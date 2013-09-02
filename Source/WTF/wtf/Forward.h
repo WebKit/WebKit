@@ -32,6 +32,7 @@ namespace WTF {
     template<typename T> class PassOwnPtr;
     template<typename T> class PassRefPtr;
     template<typename T> class RefPtr;
+    template<typename T> class Ref;
     template<typename T, size_t inlineCapacity, typename OverflowHandler> class Vector;
 
     class AtomicString;
@@ -55,6 +56,7 @@ using WTF::PassOwnArrayPtr;
 using WTF::PassOwnPtr;
 using WTF::PassRefPtr;
 using WTF::RefPtr;
+using WTF::Ref;
 using WTF::Vector;
 
 using WTF::AtomicString;

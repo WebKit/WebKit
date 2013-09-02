@@ -39,6 +39,7 @@
 #include "Page.h"
 #include "PageActivityAssertionToken.h"
 #include "ResourceBuffer.h"
+#include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -123,7 +124,7 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
 {
     // Store the previous URL because the call to ResourceLoader::willSendRequest will modify it.
     KURL previousURL = request().url();
-    RefPtr<SubresourceLoader> protect(this);
+    Ref<SubresourceLoader> protect(*this);
 
     ASSERT(!newRequest.isNull());
     if (!redirectResponse.isNull()) {
@@ -158,7 +159,7 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
 void SubresourceLoader::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
     ASSERT(m_state == Initialized);
-    RefPtr<SubresourceLoader> protect(this);
+    Ref<SubresourceLoader> protect(*this);
     m_resource->didSendData(bytesSent, totalBytesToBeSent);
 }
 
@@ -169,7 +170,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
 
     // Reference the object in this method since the additional processing can do
     // anything including removing the last reference to this object; one example of this is 3266216.
-    RefPtr<SubresourceLoader> protect(this);
+    Ref<SubresourceLoader> protect(*this);
 
     if (m_resource->resourceToRevalidate()) {
         if (response.httpStatusCode() == 304) {
@@ -240,7 +241,7 @@ void SubresourceLoader::didReceiveDataOrBuffer(const char* data, int length, Pas
     ASSERT(m_state == Initialized);
     // Reference the object in this method since the additional processing can do
     // anything including removing the last reference to this object; one example of this is 3266216.
-    RefPtr<SubresourceLoader> protect(this);
+    Ref<SubresourceLoader> protect(*this);
     RefPtr<SharedBuffer> buffer = prpBuffer;
     
     ResourceLoader::didReceiveDataOrBuffer(data, length, buffer, encodedDataLength, dataPayloadType);
@@ -274,7 +275,7 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     ASSERT(!m_resource->errorOccurred());
     LOG(ResourceLoading, "Received '%s'.", m_resource->url().string().latin1().data());
 
-    RefPtr<SubresourceLoader> protect(this);
+    Ref<SubresourceLoader> protect(*this);
     CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
     m_activityAssertion.clear();
@@ -299,7 +300,7 @@ void SubresourceLoader::didFail(const ResourceError& error)
     ASSERT(!reachedTerminalState());
     LOG(ResourceLoading, "Failed to load '%s'.\n", m_resource->url().string().latin1().data());
 
-    RefPtr<SubresourceLoader> protect(this);
+    Ref<SubresourceLoader> protect(*this);
     CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
     m_activityAssertion.clear();
@@ -323,7 +324,7 @@ void SubresourceLoader::willCancel(const ResourceError& error)
     ASSERT(!reachedTerminalState());
     LOG(ResourceLoading, "Cancelled load of '%s'.\n", m_resource->url().string().latin1().data());
 
-    RefPtr<SubresourceLoader> protect(this);
+    Ref<SubresourceLoader> protect(*this);
     m_state = Finishing;
     m_activityAssertion.clear();
     if (m_resource->resourceToRevalidate())

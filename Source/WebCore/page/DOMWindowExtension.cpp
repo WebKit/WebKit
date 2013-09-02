@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -47,7 +48,7 @@ void DOMWindowExtension::disconnectFrameForPageCache()
 {
     // Calling out to the client might result in this DOMWindowExtension being destroyed
     // while there is still work to do.
-    RefPtr<DOMWindowExtension> protector = this;
+    Ref<DOMWindowExtension> protect(*this);
     
     Frame* frame = this->frame();
     frame->loader().client().dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(this);
@@ -73,8 +74,8 @@ void DOMWindowExtension::willDestroyGlobalObjectInCachedFrame()
 
     // Calling out to the client might result in this DOMWindowExtension being destroyed
     // while there is still work to do.
-    RefPtr<DOMWindowExtension> protector = this;
-    
+    Ref<DOMWindowExtension> protect(*this);
+
     m_disconnectedFrame->loader().client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
     m_disconnectedFrame = 0;
 
@@ -87,7 +88,7 @@ void DOMWindowExtension::willDestroyGlobalObjectInFrame()
 
     // Calling out to the client might result in this DOMWindowExtension being destroyed
     // while there is still work to do.
-    RefPtr<DOMWindowExtension> protector = this;
+    Ref<DOMWindowExtension> protect(*this);
 
     if (!m_wasDetached) {
         Frame* frame = this->frame();
@@ -105,7 +106,7 @@ void DOMWindowExtension::willDetachGlobalObjectFromFrame()
 
     // Calling out to the client might result in this DOMWindowExtension being destroyed
     // while there is still work to do.
-    RefPtr<DOMWindowExtension> protector = this;
+    Ref<DOMWindowExtension> protect(*this);
 
     Frame* frame = this->frame();
     ASSERT(frame);

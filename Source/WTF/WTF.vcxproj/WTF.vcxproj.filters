@@ -494,6 +494,9 @@
     <ClInclude Include="..\wtf\NeverDestroyed.h">
       <Filter>wtf</Filter>
     </ClInclude>
+    <ClInclude Include="..\wtf\Ref.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
     <ClInclude Include="..\wtf\Noncopyable.h">
       <Filter>wtf</Filter>
     </ClInclude>

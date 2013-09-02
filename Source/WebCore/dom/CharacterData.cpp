@@ -35,6 +35,7 @@
 #include "StyleInheritedData.h"
 #include "Text.h"
 #include "TextBreakIterator.h"
+#include <wtf/Ref.h>
 
 using namespace std;
 
@@ -46,7 +47,7 @@ void CharacterData::setData(const String& data, ExceptionCode&)
     if (m_data == nonNullData)
         return;
 
-    RefPtr<CharacterData> protect = this;
+    Ref<CharacterData> protect(*this);
 
     unsigned oldLength = length();
 

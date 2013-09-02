@@ -52,6 +52,7 @@
 #include "Settings.h"
 #include "Text.h"
 #include "Widget.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -310,7 +311,7 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
         return;
     }
 
-    RefPtr<HTMLObjectElement> protect(this); // beforeload and plugin loading can make arbitrary DOM mutations.
+    Ref<HTMLObjectElement> protect(*this); // beforeload and plugin loading can make arbitrary DOM mutations.
     bool beforeLoadAllowedLoad = guardedDispatchBeforeLoadEvent(url);
     if (!renderer()) // Do not load the plugin if beforeload removed this element or its renderer.
         return;

@@ -85,6 +85,7 @@ HEADERS += \
     MessageQueue.h \
     MetaAllocator.h \
     MetaAllocatorHandle.h \
+    Ref.h \
     Noncopyable.h \
     NonCopyingSort.h \
     NotFound.h \

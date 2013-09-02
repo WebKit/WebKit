@@ -29,6 +29,7 @@
 #include "StyleInheritedData.h"
 #include "Text.h"
 #include "TextNodeTraversal.h"
+#include <wtf/Ref.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -90,7 +91,7 @@ StringWithDirection HTMLTitleElement::textWithDirection()
 
 void HTMLTitleElement::setText(const String &value)
 {
-    RefPtr<Node> protectFromMutationEvents(this);
+    Ref<HTMLTitleElement> protectFromMutationEvents(*this);
 
     int numChildren = childNodeCount();
     

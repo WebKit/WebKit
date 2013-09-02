@@ -42,6 +42,7 @@
 #include "UnitBezier.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
+#include <wtf/Ref.h>
 
 using namespace std;
 
@@ -453,8 +454,8 @@ void AnimationBase::fireAnimationEventsIfNeeded()
     // during an animation callback that might get called. Since the owner is a CompositeAnimation
     // and it ref counts this object, we will keep a ref to that instead. That way the AnimationBase
     // can still access the resources of its CompositeAnimation as needed.
-    RefPtr<AnimationBase> protector(this);
-    RefPtr<CompositeAnimation> compProtector(m_compAnim);
+    Ref<AnimationBase> protect(*this);
+    Ref<CompositeAnimation> protectCompositeAnimation(*m_compAnim);
     
     // Check for start timeout
     if (m_animState == AnimationStateStartWaitTimer) {

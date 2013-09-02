@@ -30,6 +30,7 @@
 #include "DisplayRefreshMonitor.h"
 
 #include <wtf/CurrentTime.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -105,7 +106,7 @@ void DisplayRefreshMonitor::displayDidRefresh()
 
     // The call back can cause all our clients to be unregistered, so we need to protect
     // against deletion until the end of the method.
-    RefPtr<DisplayRefreshMonitor> protector(this);
+    Ref<DisplayRefreshMonitor> protect(*this);
     
     Vector<DisplayRefreshMonitorClient*> clients;
     copyToVector(m_clients, clients);

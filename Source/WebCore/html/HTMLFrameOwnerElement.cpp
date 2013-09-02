@@ -26,6 +26,7 @@
 #include "FrameLoader.h"
 #include "RenderPart.h"
 #include "ShadowRoot.h"
+#include <wtf/Ref.h>
 
 #if ENABLE(SVG)
 #include "ExceptionCode.h"
@@ -81,7 +82,7 @@ void HTMLFrameOwnerElement::disconnectContentFrame()
     // reach up into this document and then attempt to look back down. We should
     // see if this behavior is really needed as Gecko does not allow this.
     if (Frame* frame = contentFrame()) {
-        RefPtr<Frame> protect(frame);
+        Ref<Frame> protect(*frame);
         frame->loader().frameDetached();
         frame->disconnectOwnerElement();
     }

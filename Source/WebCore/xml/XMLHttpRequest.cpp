@@ -62,6 +62,7 @@
 #include <runtime/ArrayBufferView.h>
 #include <runtime/JSLock.h>
 #include <runtime/Operations.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -822,7 +823,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
 void XMLHttpRequest::abort()
 {
     // internalAbort() calls dropProtection(), which may release the last reference.
-    RefPtr<XMLHttpRequest> protect(this);
+    Ref<XMLHttpRequest> protect(*this);
 
     bool sendFlag = m_loader;
 
@@ -1241,7 +1242,7 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
 void XMLHttpRequest::didTimeout()
 {
     // internalAbort() calls dropProtection(), which may release the last reference.
-    RefPtr<XMLHttpRequest> protect(this);
+    Ref<XMLHttpRequest> protect(*this);
     internalAbort();
 
     clearResponse();

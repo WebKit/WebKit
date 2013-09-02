@@ -50,6 +50,7 @@
 #include "ScriptController.h"
 #include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -420,7 +421,7 @@ void NavigationScheduler::timerFired(Timer<NavigationScheduler>*)
         return;
     }
 
-    RefPtr<Frame> protect(m_frame);
+    Ref<Frame> protect(*m_frame);
 
     OwnPtr<ScheduledNavigation> redirect(m_redirect.release());
     redirect->fire(m_frame);
@@ -431,7 +432,7 @@ void NavigationScheduler::schedule(PassOwnPtr<ScheduledNavigation> redirect)
 {
     ASSERT(m_frame->page());
 
-    RefPtr<Frame> protect(m_frame);
+    Ref<Frame> protect(*m_frame);
 
     // If a redirect was scheduled during a load, then stop the current load.
     // Otherwise when the current load transitions from a provisional to a 

@@ -84,6 +84,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -843,7 +844,7 @@ void AudioContext::deleteMarkedNodes()
     ASSERT(isMainThread());
 
     // Protect this object from being deleted before we release the mutex locked by AutoLocker.
-    RefPtr<AudioContext> protect(this);
+    Ref<AudioContext> protect(*this);
     {
         AutoLocker locker(this);
 

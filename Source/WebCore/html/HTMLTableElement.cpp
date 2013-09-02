@@ -40,6 +40,7 @@
 #include "HTMLTableSectionElement.h"
 #include "RenderTable.h"
 #include "StylePropertySet.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -189,7 +190,7 @@ PassRefPtr<HTMLElement> HTMLTableElement::insertRow(int index, ExceptionCode& ec
         return 0;
     }
 
-    RefPtr<Node> protectFromMutationEvents(this);
+    Ref<HTMLTableElement> protectFromMutationEvents(*this);
 
     RefPtr<HTMLTableRowElement> lastRow = 0;
     RefPtr<HTMLTableRowElement> row = 0;

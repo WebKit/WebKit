@@ -40,6 +40,7 @@
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerThreadableLoader.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -90,7 +91,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
     options.sendLoadCallbacks = SendCallbacks;
 
     // During create, callbacks may happen which remove the last reference to this object.
-    RefPtr<WorkerScriptLoader> protect(this);
+    Ref<WorkerScriptLoader> protect(*this);
     m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, this, *request, options);
 }
 

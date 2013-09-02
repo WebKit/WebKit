@@ -38,6 +38,7 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
+#include <wtf/Ref.h>
 
 // FIXME: This is a layering violation.
 #include "JSDOMWindow.h"
@@ -123,7 +124,7 @@ void ScriptExecutionContext::processMessagePortMessagesSoon()
 
 void ScriptExecutionContext::dispatchMessagePortEvents()
 {
-    RefPtr<ScriptExecutionContext> protect(this);
+    Ref<ScriptExecutionContext> protect(*this);
 
     // Make a frozen copy.
     Vector<MessagePort*> ports;

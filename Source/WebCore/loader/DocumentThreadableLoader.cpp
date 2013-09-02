@@ -48,6 +48,7 @@
 #include "SubresourceLoader.h"
 #include "ThreadableLoaderClient.h"
 #include <wtf/Assertions.h>
+#include <wtf/Ref.h>
 
 #if ENABLE(INSPECTOR)
 #include "ProgressTracker.h"
@@ -144,7 +145,7 @@ DocumentThreadableLoader::~DocumentThreadableLoader()
 
 void DocumentThreadableLoader::cancel()
 {
-    RefPtr<DocumentThreadableLoader> protect(this);
+    Ref<DocumentThreadableLoader> protect(*this);
 
     // Cancel can re-enter and m_resource might be null here as a result.
     if (m_client && m_resource) {
@@ -180,7 +181,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
     ASSERT(m_client);
     ASSERT_UNUSED(resource, resource == m_resource);
 
-    RefPtr<DocumentThreadableLoader> protect(this);
+    Ref<DocumentThreadableLoader> protect(*this);
     // Allow same origin requests to continue after allowing clients to audit the redirect.
     if (isAllowedRedirect(request.url())) {
         if (m_client->isDocumentThreadableLoaderClient())

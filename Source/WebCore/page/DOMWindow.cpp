@@ -105,6 +105,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
+#include <wtf/Ref.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
@@ -1718,7 +1719,7 @@ void DOMWindow::dispatchLoadEvent()
 
 bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget)
 {
-    RefPtr<EventTarget> protect = this;
+    Ref<EventTarget> protect(*this);
     RefPtr<Event> event = prpEvent;
 
     event->setTarget(prpTarget ? prpTarget : this);

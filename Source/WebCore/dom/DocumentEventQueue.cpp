@@ -34,6 +34,7 @@
 #include "RuntimeApplicationChecks.h"
 #include "ScriptExecutionContext.h"
 #include "SuspendableTimer.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
     
@@ -135,7 +136,7 @@ void DocumentEventQueue::pendingEventTimerFired()
     bool wasAdded = m_queuedEvents.add(0).isNewEntry;
     ASSERT_UNUSED(wasAdded, wasAdded); // It should not have already been in the list.
 
-    RefPtr<DocumentEventQueue> protector(this);
+    Ref<DocumentEventQueue> protect(*this);
 
     while (!m_queuedEvents.isEmpty()) {
         ListHashSet<RefPtr<Event>, 16>::iterator iter = m_queuedEvents.begin();

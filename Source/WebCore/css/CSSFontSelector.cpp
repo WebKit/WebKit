@@ -50,6 +50,7 @@
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "WebKitFontFamilyNames.h"
+#include <wtf/Ref.h>
 #include <wtf/text/AtomicString.h>
 
 #if ENABLE(SVG)
@@ -598,7 +599,7 @@ void CSSFontSelector::beginLoadTimerFired(Timer<WebCore::CSSFontSelector>*)
     fontsToBeginLoading.swap(m_fontsToBeginLoading);
 
     // CSSFontSelector could get deleted via beginLoadIfNeeded() or loadDone() unless protected.
-    RefPtr<CSSFontSelector> protect(this);
+    Ref<CSSFontSelector> protect(*this);
 
     CachedResourceLoader* cachedResourceLoader = m_document->cachedResourceLoader();
     for (size_t i = 0; i < fontsToBeginLoading.size(); ++i) {

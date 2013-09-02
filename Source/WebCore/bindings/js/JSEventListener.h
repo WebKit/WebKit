@@ -26,6 +26,7 @@
 #include <heap/StrongInlines.h>
 #include <heap/Weak.h>
 #include <heap/WeakInlines.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -79,7 +80,7 @@ namespace WebCore {
     {
         // initializeJSFunction can trigger code that deletes this event listener
         // before we're done. It should always return 0 in this case.
-        RefPtr<JSEventListener> protect(const_cast<JSEventListener*>(this));
+        Ref<JSEventListener> protect(const_cast<JSEventListener&>(*this));
         JSC::Strong<JSC::JSObject> wrapper(*m_isolatedWorld->vm(), m_wrapper.get());
 
         if (!m_jsFunction) {

@@ -34,6 +34,7 @@
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include <wtf/Deque.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -341,12 +342,10 @@ void StyleSheetContents::checkLoaded()
     if (isLoading())
         return;
 
-    RefPtr<StyleSheetContents> protect(this);
-
     // Avoid |this| being deleted by scripts that run via
     // ScriptableDocumentParser::executeScriptsWaitingForStylesheets().
     // See <rdar://problem/6622300>.
-    RefPtr<StyleSheetContents> protector(this);
+    Ref<StyleSheetContents> protect(*this);
     StyleSheetContents* parentSheet = parentStyleSheet();
     if (parentSheet) {
         parentSheet->checkLoaded();

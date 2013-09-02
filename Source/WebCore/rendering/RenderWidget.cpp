@@ -33,6 +33,7 @@
 #include "RenderView.h"
 #include "RenderWidgetProtector.h"
 #include <wtf/StackStats.h>
+#include <wtf/Ref.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerBacking.h"
@@ -153,7 +154,7 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
     m_clipRect = clipRect;
 
     RenderWidgetProtector protector(this);
-    RefPtr<Node> protectedNode(node());
+    Ref<Node> protectNode(*node());
     m_widget->setFrameRect(newFrame);
 
     if (clipChanged && !boundsChanged)

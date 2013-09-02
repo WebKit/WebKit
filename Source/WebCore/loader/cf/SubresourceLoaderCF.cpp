@@ -25,6 +25,8 @@
 #include "config.h"
 #include "SubresourceLoader.h"
 
+#include <wtf/Ref.h>
+
 namespace WebCore {
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
@@ -32,7 +34,7 @@ void SubresourceLoader::didReceiveDataArray(CFArrayRef dataArray)
 {
     // Reference the object in this method since the additional processing can do
     // anything including removing the last reference to this object; one example of this is 3266216.
-    RefPtr<SubresourceLoader> protect(this);
+    Ref<SubresourceLoader> protect(*this);
 
     ResourceLoader::didReceiveDataArray(dataArray);
 

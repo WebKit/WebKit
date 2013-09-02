@@ -2180,7 +2180,7 @@ bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
     if (!document().hasListenerType(Document::BEFORELOAD_LISTENER))
         return true;
 
-    RefPtr<Node> protector(this);
+    Ref<Node> protect(*this);
     RefPtr<BeforeLoadEvent> beforeLoadEvent = BeforeLoadEvent::create(sourceURL);
     dispatchEvent(beforeLoadEvent.get());
     return !beforeLoadEvent->defaultPrevented();

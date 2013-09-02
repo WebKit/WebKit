@@ -1,3 +1,12 @@
+2013-09-01  Andreas Kling  <akling@apple.com>
+
+        Ref: A smart pointer for the reference age.
+        <https://webkit.org/b/120570>
+
+        Reviewed by Antti Koivisto.
+
+        Use Ref<T> for various stack guards where null checking isn't needed.
+
 2013-09-02  Andreas Kling  <akling@apple.com>
 
         Simplify DocumentType handling.

@@ -1,3 +1,18 @@
+2013-09-01  Andreas Kling  <akling@apple.com>
+
+        Ref: A smart pointer for the reference age.
+        <https://webkit.org/b/120570>
+
+        Reviewed by Antti Koivisto.
+
+        Add a very simple simple Ref<T> smart pointer class that is never null.
+        It's initialized by passing a T& to the constructor and cannot be assigned to.
+
+        operator-> is not overloaded, to prevent unsafe-looking code.
+        The value is extracted by "T& get()", since C++ does not let you override operator.()
+
+        * wtf/Ref.h:
+
 2013-08-30  Oliver Hunt  <oliver@apple.com>
 
         Make JSValue bool conversion less dangerous

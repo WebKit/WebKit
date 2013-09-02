@@ -61,6 +61,7 @@
 
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
+#include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
@@ -747,7 +748,7 @@ void InspectorCSSAgent::regionLayoutUpdated(WebKitNamedFlow* namedFlow, int docu
         return;
 
     ErrorString errorString;
-    RefPtr<WebKitNamedFlow> protector(namedFlow);
+    Ref<WebKitNamedFlow> protect(*namedFlow);
 
     m_frontend->regionLayoutUpdated(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
 }
@@ -769,7 +770,7 @@ void InspectorCSSAgent::regionOversetChanged(WebKitNamedFlow* namedFlow, int doc
         return;
     
     ErrorString errorString;
-    RefPtr<WebKitNamedFlow> protector(namedFlow);
+    Ref<WebKitNamedFlow> protect(*namedFlow);
     
     m_frontend->regionOversetChanged(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
 }

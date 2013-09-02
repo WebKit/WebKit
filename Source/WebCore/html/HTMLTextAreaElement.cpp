@@ -48,6 +48,7 @@
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include "TextNodeTraversal.h"
+#include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -406,7 +407,7 @@ String HTMLTextAreaElement::defaultValue() const
 
 void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
 {
-    RefPtr<Node> protectFromMutationEvents(this);
+    Ref<HTMLTextAreaElement> protectFromMutationEvents(*this);
 
     // To preserve comments, remove only the text nodes, then add a single text node.
     Vector<RefPtr<Text>> textNodes;

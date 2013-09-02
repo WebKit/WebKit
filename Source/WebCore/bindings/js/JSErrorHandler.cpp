@@ -38,6 +38,7 @@
 #include "JSEvent.h"
 #include "JSMainThreadExecState.h"
 #include <runtime/JSLock.h>
+#include <wtf/Ref.h>
 
 using namespace JSC;
 
@@ -79,7 +80,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
     CallType callType = jsFunction->methodTable()->getCallData(jsFunction, callData);
 
     if (callType != CallTypeNone) {
-        RefPtr<JSErrorHandler> protectedctor(this);
+        Ref<JSErrorHandler> protectedctor(*this);
 
         Event* savedEvent = globalObject->currentEvent();
         globalObject->setCurrentEvent(event);

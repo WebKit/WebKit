@@ -42,6 +42,7 @@
 #include "SpeechInputEvent.h"
 #include "TextEvent.h"
 #include "TextEventInputType.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -308,7 +309,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
                 m_capturing = true;
             }
         }
-        RefPtr<InputFieldSpeechButtonElement> holdRefButton(this);
+        Ref<InputFieldSpeechButtonElement> protect(*this);
         input->focus();
         input->select();
         event->setDefaultHandled();
@@ -385,7 +386,7 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
     if (!input || input->isDisabledOrReadOnly())
         return;
 
-    RefPtr<InputFieldSpeechButtonElement> holdRefButton(this);
+    Ref<InputFieldSpeechButtonElement> protect(*this);
     if (document().domWindow()) {
         // Call selectionChanged, causing the element to cache the selection,
         // so that the text event inserts the text in this element even if

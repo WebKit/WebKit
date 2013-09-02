@@ -51,6 +51,7 @@
 #include "StyleInheritedData.h"
 #include "StyleResolveForDocument.h"
 #include "StyleSheetContents.h"
+#include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -298,7 +299,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
         return;
     }
     // Completing the sheet load may cause scripts to execute.
-    RefPtr<Node> protector(this);
+    Ref<HTMLLinkElement> protect(*this);
 
     CSSParserContext parserContext(&document(), baseURL, charset);
 

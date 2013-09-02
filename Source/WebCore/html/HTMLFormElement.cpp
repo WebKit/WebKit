@@ -47,6 +47,7 @@
 #include "ScriptEventListener.h"
 #include "Settings.h"
 #include <limits>
+#include <wtf/Ref.h>
 
 using namespace std;
 
@@ -227,7 +228,7 @@ bool HTMLFormElement::validateInteractively(Event* event)
     // has !renderer()->needsLayout() assertion.
     document().updateLayoutIgnorePendingStylesheets();
 
-    RefPtr<HTMLFormElement> protector(this);
+    Ref<HTMLFormElement> protect(*this);
     // Focus on the first focusable control and show a validation message.
     for (unsigned i = 0; i < unhandledInvalidControls.size(); ++i) {
         FormAssociatedElement* unhandledAssociatedElement = unhandledInvalidControls[i].get();
@@ -595,7 +596,7 @@ bool HTMLFormElement::checkValidity()
 
 bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<FormAssociatedElement> >& unhandledInvalidControls)
 {
-    RefPtr<HTMLFormElement> protector(this);
+    Ref<HTMLFormElement> protect(*this);
     // Copy m_associatedElements because event handlers called from
     // HTMLFormControlElement::checkValidity() might change m_associatedElements.
     Vector<RefPtr<FormAssociatedElement> > elements;

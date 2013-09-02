@@ -32,6 +32,7 @@
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -68,7 +69,7 @@ void NetscapePlugInStreamLoader::releaseResources()
 
 void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& response)
 {
-    RefPtr<NetscapePlugInStreamLoader> protect(this);
+    Ref<NetscapePlugInStreamLoader> protect(*this);
 
     m_client->didReceiveResponse(this, response);
 
@@ -105,7 +106,7 @@ void NetscapePlugInStreamLoader::didReceiveBuffer(PassRefPtr<SharedBuffer> buffe
 
 void NetscapePlugInStreamLoader::didReceiveDataOrBuffer(const char* data, int length, PassRefPtr<SharedBuffer> buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
-    RefPtr<NetscapePlugInStreamLoader> protect(this);
+    Ref<NetscapePlugInStreamLoader> protect(*this);
     
     m_client->didReceiveData(this, buffer ? buffer->data() : data, buffer ? buffer->size() : length);
 
@@ -114,7 +115,7 @@ void NetscapePlugInStreamLoader::didReceiveDataOrBuffer(const char* data, int le
 
 void NetscapePlugInStreamLoader::didFinishLoading(double finishTime)
 {
-    RefPtr<NetscapePlugInStreamLoader> protect(this);
+    Ref<NetscapePlugInStreamLoader> protect(*this);
 
     m_documentLoader->removePlugInStreamLoader(this);
     m_client->didFinishLoading(this);
@@ -123,7 +124,7 @@ void NetscapePlugInStreamLoader::didFinishLoading(double finishTime)
 
 void NetscapePlugInStreamLoader::didFail(const ResourceError& error)
 {
-    RefPtr<NetscapePlugInStreamLoader> protect(this);
+    Ref<NetscapePlugInStreamLoader> protect(*this);
 
     m_documentLoader->removePlugInStreamLoader(this);
     m_client->didFail(this, error);

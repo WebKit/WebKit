@@ -55,6 +55,7 @@ set(WTF_HEADERS
     MetaAllocatorHandle.h
     NonCopyingSort.h
     ThreadRestrictionVerifier.h
+    Ref.h
     Noncopyable.h
     NotFound.h
     NullPtr.h

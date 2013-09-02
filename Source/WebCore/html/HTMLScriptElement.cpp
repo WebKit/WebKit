@@ -30,6 +30,7 @@
 #include "HTMLNames.h"
 #include "ScriptEventListener.h"
 #include "Text.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -79,7 +80,7 @@ Node::InsertionNotificationRequest HTMLScriptElement::insertedInto(ContainerNode
 
 void HTMLScriptElement::setText(const String &value)
 {
-    RefPtr<Node> protectFromMutationEvents(this);
+    Ref<HTMLScriptElement> protectFromMutationEvents(*this);
 
     int numChildren = childNodeCount();
 

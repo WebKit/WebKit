@@ -37,6 +37,7 @@
 #include "RenderBox.h"
 #include "ScrollbarTheme.h"
 #include "WheelEvent.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -97,7 +98,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
             // The following functions of HTMLInputElement may run JavaScript
             // code which detaches this shadow node. We need to take a reference
             // and check renderer() after such function calls.
-            RefPtr<Node> protector(this);
+            Ref<SpinButtonElement> protect(*this);
             if (m_spinButtonOwner)
                 m_spinButtonOwner->focusAndSelectSpinButtonOwner();
             if (renderer()) {

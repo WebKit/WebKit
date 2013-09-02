@@ -35,6 +35,7 @@
 #include "Geoposition.h"
 #include "Page.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/Ref.h>
 
 #include "Coordinates.h"
 #include "GeolocationController.h"
@@ -147,7 +148,7 @@ void Geolocation::GeoNotifier::timerFired(Timer<GeoNotifier>*)
 
     // Protect this GeoNotifier object, since it
     // could be deleted by a call to clearWatch in a callback.
-    RefPtr<GeoNotifier> protect(this);
+    Ref<GeoNotifier> protect(*this);
 
     // Test for fatal error first. This is required for the case where the Frame is
     // disconnected and requests are cancelled.
@@ -433,7 +434,7 @@ void Geolocation::clearWatch(int watchID)
 void Geolocation::setIsAllowed(bool allowed)
 {
     // Protect the Geolocation object from garbage collection during a callback.
-    RefPtr<Geolocation> protect(this);
+    Ref<Geolocation> protect(*this);
 
     // This may be due to either a new position from the service, or a cached
     // position.

@@ -55,6 +55,7 @@
 #include "TemplateContentDocumentFragment.h"
 #include "Text.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(DELETION_UI)
@@ -262,7 +263,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
     // If it is, it can be deleted as a side effect of sending mutation events.
     ASSERT(refCount() || parentOrShadowHostNode());
 
-    RefPtr<Node> protect(this);
+    Ref<ContainerNode> protect(*this);
 
     ec = 0;
 
@@ -403,7 +404,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     // If it is, it can be deleted as a side effect of sending mutation events.
     ASSERT(refCount() || parentOrShadowHostNode());
 
-    RefPtr<Node> protect(this);
+    Ref<ContainerNode> protect(*this);
 
     ec = 0;
 
@@ -526,7 +527,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
     // If it is, it can be deleted as a side effect of sending mutation events.
     ASSERT(refCount() || parentOrShadowHostNode());
 
-    RefPtr<Node> protect(this);
+    Ref<ContainerNode> protect(*this);
 
     ec = 0;
 
@@ -637,7 +638,7 @@ void ContainerNode::removeChildren()
         return;
 
     // The container node can be removed from event handlers.
-    RefPtr<ContainerNode> protect(this);
+    Ref<ContainerNode> protect(*this);
 
     // exclude this node when looking for removed focusedNode since only children will be removed
     document().removeFocusedNodeOfSubtree(this, true);
@@ -648,7 +649,7 @@ void ContainerNode::removeChildren()
 
     // Do any prep work needed before actually starting to detach
     // and remove... e.g. stop loading frames, fire unload events.
-    willRemoveChildren(protect.get());
+    willRemoveChildren(this);
 
     NodeVector removedChildren;
     {
@@ -674,7 +675,7 @@ void ContainerNode::removeChildren()
 
 bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, AttachBehavior attachBehavior)
 {
-    RefPtr<ContainerNode> protect(this);
+    Ref<ContainerNode> protect(*this);
 
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
@@ -777,7 +778,7 @@ void ContainerNode::suspendPostAttachCallbacks()
 void ContainerNode::resumePostAttachCallbacks()
 {
     if (s_attachDepth == 1) {
-        RefPtr<ContainerNode> protect(this);
+        Ref<ContainerNode> protect(*this);
 
         if (s_postAttachCallbackQueue)
             dispatchPostAttachCallbacks();

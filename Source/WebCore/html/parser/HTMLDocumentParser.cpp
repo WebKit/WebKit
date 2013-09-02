@@ -47,6 +47,7 @@
 #include "NestingLevelIncrementer.h"
 #include "Settings.h"
 #include <wtf/Functional.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -181,7 +182,7 @@ void HTMLDocumentParser::prepareToStopParsing()
 
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    RefPtr<HTMLDocumentParser> protect(this);
+    Ref<HTMLDocumentParser> protect(*this);
 
     // NOTE: This pump should only ever emit buffered character tokens,
     // so ForceSynchronous vs. AllowYield should be meaningless.
@@ -245,7 +246,7 @@ void HTMLDocumentParser::resumeParsingAfterYield()
 {
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    RefPtr<HTMLDocumentParser> protect(this);
+    Ref<HTMLDocumentParser> protect(*this);
 
 #if ENABLE(THREADED_HTML_PARSER)
     if (m_haveBackgroundParser) {
@@ -320,7 +321,7 @@ void HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<Pa
 
     // processParsedChunkFromBackgroundParser can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    RefPtr<HTMLDocumentParser> protect(this);
+    Ref<HTMLDocumentParser> protect(*this);
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), lineNumber().zeroBasedInt());
 
@@ -629,7 +630,7 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
 
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    RefPtr<HTMLDocumentParser> protect(this);
+    Ref<HTMLDocumentParser> protect(*this);
 
 #if ENABLE(THREADED_HTML_PARSER)
     if (!m_tokenizer) {
@@ -720,7 +721,7 @@ void HTMLDocumentParser::append(PassRefPtr<StringImpl> inputSource)
 
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    RefPtr<HTMLDocumentParser> protect(this);
+    Ref<HTMLDocumentParser> protect(*this);
     String source(inputSource);
 
     if (m_preloadScanner) {
@@ -893,7 +894,7 @@ void HTMLDocumentParser::resumeParsingAfterScriptExecution()
         ASSERT(!m_lastChunkBeforeScript);
         // processParsedChunkFromBackgroundParser can cause this parser to be detached from the Document,
         // but we need to ensure it isn't deleted yet.
-        RefPtr<HTMLDocumentParser> protect(this);
+        Ref<HTMLDocumentParser> protect(*this);
         pumpPendingSpeculations();
         return;
     }
@@ -929,7 +930,7 @@ void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)
 {
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    RefPtr<HTMLDocumentParser> protect(this);
+    Ref<HTMLDocumentParser> protect(*this);
 
     ASSERT(m_scriptRunner);
     ASSERT(!isExecutingScript());
@@ -956,7 +957,7 @@ void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
 
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
-    RefPtr<HTMLDocumentParser> protect(this);
+    Ref<HTMLDocumentParser> protect(*this);
     m_scriptRunner->executeScriptsWaitingForStylesheets();
     if (!isWaitingForScripts())
         resumeParsingAfterScriptExecution();

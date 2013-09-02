@@ -46,6 +46,7 @@
 #include "Settings.h"
 #include "SinkDocument.h"
 #include "TextResourceDecoder.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -233,7 +234,7 @@ void DocumentWriter::end()
     // http://bugs.webkit.org/show_bug.cgi?id=10854
     // The frame's last ref may be removed and it can be deleted by checkCompleted(), 
     // so we'll add a protective refcount
-    RefPtr<Frame> protector(m_frame);
+    Ref<Frame> protect(*m_frame);
 
     if (!m_parser)
         return;

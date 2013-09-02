@@ -108,6 +108,7 @@
 #include "WindowFeatures.h"
 #include "XMLDocumentParser.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -303,7 +304,7 @@ void FrameLoader::urlSelected(const FrameLoadRequest& passedRequest, PassRefPtr<
 {
     ASSERT(!m_suppressOpenerInNewFrame);
 
-    RefPtr<Frame> protect(&m_frame);
+    Ref<Frame> protect(m_frame);
     FrameLoadRequest frameRequest(passedRequest);
 
     if (m_frame.script().executeIfJavaScriptURL(frameRequest.resourceRequest().url(), shouldReplaceDocumentIfJavaScriptURL))
@@ -476,7 +477,7 @@ void FrameLoader::stop()
 {
     // http://bugs.webkit.org/show_bug.cgi?id=10854
     // The frame's last ref may be removed and it will be deleted by checkCompleted().
-    RefPtr<Frame> protector(&m_frame);
+    Ref<Frame> protect(m_frame);
 
     if (DocumentParser* parser = m_frame.document()->parser()) {
         parser->stopParsing();
@@ -757,7 +758,7 @@ bool FrameLoader::allAncestorsAreComplete() const
 
 void FrameLoader::checkCompleted()
 {
-    RefPtr<Frame> protect(&m_frame);
+    Ref<Frame> protect(m_frame);
     m_shouldCallCheckCompleted = false;
 
     if (m_frame.view())
@@ -802,7 +803,7 @@ void FrameLoader::checkCompleted()
 
 void FrameLoader::checkTimerFired(Timer<FrameLoader>*)
 {
-    RefPtr<Frame> protect(&m_frame);
+    Ref<Frame> protect(m_frame);
 
     if (Page* page = m_frame.page()) {
         if (page->defersLoading())
@@ -1089,7 +1090,7 @@ bool FrameLoader::isComplete() const
 
 void FrameLoader::completed()
 {
-    RefPtr<Frame> protect(&m_frame);
+    Ref<Frame> protect(m_frame);
 
     for (Frame* descendant = m_frame.tree().traverseNext(&m_frame); descendant; descendant = descendant->tree().traverseNext(&m_frame))
         descendant->navigationScheduler().startTimer();
@@ -1154,7 +1155,7 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
     PassRefPtr<Event> event, PassRefPtr<FormState> formState, ShouldSendReferrer shouldSendReferrer)
 {    
     // Protect frame from getting blown away inside dispatchBeforeLoadEvent in loadWithDocumentLoader.
-    RefPtr<Frame> protect(&m_frame);
+    Ref<Frame> protect(m_frame);
 
     KURL url = request.resourceRequest().url();
 
@@ -1365,7 +1366,7 @@ void FrameLoader::load(DocumentLoader* newDocumentLoader)
 void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, PassRefPtr<FormState> prpFormState)
 {
     // Retain because dispatchBeforeLoadEvent may release the last reference to it.
-    RefPtr<Frame> protect(&m_frame);
+    Ref<Frame> protect(m_frame);
 
     ASSERT(m_client.hasWebView());
 
@@ -1562,7 +1563,7 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
     
     // Calling stopLoading() on the provisional document loader can blow away
     // the frame from underneath.
-    RefPtr<Frame> protect(&m_frame);
+    Ref<Frame> protect(m_frame);
 
     m_inStopAllLoaders = true;
 
@@ -1700,7 +1701,7 @@ void FrameLoader::commitProvisionalLoad()
 {
     RefPtr<CachedPage> cachedPage = m_loadingFromCachedPage ? pageCache()->get(history().provisionalItem()) : 0;
     RefPtr<DocumentLoader> pdl = m_provisionalDocumentLoader;
-    RefPtr<Frame> protect(&m_frame);
+    Ref<Frame> protect(m_frame);
 
     LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s'", m_frame.tree().uniqueName().string().utf8().data(),
         m_frame.document() ? m_frame.document()->url().stringCenterEllipsizedToLength().utf8().data() : "",
@@ -2614,7 +2615,7 @@ const ResourceRequest& FrameLoader::originalRequest() const
 void FrameLoader::receivedMainResourceError(const ResourceError& error)
 {
     // Retain because the stop may release the last reference to it.
-    RefPtr<Frame> protect(&m_frame);
+    Ref<Frame> protect(m_frame);
 
     RefPtr<DocumentLoader> loader = activeDocumentLoader();
     // FIXME: Don't want to do this if an entirely new load is going, so should check

@@ -51,6 +51,7 @@
 #import "SynchronousLoaderClient.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreURLResponse.h"
+#import <wtf/Ref.h>
 #import <wtf/SchedulePair.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/CString.h>
@@ -389,7 +390,7 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
     if (client()->usesAsyncCallbacks()) {
         client()->willSendRequestAsync(this, request, redirectResponse);
     } else {
-        RefPtr<ResourceHandle> protect(this);
+        Ref<ResourceHandle> protect(*this);
         client()->willSendRequest(this, request, redirectResponse);
 
         // Client call may not preserve the session, especially if the request is sent over IPC.

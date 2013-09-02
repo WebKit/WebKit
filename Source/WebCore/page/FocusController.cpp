@@ -61,6 +61,7 @@
 #include "Widget.h"
 #include "htmlediting.h" // For firstPositionInOrBeforeNode
 #include <limits>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -631,7 +632,7 @@ bool FocusController::setFocusedElement(Element* element, PassRefPtr<Frame> newF
     }
     setFocusedFrame(newFocusedFrame);
 
-    RefPtr<Element> protect(element);
+    Ref<Element> protect(*element);
     if (newDocument) {
         bool successfullyFocused = newDocument->setFocusedElement(element, direction);
         if (!successfullyFocused)

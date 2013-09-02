@@ -29,6 +29,7 @@
 #include "ActiveDOMCallback.h"
 #include "JSMainThreadExecState.h"
 #include <heap/StrongInlines.h>
+#include <wtf/Ref.h>
 
 using namespace JSC;
 
@@ -46,7 +47,7 @@ public:
         if (!canInvokeCallback())
             return;
 
-        RefPtr<JSGlobalObjectCallback> protect(this);
+        Ref<JSGlobalObjectCallback> protect(*this);
         JSLockHolder lock(m_globalObject->vm());
 
         ExecState* exec = m_globalObject->globalExec();

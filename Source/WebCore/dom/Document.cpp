@@ -165,6 +165,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/StringBuffer.h>
 
@@ -2372,7 +2373,7 @@ void Document::implicitClose()
         return;
 
     // Call to dispatchWindowLoadEvent can blow us from underneath.
-    RefPtr<Document> protect(this);
+    Ref<Document> protect(*this);
 
     m_processingLoadEvent = true;
 
@@ -5322,7 +5323,7 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
     // Since we dispatch events in this function, it's possible that the
     // document will be detached and GC'd. We protect it here to make sure we
     // can finish the function successfully.
-    RefPtr<Document> protectDocument(this);
+    Ref<Document> protect(*this);
     Deque<RefPtr<Node> > changeQueue;
     m_fullScreenChangeEventTargetQueue.swap(changeQueue);
     Deque<RefPtr<Node> > errorQueue;

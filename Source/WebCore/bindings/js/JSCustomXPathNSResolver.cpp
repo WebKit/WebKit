@@ -35,6 +35,7 @@
 #include "PageConsole.h"
 #include "SecurityOrigin.h"
 #include <runtime/JSLock.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -86,7 +87,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
         function = m_customResolver.get();
     }
 
-    RefPtr<JSCustomXPathNSResolver> selfProtector(this);
+    Ref<JSCustomXPathNSResolver> selfProtector(*this);
 
     MarkedArgumentBuffer args;
     args.append(jsStringWithCache(exec, prefix));

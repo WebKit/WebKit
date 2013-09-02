@@ -50,6 +50,7 @@
 #include "TextResourceDecoder.h"
 #include "TreeDepthLimit.h"
 #include "XMLErrors.h"
+#include <wtf/Ref.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -256,7 +257,7 @@ void XMLDocumentParser::notifyFinished(CachedResource* unusedResource)
     ASSERT(scriptElement);
 
     // JavaScript can detach this parser, make sure it's kept alive even if detached.
-    RefPtr<XMLDocumentParser> protect(this);
+    Ref<XMLDocumentParser> protect(*this);
     
     if (errorOccurred)
         scriptElement->dispatchErrorEvent();

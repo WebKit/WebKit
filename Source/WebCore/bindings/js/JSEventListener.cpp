@@ -30,6 +30,7 @@
 #include "WorkerGlobalScope.h"
 #include <runtime/ExceptionHelpers.h>
 #include <runtime/JSLock.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 
 using namespace JSC;
@@ -111,7 +112,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     }
 
     if (callType != CallTypeNone) {
-        RefPtr<JSEventListener> protect(this);
+        Ref<JSEventListener> protect(*this);
 
         MarkedArgumentBuffer args;
         args.append(toJS(exec, globalObject, event));

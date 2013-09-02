@@ -54,6 +54,7 @@
 		1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FA47C88152502DA00568D1B /* WebCoreThread.cpp */; };
 		1FA47C8B152502DA00568D1B /* WebCoreThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA47C89152502DA00568D1B /* WebCoreThread.h */; };
 		26147B0A15DDCCDC00DDB907 /* IntegerToStringConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 26147B0815DDCCDC00DDB907 /* IntegerToStringConversion.h */; };
+		26299B6E17A9E5B800ADEBE5 /* Ref.h in Headers */ = {isa = PBXBuildFile; fileRef = 26299B6D17A9E5B800ADEBE5 /* Ref.h */; };
 		2C05385415BC819000F21B96 /* GregorianDateTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C05385315BC819000F21B96 /* GregorianDateTime.h */; };
 		2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CCD892915C0390200285083 /* GregorianDateTime.cpp */; };
 		44F66008171AFAE600E4AD19 /* EnumClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 44F66007171AFAA900E4AD19 /* EnumClass.h */; };
@@ -320,6 +321,7 @@
 		1FA47C88152502DA00568D1B /* WebCoreThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreThread.cpp; sourceTree = "<group>"; };
 		1FA47C89152502DA00568D1B /* WebCoreThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreThread.h; sourceTree = "<group>"; };
 		26147B0815DDCCDC00DDB907 /* IntegerToStringConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntegerToStringConversion.h; sourceTree = "<group>"; };
+		26299B6D17A9E5B800ADEBE5 /* Ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ref.h; sourceTree = "<group>"; };
 		2C05385315BC819000F21B96 /* GregorianDateTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GregorianDateTime.h; sourceTree = "<group>"; };
 		2CCD892915C0390200285083 /* GregorianDateTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GregorianDateTime.cpp; sourceTree = "<group>"; };
 		44DEE74A152274BB00C6EC37 /* iOS.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = iOS.xcconfig; sourceTree = "<group>"; };
@@ -708,6 +710,7 @@
 				A8A472CE151A825B004123FF /* MetaAllocator.h */,
 				A8A472CF151A825B004123FF /* MetaAllocatorHandle.h */,
 				1A3F6BE6174ADA2100B2EEA7 /* NeverDestroyed.h */,
+				26299B6D17A9E5B800ADEBE5 /* Ref.h */,
 				0F0D85B317234CB100338210 /* NoLock.h */,
 				A8A472D0151A825B004123FF /* Noncopyable.h */,
 				A8A472D1151A825B004123FF /* NonCopyingSort.h */,
@@ -1001,6 +1004,7 @@
 				A8A473DA151A825B004123FF /* HashTraits.h in Headers */,
 				A8A473DB151A825B004123FF /* HexNumber.h in Headers */,
 				A8A473DC151A825B004123FF /* InlineASM.h in Headers */,
+				26299B6E17A9E5B800ADEBE5 /* Ref.h in Headers */,
 				A70DA0841799F04D00529A9B /* Insertion.h in Headers */,
 				26147B0A15DDCCDC00DDB907 /* IntegerToStringConversion.h in Headers */,
 				A70DA0851799F04D00529A9B /* ListDump.h in Headers */,
@@ -1063,6 +1067,7 @@
 				A8A47424151A825B004123FF /* SinglyLinkedList.h in Headers */,
 				A748745317A0BDAE00FA04CB /* SixCharacterHash.h in Headers */,
 				A8A47426151A825B004123FF /* Spectrum.h in Headers */,
+				26A7052617445A5F00118ACA /* Ref.h in Headers */,
 				A8A47428151A825B004123FF /* StackBounds.h in Headers */,
 				FEDACD3E1630F83F00C69634 /* StackStats.h in Headers */,
 				A8A47429151A825B004123FF /* StaticConstructors.h in Headers */,

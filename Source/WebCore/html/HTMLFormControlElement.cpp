@@ -41,6 +41,7 @@
 #include "ScriptEventListener.h"
 #include "ValidationMessage.h"
 #include "ValidityState.h"
+#include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -413,10 +414,10 @@ bool HTMLFormControlElement::checkValidity(Vector<RefPtr<FormAssociatedElement> 
     if (!willValidate() || isValidFormControlElement())
         return true;
     // An event handler can deref this object.
-    RefPtr<HTMLFormControlElement> protector(this);
-    RefPtr<Document> originalDocument(&document());
+    Ref<HTMLFormControlElement> protect(*this);
+    Ref<Document> originalDocument(document());
     bool needsDefaultAction = dispatchEvent(Event::create(eventNames().invalidEvent, false, true));
-    if (needsDefaultAction && unhandledInvalidControls && inDocument() && originalDocument == &document())
+    if (needsDefaultAction && unhandledInvalidControls && inDocument() && &originalDocument.get() == &document())
         unhandledInvalidControls->append(this);
     return false;
 }

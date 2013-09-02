@@ -37,6 +37,7 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderWidget.h"
 #include "Settings.h"
+#include <wtf/Ref.h>
 
 namespace WebCore {
 
@@ -154,7 +155,7 @@ void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
     Vector<String> paramValues;
     parametersForPlugin(paramNames, paramValues);
 
-    RefPtr<HTMLEmbedElement> protect(this); // Loading the plugin might remove us from the document.
+    Ref<HTMLEmbedElement> protect(*this); // Loading the plugin might remove us from the document.
     bool beforeLoadAllowedLoad = guardedDispatchBeforeLoadEvent(m_url);
     if (!beforeLoadAllowedLoad) {
         if (document().isPluginDocument()) {

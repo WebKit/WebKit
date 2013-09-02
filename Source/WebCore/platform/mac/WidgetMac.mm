@@ -40,6 +40,7 @@
 #import "ScrollView.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
+#import <wtf/Ref.h>
 #import <wtf/RetainPtr.h>
 
 @interface NSWindow (WebWindowDetails)
@@ -170,7 +171,7 @@ void Widget::setFrameRect(const IntRect& rect)
 
     // Take a reference to this Widget, because sending messages to outerView can invoke arbitrary
     // code, which can deref it.
-    RefPtr<Widget> protectedThis(this);
+    Ref<Widget> protect(*this);
 
     NSRect visibleRect = [outerView visibleRect];
     NSRect f = rect;
@@ -212,7 +213,7 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
 
     // Take a reference to this Widget, because sending messages to the views can invoke arbitrary
     // code, which can deref it.
-    RefPtr<Widget> protectedThis(this);
+    Ref<Widget> protect(*this);
 
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
     if (currentContext == [[view window] graphicsContext] || ![currentContext isDrawingToScreen]) {
