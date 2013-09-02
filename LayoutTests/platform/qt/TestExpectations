@@ -2460,6 +2460,17 @@ http/tests/security/xssAuditor/script-tag-with-16bit-unicode5.html [ Failure ]
 http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html [ Failure ]
 http/tests/security/xssAuditor/script-tag-with-invalid-url-encoding.html [ Failure ]
 
+# [Qt] REGRESSION(r154444): xss-DENIED test results changed
+# https://bugs.webkit.org/show_bug.cgi?id=120595
+http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html
+http/tests/security/aboutBlank/xss-DENIED-set-opener.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-in-foreign-domain-window-open.html
+http/tests/security/dataURL/xss-DENIED-from-data-url-to-data-url.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-location-change.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
+http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level.html
+
 # [Qt] REGRESSION: 2 tests started to fail with newer Qt5
 # https://bugs.webkit.org/show_bug.cgi?id=104140
 editing/selection/triple-click-in-pre.html [ Failure ]

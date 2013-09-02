@@ -1,3 +1,10 @@
+2013-09-02  Gabor Abraham <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=120595
+
+        * platform/qt/TestExpectations: Skipping failing xss-DENIED tests.
+
 2013-09-01  Dirk Schulze  <krit@webkit.org>
 
         Add edgeMode attribtue.
