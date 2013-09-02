@@ -15,6 +15,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/ExceptionInterfaces.h \
 	DerivedSources/WebCore/HTMLElementFactory.cpp \
 	DerivedSources/WebCore/HTMLElementFactory.h \
+	DerivedSources/WebCore/HTMLElementTypeChecks.h \
 	DerivedSources/WebCore/HTMLEntityTable.cpp \
 	DerivedSources/WebCore/HTMLNames.cpp \
 	DerivedSources/WebCore/HTMLNames.h \

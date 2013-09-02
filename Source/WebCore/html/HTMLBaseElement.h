@@ -44,18 +44,6 @@ private:
     virtual void removedFrom(ContainerNode*) OVERRIDE;
 };
 
-inline bool isHTMLBaseElement(const Node* node)
-{
-    return node->hasTagName(HTMLNames::baseTag);
-}
-
-inline bool isHTMLBaseElement(const Element* element)
-{
-    return element->hasTagName(HTMLNames::baseTag);
-}
-
-template <> inline bool isElementOfType<HTMLBaseElement>(const Element* element) { return isHTMLBaseElement(element); }
-
 } // namespace
 
 #endif

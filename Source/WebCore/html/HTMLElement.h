@@ -25,6 +25,8 @@
 
 #include "StyledElement.h"
 
+#include "HTMLElementTypeChecks.h"
+
 namespace WebCore {
 
 class DocumentFragment;

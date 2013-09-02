@@ -77,11 +77,6 @@ private:
     SVGImageLoader m_imageLoader;
 };
 
-inline bool isSVGImageElement(const Node* node)
-{
-    return node->hasTagName(SVGNames::imageTag);
-}
-
 inline SVGImageElement* toSVGImageElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isSVGImageElement(node));

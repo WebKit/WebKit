@@ -40,22 +40,8 @@ private:
     HTMLParamElement(const QualifiedName&, Document*);
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
-
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 };
-
-inline bool isHTMLParamElement(const Node* node)
-{
-    return node->hasTagName(HTMLNames::paramTag);
-}
-
-inline bool isHTMLParamElement(const Element* element)
-{
-    return element->hasTagName(HTMLNames::paramTag);
-}
-
-template <> inline bool isElementOfType<HTMLParamElement>(const Element* element) { return isHTMLParamElement(element); }
-
 
 } // namespace WebCore
 

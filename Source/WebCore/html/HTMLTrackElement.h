@@ -97,19 +97,6 @@ private:
     Timer<HTMLTrackElement> m_loadTimer;
 };
 
-inline bool isHTMLTrackElement(const Node* node)
-{
-    return node->hasTagName(HTMLNames::trackTag);
-}
-
-inline bool isHTMLTrackElement(const Element* element)
-{
-    return element->hasTagName(HTMLNames::trackTag);
-}
-
-template <> inline bool isElementOfType<HTMLTrackElement>(const Element* element) { return isHTMLTrackElement(element); }
-
-
 }
 
 #endif

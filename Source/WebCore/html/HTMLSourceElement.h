@@ -57,19 +57,6 @@ private:
     Timer<HTMLSourceElement> m_errorEventTimer;
 };
 
-inline bool isHTMLSourceElement(const Node* node)
-{
-    return node->hasTagName(HTMLNames::sourceTag);
-}
-
-inline bool isHTMLSourceElement(const Element* element)
-{
-    return element->hasTagName(HTMLNames::sourceTag);
-}
-
-template <> inline bool isElementOfType<HTMLSourceElement>(const Element* element) { return isHTMLSourceElement(element); }
-
-
 } //namespace
 
 #endif

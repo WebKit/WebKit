@@ -88,11 +88,6 @@ private:
     Timer<SVGElement> m_svgLoadEventTimer;
 };
 
-inline bool isSVGScriptElement(Node* node)
-{
-    return node->hasTagName(SVGNames::scriptTag);
-}
-
 inline SVGScriptElement* toSVGScriptElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(SVGNames::scriptTag));

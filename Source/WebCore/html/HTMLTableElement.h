@@ -100,16 +100,6 @@ private:
     RefPtr<StylePropertySet> m_sharedCellStyle;
 };
 
-inline bool isHTMLTableElement(const Node* node)
-{
-    return node->hasTagName(HTMLNames::tableTag);
-}
-
-inline bool isHTMLTableElement(const Element* element)
-{
-    return element->hasTagName(HTMLNames::tableTag);
-}
-
 inline HTMLTableElement* toHTMLTableElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLTableElement(node));
