@@ -26,7 +26,6 @@
 #if ENABLE(SVG)
 #include "CSSPropertyNames.h"
 #include "SVGAnimatedString.h"
-#include "SVGElementTypeChecks.h"
 #include "SVGLangSpace.h"
 #include "SVGLocatable.h"
 #include "SVGParsingError.h"

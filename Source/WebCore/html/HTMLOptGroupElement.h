@@ -63,6 +63,16 @@ private:
     RefPtr<RenderStyle> m_style;
 };
 
+inline bool isHTMLOptGroupElement(const Node* node)
+{
+    return node->hasTagName(HTMLNames::optgroupTag);
+}
+
+inline bool isHTMLOptGroupElement(const Element* element)
+{
+    return element->hasTagName(HTMLNames::optgroupTag);
+}
+
 inline HTMLOptGroupElement* toHTMLOptGroupElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLOptGroupElement(node));

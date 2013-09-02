@@ -46,11 +46,23 @@ private:
     StringWithDirection m_title;
 };
 
+inline bool isHTMLTitleElement(const Node* node)
+{
+    return node->hasTagName(HTMLNames::titleTag);
+}
+
+inline bool isHTMLTitleElement(const Element* element)
+{
+    return element->hasTagName(HTMLNames::titleTag);
+}
+
 inline HTMLTitleElement* toHTMLTitleElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLTitleElement(node));
     return static_cast<HTMLTitleElement*>(node);
 }
+
+template <> inline bool isElementOfType<HTMLTitleElement>(const Element* element) { return isHTMLTitleElement(element); }
 
 } //namespace
 

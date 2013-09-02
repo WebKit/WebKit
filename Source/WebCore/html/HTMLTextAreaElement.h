@@ -127,6 +127,16 @@ private:
     mutable bool m_wasModifiedByUser;
 };
 
+inline bool isHTMLTextAreaElement(Node* node)
+{
+    return node->hasTagName(HTMLNames::textareaTag);
+}
+
+inline bool isHTMLTextAreaElement(Element* element)
+{
+    return element->hasTagName(HTMLNames::textareaTag);
+}
+
 inline HTMLTextAreaElement* toHTMLTextAreaElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLTextAreaElement(node));

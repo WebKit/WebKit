@@ -1,3 +1,100 @@
+2013-09-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r154955.
+        http://trac.webkit.org/changeset/154955
+        https://bugs.webkit.org/show_bug.cgi?id=120605
+
+        broke xcode4 build :| (Requested by kling on #webkit).
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/make_names.pl:
+        (defaultTagPropertyHash):
+        (printLicenseHeader):
+        * html/HTMLAnchorElement.h:
+        (WebCore::isHTMLAnchorElement):
+        (WebCore::HTMLAnchorElement):
+        * html/HTMLAreaElement.h:
+        (WebCore::isHTMLAreaElement):
+        (WebCore::HTMLAreaElement):
+        * html/HTMLAudioElement.h:
+        (WebCore::isHTMLAudioElement):
+        * html/HTMLBaseElement.h:
+        (WebCore::isHTMLBaseElement):
+        (WebCore::HTMLBaseElement):
+        * html/HTMLCanvasElement.h:
+        (WebCore::isHTMLCanvasElement):
+        * html/HTMLElement.h:
+        * html/HTMLFieldSetElement.h:
+        (WebCore::isHTMLFieldSetElement):
+        (WebCore::HTMLFieldSetElement):
+        * html/HTMLFormElement.h:
+        (WebCore::isHTMLFormElement):
+        * html/HTMLFrameSetElement.h:
+        (WebCore::isHTMLFrameSetElement):
+        (WebCore::HTMLFrameSetElement):
+        * html/HTMLImageElement.h:
+        (WebCore::isHTMLImageElement):
+        * html/HTMLInputElement.h:
+        (WebCore::isHTMLInputElement):
+        * html/HTMLLabelElement.h:
+        (WebCore::isHTMLLabelElement):
+        (WebCore::HTMLLabelElement):
+        * html/HTMLLegendElement.h:
+        (WebCore::isHTMLLegendElement):
+        (WebCore::HTMLLegendElement):
+        * html/HTMLMapElement.h:
+        (WebCore::isHTMLMapElement):
+        * html/HTMLMeterElement.h:
+        (WebCore::isHTMLMeterElement):
+        * html/HTMLOptGroupElement.h:
+        (WebCore::isHTMLOptGroupElement):
+        * html/HTMLOptionElement.h:
+        (WebCore::isHTMLOptionElement):
+        * html/HTMLParamElement.h:
+        (WebCore::isHTMLParamElement):
+        (WebCore::HTMLParamElement):
+        * html/HTMLProgressElement.h:
+        (WebCore::isHTMLProgressElement):
+        * html/HTMLScriptElement.h:
+        (WebCore::isHTMLScriptElement):
+        * html/HTMLSourceElement.h:
+        (WebCore::isHTMLSourceElement):
+        (WebCore::HTMLSourceElement):
+        * html/HTMLStyleElement.h:
+        (WebCore::isHTMLStyleElement):
+        (WebCore::HTMLStyleElement):
+        * html/HTMLTableElement.h:
+        (WebCore::isHTMLTableElement):
+        * html/HTMLTableRowElement.h:
+        (WebCore::isHTMLTableRowElement):
+        (WebCore::HTMLTableRowElement):
+        * html/HTMLTagNames.in:
+        * html/HTMLTextAreaElement.h:
+        (WebCore::isHTMLTextAreaElement):
+        * html/HTMLTitleElement.h:
+        (WebCore::isHTMLTitleElement):
+        (WebCore::HTMLTitleElement):
+        * html/HTMLTrackElement.h:
+        (WebCore::isHTMLTrackElement):
+        (WebCore::HTMLTrackElement):
+        * svg/SVGElement.h:
+        * svg/SVGFontElement.h:
+        (WebCore::isSVGFontElement):
+        * svg/SVGFontFaceElement.h:
+        (WebCore::isSVGFontFaceElement):
+        (WebCore::SVGFontFaceElement):
+        * svg/SVGForeignObjectElement.h:
+        (WebCore::isSVGForeignObjectElement):
+        (WebCore::SVGForeignObjectElement):
+        * svg/SVGImageElement.h:
+        (WebCore::isSVGImageElement):
+        * svg/SVGScriptElement.h:
+        (WebCore::isSVGScriptElement):
+        * svg/svgtags.in:
+
 2013-09-02  Antti Koivisto  <antti@apple.com>
 
         Clean up ContainerNode::childrenChanged
