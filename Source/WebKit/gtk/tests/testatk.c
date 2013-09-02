@@ -374,12 +374,14 @@ static void testWebkitAtkCaretOffsets()
     text = atk_text_get_text(ATK_TEXT(listItem), 0, -1);
     g_assert_cmpstr(text, ==, "1. A list item");
     g_free (text);
+    g_object_unref(listItem);
 
     listItem = atk_object_ref_accessible_child(list, 1);
     g_assert(ATK_IS_TEXT(listItem));
     text = atk_text_get_text(ATK_TEXT(listItem), 0, -1);
     g_assert_cmpstr(text, ==, "2. Block span in a list item\nInline span in a list item");
     g_free (text);
+    g_object_unref(listItem);
 
     listItem = atk_object_ref_accessible_child(list, 2);
     g_assert(ATK_IS_TEXT(listItem));
@@ -453,6 +455,7 @@ static void testWebkitAtkCaretOffsets()
     g_assert_cmpint(result, ==, TRUE);
     offset = atk_text_get_caret_offset(ATK_TEXT(tableCell));
     g_assert_cmpint(offset, ==, 2);
+    g_object_unref(tableCell);
 
     /* Even empty table cells should implement AtkText, but report an empty string */
     tableCell = atk_object_ref_accessible_child(table, 1);
@@ -461,6 +464,7 @@ static void testWebkitAtkCaretOffsets()
     text = atk_text_get_text(ATK_TEXT(tableCell), 0, -1);
     g_assert_cmpstr(text, ==, "");
     g_free(text);
+    g_object_unref(tableCell);
 
     tableCell = atk_object_ref_accessible_child(table, 2);
     g_assert(ATK_IS_TEXT(tableCell));
@@ -468,6 +472,7 @@ static void testWebkitAtkCaretOffsets()
     text = atk_text_get_text(ATK_TEXT(tableCell), 0, -1);
     g_assert_cmpstr(text, ==, "Block span in a link in a table cell\nInline span in a link in a table cell");
     g_free(text);
+    g_object_unref(tableCell);
 
     tableCell = atk_object_ref_accessible_child(table, 3);
     g_assert(ATK_IS_TEXT(tableCell));
@@ -482,6 +487,7 @@ static void testWebkitAtkCaretOffsets()
     text = atk_text_get_text(ATK_TEXT(header), 0, -1);
     g_assert_cmpstr(text, ==, "Block span in a link in a heading\nInline span in a link in a heading");
     g_free(text);
+    g_object_unref(header);
 
     header = atk_object_ref_accessible_child(object, 6);
     g_assert(ATK_IS_TEXT(header));
@@ -548,6 +554,7 @@ static void testWebkitAtkCaretOffsetsAndExtranousWhiteSpaces()
     caretOffset = atk_text_get_caret_offset(textObject);
     g_assert_cmpint(caretOffset, ==, characterCount);
 
+    g_object_unref(object);
     g_object_unref(webView);
 }
 
@@ -805,6 +812,7 @@ static void testWebkitAtkGetTextAtOffset()
 
     runGetTextTests(textObject);
 
+    g_object_unref(object);
     g_object_unref(webView);
 }
 
@@ -827,6 +835,7 @@ static void testWebkitAtkGetTextAtOffsetNewlines()
 
     runGetTextTests(textObject);
 
+    g_object_unref(object);
     g_object_unref(webView);
 }
 
@@ -841,16 +850,18 @@ static void testWebkitAtkGetTextAtOffsetTextarea()
     /* Get to the inner AtkText object. */
     AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
-    object = atk_object_ref_accessible_child(object, 0);
-    g_assert(object);
-    object = atk_object_ref_accessible_child(object, 0);
-    g_assert(object);
+    AtkObject* child = atk_object_ref_accessible_child(object, 0);
+    g_assert(child);
+    AtkObject* grandchild = atk_object_ref_accessible_child(child, 0);
+    g_assert(grandchild);
 
-    AtkText* textObject = ATK_TEXT(object);
+    AtkText* textObject = ATK_TEXT(grandchild);
     g_assert(ATK_IS_TEXT(textObject));
 
     runGetTextTests(textObject);
 
+    g_object_unref(child);
+    g_object_unref(grandchild);
     g_object_unref(webView);
 }
 
@@ -865,16 +876,18 @@ static void testWebkitAtkGetTextAtOffsetTextInput()
     /* Get to the inner AtkText object. */
     AtkObject* object = getWebAreaObject(webView);
     g_assert(object);
-    object = atk_object_ref_accessible_child(object, 0);
-    g_assert(object);
-    object = atk_object_ref_accessible_child(object, 0);
-    g_assert(object);
+    AtkObject* child = atk_object_ref_accessible_child(object, 0);
+    g_assert(child);
+    AtkObject* grandchild = atk_object_ref_accessible_child(child, 0);
+    g_assert(grandchild);
 
-    AtkText* textObject = ATK_TEXT(object);
+    AtkText* textObject = ATK_TEXT(grandchild);
     g_assert(ATK_IS_TEXT(textObject));
 
     runGetTextTests(textObject);
 
+    g_object_unref(child);
+    g_object_unref(grandchild);
     g_object_unref(webView);
 }
 
@@ -1149,9 +1162,11 @@ static void testWebkitAtkGetTextInParagraphAndBodySimple()
 
     char *text = atk_text_get_text(textObject1, 0, -1);
     g_assert_cmpstr(text, ==, "This is a test.");
+    g_free(text);
 
     text = atk_text_get_text(textObject2, 0, 12);
     g_assert_cmpstr(text, ==, "Hello world.");
+    g_free(text);
 
     g_object_unref(object1);
     g_object_unref(object2);
@@ -1181,9 +1196,11 @@ static void testWebkitAtkGetTextInParagraphAndBodyModerate()
 
     char *text = atk_text_get_text(textObject1, 0, -1);
     g_assert_cmpstr(text, ==, "This is a test.");
+    g_free(text);
 
     text = atk_text_get_text(textObject2, 0, 53);
     g_assert_cmpstr(text, ==, "Hello world.\nThis sentence is green.\nThis one is not.");
+    g_free(text);
 
     g_object_unref(object1);
     g_object_unref(object2);
@@ -1382,6 +1399,7 @@ static void testWebkitAtkTextAttributes()
     atk_attribute_set_free(set3);
     atk_attribute_set_free(set4);
 
+    g_object_unref(child);
     child = atk_object_ref_accessible_child(object, 1);
     g_assert(child && ATK_IS_TEXT(child));
     childText = ATK_TEXT(child);
@@ -1402,6 +1420,7 @@ static void testWebkitAtkTextAttributes()
     g_assert(atkAttributeSetAttributeHasValue(set2, ATK_TEXT_ATTR_BG_COLOR, "80,81,82"));
     atk_attribute_set_free(set1);
     atk_attribute_set_free(set2);
+    g_object_unref(child);
 
     child = atk_object_ref_accessible_child(object, 2);
     g_assert(child && ATK_IS_TEXT(child));
@@ -1427,6 +1446,7 @@ static void testWebkitAtkTextAttributes()
     atk_attribute_set_free(set2);
     atk_attribute_set_free(set3);
     atk_attribute_set_free(set4);
+    g_object_unref(child);
 
     child = atk_object_ref_accessible_child(object, 3);
     g_assert(child && ATK_IS_TEXT(child));
@@ -1446,6 +1466,8 @@ static void testWebkitAtkTextAttributes()
     atk_attribute_set_free(set1);
     atk_attribute_set_free(set2);
     atk_attribute_set_free(set3);
+
+    g_object_unref(child);
 }
 
 static gchar* textSelectionChangedResult = 0;
@@ -1618,6 +1640,7 @@ static void testWebkitAtkTextSelections()
 
     g_object_unref(paragraph1);
     g_object_unref(paragraph2);
+    g_object_unref(link);
     g_object_unref(list);
     g_object_unref(listItem);
     g_object_unref(webView);
@@ -1941,9 +1964,15 @@ static void testWebkitAtkListsOfItems()
     g_assert_cmpint(atk_object_get_n_accessible_children(item2), ==, 1);
     g_assert_cmpint(atk_object_get_n_accessible_children(item3), ==, 1);
 
-    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item1), 0, -1), ==, "\342\200\242 text only");
-    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item2), 0, -1), ==, "\342\200\242 link only");
-    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item3), 0, -1), ==, "\342\200\242 text and a link");
+    char* text = atk_text_get_text(ATK_TEXT(item1), 0, -1);
+    g_assert_cmpstr(text, ==, "\342\200\242 text only");
+    g_free(text);
+    text = atk_text_get_text(ATK_TEXT(item2), 0, -1);
+    g_assert_cmpstr(text, ==, "\342\200\242 link only");
+    g_free(text);
+    text = atk_text_get_text(ATK_TEXT(item3), 0, -1);
+    g_assert_cmpstr(text, ==, "\342\200\242 text and a link");
+    g_free(text);
 
     g_object_unref(item1);
     g_object_unref(item2);
@@ -1963,9 +1992,15 @@ static void testWebkitAtkListsOfItems()
     item3 = atk_object_ref_accessible_child(oList, 2);
     g_assert(ATK_IS_TEXT(item3));
 
-    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item1), 0, -1), ==, "1. text only");
-    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item2), 0, -1), ==, "2. link only");
-    g_assert_cmpstr(atk_text_get_text(ATK_TEXT(item3), 0, -1), ==, "3. text and a link");
+    text = atk_text_get_text(ATK_TEXT(item1), 0, -1);
+    g_assert_cmpstr(text, ==, "1. text only");
+    g_free(text);
+    text = atk_text_get_text(ATK_TEXT(item2), 0, -1);
+    g_assert_cmpstr(text, ==, "2. link only");
+    g_free(text);
+    text = atk_text_get_text(ATK_TEXT(item3), 0, -1);
+    g_assert_cmpstr(text, ==, "3. text and a link");
+    g_free(text);
 
     g_assert_cmpint(atk_object_get_n_accessible_children(item1), ==, 0);
     g_assert_cmpint(atk_object_get_n_accessible_children(item2), ==, 1);

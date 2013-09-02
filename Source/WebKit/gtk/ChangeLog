@@ -1,3 +1,25 @@
+2013-09-02  Brian Holt  <brian.holt@samsung.com>
+
+        [ATK] Leak: Leaks in testatk.c
+        https://bugs.webkit.org/show_bug.cgi?id=118675
+
+        Reviewed by Mario Sanchez Prada.
+
+        Fixed memory leaks by matching ref calls with unrefs.
+
+        * tests/testatk.c:
+        (testWebkitAtkCaretOffsets):
+        (testWebkitAtkCaretOffsetsAndExtranousWhiteSpaces):
+        (testWebkitAtkGetTextAtOffset):
+        (testWebkitAtkGetTextAtOffsetNewlines):
+        (testWebkitAtkGetTextAtOffsetTextarea):
+        (testWebkitAtkGetTextAtOffsetTextInput):
+        (testWebkitAtkGetTextInParagraphAndBodySimple):
+        (testWebkitAtkGetTextInParagraphAndBodyModerate):
+        (testWebkitAtkTextAttributes):
+        (testWebkitAtkTextSelections):
+        (testWebkitAtkListsOfItems):
+
 2013-08-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [Automake] libWebCoreDOM.la could use a better name
