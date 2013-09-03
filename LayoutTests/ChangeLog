@@ -1,3 +1,10 @@
+2013-09-03  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip some failing tests.
+
+        * platform/qt-wk1/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2013-09-03  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] accessibility/aria-describedby-on-input.html is failing

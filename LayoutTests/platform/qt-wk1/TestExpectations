@@ -123,6 +123,8 @@ webkit.org/b/98525 plugins/reentrant-update-widget-positions.html
 webkit.org/b/98525 plugins/update-widgets-crash.html
 webkit.org/b/98525 plugins/window-open.html
 
+webkit.org/b/120628 plugins/destroy-on-setwindow.html [ Skip ]
+
 # TestRunner::overridePreference() does not support the 'WebKitSupportsMultipleWindows' preference
 fast/dom/HTMLAnchorElement/anchor-no-multiple-windows.html
 fast/dom/Window/window-open-no-multiple-windows.html

@@ -330,6 +330,7 @@ webkit.org/b/112755 fast/css3-text/css3-text-indent [ Failure ImageOnlyFailure ]
 webkit.org/b/120596 css3/background/background-repeat-space-border.html [ Skip ]
 webkit.org/b/120596 css3/background/background-repeat-space-content.html [ Skip ]
 webkit.org/b/120596 css3/background/background-repeat-space-padding.html [ Skip ]
+webkit.org/b/120596 css3/masking/mask-repeat-space-border.html [ Skip ]
 webkit.org/b/120596 css3/masking/mask-repeat-space-content.html [ Skip ]
 webkit.org/b/120596 css3/masking/mask-repeat-space-padding.html [ Skip ]
 
@@ -2284,8 +2285,10 @@ fast/multicol/overflow-into-columngap.html
 fast/overflow/line-clamp-and-columns.html
 fast/table/td-width-fifty-percent-regression.html
 fast/text/descent-clip-in-scaled-page.html
+fast/text/partial-textruns.html
 fast/sub-pixel/block-with-margin-overflow.html
 svg/custom/anchor-on-use.svg
+svg/custom/masking-clipping-hidpi.svg
 svg/animations/animateTransform-rotate-around-point.svg
 svg/animations/animateMotion-additive-1.svg
 svg/text/alt-glyph-for-surrogate-pair.svg
@@ -2480,6 +2483,14 @@ http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe-lo
 http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-subframe.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html
 http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level.html
+
+# [Qt] Failing animations tests.
+# https://bugs.webkit.org/show_bug.cgi?id=120603
+animations/cross-fade-background-image.html
+animations/cross-fade-border-image-source.html
+animations/cross-fade-list-style-image.html
+animations/cross-fade-webkit-mask-box-image.html
+animations/cross-fade-webkit-mask-image.html
 
 # [Qt] REGRESSION: 2 tests started to fail with newer Qt5
 # https://bugs.webkit.org/show_bug.cgi?id=104140
@@ -2742,6 +2753,8 @@ webkit.org/b/114157 fast/js/dom-static-property-for-in-iteration.html [ Failure 
 # Nested opacity with overflow may display wrong results when composited
 webkit.org/b/114338 compositing/overlap-blending/nested-overlap-overflow.html [ Skip ]
 webkit.org/b/114338 compositing/overlap-blending/nested-non-overlap-clipping.html [ Skip ]
+
+webkit.org/b/120622 compositing/video/video-object-fit.html [ Skip ]
 
 # REGRESSION(r148378): editing/style/block-style-005.html failing
 webkit.org/b/114612 editing/style/block-style-005.html [ Skip ]
