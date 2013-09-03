@@ -1,3 +1,17 @@
+2013-09-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r154967): http appcache tests crashing on WK1
+        https://bugs.webkit.org/show_bug.cgi?id=120620
+
+        Reviewed by Andreas Kling.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::cacheDestroyed): Reintroduce pre-r154967 behavior that returned early in
+        this method if the passed-in ApplicationCache object was not found in the ApplicationCacheGroup's HashSet
+        of all the caches. This is now done by checking that the HashSet<T>::remove(T) returns true (meaning the
+        object was found in the HashSet and removed from it) in addition to that HashSet being subsequently empty
+        before the method moves on to destroying its ApplicationCacheGroup instance.
+
 2013-09-03  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
 
         [gstreamer] Disable HTTP request "Accept-Encoding:" header field on gstreamer source element to avoid receiving the wrong size when retrieving data

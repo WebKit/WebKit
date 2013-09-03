@@ -387,8 +387,7 @@ void ApplicationCacheGroup::disassociateDocumentLoader(DocumentLoader* loader)
 
 void ApplicationCacheGroup::cacheDestroyed(ApplicationCache* cache)
 {
-    m_caches.remove(cache);
-    if (m_caches.isEmpty()) {
+    if (m_caches.remove(cache) && m_caches.isEmpty()) {
         ASSERT(m_associatedDocumentLoaders.isEmpty());
         ASSERT(m_pendingMasterResourceLoaders.isEmpty());
         delete this;
