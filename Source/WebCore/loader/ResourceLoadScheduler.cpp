@@ -278,10 +278,8 @@ void ResourceLoadScheduler::HostInformation::addLoadInProgress(ResourceLoader* r
     
 void ResourceLoadScheduler::HostInformation::remove(ResourceLoader* resourceLoader)
 {
-    if (m_requestsLoading.contains(resourceLoader)) {
-        m_requestsLoading.remove(resourceLoader);
+    if (m_requestsLoading.remove(resourceLoader))
         return;
-    }
     
     for (int priority = ResourceLoadPriorityHighest; priority >= ResourceLoadPriorityLowest; --priority) {  
         RequestQueue::iterator end = m_requestsPending[priority].end();

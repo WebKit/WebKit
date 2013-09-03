@@ -188,29 +188,20 @@ bool Geolocation::Watchers::add(int id, PassRefPtr<GeoNotifier> prpNotifier)
 Geolocation::GeoNotifier* Geolocation::Watchers::find(int id)
 {
     ASSERT(id > 0);
-    IdToNotifierMap::iterator iter = m_idToNotifierMap.find(id);
-    if (iter == m_idToNotifierMap.end())
-        return 0;
-    return iter->value.get();
+    return m_idToNotifierMap.get(id);
 }
 
 void Geolocation::Watchers::remove(int id)
 {
     ASSERT(id > 0);
-    IdToNotifierMap::iterator iter = m_idToNotifierMap.find(id);
-    if (iter == m_idToNotifierMap.end())
-        return;
-    m_notifierToIdMap.remove(iter->value);
-    m_idToNotifierMap.remove(iter);
+    if (auto notifier = m_idToNotifierMap.take(id))
+        m_notifierToIdMap.remove(notifier);
 }
 
 void Geolocation::Watchers::remove(GeoNotifier* notifier)
 {
-    NotifierToIdMap::iterator iter = m_notifierToIdMap.find(notifier);
-    if (iter == m_notifierToIdMap.end())
-        return;
-    m_idToNotifierMap.remove(iter->value);
-    m_notifierToIdMap.remove(iter);
+    if (auto identifier = m_notifierToIdMap.take(notifier))
+        m_idToNotifierMap.remove(identifier);
 }
 
 bool Geolocation::Watchers::contains(GeoNotifier* notifier) const
@@ -380,9 +371,7 @@ void Geolocation::makeCachedPositionCallbacks()
 
         // If this is a one-shot request, stop it. Otherwise, if the watch still
         // exists, start the service to get updates.
-        if (m_oneShots.contains(notifier))
-            m_oneShots.remove(notifier);
-        else if (m_watchers.contains(notifier)) {
+        if (!m_oneShots.remove(notifier) && m_watchers.contains(notifier)) {
             if (notifier->hasZeroTimeout() || startUpdating(notifier))
                 notifier->startTimerIfNeeded();
             else

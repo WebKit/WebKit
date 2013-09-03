@@ -75,7 +75,7 @@ void SVGDocumentExtensions::addResource(const AtomicString& id, RenderSVGResourc
 
 void SVGDocumentExtensions::removeResource(const AtomicString& id)
 {
-    if (id.isEmpty() || !m_resources.contains(id))
+    if (id.isEmpty())
         return;
 
     m_resources.remove(id);
@@ -322,16 +322,12 @@ void SVGDocumentExtensions::removeAllTargetReferencesForElement(SVGElement* refe
 {
     Vector<SVGElement*> toBeRemoved;
 
-    HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*> > >::iterator end = m_elementDependencies.end();
-    for (HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*> > >::iterator it = m_elementDependencies.begin(); it != end; ++it) {
+    auto end = m_elementDependencies.end();
+    for (auto it = m_elementDependencies.begin(); it != end; ++it) {
         SVGElement* referencedElement = it->key;
-        HashSet<SVGElement*>* referencingElements = it->value.get();
-        HashSet<SVGElement*>::iterator setIt = referencingElements->find(referencingElement);
-        if (setIt == referencingElements->end())
-            continue;
-
-        referencingElements->remove(setIt);
-        if (referencingElements->isEmpty())
+        HashSet<SVGElement*>& referencingElements = *it->value;
+        referencingElements.remove(referencingElement);
+        if (referencingElements.isEmpty())
             toBeRemoved.append(referencedElement);
     }
 
@@ -367,13 +363,7 @@ void SVGDocumentExtensions::rebuildAllElementReferencesForTarget(SVGElement* ref
 
 void SVGDocumentExtensions::removeAllElementReferencesForTarget(SVGElement* referencedElement)
 {
-    ASSERT(referencedElement);
-    HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*> > >::iterator it = m_elementDependencies.find(referencedElement);
-    if (it == m_elementDependencies.end())
-        return;
-    ASSERT(it->key == referencedElement);
-
-    m_elementDependencies.remove(it);
+    m_elementDependencies.remove(referencedElement);
 }
 
 #if ENABLE(SVG_FONTS)

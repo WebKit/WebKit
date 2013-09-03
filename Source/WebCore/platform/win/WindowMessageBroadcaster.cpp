@@ -85,12 +85,7 @@ void WindowMessageBroadcaster::addListener(WindowMessageListener* listener)
 
 void WindowMessageBroadcaster::removeListener(WindowMessageListener* listener)
 {
-    ListenerSet::iterator found = m_listeners.find(listener);
-    if (found == m_listeners.end())
-        return;
-
-    m_listeners.remove(found);
-
+    m_listeners.remove(listener);
     if (m_listeners.isEmpty())
         destroy();
 }

@@ -1,3 +1,39 @@
+2013-09-02  Darin Adler  <darin@apple.com>
+
+        Cut down on double hashing and code needlessly using hash table iterators
+        https://bugs.webkit.org/show_bug.cgi?id=120611
+
+        Reviewed by Andreas Kling.
+
+        Double hashing is common in code that needs to combine a remove with some
+        action to only be done if the code is removed. The only way to avoid it is
+        to write code using find and a hash table iterator. To help with this, add
+        a boolean return value to remove functions to indicate if anything was removed.
+
+        Double hashing also happens in code that does a get followed by a remove.
+        The take function is helpful in this case. To help with this, add a takeFirst
+        funciton to ListHashSet.
+
+        * wtf/HashCountedSet.h:
+        (WTF::HashCountedSet::removeAll): Added a boolean return value, analogous to the one
+        that the HashCountedSet::remove function already has.
+
+        * wtf/HashMap.h:
+        (WTF::HashMap::remove): Added a boolean return value, true if something was removed.
+        * wtf/HashSet.h:
+        (WTF::HashSet::remove): Ditto.
+        * wtf/RefPtrHashMap.h:
+        (WTF::RefPtrHashMap::remove): Ditto.
+
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSet::takeFirst): Added.
+        (WTF::ListHashSet::takeLast): Added.
+        (WTF::ListHashSet::remove): Added a boolean return value, true if something was removed.
+
+        * wtf/WTFThreadData.h:
+        (JSC::IdentifierTable::remove): Use the new remove return value to get rid of most of
+        the code in this function.
+
 2013-09-02  David Kilzer  <ddkilzer@apple.com>
 
         Remove duplicate entries found by Xcode in WTF project

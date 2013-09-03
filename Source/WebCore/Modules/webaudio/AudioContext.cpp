@@ -912,20 +912,16 @@ void AudioContext::addAutomaticPullNode(AudioNode* node)
 {
     ASSERT(isGraphOwner());
 
-    if (!m_automaticPullNodes.contains(node)) {
-        m_automaticPullNodes.add(node);
+    if (m_automaticPullNodes.add(node).isNewEntry)
         m_automaticPullNodesNeedUpdating = true;
-    }
 }
 
 void AudioContext::removeAutomaticPullNode(AudioNode* node)
 {
     ASSERT(isGraphOwner());
 
-    if (m_automaticPullNodes.contains(node)) {
-        m_automaticPullNodes.remove(node);
+    if (m_automaticPullNodes.remove(node))
         m_automaticPullNodesNeedUpdating = true;
-    }
 }
 
 void AudioContext::updateAutomaticPullNodes()

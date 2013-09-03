@@ -3957,22 +3957,20 @@ void WebPage::addTextCheckingRequest(uint64_t requestID, PassRefPtr<TextChecking
 
 void WebPage::didFinishCheckingText(uint64_t requestID, const Vector<TextCheckingResult>& result)
 {
-    TextCheckingRequest* request = m_pendingTextCheckingRequestMap.get(requestID);
+    RefPtr<TextCheckingRequest> request = m_pendingTextCheckingRequestMap.take(requestID);
     if (!request)
         return;
 
     request->didSucceed(result);
-    m_pendingTextCheckingRequestMap.remove(requestID);
 }
 
 void WebPage::didCancelCheckingText(uint64_t requestID)
 {
-    TextCheckingRequest* request = m_pendingTextCheckingRequestMap.get(requestID);
+    RefPtr<TextCheckingRequest> request = m_pendingTextCheckingRequestMap.take(requestID);
     if (!request)
         return;
 
     request->didCancel();
-    m_pendingTextCheckingRequestMap.remove(requestID);
 }
 
 void WebPage::didCommitLoad(WebFrame* frame)
@@ -4182,10 +4180,9 @@ unsigned WebPage::extendIncrementalRenderingSuppression()
 
 void WebPage::stopExtendingIncrementalRenderingSuppression(unsigned token)
 {
-    if (!m_activeRenderingSuppressionTokens.contains(token))
+    if (!m_activeRenderingSuppressionTokens.remove(token))
         return;
 
-    m_activeRenderingSuppressionTokens.remove(token);
     m_page->mainFrame().view()->setVisualUpdatesAllowedByClient(!shouldExtendIncrementalRenderingSuppression());
 }
     

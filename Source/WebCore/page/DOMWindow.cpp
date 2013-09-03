@@ -175,52 +175,38 @@ static DOMWindowSet& windowsWithBeforeUnloadEventListeners()
 
 static void addUnloadEventListener(DOMWindow* domWindow)
 {
-    DOMWindowSet& set = windowsWithUnloadEventListeners();
-    if (set.add(domWindow).isNewEntry)
+    if (windowsWithUnloadEventListeners().add(domWindow).isNewEntry)
         domWindow->disableSuddenTermination();
 }
 
 static void removeUnloadEventListener(DOMWindow* domWindow)
 {
-    DOMWindowSet& set = windowsWithUnloadEventListeners();
-    DOMWindowSet::iterator it = set.find(domWindow);
-    if (set.remove(it))
+    if (windowsWithUnloadEventListeners().remove(domWindow))
         domWindow->enableSuddenTermination();
 }
 
 static void removeAllUnloadEventListeners(DOMWindow* domWindow)
 {
-    DOMWindowSet& set = windowsWithUnloadEventListeners();
-    DOMWindowSet::iterator it = set.find(domWindow);
-    if (it == set.end())
-        return;
-    set.removeAll(it);
-    domWindow->enableSuddenTermination();
+    if (windowsWithUnloadEventListeners().removeAll(domWindow))
+        domWindow->enableSuddenTermination();
 }
 
 static void addBeforeUnloadEventListener(DOMWindow* domWindow)
 {
-    DOMWindowSet& set = windowsWithBeforeUnloadEventListeners();
-    if (set.add(domWindow).isNewEntry)
+    if (windowsWithBeforeUnloadEventListeners().add(domWindow).isNewEntry)
         domWindow->disableSuddenTermination();
 }
 
 static void removeBeforeUnloadEventListener(DOMWindow* domWindow)
 {
-    DOMWindowSet& set = windowsWithBeforeUnloadEventListeners();
-    DOMWindowSet::iterator it = set.find(domWindow);
-    if (set.remove(it))
+    if (windowsWithBeforeUnloadEventListeners().remove(domWindow))
         domWindow->enableSuddenTermination();
 }
 
 static void removeAllBeforeUnloadEventListeners(DOMWindow* domWindow)
 {
-    DOMWindowSet& set = windowsWithBeforeUnloadEventListeners();
-    DOMWindowSet::iterator it = set.find(domWindow);
-    if (it == set.end())
-        return;
-    set.removeAll(it);
-    domWindow->enableSuddenTermination();
+    if (windowsWithBeforeUnloadEventListeners().removeAll(domWindow))
+        domWindow->enableSuddenTermination();
 }
 
 static bool allowsBeforeUnloadListeners(DOMWindow* window)

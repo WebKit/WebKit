@@ -371,11 +371,7 @@ void PluginDatabase::clear()
 
 bool PluginDatabase::removeDisabledPluginFile(const String& fileName)
 {
-    if (!m_disabledPluginFiles.contains(fileName))
-        return false;
-
-    m_disabledPluginFiles.remove(fileName);
-    return true;
+    return m_disabledPluginFiles.remove(fileName);
 }
 
 bool PluginDatabase::addDisabledPluginFile(const String& fileName)

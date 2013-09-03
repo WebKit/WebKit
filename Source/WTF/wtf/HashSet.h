@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -88,8 +88,8 @@ namespace WTF {
         template<typename IteratorType>
         bool add(IteratorType begin, IteratorType end);
 
-        void remove(const ValueType&);
-        void remove(iterator);
+        bool remove(const ValueType&);
+        bool remove(iterator);
         void clear();
 
         static bool isValidValue(const ValueType&);
@@ -204,18 +204,19 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V>
-    inline void HashSet<T, U, V>::remove(iterator it)
+    inline bool HashSet<T, U, V>::remove(iterator it)
     {
         if (it.m_impl == m_impl.end())
-            return;
+            return false;
         m_impl.internalCheckTableConsistency();
         m_impl.removeWithoutEntryConsistencyCheck(it.m_impl);
+        return true;
     }
 
     template<typename T, typename U, typename V>
-    inline void HashSet<T, U, V>::remove(const ValueType& value)
+    inline bool HashSet<T, U, V>::remove(const ValueType& value)
     {
-        remove(find(value));
+        return remove(find(value));
     }
 
     template<typename T, typename U, typename V>

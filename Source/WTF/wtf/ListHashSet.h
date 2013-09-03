@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2011, Benjamin Poulain <ikipou@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -107,10 +107,12 @@ namespace WTF {
         ValueType& first();
         const ValueType& first() const;
         void removeFirst();
+        ValueType takeFirst();
 
         ValueType& last();
         const ValueType& last() const;
         void removeLast();
+        ValueType takeLast();
 
         iterator find(const ValueType&);
         const_iterator find(const ValueType&) const;
@@ -140,8 +142,8 @@ namespace WTF {
         AddResult insertBefore(const ValueType& beforeValue, const ValueType& newValue);
         AddResult insertBefore(iterator, const ValueType&);
 
-        void remove(const ValueType&);
-        void remove(iterator);
+        bool remove(const ValueType&);
+        bool remove(iterator);
         void clear();
 
     private:
@@ -629,6 +631,14 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity, typename U>
+    inline T ListHashSet<T, inlineCapacity, U>::takeFirst()
+    {
+        T result = first();
+        removeFirst();
+        return result;
+    }
+
+    template<typename T, size_t inlineCapacity, typename U>
     inline const T& ListHashSet<T, inlineCapacity, U>::first() const
     {
         ASSERT(!isEmpty());
@@ -655,6 +665,14 @@ namespace WTF {
         ASSERT(!isEmpty());
         m_impl.remove(m_tail);
         unlinkAndDelete(m_tail);
+    }
+
+    template<typename T, size_t inlineCapacity, typename U>
+    inline T ListHashSet<T, inlineCapacity, U>::takeLast()
+    {
+        T result = last();
+        removeLast();
+        return result;
     }
 
     template<typename T, size_t inlineCapacity, typename U>
@@ -761,18 +779,19 @@ namespace WTF {
     }
 
     template<typename T, size_t inlineCapacity, typename U>
-    inline void ListHashSet<T, inlineCapacity, U>::remove(iterator it)
+    inline bool ListHashSet<T, inlineCapacity, U>::remove(iterator it)
     {
         if (it == end())
-            return;
+            return false;
         m_impl.remove(it.node());
         unlinkAndDelete(it.node());
+        return true;
     }
 
     template<typename T, size_t inlineCapacity, typename U>
-    inline void ListHashSet<T, inlineCapacity, U>::remove(const ValueType& value)
+    inline bool ListHashSet<T, inlineCapacity, U>::remove(const ValueType& value)
     {
-        remove(find(value));
+        return remove(find(value));
     }
 
     template<typename T, size_t inlineCapacity, typename U>

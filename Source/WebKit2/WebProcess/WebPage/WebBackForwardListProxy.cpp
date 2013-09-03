@@ -126,14 +126,12 @@ uint64_t WebBackForwardListProxy::idForItem(HistoryItem* item)
 
 void WebBackForwardListProxy::removeItem(uint64_t itemID)
 {
-    IDToHistoryItemMap::iterator it = idToHistoryItemMap().find(itemID);
-    if (it == idToHistoryItemMap().end())
+    RefPtr<HistoryItem> item = idToHistoryItemMap().take(itemID);
+    if (!item)
         return;
         
-    WebCore::pageCache()->remove(it->value.get());
-
-    historyItemToIDMap().remove(it->value);
-    idToHistoryItemMap().remove(it);
+    pageCache()->remove(item.get());
+    historyItemToIDMap().remove(item);
 }
 
 WebBackForwardListProxy::WebBackForwardListProxy(WebPage* page)

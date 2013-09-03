@@ -1,3 +1,143 @@
+2013-09-02  Darin Adler  <darin@apple.com>
+
+        Cut down on double hashing and code needlessly using hash table iterators
+        https://bugs.webkit.org/show_bug.cgi?id=120611
+
+        Reviewed by Andreas Kling.
+
+        Some of these changes are primarily code cleanup, but others could provide
+        a small code size and speed improvement by avoiding extra hashing.
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::Watchers::find): Use get instead of find.
+        (WebCore::Geolocation::Watchers::remove): Use take instead of find.
+        (WebCore::Geolocation::makeCachedPositionCallbacks): Use the return
+        value from remove to avoid hashing twice.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::addAutomaticPullNode): Use the return value from
+        add to avoid hashing twice.
+        (WebCore::AudioContext::removeAutomaticPullNode): Use the return value
+        from remove to avoid hashing twice.
+
+        * Modules/webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::connect): Use the return value from add to avoid
+        hashing twice.
+        (WebCore::AudioNodeInput::disconnect): Use the return value from remove
+        to avoid hashing twice.
+
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::connect): Use the return value from add to avoid
+        hashing twice.
+        (WebCore::AudioParam::disconnect): Use the return value from remove to
+        avoid hashing twice.
+
+        * bridge/NP_jsobject.cpp:
+        (ObjectMap::remove): Use remove instead of find/remove.
+
+        * dom/Node.cpp:
+        (WebCore::Node::~Node): Use the return value from remove instead of
+        find/remove.
+
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::removeProfile): Remove needless
+        calls to contains.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::removeSubresourceLoader): Use the return
+        value from remove instead of find/remove.
+
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::HostInformation::remove): Use the
+        return value from remove to avoid hashing twice.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::disassociateDocumentLoader): Use
+        remove instead of find/remove.
+        (WebCore::ApplicationCacheGroup::cacheDestroyed): Removed a needless
+        call to contains to avoid hashing twice. It's fine to do the check
+        for an empty hash table unconditionally.
+
+        * page/DOMWindow.cpp:
+        (WebCore::addUnloadEventListener): Eliminated a local variable for clarity.
+        (WebCore::removeUnloadEventListener): Ditto. Also use remove instead
+        of find/remove.
+        (WebCore::removeAllUnloadEventListeners): Ditto. Also use removeAll instead
+        of find/removeAll.
+        (WebCore::addBeforeUnloadEventListener): Ditto.
+        (WebCore::removeBeforeUnloadEventListener): Ditto.
+        (WebCore::removeAllBeforeUnloadEventListeners): Ditto.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::removeViewportConstrainedObject): Use the return
+        value from remove to avoid hashing twice.
+        (WebCore::FrameView::removeScrollableArea): Use the return value from
+        remove instead of find/remove.
+        (WebCore::FrameView::containsScrollableArea): Use && instead of an if
+        statement in a way that is idiomatic for this kind of function.
+
+        * page/Page.cpp:
+        (WebCore::Page::addRelevantRepaintedObject): Use the return value from
+        remove instead of find/remove.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::removeUserScriptsFromWorld): Use remove instead
+        of find/remove.
+        (WebCore::PageGroup::removeUserStyleSheetsFromWorld): Use the return
+        value from remove instead of find/remove.
+
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::clearPeformanceEntries): Removed a needless call to contains.
+
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::removeClient): Use the return value
+        from remove instead of find/remove.
+        (WebCore::DisplayRefreshMonitorManager::displayDidRefresh): Use remove
+        instead of find/remove.
+
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::removeLayer): Use the return value from remove
+        instead of find/remove.
+
+        * platform/win/WindowMessageBroadcaster.cpp:
+        (WebCore::WindowMessageBroadcaster::removeListener): Use remove instead
+        of find/remove. It's fine to do the check for an empty hash table unconditionally.
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::removeDisabledPluginFile): Use the return value
+        from remove instead of find/remove.
+
+        * rendering/style/StyleCustomFilterProgramCache.cpp:
+        (WebCore::StyleCustomFilterProgramCache::lookup): Use get instead of find.
+        (WebCore::StyleCustomFilterProgramCache::add): Use contains instead of find
+        in an assertion.
+        (WebCore::StyleCustomFilterProgramCache::remove): Use remove instead of
+        find/remove.
+
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::removeClient): Use the return value from remove
+        instead of find/remove.
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::removeResource): Removed an unneeded call
+        to contains.
+        (WebCore::SVGDocumentExtensions::removeAllTargetReferencesForElement): Use
+        remove instead of find/remove. It's fine to do the check for an empty hash
+        table unconditionally.
+        (WebCore::SVGDocumentExtensions::removeAllElementReferencesForTarget): Use
+        remove instead of find/remove. Also removed unhelpful assertions. One is
+        already done by HashMap, and the other is just checking a basic invariant
+        of every HashMap that doesn't need to be checked.
+
+        * svg/graphics/SVGImageCache.cpp:
+        (WebCore::SVGImageCache::removeClientFromCache): Removed an unneeded call
+        to contains.
+
+        * svg/properties/SVGAnimatedProperty.cpp:
+        (WebCore::SVGAnimatedProperty::~SVGAnimatedProperty): Use the version of
+        remove that takes an iterator rather than the one that takes a key, so
+        we don't need to redo the hashing.
+
 2013-09-02  Andreas Kling  <akling@apple.com>
 
         Generate isFooElement() functions from tagname data.

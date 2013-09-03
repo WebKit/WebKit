@@ -39,11 +39,10 @@ SVGAnimatedProperty::SVGAnimatedProperty(SVGElement* contextElement, const Quali
 SVGAnimatedProperty::~SVGAnimatedProperty()
 {
     // Remove wrapper from cache.
-    Cache* cache = animatedPropertyCache();
-    const Cache::const_iterator end = cache->end();
-    for (Cache::const_iterator it = cache->begin(); it != end; ++it) {
+    Cache& cache = *animatedPropertyCache();
+    for (auto it = cache.begin(), end = cache.end(); it != end; ++it) {
         if (it->value == this) {
-            cache->remove(it->key);
+            cache.remove(it);
             break;
         }
     }

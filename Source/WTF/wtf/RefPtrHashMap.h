@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2011, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -96,9 +96,9 @@ namespace WTF {
         AddResult add(const KeyType&, MappedPassInType);
         AddResult add(RawKeyType, MappedPassInType);
 
-        void remove(const KeyType&);
-        void remove(RawKeyType);
-        void remove(iterator);
+        bool remove(const KeyType&);
+        bool remove(RawKeyType);
+        bool remove(iterator);
         void clear();
 
         MappedPassOutType take(const KeyType&); // efficient combination of get with remove
@@ -275,24 +275,25 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
-    inline void HashMap<RefPtr<T>, U, V, W, X>::remove(iterator it)
+    inline bool HashMap<RefPtr<T>, U, V, W, X>::remove(iterator it)
     {
         if (it.m_impl == m_impl.end())
-            return;
+            return false;
         m_impl.internalCheckTableConsistency();
         m_impl.removeWithoutEntryConsistencyCheck(it.m_impl);
+        return true;
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
-    inline void HashMap<RefPtr<T>, U, V, W, X>::remove(const KeyType& key)
+    inline bool HashMap<RefPtr<T>, U, V, W, X>::remove(const KeyType& key)
     {
-        remove(find(key));
+        return remove(find(key));
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
-    inline void HashMap<RefPtr<T>, U, V, W, X>::remove(RawKeyType key)
+    inline bool HashMap<RefPtr<T>, U, V, W, X>::remove(RawKeyType key)
     {
-        remove(find(key));
+        return remove(find(key));
     }
 
     template<typename T, typename U, typename V, typename W, typename X>

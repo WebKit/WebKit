@@ -36,7 +36,7 @@
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 
-// FIXME: This is a temporary layering violation while we move more string code to WTF.
+// FIXME: This is a temporary layering violation until we move more of the string code from JavaScriptCore to WTF.
 namespace JSC {
 
 class IdentifierTable {
@@ -44,18 +44,10 @@ class IdentifierTable {
 public:
     WTF_EXPORT_PRIVATE ~IdentifierTable();
 
-    WTF_EXPORT_PRIVATE HashSet<StringImpl*>::AddResult add(StringImpl* value);
-    template<typename U, typename V>
-    HashSet<StringImpl*>::AddResult add(U value);
+    WTF_EXPORT_PRIVATE HashSet<StringImpl*>::AddResult add(StringImpl*);
+    template<typename U, typename V> HashSet<StringImpl*>::AddResult add(U);
 
-    bool remove(StringImpl* r)
-    {
-        HashSet<StringImpl*>::iterator iter = m_table.find(r);
-        if (iter == m_table.end())
-            return false;
-        m_table.remove(iter);
-        return true;
-    }
+    bool remove(StringImpl* identifier) { return m_table.remove(identifier); }
 
 private:
     HashSet<StringImpl*> m_table;

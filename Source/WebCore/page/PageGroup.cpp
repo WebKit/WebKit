@@ -365,11 +365,7 @@ void PageGroup::removeUserScriptsFromWorld(DOMWrapperWorld* world)
     if (!m_userScripts)
         return;
 
-    UserScriptMap::iterator it = m_userScripts->find(world);
-    if (it == m_userScripts->end())
-        return;
-       
-    m_userScripts->remove(it);
+    m_userScripts->remove(world);
 }
 
 void PageGroup::removeUserStyleSheetsFromWorld(DOMWrapperWorld* world)
@@ -378,12 +374,9 @@ void PageGroup::removeUserStyleSheetsFromWorld(DOMWrapperWorld* world)
 
     if (!m_userStyleSheets)
         return;
-    
-    UserStyleSheetMap::iterator it = m_userStyleSheets->find(world);
-    if (it == m_userStyleSheets->end())
+
+    if (!m_userStyleSheets->remove(world))
         return;
-    
-    m_userStyleSheets->remove(it);
 
     invalidateInjectedStyleSheetCacheInAllFrames();
 }

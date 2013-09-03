@@ -764,32 +764,22 @@ void NetscapePlugin::frameDidFinishLoading(uint64_t requestID)
 {
     ASSERT(m_isStarted);
     
-    PendingURLNotifyMap::iterator it = m_pendingURLNotifications.find(requestID);
-    if (it == m_pendingURLNotifications.end())
+    auto notification = m_pendingURLNotifications.take(requestID);
+    if (notification.first.isEmpty())
         return;
 
-    String url = it->value.first;
-    void* notificationData = it->value.second;
-
-    m_pendingURLNotifications.remove(it);
-    
-    NPP_URLNotify(url.utf8().data(), NPRES_DONE, notificationData);
+    NPP_URLNotify(notification.first.utf8().data(), NPRES_DONE, notification.second);
 }
 
 void NetscapePlugin::frameDidFail(uint64_t requestID, bool wasCancelled)
 {
     ASSERT(m_isStarted);
     
-    PendingURLNotifyMap::iterator it = m_pendingURLNotifications.find(requestID);
-    if (it == m_pendingURLNotifications.end())
+    auto notification = m_pendingURLNotifications.take(requestID);
+    if (notification.first.isNull())
         return;
-
-    String url = it->value.first;
-    void* notificationData = it->value.second;
-
-    m_pendingURLNotifications.remove(it);
     
-    NPP_URLNotify(url.utf8().data(), wasCancelled ? NPRES_USER_BREAK : NPRES_NETWORK_ERR, notificationData);
+    NPP_URLNotify(notification.first.utf8().data(), wasCancelled ? NPRES_USER_BREAK : NPRES_NETWORK_ERR, notification.second);
 }
 
 void NetscapePlugin::didEvaluateJavaScript(uint64_t requestID, const String& result)

@@ -70,9 +70,8 @@ public:
 
     void remove(RootObject* rootObject)
     {
-        HashMap<RootObject*, JSToNPObjectMap>::iterator iter = m_map.find(rootObject);
-        ASSERT(iter != m_map.end());
-        m_map.remove(iter);
+        ASSERT(m_map.contains(rootObject));
+        m_map.remove(rootObject);
     }
 
     void remove(RootObject* rootObject, JSObject* jsObject)

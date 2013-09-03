@@ -1,5 +1,38 @@
 2013-09-02  Darin Adler  <darin@apple.com>
 
+        Cut down on double hashing and code needlessly using hash table iterators
+        https://bugs.webkit.org/show_bug.cgi?id=120611
+
+        Reviewed by Andreas Kling.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForMessage): Use take instead of find/remove.
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::removePageGroup): Use the return value from remove
+        instead of find/remove.
+
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp:
+        (WebKit::GeolocationPermissionRequestManager::cancelRequestForGeolocation):
+        (WebKit::GeolocationPermissionRequestManager::didReceiveGeolocationPermissionDecision):
+        Use take instead of find/remove.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::frameDidFinishLoading): Use take instead of find/remove.
+        (WebKit::NetscapePlugin::frameDidFail): Use take instead of find/remove.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::removeItem): Use take instead of find/remove.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didFinishCheckingText): Use take instead of get/remove so we
+        hash only once.
+        (WebKit::WebPage::didCancelCheckingText): Ditto.
+        (WebKit::WebPage::stopExtendingIncrementalRenderingSuppression): Use the return
+        value from remove instead of contains/remove so we hash only once.
+
+2013-09-02  Darin Adler  <darin@apple.com>
+
         [Mac] No need for HardAutorelease, which is same as CFBridgingRelease
         https://bugs.webkit.org/show_bug.cgi?id=120569
 

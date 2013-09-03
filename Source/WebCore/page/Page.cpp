@@ -1410,11 +1410,8 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
 
     // If this object was previously counted as an unpainted object, remove it from that HashSet
     // and corresponding Region. FIXME: This doesn't do the right thing if the objects overlap.
-    HashSet<RenderObject*>::iterator it = m_relevantUnpaintedRenderObjects.find(object);
-    if (it != m_relevantUnpaintedRenderObjects.end()) {
-        m_relevantUnpaintedRenderObjects.remove(it);
+    if (m_relevantUnpaintedRenderObjects.remove(object))
         m_relevantUnpaintedRegion.subtract(snappedPaintRect);
-    }
 
     // Split the relevantRect into a top half and a bottom half. Making sure we have coverage in
     // both halves helps to prevent cases where we have a fully loaded menu bar or masthead with

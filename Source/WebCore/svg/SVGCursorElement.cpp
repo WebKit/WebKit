@@ -106,11 +106,8 @@ void SVGCursorElement::addClient(SVGElement* element)
 
 void SVGCursorElement::removeClient(SVGElement* element)
 {
-    HashSet<SVGElement*>::iterator it = m_clients.find(element);
-    if (it != m_clients.end()) {
-        m_clients.remove(it);
+    if (m_clients.remove(element))
         element->cursorElementRemoved();
-    }
 }
 
 void SVGCursorElement::removeReferencedElement(SVGElement* element)

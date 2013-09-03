@@ -510,11 +510,7 @@ void LayerRenderer::addLayer(LayerCompositingThread* layer)
 
 bool LayerRenderer::removeLayer(LayerCompositingThread* layer)
 {
-    LayerSet::iterator iter = m_layers.find(layer);
-    if (iter == m_layers.end())
-        return false;
-    m_layers.remove(layer);
-    return true;
+    return m_layers.remove(layer);
 }
 
 void LayerRenderer::addLayerToReleaseTextureResourcesList(LayerCompositingThread* layer)

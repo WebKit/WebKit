@@ -70,13 +70,8 @@ void WebPreferences::addPageGroup(WebPageGroup* pageGroup)
 
 void WebPreferences::removePageGroup(WebPageGroup* pageGroup)
 {
-    HashSet<WebPageGroup*>::iterator iter = m_pageGroups.find(pageGroup);
-    if (iter == m_pageGroups.end())
-        return;
-
-    m_pageGroups.remove(iter);
-
-    if (privateBrowsingEnabled()) {
+    bool didRemovePageGroup = m_pageGroups.remove(pageGroup);
+    if (didRemovePageGroup && privateBrowsingEnabled()) {
         --privateBrowsingPageGroupCount;
         if (!privateBrowsingPageGroupCount)
             WebContext::willStopUsingPrivateBrowsing();

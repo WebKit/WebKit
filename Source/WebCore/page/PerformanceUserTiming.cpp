@@ -95,8 +95,7 @@ static void clearPeformanceEntries(PerformanceEntryMap& performanceEntryMap, con
         return;
     }
 
-    if (performanceEntryMap.contains(name))
-        performanceEntryMap.remove(name);
+    performanceEntryMap.remove(name);
 }
 
 void UserTiming::mark(const String& markName, ExceptionCode& ec)

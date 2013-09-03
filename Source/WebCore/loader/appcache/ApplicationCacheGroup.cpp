@@ -362,10 +362,7 @@ void ApplicationCacheGroup::stopLoading()
 
 void ApplicationCacheGroup::disassociateDocumentLoader(DocumentLoader* loader)
 {
-    HashSet<DocumentLoader*>::iterator it = m_associatedDocumentLoaders.find(loader);
-    if (it != m_associatedDocumentLoaders.end())
-        m_associatedDocumentLoaders.remove(it);
-
+    m_associatedDocumentLoaders.remove(loader);
     m_pendingMasterResourceLoaders.remove(loader);
 
     loader->applicationCacheHost()->setApplicationCache(0); // Will set candidate to 0, too.
@@ -390,11 +387,7 @@ void ApplicationCacheGroup::disassociateDocumentLoader(DocumentLoader* loader)
 
 void ApplicationCacheGroup::cacheDestroyed(ApplicationCache* cache)
 {
-    if (!m_caches.contains(cache))
-        return;
-    
     m_caches.remove(cache);
-
     if (m_caches.isEmpty()) {
         ASSERT(m_associatedDocumentLoaders.isEmpty());
         ASSERT(m_pendingMasterResourceLoaders.isEmpty());

@@ -1311,10 +1311,8 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
 
 void DocumentLoader::removeSubresourceLoader(ResourceLoader* loader)
 {
-    ResourceLoaderSet::iterator it = m_subresourceLoaders.find(loader);
-    if (it == m_subresourceLoaders.end())
+    if (!m_subresourceLoaders.remove(loader))
         return;
-    m_subresourceLoaders.remove(it);
     checkLoadComplete();
     if (Frame* frame = m_frame)
         frame->loader().checkLoadComplete();

@@ -1562,8 +1562,7 @@ void FrameView::addViewportConstrainedObject(RenderObject* object)
 
 void FrameView::removeViewportConstrainedObject(RenderObject* object)
 {
-    if (m_viewportConstrainedObjects && m_viewportConstrainedObjects->contains(object)) {
-        m_viewportConstrainedObjects->remove(object);
+    if (m_viewportConstrainedObjects && m_viewportConstrainedObjects->remove(object)) {
         if (Page* page = frame().page()) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
                 scrollingCoordinator->frameViewFixedObjectsDidChange(this);
@@ -4060,22 +4059,12 @@ bool FrameView::addScrollableArea(ScrollableArea* scrollableArea)
 
 bool FrameView::removeScrollableArea(ScrollableArea* scrollableArea)
 {
-    if (!m_scrollableAreas)
-        return false;
-
-    ScrollableAreaSet::iterator it = m_scrollableAreas->find(scrollableArea);
-    if (it == m_scrollableAreas->end())
-        return false;
-
-    m_scrollableAreas->remove(it);
-    return true;
+    return m_scrollableAreas && m_scrollableAreas->remove(scrollableArea);
 }
 
 bool FrameView::containsScrollableArea(ScrollableArea* scrollableArea) const
 {
-    if (!m_scrollableAreas)
-        return false;
-    return m_scrollableAreas->contains(scrollableArea);
+    return m_scrollableAreas && m_scrollableAreas->contains(scrollableArea);
 }
 
 void FrameView::removeChild(Widget* widget)

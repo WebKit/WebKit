@@ -47,8 +47,7 @@ void SVGImageCache::removeClientFromCache(const CachedImageClient* client)
 {
     ASSERT(client);
 
-    if (m_imageForContainerMap.contains(client))
-        m_imageForContainerMap.remove(client);
+    m_imageForContainerMap.remove(client);
 }
 
 void SVGImageCache::setContainerSizeForRenderer(const CachedImageClient* client, const IntSize& containerSize, float containerZoom)

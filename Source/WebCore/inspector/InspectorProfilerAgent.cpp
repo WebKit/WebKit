@@ -312,11 +312,9 @@ void InspectorProfilerAgent::removeProfile(ErrorString*, const String& type, int
 {
     unsigned uid = static_cast<unsigned>(rawUid);
     if (type == CPUProfileType) {
-        if (m_profiles.contains(uid))
-            m_profiles.remove(uid);
+        m_profiles.remove(uid);
     } else if (type == HeapProfileType) {
-        if (m_snapshots.contains(uid))
-            m_snapshots.remove(uid);
+        m_snapshots.remove(uid);
     }
 }
 

@@ -336,10 +336,7 @@ void Node::trackForDebugging()
 Node::~Node()
 {
 #ifndef NDEBUG
-    HashSet<Node*>::iterator it = ignoreSet.find(this);
-    if (it != ignoreSet.end())
-        ignoreSet.remove(it);
-    else
+    if (ignoreSet.remove(this))
         nodeCounter.decrement();
 #endif
 

@@ -58,8 +58,7 @@ StyleCustomFilterProgramCache::~StyleCustomFilterProgramCache()
 
 StyleCustomFilterProgram* StyleCustomFilterProgramCache::lookup(const CustomFilterProgramInfo& programInfo) const
 {
-    CacheMap::const_iterator iter = m_cache.find(programInfo);
-    return iter != m_cache.end() ? iter->value : 0;
+    return m_cache.get(programInfo);
 }
 
 StyleCustomFilterProgram* StyleCustomFilterProgramCache::lookup(StyleCustomFilterProgram* program) const
@@ -69,21 +68,17 @@ StyleCustomFilterProgram* StyleCustomFilterProgramCache::lookup(StyleCustomFilte
 
 void StyleCustomFilterProgramCache::add(StyleCustomFilterProgram* program)
 {
-    CustomFilterProgramInfo key = programCacheKey(program);
-    ASSERT(m_cache.find(key) == m_cache.end());
-    m_cache.set(key, program);
+    ASSERT(!m_cache.contains(programCacheKey(program)));
+    m_cache.set(programCacheKey(program), program);
     program->setCache(this);
 }
 
 void StyleCustomFilterProgramCache::remove(StyleCustomFilterProgram* program)
 {
-    CacheMap::iterator iter = m_cache.find(programCacheKey(program));
-    ASSERT(iter != m_cache.end());
-    m_cache.remove(iter);
+    ASSERT(m_cache.contains(programCacheKey(program)));
+    m_cache.remove(programCacheKey(program));
 }
-
 
 } // namespace WebCore
 
 #endif // ENABLE(CSS_SHADERS)
-

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2008, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -68,8 +68,8 @@ namespace WTF {
         bool remove(iterator);
  
         // Removes the value, regardless of its count.
-        void removeAll(iterator);
-        void removeAll(const ValueType&);
+        bool removeAll(iterator);
+        bool removeAll(const ValueType&);
 
         // Clears the whole set.
         void clear();
@@ -183,18 +183,19 @@ namespace WTF {
     }
     
     template<typename Value, typename HashFunctions, typename Traits>
-    inline void HashCountedSet<Value, HashFunctions, Traits>::removeAll(const ValueType& value)
+    inline bool HashCountedSet<Value, HashFunctions, Traits>::removeAll(const ValueType& value)
     {
-        removeAll(find(value));
+        return removeAll(find(value));
     }
     
     template<typename Value, typename HashFunctions, typename Traits>
-    inline void HashCountedSet<Value, HashFunctions, Traits>::removeAll(iterator it)
+    inline bool HashCountedSet<Value, HashFunctions, Traits>::removeAll(iterator it)
     {
         if (it == end())
-            return;
+            return false;
 
         m_impl.remove(it);
+        return true;
     }
     
     template<typename Value, typename HashFunctions, typename Traits>
