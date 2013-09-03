@@ -63,6 +63,7 @@
 #include <WebCore/HTMLParserIdioms.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HistoryItem.h>
+#include <WebCore/LocalizedStrings.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginPackage.h>
 #include <WebCore/PluginView.h>
@@ -814,12 +815,15 @@ void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* plugin
     userInfoBag->setDictionary(userInfo.get());
  
     int errorCode = 0;
+    String description;
     switch (pluginView->status()) {
         case PluginStatusCanNotFindPlugin:
             errorCode = WebKitErrorCannotFindPlugIn;
+            description = WEB_UI_STRING("The plug-in cant be found", "WebKitErrorCannotFindPlugin description");
             break;
         case PluginStatusCanNotLoadPlugin:
             errorCode = WebKitErrorCannotLoadPlugIn;
+            description = WEB_UI_STRING("The plug-in cant be loaded", "WebKitErrorCannotLoadPlugin description");
             break;
         default:
             ASSERT_NOT_REACHED();
