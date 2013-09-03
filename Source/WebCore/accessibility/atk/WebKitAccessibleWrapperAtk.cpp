@@ -502,6 +502,19 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (!invalidStatus.isEmpty() && invalidStatus != "false")
         attributeSet = addToAtkAttributeSet(attributeSet, "aria-invalid", coreObject->invalidStatus().string().utf8().data());
 
+    String helpText = coreObject->helpText();
+    if (!helpText.isEmpty())
+        attributeSet = addToAtkAttributeSet(attributeSet, "aria-help", helpText.utf8().data());
+
+    const char* sortDescription = "AXUnknownSortDirection";
+    AccessibilitySortDirection sortDirection = coreObject->sortDirection();
+    if (sortDirection == SortDirectionAscending)
+        sortDescription = "AXAscendingSortDirection";
+    else if (sortDirection == SortDirectionDescending)
+        sortDescription = "AXDescendingSortDirection";
+
+    attributeSet = addToAtkAttributeSet(attributeSet, "aria-sort", sortDescription);
+
     return attributeSet;
 }
 

@@ -20,7 +20,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: html-id:test, toolkit:WebKitEfl
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, html-id:test, toolkit:WebKitEfl
 
 Child 0:
 AXRole: AXImage
@@ -39,6 +39,6 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
 
 

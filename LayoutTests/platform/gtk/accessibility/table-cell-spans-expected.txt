@@ -25,7 +25,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 {0, 2}, {0, 2}
 
 ----------------------
@@ -47,7 +47,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 {0, 2}, {0, 2}
 
 ----------------------
@@ -69,7 +69,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 {2, 2}, {0, 1}
 
 ----------------------
@@ -91,7 +91,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 {2, 2}, {0, 1}
 
 ----------------------
@@ -113,7 +113,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 {2, 1}, {3, 1}
 
 ----------------------

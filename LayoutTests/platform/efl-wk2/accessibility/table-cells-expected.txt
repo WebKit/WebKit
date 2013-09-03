@@ -27,7 +27,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
 ------------------------
 [3,1]
 AXRole: AXCell
@@ -47,7 +47,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
 ------------------------
 [1,1]
 AXRole: AXCell
@@ -67,7 +67,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
 ------------------------
 [2,2]
 AXRole: AXCell
@@ -87,7 +87,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
 ------------------------
 [3,5]
 AXRole: AXCell
@@ -107,7 +107,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitEfl
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
 ------------------------
 [100,0]
 

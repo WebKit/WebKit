@@ -1,3 +1,17 @@
+2013-09-03  Krzysztof Czech  <k.czech@samsung.com>
+
+        [AX][ATK] Added support for sort and help attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=120456
+
+        Reviewed by Chris Fleizach.
+
+        Added support for aria-sort and aria-help attributes.
+
+        Test: accessibility/aria-sort.html
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+
 2013-09-03  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Remove dead code for QtXmlPatterns

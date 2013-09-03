@@ -54,6 +54,9 @@ static String coreAttributeToAtkAttribute(JSStringRef attribute)
     if (attributeString == "AXPlaceholderValue")
         return "placeholder-text";
 
+    if (attributeString == "AXSortDirection")
+        return "aria-sort";
+
     return String();
 }
 
