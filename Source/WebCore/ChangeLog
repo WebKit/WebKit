@@ -1,3 +1,17 @@
+2013-09-03  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
+
+        [GTK][EFL] include missing localized strings for subtitle auto track
+        https://bugs.webkit.org/show_bug.cgi?id=120629
+
+        those methods are necessary to show the "Auto" track on webkitgtk
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::textTrackAutomaticMenuItemText):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::textTrackAutomaticMenuItemText):
+
 2013-09-03  Daniel Bates  <dabates@apple.com>
 
         Require layout when -webkit-overflow-scrolling changes

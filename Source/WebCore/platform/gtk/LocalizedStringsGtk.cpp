@@ -803,6 +803,11 @@ String textTrackOffMenuItemText()
     return String::fromUTF8(C_("Off", "Menu item label for the track that represents disabling closed captions"));
 }
 
+String textTrackAutomaticMenuItemText()
+{
+    return String::fromUTF8(C_("Menu item label for the automatically choosen track", "Auto"));
+}
+
 String textTrackNoLabelText()
 {
     return String::fromUTF8(C_("No label", "Menu item label for a closed captions track that has no other name"));

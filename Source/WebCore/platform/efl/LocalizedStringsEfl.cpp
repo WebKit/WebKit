@@ -640,6 +640,11 @@ String textTrackOffMenuItemText()
     return String::fromUTF8("Off");
 }
 
+String textTrackAutomaticMenuItemText()
+{
+    return String::fromUTF8("Auto");
+}
+
 String textTrackNoLabelText()
 {
     return String::fromUTF8("No label");
