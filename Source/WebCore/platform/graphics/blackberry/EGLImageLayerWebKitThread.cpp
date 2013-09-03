@@ -45,7 +45,6 @@ EGLImageLayerWebKitThread::EGLImageLayerWebKitThread(LayerType type)
     , m_textureAccessor(0)
 {
     layerCompositingThread()->setClient(m_client.get());
-    setLayerProgram(LayerProgramRGBA);
 }
 
 EGLImageLayerWebKitThread::~EGLImageLayerWebKitThread()

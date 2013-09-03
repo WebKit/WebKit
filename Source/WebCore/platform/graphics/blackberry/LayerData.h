@@ -56,11 +56,6 @@ class LayerData {
 public:
     enum LayerType { Layer, TransformLayer, WebGLLayer, CanvasLayer, CustomLayer };
     enum FilterType { Linear, Nearest, Trilinear, Lanczos };
-    enum LayerProgram {
-        LayerProgramRGBA = 0,
-        LayerProgramBGRA,
-        NumberOfLayerPrograms
-    };
 
 #if ENABLE(CSS_FILTERS)
     enum CSSFilterShaders {
@@ -91,7 +86,6 @@ public:
         , m_opacity(1.0)
         , m_anchorPointZ(0.0)
         , m_borderWidth(0.0)
-        , m_layerProgram(LayerProgramBGRA)
         , m_pluginView(0)
 #if ENABLE(VIDEO)
         , m_mediaPlayer(0)
@@ -159,8 +153,6 @@ public:
 
     bool needsTexture() const { return m_layerType == WebGLLayer || m_layerType == CanvasLayer || m_needsTexture; }
 
-    LayerProgram layerProgram() const { return m_layerProgram; }
-
     bool isFixedPosition() const { return m_isFixedPosition; }
     bool hasFixedContainer() const { return m_hasFixedContainer; }
     bool hasFixedAncestorInDOMTree() const { return m_hasFixedAncestorInDOMTree; }
@@ -218,8 +210,6 @@ protected:
 #endif
     float m_anchorPointZ;
     float m_borderWidth;
-
-    LayerProgram m_layerProgram;
 
     PluginView* m_pluginView;
 #if ENABLE(VIDEO)

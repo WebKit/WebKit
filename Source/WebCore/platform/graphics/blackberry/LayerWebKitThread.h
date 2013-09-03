@@ -221,7 +221,6 @@ protected:
     LayerWebKitThread(LayerType, GraphicsLayerBlackBerry* owner);
 
     void setNeedsTexture(bool needsTexture) { m_needsTexture = needsTexture; }
-    void setLayerProgram(LayerData::LayerProgram layerProgram) { m_layerProgram = layerProgram; }
     bool isDrawable() const { return m_isDrawable; }
 
     void updateVisibility();

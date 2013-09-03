@@ -158,22 +158,14 @@ private:
     bool makeContextCurrent();
 
     enum ProgramIndex {
-        LayerProgramRGBA = LayerData::LayerProgramRGBA,
-        LayerProgramBGRA = LayerData::LayerProgramBGRA,
-
-        MaskPrograms,
-        LayerMaskProgramRGBA = MaskPrograms + LayerData::LayerProgramRGBA,
-        LayerMaskProgramBGRA = MaskPrograms + LayerData::LayerProgramBGRA,
-
-        InternalPrograms,
-        ColorProgram = InternalPrograms,
-
+        LayerProgramRGBA,
+        LayerMaskProgramRGBA,
+        ColorProgram,
         NumberOfPrograms
     };
 
     bool createProgram(ProgramIndex);
     const BlackBerry::Platform::Graphics::GLES2Program& useProgram(ProgramIndex);
-    const BlackBerry::Platform::Graphics::GLES2Program& useLayerProgram(LayerData::LayerProgram, bool isMask = false);
 
     LayerRendererClient* m_client;
 

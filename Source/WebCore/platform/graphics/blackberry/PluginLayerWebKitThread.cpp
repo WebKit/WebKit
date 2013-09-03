@@ -41,7 +41,6 @@ void PluginLayerWebKitThread::setPluginView(PluginView* pluginView)
 {
     m_pluginView = pluginView;
     setNeedsTexture(isDrawable() && pluginView);
-    setLayerProgram(LayerProgramRGBA);
 
     if (m_pluginView)
         setNeedsDisplay();

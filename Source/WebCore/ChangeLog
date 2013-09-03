@@ -1,3 +1,29 @@
+2013-09-03  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Remove LayerData::LayerProgram
+        https://bugs.webkit.org/show_bug.cgi?id=120601
+
+        Reviewed by Anders Carlsson.
+
+        JIRA 490672
+        All layer contents are RGBA now, so there's no need to support BGRA any
+        more and the LayerData::LayerProgram enum can be removed. Related dead
+        code was removed.
+
+        No new tests, no change in behavior.
+
+        * platform/graphics/blackberry/EGLImageLayerWebKitThread.cpp:
+        (WebCore::EGLImageLayerWebKitThread::EGLImageLayerWebKitThread):
+        * platform/graphics/blackberry/LayerData.h:
+        (WebCore::LayerData::LayerData):
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::compositeLayersRecursive):
+        (WebCore::LayerRenderer::createProgram):
+        * platform/graphics/blackberry/LayerRenderer.h:
+        * platform/graphics/blackberry/LayerWebKitThread.h:
+        * platform/graphics/blackberry/PluginLayerWebKitThread.cpp:
+        (WebCore::PluginLayerWebKitThread::setPluginView):
+
 2013-09-03  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Video player sets system volume to 100%
