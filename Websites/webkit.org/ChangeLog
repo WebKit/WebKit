@@ -1,3 +1,11 @@
+2013-09-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the recommended testing platform on the website
+
+        Rubberstamped by Enrica Casucci.
+
+        * quality/testing.html:
+
 2013-08-08  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix webkit.org content overflowing their content box
