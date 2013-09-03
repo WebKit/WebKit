@@ -1,3 +1,16 @@
+2013-09-03  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Shape's content gets extra left offset when left-border is positive on the content box
+        https://bugs.webkit.org/show_bug.cgi?id=117573
+
+        Reviewed by David Hyatt.
+
+        Test that nested children with padding correctly apply an ancestor's shape-inside
+        across different writing modes.
+
+        * fast/shapes/shape-inside/shape-inside-offset-block-children-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-offset-block-children.html: Added.
+
 2013-09-03  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: exceptions triggered from console evaluation do not pause the debugger

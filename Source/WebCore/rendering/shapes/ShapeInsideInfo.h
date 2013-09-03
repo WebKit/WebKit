@@ -68,6 +68,17 @@ public:
 
     static bool isEnabledFor(const RenderBlock* renderer);
 
+    bool computeSegmentsForLine(LayoutSize lineOffset, LayoutUnit lineHeight)
+    {
+        m_segmentRanges.clear();
+        bool result = ShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &Shape::getIncludedIntervals>::computeSegmentsForLine(lineOffset.height(), lineHeight);
+        for (size_t i = 0; i < m_segments.size(); i++) {
+            m_segments[i].logicalLeft -= lineOffset.width();
+            m_segments[i].logicalRight -= lineOffset.width();
+        }
+        return result;
+    }
+
     virtual bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) OVERRIDE
     {
         m_segmentRanges.clear();
