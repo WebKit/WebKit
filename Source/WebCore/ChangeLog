@@ -1,3 +1,38 @@
+2013-09-03  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Video player sets system volume to 100%
+        https://bugs.webkit.org/show_bug.cgi?id=118974
+
+        Reviewed by Philippe Normand.
+
+        In order to preserve the system volume we need to keep track of
+        the volume being initialized in the HTMLMediaElement and then just
+        setting the volume to the sink when initializing the pipeline if
+        that volume was changed before.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialized
+        attribute to false.
+        (WebCore::HTMLMediaElement::setVolume): Set the attribute to true
+        when volume is changed.
+        (WebCore::HTMLMediaElement::updateVolume): Set the volume only if
+        volume was initialized.
+        (WebCore::HTMLMediaElement::mediaPlayerPlatformVolumeConfigurationRequired):
+        Platform volume configuration is required only if volume was not
+        initialized before.
+        * html/HTMLMediaElement.h: Added attribute and interface method.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerPlatformVolumeConfigurationRequired):
+        Declared and added default implementation for the interface method.
+        (WebCore::MediaPlayer::platformVolumeConfigurationRequired):
+        Asked the client, meaning the HTMLMediaElement if the platform
+        volume configuration is required.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::mediaPlayerPrivateVolumeChangedCallback): Added log.
+        (WebCore::MediaPlayerPrivateGStreamerBase::setVolume): Added log.
+        (WebCore::MediaPlayerPrivateGStreamerBase::setStreamVolumeElement):
+        Set the volume only if not platform volume is required and added log.
+
 2013-09-02  Darin Adler  <darin@apple.com>
 
         * inspector/InspectorProfilerAgent.cpp:
