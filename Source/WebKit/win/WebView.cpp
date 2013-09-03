@@ -2552,7 +2552,7 @@ bool WebView::canShowMIMEType(const String& mimeType)
         || MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType)
         || MIMETypeRegistry::isSupportedMediaMIMEType(mimeType);
 
-    if (!canShow && m_page && m_page->pluginData())) {
+    if (!canShow && m_page && m_page->pluginData()) {
         canShow = (m_page->pluginData()->supportsMimeType(mimeType, PluginData::AllPlugins) && allowPlugins)
             || m_page->pluginData()->supportsMimeType(mimeType, PluginData::OnlyApplicationPlugins);
     }
