@@ -46,9 +46,6 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
     SaveDC(dc);
     SelectObject(dc, fontData->platformData().hfont());
 
-    TEXTMETRIC tm;
-    GetTextMetrics(dc, &tm);
-
     WORD localGlyphBuffer[GlyphPage::size * 2];
     DWORD result = GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, 0);
     bool success = result != GDI_ERROR && static_cast<unsigned>(result) == bufferLength;

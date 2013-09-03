@@ -1,3 +1,13 @@
+2013-09-03  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Unneeded code in method GlyphPage::fill().
+        https://bugs.webkit.org/show_bug.cgi?id=120634
+
+        Reviewed by Andreas Kling.
+
+        * platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp:
+        (WebCore::GlyphPage::fill): Remove unneeded call to GetTextMetrics() function.
+
 2013-09-03  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Pseudo-elements as regions should not be exposed to JS
