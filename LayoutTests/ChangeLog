@@ -1,3 +1,16 @@
+2013-09-03  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
+
+        [gstreamer] Disable HTTP request "Accept-Encoding:" header field on gstreamer source element to avoid receiving the wrong size when retrieving data
+        https://bugs.webkit.org/show_bug.cgi?id=115354
+
+        Reviewed by Philippe Normand.
+
+        Add test to check that video requests will send no "Accept-Encoding" header.
+
+        * http/tests/media/video-accept-encoding-expected.txt: Added.
+        * http/tests/media/video-accept-encoding.cgi: Added.
+        * http/tests/media/video-accept-encoding.html: Added.
+
 2013-09-03  Krzysztof Czech  <k.czech@samsung.com>
 
         [AX][ATK] Added support for sort and help attributes
