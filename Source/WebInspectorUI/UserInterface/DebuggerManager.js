@@ -343,12 +343,18 @@ WebInspector.DebuggerManager.prototype = {
         for (var i = 0; i < callFramesPayload.length; ++i) {
             var callFramePayload = callFramesPayload[i];
             var sourceCodeLocation = this._sourceCodeLocationFromPayload(callFramePayload.location);
-            if (!sourceCodeLocation)
+            // Exclude the case where the call frame is in the inspector code.
+            if (!sourceCodeLocation || sourceCodeLocation._sourceCode._url.indexOf("__WebInspector") === 0)
                 continue;
             var thisObject = WebInspector.RemoteObject.fromPayload(callFramePayload.this);
             var scopeChain = this._scopeChainFromPayload(callFramePayload.scopeChain);
             var callFrame = new WebInspector.CallFrame(callFramePayload.callFrameId, sourceCodeLocation, callFramePayload.functionName, thisObject, scopeChain);
             this._callFrames.push(callFrame);
+        }
+
+        if (!this._callFrames.length) {
+            this.resume();
+            return;
         }
 
         this._activeCallFrame = this._callFrames[0];

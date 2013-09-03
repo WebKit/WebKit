@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+//# sourceURL=__WebInspectorInjectedScript__
+
 /**
  * @param {InjectedScriptHost} InjectedScriptHost
  * @param {Window} inspectedWindow

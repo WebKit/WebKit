@@ -1,3 +1,14 @@
+2013-09-03  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: exceptions triggered from console evaluation do not pause the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=120460
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        Explicitly set a sourceURL such that the frontend may identify injected script when
+        processing call frames in order to hide such code from the debugger.
+
 2013-09-03  Andreas Kling  <akling@apple.com>
 
         Support Vector<Ref<T>>.

@@ -232,7 +232,9 @@ WebInspector.JavaScriptLogViewController.prototype = {
             this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage), true);
         }
 
-        this._evaluateInInspectedWindow(text, "console", true, true, false, printResult.bind(this));
+        text += "\n//# sourceURL=__WebInspectorConsole__\n";
+
+        this._evaluateInInspectedWindow(text, "console", true, false, false, printResult.bind(this));
     },
 
     consolePromptCompletionsNeeded: function(prompt, defaultCompletions, base, prefix, suffix, forced)

@@ -1,3 +1,50 @@
+2013-09-03  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: exceptions triggered from console evaluation do not pause the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=120460
+
+        We used to preclude any debugging from errors stemming from code evaluated in the console
+        as we would always set the doNotPauseOnExceptionsAndMuteConsole parameter to "false" when
+        calling JavaScriptLogViewController._evaluateInInspectedWindow(). However, it is desirable
+        to allow debugging code ran from the console.
+
+        We now allow debugging in such a scenario and we filter out call frames coming from the
+        Web Inspector injected script as well as the call frame for the console prompt such that
+        we only pause in the debugger in case the exception is in code under the console prompt
+        and not the console code prompt itself.
+
+        Additionally, to prevent stepping out to call frames we may have filtered out, we disable
+        the "step out" button in cases where there are no further frames in the frontend to go out to.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.debuggerDidPause):
+        Filter out call frames that have a URL coming from Web Inspector injected script by looking
+        for a URL starting with the "__WebInspector" prefix. If we determine that there are no call
+        frames left after filtering, we resume code evaluation such that we only pause in the debugger
+        when the exception is in code evluated under the console prompt.
+
+        * UserInterface/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerDidPause):
+        (WebInspector.DebuggerSidebarPanel.prototype._debuggerActiveCallFrameDidChange):
+        Monitor any change to the active call frame such that we may tie the state of the
+        "step out" button to the availability of a call frame to step out to in the filtered
+        list set on the DebuggerManager.
+
+        * UserInterface/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.consolePromptTextCommitted):
+        Set the doNotPauseOnExceptionsAndMuteConsole to "false" when calling _evaluateInInspectedWindow()
+        in order to allow pausing on exceptions coming from code evalued in the console. Also, explicitly
+        set a sourceURL for the script to evaluate such that we may identify its origin when filtering
+        call frames stemming from inspector code.
+
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasAdded):
+        Filter out any script resource starting with the Web Inspector-specific "__WebInspector" prefix
+        so that injected script does not show up.
+
 2013-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Correct windows build. Get rid of unnecessary pre-build step. We don't build anything
