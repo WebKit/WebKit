@@ -1,3 +1,18 @@
+2013-09-03  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] libsoup upversion to fix a gstreamer issue, bug115354
+        https://bugs.webkit.org/show_bug.cgi?id=120613
+
+        Reviewed by Philippe Normand.
+
+        Up version of libsoup to 2.43.90. But the exact version which we'll use is not 2.43.90.
+        To fix bug115354, we need the Andre's patch for libsoup, but the lastest release
+        does not contain it. https://bugzilla.gnome.org/show_bug.cgi?id=706338
+        For the reason, we'll use libsoup git repo directly for a while until the next
+        libsoup release.
+
+        * gtk/jhbuild.modules:
+
 2013-09-02  Darin Adler  <darin@apple.com>
 
         [Mac] No need for HardAutorelease, which is same as CFBridgingRelease
