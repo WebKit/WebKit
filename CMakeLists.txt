@@ -67,17 +67,23 @@ find_package(Ruby 1.8.7)
 # -----------------------------------------------------------------------------
 # Determine the target processor
 # -----------------------------------------------------------------------------
-string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} LOWERCASE_CMAKE_SYSTEM_PROCESSOR)
+# Use MSVC_CXX_ARCHITECTURE_ID instead of CMAKE_SYSTEM_PROCESSOR when defined,
+# since the later one just resolves to the host processor on Windows.
+if (MSVC_CXX_ARCHITECTURE_ID)
+    string(TOLOWER ${MSVC_CXX_ARCHITECTURE_ID} LOWERCASE_CMAKE_SYSTEM_PROCESSOR)
+else ()
+    string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} LOWERCASE_CMAKE_SYSTEM_PROCESSOR)
+endif ()
 if (LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
     set(WTF_CPU_ARM 1)
 elseif (LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "^mips")
     set(WTF_CPU_MIPS 1)
-elseif (LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64|amd64)")
+elseif (LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "(x64|x86_64|amd64)")
     set(WTF_CPU_X86_64 1)
 elseif (LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "(i[3-6]86|x86)")
     set(WTF_CPU_X86 1)
 else ()
-    message(FATAL_ERROR "Unknown CPU '${CMAKE_SYSTEM_PROCESSOR}'")
+    message(FATAL_ERROR "Unknown CPU '${LOWERCASE_CMAKE_SYSTEM_PROCESSOR}'")
 endif ()
 
 # -----------------------------------------------------------------------------
