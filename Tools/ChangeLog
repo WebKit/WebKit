@@ -1,3 +1,16 @@
+2013-09-03  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] WebKitTestRunner still beeps sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=120652
+
+        Reviewed by Tim Horton.
+
+        In bug 107251, we disabled beeping in WebProcess, but some of the beeps happen in
+        UI process (notably, AppKit beeps when handling a key equivalent returns NO).
+
+        * WebKitTestRunner/mac/TestControllerMac.mm: (WTR::TestController::platformInitialize):
+        Use the same SPI that we use in DRT and in WebProcess to disable beeping.
+
 2013-09-03  Krzysztof Czech  <k.czech@samsung.com>
 
         [AX][ATK] Added support for sort and help attributes

@@ -32,6 +32,10 @@
 #import <WebKit2/WKStringCF.h>
 #import <mach-o/dyld.h> 
 
+@interface NSSound (Details)
++ (void)_setAlertType:(NSUInteger)alertType;
+@end
+
 namespace WTR {
 
 void TestController::notifyDone()
@@ -42,6 +46,8 @@ void TestController::platformInitialize()
 {
     poseAsClass("WebKitTestRunnerPasteboard", "NSPasteboard");
     poseAsClass("WebKitTestRunnerEvent", "NSEvent");
+
+    [NSSound _setAlertType:0];
 }
 
 void TestController::platformDestroy()
