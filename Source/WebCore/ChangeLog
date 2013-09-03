@@ -1,3 +1,22 @@
+2013-09-03  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Pseudo-elements as regions should not be exposed to JS
+        https://bugs.webkit.org/show_bug.cgi?id=120633
+
+        Reviewed by Andreas Kling.
+
+        Until we properly implement the Region interface (http://dev.w3.org/csswg/css-regions/#the-region-interface)
+        for pseudo-elements, we should not return these as regions in JS.
+
+        Tests: fast/regions/get-regions-by-content-pseudo.html
+               fast/regions/webkit-named-flow-get-regions-pseudo.html
+
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::firstEmptyRegionIndex): Skip pseudo-elements as regions here too,
+        otherwise we may get an index that cannot be used with getRegions().
+        (WebCore::WebKitNamedFlow::getRegionsByContent):
+        (WebCore::WebKitNamedFlow::getRegions):
+
 2013-09-03  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r154967): http appcache tests crashing on WK1

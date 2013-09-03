@@ -1,0 +1,11 @@
+Tests WebKitNamedFlow.getRegionsByContent() and pseudo-elements as regions
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS regionList.length is 1
+PASS regionList.item(0).id is "region_2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

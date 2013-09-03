@@ -1,3 +1,20 @@
+2013-09-03  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Pseudo-elements as regions should not be exposed to JS
+        https://bugs.webkit.org/show_bug.cgi?id=120633
+
+        Reviewed by Andreas Kling.
+
+        Add tests with pseudo-elements as regions checking the following API:
+        WebKitNamedFlow::getRegions(), WebKitNamedFlow::getRegionsByContent()
+        Because we do not return the pseudo-elements as regions in the region list,
+        i modified WebKitNamedFlow::firstEmptyRegionIndex to skip these regions too. 
+
+        * fast/regions/get-regions-by-content-pseudo-expected.txt: Added.
+        * fast/regions/get-regions-by-content-pseudo.html: Added.
+        * fast/regions/webkit-named-flow-get-regions-pseudo-expected.txt: Added.
+        * fast/regions/webkit-named-flow-get-regions-pseudo.html: Added.
+
 2013-09-03  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip some failing tests.
