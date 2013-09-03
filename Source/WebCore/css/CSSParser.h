@@ -571,6 +571,8 @@ private:
 
     bool parseColor(const String&);
 
+    bool parseIntegerOrStringFromGridPosition(RefPtr<CSSPrimitiveValue>& numericValue, RefPtr<CSSPrimitiveValue>& gridLineName);
+
     enum ParsingMode {
         NormalMode,
         MediaQueryMode,

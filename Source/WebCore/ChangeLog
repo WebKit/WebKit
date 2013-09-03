@@ -1,3 +1,32 @@
+2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Add parsing for named grid lines
+        https://bugs.webkit.org/show_bug.cgi?id=119540
+
+        Reviewed by Andreas Kling.
+
+        From Blink r150381,r150587 by <jchaffraix@chromium.org>
+
+        Adds parsing support for named grid lines at <grid-line> level,
+        i.e., inside grid-{row|column}-{start|end}. This change covers
+        only the parsing, layout changes coming in a follow up patch.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridPosition):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseIntegerOrStringFromGridPosition):
+        (WebCore::CSSParser::parseGridPosition):
+        * css/CSSParser.h:
+        * css/StyleResolver.cpp:
+        (WebCore::createGridPosition):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::resolveGridPositionFromStyle):
+        * rendering/style/GridPosition.h:
+        (WebCore::GridPosition::setExplicitPosition):
+        (WebCore::GridPosition::setSpanPosition):
+        (WebCore::GridPosition::integerPosition):
+        (WebCore::GridPosition::namedGridLine):
+
 2013-09-03  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Hyphenation respects regional format settings language instead of primary language

@@ -766,7 +766,7 @@ size_t RenderGrid::resolveGridPositionFromStyle(const GridPosition& position, Gr
 {
     // FIXME: Handle other values for grid-{row,column} like ranges or line names.
     switch (position.type()) {
-    case IntegerPosition: {
+    case ExplicitPosition: {
         ASSERT(position.integerPosition());
         if (position.isPositive())
             return adjustGridPositionForSide(position.integerPosition() - 1, side);

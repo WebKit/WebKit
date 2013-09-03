@@ -4794,6 +4794,33 @@ bool CSSParser::parseAnimationProperty(CSSPropertyID propId, RefPtr<CSSValue>& r
     return false;
 }
 
+// The function parses [ <integer> || <string> ] in <grid-line> (which can be stand alone or with 'span').
+bool CSSParser::parseIntegerOrStringFromGridPosition(RefPtr<CSSPrimitiveValue>& numericValue, RefPtr<CSSPrimitiveValue>& gridLineName)
+{
+    CSSParserValue* value = m_valueList->current();
+    if (validUnit(value, FInteger) && value->fValue) {
+        numericValue = createPrimitiveNumericValue(value);
+        value = m_valueList->next();
+        if (value && value->unit == CSSPrimitiveValue::CSS_STRING) {
+            gridLineName = createPrimitiveStringValue(m_valueList->current());
+            m_valueList->next();
+        }
+        return true;
+    }
+
+    if (value->unit == CSSPrimitiveValue::CSS_STRING) {
+        gridLineName = createPrimitiveStringValue(m_valueList->current());
+        value = m_valueList->next();
+        if (value && validUnit(value, FInteger) && value->fValue) {
+            numericValue = createPrimitiveNumericValue(value);
+            m_valueList->next();
+        }
+        return true;
+    }
+
+    return false;
+}
+
 PassRefPtr<CSSValue> CSSParser::parseGridPosition()
 {
     CSSParserValue* value = m_valueList->current();
@@ -4803,38 +4830,42 @@ PassRefPtr<CSSValue> CSSParser::parseGridPosition()
     }
 
     RefPtr<CSSPrimitiveValue> numericValue;
+    RefPtr<CSSPrimitiveValue> gridLineName;
     bool hasSeenSpanKeyword = false;
 
-    if (validUnit(value, FInteger) && value->fValue) {
-        numericValue = createPrimitiveNumericValue(value);
-        value = m_valueList->next();
+    if (parseIntegerOrStringFromGridPosition(numericValue, gridLineName)) {
+        value = m_valueList->current();
         if (value && value->id == CSSValueSpan) {
             hasSeenSpanKeyword = true;
             m_valueList->next();
         }
     } else if (value->id == CSSValueSpan) {
         hasSeenSpanKeyword = true;
-        value = m_valueList->next();
-        if (value && (validUnit(value, FInteger) && value->fValue)) {
-            numericValue = createPrimitiveNumericValue(value);
-            m_valueList->next();
-        }
+        if (m_valueList->next())
+            parseIntegerOrStringFromGridPosition(numericValue, gridLineName);
     }
 
-    if (!hasSeenSpanKeyword)
-        return numericValue.release();
+    // Check that we have consumed all the value list. For shorthands, the parser will pass
+    // the whole value list (including the opposite position).
+    if (m_valueList->current() && !isForwardSlashOperator(m_valueList->current()))
+        return 0;
 
-    if (!numericValue && hasSeenSpanKeyword)
-        return cssValuePool().createIdentifierValue(CSSValueSpan);
+    // If we didn't parse anything, this is not a valid grid position.
+    if (!hasSeenSpanKeyword && !gridLineName && !numericValue)
+        return 0;
 
     // Negative numbers are not allowed for span (but are for <integer>).
-    if (numericValue && numericValue->getIntValue() < 0)
+    if (hasSeenSpanKeyword && numericValue && numericValue->getIntValue() < 0)
         return 0;
 
     RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
-    values->append(cssValuePool().createIdentifierValue(CSSValueSpan));
+    if (hasSeenSpanKeyword)
+        values->append(cssValuePool().createIdentifierValue(CSSValueSpan));
     if (numericValue)
         values->append(numericValue.release());
+    if (gridLineName)
+        values->append(gridLineName.release());
+    ASSERT(values->length());
     return values.release();
 }
 

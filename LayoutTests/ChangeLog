@@ -1,3 +1,20 @@
+2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Add parsing for named grid lines
+        https://bugs.webkit.org/show_bug.cgi?id=119540
+
+        Reviewed by Andreas Kling.
+
+        From Blink r150381,r150587 by <jchaffraix@chromium.org>
+
+        Added several new test cases which include different types of
+        named grid lines, this means including the names at different
+        positions, multiple names per line or mixing names with keywords
+        like 'span'.
+
+        * fast/css-grid-layout/grid-item-column-row-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-column-row-get-set.html:
+
 2013-09-03  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Hyphenation respects regional format settings language instead of primary language

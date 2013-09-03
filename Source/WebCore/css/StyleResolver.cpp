@@ -1973,30 +1973,49 @@ static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSiz
 
 static bool createGridPosition(CSSValue* value, GridPosition& position)
 {
-    // For now, we only accept: 'auto' | <integer> | span && <integer>?
+    // For now, we only accept: 'auto' | [ <integer> || <string> ] | span && <integer>?
     if (value->isPrimitiveValue()) {
+#if !ASSERT_DISABLED
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-        if (primitiveValue->getValueID() == CSSValueAuto)
-            return true;
-
-        if (primitiveValue->getValueID() == CSSValueSpan) {
-            // If the <integer> is omitted, it defaults to '1'.
-            position.setSpanPosition(1);
-            return true;
-        }
-
-        ASSERT(primitiveValue->isNumber());
-        position.setIntegerPosition(primitiveValue->getIntValue());
+        ASSERT(primitiveValue->getValueID() == CSSValueAuto);
+#endif
         return true;
     }
 
     ASSERT_WITH_SECURITY_IMPLICATION(value->isValueList());
     CSSValueList* values = static_cast<CSSValueList*>(value);
-    ASSERT(values->length() == 2);
-    ASSERT_WITH_SECURITY_IMPLICATION(values->itemWithoutBoundsCheck(1)->isPrimitiveValue());
-    CSSPrimitiveValue* numericValue = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(1));
-    ASSERT(numericValue->isNumber());
-    position.setSpanPosition(numericValue->getIntValue());
+    ASSERT(values->length());
+
+    bool isSpanPosition = false;
+    // The specification makes the <integer> optional, in which case it default to '1'.
+    int gridLineNumber = 1;
+    String gridLineName;
+
+    CSSValueListIterator it = values;
+    CSSPrimitiveValue* currentValue = static_cast<CSSPrimitiveValue*>(it.value());
+    if (currentValue->getValueID() == CSSValueSpan) {
+        isSpanPosition = true;
+        it.advance();
+        currentValue = it.hasMore() ? static_cast<CSSPrimitiveValue*>(it.value()) : 0;
+    }
+
+    if (currentValue && currentValue->isNumber()) {
+        gridLineNumber = currentValue->getIntValue();
+        it.advance();
+        currentValue = it.hasMore() ? static_cast<CSSPrimitiveValue*>(it.value()) : 0;
+    }
+
+    if (currentValue && currentValue->isString()) {
+        gridLineName = currentValue->getStringValue();
+        it.advance();
+    }
+
+    ASSERT(!it.hasMore());
+    if (isSpanPosition)
+        position.setSpanPosition(gridLineNumber, gridLineName);
+    else
+        position.setExplicitPosition(gridLineNumber, gridLineName);
+
     return true;
 }
 
