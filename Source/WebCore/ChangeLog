@@ -1,3 +1,22 @@
+2013-09-03  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Remove dead code for QtXmlPatterns
+        https://bugs.webkit.org/show_bug.cgi?id=120624
+
+        Reviewed by Simon Hausmann.
+
+        Remove code supporting XSLT using QtXmlPatterns which has been
+        dead for some time.
+
+        * Target.pri:
+        * WebCore.pri:
+        * dom/TransformSourceQt.cpp: Removed.
+        * xml/XSLStyleSheetQt.cpp: Removed.
+        * xml/XSLTProcessorQt.cpp: Removed.
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::doEnd):
+        (WebCore::XMLDocumentParser::parseProcessingInstruction):
+
 2013-09-03  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] position: fixed is computed relative to the first region, not the viewport

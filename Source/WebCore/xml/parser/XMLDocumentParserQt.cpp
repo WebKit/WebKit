@@ -212,22 +212,6 @@ void XMLDocumentParser::initializeParserContext(const CString&)
 
 void XMLDocumentParser::doEnd()
 {
-#if ENABLE(XSLT)
-    if (m_sawXSLTransform) {
-        document()->setTransformSource(adoptPtr(new TransformSource(m_originalSourceForTransform.toString())));
-        document()->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
-        document()->styleResolverChanged(RecalcStyleImmediately);
-
-        // styleResolverChanged() call can detach the parser and null out its document.
-        // In that case, we just bail out.
-        if (isDetached())
-            return;
-
-        document()->setParsing(true);
-        DocumentParser::stopParsing();
-    }
-#endif
-
     if (m_stream.error() == QXmlStreamReader::PrematureEndOfDocumentError
         || (m_wroteText && !m_sawFirstElement && !m_sawXSLTransform && !m_sawError))
         handleError(XMLErrors::fatal, qPrintable(m_stream.errorString()), textPosition());
@@ -591,11 +575,6 @@ void XMLDocumentParser::parseProcessingInstruction()
 
     if (pi->isCSS())
         m_sawCSS = true;
-#if ENABLE(XSLT)
-    m_sawXSLTransform = !m_sawFirstElement && pi->isXSL();
-    if (m_sawXSLTransform && !document()->transformSourceDocument())
-        stopParsing();
-#endif
 }
 
 void XMLDocumentParser::parseCdata()

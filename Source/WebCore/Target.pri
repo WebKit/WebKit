@@ -3572,12 +3572,6 @@ enable?(XSLT) {
                 xml/XSLImportRule.h \
                 xml/XSLTUnicodeSort.h
 
-    } else {
-        SOURCES += \
-            dom/TransformSourceQt.cpp \
-            xml/XSLStyleSheetQt.cpp \
-            xml/XSLTProcessor.cpp \
-            xml/XSLTProcessorQt.cpp
     }
 }
 
