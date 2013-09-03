@@ -1271,18 +1271,6 @@ bool RenderLayer::updateLayerPosition()
             localPoint += offset;
         }
     } else if (parent()) {
-        if (isComposited()) {
-            // FIXME: Composited layers ignore pagination, so about the best we can do is make sure they're offset into the appropriate column.
-            // They won't split across columns properly.
-            LayoutSize columnOffset;
-            if (!parent()->renderer()->hasColumns() && parent()->renderer()->isRoot() && renderer()->view()->hasColumns())
-                renderer()->view()->adjustForColumns(columnOffset, localPoint);
-            else
-                parent()->renderer()->adjustForColumns(columnOffset, localPoint);
-
-            localPoint += columnOffset;
-        }
-
         if (parent()->renderer()->hasOverflowClip()) {
             IntSize scrollOffset = parent()->scrolledContentOffset();
             localPoint -= scrollOffset;
@@ -1892,22 +1880,22 @@ void RenderLayer::insertOnlyThisLayer()
     clearClipRectsIncludingDescendants();
 }
 
-void RenderLayer::convertToPixelSnappedLayerCoords(const RenderLayer* ancestorLayer, IntPoint& roundedLocation) const
+void RenderLayer::convertToPixelSnappedLayerCoords(const RenderLayer* ancestorLayer, IntPoint& roundedLocation, ColumnOffsetAdjustment adjustForColumns) const
 {
     LayoutPoint location = roundedLocation;
-    convertToLayerCoords(ancestorLayer, location);
+    convertToLayerCoords(ancestorLayer, location, adjustForColumns);
     roundedLocation = roundedIntPoint(location);
 }
 
-void RenderLayer::convertToPixelSnappedLayerCoords(const RenderLayer* ancestorLayer, IntRect& roundedRect) const
+void RenderLayer::convertToPixelSnappedLayerCoords(const RenderLayer* ancestorLayer, IntRect& roundedRect, ColumnOffsetAdjustment adjustForColumns) const
 {
     LayoutRect rect = roundedRect;
-    convertToLayerCoords(ancestorLayer, rect);
+    convertToLayerCoords(ancestorLayer, rect, adjustForColumns);
     roundedRect = pixelSnappedIntRect(rect);
 }
 
 // Returns the layer reached on the walk up towards the ancestor.
-static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLayer* layer, const RenderLayer* ancestorLayer, LayoutPoint& location)
+static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLayer* layer, const RenderLayer* ancestorLayer, LayoutPoint& location, RenderLayer::ColumnOffsetAdjustment adjustForColumns)
 {
     ASSERT(ancestorLayer != layer);
 
@@ -2012,23 +2000,32 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
         return 0;
 
     location += toSize(layer->location());
+
+    if (adjustForColumns == RenderLayer::AdjustForColumns) {
+        if (RenderLayer* parentLayer = layer->parent()) {
+            LayoutSize layerColumnOffset;
+            parentLayer->renderer()->adjustForColumns(layerColumnOffset, location);
+            location += layerColumnOffset;
+        }
+    }
+
     return parentLayer;
 }
 
-void RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutPoint& location) const
+void RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutPoint& location, ColumnOffsetAdjustment adjustForColumns) const
 {
     if (ancestorLayer == this)
         return;
 
     const RenderLayer* currLayer = this;
     while (currLayer && currLayer != ancestorLayer)
-        currLayer = accumulateOffsetTowardsAncestor(currLayer, ancestorLayer, location);
+        currLayer = accumulateOffsetTowardsAncestor(currLayer, ancestorLayer, location, adjustForColumns);
 }
 
-void RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutRect& rect) const
+void RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutRect& rect, ColumnOffsetAdjustment adjustForColumns) const
 {
     LayoutPoint delta;
-    convertToLayerCoords(ancestorLayer, delta);
+    convertToLayerCoords(ancestorLayer, delta, adjustForColumns);
     rect.move(-delta.x(), -delta.y());
 }
 

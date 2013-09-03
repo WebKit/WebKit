@@ -444,7 +444,7 @@ void RenderLayerBacking::updateCompositedBounds()
             clippingBounds.intersect(m_owningLayer->backgroundClipRect(RenderLayer::ClipRectsContext(rootLayer, 0, AbsoluteClipRects)).rect()); // FIXME: Incorrect for CSS regions.
 
         LayoutPoint delta;
-        m_owningLayer->convertToLayerCoords(rootLayer, delta);
+        m_owningLayer->convertToLayerCoords(rootLayer, delta, RenderLayer::AdjustForColumns);
         clippingBounds.move(-delta.x(), -delta.y());
 
         layerBounds.intersect(pixelSnappedIntRect(clippingBounds));
@@ -651,7 +651,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     IntRect relativeCompositingBounds(localCompositingBounds);
     IntPoint delta;
-    m_owningLayer->convertToPixelSnappedLayerCoords(compAncestor, delta);
+    m_owningLayer->convertToPixelSnappedLayerCoords(compAncestor, delta, RenderLayer::AdjustForColumns);
     relativeCompositingBounds.moveBy(delta);
 
     IntPoint graphicsLayerParentLocation;
