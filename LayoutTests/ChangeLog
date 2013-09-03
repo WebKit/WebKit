@@ -1,3 +1,20 @@
+2013-09-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        The test inspector/geolocation-success.html is unreliable
+        https://bugs.webkit.org/show_bug.cgi?id=120655
+
+        Reviewed by Alexey Proskuryakov.
+
+        * inspector/geolocation-success.html:
+        The test was expecting everything would be done in the page context
+        when InspectorTest.evaluateInPage invoke the callback.
+
+        This is not the case, geolocation APIs are asynchronous.
+        The callbacks printLocation() and printError() may or may not be executed.
+
+        To fix this, the execution of each step is changed to depends on the completion
+        of the geolocation callback.
+
 2013-09-03  Oliver Hunt  <oliver@apple.com>
 
         Support structured clone of Map and Set

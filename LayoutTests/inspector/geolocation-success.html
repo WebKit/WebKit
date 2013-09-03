@@ -15,32 +15,35 @@ if (window.testRunner) {
 } else
     debug('This test can not be run without the LayoutTestController');
 
-function getGeolocation()
+function getGeolocation(webInspectorCallbackString)
 {
     function printLocation(pos)
     {
         console.log('lat: ' + pos.coords.latitude + ', long: ' + pos.coords.longitude);
+        finishTest();
     }
     function printError(err)
     {
         console.log('Error: ' + err.code);
+        finishTest();
+    }
+    function finishTest()
+    {
+        testRunner.evaluateInWebInspector(0, webInspectorCallbackString);
     }
     navigator.geolocation.getCurrentPosition(printLocation, printError, [])
 }
 
 function test()
 {
-    function callbackComplete()
-    {
-        InspectorTest.completeTest();
-    }
-    function callback()
+    window.testStep2 = function()
     {
         PageAgent.clearGeolocationOverride();
-        InspectorTest.evaluateInPage("getGeolocation()", callbackComplete);
+        InspectorTest.evaluateInPage("getGeolocation('InspectorTest.completeTest()')");
     }
+
     PageAgent.setGeolocationOverride(43.476093, -80.540299, 150);
-    InspectorTest.evaluateInPage("getGeolocation()", callback);
+    InspectorTest.evaluateInPage("getGeolocation('window.testStep2()')");
 }
 
 
