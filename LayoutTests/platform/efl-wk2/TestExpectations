@@ -216,7 +216,6 @@ webkit.org/b/108355 storage/websql/sql-error-codes.html [ Crash Pass ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # Missing EFL's accessibility functions
-webkit.org/b/112027 accessibility/aria-describedby-on-input.html [ Failure ]
 webkit.org/b/111984 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
 webkit.org/b/111986 accessibility/aria-invalid.html [ Failure ]
 webkit.org/b/111987 accessibility/aria-link-supports-press.html [ Failure ]
