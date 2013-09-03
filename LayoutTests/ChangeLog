@@ -1,3 +1,23 @@
+2013-09-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Support the "json" responseType and JSON response entity in XHR
+        https://bugs.webkit.org/show_bug.cgi?id=73648
+
+        Reviewed by Oliver Hunt.
+
+        Add regression tests for XMLHttpRequest.response of type 'json'.
+
+        Two of these tests (valid & invalid) come from Jarred Nicholls's original patch.
+
+        * fast/xmlhttprequest/resources/xmlhttprequest-responsetype-json-utf-16.json: Added.
+        * fast/xmlhttprequest/resources/xmlhttprequest-responsetype-json.json: Added.
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-json-invalid-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-json-invalid.html: Added.
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-json-utf16-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-json-utf16.html: Added.
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-json-valid-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-json-valid.html: Added.
+
 2013-09-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r154881.

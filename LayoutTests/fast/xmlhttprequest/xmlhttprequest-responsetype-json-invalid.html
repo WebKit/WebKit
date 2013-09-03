@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+description('Tests XMLHttpRequest.responseType of "json" with an invalid payload.');
+
+var xhr = new XMLHttpRequest();
+var url = 'resources/xmlhttprequest-get-data.xml';
+
+xhr.open('GET', url);
+xhr.responseType = 'json';
+xhr.onload = function() {
+    shouldBeNull('xhr.response');
+    finishJSTest();
+};
+xhr.onerror = function() {
+    testFailed('An error occurred while loading "' + url + '"');
+    finishJSTest();
+};
+xhr.send(null);
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

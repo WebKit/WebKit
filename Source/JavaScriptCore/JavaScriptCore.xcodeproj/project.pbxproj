@@ -957,7 +957,7 @@
 		A7E5AB3A1799E4B200D2833D /* X86Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E5AB361799E4B200D2833D /* X86Disassembler.cpp */; };
 		A7F2996B17A0BB670010417A /* FTLFail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F2996917A0BB670010417A /* FTLFail.cpp */; };
 		A7F2996C17A0BB670010417A /* FTLFail.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F2996A17A0BB670010417A /* FTLFail.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A7F9935F0FD7325100A0B2D0 /* JSONObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F9935D0FD7325100A0B2D0 /* JSONObject.h */; };
+		A7F9935F0FD7325100A0B2D0 /* JSONObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F9935D0FD7325100A0B2D0 /* JSONObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7F993600FD7325100A0B2D0 /* JSONObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F9935E0FD7325100A0B2D0 /* JSONObject.cpp */; };
 		A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */; };
 		A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };

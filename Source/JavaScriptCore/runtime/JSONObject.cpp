@@ -819,6 +819,19 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec)
     return JSValue::encode(result);
 }
 
+JSValue JSONParse(ExecState* exec, const String& json)
+{
+    LocalScope scope(exec->vm());
+
+    if (json.is8Bit()) {
+        LiteralParser<LChar> jsonParser(exec, json.characters8(), json.length(), StrictJSON);
+        return jsonParser.tryLiteralParse();
+    }
+
+    LiteralParser<UChar> jsonParser(exec, json.characters16(), json.length(), StrictJSON);
+    return jsonParser.tryLiteralParse();
+}
+
 String JSONStringify(ExecState* exec, JSValue value, unsigned indent)
 {
     LocalScope scope(exec->vm());

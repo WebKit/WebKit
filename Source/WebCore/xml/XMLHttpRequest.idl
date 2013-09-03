@@ -31,8 +31,7 @@ enum XMLHttpRequestResponseType {
     "arraybuffer",
     "blob",
     "document",
-//    FIXME: enable once support for json responseText is completed. (bug #73648)
-//    "json",
+    "json",
     "text"
 };
 
@@ -87,7 +86,7 @@ enum XMLHttpRequestResponseType {
     [GetterRaisesException] readonly attribute Document responseXML;
 
     [SetterRaisesException] attribute XMLHttpRequestResponseType responseType;
-    [GetterRaisesException, CustomGetter] readonly attribute Object response;
+    [GetterRaisesException, CachedAttribute, CustomGetter] readonly attribute Object response;
 
     [GetterRaisesException] readonly attribute unsigned short status;
     [GetterRaisesException] readonly attribute DOMString statusText;

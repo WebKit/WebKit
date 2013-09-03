@@ -1,0 +1,10 @@
+Tests XMLHttpRequest.responseType of "json" fails to parse if the payload was encoded with UTF-16.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL jsonXHR.response should be null. Was [object Object].
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

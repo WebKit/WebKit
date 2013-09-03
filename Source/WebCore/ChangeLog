@@ -1,3 +1,51 @@
+2013-09-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Support the "json" responseType and JSON response entity in XHR
+        https://bugs.webkit.org/show_bug.cgi?id=73648
+
+        Reviewed by Oliver Hunt.
+
+        Based on the patch written by Jarred Nicholls.
+
+        Implement 'json' type for XMLHttpRequest.response. We cache the result on JSC side as a cached attribute
+        unlike other response types like 'document' and 'blob' for which the parsed response object is cached
+        in XMLHttpRequest itself. In the long run, we should do the same for other types of response types.
+
+        Also refactored the various code to share the code.
+
+        Tests: fast/xmlhttprequest/xmlhttprequest-responsetype-json-invalid.html
+               fast/xmlhttprequest/xmlhttprequest-responsetype-json-utf16.html
+               fast/xmlhttprequest/xmlhttprequest-responsetype-json-valid.html
+
+        * ForwardingHeaders/runtime/JSONObject.h: Added.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::visitChildren):
+        (WebCore::JSXMLHttpRequest::response): Use JSONParse to parse the response text and cache the result.
+        Call didCacheResponseJSON to set the cache status and clear the original response buffer.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest): Added m_responseCacheIsValid to invalidate the cache of
+        a json response.
+        (WebCore::XMLHttpRequest::responseText):
+        (WebCore::XMLHttpRequest::didCacheResponseJSON): Added; Updates m_responseCacheIsValid and clears the
+        response buffer to save memory.
+        (WebCore::XMLHttpRequest::responseXML):
+        (WebCore::XMLHttpRequest::setResponseType):
+        (WebCore::XMLHttpRequest::responseType):
+        (WebCore::XMLHttpRequest::clearResponseBuffers):
+        (WebCore::XMLHttpRequest::didReceiveData):
+
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::doneWithoutErrors): Extracted from responseXML.
+        (WebCore::XMLHttpRequest::responseTextIgnoringResponseType): Extracted from responseText.
+        (WebCore::XMLHttpRequest::responseCacheIsValid): Added.
+        (WebCore::XMLHttpRequest::shouldDecodeResponse): Extracted from didReceiveData.
+        Also modified to decode when the response type is ResponseTypeJSON.
+
+        * xml/XMLHttpRequest.idl: Added CachedAttribute IDL extention on response property. This cache is
+        used when the response type is 'json'.
+
 2013-09-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r154881.

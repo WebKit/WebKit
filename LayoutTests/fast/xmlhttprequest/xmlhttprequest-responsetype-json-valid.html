@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+description('Tests XMLHttpRequest.responseType of "json" with a valid payload.');
+
+var jsonXHR = new XMLHttpRequest();
+var textXHR = new XMLHttpRequest();
+var jsonUrl = 'resources/xmlhttprequest-responsetype-json.json';
+var response;
+var responseText;
+
+jsonXHR.open('GET', jsonUrl);
+jsonXHR.responseType = 'json';
+jsonXHR.onload = function() {
+    shouldBeNonNull('jsonXHR.response');
+    shouldBe('jsonXHR.response', 'jsonXHR.response');
+
+    textXHR.open('GET', jsonUrl);
+    textXHR.onload = function() {
+        shouldBe('JSON.stringify(jsonXHR.response)', 'JSON.stringify(JSON.parse(textXHR.responseText))');
+
+        // When calling open() to reuse an XHR instance, the cached response
+        // should have been cleared.
+        shouldBeNull('jsonXHR.open("GET", jsonUrl); jsonXHR.response');
+
+        finishJSTest();
+    };
+    textXHR.onerror = function() {
+        testFailed('An error occurred while loading "' + jsonUrl + '"');
+        finishJSTest();
+    };
+    textXHR.send(null);
+};
+jsonXHR.onerror = function() {
+    testFailed('An error occurred while loading "' + jsonUrl + '"');
+    finishJSTest();
+};
+
+shouldBeNull('jsonXHR.response');
+jsonXHR.send(null);
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>
