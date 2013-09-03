@@ -82,11 +82,11 @@ SOURCES += \
     bytecode/Watchpoint.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     bytecompiler/NodesCodegen.cpp \
+    heap/CodeBlockSet.cpp \
     heap/CopiedSpaceInlines.h \
     heap/CopiedSpace.cpp \
     heap/CopyVisitor.cpp \
     heap/ConservativeRoots.cpp \
-    heap/DFGCodeBlocks.cpp \
     heap/Weak.cpp \
     heap/WeakBlock.cpp \
     heap/WeakHandleOwner.cpp \

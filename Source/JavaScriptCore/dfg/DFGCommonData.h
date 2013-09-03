@@ -66,11 +66,7 @@ struct WeakReferenceTransition {
 class CommonData {
     WTF_MAKE_NONCOPYABLE(CommonData);
 public:
-    CommonData()
-        : mayBeExecuting(false)
-        , isJettisoned(false)
-    {
-    }
+    CommonData() { }
     
     void notifyCompilingStructureTransition(Plan&, CodeBlock*, Node*);
     
@@ -81,11 +77,8 @@ public:
     Vector<WriteBarrier<JSCell> > weakReferences;
     
     RefPtr<Profiler::Compilation> compilation;
-    bool mayBeExecuting;
-    bool isJettisoned;
     bool livenessHasBeenProved; // Initialized and used on every GC.
     bool allTransitionsHaveBeenMarked; // Initialized and used on every GC.
-    unsigned visitAggregateHasBeenCalled; // Unsigned to make it work seamlessly with the broadest set of CAS implementations.
 };
 
 } } // namespace JSC::DFG

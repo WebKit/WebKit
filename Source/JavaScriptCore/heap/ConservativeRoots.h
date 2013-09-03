@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-class DFGCodeBlocks;
+class CodeBlockSet;
 class Heap;
 class JITStubRoutineSet;
 class JSCell;
@@ -44,7 +44,7 @@ public:
 
     void add(void* begin, void* end);
     void add(void* begin, void* end, JITStubRoutineSet&);
-    void add(void* begin, void* end, JITStubRoutineSet&, DFGCodeBlocks&);
+    void add(void* begin, void* end, JITStubRoutineSet&, CodeBlockSet&);
     
     size_t size();
     JSCell** roots();

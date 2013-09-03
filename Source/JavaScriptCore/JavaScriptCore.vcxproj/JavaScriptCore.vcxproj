@@ -330,10 +330,10 @@
     <ClCompile Include="..\dfg\DFGDriver.cpp" />
     <ClCompile Include="..\disassembler\Disassembler.cpp" />
     <ClCompile Include="..\heap\BlockAllocator.cpp" />
+    <ClCompile Include="..\heap\CodeBlockSet.cpp" />
     <ClCompile Include="..\heap\ConservativeRoots.cpp" />
     <ClCompile Include="..\heap\CopiedSpace.cpp" />
     <ClCompile Include="..\heap\CopyVisitor.cpp" />
-    <ClCompile Include="..\heap\DFGCodeBlocks.cpp" />
     <ClCompile Include="..\heap\GCThread.cpp" />
     <ClCompile Include="..\heap\GCThreadSharedData.cpp" />
     <ClCompile Include="..\heap\HandleSet.cpp" />
@@ -679,6 +679,7 @@
     <ClInclude Include="..\dfg\DFGOSREntry.h" />
     <ClInclude Include="..\disassembler\Disassembler.h" />
     <ClInclude Include="..\heap\BlockAllocator.h" />
+    <ClInclude Include="..\heap\CodeBlockSet.h" />
     <ClInclude Include="..\heap\ConservativeRoots.h" />
     <ClInclude Include="..\heap\CopiedAllocator.h" />
     <ClInclude Include="..\heap\CopiedBlock.h" />
@@ -689,7 +690,6 @@
     <ClInclude Include="..\heap\CopyVisitor.h" />
     <ClInclude Include="..\heap\CopyVisitorInlines.h" />
     <ClInclude Include="..\heap\CopyWorkList.h" />
-    <ClInclude Include="..\heap\DFGCodeBlocks.h" />
     <ClInclude Include="..\heap\GCAssertions.h" />
     <ClInclude Include="..\heap\GCThread.h" />
     <ClInclude Include="..\heap\GCThreadSharedData.h" />

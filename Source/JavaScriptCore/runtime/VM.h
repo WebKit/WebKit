@@ -274,17 +274,6 @@ namespace JSC {
         NumericStrings numericStrings;
         DateInstanceCache dateInstanceCache;
         WTF::SimpleStats machineCodeBytesPerBytecodeWordForBaselineJIT;
-        Vector<CodeBlock*> codeBlocksBeingCompiled;
-        void startedCompiling(CodeBlock* codeBlock)
-        {
-            codeBlocksBeingCompiled.append(codeBlock);
-        }
-
-        void finishedCompiling(CodeBlock* codeBlock)
-        {
-            ASSERT_UNUSED(codeBlock, codeBlock == codeBlocksBeingCompiled.last());
-            codeBlocksBeingCompiled.removeLast();
-        }
 
         void setInDefineOwnProperty(bool inDefineOwnProperty)
         {

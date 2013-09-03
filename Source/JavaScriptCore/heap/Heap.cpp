@@ -354,11 +354,6 @@ bool Heap::unprotect(JSValue k)
     return m_protectedValues.remove(k.asCell());
 }
 
-void Heap::jettisonDFGCodeBlock(PassRefPtr<CodeBlock> codeBlock)
-{
-    m_dfgCodeBlocks.jettison(codeBlock);
-}
-
 void Heap::addReference(JSCell* cell, ArrayBuffer* buffer)
 {
     if (m_arrayBuffers.addReference(cell, buffer)) {
@@ -457,11 +452,10 @@ void Heap::markRoots()
     }
 
     ConservativeRoots stackRoots(&m_objectSpace.blocks(), &m_storageSpace);
-    m_dfgCodeBlocks.clearMarks();
+    m_codeBlocks.clearMarks();
     {
         GCPHASE(GatherStackRoots);
-        stack().gatherConservativeRoots(
-            stackRoots, m_jitStubRoutines, m_dfgCodeBlocks);
+        stack().gatherConservativeRoots(stackRoots, m_jitStubRoutines, m_codeBlocks);
     }
 
 #if ENABLE(DFG_JIT)
@@ -484,12 +478,6 @@ void Heap::markRoots()
 
     {
         ParallelModeEnabler enabler(visitor);
-
-        if (m_vm->codeBlocksBeingCompiled.size()) {
-            GCPHASE(VisitActiveCodeBlock);
-            for (size_t i = 0; i < m_vm->codeBlocksBeingCompiled.size(); i++)
-                m_vm->codeBlocksBeingCompiled[i]->visitAggregate(visitor);
-        }
 
         m_vm->smallStrings.visitStrongReferences(visitor);
 
@@ -558,7 +546,7 @@ void Heap::markRoots()
         {
             GCPHASE(TraceCodeBlocksAndJITStubRoutines);
             MARK_LOG_ROOT(visitor, "Trace Code Blocks and JIT Stub Routines");
-            m_dfgCodeBlocks.traceMarkedCodeBlocks(visitor);
+            m_codeBlocks.traceMarked(visitor);
             m_jitStubRoutines.traceMarkedStubRoutines(visitor);
             visitor.donateAndDrain();
         }
@@ -683,8 +671,8 @@ void Heap::deleteAllCompiledCode()
         static_cast<FunctionExecutable*>(current)->clearCodeIfNotCompiling();
     }
 
-    m_dfgCodeBlocks.clearMarks();
-    m_dfgCodeBlocks.deleteUnmarkedJettisonedCodeBlocks();
+    m_codeBlocks.clearMarks();
+    m_codeBlocks.deleteUnmarkedAndUnreferenced();
 }
 
 void Heap::deleteUnmarkedCompiledCode()
@@ -701,7 +689,7 @@ void Heap::deleteUnmarkedCompiledCode()
         m_compiledCode.remove(current);
     }
 
-    m_dfgCodeBlocks.deleteUnmarkedJettisonedCodeBlocks();
+    m_codeBlocks.deleteUnmarkedAndUnreferenced();
     m_jitStubRoutines.deleteUnmarkedJettisonedStubRoutines();
 }
 

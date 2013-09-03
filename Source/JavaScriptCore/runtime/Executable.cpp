@@ -90,20 +90,6 @@ Intrinsic NativeExecutable::intrinsic() const
 }
 #endif
 
-#if ENABLE(JIT)
-// Utility method used for jettisoning code blocks.
-template<typename T>
-static void jettisonCodeBlock(VM& vm, RefPtr<T>& codeBlock)
-{
-    ASSERT(JITCode::isOptimizingJIT(codeBlock->jitType()));
-    ASSERT(codeBlock->alternative());
-    RefPtr<T> codeBlockToJettison = codeBlock.release();
-    codeBlock = static_pointer_cast<T>(codeBlockToJettison->releaseAlternative());
-    codeBlockToJettison->unlinkIncomingCalls();
-    vm.heap.jettisonDFGCodeBlock(static_pointer_cast<CodeBlock>(codeBlockToJettison.release()));
-}
-#endif
-
 const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase::s_info, 0, 0, CREATE_METHOD_TABLE(ScriptExecutable) };
 
 #if ENABLE(JIT)
@@ -124,12 +110,6 @@ void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
         vm.m_perBytecodeProfiler->ensureBytecodesFor(genericCodeBlock);
     
     ASSERT(vm.heap.isDeferred());
-    
-    if (JITCode::isJIT(genericCodeBlock->jitType())) {
-        vm.heap.reportExtraMemoryCost(
-            sizeof(CodeBlock) + genericCodeBlock->jitCode()->size());
-    } else
-        vm.heap.reportExtraMemoryCost(sizeof(CodeBlock));
     
     CodeSpecializationKind kind = genericCodeBlock->specializationKind();
     
@@ -376,15 +356,6 @@ inline const char* samplingDescription(JITCode::JITType jitType)
     }
 }
 
-#if ENABLE(JIT)
-void EvalExecutable::jettisonOptimizedCode(VM& vm)
-{
-    jettisonCodeBlock(vm, m_evalCodeBlock);
-    m_jitCodeForCall = m_evalCodeBlock->jitCode();
-    ASSERT(!m_jitCodeForCallWithArityCheck);
-}
-#endif // ENABLE(JIT)
-
 void EvalExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     EvalExecutable* thisObject = jsCast<EvalExecutable*>(cell);
@@ -425,15 +396,6 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     ASSERT(error.m_type != ParserError::ErrorNone);
     return error.toErrorObject(lexicalGlobalObject, m_source);
 }
-
-#if ENABLE(JIT)
-void ProgramExecutable::jettisonOptimizedCode(VM& vm)
-{
-    jettisonCodeBlock(vm, m_programCodeBlock);
-    m_jitCodeForCall = m_programCodeBlock->jitCode();
-    ASSERT(!m_jitCodeForCallWithArityCheck);
-}
-#endif
 
 void ProgramExecutable::unlinkCalls()
 {
@@ -517,22 +479,6 @@ FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKi
     ASSERT(JITCode::isBaselineCode(result->jitType()));
     return result;
 }
-
-#if ENABLE(JIT)
-void FunctionExecutable::jettisonOptimizedCodeForCall(VM& vm)
-{
-    jettisonCodeBlock(vm, m_codeBlockForCall);
-    m_jitCodeForCall = m_codeBlockForCall->jitCode();
-    m_jitCodeForCallWithArityCheck = m_codeBlockForCall->jitCodeWithArityCheck();
-}
-
-void FunctionExecutable::jettisonOptimizedCodeForConstruct(VM& vm)
-{
-    jettisonCodeBlock(vm, m_codeBlockForConstruct);
-    m_jitCodeForConstruct = m_codeBlockForConstruct->jitCode();
-    m_jitCodeForConstructWithArityCheck = m_codeBlockForConstruct->jitCodeWithArityCheck();
-}
-#endif
 
 void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {

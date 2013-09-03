@@ -41,8 +41,8 @@
 
 namespace JSC {
 
+    class CodeBlockSet;
     class ConservativeRoots;
-    class DFGCodeBlocks;
     class ExecState;
     class JITStubRoutineSet;
     class VM;
@@ -71,7 +71,7 @@ namespace JSC {
         ~JSStack();
         
         void gatherConservativeRoots(ConservativeRoots&);
-        void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, DFGCodeBlocks&);
+        void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&);
 
         Register* begin() const { return static_cast<Register*>(m_reservation.base()); }
         Register* end() const { return m_end; }

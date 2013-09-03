@@ -445,10 +445,6 @@ public:
 
     static void destroy(JSCell*);
 
-#if ENABLE(JIT)
-    void jettisonOptimizedCode(VM&);
-#endif
-
     EvalCodeBlock* codeBlock()
     {
         return m_evalCodeBlock.get();
@@ -505,10 +501,6 @@ public:
     JSObject* initializeGlobalProperties(VM&, CallFrame*, JSScope*);
 
     static void destroy(JSCell*);
-
-#if ENABLE(JIT)
-    void jettisonOptimizedCode(VM&);
-#endif
 
     ProgramCodeBlock* codeBlock()
     {
@@ -581,10 +573,6 @@ public:
         return m_codeBlockForConstruct.get();
     }
         
-#if ENABLE(JIT)
-    void jettisonOptimizedCodeForCall(VM&);
-#endif
-
     bool isGeneratedForCall() const
     {
         return m_codeBlockForCall;
@@ -595,10 +583,6 @@ public:
         return m_codeBlockForCall.get();
     }
 
-#if ENABLE(JIT)
-    void jettisonOptimizedCodeForConstruct(VM&);
-#endif
-
     bool isGeneratedForConstruct() const
     {
         return m_codeBlockForConstruct;
@@ -608,18 +592,6 @@ public:
     {
         return m_codeBlockForConstruct.get();
     }
-        
-#if ENABLE(JIT)
-    void jettisonOptimizedCodeFor(VM& vm, CodeSpecializationKind kind)
-    {
-        if (kind == CodeForCall) 
-            jettisonOptimizedCodeForCall(vm);
-        else {
-            ASSERT(kind == CodeForConstruct);
-            jettisonOptimizedCodeForConstruct(vm);
-        }
-    }
-#endif
         
     bool isGeneratedFor(CodeSpecializationKind kind)
     {

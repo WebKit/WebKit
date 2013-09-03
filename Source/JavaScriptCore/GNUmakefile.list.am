@@ -442,6 +442,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/ftl/FTLValueFromBlock.h \
 	Source/JavaScriptCore/ftl/FTLValueSource.cpp \
 	Source/JavaScriptCore/ftl/FTLValueSource.h \
+	Source/JavaScriptCore/heap/CodeBlockSet.cpp \
+	Source/JavaScriptCore/heap/CodeBlockSet.h \
 	Source/JavaScriptCore/heap/CopiedAllocator.h \
 	Source/JavaScriptCore/heap/CopiedBlock.h \
 	Source/JavaScriptCore/heap/CopiedBlockInlines.h \
@@ -456,8 +458,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/ConservativeRoots.cpp \
 	Source/JavaScriptCore/heap/ConservativeRoots.h \
 	Source/JavaScriptCore/heap/DeferGC.h \
-	Source/JavaScriptCore/heap/DFGCodeBlocks.cpp \
-	Source/JavaScriptCore/heap/DFGCodeBlocks.h \
 	Source/JavaScriptCore/heap/GCAssertions.h \
 	Source/JavaScriptCore/heap/GCIncomingRefCounted.h \
 	Source/JavaScriptCore/heap/GCIncomingRefCountedInlines.h \

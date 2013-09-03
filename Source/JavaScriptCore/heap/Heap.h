@@ -24,8 +24,8 @@
 
 #include "ArrayBuffer.h"
 #include "BlockAllocator.h"
+#include "CodeBlockSet.h"
 #include "CopyVisitor.h"
-#include "DFGCodeBlocks.h"
 #include "GCIncomingRefCountedSet.h"
 #include "GCThreadSharedData.h"
 #include "HandleSet.h"
@@ -144,8 +144,6 @@ namespace JSC {
         JS_EXPORT_PRIVATE void protect(JSValue);
         JS_EXPORT_PRIVATE bool unprotect(JSValue); // True when the protect count drops to 0.
         
-        void jettisonDFGCodeBlock(PassRefPtr<CodeBlock>);
-
         size_t extraSize(); // extra memory usage outside of pages allocated by the heap
         JS_EXPORT_PRIVATE size_t size();
         JS_EXPORT_PRIVATE size_t capacity();
@@ -273,7 +271,7 @@ namespace JSC {
 
         HandleSet m_handleSet;
         HandleStack m_handleStack;
-        DFGCodeBlocks m_dfgCodeBlocks;
+        CodeBlockSet m_codeBlocks;
         JITStubRoutineSet m_jitStubRoutines;
         FinalizerOwner m_finalizerOwner;
         

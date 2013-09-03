@@ -96,9 +96,9 @@ void JSStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
     conservativeRoots.add(begin(), getTopOfStack());
 }
 
-void JSStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, DFGCodeBlocks& dfgCodeBlocks)
+void JSStack::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
 {
-    conservativeRoots.add(begin(), getTopOfStack(), jitStubRoutines, dfgCodeBlocks);
+    conservativeRoots.add(begin(), getTopOfStack(), jitStubRoutines, codeBlocks);
 }
 
 void JSStack::releaseExcessCapacity()

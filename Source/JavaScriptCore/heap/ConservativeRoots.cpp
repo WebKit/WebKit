@@ -27,9 +27,9 @@
 #include "ConservativeRoots.h"
 
 #include "CodeBlock.h"
+#include "CodeBlockSet.h"
 #include "CopiedSpace.h"
 #include "CopiedSpaceInlines.h"
-#include "DFGCodeBlocks.h"
 #include "JSCell.h"
 #include "JSObject.h"
 #include "Structure.h"
@@ -140,10 +140,9 @@ private:
 };
 
 void ConservativeRoots::add(
-    void* begin, void* end, JITStubRoutineSet& jitStubRoutines, DFGCodeBlocks& dfgCodeBlocks)
+    void* begin, void* end, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
 {
-    CompositeMarkHook<JITStubRoutineSet, DFGCodeBlocks> markHook(
-        jitStubRoutines, dfgCodeBlocks);
+    CompositeMarkHook<JITStubRoutineSet, CodeBlockSet> markHook(jitStubRoutines, codeBlocks);
     genericAddSpan(begin, end, markHook);
 }
 

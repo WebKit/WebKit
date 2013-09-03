@@ -1,3 +1,74 @@
+2013-09-02  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeBlock::jettison() should be implicit
+        https://bugs.webkit.org/show_bug.cgi?id=120567
+
+        Reviewed by Oliver Hunt.
+        
+        This is a risky change from a performance standpoint, but I believe it's
+        necessary. This makes all CodeBlocks get swept by GC. Nobody but the GC
+        can delete CodeBlocks because the GC always holds a reference to them.
+        Once a CodeBlock reaches just one reference (i.e. the one from the GC)
+        then the GC will free it only if it's not on the stack.
+        
+        This allows me to get rid of the jettisoning logic. We need this for FTL
+        tier-up. Well; we don't need it, but it will help prevent a lot of bugs.
+        Previously, if you wanted to to replace one code block with another, you
+        had to remember to tell the GC that the previous code block is
+        "jettisoned". We would need to do this when tiering up from DFG to FTL
+        and when dealing with DFG-to-FTL OSR entry code blocks. There are a lot
+        of permutations here - tiering up to the FTL, OSR entering into the FTL,
+        deciding that an OSR entry code block is not relevant anymore - just to
+        name a few. In each of these cases we'd have to jettison the previous
+        code block. It smells like a huge source of future bugs.
+        
+        So I made jettisoning implicit by making the GC always watch out for a
+        CodeBlock being owned solely by the GC.
+        
+        This change is performance neutral.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::visitAggregate):
+        (JSC::CodeBlock::jettison):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::shouldImmediatelyAssumeLivenessDuringScan):
+        (JSC::CodeBlockSet::mark):
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::CommonData):
+        * heap/CodeBlockSet.cpp: Added.
+        (JSC::CodeBlockSet::CodeBlockSet):
+        (JSC::CodeBlockSet::~CodeBlockSet):
+        (JSC::CodeBlockSet::add):
+        (JSC::CodeBlockSet::clearMarks):
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced):
+        (JSC::CodeBlockSet::traceMarked):
+        * heap/CodeBlockSet.h: Added.
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::add):
+        * heap/ConservativeRoots.h:
+        * heap/DFGCodeBlocks.cpp: Removed.
+        * heap/DFGCodeBlocks.h: Removed.
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::deleteAllCompiledCode):
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        * heap/Heap.h:
+        * interpreter/JSStack.cpp:
+        (JSC::JSStack::gatherConservativeRoots):
+        * interpreter/JSStack.h:
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::installCode):
+        * runtime/Executable.h:
+        * runtime/VM.h:
+
 2013-09-02  Darin Adler  <darin@apple.com>
 
         [Mac] No need for HardAutorelease, which is same as CFBridgingRelease
