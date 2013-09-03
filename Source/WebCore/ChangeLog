@@ -1,3 +1,14 @@
+2013-09-03  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r154881.
+        http://trac.webkit.org/changeset/154881
+        https://bugs.webkit.org/show_bug.cgi?id=120643
+
+        Crashes on macworld.com (Requested by kling on #webkit).
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeInternal):
+
 2013-09-03  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
 
         [GStreamer] Don't set state to NULL until element is destroyed
