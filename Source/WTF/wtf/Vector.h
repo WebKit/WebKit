@@ -174,7 +174,7 @@ namespace WTF {
     {
         static void uninitializedFill(T* dst, T* dstEnd, const T& val) 
         {
-            ASSERT(sizeof(T) == sizeof(char));
+            COMPILE_ASSERT(sizeof(T) == sizeof(char), Size_of_type_should_be_equal_to_one);
 #if COMPILER(GCC) && defined(_FORTIFY_SOURCE)
             if (!__builtin_constant_p(dstEnd - dst) || (!(dstEnd - dst)))
 #endif

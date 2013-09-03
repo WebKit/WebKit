@@ -1,3 +1,15 @@
+2013-09-03  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Check WTF::VectorFiller template argument type size in compile time
+        https://bugs.webkit.org/show_bug.cgi?id=120631
+
+        Reviewed by Darin Adler.
+
+        The template argument's type size in WTF::VectorFiller 'memset' specialization
+        should be checked during compilation rather than in runtime.
+
+        * wtf/Vector.h:
+
 2013-09-02  Darin Adler  <darin@apple.com>
 
         Cut down on double hashing and code needlessly using hash table iterators
