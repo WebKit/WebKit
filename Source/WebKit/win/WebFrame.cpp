@@ -1669,12 +1669,12 @@ ResourceError WebFrame::interruptedForPolicyChangeError(const ResourceRequest& r
     return ResourceError(String(WebKitErrorDomain), WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().string(), WEB_UI_STRING("Frame load interrupted", "WebKitErrorFrameLoadInterruptedByPolicyChange description"));
 }
 
-ResourceError WebFrame::cannotShowMIMETypeError(const ResourceResponse&)
+ResourceError WebFrame::cannotShowMIMETypeError(const ResourceResponse& response)
 {
     return ResourceError(String(), WebKitErrorCannotShowMIMEType, response.url().string(), WEB_UI_STRING("Content with specified MIME type cant be shown", "WebKitErrorCannotShowMIMEType description"));
 }
 
-ResourceError WebFrame::fileDoesNotExistError(const ResourceResponse&)
+ResourceError WebFrame::fileDoesNotExistError(const ResourceResponse& response)
 {
     return ResourceError(String(WebURLErrorDomain), -1100, response.url().string(), String("File does not exist."));
 }
