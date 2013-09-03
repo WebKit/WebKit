@@ -107,6 +107,8 @@ public:
 
     void simulateAudioInterruption();
 
+    bool changePipelineState(GstState);
+
 private:
     MediaPlayerPrivateGStreamer(MediaPlayer*);
 
@@ -127,7 +129,6 @@ private:
     void asyncStateChangeDone();
 
     void createGSTPlayBin();
-    bool changePipelineState(GstState);
 
     bool loadNextLocation();
     void mediaLocationChanged(GstMessage*);
@@ -176,6 +177,7 @@ private:
     guint m_audioTimerHandler;
     guint m_textTimerHandler;
     guint m_videoTimerHandler;
+    guint m_readyTimerHandler;
     GRefPtr<GstElement> m_webkitAudioSink;
     mutable long m_totalBytes;
     KURL m_url;

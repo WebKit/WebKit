@@ -1,3 +1,35 @@
+2013-09-03  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
+
+        [GStreamer] Don't set state to NULL until element is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=117354
+
+        Reviewed by Philippe Normand.
+
+        Don't set playbin to NULL until it is going to be destroyed or if we stay
+        for too long on the READY state. Instead only set the state to READY as this
+        allows much faster state changes to PAUSED/PLAYING again. playbin internally
+        caches some state that is destroyed when setting it to NULL.
+        This state is independent of the URI and it is even possible to change the
+        URI in READY state.
+
+        To avoid having resources (e.g. audio devices) open indefinitely,
+        when setting the state to READY we create a timeout and if the timeout
+        is reached we reset the pipeline state to NULL to free resources.
+
+        Also now all state changes use the changePipelineState method instead of setting
+        the playbin state directly with gst_element_set_state, so we have a better control
+        of when we are requesting state changes.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateReadyStateTimeoutCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::commitLoad):
+        (WebCore::MediaPlayerPrivateGStreamer::changePipelineState):
+        (WebCore::MediaPlayerPrivateGStreamer::setRate):
+        (WebCore::MediaPlayerPrivateGStreamer::handlePluginInstallerResult):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2013-09-03  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Unneeded code in method GlyphPage::fill().
