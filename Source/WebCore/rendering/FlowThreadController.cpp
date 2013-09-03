@@ -33,6 +33,7 @@
 
 #include "NamedFlowCollection.h"
 #include "RenderFlowThread.h"
+#include "RenderLayer.h"
 #include "RenderNamedFlowThread.h"
 #include "StyleInheritedData.h"
 #include "WebKitNamedFlow.h"
@@ -280,6 +281,32 @@ void FlowThreadController::updateRenderFlowThreadLayersIfNeeded()
 bool FlowThreadController::isContentNodeRegisteredWithAnyNamedFlow(const Node* contentNode) const
 {
     return m_mapNamedFlowContentNodes.contains(contentNode);
+}
+
+// Collect the fixed positioned layers that have the named flows as containing block
+// These layers are painted and hit-tested starting from RenderView not from regions.
+void FlowThreadController::collectFixedPositionedLayers(Vector<RenderLayer*>& fixedPosLayers) const
+{
+    for (RenderNamedFlowThreadList::const_iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
+        RenderNamedFlowThread* flowRenderer = *iter;
+
+        // If the named flow does not have any regions attached, a fixed element should not be
+        // displayed even if the fixed element is positioned/sized by the viewport.
+        if (!flowRenderer->hasRegions())
+            continue;
+
+        // Iterate over the fixed positioned elements in the flow thread
+        TrackedRendererListHashSet* positionedDescendants = flowRenderer->positionedObjects();
+        if (positionedDescendants) {
+            TrackedRendererListHashSet::iterator end = positionedDescendants->end();
+            for (TrackedRendererListHashSet::iterator it = positionedDescendants->begin(); it != end; ++it) {
+                RenderBox* box = *it;
+                if (!box->fixedPositionedWithNamedFlowContainingBlock())
+                    continue;
+                fixedPosLayers.append(box->layer());
+            }
+        }
+    }
 }
 
 #ifndef NDEBUG

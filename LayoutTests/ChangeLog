@@ -1,3 +1,36 @@
+2013-09-03  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] position: fixed is computed relative to the first region, not the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=111176
+
+        Reviewed by David Hyatt.
+
+        Added new tests and changed the existing ones that were relying on incorrect positioning
+        for fixed elements.
+
+        * fast/regions/element-in-named-flow-absolute-from-fixed-expected.txt: Added.
+        * fast/regions/element-in-named-flow-absolute-from-fixed.html: Added.
+        * fast/regions/element-in-named-flow-fixed-from-absolute-expected.txt: Added.
+        * fast/regions/element-in-named-flow-fixed-from-absolute.html: Added.
+        * fast/regions/element-inflow-fixed-from-outflow-static-expected.txt: Added.
+        * fast/regions/element-inflow-fixed-from-outflow-static.html: Added.
+        * fast/regions/element-outflow-static-from-inflow-fixed-expected.txt: Added.
+        * fast/regions/element-outflow-static-from-inflow-fixed.html: Added.
+        * fast/regions/fixed-element-transformed-parent-expected.txt: Added.
+        * fast/regions/fixed-element-transformed-parent.html: Added.
+        * fast/regions/fixed-in-named-flow-scroll-expected.txt: Added.
+        * fast/regions/fixed-in-named-flow-scroll.html: Added.
+        * fast/regions/fixed-inside-fixed-in-named-flow-expected.html: Added.
+        * fast/regions/fixed-inside-fixed-in-named-flow.html: Added.
+        * fast/regions/fixed-inside-named-flow-zIndex-expected.html: Added.
+        * fast/regions/fixed-inside-named-flow-zIndex.html: Added.
+        * fast/regions/fixed-pos-elem-in-namedflow-noregions-expected.html: Added.
+        * fast/regions/fixed-pos-elem-in-namedflow-noregions.html: Added.
+        * fast/regions/fixed-pos-elem-in-region-expected.html:
+        * fast/regions/fixed-pos-elem-in-region.html:
+        * fast/regions/fixed-pos-region-in-nested-flow-expected.html: Added.
+        * fast/regions/fixed-pos-region-in-nested-flow.html: Added.
+
 2013-09-02  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         <https://webkit.org/b/98350> [GTK] accessibility/aria-invalid.html times out

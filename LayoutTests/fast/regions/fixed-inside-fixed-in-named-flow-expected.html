@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #greenOuter { position: absolute; top: 100px; left: 50px; width: 100px; height: 100px; background-color: green; }
+            #orangeInner { position: absolute; top: 50px; left: 50px; width: 100px; height: 100px; background-color: orange; }
+        </style>
+    </head>
+    <body>
+        <p>Test that a fixed positioned element inside another fixed positioned element collected in named flow is correctly positioned.</p>
+        <p>On success you should see 2 overlapping rectangles in the top left corner of the screen and no red.</p>
+        <div id="greenOuter">
+            <div id="orangeInner"></div>
+        </div>
+    </body>
+</html>

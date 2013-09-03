@@ -1,0 +1,5 @@
+(repaint rects
+  (rect 150 200 50 50)
+  (rect 50 100 50 50)
+)
+

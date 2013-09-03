@@ -1839,7 +1839,12 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
 
     mode &= ~ApplyContainerFlip;
 
-    o->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
+    // For fixed positioned elements inside out-of-flow named flows, we do not want to
+    // map their position further to regions based on their coordinates inside the named flows.
+    if (!o->isOutOfFlowRenderFlowThread() || !fixedPositionedWithNamedFlowContainingBlock())
+        o->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
+    else
+        o->mapLocalToContainer(toRenderLayerModelObject(o), transformState, mode, wasFixed);
 }
 
 const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
@@ -2967,6 +2972,9 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
         if (!flowThread)
             return toRenderBox(containingBlock)->clientLogicalWidth();
 
+        if (containingBlock->isRenderNamedFlowThread() && style()->position() == FixedPosition)
+            return containingBlock->view().clientLogicalWidth();
+
         const RenderBlock* cb = toRenderBlock(containingBlock);
         RenderBoxRegionInfo* boxInfo = 0;
         if (!region) {
@@ -3021,8 +3029,11 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
         const RenderBlock* cb = toRenderBlock(containingBlock);
         LayoutUnit result = cb->clientLogicalHeight();
         RenderFlowThread* flowThread = flowThreadContainingBlock();
-        if (flowThread && containingBlock->isRenderFlowThread() && flowThread->isHorizontalWritingMode() == containingBlock->isHorizontalWritingMode())
+        if (flowThread && containingBlock->isRenderFlowThread() && flowThread->isHorizontalWritingMode() == containingBlock->isHorizontalWritingMode()) {
+            if (containingBlock->isRenderNamedFlowThread() && style()->position() == FixedPosition)
+                return containingBlock->view().clientLogicalHeight();
             return toRenderFlowThread(containingBlock)->contentLogicalHeightOfFirstRegion();
+        }
         return result;
     }
         

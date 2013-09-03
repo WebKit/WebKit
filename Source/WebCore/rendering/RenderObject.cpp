@@ -624,6 +624,27 @@ RenderBoxModelObject* RenderObject::enclosingBoxModelObject() const
     return 0;
 }
 
+bool RenderObject::fixedPositionedWithNamedFlowContainingBlock() const
+{
+    return ((flowThreadState() == RenderObject::InsideOutOfFlowThread)
+        && (style()->position() == FixedPosition)
+        && (containingBlock()->isOutOfFlowRenderFlowThread()));
+}
+
+static bool hasFixedPosInNamedFlowContainingBlock(const RenderObject* renderer)
+{
+    ASSERT(renderer->flowThreadState() != RenderObject::NotInsideFlowThread);
+
+    RenderObject* curr = const_cast<RenderObject*>(renderer);
+    while (curr) {
+        if (curr->fixedPositionedWithNamedFlowContainingBlock())
+            return true;
+        curr = curr->containingBlock();
+    }
+
+    return false;
+}
+
 RenderFlowThread* RenderObject::locateFlowThreadContainingBlock() const
 {
     ASSERT(flowThreadState() != NotInsideFlowThread);
@@ -1305,6 +1326,10 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
     // repainting to do individual region repaints.
     RenderFlowThread* parentRenderFlowThread = flowThreadContainingBlock();
     if (parentRenderFlowThread) {
+        // If the element has a fixed positioned element with named flow as CB along the CB chain
+        // then the repaint container is not the flow thread.
+        if (hasFixedPosInNamedFlowContainingBlock(this))
+            return repaintContainer;
         // The ancestor document will do the reparenting when the repaint propagates further up.
         // We're just a seamless child document, and we don't need to do the hacking.
         if (parentRenderFlowThread && &parentRenderFlowThread->document() != &document())

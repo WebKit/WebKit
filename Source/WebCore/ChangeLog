@@ -1,3 +1,65 @@
+2013-09-03  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] position: fixed is computed relative to the first region, not the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=111176
+
+        Reviewed by David Hyatt.
+
+        Fixed positioned elements inside a named flow should be positioned and sized relative to the viewport,
+        not on the first region, as described in the spec: http://dev.w3.org/csswg/css-regions/#the-flow-into-property.
+        While the flow thread will still act as containing block for the fixed positioned elements, the painting and hit
+        testing for the fixed positioned elements is done by RenderView. The layers for the fixed positioned elements
+        are collected by the flow thread.
+ 
+        Tests: fast/regions/element-in-named-flow-absolute-from-fixed.html
+               fast/regions/element-in-named-flow-fixed-from-absolute.html
+               fast/regions/element-inflow-fixed-from-outflow-static.html
+               fast/regions/element-outflow-static-from-inflow-fixed.html
+               fast/regions/fixed-element-transformed-parent.html
+               fast/regions/fixed-in-named-flow-scroll.html
+               fast/regions/fixed-inside-fixed-in-named-flow.html
+               fast/regions/fixed-inside-named-flow-zIndex.html
+               fast/regions/fixed-pos-elem-in-namedflow-noregions.html
+               fast/regions/fixed-pos-region-in-nested-flow.html
+
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::collectFixedPositionedLayers):
+        Return the list of layers for the fixed positioned elements with named flows as containing blocks.
+        Used in RenderLayer:: paintFixedLayersInNamedFlows and RenderLayer:: hitTestFixedLayersInNamedFlows.
+        * rendering/FlowThreadController.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned):
+        For fixed positioned elements, width and height are given by the view instead of the first region.
+        * rendering/RenderLayer.cpp:
+        (WebCore::accumulateOffsetTowardsAncestor):
+        Modified for the fixed positioned elements inside named flows with the named flows as containing block
+        to take into account the view scroll.
+        (WebCore::compareZIndex):
+        Moved upwards because it is used in RenderLayer::paintFixedLayersInNamedFlows.
+        (WebCore::RenderLayer::paintFixedLayersInNamedFlows):
+        Paint the list of fixed layers directly from the RenderView instead of painting them through regions -> named flows.
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintList):
+        (WebCore::RenderLayer::hitTestFixedLayersInNamedFlows):
+        Hit test the layers for the fix positioned elements inside named flows from the RenderView layer
+        instead of the region -> named flow layer.
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::calculateRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerTreeGeometry):
+        We do not support yet the accelerated compositing for elements in named flows,
+        so bail out early here. We need to revisit fixed elements once we finish accelerated compositing for elements in named flows.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::fixedPositionedWithNamedFlowContainingBlock):
+        (WebCore::hasFixedPosInNamedFlowContainingBlock):
+        (WebCore::RenderObject::containerForRepaint):
+        Changed to take into account that RenderView should be the repaintContainer for the
+        fixed positioned elements with named flow as the containing block.
+        * rendering/RenderObject.h:
+
 2013-09-03  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Remove LayerData::LayerProgram

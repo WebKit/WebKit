@@ -55,6 +55,7 @@
 #include "FloatConversion.h"
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
+#include "FlowThreadController.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -80,6 +81,7 @@
 #include "RenderGeometryMap.h"
 #include "RenderInline.h"
 #include "RenderMarquee.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderReplica.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderScrollbar.h"
@@ -1951,7 +1953,25 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
             return ancestorLayer;
         }
     }
-    
+
+    if (position == FixedPosition && fixedFlowThreadContainer) {
+        ASSERT(ancestorLayer);
+        if (ancestorLayer->isOutOfFlowRenderFlowThread()) {
+            location += toSize(layer->location());
+            return ancestorLayer;
+        }
+
+        if (ancestorLayer == renderer.view().layer()) {
+            // Add location in flow thread coordinates.
+            location += toSize(layer->location());
+
+            // Add flow thread offset in view coordinates since the view may be scrolled.
+            FloatPoint absPos = renderer.view().localToAbsolute(FloatPoint(), IsFixed);
+            location += LayoutSize(absPos.x(), absPos.y());
+            return ancestorLayer;
+        }
+    }
+
     RenderLayer* parentLayer;
     if (position == AbsolutePosition || position == FixedPosition) {
         // Do what enclosingPositionedAncestor() does, but check for ancestorLayer along the way.
@@ -3770,6 +3790,39 @@ GraphicsContext* RenderLayer::applyFilters(FilterEffectRendererHelper* filterPai
 }
 #endif
 
+// Helper for the sorting of layers by z-index.
+static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
+{
+    return first->zIndex() < second->zIndex();
+}
+
+// Paint the layers associated with the fixed positioned elements in named flows.
+// These layers should not be painted in a similar way as the other elements collected in
+// named flows - regions -> named flows - since we do not want them to be clipped to the
+// regions viewport.
+void RenderLayer::paintFixedLayersInNamedFlows(GraphicsContext* context, const LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags)
+{
+    if (!isRootLayer())
+        return;
+
+    // Get the named flows for the view
+    if (!renderer().view().hasRenderNamedFlowThreads())
+        return;
+
+    // Collect the fixed layers in a list to be painted
+    Vector<RenderLayer*> fixedLayers;
+    renderer().view().flowThreadController().collectFixedPositionedLayers(fixedLayers);
+
+    // Sort the fixed layers list
+    std::stable_sort(fixedLayers.begin(), fixedLayers.end(), compareZIndex);
+
+    // Paint the layers
+    for (size_t i = 0; i < fixedLayers.size(); ++i) {
+        RenderLayer* fixedLayer = fixedLayers.at(i);
+        fixedLayer->paintLayer(context, paintingInfo, paintFlags);
+    }
+}
+
 void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags)
 {
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
@@ -3798,6 +3851,12 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
 
     // Ensure our lists are up-to-date.
     updateLayerListsIfNeeded();
+
+    // Do not paint the fixed positioned layers if the paint root is the named flow,
+    // if the paint originates at region level.
+    if (paintingInfo.rootLayer->isOutOfFlowRenderFlowThread()
+        && renderer().fixedPositionedWithNamedFlowContainingBlock())
+        return;
 
     LayoutPoint offsetFromRoot;
     convertToLayerCoords(paintingInfo.rootLayer, offsetFromRoot);
@@ -3890,6 +3949,9 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     
         // Now walk the sorted list of children with positive z-indices.
         paintList(posZOrderList(), context, localPaintingInfo, localPaintFlags);
+
+        // Paint the fixed elements from flow threads
+        paintFixedLayersInNamedFlows(context, localPaintingInfo, localPaintFlags);
     }
 
     if (isPaintingOverlayScrollbars)
@@ -3963,6 +4025,7 @@ void RenderLayer::paintList(Vector<RenderLayer*>* list, GraphicsContext* context
         RenderLayer* childLayer = list->at(i);
         if (childLayer->isOutOfFlowRenderFlowThread())
             continue;
+
         if (!childLayer->isPaginated())
             childLayer->paintLayer(context, paintingInfo, paintFlags);
         else
@@ -4452,6 +4515,53 @@ static bool isHitCandidate(const RenderLayer* hitLayer, bool canDepthSort, doubl
     return true;
 }
 
+RenderLayer* RenderLayer::hitTestFixedLayersInNamedFlows(RenderLayer* /*rootLayer*/,
+    const HitTestRequest& request, HitTestResult& result,
+    const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation,
+    const HitTestingTransformState* transformState, 
+    double* zOffsetForDescendants, double* zOffset,
+    const HitTestingTransformState* unflattenedTransformState,
+    bool depthSortDescendants)
+{
+    if (!isRootLayer())
+        return 0;
+
+    // Get the named flows for the view
+    if (!renderer().view().hasRenderNamedFlowThreads())
+        return 0;
+
+    Vector<RenderLayer*> fixedLayers;
+    renderer().view().flowThreadController().collectFixedPositionedLayers(fixedLayers);
+
+    // Sort the fixed layers list
+    std::stable_sort(fixedLayers.begin(), fixedLayers.end(), compareZIndex);
+
+    // Hit test the layers
+    RenderLayer* resultLayer = 0;
+    for (int i = fixedLayers.size() - 1; i >= 0; --i) {
+        RenderLayer* fixedLayer = fixedLayers.at(i);
+
+        HitTestResult tempResult(result.hitTestLocation());
+        RenderLayer* hitLayer = fixedLayer->hitTestLayer(fixedLayer->renderer().flowThreadContainingBlock()->layer(), 0, request, tempResult,
+            hitTestRect, hitTestLocation, false, transformState, zOffsetForDescendants);
+
+        // If it a rect-based test, we can safely append the temporary result since it might had hit
+        // nodes but not necesserily had hitLayer set.
+        if (result.isRectBasedTest())
+            result.append(tempResult);
+
+        if (isHitCandidate(hitLayer, depthSortDescendants, zOffset, unflattenedTransformState)) {
+            resultLayer = hitLayer;
+            if (!result.isRectBasedTest())
+                result = tempResult;
+            if (!depthSortDescendants)
+                break;
+        }
+    }
+
+    return resultLayer;
+}
+
 // hitTestLocation and hitTestRect are relative to rootLayer.
 // A 'flattening' layer is one preserves3D() == false.
 // transformState.m_accumulatedTransform holds the transform from the containing flattening layer.
@@ -4465,6 +4575,10 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
                                        const HitTestingTransformState* transformState, double* zOffset)
 {
     if (!isSelfPaintingLayer() && !hasSelfPaintingLayerDescendant())
+        return 0;
+
+    // Prevent hitting the fixed layers inside the flow thread when hitting through regions.
+    if (renderer().fixedPositionedWithNamedFlowContainingBlock() && hitTestLocation.region())
         return 0;
 
     // The natural thing would be to keep HitTestingTransformState on the stack, but it's big, so we heap-allocate.
@@ -4542,8 +4656,17 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     // This variable tracks which layer the mouse ends up being inside.
     RenderLayer* candidateLayer = 0;
 
+    // Check the fixed positioned layers within flow threads that are positioned by the view.
+    RenderLayer* hitLayer = hitTestFixedLayersInNamedFlows(rootLayer, request, result, hitTestRect, hitTestLocation,
+        localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
+    if (hitLayer) {
+        if (!depthSortDescendants)
+            return hitLayer;
+        candidateLayer = hitLayer;
+    }
+
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
-    RenderLayer* hitLayer = hitTestList(posZOrderList(), rootLayer, request, result, hitTestRect, hitTestLocation,
+    hitLayer = hitTestList(posZOrderList(), rootLayer, request, result, hitTestRect, hitTestLocation,
                                         localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
     if (hitLayer) {
         if (!depthSortDescendants)
@@ -5062,6 +5185,14 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
         offset = *offsetFromRoot;
     else
         convertToLayerCoords(clipRectsContext.rootLayer, offset);
+
+    // If the view is scrolled, the flow thread is not scrolled with it and we should
+    // take the scroll offset into account.
+    if (clipRectsContext.rootLayer->isOutOfFlowRenderFlowThread() && !clipRectsContext.region) {
+        FloatPoint absPos = renderer().view().localToAbsolute(FloatPoint(), IsFixed);
+        offset += LayoutSize(absPos.x(), absPos.y());
+    }
+
     layerBounds = LayoutRect(offset, size());
 
     // Update the clip rects that will be passed to child layers.
@@ -5583,12 +5714,6 @@ void RenderLayer::setParent(RenderLayer* parent)
     if (m_parent && !renderer().documentBeingDestroyed())
         compositor().layerWasAdded(m_parent, this);
 #endif
-}
-
-// Helper for the sorting of layers by z-index.
-static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
-{
-    return first->zIndex() < second->zIndex();
 }
 
 void RenderLayer::dirtyZOrderLists()

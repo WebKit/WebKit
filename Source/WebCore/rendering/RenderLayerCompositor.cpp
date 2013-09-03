@@ -1443,6 +1443,10 @@ bool RenderLayerCompositor::parentFrameContentLayers(RenderPart* renderer)
 // This just updates layer geometry without changing the hierarchy.
 void RenderLayerCompositor::updateLayerTreeGeometry(RenderLayer* layer, int depth)
 {
+    // FIXME: fixed positioned elements inside a named flow are not composited yet.
+    if (layer->isOutOfFlowRenderFlowThread())
+        return;
+
     if (RenderLayerBacking* layerBacking = layer->backing()) {
         // The compositing state of all our children has been updated already, so now
         // we can compute and cache the composited bounds for this layer.
