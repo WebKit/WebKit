@@ -205,6 +205,7 @@ public:
     static void clearNotificationPermissions();
 
     static void disableDefaultTypesettingFeatures();
+    static void resetPageVisibility(QWebPageAdapter*);
 
     static void getJSWindowObject(QWebFrameAdapter*, JSContextRef*, JSObjectRef*);
 };

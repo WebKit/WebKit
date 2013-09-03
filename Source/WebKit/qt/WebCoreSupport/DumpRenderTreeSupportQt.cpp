@@ -893,6 +893,16 @@ void DumpRenderTreeSupportQt::disableDefaultTypesettingFeatures()
     WebCore::Font::setDefaultTypesettingFeatures(0);
 }
 
+void DumpRenderTreeSupportQt::resetPageVisibility(QWebPageAdapter* adapter)
+{
+#if ENABLE(PAGE_VISIBILITY_API)
+    // Set visibility without emitting an event.
+    adapter->page->setVisibilityState(PageVisibilityStateVisible, true);
+#else
+    UNUSED_PARAM(adapter);
+#endif
+}
+
 void DumpRenderTreeSupportQt::getJSWindowObject(QWebFrameAdapter* adapter, JSContextRef* context, JSObjectRef* object)
 {
     JSDOMWindow* window = toJSDOMWindow(adapter->frame, mainThreadNormalWorld());

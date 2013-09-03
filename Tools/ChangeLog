@@ -1,3 +1,16 @@
+2013-09-03  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt][WK1] PageVisibility tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=120418
+
+        Reviewed by Jocelyn Turcotte.
+
+        Implement resetPageVisibility so we can reset visibility without
+        emiting visibility state change events.
+
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        (TestRunner::resetPageVisibility):
+
 2013-09-03  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] libsoup upversion to fix a gstreamer issue, bug115354

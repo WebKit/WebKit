@@ -950,7 +950,7 @@ void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStri
 
 void TestRunner::resetPageVisibility()
 {
-    // No need to implement it because the visibility state is correctly initialised when the page is created.
+    DumpRenderTreeSupportQt::resetPageVisibility(DumpRenderTree::instance()->pageAdapter());
 }
 
 void TestRunner::setPageVisibility(const char* visibility)
