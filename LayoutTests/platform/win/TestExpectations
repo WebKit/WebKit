@@ -74,6 +74,9 @@ svg/custom/manually-parsed-svg-allowed-in-dashboard.html
 svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html
 svg/custom/svg-allowed-in-dashboard-object.html
 
+# Accelerated overflow scrolling (ENABLE_ACCELERATED_OVERFLOW_SCROLLING) is not enabled.
+fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
+
 # Apache 1.3 doesn't support SSL <rdar://problem/5345985>
 http/tests/navigation/ping-cross-origin-from-https.html
 http/tests/ssl

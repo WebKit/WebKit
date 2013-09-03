@@ -1,0 +1,9 @@
+This test PASSED if you see repaint output (below).
+
+(repaint rects
+  (rect 0 0 800 600)
+  (rect 8 16 784 20)
+  (rect 8 52 2000 2000)
+  (rect 8 16 2000 2036)
+)
+

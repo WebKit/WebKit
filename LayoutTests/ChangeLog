@@ -1,3 +1,25 @@
+2013-09-03  Daniel Bates  <dabates@apple.com>
+
+        Require layout when -webkit-overflow-scrolling changes
+        https://bugs.webkit.org/show_bug.cgi?id=120535
+
+        Reviewed by Darin Adler.
+
+        Add a test to ensure we perform a layout and repaint when the
+        value of -webkit-overflow-scrolling changes on an element.
+
+        At the time of writing, the iOS port enables ACCELERATED_OVERFLOW_SCROLLING.
+
+        * fast/repaint/overflow-scroll-touch-repaint-expected.txt: Added.
+        * fast/repaint/overflow-scroll-touch-repaint.html: Added.
+        * platform/efl/TestExpectations: Skip test fast/repaint/overflow-scroll-touch-repaint.html
+        since this platform doesn't enable ACCELERATED_OVERFLOW_SCROLLING.
+        * platform/gtk/TestExpectations: Ditto.
+        * platform/mac/TestExpectations: Ditto.
+        * platform/qt/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+        * platform/wincairo/TestExpectations: Ditto.
+
 2013-09-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Support the "json" responseType and JSON response entity in XHR

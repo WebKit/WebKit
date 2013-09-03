@@ -1,3 +1,18 @@
+2013-09-03  Daniel Bates  <dabates@apple.com>
+
+        Require layout when -webkit-overflow-scrolling changes
+        https://bugs.webkit.org/show_bug.cgi?id=120535
+
+        Reviewed by Darin Adler.
+
+        Test: fast/repaint/overflow-scroll-touch-repaint.html
+
+        We want to require a layout when the value of -webkit-overflow-scrolling changes
+        since -webkit-overflow-scrolling creates a stacking context.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+
 2013-09-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Support the "json" responseType and JSON response entity in XHR

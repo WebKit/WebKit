@@ -327,6 +327,9 @@ Bug(EFL) fast/canvas/canvas-gradient-addStop-error.html
 Bug(EFL) fast/canvas/fill-stroke-clip-reset-path.html
 Bug(EFL) http/tests/xmlhttprequest/default-content-type-dashboard.html
 
+# Accelerated overflow scrolling (ENABLE_ACCELERATED_OVERFLOW_SCROLLING) is not enabled.
+fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
+
 # Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
 webkit.org/b/35824 http/tests/cookies/third-party-cookie-relaxing.html
 

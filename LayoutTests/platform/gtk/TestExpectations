@@ -65,6 +65,9 @@ Bug(GTK) fast/css/draggable-region-parser.html [ Failure ]
 # X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
 webkit.org/b/71851 http/tests/security/contentTypeOptions [ Skip ]
 
+# Accelerated overflow scrolling (ENABLE_ACCELERATED_OVERFLOW_SCROLLING) is not enabled.
+fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
+
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 inspector/styles/vendor-prefixes.html [ WontFix Pass ]
 
