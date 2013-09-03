@@ -32,11 +32,17 @@ namespace WTF {
 
 template<typename T> class Ref {
 public:
-    ALWAYS_INLINE Ref(T& object) : m_ptr(&object) { m_ptr->ref(); }
-    ALWAYS_INLINE ~Ref() { m_ptr->deref(); }
+    // Ref(const T&) looks awkward but makes Vector<Ref<T>> possible.
+    Ref(const T& object) : m_ptr(&const_cast<T&>(object)) { m_ptr->ref(); }
+    Ref(T& object) : m_ptr(&object) { m_ptr->ref(); }
 
-    ALWAYS_INLINE const T& get() const { return *m_ptr; }
-    ALWAYS_INLINE T& get() { return *m_ptr; }
+    ~Ref() { m_ptr->deref(); }
+
+    const T* operator->() const { return m_ptr; }
+    T* operator->() { return m_ptr; }
+
+    const T& get() const { return *m_ptr; }
+    T& get() { return *m_ptr; }
 
 private:
     Ref(const Ref&);

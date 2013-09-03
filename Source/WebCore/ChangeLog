@@ -1,3 +1,33 @@
+2013-09-03  Andreas Kling  <akling@apple.com>
+
+        Support Vector<Ref<T>>.
+        <https://webkit.org/b/120637>
+
+        Reviewed by Antti Koivisto.
+
+        Use Vector<Ref<T>> internally in Page.
+
+        * page/Page.cpp:
+        (WebCore::networkStateChanged):
+        (WebCore::Page::refreshPlugins):
+
+            Clean up these functions and use Vector<Ref<Frame>> to store pointers to frames
+            since we know they are not going to be null.
+
+        (WebCore::Page::pluginViews):
+
+            Changed this to return a Vector<Ref<PluginView>> by value instead of passing a
+            writable vector as an argument. Clean up loops with 'auto'.
+
+        (WebCore::Page::storageBlockingStateChanged):
+        (WebCore::Page::privateBrowsingStateChanged):
+
+            Tweaked for pluginViews() returning a Vector now.
+
+        (WebCore::Page::setVisibilityState):
+
+            Store Documents that need a visibilitychange event in a Vector<Ref<Document>>.
+
 2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Add parsing for named grid lines

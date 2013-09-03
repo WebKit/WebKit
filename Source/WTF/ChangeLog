@@ -1,3 +1,31 @@
+2013-09-03  Andreas Kling  <akling@apple.com>
+
+        Support Vector<Ref<T>>.
+        <https://webkit.org/b/120637>
+
+        Reviewed by Antti Koivisto.
+
+        Add a Ref(const T&) constructor to enable Vector<Ref<T>>. This looks a bit awkward
+        but is necessary for Vector::append(const T&) to find a constructor.
+
+        An alternative would be to add something like std::vector::emplace_back, but I can't
+        think of a good name for that, and it'd be nice if append() would "just work."
+
+        Also add operator->(). I initially excluded this because I felt it made for
+        unsafe-looking code. Things quickly got out of hand with .get() everywhere though.
+
+        IMO -> looks OK as long as it's only used on the first link in a dereference chain,
+        as that variable and its type will be "in context."
+
+        * wtf/Ref.h:
+        (WTF::Ref::Ref):
+        (WTF::Ref::~Ref):
+        (WTF::Ref::operator->):
+        (WTF::Ref::get):
+        * wtf/VectorTraits.h:
+
+            Add simple traits for Ref<T> so it can be moved around freely by Vector.
+
 2013-09-03  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Check WTF::VectorFiller template argument type size in compile time

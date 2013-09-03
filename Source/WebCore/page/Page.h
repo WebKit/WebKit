@@ -36,6 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -436,7 +437,7 @@ private:
     void setTimerAlignmentInterval(double);
     double timerAlignmentInterval() const;
 
-    void collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBases);
+    Vector<Ref<PluginViewBase>> pluginViews();
 
     void throttleTimers();
     void unthrottleTimers();

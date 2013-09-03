@@ -23,6 +23,7 @@
 
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeTraits.h>
 #include <utility>
@@ -81,6 +82,9 @@ namespace WTF {
 
     template<typename P>
     struct VectorTraits<OwnArrayPtr<P> > : SimpleClassVectorTraits { };
+
+    template<typename P>
+    struct VectorTraits<Ref<P> > : SimpleClassVectorTraits { };
 
     template<>
     struct VectorTraits<AtomicString> : SimpleClassVectorTraits { };

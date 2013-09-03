@@ -98,13 +98,12 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
 
 static void networkStateChanged(bool isOnLine)
 {
-    Vector<RefPtr<Frame> > frames;
+    Vector<Ref<Frame>> frames;
     
     // Get all the frames of all the pages in all the page groups
-    HashSet<Page*>::iterator end = allPages->end();
-    for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it) {
+    for (auto it = allPages->begin(), end = allPages->end(); it != end; ++it) {
         for (Frame* frame = &(*it)->mainFrame(); frame; frame = frame->tree().traverseNext())
-            frames.append(frame);
+            frames.append(*frame);
         InspectorInstrumentation::networkStateChanged(*it);
     }
 
@@ -492,22 +491,18 @@ void Page::refreshPlugins(bool reload)
 
     PluginData::refresh();
 
-    Vector<RefPtr<Frame> > framesNeedingReload;
+    Vector<Ref<Frame>> framesNeedingReload;
 
-    HashSet<Page*>::iterator end = allPages->end();
-    for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it) {
-        Page* page = *it;
-        
-        // Clear out the page's plug-in data.
-        if (page->m_pluginData)
-            page->m_pluginData = 0;
+    for (auto it = allPages->begin(), end = allPages->end(); it != end; ++it) {
+        Page& page = **it;
+        page.m_pluginData.clear();
 
         if (!reload)
             continue;
         
-        for (Frame* frame = &(*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
             if (frame->loader().subframeLoader()->containsPlugins())
-                framesNeedingReload.append(frame);
+                framesNeedingReload.append(*frame);
         }
     }
 
@@ -1183,23 +1178,26 @@ void Page::dnsPrefetchingStateChanged()
         frame->document()->initDNSPrefetch();
 }
 
-void Page::collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBases)
+Vector<Ref<PluginViewBase>> Page::pluginViews()
 {
+    Vector<Ref<PluginViewBase>> views;
+
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameView* view = frame->view();
         if (!view)
-            return;
+            break;
 
-        const HashSet<RefPtr<Widget> >* children = view->children();
+        auto children = view->children();
         ASSERT(children);
 
-        HashSet<RefPtr<Widget> >::const_iterator end = children->end();
-        for (HashSet<RefPtr<Widget> >::const_iterator it = children->begin(); it != end; ++it) {
+        for (auto it = children->begin(), end = children->end(); it != end; ++it) {
             Widget* widget = (*it).get();
             if (widget->isPluginViewBase())
-                pluginViewBases.append(toPluginViewBase(widget));
+                views.append(*toPluginViewBase(widget));
         }
     }
+
+    return views;
 }
 
 void Page::storageBlockingStateChanged()
@@ -1209,11 +1207,10 @@ void Page::storageBlockingStateChanged()
 
     // Collect the PluginViews in to a vector to ensure that action the plug-in takes
     // from below storageBlockingStateChanged does not affect their lifetime.
-    Vector<RefPtr<PluginViewBase>, 32> pluginViewBases;
-    collectPluginViews(pluginViewBases);
+    auto views = pluginViews();
 
-    for (size_t i = 0; i < pluginViewBases.size(); ++i)
-        pluginViewBases[i]->storageBlockingStateChanged();
+    for (unsigned i = 0; i < views.size(); ++i)
+        views[i]->storageBlockingStateChanged();
 }
 
 void Page::privateBrowsingStateChanged()
@@ -1225,11 +1222,10 @@ void Page::privateBrowsingStateChanged()
 
     // Collect the PluginViews in to a vector to ensure that action the plug-in takes
     // from below privateBrowsingStateChanged does not affect their lifetime.
-    Vector<RefPtr<PluginViewBase>, 32> pluginViewBases;
-    collectPluginViews(pluginViewBases);
+    auto views = pluginViews();
 
-    for (size_t i = 0; i < pluginViewBases.size(); ++i)
-        pluginViewBases[i]->privateBrowsingStateChanged(privateBrowsingEnabled);
+    for (unsigned i = 0; i < views.size(); ++i)
+        views[i]->privateBrowsingStateChanged(privateBrowsingEnabled);
 }
 
 #if !ASSERT_DISABLED
@@ -1275,9 +1271,10 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
     m_visibilityState = visibilityState;
 
     if (!isInitialState) {
-        Vector<RefPtr<Document>> documents;
+        Vector<Ref<Document>> documents;
         for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
-            documents.append(frame->document());
+            documents.append(*frame->document());
+
         for (size_t i = 0, size = documents.size(); i < size; ++i)
             documents[i]->dispatchEvent(Event::create(eventNames().visibilitychangeEvent, false, false));
     }
