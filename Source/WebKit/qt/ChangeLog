@@ -1,5 +1,17 @@
 2013-09-03  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] Tiled-backing store not clipped to frame or visible rect
+        https://bugs.webkit.org/show_bug.cgi?id=120606
+
+        Reviewed by Jocelyn Turcotte.
+
+        Clip painting from the tiled-backing store to the frame rect.
+
+        * WebCoreSupport/QWebFrameAdapter.cpp:
+        (QWebFrameAdapter::renderFromTiledBackingStore):
+
+2013-09-03  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         [Qt][WK1] PageVisibility tests are flaky
         https://bugs.webkit.org/show_bug.cgi?id=120418
 

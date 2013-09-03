@@ -641,19 +641,20 @@ bool QWebFrameAdapter::renderFromTiledBackingStore(QPainter* painter, const QReg
 
     int scrollX = view->scrollX();
     int scrollY = view->scrollY();
-    context.translate(-scrollX, -scrollY);
+    QRect frameRect = view->frameRect();
 
     for (int i = 0; i < vector.size(); ++i) {
         const QRect& clipRect = vector.at(i);
 
-        painter->save();
-
-        QRect rect = clipRect.translated(scrollX, scrollY);
-        painter->setClipRect(rect, Qt::IntersectClip);
+        context.save();
+        QRect rect = clipRect.intersected(frameRect);
+        context.translate(-scrollX, -scrollY);
+        rect.translate(scrollX, scrollY);
+        context.clip(rect);
 
         frame->tiledBackingStore()->paint(&context, rect);
 
-        painter->restore();
+        context.restore();
     }
 
 #if USE(ACCELERATED_COMPOSITING)
