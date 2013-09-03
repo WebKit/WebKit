@@ -1,3 +1,25 @@
+2013-09-03  Oliver Hunt  <oliver@apple.com>
+
+        Support structured clone of Map and Set
+        https://bugs.webkit.org/show_bug.cgi?id=120654
+
+        Reviewed by Simon Fraser.
+
+        Add support for cloning Map and Set.  Fairly self explanatory change.
+        Needed to add Forwarding headers for the JSMap, JSSet and MapData classes.
+
+        * ForwardingHeaders/runtime/JSMap.h: Added.
+        * ForwardingHeaders/runtime/JSSet.h: Added.
+        * ForwardingHeaders/runtime/MapData.h: Added.
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::isMap):
+        (WebCore::CloneSerializer::isSet):
+        (WebCore::CloneSerializer::startSet):
+        (WebCore::CloneSerializer::startMap):
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneDeserializer::consumeMapDataTerminationIfPossible):
+        (WebCore::CloneDeserializer::deserialize):
+
 2013-09-03  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Shape's content gets extra left offset when left-border is positive on the content box

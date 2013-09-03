@@ -54,7 +54,10 @@
 #include <runtime/JSArrayBuffer.h>
 #include <runtime/JSArrayBufferView.h>
 #include <runtime/JSDataView.h>
+#include <runtime/JSMap.h>
+#include <runtime/JSSet.h>
 #include <runtime/JSTypedArrays.h>
+#include <runtime/MapData.h>
 #include <runtime/ObjectConstructor.h>
 #include <runtime/Operations.h>
 #include <runtime/PropertyNameArray.h>
@@ -79,7 +82,8 @@ namespace WebCore {
 static const unsigned maximumFilterRecursion = 40000;
 
 enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitMember, ArrayEndVisitMember,
-    ObjectStartState, ObjectStartVisitMember, ObjectEndVisitMember };
+    ObjectStartState, ObjectStartVisitMember, ObjectEndVisitMember,
+    MapDataStartVisitEntry, MapDataEndVisitKey, MapDataEndVisitValue };
 
 // These can't be reordered, and any new types must be added to the end of the list
 enum SerializationTag {
@@ -111,6 +115,9 @@ enum SerializationTag {
     StringObjectTag = 26,
     EmptyStringObjectTag = 27,
     NumberObjectTag = 28,
+    SetObjectTag = 29,
+    MapObjectTag = 30,
+    NonMapPropertiesTag = 31,
     ErrorTag = 255
 };
 
@@ -158,8 +165,9 @@ static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
  * Version 3. added the FalseObjectTag, TrueObjectTag, NumberObjectTag, StringObjectTag
  * and EmptyStringObjectTag for serialization of Boolean, Number and String objects.
  * Version 4. added support for serializing non-index properties of arrays.
+ * Version 5. added support for Map and Set types.
  */
-static const unsigned CurrentVersion = 4;
+static const unsigned CurrentVersion = 5;
 static const unsigned TerminatorTag = 0xFFFFFFFF;
 static const unsigned StringPoolTag = 0xFFFFFFFE;
 static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
@@ -173,13 +181,19 @@ static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
  * in the constant pool.
  *
  * SerializedValue :- <CurrentVersion:uint32_t> Value
- * Value :- Array | Object | Terminal
+ * Value :- Array | Object | Map | Set | Terminal
  *
  * Array :-
  *     ArrayTag <length:uint32_t>(<index:uint32_t><value:Value>)* TerminatorTag
  *
  * Object :-
  *     ObjectTag (<name:StringData><value:Value>)* TerminatorTag
+ *
+ * Map :- MapObjectTag MapData
+ *
+ * Set :- SetObjectTag MapData
+ *
+ * MapData :- (<key:Value><value:Value>) NonMapPropertiesTag (<name:StringData><value:Value>)* TerminatorTag
  *
  * Terminal :-
  *      UndefinedTag
@@ -399,6 +413,21 @@ private:
         return isJSArray(object) || object->inherits(JSArray::info());
     }
 
+    bool isMap(JSValue value)
+    {
+        if (!value.isObject())
+            return false;
+        JSObject* object = asObject(value);
+        return object->inherits(JSMap::info());
+    }
+    bool isSet(JSValue value)
+    {
+        if (!value.isObject())
+            return false;
+        JSObject* object = asObject(value);
+        return object->inherits(JSSet::info());
+    }
+
     bool checkForDuplicate(JSObject* object)
     {
         // Record object for graph reconstruction
@@ -445,6 +474,24 @@ private:
         unsigned length = array->length();
         write(ArrayTag);
         write(length);
+        return true;
+    }
+
+    bool startSet(JSSet* set)
+    {
+        if (!startObjectInternal(set))
+            return false;
+
+        write(SetObjectTag);
+        return true;
+    }
+
+    bool startMap(JSMap* map)
+    {
+        if (!startObjectInternal(map))
+            return false;
+
+        write(MapObjectTag);
         return true;
     }
 
@@ -821,6 +868,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
     Vector<uint32_t, 16> lengthStack;
     Vector<PropertyNameArray, 16> propertyStack;
     Vector<JSObject*, 32> inputObjectStack;
+    Vector<MapData*, 4> mapDataStack;
+    Vector<MapData::const_iterator, 4> iteratorStack;
     Vector<WalkerState, 16> stateStack;
     WalkerState state = StateUnknown;
     JSValue inValue = in;
@@ -945,6 +994,63 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 indexStack.last()++;
                 goto objectStartVisitMember;
             }
+            mapStartState: {
+                ASSERT(inValue.isObject());
+                if (inputObjectStack.size() > maximumFilterRecursion)
+                    return StackOverflowError;
+                JSMap* inMap = jsCast<JSMap*>(inValue);
+                if (!startMap(inMap))
+                    break;
+                MapData* mapData = inMap->mapData();
+                m_gcBuffer.append(mapData);
+                mapDataStack.append(mapData);
+                iteratorStack.append(mapData->begin());
+                inputObjectStack.append(inMap);
+                goto mapDataStartVisitEntry;
+            }
+            setStartState: {
+                ASSERT(inValue.isObject());
+                if (inputObjectStack.size() > maximumFilterRecursion)
+                    return StackOverflowError;
+                JSSet* inSet = jsCast<JSSet*>(inValue);
+                if (!startSet(inSet))
+                    break;
+                MapData* mapData = inSet->mapData();
+                m_gcBuffer.append(mapData);
+                mapDataStack.append(mapData);
+                iteratorStack.append(mapData->begin());
+                inputObjectStack.append(inSet);
+                goto mapDataStartVisitEntry;
+            }
+            mapDataStartVisitEntry:
+            case MapDataStartVisitEntry: {
+                MapData::const_iterator& ptr = iteratorStack.last();
+                MapData* mapData = mapDataStack.last();
+                if (ptr == mapData->end()) {
+                    iteratorStack.removeLast();
+                    mapDataStack.removeLast();
+                    JSObject* object = inputObjectStack.last();
+                    ASSERT(jsDynamicCast<JSSet*>(object) || jsDynamicCast<JSMap*>(object));
+                    propertyStack.append(PropertyNameArray(m_exec));
+                    object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), ExcludeDontEnumProperties);
+                    write(NonMapPropertiesTag);
+                    indexStack.append(0);
+                    goto objectStartVisitMember;
+                }
+                inValue = ptr.key();
+                stateStack.append(MapDataEndVisitKey);
+                goto stateUnknown;
+            }
+            case MapDataEndVisitKey: {
+                inValue = iteratorStack.last().value();
+                stateStack.append(MapDataEndVisitValue);
+                goto stateUnknown;
+            }
+            case MapDataEndVisitValue: {
+                ++iteratorStack.last();
+                goto mapDataStartVisitEntry;
+            }
+
             stateUnknown:
             case StateUnknown: {
                 SerializationReturnCode terminalCode = SuccessfullyCompleted;
@@ -956,6 +1062,10 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
 
                 if (isArray(inValue))
                     goto arrayStartState;
+                if (isMap(inValue))
+                    goto mapStartState;
+                if (isSet(inValue))
+                    goto setStartState;
                 goto objectStartState;
             }
         }
@@ -1557,6 +1667,14 @@ private:
         }
     }
 
+    bool consumeMapDataTerminationIfPossible()
+    {
+        if (readTag() == NonMapPropertiesTag)
+            return true;
+        m_ptr--;
+        return false;
+    }
+
     JSGlobalObject* m_globalObject;
     bool m_isDOMGlobalObject;
     const uint8_t* m_ptr;
@@ -1573,6 +1691,8 @@ DeserializationResult CloneDeserializer::deserialize()
     Vector<uint32_t, 16> indexStack;
     Vector<Identifier, 16> propertyNameStack;
     Vector<JSObject*, 32> outputObjectStack;
+    Vector<JSValue, 4> keyStack;
+    Vector<MapData*, 4> mapDataStack;
     Vector<WalkerState, 16> stateStack;
     WalkerState state = StateUnknown;
     JSValue outValue;
@@ -1659,6 +1779,47 @@ DeserializationResult CloneDeserializer::deserialize()
             propertyNameStack.removeLast();
             goto objectStartVisitMember;
         }
+        mapObjectStartState: {
+            if (outputObjectStack.size() > maximumFilterRecursion)
+                return make_pair(JSValue(), StackOverflowError);
+            JSMap* map = JSMap::create(m_exec->vm(), m_globalObject->mapStructure());
+            m_gcBuffer.append(map);
+            outputObjectStack.append(map);
+            MapData* mapData = map->mapData();
+            mapDataStack.append(mapData);
+            goto mapDataStartVisitEntry;
+        }
+        setObjectStartState: {
+            if (outputObjectStack.size() > maximumFilterRecursion)
+                return make_pair(JSValue(), StackOverflowError);
+            JSSet* set = JSSet::create(m_exec->vm(), m_globalObject->setStructure());
+            m_gcBuffer.append(set);
+            outputObjectStack.append(set);
+            MapData* mapData = set->mapData();
+            mapDataStack.append(mapData);
+            goto mapDataStartVisitEntry;
+        }
+        mapDataStartVisitEntry:
+        case MapDataStartVisitEntry: {
+            if (consumeMapDataTerminationIfPossible()) {
+                mapDataStack.removeLast();
+                goto objectStartVisitMember;
+            }
+            stateStack.append(MapDataEndVisitKey);
+            goto stateUnknown;
+        }
+
+        case MapDataEndVisitKey: {
+            keyStack.append(outValue);
+            stateStack.append(MapDataEndVisitValue);
+            goto stateUnknown;
+        }
+
+        case MapDataEndVisitValue: {
+            mapDataStack.last()->set(m_exec, keyStack.last(), outValue);
+            keyStack.removeLast();
+            goto mapDataStartVisitEntry;
+        }
         stateUnknown:
         case StateUnknown:
             if (JSValue terminal = readTerminal()) {
@@ -1670,6 +1831,10 @@ DeserializationResult CloneDeserializer::deserialize()
                 goto arrayStartState;
             if (tag == ObjectTag)
                 goto objectStartState;
+            if (tag == MapObjectTag)
+                goto mapObjectStartState;
+            if (tag == SetObjectTag)
+                goto setObjectStartState;
             goto error;
         }
         if (stateStack.isEmpty())

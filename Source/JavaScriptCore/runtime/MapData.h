@@ -80,7 +80,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    void set(CallFrame*, KeyType, JSValue);
+    JS_EXPORT_PRIVATE void set(CallFrame*, KeyType, JSValue);
     JSValue get(CallFrame*, KeyType);
     bool remove(CallFrame*, KeyType);
     bool contains(CallFrame*, KeyType);

@@ -815,7 +815,7 @@
 		A700873D17CBE8D300C3E643 /* MapPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A700873B17CBE8D300C3E643 /* MapPrototype.cpp */; };
 		A700873E17CBE8D300C3E643 /* MapPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A700873C17CBE8D300C3E643 /* MapPrototype.h */; };
 		A700874117CBE8EB00C3E643 /* JSMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A700873F17CBE8EB00C3E643 /* JSMap.cpp */; };
-		A700874217CBE8EB00C3E643 /* JSMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A700874017CBE8EB00C3E643 /* JSMap.h */; };
+		A700874217CBE8EB00C3E643 /* JSMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A700874017CBE8EB00C3E643 /* JSMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A70447EA17A0BD4600F5898E /* OperandsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A70447E917A0BD4600F5898E /* OperandsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A70447ED17A0BD7000F5898E /* DumpContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A70447EB17A0BD7000F5898E /* DumpContext.cpp */; };
 		A70447EE17A0BD7000F5898E /* DumpContext.h in Headers */ = {isa = PBXBuildFile; fileRef = A70447EC17A0BD7000F5898E /* DumpContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -838,7 +838,7 @@
 		A7280A2811557E3000D56957 /* JSObjectRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A79EDB0811531CD60019E912 /* JSObjectRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A729009C17976C6000317298 /* MacroAssemblerARMv7.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A729009B17976C6000317298 /* MacroAssemblerARMv7.cpp */; };
 		A7299D9D17D12837005F5FF9 /* JSSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7299D9B17D12837005F5FF9 /* JSSet.cpp */; };
-		A7299D9E17D12837005F5FF9 /* JSSet.h in Headers */ = {isa = PBXBuildFile; fileRef = A7299D9C17D12837005F5FF9 /* JSSet.h */; };
+		A7299D9E17D12837005F5FF9 /* JSSet.h in Headers */ = {isa = PBXBuildFile; fileRef = A7299D9C17D12837005F5FF9 /* JSSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7299DA117D12848005F5FF9 /* SetPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7299D9F17D12848005F5FF9 /* SetPrototype.cpp */; };
 		A7299DA217D12848005F5FF9 /* SetPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A7299DA017D12848005F5FF9 /* SetPrototype.h */; };
 		A7299DA517D12858005F5FF9 /* SetConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7299DA317D12858005F5FF9 /* SetConstructor.cpp */; };
@@ -882,7 +882,7 @@
 		A784A26111D16622005776AC /* ASTBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A7EE7411B98B8D0065A14F /* ASTBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A784A26411D16622005776AC /* SyntaxChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A7EE7711B98B8D0065A14F /* SyntaxChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A78507D617CBC6FD0011F6E7 /* MapData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A78507D417CBC6FD0011F6E7 /* MapData.cpp */; };
-		A78507D717CBC6FD0011F6E7 /* MapData.h in Headers */ = {isa = PBXBuildFile; fileRef = A78507D517CBC6FD0011F6E7 /* MapData.h */; };
+		A78507D717CBC6FD0011F6E7 /* MapData.h in Headers */ = {isa = PBXBuildFile; fileRef = A78507D517CBC6FD0011F6E7 /* MapData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A78853F917972629001440E4 /* IntendedStructureChain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A78853F717972629001440E4 /* IntendedStructureChain.cpp */; };
 		A78853FA17972629001440E4 /* IntendedStructureChain.h in Headers */ = {isa = PBXBuildFile; fileRef = A78853F817972629001440E4 /* IntendedStructureChain.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A78A9774179738B8009DF744 /* DFGFailedFinalizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A78A976C179738B8009DF744 /* DFGFailedFinalizer.cpp */; };

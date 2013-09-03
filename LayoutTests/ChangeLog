@@ -1,3 +1,16 @@
+2013-09-03  Oliver Hunt  <oliver@apple.com>
+
+        Support structured clone of Map and Set
+        https://bugs.webkit.org/show_bug.cgi?id=120654
+
+        Reviewed by Simon Fraser.
+
+        Tests!
+
+        * fast/dom/Window/script-tests/postmessage-clone.js:
+        (set new):
+        (set add.set add):
+
 2013-09-03  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Shape's content gets extra left offset when left-border is positive on the content box

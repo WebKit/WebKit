@@ -43,6 +43,28 @@ tryPostMessage('arrayGraph', false, "arrayGraph");
 tryPostMessage('window', true);
 tryPostMessage('({get a() { throw "x" }})', true);
 
+var map = new Map;
+var set = new Set;
+map.expando1 = {};
+map.expando2 = {};
+map.aSet = set;
+map.set(1, 2.5)
+map.set("entry", map.expando1);
+map.set(true, set);
+map.set(map.expando2, map);
+set.add(false)
+set.add(map)
+tryPostMessage("map", false, "evalThunk", function (v) {
+    newMap = v
+    doPassFail(newMap.get("entry") === newMap.expando1, "String keyed entry was cloned correctly");
+    doPassFail(newMap.get(newMap.expando2) === newMap, "Object key entry was cloned correctly");
+    shouldBe("newMap.get(true)", "newMap.aSet")
+    shouldBe("newMap.aSet.has(newMap)", "true")
+    newMap.forEach(function (value, key) { 
+        console.innerHTML += "LOG: " + value + " => " + key + "<br>"
+    })
+})
+
 if (window.eventSender) {
     var fileInput = document.getElementById("fileInput");
     var fileRect = fileInput.getClientRects()[0];

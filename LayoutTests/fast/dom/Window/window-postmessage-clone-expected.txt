@@ -37,6 +37,14 @@ PASS: eventData is === to eventData.self
 PASS: eventData is === to eventData[0]
 PASS: eventData.graph1 is === to eventData.graph2
 PASS: eventData[0] is === to eventData[1]
+PASS: String keyed entry was cloned correctly
+PASS: Object key entry was cloned correctly
+PASS: newMap.get(true) is [object Set] of type object
+PASS: newMap.aSet.has(newMap) is true of type boolean
+LOG: 2.5 => 1
+LOG: [object Object] => entry
+LOG: [object Set] => true
+LOG: [object Map] => [object Object]
 PASS: eventData is [object ImageData] of type object
 PASS: eventData is [object Uint8ClampedArray] of type object
 PASS: eventData is [object ImageData] of type object

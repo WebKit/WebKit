@@ -36,7 +36,7 @@ class JSMap : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
-    DECLARE_INFO;
+    DECLARE_EXPORT_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -66,7 +66,7 @@ private:
     {
     }
 
-    void finishCreation(VM&, JSGlobalObject*);
+    JS_EXPORT_PRIVATE void finishCreation(VM&, JSGlobalObject*);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
