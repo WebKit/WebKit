@@ -1,3 +1,19 @@
+2013-09-03  Brian Holt  <brian.holt@samsung.com>
+
+        [GTK] [WK2] TestContextMenu default-menu fails
+        https://bugs.webkit.org/show_bug.cgi?id=120459
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add context menu items for downloading media elements.
+
+        * UIProcess/API/gtk/WebKitContextMenuActions.cpp:
+        (webkitContextMenuActionGetActionTag):
+        (webkitContextMenuActionGetForContextMenuItem):
+        (webkitContextMenuActionGetLabel):
+        * UIProcess/API/gtk/WebKitContextMenuActions.h:
+        * UIProcess/API/gtk/tests/TestContextMenu.cpp:
+
 2013-09-02  Darin Adler  <darin@apple.com>
 
         Cut down on double hashing and code needlessly using hash table iterators

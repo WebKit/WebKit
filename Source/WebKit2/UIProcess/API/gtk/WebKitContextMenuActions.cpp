@@ -123,6 +123,9 @@ ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction ac
         return ContextMenuItemTagMediaPlayPause;
     case WEBKIT_CONTEXT_MENU_ACTION_MEDIA_MUTE:
         return ContextMenuItemTagMediaMute;
+    case WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_VIDEO_TO_DISK:
+    case WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_AUDIO_TO_DISK:
+        return ContextMenuItemTagDownloadMediaToDisk;
     case WEBKIT_CONTEXT_MENU_ACTION_CUSTOM:
         return ContextMenuItemBaseApplicationTag;
     default:
@@ -214,6 +217,9 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(ContextMenu
             WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PLAY : WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PAUSE;
     case ContextMenuItemTagMediaMute:
         return WEBKIT_CONTEXT_MENU_ACTION_MEDIA_MUTE;
+    case ContextMenuItemTagDownloadMediaToDisk:
+        return menuItem->title() == contextMenuItemTagDownloadVideoToDisk() ?
+            WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_VIDEO_TO_DISK : WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_AUDIO_TO_DISK;
     case ContextMenuItemBaseApplicationTag:
         return WEBKIT_CONTEXT_MENU_ACTION_CUSTOM;
     default:
@@ -306,6 +312,10 @@ String webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
         return contextMenuItemTagMediaPause();
     case WEBKIT_CONTEXT_MENU_ACTION_MEDIA_MUTE:
         return contextMenuItemTagMediaMute();
+    case WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_VIDEO_TO_DISK:
+        return contextMenuItemTagDownloadVideoToDisk();
+    case WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_AUDIO_TO_DISK:
+        return contextMenuItemTagDownloadAudioToDisk();
     case WEBKIT_CONTEXT_MENU_ACTION_NO_ACTION:
     case WEBKIT_CONTEXT_MENU_ACTION_CUSTOM:
     case WEBKIT_CONTEXT_MENU_ACTION_SPELLING_GUESS:
