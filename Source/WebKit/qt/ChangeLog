@@ -1,5 +1,18 @@
 2013-09-03  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] Images scaled poorly on composited canvas
+        https://bugs.webkit.org/show_bug.cgi?id=120632
+
+        Reviewed by Jocelyn Turcotte.
+
+        Explicitly set a imageInterpolationQuality on the TextureMapper, because
+        InterpolationDefault may be interpreted differently by nested GraphicsContexts.
+
+        * WebCoreSupport/TextureMapperLayerClientQt.cpp:
+        (TextureMapperLayerClientQt::renderCompositedLayers):
+
+2013-09-03  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         [Qt] Tiled-backing store not clipped to frame or visible rect
         https://bugs.webkit.org/show_bug.cgi?id=120606
 
