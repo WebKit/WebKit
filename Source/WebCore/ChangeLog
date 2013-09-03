@@ -1,3 +1,15 @@
+2013-09-03  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Hyphenation respects regional format settings language instead of primary language
+        https://bugs.webkit.org/show_bug.cgi?id=120641
+
+        Reviewed by Dan Bernstein.
+
+        Fixes hyphenation tests on my machine with non-English regional format settings.
+
+        * platform/text/cf/HyphenationCF.cpp: (createValueForNullKey):
+        Use primary UI language for hyphenation, not regional settings language.
+
 2013-09-03  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
 
         [GTK][EFL] include missing localized strings for subtitle auto track
