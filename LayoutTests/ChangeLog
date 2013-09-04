@@ -1,3 +1,10 @@
+2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Adding failure expectation for accessibility/image-map1.html after r155022.
+        * platform/gtk/fast/dom/Window/window-postmessage-clone-expected.txt: Rebaselining after 155008.
+
 2013-09-04  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed bot greening.

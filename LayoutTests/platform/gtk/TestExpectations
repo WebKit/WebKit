@@ -1477,6 +1477,8 @@ webkit.org/b/120673 fast/filter-image/filter-image-blur.html [ ImageOnlyFailure 
 
 webkit.org/b/120674 fast/filter-image/filter-image-animation.html [ Failure ]
 
+webkit.org/b/84045 accessibility/image-map1.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
