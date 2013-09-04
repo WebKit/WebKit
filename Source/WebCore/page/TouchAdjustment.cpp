@@ -38,6 +38,7 @@
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #include "RenderText.h"
+#include "RenderView.h"
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextBreakIterator.h"

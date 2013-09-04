@@ -42,6 +42,7 @@
 #include "RenderBR.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TextRun.h"

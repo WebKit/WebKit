@@ -29,6 +29,7 @@
 
 #include "RenderTextTrackCue.h"
 
+#include "RenderView.h"
 #include "TextTrackCue.h"
 #include "TextTrackCueGeneric.h"
 #include <wtf/StackStats.h>

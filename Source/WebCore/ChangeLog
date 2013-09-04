@@ -1,3 +1,18 @@
+2013-09-04  Andreas Kling  <akling@apple.com>
+
+        Remove unnecessary RenderView.h inclusion from headers.
+        <https://webkit.org/b/120365>
+
+        Reviewed by Anders Carlsson.
+
+        RenderView.h was overzealously included by RenderText and RenderTextTrackCue,
+        making it unpleasant to edit on my laptop.
+
+        * rendering/RenderText.h:
+        * rendering/RenderTextTrackCue.h:
+
+            Don't include RenderView.h here, do it in .cpp files.
+
 2013-09-04  Alexey Proskuryakov  <ap@apple.com>
 
         Editor::m_removedAnchor is unused

@@ -43,6 +43,7 @@
 #include "RenderRubyRun.h"
 #include "RenderRubyText.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include "Settings.h"
 #include "SVGTextRunRenderingContext.h"
 #include "Text.h"

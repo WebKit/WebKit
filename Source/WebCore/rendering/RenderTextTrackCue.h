@@ -31,7 +31,6 @@
 #include "FloatPoint.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"
-#include "RenderView.h"
 
 namespace WebCore {
 

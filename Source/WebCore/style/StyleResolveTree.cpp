@@ -39,6 +39,7 @@
 #include "RenderNamedFlowThread.h"
 #include "RenderObject.h"
 #include "RenderText.h"
+#include "RenderView.h"
 #include "RenderWidget.h"
 #include "Settings.h"
 #include "ShadowRoot.h"

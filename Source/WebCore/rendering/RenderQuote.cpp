@@ -24,6 +24,7 @@
 #include "RenderQuote.h"
 
 #include "QuotesData.h"
+#include "RenderView.h"
 
 using namespace WTF::Unicode;
 
