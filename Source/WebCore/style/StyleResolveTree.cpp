@@ -746,7 +746,7 @@ void resolveTree(Element& current, Change change)
     bool hasIndirectAdjacentRules = current.childrenAffectedByForwardPositionalRules();
 
 #if PLATFORM(IOS)
-    CheckForVisibilityChangeOnRecalcStyle checkForVisibilityChange(current, current->renderStyle());
+    CheckForVisibilityChangeOnRecalcStyle checkForVisibilityChange(&current, current.renderStyle());
 #endif
 
     if (change > NoChange || current.needsStyleRecalc())

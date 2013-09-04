@@ -1,3 +1,13 @@
+2013-09-04  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Fix the build following <http://trac.webkit.org/changeset/154903>
+        (https://bugs.webkit.org/show_bug.cgi?id=120540)
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resolveTree): Use address operator and dot-notation when
+        passing Element to CheckForVisibilityChangeOnRecalcStyle and calling
+        Element::renderStyle(), respectively.
+
 2013-09-04  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Move logical dimension getters/setters to FloatingObject from RenderBlock
