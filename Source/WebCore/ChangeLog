@@ -1,3 +1,18 @@
+2013-09-04  Andreas Kling  <akling@apple.com>
+
+        RenderSVGResource shouldn't trigger relayout during render tree teardown.
+        <https://webkit.org/b/120689>
+        <rdar://problem/14908967>
+
+        Reviewed by Antti Koivisto.
+
+        The new assertion in FrameView::scheduleRelayoutOfSubtree() caught a fish!
+        We were doing some unnecessary relayout scheduling while tearing down SVG
+        resource renderers.
+
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation):
+
 2013-09-04  Daniel Bates  <dabates@apple.com>
 
         [iOS] Fix the build following <http://trac.webkit.org/changeset/154903>
