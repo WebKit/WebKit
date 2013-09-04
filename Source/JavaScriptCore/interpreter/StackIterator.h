@@ -53,6 +53,7 @@ public:
             Native
         };
 
+        size_t index() const { return m_index; }
         size_t argumentCountIncludingThis() const { return m_argumentCountIncludingThis; }
         CallFrame* callerFrame() const { return m_callerFrame; }
         JSObject* callee() const { return m_callee; }
@@ -89,6 +90,7 @@ public:
         void retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column);
         void setToEnd();
 
+        size_t m_index;
         size_t m_argumentCountIncludingThis;
         CallFrame* m_callerFrame;
         JSObject* m_callee;
@@ -106,20 +108,32 @@ public:
 
     typedef bool (*FrameFilter)(Frame*);
 
+    enum Status {
+        Continue = 0,
+        Done = 1
+    };
+
+    // StackIterator::iterate() expects a Functor that implements the following method:
+    //     Status operator()(StackIterator&);
+
+    template <typename Functor> void iterate(Functor& functor)
+    {
+        while (m_frame.callFrame()) {
+            Status status = functor(*this);
+            if (status != Continue)
+                break;
+            gotoNextFrameWithFilter();
+        }
+    }
+
     JS_EXPORT_PRIVATE size_t numberOfFrames();
 
     Frame& operator*() { return m_frame; }
     ALWAYS_INLINE Frame* operator->() { return &m_frame; }
 
-    inline bool operator==(const StackIterator&);
-    bool operator!=(const StackIterator& other) { return !(*this == other); }
-    void operator++() { gotoNextFrameWithFilter(); }
-    void find(JSFunction*);
-
 private:
     JS_EXPORT_PRIVATE StackIterator(CallFrame* startFrame, FrameFilter = 0);
 
-    JS_EXPORT_PRIVATE static StackIterator end();
     void gotoFrameAtIndex(size_t frameIndex);
     void gotoNextFrame();
     JS_EXPORT_PRIVATE void gotoNextFrameWithFilter();
@@ -132,21 +146,11 @@ private:
 #endif
 
     CallFrame* m_startFrame;
-    size_t m_frameIndex;
     FrameFilter m_filter;
     Frame m_frame;
 
     friend class ExecState;
 };
-
-inline bool StackIterator::operator==(const StackIterator& other)
-{
-    return (m_frame.callFrame() == other.m_frame.callFrame())
-#if ENABLE(DFG_JIT)
-        && (m_frame.inlineCallFrame() == other.m_frame.inlineCallFrame())
-#endif
-        ; 
-}
 
 } // namespace JSC
 

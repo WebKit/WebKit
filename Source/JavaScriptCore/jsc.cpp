@@ -326,14 +326,31 @@ EncodedJSValue JSC_HOST_CALL functionDescribe(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
+class FunctionJSCStackFunctor {
+public:
+    FunctionJSCStackFunctor(StringBuilder& trace)
+        : m_trace(trace)
+    {
+    }
+
+    StackIterator::Status operator()(StackIterator& iter)
+    {
+        m_trace.append(String::format("    %zu   %s\n", iter->index(), iter->toString().utf8().data()));
+        return StackIterator::Continue;
+    }
+
+private:
+    StringBuilder& m_trace;
+};
+
 EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState* exec)
 {
     StringBuilder trace;
     trace.appendLiteral("--> Stack trace:\n");
 
-    int i = 0;
-    for (StackIterator iter = exec->begin(); iter != exec->end(); ++iter, ++i)
-        trace.append(String::format("    %i   %s\n", i, iter->toString().utf8().data()));
+    FunctionJSCStackFunctor functor(trace);
+    StackIterator iter = exec->begin();
+    iter.iterate(functor);
     fprintf(stderr, "%s", trace.toString().utf8().data());
     return JSValue::encode(jsUndefined());
 }

@@ -706,6 +706,36 @@ EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState* exec)
     return throwVMTypeError(exec);
 }
 
+class GlobalFuncProtoGetterFunctor {
+public:
+    GlobalFuncProtoGetterFunctor(JSObject* thisObject)
+        : m_hasSkippedFirstFrame(false)
+        , m_thisObject(thisObject)
+        , m_result(JSValue::encode(jsUndefined()))
+    {
+    }
+
+    EncodedJSValue result() { return m_result; }
+
+    StackIterator::Status operator()(StackIterator& iter)
+    {
+        if (!m_hasSkippedFirstFrame) {
+            m_hasSkippedFirstFrame = true;
+            return StackIterator::Continue;
+        }
+
+        if (m_thisObject->allowsAccessFrom(iter->callFrame()))
+            m_result = JSValue::encode(m_thisObject->prototype());
+
+        return StackIterator::Done;
+    }
+
+private:
+    bool m_hasSkippedFirstFrame;
+    JSObject* m_thisObject;
+    EncodedJSValue m_result;
+};
+
 EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
 {
     JSObject* thisObject = jsDynamicCast<JSObject*>(exec->thisValue().toThis(exec, NotStrictMode));
@@ -713,13 +743,39 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
     if (!thisObject)
         return JSValue::encode(exec->thisValue().synthesizePrototype(exec));
 
+    GlobalFuncProtoGetterFunctor functor(thisObject);
     StackIterator iter = exec->begin();
-    ++iter;
-    if ((iter == exec->end()) || !thisObject->allowsAccessFrom(iter->callFrame()))
-        return JSValue::encode(jsUndefined());
-
-    return JSValue::encode(thisObject->prototype());
+    iter.iterate(functor);
+    return functor.result();
 }
+
+class GlobalFuncProtoSetterFunctor {
+public:
+    GlobalFuncProtoSetterFunctor(JSObject* thisObject)
+        : m_hasSkippedFirstFrame(false)
+        , m_allowsAccess(false)
+        , m_thisObject(thisObject)
+    {
+    }
+
+    bool allowsAccess() const { return m_allowsAccess; }
+
+    StackIterator::Status operator()(StackIterator& iter)
+    {
+        if (!m_hasSkippedFirstFrame) {
+            m_hasSkippedFirstFrame = true;
+            return StackIterator::Continue;
+        }
+
+        m_allowsAccess = m_thisObject->allowsAccessFrom(iter->callFrame());
+        return StackIterator::Done;
+    }
+
+private:
+    bool m_hasSkippedFirstFrame;
+    bool m_allowsAccess;
+    JSObject* m_thisObject;
+};
 
 EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
 {
@@ -731,9 +787,10 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
     if (!thisObject)
         return JSValue::encode(jsUndefined());
 
+    GlobalFuncProtoSetterFunctor functor(thisObject);
     StackIterator iter = exec->begin();
-    ++iter;
-    if ((iter == exec->end()) || !thisObject->allowsAccessFrom(iter->callFrame()))
+    iter.iterate(functor);
+    if (!functor.allowsAccess())
         return JSValue::encode(jsUndefined());
 
     // Setting __proto__ to a non-object, non-null value is silently ignored to match Mozilla.

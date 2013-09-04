@@ -103,12 +103,4 @@ StackIterator CallFrame::begin(StackIterator::FrameFilter filter)
     return StackIterator(this, filter);
 }
 
-StackIterator CallFrame::find(JSFunction* calleeFunctionObj, StackIterator::FrameFilter filter)
-{
-    ASSERT(this);
-    StackIterator iter = StackIterator(this, filter);
-    iter.find(calleeFunctionObj);
-    return iter;
-}
-
 } // namespace JSC

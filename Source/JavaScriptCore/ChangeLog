@@ -1,3 +1,74 @@
+2013-09-03  Mark Lam  <mark.lam@apple.com>
+
+        Converting StackIterator to a callback interface.
+        https://bugs.webkit.org/show_bug.cgi?id=120564.
+
+        Reviewed by Filip Pizlo.
+
+        * API/JSContextRef.cpp:
+        (BacktraceFunctor::BacktraceFunctor):
+        (BacktraceFunctor::operator()):
+        (JSContextCreateBacktrace):
+        * interpreter/CallFrame.cpp:
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::DumpRegisterFunctor::DumpRegisterFunctor):
+        (JSC::DumpRegisterFunctor::operator()):
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::unwindCallFrame):
+        (JSC::GetStackTraceFunctor::GetStackTraceFunctor):
+        (JSC::GetStackTraceFunctor::operator()):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::stackTraceAsString):
+        (JSC::UnwindFunctor::UnwindFunctor):
+        (JSC::UnwindFunctor::operator()):
+        (JSC::Interpreter::unwind):
+        * interpreter/Interpreter.h:
+        * interpreter/StackIterator.cpp:
+        (JSC::StackIterator::numberOfFrames):
+        (JSC::StackIterator::gotoFrameAtIndex):
+        (JSC::StackIterator::gotoNextFrameWithFilter):
+        (JSC::StackIterator::resetIterator):
+        (JSC::StackIterator::Frame::print):
+        (debugPrintCallFrame):
+        (DebugPrintStackFunctor::operator()):
+        (debugPrintStack): Added for debugging convenience.
+        * interpreter/StackIterator.h:
+        (JSC::StackIterator::Frame::index):
+        (JSC::StackIterator::iterate):
+        * jsc.cpp:
+        (FunctionJSCStackFunctor::FunctionJSCStackFunctor):
+        (FunctionJSCStackFunctor::operator()):
+        (functionJSCStack):
+        * profiler/ProfileGenerator.cpp:
+        (JSC::AddParentForConsoleStartFunctor::AddParentForConsoleStartFunctor):
+        (JSC::AddParentForConsoleStartFunctor::foundParent):
+        (JSC::AddParentForConsoleStartFunctor::operator()):
+        (JSC::ProfileGenerator::addParentForConsoleStart):
+        * runtime/JSFunction.cpp:
+        (JSC::RetrieveArgumentsFunctor::RetrieveArgumentsFunctor):
+        (JSC::RetrieveArgumentsFunctor::result):
+        (JSC::RetrieveArgumentsFunctor::operator()):
+        (JSC::retrieveArguments):
+        (JSC::RetrieveCallerFunctionFunctor::RetrieveCallerFunctionFunctor):
+        (JSC::RetrieveCallerFunctionFunctor::result):
+        (JSC::RetrieveCallerFunctionFunctor::operator()):
+        (JSC::retrieveCallerFunction):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::GlobalFuncProtoGetterFunctor::GlobalFuncProtoGetterFunctor):
+        (JSC::GlobalFuncProtoGetterFunctor::result):
+        (JSC::GlobalFuncProtoGetterFunctor::operator()):
+        (JSC::globalFuncProtoGetter):
+        (JSC::GlobalFuncProtoSetterFunctor::GlobalFuncProtoSetterFunctor):
+        (JSC::GlobalFuncProtoSetterFunctor::allowsAccess):
+        (JSC::GlobalFuncProtoSetterFunctor::operator()):
+        (JSC::globalFuncProtoSetter):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::ObjectConstructorGetPrototypeOfFunctor):
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::result):
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::operator()):
+        (JSC::objectConstructorGetPrototypeOf):
+
 2013-09-03  Oliver Hunt  <oliver@apple.com>
 
         Support structured clone of Map and Set

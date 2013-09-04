@@ -1,3 +1,24 @@
+2013-09-03  Mark Lam  <mark.lam@apple.com>
+
+        Converting StackIterator to a callback interface.
+        https://bugs.webkit.org/show_bug.cgi?id=120564.
+
+        Reviewed by Filip Pizlo.
+
+        No new tests.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::SendFunctor::SendFunctor):
+        (WebCore::SendFunctor::hasViableFrame):
+        (WebCore::SendFunctor::operator()):
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::CreateScriptCallStackFunctor::CreateScriptCallStackFunctor):
+        (WebCore::CreateScriptCallStackFunctor::operator()):
+        (WebCore::createScriptCallStack):
+        (WebCore::CreateScriptCallStackForConsoleFunctor::CreateScriptCallStackForConsoleFunctor):
+        (WebCore::CreateScriptCallStackForConsoleFunctor::operator()):
+
 2013-09-03  Oliver Hunt  <oliver@apple.com>
 
         Support structured clone of Map and Set
@@ -3296,7 +3317,6 @@
         * page/EventHandler.cpp:
         (WebCore::findDropZone):
 
-<<<<<<< .mine
 2013-08-28  Benjamin Poulain  <benjamin@webkit.org>
 
         Simplify and clean SpaceSplitString
@@ -3342,7 +3362,6 @@
         * page/EventHandler.cpp:
         (WebCore::findDropZone):
 
-=======
 2013-08-28  Rob Buis  <rwlbuis@webkit.org>
 
         Namespace prefix is blindly followed when serializing
@@ -3425,7 +3444,6 @@
         * platform/qt/LocalizedStringsQt.cpp:
         (WebCore::AXSearchFieldCancelButtonText):
 
->>>>>>> .r154779
 2013-08-28  Eric Carlson  <eric.carlson@apple.com>
 
         MediaPlayerPrivateAVFoundationObjC is painting video frames under the video layer

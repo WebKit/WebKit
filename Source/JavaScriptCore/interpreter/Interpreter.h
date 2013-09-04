@@ -262,7 +262,6 @@ namespace JSC {
         JSValue execute(CallFrameClosure&);
 
         void getStackTrace(Vector<StackFrame>& results, size_t maxStackSize = std::numeric_limits<size_t>::max());
-        NEVER_INLINE bool unwindCallFrame(StackIterator&, JSValue);
 
         void dumpRegisters(CallFrame*);
         

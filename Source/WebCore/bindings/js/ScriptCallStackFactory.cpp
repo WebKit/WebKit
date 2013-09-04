@@ -54,17 +54,41 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
+class CreateScriptCallStackFunctor {
+public:
+    CreateScriptCallStackFunctor(Vector<ScriptCallFrame>& frames,  size_t remainingCapacity)
+        : m_frames(frames)
+        , m_remainingCapacityForFrameCapture(remainingCapacity)
+    {
+    }
+
+    StackIterator::Status operator()(StackIterator& iter)
+    {
+        if (m_remainingCapacityForFrameCapture) {
+            unsigned line;
+            unsigned column;
+            iter->computeLineAndColumn(line, column);
+            m_frames.append(ScriptCallFrame(iter->functionName(), iter->sourceURL(), line, column));
+
+            m_remainingCapacityForFrameCapture--;
+            return StackIterator::Continue;
+        }
+        return StackIterator::Done;
+    }
+
+private:
+    Vector<ScriptCallFrame>& m_frames;
+    size_t m_remainingCapacityForFrameCapture;
+};
+
 PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool emptyIsAllowed)
 {
     Vector<ScriptCallFrame> frames;
     if (JSC::ExecState* exec = JSMainThreadExecState::currentState()) {
         CallFrame* frame = exec->vm().topCallFrame;
-        for (StackIterator iter = frame->begin(); iter != frame->end() && maxStackSize--; ++iter) {
-            unsigned line;
-            unsigned column;
-            iter->computeLineAndColumn(line, column);
-            frames.append(ScriptCallFrame(iter->functionName(), iter->sourceURL(), line, column));
-        }
+        CreateScriptCallStackFunctor functor(frames, maxStackSize);
+        StackIterator iter = frame->begin();
+        iter.iterate(functor);
     }
     if (frames.isEmpty() && !emptyIsAllowed) {
         // No frames found. It may happen in the case where
@@ -75,25 +99,55 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool empt
     return ScriptCallStack::create(frames);
 }
 
+class CreateScriptCallStackForConsoleFunctor {
+public:
+    CreateScriptCallStackForConsoleFunctor(bool needToSkipAFrame,  size_t remainingCapacity, Vector<ScriptCallFrame>& frames)
+        : m_needToSkipAFrame(needToSkipAFrame)
+        , m_remainingCapacityForFrameCapture(remainingCapacity)
+        , m_frames(frames)
+    {
+    }
+
+    StackIterator::Status operator()(StackIterator& iter)
+    {
+        if (m_needToSkipAFrame) {
+            m_needToSkipAFrame = false;
+            return StackIterator::Continue;
+        }
+
+        if (m_remainingCapacityForFrameCapture) {
+            // This early exit is necessary to maintain our old behaviour
+            // but the stack trace we produce now is complete and handles all
+            // ways in which code may be running
+            if (!iter->callee() && m_frames.size())
+                return StackIterator::Done;
+
+            unsigned line;
+            unsigned column;
+            iter->computeLineAndColumn(line, column);
+            m_frames.append(ScriptCallFrame(iter->functionName(), iter->sourceURL(), line, column));
+
+            m_remainingCapacityForFrameCapture--;
+            return StackIterator::Continue;
+        }
+        return StackIterator::Done;
+    }
+
+private:
+    bool m_needToSkipAFrame;
+    size_t m_remainingCapacityForFrameCapture;
+    Vector<ScriptCallFrame>& m_frames;
+};
+
 PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStackSize)
 {
     Vector<ScriptCallFrame> frames;
     ASSERT(exec);
     CallFrame* frame = exec->vm().topCallFrame;
     StackIterator iter = frame->begin();
-    if (iter.numberOfFrames() > 1)
-        ++iter;
-    for (; iter != frame->end() && maxStackSize--; ++iter) {
-        // This early exit is necessary to maintain our old behaviour
-        // but the stack trace we produce now is complete and handles all
-        // ways in which code may be running
-        if (!iter->callee() && frames.size())
-            break;
-        unsigned line;
-        unsigned column;
-        iter->computeLineAndColumn(line, column);
-        frames.append(ScriptCallFrame(iter->functionName(), iter->sourceURL(), line, column));
-    }
+    size_t numberOfFrames = iter.numberOfFrames();
+    CreateScriptCallStackForConsoleFunctor functor(numberOfFrames > 1, maxStackSize, frames);
+    iter.iterate(functor);
     return ScriptCallStack::create(frames);
 }
 

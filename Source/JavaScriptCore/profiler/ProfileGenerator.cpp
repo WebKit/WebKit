@@ -57,20 +57,54 @@ ProfileGenerator::ProfileGenerator(ExecState* exec, const String& title, unsigne
         addParentForConsoleStart(exec);
 }
 
+class AddParentForConsoleStartFunctor {
+public:
+    AddParentForConsoleStartFunctor(ExecState* exec, RefPtr<ProfileNode>& head, RefPtr<ProfileNode>& currentNode)
+        : m_exec(exec)
+        , m_hasSkippedFirstFrame(false)
+        , m_foundParent(false)
+        , m_head(head)
+        , m_currentNode(currentNode)
+    {
+    }
+
+    bool foundParent() const { return m_foundParent; }
+
+    StackIterator::Status operator()(StackIterator& iter)
+    {
+        if (!m_hasSkippedFirstFrame) {
+            m_hasSkippedFirstFrame = true;
+            return StackIterator::Continue;
+        }
+
+        unsigned line = 0;
+        unsigned unusedColumn = 0;
+        iter->computeLineAndColumn(line, unusedColumn);
+        m_currentNode = ProfileNode::create(m_exec, LegacyProfiler::createCallIdentifier(m_exec, iter->callee(), iter->sourceURL(), line), m_head.get(), m_head.get());
+        m_head->insertNode(m_currentNode.get());
+
+        m_foundParent = true;
+        return StackIterator::Done;
+    }
+
+private:
+    ExecState* m_exec;
+    bool m_hasSkippedFirstFrame;
+    bool m_foundParent; 
+    RefPtr<ProfileNode>& m_head;
+    RefPtr<ProfileNode>& m_currentNode;
+};
+
 void ProfileGenerator::addParentForConsoleStart(ExecState* exec)
 {
+    AddParentForConsoleStartFunctor functor(exec, m_head, m_currentNode);
     StackIterator iter = exec->begin();
-    ++iter;
-    if (iter == exec->end()) {
+    iter.iterate(functor);
+
+    if (!functor.foundParent()) {
         m_currentNode = ProfileNode::create(exec, LegacyProfiler::createCallIdentifier(exec, JSValue(), String(), 0), m_head.get(), m_head.get());
         m_head->insertNode(m_currentNode.get());
-        return;
     }
-    unsigned line = 0;
-    unsigned unusedColumn = 0;
-    iter->computeLineAndColumn(line, unusedColumn);
-    m_currentNode = ProfileNode::create(exec, LegacyProfiler::createCallIdentifier(exec, iter->callee(), iter->sourceURL(), line), m_head.get(), m_head.get());
-    m_head->insertNode(m_currentNode.get());
 }
 
 const String& ProfileGenerator::title() const

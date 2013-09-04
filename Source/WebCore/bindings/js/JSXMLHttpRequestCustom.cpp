@@ -112,6 +112,32 @@ JSValue JSXMLHttpRequest::open(ExecState* exec)
     return jsUndefined();
 }
 
+class SendFunctor {
+public:
+    SendFunctor()
+        : m_hasSkippedFirstFrame(false)
+        , m_hasViableFrame(false)
+    {
+    }
+
+    bool hasViableFrame() const { return m_hasViableFrame; }
+
+    StackIterator::Status operator()(StackIterator&)
+    {
+        if (!m_hasSkippedFirstFrame) {
+            m_hasSkippedFirstFrame = true;
+            return StackIterator::Continue;
+        }
+
+        m_hasViableFrame = true;
+        return StackIterator::Done;
+    }
+
+private:
+    bool m_hasSkippedFirstFrame;
+    bool m_hasViableFrame;
+};
+
 JSValue JSXMLHttpRequest::send(ExecState* exec)
 {
     InspectorInstrumentation::willSendXMLHttpRequest(impl()->scriptExecutionContext(), impl()->url());
@@ -138,9 +164,10 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
             impl()->send(val.toString(exec)->value(exec), ec);
     }
 
+    SendFunctor functor;
     StackIterator iter = exec->begin();
-    ++iter;
-    if (iter != exec->end()) {
+    iter.iterate(functor);
+    if (functor.hasViableFrame()) {
         unsigned line = 0;
         unsigned unusuedColumn = 0;
         iter->computeLineAndColumn(line, unusuedColumn);

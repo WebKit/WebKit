@@ -44,11 +44,11 @@ StackIterator::StackIterator(CallFrame* startFrame, StackIterator::FrameFilter f
 
 size_t StackIterator::numberOfFrames()
 {
-    int savedFrameIndex = m_frameIndex;
+    int savedFrameIndex = m_frame.index();
     resetIterator();
     while (m_frame.callFrame())
         gotoNextFrameWithFilter();
-    size_t numberOfFrames = m_frameIndex;
+    size_t numberOfFrames = m_frame.index();
 
     resetIterator();
     gotoFrameAtIndex(savedFrameIndex);
@@ -58,7 +58,7 @@ size_t StackIterator::numberOfFrames()
 
 void StackIterator::gotoFrameAtIndex(size_t index)
 {
-    while (m_frame.callFrame() && (m_frameIndex != index))
+    while (m_frame.callFrame() && (m_frame.index() != index))
         gotoNextFrameWithFilter();
 }
 
@@ -83,29 +83,13 @@ void StackIterator::gotoNextFrameWithFilter()
         if (!m_frame.callFrame() || !m_filter || !m_filter(&m_frame))
             break;
     }
-    m_frameIndex++;
+    m_frame.m_index++;
 }
 
 void StackIterator::resetIterator()
 {
-    m_frameIndex = 0;
+    m_frame.m_index = 0;
     readFrame(m_startFrame);
-}
-
-StackIterator StackIterator::end()
-{
-    return StackIterator(0, 0);
-}
-
-void StackIterator::find(JSFunction* functionObj)
-{
-    ASSERT(functionObj);
-    JSObject* targetCallee = jsDynamicCast<JSObject*>(functionObj);
-    while (m_frame.callFrame()) {
-        if (m_frame.callee() == targetCallee)
-            break;
-        gotoNextFrameWithFilter();
-    }
 }
 
 void StackIterator::readFrame(CallFrame* callFrame)
@@ -404,8 +388,13 @@ void StackIterator::Frame::print(int indentLevel)
 {
     int i = indentLevel;
 
+    if (!this->callFrame()) {
+        printif(i, "frame 0x0\n");
+        return;
+    }
+
     CodeBlock* codeBlock = this->codeBlock();
-    printif(i, "frame %p {\n", this);
+    printif(i, "frame %p {\n", this->callFrame());
 
     CallFrame* callFrame = m_callFrame;
     CallFrame* callerFrame = this->callerFrame();
@@ -460,6 +449,8 @@ void StackIterator::Frame::print(int indentLevel)
 } // namespace JSC
 
 #ifndef NDEBUG
+using JSC::StackIterator;
+
 // For debugging use
 void debugPrintCallFrame(JSC::CallFrame*);
 void debugPrintStack(JSC::CallFrame* topCallFrame);
@@ -468,16 +459,25 @@ void debugPrintCallFrame(JSC::CallFrame* callFrame)
 {
     if (!callFrame)
         return;
-    JSC::StackIterator iter = callFrame->begin();
+    StackIterator iter = callFrame->begin();
     iter->print(2);
 }
+
+class DebugPrintStackFunctor {
+public:
+    StackIterator::Status operator()(StackIterator& iter)
+    {
+        iter->print(2);
+        return StackIterator::Continue;
+    }
+};
 
 void debugPrintStack(JSC::CallFrame* topCallFrame)
 {
     if (!topCallFrame)
         return;
-    JSC::StackIterator iter = topCallFrame->begin();
-    for (; iter != topCallFrame->end(); ++iter)
-        iter->print(2);
+    DebugPrintStackFunctor functor;
+    StackIterator iter = topCallFrame->begin();
+    iter.iterate(functor);
 }
 #endif // !NDEBUG

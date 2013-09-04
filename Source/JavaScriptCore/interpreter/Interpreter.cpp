@@ -274,6 +274,34 @@ void Interpreter::dumpCallFrame(CallFrame* callFrame)
     dumpRegisters(callFrame);
 }
 
+class DumpRegisterFunctor {
+public:
+    DumpRegisterFunctor(const Register*& it)
+        : m_hasSkippedFirstFrame(false)
+        , m_it(it)
+    {
+    }
+
+    StackIterator::Status operator()(StackIterator& iter)
+    {
+        if (!m_hasSkippedFirstFrame) {
+            m_hasSkippedFirstFrame = true;
+            return StackIterator::Continue;
+        }
+
+        unsigned line = 0;
+        unsigned unusedColumn = 0;
+        iter->computeLineAndColumn(line, unusedColumn);
+        dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", m_it, iter->bytecodeOffset(), line);
+        ++m_it;
+        return StackIterator::Done;
+    }
+
+private:
+    bool m_hasSkippedFirstFrame;
+    const Register*& m_it;
+};
+
 void Interpreter::dumpRegisters(CallFrame* callFrame)
 {
     dataLogF("Register frame: \n\n");
@@ -309,15 +337,11 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     if (pc.hasJITReturnAddress())
         dataLogF("[ReturnJITPC]              | %10p | %p \n", it, pc.jitReturnAddress().value());
 #endif
+
+    DumpRegisterFunctor functor(it);
     StackIterator iter = callFrame->begin();
-    ++iter;
-    if (iter != callFrame->end()) {
-        unsigned line = 0;
-        unsigned unusedColumn = 0;
-        iter->computeLineAndColumn(line, unusedColumn);
-        dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", it, iter->bytecodeOffset(), line);
-        ++it;
-    }
+    iter.iterate(functor);
+
     dataLogF("[CodeBlock]                | %10p | %p \n", it, callFrame->codeBlock());
     ++it;
     dataLogF("-----------------------------------------------------------------------------\n");
@@ -366,7 +390,7 @@ bool Interpreter::isOpcode(Opcode opcode)
 #endif
 }
 
-NEVER_INLINE bool Interpreter::unwindCallFrame(StackIterator& iter, JSValue exceptionValue)
+static bool unwindCallFrame(StackIterator& iter, JSValue exceptionValue)
 {
     CallFrame* callFrame = iter->callFrame();
     CodeBlock* codeBlock = iter->codeBlock();
@@ -474,6 +498,51 @@ String StackFrame::toString(CallFrame* callFrame)
     return traceBuild.toString().impl();
 }
 
+class GetStackTraceFunctor {
+public:
+    GetStackTraceFunctor(VM& vm, Vector<StackFrame>& results, size_t remainingCapacity)
+        : m_vm(vm)
+        , m_results(results)
+        , m_remainingCapacityForFrameCapture(remainingCapacity)
+    {
+    }
+
+    StackIterator::Status operator()(StackIterator& iter)
+    {
+        VM& vm = m_vm;
+        if (m_remainingCapacityForFrameCapture) {
+            if (iter->isJSFrame()) {
+                CodeBlock* codeBlock = iter->codeBlock();
+                StackFrame s = {
+                    Strong<JSObject>(vm, iter->callee()),
+                    getStackFrameCodeType(iter),
+                    Strong<ExecutableBase>(vm, codeBlock->ownerExecutable()),
+                    Strong<UnlinkedCodeBlock>(vm, codeBlock->unlinkedCodeBlock()),
+                    codeBlock->source(),
+                    codeBlock->ownerExecutable()->lineNo(),
+                    codeBlock->firstLineColumnOffset(),
+                    codeBlock->sourceOffset(),
+                    iter->bytecodeOffset(),
+                    iter->sourceURL()
+                };
+                m_results.append(s);
+            } else {
+                StackFrame s = { Strong<JSObject>(vm, iter->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, 0, String()};
+                m_results.append(s);
+            }
+    
+            m_remainingCapacityForFrameCapture--;
+            return StackIterator::Continue;
+        }
+        return StackIterator::Done;
+    }
+
+private:
+    VM& m_vm;
+    Vector<StackFrame>& m_results;
+    size_t m_remainingCapacityForFrameCapture;
+};
+
 void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t maxStackSize)
 {
     VM& vm = m_vm;
@@ -481,30 +550,13 @@ void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t maxStackSize
     CallFrame* callFrame = vm.topCallFrame;
     if (!callFrame)
         return;
+
+    GetStackTraceFunctor functor(vm, results, maxStackSize);
     StackIterator iter = callFrame->begin();
-    for (; iter != callFrame->end() && maxStackSize--; ++iter) {
-        if (iter->isJSFrame()) {
-            CodeBlock* codeBlock = iter->codeBlock();
-            StackFrame s = {
-                Strong<JSObject>(vm, iter->callee()),
-                getStackFrameCodeType(iter),
-                Strong<ExecutableBase>(vm, codeBlock->ownerExecutable()),
-                Strong<UnlinkedCodeBlock>(vm, codeBlock->unlinkedCodeBlock()),
-                codeBlock->source(),
-                codeBlock->ownerExecutable()->lineNo(),
-                codeBlock->firstLineColumnOffset(),
-                codeBlock->sourceOffset(),
-                iter->bytecodeOffset(),
-                iter->sourceURL()
-            };
-            results.append(s);
-        } else {
-            StackFrame s = { Strong<JSObject>(vm, iter->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, 0, String()};
-            results.append(s);
-        }
-    }
+    iter.iterate(functor);
 }
-JSString* Interpreter:: stackTraceAsString(ExecState* exec, Vector<StackFrame> stackTrace)
+
+JSString* Interpreter::stackTraceAsString(ExecState* exec, Vector<StackFrame> stackTrace)
 {
     // FIXME: JSStringJoiner could be more efficient than StringBuilder here.
     StringBuilder builder;
@@ -515,6 +567,44 @@ JSString* Interpreter:: stackTraceAsString(ExecState* exec, Vector<StackFrame> s
     }
     return jsString(&exec->vm(), builder.toString());
 }
+
+class UnwindFunctor {
+public:
+    UnwindFunctor(CallFrame*& callFrame, JSValue& exceptionValue, bool isTermination, CodeBlock*& codeBlock, HandlerInfo*& handler)
+        : m_callFrame(callFrame)
+        , m_exceptionValue(exceptionValue)
+        , m_isTermination(isTermination)
+        , m_codeBlock(codeBlock)
+        , m_handler(handler)
+    {
+    }
+
+    StackIterator::Status operator()(StackIterator& iter)
+    {
+        VM& vm = m_callFrame->vm();
+        m_callFrame = iter->callFrame();
+        m_codeBlock = iter->codeBlock();
+        unsigned bytecodeOffset = iter->bytecodeOffset();
+
+        if (m_isTermination || !(m_handler = m_codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
+        if (!unwindCallFrame(iter, m_exceptionValue)) {
+            if (LegacyProfiler* profiler = vm.enabledProfiler())
+                profiler->exceptionUnwind(m_callFrame);
+            return StackIterator::Done;
+        }
+    } else
+        return StackIterator::Done;
+
+    return StackIterator::Continue;
+}
+
+private:
+    CallFrame*& m_callFrame;
+    JSValue& m_exceptionValue;
+    bool m_isTermination;
+    CodeBlock*& m_codeBlock;
+    HandlerInfo*& m_handler;
+};
 
 NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& exceptionValue, unsigned bytecodeOffset)
 {
@@ -549,22 +639,13 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& ex
     HandlerInfo* handler = 0;
     VM& vm = callFrame->vm();
     ASSERT(callFrame == vm.topCallFrame);
-    for (StackIterator iter = callFrame->begin(); iter != callFrame->end(); ++iter) {
-        callFrame = iter->callFrame();
-        codeBlock = iter->codeBlock();
-        bytecodeOffset = iter->bytecodeOffset();
+    UnwindFunctor functor(callFrame, exceptionValue, isTermination, codeBlock, handler);
+    StackIterator iter = callFrame->begin();
+    iter.iterate(functor);
+    if (!handler)
+        return 0;
 
-        if (isTermination || !(handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
-            if (!unwindCallFrame(iter, exceptionValue)) {
-                if (LegacyProfiler* profiler = vm.enabledProfiler())
-                    profiler->exceptionUnwind(callFrame);
-                return 0;
-            }
-        } else
-            break;
-    }
-
-    if (LegacyProfiler* profiler = callFrame->vm().enabledProfiler())
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->exceptionUnwind(callFrame);
 
     // Unwind the scope chain within the exception handler's call frame.

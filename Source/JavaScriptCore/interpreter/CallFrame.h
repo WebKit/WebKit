@@ -284,8 +284,6 @@ namespace JSC  {
         CallFrame* callerFrameNoFlags() { return callerFrame()->removeHostCallFrameFlag(); }
 
         JS_EXPORT_PRIVATE StackIterator begin(StackIterator::FrameFilter = 0);
-        JS_EXPORT_PRIVATE StackIterator find(JSFunction* calleeFunctionObj, StackIterator::FrameFilter = 0);
-        StackIterator end() { return StackIterator::end(); }
 
     private:
         static const intptr_t HostCallFrameFlag = 1;

@@ -131,16 +131,44 @@ CallType ObjectConstructor::getCallData(JSCell*, CallData& callData)
     return CallTypeHost;
 }
 
+class ObjectConstructorGetPrototypeOfFunctor {
+public:
+    ObjectConstructorGetPrototypeOfFunctor(JSObject* object)
+        : m_hasSkippedFirstFrame(false)
+        , m_object(object)
+        , m_result(JSValue::encode(jsUndefined()))
+    {
+    }
+
+    EncodedJSValue result() const { return m_result; }
+
+    StackIterator::Status operator()(StackIterator& iter)
+    {
+        if (!m_hasSkippedFirstFrame) {
+            m_hasSkippedFirstFrame = true;
+            return StackIterator::Continue;
+        }
+
+    if (m_object->allowsAccessFrom(iter->callFrame()))
+        m_result = JSValue::encode(m_object->prototype());
+    return StackIterator::Done;
+}
+
+private:
+    bool m_hasSkippedFirstFrame;
+    JSObject* m_object;
+    EncodedJSValue m_result;
+};
+
 EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
 {
     if (!exec->argument(0).isObject())
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("Requested prototype of a value that is not an object.")));
     JSObject* object = asObject(exec->argument(0));
+    ObjectConstructorGetPrototypeOfFunctor functor(object);
     StackIterator iter = exec->begin();
-    ++iter;
-    if ((iter == exec->end()) || !object->allowsAccessFrom(iter->callFrame()))
-        return JSValue::encode(jsUndefined());
-    return JSValue::encode(object->prototype());
+    iter.iterate(functor);
+    return functor.result();
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptor(ExecState* exec)
