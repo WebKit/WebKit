@@ -1,5 +1,13 @@
 2013-09-04  Beth Dakin  <bdakin@apple.com>
 
+        Fixing a typo in demo files and screenshot.
+
+        * blog-files/regions/pizza-is-amazing.png: Replaced.
+        * demos/regions/pizza-regions-manifesto-regionstyling.html:
+        * demos/regions/pizza-regions-manifesto.html:
+
+2013-09-04  Beth Dakin  <bdakin@apple.com>
+
         Upload demo and images for a potential blog post.
 
         * blog-files/regions: Added.
