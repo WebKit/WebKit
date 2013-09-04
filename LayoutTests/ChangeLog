@@ -1,3 +1,16 @@
+2013-09-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Check that XMLHttpRequest.response returns null or a json object as specified in the spec according to readyState value.
+        https://bugs.webkit.org/show_bug.cgi?id=120690
+
+        Reviewed by Darin Adler.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/d667a115b0fd8f5e11a24d8db44388a990abf543
+
+        * http/tests/xmlhttprequest/resources/test.json: Added.
+        * http/tests/xmlhttprequest/response-json-and-readystate-expected.txt: Added.
+        * http/tests/xmlhttprequest/response-json-and-readystate.html: Added.
+
 2013-09-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove HTMLDialogElement layout tests after r154835
