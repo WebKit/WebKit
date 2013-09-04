@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2013 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,52 +32,65 @@
 
 #if USE(CG)
 
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+#define WTF_USE_PDFKIT_FOR_PDFDOCUMENTIMAGE 1
+#endif
+
 typedef struct CGPDFDocument *CGPDFDocumentRef;
+OBJC_CLASS PDFDocument;
 
 namespace WebCore {
 
-    class GraphicsContext;
+class GraphicsContext;
 
-    class PDFDocumentImage : public Image {
-    public:
-        static PassRefPtr<PDFDocumentImage> create()
-        {
-            return adoptRef(new PDFDocumentImage);
-        }
+class PDFDocumentImage : public Image {
+public:
+    static PassRefPtr<PDFDocumentImage> create()
+    {
+        return adoptRef(new PDFDocumentImage);
+    }
 
-    private:
-        virtual ~PDFDocumentImage();
+private:
+    PDFDocumentImage();
+    virtual ~PDFDocumentImage();
 
-        virtual String filenameExtension() const;
+    virtual String filenameExtension() const OVERRIDE;
 
-        virtual bool hasSingleSecurityOrigin() const { return true; }
+    virtual bool hasSingleSecurityOrigin() const OVERRIDE { return true; }
 
-        virtual bool dataChanged(bool allDataReceived);
+    virtual bool dataChanged(bool allDataReceived) OVERRIDE;
 
-        // FIXME: PDF Images are underreporting decoded sizes and will be unable
-        // to prune because these functions are not implemented yet.
-        virtual void destroyDecodedData(bool /*destroyAll*/ = true) { }
-        virtual unsigned decodedSize() const { return 0; }
+    // FIXME: PDF Images are underreporting decoded sizes and will be unable
+    // to prune because these functions are not implemented yet.
+    virtual void destroyDecodedData(bool /*destroyAll*/ = true) OVERRIDE { }
+    virtual unsigned decodedSize() const OVERRIDE { return 0; }
 
-        virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
-        virtual IntSize size() const;
+    virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) OVERRIDE;
+    virtual IntSize size() const OVERRIDE;
 
-        PDFDocumentImage();
-        virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode);
+    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode) OVERRIDE;
 
-        // FIXME: Implement this to be less conservative.
-        virtual bool currentFrameKnownToBeOpaque() OVERRIDE { return false; }
+    // FIXME: Implement this to be less conservative.
+    virtual bool currentFrameKnownToBeOpaque() OVERRIDE { return false; }
 
-        void setCurrentPage(int);
-        int pageCount() const;
-        void adjustCTM(GraphicsContext*) const;
+    void applyRotationForPainting(GraphicsContext*) const;
 
-        CGPDFDocumentRef m_document;
-        FloatRect m_mediaBox;
-        FloatRect m_cropBox;
-        float m_rotation;
-        int m_currentPage;
-    };
+    void createPDFDocument();
+    void computeBoundsForCurrentPage();
+    unsigned pageCount() const;
+    void drawPDFPage(GraphicsContext*);
+
+#if USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)
+    RetainPtr<PDFDocument> m_document;
+#else
+    RetainPtr<CGPDFDocumentRef> m_document;
+#endif
+
+    FloatRect m_mediaBox;
+    FloatRect m_cropBox;
+    float m_rotation;
+    bool m_hasPage;
+};
 
 }
 

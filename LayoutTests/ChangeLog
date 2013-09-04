@@ -1,3 +1,20 @@
+2013-09-04  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] PDFDocumentImage should use PDFKit to draw
+        https://bugs.webkit.org/show_bug.cgi?id=120651
+        <rdar://problem/12810731>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/images/pdf-as-image-with-annotations-expected.html: Added.
+        * fast/images/pdf-as-image-with-annotations.html: Added.
+        * fast/images/resources/annotation.pdf: Added.
+        Add a test that ensures that PDF-in-<img> draws simple annotations.
+
+        * platform/mac/fast/images/pdf-as-image-landscape-expected.png:
+        * platform/mac/fast/images/pdf-as-image-landscape-expected.txt:
+        Extremely minor rebaselines probably due to PDFKit handling rotation in the new implementation.
+
 2013-09-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Check that XMLHttpRequest.response returns null or a json object as specified in the spec according to readyState value.

@@ -1,3 +1,99 @@
+2013-09-04  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] PDFDocumentImage should use PDFKit to draw
+        https://bugs.webkit.org/show_bug.cgi?id=120651
+        <rdar://problem/12810731>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use PDFKit to draw PDF-in-<img> on Mac, so that annotations in PDF are painted.
+
+        Test: fast/images/pdf-as-image-with-annotations.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add PDFDocumentImageMac.mm.
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::PDFDocumentImage):
+        We don't need to initialize m_document anymore because it's now a RetainPtr.
+        Initialize m_hasPage to false.
+
+        (WebCore::PDFDocumentImage::~PDFDocumentImage):
+        We don't need to manually release our CGPDFDocumentRef anymore because it's now a RetainPtr.
+
+        (WebCore::PDFDocumentImage::size):
+        Use expandedIntSize for explicitness.
+
+        (WebCore::PDFDocumentImage::applyRotationForPainting):
+        Rename adjustCTM to applyRotationForPainting, and move the one non-rotation related transformation out.
+        We need to do this because PDFKit applies the rotation transformation itself, so we don't need to.
+        Also, explicitly use std::min instead of importing the whole std namespace.
+
+        (WebCore::PDFDocumentImage::dataChanged):
+        Assert that we don't re-enter dataChanged after we've created a document,
+        because it seems like that shouldn't happen - we only create a document when
+        we've supposedly received all data, and it would be nice if we didn't have
+        all this varying code to deal with SharedBuffers changing out from under each other.
+        Factor the code to create a CGPDFDocumentRef out into createPDFDocument, so we can
+        replace it with a different implementation that creates a PDFDocument.
+
+        (WebCore::PDFDocumentImage::setCurrentPage):
+        Make all page-number-related things unsigned, since they are in CG and PDFKit,
+        and add m_hasPage to denote whether we've acquired a valid page yet.
+        Factor code to retrieve the PDF box bounds into computeBoundsForCurrentPage.
+        Remove setCurrentPage itself, as we never use a page other than the first page;
+        we will call computeBoundsForCurrentPage and set hasPage in dataChanged, now.
+
+        (WebCore::PDFDocumentImage::draw):
+        Fix a weird comment.
+        Factor code that actually draws the PDF out into drawPDFPage.
+
+        The rest of the functions in this file are only built for USE(CG) && !PLATFORM(MAC):
+
+        (WebCore::PDFDocumentImage::createPDFDocument):
+        Factored out of dataChanged(); I only kept the !PLATFORM(MAC) branch.
+
+        (WebCore::PDFDocumentImage::computeBoundsForCurrentPage):
+        Factored out of setCurrentPage().
+        Use deg2rad since we have it.
+
+        (WebCore::PDFDocumentImage::pageCount):
+        (WebCore::PDFDocumentImage::drawPDFPage):
+        Factored out of draw().
+        Reduced an unnecessary transform (we were effectively doing mediaBox.origin - cropBox.origin - mediaBox.origin).
+
+        * platform/graphics/cg/PDFDocumentImage.h:
+        Unindent all the things, as we don't indent the first level inside a namespace scope.
+        Forward-declare PDFDocument.
+        Make m_currentPage unsigned as it should be.
+        Add m_hasPage.
+        Make m_document a PDFDocument on PLATFORM(MAC) and a CGPDFDocumentRef on other platforms.
+
+        * platform/graphics/mac/PDFDocumentImageMac.mm: Added.
+        Soft-link in PDFKit and specifically the PDFDocument class.
+
+        (WebCore::PDFDocumentImage::createPDFDocument):
+        Create our PDFDocument from the SharedBuffer's NSData directly. This shouldn't be a problem
+        (with respect to the SharedBuffer's data being appended to in secret), because we've waited
+        for the document to finish loading before getting here.
+
+        (WebCore::PDFDocumentImage::computeBoundsForCurrentPage):
+        Ask PDFKit for the page's media and crop boxes; it automatically performs the correct fallback.
+        Ask PDFKit for the page's rotation.
+
+        (WebCore::PDFDocumentImage::pageCount):
+        Ask PDFKit for the page count.
+
+        (WebCore::PDFDocumentImage::drawPDFPage):
+        Paint the current page of the PDF. Note that we do not apply the rotation here
+        via applyRotationForPainting because PDFKit will do it itself.
+
+        * platform/mac/SoftLinking.h:
+        I couldn't find any clients of SOFT_LINK_FRAMEWORK_IN_CORESERVICES_UMBRELLA,
+        so I made it the more generic SOFT_LINK_FRAMEWORK_IN_UMBRELLA, taking the name
+        of the umbrella framework and the subframework, so I could use it to soft link
+        Quartz.framework's PDFKit.framework.
+
 2013-09-04  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed Windows build fix.
