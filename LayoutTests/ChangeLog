@@ -1,3 +1,31 @@
+2013-09-04  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Extend the RenderRegionRange class to include overflow information + apply the layout overflow
+        https://bugs.webkit.org/show_bug.cgi?id=116299
+
+        Reviewed by David Hyatt.
+
+        Add tests for layout overflow propagation. Some tests disable the visual representation of the overflow.
+        This is because the visual overflow in regions is not yet fixed. The tests will be revisited when the
+        visual overflow is implemented.
+        Some repaint tests are rebased because a new repaint is issued on the regions when they compute the layout
+        overflow.
+
+        * fast/regions/element-in-named-flow-absolute-from-fixed-expected.txt: Rebased.
+        * fast/regions/element-in-named-flow-fixed-from-absolute-expected.txt: Rebased.
+        * fast/regions/element-inflow-fixed-from-outflow-static-expected.txt: Rebased.
+        * fast/regions/element-outflow-static-from-inflow-fixed-expected.txt: Rebased.
+        * fast/regions/overflow-scrollable-rel-pos-fragment-expected.html: Added.
+        * fast/regions/overflow-scrollable-rel-pos-fragment.html: Added.
+        * fast/regions/overflow-scrollable-rotated-fragment-expected.html: Added.
+        * fast/regions/overflow-scrollable-rotated-fragment.html: Added.
+        * fast/regions/overflow-scrollable-unsplittable-fragment-expected.html: Added.
+        * fast/regions/overflow-scrollable-unsplittable-fragment.html: Added.
+        * fast/regions/overflow-scrollable-varying-width-1-expected.html: Added.
+        * fast/regions/overflow-scrollable-varying-width-1.html: Added.
+        * fast/regions/overflow-scrollable-varying-width-2-expected.html: Added.
+        * fast/regions/overflow-scrollable-varying-width-2.html: Added.
+
 2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.

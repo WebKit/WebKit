@@ -194,6 +194,15 @@ public:
     LayoutUnit offsetFromLogicalTopOfFirstRegion(const RenderBlock*) const;
     void clearRenderBoxRegionInfoAndCustomStyle(const RenderBox*, const RenderRegion*, const RenderRegion*, const RenderRegion*, const RenderRegion*);
 
+    LayoutRect mapFromFlowThreadToLocal(const RenderBox*, const LayoutRect&) const;
+    LayoutRect mapFromLocalToFlowThread(const RenderBox*, const LayoutRect&) const;
+
+    void addRegionsVisualEffectOverflow(const RenderBox*);
+    void addRegionsVisualOverflowFromTheme(const RenderBlock*);
+    void addRegionsOverflowFromChild(const RenderBox*, const RenderBox*, const LayoutSize&);
+    void addRegionsLayoutOverflow(const RenderBox*, const LayoutRect&);
+    void clearRegionsOverflow(const RenderBox*);
+
     // Used to estimate the maximum height of the flow thread.
     static LayoutUnit maxLogicalHeight() { return LayoutUnit::max() / 2; }
 

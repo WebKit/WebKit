@@ -132,6 +132,18 @@ RenderRegion* RenderBox::clampToStartAndEndRegions(RenderRegion* region) const
     return region;
 }
 
+LayoutRect RenderBox::clientBoxRectInRegion(RenderRegion* region) const
+{
+    if (!region)
+        return clientBoxRect();
+
+    LayoutRect clientBox = borderBoxRectInRegion(region);
+    clientBox.setLocation(clientBox.location() + LayoutSize(borderLeft(), borderTop()));
+    clientBox.setSize(clientBox.size() - LayoutSize(borderLeft() + borderRight() + verticalScrollbarWidth(), borderTop() + borderBottom() + horizontalScrollbarHeight()));
+
+    return clientBox;
+}
+
 LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region, RenderBoxRegionInfoFlags cacheFlag) const
 {
     if (!region)
@@ -4160,10 +4172,19 @@ void RenderBox::addVisualEffectOverflow()
     if (!style()->boxShadow() && !style()->hasBorderImageOutsets())
         return;
 
+    LayoutRect borderBox = borderBoxRect();
+    addVisualOverflow(applyVisualEffectOverflow(borderBox));
+
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (flowThread)
+        flowThread->addRegionsVisualEffectOverflow(this);
+}
+
+LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) const
+{
     bool isFlipped = style()->isFlippedBlocksWritingMode();
     bool isHorizontal = isHorizontalWritingMode();
     
-    LayoutRect borderBox = borderBoxRect();
     LayoutUnit overflowMinX = borderBox.x();
     LayoutUnit overflowMaxX = borderBox.maxX();
     LayoutUnit overflowMinY = borderBox.y();
@@ -4197,7 +4218,7 @@ void RenderBox::addVisualEffectOverflow()
     }
 
     // Add in the final overflow with shadows and outsets combined.
-    addVisualOverflow(LayoutRect(overflowMinX, overflowMinY, overflowMaxX - overflowMinX, overflowMaxY - overflowMinY));
+    return LayoutRect(overflowMinX, overflowMinY, overflowMaxX - overflowMinX, overflowMaxY - overflowMinY);
 }
 
 void RenderBox::addOverflowFromChild(RenderBox* child, const LayoutSize& delta)
@@ -4205,6 +4226,10 @@ void RenderBox::addOverflowFromChild(RenderBox* child, const LayoutSize& delta)
     // Never allow flow threads to propagate overflow up to a parent.
     if (child->isRenderFlowThread())
         return;
+
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (flowThread)
+        flowThread->addRegionsOverflowFromChild(this, child, delta);
 
     // Only propagate layout overflow from the child if the child isn't clipping its overflow.  If it is, then
     // its overflow is internal to it, and we don't care about it.  layoutOverflowRectForPropagation takes care of this
@@ -4283,6 +4308,14 @@ void RenderBox::addVisualOverflow(const LayoutRect& rect)
         m_overflow = adoptPtr(new RenderOverflow(clientBoxRect(), borderBox));
     
     m_overflow->addVisualOverflow(rect);
+}
+
+void RenderBox::clearOverflow()
+{
+    m_overflow.clear();
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (flowThread)
+        flowThread->clearRegionsOverflow(this);
 }
 
 inline static bool percentageLogicalHeightIsResolvable(const RenderBox* box)

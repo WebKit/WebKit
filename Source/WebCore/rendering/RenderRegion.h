@@ -143,7 +143,18 @@ public:
     virtual bool requiresLayer() const { return m_requiresLayerForCompositing || RenderBlock::requiresLayer(); }
 #endif
 
+    void addLayoutOverflowForBox(const RenderBox*, const LayoutRect&);
+    void addVisualOverflowForBox(const RenderBox*, const LayoutRect&);
+    LayoutRect layoutOverflowRectForBox(const RenderBox*);
+    LayoutRect visualOverflowRectForBox(const RenderBox*);
+    LayoutRect layoutOverflowRectForBoxForPropagation(const RenderBox*);
+    LayoutRect visualOverflowRectForBoxForPropagation(const RenderBox*);
+
+    LayoutRect rectFlowPortionForBox(const RenderBox*, const LayoutRect&) const;
+
 protected:
+    RenderOverflow* ensureOverflowForBox(const RenderBox*);
+
     void setRegionObjectsRegionStyle();
     void restoreRegionObjectsOriginalStyle();
 

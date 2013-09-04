@@ -38,6 +38,7 @@
 #include "PaintInfo.h"
 #include "Range.h"
 #include "RenderBoxRegionInfo.h"
+#include "RenderLayer.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderView.h"
 #include "StyleResolver.h"
@@ -338,12 +339,15 @@ void RenderRegion::computeOverflowFromFlowThread()
 {
     ASSERT(isValid());
 
-    LayoutRect layoutRect = overflowRectForFlowThreadPortion(flowThreadPortionRect(), isFirstRegion(), isLastRegion(), LayoutOverflow);
+    LayoutRect layoutRect = layoutOverflowRectForBox(m_flowThread);
 
     layoutRect.setLocation(contentBoxRect().location() + (layoutRect.location() - m_flowThreadPortionRect.location()));
 
     // FIXME: Correctly adjust the layout overflow for writing modes.
     addLayoutOverflow(layoutRect);
+    RenderFlowThread* enclosingRenderFlowThread = flowThreadContainingBlock();
+    if (enclosingRenderFlowThread)
+        enclosingRenderFlowThread->addRegionsLayoutOverflow(this, layoutRect);
 
     updateLayerTransform();
     updateScrollInfoAfterLayout();
@@ -452,12 +456,7 @@ RenderBoxRegionInfo* RenderRegion::setRenderBoxRegionInfo(const RenderBox* box, 
 {
     ASSERT(isValid());
 
-    OwnPtr<RenderBoxRegionInfo>& boxInfo = m_renderBoxRegionInfo.add(box, nullptr).iterator->value;
-    if (boxInfo)
-        *boxInfo = RenderBoxRegionInfo(logicalLeftInset, logicalRightInset, containingBlockChainIsInset);
-    else
-        boxInfo = adoptPtr(new RenderBoxRegionInfo(logicalLeftInset, logicalRightInset, containingBlockChainIsInset));
-
+    OwnPtr<RenderBoxRegionInfo>& boxInfo = m_renderBoxRegionInfo.add(box, adoptPtr(new RenderBoxRegionInfo(logicalLeftInset, logicalRightInset, containingBlockChainIsInset))).iterator->value;
     return boxInfo.get();
 }
 
@@ -742,5 +741,113 @@ void RenderRegion::setRequiresLayerForCompositing(bool requiresLayerForCompositi
         updateLayerIfNeeded();
 }
 #endif
+
+RenderOverflow* RenderRegion::ensureOverflowForBox(const RenderBox* box)
+{
+    RenderBoxRegionInfo* boxInfo = renderBoxRegionInfo(box);
+    if (!boxInfo)
+        return 0;
+
+    if (boxInfo->overflow())
+        return boxInfo->overflow();
+
+    LayoutRect borderBox = box->borderBoxRectInRegion(this);
+    borderBox = rectFlowPortionForBox(box, borderBox);
+
+    LayoutRect clientBox = box->clientBoxRectInRegion(this);
+    clientBox = rectFlowPortionForBox(box, clientBox);
+
+    boxInfo->createOverflow(clientBox, borderBox);
+
+    return boxInfo->overflow();
+}
+
+LayoutRect RenderRegion::rectFlowPortionForBox(const RenderBox* box, const LayoutRect& rect) const
+{
+    RenderRegion* startRegion = 0;
+    RenderRegion* endRegion = 0;
+    m_flowThread->getRegionRangeForBox(box, startRegion, endRegion);
+
+    // FIXME: Is this writing mode friendly?
+    LayoutRect mappedRect = m_flowThread->mapFromLocalToFlowThread(box, rect);
+    if (this != startRegion)
+        mappedRect.shiftYEdgeTo(std::max<LayoutUnit>(logicalTopForFlowThreadContent(), mappedRect.y()));
+    if (this != endRegion)
+        mappedRect.setHeight(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFlowThreadContent() - mappedRect.y(), mappedRect.height())));
+
+    bool clipX = style()->overflowX() != OVISIBLE;
+    bool clipY = style()->overflowY() != OVISIBLE;
+    bool isLastRegionWithRegionFragmentBreak = (isLastRegion() && (style()->regionFragment() == BreakRegionFragment));
+    if ((clipX && clipY) || isLastRegionWithRegionFragmentBreak)
+        mappedRect.intersect(flowThreadPortionRect());
+
+    return m_flowThread->mapFromFlowThreadToLocal(box, mappedRect);
+}
+
+void RenderRegion::addLayoutOverflowForBox(const RenderBox* box, const LayoutRect& rect)
+{
+    RenderOverflow* regionOverflow = ensureOverflowForBox(box);
+
+    if (!regionOverflow)
+        return;
+
+    regionOverflow->addLayoutOverflow(rect);
+}
+
+void RenderRegion::addVisualOverflowForBox(const RenderBox* box, const LayoutRect& rect)
+{
+    RenderOverflow* regionOverflow = ensureOverflowForBox(box);
+
+    if (!regionOverflow)
+        return;
+
+    regionOverflow->addVisualOverflow(rect);
+}
+
+LayoutRect RenderRegion::layoutOverflowRectForBox(const RenderBox* box)
+{
+    RenderOverflow* overflow = ensureOverflowForBox(box);
+    if (!overflow)
+        return box->layoutOverflowRect();
+
+    return overflow->layoutOverflowRect();
+}
+
+LayoutRect RenderRegion::visualOverflowRectForBox(const RenderBox* box)
+{
+    RenderOverflow* overflow = ensureOverflowForBox(box);
+    if (!overflow)
+        return box->visualOverflowRect();
+
+    return overflow->visualOverflowRect();
+}
+
+// FIXME: This doesn't work for writing modes.
+LayoutRect RenderRegion::layoutOverflowRectForBoxForPropagation(const RenderBox* box)
+{
+    // Only propagate interior layout overflow if we don't clip it.
+    LayoutRect rect = box->borderBoxRectInRegion(this);
+    rect = rectFlowPortionForBox(box, rect);
+    if (!box->hasOverflowClip())
+        rect.unite(layoutOverflowRectForBox(box));
+
+    bool hasTransform = box->hasLayer() && box->layer()->transform();
+    if (box->isInFlowPositioned() || hasTransform) {
+        if (hasTransform)
+            rect = box->layer()->currentTransform().mapRect(rect);
+
+        if (box->isInFlowPositioned())
+            rect.move(box->offsetForInFlowPosition());
+    }
+
+    return rect;
+}
+
+// FIXME: This doesn't work for writing modes.
+LayoutRect RenderRegion::visualOverflowRectForBoxForPropagation(const RenderBox* box)
+{
+    LayoutRect rect = visualOverflowRectForBox(box);
+    return rect;
+}
 
 } // namespace WebCore

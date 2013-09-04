@@ -27,10 +27,14 @@
 #ifndef RenderBoxRegionInfo_h
 #define RenderBoxRegionInfo_h
 
+#include "RenderOverflow.h"
+#include <wtf/OwnPtr.h>
+
 namespace WebCore {
 
 class RenderBoxRegionInfo {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(RenderBoxRegionInfo);
 public:
     RenderBoxRegionInfo(LayoutUnit logicalLeft, LayoutUnit logicalWidth, bool isShifted)
         : m_logicalLeft(logicalLeft)
@@ -45,10 +49,19 @@ public:
 
     bool isShifted() const { return m_isShifted; }
 
+    void createOverflow(const LayoutRect& layoutOverflow, const LayoutRect& visualOverflow) { m_overflow = adoptPtr(new RenderOverflow(layoutOverflow, visualOverflow)); }
+    RenderOverflow* overflow() const { return m_overflow.get(); }
+    void clearOverflow()
+    {
+        if (m_overflow)
+            m_overflow.clear();
+    }
+
 private:
     LayoutUnit m_logicalLeft;
     LayoutUnit m_logicalWidth;
     bool m_isShifted;
+    OwnPtr<RenderOverflow> m_overflow;
 };
 
 } // namespace WebCore

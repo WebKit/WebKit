@@ -168,7 +168,7 @@ void RenderIFrame::layout()
             layoutWithFlattening(style()->width().isFixed(), style()->height().isFixed());
     }
 
-    m_overflow.clear();
+    clearOverflow();
     addVisualEffectOverflow();
     updateLayerTransform();
 

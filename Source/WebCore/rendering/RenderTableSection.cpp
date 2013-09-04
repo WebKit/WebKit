@@ -668,7 +668,7 @@ void RenderTableSection::computeOverflowFromCells()
 
 void RenderTableSection::computeOverflowFromCells(unsigned totalRows, unsigned nEffCols)
 {
-    m_overflow.clear();
+    clearOverflow();
     m_overflowingCells.clear();
     unsigned totalCellsCount = nEffCols * totalRows;
     int maxAllowedOverflowingCellsCount = totalCellsCount < gMinTableSizeToUseFastPaintPathWithOverflowingCell ? 0 : gMaxAllowedOverflowingCellRatioForFastPaintPath * totalCellsCount;

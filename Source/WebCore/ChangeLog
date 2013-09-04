@@ -1,3 +1,86 @@
+2013-09-04  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Extend the RenderRegionRange class to include overflow information + apply the layout overflow
+        https://bugs.webkit.org/show_bug.cgi?id=116299
+
+        Reviewed by David Hyatt.
+
+        Patch for computing overflow for boxes per region and applying it for layout overflow.
+        The approach is based on adding a RenderOverflow object inside the RenderBoxRegionInfo
+        structure. The RenderOverflow object is manipulated by the RenderRegion using some utility
+        functions that receive the target box as a parameter.
+        When computing the portion of a box inside a region it is necessary to split the border
+        rect of the box between regions. This means mapping the rectangle in the flow thread
+        coordinates, making the split and then remapping the fragment in the box coordinates.
+        For now, this is not optimized and walks the render tree to compute the block offsets.
+        The function getRegionRangeForBox is used to determine in what regions a box should
+        be rendered into. The range is computed at layout time and it depends on the height of
+        the box, if its unsplittable for fragmentation etc.
+        The patch also propagates the layout overflow to the regions. This enables to correctly
+        display scrollbars when chaining varying size regions (currently the horizontal overflow
+        is as wide as the widest region for all the regions). Unsplittable boxes will also generate
+        layout overflow in the start region so they can be scrolled and fully reachable. This
+        functionality depends on fixing the visual overflow and adapting the layout to take into
+        account the unsplittable box. Besides this, the relative positioning and transforms are applied
+        at a fragment level. This is in line with the CSS3 Break specification:
+        http://dev.w3.org/csswg/css-break/#transforms
+
+        Tests: fast/regions/overflow-scrollable-rel-pos-fragment.html
+               fast/regions/overflow-scrollable-rotated-fragment.html
+               fast/regions/overflow-scrollable-unsplittable-fragment.html
+               fast/regions/overflow-scrollable-varying-width-1.html
+               fast/regions/overflow-scrollable-varying-width-2.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeOverflow):
+        (WebCore::RenderBlock::clearLayoutOverflow):
+        (WebCore::RenderBlock::addVisualOverflowFromTheme):
+        (WebCore::RenderBlock::relayoutForPagination):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::addOverflowFromInlineChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clientBoxRectInRegion):
+        (WebCore::RenderBox::addVisualEffectOverflow):
+        (WebCore::RenderBox::applyVisualEffectOverflow):
+        (WebCore::RenderBox::addOverflowFromChild):
+        (WebCore::RenderBox::clearOverflow):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxRegionInfo.h:
+        (WebCore::RenderBoxRegionInfo::createOverflow):
+        (WebCore::RenderBoxRegionInfo::overflow):
+        (WebCore::RenderBoxRegionInfo::clearOverflow):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::layout):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::updateLogicalWidth):
+        (WebCore::RenderFlowThread::markRegionsForOverflowLayoutIfNeeded):
+        (WebCore::RenderFlowThread::mapFromLocalToFlowThread):
+        (WebCore::RenderFlowThread::mapFromFlowThreadToLocal):
+        (WebCore::RenderFlowThread::addRegionsVisualEffectOverflow):
+        (WebCore::RenderFlowThread::addRegionsVisualOverflowFromTheme):
+        (WebCore::RenderFlowThread::addRegionsOverflowFromChild):
+        (WebCore::RenderFlowThread::addRegionsLayoutOverflow):
+        (WebCore::RenderFlowThread::clearRegionsOverflow):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::layout):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::computeOverflowFromFlowThread):
+        (WebCore::RenderRegion::setRenderBoxRegionInfo):
+        (WebCore::RenderRegion::ensureOverflowForBox):
+        (WebCore::RenderRegion::rectFlowPortionForBox):
+        (WebCore::RenderRegion::addLayoutOverflowForBox):
+        (WebCore::RenderRegion::addVisualOverflowForBox):
+        (WebCore::RenderRegion::layoutOverflowRectForBox):
+        (WebCore::RenderRegion::visualOverflowRectForBox):
+        (WebCore::RenderRegion::layoutOverflowRectForBoxForPropagation):
+        (WebCore::RenderRegion::visualOverflowRectForBoxForPropagation):
+        * rendering/RenderRegion.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::computeOverflowFromCells):
+
 2013-09-04  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
 
         [GStreamer] cannot play live streams

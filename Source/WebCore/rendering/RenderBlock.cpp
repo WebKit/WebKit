@@ -1830,7 +1830,7 @@ void RenderBlock::addOverflowFromChildren()
 
 void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats)
 {
-    m_overflow.clear();
+    clearOverflow();
 
     // Add overflow from children.
     addOverflowFromChildren();
@@ -1880,7 +1880,8 @@ void RenderBlock::clearLayoutOverflow()
         return;
     
     if (visualOverflowRect() == borderBoxRect()) {
-        m_overflow.clear();
+        // FIXME: Implement complete solution for regions overflow.
+        clearOverflow();
         return;
     }
     
@@ -1938,6 +1939,9 @@ void RenderBlock::addVisualOverflowFromTheme()
     IntRect inflatedRect = pixelSnappedBorderBoxRect();
     theme()->adjustRepaintRect(this, inflatedRect);
     addVisualOverflow(inflatedRect);
+
+    if (RenderFlowThread* flowThread = flowThreadContainingBlock())
+        flowThread->addRegionsVisualOverflowFromTheme(this);
 }
 
 bool RenderBlock::expandsToEncloseOverhangingFloats() const
@@ -5853,7 +5857,7 @@ bool RenderBlock::relayoutForPagination(bool hasSpecifiedPageLogicalHeight, Layo
 
     if (columnCount(colInfo)) {
         setLogicalHeight(borderAndPaddingBefore() + colInfo->columnHeight() + borderAndPaddingAfter() + scrollbarLogicalHeight());
-        m_overflow.clear();
+        clearOverflow();
     } else
         m_overflow = savedOverflow.release();
     

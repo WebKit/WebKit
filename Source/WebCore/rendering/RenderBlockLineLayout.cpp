@@ -3553,8 +3553,14 @@ void RenderBlock::addOverflowFromInlineChildren()
         endPadding = 1;
     for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
         addLayoutOverflow(curr->paddedLayoutOverflowRect(endPadding));
-        if (!hasOverflowClip())
+        RenderRegion* region = curr->containingRegion();
+        if (region)
+            region->addLayoutOverflowForBox(this, curr->paddedLayoutOverflowRect(endPadding));
+        if (!hasOverflowClip()) {
             addVisualOverflow(curr->visualOverflowRect(curr->lineTop(), curr->lineBottom()));
+            if (region)
+                region->addVisualOverflowForBox(this, curr->visualOverflowRect(curr->lineTop(), curr->lineBottom()));
+        }
     }
 }
 

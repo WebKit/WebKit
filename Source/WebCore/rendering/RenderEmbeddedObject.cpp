@@ -459,7 +459,7 @@ void RenderEmbeddedObject::layout()
 
     RenderPart::layout();
 
-    m_overflow.clear();
+    clearOverflow();
     addVisualEffectOverflow();
 
     updateLayerTransform();
