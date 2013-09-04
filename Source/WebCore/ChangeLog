@@ -1,3 +1,21 @@
+2013-09-03  Darin Adler  <darin@apple.com>
+
+        Change type of Document::doctype back to a raw pointer
+        https://bugs.webkit.org/show_bug.cgi?id=120617
+
+        Reviewed by Andreas Kling.
+
+        * dom/Document.cpp:
+        (WebCore::Document::doctype): Return a raw pointer.
+        (WebCore::Document::childrenChanged): Use the raw pointer.
+        Also added a FIXME about this code that is probably in the wrong place.
+        * dom/Document.h: More of the same.
+
+        * editing/markup.cpp:
+        (WebCore::documentTypeString): Get rid of local variable entirely,
+        since null is already handled right by createMarkup, and also remove
+        the call to get since doctype is just a raw pointer.
+
 2013-09-03  Andreas Kling  <akling@apple.com>
 
         ASSERTION FAILED: frame().view() == this closing a page with SVG or video

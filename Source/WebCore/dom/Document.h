@@ -327,7 +327,7 @@ public:
     void setReferrerPolicy(ReferrerPolicy referrerPolicy) { m_referrerPolicy = referrerPolicy; }
     ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
 
-    PassRefPtr<DocumentType> doctype() const;
+    DocumentType* doctype() const;
 
     DOMImplementation* implementation();
     
