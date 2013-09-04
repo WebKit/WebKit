@@ -1,3 +1,20 @@
+2013-09-04  Pratik Solanki  <psolanki@apple.com>
+
+        Document::updateHoverActiveState() should allow for deferred style recalcs
+        https://bugs.webkit.org/show_bug.cgi?id=120700
+
+        Reviewed by Simon Fraser.
+
+        Add an extra argument to Document::updateHoverActiveState() to specify if a style recalc
+        should be done. The default value keeps the current behavior of doing a style recalc. iOS
+        touch handling code will pass in DeferRecalcStyleIfNeeded to avoid the work.
+
+        No new tests because no functional changes.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateHoverActiveState):
+        * dom/Document.h:
+
 2013-09-04  Tim Horton  <timothy_horton@apple.com>
 
         [mac] PDFDocumentImage should use PDFKit to draw
