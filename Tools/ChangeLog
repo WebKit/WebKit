@@ -1,3 +1,17 @@
+2013-09-04  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Adds an accessibility support to access a value of the color control element
+        https://bugs.webkit.org/show_bug.cgi?id=114354
+
+        Reviewed by Mario Sanchez Prada.
+
+        Added accessibility role of the color control element.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (roleToString):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::roleToString):
+
 2013-09-04  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         REGRESSION (r132328): /WebKit2APITests/TestWebKitAccessibility unit test is failing

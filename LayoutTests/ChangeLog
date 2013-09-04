@@ -1,3 +1,17 @@
+2013-09-04  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Adds an accessibility support to access a value of the color control element
+        https://bugs.webkit.org/show_bug.cgi?id=114354
+
+        Reviewed by Mario Sanchez Prada.
+
+        Moving mac's color-well-expected.txt result to base accessibility folder.
+        Unskipping accessibility/color-well.html for EFL port.
+
+        * accessibility/color-well-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/color-well-expected.txt.
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+
 2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.

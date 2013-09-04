@@ -175,7 +175,6 @@ webkit.org/b/112020 accessibility/transformed-element.html [ Failure Crash ]
 webkit.org/b/112021 accessibility/visible-elements.html [ Failure Crash ]
 
 accessibility/aria-checkbox-sends-notification.html [ Skip ]
-accessibility/color-well.html [ Skip ]
 accessibility/deleting-iframe-destroys-axcache.html [ Skip ]
 accessibility/img-fallsback-to-title.html [ Skip ]
 accessibility/internal-link-anchors2.html [ Skip ]

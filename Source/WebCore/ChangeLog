@@ -1,3 +1,17 @@
+2013-09-04  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Adds an accessibility support to access a value of the color control element
+        https://bugs.webkit.org/show_bug.cgi?id=114354
+
+        Reviewed by Mario Sanchez Prada.
+
+        Implements a possibility of retrieving a value of the color control element.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (webkitAccessibleTextGetText):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (getInterfaceMaskFromObject):
+
 2013-09-04  Andreas Kling  <akling@apple.com>
 
         Use Vector<Ref<T>> in three random WebCore loops.

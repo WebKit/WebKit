@@ -626,6 +626,14 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
         }
     }
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    if (coreObject->roleValue() == ColorWellRole) {
+        int r, g, b;
+        coreObject->colorValue(r, g, b);
+        return g_strdup_printf("rgb %7.5f %7.5f %7.5f 1", r / 255., g / 255., b / 255.);
+    }
+#endif
+
     ret = ret.substring(startOffset, end - startOffset);
     return g_strdup(ret.utf8().data());
 }

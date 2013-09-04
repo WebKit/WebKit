@@ -252,7 +252,6 @@ webkit.org/b/117182 accessibility/text-role-with-aria-hidden-inside.html [ Failu
 webkit.org/b/112019 accessibility/title-ui-element-correctness.html [ Crash ]
 
 accessibility/aria-checkbox-sends-notification.html [ Skip ]
-accessibility/color-well.html [ Skip ]
 accessibility/deleting-iframe-destroys-axcache.html [ Skip ]
 accessibility/img-fallsback-to-title.html [ Skip ]
 accessibility/internal-link-anchors2.html [ Skip ]

@@ -1036,6 +1036,12 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
     if (role == SliderRole || role == SpinButtonRole || role == ScrollBarRole)
         interfaceMask |= 1 << WAI_VALUE;
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    // Color type.
+    if (role == ColorWellRole)
+        interfaceMask |= 1 << WAI_TEXT;
+#endif
+
     return interfaceMask;
 }
 
