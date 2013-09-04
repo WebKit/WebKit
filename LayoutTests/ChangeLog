@@ -1,3 +1,12 @@
+2013-09-04  Javier Fernandez  <jfernandez@igalia.com>
+
+        <https://webkit.org/b/119622> [CSSRegions] Not possible to clear the selection when mixing content from different FlowThreads
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/selecting-text-through-different-region-flows-2-expected.html: Added.
+        * fast/regions/selecting-text-through-different-region-flows-2.html: Added.
+
 2013-09-04  Oliver Hunt  <oliver@apple.com>
 
         Fix fast/storage/serialized script value, and add new tests for Map and Set

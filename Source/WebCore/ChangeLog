@@ -1,3 +1,34 @@
+2013-09-04  Javier Fernandez  <jfernandez@igalia.com>
+
+        <https://webkit.org/b/119622> [CSSRegions] Not possible to clear the selection when mixing content from different FlowThreads
+
+        Reviewed by David Hyatt.
+
+        When using CSS Regions is usual that the RenderTree doesn't match
+        the DOM Tree in terms of relative position of the nodes. Besides,
+        usually the content of a certain node is split and spread across
+        multiple blocks, rendered in different positions.
+
+        Regarding the Selection, this problem is even more important; the
+        selection direction changes when crossing the FlowThread
+        boundaries. This weird behavior is also present in other layouts
+        using non-regular positioning mechanisms, like absolute,
+        static. However, for those layouts the RenderTree preserves the
+        order of the nodes, unlike the CSS Regions layout model.
+
+        Because of how the RenderTree is generated with CSS Regions, the
+        RenderView::setSelection algorithm is not able to repaint some of
+        the rectangles defined during the selection process. In order to
+        face this issue, the proposed fix determines whether it should
+        backwards traversing the RenderTree, from the "stop" node to the
+        RenderView node.
+
+        Test: fast/regions/selecting-text-through-different-region-flows-2.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::getNextOrPrevRenderObjectBasedOnDirection): Added.
+        (WebCore::RenderView::setSelection):
+
 2013-09-04  Eric Carlson  <eric.carlson@apple.com>
 
         Get MEDIA_STREAM compiling on OSX

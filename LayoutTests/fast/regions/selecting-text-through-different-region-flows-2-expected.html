@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { width: 600px; }
+#footNote { font-size: 13px; }
+</style>
+<script>
+function selectText()
+{
+  var selection = window.getSelection();
+
+  var start = document.getElementById("start");
+  var end = document.getElementById("end");
+
+  selection.setBaseAndExtent(start, 0, end, 0);
+}
+</script>
+</head>
+<body onload="selectText()">
+<div id="content">
+    <h1 style="margin-top: 0px">Selecting text through different CSS-Region flows</h1>
+    <div>
+    This text contains a footnote as a nested region what is diplayed <span id="start">below<span> the article. (1) If you start selecting
+        text from this article until somewhere in the footnote and then click somewhere, the selection should be cleared.
+    </div>
+    <div id="footNote">(1) This is a footnote. Footnotes can be quite long and go over several lines. This footnote
+    is nested inside the text <span id="end">above<span> and displayed here with the help of css-regions.</span></div>
+</div>
+</body>
+</html>
