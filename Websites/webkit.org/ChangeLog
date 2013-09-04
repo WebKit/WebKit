@@ -1,3 +1,14 @@
+2013-09-04  Beth Dakin  <bdakin@apple.com>
+
+        Upload demo and images for a potential blog post.
+
+        * blog-files/regions: Added.
+        * blog-files/regions/pizza-is-amazing.png: Added.
+        * demos/regions: Added.
+        * demos/regions/pizza-regions-manifesto-regionstyling.html: Added.
+        * demos/regions/pizza-regions-manifesto.html: Added.
+        * demos/regions/yellow-pizza.jpg: Added.
+
 2013-09-03  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the recommended testing platform on the website
