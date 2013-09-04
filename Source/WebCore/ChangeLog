@@ -1,3 +1,15 @@
+2013-09-03  Darin Adler  <darin@apple.com>
+
+        Fix backwards branch in ~Node from r154967
+        https://bugs.webkit.org/show_bug.cgi?id=120659
+
+        Reviewed by Andreas Kling.
+
+        * dom/Node.cpp:
+        (WebCore::Node::~Node): Fix backwards branch. The old code ran the code only
+        when we did not remove the item from the table. I removed a ! from this expression
+        after review; bad idea.
+
 2013-09-03  Enrica Casucci  <enrica@apple.com>
 
         Can't select Katakana word by double-clicking.

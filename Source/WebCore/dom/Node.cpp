@@ -336,7 +336,7 @@ void Node::trackForDebugging()
 Node::~Node()
 {
 #ifndef NDEBUG
-    if (ignoreSet.remove(this))
+    if (!ignoreSet.remove(this))
         nodeCounter.decrement();
 #endif
 
