@@ -1,3 +1,20 @@
+2013-09-04  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
+
+        REGRESSION(r154977): Do not urlencode soup message on ResourceRequest::toSoupMessage()
+        https://bugs.webkit.org/show_bug.cgi?id=120681
+
+        Reviewed by Martin Robinson.
+
+        Do not call soup_message_set_uri with soupURI() (url encoded uri) on
+        ResourceRequest::toSoupMessage().
+
+        * platform/network/soup/ResourceRequest.h:
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateSoupMessageMembers):
+        (WebCore::ResourceRequest::updateSoupMessage):
+        (WebCore::ResourceRequest::toSoupMessage):
+        Split common code from updateSoupMessage/toSoupMessage into updateSoupMessageMembers.
+
 2013-09-04  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
 
         [GTK] add support for subtitles on webkit2GTK
