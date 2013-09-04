@@ -1,5 +1,19 @@
 2013-09-03  Enrica Casucci  <enrica@apple.com>
 
+        Follow up to http://trac.webkit.org/changeset/155014
+
+        Reviewed by Alexey Proskuryakov.
+
+        In the r155014 I renamed hasLineBreakingPropertyComplexContext
+        to requiresComplexContextForWordBreaking but forgot to
+        make the same change in UnicodeWchar.h.
+
+        * wtf/unicode/wchar/UnicodeWchar.cpp:
+        (WTF::Unicode::requiresComplexContextForWordBreaking):
+        * wtf/unicode/wchar/UnicodeWchar.h:
+
+2013-09-03  Enrica Casucci  <enrica@apple.com>
+
         Can't select Katakana word by double-clicking.
         <rdar://problem/14654926>
 

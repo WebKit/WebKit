@@ -125,7 +125,7 @@ WTF_EXPORT_PRIVATE CharCategory category(UChar32);
 WTF_EXPORT_PRIVATE unsigned char combiningClass(UChar32);
 WTF_EXPORT_PRIVATE Direction direction(UChar32);
 WTF_EXPORT_PRIVATE DecompositionType decompositionType(UChar32);
-WTF_EXPORT_PRIVATE bool hasLineBreakingPropertyComplexContext(UChar32);
+WTF_EXPORT_PRIVATE bool requiresComplexContextForWordBreaking(UChar32);
 WTF_EXPORT_PRIVATE UChar32 mirroredChar(UChar32);
 
 inline bool isAlphanumeric(UChar c) { return !!iswalnum(c); }
