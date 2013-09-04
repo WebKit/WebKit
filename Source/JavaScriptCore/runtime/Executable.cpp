@@ -230,26 +230,32 @@ PassRefPtr<CodeBlock> ScriptExecutable::newReplacementCodeBlockFor(
     if (classInfo() == EvalExecutable::info()) {
         RELEASE_ASSERT(kind == CodeForCall);
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
+        EvalCodeBlock* baseline = static_cast<EvalCodeBlock*>(
+            executable->m_evalCodeBlock->baselineVersion());
         RefPtr<EvalCodeBlock> result = adoptRef(new EvalCodeBlock(
-            CodeBlock::CopyParsedBlock, *executable->m_evalCodeBlock));
-        result->setAlternative(executable->m_evalCodeBlock);
+            CodeBlock::CopyParsedBlock, *baseline));
+        result->setAlternative(baseline);
         return result;
     }
     
     if (classInfo() == ProgramExecutable::info()) {
         RELEASE_ASSERT(kind == CodeForCall);
         ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
+        ProgramCodeBlock* baseline = static_cast<ProgramCodeBlock*>(
+            executable->m_programCodeBlock->baselineVersion());
         RefPtr<ProgramCodeBlock> result = adoptRef(new ProgramCodeBlock(
-            CodeBlock::CopyParsedBlock, *executable->m_programCodeBlock));
-        result->setAlternative(executable->m_programCodeBlock);
+            CodeBlock::CopyParsedBlock, *baseline));
+        result->setAlternative(baseline);
         return result;
     }
 
     RELEASE_ASSERT(classInfo() == FunctionExecutable::info());
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
+    FunctionCodeBlock* baseline = static_cast<FunctionCodeBlock*>(
+        executable->codeBlockFor(kind)->baselineVersion());
     RefPtr<FunctionCodeBlock> result = adoptRef(new FunctionCodeBlock(
-        CodeBlock::CopyParsedBlock, *executable->codeBlockFor(kind)));
-    result->setAlternative(executable->codeBlockFor(kind));
+        CodeBlock::CopyParsedBlock, *baseline));
+    result->setAlternative(baseline);
     return result;
 }
 

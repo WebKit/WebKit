@@ -37,6 +37,31 @@
 
 namespace JSC { namespace DFG {
 
+BasicBlock* createPreHeader(Graph& graph, BlockInsertionSet& insertionSet, BasicBlock* block)
+{
+    BasicBlock* preHeader = insertionSet.insertBefore(block);
+    preHeader->appendNode(
+        graph, SpecNone, Jump, block->at(0)->codeOrigin, OpInfo(block));
+    
+    for (unsigned predecessorIndex = 0; predecessorIndex < block->predecessors.size(); predecessorIndex++) {
+        BasicBlock* predecessor = block->predecessors[predecessorIndex];
+        if (graph.m_dominators.dominates(block, predecessor))
+            continue;
+        block->predecessors[predecessorIndex--] = block->predecessors.last();
+        block->predecessors.removeLast();
+        for (unsigned successorIndex = predecessor->numSuccessors(); successorIndex--;) {
+            BasicBlock*& successor = predecessor->successor(successorIndex);
+            if (successor != block)
+                continue;
+            successor = preHeader;
+            preHeader->predecessors.append(predecessor);
+        }
+    }
+    
+    block->predecessors.append(preHeader);
+    return preHeader;
+}
+
 class LoopPreHeaderCreationPhase : public Phase {
 public:
     LoopPreHeaderCreationPhase(Graph& graph)
@@ -70,26 +95,7 @@ public:
             if (!needsNewPreHeader)
                 continue;
             
-            BasicBlock* preHeader = m_insertionSet.insertBefore(loop.header());
-            preHeader->appendNode(
-                m_graph, SpecNone, Jump, loop.header()->at(0)->codeOrigin, OpInfo(loop.header()));
-            
-            for (unsigned predecessorIndex = 0; predecessorIndex < loop.header()->predecessors.size(); predecessorIndex++) {
-                BasicBlock* predecessor = loop.header()->predecessors[predecessorIndex];
-                if (m_graph.m_dominators.dominates(loop.header(), predecessor))
-                    continue;
-                loop.header()->predecessors[predecessorIndex--] = loop.header()->predecessors.last();
-                loop.header()->predecessors.takeLast();
-                for (unsigned successorIndex = predecessor->numSuccessors(); successorIndex--;) {
-                    BasicBlock*& successor = predecessor->successor(successorIndex);
-                    if (successor != loop.header())
-                        continue;
-                    successor = preHeader;
-                    preHeader->predecessors.append(predecessor);
-                }
-            }
-            
-            loop.header()->predecessors.append(preHeader);
+            createPreHeader(m_graph, m_insertionSet, loop.header());
         }
         
         return m_insertionSet.execute();

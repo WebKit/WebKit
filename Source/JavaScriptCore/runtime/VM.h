@@ -193,6 +193,10 @@ namespace JSC {
         JS_EXPORT_PRIVATE ~VM();
 
         void makeUsableFromMultipleThreads() { heap.machineThreads().makeUsableFromMultipleThreads(); }
+        
+#if ENABLE(DFG_JIT)
+        DFG::Worklist* ensureWorklist();
+#endif // ENABLE(DFG_JIT)
 
     private:
         RefPtr<JSLock> m_apiLock;

@@ -56,7 +56,7 @@ class LongLivedState;
 struct Plan : public ThreadSafeRefCounted<Plan> {
     Plan(
         PassRefPtr<CodeBlock>, CompilationMode, unsigned osrEntryBytecodeIndex,
-        unsigned numVarsWithValues);
+        const Operands<JSValue>& mustHandleValues);
     ~Plan();
     
     void compileInThread(LongLivedState&);
@@ -72,7 +72,6 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     RefPtr<CodeBlock> codeBlock;
     CompilationMode mode;
     const unsigned osrEntryBytecodeIndex;
-    const unsigned numVarsWithValues;
     Operands<JSValue> mustHandleValues;
 
     RefPtr<Profiler::Compilation> compilation;

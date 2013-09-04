@@ -8,10 +8,8 @@ function marsaglia(m_z, m_w, n) {
     return result;
 }
 
-var result = 0;
-for (var i = 0; i < 100; ++i)
-    result += marsaglia(i, i + 1, 1000000);
+var result = marsaglia(5, 7, 10000000);
 
-if (result != 8216386243)
+if (result != -1047364056)
     throw "Error: bad result: " + result;
 

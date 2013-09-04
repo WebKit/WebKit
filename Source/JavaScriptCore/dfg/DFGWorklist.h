@@ -98,9 +98,6 @@ private:
 // For now we use a single global worklist. It's not clear that this
 // is the right thing to do, but it is what we do, for now. This function
 // will lazily create one when it's needed.
-//
-// This returns null if for any reason we shouldn't be doing concurrent
-// compilation.
 Worklist* globalWorklist();
 
 } } // namespace JSC::DFG

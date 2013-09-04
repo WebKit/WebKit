@@ -40,18 +40,43 @@ namespace JSC { namespace DFG {
 void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIndex)
 {
 #if DFG_ENABLE(OSR_ENTRY)
-    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    ASSERT(JITCode::isOptimizingJIT(codeBlock->jitType()));
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
     ASSERT(!codeBlock->jitCodeMap());
 
     if (Options::verboseOSR()) {
         dataLog(
-            "OSR in ", *codeBlock->alternative(), " -> ", *codeBlock,
+            "DFG OSR in ", *codeBlock->alternative(), " -> ", *codeBlock,
             " from bc#", bytecodeIndex, "\n");
     }
     
     VM* vm = &exec->vm();
+    if (codeBlock->jitType() != JITCode::DFGJIT) {
+        RELEASE_ASSERT(codeBlock->jitType() == JITCode::FTLJIT);
+        
+        // When will this happen? We could have:
+        //
+        // - An exit from the FTL JIT into the baseline JIT followed by an attempt
+        //   to reenter. We're fine with allowing this to fail. If it happens
+        //   enough we'll just reoptimize. It basically means that the OSR exit cost
+        //   us dearly and so reoptimizing is the right thing to do.
+        //
+        // - We have recursive code with hot loops. Consider that foo has a hot loop
+        //   that calls itself. We have two foo's on the stack, lets call them foo1
+        //   and foo2, with foo1 having called foo2 from foo's hot loop. foo2 gets
+        //   optimized all the way into the FTL. Then it returns into foo1, and then
+        //   foo1 wants to get optimized. It might reach this conclusion from its
+        //   hot loop and attempt to OSR enter. And we'll tell it that it can't. It
+        //   might be worth addressing this case, but I just think this case will
+        //   be super rare. For now, if it does happen, it'll cause some compilation
+        //   thrashing.
+        
+        if (Options::verboseOSR())
+            dataLog("    OSR failed because the target code block is not DFG.\n");
+        return 0;
+    }
+    
     OSREntryData* entry = codeBlock->jitCode()->dfg()->osrEntryDataForBytecodeIndex(bytecodeIndex);
     
     if (!entry) {

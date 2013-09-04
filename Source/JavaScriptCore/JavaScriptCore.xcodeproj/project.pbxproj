@@ -369,6 +369,18 @@
 		0FD82E86141F3FF100179C94 /* SpeculatedType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */; };
 		0FD8A31317D4326C00CA2C40 /* CodeBlockSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD8A31117D4326C00CA2C40 /* CodeBlockSet.cpp */; };
 		0FD8A31417D4326C00CA2C40 /* CodeBlockSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD8A31217D4326C00CA2C40 /* CodeBlockSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD8A31917D51F2200CA2C40 /* FTLForOSREntryJITCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD8A31517D51F2200CA2C40 /* FTLForOSREntryJITCode.cpp */; };
+		0FD8A31A17D51F2200CA2C40 /* FTLForOSREntryJITCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD8A31617D51F2200CA2C40 /* FTLForOSREntryJITCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD8A31B17D51F2200CA2C40 /* FTLOSREntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD8A31717D51F2200CA2C40 /* FTLOSREntry.cpp */; };
+		0FD8A31C17D51F2200CA2C40 /* FTLOSREntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD8A31817D51F2200CA2C40 /* FTLOSREntry.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD8A32517D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD8A31D17D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.cpp */; };
+		0FD8A32617D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD8A31E17D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD8A32717D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD8A31F17D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.cpp */; };
+		0FD8A32817D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD8A32017D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD8A32917D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD8A32117D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.cpp */; };
+		0FD8A32A17D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD8A32217D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FD8A32B17D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD8A32317D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.cpp */; };
+		0FD8A32C17D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD8A32417D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FDB2CC9173DA520007B3C1B /* FTLAbbreviatedTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDB2CC7173DA51E007B3C1B /* FTLAbbreviatedTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FDB2CCA173DA523007B3C1B /* FTLValueFromBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDB2CC8173DA51E007B3C1B /* FTLValueFromBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FDB2CE7174830A2007B3C1B /* DFGWorklist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDB2CE5174830A2007B3C1B /* DFGWorklist.cpp */; };
@@ -1558,6 +1570,18 @@
 		0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeculatedType.cpp; sourceTree = "<group>"; };
 		0FD8A31117D4326C00CA2C40 /* CodeBlockSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeBlockSet.cpp; sourceTree = "<group>"; };
 		0FD8A31217D4326C00CA2C40 /* CodeBlockSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeBlockSet.h; sourceTree = "<group>"; };
+		0FD8A31517D51F2200CA2C40 /* FTLForOSREntryJITCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLForOSREntryJITCode.cpp; path = ftl/FTLForOSREntryJITCode.cpp; sourceTree = "<group>"; };
+		0FD8A31617D51F2200CA2C40 /* FTLForOSREntryJITCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLForOSREntryJITCode.h; path = ftl/FTLForOSREntryJITCode.h; sourceTree = "<group>"; };
+		0FD8A31717D51F2200CA2C40 /* FTLOSREntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLOSREntry.cpp; path = ftl/FTLOSREntry.cpp; sourceTree = "<group>"; };
+		0FD8A31817D51F2200CA2C40 /* FTLOSREntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLOSREntry.h; path = ftl/FTLOSREntry.h; sourceTree = "<group>"; };
+		0FD8A31D17D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSREntrypointCreationPhase.cpp; path = dfg/DFGOSREntrypointCreationPhase.cpp; sourceTree = "<group>"; };
+		0FD8A31E17D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSREntrypointCreationPhase.h; path = dfg/DFGOSREntrypointCreationPhase.h; sourceTree = "<group>"; };
+		0FD8A31F17D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGTierUpCheckInjectionPhase.cpp; path = dfg/DFGTierUpCheckInjectionPhase.cpp; sourceTree = "<group>"; };
+		0FD8A32017D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGTierUpCheckInjectionPhase.h; path = dfg/DFGTierUpCheckInjectionPhase.h; sourceTree = "<group>"; };
+		0FD8A32117D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGToFTLDeferredCompilationCallback.cpp; path = dfg/DFGToFTLDeferredCompilationCallback.cpp; sourceTree = "<group>"; };
+		0FD8A32217D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGToFTLDeferredCompilationCallback.h; path = dfg/DFGToFTLDeferredCompilationCallback.h; sourceTree = "<group>"; };
+		0FD8A32317D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGToFTLForOSREntryDeferredCompilationCallback.cpp; path = dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp; sourceTree = "<group>"; };
+		0FD8A32417D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGToFTLForOSREntryDeferredCompilationCallback.h; path = dfg/DFGToFTLForOSREntryDeferredCompilationCallback.h; sourceTree = "<group>"; };
 		0FDB2CC7173DA51E007B3C1B /* FTLAbbreviatedTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FTLAbbreviatedTypes.h; path = ftl/FTLAbbreviatedTypes.h; sourceTree = "<group>"; };
 		0FDB2CC8173DA51E007B3C1B /* FTLValueFromBlock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FTLValueFromBlock.h; path = ftl/FTLValueFromBlock.h; sourceTree = "<group>"; };
 		0FDB2CE5174830A2007B3C1B /* DFGWorklist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGWorklist.cpp; path = dfg/DFGWorklist.cpp; sourceTree = "<group>"; };
@@ -2539,6 +2563,8 @@
 				A7F2996917A0BB670010417A /* FTLFail.cpp */,
 				A7F2996A17A0BB670010417A /* FTLFail.h */,
 				0FEA0A2B170B661900BB722C /* FTLFormattedValue.h */,
+				0FD8A31517D51F2200CA2C40 /* FTLForOSREntryJITCode.cpp */,
+				0FD8A31617D51F2200CA2C40 /* FTLForOSREntryJITCode.h */,
 				A78A977C179738D5009DF744 /* FTLGeneratedFunction.h */,
 				0FEA0A261709623B00BB722C /* FTLIntrinsicRepository.cpp */,
 				0FEA0A221709606900BB722C /* FTLIntrinsicRepository.h */,
@@ -2551,6 +2577,8 @@
 				0FEA0A04170513DB00BB722C /* FTLLowerDFGToLLVM.cpp */,
 				0FEA0A05170513DB00BB722C /* FTLLowerDFGToLLVM.h */,
 				A7D89D0117A0B90400773AD8 /* FTLLoweredNodeValue.h */,
+				0FD8A31717D51F2200CA2C40 /* FTLOSREntry.cpp */,
+				0FD8A31817D51F2200CA2C40 /* FTLOSREntry.h */,
 				0F235BC617178E1C00690C7F /* FTLOSRExit.cpp */,
 				0F235BC717178E1C00690C7F /* FTLOSRExit.h */,
 				0F235BC817178E1C00690C7F /* FTLOSRExitCompilationInfo.h */,
@@ -3524,6 +3552,8 @@
 				A7D89CEF17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.h */,
 				0FD82E52141DAEDE00179C94 /* DFGOSREntry.cpp */,
 				0FD82E53141DAEDE00179C94 /* DFGOSREntry.h */,
+				0FD8A31D17D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.cpp */,
+				0FD8A31E17D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h */,
 				0FC0978E146A6F6300CF2442 /* DFGOSRExit.cpp */,
 				0FC097681468A6EF00CF2442 /* DFGOSRExit.h */,
 				0F235BE717178E7300690C7F /* DFGOSRExitBase.cpp */,
@@ -3566,6 +3596,12 @@
 				0F63947615DCE347006A597C /* DFGStructureAbstractValue.h */,
 				0FC0979F146B28C700CF2442 /* DFGThunks.cpp */,
 				0FC097A0146B28C700CF2442 /* DFGThunks.h */,
+				0FD8A31F17D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.cpp */,
+				0FD8A32017D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.h */,
+				0FD8A32117D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.cpp */,
+				0FD8A32217D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h */,
+				0FD8A32317D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.cpp */,
+				0FD8A32417D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h */,
 				0F63943C15C75F14006A597C /* DFGTypeCheckHoistingPhase.cpp */,
 				0F63943D15C75F14006A597C /* DFGTypeCheckHoistingPhase.h */,
 				0FBE0F6F16C1DB010082C5E8 /* DFGUnificationPhase.cpp */,
@@ -3977,6 +4013,7 @@
 				0F3B3A2C15475002003ED0FF /* DFGValidate.h in Headers */,
 				0F2BDC471522802500CD8910 /* DFGValueRecoveryOverride.h in Headers */,
 				0F2BDC481522802900CD8910 /* DFGValueSource.h in Headers */,
+				0FD8A32C17D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h in Headers */,
 				0F620174143FCD330068B77C /* DFGVariableAccessData.h in Headers */,
 				0FDDBFB61666EEDA00C55FEF /* DFGVariableAccessDataDump.h in Headers */,
 				0F2BDC491522809600CD8910 /* DFGVariableEvent.h in Headers */,
@@ -4057,6 +4094,7 @@
 				14BA7A9813AADFF8005B7C2C /* Heap.h in Headers */,
 				C2C8D03114A3CEFC00578E65 /* HeapBlock.h in Headers */,
 				14F97447138C853E00DA1C67 /* HeapRootVisitor.h in Headers */,
+				0FD8A32817D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.h in Headers */,
 				C24D31E3161CD695002AA4DB /* HeapStatistics.h in Headers */,
 				C2E526BE1590EF000054E48D /* HeapTimer.h in Headers */,
 				0F4680D514BBD24B00BFE272 /* HostCallReturnValue.h in Headers */,
@@ -4292,6 +4330,7 @@
 				0F13912A16771C36009CCB07 /* ProfilerBytecodeSequence.h in Headers */,
 				0FF729BA166AD360000F5BA3 /* ProfilerCompilation.h in Headers */,
 				0FF729BB166AD360000F5BA3 /* ProfilerCompilationKind.h in Headers */,
+				0FD8A32617D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h in Headers */,
 				0FF729BC166AD360000F5BA3 /* ProfilerCompiledBytecode.h in Headers */,
 				0FF729BD166AD360000F5BA3 /* ProfilerDatabase.h in Headers */,
 				0FF729BE166AD360000F5BA3 /* ProfilerExecutionCounter.h in Headers */,
@@ -4316,6 +4355,7 @@
 				0FF60AC216740F8300029779 /* ReduceWhitespace.h in Headers */,
 				BC18C45A0E16F5CD00B34460 /* RegExp.h in Headers */,
 				A1712B3F11C7B228007A5315 /* RegExpCache.h in Headers */,
+				0FD8A31A17D51F2200CA2C40 /* FTLForOSREntryJITCode.h in Headers */,
 				BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */,
 				BCD202D60E170708002C7E82 /* RegExpConstructor.lut.h in Headers */,
 				A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */,
@@ -4345,6 +4385,7 @@
 				0FB7F39E15ED8E4600F167B2 /* SparseArrayValueMap.h in Headers */,
 				A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */,
 				0F5541B21613C1FB00CE3E25 /* SpecialPointer.h in Headers */,
+				0FD8A31C17D51F2200CA2C40 /* FTLOSREntry.h in Headers */,
 				0FD82E54141DAEEE00179C94 /* SpeculatedType.h in Headers */,
 				A7C1EAF217987AB600299DB2 /* StackIterator.h in Headers */,
 				14DF04DA16B3996D0016A513 /* StaticPropertyAnalysis.h in Headers */,
@@ -4368,6 +4409,7 @@
 				BC18C46B0E16F5CD00B34460 /* SymbolTable.h in Headers */,
 				A784A26411D16622005776AC /* SyntaxChecker.h in Headers */,
 				0F572D4F16879FDD00E57FBD /* ThunkGenerator.h in Headers */,
+				0FD8A32A17D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h in Headers */,
 				A7386556118697B400540279 /* ThunkGenerators.h in Headers */,
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
 				0F55989817C86C5800A1E543 /* ToNativeFromValue.h in Headers */,
@@ -4789,6 +4831,7 @@
 				0F8F9446166764F100D61971 /* CodeOrigin.cpp in Sources */,
 				86B5826714D2796C00A9C306 /* CodeProfile.cpp in Sources */,
 				86B5826914D2797000A9C306 /* CodeProfiling.cpp in Sources */,
+				0FD8A32717D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.cpp in Sources */,
 				0F8F943C1667631300D61971 /* CodeSpecializationKind.cpp in Sources */,
 				0F8F94421667633500D61971 /* CodeType.cpp in Sources */,
 				147F39C1107EC37600427A48 /* CommonIdentifiers.cpp in Sources */,
@@ -4803,6 +4846,7 @@
 				0F2B66DE17B6B5AB00A7AE3F /* DataView.cpp in Sources */,
 				147F39C3107EC37600427A48 /* DateConstructor.cpp in Sources */,
 				147F39C4107EC37600427A48 /* DateConversion.cpp in Sources */,
+				0FD8A31B17D51F2200CA2C40 /* FTLOSREntry.cpp in Sources */,
 				147F39C5107EC37600427A48 /* DateInstance.cpp in Sources */,
 				147F39C6107EC37600427A48 /* DatePrototype.cpp in Sources */,
 				14280823107EC02C0013E7B2 /* Debugger.cpp in Sources */,
@@ -4885,6 +4929,7 @@
 				86880F4D14353B2100B08D42 /* DFGSpeculativeJIT64.cpp in Sources */,
 				A7D89CFF17A0B8CC00773AD8 /* DFGSSAConversionPhase.cpp in Sources */,
 				0FC097A1146B28CA00CF2442 /* DFGThunks.cpp in Sources */,
+				0FD8A32917D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.cpp in Sources */,
 				0F63944015C75F1D006A597C /* DFGTypeCheckHoistingPhase.cpp in Sources */,
 				0FBE0F7616C1DB0F0082C5E8 /* DFGUnificationPhase.cpp in Sources */,
 				0F34B14916D42010001CDA5A /* DFGUseKind.cpp in Sources */,
@@ -5059,6 +5104,7 @@
 				A78507D617CBC6FD0011F6E7 /* MapData.cpp in Sources */,
 				A700873D17CBE8D300C3E643 /* MapPrototype.cpp in Sources */,
 				C2B916C514DA040C00CBAC86 /* MarkedAllocator.cpp in Sources */,
+				0FD8A31917D51F2200CA2C40 /* FTLForOSREntryJITCode.cpp in Sources */,
 				142D6F0813539A2800B02E86 /* MarkedBlock.cpp in Sources */,
 				14D2F3DA139F4BE200491031 /* MarkedSpace.cpp in Sources */,
 				142D6F1113539A4100B02E86 /* MarkStack.cpp in Sources */,
@@ -5111,6 +5157,7 @@
 				14280841107EC0930013E7B2 /* RegExp.cpp in Sources */,
 				A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */,
 				8642C510151C06A90046D4EF /* RegExpCachedResult.cpp in Sources */,
+				0FD8A32B17D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.cpp in Sources */,
 				14280842107EC0930013E7B2 /* RegExpConstructor.cpp in Sources */,
 				8642C512151C083D0046D4EF /* RegExpMatchesArray.cpp in Sources */,
 				14280843107EC0930013E7B2 /* RegExpObject.cpp in Sources */,
@@ -5141,6 +5188,7 @@
 				BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */,
 				C2DF442F1707AC0100A5CA96 /* SuperRegion.cpp in Sources */,
 				0F919D2815856773004A4E7D /* SymbolTable.cpp in Sources */,
+				0FD8A32517D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.cpp in Sources */,
 				A7386555118697B400540279 /* ThunkGenerators.cpp in Sources */,
 				0F2B670717B6B5AB00A7AE3F /* TypedArrayController.cpp in Sources */,
 				0F2B670A17B6B5AB00A7AE3F /* TypedArrayType.cpp in Sources */,

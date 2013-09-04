@@ -150,6 +150,20 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node) = value;
         break;
     }
+        
+    case ExtractOSREntryLocal: {
+        forNode(node).makeTop();
+        if (!operandIsArgument(node->unlinkedLocal())
+            && m_graph.m_lazyVars.get(node->unlinkedLocal())) {
+            // This is kind of pessimistic - we could know in some cases that the
+            // DFG code at the point of the OSR had already initialized the lazy
+            // variable. But maybe this is fine, since we're inserting OSR
+            // entrypoints very early in the pipeline - so any lazy initializations
+            // ought to be hoisted out anyway.
+            forNode(node).merge(SpecEmpty);
+        }
+        break;
+    }
             
     case GetLocal: {
         VariableAccessData* variableAccessData = node->variableAccessData();
@@ -1515,6 +1529,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case Phantom:
     case InlineStart:
     case CountExecution:
+    case CheckTierUpInLoop:
+    case CheckTierUpAtReturn:
+        break;
+
+    case CheckTierUpAndOSREnter:
+    case LoopHint:
+        // We pretend that it can exit because it may want to get all state.
+        node->setCanExit(true);
         break;
 
     case Unreachable:

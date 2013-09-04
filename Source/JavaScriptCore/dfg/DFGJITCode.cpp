@@ -28,6 +28,8 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CodeBlock.h"
+
 namespace JSC { namespace DFG {
 
 JITCode::JITCode()
@@ -58,6 +60,145 @@ void JITCode::shrinkToFit()
     minifiedDFG.prepareAndShrink();
     variableEventStream.shrinkToFit();
 }
+
+void JITCode::reconstruct(
+    CodeBlock* codeBlock, CodeOrigin codeOrigin, unsigned streamIndex,
+    Operands<ValueRecovery>& result)
+{
+    variableEventStream.reconstruct(
+        codeBlock, codeOrigin, minifiedDFG, streamIndex, result);
+}
+
+void JITCode::reconstruct(
+    ExecState* exec, CodeBlock* codeBlock, CodeOrigin codeOrigin, unsigned streamIndex,
+    Operands<JSValue>& result)
+{
+    Operands<ValueRecovery> recoveries;
+    reconstruct(codeBlock, codeOrigin, streamIndex, recoveries);
+    
+    result = Operands<JSValue>(OperandsLike, recoveries);
+    for (size_t i = result.size(); i--;) {
+        int operand = result.operandForIndex(i);
+        
+        if (operandIsArgument(operand)
+            && !operandToArgument(operand)
+            && codeBlock->codeType() == FunctionCode
+            && codeBlock->specializationKind() == CodeForConstruct) {
+            // Ugh. If we're in a constructor, the 'this' argument may hold garbage. It will
+            // also never be used. It doesn't matter what we put into the value for this,
+            // but it has to be an actual value that can be grokked by subsequent DFG passes,
+            // so we sanitize it here by turning it into Undefined.
+            result[i] = jsUndefined();
+            continue;
+        }
+        
+        ValueRecovery recovery = recoveries[i];
+        JSValue value;
+        switch (recovery.technique()) {
+        case AlreadyInJSStack:
+        case AlreadyInJSStackAsUnboxedCell:
+        case AlreadyInJSStackAsUnboxedBoolean:
+            value = exec->r(operand).jsValue();
+            break;
+        case AlreadyInJSStackAsUnboxedInt32:
+            value = jsNumber(exec->r(operand).unboxedInt32());
+            break;
+        case AlreadyInJSStackAsUnboxedDouble:
+            value = jsDoubleNumber(exec->r(operand).unboxedDouble());
+            break;
+        case Constant:
+            value = recovery.constant();
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        result[i] = value;
+    }
+}
+
+#if ENABLE(FTL_JIT)
+bool JITCode::checkIfOptimizationThresholdReached(CodeBlock* codeBlock)
+{
+    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    return tierUpCounter.checkIfThresholdCrossedAndSet(codeBlock->baselineVersion());
+}
+
+void JITCode::optimizeNextInvocation(CodeBlock* codeBlock)
+{
+    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    if (Options::verboseOSR())
+        dataLog(*codeBlock, ": FTL-optimizing next invocation.\n");
+    tierUpCounter.setNewThreshold(0, codeBlock->baselineVersion());
+}
+
+void JITCode::dontOptimizeAnytimeSoon(CodeBlock* codeBlock)
+{
+    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    if (Options::verboseOSR())
+        dataLog(*codeBlock, ": Not FTL-optimizing anytime soon.\n");
+    tierUpCounter.deferIndefinitely();
+}
+
+void JITCode::optimizeAfterWarmUp(CodeBlock* codeBlock)
+{
+    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    if (Options::verboseOSR())
+        dataLog(*codeBlock, ": FTL-optimizing after warm-up.\n");
+    CodeBlock* baseline = codeBlock->baselineVersion();
+    tierUpCounter.setNewThreshold(
+        baseline->adjustedCounterValue(Options::thresholdForFTLOptimizeAfterWarmUp()),
+        baseline);
+}
+
+void JITCode::optimizeSoon(CodeBlock* codeBlock)
+{
+    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    if (Options::verboseOSR())
+        dataLog(*codeBlock, ": FTL-optimizing soon.\n");
+    CodeBlock* baseline = codeBlock->baselineVersion();
+    tierUpCounter.setNewThreshold(
+        baseline->adjustedCounterValue(Options::thresholdForFTLOptimizeSoon()),
+        baseline);
+}
+
+void JITCode::forceOptimizationSlowPathConcurrently(CodeBlock* codeBlock)
+{
+    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    if (Options::verboseOSR())
+        dataLog(*codeBlock, ": Forcing slow path concurrently for FTL entry.\n");
+    tierUpCounter.forceSlowPathConcurrently();
+}
+
+void JITCode::setOptimizationThresholdBasedOnCompilationResult(
+    CodeBlock* codeBlock, CompilationResult result)
+{
+    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
+    switch (result) {
+    case CompilationSuccessful:
+        optimizeNextInvocation(codeBlock);
+        return;
+    case CompilationFailed:
+        dontOptimizeAnytimeSoon(codeBlock);
+        codeBlock->baselineVersion()->m_didFailFTLCompilation = true;
+        return;
+    case CompilationDeferred:
+        optimizeAfterWarmUp(codeBlock);
+        return;
+    case CompilationInvalidated:
+        // This is weird - it will only happen in cases when the DFG code block (i.e.
+        // the code block that this JITCode belongs to) is also invalidated. So it
+        // doesn't really matter what we do. But, we do the right thing anyway. Note
+        // that us counting the reoptimization actually means that we might count it
+        // twice. But that's generally OK. It's better to overcount reoptimizations
+        // than it is to undercount them.
+        codeBlock->baselineVersion()->countReoptimization();
+        optimizeAfterWarmUp(codeBlock);
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+#endif // ENABLE(FTL_JIT)
 
 } } // namespace JSC::DFG
 

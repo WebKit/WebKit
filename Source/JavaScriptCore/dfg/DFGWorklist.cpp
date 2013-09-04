@@ -277,8 +277,6 @@ static void initializeGlobalWorklistOnce()
 
 Worklist* globalWorklist()
 {
-    if (!enableConcurrentJIT())
-        return 0;
     pthread_once(&initializeGlobalWorklistKeyOnce, initializeGlobalWorklistOnce);
     return theGlobalWorklist;
 }

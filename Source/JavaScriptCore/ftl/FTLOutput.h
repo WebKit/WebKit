@@ -351,9 +351,14 @@ public:
     {
         call(trapIntrinsic());
     }
-    void crash()
+    
+    void crashNonTerminal()
     {
         call(intToPtr(constIntPtr(abort), pointerType(functionType(voidType))));
+    }
+    void crash()
+    {
+        crashNonTerminal();
         unreachable();
     }
     

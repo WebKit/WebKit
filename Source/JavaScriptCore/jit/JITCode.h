@@ -42,6 +42,7 @@ class CommonData;
 class JITCode;
 }
 namespace FTL {
+class ForOSREntryJITCode;
 class JITCode;
 }
 
@@ -174,6 +175,7 @@ public:
     virtual DFG::CommonData* dfgCommon();
     virtual DFG::JITCode* dfg();
     virtual FTL::JITCode* ftl();
+    virtual FTL::ForOSREntryJITCode* ftlForOSREntry();
     
     JSValue execute(JSStack*, CallFrame*, VM*);
     

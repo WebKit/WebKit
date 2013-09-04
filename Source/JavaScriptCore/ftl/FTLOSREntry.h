@@ -23,28 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLCapabilities_h
-#define FTLCapabilities_h
+#ifndef FTLOSREntry_h
+#define FTLOSREntry_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGGraph.h"
+namespace JSC {
 
-namespace JSC { namespace FTL {
+class CodeBlock;
+class ExecState;
 
-enum CapabilityLevel {
-    CannotCompile,
-    CanCompile,
-    CanCompileAndOSREnter
-};
+namespace FTL {
 
-CapabilityLevel canCompile(DFG::Graph&);
+void* prepareOSREntry(
+    ExecState*, CodeBlock* dfgCodeBlock, CodeBlock* entryCodeBlock, unsigned bytecodeIndex,
+    unsigned streamIndex);
 
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
 
-#endif // FTLCapabilities_h
+#endif // FTLOSREntry_h
 

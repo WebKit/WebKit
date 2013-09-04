@@ -23,28 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLCapabilities_h
-#define FTLCapabilities_h
+#ifndef FTLForOSREntryJITCode_h
+#define FTLForOSREntryJITCode_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGGraph.h"
+#include "FTLJITCode.h"
 
 namespace JSC { namespace FTL {
 
-enum CapabilityLevel {
-    CannotCompile,
-    CanCompile,
-    CanCompileAndOSREnter
-};
+// OSR entry into the FTL has a number of quirks:
+//
+// - OSR entry only happens through special OSR entry compilations. They have their
+//   own CodeBlock and their own JITCode.
+//
+// - We only OSR enter in loop headers that have a null inline call frame.
+//
+// - Each OSR entry compilation allows entry through only one bytecode index.
 
-CapabilityLevel canCompile(DFG::Graph&);
+class ForOSREntryJITCode : public FTL::JITCode {
+public:
+    ForOSREntryJITCode();
+    ~ForOSREntryJITCode();
+    
+    void initializeEntryBuffer(VM&, unsigned numCalleeRegisters);
+    ScratchBuffer* entryBuffer() const { return m_entryBuffer; }
+    
+    void setBytecodeIndex(unsigned value) { m_bytecodeIndex = value; }
+    unsigned bytecodeIndex() const { return m_bytecodeIndex; }
+    
+    void countEntryFailure() { m_entryFailureCount++; }
+    unsigned entryFailureCount() const { return m_entryFailureCount; }
+    
+    ForOSREntryJITCode* ftlForOSREntry();
+    
+private:
+    ScratchBuffer* m_entryBuffer; // Only for OSR entry code blocks.
+    unsigned m_bytecodeIndex;
+    unsigned m_entryFailureCount;
+};
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(FLT_JIT)
 
-#endif // FTLCapabilities_h
+#endif // FTLForOSREntryJITCode_h
 

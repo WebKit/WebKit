@@ -33,6 +33,7 @@
 #include "DFGInPlaceAbstractState.h"
 #include "FTLAbstractHeapRepository.h"
 #include "FTLExitThunkGenerator.h"
+#include "FTLForOSREntryJITCode.h"
 #include "FTLFormattedValue.h"
 #include "FTLLoweredNodeValue.h"
 #include "FTLOutput.h"
@@ -191,6 +192,9 @@ private:
         // make IR dumps easier to read.
         m_out.appendTo(lowBlock, m_nextLowBlock);
         
+        if (Options::ftlCrashes())
+            m_out.crashNonTerminal();
+        
         if (!m_highBlock->cfaHasVisited) {
             m_out.crash();
             return;
@@ -243,6 +247,9 @@ private:
         case GetArgument:
             compileGetArgument();
             break;
+        case ExtractOSREntryLocal:
+            compileExtractOSREntryLocal();
+            break;
         case GetLocal:
             compileGetLocal();
             break;
@@ -264,6 +271,7 @@ private:
         case Flush:
         case PhantomLocal:
         case SetArgument:
+        case LoopHint:
             break;
         case ArithAdd:
         case ValueAdd:
@@ -506,6 +514,13 @@ private:
         }
     }
     
+    void compileExtractOSREntryLocal()
+    {
+        EncodedJSValue* buffer = static_cast<EncodedJSValue*>(
+            m_ftlState.jitCode->ftlForOSREntry()->entryBuffer()->dataBuffer());
+        setJSValue(m_out.load64(m_out.absolute(buffer + m_node->unlinkedLocal())));
+    }
+    
     void compileGetLocal()
     {
         // GetLocals arise only for captured variables.
@@ -515,7 +530,7 @@ private:
         
         RELEASE_ASSERT(variable->isCaptured());
         
-        if (isInt32Speculation(value.m_value))
+        if (isInt32Speculation(value.m_type))
             setInt32(m_out.load32(payloadFor(variable->local())));
         else
             setJSValue(m_out.load64(addressFor(variable->local())));
@@ -2817,8 +2832,7 @@ private:
     
     void addWeakReference(JSCell* target)
     {
-        m_ftlState.jitCode->common.weakReferences.append(
-            WriteBarrier<JSCell>(vm(), codeBlock()->ownerExecutable(), target));
+        m_graph.m_plan.weakReferences.addLazily(target);
     }
     
     LValue weakPointer(JSCell* pointer)

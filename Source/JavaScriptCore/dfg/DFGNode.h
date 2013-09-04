@@ -527,9 +527,20 @@ struct Node {
         return variableAccessData()->local();
     }
     
+    bool hasUnlinkedLocal()
+    {
+        switch (op()) {
+        case GetLocalUnlinked:
+        case ExtractOSREntryLocal:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
     VirtualRegister unlinkedLocal()
     {
-        ASSERT(op() == GetLocalUnlinked);
+        ASSERT(hasUnlinkedLocal());
         return static_cast<VirtualRegister>(m_opInfo);
     }
     

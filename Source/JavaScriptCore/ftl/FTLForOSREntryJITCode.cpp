@@ -23,28 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLCapabilities_h
-#define FTLCapabilities_h
-
-#include <wtf/Platform.h>
+#include "config.h"
+#include "FTLForOSREntryJITCode.h"
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGGraph.h"
-
 namespace JSC { namespace FTL {
 
-enum CapabilityLevel {
-    CannotCompile,
-    CanCompile,
-    CanCompileAndOSREnter
-};
+ForOSREntryJITCode::ForOSREntryJITCode()
+{
+}
 
-CapabilityLevel canCompile(DFG::Graph&);
+ForOSREntryJITCode::~ForOSREntryJITCode()
+{
+}
+
+ForOSREntryJITCode* ForOSREntryJITCode::ftlForOSREntry()
+{
+    return this;
+}
+
+void ForOSREntryJITCode::initializeEntryBuffer(VM& vm, unsigned numCalleeRegisters)
+{
+    m_entryBuffer = vm.scratchBufferForSize(numCalleeRegisters * sizeof(EncodedJSValue));
+}
 
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)
-
-#endif // FTLCapabilities_h
 

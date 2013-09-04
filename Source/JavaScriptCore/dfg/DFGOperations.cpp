@@ -31,9 +31,15 @@
 #include "CodeBlock.h"
 #include "CommonSlowPaths.h"
 #include "CopiedSpaceInlines.h"
+#include "DFGDriver.h"
 #include "DFGOSRExit.h"
 #include "DFGRepatch.h"
 #include "DFGThunks.h"
+#include "DFGToFTLDeferredCompilationCallback.h"
+#include "DFGToFTLForOSREntryDeferredCompilationCallback.h"
+#include "DFGWorklist.h"
+#include "FTLForOSREntryJITCode.h"
+#include "FTLOSREntry.h"
 #include "HostCallReturnValue.h"
 #include "GetterSetter.h"
 #include "Interpreter.h"
@@ -2014,6 +2020,187 @@ extern "C" void DFG_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
 
     codeBlock->reoptimize();
 }
+
+#if ENABLE(FTL_JIT)
+void DFG_OPERATION triggerTierUpNow(ExecState* exec)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    DeferGC deferGC(vm->heap);
+    CodeBlock* codeBlock = exec->codeBlock();
+    
+    JITCode* jitCode = codeBlock->jitCode()->dfg();
+    
+    if (Options::verboseOSR()) {
+        dataLog(
+            *codeBlock, ": Entered triggerTierUpNow with executeCounter = ",
+            jitCode->tierUpCounter, "\n");
+    }
+    
+    if (codeBlock->baselineVersion()->m_didFailFTLCompilation) {
+        if (Options::verboseOSR())
+            dataLog("Deferring FTL-optimization of ", *codeBlock, " indefinitely because there was an FTL failure.\n");
+        jitCode->dontOptimizeAnytimeSoon(codeBlock);
+        return;
+    }
+    
+    if (!jitCode->checkIfOptimizationThresholdReached(codeBlock)) {
+        if (Options::verboseOSR())
+            dataLog("Choosing not to FTL-optimize ", *codeBlock, " yet.\n");
+        return;
+    }
+    
+    Worklist::State worklistState;
+    if (Worklist* worklist = vm->worklist.get()) {
+        worklistState = worklist->completeAllReadyPlansForVM(
+            *vm, CompilationKey(codeBlock->baselineVersion(), FTLMode));
+    } else
+        worklistState = Worklist::NotKnown;
+    
+    if (worklistState == Worklist::Compiling) {
+        jitCode->setOptimizationThresholdBasedOnCompilationResult(
+            codeBlock, CompilationDeferred);
+        return;
+    }
+    
+    if (codeBlock->hasOptimizedReplacement()) {
+        // That's great, we've compiled the code - next time we call this function,
+        // we'll enter that replacement.
+        jitCode->optimizeSoon(codeBlock);
+        return;
+    }
+    
+    if (worklistState == Worklist::Compiled) {
+        // This means that we finished compiling, but failed somehow; in that case the
+        // thresholds will be set appropriately.
+        if (Options::verboseOSR())
+            dataLog("Code block ", *codeBlock, " was compiled but it doesn't have an optimized replacement.\n");
+        return;
+    }
+
+    // We need to compile the code.
+    compile(
+        *vm, codeBlock->newReplacement().get(), FTLMode, UINT_MAX, Operands<JSValue>(),
+        ToFTLDeferredCompilationCallback::create(codeBlock), vm->ensureWorklist());
+}
+
+char* DFG_OPERATION triggerOSREntryNow(
+    ExecState* exec, int32_t bytecodeIndex, int32_t streamIndex)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    DeferGC deferGC(vm->heap);
+    CodeBlock* codeBlock = exec->codeBlock();
+    
+    JITCode* jitCode = codeBlock->jitCode()->dfg();
+    
+    if (Options::verboseOSR()) {
+        dataLog(
+            *codeBlock, ": Entered triggerTierUpNow with executeCounter = ",
+            jitCode->tierUpCounter, "\n");
+    }
+    
+    if (codeBlock->baselineVersion()->m_didFailFTLCompilation) {
+        if (Options::verboseOSR())
+            dataLog("Deferring FTL-optimization of ", *codeBlock, " indefinitely because there was an FTL failure.\n");
+        jitCode->dontOptimizeAnytimeSoon(codeBlock);
+        return 0;
+    }
+    
+    if (!jitCode->checkIfOptimizationThresholdReached(codeBlock)) {
+        if (Options::verboseOSR())
+            dataLog("Choosing not to FTL-optimize ", *codeBlock, " yet.\n");
+        return 0;
+    }
+    
+    Worklist::State worklistState;
+    if (Worklist* worklist = vm->worklist.get()) {
+        worklistState = worklist->completeAllReadyPlansForVM(
+            *vm, CompilationKey(codeBlock->baselineVersion(), FTLForOSREntryMode));
+    } else
+        worklistState = Worklist::NotKnown;
+    
+    if (worklistState == Worklist::Compiling) {
+        ASSERT(!jitCode->osrEntryBlock);
+        jitCode->setOptimizationThresholdBasedOnCompilationResult(
+            codeBlock, CompilationDeferred);
+        return 0;
+    }
+    
+    if (CodeBlock* entryBlock = jitCode->osrEntryBlock.get()) {
+        void* address = FTL::prepareOSREntry(
+            exec, codeBlock, entryBlock, bytecodeIndex, streamIndex);
+        if (address) {
+            jitCode->optimizeSoon(codeBlock);
+            return static_cast<char*>(address);
+        }
+        
+        FTL::ForOSREntryJITCode* entryCode = entryBlock->jitCode()->ftlForOSREntry();
+        entryCode->countEntryFailure();
+        if (entryCode->entryFailureCount() <
+            Options::ftlOSREntryFailureCountForReoptimization()) {
+            
+            jitCode->optimizeSoon(codeBlock);
+            return 0;
+        }
+        
+        // OSR entry failed. Oh no! This implies that we need to retry. We retry
+        // without exponential backoff and we only do this for the entry code block.
+        jitCode->osrEntryBlock.clear();
+        
+        jitCode->optimizeAfterWarmUp(codeBlock);
+        return 0;
+    }
+    
+    if (worklistState == Worklist::Compiled) {
+        // This means that compilation failed and we already set the thresholds.
+        if (Options::verboseOSR())
+            dataLog("Code block ", *codeBlock, " was compiled but it doesn't have an optimized replacement.\n");
+        return 0;
+    }
+
+    // The first order of business is to trigger a for-entry compile.
+    Operands<JSValue> mustHandleValues;
+    jitCode->reconstruct(
+        exec, codeBlock, CodeOrigin(bytecodeIndex), streamIndex, mustHandleValues);
+    CompilationResult forEntryResult = DFG::compile(
+        *vm, codeBlock->newReplacement().get(), FTLForOSREntryMode, bytecodeIndex,
+        mustHandleValues, ToFTLForOSREntryDeferredCompilationCallback::create(codeBlock),
+        vm->ensureWorklist());
+    
+    // But we also want to trigger a replacement compile. Of course, we don't want to
+    // trigger it if we don't need to. Note that this is kind of weird because we might
+    // have just finished an FTL compile and that compile failed or was invalidated.
+    // But this seems uncommon enough that we sort of don't care. It's certainly sound
+    // to fire off another compile right now so long as we're not already compiling and
+    // we don't already have an optimized replacement. Note, we don't do this for
+    // obviously bad cases like global code, where we know that there is a slim chance
+    // of this code being invoked ever again.
+    CompilationKey keyForReplacement(codeBlock->baselineVersion(), FTLMode);
+    if (codeBlock->codeType() != GlobalCode
+        && !codeBlock->hasOptimizedReplacement()
+        && (!vm->worklist.get()
+            || vm->worklist->compilationState(keyForReplacement) == Worklist::NotKnown)) {
+        compile(
+            *vm, codeBlock->newReplacement().get(), FTLMode, UINT_MAX, Operands<JSValue>(),
+            ToFTLDeferredCompilationCallback::create(codeBlock), vm->ensureWorklist());
+    }
+    
+    if (forEntryResult != CompilationSuccessful)
+        return 0;
+    
+    // It's possible that the for-entry compile already succeeded. In that case OSR
+    // entry will succeed unless we ran out of stack. It's not clear what we should do.
+    // We signal to try again after a while if that happens.
+    void* address = FTL::prepareOSREntry(
+        exec, codeBlock, jitCode->osrEntryBlock.get(), bytecodeIndex, streamIndex);
+    if (address)
+        jitCode->optimizeSoon(codeBlock);
+    else
+        jitCode->optimizeAfterWarmUp(codeBlock);
+    return static_cast<char*>(address);
+}
+#endif // ENABLE(FTL_JIT)
 
 } // extern "C"
 } } // namespace JSC::DFG

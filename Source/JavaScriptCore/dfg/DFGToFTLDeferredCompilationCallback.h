@@ -23,28 +23,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLCapabilities_h
-#define FTLCapabilities_h
+#ifndef DFGToFTLDeferredCompilationCallback_h
+#define DFGToFTLDeferredCompilationCallback_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGGraph.h"
+#include "DeferredCompilationCallback.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
-namespace JSC { namespace FTL {
+namespace JSC {
 
-enum CapabilityLevel {
-    CannotCompile,
-    CanCompile,
-    CanCompileAndOSREnter
+class ScriptExecutable;
+
+namespace DFG {
+
+class ToFTLDeferredCompilationCallback : public DeferredCompilationCallback {
+protected:
+    ToFTLDeferredCompilationCallback(PassRefPtr<CodeBlock> dfgCodeBlock);
+
+public:
+    virtual ~ToFTLDeferredCompilationCallback();
+
+    static PassRefPtr<ToFTLDeferredCompilationCallback> create(
+        PassRefPtr<CodeBlock> dfgCodeBlock);
+    
+    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*);
+    virtual void compilationDidComplete(CodeBlock*, CompilationResult);
+
+private:
+    RefPtr<CodeBlock> m_dfgCodeBlock;
 };
 
-CapabilityLevel canCompile(DFG::Graph&);
-
-} } // namespace JSC::FTL
+} } // namespace JSC::DFG
 
 #endif // ENABLE(FTL_JIT)
 
-#endif // FTLCapabilities_h
+#endif // DFGToFTLDeferredCompilationCallback_h
 

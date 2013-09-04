@@ -710,6 +710,15 @@ void VM::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
         }
     }
 }
+
+DFG::Worklist* VM::ensureWorklist()
+{
+    if (!DFG::enableConcurrentJIT())
+        return 0;
+    if (!worklist)
+        worklist = DFG::globalWorklist();
+    return worklist.get();
+}
 #endif
 
 #if ENABLE(REGEXP_TRACING)

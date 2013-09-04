@@ -23,28 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLCapabilities_h
-#define FTLCapabilities_h
+#ifndef DFGOSREntrypointCreationPhase_h
+#define DFGOSREntrypointCreationPhase_h
 
 #include <wtf/Platform.h>
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(DFG_JIT)
 
-#include "DFGGraph.h"
+namespace JSC { namespace DFG {
 
-namespace JSC { namespace FTL {
+class Graph;
 
-enum CapabilityLevel {
-    CannotCompile,
-    CanCompile,
-    CanCompileAndOSREnter
-};
+// This phase is only for compilation pipelines that go through SSA, and that
+// do a specialized OSR entry compile. Currently that means FTL.
+//
+// Creates an OSR entrypoint that establishes all argument and local variable
+// values. This entrypoint only works for the Plan::osrEntryBytecodeIndex.
+// Unlike ordinary OSR entry into the DFG, this forces all variables slurped
+// in through OSR entry to appear TOP to the CFA. Hence this phase must be run
+// early - before doing any CFA. But this also does some additional hacks that
+// require this to run before unification.
 
-CapabilityLevel canCompile(DFG::Graph&);
+bool performOSREntrypointCreation(Graph&);
 
-} } // namespace JSC::FTL
+} } // namespace JSC::DFG
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(DFG_JIT)
 
-#endif // FTLCapabilities_h
+#endif // DFGOSREntrypointCreationPhase_h
 

@@ -3140,19 +3140,18 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             if (!m_inlineStackTop->m_caller)
                 m_currentBlock->isOSRTarget = true;
 
+            addToGraph(LoopHint);
+            
             if (m_vm->watchdog.isEnabled())
                 addToGraph(CheckWatchdogTimer);
-            else {
-                // Emit a phantom node to ensure that there is a placeholder
-                // node for this bytecode op.
-                addToGraph(Phantom);
-            }
             
             NEXT_OPCODE(op_loop_hint);
         }
             
         case op_init_lazy_reg: {
             set(currentInstruction[1].u.operand, getJSConstantForValue(JSValue()));
+            ASSERT(currentInstruction[1].u.operand >= 0);
+            m_graph.m_lazyVars.set(currentInstruction[1].u.operand);
             NEXT_OPCODE(op_init_lazy_reg);
         }
             
@@ -3634,7 +3633,7 @@ bool ByteCodeParser::parse()
         BasicBlock* block = m_graph.block(blockIndex);
         ASSERT(block);
         if (!block->isReachable) {
-            m_graph.killBlock(block);
+            m_graph.killBlockAndItsContents(block);
             continue;
         }
         

@@ -64,7 +64,9 @@ bool JITFinalizer::finalizeFunction()
                 ("FTL exit thunks for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data())));
     } // else this function had no OSR exits, so no exit thunks.
     
-    MacroAssemblerCodePtr withArityCheck = m_entrypointLinkBuffer->locationOf(m_arityCheck);
+    MacroAssemblerCodePtr withArityCheck;
+    if (m_arityCheck.isSet())
+        withArityCheck = m_entrypointLinkBuffer->locationOf(m_arityCheck);
     m_jitCode->initializeCode(
         FINALIZE_DFG_CODE(
             *m_entrypointLinkBuffer,

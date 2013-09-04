@@ -23,28 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLCapabilities_h
-#define FTLCapabilities_h
+#ifndef DFGTierUpCheckInjectionPhase_h
+#define DFGTierUpCheckInjectionPhase_h
 
 #include <wtf/Platform.h>
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(DFG_JIT)
 
-#include "DFGGraph.h"
+namespace JSC { namespace DFG {
 
-namespace JSC { namespace FTL {
+class Graph;
 
-enum CapabilityLevel {
-    CannotCompile,
-    CanCompile,
-    CanCompileAndOSREnter
-};
+// This phase checks if the this code block could be recompiled with the FTL,
+// and if so, it injects tier-up checks.
 
-CapabilityLevel canCompile(DFG::Graph&);
+bool performTierUpCheckInjection(Graph&);
 
-} } // namespace JSC::FTL
+} } // namespace JSC::DFG
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(DFG_JIT)
 
-#endif // FTLCapabilities_h
+#endif // DFGTierUpCheckInjectionPhase_h
 

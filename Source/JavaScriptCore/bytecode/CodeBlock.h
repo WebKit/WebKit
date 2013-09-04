@@ -308,7 +308,8 @@ public:
     }
     DFG::CapabilityLevel capabilityLevelState() { return m_capabilityLevelState; }
 
-    bool hasOptimizedReplacement();
+    bool hasOptimizedReplacement(JITCode::JITType typeToReplace);
+    bool hasOptimizedReplacement(); // the typeToReplace is my JITType
 #endif
 
     ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
@@ -957,6 +958,8 @@ public:
     bool m_shouldAlwaysBeInlined;
     bool m_allTransitionsHaveBeenMarked; // Initialized and used on every GC.
     
+    bool m_didFailFTLCompilation;
+    
 protected:
     virtual void visitWeakReferences(SlotVisitor&);
     virtual void finalizeUnconditionally();
@@ -969,6 +972,8 @@ protected:
 
 private:
     friend class CodeBlockSet;
+    
+    CodeBlock* specialOSREntryBlockOrNull();
     
     void noticeIncomingCall(ExecState* callerFrame);
     

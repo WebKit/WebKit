@@ -4823,6 +4823,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case PhantomLocal:
+    case LoopHint:
         // This is a no-op.
         noResult(node);
         break;
@@ -4835,6 +4836,10 @@ void SpeculativeJIT::compile(Node* node)
     case Phi:
     case Upsilon:
     case GetArgument:
+    case ExtractOSREntryLocal:
+    case CheckTierUpInLoop:
+    case CheckTierUpAtReturn:
+    case CheckTierUpAndOSREnter:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }

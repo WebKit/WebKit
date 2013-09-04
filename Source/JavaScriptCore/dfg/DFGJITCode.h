@@ -30,11 +30,13 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CompilationResult.h"
 #include "DFGCommonData.h"
 #include "DFGMinifiedGraph.h"
 #include "DFGOSREntry.h"
 #include "DFGOSRExit.h"
 #include "DFGVariableEventStream.h"
+#include "ExecutionCounter.h"
 #include "JITCode.h"
 #include "JumpReplacementWatchpoint.h"
 #include <wtf/SegmentedVector.h>
@@ -93,8 +95,30 @@ public:
         return result;
     }
     
+    void reconstruct(
+        CodeBlock*, CodeOrigin, unsigned streamIndex, Operands<ValueRecovery>& result);
+    
+    // This is only applicable if we're at a point where all values are spilled to the
+    // stack. Currently, it also has the restriction that the values must be in their
+    // bytecode-designated stack slots.
+    void reconstruct(
+        ExecState*, CodeBlock*, CodeOrigin, unsigned streamIndex, Operands<JSValue>& result);
+
+#if ENABLE(FTL_JIT)
+    // NB. All of these methods take CodeBlock* because they may want to use
+    // CodeBlock's logic about scaling thresholds. It should be a DFG CodeBlock.
+    
+    bool checkIfOptimizationThresholdReached(CodeBlock*);
+    void optimizeNextInvocation(CodeBlock*);
+    void dontOptimizeAnytimeSoon(CodeBlock*);
+    void optimizeAfterWarmUp(CodeBlock*);
+    void optimizeSoon(CodeBlock*);
+    void forceOptimizationSlowPathConcurrently(CodeBlock*);
+    void setOptimizationThresholdBasedOnCompilationResult(CodeBlock*, CompilationResult);
+#endif // ENABLE(FTL_JIT)
+    
     void shrinkToFit();
-        
+    
 private:
     friend class JITCompiler; // Allow JITCompiler to call setCodeRef().
 
@@ -106,6 +130,10 @@ public:
     SegmentedVector<JumpReplacementWatchpoint, 1, 0> watchpoints;
     DFG::VariableEventStream variableEventStream;
     DFG::MinifiedGraph minifiedDFG;
+#if ENABLE(FTL_JIT)
+    ExecutionCounter tierUpCounter;
+    RefPtr<CodeBlock> osrEntryBlock;
+#endif // ENABLE(FTL_JIT)
 };
 
 } } // namespace JSC::DFG

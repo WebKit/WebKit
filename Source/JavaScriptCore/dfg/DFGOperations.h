@@ -99,6 +99,7 @@ typedef size_t DFG_OPERATION (*S_DFGOperation_ECC)(ExecState*, JSCell*, JSCell*)
 typedef size_t DFG_OPERATION (*S_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef size_t DFG_OPERATION (*S_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
 typedef size_t DFG_OPERATION (*S_DFGOperation_J)(EncodedJSValue);
+typedef void DFG_OPERATION (*V_DFGOperation_E)(ExecState*);
 typedef void DFG_OPERATION (*V_DFGOperation_EOZD)(ExecState*, JSObject*, int32_t, double);
 typedef void DFG_OPERATION (*V_DFGOperation_EOZJ)(ExecState*, JSObject*, int32_t, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_EC)(ExecState*, JSCell*);
@@ -126,6 +127,7 @@ typedef char* DFG_OPERATION (*P_DFGOperation_EStJ)(ExecState*, Structure*, Encod
 typedef char* DFG_OPERATION (*P_DFGOperation_EStPS)(ExecState*, Structure*, void*, size_t);
 typedef char* DFG_OPERATION (*P_DFGOperation_EStSS)(ExecState*, Structure*, size_t, size_t);
 typedef char* DFG_OPERATION (*P_DFGOperation_EStZ)(ExecState*, Structure*, int32_t);
+typedef char* DFG_OPERATION (*P_DFGOperation_EZZ)(ExecState*, int32_t, int32_t);
 typedef StringImpl* DFG_OPERATION (*I_DFGOperation_EJss)(ExecState*, JSString*);
 typedef JSString* DFG_OPERATION (*Jss_DFGOperation_EZ)(ExecState*, int32_t);
 JSCell* DFG_OPERATION operationStringFromCharCode(ExecState*, int32_t)  WTF_INTERNAL; 
@@ -301,6 +303,11 @@ size_t DFG_OPERATION dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue) WTF_
 void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState*, void*, void*) WTF_INTERNAL;
 
 void DFG_OPERATION triggerReoptimizationNow(CodeBlock*) WTF_INTERNAL;
+
+#if ENABLE(FTL_JIT)
+void DFG_OPERATION triggerTierUpNow(ExecState*) WTF_INTERNAL;
+char* DFG_OPERATION triggerOSREntryNow(ExecState*, int32_t bytecodeIndex, int32_t streamIndex) WTF_INTERNAL;
+#endif // ENABLE(FTL_JIT)
 
 } // extern "C"
 

@@ -111,6 +111,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case IsString:
     case LogicalNot:
     case Int32ToDouble:
+    case ExtractOSREntryLocal:
         return;
         
     case MovHintAndCheck:
@@ -133,6 +134,10 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case ForceOSRExit:
     case Return:
     case Unreachable:
+    case CheckTierUpInLoop:
+    case CheckTierUpAtReturn:
+    case CheckTierUpAndOSREnter:
+    case LoopHint:
         write(SideState);
         return;
 

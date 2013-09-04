@@ -132,6 +132,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGNodeFlags.cpp
     dfg/DFGOSRAvailabilityAnalysisPhase.cpp
     dfg/DFGOSREntry.cpp
+    dfg/DFGOSREntrypointCreationPhase.cpp
     dfg/DFGOSRExit.cpp
     dfg/DFGOSRExitBase.cpp
     dfg/DFGOSRExitCompiler.cpp
@@ -151,6 +152,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGSpeculativeJIT32_64.cpp
     dfg/DFGSpeculativeJIT64.cpp
     dfg/DFGThunks.cpp
+    dfg/DFGTierUpCheckInjectionPhase.cpp
     dfg/DFGTypeCheckHoistingPhase.cpp
     dfg/DFGUnificationPhase.cpp
     dfg/DFGUseKind.cpp

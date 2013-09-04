@@ -236,6 +236,13 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         else
             out.print(comma, "r", operand, "(", VariableAccessDataDump(*this, variableAccessData), ")");
     }
+    if (node->hasUnlinkedLocal()) {
+        int operand = node->unlinkedLocal();
+        if (operandIsArgument(operand))
+            out.print(comma, "arg", operandToArgument(operand));
+        else
+            out.print(comma, "r", operand);
+    }
     if (node->hasConstantBuffer()) {
         out.print(comma);
         out.print(node->startConstant(), ":[");
@@ -485,6 +492,29 @@ void Graph::resetReachability()
     }
     
     determineReachability();
+}
+
+void Graph::killBlockAndItsContents(BasicBlock* block)
+{
+    for (unsigned phiIndex = block->phis.size(); phiIndex--;)
+        m_allocator.free(block->phis[phiIndex]);
+    for (unsigned nodeIndex = block->size(); nodeIndex--;)
+        m_allocator.free(block->at(nodeIndex));
+    
+    killBlock(block);
+}
+
+void Graph::killUnreachableBlocks()
+{
+    for (BlockIndex blockIndex = 0; blockIndex < numBlocks(); ++blockIndex) {
+        BasicBlock* block = this->block(blockIndex);
+        if (!block)
+            continue;
+        if (block->isReachable)
+            continue;
+        
+        killBlockAndItsContents(block);
+    }
 }
 
 void Graph::resetExitStates()

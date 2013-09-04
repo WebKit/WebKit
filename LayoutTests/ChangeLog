@@ -1,3 +1,19 @@
+2013-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        The DFG should be able to tier-up and OSR enter into the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=112838
+
+        Reviewed by Mark Hahnenberg.
+        
+        Fix marsaglia to check the result instead of printing, and add a second
+        version that relies on OSR entry.
+
+        * fast/js/regress/marsaglia-osr-entry-expected.txt: Added.
+        * fast/js/regress/marsaglia-osr-entry.html: Added.
+        * fast/js/regress/script-tests/marsaglia-osr-entry.js: Added.
+        (marsaglia):
+        * fast/js/regress/script-tests/marsaglia.js:
+
 2013-09-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: REGRESSION: @title is exposed as AXDescription when label label from contents already exists.

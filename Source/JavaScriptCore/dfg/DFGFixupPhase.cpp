@@ -844,6 +844,9 @@ private:
         case MovHint:
         case MovHintAndCheck:
         case ZombieHint:
+        case CheckTierUpInLoop:
+        case CheckTierUpAtReturn:
+        case CheckTierUpAndOSREnter:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         
@@ -896,6 +899,8 @@ private:
         case ForceOSRExit:
         case CheckWatchdogTimer:
         case Unreachable:
+        case ExtractOSREntryLocal:
+        case LoopHint:
             break;
 #else
         default:

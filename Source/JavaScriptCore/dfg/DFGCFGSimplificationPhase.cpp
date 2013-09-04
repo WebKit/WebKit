@@ -270,16 +270,7 @@ public:
                 
                 m_graph.invalidateCFG();
                 m_graph.resetReachability();
-
-                for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
-                    BasicBlock* block = m_graph.block(blockIndex);
-                    if (!block)
-                        continue;
-                    if (block->isReachable)
-                        continue;
-                    
-                    killUnreachable(block);
-                }
+                m_graph.killUnreachableBlocks();
             }
             
             if (Options::validateGraphAtEachPhase())
@@ -320,19 +311,6 @@ private:
         }
     }
 
-    void killUnreachable(BasicBlock* block)
-    {
-        ASSERT(block);
-        ASSERT(!block->isReachable);
-        
-        for (unsigned phiIndex = block->phis.size(); phiIndex--;)
-            m_graph.m_allocator.free(block->phis[phiIndex]);
-        for (unsigned nodeIndex = block->size(); nodeIndex--;)
-            m_graph.m_allocator.free(block->at(nodeIndex));
-        
-        m_graph.killBlock(block);
-    }
-    
     void keepOperandAlive(BasicBlock* block, BasicBlock* jettisonedBlock, CodeOrigin codeOrigin, int operand)
     {
         Node* livenessNode = jettisonedBlock->variablesAtHead.operand(operand);

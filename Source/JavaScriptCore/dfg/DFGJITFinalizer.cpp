@@ -48,27 +48,31 @@ JITFinalizer::~JITFinalizer()
 
 bool JITFinalizer::finalize()
 {
-    finalizeCommon();
-    
     m_jitCode->initializeCodeRef(m_linkBuffer->finalizeCodeWithoutDisassembly());
     m_plan.codeBlock->setJITCode(m_jitCode, MacroAssemblerCodePtr());
+    
+    finalizeCommon();
     
     return true;
 }
 
 bool JITFinalizer::finalizeFunction()
 {
-    finalizeCommon();
-    
     MacroAssemblerCodePtr withArityCheck = m_linkBuffer->locationOf(m_arityCheck);
     m_jitCode->initializeCodeRef(m_linkBuffer->finalizeCodeWithoutDisassembly());
     m_plan.codeBlock->setJITCode(m_jitCode, withArityCheck);
+    
+    finalizeCommon();
     
     return true;
 }
 
 void JITFinalizer::finalizeCommon()
 {
+#if ENABLE(FTL_JIT)
+    m_jitCode->optimizeAfterWarmUp(m_plan.codeBlock.get());
+#endif // ENABLE(FTL_JIT)
+    
     if (m_plan.compilation)
         m_plan.vm.m_perBytecodeProfiler->addCompilation(m_plan.compilation);
 }

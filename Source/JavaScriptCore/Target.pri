@@ -170,6 +170,7 @@ SOURCES += \
     dfg/DFGOperations.cpp \
     dfg/DFGOSRAvailabilityAnalysisPhase.cpp \
     dfg/DFGOSREntry.cpp \
+    dfg/DFGOSREntrypointCreationPhase.cpp \
     dfg/DFGOSRExit.cpp \
     dfg/DFGOSRExitBase.cpp \
     dfg/DFGOSRExitCompiler.cpp \
@@ -189,6 +190,7 @@ SOURCES += \
     dfg/DFGSpeculativeJIT64.cpp \
     dfg/DFGTypeCheckHoistingPhase.cpp \
     dfg/DFGThunks.cpp \
+    dfg/DFGTierUpCheckInjectionPhase.cpp \
     dfg/DFGUnificationPhase.cpp \
     dfg/DFGUseKind.cpp \
     dfg/DFGValueSource.cpp \

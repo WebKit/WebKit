@@ -77,8 +77,8 @@ public:
             if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex)
                 continue;
             for (size_t i = 0; i < m_graph.m_plan.mustHandleValues.size(); ++i) {
-                Node* node = block->variablesAtHead.operand(
-                    m_graph.m_plan.mustHandleValues.operandForIndex(i));
+                int operand = m_graph.m_plan.mustHandleValues.operandForIndex(i);
+                Node* node = block->variablesAtHead.operand(operand);
                 if (!node)
                     continue;
                 ASSERT(node->hasLocal(m_graph));

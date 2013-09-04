@@ -55,9 +55,9 @@ unsigned getNumCompilations()
 
 #if ENABLE(DFG_JIT)
 static CompilationResult compileImpl(
-    ExecState* exec, CodeBlock* codeBlock, CompilationMode mode,
-    unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback> callback,
-    Worklist* worklist)
+    VM& vm, CodeBlock* codeBlock, CompilationMode mode, unsigned osrEntryBytecodeIndex,
+    const Operands<JSValue>& mustHandleValues,
+    PassRefPtr<DeferredCompilationCallback> callback, Worklist* worklist)
 {
     SamplingRegion samplingRegion("DFG Compilation (Driver)");
     
@@ -67,8 +67,6 @@ static CompilationResult compileImpl(
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
     
-    ASSERT(osrEntryBytecodeIndex != UINT_MAX);
-
     if (!Options::useDFGJIT() || !MacroAssembler::supportsFloatingPoint())
         return CompilationFailed;
 
@@ -76,9 +74,7 @@ static CompilationResult compileImpl(
         return CompilationFailed;
     
     if (logCompilationChanges())
-        dataLog("DFG(Driver) compiling ", *codeBlock, ", number of instructions = ", codeBlock->instructionCount(), "\n");
-    
-    VM& vm = exec->vm();
+        dataLog("DFG(Driver) compiling ", *codeBlock, " with ", mode, ", number of instructions = ", codeBlock->instructionCount(), "\n");
     
     // Make sure that any stubs that the DFG is going to use are initialized. We want to
     // make sure that al JIT code generation does finalization on the main thread.
@@ -93,29 +89,8 @@ static CompilationResult compileImpl(
     vm.getCTIStub(FTL::osrExitGenerationThunkGenerator);
 #endif
     
-    // Derive our set of must-handle values. The compilation must be at least conservative
-    // enough to allow for OSR entry with these values.
-    unsigned numVarsWithValues;
-    if (osrEntryBytecodeIndex)
-        numVarsWithValues = codeBlock->m_numVars;
-    else
-        numVarsWithValues = 0;
     RefPtr<Plan> plan = adoptRef(
-        new Plan(codeBlock, mode, osrEntryBytecodeIndex, numVarsWithValues));
-    for (size_t i = 0; i < plan->mustHandleValues.size(); ++i) {
-        int operand = plan->mustHandleValues.operandForIndex(i);
-        if (operandIsArgument(operand)
-            && !operandToArgument(operand)
-            && codeBlock->codeType() == FunctionCode
-            && codeBlock->specializationKind() == CodeForConstruct) {
-            // Ugh. If we're in a constructor, the 'this' argument may hold garbage. It will
-            // also never be used. It doesn't matter what we put into the value for this,
-            // but it has to be an actual value that can be grokked by subsequent DFG passes,
-            // so we sanitize it here by turning it into Undefined.
-            plan->mustHandleValues[i] = jsUndefined();
-        } else
-            plan->mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
-    }
+        new Plan(codeBlock, mode, osrEntryBytecodeIndex, mustHandleValues));
     
     if (worklist) {
         plan->callback = callback;
@@ -130,7 +105,7 @@ static CompilationResult compileImpl(
 }
 #else // ENABLE(DFG_JIT)
 static CompilationResult compileImpl(
-    ExecState*, CodeBlock*, CompilationMode, unsigned,
+    VM&, CodeBlock*, CompilationMode, unsigned, const Operands<JSValue>&,
     PassRefPtr<DeferredCompilationCallback>, Worklist*)
 {
     return CompilationFailed;
@@ -138,13 +113,13 @@ static CompilationResult compileImpl(
 #endif // ENABLE(DFG_JIT)
 
 CompilationResult compile(
-    ExecState* exec, CodeBlock* codeBlock, CompilationMode mode,
-    unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback> passedCallback,
-    Worklist* worklist)
+    VM& vm, CodeBlock* codeBlock, CompilationMode mode, unsigned osrEntryBytecodeIndex,
+    const Operands<JSValue>& mustHandleValues,
+    PassRefPtr<DeferredCompilationCallback> passedCallback, Worklist* worklist)
 {
     RefPtr<DeferredCompilationCallback> callback = passedCallback;
     CompilationResult result = compileImpl(
-        exec, codeBlock, mode, osrEntryBytecodeIndex, callback, worklist);
+        vm, codeBlock, mode, osrEntryBytecodeIndex, mustHandleValues, callback, worklist);
     if (result != CompilationDeferred)
         callback->compilationDidComplete(codeBlock, result);
     return result;

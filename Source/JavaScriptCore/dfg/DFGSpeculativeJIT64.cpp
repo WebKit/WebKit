@@ -4673,6 +4673,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
         
     case PhantomLocal:
+    case LoopHint:
         // This is a no-op.
         noResult(node);
         break;
@@ -4680,11 +4681,75 @@ void SpeculativeJIT::compile(Node* node)
     case Unreachable:
         RELEASE_ASSERT_NOT_REACHED();
         break;
+
+#if ENABLE(FTL_JIT)        
+    case CheckTierUpInLoop: {
+        MacroAssembler::Jump done = m_jit.branchAdd32(
+            MacroAssembler::Signed,
+            TrustedImm32(Options::ftlTierUpCounterIncrementForLoop()),
+            MacroAssembler::AbsoluteAddress(&m_jit.jitCode()->tierUpCounter.m_counter));
+        
+        silentSpillAllRegisters(InvalidGPRReg);
+        m_jit.setupArgumentsExecState();
+        appendCall(triggerTierUpNow);
+        silentFillAllRegisters(InvalidGPRReg);
+        
+        done.link(&m_jit);
+        break;
+    }
+        
+    case CheckTierUpAtReturn: {
+        MacroAssembler::Jump done = m_jit.branchAdd32(
+            MacroAssembler::Signed,
+            TrustedImm32(Options::ftlTierUpCounterIncrementForReturn()),
+            MacroAssembler::AbsoluteAddress(&m_jit.jitCode()->tierUpCounter.m_counter));
+        
+        silentSpillAllRegisters(InvalidGPRReg);
+        m_jit.setupArgumentsExecState();
+        appendCall(triggerTierUpNow);
+        silentFillAllRegisters(InvalidGPRReg);
+        
+        done.link(&m_jit);
+        break;
+    }
+        
+    case CheckTierUpAndOSREnter: {
+        ASSERT(!node->codeOrigin.inlineCallFrame);
+        
+        GPRTemporary temp(this);
+        GPRReg tempGPR = temp.gpr();
+        
+        MacroAssembler::Jump done = m_jit.branchAdd32(
+            MacroAssembler::Signed,
+            TrustedImm32(Options::ftlTierUpCounterIncrementForLoop()),
+            MacroAssembler::AbsoluteAddress(&m_jit.jitCode()->tierUpCounter.m_counter));
+        
+        silentSpillAllRegisters(tempGPR);
+        m_jit.setupArgumentsWithExecState(
+            TrustedImm32(node->codeOrigin.bytecodeIndex),
+            TrustedImm32(m_stream->size()));
+        appendCallSetResult(triggerOSREntryNow, tempGPR);
+        MacroAssembler::Jump dontEnter = m_jit.branchTestPtr(MacroAssembler::Zero, tempGPR);
+        m_jit.jump(tempGPR);
+        dontEnter.link(&m_jit);
+        silentFillAllRegisters(tempGPR);
+        
+        done.link(&m_jit);
+        break;
+    }
+#else // ENABLE(FTL_JIT)
+    case CheckTierUpInLoop:
+    case CheckTierUpAtReturn:
+    case CheckTierUpAndOSREnter:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+#endif // ENABLE(FTL_JIT)
         
     case LastNodeType:
     case Phi:
     case Upsilon:
     case GetArgument:
+    case ExtractOSREntryLocal:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }

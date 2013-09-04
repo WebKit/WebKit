@@ -29,6 +29,8 @@
 #if ENABLE(FTL_JIT)
 
 #include "CodeBlockWithJITType.h"
+#include "FTLForOSREntryJITCode.h"
+#include "FTLJITCode.h"
 #include "FTLJITFinalizer.h"
 
 namespace JSC { namespace FTL {
@@ -40,9 +42,25 @@ State::State(Graph& graph)
     , context(LLVMContextCreate())
     , module(0)
     , function(0)
-    , jitCode(adoptRef(new JITCode()))
     , generatedFunction(0)
 {
+    switch (graph.m_plan.mode) {
+    case FTLMode: {
+        jitCode = adoptRef(new JITCode());
+        break;
+    }
+    case FTLForOSREntryMode: {
+        RefPtr<ForOSREntryJITCode> code = adoptRef(new ForOSREntryJITCode());
+        code->initializeEntryBuffer(graph.m_vm, graph.m_profiledBlock->m_numCalleeRegisters);
+        code->setBytecodeIndex(graph.m_plan.osrEntryBytecodeIndex);
+        jitCode = code;
+        break;
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+    
     finalizer = new JITFinalizer(graph.m_plan);
     graph.m_plan.finalizer = adoptPtr(finalizer);
 }

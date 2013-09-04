@@ -1,5 +1,196 @@
 2013-09-03  Filip Pizlo  <fpizlo@apple.com>
 
+        The DFG should be able to tier-up and OSR enter into the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=112838
+
+        Reviewed by Mark Hahnenberg.
+        
+        This adds the ability for the DFG to tier-up into the FTL. This works in both
+        of the expected tier-up modes:
+        
+        Replacement: frequently called functions eventually have their entrypoint
+        replaced with one that goes into FTL-compiled code. Note, this will be a
+        slow-down for now since we don't yet have LLVM calling convention integration.
+        
+        OSR entry: code stuck in hot loops gets OSR'd into the FTL from the DFG.
+        
+        This means that if the DFG detects that a function is an FTL candidate, it
+        inserts execution counting code similar to the kind that the baseline JIT
+        would use. If you trip on a loop count in a loop header that is an OSR
+        candidate (it's not an inlined loop), we do OSR; otherwise we do replacement.
+        OSR almost always also implies future replacement.
+        
+        OSR entry into the FTL is really cool. It uses a specialized FTL compile of
+        the code, where early in the DFG pipeline we replace the original root block
+        with an OSR entrypoint block that jumps to the pre-header of the hot loop.
+        The OSR entrypoint loads all live state at the loop pre-header using loads
+        from a scratch buffer, which gets populated by the runtime's OSR entry
+        preparation code (FTL::prepareOSREntry()). This approach appears to work well
+        with all of our subsequent optimizations, including prediction propagation,
+        CFA, and LICM. LLVM seems happy with it, too. Best of all, it works naturally
+        with concurrent compilation: when we hit the tier-up trigger we spawn a
+        compilation plan at the bytecode index from which we triggered; once the
+        compilation finishes the next trigger will try to enter, at that bytecode
+        index. If it can't - for example because the code has moved on to another
+        loop - then we just try again. Loops that get hot enough for OSR entry (about
+        25,000 iterations) will probably still be running when a concurrent compile
+        finishes, so this doesn't appear to be a big problem.
+        
+        This immediately gives us a 70% speed-up on imaging-gaussian-blur. We could
+        get a bigger speed-up by adding some more intelligence and tweaking LLVM to
+        compile code faster. Those things will happen eventually but this is a good
+        start. Probably this code will see more tuning as we get more coverage in the
+        FTL JIT, but I'll worry about that in future patches.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::hasOptimizedReplacement):
+        (JSC::CodeBlock::setOptimizationThresholdBasedOnCompilationResult):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        (JSC::DFG::compile):
+        * dfg/DFGDriver.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::killBlockAndItsContents):
+        (JSC::DFG::Graph::killUnreachableBlocks):
+        * dfg/DFGGraph.h:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::reconstruct):
+        (JSC::DFG::JITCode::checkIfOptimizationThresholdReached):
+        (JSC::DFG::JITCode::optimizeNextInvocation):
+        (JSC::DFG::JITCode::dontOptimizeAnytimeSoon):
+        (JSC::DFG::JITCode::optimizeAfterWarmUp):
+        (JSC::DFG::JITCode::optimizeSoon):
+        (JSC::DFG::JITCode::forceOptimizationSlowPathConcurrently):
+        (JSC::DFG::JITCode::setOptimizationThresholdBasedOnCompilationResult):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        (JSC::DFG::JITFinalizer::finalizeCommon):
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp:
+        (JSC::DFG::createPreHeader):
+        (JSC::DFG::LoopPreHeaderCreationPhase::run):
+        * dfg/DFGLoopPreHeaderCreationPhase.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasUnlinkedLocal):
+        (JSC::DFG::Node::unlinkedLocal):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSREntrypointCreationPhase.cpp: Added.
+        (JSC::DFG::OSREntrypointCreationPhase::OSREntrypointCreationPhase):
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        (JSC::DFG::performOSREntrypointCreation):
+        * dfg/DFGOSREntrypointCreationPhase.h: Added.
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPlan.h:
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp: Added.
+        (JSC::DFG::TierUpCheckInjectionPhase::TierUpCheckInjectionPhase):
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        (JSC::DFG::performTierUpCheckInjection):
+        * dfg/DFGTierUpCheckInjectionPhase.h: Added.
+        * dfg/DFGToFTLDeferredCompilationCallback.cpp: Added.
+        (JSC::DFG::ToFTLDeferredCompilationCallback::ToFTLDeferredCompilationCallback):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::~ToFTLDeferredCompilationCallback):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::create):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidComplete):
+        * dfg/DFGToFTLDeferredCompilationCallback.h: Added.
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp: Added.
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::ToFTLForOSREntryDeferredCompilationCallback):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::~ToFTLForOSREntryDeferredCompilationCallback):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::create):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete):
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.h: Added.
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::globalWorklist):
+        * dfg/DFGWorklist.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCapabilities.h:
+        * ftl/FTLForOSREntryJITCode.cpp: Added.
+        (JSC::FTL::ForOSREntryJITCode::ForOSREntryJITCode):
+        (JSC::FTL::ForOSREntryJITCode::~ForOSREntryJITCode):
+        (JSC::FTL::ForOSREntryJITCode::ftlForOSREntry):
+        (JSC::FTL::ForOSREntryJITCode::initializeEntryBuffer):
+        * ftl/FTLForOSREntryJITCode.h: Added.
+        (JSC::FTL::ForOSREntryJITCode::entryBuffer):
+        (JSC::FTL::ForOSREntryJITCode::setBytecodeIndex):
+        (JSC::FTL::ForOSREntryJITCode::bytecodeIndex):
+        (JSC::FTL::ForOSREntryJITCode::countEntryFailure):
+        (JSC::FTL::ForOSREntryJITCode::entryFailureCount):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileBlock):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileExtractOSREntryLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileGetLocal):
+        (JSC::FTL::LowerDFGToLLVM::addWeakReference):
+        * ftl/FTLOSREntry.cpp: Added.
+        (JSC::FTL::prepareOSREntry):
+        * ftl/FTLOSREntry.h: Added.
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::crashNonTerminal):
+        (JSC::FTL::Output::crash):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+        * interpreter/Register.h:
+        (JSC::Register::unboxedDouble):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::ftlForOSREntry):
+        * jit/JITCode.h:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newReplacementCodeBlockFor):
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::ensureWorklist):
+        * runtime/VM.h:
+
+2013-09-03  Filip Pizlo  <fpizlo@apple.com>
+
         CodeBlock memory cost reporting should be rationalized
         https://bugs.webkit.org/show_bug.cgi?id=120615
 

@@ -46,7 +46,10 @@ JS_EXPORT_PRIVATE unsigned getNumCompilations();
 
 // If the worklist is non-null, we do a concurrent compile. Otherwise we do a synchronous
 // compile. Even if we do a synchronous compile, we call the callback with the result.
-CompilationResult compile(ExecState*, CodeBlock*, CompilationMode, unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback>, Worklist*);
+CompilationResult compile(
+    VM&, CodeBlock*, CompilationMode, unsigned osrEntryBytecodeIndex,
+    const Operands<JSValue>& mustHandleValues,
+    PassRefPtr<DeferredCompilationCallback>, Worklist*);
 
 } } // namespace JSC::DFG
 

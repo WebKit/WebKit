@@ -107,6 +107,7 @@ void InPlaceAbstractState::initialize()
     root->cfaHasVisited = false;
     root->cfaFoundConstants = false;
     for (size_t i = 0; i < root->valuesAtHead.numberOfArguments(); ++i) {
+        root->valuesAtTail.argument(i).clear();
         if (m_graph.m_form == SSA) {
             root->valuesAtHead.argument(i).makeTop();
             continue;
@@ -129,8 +130,6 @@ void InPlaceAbstractState::initialize()
             root->valuesAtHead.argument(i).setType(SpecCell);
         else
             root->valuesAtHead.argument(i).makeTop();
-        
-        root->valuesAtTail.argument(i).clear();
     }
     for (size_t i = 0; i < root->valuesAtHead.numberOfLocals(); ++i) {
         Node* node = root->variablesAtHead.local(i);

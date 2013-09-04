@@ -32,12 +32,26 @@
 
 namespace JSC { namespace DFG {
 
+class BlockInsertionSet;
 class Graph;
+struct BasicBlock;
 
 // Inserts dummy basic blocks before any loop headers that don't already have
 // a single non-loop predecessor.
 
 bool performLoopPreHeaderCreation(Graph&);
+
+// Creates a new basic block (a pre-header) that jumps to the given block. All
+// predecessors of the given block that aren't dominated by it are rerouted to
+// the pre-header.
+//
+// This function is used internally and it's used in a surgical fashion by
+// OSREntrypointCreationPhase.
+//
+// Note that executing this function requires having an intact dominators
+// analysis. You should run that analysis before doing damage to the CFG, even
+// if said damage is done before you call this.
+BasicBlock* createPreHeader(Graph&, BlockInsertionSet&, BasicBlock*);
 
 } } // namespace JSC::DFG
 

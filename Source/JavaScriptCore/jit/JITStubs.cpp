@@ -1036,16 +1036,32 @@ DEFINE_STUB_FUNCTION(void, optimize)
         if (Options::verboseOSR())
             dataLog("Triggering optimized compilation of ", *codeBlock, "\n");
         
-        RefPtr<DeferredCompilationCallback> callback =
-            JITToDFGDeferredCompilationCallback::create();
-        RefPtr<CodeBlock> newCodeBlock = codeBlock->newReplacement();
-        
-        if (!vm.worklist)
-            vm.worklist = DFG::globalWorklist();
+        unsigned numVarsWithValues;
+        if (bytecodeIndex)
+            numVarsWithValues = codeBlock->m_numVars;
+        else
+            numVarsWithValues = 0;
+        Operands<JSValue> mustHandleValues(
+            codeBlock->numParameters(), numVarsWithValues);
+        for (size_t i = 0; i < mustHandleValues.size(); ++i) {
+            int operand = mustHandleValues.operandForIndex(i);
+            if (operandIsArgument(operand)
+                && !operandToArgument(operand)
+                && codeBlock->codeType() == FunctionCode
+                && codeBlock->specializationKind() == CodeForConstruct) {
+                // Ugh. If we're in a constructor, the 'this' argument may hold garbage. It will
+                // also never be used. It doesn't matter what we put into the value for this,
+                // but it has to be an actual value that can be grokked by subsequent DFG passes,
+                // so we sanitize it here by turning it into Undefined.
+                mustHandleValues[i] = jsUndefined();
+            } else
+                mustHandleValues[i] = callFrame->uncheckedR(operand).jsValue();
+        }
         
         CompilationResult result = DFG::compile(
-            callFrame, newCodeBlock.get(), DFG::DFGMode, bytecodeIndex, callback,
-            vm.worklist.get());
+            vm, codeBlock->newReplacement().get(), DFG::DFGMode, bytecodeIndex,
+            mustHandleValues, JITToDFGDeferredCompilationCallback::create(),
+            vm.ensureWorklist());
         
         if (result != CompilationSuccessful)
             return;
@@ -1053,15 +1069,6 @@ DEFINE_STUB_FUNCTION(void, optimize)
     
     CodeBlock* optimizedCodeBlock = codeBlock->replacement();
     ASSERT(JITCode::isOptimizingJIT(optimizedCodeBlock->jitType()));
-    
-    if (optimizedCodeBlock->jitType() == JITCode::FTLJIT) {
-        // FTL JIT doesn't support OSR entry yet.
-        // https://bugs.webkit.org/show_bug.cgi?id=113625
-        
-        // Don't attempt OSR entry again.
-        codeBlock->dontOptimizeAnytimeSoon();
-        return;
-    }
     
     if (void* address = DFG::prepareOSREntry(callFrame, optimizedCodeBlock, bytecodeIndex)) {
         if (Options::verboseOSR()) {

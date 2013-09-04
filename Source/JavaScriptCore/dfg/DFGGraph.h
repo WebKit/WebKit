@@ -489,6 +489,10 @@ public:
         killBlock(basicBlock->index);
     }
     
+    void killBlockAndItsContents(BasicBlock*);
+    
+    void killUnreachableBlocks();
+    
     bool isPredictedNumerical(Node* node)
     {
         return isNumerical(node->child1().useKind()) && isNumerical(node->child2().useKind());
@@ -698,6 +702,7 @@ public:
     bool m_hasArguments;
     HashSet<ExecutableBase*> m_executablesWhoseArgumentsEscaped;
     BitVector m_preservedVars;
+    BitVector m_lazyVars;
     Dominators m_dominators;
     NaturalLoops m_naturalLoops;
     unsigned m_localVars;

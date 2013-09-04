@@ -66,6 +66,12 @@ FTL::JITCode* JITCode::ftl()
     return 0;
 }
 
+FTL::ForOSREntryJITCode* JITCode::ftlForOSREntry()
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
+}
+
 PassRefPtr<JITCode> JITCode::hostFunction(JITCode::CodeRef code)
 {
     return adoptRef(new DirectJITCode(code, HostCallThunk));

@@ -484,7 +484,10 @@ private:
         case ArrayifyToStructure:
         case MovHint:
         case MovHintAndCheck:
-        case ZombieHint: {
+        case ZombieHint:
+        case CheckTierUpInLoop:
+        case CheckTierUpAtReturn:
+        case CheckTierUpAndOSREnter: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             RELEASE_ASSERT_NOT_REACHED();
@@ -549,6 +552,11 @@ private:
         case PutGlobalVar:
         case CheckWatchdogTimer:
         case Unreachable:
+        case LoopHint:
+            break;
+            
+        // This gets ignored because it already has a prediction.
+        case ExtractOSREntryLocal:
             break;
             
         // These gets ignored because it doesn't do anything.
