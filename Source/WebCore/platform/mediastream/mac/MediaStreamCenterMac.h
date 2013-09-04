@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,7 +11,7 @@
  *    notice, this list of conditions and the following disclaimer
  *    in the documentation and/or other materials provided with the
  *    distribution.
- * 3. Neither the name of Google Inc. nor the names of its contributors
+ * 3. Neither the name of Ericsson nor the names of its contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  *
@@ -28,12 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=MEDIA_STREAM,
-    Constructor(Dictionary dictionary),
-    ConstructorRaisesException
-] interface RTCSessionDescription {
-    [SetterRaisesException] attribute DOMString type;
-    attribute DOMString sdp;
+#ifndef MediaStreamCenterMac_h
+#define MediaStreamCenterMac_h
+
+#if ENABLE(MEDIA_STREAM)
+
+#include "MediaStreamCenter.h"
+
+#include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+class MediaStreamComponent;
+class MediaStreamDescriptor;
+class MediaStreamSourcesQueryClient;
+
+class MediaStreamCenterMac FINAL : public MediaStreamCenter {
+public:
+    MediaStreamCenterMac();
+    ~MediaStreamCenterMac();
+
+    // MediaStreamCenter
+    virtual void queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient>) OVERRIDE;
+    virtual void didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*) OVERRIDE;
+    virtual bool didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) OVERRIDE;
+    virtual bool didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) OVERRIDE;
+    virtual void didStopLocalMediaStream(MediaStreamDescriptor*) OVERRIDE;
+    virtual void didCreateMediaStream(MediaStreamDescriptor*) OVERRIDE;
 };
 
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)
+
+#endif // MediaStreamCenterMac_h

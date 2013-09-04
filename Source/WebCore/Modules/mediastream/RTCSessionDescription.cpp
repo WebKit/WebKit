@@ -97,7 +97,7 @@ const String& RTCSessionDescription::sdp() const
     return m_descriptor->sdp();
 }
 
-void RTCSessionDescription::setSdp(const String& sdp, ExceptionCode& ec)
+void RTCSessionDescription::setSdp(const String& sdp)
 {
     m_descriptor->setSdp(sdp);
 }

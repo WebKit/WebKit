@@ -53,7 +53,7 @@ public:
     void setType(const String&, ExceptionCode&);
 
     const String& sdp() const;
-    void setSdp(const String&, ExceptionCode&);
+    void setSdp(const String&);
 
     RTCSessionDescriptionDescriptor* descriptor();
 

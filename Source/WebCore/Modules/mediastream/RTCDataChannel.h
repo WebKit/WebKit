@@ -32,6 +32,11 @@
 #include "Timer.h"
 #include <wtf/RefCounted.h>
 
+namespace JSC {
+class ArrayBuffer;
+class ArrayBufferView;
+}
+
 namespace WebCore {
 
 class Blob;
@@ -53,8 +58,8 @@ public:
     void setBinaryType(const String&, ExceptionCode&);
 
     void send(const String&, ExceptionCode&);
-    void send(PassRefPtr<ArrayBuffer>, ExceptionCode&);
-    void send(PassRefPtr<ArrayBufferView>, ExceptionCode&);
+    void send(PassRefPtr<JSC::ArrayBuffer>, ExceptionCode&);
+    void send(PassRefPtr<JSC::ArrayBufferView>, ExceptionCode&);
     void send(PassRefPtr<Blob>, ExceptionCode&);
 
     void close();

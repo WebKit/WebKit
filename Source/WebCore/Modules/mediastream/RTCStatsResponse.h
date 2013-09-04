@@ -39,13 +39,14 @@
 
 namespace WebCore {
 
-class RTCStatsResponse : public RTCStatsResponseBase {
+class RTCStatsResponse FINAL : public RTCStatsResponseBase {
 public:
     static PassRefPtr<RTCStatsResponse> create();
 
     const Vector<RefPtr<RTCStatsReport> >& result() const { return m_result; };
 
-    PassRefPtr<RTCStatsReport> namedItem(const AtomicString& name);
+    PassRefPtr<RTCStatsReport> namedItem(const AtomicString&);
+    bool canGetItemsForName(const AtomicString&);
 
     virtual size_t addReport(String id, String type, double timestamp) OVERRIDE;
     virtual void addStatistic(size_t report, String name, String value) OVERRIDE;

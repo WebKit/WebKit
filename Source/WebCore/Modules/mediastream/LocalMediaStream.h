@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class LocalMediaStream : public MediaStream {
+class LocalMediaStream FINAL : public MediaStream {
 public:
     static PassRefPtr<LocalMediaStream> create(ScriptExecutionContext*, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
     static PassRefPtr<LocalMediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>);

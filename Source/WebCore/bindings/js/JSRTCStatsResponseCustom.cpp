@@ -24,25 +24,26 @@
  */
 
 #include "config.h"
+
 #if ENABLE(MEDIA_STREAM)
 #include "JSRTCStatsResponse.h"
 
 #include "JSRTCStatsReport.h"
-#include "RTCStatsResponse.h"
+#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-bool JSRTCStatsResponse::canGetItemsForName(ExecState*, RTCStatsResponse* impl, PropertyName propertyName)
+bool JSRTCStatsResponse::canGetItemsForName(ExecState*, RTCStatsResponse* response, PropertyName propertyName)
 {
-    return impl->namedItem(propertyNameToString(propertyName));
+    return response->canGetItemsForName(propertyNameToAtomicString(propertyName));
 }
 
 JSValue JSRTCStatsResponse::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSRTCStatsResponse* thisObj = jsCast<JSRTCStatsResponse*>(asObject(slotBase));
-    return toJS(exec, thisObj->globalObject(), thisObj->impl()->namedItem(propertyNameToString(propertyName)));
+    return toJS(exec, thisObj->globalObject(), thisObj->impl()->namedItem(propertyNameToAtomicString(propertyName)));
 }
 
 } // namespace WebCore

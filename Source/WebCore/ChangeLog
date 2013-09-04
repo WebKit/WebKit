@@ -1,17 +1,50 @@
-2013-09-04  Andreas Kling  <akling@apple.com>
+2013-09-04  Eric Carlson  <eric.carlson@apple.com>
 
-        RenderSVGResource shouldn't trigger relayout during render tree teardown.
-        <https://webkit.org/b/120689>
-        <rdar://problem/14908967>
+        Get MEDIA_STREAM compiling on OSX
+        https://bugs.webkit.org/show_bug.cgi?id=120650
 
-        Reviewed by Antti Koivisto.
+        Reviewed by Darin Adler.
 
-        The new assertion in FrameView::scheduleRelayoutOfSubtree() caught a fish!
-        We were doing some unnecessary relayout scheduling while tearing down SVG
-        resource renderers.
+        No new tests, the code changed doesn't run on OSX yet.
 
-        * rendering/svg/RenderSVGResource.cpp:
-        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation):
+        * DerivedSources.make: Add MediaStream idl files.
+
+        * Modules/mediastream/LocalMediaStream.h: Mark class as FINAL.
+
+        * Modules/mediastream/MediaConstraintsImpl.cpp:
+        (WebCore::MediaConstraintsImpl::getOptionalConstraints): append -> appendRange so we don't
+            need a MediaConstraint copy constructor.
+
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::send): Remove an unused parameter name.
+        * Modules/mediastream/RTCDataChannel.h: ArrayBuffer and ArrayBufferView are in the JSC namespace.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::RTCPeerConnection): loader() doesn't return a pointer.
+        (WebCore::RTCPeerConnection::localDescription): Set the ExceptionCode on error.
+        (WebCore::RTCPeerConnection::remoteDescription): Ditto.
+
+        * Modules/mediastream/RTCSessionDescription.cpp:
+        (WebCore::RTCSessionDescription::setSdp): Remove the unused ExceptionCode parameter.
+        * Modules/mediastream/RTCSessionDescription.h: Ditto.
+        * Modules/mediastream/RTCSessionDescription.idl: Ditto.
+
+        * Modules/mediastream/RTCStatsResponse.cpp:
+        (WebCore::RTCStatsResponse::canGetItemsForName): Add so JSRTCStatsResponse::canGetItemsForName
+            doesn't cause ref count churn.
+        * Modules/mediastream/RTCStatsResponse.h: Mark class as FINAL. Declare canGetItemsForName.
+
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+
+        * bindings/js/JSRTCStatsResponseCustom.cpp:
+        (WebCore::JSRTCStatsResponse::canGetItemsForName): Use canGetItemsForName instead of namedItem.
+            Use propertyNameToAtomicString instead of propertyNameToString 
+        (WebCore::JSRTCStatsResponse::nameGetter): Use propertyNameToAtomicString instead of 
+            propertyNameToString because namedItem takes an AtomicString.
+
+        * platform/mediastream/mac: Added.
+        * platform/mediastream/mac/MediaStreamCenterMac.cpp: Added.
+        * platform/mediastream/mac/MediaStreamCenterMac.h: Added.
 
 2013-09-04  Daniel Bates  <dabates@apple.com>
 

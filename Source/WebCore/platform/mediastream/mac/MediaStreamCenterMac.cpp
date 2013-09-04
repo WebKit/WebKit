@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,7 +11,7 @@
  *    notice, this list of conditions and the following disclaimer
  *    in the documentation and/or other materials provided with the
  *    distribution.
- * 3. Neither the name of Google Inc. nor the names of its contributors
+ * 3. Neither the name of Ericsson nor the names of its contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  *
@@ -28,12 +28,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=MEDIA_STREAM,
-    Constructor(Dictionary dictionary),
-    ConstructorRaisesException
-] interface RTCSessionDescription {
-    [SetterRaisesException] attribute DOMString type;
-    attribute DOMString sdp;
-};
+#include "config.h"
 
+#if ENABLE(MEDIA_STREAM)
+
+#include "MediaStreamCenterMac.h"
+
+#include "MediaStreamDescriptor.h"
+#include "MediaStreamSourcesQueryClient.h"
+#include "NotImplemented.h"
+#include <wtf/MainThread.h>
+
+namespace WebCore {
+
+MediaStreamCenter& MediaStreamCenter::instance()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(MediaStreamCenterMac, center, ());
+    return center;
+}
+
+MediaStreamCenterMac::MediaStreamCenterMac()
+{
+}
+
+MediaStreamCenterMac::~MediaStreamCenterMac()
+{
+}
+
+void MediaStreamCenterMac::queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient>)
+{
+    notImplemented();
+}
+
+void MediaStreamCenterMac::didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*)
+{
+    notImplemented();
+}
+
+bool MediaStreamCenterMac::didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+{
+    notImplemented();
+    return false;
+}
+
+bool MediaStreamCenterMac::didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+{
+    notImplemented();
+    return false;
+}
+
+void MediaStreamCenterMac::didStopLocalMediaStream(MediaStreamDescriptor* stream)
+{
+    endLocalMediaStream(stream);
+}
+
+void MediaStreamCenterMac::didCreateMediaStream(MediaStreamDescriptor*)
+{
+    notImplemented();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)

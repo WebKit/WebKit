@@ -164,7 +164,7 @@ void RTCDataChannel::send(PassRefPtr<ArrayBufferView> data, ExceptionCode& ec)
     send(arrayBuffer.release(), ec);
 }
 
-void RTCDataChannel::send(PassRefPtr<Blob> data, ExceptionCode& ec)
+void RTCDataChannel::send(PassRefPtr<Blob>, ExceptionCode& ec)
 {
     // FIXME: implement
     ec = NOT_SUPPORTED_ERR;
