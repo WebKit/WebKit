@@ -4291,9 +4291,6 @@ webcore_sources += \
 	Source/WebCore/page/WindowFocusAllowedIndicator.h \
 	Source/WebCore/page/WorkerNavigator.cpp \
 	Source/WebCore/page/WorkerNavigator.h \
-	Source/WebCore/plugins/npapi.h \
-	Source/WebCore/plugins/npruntime.h \
-	Source/WebCore/plugins/nptypes.h \
 	Source/WebCore/plugins/DOMMimeTypeArray.cpp \
 	Source/WebCore/plugins/DOMMimeTypeArray.h \
 	Source/WebCore/plugins/DOMMimeType.cpp \
@@ -4302,8 +4299,6 @@ webcore_sources += \
 	Source/WebCore/plugins/DOMPluginArray.h \
 	Source/WebCore/plugins/DOMPlugin.cpp \
 	Source/WebCore/plugins/DOMPlugin.h \
-	Source/WebCore/plugins/npapi.cpp \
-	Source/WebCore/plugins/npfunctions.h \
 	Source/WebCore/plugins/PluginDatabase.cpp \
 	Source/WebCore/plugins/PluginDatabase.h \
 	Source/WebCore/plugins/PluginData.cpp \
@@ -4321,6 +4316,11 @@ webcore_sources += \
 	Source/WebCore/plugins/PluginViewBase.h \
 	Source/WebCore/plugins/PluginView.cpp \
 	Source/WebCore/plugins/PluginView.h \
+	Source/WebCore/plugins/npapi.cpp \
+	Source/WebCore/plugins/npapi.h \
+	Source/WebCore/plugins/npfunctions.h \
+	Source/WebCore/plugins/npruntime.h \
+	Source/WebCore/plugins/nptypes.h \
 	Source/WebCore/rendering/AutoTableLayout.cpp \
 	Source/WebCore/rendering/AutoTableLayout.h \
 	Source/WebCore/rendering/BidiRun.cpp \
@@ -6262,7 +6262,20 @@ webcoregtk_sources += \
 	Source/WebCore/plugins/gtk/xembed.h
 platformgtk_sources += \
 	Source/WebCore/platform/gtk/WidgetBackingStoreGtkX11.h \
-	Source/WebCore/platform/gtk/WidgetBackingStoreGtkX11.cpp \
+	Source/WebCore/platform/gtk/WidgetBackingStoreGtkX11.cpp
+if USE_GLX
+webcoregtk_sources += \
+	Source/WebCore/platform/graphics/glx/GLContextGLX.cpp \
+	Source/WebCore/platform/graphics/glx/GLContextGLX.h
+endif # END USE_GLX
+else
+webcore_sources += \
+	Source/WebCore/plugins/PluginPackageNone.cpp \
+	Source/WebCore/plugins/PluginViewNone.cpp
+endif # END TARGET_X11
+
+if TARGET_X11_OR_WAYLAND
+platformgtk_sources += \
 	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.h \
 	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp
 if USE_OPENGL
@@ -6277,11 +6290,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/egl/GLContextEGL.cpp \
 	Source/WebCore/platform/graphics/egl/GLContextEGL.h
 endif # END USE_EGL
-if USE_GLX
-webcoregtk_sources += \
-	Source/WebCore/platform/graphics/glx/GLContextGLX.cpp \
-	Source/WebCore/platform/graphics/glx/GLContextGLX.h
-endif # END USE_GLX
 else
 if TARGET_WIN32
 webcore_sources += \
@@ -6310,7 +6318,7 @@ webcore_sources += \
 	Source/WebCore/plugins/PluginPackageNone.cpp \
 	Source/WebCore/plugins/PluginViewNone.cpp
 endif # END TARGET_WIN32
-endif # END TARGET_X11
+endif # END TARGET_X11_OR_WAYLAND
 
 if USE_GLES2
 webcore_sources += \

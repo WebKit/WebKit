@@ -1,3 +1,53 @@
+2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add support for the Wayland build target
+        https://bugs.webkit.org/show_bug.cgi?id=120627
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add support for building the GTK port with Wayland as the target. The Wayland target can be the sole target
+        that's enabled, or it can be enabled in parallel with the X11 target.
+
+        Each of those two targets, when enabled, checks for the corresponding GTK+ windowing dependency being present.
+        In the case of only the Wayland target being enabled, the accelerated compositing feature is disabled at
+        build-time as the feature is not yet supported under the Wayland display protocol. X11-based plugin support is
+        also disabled under that configuration, even if the WebKitPluginProcess is still built but is left non-operational.
+        GLX support is also disabled if not building the X11 target.
+
+        The Wayland target can be enabled through using the --with-target configuration option that now accepts two
+        additional values:
+        - 'wayland' - only enables the Wayland target,
+        - 'x11,wayland' - enables the X11 and Wayland targets that are to be built in parallel.
+
+        This makes it possible to build the GTK port of WebKit with the Wayland target, relying solely on the GTK+
+        dependency that only has the Wayland backend enabled, and removes linking against any X11-related library.
+        Note that at the moment there seem to be other dependencies that still link to X11-related libraries.
+        Complete functionality is not yet guaranteed, but is of course the goal.
+
+        * Source/autotools/FindDependencies.m4: Store the version of the basic GTK+ dependency that was found.
+        This is later used to check that the GTK+ X11 and GTK+ Wayland dependencies are of the same version. The
+        X11-specific dependencies are grouped into one section (apart from the XComposite and XDamage dependencies),
+        also checking for the GTK+ X11 dependency. If the X11 target is not enabled, the GLX dependency is disabled.
+        Additionally check for the GTK+ Wayland dependency if the Wayland target is enabled.
+        We only check for the presence and correct version of the GTK+ X11 and Wayland dependencies, if necessary.
+        Check for the XComposite and XDamage dependencies if the X11 target is enabled (in addition to the OpenGL
+        headers being present).
+        In case of the Wayland target being enabled while the X11 target is not, disable the accelerated compositing
+        feature as there's no support yet for it under the Wayland display protocol.
+        * Source/autotools/PrintBuildConfiguration.m4: The build configuration should now print out 'GDK targets'.
+        * Source/autotools/ReadCommandLineArguments.m4: The --with-target option can now take two additional values,
+        'wayland' and 'x11,wayland'. The first one enables only the Wayland target, while the second one enables both
+        X11 and Wayland targets. This makes it possible to build the GTK port with both X11 and Wayland display protocols
+        supported in the same build.
+        We must now check the outcoming with_target variable to see if the special case of building one or both of the
+        possible parallel targets was chosen. We define with_x11_target and with_wayland_target variables if the
+        with_target value applies to that case.
+        * Source/autotools/SetupAutoconfHeader.m4: Do not define the XP_UNIX macro on builds that enable the Wayland-only
+        target. It should still be defined if we're building both X11 and Wayland targets in parallel.
+        * Source/autotools/SetupAutomake.m4: Define TARGET_X11 and TARGET_WAYLAND Automake conditionals if the new
+        with_x11_target or with_wayland_target variables were set, respectively. Additionall, define the TARGET_X11_OR_WAYLAND
+        Automake conditional if we're building either of the two targets.
+
 2013-09-03  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Fix detection of x86_64 platform with MSVC

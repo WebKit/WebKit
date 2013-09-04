@@ -102,7 +102,7 @@ static const type& name() \
 #ifndef PLUGIN_ARCHITECTURE_UNSUPPORTED
 #if PLATFORM(MAC)
 #define PLUGIN_ARCHITECTURE_MAC 1
-#elif (PLATFORM(GTK) || PLATFORM(EFL)) && (OS(UNIX) && !OS(MAC_OS_X))
+#elif (PLATFORM(GTK) || PLATFORM(EFL)) && (OS(UNIX) && !OS(MAC_OS_X)) && PLATFORM(X11)
 #define PLUGIN_ARCHITECTURE_X11 1
 #elif PLATFORM(QT)
 // Qt handles this features.prf

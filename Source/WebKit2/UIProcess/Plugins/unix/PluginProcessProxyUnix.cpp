@@ -59,6 +59,7 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
 {
 }
 
+#if PLUGIN_ARCHITECTURE(X11)
 bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData& result)
 {
 #if PLATFORM(GTK) || PLATFORM(EFL)
@@ -107,6 +108,7 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     return false;
 #endif // PLATFORM(GTK) || PLATFORM(EFL)
 }
+#endif // PLUGIN_ARCHITECTURE(X11)
 
 } // namespace WebKit
 

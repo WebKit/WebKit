@@ -34,7 +34,7 @@
 #include <WebCore/WidgetBackingStoreCairo.h>
 #include <cairo.h>
 
-#if PLATFORM(GTK) && defined(GDK_WINDOWING_X11)
+#if PLATFORM(GTK) && PLATFORM(X11) && defined(GDK_WINDOWING_X11)
 #include <WebCore/WidgetBackingStoreGtkX11.h>
 #include <gdk/gdkx.h>
 #endif
@@ -50,7 +50,7 @@ namespace WebKit {
 #if PLATFORM(GTK)
 static OwnPtr<WidgetBackingStore> createBackingStoreForGTK(GtkWidget* widget, const IntSize& size)
 {
-#ifdef GDK_WINDOWING_X11
+#if PLATFORM(X11) && defined(GDK_WINDOWING_X11)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
     if (GDK_IS_X11_DISPLAY(display))
         return WebCore::WidgetBackingStoreGtkX11::create(widget, size);

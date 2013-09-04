@@ -75,7 +75,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-#ifdef GDK_WINDOWING_X11
+#if PLATFORM(X11) && defined(GDK_WINDOWING_X11)
 #define Font XFont
 #define Cursor XCursor
 #define Region XRegion
@@ -95,7 +95,7 @@
 #include "HTMLMediaElement.h"
 #endif
 
-#ifdef GDK_WINDOWING_X11
+#if PLATFORM(X11) && defined(GDK_WINDOWING_X11)
 #include "WidgetBackingStoreGtkX11.h"
 #endif
 #include "WidgetBackingStoreCairo.h"
@@ -106,7 +106,7 @@ namespace WebKit {
 
 static PassOwnPtr<WidgetBackingStore> createBackingStore(GtkWidget* widget, const IntSize& size)
 {
-#ifdef GDK_WINDOWING_X11
+#if PLATFORM(X11) && defined(GDK_WINDOWING_X11)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
     if (GDK_IS_X11_DISPLAY(display))
         return WebCore::WidgetBackingStoreGtkX11::create(widget, size);

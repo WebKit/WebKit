@@ -23,7 +23,9 @@ AM_CONDITIONAL([OS_DARWIN],[test "$os_darwin" = "yes"])
 AM_CONDITIONAL([OS_FREEBSD],[test "$os_freebsd" = "yes"])
 
 # Target conditionals.
-AM_CONDITIONAL([TARGET_X11], [test "$with_target" = "x11"])
+AM_CONDITIONAL([TARGET_X11], [test "$with_x11_target" = "yes"])
+AM_CONDITIONAL([TARGET_WAYLAND], [test "$with_wayland_target" = "yes"])
+AM_CONDITIONAL([TARGET_X11_OR_WAYLAND], [test "$with_x11_target" = "yes" || test "$with_wayland_target" = "yes"])
 AM_CONDITIONAL([TARGET_WIN32], [test "$with_target" = "win32"])
 AM_CONDITIONAL([TARGET_QUARTZ], [test "$with_target" = "quartz"])
 AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_target" = "directfb"])

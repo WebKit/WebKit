@@ -23,7 +23,7 @@
 
 #include <gtk/gtk.h>
 
-#ifdef GDK_WINDOWING_X11
+#if PLATFORM(X11) && defined(GDK_WINDOWING_X11)
 #include <X11/Xatom.h>
 #include <gdk/gdkx.h>
 #endif
@@ -200,7 +200,7 @@ gdk_pixbuf_get_from_surface(cairo_surface_t * surface,
     return dest;
 }
 
-#ifdef GDK_WINDOWING_X11
+#if PLATFORM(X11) && defined(GDK_WINDOWING_X11)
 static int getScreenCurrentDesktop(GdkScreen *screen)
 {
     Display *display = GDK_DISPLAY_XDISPLAY(gdk_screen_get_display(screen));
@@ -257,13 +257,13 @@ static void getScreenWorkArea(GdkScreen *screen, GdkRectangle *area)
 
     XFree(returnedData);
 }
-#endif // GDK_WINDOWING_X11
+#endif // PLATFORM(X11) && defined(GDK_WINDOWING_X11)
 
 void gdk_screen_get_monitor_workarea(GdkScreen *screen, int monitor, GdkRectangle *area)
 {
     gdk_screen_get_monitor_geometry(screen, monitor, area);
 
-#ifdef GDK_WINDOWING_X11
+#if PLATFORM(X11) && defined(GDK_WINDOWING_X11)
     GdkRectangle workArea;
     getScreenWorkArea(screen, &workArea);
     gdk_rectangle_intersect(&workArea, area, area);

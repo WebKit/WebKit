@@ -1,3 +1,24 @@
+2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add support for the Wayland build target
+        https://bugs.webkit.org/show_bug.cgi?id=120627
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.list.am: Build X11-specific NetscapePluginModule and NetscapePlugin classes if building the X11 target,
+        fall back to the generic, empty classes otherwise.
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+        (WebKit::PluginProcessMainUnix): Guard the NetscapePluginModule::scanPlugin() invocation with PLUGIN_ARCHITECTURE(X11),
+        it's at the moment specific to the X11 implementation of the Netscape plugins.
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp: Guard PluginProcessProxy::scanPlugin() with PLUGIN_ARCHITECTURE(X11),
+        just like it's guarded in the PluginProcessProxy class declaration.
+        * UIProcess/cairo/BackingStoreCairo.cpp: Additionally guard <gdk/gdkx.h> and WidgetBackingStoreGtkX11 inclusion and use
+        with PLATFORM(X11), this code should only be built when building the X11 target.
+        (WebKit::createBackingStoreForGTK):
+        * UIProcess/gtk/WebPageProxyGtk.cpp: Guard the createPluginContainer() and windowedPluginGeometryDidChange() methods and their
+        helper functions and objects with PLUGIN_ARCHITECTURE(X11), just like they're guarded in the WebPageProxy class declaration.
+        * config.h: Only define PLUGIN_ARCHITECTURE_X11 to 1 if we're actually building the X11 target.
+
 2013-09-03  Darin Adler  <darin@apple.com>
 
         REGRESSION (r154967) window resize is very choppy

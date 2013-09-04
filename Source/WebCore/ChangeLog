@@ -1,3 +1,20 @@
+2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add support for the Wayland build target
+        https://bugs.webkit.org/show_bug.cgi?id=120627
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.list.am: Reorder the Source/WebCore/plugins/np* source files.
+        The X11-specific source files should only be included if the X11 target is being built. PluginPackageNone and
+        PluginViewNone source files must be included in non-X11-target builds. Other source files that were previously
+        guarded with the TARGET_X11 conditional should also be built for the Wayland target, so the new TARGET_X11_OR_WAYLAND
+        conditional is used. If neither of those two targets is being built we fall back to adding source files to the build
+        as necessary by the actual build target.
+        * platform/gtk/GtkVersioning.c:
+        (gdk_screen_get_monitor_workarea): Additionally guard bits of code that depend on the GDK_WINDOWING_X11 macro being
+        defined - these should only be built when building the X11 target, checked for with PLATFORM(X11).
+
 2013-09-04  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Reimplement atk_text_get_text_*_offset for SENTENCE boundaries
