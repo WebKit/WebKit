@@ -1,3 +1,10 @@
+2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Manage the current accessibility layout test failures
+        after r154697, r154781 and r154976.
+
 2013-09-04  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Extend the RenderRegionRange class to include overflow information + apply the layout overflow
