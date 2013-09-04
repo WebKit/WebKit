@@ -227,12 +227,8 @@ static void removeBlockFromDescendantAndContainerMaps(RenderBlock* block, Tracke
 
 RenderBlock::~RenderBlock()
 {
-    if (m_floatingObjects)
-        deleteAllValues(m_floatingObjects->set());
-    
     if (hasColumns())
         gColumnInfoMap->take(this);
-
     if (gPercentHeightDescendantsMap)
         removeBlockFromDescendantAndContainerMaps(this, gPercentHeightDescendantsMap, gPercentHeightContainerMap);
     if (gPositionedDescendantsMap)
@@ -988,15 +984,8 @@ static void getInlineRun(RenderObject* start, RenderObject* boundary,
 
 void RenderBlock::deleteLineBoxTree()
 {
-    if (containsFloats()) {
-        // Clear references to originating lines, since the lines are being deleted
-        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        FloatingObjectSetIterator end = floatingObjectSet.end();
-        for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
-            ASSERT(!((*it)->originatingLine()) || &(*it)->originatingLine()->renderer() == this);
-            (*it)->setOriginatingLine(0);
-        }
-    }
+    if (containsFloats())
+        m_floatingObjects->clearLineBoxTreePointers();
     m_lineBoxes.deleteLineBoxTree(renderArena());
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
@@ -3042,7 +3031,9 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
         // Only repaint the object if it is overhanging, is not in its own layer, and
         // is our responsibility to paint (m_shouldPaint is set). When paintAllDescendants is true, the latter
         // condition is replaced with being a descendant of us.
-        if (r->logicalBottom(isHorizontalWritingMode()) > logicalHeight() && ((paintAllDescendants && r->renderer()->isDescendantOf(this)) || r->shouldPaint()) && !r->renderer()->hasSelfPaintingLayer()) {
+        if (r->logicalBottom(isHorizontalWritingMode()) > logicalHeight()
+            && !r->renderer()->hasSelfPaintingLayer()
+            && (r->shouldPaint() || (paintAllDescendants && r->renderer()->isDescendantOf(this)))) {
             r->renderer()->repaint();
             r->renderer()->repaintOverhangingFloats(false);
         }
@@ -8237,6 +8228,22 @@ inline RenderBlock::FloatingObjects::FloatingObjects(const RenderBlock* renderer
 {
 }
 
+RenderBlock::FloatingObjects::~FloatingObjects()
+{
+    // FIXME: m_set should use OwnPtr instead.
+    deleteAllValues(m_set);
+}
+
+void RenderBlock::FloatingObjects::clearLineBoxTreePointers()
+{
+    // Clear references to originating lines, since the lines are being deleted
+    FloatingObjectSetIterator end = m_set.end();
+    for (FloatingObjectSetIterator it = m_set.begin(); it != end; ++it) {
+        ASSERT(!((*it)->originatingLine()) || &((*it)->originatingLine()->renderer()) == m_renderer);
+        (*it)->setOriginatingLine(0);
+    }
+}
+
 void RenderBlock::createFloatingObjects()
 {
     m_floatingObjects = adoptPtr(new FloatingObjects(this, isHorizontalWritingMode()));
@@ -8244,6 +8251,9 @@ void RenderBlock::createFloatingObjects()
 
 inline void RenderBlock::FloatingObjects::clear()
 {
+    // FIXME: This should call deleteAllValues, except RenderBlock::clearFloats
+    // like to play fast and loose with ownership of these pointers.
+    // If we move to OwnPtr that will fix this ownership oddness.
     m_set.clear();
     m_placedFloatsTree.clear();
     m_leftObjectsCount = 0;

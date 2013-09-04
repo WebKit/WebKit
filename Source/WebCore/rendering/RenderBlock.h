@@ -1251,6 +1251,8 @@ public:
     class FloatingObjects {
         WTF_MAKE_NONCOPYABLE(FloatingObjects); WTF_MAKE_FAST_ALLOCATED;
     public:
+        ~FloatingObjects();
+
         void clear();
         void add(FloatingObject*);
         void remove(FloatingObject*);
@@ -1266,6 +1268,7 @@ public:
             computePlacedFloatsTreeIfNeeded();
             return m_placedFloatsTree; 
         }
+        void clearLineBoxTreePointers();
     private:
         FloatingObjects(const RenderBlock*, bool horizontalWritingMode);
         void computePlacedFloatsTree();

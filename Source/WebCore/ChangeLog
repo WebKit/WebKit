@@ -1,3 +1,35 @@
+2013-09-04  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        FloatingObjects should manage cleaning it's line box tree pointers itself
+        https://bugs.webkit.org/show_bug.cgi?id=120692
+
+        Reviewed by David Hyatt.
+
+        This is another step in properly encapsulating FloatingObjects.
+        Instead of having RenderBlock walk and clear the line box tree
+        pointers, create a method for the behavior, and have RenderBlock call
+        that.
+
+        In addtion, add a proper destructor to FloatingObjects, so that
+        RenderBlock does not have to explicitly delete the set in
+        FloatingObjects.
+
+        And as a bonus, fix the ordering of an if to avoid the expensive
+        descendantChild check.
+
+        This is a port of a Blink patch by Eric Seidel.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::deleteLineBoxTree):
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        (WebCore::RenderBlock::FloatingObjects::~FloatingObjects):
+        (WebCore::RenderBlock::FloatingObjects::clearLineBoxTreePointers):
+        (WebCore::RenderBlock::FloatingObjects::clear):
+        * rendering/RenderBlock.h:
+
 2013-09-04  Tim Horton  <timothy_horton@apple.com>
 
         Rename customCssText -> customCSSText to match WebKit style
