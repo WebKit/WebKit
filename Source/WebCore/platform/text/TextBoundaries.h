@@ -30,9 +30,12 @@
 
 namespace WebCore {
 
+    // FIXME: this function won't be needed together with the function
+    // it calls when https://bugs.webkit.org/show_bug.cgi?id=120656
+    // will be fixed.
     inline bool requiresContextForWordBoundary(UChar32 ch)
     {
-        return WTF::Unicode::hasLineBreakingPropertyComplexContext(ch);
+        return WTF::Unicode::requiresComplexContextForWordBreaking(ch);
     }
 
     int endOfFirstWordBoundaryContext(const UChar* characters, int length);
