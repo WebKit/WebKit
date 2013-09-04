@@ -417,8 +417,13 @@ PassOwnPtr<MessageDecoder> Connection::waitForMessage(StringReference messageRec
     while (true) {
         MutexLocker locker(m_waitForMessageMutex);
 
-        if (OwnPtr<MessageDecoder> decoder = m_waitForMessageMap.take(messageAndDestination))
+        HashMap<std::pair<std::pair<StringReference, StringReference>, uint64_t>, OwnPtr<MessageDecoder>>::iterator it = m_waitForMessageMap.find(messageAndDestination);
+        if (it->value) {
+            OwnPtr<MessageDecoder> decoder = it->value.release();
+            m_waitForMessageMap.remove(it);
+
             return decoder.release();
+        }
         
         // Now we wait.
         if (!m_waitForMessageCondition.timedWait(m_waitForMessageMutex, absoluteTime)) {

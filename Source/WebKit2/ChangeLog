@@ -1,3 +1,16 @@
+2013-09-03  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r154967) window resize is very choppy
+        https://bugs.webkit.org/show_bug.cgi?id=120653
+
+        Reviewed by Andreas Kling.
+
+        Andreas Kling spotted the bad change.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForMessage): Roll out this incorrect change.
+        The code here is not the same as a call to take.
+
 2013-09-03  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] gdk threads deprecated functions calls should be refactored
