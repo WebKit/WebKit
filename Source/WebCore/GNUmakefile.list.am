@@ -4347,6 +4347,8 @@ webcore_sources += \
 	Source/WebCore/rendering/HitTestLocation.h \
 	Source/WebCore/rendering/HitTestResult.cpp \
 	Source/WebCore/rendering/HitTestResult.h \
+	Source/WebCore/rendering/ImageQualityController.cpp \
+	Source/WebCore/rendering/ImageQualityController.h \
 	Source/WebCore/rendering/InlineBox.cpp \
 	Source/WebCore/rendering/InlineBox.h \
 	Source/WebCore/rendering/InlineFlowBox.cpp \

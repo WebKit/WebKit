@@ -1146,6 +1146,7 @@ SOURCES += \
     rendering/HitTestingTransformState.cpp \
     rendering/HitTestLocation.cpp \
     rendering/HitTestResult.cpp \
+    rendering/ImageQualityController.cpp \
     rendering/InlineBox.cpp \
     rendering/InlineFlowBox.cpp \
     rendering/InlineTextBox.cpp \
@@ -2398,6 +2399,7 @@ HEADERS += \
     rendering/HitTestingTransformState.h \
     rendering/HitTestLocation.h \
     rendering/HitTestResult.h \
+    rendering/ImageQualityController.h \
     rendering/InlineBox.h \
     rendering/InlineFlowBox.h \
     rendering/InlineTextBox.h \

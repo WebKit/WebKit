@@ -1,3 +1,28 @@
+2013-09-04  Andreas Kling  <akling@apple.com>
+
+        Make ImageQualityController per-RenderView.
+        <https://webkit.org/b/120702>
+
+        Reviewed by Anders Carlsson.
+
+        Move ImageQualityController to its own files and add a RenderView::imageQualityController()
+        getter instead of using a global map for all render trees.
+
+        This avoids having to unregister every renderer (well, every RenderBoxModelObject) from the
+        global hash map during render tree teardown.
+
+        It also simplifies the live resize optimization a bit since it can now short-circuit if
+        the RenderView's FrameView is being resized. (Previously there could be any number of
+        RenderViews present in the map.)
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/ImageQualityController.cpp: Added.
+        * rendering/ImageQualityController.h: Added.
+
 2013-09-04  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed Build fix for Windows DebugSuffix configuration.

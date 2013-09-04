@@ -33,6 +33,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLIFrameElement.h"
 #include "HitTestResult.h"
+#include "ImageQualityController.h"
 #include "Page.h"
 #include "RenderGeometryMap.h"
 #include "RenderLayer.h"
@@ -1240,6 +1241,13 @@ RenderBlock::IntervalArena* RenderView::intervalArena()
     if (!m_intervalArena)
         m_intervalArena = IntervalArena::create();
     return m_intervalArena.get();
+}
+
+ImageQualityController& RenderView::imageQualityController()
+{
+    if (!m_imageQualityController)
+        m_imageQualityController = ImageQualityController::create(*this);
+    return *m_imageQualityController;
 }
 
 FragmentationDisabler::FragmentationDisabler(RenderObject* root)
