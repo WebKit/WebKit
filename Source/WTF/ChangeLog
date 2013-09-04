@@ -1,3 +1,18 @@
+2013-09-03  Enrica Casucci  <enrica@apple.com>
+
+        Can't select Katakana word by double-clicking.
+        <rdar://problem/14654926>
+
+        Reviewed by Alexey Proskuryakov and Ryosuke Niwa.
+
+        For some languages, like Japanese we need
+        to use more context for word breaking.
+        I've renamed the function to better reflect its use
+        and remove the unused hasLineBreakingPropertyComplexContextOrIdeographic.
+
+        * wtf/unicode/icu/UnicodeIcu.h:
+        (WTF::Unicode::requiresComplexContextForWordBreaking):
+
 2013-09-03  Andreas Kling  <akling@apple.com>
 
         Support Vector<Ref<T>>.

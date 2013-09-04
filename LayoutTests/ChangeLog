@@ -1,3 +1,15 @@
+2013-09-03  Enrica Casucci  <enrica@apple.com>
+
+        Can't select Katakana word by double-clicking.
+        <rdar://problem/14654926>
+
+        Reviewed by Alexey Proskuryakov and Ryosuke Niwa.
+
+        Added new test for this scenario.
+
+        * editing/selection/doubleclick-japanese-text-expected.txt: Added.
+        * editing/selection/doubleclick-japanese-text.html: Added.
+
 2013-09-03  Benjamin Poulain  <benjamin@webkit.org>
 
         Try unskipping compositing/images/positioned-image-content-rect.html

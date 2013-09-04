@@ -1,3 +1,18 @@
+2013-09-03  Enrica Casucci  <enrica@apple.com>
+
+        Can't select Katakana word by double-clicking.
+        <rdar://problem/14654926>
+
+        Reviewed by Alexey Proskuryakov and Ryosuke Niwa.
+
+        For some languages, like Japanese we need
+        to use more context for word breaking.
+
+        New test: editing/selection/doubleclick-japanese-text.html
+
+        * platform/text/TextBoundaries.h:
+        (WebCore::requiresContextForWordBoundary):
+
 2013-09-03  Mark Lam  <mark.lam@apple.com>
 
         Converting StackIterator to a callback interface.
