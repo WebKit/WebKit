@@ -16,4 +16,4 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: html-id:hiddenDiv, toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, html-id:hiddenDiv, toolkit:WebKitGtk

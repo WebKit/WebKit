@@ -1,3 +1,15 @@
+2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Rebaselining 7 accessibility tests after r154976.
+
+        * platform/gtk/accessibility/lists-expected.txt:
+        * platform/gtk/accessibility/plugin-expected.txt:
+        * platform/gtk/accessibility/table-detection-expected.txt:
+        * platform/gtk/accessibility/table-one-cell-expected.txt:
+        * platform/gtk/accessibility/table-with-aria-role-expected.txt:
+        * platform/gtk/accessibility/table-with-rules-expected.txt:
+        * platform/gtk/accessibility/transformed-element-expected.txt:
+
 2013-09-04  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Fix failing tests on ML WK2 after r154973

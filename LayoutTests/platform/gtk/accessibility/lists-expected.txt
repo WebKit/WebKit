@@ -27,7 +27,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 AXRole: AXList
 AXParent: AXWebArea
@@ -45,7 +45,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 AXRole: AXList
 AXParent: AXWebArea
@@ -63,7 +63,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 AXRole: AXGroup
 AXParent: AXWebArea
@@ -82,7 +82,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 AXRole: AXHorizontalRule
 AXParent: AXWebArea
@@ -101,7 +101,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 AXRole: AXGroup
 AXParent: AXWebArea
@@ -120,7 +120,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 
 
@@ -141,7 +141,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 AXRole: AXListItem
 AXParent: AXList
@@ -160,7 +160,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 
 
@@ -181,7 +181,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 AXRole: AXListItem
 AXParent: AXList
@@ -200,7 +200,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 
 
@@ -221,7 +221,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 AXRole: AXUnknown
 AXParent: AXList
@@ -240,7 +240,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 AXRole: AXUnknown
 AXParent: AXList
@@ -259,7 +259,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 AXRole: AXUnknown
 AXParent: AXList
@@ -278,7 +278,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 AXRole: AXUnknown
 AXParent: AXList
@@ -297,7 +297,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: toolkit:WebKitGtk
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitGtk
 ------------
 
 
