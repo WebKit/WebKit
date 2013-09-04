@@ -50,7 +50,7 @@ DecompositionType decompositionType(UChar32)
     return DecompositionNone; // FIXME: implement!
 }
 
-bool hasLineBreakingPropertyComplexContext(UChar32)
+bool requiresComplexContextForWordBreaking(UChar32)
 {
     return false; // FIXME: implement!
 }
