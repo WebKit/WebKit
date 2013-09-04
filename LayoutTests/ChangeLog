@@ -1,3 +1,9 @@
+2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Skipping the media/track/in-band test set that's failing on the GTK port.
+
 2013-09-03  Filip Pizlo  <fpizlo@apple.com>
 
         The DFG should be able to tier-up and OSR enter into the FTL

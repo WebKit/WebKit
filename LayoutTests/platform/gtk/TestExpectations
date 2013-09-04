@@ -424,6 +424,9 @@ webkit.org/b/117975 fast/text/international/synthesized-italic-vertical-latin.ht
 # .webkitClosedCaptionsVisible doesn't work with "Automatic" caption mode
 webkit.org/b/118459 media/track/track-legacyapi-with-automatic-mode.html [ Skip ]
 
+# The feature is enabled at build-time, but the whole test set is failing.
+webkit.org/b/120665 media/track/in-band [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
