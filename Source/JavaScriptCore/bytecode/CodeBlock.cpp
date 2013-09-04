@@ -1847,7 +1847,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     if (Options::dumpGeneratedBytecodes())
         dumpBytecode();
     m_heap->m_codeBlocks.add(this);
-    m_heap->reportExtraMemoryCost(sizeof(CodeBlock));
+    m_heap->reportExtraMemoryCost(sizeof(CodeBlock) + m_instructions.size() * sizeof(Instruction));
 }
 
 CodeBlock::~CodeBlock()
@@ -1930,6 +1930,17 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     
     if (!!m_alternative)
         m_alternative->visitAggregate(visitor);
+
+    visitor.reportExtraMemoryUsage(sizeof(CodeBlock));
+    if (m_jitCode)
+        visitor.reportExtraMemoryUsage(m_jitCode->size());
+    if (m_instructions.size()) {
+        // Divide by refCount() because m_instructions points to something that is shared
+        // by multiple CodeBlocks, and we only want to count it towards the heap size once.
+        // Having each CodeBlock report only its proportional share of the size is one way
+        // of accomplishing this.
+        visitor.reportExtraMemoryUsage(m_instructions.size() * sizeof(Instruction) / m_instructions.refCount());
+    }
 
     visitor.append(&m_unlinkedCode);
 

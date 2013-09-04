@@ -1,3 +1,13 @@
+2013-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeBlock memory cost reporting should be rationalized
+        https://bugs.webkit.org/show_bug.cgi?id=120615
+
+        Reviewed by Darin Adler.
+
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::refCount):
+
 2013-09-03  Enrica Casucci  <enrica@apple.com>
 
         Follow up to http://trac.webkit.org/changeset/155014

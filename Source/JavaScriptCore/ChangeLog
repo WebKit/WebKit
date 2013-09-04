@@ -1,3 +1,23 @@
+2013-09-03  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeBlock memory cost reporting should be rationalized
+        https://bugs.webkit.org/show_bug.cgi?id=120615
+
+        Reviewed by Darin Adler.
+        
+        Report the size of the instruction stream, and then remind the GC that we're
+        using memory when we trace.
+        
+        This is a slight slow-down on some JSBench tests because it makes us GC a
+        bit more frequently. But I think it's well worth it; if we really want those
+        tests to GC less frequently then we can achieve that through other kinds of
+        tuning. It's better that the GC knows that CodeBlocks do in fact use memory;
+        what it does with that information is a somewhat orthogonal question.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::visitAggregate):
+
 2013-09-03  Mark Lam  <mark.lam@apple.com>
 
         Converting StackIterator to a callback interface.

@@ -112,6 +112,13 @@ public:
         fastFree(Header::fromPayload(m_data));
     }
     
+    unsigned refCount() const
+    {
+        if (!m_data)
+            return 0;
+        return Header::fromPayload(m_data)->refCount;
+    }
+    
     size_t size() const
     {
         if (!m_data)
