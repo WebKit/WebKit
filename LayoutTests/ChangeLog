@@ -1,3 +1,19 @@
+2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Adding failure expectations for tests introduced in r154875, r154906 and r154954.
+        * platform/gtk/animations/cross-fade-background-image-expected.png: Rebaselining after r154906.
+        * platform/gtk/animations/cross-fade-background-image-expected.txt: Ditto.
+        * platform/gtk/animations/cross-fade-border-image-source-expected.png: Ditto.
+        * platform/gtk/animations/cross-fade-border-image-source-expected.txt: Ditto.
+        * platform/gtk/animations/cross-fade-list-style-image-expected.png: Ditto.
+        * platform/gtk/animations/cross-fade-list-style-image-expected.txt: Ditto.
+        * platform/gtk/animations/cross-fade-webkit-mask-box-image-expected.png: Ditto.
+        * platform/gtk/animations/cross-fade-webkit-mask-box-image-expected.txt: Ditto.
+        * platform/gtk/animations/cross-fade-webkit-mask-image-expected.png: Ditto.
+        * platform/gtk/animations/cross-fade-webkit-mask-image-expected.txt: Ditto.
+
 2013-09-04  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed bot greening.

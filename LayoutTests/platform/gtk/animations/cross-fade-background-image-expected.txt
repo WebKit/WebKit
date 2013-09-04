@@ -3,16 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x51
-        RenderText {#text} at (0,0) size 577x17
-          text run at (0,0) width 577: "PASS - \"backgroundImage\" property for \"box\" element at 2.5s saw something close to: 0.5"
-        RenderBR {BR} at (577,14) size 0x0
-        RenderText {#text} at (0,17) size 704x17
-          text run at (0,17) width 704: "PASS - \"backgroundImage\" property for \"box\" and \"boxStatic\" elements at 2.5s are close enough to each other"
-        RenderBR {BR} at (704,31) size 0x0
-        RenderText {#text} at (0,34) size 769x17
-          text run at (0,34) width 769: "PASS - \"backgroundImage\" property for \"boxShorthand\" and \"boxStatic\" elements at 2.5s are close enough to each other"
-        RenderBR {BR} at (769,48) size 0x0
+      RenderBlock {DIV} at (0,0) size 784x68
+        RenderText {#text} at (0,0) size 733x34
+          text run at (0,0) width 733: "PASS - \"backgroundImage\" property for \"box\" element at 2.5s saw something close to: -webkit-cross-fade(url(blue-"
+          text run at (0,17) width 226: "100.png), url(green-100.png), 50%)"
+        RenderBR {BR} at (226,31) size 0x0
+        RenderText {#text} at (0,34) size 704x17
+          text run at (0,34) width 704: "PASS - \"backgroundImage\" property for \"box\" and \"boxStatic\" elements at 2.5s are close enough to each other"
+        RenderBR {BR} at (704,48) size 0x0
+        RenderText {#text} at (0,51) size 769x17
+          text run at (0,51) width 769: "PASS - \"backgroundImage\" property for \"boxShorthand\" and \"boxStatic\" elements at 2.5s are close enough to each other"
+        RenderBR {BR} at (769,65) size 0x0
 layer at (100,100) size 100x100
   RenderBlock (positioned) {DIV} at (100,100) size 100x100 [bgcolor=#FF0000]
 layer at (100,300) size 100x100
