@@ -87,6 +87,7 @@ public:
 #if ENABLE(VIDEO)
     virtual String extraMediaControlsStyleSheet();
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
+    virtual bool supportsClosedCaptioning() const OVERRIDE { return true; }
 
 #if ENABLE(FULLSCREEN_API)
     virtual String extraFullScreenStyleSheet();

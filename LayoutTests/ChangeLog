@@ -1,3 +1,15 @@
+2013-09-04  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
+
+        [GTK] add support for subtitles on webkit2GTK
+        https://bugs.webkit.org/show_bug.cgi?id=117008
+
+        By activating subtitles support on webkit2GTK, the video player
+        recognizes and use text <tracks> inside <video> elements.
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/TestExpectations:
+
 2013-09-04  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed bot greening.

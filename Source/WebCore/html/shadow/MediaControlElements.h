@@ -280,7 +280,7 @@ private:
     virtual const AtomicString& shadowPseudoId() const OVERRIDE;
     virtual void defaultEventHandler(Event*) OVERRIDE;
 
-#if PLATFORM(MAC) || PLATFORM(WIN)
+#if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK)
     MediaControls* m_controls;
 #endif
 };

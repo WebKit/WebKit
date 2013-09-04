@@ -1,3 +1,52 @@
+2013-09-04  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
+
+        [GTK] add support for subtitles on webkit2GTK
+        https://bugs.webkit.org/show_bug.cgi?id=117008
+
+        By activating subtitles support on webkit2GTK, the video player
+        recognizes and use text <tracks> inside <video> elements.
+
+        Reviewed by Martin Robinson.
+
+        Layout tests (track-menu) should cover this change.
+
+        * css/mediaControlsGtk.css:
+        (audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button):
+        (video::-webkit-media-controls-closed-captions-container):
+        (video::-webkit-media-controls-closed-captions-track-list):
+        (video::-webkit-media-controls-closed-captions-track-list h3):
+        (video::-webkit-media-controls-closed-captions-track-list ul):
+        (video::-webkit-media-controls-closed-captions-track-list li):
+        (video::-webkit-media-controls-closed-captions-track-list li.selected):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler):
+        * html/shadow/MediaControlElements.h:
+        * html/shadow/MediaControlsGtk.cpp:
+        (WebCore::MediaControlsGtkEventListener::create):
+        (WebCore::MediaControlsGtkEventListener::cast):
+        (WebCore::MediaControlsGtkEventListener::MediaControlsGtkEventListener):
+        (WebCore::MediaControlsGtk::MediaControlsGtk):
+        (WebCore::MediaControlsGtk::initializeControls):
+        (WebCore::MediaControlsGtk::setMediaController):
+        (WebCore::MediaControlsGtk::reset):
+        (WebCore::MediaControlsGtk::makeTransparent):
+        (WebCore::MediaControlsGtk::toggleClosedCaptionTrackList):
+        (WebCore::MediaControlsGtk::showClosedCaptionTrackList):
+        (WebCore::MediaControlsGtk::hideClosedCaptionTrackList):
+        (WebCore::MediaControlsGtk::handleClickEvent):
+        (WebCore::MediaControlsGtk::eventListener):
+        (WebCore::MediaControlsGtkEventListener::handleEvent):
+        (WebCore::MediaControlsGtkEventListener::operator==):
+        * html/shadow/MediaControlsGtk.h:
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::trackDisplayName):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::textTrackSubtitlesText):
+        (WebCore::textTrackOffMenuItemText):
+        (WebCore::textTrackNoLabelText):
+        * platform/gtk/RenderThemeGtk.h:
+
 2013-09-03  Darin Adler  <darin@apple.com>
 
         Use OwnPtr in the RenderLayerFilterInfo map

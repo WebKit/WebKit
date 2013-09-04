@@ -157,6 +157,11 @@ void CaptionUserPreferences::setPreferredLanguage(const String& language)
 
 static String trackDisplayName(TextTrack* track)
 {
+    if (track == TextTrack::captionMenuOffItem())
+        return textTrackOffMenuItemText();
+    if (track == TextTrack::captionMenuAutomaticItem())
+        return textTrackAutomaticMenuItemText();
+
     if (track->label().isEmpty() && track->language().isEmpty())
         return textTrackNoLabelText();
     if (!track->label().isEmpty())
@@ -184,6 +189,8 @@ Vector<RefPtr<TextTrack> > CaptionUserPreferences::sortedTrackListForMenu(TextTr
         tracksForMenu.append(trackList->item(i));
 
     nonCopyingSort(tracksForMenu.begin(), tracksForMenu.end(), textTrackCompare);
+    tracksForMenu.insert(0, TextTrack::captionMenuOffItem());
+    tracksForMenu.insert(1, TextTrack::captionMenuAutomaticItem());
 
     return tracksForMenu;
 }

@@ -796,15 +796,6 @@ Bug(GTK) media/progress-events-generated-correctly.html [ Failure Timeout ]
 
 webkit.org/b/102257 fast/dom/Window/open-window-min-size.html [ Timeout ]
 
-# GTK still has the CC toggle button, not the menu of tracks.
-webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
-webkit.org/b/101670 media/video-controls-captions-trackmenu-sorted.html [ Skip ]
-webkit.org/b/101670 media/video-controls-captions-trackmenu-localized.html [ Skip ]
-webkit.org/b/101670 media/video-controls-captions-trackmenu-hide-on-click.html [ Skip ]
-webkit.org/b/101670 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Skip ]
-webkit.org/b/101670 media/track/track-user-preferences.html [ Skip ]
-webkit.org/b/101670 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Skip ]
-
 webkit.org/b/107194 storage/indexeddb/database-quota.html [ Timeout ]
 webkit.org/b/107194 storage/indexeddb/pending-activity-workers.html [ Timeout ]
 webkit.org/b/107194 storage/indexeddb/pending-version-change-on-exit.html [ Timeout ]
@@ -910,6 +901,11 @@ webkit.org/b/44478 fast/text/hyphen-min-preferred-width.html [ Skip ]
 
 # LayoutTestController::applicationCacheDiskUsageForOrigin isn't implemented.
 webkit.org/b/57127 http/tests/appcache/origin-usage.html [ Failure ]
+
+# GTK is moving from toggle button to a menu of tracks.
+webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Failure ]
+webkit.org/b/101670 media/track/track-user-preferences.html [ Failure ]
+webkit.org/b/101670 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Failure ]
 
 Bug(GTK) http/tests/loading/bad-scheme-subframe.html [ Failure ]
 
@@ -1220,6 +1216,7 @@ webkit.org/b/89663 editing/deleting/delete-3800834-fix.html [ Failure ]
 
 webkit.org/b/87355 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure ]
 
+# GTK is moving from the simple toggle button to a menu of tracks
 webkit.org/b/95428 media/video-controls-captions.html [ Failure ]
 
 webkit.org/b/95429 svg/custom/clamped-masking-clipping.svg [ ImageOnlyFailure ]
