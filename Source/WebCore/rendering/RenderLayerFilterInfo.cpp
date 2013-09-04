@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,74 +33,57 @@
 #if ENABLE(CSS_FILTERS)
 #include "RenderLayerFilterInfo.h"
 
-#include "FilterEffectRenderer.h"
-#include "RenderLayer.h"
-
-#if ENABLE(SVG)
 #include "CachedSVGDocument.h"
 #include "CachedSVGDocumentReference.h"
+#include "CustomFilterOperation.h"
+#include "CustomFilterProgram.h"
+#include "FilterEffectRenderer.h"
 #include "SVGElement.h"
 #include "SVGFilter.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
-#endif
-
-#if ENABLE(CSS_SHADERS)
-#include "CustomFilterOperation.h"
-#include "CustomFilterProgram.h"
-#endif
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-RenderLayerFilterInfoMap* RenderLayerFilterInfo::s_filterMap = 0;
-
-RenderLayerFilterInfo* RenderLayerFilterInfo::filterInfoForRenderLayer(const RenderLayer* layer)
+HashMap<const RenderLayer*, OwnPtr<RenderLayer::FilterInfo>>& RenderLayer::FilterInfo::map()
 {
-    if (!s_filterMap)
-        return 0;
-    RenderLayerFilterInfoMap::iterator iter = s_filterMap->find(layer);
-    return (iter != s_filterMap->end()) ? iter->value : 0;
+    static NeverDestroyed<HashMap<const RenderLayer*, OwnPtr<FilterInfo>>> map;
+    return map;
 }
 
-RenderLayerFilterInfo* RenderLayerFilterInfo::createFilterInfoForRenderLayerIfNeeded(RenderLayer* layer)
+RenderLayer::FilterInfo* RenderLayer::FilterInfo::getIfExists(const RenderLayer& layer)
 {
-    if (!s_filterMap)
-        s_filterMap = new RenderLayerFilterInfoMap();
-    
-    RenderLayerFilterInfoMap::iterator iter = s_filterMap->find(layer);
-    if (iter != s_filterMap->end()) {
-        ASSERT(layer->hasFilterInfo());
-        return iter->value;
-    }
-    
-    RenderLayerFilterInfo* filter = new RenderLayerFilterInfo(layer);
-    s_filterMap->set(layer, filter);
-    layer->setHasFilterInfo(true);
-    return filter;
+    ASSERT(layer.m_hasFilterInfo == map().contains(&layer));
+
+    return layer.m_hasFilterInfo ? map().get(&layer) : 0;
 }
 
-void RenderLayerFilterInfo::removeFilterInfoForRenderLayer(RenderLayer* layer)
+RenderLayer::FilterInfo& RenderLayer::FilterInfo::get(RenderLayer& layer)
 {
-    if (!s_filterMap)
-        return;
-    RenderLayerFilterInfo* filter = s_filterMap->take(layer);
-    if (s_filterMap->isEmpty()) {
-        delete s_filterMap;
-        s_filterMap = 0;
+    ASSERT(layer.m_hasFilterInfo == map().contains(&layer));
+
+    OwnPtr<FilterInfo>& info = map().add(&layer, nullptr).iterator->value;
+    if (!info) {
+        info = adoptPtr(new FilterInfo(layer));
+        layer.m_hasFilterInfo = true;
     }
-    if (!filter) {
-        ASSERT(!layer->hasFilterInfo());
-        return;
-    }
-    layer->setHasFilterInfo(false);
-    delete filter;
+    return *info;
 }
 
-RenderLayerFilterInfo::RenderLayerFilterInfo(RenderLayer* layer)
+void RenderLayer::FilterInfo::remove(RenderLayer& layer)
+{
+    ASSERT(layer.m_hasFilterInfo == map().contains(&layer));
+
+    if (map().remove(&layer))
+        layer.m_hasFilterInfo = false;
+}
+
+RenderLayer::FilterInfo::FilterInfo(RenderLayer& layer)
     : m_layer(layer)
 {
 }
 
-RenderLayerFilterInfo::~RenderLayerFilterInfo()
+RenderLayer::FilterInfo::~FilterInfo()
 {
 #if ENABLE(CSS_SHADERS)
     removeCustomFilterClients();
@@ -109,26 +93,27 @@ RenderLayerFilterInfo::~RenderLayerFilterInfo()
 #endif
 }
 
-void RenderLayerFilterInfo::setRenderer(PassRefPtr<FilterEffectRenderer> renderer)
+void RenderLayer::FilterInfo::setRenderer(PassRefPtr<FilterEffectRenderer> renderer)
 { 
     m_renderer = renderer; 
 }
 
 #if ENABLE(SVG)
-void RenderLayerFilterInfo::notifyFinished(CachedResource*)
+
+void RenderLayer::FilterInfo::notifyFinished(CachedResource*)
 {
-    m_layer->renderer().node()->setNeedsStyleRecalc(SyntheticStyleChange);
-    m_layer->renderer().repaint();
+    m_layer.renderer().node()->setNeedsStyleRecalc(SyntheticStyleChange);
+    m_layer.renderer().repaint();
 }
 
-void RenderLayerFilterInfo::updateReferenceFilterClients(const FilterOperations& operations)
+void RenderLayer::FilterInfo::updateReferenceFilterClients(const FilterOperations& operations)
 {
     removeReferenceFilterClients();
-    for (size_t i = 0; i < operations.size(); ++i) {
-        RefPtr<FilterOperation> filterOperation = operations.operations().at(i);
+    for (size_t i = 0, size = operations.size(); i < size; ++i) {
+        FilterOperation* filterOperation = operations.operations()[i].get();
         if (filterOperation->getOperationType() != FilterOperation::REFERENCE)
             continue;
-        ReferenceFilterOperation* referenceFilterOperation = static_cast<ReferenceFilterOperation*>(filterOperation.get());
+        ReferenceFilterOperation* referenceFilterOperation = static_cast<ReferenceFilterOperation*>(filterOperation);
         CachedSVGDocumentReference* documentReference = referenceFilterOperation->cachedSVGDocumentReference();
         CachedSVGDocument* cachedSVGDocument = documentReference ? documentReference->document() : 0;
 
@@ -139,50 +124,52 @@ void RenderLayerFilterInfo::updateReferenceFilterClients(const FilterOperations&
         } else {
             // Reference is internal; add layer as a client so we can trigger
             // filter repaint on SVG attribute change.
-            Element* filter = m_layer->renderer().node()->document().getElementById(referenceFilterOperation->fragment());
+            Element* filter = m_layer.renderer().node()->document().getElementById(referenceFilterOperation->fragment());
             if (!filter || !filter->renderer() || !filter->renderer()->isSVGResourceFilter())
                 continue;
-            filter->renderer()->toRenderSVGResourceContainer()->addClientRenderLayer(m_layer);
+            filter->renderer()->toRenderSVGResourceContainer()->addClientRenderLayer(&m_layer);
             m_internalSVGReferences.append(filter);
         }
     }
 }
 
-void RenderLayerFilterInfo::removeReferenceFilterClients()
+void RenderLayer::FilterInfo::removeReferenceFilterClients()
 {
-    for (size_t i = 0; i < m_externalSVGReferences.size(); ++i)
-        m_externalSVGReferences.at(i)->removeClient(this);
+    for (size_t i = 0, size = m_externalSVGReferences.size(); i < size; ++i)
+        m_externalSVGReferences[i]->removeClient(this);
     m_externalSVGReferences.clear();
-    for (size_t i = 0; i < m_internalSVGReferences.size(); ++i) {
-        Element* filter = m_internalSVGReferences.at(i).get();
+    for (size_t i = 0, size = m_internalSVGReferences.size(); i < size; ++i) {
+        Element* filter = m_internalSVGReferences[i].get();
         if (!filter->renderer())
             continue;
-        filter->renderer()->toRenderSVGResourceContainer()->removeClientRenderLayer(m_layer);
+        filter->renderer()->toRenderSVGResourceContainer()->removeClientRenderLayer(&m_layer);
     }
     m_internalSVGReferences.clear();
 }
+
 #endif
 
 #if ENABLE(CSS_SHADERS)
-void RenderLayerFilterInfo::notifyCustomFilterProgramLoaded(CustomFilterProgram*)
+
+void RenderLayer::FilterInfo::notifyCustomFilterProgramLoaded(CustomFilterProgram*)
 {
-    m_layer->renderer().node()->setNeedsStyleRecalc(SyntheticStyleChange);
-    m_layer->renderer().repaint();
+    m_layer.renderer().node()->setNeedsStyleRecalc(SyntheticStyleChange);
+    m_layer.renderer().repaint();
 }
 
-void RenderLayerFilterInfo::updateCustomFilterClients(const FilterOperations& operations)
+void RenderLayer::FilterInfo::updateCustomFilterClients(const FilterOperations& operations)
 {
     if (!operations.size()) {
         removeCustomFilterClients();
         return;
     }
-    CustomFilterProgramList cachedCustomFilterPrograms;
-    for (size_t i = 0; i < operations.size(); ++i) {
-        const FilterOperation* filterOperation = operations.at(i);
+    Vector<RefPtr<CustomFilterProgram>> cachedCustomFilterPrograms;
+    for (size_t i = 0, size = operations.size(); i < size; ++i) {
+        const FilterOperation* filterOperation = operations.operations()[i].get();
         if (filterOperation->getOperationType() != FilterOperation::CUSTOM)
             continue;
         const CustomFilterOperation* customFilterOperation = static_cast<const CustomFilterOperation*>(filterOperation);
-        RefPtr<CustomFilterProgram> program = customFilterOperation->program();
+        CustomFilterProgram* program = customFilterOperation->program();
         cachedCustomFilterPrograms.append(program);
         program->addClient(this);
     }
@@ -191,12 +178,13 @@ void RenderLayerFilterInfo::updateCustomFilterClients(const FilterOperations& op
     m_cachedCustomFilterPrograms.swap(cachedCustomFilterPrograms);
 }
 
-void RenderLayerFilterInfo::removeCustomFilterClients()
+void RenderLayer::FilterInfo::removeCustomFilterClients()
 {
-    for (size_t i = 0; i < m_cachedCustomFilterPrograms.size(); ++i)
-        m_cachedCustomFilterPrograms.at(i)->removeClient(this);
+    for (size_t i = 0, size = m_cachedCustomFilterPrograms.size(); i < size; ++i)
+        m_cachedCustomFilterPrograms[i]->removeClient(this);
     m_cachedCustomFilterPrograms.clear();
 }
+
 #endif
 
 } // namespace WebCore

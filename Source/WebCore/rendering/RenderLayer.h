@@ -51,17 +51,16 @@
 
 namespace WebCore {
 
-#if ENABLE(CSS_FILTERS)
 class FilterEffectRenderer;
 class FilterEffectRendererHelper;
 class FilterOperations;
-class RenderLayerFilterInfo;
-#endif
 class HitTestRequest;
 class HitTestResult;
 class HitTestingTransformState;
 class RenderFlowThread;
 class RenderGeometryMap;
+class RenderLayerBacking;
+class RenderLayerCompositor;
 class RenderMarquee;
 class RenderReplica;
 class RenderScrollbarPart;
@@ -69,11 +68,6 @@ class RenderStyle;
 class RenderView;
 class Scrollbar;
 class TransformationMatrix;
-
-#if USE(ACCELERATED_COMPOSITING)
-class RenderLayerBacking;
-class RenderLayerCompositor;
-#endif
 
 enum BorderRadiusClippingRule { IncludeSelfForBorderRadius, DoNotIncludeSelfForBorderRadius };
 enum IncludeSelfOrNot { IncludeSelf, ExcludeSelf };
@@ -314,7 +308,7 @@ public:
 
 typedef Vector<LayerFragment, 1> LayerFragments;
 
-class RenderLayer : public ScrollableArea {
+class RenderLayer FINAL : public ScrollableArea {
 public:
     friend class RenderReplica;
 
@@ -805,13 +799,6 @@ public:
     bool paintsWithFilters() const;
     bool requiresFullLayerImageForFilters() const;
     FilterEffectRenderer* filterRenderer() const;
-
-    RenderLayerFilterInfo* filterInfo() const;
-    RenderLayerFilterInfo* ensureFilterInfo();
-    void removeFilterInfoIfNeeded();
-    
-    bool hasFilterInfo() const { return m_hasFilterInfo; }
-    void setHasFilterInfo(bool hasFilterInfo) { m_hasFilterInfo = hasFilterInfo; }
 #endif
 
 #if !ASSERT_DISABLED
@@ -1144,7 +1131,7 @@ private:
 
     bool overflowControlsIntersectRect(const IntRect& localRect) const;
 
-protected:
+private:
     // The bitfields are up here so they will fall into the padding from ScrollableArea on 64-bit.
 
     // Keeps track of whether the layer is currently resizing, so events can cause resizing to start and stop.
@@ -1278,12 +1265,13 @@ protected:
     // Pointer to the enclosing RenderLayer that caused us to be paginated. It is 0 if we are not paginated.
     RenderLayer* m_enclosingPaginationLayer;
 
-private:
     IntRect m_blockSelectionGapsBounds;
 
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<RenderLayerBacking> m_backing;
 #endif
+
+    class FilterInfo;
 };
 
 inline void RenderLayer::clearZOrderLists()

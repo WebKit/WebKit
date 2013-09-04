@@ -1,3 +1,72 @@
+2013-09-03  Darin Adler  <darin@apple.com>
+
+        Use OwnPtr in the RenderLayerFilterInfo map
+        https://bugs.webkit.org/show_bug.cgi?id=120619
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::~RenderLayer): Use FilterInfo::remove directly instead of
+        going through removeFilterInfoIfNeeded function.
+        (WebCore::RenderLayer::paintsWithFilters): Rearranged #if a little bit and tweaked
+        the comment.
+        (WebCore::RenderLayer::requiresFullLayerImageForFilters): Use && instead of ternary.
+        (WebCore::RenderLayer::filterRenderer): Use FilterInfo::getIfExists directly instead
+        of going through filterInfo function.
+        (WebCore::RenderLayer::setFilterBackendNeedsRepaintingInRect): Use FilterInfo::get
+        directly instead of going through filterInfo function. Also use references instead
+        of pointers.
+        (WebCore::shouldDoSoftwarePaint): Marked this simple function, used only once, as
+        inline.
+        (WebCore::paintForFixedRootBackground): Ditto.
+        (WebCore::RenderLayer::setupFilters): Use FilterInfo::getIfExists directly instead
+        of going through filterInfo function. Also get rendererer out of filterInfo instead
+        of calling filterRenderer.
+        (WebCore::RenderLayer::updateOrRemoveFilterClients): Use FilterInfo::get and
+        FilterInfo::getIfExists directly instead of using ensureFilterInfo and
+        filterInfo functions.
+        (WebCore::RenderLayer::updateOrRemoveFilterEffectRenderer): Use FilterInfo::getIfExists
+        and FilterInfo::get directly instead of using filterInfo function.
+
+        * rendering/RenderLayer.h: Removed the ifdefs around forward declarations; overkill,
+        since there is no harm in a few extras. Marked the RenderLayer class FINAL. Removed the
+        no-longer-needed filterInfo, ensureFilterInfo, removeFilterInfoIfNeeded, hasFilterInfo,
+        and setHasFilterInfo functions. Mark everything private instead of protected since
+        there are no classes derived from this one. Made FilterInfo an embedded class so it
+        can get at the m_hasFilterInfo data member directly and has a shorter name.
+
+        * rendering/RenderLayerFilterInfo.cpp: Removed the ifs around includes, which were
+        overkill, since there is little harm including a few extra files.
+        (WebCore::RenderLayer::FilterInfo::map): Added. Returns the single global map.
+        (WebCore::RenderLayer::FilterInfo::getIfExists): Renamed from filterInfoForRenderLayer.
+        Also changed to take a reference instead of a pointer, and to use the new filterMap.
+        (WebCore::RenderLayer::FilterInfo::get): Renamed from createFilterInfoForRenderLayerIfNeeded.
+        Also changed to take a reference instead of a pointer, to use the new filterMap, and
+        to use add to avoid hashing twice when adding a new layer to the map.
+        (WebCore::RenderLayer::FilterInfo::remove): Renamed from removeFilterInfoForRenderLayer.
+        Also changed to take a reference instead of a pointer and eliminated the explicit
+        delete since we use OwnPtr now.
+        (WebCore::RenderLayer::FilterInfo::FilterInfo): Take a reference instead of a pointer.
+        (WebCore::RenderLayer::FilterInfo::~FilterInfo): Updated class name.
+        (WebCore::RenderLayer::FilterInfo::setRenderer): Ditto.
+        (WebCore::RenderLayer::FilterInfo::notifyFinished): Update since m_layer is a reference.
+        (WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients): Update to iterate in a
+        slightly more idiomatic and efficient way. Also update since m_layer is a reference.
+        (WebCore::RenderLayer::FilterInfo::removeReferenceFilterClients): Ditto.
+        (WebCore::RenderLayer::FilterInfo::notifyCustomFilterProgramLoaded): Ditto.
+        (WebCore::RenderLayer::FilterInfo::updateCustomFilterClients): Ditto. Also switched to
+        a raw pointer for CustomFilterProgram*.
+        (WebCore::RenderLayer::FilterInfo::removeCustomFilterClients): Ditto.
+
+        * rendering/RenderLayerFilterInfo.h: Removed the ifs around includes, which were
+        overkill, since there is little harm including a few extra files. Changed to be a
+        member class of RenderLayer, marked the class FINAL, and changed the style of the
+        conditionals around the base classes. Renamed functions. Made overrides private and
+        used OVERRIDE. Changed functions to take references instead of pointers. Did some
+        small style cleanup. Made deleteOwnedPtr a friend so we can keep the destructor private.
+        Moved the typedef of RenderLayerFilterInfoMap into the class and named it just Map.
+        Got rid of s_filterMap and instead added a function named just map().
+
 2013-09-04  Andreas Kling  <akling@apple.com>
 
         Simplify subtree relayout scheduling a bit.

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,44 +34,27 @@
 #if ENABLE(CSS_FILTERS)
 
 #include "CachedResourceHandle.h"
-#include "FilterOperation.h"
-#include "LayoutRect.h"
-#include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-
-#if ENABLE(CSS_SHADERS)
-#include "CustomFilterProgramClient.h"
-#endif
-
-#if ENABLE(SVG)
 #include "CachedSVGDocumentClient.h"
-#include "Element.h"
-#endif
+#include "CustomFilterProgramClient.h"
+#include "RenderLayer.h"
 
 namespace WebCore {
 
-class FilterEffectRenderer;
-class FilterOperations;
-class RenderLayer;
-class RenderLayerFilterInfo;
+class Element;
 
-typedef HashMap<const RenderLayer*, RenderLayerFilterInfo*> RenderLayerFilterInfoMap;
-    
-class RenderLayerFilterInfo
-#if ENABLE(CSS_SHADERS)
-    : public CustomFilterProgramClient
-#if ENABLE(SVG)
-    , public CachedSVGDocumentClient
-#endif
+class RenderLayer::FilterInfo
+#if ENABLE(CSS_SHADERS) && ENABLE(SVG)
+    FINAL : public CustomFilterProgramClient, public CachedSVGDocumentClient
+#elif ENABLE(CSS_SHADERS)
+    FINAL : public CustomFilterProgramClient
 #elif ENABLE(SVG)
-    : public CachedSVGDocumentClient
+    FINAL : public CachedSVGDocumentClient
 #endif
 {
 public:
-    static RenderLayerFilterInfo* filterInfoForRenderLayer(const RenderLayer*);
-    static RenderLayerFilterInfo* createFilterInfoForRenderLayerIfNeeded(RenderLayer*);
-    static void removeFilterInfoForRenderLayer(RenderLayer*);
+    static FilterInfo& get(RenderLayer&);
+    static FilterInfo* getIfExists(const RenderLayer&);
+    static void remove(RenderLayer&);
 
     const LayoutRect& dirtySourceRect() const { return m_dirtySourceRect; }
     void expandDirtySourceRect(const LayoutRect& rect) { m_dirtySourceRect.unite(rect); }
@@ -80,37 +64,43 @@ public:
     void setRenderer(PassRefPtr<FilterEffectRenderer>);
     
 #if ENABLE(CSS_SHADERS)
-    // Implementation of the CustomFilterProgramClient interface.
-    virtual void notifyCustomFilterProgramLoaded(CustomFilterProgram*);
-
     void updateCustomFilterClients(const FilterOperations&);
     void removeCustomFilterClients();
 #endif
 
 #if ENABLE(SVG)
     void updateReferenceFilterClients(const FilterOperations&);
-    virtual void notifyFinished(CachedResource*);
     void removeReferenceFilterClients();
 #endif
 
 private:
-    RenderLayerFilterInfo(RenderLayer*);
-    ~RenderLayerFilterInfo();
-    
-    RenderLayer* m_layer;
-    
+    FilterInfo(RenderLayer&);
+    ~FilterInfo();
+
+    friend void WTF::deleteOwnedPtr<FilterInfo>(FilterInfo*);
+
+#if ENABLE(CSS_SHADERS)
+    virtual void notifyCustomFilterProgramLoaded(CustomFilterProgram*) OVERRIDE;
+#endif
+
+#if ENABLE(SVG)
+    virtual void notifyFinished(CachedResource*) OVERRIDE;
+#endif
+
+    static HashMap<const RenderLayer*, OwnPtr<FilterInfo>>& map();
+
+    RenderLayer& m_layer;
+
     RefPtr<FilterEffectRenderer> m_renderer;
     LayoutRect m_dirtySourceRect;
-    
+
 #if ENABLE(CSS_SHADERS)
-    typedef Vector<RefPtr<CustomFilterProgram> > CustomFilterProgramList;
-    CustomFilterProgramList m_cachedCustomFilterPrograms;
+    Vector<RefPtr<CustomFilterProgram>> m_cachedCustomFilterPrograms;
 #endif
-    
-    static RenderLayerFilterInfoMap* s_filterMap;
+
 #if ENABLE(SVG)
-    Vector<RefPtr<Element> > m_internalSVGReferences;
-    Vector<CachedResourceHandle<CachedSVGDocument> > m_externalSVGReferences;
+    Vector<RefPtr<Element>> m_internalSVGReferences;
+    Vector<CachedResourceHandle<CachedSVGDocument>> m_externalSVGReferences;
 #endif
 };
 
