@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html>
+    <script>
+    if (window.internals)
+        internals.settings.setAcceleratedCompositingForFixedPositionEnabled(false);
+    </script>
     <head>
         <style>
         #fixed1 { -webkit-flow-into: flow; width: 100px; height: 100px; top: 100px; left: 100px; background-color: green; position: fixed; z-index: 10; }

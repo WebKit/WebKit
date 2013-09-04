@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script>
+    if (window.internals)
+        internals.settings.setAcceleratedCompositingForFixedPositionEnabled(false);
+    </script>
     <style>
         body {
             font: 16px/1.25 monospace;

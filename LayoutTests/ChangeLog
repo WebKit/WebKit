@@ -1,3 +1,19 @@
+2013-09-04  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Fix failing tests on ML WK2 after r154973
+        https://bugs.webkit.org/show_bug.cgi?id=120672
+
+        Reviewed by Antti Koivisto.
+
+        The two tests are failing because the reference tests create backings for the fixed elements layers.
+        Regions are not yet accelerated, don't create backings and this difference of behaviour causes a
+        slight shift in the background color of the fixed elements.
+
+        * fast/regions/fixed-inside-named-flow-zIndex-expected.html:
+        * fast/regions/fixed-inside-named-flow-zIndex.html:
+        * fast/regions/fixed-pos-region-in-nested-flow-expected.html:
+        * fast/regions/fixed-pos-region-in-nested-flow.html:
+
 2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
