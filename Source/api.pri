@@ -75,7 +75,7 @@ BASE_TARGET = $$TARGET
 load(qt_module)
 
 # Make sure the install_name of the QtWebKit library point to webkit
-force_independent:macx {
+!production_build:force_independent:macx {
     # We do our own absolute path so that we can trick qmake into
     # using the webkit build path instead of the Qt install path.
     CONFIG -= absolute_library_soname

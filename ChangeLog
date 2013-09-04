@@ -1,3 +1,21 @@
+2013-09-04  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt] Use correct library paths for prefix builds on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=120635
+
+        Reviewed by Tor Arne Vestbø.
+
+        Due to a change of scope of the qmake force_independent configuration
+        flag, the library paths in QtWebKit builds on the Mac are set to the
+        QtWebKit build directory even for production builds.
+
+        This patch sets the correct library paths for prefixed production builds
+        while keeping the scope of the force_independent flag for non-production
+        builds.
+
+        * Source/api.pri:
+        * Source/widgetsapi.pri:
+
 2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add support for the Wayland build target
