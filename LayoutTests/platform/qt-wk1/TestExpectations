@@ -48,6 +48,9 @@ compositing/visibility/visibility-composited.html
 
 webkit.org/b/112671 compositing/video/video-reflection.html [ Skip ]
 
+# [Qt][WK1] REGRESSION(r154988)
+webkit.org/b/120683 compositing/video/video-with-invalid-source.html [ Skip ]
+
 # Fullscreen API is not supported on WK1
 fullscreen
 plugins/fullscreen-plugins-dont-reload.html

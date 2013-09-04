@@ -1,3 +1,10 @@
+2013-09-04  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed bot greening.
+
+        * platform/qt-wk1/TestExpectations: Skipping after r154988.
+        * platform/qt/TestExpectations: Skipping after r154828.
+
 2013-09-04  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Adds an accessibility support to access a value of the color control element
