@@ -1,3 +1,9 @@
+2013-09-04  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed Windows build fix.
+
+        * WebCore.vcxproj/WebCoreCommon.props:
+
 2013-09-04  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         FloatingObjects should manage cleaning it's line box tree pointers itself
