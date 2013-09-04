@@ -330,9 +330,6 @@ webkit.org/b/31508 storage/websql/transaction-success-callback-isolated-world.ht
 # Text Autosizing is not yet enabled.
 webkit.org/b/99063 fast/text-autosizing [ Skip ]
 
-# Dialog element is not yet enabled.
-webkit.org/b/99062 fast/dom/HTMLDialogElement [ Skip ]
-
 # Proximity Events is not supported.
 webkit.org/b/99060 proximity [ Failure ]
 webkit.org/b/99060 proximity/event-after-navigation.html [ Timeout ]

@@ -502,9 +502,6 @@ webkit.org/b/86080 fast/encoding/idn-security.html [ Skip ]
 # Text Autosizing is not yet enabled.
 webkit.org/b/84186 fast/text-autosizing
 
-# Dialog element is not yet enabled.
-webkit.org/b/84635 fast/dom/HTMLDialogElement [ Skip ]
-
 # HIGH_DPI_CANVAS is not enabled.
 webkit.org/b/101809 fast/canvas/canvas-resize-reset-pixelRatio.html [ Skip ]
 
