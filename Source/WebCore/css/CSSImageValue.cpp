@@ -102,7 +102,7 @@ bool CSSImageValue::equals(const CSSImageValue& other) const
     return m_url == other.m_url;
 }
 
-String CSSImageValue::customCssText() const
+String CSSImageValue::customCSSText() const
 {
     return "url(" + quoteCSSURLIfNeeded(m_url) + ')';
 }

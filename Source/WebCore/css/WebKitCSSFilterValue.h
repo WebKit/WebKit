@@ -62,7 +62,7 @@ public:
         return adoptRef(new WebKitCSSFilterValue(type));
     }
 
-    String customCssText() const;
+    String customCSSText() const;
 
     FilterOperationType operationType() const { return m_type; }
 

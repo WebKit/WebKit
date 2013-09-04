@@ -45,7 +45,7 @@ public:
         return adoptRef(new CSSFunctionValue(name, args));
     }
 
-    String customCssText() const;
+    String customCSSText() const;
 
     bool equals(const CSSFunctionValue&) const;
 

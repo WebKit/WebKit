@@ -47,7 +47,7 @@ WebKitCSSMatFunctionValue::WebKitCSSMatFunctionValue(const WebKitCSSMatFunctionV
 {
 }
 
-String WebKitCSSMatFunctionValue::customCssText() const
+String WebKitCSSMatFunctionValue::customCSSText() const
 {
     StringBuilder builder;
     if (length() == 4)
@@ -61,7 +61,7 @@ String WebKitCSSMatFunctionValue::customCssText() const
         return String();
     }
 
-    builder.append(CSSValueList::customCssText());
+    builder.append(CSSValueList::customCSSText());
     builder.append(')');
     return builder.toString();
 }

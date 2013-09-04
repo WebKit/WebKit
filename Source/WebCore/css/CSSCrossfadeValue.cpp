@@ -58,7 +58,7 @@ CSSCrossfadeValue::~CSSCrossfadeValue()
         m_cachedToImage->removeClient(&m_crossfadeSubimageObserver);
 }
 
-String CSSCrossfadeValue::customCssText() const
+String CSSCrossfadeValue::customCSSText() const
 {
     StringBuilder result;
     result.appendLiteral("-webkit-cross-fade(");

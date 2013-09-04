@@ -44,7 +44,7 @@ public:
         return adoptRef(new WebKitCSSArrayFunctionValue());
     }
 
-    String customCssText() const;
+    String customCSSText() const;
 
     PassRefPtr<WebKitCSSArrayFunctionValue> cloneForCSSOM() const;
 

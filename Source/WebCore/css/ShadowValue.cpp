@@ -43,7 +43,7 @@ ShadowValue::ShadowValue(PassRefPtr<CSSPrimitiveValue> _x,
 {
 }
 
-String ShadowValue::customCssText() const
+String ShadowValue::customCSSText() const
 {
     StringBuilder text;
 

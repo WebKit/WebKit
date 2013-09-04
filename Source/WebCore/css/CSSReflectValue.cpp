@@ -33,7 +33,7 @@ using namespace std;
 
 namespace WebCore {
 
-String CSSReflectValue::customCssText() const
+String CSSReflectValue::customCSSText() const
 {
     if (m_mask)
         return m_direction->cssText() + ' ' + m_offset->cssText() + ' ' + m_mask->cssText();

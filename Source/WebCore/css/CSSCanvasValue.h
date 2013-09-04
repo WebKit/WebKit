@@ -38,7 +38,7 @@ public:
     static PassRefPtr<CSSCanvasValue> create(const String& name) { return adoptRef(new CSSCanvasValue(name)); }
     ~CSSCanvasValue();
 
-    String customCssText() const;
+    String customCSSText() const;
 
     PassRefPtr<Image> image(RenderObject*, const IntSize&);
     bool isFixedSize() const { return true; }

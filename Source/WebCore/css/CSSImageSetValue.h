@@ -51,7 +51,7 @@ public:
     // Returns a StyleCachedImageSet if the best fit image has been cached already, otherwise a StylePendingImage.
     StyleImage* cachedOrPendingImageSet(Document*);
 
-    String customCssText() const;
+    String customCSSText() const;
 
     bool isPending() const { return !m_accessedBestFitImage; }
 

@@ -90,9 +90,9 @@ static String buildCssText(const String& expression)
     return result.toString(); 
 }
 
-String CSSCalcValue::customCssText() const
+String CSSCalcValue::customCSSText() const
 {
-    return buildCssText(m_expression->customCssText());
+    return buildCssText(m_expression->customCSSText());
 }
 
 bool CSSCalcValue::equals(const CSSCalcValue& other) const
@@ -145,7 +145,7 @@ public:
         return !m_value->getDoubleValue();
     }
 
-    virtual String customCssText() const
+    virtual String customCSSText() const
     {
         return m_value->cssText();
     }
@@ -339,9 +339,9 @@ public:
         return result.toString();  
     }
 
-    virtual String customCssText() const
+    virtual String customCSSText() const
     {
-        return buildCssText(m_leftSide->customCssText(), m_rightSide->customCssText(), m_operator);
+        return buildCssText(m_leftSide->customCSSText(), m_rightSide->customCSSText(), m_operator);
     }
 
 #if ENABLE(CSS_VARIABLES)

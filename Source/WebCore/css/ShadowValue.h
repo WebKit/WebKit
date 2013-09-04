@@ -42,7 +42,7 @@ public:
         return adoptRef(new ShadowValue(x, y, blur, spread, style, color));
     }
 
-    String customCssText() const;
+    String customCSSText() const;
 
     bool equals(const ShadowValue&) const;
 

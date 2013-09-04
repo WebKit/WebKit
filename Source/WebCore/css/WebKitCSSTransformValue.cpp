@@ -73,9 +73,9 @@ WebKitCSSTransformValue::WebKitCSSTransformValue(TransformOperationType op)
 {
 }
 
-String WebKitCSSTransformValue::customCssText() const
+String WebKitCSSTransformValue::customCSSText() const
 {
-    return transformValueToCssString(m_type, CSSValueList::customCssText());
+    return transformValueToCssString(m_type, CSSValueList::customCSSText());
 }
 
 #if ENABLE(CSS_VARIABLES)

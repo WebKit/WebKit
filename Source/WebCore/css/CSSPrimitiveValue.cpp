@@ -906,7 +906,7 @@ ALWAYS_INLINE static String formatNumber(double number, const char (&characters)
     return formatNumber(number, characters, characterCount - 1);
 }
 
-String CSSPrimitiveValue::customCssText() const
+String CSSPrimitiveValue::customCSSText() const
 {
     // FIXME: return the original value instead of a generated one (e.g. color
     // name if it was specified) - check what spec says about this
@@ -1178,7 +1178,7 @@ String CSSPrimitiveValue::customSerializeResolvingVariables(const HashMap<Atomic
         return quadVal->serializeResolvingVariables(variables);
     if (CSSBasicShape* shapeValue = getShapeValue())
         return shapeValue->serializeResolvingVariables(variables);
-    return customCssText();
+    return customCSSText();
 }
 
 bool CSSPrimitiveValue::hasVariableReference() const

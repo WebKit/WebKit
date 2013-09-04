@@ -1,3 +1,118 @@
+2013-09-04  Tim Horton  <timothy_horton@apple.com>
+
+        Rename customCssText -> customCSSText to match WebKit style
+        https://bugs.webkit.org/show_bug.cgi?id=120694
+
+        Reviewed by Simon Fraser.
+
+        No new tests, just a rename.
+
+        * WebCore.order:
+        * css/CSSAspectRatioValue.cpp:
+        (WebCore::CSSAspectRatioValue::customCSSText):
+        * css/CSSAspectRatioValue.h:
+        * css/CSSBorderImageSliceValue.cpp:
+        (WebCore::CSSBorderImageSliceValue::customCSSText):
+        * css/CSSBorderImageSliceValue.h:
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcValue::customCSSText):
+        (WebCore::CSSCalcPrimitiveValue::customCSSText):
+        (WebCore::CSSCalcBinaryOperation::customCSSText):
+        * css/CSSCalculationValue.h:
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::customCSSText):
+        * css/CSSCanvasValue.h:
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::customCSSText):
+        * css/CSSCrossfadeValue.h:
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::customCSSText):
+        * css/CSSCursorImageValue.h:
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::customCSSText):
+        * css/CSSFilterImageValue.h:
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::customCSSText):
+        * css/CSSFontFaceSrcValue.h:
+        * css/CSSFunctionValue.cpp:
+        (WebCore::CSSFunctionValue::customCSSText):
+        * css/CSSFunctionValue.h:
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSLinearGradientValue::customCSSText):
+        (WebCore::CSSRadialGradientValue::customCSSText):
+        * css/CSSGradientValue.h:
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::customCSSText):
+        * css/CSSImageSetValue.h:
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::customCSSText):
+        * css/CSSImageValue.h:
+        * css/CSSInheritedValue.cpp:
+        (WebCore::CSSInheritedValue::customCSSText):
+        * css/CSSInheritedValue.h:
+        * css/CSSInitialValue.cpp:
+        (WebCore::CSSInitialValue::customCSSText):
+        * css/CSSInitialValue.h:
+        * css/CSSLineBoxContainValue.cpp:
+        (WebCore::CSSLineBoxContainValue::customCSSText):
+        * css/CSSLineBoxContainValue.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::customCSSText):
+        (WebCore::CSSPrimitiveValue::customSerializeResolvingVariables):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSReflectValue.cpp:
+        (WebCore::CSSReflectValue::customCSSText):
+        * css/CSSReflectValue.h:
+        * css/CSSTimingFunctionValue.cpp:
+        (WebCore::CSSLinearTimingFunctionValue::customCSSText):
+        (WebCore::CSSCubicBezierTimingFunctionValue::customCSSText):
+        (WebCore::CSSStepsTimingFunctionValue::customCSSText):
+        * css/CSSTimingFunctionValue.h:
+        * css/CSSUnicodeRangeValue.cpp:
+        (WebCore::CSSUnicodeRangeValue::customCSSText):
+        * css/CSSUnicodeRangeValue.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::cssText):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::customCSSText):
+        * css/CSSValueList.h:
+        * css/FontFeatureValue.cpp:
+        (WebCore::FontFeatureValue::customCSSText):
+        * css/FontFeatureValue.h:
+        * css/FontValue.cpp:
+        (WebCore::FontValue::customCSSText):
+        * css/FontValue.h:
+        * css/ShadowValue.cpp:
+        (WebCore::ShadowValue::customCSSText):
+        * css/ShadowValue.h:
+        * css/WebKitCSSArrayFunctionValue.cpp:
+        (WebCore::WebKitCSSArrayFunctionValue::customCSSText):
+        * css/WebKitCSSArrayFunctionValue.h:
+        * css/WebKitCSSFilterValue.cpp:
+        (WebCore::WebKitCSSFilterValue::customCSSText):
+        * css/WebKitCSSFilterValue.h:
+        * css/WebKitCSSMatFunctionValue.cpp:
+        (WebCore::WebKitCSSMatFunctionValue::customCSSText):
+        * css/WebKitCSSMatFunctionValue.h:
+        * css/WebKitCSSMixFunctionValue.cpp:
+        (WebCore::WebKitCSSMixFunctionValue::customCSSText):
+        * css/WebKitCSSMixFunctionValue.h:
+        * css/WebKitCSSSVGDocumentValue.cpp:
+        (WebCore::WebKitCSSSVGDocumentValue::customCSSText):
+        * css/WebKitCSSSVGDocumentValue.h:
+        * css/WebKitCSSShaderValue.cpp:
+        (WebCore::WebKitCSSShaderValue::customCSSText):
+        * css/WebKitCSSShaderValue.h:
+        * css/WebKitCSSTransformValue.cpp:
+        (WebCore::WebKitCSSTransformValue::customCSSText):
+        * css/WebKitCSSTransformValue.h:
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::customCSSText):
+        * svg/SVGColor.h:
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::customCSSText):
+        * svg/SVGPaint.h:
+
 2013-09-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-valuetext property not exposing AXValueDescription

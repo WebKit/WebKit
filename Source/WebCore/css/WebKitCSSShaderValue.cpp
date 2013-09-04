@@ -84,7 +84,7 @@ StyleShader* WebKitCSSShaderValue::cachedOrPendingShader()
     return m_shader.get();
 }
 
-String WebKitCSSShaderValue::customCssText() const
+String WebKitCSSShaderValue::customCSSText() const
 {
     StringBuilder result;
     result.appendLiteral("url(");

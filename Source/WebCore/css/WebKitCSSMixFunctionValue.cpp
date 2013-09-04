@@ -45,9 +45,9 @@ WebKitCSSMixFunctionValue::WebKitCSSMixFunctionValue(const WebKitCSSMixFunctionV
 {
 }
 
-String WebKitCSSMixFunctionValue::customCssText() const
+String WebKitCSSMixFunctionValue::customCSSText() const
 {
-    return "mix(" + CSSValueList::customCssText() + ')';
+    return "mix(" + CSSValueList::customCSSText() + ')';
 }
 
 PassRefPtr<WebKitCSSMixFunctionValue> WebKitCSSMixFunctionValue::cloneForCSSOM() const

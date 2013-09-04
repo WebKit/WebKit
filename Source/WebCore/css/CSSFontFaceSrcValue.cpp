@@ -63,7 +63,7 @@ bool CSSFontFaceSrcValue::isSupportedFormat() const
            ;
 }
 
-String CSSFontFaceSrcValue::customCssText() const
+String CSSFontFaceSrcValue::customCSSText() const
 {
     StringBuilder result;
     if (isLocal())

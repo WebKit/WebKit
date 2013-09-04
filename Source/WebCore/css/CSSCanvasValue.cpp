@@ -38,7 +38,7 @@ CSSCanvasValue::~CSSCanvasValue()
         m_element->removeObserver(&m_canvasObserver);
 }
 
-String CSSCanvasValue::customCssText() const
+String CSSCanvasValue::customCSSText() const
 {
     StringBuilder result;
     result.appendLiteral("-webkit-canvas(");

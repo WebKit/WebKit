@@ -70,7 +70,7 @@ public:
     virtual PassOwnPtr<CalcExpressionNode> toCalcValue(const RenderStyle*, const RenderStyle* rootStyle, double zoom = 1.0) const = 0;    
     virtual double doubleValue() const = 0;
     virtual double computeLengthPx(const RenderStyle* currentStyle, const RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const = 0;
-    virtual String customCssText() const = 0;
+    virtual String customCSSText() const = 0;
 #if ENABLE(CSS_VARIABLES)
     virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const = 0;
     virtual bool hasVariableReference() const = 0;
@@ -107,7 +107,7 @@ public:
     bool isNegative() const { return m_expression->doubleValue() < 0; }
     double computeLengthPx(const RenderStyle* currentStyle, const RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const;
         
-    String customCssText() const;
+    String customCSSText() const;
     bool equals(const CSSCalcValue&) const;
 #if ENABLE(CSS_VARIABLES)
     String customSerializeResolvingVariables(const HashMap<AtomicString, String>&) const;

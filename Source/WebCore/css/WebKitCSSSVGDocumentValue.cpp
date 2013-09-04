@@ -62,7 +62,7 @@ CachedSVGDocument* WebKitCSSSVGDocumentValue::load(CachedResourceLoader* loader)
     return m_document.get();
 }
 
-String WebKitCSSSVGDocumentValue::customCssText() const
+String WebKitCSSSVGDocumentValue::customCSSText() const
 {
     return quoteCSSStringIfNeeded(m_url);
 }

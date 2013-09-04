@@ -46,7 +46,7 @@ public:
 
     const String& url() { return m_url; }
 
-    String customCssText() const;
+    String customCSSText() const;
 
     PassRefPtr<CSSValue> cloneForCSSOM() const;
 

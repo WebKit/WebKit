@@ -95,7 +95,7 @@ PassRefPtr<CSSValueList> CSSValueList::copy()
     return newList.release();
 }
 
-String CSSValueList::customCssText() const
+String CSSValueList::customCSSText() const
 {
     StringBuilder result;
     String separator;

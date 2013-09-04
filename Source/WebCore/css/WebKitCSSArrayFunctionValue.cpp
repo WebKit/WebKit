@@ -44,9 +44,9 @@ WebKitCSSArrayFunctionValue::WebKitCSSArrayFunctionValue(const WebKitCSSArrayFun
 {
 }
 
-String WebKitCSSArrayFunctionValue::customCssText() const
+String WebKitCSSArrayFunctionValue::customCSSText() const
 {
-    return "array(" + CSSValueList::customCssText() + ')';
+    return "array(" + CSSValueList::customCSSText() + ')';
 }
 
 PassRefPtr<WebKitCSSArrayFunctionValue> WebKitCSSArrayFunctionValue::cloneForCSSOM() const

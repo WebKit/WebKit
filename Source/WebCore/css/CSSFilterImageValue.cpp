@@ -48,7 +48,7 @@ CSSFilterImageValue::~CSSFilterImageValue()
         m_cachedImage->removeClient(&m_filterSubimageObserver);
 }
 
-String CSSFilterImageValue::customCssText() const
+String CSSFilterImageValue::customCSSText() const
 {
     StringBuilder result;
     result.appendLiteral("-webkit-filter(");

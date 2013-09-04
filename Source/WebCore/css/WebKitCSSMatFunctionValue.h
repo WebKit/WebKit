@@ -44,7 +44,7 @@ public:
         return adoptRef(new WebKitCSSMatFunctionValue());
     }
 
-    String customCssText() const;
+    String customCSSText() const;
 
     PassRefPtr<WebKitCSSMatFunctionValue> cloneForCSSOM() const;
 

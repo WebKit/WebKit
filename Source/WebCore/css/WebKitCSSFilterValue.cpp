@@ -50,7 +50,7 @@ bool WebKitCSSFilterValue::typeUsesSpaceSeparator(FilterOperationType operationT
 #endif
 }
 
-String WebKitCSSFilterValue::customCssText() const
+String WebKitCSSFilterValue::customCSSText() const
 {
     const char* result = "";
     switch (m_type) {
@@ -97,7 +97,7 @@ String WebKitCSSFilterValue::customCssText() const
 #endif
     }
 
-    return result + CSSValueList::customCssText() + ')';
+    return result + CSSValueList::customCSSText() + ')';
 }
 
 WebKitCSSFilterValue::WebKitCSSFilterValue(const WebKitCSSFilterValue& cloneFrom)

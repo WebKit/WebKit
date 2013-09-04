@@ -37,7 +37,7 @@ public:
         return adoptRef(new CSSInitialValue(/* implicit */ true));
     }
 
-    String customCssText() const;
+    String customCSSText() const;
 
     bool isImplicit() const { return m_isImplicit; }
 

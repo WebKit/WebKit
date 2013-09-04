@@ -40,7 +40,7 @@ public:
 
     const String& tag() const { return m_tag; }
     int value() const { return m_value; }
-    String customCssText() const;
+    String customCSSText() const;
 
     bool equals(const FontFeatureValue&) const;
 

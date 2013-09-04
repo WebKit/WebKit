@@ -50,7 +50,7 @@ public:
 
     ~CSSCrossfadeValue();
 
-    String customCssText() const;
+    String customCSSText() const;
 
     PassRefPtr<Image> image(RenderObject*, const IntSize&);
     bool isFixedSize() const { return true; }

@@ -37,7 +37,7 @@ public:
         return adoptRef(new FontValue);
     }
 
-    String customCssText() const;
+    String customCSSText() const;
 
     bool equals(const FontValue&) const;
 

@@ -73,7 +73,7 @@ void SVGColor::setColor(unsigned short, const String&, const String&, ExceptionC
     ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
-String SVGColor::customCssText() const
+String SVGColor::customCSSText() const
 {
     switch (m_colorType) {
     case SVG_COLORTYPE_UNKNOWN:

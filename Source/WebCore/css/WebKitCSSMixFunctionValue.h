@@ -44,7 +44,7 @@ public:
         return adoptRef(new WebKitCSSMixFunctionValue());
     }
 
-    String customCssText() const;
+    String customCSSText() const;
 
     PassRefPtr<WebKitCSSMixFunctionValue> cloneForCSSOM() const;
 

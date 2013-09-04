@@ -53,7 +53,7 @@ public:
     StyleCachedShader* cachedShader(CachedResourceLoader*);
     StyleShader* cachedOrPendingShader();
 
-    String customCssText() const;
+    String customCSSText() const;
 
     bool equals(const WebKitCSSShaderValue&) const;
 

@@ -39,7 +39,7 @@ FontFeatureValue::FontFeatureValue(const String& tag, int value)
 {
 }
 
-String FontFeatureValue::customCssText() const
+String FontFeatureValue::customCSSText() const
 {
     StringBuilder builder;
     builder.append('\'');

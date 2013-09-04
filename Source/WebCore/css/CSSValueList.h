@@ -59,7 +59,7 @@ public:
     bool hasValue(CSSValue*) const;
     PassRefPtr<CSSValueList> copy();
 
-    String customCssText() const;
+    String customCSSText() const;
     bool equals(const CSSValueList&) const;
     bool equals(const CSSValue&) const;
 #if ENABLE(CSS_VARIABLES)
