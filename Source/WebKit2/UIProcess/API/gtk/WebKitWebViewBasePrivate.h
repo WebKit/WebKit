@@ -51,6 +51,7 @@ WebKit::WebContextMenuProxyGtk* webkitWebViewBaseGetActiveContextMenuProxy(WebKi
 GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase*);
 void webkitWebViewBaseSetInputMethodState(WebKitWebViewBase*, bool enabled);
 void webkitWebViewBaseUpdateTextInputState(WebKitWebViewBase*);
+void webkitWebViewBaseUpdatePreferences(WebKitWebViewBase*);
 
 #if USE(TEXTURE_MAPPER_GL)
 void webkitWebViewBaseQueueDrawOfAcceleratedCompositingResults(WebKitWebViewBase*);

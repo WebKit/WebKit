@@ -379,6 +379,8 @@ static void webkitWebViewUpdateSettings(WebKitWebView* webView)
     page->setCanRunModal(webkit_settings_get_allow_modal_dialogs(settings));
     page->setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
 
+    webkitWebViewBaseUpdatePreferences(WEBKIT_WEB_VIEW_BASE(webView));
+
     g_signal_connect(settings, "notify::allow-modal-dialogs", G_CALLBACK(allowModalDialogsChanged), webView);
     g_signal_connect(settings, "notify::zoom-text-only", G_CALLBACK(zoomTextOnlyChanged), webView);
     g_signal_connect(settings, "notify::user-agent", G_CALLBACK(userAgentChanged), webView);
