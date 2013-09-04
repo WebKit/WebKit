@@ -1,3 +1,24 @@
+2013-09-04  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Revise the ShapeInterval set operations' implementation
+        https://bugs.webkit.org/show_bug.cgi?id=120349
+
+        Reviewed by Alexandru Chiculita.
+
+        Revised the ShapeIntervals unite, intersect, and subtract operations to
+        improve efficiency and clarity.
+
+        No new tests are required, this is just an internal refactoring.
+
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::computeOverlappingEdgeXProjections): Removed call to ShapeInterval<T>sortVector(), since calling std::sort directly is simpler.
+        * rendering/shapes/ShapeInterval.h:
+        (WebCore::ShapeInterval::contains): True if the interval parameter is within this interval.
+        (WebCore::ShapeInterval::intersect): Substantially revised version of the original method.
+        (WebCore::ShapeInterval::uniteVectors): Ditto.
+        (WebCore::ShapeInterval::intersectVectors): Ditto.
+        (WebCore::ShapeInterval::subtractVectors): Ditto.
+
 2013-09-04  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Adds an accessibility support to access a value of the color control element

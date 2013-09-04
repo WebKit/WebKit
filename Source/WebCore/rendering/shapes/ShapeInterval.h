@@ -36,6 +36,7 @@ namespace WebCore {
 
 template <typename T>
 class ShapeInterval {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ShapeInterval(T x1 = 0, T x2 = 0)
         : m_x1(x1)
@@ -71,141 +72,140 @@ public:
         return x2() >= interval.x1() && x1() <= interval.x2();
     }
 
-    bool intersect(const ShapeInterval<T>& i, ShapeInterval<T>& rv) const
+    bool contains(const ShapeInterval<T>& interval) const
     {
-        if (x2() < i.x1() || x1() > i.x2())
-            return false;
-        rv.set(std::max(x1(), i.x1()), std::min(x2(), i.x2()));
-        return true;
+        return x1() <= interval.x1() && x2() >= interval.x2();
+    }
+
+    ShapeInterval<T> intersect(const ShapeInterval<T>& interval) const
+    {
+        ASSERT(overlaps(interval));
+        return ShapeInterval<T>(std::max<T>(x1(), interval.x1()), std::min<T>(x2(), interval.x2()));
     }
 
     typedef Vector<ShapeInterval<T> > ShapeIntervals;
     typedef typename ShapeIntervals::const_iterator const_iterator;
     typedef typename ShapeIntervals::iterator iterator;
 
-    static void sortVector(ShapeIntervals& intervals)
+    static void uniteShapeIntervals(const ShapeIntervals& a, const ShapeIntervals& b, ShapeIntervals& result)
     {
-        std::sort(intervals.begin(), intervals.end());
+        ASSERT(shapeIntervalsAreSortedAndDisjoint(a) && shapeIntervalsAreSortedAndDisjoint(b));
+
+        if (a.isEmpty() || a == b) {
+            result.appendRange(b.begin(), b.end());
+            return;
+        }
+
+        if (b.isEmpty()) {
+            result.appendRange(a.begin(), a.end());
+            return;
+        }
+
+        const_iterator aNext = a.begin();
+        const_iterator bNext = b.begin();
+
+        while (aNext != a.end() || bNext != b.end()) {
+            const_iterator next = (bNext == b.end() || (aNext != a.end() && aNext->x1() < bNext->x1())) ? aNext++ : bNext++;
+            if (result.isEmpty() || !result.last().overlaps(*next))
+                result.append(*next);
+            else
+                result.last().setX2(std::max<T>(result.last().x2(), next->x2()));
+        }
     }
 
-    static void uniteVectors(const ShapeIntervals& v1, const ShapeIntervals& v2, ShapeIntervals& rv)
+    static void intersectShapeIntervals(const ShapeIntervals& a, const ShapeIntervals& b, ShapeIntervals& result)
     {
-        if (!v1.size())
-            rv.appendRange(v2.begin(), v2.end());
-        else if (!v2.size())
-            rv.appendRange(v1.begin(), v1.end());
-        else {
-            ShapeIntervals v(v1.size() + v2.size());
-            ShapeInterval<T>* interval = 0;
+        ASSERT(shapeIntervalsAreSortedAndDisjoint(a) && shapeIntervalsAreSortedAndDisjoint(b));
 
-            std::merge(v1.begin(), v1.end(), v2.begin(), v2.end(), v.begin());
-
-            for (size_t i = 0; i < v.size(); i++) {
-                if (!interval)
-                    interval = &v[i];
-                else if (v[i].x1() >= interval->x1() && v[i].x1() <= interval->x2()) // FIXME: 1st <= test not needed?
-                    interval->set(interval->x1(), std::max<T>(interval->x2(), v[i].x2()));
-                else {
-                    rv.append(*interval);
-                    interval = &v[i];
-                }
-            }
-
-            if (interval)
-                rv.append(*interval);
-            }
-    }
-
-    static void intersectVectors(const ShapeIntervals& v1, const ShapeIntervals& v2, ShapeIntervals& rv)
-    {
-        size_t v1Size = v1.size();
-        size_t v2Size = v2.size();
-
-        if (!v1Size || !v2Size)
+        if (a.isEmpty() || b.isEmpty())
             return;
 
-        ShapeInterval<T> interval;
-        bool overlap = false;
-        size_t i1 = 0;
-        size_t i2 = 0;
+        if (a == b) {
+            result.appendRange(a.begin(), a.end());
+            return;
+        }
 
-        while (i1 < v1Size && i2 < v2Size) {
-            ShapeInterval<T> v12;
-            if (v1[i1].intersect(v2[i2], v12)) {
-                if (!overlap || !v12.intersect(interval, interval)) {
-                    if (overlap)
-                        rv.append(interval);
-                    interval = v12;
-                    overlap = true;
+        const_iterator aNext = a.begin();
+        const_iterator bNext = b.begin();
+        const_iterator working = aNext->x1() < bNext->x1() ? aNext++ : bNext++;
+
+        while (aNext != a.end() || bNext != b.end()) {
+            const_iterator next = (bNext == b.end() || (aNext != a.end() && aNext->x1() < bNext->x1())) ? aNext++ : bNext++;
+            if (working->overlaps(*next)) {
+                result.append(working->intersect(*next));
+                if (next->x2() > working->x2())
+                    working = next;
+            } else
+                working = next;
+        }
+    }
+
+    static void subtractShapeIntervals(const ShapeIntervals& a, const ShapeIntervals& b, ShapeIntervals& result)
+    {
+        ASSERT(shapeIntervalsAreSortedAndDisjoint(a) && shapeIntervalsAreSortedAndDisjoint(b));
+
+        if (a.isEmpty() || a == b)
+            return;
+
+        if (b.isEmpty()) {
+            result.appendRange(a.begin(), a.end());
+            return;
+        }
+
+        const_iterator aNext = a.begin();
+        const_iterator bNext = b.begin();
+        ShapeInterval<T> aValue = *aNext;
+        ShapeInterval<T> bValue = *bNext;
+
+        while (aNext != a.end() && bNext != b.end()) {
+            if (bValue.contains(aValue)) {
+                aValue = *++aNext;
+            } else if (aValue.contains(bValue)) {
+                if (bValue.x1() > aValue.x1())
+                    result.append(ShapeInterval<T>(aValue.x1(), bValue.x1()));
+                if (aValue.x2() > bValue.x2())
+                    aValue.setX1(bValue.x2());
+                else
+                    aValue = *++aNext;
+                bValue = *++bNext;
+            } else if (aValue.overlaps(bValue)) {
+                if (aValue.x1() < bValue.x1()) {
+                    result.append(ShapeInterval<T>(aValue.x1(), bValue.x1()));
+                    aValue = *++aNext;
+                } else {
+                    aValue.setX1(bValue.x2());
+                    bValue = *++bNext;
                 }
-                if (v1[i1].x2() < v2[i2].x2())
-                    i1++;
-                else
-                    i2++;
             } else {
-                if (overlap)
-                    rv.append(interval);
-                overlap = false;
-                if (v1[i1].x1() < v2[i2].x1())
-                    i1++;
-                else
-                    i2++;
+                if (aValue.x1() < bValue.x1()) {
+                    result.append(aValue);
+                    aValue = *++aNext;
+                } else
+                    bValue = *++bNext;
             }
         }
 
-        if (overlap)
-            rv.append(interval);
-    }
-
-    static void subtractVectors(const ShapeIntervals& v1, const ShapeIntervals& v2, ShapeIntervals& rv)
-    {
-        size_t v1Size = v1.size();
-        size_t v2Size = v2.size();
-
-        if (!v1Size)
-            return;
-
-        if (!v2Size)
-            rv.appendRange(v1.begin(), v1.end());
-        else {
-            size_t i1 = 0, i2 = 0;
-            rv.appendRange(v1.begin(), v1.end());
-
-            while (i1 < rv.size() && i2 < v2Size) {
-                ShapeInterval<T>& interval1 = rv[i1];
-                const ShapeInterval<T>& interval2 = v2[i2];
-
-                if (interval2.x1() <= interval1.x1() && interval2.x2() >= interval1.x2())
-                    rv.remove(i1);
-                else if (interval2.x2() < interval1.x1())
-                    i2 += 1;
-                else if (interval2.x1() > interval1.x2())
-                    i1 += 1;
-                else if (interval2.x1() > interval1.x1() && interval2.x2() < interval1.x2()) {
-                    rv.insert(i1, ShapeInterval(interval1.x1(), interval2.x1()));
-                    interval1.set(interval2.x2(), interval1.x2());
-                    i2 += 1;
-                } else if (interval2.x1() <= interval1.x1()) {
-                    interval1.set(interval2.x2(), interval1.x2());
-                    i2 += 1;
-                } else  { // (interval2.x2() >= interval1.x2())
-                    interval1.set(interval1.x1(), interval2.x1());
-                    i1 += 1;
-                }
-            }
+        if (aNext != a.end()) {
+            result.append(aValue);
+            result.appendRange(++aNext, a.end());
         }
     }
 
     bool operator==(const ShapeInterval<T>& other) const { return x1() == other.x1() && x2() == other.x2(); }
     bool operator!=(const ShapeInterval<T>& other) const { return !operator==(other); }
-    bool operator< (const ShapeInterval<T>& other) const { return x1() < other.x1(); }
-    bool operator> (const ShapeInterval<T>& other) const { return operator< (other, *this); }
-    bool operator<=(const ShapeInterval<T>& other) const { return !operator> (other); }
-    bool operator>=(const ShapeInterval<T>& other) const { return !operator< (other); }
 
 private:
     T m_x1;
     T m_x2;
+
+    static bool shapeIntervalsAreSortedAndDisjoint(const ShapeIntervals& intervals)
+    {
+        for (unsigned i = 1; i < intervals.size(); i++)
+            if (intervals[i - 1].x2() > intervals[i].x1())
+                return false;
+
+        return true;
+    }
 };
 
 typedef ShapeInterval<int> IntShapeInterval;
