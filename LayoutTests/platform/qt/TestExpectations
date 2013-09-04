@@ -473,6 +473,9 @@ webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing
 
+# WEB_TIMING doesn't support on Qt.
+webkit.org/b/118395 http/tests/misc/webtiming-ssl.php [ Skip ]
+
 # Missing eventSender.scheduleAsynchronousKeyDown() implementation
 fast/dom/MutationObserver/inline-event-listener.html
 
@@ -635,6 +638,8 @@ http/tests/media
 http/tests/navigation/javascriptlink-goback.html
 http/tests/navigation/metaredirect-goback.html
 http/tests/navigation/timerredirect-goback.html
+
+webkit.org/b/120028 http/tests/navigation/post-frames-goback1-uncached.html [ Skip ]
 
 # Advanced credential handling
 http/tests/security/401-logout/401-logout.php
