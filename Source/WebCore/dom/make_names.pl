@@ -622,7 +622,7 @@ sub printTypeChecks
     my %names = %$namesRef;
 
     for my $name (sort keys %names) {
-        if ($parsedTags{$name}{generateTypeChecks} != 1) {
+        if (!$parsedTags{$name}{generateTypeChecks}) {
             next;
         }
 
