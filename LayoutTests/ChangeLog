@@ -1,3 +1,13 @@
+2013-09-04  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed bot greening.
+
+        * platform/qt-wk2/fast/regions/element-in-named-flow-absolute-from-fixed-expected.txt: Added.
+        * platform/qt-wk2/fast/regions/element-in-named-flow-fixed-from-absolute-expected.txt: Added.
+        * platform/qt-wk2/fast/regions/element-inflow-fixed-from-outflow-static-expected.txt: Added.
+        * platform/qt-wk2/fast/regions/element-outflow-static-from-inflow-fixed-expected.txt: Added.
+        * platform/qt/TestExpectations: Skip after r155014.
+
 2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
