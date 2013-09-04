@@ -1311,13 +1311,6 @@ void MediaPlayerPrivateGStreamer::updateStates()
     case GST_STATE_CHANGE_ASYNC:
         LOG_MEDIA_MESSAGE("Async: State: %s, pending: %s", gst_element_state_get_name(state), gst_element_state_get_name(pending));
         // Change in progress.
-
-        // A live stream was paused, reset the pipeline.
-        if (state == GST_STATE_PAUSED && pending == GST_STATE_PLAYING && isLiveStream()) {
-            changePipelineState(GST_STATE_READY);
-            changePipelineState(GST_STATE_PLAYING);
-        }
-
         break;
     case GST_STATE_CHANGE_FAILURE:
         LOG_MEDIA_MESSAGE("Failure: State: %s, pending: %s", gst_element_state_get_name(state), gst_element_state_get_name(pending));

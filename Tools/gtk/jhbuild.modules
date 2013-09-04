@@ -52,8 +52,8 @@
       href="http://xorg.freedesktop.org"/>
   <repository type="tarball" name="xmlsoft.org"
       href="ftp://xmlsoft.org"/>
-  <repository type="git" name="gstreamer"
-      href="git://anongit.freedesktop.org/git/gstreamer/"/>
+  <repository type="tarball" name="gstreamer"
+      href="http://gstreamer.freedesktop.org/src/"/>
   <repository type="tarball" name="savannah.gnu.org"
       href="http://download.savannah.gnu.org/releases/"/>
 
@@ -268,35 +268,54 @@
   </autotools>
 
   <autotools id="gstreamer">
-    <branch repo="gstreamer" module="gstreamer" checkoutdir="gstreamer" tag="1.0.8"/>
+    <branch module="gstreamer/gstreamer-1.0.8.tar.xz" version="1.0.8"
+            repo="gstreamer"
+            hash="sha256:ff70f45509566b88e35986971ace5e89cb6cb232e9ca249f84502abceef1762d"
+            md5sum="fb0c73470e8dd5dab01e5e9e62db9db9"/>
   </autotools>
 
   <autotools id="gst-plugins-base" autogenargs="--disable-examples">
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch repo="gstreamer" module="gst-plugins-base" checkoutdir="gst-plugins-base" tag="1.0.8"/>
+    <branch module="gst-plugins-base/gst-plugins-base-1.0.8.tar.xz" version="1.0.8"
+            repo="gstreamer"
+            hash="sha256:b55c9deea00acf789f82845c088b7c7c17b3ecef24a94831a819071b3dd8ef0d"
+            md5sum="c8b36678186e7d4fb1e6395ffcd1abb1"/>
   </autotools>
 
   <autotools id="gst-plugins-good" autogenargs="--disable-examples --disable-soup --disable-gst_v4l2 --without-libv4l2">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch repo="gstreamer" module="gst-plugins-good" checkoutdir="gst-plugins-good" tag="1.0.8"/>
+
+    <branch module="gst-plugins-good/gst-plugins-good-1.0.8.tar.xz" version="1.0.8"
+            repo="gstreamer"
+            hash="sha256:97831570ccdd8e15557f18858b965e54433d572d27fdabebb8b710cee276cfad"
+            md5sum="4969826043bbd3f76e4a0d49ea475736">
+      <patch file="udpsrc-improve-timeouts.patch" strip="1"/>
+      <patch file="rtspsrc-timeout-on-udpsrc-is-in-nanoseconds.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="gst-plugins-bad" autogenargs="--disable-examples">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch repo="gstreamer" module="gst-plugins-bad" checkoutdir="gst-plugins-bad" tag="1.0.8"/>
+    <branch module="gst-plugins-bad/gst-plugins-bad-1.0.8.tar.xz" version="1.0.8"
+            repo="gstreamer"
+            hash="sha256:6949b5532034fc37d5a874e4e3330107767238bc4def9f769b8193124e2420cc"
+            md5sum="a2fdf125ee2ae46047dcbcfc305949ee"/>
   </autotools>
 
   <autotools id="gst-libav" autogenargs="--with-libav-extra-configure='--disable-yasm'">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch repo="gstreamer" module="gst-libav" checkoutdir="gst-libav" tag="1.0.8"/>
+    <branch module="gst-libav/gst-libav-1.0.8.tar.xz" version="1.0.8"
+            repo="gstreamer"
+            hash="sha256:e6e538290e585c993609337761d894dd1b6b53ef625798b2a511d5314579995f"
+            md5sum="7c2e8db039efa1880a61a6982a6909d7"/>
   </autotools>
 
   <autotools id="xserver" autogenargs="--disable-xinerama --enable-glx --enable-composite --disable-xorg --disable-dmx --disable-xnest --disable-xquartz --disable-xwin --disable-xephyr --disable-xfake --disable-xfbdev --disable-install-setuid --disable-unit-tests --enable-unix-transport --enable-tcp-transport --enable-local-transport --with-xkb-path=/usr/share/X11/xkb --with-xkb-output=/var/lib/xkb --with-xkb-bin-directory=/usr/bin">
