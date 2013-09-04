@@ -219,6 +219,18 @@ PASS areValuesIdentical(newObj, obj) is true
 Serialize ["foo","bar"]:
 PASS bufferView.length is expectedBufferValues.length
 
+Deserialize to {"expando":{}}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+PASS areValuesIdentical(newObj, obj) is true
+Serialize {"expando":{}}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {"expando":{}}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+PASS areValuesIdentical(newObj, obj) is true
+Serialize {"expando":{}}:
+PASS bufferView.length is expectedBufferValues.length
+
 Serialize undefined:
 PASS thrownException.code is expectedException
 PASS successfullyParsed is true

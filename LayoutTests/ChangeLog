@@ -1,3 +1,9 @@
+2013-09-04  Oliver Hunt  <oliver@apple.com>
+
+        Actually land the new results
+
+        * fast/storage/serialized-script-value-expected.txt:
+
 2013-09-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-valuetext property not exposing AXValueDescription
