@@ -1171,7 +1171,9 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
         HTMLLabelElement* label = labelForElement(toElement(node));
         if (label) {
             AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label);
-            textOrder.append(AccessibilityText(label->innerText(), LabelByElementText, labelObject));
+            String innerText = label->innerText();
+            if (!innerText.isEmpty())
+                textOrder.append(AccessibilityText(innerText, LabelByElementText, labelObject));
             return;
         }
     }

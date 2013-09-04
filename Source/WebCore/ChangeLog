@@ -1,3 +1,17 @@
+2013-09-04  Samuel White  <samuel_white@apple.com>
+
+        AX: when no other label on provided on form elements, WebKit should fall back to using @title
+        https://bugs.webkit.org/show_bug.cgi?id=112842
+
+        Reviewed by Chris Fleizach.
+
+        Don't let input elements include empty labels in their accessibility title.
+
+        Test: platform/mac/accessibility/input-title.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::titleElementText):
+
 2013-09-04  Andreas Kling  <akling@apple.com>
 
         Make ImageQualityController per-RenderView.

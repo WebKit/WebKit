@@ -1,3 +1,16 @@
+2013-09-04  Samuel White  <samuel_white@apple.com>
+
+        AX: when no other label on provided on form elements, WebKit should fall back to using @title
+        https://bugs.webkit.org/show_bug.cgi?id=112842
+
+        Reviewed by Chris Fleizach.
+
+        Added test to ensure that input elements are computing their
+        accessibility title as expected.
+
+        * platform/mac/accessibility/input-title-expected.txt: Added.
+        * platform/mac/accessibility/input-title.html: Added.
+
 2013-09-04  Tim Horton  <timothy_horton@apple.com>
 
         [mac] PDFDocumentImage should use PDFKit to draw
