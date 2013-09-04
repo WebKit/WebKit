@@ -1,3 +1,11 @@
+2013-09-04  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed bot greening.
+
+        * platform/qt-wk2/compositing/images/direct-image-object-fit-expected.txt: Rebaselining after r154921.
+        * platform/qt-wk2/compositing/reflections/direct-image-object-fit-reflected-expected.txt: Ditto.
+        * platform/qt/TestExpectations: Skip after r155008.
+
 2013-09-04  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip failing tests and added platform specifix expected result.

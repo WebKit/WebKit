@@ -2794,3 +2794,6 @@ fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
 # Failing tests after r155014
 webkit.org/b/120671 editing/selection/doubleclick-japanese-text.html [ Skip ]
 webkit.org/b/120671 editing/style/make-text-writing-direction-inline-win.html [ Skip ]
+
+# [EFL][GTK][Qt] The layout test fast/storage/serialized-script-value.html is failing after r155008.
+webkit.org/b/120677 fast/storage/serialized-script-value.html [ Skip ]
