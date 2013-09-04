@@ -535,15 +535,12 @@ void FontCache::invalidate()
 
     gGeneration++;
 
-    Vector<RefPtr<FontSelector> > clients;
-    size_t numClients = gClients->size();
-    clients.reserveInitialCapacity(numClients);
-    HashSet<FontSelector*>::iterator end = gClients->end();
-    for (HashSet<FontSelector*>::iterator it = gClients->begin(); it != end; ++it)
-        clients.append(*it);
+    Vector<Ref<FontSelector>> clients;
+    clients.reserveInitialCapacity(gClients->size());
+    for (auto it = gClients->begin(), end = gClients->end(); it != end; ++it)
+        clients.uncheckedAppend(**it);
 
-    ASSERT(numClients == clients.size());
-    for (size_t i = 0; i < numClients; ++i)
+    for (unsigned i = 0; i < clients.size(); ++i)
         clients[i]->fontCacheInvalidated();
 
     purgeInactiveFontData();

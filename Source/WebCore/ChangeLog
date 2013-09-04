@@ -1,3 +1,19 @@
+2013-09-04  Andreas Kling  <akling@apple.com>
+
+        Use Vector<Ref<T>> in three random WebCore loops.
+        <https://webkit.org/b/120661>
+
+        Reviewed by Darin Adler.
+
+        Clean up three little loops to use Refs to avoid null checking known-valid objects.
+        Also apply auto, reserveInitialCapacity and uncheckedAppend as appropriate.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchAllPendingBeforeUnloadEvents):
+        (WebCore::DOMWindow::dispatchAllPendingUnloadEvents):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::invalidate):
+
 2013-09-04  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Color of input button's text broken with recent gnome-themes-standard
