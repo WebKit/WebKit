@@ -1,3 +1,14 @@
+2013-09-04  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        REGRESSION (r132328): /WebKit2APITests/TestWebKitAccessibility unit test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=100408
+
+        Unreviewed gardening. Unskip TestWebKitAccessibility after
+        manually checking that it's running properly in the bot.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Unskipped TestWebKitAccessibility.
+
 2013-09-04  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add support for the Wayland build target
