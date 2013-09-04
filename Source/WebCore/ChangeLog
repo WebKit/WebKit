@@ -1,3 +1,16 @@
+2013-09-04  Jae Hyun Park  <jae.park@company100.net>
+
+        [Coordinated Graphics] Remove unused method in CoordinatedGraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=120664
+
+        Reviewed by Darin Adler.
+
+        CoordinatedGraphicsLayer::hasPendingVisibleChanges is not used as of
+        r148952.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+
 2013-09-04  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Revise the ShapeInterval set operations' implementation

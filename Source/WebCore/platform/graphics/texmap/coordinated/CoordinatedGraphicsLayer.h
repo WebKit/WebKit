@@ -149,7 +149,6 @@ public:
 
     void setNeedsVisibleRectAdjustment();
     void purgeBackingStores();
-    bool hasPendingVisibleChanges();
 
     static void setShouldSupportContentsTiling(bool);
     CoordinatedGraphicsLayer* findFirstDescendantWithContentsRecursively();
