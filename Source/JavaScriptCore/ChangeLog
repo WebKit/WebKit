@@ -1,3 +1,18 @@
+2013-09-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        ASSERT in MarkedAllocator::allocateSlowCase is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=120639
+
+        Reviewed by Oliver Hunt.
+
+        ASSERT(!m_heap->shouldCollect()) is no longer true due to our use of the GC 
+        deferral mechanism. We could technically be beyond our byte allocation limit, 
+        but still not try to collect due to deferral. This patch amends shouldCollect() 
+        to return false if GC is currently deferred.
+
+        * heap/Heap.h:
+        (JSC::Heap::shouldCollect):
+
 2013-09-03  Filip Pizlo  <fpizlo@apple.com>
 
         The DFG should be able to tier-up and OSR enter into the FTL

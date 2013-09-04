@@ -305,6 +305,8 @@ namespace JSC {
 
     inline bool Heap::shouldCollect()
     {
+        if (isDeferred())
+            return false;
         if (Options::gcMaxHeapSize())
             return m_bytesAllocated > Options::gcMaxHeapSize() && m_isSafeToCollect && m_operationInProgress == NoOperation;
         return m_bytesAllocated > m_bytesAllocatedLimit && m_isSafeToCollect && m_operationInProgress == NoOperation;
