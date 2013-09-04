@@ -1,3 +1,15 @@
+2013-09-04  Oliver Hunt  <oliver@apple.com>
+
+        Fix fast/storage/serialized script value, and add new tests for Map and Set
+        https://bugs.webkit.org/show_bug.cgi?id=120688
+
+        Reviewed by Steve Falkenburg.
+
+        Update for new version number, and adding binary tests for Map and Set
+        serialisation
+
+        * fast/storage/serialized-script-value.html:
+
 2013-09-04  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
 
         [GTK] add support for subtitles on webkit2GTK
