@@ -1,3 +1,56 @@
+2013-09-04  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Move logical dimension getters/setters to FloatingObject from RenderBlock
+        https://bugs.webkit.org/show_bug.cgi?id=120686
+
+        Reviewed by David Hyatt.
+
+        This is the first step in decoupling FloatingObject, FloatingObjects,
+        et al from RenderBlock. It is not ideal that the methods take a bool;
+        however, passing down the actual writing mode would require
+        refactoring the way that RenderBlock stores this information, which is
+        a task for the future.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::repaintOverhangingFloats): Use new methods.
+        (WebCore::RenderBlock::insertFloatingObject):  Ditto.
+        (WebCore::RenderBlock::removeFloatingObject): Ditto.
+        (WebCore::RenderBlock::removeFloatingObjectsBelow): Ditto.
+        (WebCore::RenderBlock::computeLogicalLocationForFloat): Ditto.
+        (WebCore::RenderBlock::positionNewFloats): Ditto.
+        (WebCore::::updateOffsetIfNeeded): Ditto.
+        (WebCore::::collectIfNeeded): Ditto.
+        (WebCore::::getHeightRemaining): Ditto.
+        (WebCore::RenderBlock::logicalLeftFloatOffsetForLine): Ditto.
+        (WebCore::RenderBlock::logicalRightFloatOffsetForLine): Ditto.
+        (WebCore::RenderBlock::nextFloatLogicalBottomBelow): Ditto.
+        (WebCore::RenderBlock::lowestFloatLogicalBottom): Ditto.
+        (WebCore::RenderBlock::clearFloats): Ditto.
+        (WebCore::RenderBlock::addOverhangingFloats): Ditto.
+        (WebCore::RenderBlock::hasOverhangingFloat): Ditto.
+        (WebCore::RenderBlock::addIntrudingFloats): Ditto.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObject::logicalTop): Moved from RenderBlock::logicalTopForFloat
+        (WebCore::RenderBlock::FloatingObject::logicalBottom): Moved from RenderBlock::logicalBottomForFloat
+        (WebCore::RenderBlock::FloatingObject::logicalLeft): Moved from RenderBlock::logicalLeftForFloat
+        (WebCore::RenderBlock::FloatingObject::logicalRight): Moved from RenderBlock::logicalRightForFloat
+        (WebCore::RenderBlock::FloatingObject::logicalWidth): Moved from RenderBlock::logicalWidthForFloat
+        (WebCore::RenderBlock::FloatingObject::pixelSnappedLogicalTop): Moved from RenderBlock::pixelSnappedLogicalTopForFloat
+        (WebCore::RenderBlock::FloatingObject::pixelSnappedLogicalBottom): Moved from RenderBlock::pixelSnappedLogicalBottomForFloat
+        (WebCore::RenderBlock::FloatingObject::pixelSnappedLogicalLeft): Moved from RenderBlock::pixelSnappedLogicalLeftForFloat
+        (WebCore::RenderBlock::FloatingObject::pixelSnappedLogicalRight): Moved from RenderBlock::pixelSnappedLogicalRightForFloat
+        (WebCore::RenderBlock::FloatingObject::setLogicalTop): Moved from RenderBlock::setLogicalTopForFloat
+        (WebCore::RenderBlock::FloatingObject::setLogicalLeft): Moved from RenderBlock::setLogicalLeftForFloat
+        (WebCore::RenderBlock::FloatingObject::setLogicalHeight): Moved from RenderBlock::setLogicalHeightForFloat
+        (WebCore::RenderBlock::FloatingObject::setLogicalWidth): Moved from RenderBlock::setLogicalWidthForFloat
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded): Use new methods.
+        (WebCore::RenderBlock::checkPaginationAndFloatsAtEndLine): Ditto.
+        (WebCore::RenderBlock::LineBreaker::nextSegmentBreak): Ditto.
+        (WebCore::RenderBlock::positionNewFloatOnLine): Ditto.
+
 2013-09-04  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
 
         REGRESSION(r154977): Do not urlencode soup message on ResourceRequest::toSoupMessage()

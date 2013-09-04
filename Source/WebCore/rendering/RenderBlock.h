@@ -772,6 +772,46 @@ private:
         RootInlineBox* originatingLine() const { return m_originatingLine; }
         void setOriginatingLine(RootInlineBox* line) { m_originatingLine = line; }
 
+        LayoutUnit logicalTop(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? y() : x(); }
+        LayoutUnit logicalBottom(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? maxY() : maxX(); }
+        LayoutUnit logicalLeft(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? x() : y(); }
+        LayoutUnit logicalRight(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? maxX() : maxY(); }
+        LayoutUnit logicalWidth(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? width() : height(); }
+
+        int pixelSnappedLogicalTop(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? frameRect().pixelSnappedY() : frameRect().pixelSnappedX(); }
+        int pixelSnappedLogicalBottom(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? frameRect().pixelSnappedMaxY() : frameRect().pixelSnappedMaxX(); }
+        int pixelSnappedLogicalLeft(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? frameRect().pixelSnappedX() : frameRect().pixelSnappedY(); }
+        int pixelSnappedLogicalRight(bool isHorizontalWritingMode) const { return isHorizontalWritingMode ? frameRect().pixelSnappedMaxX() : frameRect().pixelSnappedMaxY(); }
+
+        void setLogicalTop(LayoutUnit logicalTop, bool isHorizontalWritingMode)
+        {
+            if (isHorizontalWritingMode)
+                setY(logicalTop);
+            else
+                setX(logicalTop);
+        }
+        void setLogicalLeft(LayoutUnit logicalLeft, bool isHorizontalWritingMode)
+        {
+            if (isHorizontalWritingMode)
+                setX(logicalLeft);
+            else
+                setY(logicalLeft);
+        }
+        void setLogicalHeight(LayoutUnit logicalHeight, bool isHorizontalWritingMode)
+        {
+            if (isHorizontalWritingMode)
+                setHeight(logicalHeight);
+            else
+                setWidth(logicalHeight);
+        }
+        void setLogicalWidth(LayoutUnit logicalWidth, bool isHorizontalWritingMode)
+        {
+            if (isHorizontalWritingMode)
+                setWidth(logicalWidth);
+            else
+                setHeight(logicalWidth);
+        }
+
     private:
         RenderBox* m_renderer;
         RootInlineBox* m_originatingLine;
@@ -788,46 +828,6 @@ private:
     };
 
     LayoutPoint flipFloatForWritingModeForChild(const FloatingObject*, const LayoutPoint&) const;
-
-    LayoutUnit logicalTopForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->y() : child->x(); }
-    LayoutUnit logicalBottomForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->maxY() : child->maxX(); }
-    LayoutUnit logicalLeftForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->x() : child->y(); }
-    LayoutUnit logicalRightForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->maxX() : child->maxY(); }
-    LayoutUnit logicalWidthForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->width() : child->height(); }
-
-    int pixelSnappedLogicalTopForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->frameRect().pixelSnappedY() : child->frameRect().pixelSnappedX(); }
-    int pixelSnappedLogicalBottomForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->frameRect().pixelSnappedMaxY() : child->frameRect().pixelSnappedMaxX(); }
-    int pixelSnappedLogicalLeftForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->frameRect().pixelSnappedX() : child->frameRect().pixelSnappedY(); }
-    int pixelSnappedLogicalRightForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->frameRect().pixelSnappedMaxX() : child->frameRect().pixelSnappedMaxY(); }
-
-    void setLogicalTopForFloat(FloatingObject* child, LayoutUnit logicalTop)
-    {
-        if (isHorizontalWritingMode())
-            child->setY(logicalTop);
-        else
-            child->setX(logicalTop);
-    }
-    void setLogicalLeftForFloat(FloatingObject* child, LayoutUnit logicalLeft)
-    {
-        if (isHorizontalWritingMode())
-            child->setX(logicalLeft);
-        else
-            child->setY(logicalLeft);
-    }
-    void setLogicalHeightForFloat(FloatingObject* child, LayoutUnit logicalHeight)
-    {
-        if (isHorizontalWritingMode())
-            child->setHeight(logicalHeight);
-        else
-            child->setWidth(logicalHeight);
-    }
-    void setLogicalWidthForFloat(FloatingObject* child, LayoutUnit logicalWidth)
-    {
-        if (isHorizontalWritingMode())
-            child->setWidth(logicalWidth);
-        else
-            child->setHeight(logicalWidth);
-    }
 
     LayoutUnit xPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
