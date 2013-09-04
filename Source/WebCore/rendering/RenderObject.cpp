@@ -2768,7 +2768,7 @@ void RenderObject::scheduleRelayout()
         toRenderView(*this).frameView().scheduleRelayout();
     else {
         if (isRooted())
-            view().frameView().scheduleRelayoutOfSubtree(this);
+            view().frameView().scheduleRelayoutOfSubtree(*this);
     }
 }
 

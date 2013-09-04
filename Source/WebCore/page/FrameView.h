@@ -101,7 +101,7 @@ public:
     bool didFirstLayout() const;
     void layoutTimerFired(Timer<FrameView>*);
     void scheduleRelayout();
-    void scheduleRelayoutOfSubtree(RenderObject*);
+    void scheduleRelayoutOfSubtree(RenderObject&);
     void unscheduleRelayout();
     bool layoutPending() const;
     bool isInLayout() const { return m_inLayout; }

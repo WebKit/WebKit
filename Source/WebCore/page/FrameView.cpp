@@ -2417,46 +2417,61 @@ static bool isObjectAncestorContainerOf(RenderObject* ancestor, RenderObject* de
     return false;
 }
 
-void FrameView::scheduleRelayoutOfSubtree(RenderObject* relayoutRoot)
+void FrameView::scheduleRelayoutOfSubtree(RenderObject& newRelayoutRoot)
 {
+    ASSERT(renderView());
+    RenderView& renderView = *this->renderView();
+
+    // Try to catch unnecessary work during render tree teardown.
+    ASSERT(!renderView.documentBeingDestroyed());
     ASSERT(frame().view() == this);
 
-    RenderView* renderView = this->renderView();
-    if (renderView && renderView->needsLayout()) {
-        if (relayoutRoot)
-            relayoutRoot->markContainingBlocksForLayout(false);
+    if (renderView.needsLayout()) {
+        newRelayoutRoot.markContainingBlocksForLayout(false);
         return;
     }
 
-    if (layoutPending() || !m_layoutSchedulingEnabled) {
-        if (m_layoutRoot != relayoutRoot) {
-            if (isObjectAncestorContainerOf(m_layoutRoot, relayoutRoot)) {
-                // Keep the current root
-                relayoutRoot->markContainingBlocksForLayout(false, m_layoutRoot);
-                ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout());
-            } else if (m_layoutRoot && isObjectAncestorContainerOf(relayoutRoot, m_layoutRoot)) {
-                // Re-root at relayoutRoot
-                m_layoutRoot->markContainingBlocksForLayout(false, relayoutRoot);
-                m_layoutRoot = relayoutRoot;
-                ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout());
-                InspectorInstrumentation::didInvalidateLayout(&frame());
-            } else {
-                // Just do a full relayout
-                if (m_layoutRoot)
-                    m_layoutRoot->markContainingBlocksForLayout(false);
-                m_layoutRoot = 0;
-                relayoutRoot->markContainingBlocksForLayout(false);
-                InspectorInstrumentation::didInvalidateLayout(&frame());
-            }
-        }
-    } else if (m_layoutSchedulingEnabled) {
-        int delay = frame().document()->minimumLayoutDelay();
-        m_layoutRoot = relayoutRoot;
-        ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout());
+    if (!layoutPending() && m_layoutSchedulingEnabled) {
+        int delay = renderView.document().minimumLayoutDelay();
+        ASSERT(!newRelayoutRoot.container() || !newRelayoutRoot.container()->needsLayout());
+        m_layoutRoot = &newRelayoutRoot;
         InspectorInstrumentation::didInvalidateLayout(&frame());
         m_delayedLayout = delay != 0;
         m_layoutTimer.startOneShot(delay * 0.001);
+        return;
     }
+
+    if (m_layoutRoot == &newRelayoutRoot)
+        return;
+
+    if (!m_layoutRoot) {
+        // Just relayout the subtree.
+        newRelayoutRoot.markContainingBlocksForLayout(false);
+        InspectorInstrumentation::didInvalidateLayout(&frame());
+        return;
+    }
+
+    if (isObjectAncestorContainerOf(m_layoutRoot, &newRelayoutRoot)) {
+        // Keep the current root.
+        newRelayoutRoot.markContainingBlocksForLayout(false, m_layoutRoot);
+        ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout());
+        return;
+    }
+
+    if (isObjectAncestorContainerOf(&newRelayoutRoot, m_layoutRoot)) {
+        // Re-root at newRelayoutRoot.
+        m_layoutRoot->markContainingBlocksForLayout(false, &newRelayoutRoot);
+        m_layoutRoot = &newRelayoutRoot;
+        ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout());
+        InspectorInstrumentation::didInvalidateLayout(&frame());
+        return;
+    }
+
+    // Just do a full relayout.
+    m_layoutRoot->markContainingBlocksForLayout(false);
+    m_layoutRoot = 0;
+    newRelayoutRoot.markContainingBlocksForLayout(false);
+    InspectorInstrumentation::didInvalidateLayout(&frame());
 }
 
 bool FrameView::layoutPending() const

@@ -1,3 +1,26 @@
+2013-09-04  Andreas Kling  <akling@apple.com>
+
+        Simplify subtree relayout scheduling a bit.
+        <https://webkit.org/b/120684>
+
+        Reviewed by Antti Koivisto.
+
+        Subtree relayout scheduling should only happen while there's a render tree up,
+        the code can freely assume that there's a RenderView present.
+
+        Added an assertion that the render tree isn't being torn down. This should catch
+        renderers doing unnecessary work during document detach and could be a source
+        of "performance freebies."
+
+        I also un-nested scheduleRelayoutOfSubtree() with early-return style to make
+        the code more human-readable.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scheduleRelayoutOfSubtree):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::scheduleRelayout):
+
 2013-09-04  Jae Hyun Park  <jae.park@company100.net>
 
         [Coordinated Graphics] Remove unused method in CoordinatedGraphicsLayer
