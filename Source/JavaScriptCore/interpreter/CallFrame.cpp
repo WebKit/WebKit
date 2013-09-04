@@ -97,10 +97,4 @@ Register* CallFrame::frameExtentInternal()
     return registers() + codeBlock->m_numCalleeRegisters;
 }
 
-StackIterator CallFrame::begin(StackIterator::FrameFilter filter)
-{
-    ASSERT(this);
-    return StackIterator(this, filter);
-}
-
 } // namespace JSC

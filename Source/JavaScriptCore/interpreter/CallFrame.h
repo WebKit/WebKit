@@ -283,7 +283,14 @@ namespace JSC  {
 #endif
         CallFrame* callerFrameNoFlags() { return callerFrame()->removeHostCallFrameFlag(); }
 
-        JS_EXPORT_PRIVATE StackIterator begin(StackIterator::FrameFilter = 0);
+        // CallFrame::iterate() expects a Functor that implements the following method:
+        //     StackIterator::Status operator()(StackIterator&);
+
+        template <typename Functor> void iterate(Functor& functor)
+        {
+            StackIterator iter(this);
+            iter.iterate<Functor>(functor);
+        }
 
     private:
         static const intptr_t HostCallFrameFlag = 1;

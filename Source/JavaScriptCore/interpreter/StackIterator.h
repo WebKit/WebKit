@@ -100,13 +100,10 @@ public:
 #if ENABLE(DFG_JIT)
         InlineCallFrame* m_inlineCallFrame;
 #endif
-
         CallFrame* m_callFrame;
 
         friend class StackIterator;
     };
-
-    typedef bool (*FrameFilter)(Frame*);
 
     enum Status {
         Continue = 0,
@@ -122,21 +119,17 @@ public:
             Status status = functor(*this);
             if (status != Continue)
                 break;
-            gotoNextFrameWithFilter();
+            gotoNextFrame();
         }
     }
-
-    JS_EXPORT_PRIVATE size_t numberOfFrames();
 
     Frame& operator*() { return m_frame; }
     ALWAYS_INLINE Frame* operator->() { return &m_frame; }
 
 private:
-    JS_EXPORT_PRIVATE StackIterator(CallFrame* startFrame, FrameFilter = 0);
+    JS_EXPORT_PRIVATE StackIterator(CallFrame* startFrame);
 
-    void gotoFrameAtIndex(size_t frameIndex);
-    void gotoNextFrame();
-    JS_EXPORT_PRIVATE void gotoNextFrameWithFilter();
+    JS_EXPORT_PRIVATE void gotoNextFrame();
     void resetIterator();
 
     void readFrame(CallFrame*);
@@ -146,7 +139,6 @@ private:
 #endif
 
     CallFrame* m_startFrame;
-    FrameFilter m_filter;
     Frame m_frame;
 
     friend class ExecState;

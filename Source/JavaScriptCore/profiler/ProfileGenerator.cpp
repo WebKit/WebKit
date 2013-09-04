@@ -98,8 +98,7 @@ private:
 void ProfileGenerator::addParentForConsoleStart(ExecState* exec)
 {
     AddParentForConsoleStartFunctor functor(exec, m_head, m_currentNode);
-    StackIterator iter = exec->begin();
-    iter.iterate(functor);
+    exec->iterate(functor);
 
     if (!functor.foundParent()) {
         m_currentNode = ProfileNode::create(exec, LegacyProfiler::createCallIdentifier(exec, JSValue(), String(), 0), m_head.get(), m_head.get());

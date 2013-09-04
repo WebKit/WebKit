@@ -1,3 +1,21 @@
+2013-09-04  Mark Lam  <mark.lam@apple.com>
+
+        Refining the StackIterator callback interface.
+        https://bugs.webkit.org/show_bug.cgi?id=120695.
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::SendFunctor::SendFunctor):
+        (WebCore::SendFunctor::line):
+        (WebCore::SendFunctor::url):
+        (WebCore::SendFunctor::operator()):
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::createScriptCallStack):
+
 2013-09-04  Andreas Kling  <akling@apple.com>
 
         Remove unnecessary RenderView.h inclusion from headers.

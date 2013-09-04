@@ -339,8 +339,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
 #endif
 
     DumpRegisterFunctor functor(it);
-    StackIterator iter = callFrame->begin();
-    iter.iterate(functor);
+    callFrame->iterate(functor);
 
     dataLogF("[CodeBlock]                | %10p | %p \n", it, callFrame->codeBlock());
     ++it;
@@ -552,8 +551,7 @@ void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t maxStackSize
         return;
 
     GetStackTraceFunctor functor(vm, results, maxStackSize);
-    StackIterator iter = callFrame->begin();
-    iter.iterate(functor);
+    callFrame->iterate(functor);
 }
 
 JSString* Interpreter::stackTraceAsString(ExecState* exec, Vector<StackFrame> stackTrace)
@@ -640,8 +638,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& ex
     VM& vm = callFrame->vm();
     ASSERT(callFrame == vm.topCallFrame);
     UnwindFunctor functor(callFrame, exceptionValue, isTermination, codeBlock, handler);
-    StackIterator iter = callFrame->begin();
-    iter.iterate(functor);
+    callFrame->iterate(functor);
     if (!handler)
         return 0;
 

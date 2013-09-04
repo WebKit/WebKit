@@ -87,8 +87,7 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool empt
     if (JSC::ExecState* exec = JSMainThreadExecState::currentState()) {
         CallFrame* frame = exec->vm().topCallFrame;
         CreateScriptCallStackFunctor functor(frames, maxStackSize);
-        StackIterator iter = frame->begin();
-        iter.iterate(functor);
+        frame->iterate(functor);
     }
     if (frames.isEmpty() && !emptyIsAllowed) {
         // No frames found. It may happen in the case where
@@ -144,10 +143,12 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t m
     Vector<ScriptCallFrame> frames;
     ASSERT(exec);
     CallFrame* frame = exec->vm().topCallFrame;
-    StackIterator iter = frame->begin();
-    size_t numberOfFrames = iter.numberOfFrames();
-    CreateScriptCallStackForConsoleFunctor functor(numberOfFrames > 1, maxStackSize, frames);
-    iter.iterate(functor);
+    CreateScriptCallStackForConsoleFunctor functor(true, maxStackSize, frames);
+    frame->iterate(functor);
+    if (frames.isEmpty()) {
+        CreateScriptCallStackForConsoleFunctor functor(false, maxStackSize, frames);
+        frame->iterate(functor);
+    }
     return ScriptCallStack::create(frames);
 }
 

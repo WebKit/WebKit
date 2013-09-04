@@ -35,31 +35,10 @@
 
 namespace JSC {
 
-StackIterator::StackIterator(CallFrame* startFrame, StackIterator::FrameFilter filter)
+StackIterator::StackIterator(CallFrame* startFrame)
     : m_startFrame(startFrame)
-    , m_filter(filter)
 {
     resetIterator();
-}
-
-size_t StackIterator::numberOfFrames()
-{
-    int savedFrameIndex = m_frame.index();
-    resetIterator();
-    while (m_frame.callFrame())
-        gotoNextFrameWithFilter();
-    size_t numberOfFrames = m_frame.index();
-
-    resetIterator();
-    gotoFrameAtIndex(savedFrameIndex);
-
-    return numberOfFrames;
-}
-
-void StackIterator::gotoFrameAtIndex(size_t index)
-{
-    while (m_frame.callFrame() && (m_frame.index() != index))
-        gotoNextFrameWithFilter();
 }
 
 void StackIterator::gotoNextFrame()
@@ -73,17 +52,6 @@ void StackIterator::gotoNextFrame()
     } else
 #endif // ENABLE(DFG_JIT)
         readFrame(m_frame.callerFrame());
-}
-
-void StackIterator::gotoNextFrameWithFilter()
-{
-    ASSERT(m_frame.callFrame());
-    while (m_frame.callFrame()) {
-        gotoNextFrame();
-        if (!m_frame.callFrame() || !m_filter || !m_filter(&m_frame))
-            break;
-    }
-    m_frame.m_index++;
 }
 
 void StackIterator::resetIterator()
@@ -455,29 +423,42 @@ using JSC::StackIterator;
 void debugPrintCallFrame(JSC::CallFrame*);
 void debugPrintStack(JSC::CallFrame* topCallFrame);
 
+class DebugPrintFrameFunctor {
+public:
+    enum Action {
+        PrintOne,
+        PrintAll
+    };
+
+    DebugPrintFrameFunctor(Action action)
+        : m_action(action)
+    {
+    }
+
+    StackIterator::Status operator()(StackIterator& iter)
+    {
+        iter->print(2);
+        return m_action == PrintAll ? StackIterator::Continue : StackIterator::Done;
+    }
+
+private:
+    Action m_action;
+};
+
 void debugPrintCallFrame(JSC::CallFrame* callFrame)
 {
     if (!callFrame)
         return;
-    StackIterator iter = callFrame->begin();
-    iter->print(2);
+    DebugPrintFrameFunctor functor(DebugPrintFrameFunctor::PrintOne);
+    callFrame->iterate(functor);
 }
-
-class DebugPrintStackFunctor {
-public:
-    StackIterator::Status operator()(StackIterator& iter)
-    {
-        iter->print(2);
-        return StackIterator::Continue;
-    }
-};
 
 void debugPrintStack(JSC::CallFrame* topCallFrame)
 {
     if (!topCallFrame)
         return;
-    DebugPrintStackFunctor functor;
-    StackIterator iter = topCallFrame->begin();
-    iter.iterate(functor);
+    DebugPrintFrameFunctor functor(DebugPrintFrameFunctor::PrintAll);
+    topCallFrame->iterate(functor);
 }
+
 #endif // !NDEBUG

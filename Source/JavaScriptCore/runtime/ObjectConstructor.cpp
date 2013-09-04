@@ -166,8 +166,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("Requested prototype of a value that is not an object.")));
     JSObject* object = asObject(exec->argument(0));
     ObjectConstructorGetPrototypeOfFunctor functor(object);
-    StackIterator iter = exec->begin();
-    iter.iterate(functor);
+    exec->iterate(functor);
     return functor.result();
 }
 

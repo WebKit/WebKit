@@ -744,8 +744,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
         return JSValue::encode(exec->thisValue().synthesizePrototype(exec));
 
     GlobalFuncProtoGetterFunctor functor(thisObject);
-    StackIterator iter = exec->begin();
-    iter.iterate(functor);
+    exec->iterate(functor);
     return functor.result();
 }
 
@@ -788,8 +787,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     GlobalFuncProtoSetterFunctor functor(thisObject);
-    StackIterator iter = exec->begin();
-    iter.iterate(functor);
+    exec->iterate(functor);
     if (!functor.allowsAccess())
         return JSValue::encode(jsUndefined());
 

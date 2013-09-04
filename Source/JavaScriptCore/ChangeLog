@@ -1,3 +1,46 @@
+2013-09-04  Mark Lam  <mark.lam@apple.com>
+
+        Refining the StackIterator callback interface.
+        https://bugs.webkit.org/show_bug.cgi?id=120695.
+
+        Reviewed by Geoffrey Garen.
+
+        Introduce CallFrame::iterate() which instantiates a StackIterator and
+        invoke its iterate() method with the passed in functor. The only place
+        where the client code gets access to the StackIterator now is as an
+        argument to the client's functor.
+
+        * API/JSContextRef.cpp:
+        (JSContextCreateBacktrace):
+        * interpreter/CallFrame.cpp:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::iterate):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::unwind):
+        * interpreter/StackIterator.cpp:
+        (JSC::StackIterator::StackIterator):
+        (DebugPrintFrameFunctor::DebugPrintFrameFunctor):
+        (DebugPrintFrameFunctor::operator()):
+        (debugPrintCallFrame):
+        (debugPrintStack):
+        * interpreter/StackIterator.h:
+        (JSC::StackIterator::iterate):
+        * jsc.cpp:
+        (functionJSCStack):
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::addParentForConsoleStart):
+        * runtime/JSFunction.cpp:
+        (JSC::retrieveArguments):
+        (JSC::RetrieveCallerFunctionFunctor::operator()):
+        (JSC::retrieveCallerFunction):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncProtoGetter):
+        (JSC::globalFuncProtoSetter):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetPrototypeOf):
+
 2013-09-04  Benjamin Poulain  <benjamin@webkit.org>
 
         JSGenericTypedArrayViewConstructor.h is referenced twice in the XCode project build section, causing warnings

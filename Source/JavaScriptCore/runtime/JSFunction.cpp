@@ -210,8 +210,7 @@ private:
 static JSValue retrieveArguments(ExecState* exec, JSFunction* functionObj)
 {
     RetrieveArgumentsFunctor functor(functionObj);
-    StackIterator iter = exec->begin();
-    iter.iterate(functor);
+    exec->iterate(functor);
     return functor.result();
 }
 
@@ -221,13 +220,6 @@ JSValue JSFunction::argumentsGetter(ExecState* exec, JSValue slotBase, PropertyN
     ASSERT(!thisObj->isHostFunction());
 
     return retrieveArguments(exec, thisObj);
-}
-
-static bool skipOverBoundFunctions(StackIterator::Frame* frame)
-{
-    JSObject* callee = frame->callee();
-    bool shouldSkip = callee ? callee->inherits(JSBoundFunction::info()) : false;
-    return shouldSkip;
 }
 
 class RetrieveCallerFunctionFunctor {
@@ -245,6 +237,10 @@ public:
     StackIterator::Status operator()(StackIterator& iter)
     {
         JSObject* callee = iter->callee();
+
+        if (callee && callee->inherits(JSBoundFunction::info()))
+            return StackIterator::Continue;
+
         if (!m_hasFoundFrame && (callee != m_targetCallee))
             return StackIterator::Continue;
 
@@ -269,8 +265,7 @@ private:
 static JSValue retrieveCallerFunction(ExecState* exec, JSFunction* functionObj)
 {
     RetrieveCallerFunctionFunctor functor(functionObj);
-    StackIterator iter = exec->begin(skipOverBoundFunctions);
-    iter.iterate(functor);
+    exec->iterate(functor);
     return functor.result();
 }
 

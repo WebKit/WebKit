@@ -116,26 +116,32 @@ class SendFunctor {
 public:
     SendFunctor()
         : m_hasSkippedFirstFrame(false)
-        , m_hasViableFrame(false)
+        , m_line(0)
     {
     }
 
-    bool hasViableFrame() const { return m_hasViableFrame; }
+    unsigned line() const { return m_line; }
+    String url() const { return m_url; }
 
-    StackIterator::Status operator()(StackIterator&)
+    StackIterator::Status operator()(StackIterator& iter)
     {
         if (!m_hasSkippedFirstFrame) {
             m_hasSkippedFirstFrame = true;
             return StackIterator::Continue;
         }
 
-        m_hasViableFrame = true;
+        unsigned line = 0;
+        unsigned unusedColumn = 0;
+        iter->computeLineAndColumn(line, unusedColumn);
+        m_line = line;
+        m_url = iter->sourceURL();
         return StackIterator::Done;
     }
 
 private:
     bool m_hasSkippedFirstFrame;
-    bool m_hasViableFrame;
+    unsigned m_line;
+    String m_url;
 };
 
 JSValue JSXMLHttpRequest::send(ExecState* exec)
@@ -165,18 +171,9 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
     }
 
     SendFunctor functor;
-    StackIterator iter = exec->begin();
-    iter.iterate(functor);
-    if (functor.hasViableFrame()) {
-        unsigned line = 0;
-        unsigned unusuedColumn = 0;
-        iter->computeLineAndColumn(line, unusuedColumn);
-        impl()->setLastSendLineNumber(line);
-        impl()->setLastSendURL(iter->sourceURL());
-    } else {
-        impl()->setLastSendLineNumber(0);
-        impl()->setLastSendURL(String());
-    }
+    exec->iterate(functor);
+    impl()->setLastSendLineNumber(functor.line());
+    impl()->setLastSendURL(functor.url());
     setDOMException(exec, ec);
     return jsUndefined();
 }

@@ -349,8 +349,7 @@ EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState* exec)
     trace.appendLiteral("--> Stack trace:\n");
 
     FunctionJSCStackFunctor functor(trace);
-    StackIterator iter = exec->begin();
-    iter.iterate(functor);
+    exec->iterate(functor);
     fprintf(stderr, "%s", trace.toString().utf8().data());
     return JSValue::encode(jsUndefined());
 }
