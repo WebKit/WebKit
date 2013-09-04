@@ -1,3 +1,11 @@
+2013-09-04  Dean Jackson  <dino@apple.com>
+
+        <rdar://problem/14910916> Disable CSS_SHAPES on safari-537-branch
+
+        Reviewed by Beth Dakin.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-08-27  Lucas Forschler  <lforschler@apple.com>
 
         Merge r154633

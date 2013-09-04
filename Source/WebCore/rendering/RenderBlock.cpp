@@ -1470,6 +1470,7 @@ void RenderBlock::markShapeInsideDescendantsForLayout()
 static inline bool shapeInfoRequiresRelayout(const RenderBlock* block)
 {
 #if !ENABLE(CSS_SHAPES)
+    UNUSED_PARAM(block);
     return false;
 #else
     ShapeInsideInfo* info = block->shapeInsideInfo();
