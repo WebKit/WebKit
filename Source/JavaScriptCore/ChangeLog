@@ -1,3 +1,10 @@
+2013-09-04  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed Build fix for Windows DebugSuffix configuration.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
 2013-09-04  Mark Lam  <mark.lam@apple.com>
 
         Refining the StackIterator callback interface.

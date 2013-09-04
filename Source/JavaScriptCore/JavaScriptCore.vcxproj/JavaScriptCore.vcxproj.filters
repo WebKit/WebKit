@@ -207,9 +207,6 @@
     <ClCompile Include="..\heap\CopyVisitor.cpp">
       <Filter>heap</Filter>
     </ClCompile>
-    <ClCompile Include="..\heap\DFGCodeBlocks.cpp">
-      <Filter>heap</Filter>
-    </ClCompile>
     <ClCompile Include="..\heap\GCThread.cpp">
       <Filter>heap</Filter>
     </ClCompile>
@@ -361,9 +358,6 @@
       <Filter>llint</Filter>
     </ClCompile>
     <ClCompile Include="..\llint\LLIntData.cpp">
-      <Filter>llint</Filter>
-    </ClCompile>
-    <ClCompile Include="..\llint\LLIntEntrypoints.cpp">
       <Filter>llint</Filter>
     </ClCompile>
     <ClCompile Include="..\llint\LLIntExceptions.cpp">
@@ -864,6 +858,13 @@
     <ClCompile Include="..\runtime\JSPromise.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\bytecode\DeferredCompilationCallback.cpp" />
+    <ClCompile Include="..\dfg\DFGCompilationKey.cpp" />
+    <ClCompile Include="..\dfg\DFGCompilationMode.cpp" />
+    <ClCompile Include="..\dfg\DFGDriver.cpp" />
+    <ClCompile Include="..\heap\CodeBlockSet.cpp" />
+    <ClCompile Include="..\jit\JITToDFGDeferredCompilationCallback.cpp" />
+    <ClCompile Include="..\llint\LLIntEntrypoint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -1169,9 +1170,6 @@
     <ClInclude Include="..\heap\CopyWorkList.h">
       <Filter>heap</Filter>
     </ClInclude>
-    <ClInclude Include="..\heap\DFGCodeBlocks.h">
-      <Filter>heap</Filter>
-    </ClInclude>
     <ClInclude Include="..\heap\GCAssertions.h">
       <Filter>heap</Filter>
     </ClInclude>
@@ -1364,9 +1362,6 @@
     <ClInclude Include="..\jit\JITDisassembler.h">
       <Filter>jit</Filter>
     </ClInclude>
-    <ClInclude Include="..\jit\JITDriver.h">
-      <Filter>jit</Filter>
-    </ClInclude>
     <ClInclude Include="..\jit\JITExceptions.h">
       <Filter>jit</Filter>
     </ClInclude>
@@ -1422,9 +1417,6 @@
       <Filter>llint</Filter>
     </ClInclude>
     <ClInclude Include="..\llint\LLIntData.h">
-      <Filter>llint</Filter>
-    </ClInclude>
-    <ClInclude Include="..\llint\LLIntEntrypoints.h">
       <Filter>llint</Filter>
     </ClInclude>
     <ClInclude Include="..\llint\LLIntExceptions.h">
@@ -1641,9 +1633,6 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\Executable.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\ExecutionHarness.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\FunctionConstructor.h">
@@ -2235,6 +2224,19 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NamePrototype.lut.h">
       <Filter>Derived Sources</Filter>
     </ClInclude>
+    <ClInclude Include="..\bytecode\DeferredCompilationCallback.h" />
+    <ClInclude Include="..\dfg\DFGCompilationKey.h" />
+    <ClInclude Include="..\dfg\DFGCompilationMode.h" />
+    <ClInclude Include="..\heap\CodeBlockSet.h" />
+    <ClInclude Include="..\jit\JITToDFGDeferredCompilationCallback.h" />
+    <ClInclude Include="..\llint\LLIntEntrypoint.h" />
+    <ClInclude Include="..\runtime\JSMap.h" />
+    <ClInclude Include="..\runtime\JSSet.h" />
+    <ClInclude Include="..\runtime\MapConstructor.h" />
+    <ClInclude Include="..\runtime\MapData.h" />
+    <ClInclude Include="..\runtime\MapPrototype.h" />
+    <ClInclude Include="..\runtime\SetConstructor.h" />
+    <ClInclude Include="..\runtime\SetPrototype.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="JavaScriptCorePreLink.cmd" />

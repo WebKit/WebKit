@@ -14839,10 +14839,14 @@
     <ClInclude Include="..\rendering\style\StyleCachedImageSet.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
-    <ClInclude Include="..\dom\ChildIterator.h" />
-    <ClInclude Include="..\dom\DescendantIterator.h" />
-    <ClInclude Include="..\dom\DescendantIteratorAssertions.h" />
     <ClInclude Include="..\accessibility\AccessibilitySearchFieldButtons.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLElementTypeChecks.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementTypeChecks.h" />
+    <ClInclude Include="..\dom\ElementAncestorIterator.h" />
+    <ClInclude Include="..\dom\ElementChildIterator.h" />
+    <ClInclude Include="..\dom\ElementDescendantIterator.h" />
+    <ClInclude Include="..\dom\ElementIterator.h" />
+    <ClInclude Include="..\dom\ElementIteratorAssertions.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">
