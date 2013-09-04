@@ -97,7 +97,9 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection text
     // menu right after calling WebPopupMenuProxy::showPopupMenu().
     m_runLoop = adoptGRef(g_main_loop_new(0, FALSE));
 
+    gdk_threads_leave();
     g_main_loop_run(m_runLoop.get());
+    gdk_threads_enter();
 
     m_runLoop.clear();
 
