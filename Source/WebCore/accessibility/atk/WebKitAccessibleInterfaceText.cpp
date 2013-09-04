@@ -38,6 +38,7 @@
 #include "Document.h"
 #include "Font.h"
 #include "FrameView.h"
+#include "HTMLParserIdioms.h"
 #include "HostWindow.h"
 #include "InlineTextBox.h"
 #include "NotImplemented.h"
@@ -771,7 +772,7 @@ static int numberOfReplacedElementsBeforeOffset(AtkText* text, unsigned offset)
     return count;
 }
 
-static char* webkitAccessibleTextGetWordForBoundary(AtkText* text, int offset, AtkTextBoundary boundaryType, GetTextRelativePosition textPosition, int* startOffset, int* endOffset)
+static char* webkitAccessibleTextWordForBoundary(AtkText* text, int offset, AtkTextBoundary boundaryType, GetTextRelativePosition textPosition, int* startOffset, int* endOffset)
 {
     AccessibilityObject* coreObject = core(text);
     Document* document = coreObject->document();
@@ -832,6 +833,139 @@ static char* webkitAccessibleTextGetWordForBoundary(AtkText* text, int offset, A
     return webkitAccessibleTextGetText(text, *startOffset, *endOffset);
 }
 
+static bool isSentenceBoundary(const VisiblePosition &pos)
+{
+    if (pos.isNull())
+        return false;
+
+    // It's definitely a sentence boundary if there's nothing before.
+    if (pos.previous().isNull())
+        return true;
+
+    // We go backwards and forward to make sure about this.
+    VisiblePosition startOfPreviousSentence = startOfSentence(pos);
+    return startOfPreviousSentence.isNotNull() && pos == endOfSentence(startOfPreviousSentence);
+}
+
+static bool isWhiteSpaceBetweenSentences(const VisiblePosition& position)
+{
+    if (position.isNull())
+        return false;
+
+    if (!isWhitespace(position.characterAfter()))
+        return false;
+
+    VisiblePosition startOfWhiteSpace = startOfWord(position, RightWordIfOnBoundary);
+    VisiblePosition endOfWhiteSpace = endOfWord(startOfWhiteSpace, RightWordIfOnBoundary);
+    if (!isSentenceBoundary(startOfWhiteSpace) && !isSentenceBoundary(endOfWhiteSpace))
+        return false;
+
+    return comparePositions(startOfWhiteSpace, position) <= 0 && comparePositions(endOfWhiteSpace, position) >= 0;
+}
+
+static VisibleSelection sentenceAtPositionForAtkBoundary(const AccessibilityObject* coreObject, const VisiblePosition& position, AtkTextBoundary boundaryType)
+{
+    VisiblePosition startPosition;
+    VisiblePosition endPosition;
+
+    bool isAtStartOfSentenceForEndBoundary = isWhiteSpaceBetweenSentences(position) || isSentenceBoundary(position);
+    if (boundaryType == ATK_TEXT_BOUNDARY_SENTENCE_START || !isAtStartOfSentenceForEndBoundary) {
+        startPosition = isSentenceBoundary(position) ? position : startOfSentence(position);
+        // startOfSentence might stop at a linebreak in the HTML source code,
+        // but we don't want to stop there yet, so keep going.
+        while (!isSentenceBoundary(startPosition) && isHTMLLineBreak(startPosition.characterBefore()))
+            startPosition = startOfSentence(startPosition);
+
+        endPosition = endOfSentence(startPosition);
+    }
+
+    if (boundaryType == ATK_TEXT_BOUNDARY_SENTENCE_END) {
+        if (isAtStartOfSentenceForEndBoundary) {
+            startPosition = position;
+            endPosition = endOfSentence(endOfWord(position, RightWordIfOnBoundary));
+        }
+
+        // startOfSentence returns a position after any white space previous to
+        // the sentence, so we might need to adjust that offset for this boundary.
+        if (isWhitespace(startPosition.characterBefore()))
+            startPosition = startOfWord(startPosition, LeftWordIfOnBoundary);
+
+        // endOfSentence returns a position after any white space after the
+        // sentence, so we might need to adjust that offset for this boundary.
+        if (isWhitespace(endPosition.characterBefore()))
+            endPosition = startOfWord(endPosition, LeftWordIfOnBoundary);
+
+        // Finally, do some additional adjustments that might be needed if
+        // positions are at the start or the end of a line.
+        if (isStartOfLine(startPosition) && !isStartOfBlock(startPosition))
+            startPosition = startPosition.previous();
+        if (isStartOfLine(endPosition) && !isStartOfBlock(endPosition))
+            endPosition = endPosition.previous();
+    }
+
+    VisibleSelection selectedSentence(startPosition, endPosition);
+
+    // We mark the selection as 'upstream' so we can use that information later,
+    // when finding the actual offsets in getSelectionOffsetsForObject().
+    if (boundaryType == ATK_TEXT_BOUNDARY_SENTENCE_END)
+        selectedSentence.setAffinity(UPSTREAM);
+
+    return selectedSentence;
+}
+
+static char* webkitAccessibleTextSentenceForBoundary(AtkText* text, int offset, AtkTextBoundary boundaryType, GetTextRelativePosition textPosition, int* startOffset, int* endOffset)
+{
+    AccessibilityObject* coreObject = core(text);
+    Document* document = coreObject->document();
+    if (!document)
+        return emptyTextSelectionAtOffset(0, startOffset, endOffset);
+
+    Node* node = getNodeForAccessibilityObject(coreObject);
+    if (!node)
+        return emptyTextSelectionAtOffset(0, startOffset, endOffset);
+
+    int actualOffset = atkOffsetToWebCoreOffset(text, offset);
+
+    // Besides of the usual conversion from ATK offsets to WebCore offsets,
+    // we need to consider the potential embedded objects that might have been
+    // inserted in the text exposed through AtkText when calculating the offset.
+    actualOffset -= numberOfReplacedElementsBeforeOffset(text, actualOffset);
+
+    VisiblePosition caretPosition = coreObject->visiblePositionForIndex(actualOffset);
+    VisibleSelection currentSentence = sentenceAtPositionForAtkBoundary(coreObject, caretPosition, boundaryType);
+
+    // Take into account other relative positions, if needed, by
+    // calculating the new position that we would need to consider.
+    VisiblePosition newPosition = caretPosition;
+    switch (textPosition) {
+    case GetTextPositionAt:
+        break;
+
+    case GetTextPositionBefore:
+        // Early return if asking for the previous sentence while already at the beginning.
+        if (isFirstVisiblePositionInNode(currentSentence.visibleStart(), node))
+            return emptyTextSelectionAtOffset(0, startOffset, endOffset);
+        newPosition = currentSentence.visibleStart().previous();
+        break;
+
+    case GetTextPositionAfter:
+        // Early return if asking for the following word while already at the end.
+        if (isLastVisiblePositionInNode(currentSentence.visibleEnd(), node))
+            return emptyTextSelectionAtOffset(accessibilityObjectLength(coreObject), startOffset, endOffset);
+        newPosition = currentSentence.visibleEnd().next();
+        break;
+
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    // Determine the relevant sentence we are actually interested in
+    // and calculate the ATK offsets for it, then return everything.
+    VisibleSelection selectedSentence = newPosition != caretPosition ? sentenceAtPositionForAtkBoundary(coreObject, newPosition, boundaryType) : currentSentence;
+    getSelectionOffsetsForObject(coreObject, selectedSentence, *startOffset, *endOffset);
+    return webkitAccessibleTextGetText(text, *startOffset, *endOffset);
+}
+
 static gchar* webkitAccessibleTextGetTextForOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, GetTextRelativePosition textPosition, gint* startOffset, gint* endOffset)
 {
     AccessibilityObject* coreObject = core(text);
@@ -842,7 +976,10 @@ static gchar* webkitAccessibleTextGetTextForOffset(AtkText* text, gint offset, A
         return webkitAccessibleTextGetChar(text, offset, textPosition, startOffset, endOffset);
 
     if (boundaryType == ATK_TEXT_BOUNDARY_WORD_START || boundaryType == ATK_TEXT_BOUNDARY_WORD_END)
-        return webkitAccessibleTextGetWordForBoundary(text, offset, boundaryType, textPosition, startOffset, endOffset);
+        return webkitAccessibleTextWordForBoundary(text, offset, boundaryType, textPosition, startOffset, endOffset);
+
+    if (boundaryType == ATK_TEXT_BOUNDARY_SENTENCE_START || boundaryType == ATK_TEXT_BOUNDARY_SENTENCE_END)
+        return webkitAccessibleTextSentenceForBoundary(text, offset, boundaryType, textPosition, startOffset, endOffset);
 
 #if PLATFORM(GTK)
     // FIXME: Get rid of the code below once every single part above

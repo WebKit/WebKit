@@ -1,3 +1,27 @@
+2013-09-04  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Reimplement atk_text_get_text_*_offset for SENTENCE boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=114873
+
+        Reviewed by Chris Fleizach.
+
+        Re-implement these functions without using GailTextUtil nor Pango.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (webkitAccessibleTextWordForBoundary): Renamed from webkitAccessibleTextGetWordForBoundary,
+        to keep it consistent with names for new functions.
+        (isSentenceBoundary): Helper function to know when we are either
+        at the beginning or the end of a sentence.
+        (isWhiteSpaceBetweenSentences): It returns true if we are in the
+        middle of a white space between sentences. Useful for implementing
+        the SENTENCE_END boundary type.
+        (sentenceAtPositionForAtkBoundary): New helper function to find the
+        sentence at a given position considering values of AtkTextBoundary.
+        (webkitAccessibleTextSentenceForBoundary): New function,
+        implementing atk_text_get_text_*_offset for SENTENCE.
+        (webkitAccessibleTextGetTextForOffset): Replace usage of Gail for
+        SENTENCE boundaries with webkitAccessibleTextSentenceForBoundary().
+
 2013-09-04  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Extend the RenderRegionRange class to include overflow information + apply the layout overflow
