@@ -1,3 +1,13 @@
+2013-09-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Editor::m_removedAnchor is unused
+        https://bugs.webkit.org/show_bug.cgi?id=120701
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/Editor.h: Removed m_removedAnchor. It was not only unused, but also broken,
+        as we didn't reset it when navigating.
+
 2013-09-04  Pratik Solanki  <psolanki@apple.com>
 
         Document::updateHoverActiveState() should allow for deferred style recalcs

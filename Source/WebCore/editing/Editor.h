@@ -168,9 +168,6 @@ public:
     void deleteSelectionWithSmartDelete(bool smartDelete);
     bool dispatchCPPEvent(const AtomicString&, ClipboardAccessPolicy);
     
-    Node* removedAnchor() const { return m_removedAnchor.get(); }
-    void setRemovedAnchor(PassRefPtr<Node> n) { m_removedAnchor = n; }
-
     void applyStyle(StylePropertySet*, EditAction = EditActionUnspecified);
     void applyParagraphStyle(StylePropertySet*, EditAction = EditActionUnspecified);
     void applyStyleToSelection(StylePropertySet*, EditAction);
@@ -429,7 +426,6 @@ private:
     OwnPtr<DeleteButtonController> m_deleteButtonController;
 #endif
     RefPtr<CompositeEditCommand> m_lastEditCommand;
-    RefPtr<Node> m_removedAnchor;
     RefPtr<Text> m_compositionNode;
     unsigned m_compositionStart;
     unsigned m_compositionEnd;
