@@ -1244,6 +1244,9 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         tempArray = [[NSMutableArray alloc] initWithArray:attributes];
         [tempArray addObject:NSAccessibilityIncrementButtonAttribute];
         [tempArray addObject:NSAccessibilityDecrementButtonAttribute];
+        [tempArray addObject:NSAccessibilityValueDescriptionAttribute];
+        [tempArray addObject:NSAccessibilityMinValueAttribute];
+        [tempArray addObject:NSAccessibilityMaxValueAttribute];
         incrementorAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }

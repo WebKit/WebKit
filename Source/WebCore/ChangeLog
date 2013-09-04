@@ -1,3 +1,17 @@
+2013-09-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: aria-valuetext property not exposing AXValueDescription
+        https://bugs.webkit.org/show_bug.cgi?id=120375
+
+        Reviewed by Darin Adler.
+
+        Expose value based attributes for incrementor roles (which are called spinbuttons by ARIA).
+
+        Test: platform/mac/accessibility/spinbutton-valuedescription.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+
 2013-09-04  Javier Fernandez  <jfernandez@igalia.com>
 
         <https://webkit.org/b/119622> [CSSRegions] Not possible to clear the selection when mixing content from different FlowThreads
