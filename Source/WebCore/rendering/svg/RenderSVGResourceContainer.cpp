@@ -139,7 +139,8 @@ void RenderSVGResourceContainer::markClientForInvalidation(RenderObject* client,
         client->setNeedsBoundariesUpdate();
         break;
     case RepaintInvalidation:
-        client->repaint();
+        if (!client->documentBeingDestroyed())
+            client->repaint();
         break;
     case ParentOnlyInvalidation:
         break;

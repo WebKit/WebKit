@@ -1,3 +1,20 @@
+2013-09-03  Andreas Kling  <akling@apple.com>
+
+        ASSERTION FAILED: frame().view() == this closing a page with SVG or video
+        <https://webkit.org/b/120645>
+
+        Reviewed by Antti Koivisto.
+
+        Have RenderSVGResourceContainer check if the document is being destroyed before
+        triggering any repaints. This replaces the previous check for a null RenderView
+        which meant basically the same thing.
+
+        We could add more and better assertions to catch unnecessary work during tree
+        teardown, but let's do that separately.
+
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::markClientForInvalidation):
+
 2013-09-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix uninitialized build warning in make_names.pl
