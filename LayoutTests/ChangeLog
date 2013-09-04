@@ -1,3 +1,16 @@
+2013-09-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: REGRESSION: @title is exposed as AXDescription when label label from contents already exists.
+        https://bugs.webkit.org/show_bug.cgi?id=120550
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/image-map1.html:
+        * platform/mac/accessibility/document-links-expected.txt:
+        * platform/mac/accessibility/image-map1-expected.txt:
+        * platform/mac/accessibility/link-with-title-expected.txt: Added.
+        * platform/mac/accessibility/link-with-title.html: Added.
+
 2013-09-03  Enrica Casucci  <enrica@apple.com>
 
         Can't select Katakana word by double-clicking.

@@ -1971,14 +1971,6 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     return [self remoteAccessibilityParentObject];
 }
 
-// FIXME: Different kinds of elements are putting the title tag to use in different
-// AX fields. This should be rectified, but in the initial patch I want to achieve
-// parity with existing behavior.
-- (BOOL)titleTagShouldBeUsedInDescriptionField
-{
-    return (m_object->isLink() && !m_object->isImageMapLink()) || m_object->isImage();
-}
-
 // This should be the "visible" text that's actually on the screen if possible.
 // If there's alternative text, that can override the title.
 - (NSString *)accessibilityTitle
@@ -2012,11 +2004,6 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         // that text as our title.
         if (text.textSource == LabelByElementText && !m_object->exposesTitleUIElement())
             return text.text;
-        
-        // FIXME: The title tag is used in certain cases for the title. This usage should
-        // probably be in the description field since it's not "visible".
-        if (text.textSource == TitleTagText && ![self titleTagShouldBeUsedInDescriptionField])
-            return text.text;
     }
     
     return [NSString string];
@@ -2033,13 +2020,23 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     m_object->accessibilityText(textOrder);
     
     unsigned length = textOrder.size();
+    bool visibleTextAvailable = false;
     for (unsigned k = 0; k < length; k++) {
         const AccessibilityText& text = textOrder[k];
         
         if (text.textSource == AlternativeText)
             return text.text;
         
-        if (text.textSource == TitleTagText && [self titleTagShouldBeUsedInDescriptionField])
+        switch (text.textSource) {
+        case VisibleText:
+        case ChildrenText:
+        case LabelByElementText:
+            visibleTextAvailable = true;
+        default:
+            break;
+        }
+        
+        if (text.textSource == TitleTagText && !visibleTextAvailable)
             return text.text;
     }
     

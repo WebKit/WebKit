@@ -1,3 +1,22 @@
+2013-09-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: REGRESSION: @title is exposed as AXDescription when label label from contents already exists.
+        https://bugs.webkit.org/show_bug.cgi?id=120550
+
+        Reviewed by Mario Sanchez Prada.
+
+        Resolve a FIXME from the accessible name computation refactoring so that alternative text for links do not
+        show up in the title field and do not duplicate naming when a title tag is used.
+
+        Effectively, this means that links no longer use AXTitle for alternative text. They use AXDescription
+        like all other elements.
+
+        Test: platform/mac/accessibility/link-with-title.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityTitle]):
+        (-[WebAccessibilityObjectWrapper accessibilityDescription]):
+
 2013-09-03  Darin Adler  <darin@apple.com>
 
         Change type of Document::doctype back to a raw pointer

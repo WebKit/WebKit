@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<a id="link1" href="#" title="TITLE">TEXT</a>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that a link with a title attribute will only include that in the help field.");
+    
+    if (window.accessibilityController) {
+        var link1 = accessibilityController.accessibleElementById("link1");
+        
+        debug("Link with title and visible text");
+        shouldBe("link1.description", "'AXDescription: '");
+        shouldBe("link1.title", "'AXTitle: TEXT'");
+        shouldBe("link1.helpText", "'AXHelp: TITLE'");
+
+    }
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

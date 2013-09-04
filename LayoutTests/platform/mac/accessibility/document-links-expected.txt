@@ -5,14 +5,14 @@ AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 0>
 AXHelp: 
-AXParent: <AXLink: 'Link1'>
+AXParent: <AXLink>
 AXSize: NSSize: {123, 62}
-AXTitle: Link1
-AXDescription: 
+AXTitle: 
+AXDescription: Link1
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXLink: 'Link1'>
+AXWindow: <AXLink>
 AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)
 AXEndTextMarker: (null)
@@ -20,12 +20,12 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXLink: 'Link1'>
+AXTopLevelUIElement: <AXLink>
 AXLanguage: 
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
 AXARIABusy: 0
-AXPath: <AXLink: 'Link1'>
+AXPath: <AXLink>
 
 ------------
 AXRole: AXLink
@@ -33,14 +33,14 @@ AXSubrole: (null)
 AXRoleDescription: link
 AXChildren: <array of size 0>
 AXHelp: 
-AXParent: <AXLink: 'Link2'>
+AXParent: <AXLink>
 AXSize: NSSize: {113, 22}
-AXTitle: Link2
-AXDescription: 
+AXTitle: 
+AXDescription: Link2
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXLink: 'Link2'>
+AXWindow: <AXLink>
 AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)
 AXEndTextMarker: (null)
@@ -48,12 +48,12 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXLink: 'Link2'>
+AXTopLevelUIElement: <AXLink>
 AXLanguage: 
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
 AXARIABusy: 0
-AXPath: <AXLink: 'Link2'>
+AXPath: <AXLink>
 
 ------------
 AXRole: AXLink

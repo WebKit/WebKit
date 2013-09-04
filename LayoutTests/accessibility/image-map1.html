@@ -21,22 +21,20 @@
 <p id="description"></p>
 <div id="console"></div>
      
-    <script>
+<script>
         description("This tests that you can reach the links within an image map.");
 
         if (window.accessibilityController) {
             document.getElementById("body").focus();
 
             var body = accessibilityController.focusedElement;
-            shouldBe("body.childAtIndex(0).role", "'AXRole: AXLink'");
-            shouldBe("body.childAtIndex(0).title", "'AXTitle: Link1'");
-
-            shouldBe("body.childAtIndex(1).role", "'AXRole: AXLink'");
-            shouldBe("body.childAtIndex(1).title", "'AXTitle: Link2'");
-
-            shouldBe("body.childAtIndex(2).role", "'AXRole: AXLink'");
-            shouldBe("body.childAtIndex(2).title", "'AXTitle: Link3'");
-        }
+            for (var k = 0; k < 3; k++) {
+                var link = body.childAtIndex(k);
+                debug("Link" + (k + 1) + " role: " + link.role);
+                debug("Link" + (k + 1) + " title: " + link.title);
+                debug("Link" + (k + 1) + " description: " + link.description + "\n");
+            }
+         }
 </script>
 
 <script src="../fast/js/resources/js-test-post.js"></script>
