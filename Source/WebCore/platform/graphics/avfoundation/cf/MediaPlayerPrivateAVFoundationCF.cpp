@@ -66,7 +66,11 @@
 #include "CoreMediaSoftLinking.h"
 
 // We don't bother softlinking against libdispatch since it's already been loaded by AAS.
+#ifdef DEBUG_ALL
+#pragma comment(lib, "libdispatch_debug.lib")
+#else
 #pragma comment(lib, "libdispatch.lib")
+#endif
 
 using namespace std;
 

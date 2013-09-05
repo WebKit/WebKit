@@ -418,6 +418,16 @@
 
 2013-09-04  Roger Fong  <roger_fong@apple.com>
 
+        Link to libdispatch_debug.lib when using DebugSuffix configuration.
+        https://bugs.webkit.org/show_bug.cgi?id=120712.
+        <rdar://problem/14883216>.
+
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+
+2013-09-04  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Windows build fix and WebCore project cleanup.
 
         * WebCore.vcxproj/WebCore.vcxproj.filters:
