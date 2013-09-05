@@ -1207,7 +1207,7 @@ inline bool operator!=(const Vector<T, inlineCapacity, OverflowHandler>& a, cons
 }
 
 #if !ASSERT_DISABLED
-template<typename T> struct ValueCheck<Vector<T>> {
+template<typename T> struct ValueCheck<Vector<T> > {
     typedef Vector<T> TraitType;
     static void checkConsistency(const Vector<T>& v)
     {

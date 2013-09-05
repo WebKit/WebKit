@@ -1,3 +1,11 @@
+2013-09-05  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed. Fix build after r155083
+
+        Source/WTF/wtf/Vector.h:1210:48: error: ‘>>’ should be ‘> >’ within a nested template argument list
+
+        * wtf/Vector.h: Add missing space.
+
 2013-09-04  Mark Rowe  <mrowe@apple.com>
 
         Fix AutodrainedPool.h to compile without errors under ARC.
