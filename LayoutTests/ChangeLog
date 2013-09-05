@@ -1,3 +1,72 @@
+2013-09-05  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] Convert existing pixel tests in ref tests
+        https://bugs.webkit.org/show_bug.cgi?id=120760
+
+        Reviewed by Antti Koivisto.
+
+        I have also removed text-align:justify from the tests because its not relevant to the tested functionality and
+        it makes creating the expected results very difficult because of the way fragmented text is rendered when
+        it's aligned justified.
+
+        * fast/regions/overflow-in-uniform-regions-dynamic-expected.html: Added.
+        * fast/regions/overflow-in-uniform-regions-dynamic.html:
+        * fast/regions/overflow-in-variable-width-regions-expected.html: Added.
+        * fast/regions/overflow-in-variable-width-regions.html:
+        * fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.html: Added.
+        * fast/regions/overflow-moving-below-floats-in-variable-width-regions.html:
+        * fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.html: Added.
+        * fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html:
+        * fast/regions/overflow-rtl-in-variable-width-regions-expected.html: Added.
+        * fast/regions/overflow-rtl-in-variable-width-regions.html:
+        * fast/regions/overflow-size-change-in-variable-width-regions-expected.html: Added.
+        * fast/regions/overflow-size-change-in-variable-width-regions.html:
+        * platform/efl/fast/regions/overflow-in-uniform-regions-dynamic-expected.png: Removed.
+        * platform/efl/fast/regions/overflow-in-uniform-regions-dynamic-expected.txt: Removed.
+        * platform/efl/fast/regions/overflow-in-variable-width-regions-expected.png: Removed.
+        * platform/efl/fast/regions/overflow-in-variable-width-regions-expected.txt: Removed.
+        * platform/efl/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.png: Removed.
+        * platform/efl/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.txt: Removed.
+        * platform/efl/fast/regions/overflow-rtl-in-variable-width-regions-expected.png: Removed.
+        * platform/efl/fast/regions/overflow-rtl-in-variable-width-regions-expected.txt: Removed.
+        * platform/efl/fast/regions/overflow-size-change-in-variable-width-regions-expected.png: Removed.
+        * platform/efl/fast/regions/overflow-size-change-in-variable-width-regions-expected.txt: Removed.
+        * platform/gtk/fast/regions/overflow-in-uniform-regions-dynamic-expected.png: Removed.
+        * platform/gtk/fast/regions/overflow-in-uniform-regions-dynamic-expected.txt: Removed.
+        * platform/gtk/fast/regions/overflow-in-variable-width-regions-expected.png: Removed.
+        * platform/gtk/fast/regions/overflow-in-variable-width-regions-expected.txt: Removed.
+        * platform/gtk/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.png: Removed.
+        * platform/gtk/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.txt: Removed.
+        * platform/gtk/fast/regions/overflow-rtl-in-variable-width-regions-expected.png: Removed.
+        * platform/gtk/fast/regions/overflow-rtl-in-variable-width-regions-expected.txt: Removed.
+        * platform/gtk/fast/regions/overflow-size-change-in-variable-width-regions-expected.png: Removed.
+        * platform/gtk/fast/regions/overflow-size-change-in-variable-width-regions-expected.txt: Removed.
+        * platform/mac/fast/regions/overflow-in-uniform-regions-dynamic-expected.png: Removed.
+        * platform/mac/fast/regions/overflow-in-uniform-regions-dynamic-expected.txt: Removed.
+        * platform/mac/fast/regions/overflow-in-variable-width-regions-expected.png: Removed.
+        * platform/mac/fast/regions/overflow-in-variable-width-regions-expected.txt: Removed.
+        * platform/mac/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.png: Removed.
+        * platform/mac/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.txt: Removed.
+        * platform/mac/fast/regions/overflow-rtl-in-variable-width-regions-expected.png: Removed.
+        * platform/mac/fast/regions/overflow-rtl-in-variable-width-regions-expected.txt: Removed.
+        * platform/mac/fast/regions/overflow-size-change-in-variable-width-regions-expected.png: Removed.
+        * platform/mac/fast/regions/overflow-size-change-in-variable-width-regions-expected.txt: Removed.
+        * platform/qt-wk2/fast/regions/overflow-in-uniform-regions-dynamic-expected.png: Removed.
+        * platform/qt-wk2/fast/regions/overflow-in-variable-width-regions-expected.png: Removed.
+        * platform/qt-wk2/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.png: Removed.
+        * platform/qt-wk2/fast/regions/overflow-rtl-in-variable-width-regions-expected.png: Removed.
+        * platform/qt-wk2/fast/regions/overflow-size-change-in-variable-width-regions-expected.png: Removed.
+        * platform/qt/fast/regions/overflow-in-uniform-regions-dynamic-expected.png: Removed.
+        * platform/qt/fast/regions/overflow-in-uniform-regions-dynamic-expected.txt: Removed.
+        * platform/qt/fast/regions/overflow-in-variable-width-regions-expected.png: Removed.
+        * platform/qt/fast/regions/overflow-in-variable-width-regions-expected.txt: Removed.
+        * platform/qt/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.png: Removed.
+        * platform/qt/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.txt: Removed.
+        * platform/qt/fast/regions/overflow-rtl-in-variable-width-regions-expected.png: Removed.
+        * platform/qt/fast/regions/overflow-rtl-in-variable-width-regions-expected.txt: Removed.
+        * platform/qt/fast/regions/overflow-size-change-in-variable-width-regions-expected.png: Removed.
+        * platform/qt/fast/regions/overflow-size-change-in-variable-width-regions-expected.txt: Removed.
+
 2013-09-05  Brendan Long  <b.long@cablelabs.com>
 
         [GTK] media/track/in-band/ layout tests introduced in r154908 are failing
