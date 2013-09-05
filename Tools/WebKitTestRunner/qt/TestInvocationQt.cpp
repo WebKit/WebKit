@@ -64,29 +64,11 @@ static void dumpImage(const QImage& image)
     fflush(stdout);
 }
 
-void TestInvocation::forceRepaintDoneCallback(WKErrorRef, void *context)
-{
-    static_cast<TestInvocation*>(context)->m_gotRepaint = true;
-    TestController::shared().notifyDone();
-}
-
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef imageRef, WKArrayRef repaintRects)
 {
     QImage image;
     if (PlatformWebView::windowShapshotEnabled()) {
-        WKPageRef page = TestController::shared().mainWebView()->page();
-        WKPageForceRepaint(page, this, &forceRepaintDoneCallback);
-
-        TestController::shared().runUntil(m_gotRepaint, TestController::ShortTimeout);
-
-        if (m_gotRepaint)
-            image = WKImageCreateQImage(TestController::shared().mainWebView()->windowSnapshotImage().get());
-        else {
-            m_error = true;
-            m_errorMessage = "Timed out waiting for repaint\n";
-            m_webProcessIsUnresponsive = true;
-            return;
-        }
+        image = WKImageCreateQImage(TestController::shared().mainWebView()->windowSnapshotImage().get());
     } else
         image = WKImageCreateQImage(imageRef);
 

@@ -106,34 +106,11 @@ static void paintRepaintRectOverlay(cairo_surface_t* surface, WKArrayRef repaint
     cairo_destroy(context);
 }
 
-#if PLATFORM(EFL)
-void TestInvocation::forceRepaintDoneCallback(WKErrorRef, void *context)
-{
-    static_cast<TestInvocation*>(context)->m_gotRepaint = true;
-    TestController::shared().notifyDone();
-}
-#endif
-
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef wkImage, WKArrayRef repaintRects)
 {
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(EFL)
     UNUSED_PARAM(wkImage);
-
-    cairo_surface_t* surface;
-
-    WKPageRef page = TestController::shared().mainWebView()->page();
-    WKPageForceRepaint(page, this, &forceRepaintDoneCallback);
-
-    TestController::shared().runUntil(m_gotRepaint, TestController::ShortTimeout);
-
-    if (!m_gotRepaint) {
-        m_error = true;
-        m_errorMessage = "Timed out waiting for repaint\n";
-        m_webProcessIsUnresponsive = true;
-        return;
-    }
-
-    surface = WKImageCreateCairoSurface(TestController::shared().mainWebView()->windowSnapshotImage().get());
+    cairo_surface_t* surface = WKImageCreateCairoSurface(TestController::shared().mainWebView()->windowSnapshotImage().get());
 #else
     cairo_surface_t* surface = WKImageCreateCairoSurface(wkImage);
 #endif

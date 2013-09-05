@@ -58,10 +58,8 @@ private:
     void dumpAudio(WKDataRef);
     bool compareActualHashToExpectedAndDumpResults(const char[33]);
 
-#if PLATFORM(QT) || PLATFORM(EFL)
     static void forceRepaintDoneCallback(WKErrorRef, void* context);
-#endif
-    
+
     WKRetainPtr<WKURLRef> m_url;
     std::string m_pathOrURL;
     

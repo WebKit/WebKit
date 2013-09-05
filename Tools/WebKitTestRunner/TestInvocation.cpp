@@ -310,6 +310,12 @@ void TestInvocation::dump(const char* textToStdout, const char* textToStderr, bo
     fflush(stderr);
 }
 
+void TestInvocation::forceRepaintDoneCallback(WKErrorRef, void* context)
+{
+    TestInvocation* testInvocation = static_cast<TestInvocation*>(context);
+    testInvocation->m_gotRepaint = true;
+}
+
 void TestInvocation::dumpResults()
 {
     if (m_textOutput.length() || !m_audioResult)
@@ -317,8 +323,17 @@ void TestInvocation::dumpResults()
     else
         dumpAudio(m_audioResult.get());
 
-    if (m_dumpPixels && m_pixelResult)
+    if (m_dumpPixels && m_pixelResult) {
+        m_gotRepaint = false;
+        WKPageForceRepaint(TestController::shared().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
+        TestController::shared().runUntil(m_gotRepaint, TestController::ShortTimeout);
+        if (!m_gotRepaint) {
+            m_errorMessage = "Timed out waiting for pre-pixel dump repaint\n";
+            m_webProcessIsUnresponsive = true;
+            return;
+        }
         dumpPixelsAndCompareWithExpected(m_pixelResult.get(), m_repaintRects.get());
+    }
 
     fputs("#EOF\n", stdout);
     fflush(stdout);
