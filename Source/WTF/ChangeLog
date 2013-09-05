@@ -1,5 +1,22 @@
 2013-09-05  Anders Carlsson  <andersca@apple.com>
 
+        Clean up wtf/Compiler.h
+        https://bugs.webkit.org/show_bug.cgi?id=120790
+
+        Reviewed by Andreas Kling.
+
+        - Get rid of the CLANG_PRAGMA define, it's not used anywhere.
+        - Remove a workaround for a bug in the version of clang that came with Xcode 4.2.
+        - Replace WTF_COMPILER_SUPPORTS_CXX_FINAL_CONTROL with a compiler quirk for versions of clang
+          that have a buggy final implementation and fix a bug in the macro where final would be disabled
+          for versions of clang where __clang_minor__ is less than 2, regardless of the major version.
+        - Fail if someone tries to compile the WebKit stack with a compiler that doesn't support rvalue
+          references or static_assert.
+
+        * wtf/Compiler.h:
+
+2013-09-05  Anders Carlsson  <andersca@apple.com>
+
         Change StringBuffer back to not use an OwnPtr in an attempt to fix ports.
         
         * wtf/text/StringBuffer.h:
