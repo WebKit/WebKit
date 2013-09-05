@@ -1,5 +1,13 @@
 2013-09-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, don't run fast/js tests in run-javascriptcore-tests on platforms that
+        can't support it because if non-bourne shells. This fixes part #2 of the Linux
+        bot breakage.
+
+        * Scripts/run-javascriptcore-tests:
+
+2013-09-05  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, don't rely on File::Slurp. This fixes part #1 of Linux bot breakage.
 
         * Scripts/run-javascriptcore-tests:

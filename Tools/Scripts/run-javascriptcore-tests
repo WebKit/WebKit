@@ -189,13 +189,16 @@ while (<ACTUAL>) {
 }
 close ACTUAL;
 
-# Run the fast/js tests.
 chdirWebKit();
 my $fastJSResultsDir = $productDir . "/fast-jsc-results";
-my @fastJSDriverCmd = ("/bin/sh", "Tools/Scripts/run-fast-jsc", "-j", jscPath($productDir), "-r", $fastJSResultsDir, "-t", "LayoutTests");
-print "Running: " . join(" ", @fastJSDriverCmd) . "\n";
-$result = system(@fastJSDriverCmd);
-exit exitStatus($result) if $result;
+my $runFastJS = isAppleMacWebKit();
+if ($runFastJS) {
+    # Run the fast/js tests.
+    my @fastJSDriverCmd = ("/bin/sh", "Tools/Scripts/run-fast-jsc", "-j", jscPath($productDir), "-r", $fastJSResultsDir, "-t", "LayoutTests");
+    print "Running: " . join(" ", @fastJSDriverCmd) . "\n";
+    $result = system(@fastJSDriverCmd);
+    exit exitStatus($result) if $result;
+}
 
 my $numNewMozillaFailures = keys %newMozillaFailures;
 if ($numNewMozillaFailures) {
@@ -262,11 +265,13 @@ print "    OK.\n" if $numNewMozillaFailures == 0;
 
 print "\n";
 
-print "Results for fast/js tests:\n";
-printThingsFound($numJSFailures, "failure", "failures", "found");
-printThingsFound($numJSCrashes, "crash", "crashes", "found");
-print "    OK.\n" if $numJSFailures == 0 && $numJSCrashes == 0;
-
-print "\n";
-
+if ($runFastJS) {
+    print "Results for fast/js tests:\n";
+    printThingsFound($numJSFailures, "failure", "failures", "found");
+    printThingsFound($numJSCrashes, "crash", "crashes", "found");
+    print "    OK.\n" if $numJSFailures == 0 && $numJSCrashes == 0;
+    
+    print "\n";
+}
+    
 exit(1)  if $numNewMozillaFailures || $numJSFailures || $numJSCrashes;
