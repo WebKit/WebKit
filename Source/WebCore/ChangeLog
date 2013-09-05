@@ -1,5 +1,27 @@
 2013-09-04  Andreas Kling  <akling@apple.com>
 
+        CachedFrame construction should begin with a Frame&.
+        <https://webkit.org/b/120719>
+
+        Reviewed by Anders Carlsson.
+
+        We can't create a CachedFrame from a null Frame anyway.
+
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::restore):
+        * bindings/js/ScriptCachedFrameData.h:
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::CachedFrameBase):
+        (WebCore::CachedFrameBase::restore):
+        (WebCore::CachedFrame::CachedFrame):
+        * history/CachedFrame.h:
+        (WebCore::CachedFrame::create):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+
+2013-09-04  Andreas Kling  <akling@apple.com>
+
         Set "render tree being torn down" flag a bit earlier.
         <https://webkit.org/b/120717>
 

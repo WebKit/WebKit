@@ -45,10 +45,10 @@ namespace WebCore {
         typedef HashMap< RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindow> > JSDOMWindowSet;
 
     public:
-        ScriptCachedFrameData(Frame*);
+        ScriptCachedFrameData(Frame&);
         ~ScriptCachedFrameData();
 
-        void restore(Frame*);
+        void restore(Frame&);
         void clear();
 
     private:

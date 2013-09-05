@@ -44,11 +44,11 @@ using namespace JSC;
 
 namespace WebCore {
 
-ScriptCachedFrameData::ScriptCachedFrameData(Frame* frame)
+ScriptCachedFrameData::ScriptCachedFrameData(Frame& frame)
 {
     JSLockHolder lock(JSDOMWindowBase::commonVM());
 
-    ScriptController& scriptController = frame->script();
+    ScriptController& scriptController = frame.script();
     ScriptController::ShellMap& windowShells = scriptController.m_windowShells;
 
     ScriptController::ShellMap::iterator windowShellsEnd = windowShells.end();
@@ -65,11 +65,11 @@ ScriptCachedFrameData::~ScriptCachedFrameData()
     clear();
 }
 
-void ScriptCachedFrameData::restore(Frame* frame)
+void ScriptCachedFrameData::restore(Frame& frame)
 {
     JSLockHolder lock(JSDOMWindowBase::commonVM());
 
-    ScriptController& scriptController = frame->script();
+    ScriptController& scriptController = frame.script();
     ScriptController::ShellMap& windowShells = scriptController.m_windowShells;
 
     ScriptController::ShellMap::iterator windowShellsEnd = windowShells.end();
@@ -80,13 +80,13 @@ void ScriptCachedFrameData::restore(Frame* frame)
         if (JSDOMWindow* window = m_windows.get(world).get())
             windowShell->setWindow(window->vm(), window);
         else {
-            DOMWindow* domWindow = frame->document()->domWindow();
+            DOMWindow* domWindow = frame.document()->domWindow();
             if (windowShell->window()->impl() == domWindow)
                 continue;
 
             windowShell->setWindow(domWindow);
 
-            if (Page* page = frame->page()) {
+            if (Page* page = frame.page()) {
                 scriptController.attachDebugger(windowShell, page->debugger());
                 windowShell->window()->setProfileGroup(page->group().identifier());
             }

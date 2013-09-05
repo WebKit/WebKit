@@ -51,7 +51,7 @@ public:
     bool isMainFrame() { return m_isMainFrame; }
 
 protected:
-    CachedFrameBase(Frame*);
+    CachedFrameBase(Frame&);
     ~CachedFrameBase();
     
     RefPtr<Document> m_document;
@@ -71,7 +71,7 @@ protected:
 
 class CachedFrame : private CachedFrameBase {
 public:
-    static PassOwnPtr<CachedFrame> create(Frame* frame) { return adoptPtr(new CachedFrame(frame)); }
+    static PassOwnPtr<CachedFrame> create(Frame& frame) { return adoptPtr(new CachedFrame(frame)); }
 
     void open();
     void clear();
@@ -89,7 +89,7 @@ public:
     int descendantFrameCount() const;
 
 private:
-    explicit CachedFrame(Frame*);
+    explicit CachedFrame(Frame&);
 };
 
 } // namespace WebCore
