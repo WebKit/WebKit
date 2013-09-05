@@ -56,7 +56,6 @@ namespace JSC {
     class Register;
     class JSScope;
     class SamplingTool;
-    class StackIterator;
     struct CallFrameClosure;
     struct HandlerInfo;
     struct Instruction;

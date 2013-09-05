@@ -1,3 +1,68 @@
+2013-09-04  Mark Lam  <mark.lam@apple.com>
+
+        Renamed StackIterator to StackVisitor.
+        https://bugs.webkit.org/show_bug.cgi?id=120706.
+
+        Reviewed by Geoffrey Garen.
+
+        Also did some minor refactoring:
+        - Renamed StackIterator::iterate() to StackVisitor::visit().
+        - Make StackVisitor::visit() a static method.
+        - Move the instantiation of the StackVisitor instance into StackVisitor::visit()
+          from CallFrame::iterate().
+        - Removed StackIterator::resetIterator() and inline its body into the
+          StackVisitor constructor since this is the only remaining caller of it.
+
+        * API/JSContextRef.cpp:
+        (BacktraceFunctor::operator()):
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::iterate):
+        * interpreter/Interpreter.cpp:
+        (JSC::DumpRegisterFunctor::operator()):
+        (JSC::unwindCallFrame):
+        (JSC::getStackFrameCodeType):
+        (JSC::GetStackTraceFunctor::operator()):
+        (JSC::UnwindFunctor::operator()):
+        * interpreter/Interpreter.h:
+        * interpreter/StackIterator.cpp: Removed.
+        * interpreter/StackIterator.h: Removed.
+        * interpreter/StackVisitor.cpp: Copied from Source/JavaScriptCore/interpreter/StackIterator.cpp.
+        (JSC::StackVisitor::StackVisitor):
+        (JSC::StackVisitor::gotoNextFrame):
+        (JSC::StackVisitor::readFrame):
+        (JSC::StackVisitor::readNonInlinedFrame):
+        (JSC::StackVisitor::readInlinedFrame):
+        (JSC::StackVisitor::Frame::codeType):
+        (JSC::StackVisitor::Frame::functionName):
+        (JSC::StackVisitor::Frame::sourceURL):
+        (JSC::StackVisitor::Frame::toString):
+        (JSC::StackVisitor::Frame::arguments):
+        (JSC::StackVisitor::Frame::computeLineAndColumn):
+        (JSC::StackVisitor::Frame::retrieveExpressionInfo):
+        (JSC::StackVisitor::Frame::setToEnd):
+        (JSC::StackVisitor::Frame::print):
+        (DebugPrintFrameFunctor::operator()):
+        * interpreter/StackVisitor.h: Copied from Source/JavaScriptCore/interpreter/StackIterator.h.
+        (JSC::StackVisitor::visit):
+        * jsc.cpp:
+        (FunctionJSCStackFunctor::operator()):
+        * profiler/ProfileGenerator.cpp:
+        (JSC::AddParentForConsoleStartFunctor::operator()):
+        * runtime/JSFunction.cpp:
+        (JSC::RetrieveArgumentsFunctor::operator()):
+        (JSC::RetrieveCallerFunctionFunctor::operator()):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::GlobalFuncProtoGetterFunctor::operator()):
+        (JSC::GlobalFuncProtoSetterFunctor::operator()):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructorGetPrototypeOfFunctor::operator()):
+
 2013-09-04  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed Build fix for Windows DebugSuffix configuration.

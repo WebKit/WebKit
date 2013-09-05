@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StackIterator_h
-#define StackIterator_h
+#ifndef StackVisitor_h
+#define StackVisitor_h
 
 #include <wtf/text/WTFString.h>
 
@@ -42,7 +42,7 @@ class JSScope;
 
 typedef ExecState CallFrame;
 
-class StackIterator {
+class StackVisitor {
 public:
     class Frame {
     public:
@@ -102,7 +102,7 @@ public:
 #endif
         CallFrame* m_callFrame;
 
-        friend class StackIterator;
+        friend class StackVisitor;
     };
 
     enum Status {
@@ -110,16 +110,18 @@ public:
         Done = 1
     };
 
-    // StackIterator::iterate() expects a Functor that implements the following method:
-    //     Status operator()(StackIterator&);
+    // StackVisitor::visit() expects a Functor that implements the following method:
+    //     Status operator()(StackVisitor&);
 
-    template <typename Functor> void iterate(Functor& functor)
+    template <typename Functor>
+    static void visit(CallFrame* startFrame, Functor& functor)
     {
-        while (m_frame.callFrame()) {
-            Status status = functor(*this);
+        StackVisitor visitor(startFrame);
+        while (visitor->callFrame()) {
+            Status status = functor(visitor);
             if (status != Continue)
                 break;
-            gotoNextFrame();
+            visitor.gotoNextFrame();
         }
     }
 
@@ -127,10 +129,9 @@ public:
     ALWAYS_INLINE Frame* operator->() { return &m_frame; }
 
 private:
-    JS_EXPORT_PRIVATE StackIterator(CallFrame* startFrame);
+    JS_EXPORT_PRIVATE StackVisitor(CallFrame* startFrame);
 
     JS_EXPORT_PRIVATE void gotoNextFrame();
-    void resetIterator();
 
     void readFrame(CallFrame*);
     void readNonInlinedFrame(CallFrame*, CodeOrigin* = 0);
@@ -138,13 +139,10 @@ private:
     void readInlinedFrame(CallFrame*, CodeOrigin*);
 #endif
 
-    CallFrame* m_startFrame;
     Frame m_frame;
-
-    friend class ExecState;
 };
 
 } // namespace JSC
 
-#endif // StackIterator_h
+#endif // StackVisitor_h
 

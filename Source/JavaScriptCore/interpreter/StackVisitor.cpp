@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "StackIterator.h"
+#include "StackVisitor.h"
 
 #include "Arguments.h"
 #include "CallFrameInlines.h"
@@ -35,13 +35,13 @@
 
 namespace JSC {
 
-StackIterator::StackIterator(CallFrame* startFrame)
-    : m_startFrame(startFrame)
+StackVisitor::StackVisitor(CallFrame* startFrame)
 {
-    resetIterator();
+    m_frame.m_index = 0;
+    readFrame(startFrame);
 }
 
-void StackIterator::gotoNextFrame()
+void StackVisitor::gotoNextFrame()
 {
 #if ENABLE(DFG_JIT)
     if (m_frame.isInlinedFrame()) {
@@ -54,13 +54,7 @@ void StackIterator::gotoNextFrame()
         readFrame(m_frame.callerFrame());
 }
 
-void StackIterator::resetIterator()
-{
-    m_frame.m_index = 0;
-    readFrame(m_startFrame);
-}
-
-void StackIterator::readFrame(CallFrame* callFrame)
+void StackVisitor::readFrame(CallFrame* callFrame)
 {
     ASSERT(!callFrame->hasHostCallFrameFlag());
     if (!callFrame) {
@@ -106,7 +100,7 @@ void StackIterator::readFrame(CallFrame* callFrame)
 #endif // !ENABLE(DFG_JIT)
 }
 
-void StackIterator::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin)
+void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin)
 {
     m_frame.m_callFrame = callFrame;
     m_frame.m_argumentCountIncludingThis = callFrame->argumentCountIncludingThis();
@@ -130,7 +124,7 @@ static unsigned inlinedFrameOffset(CodeOrigin* codeOrigin)
     return frameOffset;
 }
 
-void StackIterator::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin)
+void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin)
 {
     ASSERT(codeOrigin);
     ASSERT(!callFrame->hasHostCallFrameFlag());
@@ -170,67 +164,67 @@ void StackIterator::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigi
 }
 #endif // ENABLE(DFG_JIT)
 
-StackIterator::Frame::CodeType StackIterator::Frame::codeType() const
+StackVisitor::Frame::CodeType StackVisitor::Frame::codeType() const
 {
     if (!isJSFrame())
-        return StackIterator::Frame::Native;
+        return StackVisitor::Frame::Native;
 
     switch (codeBlock()->codeType()) {
     case EvalCode:
-        return StackIterator::Frame::Eval;
+        return StackVisitor::Frame::Eval;
     case FunctionCode:
-        return StackIterator::Frame::Function;
+        return StackVisitor::Frame::Function;
     case GlobalCode:
-        return StackIterator::Frame::Global;
+        return StackVisitor::Frame::Global;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return StackIterator::Frame::Global;
+    return StackVisitor::Frame::Global;
 }
 
-String StackIterator::Frame::functionName()
+String StackVisitor::Frame::functionName()
 {
     String traceLine;
     JSObject* callee = this->callee();
 
     switch (codeType()) {
-    case StackIterator::Frame::Eval:
+    case StackVisitor::Frame::Eval:
         traceLine = "eval code";
         break;
-    case StackIterator::Frame::Native:
+    case StackVisitor::Frame::Native:
         if (callee)
             traceLine = getCalculatedDisplayName(callFrame(), callee).impl();
         break;
-    case StackIterator::Frame::Function:
+    case StackVisitor::Frame::Function:
         traceLine = getCalculatedDisplayName(callFrame(), callee).impl();
         break;
-    case StackIterator::Frame::Global:
+    case StackVisitor::Frame::Global:
         traceLine = "global code";
         break;
     }
     return traceLine.isNull() ? emptyString() : traceLine;
 }
 
-String StackIterator::Frame::sourceURL()
+String StackVisitor::Frame::sourceURL()
 {
     String traceLine;
 
     switch (codeType()) {
-    case StackIterator::Frame::Eval:
-    case StackIterator::Frame::Function:
-    case StackIterator::Frame::Global: {
+    case StackVisitor::Frame::Eval:
+    case StackVisitor::Frame::Function:
+    case StackVisitor::Frame::Global: {
         String sourceURL = codeBlock()->ownerExecutable()->sourceURL();
         if (!sourceURL.isEmpty())
             traceLine = sourceURL.impl();
         break;
     }
-    case StackIterator::Frame::Native:
+    case StackVisitor::Frame::Native:
         traceLine = "[native code]";
         break;
     }
     return traceLine.isNull() ? emptyString() : traceLine;
 }
 
-String StackIterator::Frame::toString()
+String StackVisitor::Frame::toString()
 {
     StringBuilder traceBuild;
     String functionName = this->functionName();
@@ -253,7 +247,7 @@ String StackIterator::Frame::toString()
     return traceBuild.toString().impl();
 }
 
-Arguments* StackIterator::Frame::arguments()
+Arguments* StackVisitor::Frame::arguments()
 {
     ASSERT(m_callFrame);
     CallFrame* physicalFrame = m_callFrame;
@@ -273,7 +267,7 @@ Arguments* StackIterator::Frame::arguments()
     return arguments;
 }
 
-void StackIterator::Frame::computeLineAndColumn(unsigned& line, unsigned& column)
+void StackVisitor::Frame::computeLineAndColumn(unsigned& line, unsigned& column)
 {
     CodeBlock* codeBlock = this->codeBlock();
     if (!codeBlock) {
@@ -293,14 +287,14 @@ void StackIterator::Frame::computeLineAndColumn(unsigned& line, unsigned& column
     column = divotColumn + (divotLine ? 1 : codeBlock->firstLineColumnOffset());
 }
 
-void StackIterator::Frame::retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column)
+void StackVisitor::Frame::retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column)
 {
     CodeBlock* codeBlock = this->codeBlock();
     codeBlock->unlinkedCodeBlock()->expressionRangeForBytecodeOffset(bytecodeOffset(), divot, startOffset, endOffset, line, column);
     divot += codeBlock->sourceOffset();
 }
 
-void StackIterator::Frame::setToEnd()
+void StackVisitor::Frame::setToEnd()
 {
     m_callFrame = 0;
 #if ENABLE(DFG_JIT)
@@ -352,7 +346,7 @@ static void printif(int indentLevels, const char* format, ...)
     va_end(argList);
 }
 
-void StackIterator::Frame::print(int indentLevel)
+void StackVisitor::Frame::print(int indentLevel)
 {
     int i = indentLevel;
 
@@ -417,7 +411,7 @@ void StackIterator::Frame::print(int indentLevel)
 } // namespace JSC
 
 #ifndef NDEBUG
-using JSC::StackIterator;
+using JSC::StackVisitor;
 
 // For debugging use
 void debugPrintCallFrame(JSC::CallFrame*);
@@ -435,10 +429,10 @@ public:
     {
     }
 
-    StackIterator::Status operator()(StackIterator& iter)
+    StackVisitor::Status operator()(StackVisitor& visitor)
     {
-        iter->print(2);
-        return m_action == PrintAll ? StackIterator::Continue : StackIterator::Done;
+        visitor->print(2);
+        return m_action == PrintAll ? StackVisitor::Continue : StackVisitor::Done;
     }
 
 private:

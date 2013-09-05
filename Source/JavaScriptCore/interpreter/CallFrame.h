@@ -28,7 +28,7 @@
 #include "JSStack.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
-#include "StackIterator.h"
+#include "StackVisitor.h"
 
 namespace JSC  {
 
@@ -284,12 +284,11 @@ namespace JSC  {
         CallFrame* callerFrameNoFlags() { return callerFrame()->removeHostCallFrameFlag(); }
 
         // CallFrame::iterate() expects a Functor that implements the following method:
-        //     StackIterator::Status operator()(StackIterator&);
+        //     StackVisitor::Status operator()(StackVisitor&);
 
         template <typename Functor> void iterate(Functor& functor)
         {
-            StackIterator iter(this);
-            iter.iterate<Functor>(functor);
+            StackVisitor::visit<Functor>(this, functor);
         }
 
     private:

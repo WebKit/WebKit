@@ -37,7 +37,7 @@
 #include "JSObject.h"
 #include "Operations.h"
 #include "SourceProvider.h"
-#include "StackIterator.h"
+#include "StackVisitor.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
@@ -221,39 +221,39 @@ public:
     {
     }
 
-    StackIterator::Status operator()(StackIterator& iter)
+    StackVisitor::Status operator()(StackVisitor& visitor)
     {
         if (m_remainingCapacityForFrameCapture) {
             // If callee is unknown, but we've not added any frame yet, we should
             // still add the frame, because something called us, and gave us arguments.
-            JSObject* callee = iter->callee();
-            if (!callee && iter->index())
-                return StackIterator::Done;
+            JSObject* callee = visitor->callee();
+            if (!callee && visitor->index())
+                return StackVisitor::Done;
 
             StringBuilder& builder = m_builder;
             if (!builder.isEmpty())
                 builder.append('\n');
             builder.append('#');
-            builder.appendNumber(iter->index());
+            builder.appendNumber(visitor->index());
             builder.append(' ');
-            builder.append(iter->functionName());
+            builder.append(visitor->functionName());
             builder.appendLiteral("() at ");
-            builder.append(iter->sourceURL());
-            if (iter->isJSFrame()) {
+            builder.append(visitor->sourceURL());
+            if (visitor->isJSFrame()) {
                 builder.append(':');
                 unsigned lineNumber;
                 unsigned unusedColumn;
-                iter->computeLineAndColumn(lineNumber, unusedColumn);
+                visitor->computeLineAndColumn(lineNumber, unusedColumn);
                 builder.appendNumber(lineNumber);
             }
 
             if (!callee)
-                return StackIterator::Done;
+                return StackVisitor::Done;
 
             m_remainingCapacityForFrameCapture--;
-            return StackIterator::Continue;
+            return StackVisitor::Continue;
         }
-        return StackIterator::Done;
+        return StackVisitor::Done;
     }
 
 private:

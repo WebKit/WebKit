@@ -206,7 +206,7 @@ set(JavaScriptCore_SOURCES
     interpreter/CallFrame.cpp
     interpreter/Interpreter.cpp
     interpreter/JSStack.cpp
-    interpreter/StackIterator.cpp
+    interpreter/StackVisitor.cpp
     interpreter/VMInspector.cpp
 
     jit/ClosureCallStubRoutine.cpp

@@ -43,7 +43,7 @@
 #include "Operations.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"
-#include "StackIterator.h"
+#include "StackVisitor.h"
 
 using namespace WTF;
 using namespace Unicode;
@@ -192,14 +192,14 @@ public:
 
     JSValue result() const { return m_result; }
 
-    StackIterator::Status operator()(StackIterator& iter)
+    StackVisitor::Status operator()(StackVisitor& visitor)
     {
-        JSObject* callee = iter->callee();
+        JSObject* callee = visitor->callee();
         if (callee != m_targetCallee)
-            return StackIterator::Continue;
+            return StackVisitor::Continue;
 
-        m_result = JSValue(iter->arguments());
-        return StackIterator::Done;
+        m_result = JSValue(visitor->arguments());
+        return StackVisitor::Done;
     }
 
 private:
@@ -234,25 +234,25 @@ public:
 
     JSValue result() const { return m_result; }
 
-    StackIterator::Status operator()(StackIterator& iter)
+    StackVisitor::Status operator()(StackVisitor& visitor)
     {
-        JSObject* callee = iter->callee();
+        JSObject* callee = visitor->callee();
 
         if (callee && callee->inherits(JSBoundFunction::info()))
-            return StackIterator::Continue;
+            return StackVisitor::Continue;
 
         if (!m_hasFoundFrame && (callee != m_targetCallee))
-            return StackIterator::Continue;
+            return StackVisitor::Continue;
 
         m_hasFoundFrame = true;
         if (!m_hasSkippedToCallerFrame) {
             m_hasSkippedToCallerFrame = true;
-            return StackIterator::Continue;
+            return StackVisitor::Continue;
         }
 
         if (callee)
             m_result = callee;
-        return StackIterator::Done;
+        return StackVisitor::Done;
     }
 
 private:

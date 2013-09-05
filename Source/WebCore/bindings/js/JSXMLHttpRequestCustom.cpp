@@ -45,7 +45,7 @@
 #include "JSEvent.h"
 #include "JSEventListener.h"
 #include "XMLHttpRequest.h"
-#include <interpreter/StackIterator.h>
+#include <interpreter/StackVisitor.h>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/Error.h>
 #include <runtime/JSArrayBuffer.h>
@@ -123,19 +123,19 @@ public:
     unsigned line() const { return m_line; }
     String url() const { return m_url; }
 
-    StackIterator::Status operator()(StackIterator& iter)
+    StackVisitor::Status operator()(StackVisitor& visitor)
     {
         if (!m_hasSkippedFirstFrame) {
             m_hasSkippedFirstFrame = true;
-            return StackIterator::Continue;
+            return StackVisitor::Continue;
         }
 
         unsigned line = 0;
         unsigned unusedColumn = 0;
-        iter->computeLineAndColumn(line, unusedColumn);
+        visitor->computeLineAndColumn(line, unusedColumn);
         m_line = line;
-        m_url = iter->sourceURL();
-        return StackIterator::Done;
+        m_url = visitor->sourceURL();
+        return StackVisitor::Done;
     }
 
 private:

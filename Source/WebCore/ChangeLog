@@ -1,3 +1,20 @@
+2013-09-04  Mark Lam  <mark.lam@apple.com>
+
+        Renamed StackIterator to StackVisitor.
+        https://bugs.webkit.org/show_bug.cgi?id=120706.
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        * ForwardingHeaders/interpreter/StackIterator.h: Removed.
+        * ForwardingHeaders/interpreter/StackVisitor.h: Copied from Source/WebCore/ForwardingHeaders/interpreter/StackIterator.h.
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::SendFunctor::operator()):
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::CreateScriptCallStackFunctor::operator()):
+        (WebCore::CreateScriptCallStackForConsoleFunctor::operator()):
+
 2013-09-04  Samuel White  <samuel_white@apple.com>
 
         AX: when no other label on provided on form elements, WebKit should fall back to using @title

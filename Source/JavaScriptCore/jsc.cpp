@@ -39,7 +39,7 @@
 #include "JSString.h"
 #include "Operations.h"
 #include "SamplingTool.h"
-#include "StackIterator.h"
+#include "StackVisitor.h"
 #include "StructureRareDataInlines.h"
 #include <math.h>
 #include <stdio.h>
@@ -333,10 +333,10 @@ public:
     {
     }
 
-    StackIterator::Status operator()(StackIterator& iter)
+    StackVisitor::Status operator()(StackVisitor& visitor)
     {
-        m_trace.append(String::format("    %zu   %s\n", iter->index(), iter->toString().utf8().data()));
-        return StackIterator::Continue;
+        m_trace.append(String::format("    %zu   %s\n", visitor->index(), visitor->toString().utf8().data()));
+        return StackVisitor::Continue;
     }
 
 private:

@@ -34,7 +34,7 @@
 #include "Operations.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
-#include "StackIterator.h"
+#include "StackVisitor.h"
 
 namespace JSC {
 
@@ -142,16 +142,16 @@ public:
 
     EncodedJSValue result() const { return m_result; }
 
-    StackIterator::Status operator()(StackIterator& iter)
+    StackVisitor::Status operator()(StackVisitor& visitor)
     {
         if (!m_hasSkippedFirstFrame) {
             m_hasSkippedFirstFrame = true;
-            return StackIterator::Continue;
+            return StackVisitor::Continue;
         }
 
-    if (m_object->allowsAccessFrom(iter->callFrame()))
+    if (m_object->allowsAccessFrom(visitor->callFrame()))
         m_result = JSValue::encode(m_object->prototype());
-    return StackIterator::Done;
+    return StackVisitor::Done;
 }
 
 private:

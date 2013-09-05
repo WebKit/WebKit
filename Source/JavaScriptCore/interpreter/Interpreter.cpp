@@ -63,7 +63,7 @@
 #include "RegExpPrototype.h"
 #include "Register.h"
 #include "SamplingTool.h"
-#include "StackIterator.h"
+#include "StackVisitor.h"
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
 #include "VMStackBounds.h"
@@ -282,19 +282,19 @@ public:
     {
     }
 
-    StackIterator::Status operator()(StackIterator& iter)
+    StackVisitor::Status operator()(StackVisitor& visitor)
     {
         if (!m_hasSkippedFirstFrame) {
             m_hasSkippedFirstFrame = true;
-            return StackIterator::Continue;
+            return StackVisitor::Continue;
         }
 
         unsigned line = 0;
         unsigned unusedColumn = 0;
-        iter->computeLineAndColumn(line, unusedColumn);
-        dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", m_it, iter->bytecodeOffset(), line);
+        visitor->computeLineAndColumn(line, unusedColumn);
+        dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", m_it, visitor->bytecodeOffset(), line);
         ++m_it;
-        return StackIterator::Done;
+        return StackVisitor::Done;
     }
 
 private:
@@ -389,10 +389,10 @@ bool Interpreter::isOpcode(Opcode opcode)
 #endif
 }
 
-static bool unwindCallFrame(StackIterator& iter, JSValue exceptionValue)
+static bool unwindCallFrame(StackVisitor& visitor, JSValue exceptionValue)
 {
-    CallFrame* callFrame = iter->callFrame();
-    CodeBlock* codeBlock = iter->codeBlock();
+    CallFrame* callFrame = visitor->callFrame();
+    CodeBlock* codeBlock = visitor->codeBlock();
     CodeBlock* oldCodeBlock = codeBlock;
     JSScope* scope = callFrame->scope();
 
@@ -431,16 +431,16 @@ static ALWAYS_INLINE const String getSourceURLFromCallFrame(CallFrame* callFrame
     return callFrame->codeBlock()->ownerExecutable()->sourceURL();
 }
 
-static StackFrameCodeType getStackFrameCodeType(StackIterator iter)
+static StackFrameCodeType getStackFrameCodeType(StackVisitor& visitor)
 {
-    switch (iter->codeType()) {
-    case StackIterator::Frame::Eval:
+    switch (visitor->codeType()) {
+    case StackVisitor::Frame::Eval:
         return StackFrameEvalCode;
-    case StackIterator::Frame::Function:
+    case StackVisitor::Frame::Function:
         return StackFrameFunctionCode;
-    case StackIterator::Frame::Global:
+    case StackVisitor::Frame::Global:
         return StackFrameGlobalCode;
-    case StackIterator::Frame::Native:
+    case StackVisitor::Frame::Native:
         ASSERT_NOT_REACHED();
         return StackFrameNativeCode;
     }
@@ -506,34 +506,34 @@ public:
     {
     }
 
-    StackIterator::Status operator()(StackIterator& iter)
+    StackVisitor::Status operator()(StackVisitor& visitor)
     {
         VM& vm = m_vm;
         if (m_remainingCapacityForFrameCapture) {
-            if (iter->isJSFrame()) {
-                CodeBlock* codeBlock = iter->codeBlock();
+            if (visitor->isJSFrame()) {
+                CodeBlock* codeBlock = visitor->codeBlock();
                 StackFrame s = {
-                    Strong<JSObject>(vm, iter->callee()),
-                    getStackFrameCodeType(iter),
+                    Strong<JSObject>(vm, visitor->callee()),
+                    getStackFrameCodeType(visitor),
                     Strong<ExecutableBase>(vm, codeBlock->ownerExecutable()),
                     Strong<UnlinkedCodeBlock>(vm, codeBlock->unlinkedCodeBlock()),
                     codeBlock->source(),
                     codeBlock->ownerExecutable()->lineNo(),
                     codeBlock->firstLineColumnOffset(),
                     codeBlock->sourceOffset(),
-                    iter->bytecodeOffset(),
-                    iter->sourceURL()
+                    visitor->bytecodeOffset(),
+                    visitor->sourceURL()
                 };
                 m_results.append(s);
             } else {
-                StackFrame s = { Strong<JSObject>(vm, iter->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, 0, String()};
+                StackFrame s = { Strong<JSObject>(vm, visitor->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, 0, String()};
                 m_results.append(s);
             }
     
             m_remainingCapacityForFrameCapture--;
-            return StackIterator::Continue;
+            return StackVisitor::Continue;
         }
-        return StackIterator::Done;
+        return StackVisitor::Done;
     }
 
 private:
@@ -577,23 +577,23 @@ public:
     {
     }
 
-    StackIterator::Status operator()(StackIterator& iter)
+    StackVisitor::Status operator()(StackVisitor& visitor)
     {
         VM& vm = m_callFrame->vm();
-        m_callFrame = iter->callFrame();
-        m_codeBlock = iter->codeBlock();
-        unsigned bytecodeOffset = iter->bytecodeOffset();
+        m_callFrame = visitor->callFrame();
+        m_codeBlock = visitor->codeBlock();
+        unsigned bytecodeOffset = visitor->bytecodeOffset();
 
         if (m_isTermination || !(m_handler = m_codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
-        if (!unwindCallFrame(iter, m_exceptionValue)) {
+        if (!unwindCallFrame(visitor, m_exceptionValue)) {
             if (LegacyProfiler* profiler = vm.enabledProfiler())
                 profiler->exceptionUnwind(m_callFrame);
-            return StackIterator::Done;
+            return StackVisitor::Done;
         }
     } else
-        return StackIterator::Done;
+        return StackVisitor::Done;
 
-    return StackIterator::Continue;
+    return StackVisitor::Continue;
 }
 
 private:
