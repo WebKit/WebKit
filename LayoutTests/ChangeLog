@@ -1,3 +1,15 @@
+2013-09-04  Filip Pizlo  <fpizlo@apple.com>
+
+        run-fast-jsc should work with new-school fast/js tests that loop until the DFG tiers up
+        https://bugs.webkit.org/show_bug.cgi?id=120697
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/resources/standalone-pre.js:
+        (testPassed):
+        (testFailed):
+        (dfgCompiled):
+
 2013-09-04  Samuel White  <samuel_white@apple.com>
 
         AX: when no other label on provided on form elements, WebKit should fall back to using @title

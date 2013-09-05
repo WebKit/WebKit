@@ -41,6 +41,7 @@
 #include "SamplingTool.h"
 #include "StackVisitor.h"
 #include "StructureRareDataInlines.h"
+#include "TestRunnerUtils.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -115,6 +116,8 @@ static EncodedJSValue JSC_HOST_CALL functionLoad(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReadline(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionPreciseTime(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionNeverInlineFunction(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionNumberOfDFGCompiles(ExecState*);
 static NO_RETURN_WITH_VALUE EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
@@ -232,6 +235,8 @@ protected:
         addFunction(vm, "jscStack", functionJSCStack, 1);
         addFunction(vm, "readline", functionReadline, 0);
         addFunction(vm, "preciseTime", functionPreciseTime, 0);
+        addFunction(vm, "neverInlineFunction", functionNeverInlineFunction, 1);
+        addFunction(vm, "numberOfDFGCompiles", functionNumberOfDFGCompiles, 1);
 #if ENABLE(SAMPLING_FLAGS)
         addFunction(vm, "setSamplingFlags", functionSetSamplingFlags, 1);
         addFunction(vm, "clearSamplingFlags", functionClearSamplingFlags, 1);
@@ -476,6 +481,16 @@ EncodedJSValue JSC_HOST_CALL functionReadline(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionPreciseTime(ExecState*)
 {
     return JSValue::encode(jsNumber(currentTime()));
+}
+
+EncodedJSValue JSC_HOST_CALL functionNeverInlineFunction(ExecState* exec)
+{
+    return JSValue::encode(setNeverInline(exec));
+}
+
+EncodedJSValue JSC_HOST_CALL functionNumberOfDFGCompiles(ExecState* exec)
+{
+    return JSValue::encode(numberOfDFGCompiles(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*)

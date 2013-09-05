@@ -1040,6 +1040,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/StructureTransitionTable.h \
 	Source/JavaScriptCore/runtime/SymbolTable.cpp \
 	Source/JavaScriptCore/runtime/SymbolTable.h \
+	Source/JavaScriptCore/runtime/TestRunnerUtils.cpp \
+	Source/JavaScriptCore/runtime/TestRunnerUtils.h \
 	Source/JavaScriptCore/runtime/ToNativeFromValue.h \
 	Source/JavaScriptCore/runtime/Tracing.h \
 	Source/JavaScriptCore/runtime/TypedArrayAdaptors.h \

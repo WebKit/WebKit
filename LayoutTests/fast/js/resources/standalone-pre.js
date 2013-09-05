@@ -2,6 +2,16 @@ var wasPostTestScriptParsed = false;
 var errorMessage;
 var self = this;
 
+self.testRunner = {
+    neverInlineFunction: neverInlineFunction,
+    numberOfDFGCompiles: numberOfDFGCompiles
+};
+
+var silentTestPass, didPassSomeTestsSilently, didFailSomeTests;
+silentTestPass = false;
+didPassSomeTestsSilenty = false;
+didFaileSomeTests = false;
+
 function description(msg)
 {
     print(msg);
@@ -21,11 +31,15 @@ function escapeString(text)
 
 function testPassed(msg)
 {
-    print("PASS", escapeString(msg));
+    if (silentTestPass)
+        didPassSomeTestsSilently = true;
+    else
+        print("PASS", escapeString(msg));
 }
 
 function testFailed(msg)
 {
+    didFailSomeTests = true;
     errorMessage = msg;
     print("FAIL", escapeString(msg));
 }
@@ -183,6 +197,10 @@ function isSuccessfullyParsed()
     if (!errorMessage)
         successfullyParsed = true;
     shouldBeTrue("successfullyParsed");
+    if (silentTestPass && didPassSomeTestsSilently)
+        debug("Passed some tests silently.");
+    if (silentTestPass && didFailSomeTests)
+        debug("Some tests failed.");
     debug("\nTEST COMPLETE\n");
 }
 

@@ -398,6 +398,7 @@ SOURCES += \
     runtime/StructureChain.cpp \
     runtime/StructureRareData.cpp \
     runtime/SymbolTable.cpp \
+    runtime/TestRunnerUtils.cpp \
     runtime/TypedArrayController.cpp \
     runtime/TypedArrayType.cpp \
     runtime/VM.cpp \

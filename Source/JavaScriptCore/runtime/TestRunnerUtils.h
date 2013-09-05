@@ -23,26 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "JSCTestRunnerUtils.h"
+#ifndef TestRunnerUtils_h
+#define TestRunnerUtils_h
 
-#include "APICast.h"
-#include "Operations.h"
-#include "TestRunnerUtils.h"
+#include "JSCJSValue.h"
 
 namespace JSC {
 
-JSValueRef numberOfDFGCompiles(JSContextRef context, JSValueRef theFunctionValueRef)
-{
-    ExecState* exec= toJS(context);
-    return toRef(exec, numberOfDFGCompiles(toJS(exec, theFunctionValueRef)));
-}
+JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(JSValue function);
+JS_EXPORT_PRIVATE JSValue setNeverInline(JSValue function);
 
-JSValueRef setNeverInline(JSContextRef context, JSValueRef theFunctionValueRef)
-{
-    ExecState* exec= toJS(context);
-    return toRef(exec, setNeverInline(toJS(exec, theFunctionValueRef)));
-}
+JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(ExecState*);
+JS_EXPORT_PRIVATE JSValue setNeverInline(ExecState*);
 
 } // namespace JSC
 
+#endif // TestRunnerUtils_h
