@@ -1,5 +1,19 @@
 2013-09-04  Filip Pizlo  <fpizlo@apple.com>
 
+        jsc tests should have timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=120725
+
+        Reviewed by Geoffrey Garen.
+        
+        Add the timeout logic directly to 'jsc' because that's easier to do than
+        writing shell/perl code for it.
+
+        * jsc.cpp:
+        (timeoutThreadMain):
+        (main):
+
+2013-09-04  Filip Pizlo  <fpizlo@apple.com>
+
         fast/js/dfg-* tests should wait for the concurrent JIT
         https://bugs.webkit.org/show_bug.cgi?id=120723
 

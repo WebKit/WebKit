@@ -518,6 +518,23 @@ EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*)
 
 int jscmain(int argc, char** argv);
 
+static double s_desiredTimeout;
+static double s_timeToWake;
+
+static NO_RETURN_DUE_TO_CRASH void timeoutThreadMain(void*)
+{
+    // WTF doesn't provide for a portable sleep(), so we use the ThreadCondition, which
+    // is close enough.
+    Mutex mutex;
+    ThreadCondition condition;
+    mutex.lock();
+    while (currentTime() < s_timeToWake)
+        condition.timedWait(mutex, s_timeToWake);
+    
+    dataLog("Timed out after ", s_desiredTimeout, " seconds!\n");
+    CRASH();
+}
+
 int main(int argc, char** argv)
 {
 #if PLATFORM(IOS)
@@ -566,6 +583,17 @@ int main(int argc, char** argv)
     WTF::initializeMainThread();
 #endif
     JSC::initializeThreading();
+    
+    if (char* timeoutString = getenv("JSC_timeout")) {
+        if (sscanf(timeoutString, "%lf", &s_desiredTimeout) != 1) {
+            dataLog(
+                "WARNING: timeout string is malformed, got ", timeoutString,
+                " but expected a number. Not using a timeout.\n");
+        } else {
+            s_timeToWake = currentTime() + s_desiredTimeout;
+            createThread(timeoutThreadMain, 0, "jsc Timeout Thread");
+        }
+    }
 
     // We can't use destructors in the following code because it uses Windows
     // Structured Exception Handling
