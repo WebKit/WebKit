@@ -1,3 +1,9 @@
+2013-09-05  Anders Carlsson  <andersca@apple.com>
+
+        Change StringBuffer back to not use an OwnPtr in an attempt to fix ports.
+        
+        * wtf/text/StringBuffer.h:
+
 2013-09-04  Anders Carlsson  <andersca@apple.com>
 
         Vector::releaseBuffer should return an OwnPtr
