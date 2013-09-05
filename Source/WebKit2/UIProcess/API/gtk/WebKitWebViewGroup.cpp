@@ -28,10 +28,6 @@
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
-#ifdef GDK_WINDOWING_WAYLAND
-#include <gdk/gdkwayland.h>
-#endif
-
 using namespace WebKit;
 
 /**
@@ -130,12 +126,6 @@ static void webkit_web_view_group_class_init(WebKitWebViewGroupClass* hitTestRes
 static void webkitWebViewGroupAttachSettingsToPageGroup(WebKitWebViewGroup* group)
 {
     group->priv->pageGroup->setPreferences(webkitSettingsGetPreferences(group->priv->settings.get()));
-
-#ifdef GDK_WINDOWING_WAYLAND
-    GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
-    if (GDK_IS_WAYLAND_DISPLAY(display))
-        group->priv->pageGroup->preferences()->setAcceleratedCompositingEnabled(false);
-#endif
 }
 
 WebKitWebViewGroup* webkitWebViewGroupCreate(WebPageGroup* pageGroup)

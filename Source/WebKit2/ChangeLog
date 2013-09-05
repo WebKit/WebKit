@@ -1,3 +1,23 @@
+2013-09-05  Alberto Garcia  <berto@igalia.com>
+
+        [WK2] [GTK] Remove the test to disable AC under Wayland from WebKitWebViewGroup
+        https://bugs.webkit.org/show_bug.cgi?id=120762
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The code to disable AC under Wayland is not run if we're using
+        WebKitTestRunner, so it would be better to move it to
+        WebKitWebViewBase.
+
+        However it's not really necessary to do that, instead it's much
+        simpler to disable accelerated compositing in all cases unless we
+        know we can support it.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseUpdatePreferences):
+        * UIProcess/API/gtk/WebKitWebViewGroup.cpp:
+        (webkitWebViewGroupAttachSettingsToPageGroup):
+
 2013-09-04  Alberto Garcia  <berto@igalia.com>
 
         [WK2][GTK] ASSERTION in WebKit::LayerTreeHostGtk::invalidate
