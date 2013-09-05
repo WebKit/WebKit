@@ -27,7 +27,7 @@
 #include "HTMLSummaryElement.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "ShadowRoot.h"
 #include "Text.h"
 
@@ -113,7 +113,7 @@ HTMLDetailsElement::HTMLDetailsElement(const QualifiedName& tagName, Document* d
 
 RenderObject* HTMLDetailsElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderBlock(this);
+    return new (arena) RenderBlockFlow(this);
 }
 
 void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)

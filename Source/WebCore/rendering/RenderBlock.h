@@ -89,9 +89,11 @@ public:
     template <class> friend struct ValueToString;
 #endif
 
+protected:
     explicit RenderBlock(ContainerNode*);
     virtual ~RenderBlock();
 
+public:
     static RenderBlock* createAnonymous(Document*);
 
     RenderObject* firstChild() const { ASSERT(children() == virtualChildren()); return children()->firstChild(); }

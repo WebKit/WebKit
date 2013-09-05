@@ -1,5 +1,25 @@
 2013-09-05  David Hyatt  <hyatt@apple.com>
 
+        Make RenderBlock have a protected constructor..
+        https://bugs.webkit.org/show_bug.cgi?id=120787
+
+        Reviewed by Beth Dakin.
+
+        Make sure nobody can create a RenderBlock directly. Make sure RenderBlockFlows
+        get made when a display:block/inline-block/compact/run-in is seen.
+
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::createRenderer):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::createRenderer):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::createAnonymous):
+        * rendering/RenderBlock.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+
+2013-09-05  David Hyatt  <hyatt@apple.com>
+
         Add new RenderBlockFlow class
         https://bugs.webkit.org/show_bug.cgi?id=120777
 

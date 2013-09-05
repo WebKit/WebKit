@@ -207,7 +207,7 @@ RenderObject* RenderObject::createObject(Element* element, RenderStyle* style)
     case COMPACT:
         if ((!style->hasAutoColumnCount() || !style->hasAutoColumnWidth()) && document.regionBasedColumnsEnabled())
             return new (arena) RenderMultiColumnBlock(element);
-        return new (arena) RenderBlock(element);
+        return new (arena) RenderBlockFlow(element);
     case LIST_ITEM:
         return new (arena) RenderListItem(element);
     case TABLE:
