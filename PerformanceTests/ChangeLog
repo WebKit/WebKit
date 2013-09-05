@@ -1,3 +1,224 @@
+2013-09-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Introduce a version of SunSpider that runs for a really long time (about 1 sec on my machine)
+
+        Rubber stamped by Mark Hahnenberg.
+        
+        This isn't meant for serious VM-to-VM performance comparisons, but it is useful
+        to see how these benchmarks behave when they're completely warmed up.
+
+        * LongSpider: Added.
+        * LongSpider/3d-cube.js: Added.
+        (DrawLine):
+        (CalcCross):
+        (CalcNormal):
+        (CreateP):
+        (MMulti):
+        (VMulti):
+        (VMulti2):
+        (MAdd):
+        (Translate):
+        (RotateX):
+        (RotateY):
+        (RotateZ):
+        (DrawQube):
+        (Loop):
+        (Init):
+        * LongSpider/3d-morph.js: Added.
+        (loops.3500.nx.120.nz.120.morph):
+        * LongSpider/3d-raytrace.js: Added.
+        (createVector):
+        (sqrLengthVector):
+        (lengthVector):
+        (addVector):
+        (subVector):
+        (scaleVector):
+        (normaliseVector):
+        (add):
+        (sub):
+        (scalev):
+        (dot):
+        (scale):
+        (cross):
+        (normalise):
+        (transformMatrix):
+        (invertMatrix):
+        (Triangle):
+        (Triangle.prototype.intersect):
+        (Scene):
+        (Scene.prototype.intersect):
+        (Scene.prototype.blocked):
+        (Camera):
+        (Camera.prototype.generateRayPair):
+        (renderRows):
+        (Camera.prototype.render):
+        (raytraceScene.floorShader):
+        (raytraceScene):
+        (arrayToCanvasCommands):
+        * LongSpider/access-binary-trees.js: Added.
+        (TreeNode):
+        (TreeNode.prototype.itemCheck):
+        (bottomUpTree):
+        * LongSpider/access-fannkuch.js: Added.
+        (fannkuch):
+        * LongSpider/access-nbody.js: Added.
+        (Body):
+        (Body.prototype.offsetMomentum):
+        (Jupiter):
+        (Saturn):
+        (Uranus):
+        (Neptune):
+        (Sun):
+        (NBodySystem):
+        (NBodySystem.prototype.advance):
+        (NBodySystem.prototype.energy):
+        * LongSpider/access-nsieve.js: Added.
+        (pad):
+        (nsieve):
+        (sieve):
+        * LongSpider/bitops-3bit-bits-in-byte.js: Added.
+        (fast3bitlookup):
+        (TimeFunc):
+        * LongSpider/bitops-bits-in-byte.js: Added.
+        (bitsinbyte):
+        (TimeFunc):
+        * LongSpider/bitops-nsieve-bits.js: Added.
+        (pad):
+        (primes):
+        (sieve):
+        * LongSpider/controlflow-recursive.js: Added.
+        (ack):
+        (fib):
+        (tak):
+        * LongSpider/crypto-aes.js: Added.
+        (Cipher):
+        (SubBytes):
+        (ShiftRows):
+        (MixColumns):
+        (AddRoundKey):
+        (KeyExpansion):
+        (SubWord):
+        (RotWord):
+        (AESEncryptCtr):
+        (AESDecryptCtr):
+        (escCtrlChars):
+        * LongSpider/crypto-md5.js: Added.
+        (hex_md5):
+        (b64_md5):
+        (str_md5):
+        (hex_hmac_md5):
+        (b64_hmac_md5):
+        (str_hmac_md5):
+        (md5_vm_test):
+        (core_md5):
+        (md5_cmn):
+        (md5_ff):
+        (md5_gg):
+        (md5_hh):
+        (md5_ii):
+        (core_hmac_md5):
+        (safe_add):
+        (bit_rol):
+        (str2binl):
+        (binl2str):
+        (binl2hex):
+        (binl2b64):
+        * LongSpider/crypto-sha1.js: Added.
+        (hex_sha1):
+        (b64_sha1):
+        (str_sha1):
+        (hex_hmac_sha1):
+        (b64_hmac_sha1):
+        (str_hmac_sha1):
+        (sha1_vm_test):
+        (core_sha1):
+        (sha1_ft):
+        (sha1_kt):
+        (core_hmac_sha1):
+        (safe_add):
+        (rol):
+        (str2binb):
+        (binb2str):
+        (binb2hex):
+        (binb2b64):
+        * LongSpider/date-format-tofte.js: Added.
+        (arrayExists):
+        (.a):
+        (.A):
+        (.B):
+        (.d):
+        (.D):
+        (.F):
+        (.g):
+        (.G):
+        (.h):
+        (.H):
+        (.i):
+        (.j):
+        (.l):
+        (.L):
+        (.m):
+        (.M):
+        (.n):
+        (.O):
+        (.r):
+        (.S):
+        (.s):
+        (.t):
+        (.U):
+        (.W):
+        (.w):
+        (.Y):
+        (.y):
+        (.z):
+        (Date.prototype.formatDate):
+        * LongSpider/date-format-xparb.js: Added.
+        (Date.prototype.dateFormat):
+        (Date.createNewFormat):
+        (Date.getFormatCode):
+        (Date.parseDate):
+        (Date.createParser):
+        (Date.formatCodeToRegex):
+        (Date.prototype.getTimezone):
+        (Date.prototype.getGMTOffset):
+        (Date.prototype.getDayOfYear):
+        (Date.prototype.getWeekOfYear):
+        (Date.prototype.isLeapYear):
+        (Date.prototype.getFirstDayOfMonth):
+        (Date.prototype.getLastDayOfMonth):
+        (Date.prototype.getDaysInMonth):
+        (Date.prototype.getSuffix):
+        (String.escape):
+        * LongSpider/math-cordic.js: Added.
+        (FIXED):
+        (FLOAT):
+        (DEG2RAD):
+        (cordicsincos):
+        (cordic):
+        * LongSpider/math-partial-sums.js: Added.
+        (partial):
+        * LongSpider/math-spectral-norm.js: Added.
+        (A):
+        (Au):
+        (Atu):
+        (AtAu):
+        (spectralnorm):
+        * LongSpider/string-base64.js: Added.
+        (toBase64):
+        (base64ToString):
+        * LongSpider/string-fasta.js: Added.
+        (rand):
+        (makeCumulative):
+        (fastaRepeat):
+        (fastaRandom):
+        * LongSpider/string-tagcloud.js: Added.
+        (.Array.prototype.toJSONString):
+        (.Boolean.prototype.toJSONString):
+        (.Date.prototype.toJSONString):
+        (.Number.prototype.toJSONString):
+        (.Object.prototype.toJSONString):
+        (.):
+
 2013-06-10  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Rename region-overflow to region-fragment
