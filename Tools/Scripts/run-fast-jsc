@@ -32,7 +32,7 @@ testList="unset"
 
 cmdName=`basename $0`
 
-function usage()
+usage()
 {
     echo "usage: $cmdName [[--jsc | -j] <path-to-jsc>] [[--results-dir | -r] <results-path>]"
     echo "                    [[--test-root | -t] <test-root-path>] [[--test-list | -l] <test-list-file>]"
@@ -108,8 +108,12 @@ do
 
     if [ -f $expectedOut -a -f $jsTest ]
     then
-        echo "Testing $test ... \c"
-        let numTestsRun=$numTestsRun+1
+        if [ `uname` = 'Darwin' ]; then
+            echo "Testing $test ... \c"
+        else
+            echo -n "Testing $test ..."
+        fi
+        numTestsRun=$(($numTestsRun+1))
         $jscCmd $preScript $jsTest $postScript 2>$actualErr > $actualOut
         JSC_RES=$?
         
@@ -138,14 +142,14 @@ do
         if [ $testPassed -eq 1 ]
         then
             echo "$test" >> $passList
-            let numPassed=$numPassed+1
+            numPassed=$(($numPassed+1))
         else
             echo "$test" >> $failList
-            let numFailed=$numFailed+1
+            numFailed=$(($numFailed+1))
             if [ $testCrashed -eq 1 ]
             then
                 echo "$test" >> $crashList
-                let numCrashed=$numCrashed+1
+                numCrashed=$(($numCrashed+1))
             fi
         fi
     fi

@@ -1,3 +1,13 @@
+2013-09-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Make run-fast-jsc script bash, dash and Darwin's /bin/sh friendly
+        https://bugs.webkit.org/show_bug.cgi?id=120759
+
+        Reviewed by Filip Pizlo.
+
+        * Scripts/run-fast-jsc: Remove bashisms to make bash, dash and Darwin's /bin/sh happy.
+        * Scripts/run-javascriptcore-tests: Enable run-fast-jsc tests everywhere, except Windows.
+
 2013-09-05  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, green the Mac bots by boosting the timeout on JSC tests. One of the

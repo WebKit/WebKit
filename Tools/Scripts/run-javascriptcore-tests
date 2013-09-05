@@ -191,7 +191,11 @@ close ACTUAL;
 
 chdirWebKit();
 my $fastJSResultsDir = $productDir . "/fast-jsc-results";
-my $runFastJS = isAppleMacWebKit();
+
+# FIXME: run-fast-jsc tests doesn't work properly on Windows
+# https://bugs.webkit.org/show_bug.cgi?id=120765
+my $runFastJS = !isAppleWinWebKit();
+
 if ($runFastJS) {
     # Run the fast/js tests.
     my @fastJSDriverCmd = ("/bin/sh", "Tools/Scripts/run-fast-jsc", "-j", jscPath($productDir), "-r", $fastJSResultsDir, "-t", "LayoutTests");
