@@ -1,5 +1,25 @@
 2013-09-05  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Make build.webkit.org report the number of failing run-fast-jsc tests
+        https://bugs.webkit.org/show_bug.cgi?id=120766
+
+        Reviewed by Filip Pizlo.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunJavaScriptCoreTests.commandComplete):
+        (RunJavaScriptCoreTests.getText2):
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (RunJavaScriptCoreTestsTest): Added.
+        (RunJavaScriptCoreTestsTest.assertResults):
+        (RunJavaScriptCoreTestsTest.test_no_regressions_old_output):
+        (RunJavaScriptCoreTestsTest.test_mozilla_failure_old_output):
+        (RunJavaScriptCoreTestsTest.test_mozilla_failure_new_output):
+        (RunJavaScriptCoreTestsTest.test_fast_js_failure_new_output):
+        (RunJavaScriptCoreTestsTest.test_fast_js_crash_new_output):
+        (RunJavaScriptCoreTestsTest.test_mozilla_and_fast_js_failure_new_output):
+
+2013-09-05  Csaba Osztrogonác  <ossy@webkit.org>
+
         Make run-fast-jsc script bash, dash and Darwin's /bin/sh friendly
         https://bugs.webkit.org/show_bug.cgi?id=120759
 

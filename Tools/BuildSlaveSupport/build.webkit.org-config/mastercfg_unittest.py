@@ -101,6 +101,68 @@ class StubRemoteCommand(object):
         self.logs = {'stdio': StubStdio(stdio)}
 
 
+class RunJavaScriptCoreTestsTest(unittest.TestCase):
+    def assertResults(self, expected_result, expected_text, rc, stdio):
+        cmd = StubRemoteCommand(rc, stdio)
+        step = RunJavaScriptCoreTests()
+        step.commandComplete(cmd)
+        actual_results = step.evaluateCommand(cmd)
+        actual_text = step.getText2(cmd, actual_results)
+
+        self.assertEqual(expected_result, actual_results)
+        self.assertEqual(actual_text, expected_text)
+
+    def test_no_regressions_old_output(self):
+        self.assertResults(SUCCESS, ["jscore-test"], 0, """Results for Mozilla tests:
+    0 regressions found.
+    0 tests fixed.
+    OK.""")
+
+    def test_mozilla_failure_old_output(self):
+        self.assertResults(FAILURE, ["jscore-test", '1 failing Mozilla test '], 1, """Results for Mozilla tests:
+    1 regression found.
+    0 tests fixed.""")
+
+    def test_mozilla_failure_new_output(self):
+        self.assertResults(FAILURE, ["jscore-test", '1 failing Mozilla test '], 1, """Results for Mozilla tests:
+    1 regression found.
+    0 tests fixed.
+
+Results for fast/js tests:
+    0 failures found.
+    0 crashes found.
+    OK.""")
+
+    def test_fast_js_failure_new_output(self):
+        self.assertResults(FAILURE, ["jscore-test", '469 failing fast/js tests '], 1,  """Results for Mozilla tests:
+    0 regressions found.
+    0 tests fixed.
+    OK.
+
+Results for fast/js tests:
+    469 failures found.
+    0 crashes found.""")
+
+    def test_fast_js_crash_new_output(self):
+        self.assertResults(FAILURE, ["jscore-test", '1 crashing fast/js test '], 1,  """Results for Mozilla tests:
+    0 regressions found.
+    0 tests fixed.
+    OK.
+
+Results for fast/js tests:
+    0 failures found.
+    1 crashes found.""")
+
+    def test_mozilla_and_fast_js_failure_new_output(self):
+        self.assertResults(FAILURE, ["jscore-test", '1 failing Mozilla test ', '469 failing fast/js tests '], 1,  """Results for Mozilla tests:
+    1 regression found.
+    0 tests fixed.
+
+Results for fast/js tests:
+    469 failures found.
+    0 crashes found.""")
+
+
 class RunQtAPITestsTest(unittest.TestCase):
     def assertResults(self, expected_result, expected_text, stdio):
         rc = 0
