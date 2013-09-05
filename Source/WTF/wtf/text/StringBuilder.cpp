@@ -341,8 +341,7 @@ void StringBuilder::shrinkToFit()
             reallocateBuffer<LChar>(m_length);
         else
             reallocateBuffer<UChar>(m_length);
-        m_string = m_buffer;
-        m_buffer = 0;
+        m_string = m_buffer.release();
     }
 }
 

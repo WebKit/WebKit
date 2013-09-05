@@ -128,7 +128,6 @@ public:
     // Construct a string referencing an existing StringImpl.
     String(StringImpl* impl) : m_impl(impl) { }
     String(PassRefPtr<StringImpl> impl) : m_impl(impl) { }
-    String(RefPtr<StringImpl> impl) : m_impl(impl) { }
 
     // Construct a string from a constant string literal.
     WTF_EXPORT_STRING_API String(ASCIILiteral characters);
