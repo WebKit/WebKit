@@ -30,7 +30,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSImageConstructor);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSImageConstructor);
 
 const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSImageConstructor) };
 

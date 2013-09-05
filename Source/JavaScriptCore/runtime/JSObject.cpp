@@ -65,8 +65,8 @@ JSCell* getCallableObjectSlow(JSCell* cell)
     return 0;
 }
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSObject);
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSFinalObject);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSObject);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSFinalObject);
 
 const char* StrictModeReadonlyPropertyWriteError = "Attempted to assign to readonly property.";
 

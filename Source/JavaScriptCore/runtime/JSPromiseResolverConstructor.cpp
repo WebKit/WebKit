@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSPromiseResolverConstructor);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSPromiseResolverConstructor);
 
 const ClassInfo JSPromiseResolverConstructor::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSPromiseResolverConstructor) };
 

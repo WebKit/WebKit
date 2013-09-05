@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(GetterSetter);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(GetterSetter);
 
 const ClassInfo GetterSetter::s_info = { "GetterSetter", 0, 0, 0, CREATE_METHOD_TABLE(GetterSetter) };
 

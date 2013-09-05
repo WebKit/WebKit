@@ -48,7 +48,7 @@ const ClassInfo BooleanPrototype::s_info = { "Boolean", &BooleanObject::s_info, 
 @end
 */
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(BooleanPrototype);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(BooleanPrototype);
 
 BooleanPrototype::BooleanPrototype(ExecState* exec, Structure* structure)
     : BooleanObject(exec->vm(), structure)

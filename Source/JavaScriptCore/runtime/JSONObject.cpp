@@ -43,7 +43,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSONObject);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSONObject);
 
 static EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState*);
 static EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState*);

@@ -26,6 +26,7 @@
 #ifndef GCAssertions_h
 #define GCAssertions_h
 
+#include <type_traits>
 #include <wtf/Assertions.h>
 
 #if ENABLE(GC_VALIDATION)
@@ -44,10 +45,14 @@
 #define ASSERT_GC_OBJECT_INHERITS(object, classInfo) do { (void)object; (void)classInfo; } while (0)
 #endif
 
-#if COMPILER_SUPPORTS(HAS_TRIVIAL_DESTRUCTOR)
-#define ASSERT_HAS_TRIVIAL_DESTRUCTOR(klass) COMPILE_ASSERT(__has_trivial_destructor(klass), klass##_has_trivial_destructor_check)
+#if COMPILER(CLANG)
+#define STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(klass) static_assert(std::is_trivially_destructible<klass>::value, #klass " must have a trivial destructor")
+#elif COMPILER(MSVC)
+// An earlier verison of the C++11 spec used to call this type trait std::has_trivial_destructor, and that's what MSVC uses.
+#define STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(klass) static_assert(std::has_trivial_destructor<klass>::value, #klass " must have a trivial destructor")
 #else
-#define ASSERT_HAS_TRIVIAL_DESTRUCTOR(klass)
+// This is not enabled on GCC due to http://gcc.gnu.org/bugzilla/show_bug.cgi?id=52702
+#define STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(klass)
 #endif
 
 #endif // GCAssertions_h

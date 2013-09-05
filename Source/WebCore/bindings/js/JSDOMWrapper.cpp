@@ -32,6 +32,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSDOMWrapper);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDOMWrapper);
 
 } // namespace WebCore

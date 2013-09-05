@@ -50,7 +50,7 @@ static JSValue regExpObjectSource(ExecState*, JSValue, PropertyName);
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(RegExpObject);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(RegExpObject);
 
 const ClassInfo RegExpObject::s_info = { "RegExp", &Base::s_info, 0, ExecState::regExpTable, CREATE_METHOD_TABLE(RegExpObject) };
 

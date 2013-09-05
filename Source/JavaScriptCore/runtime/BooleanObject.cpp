@@ -26,7 +26,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(BooleanObject);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(BooleanObject);
 
 const ClassInfo BooleanObject::s_info = { "Boolean", &JSWrapperObject::s_info, 0, 0, CREATE_METHOD_TABLE(BooleanObject) };
 

@@ -41,7 +41,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSNPMethod);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSNPMethod);
 
 const ClassInfo JSNPMethod::s_info = { "NPMethod", &InternalFunction::s_info, 0, 0, CREATE_METHOD_TABLE(JSNPMethod) };
 

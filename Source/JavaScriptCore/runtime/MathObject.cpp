@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(MathObject);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(MathObject);
 
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncAbs(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncACos(ExecState*);

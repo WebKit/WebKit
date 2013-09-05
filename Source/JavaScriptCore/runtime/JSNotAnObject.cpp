@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSNotAnObject);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSNotAnObject);
 
 const ClassInfo JSNotAnObject::s_info = { "Object", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSNotAnObject) };
 

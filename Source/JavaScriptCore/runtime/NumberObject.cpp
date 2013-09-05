@@ -28,7 +28,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(NumberObject);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(NumberObject);
 
 const ClassInfo NumberObject::s_info = { "Number", &JSWrapperObject::s_info, 0, 0, CREATE_METHOD_TABLE(NumberObject) };
 

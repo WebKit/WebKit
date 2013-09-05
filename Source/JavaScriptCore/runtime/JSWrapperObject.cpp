@@ -26,7 +26,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSWrapperObject);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSWrapperObject);
 
 void JSWrapperObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {

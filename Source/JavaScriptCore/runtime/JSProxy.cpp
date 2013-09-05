@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSProxy);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSProxy);
 
 const ClassInfo JSProxy::s_info = { "JSProxy", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSProxy) };
 

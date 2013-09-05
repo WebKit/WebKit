@@ -41,7 +41,7 @@ static JSValue numberConstructorMinValue(ExecState*, JSValue, PropertyName);
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(NumberConstructor);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(NumberConstructor);
 
 const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::numberConstructorTable, CREATE_METHOD_TABLE(NumberConstructor) };
 

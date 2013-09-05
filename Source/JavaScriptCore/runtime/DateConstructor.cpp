@@ -72,7 +72,7 @@ const ClassInfo DateConstructor::s_info = { "Function", &InternalFunction::s_inf
 @end
 */
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(DateConstructor);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DateConstructor);
 
 DateConstructor::DateConstructor(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure) 

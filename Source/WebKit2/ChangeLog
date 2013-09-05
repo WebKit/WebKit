@@ -1,3 +1,14 @@
+2013-09-05  Anders Carlsson  <andersca@apple.com>
+
+        GCAssertions.h should use STL type traits and static_assert
+        https://bugs.webkit.org/show_bug.cgi?id=120785
+
+        Reviewed by Andreas Kling.
+
+        Update for JavaScriptCore changes.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+
 2013-09-05  Alberto Garcia  <berto@igalia.com>
 
         [WK2] [GTK] Remove the test to disable AC under Wayland from WebKitWebViewGroup

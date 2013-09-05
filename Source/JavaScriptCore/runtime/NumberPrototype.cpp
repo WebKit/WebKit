@@ -68,7 +68,7 @@ const ClassInfo NumberPrototype::s_info = { "Number", &NumberObject::s_info, 0, 
 @end
 */
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(NumberPrototype);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(NumberPrototype);
 
 NumberPrototype::NumberPrototype(ExecState* exec, Structure* structure)
     : NumberObject(exec->vm(), structure)

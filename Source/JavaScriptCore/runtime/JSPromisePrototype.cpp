@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSPromisePrototype);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSPromisePrototype);
 
 // Promise then([TreatUndefinedAs=Missing] optional AnyCallback fulfillCallback, [TreatUndefinedAs=Missing] optional AnyCallback rejectCallback);
 static EncodedJSValue JSC_HOST_CALL JSPromisePrototypeFuncThen(ExecState*);

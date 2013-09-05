@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(ErrorConstructor);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ErrorConstructor);
 
 const ClassInfo ErrorConstructor::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ErrorConstructor) };
 

@@ -26,7 +26,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(ErrorInstance);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ErrorInstance);
 
 const ClassInfo ErrorInstance::s_info = { "Error", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(ErrorInstance) };
 

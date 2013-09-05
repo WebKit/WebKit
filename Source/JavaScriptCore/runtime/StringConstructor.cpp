@@ -46,7 +46,7 @@ const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_i
 @end
 */
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(StringConstructor);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(StringConstructor);
 
 StringConstructor::StringConstructor(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure)

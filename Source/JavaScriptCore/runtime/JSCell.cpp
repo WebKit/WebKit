@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSCell);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSCell);
 
 void JSCell::destroy(JSCell* cell)
 {

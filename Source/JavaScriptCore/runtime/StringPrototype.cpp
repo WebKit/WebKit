@@ -47,7 +47,7 @@ using namespace WTF;
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(StringPrototype);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(StringPrototype);
 
 static EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState*);

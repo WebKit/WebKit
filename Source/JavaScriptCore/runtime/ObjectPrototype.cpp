@@ -41,7 +41,7 @@ static EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState*);
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(ObjectPrototype);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ObjectPrototype);
 
 const ClassInfo ObjectPrototype::s_info = { "Object", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(ObjectPrototype) };
 

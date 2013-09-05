@@ -1,3 +1,58 @@
+2013-09-05  Anders Carlsson  <andersca@apple.com>
+
+        GCAssertions.h should use STL type traits and static_assert
+        https://bugs.webkit.org/show_bug.cgi?id=120785
+
+        Reviewed by Andreas Kling.
+
+        There's no need to rely on compiler specific support to figure out if a class is trivially destructable,
+        we can just use type traits from STL. Do this, fix the assert macro to use static_assert directly and
+        rename it from ASSERT_HAS_TRIVIAL_DESTRUCTOR to STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE to clarify that
+        it's a static assert and to match the STL nomenclature.
+        
+        * API/JSCallbackFunction.cpp:
+        * debugger/DebuggerActivation.cpp:
+        * heap/GCAssertions.h:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/BooleanConstructor.cpp:
+        * runtime/BooleanObject.cpp:
+        * runtime/BooleanPrototype.cpp:
+        * runtime/DateConstructor.cpp:
+        * runtime/ErrorConstructor.cpp:
+        * runtime/ErrorInstance.cpp:
+        * runtime/ErrorPrototype.cpp:
+        * runtime/ExceptionHelpers.cpp:
+        * runtime/FunctionConstructor.cpp:
+        * runtime/FunctionPrototype.cpp:
+        * runtime/GetterSetter.cpp:
+        * runtime/InternalFunction.cpp:
+        * runtime/JSAPIValueWrapper.cpp:
+        * runtime/JSArray.cpp:
+        * runtime/JSCell.cpp:
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSONObject.cpp:
+        * runtime/JSObject.cpp:
+        * runtime/JSPromiseConstructor.cpp:
+        * runtime/JSPromisePrototype.cpp:
+        * runtime/JSPromiseResolverConstructor.cpp:
+        * runtime/JSPromiseResolverPrototype.cpp:
+        * runtime/JSProxy.cpp:
+        * runtime/JSScope.cpp:
+        * runtime/JSWrapperObject.cpp:
+        * runtime/MathObject.cpp:
+        * runtime/NameConstructor.cpp:
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NumberConstructor.cpp:
+        * runtime/NumberObject.cpp:
+        * runtime/NumberPrototype.cpp:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectPrototype.cpp:
+        * runtime/RegExpObject.cpp:
+        * runtime/StrictEvalActivation.cpp:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringObject.cpp:
+        * runtime/StringPrototype.cpp:
+
 2013-09-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix for DebugSuffix target.

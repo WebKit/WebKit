@@ -40,7 +40,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSPromiseConstructor);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSPromiseConstructor);
 
 // static Promise fulfill(any value);
 static EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncFulfill(ExecState*);

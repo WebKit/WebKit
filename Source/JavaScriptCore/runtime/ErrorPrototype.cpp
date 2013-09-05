@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(ErrorPrototype);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ErrorPrototype);
 
 static EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState*);
 

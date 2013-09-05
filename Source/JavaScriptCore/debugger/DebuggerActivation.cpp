@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(DebuggerActivation);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DebuggerActivation);
 
 const ClassInfo DebuggerActivation::s_info = { "DebuggerActivation", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(DebuggerActivation) };
 

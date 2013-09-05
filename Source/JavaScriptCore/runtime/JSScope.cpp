@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSScope);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSScope);
 
 void JSScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
