@@ -1,3 +1,29 @@
+2013-09-05  Antti Koivisto  <antti@apple.com>
+
+        Call createTextRenderersForSiblingsAfterAttachIfNeeded only for the attach root
+        https://bugs.webkit.org/show_bug.cgi?id=120770
+
+        Reviewed by Andreas Kling.
+
+        There is no need to call this during recursive attach as siblings are going to be attached normally anyway.
+        Move call sites to attach roots only.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::createTextRenderersForSiblingsAfterAttachIfNeeded):
+        
+            Factor to take reference and do the inital tests itself.
+
+        (WebCore::Style::createTextRendererIfNeeded):
+        (WebCore::Style::updateTextRendererAfterContentChange):
+        (WebCore::Style::attachChildren):
+        
+            Also tightened the condition where previously attached children may be encountered.
+
+        (WebCore::Style::attachRenderTree):
+        (WebCore::Style::resolveLocal):
+        (WebCore::Style::updateTextStyle):
+        (WebCore::Style::reattachRenderTree):
+
 2013-09-05  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GTK] Assertion fails when the mouse pointer is styled with a custom cursor

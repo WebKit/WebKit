@@ -280,22 +280,19 @@ static RenderObject* nextSiblingRenderer(const Text& textNode)
     return 0;
 }
 
-static void createTextRenderersForSiblingsAfterAttachIfNeeded(Node* sibling)
+static void createTextRenderersForSiblingsAfterAttachIfNeeded(Node& node)
 {
-    ASSERT(sibling->previousSibling());
-    ASSERT(sibling->previousSibling()->renderer());
-    ASSERT(!sibling->renderer());
-    ASSERT(sibling->attached());
+    if (!node.renderer())
+        return;
     // If this node got a renderer it may be the previousRenderer() of sibling text nodes and thus affect the
     // result of Text::textRendererIsNeeded() for those nodes.
-    for (; sibling; sibling = sibling->nextSibling()) {
+    for (Node* sibling = node.nextSibling(); sibling; sibling = sibling->nextSibling()) {
         if (sibling->renderer())
             break;
         if (!sibling->attached())
             break; // Assume this means none of the following siblings are attached.
         if (!sibling->isTextNode())
             continue;
-        ASSERT(!sibling->renderer());
         attachTextRenderer(*toText(sibling));
         // If we again decided not to create a renderer for next, we can bail out the loop,
         // because it won't affect the result of Text::textRendererIsNeeded() for the rest
@@ -385,10 +382,6 @@ static void createTextRendererIfNeeded(Text& textNode)
     // Parent takes care of the animations, no need to call setAnimatableStyle.
     newRenderer->setStyle(style.release());
     parentRenderer->addChild(newRenderer, nextRenderer);
-
-    Node* sibling = textNode.nextSibling();
-    if (sibling && !sibling->renderer() && sibling->attached())
-        createTextRenderersForSiblingsAfterAttachIfNeeded(sibling);
 }
 
 void attachTextRenderer(Text& textNode)
@@ -414,6 +407,7 @@ void updateTextRendererAfterContentChange(Text& textNode, unsigned offsetOfRepla
     RenderText* textRenderer = toRenderText(textNode.renderer());
     if (!textRenderer) {
         attachTextRenderer(textNode);
+        createTextRenderersForSiblingsAfterAttachIfNeeded(textNode);
         return;
     }
     RenderObject* parentRenderer = NodeRenderingTraversal::parent(&textNode)->renderer();
@@ -425,23 +419,10 @@ void updateTextRendererAfterContentChange(Text& textNode, unsigned offsetOfRepla
     textRenderer->setTextWithOffset(textNode.dataImpl(), offsetOfReplacedData, lengthOfReplacedData);
 }
 
-#ifndef NDEBUG
-static bool childAttachedAllowedWhenAttachingChildren(ContainerNode& node)
-{
-    if (node.isShadowRoot())
-        return true;
-    if (node.isInsertionPoint())
-        return true;
-    if (node.isElementNode() && toElement(&node)->shadowRoot())
-        return true;
-    return false;
-}
-#endif
-
 static void attachChildren(ContainerNode& current)
 {
     for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
-        ASSERT(!child->attached() || childAttachedAllowedWhenAttachingChildren(current));
+        ASSERT(!child->attached() || current.shadowRoot());
         if (child->attached())
             continue;
         if (child->isTextNode()) {
@@ -493,10 +474,6 @@ static void attachRenderTree(Element& current, RenderStyle* resolvedStyle)
         parentPusher.push();
 
     attachChildren(current);
-
-    Node* sibling = current.nextSibling();
-    if (current.renderer() && sibling && !sibling->renderer() && sibling->attached())
-        createTextRenderersForSiblingsAfterAttachIfNeeded(sibling);
 
     current.setAttached(true);
     current.clearNeedsStyleRecalc();
@@ -612,6 +589,8 @@ static Change resolveLocal(Element& current, Change inheritedChange)
         if (current.attached())
             detachRenderTree(current, ReattachDetach);
         attachRenderTree(current, newStyle.get());
+        createTextRenderersForSiblingsAfterAttachIfNeeded(current);
+
         return Detach;
     }
 
@@ -652,8 +631,10 @@ static void updateTextStyle(Text& text, RenderStyle* parentElementStyle, Style::
         return;
     if (renderer)
         renderer->setText(text.dataImpl());
-    else
+    else {
         attachTextRenderer(text);
+        createTextRenderersForSiblingsAfterAttachIfNeeded(text);
+    }
     text.clearNeedsStyleRecalc();
 }
 
@@ -836,6 +817,7 @@ void resolveTree(Document& document, Change change)
 void attachRenderTree(Element& element)
 {
     attachRenderTree(element, nullptr);
+    createTextRenderersForSiblingsAfterAttachIfNeeded(element);
 }
 
 void detachRenderTree(Element& element)
@@ -852,7 +834,7 @@ void reattachRenderTree(Element& current)
 {
     if (current.attached())
         detachRenderTree(current, ReattachDetach);
-    attachRenderTree(current, nullptr);
+    attachRenderTree(current);
 }
 
 }
