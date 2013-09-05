@@ -1,3 +1,10 @@
+2013-09-05  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-wk1/TestExpectations: Unskipping after 155104.
+        * platform/qt/TestExpectations: Unskipping after r155061.
+
 2013-09-05  Dirk Schulze  <krit@webkit.org>
 
         NULL ptr in WebCore::RefCountedPropertyWrapper<WebCore::ClipPathOperation>::blend
