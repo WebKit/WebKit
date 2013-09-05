@@ -113,10 +113,10 @@ bool InjectedBundle::load(APIObject* initializationUserData)
             objCInitializationUserData = static_cast<ObjCObjectGraph*>(initializationUserData)->rootObject();
         [instance webProcessPlugIn:[WKWebProcessPlugInController _shared] initializeWithObject:objCInitializationUserData.get()];
     } else if ([instance respondsToSelector:@selector(webProcessPlugInInitialize:)]) {
-        CLANG_PRAGMA("clang diagnostic push")
-        CLANG_PRAGMA("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [instance webProcessPlugInInitialize:[WKWebProcessPlugInController _shared]];
-        CLANG_PRAGMA("clang diagnostic pop")
+#pragma clang diagnostic pop
     }
 
     return true;
