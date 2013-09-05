@@ -35,6 +35,7 @@
 #include "HitTestingTransformState.cpp"
 #include "HitTestResult.cpp"
 #include "HitTestLocation.cpp"
+#include "ImageQualityController.cpp"
 #include "InlineBox.cpp"
 #include "InlineFlowBox.cpp"
 #include "InlineTextBox.cpp"

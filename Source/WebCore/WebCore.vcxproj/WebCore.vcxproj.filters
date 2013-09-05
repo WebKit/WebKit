@@ -7033,7 +7033,6 @@
     <ClCompile Include="..\platform\graphics\egl\GLContextEGL.cpp">
       <Filter>platform\graphics\egl</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSSVGGraphicsElement.cpp" />
     <ClCompile Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateAVCF.cpp">
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClCompile>
@@ -7052,25 +7051,51 @@
     <ClCompile Include="..\platform\graphics\GLContext.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\shapes\RasterShape.cpp" />
-    <ClCompile Include="..\bindings\js\WebCoreTypedArrayController.cpp" />
-    <ClCompile Include="..\style\StyleFontSizeFunctions.cpp" />
-    <ClCompile Include="..\style\StyleResolveForDocument.cpp" />
-    <ClCompile Include="..\style\StyleResolveTree.cpp" />
-    <ClCompile Include="..\css\CSSFilterImageValue.cpp" />
     <ClCompile Include="..\platform\win\WebCoreBundleWin.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\ElementData.cpp" />
-    <ClCompile Include="..\dom\InlineStyleSheetOwner.cpp" />
-    <ClCompile Include="..\dom\TextNodeTraversal.cpp" />
     <ClCompile Include="..\css\CSSImageSetValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\style\StyleCachedImageSet.cpp">
       <Filter>rendering\style</Filter>
     </ClCompile>
-    <ClCompile Include="..\accessibility\AccessibilitySearchFieldButtons.cpp" />
+    <ClCompile Include="..\rendering\ImageQualityController.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\accessibility\AccessibilitySearchFieldButtons.cpp">
+      <Filter>accessibility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dom\ElementData.cpp">
+      <Filter>dom</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSSVGGraphicsElement.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\css\CSSFilterImageValue.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dom\InlineStyleSheetOwner.cpp">
+      <Filter>dom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\shapes\RasterShape.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\style\StyleFontSizeFunctions.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\style\StyleResolveForDocument.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\style\StyleResolveTree.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dom\TextNodeTraversal.cpp">
+      <Filter>dom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bindings\js\WebCoreTypedArrayController.cpp">
+      <Filter>bindings\js</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -14818,35 +14843,72 @@
     <ClInclude Include="..\platform\graphics\GLContext.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\shapes\RasterShape.h" />
-    <ClInclude Include="..\dom\ElementTraversal.h" />
-    <ClInclude Include="..\style\StyleFontSizeFunctions.h" />
-    <ClInclude Include="..\style\StyleResolveForDocument.h" />
-    <ClInclude Include="..\style\StyleResolveTree.h" />
-    <ClInclude Include="..\css\CSSFilterImageValue.h" />
     <ClInclude Include="..\platform\win\WebCoreBundleWin.h">
       <Filter>platform\win</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\ca\PlatformCAFilters.h">
       <Filter>platform\graphics\ca</Filter>
     </ClInclude>
-    <ClInclude Include="..\dom\ElementData.h" />
-    <ClInclude Include="..\dom\InlineStyleSheetOwner.h" />
-    <ClInclude Include="..\dom\TextNodeTraversal.h" />
     <ClInclude Include="..\css\CSSImageSetValue.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\style\StyleCachedImageSet.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
-    <ClInclude Include="..\accessibility\AccessibilitySearchFieldButtons.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLElementTypeChecks.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementTypeChecks.h" />
-    <ClInclude Include="..\dom\ElementAncestorIterator.h" />
-    <ClInclude Include="..\dom\ElementChildIterator.h" />
-    <ClInclude Include="..\dom\ElementDescendantIterator.h" />
-    <ClInclude Include="..\dom\ElementIterator.h" />
-    <ClInclude Include="..\dom\ElementIteratorAssertions.h" />
+    <ClInclude Include="..\rendering\ImageQualityController.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\accessibility\AccessibilitySearchFieldButtons.h">
+      <Filter>accessibility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\ElementAncestorIterator.h">
+      <Filter>dom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\ElementTraversal.h">
+      <Filter>dom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\ElementChildIterator.h">
+      <Filter>dom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\ElementData.h">
+      <Filter>dom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\ElementDescendantIterator.h">
+      <Filter>dom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\ElementIterator.h">
+      <Filter>dom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\ElementIteratorAssertions.h">
+      <Filter>dom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\css\CSSFilterImageValue.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLElementTypeChecks.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\InlineStyleSheetOwner.h">
+      <Filter>dom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\shapes\RasterShape.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\style\StyleResolveTree.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\style\StyleFontSizeFunctions.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\style\StyleResolveForDocument.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementTypeChecks.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\TextNodeTraversal.h">
+      <Filter>dom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">
@@ -15679,7 +15741,6 @@
     </None>
     <None Include="WebCorePostBuild.cmd" />
     <None Include="WebCorePreBuild.cmd" />
-    <None Include="..\Resources\plugIns.js" />
     <None Include="..\css\mathml.css">
       <Filter>css</Filter>
     </None>
@@ -15697,6 +15758,9 @@
     </None>
     <None Include="..\css\themeWinQuirks.css">
       <Filter>css</Filter>
+    </None>
+    <None Include="..\Resources\plugIns.js">
+      <Filter>plugins</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
