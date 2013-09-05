@@ -12,3 +12,8 @@ function breakpointAutomaticallyContinue()
 {
     log("inside breakpointAutomaticallyContinue");
 }
+
+function breakpointActions(a, b)
+{
+    log("inside breakpointActions a:(" + a + ") b:(" + b + ")");
+}

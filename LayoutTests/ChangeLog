@@ -1,3 +1,18 @@
+2013-09-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Breakpoint Actions
+        https://bugs.webkit.org/show_bug.cgi?id=120576
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector-protocol/debugger/resources/breakpoint.js:
+        * inspector-protocol/debugger/setBreakpoint-actions-expected.txt: Added.
+        * inspector-protocol/debugger/setBreakpoint-actions.html: Added.
+        * inspector-protocol/debugger/setBreakpoint-options-exception-expected.txt: Added.
+        * inspector-protocol/debugger/setBreakpoint-options-exception.html: Added.
+        * inspector-protocol/resources/console-helper.js: Added.
+        (ConsoleHelper.simplifiedConsoleMessage):
+
 2013-09-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix repaint issue on "paints into ancestor" filtered layers

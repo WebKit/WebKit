@@ -1,3 +1,41 @@
+2013-09-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Breakpoint Actions
+        https://bugs.webkit.org/show_bug.cgi?id=120576
+
+        Reviewed by Timothy Hatcher.
+
+        Tests: inspector-protocol/debugger/setBreakpoint-actions.html
+               inspector-protocol/debugger/setBreakpoint-options-exception.html
+
+        * inspector/ScriptBreakpoint.h:
+        (WebCore::ScriptBreakpointAction::ScriptBreakpointAction):
+        (WebCore::ScriptBreakpoint::ScriptBreakpoint):
+        Struct for a breakpoint action. Type and string of data.
+
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::hasBreakpoint):
+        (WebCore::ScriptDebugServer::evaluateBreakpointAction):
+        (WebCore::ScriptDebugServer::evaluateBreakpointActions):
+        (WebCore::ScriptDebugServer::updateCallFrameAndPauseIfNeeded):
+        (WebCore::ScriptDebugServer::pauseIfNeeded):
+        When a breakpoint is triggered evaluate each of its breakpoint
+        actions in order. If there are exceptions, log them.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::buildObjectForBreakpointCookie):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        Save and restore breakpoint actions where needed.
+
+        (WebCore::breakpointActionTypeForString):
+        (WebCore::breakpointActionsFromProtocol):
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        Parse optional breakpoint actions from the protocol into
+        ScriptBreakpointAction objects.
+
 2013-09-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix repaint issue on "paints into ancestor" filtered layers

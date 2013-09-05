@@ -30,9 +30,27 @@
 #ifndef ScriptBreakpoint_h
 #define ScriptBreakpoint_h
 
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+typedef enum {
+    ScriptBreakpointActionTypeLog,
+    ScriptBreakpointActionTypeEvaluate,
+    ScriptBreakpointActionTypeSound
+} ScriptBreakpointActionType;
+
+struct ScriptBreakpointAction {
+    ScriptBreakpointAction(ScriptBreakpointActionType type, const String& data)
+        : type(type)
+        , data(data)
+    {
+    }
+
+    ScriptBreakpointActionType type;
+    String data;
+};
 
 struct ScriptBreakpoint {
     ScriptBreakpoint()
@@ -47,9 +65,19 @@ struct ScriptBreakpoint {
     {
     }
 
+    ScriptBreakpoint(int lineNumber, int columnNumber, const String& condition, Vector<ScriptBreakpointAction>& actions, bool autoContinue)
+        : lineNumber(lineNumber)
+        , columnNumber(columnNumber)
+        , condition(condition)
+        , actions(actions)
+        , autoContinue(autoContinue)
+    {
+    }
+
     int lineNumber;
     int columnNumber;
     String condition;
+    Vector<ScriptBreakpointAction> actions;
     bool autoContinue;
 };
 

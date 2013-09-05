@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating 'this.will.cause')
+CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating 'this.will.cause')
+Debugger.setBreakpoint options.condition or options.action with exception
+
+Breakpoints Enabled
+Found breakpoint.js
+Running breakpointWithCondition to trigger condition exception.
+inside breakpointWithCondition a:(1) b:(2) a+b:(3)
+PASS: Console Message: {"source":"javascript","level":"error","text":"TypeError: undefined is not an object (evaluating 'this.will.cause')","location":"undefined:1:10"}
+Running breakpointActions to trigger actions exception.
+inside breakpointActions a:(1) b:(2)
+PASS: Console Message: {"source":"javascript","level":"error","text":"TypeError: undefined is not an object (evaluating 'this.will.cause')","location":"undefined:1:10"}
+

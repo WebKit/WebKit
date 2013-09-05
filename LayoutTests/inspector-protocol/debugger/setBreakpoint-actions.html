@@ -1,0 +1,82 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+function test()
+{
+    InspectorTest.importScript("../../../../inspector-protocol/resources/console-helper.js");
+
+    InspectorTest.sendCommand("Console.enable", {});
+    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
+        InspectorTest.log("Breakpoints Enabled");
+    });
+
+    var expectLogs = false;
+    var logsSeen = 0;
+    const expectedLogs = 6;
+
+    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            InspectorTest.log("Found breakpoint.js");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var location = {scriptId: scriptIdentifier, lineNumber: 18, columnNumber: 0};
+            var options = {
+                condition: "a > 10",
+                autoContinue: true,
+                actions: [
+                    {"type": "log", "data": "log-action-before"},
+                    {"type": "sound"},
+                    {"type": "evaluate", "data": "(function() { console.log('eval-action', a, b); })()"},
+                    {"type": "log", "data": "log-action-after"}
+                ]
+            };
+
+            InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
+                InspectorTest.checkForError(responseObject);
+                breakpointIdentifier = responseObject.result.breakpointId;
+                InspectorTest.log("Running breakpointActions a few times that should not trigger");
+                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(1)"});
+                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(2, 12)"});
+                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(2, {x:1,y:2})"}, function() {
+                    expectLogs = true;
+                    InspectorTest.log("Running breakpointActions to triggering the breakpoint actions");
+                    InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(12, {x:1,y:2})"}, function() {
+                        InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointActions(100, document.body)"});
+                    });
+                });
+            });
+        }
+    }
+
+    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        InspectorTest.log("Hit Breakpoint!");
+
+        InspectorTest.log("FAIL: should not have hit breakpoint, autoContinue was true");
+        InspectorTest.completeTest();
+    }
+
+    InspectorTest.eventHandler["Console.messageAdded"] = function(messageObject)
+    {
+        if (!expectLogs) {
+            InspectorTest.log("FAIL: unexpected log, logs should only have come from breakpoint actions.");
+            InspectorTest.completeTest();
+            return;
+        }
+
+        var simplifiedMessage = ConsoleHelper.simplifiedConsoleMessage(messageObject);
+        InspectorTest.log("PASS: Console Message: " + JSON.stringify(simplifiedMessage));
+
+        if (++logsSeen === expectedLogs)
+            InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.setBreakpoint options.actions</p>
+</body>
+</html>

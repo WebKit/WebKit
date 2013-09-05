@@ -1,0 +1,24 @@
+CONSOLE MESSAGE: log-action-before
+CONSOLE MESSAGE: line 1: eval-action
+CONSOLE MESSAGE: log-action-after
+CONSOLE MESSAGE: log-action-before
+CONSOLE MESSAGE: line 1: eval-action
+CONSOLE MESSAGE: log-action-after
+Debugger.setBreakpoint options.actions
+
+Breakpoints Enabled
+Found breakpoint.js
+Running breakpointActions a few times that should not trigger
+inside breakpointActions a:(1) b:(undefined)
+inside breakpointActions a:(2) b:(12)
+inside breakpointActions a:(2) b:([object Object])
+Running breakpointActions to triggering the breakpoint actions
+inside breakpointActions a:(12) b:([object Object])
+PASS: Console Message: {"source":"javascript","level":"log","text":"log-action-before","location":"breakpoint.js:19:1"}
+PASS: Console Message: {"source":"console-api","level":"log","text":"eval-action","location":"???:1:26","parameters":[{"type":"string"},{"type":"number"},{"type":"object"}]}
+PASS: Console Message: {"source":"javascript","level":"log","text":"log-action-after","location":"breakpoint.js:19:1"}
+inside breakpointActions a:(100) b:([object HTMLBodyElement])
+PASS: Console Message: {"source":"javascript","level":"log","text":"log-action-before","location":"breakpoint.js:19:1"}
+PASS: Console Message: {"source":"console-api","level":"log","text":"eval-action","location":"???:1:26","parameters":[{"type":"string"},{"type":"number"},{"type":"object","subtype":"node"}]}
+PASS: Console Message: {"source":"javascript","level":"log","text":"log-action-after","location":"breakpoint.js:19:1"}
+
