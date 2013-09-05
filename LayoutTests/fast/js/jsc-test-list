@@ -71,6 +71,7 @@ fast/js/debugger
 fast/js/declaration-in-block
 fast/js/delete-getters-setters
 fast/js/delete-then-put
+fast/js/dfg-activation-register-overwritten-in-throw
 fast/js/dfg-abs-backwards-propagation
 fast/js/dfg-add-not-number
 fast/js/dfg-allocation-profile-watch-point-exit

@@ -15,9 +15,4 @@ function bar(x) {
     return result[0] * result[1][0];
 }
 
-silentTestPass = true;
-noInline(bar);
-
-for (var i = 0; i < 200; i = dfgIncrement({f:bar, i:i + 1, n:100}))
-    shouldBe("bar(42)", "1764");
-
+dfgShouldBe(bar, "bar(42)", "1764");

@@ -3,7 +3,7 @@ Tests what happens when you use arguments in strict mode and present the DFG wit
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS f(1) is 1
+PASS f(1) is 1 on all iterations including after DFG tier-up.
 PASS successfullyParsed is true
 
 TEST COMPLETE

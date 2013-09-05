@@ -7,8 +7,4 @@ function foo(o) {
     return o[0];
 }
 
-for (var i = 0; i < 200; ++i) {
-    var o = {};
-    Object.preventExtensions(o);
-    shouldBe("foo(o)", "void 0");
-}
+dfgShouldBe(foo, "var o = {}; Object.preventExtensions(o); foo(o)", "void 0");

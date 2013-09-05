@@ -7,11 +7,13 @@ function Foo() {
 }
 
 function foo() {
-    eval("// Don't optimize me!");
     return new Foo().f;
 }
 
-for (var i = 0; i < 100; ++i) {
+silentTestPass = true;
+noInline(Foo);
+
+for (var i = 0; i < 100; i = dfgIncrement({f:Foo, i:i + 1, n:90})) {
     if (i == 95)
         Foo.prototype = {foo: 62};
     shouldBe("foo()", "42");

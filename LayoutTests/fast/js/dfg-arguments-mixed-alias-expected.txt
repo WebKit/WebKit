@@ -3,7 +3,8 @@ Tests functions that use 'arguments' in both an aliased and a non-aliased way.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Passed some tests silently.
+PASS bar(42) is 42 on all iterations including after DFG tier-up.
+PASS successfullyParsed is true
 
 TEST COMPLETE
 

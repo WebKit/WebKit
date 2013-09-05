@@ -6,5 +6,4 @@ function foo(x) {
     return [x << 1, x];
 }
 
-for (var i = 0; i < 100; ++i)
-    shouldBe("foo(true)", "[2, true]");
+dfgShouldBe(foo, "foo(true)", "[2, true]");

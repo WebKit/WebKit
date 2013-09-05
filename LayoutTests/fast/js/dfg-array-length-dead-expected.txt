@@ -3,7 +3,8 @@ Tests that an array length access being dead does not result in register allocat
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Passed some tests silently.
+PASS foo({f:[]}) is 42 on all iterations including after DFG tier-up.
+PASS successfullyParsed is true
 
 TEST COMPLETE
 

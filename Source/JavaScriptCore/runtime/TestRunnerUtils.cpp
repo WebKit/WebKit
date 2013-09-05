@@ -56,6 +56,9 @@ JSValue numberOfDFGCompiles(JSValue theFunctionValue)
         CodeBlock* baselineCodeBlock = executable->baselineCodeBlockFor(CodeForCall);
         
         if (!baselineCodeBlock)
+            baselineCodeBlock = executable->baselineCodeBlockFor(CodeForConstruct);
+        
+        if (!baselineCodeBlock)
             return jsNumber(0);
 
         if (pretendToHaveManyCompiles)

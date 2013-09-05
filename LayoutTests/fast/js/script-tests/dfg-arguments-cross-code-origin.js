@@ -17,8 +17,4 @@ function baz(x) {
     return bar(foo(x));
 }
 
-silentTestPass = true;
-noInline(baz);
-
-for (var i = 0; i < 200; i = dfgIncrement({f:baz, i:i + 1, n:100}))
-    shouldBe("baz(42)", "42");
+dfgShouldBe(baz, "baz(42)", "42");

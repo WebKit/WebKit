@@ -23,7 +23,4 @@ function bar(x) {
     return a;
 }
 
-for (var i = 0; i < 1000; ++i) {
-    shouldBe("foo()", "2");
-}
-
+dfgShouldBe(foo, "foo()", "2");

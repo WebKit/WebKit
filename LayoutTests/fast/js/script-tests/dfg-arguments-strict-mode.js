@@ -8,10 +8,4 @@ function f(a) {
     return arguments[0];
 }
 
-noInline(f);
-
-while (!dfgCompiled({f:f}))
-    f(1);
-
-shouldBe("f(1)", "1");
-
+dfgShouldBe(f, "f(1)", "1");

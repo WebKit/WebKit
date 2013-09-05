@@ -5,11 +5,6 @@ description(
 function g() { 
     (eval("-7") = 0);
 }
- 
-while (!dfgCompiled({f:g})) {
-    try {
-        g()
-    } catch(e) {
 
-    }
-}
+dfgShouldBe(g, "try { g() } catch (e) { }", "void 0");
+

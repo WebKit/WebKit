@@ -222,6 +222,48 @@ function shouldBe(_a, _b, quiet)
     testFailed(_a + " should be " + stringify(_bv) + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
 }
 
+function dfgShouldBe(theFunction, _a, _b)
+{
+  if (typeof theFunction != "function" || typeof _a != "string" || typeof _b != "string")
+    debug("WARN: dfgShouldBe() expects a function and two strings");
+  noInline(theFunction);
+  var exception;
+  var values = [];
+
+  // Defend against tests that muck with numeric properties on array.prototype.
+  values.__proto__ = null;
+  values.push = Array.prototype.push;
+  
+  try {
+    while (!dfgCompiled({f:theFunction}))
+      values.push(eval(_a));
+    values.push(eval(_a));
+  } catch (e) {
+    exception = e;
+  }
+
+  var _bv = eval(_b);
+  if (exception)
+    testFailed(_a + " should be " + stringify(_bv) + ". On iteration " + (values.length + 1) + ", threw exception " + exception);
+  else {
+    var allPassed = true;
+    for (var i = 0; i < values.length; ++i) {
+      var _av = values[i];
+      if (isResultCorrect(_av, _bv))
+        continue;
+      if (typeof(_av) == typeof(_bv))
+        testFailed(_a + " should be " + stringify(_bv) + ". On iteration " + (i + 1) + ", was " + stringify(_av) + ".");
+      else
+        testFailed(_a + " should be " + stringify(_bv) + " (of type " + typeof _bv + "). On iteration " + (i + 1) + ", was " + _av + " (of type " + typeof _av + ").");
+      allPassed = false;
+    }
+    if (allPassed)
+      testPassed(_a + " is " + _b + " on all iterations including after DFG tier-up.");
+  }
+  
+  return values.length;
+}
+
 // Execute condition every 5 milliseconds until it succeed or failureTime is reached.
 // completionHandler is executed on success, failureHandler is executed on timeout.
 function _waitForCondition(condition, failureTime, completionHandler, failureHandler)

@@ -1,3 +1,53 @@
+2013-09-04  Filip Pizlo  <fpizlo@apple.com>
+
+        fast/js/dfg-* tests should wait for the concurrent JIT
+        https://bugs.webkit.org/show_bug.cgi?id=120723
+
+        Reviewed by Geoffrey Garen.
+        
+        Add dfgShouldBe(), a handy function that covers a lot of common cases.
+        Also convert a bunch of tests.
+
+        * fast/js/dfg-activation-register-overwritten-in-throw-expected.txt:
+        * fast/js/dfg-add-not-number-expected.txt:
+        * fast/js/dfg-allocation-profile-watch-point-exit-expected.txt:
+        * fast/js/dfg-arguments-alias-escape-expected.txt:
+        * fast/js/dfg-arguments-cross-code-origin-expected.txt:
+        * fast/js/dfg-arguments-mixed-alias-expected.txt:
+        * fast/js/dfg-arguments-strict-mode-expected.txt:
+        * fast/js/dfg-arguments-unexpected-escape-expected.txt:
+        * fast/js/dfg-array-dead-expected.txt:
+        * fast/js/dfg-array-length-dead-expected.txt:
+        * fast/js/dfg-array-pop-value-clearing-expected.txt:
+        * fast/js/dfg-array-push-bad-time-expected.txt:
+        * fast/js/dfg-array-push-slow-put-expected.txt:
+        * fast/js/dfg-arrayify-when-late-prevent-extensions-expected.txt:
+        * fast/js/dfg-arrayify-when-prevent-extensions-expected.txt:
+        * fast/js/dfg-bool-to-int32-reuse-expected.txt:
+        * fast/js/jsc-test-list:
+        * fast/js/resources/js-test-pre.js:
+        (dfgShouldBe):
+        * fast/js/resources/standalone-pre.js:
+        (dfgShouldBe):
+        * fast/js/script-tests/dfg-activation-register-overwritten-in-throw.js:
+        (g):
+        * fast/js/script-tests/dfg-add-not-number.js:
+        * fast/js/script-tests/dfg-allocation-profile-watch-point-exit.js:
+        (foo):
+        * fast/js/script-tests/dfg-arguments-alias-escape.js:
+        * fast/js/script-tests/dfg-arguments-cross-code-origin.js:
+        * fast/js/script-tests/dfg-arguments-mixed-alias.js:
+        * fast/js/script-tests/dfg-arguments-strict-mode.js:
+        * fast/js/script-tests/dfg-arguments-unexpected-escape.js:
+        * fast/js/script-tests/dfg-array-dead.js:
+        * fast/js/script-tests/dfg-array-length-dead.js:
+        * fast/js/script-tests/dfg-array-pop-value-clearing.js:
+        * fast/js/script-tests/dfg-array-push-bad-time.js:
+        * fast/js/script-tests/dfg-array-push-slow-put.js:
+        * fast/js/script-tests/dfg-arrayify-when-late-prevent-extensions.js:
+        * fast/js/script-tests/dfg-arrayify-when-prevent-extensions.js:
+        * fast/js/script-tests/dfg-bool-to-int32-reuse.js:
+
 2013-09-04  Arpita Bahuguna  <a.bah@samsung.com>
 
         setAttributeNode() does not set the new value to an existing attribute if specified attribute is in a different case.

@@ -8,5 +8,4 @@ function foo(a) {
     return [x, a.pop(), a.pop()];
 }
 
-for (var i = 0; i < 1000; ++i)
-    shouldBe("foo([1, 2])", "[2,42,,]");
+dfgShouldBe(foo, "foo([1, 2])", "[2,42,,]");

@@ -3,7 +3,7 @@ description(
 );
 
 var ouches = 0;
-Array.prototype.__defineSetter__("3", function() { debug("Ouch!"); ouches++; });
+Array.prototype.__defineSetter__("3", function() { ouches++; });
 
 function foo() {
     var result = [];
@@ -12,7 +12,6 @@ function foo() {
     return result;
 }
 
-for (var i = 0; i < 100; ++i)
-    shouldBe("\"" + foo().join(",") + "\"", "\"0,1,2,,4\"");
+var numRuns = dfgShouldBe(foo, "foo().join(\",\")", "\"0,1,2,,4\"");
 
-shouldBe("ouches", "100");
+shouldBe("ouches", "numRuns");

@@ -18,7 +18,10 @@ function foo(haveABadTime) {
 
 var expected = "\"0,1,2,3,4\"";
 
-for (var i = 0; i < 1000; ++i) {
+silentTestPass = true;
+noInline(foo);
+
+for (var i = 0; i < 1000; i = dfgIncrement({f:foo, i:i + 1, n:900})) {
     var haveABadTime;
     if (i == 950) {
         haveABadTime = 2;
