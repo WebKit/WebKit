@@ -1,3 +1,21 @@
+2013-09-04  Anders Carlsson  <andersca@apple.com>
+
+        Animations in an AnimationList are never null
+        https://bugs.webkit.org/show_bug.cgi?id=120720
+
+        Reviewed by Andreas Kling.
+
+        Change AnimationList::operator[] to return an Animation& and fix up related code to also take references.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/DeprecatedStyleBuilder.cpp:
+        * page/animation/CompositeAnimation.cpp:
+        * page/animation/KeyframeAnimation.cpp:
+        * platform/animation/Animation.h:
+        * platform/animation/AnimationList.cpp:
+        * platform/animation/AnimationList.h:
+        * rendering/RenderLayerBacking.cpp:
+
 2013-09-05  Antti Koivisto  <antti@apple.com>
 
         Call createTextRenderersForSiblingsAfterAttachIfNeeded only for the attach root

@@ -38,10 +38,10 @@ public:
     AnimationList(const AnimationList&);
 
     void fillUnsetProperties();
-    bool operator==(const AnimationList& o) const;
-    bool operator!=(const AnimationList& o) const
+    bool operator==(const AnimationList&) const;
+    bool operator!=(const AnimationList& other) const
     {
-        return !(*this == o);
+        return !(*this == other);
     }
     
     size_t size() const { return m_animations.size(); }
@@ -49,15 +49,19 @@ public:
     
     void resize(size_t n) { m_animations.resize(n); }
     void remove(size_t i) { m_animations.remove(i); }
-    void append(PassRefPtr<Animation> anim) { m_animations.append(anim); }
+    void append(PassRefPtr<Animation> animation)
+    {
+        ASSERT(animation);
+        m_animations.append(animation);
+    }
     
-    Animation* animation(size_t i) { return m_animations[i].get(); }
-    const Animation* animation(size_t i) const { return m_animations[i].get(); }
+    Animation& animation(size_t i) { return *m_animations[i]; }
+    const Animation& animation(size_t i) const { return *m_animations[i]; }
     
 private:
     AnimationList& operator=(const AnimationList&);
 
-    Vector<RefPtr<Animation> > m_animations;
+    Vector<RefPtr<Animation>> m_animations;
 };    
 
 

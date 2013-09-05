@@ -73,8 +73,8 @@ static const Animation* getAnimationFromStyleByName(const RenderStyle* style, co
         return 0;
 
     for (size_t i = 0; i < style->animations()->size(); i++) {
-        if (name == style->animations()->animation(i)->name())
-            return style->animations()->animation(i);
+        if (name == style->animations()->animation(i).name())
+            return &style->animations()->animation(i);
     }
 
     return 0;

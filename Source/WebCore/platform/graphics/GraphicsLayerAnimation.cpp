@@ -216,7 +216,7 @@ static const TimingFunction* timingFunctionForAnimationValue(const AnimationValu
 GraphicsLayerAnimation::GraphicsLayerAnimation(const String& name, const KeyframeValueList& keyframes, const IntSize& boxSize, const Animation* animation, double startTime, bool listsMatch)
     : m_keyframes(keyframes)
     , m_boxSize(boxSize)
-    , m_animation(Animation::create(animation))
+    , m_animation(Animation::create(*animation))
     , m_name(name)
     , m_listsMatch(listsMatch)
     , m_startTime(startTime)
