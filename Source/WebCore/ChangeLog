@@ -1,5 +1,22 @@
 2013-09-05  David Hyatt  <hyatt@apple.com>
 
+        Make RenderListItem inherit from RenderBlockFlow.
+        https://bugs.webkit.org/show_bug.cgi?id=120789
+
+        Reviewed by Beth Dakin.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::RenderListItem):
+        (WebCore::RenderListItem::willBeDestroyed):
+        (WebCore::RenderListItem::willBeRemovedFromTree):
+        (WebCore::RenderListItem::layout):
+        (WebCore::RenderListItem::addOverflowFromChildren):
+        (WebCore::RenderListItem::computePreferredLogicalWidths):
+        (WebCore::RenderListItem::paint):
+        * rendering/RenderListItem.h:
+
+2013-09-05  David Hyatt  <hyatt@apple.com>
+
         Make RenderBlock have a protected constructor..
         https://bugs.webkit.org/show_bug.cgi?id=120787
 
