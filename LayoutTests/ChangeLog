@@ -1,3 +1,14 @@
+2013-09-04  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        <https://webkit.org/b/118553> Hash navigation doesn't affect history when the page is retrieved from appcache
+
+        Reviewed by Darin Adler.
+
+        * http/tests/appcache/history-test-expected.txt: Added.
+        * http/tests/appcache/history-test.html: Added.
+        * http/tests/appcache/resources/history-test.html: Added.
+        * http/tests/appcache/resources/history-test.manifest: Added.
+
 2013-09-04  Mihai Tica  <mitica@adobe.com>
 
         Test background blend modes with animated gif background layers.

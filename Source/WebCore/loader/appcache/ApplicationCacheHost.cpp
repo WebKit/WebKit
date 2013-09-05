@@ -83,9 +83,12 @@ void ApplicationCacheHost::maybeLoadMainResource(ResourceRequest& request, Subst
         if (m_mainResourceApplicationCache) {
             // Get the resource from the application cache. By definition, cacheForMainRequest() returns a cache that contains the resource.
             ApplicationCacheResource* resource = m_mainResourceApplicationCache->resourceForRequest(request);
-            substituteData = SubstituteData(resource->data(), 
+            substituteData = SubstituteData(resource->data(),
                                             resource->response().mimeType(),
-                                            resource->response().textEncodingName(), KURL());
+                                            resource->response().textEncodingName(),
+                                            KURL(),
+                                            KURL(),
+                                            SubstituteData::ShouldRevealToSessionHistory);
         }
     }
 }

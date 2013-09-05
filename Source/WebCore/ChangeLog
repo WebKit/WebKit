@@ -1,3 +1,23 @@
+2013-09-04  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        <https://webkit.org/b/118553> Hash navigation doesn't affect history when the page is retrieved from appcache
+
+        Reviewed by Darin Adler.
+
+        A new flag called keepInHistory is added to allow keeping
+        certain pages in the history even if they have substitute data.
+
+        Test: http/tests/appcache/history-test.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::urlForHistory):
+        * loader/SubstituteData.h:
+        (WebCore::SubstituteData::SubstituteData):
+        (WebCore::SubstituteData::shouldRevealToSessionHistory):
+        (WebCore::SubstituteData::setShouldRevealToSessionHistory):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::maybeLoadMainResource):
+
 2013-09-04  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Remove deprecated markersForNode(Node* node).

@@ -35,18 +35,27 @@ namespace WebCore {
 
     class SubstituteData {
     public:
-        SubstituteData() { }
+        SubstituteData()
+            : m_shouldRevealToSessionHistory(false)
+        {
+        }
 
-        SubstituteData(PassRefPtr<SharedBuffer> content, const String& mimeType, const String& textEncoding, const KURL& failingURL, const KURL& responseURL = KURL())
+        SubstituteData(PassRefPtr<SharedBuffer> content, const String& mimeType,
+                       const String& textEncoding, const KURL& failingURL,
+                       const KURL& responseURL = KURL(), bool shouldRevealToSessionHistory = false)
             : m_content(content)
             , m_mimeType(mimeType)
             , m_textEncoding(textEncoding)
             , m_failingURL(failingURL)
             , m_responseURL(responseURL)
+            , m_shouldRevealToSessionHistory(shouldRevealToSessionHistory)
         {
         }
 
+        static const bool ShouldRevealToSessionHistory = true;
+
         bool isValid() const { return m_content != 0; }
+        bool shouldRevealToSessionHistory() const { return m_shouldRevealToSessionHistory; }
 
         const SharedBuffer* content() const { return m_content.get(); }
         const String& mimeType() const { return m_mimeType; }
@@ -60,6 +69,7 @@ namespace WebCore {
         String m_textEncoding;
         KURL m_failingURL;
         KURL m_responseURL;
+        bool m_shouldRevealToSessionHistory;
     };
 
 }
