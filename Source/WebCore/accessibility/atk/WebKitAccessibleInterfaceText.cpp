@@ -871,7 +871,7 @@ static bool isWhiteSpaceBetweenSentences(const VisiblePosition& position)
     return comparePositions(startOfWhiteSpace, position) <= 0 && comparePositions(endOfWhiteSpace, position) >= 0;
 }
 
-static VisibleSelection sentenceAtPositionForAtkBoundary(const AccessibilityObject* coreObject, const VisiblePosition& position, AtkTextBoundary boundaryType)
+static VisibleSelection sentenceAtPositionForAtkBoundary(const AccessibilityObject*, const VisiblePosition& position, AtkTextBoundary boundaryType)
 {
     VisiblePosition startPosition;
     VisiblePosition endPosition;

@@ -1,3 +1,15 @@
+2013-09-05  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Fix unused parameter warning in WebKitAccessibleInterfaceText.cpp
+        <https://webkit.org/b/120761>
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix warning by removing unused parameter.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (sentenceAtPositionForAtkBoundary):
+
 2013-09-05  Dirk Schulze  <krit@webkit.org>
 
         NULL ptr in WebCore::RefCountedPropertyWrapper<WebCore::ClipPathOperation>::blend
