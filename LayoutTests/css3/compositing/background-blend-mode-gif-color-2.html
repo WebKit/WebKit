@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+    div {
+        width: 130px;
+        height: 130px;
+        background: url('resources/squares.gif'), green;
+        float: left;
+        margin: 5px;
+    }
+</style>
+<script type="text/javascript">
+    if (window.testRunner)
+        window.testRunner.waitUntilDone();
+
+    function done() {
+        if (window.testRunner)
+            window.testRunner.notifyDone();
+    }
+
+</script>
+</head>
+<!-- This file should contain a gif on top of a background color with every type of blending. -->
+<body>
+    <div style="-webkit-background-blend-mode: normal, normal"></div>
+    <div style="-webkit-background-blend-mode: multiply, normal"></div>
+    <div style="-webkit-background-blend-mode: screen, normal"></div>
+    <div style="-webkit-background-blend-mode: darken, normal"></div>
+    <div style="-webkit-background-blend-mode: lighten, normal"></div>
+    <div style="-webkit-background-blend-mode: color-dodge, normal"></div>
+    <div style="-webkit-background-blend-mode: color-burn, normal"></div>
+    <div style="-webkit-background-blend-mode: hard-light, normal"></div>
+    <div style="-webkit-background-blend-mode: soft-light, normal"></div>
+    <div style="-webkit-background-blend-mode: difference, normal"></div>
+    <div style="-webkit-background-blend-mode: exclusion, normal"></div>
+    <div style="-webkit-background-blend-mode: hue, normal;"></div>
+    <div style="-webkit-background-blend-mode: saturation, normal"></div>
+    <div style="-webkit-background-blend-mode: color, normal"></div>
+    <div style="-webkit-background-blend-mode: luminosity, normal"></div>
+    <script type="text/javascript">
+        window.setTimeout("done()", 400);
+    </script>
+</body>
+</html>

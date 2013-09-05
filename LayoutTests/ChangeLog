@@ -1,3 +1,18 @@
+2013-09-04  Mihai Tica  <mitica@adobe.com>
+
+        Test background blend modes with animated gif background layers.
+        https://bugs.webkit.org/show_bug.cgi?id=120057
+
+        Reviewed by Darin Adler.
+
+        * css3/compositing/background-blend-mode-gif-color-2.html: Added.
+        * css3/compositing/background-blend-mode-gif-color.html: Added.
+        * css3/compositing/resources/squares.gif: Added.
+        * platform/mac/css3/compositing/background-blend-mode-gif-color-2-expected.png: Added.
+        * platform/mac/css3/compositing/background-blend-mode-gif-color-2-expected.txt: Added.
+        * platform/mac/css3/compositing/background-blend-mode-gif-color-expected.png: Added.
+        * platform/mac/css3/compositing/background-blend-mode-gif-color-expected.txt: Added.
+
 2013-09-04  Filip Pizlo  <fpizlo@apple.com>
 
         fast/js/dfg-* tests should wait for the concurrent JIT
