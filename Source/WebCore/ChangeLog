@@ -1,3 +1,14 @@
+2013-09-05  Anders Carlsson  <andersca@apple.com>
+
+        Enable C++11 wherever we build C++ files that include wtf/Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=120782
+
+        Reviewed by Andreas Kling.
+
+        Pass -std=gnu++11 when preprocessing wtf/Platform.h.
+
+        * DerivedSources.make:
+
 2013-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Breakpoint Actions

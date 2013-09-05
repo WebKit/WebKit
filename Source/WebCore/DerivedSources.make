@@ -713,7 +713,7 @@ ifneq ($(SDKROOT),)
 	SDK_FLAGS=-isysroot $(SDKROOT)
 endif
 
-ifeq ($(shell $(CC) -x c++ -E -P -dM $(SDK_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_ORIENTATION_EVENTS | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -std=gnu++11 -x c++ -E -P -dM $(SDK_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_ORIENTATION_EVENTS | cut -d' ' -f3), 1)
     ENABLE_ORIENTATION_EVENTS = 1
 endif
 

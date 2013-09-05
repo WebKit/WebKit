@@ -29,6 +29,9 @@ SEPARATE_STRIP = YES
 // Force C99 dialect
 GCC_C_LANGUAGE_STANDARD = c99
 
+// Force C++11
+CLANG_CXX_LANGUAGE_STANDARD = gnu++0x;
+
 // not sure why apple defaults this on, but it's pretty risky
 ALWAYS_SEARCH_USER_PATHS = NO
 
