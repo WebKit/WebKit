@@ -165,7 +165,13 @@ CString CodeBlock::registerName(int r) const
     if (isConstantRegisterIndex(r))
         return constantName(r, getConstant(r));
 
-    return toCString("r", r);
+    if (operandIsArgument(r)) {
+        if (!operandToArgument(r))
+            return "this";
+        return toCString("arg", operandToArgument(r));
+    }
+
+    return toCString("loc", r);
 }
 
 static CString regexpToSourceString(RegExp* regExp)
@@ -208,27 +214,30 @@ NEVER_INLINE static const char* debugHookName(int debugHookID)
     return "";
 }
 
-void CodeBlock::printUnaryOp(PrintStream& out, ExecState*, int location, const Instruction*& it, const char* op)
+void CodeBlock::printUnaryOp(PrintStream& out, ExecState* exec, int location, const Instruction*& it, const char* op)
 {
     int r0 = (++it)->u.operand;
     int r1 = (++it)->u.operand;
 
-    out.printf("[%4d] %s\t\t %s, %s", location, op, registerName(r0).data(), registerName(r1).data());
+    printLocationAndOp(out, exec, location, it, op);
+    out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
 }
 
-void CodeBlock::printBinaryOp(PrintStream& out, ExecState*, int location, const Instruction*& it, const char* op)
+void CodeBlock::printBinaryOp(PrintStream& out, ExecState* exec, int location, const Instruction*& it, const char* op)
 {
     int r0 = (++it)->u.operand;
     int r1 = (++it)->u.operand;
     int r2 = (++it)->u.operand;
-    out.printf("[%4d] %s\t\t %s, %s, %s", location, op, registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
+    printLocationAndOp(out, exec, location, it, op);
+    out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
 }
 
-void CodeBlock::printConditionalJump(PrintStream& out, ExecState*, const Instruction*, const Instruction*& it, int location, const char* op)
+void CodeBlock::printConditionalJump(PrintStream& out, ExecState* exec, const Instruction*, const Instruction*& it, int location, const char* op)
 {
     int r0 = (++it)->u.operand;
     int offset = (++it)->u.operand;
-    out.printf("[%4d] %s\t\t %s, %d(->%d)", location, op, registerName(r0).data(), offset, location + offset);
+    printLocationAndOp(out, exec, location, it, op);
+    out.printf("%s, %d(->%d)", registerName(r0).data(), offset, location + offset);
 }
 
 void CodeBlock::printGetByIdOp(PrintStream& out, ExecState* exec, int location, const Instruction*& it)
@@ -284,7 +293,8 @@ void CodeBlock::printGetByIdOp(PrintStream& out, ExecState* exec, int location, 
     int r0 = (++it)->u.operand;
     int r1 = (++it)->u.operand;
     int id0 = (++it)->u.operand;
-    out.printf("[%4d] %s\t %s, %s, %s", location, op, registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data());
+    printLocationAndOp(out, exec, location, it, op);
+    out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data());
     it += 4; // Increment up to the value profiler.
 }
 
@@ -435,13 +445,14 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
 #endif
 }
 
-void CodeBlock::printCallOp(PrintStream& out, ExecState*, int location, const Instruction*& it, const char* op, CacheDumpMode cacheDumpMode, bool& hasPrintedProfiling)
+void CodeBlock::printCallOp(PrintStream& out, ExecState* exec, int location, const Instruction*& it, const char* op, CacheDumpMode cacheDumpMode, bool& hasPrintedProfiling)
 {
     int dst = (++it)->u.operand;
     int func = (++it)->u.operand;
     int argCount = (++it)->u.operand;
     int registerOffset = (++it)->u.operand;
-    out.printf("[%4d] %s %s, %s, %d, %d", location, op, registerName(dst).data(), registerName(func).data(), argCount, registerOffset);
+    printLocationAndOp(out, exec, location, it, op);
+    out.printf("%s, %s, %d, %d", registerName(dst).data(), registerName(func).data(), argCount, registerOffset);
     if (cacheDumpMode == DumpCaches) {
 #if ENABLE(LLINT)
         LLIntCallLinkInfo* callLinkInfo = it[1].u.callLinkInfo;
@@ -466,12 +477,13 @@ void CodeBlock::printCallOp(PrintStream& out, ExecState*, int location, const In
     dumpValueProfiling(out, it, hasPrintedProfiling);
 }
 
-void CodeBlock::printPutByIdOp(PrintStream& out, ExecState*, int location, const Instruction*& it, const char* op)
+void CodeBlock::printPutByIdOp(PrintStream& out, ExecState* exec, int location, const Instruction*& it, const char* op)
 {
     int r0 = (++it)->u.operand;
     int id0 = (++it)->u.operand;
     int r1 = (++it)->u.operand;
-    out.printf("[%4d] %s\t %s, %s, %s", location, op, registerName(r0).data(), idName(id0, identifier(id0)).data(), registerName(r1).data());
+    printLocationAndOp(out, exec, location, it, op);
+    out.printf("%s, %s, %s", registerName(r0).data(), idName(id0, identifier(id0)).data(), registerName(r1).data());
     it += 5;
 }
 
@@ -505,7 +517,8 @@ void CodeBlock::dumpBytecode(PrintStream& out)
     }
     if (needsFullScopeChain() && codeType() == FunctionCode)
         out.printf("; activation in r%d", activationRegister());
-
+    out.printf("\n");
+    
     const Instruction* begin = instructions().begin();
     const Instruction* end = instructions().end();
     for (const Instruction* it = begin; it != end; ++it)
@@ -649,27 +662,27 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
     bool hasPrintedProfiling = false;
     switch (exec->interpreter()->getOpcodeID(it->u.opcode)) {
         case op_enter: {
-            out.printf("[%4d] enter", location);
+            printLocationAndOp(out, exec, location, it, "enter");
             break;
         }
         case op_create_activation: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] create_activation %s", location, registerName(r0).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "create_activation", r0);
             break;
         }
         case op_create_arguments: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] create_arguments\t %s", location, registerName(r0).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "create_arguments", r0);
             break;
         }
         case op_init_lazy_reg: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] init_lazy_reg\t %s", location, registerName(r0).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "init_lazy_reg", r0);
             break;
         }
         case op_get_callee: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] get_callee %s\n", location, registerName(r0).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "get_callee", r0);
             ++it;
             break;
         }
@@ -677,19 +690,21 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             unsigned inferredInlineCapacity = (++it)->u.operand;
-            out.printf("[%4d] create_this %s, %s, %u", location, registerName(r0).data(), registerName(r1).data(), inferredInlineCapacity);
+            printLocationAndOp(out, exec, location, it, "create_this");
+            out.printf("%s, %s, %u", registerName(r0).data(), registerName(r1).data(), inferredInlineCapacity);
             break;
         }
         case op_to_this: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] to_this\t %s", location, registerName(r0).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "to_this", r0);
             ++it; // Skip value profile.
             break;
         }
         case op_new_object: {
             int r0 = (++it)->u.operand;
             unsigned inferredInlineCapacity = (++it)->u.operand;
-            out.printf("[%4d] new_object\t %s, %u", location, registerName(r0).data(), inferredInlineCapacity);
+            printLocationAndOp(out, exec, location, it, "new_object");
+            out.printf("%s, %u", registerName(r0).data(), inferredInlineCapacity);
             ++it; // Skip object allocation profile.
             break;
         }
@@ -697,14 +712,16 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int dst = (++it)->u.operand;
             int argv = (++it)->u.operand;
             int argc = (++it)->u.operand;
-            out.printf("[%4d] new_array\t %s, %s, %d", location, registerName(dst).data(), registerName(argv).data(), argc);
+            printLocationAndOp(out, exec, location, it, "new_array");
+            out.printf("%s, %s, %d", registerName(dst).data(), registerName(argv).data(), argc);
             ++it; // Skip array allocation profile.
             break;
         }
         case op_new_array_with_size: {
             int dst = (++it)->u.operand;
             int length = (++it)->u.operand;
-            out.printf("[%4d] new_array_with_size\t %s, %s", location, registerName(dst).data(), registerName(length).data());
+            printLocationAndOp(out, exec, location, it, "new_array_with_size");
+            out.printf("%s, %s", registerName(dst).data(), registerName(length).data());
             ++it; // Skip array allocation profile.
             break;
         }
@@ -712,14 +729,16 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int dst = (++it)->u.operand;
             int argv = (++it)->u.operand;
             int argc = (++it)->u.operand;
-            out.printf("[%4d] new_array_buffer\t %s, %d, %d", location, registerName(dst).data(), argv, argc);
+            printLocationAndOp(out, exec, location, it, "new_array_buffer");
+            out.printf("%s, %d, %d", registerName(dst).data(), argv, argc);
             ++it; // Skip array allocation profile.
             break;
         }
         case op_new_regexp: {
             int r0 = (++it)->u.operand;
             int re0 = (++it)->u.operand;
-            out.printf("[%4d] new_regexp\t %s, ", location, registerName(r0).data());
+            printLocationAndOp(out, exec, location, it, "new_regexp");
+            out.printf("%s, ", registerName(r0).data());
             if (r0 >=0 && r0 < (int)m_unlinkedCode->numberOfRegExps())
                 out.printf("%s", regexpName(re0, regexp(re0)).data());
             else
@@ -729,7 +748,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         case op_mov: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
-            out.printf("[%4d] mov\t\t %s, %s", location, registerName(r0).data(), registerName(r1).data());
+            printLocationAndOp(out, exec, location, it, "mov");
+            out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
             break;
         }
         case op_not: {
@@ -778,12 +798,12 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         }
         case op_inc: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] pre_inc\t\t %s", location, registerName(r0).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "pre_inc", r0);
             break;
         }
         case op_dec: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] pre_dec\t\t %s", location, registerName(r0).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "pre_dec", r0);
             break;
         }
         case op_to_number: {
@@ -850,14 +870,16 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
             int offset = (++it)->u.operand;
-            out.printf("[%4d] check_has_instance\t\t %s, %s, %s, %d(->%d)", location, registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), offset, location + offset);
+            printLocationAndOp(out, exec, location, it, "check_has_instance");
+            out.printf("%s, %s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), offset, location + offset);
             break;
         }
         case op_instanceof: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
-            out.printf("[%4d] instanceof\t\t %s, %s, %s", location, registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
+            printLocationAndOp(out, exec, location, it, "instanceof");
+            out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
             break;
         }
         case op_typeof: {
@@ -893,7 +915,7 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             break;
         }
         case op_init_global_const_nop: {
-            out.printf("[%4d] init_global_const_nop\t", location);
+            printLocationAndOp(out, exec, location, it, "init_global_const_nop");
             it++;
             it++;
             it++;
@@ -903,7 +925,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         case op_init_global_const: {
             WriteBarrier<Unknown>* registerPointer = (++it)->u.registerPointer;
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] init_global_const\t g%d(%p), %s", location, m_globalObject->findRegisterIndex(registerPointer), registerPointer, registerName(r0).data());
+            printLocationAndOp(out, exec, location, it, "init_global_const");
+            out.printf("g%d(%p), %s", m_globalObject->findRegisterIndex(registerPointer), registerPointer, registerName(r0).data());
             it++;
             it++;
             break;
@@ -973,21 +996,24 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int id0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
-            out.printf("[%4d] put_getter_setter\t %s, %s, %s, %s", location, registerName(r0).data(), idName(id0, identifier(id0)).data(), registerName(r1).data(), registerName(r2).data());
+            printLocationAndOp(out, exec, location, it, "put_getter_setter");
+            out.printf("%s, %s, %s, %s", registerName(r0).data(), idName(id0, identifier(id0)).data(), registerName(r1).data(), registerName(r2).data());
             break;
         }
         case op_del_by_id: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
-            out.printf("[%4d] del_by_id\t %s, %s, %s", location, registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data());
+            printLocationAndOp(out, exec, location, it, "del_by_id");
+            out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data());
             break;
         }
         case op_get_by_val: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
-            out.printf("[%4d] get_by_val\t %s, %s, %s", location, registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
+            printLocationAndOp(out, exec, location, it, "get_by_val");
+            out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
             dumpArrayProfiling(out, it, hasPrintedProfiling);
             dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
@@ -996,7 +1022,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
-            out.printf("[%4d] get_argument_by_val\t %s, %s, %s", location, registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
+            printLocationAndOp(out, exec, location, it, "get_argument_by_val");
+            out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
             ++it;
             dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
@@ -1008,14 +1035,16 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r3 = (++it)->u.operand;
             int r4 = (++it)->u.operand;
             int r5 = (++it)->u.operand;
-            out.printf("[%4d] get_by_pname\t %s, %s, %s, %s, %s, %s", location, registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), registerName(r3).data(), registerName(r4).data(), registerName(r5).data());
+            printLocationAndOp(out, exec, location, it, "get_by_pname");
+            out.printf("%s, %s, %s, %s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), registerName(r3).data(), registerName(r4).data(), registerName(r5).data());
             break;
         }
         case op_put_by_val: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
-            out.printf("[%4d] put_by_val\t %s, %s, %s", location, registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
+            printLocationAndOp(out, exec, location, it, "put_by_val");
+            out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
             dumpArrayProfiling(out, it, hasPrintedProfiling);
             break;
         }
@@ -1023,19 +1052,22 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
-            out.printf("[%4d] del_by_val\t %s, %s, %s", location, registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
+            printLocationAndOp(out, exec, location, it, "del_by_val");
+            out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
             break;
         }
         case op_put_by_index: {
             int r0 = (++it)->u.operand;
             unsigned n0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
-            out.printf("[%4d] put_by_index\t %s, %u, %s", location, registerName(r0).data(), n0, registerName(r1).data());
+            printLocationAndOp(out, exec, location, it, "put_by_index");
+            out.printf("%s, %u, %s", registerName(r0).data(), n0, registerName(r1).data());
             break;
         }
         case op_jmp: {
             int offset = (++it)->u.operand;
-            out.printf("[%4d] jmp\t\t %d(->%d)", location, offset, location + offset);
+            printLocationAndOp(out, exec, location, it, "jmp");
+            out.printf("%d(->%d)", offset, location + offset);
             break;
         }
         case op_jtrue: {
@@ -1058,101 +1090,115 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r0 = (++it)->u.operand;
             Special::Pointer pointer = (++it)->u.specialPointer;
             int offset = (++it)->u.operand;
-            out.printf("[%4d] jneq_ptr\t\t %s, %d (%p), %d(->%d)", location, registerName(r0).data(), pointer, m_globalObject->actualPointerFor(pointer), offset, location + offset);
+            printLocationAndOp(out, exec, location, it, "jneq_ptr");
+            out.printf("%s, %d (%p), %d(->%d)", registerName(r0).data(), pointer, m_globalObject->actualPointerFor(pointer), offset, location + offset);
             break;
         }
         case op_jless: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int offset = (++it)->u.operand;
-            out.printf("[%4d] jless\t\t %s, %s, %d(->%d)", location, registerName(r0).data(), registerName(r1).data(), offset, location + offset);
+            printLocationAndOp(out, exec, location, it, "jless");
+            out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
             break;
         }
         case op_jlesseq: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int offset = (++it)->u.operand;
-            out.printf("[%4d] jlesseq\t\t %s, %s, %d(->%d)", location, registerName(r0).data(), registerName(r1).data(), offset, location + offset);
+            printLocationAndOp(out, exec, location, it, "jlesseq");
+            out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
             break;
         }
         case op_jgreater: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int offset = (++it)->u.operand;
-            out.printf("[%4d] jgreater\t\t %s, %s, %d(->%d)", location, registerName(r0).data(), registerName(r1).data(), offset, location + offset);
+            printLocationAndOp(out, exec, location, it, "jgreater");
+            out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
             break;
         }
         case op_jgreatereq: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int offset = (++it)->u.operand;
-            out.printf("[%4d] jgreatereq\t\t %s, %s, %d(->%d)", location, registerName(r0).data(), registerName(r1).data(), offset, location + offset);
+            printLocationAndOp(out, exec, location, it, "jgreatereq");
+            out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
             break;
         }
         case op_jnless: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int offset = (++it)->u.operand;
-            out.printf("[%4d] jnless\t\t %s, %s, %d(->%d)", location, registerName(r0).data(), registerName(r1).data(), offset, location + offset);
+            printLocationAndOp(out, exec, location, it, "jnless");
+            out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
             break;
         }
         case op_jnlesseq: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int offset = (++it)->u.operand;
-            out.printf("[%4d] jnlesseq\t\t %s, %s, %d(->%d)", location, registerName(r0).data(), registerName(r1).data(), offset, location + offset);
+            printLocationAndOp(out, exec, location, it, "jnlesseq");
+            out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
             break;
         }
         case op_jngreater: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int offset = (++it)->u.operand;
-            out.printf("[%4d] jngreater\t\t %s, %s, %d(->%d)", location, registerName(r0).data(), registerName(r1).data(), offset, location + offset);
+            printLocationAndOp(out, exec, location, it, "jngreater");
+            out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
             break;
         }
         case op_jngreatereq: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int offset = (++it)->u.operand;
-            out.printf("[%4d] jngreatereq\t\t %s, %s, %d(->%d)", location, registerName(r0).data(), registerName(r1).data(), offset, location + offset);
+            printLocationAndOp(out, exec, location, it, "jngreatereq");
+            out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
             break;
         }
         case op_loop_hint: {
-            out.printf("[%4d] loop_hint", location);
+            printLocationAndOp(out, exec, location, it, "loop_hint");
             break;
         }
         case op_switch_imm: {
             int tableIndex = (++it)->u.operand;
             int defaultTarget = (++it)->u.operand;
             int scrutineeRegister = (++it)->u.operand;
-            out.printf("[%4d] switch_imm\t %d, %d(->%d), %s", location, tableIndex, defaultTarget, location + defaultTarget, registerName(scrutineeRegister).data());
+            printLocationAndOp(out, exec, location, it, "switch_imm");
+            out.printf("%d, %d(->%d), %s", tableIndex, defaultTarget, location + defaultTarget, registerName(scrutineeRegister).data());
             break;
         }
         case op_switch_char: {
             int tableIndex = (++it)->u.operand;
             int defaultTarget = (++it)->u.operand;
             int scrutineeRegister = (++it)->u.operand;
-            out.printf("[%4d] switch_char\t %d, %d(->%d), %s", location, tableIndex, defaultTarget, location + defaultTarget, registerName(scrutineeRegister).data());
+            printLocationAndOp(out, exec, location, it, "switch_char");
+            out.printf("%d, %d(->%d), %s", tableIndex, defaultTarget, location + defaultTarget, registerName(scrutineeRegister).data());
             break;
         }
         case op_switch_string: {
             int tableIndex = (++it)->u.operand;
             int defaultTarget = (++it)->u.operand;
             int scrutineeRegister = (++it)->u.operand;
-            out.printf("[%4d] switch_string\t %d, %d(->%d), %s", location, tableIndex, defaultTarget, location + defaultTarget, registerName(scrutineeRegister).data());
+            printLocationAndOp(out, exec, location, it, "switch_string");
+            out.printf("%d, %d(->%d), %s", tableIndex, defaultTarget, location + defaultTarget, registerName(scrutineeRegister).data());
             break;
         }
         case op_new_func: {
             int r0 = (++it)->u.operand;
             int f0 = (++it)->u.operand;
             int shouldCheck = (++it)->u.operand;
-            out.printf("[%4d] new_func\t\t %s, f%d, %s", location, registerName(r0).data(), f0, shouldCheck ? "<Checked>" : "<Unchecked>");
+            printLocationAndOp(out, exec, location, it, "new_func");
+            out.printf("%s, f%d, %s", registerName(r0).data(), f0, shouldCheck ? "<Checked>" : "<Unchecked>");
             break;
         }
         case op_new_func_exp: {
             int r0 = (++it)->u.operand;
             int f0 = (++it)->u.operand;
-            out.printf("[%4d] new_func_exp\t %s, f%d", location, registerName(r0).data(), f0);
+            printLocationAndOp(out, exec, location, it, "new_func_exp");
+            out.printf("%s, f%d", registerName(r0).data(), f0);
             break;
         }
         case op_call: {
@@ -1170,30 +1216,33 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int arguments = (++it)->u.operand;
             int firstFreeRegister = (++it)->u.operand;
             ++it;
-            out.printf("[%4d] call_varargs\t %s, %s, %s, %s, %d", location, registerName(result).data(), registerName(callee).data(), registerName(thisValue).data(), registerName(arguments).data(), firstFreeRegister);
+            printLocationAndOp(out, exec, location, it, "call_varargs");
+            out.printf("%s, %s, %s, %s, %d", registerName(result).data(), registerName(callee).data(), registerName(thisValue).data(), registerName(arguments).data(), firstFreeRegister);
             dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
         }
         case op_tear_off_activation: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] tear_off_activation\t %s", location, registerName(r0).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "tear_off_activation", r0);
             break;
         }
         case op_tear_off_arguments: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
-            out.printf("[%4d] tear_off_arguments %s, %s", location, registerName(r0).data(), registerName(r1).data());
+            printLocationAndOp(out, exec, location, it, "tear_off_arguments");
+            out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
             break;
         }
         case op_ret: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] ret\t\t %s", location, registerName(r0).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "ret", r0);
             break;
         }
         case op_ret_object_or_this: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
-            out.printf("[%4d] constructor_ret\t\t %s %s", location, registerName(r0).data(), registerName(r1).data());
+            printLocationAndOp(out, exec, location, it, "constructor_ret");
+            out.printf("%s %s", registerName(r0).data(), registerName(r1).data());
             break;
         }
         case op_construct: {
@@ -1204,13 +1253,15 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int count = (++it)->u.operand;
-            out.printf("[%4d] strcat\t\t %s, %s, %d", location, registerName(r0).data(), registerName(r1).data(), count);
+            printLocationAndOp(out, exec, location, it, "strcat");
+            out.printf("%s, %s, %d", registerName(r0).data(), registerName(r1).data(), count);
             break;
         }
         case op_to_primitive: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
-            out.printf("[%4d] to_primitive\t %s, %s", location, registerName(r0).data(), registerName(r1).data());
+            printLocationAndOp(out, exec, location, it, "to_primitive");
+            out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
             break;
         }
         case op_get_pnames: {
@@ -1219,7 +1270,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r2 = it[3].u.operand;
             int r3 = it[4].u.operand;
             int offset = it[5].u.operand;
-            out.printf("[%4d] get_pnames\t %s, %s, %s, %s, %d(->%d)", location, registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), registerName(r3).data(), offset, location + offset);
+            printLocationAndOp(out, exec, location, it, "get_pnames");
+            out.printf("%s, %s, %s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), registerName(r3).data(), offset, location + offset);
             it += OPCODE_LENGTH(op_get_pnames) - 1;
             break;
         }
@@ -1230,40 +1282,43 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int size = it[4].u.operand;
             int iter = it[5].u.operand;
             int offset = it[6].u.operand;
-            out.printf("[%4d] next_pname\t %s, %s, %s, %s, %s, %d(->%d)", location, registerName(dest).data(), registerName(base).data(), registerName(i).data(), registerName(size).data(), registerName(iter).data(), offset, location + offset);
+            printLocationAndOp(out, exec, location, it, "next_pname");
+            out.printf("%s, %s, %s, %s, %s, %d(->%d)", registerName(dest).data(), registerName(base).data(), registerName(i).data(), registerName(size).data(), registerName(iter).data(), offset, location + offset);
             it += OPCODE_LENGTH(op_next_pname) - 1;
             break;
         }
         case op_push_with_scope: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] push_with_scope\t %s", location, registerName(r0).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "push_with_scope", r0);
             break;
         }
         case op_pop_scope: {
-            out.printf("[%4d] pop_scope", location);
+            printLocationAndOp(out, exec, location, it, "pop_scope");
             break;
         }
         case op_push_name_scope: {
             int id0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             unsigned attributes = (++it)->u.operand;
-            out.printf("[%4d] push_name_scope \t%s, %s, %u", location, idName(id0, identifier(id0)).data(), registerName(r1).data(), attributes);
+            printLocationAndOp(out, exec, location, it, "push_name_scope");
+            out.printf("%s, %s, %u", idName(id0, identifier(id0)).data(), registerName(r1).data(), attributes);
             break;
         }
         case op_catch: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] catch\t\t %s", location, registerName(r0).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "catch", r0);
             break;
         }
         case op_throw: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] throw\t\t %s", location, registerName(r0).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "throw", r0);
             break;
         }
         case op_throw_static_error: {
             int k0 = (++it)->u.operand;
             int k1 = (++it)->u.operand;
-            out.printf("[%4d] throw_static_error\t %s, %s", location, constantName(k0, getConstant(k0)).data(), k1 ? "true" : "false");
+            printLocationAndOp(out, exec, location, it, "throw_static_error");
+            out.printf("%s, %s", constantName(k0, getConstant(k0)).data(), k1 ? "true" : "false");
             break;
         }
         case op_debug: {
@@ -1271,22 +1326,23 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int firstLine = (++it)->u.operand;
             int lastLine = (++it)->u.operand;
             int column = (++it)->u.operand;
-            out.printf("[%4d] debug\t\t %s, %d, %d, %d", location, debugHookName(debugHookID), firstLine, lastLine, column);
+            printLocationAndOp(out, exec, location, it, "debug");
+            out.printf("%s, %d, %d, %d", debugHookName(debugHookID), firstLine, lastLine, column);
             break;
         }
         case op_profile_will_call: {
             int function = (++it)->u.operand;
-            out.printf("[%4d] profile_will_call %s", location, registerName(function).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "profile_will_call", function);
             break;
         }
         case op_profile_did_call: {
             int function = (++it)->u.operand;
-            out.printf("[%4d] profile_did_call\t %s", location, registerName(function).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "profile_did_call", function);
             break;
         }
         case op_end: {
             int r0 = (++it)->u.operand;
-            out.printf("[%4d] end\t\t %s", location, registerName(r0).data());
+            printLocationOpAndRegisterOperand(out, exec, location, it, "end", r0);
             break;
         }
         case op_resolve_scope: {
@@ -1294,7 +1350,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int id0 = (++it)->u.operand;
             int resolveModeAndType = (++it)->u.operand;
             ++it; // depth
-            out.printf("[%4d] resolve_scope\t %s, %s, %d", location, registerName(r0).data(), idName(id0, identifier(id0)).data(), resolveModeAndType);
+            printLocationAndOp(out, exec, location, it, "resolve_scope");
+            out.printf("%s, %s, %d", registerName(r0).data(), idName(id0, identifier(id0)).data(), resolveModeAndType);
             break;
         }
         case op_get_from_scope: {
@@ -1305,7 +1362,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             ++it; // Structure
             ++it; // Operand
             ++it; // Skip value profile.
-            out.printf("[%4d] get_from_scope\t %s, %s, %s, %d", location, registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data(), resolveModeAndType);
+            printLocationAndOp(out, exec, location, it, "get_from_scope");
+            out.printf("%s, %s, %s, %d", registerName(r0).data(), registerName(r1).data(), idName(id0, identifier(id0)).data(), resolveModeAndType);
             break;
         }
         case op_put_to_scope: {
@@ -1315,7 +1373,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int resolveModeAndType = (++it)->u.operand;
             ++it; // Structure
             ++it; // Operand
-            out.printf("[%4d] put_to_scope\t %s, %s, %s, %d", location, registerName(r0).data(), idName(id0, identifier(id0)).data(), registerName(r1).data(), resolveModeAndType);
+            printLocationAndOp(out, exec, location, it, "put_to_scope");
+            out.printf("%s, %s, %s, %d", registerName(r0).data(), idName(id0, identifier(id0)).data(), registerName(r1).data(), resolveModeAndType);
             break;
         }
 #if ENABLE(LLINT_C_LOOP)

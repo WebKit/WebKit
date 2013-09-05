@@ -1,3 +1,28 @@
+2013-09-05  Michael Saboff  <msaboff@apple.com>
+
+        Cleanup formatting of byte code debug output
+        Source/JavaScriptCore/ChangeLog
+
+        Rubber stamped by Filip Pizlo.
+
+        Put the formatting of the byte code offset and operation into one common function to
+        simplify and unify formatting.  Changed CodeBlock::registerName() to return
+        "thist" for argument register 0, "argN" for other argument registers and "locN" for
+        local registers.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::registerName):
+        (JSC::CodeBlock::printUnaryOp):
+        (JSC::CodeBlock::printBinaryOp):
+        (JSC::CodeBlock::printConditionalJump):
+        (JSC::CodeBlock::printGetByIdOp):
+        (JSC::CodeBlock::printCallOp):
+        (JSC::CodeBlock::printPutByIdOp):
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::printLocationAndOp):
+        (JSC::CodeBlock::printLocationOpAndRegisterOperand):
+
 2013-09-05  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(149636, merged in 153145): ToThis conversion doesn't work in the DFG

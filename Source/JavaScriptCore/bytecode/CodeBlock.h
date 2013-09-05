@@ -1006,6 +1006,17 @@ private:
     enum CacheDumpMode { DumpCaches, DontDumpCaches };
     void printCallOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op, CacheDumpMode, bool& hasPrintedProfiling);
     void printPutByIdOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
+    void printLocationAndOp(PrintStream& out, ExecState*, int location, const Instruction*&, const char* op)
+    {
+        out.printf("[%4d] %-17s ", location, op);
+    }
+
+    void printLocationOpAndRegisterOperand(PrintStream& out, ExecState* exec, int location, const Instruction*& it, const char* op, int operand)
+    {
+        printLocationAndOp(out, exec, location, it, op);
+        out.printf("%s", registerName(operand).data());
+    }
+
     void beginDumpProfiling(PrintStream&, bool& hasPrintedProfiling);
     void dumpValueProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
     void dumpArrayProfiling(PrintStream&, const Instruction*&, bool& hasPrintedProfiling);
