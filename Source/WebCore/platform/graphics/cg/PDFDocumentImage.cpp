@@ -145,13 +145,8 @@ void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& dstRect, 
 #if !USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)
 void PDFDocumentImage::createPDFDocument()
 {
-    // Create a CGDataProvider to wrap the SharedBuffer.
-    // We use the GetBytesAtPosition callback rather than the GetBytePointer one because SharedBuffer
-    // does not provide a way to lock down the byte pointer and guarantee that it won't move, which
-    // is a requirement for using the GetBytePointer callback.
-
-    CGDataProviderDirectCallbacks providerCallbacks = { 0, 0, 0, sharedBufferGetBytesAtPosition, 0 };
-    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateDirect(this->data(), this->data()->size(), &providerCallbacks));
+    RetainPtr<CFDataRef> data = adoptCF(this->data()->createCFData());
+    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
     m_document = CGPDFDocumentCreateWithProvider(dataProvider.get());
 }
 

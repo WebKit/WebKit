@@ -1,3 +1,19 @@
+2013-09-05  Tim Horton  <timothy_horton@apple.com>
+
+        iOS build broke with change to make Mac use PDFKit for PDFDocumentImage
+        https://bugs.webkit.org/show_bug.cgi?id=120771
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::createPDFDocument):
+        Use the (removed in r155069) PLATFORM(MAC) way of making a CGDataProvider from a SharedBuffer
+        everywhere; this is what iOS was expecting to use (where I accidentally changed behavior),
+        and it should also work for Windows, the only other USE(CG) platform.
+
+        Since we only createPDFDocument() after all data has been received, I'm not
+        restoring the comment about the SharedBuffer being secretly written to behind its back.
+
 2013-09-04  Dean Jackson  <dino@apple.com>
 
         Rename supportsContext to probablySupportsContext
