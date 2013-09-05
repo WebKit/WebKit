@@ -108,4 +108,51 @@ TEST(WTF_Vector, ReverseIterator)
     EXPECT_TRUE(end == it);
 }
 
+class MoveOnly {
+public:
+    MoveOnly(unsigned value)
+        : m_value(value)
+    {
+    }
+
+    unsigned value() const
+    {
+        return m_value;
+    }
+
+    MoveOnly(MoveOnly&& other)
+        : m_value(other.m_value)
+    {
+        other.m_value = 0;
+    }
+
+    MoveOnly& operator=(MoveOnly&& other)
+    {
+        if (this == &other)
+            return *this;
+
+        m_value = other.m_value;
+        other.m_value = 0;
+        return *this;
+    }
+
+private:
+    unsigned m_value;
+};
+
+TEST(WTF_Vector, MoveOnly_UncheckedAppend)
+{
+    Vector<MoveOnly> vector;
+
+    vector.reserveInitialCapacity(100);
+    for (size_t i = 0; i < 100; ++i) {
+        MoveOnly moveOnly(i);
+        vector.uncheckedAppend(std::move(moveOnly));
+        EXPECT_EQ(moveOnly.value(), 0U);
+    }
+
+    for (size_t i = 0; i < 100; ++i)
+        EXPECT_EQ(vector[i].value(), i);
+}
+
 } // namespace TestWebKitAPI

@@ -643,7 +643,7 @@ public:
 
     template<typename U> void append(const U*, size_t);
     template<typename U> void append(const U&);
-    template<typename U> void uncheckedAppend(const U& val);
+    template<typename U> void uncheckedAppend(U&& val);
     template<typename U, size_t otherCapacity> void appendVector(const Vector<U, otherCapacity>&);
     template<typename U> bool tryAppend(const U*, size_t);
 
@@ -1068,11 +1068,11 @@ void Vector<T, inlineCapacity, OverflowHandler>::appendSlowCase(const U& val)
 // vector's capacity is large enough for the append to succeed.
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler> template<typename U>
-inline void Vector<T, inlineCapacity, OverflowHandler>::uncheckedAppend(const U& val)
+inline void Vector<T, inlineCapacity, OverflowHandler>::uncheckedAppend(U&& val)
 {
     ASSERT(size() < capacity());
-    const U* ptr = &val;
-    new (NotNull, end()) T(*ptr);
+    typename std::remove_reference<U>::type* ptr = &val;
+    new (NotNull, end()) T(std::forward<U>(*ptr));
     ++m_size;
 }
 
