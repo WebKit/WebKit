@@ -382,6 +382,7 @@ webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_ev
 
 # No support for exposing in-band text tracks
 webkit.org/b/103771 media/track/track-forced-subtitles-in-band.html [ Timeout Failure ]
+webkit.org/b/103771 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Failure ]
 webkit.org/b/103771 media/track/track-in-band.html [ Failure ]
 webkit.org/b/103771 media/track/track-in-band-cues-added-once.html [ Timeout ]
 webkit.org/b/103771 media/track/track-in-band-style.html [ Timeout ]

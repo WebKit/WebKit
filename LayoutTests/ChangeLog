@@ -1,3 +1,22 @@
+2013-09-05  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
+
+        [GTK] improving tests expectations related to trackmenu
+        https://bugs.webkit.org/show_bug.cgi?id=120699
+
+        Adding tests expectations to the current GTK's trackmenu
+        implementation.
+
+        Also adding a in-band-track test expectation as failure since we don't
+        support in-band tracks yet.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/media/video-controls-captions-trackmenu-expected.txt: Added.
+        * platform/gtk/media/video-controls-captions-trackmenu-hide-on-click-expected.txt: Added.
+        * platform/gtk/media/video-controls-captions-trackmenu-localized-expected.txt: Added.
+        * platform/gtk/media/video-controls-captions-trackmenu-sorted-expected.txt: Added.
+
 2013-09-05  Filip Pizlo  <fpizlo@apple.com>
 
         fast/js/dfg-* tests should wait for the concurrent JIT
