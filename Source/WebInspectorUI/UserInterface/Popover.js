@@ -99,6 +99,20 @@ WebInspector.Popover.prototype = {
             this._update();
     },
 
+    update: function()
+    {
+        if (!this.visible)
+            return;
+
+        var previouslyFocusedElement = document.activeElement;
+
+        this._contentNeedsUpdate = true;
+        this._update();
+
+        if (previouslyFocusedElement)
+            previouslyFocusedElement.focus();
+    },
+
     /**
      * @param {WebInspector.Rect} targetFrame
      * @param {WebInspector.RectEdge}[] preferredEdges
@@ -151,7 +165,7 @@ WebInspector.Popover.prototype = {
 
     // Private
 
-    _update: function(replaceContent)
+    _update: function()
     {
         var targetFrame = this._targetFrame;
         var preferredEdges = this._preferredEdges;

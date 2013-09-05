@@ -1,3 +1,96 @@
+2013-09-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Breakpoint Actions
+        https://bugs.webkit.org/show_bug.cgi?id=120576
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Breakpoint.js:
+        (WebInspector.Breakpoint):
+        (WebInspector.Breakpoint.prototype.get actions):
+        (WebInspector.Breakpoint.prototype.get options):
+        (WebInspector.Breakpoint.prototype.get info):
+        (WebInspector.Breakpoint.prototype._serializableActions):
+        Saving, restoring, and serialization.
+
+        (WebInspector.Breakpoint.prototype.createAction):
+        (WebInspector.Breakpoint.prototype.recreateAction):
+        (WebInspector.Breakpoint.prototype.removeAction):
+        (WebInspector.Breakpoint.prototype.breakpointActionDidChange):
+        Modifying _actions ivar.
+
+        (WebInspector.Breakpoint.prototype._editBreakpointPopoverContentElement):
+        (WebInspector.Breakpoint.prototype._popoverActionsCreateAddActionButton):
+        (WebInspector.Breakpoint.prototype._popoverActionsAddActionButtonClicked):
+        (WebInspector.Breakpoint.prototype._popoverActionsInsertBreakpointActionView):
+        (WebInspector.Breakpoint.prototype.breakpointActionViewAppendActionView):
+        (WebInspector.Breakpoint.prototype.breakpointActionViewRemoveActionView):
+        (WebInspector.Breakpoint.prototype.breakpointActionViewResized):
+        Popover UI containing breakpoint action views and converting to and from
+        having no actions.
+
+        (WebInspector.Breakpoint.prototype.willDismissPopover):
+        Cleanup some ivars when the popover dismisses.
+
+        * UserInterface/Breakpoint.css:
+        (.popover .edit-breakpoint-popover-content.wide):
+        Wider setting when there are actions in the popover.
+
+        (.popover .edit-breakpoint-popover-content > table > tr > th):
+        Keep the title labels at the top of their section.
+
+        * UserInterface/BreakpointAction.js:
+        (WebInspector.BreakpointAction):
+        (WebInspector.BreakpointAction.prototype.get breakpoint):
+        (WebInspector.BreakpointAction.prototype.get type):
+        (WebInspector.BreakpointAction.prototype.get data):
+        (WebInspector.BreakpointAction.prototype.set data):
+        (WebInspector.BreakpointAction.prototype.get info):
+        Very basic BreakpointAction class. Notifies Breakpoint on data changes.
+        Type changes are not allowed, instead just create a new BreakpointAction.
+
+        * UserInterface/BreakpointActionView.css: Added.
+        (.breakpoint-action-block-header):
+        (.breakpoint-action-remove-button):
+        (.breakpoint-action-remove-button:active):
+        (.breakpoint-action-append-button):
+        (.breakpoint-action-block-body):
+        (.breakpoint-action-block-body > input):
+        (.breakpoint-action-eval-editor):
+        (.breakpoint-action-eval-editor > .CodeMirror):
+        (.breakpoint-action-eval-editor > .CodeMirror-scroll):
+        * UserInterface/BreakpointActionView.js: Added.
+        (WebInspector.BreakpointActionView):
+        (WebInspector.BreakpointActionView.displayStringForType):
+        (WebInspector.BreakpointActionView.prototype.get action):
+        (WebInspector.BreakpointActionView.prototype.get element):
+        (WebInspector.BreakpointActionView.prototype._pickerChanged):
+        (WebInspector.BreakpointActionView.prototype._appendActionButtonClicked):
+        (WebInspector.BreakpointActionView.prototype._removeActionButtonClicked):
+        (WebInspector.BreakpointActionView.prototype._updateBody.switch.break):
+        (WebInspector.BreakpointActionView.prototype._logInputChanged):
+        (WebInspector.BreakpointActionView.prototype._codeMirrorBlurred):
+        (WebInspector.BreakpointActionView.prototype._codeMirrorViewportChanged):
+        UI and form controls for individual breakpoint actions. The view
+        wraps a single BreakpointAction, and for any actions that could affect
+        other views the delegate is notified.
+
+        * UserInterface/DebuggerManager.js:
+        (WebInspector.DebuggerManager):
+        (WebInspector.DebuggerManager.prototype._debuggerBreakpointActionType):
+        When sending to the backend, make sure to send protocol enums.
+
+        * UserInterface/Popover.js:
+        (WebInspector.Popover.prototype.update):
+        Update the popover when content changes.
+
+        * UserInterface/Images/BreakpointActionAdd.svg: Added.
+        * UserInterface/Images/BreakpointActionRemove.svg: Added.
+        * UserInterface/InspectorBackendCommands.js:
+        * UserInterface/Main.html:
+        * Localizations/en.lproj/localizedStrings.js:
+        Misc. New strings, images, includes.
+
 2013-09-03  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: exceptions triggered from console evaluation do not pause the debugger

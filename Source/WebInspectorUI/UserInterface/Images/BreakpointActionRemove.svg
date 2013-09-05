@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2013 Apple Inc. All rights reserved. -->
+<svg viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <path stroke="rgb(241, 242, 243)" stroke-width="2" d="M 12 9 L 4 9"/>
+    <path stroke="rgb(129, 129, 129)" stroke-width="2" d="M 12 8 L 4 8"/>
+</svg>

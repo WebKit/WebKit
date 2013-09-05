@@ -31,6 +31,10 @@
     font-size: 11px;
 }
 
+.popover .edit-breakpoint-popover-content.wide {
+    width: 460px;
+}
+
 .popover .edit-breakpoint-popover-content > label.toggle {
     color: black;
     font-weight: bold;
@@ -47,6 +51,8 @@
     font-weight: bold;
     text-align: right;
     width: 1px; /* Shrink to fit. */
+    vertical-align: top;
+    line-height: 23px;
 }
 
 .popover .edit-breakpoint-popover-content > table > tr > td {

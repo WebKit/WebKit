@@ -33,6 +33,7 @@ WebInspector.DebuggerManager = function()
     WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisabledStateDidChange, this._breakpointDisabledStateDidChange, this);
     WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ConditionDidChange, this._breakpointEditablePropertyDidChange, this);
     WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.AutoContinueDidChange, this._breakpointEditablePropertyDidChange, this);
+    WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ActionsDidChange, this._breakpointEditablePropertyDidChange, this);
 
     window.addEventListener("pagehide", this._inspectorClosing.bind(this));
 
@@ -470,6 +471,21 @@ WebInspector.DebuggerManager.prototype = {
         return new WebInspector.ScopeChainNode(type, object);
     },
 
+    _debuggerBreakpointActionType: function(type)
+    {
+        switch (type) {
+        case WebInspector.BreakpointAction.Type.Log:
+            return DebuggerAgent.BreakpointActionType.Log;
+        case WebInspector.BreakpointAction.Type.Evaluate:
+            return DebuggerAgent.BreakpointActionType.Evaluate;
+        case WebInspector.BreakpointAction.Type.Sound:
+            return DebuggerAgent.BreakpointActionType.Sound;
+        default:
+            console.assert(false);
+            return DebuggerAgent.BreakpointActionType.Log;
+        }
+    },
+
     _setBreakpoint: function(breakpoint, callback)
     {
         console.assert(!breakpoint.id);
@@ -496,6 +512,14 @@ WebInspector.DebuggerManager.prototype = {
         // If something goes wrong it will stay unresolved and show up as such in the user interface.
         breakpoint.resolved = false;
 
+        // Convert BreakpointAction types to DebuggerAgent protocol types.
+        // NOTE: Breakpoint.options returns new objects each time, so it is safe to modify.
+        var options = breakpoint.options;
+        if (options.actions.length) {
+            for (var i = 0; i < options.actions.length; ++i)
+                options.actions[i].type = this._debuggerBreakpointActionType(options.actions[i].type);
+        }
+
         // COMPATIBILITY (iOS 7): iOS 7 and earlier, DebuggerAgent.setBreakpoint* took a "condition" string argument.
         // This has been replaced with an "options" BreakpointOptions object.
         if (breakpoint.url) {
@@ -505,13 +529,13 @@ WebInspector.DebuggerManager.prototype = {
                 urlRegex: undefined,
                 columnNumber: breakpoint.sourceCodeLocation.columnNumber,
                 condition: breakpoint.condition,
-                options: breakpoint.options
+                options: options
             }, didSetBreakpoint.bind(this));
         } else if (breakpoint.scriptIdentifier) {
             DebuggerAgent.setBreakpoint.invoke({
                 location: {scriptId: breakpoint.scriptIdentifier, lineNumber: breakpoint.sourceCodeLocation.lineNumber, columnNumber: breakpoint.sourceCodeLocation.columnNumber},
                 condition: breakpoint.condition,
-                options: breakpoint.options
+                options: options
             }, didSetBreakpoint.bind(this));
         }
     },
@@ -525,6 +549,9 @@ WebInspector.DebuggerManager.prototype = {
 
         function didRemoveBreakpoint(error)
         {
+            if (error)
+                console.log(error);
+
             delete this._breakpointIdMap[breakpoint.id];
 
             breakpoint.id = null;
