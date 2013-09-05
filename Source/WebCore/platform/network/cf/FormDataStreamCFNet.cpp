@@ -107,7 +107,7 @@ struct FormStreamFields {
 #if ENABLE(BLOB)
     long long currentStreamRangeLength;
 #endif
-    char* currentData;
+    OwnPtr<char> currentData;
     CFReadStreamRef formStream;
     unsigned long long streamLength;
     unsigned long long bytesSent;
@@ -124,10 +124,8 @@ static void closeCurrentStream(FormStreamFields* form)
         form->currentStreamRangeLength = BlobDataItem::toEndOfFile;
 #endif
     }
-    if (form->currentData) {
-        fastFree(form->currentData);
-        form->currentData = 0;
-    }
+
+    form->currentData = nullptr;
 }
 
 // Return false if we cannot advance the stream. Currently the only possible failure is that the underlying file has been removed or changed since File.slice.
@@ -143,9 +141,9 @@ static bool advanceCurrentStream(FormStreamFields* form)
 
     if (nextInput.m_type == FormDataElement::data) {
         size_t size = nextInput.m_data.size();
-        char* data = nextInput.m_data.releaseBuffer();
-        form->currentStream = CFReadStreamCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data), size, kCFAllocatorNull);
-        form->currentData = data;
+        OwnPtr<char> data = nextInput.m_data.releaseBuffer();
+        form->currentStream = CFReadStreamCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data.get()), size, kCFAllocatorNull);
+        form->currentData = data.release();
     } else {
 #if ENABLE(BLOB)
         // Check if the file has been changed or not if required.
@@ -206,7 +204,6 @@ static void* formCreate(CFReadStreamRef stream, void* context)
 #if ENABLE(BLOB)
     newInfo->currentStreamRangeLength = BlobDataItem::toEndOfFile;
 #endif
-    newInfo->currentData = 0;
     newInfo->formStream = stream; // Don't retain. That would create a reference cycle.
     newInfo->streamLength = formContext->streamLength;
     newInfo->bytesSent = 0;

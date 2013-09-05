@@ -44,12 +44,11 @@ public:
     {
         if (m_length > std::numeric_limits<unsigned>::max() / sizeof(CharType))
             CRASH();
-        m_data = static_cast<CharType*>(fastMalloc(m_length * sizeof(CharType)));
+        m_data = adoptPtr(static_cast<CharType*>(fastMalloc(m_length * sizeof(CharType))));
     }
 
     ~StringBuffer()
     {
-        fastFree(m_data);
     }
 
     void shrink(unsigned newLength)
@@ -63,21 +62,29 @@ public:
         if (newLength > m_length) {
             if (newLength > std::numeric_limits<unsigned>::max() / sizeof(UChar))
                 CRASH();
-            m_data = static_cast<UChar*>(fastRealloc(m_data, newLength * sizeof(UChar)));
+            m_data = adoptPtr(static_cast<UChar*>(fastRealloc(m_data.release().leakPtr(), newLength * sizeof(UChar))));
         }
         m_length = newLength;
     }
 
     unsigned length() const { return m_length; }
-    CharType* characters() { return m_data; }
+    CharType* characters() { return m_data.get(); }
 
-    CharType& operator[](unsigned i) { ASSERT_WITH_SECURITY_IMPLICATION(i < m_length); return m_data[i]; }
+    CharType& operator[](unsigned i)
+    {
+        ASSERT_WITH_SECURITY_IMPLICATION(i < m_length);
+        return m_data.get()[i];
+    }
 
-    CharType* release() { CharType* data = m_data; m_data = 0; return data; }
+    PassOwnPtr<CharType> release()
+    {
+        OwnPtr<CharType> data = m_data.release();
+        return data.release();
+    }
 
 private:
     unsigned m_length;
-    CharType* m_data;
+    OwnPtr<CharType> m_data;
 };
 
 } // namespace WTF

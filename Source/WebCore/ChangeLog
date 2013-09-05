@@ -1,3 +1,17 @@
+2013-09-04  Anders Carlsson  <andersca@apple.com>
+
+        Vector::releaseBuffer should return an OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=120718
+
+        Reviewed by Andreas Kling.
+
+        Change FormStreamFields::currentData to an OwnPtr.
+
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::closeCurrentStream):
+        (WebCore::advanceCurrentStream):
+        (WebCore::formCreate):
+
 2013-09-05  Andreas Kling  <akling@apple.com>
 
         Reverting "Cached Page and Frame don't need to be ref-counted.

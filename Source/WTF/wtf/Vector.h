@@ -26,6 +26,7 @@
 #include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/NotFound.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ValueCheck.h>
 #include <wtf/VectorTraits.h>
@@ -307,12 +308,12 @@ public:
     const T* buffer() const { return m_buffer; }
     size_t capacity() const { return m_capacity; }
 
-    T* releaseBuffer()
+    OwnPtr<T> releaseBuffer()
     {
         T* buffer = m_buffer;
         m_buffer = 0;
         m_capacity = 0;
-        return buffer;
+        return adoptPtr(buffer);
     }
 
 protected:
@@ -487,10 +488,10 @@ public:
     using Base::buffer;
     using Base::capacity;
 
-    T* releaseBuffer()
+    OwnPtr<T> releaseBuffer()
     {
         if (buffer() == inlineBuffer())
-            return 0;
+            return nullptr;
         return Base::releaseBuffer();
     }
 
@@ -539,6 +540,13 @@ public:
     {
         if (begin())
             TypeOperations::initialize(begin(), end());
+    }
+
+    Vector(size_t size, const T& val)
+        : Base(size, size)
+    {
+        if (begin())
+            TypeOperations::uninitializedFill(begin(), end(), val);
     }
 
     ~Vector()
@@ -653,19 +661,12 @@ public:
         shrink(size() - 1); 
     }
 
-    Vector(size_t size, const T& val)
-        : Base(size, size)
-    {
-        if (begin())
-            TypeOperations::uninitializedFill(begin(), end(), val);
-    }
-
     void fill(const T&, size_t);
     void fill(const T& val) { fill(val, size()); }
 
     template<typename Iterator> void appendRange(Iterator start, Iterator end);
 
-    T* releaseBuffer();
+    OwnPtr<T> releaseBuffer();
 
     void swap(Vector<T, inlineCapacity, OverflowHandler>& other)
     {
@@ -1152,19 +1153,19 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::reverse()
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline T* Vector<T, inlineCapacity, OverflowHandler>::releaseBuffer()
+inline OwnPtr<T> Vector<T, inlineCapacity, OverflowHandler>::releaseBuffer()
 {
-    T* buffer = Base::releaseBuffer();
+    OwnPtr<T> buffer = Base::releaseBuffer();
     if (inlineCapacity && !buffer && m_size) {
         // If the vector had some data, but no buffer to release,
         // that means it was using the inline buffer. In that case,
         // we create a brand new buffer so the caller always gets one.
         size_t bytes = m_size * sizeof(T);
-        buffer = static_cast<T*>(fastMalloc(bytes));
-        memcpy(buffer, data(), bytes);
+        buffer = adoptPtr(static_cast<T*>(fastMalloc(bytes)));
+        memcpy(buffer.get(), data(), bytes);
     }
     m_size = 0;
-    return buffer;
+    return buffer.release();
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>

@@ -28,6 +28,7 @@
 #include <wtf/CompilationThread.h>
 #include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringHasher.h>
 #include <wtf/Vector.h>
@@ -232,10 +233,10 @@ private:
     }
 
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
-    StringImpl(const LChar* characters, unsigned length)
+    StringImpl(PassOwnPtr<LChar> characters, unsigned length)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
-        , m_data8(characters)
+        , m_data8(characters.leakPtr())
         , m_buffer(0)
         , m_hashAndFlags(s_hashFlag8BitBuffer | BufferOwned)
     {
@@ -273,10 +274,10 @@ private:
     }
 
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
-    StringImpl(const UChar* characters, unsigned length)
+    StringImpl(PassOwnPtr<UChar> characters, unsigned length)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
-        , m_data16(characters)
+        , m_data16(characters.leakPtr())
         , m_buffer(0)
         , m_hashAndFlags(BufferOwned)
     {
@@ -472,7 +473,7 @@ public:
             ASSERT(vector.data());
             if (size > std::numeric_limits<unsigned>::max())
                 CRASH();
-            return adoptRef(new StringImpl(vector.releaseBuffer(), size));
+            return adoptRef(new StringImpl(vector.releaseBuffer().release(), size));
         }
         return empty();
     }

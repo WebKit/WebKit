@@ -1,3 +1,20 @@
+2013-09-04  Anders Carlsson  <andersca@apple.com>
+
+        Vector::releaseBuffer should return an OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=120718
+
+        Reviewed by Andreas Kling.
+
+        Change Vector::releaseBuffer() to return an OwnPtr. I intentionally chose
+        to use an OwnPtr over a PassOwnPtr since we're trying to move away from PassOwnPtr objects.
+        
+        Fix fallout from this change by adopting OwnPtr/PassOwnPtr in StringBuffer and the two StringImpl
+        constructors that adopt the passed in pointer.
+
+        * wtf/Vector.h:
+        * wtf/text/StringBuffer.h:
+        * wtf/text/StringImpl.h:
+
 2013-09-05  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Remove String(RefPtr<StringImpl>) constructor
