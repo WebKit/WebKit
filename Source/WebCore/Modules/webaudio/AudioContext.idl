@@ -35,7 +35,7 @@
     readonly attribute AudioDestinationNode destination;
 
     // All scheduled times are relative to this time in seconds.
-    readonly attribute float currentTime;
+    readonly attribute double currentTime;
 
     // All AudioNodes in the context run at this sample-rate (sample-frames per second).
     readonly attribute float sampleRate;

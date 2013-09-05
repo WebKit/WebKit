@@ -50,14 +50,14 @@ public:
 
     unsigned frequencyBinCount() const { return m_fftSize / 2; }
 
-    void setMinDecibels(float k) { m_minDecibels = k; }
-    float minDecibels() const { return static_cast<float>(m_minDecibels); }
+    void setMinDecibels(double k) { m_minDecibels = k; }
+    double minDecibels() const { return m_minDecibels; }
 
-    void setMaxDecibels(float k) { m_maxDecibels = k; }
-    float maxDecibels() const { return static_cast<float>(m_maxDecibels); }
+    void setMaxDecibels(double k) { m_maxDecibels = k; }
+    double maxDecibels() const { return m_maxDecibels; }
 
-    void setSmoothingTimeConstant(float k) { m_smoothingTimeConstant = k; }
-    float smoothingTimeConstant() const { return static_cast<float>(m_smoothingTimeConstant); }
+    void setSmoothingTimeConstant(double k) { m_smoothingTimeConstant = k; }
+    double smoothingTimeConstant() const { return m_smoothingTimeConstant; }
 
     void getFloatFrequencyData(JSC::Float32Array*);
     void getByteFrequencyData(JSC::Uint8Array*);

@@ -78,7 +78,7 @@ void AnalyserNode::setFftSize(unsigned size, ExceptionCode& ec)
         ec = INDEX_SIZE_ERR;
 }
 
-void AnalyserNode::setMinDecibels(float k, ExceptionCode& ec)
+void AnalyserNode::setMinDecibels(double k, ExceptionCode& ec)
 {
     if (k > maxDecibels()) {
         ec = INDEX_SIZE_ERR;
@@ -88,7 +88,7 @@ void AnalyserNode::setMinDecibels(float k, ExceptionCode& ec)
     m_analyser.setMinDecibels(k);
 }
 
-void AnalyserNode::setMaxDecibels(float k, ExceptionCode& ec)
+void AnalyserNode::setMaxDecibels(double k, ExceptionCode& ec)
 {
     if (k < minDecibels()) {
         ec = INDEX_SIZE_ERR;
@@ -98,7 +98,7 @@ void AnalyserNode::setMaxDecibels(float k, ExceptionCode& ec)
     m_analyser.setMaxDecibels(k);
 }
 
-void AnalyserNode::setSmoothingTimeConstant(float k, ExceptionCode& ec)
+void AnalyserNode::setSmoothingTimeConstant(double k, ExceptionCode& ec)
 {
     if (k < 0 || k > 1) {
         ec = INDEX_SIZE_ERR;
