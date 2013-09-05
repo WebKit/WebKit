@@ -18,5 +18,4 @@ function foo(p, q, v) {
     return 0;
 }
 
-for (var i = 0; i < 200; ++i)
-    shouldBe("foo(false, true, 5)", "42");
+dfgShouldBe(foo, "foo(false, true, 5)", "42");

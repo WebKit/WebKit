@@ -1,3 +1,40 @@
+2013-09-05  Filip Pizlo  <fpizlo@apple.com>
+
+        fast/js/dfg-* tests should wait for the concurrent JIT
+        https://bugs.webkit.org/show_bug.cgi?id=120723
+
+        Rubber stamped by Oliver Hunt.
+        
+        Convert more tests.
+
+        * fast/js/dfg-branch-logical-not-peephole-around-osr-exit-expected.txt:
+        * fast/js/dfg-branch-not-fail-expected.txt:
+        * fast/js/dfg-byte-array-put-expected.txt:
+        * fast/js/dfg-call-function-hit-watchpoint-expected.txt:
+        * fast/js/dfg-call-method-hit-watchpoint-expected.txt:
+        * fast/js/dfg-captured-var-get-local-expected.txt:
+        * fast/js/dfg-cfa-merge-with-dead-use-at-tail-expected.txt:
+        * fast/js/dfg-cfg-simplify-eliminate-set-local-type-check-then-branch-not-null-and-decrement-expected.txt:
+        * fast/js/dfg-cfg-simplify-eliminate-set-local-type-check-then-branch-not-null-expected.txt:
+        * fast/js/dfg-cfg-simplify-eliminate-set-local-type-check-then-typeof-expected.txt:
+        * fast/js/dfg-cfg-simplify-phantom-get-local-on-same-block-set-local-expected.txt:
+        * fast/js/dfg-cfg-simplify-redundant-dead-get-local-expected.txt:
+        * fast/js/dfg-check-function-change-structure-expected.txt:
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-branch-logical-not-peephole-around-osr-exit.js:
+        * fast/js/script-tests/dfg-branch-not-fail.js:
+        * fast/js/script-tests/dfg-byte-array-put.js:
+        * fast/js/script-tests/dfg-call-function-hit-watchpoint.js:
+        * fast/js/script-tests/dfg-call-method-hit-watchpoint.js:
+        * fast/js/script-tests/dfg-captured-var-get-local.js:
+        * fast/js/script-tests/dfg-cfa-merge-with-dead-use-at-tail.js:
+        * fast/js/script-tests/dfg-cfg-simplify-eliminate-set-local-type-check-then-branch-not-null-and-decrement.js:
+        * fast/js/script-tests/dfg-cfg-simplify-eliminate-set-local-type-check-then-branch-not-null.js:
+        * fast/js/script-tests/dfg-cfg-simplify-eliminate-set-local-type-check-then-typeof.js:
+        * fast/js/script-tests/dfg-cfg-simplify-phantom-get-local-on-same-block-set-local.js:
+        * fast/js/script-tests/dfg-cfg-simplify-redundant-dead-get-local.js:
+        * fast/js/script-tests/dfg-check-function-change-structure.js:
+
 2013-09-05  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] Convert existing pixel tests in ref tests

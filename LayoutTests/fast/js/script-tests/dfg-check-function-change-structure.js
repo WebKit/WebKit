@@ -11,7 +11,10 @@ bar.f = 23;
 
 var expected = "[42, 23]";
 
-for (var i = 0; i < 100; ++i) {
+silentTestPass = true;
+noInline(foo);
+
+for (var i = 0; i < 100; i = dfgIncrement({f:foo, i:i + 1, n:50})) {
     if (i == 95) {
         delete bar.f;
         bar.g = 36;

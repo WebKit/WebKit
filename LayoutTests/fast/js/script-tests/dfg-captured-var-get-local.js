@@ -74,5 +74,4 @@ function foo() {
     return y;
 }
 
-for (var i = 0; i < 100; ++i)
-    shouldBe("foo()", "42");
+dfgShouldBe(foo, "foo()", "42");

@@ -15,9 +15,13 @@ context = canvas.getContext("2d");
 imageData = context.createImageData(10,10);
 data = imageData.data;
 
+silentTestPass = true;
+noInline(doPut);
+noInline(doGet);
+
 shouldBe("data.length", "400");
 
-for (var i = 0; i < 1000; ++i) {
+for (var i = 0; i < 1000; i = dfgIncrement({f:[doPut, doGet], i:i + 1, n:50})) {
     doPut(data, i % 100, i - 100);
     var expectedValue;
     if (i < 100)

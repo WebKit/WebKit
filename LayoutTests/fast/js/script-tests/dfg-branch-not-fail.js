@@ -15,9 +15,13 @@ function bar(a) {
     return 0;
 }
 
+silentTestPass = true;
+noInline(foo);
+noInline(bar);
+
 var True = true;
 var False = false;
-for (var i = 0; i < 200; ++i) {
+for (var i = 0; i < 200; i = dfgIncrement({f:[foo, bar], i:i + 1, n:50})) {
     var x;
     if (i == 100) {
         True = "string";

@@ -14,7 +14,10 @@ function foo(o) {
         return x;
 }
 
-for (var i = 0; i < 500; ++i) {
+silentTestPass = true;
+noInline(foo);
+
+for (var i = 0; i < 500; i = dfgIncrement({f:foo, i:i + 1, n:100})) {
     var o = {f:foo};
     var expected;
     if (i < 450) {

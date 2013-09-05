@@ -103,6 +103,8 @@ fast/js/dfg-arrayify-when-prevent-extensions
 fast/js/dfg-bool-to-int32-reuse
 fast/js/dfg-branch-logical-not-peephole-around-osr-exit
 fast/js/dfg-branch-not-fail
+fast/js/dfg-call-function-hit-watchpoint
+fast/js/dfg-call-method-hit-watchpoint
 fast/js/dfg-captured-var-get-local
 fast/js/dfg-cfa-merge-with-dead-use-at-tail
 fast/js/dfg-cfa-prove-put-by-id-simple-when-storing-to-specialized-function

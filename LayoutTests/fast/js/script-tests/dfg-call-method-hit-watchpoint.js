@@ -17,7 +17,10 @@ function callFoo(o) {
 
 var o = new Thingy();
 
-for (var i = 0; i < 200; ++i) {
+silentTestPass = true;
+noInline(callFoo);
+
+for (var i = 0; i < 200; i = dfgIncrement({f:callFoo, i:i + 1, n:100})) {
     if (i == 150)
         Thingy.prototype.foo = function() { return 56; }
     var expected;

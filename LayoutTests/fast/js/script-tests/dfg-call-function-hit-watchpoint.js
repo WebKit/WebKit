@@ -10,7 +10,10 @@ function bar(a, b) {
     return foo(a, b);
 }
 
-for (var i = 0; i < 200; ++i) {
+silentTestPass = true;
+noInline(bar);
+
+for (var i = 0; i < 200; i = dfgIncrement({f:bar, i:i + 1, n:100})) {
     if (i == 150)
         foo = function(a, b) { return a - b; }
     var expected;

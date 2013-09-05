@@ -12,7 +12,10 @@ function foo(a, b, c) {
     return result;
 }
 
-for (var i = 0; i < 200; ++i) {
+silentTestPass = true;
+noInline(foo);
+
+for (var i = 0; i < 200; i = dfgIncrement({f:foo, i:i + 1, n:100})) {
     var expected = i + (i == 199 ? 2147483647 : 5) + (i !== 5 ? 1 : -1)
     shouldBe("foo(i, 5, i == 199 ? 2147483647 : 5)", "" + expected);
 }
