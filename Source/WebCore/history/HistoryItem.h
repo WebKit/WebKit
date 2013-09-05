@@ -286,7 +286,7 @@ private:
     // PageCache controls these fields.
     HistoryItem* m_next;
     HistoryItem* m_prev;
-    RefPtr<CachedPage> m_cachedPage;
+    OwnPtr<CachedPage> m_cachedPage;
     
 #if PLATFORM(MAC)
     RetainPtr<id> m_viewState;

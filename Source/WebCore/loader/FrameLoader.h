@@ -308,7 +308,7 @@ private:
     void addExtraFieldsToRequest(ResourceRequest&, FrameLoadType, bool isMainResource);
 
     void clearProvisionalLoad();
-    void transitionToCommitted(PassRefPtr<CachedPage>);
+    void transitionToCommitted(CachedPage*);
     void frameLoadCompleted();
 
     SubstituteData defaultSubstituteDataForURL(const KURL&);
