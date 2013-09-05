@@ -4612,6 +4612,23 @@ void SpeculativeJIT::speculateObject(Edge edge)
             MacroAssembler::TrustedImmPtr(m_jit.vm()->stringStructure.get())));
 }
 
+void SpeculativeJIT::speculateFinalObject(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecFinalObject))
+        return;
+    
+    SpeculateCellOperand operand(this, edge);
+    GPRTemporary structure(this);
+    GPRReg gpr = operand.gpr();
+    GPRReg structureGPR = structure.gpr();
+    m_jit.loadPtr(MacroAssembler::Address(gpr, JSCell::structureOffset()), structureGPR);
+    DFG_TYPE_CHECK(
+        JSValueSource::unboxedCell(gpr), edge, SpecFinalObject, m_jit.branch8(
+            MacroAssembler::NotEqual,
+            MacroAssembler::Address(structureGPR, Structure::typeInfoTypeOffset()),
+            TrustedImm32(FinalObjectType)));
+}
+
 void SpeculativeJIT::speculateObjectOrOther(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecObject | SpecOther))
@@ -4847,6 +4864,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case ObjectUse:
         speculateObject(edge);
+        break;
+    case FinalObjectUse:
+        speculateFinalObject(edge);
         break;
     case ObjectOrOtherUse:
         speculateObjectOrOther(edge);
