@@ -1,3 +1,13 @@
+2013-09-04  Mark Rowe  <mrowe@apple.com>
+
+        Fix AutodrainedPool.h to compile without errors under ARC.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * wtf/AutodrainedPool.h: Some versions of Clang complain about any use of NSAutoreleasePool under ARC.
+        Change the type of the member variable to id to work around this. Since the implementation file is compiled
+        under manual reference counting, everything will work fine.
+
 2013-09-04  Anders Carlsson  <andersca@apple.com>
 
         De-indent Vector.h.

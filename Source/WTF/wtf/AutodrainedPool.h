@@ -31,7 +31,9 @@
 
 #include <wtf/Noncopyable.h>
 
-OBJC_CLASS NSAutoreleasePool;
+#if PLATFORM(MAC) && !defined(__OBJC__)
+typedef struct objc_object *id;
+#endif
 
 namespace WTF {
 
@@ -48,7 +50,7 @@ public:
     
 private:
 #if PLATFORM(MAC)
-    NSAutoreleasePool* m_pool;
+    id m_pool;
 #endif
 };
 
