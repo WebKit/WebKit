@@ -1,3 +1,15 @@
+2013-09-04  Arpita Bahuguna  <a.bah@samsung.com>
+
+        setAttributeNode() does not set the new value to an existing attribute if specified attribute is in a different case.
+        https://bugs.webkit.org/show_bug.cgi?id=120293
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Element/setAttributeNode-for-existing-attribute-expected.txt: Added.
+        * fast/dom/Element/setAttributeNode-for-existing-attribute.html: Added.
+        Layout testcase for verifying that the new attribute value is set properly
+        if an existing attribute with the same name exists.
+
 2013-09-04  Filip Pizlo  <fpizlo@apple.com>
 
         run-javascriptcore-tests should run-fast-jsc as well

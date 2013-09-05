@@ -963,21 +963,24 @@ inline void Element::setAttributeInternal(unsigned index, const QualifiedName& n
         return;
     }
 
-    if (!inSynchronizationOfLazyAttribute)
-        willModifyAttribute(name, attributeAt(index).value(), newValue);
+    bool valueChanged = newValue != attributeAt(index).value();
+    QualifiedName attributeName = (!inSynchronizationOfLazyAttribute || valueChanged) ? attributeAt(index).name() : name;
 
-    if (newValue != attributeAt(index).value()) {
+    if (!inSynchronizationOfLazyAttribute)
+        willModifyAttribute(attributeName, attributeAt(index).value(), newValue);
+
+    if (valueChanged) {
         // If there is an Attr node hooked to this attribute, the Attr::setValue() call below
         // will write into the ElementData.
         // FIXME: Refactor this so it makes some sense.
-        if (RefPtr<Attr> attrNode = inSynchronizationOfLazyAttribute ? 0 : attrIfExists(name))
+        if (RefPtr<Attr> attrNode = inSynchronizationOfLazyAttribute ? 0 : attrIfExists(attributeName))
             attrNode->setValue(newValue);
         else
             ensureUniqueElementData().attributeAt(index).setValue(newValue);
     }
 
     if (!inSynchronizationOfLazyAttribute)
-        didModifyAttribute(name, newValue);
+        didModifyAttribute(attributeName, newValue);
 }
 
 static inline AtomicString makeIdForStyleResolution(const AtomicString& value, bool inQuirksMode)
