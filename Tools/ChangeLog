@@ -1,5 +1,16 @@
 2013-09-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, green the Mac bots by boosting the timeout on JSC tests. One of the
+        Mozilla tests appears to run for a longer time.
+        
+        I think we want to continue to allow a few tests here and there to be
+        longer-running, rather than excluding them. I seem to recall that those tests
+        catch good bugs.
+
+        * Scripts/run-javascriptcore-tests:
+
+2013-09-05  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, don't run fast/js tests in run-javascriptcore-tests on platforms that
         can't support it because if non-bourne shells. This fixes part #2 of the Linux
         bot breakage.
