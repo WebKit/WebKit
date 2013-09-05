@@ -31,7 +31,6 @@
 # as well as other tests: testapi on Mac and LayoutTests/fast/js.
 
 use strict;
-use File::Slurp;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
 use List::Util qw(min max);
@@ -216,6 +215,20 @@ if ($numOldMozillaFailures) {
     }
 }
 
+sub readAllLines
+{
+    my ($filename) = @_;
+    my @array = ();
+    eval {
+        open FILE, $filename or die;
+        while (<FILE>) {
+            push @array, $_;
+        }
+        close FILE;
+    };
+    return @array;
+}
+
 sub printThingsFound
 {
     my ($number, $label, $pluralLabel, $verb) = @_;
@@ -228,8 +241,8 @@ sub printThingsFound
     print " $verb.\n";
 }
 
-my @fastJSFailList = eval { read_file($fastJSResultsDir . "/failed") };
-my @fastJSCrashList = eval { read_file($fastJSResultsDir . "/crashed") };
+my @fastJSFailList = readAllLines($fastJSResultsDir . "/failed");
+my @fastJSCrashList = readAllLines($fastJSResultsDir . "/crashed");
 my $numJSFailures = @fastJSFailList;
 my $numJSCrashes = @fastJSCrashList;
 

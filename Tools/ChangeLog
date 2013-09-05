@@ -1,3 +1,10 @@
+2013-09-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, don't rely on File::Slurp. This fixes part #1 of Linux bot breakage.
+
+        * Scripts/run-javascriptcore-tests:
+        (readAllLines):
+
 2013-09-04  Filip Pizlo  <fpizlo@apple.com>
 
         jsc tests should have timeouts
