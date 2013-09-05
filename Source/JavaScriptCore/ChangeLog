@@ -1,3 +1,10 @@
+2013-09-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix for DebugSuffix target.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Don't build 64-bit assembly in 32-bit build.
+        Also correct 'filters' file so that files appear in categories that match their on-disk locations.
+
 2013-09-04  Filip Pizlo  <fpizlo@apple.com>
 
         jsc tests should have timeouts

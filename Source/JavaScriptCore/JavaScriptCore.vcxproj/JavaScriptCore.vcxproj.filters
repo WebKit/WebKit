@@ -858,13 +858,28 @@
     <ClCompile Include="..\runtime\JSPromise.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\bytecode\DeferredCompilationCallback.cpp" />
-    <ClCompile Include="..\dfg\DFGCompilationKey.cpp" />
-    <ClCompile Include="..\dfg\DFGCompilationMode.cpp" />
-    <ClCompile Include="..\dfg\DFGDriver.cpp" />
-    <ClCompile Include="..\heap\CodeBlockSet.cpp" />
-    <ClCompile Include="..\jit\JITToDFGDeferredCompilationCallback.cpp" />
-    <ClCompile Include="..\llint\LLIntEntrypoint.cpp" />
+    <ClCompile Include="..\heap\CodeBlockSet.cpp">
+      <Filter>heap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\DeferredCompilationCallback.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGCompilationKey.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGDriver.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGCompilationMode.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\JITToDFGDeferredCompilationCallback.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\llint\LLIntEntrypoint.cpp">
+      <Filter>llint</Filter>
+    </ClCompile>
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -2224,19 +2239,45 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NamePrototype.lut.h">
       <Filter>Derived Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\bytecode\DeferredCompilationCallback.h" />
-    <ClInclude Include="..\dfg\DFGCompilationKey.h" />
-    <ClInclude Include="..\dfg\DFGCompilationMode.h" />
-    <ClInclude Include="..\heap\CodeBlockSet.h" />
-    <ClInclude Include="..\jit\JITToDFGDeferredCompilationCallback.h" />
-    <ClInclude Include="..\llint\LLIntEntrypoint.h" />
-    <ClInclude Include="..\runtime\JSMap.h" />
-    <ClInclude Include="..\runtime\JSSet.h" />
-    <ClInclude Include="..\runtime\MapConstructor.h" />
-    <ClInclude Include="..\runtime\MapData.h" />
-    <ClInclude Include="..\runtime\MapPrototype.h" />
-    <ClInclude Include="..\runtime\SetConstructor.h" />
-    <ClInclude Include="..\runtime\SetPrototype.h" />
+    <ClInclude Include="..\heap\CodeBlockSet.h">
+      <Filter>heap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\DeferredCompilationCallback.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGCompilationKey.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGCompilationMode.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\JITToDFGDeferredCompilationCallback.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSMap.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSSet.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\llint\LLIntEntrypoint.h">
+      <Filter>llint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\MapConstructor.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\MapData.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\SetPrototype.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\MapPrototype.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\SetConstructor.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="JavaScriptCorePreLink.cmd" />
