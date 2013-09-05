@@ -1314,6 +1314,7 @@
 		441B055C0CD77A2D007C1F18 /* DOMHTMLEmbedElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAFB0CB84E88007647C5 /* DOMHTMLEmbedElementPrivate.h */; };
 		441B055E0CD77A48007C1F18 /* DOMHTMLIFrameElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAFD0CB84EA5007647C5 /* DOMHTMLIFrameElementPrivate.h */; };
 		441B05600CD77A65007C1F18 /* DOMHTMLObjectElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAFF0CB84EC3007647C5 /* DOMHTMLObjectElementPrivate.h */; };
+		442ABCD617D9262F00D30715 /* SynchronousLoaderClientCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 442ABCD517D9262F00D30715 /* SynchronousLoaderClientCFNet.cpp */; };
 		44311CD612E4E22D000A8D19 /* DOMDocumentFragmentPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 44311CD412E4E22D000A8D19 /* DOMDocumentFragmentPrivate.h */; };
 		44311CD712E4E22D000A8D19 /* DOMDocumentPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 44311CD512E4E22D000A8D19 /* DOMDocumentPrivate.h */; };
 		44311CD812E4E24B000A8D19 /* DOMDocumentPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 44311CD512E4E22D000A8D19 /* DOMDocumentPrivate.h */; };
@@ -7814,6 +7815,7 @@
 		4429AAFD0CB84EA5007647C5 /* DOMHTMLIFrameElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLIFrameElementPrivate.h; sourceTree = "<group>"; };
 		4429AAFF0CB84EC3007647C5 /* DOMHTMLObjectElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLObjectElementPrivate.h; sourceTree = "<group>"; };
 		4429AB070CB84F81007647C5 /* DOMTextEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMTextEventInternal.h; sourceTree = "<group>"; };
+		442ABCD517D9262F00D30715 /* SynchronousLoaderClientCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SynchronousLoaderClientCFNet.cpp; sourceTree = "<group>"; };
 		44311CD412E4E22D000A8D19 /* DOMDocumentFragmentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDocumentFragmentPrivate.h; sourceTree = "<group>"; };
 		44311CD512E4E22D000A8D19 /* DOMDocumentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDocumentPrivate.h; sourceTree = "<group>"; };
 		447958021643B47B001E0A7F /* ParsedContentType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentType.cpp; sourceTree = "<group>"; };
@@ -19031,6 +19033,7 @@
 				51ABAE1A103C18FF008C5260 /* SocketStreamError.h */,
 				51ABAE1C103C1913008C5260 /* SocketStreamHandle.h */,
 				51ABAE1D103C1913008C5260 /* SocketStreamHandleCFNet.cpp */,
+				442ABCD517D9262F00D30715 /* SynchronousLoaderClientCFNet.cpp */,
 			);
 			path = cf;
 			sourceTree = "<group>";
@@ -27310,6 +27313,7 @@
 				B2E4EC970D00C22B00432643 /* SVGZoomEvent.cpp in Sources */,
 				E180811216FCF42F00B80D07 /* SynchronousLoaderClient.cpp in Sources */,
 				E180811616FCF9CB00B80D07 /* SynchronousLoaderClient.mm in Sources */,
+				442ABCD617D9262F00D30715 /* SynchronousLoaderClientCFNet.cpp in Sources */,
 				5DA97ECE168E787B000E3676 /* SystemVersionMac.mm in Sources */,
 				BCE3BEC20D222B1D007E06E4 /* TagNodeList.cpp in Sources */,
 				F55B3DD51251F12D003EF269 /* TelephoneInputType.cpp in Sources */,

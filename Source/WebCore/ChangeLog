@@ -1,3 +1,11 @@
+2013-09-05  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r155108): Add SynchronousLoaderClientCFNet.cpp to Xcode project
+
+        * WebCore.xcodeproj/project.pbxproj: The iOS port defines
+        USE(CFNETWORK), so it needs to compile
+        SynchronousLoaderClientCFNet.cpp to build successfully.
+
 2013-09-05  Anders Carlsson  <andersca@apple.com>
 
         GCAssertions.h should use STL type traits and static_assert
