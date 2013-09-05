@@ -73,8 +73,6 @@ Programs_TestWebKitAPI_TestWTF_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WTF/StringOperators.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/TemporaryChange.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/Vector.cpp \
-	Tools/TestWebKitAPI/Tests/WTF/VectorBasic.cpp \
-	Tools/TestWebKitAPI/Tests/WTF/VectorReverse.cpp \
 	Tools/TestWebKitAPI/WTFStringUtilities.h
 
 Programs_TestWebKitAPI_TestJavaScriptCore_CPPFLAGS = \

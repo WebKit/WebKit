@@ -22,8 +22,6 @@ SOURCES += \
     StringOperators.cpp \
     TemporaryChange.cpp \
     Vector.cpp \
-    VectorBasic.cpp \
-    VectorReverse.cpp \
     WTFString.cpp
 
 include(../../TestWebKitAPI.pri)

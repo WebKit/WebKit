@@ -78,12 +78,6 @@
     <ClCompile Include="..\Tests\WTF\Vector.cpp">
       <Filter>Tests\WTF</Filter>
     </ClCompile>
-    <ClCompile Include="..\Tests\WTF\VectorBasic.cpp">
-      <Filter>Tests\WTF</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Tests\WTF\VectorReverse.cpp">
-      <Filter>Tests\WTF</Filter>
-    </ClCompile>
     <ClCompile Include="..\Tests\WTF\cf\RetainPtr.cpp">
       <Filter>Tests\WTF\cf</Filter>
     </ClCompile>

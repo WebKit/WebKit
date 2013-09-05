@@ -299,8 +299,6 @@
     <ClCompile Include="..\Tests\WTF\StringHasher.cpp" />
     <ClCompile Include="..\Tests\WTF\StringOperators.cpp" />
     <ClCompile Include="..\Tests\WTF\Vector.cpp" />
-    <ClCompile Include="..\Tests\WTF\VectorBasic.cpp" />
-    <ClCompile Include="..\Tests\WTF\VectorReverse.cpp" />
     <ClCompile Include="..\win\HostWindow.cpp" />
     <ClCompile Include="..\win\main.cpp" />
   </ItemGroup>

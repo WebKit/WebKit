@@ -111,7 +111,6 @@ add_executable(test_wtf
     ${TESTWEBKITAPI_DIR}/Tests/WTF/StringOperators.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/TemporaryChange.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Vector.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/VectorBasic.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/VectorReverse.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/WTFString.cpp
 )

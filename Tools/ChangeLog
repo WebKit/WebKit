@@ -1,3 +1,21 @@
+2013-09-05  Anders Carlsson  <andersca@apple.com>
+
+        Move all Vector tests into Vector.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=120797
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/GNUmakefile.am:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj.filters:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/VectorBasic.cpp: Removed.
+        * TestWebKitAPI/Tests/WTF/VectorReverse.cpp: Removed.
+        * TestWebKitAPI/Tests/WTF/WTF.pro:
+
 2013-09-05  Simon Fraser  <simon.fraser@apple.com>
 
         Expected result images are sometimes blank in WKTR

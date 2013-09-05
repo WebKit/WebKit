@@ -28,6 +28,14 @@
 
 namespace TestWebKitAPI {
 
+TEST(WTF_Vector, Basic)
+{
+    Vector<int> intVector;
+    EXPECT_TRUE(intVector.isEmpty());
+    EXPECT_EQ(0ul, intVector.size());
+    EXPECT_EQ(0ul, intVector.capacity());
+}
+
 TEST(WTF_Vector, Iterator)
 {
     Vector<int> intVector;
@@ -50,6 +58,30 @@ TEST(WTF_Vector, Iterator)
     ++it;
 
     EXPECT_TRUE(end == it);
+}
+
+TEST(WTF_Vector, Reverse)
+{
+    Vector<int> intVector;
+    intVector.append(10);
+    intVector.append(11);
+    intVector.append(12);
+    intVector.append(13);
+    intVector.reverse();
+
+    EXPECT_EQ(13, intVector[0]);
+    EXPECT_EQ(12, intVector[1]);
+    EXPECT_EQ(11, intVector[2]);
+    EXPECT_EQ(10, intVector[3]);
+
+    intVector.append(9);
+    intVector.reverse();
+
+    EXPECT_EQ(9, intVector[0]);
+    EXPECT_EQ(10, intVector[1]);
+    EXPECT_EQ(11, intVector[2]);
+    EXPECT_EQ(12, intVector[3]);
+    EXPECT_EQ(13, intVector[4]);
 }
 
 TEST(WTF_Vector, ReverseIterator)
