@@ -57,7 +57,7 @@
 
 /* Disable final on versions of Apple clang earlier than 4.2 to avoid bugs like http://webkit.org/b/119165 */
 #if defined(__APPLE__) && (__clang_major__ < 4 || (__clang_major__ == 4 && __clang_minor__ < 2))
-#define WTF_COMPILER_QUIRK_FINAL_IS_BUGGY
+#define WTF_COMPILER_QUIRK_FINAL_IS_BUGGY 1
 #endif
 
 #endif

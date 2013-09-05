@@ -1,5 +1,11 @@
 2013-09-05  Anders Carlsson  <andersca@apple.com>
 
+        Fix build with older versions of clang from Xcode.
+
+        * wtf/Compiler.h:
+
+2013-09-05  Anders Carlsson  <andersca@apple.com>
+
         Make Vector::uncheckedAppend work with move-only types
         https://bugs.webkit.org/show_bug.cgi?id=120799
 
