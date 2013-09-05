@@ -1,3 +1,13 @@
+2013-09-04  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [EFL][WK2] Move ShouldGoToBackForwardListItem to the list of passing API tests
+        https://bugs.webkit.org/show_bug.cgi?id=120646
+
+        Reviewed by Gyuyoung Kim.
+
+        * TestWebKitAPI/PlatformEfl.cmake: Move ShouldGoToBackForwardListItem to the
+        list of passing tests, since it started to pass after r154045.
+
 2013-09-04  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Adds an accessibility support to access a value of the color control element

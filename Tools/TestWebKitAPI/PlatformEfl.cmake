@@ -92,6 +92,7 @@ set(test_webkit2_api_BINARIES
     ReloadPageAfterCrash
     ResizeWindowAfterCrash
     ResponsivenessTimerDoesntFireEarly
+    ShouldGoToBackForwardListItem
     TerminateTwice
     UserMessage
     WKConnection
@@ -123,7 +124,6 @@ set(test_webkit2_api_fail_BINARIES
     ResizeReversePaginatedWebView
     RestoreSessionStateContainingFormData
     ScrollPinningBehaviors
-    ShouldGoToBackForwardListItem
     WKPageGetScaleFactorNotZero
 )
 
