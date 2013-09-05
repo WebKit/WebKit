@@ -443,17 +443,5 @@ private:
 #endif
 };
 
-inline HTMLInputElement* toHTMLInputElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLInputElement(node));
-    return static_cast<HTMLInputElement*>(node);
-}
-
-inline const HTMLInputElement* toHTMLInputElement(const Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLInputElement(node));
-    return static_cast<const HTMLInputElement*>(node);
-}
-
 } //namespace
 #endif

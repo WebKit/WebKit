@@ -55,12 +55,6 @@ private:
     virtual void focus(bool restorePreviousSelection, FocusDirection) OVERRIDE;
 };
 
-inline HTMLLabelElement* toHTMLLabelElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLLabelElement(node));
-    return static_cast<HTMLLabelElement*>(node);
-}
-
 } //namespace
 
 #endif

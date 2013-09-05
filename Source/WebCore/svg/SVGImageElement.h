@@ -28,7 +28,6 @@
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
 #include "SVGImageLoader.h"
-#include "SVGNames.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
@@ -76,12 +75,6 @@ private:
 
     SVGImageLoader m_imageLoader;
 };
-
-inline SVGImageElement* toSVGImageElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isSVGImageElement(node));
-    return static_cast<SVGImageElement*>(node);
-}
 
 } // namespace WebCore
 

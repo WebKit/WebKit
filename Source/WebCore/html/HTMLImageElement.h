@@ -115,12 +115,6 @@ private:
     AtomicString m_bestFitImageURL;
 };
 
-inline HTMLImageElement* toHTMLImageElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLImageElement(node));
-    return static_cast<HTMLImageElement*>(node);
-}
-
 } //namespace
 
 #endif

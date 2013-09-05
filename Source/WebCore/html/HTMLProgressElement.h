@@ -69,12 +69,6 @@ private:
     ProgressValueElement* m_value;
 };
 
-inline HTMLProgressElement* toHTMLProgressElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLProgressElement(node));
-    return static_cast<HTMLProgressElement*>(node);
-}
-
 } // namespace
 
 #endif

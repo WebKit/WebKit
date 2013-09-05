@@ -155,14 +155,14 @@ die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $
 $parameters{namespacePrefix} = $parameters{namespace} unless $parameters{namespacePrefix};
 $parameters{fallbackJSInterfaceName} = $parameters{fallbackInterfaceName} unless $parameters{fallbackJSInterfaceName};
 
-my $typeChecksBasePath = "$outputDir/$parameters{namespace}ElementTypeChecks";
+my $typeHelpersBasePath = "$outputDir/$parameters{namespace}ElementTypeHelpers";
 my $namesBasePath = "$outputDir/$parameters{namespace}Names";
 my $factoryBasePath = "$outputDir/$parameters{namespace}ElementFactory";
 my $wrapperFactoryFileName = "$parameters{namespace}ElementWrapperFactory";
 
 printNamesHeaderFile("$namesBasePath.h");
 printNamesCppFile("$namesBasePath.cpp");
-printTypeChecksHeaderFile("$typeChecksBasePath.h");
+printTypeHelpersHeaderFile("$typeHelpersBasePath.h");
 
 if ($printFactory) {
     printFactoryCppFile("$factoryBasePath.cpp");
@@ -190,7 +190,7 @@ sub defaultTagPropertyHash
         'conditional' => 0,
         'contextConditional' => 0,
         'runtimeConditional' => 0,
-        'generateTypeChecks' => 0
+        'generateTypeHelpers' => 0
     );
 }
 
@@ -616,42 +616,45 @@ sub printLicenseHeader
 ";
 }
 
-sub printTypeChecks
+sub printTypeHelpers
 {
     my ($F, $namesRef) = @_;
     my %names = %$namesRef;
 
     for my $name (sort keys %names) {
-        if (!$parsedTags{$name}{generateTypeChecks}) {
+        if (!$parsedTags{$name}{generateTypeHelpers}) {
             next;
         }
 
         my $class = $parsedTags{$name}{interfaceName};
-        my $helper = "is$class";
+        my $checkHelper = "is$class";
+        my $castingHelper = "to$class";
 
         print F "class $class;\n";
-        print F "inline bool $helper(const Element& element) { return element.hasTagName(".$parameters{namespace}."Names::".$name."Tag); }\n";
-        print F "inline bool $helper(const Element* element) { ASSERT(element); return $helper(*element); }\n";
-        print F "inline bool $helper(const Node* node) { ASSERT(node); return node->isElementNode() && $helper(toElement(node)); }\n";
-        print F "template <> inline bool isElementOfType<$class>(const Element* element) { return $helper(element); }\n";
+        print F "inline bool $checkHelper(const Element& element) { return element.hasTagName(".$parameters{namespace}."Names::".$name."Tag); }\n";
+        print F "inline bool $checkHelper(const Element* element) { ASSERT(element); return $checkHelper(*element); }\n";
+        print F "inline bool $checkHelper(const Node* node) { ASSERT(node); return node->isElementNode() && $checkHelper(toElement(node)); }\n";
+        print F "template <> inline bool isElementOfType<$class>(const Element* element) { return $checkHelper(element); }\n";
+        print F "inline $class* $castingHelper(Node* node) { ASSERT_WITH_SECURITY_IMPLICATION(!node || $checkHelper(node)); return reinterpret_cast<".$class."*>(node); }\n";
+        print F "inline $class* $castingHelper(Element* element) { ASSERT_WITH_SECURITY_IMPLICATION(!element || $checkHelper(element)); return reinterpret_cast<".$class."*>(element); }\n";
 
         print F "\n";
     }
 }
 
-sub printTypeChecksHeaderFile
+sub printTypeHelpersHeaderFile
 {
     my ($headerPath) = shift;
     my $F;
     open F, ">$headerPath";
     printLicenseHeader($F);
 
-    print F "#ifndef ".$parameters{namespace}."ElementTypeChecks_h\n";
-    print F "#define ".$parameters{namespace}."ElementTypeChecks_h\n\n";
+    print F "#ifndef ".$parameters{namespace}."ElementTypeHelpers_h\n";
+    print F "#define ".$parameters{namespace}."ElementTypeHelpers_h\n\n";
     print F "#include \"".$parameters{namespace}."Names.h\"\n\n";
     print F "namespace WebCore {\n\n";
 
-    printTypeChecks($F, \%allTags);
+    printTypeHelpers($F, \%allTags);
 
     print F "}\n\n";
     print F "#endif\n";

@@ -43,12 +43,6 @@ private:
     HTMLAudioElement(const QualifiedName&, Document*, bool);
 };
 
-inline HTMLAudioElement* toHTMLAudioElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLAudioElement(node));
-    return static_cast<HTMLAudioElement*>(node);
-}
-
 } //namespace
 
 #endif

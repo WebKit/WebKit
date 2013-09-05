@@ -4635,8 +4635,8 @@
 		B55D5AA4119131FC00BCC315 /* JSSQLTransactionSyncCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B55D5AA2119131FC00BCC315 /* JSSQLTransactionSyncCallback.h */; };
 		B55D5AA5119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55D5AA3119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp */; };
 		B55D5AA91191325000BCC315 /* JSSQLTransactionSyncCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55D5AA71191325000BCC315 /* JSSQLTransactionSyncCustom.cpp */; };
-		B562DB6017D3CD630010AF96 /* HTMLElementTypeChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = B562DB5E17D3CD560010AF96 /* HTMLElementTypeChecks.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B562DB6117D3CD660010AF96 /* SVGElementTypeChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = B562DB5F17D3CD560010AF96 /* SVGElementTypeChecks.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B562DB6017D3CD630010AF96 /* HTMLElementTypeHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = B562DB5E17D3CD560010AF96 /* HTMLElementTypeHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B562DB6117D3CD660010AF96 /* SVGElementTypeHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = B562DB5F17D3CD560010AF96 /* SVGElementTypeHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B58CEB6911913607002A6790 /* JSDatabaseSync.h in Headers */ = {isa = PBXBuildFile; fileRef = B58CEB6711913607002A6790 /* JSDatabaseSync.h */; };
 		B58CEB6A11913607002A6790 /* JSDatabaseSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B58CEB6811913607002A6790 /* JSDatabaseSync.cpp */; };
 		B58CEB6D1191361C002A6790 /* JSSQLTransactionSync.h in Headers */ = {isa = PBXBuildFile; fileRef = B58CEB6B1191361C002A6790 /* JSSQLTransactionSync.h */; };
@@ -11446,8 +11446,8 @@
 		B55D5AA2119131FC00BCC315 /* JSSQLTransactionSyncCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLTransactionSyncCallback.h; sourceTree = "<group>"; };
 		B55D5AA3119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransactionSyncCallback.cpp; sourceTree = "<group>"; };
 		B55D5AA71191325000BCC315 /* JSSQLTransactionSyncCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransactionSyncCustom.cpp; sourceTree = "<group>"; };
-		B562DB5E17D3CD560010AF96 /* HTMLElementTypeChecks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTMLElementTypeChecks.h; sourceTree = "<group>"; };
-		B562DB5F17D3CD560010AF96 /* SVGElementTypeChecks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGElementTypeChecks.h; sourceTree = "<group>"; };
+		B562DB5E17D3CD560010AF96 /* HTMLElementTypeHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTMLElementTypeHelpers.h; sourceTree = "<group>"; };
+		B562DB5F17D3CD560010AF96 /* SVGElementTypeHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGElementTypeHelpers.h; sourceTree = "<group>"; };
 		B58CEB6711913607002A6790 /* JSDatabaseSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDatabaseSync.h; sourceTree = "<group>"; };
 		B58CEB6811913607002A6790 /* JSDatabaseSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDatabaseSync.cpp; sourceTree = "<group>"; };
 		B58CEB6B1191361C002A6790 /* JSSQLTransactionSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLTransactionSync.h; sourceTree = "<group>"; };
@@ -14861,7 +14861,7 @@
 				9767CE0A145ABC13005E64DB /* ExceptionInterfaces.h */,
 				A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */,
 				A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */,
-				B562DB5E17D3CD560010AF96 /* HTMLElementTypeChecks.h */,
+				B562DB5E17D3CD560010AF96 /* HTMLElementTypeHelpers.h */,
 				A8BC04911214F69600B5F122 /* HTMLEntityTable.cpp */,
 				A8D06B380A265DCD005E7203 /* HTMLNames.cpp */,
 				A8D06B370A265DCD005E7203 /* HTMLNames.h */,
@@ -14885,7 +14885,7 @@
 				53EF766A16530A61004CBE49 /* SettingsMacros.h */,
 				656581E609D1508D000E61D7 /* SVGElementFactory.cpp */,
 				656581E709D1508D000E61D7 /* SVGElementFactory.h */,
-				B562DB5F17D3CD560010AF96 /* SVGElementTypeChecks.h */,
+				B562DB5F17D3CD560010AF96 /* SVGElementTypeHelpers.h */,
 				656581E809D1508D000E61D7 /* SVGNames.cpp */,
 				656581E909D1508D000E61D7 /* SVGNames.h */,
 				656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */,
@@ -21843,7 +21843,7 @@
 				85909CDC0ACC7A7E00DF01F1 /* DOMCSSCharsetRuleInternal.h in Headers */,
 				85032DD90AA8C9BE007D3B7D /* DOMCSSFontFaceRule.h in Headers */,
 				85909CDD0ACC7A7E00DF01F1 /* DOMCSSFontFaceRuleInternal.h in Headers */,
-				B562DB6117D3CD660010AF96 /* SVGElementTypeChecks.h in Headers */,
+				B562DB6117D3CD660010AF96 /* SVGElementTypeHelpers.h in Headers */,
 				85032DDB0AA8C9BE007D3B7D /* DOMCSSImportRule.h in Headers */,
 				85909CDE0ACC7A7E00DF01F1 /* DOMCSSImportRuleInternal.h in Headers */,
 				85032DDD0AA8C9BE007D3B7D /* DOMCSSMediaRule.h in Headers */,
@@ -23284,7 +23284,7 @@
 				8C0E334F138A92C7008DA94F /* LevelDBWriteBatch.h in Headers */,
 				84730D911248F0B300D3A9C9 /* LightSource.h in Headers */,
 				B22279650D00BF220071B782 /* LinearGradientAttributes.h in Headers */,
-				B562DB6017D3CD630010AF96 /* HTMLElementTypeChecks.h in Headers */,
+				B562DB6017D3CD630010AF96 /* HTMLElementTypeHelpers.h in Headers */,
 				A5ABB78713B904BC00F197E3 /* LineBreakIteratorPoolICU.h in Headers */,
 				AB31C91E10AE1B8E000C7B92 /* LineClampValue.h in Headers */,
 				89B5EAA211E8003D00F2367E /* LineEnding.h in Headers */,

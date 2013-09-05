@@ -82,12 +82,6 @@ private:
     RefPtr<MeterValueElement> m_value;
 };
 
-inline HTMLMeterElement* toHTMLMeterElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLMeterElement(node));
-    return static_cast<HTMLMeterElement*>(node);
-}
-
 } // namespace
 
 #endif

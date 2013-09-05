@@ -166,12 +166,6 @@ private:
     bool m_wasDemoted;
 };
 
-inline HTMLFormElement* toHTMLFormElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFormElement(node));
-    return static_cast<HTMLFormElement*>(node);
-}
-
 } // namespace WebCore
 
 #endif // HTMLFormElement_h

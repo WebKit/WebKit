@@ -46,12 +46,6 @@ private:
     StringWithDirection m_title;
 };
 
-inline HTMLTitleElement* toHTMLTitleElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLTitleElement(node));
-    return static_cast<HTMLTitleElement*>(node);
-}
-
 } //namespace
 
 #endif

@@ -70,12 +70,6 @@ private:
     Shape m_shape;
 };
 
-inline HTMLAreaElement* toHTMLAreaElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLAreaElement(node));
-    return static_cast<HTMLAreaElement*>(node);
-}
-
 } //namespace
 
 #endif

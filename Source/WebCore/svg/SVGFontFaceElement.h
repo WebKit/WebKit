@@ -24,7 +24,6 @@
 
 #if ENABLE(SVG_FONTS)
 #include "SVGElement.h"
-#include "SVGNames.h"
 
 namespace WebCore {
 
@@ -66,12 +65,6 @@ private:
     RefPtr<StyleRuleFontFace> m_fontFaceRule;
     SVGFontElement* m_fontElement;
 };
-
-inline SVGFontFaceElement* toSVGFontFaceElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isSVGFontFaceElement(node));
-    return static_cast<SVGFontFaceElement*>(node);
-}
 
 } // namespace WebCore
 

@@ -100,12 +100,6 @@ private:
     RefPtr<StylePropertySet> m_sharedCellStyle;
 };
 
-inline HTMLTableElement* toHTMLTableElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLTableElement(node));
-    return static_cast<HTMLTableElement*>(node);
-}
-
 } //namespace
 
 #endif

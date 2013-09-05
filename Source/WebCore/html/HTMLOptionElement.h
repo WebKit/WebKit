@@ -95,12 +95,6 @@ private:
     RefPtr<RenderStyle> m_style;
 };
 
-inline HTMLOptionElement* toHTMLOptionElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLOptionElement(node));
-    return static_cast<HTMLOptionElement*>(node);
-}
-
 } // namespace
 
 #endif

@@ -51,12 +51,6 @@ private:
     HTMLTableRowElement(const QualifiedName&, Document*);
 };
 
-inline HTMLTableRowElement* toHTMLTableRowElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLTableRowElement(node));
-    return static_cast<HTMLTableRowElement*>(node);
-}
-
 } // namespace
 
 #endif

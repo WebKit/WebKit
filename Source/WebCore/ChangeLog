@@ -1,3 +1,53 @@
+2013-09-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Generate toFooElement() functions from tagname data.
+        https://bugs.webkit.org/show_bug.cgi?id=120676
+
+        Reviewed by Andreas Kling.
+
+        As r154965 introduced the isFooElement() generation, this patch adds generations of toFooElement() function
+        to *generateTypeChecking* attribute. To represent isFooElement() and toFooElement(), *generateTypeChecking*
+        is changed to *generateTypeHelpers*.
+
+        Removed all the hand-written toFooElement() that can be covered by the *generateTypeHelpers*.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/make_names.pl:
+        (defaultTagPropertyHash):
+        (printTypeHelpers):
+        (printTypeHelpersHeaderFile):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAreaElement.h:
+        * html/HTMLAudioElement.h:
+        * html/HTMLCanvasElement.h:
+        * html/HTMLElement.h:
+        * html/HTMLFormElement.h:
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.h:
+        * html/HTMLLabelElement.h:
+        * html/HTMLMapElement.h:
+        * html/HTMLMeterElement.h:
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.h:
+        * html/HTMLProgressElement.h:
+        * html/HTMLScriptElement.h:
+        * html/HTMLStyleElement.h:
+        * html/HTMLTableElement.h:
+        * html/HTMLTableRowElement.h:
+        * html/HTMLTagNames.in:
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTitleElement.h:
+        * svg/SVGElement.h:
+        * svg/SVGFontElement.h:
+        * svg/SVGFontFaceElement.h:
+        * svg/SVGImageElement.h:
+        * svg/SVGScriptElement.h:
+        * svg/svgtags.in:
+
 2013-09-05  Andreas Kling  <akling@apple.com>
 
         Cached Page and Frame don't need to be ref-counted.

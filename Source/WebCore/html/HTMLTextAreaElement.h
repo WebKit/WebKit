@@ -127,12 +127,6 @@ private:
     mutable bool m_wasModifiedByUser;
 };
 
-inline HTMLTextAreaElement* toHTMLTextAreaElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLTextAreaElement(node));
-    return static_cast<HTMLTextAreaElement*>(node);
-}
-
 } //namespace
 
 #endif

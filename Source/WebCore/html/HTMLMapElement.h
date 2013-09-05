@@ -54,12 +54,6 @@ private:
     AtomicString m_name;
 };
 
-inline HTMLMapElement* toHTMLMapElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLMapElement(node));
-    return static_cast<HTMLMapElement*>(node);
-}
-
-} //namespace
+} // namespaces
 
 #endif

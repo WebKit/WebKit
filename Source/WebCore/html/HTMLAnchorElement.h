@@ -149,12 +149,6 @@ inline LinkHash HTMLAnchorElement::visitedLinkHash() const
     return m_cachedVisitedLinkHash; 
 }
 
-inline HTMLAnchorElement* toHTMLAnchorElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLAnchorElement(node));
-    return static_cast<HTMLAnchorElement*>(node);
-}
-
 // Functions shared with the other anchor elements (i.e., SVG).
 
 bool isEnterKeyKeydownEvent(Event*);

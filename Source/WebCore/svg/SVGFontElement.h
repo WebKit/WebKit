@@ -27,7 +27,6 @@
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGlyphMap.h"
-#include "SVGNames.h"
 #include "SVGParserUtilities.h"
 
 namespace WebCore {
@@ -88,12 +87,6 @@ private:
     Glyph m_missingGlyph;
     bool m_isGlyphCacheValid;
 };
-
-inline SVGFontElement* toSVGFontElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isSVGFontElement(node));
-    return static_cast<SVGFontElement*>(node);
-}
 
 } // namespace WebCore
 

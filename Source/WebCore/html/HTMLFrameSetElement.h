@@ -100,18 +100,6 @@ private:
     bool m_noresize;
 };
 
-inline HTMLFrameSetElement* toHTMLFrameSetElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFrameSetElement(node));
-    return static_cast<HTMLFrameSetElement*>(node);
-}
-
-inline const HTMLFrameSetElement* toHTMLFrameSetElement(const Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFrameSetElement(node));
-    return static_cast<const HTMLFrameSetElement*>(node);
-}
-
 } // namespace WebCore
 
 #endif // HTMLFrameSetElement_h

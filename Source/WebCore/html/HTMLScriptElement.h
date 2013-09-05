@@ -67,12 +67,6 @@ private:
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
 };
 
-inline HTMLScriptElement* toHTMLScriptElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(HTMLNames::scriptTag));
-    return static_cast<HTMLScriptElement*>(node);
-}
-
 } //namespace
 
 #endif
