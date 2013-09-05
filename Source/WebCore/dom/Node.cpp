@@ -117,10 +117,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#ifndef NDEBUG
-#include "RenderLayer.h"
-#endif
-
 #if ENABLE(GESTURE_EVENTS)
 #include "GestureEvent.h"
 #endif

@@ -1,3 +1,16 @@
+2013-09-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix repaint issue on "paints into ancestor" filtered layers
+        https://bugs.webkit.org/show_bug.cgi?id=120780
+        <rdar://problem/14884148>
+
+        Reviewed by Tim Horton.
+        
+        Ref test for opacity change on a filtered layer which paints into its compositing ancestor.
+
+        * compositing/filters/opacity-change-on-filtered-paints-into-ancestor-expected.html: Added.
+        * compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html: Added.
+
 2013-09-05  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
 
         [GTK] improving tests expectations related to trackmenu

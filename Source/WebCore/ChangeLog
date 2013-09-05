@@ -1,3 +1,28 @@
+2013-09-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix repaint issue on "paints into ancestor" filtered layers
+        https://bugs.webkit.org/show_bug.cgi?id=120780
+
+        Reviewed by Tim Horton.
+        
+        When a repaint happened on a layer with a filter, and which paints into
+        its compositing ancestor, we'd repaint the wrong layer (and assert).
+        
+        Fix by ensuring that RenderLayer::enclosingFilterLayer() takes paintsIntoCompositedAncestor()
+        into account, by adding a function that we share between three callers who
+        check isComposited() && !paintsIntoCompositedAncestor(). I didn't use a function
+        on RenderLayer, because I wanted it to be inline but to not #include RenderLayerBacking
+        in RenderLayer.h.
+
+        Test: compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html
+
+        * dom/Node.cpp: Drive-by removal of #include "RenderLayer.h"
+        * rendering/RenderLayer.cpp: 
+        (WebCore::compositedWithOwnBackingStore):
+        (WebCore::RenderLayer::enclosingCompositingLayerForRepaint):
+        (WebCore::RenderLayer::enclosingFilterRepaintLayer):
+        (WebCore::RenderLayer::clippingRootForPainting):
+
 2013-09-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build/link improvement after r155127 to be

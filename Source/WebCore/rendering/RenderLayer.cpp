@@ -1417,6 +1417,11 @@ inline bool RenderLayer::shouldRepaintAfterLayout() const
 
 #if USE(ACCELERATED_COMPOSITING)
 
+static bool compositedWithOwnBackingStore(const RenderLayer* layer)
+{
+    return layer->isComposited() && !layer->backing()->paintsIntoCompositedAncestor();
+}
+
 RenderLayer* RenderLayer::enclosingCompositingLayer(IncludeSelfOrNot includeSelf) const
 {
     if (includeSelf == IncludeSelf && isComposited())
@@ -1436,7 +1441,7 @@ RenderLayer* RenderLayer::enclosingCompositingLayerForRepaint(IncludeSelfOrNot i
         return const_cast<RenderLayer*>(this);
 
     for (const RenderLayer* curr = compositingContainer(this); curr; curr = compositingContainer(curr)) {
-        if (curr->isComposited() && !curr->backing()->paintsIntoCompositedAncestor())
+        if (compositedWithOwnBackingStore(curr))
             return const_cast<RenderLayer*>(curr);
     }
          
@@ -1461,7 +1466,7 @@ RenderLayer* RenderLayer::enclosingFilterLayer(IncludeSelfOrNot includeSelf) con
 RenderLayer* RenderLayer::enclosingFilterRepaintLayer() const
 {
     for (const RenderLayer* curr = this; curr; curr = curr->parent()) {
-        if ((curr != this && curr->requiresFullLayerImageForFilters()) || curr->isComposited() || curr->isRootLayer())
+        if ((curr != this && curr->requiresFullLayerImageForFilters()) || compositedWithOwnBackingStore(curr) || curr->isRootLayer())
             return const_cast<RenderLayer*>(curr);
     }
     return 0;
@@ -1528,7 +1533,7 @@ bool RenderLayer::hasAncestorWithFilterOutsets() const
 }
 
 #endif
-    
+
 RenderLayer* RenderLayer::clippingRootForPainting() const
 {
 #if USE(ACCELERATED_COMPOSITING)
@@ -1545,7 +1550,7 @@ RenderLayer* RenderLayer::clippingRootForPainting() const
         ASSERT(current);
         if (current->transform()
 #if USE(ACCELERATED_COMPOSITING)
-            || (current->isComposited() && !current->backing()->paintsIntoCompositedAncestor())
+            || compositedWithOwnBackingStore(current)
 #endif
         )
             return const_cast<RenderLayer*>(current);
