@@ -1,3 +1,15 @@
+2013-09-05  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] MediaControlsGtk: fix warning in constructor due to incorrect order of attributes
+        https://bugs.webkit.org/show_bug.cgi?id=120703
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix member initialization so it matches their declaration [-Wreorder].
+
+        * html/shadow/MediaControlsGtk.cpp:
+        (WebCore::MediaControlsGtk::MediaControlsGtk):
+
 2013-09-04  Dirk Schulze  <krit@webkit.org>
 
         Support interpolation between cross-fade() images

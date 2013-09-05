@@ -64,9 +64,9 @@ MediaControlsGtk::MediaControlsGtk(Document* document)
     : MediaControls(document)
     , m_durationDisplay(0)
     , m_enclosure(0)
-    , m_eventListener(0)
     , m_closedCaptionsTrackList(0)
     , m_closedCaptionsContainer(0)
+    , m_eventListener(0)
 {
 }
 
