@@ -194,7 +194,7 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
     }
     case ScriptBreakpointActionTypeEvaluate: {
         JSValue exception;
-        JSValue result = m_currentCallFrame->evaluate(breakpointAction.data, exception);
+        m_currentCallFrame->evaluate(breakpointAction.data, exception);
         if (exception)
             reportException(m_currentCallFrame->exec(), exception);
         break;
