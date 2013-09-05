@@ -1,3 +1,19 @@
+2013-09-04  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Remove deprecated markersForNode(Node* node).
+        https://bugs.webkit.org/show_bug.cgi?id=120679
+
+        Reviewed by Ryosuke Niwa.
+
+        DocumentMarkerController::markersForNode(Node* node) has been marked as
+        deprecated in favor of markersFor(Node*, MarkerTypes = AllMarkers()).
+
+        No new tests, no behavior change.
+
+        * dom/DocumentMarkerController.cpp:
+        * dom/DocumentMarkerController.h:
+        Remove never used markersForNode(Node*).
+
 2013-09-04  Andreas Kling  <akling@apple.com>
 
         CachedPage construction should begin with a Page&.
