@@ -1,3 +1,23 @@
+2013-09-04  Andreas Kling  <akling@apple.com>
+
+        CachedPage construction should begin with a Page&.
+        <https://webkit.org/b/120721>
+
+        Reviewed by Anders Carlsson.
+
+        We can't create a CachedPage from a null Page anyway.
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::create):
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        * history/CachedPage.h:
+        * history/PageCache.cpp:
+        (WebCore::PageCache::add):
+        * history/PageCache.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+
 2013-09-04  Arpita Bahuguna  <a.bah@samsung.com>
 
         setAttributeNode() does not set the new value to an existing attribute if specified attribute is in a different case.

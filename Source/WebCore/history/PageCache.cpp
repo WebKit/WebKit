@@ -424,11 +424,10 @@ void PageCache::markPagesForCaptionPreferencesChanged()
 }
 #endif
 
-void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page* page)
+void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page& page)
 {
     ASSERT(prpItem);
-    ASSERT(page);
-    ASSERT(canCache(page));
+    ASSERT(canCache(&page));
     
     HistoryItem* item = prpItem.leakRef(); // Balanced in remove().
 

@@ -1713,7 +1713,7 @@ void FrameLoader::commitProvisionalLoad()
     // We are doing this here because we know for sure that a new page is about to be loaded.
     HistoryItem* item = history().currentItem();
     if (!m_frame.tree().parent() && pageCache()->canCache(m_frame.page()) && !item->isInPageCache())
-        pageCache()->add(item, m_frame.page());
+        pageCache()->add(item, *m_frame.page());
 
     if (m_loadType != FrameLoadTypeReplace)
         closeOldDataSources();
@@ -1738,7 +1738,7 @@ void FrameLoader::commitProvisionalLoad()
     
     if (cachedPage && cachedPage->document()) {
         prepareForCachedPageRestore();
-        cachedPage->restore(m_frame.page());
+        cachedPage->restore(*m_frame.page());
 
         // The page should be removed from the cache immediately after a restoration in order for the PageCache to be consistent.
         pageCache()->remove(history().currentItem());

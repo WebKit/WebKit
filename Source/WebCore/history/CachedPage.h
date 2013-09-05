@@ -36,10 +36,10 @@ class Page;
 
 class CachedPage {
 public:
-    static PassOwnPtr<CachedPage> create(Page*);
+    static PassOwnPtr<CachedPage> create(Page&);
     ~CachedPage();
 
-    void restore(Page*);
+    void restore(Page&);
     void clear();
 
     Document* document() const { return m_cachedMainFrame->document(); }
@@ -61,7 +61,7 @@ public:
 #endif
 
 private:
-    CachedPage(Page*);
+    explicit CachedPage(Page&);
     void destroy();
 
     double m_timeStamp;
