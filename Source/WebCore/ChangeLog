@@ -1,5 +1,18 @@
 2013-09-04  Andreas Kling  <akling@apple.com>
 
+        Set "render tree being torn down" flag a bit earlier.
+        <https://webkit.org/b/120717>
+
+        Reviewed by Anders Carlsson.
+
+        Set the flag at the start of Document::detach() so everyone can get a chance
+        to avoid unnecessary work, not just renderers.
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach):
+
+2013-09-04  Andreas Kling  <akling@apple.com>
+
         Cached Page and Frame don't need to be ref-counted.
         <https://webkit.org/b/120710>
 
