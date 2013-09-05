@@ -30,6 +30,7 @@
 #include "KURL.h"
 #include "ScriptCachedFrameData.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -66,12 +67,12 @@ protected:
     bool m_isComposited;
 #endif
     
-    Vector<OwnPtr<CachedFrame>> m_childFrames;
+    Vector<RefPtr<CachedFrame>> m_childFrames;
 };
 
-class CachedFrame : private CachedFrameBase {
+class CachedFrame : public RefCounted<CachedFrame>, private CachedFrameBase {
 public:
-    static PassOwnPtr<CachedFrame> create(Frame& frame) { return adoptPtr(new CachedFrame(frame)); }
+    static PassRefPtr<CachedFrame> create(Frame& frame) { return adoptRef(new CachedFrame(frame)); }
 
     void open();
     void clear();

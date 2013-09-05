@@ -1,3 +1,22 @@
+2013-09-05  Andreas Kling  <akling@apple.com>
+
+        Reverting "Cached Page and Frame don't need to be ref-counted.
+        <https://webkit.org/b/120758>
+
+        This didn't work so well on Qt bots. Will have to take bigger steps
+        here instead of iterating.
+
+        * history/CachedFrame.h:
+        (WebCore::CachedFrame::create):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::create):
+        * history/CachedPage.h:
+        * history/HistoryItem.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::transitionToCommitted):
+        * loader/FrameLoader.h:
+
 2013-09-04  Anders Carlsson  <andersca@apple.com>
 
         Animations in an AnimationList are never null

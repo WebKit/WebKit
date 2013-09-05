@@ -1699,7 +1699,7 @@ void FrameLoader::clearProvisionalLoad()
 
 void FrameLoader::commitProvisionalLoad()
 {
-    CachedPage* cachedPage = m_loadingFromCachedPage ? pageCache()->get(history().provisionalItem()) : 0;
+    RefPtr<CachedPage> cachedPage = m_loadingFromCachedPage ? pageCache()->get(history().provisionalItem()) : 0;
     RefPtr<DocumentLoader> pdl = m_provisionalDocumentLoader;
     Ref<Frame> protect(m_frame);
 
@@ -1743,9 +1743,6 @@ void FrameLoader::commitProvisionalLoad()
         // The page should be removed from the cache immediately after a restoration in order for the PageCache to be consistent.
         pageCache()->remove(history().currentItem());
 
-        // Clear out 'cachedPage' right away since it now points to a deleted object.
-        cachedPage = nullptr;
-
         dispatchDidCommitLoad();
 
         // If we have a title let the WebView know about it. 
@@ -1755,12 +1752,8 @@ void FrameLoader::commitProvisionalLoad()
 
         checkCompleted();
     } else {
-        if (cachedPage) {
+        if (cachedPage)
             pageCache()->remove(history().currentItem());
-
-            // Clear out 'cachedPage' right away since it now points to a deleted object.
-            cachedPage = nullptr;
-        }
         didOpenURL();
     }
 
@@ -1796,7 +1789,7 @@ void FrameLoader::commitProvisionalLoad()
     }
 }
 
-void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
+void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
 {
     ASSERT(m_client.hasWebView());
     ASSERT(m_state == FrameStateProvisional);
