@@ -73,6 +73,7 @@ WebInspector.loaded = function()
     this.cssStyleManager = new WebInspector.CSSStyleManager;
     this.logManager = new WebInspector.LogManager;
     this.issueManager = new WebInspector.IssueManager;
+    this.runtimeManager = new WebInspector.RuntimeManager;
     this.applicationCacheManager = new WebInspector.ApplicationCacheManager;
     this.timelineManager = new WebInspector.TimelineManager;
     this.profileManager = new WebInspector.ProfileManager;
@@ -83,10 +84,6 @@ WebInspector.loaded = function()
 
     // Enable the Console Agent after creating the singleton managers.
     ConsoleAgent.enable();
-
-    // Enable the RuntimeAgent to receive notification of execution contexts.
-    if (RuntimeAgent.enable)
-        RuntimeAgent.enable();
 
     // Register for events.
     this.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, this._debuggerDidPause, this);

@@ -38,6 +38,7 @@ WebInspector.CodeMirrorCompletionController = function(codeMirror, delegate, sto
     this._lineNumber = NaN;
     this._prefix = "";
     this._completions = [];
+    this._extendedCompletionProviders = {};
 
     this._suggestionsView = new WebInspector.CompletionSuggestionsView(this);
 
@@ -86,6 +87,11 @@ WebInspector.CodeMirrorCompletionController.prototype = {
     get delegate()
     {
         return this._delegate;
+    },
+
+    addExtendedCompletionProvider: function(modeName, provider)
+    {
+        this._extendedCompletionProviders[modeName] = provider;
     },
 
     updateCompletions: function(completions, implicitSuffix)
@@ -496,6 +502,12 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         case "javascript":
             defaultCompletions = this._generateJavaScriptCompletions(token, baseScanResult ? baseScanResult.string : null, suffix);
             break;
+        }
+
+        var extendedCompletionsProvider = this._extendedCompletionProviders[modeName];
+        if (extendedCompletionsProvider) {
+            extendedCompletionsProvider.completionControllerCompletionsNeeded(this, defaultCompletions, baseScanResult ? baseScanResult.string : null, this._prefix, suffix, force);
+            return;
         }
 
         if (this._delegate && typeof this._delegate.completionControllerCompletionsNeeded === "function")

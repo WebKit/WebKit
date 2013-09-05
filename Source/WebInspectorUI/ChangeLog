@@ -5,6 +5,55 @@
 
         Reviewed by Timothy Hatcher.
 
+        Give the CodeMirror editor for JavaScript Breakpoint Actions JS Runtime
+        completions (like window, document, etc.).
+
+        The logic was inside of JavaScriptLogViewController but was already
+        entirely independent. Factor it out into its own class and plug it into
+        CodeMirrorCompletionController as a "CompletionsProvider".
+
+        Because the class hooks into a global event to reset some state, make
+        it a singleton, so new instances are not leaked.
+
+        * UserInterface/Main.html:
+        * UserInterface/Main.js:
+        (WebInspector.loaded):
+        * UserInterface/RuntimeManager.js: Added.
+        (WebInspector.RuntimeManager):
+        (WebInspector.RuntimeManager.prototype.evalCallback):
+        (WebInspector.RuntimeManager.prototype.evaluateInInspectedWindow):
+        Move eval in window to new RuntimeManager. A slightly cleaner place to this
+        since it is used both by the console and JS completions provider.
+
+        * UserInterface/CodeMirrorCompletionController.js:
+        (WebInspector.CodeMirrorCompletionController):
+        (WebInspector.CodeMirrorCompletionController.prototype.setExtendedCompletionProvider):
+        (WebInspector.CodeMirrorCompletionController.prototype._completeAtCurrentPosition):
+        Allow a completions provider plugin to completions controller. If one
+        is available, this supercedes the delegate extend completions path.
+
+        * UserInterface/BreakpointActionView.js:
+        * UserInterface/ConsolePrompt.js:
+        (WebInspector.ConsolePrompt):
+        Use the new JS completions provider to get runtime JS completions.
+        NOTE: ConsolePrompt still needs the delegate path for SQL completions.
+
+        * UserInterface/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController):
+        (WebInspector.JavaScriptLogViewController.prototype.consolePromptTextCommitted):
+        * UserInterface/JavaScriptRuntimeCompletionProvider.js: Added.
+        (WebInspector.JavaScriptRuntimeCompletionProvider):
+        (get WebInspector.JavaScriptRuntimeCompletionProvider.prototype.):
+        (get WebInspector.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded):
+        Move the JS completions code to a new class. No changes needed.
+
+2013-09-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Breakpoint Actions
+        https://bugs.webkit.org/show_bug.cgi?id=120576
+
+        Reviewed by Timothy Hatcher.
+
         * UserInterface/Breakpoint.js:
         (WebInspector.Breakpoint):
         (WebInspector.Breakpoint.prototype.get actions):

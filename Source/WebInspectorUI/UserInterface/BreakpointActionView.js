@@ -157,6 +157,7 @@ WebInspector.BreakpointActionView.prototype = {
             this._codeMirror.on("blur", this._codeMirrorBlurred.bind(this));
 
             var completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror);
+            completionController.addExtendedCompletionProvider("javascript", WebInspector.javaScriptRuntimeCompletionProvider);
 
             // CodeMirror needs a refresh after the popover displays, to layout, otherwise it doesn't appear.
             setTimeout(function() {

@@ -53,6 +53,7 @@ WebInspector.ConsolePrompt = function(delegate, mimeType, element)
     this._codeMirror.addKeyMap(keyMap);
 
     this._completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror, this);
+    this._completionController.addExtendedCompletionProvider("javascript", WebInspector.javaScriptRuntimeCompletionProvider);
 
     this._history = [{}];
     this._historyIndex = 0;
