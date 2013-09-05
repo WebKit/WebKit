@@ -669,14 +669,12 @@ static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, 
         RenderRegion* renderRegion = *itRR;
         writeIndent(ts, indent + 2);
         ts << "RenderRegion";
-        if (renderRegion->generatingNode()) {
-            String tagName = getTagName(renderRegion->generatingNode());
+        if (renderRegion->generatingElement()) {
+            String tagName = getTagName(renderRegion->node());
             if (!tagName.isEmpty())
                 ts << " {" << tagName << "}";
-            if (renderRegion->generatingNode()->isElementNode() && toElement(renderRegion->generatingNode())->hasID()) {
-                Element* element = toElement(renderRegion->generatingNode());
-                ts << " #" << element->idForStyleResolution();
-            }
+            if (renderRegion->generatingElement()->hasID())
+                ts << " #" << renderRegion->generatingElement()->idForStyleResolution();
             if (renderRegion->hasLayer())
                 ts << " hasLayer";
             if (renderRegion->hasCustomRegionStyle())

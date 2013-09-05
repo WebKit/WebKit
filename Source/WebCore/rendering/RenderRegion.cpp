@@ -139,23 +139,19 @@ LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flow
 
 RegionOversetState RenderRegion::regionOversetState() const
 {
-    ASSERT(node());
+    ASSERT(generatingElement());
 
     if (!isValid())
         return RegionUndefined;
 
-    if (Element* element = toElement(node()))
-        return element->regionOversetState();
-    
-    return RegionUndefined;
+    return generatingElement()->regionOversetState();
 }
 
 void RenderRegion::setRegionOversetState(RegionOversetState state)
 {
-    ASSERT(node());
+    ASSERT(generatingElement());
 
-    if (Element* element = toElement(node()))
-        element->setRegionOversetState(state);
+    generatingElement()->setRegionOversetState(state);
 }
 
 LayoutUnit RenderRegion::pageLogicalTopForOffset(LayoutUnit /* offset */) const
@@ -231,10 +227,8 @@ void RenderRegion::checkRegionStyle()
     bool customRegionStyle = false;
 
     // FIXME: Region styling doesn't work for pseudo elements.
-    if (node()) {
-        Element* regionElement = toElement(node());
-        customRegionStyle = view().document().ensureStyleResolver().checkRegionStyle(regionElement);
-    }
+    if (!isPseudoElement())
+        customRegionStyle = view().document().ensureStyleResolver().checkRegionStyle(generatingElement());
     setHasCustomRegionStyle(customRegionStyle);
     m_flowThread->checkRegionsWithStyling();
 }

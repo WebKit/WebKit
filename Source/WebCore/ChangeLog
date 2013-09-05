@@ -1,3 +1,33 @@
+2013-09-05  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Replace node() calls with generatingNode() for RenderRegion code
+        https://bugs.webkit.org/show_bug.cgi?id=120397
+
+        Reviewed by Darin Adler.
+
+        As regions will become anonymous blocks nested inside elements with the flow-from property, a first step
+        would be to change the calls to node() with calls to generatingNode(). In the case of regions, generatingNode()
+        will always return an Element* and not a Node*. Therefore, to get rid of toElement() casts, i created
+        a specific method RenderRegion::generatingElement that will return the generating node as Element.
+        No new tests as no functional change was introduced.
+
+        Original patch by Catalin Badea.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRulesForRegion):
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::getRegionsByContent):
+        (WebCore::WebKitNamedFlow::getRegions):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::regionOversetState):
+        (WebCore::RenderRegion::setRegionOversetState):
+        (WebCore::RenderRegion::checkRegionStyle):
+        * rendering/RenderRegion.h:
+        (WebCore::RenderRegion::generatingElement):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderRegionList): For pseudo-elements as regions, i want to print
+        {pseudo} instead of {div} marker for the parent.
+
 2013-09-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix SynchronousLoaderClient class for !USE(CFNETWORK) platforms

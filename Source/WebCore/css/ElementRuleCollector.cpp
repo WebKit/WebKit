@@ -182,7 +182,7 @@ void ElementRuleCollector::collectMatchingRulesForRegion(const MatchRequest& mat
     unsigned size = matchRequest.ruleSet->regionSelectorsAndRuleSets().size();
     for (unsigned i = 0; i < size; ++i) {
         const CSSSelector* regionSelector = matchRequest.ruleSet->regionSelectorsAndRuleSets().at(i).selector;
-        if (checkRegionSelector(regionSelector, toElement(m_regionForStyling->node()))) {
+        if (checkRegionSelector(regionSelector, m_regionForStyling->generatingElement())) {
             RuleSet* regionRules = matchRequest.ruleSet->regionSelectorsAndRuleSets().at(i).ruleSet.get();
             ASSERT(regionRules);
             collectMatchingRules(MatchRequest(regionRules, matchRequest.includeEmptyRules, matchRequest.scope), ruleRange);

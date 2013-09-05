@@ -140,7 +140,7 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
             if (renderRegion->isPseudoElement())
                 continue;
             if (m_parentFlowThread->objectInFlowRegion(contentNode->renderer(), renderRegion))
-                regionNodes.append(renderRegion->node());
+                regionNodes.append(renderRegion->generatingElement());
         }
     }
 
@@ -167,7 +167,7 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegions()
         // http://dev.w3.org/csswg/css-regions/#the-region-interface
         if (renderRegion->isPseudoElement())
             continue;
-        regionNodes.append(renderRegion->node());
+        regionNodes.append(renderRegion->generatingElement());
     }
 
     return StaticNodeList::adopt(regionNodes);
