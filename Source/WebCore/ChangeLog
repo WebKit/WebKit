@@ -1,3 +1,16 @@
+2013-09-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build/link improvement after r155127 to be
+        consistent about using debug-build support libraries.
+
+        Now that <rdar://problem/9898937> is resolved, we should be linking
+        to debug AVFoundationCF as well.
+
+        * page/CaptionUserPreferencesMediaAF.cpp: Link to AVFoundationCF_debug
+        when building with the DEBUG_ALL target.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp: Ditto.
+        * platform/graphics/avfoundation/cf/AVFoundationCFSoftLinking.h: Ditto.
+
 2013-09-04  Anders Carlsson  <andersca@apple.com>
 
         Vector::releaseBuffer should return an OwnPtr

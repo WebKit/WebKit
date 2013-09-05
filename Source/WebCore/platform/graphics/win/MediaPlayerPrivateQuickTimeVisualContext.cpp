@@ -1009,7 +1009,11 @@ void MediaPlayerPrivateQuickTimeVisualContext::getSupportedTypes(HashSet<String>
 
 bool MediaPlayerPrivateQuickTimeVisualContext::isAvailable()
 {
+#ifdef DEBUG_ALL
+    return false;
+#else
     return QTMovie::initializeQuickTime();
+#endif
 }
 
 MediaPlayer::SupportsType MediaPlayerPrivateQuickTimeVisualContext::supportsType(const String& type, const String& codecs, const KURL&)
