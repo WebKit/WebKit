@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
- * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2012, 2013 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -316,21 +316,23 @@ static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleI
         if (fromGenerated->isFilterImageValue() && toGenerated->isFilterImageValue()) {
             // Animation of generated images just possible if input images are equal.
             // Otherwise fall back to cross fade animation.
-            CSSFilterImageValue* fromFitler = toCSSFilterImageValue(fromGenerated);
-            CSSFilterImageValue* toFitler = toCSSFilterImageValue(toGenerated);
-            if (fromFitler->equalInputImages(*toFitler))
+            CSSFilterImageValue& fromFitler = *toCSSFilterImageValue(fromGenerated);
+            CSSFilterImageValue& toFitler = *toCSSFilterImageValue(toGenerated);
+            if (fromFitler.equalInputImages(toFitler))
                 return filterBlend(anim, from, to, progress);
         }
-#else
-        UNUSED_PARAM(fromGenerated);
-        UNUSED_PARAM(toGenerated);
 #endif
-        // FIXME: Add support for animation between two cross-fade() functions.
-        // https://bugs.webkit.org/show_bug.cgi?id=119955
+
+        if (fromGenerated->isCrossfadeValue() && toGenerated->isCrossfadeValue()) {
+            CSSCrossfadeValue& fromCrossfade = *toCSSCrossfadeValue(fromGenerated);
+            CSSCrossfadeValue& toCrossfade = *toCSSCrossfadeValue(toGenerated);
+            if (fromCrossfade.equalInputImages(toCrossfade))
+                return StyleGeneratedImage::create(toCrossfade.blend(fromCrossfade, progress).get());
+        }
 
         // FIXME: Add support for animation between two *gradient() functions.
         // https://bugs.webkit.org/show_bug.cgi?id=119956
-}
+    }
 
     // FIXME: Add support cross fade between cached and generated images.
     // https://bugs.webkit.org/show_bug.cgi?id=78293

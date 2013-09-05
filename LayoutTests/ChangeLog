@@ -1,3 +1,18 @@
+2013-09-04  Dirk Schulze  <krit@webkit.org>
+
+        Support interpolation between cross-fade() images
+        https://bugs.webkit.org/show_bug.cgi?id=119955
+
+        Reviewed by Darin Adler.
+
+        Test interpolation from one cross-fade function to another. Changed pixel test
+        to a ref test.
+
+        * animations/cross-fade-background-image.html:
+        * animations/cross-fade-background-image-expected.html: Added.
+        * platform/mac/animations/cross-fade-background-image-expected.png: Removed.
+        * platform/mac/animations/cross-fade-background-image-expected.txt: Removed.
+
 2013-09-04  Zoltan Herczeg  <zherczeg@webkit.org>
 
         <https://webkit.org/b/118553> Hash navigation doesn't affect history when the page is retrieved from appcache

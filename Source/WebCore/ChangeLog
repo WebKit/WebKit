@@ -1,3 +1,27 @@
+2013-09-04  Dirk Schulze  <krit@webkit.org>
+
+        Support interpolation between cross-fade() images
+        https://bugs.webkit.org/show_bug.cgi?id=119955
+
+        Reviewed by Darin Adler.
+
+        With this patch, CSS can animate from one -webkit-cross-fade
+        function to another, when the input images are the same in the
+        same order.
+
+        * css/CSSCrossfadeValue.cpp: Added blend function.
+        (WebCore::blendFunc):
+        (WebCore::CSSCrossfadeValue::blend):
+        (WebCore::CSSCrossfadeValue::equals):
+        (WebCore::CSSCrossfadeValue::equalInputImages):
+        * css/CSSCrossfadeValue.h: Added save casting functions.
+        (WebCore::toCSSCrossfadeValue):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isCrossfadeValue):
+        * page/animation/CSSPropertyAnimation.cpp: Add another condition to
+            interpolate between two -webkit-cross-fade functions.
+        (WebCore::blendFunc):
+
 2013-09-04  Zoltan Herczeg  <zherczeg@webkit.org>
 
         <https://webkit.org/b/118553> Hash navigation doesn't affect history when the page is retrieved from appcache

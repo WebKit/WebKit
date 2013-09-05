@@ -65,7 +65,11 @@ public:
 
     bool hasFailedOrCanceledSubresources() const;
 
+    PassRefPtr<CSSCrossfadeValue> blend(const CSSCrossfadeValue&, double) const;
+
     bool equals(const CSSCrossfadeValue&) const;
+
+    bool equalInputImages(const CSSCrossfadeValue&) const;
 
 private:
     CSSCrossfadeValue(PassRefPtr<CSSValue> fromValue, PassRefPtr<CSSValue> toValue)
@@ -105,6 +109,12 @@ private:
 
     CrossfadeSubimageObserverProxy m_crossfadeSubimageObserver;
 };
+
+inline CSSCrossfadeValue* toCSSCrossfadeValue(CSSImageGeneratorValue* value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isCrossfadeValue());
+    return static_cast<CSSCrossfadeValue*>(value);
+}
 
 } // namespace WebCore
 
