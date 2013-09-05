@@ -1,3 +1,31 @@
+2013-09-05  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
+
+        [Qt][WK1] REGRESSION(r154988): compositing/video/video-with-invalid-source.html
+        https://bugs.webkit.org/show_bug.cgi?id=120683
+
+        Reviewed by Philippe Normand.
+
+        Do not set pipeline state to NULL on MediaPlayerPrivateGStreamer::loadingFailed()
+        otherwise the bus is flushed and we never get a GST_MESSAGE_ERROR when failing to
+        load uris.
+        Also restore previous behaviour (before r154988) of not invoking loadingFailed() for
+        all failed manual state change attempts.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::changePipelineState):
+        Do not call loadingFailed() if state change fails as all manual state changes are
+        now done with changePipelineState().
+        (WebCore::MediaPlayerPrivateGStreamer::play):
+        (WebCore::MediaPlayerPrivateGStreamer::pause):
+        (WebCore::MediaPlayerPrivateGStreamer::seek):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        Restore previous behaviour (before changeset r154988) when calling changePipelineState().
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+        Do nothing if changing to READY on EOS (same behaviour as setting to NULL as it was before
+        changeset r154988).
+        (WebCore::MediaPlayerPrivateGStreamer::loadingFailed):
+        Do not set pipeline state to NULL so we properly get GST_MESSAGE_ERROR on loading failures.
+
 2013-09-05  Alberto Garcia  <berto@igalia.com>
 
         [GTK] MediaControlsGtk: fix warning in constructor due to incorrect order of attributes

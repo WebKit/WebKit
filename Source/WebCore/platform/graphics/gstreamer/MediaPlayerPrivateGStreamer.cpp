@@ -441,7 +441,6 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
     GstStateChangeReturn setStateResult = gst_element_set_state(m_playBin.get(), newState);
     GstState pausedOrPlaying = newState == GST_STATE_PLAYING ? GST_STATE_PAUSED : GST_STATE_PLAYING;
     if (currentState != pausedOrPlaying && setStateResult == GST_STATE_CHANGE_FAILURE) {
-        loadingFailed(MediaPlayer::Empty);
         return false;
     }
 
@@ -476,6 +475,8 @@ void MediaPlayerPrivateGStreamer::play()
         m_preload = MediaPlayer::Auto;
         setDownloadBuffering();
         LOG_MEDIA_MESSAGE("Play");
+    } else {
+        loadingFailed(MediaPlayer::Empty);
     }
 }
 
@@ -488,6 +489,8 @@ void MediaPlayerPrivateGStreamer::pause()
 
     if (changePipelineState(GST_STATE_PAUSED))
         INFO_MEDIA_MESSAGE("Pause");
+    else
+        loadingFailed(MediaPlayer::Empty);
 }
 
 float MediaPlayerPrivateGStreamer::duration() const
@@ -586,7 +589,8 @@ void MediaPlayerPrivateGStreamer::seek(float time)
         if (m_isEndReached) {
             LOG_MEDIA_MESSAGE("[Seek] reset pipeline");
             m_resetPipeline = true;
-            changePipelineState(GST_STATE_PAUSED);
+            if (!changePipelineState(GST_STATE_PAUSED))
+                loadingFailed(MediaPlayer::Empty);
         }
     } else {
         // We can seek now.
@@ -941,7 +945,8 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             INFO_MEDIA_MESSAGE("Element %s requested state change to %s", elementName.get(),
                 gst_element_state_get_name(requestedState));
             m_requestedState = requestedState;
-            changePipelineState(requestedState);
+            if (!changePipelineState(requestedState))
+                loadingFailed(MediaPlayer::Empty);
         }
         break;
     case GST_MESSAGE_ELEMENT:
@@ -1221,6 +1226,11 @@ void MediaPlayerPrivateGStreamer::updateStates()
     case GST_STATE_CHANGE_SUCCESS: {
         LOG_MEDIA_MESSAGE("State: %s, pending: %s", gst_element_state_get_name(state), gst_element_state_get_name(pending));
 
+        // Do nothing if on EOS and state changed to READY to avoid recreating the player
+        // on HTMLMediaElement and properly generate the video 'ended' event.
+        if (m_isEndReached && state == GST_STATE_READY)
+            break;
+
         if (state <= GST_STATE_READY) {
             m_resetPipeline = true;
             m_mediaDuration = 0;
@@ -1238,12 +1248,8 @@ void MediaPlayerPrivateGStreamer::updateStates()
             m_networkState = MediaPlayer::Empty;
             break;
         case GST_STATE_READY:
-            // Do not change network/ready states if on EOS and state changed to READY to avoid
-            // recreating the player on HTMLMediaElement.
-            if (!m_isEndReached) {
-                m_readyState = MediaPlayer::HaveMetadata;
-                m_networkState = MediaPlayer::Empty;
-            }
+            m_readyState = MediaPlayer::HaveMetadata;
+            m_networkState = MediaPlayer::Empty;
             break;
         case GST_STATE_PAUSED:
         case GST_STATE_PLAYING:
@@ -1529,8 +1535,7 @@ void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState error)
         m_player->readyStateChanged();
     }
 
-    // Loading failed, force reset pipeline and remove ready timer.
-    gst_element_set_state(m_playBin.get(), GST_STATE_NULL);
+    // Loading failed, remove ready timer.
     if (m_readyTimerHandler) {
         g_source_remove(m_readyTimerHandler);
         m_readyTimerHandler = 0;
