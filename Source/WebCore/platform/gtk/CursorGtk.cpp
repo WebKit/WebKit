@@ -60,8 +60,12 @@ static GRefPtr<GdkCursor> createNamedCursor(CustomCursorType cursorType)
 
 static GRefPtr<GdkCursor> createCustomCursor(Image* image, const IntPoint& hotSpot)
 {
-    IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
     GRefPtr<GdkPixbuf> pixbuf = adoptGRef(image->getGdkPixbuf());
+
+    if (!image->nativeImageForCurrentFrame() || !pixbuf)
+        return 0;
+
+    IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
     return adoptGRef(gdk_cursor_new_from_pixbuf(gdk_display_get_default(), pixbuf.get(), effectiveHotSpot.x(), effectiveHotSpot.y()));
 }
 
