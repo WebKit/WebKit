@@ -53,6 +53,7 @@
 #define WTF_COMPILER_SUPPORTS_CXX_OVERRIDE_CONTROL __has_feature(cxx_override_control)
 #define WTF_COMPILER_SUPPORTS_CXX_STRONG_ENUMS __has_feature(cxx_strong_enums)
 #define WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS __has_feature(cxx_reference_qualified_functions)
+#define WTF_COMPILER_SUPPORTS_CXX_AUTO_TYPE __has_feature(cxx_auto_type)
 
 /* Disable final on versions of Apple clang earlier than 4.2 to avoid bugs like http://webkit.org/b/119165 */
 #if defined(__APPLE__) && (__clang_major__ < 4 || (__clang_major__ == 4 && __clang_minor__ < 2))
@@ -83,6 +84,7 @@
 #if _MSC_VER >= 1600
 #define WTF_COMPILER_SUPPORTS_CXX_RVALUE_REFERENCES 1
 #define WTF_COMPILER_SUPPORTS_CXX_STATIC_ASSERT 1
+#define WTF_COMPILER_SUPPORTS_CXX_AUTO_TYPE 1
 #endif
 
 #endif /* defined(_MSC_VER) */
@@ -130,6 +132,7 @@
 #define WTF_COMPILER_SUPPORTS_CXX_RVALUE_REFERENCES 1
 #define WTF_COMPILER_SUPPORTS_CXX_STATIC_ASSERT 1
 #define WTF_COMPILER_SUPPORTS_CXX_VARIADIC_TEMPLATES 1
+#define WTF_COMPILER_SUPPORTS_CXX_AUTO_TYPE 1
 #endif
 #if GCC_VERSION_AT_LEAST(4, 4, 0)
 #define WTF_COMPILER_SUPPORTS_CXX_DELETED_FUNCTIONS 1
@@ -183,6 +186,9 @@
 #endif
 #if !COMPILER_SUPPORTS(CXX_STATIC_ASSERT)
 #error "Please use a compiler that supports C++11 static_assert."
+#endif
+#if !COMPILER_SUPPORTS(CXX_AUTO_TYPE)
+#error "Please use a compiler that supports C++11 auto."
 #endif
 #endif
 
