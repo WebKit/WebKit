@@ -988,7 +988,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
 
         child->clearOverrideSize();
         if (relayoutChildren || (child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent()))
-            || (child->style()->height().isAuto() && child->isBlockFlow())) {
+            || (child->style()->height().isAuto() && child->isRenderBlockFlow())) {
             child->setChildNeedsLayout(true, MarkOnlyThis);
 
             // Dirty all the positioned objects.
@@ -998,7 +998,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
             }
         }
         child->layoutIfNeeded();
-        if (child->style()->height().isAuto() && child->isBlockFlow())
+        if (child->style()->height().isAuto() && child->isRenderBlockFlow())
             maxLineCount = max(maxLineCount, toRenderBlock(child)->lineCount());
     }
 
@@ -1010,7 +1010,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         return;
 
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-        if (childDoesNotAffectWidthOrFlexing(child) || !child->style()->height().isAuto() || !child->isBlockFlow())
+        if (childDoesNotAffectWidthOrFlexing(child) || !child->style()->height().isAuto() || !child->isRenderBlockFlow())
             continue;
 
         RenderBlock* blockChild = toRenderBlock(child);
@@ -1087,7 +1087,7 @@ void RenderDeprecatedFlexibleBox::clearLineClamp()
 
         child->clearOverrideSize();
         if ((child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent()))
-            || (child->style()->height().isAuto() && child->isBlockFlow())) {
+            || (child->style()->height().isAuto() && child->isRenderBlockFlow())) {
             child->setChildNeedsLayout(true);
 
             if (child->isRenderBlock()) {

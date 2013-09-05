@@ -44,7 +44,7 @@ using namespace std;
 namespace WebCore {
 
 RenderRubyRun::RenderRubyRun()
-    : RenderBlock(0)
+    : RenderBlockFlow(0)
 {
     setReplaced(true);
     setInline(true);

@@ -4374,6 +4374,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderArena.h \
 	Source/WebCore/rendering/RenderBlock.cpp \
 	Source/WebCore/rendering/RenderBlock.h \
+    Source/WebCore/rendering/RenderBlockFlow.cpp \
+	Source/WebCore/rendering/RenderBlockFlow.h \
 	Source/WebCore/rendering/RenderBlockLineLayout.cpp \
 	Source/WebCore/rendering/RenderBox.cpp \
 	Source/WebCore/rendering/RenderBox.h \

@@ -4709,6 +4709,8 @@
 		BC0B358814C4F9830055E22A /* RunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0B358614C4F9830055E22A /* RunLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC0B36A40CD3C67C00AC7EB5 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0B36A10CD3C67C00AC7EB5 /* Console.cpp */; };
 		BC0B36A50CD3C67C00AC7EB5 /* Console.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0B36A20CD3C67C00AC7EB5 /* Console.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC10D76717D8EE6E005E2626 /* RenderBlockFlow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFB45F417D8E49400444446 /* RenderBlockFlow.cpp */; };
+		BC10D76817D8EE71005E2626 /* RenderBlockFlow.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB45F317D8E39200444446 /* RenderBlockFlow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC124EE70C2641CD009E2349 /* BarProp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC124EE40C2641CD009E2349 /* BarProp.cpp */; };
 		BC124EE80C2641CD009E2349 /* BarProp.h in Headers */ = {isa = PBXBuildFile; fileRef = BC124EE50C2641CD009E2349 /* BarProp.h */; };
 		BC124EFF0C26447A009E2349 /* JSBarProp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC124EFD0C26447A009E2349 /* JSBarProp.cpp */; };
@@ -12018,6 +12020,8 @@
 		BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceClient.h; sourceTree = "<group>"; };
 		BCFB2F74097A2E1A00BA703D /* Arena.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Arena.cpp; sourceTree = "<group>"; };
 		BCFB2F75097A2E1A00BA703D /* Arena.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Arena.h; sourceTree = "<group>"; };
+		BCFB45F317D8E39200444446 /* RenderBlockFlow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderBlockFlow.h; sourceTree = "<group>"; };
+		BCFB45F417D8E49400444446 /* RenderBlockFlow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderBlockFlow.cpp; sourceTree = "<group>"; };
 		BCFE2F0F0C1B58370020235F /* JSRect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSRect.cpp; sourceTree = "<group>"; };
 		BCFE2F100C1B58370020235F /* JSRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSRect.h; sourceTree = "<group>"; };
 		BCFF648F0EAD15C200C1D6F7 /* LengthBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthBox.h; sourceTree = "<group>"; };
@@ -20391,6 +20395,8 @@
 				BCEA481F097D93020094C9E4 /* RenderArena.h */,
 				BCEA4820097D93020094C9E4 /* RenderBlock.cpp */,
 				BCEA4821097D93020094C9E4 /* RenderBlock.h */,
+				BCFB45F417D8E49400444446 /* RenderBlockFlow.cpp */,
+				BCFB45F317D8E39200444446 /* RenderBlockFlow.h */,
 				BCEA4813097D93020094C9E4 /* RenderBlockLineLayout.cpp */,
 				BCEA4822097D93020094C9E4 /* RenderBox.cpp */,
 				BCEA4823097D93020094C9E4 /* RenderBox.h */,
@@ -24545,6 +24551,7 @@
 				FBB0C5B817BBD629003D3677 /* CSSFilterImageValue.h in Headers */,
 				BE16C59317CFE17200852C04 /* InbandGenericTextTrack.h in Headers */,
 				BE16C59517CFE17200852C04 /* InbandWebVTTTextTrack.h in Headers */,
+				BC10D76817D8EE71005E2626 /* RenderBlockFlow.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27568,6 +27575,7 @@
 				FBB0C5B717BBD626003D3677 /* CSSFilterImageValue.cpp in Sources */,
 				BE16C59217CFE17200852C04 /* InbandGenericTextTrack.cpp in Sources */,
 				BE16C59417CFE17200852C04 /* InbandWebVTTTextTrack.cpp in Sources */,
+				BC10D76717D8EE6E005E2626 /* RenderBlockFlow.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

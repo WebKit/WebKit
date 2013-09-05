@@ -57,7 +57,7 @@
 namespace WebCore {
 
 RenderView::RenderView(Document* document)
-    : RenderBlock(document)
+    : RenderBlockFlow(document)
     , m_frameView(*document->view())
     , m_selectionStart(0)
     , m_selectionEnd(0)

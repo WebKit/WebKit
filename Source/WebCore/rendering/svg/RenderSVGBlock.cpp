@@ -32,7 +32,7 @@
 namespace WebCore {
 
 RenderSVGBlock::RenderSVGBlock(SVGElement* element)
-    : RenderBlock(element)
+    : RenderBlockFlow(element)
 {
 }
 

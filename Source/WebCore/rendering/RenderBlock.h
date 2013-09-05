@@ -627,7 +627,6 @@ private:
     virtual const char* renderName() const;
 
     virtual bool isRenderBlock() const OVERRIDE FINAL { return true; }
-    virtual bool isBlockFlow() const OVERRIDE FINAL { return (!isInline() || isReplaced()) && !isTable(); }
     virtual bool isInlineBlockOrInlineTable() const OVERRIDE FINAL { return isInline() && isReplaced(); }
 
     void makeChildrenNonInline(RenderObject* insertionPoint = 0);

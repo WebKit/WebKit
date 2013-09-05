@@ -30,7 +30,7 @@
 #ifndef RenderRegion_h
 #define RenderRegion_h
 
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "StyleInheritedData.h"
 
 namespace WebCore {
@@ -43,7 +43,7 @@ class RenderBoxRegionInfo;
 class RenderFlowThread;
 class RenderNamedFlowThread;
 
-class RenderRegion : public RenderBlock {
+class RenderRegion : public RenderBlockFlow {
 public:
     explicit RenderRegion(Element*, RenderFlowThread*);
 

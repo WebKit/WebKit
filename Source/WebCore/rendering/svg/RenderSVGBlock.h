@@ -21,14 +21,14 @@
 #define RenderSVGBlock_h
 
 #if ENABLE(SVG)
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "SVGRenderSupport.h"
 
 namespace WebCore {
 
 class SVGElement;
 
-class RenderSVGBlock : public RenderBlock {
+class RenderSVGBlock : public RenderBlockFlow {
 public:
     explicit RenderSVGBlock(SVGElement*);
 

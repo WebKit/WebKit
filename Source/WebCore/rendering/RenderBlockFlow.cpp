@@ -1,5 +1,9 @@
 /*
- * Copyright (C) 2011 Robert Hogan <robert@roberthogan.net>
+ * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2007 David Smith (catfish.man@gmail.com)
+ * Copyright (C) 2003-2013 Apple Inc. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,44 +22,17 @@
  */
 
 #include "config.h"
-#include "RenderTableCaption.h"
-
-#include "RenderTable.h"
+#include "RenderBlockFlow.h"
 
 namespace WebCore {
 
-RenderTableCaption::RenderTableCaption(Element* element)
-    : RenderBlockFlow(element)
+RenderBlockFlow::RenderBlockFlow(ContainerNode* node)
+    : RenderBlock(node)
 {
 }
 
-RenderTableCaption::~RenderTableCaption()
+RenderBlockFlow::~RenderBlockFlow()
 {
 }
 
-LayoutUnit RenderTableCaption::containingBlockLogicalWidthForContent() const
-{
-    RenderBlock* cb = containingBlock();
-    return cb->logicalWidth();
-}
-
-void RenderTableCaption::insertedIntoTree()
-{
-    RenderBlock::insertedIntoTree();
-
-    table()->addCaption(this);
-}
-
-void RenderTableCaption::willBeRemovedFromTree()
-{
-    RenderBlock::willBeRemovedFromTree();
-
-    table()->removeCaption(this);
-}
-
-RenderTable* RenderTableCaption::table() const
-{
-    return toRenderTable(parent());
-}
-
-}
+} // namespace WebCore

@@ -22,11 +22,11 @@
 #define RenderDetailsMarker_h
 
 #if ENABLE(DETAILS_ELEMENT)
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 
 namespace WebCore {
 
-class RenderDetailsMarker FINAL : public RenderBlock {
+class RenderDetailsMarker FINAL : public RenderBlockFlow {
 public:
     RenderDetailsMarker(Element*);
 

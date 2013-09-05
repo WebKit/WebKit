@@ -31,7 +31,7 @@
 #ifndef RenderRuby_h
 #define RenderRuby_h
 
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 #include "RenderInline.h"
 
 namespace WebCore {
@@ -70,7 +70,7 @@ private:
 };
 
 // <ruby> when used as 'display:block' or 'display:inline-block'
-class RenderRubyAsBlock FINAL : public RenderBlock {
+class RenderRubyAsBlock FINAL : public RenderBlockFlow {
 public:
     RenderRubyAsBlock(Element*);
     virtual ~RenderRubyAsBlock();

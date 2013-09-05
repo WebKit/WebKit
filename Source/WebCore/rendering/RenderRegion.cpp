@@ -49,7 +49,7 @@ using namespace std;
 namespace WebCore {
 
 RenderRegion::RenderRegion(Element* element, RenderFlowThread* flowThread)
-    : RenderBlock(element)
+    : RenderBlockFlow(element)
     , m_flowThread(flowThread)
     , m_parentNamedFlowThread(0)
     , m_isValid(false)

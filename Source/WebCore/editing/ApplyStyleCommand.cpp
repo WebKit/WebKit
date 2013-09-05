@@ -1013,7 +1013,7 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, EditingStyle* sty
 
     // Since addInlineStyleIfNeeded can't add styles to block-flow render objects, add style attribute instead.
     // FIXME: applyInlineStyleToRange should be used here instead.
-    if ((node->renderer()->isBlockFlow() || node->childNodeCount()) && node->isHTMLElement()) {
+    if ((node->renderer()->isRenderBlockFlow() || node->childNodeCount()) && node->isHTMLElement()) {
         setNodeAttribute(toHTMLElement(node), styleAttr, newInlineStyle->style()->asText());
         return;
     }

@@ -28,6 +28,7 @@
 
 #include "RenderFullScreen.h"
 
+#include "RenderBlockFlow.h"
 #include "RenderLayer.h"
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -36,10 +37,10 @@
 
 using namespace WebCore;
 
-class RenderFullScreenPlaceholder FINAL : public RenderBlock {
+class RenderFullScreenPlaceholder FINAL : public RenderBlockFlow {
 public:
     RenderFullScreenPlaceholder(RenderFullScreen* owner) 
-        : RenderBlock(0)
+        : RenderBlockFlow(0)
         , m_owner(owner) 
     {
         setDocumentForAnonymous(&owner->document());
