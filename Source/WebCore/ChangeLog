@@ -1,3 +1,23 @@
+2013-09-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix SynchronousLoaderClient class for !USE(CFNETWORK) platforms
+        https://bugs.webkit.org/show_bug.cgi?id=120532
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * platform/network/SynchronousLoaderClient.cpp:
+        * platform/network/cf/SynchronousLoaderClientCFNet.cpp: Added.
+        (WebCore::SynchronousLoaderClient::didReceiveAuthenticationChallenge):
+        (WebCore::SynchronousLoaderClient::platformBadResponseError):
+        * platform/network/soup/SynchronousLoaderClientSoup.cpp: Added.
+        (WebCore::SynchronousLoaderClient::didReceiveAuthenticationChallenge):
+        (WebCore::SynchronousLoaderClient::platformBadResponseError):
+
 2013-09-05  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Fix unused parameter warning in WebKitAccessibleInterfaceText.cpp

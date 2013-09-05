@@ -8247,6 +8247,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\platform\network\cf\SynchronousLoaderClientCFNet.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\platform\network\win\DownloadBundleWin.cpp" />
     <ClCompile Include="..\platform\network\win\NetworkStateNotifierWin.cpp" />
     <ClCompile Include="..\platform\network\curl\CookieJarCurl.cpp">

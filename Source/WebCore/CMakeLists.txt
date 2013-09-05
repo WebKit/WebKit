@@ -2047,6 +2047,7 @@ set(WebCore_SOURCES
     platform/network/ResourceRequestBase.cpp
     platform/network/ResourceResponseBase.cpp
     platform/network/SocketStreamHandleBase.cpp
+    platform/network/SynchronousLoaderClient.cpp
 
     platform/sql/SQLValue.cpp
     platform/sql/SQLiteAuthorizer.cpp

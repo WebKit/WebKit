@@ -1953,6 +1953,9 @@
     <ClCompile Include="..\platform\network\cf\SocketStreamHandleCFNet.cpp">
       <Filter>platform\network\cf</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\network\cf\SynchronousLoaderClientCFNet.cpp">
+      <Filter>platform\network\cf</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\network\win\DownloadBundleWin.cpp">
       <Filter>platform\network\win</Filter>
     </ClCompile>
