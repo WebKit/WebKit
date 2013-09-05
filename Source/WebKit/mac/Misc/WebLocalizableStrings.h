@@ -36,7 +36,7 @@ typedef struct NSBundle NSBundle;
 
 typedef struct {
     const char *identifier;
-    NSBundle *bundle;
+    __unsafe_unretained NSBundle *bundle;
 } WebLocalizableStringsBundle;
 
 #ifdef __cplusplus

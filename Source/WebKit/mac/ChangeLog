@@ -1,3 +1,15 @@
+2013-09-04  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/120707> Make WebKit's localizable strings mechanism usable under ARC
+
+        WebKit's localizable strings mechanism is also used outside of WebKit so it needs to work
+        both with and without ARC.
+
+        Reviewed by Anders Carlsson.
+
+        * Misc/WebLocalizableStrings.h: Mark the bundle member as unretained. This matches how the
+        member is used within WebLocalizableStrings.mm.
+
 2013-09-02  Darin Adler  <darin@apple.com>
 
         [Mac] No need for HardAutorelease, which is same as CFBridgingRelease
