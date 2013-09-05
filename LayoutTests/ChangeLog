@@ -1,3 +1,15 @@
+2013-09-05  Dirk Schulze  <krit@webkit.org>
+
+        NULL ptr in WebCore::RefCountedPropertyWrapper<WebCore::ClipPathOperation>::blend
+        https://bugs.webkit.org/show_bug.cgi?id=105408
+
+        Reviewed by Dean Jackson.
+
+        Test that animation from none to a basic shape on -webkit-clip-path doesn't crash.
+
+        * css3/masking/clip-path-animation-expected.txt:
+        * css3/masking/clip-path-animation.html:
+
 2013-09-04  Dirk Schulze  <krit@webkit.org>
 
         Support interpolation between cross-fade() images

@@ -1,3 +1,18 @@
+2013-09-05  Dirk Schulze  <krit@webkit.org>
+
+        NULL ptr in WebCore::RefCountedPropertyWrapper<WebCore::ClipPathOperation>::blend
+        https://bugs.webkit.org/show_bug.cgi?id=105408
+
+        Reviewed by Dean Jackson.
+
+        Adding an early return if from or to clip-path values are 'none'. According to the
+        specification we shall just interpolate between two basic shapes.
+
+        http://dev.w3.org/csswg/css-shapes/#basic-shape-interpolation
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+
 2013-09-05  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
 
         [Qt][WK1] REGRESSION(r154988): compositing/video/video-with-invalid-source.html
