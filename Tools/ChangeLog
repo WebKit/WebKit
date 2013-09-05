@@ -1,3 +1,16 @@
+2013-09-04  Filip Pizlo  <fpizlo@apple.com>
+
+        run-javascriptcore-tests should run-fast-jsc as well
+        https://bugs.webkit.org/show_bug.cgi?id=120722
+
+        Reviewed by Geoffrey Garen.
+        
+        Makes run-javascriptcore-tests run the fast/js tests via run-fast-jsc tool.
+        Integrates run-fast-jsc's error reporting into run-javascriptcore-tests.
+
+        * Scripts/run-javascriptcore-tests:
+        (printThingsFound):
+
 2013-09-04  Sergio Correia  <sergio.correia@openbossa.org>
 
         [EFL][WK2] Move ShouldGoToBackForwardListItem to the list of passing API tests

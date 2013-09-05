@@ -345,7 +345,6 @@ fast/js/numeric-escapes-in-string-literals
 fast/js/object-bad-time
 fast/js/Object-create
 fast/js/Object-defineProperties
-fast/js/Object-defineProperty
 fast/js/Object-getOwnPropertyNames
 fast/js/Object-keys
 fast/js/object-literal-direct-put

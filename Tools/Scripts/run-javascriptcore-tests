@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005, 2013 Apple Computer, Inc.  All rights reserved.
 # Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -27,11 +27,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Script to run the WebKit Open Source Project JavaScriptCore tests (adapted from Mozilla).
+# Script to run the WebKit Open Source Project JavaScriptCore tests (adapted from Mozilla),
+# as well as other tests: testapi on Mac and LayoutTests/fast/js.
 
 use strict;
+use File::Slurp;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
+use List::Util qw(min max);
 use lib $FindBin::Bin;
 use webkitdirs;
 use POSIX;
@@ -139,7 +142,7 @@ if (isAppleMacWebKit() || isAppleWinWebKit()) {
 chdirWebKit();
 chdir("Source/JavaScriptCore");
 chdir "tests/mozilla" or die "Failed to switch directory to 'tests/mozilla'\n";
-my @jsDriverCmd = ("perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", @jsArgs);
+my @jsMozillaDriverCmd = ("perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", @jsArgs);
 if (isGtk() || isEfl()) {
     my @jhbuildPrefix = sourceDir() . "/Tools/jhbuild/jhbuild-wrapper";
 
@@ -150,15 +153,15 @@ if (isGtk() || isEfl()) {
     }
     push(@jhbuildPrefix, 'run');
 
-    unshift(@jsDriverCmd, @jhbuildPrefix);
+    unshift(@jsMozillaDriverCmd, @jhbuildPrefix);
 } elsif (isIOSWebKit() && willUseIOSSimulatorSDKWhenBuilding()) {
-    push @jsDriverCmd, ("--sdk", xcodeSDK());
+    push @jsMozillaDriverCmd, ("--sdk", xcodeSDK());
 }
-print "Running: " . join(" ", @jsDriverCmd) . "\n";
-my $result = system(@jsDriverCmd);
+print "Running: " . join(" ", @jsMozillaDriverCmd) . "\n";
+my $result = system(@jsMozillaDriverCmd);
 exit exitStatus($result)  if $result;
 
-my %failures;
+my %mozillaFailures;
 
 open EXPECTED, "expected.html" or die "Failed to open 'expected.html'\n";
 while (<EXPECTED>) {
@@ -166,11 +169,11 @@ while (<EXPECTED>) {
 }
 while (<EXPECTED>) {
     chomp;
-    $failures{$_} = 1;
+    $mozillaFailures{$_} = 1;
 }
 close EXPECTED;
 
-my %newFailures;
+my %newMozillaFailures;
 
 open ACTUAL, "actual.html" or die "Failed to open 'actual.html'";
 while (<ACTUAL>) {
@@ -178,41 +181,78 @@ while (<ACTUAL>) {
 }
 while (<ACTUAL>) {
     chomp;
-    if ($failures{$_}) {
-        delete $failures{$_};
+    if ($mozillaFailures{$_}) {
+        delete $mozillaFailures{$_};
     } else {
-        $newFailures{$_} = 1;
+        $newMozillaFailures{$_} = 1;
     }
 }
 close ACTUAL;
 
-my $numNewFailures = keys %newFailures;
-if ($numNewFailures) {
-    print "\n** Danger, Will Robinson! Danger! The following failures have been introduced:\n";
-    foreach my $failure (sort keys %newFailures) {
-        print "\t$failure\n";
+# Run the fast/js tests.
+chdirWebKit();
+my $fastJSResultsDir = $productDir . "/fast-jsc-results";
+my @fastJSDriverCmd = ("/bin/sh", "Tools/Scripts/run-fast-jsc", "-j", jscPath($productDir), "-r", $fastJSResultsDir, "-t", "LayoutTests");
+print "Running: " . join(" ", @fastJSDriverCmd) . "\n";
+$result = system(@fastJSDriverCmd);
+exit exitStatus($result) if $result;
+
+my $numNewMozillaFailures = keys %newMozillaFailures;
+if ($numNewMozillaFailures) {
+    print "\n** The following Mozilla test failures have been introduced:\n";
+    foreach my $mozillaFailure (sort keys %newMozillaFailures) {
+        print "\t$mozillaFailure\n";
     }
 }
 
-my $numOldFailures = keys %failures;
-if ($numOldFailures) {
+my $numOldMozillaFailures = keys %mozillaFailures;
+if ($numOldMozillaFailures) {
     print "\nYou fixed the following test";
-    print "s" if $numOldFailures != 1;
+    print "s" if $numOldMozillaFailures != 1;
     print ":\n";
-    foreach my $failure (sort keys %failures) {
-        print "\t$failure\n";
+    foreach my $mozillaFailure (sort keys %mozillaFailures) {
+        print "\t$mozillaFailure\n";
+    }
+}
+
+sub printThingsFound
+{
+    my ($number, $label, $pluralLabel, $verb) = @_;
+    print "    $number ";
+    if ($number == 1) {
+        print $label;
+    } else {
+        print $pluralLabel;
+    }
+    print " $verb.\n";
+}
+
+my @fastJSFailList = eval { read_file($fastJSResultsDir . "/failed") };
+my @fastJSCrashList = eval { read_file($fastJSResultsDir . "/crashed") };
+my $numJSFailures = @fastJSFailList;
+my $numJSCrashes = @fastJSCrashList;
+
+if ($numJSFailures || $numJSCrashes) {
+    print "\n** The following fast/js test failures have been introduced:\n";
+    foreach my $testFailure (@fastJSFailList, @fastJSCrashList) {
+        print "\t$testFailure";
     }
 }
 
 print "\n";
 
-print "$numNewFailures regression";
-print "s" if $numNewFailures != 1;
-print " found.\n";
+print "Results for Mozilla tests:\n";
+printThingsFound($numNewMozillaFailures, "regression", "regressions", "found");
+printThingsFound($numOldMozillaFailures, "test", "tests", "fixed");
+print "    OK.\n" if $numNewMozillaFailures == 0;
 
-print "$numOldFailures test";
-print "s" if $numOldFailures != 1;
-print " fixed.\n";
+print "\n";
 
-print "OK.\n" if $numNewFailures == 0;
-exit(1)  if $numNewFailures;
+print "Results for fast/js tests:\n";
+printThingsFound($numJSFailures, "failure", "failures", "found");
+printThingsFound($numJSCrashes, "crash", "crashes", "found");
+print "    OK.\n" if $numJSFailures == 0 && $numJSCrashes == 0;
+
+print "\n";
+
+exit(1)  if $numNewMozillaFailures || $numJSFailures || $numJSCrashes;

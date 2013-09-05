@@ -7,7 +7,7 @@ self.testRunner = {
     numberOfDFGCompiles: numberOfDFGCompiles
 };
 
-var silentTestPass, didPassSomeTestsSilently, didFailSomeTests;
+var silentTestPass, didPassSomeTestsSilently, didFailSomeTests, successfullyParsed;
 silentTestPass = false;
 didPassSomeTestsSilenty = false;
 didFaileSomeTests = false;
@@ -40,7 +40,6 @@ function testPassed(msg)
 function testFailed(msg)
 {
     didFailSomeTests = true;
-    errorMessage = msg;
     print("FAIL", escapeString(msg));
 }
 
