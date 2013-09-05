@@ -1,3 +1,25 @@
+2013-09-05  Alexey Proskuryakov  <ap@apple.com>
+
+        WKFullScreenWindowController extends lifetime of WKView, deleting it at a wrong time
+        https://bugs.webkit.org/show_bug.cgi?id=120792
+        <rdar://problem/14884666>
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/API/mac/WKView.mm: (-[WKView fullScreenWindowController]):
+        Use a newly minted initializer for the controller.
+
+        * UIProcess/mac/WKFullScreenWindowController.h: Removed unused web view accessors.
+        Changed the class to take web view at initialization time.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:webView:]): Initialize the controller
+        inone step.
+        (-[WKFullScreenWindowController dealloc]): WebView is now a raw pointer, no need
+        to zero it.
+        (-[WKFullScreenWindowController close]): Make sure to not leave a dangling WKView
+        pointer (this method is indirectly but inevitably called when WKView is deallocated).
+
 2013-09-05  Anders Carlsson  <andersca@apple.com>
 
         Replace uses of CLANG_PRAGMA with #pragma
