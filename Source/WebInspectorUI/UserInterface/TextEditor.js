@@ -1180,7 +1180,6 @@ WebInspector.TextEditor.prototype = {
                 }
 
                 if (!isNaN(this._executionLineNumber)) {
-                    console.assert(this._executionLineHandle);
                     console.assert(!isNaN(this._executionColumnNumber));
                     newExecutionLocation = this._formatterSourceMap.originalToFormatted(this._executionLineNumber, this._executionColumnNumber);
                 }
@@ -1204,7 +1203,6 @@ WebInspector.TextEditor.prototype = {
                 }
 
                 if (!isNaN(this._executionLineNumber)) {
-                    console.assert(this._executionLineHandle);
                     console.assert(!isNaN(this._executionColumnNumber));
                     newExecutionLocation = this._formatterSourceMap.formattedToOriginal(this._executionLineNumber, this._executionColumnNumber);
                 }
