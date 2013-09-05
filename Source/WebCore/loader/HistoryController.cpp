@@ -224,21 +224,21 @@ void HistoryController::restoreDocumentState()
 
 void HistoryController::invalidateCurrentItemCachedPage()
 {
-    // When we are pre-commit, the currentItem is where the pageCache data resides    
-    CachedPage* cachedPage = pageCache()->get(currentItem());
+    // When we are pre-commit, the currentItem is where any page cache data resides.
+    if (!pageCache()->get(currentItem()))
+        return;
+
+    OwnPtr<CachedPage> cachedPage = pageCache()->take(currentItem());
 
     // FIXME: This is a grotesque hack to fix <rdar://problem/4059059> Crash in RenderFlow::detach
     // Somehow the PageState object is not properly updated, and is holding onto a stale document.
     // Both Xcode and FileMaker see this crash, Safari does not.
     
-    ASSERT(!cachedPage || cachedPage->document() == m_frame.document());
-    if (cachedPage && cachedPage->document() == m_frame.document()) {
+    ASSERT(cachedPage->document() == m_frame.document());
+    if (cachedPage->document() == m_frame.document()) {
         cachedPage->document()->setInPageCache(false);
         cachedPage->clear();
     }
-    
-    if (cachedPage)
-        pageCache()->remove(currentItem());
 }
 
 bool HistoryController::shouldStopLoadingForHistoryItem(HistoryItem* targetItem) const

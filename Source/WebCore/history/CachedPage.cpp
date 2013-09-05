@@ -45,9 +45,9 @@ namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedPageCounter, ("CachedPage"));
 
-PassRefPtr<CachedPage> CachedPage::create(Page& page)
+PassOwnPtr<CachedPage> CachedPage::create(Page& page)
 {
-    return adoptRef(new CachedPage(page));
+    return adoptPtr(new CachedPage(page));
 }
 
 CachedPage::CachedPage(Page& page)

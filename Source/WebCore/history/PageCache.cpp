@@ -442,6 +442,29 @@ void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page& page)
     prune();
 }
 
+PassOwnPtr<CachedPage> PageCache::take(HistoryItem* item)
+{
+    if (!item)
+        return nullptr;
+
+    OwnPtr<CachedPage> cachedPage = item->m_cachedPage.release();
+
+    removeFromLRUList(item);
+    --m_size;
+
+    item->deref(); // Balanced in add().
+
+    if (!cachedPage)
+        return nullptr;
+
+    if (cachedPage->hasExpired()) {
+        LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item->url().string().ascii().data());
+        return nullptr;
+    }
+
+    return cachedPage.release();
+}
+
 CachedPage* PageCache::get(HistoryItem* item)
 {
     if (!item)

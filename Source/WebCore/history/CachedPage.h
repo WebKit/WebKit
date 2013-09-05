@@ -27,7 +27,6 @@
 #define CachedPage_h
 
 #include "CachedFrame.h"
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
     
@@ -35,9 +34,9 @@ class Document;
 class DocumentLoader;
 class Page;
 
-class CachedPage : public RefCounted<CachedPage> {
+class CachedPage {
 public:
-    static PassRefPtr<CachedPage> create(Page&);
+    static PassOwnPtr<CachedPage> create(Page&);
     ~CachedPage();
 
     void restore(Page&);
@@ -67,7 +66,7 @@ private:
 
     double m_timeStamp;
     double m_expirationTime;
-    RefPtr<CachedFrame> m_cachedMainFrame;
+    OwnPtr<CachedFrame> m_cachedMainFrame;
     bool m_needStyleRecalcForVisitedLinks;
     bool m_needsFullStyleRecalc;
     bool m_needsCaptionPreferencesChanged;

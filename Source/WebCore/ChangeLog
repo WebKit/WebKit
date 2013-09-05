@@ -1,3 +1,41 @@
+2013-09-05  Andreas Kling  <akling@apple.com>
+
+        Cached Page and Frame don't need to be ref-counted.
+        <https://webkit.org/b/120710>
+
+        Reviewed by Anders Carlsson.
+
+        - CachedPage is owned by HistoryItem.
+        - CachedFrame is owned by CachedPage.
+
+        Remove the ref counting from these objects to make the code less confusing.
+
+        Added a new method:
+
+        - PassOwnPtr<CachedPage> PageCache::take(HistoryItem*)
+
+        ..which is what it looks like - a combined get() and remove() that transfers
+        ownership of the CachedPage to the caller.
+
+        This is used by commitProvisionalLoad() and invalidateCurrentItemCachedPage()
+        to accomplish in one swoop what they used to do in awkwardly spaced steps.
+
+        * history/CachedFrame.h:
+        (WebCore::CachedFrame::create):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::create):
+        * history/CachedPage.h:
+        * history/HistoryItem.h:
+        * history/PageCache.cpp:
+        (WebCore::PageCache::take):
+        * history/PageCache.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::transitionToCommitted):
+        * loader/FrameLoader.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::invalidateCurrentItemCachedPage):
+
 2013-09-05  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r155108): Add SynchronousLoaderClientCFNet.cpp to Xcode project

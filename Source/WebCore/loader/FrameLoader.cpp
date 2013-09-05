@@ -1699,9 +1699,12 @@ void FrameLoader::clearProvisionalLoad()
 
 void FrameLoader::commitProvisionalLoad()
 {
-    RefPtr<CachedPage> cachedPage = m_loadingFromCachedPage ? pageCache()->get(history().provisionalItem()) : 0;
     RefPtr<DocumentLoader> pdl = m_provisionalDocumentLoader;
     Ref<Frame> protect(m_frame);
+
+    OwnPtr<CachedPage> cachedPage;
+    if (m_loadingFromCachedPage)
+        cachedPage = pageCache()->take(history().provisionalItem());
 
     LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s'", m_frame.tree().uniqueName().string().utf8().data(),
         m_frame.document() ? m_frame.document()->url().stringCenterEllipsizedToLength().utf8().data() : "",
@@ -1721,7 +1724,7 @@ void FrameLoader::commitProvisionalLoad()
     if (!cachedPage && !m_stateMachine.creatingInitialEmptyDocument())
         m_client.makeRepresentation(pdl.get());
 
-    transitionToCommitted(cachedPage);
+    transitionToCommitted(cachedPage.get());
 
     if (pdl && m_documentLoader) {
         // Check if the destination page is allowed to access the previous page's timing information.
@@ -1738,10 +1741,9 @@ void FrameLoader::commitProvisionalLoad()
     
     if (cachedPage && cachedPage->document()) {
         prepareForCachedPageRestore();
-        cachedPage->restore(*m_frame.page());
 
-        // The page should be removed from the cache immediately after a restoration in order for the PageCache to be consistent.
-        pageCache()->remove(history().currentItem());
+        // FIXME: This API should be turned around so that we ground CachedPage into the Page.
+        cachedPage->restore(*m_frame.page());
 
         dispatchDidCommitLoad();
 
@@ -1751,11 +1753,8 @@ void FrameLoader::commitProvisionalLoad()
             m_client.dispatchDidReceiveTitle(title);
 
         checkCompleted();
-    } else {
-        if (cachedPage)
-            pageCache()->remove(history().currentItem());
+    } else
         didOpenURL();
-    }
 
     LOG(Loading, "WebCoreLoading %s: Finished committing provisional load to URL %s", m_frame.tree().uniqueName().string().utf8().data(),
         m_frame.document() ? m_frame.document()->url().stringCenterEllipsizedToLength().utf8().data() : "");
@@ -1789,7 +1788,7 @@ void FrameLoader::commitProvisionalLoad()
     }
 }
 
-void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
+void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
 {
     ASSERT(m_client.hasWebView());
     ASSERT(m_state == FrameStateProvisional);
