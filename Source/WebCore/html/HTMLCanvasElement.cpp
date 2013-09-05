@@ -235,7 +235,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
     return 0;
 }
     
-bool HTMLCanvasElement::supportsContext(const String& type, CanvasContextAttributes*)
+bool HTMLCanvasElement::probablySupportsContext(const String& type, CanvasContextAttributes*)
 {
     // FIXME: Provide implementation that accounts for attributes. Bugzilla bug 117093
     // https://bugs.webkit.org/show_bug.cgi?id=117093

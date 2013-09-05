@@ -1,118 +1,118 @@
-This test ensures WebGL implementations interact correctly with the canvas tag's supportContext function, that getContext and supportsContext are implemented consistently with one another, and that malformed parameters to supportsContext are handled correctly.
+This test ensures WebGL implementations interact correctly with the canvas tag's probablySupportsContext function, that getContext and probablySupportsContext are implemented consistently with one another, and that malformed parameters to probablySupportsContext are handled correctly.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Canvas.supportsContext('2d')
+Canvas.probablySupportsContext('2d')
 
-PASS supportsContext('2d') is consistent with getContext('2d')
-PASS supportsContext('2d') returns true
+PASS probablySupportsContext('2d') is consistent with getContext('2d')
+PASS probablySupportsContext('2d') returns true
 PASS getContext('2d') returns true (context exists)
-Testing getContext and supportsContext('2d') after a context is created
-PASS supportsContext('2d') returns true
-PASS supportsContext('webkit-3d') returns false
+Testing getContext and probablySupportsContext('2d') after a context is created
+PASS probablySupportsContext('2d') returns true
+PASS probablySupportsContext('webkit-3d') returns false
 PASS webkit-3d context does not exist
 
 WebGL disabled
 
-Canvas.supportsContext('webkit-3d')
+Canvas.probablySupportsContext('webkit-3d')
 
-PASS supportsContext('webkit-3d') is consistent with getContext('webkit-3d')
-FAIL supportsContext('webkit-3d') returns false
+PASS probablySupportsContext('webkit-3d') is consistent with getContext('webkit-3d')
+FAIL probablySupportsContext('webkit-3d') returns false
 FAIL getContext('webkit-3d') returns false (context does not exist)
 
-Canvas.supportsContext('experimental-webgl')
+Canvas.probablySupportsContext('experimental-webgl')
 
-PASS supportsContext('experimental-webgl') is consistent with getContext('experimental-webgl')
-FAIL supportsContext('experimental-webgl') returns false
+PASS probablySupportsContext('experimental-webgl') is consistent with getContext('experimental-webgl')
+FAIL probablySupportsContext('experimental-webgl') returns false
 FAIL getContext('experimental-webgl') returns false (context does not exist)
 
-Canvas.supportsContext('moz-webgl')
+Canvas.probablySupportsContext('moz-webgl')
 
-PASS supportsContext('moz-webgl') is consistent with getContext('moz-webgl')
-FAIL supportsContext('moz-webgl') returns false
+PASS probablySupportsContext('moz-webgl') is consistent with getContext('moz-webgl')
+FAIL probablySupportsContext('moz-webgl') returns false
 FAIL getContext('moz-webgl') returns false (context does not exist)
 
 WebGL enabled
 
-Canvas.supportsContext('webkit-3d')
+Canvas.probablySupportsContext('webkit-3d')
 
-PASS supportsContext('webkit-3d') is consistent with getContext('webkit-3d')
-PASS supportsContext('webkit-3d') returns true
+PASS probablySupportsContext('webkit-3d') is consistent with getContext('webkit-3d')
+PASS probablySupportsContext('webkit-3d') returns true
 PASS getContext('webkit-3d') returns true (context exists)
-Testing getContext and supportsContext('webkit-3d') after a context is created
-PASS supportsContext('webkit-3d') returns true
-PASS supportsContext('2d') returns false
+Testing getContext and probablySupportsContext('webkit-3d') after a context is created
+PASS probablySupportsContext('webkit-3d') returns true
+PASS probablySupportsContext('2d') returns false
 PASS 2d context does not exist
 
-Canvas.supportsContext('experimental-webgl')
+Canvas.probablySupportsContext('experimental-webgl')
 
-PASS supportsContext('experimental-webgl') is consistent with getContext('experimental-webgl')
-PASS supportsContext('experimental-webgl') returns true
+PASS probablySupportsContext('experimental-webgl') is consistent with getContext('experimental-webgl')
+PASS probablySupportsContext('experimental-webgl') returns true
 PASS getContext('experimental-webgl') returns true (context exists)
-Testing getContext and supportsContext('experimental-webgl') after a context is created
-PASS supportsContext('experimental-webgl') returns true
-PASS supportsContext('2d') returns false
+Testing getContext and probablySupportsContext('experimental-webgl') after a context is created
+PASS probablySupportsContext('experimental-webgl') returns true
+PASS probablySupportsContext('2d') returns false
 PASS 2d context does not exist
 
-Canvas.supportsContext('moz-webgl')
+Canvas.probablySupportsContext('moz-webgl')
 
-PASS supportsContext('moz-webgl') is consistent with getContext('moz-webgl')
-FAIL supportsContext('moz-webgl') returns false
+PASS probablySupportsContext('moz-webgl') is consistent with getContext('moz-webgl')
+FAIL probablySupportsContext('moz-webgl') returns false
 FAIL getContext('moz-webgl') returns false (context does not exist)
 
-Testing malformed attributes that cause supportsContext and getContext to be undefined
+Testing malformed attributes that cause probablySupportsContext and getContext to be undefined
 
-canvas.supportsContext('webkit-3d' ,{ get alpha() { throw 'Test alpha Error'; } })
+canvas.probablySupportsContext('webkit-3d' ,{ get alpha() { throw 'Test alpha Error'; } })
 
 PASS supports is undefined
 PASS context is undefined
-PASS supportsContext('webkit-3d' ,{ get alpha() { throw 'Test alpha Error'; } }) is consistent with getContext('webkit-3d' ,{ get alpha() { throw 'Test alpha Error'; } })
-FAIL supportsContext('webkit-3d' ,{ get alpha() { throw 'Test alpha Error'; } }) returns false
+PASS probablySupportsContext('webkit-3d' ,{ get alpha() { throw 'Test alpha Error'; } }) is consistent with getContext('webkit-3d' ,{ get alpha() { throw 'Test alpha Error'; } })
+FAIL probablySupportsContext('webkit-3d' ,{ get alpha() { throw 'Test alpha Error'; } }) returns false
 FAIL getContext('webkit-3d' ,{ get alpha() { throw 'Test alpha Error'; } }) returns false (context does not exist)
 
-canvas.supportsContext('webkit-3d' ,{ get depth() { throw 'Test depth Error'; } })
+canvas.probablySupportsContext('webkit-3d' ,{ get depth() { throw 'Test depth Error'; } })
 
 PASS supports is undefined
 PASS context is undefined
-PASS supportsContext('webkit-3d' ,{ get depth() { throw 'Test depth Error'; } }) is consistent with getContext('webkit-3d' ,{ get depth() { throw 'Test depth Error'; } })
-FAIL supportsContext('webkit-3d' ,{ get depth() { throw 'Test depth Error'; } }) returns false
+PASS probablySupportsContext('webkit-3d' ,{ get depth() { throw 'Test depth Error'; } }) is consistent with getContext('webkit-3d' ,{ get depth() { throw 'Test depth Error'; } })
+FAIL probablySupportsContext('webkit-3d' ,{ get depth() { throw 'Test depth Error'; } }) returns false
 FAIL getContext('webkit-3d' ,{ get depth() { throw 'Test depth Error'; } }) returns false (context does not exist)
 
-canvas.supportsContext('webkit-3d' ,{ get stencil() { throw 'Test stencil Error'; } })
+canvas.probablySupportsContext('webkit-3d' ,{ get stencil() { throw 'Test stencil Error'; } })
 
 PASS supports is undefined
 PASS context is undefined
-PASS supportsContext('webkit-3d' ,{ get stencil() { throw 'Test stencil Error'; } }) is consistent with getContext('webkit-3d' ,{ get stencil() { throw 'Test stencil Error'; } })
-FAIL supportsContext('webkit-3d' ,{ get stencil() { throw 'Test stencil Error'; } }) returns false
+PASS probablySupportsContext('webkit-3d' ,{ get stencil() { throw 'Test stencil Error'; } }) is consistent with getContext('webkit-3d' ,{ get stencil() { throw 'Test stencil Error'; } })
+FAIL probablySupportsContext('webkit-3d' ,{ get stencil() { throw 'Test stencil Error'; } }) returns false
 FAIL getContext('webkit-3d' ,{ get stencil() { throw 'Test stencil Error'; } }) returns false (context does not exist)
 
-canvas.supportsContext('webkit-3d' ,{ get antialias() { throw 'Test antialias Error'; } })
+canvas.probablySupportsContext('webkit-3d' ,{ get antialias() { throw 'Test antialias Error'; } })
 
 PASS supports is undefined
 PASS context is undefined
-PASS supportsContext('webkit-3d' ,{ get antialias() { throw 'Test antialias Error'; } }) is consistent with getContext('webkit-3d' ,{ get antialias() { throw 'Test antialias Error'; } })
-FAIL supportsContext('webkit-3d' ,{ get antialias() { throw 'Test antialias Error'; } }) returns false
+PASS probablySupportsContext('webkit-3d' ,{ get antialias() { throw 'Test antialias Error'; } }) is consistent with getContext('webkit-3d' ,{ get antialias() { throw 'Test antialias Error'; } })
+FAIL probablySupportsContext('webkit-3d' ,{ get antialias() { throw 'Test antialias Error'; } }) returns false
 FAIL getContext('webkit-3d' ,{ get antialias() { throw 'Test antialias Error'; } }) returns false (context does not exist)
 
-canvas.supportsContext('webkit-3d' ,{ get premultipliedAlpha() { throw 'Test premultipliedAlpha Error'; } })
+canvas.probablySupportsContext('webkit-3d' ,{ get premultipliedAlpha() { throw 'Test premultipliedAlpha Error'; } })
 
 PASS supports is undefined
 PASS context is undefined
-PASS supportsContext('webkit-3d' ,{ get premultipliedAlpha() { throw 'Test premultipliedAlpha Error'; } }) is consistent with getContext('webkit-3d' ,{ get premultipliedAlpha() { throw 'Test premultipliedAlpha Error'; } })
-FAIL supportsContext('webkit-3d' ,{ get premultipliedAlpha() { throw 'Test premultipliedAlpha Error'; } }) returns false
+PASS probablySupportsContext('webkit-3d' ,{ get premultipliedAlpha() { throw 'Test premultipliedAlpha Error'; } }) is consistent with getContext('webkit-3d' ,{ get premultipliedAlpha() { throw 'Test premultipliedAlpha Error'; } })
+FAIL probablySupportsContext('webkit-3d' ,{ get premultipliedAlpha() { throw 'Test premultipliedAlpha Error'; } }) returns false
 FAIL getContext('webkit-3d' ,{ get premultipliedAlpha() { throw 'Test premultipliedAlpha Error'; } }) returns false (context does not exist)
 
-canvas.supportsContext('webkit-3d' ,{ get preserveDrawingBUffer() { throw 'Test preserveDrawingBuffer Error'; } })
+canvas.probablySupportsContext('webkit-3d' ,{ get preserveDrawingBUffer() { throw 'Test preserveDrawingBuffer Error'; } })
 
 PASS supports is undefined
 PASS context is undefined
-PASS supportsContext('webkit-3d' ,{ get preserveDrawingBUffer() { throw 'Test preserveDrawingBuffer Error'; } }) is consistent with getContext('webkit-3d' ,{ get preserveDrawingBUffer() { throw 'Test preserveDrawingBuffer Error'; } })
-FAIL supportsContext('webkit-3d' ,{ get preserveDrawingBUffer() { throw 'Test preserveDrawingBuffer Error'; } }) returns false
+PASS probablySupportsContext('webkit-3d' ,{ get preserveDrawingBUffer() { throw 'Test preserveDrawingBuffer Error'; } }) is consistent with getContext('webkit-3d' ,{ get preserveDrawingBUffer() { throw 'Test preserveDrawingBuffer Error'; } })
+FAIL probablySupportsContext('webkit-3d' ,{ get preserveDrawingBUffer() { throw 'Test preserveDrawingBuffer Error'; } }) returns false
 FAIL getContext('webkit-3d' ,{ get preserveDrawingBUffer() { throw 'Test preserveDrawingBuffer Error'; } }) returns false (context does not exist)
 
-Testing how supportsContext handles no parameters
-PASS document.createElement('canvas').supportsContext() is false
+Testing how probablySupportsContext handles no parameters
+PASS document.createElement('canvas').probablySupportsContext() is false
 
 PASS successfullyParsed is true
 

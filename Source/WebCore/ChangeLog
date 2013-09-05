@@ -1,3 +1,20 @@
+2013-09-04  Dean Jackson  <dino@apple.com>
+
+        Rename supportsContext to probablySupportsContext
+        https://bugs.webkit.org/show_bug.cgi?id=120716
+        <rdar://problem/14914499>
+
+        Reviewed by Antoine Quint.
+
+        As decided in: http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2013-September/040680.html
+
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::probablySupportsContext):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::probablySupportsContext):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.idl:
+
 2013-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix build warning about unused variable.

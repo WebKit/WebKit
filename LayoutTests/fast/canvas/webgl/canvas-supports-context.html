@@ -1,7 +1,6 @@
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>WebGL Canvas supportsContext Tests</title>
+<title>WebGL Canvas probablySupportsContext Tests</title>
 <script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body>
@@ -16,14 +15,14 @@ var type3dmoz = "moz-webgl";
 function print_basic_results(supports, context, args_str)
 {
     if (context && !supports)
-        testFailed(type_of_context + " context exists yet canvas.supportsContext(" + args_str + ") returns false");
+        testFailed(type_of_context + " context exists yet canvas.probablySupportsContext(" + args_str + ") returns false");
     else
-        testPassed("supportsContext(" + args_str + ") is consistent with getContext(" + args_str + ")");
+        testPassed("probablySupportsContext(" + args_str + ") is consistent with getContext(" + args_str + ")");
 
     if (supports)
-        testPassed("supportsContext(" + args_str + ") returns true");
+        testPassed("probablySupportsContext(" + args_str + ") returns true");
     else
-        testFailed("supportsContext(" + args_str + ") returns false");
+        testFailed("probablySupportsContext(" + args_str + ") returns false");
 
     if (context) {
         testPassed("getContext(" + args_str + ") returns true (context exists)");
@@ -46,12 +45,12 @@ function other_type_of_context(type_of_context)
 
 function test_post_creation(canvas, type_of_context)
 {
-    debug("Testing getContext and supportsContext('" + type_of_context + "') after a context is created");
+    debug("Testing getContext and probablySupportsContext('" + type_of_context + "') after a context is created");
 
-    if (canvas.supportsContext(type_of_context))
-        testPassed("supportsContext('" + type_of_context + "') returns true");
+    if (canvas.probablySupportsContext(type_of_context))
+        testPassed("probablySupportsContext('" + type_of_context + "') returns true");
     else
-        testFailed("supportsContext('" + type_of_context + "') returns false");
+        testFailed("probablySupportsContext('" + type_of_context + "') returns false");
 
     var other_type = other_type_of_context(type_of_context);
     
@@ -60,10 +59,10 @@ function test_post_creation(canvas, type_of_context)
         return;
     }
 
-    if (!canvas.supportsContext(other_type))
-        testPassed("supportsContext('" + other_type + "') returns false");
+    if (!canvas.probablySupportsContext(other_type))
+        testPassed("probablySupportsContext('" + other_type + "') returns false");
     else
-        testFailed("supportsContext('" + other_type + "') returns true");
+        testFailed("probablySupportsContext('" + other_type + "') returns true");
 
     if (!canvas.getContext(other_type))
         testPassed(other_type + " context does not exist");
@@ -75,11 +74,11 @@ function test_post_creation(canvas, type_of_context)
 function check_context(type_of_context)
 {
     debug("");
-    debug("Canvas.supportsContext('" + type_of_context + "')");
+    debug("Canvas.probablySupportsContext('" + type_of_context + "')");
     debug("");
 
     var canvas = document.createElement("canvas");
-    var supports = canvas.supportsContext(type_of_context);
+    var supports = canvas.probablySupportsContext(type_of_context);
     var context = canvas.getContext(type_of_context);
 
     if(print_basic_results(supports, context, "'" + type_of_context + "'"))
@@ -91,13 +90,13 @@ function malformed_attrs(attrs, attrs_str)
     type_of_context = type3dlegacy;
 
     debug("");
-    debug("canvas.supportsContext('" + type_of_context + "' ," + attrs_str + ")");
+    debug("canvas.probablySupportsContext('" + type_of_context + "' ," + attrs_str + ")");
     debug("");
 
     var canvas = document.createElement("canvas");
     var supports;
     try {
-        supports = canvas.supportsContext(type_of_context, attrs);
+        supports = canvas.probablySupportsContext(type_of_context, attrs);
     } catch (e) { } finally {
         if (typeof(supports) == typeof(undefined))
             testPassed("supports is undefined");
@@ -121,7 +120,7 @@ function malformed_attrs(attrs, attrs_str)
 
 function run_tests()
 {
-    description("This test ensures WebGL implementations interact correctly with the canvas tag's supportContext function, that getContext and supportsContext are implemented consistently with one another, and that malformed parameters to supportsContext are handled correctly.");
+    description("This test ensures WebGL implementations interact correctly with the canvas tag's probablySupportsContext function, that getContext and probablySupportsContext are implemented consistently with one another, and that malformed parameters to probablySupportsContext are handled correctly.");
 
     check_context(type2d);
 
@@ -142,7 +141,7 @@ function run_tests()
     check_context(type3dmoz);
 
     debug("");
-    debug("Testing malformed attributes that cause supportsContext and getContext to be undefined");
+    debug("Testing malformed attributes that cause probablySupportsContext and getContext to be undefined");
 
     malformed_attrs({ get alpha() { throw 'Test alpha Error'; } }, 
         "{ get alpha() { throw 'Test alpha Error'; } }");
@@ -158,8 +157,8 @@ function run_tests()
         "{ get preserveDrawingBUffer() { throw 'Test preserveDrawingBuffer Error'; } }");
 
     debug("");
-    debug("Testing how supportsContext handles no parameters");
-    shouldBeFalse("document.createElement('canvas').supportsContext()");
+    debug("Testing how probablySupportsContext handles no parameters");
+    shouldBeFalse("document.createElement('canvas').probablySupportsContext()");
 
     debug("");
 }
