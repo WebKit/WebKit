@@ -75,11 +75,11 @@
 }
 
 .breakpoint-action-eval-editor > .CodeMirror {
-    width: 100%;
+    width: 336px; /* NOTE: Fixed value, manually tuned to .edit-breakpoint-popover-content.wide width */
     height: auto;
 }
 
 .breakpoint-action-eval-editor > .CodeMirror-scroll {
-    width: 100%;
+    width: 336px; /* NOTE: Fixed value, manually tuned to .edit-breakpoint-popover-content.wide width */
     overflow: hidden;
 }
