@@ -77,7 +77,7 @@ def run(kind, *options)
         puts "FAIL: #{$?.inspect}"
         File.open($outputDir + "failed", "a") {
             | outp |
-            outp.puts name
+            outp.puts "#{$collectionName}/#{name}"
         }
         $numFailures += 1
         filename = $outputDir + $collectionName + name
