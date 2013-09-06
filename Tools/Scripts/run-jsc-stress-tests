@@ -71,7 +71,7 @@ def run(kind, *options)
             | outp |
             outp.puts name
         }
-        $numFailures = 0
+        $numFailures += 1
     end
 end
 

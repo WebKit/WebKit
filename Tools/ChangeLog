@@ -1,5 +1,13 @@
 2013-09-06  Filip Pizlo  <fpizlo@apple.com>
 
+        Actually increment $numFailures
+
+        Reviewed by Mark Hahnenberg.
+
+        * Scripts/run-jsc-stress-tests:
+
+2013-09-06  Filip Pizlo  <fpizlo@apple.com>
+
         Fix run-jsc-stress-tests to use Pathname instead of File.realpath.
         
         Also make it uses system() instead of popen(); that means that test output
