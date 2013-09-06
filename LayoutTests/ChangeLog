@@ -1,3 +1,18 @@
+2013-09-06  Mike West  <mkwst@chromium.org>
+
+        Revalidation header blacklisting should be case-insensitive.
+        https://bugs.webkit.org/show_bug.cgi?id=120832
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adds a new test to verify that a CSS file served initially as type
+        'text/css' maintains that type even if a revalidation response sends
+        'text/plain' along with a 304 response.
+
+        * http/tests/cache/content-type-ignored-during-revalidation-expected.txt: Added.
+        * http/tests/cache/content-type-ignored-during-revalidation.html: Added.
+        * http/tests/cache/resources/stylesheet304-bad-content-type.php: Added.
+
 2013-09-06  Filip Pizlo  <fpizlo@apple.com>
 
         fast/js/dfg-* tests should wait for the concurrent JIT
