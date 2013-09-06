@@ -3326,8 +3326,6 @@ enable?(VIDEO) {
             platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h \
             platform/graphics/gstreamer/VideoSinkGStreamer.h \
             platform/graphics/gstreamer/WebKitWebSourceGStreamer.h \
-            platform/graphics/gstreamer/PlatformVideoWindow.h \
-            platform/graphics/gstreamer/PlatformVideoWindowPrivate.h \
             platform/graphics/gstreamer/ImageGStreamer.h
         SOURCES += \
             platform/graphics/gstreamer/GStreamerGWorld.cpp \
@@ -3335,7 +3333,6 @@ enable?(VIDEO) {
             platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp \
             platform/graphics/gstreamer/VideoSinkGStreamer.cpp \
             platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp \
-            platform/graphics/gstreamer/PlatformVideoWindowQt.cpp \
             platform/graphics/gstreamer/ImageGStreamerQt.cpp
         enable?(VIDEO_TRACK) {
             HEADERS += \
@@ -3346,6 +3343,13 @@ enable?(VIDEO) {
                 platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp \
                 platform/graphics/gstreamer/TextCombinerGStreamer.cpp \
                 platform/graphics/gstreamer/TextSinkGStreamer.cpp
+        }
+        use?(NATIVE_FULLSCREEN_VIDEO) {
+            HEADERS += \
+                platform/graphics/gstreamer/PlatformVideoWindow.h \
+                platform/graphics/gstreamer/PlatformVideoWindowPrivate.h
+            SOURCES += \
+                platform/graphics/gstreamer/PlatformVideoWindowQt.cpp
         }
 
     } else:use?(QT_MULTIMEDIA) {
