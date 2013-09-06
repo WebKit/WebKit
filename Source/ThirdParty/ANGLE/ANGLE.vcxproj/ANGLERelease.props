@@ -6,16 +6,9 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup>
-    <ClCompile>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup>
-    <ClCompile>
       <WholeProgramOptimization>true</WholeProgramOptimization>
+      <PreprocessorDefinitions>ANGLE_DISABLE_TRACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

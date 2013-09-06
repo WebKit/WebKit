@@ -1,3 +1,14 @@
+2013-09-06  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win][WebGL] WebGL rendering is slow.
+        https://bugs.webkit.org/show_bug.cgi?id=120841
+
+        Reviewed by Brent Fulgham.
+
+        Rendering WebGL content is slow on Windows, because lots of debug information is written to debug.txt.
+
+        * ANGLE.vcxproj/ANGLERelease.props: Disable logging in release builds.
+
 2013-09-05  Dan Bernstein  <mitz@apple.com>
 
         INSTALL_PATH_PREFIX is used even when not installing
