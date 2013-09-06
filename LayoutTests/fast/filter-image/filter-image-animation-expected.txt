@@ -1,9 +1,10 @@
-         
+          
 PASS - "backgroundImage" property for "brightness" element at 1s saw something close to: -webkit-filter(url(image.svg), brightness(0.5))
 PASS - "backgroundImage" property for "blur" element at 1s saw something close to: -webkit-filter(url(image.svg), blur(5px))
 PASS - "backgroundImage" property for "grayscale" element at 1s saw something close to: -webkit-filter(url(image.svg), grayscale(0.5))
 PASS - "backgroundImage" property for "sepia" element at 1s saw something close to: -webkit-filter(url(image.svg), sepia(0.5))
 PASS - "backgroundImage" property for "no" element at 1s saw something close to: -webkit-filter(url(blue.svg), sepia(0))
+PASS - "backgroundImage" property for "string" element at 1s saw something close to: -webkit-filter(url(image.svg), sepia(0.5))
 PASS - "backgroundImage" property for "multiple1" element at 1s saw something close to: -webkit-filter(url(image.svg), sepia(0.5) blur(1.5px) hue-rotate(22.5deg))
 PASS - "backgroundImage" property for "multiple2" element at 1s saw something close to: -webkit-filter(url(image.svg), contrast(0.5) blur(1.5px) hue-rotate(22.5deg))
 PASS - "backgroundImage" property for "generated1" element at 1s saw something close to: -webkit-filter(-webkit-filter(url(image.svg), blur(3px)), sepia(0))

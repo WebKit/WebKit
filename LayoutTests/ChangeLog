@@ -1,3 +1,19 @@
+2013-09-06  Dirk Schulze  <krit@webkit.org>
+
+        Allow string as image reference on filter()
+        https://bugs.webkit.org/show_bug.cgi?id=120829
+
+        Reviewed by Andreas Kling.
+
+        Check that string can be used as image reference, that we
+        interpolate between the same images once referenced by string
+        and once by url() and that other tokens are not excepted.
+
+        * fast/filter-image/filter-image-animation-expected.txt:
+        * fast/filter-image/filter-image-animation.html:
+        * fast/filter-image/parse-filter-image-expected.txt:
+        * fast/filter-image/parse-filter-image.html:
+
 2013-09-05  Dirk Schulze  <krit@webkit.org>
 
         Support SVG filters on -webkit-filter() function

@@ -80,6 +80,7 @@ PASS innerStyle("background-image", "-webkit-filter(linear-gradient(to top left,
 PASS innerStyle("background-image", "-webkit-filter(linear-gradient(0deg, white -20%, blue, black 120%), hue-rotate(90deg))") is "-webkit-filter(linear-gradient(0deg, white -20%, blue, black 120%), hue-rotate(90deg))"
 PASS innerStyle("background-image", "-webkit-filter(-webkit-cross-fade(url(http://image1.png), url(http://image2.png), 50%), contrast(0.5))") is "-webkit-filter(-webkit-cross-fade(url(http://image1.png/), url(http://image2.png/), 0.5), contrast(0.5))"
 PASS innerStyle("background-image", "-webkit-filter(url(http://image1.png), brightness(50%))") is "-webkit-filter(url(http://image1.png/), brightness(50%))"
+PASS innerStyle("background-image", "-webkit-filter('http://image1.png', brightness(50%))") is "-webkit-filter(url(http://image1.png/), brightness(50%))"
 PASS innerStyle("border-image-source", "-webkit-filter(url(http://image1.png), invert(50%))") is "-webkit-filter(url(http://image1.png/), invert(50%))"
 PASS innerStyle("-webkit-mask-image", "-webkit-filter(url(http://image1.png), invert(50%))") is "-webkit-filter(url(http://image1.png/), invert(50%))"
 PASS innerStyle("-webkit-mask-box-image-source", "-webkit-filter(url(http://image1.png), invert(50%))") is "-webkit-filter(url(http://image1.png/), invert(50%))"
@@ -108,6 +109,8 @@ PASS innerStyle("background-image", "-webkit-filter(url(image1.png) url(image2.p
 PASS computedStyle("background-image", "-webkit-filter(url(image1.png) url(image2.png), brightness(50%))") is "none"
 PASS innerStyle("background-image", "-webkit-filter(url(image1.png), url(image2.png), brightness(50%))") is null
 PASS computedStyle("background-image", "-webkit-filter(url(image1.png), url(image2.png), brightness(50%))") is "none"
+PASS innerStyle("background-image", "-webkit-filter(invalidToken.png, blur(3px))") is null
+PASS computedStyle("background-image", "-webkit-filter(invalidToken.png, blur(3px))") is "none"
 PASS successfullyParsed is true
 
 TEST COMPLETE

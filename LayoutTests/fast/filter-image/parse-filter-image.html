@@ -352,6 +352,10 @@ testInner(
     "background-image",
     "-webkit-filter(url(http://image1.png), brightness(50%))",
     "-webkit-filter(url(http://image1.png/), brightness(50%))");
+testInner(
+    "background-image",
+    "-webkit-filter('http://image1.png', brightness(50%))",
+    "-webkit-filter(url(http://image1.png/), brightness(50%))");
 
 // Test different properties, taking CSS Image values.
 testInner(
@@ -384,6 +388,7 @@ negativeTest("background-image", "-webkit-filter(brightness(50%), )");
 negativeTest("background-image", "-webkit-filter(url(image1.png), brightness(50%), brightness(50%))");
 negativeTest("background-image", "-webkit-filter(url(image1.png) url(image2.png), brightness(50%))");
 negativeTest("background-image", "-webkit-filter(url(image1.png), url(image2.png), brightness(50%))");
+negativeTest("background-image", "-webkit-filter(invalidToken.png, blur(3px))");
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

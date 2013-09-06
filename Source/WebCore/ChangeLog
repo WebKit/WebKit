@@ -1,3 +1,19 @@
+2013-09-06  Dirk Schulze  <krit@webkit.org>
+
+        Allow string as image reference on filter()
+        https://bugs.webkit.org/show_bug.cgi?id=120829
+
+        Reviewed by Andreas Kling.
+
+        Beside <image> (which already includes url(), gradients, cross-fade() and
+        image-set()), the filter() image function should support <string> as image
+        reference.
+
+        http://dev.w3.org/fxtf/filters/#FilterCSSImageValue
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFilterImage): Create CSSImageValue from string.
+
 2013-09-05  Dirk Schulze  <krit@webkit.org>
 
         Support SVG filters on -webkit-filter() function

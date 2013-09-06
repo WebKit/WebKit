@@ -8077,7 +8077,7 @@ bool CSSParser::parseGeneratedImage(CSSParserValueList* valueList, RefPtr<CSSVal
 }
 
 #if ENABLE(CSS_FILTERS)
-bool CSSParser::parseFilterImage(CSSParserValueList* valueList, RefPtr<CSSValue>& crossfade)
+bool CSSParser::parseFilterImage(CSSParserValueList* valueList, RefPtr<CSSValue>& filter)
 {
     RefPtr<CSSFilterImageValue> result;
 
@@ -8085,27 +8085,35 @@ bool CSSParser::parseFilterImage(CSSParserValueList* valueList, RefPtr<CSSValue>
     CSSParserValueList* args = valueList->current()->function->args.get();
     if (!args)
         return false;
-    CSSParserValue* a = args->current();
+    CSSParserValue* value = args->current();
     RefPtr<CSSValue> imageValue;
     RefPtr<CSSValue> filterValue;
 
-    // The first argument is the image. It is a fill image.
-    if (!a || !parseFillImage(args, imageValue))
+    if (!value)
         return false;
-    a = args->next();
+
+    // The first argument is the image. It is a fill image.
+    if (!parseFillImage(args, imageValue)) {
+        if (value->unit == CSSPrimitiveValue::CSS_STRING)
+            imageValue = CSSImageValue::create(completeURL(value->string));
+        else
+            return false;
+    }
+
+    value = args->next();
 
     // Skip a comma
-    if (!isComma(a))
+    if (!isComma(value))
         return false;
-    a = args->next();
+    value = args->next();
 
-    if (!a || !parseFilter(args, filterValue))
+    if (!value || !parseFilter(args, filterValue))
         return false;
-    a = args->next();
+    value = args->next();
 
     result = CSSFilterImageValue::create(imageValue, filterValue);
 
-    crossfade = result;
+    filter = result;
 
     return true;
 }
