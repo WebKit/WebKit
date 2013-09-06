@@ -1,3 +1,15 @@
+2013-09-06  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Update TestExpectations.
+
+        * platform/gtk-wk2/TestExpectations: Skip speech input tests, mark as failing drag and drop tests.
+        * platform/gtk-wk2/plugins/npruntime/object-from-destroyed-plugin-expected.txt: Added.
+        * platform/gtk-wk2/plugins/npruntime/object-from-destroyed-plugin-in-subframe-expected.txt: Added.
+        * platform/gtk/TestExpectations: Updated failing tests.
+        * platform/gtk/animations/cross-fade-background-image-expected.png: Removed.
+        * platform/gtk/animations/cross-fade-background-image-expected.txt: Removed.
+        * platform/gtk/editing/spelling/spellcheck-paste-expected.txt: Rebaseline after r154869.
+
 2013-09-06  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Resolve named grid lines

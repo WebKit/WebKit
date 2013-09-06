@@ -256,6 +256,9 @@ webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Pass 
 webkit.org/b/99026 css3/filters [ Skip ]
 webkit.org/b/99026 fast/filter-image/filter-image.html [ Skip ]
 webkit.org/b/99026 fast/filter-image/parse-filter-image.html [ Skip ]
+webkit.org/b/120673 fast/filter-image/filter-image-blur.html [ Skip ]
+webkit.org/b/120674 fast/filter-image/filter-image-animation.html [ Skip ]
+webkit.org/b/99026 fast/filter-image/filter-image-svg.html [ Skip ]
 
 # Needs testRunner.enableAutoResizeMode()
 webkit.org/b/99028 fast/autoresize [ Failure ]
@@ -424,6 +427,9 @@ webkit.org/b/118459 media/track/track-legacyapi-with-automatic-mode.html [ Skip 
 
 # The feature is enabled at build-time, but the whole test set is failing.
 webkit.org/b/120665 media/track/in-band [ Skip ]
+
+# About using <img> to display PDF with annotations
+webkit.org/b/120844 fast/images/pdf-as-image-with-annotations.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -814,6 +820,8 @@ webkit.org/b/116958 http/tests/navigation/scrollstate-after-location-reload.html
 # These tests time out after the FTL merge
 webkit.org/b/119254 fast/js/regress/marsaglia.html [ Timeout ]
 webkit.org/b/119254 fast/workers/worker-call.html [ Timeout ]
+
+webkit.org/b/120682 inspector-protocol/page/archive.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1468,11 +1476,21 @@ webkit.org/b/120596 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailur
 webkit.org/b/120596 css3/masking/mask-repeat-space-content.html [ ImageOnlyFailure ]
 webkit.org/b/120596 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
-webkit.org/b/120673 fast/filter-image/filter-image-blur.html [ ImageOnlyFailure ]
-
-webkit.org/b/120674 fast/filter-image/filter-image-animation.html [ Failure ]
-
 webkit.org/b/84045 accessibility/image-map1.html [ Failure ]
+
+webkit.org/b/120836 fast/regions/text-region-split-vertical-rl.html [ Failure ]
+
+webkit.org/b/120776 fast/hidpi/image-srcset-fraction.html [ Failure ]
+webkit.org/b/120776 fast/hidpi/image-srcset-change-dynamically-from-js-2x.html [ Failure ]
+webkit.org/b/120776 fast/hidpi/image-srcset-simple-2x.html [ Failure ]
+webkit.org/b/120776 fast/hidpi/image-srcset-src-selection-2x.html [ Failure ]
+
+webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
+
+webkit.org/b/120842 fast/regions/overflow-in-uniform-regions-dynamic.html [ ImageOnlyFailure ]
+webkit.org/b/120842 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure ]
+
+webkit.org/b/120846 svg/custom/masking-clipping-hidpi.svg [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
