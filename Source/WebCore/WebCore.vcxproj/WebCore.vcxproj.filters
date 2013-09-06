@@ -7099,6 +7099,10 @@
     <ClCompile Include="..\bindings\js\WebCoreTypedArrayController.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\RenderBlockFlow.cpp" />
+    <ClCompile Include="..\platform\win\StructuredExceptionHandlerSuppressor.cpp">
+      <Filter>platform\win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -14885,9 +14889,6 @@
     <ClInclude Include="..\css\CSSFilterImageValue.h">
       <Filter>css</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLElementTypeChecks.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
     <ClInclude Include="..\dom\InlineStyleSheetOwner.h">
       <Filter>dom</Filter>
     </ClInclude>
@@ -14903,12 +14904,11 @@
     <ClInclude Include="..\style\StyleResolveForDocument.h">
       <Filter>css</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementTypeChecks.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
     <ClInclude Include="..\dom\TextNodeTraversal.h">
       <Filter>dom</Filter>
     </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLElementTypeHelpers.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementTypeHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">
@@ -15876,6 +15876,9 @@
   <ItemGroup>
     <MASM Include="..\plugins\win\PaintHooks.asm">
       <Filter>plugins\win</Filter>
+    </MASM>
+    <MASM Include="..\platform\win\makesafeseh.asm">
+      <Filter>platform\win</Filter>
     </MASM>
   </ItemGroup>
 </Project>

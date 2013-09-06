@@ -1,3 +1,29 @@
+2013-09-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] StructuredExceptionHandlerSuppressor Causes Bad Interactions with Support Libraries
+        https://bugs.webkit.org/show_bug.cgi?id=120901
+
+        Reviewed by Anders Carlsson.
+
+        Change from old "crash on any exception" implementation to a new version that leaves normal
+        exception handling infrastructure in place for use by support libraries. We check exceptions
+        and decide whether to abort or not based on the failure type.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Add new implementation files.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * platform/graphics/ca/win/LayerChangesFlusher.cpp:
+        (WebCore::LayerChangesFlusher::hookCallback): Allocate handler struct on stack.
+        * platform/win/StructuredExceptionHandlerSuppressor.cpp: Added.
+        (exceptionShouldTerminateProgram): New.
+        (exceptionHandler): New.
+        (WebCore::StructuredExceptionHandlerSuppressor::StructuredExceptionHandlerSuppressor): Moved
+        from header, and updated to add our new exception handler.
+        (WebCore::StructuredExceptionHandlerSuppressor::~StructuredExceptionHandlerSuppressor): Moved
+        from header.
+        * platform/win/StructuredExceptionHandlerSuppressor.h: Move implementation of constructor and
+        destructor from header file.
+        * platform/win/makesafeseh.asm: Added.
+
 2013-09-06  Vivek Galatage  <vivek.vg@samsung.com>
 
         Refactor XMLDocumentParser to defer creation of XMLErrors until error occurs
