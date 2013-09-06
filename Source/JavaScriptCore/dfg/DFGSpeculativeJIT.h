@@ -2118,7 +2118,6 @@ public:
     void speculateBoolean(Edge);
     void speculateCell(Edge);
     void speculateObject(Edge);
-    void speculateFinalObject(Edge);
     void speculateObjectOrOther(Edge);
     void speculateString(Edge edge, GPRReg cell);
     void speculateStringIdentAndLoadStorage(Edge edge, GPRReg string, GPRReg storage);

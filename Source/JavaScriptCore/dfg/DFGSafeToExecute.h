@@ -53,7 +53,6 @@ public:
         case BooleanUse:
         case CellUse:
         case ObjectUse:
-        case FinalObjectUse:
         case ObjectOrOtherUse:
         case StringIdentUse:
         case StringUse:
