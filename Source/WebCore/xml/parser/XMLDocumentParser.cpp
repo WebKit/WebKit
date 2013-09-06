@@ -134,7 +134,9 @@ void XMLDocumentParser::append(PassRefPtr<StringImpl> inputSource)
 
 void XMLDocumentParser::handleError(XMLErrors::ErrorType type, const char* m, TextPosition position)
 {
-    m_xmlErrors.handleError(type, m, position);
+    if (!m_xmlErrors)
+        m_xmlErrors = adoptPtr(new XMLErrors(document()));
+    m_xmlErrors->handleError(type, m, position);
     if (type != XMLErrors::warning)
         m_sawError = true;
     if (type == XMLErrors::fatal)
@@ -234,8 +236,8 @@ void XMLDocumentParser::insertErrorMessageBlock()
     if (m_parsingFragment)
         return;
 #endif
-
-    m_xmlErrors.insertErrorMessageBlock();
+    ASSERT(m_xmlErrors);
+    m_xmlErrors->insertErrorMessageBlock();
 }
 
 void XMLDocumentParser::notifyFinished(CachedResource* unusedResource)

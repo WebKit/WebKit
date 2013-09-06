@@ -203,7 +203,7 @@ public:
         bool m_requestingScript;
         bool m_finishCalled;
 
-        XMLErrors m_xmlErrors;
+        OwnPtr<XMLErrors> m_xmlErrors;
 
         CachedResourceHandle<CachedScript> m_pendingScript;
         RefPtr<Element> m_scriptElement;

@@ -1,3 +1,25 @@
+2013-09-06  Vivek Galatage  <vivek.vg@samsung.com>
+
+        Refactor XMLDocumentParser to defer creation of XMLErrors until error occurs
+        https://bugs.webkit.org/show_bug.cgi?id=120850
+
+        Reviewed by Darin Adler.
+
+        XMLErrors is created as soon as XMLDocumentParser is constructed. It may not be required 
+        for all the valid XML documents. Deferring its creation until an error for the invalid
+        XML document.
+
+        No new tests as code refactoring.
+
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::handleError):
+        (WebCore::XMLDocumentParser::insertErrorMessageBlock):
+        * xml/parser/XMLDocumentParser.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+
 2013-09-06  Anders Carlsson  <andersca@apple.com>
 
         Remove fastNew/fastDelete
