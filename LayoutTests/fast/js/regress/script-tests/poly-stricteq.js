@@ -1,3 +1,5 @@
+//@ runDefault
+
 // Tests the performance of completely polymorphic strict equality.
 
 var array = [];

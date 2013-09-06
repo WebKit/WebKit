@@ -1,3 +1,5 @@
+//@ skip
+
 var result = 0;
 var buffer = new ArrayBuffer(10);
 var array1 = new Int32Array(buffer, 4, 1);

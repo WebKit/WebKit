@@ -204,6 +204,24 @@ if ($runFastJS) {
     exit exitStatus($result) if $result;
 }
 
+my $jscStressResultsDir = $productDir . "/jsc-stress-results";
+
+# FIXME: run-jsc-stress-tests should be ported to other platforms.
+# https://bugs.webkit.org/show_bug.cgi?id=120809
+my $runJSCStress = isAppleMacWebKit();
+if ($runJSCStress) {
+    my @jscStressDriverCmd = (
+        "/usr/bin/env", "ruby", "Tools/Scripts/run-jsc-stress-tests",
+        "-j", jscPath($productDir), "-o", $jscStressResultsDir,
+        "PerformanceTests/SunSpider/tests/sunspider-1.0",
+        "PerformanceTests/SunSpider/tests/v8-v6",
+        "LayoutTests/fast/js/regress/script-tests"
+    );
+    print "Running: " . join(" ", @jscStressDriverCmd) . "\n";
+    $result = system(@jscStressDriverCmd);
+    exit exitStatus($result) if $result;
+}
+
 my $numNewMozillaFailures = keys %newMozillaFailures;
 if ($numNewMozillaFailures) {
     print "\n** The following Mozilla test failures have been introduced:\n";
@@ -253,9 +271,25 @@ my @fastJSCrashList = readAllLines($fastJSResultsDir . "/crashed");
 my $numJSFailures = @fastJSFailList;
 my $numJSCrashes = @fastJSCrashList;
 
-if ($numJSFailures || $numJSCrashes) {
+if ($numJSFailures) {
     print "\n** The following fast/js test failures have been introduced:\n";
-    foreach my $testFailure (@fastJSFailList, @fastJSCrashList) {
+    foreach my $testFailure (@fastJSFailList) {
+        print "\t$testFailure";
+    }
+}
+if ($numJSCrashes) {
+    print "\n** The following fast/js test crashes have been introduced:\n";
+    foreach my $testCrash (@fastJSCrashList) {
+        print "\t$testCrash";
+    }
+}
+
+my @jscStressFailList = readAllLines($jscStressResultsDir . "/failed");
+my $numJSCStressFailures = @jscStressFailList;
+
+if ($numJSCStressFailures) {
+    print "\n** The following JSC stress test failures have been introduced:\n";
+    foreach my $testFailure (@jscStressFailList) {
         print "\t$testFailure";
     }
 }
@@ -277,5 +311,13 @@ if ($runFastJS) {
     
     print "\n";
 }
+
+if ($runJSCStress) {
+    print "Results for JSC stress tests:\n";
+    printThingsFound($numJSCStressFailures, "failure", "failures", "found");
+    print "    OK.\n" if $numJSCStressFailures == 0;
     
-exit(1)  if $numNewMozillaFailures || $numJSFailures || $numJSCrashes;
+    print "\n";
+}
+
+exit(1)  if $numNewMozillaFailures || $numJSFailures || $numJSCrashes || $numJSCStressFailures;

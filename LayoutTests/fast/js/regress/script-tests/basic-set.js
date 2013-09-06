@@ -1,3 +1,5 @@
+//@ runDefault
+
 var set = new Set;
 for (var i = 0; i < 8000; ++i) {
     set.add(i);

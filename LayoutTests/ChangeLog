@@ -1,3 +1,54 @@
+2013-09-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Introduce a way to run benchmarks and JSRegress as stress tests with different jsc command-line options
+        https://bugs.webkit.org/show_bug.cgi?id=120808
+
+        Reviewed by Mark Hahnenberg and rubber stamped by Geoffrey Garen.
+        
+        Make it so that long-running tests aren't run as part of the stress test (they
+        will still run as part of benchmarks and LayoutTests) or run them with fewer
+        configurations.
+
+        * fast/js/regress/script-tests/ArrayBuffer-DataView-alloc-large-long-lived.js:
+        * fast/js/regress/script-tests/ArrayBuffer-DataView-alloc-long-lived.js:
+        * fast/js/regress/script-tests/ArrayBuffer-Int32Array-byteOffset.js:
+        * fast/js/regress/script-tests/ArrayBuffer-Int8Array-alloc-huge-long-lived.js:
+        * fast/js/regress/script-tests/ArrayBuffer-Int8Array-alloc-large-long-lived-fragmented.js:
+        * fast/js/regress/script-tests/ArrayBuffer-Int8Array-alloc-large-long-lived.js:
+        * fast/js/regress/script-tests/ArrayBuffer-Int8Array-alloc-long-lived-buffer.js:
+        * fast/js/regress/script-tests/ArrayBuffer-Int8Array-alloc-long-lived.js:
+        * fast/js/regress/script-tests/ArrayBuffer-Int8Array-alloc.js:
+        * fast/js/regress/script-tests/DataView-custom-properties.js:
+        * fast/js/regress/script-tests/Float32Array-to-Float64Array-set.js:
+        * fast/js/regress/script-tests/Float64Array-alloc-long-lived.js:
+        * fast/js/regress/script-tests/Float64Array-to-Int16Array-set.js:
+        * fast/js/regress/script-tests/HashMap-put-get-iterate-keys.js:
+        * fast/js/regress/script-tests/HashMap-put-get-iterate.js:
+        * fast/js/regress/script-tests/HashMap-string-put-get-iterate.js:
+        * fast/js/regress/script-tests/Int16Array-alloc-long-lived.js:
+        * fast/js/regress/script-tests/Int16Array-to-Int32Array-set.js:
+        * fast/js/regress/script-tests/Int32Array-alloc-huge-long-lived.js:
+        * fast/js/regress/script-tests/Int32Array-alloc-huge.js:
+        * fast/js/regress/script-tests/Int32Array-alloc-large-long-lived.js:
+        * fast/js/regress/script-tests/Int32Array-alloc-large.js:
+        * fast/js/regress/script-tests/Int32Array-alloc-long-lived.js:
+        * fast/js/regress/script-tests/Int32Array-alloc.js:
+        * fast/js/regress/script-tests/Int8Array-alloc-long-lived.js:
+        * fast/js/regress/script-tests/array-nonarray-polymorhpic-access.js:
+        * fast/js/regress/script-tests/basic-set.js:
+        * fast/js/regress/script-tests/emscripten-memops.js:
+        * fast/js/regress/script-tests/inline-arguments-local-escape.js:
+        * fast/js/regress/script-tests/method-on-number.js:
+        * fast/js/regress/script-tests/nested-function-parsing-random.js:
+        * fast/js/regress/script-tests/nested-function-parsing.js:
+        * fast/js/regress/script-tests/new-array-buffer-push.js:
+        * fast/js/regress/script-tests/new-array-push.js:
+        * fast/js/regress/script-tests/poly-stricteq.js:
+        * fast/js/regress/script-tests/splice-to-remove.js:
+        * fast/js/regress/script-tests/string-equality.js:
+        * fast/js/regress/script-tests/string-repeat-arith.js:
+        * fast/js/regress/script-tests/string-sub.js:
+
 2013-09-06  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream API] Allow empty MediaStreams

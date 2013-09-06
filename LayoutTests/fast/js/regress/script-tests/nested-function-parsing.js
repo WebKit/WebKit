@@ -1,3 +1,5 @@
+//@ skip
+
 (function() {
     var result = 0;
 

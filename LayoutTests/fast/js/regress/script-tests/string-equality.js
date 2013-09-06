@@ -1,3 +1,5 @@
+//@ runDefault
+
 var array = [ "a", "b", "c", "d" ];
 
 function foo(array, s) {

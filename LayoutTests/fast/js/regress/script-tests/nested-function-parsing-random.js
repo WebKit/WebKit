@@ -1,3 +1,5 @@
+//@ skip
+
 function randomIdent(prefix)
 {
     var random = Math.random();

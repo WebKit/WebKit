@@ -1,3 +1,5 @@
+//@ runDefault
+
 function foo() {
     return new Array();
 }

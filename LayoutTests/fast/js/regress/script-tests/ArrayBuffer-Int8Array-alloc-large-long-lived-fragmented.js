@@ -1,3 +1,5 @@
+//@ skip
+
 var array = new Array(10000);
 
 var fragmentedArray = [];

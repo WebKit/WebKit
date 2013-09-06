@@ -1,0 +1,162 @@
+#!/usr/bin/env ruby
+
+# Copyright (C) 2013 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+require 'getoptlong'
+
+$jscPath = nil
+$collections = []
+$outputDir = "results"
+
+def usage
+    puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
+    puts
+    puts "--jsc            (-j)   Path to JavaScriptCore. This option is required."
+    puts "--output-dir     (-o)   Path where to put results. Default is #{$outputDir}."
+    puts "--help           (-h)   Print this message."
+    exit 1
+end
+
+GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
+               ['--jsc', '-j', GetoptLong::REQUIRED_ARGUMENT],
+               ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT]).each {
+    | opt, arg |
+    case opt
+    when '--help'
+        usage
+    when '--jsc'
+        $jscPath = File.realpath(arg)
+    when '--output-dir'
+        $outputDir = arg
+    end
+}
+
+unless $jscPath
+    $stderr.puts "Error: must specify -j <path>."
+    exit 1
+end
+
+$numFailures = 0
+
+def run(kind, *options)
+    name = "#{$benchmark}.#{kind}"
+    print "#{name}: "
+    IO.popen([$jscPath] + options + [$benchmark], "r") {
+        | inp |
+        File.open($outputDir + "/" + $collectionName + "/" + name, "w") {
+            | outp |
+            outp.write inp.read
+        }
+    }
+    if $?.success?
+        puts "OK."
+    else
+        puts "FAIL: #{$?.inspect}"
+        File.open($outputDir + "/failed", "a") {
+            | outp |
+            outp.puts name
+        }
+        $numFailures = 0
+    end
+end
+
+def runDefault
+    run("default")
+end
+
+def runNoCJIT
+    run("no-cjit", "--enableConcurrentJIT=false")
+end
+
+def runDefaultFTL
+    run("default-ftl", "--useExperimentalFTL=true")
+end
+
+def runFTLNoCJIT
+    run("ftl-no-cjit", "--enableConcurrentJIT=false", "--useExperimentalFTL=true")
+end
+
+def runFTLEager
+    run("ftl-eager", "--enableConcurrentJIT=false", "--useExperimentalFTL=true", "--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20")
+end
+
+def defaultRun
+    runDefault
+    runNoCJIT
+    runDefaultFTL
+    runFTLNoCJIT
+    runFTLEager
+end
+
+def skip
+    puts "Skipping #{$benchmark}"
+end
+
+collectionNames = {}
+
+Dir.mkdir($outputDir) unless FileTest.directory? $outputDir
+begin
+    File.delete($outputDir + "/failed")
+rescue
+end
+
+$outputDir = File.realpath($outputDir)
+
+ARGV.each {
+    | collection |
+    $collection = collection
+    $collectionName = File.basename(collection)
+    toAdd = 1
+    while collectionNames[$collectionName]
+        $collectionName = File.basename(collection) + "-#{toAdd}"
+        toAdd += 1
+    end
+    collectionNames[$collectionName] = true
+    dir = $outputDir + "/" + $collectionName
+    Dir.mkdir(dir) unless FileTest.directory? dir
+    Dir.chdir(collection) {
+        Dir.foreach('.') {
+            | benchmark |
+            next unless benchmark =~ /\.js$/
+            next unless FileTest.file? benchmark
+            
+            $benchmark = benchmark
+            
+            didRun = false
+            File.open(benchmark) {
+                | inp |
+                inp.each_line {
+                    | line |
+                    next unless line =~ /^\/\/@/
+                    eval $~.post_match
+                    didRun = true
+                }
+            }
+            
+            defaultRun unless didRun
+        }
+    }
+}
+
+puts "Failed #{$numFailures} tests."

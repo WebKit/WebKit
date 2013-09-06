@@ -1,3 +1,5 @@
+//@ skip
+
 var array = new Array(1000);
 
 var n = 10000;

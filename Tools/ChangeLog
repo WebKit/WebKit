@@ -1,3 +1,19 @@
+2013-09-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Introduce a way to run benchmarks and JSRegress as stress tests with different jsc command-line options
+        https://bugs.webkit.org/show_bug.cgi?id=120808
+
+        Reviewed by Mark Hahnenberg and rubber stamped by Geoffrey Garen.
+        
+        Add a script for running stress tests.  A stress test is a .js file that is run
+        through different configurations of JSC.  It can control which configurations it
+        runs by using "//@ <ruby code>" to guide the script.
+        
+        This script is now run as part of run-javascriptcore-tests, on Mac only.
+
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-jsc-stress-tests: Added.
+
 2013-09-06  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Desktop proxy settings are ignored inside the internal jhbuild

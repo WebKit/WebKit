@@ -1,3 +1,5 @@
+//@ skip
+
 var array = new Array(10000);
 
 for (var i = 0; i < 100000; ++i)
