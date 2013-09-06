@@ -37,7 +37,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderFieldset::RenderFieldset(Element* element)
-    : RenderBlock(element)
+    : RenderBlockFlow(element)
 {
 }
 

@@ -2103,7 +2103,7 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
         topLeft += layer()->offsetForInFlowPosition();
     }
     
-    if (position != AbsolutePosition && position != FixedPosition && o->hasColumns() && o->isBlockFlow()) {
+    if (position != AbsolutePosition && position != FixedPosition && o->hasColumns() && o->isBlockFlowFlexBoxOrGrid()) {
         LayoutRect repaintRect(topLeft, rect.size());
         toRenderBlock(o)->adjustRectForColumns(repaintRect);
         topLeft = repaintRect.location();
@@ -4093,7 +4093,7 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point)
         adjustedPoint.moveBy(location());
 
     for (RenderObject* renderObject = firstChild(); renderObject; renderObject = renderObject->nextSibling()) {
-        if ((!renderObject->firstChild() && !renderObject->isInline() && !renderObject->isBlockFlow() )
+        if ((!renderObject->firstChild() && !renderObject->isInline() && !renderObject->isBlockFlowFlexBoxOrGrid() )
             || renderObject->style()->visibility() != VISIBLE)
             continue;
         

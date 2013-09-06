@@ -118,7 +118,7 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
 void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* newChild, RenderObject* beforeChild, bool notifyRenderer)
 {
     ASSERT(!newChild->parent());
-    ASSERT(!owner->isBlockFlow() || (!newChild->isTableSection() && !newChild->isTableRow() && !newChild->isTableCell()));
+    ASSERT(!owner->isBlockFlowFlexBoxOrGrid() || (!newChild->isTableSection() && !newChild->isTableRow() && !newChild->isTableCell()));
 
     while (beforeChild && beforeChild->parent() && beforeChild->parent() != owner)
         beforeChild = beforeChild->parent();

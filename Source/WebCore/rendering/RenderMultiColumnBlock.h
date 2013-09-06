@@ -27,13 +27,13 @@
 #ifndef RenderMultiColumnBlock_h
 #define RenderMultiColumnBlock_h
 
-#include "RenderBlock.h"
+#include "RenderBlockFlow.h"
 
 namespace WebCore {
 
 class RenderMultiColumnFlowThread;
 
-class RenderMultiColumnBlock FINAL : public RenderBlock {
+class RenderMultiColumnBlock FINAL : public RenderBlockFlow {
 public:
     RenderMultiColumnBlock(Element*);
 

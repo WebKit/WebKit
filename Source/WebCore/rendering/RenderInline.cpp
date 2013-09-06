@@ -1087,7 +1087,7 @@ void RenderInline::computeRectForRepaint(const RenderLayerModelObject* repaintCo
 
     LayoutPoint topLeft = rect.location();
 
-    if (o->isBlockFlow() && !style()->hasOutOfFlowPosition()) {
+    if (o->isBlockFlowFlexBoxOrGrid() && !style()->hasOutOfFlowPosition()) {
         RenderBlock* cb = toRenderBlock(o);
         if (cb->hasColumns()) {
             LayoutRect repaintRect(topLeft, rect.size());

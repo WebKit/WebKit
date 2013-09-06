@@ -33,6 +33,7 @@
 #include "FontCache.h"
 #include "FontSelector.h"
 #include "MathMLNames.h"
+#include "RenderBlockFlow.h"
 #include "RenderText.h"
 
 namespace WebCore {
@@ -307,7 +308,7 @@ RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int maxHeightForRend
     addChild(container);
     RenderBlock* parent = container;
     if (charRelative) {
-        RenderBlock* charBlock = new (renderArena()) RenderBlock(node());
+        RenderBlock* charBlock = new (renderArena()) RenderBlockFlow(node());
         RefPtr<RenderStyle> charStyle = RenderStyle::create();
         charStyle->inheritFrom(container->style());
         charStyle->setDisplay(INLINE_BLOCK);

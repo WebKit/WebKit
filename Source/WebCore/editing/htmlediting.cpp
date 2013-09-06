@@ -1290,7 +1290,7 @@ bool isBlockFlowElement(const Node* node)
     if (!node->isElementNode())
         return false;
     RenderObject* renderer = node->renderer();
-    return renderer && renderer->isBlockFlow();
+    return renderer && renderer->isBlockFlowFlexBoxOrGrid();
 }
 
 Element* deprecatedEnclosingBlockFlowElement(Node* node)

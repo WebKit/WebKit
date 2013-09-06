@@ -33,7 +33,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderMeter::RenderMeter(HTMLElement* element)
-    : RenderBlock(element)
+    : RenderBlockFlow(element)
 {
 }
 

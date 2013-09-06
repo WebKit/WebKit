@@ -131,7 +131,7 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
         computeLineGridPaginationOrigin(renderer);
 
     // If we have a new grid to track, then add it to our set.
-    if (renderer->style()->lineGrid() != RenderStyle::initialLineGrid() && renderer->isBlockFlow())
+    if (renderer->style()->lineGrid() != RenderStyle::initialLineGrid() && renderer->isBlockFlowFlexBoxOrGrid())
         establishLineGrid(toRenderBlock(renderer));
 
     // FIXME: <http://bugs.webkit.org/show_bug.cgi?id=13443> Apply control clip if present.

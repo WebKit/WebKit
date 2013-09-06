@@ -1225,7 +1225,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (node && node->hasTagName(spanTag))
         return true;
     
-    if (m_renderer->isBlockFlow() && m_renderer->childrenInline() && !canSetFocusAttribute())
+    if (m_renderer->isBlockFlowFlexBoxOrGrid() && m_renderer->childrenInline() && !canSetFocusAttribute())
         return !toRenderBlock(m_renderer)->firstLineBox() && !mouseButtonListener();
     
     // ignore images seemingly used as spacers
@@ -2562,7 +2562,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(footerTag) && !isDescendantOfElementType(articleTag) && !isDescendantOfElementType(sectionTag))
         return FooterRole;
 
-    if (m_renderer->isBlockFlow())
+    if (m_renderer->isBlockFlowFlexBoxOrGrid())
         return GroupRole;
     
     // If the element does not have role, but it has ARIA attributes, accessibility should fallback to exposing it as a group.

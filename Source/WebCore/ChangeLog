@@ -1,3 +1,183 @@
+2013-09-06  David Hyatt  <hyatt@apple.com>
+
+        Add new RenderBlockFlow class.
+        https://bugs.webkit.org/show_bug.cgi?id=120777
+
+        Reviewed by Beth Dakin.
+
+        This patch adds a new RenderBlockFlow class. The idea is to get all of the line/float/margin
+        code out of RenderBlock and into the subclass, and then we can make RenderBlock an abstract
+        base. This will save memory for all of the classes that derive from RenderBlock but have
+        their own layout systems (e.g., flexbox, grid, table), and it will let us tighten up
+        types to make it more clear when we're talking about block layout code vs. a more generic
+        block-level object that can have any kind of layout.
+
+        This patch adds the new class and it makes sure all the objects that should be block flows
+        inherit from the new class.
+        
+        isBlockFlow() proved to be a problematic method (and was the source of regressions when I
+        landed this patch the first time). When the method was first implemented, it was added as
+        "I'm a block but not a table." and at the time table was the only subclass of block. However
+        when new subclasses were added, this function was never patched to account for them. This
+        means, for example, that flexible boxes and grids claim to be block flows in the codebase
+        and have for years. This is obviously wrong, since flexible boxes are not in fact block
+        flows, but because of this mistake, code has started relying on the incorrect behavior of
+        isBlockFlow() (form controls mostly).
+        
+        What I've done to deal with this problem is renamed isBlockFlow() to be
+        isBlockFlowFlexBoxOrGrid() in order to make it obvious that this method is returning true
+        for pretty much all blocks other than tables. This makes a lot of call sites look pretty
+        stupid, since they obviously never intended to include flexible boxes or grids, but at least
+        it is clear what the method is doing now.
+        
+        The plan is to land this patch and then start converting call sites from 
+        isBlockFlowFlexBoxOrGrid() to isRenderBlockFlow() one by one, and that way we can figure
+        out which code is making bad assumptions and change those callers to be isRenderBlock()
+        instead. Ultimately this isBlockFlowFlexBoxOrGrid() method will go away with callers either
+        changing to use isRenderBlock() or isRenderBlockFlow().
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * dom/Position.cpp:
+        (WebCore::Position::isCandidate):
+        (WebCore::Position::getInlineBoxAndOffset):
+        (WebCore::Position::primaryDirection):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::addBlockPlaceholderIfNeeded):
+        * editing/Editor.cpp:
+        (WebCore::Editor::baseWritingDirectionForSelectionStart):
+        * editing/FrameSelection.cpp:
+        (WebCore::caretRenderer):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::makeEditableRootEmpty):
+        * editing/htmlediting.cpp:
+        (WebCore::isBlockFlowElement):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::createRenderer):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::createRenderer):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderThumb::RenderSliderThumb):
+        * html/shadow/SliderThumbElement.h:
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::createAnonymous):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::firstLineBoxBaseline):
+        (WebCore::RenderBlock::lastLineBoxBaseline):
+        (WebCore::RenderBlock::firstLineBlock):
+        (WebCore::findFirstLetterBlock):
+        (WebCore::shouldCheckLines):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::positionForPoint):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::canHaveBoxInfoInRegion):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        (WebCore::RenderDeprecatedFlexibleBox::clearLineClamp):
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::RenderDetailsMarker):
+        * rendering/RenderDetailsMarker.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::RenderFieldset):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl):
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderFullScreen.cpp:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::computeRectForRepaint):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::RenderListItem):
+        (WebCore::RenderListItem::willBeDestroyed):
+        (WebCore::RenderListItem::willBeRemovedFromTree):
+        (WebCore::RenderListItem::layout):
+        (WebCore::RenderListItem::addOverflowFromChildren):
+        (WebCore::RenderListItem::computePreferredLogicalWidths):
+        (WebCore::RenderListItem::paint):
+        * rendering/RenderListItem.h:
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::RenderMeter):
+        * rendering/RenderMeter.h:
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::RenderMultiColumnBlock):
+        * rendering/RenderMultiColumnBlock.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        (WebCore::RenderObject::computeRectForRepaint):
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore::firstLineStyleForCachedUncachedType):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isBR):
+        (WebCore::RenderObject::isRenderBlockFlow):
+        (WebCore::RenderObject::isBlockFlowFlexBoxOrGrid):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::insertChildNode):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::RenderProgress):
+        * rendering/RenderProgress.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        * rendering/RenderRegion.h:
+        * rendering/RenderRuby.cpp:
+        (WebCore::RenderRubyAsBlock::RenderRubyAsBlock):
+        * rendering/RenderRuby.h:
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::RenderRubyBase):
+        * rendering/RenderRubyBase.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::RenderRubyRun):
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderRubyText.cpp:
+        (WebCore::RenderRubyText::RenderRubyText):
+        * rendering/RenderRubyText.h:
+        * rendering/RenderTableCaption.cpp:
+        (WebCore::RenderTableCaption::RenderTableCaption):
+        * rendering/RenderTableCaption.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlSingleLine.h:
+        (WebCore::RenderTextControlInnerBlock::RenderTextControlInnerBlock):
+        * rendering/RenderTextTrackCue.cpp:
+        (WebCore::RenderTextTrackCue::RenderTextTrackCue):
+        * rendering/RenderTextTrackCue.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        * rendering/RenderingAllInOne.cpp:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::createGlyph):
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::RenderSVGBlock):
+        * rendering/svg/RenderSVGBlock.h:
+
 2013-09-06  Vivek Galatage  <vivek.vg@samsung.com>
 
         Calling window.close() should indicate failure with warning message
