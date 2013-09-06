@@ -1,3 +1,16 @@
+2013-09-06  Anders Carlsson  <andersca@apple.com>
+
+        Fix fastMalloc/delete mismatches in CSS parser
+        https://bugs.webkit.org/show_bug.cgi?id=120864
+
+        Reviewed by Andreas Kling.
+
+        Stop putting fastMalloced memory inside an OwnPtr.
+
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::CSSParserSelector):
+        (WebCore::CSSParserSelector::adoptSelectorVector):
+
 2013-09-06  Andreas Kling  <akling@apple.com>
 
         FrameLoader::subresourceLoader() should return a reference.

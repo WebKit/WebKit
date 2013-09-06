@@ -149,7 +149,7 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
 }
 
 CSSParserSelector::CSSParserSelector()
-    : m_selector(adoptPtr(fastNew<CSSSelector>()))
+    : m_selector(adoptPtr(new CSSSelector))
 {
 }
 
@@ -175,9 +175,9 @@ CSSParserSelector::~CSSParserSelector()
 
 void CSSParserSelector::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectorVector)
 {
-    CSSSelectorList* selectorList = fastNew<CSSSelectorList>();
+    OwnPtr<CSSSelectorList> selectorList = adoptPtr(new CSSSelectorList);
     selectorList->adoptSelectorVector(selectorVector);
-    m_selector->setSelectorList(adoptPtr(selectorList));
+    m_selector->setSelectorList(selectorList.release());
 }
 
 bool CSSParserSelector::isSimple() const
