@@ -855,23 +855,26 @@ private:
             
             m_out.appendTo(continuation, done);
             
+            LValue remainder = m_out.rem(numerator, denominator);
+            
             if (!nodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
-                LBasicBlock zeroNumerator = FTL_NEW_BLOCK(m_out, ("ArithMod zero numerator"));
+                LBasicBlock negativeNumerator = FTL_NEW_BLOCK(m_out, ("ArithMod negative numerator"));
                 LBasicBlock numeratorContinuation = FTL_NEW_BLOCK(m_out, ("ArithMod numerator continuation"));
                 
-                m_out.branch(m_out.isZero32(numerator), zeroNumerator, numeratorContinuation);
+                m_out.branch(
+                    m_out.lessThan(numerator, m_out.int32Zero),
+                    negativeNumerator, numeratorContinuation);
                 
-                LBasicBlock innerLastNext = m_out.appendTo(zeroNumerator, numeratorContinuation);
+                LBasicBlock innerLastNext = m_out.appendTo(negativeNumerator, numeratorContinuation);
                 
-                speculate(
-                    NegativeZero, noValue(), 0, m_out.lessThan(denominator, m_out.int32Zero));
+                speculate(NegativeZero, noValue(), 0, m_out.isZero32(remainder));
                 
                 m_out.jump(numeratorContinuation);
                 
                 m_out.appendTo(numeratorContinuation, innerLastNext);
             }
             
-            results.append(m_out.anchor(m_out.rem(numerator, denominator)));
+            results.append(m_out.anchor(remainder));
             m_out.jump(done);
             
             m_out.appendTo(done, lastNext);
