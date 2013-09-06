@@ -14,5 +14,5 @@ var x = (1/((-4)%4)).toString();
 var y = foo().toString();
 
 if (x != y)
-    throw "Error: bad result: " + y;
+    throw "Error: bad result: " + y + " (expected " + x + ")";
 

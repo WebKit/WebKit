@@ -1,3 +1,13 @@
+2013-09-06  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL ArithNeg Int32Use doesn't check negative zero
+        https://bugs.webkit.org/show_bug.cgi?id=120900
+
+        Reviewed by Mark Hahnenberg.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileArithNegate):
+
 2013-09-06  Anders Carlsson  <andersca@apple.com>
 
         Stop using fastNew/fastDelete in JavaScriptCore

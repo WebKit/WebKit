@@ -984,6 +984,7 @@ private:
                 LValue overflowResult = m_out.subWithOverflow32(m_out.int32Zero, value);
                 speculate(Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
                 result = m_out.extractValue(overflowResult, 0);
+                speculate(NegativeZero, noValue(), 0, m_out.isZero32(result));
             }
             
             setInt32(result);
