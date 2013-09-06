@@ -357,7 +357,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         m_page->settings().setPluginsEnabled(false);
 
         Frame& frame = m_page->mainFrame();
-        frame.setView(FrameView::create(&frame));
+        frame.setView(FrameView::create(frame));
         frame.init();
         FrameLoader& loader = frame.loader();
         loader.forceSandboxFlags(SandboxAll);

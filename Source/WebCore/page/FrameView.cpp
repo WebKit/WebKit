@@ -170,8 +170,8 @@ Pagination::Mode paginationModeForRenderStyle(RenderStyle* style)
     return Pagination::BottomToTopPaginated;
 }
 
-FrameView::FrameView(Frame* frame)
-    : m_frame(frame)
+FrameView::FrameView(Frame& frame)
+    : m_frame(&frame)
     , m_canHaveScrollbars(true)
     , m_layoutTimer(this, &FrameView::layoutTimerFired)
     , m_layoutRoot(0)
@@ -214,14 +214,14 @@ FrameView::FrameView(Frame* frame)
     }
 }
 
-PassRefPtr<FrameView> FrameView::create(Frame* frame)
+PassRefPtr<FrameView> FrameView::create(Frame& frame)
 {
     RefPtr<FrameView> view = adoptRef(new FrameView(frame));
     view->show();
     return view.release();
 }
 
-PassRefPtr<FrameView> FrameView::create(Frame* frame, const IntSize& initialSize)
+PassRefPtr<FrameView> FrameView::create(Frame& frame, const IntSize& initialSize)
 {
     RefPtr<FrameView> view = adoptRef(new FrameView(frame));
     view->Widget::setFrameRect(IntRect(view->location(), initialSize));

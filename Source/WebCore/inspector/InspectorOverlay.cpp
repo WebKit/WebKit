@@ -451,7 +451,7 @@ Page* InspectorOverlay::overlayPage()
     overlaySettings.setPluginsEnabled(false);
 
     Frame& frame = m_overlayPage->mainFrame();
-    frame.setView(FrameView::create(&frame));
+    frame.setView(FrameView::create(frame));
     frame.init();
     FrameLoader& loader = frame.loader();
     frame.view()->setCanHaveScrollbars(false);

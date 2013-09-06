@@ -62,8 +62,8 @@ public:
     friend class RenderView;
     friend class Internals;
 
-    static PassRefPtr<FrameView> create(Frame*);
-    static PassRefPtr<FrameView> create(Frame*, const IntSize& initialSize);
+    static PassRefPtr<FrameView> create(Frame&);
+    static PassRefPtr<FrameView> create(Frame&, const IntSize& initialSize);
 
     virtual ~FrameView();
 
@@ -448,7 +448,7 @@ protected:
     virtual bool isFlippedDocument() const;
 
 private:
-    explicit FrameView(Frame*);
+    explicit FrameView(Frame&);
 
     void reset();
     void init();

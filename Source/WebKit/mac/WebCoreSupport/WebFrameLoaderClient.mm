@@ -1269,7 +1269,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     if (isMainFrame && coreFrame->view())
         coreFrame->view()->setParentVisible(false);
     coreFrame->setView(0);
-    RefPtr<FrameView> coreView = FrameView::create(coreFrame);
+    RefPtr<FrameView> coreView = FrameView::create(*coreFrame);
     coreFrame->setView(coreView);
 
     [m_webFrame.get() _updateBackgroundAndUpdatesWhileOffscreen];

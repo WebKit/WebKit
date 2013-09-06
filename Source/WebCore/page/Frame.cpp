@@ -725,12 +725,12 @@ void Frame::createView(const IntSize& viewportSize, const Color& backgroundColor
 
     RefPtr<FrameView> frameView;
     if (isMainFrame) {
-        frameView = FrameView::create(this, viewportSize);
+        frameView = FrameView::create(*this, viewportSize);
         frameView->setFixedLayoutSize(fixedLayoutSize);
         frameView->setFixedVisibleContentRect(fixedVisibleContentRect);
         frameView->setUseFixedLayout(useFixedLayout);
     } else
-        frameView = FrameView::create(this);
+        frameView = FrameView::create(*this);
 
     frameView->setScrollbarModes(horizontalScrollbarMode, verticalScrollbarMode, horizontalLock, verticalLock);
 

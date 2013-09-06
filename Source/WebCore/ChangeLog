@@ -1,3 +1,22 @@
+2013-09-05  Andreas Kling  <akling@apple.com>
+
+        FrameView: Constructor should take Frame&.
+        <https://webkit.org/b/120824>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::overlayPage):
+        * page/Frame.cpp:
+        (WebCore::Frame::createView):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::create):
+        * page/FrameView.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2013-09-05  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Fix build warnings by unused parameter
