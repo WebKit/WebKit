@@ -1,5 +1,34 @@
 2013-09-05  Andreas Kling  <akling@apple.com>
 
+        ContainerNode: Apply Ref<T> to some popular DOM functions.
+        <https://webkit.org/b/120800>
+
+        Reviewed by Antti Koivisto.
+
+        Use Ref to avoid a bunch of null checks in some popular DOM functions.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+
+            'refChild' is never null here, so store it in a Ref.
+
+        (WebCore::ContainerNode::replaceChild):
+
+            'removedChild' is never null here, so store it in a Ref.
+
+        (WebCore::ContainerNode::removeChild):
+
+            'child' is never null here, so store it in a Ref.
+            Also return "true" at the end of the function since we can't
+            null-check 'child' anymore (not that it would ever be false!)
+
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+
+            Use Ref<Document> in both of these methods.
+
+2013-09-05  Andreas Kling  <akling@apple.com>
+
         ScrollView::children() should return a reference.
         <https://webkit.org/b/120795>
 

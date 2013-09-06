@@ -284,7 +284,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
     if (refChild->previousSibling() == newChild || refChild == newChild) // nothing to do
         return true;
 
-    RefPtr<Node> next = refChild;
+    Ref<Node> next(*refChild);
 
     NodeVector targets;
     collectChildrenAndRemoveFromOldParent(newChild.get(), targets, ec);
@@ -314,7 +314,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 
         treeScope()->adoptIfNeeded(child);
 
-        insertBeforeCommon(next.get(), child);
+        insertBeforeCommon(&next.get(), child);
 
         updateTreeAfterInsertion(child, attachBehavior);
     }
@@ -431,7 +431,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     RefPtr<Node> next = oldChild->nextSibling();
 
     // Remove the node we're replacing
-    RefPtr<Node> removedChild = oldChild;
+    Ref<Node> removedChild(*oldChild);
     removeChild(oldChild, ec);
     if (ec)
         return false;
@@ -543,12 +543,12 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
         return false;
     }
 
-    RefPtr<Node> child = oldChild;
+    Ref<Node> child(*oldChild);
 
-    document().removeFocusedNodeOfSubtree(child.get());
+    document().removeFocusedNodeOfSubtree(&child.get());
 
 #if ENABLE(FULLSCREEN_API)
-    document().removeFullScreenElementOfSubtree(child.get());
+    document().removeFullScreenElementOfSubtree(&child.get());
 #endif
 
     // Events fired when blurring currently focused node might have moved this
@@ -558,7 +558,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
         return false;
     }
 
-    willRemoveChild(child.get());
+    willRemoveChild(&child.get());
 
     // Mutation events might have moved this child into a different parent.
     if (child->parentNode() != this) {
@@ -571,15 +571,15 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
         Node* prev = child->previousSibling();
         Node* next = child->nextSibling();
-        removeBetween(prev, next, child.get());
+        removeBetween(prev, next, &child.get());
 
-        notifyChildRemoved(child.get(), prev, next, ChildChangeSourceAPI);
+        notifyChildRemoved(&child.get(), prev, next, ChildChangeSourceAPI);
 
-        ChildNodeRemovalNotifier(this).notify(child.get());
+        ChildNodeRemovalNotifier(this).notify(&child.get());
     }
     dispatchSubtreeModifiedEvent();
 
-    return child;
+    return true;
 }
 
 void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node* oldChild)
@@ -1026,7 +1026,7 @@ static void dispatchChildInsertionEvents(Node* child)
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
 
     RefPtr<Node> c = child;
-    RefPtr<Document> document = &child->document();
+    Ref<Document> document(child->document());
 
     if (c->parentNode() && document->hasListenerType(Document::DOMNODEINSERTED_LISTENER))
         c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, true, c->parentNode()));
@@ -1051,7 +1051,7 @@ static void dispatchChildRemovalEvents(Node* child)
     InspectorInstrumentation::willRemoveDOMNode(&child->document(), child);
 
     RefPtr<Node> c = child;
-    RefPtr<Document> document = &child->document();
+    Ref<Document> document(child->document());
 
     // dispatch pre-removal mutation events
     if (c->parentNode() && document->hasListenerType(Document::DOMNODEREMOVED_LISTENER))
