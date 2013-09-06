@@ -53,10 +53,9 @@ void JSArrayBufferConstructor::finishCreation(VM& vm, JSArrayBufferPrototype* pr
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), DontEnum | DontDelete | ReadOnly);
 }
 
-JSArrayBufferConstructor* JSArrayBufferConstructor::create(
-    JSGlobalObject* globalObject, Structure* structure, JSArrayBufferPrototype* prototype)
+JSArrayBufferConstructor* JSArrayBufferConstructor::create(CallFrame* callFrame, JSGlobalObject* globalObject, Structure* structure, JSArrayBufferPrototype* prototype)
 {
-    VM& vm = globalObject->vm();
+    VM& vm = callFrame->vm();
     JSArrayBufferConstructor* result =
         new (NotNull, allocateCell<JSArrayBufferConstructor>(vm.heap))
         JSArrayBufferConstructor(globalObject, structure);

@@ -1,3 +1,19 @@
+2013-09-05  Oliver Hunt  <oliver@apple.com>
+
+        Make it simpler to introduce new data types to the global object
+        https://bugs.webkit.org/show_bug.cgi?id=120801
+
+        Reviewed by Gavin Barraclough.
+
+        Add an iterator macro that lists all the "simple" ES types (e.g. type
+        consists of instance, constructor, and prototype classes).  So that
+        we don't need to have every new type litter JSGlobalObject.{cpp,h} with
+        members, accessors, and manual GC visiting.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+
 2013-09-05  Michael Saboff  <msaboff@apple.com>
 
         Cleanup formatting of byte code debug output

@@ -41,7 +41,7 @@ protected:
     void finishCreation(VM&, JSArrayBufferPrototype*);
 
 public:
-    static JSArrayBufferConstructor* create(JSGlobalObject*, Structure*, JSArrayBufferPrototype*);
+    static JSArrayBufferConstructor* create(CallFrame*, JSGlobalObject*, Structure*, JSArrayBufferPrototype*);
     
     DECLARE_INFO;
     

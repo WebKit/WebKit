@@ -48,7 +48,6 @@ namespace JSC {
 
 class ArrayPrototype;
 class BooleanPrototype;
-class DatePrototype;
 class Debugger;
 class ErrorConstructor;
 class ErrorPrototype;
@@ -63,16 +62,33 @@ class JSPromisePrototype;
 class JSPromiseResolverPrototype;
 class JSStack;
 class LLIntOffsetsExtractor;
-class MapPrototype;
 class NativeErrorConstructor;
 class ProgramCodeBlock;
 class ProgramExecutable;
 class RegExpConstructor;
 class RegExpPrototype;
-class SetPrototype;
 class SourceCode;
 struct ActivationStackNode;
 struct HashTable;
+
+#define FOR_EACH_SIMPLE_BUILTIN_TYPE(macro) \
+    macro(Set, set, set, JSSet, Set) \
+    macro(Map, map, map, JSMap, Map) \
+    macro(Date, date, date, DateInstance, Date) \
+    macro(String, string, stringObject, StringObject, String) \
+    macro(Boolean, boolean, booleanObject, BooleanObject, Boolean) \
+    macro(Number, number, numberObject, NumberObject, Number) \
+    macro(Error, error, error, ErrorInstance, Error) \
+    macro(JSArrayBuffer, arrayBuffer, arrayBuffer, JSArrayBuffer, ArrayBuffer) \
+
+#define DECLARE_SIMPLE_BUILTIN_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
+    class JS ## capitalName; \
+    class capitalName ## Prototype; \
+    class capitalName ## Constructor;
+
+FOR_EACH_SIMPLE_BUILTIN_TYPE(DECLARE_SIMPLE_BUILTIN_TYPE)
+
+#undef DECLARE_SIMPLE_BUILTIN_TYPE
 
 typedef Vector<ExecState*, 16> ExecStateStack;
 
@@ -144,16 +160,9 @@ protected:
     WriteBarrier<ObjectPrototype> m_objectPrototype;
     WriteBarrier<FunctionPrototype> m_functionPrototype;
     WriteBarrier<ArrayPrototype> m_arrayPrototype;
-    WriteBarrier<BooleanPrototype> m_booleanPrototype;
-    WriteBarrier<StringPrototype> m_stringPrototype;
-    WriteBarrier<NumberPrototype> m_numberPrototype;
-    WriteBarrier<DatePrototype> m_datePrototype;
     WriteBarrier<RegExpPrototype> m_regExpPrototype;
-    WriteBarrier<ErrorPrototype> m_errorPrototype;
     WriteBarrier<JSPromisePrototype> m_promisePrototype;
     WriteBarrier<JSPromiseResolverPrototype> m_promiseResolverPrototype;
-    WriteBarrier<MapPrototype> m_mapPrototype;
-    WriteBarrier<SetPrototype> m_setPrototype;
 
     WriteBarrier<Structure> m_withScopeStructure;
     WriteBarrier<Structure> m_strictEvalActivationStructure;
@@ -165,8 +174,7 @@ protected:
     WriteBarrier<Structure> m_originalArrayStructureForIndexingShape[NumberOfIndexingShapes];
     // Lists the structures we should use during allocation for these particular indexing shapes.
     WriteBarrier<Structure> m_arrayStructureForIndexingShapeDuringAllocation[NumberOfIndexingShapes];
-        
-    WriteBarrier<Structure> m_booleanObjectStructure;
+
     WriteBarrier<Structure> m_callbackConstructorStructure;
     WriteBarrier<Structure> m_callbackFunctionStructure;
     WriteBarrier<Structure> m_callbackObjectStructure;
@@ -174,18 +182,14 @@ protected:
     WriteBarrier<Structure> m_objcCallbackFunctionStructure;
     WriteBarrier<Structure> m_objcWrapperObjectStructure;
 #endif
-    WriteBarrier<Structure> m_dateStructure;
     WriteBarrier<Structure> m_nullPrototypeObjectStructure;
-    WriteBarrier<Structure> m_errorStructure;
     WriteBarrier<Structure> m_functionStructure;
     WriteBarrier<Structure> m_boundFunctionStructure;
     WriteBarrier<Structure> m_namedFunctionStructure;
     PropertyOffset m_functionNameOffset;
-    WriteBarrier<Structure> m_numberObjectStructure;
     WriteBarrier<Structure> m_privateNameStructure;
     WriteBarrier<Structure> m_regExpMatchesArrayStructure;
     WriteBarrier<Structure> m_regExpStructure;
-    WriteBarrier<Structure> m_stringObjectStructure;
     WriteBarrier<Structure> m_internalFunctionStructure;
 
 #if ENABLE(PROMISES)
@@ -196,12 +200,15 @@ protected:
 #endif // ENABLE(PROMISES)
 
     WriteBarrier<Structure> m_mapDataStructure;
-    WriteBarrier<Structure> m_mapStructure;
-    WriteBarrier<Structure> m_setStructure;
-    
-    WriteBarrier<JSArrayBufferPrototype> m_arrayBufferPrototype;
-    WriteBarrier<Structure> m_arrayBufferStructure;
-    
+
+#define DEFINE_STORAGE_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
+    WriteBarrier<capitalName ## Prototype> m_ ## lowerName ## Prototype; \
+    WriteBarrier<Structure> m_ ## properName ## Structure;
+
+    FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE)
+
+#undef DEFINE_STORAGE_FOR_SIMPLE_TYPE
+
     struct TypedArrayData {
         WriteBarrier<JSObject> prototype;
         WriteBarrier<Structure> structure;
@@ -404,8 +411,14 @@ public:
 #endif // ENABLE(PROMISES)
 
     JSArrayBufferPrototype* arrayBufferPrototype() const { return m_arrayBufferPrototype.get(); }
-    Structure* arrayBufferStructure() const { return m_arrayBufferStructure.get(); }
-    
+
+#define DEFINE_ACCESSORS_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
+    Structure* properName ## Structure() { return m_ ## properName ## Structure.get(); }
+
+    FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_ACCESSORS_FOR_SIMPLE_TYPE)
+
+#undef DEFINE_ACCESSORS_FOR_SIMPLE_TYPE
+
     Structure* typedArrayStructure(TypedArrayType type) const
     {
         return m_typedArrays[toIndex(type)].structure.get();
