@@ -1,3 +1,27 @@
+2013-09-05  Andreas Kling  <akling@apple.com>
+
+        ScrollView::children() should return a reference.
+        <https://webkit.org/b/120795>
+
+        Reviewed by Anders Carlsson.
+
+        This function was already just returning the address of a member variable.
+        Modernized some loops that were using it.
+
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::setJavaScriptPaused):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::hasCustomScrollbars):
+        (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive):
+        * page/Page.cpp:
+        (WebCore::Page::pluginViews):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::computeNonFastScrollableRegion):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::children):
+        * plugins/IFrameShimSupport.cpp:
+        (WebCore::getPluginOcclusions):
+
 2013-09-05  Beth Dakin  <bdakin@apple.com>
 
         Reverting revisions 155139, 155141, 155142, and 155145 since they appear to have 

@@ -140,15 +140,12 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame* frame, 
         }
     }
 
-    if (const HashSet<RefPtr<Widget> >* children = frameView->children()) {
-        for (HashSet<RefPtr<Widget> >::const_iterator it = children->begin(), end = children->end(); it != end; ++it) {
-            if (!(*it)->isPluginViewBase())
-                continue;
-
-            PluginViewBase* pluginViewBase = toPluginViewBase((*it).get());
-            if (pluginViewBase->wantsWheelEvents())
-                nonFastScrollableRegion.unite(pluginViewBase->frameRect());
-        }
+    for (auto it = frameView->children().begin(), end = frameView->children().end(); it != end; ++it) {
+        if (!(*it)->isPluginViewBase())
+            continue;
+        PluginViewBase* pluginViewBase = toPluginViewBase((*it).get());
+        if (pluginViewBase->wantsWheelEvents())
+            nonFastScrollableRegion.unite(pluginViewBase->frameRect());
     }
 
     for (Frame* subframe = frame->tree().firstChild(); subframe; subframe = subframe->tree().nextSibling())

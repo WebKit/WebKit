@@ -1,3 +1,13 @@
+2013-09-05  Andreas Kling  <akling@apple.com>
+
+        ScrollView::children() should return a reference.
+        <https://webkit.org/b/120795>
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebView.mm:
+        (-[WebView _addScrollerDashboardRegionsForFrameView:dashboardRegions:]):
+
 2013-09-04  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/120707> Make WebKit's localizable strings mechanism usable under ARC

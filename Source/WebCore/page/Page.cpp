@@ -1187,10 +1187,7 @@ Vector<Ref<PluginViewBase>> Page::pluginViews()
         if (!view)
             break;
 
-        auto children = view->children();
-        ASSERT(children);
-
-        for (auto it = children->begin(), end = children->end(); it != end; ++it) {
+        for (auto it = view->children().begin(), end = view->children().end(); it != end; ++it) {
             Widget* widget = (*it).get();
             if (widget->isPluginViewBase())
                 views.append(*toPluginViewBase(widget));

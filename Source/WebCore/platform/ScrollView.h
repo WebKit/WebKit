@@ -68,7 +68,7 @@ public:
     virtual IntRect windowClipRect(bool clipToContents = true) const = 0;
 
     // Functions for child manipulation and inspection.
-    const HashSet<RefPtr<Widget> >* children() const { return &m_children; }
+    const HashSet<RefPtr<Widget>>& children() const { return m_children; }
     virtual void addChild(PassRefPtr<Widget>);
     virtual void removeChild(Widget*);
 
