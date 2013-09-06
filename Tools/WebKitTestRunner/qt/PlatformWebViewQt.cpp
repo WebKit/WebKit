@@ -65,7 +65,7 @@ private Q_SLOTS:
         m_view->setParentItem(rootObject());
         QQmlProperty::write(m_view, "anchors.fill", qVariantFromValue(rootObject()));
 
-        if (PlatformWebView::windowShapshotEnabled()) {
+        if (PlatformWebView::windowSnapshotEnabled()) {
             setSurfaceType(OpenGLSurface);
             create();
 #if QT_VERSION < QT_VERSION_CHECK(5, 1, 0)
@@ -175,7 +175,7 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     return adoptWK(WKImageCreateFromQImage(m_window->grabWindow()));
 }
 
-bool PlatformWebView::windowShapshotEnabled()
+bool PlatformWebView::windowSnapshotEnabled()
 {
     // We need a way to disable UI side rendering for tests because it is
     // too slow without appropriate hardware.

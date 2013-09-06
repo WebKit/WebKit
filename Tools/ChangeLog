@@ -1,3 +1,24 @@
+2013-09-06  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] REGRESSION(r155140) Pixel tests is still broken on Qt with QT_WEBKIT_DISABLE_UIPROCESS_DUMPPIXELS=1
+        https://bugs.webkit.org/show_bug.cgi?id=120847
+
+        Reviewed by Csaba Osztrogonác.
+
+        Move the force repaint code back to if (PlatformWebView::windowSnapshotEnabled()) block to support Qt.
+        Typo fixed: windowShapshotEnabled -> windowSnapshotEnabled.
+        Add a default PlatformWebView::windowSnapshotEnabled() to the !PLATFORM(QT).
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (WTR::PlatformWebView::windowSnapshotEnabled):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::dumpResults):
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::WrapperWindow::handleStatusChanged):
+        (WTR::PlatformWebView::windowSnapshotEnabled):
+        * WebKitTestRunner/qt/TestInvocationQt.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+
 2013-09-06  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         REGRESSION(r155140) Broke pixel tests on EFL/GTK/Qt

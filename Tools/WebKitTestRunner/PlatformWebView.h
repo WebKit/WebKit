@@ -81,7 +81,11 @@ public:
     bool sendEvent(QEvent*);
     void postEvent(QEvent*);
     void setModalEventLoop(QEventLoop* eventLoop) { m_modalEventLoop = eventLoop; }
-    static bool windowShapshotEnabled();
+    // Window snapshot can be disabled on Qt with QT_WEBKIT_DISABLE_UIPROCESS_DUMPPIXELS=1 environment variable (necessary for xvfb)
+    static bool windowSnapshotEnabled();
+#else
+    // Window snapshot is always enabled by default on all other platform.
+    static bool windowSnapshotEnabled() { return true; }
 #endif
 
     WKRect windowFrame();
