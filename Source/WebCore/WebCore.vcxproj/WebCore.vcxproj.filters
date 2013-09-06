@@ -8388,7 +8388,7 @@
     <ClInclude Include="..\platform\win\SoftLinking.h">
       <Filter>platform\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\win\StructuredExceptionHandlerSupressor.h">
+    <ClInclude Include="..\platform\win\StructuredExceptionHandlerSuppressor.h">
       <Filter>platform\win</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\win\SystemInfo.h">

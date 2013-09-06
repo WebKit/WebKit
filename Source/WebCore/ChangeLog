@@ -1,3 +1,14 @@
+2013-09-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed gardening: Spell 'Suppressor' properly
+
+        * WebCore.vcxproj/WebCore.vcxproj: Change StructuredExceptionHandlerSupressor to StructuredExceptionHandlerSuppressor
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto
+        * platform/graphics/ca/win/LayerChangesFlusher.cpp:
+        (WebCore::LayerChangesFlusher::hookCallback): Ditto
+        * platform/win/StructuredExceptionHandlerSuppressor.h: Copied from platform/win/StructuredExceptionHandlerSupressor.h.
+        * platform/win/StructuredExceptionHandlerSupressor.h: Removed.
+
 2013-09-06  David Hyatt  <hyatt@apple.com>
 
         Add new RenderBlockFlow class.

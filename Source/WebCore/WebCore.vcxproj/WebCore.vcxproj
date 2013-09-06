@@ -19361,7 +19361,7 @@
     <ClInclude Include="..\platform\win\ScrollbarThemeWin.h" />
     <ClInclude Include="..\platform\win\SearchPopupMenuWin.h" />
     <ClInclude Include="..\platform\win\SoftLinking.h" />
-    <ClInclude Include="..\platform\win\StructuredExceptionHandlerSupressor.h" />
+    <ClInclude Include="..\platform\win\StructuredExceptionHandlerSuppressor.h" />
     <ClInclude Include="..\platform\win\SystemInfo.h" />
     <ClInclude Include="..\platform\graphics\TextRenderingMode.h" />
     <ClInclude Include="..\platform\win\WCDataObject.h" />
