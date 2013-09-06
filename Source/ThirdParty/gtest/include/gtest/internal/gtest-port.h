@@ -81,6 +81,8 @@
 //   GTEST_OS_AIX      - IBM AIX
 //   GTEST_OS_CYGWIN   - Cygwin
 //   GTEST_OS_LINUX    - Linux
+//   GTEST_OS_FREEBSD  - FreeBSD
+//   GTEST_OS_HURD     - GNU/Hurd
 //   GTEST_OS_MAC      - Mac OS X
 //   GTEST_OS_SOLARIS  - Sun Solaris
 //   GTEST_OS_SYMBIAN  - Symbian
@@ -219,6 +221,10 @@
 #define GTEST_OS_MAC 1
 #elif defined __linux__
 #define GTEST_OS_LINUX 1
+#elif defined __GNU__
+#define GTEST_OS_HURD 1
+#elif defined(__FreeBSD__) || defined(__DragonFly__) || defined(__FreeBSD_kernel__)
+#define GTEST_OS_FREEBSD 1
 #elif defined __MVS__
 #define GTEST_OS_ZOS 1
 #elif defined(__sun) && defined(__SVR4)
@@ -228,7 +234,7 @@
 #endif  // __CYGWIN__
 
 #if GTEST_OS_CYGWIN || GTEST_OS_LINUX || GTEST_OS_MAC || GTEST_OS_SYMBIAN || \
-    GTEST_OS_SOLARIS || GTEST_OS_AIX
+    GTEST_OS_SOLARIS || GTEST_OS_AIX || GTEST_OS_FREEBSD || GTEST_OS_HURD
 
 // On some platforms, <regex.h> needs someone to define size_t, and
 // won't compile otherwise.  We can #include it here as we already
@@ -260,7 +266,8 @@
 #define GTEST_USES_SIMPLE_RE 1
 
 #endif  // GTEST_OS_CYGWIN || GTEST_OS_LINUX || GTEST_OS_MAC ||
-        // GTEST_OS_SYMBIAN || GTEST_OS_SOLARIS || GTEST_OS_AIX
+        // GTEST_OS_SYMBIAN || GTEST_OS_SOLARIS || GTEST_OS_AIX ||
+        // GTEST_OS_FREEBSD || GTEST_OS_HURD
 
 #ifndef GTEST_HAS_EXCEPTIONS
 // The user didn't tell us whether exceptions are enabled, so we need
@@ -382,7 +389,7 @@
 //
 // To disable threading support in Google Test, add -DGTEST_HAS_PTHREAD=0
 // to your compiler flags.
-#define GTEST_HAS_PTHREAD (GTEST_OS_LINUX || GTEST_OS_MAC)
+#define GTEST_HAS_PTHREAD (GTEST_OS_LINUX || GTEST_OS_FREEBSD || GTEST_OS_HURD || GTEST_OS_MAC)
 #endif  // GTEST_HAS_PTHREAD
 
 // Determines whether Google Test can use tr1/tuple.  You can define
@@ -488,7 +495,8 @@
 // Google Test does not support death tests for VC 7.1 and earlier as
 // abort() in a VC 7.1 application compiled as GUI in debug config
 // pops up a dialog window that cannot be suppressed programmatically.
-#if (GTEST_OS_LINUX || GTEST_OS_MAC || GTEST_OS_CYGWIN || GTEST_OS_SOLARIS || \
+#if (GTEST_OS_LINUX || GTEST_OS_FREEBSD || GTEST_OS_HURD || \
+     GTEST_OS_MAC || GTEST_OS_CYGWIN || GTEST_OS_SOLARIS || \
      (GTEST_OS_WINDOWS_DESKTOP && _MSC_VER >= 1400) || \
      GTEST_OS_WINDOWS_MINGW || GTEST_OS_AIX)
 #define GTEST_HAS_DEATH_TEST 1

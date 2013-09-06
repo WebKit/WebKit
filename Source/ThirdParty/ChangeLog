@@ -1,3 +1,13 @@
+2013-09-06  Alberto Garcia  <berto@igalia.com>
+
+        GTest: add support for FreeBSD and Hurd
+        https://bugs.webkit.org/show_bug.cgi?id=120870
+
+        Patch by Emilio Pozuelo Monfort <pochu@debian.org>
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtest/include/gtest/internal/gtest-port.h:
+
 2013-09-05  Anders Carlsson  <andersca@apple.com>
 
         Enable C++11 wherever we build C++ files that include wtf/Platform.h
