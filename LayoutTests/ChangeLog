@@ -1,3 +1,52 @@
+2013-09-06  Filip Pizlo  <fpizlo@apple.com>
+
+        fast/js/dfg-* tests should wait for the concurrent JIT
+        https://bugs.webkit.org/show_bug.cgi?id=120723
+
+        Rubber stamped by Oliver Hunt.
+        
+        Convert more tests.
+
+        * fast/js/dfg-check-structure-elimination-for-non-cell-expected.txt:
+        * fast/js/dfg-check-two-structures-expected.txt:
+        * fast/js/dfg-compare-final-object-to-final-object-or-other-expected.txt:
+        * fast/js/dfg-compare-final-object-to-final-object-or-other-when-both-proven-final-object-expected.txt:
+        * fast/js/dfg-compare-final-object-to-final-object-or-other-when-proven-final-object-expected.txt:
+        * fast/js/dfg-constant-fold-first-local-read-after-block-merge-expected.txt:
+        * fast/js/dfg-constant-fold-logical-not-branch-expected.txt:
+        * fast/js/dfg-constant-fold-misprediction-expected.txt:
+        * fast/js/dfg-constant-fold-uncaptured-variable-that-is-later-captured-expected.txt:
+        * fast/js/dfg-convert-this-dom-window-expected.txt:
+        * fast/js/dfg-convert-this-object-then-exit-on-other-expected.txt:
+        * fast/js/dfg-convert-this-other-then-exit-on-object-expected.txt:
+        * fast/js/dfg-convert-this-polymorphic-object-then-exit-on-other-expected.txt:
+        * fast/js/dfg-convert-this-polymorphic-object-then-exit-on-string-expected.txt:
+        * fast/js/dfg-create-inlined-arguments-in-closure-inline-expected.txt:
+        * fast/js/dfg-cross-global-object-inline-new-array-literal-expected.txt:
+        * fast/js/dfg-cross-global-object-inline-new-array-literal-with-variables-expected.txt:
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-check-structure-elimination-for-non-cell.js:
+        * fast/js/script-tests/dfg-check-two-structures.js:
+        * fast/js/script-tests/dfg-compare-final-object-to-final-object-or-other-when-both-proven-final-object.js:
+        * fast/js/script-tests/dfg-compare-final-object-to-final-object-or-other-when-proven-final-object.js:
+        * fast/js/script-tests/dfg-compare-final-object-to-final-object-or-other.js:
+        * fast/js/script-tests/dfg-constant-fold-first-local-read-after-block-merge.js:
+        * fast/js/script-tests/dfg-constant-fold-logical-not-branch.js:
+        * fast/js/script-tests/dfg-constant-fold-misprediction.js:
+        * fast/js/script-tests/dfg-constant-fold-uncaptured-variable-that-is-later-captured.js:
+        * fast/js/script-tests/dfg-convert-this-dom-window.js:
+        * fast/js/script-tests/dfg-convert-this-object-then-exit-on-other.js:
+        * fast/js/script-tests/dfg-convert-this-other-then-exit-on-object.js:
+        * fast/js/script-tests/dfg-convert-this-polymorphic-object-then-exit-on-other.js:
+        * fast/js/script-tests/dfg-convert-this-polymorphic-object-then-exit-on-string.js:
+        * fast/js/script-tests/dfg-create-inlined-arguments-in-closure-inline.js:
+        * fast/js/script-tests/dfg-cross-global-object-inline-new-array-literal-with-variables.js:
+        (done):
+        (doit):
+        * fast/js/script-tests/dfg-cross-global-object-inline-new-array-literal.js:
+        (done):
+        (doit):
+
 2013-09-05  Filip Pizlo  <fpizlo@apple.com>
 
         Introduce a way to run benchmarks and JSRegress as stress tests with different jsc command-line options
