@@ -1,3 +1,15 @@
+2013-09-05  Dan Bernstein  <mitz@apple.com>
+
+        INSTALL_PATH_PREFIX is used even when not installing
+        https://bugs.webkit.org/show_bug.cgi?id=120810
+
+        Reviewed by Andy Estes.
+
+        * Configurations/CopyWTFHeaders.xcconfig: Removed INSTALL_PATH_PREFIX from
+        the definition of PRIVATE_HEADERS_FOLDER_PATH. Also removed the leading
+        slash, because the Xcode definition of this build setting is relative.
+        * WTF.xcodeproj/project.pbxproj: Prepend INSTALL_PATH_PREFIX here when installing.
+
 2013-09-05  Anders Carlsson  <andersca@apple.com>
 
         Fix build with older versions of clang from Xcode.
