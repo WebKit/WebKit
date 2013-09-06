@@ -21,7 +21,6 @@ PASS [object MediaStream] is defined.
 PASS newStream.constructor.name is 'MediaStream'
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
-PASS newStream.ended is true
 PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
@@ -29,7 +28,6 @@ PASS [object MediaStream] is defined.
 PASS newStream.constructor.name is 'MediaStream'
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
-PASS newStream.ended is true
 PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
@@ -37,7 +35,6 @@ PASS [object MediaStream] is defined.
 PASS newStream.constructor.name is 'MediaStream'
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
-PASS newStream.ended is false
 PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
@@ -45,7 +42,6 @@ PASS [object MediaStream] is defined.
 PASS newStream.constructor.name is 'MediaStream'
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
-PASS newStream.ended is false
 PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
@@ -53,7 +49,6 @@ PASS [object MediaStream] is defined.
 PASS newStream.constructor.name is 'MediaStream'
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
-PASS newStream.ended is false
 PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
@@ -61,7 +56,6 @@ PASS [object MediaStream] is defined.
 PASS newStream.constructor.name is 'MediaStream'
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
-PASS newStream.ended is false
 PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
@@ -69,7 +63,6 @@ PASS [object MediaStream] is defined.
 PASS newStream.constructor.name is 'MediaStream'
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
-PASS newStream.ended is false
 PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
@@ -77,7 +70,6 @@ PASS [object MediaStream] is defined.
 PASS newStream.constructor.name is 'MediaStream'
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
-PASS newStream.ended is true
 PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
@@ -85,7 +77,6 @@ PASS [object MediaStream] is defined.
 PASS newStream.constructor.name is 'MediaStream'
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
-PASS newStream.ended is true
 PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
@@ -93,7 +84,6 @@ PASS [object MediaStream] is defined.
 PASS newStream.constructor.name is 'MediaStream'
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
-PASS newStream.ended is true
 PASS checkIdAttribute(newStream.id) is true
 PASS Stream constructed
 PASS [object MediaStream] is non-null.
@@ -101,7 +91,6 @@ PASS [object MediaStream] is defined.
 PASS newStream.constructor.name is 'MediaStream'
 PASS newStream.getAudioTracks().length is nAudio
 PASS newStream.getVideoTracks().length is nVideo
-PASS newStream.ended is true
 PASS checkIdAttribute(newStream.id) is true
 PASS successfullyParsed is true
 

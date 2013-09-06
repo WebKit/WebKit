@@ -1,3 +1,21 @@
+2013-09-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream API] Allow empty MediaStreams
+        https://bugs.webkit.org/show_bug.cgi?id=120815
+
+        Reviewed by Jer Noble.
+
+        The spec is a bit unclear ecactly what should happen with newly created MediaStreams 
+        that doesn't have any tracks. The current implementation is too strict and the spec 
+        is being worked upon to be clearer. In the meantime this patch doesn't set eneded to 
+        true in the constructor. 
+
+        No new tests, existing test updated.
+
+        (WebCore::MediaStreamRegistry::lookupMediaStreamDescriptor):
+        * platform/mediastream/MediaStreamDescriptor.h:
+        (WebCore::MediaStreamDescriptor::MediaStreamDescriptor):
+
 2013-09-06  Anders Carlsson  <andersca@apple.com>
 
         Stop using fastNew/fastDelete in WebCore

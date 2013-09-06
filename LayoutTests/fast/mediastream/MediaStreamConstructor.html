@@ -76,21 +76,21 @@ function testConstructor(s) {
     shouldThrow('new webkitMediaStream(null)');
     shouldThrow('new webkitMediaStream(undefined)');
 
-    verifyStream(new webkitMediaStream(), 0, 0, true);
-    verifyStream(new webkitMediaStream([]), 0, 0, true);
+    verifyStream(new webkitMediaStream(), 0, 0);
+    verifyStream(new webkitMediaStream([]), 0, 0);
 
-    verifyStream(new webkitMediaStream(s), s.getAudioTracks().length, s.getVideoTracks().length, false);
+    verifyStream(new webkitMediaStream(s), s.getAudioTracks().length, s.getVideoTracks().length);
 
-    verifyStream(new webkitMediaStream([s.getAudioTracks()[0]]), 1, 0, false);
-    verifyStream(new webkitMediaStream([s.getVideoTracks()[0]]), 0, 1, false);
-    verifyStream(new webkitMediaStream([s.getAudioTracks()[0], s.getVideoTracks()[0]]), 1, 1, false);
-    verifyStream(new webkitMediaStream([s.getVideoTracks()[0], s.getAudioTracks()[0], s.getVideoTracks()[0]]), 1, 1, false);
+    verifyStream(new webkitMediaStream([s.getAudioTracks()[0]]), 1, 0);
+    verifyStream(new webkitMediaStream([s.getVideoTracks()[0]]), 0, 1);
+    verifyStream(new webkitMediaStream([s.getAudioTracks()[0], s.getVideoTracks()[0]]), 1, 1);
+    verifyStream(new webkitMediaStream([s.getVideoTracks()[0], s.getAudioTracks()[0], s.getVideoTracks()[0]]), 1, 1);
 
     s.onended = function () {
-        verifyStream(new webkitMediaStream([s.getAudioTracks()[0]]), 0, 0, true);
-        verifyStream(new webkitMediaStream([s.getVideoTracks()[0]]), 0, 0, true);
-        verifyStream(new webkitMediaStream([s.getAudioTracks()[0], s.getVideoTracks()[0]]), 0, 0, true);
-        verifyStream(new webkitMediaStream(s), 0, 0, true);
+        verifyStream(new webkitMediaStream([s.getAudioTracks()[0]]), 0, 0);
+        verifyStream(new webkitMediaStream([s.getVideoTracks()[0]]), 0, 0);
+        verifyStream(new webkitMediaStream([s.getAudioTracks()[0], s.getVideoTracks()[0]]), 0, 0);
+        verifyStream(new webkitMediaStream(s), 0, 0);
 
         finishJSTest();
     };
@@ -98,7 +98,7 @@ function testConstructor(s) {
     s.stop();
 }
 
-function verifyStream(s, numAudioTracks, numVideoTracks, ended) {
+function verifyStream(s, numAudioTracks, numVideoTracks) {
     newStream = s;
     nAudio = numAudioTracks;
     nVideo = numVideoTracks;
@@ -109,11 +109,6 @@ function verifyStream(s, numAudioTracks, numVideoTracks, ended) {
     shouldBe("newStream.constructor.name", "'MediaStream'");
     shouldBe('newStream.getAudioTracks().length', 'nAudio');
     shouldBe('newStream.getVideoTracks().length', 'nVideo');
-
-    if (ended)
-        shouldBeTrue('newStream.ended');
-    else
-        shouldBeFalse('newStream.ended');
 
     shouldBeTrue('checkIdAttribute(newStream.id)');
 }
