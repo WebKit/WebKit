@@ -1,3 +1,22 @@
+2013-09-06  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Remove orphan test results
+        https://bugs.webkit.org/show_bug.cgi?id=120845
+
+        Reviewed by Antti Koivisto.
+
+        Removed remaining orphan test results after https://bugs.webkit.org/show_bug.cgi?id=120760.
+
+        * platform/efl/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.png: Removed.
+        * platform/efl/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.txt: Removed.
+        * platform/gtk/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.png: Removed.
+        * platform/gtk/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.txt: Removed.
+        * platform/mac/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.png: Removed.
+        * platform/mac/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.txt: Removed.
+        * platform/qt-wk2/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.png: Removed.
+        * platform/qt/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.png: Removed.
+        * platform/qt/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.txt: Removed.
+
 2013-09-06  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Unreviewed gardening. Added missing results.
