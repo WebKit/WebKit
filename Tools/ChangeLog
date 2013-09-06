@@ -1,3 +1,31 @@
+2013-09-06  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [GTK] AccessibilityUIElement::addNotificationListener() crashes on debug build
+        https://bugs.webkit.org/show_bug.cgi?id=120416
+
+        Reviewed by Mario Sanchez Prada.
+
+        Fixed crashes when running debug DRT. Simplified loops at AccessibilityCallbackAtk.cpp where the HashMap
+        iterator was removed inside a loop. Fixed AccessibilityUIElement::addNotificationListener() where
+        m_notificationHandler expected RefPtr.
+
+        The global notification handler was stored in the HashMap with key 0. And this caused an assertion when
+        HashMap::add() or find() are called. To fix it, moved the global handler to a separated pointer.
+
+        * DumpRenderTree/atk/AccessibilityCallbacks.h: Removed the global notification key.
+        * DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp:
+        (axObjectEventListener): Simplified the code by using HashMap::find() and a separate pointer for the
+        global notification handler.
+        (addAccessibilityNotificationHandler): Simplified the code by using HashMap::find() and a separate pointer
+        for the global notification handler.
+        (removeAccessibilityNotificationHandler): Added the removal for the global notification handler.
+        * DumpRenderTree/atk/AccessibilityNotificationHandlerAtk.h:
+        (AccessibilityNotificationHandler::create): Added static function to create
+        AccessibilityNotificationHandler.
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::addNotificationListener): Assigned m_notificationHandler with
+        AccessibilityNotificationHandler::create().
+
 2013-09-06  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] REGRESSION(r155140) Pixel tests is still broken on Qt with QT_WEBKIT_DISABLE_UIPROCESS_DUMPPIXELS=1

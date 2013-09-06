@@ -48,13 +48,16 @@
 #include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
 #endif
 
+typedef HashMap<PlatformUIElement, AccessibilityNotificationHandler*> NotificationHandlersMap;
+
 static guint stateChangeListenerId = 0;
 static guint focusEventListenerId = 0;
 static guint activeDescendantChangedListenerId = 0;
 static guint childrenChangedListenerId = 0;
 static guint propertyChangedListenerId = 0;
 static guint visibleDataChangedListenerId = 0;
-static HashMap<PlatformUIElement, AccessibilityNotificationHandler*> notificationHandlers;
+static NotificationHandlersMap notificationHandlers;
+static AccessibilityNotificationHandler* globalNotificationHandler = 0;
 
 extern bool loggingAccessibilityEvents;
 
@@ -127,23 +130,18 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint, guint n
         return TRUE;
 
     if (notificationName.length()) {
-        for (HashMap<PlatformUIElement, AccessibilityNotificationHandler*>::iterator it = notificationHandlers.begin(); it != notificationHandlers.end(); ++it) {
-            if (it->key == accessible || it->key == GlobalNotificationKey) {
-                JSRetainPtr<JSStringRef> jsNotificationEventName(Adopt, JSStringCreateWithUTF8CString(reinterpret_cast<const char*>(notificationName.utf8().data())));
-                JSValueRef notificationNameArgument = JSValueMakeString(jsContext, jsNotificationEventName.get());
-                AccessibilityNotificationHandler* notificationHandler = it->value;
-                if (notificationHandler->platformElement()) {
-                    JSValueRef argument = notificationNameArgument;
-                    // Listener for one element just gets one argument, the notification name.
-                    JSObjectCallAsFunction(jsContext, notificationHandler->notificationFunctionCallback(), 0, 1, &argument, 0);
-                } else {
-                    // A global listener gets the element and the notification name as arguments.
-                    JSValueRef arguments[2];
-                    arguments[0] = AccessibilityUIElement::makeJSAccessibilityUIElement(jsContext, AccessibilityUIElement(accessible));
-                    arguments[1] = notificationNameArgument;
-                    JSObjectCallAsFunction(jsContext, notificationHandler->notificationFunctionCallback(), 0, 2, arguments, 0);
-                }
-            }
+        JSRetainPtr<JSStringRef> jsNotificationEventName(Adopt, JSStringCreateWithUTF8CString(notificationName.utf8().data()));
+        JSValueRef notificationNameArgument = JSValueMakeString(jsContext, jsNotificationEventName.get());
+        NotificationHandlersMap::iterator elementNotificationHandler = notificationHandlers.find(accessible);
+        if (elementNotificationHandler != notificationHandlers.end()) {
+            // Listener for one element just gets one argument, the notification name.
+            JSObjectCallAsFunction(jsContext, elementNotificationHandler->value->notificationFunctionCallback(), 0, 1, &notificationNameArgument, 0);
+        } else if (globalNotificationHandler) {
+            // A global listener gets the element and the notification name as arguments.
+            JSValueRef arguments[2];
+            arguments[0] = AccessibilityUIElement::makeJSAccessibilityUIElement(jsContext, AccessibilityUIElement(accessible));
+            arguments[1] = notificationNameArgument;
+            JSObjectCallAsFunction(jsContext, globalNotificationHandler->notificationFunctionCallback(), 0, 2, arguments, 0);
         }
     }
 
@@ -228,17 +226,17 @@ void addAccessibilityNotificationHandler(AccessibilityNotificationHandler* notif
     JSValueProtect(jsContext, notificationHandler->notificationFunctionCallback());
     // Check if this notification handler is related to a specific element.
     if (notificationHandler->platformElement()) {
-        if (notificationHandlers.contains(notificationHandler->platformElement())) {
-            JSValueUnprotect(jsContext, notificationHandlers.find(notificationHandler->platformElement())->value->notificationFunctionCallback());
-            notificationHandlers.remove(notificationHandler->platformElement());
+        NotificationHandlersMap::iterator currentNotificationHandler = notificationHandlers.find(notificationHandler->platformElement());
+        if (currentNotificationHandler != notificationHandlers.end()) {
+            ASSERT(currentNotificationHandler->value->platformElement());
+            JSValueUnprotect(jsContext, currentNotificationHandler->value->notificationFunctionCallback());
+            notificationHandlers.remove(currentNotificationHandler->value->platformElement());
         }
         notificationHandlers.add(notificationHandler->platformElement(), notificationHandler);
     } else {
-        if (notificationHandlers.contains(GlobalNotificationKey)) {
-            JSValueUnprotect(jsContext, notificationHandlers.find(GlobalNotificationKey)->value->notificationFunctionCallback());
-            notificationHandlers.remove(GlobalNotificationKey);
-        }
-        notificationHandlers.add(GlobalNotificationKey, notificationHandler);
+        if (globalNotificationHandler)
+            JSValueUnprotect(jsContext, globalNotificationHandler->notificationFunctionCallback());
+        globalNotificationHandler = notificationHandler;
     }
 
     connectAccessibilityCallbacks();
@@ -257,10 +255,14 @@ void removeAccessibilityNotificationHandler(AccessibilityNotificationHandler* no
     if (!jsContext)
         return;
 
-    for (HashMap<PlatformUIElement, AccessibilityNotificationHandler*>::iterator it = notificationHandlers.begin(); it != notificationHandlers.end(); ++it) {
-        if (it->value == notificationHandler) {
-            JSValueUnprotect(jsContext, notificationHandler->notificationFunctionCallback());
-            notificationHandlers.remove(it);
+    if (globalNotificationHandler == notificationHandler) {
+        JSValueUnprotect(jsContext, globalNotificationHandler->notificationFunctionCallback());
+        globalNotificationHandler = 0;
+    } else if (notificationHandler->platformElement()) {
+        NotificationHandlersMap::iterator removeNotificationHandler = notificationHandlers.find(notificationHandler->platformElement());
+        if (removeNotificationHandler != notificationHandlers.end()) {
+            JSValueUnprotect(jsContext, removeNotificationHandler->value->notificationFunctionCallback());
+            notificationHandlers.remove(removeNotificationHandler);
         }
     }
 }

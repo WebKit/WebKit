@@ -1050,7 +1050,7 @@ bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallbac
     if (m_notificationHandler)
         return false;
 
-    m_notificationHandler = new AccessibilityNotificationHandler();
+    m_notificationHandler = AccessibilityNotificationHandler::create();
     m_notificationHandler->setPlatformElement(platformUIElement());
     m_notificationHandler->setNotificationFunctionCallback(functionCallback);
 

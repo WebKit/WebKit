@@ -22,10 +22,15 @@
 
 #include <JavaScriptCore/JSObjectRef.h>
 #include <atk/atk.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 class AccessibilityNotificationHandler : public RefCounted<AccessibilityNotificationHandler> {
 public:
+    static PassRefPtr<AccessibilityNotificationHandler> create()
+    {
+        return adoptRef(new AccessibilityNotificationHandler());
+    }
     AccessibilityNotificationHandler(void);
     ~AccessibilityNotificationHandler();
 

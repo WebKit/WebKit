@@ -32,8 +32,6 @@
 #include "AccessibilityNotificationHandlerAtk.h"
 #include "AccessibilityUIElement.h"
 
-const PlatformUIElement GlobalNotificationKey = 0;
-
 void connectAccessibilityCallbacks();
 void disconnectAccessibilityCallbacks();
 void addAccessibilityNotificationHandler(AccessibilityNotificationHandler*);

@@ -1,3 +1,16 @@
+2013-09-06  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [GTK] AccessibilityUIElement::addNotificationListener() crashes on debug build
+        https://bugs.webkit.org/show_bug.cgi?id=120416
+
+        Reviewed by Mario Sanchez Prada.
+
+        Fixed crashes when running debug DRT on tests that require an a11y notification handler.
+
+        * platform/gtk/TestExpectations: Unskipped some a11y tests that were crashing before this fix.
+        Updated the expectation of accessibility/notification-listeners.html to expect failure on Debug build
+        since it is not crashing anymore. This other issue is tracked in a separate bug (bug 120669).
+
 2013-09-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-relevant does not expose AXARIARelevant
