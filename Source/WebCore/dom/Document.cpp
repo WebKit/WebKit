@@ -5958,6 +5958,13 @@ PassRefPtr<FontLoader> Document::fontloader()
 }
 #endif
 
+float Document::deviceScaleFactor() const
+{
+    float deviceScaleFactor = 1.0;
+    if (Page* documentPage = page())
+        deviceScaleFactor = documentPage->deviceScaleFactor();
+    return deviceScaleFactor;
+}
 void Document::didAssociateFormControl(Element* element)
 {
     if (!frame() || !frame()->page() || !frame()->page()->chrome().client().shouldNotifyOnFormChanges())

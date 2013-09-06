@@ -566,10 +566,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     if (isWaitingForScripts()) {
         ASSERT(m_tokenizer->state() == HTMLTokenizer::DataState);
         if (!m_preloadScanner) {
-            float deviceScaleFactor = 1.0;
-            if (Page* page = document()->page())
-                deviceScaleFactor = page->deviceScaleFactor();
-            m_preloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url(), deviceScaleFactor));
+            m_preloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url(), document()->deviceScaleFactor()));
             m_preloadScanner->appendToEnd(m_input.current());
         }
         m_preloadScanner->scan(m_preloader.get(), document()->baseElementURL());
@@ -650,10 +647,7 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
         // Check the document.write() output with a separate preload scanner as
         // the main scanner can't deal with insertions.
         if (!m_insertionPreloadScanner) {
-            float deviceScaleFactor = 1.0;
-            if (Page* page = document()->page())
-                deviceScaleFactor = page->deviceScaleFactor();
-            m_insertionPreloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url(), deviceScaleFactor));
+            m_insertionPreloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url(), document()->deviceScaleFactor()));
         }
         m_insertionPreloadScanner->appendToEnd(source);
         m_insertionPreloadScanner->scan(m_preloader.get(), document()->baseElementURL());

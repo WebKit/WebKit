@@ -496,6 +496,8 @@ public:
     Page* page() const; // can be NULL
     Settings* settings() const; // can be NULL
 
+    float deviceScaleFactor() const;
+
     PassRefPtr<Range> createRange();
 
     PassRefPtr<NodeIterator> createNodeIterator(Node* root, unsigned whatToShow,
