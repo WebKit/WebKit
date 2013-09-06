@@ -1,3 +1,18 @@
+2013-09-05  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Implement text offset methods of IAccessibleText interface.
+        https://bugs.webkit.org/show_bug.cgi?id=120820.
+        <rdar://problem/14925242>
+
+        Reviewed by Brenet Fulgham.
+
+        * AccessibleTextImpl.cpp:
+        (AccessibleText::get_textBeforeOffset):
+        (AccessibleText::get_textAfterOffset):
+        (AccessibleText::get_textAtOffset):
+        (AccessibleText::isInRange):
+        * AccessibleTextImpl.h:
+
 2013-08-30  Andreas Kling  <akling@apple.com>
 
         Windows build fix for Document& Node::document().
