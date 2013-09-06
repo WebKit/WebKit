@@ -68,6 +68,7 @@ struct RDFTContext;
 #endif // USE(WEBAUDIO_IPP)
 
 #include <wtf/Forward.h>
+#include <wtf/PassOwnArrayPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Threading.h>
 
@@ -163,7 +164,7 @@ private:
 #if USE(WEBAUDIO_GSTREAMER)
     GstFFTF32* m_fft;
     GstFFTF32* m_inverseFft;
-    GstFFTF32Complex* m_complexData;
+    OwnArrayPtr<GstFFTF32Complex> m_complexData;
     AudioFloatArray m_realData;
     AudioFloatArray m_imagData;
 #endif // USE(WEBAUDIO_GSTREAMER)

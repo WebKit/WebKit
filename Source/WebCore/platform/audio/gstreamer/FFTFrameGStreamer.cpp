@@ -42,11 +42,10 @@ namespace WebCore {
 FFTFrame::FFTFrame(unsigned fftSize)
     : m_FFTSize(fftSize)
     , m_log2FFTSize(static_cast<unsigned>(log2(fftSize)))
+    , m_complexData(adoptArrayPtr(new GstFFTF32Complex[unpackedFFTDataSize(m_FFTSize)]))
     , m_realData(unpackedFFTDataSize(m_FFTSize))
     , m_imagData(unpackedFFTDataSize(m_FFTSize))
 {
-    m_complexData = WTF::fastNewArray<GstFFTF32Complex>(unpackedFFTDataSize(m_FFTSize));
-
     int fftLength = gst_fft_next_fast_length(m_FFTSize);
     m_fft = gst_fft_f32_new(fftLength, FALSE);
     m_inverseFft = gst_fft_f32_new(fftLength, TRUE);
@@ -56,7 +55,6 @@ FFTFrame::FFTFrame(unsigned fftSize)
 FFTFrame::FFTFrame()
     : m_FFTSize(0)
     , m_log2FFTSize(0)
-    , m_complexData(0)
 {
     int fftLength = gst_fft_next_fast_length(m_FFTSize);
     m_fft = gst_fft_f32_new(fftLength, FALSE);
@@ -67,11 +65,10 @@ FFTFrame::FFTFrame()
 FFTFrame::FFTFrame(const FFTFrame& frame)
     : m_FFTSize(frame.m_FFTSize)
     , m_log2FFTSize(frame.m_log2FFTSize)
+    , m_complexData(adoptArrayPtr(new GstFFTF32Complex[unpackedFFTDataSize(m_FFTSize)]))
     , m_realData(unpackedFFTDataSize(frame.m_FFTSize))
     , m_imagData(unpackedFFTDataSize(frame.m_FFTSize))
 {
-    m_complexData = WTF::fastNewArray<GstFFTF32Complex>(unpackedFFTDataSize(m_FFTSize));
-
     int fftLength = gst_fft_next_fast_length(m_FFTSize);
     m_fft = gst_fft_f32_new(fftLength, FALSE);
     m_inverseFft = gst_fft_f32_new(fftLength, TRUE);
@@ -99,8 +96,6 @@ FFTFrame::~FFTFrame()
 
     gst_fft_f32_free(m_inverseFft);
     m_inverseFft = 0;
-
-    WTF::fastDeleteArray(m_complexData);
 }
 
 void FFTFrame::multiply(const FFTFrame& frame)
@@ -128,7 +123,7 @@ void FFTFrame::multiply(const FFTFrame& frame)
 
 void FFTFrame::doFFT(const float* data)
 {
-    gst_fft_f32_fft(m_fft, data, m_complexData);
+    gst_fft_f32_fft(m_fft, data, m_complexData.get());
 
     // Scale the frequency domain data to match vecLib's scale factor
     // on the Mac. FIXME: if we change the definition of FFTFrame to
@@ -156,7 +151,7 @@ void FFTFrame::doInverseFFT(float* data)
         m_complexData[i].r = realData[i];
     }
 
-    gst_fft_f32_inverse_fft(m_inverseFft, m_complexData, data);
+    gst_fft_f32_inverse_fft(m_inverseFft, m_complexData.get(), data);
 
     // Scale so that a forward then inverse FFT yields exactly the original data.
     const float scaleFactor = 1.0 / (2 * m_FFTSize);

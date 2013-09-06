@@ -118,7 +118,7 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
     , m_muteSignalHandler(0)
 {
 #if GLIB_CHECK_VERSION(2, 31, 0)
-    m_bufferMutex = WTF::fastNew<GMutex>();
+    m_bufferMutex = new GMutex;
     g_mutex_init(m_bufferMutex);
 #else
     m_bufferMutex = g_mutex_new();
@@ -131,7 +131,7 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 
 #if GLIB_CHECK_VERSION(2, 31, 0)
     g_mutex_clear(m_bufferMutex);
-    WTF::fastDelete(m_bufferMutex);
+    delete m_bufferMutex;
 #else
     g_mutex_free(m_bufferMutex);
 #endif

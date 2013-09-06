@@ -38,7 +38,7 @@
 #include <gst/video/gstvideometa.h>
 #include <gst/video/gstvideopool.h>
 #endif
-#include <wtf/FastAllocBase.h>
+#include <wtf/OwnPtr.h>
 
 // CAIRO_FORMAT_RGB24 used to render the video buffers is little/big endian dependant.
 #ifdef GST_API_VERSION_1
@@ -117,9 +117,9 @@ static void webkit_video_sink_init(WebKitVideoSink* sink)
 {
     sink->priv = G_TYPE_INSTANCE_GET_PRIVATE(sink, WEBKIT_TYPE_VIDEO_SINK, WebKitVideoSinkPrivate);
 #if GLIB_CHECK_VERSION(2, 31, 0)
-    sink->priv->dataCondition = WTF::fastNew<GCond>();
+    sink->priv->dataCondition = new GCond;
     g_cond_init(sink->priv->dataCondition);
-    sink->priv->bufferMutex = WTF::fastNew<GMutex>();
+    sink->priv->bufferMutex = new GMutex;
     g_mutex_init(sink->priv->bufferMutex);
 #else
     sink->priv->dataCondition = g_cond_new();
@@ -279,7 +279,7 @@ static void webkitVideoSinkDispose(GObject* object)
     if (priv->dataCondition) {
 #if GLIB_CHECK_VERSION(2, 31, 0)
         g_cond_clear(priv->dataCondition);
-        WTF::fastDelete(priv->dataCondition);
+        delete priv->dataCondition;
 #else
         g_cond_free(priv->dataCondition);
 #endif
@@ -289,7 +289,7 @@ static void webkitVideoSinkDispose(GObject* object)
     if (priv->bufferMutex) {
 #if GLIB_CHECK_VERSION(2, 31, 0)
         g_mutex_clear(priv->bufferMutex);
-        WTF::fastDelete(priv->bufferMutex);
+        delete priv->bufferMutex;
 #else
         g_mutex_free(priv->bufferMutex);
 #endif
