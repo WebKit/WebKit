@@ -1,3 +1,12 @@
+2013-09-06  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r155171): INSTALL_PATH_PREFIX should no longer be used beneath BUILT_PRODUCTS_DIR in HEADER_SEARCH_PATHS for iOS
+
+        * Configurations/Base.xcconfig:
+        (HEADER_SEARCH_PATHS): Change
+        $(BUILT_PRODUCTS_DIR)/$(INSTALL_PATH_PREFIX)/usr/local/include to
+        $(BUILT_PRODUCTS_DIR)/usr/local/include.
+
 2013-09-06  Anders Carlsson  <andersca@apple.com>
 
         Remove fastNew/fastDelete
