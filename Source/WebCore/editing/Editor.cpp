@@ -921,6 +921,10 @@ void Editor::clear()
     m_customCompositionUnderlines.clear();
     m_shouldStyleWithCSS = false;
     m_defaultParagraphSeparator = EditorParagraphSeparatorIsDiv;
+
+#if ENABLE(DELETION_UI)
+    m_deleteButtonController = adoptPtr(new DeleteButtonController(&m_frame));
+#endif
 }
 
 bool Editor::insertText(const String& text, Event* triggeringEvent)

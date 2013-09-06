@@ -1,3 +1,15 @@
+2013-09-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Flaky Test: platform/mac/editing/deleting/deletionUI-single-instance.html
+        https://bugs.webkit.org/show_bug.cgi?id=114181
+
+        Reviewed by Ryosuke Niwa.
+
+        Editor survives navigations, and so did DeleteButtonController. But the state it holds
+        is document specific (like nodes in the old document).
+
+        * editing/Editor.cpp: (WebCore::Editor::clear): Replace DeleteButtonController.
+
 2013-09-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate toFooElement() functions from tagname data.
