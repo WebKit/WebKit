@@ -27,7 +27,7 @@
 
 #include "AdjustViewSizeOrNot.h"
 #include "Color.h"
-#include "Frame.h"
+#include "LayoutMilestones.h"
 #include "LayoutRect.h"
 #include "Pagination.h"
 #include "PaintPhase.h"
@@ -42,7 +42,9 @@ class AXObjectCache;
 class Element;
 class Event;
 class FloatSize;
+class Frame;
 class FrameActionScheduler;
+class HTMLFrameOwnerElement;
 class KURL;
 class Node;
 class Page;
@@ -52,6 +54,7 @@ class RenderLayer;
 class RenderObject;
 class RenderScrollbarPart;
 class RenderStyle;
+class RenderView;
 
 Pagination::Mode paginationModeForRenderStyle(RenderStyle*);
 
@@ -78,10 +81,10 @@ public:
 
     Frame& frame() const { return *m_frame; }
 
-    RenderView* renderView() const { return frame().contentRenderer(); }
+    RenderView* renderView() const;
 
-    int mapFromLayoutToCSSUnits(LayoutUnit);
-    LayoutUnit mapFromCSSToLayoutUnits(int);
+    int mapFromLayoutToCSSUnits(LayoutUnit) const;
+    LayoutUnit mapFromCSSToLayoutUnits(int) const;
 
     LayoutUnit marginWidth() const { return m_margins.width(); } // -1 means default
     LayoutUnit marginHeight() const { return m_margins.height(); } // -1 means default
@@ -695,16 +698,6 @@ inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
     if (m_visuallyNonEmptyPixelCount <= visualPixelThreshold)
         return;
     updateIsVisuallyNonEmpty();
-}
-
-inline int FrameView::mapFromLayoutToCSSUnits(LayoutUnit value)
-{
-    return value / (frame().pageZoomFactor() * frame().frameScaleFactor());
-}
-
-inline LayoutUnit FrameView::mapFromCSSToLayoutUnits(int value)
-{
-    return value * frame().pageZoomFactor() * frame().frameScaleFactor();
 }
 
 inline FrameView* toFrameView(Widget* widget)

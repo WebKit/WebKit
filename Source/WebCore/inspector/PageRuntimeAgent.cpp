@@ -35,6 +35,7 @@
 #include "PageRuntimeAgent.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorPageAgent.h"

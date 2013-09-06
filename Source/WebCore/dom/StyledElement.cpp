@@ -37,6 +37,7 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "InspectorInstrumentation.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "ScriptableDocumentParser.h"
 #include "StylePropertySet.h"

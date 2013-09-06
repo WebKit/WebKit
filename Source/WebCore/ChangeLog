@@ -1,3 +1,57 @@
+2013-09-06  Andreas Kling  <akling@apple.com>
+
+        Include Frame.h in fewer places.
+        <https://webkit.org/b/120868>
+
+        Reviewed by Anders Carlsson.
+
+        - Move JSMainThreadExecState::instrumentFunctionCall() to a separate header.
+          This avoids including InspectorInstrumentation.h from JSMainThreadExecState.h
+          which caused all JS and Objective-C bindings to depend on Frame.h
+
+        - Out-of-line the three methods on FrameView that were operating on Frames.
+          Most of the call sites were in FrameView.cpp so they will still get inlined.
+
+        - Removed GenericBinding.h, nothing was using it anyway.
+
+        After this, touching Frame.h and doing a (debug) rebuild goes from 9m30 to 3m30
+        on my laptop.
+
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/GenericBinding.h: Removed.
+        * bindings/js/JSCallbackData.cpp:
+        * bindings/js/JSEventListener.cpp:
+        * bindings/js/JSMainThreadExecState.h:
+        * bindings/js/JSMainThreadExecStateInstrumentation.h: Added.
+        (WebCore::JSMainThreadExecState::instrumentFunctionCall):
+        * bindings/js/JSMutationCallback.cpp:
+        * bindings/js/ScheduledAction.cpp:
+        * css/DeprecatedStyleBuilder.cpp:
+        * css/ElementRuleCollector.cpp:
+        * css/MediaQueryEvaluator.cpp:
+        * css/SelectorChecker.h:
+        * dom/StyledElement.cpp:
+        * html/HTMLPlugInImageElement.cpp:
+        * inspector/InspectorPageAgent.h:
+        * inspector/NetworkResourcesData.h:
+        * inspector/PageRuntimeAgent.cpp:
+        * loader/cache/CachedImage.cpp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::renderView):
+        (WebCore::FrameView::mapFromLayoutToCSSUnits):
+        (WebCore::FrameView::mapFromCSSToLayoutUnits):
+        * page/FrameView.h:
+        * page/TouchAdjustment.cpp:
+        * rendering/RenderBoxModelObject.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderText.cpp:
+        * svg/graphics/SVGImage.cpp:
+
 2013-09-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed gardening: Spell 'Suppressor' properly

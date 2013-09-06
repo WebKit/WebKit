@@ -20717,7 +20717,6 @@
     <ClInclude Include="..\bindings\ScriptControllerBase.h" />
     <ClInclude Include="..\bindings\generic\ActiveDOMCallback.h" />
     <ClInclude Include="..\bindings\generic\BindingSecurity.h" />
-    <ClInclude Include="..\bindings\generic\GenericBinding.h" />
     <ClInclude Include="..\bindings\generic\RuntimeEnabledFeatures.h" />
     <ClInclude Include="..\bindings\js\ArrayValue.h" />
     <ClInclude Include="..\bindings\js\BindingState.h" />

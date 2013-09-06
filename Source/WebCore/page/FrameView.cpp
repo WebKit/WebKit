@@ -4227,4 +4227,19 @@ void FrameView::setScrollPinningBehavior(ScrollPinningBehavior pinning)
     updateScrollbars(scrollOffset());
 }
 
+RenderView* FrameView::renderView() const
+{
+    return frame().contentRenderer();
+}
+
+int FrameView::mapFromLayoutToCSSUnits(LayoutUnit value) const
+{
+    return value / (frame().pageZoomFactor() * frame().frameScaleFactor());
+}
+
+LayoutUnit FrameView::mapFromCSSToLayoutUnits(int value) const
+{
+    return value * frame().pageZoomFactor() * frame().frameScaleFactor();
+}
+
 } // namespace WebCore

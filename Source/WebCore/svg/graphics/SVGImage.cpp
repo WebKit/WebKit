@@ -33,6 +33,7 @@
 #include "Chrome.h"
 #include "DocumentLoader.h"
 #include "ElementIterator.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"

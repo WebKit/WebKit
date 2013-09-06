@@ -36,6 +36,7 @@
 #include "CSSSelectorList.h"
 #include "CSSValueKeywords.h"
 #include "HTMLElement.h"
+#include "InspectorInstrumentation.h"
 #include "RenderRegion.h"
 #include "SVGElement.h"
 #include "SelectorCheckerFastPath.h"

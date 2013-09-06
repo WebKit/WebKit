@@ -25,6 +25,7 @@
 #include "Editor.h"
 #include "FloatPoint.h"
 #include "FloatQuad.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLInputElement.h"

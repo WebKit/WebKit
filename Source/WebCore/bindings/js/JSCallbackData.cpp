@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "JSDOMBinding.h"
 #include "JSMainThreadExecState.h"
+#include "JSMainThreadExecStateInstrumentation.h"
 
 using namespace JSC;
     

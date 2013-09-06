@@ -29,6 +29,7 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"
+#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebKitSystemInterface.h>
 

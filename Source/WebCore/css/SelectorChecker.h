@@ -29,7 +29,7 @@
 #define SelectorChecker_h
 
 #include "CSSSelector.h"
-#include "InspectorInstrumentation.h"
+#include "Element.h"
 #include "SpaceSplitString.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>

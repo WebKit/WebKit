@@ -11562,9 +11562,6 @@
     <ClInclude Include="..\bindings\generic\BindingSecurity.h">
       <Filter>bindings\generic</Filter>
     </ClInclude>
-    <ClInclude Include="..\bindings\generic\GenericBinding.h">
-      <Filter>bindings\generic</Filter>
-    </ClInclude>
     <ClInclude Include="..\bindings\generic\RuntimeEnabledFeatures.h">
       <Filter>bindings\generic</Filter>
     </ClInclude>

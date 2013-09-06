@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "Frame.h"
 #include "TiledBackingStore.h"
 #include "ewk_paint_context_private.h"
 #include "ewk_private.h"

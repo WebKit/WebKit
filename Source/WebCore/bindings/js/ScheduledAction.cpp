@@ -32,6 +32,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "JSMainThreadExecState.h"
+#include "JSMainThreadExecStateInstrumentation.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"

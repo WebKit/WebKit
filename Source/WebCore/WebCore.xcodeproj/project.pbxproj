@@ -3494,7 +3494,6 @@
 		A6148A6812E41D940044A784 /* DOMHTMLKeygenElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = A6148A6612E41D940044A784 /* DOMHTMLKeygenElement.mm */; };
 		A6148A7812E41E3B0044A784 /* JSHTMLKeygenElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6148A7612E41E3B0044A784 /* JSHTMLKeygenElement.cpp */; };
 		A6148A7912E41E3B0044A784 /* JSHTMLKeygenElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A6148A7712E41E3B0044A784 /* JSHTMLKeygenElement.h */; };
-		A622A8FF122C44A600A785B3 /* GenericBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F9122C44A600A785B3 /* GenericBinding.h */; };
 		A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6D169611346B49B000EB770 /* ShadowRoot.cpp */; };
 		A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = A6D169631346B4C1000EB770 /* ShadowRoot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7151BD812F1558F005A0F64 /* TextCheckerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7151BD712F1558F005A0F64 /* TextCheckerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10095,7 +10094,6 @@
 		A6148A7612E41E3B0044A784 /* JSHTMLKeygenElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLKeygenElement.cpp; sourceTree = "<group>"; };
 		A6148A7712E41E3B0044A784 /* JSHTMLKeygenElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLKeygenElement.h; sourceTree = "<group>"; };
 		A6148A7F12E41ED10044A784 /* HTMLKeygenElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLKeygenElement.idl; sourceTree = "<group>"; };
-		A622A8F9122C44A600A785B3 /* GenericBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericBinding.h; path = generic/GenericBinding.h; sourceTree = "<group>"; };
 		A6D169611346B49B000EB770 /* ShadowRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowRoot.cpp; sourceTree = "<group>"; };
 		A6D169631346B4C1000EB770 /* ShadowRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowRoot.h; sourceTree = "<group>"; };
 		A7151BD712F1558F005A0F64 /* TextCheckerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerClient.h; sourceTree = "<group>"; };
@@ -11448,6 +11446,7 @@
 		B55D5AA71191325000BCC315 /* JSSQLTransactionSyncCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransactionSyncCustom.cpp; sourceTree = "<group>"; };
 		B562DB5E17D3CD560010AF96 /* HTMLElementTypeHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTMLElementTypeHelpers.h; sourceTree = "<group>"; };
 		B562DB5F17D3CD560010AF96 /* SVGElementTypeHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGElementTypeHelpers.h; sourceTree = "<group>"; };
+		B56576E417DA599F00A56BDC /* JSMainThreadExecStateInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMainThreadExecStateInstrumentation.h; sourceTree = "<group>"; };
 		B58CEB6711913607002A6790 /* JSDatabaseSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDatabaseSync.h; sourceTree = "<group>"; };
 		B58CEB6811913607002A6790 /* JSDatabaseSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDatabaseSync.cpp; sourceTree = "<group>"; };
 		B58CEB6B1191361C002A6790 /* JSSQLTransactionSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLTransactionSync.h; sourceTree = "<group>"; };
@@ -19053,7 +19052,6 @@
 				B5D31DF911CF610B009F22B4 /* ActiveDOMCallback.h */,
 				973AA3F715D0891B00E38A85 /* BindingSecurity.cpp */,
 				973AA3F815D0891B00E38A85 /* BindingSecurity.h */,
-				A622A8F9122C44A600A785B3 /* GenericBinding.h */,
 			);
 			name = generic;
 			sourceTree = "<group>";
@@ -19138,6 +19136,7 @@
 				3314ACEA10892086000F0E56 /* JSExceptionBase.h */,
 				8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */,
 				8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */,
+				B56576E417DA599F00A56BDC /* JSMainThreadExecStateInstrumentation.h */,
 				C6F420A016B7164E0052A9F2 /* JSMutationCallback.cpp */,
 				C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */,
 				93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */,
@@ -22368,7 +22367,6 @@
 				C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */,
 				BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */,
 				2D481F04146B5C6B00AA7834 /* GeneratorGeneratedImage.h in Headers */,
-				A622A8FF122C44A600A785B3 /* GenericBinding.h in Headers */,
 				0720B0A114D3323500642955 /* GenericEventQueue.h in Headers */,
 				9746AF2414F4DDE6003E7A70 /* Geolocation.h in Headers */,
 				9746AF2514F4DDE6003E7A71 /* GeolocationClient.h in Headers */,

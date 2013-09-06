@@ -29,7 +29,6 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "ChromeClient.h"
-#include "Frame.h"
 #include "GraphicsLayerClient.h"
 #include "GraphicsLayerUpdater.h"
 #include "RenderLayer.h"
@@ -48,6 +47,8 @@ class StickyPositionViewportConstraints;
 class RenderVideo;
 #endif
 class TiledBacking;
+
+typedef unsigned LayerTreeFlags;
 
 enum CompositingUpdateType {
     CompositingUpdateAfterStyleChange,

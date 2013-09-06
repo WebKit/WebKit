@@ -29,6 +29,7 @@
 #include "EllipsisBox.h"
 #include "FloatQuad.h"
 #include "FontTranscoder.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "Hyphenation.h"
 #include "InlineTextBox.h"

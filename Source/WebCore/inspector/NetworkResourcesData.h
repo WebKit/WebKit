@@ -31,6 +31,7 @@
 
 #include "HTTPHeaderMap.h"
 #include "InspectorPageAgent.h"
+#include "KURL.h"
 #include "TextResourceDecoder.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -44,6 +45,7 @@ namespace WebCore {
 
 class CachedResource;
 class FormData;
+class ResourceResponse;
 class SharedBuffer;
 class TextResourceDecoder;
 

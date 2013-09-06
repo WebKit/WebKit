@@ -37,6 +37,7 @@
 #include "MouseEvent.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
+#include "Page.h"
 #include "PlugInClient.h"
 #include "PluginViewBase.h"
 #include "RenderEmbeddedObject.h"

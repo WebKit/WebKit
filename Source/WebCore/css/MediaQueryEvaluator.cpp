@@ -39,6 +39,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "InspectorInstrumentation.h"
 #include "IntRect.h"
 #include "MediaFeatureNames.h"
 #include "MediaList.h"

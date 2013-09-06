@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderBoxModelObject.h"
 
+#include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"

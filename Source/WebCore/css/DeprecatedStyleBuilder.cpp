@@ -38,6 +38,7 @@
 #include "CursorList.h"
 #include "Document.h"
 #include "Element.h"
+#include "Frame.h"
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderObject.h"

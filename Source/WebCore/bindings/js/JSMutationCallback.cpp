@@ -29,6 +29,7 @@
 
 #include "JSDOMGlobalObject.h"
 #include "JSMainThreadExecState.h"
+#include "JSMainThreadExecStateInstrumentation.h"
 #include "JSMutationObserver.h"
 #include "JSMutationRecord.h"
 #include "ScriptExecutionContext.h"
