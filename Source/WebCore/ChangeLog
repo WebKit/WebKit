@@ -1,3 +1,30 @@
+2013-09-06  Mike West  <mkwst@chromium.org>
+
+        Revalidation header blacklisting should be case-insensitive.
+        https://bugs.webkit.org/show_bug.cgi?id=120832
+
+        Reviewed by Alexey Proskuryakov.
+
+        Headers like 'content-type' should be ignored for 304 responses,
+        even if they are delivered as 'Content-Type', or 'CoNtEnT-TyPe', etc.
+
+        I broke this behavior in http://trac.webkit.org/changeset/142068
+        ("Entity-header extension headers honored on 304 responses"). Pages like
+        https://learndev.unm.edu/ currently break on reload, as they incorrectly
+        send 'Content-Type: text/plain' for 304 responses for resources like
+        CSS and JavaScript. The browser should drop these headers, but because
+        we're comparing in a case-sensitive fashion, we don't.
+
+        https://code.google.com/p/chromium/issues/detail?id=246875 documents the
+        Blink-side fix; this patch is a port of that patch.
+
+        Test: http/tests/cache/content-type-ignored-during-revalidation.html
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::shouldUpdateHeaderAfterRevalidation):
+        Compare the provided AtomicString 'header' to the revalidation
+        blacklists in a case-insensitive fashion.
+
 2013-09-06  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream API] Allow empty MediaStreams

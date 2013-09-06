@@ -90,11 +90,11 @@ const char* const headerPrefixesToIgnoreAfterRevalidation[] = {
 static inline bool shouldUpdateHeaderAfterRevalidation(const AtomicString& header)
 {
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(headersToIgnoreAfterRevalidation); i++) {
-        if (header == headersToIgnoreAfterRevalidation[i])
+        if (equalIgnoringCase(header, headersToIgnoreAfterRevalidation[i]))
             return false;
     }
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(headerPrefixesToIgnoreAfterRevalidation); i++) {
-        if (header.startsWith(headerPrefixesToIgnoreAfterRevalidation[i]))
+        if (header.startsWith(headerPrefixesToIgnoreAfterRevalidation[i], false))
             return false;
     }
     return true;
