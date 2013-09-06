@@ -1,3 +1,9 @@
+2013-09-05  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Unreviewed gardening.
+
+        * platform/efl-wk1/TestExpectations: Failing after r155014.
+
 2013-09-04  Dean Jackson  <dino@apple.com>
 
         Rename supportsContext to probablySupportsContext

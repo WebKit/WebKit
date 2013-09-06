@@ -501,3 +501,6 @@ webkit.org/b/87226 printing/media-queries-print.html [ Failure ]
 webkit.org/b/87226 printing/setPrinting.html [ Failure ]
 webkit.org/b/87226 printing/simultaneous-position-float-change.html [ Failure ]
 webkit.org/b/87226 printing/width-overflow.html [ Failure ]
+
+# Failing tests after r155014
+webkit.org/b/120671 editing/selection/doubleclick-japanese-text.html [ Failure ]
