@@ -875,7 +875,7 @@ static void emitPutTransitionStub(
         stubJit.store32(valueTagGPR, MacroAssembler::Address(scratchGPR1, offsetInButterfly(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     }
 #endif
-            
+    
     MacroAssembler::Jump success;
     MacroAssembler::Jump failure;
             

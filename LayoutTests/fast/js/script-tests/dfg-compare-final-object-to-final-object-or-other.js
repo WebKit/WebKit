@@ -17,7 +17,10 @@ function foo(a, b) {
     return result;
 }
 
-for (var i = 0; i < 100; ++i) {
+silentTestPass = true;
+noInline(foo);
+
+for (var i = 0; i < 100; i = dfgIncrement({f:foo, i:i + 1, n:50})) {
     if (i%2) {
         var o = {f:42};
         shouldBe("foo(o, o)", "true");

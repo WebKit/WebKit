@@ -1,3 +1,47 @@
+2013-09-06  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(149636, merged in 153145): ToThis conversion doesn't work in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=120781
+
+        Reviewed by Mark Hahnenberg.
+        
+        Roll this back in with a build fix.
+        
+        - Use some method table hacks to detect if the CheckStructure optimization is
+          valid for to_this.
+        
+        - Introduce a FinalObjectUse and use it for ToThis->Identity conversion.
+        
+        This looks like it might be perf-neutral on the major benchmarks, but it
+        introduces some horrible performance cliffs. For example if you add methods to
+        the Array prototype, you'll get horrible performance cliffs. As in virtual calls
+        to C++ every time you call a JS function even if it's inlined.
+        LongSpider/3d-cube appears to hit this.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::emitPutTransitionStub):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateFinalObject):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isCell):
+
 2013-09-05  Filip Pizlo  <fpizlo@apple.com>
 
         Introduce a way to run benchmarks and JSRegress as stress tests with different jsc command-line options
@@ -33,6 +77,10 @@
         (JSC::JSGlobalObject::visitChildren):
         * runtime/JSGlobalObject.h:
 
+2013-09-05  Mark Rowe  <mrowe@apple.com>
+        
+        Roll out r155149 since it broke the build.
+
 2013-09-05  Michael Saboff  <msaboff@apple.com>
 
         Cleanup formatting of byte code debug output
@@ -57,6 +105,46 @@
         * bytecode/CodeBlock.h:
         (JSC::CodeBlock::printLocationAndOp):
         (JSC::CodeBlock::printLocationOpAndRegisterOperand):
+
+2013-09-05  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(149636, merged in 153145): ToThis conversion doesn't work in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=120781
+
+        Reviewed by Mark Hahnenberg.
+        
+        - Use some method table hacks to detect if the CheckStructure optimization is
+          valid for to_this.
+        
+        - Introduce a FinalObjectUse and use it for ToThis->Identity conversion.
+        
+        This looks like it might be perf-neutral on the major benchmarks, but it
+        introduces some horrible performance cliffs. For example if you add methods to
+        the Array prototype, you'll get horrible performance cliffs. As in virtual calls
+        to C++ every time you call a JS function even if it's inlined.
+        LongSpider/3d-cube appears to hit this.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateFinalObject):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isCell):
 
 2013-09-05  Anders Carlsson  <andersca@apple.com>
 

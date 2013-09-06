@@ -10,7 +10,10 @@ x = 42;
 
 String.prototype.x = 42;
 
-for (var i = 0; i < 1000; ++i) {
+silentTestPass = true;
+noInline(foo);
+
+for (var i = 0; i < 1000; i = dfgIncrement({f:foo, i:dfgIncrement({f:foo, i:i + 1, n:100}), n:500, compiles:2})) {
     var me;
     if (i < 150)
         me = this;

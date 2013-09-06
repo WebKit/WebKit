@@ -24,9 +24,5 @@ Stuff.prototype = {
     otherThingy: function(x) { return x - 1; }
 };
 
-for (var i = 0; i < 1000; ++i) {
-    shouldBe("foo1(new Stuff())", "43");
-    shouldBe("foo2(new Stuff())", "58");
-}
-
-
+dfgShouldBe(foo1, "foo1(new Stuff())", "43");
+dfgShouldBe(foo2, "foo2(new Stuff())", "58");

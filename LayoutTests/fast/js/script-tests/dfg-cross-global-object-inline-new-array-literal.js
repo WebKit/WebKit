@@ -11,7 +11,7 @@ function foo() {
 Array.prototype.thingy = 24;
 
 function done(value) {
-    var expected = (24 + 3 + 1 + 2 + 3) * 200;
+    var expected = 1 + 2 + 3 + 3 + 24;
     if (value == expected)
         testPassed("done() called with " + expected);
     else
@@ -30,11 +30,11 @@ function doit() {
     code += "function bar() {\n";
     code += "    return window.parent.foo();\n";
     code += "}\n";
-    code += "var result = 0;\n";
-    code += "for (var i = 0; i < 200; ++i) {\n";
-    code += "    var theArray = bar();\n";
-    code += "    result += theArray.thingy + theArray.length + theArray[0] + theArray[1] + theArray[2];\n";
-    code += "}\n";
+    code += "window.parent.noInline(bar);\n";
+    code += "var theArray;\n";
+    code += "while (!window.parent.dfgCompiled({f:bar}))\n";
+    code += "    theArray = bar();\n";
+    code += "var result = theArray.thingy + theArray.length + theArray[0] + theArray[1] + theArray[2];\n";
     code += "window.parent.done(result);\n";
     code += "</script></body></html>";
     
@@ -42,5 +42,5 @@ function doit() {
     testFrame.contentDocument.close();
 }
 
-window.setTimeout(doit, 10);
+window.setTimeout(doit, 0);
 

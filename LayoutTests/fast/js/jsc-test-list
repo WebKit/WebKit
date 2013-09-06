@@ -116,6 +116,10 @@ fast/js/dfg-cfg-simplify-redundant-dead-get-local
 fast/js/dfg-check-function-change-structure
 fast/js/dfg-check-structure-elimination-for-non-cell
 fast/js/dfg-check-two-structures
+fast/js/dfg-compare-final-object-to-final-object-or-other-when-both-proven-final-object
+fast/js/dfg-compare-final-object-to-final-object-or-other-when-proven-final-object
+fast/js/dfg-constant-fold-logical-not-branch
+fast/js/dfg-constant-fold-misprediction
 fast/js/dfg-constant-fold-first-local-read-after-block-merge
 fast/js/dfg-constant-fold-uncaptured-variable-that-is-later-captured
 fast/js/dfg-convert-this-dom-window

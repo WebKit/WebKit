@@ -13,7 +13,10 @@ var o1 = {f:42, g:43};
 var o2 = {f:44};
 var o3 = {e:45, f:46};
 
-for (var i = 0; i < 200; ++i) {
+silentTestPass = true;
+noInline(foo);
+
+for (var i = 0; i < 200; i = dfgIncrement({f:foo, i:i + 1, n:100})) {
     var o;
     var expected;
     if (i < 150) {
