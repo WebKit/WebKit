@@ -51,7 +51,7 @@
 namespace WebCore {
 
 RenderFlowThread::RenderFlowThread()
-    : RenderBlockFlow(0)
+    : RenderBlock(0)
     , m_previousRegionCount(0)
     , m_autoLogicalHeightRegionsCount(0)
     , m_regionsInvalidated(false)

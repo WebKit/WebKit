@@ -31,11 +31,11 @@
 #ifndef RenderRubyText_h
 #define RenderRubyText_h
 
-#include "RenderBlockFlow.h"
+#include "RenderBlock.h"
 
 namespace WebCore {
 
-class RenderRubyText FINAL : public RenderBlockFlow {
+class RenderRubyText FINAL : public RenderBlock {
 public:
     RenderRubyText(Element*);
     virtual ~RenderRubyText();

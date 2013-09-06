@@ -95,7 +95,7 @@ HTMLElement* sliderTrackElementOf(Node* node)
 // --------------------------------
 
 RenderSliderThumb::RenderSliderThumb(SliderThumbElement* element)
-    : RenderBlockFlow(element)
+    : RenderBlock(element)
 {
 }
 

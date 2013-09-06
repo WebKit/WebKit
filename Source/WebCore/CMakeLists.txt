@@ -2111,7 +2111,6 @@ set(WebCore_SOURCES
     rendering/RenderArena.cpp
     rendering/RenderBR.cpp
     rendering/RenderBlock.cpp
-    rendering/RenderBlockFlow.cpp
     rendering/RenderBlockLineLayout.cpp
     rendering/RenderBox.cpp
     rendering/RenderBoxModelObject.cpp

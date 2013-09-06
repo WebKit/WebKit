@@ -31,7 +31,7 @@
 #define RenderFlowThread_h
 
 
-#include "RenderBlockFlow.h"
+#include "RenderBlock.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/PassRefPtr.h>
@@ -55,7 +55,7 @@ typedef HashMap<RenderLayer*, RenderRegion*> LayerToRegionMap;
 // and nodeAtPoint methods to this object. Each RenderRegion will actually be a viewPort
 // of the RenderFlowThread.
 
-class RenderFlowThread: public RenderBlockFlow {
+class RenderFlowThread: public RenderBlock {
 public:
     RenderFlowThread();
     virtual ~RenderFlowThread() { };

@@ -42,7 +42,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderListItem::RenderListItem(Element* element)
-    : RenderBlockFlow(element)
+    : RenderBlock(element)
     , m_marker(0)
     , m_hasExplicitValue(false)
     , m_isValueUpToDate(false)
@@ -76,7 +76,7 @@ void RenderListItem::willBeDestroyed()
         m_marker->destroy();
         m_marker = 0;
     }
-    RenderBlockFlow::willBeDestroyed();
+    RenderBlock::willBeDestroyed();
 }
 
 void RenderListItem::insertedIntoTree()
@@ -88,7 +88,7 @@ void RenderListItem::insertedIntoTree()
 
 void RenderListItem::willBeRemovedFromTree()
 {
-    RenderBlockFlow::willBeRemovedFromTree();
+    RenderBlock::willBeRemovedFromTree();
 
     updateListMarkerNumbers();
 }
@@ -306,12 +306,12 @@ void RenderListItem::layout()
     ASSERT(needsLayout()); 
 
     insertOrMoveMarkerRendererIfNeeded();
-    RenderBlockFlow::layout();
+    RenderBlock::layout();
 }
 
 void RenderListItem::addOverflowFromChildren()
 {
-    RenderBlockFlow::addOverflowFromChildren();
+    RenderBlock::addOverflowFromChildren();
     positionListMarker();
 }
 
@@ -325,7 +325,7 @@ void RenderListItem::computePreferredLogicalWidths()
     SetLayoutNeededForbiddenScope layoutForbiddenScope(this, false);
 #endif
     insertOrMoveMarkerRendererIfNeeded();
-    RenderBlockFlow::computePreferredLogicalWidths();
+    RenderBlock::computePreferredLogicalWidths();
 }
 
 void RenderListItem::positionListMarker()
@@ -428,7 +428,7 @@ void RenderListItem::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (!logicalHeight() && hasOverflowClip())
         return;
 
-    RenderBlockFlow::paint(paintInfo, paintOffset);
+    RenderBlock::paint(paintInfo, paintOffset);
 }
 
 const String& RenderListItem::markerText() const

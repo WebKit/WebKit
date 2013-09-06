@@ -25,7 +25,7 @@
 #include "FrameView.h"
 #include "LayoutState.h"
 #include "PODFreeListArena.h"
-#include "RenderBlockFlow.h"
+#include "RenderBlock.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ class RenderLayerCompositor;
 class CustomFilterGlobalContext;
 #endif
 
-class RenderView FINAL : public RenderBlockFlow {
+class RenderView FINAL : public RenderBlock {
 public:
     explicit RenderView(Document*);
     virtual ~RenderView();
@@ -253,7 +253,7 @@ private:
     {
         // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
         if (!doingFullRepaint() || m_layoutState->isPaginated() || renderer->hasColumns() || renderer->flowThreadContainingBlock()
-            || m_layoutState->lineGrid() || (renderer->style()->lineGrid() != RenderStyle::initialLineGrid() && renderer->isRenderBlockFlow())
+            || m_layoutState->lineGrid() || (renderer->style()->lineGrid() != RenderStyle::initialLineGrid() && renderer->isBlockFlow())
 #if ENABLE(CSS_SHAPES)
             || (renderer->isRenderBlock() && toRenderBlock(renderer)->shapeInsideInfo())
             || (m_layoutState->shapeInsideInfo() && renderer->isRenderBlock() && !toRenderBlock(renderer)->allowsShapeInsideInfoSharing())

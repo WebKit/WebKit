@@ -31,13 +31,13 @@
 #ifndef RenderRubyBase_h
 #define RenderRubyBase_h
 
-#include "RenderBlockFlow.h"
+#include "RenderBlock.h"
 
 namespace WebCore {
 
 class RenderRubyRun;
 
-class RenderRubyBase FINAL : public RenderBlockFlow {
+class RenderRubyBase FINAL : public RenderBlock {
 public:
     virtual ~RenderRubyBase();
     

@@ -321,6 +321,7 @@ public:
     bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
 
     virtual bool isBR() const { return false; }
+    virtual bool isBlockFlow() const { return false; }
     virtual bool isBoxModelObject() const { return false; }
     virtual bool isCounter() const { return false; }
     virtual bool isQuote() const { return false; }
@@ -349,7 +350,6 @@ public:
     virtual bool isProgress() const { return false; }
 #endif
     virtual bool isRenderBlock() const { return false; }
-    virtual bool isRenderBlockFlow() const { return false; }
     virtual bool isRenderSVGBlock() const { return false; };
     virtual bool isRenderButton() const { return false; }
     virtual bool isRenderIFrame() const { return false; }

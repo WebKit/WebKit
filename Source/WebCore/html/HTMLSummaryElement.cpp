@@ -30,7 +30,7 @@
 #include "MouseEvent.h"
 #include "NodeRenderingTraversal.h"
 #include "PlatformMouseEvent.h"
-#include "RenderBlockFlow.h"
+#include "RenderBlock.h"
 #include "ShadowRoot.h"
 
 namespace WebCore {
@@ -68,7 +68,7 @@ HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document* d
 
 RenderObject* HTMLSummaryElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderBlockFlow(this);
+    return new (arena) RenderBlock(this);
 }
 
 bool HTMLSummaryElement::childShouldCreateRenderer(const Node* child) const

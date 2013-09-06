@@ -1,3 +1,151 @@
+2013-09-05  Beth Dakin  <bdakin@apple.com>
+
+        Reverting revisions 155139, 155141, 155142, and 155145 since they appear to have 
+        caused about 50 new test failures. 
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * dom/Position.cpp:
+        (WebCore::Position::isCandidate):
+        (WebCore::Position::getInlineBoxAndOffset):
+        (WebCore::Position::primaryDirection):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::addBlockPlaceholderIfNeeded):
+        * editing/Editor.cpp:
+        (WebCore::Editor::baseWritingDirectionForSelectionStart):
+        * editing/FrameSelection.cpp:
+        (WebCore::caretRenderer):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::makeEditableRootEmpty):
+        * editing/htmlediting.cpp:
+        (WebCore::isBlockFlowElement):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::createRenderer):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::createRenderer):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderThumb::RenderSliderThumb):
+        * html/shadow/SliderThumbElement.h:
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::createAnonymous):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::firstLineBoxBaseline):
+        (WebCore::RenderBlock::lastLineBoxBaseline):
+        (WebCore::RenderBlock::firstLineBlock):
+        (WebCore::findFirstLetterBlock):
+        (WebCore::shouldCheckLines):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp: Removed.
+        * rendering/RenderBlockFlow.h: Removed.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::positionForPoint):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::canHaveBoxInfoInRegion):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        (WebCore::RenderDeprecatedFlexibleBox::clearLineClamp):
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::RenderDetailsMarker):
+        * rendering/RenderDetailsMarker.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::RenderFieldset):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl):
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderFullScreen.cpp:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::computeRectForRepaint):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::RenderListItem):
+        (WebCore::RenderListItem::willBeDestroyed):
+        (WebCore::RenderListItem::willBeRemovedFromTree):
+        (WebCore::RenderListItem::layout):
+        (WebCore::RenderListItem::addOverflowFromChildren):
+        (WebCore::RenderListItem::computePreferredLogicalWidths):
+        (WebCore::RenderListItem::paint):
+        * rendering/RenderListItem.h:
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::RenderMeter):
+        * rendering/RenderMeter.h:
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::RenderMultiColumnBlock):
+        * rendering/RenderMultiColumnBlock.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        (WebCore::RenderObject::computeRectForRepaint):
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore::firstLineStyleForCachedUncachedType):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isBlockFlow):
+        (WebCore::RenderObject::isRenderBlock):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::insertChildNode):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::RenderProgress):
+        * rendering/RenderProgress.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        * rendering/RenderRegion.h:
+        * rendering/RenderRuby.cpp:
+        (WebCore::RenderRubyAsBlock::RenderRubyAsBlock):
+        * rendering/RenderRuby.h:
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::RenderRubyBase):
+        * rendering/RenderRubyBase.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::RenderRubyRun):
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderRubyText.cpp:
+        (WebCore::RenderRubyText::RenderRubyText):
+        * rendering/RenderRubyText.h:
+        * rendering/RenderTableCaption.cpp:
+        (WebCore::RenderTableCaption::RenderTableCaption):
+        * rendering/RenderTableCaption.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlSingleLine.h:
+        (WebCore::RenderTextControlInnerBlock::RenderTextControlInnerBlock):
+        * rendering/RenderTextTrackCue.cpp:
+        (WebCore::RenderTextTrackCue::RenderTextTrackCue):
+        * rendering/RenderTextTrackCue.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        * rendering/RenderingAllInOne.cpp:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::createGlyph):
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::RenderSVGBlock):
+        * rendering/svg/RenderSVGBlock.h:
+
 2013-09-05  Alexey Proskuryakov  <ap@apple.com>
 
         Flaky Test: platform/mac/editing/deleting/deletionUI-single-instance.html

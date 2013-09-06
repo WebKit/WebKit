@@ -39,7 +39,7 @@ using namespace std;
 namespace WebCore {
 
 RenderRubyBase::RenderRubyBase()
-    : RenderBlockFlow(0)
+    : RenderBlock(0)
 {
     setInline(false);
 }

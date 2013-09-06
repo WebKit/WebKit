@@ -108,9 +108,9 @@ void toRenderTextControlSingleLine(const RenderTextControlSingleLine*);
 
 // ----------------------------
 
-class RenderTextControlInnerBlock : public RenderBlockFlow {
+class RenderTextControlInnerBlock : public RenderBlock {
 public:
-    RenderTextControlInnerBlock(Element* element) : RenderBlockFlow(element) { }
+    RenderTextControlInnerBlock(Element* element) : RenderBlock(element) { }
 
 private:
     virtual bool hasLineIfEmpty() const { return true; }

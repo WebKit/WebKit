@@ -20,13 +20,13 @@
 #ifndef RenderTableCaption_h
 #define RenderTableCaption_h
 
-#include "RenderBlockFlow.h"
+#include "RenderBlock.h"
 
 namespace WebCore {
 
 class RenderTable;
 
-class RenderTableCaption FINAL : public RenderBlockFlow {
+class RenderTableCaption FINAL : public RenderBlock {
 public:
     explicit RenderTableCaption(Element*);
     virtual ~RenderTableCaption();

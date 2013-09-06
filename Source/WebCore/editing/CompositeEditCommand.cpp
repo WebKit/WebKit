@@ -874,7 +874,7 @@ PassRefPtr<Node> CompositeEditCommand::addBlockPlaceholderIfNeeded(Element* cont
     document().updateLayoutIgnorePendingStylesheets();
 
     RenderObject* renderer = container->renderer();
-    if (!renderer || !renderer->isRenderBlockFlow())
+    if (!renderer || !renderer->isBlockFlow())
         return 0;
     
     // append the placeholder to make sure it follows

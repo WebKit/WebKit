@@ -22,7 +22,7 @@
 #define RenderMeter_h
 
 #if ENABLE(METER_ELEMENT)
-#include "RenderBlockFlow.h"
+#include "RenderBlock.h"
 #include "RenderWidget.h"
 
 
@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLMeterElement;
 
-class RenderMeter FINAL : public RenderBlockFlow {
+class RenderMeter FINAL : public RenderBlock {
 public:
     explicit RenderMeter(HTMLElement*);
     virtual ~RenderMeter();

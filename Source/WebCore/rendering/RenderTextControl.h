@@ -22,14 +22,14 @@
 #ifndef RenderTextControl_h
 #define RenderTextControl_h
 
-#include "RenderBlockFlow.h"
+#include "RenderBlock.h"
 #include "RenderFlexibleBox.h"
 
 namespace WebCore {
 
 class HTMLTextFormControlElement;
 
-class RenderTextControl : public RenderBlockFlow {
+class RenderTextControl : public RenderBlock {
 public:
     virtual ~RenderTextControl();
 

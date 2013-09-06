@@ -48,7 +48,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-struct SameSizeAsRenderTableCell : public RenderBlockFlow {
+struct SameSizeAsRenderTableCell : public RenderBlock {
     unsigned bitfields;
     int paddings[2];
 };
@@ -57,7 +57,7 @@ COMPILE_ASSERT(sizeof(RenderTableCell) == sizeof(SameSizeAsRenderTableCell), Ren
 COMPILE_ASSERT(sizeof(CollapsedBorderValue) == 8, CollapsedBorderValue_should_stay_small);
 
 RenderTableCell::RenderTableCell(Element* element)
-    : RenderBlockFlow(element)
+    : RenderBlock(element)
     , m_column(unsetColumnIndex)
     , m_cellWidthChanged(false)
     , m_intrinsicPaddingBefore(0)

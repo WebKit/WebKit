@@ -25,7 +25,6 @@
 #ifndef RenderTableCell_h
 #define RenderTableCell_h
 
-#include "RenderBlockFlow.h"
 #include "RenderTableRow.h"
 #include "RenderTableSection.h"
 
@@ -36,7 +35,7 @@ static const unsigned maxColumnIndex = 0x1FFFFFFE; // 536,870,910
 
 enum IncludeBorderColorOrNot { DoNotIncludeBorderColor, IncludeBorderColor };
 
-class RenderTableCell FINAL : public RenderBlockFlow {
+class RenderTableCell FINAL : public RenderBlock {
 public:
     explicit RenderTableCell(Element*);
     

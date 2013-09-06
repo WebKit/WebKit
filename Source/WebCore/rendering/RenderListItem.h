@@ -23,14 +23,14 @@
 #ifndef RenderListItem_h
 #define RenderListItem_h
 
-#include "RenderBlockFlow.h"
+#include "RenderBlock.h"
 
 namespace WebCore {
 
 class HTMLOListElement;
 class RenderListMarker;
 
-class RenderListItem FINAL : public RenderBlockFlow {
+class RenderListItem FINAL : public RenderBlock {
 public:
     explicit RenderListItem(Element*);
 

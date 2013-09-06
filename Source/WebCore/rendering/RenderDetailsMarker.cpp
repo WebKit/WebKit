@@ -33,7 +33,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderDetailsMarker::RenderDetailsMarker(Element* element)
-    : RenderBlockFlow(element)
+    : RenderBlock(element)
 {
 }
 

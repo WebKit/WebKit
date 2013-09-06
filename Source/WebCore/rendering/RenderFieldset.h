@@ -24,11 +24,11 @@
 #ifndef RenderFieldset_h
 #define RenderFieldset_h
 
-#include "RenderBlockFlow.h"
+#include "RenderBlock.h"
 
 namespace WebCore {
 
-class RenderFieldset FINAL : public RenderBlockFlow {
+class RenderFieldset FINAL : public RenderBlock {
 public:
     explicit RenderFieldset(Element*);
 

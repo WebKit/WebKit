@@ -28,7 +28,6 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "RenderTextTrackCue.h"
-#include "RenderView.h"
 
 #include "RenderView.h"
 #include "TextTrackCue.h"
@@ -38,7 +37,7 @@
 namespace WebCore {
 
 RenderTextTrackCue::RenderTextTrackCue(TextTrackCueBox* element)
-    : RenderBlockFlow(element)
+    : RenderBlock(element)
     , m_cue(element->getCue())
 {
 }
