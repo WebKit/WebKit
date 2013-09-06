@@ -1,5 +1,17 @@
 2013-09-06  Filip Pizlo  <fpizlo@apple.com>
 
+        Concurrent FTL causes !hasOptimizedReplacement() asserts in cti_optimize
+        https://bugs.webkit.org/show_bug.cgi?id=120890
+
+        Reviewed by Mark Hahnenberg.
+        
+        Don't install an FTL code block if the DFG code block has already been jettisoned.
+
+        * dfg/DFGToFTLDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidComplete):
+
+2013-09-06  Filip Pizlo  <fpizlo@apple.com>
+
         REGRESSION(149636, merged in 153145): ToThis conversion doesn't work in the DFG
         https://bugs.webkit.org/show_bug.cgi?id=120781
 

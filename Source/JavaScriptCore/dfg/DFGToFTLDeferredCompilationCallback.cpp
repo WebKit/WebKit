@@ -70,6 +70,15 @@ void ToFTLDeferredCompilationCallback::compilationDidComplete(
             ") result: ", result, "\n");
     }
     
+    if (m_dfgCodeBlock->replacement() != m_dfgCodeBlock) {
+        if (Options::verboseOSR()) {
+            dataLog(
+                "Dropping FTL code block ", *codeBlock, " on the floor because the "
+                "DFG code block ", *m_dfgCodeBlock, " was jettisoned.\n");
+        }
+        return;
+    }
+    
     if (result == CompilationSuccessful)
         codeBlock->install();
     
