@@ -149,9 +149,8 @@ class Manager(object):
 
         # This must be started before we check the system dependencies,
         # since the helper may do things to make the setup correct.
-        if self._options.pixel_tests:
-            self._printer.write_update("Starting pixel test helper ...")
-            self._port.start_helper()
+        self._printer.write_update("Starting pixel test helper ...")
+        self._port.start_helper()
 
         # Check that the system dependencies (themes, fonts, ...) are correct.
         if not self._options.nocheck_sys_deps:

@@ -1,3 +1,23 @@
+2013-09-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Lots of pixel tests are failing on first run, so tests cannot finish
+        https://bugs.webkit.org/show_bug.cgi?id=120755
+
+        Reviewed by Ryosuke Niwa.
+
+        For whatever reason, many reftests are color profile sensitive, and we only set
+        color profile to a known one for pixel tests, not for reftests.
+
+        Pixel testing mode is also enabled  when retrying tests, so these failures used to
+        be essentially hidden - the tests were "flaky", but that was not reported loudly enough.
+        But now, so many tests fail that it makes run-webkit-tests stop early, and never retry.
+
+        This probably shouldn't happen, as reftests should not be color profile sensitive.
+        The fix is a stopgap measure to unblock EWS until a better fix can be investigated.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._set_up_run): Roll out <http://trac.webkit.org/changeset/115601>.
+
 2013-09-06  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] AccessibilityUIElement::addNotificationListener() crashes on debug build
