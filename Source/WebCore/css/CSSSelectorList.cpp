@@ -70,7 +70,9 @@ void CSSSelectorList::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& se
                 // Move item from the parser selector vector into m_selectorArray without invoking destructor (Ugh.)
                 CSSSelector* currentSelector = current->releaseSelector().leakPtr();
                 memcpy(&m_selectorArray[arrayIndex], currentSelector, sizeof(CSSSelector));
-                fastDeleteSkippingDestructor(currentSelector);
+
+                // Free the underlying memory without invoking the destructor.
+                operator delete (currentSelector);
             }
             current = current->tagHistory();
             ASSERT(!m_selectorArray[arrayIndex].isLastInSelectorList());

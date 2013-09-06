@@ -99,8 +99,6 @@ namespace WTF {
             AllocTypeMalloc = 0x375d6750,   // Encompasses fastMalloc, fastZeroedMalloc, fastCalloc, fastRealloc.
             AllocTypeClassNew,              // Encompasses class operator new from FastAllocBase.
             AllocTypeClassNewArray,         // Encompasses class operator new[] from FastAllocBase.
-            AllocTypeFastNew,               // Encompasses fastNew.
-            AllocTypeFastNewArray,          // Encompasses fastNewArray.
             AllocTypeNew,                   // Encompasses global operator new.
             AllocTypeNewArray               // Encompasses global operator new[].
         };

@@ -1,5 +1,17 @@
 2013-09-06  Anders Carlsson  <andersca@apple.com>
 
+        Remove fastNew/fastDelete
+        https://bugs.webkit.org/show_bug.cgi?id=120904
+
+        Reviewed by Andreas Kling.
+
+        Call operator delete directly.
+
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::adoptSelectorVector):
+
+2013-09-06  Anders Carlsson  <andersca@apple.com>
+
         Stop using fastNew/fastDelete in JavaScriptCore
         https://bugs.webkit.org/show_bug.cgi?id=120898
 
