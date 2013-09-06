@@ -51,8 +51,6 @@ macro(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
             set(OLD_COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -Wno-c++0x-compat")
         endif ()
 
-        set(OLD_COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -std=gnu++0x")
-
         set_target_properties(${_target} PROPERTIES
             COMPILE_FLAGS "${OLD_COMPILE_FLAGS}")
 

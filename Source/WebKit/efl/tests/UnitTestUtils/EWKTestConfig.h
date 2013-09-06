@@ -23,8 +23,8 @@ namespace EWKUnitTests {
 namespace Config {
 static const int defaultViewWidth = 600;
 static const int defaultViewHeight = 800;
-static const char* const defaultThemePath = DEFAULT_THEME_PATH"/default.edj";
-static const char* const defaultTestPage = "file://"DEFAULT_TEST_PAGE_DIR"/default_test_page.html";
+static const char* const defaultThemePath = DEFAULT_THEME_PATH "/default.edj";
+static const char* const defaultTestPage = "file://" DEFAULT_TEST_PAGE_DIR "/default_test_page.html";
 }
 }
 

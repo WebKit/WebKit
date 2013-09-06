@@ -1,3 +1,12 @@
+2013-09-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE] Add c++0x into CXX_FLAGS as a default
+        https://bugs.webkit.org/show_bug.cgi?id=120812
+
+        Unreviewed build fix for EFL ports.
+
+        * tests/UnitTestUtils/EWKTestConfig.h: Add space between strings.
+
 2013-08-28  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Let Page create the main Frame

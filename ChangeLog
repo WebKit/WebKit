@@ -1,3 +1,13 @@
+2013-09-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE] Add c++0x into CXX_FLAGS as a default
+        https://bugs.webkit.org/show_bug.cgi?id=120812
+
+        Unreviewed build fix for EFL ports.
+
+        * Source/cmake/OptionsCommon.cmake: Moved c++0x option here from WebKitHelpers.
+        * Source/cmake/WebKitHelpers.cmake:
+
 2013-09-04  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt] Use correct library paths for prefix builds on Mac.
