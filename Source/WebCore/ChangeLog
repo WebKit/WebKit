@@ -1,3 +1,15 @@
+2013-09-06  Vivek Galatage  <vivek.vg@samsung.com>
+
+        Calling window.close() should indicate failure with warning message
+        https://bugs.webkit.org/show_bug.cgi?id=120156
+
+        Reviewed by Darin Adler.
+
+        Closing of window is allowed for the tests for the automation.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::close):
+
 2013-09-06  Mike West  <mkwst@chromium.org>
 
         Revalidation header blacklisting should be case-insensitive.
