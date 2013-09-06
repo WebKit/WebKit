@@ -1,3 +1,16 @@
+2013-09-05  Dirk Schulze  <krit@webkit.org>
+
+        Support SVG filters on -webkit-filter() function
+        https://bugs.webkit.org/show_bug.cgi?id=120806
+
+        Reviewed by Darin Adler.
+
+        Test that the -webkit-filter() function can reference a SVG Filter
+        from the document.
+
+        * fast/filter-image/filter-image-svg-expected.html: Added.
+        * fast/filter-image/filter-image-svg.html: Added.
+
 2013-09-05  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Unreviewed gardening.

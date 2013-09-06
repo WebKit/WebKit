@@ -122,8 +122,7 @@ PassRefPtr<Image> CSSFilterImageValue::image(RenderObject* renderer, const IntSi
     filterRenderer->setSourceImage(texture.release());
     filterRenderer->setSourceImageRect(FloatRect(FloatPoint(), size));
     filterRenderer->setFilterRegion(FloatRect(FloatPoint(), size));
-    // FIXME: SVG Filter don't work at the moment.
-    if (!filterRenderer->build(0, m_filterOperations, FilterFunction))
+    if (!filterRenderer->build(renderer, m_filterOperations, FilterFunction))
         return Image::nullImage();
     filterRenderer->apply();
 

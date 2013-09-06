@@ -1,3 +1,17 @@
+2013-09-05  Dirk Schulze  <krit@webkit.org>
+
+        Support SVG filters on -webkit-filter() function
+        https://bugs.webkit.org/show_bug.cgi?id=120806
+
+        Reviewed by Darin Adler.
+
+        Add support for SVG Filters on CSS -webkit-filter() image function.
+
+        Test: fast/filter-image/filter-image-svg.html
+
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::image): Pass renderer to filter builder.
+
 2013-09-05  Yoav Weiss  <yoav@yoav.ws>
 
         DRY out srcset related deviceScaleFactor calculations
