@@ -1,5 +1,20 @@
 2013-09-05  Andreas Kling  <akling@apple.com>
 
+        FrameLoader: Convert three little loops to using Vector<Ref<Frame>>.
+        <https://webkit.org/b/120798>
+
+        Reviewed by Antti Koivisto.
+
+        Also apply a bit of inline capacity + reserveInitialCapacity + uncheckedAppend
+        in FrameLoader::detachChildren() since we know the final size from the start.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::detachChildren):
+        (WebCore::FrameLoader::checkLoadComplete):
+        (WebCore::FrameLoader::shouldClose):
+
+2013-09-05  Andreas Kling  <akling@apple.com>
+
         ContainerNode: Apply Ref<T> to some popular DOM functions.
         <https://webkit.org/b/120800>
 

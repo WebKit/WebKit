@@ -2318,14 +2318,12 @@ void FrameLoader::frameLoadCompleted()
 
 void FrameLoader::detachChildren()
 {
-    typedef Vector<RefPtr<Frame> > FrameVector;
-    FrameVector childrenToDetach;
-    childrenToDetach.reserveCapacity(m_frame.tree().childCount());
+    Vector<Ref<Frame>, 16> childrenToDetach;
+    childrenToDetach.reserveInitialCapacity(m_frame.tree().childCount());
     for (Frame* child = m_frame.tree().lastChild(); child; child = child->tree().previousSibling())
-        childrenToDetach.append(child);
-    FrameVector::iterator end = childrenToDetach.end();
-    for (FrameVector::iterator it = childrenToDetach.begin(); it != end; ++it)
-        (*it)->loader().detachFromParent();
+        childrenToDetach.uncheckedAppend(*child);
+    for (unsigned i = 0; i < childrenToDetach.size(); ++i)
+        childrenToDetach[i]->loader().detachFromParent();
 }
 
 void FrameLoader::closeAndRemoveChild(Frame* child)
@@ -2348,16 +2346,18 @@ void FrameLoader::checkLoadComplete()
     
     m_shouldCallCheckLoadComplete = false;
 
+    if (!m_frame.page())
+        return;
+
     // FIXME: Always traversing the entire frame tree is a bit inefficient, but 
     // is currently needed in order to null out the previous history item for all frames.
-    if (Page* page = m_frame.page()) {
-        Vector<RefPtr<Frame>, 10> frames;
-        for (RefPtr<Frame> frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
-            frames.append(frame);
-        // To process children before their parents, iterate the vector backwards.
-        for (size_t i = frames.size(); i; --i)
-            frames[i - 1]->loader().checkLoadCompleteForThisFrame();
-    }
+    Vector<Ref<Frame>, 16> frames;
+    for (Frame* frame = &m_frame.page()->mainFrame(); frame; frame = frame->tree().traverseNext())
+        frames.append(*frame);
+
+    // To process children before their parents, iterate the vector backwards.
+    for (unsigned i = frames.size(); i; --i)
+        frames[i - 1]->loader().checkLoadCompleteForThisFrame();
 }
 
 int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
@@ -2722,10 +2722,10 @@ bool FrameLoader::shouldClose()
         return true;
 
     // Store all references to each subframe in advance since beforeunload's event handler may modify frame
-    Vector<RefPtr<Frame> > targetFrames;
-    targetFrames.append(&m_frame);
+    Vector<Ref<Frame>, 16> targetFrames;
+    targetFrames.append(m_frame);
     for (Frame* child = m_frame.tree().firstChild(); child; child = child->tree().traverseNext(&m_frame))
-        targetFrames.append(child);
+        targetFrames.append(*child);
 
     bool shouldClose = false;
     {
