@@ -199,9 +199,13 @@ WebInspector.Breakpoint.prototype = {
 
     appendContextMenuItems: function(contextMenu, breakpointDisplayElement)
     {
+        console.assert(document.body.contains(breakpointDisplayElement), "breakpoint popover display element must be in the DOM");
+
+        var boundingClientRect = breakpointDisplayElement.getBoundingClientRect();
+
         function editBreakpoint()
         {
-            this._showEditBreakpointPopover(breakpointDisplayElement);
+            this._showEditBreakpointPopover(boundingClientRect);
         }
 
         function removeBreakpoint()
@@ -474,10 +478,11 @@ WebInspector.Breakpoint.prototype = {
         delete this._popover;
     },
 
-    _showEditBreakpointPopover: function(element)
+    _showEditBreakpointPopover: function(boundingClientRect)
     {
         const padding = 2;
-        var bounds = WebInspector.Rect.rectFromClientRect(element.getBoundingClientRect());
+        var bounds = WebInspector.Rect.rectFromClientRect(boundingClientRect);
+
         bounds.origin.x -= 1; // Move the anchor left one pixel so it looks more centered.
         bounds.origin.x -= padding;
         bounds.origin.y -= padding;

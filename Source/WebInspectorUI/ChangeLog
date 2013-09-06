@@ -1,5 +1,21 @@
 2013-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Edit Breakpoint popover sometimes appears misplaced in top left
+        https://bugs.webkit.org/show_bug.cgi?id=120804
+
+        Reviewed by Timothy Hatcher.
+
+        Grab the bounding rect immediately, instead of grabbing it from the element
+        after the user has selected the "Edit Breakpoint" context menu item. When
+        the popover was misplaced it was when using an element had been removed or
+        replaced in the DOM, and caused a bogus bounding client rect.
+
+        * UserInterface/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.editBreakpoint):
+        (WebInspector.Breakpoint.prototype._showEditBreakpointPopover):
+
+2013-09-05  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove harmless assert, triggered hitting breakpoint in auto prettyprinted code on reload
         https://bugs.webkit.org/show_bug.cgi?id=120332
 
