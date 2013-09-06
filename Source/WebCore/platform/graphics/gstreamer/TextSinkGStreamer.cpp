@@ -49,14 +49,14 @@ static void webkit_text_sink_init(WebKitTextSink* sink)
     gst_base_sink_set_sync(GST_BASE_SINK(sink), false);
 }
 
-static void webkitTextSinkGetProperty(GObject* object, guint propertyId,
-    GValue* value, GParamSpec* pspec)
+static void webkitTextSinkGetProperty(GObject*, guint /* propertyId */,
+    GValue*, GParamSpec*)
 {
     /* Do nothing with PropSync */
 }
 
-static void webkitTextSinkSetProperty(GObject* object, guint propertyId,
-    const GValue* value, GParamSpec* pspec)
+static void webkitTextSinkSetProperty(GObject*, guint /* propertyId */,
+    const GValue*, GParamSpec*)
 {
     /* Do nothing with PropSync */
 }
