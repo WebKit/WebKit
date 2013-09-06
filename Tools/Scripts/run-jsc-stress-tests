@@ -26,6 +26,13 @@
 require 'getoptlong'
 require 'pathname'
 
+begin
+    require 'shellwords'
+rescue => e
+    $stderr.puts "Warning: did not find shellwords; some features will be disabled."
+    $stderr.puts "Error: #{e.inspect}"
+end
+
 $jscPath = nil
 $collections = []
 $outputDir = Pathname.new("results")
@@ -62,8 +69,9 @@ $numFailures = 0
 
 def run(kind, *options)
     name = "#{$benchmark}.#{kind}"
-    print "#{name}: "
-    if system($jscPath.to_s, *options, $benchmark)
+    print "#{$collectionName}/#{name}: "
+    arguments = [$jscPath.to_s] + options + [$benchmark]
+    if system(*arguments)
         puts "OK."
     else
         puts "FAIL: #{$?.inspect}"
@@ -72,6 +80,16 @@ def run(kind, *options)
             outp.puts name
         }
         $numFailures += 1
+        filename = $outputDir + $collectionName + name
+        begin
+            File.open(filename, "w") {
+                | outp |
+                outp.puts("cd #{Shellwords.shellescape(Dir.pwd)}")
+                outp.puts(arguments.map{|v| Shellwords.shellescape(v)}.join(' '))
+            }
+        rescue => e
+            $stderr.puts "Warning: failed to create repro file at #{filename}: #{e.inspect}"
+        end
     end
 end
 
@@ -107,6 +125,8 @@ def skip
     puts "Skipping #{$benchmark}"
 end
 
+collectionNames = {}
+
 Dir.mkdir($outputDir) unless $outputDir.directory?
 begin
     File.delete($outputDir + "failed")
@@ -118,6 +138,15 @@ $outputDir = $outputDir.realpath
 ARGV.each {
     | collection |
     $collection = collection
+    $collectionName = File.basename(collection)
+    toAdd = 1
+    while collectionNames[$collectionName]
+        $collectionName = File.basename(collection) + "-#{toAdd}"
+        toAdd += 1
+    end
+    collectionNames[$collectionName] = true
+    dir = $outputDir + $collectionName
+    Dir.mkdir(dir) unless dir.directory?
     Dir.chdir(collection) {
         Dir.foreach('.') {
             | benchmark |

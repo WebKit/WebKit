@@ -1,5 +1,15 @@
 2013-09-06  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix run-jsc-stress-tests to run on bots with old Ruby.
+        
+        Also make it create a repro file.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * Scripts/run-jsc-stress-tests:
+
+2013-09-06  Filip Pizlo  <fpizlo@apple.com>
+
         Actually increment $numFailures
 
         Reviewed by Mark Hahnenberg.
