@@ -48,6 +48,7 @@
 #include "Page.h"
 #include "Settings.h"
 #include "SharedWorkerRepository.h"
+#include "SubframeLoader.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
@@ -110,7 +111,7 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
         PCLOG("   -Frame is an error page");
         rejectReasons |= 1 << IsErrorPage;
     }
-    if (frame->loader().subframeLoader()->containsPlugins() && !frame->page()->settings().pageCacheSupportsPlugins()) {
+    if (frame->loader().subframeLoader().containsPlugins() && !frame->page()->settings().pageCacheSupportsPlugins()) {
         PCLOG("   -Frame contains plugins");
         rejectReasons |= 1 << HasPlugins;
     }
@@ -316,7 +317,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
         && documentLoader->mainDocumentError().isNull()
         // Do not cache error pages (these can be recognized as pages with substitute data or unreachable URLs).
         && !(documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty())
-        && (!frameLoader.subframeLoader()->containsPlugins() || frame->page()->settings().pageCacheSupportsPlugins())
+        && (!frameLoader.subframeLoader().containsPlugins() || frame->page()->settings().pageCacheSupportsPlugins())
         && (!document->url().protocolIs("https") || (!documentLoader->response().cacheControlContainsNoCache() && !documentLoader->response().cacheControlContainsNoStore()))
         && (!document->domWindow() || !document->domWindow()->hasEventListeners(eventNames().unloadEvent))
 #if ENABLE(SQL_DATABASE)

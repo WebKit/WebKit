@@ -53,6 +53,7 @@
 #include <WebCore/PlatformPasteboard.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/StorageNamespace.h>
+#include <WebCore/SubframeLoader.h>
 #include <wtf/Atomics.h>
 
 #if ENABLE(NETWORK_PROCESS)
@@ -296,7 +297,7 @@ void WebPlatformStrategies::getPluginInfo(const WebCore::Page* page, Vector<WebC
 #if ENABLE(NETSCAPE_PLUGIN_API)
     populatePluginCache();
 
-    if (page->mainFrame().loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin)) {
+    if (page->mainFrame().loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin)) {
         plugins = m_cachedPlugins;
         return;
     }

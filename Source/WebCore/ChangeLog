@@ -1,3 +1,13 @@
+2013-09-06  Andreas Kling  <akling@apple.com>
+
+        FrameLoader::subresourceLoader() should return a reference.
+        <https://webkit.org/b/120830>
+
+        Reviewed by Anders Carlsson.
+
+        There is always a SubresourceLoader, so this method could never return null.
+        Also made m_subresourceLoader an OwnPtr to reduce header dependencies.
+
 2013-09-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-relevant does not expose AXARIARelevant

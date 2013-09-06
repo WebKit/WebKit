@@ -41,7 +41,6 @@
 #include "ResourceHandleTypes.h"
 #include "ResourceLoadNotifier.h"
 #include "SecurityContext.h"
-#include "SubframeLoader.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -54,6 +53,7 @@ class CachedPage;
 class CachedResource;
 class Chrome;
 class DOMWrapperWorld;
+class Document;
 class DocumentLoader;
 class Event;
 class FormState;
@@ -74,6 +74,7 @@ class ResourceResponse;
 class SecurityOrigin;
 class SerializedScriptValue;
 class StringWithDirection;
+class SubframeLoader;
 class SubstituteData;
 
 struct FrameLoadRequest;
@@ -94,7 +95,7 @@ public:
     PolicyChecker* policyChecker() const { return m_policyChecker.get(); }
     HistoryController& history() const { return *m_history; }
     ResourceLoadNotifier* notifier() const { return &m_notifer; }
-    SubframeLoader* subframeLoader() const { return &m_subframeLoader; }
+    SubframeLoader& subframeLoader() const { return *m_subframeLoader; }
     IconController* icon() const { return m_icon.get(); }
     MixedContentChecker* mixedContentChecker() const { return &m_mixedContentChecker; }
 
@@ -388,7 +389,7 @@ private:
     OwnPtr<PolicyChecker> m_policyChecker;
     const OwnPtr<HistoryController> m_history;
     mutable ResourceLoadNotifier m_notifer;
-    mutable SubframeLoader m_subframeLoader;
+    const OwnPtr<SubframeLoader> m_subframeLoader;
     mutable FrameLoaderStateMachine m_stateMachine;
     OwnPtr<IconController> m_icon;
     mutable MixedContentChecker m_mixedContentChecker;

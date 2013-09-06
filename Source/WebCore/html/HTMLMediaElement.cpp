@@ -4362,7 +4362,7 @@ void HTMLMediaElement::createMediaPlayerProxy()
     
     // Hang onto the proxy widget so it won't be destroyed if the plug-in is set to
     // display:none
-    m_proxyWidget = frame->loader().subframeLoader()->loadMediaPlayerProxyPlugin(this, url, paramNames, paramValues);
+    m_proxyWidget = frame->loader().subframeLoader().loadMediaPlayerProxyPlugin(this, url, paramNames, paramValues);
     if (m_proxyWidget)
         m_needWidgetUpdate = false;
 }
@@ -4378,8 +4378,8 @@ void HTMLMediaElement::updateWidget(PluginCreationOption)
 
     mediaElement->getPluginProxyParams(kurl, paramNames, paramValues);
     // FIXME: What if document().frame() is 0?
-    SubframeLoader* loader = document().frame()->loader().subframeLoader();
-    loader->loadMediaPlayerProxyPlugin(mediaElement, kurl, paramNames, paramValues);
+    SubframeLoader& loader = document().frame()->loader().subframeLoader();
+    loader.loadMediaPlayerProxyPlugin(mediaElement, kurl, paramNames, paramValues);
 }
 
 #endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)

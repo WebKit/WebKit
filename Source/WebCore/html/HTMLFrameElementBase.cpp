@@ -39,6 +39,7 @@
 #include "ScriptController.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
+#include "SubframeLoader.h"
 
 namespace WebCore {
 
@@ -86,7 +87,7 @@ void HTMLFrameElementBase::openURL(bool lockHistory, bool lockBackForwardList)
     if (!parentFrame)
         return;
 
-    parentFrame->loader().subframeLoader()->requestFrame(this, m_URL, m_frameName, lockHistory, lockBackForwardList);
+    parentFrame->loader().subframeLoader().requestFrame(this, m_URL, m_frameName, lockHistory, lockBackForwardList);
     if (contentFrame())
         contentFrame()->setInViewSourceMode(viewSourceMode());
 }

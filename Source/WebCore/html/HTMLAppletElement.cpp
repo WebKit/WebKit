@@ -33,6 +33,7 @@
 #include "RenderApplet.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "SubframeLoader.h"
 #include "Widget.h"
 
 namespace WebCore {
@@ -159,7 +160,7 @@ void HTMLAppletElement::updateWidget(PluginCreationOption pluginCreationOption)
     Frame* frame = document().frame();
     ASSERT(frame);
 
-    renderer->setWidget(frame->loader().subframeLoader()->createJavaAppletWidget(roundedIntSize(LayoutSize(contentWidth, contentHeight)), this, paramNames, paramValues));
+    renderer->setWidget(frame->loader().subframeLoader().createJavaAppletWidget(roundedIntSize(LayoutSize(contentWidth, contentHeight)), this, paramNames, paramValues));
 }
 
 bool HTMLAppletElement::canEmbedJava() const

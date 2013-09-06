@@ -34,6 +34,7 @@
 #import <WebCore/PageGroup.h>
 #import <WebCore/PlatformCookieJar.h>
 #import <WebCore/PlatformPasteboard.h>
+#import <WebCore/SubframeLoader.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
@@ -131,7 +132,7 @@ void WebPlatformStrategies::getPluginInfo(const Page* page, Vector<PluginInfo>& 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     // WebKit1 has no application plug-ins, so we don't need to add them here.
-    if (!page->mainFrame().loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+    if (!page->mainFrame().loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
         return;
 
     NSArray* pluginsArray = [[WebPluginDatabase sharedDatabase] plugins];

@@ -104,6 +104,7 @@
 #include "SegmentedString.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
+#include "SubframeLoader.h"
 #include "TextResourceDecoder.h"
 #include "WindowFeatures.h"
 #include "XMLDocumentParser.h"
@@ -216,7 +217,7 @@ FrameLoader::FrameLoader(Frame& frame, FrameLoaderClient& client)
     , m_policyChecker(adoptPtr(new PolicyChecker(&frame)))
     , m_history(adoptPtr(new HistoryController(frame)))
     , m_notifer(&frame)
-    , m_subframeLoader(&frame)
+    , m_subframeLoader(adoptPtr(new SubframeLoader(&frame)))
     , m_icon(adoptPtr(new IconController(&frame)))
     , m_mixedContentChecker(&frame)
     , m_state(FrameStateProvisional)
@@ -600,7 +601,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
     // as some destructors might still try to access the document.
     m_frame.setDocument(0);
 
-    m_subframeLoader.clear();
+    subframeLoader().clear();
 
     if (clearScriptObjects)
         m_frame.script().clearScriptObjects();

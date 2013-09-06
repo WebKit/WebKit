@@ -61,6 +61,7 @@ namespace WebCore {
     class FrameDestructionObserver;
     class FrameSelection;
     class FrameView;
+    class HTMLFrameOwnerElement;
     class HTMLTableCellElement;
     class IntRect;
     class Node;
@@ -72,6 +73,7 @@ namespace WebCore {
     class Settings;
     class TiledBackingStore;
     class VisiblePosition;
+    class Widget;
 
 #if !USE(TILED_BACKING_STORE)
     class TiledBackingStoreClient { };

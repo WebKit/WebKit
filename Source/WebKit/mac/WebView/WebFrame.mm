@@ -93,6 +93,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/StylePropertySet.h>
+#import <WebCore/SubframeLoader.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/VisibleUnits.h>
@@ -807,7 +808,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
     if (WebCore::DOMImplementation::isTextMIMEType(mimeType)
         || Image::supportsType(mimeType)
-        || (pluginData && pluginData->supportsMimeType(mimeType, PluginData::AllPlugins) && frame->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+        || (pluginData && pluginData->supportsMimeType(mimeType, PluginData::AllPlugins) && frame->loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
         || (pluginData && pluginData->supportsMimeType(mimeType, PluginData::OnlyApplicationPlugins)))
         return NO;
 
@@ -1017,7 +1018,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (documentLoader && !documentLoader->mainDocumentError().isNull())
         [result setObject:(NSError *)documentLoader->mainDocumentError() forKey:WebFrameMainDocumentError];
         
-    if (frameLoader.subframeLoader()->containsPlugins())
+    if (frameLoader.subframeLoader().containsPlugins())
         [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameHasPlugins];
     
     if (DOMWindow* domWindow = _private->coreFrame->document()->domWindow()) {

@@ -73,6 +73,7 @@
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/Settings.h>
+#include <WebCore/SubframeLoader.h>
 #include <WebCore/UIEventWithKeyState.h>
 #include <WebCore/Widget.h>
 #include <WebCore/WindowFeatures.h>
@@ -1416,7 +1417,7 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const
     bool plugInSupportsMIMEType = false;
     if (WebPage* webPage = m_frame->page()) {
         const PluginData& pluginData = webPage->corePage()->pluginData();
-        if (pluginData.supportsMimeType(mimeType, PluginData::AllPlugins) && webFrame()->coreFrame()->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+        if (pluginData.supportsMimeType(mimeType, PluginData::AllPlugins) && webFrame()->coreFrame()->loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
             plugInSupportsMIMEType = true;
         else if (pluginData.supportsMimeType(mimeType, PluginData::OnlyApplicationPlugins))
             plugInSupportsMIMEType = true;

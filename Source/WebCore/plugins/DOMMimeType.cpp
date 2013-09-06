@@ -26,6 +26,7 @@
 #include "Page.h"
 #include "PluginData.h"
 #include "Settings.h"
+#include "SubframeLoader.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -66,7 +67,7 @@ const String &DOMMimeType::description() const
 
 PassRefPtr<DOMPlugin> DOMMimeType::enabledPlugin() const
 {
-    if (!m_frame || !m_frame->page() || !m_frame->page()->mainFrame().loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+    if (!m_frame || !m_frame->page() || !m_frame->page()->mainFrame().loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
         return 0;
 
     return DOMPlugin::create(m_pluginData.get(), m_frame, m_pluginData->mimePluginIndices()[m_index]);

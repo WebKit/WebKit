@@ -50,6 +50,7 @@
 #include "RenderWidget.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
+#include "SubframeLoader.h"
 #include "Text.h"
 #include "Widget.h"
 #include <wtf/Ref.h>
@@ -206,8 +207,8 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
     // resource's URL to be given by a param named "src", "movie", "code" or "url"
     // if we know that resource points to a plug-in.
     if (url.isEmpty() && !urlParameter.isEmpty()) {
-        SubframeLoader* loader = document().frame()->loader().subframeLoader();
-        if (loader->resourceWillUsePlugin(urlParameter, serviceType, shouldPreferPlugInsForImages()))
+        SubframeLoader& loader = document().frame()->loader().subframeLoader();
+        if (loader.resourceWillUsePlugin(urlParameter, serviceType, shouldPreferPlugInsForImages()))
             url = urlParameter;
     }
 }
@@ -316,8 +317,8 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
     if (!renderer()) // Do not load the plugin if beforeload removed this element or its renderer.
         return;
 
-    SubframeLoader* loader = document().frame()->loader().subframeLoader();
-    bool success = beforeLoadAllowedLoad && hasValidClassId() && loader->requestObject(this, url, getNameAttribute(), serviceType, paramNames, paramValues);
+    SubframeLoader& loader = document().frame()->loader().subframeLoader();
+    bool success = beforeLoadAllowedLoad && hasValidClassId() && loader.requestObject(this, url, getNameAttribute(), serviceType, paramNames, paramValues);
     if (!success && fallbackContent)
         renderFallbackContent();
 }

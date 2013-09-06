@@ -54,6 +54,7 @@
 #include "ScriptEventListener.h"
 #include "Settings.h"
 #include "StylePropertySet.h"
+#include "SubframeLoader.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "XMLNames.h"
@@ -759,7 +760,7 @@ bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
             return false;
     } else if (hasLocalName(noembedTag)) {
         Frame* frame = document().frame();
-        if (frame && frame->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+        if (frame && frame->loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
             return false;
     }
     return StyledElement::rendererIsNeeded(style);

@@ -33,6 +33,7 @@
 #include "FullscreenVideoController.h"
 #include "MarshallingHelpers.h"
 #include "SoftLinking.h"
+#include "SubframeLoader.h"
 #include "TextIterator.h"
 #include "WebBackForwardList.h"
 #include "WebChromeClient.h"
@@ -2544,7 +2545,7 @@ HRESULT WebView::canShowMIMEType(/* [in] */ BSTR mimeType, /* [retval][out] */ B
 bool WebView::canShowMIMEType(const String& mimeType)
 {
     Frame* coreFrame = core(m_mainFrame);
-    bool allowPlugins = coreFrame && coreFrame->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
+    bool allowPlugins = coreFrame && coreFrame->loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin);
 
     bool canShow = MIMETypeRegistry::isSupportedImageMIMEType(mimeType)
         || MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType)

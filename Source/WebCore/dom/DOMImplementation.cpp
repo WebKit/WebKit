@@ -50,6 +50,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StyleSheetContents.h"
+#include "SubframeLoader.h"
 #include "TextDocument.h"
 #include "ThreadGlobalData.h"
 #include "XMLNames.h"
@@ -341,7 +342,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
     PluginData* pluginData = 0;
     PluginData::AllowedPluginTypes allowedPluginTypes = PluginData::OnlyApplicationPlugins;
     if (frame && frame->page()) {
-        if (frame->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+        if (frame->loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
             allowedPluginTypes = PluginData::AllPlugins;
 
         pluginData = &frame->page()->pluginData();
