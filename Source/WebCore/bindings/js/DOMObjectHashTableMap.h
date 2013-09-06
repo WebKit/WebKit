@@ -42,12 +42,12 @@ public:
             iter->value.deleteTable();
     }
 
-    const JSC::HashTable* get(const JSC::HashTable* staticTable)
+    const JSC::HashTable& get(const JSC::HashTable& staticTable)
     {
-        HashMap<const JSC::HashTable*, JSC::HashTable>::iterator iter = m_map.find(staticTable);
+        HashMap<const JSC::HashTable*, JSC::HashTable>::iterator iter = m_map.find(&staticTable);
         if (iter != m_map.end())
-            return &iter->value;
-        return &m_map.set(staticTable, staticTable->copy()).iterator->value;
+            return iter->value;
+        return m_map.set(&staticTable, staticTable.copy()).iterator->value;
     }
 
 private:

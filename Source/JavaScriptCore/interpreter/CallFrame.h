@@ -84,27 +84,27 @@ namespace JSC  {
 #ifndef NDEBUG
         void dumpCaller();
 #endif
-        static const HashTable* arrayConstructorTable(CallFrame* callFrame) { return callFrame->vm().arrayConstructorTable; }
-        static const HashTable* arrayPrototypeTable(CallFrame* callFrame) { return callFrame->vm().arrayPrototypeTable; }
-        static const HashTable* booleanPrototypeTable(CallFrame* callFrame) { return callFrame->vm().booleanPrototypeTable; }
-        static const HashTable* dataViewTable(CallFrame* callFrame) { return callFrame->vm().dataViewTable; }
-        static const HashTable* dateTable(CallFrame* callFrame) { return callFrame->vm().dateTable; }
-        static const HashTable* dateConstructorTable(CallFrame* callFrame) { return callFrame->vm().dateConstructorTable; }
-        static const HashTable* errorPrototypeTable(CallFrame* callFrame) { return callFrame->vm().errorPrototypeTable; }
-        static const HashTable* globalObjectTable(CallFrame* callFrame) { return callFrame->vm().globalObjectTable; }
-        static const HashTable* jsonTable(CallFrame* callFrame) { return callFrame->vm().jsonTable; }
-        static const HashTable* numberConstructorTable(CallFrame* callFrame) { return callFrame->vm().numberConstructorTable; }
-        static const HashTable* numberPrototypeTable(CallFrame* callFrame) { return callFrame->vm().numberPrototypeTable; }
-        static const HashTable* objectConstructorTable(CallFrame* callFrame) { return callFrame->vm().objectConstructorTable; }
-        static const HashTable* privateNamePrototypeTable(CallFrame* callFrame) { return callFrame->vm().privateNamePrototypeTable; }
-        static const HashTable* regExpTable(CallFrame* callFrame) { return callFrame->vm().regExpTable; }
-        static const HashTable* regExpConstructorTable(CallFrame* callFrame) { return callFrame->vm().regExpConstructorTable; }
-        static const HashTable* regExpPrototypeTable(CallFrame* callFrame) { return callFrame->vm().regExpPrototypeTable; }
-        static const HashTable* stringConstructorTable(CallFrame* callFrame) { return callFrame->vm().stringConstructorTable; }
+        static const HashTable& arrayConstructorTable(CallFrame* callFrame) { return *callFrame->vm().arrayConstructorTable; }
+        static const HashTable& arrayPrototypeTable(CallFrame* callFrame) { return *callFrame->vm().arrayPrototypeTable; }
+        static const HashTable& booleanPrototypeTable(CallFrame* callFrame) { return *callFrame->vm().booleanPrototypeTable; }
+        static const HashTable& dataViewTable(CallFrame* callFrame) { return *callFrame->vm().dataViewTable; }
+        static const HashTable& dateTable(CallFrame* callFrame) { return *callFrame->vm().dateTable; }
+        static const HashTable& dateConstructorTable(CallFrame* callFrame) { return *callFrame->vm().dateConstructorTable; }
+        static const HashTable& errorPrototypeTable(CallFrame* callFrame) { return *callFrame->vm().errorPrototypeTable; }
+        static const HashTable& globalObjectTable(CallFrame* callFrame) { return *callFrame->vm().globalObjectTable; }
+        static const HashTable& jsonTable(CallFrame* callFrame) { return *callFrame->vm().jsonTable; }
+        static const HashTable& numberConstructorTable(CallFrame* callFrame) { return *callFrame->vm().numberConstructorTable; }
+        static const HashTable& numberPrototypeTable(CallFrame* callFrame) { return *callFrame->vm().numberPrototypeTable; }
+        static const HashTable& objectConstructorTable(CallFrame* callFrame) { return *callFrame->vm().objectConstructorTable; }
+        static const HashTable& privateNamePrototypeTable(CallFrame* callFrame) { return *callFrame->vm().privateNamePrototypeTable; }
+        static const HashTable& regExpTable(CallFrame* callFrame) { return *callFrame->vm().regExpTable; }
+        static const HashTable& regExpConstructorTable(CallFrame* callFrame) { return *callFrame->vm().regExpConstructorTable; }
+        static const HashTable& regExpPrototypeTable(CallFrame* callFrame) { return *callFrame->vm().regExpPrototypeTable; }
+        static const HashTable& stringConstructorTable(CallFrame* callFrame) { return *callFrame->vm().stringConstructorTable; }
 #if ENABLE(PROMISES)
-        static const HashTable* promisePrototypeTable(CallFrame* callFrame) { return callFrame->vm().promisePrototypeTable; }
-        static const HashTable* promiseConstructorTable(CallFrame* callFrame) { return callFrame->vm().promiseConstructorTable; }
-        static const HashTable* promiseResolverPrototypeTable(CallFrame* callFrame) { return callFrame->vm().promiseResolverPrototypeTable; }
+        static const HashTable& promisePrototypeTable(CallFrame* callFrame) { return *callFrame->vm().promisePrototypeTable; }
+        static const HashTable& promiseConstructorTable(CallFrame* callFrame) { return *callFrame->vm().promiseConstructorTable; }
+        static const HashTable& promiseResolverPrototypeTable(CallFrame* callFrame) { return *callFrame->vm().promiseResolverPrototypeTable; }
 #endif
 
         static CallFrame* create(Register* callFrameBase) { return static_cast<CallFrame*>(callFrameBase); }

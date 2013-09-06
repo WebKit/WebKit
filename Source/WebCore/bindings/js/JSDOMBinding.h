@@ -257,7 +257,7 @@ class DOMStringList;
         return index >= exec->argumentCount() ? JSC::JSValue() : exec->argument(index);
     }
 
-    const JSC::HashTable* getHashTableForGlobalData(JSC::VM&, const JSC::HashTable* staticTable);
+    const JSC::HashTable& getHashTableForGlobalData(JSC::VM&, const JSC::HashTable& staticTable);
 
     void reportException(JSC::ExecState*, JSC::JSValue exception, CachedScript* = 0);
     void reportCurrentException(JSC::ExecState*);

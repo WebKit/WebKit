@@ -1,3 +1,32 @@
+2013-09-06  Anders Carlsson  <andersca@apple.com>
+
+        Stop using fastNew/fastDelete in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=120898
+
+        Reviewed by Oliver Hunt.
+
+        Update for changes to JavaScriptCore.
+
+        * bindings/js/DOMObjectHashTableMap.h:
+        (WebCore::DOMObjectHashTableMap::get):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::getHashTableForGlobalData):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::put):
+        * bindings/js/JSPluginElementFunctions.h:
+        (WebCore::pluginElementCustomGetOwnPropertySlot):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::deleteProperty):
+        (WebCore::JSStorage::putDelegate):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (hashTableAccessor):
+        (prototypeHashTableAccessor):
+        (constructorHashTableAccessor):
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateImplementation):
+        (GenerateConstructorHelperMethods):
+
 2013-09-06  Andreas Kling  <akling@apple.com>
 
         Include Frame.h in fewer places.

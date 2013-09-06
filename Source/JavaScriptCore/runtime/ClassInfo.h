@@ -144,24 +144,21 @@ struct MethodTable {
     ClassName::TypedArrayStorageType
 
 struct ClassInfo {
-    /**
-     * A string denoting the class name. Example: "Window".
-     */
+    // A string denoting the class name. Example: "Window".
     const char* className;
 
-    /**
-     * Pointer to the class information of the base class.
-     * 0L if there is none.
-     */
+    // Pointer to the class information of the base class.
+    // nullptrif there is none.
     const ClassInfo* parentClass;
-    /**
-     * Static hash-table of properties.
-     * For classes that can be used from multiple threads, it is accessed via a getter function that would typically return a pointer to thread-specific value.
-     */
+
+    // Static hash-table of properties.
+    // For classes that can be used from multiple threads, it is accessed via a getter function
+    // that would typically return a pointer to a thread-specific value.
     const HashTable* propHashTable(ExecState* exec) const
     {
         if (classPropHashTableGetterFunction)
-            return classPropHashTableGetterFunction(exec);
+            return &classPropHashTableGetterFunction(exec);
+
         return staticPropHashTable;
     }
         
@@ -184,7 +181,7 @@ struct ClassInfo {
     }
 
     const HashTable* staticPropHashTable;
-    typedef const HashTable* (*ClassPropHashTableGetterFunction)(ExecState*);
+    typedef const HashTable& (*ClassPropHashTableGetterFunction)(ExecState*);
     const ClassPropHashTableGetterFunction classPropHashTableGetterFunction;
 
     MethodTable methodTable;

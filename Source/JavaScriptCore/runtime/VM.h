@@ -222,27 +222,27 @@ namespace JSC {
         ExecState* topCallFrame;
         Watchdog watchdog;
 
-        const HashTable* arrayConstructorTable;
-        const HashTable* arrayPrototypeTable;
-        const HashTable* booleanPrototypeTable;
-        const HashTable* dataViewTable;
-        const HashTable* dateTable;
-        const HashTable* dateConstructorTable;
-        const HashTable* errorPrototypeTable;
-        const HashTable* globalObjectTable;
-        const HashTable* jsonTable;
-        const HashTable* numberConstructorTable;
-        const HashTable* numberPrototypeTable;
-        const HashTable* objectConstructorTable;
-        const HashTable* privateNamePrototypeTable;
-        const HashTable* regExpTable;
-        const HashTable* regExpConstructorTable;
-        const HashTable* regExpPrototypeTable;
-        const HashTable* stringConstructorTable;
+        const OwnPtr<const HashTable> arrayConstructorTable;
+        const OwnPtr<const HashTable> arrayPrototypeTable;
+        const OwnPtr<const HashTable> booleanPrototypeTable;
+        const OwnPtr<const HashTable> dataViewTable;
+        const OwnPtr<const HashTable> dateTable;
+        const OwnPtr<const HashTable> dateConstructorTable;
+        const OwnPtr<const HashTable> errorPrototypeTable;
+        const OwnPtr<const HashTable> globalObjectTable;
+        const OwnPtr<const HashTable> jsonTable;
+        const OwnPtr<const HashTable> numberConstructorTable;
+        const OwnPtr<const HashTable> numberPrototypeTable;
+        const OwnPtr<const HashTable> objectConstructorTable;
+        const OwnPtr<const HashTable> privateNamePrototypeTable;
+        const OwnPtr<const HashTable> regExpTable;
+        const OwnPtr<const HashTable> regExpConstructorTable;
+        const OwnPtr<const HashTable> regExpPrototypeTable;
+        const OwnPtr<const HashTable> stringConstructorTable;
 #if ENABLE(PROMISES)
-        const HashTable* promisePrototypeTable;
-        const HashTable* promiseConstructorTable;
-        const HashTable* promiseResolverPrototypeTable;
+        const OwnPtr<const HashTable> promisePrototypeTable;
+        const OwnPtr<const HashTable> promiseConstructorTable;
+        const OwnPtr<const HashTable> promiseResolverPrototypeTable;
 #endif
 
         Strong<Structure> structureStructure;

@@ -48,7 +48,7 @@ namespace WebCore {
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DOMConstructorObject);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DOMConstructorWithDocument);
 
-const JSC::HashTable* getHashTableForGlobalData(VM& vm, const JSC::HashTable* staticTable)
+const JSC::HashTable& getHashTableForGlobalData(VM& vm, const JSC::HashTable& staticTable)
 {
     return DOMObjectHashTableMap::mapFor(vm).get(staticTable);
 }

@@ -295,7 +295,7 @@ sub hashTableAccessor
     if ($noStaticTables) {
         return "get${className}Table(exec)";
     } else {
-        return "&${className}Table";
+        return "${className}Table";
     }
 }
 
@@ -306,7 +306,7 @@ sub prototypeHashTableAccessor
     if ($noStaticTables) {
         return "get${className}PrototypeTable(exec)";
     } else {
-        return "&${className}PrototypeTable";
+        return "${className}PrototypeTable";
     }
 }
 
@@ -317,7 +317,7 @@ sub constructorHashTableAccessor
     if ($noStaticTables) {
         return "get${constructorClassName}Table(exec)";
     } else {
-        return "&${constructorClassName}Table";
+        return "${constructorClassName}Table";
     }
 }
 
@@ -420,7 +420,7 @@ sub GenerateGetOwnPropertySlotBody
     if ($hasAttributes) {
         if ($inlined) {
             die "Cannot inline if NoStaticTables is set." if ($interface->extendedAttributes->{"JSNoStaticTables"});
-            push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, info()->staticPropHashTable, thisObject, propertyName, slot);\n");
+            push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, *info()->staticPropHashTable, thisObject, propertyName, slot);\n");
         } else {
             push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, " . hashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
         }
@@ -1625,9 +1625,9 @@ sub GenerateImplementation
                                \%conditionals);
 
     if ($interface->extendedAttributes->{"JSNoStaticTables"}) {
-        push(@implContent, "static const HashTable* get${className}PrototypeTable(ExecState* exec)\n");
+        push(@implContent, "static const HashTable& get${className}PrototypeTable(ExecState* exec)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return getHashTableForGlobalData(exec->vm(), &${className}PrototypeTable);\n");
+        push(@implContent, "    return getHashTableForGlobalData(exec->vm(), ${className}PrototypeTable);\n");
         push(@implContent, "}\n\n");
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, 0, get${className}PrototypeTable, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     } else {
@@ -1669,9 +1669,9 @@ sub GenerateImplementation
 
     # - Initialize static ClassInfo object
     if ($numAttributes > 0 && $interface->extendedAttributes->{"JSNoStaticTables"}) {
-        push(@implContent, "static const HashTable* get${className}Table(ExecState* exec)\n");
+        push(@implContent, "static const HashTable& get${className}Table(ExecState* exec)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return getHashTableForGlobalData(exec->vm(), &${className}Table);\n");
+        push(@implContent, "    return getHashTableForGlobalData(exec->vm(), ${className}Table);\n");
         push(@implContent, "}\n\n");
     }
 
@@ -4060,9 +4060,9 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "}\n\n");
     } else {
         if ($interface->extendedAttributes->{"JSNoStaticTables"}) {
-            push(@$outputArray, "static const HashTable* get${constructorClassName}Table(ExecState* exec)\n");
+            push(@$outputArray, "static const HashTable& get${constructorClassName}Table(ExecState* exec)\n");
             push(@$outputArray, "{\n");
-            push(@$outputArray, "    return getHashTableForGlobalData(exec->vm(), &${constructorClassName}Table);\n");
+            push(@$outputArray, "    return getHashTableForGlobalData(exec->vm(), ${constructorClassName}Table);\n");
             push(@$outputArray, "}\n\n");
             push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, 0, get${constructorClassName}Table, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
         } else {
