@@ -1,3 +1,24 @@
+2013-09-06  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Desktop proxy settings are ignored inside the internal jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=120833
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add dconf as an optional module for the internal jhbuild, along
+        with vala 0.17 as a dependency, and make sure we do not explicitly
+        set always the 'memory' backend, so we can have an easy way to
+        allow apps access desktop settings from the jhbuild. This is
+        useful for example to be able to run apps such as MiniBrowser
+        inside the jhbuild (by means of run-launcher, for instance) while
+        working behind a proxy, since those network settings have to be
+        read from the system global configuration in org.gnome.system.proxy.
+
+        * gtk/jhbuild-optional.modules: Added dconf 0.14 and vala 0.17.
+        * gtk/jhbuildrc: Do not explicitly choose the GSettings memory
+        backend here, since that will make more difficult to use the dconf
+        backend from inside the jhbuild if we need to do it so.
+
 2013-09-06  Alexey Proskuryakov  <ap@apple.com>
 
         Lots of pixel tests are failing on first run, so tests cannot finish

@@ -55,10 +55,6 @@ module_makeargs['gtk+'] = 'LDFLAGS="-lm" ' + makeargs
 # to use only the plugins we build in JHBuild.
 os.environ['GST_PLUGIN_SYSTEM_PATH'] = ''
 
-# We often end up using the memory backend anyway, so explicitly choosing
-# it will prevent the warning message.
-os.environ['GSETTINGS_BACKEND'] = 'memory'
-
 # We always enable introspection so that we can sniff out problems with our
 # annotations sooner rather than later.
 autogenargs='--enable-introspection'

@@ -16,4 +16,30 @@
             hash="sha256:e5399dfb61376a7500d20cb22715152780aa3a2c8a64281ec6bc8f0ebeb8b689"/>
   </autotools>
 
+  <!-- dconf is interesting in case you need to make sure that you can
+       access your global settings from inside the jhbuild environment
+       (e.g running MiniBrowser behind a proxy needs to read settings
+       from the org.gnome.system.proxy GSettings scheme -->
+  <autotools id="dconf" autogen-sh="configure">
+    <branch repo="ftp.gnome.org"
+            module="/pub/GNOME/sources/dconf/0.14/dconf-0.14.1.tar.xz" version="0.14"
+            hash="sha256:59c58c5eafa0ebd616287d078f4441d5342870a44634445d324e88fc0287f0b8"/>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="gtk+"/>
+      <dep package="libxml2"/>
+      <dep package="vala"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="vala" autogenargs="--enable-vapigen" supports-non-srcdir-builds="no">
+    <pkg-config>libvala-0.20.pc</pkg-config>
+    <branch repo="ftp.gnome.org"
+            module="/pub/GNOME/sources/vala/0.17/vala-0.17.7.tar.xz" version="0.17"
+            hash="sha256:dfdb9b3cb1c455462a57fd71a7e832c3b7b4131e85d2d0a2030111dae9fae24f"/>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+  </autotools>
+
 </moduleset>
