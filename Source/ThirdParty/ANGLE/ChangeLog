@@ -1,3 +1,13 @@
+2013-09-05  Dan Bernstein  <mitz@apple.com>
+
+        INSTALL_PATH_PREFIX is used even when not installing
+        https://bugs.webkit.org/show_bug.cgi?id=120818
+
+        Reviewed by Darin Adler.
+
+        * Configurations/ANGLE.xcconfig: Changed the definition of PRIVATE_HEADERS_FOLDER_PATH
+        to include INSTALL_PATH_PREFIX only when installing.
+
 2013-08-17  David Kilzer  <ddkilzer@apple.com>
 
         ANGLE fails to build with trunk clang: error: 'register' storage class specifier is deprecated [-Werror,-Wdeprecated-register]
