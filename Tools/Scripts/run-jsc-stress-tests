@@ -24,10 +24,11 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 require 'getoptlong'
+require 'pathname'
 
 $jscPath = nil
 $collections = []
-$outputDir = "results"
+$outputDir = Pathname.new("results")
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -46,9 +47,9 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--help'
         usage
     when '--jsc'
-        $jscPath = File.realpath(arg)
+        $jscPath = Pathname.new(arg).realpath
     when '--output-dir'
-        $outputDir = arg
+        $outputDir = Pathname.new(arg)
     end
 }
 
@@ -62,18 +63,11 @@ $numFailures = 0
 def run(kind, *options)
     name = "#{$benchmark}.#{kind}"
     print "#{name}: "
-    IO.popen([$jscPath] + options + [$benchmark], "r") {
-        | inp |
-        File.open($outputDir + "/" + $collectionName + "/" + name, "w") {
-            | outp |
-            outp.write inp.read
-        }
-    }
-    if $?.success?
+    if system($jscPath.to_s, *options, $benchmark)
         puts "OK."
     else
         puts "FAIL: #{$?.inspect}"
-        File.open($outputDir + "/failed", "a") {
+        File.open($outputDir + "failed", "a") {
             | outp |
             outp.puts name
         }
@@ -113,28 +107,17 @@ def skip
     puts "Skipping #{$benchmark}"
 end
 
-collectionNames = {}
-
-Dir.mkdir($outputDir) unless FileTest.directory? $outputDir
+Dir.mkdir($outputDir) unless $outputDir.directory?
 begin
-    File.delete($outputDir + "/failed")
+    File.delete($outputDir + "failed")
 rescue
 end
 
-$outputDir = File.realpath($outputDir)
+$outputDir = $outputDir.realpath
 
 ARGV.each {
     | collection |
     $collection = collection
-    $collectionName = File.basename(collection)
-    toAdd = 1
-    while collectionNames[$collectionName]
-        $collectionName = File.basename(collection) + "-#{toAdd}"
-        toAdd += 1
-    end
-    collectionNames[$collectionName] = true
-    dir = $outputDir + "/" + $collectionName
-    Dir.mkdir(dir) unless FileTest.directory? dir
     Dir.chdir(collection) {
         Dir.foreach('.') {
             | benchmark |

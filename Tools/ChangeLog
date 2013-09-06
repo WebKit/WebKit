@@ -1,3 +1,15 @@
+2013-09-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix run-jsc-stress-tests to use Pathname instead of File.realpath.
+        
+        Also make it uses system() instead of popen(); that means that test output
+        will go to the console. This reduces error detection flakiness. It's fine
+        because stress tests don't print() unless they really have to.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-09-05  Filip Pizlo  <fpizlo@apple.com>
 
         Introduce a way to run benchmarks and JSRegress as stress tests with different jsc command-line options
