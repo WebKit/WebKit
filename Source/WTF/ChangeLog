@@ -1,3 +1,18 @@
+2013-09-06  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] GlibUtilities: getCurrentExecutablePath() does not compile on GNU/Hurd
+        https://bugs.webkit.org/show_bug.cgi?id=120793
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Original patch by Svante Signell <svante.signell@telia.com>.
+
+        PATH_MAX is not defined in GNU/Hurd, this patch adds a dummy
+        implementation to make it compile.
+
+        * wtf/gobject/GlibUtilities.cpp:
+        (getCurrentExecutablePath):
+
 2013-09-05  Dan Bernstein  <mitz@apple.com>
 
         INSTALL_PATH_PREFIX is used even when not installing
