@@ -1,3 +1,17 @@
+2013-09-06  Brendan Long  <b.long@cablelabs.com>
+
+        [Qt][BlackBerry] Text track localized string functions are named wrong
+        https://bugs.webkit.org/show_bug.cgi?id=120788
+
+        Reviewed by Philippe Normand.
+
+        This renames textTrackOffText() to textTrackOffMenuItemText(), and
+        adds textTrackAutomaticMenuItemText(), to make them match the
+        definitions in LocalizedStrings.h.
+
+        * platform/blackberry/LocalizedStringsBlackBerry.cpp:
+        * platform/qt/LocalizedStringsQt.cpp:
+
 2013-09-06  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt][WK2] Cached credentials not cleared between tests

@@ -762,7 +762,13 @@ String textTrackSubtitlesText()
     return String();
 }
 
-String textTrackOffText()
+String textTrackOffMenuItemText()
+{
+    notImplemented();
+    return String();
+}
+
+String textTrackAutomaticMenuItemText()
 {
     notImplemented();
     return String();
