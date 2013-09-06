@@ -1853,6 +1853,10 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
 
     role = remapAriaRoleDueToParent(role);
     
+    // Presentational roles are invalidated by the presence of ARIA attributes.
+    if (role == PresentationalRole && supportsARIAAttributes())
+        role = UnknownRole;
+    
     if (role)
         return role;
 
