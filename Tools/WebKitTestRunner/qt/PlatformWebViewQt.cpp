@@ -128,6 +128,7 @@ WKPageRef PlatformWebView::page()
 
 void PlatformWebView::focus()
 {
+    QWindowSystemInterface::handleWindowActivated(m_window);
     m_view->setFocus(true);
 }
 

@@ -1,3 +1,17 @@
+2013-09-06  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt][WK2] Window used by WebKitTestRunner loses active status
+        https://bugs.webkit.org/show_bug.cgi?id=120774
+
+        Reviewed by Jocelyn Turcotte.
+
+        When focusing the PlatformWebView which is done at the start of each test, we should
+        ensure the host window of PlatformWebView is also made active, otherwise we will
+        not receive the keyboard events send by EventSenderProxy.
+
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::focus):
+
 2013-09-05  Seokju Kwon  <seokju@webkit.org>
 
         Unreviewed build fix. VectorReverse.cpp was removed after r155151.
