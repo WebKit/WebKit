@@ -1,3 +1,9 @@
+2013-09-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for the GTK port when building with FTL JIT enabled.
+
+        * GNUmakefile.list.am: Add the missing files to the build.
+
 2013-09-05  Oliver Hunt  <oliver@apple.com>
 
         Make it simpler to introduce new data types to the global object
