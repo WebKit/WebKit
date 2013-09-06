@@ -314,6 +314,7 @@ void TestInvocation::forceRepaintDoneCallback(WKErrorRef, void* context)
 {
     TestInvocation* testInvocation = static_cast<TestInvocation*>(context);
     testInvocation->m_gotRepaint = true;
+    TestController::shared().notifyDone();
 }
 
 void TestInvocation::dumpResults()

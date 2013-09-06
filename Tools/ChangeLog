@@ -1,5 +1,18 @@
 2013-09-06  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        REGRESSION(r155140) Broke pixel tests on EFL/GTK/Qt
+        https://bugs.webkit.org/show_bug.cgi?id=120843
+
+        Reviewed by Csaba Osztrogonác.
+
+        Call notifyDone like the platform specific forceRepaintDoneCallback methods
+        it replaced did. The method is empty on the Apple ports.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::forceRepaintDoneCallback):
+
+2013-09-06  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         [Qt][WK2] Window used by WebKitTestRunner loses active status
         https://bugs.webkit.org/show_bug.cgi?id=120774
 
