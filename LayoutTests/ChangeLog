@@ -1,3 +1,21 @@
+2013-09-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Resolve named grid lines
+        https://bugs.webkit.org/show_bug.cgi?id=119632
+
+        Reviewed by Andreas Kling.
+
+        From Blink r152659, r153794 by <jchaffraix@chromium.org>
+
+        Added a new test to check named grid lines resolution. This also
+        provides some more new test cases with named grid lines and
+        negative positions.
+
+        * fast/css-grid-layout/grid-item-named-grid-line-resolution-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-named-grid-line-resolution.html: Added.
+        * fast/css-grid-layout/grid-item-negative-position-resolution-expected.txt:
+        * fast/css-grid-layout/grid-item-negative-position-resolution.html:
+
 2013-09-06  Dirk Schulze  <krit@webkit.org>
 
         Allow string as image reference on filter()

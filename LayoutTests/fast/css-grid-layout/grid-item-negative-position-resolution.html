@@ -7,8 +7,8 @@ if (window.testRunner)
 <link href="resources/grid.css" rel="stylesheet">
 <style>
 .grid {
-    -webkit-grid-definition-columns: 50px 100px;
-    -webkit-grid-definition-rows: 50px 100px;
+    -webkit-grid-definition-columns: 'first' 50px 'middle' 100px 'last';
+    -webkit-grid-definition-rows: 'first' 50px 'middle' 100px 'last';
     /* To detect how much we extend the grid. */
     -webkit-grid-auto-columns: 200px;
     -webkit-grid-auto-rows: 200px;
@@ -27,6 +27,21 @@ if (window.testRunner)
     -webkit-grid-row: -1 / auto;
 }
 
+.lastNamedGridLineStartPositionGrowGridInRowDirection {
+    -webkit-grid-column: 1;
+    -webkit-grid-row: -1 / auto;
+}
+
+.lastNamedGridLineStartPositionGrowGridInColumnDirection {
+    -webkit-grid-column: "last" / auto;
+    -webkit-grid-row: 1;
+}
+
+.negativeStartPositionGrowGridInRowDirection {
+    -webkit-grid-column: 1;
+    -webkit-grid-row: "last" / auto;
+}
+
 .endSpanGrowGridInColumnDirection {
     -webkit-grid-column: -2 / span 3;
     -webkit-grid-row: 1;
@@ -35,6 +50,16 @@ if (window.testRunner)
 .endSpanGrowGridInRowDirection {
     -webkit-grid-column: 1;
     -webkit-grid-row: -2 / span 3;
+}
+
+.namedEndSpanGrowGridInColumnDirection {
+    -webkit-grid-column: -1 "middle" / span 3;
+    -webkit-grid-row: 1;
+}
+
+.namedEndSpanGrowGridInRowDirection {
+    -webkit-grid-column: 1;
+    -webkit-grid-row: 2 "middle" / span 3;
 }
 
 .negativeEndPositionStartSpanInColumnDirection {
@@ -47,6 +72,16 @@ if (window.testRunner)
     -webkit-grid-row: span 5 / -1;
 }
 
+.negativeNamedGridLineEndPositionStartSpanInColumnDirection {
+    -webkit-grid-column: span / "last";
+    -webkit-grid-row: 1;
+}
+
+.negativeNamedGridLineEndPositionStartSpanInRowDirection {
+    -webkit-grid-column: 1;
+    -webkit-grid-row: span 5 / "last";
+}
+
 .negativeEndPositionStartNegativeInColumnDirection {
     -webkit-grid-column: -3 / -1;
     -webkit-grid-row: 1;
@@ -55,6 +90,16 @@ if (window.testRunner)
 .negativeEndPositionStartNegativeInRowDirection {
     -webkit-grid-column: -5 / -2;
     -webkit-grid-row: 1;
+}
+
+.namedGridLineEndPositionStartNegativeInColumnDirection {
+    -webkit-grid-column: -3 / 10 "last";
+    -webkit-grid-row: 1;
+}
+
+.namedGridLineEndPositionStartNegativeInRowDirection {
+    grid-column: -5 / -2 "middle";
+    grid-row: 1;
 }
 </style>
 <script src="../../resources/check-layout.js"></script>
@@ -65,6 +110,18 @@ if (window.testRunner)
 <div style="position: relative">
 <div class="grid" data-expected-width="350" data-expected-height="150">
     <div class="sizedToGridArea negativeStartPositionGrowGridInColumnDirection" data-offset-x="150" data-offset-y="0" data-expected-width="200" data-expected-height="50"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="150" data-expected-height="350">
+    <div class="sizedToGridArea lastNamedGridLineStartPositionGrowGridInRowDirection" data-offset-x="0" data-offset-y="150" data-expected-width="50" data-expected-height="200"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="350" data-expected-height="150">
+    <div class="sizedToGridArea lastNamedGridLineStartPositionGrowGridInColumnDirection" data-offset-x="150" data-offset-y="0" data-expected-width="200" data-expected-height="50"></div>
 </div>
 </div>
 
@@ -87,6 +144,18 @@ if (window.testRunner)
 </div>
 
 <div style="position: relative">
+<div class="grid" data-expected-width="550" data-expected-height="150">
+    <div class="sizedToGridArea namedEndSpanGrowGridInColumnDirection" data-offset-x="50" data-offset-y="0" data-expected-width="500" data-expected-height="50"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="150" data-expected-height="550">
+    <div class="sizedToGridArea namedEndSpanGrowGridInRowDirection" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="500"></div>
+</div>
+</div>
+
+<div style="position: relative">
 <div class="grid" data-expected-width="150" data-expected-height="150">
     <div class="sizedToGridArea negativeEndPositionStartSpanInColumnDirection" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50"></div>
 </div>
@@ -95,6 +164,18 @@ if (window.testRunner)
 <div style="position: relative">
 <div class="grid" data-expected-width="150" data-expected-height="150">
     <div class="sizedToGridArea negativeEndPositionStartSpanInRowDirection" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="150"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="150" data-expected-height="150">
+    <div class="sizedToGridArea negativeNamedGridLineEndPositionStartSpanInColumnDirection" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="150" data-expected-height="150">
+    <div class="sizedToGridArea negativeNamedGridLineEndPositionStartSpanInRowDirection" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="150"></div>
 </div>
 </div>
 
@@ -110,6 +191,17 @@ if (window.testRunner)
 </div>
 </div>
 
+<div style="position: relative">
+<div class="grid" data-expected-width="150" data-expected-height="150">
+    <div class="sizedToGridArea namedGridLineEndPositionStartNegativeInColumnDirection" data-offset-x="0" data-offset-y="0" data-expected-width="150" data-expected-height="50"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="150" data-expected-height="150">
+    <div class="sizedToGridArea namedGridLineEndPositionStartNegativeInRowDirection" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50"></div>
+</div>
+</div>
 
 </body>
 </html>
