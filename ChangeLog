@@ -1,3 +1,13 @@
+2013-09-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Bump the required Clang version to 3.2
+        https://bugs.webkit.org/show_bug.cgi?id=112537
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/autotools/CheckSystemAndBasicDependencies.m4: Require the Clang 3.2 stack
+        when the Clang compiler is specified.
+
 2013-09-05  Brendan Long  <b.long@cablelabs.com>
 
         [Qt] DefaultFullScreenVideoHandler and PlatformVideoWindow are included in the build when they are disabled
