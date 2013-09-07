@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-class RTCStatsResponse FINAL : public RTCStatsResponseBase {
+class RTCStatsResponse : public RTCStatsResponseBase {
 public:
     static PassRefPtr<RTCStatsResponse> create();
 
