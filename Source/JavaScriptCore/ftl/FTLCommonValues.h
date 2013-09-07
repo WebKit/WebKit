@@ -50,12 +50,14 @@ public:
     const LType int32;
     const LType int64;
     const LType intPtr;
+    const LType floatType;
     const LType doubleType;
     const LType ref8;
     const LType ref16;
     const LType ref32;
     const LType ref64;
     const LType refPtr;
+    const LType refFloat;
     const LType refDouble;
     const LValue booleanTrue;
     const LValue booleanFalse;

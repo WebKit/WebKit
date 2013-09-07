@@ -41,13 +41,18 @@ namespace JSC { namespace FTL {
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
     macro(Butterfly_publicLength, Butterfly::offsetOfPublicLength()) \
     macro(Butterfly_vectorLength, Butterfly::offsetOfVectorLength()) \
+    macro(JSArrayBufferView_length, JSArrayBufferView::offsetOfLength()) \
+    macro(JSArrayBufferView_mode, JSArrayBufferView::offsetOfMode()) \
+    macro(JSArrayBufferView_vector, JSArrayBufferView::offsetOfVector()) \
     macro(JSCell_structure, JSCell::structureOffset()) \
     macro(JSObject_butterfly, JSObject::butterflyOffset()) \
     macro(JSString_length, JSString::offsetOfLength()) \
     macro(JSString_value, JSString::offsetOfValue()) \
     macro(StringImpl_data, StringImpl::dataOffset()) \
     macro(StringImpl_hashAndFlags, StringImpl::flagsOffset()) \
+    macro(Structure_classInfo, Structure::classInfoOffset()) \
     macro(Structure_globalObject, Structure::globalObjectOffset()) \
+    macro(Structure_indexingType, Structure::indexingTypeOffset()) \
     macro(Structure_typeInfoFlags, Structure::typeInfoFlagsOffset())
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \

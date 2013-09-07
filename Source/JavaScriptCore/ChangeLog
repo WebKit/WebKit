@@ -1,3 +1,50 @@
+2013-09-07  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support typed array GetByVal and related ops
+        https://bugs.webkit.org/show_bug.cgi?id=120965
+
+        Reviewed by Oliver Hunt.
+        
+        This adds support for typed array instantiations of the following DFG IR ops:
+        
+        - GetByVal
+        
+        - GetIndexedPropertyStorage
+        
+        - CheckArray
+        
+        - GetArrayLength
+        
+        This also adds CheckArray for Int32/Double/Contiguous arrays.
+
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::toIndexingShape):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::shapeMask):
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::floatType):
+        (JSC::FTL::buildSExt):
+        (JSC::FTL::buildFPCast):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCommonValues.cpp:
+        (JSC::FTL::CommonValues::CommonValues):
+        * ftl/FTLCommonValues.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetIndexedPropertyStorage):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckArray):
+        (JSC::FTL::LowerDFGToLLVM::compileGetArrayLength):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::isArrayType):
+        (JSC::FTL::LowerDFGToLLVM::hasClassInfo):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::constIntPtr):
+        (JSC::FTL::Output::signExt):
+        (JSC::FTL::Output::fpCast):
+        (JSC::FTL::Output::loadFloat):
+
 2013-09-07  Anders Carlsson  <andersca@apple.com>
 
         VectorMover should use std::move

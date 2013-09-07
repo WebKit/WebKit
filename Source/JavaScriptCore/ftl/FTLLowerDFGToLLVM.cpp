@@ -341,6 +341,12 @@ private:
         case GetButterfly:
             compileGetButterfly();
             break;
+        case GetIndexedPropertyStorage:
+            compileGetIndexedPropertyStorage();
+            break;
+        case CheckArray:
+            compileCheckArray();
+            break;
         case GetArrayLength:
             compileGetArrayLength();
             break;
@@ -1203,6 +1209,24 @@ private:
         setStorage(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSObject_butterfly));
     }
     
+    void compileGetIndexedPropertyStorage()
+    {
+        setStorage(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSArrayBufferView_vector));
+    }
+    
+    void compileCheckArray()
+    {
+        Edge edge = m_node->child1();
+        LValue cell = lowCell(edge);
+        
+        if (m_node->arrayMode().alreadyChecked(m_graph, m_node, m_state.forNode(edge)))
+            return;
+        
+        speculate(
+            BadIndexingType, jsValueValue(cell), 0,
+            m_out.bitNot(isArrayType(cell, m_node->arrayMode())));
+    }
+    
     void compileGetArrayLength()
     {
         switch (m_node->arrayMode().type()) {
@@ -1210,12 +1234,18 @@ private:
         case Array::Double:
         case Array::Contiguous: {
             setInt32(m_out.load32(lowStorage(m_node->child2()), m_heaps.Butterfly_publicLength));
-            break;
+            return;
         }
             
         default:
+            if (isTypedView(m_node->arrayMode().typedArrayType())) {
+                setInt32(
+                    m_out.load32(lowCell(m_node->child1()), m_heaps.JSArrayBufferView_length));
+                return;
+            }
+            
             RELEASE_ASSERT_NOT_REACHED();
-            break;
+            return;
         }
     }
     
@@ -1281,10 +1311,90 @@ private:
             return;
         }
             
-        default:
+        default: {
+            TypedArrayType type = m_node->arrayMode().typedArrayType();
+            
+            if (isTypedView(type)) {
+                LValue array = lowCell(m_node->child1());
+                
+                speculate(
+                    OutOfBounds, noValue(), 0,
+                    m_out.aboveOrEqual(
+                        index, m_out.load32(array, m_heaps.JSArrayBufferView_length)));
+                
+                TypedPointer pointer = TypedPointer(
+                    m_heaps.typedArrayProperties,
+                    m_out.add(
+                        storage,
+                        m_out.shl(
+                            m_out.zeroExt(index, m_out.intPtr),
+                            m_out.constIntPtr(logElementSize(type)))));
+                
+                if (isInt(type)) {
+                    LValue result;
+                    switch (elementSize(type)) {
+                    case 1:
+                        result = m_out.load8(pointer);
+                        break;
+                    case 2:
+                        result = m_out.load16(pointer);
+                        break;
+                    case 4:
+                        result = m_out.load32(pointer);
+                        break;
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                    }
+                    
+                    if (elementSize(type) < 4) {
+                        if (isSigned(type))
+                            result = m_out.signExt(result, m_out.int32);
+                        else
+                            result = m_out.zeroExt(result, m_out.int32);
+                        setInt32(result);
+                        return;
+                    }
+                    
+                    if (isSigned(type)) {
+                        setInt32(result);
+                        return;
+                    }
+                    
+                    if (m_node->shouldSpeculateInteger()) {
+                        speculateForward(
+                            Overflow, noValue(), 0, m_out.lessThan(result, m_out.int32Zero),
+                            uInt32Value(result));
+                        setInt32(result);
+                        return;
+                    }
+                    
+                    setDouble(m_out.unsignedToFP(result, m_out.doubleType));
+                    return;
+                }
+            
+                ASSERT(isFloat(type));
+                
+                LValue result;
+                switch (type) {
+                case TypeFloat32:
+                    result = m_out.fpCast(m_out.loadFloat(pointer), m_out.doubleType);
+                    break;
+                case TypeFloat64:
+                    result = m_out.loadDouble(pointer);
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+                
+                result = m_out.select(
+                    m_out.doubleEqual(result, result), result, m_out.constDouble(QNaN));
+                setDouble(result);
+                return;
+            }
+            
             RELEASE_ASSERT_NOT_REACHED();
             return;
-        }
+        } }
     }
     
     void compilePutByVal()
@@ -2317,6 +2427,47 @@ private:
     LValue isNotObject(LValue cell)
     {
         return isString(cell);
+    }
+    
+    LValue isArrayType(LValue cell, ArrayMode arrayMode)
+    {
+        switch (arrayMode.type()) {
+        case Array::Int32:
+        case Array::Double:
+        case Array::Contiguous: {
+            LValue indexingType = m_out.load8(
+                m_out.loadPtr(cell, m_heaps.JSCell_structure),
+                m_heaps.Structure_indexingType);
+            
+            switch (arrayMode.arrayClass()) {
+            case Array::OriginalArray:
+                RELEASE_ASSERT_NOT_REACHED();
+                return 0;
+                
+            case Array::Array:
+                return m_out.equal(
+                    m_out.bitAnd(indexingType, m_out.constInt8(IsArray | IndexingShapeMask)),
+                    m_out.constInt8(IsArray | arrayMode.shapeMask()));
+                
+            default:
+                return m_out.equal(
+                    m_out.bitAnd(indexingType, m_out.constInt8(IndexingShapeMask)),
+                    m_out.constInt8(arrayMode.shapeMask()));
+            }
+        }
+            
+        default:
+            return hasClassInfo(cell, classInfoForType(arrayMode.typedArrayType()));
+        }
+    }
+    
+    LValue hasClassInfo(LValue cell, const ClassInfo* classInfo)
+    {
+        return m_out.equal(
+            m_out.loadPtr(
+                m_out.loadPtr(cell, m_heaps.JSCell_structure),
+                m_heaps.Structure_classInfo),
+            m_out.constIntPtr(classInfo));
     }
     
     void speculateObject(Edge edge, LValue cell)

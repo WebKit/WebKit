@@ -91,6 +91,22 @@ inline CapabilityLevel canCompile(Node* node)
     case GlobalVarWatchpoint:
         // These are OK.
         break;
+    case GetIndexedPropertyStorage:
+        if (isTypedView(node->arrayMode().typedArrayType()))
+            break;
+        return CannotCompile;
+    case CheckArray:
+        switch (node->arrayMode().type()) {
+        case Array::Int32:
+        case Array::Double:
+        case Array::Contiguous:
+            break;
+        default:
+            if (isTypedView(node->arrayMode().typedArrayType()))
+                break;
+            return CannotCompile;
+        }
+        break;
     case GetArrayLength:
         switch (node->arrayMode().type()) {
         case Array::Int32:
@@ -98,6 +114,8 @@ inline CapabilityLevel canCompile(Node* node)
         case Array::Contiguous:
             break;
         default:
+            if (isTypedView(node->arrayMode().typedArrayType()))
+                break;
             return CannotCompile;
         }
         break;
@@ -110,6 +128,8 @@ inline CapabilityLevel canCompile(Node* node)
         case Array::Contiguous:
             break;
         default:
+            if (isTypedView(node->arrayMode().typedArrayType()))
+                return CanCompileAndOSREnter;
             return CannotCompile;
         }
         switch (node->arrayMode().speculation()) {

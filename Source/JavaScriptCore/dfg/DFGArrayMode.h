@@ -104,6 +104,8 @@ const char* arrayClassToString(Array::Class);
 const char* arraySpeculationToString(Array::Speculation);
 const char* arrayConversionToString(Array::Conversion);
 
+IndexingType toIndexingShape(Array::Type);
+
 TypedArrayType toTypedArrayType(Array::Type);
 Array::Type toArrayType(TypedArrayType);
 
@@ -381,6 +383,11 @@ public:
     bool getIndexedPropertyStorageMayTriggerGC() const
     {
         return type() == Array::String;
+    }
+    
+    IndexingType shapeMask() const
+    {
+        return toIndexingShape(type());
     }
     
     TypedArrayType typedArrayType() const

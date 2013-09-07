@@ -108,7 +108,9 @@ public:
     LValue constInt8(int8_t value) { return constInt(int8, value); }
     LValue constInt32(int32_t value) { return constInt(int32, value); }
     template<typename T>
-    LValue constIntPtr(T value) { return constInt(intPtr, bitwise_cast<intptr_t>(value)); }
+    LValue constIntPtr(T* value) { return constInt(intPtr, bitwise_cast<intptr_t>(value)); }
+    template<typename T>
+    LValue constIntPtr(T value) { return constInt(intPtr, static_cast<intptr_t>(value)); }
     LValue constInt64(int64_t value) { return constInt(int64, value); }
     LValue constDouble(double value) { return constReal(doubleType, value); }
     
@@ -169,6 +171,7 @@ public:
         return call(doubleAbsIntrinsic(), value);
     }
     
+    LValue signExt(LValue value, LType type) { return buildSExt(m_builder, value, type); }
     LValue zeroExt(LValue value, LType type) { return buildZExt(m_builder, value, type); }
     LValue fpToInt(LValue value, LType type) { return buildFPToSI(m_builder, value, type); }
     LValue fpToInt32(LValue value) { return fpToInt(value, int32); }
@@ -178,6 +181,7 @@ public:
     LValue unsignedToDouble(LValue value) { return unsignedToFP(value, doubleType); }
     LValue intCast(LValue value, LType type) { return buildIntCast(m_builder, value, type); }
     LValue castToInt32(LValue value) { return intCast(value, int32); }
+    LValue fpCast(LValue value, LType type) { return buildFPCast(m_builder, value, type); }
     LValue intToPtr(LValue value, LType type) { return buildIntToPtr(m_builder, value, type); }
     LValue bitCast(LValue value, LType type) { return buildBitCast(m_builder, value, type); }
     
@@ -201,6 +205,7 @@ public:
     LValue load32(TypedPointer pointer) { return load(pointer, ref32); }
     LValue load64(TypedPointer pointer) { return load(pointer, ref64); }
     LValue loadPtr(TypedPointer pointer) { return load(pointer, refPtr); }
+    LValue loadFloat(TypedPointer pointer) { return load(pointer, refFloat); }
     LValue loadDouble(TypedPointer pointer) { return load(pointer, refDouble); }
     void store32(LValue value, TypedPointer pointer) { store(value, pointer, ref32); }
     void store64(LValue value, TypedPointer pointer) { store(value, pointer, ref64); }

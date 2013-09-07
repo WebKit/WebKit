@@ -53,6 +53,7 @@ static inline LType int16Type(LContext context) { return LLVMInt16TypeInContext(
 static inline LType int32Type(LContext context) { return LLVMInt32TypeInContext(context); }
 static inline LType int64Type(LContext context) { return LLVMInt64TypeInContext(context); }
 static inline LType intPtrType(LContext context) { return LLVMInt64TypeInContext(context); }
+static inline LType floatType(LContext context) { return LLVMFloatTypeInContext(context); }
 static inline LType doubleType(LContext context) { return LLVMDoubleTypeInContext(context); }
 
 static inline LType pointerType(LType type) { return LLVMPointerType(type, 0); }
@@ -201,11 +202,13 @@ static inline LValue buildLShr(LBuilder builder, LValue left, LValue right) { re
 static inline LValue buildNot(LBuilder builder, LValue value) { return LLVMBuildNot(builder, value, ""); }
 static inline LValue buildLoad(LBuilder builder, LValue pointer) { return LLVMBuildLoad(builder, pointer, ""); }
 static inline LValue buildStore(LBuilder builder, LValue value, LValue pointer) { return LLVMBuildStore(builder, value, pointer); }
+static inline LValue buildSExt(LBuilder builder, LValue value, LType type) { return LLVMBuildSExt(builder, value, type, ""); }
 static inline LValue buildZExt(LBuilder builder, LValue value, LType type) { return LLVMBuildZExt(builder, value, type, ""); }
 static inline LValue buildFPToSI(LBuilder builder, LValue value, LType type) { return LLVMBuildFPToSI(builder, value, type, ""); }
 static inline LValue buildSIToFP(LBuilder builder, LValue value, LType type) { return LLVMBuildSIToFP(builder, value, type, ""); }
 static inline LValue buildUIToFP(LBuilder builder, LValue value, LType type) { return LLVMBuildUIToFP(builder, value, type, ""); }
 static inline LValue buildIntCast(LBuilder builder, LValue value, LType type) { return LLVMBuildIntCast(builder, value, type, ""); }
+static inline LValue buildFPCast(LBuilder builder, LValue value, LType type) { return LLVMBuildFPCast(builder, value, type, ""); }
 static inline LValue buildIntToPtr(LBuilder builder, LValue value, LType type) { return LLVMBuildIntToPtr(builder, value, type, ""); }
 static inline LValue buildPtrToInt(LBuilder builder, LValue value, LType type) { return LLVMBuildPtrToInt(builder, value, type, ""); }
 static inline LValue buildBitCast(LBuilder builder, LValue value, LType type) { return LLVMBuildBitCast(builder, value, type, ""); }

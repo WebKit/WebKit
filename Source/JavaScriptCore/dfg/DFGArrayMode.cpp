@@ -458,6 +458,24 @@ const char* arrayConversionToString(Array::Conversion conversion)
     }
 }
 
+IndexingType toIndexingShape(Array::Type type)
+{
+    switch (type) {
+    case Array::Int32:
+        return Int32Shape;
+    case Array::Double:
+        return DoubleShape;
+    case Array::Contiguous:
+        return ContiguousShape;
+    case Array::ArrayStorage:
+        return ArrayStorageShape;
+    case Array::SlowPutArrayStorage:
+        return SlowPutArrayStorageShape;
+    default:
+        return NoIndexingShape;
+    }
+}
+
 TypedArrayType toTypedArrayType(Array::Type type)
 {
     switch (type) {
