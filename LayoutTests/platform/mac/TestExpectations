@@ -1303,3 +1303,4 @@ media/track/in-band [ WontFix ]
 webkit.org/b/120922 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure ]
 webkit.org/b/120922 compositing/overlap-blending/children-opacity-no-overlap.html [ ImageOnlyFailure ]
 
+webkit.org/b/120923 animations/cross-fade-background-image.html [ ImageOnlyFailure ]

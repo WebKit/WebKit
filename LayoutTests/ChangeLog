@@ -1,5 +1,14 @@
 2013-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION(r155100): animations/cross-fade-background-image.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=120923
+
+        Add the failing test expectation.
+
+        * platform/mac/TestExpectations:
+
+2013-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         compositing/overlap-blending//children-opacity-huge.html and children-opacity-no-overlap.html are failing
         https://bugs.webkit.org/show_bug.cgi?id=120922
 
