@@ -49,7 +49,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (123,0) size 126x18
           text run at (123,0) width 126: " I should not be red."
       RenderBlock (anonymous) at (0,170) size 784x18
-        RenderText {#text} at (0,0) size 0x0
         RenderInline {B} at (0,0) size 131x18
           RenderText {#text} at (0,0) size 36x18
             text run at (0,0) width 36: "Bold "

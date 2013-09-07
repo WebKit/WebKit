@@ -66,4 +66,3 @@ execBoldCommand: <div id="test"><b> Editable </b><span contenteditable="false">N
 execItalicCommand: <div id="test"><b><i> Editable </i></b><span contenteditable="false">Non-editable</span><b><i> Editable </i></b></div>
 execBoldCommand: <div id="test"><i> Editable </i><span contenteditable="false">Non-editable</span><i> Editable </i></div>
 execItalicCommand: <div id="test"> Editable <span contenteditable="false">Non-editable</span> Editable </div>
-

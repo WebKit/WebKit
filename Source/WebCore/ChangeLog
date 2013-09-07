@@ -1,3 +1,36 @@
+2013-09-07  Antti Koivisto  <antti@apple.com>
+
+        Remove unnecessary sibling text renderers after attach
+        https://bugs.webkit.org/show_bug.cgi?id=120953
+
+        Reviewed by the Swedish Review Team: Anders Carlsson and Andreas Kling.
+
+        The current createTextRenderersForSiblingsAfterAttachIfNeeded code only adds text renderers, never removes them. 
+        Style changes can go either way.
+        
+        The patch causes no visible changes in rendered output. The whitespace nodes that it affects are leftovers that
+        have no rendering effect. However it does change results of many dumpAsText and render tree dump based layout
+        tests as unnecessary text nodes disappear.
+        
+        The main goal is to make results of dynamic attach and parsing time attach produce more similar results. As
+        an added bonus we get slightly simpler rendering trees.
+        
+        Rendering tree dumps show us still leaving behind empty anonymous blocks when removing whitespace text nodes.
+        Those should collapse away too.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::reattachTextRenderersForWhitespaceOnlySiblingsAfterAttachIfNeeded):
+        
+            Allow the code both create and remove text renderers.
+            Tighten to bail out faster if case is not the exact one that matters.
+            Use NodeRenderingTraversal to mirror textRendererIsNeeded.
+            Renamed for clarity.
+
+        (WebCore::Style::updateTextRendererAfterContentChange):
+        (WebCore::Style::resolveLocal):
+        (WebCore::Style::updateTextStyle):
+        (WebCore::Style::attachRenderTree):
+
 2013-09-07  Anders Carlsson  <andersca@apple.com>
 
         Get rid of FastAllocBase.h

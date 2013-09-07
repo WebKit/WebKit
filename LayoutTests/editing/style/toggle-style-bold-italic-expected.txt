@@ -68,4 +68,3 @@ execBoldCommand: <div id="test"> <div><b>Some text</b></div> <p><b>Some more tex
 execItalicCommand: <div id="test"> <div><b><i>Some text</i></b></div> <p><b><i>Some more text</i></b></p> </div>
 execBoldCommand: <div id="test"> <div><i>Some text</i></div> <p><i>Some more text</i></p> </div>
 execItalicCommand: <div id="test"> <div>Some text</div> <p>Some more text</p> </div>
-

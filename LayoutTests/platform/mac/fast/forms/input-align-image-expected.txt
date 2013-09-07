@@ -14,7 +14,6 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,36) size 0x18
         RenderBR {BR} at (0,54) size 0x18
         RenderImage {INPUT} at (767,72) size 17x19
-        RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,72) size 0x18
         RenderBR {BR} at (0,90) size 0x18
       RenderBlock {DIV} at (0,142) size 784x0

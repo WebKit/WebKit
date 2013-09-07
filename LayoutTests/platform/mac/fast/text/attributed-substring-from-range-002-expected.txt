@@ -6,4 +6,3 @@ actual text: \n123456789
 from innerText (TextIterator): 123456789
 from attributedSubstringFromRange: 123456789
 SUCCESS: Strings matched, although there is room for improvement because they were both wrong.
-

@@ -3,4 +3,3 @@ The square below should be 100px by 100px. https://bugs.webkit.org/show_bug.cgi?
 
 
 PASS
-

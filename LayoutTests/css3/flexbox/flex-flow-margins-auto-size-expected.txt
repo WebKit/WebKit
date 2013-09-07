@@ -142,4 +142,3 @@ Expected 90 for width, but got 60.
 <div class="container" data-expected-width="90" data-expected-height="90"><div class="flexbox vertical-rl ltr column-reverse" data-offset-x="40" data-offset-y="10">
 <div style="-webkit-flex: 1 auto; width: 20px; height: 20px;" data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"></div>
 </div></div>
-

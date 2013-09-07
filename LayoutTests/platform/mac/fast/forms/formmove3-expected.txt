@@ -26,6 +26,5 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,28) size 784x18
-        RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 104x18
           text run at (0,0) width 104: "Form did submit"

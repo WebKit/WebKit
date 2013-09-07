@@ -3,5 +3,3 @@ This tests that links resouce URLs are resolved dynamically when inserted into t
 I should be blue...and I am!!!
 
 I should be red...and I am!!!
-
-

@@ -1,3 +1,86 @@
+2013-09-07  Antti Koivisto  <antti@apple.com>
+
+        Remove unnecessary sibling text renderers after attach
+        https://bugs.webkit.org/show_bug.cgi?id=120953
+
+        Reviewed by Anders Carlsson and Andreas Kling.
+
+        A bunch of spaces and empty lines disappear from dumpAsText test results.
+        Empty RenderTexts disapper from render tree dumps.
+
+        * css3/flexbox/flex-flow-auto-margins-expected.txt:
+        * css3/flexbox/flex-flow-auto-margins-no-available-space-expected.txt:
+        * css3/flexbox/flex-flow-border-expected.txt:
+        * css3/flexbox/flex-flow-margins-auto-size-expected.txt:
+        * css3/flexbox/flex-flow-margins-expected.txt:
+        * css3/flexbox/flex-flow-orientations-expected.txt:
+        * css3/flexbox/flex-flow-overflow-expected.txt:
+        * css3/flexbox/flex-flow-padding-expected.txt:
+        * css3/flexbox/flexbox-ignore-firstLetter-expected.txt:
+        * css3/flexbox/inline-flexbox-ignore-firstLine-expected.txt:
+        * css3/flexbox/intrinsic-min-width-applies-with-fixed-width-expected.txt:
+        * editing/selection/focus-crash-expected.txt:
+        
+            A few frame based tests also gain an extra space from alrgorithm fixes in creation direction.
+
+        * editing/style/toggle-style-bold-italic-expected.txt:
+        * editing/style/toggle-style-bold-italic-mixed-editability-expected.txt:
+        * fast/block/float/intruding-float-not-removed-writing-mode-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-resolved-values-expected.txt:
+        * fast/css/import-style-update-expected.txt:
+        * fast/css/positioned-overflow-scroll-expected.txt:
+        * fast/dom/HTMLLinkElement/resolve-url-on-insertion-expected.txt:
+        * fast/dom/search-shadow-host-crash-expected.txt:
+        * fast/dynamic/inline-to-block-crash-expected.txt:
+        * fast/events/input-element-display-none-in-dragleave-crash-expected.txt:
+        * fast/flexbox/intrinsic-min-width-applies-with-fixed-width-expected.txt:
+        * fast/forms/select-listbox-focus-displaynone-expected.txt:
+        * fast/frames/repaint-display-none-crash-expected.txt:
+        * fast/inline/inline-with-empty-inline-children-expected.txt:
+        * fast/inline/out-of-flow-objects-and-whitespace-after-empty-inline-expected.txt:
+        * fast/repaint/text-in-relative-positioned-inline-expected.txt:
+        * fast/replaced/computed-image-width-with-percent-height-and-fixed-ancestor-expected.txt:
+        * fast/replaced/computed-image-width-with-percent-height-and-fixed-ancestor-vertical-lr-expected.txt:
+        * fast/replaced/preferred-widths-expected.txt:
+        * fast/spatial-navigation/snav-tiny-table-traversal-expected.txt:
+        * fast/table/min-max-width-preferred-size-expected.txt:
+        * fast/xsl/import-non-document-node-expected.txt:
+        * fullscreen/full-screen-fixed-pos-parent-expected.txt:
+        * http/tests/appcache/auth-expected.txt:
+        * http/tests/cache/subresource-expiration-1-expected.txt:
+        * http/tests/cache/subresource-expiration-2-expected.txt:
+        * http/tests/xmlhttprequest/send-array-buffer-expected.txt:
+        * http/tests/xmlhttprequest/send-data-view-expected.txt:
+        * http/tests/xmlhttprequest/send-undefined-and-null-expected.txt:
+        * platform/mac/editing/input/firstrectforcharacterrange-plain-expected.txt:
+        * platform/mac/editing/input/firstrectforcharacterrange-styled-expected.txt:
+        * platform/mac/editing/pasteboard/4989774-expected.txt:
+        * platform/mac/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/mac/editing/selection/caret-ltr-2-expected.txt:
+        * platform/mac/editing/selection/caret-ltr-2-left-expected.txt:
+        * platform/mac/editing/selection/caret-ltr-expected.txt:
+        * platform/mac/editing/selection/caret-ltr-right-expected.txt:
+        * platform/mac/editing/selection/caret-rtl-2-expected.txt:
+        * platform/mac/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/mac/editing/selection/caret-rtl-expected.txt:
+        * platform/mac/editing/selection/caret-rtl-right-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-in-textarea-expected.txt:
+        * platform/mac/editing/style/style-boundary-005-expected.txt:
+        * platform/mac/fast/AppleScript/001-expected.txt:
+        * platform/mac/fast/AppleScript/date-expected.txt:
+        * platform/mac/fast/forms/formmove3-expected.txt:
+        * platform/mac/fast/forms/input-align-image-expected.txt:
+        * platform/mac/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/mac/fast/invalid/003-expected.txt:
+        * platform/mac/fast/text/attributed-substring-from-range-002-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug647-expected.txt:
+        * userscripts/user-script-all-frames-expected.txt:
+        * userscripts/user-script-top-frame-only-expected.txt:
+        
+            Here too.
+
 2013-09-07  Mark Lam  <mark.lam@apple.com>
 
         Change fast/js/resources files to use pre and post js files in LayoutTests/resources.
