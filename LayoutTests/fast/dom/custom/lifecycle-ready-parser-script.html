@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script>
 description("This test ensures that the lifecycle callback of a parser-made element is visible in following script block.")
 document.register = document.register || document.webkitRegister;
@@ -14,6 +14,6 @@ document.register("x-foo", { prototype: proto });
 <script>
 shouldBeTrue("window.callbacksCalled");
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

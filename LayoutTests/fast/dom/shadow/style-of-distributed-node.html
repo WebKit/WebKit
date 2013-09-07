@@ -2,7 +2,7 @@
 <html>
 <head>
 <script src="resources/polyfill.js"></script>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script>
 function getColorProperty(id) {
     return window.getComputedStyle(document.getElementById(id)).color;
@@ -36,6 +36,6 @@ shouldBe('getColorProperty("child-b")', '"rgb(0, 0, 255)"');
 
 document.getElementById("test").innerHTML = '';
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

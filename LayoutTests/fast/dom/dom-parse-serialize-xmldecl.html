@@ -1,5 +1,5 @@
 <html>
-    <script src="../js/resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test-pre.js"></script>
     <script type="text/javascript">
         description("This test verifies that the xml declaration gets serialized if present.");
 
@@ -34,5 +34,5 @@
         shouldBeEqualToString("new XMLSerializer().serializeToString(xmldoc).replace(/\"/g,\"'\")", "<?xml version='1.0'?><root><test/></root>");
 
     </script>
-    <script src="../js/resources/js-test-post.js"></script>
+    <script src="../../resources/js-test-post.js"></script>
 </html>

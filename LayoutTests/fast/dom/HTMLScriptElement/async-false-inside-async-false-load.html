@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body onload="">
 Checks that adding an async=false script while executing an async=false script doesn't mess anything up.
@@ -14,6 +14,6 @@ first_script.async = false;
 first_script.src = "resources/async-false.js";
 document.getElementsByTagName("head")[0].appendChild(first_script);
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

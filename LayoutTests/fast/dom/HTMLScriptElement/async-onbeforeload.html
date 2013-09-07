@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body onload="debug('load');finishJSTest();">
 Checks that async scripts fire onbeforeload immediately and that it is cancellable.
@@ -10,6 +10,6 @@ Checks that async scripts fire onbeforeload immediately and that it is cancellab
 <script src="resources/shouldnotexecute.js" onbeforeload="debug('cancelled onbeforeload async'); return false;" async></script>
 <script src="resources/async.js" onbeforeload="debug('onbeforeload async'); return true;" async></script>
 <script src="data:text/javascript," onbeforeload="debug('onbeforeload external'); return true;"></script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

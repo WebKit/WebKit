@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <script>
 
 description('This tests that setting the proto of a built in constructor is not reset');
@@ -12,4 +12,4 @@ HTMLElement.__proto__ = proto;
 shouldBe('Object.getPrototypeOf(HTMLElement)', 'proto');
 
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>

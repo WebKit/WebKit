@@ -7,7 +7,7 @@
 <div id="container"><a id="anchor-in-host-children" href="/">tehepero</a></div>
 <div><a id="anchor-outside-of-shadow" href="/">tehepero</a></div>
 
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script>
 var container = document.getElementById('container');
 
@@ -28,6 +28,6 @@ shouldBe('anchorInShadow.href.indexOf("http://www.example.com")', '-1');
 shouldBe('anchorInHostChildren.href.indexOf("http://www.example.com")', '-1');
 shouldBe('anchorOutsideOfShadow.href.indexOf("http://www.example.com")', '-1');
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

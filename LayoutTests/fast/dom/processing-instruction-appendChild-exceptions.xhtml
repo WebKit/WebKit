@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <body>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <script>
 <![CDATA[
 description("Test that appropriate exceptions are thrown when adding children to a ProcessingInstruction.");
@@ -12,6 +12,6 @@ var textNode = document.createTextNode('sometext');
 shouldThrow("pi.appendChild(textNode)", "'Error: HierarchyRequestError: DOM Exception 3'");
 ]]>
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

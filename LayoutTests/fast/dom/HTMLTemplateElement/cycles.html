@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script>
 description('Test that cycles are not allowed in template content');
 var template = document.createElement('template');
@@ -13,4 +13,4 @@ shouldThrow('innerDiv.appendChild(outerDiv)');
 var innerTemplate = innerDiv.appendChild(document.createElement('template'));
 shouldThrow('innerTemplate.appendChild(outerDiv)');
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>

@@ -1,5 +1,5 @@
 <html>
-    <script src="../js/resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test-pre.js"></script>
     <script type="text/javascript">
         description("This test verifies that the namespace on a node gets serialized if present even if the node is not in the DOM tree.");
 
@@ -12,5 +12,5 @@
         shouldBeEqualToString("s.serializeToString(doc).replace(/\"/g,\"'\")", "<test xmlns='http://example.com/'/>");
 
     </script>
-    <script src="../js/resources/js-test-post.js"></script>
+    <script src="../../resources/js-test-post.js"></script>
 </html>

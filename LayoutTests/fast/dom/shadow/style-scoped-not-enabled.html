@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script>
 if (window.internals)
     window.internals.settings.setStyleScopedEnabled(false);
@@ -30,6 +30,6 @@ shouldBe("window.getComputedStyle(insideScope).color", "'rgb(255, 0, 0)'");
 shouldBe("window.getComputedStyle(shouldNotBeScoped).color", "'rgb(255, 0, 0)'");
 finishJSTest();
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

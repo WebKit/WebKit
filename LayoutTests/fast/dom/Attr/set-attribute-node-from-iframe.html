@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <iframe></iframe>
@@ -17,6 +17,6 @@ shouldBe('attr = iframeDocument.createAttribute("foo"); attr.ownerDocument', 'if
 shouldBe('elementToBeMoved.setAttributeNode(attr); attr.ownerDocument', 'document');
 shouldBe('iframeDocument.documentElement.appendChild(elementToBeMoved); attr.ownerDocument', 'iframeDocument');
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <script src="../../js/resources/js-test-pre.js"></script>
+  <script src="../../../resources/js-test-pre.js"></script>
   <script>
 description("Test for https://bugs.webkit.org/show_bug.cgi?id=92899. Dynamically styling ShadowDom content on a node distributed to another shadow insertion point fails.");
 
@@ -31,6 +31,6 @@ target = youngestShadowRoot.querySelector("div");
 target.classList.add("selected");
 shouldBe('window.getComputedStyle(target).backgroundColor', '"rgb(255, 0, 0)"');
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

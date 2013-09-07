@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <xht:input id="test"></xht:input>
@@ -10,6 +10,6 @@ var source = document.getElementById('test');
 var imported = document.importNode(source, true);
 shouldBe('imported.constructor', 'source.constructor');
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

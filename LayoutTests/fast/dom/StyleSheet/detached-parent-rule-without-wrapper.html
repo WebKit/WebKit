@@ -3,7 +3,7 @@
 <style>
 @media all { #test { color: green; } }
 </style>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <div id="test"></div>
@@ -19,6 +19,6 @@ document.head.removeChild(document.getElementsByTagName("style")[0]);
 shouldBe("rule.parentRule", "null");
 shouldBe('getMatchedCSSRules(document.getElementById("test"))', 'null');
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

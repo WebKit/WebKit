@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script>
 description('MutationRecord should be exposed on window but not constructible');
 
@@ -14,4 +14,4 @@ div.id = 'foo';
 var record = observer.takeRecords()[0];
 shouldBeTrue('record instanceof MutationRecord');
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>

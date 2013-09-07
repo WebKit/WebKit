@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script>
 description("This test ensures that the lifecycle callbacks of editing-originated elements are visible in following script block.")
 document.register = document.register || document.webkitRegister;
@@ -25,6 +25,6 @@ shouldBe("window.callbacksCalled", "['X-FOO', 'DIV', 'X-FOO', 'DIV']");
 
 container.style.display = "none";
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

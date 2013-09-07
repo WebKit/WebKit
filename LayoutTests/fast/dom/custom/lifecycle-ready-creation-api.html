@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script>
 description("This test ensures that the lifecycle callbacks of API-originated elements are visible in following script block.")
 window.callbacksCalled = [];
@@ -69,6 +69,6 @@ insertionPlaceHolder.insertAdjacentHTML("beforebegin", "<x-foo></x-foo>");
 shouldBe("window.callbacksCalled", "['X-FOO']");
 
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

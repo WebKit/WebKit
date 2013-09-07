@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script>
 description("This test ensures that the lifecycle callback of a parser-made element is visible in following script block.")
 document.register = document.register || document.webkitRegister;
@@ -31,6 +31,6 @@ window.callbacksCalled = [];
 container.innerHTML = "<x-foo id='a'><div id='b' is='x-bar'><x-baz id='c'></x-baz></div></x-foo>";
 shouldBe("window.callbacksCalled", "['a', 'b', 'c']");
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>
