@@ -56,7 +56,7 @@ static void compileStub(
     // of: we know that it's two frames beneath us. This is terrible and I feel
     // ashamed of it, but it will work for now.
     
-    CArgumentGetter arguments(jit);
+    CArgumentGetter arguments(jit, 2);
     
     // First recover our call frame and tag thingies.
     arguments.loadNextPtr(GPRInfo::callFrameRegister);

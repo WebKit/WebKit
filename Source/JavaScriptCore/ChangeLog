@@ -1,5 +1,56 @@
 2013-09-06  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should support Call/Construct in the worst way possible
+        https://bugs.webkit.org/show_bug.cgi?id=120916
+
+        Reviewed by Oliver Hunt.
+        
+        This adds support for Call/Construct by just calling out to C code that uses
+        the JSC::call/JSC::construct runtime functions for making calls. This is slow
+        and terrible, but it dramatically extends FTL coverage.
+        
+        Supporting calls in a meaningful way meant also supporting
+        GlobalVarWatchpoint.
+        
+        The extension of coverage helped to find a bunch of bugs:
+        
+        - ObjectOrOtherUse was claimed to be supported in the FTL but speculate()
+          didn't support it. That means that any node with an ObjectOrOtherUse edge
+          that got DCE'd would cause the FTL to ICE.
+        
+        - There was a bad fall-through compileCompareStrictEq() that led to ICE.
+        
+        - The OSR exit reconstruction code was assuming it could do fast checks on
+          node->child1() before even determining the type of node; that crashes if
+          the node is HasVarArgs. Fixed by checking HasVarArgs first.
+        
+        - The OSR exit compiler was using the wrong peekOffset for CArgumentGetter.
+          The default is 1, which assumes that you didn't push anything onto the
+          stack after getting called. The OSR exit thunks push FP, so the offset
+          should be 2.
+        
+        This passes stress tests and is probably huge performance regression if you
+        --useExperimentalFTL=true. The regression will be fixed in
+        https://bugs.webkit.org/show_bug.cgi?id=113621.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGlobalVarWatchpoint):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq):
+        (JSC::FTL::LowerDFGToLLVM::compileCallOrConstruct):
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::speculateObjectOrOther):
+        (JSC::FTL::LowerDFGToLLVM::addExitArgumentForNode):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+
+2013-09-06  Filip Pizlo  <fpizlo@apple.com>
+
         jsc shell should destroy VM as a workaround for LLVM's exit-time destructors
         https://bugs.webkit.org/show_bug.cgi?id=120921
 

@@ -363,6 +363,9 @@ private:
         case PutGlobalVar:
             compilePutGlobalVar();
             break;
+        case GlobalVarWatchpoint:
+            compileGlobalVarWatchpoint();
+            break;
         case CompareEq:
             compileCompareEq();
             break;
@@ -389,6 +392,10 @@ private:
             break;
         case LogicalNot:
             compileLogicalNot();
+            break;
+        case Call:
+        case Construct:
+            compileCallOrConstruct();
             break;
         case Jump:
             compileJump();
@@ -1396,6 +1403,12 @@ private:
             lowJSValue(m_node->child1()), m_out.absolute(m_node->registerPointer()));
     }
     
+    void compileGlobalVarWatchpoint()
+    {
+        // FIXME: Implement watchpoints.
+        // https://bugs.webkit.org/show_bug.cgi?id=113647
+    }
+    
     void compileCompareEq()
     {
         if (m_node->isBinaryUseKind(Int32Use)
@@ -1428,6 +1441,7 @@ private:
         if (m_node->isBinaryUseKind(NumberUse)) {
             setBoolean(
                 m_out.doubleEqual(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
+            return;
         }
         
         if (m_node->isBinaryUseKind(ObjectUse)) {
@@ -1539,6 +1553,39 @@ private:
     void compileLogicalNot()
     {
         setBoolean(m_out.bitNot(boolify(m_node->child1())));
+    }
+    
+    void compileCallOrConstruct()
+    {
+        // FIXME: This is unacceptably slow.
+        // https://bugs.webkit.org/show_bug.cgi?id=113621
+        
+        J_DFGOperation_E function =
+            m_node->op() == Call ? operationFTLCall : operationFTLConstruct;
+        
+        int dummyThisArgument = m_node->op() == Call ? 0 : 1;
+        
+        int numPassedArgs = m_node->numChildren() - 1;
+        
+        LValue calleeFrame = m_out.add(
+            m_callFrame,
+            m_out.constIntPtr(sizeof(Register) * codeBlock()->m_numCalleeRegisters));
+        
+        m_out.store32(
+            m_out.constInt32(numPassedArgs + dummyThisArgument),
+            payloadFor(calleeFrame, JSStack::ArgumentCount));
+        m_out.store64(m_callFrame, addressFor(calleeFrame, JSStack::CallerFrame));
+        m_out.store64(
+            lowJSValue(m_graph.varArgChild(m_node, 0)),
+            addressFor(calleeFrame, JSStack::Callee));
+        
+        for (int i = 0; i < numPassedArgs; ++i) {
+            m_out.store64(
+                lowJSValue(m_graph.varArgChild(m_node, 1 + i)),
+                addressFor(calleeFrame, argumentToOperand(i + dummyThisArgument)));
+        }
+        
+        setJSValue(vmCall(m_out.operation(function), calleeFrame));
     }
     
     void compileJump()
@@ -2212,6 +2259,9 @@ private:
         case ObjectUse:
             speculateObject(edge);
             break;
+        case ObjectOrOtherUse:
+            speculateObjectOrOther(edge);
+            break;
         case StringUse:
             speculateString(edge);
             break;
@@ -2225,6 +2275,7 @@ private:
             speculateBoolean(edge);
             break;
         default:
+            dataLog("Unsupported speculation use kind: ", edge.useKind(), "\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -2276,6 +2327,42 @@ private:
     void speculateObject(Edge edge)
     {
         speculateObject(edge, lowCell(edge));
+    }
+    
+    void speculateObjectOrOther(Edge edge)
+    {
+        if (!m_interpreter.needsTypeCheck(edge))
+            return;
+        
+        LValue value = lowJSValue(edge);
+        
+        LBasicBlock cellCase = FTL_NEW_BLOCK(m_out, ("speculateObjectOrOther cell case"));
+        LBasicBlock primitiveCase = FTL_NEW_BLOCK(m_out, ("speculateObjectOrOther primitive case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("speculateObjectOrOther continuation"));
+        
+        m_out.branch(isNotCell(value), primitiveCase, cellCase);
+        
+        LBasicBlock lastNext = m_out.appendTo(cellCase, primitiveCase);
+        
+        FTL_TYPE_CHECK(
+            jsValueValue(value), edge, (~SpecCell) | SpecObject,
+            m_out.equal(
+                m_out.loadPtr(value, m_heaps.JSCell_structure),
+                m_out.constIntPtr(vm().stringStructure.get())));
+        
+        m_out.jump(continuation);
+        
+        m_out.appendTo(primitiveCase, continuation);
+        
+        FTL_TYPE_CHECK(
+            jsValueValue(value), edge, SpecCell | SpecOther,
+            m_out.notEqual(
+                m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
+                m_out.constInt64(ValueNull)));
+        
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
     }
     
     void speculateString(Edge edge, LValue cell)
@@ -2634,6 +2721,8 @@ private:
                 HashSet<Node*>::iterator end = m_live.end();
                 for (; iter != end; ++iter) {
                     Node* candidate = *iter;
+                    if (candidate->flags() & NodeHasVarArgs)
+                        continue;
                     if (!candidate->child1())
                         continue;
                     if (candidate->child1() != node)

@@ -254,6 +254,13 @@ JSCell* DFG_OPERATION operationMakeRope3(ExecState*, JSString*, JSString*, JSStr
 char* DFG_OPERATION operationFindSwitchImmTargetForDouble(ExecState*, EncodedJSValue, size_t tableIndex);
 char* DFG_OPERATION operationSwitchString(ExecState*, size_t tableIndex, JSString*);
 
+#if ENABLE(FTL_JIT)
+// FIXME: Make calls work well. Currently they're a pure regression.
+// https://bugs.webkit.org/show_bug.cgi?id=113621
+EncodedJSValue DFG_OPERATION operationFTLCall(ExecState*) WTF_INTERNAL;
+EncodedJSValue DFG_OPERATION operationFTLConstruct(ExecState*) WTF_INTERNAL;
+#endif // ENABLE(FTL_JIT)
+
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.
 

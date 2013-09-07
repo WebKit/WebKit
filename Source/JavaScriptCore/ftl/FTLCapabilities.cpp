@@ -86,6 +86,9 @@ inline CapabilityLevel canCompile(Node* node)
     case Upsilon:
     case ExtractOSREntryLocal:
     case LoopHint:
+    case Call:
+    case Construct:
+    case GlobalVarWatchpoint:
         // These are OK.
         break;
     case GetArrayLength:
