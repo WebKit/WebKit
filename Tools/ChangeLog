@@ -1,3 +1,18 @@
+2013-09-07  Santosh Mahto  <santosh.ma@samsung.com>
+
+        removing --dialog-element from build-webkit --help option message
+        https://bugs.webkit.org/show_bug.cgi?id=120955
+
+        Reviewed by Daniel Bates.
+
+        --dialog-element option is useless while building as
+        Dialog Element support has been removed in following changeset.
+        http://trac.webkit.org/changeset/154835
+        http://trac.webkit.org/changeset/154870
+
+        * Scripts/webkitperl/FeatureList.pm:
+        Removed --dialog-element option message.
+
 2013-09-06  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to run-javascriptcore-tests with only a subset of the test suites
