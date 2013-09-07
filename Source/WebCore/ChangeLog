@@ -1,3 +1,21 @@
+2013-09-06  Dirk Schulze  <krit@webkit.org>
+
+        Interpolate between CSS filter() and cached images
+        https://bugs.webkit.org/show_bug.cgi?id=120602
+
+        Reviewed by Simon Fraser.
+
+        Interpolate from a filter() image function to a url() image reference and
+        the other way around, if the input image on the filter function is the same
+        as the referenced image on url().
+
+        * page/animation/CSSPropertyAnimation.cpp: Replaced old
+            filterBlend function with blendFilter function which is more generic
+            and can be reused in multiple places.
+        (WebCore::blendFilterOperations):
+        (WebCore::blendFunc):
+        (WebCore::blendFilter):
+
 2013-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Elements retained by AccessibilityImageMapLink leak

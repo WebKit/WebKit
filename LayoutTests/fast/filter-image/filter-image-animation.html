@@ -43,6 +43,18 @@
       -webkit-animation: multiple-anim2 2s linear;
     }
 
+    #urlfilter {
+      -webkit-animation: url-to-filter-anim 2s linear;
+    }
+
+    #filterurl {
+      -webkit-animation: filter-to-url-anim 2s linear;
+    }
+
+    #filterdiffurl {
+      -webkit-animation: filter-diff-url-anim 2s linear;
+    }
+
     #generated1 {
       -webkit-animation: generated-anim1 2s linear;
     }
@@ -50,11 +62,6 @@
     #generated2 {
       -webkit-animation: generated-anim2 2s linear;
     }
-
-    #urlfilter {
-      -webkit-animation: url-to-filter-anim 2s linear;
-    }
-
 
     @-webkit-keyframes brightness-anim {
         from { background-image: -webkit-filter(url(resources/image.svg), brightness(1)); }
@@ -96,6 +103,21 @@
         to   { background-image: -webkit-filter(url(resources/image.svg), contrast(0.75) blur(3px) hue-rotate(45deg)); }
     }
 
+    @-webkit-keyframes url-to-filter-anim {
+        from { background-image: url(resources/image.svg); }
+        to   { background-image: -webkit-filter(url(resources/image.svg), sepia(0.5)); }
+    }
+
+    @-webkit-keyframes filter-to-url-anim {
+        from { background-image: -webkit-filter(url(resources/image.svg), sepia(0.5)); }
+        to   { background-image: url(resources/image.svg); }
+    }
+
+    @-webkit-keyframes filter-diff-url-anim {
+        from { background-image: url(resources/image.svg); }
+        to   { background-image: -webkit-filter(url(resources/blue.svg), sepia(0.5)); }
+    }
+
     @-webkit-keyframes generated-anim1 {
         from { background-image: -webkit-filter(-webkit-filter(url(resources/image.svg), blur(3px)), sepia(1)); }
         to   { background-image: -webkit-filter(-webkit-filter(url(resources/image.svg), blur(3px)), sepia(0)); }
@@ -104,11 +126,6 @@
     @-webkit-keyframes generated-anim2 {
         from { background-image: -webkit-filter(-webkit-cross-fade(url(resources/image.svg), url(resources/image.svg), 50%), sepia(1)); }
         to   { background-image: -webkit-filter(-webkit-cross-fade(url(resources/image.svg), url(resources/image.svg), 50%), sepia(0)); }
-    }
-
-    @-webkit-keyframes url-to-filter-anim {
-        from { background-image: url(resources/image.svg); }
-        to   { background-image: -webkit-filter(url(resources/image.svg), sepia(0.5)); }
     }
   </style>
   <script src="../../animations/resources/animation-test-helpers.js"></script>
@@ -123,10 +140,12 @@
       ["string-anim",  1, "string", "backgroundImage", "-webkit-filter(url(image.svg), sepia(0.5))", 0],
       ["multiple-anim1",  1, "multiple1", "backgroundImage", "-webkit-filter(url(image.svg), sepia(0.5) blur(1.5px) hue-rotate(22.5deg))", 0.05],
       ["multiple-anim2",  1, "multiple2", "backgroundImage", "-webkit-filter(url(image.svg), contrast(0.5) blur(1.5px) hue-rotate(22.5deg))", 0.05],
+      ["url-to-filter-anim",  1, "urlfilter", "backgroundImage", " -webkit-filter(url(image.svg), sepia(0.25))", 0.05],
+      ["filter-to-url-anim",  1, "filterurl", "backgroundImage", " -webkit-filter(url(image.svg), sepia(0.25))", 0.05],
+      ["filter-diff-url-anim",  1, "filterdiffurl", "backgroundImage", " -webkit-filter(url(blue.svg), sepia(0.5))", 0],
       // FIXME: We need to support generated images as input to other generated images for animations first.
       ["generated-anim1",  1, "generated1", "backgroundImage", "-webkit-filter(-webkit-filter(url(image.svg), blur(3px)), sepia(0))", 0],
       ["generated-anim2",  1, "generated2", "backgroundImage", "-webkit-filter(-webkit-cross-fade(url(image.svg), url(image.svg), 50%), sepia(0))", 0],
-      ["url-to-filter-anim",  1, "urlfilter", "backgroundImage", " -webkit-filter(url(image.svg), sepia(0.5))", 0],
     ];
     
     runAnimationTest(expectedValues);
@@ -142,9 +161,11 @@
 <div class="box" id="string"></div>
 <div class="box" id="multiple1"></div>
 <div class="box" id="multiple2"></div>
+<div class="box" id="urlfilter"></div>
+<div class="box" id="filterurl"></div>
+<div class="box" id="filterdiffurl"></div>
 <div class="box" id="generated1"></div>
 <div class="box" id="generated2"></div>
-<div class="box" id="urlfilter"></div>
 
 <div id="result">
 </div>
