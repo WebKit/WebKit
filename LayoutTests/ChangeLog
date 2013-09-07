@@ -1,3 +1,16 @@
+2013-09-07  Mark Lam  <mark.lam@apple.com>
+
+        Copy test pre and post js files to LayoutTests/resources.
+        https://bugs.webkit.org/show_bug.cgi?id=120957.
+
+        Reviewed by Ryosuke Niwa.
+
+        * resources/js-test-post-async.js: Copied from LayoutTests/fast/js/resources/js-test-post-async.js.
+        * resources/js-test-post.js: Copied from LayoutTests/fast/js/resources/js-test-post.js.
+        * resources/js-test-pre.js: Copied from LayoutTests/fast/js/resources/js-test-pre.js.
+        * resources/standalone-post.js: Copied from LayoutTests/fast/js/resources/standalone-post.js.
+        * resources/standalone-pre.js: Copied from LayoutTests/fast/js/resources/standalone-pre.js.
+
 2013-09-07  Eric Carlson  <eric.carlson@apple.com>
 
         MediaStream should fire ended event when all tracks are ended
