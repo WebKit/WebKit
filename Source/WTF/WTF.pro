@@ -107,7 +107,6 @@ HEADERS += \
     ParallelJobsGeneric.h \
     ParallelJobsLibdispatch.h \
     ParallelJobsOpenMP.h \
-    PassOwnArrayPtr.h \
     PassOwnPtr.h \
     PassRefPtr.h \
     PassTraits.h \

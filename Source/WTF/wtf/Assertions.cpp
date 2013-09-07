@@ -35,7 +35,7 @@
 #include "Assertions.h"
 
 #include "Compiler.h"
-#include "OwnArrayPtr.h"
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

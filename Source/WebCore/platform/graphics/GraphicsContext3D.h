@@ -34,7 +34,6 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnArrayPtr.h>
-#include <wtf/PassOwnArrayPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

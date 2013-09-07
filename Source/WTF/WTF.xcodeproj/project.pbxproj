@@ -179,7 +179,6 @@
 		A8A47404151A825B004123FF /* PageReservation.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472E5151A825B004123FF /* PageReservation.h */; };
 		A8A47405151A825B004123FF /* ParallelJobs.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472E6151A825B004123FF /* ParallelJobs.h */; };
 		A8A47408151A825B004123FF /* ParallelJobsLibdispatch.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472E9151A825B004123FF /* ParallelJobsLibdispatch.h */; };
-		A8A4740A151A825B004123FF /* PassOwnArrayPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472EB151A825B004123FF /* PassOwnArrayPtr.h */; };
 		A8A4740B151A825B004123FF /* PassOwnPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472EC151A825B004123FF /* PassOwnPtr.h */; };
 		A8A4740C151A825B004123FF /* PassRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472ED151A825B004123FF /* PassRefPtr.h */; };
 		A8A4740D151A825B004123FF /* PassTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472EE151A825B004123FF /* PassTraits.h */; };
@@ -455,7 +454,6 @@
 		A8A472E5151A825B004123FF /* PageReservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageReservation.h; sourceTree = "<group>"; };
 		A8A472E6151A825B004123FF /* ParallelJobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelJobs.h; sourceTree = "<group>"; };
 		A8A472E9151A825B004123FF /* ParallelJobsLibdispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelJobsLibdispatch.h; sourceTree = "<group>"; };
-		A8A472EB151A825B004123FF /* PassOwnArrayPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassOwnArrayPtr.h; sourceTree = "<group>"; };
 		A8A472EC151A825B004123FF /* PassOwnPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassOwnPtr.h; sourceTree = "<group>"; };
 		A8A472ED151A825B004123FF /* PassRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassRefPtr.h; sourceTree = "<group>"; };
 		A8A472EE151A825B004123FF /* PassTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassTraits.h; sourceTree = "<group>"; };
@@ -734,7 +732,6 @@
 				A8A472E5151A825B004123FF /* PageReservation.h */,
 				A8A472E6151A825B004123FF /* ParallelJobs.h */,
 				A8A472E9151A825B004123FF /* ParallelJobsLibdispatch.h */,
-				A8A472EB151A825B004123FF /* PassOwnArrayPtr.h */,
 				A8A472EC151A825B004123FF /* PassOwnPtr.h */,
 				A8A472ED151A825B004123FF /* PassRefPtr.h */,
 				A8A472EE151A825B004123FF /* PassTraits.h */,
@@ -1033,7 +1030,6 @@
 				A8A47404151A825B004123FF /* PageReservation.h in Headers */,
 				A8A47405151A825B004123FF /* ParallelJobs.h in Headers */,
 				A8A47408151A825B004123FF /* ParallelJobsLibdispatch.h in Headers */,
-				A8A4740A151A825B004123FF /* PassOwnArrayPtr.h in Headers */,
 				A8A4740B151A825B004123FF /* PassOwnPtr.h in Headers */,
 				A8A4740C151A825B004123FF /* PassRefPtr.h in Headers */,
 				A8A4740D151A825B004123FF /* PassTraits.h in Headers */,

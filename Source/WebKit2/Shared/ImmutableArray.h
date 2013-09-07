@@ -27,7 +27,6 @@
 #define ImmutableArray_h
 
 #include "APIObject.h"
-#include <wtf/PassOwnArrayPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 

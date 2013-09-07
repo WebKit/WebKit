@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006, 2010, 2013 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -24,35 +24,26 @@
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/NullPtr.h>
-#include <wtf/PassOwnArrayPtr.h>
 #include <algorithm>
 
 namespace WTF {
 
-template<typename T> class PassOwnArrayPtr;
-template<typename T> PassOwnArrayPtr<T> adoptArrayPtr(T*);
+template<typename T> inline void deleteOwnedArrayPtr(T*);
 
 template <typename T> class OwnArrayPtr {
 public:
     typedef T* PtrType;
 
-    OwnArrayPtr() : m_ptr(0) { }
-
-    // See comment in PassOwnArrayPtr.h for why this takes a const reference.
-    template<typename U> OwnArrayPtr(const PassOwnArrayPtr<U>& o);
-
-    // This copy constructor is used implicitly by gcc when it generates
-    // transients for assigning a PassOwnArrayPtr<T> object to a stack-allocated
-    // OwnArrayPtr<T> object. It should never be called explicitly and gcc
-    // should optimize away the constructor when generating code.
-    OwnArrayPtr(const OwnArrayPtr<T>&);
+    OwnArrayPtr() : m_ptr(nullptr) { }
+    OwnArrayPtr(std::nullptr_t) : m_ptr(nullptr) { }
+    OwnArrayPtr(OwnArrayPtr&&);
+    template<typename U> OwnArrayPtr(OwnArrayPtr<U>&&);
 
     ~OwnArrayPtr() { deleteOwnedArrayPtr(m_ptr); }
 
     PtrType get() const { return m_ptr; }
 
     void clear();
-    PassOwnArrayPtr<T> release();
     PtrType leakPtr() WARN_UNUSED_RETURN;
 
     T& operator*() const { ASSERT(m_ptr); return *m_ptr; }
@@ -66,57 +57,60 @@ public:
     typedef T* OwnArrayPtr::*UnspecifiedBoolType;
     operator UnspecifiedBoolType() const { return m_ptr ? &OwnArrayPtr::m_ptr : 0; }
 
-    OwnArrayPtr& operator=(const PassOwnArrayPtr<T>&);
     OwnArrayPtr& operator=(std::nullptr_t) { clear(); return *this; }
-    template<typename U> OwnArrayPtr& operator=(const PassOwnArrayPtr<U>&);
+    OwnArrayPtr& operator=(OwnArrayPtr&&);
+    template<typename U> OwnArrayPtr& operator=(OwnArrayPtr<U>&&);
 
     void swap(OwnArrayPtr& o) { std::swap(m_ptr, o.m_ptr); }
 
 private:
+    template<typename U> friend OwnArrayPtr<U> adoptArrayPtr(U*);
+    explicit OwnArrayPtr(PtrType ptr) : m_ptr(ptr) { }
+
     PtrType m_ptr;
 };
 
-template<typename T> template<typename U> inline OwnArrayPtr<T>::OwnArrayPtr(const PassOwnArrayPtr<U>& o)
-    : m_ptr(o.leakPtr())
+template<typename T>
+inline OwnArrayPtr<T>::OwnArrayPtr(OwnArrayPtr&& other)
+    : m_ptr(other.leakPtr())
 {
 }
 
-template<typename T> inline void OwnArrayPtr<T>::clear()
+template<typename T> template<typename U>
+inline OwnArrayPtr<T>::OwnArrayPtr(OwnArrayPtr<U>&& other)
+    : m_ptr(other.leakPtr())
+{
+}
+
+template<typename T>
+inline void OwnArrayPtr<T>::clear()
 {
     PtrType ptr = m_ptr;
     m_ptr = 0;
     deleteOwnedArrayPtr(ptr);
 }
 
-template<typename T> inline PassOwnArrayPtr<T> OwnArrayPtr<T>::release()
-{
-    PtrType ptr = m_ptr;
-    m_ptr = 0;
-    return adoptArrayPtr(ptr);
-}
-
-template<typename T> inline typename OwnArrayPtr<T>::PtrType OwnArrayPtr<T>::leakPtr()
+template<typename T>
+inline typename OwnArrayPtr<T>::PtrType OwnArrayPtr<T>::leakPtr()
 {
     PtrType ptr = m_ptr;
     m_ptr = 0;
     return ptr;
 }
 
-template<typename T> inline OwnArrayPtr<T>& OwnArrayPtr<T>::operator=(const PassOwnArrayPtr<T>& o)
+template<typename T>
+inline OwnArrayPtr<T>& OwnArrayPtr<T>::operator=(OwnArrayPtr&& other)
 {
-    PtrType ptr = m_ptr;
-    m_ptr = o.leakPtr();
-    ASSERT(!ptr || m_ptr != ptr);
-    deleteOwnedArrayPtr(ptr);
+    auto ptr = std::move(other);
+    swap(ptr);
     return *this;
 }
 
-template<typename T> template<typename U> inline OwnArrayPtr<T>& OwnArrayPtr<T>::operator=(const PassOwnArrayPtr<U>& o)
+template<typename T> template<typename U>
+inline OwnArrayPtr<T>& OwnArrayPtr<T>::operator=(OwnArrayPtr<U>&& other)
 {
-    PtrType ptr = m_ptr;
-    m_ptr = o.leakPtr();
-    ASSERT(!ptr || m_ptr != ptr);
-    deleteOwnedArrayPtr(ptr);
+    auto ptr = std::move(other);
+    swap(ptr);
     return *this;
 }
 
@@ -150,8 +144,21 @@ template <typename T> inline T* getPtr(const OwnArrayPtr<T>& p)
     return p.get();
 }
 
+template<typename T> inline OwnArrayPtr<T> adoptArrayPtr(T* ptr)
+{
+    return OwnArrayPtr<T>(ptr);
+}
+
+template<typename T> inline void deleteOwnedArrayPtr(T* ptr)
+{
+    static_assert(sizeof(T) > 0, "deleteOwnedArrayPtr can not delete incomplete types");
+
+    delete[] ptr;
+}
+
 } // namespace WTF
 
 using WTF::OwnArrayPtr;
+using WTF::adoptArrayPtr;
 
 #endif // WTF_OwnArrayPtr_h

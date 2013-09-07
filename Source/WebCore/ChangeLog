@@ -1,3 +1,23 @@
+2013-09-07  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of PassOwnArrayPtr
+        https://bugs.webkit.org/show_bug.cgi?id=120964
+
+        Reviewed by Andreas Kling.
+
+        Use OwnArrayPtr instead of PassOwnArrayPtr.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        * platform/Length.cpp:
+        (WebCore::newCoordsArray):
+        (WebCore::newLengthArray):
+        * platform/Length.h:
+        * platform/audio/FFTFrame.h:
+        * platform/graphics/GraphicsContext3D.cpp:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        * platform/graphics/wince/SharedBitmap.cpp:
+
 2013-09-07  Antti Koivisto  <antti@apple.com>
 
         Remove unnecessary sibling text renderers after attach

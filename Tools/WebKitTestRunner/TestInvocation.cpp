@@ -38,7 +38,6 @@
 #include <WebKit2/WKInspector.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/OwnArrayPtr.h>
-#include <wtf/PassOwnArrayPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 

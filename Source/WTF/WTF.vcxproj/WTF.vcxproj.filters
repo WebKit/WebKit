@@ -551,9 +551,6 @@
     <ClInclude Include="..\wtf\ParallelJobsOpenMP.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\PassOwnArrayPtr.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\PassOwnPtr.h">
       <Filter>wtf</Filter>
     </ClInclude>

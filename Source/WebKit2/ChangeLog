@@ -1,3 +1,15 @@
+2013-09-07  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of PassOwnArrayPtr
+        https://bugs.webkit.org/show_bug.cgi?id=120964
+
+        Reviewed by Andreas Kling.
+
+        Remove unneeded includes.
+
+        * Shared/ImmutableArray.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+
 2013-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Range::ownerDocument should return Document&

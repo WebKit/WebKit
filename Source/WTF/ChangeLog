@@ -1,5 +1,30 @@
 2013-09-07  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of PassOwnArrayPtr
+        https://bugs.webkit.org/show_bug.cgi?id=120964
+
+        Reviewed by Andreas Kling.
+
+        Make OwnArrayPtr a proper move-only type and get rid of PassOwnArrayPtr.
+        
+        Ultimately I'd like to get rid of OwnArrayPtr as well and just have it be a specialization
+        of OwnPtr<T[]>, but this is a step in the right direction.
+
+        * GNUmakefile.list.am:
+        * WTF.pro:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Assertions.cpp:
+        * wtf/CMakeLists.txt:
+        * wtf/DateMath.h:
+        * wtf/FastBitVector.h:
+        * wtf/Forward.h:
+        * wtf/OwnArrayPtr.h:
+        * wtf/PassOwnArrayPtr.h: Removed.
+
+2013-09-07  Anders Carlsson  <andersca@apple.com>
+
         VectorMover should use std::move
         https://bugs.webkit.org/show_bug.cgi?id=120959
 

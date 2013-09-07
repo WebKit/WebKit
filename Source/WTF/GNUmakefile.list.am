@@ -120,7 +120,6 @@ wtf_sources += \
     Source/WTF/wtf/ParallelJobsGeneric.h \
     Source/WTF/wtf/ParallelJobsLibdispatch.h \
     Source/WTF/wtf/ParallelJobsOpenMP.h \
-    Source/WTF/wtf/PassOwnArrayPtr.h \
     Source/WTF/wtf/PassOwnPtr.h \
     Source/WTF/wtf/PassRefPtr.h \
     Source/WTF/wtf/PassTraits.h \

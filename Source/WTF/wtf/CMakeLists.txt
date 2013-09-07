@@ -70,7 +70,6 @@ set(WTF_HEADERS
     PageAllocationAligned.h
     PageBlock.h
     PageReservation.h
-    PassOwnArrayPtr.h
     PassOwnPtr.h
     PassRefPtr.h
     PassTraits.h

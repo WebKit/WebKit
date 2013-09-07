@@ -30,7 +30,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
-#include <wtf/PassOwnArrayPtr.h>
 
 namespace WebCore {
 
@@ -306,8 +305,8 @@ private:
     bool m_isFloat;
 };
 
-PassOwnArrayPtr<Length> newCoordsArray(const String&, int& len);
-PassOwnArrayPtr<Length> newLengthArray(const String&, int& len);
+OwnArrayPtr<Length> newCoordsArray(const String&, int& len);
+OwnArrayPtr<Length> newLengthArray(const String&, int& len);
 
 } // namespace WebCore
 

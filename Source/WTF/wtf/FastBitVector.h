@@ -28,7 +28,6 @@
 
 #include <wtf/FastMalloc.h>
 #include <wtf/OwnArrayPtr.h>
-#include <wtf/PassOwnArrayPtr.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {

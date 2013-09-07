@@ -28,7 +28,6 @@
 #include "WinCEGraphicsExtras.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCountedLeakCounter.h>
-#include <wtf/PassOwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
 
 #include <windows.h>

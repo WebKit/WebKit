@@ -280,7 +280,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
             slowArguments[i].status = SlowArgument::Captured;
             slowArguments[i].index = capturedArguments[i]->index();
         }
-        m_symbolTable->setSlowArguments(slowArguments.release());
+        m_symbolTable->setSlowArguments(std::move(slowArguments));
     }
 
     RegisterID* calleeRegister = resolveCallee(functionBody); // May push to the scope chain and/or add a captured var.

@@ -36,7 +36,6 @@
 #include <WebKit2/WKStringPrivate.h>
 #include <WebKit2/WKURL.h>
 #include <wtf/OwnArrayPtr.h>
-#include <wtf/PassOwnArrayPtr.h>
 #include <wtf/Platform.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

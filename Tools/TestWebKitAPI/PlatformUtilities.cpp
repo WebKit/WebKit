@@ -27,7 +27,6 @@
 #include "PlatformUtilities.h"
 
 #include <wtf/OwnArrayPtr.h>
-#include <wtf/PassOwnArrayPtr.h>
 
 namespace TestWebKitAPI {
 namespace Util {

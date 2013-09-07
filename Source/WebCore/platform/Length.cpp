@@ -85,7 +85,7 @@ static int countCharacter(const UChar* data, unsigned length, UChar character)
     return count;
 }
 
-PassOwnArrayPtr<Length> newCoordsArray(const String& string, int& len)
+OwnArrayPtr<Length> newCoordsArray(const String& string, int& len)
 {
     unsigned length = string.length();
     const UChar* data = string.characters();
@@ -116,10 +116,10 @@ PassOwnArrayPtr<Length> newCoordsArray(const String& string, int& len)
 
     ASSERT(i == len - 1);
 
-    return r.release();
+    return r;
 }
 
-PassOwnArrayPtr<Length> newLengthArray(const String& string, int& len)
+OwnArrayPtr<Length> newLengthArray(const String& string, int& len)
 {
     RefPtr<StringImpl> str = string.impl()->simplifyWhiteSpace();
     if (!str->length()) {
@@ -147,7 +147,7 @@ PassOwnArrayPtr<Length> newLengthArray(const String& string, int& len)
     else
         len--;
 
-    return r.release();
+    return r;
 }
         
 class CalculationValueHandleMap {

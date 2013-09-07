@@ -36,7 +36,6 @@
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <wtf/OwnArrayPtr.h>
-#include <wtf/PassOwnArrayPtr.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <wtf/gobject/GOwnPtr.h>
