@@ -90,20 +90,16 @@ struct VectorMover;
 template<typename T>
 struct VectorMover<false, T>
 {
-    static void move(const T* src, const T* srcEnd, T* dst)
+    static void move(T* src, T* srcEnd, T* dst)
     {
         while (src != srcEnd) {
-            new (NotNull, dst) T(*src);
-#if COMPILER(SUNCC) && __SUNPRO_CC <= 0x590
-            const_cast<T*>(src)->~T(); // Work around obscure SunCC 12 compiler bug.
-#else
+            new (NotNull, dst) T(std::move(*src));
             src->~T();
-#endif
             ++dst;
             ++src;
         }
     }
-    static void moveOverlapping(const T* src, const T* srcEnd, T* dst)
+    static void moveOverlapping(T* src, T* srcEnd, T* dst)
     {
         if (src > dst)
             move(src, srcEnd, dst);
@@ -112,7 +108,7 @@ struct VectorMover<false, T>
             while (src != srcEnd) {
                 --srcEnd;
                 --dstEnd;
-                new (NotNull, dstEnd) T(*srcEnd);
+                new (NotNull, dstEnd) T(std::move(*srcEnd));
                 srcEnd->~T();
             }
         }
@@ -222,12 +218,12 @@ struct VectorTypeOperations
         VectorInitializer<VectorTraits<T>::needsInitialization, VectorTraits<T>::canInitializeWithMemset, T>::initialize(begin, end);
     }
 
-    static void move(const T* src, const T* srcEnd, T* dst)
+    static void move(T* src, T* srcEnd, T* dst)
     {
         VectorMover<VectorTraits<T>::canMoveWithMemcpy, T>::move(src, srcEnd, dst);
     }
 
-    static void moveOverlapping(const T* src, const T* srcEnd, T* dst)
+    static void moveOverlapping(T* src, T* srcEnd, T* dst)
     {
         VectorMover<VectorTraits<T>::canMoveWithMemcpy, T>::moveOverlapping(src, srcEnd, dst);
     }

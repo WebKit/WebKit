@@ -1,5 +1,19 @@
 2013-09-07  Anders Carlsson  <andersca@apple.com>
 
+        VectorMover should use std::move
+        https://bugs.webkit.org/show_bug.cgi?id=120959
+
+        Reviewed by Geoffrey Garen.
+
+        This lets the compiler use move constructors when moving data, which can be a performance improvement.
+        If the vector element type isn't movable it will be copied instead.
+
+        * wtf/Vector.h:
+        (WTF::VectorTypeOperations::move):
+        (WTF::VectorTypeOperations::moveOverlapping):
+
+2013-09-07  Anders Carlsson  <andersca@apple.com>
+
         Get rid of FastAllocBase.h
         https://bugs.webkit.org/show_bug.cgi?id=120952
 

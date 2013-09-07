@@ -82,7 +82,7 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
     bool hasSeenShouldRepatch : 1;
     bool isDFG : 1;
     bool hasSeenClosure : 1;
-    CallType callType : 5;
+    unsigned callType : 5; // CallType
     unsigned calleeGPR : 8;
     CodeOrigin codeOrigin;
 
