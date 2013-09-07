@@ -68,20 +68,44 @@ my $showHelp;
 
 my $buildJSC = 1;
 
+my $runTestAPI = isAppleMacWebKit() || isAppleWinWebKit();
+
+my $runMozilla = 1;
+
+# FIXME: run-fast-jsc tests doesn't work properly on Windows
+# https://bugs.webkit.org/show_bug.cgi?id=120765
+my $runFastJS = !isAppleWinWebKit();
+
+# FIXME: run-jsc-stress-tests should be ported to other platforms.
+# https://bugs.webkit.org/show_bug.cgi?id=120809
+my $runJSCStress = isAppleMacWebKit();
+
 my $programName = basename($0);
 my $buildJSCDefault = $buildJSC ? "will check" : "will not check";
+my $testapiDefault = $runTestAPI ? "will run" : "will not run";
+my $mozillaDefault = $runMozilla ? "will run" : "will not run";
+my $fastJSDefault = $runFastJS ? "will run" : "will not run";
+my $jscStressDefault = $runJSCStress ? "will run" : " will not run";
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
   --jsDriver-args=              A string of arguments to pass to jsDriver.pl
   --root=                       Path to pre-built root containing jsc
   --[no-]build                  Check (or don't check) to see if the jsc build is up-to-date (default: $buildJSCDefault)
+  --[no-]testapi                Run (or don't run) testapi (default: $testapiDefault)
+  --[no-]mozilla                Run (or don't run) the Mozilla tests (default: $mozillaDefault)
+  --[no-]fast-js                Run (or don't run) the fast/js tests (default: $fastJSDefault)
+  --[no-]jsc-stress             Run (or don't run) the JSC stress tests (default: $jscStressDefault)
 EOF
 
 GetOptions(
     'j|jsDriver-args=s' => \$jsDriverArgs,
     'root=s' => \$root,
     'build!' => \$buildJSC,
+    'testapi!' => \$runTestAPI,
+    'mozilla!' => \$runMozilla,
+    'fast-js!' => \$runFastJS,
+    'jsc-stress!' => \$runJSCStress,
     'help' => \$showHelp
 );
 
@@ -126,7 +150,7 @@ sub testapiPath($)
 }
 
 #run api tests
-if (isAppleMacWebKit() || isAppleWinWebKit()) {
+if ($runTestAPI) {
     chdirWebKit();
     chdir($productDir) or die "Failed to switch directory to '$productDir'\n";
     my @command = (testapiPath($productDir));
@@ -140,75 +164,70 @@ if (isAppleMacWebKit() || isAppleWinWebKit()) {
 
 # Find JavaScriptCore directory
 chdirWebKit();
-chdir("Source/JavaScriptCore");
-chdir "tests/mozilla" or die "Failed to switch directory to 'tests/mozilla'\n";
-my @jsMozillaDriverCmd = ("perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", @jsArgs);
-if (isGtk() || isEfl()) {
-    my @jhbuildPrefix = sourceDir() . "/Tools/jhbuild/jhbuild-wrapper";
-
-    if (isEfl()) {
-        push(@jhbuildPrefix, '--efl');
-    } elsif (isGtk()) {
-        push(@jhbuildPrefix, '--gtk');
-    }
-    push(@jhbuildPrefix, 'run');
-
-    unshift(@jsMozillaDriverCmd, @jhbuildPrefix);
-} elsif (isIOSWebKit() && willUseIOSSimulatorSDKWhenBuilding()) {
-    push @jsMozillaDriverCmd, ("--sdk", xcodeSDK());
-}
-print "Running: " . join(" ", @jsMozillaDriverCmd) . "\n";
-my $result = system(@jsMozillaDriverCmd);
-exit exitStatus($result)  if $result;
 
 my %mozillaFailures;
-
-open EXPECTED, "expected.html" or die "Failed to open 'expected.html'\n";
-while (<EXPECTED>) {
-    last if /failures reported\.$/;
-}
-while (<EXPECTED>) {
-    chomp;
-    $mozillaFailures{$_} = 1;
-}
-close EXPECTED;
-
 my %newMozillaFailures;
 
-open ACTUAL, "actual.html" or die "Failed to open 'actual.html'";
-while (<ACTUAL>) {
-    last if /failures reported\.$/;
-}
-while (<ACTUAL>) {
-    chomp;
-    if ($mozillaFailures{$_}) {
-        delete $mozillaFailures{$_};
-    } else {
-        $newMozillaFailures{$_} = 1;
+if ($runMozilla) {
+    chdir("Source/JavaScriptCore");
+    chdir "tests/mozilla" or die "Failed to switch directory to 'tests/mozilla'\n";
+    my @jsMozillaDriverCmd = ("perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", @jsArgs);
+    if (isGtk() || isEfl()) {
+        my @jhbuildPrefix = sourceDir() . "/Tools/jhbuild/jhbuild-wrapper";
+    
+        if (isEfl()) {
+            push(@jhbuildPrefix, '--efl');
+        } elsif (isGtk()) {
+            push(@jhbuildPrefix, '--gtk');
+        }
+        push(@jhbuildPrefix, 'run');
+    
+        unshift(@jsMozillaDriverCmd, @jhbuildPrefix);
+    } elsif (isIOSWebKit() && willUseIOSSimulatorSDKWhenBuilding()) {
+        push @jsMozillaDriverCmd, ("--sdk", xcodeSDK());
     }
+    print "Running: " . join(" ", @jsMozillaDriverCmd) . "\n";
+    my $result = system(@jsMozillaDriverCmd);
+    exit exitStatus($result)  if $result;
+    
+    open EXPECTED, "expected.html" or die "Failed to open 'expected.html'\n";
+    while (<EXPECTED>) {
+        last if /failures reported\.$/;
+    }
+    while (<EXPECTED>) {
+        chomp;
+        $mozillaFailures{$_} = 1;
+    }
+    close EXPECTED;
+    
+    open ACTUAL, "actual.html" or die "Failed to open 'actual.html'";
+    while (<ACTUAL>) {
+        last if /failures reported\.$/;
+    }
+    while (<ACTUAL>) {
+        chomp;
+        if ($mozillaFailures{$_}) {
+            delete $mozillaFailures{$_};
+        } else {
+            $newMozillaFailures{$_} = 1;
+        }
+    }
+    close ACTUAL;
 }
-close ACTUAL;
 
 chdirWebKit();
 my $fastJSResultsDir = $productDir . "/fast-jsc-results";
-
-# FIXME: run-fast-jsc tests doesn't work properly on Windows
-# https://bugs.webkit.org/show_bug.cgi?id=120765
-my $runFastJS = !isAppleWinWebKit();
 
 if ($runFastJS) {
     # Run the fast/js tests.
     my @fastJSDriverCmd = ("/bin/sh", "Tools/Scripts/run-fast-jsc", "-j", jscPath($productDir), "-r", $fastJSResultsDir, "-t", "LayoutTests");
     print "Running: " . join(" ", @fastJSDriverCmd) . "\n";
-    $result = system(@fastJSDriverCmd);
+    my $result = system(@fastJSDriverCmd);
     exit exitStatus($result) if $result;
 }
 
 my $jscStressResultsDir = $productDir . "/jsc-stress-results";
 
-# FIXME: run-jsc-stress-tests should be ported to other platforms.
-# https://bugs.webkit.org/show_bug.cgi?id=120809
-my $runJSCStress = isAppleMacWebKit();
 if ($runJSCStress) {
     my @jscStressDriverCmd = (
         "/usr/bin/env", "ruby", "Tools/Scripts/run-jsc-stress-tests",
@@ -218,7 +237,7 @@ if ($runJSCStress) {
         "LayoutTests/fast/js/regress/script-tests"
     );
     print "Running: " . join(" ", @jscStressDriverCmd) . "\n";
-    $result = system(@jscStressDriverCmd);
+    my $result = system(@jscStressDriverCmd);
     exit exitStatus($result) if $result;
 }
 
@@ -296,12 +315,14 @@ if ($numJSCStressFailures) {
 
 print "\n";
 
-print "Results for Mozilla tests:\n";
-printThingsFound($numNewMozillaFailures, "regression", "regressions", "found");
-printThingsFound($numOldMozillaFailures, "test", "tests", "fixed");
-print "    OK.\n" if $numNewMozillaFailures == 0;
-
-print "\n";
+if ($runMozilla) {
+    print "Results for Mozilla tests:\n";
+    printThingsFound($numNewMozillaFailures, "regression", "regressions", "found");
+    printThingsFound($numOldMozillaFailures, "test", "tests", "fixed");
+    print "    OK.\n" if $numNewMozillaFailures == 0;
+    
+    print "\n";
+}
 
 if ($runFastJS) {
     print "Results for fast/js tests:\n";
@@ -320,4 +341,4 @@ if ($runJSCStress) {
     print "\n";
 }
 
-exit(1)  if $numNewMozillaFailures || $numJSFailures || $numJSCrashes || $numJSCStressFailures;
+exit(1)  if ($runMozilla && $numNewMozillaFailures) || ($runFastJS && ($numJSFailures || $numJSCrashes)) || ($runJSCStress && $numJSCStressFailures);
