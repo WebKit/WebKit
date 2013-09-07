@@ -42,7 +42,7 @@
 }
 
 .item > .status > .status-button.disabled > svg * {
-    fill: rgb(112, 126, 139, 0.5) !important;
+    fill: rgba(112, 126, 139, 0.5) !important;
 }
 
 .item.selected > .status > .status-button.disabled > svg * {

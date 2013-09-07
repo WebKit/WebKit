@@ -1,5 +1,15 @@
 2013-09-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Download Archive button incorrectly styled when disabled and tree element is not-selected
+        https://bugs.webkit.org/show_bug.cgi?id=120866
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/TreeElementStatusButton.css:
+        (.item > .status > .status-button.disabled > svg *):
+
+2013-09-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Lint JavaScript and CSS for minor issues
         https://bugs.webkit.org/show_bug.cgi?id=120884
 
