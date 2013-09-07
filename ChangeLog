@@ -1,5 +1,32 @@
 2013-09-06  Zan Dobersek  <zdobersek@igalia.com>
 
+        REGRESSION(r155143): Build failures on GTK port with Clang and libstdc++ < 4.8.1
+        https://bugs.webkit.org/show_bug.cgi?id=120896
+
+        Reviewed by Anders Carlsson.
+
+        The GTK port currently only permits using the libstdc++ standard library when compiling with
+        Clang. After r155143, build failures are occurring when using Clang and libstdc++ that predates
+        the 4.8.0 release due to the use of std::is_trivially_destructible that isn't available in
+        libstdc++ < 4.8.0.
+
+        To not add additional special casing, the GTK port should move onto requiring libstdc++ >= 4.8.1
+        when compiling with the Clang compiler. Version 4.8.1 was chosen since it's C++11 feature-complete.
+        This strict requirement is possible as compiling the GTK port with the Clang compiler is not really
+        widespread, so we can afford to adjust the required dependencies to match other ports' progression
+        instead of modifying the code.
+
+        * Source/autotools/CheckSystemAndBasicDependencies.m4: If the detected compiler is Clang, also check
+        that the libstdc++ standard library is used by testing for the __GLIBCXX__ macro that should be defined
+        to the value lesser than the '20130531', the date stamp used by the 4.8.1 release of libstdc++. Since
+        possible future releases of the 4.6 or 4.7 series of libstdc++ will also match this check due to a newer
+        date stamp contained in __GLIBCXX__, the std::is_trivially_destructible struct is also used so the
+        compilation will fail if the libstdc++ that's used is older than allowed (and therefor does not support
+        the feature). If the check fails, a fatal error is thrown, describing the requirement. Everything carries
+        on as normal otherwise.
+
+2013-09-06  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] Bump the required Clang version to 3.2
         https://bugs.webkit.org/show_bug.cgi?id=112537
 

@@ -114,6 +114,20 @@ AC_LANG_POP([C++])
 
 if test "$cxx_compiler" = "unknown"; then
     AC_MSG_ERROR([Compiler GCC >= 4.7 or Clang >= 3.2 is required for C++ compilation])
+elif test "$cxx_compiler" = "clang++"; then
+    OLD_CXXFLAGS="$CXXFLAGS"
+    CXXFLAGS="-std=c++11"
+    AC_LANG_PUSH([C++])
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+#include <type_traits>
+#if defined(__GLIBCXX__) && __GLIBCXX__ >= 20130531
+bool libstdcxxTest = std::is_trivially_destructible<bool>::value;
+#else
+#error libstdc++ >= 4.8.1 is required
+#endif
+])], [], [AC_MSG_ERROR([libstdc++ >= 4.8.1 is required as the standard library used with the Clang compiler.])])
+    AC_LANG_POP([C++])
+    CXXFLAGS="$OLD_CXXFLAGS"
 fi
 
 # C/C++ Language Features
