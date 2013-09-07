@@ -1,3 +1,27 @@
+2013-09-07  Eric Carlson  <eric.carlson@apple.com>
+
+        MediaStream should fire ended event when all tracks are ended
+        https://bugs.webkit.org/show_bug.cgi?id=120871
+
+        Reviewed by Jer Noble.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/bebd179b65be69e46f2f434a3ec8b1e4aa85cc42
+
+        Test: fast/mediastream/MediaStream-onended.html
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::trackEnded): New.
+        * Modules/mediastream/MediaStream.h:
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::sourceChangedState): Call didEndTrack when state changes to ReadyStateEnded. 
+        (WebCore::MediaStreamTrack::didEndTrack): New.
+        (WebCore::MediaStreamTrack::stop): Call didEndTrack.
+        * Modules/mediastream/MediaStreamTrack.h:
+
+        * platform/mediastream/MediaStreamDescriptor.h:
+        (WebCore::MediaStreamDescriptor::MediaStreamDescriptor): Require didEndTrack.
+
 2013-09-06  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Get MEDIA_STREAM compiling for other ports (EFL and GTK)

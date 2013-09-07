@@ -135,8 +135,18 @@ void MediaStreamTrack::sourceChangedState()
         break;
     case MediaStreamSource::ReadyStateEnded:
         dispatchEvent(Event::create(eventNames().endedEvent, false, false));
+        didEndTrack();
         break;
     }
+}
+
+void MediaStreamTrack::didEndTrack()
+{
+    MediaStreamDescriptorClient* client = m_component->stream()->client();
+    if (!client)
+        return;
+    
+    client->trackEnded();
 }
 
 MediaStreamComponent* MediaStreamTrack::component()
@@ -147,6 +157,7 @@ MediaStreamComponent* MediaStreamTrack::component()
 void MediaStreamTrack::stop()
 {
     m_stopped = true;
+    didEndTrack();
 }
 
 const AtomicString& MediaStreamTrack::interfaceName() const

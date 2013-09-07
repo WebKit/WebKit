@@ -53,6 +53,8 @@ public:
     bool enabled() const;
     void setEnabled(bool);
 
+    void didEndTrack();
+    
     String readyState() const;
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(mute);

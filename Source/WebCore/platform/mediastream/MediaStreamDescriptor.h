@@ -44,6 +44,7 @@ class MediaStreamDescriptorClient {
 public:
     virtual ~MediaStreamDescriptorClient() { }
 
+    virtual void trackEnded() = 0;
     virtual void streamEnded() = 0;
     virtual void addRemoteTrack(MediaStreamComponent*) = 0;
     virtual void removeRemoteTrack(MediaStreamComponent*) = 0;

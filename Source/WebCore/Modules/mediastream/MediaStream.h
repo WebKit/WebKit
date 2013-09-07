@@ -66,6 +66,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(removetrack);
 
     // MediaStreamDescriptorClient
+    virtual void trackEnded() OVERRIDE;
     virtual void streamEnded() OVERRIDE;
 
     virtual bool isLocal() const { return false; }
