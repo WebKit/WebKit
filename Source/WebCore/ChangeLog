@@ -1,3 +1,27 @@
+2013-09-06  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Floats with shape-outside aren't painting in the correct order
+        https://bugs.webkit.org/show_bug.cgi?id=118492
+
+        Reviewed by Darin Adler.
+
+        When removing the old positioning behavior, the code that makes a
+        float with shape-outside gain a layer was left behind. This patch
+        removes that, so now floats with shape-outside are painted just like
+        floats without shape-outside.
+
+        Also remove the isFloatingWithShapeOutside helper method because its
+        use is now somewhat redundant, and the check it does is now only
+        needed in one place.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-floats-not-a-layer.html
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::shapeOutsideInfo):
+        * rendering/RenderObject.h:
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::isEnabledFor): 
+
 2013-09-06  Anders Carlsson  <andersca@apple.com>
 
         Add a new smart pointer type for fastMalloc'ed memory

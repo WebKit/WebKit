@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<style>
+    .container {
+        font: 10px/1 Ahem;
+        color: green;
+    }
+    .left {
+        float: left;
+        height: 10px;
+        width: 50px;
+        background-color: red;
+        -webkit-shape-outside: rectangle(0, 0, 0, 100%);
+    }
+</style>
+<body>
+    You should see a green rectangle. You shouldn't see any red.
+    <div class="container">
+        <div class="left"></div>
+        XXXXX
+    </div>
+</body>
