@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <script src="resources/webgl-test.js"></script>
 <script id="vshader" type="x-shader/x-vertex">
 attribute vec3 g_Position;
@@ -166,7 +166,7 @@ function runTest(antialias)
     runTestIteration(false);
     var epilogue = document.createElement("script");
     epilogue.onload = finish;
-    epilogue.src = "../../js/resources/js-test-post.js";
+    epilogue.src = "../../../resources/js-test-post.js";
     document.body.appendChild(epilogue);
 }
 

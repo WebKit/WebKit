@@ -2,7 +2,7 @@
 <html> 
 <head> 
 <style type="text/css"></style> 
-<script src="../js/resources/js-test-pre.js"></script> 
+<script src="../../resources/js-test-pre.js"></script> 
 </head> 
 <body>
 <p id="description"></p>
@@ -30,6 +30,6 @@ shouldBe("document.getElementById('test-limited-apple').style.getPropertyValue('
 shouldBe("document.getElementById('test-limited-apple').style.appleLineClamp", "'10%'");
 shouldBe("document.getElementById('test-limited-apple').style.appleUserDrag", "undefined");
 </script>
-<script src="../js/resources/js-test-post.js"></script> 
+<script src="../../resources/js-test-post.js"></script> 
 </body> 
 </html>

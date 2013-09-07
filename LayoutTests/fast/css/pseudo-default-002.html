@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <style>
  input { background: red; }
  button { background: red; }
@@ -24,6 +24,6 @@ shouldBe("document.defaultView.getComputedStyle(v[0], null).getPropertyValue('ba
 for (i = 1; i < v.length; i++)
     shouldBe("document.defaultView.getComputedStyle(v[i], null).getPropertyValue('background-color')", "'rgb(255, 0, 0)'");
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

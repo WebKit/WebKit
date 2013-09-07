@@ -9,7 +9,7 @@
     <div id="test3" style="color:currentColor; outline: solid 1em currentColor"></div>
   </div>
 </div>
-<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <script>
 description('Test that outline-color is non-inherit and currentColor is handled correctly.');
 var test1 = document.getElementById("test1");
@@ -20,4 +20,4 @@ shouldBeEqualToString('getComputedStyle(test1).outlineColor', 'rgb(0, 128, 0)');
 shouldBeEqualToString('getComputedStyle(test2).outlineColor', 'rgb(0, 128, 0)');
 shouldBeEqualToString('getComputedStyle(test3).outlineColor', 'rgb(0, 128, 0)');
 </script>
-<script src="../../fast/js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>

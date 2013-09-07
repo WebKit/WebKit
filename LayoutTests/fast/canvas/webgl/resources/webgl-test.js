@@ -34,7 +34,7 @@ function finishTest() {
       window.nonKhronosFrameworkNotifyDone();
     }
   };
-  epilogue.src = "../../js/resources/js-test-post.js";
+  epilogue.src = "../../../resources/js-test-post.js";
   document.body.appendChild(epilogue);
 }
 

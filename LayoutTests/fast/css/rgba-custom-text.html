@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <style>
    #test {
        color: rgba(0, 0, 0, 0.2);
@@ -10,4 +10,4 @@
     description("Tests the CSS custom text implementation for rgba(). Note that WebKit internally stores alpha as an 8 bit value, and that 255 * 0.2 = 51 exactly. So 0.2 is able to be stored with no rounding.");
     shouldBeEqualToString('getComputedStyle(document.getElementById("test"), null).color', "rgba(0, 0, 0, 0.2)");
 </script>
-<script src="../../fast/js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>

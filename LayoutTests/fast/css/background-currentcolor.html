@@ -9,7 +9,7 @@
     <div id="test3" style="color:currentColor; background: currentColor"></div>
   </div>
 </div>
-<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <script>
 description('Test that background-color is non-inherit and currentColor is handled correctly.');
 var test1 = document.getElementById("test1");
@@ -20,4 +20,4 @@ shouldBeEqualToString('getComputedStyle(test1).backgroundColor', 'rgb(0, 128, 0)
 shouldBeEqualToString('getComputedStyle(test2).backgroundColor', 'rgb(0, 128, 0)');
 shouldBeEqualToString('getComputedStyle(test3).backgroundColor', 'rgb(0, 128, 0)');
 </script>
-<script src="../../fast/js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>

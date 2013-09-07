@@ -7,7 +7,7 @@
     </script>
 </head>
 <body>
-    <script src="../js/resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test-pre.js"></script>
     <script type="text/javascript" src="canvas-blending-helpers.js"></script>
     <script type="text/javascript">
 
@@ -32,7 +32,7 @@
             if (i >= blendModes.length) {
                 if (hardwareAcceleratedTestsDone) {
                     var scriptElement = document.createElement("script");
-                    scriptElement.src = "../js/resources/js-test-post-async.js";
+                    scriptElement.src = "../../resources/js-test-post-async.js";
                     document.body.appendChild(scriptElement);
                     return;
                 }
