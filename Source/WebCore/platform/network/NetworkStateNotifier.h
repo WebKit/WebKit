@@ -26,7 +26,7 @@
 #ifndef NetworkStateNotifier_h
 #define NetworkStateNotifier_h
 
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 

@@ -1,3 +1,48 @@
+2013-09-07  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of FastAllocBase.h
+        https://bugs.webkit.org/show_bug.cgi?id=120952
+
+        Reviewed by Antti Koivisto.
+
+        Include FastMalloc.h instead of FastAllocBase.h.
+
+        * Modules/webdatabase/SQLTransactionClient.h:
+        * bindings/js/GCController.h:
+        * bridge/Bridge.h:
+        * bridge/IdentifierRep.h:
+        * dom/DocumentStyleSheetCollection.h:
+        * dom/TransformSource.h:
+        * html/InputType.h:
+        * inspector/InspectorCounters.h:
+        * inspector/InstrumentingAgents.h:
+        * inspector/WorkerInspectorController.h:
+        * loader/cache/CachedResourceClient.h:
+        * page/FrameActionScheduler.h:
+        * platform/Length.h:
+        * platform/MemoryPressureHandler.h:
+        * platform/ScrollAnimator.h:
+        * platform/SharedTimer.h:
+        * platform/audio/gstreamer/FFTFrameGStreamer.cpp:
+        * platform/cairo/WidgetBackingStore.h:
+        * platform/graphics/Color.h:
+        * platform/graphics/FontData.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/qt/FontCustomPlatformData.h:
+        * platform/graphics/transforms/AffineTransform.h:
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * platform/gtk/GtkDragAndDropHelper.h:
+        * platform/gtk/GtkPopupMenu.h:
+        * platform/network/NetworkStateNotifier.h:
+        * platform/sql/SQLiteTransaction.h:
+        * platform/text/enchant/TextCheckerEnchant.h:
+        * rendering/RenderArena.h:
+        * rendering/TableLayout.h:
+        * rendering/style/StyleCustomFilterProgram.h:
+        * rendering/style/StyleCustomFilterProgramCache.h:
+        * svg/SVGPathConsumer.h:
+        * workers/WorkerScriptLoader.h:
+
 2013-09-07  Eric Carlson  <eric.carlson@apple.com>
 
         MediaStream should fire ended event when all tracks are ended

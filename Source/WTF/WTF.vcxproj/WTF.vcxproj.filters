@@ -413,9 +413,6 @@
     <ClInclude Include="..\wtf\EnumClass.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\FastAllocBase.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\FastBitVector.h">
       <Filter>wtf</Filter>
     </ClInclude>

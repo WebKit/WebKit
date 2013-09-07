@@ -30,7 +30,7 @@
 #define CompactJITCodeMap_h
 
 #include <wtf/Assertions.h>
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

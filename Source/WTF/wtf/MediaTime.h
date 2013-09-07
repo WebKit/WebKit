@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "FastAllocBase.h"
+#include <wtf/FastMalloc.h>
 
 #include <cmath>
 #include <limits>

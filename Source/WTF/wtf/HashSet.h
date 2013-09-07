@@ -21,7 +21,7 @@
 #ifndef WTF_HashSet_h
 #define WTF_HashSet_h
 
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/HashTable.h>
 
 namespace WTF {

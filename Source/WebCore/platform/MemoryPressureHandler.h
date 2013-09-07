@@ -27,7 +27,7 @@
 #define MemoryPressureHandler_h
 
 #include <time.h>
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 

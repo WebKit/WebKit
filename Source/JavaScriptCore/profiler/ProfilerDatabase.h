@@ -30,7 +30,7 @@
 #include "ProfilerBytecodes.h"
 #include "ProfilerCompilation.h"
 #include "ProfilerCompilationKind.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>

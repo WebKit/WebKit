@@ -72,10 +72,9 @@
 #include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
 #include "Watchpoint.h"
-#include <wtf/RefCountedArray.h>
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/Platform.h>
+#include <wtf/RefCountedArray.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/Vector.h>

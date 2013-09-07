@@ -29,7 +29,7 @@
 #include <wtf/Platform.h>
 
 #include "JITStubRoutine.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 

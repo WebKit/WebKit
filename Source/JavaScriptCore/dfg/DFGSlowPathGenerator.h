@@ -33,7 +33,7 @@
 #include "DFGCommon.h"
 #include "DFGSilentRegisterSavePlan.h"
 #include "DFGSpeculativeJIT.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace JSC { namespace DFG {

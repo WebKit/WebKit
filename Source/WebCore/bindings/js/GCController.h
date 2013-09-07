@@ -27,7 +27,7 @@
 #define GCController_h
 
 #if USE(CF) || PLATFORM(BLACKBERRY)
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #else
 #include "Timer.h"

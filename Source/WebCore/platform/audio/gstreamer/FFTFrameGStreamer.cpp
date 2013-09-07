@@ -25,7 +25,7 @@
 #include "FFTFrame.h"
 
 #include "VectorMath.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 
 namespace {
 

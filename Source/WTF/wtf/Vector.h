@@ -23,7 +23,7 @@
 
 #include <wtf/Alignment.h>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/NotFound.h>
@@ -32,6 +32,7 @@
 #include <wtf/ValueCheck.h>
 #include <wtf/VectorTraits.h>
 #include <limits>
+#include <string.h>
 #include <utility>
 
 namespace WTF {

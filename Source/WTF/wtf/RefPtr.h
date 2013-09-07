@@ -25,7 +25,7 @@
 
 #include <algorithm>
 #include <utility>
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WTF {

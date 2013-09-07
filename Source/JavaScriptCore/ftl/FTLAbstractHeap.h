@@ -32,7 +32,7 @@
 
 #include "FTLAbbreviations.h"
 #include "JSCJSValue.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/FixedArray.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>

@@ -28,7 +28,7 @@
 #define AffineTransform_h
 
 #include <string.h> // for memcpy
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 
 #if USE(CG)
 typedef struct CGAffineTransform CGAffineTransform;

@@ -32,7 +32,7 @@
 
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterProgramInfo.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {

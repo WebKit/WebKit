@@ -36,8 +36,8 @@
 #include "FeatureObserver.h"
 #include "HTMLTextFormControlElement.h"
 #include "StepRange.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
-#include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 

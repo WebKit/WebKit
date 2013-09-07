@@ -27,15 +27,14 @@
 #include "config.h"
 #include "CString.h"
 
+#include <string.h>
 #include <wtf/StringHasher.h>
-
-using namespace std;
 
 namespace WTF {
 
 PassRefPtr<CStringBuffer> CStringBuffer::createUninitialized(size_t length)
 {
-    RELEASE_ASSERT(length < (numeric_limits<unsigned>::max() - sizeof(CStringBuffer)));
+    RELEASE_ASSERT(length < (std::numeric_limits<unsigned>::max() - sizeof(CStringBuffer)));
 
     // The +1 is for the terminating null character.
     size_t size = sizeof(CStringBuffer) + length + 1;

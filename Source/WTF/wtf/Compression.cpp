@@ -24,13 +24,13 @@
  */
 
 #include "config.h"
-
 #include "Compression.h"
 
 #include "CheckedArithmetic.h"
 
 #if USE(ZLIB) && !COMPILER(MSVC)
 
+#include <string.h>
 #include <zlib.h>
 
 namespace WTF {

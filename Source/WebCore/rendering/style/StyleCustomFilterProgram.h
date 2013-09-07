@@ -37,7 +37,7 @@
 #include "CustomFilterProgram.h"
 #include "KURL.h"
 #include "StyleShader.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 

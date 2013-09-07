@@ -20,7 +20,7 @@
 #define GtkDragAndDropHelper_h
 
 #include "DataObjectGtk.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/CString.h>
 

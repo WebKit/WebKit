@@ -128,7 +128,6 @@
 		A8A473BD151A825B004123FF /* DynamicAnnotations.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4729A151A825A004123FF /* DynamicAnnotations.h */; };
 		A8A473C0151A825B004123FF /* Encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4729E151A825A004123FF /* Encoder.h */; };
 		A8A473C1151A825B004123FF /* ExportMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4729F151A825A004123FF /* ExportMacros.h */; };
-		A8A473C2151A825B004123FF /* FastAllocBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472A0151A825A004123FF /* FastAllocBase.h */; };
 		A8A473C3151A825B004123FF /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472A1151A825A004123FF /* FastMalloc.cpp */; };
 		A8A473C4151A825B004123FF /* FastMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472A2151A825A004123FF /* FastMalloc.h */; };
 		A8A473C5151A825B004123FF /* FixedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472A3151A825A004123FF /* FixedArray.h */; };
@@ -405,7 +404,6 @@
 		A8A4729A151A825A004123FF /* DynamicAnnotations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicAnnotations.h; sourceTree = "<group>"; };
 		A8A4729E151A825A004123FF /* Encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encoder.h; sourceTree = "<group>"; };
 		A8A4729F151A825A004123FF /* ExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportMacros.h; sourceTree = "<group>"; };
-		A8A472A0151A825A004123FF /* FastAllocBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastAllocBase.h; sourceTree = "<group>"; };
 		A8A472A1151A825A004123FF /* FastMalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastMalloc.cpp; sourceTree = "<group>"; };
 		A8A472A2151A825A004123FF /* FastMalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastMalloc.h; sourceTree = "<group>"; };
 		A8A472A3151A825A004123FF /* FixedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FixedArray.h; sourceTree = "<group>"; };
@@ -667,7 +665,6 @@
 				A8A4729E151A825A004123FF /* Encoder.h */,
 				44F66007171AFAA900E4AD19 /* EnumClass.h */,
 				A8A4729F151A825A004123FF /* ExportMacros.h */,
-				A8A472A0151A825A004123FF /* FastAllocBase.h */,
 				0FD81AC4154FB22E00983E72 /* FastBitVector.h */,
 				A8A472A1151A825A004123FF /* FastMalloc.cpp */,
 				A8A472A2151A825A004123FF /* FastMalloc.h */,
@@ -982,7 +979,6 @@
 				44F66008171AFAE600E4AD19 /* EnumClass.h in Headers */,
 				A8A473C1151A825B004123FF /* ExportMacros.h in Headers */,
 				A8A473B4151A825B004123FF /* fast-dtoa.h in Headers */,
-				A8A473C2151A825B004123FF /* FastAllocBase.h in Headers */,
 				0FD81AC5154FB22E00983E72 /* FastBitVector.h in Headers */,
 				A8A473C4151A825B004123FF /* FastMalloc.h in Headers */,
 				B38FD7BD168953E80065C969 /* FeatureDefines.h in Headers */,

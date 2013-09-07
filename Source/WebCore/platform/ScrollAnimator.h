@@ -34,7 +34,7 @@
 #include "FloatSize.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

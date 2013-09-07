@@ -29,7 +29,7 @@
 #define Path_h
 
 #include "WindRule.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 
 #if USE(CG)

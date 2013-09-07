@@ -34,7 +34,7 @@
 #if ENABLE(INSPECTOR) && ENABLE(WORKERS)
 
 #include "InspectorBaseAgent.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>

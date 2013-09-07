@@ -26,6 +26,7 @@
 #ifndef StringReference_h
 #define StringReference_h
 
+#include <string.h>
 #include <wtf/Forward.h>
 #include <wtf/HashTraits.h>
 

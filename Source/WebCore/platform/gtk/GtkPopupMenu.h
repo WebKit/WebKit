@@ -24,7 +24,7 @@
 #include "GRefPtrGtk.h"
 #include "IntPoint.h"
 #include "IntSize.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>

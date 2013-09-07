@@ -31,7 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGNodeAllocator.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC { namespace DFG {

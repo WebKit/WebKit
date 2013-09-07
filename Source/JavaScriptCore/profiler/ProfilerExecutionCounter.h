@@ -26,7 +26,7 @@
 #ifndef ProfilerExecutionCounter_h
 #define ProfilerExecutionCounter_h
 
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC { namespace Profiler {

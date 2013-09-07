@@ -22,6 +22,7 @@
 #ifndef WTF_HashTable_h
 #define WTF_HashTable_h
 
+#include <string.h>
 #include <wtf/Alignment.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>

@@ -26,7 +26,7 @@
 #include "FontRenderingMode.h"
 #include "FontWidthVariant.h"
 #include <QRawFont>
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 

@@ -37,7 +37,7 @@
 #include "JITCompilationEffort.h"
 #include "MacroAssembler.h"
 #include <wtf/DataLog.h>
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {

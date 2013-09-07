@@ -28,6 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
+#include <string.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {

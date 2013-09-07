@@ -30,7 +30,7 @@
 #include "FloatPoint3D.h"
 #include "IntPoint.h"
 #include <string.h> //for memcpy
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 
 #if USE(CA)
 typedef struct CATransform3D CATransform3D;

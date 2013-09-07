@@ -23,7 +23,7 @@
 #if ENABLE(SPELLCHECK)
 
 #include <enchant.h>
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>

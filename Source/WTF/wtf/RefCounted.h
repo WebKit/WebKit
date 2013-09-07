@@ -22,7 +22,7 @@
 #define RefCounted_h
 
 #include <wtf/Assertions.h>
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/ThreadRestrictionVerifier.h>

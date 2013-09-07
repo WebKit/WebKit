@@ -1,3 +1,24 @@
+2013-09-07  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of FastAllocBase.h
+        https://bugs.webkit.org/show_bug.cgi?id=120952
+
+        Reviewed by Antti Koivisto.
+
+        Include FastMalloc.h instead of FastAllocBase.h.
+
+        * assembler/LinkBuffer.h:
+        * bytecode/CodeBlock.h:
+        * bytecode/StructureStubClearingWatchpoint.h:
+        * dfg/DFGFinalizer.h:
+        * dfg/DFGLongLivedState.h:
+        * dfg/DFGSlowPathGenerator.h:
+        * ftl/FTLAbstractHeap.h:
+        * heap/JITStubRoutineSet.h:
+        * jit/CompactJITCodeMap.h:
+        * profiler/ProfilerDatabase.h:
+        * profiler/ProfilerExecutionCounter.h:
+
 2013-09-06  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support Call/Construct in the worst way possible

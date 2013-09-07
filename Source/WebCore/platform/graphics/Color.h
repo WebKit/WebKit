@@ -27,7 +27,7 @@
 #define Color_h
 
 #include "AnimationUtilities.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/unicode/Unicode.h>
 

@@ -161,7 +161,6 @@
     <ClInclude Include="..\wtf\DynamicAnnotations.h" />
     <ClInclude Include="..\wtf\Encoder.h" />
     <ClInclude Include="..\wtf\EnumClass.h" />
-    <ClInclude Include="..\wtf\FastAllocBase.h" />
     <ClInclude Include="..\wtf\FastBitVector.h" />
     <ClInclude Include="..\wtf\FastMalloc.h" />
     <ClInclude Include="..\wtf\FeatureDefines.h" />

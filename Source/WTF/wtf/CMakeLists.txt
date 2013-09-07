@@ -25,7 +25,6 @@ set(WTF_HEADERS
     DoublyLinkedList.h
     DynamicAnnotations.h
     Encoder.h
-    FastAllocBase.h
     FastMalloc.h
     FeatureDefines.h
     FilePrintStream.h

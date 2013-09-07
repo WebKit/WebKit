@@ -26,7 +26,7 @@
 #ifndef FrameActionScheduler_h
 #define FrameActionScheduler_h
 
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

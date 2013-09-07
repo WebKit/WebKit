@@ -27,7 +27,7 @@
 #define DeferrableRefCounted_h
 
 #include <wtf/Assertions.h>
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
 namespace WTF {

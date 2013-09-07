@@ -21,7 +21,7 @@
 #ifndef TableLayout_h
 #define TableLayout_h
 
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {

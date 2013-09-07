@@ -27,7 +27,7 @@
 #define IdentifierRep_h
 
 #include <wtf/Assertions.h>
-#include <wtf/FastAllocBase.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/StringExtras.h>
 #include <string.h>
 

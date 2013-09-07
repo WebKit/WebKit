@@ -26,6 +26,8 @@
 #ifndef StringConcatenate_h
 #define StringConcatenate_h
 
+#include <string.h>
+
 #ifndef WTFString_h
 #include <wtf/text/AtomicString.h>
 #endif
