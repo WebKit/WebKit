@@ -1,3 +1,66 @@
+2013-09-07  Mark Lam  <mark.lam@apple.com>
+
+        Change fast/js/kde files to use pre and post js files in LayoutTests/resources.
+        https://bugs.webkit.org/show_bug.cgi?id=120960.
+
+        Rubber stamped by Filip Pizlo.
+
+        * fast/js/kde/Array.html:
+        * fast/js/kde/Boolean.html:
+        * fast/js/kde/Date-setYear.html:
+        * fast/js/kde/Error.html:
+        * fast/js/kde/GlobalObject.html:
+        * fast/js/kde/Number.html:
+        * fast/js/kde/Object.html:
+        * fast/js/kde/Prototype.html:
+        * fast/js/kde/RegExp.html:
+        * fast/js/kde/StringObject.html:
+        * fast/js/kde/arguments-scope.html:
+        * fast/js/kde/assignments.html:
+        * fast/js/kde/cast.html:
+        * fast/js/kde/comment-1.html:
+        * fast/js/kde/comment-2.html:
+        * fast/js/kde/completion.html:
+        * fast/js/kde/conditional.html:
+        * fast/js/kde/const.html:
+        * fast/js/kde/constructor_length.html:
+        * fast/js/kde/crash-1.html:
+        * fast/js/kde/crash-2.html:
+        * fast/js/kde/delete.html:
+        * fast/js/kde/empty.html:
+        * fast/js/kde/encode_decode_uri.html:
+        * fast/js/kde/eval.html:
+        * fast/js/kde/evil-n.html:
+        * fast/js/kde/exception_propagation.html:
+        * fast/js/kde/exceptions.html:
+        * fast/js/kde/func-decl.html:
+        * fast/js/kde/function.html:
+        * fast/js/kde/function_arguments.html:
+        * fast/js/kde/function_constructor.html:
+        * fast/js/kde/function_length.html:
+        * fast/js/kde/garbage-n.html:
+        * fast/js/kde/inbuilt_function_proto.html:
+        * fast/js/kde/inbuilt_function_tostring.html:
+        * fast/js/kde/iteration.html:
+        * fast/js/kde/j-comment-3.html:
+        * fast/js/kde/j-comment-4.html:
+        * fast/js/kde/literals.html:
+        * fast/js/kde/lval-exceptions.html:
+        * fast/js/kde/math.html:
+        * fast/js/kde/md5-1.html:
+        * fast/js/kde/md5-2.html:
+        * fast/js/kde/object_prototype.html:
+        * fast/js/kde/object_prototype_tostring.html:
+        * fast/js/kde/operators.html:
+        * fast/js/kde/parse.html:
+        * fast/js/kde/prototype_length.html:
+        * fast/js/kde/prototype_proto.html:
+        * fast/js/kde/scope.html:
+        * fast/js/kde/statements.html:
+        * fast/js/kde/string-1-n.html:
+        * fast/js/kde/string-2-n.html:
+        * fast/js/kde/var_decl_init.html:
+
 2013-09-07  Antti Koivisto  <antti@apple.com>
 
         Remove unnecessary sibling text renderers after attach
