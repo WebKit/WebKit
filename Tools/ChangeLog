@@ -1,3 +1,15 @@
+2013-09-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r155196.
+        http://trac.webkit.org/changeset/155196
+        https://bugs.webkit.org/show_bug.cgi?id=120919
+
+        Broke 16 tests on build.webkit.org (Requested by rniwa on
+        #webkit).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._set_up_run):
+
 2013-09-06  Filip Pizlo  <fpizlo@apple.com>
 
         The 'failed' file should report collectionName/testName rather than just
