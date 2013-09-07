@@ -29,16 +29,11 @@
 
 #import "DOMTestObj.h"
 
-#import "DOMBlobInternal.h"
-#import "DOMCSSRuleInternal.h"
-#import "DOMCSSValueInternal.h"
 #import "DOMDictionaryInternal.h"
 #import "DOMDocumentInternal.h"
-#import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMSVGDocumentInternal.h"
 #import "DOMSVGPointInternal.h"
-#import "DOMStyleSheetInternal.h"
 #import "DOMTestEnumTypeInternal.h"
 #import "DOMTestNodeInternal.h"
 #import "DOMTestObjInternal.h"

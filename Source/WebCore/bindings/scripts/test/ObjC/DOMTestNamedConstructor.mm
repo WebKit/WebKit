@@ -29,12 +29,7 @@
 
 #import "DOMTestNamedConstructor.h"
 
-#import "DOMBlobInternal.h"
-#import "DOMCSSRuleInternal.h"
-#import "DOMCSSValueInternal.h"
-#import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
-#import "DOMStyleSheetInternal.h"
 #import "DOMTestNamedConstructorInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"

@@ -1132,15 +1132,13 @@ sub GenerateImplementation
     $implIncludes{"JSMainThreadExecState.h"} = 1;
     $implIncludes{"WebScriptObjectPrivate.h"} = 1;
     $implIncludes{$classHeaderName . "Internal.h"} = 1;
-
-    # FIXME: These includes are only needed when the class is a subclass of one of these polymorphic classes.
-    $implIncludes{"DOMBlobInternal.h"} = 1;
-    $implIncludes{"DOMCSSRuleInternal.h"} = 1;
-    $implIncludes{"DOMCSSValueInternal.h"} = 1;
-    $implIncludes{"DOMEventInternal.h"} = 1;
     $implIncludes{"DOMNodeInternal.h"} = 1;
-    $implIncludes{"DOMStyleSheetInternal.h"} = 1;
 
+    $implIncludes{"DOMBlobInternal.h"} = 1 if $interfaceName eq "File";
+    $implIncludes{"DOMCSSRuleInternal.h"} = 1 if $interfaceName =~ /.*CSS.*Rule/;
+    $implIncludes{"DOMCSSValueInternal.h"} = 1 if $interfaceName =~ /.*CSS.*Value/;
+    $implIncludes{"DOMEventInternal.h"} = 1 if $interfaceName =~ /.*Event/;
+    $implIncludes{"DOMStyleSheetInternal.h"} = 1 if $interfaceName eq "CSSStyleSheet";
     $implIncludes{"DOMSVGPathSegInternal.h"} = 1 if $interfaceName =~ /^SVGPathSeg.+/;
 
     if ($interfaceName =~ /(\w+)(Abs|Rel)$/) {

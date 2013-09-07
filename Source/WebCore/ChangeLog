@@ -1,5 +1,24 @@
 2013-09-06  Andreas Kling  <akling@apple.com>
 
+        Make Obj-C bindings generator less #include-happy.
+        <https://webkit.org/b/120913>
+
+        Reviewed by Anders Carlsson.
+
+        Knock out an old FIXME in CodeGeneratorObjC.pm and avoid including unrelated
+        interface declarations from implementation files where they are not needed.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+
+            Only include DOMFooInternal.h relevant to the current interface.
+
+        * bindings/scripts/test/ObjC/*
+
+            Rebaseline Obj-C bindings tests now that they include fewer things.
+
+2013-09-06  Andreas Kling  <akling@apple.com>
+
         Rebaseline bindings tests after Swedish breakage.
 
 2013-09-06  Andreas Kling  <akling@apple.com>

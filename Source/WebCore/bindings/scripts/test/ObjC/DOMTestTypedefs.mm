@@ -29,13 +29,8 @@
 
 #import "DOMTestTypedefs.h"
 
-#import "DOMBlobInternal.h"
-#import "DOMCSSRuleInternal.h"
-#import "DOMCSSValueInternal.h"
-#import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
 #import "DOMSVGPointInternal.h"
-#import "DOMStyleSheetInternal.h"
 #import "DOMTestTypedefsInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"

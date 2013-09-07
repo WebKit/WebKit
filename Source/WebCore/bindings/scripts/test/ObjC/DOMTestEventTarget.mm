@@ -29,12 +29,8 @@
 
 #import "DOMTestEventTarget.h"
 
-#import "DOMBlobInternal.h"
-#import "DOMCSSRuleInternal.h"
-#import "DOMCSSValueInternal.h"
 #import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
-#import "DOMStyleSheetInternal.h"
 #import "DOMTestEventTargetInternal.h"
 #import "Event.h"
 #import "EventListener.h"

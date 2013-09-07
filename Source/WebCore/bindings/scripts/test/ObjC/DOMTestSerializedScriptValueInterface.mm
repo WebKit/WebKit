@@ -32,12 +32,7 @@
 
 #import "DOMTestSerializedScriptValueInterface.h"
 
-#import "DOMBlobInternal.h"
-#import "DOMCSSRuleInternal.h"
-#import "DOMCSSValueInternal.h"
-#import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
-#import "DOMStyleSheetInternal.h"
 #import "DOMTestSerializedScriptValueInterfaceInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"

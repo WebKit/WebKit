@@ -32,12 +32,7 @@
 
 #import "DOMTestInterface.h"
 
-#import "DOMBlobInternal.h"
-#import "DOMCSSRuleInternal.h"
-#import "DOMCSSValueInternal.h"
-#import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
-#import "DOMStyleSheetInternal.h"
 #import "DOMTestInterfaceInternal.h"
 #import "DOMTestObjInternal.h"
 #import "ExceptionHandlers.h"
