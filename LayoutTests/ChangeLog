@@ -1,5 +1,101 @@
 2013-09-07  Mark Lam  <mark.lam@apple.com>
 
+        Change fast/g*, fast/h*, fast/i*, and fast/l* files to use pre and post js files in LayoutTests/resources.
+        https://bugs.webkit.org/show_bug.cgi?id=120977.
+
+        Rubber stamped by Filip Pizlo.
+
+        * fast/gradients/css3-gradient-parsing.html:
+        * fast/gradients/unprefixed-gradient-parsing.html:
+        * fast/harness/fastmallocstatistics-object.html:
+        * fast/harness/memoryinfo-object.html:
+        * fast/harness/perftests/perf-runner-compute-statistics.html:
+        * fast/harness/perftests/runs-per-second-iterations.html:
+        * fast/hidpi/image-srcset-change-dynamically-from-js-1x.html:
+        * fast/hidpi/image-srcset-change-dynamically-from-js-2x.html:
+        * fast/hidpi/image-srcset-data-src.html:
+        * fast/hidpi/image-srcset-data-srcset.html:
+        * fast/hidpi/image-srcset-fraction.html:
+        * fast/hidpi/image-srcset-invalid-inputs-correct-src.html:
+        * fast/hidpi/image-srcset-invalid-inputs-except-one.html:
+        * fast/hidpi/image-srcset-remove-dynamically-from-js.html:
+        * fast/hidpi/image-srcset-same-alternative-for-both-attributes.html:
+        * fast/hidpi/image-srcset-simple-1x.html:
+        * fast/hidpi/image-srcset-simple-2x.html:
+        * fast/hidpi/image-srcset-src-selection-1x.html:
+        * fast/hidpi/image-srcset-src-selection-2x.html:
+        * fast/hidpi/image-srcset-viewport-modifiers.html:
+        * fast/history/history-back-forward-within-subframe-hash.html:
+        * fast/history/history-subframe-with-name.html:
+        * fast/history/history-traversal-is-asynchronous.html:
+        * fast/history/location-replace-hash.html:
+        * fast/history/multiple-classes-visited.html:
+        * fast/history/nested-visited-test.html:
+        * fast/history/same-document-iframes-changing-fragment.html:
+        * fast/history/same-document-iframes-changing-pushstate.html:
+        * fast/history/self-is-visited.html:
+        * fast/history/sibling-visited-test.html:
+        * fast/html/article-element.html:
+        * fast/html/aside-element.html:
+        * fast/html/clone-keygen.html:
+        * fast/html/clone-range.html:
+        * fast/html/details-click-controls.html:
+        * fast/html/details-clone.html:
+        * fast/html/details-keyboard-show-hide.html:
+        * fast/html/disable-style-element.html:
+        * fast/html/figcaption-element.html:
+        * fast/html/figure-element.html:
+        * fast/html/footer-element.html:
+        * fast/html/header-element.html:
+        * fast/html/hgroup-element.html:
+        * fast/html/hidden-attr-dom.html:
+        * fast/html/hidden-attr.html:
+        * fast/html/input-type-change-crash.html:
+        * fast/html/main-element.html:
+        * fast/html/mark-element.html:
+        * fast/html/marquee-alternate.html-disabled:
+        * fast/html/marquee-element.html:
+        * fast/html/meter-user-modify.html:
+        * fast/html/numbered-header-element.html:
+        * fast/html/object-border.html:
+        * fast/html/progress-user-modify.html:
+        * fast/html/range-point-in-range-for-different-documents.html:
+        * fast/html/script-tests/TEMPLATE.html:
+        * fast/html/section-element.html:
+        * fast/html/set-text-direction.html:
+        * fast/html/unknown-tag.html:
+        * fast/images/border.html:
+        * fast/images/cmyk-jpeg-with-color-profile.html:
+        * fast/images/image-error-event-not-firing.html:
+        * fast/images/imagemap-dynamic-area-updates.html:
+        * fast/images/move-image-to-new-document.html:
+        * fast/images/script-tests/TEMPLATE.html:
+        * fast/images/webgl-teximage2d.html:
+        * fast/images/zoomed-offset-size.html:
+        * fast/inline/inline-fixed-position-boundingbox.html:
+        * fast/inline/inline-position-top-align.html:
+        * fast/inline/inline-relative-offset-boundingbox.html:
+        * fast/innerHTML/innerHTML-special-elements.html:
+        * fast/innerHTML/innerHTML-uri-resolution.html:
+        * fast/layers/negative-scroll-positions.html:
+        * fast/layers/script-tests/TEMPLATE.html:
+        * fast/line-grid/line-align-parsing.html:
+        * fast/line-grid/line-grid-parsing.html:
+        * fast/line-grid/line-snap-parsing.html:
+        * fast/loader/form-state-restore-with-frames.html:
+        * fast/loader/hashchange-event-properties.html:
+        * fast/loader/image-in-page-cache.html:
+        * fast/loader/resources/form-state-restore-with-locked-back-forward-list-3.html:
+        * fast/loader/stateobjects/popstate-fires-on-history-traversal.html:
+        * fast/loader/stateobjects/popstate-fires-with-page-cache.html:
+        * fast/loader/stateobjects/state-attribute-object-types.html:
+        * fast/loader/stateobjects/state-attribute-only-one-deserialization.html:
+        * fast/loader/stateobjects/state-attribute-popstate-event.html:
+        * fast/loader/stateobjects/state-url-sets-links-visited.html:
+        * fast/loader/url-selected-user-gesture.html:
+
+2013-09-07  Mark Lam  <mark.lam@apple.com>
+
         Change fast/f* files to use pre and post js files in LayoutTests/resources.
         https://bugs.webkit.org/show_bug.cgi?id=120976.
 

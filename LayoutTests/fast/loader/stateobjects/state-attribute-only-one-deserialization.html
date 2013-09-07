@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="../../js/resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test-pre.js"></script>
 </head/>
 <body>
 <script>
@@ -48,7 +48,7 @@
         shouldBeTrue("popStateEvent.state === history.state");
 
         var s = document.createElement("script");
-        s.src = "../../js/resources/js-test-post.js";
+        s.src = "../../../resources/js-test-post.js";
         document.body.appendChild(s);
         setTimeout(finishJSTest, 0);
     }
