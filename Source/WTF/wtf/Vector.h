@@ -24,6 +24,7 @@
 #include <wtf/Alignment.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastAllocBase.h>
+#include <wtf/MallocPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/NotFound.h>
 #include <wtf/OwnPtr.h>
@@ -308,12 +309,12 @@ public:
     const T* buffer() const { return m_buffer; }
     size_t capacity() const { return m_capacity; }
 
-    OwnPtr<T> releaseBuffer()
+    MallocPtr<T> releaseBuffer()
     {
         T* buffer = m_buffer;
         m_buffer = 0;
         m_capacity = 0;
-        return adoptPtr(buffer);
+        return adoptMallocPtr(buffer);
     }
 
 protected:
@@ -488,7 +489,7 @@ public:
     using Base::buffer;
     using Base::capacity;
 
-    OwnPtr<T> releaseBuffer()
+    MallocPtr<T> releaseBuffer()
     {
         if (buffer() == inlineBuffer())
             return nullptr;
@@ -666,7 +667,7 @@ public:
 
     template<typename Iterator> void appendRange(Iterator start, Iterator end);
 
-    OwnPtr<T> releaseBuffer();
+    MallocPtr<T> releaseBuffer();
 
     void swap(Vector<T, inlineCapacity, OverflowHandler>& other)
     {
@@ -1153,19 +1154,19 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::reverse()
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
-inline OwnPtr<T> Vector<T, inlineCapacity, OverflowHandler>::releaseBuffer()
+inline MallocPtr<T> Vector<T, inlineCapacity, OverflowHandler>::releaseBuffer()
 {
-    OwnPtr<T> buffer = Base::releaseBuffer();
+    auto buffer = Base::releaseBuffer();
     if (inlineCapacity && !buffer && m_size) {
         // If the vector had some data, but no buffer to release,
         // that means it was using the inline buffer. In that case,
         // we create a brand new buffer so the caller always gets one.
         size_t bytes = m_size * sizeof(T);
-        buffer = adoptPtr(static_cast<T*>(fastMalloc(bytes)));
+        buffer = adoptMallocPtr(static_cast<T*>(fastMalloc(bytes)));
         memcpy(buffer.get(), data(), bytes);
     }
     m_size = 0;
-    return buffer.release();
+    return buffer;
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>

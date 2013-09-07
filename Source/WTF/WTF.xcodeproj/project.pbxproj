@@ -50,6 +50,7 @@
 		14F3B0F715E45E4600210069 /* SaturatedArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */; settings = {ATTRIBUTES = (); }; };
 		1A1D8B9C173186CE00141DA4 /* FunctionDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1D8B9B173186CE00141DA4 /* FunctionDispatcher.h */; };
 		1A1D8B9E1731879800141DA4 /* FunctionDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D8B9D1731879800141DA4 /* FunctionDispatcher.cpp */; };
+		1A233C7D17DAA6E300A93ACF /* MallocPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A233C7C17DAA6E300A93ACF /* MallocPtr.h */; };
 		1A6BB769162F300500DD16DB /* StreamBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6BB768162F300500DD16DB /* StreamBuffer.h */; };
 		1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FA47C88152502DA00568D1B /* WebCoreThread.cpp */; };
 		1FA47C8B152502DA00568D1B /* WebCoreThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FA47C89152502DA00568D1B /* WebCoreThread.h */; };
@@ -315,6 +316,7 @@
 		14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaturatedArithmetic.h; sourceTree = "<group>"; };
 		1A1D8B9B173186CE00141DA4 /* FunctionDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionDispatcher.h; sourceTree = "<group>"; };
 		1A1D8B9D1731879800141DA4 /* FunctionDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionDispatcher.cpp; sourceTree = "<group>"; };
+		1A233C7C17DAA6E300A93ACF /* MallocPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MallocPtr.h; sourceTree = "<group>"; };
 		1A3F6BE6174ADA2100B2EEA7 /* NeverDestroyed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NeverDestroyed.h; sourceTree = "<group>"; };
 		1A6BB768162F300500DD16DB /* StreamBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamBuffer.h; sourceTree = "<group>"; };
 		1FA47C88152502DA00568D1B /* WebCoreThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreThread.cpp; sourceTree = "<group>"; };
@@ -696,11 +698,12 @@
 				A8A472C1151A825A004123FF /* ListHashSet.h */,
 				A736B3581799E11A00C6F05E /* LLVMHeaders.h */,
 				A8A472C3151A825A004123FF /* Locker.h */,
-				A8A472C6151A825A004123FF /* MainThread.cpp */,
-				A8A472C7151A825B004123FF /* MainThread.h */,
-				A8A472C9151A825B004123FF /* MathExtras.h */,
 				A8A472CA151A825B004123FF /* MD5.cpp */,
 				A8A472CB151A825B004123FF /* MD5.h */,
+				A8A472C6151A825A004123FF /* MainThread.cpp */,
+				A8A472C7151A825B004123FF /* MainThread.h */,
+				1A233C7C17DAA6E300A93ACF /* MallocPtr.h */,
+				A8A472C9151A825B004123FF /* MathExtras.h */,
 				CD5497AA15857D0300B5BC30 /* MediaTime.cpp */,
 				CD5497AB15857D0300B5BC30 /* MediaTime.h */,
 				A8A472CC151A825B004123FF /* MessageQueue.h */,
@@ -996,6 +999,7 @@
 				A8A473D4151A825B004123FF /* HashFunctions.h in Headers */,
 				A8A473D5151A825B004123FF /* HashIterators.h in Headers */,
 				A8A473D6151A825B004123FF /* HashMap.h in Headers */,
+				1A233C7D17DAA6E300A93ACF /* MallocPtr.h in Headers */,
 				A8A473D7151A825B004123FF /* HashSet.h in Headers */,
 				A8A473D9151A825B004123FF /* HashTable.h in Headers */,
 				A8A473DA151A825B004123FF /* HashTraits.h in Headers */,

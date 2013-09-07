@@ -184,6 +184,7 @@
     <ClInclude Include="..\wtf\ListHashSet.h" />
     <ClInclude Include="..\wtf\Locker.h" />
     <ClInclude Include="..\wtf\MainThread.h" />
+    <ClInclude Include="..\wtf\MallocPtr.h" />
     <ClInclude Include="..\wtf\MathExtras.h" />
     <ClInclude Include="..\wtf\MD5.h" />
     <ClInclude Include="..\wtf\MediaTime.h" />

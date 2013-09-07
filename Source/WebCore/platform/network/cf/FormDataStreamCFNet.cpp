@@ -107,7 +107,7 @@ struct FormStreamFields {
 #if ENABLE(BLOB)
     long long currentStreamRangeLength;
 #endif
-    OwnPtr<char> currentData;
+    MallocPtr<char> currentData;
     CFReadStreamRef formStream;
     unsigned long long streamLength;
     unsigned long long bytesSent;
@@ -141,9 +141,9 @@ static bool advanceCurrentStream(FormStreamFields* form)
 
     if (nextInput.m_type == FormDataElement::data) {
         size_t size = nextInput.m_data.size();
-        OwnPtr<char> data = nextInput.m_data.releaseBuffer();
+        MallocPtr<char> data = nextInput.m_data.releaseBuffer();
         form->currentStream = CFReadStreamCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data.get()), size, kCFAllocatorNull);
-        form->currentData = data.release();
+        form->currentData = std::move(data);
     } else {
 #if ENABLE(BLOB)
         // Check if the file has been changed or not if required.

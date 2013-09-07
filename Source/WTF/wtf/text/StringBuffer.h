@@ -73,11 +73,11 @@ public:
 
     CharType& operator[](unsigned i) { ASSERT_WITH_SECURITY_IMPLICATION(i < m_length); return m_data[i]; }
 
-    PassOwnPtr<CharType> release()
+    MallocPtr<CharType> release()
     {
         CharType* data = m_data;
         m_data = 0;
-        return adoptPtr(data);
+        return adoptMallocPtr(data);
     }
 
 private:

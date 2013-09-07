@@ -473,6 +473,9 @@
     <ClInclude Include="..\wtf\MainThread.h">
       <Filter>wtf</Filter>
     </ClInclude>
+    <ClInclude Include="..\wtf\MallocPtr.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
     <ClInclude Include="..\wtf\MathExtras.h">
       <Filter>wtf</Filter>
     </ClInclude>

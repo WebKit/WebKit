@@ -1,3 +1,15 @@
+2013-09-06  Anders Carlsson  <andersca@apple.com>
+
+        Add a new smart pointer type for fastMalloc'ed memory
+        https://bugs.webkit.org/show_bug.cgi?id=120911
+
+        Reviewed by Andreas Kling.
+
+        Update for WTF changes.
+
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::advanceCurrentStream):
+
 2013-09-06  Dirk Schulze  <krit@webkit.org>
 
         Interpolate between CSS filter() and cached images

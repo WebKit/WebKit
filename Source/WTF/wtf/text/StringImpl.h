@@ -28,7 +28,6 @@
 #include <wtf/CompilationThread.h>
 #include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringHasher.h>
 #include <wtf/Vector.h>
@@ -233,7 +232,7 @@ private:
     }
 
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
-    StringImpl(PassOwnPtr<LChar> characters, unsigned length)
+    StringImpl(MallocPtr<LChar> characters, unsigned length)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data8(characters.leakPtr())
@@ -274,7 +273,7 @@ private:
     }
 
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
-    StringImpl(PassOwnPtr<UChar> characters, unsigned length)
+    StringImpl(MallocPtr<UChar> characters, unsigned length)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
         , m_data16(characters.leakPtr())
@@ -473,7 +472,7 @@ public:
             ASSERT(vector.data());
             if (size > std::numeric_limits<unsigned>::max())
                 CRASH();
-            return adoptRef(new StringImpl(vector.releaseBuffer().release(), size));
+            return adoptRef(new StringImpl(vector.releaseBuffer(), size));
         }
         return empty();
     }

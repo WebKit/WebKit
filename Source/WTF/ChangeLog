@@ -1,3 +1,26 @@
+2013-09-06  Anders Carlsson  <andersca@apple.com>
+
+        Add a new smart pointer type for fastMalloc'ed memory
+        https://bugs.webkit.org/show_bug.cgi?id=120911
+
+        Reviewed by Andreas Kling.
+
+        Due to an oversight on my part, Vector::releaseBuffer() currently returns an OwnPtr
+        which means that its data will be freed with operator delete instead of fastFree.
+        
+        Fix this by introducing a new MllocPtr smart pointer class and change Vector::releaseBuffer() to return it instead.
+
+        * WTF.pro:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/FastAllocBase.h:
+        * wtf/MallocPtr.h: Added.
+        * wtf/Vector.h:
+        * wtf/text/StringBuffer.h:
+        * wtf/text/StringImpl.h:
+
 2013-09-06  Andreas Kling  <akling@apple.com>
 
         Remove old workaround for Nokia's Harmattan GCC on Qt/ARM.
