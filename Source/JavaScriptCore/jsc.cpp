@@ -849,28 +849,33 @@ int jscmain(int argc, char** argv)
     // Note that the options parsing can affect VM creation, and thus
     // comes first.
     CommandLine options(argc, argv);
-    VM* vm = VM::create(LargeHeap).leakRef();
-    APIEntryShim shim(vm);
+    RefPtr<VM> vm = VM::create(LargeHeap);
     int result;
+    {
+        APIEntryShim shim(vm.get());
 
-    if (options.m_profile && !vm->m_perBytecodeProfiler)
-        vm->m_perBytecodeProfiler = adoptPtr(new Profiler::Database(*vm));
+        if (options.m_profile && !vm->m_perBytecodeProfiler)
+            vm->m_perBytecodeProfiler = adoptPtr(new Profiler::Database(*vm));
     
-    GlobalObject* globalObject = GlobalObject::create(*vm, GlobalObject::createStructure(*vm, jsNull()), options.m_arguments);
-    bool success = runWithScripts(globalObject, options.m_scripts, options.m_dump);
-    if (options.m_interactive && success)
-        runInteractive(globalObject);
+        GlobalObject* globalObject = GlobalObject::create(*vm, GlobalObject::createStructure(*vm, jsNull()), options.m_arguments);
+        bool success = runWithScripts(globalObject, options.m_scripts, options.m_dump);
+        if (options.m_interactive && success)
+            runInteractive(globalObject);
 
-    result = success ? 0 : 3;
+        result = success ? 0 : 3;
 
-    if (options.m_exitCode)
-        printf("jsc exiting %d\n", result);
+        if (options.m_exitCode)
+            printf("jsc exiting %d\n", result);
     
-    if (options.m_profile) {
-        if (!vm->m_perBytecodeProfiler->save(options.m_profilerOutput.utf8().data()))
-            fprintf(stderr, "could not save profiler output.\n");
+        if (options.m_profile) {
+            if (!vm->m_perBytecodeProfiler->save(options.m_profilerOutput.utf8().data()))
+                fprintf(stderr, "could not save profiler output.\n");
+        }
     }
-
+    
+    JSLockHolder lock(*vm);
+    vm.clear();
+    
     return result;
 }
 

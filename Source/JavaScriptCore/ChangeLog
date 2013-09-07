@@ -1,5 +1,23 @@
 2013-09-06  Filip Pizlo  <fpizlo@apple.com>
 
+        jsc shell should destroy VM as a workaround for LLVM's exit-time destructors
+        https://bugs.webkit.org/show_bug.cgi?id=120921
+
+        Reviewed by Oliver Hunt.
+        
+        LLVM's exit-time destructors will fire when we exit. If there is an on-going
+        FTL compile at exit, which will happen if the VM that triggered the compile
+        isn't shut down, then we will crash.
+        
+        We should get rid of LLVM's exit-time destructors. But before we do that, we
+        should just do a clean VM shutdown to suppress spurious crashes. This will
+        help in expanding LLVM coverage for now.
+
+        * jsc.cpp:
+        (jscmain):
+
+2013-09-06  Filip Pizlo  <fpizlo@apple.com>
+
         FTL ArithMod Int32Use doesn't check for negative zero correctly
         https://bugs.webkit.org/show_bug.cgi?id=120905
 
