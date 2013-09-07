@@ -22,7 +22,7 @@ function runNextTest()
 {
     if (currentTest >= encodingTests.length) {
         var script = document.createElement("script");
-        script.src = "../js/resources/js-test-post.js";
+        script.src = "../../resources/js-test-post.js";
         if (window.testRunner)
             script.setAttribute("onload", "testRunner.notifyDone()");
         document.body.appendChild(script);

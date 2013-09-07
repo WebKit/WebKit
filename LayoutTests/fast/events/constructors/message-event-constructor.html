@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <script>
@@ -126,6 +126,6 @@ shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data:
 shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel2.port1] }).ports[1]", "channel.port2");
 shouldBe("new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel2.port1] }).ports[2]", "channel2.port1");
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>
