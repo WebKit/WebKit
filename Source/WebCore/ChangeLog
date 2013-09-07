@@ -1,3 +1,20 @@
+2013-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Elements retained by AccessibilityImageMapLink leak
+        https://bugs.webkit.org/show_bug.cgi?id=120917
+
+        Reviewed by Chris Fleizach.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/df0bd288efe65e5e38425fbdcdfc68b5a2a79e42
+
+        Unfortunately, the test added by the Blink change doesn't reproduce a leak in WebKit.
+
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::detachFromParent):
+        * accessibility/AccessibilityImageMapLink.h:
+        * accessibility/AccessibilityMockObject.h:
+        (WebCore::AccessibilityMockObject::detachFromParent):
+
 2013-09-06  Andreas Kling  <akling@apple.com>
 
         Make Obj-C bindings generator less #include-happy.

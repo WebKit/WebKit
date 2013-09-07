@@ -147,7 +147,14 @@ RenderObject* AccessibilityImageMapLink::imageMapLinkRenderer() const
     
     return renderer;
 }
-    
+
+void AccessibilityImageMapLink::detachFromParent()
+{
+    AccessibilityMockObject::detachFromParent();
+    m_areaElement = 0;
+    m_mapElement = 0;
+}
+
 Path AccessibilityImageMapLink::elementPath() const
 {
     RenderObject* renderer = imageMapLinkRenderer();

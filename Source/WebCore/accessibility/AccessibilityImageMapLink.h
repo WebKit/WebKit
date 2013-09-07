@@ -71,7 +71,9 @@ public:
 private:    
     RefPtr<HTMLAreaElement> m_areaElement;
     RefPtr<HTMLMapElement> m_mapElement;
-    
+
+    virtual void detachFromParent() OVERRIDE;
+
     virtual Path elementPath() const;
     RenderObject* imageMapLinkRenderer() const;
     virtual void accessibilityText(Vector<AccessibilityText>&);
