@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <div id="output"></div>
 <script>
     description("Tests that select elements cap their size to the size attribute and to 4 when no size is specified.");
@@ -35,4 +35,4 @@
     shouldBeTrue("getElemById('select2').setAttribute('size', '12'); clientHeight('select2') == multipleOfElement('select1', 3)");
     shouldBeTrue("getElemById('select2').setAttribute('size', '16'); clientHeight('select2') == multipleOfElement('select1', 4)");
 </script>
-<script src="../../fast/js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>

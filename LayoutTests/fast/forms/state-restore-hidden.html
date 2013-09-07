@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 </head>
 <body onload="runTest()">
 
@@ -32,7 +32,7 @@ function runTest() {
         successfullyParsed = true;
         
         var script = document.createElement('script');
-        script.src = "../js/resources/js-test-post.js";
+        script.src = "../../resources/js-test-post.js";
         script.type = "text/javascript";
         script.onload = function() {
             if (window.testRunner)

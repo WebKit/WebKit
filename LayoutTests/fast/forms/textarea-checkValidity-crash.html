@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <p id="description">Bug 45681: Assertion failure about dirty flag changes of textarea elements.</p>
@@ -18,6 +18,6 @@ ta.defaultValue = 'abc'; // Make it non-dirty && invalid.
 ta.checkValidity(); // This made an assertion fail.
 testPassed('Not crashed.');
 </script>
-<script src="../../fast/js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <p id="description">There was a bug that moving focus with TAB from a number input with an invalid string dispatched an extra focus event and an extra blur event.</p>
@@ -34,6 +34,6 @@ num.dispatchEvent(tabEvent);
 shouldBe('numOfFocus', '1');
 shouldBe('numOfBlur', '1');
 </script>
-<script src="../../../fast/js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

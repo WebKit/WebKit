@@ -1,6 +1,6 @@
 <!DOCTYPE>
 <body id=body>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 
 <label id="label1">Label: <input type="date" id="date1"></label>
 <script>
@@ -14,5 +14,5 @@ clickEvent.initEvent('click', true, true);
 document.getElementById('label1').dispatchEvent(clickEvent);
 shouldBeEqualToString('document.activeElement.id', 'date1');
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>

@@ -1,7 +1,7 @@
 if (this.importScripts) {
     importScripts('fs-worker-common.js');
     if (!('description' in self))  // Shared workers will already have imported this, and importing twice would break it.
-        importScripts('../../js/resources/js-test-pre.js');
+        importScripts('../../../resources/js-test-pre.js');
     importScripts('file-writer-utils.js');
 }
 

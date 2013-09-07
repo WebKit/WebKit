@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <body>
-<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
 <input type="number" id="number1">
 <script>
 var numberInput = document.getElementById('number1');
@@ -11,5 +11,5 @@ document.execCommand('inserttext', false, '0000123456789012345678901234567890123
 numberInput.blur();
 shouldBeEqualToString('numberInput.value', '0000123456789012345678901234567890123456789');
 </script>
-<script src="../../js/resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>

@@ -26,11 +26,11 @@
 <select id="multiple-a" multiple class="min-content"><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select><br>
 <select id="multiple-b" multiple><option>aaaaaaaaaaaaaaaaaaaaaaaaa</option></select><br>
 
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <script>
 var ids = ['text', 'file', 'range', 'select', 'multiple'];
 ids.forEach(function(id) {
     shouldBe('document.getElementById("' + id + '-a").offsetWidth', 'document.getElementById("' + id + '-b").offsetWidth');
 });
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>

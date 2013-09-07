@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <script>
 description("Removing all children of a form should disassociate any form controls in that subtree");
 var form = document.createElement('form');
@@ -9,4 +9,4 @@ form.innerHTML = '';
 shouldBeNull("input.form");
 shouldBe("form.elements.length", "0");
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
