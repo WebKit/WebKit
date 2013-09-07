@@ -1425,6 +1425,7 @@ sub Generate {
     $implIncludes{"WebKitDOMPrivate.h"} = 1;
     $implIncludes{"gobject/ConvertToUTF8String.h"} = 1;
     $implIncludes{"${className}Private.h"} = 1;
+    $implIncludes{"Document.h"} = 1;
     $implIncludes{"JSMainThreadExecState.h"} = 1;
     $implIncludes{"ExceptionCode.h"} = 1;
     $implIncludes{"CSSImportRule.h"} = 1;

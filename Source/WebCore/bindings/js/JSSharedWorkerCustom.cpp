@@ -34,6 +34,7 @@
 
 #include "JSSharedWorker.h"
 
+#include "Document.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWindowCustom.h"
 #include "SharedWorker.h"

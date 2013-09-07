@@ -32,6 +32,7 @@
 
 #include "JSErrorHandler.h"
 
+#include "Document.h"
 #include "ErrorEvent.h"
 #include "Event.h"
 #include "EventNames.h"

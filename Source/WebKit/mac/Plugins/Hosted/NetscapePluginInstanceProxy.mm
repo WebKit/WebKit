@@ -48,6 +48,7 @@
 #import <JavaScriptCore/SourceCode.h>
 #import <JavaScriptCore/StrongInlines.h>
 #import <WebCore/CookieJar.h>
+#import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>

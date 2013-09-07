@@ -28,11 +28,9 @@
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
 #include "DOMWrapperWorld.h"
-#include "Document.h"
 #include "ScriptWrappable.h"
 #include "ScriptWrappableInlines.h"
 #include "WebCoreTypedArrayController.h"
-#include <heap/SlotVisitor.h>
 #include <heap/Weak.h>
 #include <heap/WeakInlines.h>
 #include <runtime/Error.h>
@@ -60,8 +58,11 @@ namespace WebCore {
 class DOMStringList;
 
     class CachedScript;
+    class Document;
     class Frame;
+    class HTMLDocument;
     class KURL;
+    class Node;
 
     typedef int ExceptionCode;
 
@@ -82,29 +83,6 @@ class DOMStringList;
         }
     };
 
-    // Constructors using this base class depend on being in a Document and
-    // can never be used from a WorkerGlobalScope.
-    class DOMConstructorWithDocument : public DOMConstructorObject {
-        typedef DOMConstructorObject Base;
-    public:
-        Document* document() const
-        {
-            return toDocument(scriptExecutionContext());
-        }
-
-    protected:
-        DOMConstructorWithDocument(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
-            : DOMConstructorObject(structure, globalObject)
-        {
-        }
-
-        void finishCreation(JSDOMGlobalObject* globalObject)
-        {
-            Base::finishCreation(globalObject->vm());
-            ASSERT(globalObject->scriptExecutionContext()->isDocument());
-        }
-    };
-    
     JSC::Structure* getCachedDOMStructure(JSDOMGlobalObject*, const JSC::ClassInfo*);
     JSC::Structure* cacheDOMStructure(JSDOMGlobalObject*, JSC::Structure*, const JSC::ClassInfo*);
 

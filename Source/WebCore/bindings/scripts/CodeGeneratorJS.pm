@@ -1005,6 +1005,9 @@ sub GenerateHeader
 
     if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
         $headerIncludes{"JSDOMBinding.h"} = 1;
+        if ($interface->extendedAttributes->{"NamedConstructor"}) {
+            $headerIncludes{"DOMConstructorWithDocument.h"} = 1;
+        }
         GenerateConstructorDeclaration(\@headerContent, $className, $interface, $interfaceName);
     }
 

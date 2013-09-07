@@ -30,6 +30,7 @@
 
 #include "JSWorker.h"
 
+#include "Document.h"
 #include "JSDOMGlobalObject.h"
 #include "JSMessagePortCustom.h"
 #include "Worker.h"

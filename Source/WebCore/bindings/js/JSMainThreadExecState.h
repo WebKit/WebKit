@@ -28,7 +28,6 @@
 
 #include "JSDOMBinding.h"
 #include <runtime/Completion.h>
-#include <runtime/Executable.h>
 #ifndef NDEBUG
 #include <wtf/MainThread.h>
 #endif

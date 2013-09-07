@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ScriptState.h"
 
+#include "Document.h"
 #include "Frame.h"
 #include "JSDOMWindowBase.h"
 #include "Node.h"

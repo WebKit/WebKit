@@ -29,6 +29,7 @@
 
 #include "InspectorInstrumentation.h"
 #include "JSMainThreadExecState.h"
+#include <runtime/Executable.h>
 
 namespace WebCore {
 

@@ -29,6 +29,7 @@
 #include "AudioContext.h"
 
 #include "AudioBuffer.h"
+#include "Document.h"
 #include "JSAudioBuffer.h"
 #include "JSAudioContext.h"
 #include "JSOfflineAudioContext.h"

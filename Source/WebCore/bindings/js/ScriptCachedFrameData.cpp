@@ -32,6 +32,7 @@
 #include "config.h"
 #include "ScriptCachedFrameData.h"
 
+#include "Document.h"
 #include "Frame.h"
 #include "GCController.h"
 #include "Page.h"

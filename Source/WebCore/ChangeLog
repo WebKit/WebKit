@@ -1,3 +1,22 @@
+2013-09-06  Andreas Kling  <akling@apple.com>
+
+        Don't include Document.h from JSDOMBinding.h
+        <https://webkit.org/b/120909>
+
+        Reviewed by Anders Carlsson.
+
+        Move DOMConstructorWithDocument out of JSDOMBinding.h to its own header.
+        This was the only part of JSDOMBinding.h that needed Document's definition.
+
+        This reduces the include dependency graph of many bindings files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/DOMConstructorWithDocument.h:
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2013-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Range::ownerDocument should return Document&

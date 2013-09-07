@@ -20,6 +20,7 @@
 #ifndef JSImageConstructor_h
 #define JSImageConstructor_h
 
+#include "DOMConstructorWithDocument.h"
 #include "JSDOMBinding.h"
 #include "JSDocument.h"
 

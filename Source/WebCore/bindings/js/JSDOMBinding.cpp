@@ -24,6 +24,7 @@
 
 #include "BindingSecurity.h"
 #include "CachedScript.h"
+#include "DOMConstructorWithDocument.h"
 #include "DOMObjectHashTableMap.h"
 #include "DOMStringList.h"
 #include "ExceptionCode.h"

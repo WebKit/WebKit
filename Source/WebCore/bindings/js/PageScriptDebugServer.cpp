@@ -34,6 +34,7 @@
 
 #include "PageScriptDebugServer.h"
 
+#include "Document.h"
 #include "EventLoop.h"
 #include "Frame.h"
 #include "FrameView.h"
