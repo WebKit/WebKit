@@ -142,7 +142,7 @@
 
 - (NSArray *)textRects
 {
-    _impl->ownerDocument()->updateLayoutIgnorePendingStylesheets();
+    _impl->ownerDocument().updateLayoutIgnorePendingStylesheets();
     Vector<WebCore::IntRect> rects;
     _impl->textRects(rects);
     return WebKit::toNSArray(rects);

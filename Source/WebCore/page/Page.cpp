@@ -630,11 +630,11 @@ PassRefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRang
     if (target.isEmpty())
         return 0;
 
-    if (referenceRange && referenceRange->ownerDocument()->page() != this)
+    if (referenceRange && referenceRange->ownerDocument().page() != this)
         return 0;
 
     bool shouldWrap = options & WrapAround;
-    Frame* frame = referenceRange ? referenceRange->ownerDocument()->frame() : &mainFrame();
+    Frame* frame = referenceRange ? referenceRange->ownerDocument().frame() : &mainFrame();
     Frame* startFrame = frame;
     do {
         if (RefPtr<Range> resultRange = frame->editor().rangeOfString(target, frame == startFrame ? referenceRange : 0, options & ~WrapAround))

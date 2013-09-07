@@ -2535,8 +2535,8 @@ String plainText(const Range* r, TextIteratorBehavior defaultBehavior, bool isDi
 
     String result = builder.toString();
 
-    if (isDisplayString && r->ownerDocument())
-        r->ownerDocument()->displayStringModifiedByEncoding(result);
+    if (isDisplayString)
+        r->ownerDocument().displayStringModifiedByEncoding(result);
 
     return result;
 }
@@ -2557,7 +2557,7 @@ static size_t findPlainText(CharacterIterator& it, const String& target, FindOpt
 
     if (buffer.needsMoreContext()) {
         RefPtr<Range> startRange = it.range();
-        RefPtr<Range> beforeStartRange = startRange->ownerDocument()->createRange();
+        RefPtr<Range> beforeStartRange = startRange->ownerDocument().createRange();
         beforeStartRange->setEnd(startRange->startContainer(), startRange->startOffset(), IGNORE_EXCEPTION);
         for (SimplifiedBackwardsTextIterator backwardsIterator(beforeStartRange.get()); !backwardsIterator.atEnd(); backwardsIterator.advance()) {
             buffer.prependContext(backwardsIterator.characters(), backwardsIterator.length());
@@ -2594,7 +2594,7 @@ tryAgain:
 PassRefPtr<Range> findPlainText(const Range* range, const String& target, FindOptions options)
 {
     // CharacterIterator requires renderers to be up-to-date
-    range->ownerDocument()->updateLayout();
+    range->ownerDocument().updateLayout();
 
     // First, find the text.
     size_t matchStart;

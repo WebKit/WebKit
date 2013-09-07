@@ -110,8 +110,6 @@ PassRefPtr<Range> Editor::avoidIntersectionWithDeleteButtonController(const Rang
     if (!range || !controller)
         return 0;
 
-    Document* document = range->ownerDocument();
-
     Node* startContainer = range->startContainer();
     int startOffset = range->startOffset();
     Node* endContainer = range->endContainer();
@@ -134,7 +132,7 @@ PassRefPtr<Range> Editor::avoidIntersectionWithDeleteButtonController(const Rang
         endOffset = element->nodeIndex();
     }
 
-    return Range::create(document, startContainer, startOffset, endContainer, endOffset);
+    return Range::create(&range->ownerDocument(), startContainer, startOffset, endContainer, endOffset);
 }
 
 VisibleSelection Editor::avoidIntersectionWithDeleteButtonController(const VisibleSelection& selection) const
@@ -2919,7 +2917,7 @@ static bool isFrameInRange(Frame* frame, Range* range)
 {
     bool inRange = false;
     for (HTMLFrameOwnerElement* ownerElement = frame->ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
-        if (&ownerElement->document() == range->ownerDocument()) {
+        if (&ownerElement->document() == &range->ownerDocument()) {
             inRange = range->intersectsNode(ownerElement, IGNORE_EXCEPTION);
             break;
         }
@@ -2934,7 +2932,7 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
 
     RefPtr<Range> searchRange;
     if (range) {
-        if (range->ownerDocument() == m_frame.document())
+        if (&range->ownerDocument() == m_frame.document())
             searchRange = range;
         else if (!isFrameInRange(&m_frame, range))
             return 0;

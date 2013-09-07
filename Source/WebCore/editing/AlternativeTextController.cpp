@@ -397,7 +397,7 @@ void AlternativeTextController::timerFired(Timer<AlternativeTextController>*)
 void AlternativeTextController::handleAlternativeTextUIResult(const String& result)
 {
     Range* rangeWithAlternative = m_alternativeTextInfo.rangeWithAlternative.get();
-    if (!rangeWithAlternative || m_frame.document() != rangeWithAlternative->ownerDocument())
+    if (!rangeWithAlternative || m_frame.document() != &rangeWithAlternative->ownerDocument())
         return;
 
     String currentWord = plainText(rangeWithAlternative);

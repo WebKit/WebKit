@@ -1,3 +1,18 @@
+2013-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Range::ownerDocument should return Document&
+        https://bugs.webkit.org/show_bug.cgi?id=120908
+
+        Reviewed by Andreas Kling.
+
+        * WebKitSupport/InPageSearchManager.cpp:
+        (BlackBerry::WebKit::InPageSearchManager::findNextString):
+        (BlackBerry::WebKit::InPageSearchManager::findAndMarkText):
+        (BlackBerry::WebKit::InPageSearchManager::clearTextMatches):
+        (BlackBerry::WebKit::InPageSearchManager::setActiveMatchAndMarker):
+        (BlackBerry::WebKit::InPageSearchManager::frameUnloaded):
+        (BlackBerry::WebKit::InPageSearchManager::scopeStringMatches):
+
 2013-08-30  Antti Koivisto  <antti@apple.com>
 
         Remove code behind ENABLE(DIALOG_ELEMENT)

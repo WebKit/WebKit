@@ -123,15 +123,13 @@ PassOwnPtr<DragController> DragController::create(Page* page, DragClient* client
     return adoptPtr(new DragController(page, client));
 }
 
-static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragData, Frame* frame, RefPtr<Range> context,
-                                          bool allowPlainText, bool& chosePlainText)
+static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragData, Frame* frame, PassRefPtr<Range> context, bool allowPlainText, bool& chosePlainText)
 {
     ASSERT(dragData);
     chosePlainText = false;
 
-    Document* document = context->ownerDocument();
-    ASSERT(document);
-    if (document && dragData->containsCompatibleContent()) {
+    Document& document = context->ownerDocument();
+    if (dragData->containsCompatibleContent()) {
         if (PassRefPtr<DocumentFragment> fragment = dragData->asFragment(frame, context, allowPlainText, chosePlainText))
             return fragment;
 
@@ -139,7 +137,7 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
             String title;
             String url = dragData->asURL(frame, DragData::DoNotConvertFilenames, &title);
             if (!url.isEmpty()) {
-                RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(document);
+                RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(&document);
                 anchor->setHref(url);
                 if (title.isEmpty()) {
                     // Try the plain text first because the url might be normalized or escaped.
@@ -148,9 +146,9 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
                     if (title.isEmpty())
                         title = url;
                 }
-                RefPtr<Node> anchorText = document->createTextNode(title);
+                RefPtr<Node> anchorText = document.createTextNode(title);
                 anchor->appendChild(anchorText, IGNORE_EXCEPTION);
-                RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
+                RefPtr<DocumentFragment> fragment = document.createDocumentFragment();
                 fragment->appendChild(anchor, IGNORE_EXCEPTION);
                 return fragment.get();
             }
@@ -505,7 +503,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     // manually controlling drag behaviour
     if (!range)
         return false;
-    CachedResourceLoader* cachedResourceLoader = range->ownerDocument()->cachedResourceLoader();
+    CachedResourceLoader* cachedResourceLoader = range->ownerDocument().cachedResourceLoader();
     ResourceCacheValidationSuppressor validationSuppressor(cachedResourceLoader);
     if (dragIsMove(innerFrame->selection(), dragData) || dragCaret.isContentRichlyEditable()) {
         bool chosePlainText = false;

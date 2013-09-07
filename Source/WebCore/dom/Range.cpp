@@ -116,14 +116,14 @@ Range::~Range()
 #endif
 }
 
-void Range::setDocument(Document* document)
+void Range::setDocument(Document& document)
 {
-    ASSERT(m_ownerDocument != document);
+    ASSERT(m_ownerDocument != &document);
     if (m_ownerDocument)
         m_ownerDocument->detachRange(this);
-    m_ownerDocument = document;
-    m_start.setToStartOfNode(document);
-    m_end.setToStartOfNode(document);
+    m_ownerDocument = &document;
+    m_start.setToStartOfNode(&document);
+    m_end.setToStartOfNode(&document);
     m_ownerDocument->attachRange(this);
 }
 
@@ -224,7 +224,7 @@ void Range::setStart(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
 
     bool didMoveDocument = false;
     if (&refNode->document() != m_ownerDocument) {
-        setDocument(&refNode->document());
+        setDocument(refNode->document());
         didMoveDocument = true;
     }
 
@@ -253,7 +253,7 @@ void Range::setEnd(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
 
     bool didMoveDocument = false;
     if (&refNode->document() != m_ownerDocument) {
-        setDocument(&refNode->document());
+        setDocument(refNode->document());
         didMoveDocument = true;
     }
 
@@ -1344,7 +1344,7 @@ void Range::selectNode(Node* refNode, ExceptionCode& ec)
     }
 
     if (m_ownerDocument != &refNode->document())
-        setDocument(&refNode->document());
+        setDocument(refNode->document());
 
     ec = 0;
     setStartBefore(refNode, ec);
@@ -1389,7 +1389,7 @@ void Range::selectNodeContents(Node* refNode, ExceptionCode& ec)
     }
 
     if (m_ownerDocument != &refNode->document())
-        setDocument(&refNode->document());
+        setDocument(refNode->document());
 
     m_start.setToStartOfNode(refNode);
     m_end.setToEndOfNode(refNode);

@@ -319,14 +319,14 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 - (NSRect)boundingBox
 {
     // FIXME: The call to updateLayoutIgnorePendingStylesheets should be moved into WebCore::Range.
-    core(self)->ownerDocument()->updateLayoutIgnorePendingStylesheets();
+    core(self)->ownerDocument().updateLayoutIgnorePendingStylesheets();
     return core(self)->boundingBox();
 }
 
 - (NSImage *)renderedImageForcingBlackText:(BOOL)forceBlackText
 {
     WebCore::Range* range = core(self);
-    WebCore::Frame* frame = range->ownerDocument()->frame();
+    WebCore::Frame* frame = range->ownerDocument().frame();
     if (!frame)
         return nil;
 
@@ -337,7 +337,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 {
     // FIXME: The call to updateLayoutIgnorePendingStylesheets should be moved into WebCore::Range.
     Vector<WebCore::IntRect> rects;
-    core(self)->ownerDocument()->updateLayoutIgnorePendingStylesheets();
+    core(self)->ownerDocument().updateLayoutIgnorePendingStylesheets();
     core(self)->textRects(rects);
     return kit(rects);
 }

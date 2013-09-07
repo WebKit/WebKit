@@ -135,7 +135,7 @@ bool InPageSearchManager::findNextString(const String& text, FindOptions findOpt
         startFromSelection = true;
     }
 
-    Frame* currentActiveMatchFrame = selection.isNone() && m_activeMatch ? m_activeMatch->ownerDocument()->frame() : m_webPage->focusedOrMainFrame();
+    Frame* currentActiveMatchFrame = selection.isNone() && m_activeMatch ? m_activeMatch->ownerDocument().frame() : m_webPage->focusedOrMainFrame();
 
     if (findAndMarkText(text, searchStartingPoint.get(), currentActiveMatchFrame, findOptions, newSearch, startFromSelection))
         return true;
@@ -189,7 +189,7 @@ bool InPageSearchManager::findAndMarkText(const String& text, Range* range, Fram
                 // Not highlighting all matches, we need to add the marker here,
                 // because scopeStringMatches does not add any markers, it only counts the number.
                 // No need to unmarkAllTextMatches, it is already done from the caller because of newSearch
-                m_activeMatch->ownerDocument()->markers().addTextMatchMarker(m_activeMatch.get(), true);
+                m_activeMatch->ownerDocument().markers().addTextMatchMarker(m_activeMatch.get(), true);
                 frame->editor().setMarkedTextMatchesAreHighlighted(true /* highlight */);
             }
             return true;
@@ -222,7 +222,7 @@ bool InPageSearchManager::findAndMarkText(const String& text, Range* range, Fram
             // When only showing single matches, the scoping effort won't highlight
             // all matches but count them.
             m_webPage->m_page->unmarkAllTextMatches();
-            m_activeMatch->ownerDocument()->markers().addTextMatchMarker(m_activeMatch.get(), true);
+            m_activeMatch->ownerDocument().markers().addTextMatchMarker(m_activeMatch.get(), true);
             frame->editor().setMarkedTextMatchesAreHighlighted(true /* highlight */);
         }
 
@@ -235,7 +235,7 @@ void InPageSearchManager::clearTextMatches(bool selectActiveMatchOnClear)
 {
     if (selectActiveMatchOnClear && m_activeMatch.get()) {
         VisibleSelection selection(m_activeMatch.get());
-        m_activeMatch->ownerDocument()->frame()->selection().setSelection(selection);
+        m_activeMatch->ownerDocument().frame()->selection().setSelection(selection);
     }
     m_webPage->m_page->unmarkAllTextMatches();
     m_activeMatch = 0;
@@ -246,16 +246,12 @@ void InPageSearchManager::clearTextMatches(bool selectActiveMatchOnClear)
 void InPageSearchManager::setActiveMatchAndMarker(PassRefPtr<Range> range)
 {
     // Clear the old marker, update our range, and highlight the new range.
-    if (m_activeMatch.get()) {
-        if (Document* doc = m_activeMatch->ownerDocument())
-            doc->markers().setMarkersActive(m_activeMatch.get(), false);
-    }
+    if (m_activeMatch.get())
+        m_activeMatch->ownerDocument().markers().setMarkersActive(m_activeMatch.get(), false);
 
     m_activeMatch = range;
-    if (m_activeMatch.get()) {
-        if (Document* doc = m_activeMatch->ownerDocument())
-            doc->markers().setMarkersActive(m_activeMatch.get(), true);
-    }
+    if (m_activeMatch.get())
+        m_activeMatch->ownerDocument().markers().setMarkersActive(m_activeMatch.get(), true);
 }
 
 void InPageSearchManager::frameUnloaded(const Frame* frame)
@@ -273,7 +269,7 @@ void InPageSearchManager::frameUnloaded(const Frame* frame)
         return;
     }
 
-    Frame* currentActiveMatchFrame = m_activeMatch->ownerDocument()->frame();
+    Frame* currentActiveMatchFrame = m_activeMatch->ownerDocument().frame();
     if (currentActiveMatchFrame == frame) {
         // FIXME: We need to re-scope this frame instead of cancelling all effort?
         cancelPendingScopingEffort();
@@ -302,7 +298,7 @@ void InPageSearchManager::scopeStringMatches(const String& text, bool reset, boo
         return;
     }
 
-    if (m_resumeScopingFromRange && scopingFrame != m_resumeScopingFromRange->ownerDocument()->frame())
+    if (m_resumeScopingFromRange && scopingFrame != m_resumeScopingFromRange->ownerDocument().frame())
         m_resumeScopingFromRange = 0;
 
     RefPtr<Range> searchRange(rangeOfContents(scopingFrame->document()));
@@ -343,7 +339,7 @@ void InPageSearchManager::scopeStringMatches(const String& text, bool reset, boo
             m_activeMatchIndex = m_activeMatchCount + matchCount;
         }
         if (!locateActiveMatchOnly && m_highlightAllMatches)
-            resultRange->ownerDocument()->markers().addTextMatchMarker(resultRange.get(), foundActiveMatch);
+            resultRange->ownerDocument().markers().addTextMatchMarker(resultRange.get(), foundActiveMatch);
 
         searchRange->setStart(resultRange->endContainer(ec), resultRange->endOffset(ec), ec);
         ShadowRoot* shadowTreeRoot = searchRange->shadowRoot();

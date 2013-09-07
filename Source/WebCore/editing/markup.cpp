@@ -637,16 +637,13 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     if (!range)
         return emptyString();
 
-    Document* document = range->ownerDocument();
-    if (!document)
-        return emptyString();
-
+    Document& document = range->ownerDocument();
     const Range* updatedRange = range;
 
 #if ENABLE(DELETION_UI)
     // Disable the delete button so it's elements are not serialized into the markup,
     // but make sure neither endpoint is inside the delete user interface.
-    Frame* frame = document->frame();
+    Frame* frame = document.frame();
     DeleteButtonControllerDisableScope deleteButtonControllerDisableScope(frame);
 
     RefPtr<Range> updatedRangeRef;
@@ -658,7 +655,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     }
 #endif
 
-    return createMarkupInternal(document, range, updatedRange, nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs);
+    return createMarkupInternal(&document, range, updatedRange, nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs);
 }
 
 PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const String& markup, const String& baseURL, ParserContentPolicy parserContentPolicy)
@@ -840,8 +837,8 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
     if (!context)
         return 0;
 
-    Document* document = context->ownerDocument();
-    RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
+    Document& document = context->ownerDocument();
+    RefPtr<DocumentFragment> fragment = document.createDocumentFragment();
     
     if (text.isEmpty())
         return fragment.release();
@@ -851,9 +848,9 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
     string.replace('\r', '\n');
 
     if (contextPreservesNewline(*context)) {
-        fragment->appendChild(document->createTextNode(string), ASSERT_NO_EXCEPTION);
+        fragment->appendChild(document.createTextNode(string), ASSERT_NO_EXCEPTION);
         if (string.endsWith('\n')) {
-            RefPtr<Element> element = createBreakElement(document);
+            RefPtr<Element> element = createBreakElement(&document);
             element->setAttribute(classAttr, AppleInterchangeNewline);            
             fragment->appendChild(element.release(), ASSERT_NO_EXCEPTION);
         }
@@ -885,16 +882,16 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
         RefPtr<Element> element;
         if (s.isEmpty() && i + 1 == numLines) {
             // For last line, use the "magic BR" rather than a P.
-            element = createBreakElement(document);
+            element = createBreakElement(&document);
             element->setAttribute(classAttr, AppleInterchangeNewline);
         } else if (useLineBreak) {
-            element = createBreakElement(document);
+            element = createBreakElement(&document);
             fillContainerFromString(fragment.get(), s);
         } else {
             if (useClonesOfEnclosingBlock)
                 element = block->cloneElementWithoutChildren();
             else
-                element = createDefaultParagraphElement(document);
+                element = createDefaultParagraphElement(&document);
             fillContainerFromString(element.get(), s);
         }
         fragment->appendChild(element.release(), ASSERT_NO_EXCEPTION);

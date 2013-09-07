@@ -637,7 +637,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 {
     BOOL inRange = NO;
     for (HTMLFrameOwnerElement* ownerElement = core(frame)->ownerElement(); ownerElement; ownerElement = ownerElement->document().frame()->ownerElement()) {
-        if (&ownerElement->document() == core(range)->ownerDocument()) {
+        if (&ownerElement->document() == &core(range)->ownerDocument()) {
             inRange = [range intersectsNode:kit(ownerElement)];
             break;
         }

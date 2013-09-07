@@ -1,3 +1,13 @@
+2013-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Range::ownerDocument should return Document&
+        https://bugs.webkit.org/show_bug.cgi?id=120908
+
+        Reviewed by Andreas Kling.
+
+        * WebView/WebPDFView.mm:
+        (isFrameInRange):
+
 2013-09-05  Andreas Kling  <akling@apple.com>
 
         ScrollView::children() should return a reference.

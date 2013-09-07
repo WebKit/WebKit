@@ -633,14 +633,7 @@ void TextCheckingHelper::markAllBadGrammar()
 
 bool TextCheckingHelper::unifiedTextCheckerEnabled() const
 {
-    if (!m_range)
-        return false;
-
-    Document* doc = m_range->ownerDocument();
-    if (!doc)
-        return false;
-
-    return WebCore::unifiedTextCheckerEnabled(doc->frame());
+    return m_range && WebCore::unifiedTextCheckerEnabled(m_range->ownerDocument().frame());
 }
 
 void checkTextOfParagraph(TextCheckerClient* client, const UChar* text, int length,

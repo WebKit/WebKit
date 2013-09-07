@@ -53,7 +53,7 @@ public:
     static PassRefPtr<Range> create(PassRefPtr<Document>, const Position&, const Position&);
     ~Range();
 
-    Document* ownerDocument() const { return m_ownerDocument.get(); }
+    Document& ownerDocument() const { return *m_ownerDocument; }
     Node* startContainer() const { return m_start.container(); }
     int startOffset() const { return m_start.offset(); }
     Node* endContainer() const { return m_end.container(); }
@@ -152,7 +152,7 @@ private:
     explicit Range(PassRefPtr<Document>);
     Range(PassRefPtr<Document>, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset);
 
-    void setDocument(Document*);
+    void setDocument(Document&);
 
     Node* checkNodeWOffset(Node*, int offset, ExceptionCode&) const;
     void checkNodeBA(Node*, ExceptionCode&) const;
