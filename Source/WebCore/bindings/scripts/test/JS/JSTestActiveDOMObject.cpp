@@ -68,7 +68,7 @@ void JSTestActiveDOMObjectConstructor::finishCreation(ExecState* exec, JSDOMGlob
 
 bool JSTestActiveDOMObjectConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestActiveDOMObjectConstructor, JSDOMWrapper>(exec, &JSTestActiveDOMObjectConstructorTable, jsCast<JSTestActiveDOMObjectConstructor*>(object), propertyName, slot);
+    return getStaticValueSlot<JSTestActiveDOMObjectConstructor, JSDOMWrapper>(exec, JSTestActiveDOMObjectConstructorTable, jsCast<JSTestActiveDOMObjectConstructor*>(object), propertyName, slot);
 }
 
 /* Hash table for prototype */
@@ -91,7 +91,7 @@ JSObject* JSTestActiveDOMObjectPrototype::self(ExecState* exec, JSGlobalObject* 
 bool JSTestActiveDOMObjectPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestActiveDOMObjectPrototype* thisObject = jsCast<JSTestActiveDOMObjectPrototype*>(object);
-    return getStaticFunctionSlot<JSObject>(exec, &JSTestActiveDOMObjectPrototypeTable, thisObject, propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, JSTestActiveDOMObjectPrototypeTable, thisObject, propertyName, slot);
 }
 
 const ClassInfo JSTestActiveDOMObject::s_info = { "TestActiveDOMObject", &Base::s_info, &JSTestActiveDOMObjectTable, 0 , CREATE_METHOD_TABLE(JSTestActiveDOMObject) };
@@ -128,7 +128,7 @@ bool JSTestActiveDOMObject::getOwnPropertySlot(JSObject* object, ExecState* exec
 {
     JSTestActiveDOMObject* thisObject = jsCast<JSTestActiveDOMObject*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueSlot<JSTestActiveDOMObject, Base>(exec, &JSTestActiveDOMObjectTable, thisObject, propertyName, slot);
+    return getStaticValueSlot<JSTestActiveDOMObject, Base>(exec, JSTestActiveDOMObjectTable, thisObject, propertyName, slot);
 }
 
 JSValue jsTestActiveDOMObjectExcitingAttr(ExecState* exec, JSValue slotBase, PropertyName)

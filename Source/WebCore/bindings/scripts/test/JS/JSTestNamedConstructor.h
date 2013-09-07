@@ -21,6 +21,7 @@
 #ifndef JSTestNamedConstructor_h
 #define JSTestNamedConstructor_h
 
+#include "DOMConstructorWithDocument.h"
 #include "JSDOMBinding.h"
 #include "TestNamedConstructor.h"
 #include <runtime/JSGlobalObject.h>

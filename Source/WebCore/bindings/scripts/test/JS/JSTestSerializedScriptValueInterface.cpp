@@ -74,7 +74,7 @@ void JSTestSerializedScriptValueInterfaceConstructor::finishCreation(ExecState* 
 
 bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestSerializedScriptValueInterfaceConstructor, JSDOMWrapper>(exec, &JSTestSerializedScriptValueInterfaceConstructorTable, jsCast<JSTestSerializedScriptValueInterfaceConstructor*>(object), propertyName, slot);
+    return getStaticValueSlot<JSTestSerializedScriptValueInterfaceConstructor, JSDOMWrapper>(exec, JSTestSerializedScriptValueInterfaceConstructorTable, jsCast<JSTestSerializedScriptValueInterfaceConstructor*>(object), propertyName, slot);
 }
 
 /* Hash table for prototype */
@@ -126,7 +126,7 @@ bool JSTestSerializedScriptValueInterface::getOwnPropertySlot(JSObject* object, 
 {
     JSTestSerializedScriptValueInterface* thisObject = jsCast<JSTestSerializedScriptValueInterface*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueSlot<JSTestSerializedScriptValueInterface, Base>(exec, &JSTestSerializedScriptValueInterfaceTable, thisObject, propertyName, slot);
+    return getStaticValueSlot<JSTestSerializedScriptValueInterface, Base>(exec, JSTestSerializedScriptValueInterfaceTable, thisObject, propertyName, slot);
 }
 
 JSValue jsTestSerializedScriptValueInterfaceValue(ExecState* exec, JSValue slotBase, PropertyName)
@@ -195,7 +195,7 @@ void JSTestSerializedScriptValueInterface::put(JSCell* cell, ExecState* exec, Pr
 {
     JSTestSerializedScriptValueInterface* thisObject = jsCast<JSTestSerializedScriptValueInterface*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    lookupPut<JSTestSerializedScriptValueInterface, Base>(exec, propertyName, value, &JSTestSerializedScriptValueInterfaceTable, thisObject, slot);
+    lookupPut<JSTestSerializedScriptValueInterface, Base>(exec, propertyName, value, JSTestSerializedScriptValueInterfaceTable, thisObject, slot);
 }
 
 void setJSTestSerializedScriptValueInterfaceValue(ExecState* exec, JSObject* thisObject, JSValue value)

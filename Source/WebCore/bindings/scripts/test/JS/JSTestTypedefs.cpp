@@ -98,7 +98,7 @@ void JSTestTypedefsConstructor::finishCreation(ExecState* exec, JSDOMGlobalObjec
 
 bool JSTestTypedefsConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestTypedefsConstructor, JSDOMWrapper>(exec, &JSTestTypedefsConstructorTable, jsCast<JSTestTypedefsConstructor*>(object), propertyName, slot);
+    return getStaticValueSlot<JSTestTypedefsConstructor, JSDOMWrapper>(exec, JSTestTypedefsConstructorTable, jsCast<JSTestTypedefsConstructor*>(object), propertyName, slot);
 }
 
 ConstructType JSTestTypedefsConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -134,7 +134,7 @@ JSObject* JSTestTypedefsPrototype::self(ExecState* exec, JSGlobalObject* globalO
 bool JSTestTypedefsPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestTypedefsPrototype* thisObject = jsCast<JSTestTypedefsPrototype*>(object);
-    return getStaticFunctionSlot<JSObject>(exec, &JSTestTypedefsPrototypeTable, thisObject, propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, JSTestTypedefsPrototypeTable, thisObject, propertyName, slot);
 }
 
 const ClassInfo JSTestTypedefs::s_info = { "TestTypedefs", &Base::s_info, &JSTestTypedefsTable, 0 , CREATE_METHOD_TABLE(JSTestTypedefs) };
@@ -171,7 +171,7 @@ bool JSTestTypedefs::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
 {
     JSTestTypedefs* thisObject = jsCast<JSTestTypedefs*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueSlot<JSTestTypedefs, Base>(exec, &JSTestTypedefsTable, thisObject, propertyName, slot);
+    return getStaticValueSlot<JSTestTypedefs, Base>(exec, JSTestTypedefsTable, thisObject, propertyName, slot);
 }
 
 JSValue jsTestTypedefsUnsignedLongLongAttr(ExecState* exec, JSValue slotBase, PropertyName)
@@ -253,7 +253,7 @@ void JSTestTypedefs::put(JSCell* cell, ExecState* exec, PropertyName propertyNam
 {
     JSTestTypedefs* thisObject = jsCast<JSTestTypedefs*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    lookupPut<JSTestTypedefs, Base>(exec, propertyName, value, &JSTestTypedefsTable, thisObject, slot);
+    lookupPut<JSTestTypedefs, Base>(exec, propertyName, value, JSTestTypedefsTable, thisObject, slot);
 }
 
 void setJSTestTypedefsUnsignedLongLongAttr(ExecState* exec, JSObject* thisObject, JSValue value)

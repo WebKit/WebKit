@@ -66,7 +66,7 @@ void JSTestMediaQueryListListenerConstructor::finishCreation(ExecState* exec, JS
 
 bool JSTestMediaQueryListListenerConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestMediaQueryListListenerConstructor, JSDOMWrapper>(exec, &JSTestMediaQueryListListenerConstructorTable, jsCast<JSTestMediaQueryListListenerConstructor*>(object), propertyName, slot);
+    return getStaticValueSlot<JSTestMediaQueryListListenerConstructor, JSDOMWrapper>(exec, JSTestMediaQueryListListenerConstructorTable, jsCast<JSTestMediaQueryListListenerConstructor*>(object), propertyName, slot);
 }
 
 /* Hash table for prototype */
@@ -88,7 +88,7 @@ JSObject* JSTestMediaQueryListListenerPrototype::self(ExecState* exec, JSGlobalO
 bool JSTestMediaQueryListListenerPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestMediaQueryListListenerPrototype* thisObject = jsCast<JSTestMediaQueryListListenerPrototype*>(object);
-    return getStaticFunctionSlot<JSObject>(exec, &JSTestMediaQueryListListenerPrototypeTable, thisObject, propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, JSTestMediaQueryListListenerPrototypeTable, thisObject, propertyName, slot);
 }
 
 const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, &JSTestMediaQueryListListenerTable, 0 , CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };
@@ -125,7 +125,7 @@ bool JSTestMediaQueryListListener::getOwnPropertySlot(JSObject* object, ExecStat
 {
     JSTestMediaQueryListListener* thisObject = jsCast<JSTestMediaQueryListListener*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueSlot<JSTestMediaQueryListListener, Base>(exec, &JSTestMediaQueryListListenerTable, thisObject, propertyName, slot);
+    return getStaticValueSlot<JSTestMediaQueryListListener, Base>(exec, JSTestMediaQueryListListenerTable, thisObject, propertyName, slot);
 }
 
 JSValue jsTestMediaQueryListListenerConstructor(ExecState* exec, JSValue slotBase, PropertyName)

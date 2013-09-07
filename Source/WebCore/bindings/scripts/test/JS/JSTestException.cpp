@@ -65,7 +65,7 @@ void JSTestExceptionConstructor::finishCreation(ExecState* exec, JSDOMGlobalObje
 
 bool JSTestExceptionConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestExceptionConstructor, JSDOMWrapper>(exec, &JSTestExceptionConstructorTable, jsCast<JSTestExceptionConstructor*>(object), propertyName, slot);
+    return getStaticValueSlot<JSTestExceptionConstructor, JSDOMWrapper>(exec, JSTestExceptionConstructorTable, jsCast<JSTestExceptionConstructor*>(object), propertyName, slot);
 }
 
 /* Hash table for prototype */
@@ -117,7 +117,7 @@ bool JSTestException::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 {
     JSTestException* thisObject = jsCast<JSTestException*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueSlot<JSTestException, Base>(exec, &JSTestExceptionTable, thisObject, propertyName, slot);
+    return getStaticValueSlot<JSTestException, Base>(exec, JSTestExceptionTable, thisObject, propertyName, slot);
 }
 
 JSValue jsTestExceptionName(ExecState* exec, JSValue slotBase, PropertyName)

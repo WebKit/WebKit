@@ -66,7 +66,7 @@ void JSTestCustomNamedGetterConstructor::finishCreation(ExecState* exec, JSDOMGl
 
 bool JSTestCustomNamedGetterConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestCustomNamedGetterConstructor, JSDOMWrapper>(exec, &JSTestCustomNamedGetterConstructorTable, jsCast<JSTestCustomNamedGetterConstructor*>(object), propertyName, slot);
+    return getStaticValueSlot<JSTestCustomNamedGetterConstructor, JSDOMWrapper>(exec, JSTestCustomNamedGetterConstructorTable, jsCast<JSTestCustomNamedGetterConstructor*>(object), propertyName, slot);
 }
 
 /* Hash table for prototype */
@@ -88,7 +88,7 @@ JSObject* JSTestCustomNamedGetterPrototype::self(ExecState* exec, JSGlobalObject
 bool JSTestCustomNamedGetterPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestCustomNamedGetterPrototype* thisObject = jsCast<JSTestCustomNamedGetterPrototype*>(object);
-    return getStaticFunctionSlot<JSObject>(exec, &JSTestCustomNamedGetterPrototypeTable, thisObject, propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, JSTestCustomNamedGetterPrototypeTable, thisObject, propertyName, slot);
 }
 
 const ClassInfo JSTestCustomNamedGetter::s_info = { "TestCustomNamedGetter", &Base::s_info, &JSTestCustomNamedGetterTable, 0 , CREATE_METHOD_TABLE(JSTestCustomNamedGetter) };
@@ -129,7 +129,7 @@ bool JSTestCustomNamedGetter::getOwnPropertySlot(JSObject* object, ExecState* ex
         slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
         return true;
     }
-    return getStaticValueSlot<JSTestCustomNamedGetter, Base>(exec, &JSTestCustomNamedGetterTable, thisObject, propertyName, slot);
+    return getStaticValueSlot<JSTestCustomNamedGetter, Base>(exec, JSTestCustomNamedGetterTable, thisObject, propertyName, slot);
 }
 
 bool JSTestCustomNamedGetter::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned index, PropertySlot& slot)

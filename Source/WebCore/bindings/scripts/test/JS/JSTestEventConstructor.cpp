@@ -106,7 +106,7 @@ void JSTestEventConstructorConstructor::finishCreation(ExecState* exec, JSDOMGlo
 
 bool JSTestEventConstructorConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestEventConstructorConstructor, JSDOMWrapper>(exec, &JSTestEventConstructorConstructorTable, jsCast<JSTestEventConstructorConstructor*>(object), propertyName, slot);
+    return getStaticValueSlot<JSTestEventConstructorConstructor, JSDOMWrapper>(exec, JSTestEventConstructorConstructorTable, jsCast<JSTestEventConstructorConstructor*>(object), propertyName, slot);
 }
 
 ConstructType JSTestEventConstructorConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -164,7 +164,7 @@ bool JSTestEventConstructor::getOwnPropertySlot(JSObject* object, ExecState* exe
 {
     JSTestEventConstructor* thisObject = jsCast<JSTestEventConstructor*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueSlot<JSTestEventConstructor, Base>(exec, &JSTestEventConstructorTable, thisObject, propertyName, slot);
+    return getStaticValueSlot<JSTestEventConstructor, Base>(exec, JSTestEventConstructorTable, thisObject, propertyName, slot);
 }
 
 JSValue jsTestEventConstructorAttr1(ExecState* exec, JSValue slotBase, PropertyName)

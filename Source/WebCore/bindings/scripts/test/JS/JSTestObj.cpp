@@ -237,7 +237,7 @@ void JSTestObjConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* gl
 
 bool JSTestObjConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticPropertySlot<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, jsCast<JSTestObjConstructor*>(object), propertyName, slot);
+    return getStaticPropertySlot<JSTestObjConstructor, JSDOMWrapper>(exec, JSTestObjConstructorTable, jsCast<JSTestObjConstructor*>(object), propertyName, slot);
 }
 
 ConstructType JSTestObjConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -344,7 +344,7 @@ JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject
 bool JSTestObjPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestObjPrototype* thisObject = jsCast<JSTestObjPrototype*>(object);
-    return getStaticPropertySlot<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, thisObject, propertyName, slot);
+    return getStaticPropertySlot<JSTestObjPrototype, JSObject>(exec, JSTestObjPrototypeTable, thisObject, propertyName, slot);
 }
 
 const ClassInfo JSTestObj::s_info = { "TestObject", &Base::s_info, &JSTestObjTable, 0 , CREATE_METHOD_TABLE(JSTestObj) };
@@ -381,7 +381,7 @@ bool JSTestObj::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyNa
 {
     JSTestObj* thisObject = jsCast<JSTestObj*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueSlot<JSTestObj, Base>(exec, &JSTestObjTable, thisObject, propertyName, slot);
+    return getStaticValueSlot<JSTestObj, Base>(exec, JSTestObjTable, thisObject, propertyName, slot);
 }
 
 JSValue jsTestObjReadOnlyLongAttr(ExecState* exec, JSValue slotBase, PropertyName)
@@ -1089,7 +1089,7 @@ void JSTestObj::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JS
 {
     JSTestObj* thisObject = jsCast<JSTestObj*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    lookupPut<JSTestObj, Base>(exec, propertyName, value, &JSTestObjTable, thisObject, slot);
+    lookupPut<JSTestObj, Base>(exec, propertyName, value, JSTestObjTable, thisObject, slot);
 }
 
 void setJSTestObjConstructorStaticStringAttr(ExecState* exec, JSObject*, JSValue value)

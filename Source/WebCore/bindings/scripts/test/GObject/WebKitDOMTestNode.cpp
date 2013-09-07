@@ -23,6 +23,7 @@
 
 #include "CSSImportRule.h"
 #include "DOMObjectCache.h"
+#include "Document.h"
 #include "ExceptionCode.h"
 #include "GObjectEventListener.h"
 #include "JSMainThreadExecState.h"

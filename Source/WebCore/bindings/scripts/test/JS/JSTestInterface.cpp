@@ -172,7 +172,7 @@ void JSTestInterfaceConstructor::finishCreation(ExecState* exec, JSDOMGlobalObje
 
 bool JSTestInterfaceConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticPropertySlot<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, jsCast<JSTestInterfaceConstructor*>(object), propertyName, slot);
+    return getStaticPropertySlot<JSTestInterfaceConstructor, JSDOMWrapper>(exec, JSTestInterfaceConstructorTable, jsCast<JSTestInterfaceConstructor*>(object), propertyName, slot);
 }
 
 #if ENABLE(TEST_INTERFACE)
@@ -231,7 +231,7 @@ JSObject* JSTestInterfacePrototype::self(ExecState* exec, JSGlobalObject* global
 bool JSTestInterfacePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestInterfacePrototype* thisObject = jsCast<JSTestInterfacePrototype*>(object);
-    return getStaticPropertySlot<JSTestInterfacePrototype, JSObject>(exec, &JSTestInterfacePrototypeTable, thisObject, propertyName, slot);
+    return getStaticPropertySlot<JSTestInterfacePrototype, JSObject>(exec, JSTestInterfacePrototypeTable, thisObject, propertyName, slot);
 }
 
 const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, &JSTestInterfaceTable, 0 , CREATE_METHOD_TABLE(JSTestInterface) };
@@ -268,7 +268,7 @@ bool JSTestInterface::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 {
     JSTestInterface* thisObject = jsCast<JSTestInterface*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueSlot<JSTestInterface, Base>(exec, &JSTestInterfaceTable, thisObject, propertyName, slot);
+    return getStaticValueSlot<JSTestInterface, Base>(exec, JSTestInterfaceTable, thisObject, propertyName, slot);
 }
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
@@ -417,7 +417,7 @@ void JSTestInterface::put(JSCell* cell, ExecState* exec, PropertyName propertyNa
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (thisObject->putDelegate(exec, propertyName, value, slot))
         return;
-    lookupPut<JSTestInterface, Base>(exec, propertyName, value, &JSTestInterfaceTable, thisObject, slot);
+    lookupPut<JSTestInterface, Base>(exec, propertyName, value, JSTestInterfaceTable, thisObject, slot);
 }
 
 void JSTestInterface::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool shouldThrow)

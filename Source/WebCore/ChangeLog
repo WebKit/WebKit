@@ -1,5 +1,9 @@
 2013-09-06  Andreas Kling  <akling@apple.com>
 
+        Rebaseline bindings tests after Swedish breakage.
+
+2013-09-06  Andreas Kling  <akling@apple.com>
+
         Don't include Document.h from JSDOMBinding.h
         <https://webkit.org/b/120909>
 

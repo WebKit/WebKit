@@ -131,7 +131,7 @@ void JSTestOverloadedConstructorsConstructor::finishCreation(ExecState* exec, JS
 
 bool JSTestOverloadedConstructorsConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestOverloadedConstructorsConstructor, JSDOMWrapper>(exec, &JSTestOverloadedConstructorsConstructorTable, jsCast<JSTestOverloadedConstructorsConstructor*>(object), propertyName, slot);
+    return getStaticValueSlot<JSTestOverloadedConstructorsConstructor, JSDOMWrapper>(exec, JSTestOverloadedConstructorsConstructorTable, jsCast<JSTestOverloadedConstructorsConstructor*>(object), propertyName, slot);
 }
 
 ConstructType JSTestOverloadedConstructorsConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -189,7 +189,7 @@ bool JSTestOverloadedConstructors::getOwnPropertySlot(JSObject* object, ExecStat
 {
     JSTestOverloadedConstructors* thisObject = jsCast<JSTestOverloadedConstructors*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueSlot<JSTestOverloadedConstructors, Base>(exec, &JSTestOverloadedConstructorsTable, thisObject, propertyName, slot);
+    return getStaticValueSlot<JSTestOverloadedConstructors, Base>(exec, JSTestOverloadedConstructorsTable, thisObject, propertyName, slot);
 }
 
 JSValue jsTestOverloadedConstructorsConstructor(ExecState* exec, JSValue slotBase, PropertyName)

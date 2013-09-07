@@ -65,7 +65,7 @@ void JSTestNamedConstructorConstructor::finishCreation(ExecState* exec, JSDOMGlo
 
 bool JSTestNamedConstructorConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestNamedConstructorConstructor, JSDOMWrapper>(exec, &JSTestNamedConstructorConstructorTable, jsCast<JSTestNamedConstructorConstructor*>(object), propertyName, slot);
+    return getStaticValueSlot<JSTestNamedConstructorConstructor, JSDOMWrapper>(exec, JSTestNamedConstructorConstructorTable, jsCast<JSTestNamedConstructorConstructor*>(object), propertyName, slot);
 }
 
 EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::constructJSTestNamedConstructor(ExecState* exec)
@@ -161,7 +161,7 @@ bool JSTestNamedConstructor::getOwnPropertySlot(JSObject* object, ExecState* exe
 {
     JSTestNamedConstructor* thisObject = jsCast<JSTestNamedConstructor*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueSlot<JSTestNamedConstructor, Base>(exec, &JSTestNamedConstructorTable, thisObject, propertyName, slot);
+    return getStaticValueSlot<JSTestNamedConstructor, Base>(exec, JSTestNamedConstructorTable, thisObject, propertyName, slot);
 }
 
 JSValue jsTestNamedConstructorConstructor(ExecState* exec, JSValue slotBase, PropertyName)

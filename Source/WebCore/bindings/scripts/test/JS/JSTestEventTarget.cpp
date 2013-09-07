@@ -72,7 +72,7 @@ void JSTestEventTargetConstructor::finishCreation(ExecState* exec, JSDOMGlobalOb
 
 bool JSTestEventTargetConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestEventTargetConstructor, JSDOMWrapper>(exec, &JSTestEventTargetConstructorTable, jsCast<JSTestEventTargetConstructor*>(object), propertyName, slot);
+    return getStaticValueSlot<JSTestEventTargetConstructor, JSDOMWrapper>(exec, JSTestEventTargetConstructorTable, jsCast<JSTestEventTargetConstructor*>(object), propertyName, slot);
 }
 
 /* Hash table for prototype */
@@ -97,7 +97,7 @@ JSObject* JSTestEventTargetPrototype::self(ExecState* exec, JSGlobalObject* glob
 bool JSTestEventTargetPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestEventTargetPrototype* thisObject = jsCast<JSTestEventTargetPrototype*>(object);
-    return getStaticFunctionSlot<JSObject>(exec, &JSTestEventTargetPrototypeTable, thisObject, propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, JSTestEventTargetPrototypeTable, thisObject, propertyName, slot);
 }
 
 const ClassInfo JSTestEventTarget::s_info = { "TestEventTarget", &Base::s_info, &JSTestEventTargetTable, 0 , CREATE_METHOD_TABLE(JSTestEventTarget) };
@@ -149,7 +149,7 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* exec, Pr
         slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
         return true;
     }
-    return getStaticValueSlot<JSTestEventTarget, Base>(exec, &JSTestEventTargetTable, thisObject, propertyName, slot);
+    return getStaticValueSlot<JSTestEventTarget, Base>(exec, JSTestEventTargetTable, thisObject, propertyName, slot);
 }
 
 bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned index, PropertySlot& slot)
