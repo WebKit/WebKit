@@ -75,7 +75,7 @@
     color: rgba(0, 0, 0, 0.7);
     text-shadow: none;
     text-align: right;
-    margin-right: 0px;
+    margin-right: 0;
 }
 
 .network-graph-label.before::after {

@@ -284,7 +284,7 @@ InspectorBackendClass.prototype = {
 
         if (!this._pendingResponsesCount) {
             var scripts = this._scripts;
-            this._scripts = []
+            this._scripts = [];
             for (var id = 0; id < scripts.length; ++id)
                  scripts[id].call(this);
         }

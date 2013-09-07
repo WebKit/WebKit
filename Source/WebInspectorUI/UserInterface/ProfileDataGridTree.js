@@ -379,7 +379,7 @@ WebInspector.ProfileDataGridTree.propertyComparator = function(/*String*/ proper
                     return 1;
 
                 return 0;
-            }
+            };
         } else {
             comparator = function(lhs, rhs)
             {
@@ -390,7 +390,7 @@ WebInspector.ProfileDataGridTree.propertyComparator = function(/*String*/ proper
                     return 1;
 
                 return 0;
-            }
+            };
         }
 
         this.propertyComparators[(isAscending ? 1 : 0)][property] = comparator;

@@ -53,7 +53,7 @@ WebInspector.DOMTreeManager.Event = {
     ChildNodeCountUpdated: "dom-tree-manager-child-node-count-updated",
     DOMNodeWasInspected: "dom-tree-manager-dom-node-was-inspected",
     InspectModeStateChanged: "dom-tree-manager-inspect-mode-state-changed"
-}
+};
 
 WebInspector.DOMTreeManager.prototype = {
     /**
@@ -122,12 +122,11 @@ WebInspector.DOMTreeManager.prototype = {
     {
         if (!callback)
             return;
-        return function(error, result)
-        {
+        return function(error, result) {
             if (error)
                 console.error("Error during DOMAgent operation: " + error);
             callback(error ? null : result);
-        }
+        };
     },
 
     /**

@@ -219,7 +219,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _addBreakpointWithEditorLineInfo: function(breakpoint, lineInfo)
     {
         if (!this._breakpointMap[lineInfo.lineNumber])
-            this._breakpointMap[lineInfo.lineNumber] = {}
+            this._breakpointMap[lineInfo.lineNumber] = {};
 
         this._breakpointMap[lineInfo.lineNumber][lineInfo.columnNumber] = breakpoint;
     },

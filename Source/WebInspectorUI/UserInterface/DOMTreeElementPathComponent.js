@@ -38,7 +38,7 @@ WebInspector.DOMTreeElementPathComponent = function(domTreeElement, representedO
     case Node.TEXT_NODE:
         className = WebInspector.DOMTreeElementPathComponent.DOMTextNodeIconStyleClassName;
         title = "\"" + node.nodeValue().trimEnd(32) + "\"";
-        break
+        break;
 
     case Node.COMMENT_NODE:
         className = WebInspector.DOMTreeElementPathComponent.DOMCommentIconStyleClassName;

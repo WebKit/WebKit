@@ -430,7 +430,7 @@ WebInspector.Breakpoint.prototype = {
     _popoverActionsInsertBreakpointActionView: function(breakpointActionView, index)
     {
         if (index === -1)
-            this._actionsContainer.appendChild(breakpointActionView.element)
+            this._actionsContainer.appendChild(breakpointActionView.element);
         else {
             var nextElement = this._actionsContainer.children[index + 1] || null;
             this._actionsContainer.insertBefore(breakpointActionView.element, nextElement);

@@ -104,7 +104,7 @@ WebInspector.CSSColorPicker = function()
                 return;
 
             if (onstart)
-                onstart(element, e)
+                onstart(element, e);
 
             dragging = true;
             maxHeight = element.clientHeight;

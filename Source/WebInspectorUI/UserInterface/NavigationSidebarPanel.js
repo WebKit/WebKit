@@ -344,7 +344,7 @@ WebInspector.NavigationSidebarPanel.prototype = {
         var scrollTop = this._contentElement.scrollTop;
 
         var topCoverage = Math.min(scrollTop, edgeThreshold);
-        var bottomCoverage = Math.max(0, (offsetHeight + scrollTop) - (scrollHeight - edgeThreshold))
+        var bottomCoverage = Math.max(0, (offsetHeight + scrollTop) - (scrollHeight - edgeThreshold));
 
         if (this._topOverflowShadowElement)
             this._topOverflowShadowElement.style.opacity = (topCoverage / edgeThreshold).toFixed(1);

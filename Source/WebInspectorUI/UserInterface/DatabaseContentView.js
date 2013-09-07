@@ -45,7 +45,7 @@ WebInspector.DatabaseContentView = function(representedObject)
 
 WebInspector.DatabaseContentView.Event = {
     SchemaUpdated: "SchemaUpdated"
-}
+};
 
 WebInspector.DatabaseContentView.prototype = {
     constructor: WebInspector.DatabaseContentView,
@@ -152,7 +152,7 @@ WebInspector.DatabaseContentView.prototype = {
     _appendErrorQueryResult: function(query, errorText)
     {
         var resultElement = this._appendQueryResult(query);
-        resultElement.classList.add("error")
+        resultElement.classList.add("error");
         resultElement.textContent = errorText;
 
         this._promptElement.scrollIntoView(false);

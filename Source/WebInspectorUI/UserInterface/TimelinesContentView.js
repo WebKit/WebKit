@@ -264,7 +264,7 @@ WebInspector.TimelinesContentView.prototype = {
 
         // Restore scroll positon now that we are back in the document.
         if (this._currentDataGrid._savedIsScrolledToLastRow)
-            this._currentDataGrid.scrollToLastRow()
+            this._currentDataGrid.scrollToLastRow();
         else if (this._currentDataGrid._savedScrollTop)
             this._currentDataGrid.scrollContainer.scrollTop = this._currentDataGrid._savedScrollTop;
 

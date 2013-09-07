@@ -723,7 +723,7 @@ Object.defineProperty(String.prototype, "hash",
         for (var i = 0; i < this.length; ++i) {
             var currentCharacter = this[i].charCodeAt(0);
             if (pendingCharacter === null) {
-                pendingCharacter = currentCharacter
+                pendingCharacter = currentCharacter;
                 continue;
             }
 

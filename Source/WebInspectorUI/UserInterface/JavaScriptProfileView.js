@@ -393,7 +393,7 @@ WebInspector.JavaScriptProfileView.prototype = {
 
     _excludeClicked: function(event)
     {
-        var selectedNode = this.dataGrid.selectedNode
+        var selectedNode = this.dataGrid.selectedNode;
 
         if (!selectedNode)
             return;

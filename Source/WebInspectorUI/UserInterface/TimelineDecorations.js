@@ -35,7 +35,7 @@ WebInspector.TimelineDecorations = function()
     this._element.appendChild(this._headerElement);
 
     this._markersElement = document.createElement("div");
-    this._markersElement.className = WebInspector.TimelineDecorations.EventMarkersElementStyleClassName
+    this._markersElement.className = WebInspector.TimelineDecorations.EventMarkersElementStyleClassName;
     this._element.appendChild(this._markersElement);
 
     this.clear();
@@ -62,7 +62,7 @@ WebInspector.TimelineDecorations.prototype = {
 
     get headerElement()
     {
-        return this._headerElement
+        return this._headerElement;
     },
 
     clear: function()

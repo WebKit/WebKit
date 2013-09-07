@@ -71,7 +71,7 @@ WebInspector.FormatterSourceMap.prototype = {
             var columnNumber = position;
         else
             var columnNumber = position - lineEndings[lineNumber - 1] - 1;
-        return {lineNumber:lineNumber, columnNumber:columnNumber};
+        return {lineNumber: lineNumber, columnNumber: columnNumber};
     },
 
     _convertPosition: function(positions1, positions2, positionInPosition1)

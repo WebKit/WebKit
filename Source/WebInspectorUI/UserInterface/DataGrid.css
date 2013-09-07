@@ -70,7 +70,7 @@
 
     background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), -webkit-linear-gradient(top, transparent, transparent),
         -webkit-linear-gradient(top, white, white 25%, rgb(244, 244, 244) 50%, rgb(236, 236, 236) 50%, rgb(237, 237, 237));
-    background-size: 1px 11px, 0px 0px, 100% 100%;
+    background-size: 1px 11px, 0 0, 100% 100%;
     background-position: left 2px, right 2px, center;
     background-repeat: no-repeat;
 

@@ -426,7 +426,7 @@ WebInspector.NavigationBar.prototype = {
 
     _calculateMinimumWidth: function()
     {
-        var wasCollapsed = this._element.classList.contains(WebInspector.NavigationBar.CollapsedStyleClassName)
+        var wasCollapsed = this._element.classList.contains(WebInspector.NavigationBar.CollapsedStyleClassName);
 
         // Add the collapsed style class to calculate the width of the items when they are collapsed.
         if (!wasCollapsed)

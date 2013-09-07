@@ -29,7 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSKeywordCompletions = {}
+WebInspector.CSSKeywordCompletions = {};
 
 WebInspector.CSSKeywordCompletions.forProperty = function(propertyName)
 {
@@ -161,9 +161,6 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "margin-top-collapse": [
         "collapse", "separate", "discard"
-    ],
-    "max-height": [
-        "none"
     ],
     "-webkit-box-orient": [
         "horizontal", "vertical", "inline-axis", "block-axis"
@@ -513,9 +510,6 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "-webkit-font-smoothing": [
         "none", "auto", "antialiased", "subpixel-antialiased"
-    ],
-    "-webkit-hyphens": [
-        "none", "manual", "auto"
     ],
     "border": [
         "none", "hidden", "inset", "groove", "ridge", "outset", "dotted", "dashed", "solid", "double"
@@ -905,4 +899,4 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-overflow-scrolling": [
         "auto", "touch"
     ]
-}
+};

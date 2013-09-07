@@ -274,7 +274,7 @@ WebInspector.LogContentView.prototype = {
                 return;
 
             if (index > 0)
-                data += "\n"
+                data += "\n";
             data += messageObject.toClipboardString(isPrefixOptional);
         });
 
@@ -856,7 +856,7 @@ WebInspector.LogContentView.prototype = {
             this._matchingSearchElements = [];
             this.messagesElement.classList.remove(WebInspector.LogContentView.SearchInProgressStyleClassName);
             return;
-        };
+        }
 
         this.messagesElement.classList.add(WebInspector.LogContentView.SearchInProgressStyleClassName);
 
@@ -904,7 +904,7 @@ WebInspector.LogContentView.prototype = {
             });
 
             if (this._selectedSearchMatch && !this._selectedSearchMathIsValid && this._selectedSearchMatch.message === message) {
-                this._selectedSearchMathIsValid = this._rangesOverlap(this._selectedSearchMatch.range, range)
+                this._selectedSearchMathIsValid = this._rangesOverlap(this._selectedSearchMatch.range, range);
                 if (this._selectedSearchMathIsValid) {
                     delete this._selectedSearchMatch;
                     this._highlightSearchMatchAtIndex(this._searchMatches.length - 1);

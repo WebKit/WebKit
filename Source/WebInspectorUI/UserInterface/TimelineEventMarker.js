@@ -38,7 +38,7 @@ WebInspector.TimelineEventMarker.Type = {
     LoadEvent: "load-event",
     DOMContentEvent: "dom-content-event",
     TimeStamp: "timestamp"
-}
+};
 
 WebInspector.TimelineEventMarker.prototype = {
     constructor: WebInspector.TimelineEventMarker,

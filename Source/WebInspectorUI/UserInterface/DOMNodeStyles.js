@@ -143,7 +143,7 @@ WebInspector.DOMNodeStyles.prototype = {
                 if (inheritedRuleInfo.inlineStyle || inheritedRuleInfo.matchedRules.length)
                     this._inheritedRules.push(inheritedRuleInfo);
 
-                currentNode = currentNode.parentNode
+                currentNode = currentNode.parentNode;
                 ++i;
             }
         }

@@ -79,7 +79,7 @@ WebInspector.SearchResultTreeElement.truncateAndHighlightTitle = function(title,
     highlightedTitle.appendChild(document.createTextNode(modifiedTitle.substring(0, searchTermIndex)));
 
     var highlightSpan = document.createElement("span");
-    highlightSpan.className = WebInspector.SearchResultTreeElement.HighlightedStyleClassName
+    highlightSpan.className = WebInspector.SearchResultTreeElement.HighlightedStyleClassName;
     highlightSpan.appendChild(document.createTextNode(modifiedTitle.substring(searchTermIndex, searchTermIndex + searchTerm.length)));
     highlightedTitle.appendChild(highlightSpan);
 

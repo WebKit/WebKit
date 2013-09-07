@@ -80,7 +80,7 @@
 
 .layer-tree.panel .data-grid {
     position: relative;
-    top: 0px;
+    top: 0;
     width: 100%;
     height: 100%;
     /* Turn off the default borders, we want to snap to edges. */

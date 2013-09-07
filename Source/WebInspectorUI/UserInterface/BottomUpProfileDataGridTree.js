@@ -113,7 +113,7 @@ WebInspector.BottomUpProfileDataGridNode.prototype = {
             } else {
                 // If not, add it as a true ancestor.
                 // In heavy mode, we take our visual identity from ancestor node...
-                var child = new WebInspector.BottomUpProfileDataGridNode(this.profileView, ancestor, this.tree);
+                child = new WebInspector.BottomUpProfileDataGridNode(this.profileView, ancestor, this.tree);
 
                 if (ancestor !== focusNode) {
                     // but the actual statistics from the "root" node (bottom of the callstack).
@@ -174,7 +174,7 @@ WebInspector.BottomUpProfileDataGridTree = function(/*ProfileView*/ aProfileView
                 var totalTimeAccountedFor = false;
 
                 if (!visitedNodes) {
-                    visitedNodes = {}
+                    visitedNodes = {};
                     visitedProfileNodesForCallUID[profileNode.callUID] = visitedNodes;
                 } else {
                     // The total time for this node has already been accounted for iff one of it's parents has already been visited.
@@ -195,7 +195,7 @@ WebInspector.BottomUpProfileDataGridTree = function(/*ProfileView*/ aProfileView
 
             var children = profileNode.children;
             if (children.length) {
-                profileNodeGroups.push(parentProfileNodes.concat([profileNode]))
+                profileNodeGroups.push(parentProfileNodes.concat([profileNode]));
                 profileNodeGroups.push(children);
             }
         }

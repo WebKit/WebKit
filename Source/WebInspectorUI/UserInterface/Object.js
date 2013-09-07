@@ -26,7 +26,8 @@
 /**
  * @constructor
  */
-WebInspector.Object = function() {
+WebInspector.Object = function()
+{
 }
 
 /**

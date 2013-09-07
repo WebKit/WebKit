@@ -453,7 +453,7 @@ WebInspector.Color.prototype = {
      */
     _rgbaToHSLA: function(rgba, alpha)
     {
-        var hsl = this._rgbToHSL(rgba)
+        var hsl = this._rgbToHSL(rgba);
         hsl.push(alpha);
         return hsl;
     },

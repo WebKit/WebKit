@@ -169,7 +169,7 @@ WebInspector.CodeMirrorCompletionController.prototype = {
         this._forced = false;
 
         if (this._completionDelayTimeout) {
-            clearTimeout(this._completionDelayTimeout)
+            clearTimeout(this._completionDelayTimeout);
             delete this._completionDelayTimeout;
         }
 

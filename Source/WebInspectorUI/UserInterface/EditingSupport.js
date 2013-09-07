@@ -83,7 +83,7 @@ WebInspector.isEventTargetAnEditableField = function(event)
 WebInspector.EditingConfig = function(commitHandler, cancelHandler, context)
 {
     this.commitHandler = commitHandler;
-    this.cancelHandler = cancelHandler
+    this.cancelHandler = cancelHandler;
     this.context = context;
 
     /**

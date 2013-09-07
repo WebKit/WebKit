@@ -499,7 +499,7 @@ WebInspector.DebuggerSidebarPanel.prototype = {
         var aLocation = a.breakpoint.sourceCodeLocation;
         var bLocation = b.breakpoint.sourceCodeLocation;
 
-        var comparisonResult = aLocation.displayLineNumber - bLocation.displayLineNumber
+        var comparisonResult = aLocation.displayLineNumber - bLocation.displayLineNumber;
         if (comparisonResult !== 0)
             return comparisonResult;
 

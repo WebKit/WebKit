@@ -96,7 +96,7 @@ WebInspector.FrameResourceManager.prototype = {
             // Make a new resource (which will make the frame). Mark will mark it as loaded at the end too since we
             // don't expect any more events about the load finishing for these frames.
             var frameResource = this._addNewResourceToFrame(null, framePayload.id, framePayload.loaderId, framePayload.url, null, null, null, null, null, framePayload.name, framePayload.securityOrigin);
-            var frame = frameResource.parentFrame;
+            frame = frameResource.parentFrame;
             frameWasLoadedInstantly = true;
 
             console.assert(frame);
@@ -126,7 +126,7 @@ WebInspector.FrameResourceManager.prototype = {
             console.assert(parentFrame);
 
             if (frame === this._mainFrame)
-                this._mainFrame = null
+                this._mainFrame = null;
 
             if (frame.parentFrame !== parentFrame)
                 parentFrame.addChildFrame(frame);

@@ -279,13 +279,13 @@ WebInspector.GeneralTreeElement.prototype = {
 
     // Protected
 
-    callFirstAncestorFunction: function(functionName, arguments)
+    callFirstAncestorFunction: function(functionName, args)
     {
         // Call the first ancestor that implements a function named functionName (if any).
         var currentNode = this.parent;
         while (currentNode) {
             if (typeof currentNode[functionName] === "function") {
-                currentNode[functionName].apply(currentNode, arguments);
+                currentNode[functionName].apply(currentNode, args);
                 break;
             }
 

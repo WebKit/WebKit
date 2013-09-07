@@ -1,3 +1,16 @@
+2013-09-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Lint JavaScript and CSS for minor issues
+        https://bugs.webkit.org/show_bug.cgi?id=120884
+
+        Reviewed by Timothy Hatcher.
+
+        JS, caught a bunch of missing semicolons but at least one possible
+        issue with duplicate object literal keys in CSSKeywordCompletions.
+
+        CSS, cause some duplicate properties, an invalid property value,
+        and some "0px" => "0" cleanup.
+
 2013-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Breakpoint Action JS Editor has line wrapping issues with long no-space lines

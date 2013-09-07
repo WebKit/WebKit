@@ -202,7 +202,7 @@ FormatterContentBuilder.prototype = {
         var indent = this._indent;
         do {
             if (indent >= maxCacheIndent)
-                this._append(this._indentCache[maxCacheIndent])
+                this._append(this._indentCache[maxCacheIndent]);
             else
                 this._append(this._indentCache[indent]);
             indent -= maxCacheIndent;

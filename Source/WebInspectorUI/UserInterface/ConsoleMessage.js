@@ -92,7 +92,7 @@ WebInspector.ConsoleMessage.MessageSource = {
     Network: "network",
     ConsoleAPI: "console-api",
     Other: "other"
-}
+};
 
 WebInspector.ConsoleMessage.MessageType = {
     Log: "log",
@@ -104,7 +104,7 @@ WebInspector.ConsoleMessage.MessageType = {
     EndGroup: "endGroup",
     Assert: "assert",
     Result: "result"
-}
+};
 
 WebInspector.ConsoleMessage.MessageLevel = {
     Tip: "tip",
@@ -112,4 +112,4 @@ WebInspector.ConsoleMessage.MessageLevel = {
     Warning: "warning",
     Error: "error",
     Debug: "debug"
-}
+};

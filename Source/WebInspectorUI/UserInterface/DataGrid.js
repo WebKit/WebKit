@@ -192,7 +192,7 @@ WebInspector.DataGrid.Event = {
     DidLayout: "datagrid-did-layout",
     SortChanged: "datagrid-sort-changed",
     SelectedNodeChanged: "datagrid-selected-node-changed"
-}
+};
 
 /**
  * @param {Array.<string>} columnNames
@@ -1286,7 +1286,7 @@ WebInspector.DataGrid.ResizeMethod = {
     Nearest: "nearest",
     First: "first",
     Last: "last"
-}
+};
 
 WebInspector.DataGrid.prototype.__proto__ = WebInspector.Object.prototype;
 

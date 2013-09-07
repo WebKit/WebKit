@@ -30,10 +30,6 @@
 
     overflow-x: hidden;
     overflow-y: auto;
-
-    display: -webkit-flex;
-
-    -webkit-justify-content: center;
 }
 
 .content-view.resource.font .preview {

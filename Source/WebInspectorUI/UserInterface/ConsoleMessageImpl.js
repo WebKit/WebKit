@@ -349,7 +349,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
     _formatWithSubstitutionString: function(parameters, formattedResult)
     {
-        var formatters = {}
+        var formatters = {};
 
         function parameterFormatter(force, obj)
         {
@@ -688,8 +688,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
                 if (frame.url)
                     clipboardString += " (" + WebInspector.displayNameForURL(frame.url) + ", line " + frame.lineNumber + ")";
             });
-        }
-        else {
+        } else {
             var repeatString = this.repeatCount > 1 ? "x" + this.repeatCount : "";
 
             var urlLine = "";
@@ -710,7 +709,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
         return clipboardString;
     }
-
 }
 
 WebInspector.ConsoleMessageImpl.prototype.__proto__ = WebInspector.ConsoleMessage.prototype;
