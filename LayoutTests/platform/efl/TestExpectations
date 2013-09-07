@@ -586,10 +586,6 @@ webkit.org/b/104809 media/video-timeupdate-during-playback.html [ Crash Pass ]
 
 webkit.org/b/111521 editing/selection/selection-invalid-offset.html [ Crash Pass ]
 
-# ASSERTION FAILED: static_cast<unsigned>(m_start + length) <= string.length().
-webkit.org/b/116024 fast/table/crash-section-logical-height-changed-needsCellRecalc.html [ Crash ]
-webkit.org/b/116024 fast/table/crash-split-table-section-no-cell-recalc.html [ Crash Pass ]
-
 # Sometimes crashes in PlatformContextCairo::drawSurfaceToContext().
 webkit.org/b/116025 compositing/video/video-background-color.html [ Crash Pass ]
 
@@ -730,8 +726,6 @@ webkit.org/b/107024 compositing/video-page-visibility.html [ Pass Failure ]
 webkit.org/b/78819 fast/workers/shared-worker-load-error.html [ Failure Pass ]
 
 # Libsoup 2.42.0 regressions
-webkit.org/b/114918 http/tests/cache/reload-main-resource.php [ Failure ]
-webkit.org/b/114918 http/tests/cache/xhr-vary-header.html [ Failure ]
 webkit.org/b/114918 http/tests/xmlhttprequest/cache-override.html [ Failure Pass ]
 webkit.org/b/114918 http/tests/xmlhttprequest/range-test.html [ Failure Pass ]
 
@@ -1050,7 +1044,6 @@ Bug(EFL) fast/images/pdf-as-tiled-background.html
 Bug(EFL) fast/replaced/pdf-as-image.html
 
 # Started failing after sub-pixel layout was enabled.
-Bug(EFL) fast/replaced/table-percent-height-text-controls.html [ Failure ]
 Bug(EFL) fast/regions/overflow-last-region-vert-lr.html [ ImageOnlyFailure ]
 Bug(EFL) fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
 
@@ -1260,7 +1253,6 @@ Bug(EFL) fast/media/media-query-list-03.html [ Failure ]
 Bug(EFL) fast/media/media-query-list-04.html [ Failure ]
 Bug(EFL) fast/media/media-query-list-05.html [ Failure ]
 Bug(EFL) fast/media/media-query-list-06.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-07.html [ Failure ]
 
 # EFL's TestRunner should support for the Geolocation API
 webkit.org/b/82140 fast/dom/Geolocation [ Skip ]
@@ -1326,8 +1318,6 @@ webkit.org/b/91339 css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailu
 
 # Failing after r121121 on both GTK and EFL
 webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
-
-webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
 
 # These tests are failing after r122528.
 webkit.org/b/91210 http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html [ Failure ]
@@ -1617,7 +1607,6 @@ webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
 # Fail to generate proper pixel results - let's wait with rebaselining.
 webkit.org/b/106992 scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ Failure Pass ]
 webkit.org/b/106992 scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ Failure Pass ]
-webkit.org/b/106992 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm [ Failure ]
 webkit.org/b/106992 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure ]
 
 webkit.org/b/107375 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
@@ -1670,9 +1659,6 @@ webkit.org/b/110654 css3/flexbox/button.html [ Failure ]
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 
 webkit.org/b/111058 plugins/plugin-clip-subframe.html [ Failure ]
-
-# Button has focus but should not.
-webkit.org/b/114150 fast/forms/datalist/update-range-with-datalist.html [ ImageOnlyFailure ]
 
 # Newly added tests in r144190 are failing.
 webkit.org/b/111172 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure ]
