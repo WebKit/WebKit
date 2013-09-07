@@ -1299,3 +1299,7 @@ webkit.org/b/120387 svg/animations/svglengthlist-animation-3.html [ Pass Failure
 
 # Don't run ogv and mkv tests on mac
 media/track/in-band [ WontFix ]
+
+webkit.org/b/120922 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure ]
+webkit.org/b/120922 compositing/overlap-blending/children-opacity-no-overlap.html [ ImageOnlyFailure ]
+
