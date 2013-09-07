@@ -1,5 +1,22 @@
 2013-09-06  Andreas Kling  <akling@apple.com>
 
+        Remove old workaround for Nokia's Harmattan GCC on Qt/ARM.
+        <https://webkit.org/b/37253>
+
+        Reviewed by Anders Carlsson.
+
+        Apparently this was a workaround for GCC getting stuck in an infinite loop
+        when building for ARM in a Nokia SDK over 2 years ago.
+
+        I think it's safe to remove this now, but if I'm wrong, and you're reading
+        this ChangeLog wondering why I did this to you, feel free to put it back in.
+
+        * wtf/PassRefPtr.h:
+        (WTF::refIfNotNull):
+        (WTF::derefIfNotNull):
+
+2013-09-06  Andreas Kling  <akling@apple.com>
+
         Remove unused RefPtr(PlacementNewAdopt) constructor.
         <https://webkit.org/b/120914>
 

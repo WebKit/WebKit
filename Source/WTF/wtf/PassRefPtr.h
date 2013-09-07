@@ -32,27 +32,17 @@ namespace WTF {
 
     inline void adopted(const void*) { }
 
-#if !(PLATFORM(QT) && CPU(ARM))
-    #define REF_DEREF_INLINE ALWAYS_INLINE
-#else
-    // Older version of gcc used by Harmattan SDK fails to build with ALWAYS_INLINE.
-    // See https://bugs.webkit.org/show_bug.cgi?id=37253 for details.
-    #define REF_DEREF_INLINE inline
-#endif
-
-    template<typename T> REF_DEREF_INLINE void refIfNotNull(T* ptr)
+    template<typename T> ALWAYS_INLINE void refIfNotNull(T* ptr)
     {
         if (LIKELY(ptr != 0))
             ptr->ref();
     }
 
-    template<typename T> REF_DEREF_INLINE void derefIfNotNull(T* ptr)
+    template<typename T> ALWAYS_INLINE void derefIfNotNull(T* ptr)
     {
         if (LIKELY(ptr != 0))
             ptr->deref();
     }
-
-    #undef REF_DEREF_INLINE
 
     template<typename T> class PassRefPtr {
     public:
