@@ -50,7 +50,7 @@ EOF
 GetOptions(
     'coverage!' => \$coverageSupport,
     'help' => \$showHelp,
-    'ftl-jit' => \$ftlJIT
+    'ftl-jit!' => \$ftlJIT
 );
 
 if ($showHelp) {

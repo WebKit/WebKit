@@ -1,3 +1,16 @@
+2013-09-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Only run FTL tests if we have the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=120974
+
+        Reviewed by Geoffrey Garen.
+        
+        The test infrastructure is now smart enough to not pass --useExperimentalFTL=true
+        unless it knows that we have the FTL.
+
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+
 2013-09-07  Anders Carlsson  <andersca@apple.com>
 
         Get rid of PassOwnArrayPtr

@@ -34,6 +34,7 @@ rescue => e
 end
 
 $jscPath = nil
+$enableFTL = false
 $collections = []
 $outputDir = Pathname.new("results")
 
@@ -41,6 +42,7 @@ def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
     puts
     puts "--jsc            (-j)   Path to JavaScriptCore. This option is required."
+    puts "--ftl-jit               Indicate that we have the FTL JIT."
     puts "--output-dir     (-o)   Path where to put results. Default is #{$outputDir}."
     puts "--help           (-h)   Print this message."
     exit 1
@@ -48,6 +50,7 @@ end
 
 GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--jsc', '-j', GetoptLong::REQUIRED_ARGUMENT],
+               ['--ftl-jit', GetoptLong::NO_ARGUMENT],
                ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT]).each {
     | opt, arg |
     case opt
@@ -57,6 +60,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $jscPath = Pathname.new(arg).realpath
     when '--output-dir'
         $outputDir = Pathname.new(arg)
+    when '--ftl-jit'
+        $enableFTL = true
     end
 }
 
@@ -66,6 +71,8 @@ unless $jscPath
 end
 
 $numFailures = 0
+
+EAGER_OPTIONS = ["--enableConcurrentJIT=false", "--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20"]
 
 def run(kind, *options)
     name = "#{$benchmark}.#{kind}"
@@ -109,16 +116,24 @@ def runFTLNoCJIT
     run("ftl-no-cjit", "--enableConcurrentJIT=false", "--useExperimentalFTL=true")
 end
 
+def runDFGEager
+    run("dfg-eager", *EAGER_OPTIONS)
+end
+
 def runFTLEager
-    run("ftl-eager", "--enableConcurrentJIT=false", "--useExperimentalFTL=true", "--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20")
+    run("ftl-eager", "--useExperimentalFTL=true", *EAGER_OPTIONS)
 end
 
 def defaultRun
     runDefault
     runNoCJIT
-    runDefaultFTL
-    runFTLNoCJIT
-    runFTLEager
+    if $enableFTL
+        runDefaultFTL
+        runFTLNoCJIT
+        runFTLEager
+    else
+        runDFGEager
+    end
 end
 
 def skip

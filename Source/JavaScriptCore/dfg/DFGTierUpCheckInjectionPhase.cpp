@@ -82,6 +82,7 @@ public:
         
         return true;
 #else // ENABLE(FTL_JIT)
+        RELEASE_ASSERT_NOT_REACHED();
         return false;
 #endif // ENABLE(FTL_JIT)
     }
