@@ -30,8 +30,6 @@
 
 namespace WTF {
 
-    enum PlacementNewAdoptType { PlacementNewAdopt };
-
     template<typename T> class PassRefPtr;
 
     enum HashTableDeletedValueType { HashTableDeletedValue };
@@ -51,9 +49,6 @@ namespace WTF {
 
         // See comments in PassRefPtr.h for an explanation of why this takes a const reference.
         template<typename U> RefPtr(const PassRefPtr<U>&);
-
-        // Special constructor for cases where we overwrite an object in place.
-        ALWAYS_INLINE RefPtr(PlacementNewAdoptType) { }
 
         // Hash table deleted values, which are only constructed and never copied or destroyed.
         RefPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }

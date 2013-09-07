@@ -1,3 +1,12 @@
+2013-09-06  Andreas Kling  <akling@apple.com>
+
+        Remove unused RefPtr(PlacementNewAdopt) constructor.
+        <https://webkit.org/b/120914>
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/RefPtr.h:
+
 2013-09-06  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r155171): INSTALL_PATH_PREFIX should no longer be used beneath BUILT_PRODUCTS_DIR in HEADER_SEARCH_PATHS for iOS
