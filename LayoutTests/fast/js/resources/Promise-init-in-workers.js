@@ -1,4 +1,4 @@
-importScripts('./js-test-pre.js');
+importScripts('../../../resources/js-test-pre.js');
 
 var global = this;
 global.jsTestIsAsync = true;

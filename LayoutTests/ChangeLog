@@ -1,5 +1,22 @@
 2013-09-07  Mark Lam  <mark.lam@apple.com>
 
+        Change fast/js/resources files to use pre and post js files in LayoutTests/resources.
+        https://bugs.webkit.org/show_bug.cgi?id=120958.
+
+        Rubber stamped by Filip Pizlo.
+
+        * fast/js/resources/Promise-catch-in-workers.js:
+        * fast/js/resources/Promise-fulfill-in-workers.js:
+        * fast/js/resources/Promise-init-in-workers.js:
+        * fast/js/resources/Promise-reject-in-workers.js:
+        * fast/js/resources/Promise-resolve-in-workers.js:
+        * fast/js/resources/Promise-simple-in-workers.js:
+        * fast/js/resources/Promise-then-in-workers.js:
+        * fast/js/resources/Promise-then-without-callbacks-in-workers.js:
+        * fast/js/resources/document-all-between-frames-subframe.html:
+
+2013-09-07  Mark Lam  <mark.lam@apple.com>
+
         Copy test pre and post js files to LayoutTests/resources.
         https://bugs.webkit.org/show_bug.cgi?id=120957.
 
