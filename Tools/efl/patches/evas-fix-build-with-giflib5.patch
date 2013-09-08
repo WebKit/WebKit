@@ -1,0 +1,54 @@
+Patch from Doug Newgard, available at https://phab.enlightenment.org/D200
+
+diff --git a/src/modules/loaders/gif/evas_image_load_gif.c b/src/modules/loaders/gif/evas_image_load_gif.c
+index 18a6e23..6b6ef3d 100644
+--- a/src/modules/loaders/gif/evas_image_load_gif.c
++++ b/src/modules/loaders/gif/evas_image_load_gif.c
+@@ -700,7 +700,11 @@ evas_image_load_file_head_gif(Image_Entry *ie, const char *file, const char *key
+         return EINA_FALSE;
+      }
+ 
++#if GIFLIB_MAJOR >= 5
++   gif = DGifOpenFileHandle(fd, NULL);
++#else
+    gif = DGifOpenFileHandle(fd);
++#endif
+    if (!gif)
+      {
+         if (fd) close(fd);
+@@ -838,7 +842,11 @@ evas_image_load_specific_frame(Image_Entry *ie, const char *file, int frame_inde
+         return EINA_FALSE;
+      }
+ 
++#if GIFLIB_MAJOR >= 5
++   gif = DGifOpenFileHandle(fd, NULL);
++#else
+    gif = DGifOpenFileHandle(fd);
++#endif
+    if (!gif)
+      {
+         if (fd) close(fd);
+@@ -927,7 +935,11 @@ evas_image_load_file_data_gif(Image_Entry *ie, const char *file, const char *key
+                   return EINA_FALSE;
+                }
+ 
++#if GIFLIB_MAJOR >= 5
++             gif = DGifOpenFileHandle(fd, NULL);
++#else
+              gif = DGifOpenFileHandle(fd);
++#endif
+              if (!gif)
+                {
+                   if (fd) close(fd);
+@@ -1000,7 +1012,11 @@ evas_image_load_frame_duration_gif(Image_Entry *ie, const char *file, const int
+ #endif
+    if (fd < 0) return -1;
+ 
++#if GIFLIB_MAJOR >=5
++   gif = DGifOpenFileHandle(fd, NULL);
++#else
+    gif = DGifOpenFileHandle(fd);
++#endif
+    if (!gif)
+      {
+         if (fd) close(fd);

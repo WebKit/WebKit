@@ -173,6 +173,7 @@
             repo="download.enlightenment.org"
             hash="sha256:70b350a970b2086787622845896f3e54de278fe698b8069796fd752e70427374"
             md5sum="2c965b836128a839292161d4ca89380d">
+      <patch file="evas-fix-build-with-giflib5.patch" strip="1"/>
     </branch>
     <dependencies>
       <dep package="eet"/>

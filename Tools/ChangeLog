@@ -1,3 +1,15 @@
+2013-09-08  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [EFL][JHBUILD] Fix evas build with giflib5
+        https://bugs.webkit.org/show_bug.cgi?id=120863
+
+        Original patch from Doug Newgard, at https://phab.enlightenment.org/D200.
+
+        Reviewed by Anders Carlsson.
+
+        * efl/jhbuild.modules: Apply patch to fix evas build with giflib5.
+        * efl/patches/evas-fix-build-with-giflib5.patch: Added.
+
 2013-09-07  Filip Pizlo  <fpizlo@apple.com>
 
         Only run FTL tests if we have the FTL
