@@ -8,5 +8,8 @@ PASS window.getComputedStyle(shapeElement).webkitShapeInside is "rectangle(0px, 
 PASS window.getComputedStyle(shapeElement).webkitShapeOutside is "rectangle(0px, 0px, 0px, 0px, 0px, 0px)"
 PASS window.getComputedStyle(shapeElement).webkitShapeInside is "none"
 PASS window.getComputedStyle(shapeElement).webkitShapeOutside is "none"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
 

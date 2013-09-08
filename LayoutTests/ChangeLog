@@ -1,3 +1,11 @@
+2013-09-08  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/security/shape-inside-image-origin.html started to fail with
+        http://trac.webkit.org/changeset/155279
+
+        * http/tests/security/shape-inside-image-origin-expected.txt: Updated expected
+        result, which shows that the test now successfully loads js-test-post.js.
+
 2013-09-08  Filip Pizlo  <fpizlo@apple.com>
 
         fast/js/dfg-* tests should wait for the concurrent JIT
