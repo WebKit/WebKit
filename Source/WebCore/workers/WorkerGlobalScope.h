@@ -65,8 +65,8 @@ namespace WebCore {
         virtual bool isSharedWorkerGlobalScope() const { return false; }
         virtual bool isDedicatedWorkerGlobalScope() const { return false; }
 
-        const KURL& url() const { return m_url; }
-        KURL completeURL(const String&) const;
+        virtual const KURL& url() const OVERRIDE FINAL { return m_url; }
+        virtual KURL completeURL(const String&) const OVERRIDE FINAL;
 
         const GroupSettings* groupSettings() { return m_groupSettings.get(); }
         virtual String userAgent(const KURL&) const;
@@ -156,9 +156,6 @@ namespace WebCore {
         virtual void derefEventTarget() OVERRIDE { deref(); }
         virtual EventTargetData* eventTargetData() OVERRIDE;
         virtual EventTargetData& ensureEventTargetData() OVERRIDE;
-
-        virtual const KURL& virtualURL() const OVERRIDE;
-        virtual KURL virtualCompleteURL(const String&) const;
 
         virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack>, ScriptState* = 0, unsigned long requestIdentifier = 0) OVERRIDE;
         virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) OVERRIDE;

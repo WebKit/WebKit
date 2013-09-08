@@ -122,16 +122,6 @@ ScriptExecutionContext* WorkerGlobalScope::scriptExecutionContext() const
     return const_cast<WorkerGlobalScope*>(this);
 }
 
-const KURL& WorkerGlobalScope::virtualURL() const
-{
-    return m_url;
-}
-
-KURL WorkerGlobalScope::virtualCompleteURL(const String& url) const
-{
-    return completeURL(url);
-}
-
 KURL WorkerGlobalScope::completeURL(const String& url) const
 {
     // Always return a null URL when passed a null string.

@@ -2575,16 +2575,6 @@ void Document::writeln(const String& text, Document* ownerDocument)
     write("\n", ownerDocument);
 }
 
-const KURL& Document::virtualURL() const
-{
-    return m_url;
-}
-
-KURL Document::virtualCompleteURL(const String& url) const
-{
-    return completeURL(url);
-}
-
 double Document::minimumTimerInterval() const
 {
     Page* p = page();

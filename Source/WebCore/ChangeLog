@@ -1,3 +1,19 @@
+2013-09-08  Andreas Kling  <akling@apple.com>
+
+        ScriptExecutionContext: Use FINAL instead of foo() { virtualFoo() }
+        <https://webkit.org/b/120827>
+
+        Reviewed by Darin Adler.
+
+        Now that we have FINAL, we can just use that to have fast versions of url()
+        and completeURL() when calling through a Document or WorkerGlobalScope pointer.
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * workers/WorkerGlobalScope.cpp:
+        * workers/WorkerGlobalScope.h:
+
 2013-09-08  Antti Koivisto  <antti@apple.com>
 
         Rename needsShadowTreeWalker
