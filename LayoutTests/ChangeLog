@@ -1,5 +1,147 @@
 2013-09-07  Mark Lam  <mark.lam@apple.com>
 
+        Change LayoutTests' a* and b* files to use pre and post js files in LayoutTests/resources.
+        https://bugs.webkit.org/show_bug.cgi?id=120985.
+
+        Rubber stamped by Filip Pizlo.
+
+        * accessibility/accessibility-node-memory-management.html:
+        * accessibility/accessibility-node-reparent.html:
+        * accessibility/accessibility-object-detached.html:
+        * accessibility/adjacent-continuations-cause-assertion-failure.html:
+        * accessibility/anonymous-render-block-in-continuation-causes-crash.html:
+        * accessibility/aria-checkbox-checked.html:
+        * accessibility/aria-checkbox-sends-notification.html:
+        * accessibility/aria-checkbox-text.html:
+        * accessibility/aria-combobox.html:
+        * accessibility/aria-controls-with-tabs.html:
+        * accessibility/aria-disabled.html:
+        * accessibility/aria-fallback-roles.html:
+        * accessibility/aria-help.html:
+        * accessibility/aria-hidden-hides-all-elements.html:
+        * accessibility/aria-hidden-update.html:
+        * accessibility/aria-hidden-updates-alldescendants.html:
+        * accessibility/aria-hidden-with-elements.html:
+        * accessibility/aria-hidden.html:
+        * accessibility/aria-invalid.html:
+        * accessibility/aria-label.html:
+        * accessibility/aria-labelledby-overrides-label.html:
+        * accessibility/aria-list-and-listitem.html:
+        * accessibility/aria-menubar-menuitems.html:
+        * accessibility/aria-option-role.html:
+        * accessibility/aria-presentational-role.html:
+        * accessibility/aria-readonly.html:
+        * accessibility/aria-required.html:
+        * accessibility/aria-scrollbar-role.html:
+        * accessibility/aria-sort.html:
+        * accessibility/aria-tab-role-on-buttons.html:
+        * accessibility/aria-tab-roles.html:
+        * accessibility/aria-text-role.html:
+        * accessibility/aria-toggle-button-with-title.html:
+        * accessibility/aria-used-on-image-maps.html:
+        * accessibility/button-title-uses-inner-img-alt.html:
+        * accessibility/canvas-accessibilitynodeobject.html:
+        * accessibility/canvas-description-and-role.html:
+        * accessibility/canvas-fallback-content-2.html:
+        * accessibility/canvas-fallback-content.html:
+        * accessibility/color-well.html:
+        * accessibility/container-node-delete-causes-crash.html:
+        * accessibility/content-changed-notification-causes-crash.html:
+        * accessibility/contenteditable-hidden-div.html:
+        * accessibility/contenteditable-table-check-causes-crash.html:
+        * accessibility/corresponding-control-deleted-crash.html:
+        * accessibility/crash-adopt-node-from-new-document.html:
+        * accessibility/crash-determining-aria-role-when-label-present.html:
+        * accessibility/crash-with-noelement-selectbox.html:
+        * accessibility/crashing-a-tag-in-map.html:
+        * accessibility/deleting-iframe-destroys-axcache.html:
+        * accessibility/disabled-controls-not-focusable.html:
+        * accessibility/div-within-anchors-causes-crash.html:
+        * accessibility/duplicate-axrenderobject-crash.html:
+        * accessibility/duplicate-child-nodes.html:
+        * accessibility/element-haspopup.html:
+        * accessibility/ellipsis-text.html:
+        * accessibility/empty-image-with-title.html:
+        * accessibility/file-upload-button-with-axpress.html:
+        * accessibility/first-letter-text-transform-causes-crash.html:
+        * accessibility/focusable-div.html:
+        * accessibility/global-aria-attributes-invalidate-presentational.html:
+        * accessibility/hang-in-isignored.html:
+        * accessibility/heading-level.html:
+        * accessibility/heading-title-includes-links.html:
+        * accessibility/hidden-legend.html:
+        * accessibility/html-html-element-is-ignored.html:
+        * accessibility/html5-required-attribute.html:
+        * accessibility/iframe-bastardization.html:
+        * accessibility/image-map-title-causes-crash.html:
+        * accessibility/image-map-update-parent-crash.html:
+        * accessibility/image-map1.html:
+        * accessibility/img-alt-tag-only-whitespace.html:
+        * accessibility/img-aria-button-alt-tag.html:
+        * accessibility/img-fallsback-to-title.html:
+        * accessibility/inline-continuations.html:
+        * accessibility/input-file-causes-crash.html:
+        * accessibility/input-image-alt.html:
+        * accessibility/insert-selected-option-into-select-causes-crash.html:
+        * accessibility/label-element-press.html:
+        * accessibility/label-for-control-hittest.html:
+        * accessibility/legend.html:
+        * accessibility/link-inside-button-accessible-text.html:
+        * accessibility/listbox-enabled-states.html:
+        * accessibility/loading-iframe-sends-notification.html:
+        * accessibility/loading-iframe-updates-axtree.html:
+        * accessibility/media-controls.html:
+        * accessibility/media-element.html:
+        * accessibility/menu-item-crash.html:
+        * accessibility/menu-list-sends-change-notification.html:
+        * accessibility/meter-element.html:
+        * accessibility/multiselect-list-reports-active-option.html:
+        * accessibility/non-native-image-crash.html:
+        * accessibility/noscript-ignored.html:
+        * accessibility/notification-listeners.html:
+        * accessibility/placeholder.html:
+        * accessibility/platform-name.html:
+        * accessibility/poorly-formed-aria-table.html:
+        * accessibility/popup-button-title.html:
+        * accessibility/presentational-elements-with-focus.html:
+        * accessibility/press-works-on-control-types.html:
+        * accessibility/radio-button-title-label.html:
+        * accessibility/removed-anonymous-block-child-causes-crash.html:
+        * accessibility/removed-continuation-element-causes-crash.html:
+        * accessibility/render-counter-text.html:
+        * accessibility/selection-states.html:
+        * accessibility/spinbutton-value.html:
+        * accessibility/svg-bounds.html:
+        * accessibility/svg-group-element-with-title.html:
+        * accessibility/svg-image.html:
+        * accessibility/svg-remote-element.html:
+        * accessibility/table-cell-for-column-and-row-crash.html:
+        * accessibility/table-destroyed-crash.html:
+        * accessibility/table-remove-cell-crash.html:
+        * accessibility/table-with-empty-thead-causes-crash.html:
+        * accessibility/table-with-hidden-head-section.html:
+        * accessibility/table-with-mismatch-column-count-in-initial-section.html:
+        * accessibility/text-role-with-aria-hidden-inside.html:
+        * accessibility/textarea-insertion-point-line-number.html:
+        * accessibility/textbox-role-reports-selection.html:
+        * accessibility/title-ui-element-correctness.html:
+        * accessibility/transformed-bounds.html:
+        * accessibility/updating-attribute-in-table-causes-crash.html:
+        * animations/animation-css-rule-types.html:
+        * animations/animation-events-create.html:
+        * animations/computed-style.html:
+        * animations/keyframes-rule.html:
+        * animations/script-tests/TEMPLATE.html:
+        * batterystatus/add-listener-from-callback.html:
+        * batterystatus/basic-all-types-of-events.html:
+        * batterystatus/basic-operation.html:
+        * batterystatus/event-after-navigation.html:
+        * batterystatus/multiple-frames.html:
+        * batterystatus/updates.html:
+        * batterystatus/window-property.html:
+
+2013-09-07  Mark Lam  <mark.lam@apple.com>
+
         Change fast/u*, fast/w*, and fast/x* files to use pre and post js files in LayoutTests/resources.
         https://bugs.webkit.org/show_bug.cgi?id=120982.
 
