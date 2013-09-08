@@ -46,8 +46,10 @@ namespace JSC { namespace FTL {
     macro(JSArrayBufferView_vector, JSArrayBufferView::offsetOfVector()) \
     macro(JSCell_structure, JSCell::structureOffset()) \
     macro(JSObject_butterfly, JSObject::butterflyOffset()) \
+    macro(JSScope_next, JSScope::offsetOfNext()) \
     macro(JSString_length, JSString::offsetOfLength()) \
     macro(JSString_value, JSString::offsetOfValue()) \
+    macro(JSVariableObject_registers, JSVariableObject::offsetOfRegisters()) \
     macro(StringImpl_data, StringImpl::dataOffset()) \
     macro(StringImpl_hashAndFlags, StringImpl::flagsOffset()) \
     macro(Structure_classInfo, Structure::classInfoOffset()) \

@@ -89,6 +89,11 @@ inline CapabilityLevel canCompile(Node* node)
     case Call:
     case Construct:
     case GlobalVarWatchpoint:
+    case GetMyScope:
+    case SkipScope:
+    case GetClosureRegisters:
+    case GetClosureVar:
+    case PutClosureVar:
         // These are OK.
         break;
     case GetIndexedPropertyStorage:

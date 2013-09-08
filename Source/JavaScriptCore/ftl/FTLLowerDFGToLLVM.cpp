@@ -372,6 +372,21 @@ private:
         case GlobalVarWatchpoint:
             compileGlobalVarWatchpoint();
             break;
+        case GetMyScope:
+            compileGetMyScope();
+            break;
+        case SkipScope:
+            compileSkipScope();
+            break;
+        case GetClosureRegisters:
+            compileGetClosureRegisters();
+            break;
+        case GetClosureVar:
+            compileGetClosureVar();
+            break;
+        case PutClosureVar:
+            compilePutClosureVar();
+            break;
         case CompareEq:
             compileCompareEq();
             break;
@@ -1517,6 +1532,36 @@ private:
     {
         // FIXME: Implement watchpoints.
         // https://bugs.webkit.org/show_bug.cgi?id=113647
+    }
+    
+    void compileGetMyScope()
+    {
+        setJSValue(m_out.loadPtr(addressFor(
+            m_node->codeOrigin.stackOffset() + JSStack::ScopeChain)));
+    }
+    
+    void compileSkipScope()
+    {
+        setJSValue(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSScope_next));
+    }
+    
+    void compileGetClosureRegisters()
+    {
+        setStorage(m_out.loadPtr(
+            lowCell(m_node->child1()), m_heaps.JSVariableObject_registers));
+    }
+    
+    void compileGetClosureVar()
+    {
+        setJSValue(m_out.load64(
+            addressFor(lowStorage(m_node->child1()), m_node->varNumber())));
+    }
+    
+    void compilePutClosureVar()
+    {
+        m_out.store64(
+            lowJSValue(m_node->child3()),
+            addressFor(lowStorage(m_node->child2()), m_node->varNumber()));
     }
     
     void compileCompareEq()

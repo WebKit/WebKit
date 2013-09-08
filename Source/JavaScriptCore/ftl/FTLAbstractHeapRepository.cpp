@@ -28,6 +28,8 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "JSScope.h"
+#include "JSVariableObject.h"
 #include "Operations.h"
 
 namespace JSC { namespace FTL {
