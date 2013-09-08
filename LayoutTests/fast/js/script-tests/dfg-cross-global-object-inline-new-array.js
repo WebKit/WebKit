@@ -11,7 +11,7 @@ function foo() {
 Array.prototype.thingy = 24;
 
 function done(value) {
-    var expected = 24 * 200;
+    var expected = 24;
     if (value == expected)
         testPassed("done() called with " + expected);
     else
@@ -30,9 +30,10 @@ function doit() {
     code += "function bar() {\n";
     code += "    return window.parent.foo();\n";
     code += "}\n";
-    code += "var result = 0;\n";
-    code += "for (var i = 0; i < 200; ++i)\n";
-    code += "    result += bar().thingy;\n";
+    code += "window.parent.noInline(bar);\n"
+    code += "while (!window.parent.dfgCompiled({f:bar}))\n"
+    code += "    bar();\n";
+    code += "var result = bar().thingy;\n";
     code += "window.parent.done(result);\n";
     code += "</script></body></html>";
     

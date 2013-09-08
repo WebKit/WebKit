@@ -1,3 +1,29 @@
+2013-09-08  Filip Pizlo  <fpizlo@apple.com>
+
+        fast/js/dfg-* tests should wait for the concurrent JIT
+        https://bugs.webkit.org/show_bug.cgi?id=120723
+
+        Rubber stamped by Oliver Hunt.
+        
+        Convert more tests.
+
+        * fast/js/dfg-cross-global-object-inline-new-array-expected.txt:
+        * fast/js/dfg-cross-global-object-inline-new-array-with-elements-expected.txt:
+        * fast/js/dfg-cross-global-object-inline-new-array-with-size-expected.txt:
+        * fast/js/script-tests/dfg-cross-global-object-inline-new-array-literal-with-variables.js:
+        (doit):
+        * fast/js/script-tests/dfg-cross-global-object-inline-new-array-literal.js:
+        (doit):
+        * fast/js/script-tests/dfg-cross-global-object-inline-new-array-with-elements.js:
+        (done):
+        (doit):
+        * fast/js/script-tests/dfg-cross-global-object-inline-new-array-with-size.js:
+        (done):
+        (doit):
+        * fast/js/script-tests/dfg-cross-global-object-inline-new-array.js:
+        (done):
+        (doit):
+
 2013-09-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r155069 and r155138.

@@ -31,9 +31,9 @@ function doit() {
     code += "    return window.parent.foo();\n";
     code += "}\n";
     code += "window.parent.noInline(bar);\n";
-    code += "var theArray;\n";
     code += "while (!window.parent.dfgCompiled({f:bar}))\n";
-    code += "    theArray = bar();\n";
+    code += "    bar();\n";
+    code += "var theArray = bar();\n";
     code += "var result = theArray.thingy + theArray.length + theArray[0] + theArray[1] + theArray[2];\n";
     code += "window.parent.done(result);\n";
     code += "</script></body></html>";
