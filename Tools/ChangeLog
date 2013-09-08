@@ -1,3 +1,20 @@
+2013-09-08  Filip Pizlo  <fpizlo@apple.com>
+
+        run-jsc-stress-tests should be smart enough to call JSRegress "regress/script-tests" rather than "script-tests"
+        https://bugs.webkit.org/show_bug.cgi?id=120994
+
+        Reviewed by Geoffrey Garen.
+        
+        run-jsc-stress-tests accepts a list of directories containing tests.  It needs to
+        come up with names for all of them.  Currently it uses the basename of the test
+        directory.  But that means that JSRegress gets called "script-tests", which is
+        unfortunate since any directory in LayoutTests containing .js files will be
+        called "script-tests".  So, this changes run-jsc-stress-tests to use more than
+        just the basename if the basename has the word "tests" in it.  This causes
+        JSRegress to be called "regress/script-tests".
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-09-08  Sergio Correia  <sergio.correia@openbossa.org>
 
         [EFL][JHBUILD] Fix evas build with giflib5

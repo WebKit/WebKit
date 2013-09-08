@@ -137,7 +137,7 @@ def defaultRun
 end
 
 def skip
-    puts "Skipping #{$benchmark}"
+    puts "Skipping #{$collectionName}/#{$benchmark}"
 end
 
 collectionNames = {}
@@ -152,17 +152,29 @@ $outputDir = $outputDir.realpath
 
 ARGV.each {
     | collection |
-    $collection = collection
-    $collectionName = File.basename(collection)
+    $collection = Pathname.new(collection)
+    outerDir = $collection.dirname
+    name = $collection.basename
+    lastName = name
+    while lastName.to_s =~ /test/
+        lastName = outerDir.basename
+        name = lastName + name
+        outerDir = outerDir.dirname
+    end
+    $collectionName = name.to_s
     toAdd = 1
     while collectionNames[$collectionName]
-        $collectionName = File.basename(collection) + "-#{toAdd}"
+        $collectionName = File.basename(name.to_s) + "-#{toAdd}"
         toAdd += 1
     end
     collectionNames[$collectionName] = true
-    dir = $outputDir + $collectionName
-    Dir.mkdir(dir) unless dir.directory?
-    Dir.chdir(collection) {
+    dir = $outputDir
+    name.each_filename {
+        | filename |
+        dir = dir + filename
+        Dir.mkdir(dir) unless dir.directory?
+    }
+    Dir.chdir($collection) {
         Dir.foreach('.') {
             | benchmark |
             next unless benchmark =~ /\.js$/
