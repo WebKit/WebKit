@@ -205,6 +205,7 @@ static inline LValue buildStore(LBuilder builder, LValue value, LValue pointer) 
 static inline LValue buildSExt(LBuilder builder, LValue value, LType type) { return LLVMBuildSExt(builder, value, type, ""); }
 static inline LValue buildZExt(LBuilder builder, LValue value, LType type) { return LLVMBuildZExt(builder, value, type, ""); }
 static inline LValue buildFPToSI(LBuilder builder, LValue value, LType type) { return LLVMBuildFPToSI(builder, value, type, ""); }
+static inline LValue buildFPToUI(LBuilder builder, LValue value, LType type) { return LLVMBuildFPToUI(builder, value, type, ""); }
 static inline LValue buildSIToFP(LBuilder builder, LValue value, LType type) { return LLVMBuildSIToFP(builder, value, type, ""); }
 static inline LValue buildUIToFP(LBuilder builder, LValue value, LType type) { return LLVMBuildUIToFP(builder, value, type, ""); }
 static inline LValue buildIntCast(LBuilder builder, LValue value, LType type) { return LLVMBuildIntCast(builder, value, type, ""); }

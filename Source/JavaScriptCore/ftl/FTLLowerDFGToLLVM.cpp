@@ -1423,72 +1423,203 @@ private:
         LValue index = lowInt32(child2);
         LValue storage = lowStorage(child4);
         
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("PutByVal continuation"));
-        LBasicBlock outerLastNext = m_out.appendTo(m_out.m_block, continuation);
-            
         switch (m_node->arrayMode().type()) {
         case Array::Int32:
+        case Array::Double:
         case Array::Contiguous: {
-            LValue value = lowJSValue(child3, ManualOperandSpeculation);
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("PutByVal continuation"));
+            LBasicBlock outerLastNext = m_out.appendTo(m_out.m_block, continuation);
             
-            if (m_node->arrayMode().type() == Array::Int32)
-                FTL_TYPE_CHECK(jsValueValue(value), child3, SpecInt32, isNotInt32(value));
-            
-            TypedPointer elementPointer = m_out.baseIndex(
-                m_node->arrayMode().type() == Array::Int32 ?
-                m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties,
-                storage, m_out.zeroExt(index, m_out.intPtr),
-                m_state.forNode(child2).m_value);
-            
-            if (m_node->op() == PutByValAlias) {
+            switch (m_node->arrayMode().type()) {
+            case Array::Int32:
+            case Array::Contiguous: {
+                LValue value = lowJSValue(child3, ManualOperandSpeculation);
+                
+                if (m_node->arrayMode().type() == Array::Int32)
+                    FTL_TYPE_CHECK(jsValueValue(value), child3, SpecInt32, isNotInt32(value));
+                
+                TypedPointer elementPointer = m_out.baseIndex(
+                    m_node->arrayMode().type() == Array::Int32 ?
+                    m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties,
+                    storage, m_out.zeroExt(index, m_out.intPtr),
+                    m_state.forNode(child2).m_value);
+                
+                if (m_node->op() == PutByValAlias) {
+                    m_out.store64(value, elementPointer);
+                    break;
+                }
+                
+                contiguousPutByValOutOfBounds(
+                    codeBlock()->isStrictMode()
+                    ? operationPutByValBeyondArrayBoundsStrict
+                    : operationPutByValBeyondArrayBoundsNonStrict,
+                    base, storage, index, value, continuation);
+                
                 m_out.store64(value, elementPointer);
                 break;
             }
-            
-            contiguousPutByValOutOfBounds(
-                codeBlock()->isStrictMode()
-                    ? operationPutByValBeyondArrayBoundsStrict
-                    : operationPutByValBeyondArrayBoundsNonStrict,
-                base, storage, index, value, continuation);
-            
-            m_out.store64(value, elementPointer);
-            break;
-        }
-            
-        case Array::Double: {
-            LValue value = lowDouble(child3);
-            
-            FTL_TYPE_CHECK(
-                doubleValue(value), child3, SpecRealNumber,
-                m_out.doubleNotEqualOrUnordered(value, value));
-            
-            TypedPointer elementPointer = m_out.baseIndex(
-                m_heaps.indexedDoubleProperties,
-                storage, m_out.zeroExt(index, m_out.intPtr),
-                m_state.forNode(child2).m_value);
-
-            if (m_node->op() == PutByValAlias) {
+                
+            case Array::Double: {
+                LValue value = lowDouble(child3);
+                
+                FTL_TYPE_CHECK(
+                    doubleValue(value), child3, SpecRealNumber,
+                    m_out.doubleNotEqualOrUnordered(value, value));
+                
+                TypedPointer elementPointer = m_out.baseIndex(
+                    m_heaps.indexedDoubleProperties,
+                    storage, m_out.zeroExt(index, m_out.intPtr),
+                    m_state.forNode(child2).m_value);
+                
+                if (m_node->op() == PutByValAlias) {
+                    m_out.storeDouble(value, elementPointer);
+                    break;
+                }
+                
+                contiguousPutByValOutOfBounds(
+                    codeBlock()->isStrictMode()
+                    ? operationPutDoubleByValBeyondArrayBoundsStrict
+                    : operationPutDoubleByValBeyondArrayBoundsNonStrict,
+                    base, storage, index, value, continuation);
+                
                 m_out.storeDouble(value, elementPointer);
                 break;
             }
-            
-            contiguousPutByValOutOfBounds(
-                codeBlock()->isStrictMode()
-                    ? operationPutDoubleByValBeyondArrayBoundsStrict
-                    : operationPutDoubleByValBeyondArrayBoundsNonStrict,
-                base, storage, index, value, continuation);
-            
-            m_out.storeDouble(value, elementPointer);
-            break;
+                
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+
+            m_out.jump(continuation);
+            m_out.appendTo(continuation, outerLastNext);
+            return;
         }
             
         default:
+            TypedArrayType type = m_node->arrayMode().typedArrayType();
+            
+            if (isTypedView(type)) {
+                if (m_node->op() == PutByVal) {
+                    speculate(
+                        OutOfBounds, noValue(), 0,
+                        m_out.aboveOrEqual(
+                            index, m_out.load32(base, m_heaps.JSArrayBufferView_length)));
+                }
+                
+                TypedPointer pointer = TypedPointer(
+                    m_heaps.typedArrayProperties,
+                    m_out.add(
+                        storage,
+                        m_out.shl(
+                            m_out.zeroExt(index, m_out.intPtr),
+                            m_out.constIntPtr(logElementSize(type)))));
+                
+                if (isInt(type)) {
+                    LValue intValue;
+                    switch (child3.useKind()) {
+                    case Int32Use: {
+                        intValue = lowInt32(child3);
+                        if (isClamped(type)) {
+                            ASSERT(elementSize(type) == 1);
+                            
+                            LBasicBlock atLeastZero = FTL_NEW_BLOCK(m_out, ("PutByVal int clamp atLeastZero"));
+                            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("PutByVal int clamp continuation"));
+                            
+                            Vector<ValueFromBlock, 2> intValues;
+                            intValues.append(m_out.anchor(m_out.int32Zero));
+                            m_out.branch(
+                                m_out.lessThan(intValue, m_out.int32Zero),
+                                continuation, atLeastZero);
+                            
+                            LBasicBlock lastNext = m_out.appendTo(atLeastZero, continuation);
+                            
+                            intValues.append(m_out.anchor(m_out.select(
+                                m_out.greaterThan(intValue, m_out.constInt32(255)),
+                                m_out.constInt32(255),
+                                intValue)));
+                            m_out.jump(continuation);
+                            
+                            m_out.appendTo(continuation, lastNext);
+                            intValue = m_out.phi(m_out.int32, intValues);
+                        }
+                        break;
+                    }
+                        
+                    case NumberUse: {
+                        LValue doubleValue = lowDouble(child3);
+                        
+                        if (isClamped(type)) {
+                            ASSERT(elementSize(type) == 1);
+                            
+                            LBasicBlock atLeastZero = FTL_NEW_BLOCK(m_out, ("PutByVal double clamp atLeastZero"));
+                            LBasicBlock withinRange = FTL_NEW_BLOCK(m_out, ("PutByVal double clamp withinRange"));
+                            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("PutByVal double clamp continuation"));
+                            
+                            Vector<ValueFromBlock, 3> intValues;
+                            intValues.append(m_out.anchor(m_out.int32Zero));
+                            m_out.branch(
+                                m_out.doubleLessThanOrUnordered(doubleValue, m_out.doubleZero),
+                                continuation, atLeastZero);
+                            
+                            LBasicBlock lastNext = m_out.appendTo(atLeastZero, withinRange);
+                            intValues.append(m_out.anchor(m_out.constInt32(255)));
+                            m_out.branch(
+                                m_out.doubleGreaterThan(doubleValue, m_out.constDouble(255)),
+                                continuation, withinRange);
+                            
+                            m_out.appendTo(withinRange, continuation);
+                            intValues.append(m_out.anchor(m_out.fpToInt32(doubleValue)));
+                            m_out.jump(continuation);
+                            
+                            m_out.appendTo(continuation, lastNext);
+                            intValue = m_out.phi(m_out.int32, intValues);
+                        } else if (isSigned(type))
+                            intValue = doubleToInt32(doubleValue);
+                        else
+                            intValue = doubleToUInt32(doubleValue);
+                        break;
+                    }
+                        
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                    }
+                    
+                    switch (elementSize(type)) {
+                    case 1:
+                        m_out.store8(m_out.intCast(intValue, m_out.int8), pointer);
+                        break;
+                    case 2:
+                        m_out.store16(m_out.intCast(intValue, m_out.int16), pointer);
+                        break;
+                    case 4:
+                        m_out.store32(intValue, pointer);
+                        break;
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                    }
+                    
+                    return;
+                }
+                
+                ASSERT(isFloat(type));
+                
+                LValue value = lowDouble(child3);
+                switch (type) {
+                case TypeFloat32:
+                    m_out.storeFloat(m_out.fpCast(value, m_out.floatType), pointer);
+                    break;
+                case TypeFloat64:
+                    m_out.storeDouble(value, pointer);
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+                return;
+            }
+            
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
-
-        m_out.jump(continuation);
-        m_out.appendTo(continuation, outerLastNext);
     }
     
     void compileGetByOffset()
@@ -2091,6 +2222,55 @@ private:
         }
         
         m_out.switchInstruction(switchValue, cases, lowBlock(data->fallThrough));
+    }
+    
+    LValue doubleToInt32(LValue doubleValue, double low, double high, bool isSigned = true)
+    {
+        // FIXME: Optimize double-to-int conversions.
+        // <rdar://problem/14938465>
+        
+        LBasicBlock greatEnough = FTL_NEW_BLOCK(m_out, ("doubleToInt32 greatEnough"));
+        LBasicBlock withinRange = FTL_NEW_BLOCK(m_out, ("doubleToInt32 withinRange"));
+        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("doubleToInt32 slowPath"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("doubleToInt32 continuation"));
+        
+        Vector<ValueFromBlock, 2> results;
+        
+        m_out.branch(
+            m_out.greaterThanOrEqual(doubleValue, m_out.constDouble(low)),
+            greatEnough, slowPath);
+        
+        LBasicBlock lastNext = m_out.appendTo(greatEnough, withinRange);
+        m_out.branch(
+            m_out.lessThanOrEqual(doubleValue, m_out.constDouble(high)),
+            withinRange, slowPath);
+        
+        m_out.appendTo(withinRange, slowPath);
+        LValue fastResult;
+        if (isSigned)
+            fastResult = m_out.fpToInt32(doubleValue);
+        else
+            fastResult = m_out.fpToUInt32(doubleValue);
+        results.append(m_out.anchor(fastResult));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(slowPath, continuation);
+        results.append(m_out.anchor(m_out.call(m_out.operation(toInt32), doubleValue)));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        return m_out.phi(m_out.int32, results);
+    }
+    
+    LValue doubleToInt32(LValue doubleValue)
+    {
+        double limit = pow(2, 31) - 1;
+        return doubleToInt32(doubleValue, -limit, limit);
+    }
+    
+    LValue doubleToUInt32(LValue doubleValue)
+    {
+        return doubleToInt32(doubleValue, 0, pow(2, 32) - 1, false);
     }
     
     void speculateBackward(

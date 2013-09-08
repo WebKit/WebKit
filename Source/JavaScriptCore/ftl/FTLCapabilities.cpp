@@ -155,6 +155,8 @@ inline CapabilityLevel canCompile(Node* node)
         case Array::Contiguous:
             break;
         default:
+            if (isTypedView(node->arrayMode().typedArrayType()))
+                return CanCompileAndOSREnter;
             return CannotCompile;
         }
         break;

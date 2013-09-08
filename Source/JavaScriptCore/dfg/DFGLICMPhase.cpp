@@ -244,6 +244,8 @@ private:
             if (!subLoop)
                 continue;
             BasicBlock* subPreHeader = m_data[subLoop->index()].preHeader;
+            if (!subPreHeader->cfaDidFinish)
+                continue;
             m_state.initializeTo(subPreHeader);
             m_interpreter.execute(node);
         }

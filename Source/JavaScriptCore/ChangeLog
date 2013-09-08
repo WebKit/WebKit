@@ -1,5 +1,35 @@
 2013-09-07  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should support typed array PutByVal
+        https://bugs.webkit.org/show_bug.cgi?id=120972
+
+        Reviewed by Oliver Hunt.
+
+        Due to increased FTL coverage, this revealed a bug in LICM where we were trying to
+        have AI execute the tail of a block that !cfaDidFinish. We don't need to execute AI
+        for such blocks since LICM will bail for them anyway, and AI asserts that cfaDidFinish
+        is true.
+
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::buildFPToUI):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compilePutByVal):
+        (JSC::FTL::LowerDFGToLLVM::doubleToInt32):
+        (JSC::FTL::LowerDFGToLLVM::doubleToUInt32):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::fpToUInt):
+        (JSC::FTL::Output::fpToUInt32):
+        (JSC::FTL::Output::store8):
+        (JSC::FTL::Output::store16):
+        (JSC::FTL::Output::storeFloat):
+
+2013-09-07  Filip Pizlo  <fpizlo@apple.com>
+
         FTL should support basic closure operations
         https://bugs.webkit.org/show_bug.cgi?id=120987
 
