@@ -2396,7 +2396,7 @@ void Document::implicitClose()
     // ramifications, and we need to decide what is the Right Thing To Do(tm)
     Frame* f = frame();
     if (f) {
-        f->loader().icon()->startLoader();
+        f->loader().icon().startLoader();
         f->animation().startAnimationsIfNotSuspended(this);
     }
 

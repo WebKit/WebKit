@@ -96,7 +96,7 @@ public:
     HistoryController& history() const { return *m_history; }
     ResourceLoadNotifier* notifier() const { return &m_notifer; }
     SubframeLoader& subframeLoader() const { return *m_subframeLoader; }
-    IconController* icon() const { return m_icon.get(); }
+    IconController& icon() const { return *m_icon; }
     MixedContentChecker& mixedContentChecker() const { return m_mixedContentChecker; }
 
     void prepareForHistoryNavigation();
@@ -391,7 +391,7 @@ private:
     mutable ResourceLoadNotifier m_notifer;
     const OwnPtr<SubframeLoader> m_subframeLoader;
     mutable FrameLoaderStateMachine m_stateMachine;
-    OwnPtr<IconController> m_icon;
+    const OwnPtr<IconController> m_icon;
     mutable MixedContentChecker m_mixedContentChecker;
 
     class FrameProgressTracker;

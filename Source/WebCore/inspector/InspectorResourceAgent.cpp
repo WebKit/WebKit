@@ -201,7 +201,7 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
     if (type == InspectorPageAgent::OtherResource) {
         if (m_loadingXHRSynchronously)
             type = InspectorPageAgent::XHRResource;
-        else if (equalIgnoringFragmentIdentifier(request.url(), loader->frameLoader()->icon()->url()))
+        else if (equalIgnoringFragmentIdentifier(request.url(), loader->frameLoader()->icon().url()))
             type = InspectorPageAgent::ImageResource;
         else if (equalIgnoringFragmentIdentifier(request.url(), loader->url()) && !loader->isCommitted())
             type = InspectorPageAgent::DocumentResource;

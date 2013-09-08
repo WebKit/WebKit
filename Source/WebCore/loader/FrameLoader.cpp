@@ -485,7 +485,7 @@ void FrameLoader::stop()
         parser->finish();
     }
     
-    icon()->stopLoader();
+    icon().stopLoader();
 }
 
 void FrameLoader::willTransitionToCommitted()

@@ -1,5 +1,14 @@
 2013-09-08  Andreas Kling  <akling@apple.com>
 
+        FrameLoader::icon() should return a reference.
+        <https://webkit.org/b/120993>
+
+        Reviewed by Antti Koivisto.
+
+        This function never returns null. Make it return a reference!
+
+2013-09-08  Andreas Kling  <akling@apple.com>
+
         Remove unused Scrollbar tickmark stuff.
         <https://webkit.org/b/121000>
 

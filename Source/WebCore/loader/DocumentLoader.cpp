@@ -1467,7 +1467,7 @@ void DocumentLoader::maybeFinishLoadingMultipartContent()
 void DocumentLoader::iconLoadDecisionAvailable()
 {
     if (m_frame)
-        m_frame->loader().icon()->loadDecisionReceived(iconDatabase().synchronousLoadDecisionForIconURL(frameLoader()->icon()->url(), this));
+        m_frame->loader().icon().loadDecisionReceived(iconDatabase().synchronousLoadDecisionForIconURL(frameLoader()->icon().url(), this));
 }
 
 static void iconLoadDecisionCallback(IconLoadDecision decision, void* context)
@@ -1488,7 +1488,7 @@ void DocumentLoader::continueIconLoadWithDecision(IconLoadDecision decision)
     ASSERT(m_iconLoadDecisionCallback);
     m_iconLoadDecisionCallback = 0;
     if (m_frame)
-        m_frame->loader().icon()->continueLoadWithDecision(decision);
+        m_frame->loader().icon().continueLoadWithDecision(decision);
 }
 
 static void iconDataCallback(SharedBuffer*, void*)

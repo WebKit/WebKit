@@ -63,7 +63,7 @@ void IconLoader::startLoading()
     if (m_resource || !m_frame->document())
         return;
 
-    CachedResourceRequest request(ResourceRequest(m_frame->loader().icon()->url()), ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForAnyCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType));
+    CachedResourceRequest request(ResourceRequest(m_frame->loader().icon().url()), ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForAnyCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType));
 
 #if PLATFORM(BLACKBERRY)
     request.mutableResourceRequest().setTargetType(ResourceRequest::TargetIsFavicon);
@@ -75,7 +75,7 @@ void IconLoader::startLoading()
     if (m_resource)
         m_resource->addClient(this);
     else
-        LOG_ERROR("Failed to start load for icon at url %s", m_frame->loader().icon()->url().string().ascii().data());
+        LOG_ERROR("Failed to start load for icon at url %s", m_frame->loader().icon().url().string().ascii().data());
 }
 
 void IconLoader::stopLoading()
@@ -105,7 +105,7 @@ void IconLoader::notifyFinished(CachedResource* resource)
     }
 
     LOG(IconDatabase, "IconLoader::finishLoading() - Committing iconURL %s to database", resource->url().string().ascii().data());
-    m_frame->loader().icon()->commitToDatabase(resource->url());
+    m_frame->loader().icon().commitToDatabase(resource->url());
     // Setting the icon data only after committing to the database ensures that the data is
     // kept in memory (so it does not have to be read from the database asynchronously), since
     // there is a page URL referencing it.
