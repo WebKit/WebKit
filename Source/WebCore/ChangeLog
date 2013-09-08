@@ -1,5 +1,24 @@
 2013-09-08  Andreas Kling  <akling@apple.com>
 
+        Move "using software CSS filters" optimization flag to RenderView.
+        <https://webkit.org/b/120999>
+
+        Reviewed by Antti Koivisto.
+
+        This flag is used to avoid an extra tree walk when there are no software CSS filters in use.
+        Move it from FrameView to RenderView where it belongs.
+
+        * page/FrameView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateOrRemoveFilterEffectRenderer):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containerForRepaint):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+
+2013-09-08  Andreas Kling  <akling@apple.com>
+
         FrameLoader::icon() should return a reference.
         <https://webkit.org/b/120993>
 

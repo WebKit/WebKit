@@ -6469,7 +6469,7 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
         filterInfo.setRenderer(filterRenderer.release());
         
         // We can optimize away code paths in other places if we know that there are no software filters.
-        renderer().view().frameView().setHasSoftwareFilters(true);
+        renderer().view().setHasSoftwareFilters(true);
     }
 
     // If the filter fails to build, remove it from the layer. It will still attempt to
