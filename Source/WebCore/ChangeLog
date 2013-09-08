@@ -1,3 +1,47 @@
+2013-09-08  Antti Koivisto  <antti@apple.com>
+
+        Remove ComposedShadowTreeWalker
+        https://bugs.webkit.org/show_bug.cgi?id=120997
+
+        Reviewed by Andreas Kling.
+
+        Move the code to NodeRenderingTraversal which is the only client besides Internals.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ComposedShadowTreeWalker.cpp: Removed.
+        * dom/ComposedShadowTreeWalker.h: Removed.
+        * dom/NodeRenderingTraversal.cpp:
+        (WebCore::NodeRenderingTraversal::nodeCanBeDistributed):
+        (WebCore::NodeRenderingTraversal::findFirstSiblingEnteringInsertionPoints):
+        (WebCore::NodeRenderingTraversal::findFirstEnteringInsertionPoints):
+        (WebCore::NodeRenderingTraversal::findFirstFromDistributedNode):
+        (WebCore::NodeRenderingTraversal::findLastSiblingEnteringInsertionPoints):
+        (WebCore::NodeRenderingTraversal::findLastEnteringInsertionPoints):
+        (WebCore::NodeRenderingTraversal::findLastFromDistributedNode):
+        (WebCore::NodeRenderingTraversal::traverseParent):
+        (WebCore::NodeRenderingTraversal::traverseFirstChild):
+        (WebCore::NodeRenderingTraversal::traverseLastChild):
+        (WebCore::NodeRenderingTraversal::traverseNextSibling):
+        (WebCore::NodeRenderingTraversal::traversePreviousSibling):
+        
+            Make former members of ComposedShadowTreeWalker standalone functions in NodeRenderingTraversal.
+
+        (WebCore::NodeRenderingTraversal::parentSlow):
+        (WebCore::NodeRenderingTraversal::nextSiblingSlow):
+        (WebCore::NodeRenderingTraversal::previousSiblingSlow):
+        (WebCore::NodeRenderingTraversal::nextInScope):
+        (WebCore::NodeRenderingTraversal::previousInScope):
+        (WebCore::NodeRenderingTraversal::parentInScope):
+        (WebCore::NodeRenderingTraversal::lastChildInScope):
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2013-09-08  Andreas Kling  <akling@apple.com>
 
         FrameLoader::policyChecker() should return a reference.

@@ -12166,7 +12166,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\dom\ComposedShadowTreeWalker.cpp" />
     <ClCompile Include="..\dom\CompositionEvent.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -20264,7 +20263,6 @@
     <ClInclude Include="..\dom\ClipboardAccessPolicy.h" />
     <ClInclude Include="..\dom\ClipboardEvent.h" />
     <ClInclude Include="..\dom\Comment.h" />
-    <ClInclude Include="..\dom\ComposedShadowTreeWalker.h" />
     <ClInclude Include="..\dom\CompositionEvent.h" />
     <ClInclude Include="..\dom\ContainerNode.h" />
     <ClInclude Include="..\dom\ContextDestructionObserver.h" />

@@ -120,13 +120,6 @@ public:
 
     bool attached(Node*, ExceptionCode&);
 
-    // FIXME: Rename these functions if walker is prefered.
-    Node* nextSiblingByWalker(Node*, ExceptionCode&);
-    Node* firstChildByWalker(Node*, ExceptionCode&);
-    Node* lastChildByWalker(Node*, ExceptionCode&);
-    Node* nextNodeByWalker(Node*, ExceptionCode&);
-    Node* previousNodeByWalker(Node*, ExceptionCode&);
-
     String visiblePlaceholder(Element*);
 #if ENABLE(INPUT_TYPE_COLOR)
     void selectColorInColorChooser(Element*, const String& colorValue);

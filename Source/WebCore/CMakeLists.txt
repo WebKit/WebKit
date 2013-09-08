@@ -1122,7 +1122,6 @@ set(WebCore_SOURCES
     dom/Clipboard.cpp
     dom/ClipboardEvent.cpp
     dom/Comment.cpp
-    dom/ComposedShadowTreeWalker.cpp
     dom/CompositionEvent.cpp
     dom/ContainerNode.cpp
     dom/ContainerNodeAlgorithms.cpp

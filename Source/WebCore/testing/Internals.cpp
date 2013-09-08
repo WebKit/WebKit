@@ -34,7 +34,6 @@
 #include "ChromeClient.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
-#include "ComposedShadowTreeWalker.h"
 #include "ContentDistributor.h"
 #include "Cursor.h"
 #include "DOMStringList.h"
@@ -508,61 +507,6 @@ bool Internals::attached(Node* node, ExceptionCode& ec)
     }
 
     return node->attached();
-}
-
-Node* Internals::nextSiblingByWalker(Node* node, ExceptionCode& ec)
-{
-    if (!node) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-    ComposedShadowTreeWalker walker(node);
-    walker.nextSibling();
-    return walker.get();
-}
-
-Node* Internals::firstChildByWalker(Node* node, ExceptionCode& ec)
-{
-    if (!node) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-    ComposedShadowTreeWalker walker(node);
-    walker.firstChild();
-    return walker.get();
-}
-
-Node* Internals::lastChildByWalker(Node* node, ExceptionCode& ec)
-{
-    if (!node) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-    ComposedShadowTreeWalker walker(node);
-    walker.lastChild();
-    return walker.get();
-}
-
-Node* Internals::nextNodeByWalker(Node* node, ExceptionCode& ec)
-{
-    if (!node) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-    ComposedShadowTreeWalker walker(node);
-    walker.next();
-    return walker.get();
-}
-
-Node* Internals::previousNodeByWalker(Node* node, ExceptionCode& ec)
-{
-    if (!node) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-    ComposedShadowTreeWalker walker(node);
-    walker.previous();
-    return walker.get();
 }
 
 String Internals::elementRenderTreeAsText(Element* element, ExceptionCode& ec)

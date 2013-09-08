@@ -69,12 +69,6 @@
     [RaisesException] boolean pauseTransitionAtTimeOnElement(DOMString propertyName, double pauseTime, Element element);
     [RaisesException] boolean pauseTransitionAtTimeOnPseudoElement(DOMString property, double pauseTime, Element element, DOMString pseudoId);
 
-    [RaisesException] Node nextSiblingByWalker(Node node);
-    [RaisesException] Node firstChildByWalker(Node node);
-    [RaisesException] Node lastChildByWalker(Node node);
-    [RaisesException] Node nextNodeByWalker(Node node);
-    [RaisesException] Node previousNodeByWalker(Node node);
-
     [RaisesException] boolean attached(Node node);
 
     DOMString visiblePlaceholder(Element element);
