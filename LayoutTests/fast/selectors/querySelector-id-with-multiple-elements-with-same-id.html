@@ -4,7 +4,7 @@
 <span id="foo"></span>
 <div id="container"><span id="foo"></span></div>
 </body>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <script>
 description('This test makes sure WebKit element.querySelector("#foo") returns a descendent node of the element even when there are multiple elements with the id foo.');
 
@@ -13,5 +13,5 @@ shouldBe('container.querySelectorAll("#foo").length', '1');
 shouldBe('container.querySelectorAll("#foo")[0]', 'container.firstChild');
 
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
 </html>

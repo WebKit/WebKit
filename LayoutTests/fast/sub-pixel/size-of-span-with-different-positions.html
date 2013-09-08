@@ -13,7 +13,7 @@
     <span id="span-position-absolute" style="position:absolute">T</span>
     <span id="span-position-relative" style="position:relative">T</span>
 </div>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <script>
     description("Test case for bug 90097. This tests span sizes with different CSS position attributes.");
     var spans = testContent.querySelectorAll('span');
@@ -26,6 +26,6 @@
     shouldBeCloseTo('document.getElementById("span-position-relative").getBoundingClientRect().width', expected_width, tolerance, true);
     document.getElementById("testContent").style.display = 'none';
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
