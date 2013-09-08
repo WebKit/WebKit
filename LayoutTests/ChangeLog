@@ -1,3 +1,19 @@
+2013-09-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r155069 and r155138.
+        http://trac.webkit.org/changeset/155069
+        http://trac.webkit.org/changeset/155138
+        https://bugs.webkit.org/show_bug.cgi?id=121008
+
+        Seems to have broken many tests (bug 120963) (Requested by ap
+        on #webkit).
+
+        * fast/images/pdf-as-image-with-annotations-expected.html: Removed.
+        * fast/images/pdf-as-image-with-annotations.html: Removed.
+        * fast/images/resources/annotation.pdf: Removed.
+        * platform/mac/fast/images/pdf-as-image-landscape-expected.png:
+        * platform/mac/fast/images/pdf-as-image-landscape-expected.txt:
+
 2013-09-07  Mark Lam  <mark.lam@apple.com>
 
         Change LayoutTests' u*-w* files to use pre and post js files in LayoutTests/resources.

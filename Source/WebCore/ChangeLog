@@ -1,3 +1,31 @@
+2013-09-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r155069 and r155138.
+        http://trac.webkit.org/changeset/155069
+        http://trac.webkit.org/changeset/155138
+        https://bugs.webkit.org/show_bug.cgi?id=121008
+
+        Seems to have broken many tests (bug 120963) (Requested by ap
+        on #webkit).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::PDFDocumentImage):
+        (WebCore::PDFDocumentImage::~PDFDocumentImage):
+        (WebCore::PDFDocumentImage::size):
+        (WebCore::PDFDocumentImage::dataChanged):
+        (WebCore::PDFDocumentImage::adjustCTM):
+        (WebCore::PDFDocumentImage::setCurrentPage):
+        (WebCore::PDFDocumentImage::pageCount):
+        (WebCore::PDFDocumentImage::draw):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        (WebCore::PDFDocumentImage::create):
+        (WebCore::PDFDocumentImage::hasSingleSecurityOrigin):
+        (WebCore::PDFDocumentImage::destroyDecodedData):
+        (WebCore::PDFDocumentImage::decodedSize):
+        * platform/graphics/mac/PDFDocumentImageMac.mm: Removed.
+        * platform/mac/SoftLinking.h:
+
 2013-09-08  Andreas Kling  <akling@apple.com>
 
         ScriptExecutionContext: Use FINAL instead of foo() { virtualFoo() }
