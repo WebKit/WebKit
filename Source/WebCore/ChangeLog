@@ -1,3 +1,42 @@
+2013-09-08  Antti Koivisto  <antti@apple.com>
+
+        Rename needsShadowTreeWalker
+        https://bugs.webkit.org/show_bug.cgi?id=121005
+
+        Reviewed by Andreas Kling.
+
+        Rename to needsNodeRenderingTraversalSlowPath.
+
+        * dom/ContainerNode.h:
+        (WebCore::Node::needsNodeRenderingTraversalSlowPath):
+        * dom/Element.cpp:
+        (WebCore::shouldUseNodeRenderingTraversalSlowPath):
+        (WebCore::Element::resetNeedsNodeRenderingTraversalSlowPath):
+
+            Only Elements can have this flag. Move the code here from Node.
+
+        (WebCore::Element::addShadowRoot):
+        (WebCore::Element::setBeforePseudoElement):
+        (WebCore::Element::setAfterPseudoElement):
+        (WebCore::Element::clearBeforePseudoElement):
+        (WebCore::Element::clearAfterPseudoElement):
+
+            Reset after clear too.
+
+        * dom/Element.h:
+        * dom/Element.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        (WebCore::Node::isInsertionPoint):
+        (WebCore::Node::setNeedsNodeRenderingTraversalSlowPath):
+        
+            Make protected.
+
+        * dom/NodeRenderingTraversal.h:
+        (WebCore::NodeRenderingTraversal::parent):
+        (WebCore::NodeRenderingTraversal::nextSibling):
+        (WebCore::NodeRenderingTraversal::previousSibling):
+
 2013-09-08  Andreas Kling  <akling@apple.com>
 
         Render{Block,Inline}::lineBoxes() should return a reference.

@@ -590,6 +590,7 @@ private:
     void setAfterPseudoElement(PassRefPtr<PseudoElement>);
     void clearBeforePseudoElement();
     void clearAfterPseudoElement();
+    void resetNeedsNodeRenderingTraversalSlowPath();
 
     virtual bool areAuthorShadowsAllowed() const { return true; }
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) { }

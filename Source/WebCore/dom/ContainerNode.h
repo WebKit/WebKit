@@ -220,12 +220,12 @@ inline Node* Node::highestAncestor() const
     return highest;
 }
 
-inline bool Node::needsShadowTreeWalker() const
+inline bool Node::needsNodeRenderingTraversalSlowPath() const
 {
-    if (getFlag(NeedsShadowTreeWalkerFlag))
+    if (getFlag(NeedsNodeRenderingTraversalSlowPathFlag))
         return true;
     ContainerNode* parent = parentOrShadowHostNode();
-    return parent && parent->getFlag(NeedsShadowTreeWalkerFlag);
+    return parent && parent->getFlag(NeedsNodeRenderingTraversalSlowPathFlag);
 }
 
 inline bool Node::isTreeScope() const

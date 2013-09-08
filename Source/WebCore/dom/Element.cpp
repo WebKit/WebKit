@@ -1408,6 +1408,20 @@ void Element::didAffectSelector(AffectedSelectorMask)
     setNeedsStyleRecalc();
 }
 
+static bool shouldUseNodeRenderingTraversalSlowPath(const Element& element)
+{
+    if (element.isShadowRoot())
+        return true;
+    if (element.isPseudoElement() || element.beforePseudoElement() || element.afterPseudoElement())
+        return true;
+    return element.isInsertionPoint() || element.shadowRoot();
+}
+
+void Element::resetNeedsNodeRenderingTraversalSlowPath()
+{
+    setNeedsNodeRenderingTraversalSlowPath(shouldUseNodeRenderingTraversalSlowPath(*this));
+}
+
 void Element::addShadowRoot(PassRefPtr<ShadowRoot> newShadowRoot)
 {
     ASSERT(!shadowRoot());
@@ -1421,8 +1435,7 @@ void Element::addShadowRoot(PassRefPtr<ShadowRoot> newShadowRoot)
 
     ChildNodeInsertionNotifier(this).notify(shadowRoot);
 
-    // Existence of shadow roots requires the host and its children to do traversal using ComposedShadowTreeWalker.
-    setNeedsShadowTreeWalker();
+    resetNeedsNodeRenderingTraversalSlowPath();
 
     // FIXME(94905): ShadowHost should be reattached during recalcStyle.
     // Set some flag here and recreate shadow hosts' renderer in
@@ -2349,13 +2362,13 @@ PseudoElement* Element::afterPseudoElement() const
 void Element::setBeforePseudoElement(PassRefPtr<PseudoElement> element)
 {
     ensureElementRareData().setBeforePseudoElement(element);
-    resetNeedsShadowTreeWalker();
+    resetNeedsNodeRenderingTraversalSlowPath();
 }
 
 void Element::setAfterPseudoElement(PassRefPtr<PseudoElement> element)
 {
     ensureElementRareData().setAfterPseudoElement(element);
-    resetNeedsShadowTreeWalker();
+    resetNeedsNodeRenderingTraversalSlowPath();
 }
 
 static void disconnectPseudoElement(PseudoElement* pseudoElement)
@@ -2374,6 +2387,7 @@ void Element::clearBeforePseudoElement()
         return;
     disconnectPseudoElement(elementRareData()->beforePseudoElement());
     elementRareData()->setBeforePseudoElement(nullptr);
+    resetNeedsNodeRenderingTraversalSlowPath();
 }
 
 void Element::clearAfterPseudoElement()
@@ -2382,6 +2396,7 @@ void Element::clearAfterPseudoElement()
         return;
     disconnectPseudoElement(elementRareData()->afterPseudoElement());
     elementRareData()->setAfterPseudoElement(nullptr);
+    resetNeedsNodeRenderingTraversalSlowPath();
 }
 
 // ElementTraversal API

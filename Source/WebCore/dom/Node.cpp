@@ -1045,18 +1045,6 @@ void Node::removedFrom(ContainerNode* insertionPoint)
         clearFlag(IsInShadowTreeFlag);
 }
 
-bool Node::needsShadowTreeWalkerSlow() const
-{
-    if (isShadowRoot())
-        return true;
-    if (!isElementNode())
-        return false;
-    const Element* asElement = toElement(this);
-    if (asElement->isPseudoElement() || asElement->beforePseudoElement() || asElement->afterPseudoElement())
-        return true;
-    return asElement->isInsertionPoint() || asElement->shadowRoot();
-}
-
 bool Node::isRootEditableElement() const
 {
     return rendererIsEditable() && isElementNode() && (!parentNode() || !parentNode()->rendererIsEditable()
