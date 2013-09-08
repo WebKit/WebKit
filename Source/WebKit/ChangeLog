@@ -1,3 +1,11 @@
+2013-09-08  Antti Koivisto  <antti@apple.com>
+
+        Fix window build.
+        
+        Not reviewed.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build correction.
