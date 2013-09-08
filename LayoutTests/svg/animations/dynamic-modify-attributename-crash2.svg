@@ -2,7 +2,7 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <set id="set"></set>
     <text id="status" x="100" y="100">FAIL</text>
-    <script xlink:href="../../fast/js/resources/js-test-pre.js"></script>
+    <script xlink:href="../../resources/js-test-pre.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();

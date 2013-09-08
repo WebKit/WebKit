@@ -27,7 +27,7 @@ function completeDynamicTest() {
             testRunner.notifyDone();
     };
 
-    script.src = "../../../fast/js/resources/js-test-post.js";
+    script.src = "../../../resources/js-test-post.js";
     successfullyParsed = true;
     document.body.appendChild(script);
 }

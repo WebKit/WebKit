@@ -1,5 +1,5 @@
 if (this.importScripts) {
-    importScripts('../../../fast/js/resources/js-test-pre.js');
+    importScripts('../../../resources/js-test-pre.js');
     importScripts('shared.js');
 }
 

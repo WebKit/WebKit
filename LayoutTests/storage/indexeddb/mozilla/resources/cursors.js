@@ -5,7 +5,7 @@
 //   http://creativecommons.org/publicdomain/zero/1.0/ "
 
 if (this.importScripts) {
-    importScripts('../../../../fast/js/resources/js-test-pre.js');
+    importScripts('../../../../resources/js-test-pre.js');
     importScripts('../../resources/shared.js');
 }
 
