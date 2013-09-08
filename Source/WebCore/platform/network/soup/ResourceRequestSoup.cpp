@@ -80,15 +80,7 @@ SoupMessage* ResourceRequest::toSoupMessage() const
     if (!soupMessage)
         return 0;
 
-    updateSoupMessageHeaders(soupMessage->request_headers);
-
-    String firstPartyString = firstPartyForCookies().string();
-    if (!firstPartyString.isEmpty()) {
-        GOwnPtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
-        soup_message_set_first_party(soupMessage, firstParty.get());
-    }
-
-    soup_message_set_flags(soupMessage, m_soupFlags);
+    updateSoupMessage(soupMessage);
 
     // Body data is only handled at ResourceHandleSoup::startHttp for
     // now; this is because this may not be a good place to go
