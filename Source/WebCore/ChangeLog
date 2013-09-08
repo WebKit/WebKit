@@ -1,3 +1,31 @@
+2013-09-07  Antti Koivisto  <antti@apple.com>
+
+        Separate forward and backward paths in ComposedShadowTreeWalker
+        https://bugs.webkit.org/show_bug.cgi?id=120979
+
+        Reviewed by Andreas Kling.
+
+        Have separate first/last and next/previous paths instead of using a direction enum.
+        
+        Reduce the number of helper functions and give them more understandable names.
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::findFirstSiblingEnteringInsertionPoints):
+        (WebCore::findFirstEnteringInsertionPoints):
+        (WebCore::findFirstFromDistributedNode):
+        (WebCore::findLastSiblingEnteringInsertionPoints):
+        (WebCore::findLastEnteringInsertionPoints):
+        (WebCore::findLastFromDistributedNode):
+        (WebCore::ComposedShadowTreeWalker::firstChild):
+        (WebCore::ComposedShadowTreeWalker::traverseFirstChild):
+        (WebCore::ComposedShadowTreeWalker::lastChild):
+        (WebCore::ComposedShadowTreeWalker::traverseLastChild):
+        (WebCore::ComposedShadowTreeWalker::nextSibling):
+        (WebCore::ComposedShadowTreeWalker::previousSibling):
+        (WebCore::ComposedShadowTreeWalker::traverseNextSibling):
+        (WebCore::ComposedShadowTreeWalker::traversePreviousSibling):
+        * dom/ComposedShadowTreeWalker.h:
+
 2013-09-07  Andreas Kling  <akling@apple.com>
 
         Beat FrameView with the FINAL stick.

@@ -68,11 +68,6 @@ public:
     Node* traverseParent(const Node*) const;
 
 private:
-    enum TraversalDirection {
-        TraversalDirectionForward,
-        TraversalDirectionBackward
-    };
-
     bool canCrossUpperBoundary() const { return m_policy == CrossUpperBoundary; }
 
     void assertPrecondition() const
@@ -93,23 +88,11 @@ private:
 #endif
     }
 
-    static Node* traverseNode(const Node*, TraversalDirection);
-    static Node* traverseLightChildren(const Node*, TraversalDirection);
-
     Node* traverseFirstChild(const Node*) const;
     Node* traverseLastChild(const Node*) const;
-    Node* traverseChild(const Node*, TraversalDirection) const;
 
     static Node* traverseNextSibling(const Node*);
     static Node* traversePreviousSibling(const Node*);
-
-    static Node* traverseSiblingOrBackToInsertionPoint(const Node*, TraversalDirection);
-    static Node* traverseSiblingInCurrentTree(const Node*, TraversalDirection);
-
-    static Node* traverseSiblings(const Node*, TraversalDirection);
-    static Node* traverseDistributedNodes(const Node*, const InsertionPoint*, TraversalDirection);
-
-    static Node* escapeFallbackContentElement(const Node*, TraversalDirection);
 
     const Node* m_node;
     Policy m_policy;
