@@ -1,5 +1,50 @@
 2013-09-07  Mark Lam  <mark.lam@apple.com>
 
+        Change LayoutTests' t* files to use pre and post js files in LayoutTests/resources.
+        https://bugs.webkit.org/show_bug.cgi?id=120899.
+
+        Rubber stamped by Filip Pizlo.
+
+        * touchadjustment/big-div.html:
+        * touchadjustment/block-testing.html:
+        * touchadjustment/context-menu-select-text.html:
+        * touchadjustment/context-menu-shadow-node.html:
+        * touchadjustment/context-menu-text-subtargets.html:
+        * touchadjustment/context-menu.html:
+        * touchadjustment/disabled-formelements.html:
+        * touchadjustment/editable-content.html:
+        * touchadjustment/event-triggered-widgets.html:
+        * touchadjustment/html-label.html:
+        * touchadjustment/iframe.html:
+        * touchadjustment/nested-shadow-node.html:
+        * touchadjustment/nested-touch.html:
+        * touchadjustment/plugin.html:
+        * touchadjustment/rotated-node.html:
+        * touchadjustment/scroll-delegation/iframe-with-mainframe-scroll-offset.html:
+        * touchadjustment/scroll-offset.html:
+        * touchadjustment/search-cancel.html:
+        * touchadjustment/small-target-test.html:
+        * touchadjustment/touch-inlines.html:
+        * touchadjustment/touch-links-active.html:
+        * touchadjustment/touch-links-longpress.html:
+        * touchadjustment/touch-links-two-finger-tap.html:
+        * touchadjustment/zoom-basic.html:
+        * touchadjustment/zoom-fatfinger.html:
+        * transforms/2d/computed-style-origin.html:
+        * transforms/2d/transform-value-types.html:
+        * transforms/cssmatrix-2d-interface.xhtml:
+        * transforms/cssmatrix-3d-interface.xhtml:
+        * transitions/transition-end-event-create.html:
+        * transitions/transition-end-event-prefixed-01.html:
+        * transitions/transition-end-event-prefixed-02.html:
+        * transitions/transition-end-event-prefixed-03.html:
+        * transitions/transitions-parsing.html:
+        * traversal/acid3-test-2.html:
+        * traversal/exception-forwarding.html:
+        * traversal/script-tests/TEMPLATE.html:
+
+2013-09-07  Mark Lam  <mark.lam@apple.com>
+
         Change LayoutTests' s* files to use pre and post js files in LayoutTests/resources.
         https://bugs.webkit.org/show_bug.cgi?id=120899.
 
