@@ -134,7 +134,7 @@ bool SubframeLoader::pluginIsLoadable(HTMLPlugInImageElement* pluginElement, con
             return false;
         }
 
-        if (!m_frame->loader().mixedContentChecker()->canRunInsecureContent(document()->securityOrigin(), url))
+        if (!m_frame->loader().mixedContentChecker().canRunInsecureContent(document()->securityOrigin(), url))
             return false;
     }
 
@@ -263,7 +263,7 @@ PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const 
     else if (mediaElement->isVideo())
         size = RenderVideo::defaultSize();
 
-    if (!m_frame->loader().mixedContentChecker()->canRunInsecureContent(m_frame->document()->securityOrigin(), completedURL))
+    if (!m_frame->loader().mixedContentChecker().canRunInsecureContent(m_frame->document()->securityOrigin(), completedURL))
         return 0;
 
     RefPtr<Widget> widget = m_frame->loader().client().createMediaPlayerProxyPlugin(size, mediaElement, completedURL,

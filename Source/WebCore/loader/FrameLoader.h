@@ -97,7 +97,7 @@ public:
     ResourceLoadNotifier* notifier() const { return &m_notifer; }
     SubframeLoader& subframeLoader() const { return *m_subframeLoader; }
     IconController* icon() const { return m_icon.get(); }
-    MixedContentChecker* mixedContentChecker() const { return &m_mixedContentChecker; }
+    MixedContentChecker& mixedContentChecker() const { return m_mixedContentChecker; }
 
     void prepareForHistoryNavigation();
     void setupForReplace();
