@@ -43,7 +43,6 @@ class Element;
 class Event;
 class FloatSize;
 class Frame;
-class FrameActionScheduler;
 class HTMLFrameOwnerElement;
 class KURL;
 class Node;
@@ -587,8 +586,6 @@ private:
     String m_mediaType;
     String m_mediaTypeWhenNotPrinting;
 
-    OwnPtr<FrameActionScheduler> m_actionScheduler;
-
     bool m_overflowStatusDirty;
     bool m_horizontalOverflow;
     bool m_verticalOverflow;    
@@ -670,6 +667,11 @@ private:
     bool m_visualUpdatesAllowedByClient;
     
     ScrollPinningBehavior m_scrollPinningBehavior;
+
+    unsigned m_scheduledEventSuppressionCount;
+
+    struct ScheduledEvent;
+    Vector<ScheduledEvent> m_scheduledEvents;
 };
 
 inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)

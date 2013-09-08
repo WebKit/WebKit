@@ -908,7 +908,6 @@ SOURCES += \
     page/FeatureObserver.cpp \
     page/FocusController.cpp \
     page/Frame.cpp \
-    page/FrameActionScheduler.cpp \
     page/FrameDestructionObserver.cpp \
     page/FrameTree.cpp \
     page/FrameView.cpp \

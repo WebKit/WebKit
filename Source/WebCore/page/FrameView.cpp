@@ -42,7 +42,6 @@
 #include "FontCache.h"
 #include "FontLoader.h"
 #include "Frame.h"
-#include "FrameActionScheduler.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameSelection.h"
@@ -180,7 +179,6 @@ FrameView::FrameView(Frame& frame)
     , m_isTransparent(false)
     , m_baseBackgroundColor(Color::white)
     , m_mediaType("screen")
-    , m_actionScheduler(adoptPtr(new FrameActionScheduler))
     , m_overflowStatusDirty(true)
     , m_viewportRenderer(0)
     , m_wasScrolledByUser(false)
@@ -202,6 +200,7 @@ FrameView::FrameView(Frame& frame)
     , m_milestonesPendingPaint(0)
     , m_visualUpdatesAllowedByClient(true)
     , m_scrollPinningBehavior(DoNotPin)
+    , m_scheduledEventSuppressionCount(0)
 {
     init();
 
@@ -230,7 +229,8 @@ FrameView::~FrameView()
 {
     if (m_postLayoutTasksTimer.isActive()) {
         m_postLayoutTasksTimer.stop();
-        m_actionScheduler->clear();
+        m_scheduledEventSuppressionCount = 0;
+        m_scheduledEvents.clear();
     }
     
     removeFromAXObjectCache();
@@ -244,7 +244,7 @@ FrameView::~FrameView()
     setHasVerticalScrollbar(false);
     
     ASSERT(!m_scrollCorner);
-    ASSERT(m_actionScheduler->isEmpty());
+    ASSERT(m_scheduledEvents.isEmpty());
 
     ASSERT(frame().view() != this || !frame().contentRenderer());
     RenderPart* renderer = frame().ownerRenderer();
@@ -1262,7 +1262,7 @@ void FrameView::layout(bool allowSubtree)
 
         layer = root->enclosingLayer();
 
-        m_actionScheduler->pause();
+        pauseScheduledEvents();
 
         {
             bool disableLayoutState = false;
@@ -1328,7 +1328,9 @@ void FrameView::layout(bool allowSubtree)
         updateOverflowStatus(layoutWidth() < contentsWidth(),
                              layoutHeight() < contentsHeight());
 
-    if (!m_postLayoutTasksTimer.isActive()) {
+    if (m_postLayoutTasksTimer.isActive())
+        resumeScheduledEvents();
+    else {
         if (!m_inSynchronousPostLayout) {
             if (inChildFrameLayoutWithFrameFlattening) {
                 if (RenderView* renderView = this->renderView())
@@ -1348,12 +1350,10 @@ void FrameView::layout(bool allowSubtree)
             // we call it through the timer here.
             m_postLayoutTasksTimer.startOneShot(0);
             if (needsLayout()) {
-                m_actionScheduler->pause();
+                pauseScheduledEvents();
                 layout();
             }
         }
-    } else {
-        m_actionScheduler->resume();
     }
 
     InspectorInstrumentation::didLayout(cookie, root);
@@ -2574,19 +2574,40 @@ bool FrameView::shouldUpdate(bool immediateRequested) const
     return true;
 }
 
+struct FrameView::ScheduledEvent {
+    ScheduledEvent(PassRefPtr<Event> e, PassRefPtr<Node> t) : event(e), target(t) { }
+    RefPtr<Event> event;
+    RefPtr<Node> target;
+};
+
 void FrameView::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<Node> eventTarget)
 {
-    m_actionScheduler->scheduleEvent(event, eventTarget);
+    if (!m_scheduledEventSuppressionCount) {
+        eventTarget->dispatchEvent(event, IGNORE_EXCEPTION);
+        return;
+    }
+    m_scheduledEvents.append(ScheduledEvent(event, eventTarget));
 }
 
 void FrameView::pauseScheduledEvents()
 {
-    m_actionScheduler->pause();
+    ++m_scheduledEventSuppressionCount;
 }
 
 void FrameView::resumeScheduledEvents()
 {
-    m_actionScheduler->resume();
+    ASSERT(m_scheduledEventSuppressionCount);
+    --m_scheduledEventSuppressionCount;
+    if (m_scheduledEventSuppressionCount)
+        return;
+
+    Vector<ScheduledEvent> eventsToDispatch = std::move(m_scheduledEvents);
+    for (auto it = eventsToDispatch.begin(), end = eventsToDispatch.end(); it != end; ++it) {
+        ScheduledEvent& scheduledEvent = *it;
+        if (!scheduledEvent.target->inDocument())
+            continue;
+        scheduledEvent.target->dispatchEvent(scheduledEvent.event.release(), IGNORE_EXCEPTION);
+    }
 }
 
 void FrameView::scrollToAnchor()
@@ -2778,7 +2799,7 @@ void FrameView::performPostLayoutTasks()
 
     scrollToAnchor();
 
-    m_actionScheduler->resume();
+    resumeScheduledEvents();
 
     sendResizeEventIfNeeded();
 }
@@ -2968,7 +2989,7 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
         m_horizontalOverflow = horizontalOverflow;
         m_verticalOverflow = verticalOverflow;
         
-        m_actionScheduler->scheduleEvent(OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow,
+        scheduleEvent(OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow,
             verticalOverflowChanged, verticalOverflow),
             m_viewportRenderer->node());
     }

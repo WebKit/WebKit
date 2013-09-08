@@ -1,3 +1,39 @@
+2013-09-08  Andreas Kling  <akling@apple.com>
+
+        FrameView::scheduleEvent() is over-engineered.
+        <https://webkit.org/b/121004>
+
+        Reviewed by Antti Koivisto.
+
+        Remove gratuitous FrameActionScheduler class that was really only being used
+        to defer the occassional "overflowchanged" event until layout had finished.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/FrameActionScheduler.cpp:
+        * page/FrameActionScheduler.h:
+
+            Removed FrameActionScheduler.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::ScheduledEvent::ScheduledEvent):
+        (WebCore::FrameView::scheduleEvent):
+        (WebCore::FrameView::pauseScheduledEvents):
+        (WebCore::FrameView::resumeScheduledEvents):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::updateOverflowStatus):
+
+            Replaced it with a Vector<ScheduledEvent> and a suppression counter.
+            A ScheduledEvent is just a { Node, Event } pair.
+
 2013-09-08  Anders Carlsson  <andersca@apple.com>
 
         Move WTF::notFound to Vector.h and delete NotFound.h
