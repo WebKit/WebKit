@@ -32,6 +32,22 @@ using namespace std;
 
 namespace WebCore {
 
+void ResourceRequest::updateSoupMessageMembers(SoupMessage* soupMessage) const
+{
+    updateSoupMessageHeaders(soupMessage->request_headers);
+
+    String firstPartyString = firstPartyForCookies().string();
+    if (!firstPartyString.isEmpty()) {
+        GOwnPtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
+        soup_message_set_first_party(soupMessage, firstParty.get());
+    }
+
+    soup_message_set_flags(soupMessage, m_soupFlags);
+
+    if (!acceptEncoding())
+        soup_message_disable_feature(soupMessage, SOUP_TYPE_CONTENT_DECODER);
+}
+
 void ResourceRequest::updateSoupMessageHeaders(SoupMessageHeaders* soupHeaders) const
 {
     const HTTPHeaderMap& headers = httpHeaderFields();
@@ -60,18 +76,7 @@ void ResourceRequest::updateSoupMessage(SoupMessage* soupMessage) const
     GOwnPtr<SoupURI> uri(soupURI());
     soup_message_set_uri(soupMessage, uri.get());
 
-    updateSoupMessageHeaders(soupMessage->request_headers);
-
-    String firstPartyString = firstPartyForCookies().string();
-    if (!firstPartyString.isEmpty()) {
-        GOwnPtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
-        soup_message_set_first_party(soupMessage, firstParty.get());
-    }
-
-    soup_message_set_flags(soupMessage, m_soupFlags);
-
-    if (!acceptEncoding())
-        soup_message_disable_feature(soupMessage, SOUP_TYPE_CONTENT_DECODER);
+    updateSoupMessageMembers(soupMessage);
 }
 
 SoupMessage* ResourceRequest::toSoupMessage() const
@@ -80,7 +85,7 @@ SoupMessage* ResourceRequest::toSoupMessage() const
     if (!soupMessage)
         return 0;
 
-    updateSoupMessage(soupMessage);
+    updateSoupMessageMembers(soupMessage);
 
     // Body data is only handled at ResourceHandleSoup::startHttp for
     // now; this is because this may not be a good place to go

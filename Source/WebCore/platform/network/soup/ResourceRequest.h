@@ -93,6 +93,7 @@ namespace WebCore {
         bool m_acceptEncoding : 1;
         SoupMessageFlags m_soupFlags;
 
+        void updateSoupMessageMembers(SoupMessage*) const;
         void doUpdatePlatformRequest() { }
         void doUpdateResourceRequest() { }
         void doUpdatePlatformHTTPBody() { }
