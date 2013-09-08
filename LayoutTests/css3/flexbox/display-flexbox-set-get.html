@@ -5,7 +5,7 @@
 .flexbox { display: -webkit-flex; }
 .flexboxInline { display: -webkit-inline-flex; }
 </style>
-<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <div class="flexbox" id="flexbox"></div>
@@ -33,6 +33,6 @@ shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'block'")
 element.style.display = "-webkit-inline-flex";
 shouldBe("getComputedStyle(element, '').getPropertyValue('display')", "'-webkit-inline-flex'");
 </script>
-<script src="../../fast/js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
