@@ -1,3 +1,20 @@
+2013-09-07  David Kilzer  <ddkilzer@apple.com>
+
+        gtest fails to build due to integer type mismatch in WTF::insertIntoBoundedVector()
+        <http://webkit.org/b/120983>
+
+        Reviewed by Dan Bernstein.
+
+        Fixes the following build failure:
+
+            WebKitBuild/Debug/usr/local/include/wtf/StdLibExtras.h:266:23: error: implicit conversion loses integer precision: 'size_t' (aka 'unsigned long') to 'unsigned int' [-Werror,-Wshorten-64-to-32]
+            for (unsigned i = size; i-- > index + 1;)
+                          ~   ^~~~
+
+        * wtf/StdLibExtras.h:
+        (WTF::insertIntoBoundedVector): Use size_t instead of unsigned
+        as for loop index variable.
+
 2013-09-07  Anders Carlsson  <andersca@apple.com>
 
         Remove NonCopyableSort.h from WTF

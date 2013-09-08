@@ -263,7 +263,7 @@ inline ArrayElementType* approximateBinarySearch(const ArrayType& array, size_t 
 template<typename VectorType, typename ElementType>
 inline void insertIntoBoundedVector(VectorType& vector, size_t size, const ElementType& element, size_t index)
 {
-    for (unsigned i = size; i-- > index + 1;)
+    for (size_t i = size; i-- > index + 1;)
         vector[i] = vector[i - 1];
     vector[index] = element;
 }
