@@ -2,7 +2,7 @@
 <html>
 <body>
 <input id="fileInput" type="file" multiple="true" onchange="displayFiles()"></input>
-<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../resources/js-test-pre.js"></script>
 <script>
 description("Tests drag multi-files into &lt;input type='file'&gt;, and check the files name were correct.");
 
@@ -24,7 +24,7 @@ function displayFiles()
     shouldBe("fileInput.files[2].name", "'got-file-upload-2.html'");
 }
 </script>
-<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+<script src="../../../../../resources/js-test-post.js"></script>
 
 </body>
 </html>
