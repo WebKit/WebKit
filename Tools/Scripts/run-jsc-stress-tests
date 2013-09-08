@@ -26,23 +26,30 @@
 require 'getoptlong'
 require 'pathname'
 
+$haveShellwords = false
+
 begin
     require 'shellwords'
+    $haveShellwords = true
 rescue => e
     $stderr.puts "Warning: did not find shellwords; some features will be disabled."
     $stderr.puts "Error: #{e.inspect}"
 end
 
+numProcessors = `sysctl -n hw.availcpu`.to_i
+
 $jscPath = nil
 $enableFTL = false
 $collections = []
 $outputDir = Pathname.new("results")
+$parallel = ($haveShellwords and numProcessors > 1)
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
     puts
     puts "--jsc            (-j)   Path to JavaScriptCore. This option is required."
     puts "--ftl-jit               Indicate that we have the FTL JIT."
+    puts "--[no-]parallel         Run in parallel, or not. Default is #{$parallel}."
     puts "--output-dir     (-o)   Path where to put results. Default is #{$outputDir}."
     puts "--help           (-h)   Print this message."
     exit 1
@@ -51,6 +58,8 @@ end
 GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--jsc', '-j', GetoptLong::REQUIRED_ARGUMENT],
                ['--ftl-jit', GetoptLong::NO_ARGUMENT],
+               ['--parallel', GetoptLong::NO_ARGUMENT],
+               ['--no-parallel', GetoptLong::NO_ARGUMENT],
                ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT]).each {
     | opt, arg |
     case opt
@@ -62,6 +71,10 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $outputDir = Pathname.new(arg)
     when '--ftl-jit'
         $enableFTL = true
+    when '--parallel'
+        $parallel = true
+    when '--no-parallel'
+        $parallel = false
     end
 }
 
@@ -74,30 +87,33 @@ $numFailures = 0
 
 EAGER_OPTIONS = ["--enableConcurrentJIT=false", "--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20"]
 
-def run(kind, *options)
-    name = "#{$benchmark}.#{kind}"
-    print "#{$collectionName}/#{name}: "
-    arguments = [$jscPath.to_s] + options + [$benchmark]
-    if system(*arguments)
-        puts "OK."
-    else
-        puts "FAIL: #{$?.inspect}"
-        File.open($outputDir + "failed", "a") {
-            | outp |
-            outp.puts "#{$collectionName}/#{name}"
-        }
-        $numFailures += 1
-        filename = $outputDir + $collectionName + name
-        begin
-            File.open(filename, "w") {
-                | outp |
-                outp.puts("cd #{Shellwords.shellescape(Dir.pwd)}")
-                outp.puts(arguments.map{|v| Shellwords.shellescape(v)}.join(' '))
-            }
-        rescue => e
-            $stderr.puts "Warning: failed to create repro file at #{filename}: #{e.inspect}"
-        end
+$runlist = []
+
+class Plan
+    attr_reader :directory, :arguments, :name
+    attr_accessor :index
+    
+    def initialize(directory, arguments, name)
+        @directory = directory.realpath
+        @arguments = arguments
+        @name = name
     end
+    
+    def writeTestScript(filename, failCommand)
+        File.open(filename, "w") {
+            | outp |
+            outp.puts "echo Running #{Shellwords.shellescape(@name)}"
+            outp.puts("(cd #{Shellwords.shellescape(@directory)} && " +
+                      @arguments.map{|v| Shellwords.shellescape(v)}.join(' ') +
+                      ") || #{failCommand}")
+        }
+    end
+end
+
+def run(kind, *options)
+    $runlist << Plan.new($collection,
+                         [$jscPath.to_s] + options + [$benchmark],
+                         "#{$collectionName}/#{$benchmark}.#{kind}")
 end
 
 def runDefault
@@ -174,28 +190,157 @@ ARGV.each {
         dir = dir + filename
         Dir.mkdir(dir) unless dir.directory?
     }
-    Dir.chdir($collection) {
-        Dir.foreach('.') {
-            | benchmark |
-            next unless benchmark =~ /\.js$/
-            next unless FileTest.file? benchmark
-            
-            $benchmark = benchmark
-            
-            didRun = false
-            File.open(benchmark) {
-                | inp |
-                inp.each_line {
-                    | line |
-                    next unless line =~ /^\/\/@/
-                    eval $~.post_match
-                    didRun = true
-                }
+
+    Dir.foreach($collection) {
+        | benchmark |
+        next unless benchmark =~ /\.js$/
+        next unless ($collection + benchmark).file?
+        
+        $benchmark = benchmark
+        
+        didRun = false
+        File.open($collection + benchmark) {
+            | inp |
+            inp.each_line {
+                | line |
+                next unless line =~ /^\/\/@/
+                eval $~.post_match
+                didRun = true
             }
-            
-            defaultRun unless didRun
         }
+        
+        defaultRun unless didRun
     }
 }
+
+def appendFailure(plan)
+    File.open($outputDir + "failed", "a") {
+        | outp |
+        outp.puts plan.name
+    }
+    filename = $outputDir + plan.name
+    begin
+        plan.writeTestScript(filename, "exit 1")
+    rescue => e
+        $stderr.puts "Warning: failed to create repro file at #{filename}: #{e.inspect}"
+    end
+    $numFailures += 1
+end
+
+if $enableFTL and ENV["JSC_timeout"]
+    # Currently, using the FTL is a performance regression particularly in real
+    # (i.e. non-loopy) benchmarks. Account for this in the timeout.
+    ENV["JSC_timeout"] = (ENV["JSC_timeout"].to_i * 2).to_s
+end
+
+if $parallel
+    if ENV["JSC_timeout"]
+        # In the worst case, the processors just interfere with each other.
+        # Increase the timeout proportionally to the number of processors.
+        ENV["JSC_timeout"] = (ENV["JSC_timeout"].to_i.to_f * Math.sqrt(numProcessors)).to_i.to_s
+    end
+    
+    # The goals of our parallel test runner are scalability and simplicity. The
+    # simplicity part is particularly important. We don't want to have to have
+    # a full-time contributor just philosophising about parallel testing.
+    #
+    # As such, we just pass off all of the hard work to 'make'. This creates a
+    # dummy directory ("$outputDir/.parallel") in which we create a dummy
+    # Makefile. The Makefile has an 'all' rule that depends on all of the tests.
+    # That is, for each test we know we will run, there is a rule in the
+    # Makefile and 'all' depends on it. Running 'make -j <whatever>' on this
+    # Makefile results in 'make' doing all of the hard work:
+    #
+    # - Load balancing just works. Most systems have a great load balancer in
+    #   'make'. If your system doesn't then just install a real 'make'.
+    #
+    # - Interruptions just work. For example Ctrl-C handling in 'make' is
+    #   exactly right. You don't have to worry about zombie processes.
+    #
+    # We then do some tricks to make failure detection work and to make this
+    # totally sound. If a test fails, we don't want the whole 'make' job to
+    # stop. We also don't have any facility for makefile-escaping of path names.
+    # We do have such a thing for shell-escaping, though. We fix both problems
+    # by having the actual work for each of the test rules be done in a shell
+    # script on the side. There is one such script per test. The script responds
+    # to failure by printing something on the console and then touching a
+    # failure file for that test, but then still returns 0. This makes 'make'
+    # continue past that failure and complete all the tests anyway.
+    #
+    # In the end, this script collects all of the failures by searching for
+    # files in the .parallel directory whose name matches /^test_fail_/, where
+    # the thing after the 'fail_' is the test index. Those are the files that
+    # would be created by the test scripts if they detect failure. We're
+    # basically using the filesystem as a concurrent database of test failures.
+    # Even if two tests fail at the same time, since they're touching different
+    # files we won't miss any failures.
+    
+    runIndices = []
+    $runlist.each_with_index {
+        | plan, index |
+        runIndices << index
+        plan.index = index
+    }
+    
+    parallelDir = $outputDir + ".parallel"
+    Dir.mkdir(parallelDir) unless parallelDir.directory?
+    toDelete = []
+    Dir.foreach(parallelDir) {
+        | filename |
+        if filename =~ /^test_/
+            toDelete << filename
+        end
+    }
+    
+    toDelete.each {
+        | filename |
+        File.unlink(parallelDir + filename)
+    }
+    
+    $runlist.each {
+        | plan |
+        failCommand  = "{\n"
+        failCommand += "    echo FAIL: #{Shellwords.shellescape(plan.name)}\n"
+        failCommand += "    touch test_fail_#{plan.index}\n"
+        failCommand += "}"
+        plan.writeTestScript(parallelDir + "test_script_#{plan.index}", failCommand)
+    }
+    
+    File.open(parallelDir + "Makefile", "w") {
+        | outp |
+        outp.puts("all: " + runIndices.map{|v| "test_done_#{v}"}.join(' '))
+        runIndices.each {
+            | index |
+            plan = $runlist[index]
+            outp.puts "test_done_#{index}:"
+            outp.puts "\tsh test_script_#{plan.index}"
+            outp.puts "\ttouch test_done_#{index}"
+        }
+    }
+    
+    Dir.chdir(parallelDir) {
+        system("make", "-j", numProcessors.to_s, "-s", "-f", "Makefile")
+    }
+    
+    Dir.foreach(parallelDir) {
+        | filename |
+        next unless filename =~ /test_fail_/
+        appendFailure($runlist[$~.post_match.to_i])
+    }
+else
+    $runlist.each {
+        | plan |
+        print "#{plan.name}: "
+        
+        Dir.chdir(plan.directory) {
+            if system(*plan.arguments)
+                puts "OK."
+            else
+                puts "FAIL: #{$?.inspect}"
+                appendFailure(plan)
+            end
+        }
+    }
+end
 
 puts "Failed #{$numFailures} tests."

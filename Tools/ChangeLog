@@ -1,5 +1,21 @@
 2013-09-08  Filip Pizlo  <fpizlo@apple.com>
 
+        run-jsc-stress-tests should run tests in parallel if possible
+        https://bugs.webkit.org/show_bug.cgi?id=120996
+
+        Reviewed by Oliver Hunt.
+        
+        Run tests in parallel by using Makefile hacks. This lets make take care of all load
+        balancing. It's a really awesome speed-up for these tests.
+        
+        This reduces the FTL debug build stress test run time from 8m18s to 2m11s. The 
+        no-FTL debug build stress test time goes from 1m11s to 16s. This patch is pretty
+        much awesome.
+
+        * Scripts/run-jsc-stress-tests:
+
+2013-09-08  Filip Pizlo  <fpizlo@apple.com>
+
         run-jsc-stress-tests should be smart enough to call JSRegress "regress/script-tests" rather than "script-tests"
         https://bugs.webkit.org/show_bug.cgi?id=120994
 
