@@ -88,7 +88,6 @@ HEADERS += \
     MetaAllocatorHandle.h \
     Ref.h \
     Noncopyable.h \
-    NonCopyingSort.h \
     NotFound.h \
     NullPtr.h \
     NumberOfCores.h \

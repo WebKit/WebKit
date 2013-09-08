@@ -1,3 +1,13 @@
+2013-09-07  Anders Carlsson  <andersca@apple.com>
+
+        Remove NonCopyableSort.h from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=120984
+
+        Reviewed by Andreas Kling.
+
+        * WebKitSupport/RenderQueue.cpp:
+        (BlackBerry::WebKit::RenderQueue::quickSort):
+
 2013-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Range::ownerDocument should return Document&

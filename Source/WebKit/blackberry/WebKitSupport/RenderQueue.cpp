@@ -24,8 +24,6 @@
 #include "WebPageClient.h"
 #include "WebPage_p.h"
 
-#include <wtf/NonCopyingSort.h>
-
 #define DEBUG_RENDER_QUEUE 0
 #define DEBUG_RENDER_QUEUE_SORT 0
 
@@ -378,7 +376,7 @@ void RenderQueue::quickSort(TileIndexList* queue)
     if (!length)
         return;
 
-    WTF::nonCopyingSort(queue->begin(), queue->end(), TileIndexLessThan(m_primarySortDirection, m_secondarySortDirection));
+    std::sort(queue->begin(), queue->end(), TileIndexLessThan(m_primarySortDirection, m_secondarySortDirection));
 }
 
 void RenderQueue::updateSortDirection(int lastDeltaX, int lastDeltaY)

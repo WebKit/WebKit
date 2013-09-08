@@ -53,7 +53,6 @@ set(WTF_HEADERS
     MessageQueue.h
     MetaAllocator.h
     MetaAllocatorHandle.h
-    NonCopyingSort.h
     ThreadRestrictionVerifier.h
     Ref.h
     Noncopyable.h

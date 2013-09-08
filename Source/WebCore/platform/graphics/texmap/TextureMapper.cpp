@@ -25,7 +25,6 @@
 #include "TextureMapperImageBuffer.h"
 #include "Timer.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/NonCopyingSort.h>
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 
@@ -85,7 +84,7 @@ void BitmapTexturePool::releaseUnusedTexturesTimerFired(Timer<BitmapTexturePool>
         return;
 
     // Delete entries, which have been unused in s_releaseUnusedSecondsTolerance.
-    nonCopyingSort(m_textures.begin(), m_textures.end(), BitmapTexturePoolEntry::compareTimeLastUsed);
+    std::sort(m_textures.begin(), m_textures.end(), BitmapTexturePoolEntry::compareTimeLastUsed);
 
     double minUsedTime = monotonicallyIncreasingTime() - s_releaseUnusedSecondsTolerance;
     for (size_t i = 0; i < m_textures.size(); ++i) {

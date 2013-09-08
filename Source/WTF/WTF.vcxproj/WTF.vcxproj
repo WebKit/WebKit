@@ -192,7 +192,6 @@
     <ClInclude Include="..\wtf\MetaAllocatorHandle.h" />
     <ClInclude Include="..\wtf\NeverDestroyed.h" />
     <ClInclude Include="..\wtf\Noncopyable.h" />
-    <ClInclude Include="..\wtf\NonCopyingSort.h" />
     <ClInclude Include="..\wtf\NotFound.h" />
     <ClInclude Include="..\wtf\NullPtr.h" />
     <ClInclude Include="..\wtf\NumberOfCores.h" />

@@ -91,7 +91,6 @@ wtf_sources += \
     Source/WTF/wtf/MetaAllocatorHandle.h \
     Source/WTF/wtf/NeverDestroyed.h \
     Source/WTF/wtf/NoLock.h \
-    Source/WTF/wtf/NonCopyingSort.h \
     Source/WTF/wtf/Noncopyable.h \
     Source/WTF/wtf/NotFound.h \
     Source/WTF/wtf/NullPtr.h \

@@ -45,7 +45,6 @@
 #include "TextTrackCue.h"
 #include "TextTrackList.h"
 #include "UserStyleSheetTypes.h"
-#include <wtf/NonCopyingSort.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -845,7 +844,7 @@ Vector<RefPtr<TextTrack> > CaptionUserPreferencesMediaAF::sortedTrackListForMenu
         }
     }
 
-    nonCopyingSort(tracksForMenu.begin(), tracksForMenu.end(), textTrackCompare);
+    std::sort(tracksForMenu.begin(), tracksForMenu.end(), textTrackCompare);
 
     tracksForMenu.insert(0, TextTrack::captionMenuOffItem());
     tracksForMenu.insert(1, TextTrack::captionMenuAutomaticItem());

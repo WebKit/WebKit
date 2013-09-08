@@ -79,7 +79,7 @@ public:
     virtual Vector<String> preferredLanguages() const;
 
     virtual String displayNameForTrack(TextTrack*) const;
-    virtual Vector<RefPtr<TextTrack> > sortedTrackListForMenu(TextTrackList*);
+    virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*);
 
     void setPrimaryAudioTrackLanguageOverride(const String& language) { m_primaryAudioTrackLanguageOverride = language;  }
     String primaryAudioTrackLanguageOverride() const;

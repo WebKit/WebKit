@@ -1,5 +1,21 @@
 2013-09-07  Anders Carlsson  <andersca@apple.com>
 
+        Remove NonCopyableSort.h from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=120984
+
+        Reviewed by Andreas Kling.
+
+        std::sort as defined by C++11 moves elements when possible, so there's no need for nonCopyableSort anymore.
+
+        * GNUmakefile.list.am:
+        * WTF.pro:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/NonCopyingSort.h: Removed.
+
+2013-09-07  Anders Carlsson  <andersca@apple.com>
+
         Get rid of PassOwnArrayPtr
         https://bugs.webkit.org/show_bug.cgi?id=120964
 
