@@ -82,7 +82,7 @@ void RootInlineBox::detachEllipsisBox(RenderArena* arena)
     }
 }
 
-RenderLineBoxList* RootInlineBox::rendererLineBoxes() const
+RenderLineBoxList& RootInlineBox::rendererLineBoxes() const
 {
     return block().lineBoxes();
 }
@@ -724,17 +724,17 @@ EllipsisBox* RootInlineBox::ellipsisBox() const
 
 void RootInlineBox::removeLineBoxFromRenderObject()
 {
-    block().lineBoxes()->removeLineBox(this);
+    block().lineBoxes().removeLineBox(this);
 }
 
 void RootInlineBox::extractLineBoxFromRenderObject()
 {
-    block().lineBoxes()->extractLineBox(this);
+    block().lineBoxes().extractLineBox(this);
 }
 
 void RootInlineBox::attachLineBoxToRenderObject()
 {
-    block().lineBoxes()->attachLineBox(this);
+    block().lineBoxes().attachLineBox(this);
 }
 
 LayoutRect RootInlineBox::paddedLayoutOverflowRect(LayoutUnit endPadding) const

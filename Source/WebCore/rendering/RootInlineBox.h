@@ -85,7 +85,7 @@ public:
         m_lineBottomWithLeading = bottomWithLeading;
     }
 
-    virtual RenderLineBoxList* rendererLineBoxes() const OVERRIDE FINAL;
+    virtual RenderLineBoxList& rendererLineBoxes() const OVERRIDE FINAL;
 
     RenderObject* lineBreakObj() const { return m_lineBreakObj; }
     BidiStatus lineBreakBidiStatus() const;

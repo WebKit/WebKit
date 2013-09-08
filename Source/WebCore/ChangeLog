@@ -1,5 +1,14 @@
 2013-09-08  Andreas Kling  <akling@apple.com>
 
+        Render{Block,Inline}::lineBoxes() should return a reference.
+        <https://webkit.org/b/120995>
+
+        Reviewed by Antti Koivisto.
+
+        This function was already just returning the address of a member variable.
+
+2013-09-08  Andreas Kling  <akling@apple.com>
+
         Move "using software CSS filters" optimization flag to RenderView.
         <https://webkit.org/b/120999>
 

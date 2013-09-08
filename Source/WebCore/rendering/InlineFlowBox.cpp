@@ -225,7 +225,7 @@ void InlineFlowBox::deleteLine(RenderArena* arena)
 
 void InlineFlowBox::removeLineBoxFromRenderObject()
 {
-    toRenderInline(renderer()).lineBoxes()->removeLineBox(this);
+    toRenderInline(renderer()).lineBoxes().removeLineBox(this);
 }
 
 void InlineFlowBox::extractLine()
@@ -238,7 +238,7 @@ void InlineFlowBox::extractLine()
 
 void InlineFlowBox::extractLineBoxFromRenderObject()
 {
-    toRenderInline(renderer()).lineBoxes()->extractLineBox(this);
+    toRenderInline(renderer()).lineBoxes().extractLineBox(this);
 }
 
 void InlineFlowBox::attachLine()
@@ -251,7 +251,7 @@ void InlineFlowBox::attachLine()
 
 void InlineFlowBox::attachLineBoxToRenderObject()
 {
-    toRenderInline(renderer()).lineBoxes()->attachLineBox(this);
+    toRenderInline(renderer()).lineBoxes().attachLineBox(this);
 }
 
 void InlineFlowBox::adjustPosition(float dx, float dy)
@@ -263,7 +263,7 @@ void InlineFlowBox::adjustPosition(float dx, float dy)
         m_overflow->move(dx, dy); // FIXME: Rounding error here since overflow was pixel snapped, but nobody other than list markers passes non-integral values here.
 }
 
-RenderLineBoxList* InlineFlowBox::rendererLineBoxes() const
+RenderLineBoxList& InlineFlowBox::rendererLineBoxes() const
 {
     return toRenderInline(renderer()).lineBoxes();
 }
@@ -315,20 +315,20 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogically
 
         // Check to see if all initial lines are unconstructed.  If so, then
         // we know the inline began on this line (unless we are a continuation).
-        RenderLineBoxList* lineBoxList = rendererLineBoxes();
-        if (!lineBoxList->firstLineBox()->isConstructed() && !renderer().isInlineElementContinuation()) {
+        RenderLineBoxList& lineBoxList = rendererLineBoxes();
+        if (!lineBoxList.firstLineBox()->isConstructed() && !renderer().isInlineElementContinuation()) {
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
             if (renderer().style()->boxDecorationBreak() == DCLONE)
                 includeLeftEdge = includeRightEdge = true;
             else
 #endif
-            if (ltr && lineBoxList->firstLineBox() == this)
+            if (ltr && lineBoxList.firstLineBox() == this)
                 includeLeftEdge = true;
-            else if (!ltr && lineBoxList->lastLineBox() == this)
+            else if (!ltr && lineBoxList.lastLineBox() == this)
                 includeRightEdge = true;
         }
 
-        if (!lineBoxList->lastLineBox()->isConstructed()) {
+        if (!lineBoxList.lastLineBox()->isConstructed()) {
             RenderInline& inlineFlow = toRenderInline(renderer());
             bool isLastObjectOnLine = !isAncestorAndWithinBlock(renderer(), logicallyLastRunRenderer) || (isLastChildForRenderer(&renderer(), logicallyLastRunRenderer) && !isLogicallyLastRunWrapped);
 

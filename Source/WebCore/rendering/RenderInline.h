@@ -66,8 +66,8 @@ public:
     void dirtyLineBoxes(bool fullLayout);
     void deleteLineBoxTree();
 
-    RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
-    const RenderLineBoxList* lineBoxes() const { return &m_lineBoxes; }
+    RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
+    const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
 
     InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
     InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }

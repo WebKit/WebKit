@@ -108,8 +108,8 @@ public:
     virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE FINAL;
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
-    RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
-    const RenderLineBoxList* lineBoxes() const { return &m_lineBoxes; }
+    RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
+    const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
 
     InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
     InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
