@@ -467,7 +467,8 @@ void Heap::markRoots()
 #endif
 
     {
-        GCPHASE(clearMarks);
+        GCPHASE(ClearLivenessData);
+        m_objectSpace.clearNewlyAllocated();
         m_objectSpace.clearMarks();
     }
 

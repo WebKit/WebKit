@@ -134,6 +134,9 @@ namespace JSC {
         void didConsumeFreeList(); // Call this once you've allocated all the items in the free list.
         void canonicalizeCellLivenessData(const FreeList&);
 
+        // Returns true if the "newly allocated" bitmap was non-null 
+        // and was successfully cleared and false otherwise.
+        bool clearNewlyAllocated();
         void clearMarks();
         size_t markCount();
         bool isEmpty();
@@ -226,6 +229,7 @@ namespace JSC {
     {
         m_weakSet.lastChanceToFinalize();
 
+        clearNewlyAllocated();
         clearMarks();
         sweep();
     }
@@ -279,7 +283,6 @@ namespace JSC {
 
         ASSERT(m_state != New && m_state != FreeListed);
         m_marks.clearAll();
-        m_newlyAllocated.clear();
 
         // This will become true at the end of the mark phase. We set it now to
         // avoid an extra pass to do so later.
@@ -355,6 +358,15 @@ namespace JSC {
     inline void MarkedBlock::clearNewlyAllocated(const void* p)
     {
         m_newlyAllocated->clear(atomNumber(p));
+    }
+
+    inline bool MarkedBlock::clearNewlyAllocated()
+    {
+        if (m_newlyAllocated) {
+            m_newlyAllocated.clear();
+            return true;
+        }
+        return false;
     }
 
     inline bool MarkedBlock::isLive(const JSCell* cell)

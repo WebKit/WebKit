@@ -1,3 +1,31 @@
+2013-09-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Clearing MarkedBlock::m_newlyAllocated should be separate from MarkedBlock::clearMarks
+        https://bugs.webkit.org/show_bug.cgi?id=121007
+
+        Reviewed by Oliver Hunt.
+
+        We call clearMarks on every MarkedBlock in the Heap, whereas we only need to clear 
+        m_newlyAllocated for the m_currentBlock at the time of the last canonicalizeCellLiveness() 
+        for each MarkedAllocator. We also need to call it on every block in the largeAllocators 
+        because each one of their blocks is canonicalized as it is used.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::getAndClearCanonicalizedBlock):
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::canonicalizeCellLivenessData):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::lastChanceToFinalize):
+        (JSC::MarkedBlock::clearMarks):
+        (JSC::MarkedBlock::clearNewlyAllocated):
+        * heap/MarkedSpace.cpp:
+        (JSC::clearNewlyAllocatedInBlock):
+        (JSC::ClearNewlyAllocated::operator()):
+        (JSC::MarkedSpace::clearNewlyAllocated):
+        * heap/MarkedSpace.h:
+
 2013-09-07  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support typed array PutByVal

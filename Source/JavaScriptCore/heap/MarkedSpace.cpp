@@ -223,4 +223,49 @@ void MarkedSpace::shrink()
     forEachBlock(freeOrShrink);
 }
 
+static void clearNewlyAllocatedInBlock(MarkedBlock* block)
+{
+    if (!block)
+        return;
+    block->clearNewlyAllocated();
+}
+
+struct ClearNewlyAllocated : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock* block) { block->clearNewlyAllocated(); }
+};
+
+#ifndef NDEBUG
+struct VerifyNewlyAllocated : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock* block) { ASSERT(!block->clearNewlyAllocated()); }
+};
+#endif
+
+void MarkedSpace::clearNewlyAllocated()
+{
+    for (size_t i = 0; i < preciseCount; ++i) {
+        clearNewlyAllocatedInBlock(m_normalSpace.preciseAllocators[i].takeCanonicalizedBlock());
+        clearNewlyAllocatedInBlock(m_normalDestructorSpace.preciseAllocators[i].takeCanonicalizedBlock());
+        clearNewlyAllocatedInBlock(m_immortalStructureDestructorSpace.preciseAllocators[i].takeCanonicalizedBlock());
+    }
+
+    for (size_t i = 0; i < impreciseCount; ++i) {
+        clearNewlyAllocatedInBlock(m_normalSpace.impreciseAllocators[i].takeCanonicalizedBlock());
+        clearNewlyAllocatedInBlock(m_normalDestructorSpace.impreciseAllocators[i].takeCanonicalizedBlock());
+        clearNewlyAllocatedInBlock(m_immortalStructureDestructorSpace.impreciseAllocators[i].takeCanonicalizedBlock());
+    }
+
+    // We have to iterate all of the blocks in the large allocators because they are
+    // canonicalized as they are used up (see MarkedAllocator::tryAllocateHelper)
+    // which creates the m_newlyAllocated bitmap.
+    ClearNewlyAllocated functor;
+    m_normalSpace.largeAllocator.forEachBlock(functor);
+    m_normalDestructorSpace.largeAllocator.forEachBlock(functor);
+    m_immortalStructureDestructorSpace.largeAllocator.forEachBlock(functor);
+
+#ifndef NDEBUG
+    VerifyNewlyAllocated verifyFunctor;
+    forEachBlock(verifyFunctor);
+#endif
+}
+
 } // namespace JSC

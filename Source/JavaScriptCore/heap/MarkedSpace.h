@@ -104,6 +104,7 @@ public:
     void didConsumeFreeList(MarkedBlock*);
 
     void clearMarks();
+    void clearNewlyAllocated();
     void sweep();
     size_t objectCount();
     size_t size();
