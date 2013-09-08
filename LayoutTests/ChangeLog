@@ -1,3 +1,26 @@
+2013-09-08  Filip Pizlo  <fpizlo@apple.com>
+
+        fast/js/dfg-* tests should wait for the concurrent JIT
+        https://bugs.webkit.org/show_bug.cgi?id=120723
+
+        Rubber stamped by Oliver Hunt.
+        
+        Convert more tests.
+
+        * fast/js/dfg-dead-variable-on-exit-expected.txt:
+        * fast/js/dfg-div-by-neg1-and-then-or-zero-interesting-reg-alloc-expected.txt:
+        * fast/js/dfg-div-by-zero-and-then-or-zero-interesting-reg-alloc-expected.txt:
+        * fast/js/dfg-div-neg2tothe31-by-one-and-then-or-zero-with-interesting-reg-alloc-expected.txt:
+        * fast/js/dfg-double-addition-simplify-to-int-expected.txt:
+        * fast/js/dfg-double-use-of-post-simplification-double-prediction-expected.txt:
+        * fast/js/script-tests/dfg-dead-variable-on-exit.js:
+        * fast/js/script-tests/dfg-div-by-neg1-and-then-or-zero-interesting-reg-alloc.js:
+        * fast/js/script-tests/dfg-div-by-zero-and-then-or-zero-interesting-reg-alloc.js:
+        * fast/js/script-tests/dfg-div-neg2tothe31-by-one-and-then-or-zero-with-interesting-reg-alloc.js:
+        * fast/js/script-tests/dfg-double-addition-simplify-to-int.js:
+        * fast/js/script-tests/dfg-double-use-of-post-simplification-double-prediction.js:
+        * fast/js/script-tests/dfg-double-vote-fuzz.js:
+
 2013-09-08  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/security/shape-inside-image-origin.html started to fail with

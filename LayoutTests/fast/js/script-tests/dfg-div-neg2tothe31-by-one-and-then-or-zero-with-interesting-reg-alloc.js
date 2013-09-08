@@ -6,6 +6,5 @@ function foo(c, d, a, b) {
     return (c + d) + ((a / b) | 0);
 }
 
-for (var i = 0; i < 100; ++i)
-    shouldBe("foo(0, 0, -2147483647-1, -1)", "-2147483647-1");
+dfgShouldBe(foo, "foo(0, 0, -2147483647-1, -1)", "-2147483647-1");
 

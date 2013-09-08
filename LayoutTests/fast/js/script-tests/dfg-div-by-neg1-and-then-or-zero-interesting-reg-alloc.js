@@ -6,6 +6,9 @@ function foo(c, d, a, b) {
     return (c + d) + ((a / b) | 0);
 }
 
-for (var i = 0; i < 100; ++i)
+silentTestPass = true;
+noInline(foo);
+
+for (var i = 0; i < 100; i = dfgIncrement({f:foo, i:i + 1, n:50}))
     shouldBe("foo(0, 0, " + i + ", -1)", (i ? "-" : "") + i);
 

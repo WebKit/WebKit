@@ -43,7 +43,13 @@ function foo(a, b) {
 var firstArg = {f:2, g:3};
 var secondArg = {f:3, g:4};
 
-for (var i = 0; i < 300; ++i) {
+var myFunctions = array.concat(foo);
+for (var i = 0; i < myFunctions.length; ++i)
+    noInline(myFunctions[i]);
+
+silentTestPass = true;
+
+for (var i = 0; i < 300; i = dfgIncrement({f:myFunctions, i:i + 1, n:100})) {
     var code = "";
     code += "array[" + (((i / 2) | 0) % array.length) + "](";
     for (var j = 0; j < (((i / 2) | 0) % array.length); ++j) {

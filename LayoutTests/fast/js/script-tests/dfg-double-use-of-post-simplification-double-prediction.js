@@ -12,6 +12,5 @@ function foo(a) {
     return x + a;
 }
 
-for (var i = 0; i < 200; ++i)
-    shouldBe("foo(0.5)", "42.5");
+dfgShouldBe(foo, "foo(0.5)", "42.5");
 

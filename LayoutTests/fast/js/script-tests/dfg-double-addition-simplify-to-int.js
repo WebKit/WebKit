@@ -22,5 +22,4 @@ function foo(a, p) {
     return [result, [x, y], [x, y], [x, y]];
 }
 
-for (var i = 0; i < 1000; ++i)
-    shouldBe("foo(42, true)[0]", "84");
+dfgShouldBe(foo, "foo(42, true)[0]", "84");

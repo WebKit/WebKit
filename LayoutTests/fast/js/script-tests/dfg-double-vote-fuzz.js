@@ -52,6 +52,9 @@ for (var i = 0; i < 256; ++i) {
     code += "}\n";
     code += "\n";
     code += "var result = 0;\n"
+    code += "noInline(foo);\n"
+    code += "while (!dfgCompiled({f:foo}))\n"
+    code += "    foo({}, 25, 35);\n"
     code += "for (var __j = 0; __j < 100; ++__j) {\n";
     code += "    result += foo({}, __j, __j + 1);\n";
     code += "}\n";
