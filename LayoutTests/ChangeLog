@@ -1,5 +1,115 @@
 2013-09-07  Mark Lam  <mark.lam@apple.com>
 
+        Change fast/r* files to use pre and post js files in LayoutTests/resources.
+        https://bugs.webkit.org/show_bug.cgi?id=120980.
+
+        Rubber stamped by Filip Pizlo.
+
+        * fast/regex/alternative-length-miscalculation.html:
+        * fast/regex/assertion.html:
+        * fast/regex/constructor.html:
+        * fast/regex/cross-frame-callable.html:
+        * fast/regex/dotstar.html:
+        * fast/regex/early-acid3-86.html:
+        * fast/regex/ecma-regex-examples.html:
+        * fast/regex/invalid-range-in-class.html:
+        * fast/regex/lastIndex.html:
+        * fast/regex/malformed-escapes.html:
+        * fast/regex/non-capturing-backtracking.html:
+        * fast/regex/non-pattern-characters.html:
+        * fast/regex/overflow.html:
+        * fast/regex/parentheses.html:
+        * fast/regex/pcre-test-1.html:
+        * fast/regex/pcre-test-4.html:
+        * fast/regex/quantified-assertions.html:
+        * fast/regex/repeat-match-waldemar.html:
+        * fast/regex/script-tests/TEMPLATE.html:
+        * fast/regex/slow.html:
+        * fast/regex/toString.html:
+        * fast/regex/unicodeCaseInsensitive.html:
+        * fast/regions/autoheight-regionlayoutupdate-multipletimes.html:
+        * fast/regions/content-webkit-from-flow-parsing.html:
+        * fast/regions/css-regions-disabled.html:
+        * fast/regions/element-region-overset-state-negative-letter-spacing.html:
+        * fast/regions/element-region-overset-state-vertical-rl-negative-letter-spacing.html:
+        * fast/regions/element-region-overset-state-vertical-rl.html:
+        * fast/regions/element-region-overset-state.html:
+        * fast/regions/get-region-flow-ranges-absolute-pos.html:
+        * fast/regions/get-region-flow-ranges-content-nodes.html:
+        * fast/regions/get-region-flow-ranges-display-none.html:
+        * fast/regions/get-region-flow-ranges-empty-regions.html:
+        * fast/regions/get-region-flow-ranges-fixed-pos.html:
+        * fast/regions/get-region-flow-ranges-horiz-bt.html:
+        * fast/regions/get-region-flow-ranges-inline-only.html:
+        * fast/regions/get-region-flow-ranges-text-vert-lr.html:
+        * fast/regions/get-region-flow-ranges-text.html:
+        * fast/regions/get-region-flow-ranges-vert-lr.html:
+        * fast/regions/get-region-flow-ranges-vert-rl.html:
+        * fast/regions/get-region-flow-ranges-writing-modes-rl-rb-lr.html:
+        * fast/regions/get-region-flow-ranges-writing-modes-tb-rl-lr.html:
+        * fast/regions/get-region-flow-ranges.html:
+        * fast/regions/get-regions-by-content-horiz-bt.html:
+        * fast/regions/get-regions-by-content-horiz-tb.html:
+        * fast/regions/get-regions-by-content-pseudo.html:
+        * fast/regions/get-regions-by-content-vert-lr.html:
+        * fast/regions/get-regions-by-content-vert-rl.html:
+        * fast/regions/get-regions-by-content.html:
+        * fast/regions/get-regions-by-content2.html:
+        * fast/regions/hover-in-region-grandparent.html:
+        * fast/regions/hover-in-region-parent-skip-inlines-anonymous.html:
+        * fast/regions/hover-on-child-in-region-in-region.html:
+        * fast/regions/hover-on-child-in-region.html:
+        * fast/regions/hover-on-child-parent-different-regions.html:
+        * fast/regions/mathml-crash.html:
+        * fast/regions/offsetLeft-offsetTop-in-multiple-regions.html:
+        * fast/regions/offsetLeft-offsetTop-in-region-absolute-sticky-fixed.html:
+        * fast/regions/offsetLeft-offsetTop-in-region-float-vert-rl.html:
+        * fast/regions/offsetLeft-offsetTop-in-region-float.html:
+        * fast/regions/offsetLeft-offsetTop-inlines-region-in-element.html:
+        * fast/regions/offsetParent-body-in-flow-thread.html:
+        * fast/regions/offsetParent-in-flow-thread.html:
+        * fast/regions/overflow-scrollable-nested.html:
+        * fast/regions/region-element-display-change.html:
+        * fast/regions/region-element-display-restriction.html:
+        * fast/regions/regions-widows-and-orphans.html:
+        * fast/regions/remove-flow-thread-crash.html:
+        * fast/regions/script-tests/TEMPLATE.html:
+        * fast/regions/webkit-named-flow-collection-crash.html:
+        * fast/regions/webkit-named-flow-collection-empty-getters.html:
+        * fast/regions/webkit-named-flow-collection.html:
+        * fast/regions/webkit-named-flow-event-add-to-flow.html:
+        * fast/regions/webkit-named-flow-event-auto-height.html:
+        * fast/regions/webkit-named-flow-event-crash.html:
+        * fast/regions/webkit-named-flow-event-no-regions.html:
+        * fast/regions/webkit-named-flow-event-region-in-flexbox-no-overset-change.html:
+        * fast/regions/webkit-named-flow-event-region-in-flexbox-overset-change.html:
+        * fast/regions/webkit-named-flow-event-remove-from-dom.html:
+        * fast/regions/webkit-named-flow-event-remove-from-flow.html:
+        * fast/regions/webkit-named-flow-event-target.html:
+        * fast/regions/webkit-named-flow-event-to-null.html:
+        * fast/regions/webkit-named-flow-event.html:
+        * fast/regions/webkit-named-flow-first-empty-region-index.html:
+        * fast/regions/webkit-named-flow-get-content.html:
+        * fast/regions/webkit-named-flow-get-regions-pseudo.html:
+        * fast/regions/webkit-named-flow-get-regions.html:
+        * fast/regions/webkit-named-flow-name.html:
+        * fast/regions/webkit-named-flow-overset.html:
+        * fast/regions/webkit-region-fragment-parsing.html:
+        * fast/regions/webkit-region-rule.html:
+        * fast/repaint/background-shorthand-with-gradient-and-height-changes.html:
+        * fast/repaint/fixed-in-page-scale.html:
+        * fast/repaint/fixed-right-bottom-in-page-scale.html:
+        * fast/repaint/fixed-right-in-page-scale.html:
+        * fast/repaint/obscured-background-no-repaint.html:
+        * fast/replaced/iframe-with-percentage-height-within-table-with-anonymous-table-cell.html:
+        * fast/replaced/iframe-with-percentage-height-within-table-with-table-cell-ignore-height.html:
+        * fast/replaced/table-percent-height-text-controls.html:
+        * fast/replaced/table-percent-height.html:
+        * fast/replaced/table-percent-width.html:
+        * fast/ruby/ruby-line-height.html:
+
+2013-09-07  Mark Lam  <mark.lam@apple.com>
+
         Change fast/m*, fast/n*, fast/o*, and fast/p* files to use pre and post js files in LayoutTests/resources.
         https://bugs.webkit.org/show_bug.cgi?id=120978.
 
