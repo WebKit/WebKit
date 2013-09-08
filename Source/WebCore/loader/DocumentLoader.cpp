@@ -528,7 +528,7 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
     // listener tells us to. In practice that means the navigation policy needs to be decided
     // synchronously for these redirect cases.
     if (!redirectResponse.isNull())
-        frameLoader()->policyChecker()->checkNavigationPolicy(newRequest, callContinueAfterNavigationPolicy, this);
+        frameLoader()->policyChecker().checkNavigationPolicy(newRequest, callContinueAfterNavigationPolicy, this);
 }
 
 void DocumentLoader::callContinueAfterNavigationPolicy(void* argument, const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue)
@@ -638,7 +638,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
         m_contentFilter = ContentFilter::create(response);
 #endif
 
-    frameLoader()->policyChecker()->checkContentPolicy(m_response, callContinueAfterContentPolicy, this);
+    frameLoader()->policyChecker().checkContentPolicy(m_response, callContinueAfterContentPolicy, this);
 }
 
 void DocumentLoader::callContinueAfterContentPolicy(void* argument, PolicyAction policy)
@@ -667,7 +667,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
             || equalIgnoringCase("multipart/related", mimeType))
             && !m_substituteData.isValid() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol());
         if (!frameLoader()->client().canShowMIMEType(mimeType) || isRemoteWebArchive) {
-            frameLoader()->policyChecker()->cannotShowMIMEType(m_response);
+            frameLoader()->policyChecker().cannotShowMIMEType(m_response);
             // Check reachedTerminalState since the load may have already been canceled inside of _handleUnimplementablePolicyWithErrorCode::.
             stopLoadingForPolicyChange();
             return;
@@ -1423,7 +1423,7 @@ void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError)
 
     m_dataLoadTimer.stop();
     if (m_waitingForContentPolicy) {
-        frameLoader()->policyChecker()->cancelCheck();
+        frameLoader()->policyChecker().cancelCheck();
         ASSERT(m_waitingForContentPolicy);
         m_waitingForContentPolicy = false;
     }

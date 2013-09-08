@@ -625,7 +625,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(FramePolicyFunction f
         return;
 
     if (!request.url().string()) {
-        (m_frame->coreFrame()->loader().policyChecker()->*function)(PolicyUse);
+        (m_frame->coreFrame()->loader().policyChecker().*function)(PolicyUse);
         return;
     }
 
@@ -634,7 +634,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(FramePolicyFunction f
     // Notify the bundle client.
     WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForResponse(webPage, m_frame, response, request, userData);
     if (policy == WKBundlePagePolicyActionUse) {
-        (m_frame->coreFrame()->loader().policyChecker()->*function)(PolicyUse);
+        (m_frame->coreFrame()->loader().policyChecker().*function)(PolicyUse);
         return;
     }
 
@@ -665,7 +665,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFun
     // Notify the bundle client.
     WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForNewWindowAction(webPage, m_frame, action.get(), request, frameName, userData);
     if (policy == WKBundlePagePolicyActionUse) {
-        (m_frame->coreFrame()->loader().policyChecker()->*function)(PolicyUse);
+        (m_frame->coreFrame()->loader().policyChecker().*function)(PolicyUse);
         return;
     }
 
@@ -684,7 +684,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
 
     // Always ignore requests with empty URLs. 
     if (request.isEmpty()) { 
-        (m_frame->coreFrame()->loader().policyChecker()->*function)(PolicyIgnore); 
+        (m_frame->coreFrame()->loader().policyChecker().*function)(PolicyIgnore); 
         return; 
     }
 
@@ -695,7 +695,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     // Notify the bundle client.
     WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForNavigationAction(webPage, m_frame, action.get(), request, userData);
     if (policy == WKBundlePagePolicyActionUse) {
-        (m_frame->coreFrame()->loader().policyChecker()->*function)(PolicyUse);
+        (m_frame->coreFrame()->loader().policyChecker().*function)(PolicyUse);
         return;
     }
     

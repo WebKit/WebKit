@@ -107,7 +107,7 @@ void FrameLoaderClientEfl::callPolicyFunction(FramePolicyFunction function, Poli
 {
     Frame* f = EWKPrivate::coreFrame(m_frame);
     ASSERT(f);
-    (f->loader().policyChecker()->*function)(action);
+    (f->loader().policyChecker().*function)(action);
 }
 
 WTF::PassRefPtr<DocumentLoader> FrameLoaderClientEfl::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)

@@ -1,5 +1,14 @@
 2013-09-08  Andreas Kling  <akling@apple.com>
 
+        FrameLoader::policyChecker() should return a reference.
+        <https://webkit.org/b/120991>
+
+        Reviewed by Antti Koivisto.
+
+        This function never returns null. Make it return a reference!
+
+2013-09-08  Andreas Kling  <akling@apple.com>
+
         FrameLoader::mixedContentChecker() should return a reference.
         <https://webkit.org/b/120992>
 

@@ -244,7 +244,7 @@ void FrameLoaderClientQt::setFrame(QWebFrameAdapter* webFrame, Frame* frame)
 
 void FrameLoaderClientQt::callPolicyFunction(FramePolicyFunction function, PolicyAction action)
 {
-    (m_frame->loader().policyChecker()->*function)(action);
+    (m_frame->loader().policyChecker().*function)(action);
 }
 
 bool FrameLoaderClientQt::hasWebView() const

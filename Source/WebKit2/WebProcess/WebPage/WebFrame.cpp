@@ -222,7 +222,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
 
     m_policyDownloadID = downloadID;
 
-    (m_coreFrame->loader().policyChecker()->*function)(action);
+    (m_coreFrame->loader().policyChecker().*function)(action);
 }
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request)
