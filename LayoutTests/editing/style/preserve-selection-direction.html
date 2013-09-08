@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Preserve selection direction</title>
-<script src="../../fast/js/resources/js-test-pre.js" type="text/javascript"></script>
+<script src="../../resources/js-test-pre.js" type="text/javascript"></script>
 </head>
 <body>
 <p>Bug 110979: Selection direction is not preserved when applying styles</p>
@@ -26,6 +26,6 @@ evalAndLog("document.execCommand('foreColor', false, 'green');");
 shouldBe("selection.anchorOffset", "5");
 shouldBe("selection.focusOffset", "0");
 </script>
-<script src="../../fast/js/resources/js-test-post.js" type="text/javascript"></script>
+<script src="../../resources/js-test-post.js" type="text/javascript"></script>
 </body>
 </html>

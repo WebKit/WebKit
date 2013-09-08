@@ -3,7 +3,7 @@
         <style>
         .userSelectAll {-webkit-user-select: all;}
         </style>
-        <script src="../../fast/js/resources/js-test-pre.js"></script>
+        <script src="../../resources/js-test-pre.js"></script>
     </head>
     <body contentEditable="true">
         <div class="userSelectAll" id ="allArea">
@@ -16,6 +16,6 @@
             var userSelect = document.defaultView.getComputedStyle(document.getElementById("allArea"),null);
             shouldBeEqualToString('userSelect.getPropertyValue("-webkit-user-select")', 'all');
         </script>
-        <script src="../../fast/js/resources/js-test-post.js"></script>
+        <script src="../../resources/js-test-post.js"></script>
     </body>
 </html>
