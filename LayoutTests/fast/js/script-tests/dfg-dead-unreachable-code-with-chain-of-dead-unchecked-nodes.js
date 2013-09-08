@@ -12,6 +12,4 @@ function foo(a) {
     return bar;
 }
 
-// Since the function contains unreachable code we need a higher optimization threshold.
-for (var i = 0; i < 1000; ++i)
-    shouldBe("foo(42)(false)", "5");
+dfgShouldBe(foo(0), "foo(42)(false)", "5");

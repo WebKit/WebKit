@@ -9,6 +9,5 @@ function foo() {
     return result;
 }
 
-for (var i = 0; i < 200; ++i)
-    shouldBe("foo()", "\" DIV #text DIV #text SCRIPT\"");
+dfgShouldBe(foo, "foo()", "\" DIV #text DIV #text SCRIPT\"");
 

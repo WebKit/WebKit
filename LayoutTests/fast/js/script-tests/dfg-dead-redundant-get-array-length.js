@@ -7,5 +7,4 @@ function foo(array) {
     return array.length;
 }
 
-for (var i = 0; i < 128; ++i)
-    shouldBe("foo([1, 2, 3])", "3");
+dfgShouldBe(foo, "foo([1, 2, 3])", "3");

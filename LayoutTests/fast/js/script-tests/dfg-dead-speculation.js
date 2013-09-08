@@ -11,7 +11,10 @@ var thingy = {f:42};
 var variable = 84;
 var expected = 84;
 
-for (var i = 0; i < 200; ++i) {
+noInline(foo);
+silentTestPass = true;
+
+for (var i = 0; i < 200; i = dfgIncrement({f:foo, i:i + 1, n:100})) {
     if (i == 150) {
         thingy = {f:{valueOf:function(){ variable = 24; return 5; }}};
         expected = 24;

@@ -21,7 +21,10 @@ function bar(doOpen) {
     }
 }
 
-for (var i = 0; i < 200; ++i) {
+noInline(baz);
+silentTestPass = true;
+
+for (var i = 0; i < 200; i = dfgIncrement({f:baz, i:i + 1, n:50})) {
     shouldBe("bar(i >= 100)", i >= 100 ? "\"Threw exception: Error: InvalidStateError: DOM Exception 11\"" : "\"Returned result: 0\"");
 }
 
