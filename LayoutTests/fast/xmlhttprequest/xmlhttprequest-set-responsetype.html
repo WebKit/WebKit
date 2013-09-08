@@ -2,7 +2,7 @@
 <body>
 <div id="description"></div>
 <div id="console"></div>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <script>
 description('This test checks if setting non-supported type does not throw an exception');
 
@@ -22,5 +22,5 @@ shouldNotThrow('xhr.responseType = "dkjdfkjdfkj"');
 shouldBeEqualToString('xhr.responseType = "text"; xhr.responseType = "asdfasdfasd"; xhr.responseType', 'text');
 
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
 </body>

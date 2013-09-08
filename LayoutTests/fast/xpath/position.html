@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <script src="xpath-test-pre.js"></script>
 </head>
 <body>
@@ -79,6 +79,6 @@ ROOT2.innerHTML = '<p num="1"></p><p num="2" type="warning"></p><p num="3" type=
     shouldBe("document.evaluate('p[5][@type=\"warning\"]/@num', ROOT2, null, XPathResult.STRING_TYPE, null).stringValue", "'5'");
 
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

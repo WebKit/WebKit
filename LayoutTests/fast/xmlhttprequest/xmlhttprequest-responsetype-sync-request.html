@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="../js/resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test-pre.js"></script>
     <script>
         description('This tests that the XMLHttpRequest responseType attribute is not modifiable for synchronous HTTP(S) requests.');
         var xhr;
@@ -34,7 +34,7 @@
         evalAndLog("xhr.responseType = 'document';");
         shouldBeEqualToString('xhr.responseType', 'document');
     </script>
-    <script src="../js/resources/js-test-post.js"></script>
+    <script src="../../resources/js-test-post.js"></script>
 </head>
 <body>
     <div id="description"></div>

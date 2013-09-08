@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="../js/resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test-pre.js"></script>
     <script>
         description('This tests that XMLHttpRequest open() disallows synchronous HTTP(S) requests when a non-default responseType is set.');
         var xhr;
@@ -34,7 +34,7 @@
         evalAndLog("xhr.open('GET', dataUrl, false);");
         shouldBeEqualToString('xhr.responseType', 'document');
     </script>
-    <script src="../js/resources/js-test-post.js"></script>
+    <script src="../../resources/js-test-post.js"></script>
 </head>
 <body>
     <div id="description"></div>

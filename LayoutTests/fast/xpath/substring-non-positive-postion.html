@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=41913">bug 41913</a>:
@@ -15,6 +15,6 @@ XPath substring function does not correctly handle non-positive values for the p
     shouldBe("document.evaluate(\"substring('abcde', -2, 5)\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'ab'");
 
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

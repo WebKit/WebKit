@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <svg id="svg"></svg>
@@ -21,6 +21,6 @@
   var result= document.evaluate("/node()/descendant-or-self::svg:* | node()/ancestor-or-self::node()", document.getElementById("svg").ownerDocument.importNode(document.documentElement), resolver, XPathResult.NUMBER_TYPE, result);
   shouldBe("result.numberValue", "NaN");
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

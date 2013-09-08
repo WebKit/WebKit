@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=41862">bug 41862</a>:
@@ -18,6 +18,6 @@ XPath substring function is broken when passing NaN as the position parameter.</
     shouldBe("document.evaluate(\"substring('12345', number(\'NaN\'), number(\'NaN\'))\", document, null, XPathResult.STRING_TYPE, null).stringValue", "''");
 
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

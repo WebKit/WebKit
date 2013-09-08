@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="../js/resources/js-test-pre.js"></script>
+    <script src="../../resources/js-test-pre.js"></script>
     <script>
         if ('internals' in window) {
             window.internals.settings.setSyncXHRInDocumentsEnabled(false);
@@ -13,7 +13,7 @@
         var xhr = new XMLHttpRequest();
         shouldThrow('xhr.open("GET", "http://mydomain/", false)');
     </script>
-    <script src="../js/resources/js-test-post.js"></script>
+    <script src="../../resources/js-test-post.js"></script>
 </head>
 <body>
     <div id="description"></div>
