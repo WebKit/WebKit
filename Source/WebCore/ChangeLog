@@ -1,3 +1,16 @@
+2013-09-07  Andreas Kling  <akling@apple.com>
+
+        Beat FrameView with the FINAL stick.
+        <https://webkit.org/b/120989>
+
+        Reviewed by Anders Carlsson.
+
+        ... and mark everything virtual with OVERRIDE, exposing a couple of things
+        that didn't actually override anything.
+
+        * WebCore.exp.in:
+        * page/FrameView.h:
+
 2013-09-07  Anders Carlsson  <andersca@apple.com>
 
         Remove NonCopyableSort.h from WTF
