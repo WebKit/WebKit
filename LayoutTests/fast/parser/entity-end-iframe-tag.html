@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../js/resources/js-test-pre.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <iframe id="myiframe">&lt;/iframe></iframe>
@@ -13,6 +13,6 @@ description("Test parsing of entity-escaped &lt;/iframe&gt; tag for <a href=\"ht
 var expectedResult = '<' + '/iframe>';
 shouldBe('document.getElementById("myiframe").textContent', 'expectedResult');
 </script>
-<script src="../js/resources/js-test-post.js"></script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

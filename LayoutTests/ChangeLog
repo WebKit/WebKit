@@ -1,5 +1,91 @@
 2013-09-07  Mark Lam  <mark.lam@apple.com>
 
+        Change fast/m*, fast/n*, fast/o*, and fast/p* files to use pre and post js files in LayoutTests/resources.
+        https://bugs.webkit.org/show_bug.cgi?id=120978.
+
+        Rubber stamped by Filip Pizlo.
+
+        * fast/masking/parsing-clip-path-iri.html:
+        * fast/masking/parsing-clip-path-shape.html:
+        * fast/masking/parsing-mask-source-type.html:
+        * fast/masking/parsing-mask.html:
+        * fast/media/media-query-serialization.html:
+        * fast/media/mq-pixel-ratio-print.html:
+        * fast/media/mq-resolution.html:
+        * fast/media/viewport-media-query-synchronous.html:
+        * fast/mediastream/LocalMediaStream-onended.html:
+        * fast/mediastream/MediaStream-add-remove-tracks.html:
+        * fast/mediastream/MediaStream-onended.html:
+        * fast/mediastream/MediaStreamConstructor.html:
+        * fast/mediastream/MediaStreamTrack.html:
+        * fast/mediastream/RTCIceCandidate.html:
+        * fast/mediastream/RTCPeerConnection-AddRemoveStream.html:
+        * fast/mediastream/RTCPeerConnection-createAnswer.html:
+        * fast/mediastream/RTCPeerConnection-createOffer.html:
+        * fast/mediastream/RTCPeerConnection-datachannel.html:
+        * fast/mediastream/RTCPeerConnection-dtmf.html:
+        * fast/mediastream/RTCPeerConnection-events.html:
+        * fast/mediastream/RTCPeerConnection-ice.html:
+        * fast/mediastream/RTCPeerConnection-localDescription.html:
+        * fast/mediastream/RTCPeerConnection-onnegotiationneeded.html:
+        * fast/mediastream/RTCPeerConnection-remoteDescription.html:
+        * fast/mediastream/RTCPeerConnection-state.html:
+        * fast/mediastream/RTCPeerConnection-stats.html:
+        * fast/mediastream/RTCPeerConnection-statsSelector.html:
+        * fast/mediastream/RTCPeerConnection.html:
+        * fast/mediastream/RTCSessionDescription.html:
+        * fast/mediastream/argument-types.html:
+        * fast/mediastream/constructors.html:
+        * fast/mediastream/enabled.html:
+        * fast/mediastream/getusermedia.html:
+        * fast/mediastream/no-interface-object.html:
+        * fast/multicol/column-span-parent-continuation-crash.html:
+        * fast/multicol/column-width-zero.html:
+        * fast/multicol/newmulticol/balance-images.html:
+        * fast/multicol/newmulticol/balance-maxheight1.html:
+        * fast/multicol/newmulticol/balance-maxheight2.html:
+        * fast/multicol/newmulticol/balance1.html:
+        * fast/multicol/newmulticol/balance2.html:
+        * fast/multicol/newmulticol/balance3.html:
+        * fast/multicol/newmulticol/balance4.html:
+        * fast/multicol/newmulticol/balance5.html:
+        * fast/multicol/newmulticol/balance6.html:
+        * fast/multicol/newmulticol/balance7.html:
+        * fast/multicol/newmulticol/balance8.html:
+        * fast/multicol/newmulticol/balance9.html:
+        * fast/multicol/newmulticol/orphans-and-widows-balance.html:
+        * fast/multicol/orphans-relayout.html:
+        * fast/multicol/zeroColumnCount.html:
+        * fast/notifications/notifications-permission.html:
+        * fast/notifications/notifications-request-permission-optional.html:
+        * fast/overflow/child-100percent-height-inside-fixed-container-with-overflow-auto.html:
+        * fast/overflow/height-during-simplified-layout.html:
+        * fast/overflow/replaced-child-100percent-height-inside-fixed-container-with-overflow-auto.html:
+        * fast/overflow/scroll-div-hide-show.html:
+        * fast/overflow/scrollbar-click-retains-focus.html:
+        * fast/parser/block-nesting-cap.html:
+        * fast/parser/close-while-stopping.html:
+        * fast/parser/comment-in-textarea.html:
+        * fast/parser/double-write-from-closed-iframe.html:
+        * fast/parser/entity-end-iframe-tag.html:
+        * fast/parser/entity-end-script-tag.html:
+        * fast/parser/entity-end-style-tag.html:
+        * fast/parser/entity-end-textarea-tag.html:
+        * fast/parser/entity-end-title-tag.html:
+        * fast/parser/entity-end-xmp-tag.html:
+        * fast/parser/fragment-parser-doctype.html:
+        * fast/parser/fragment-parser.html:
+        * fast/parser/localname-case-strict.html:
+        * fast/parser/localname-case.html:
+        * fast/parser/parser-yield-timing.html:
+        * fast/parser/pre-first-line-break.html:
+        * fast/parser/script-tests/TEMPLATE.html:
+        * fast/performance/performance-now-timestamps.html:
+        * fast/performance/script-tests/TEMPLATE.html:
+        * fast/preloader/image-srcset.html:
+
+2013-09-07  Mark Lam  <mark.lam@apple.com>
+
         Change fast/g*, fast/h*, fast/i*, and fast/l* files to use pre and post js files in LayoutTests/resources.
         https://bugs.webkit.org/show_bug.cgi?id=120977.
 
