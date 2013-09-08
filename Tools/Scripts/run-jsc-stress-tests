@@ -36,6 +36,16 @@ rescue => e
     $stderr.puts "Error: #{e.inspect}"
 end
 
+def mysys(*cmd)
+    begin
+        commandArray = cmd.each{|value| Shellwords.shellescape(value.to_s)}.join(' ')
+    rescue
+        commandArray = cmd.join(' ')
+    end
+    $stderr.puts ">> #{commandArray}"
+    raise "Command failed: #{$?.inspect}" unless system(*cmd)
+end
+
 numProcessors = `sysctl -n hw.availcpu`.to_i
 
 $jscPath = nil
@@ -319,7 +329,7 @@ if $parallel
     }
     
     Dir.chdir(parallelDir) {
-        system("make", "-j", numProcessors.to_s, "-s", "-f", "Makefile")
+        mysys("make", "-j", numProcessors.to_s, "-s", "-f", "Makefile")
     }
     
     Dir.foreach(parallelDir) {
