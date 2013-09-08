@@ -103,7 +103,7 @@ class Plan
         File.open(filename, "w") {
             | outp |
             outp.puts "echo Running #{Shellwords.shellescape(@name)}"
-            outp.puts("(cd #{Shellwords.shellescape(@directory)} && " +
+            outp.puts("(cd #{Shellwords.shellescape(@directory.to_s)} && " +
                       @arguments.map{|v| Shellwords.shellescape(v)}.join(' ') +
                       ") || #{failCommand}")
         }
