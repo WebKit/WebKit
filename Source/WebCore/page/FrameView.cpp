@@ -3063,11 +3063,6 @@ void FrameView::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rec
     invalidateRect(dirtyRect);
 }
 
-void FrameView::getTickmarks(Vector<IntRect>& tickmarks) const
-{
-    tickmarks = frame().document()->markers().renderedRectsForMarkers(DocumentMarker::TextMatch);
-}
-
 IntRect FrameView::windowResizerRect() const
 {
     if (Page* page = frame().page())

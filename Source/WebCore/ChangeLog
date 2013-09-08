@@ -1,3 +1,19 @@
+2013-09-08  Andreas Kling  <akling@apple.com>
+
+        Remove unused Scrollbar tickmark stuff.
+        <https://webkit.org/b/121000>
+
+        Reviewed by Antti Koivisto.
+
+        This code is no longer used by any ports.
+
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+        * platform/ScrollableArea.h:
+        * platform/Scrollbar.cpp:
+        * platform/Scrollbar.h:
+        * platform/ScrollbarThemeClient.h:
+
 2013-09-08  Antti Koivisto  <antti@apple.com>
 
         Remove ComposedShadowTreeWalker
