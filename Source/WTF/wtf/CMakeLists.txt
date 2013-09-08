@@ -56,7 +56,6 @@ set(WTF_HEADERS
     ThreadRestrictionVerifier.h
     Ref.h
     Noncopyable.h
-    NotFound.h
     NullPtr.h
     NumberOfCores.h
     RAMSize.h

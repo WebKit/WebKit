@@ -1,3 +1,12 @@
+2013-09-08  Anders Carlsson  <andersca@apple.com>
+
+        Move WTF::notFound to Vector.h and delete NotFound.h
+        https://bugs.webkit.org/show_bug.cgi?id=120990
+
+        Reviewed by Sam Weinig.
+
+        * Api/BackingStore.cpp:
+
 2013-09-07  Anders Carlsson  <andersca@apple.com>
 
         Remove NonCopyableSort.h from WTF

@@ -28,7 +28,6 @@
 
 #include "IntendedStructureChain.h"
 #include "PropertyOffset.h"
-#include <wtf/NotFound.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {

@@ -28,7 +28,6 @@
 
 #include "ArgumentCoders.h"
 #include <WebCore/IntRect.h>
-#include <wtf/NotFound.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

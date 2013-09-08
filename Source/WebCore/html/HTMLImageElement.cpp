@@ -37,7 +37,6 @@
 #include "Page.h"
 #include "RenderImage.h"
 #include "ScriptEventListener.h"
-#include <wtf/NotFound.h>
 
 using namespace std;
 

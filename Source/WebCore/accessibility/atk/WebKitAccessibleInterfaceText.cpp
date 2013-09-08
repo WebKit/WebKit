@@ -51,7 +51,6 @@
 #include "WebKitAccessibleUtil.h"
 #include "WebKitAccessibleWrapperAtk.h"
 #include "htmlediting.h"
-#include <wtf/NotFound.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 

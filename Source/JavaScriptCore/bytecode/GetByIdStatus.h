@@ -29,7 +29,6 @@
 #include "IntendedStructureChain.h"
 #include "PropertyOffset.h"
 #include "StructureSet.h"
-#include <wtf/NotFound.h>
 
 namespace JSC {
 

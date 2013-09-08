@@ -38,7 +38,6 @@
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
-#include <wtf/NotFound.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 

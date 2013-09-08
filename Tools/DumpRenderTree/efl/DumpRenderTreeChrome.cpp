@@ -47,7 +47,6 @@
 #include <Eina.h>
 #include <Evas.h>
 #include <cstdio>
-#include <wtf/NotFound.h>
 #include <wtf/text/StringBuilder.h>
 
 #if HAVE(ACCESSIBILITY)

@@ -500,9 +500,6 @@
     <ClInclude Include="..\wtf\Noncopyable.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\NotFound.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\NullPtr.h">
       <Filter>wtf</Filter>
     </ClInclude>

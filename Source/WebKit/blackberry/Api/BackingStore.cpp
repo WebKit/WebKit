@@ -54,7 +54,6 @@
 
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
-#include <wtf/NotFound.h>
 
 #define SUPPRESS_NON_VISIBLE_REGULAR_RENDER_JOBS 0
 #define ENABLE_SCROLLBARS 1

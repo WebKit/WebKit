@@ -26,7 +26,6 @@
 #include "PropertyOffset.h"
 #include "Register.h"
 #include <wtf/Assertions.h>
-#include <wtf/NotFound.h>
 
 namespace JSC {
 

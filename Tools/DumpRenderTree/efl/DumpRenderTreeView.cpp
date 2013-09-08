@@ -38,7 +38,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <inttypes.h>
-#include <wtf/NotFound.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

@@ -26,7 +26,6 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/NotFound.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ValueCheck.h>
@@ -36,6 +35,8 @@
 #include <utility>
 
 namespace WTF {
+
+const size_t notFound = static_cast<size_t>(-1);
 
 template <bool needsDestruction, typename T>
 struct VectorDestructor;
@@ -1219,5 +1220,6 @@ template<typename T> struct ValueCheck<Vector<T> > {
 
 using WTF::Vector;
 using WTF::UnsafeVectorOverflow;
+using WTF::notFound;
 
 #endif // WTF_Vector_h

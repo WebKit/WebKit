@@ -88,7 +88,6 @@ HEADERS += \
     MetaAllocatorHandle.h \
     Ref.h \
     Noncopyable.h \
-    NotFound.h \
     NullPtr.h \
     NumberOfCores.h \
     RAMSize.h \

@@ -157,7 +157,6 @@
 		A8A473ED151A825B004123FF /* MetaAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472CE151A825B004123FF /* MetaAllocator.h */; };
 		A8A473EE151A825B004123FF /* MetaAllocatorHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472CF151A825B004123FF /* MetaAllocatorHandle.h */; };
 		A8A473EF151A825B004123FF /* Noncopyable.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472D0151A825B004123FF /* Noncopyable.h */; };
-		A8A473F1151A825B004123FF /* NotFound.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472D2151A825B004123FF /* NotFound.h */; };
 		A8A473F2151A825B004123FF /* NullPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472D3151A825B004123FF /* NullPtr.cpp */; };
 		A8A473F3151A825B004123FF /* NullPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472D4151A825B004123FF /* NullPtr.h */; };
 		A8A473F4151A825B004123FF /* NumberOfCores.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472D5151A825B004123FF /* NumberOfCores.cpp */; };
@@ -431,7 +430,6 @@
 		A8A472CE151A825B004123FF /* MetaAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaAllocator.h; sourceTree = "<group>"; };
 		A8A472CF151A825B004123FF /* MetaAllocatorHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaAllocatorHandle.h; sourceTree = "<group>"; };
 		A8A472D0151A825B004123FF /* Noncopyable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Noncopyable.h; sourceTree = "<group>"; };
-		A8A472D2151A825B004123FF /* NotFound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotFound.h; sourceTree = "<group>"; };
 		A8A472D3151A825B004123FF /* NullPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NullPtr.cpp; sourceTree = "<group>"; };
 		A8A472D4151A825B004123FF /* NullPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NullPtr.h; sourceTree = "<group>"; };
 		A8A472D5151A825B004123FF /* NumberOfCores.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NumberOfCores.cpp; sourceTree = "<group>"; };
@@ -707,7 +705,6 @@
 				26299B6D17A9E5B800ADEBE5 /* Ref.h */,
 				0F0D85B317234CB100338210 /* NoLock.h */,
 				A8A472D0151A825B004123FF /* Noncopyable.h */,
-				A8A472D2151A825B004123FF /* NotFound.h */,
 				A8A472D3151A825B004123FF /* NullPtr.cpp */,
 				A8A472D4151A825B004123FF /* NullPtr.h */,
 				A8A472D5151A825B004123FF /* NumberOfCores.cpp */,
@@ -1010,7 +1007,6 @@
 				A8A473EE151A825B004123FF /* MetaAllocatorHandle.h in Headers */,
 				0F0D85B417234CC100338210 /* NoLock.h in Headers */,
 				A8A473EF151A825B004123FF /* Noncopyable.h in Headers */,
-				A8A473F1151A825B004123FF /* NotFound.h in Headers */,
 				A8A473F3151A825B004123FF /* NullPtr.h in Headers */,
 				A8A473F5151A825B004123FF /* NumberOfCores.h in Headers */,
 				7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */,

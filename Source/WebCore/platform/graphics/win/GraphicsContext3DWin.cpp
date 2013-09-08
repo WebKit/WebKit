@@ -28,7 +28,6 @@
 #if USE(3D_GRAPHICS)
 
 #include "GraphicsContext3DPrivate.h"
-#include <wtf/NotFound.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
