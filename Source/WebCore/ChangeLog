@@ -1,3 +1,20 @@
+2013-09-09  Eric Carlson  <eric.carlson@apple.com>
+
+        MediaStream API: Stop means stop
+        https://bugs.webkit.org/show_bug.cgi?id=120873
+
+        Reviewed by Jer Noble.
+
+        Merge blink https://chromium.googlesource.com/chromium/blink/+/9a97b0f3892320fa5741485e06a78183b77c3635
+        by Tommy Widenflycht.
+
+        Removing notification functionality from MediaStreamTrack::stop because the world is being torn down.
+
+        No new tests, the original author was unable to come up with a reliable test case.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::stop): Don't call didEndTrack, the world is going away.
+
 2013-09-09  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix build.

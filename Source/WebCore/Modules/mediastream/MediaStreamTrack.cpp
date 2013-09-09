@@ -157,7 +157,6 @@ MediaStreamComponent* MediaStreamTrack::component()
 void MediaStreamTrack::stop()
 {
     m_stopped = true;
-    didEndTrack();
 }
 
 const AtomicString& MediaStreamTrack::interfaceName() const
