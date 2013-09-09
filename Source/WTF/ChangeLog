@@ -1,3 +1,16 @@
+2013-09-09  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        Nix upstreaming - Adding stubs and Nix specific platform files
+        https://bugs.webkit.org/show_bug.cgi?id=118358
+
+        Reviewed by Benjamin Poulain.
+
+        Basically adding all files that have "Nix" in their names and
+        are related to WebCore module.
+
+        * wtf/nix/FeatureDefinesNix.h: Added.
+        * wtf/nix/PlatformNix.h: Added.
+
 2013-09-08  Anders Carlsson  <andersca@apple.com>
 
         Begin moving off of TypeTraits.h

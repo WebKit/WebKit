@@ -1,3 +1,39 @@
+2013-09-09  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        Nix upstreaming - Adding stubs and Nix specific platform files
+        https://bugs.webkit.org/show_bug.cgi?id=118358
+
+        Reviewed by Benjamin Poulain.
+
+        Basically adding all files that have "Nix" in their names and
+        are related to WebCore module.
+
+        No new tests. They will be uploaded on another patch during the
+        upstreaming process.
+
+        * css/mediaControlsNix.css: Added.
+        * css/mediaControlsNixFullscreen.css: Added.
+        * page/nix/EventHandlerNix.cpp: Added.
+        * platform/graphics/egl/GLContextFromCurrentEGL.cpp: Added.
+        * platform/graphics/egl/GLContextFromCurrentEGL.h: Added.
+        * platform/graphics/gstreamer/PlatformVideoWindowNix.cpp: Added.
+        * platform/graphics/nix/IconNix.cpp: Added.
+        * platform/graphics/nix/ImageNix.cpp: Added.
+        * platform/nix/CursorNix.cpp: Added.
+        * platform/nix/DragDataNix.cpp: Added.
+        * platform/nix/DragImageNix.cpp: Added.
+        * platform/nix/GamepadsNix.cpp: Added.
+        * platform/nix/LanguageNix.cpp: Added.
+        * platform/nix/LocalizedStringsNix.cpp: Added.
+        * platform/nix/NixKeyboardUtilities.cpp: Added.
+        * platform/nix/NixKeyboardUtilities.h: Added.
+        * platform/nix/PasteboardNix.cpp: Added.
+        * platform/nix/PlatformKeyboardEventNix.cpp: Added.
+        * platform/nix/PlatformScreenNix.cpp: Added.
+        * platform/nix/SoundNix.cpp: Added.
+        * platform/nix/WidgetNix.cpp: Added.
+        * platform/text/nix/TextBreakIteratorInternalICUNix.cpp: Added.
+
 2013-09-09  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         Preparing WebCore to receive Nix Port
