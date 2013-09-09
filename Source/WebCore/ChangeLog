@@ -1,3 +1,11 @@
+2013-09-08  Tamas Czene  <tczene@inf.u-szeged.hu>
+
+        GStreamer 0.10 build fix after r155251.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/graphics/gstreamer/GStreamerVersioning.cpp:
+
 2013-09-08  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [wk2] REGRESSION (r154673): PDF scrolling moves very slowly

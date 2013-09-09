@@ -29,6 +29,7 @@
 #include <gst/audio/audio.h>
 #else
 #include <gst/audio/multichannel.h>
+#include <string.h>
 #endif
 
 #ifdef GST_API_VERSION_1
