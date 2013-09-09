@@ -54,8 +54,12 @@ static GRefPtr<GdkCursor> createNamedCursor(CustomCursorType cursorType)
     cairo_set_source_surface(cr.get(), source.get(), 0, 0);
     cairo_mask_surface(cr.get(), mask.get(), 0, 0);
 
+#if GTK_CHECK_VERSION(3, 9, 12)
+    return adoptGRef(gdk_cursor_new_from_surface(gdk_display_get_default(), surface.get(), cursor.hot_x, cursor.hot_y));
+#else
     GRefPtr<GdkPixbuf> pixbuf = adoptGRef(gdk_pixbuf_get_from_surface(surface.get(), 0, 0, 32, 32));
     return adoptGRef(gdk_cursor_new_from_pixbuf(gdk_display_get_default(), pixbuf.get(), cursor.hot_x, cursor.hot_y));
+#endif
 }
 
 static GRefPtr<GdkCursor> createCustomCursor(Image* image, const IntPoint& hotSpot)

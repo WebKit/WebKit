@@ -1,3 +1,16 @@
+2013-09-09  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK]  ghost cursor when mouse hovers over an image file in a tab
+        https://bugs.webkit.org/show_bug.cgi?id=120675
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests, covered by existing.
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::createNamedCursor): Use new gdk_cursor_new_from_surface()
+        when compiling against GTK+ 3.9.12 or newer.
+
 2013-09-08  Santosh Mahto  <santosh.ma@samsung.com>
 
         HTMLDocument.h : Removing unnecessary forward declaration.
