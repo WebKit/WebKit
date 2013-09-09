@@ -1,3 +1,10 @@
+2013-09-09  Beth Dakin  <bdakin@apple.com>
+
+        Skipping this newly-added test since it asserts on debug builds.
+        https://bugs.webkit.org/show_bug.cgi?id=121053 tracks fixing this for real.
+
+        * platform/mac/TestExpectations:
+
 2013-09-09  Filip Pizlo  <fpizlo@apple.com>
 
         fast/js/dfg-* tests should wait for the concurrent JIT
