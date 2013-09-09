@@ -43,24 +43,27 @@ namespace WebCore {
 
 class RTCIceServer : public RefCounted<RTCIceServer> {
 public:
-    static PassRefPtr<RTCIceServer> create(const KURL& uri, const String& credential)
+    static PassRefPtr<RTCIceServer> create(const KURL& uri, const String& credential, const String& username)
     {
-        return adoptRef(new RTCIceServer(uri, credential));
+        return adoptRef(new RTCIceServer(uri, credential, username));
     }
     virtual ~RTCIceServer() { }
 
     const KURL& uri() { return m_uri; }
     const String& credential() { return m_credential; }
+    const String& username() { return m_username; }
 
 private:
-    RTCIceServer(const KURL& uri, const String& credential)
+    RTCIceServer(const KURL& uri, const String& credential, const String& username)
         : m_uri(uri)
         , m_credential(credential)
+        , m_username(username)
     {
     }
 
     KURL m_uri;
     String m_credential;
+    String m_username;
 };
 
 class RTCConfiguration : public RefCounted<RTCConfiguration> {
