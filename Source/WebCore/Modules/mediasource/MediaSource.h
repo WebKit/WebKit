@@ -94,9 +94,9 @@ private:
     String m_readyState;
     OwnPtr<MediaSourcePrivate> m_private;
 
+    GenericEventQueue m_asyncEventQueue;
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
-    OwnPtr<GenericEventQueue> m_asyncEventQueue;
 };
 
 } // namespace WebCore

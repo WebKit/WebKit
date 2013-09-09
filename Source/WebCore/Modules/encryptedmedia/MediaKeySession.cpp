@@ -46,7 +46,7 @@ MediaKeySession::MediaKeySession(ScriptExecutionContext* context, MediaKeys* key
     : ContextDestructionObserver(context)
     , m_keys(keys)
     , m_keySystem(keySystem)
-    , m_asyncEventQueue(GenericEventQueue::create(this))
+    , m_asyncEventQueue(*this)
     , m_session(keys->cdm()->createSession())
     , m_keyRequestTimer(this, &MediaKeySession::keyRequestTimerFired)
     , m_addKeyTimer(this, &MediaKeySession::addKeyTimerFired)
@@ -68,7 +68,7 @@ void MediaKeySession::close()
     if (m_session)
         m_session->releaseKeys();
     m_session = 0;
-    m_asyncEventQueue->cancelAllEvents();
+    m_asyncEventQueue.cancelAllEvents();
 }
 
 const String& MediaKeySession::sessionId() const
@@ -117,7 +117,7 @@ void MediaKeySession::keyRequestTimerFired(Timer<MediaKeySession>*)
             // 3.3. queue a task to fire a simple event named keyerror at the MediaKeySession object.
             RefPtr<Event> event = Event::create(eventNames().webkitkeyerrorEvent, false, false);
             event->setTarget(this);
-            m_asyncEventQueue->enqueueEvent(event.release());
+            m_asyncEventQueue.enqueueEvent(event.release());
 
             // 3.4. Abort the task.
             continue;
@@ -134,7 +134,7 @@ void MediaKeySession::keyRequestTimerFired(Timer<MediaKeySession>*)
         init.destinationURL = destinationURL;
         RefPtr<MediaKeyMessageEvent> event = MediaKeyMessageEvent::create(eventNames().webkitkeymessageEvent, init);
         event->setTarget(this);
-        m_asyncEventQueue->enqueueEvent(event);
+        m_asyncEventQueue.enqueueEvent(event.release());
     }
 }
 
@@ -188,14 +188,14 @@ void MediaKeySession::addKeyTimerFired(Timer<MediaKeySession>*)
             init.message = nextMessage;
             RefPtr<MediaKeyMessageEvent> event = MediaKeyMessageEvent::create(eventNames().webkitkeymessageEvent, init);
             event->setTarget(this);
-            m_asyncEventQueue->enqueueEvent(event);
+            m_asyncEventQueue.enqueueEvent(event.release());
         }
 
         // 2.7. If did store key is true, queue a task to fire a simple event named keyadded at the MediaKeySession object.
         if (didStoreKey) {
             RefPtr<Event> keyaddedEvent = Event::create(eventNames().webkitkeyaddedEvent, false, false);
             keyaddedEvent->setTarget(this);
-            m_asyncEventQueue->enqueueEvent(keyaddedEvent);
+            m_asyncEventQueue.enqueueEvent(keyaddedEvent.release());
         }
 
         // 2.8. If any of the preceding steps in the task failed
@@ -211,7 +211,7 @@ void MediaKeySession::addKeyTimerFired(Timer<MediaKeySession>*)
             // 2.8.3. queue a task to fire a simple event named keyerror at the MediaKeySession object.
             RefPtr<Event> keyerrorEvent = Event::create(eventNames().webkitkeyerrorEvent, false, false);
             keyerrorEvent->setTarget(this);
-            m_asyncEventQueue->enqueueEvent(keyerrorEvent.release());
+            m_asyncEventQueue.enqueueEvent(keyerrorEvent.release());
             
             // 2.8.4. Abort the task.
             // NOTE: no-op

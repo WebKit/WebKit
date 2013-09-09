@@ -2263,7 +2263,7 @@ void RenderLayer::scrollTo(int x, int y)
 
     // Schedule the scroll DOM event.
     if (Node* node = renderer().node())
-        node->document().eventQueue()->enqueueOrDispatchScrollEvent(renderer().node(), DocumentEventQueue::ScrollEventElementTarget);
+        node->document().eventQueue().enqueueOrDispatchScrollEvent(*node);
 
     InspectorInstrumentation::didScrollLayer(&frame);
     if (scrollsOverflow())

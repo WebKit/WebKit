@@ -1010,7 +1010,7 @@ public:
     void enqueuePageshowEvent(PageshowEventPersistence);
     void enqueueHashchangeEvent(const String& oldURL, const String& newURL);
     void enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject);
-    virtual DocumentEventQueue* eventQueue() const { return m_eventQueue.get(); }
+    DocumentEventQueue& eventQueue() const { return m_eventQueue; }
 
     void addMediaCanStartListener(MediaCanStartListener*);
     void removeMediaCanStartListener(MediaCanStartListener*);
@@ -1447,7 +1447,7 @@ private:
     bool m_isSrcdocDocument;
 
     RenderView* m_renderView;
-    RefPtr<DocumentEventQueue> m_eventQueue;
+    mutable DocumentEventQueue m_eventQueue;
 
     WeakPtrFactory<Document> m_weakFactory;
 

@@ -1,3 +1,135 @@
+2013-09-08  Darin Adler  <darin@apple.com>
+
+        Tighten up EventQueue classes a bit, less indirection and memory allocation
+        https://bugs.webkit.org/show_bug.cgi?id=121016
+
+        Reviewed by Andreas Kling.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::MediaKeySession): Updated since event queue is now
+        a member rather than an OwnPtr.
+        (WebCore::MediaKeySession::close): Ditto.
+        (WebCore::MediaKeySession::keyRequestTimerFired): Ditto.
+        (WebCore::MediaKeySession::addKeyTimerFired): Ditto.
+        * Modules/encryptedmedia/MediaKeySession.h: Ditto.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::closeConnection): Updated since ScriptExecutionContext's
+        eventQueue function now returns a reference rather than a pointer. Also, the
+        cancelEvent function takes a reference instead of a pointer.
+        (WebCore::IDBDatabase::enqueueEvent): Ditto.
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::abort): Ditto.
+        (WebCore::IDBRequest::enqueueEvent): Ditto.
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::enqueueEvent): Ditto.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::MediaSource): Updated since event queue is now a
+        member rather than an OwnPtr. Also use initialization instead of assignment
+        to set up source buffers.
+        (WebCore::MediaSource::hasPendingActivity): Ditto.
+        (WebCore::MediaSource::stop): Ditto.
+        (WebCore::MediaSource::scheduleEvent): Ditto.
+        * Modules/mediasource/MediaSource.h: Ditto.
+
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::SourceBufferList): Take references instead of
+        pointers.
+        (WebCore::SourceBufferList::length): Changed type to unsigned instead of
+        unsigned long. This is an IDL "unsigned long", which corresponds to "unsigned"
+        in our C++ DOM implementation.
+        (WebCore::SourceBufferList::createAndFireEvent): Updated since event queue is
+        now a reference.
+        (WebCore::SourceBufferList::scriptExecutionContext): Updated since script
+        execution context is now a reference.
+        * Modules/mediasource/SourceBufferList.h: Ditto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Updated since event queue is now a member rather
+        than a RefPtr.
+        (WebCore::Document::detach): Ditto.
+        (WebCore::Document::enqueueWindowEvent): Ditto.
+        (WebCore::Document::enqueueDocumentEvent): Ditto.
+        * dom/Document.h: Ditto.
+
+        * dom/DocumentEventQueue.cpp: Renamed DocumentEventQueueTimer to just Timer and
+        made it a class member of DocumentEventQueue. Also changed it to use references
+        instead of pointers and removed unneeded ScriptExecutionContext argument.
+        (WebCore::DocumentEventQueue::DocumentEventQueue): Updated to take a document
+        reference instead of a script execution context pointer.
+        (WebCore::DocumentEventQueue::enqueueEvent): Wrote the assertions in a clearer
+        style and do the assertions even when the queue is closed.
+        (WebCore::DocumentEventQueue::enqueueOrDispatchScrollEvent): Removed the unneeded
+        ScrollEventTargetType argument, since the policy is specific to the document node.
+        Made the argument a reference instead of a PassRefPtr, and rewrote the function
+        to be more straightforward and readable.
+        (WebCore::DocumentEventQueue::cancelEvent): Use the return value recently added to
+        the remove function to avoid the need for use of iterators and a find/remove pair.
+        (WebCore::DocumentEventQueue::pendingEventTimerFired): Rewrote this to use the
+        recently added ListHashSet takeFirst function. Also protect the document instead
+        of protecting just this object during the dispatch. Can't really protect the
+        event queue since it's no longer separately reference counted.
+        (WebCore::DocumentEventQueue::dispatchEvent): Changed this to take a reference and
+        added a FIXME about some curious code in here that needs a "why" comment.
+        * dom/DocumentEventQueue.h: Removed many unneeded includes, some unneeded forward
+        declarations, marked the class final, made it no longer derive from RefCounted,
+        removed ScrollEventTargetType and create, and did the other changes mentioned above.
+
+        * dom/EventQueue.h: Got rid of many uneeded includes, changed the argument type
+        of cancelEvent to Event& and rewrote the comment for close.
+
+        * dom/GenericEventQueue.cpp:
+        (WebCore::GenericEventQueue::GenericEventQueue): Updated to take a reference.
+        (WebCore::GenericEventQueue::enqueueEvent): Ditto.
+        (WebCore::GenericEventQueue::timerFired): Ditto.
+        * dom/GenericEventQueue.h: Changed this class to no longer derive from EventQueue
+        since there was no value coming from that polymorphism. Removed all the virtual
+        keywords from the class. Switched from pointers to references. Removed the unused
+        cancelEvent function. Removed the create function since this is always used as a
+        data member, not a pointer on the heap.
+
+        * dom/ScriptExecutionContext.h: Changed the return type of eventQueue to a reference.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Updated since event queue is now a
+        member rather than an OwnPtr.
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Ditto.
+        (WebCore::HTMLMediaElement::scheduleEvent): Ditto.
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): Ditto.
+        (WebCore::HTMLMediaElement::cancelPendingEventsAndCallbacks): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerKeyAdded): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerKeyError): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerKeyMessage): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded): Ditto.
+        (WebCore::HTMLMediaElement::stop): Ditto.
+        (WebCore::HTMLMediaElement::hasPendingActivity): Ditto.
+        * html/HTMLMediaElement.h: Ditto.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendScrollEvent): Updated to remove the now-uneeded
+        ScrollEventTargetType argument, and also to use references instead of pointers.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo): Ditto.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scrollTo): Ditto.
+
+        * workers/WorkerEventQueue.cpp:
+        (WebCore::WorkerEventQueue::WorkerEventQueue): Updated to work with references
+        instead of pointers.
+        (WebCore::WorkerEventQueue::enqueueEvent): Ditto.
+        (WebCore::WorkerEventQueue::cancelEvent): Use the take function instead of a
+        get/remove pair, to eliminate double hashing.
+        * workers/WorkerEventQueue.h: Removed unneeded includes, forward declarations,
+        the create function, and the private removeEvent function. Marked class final.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope): Updated since eventQueue is
+        now a data member.
+        (WebCore::WorkerGlobalScope::eventQueue): Ditto.
+        * workers/WorkerGlobalScope.h: Made m_eventQueue a queue instead of a pointer
+        to a queue. Also made the eventQueue function private and final.
+
 2013-09-09  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Heap-buffer-overflow in WebCore::ShapeInterval<float>::subtractShapeIntervals

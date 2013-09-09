@@ -258,7 +258,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_progressEventTimer(this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(this, &HTMLMediaElement::playbackProgressTimerFired)
     , m_playedTimeRanges()
-    , m_asyncEventQueue(GenericEventQueue::create(this))
+    , m_asyncEventQueue(*this)
     , m_playbackRate(1.0f)
     , m_defaultPlaybackRate(1.0f)
     , m_webkitPreservesPitch(true)
@@ -352,7 +352,7 @@ HTMLMediaElement::~HTMLMediaElement()
 {
     LOG(Media, "HTMLMediaElement::~HTMLMediaElement");
 
-    m_asyncEventQueue->close();
+    m_asyncEventQueue.close();
 
     if (m_isWaitingUntilMediaCanStart)
         document().removeMediaCanStartListener(this);
@@ -704,7 +704,7 @@ void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
     // Don't set the event target, the event queue will set it in GenericEventQueue::timerFired and setting it here
     // will trigger an ASSERT if this element has been marked for deletion.
 
-    m_asyncEventQueue->enqueueEvent(event.release());
+    m_asyncEventQueue.enqueueEvent(event.release());
 }
 
 void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
@@ -1325,11 +1325,11 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
         if (eventTasks[i].second->startTime() >= eventTasks[i].second->endTime()) {
             event = Event::create(eventNames().enterEvent, false, false);
             event->setTarget(eventTasks[i].second);
-            m_asyncEventQueue->enqueueEvent(event.release());
+            m_asyncEventQueue.enqueueEvent(event.release());
 
             event = Event::create(eventNames().exitEvent, false, false);
             event->setTarget(eventTasks[i].second);
-            m_asyncEventQueue->enqueueEvent(event.release());
+            m_asyncEventQueue.enqueueEvent(event.release());
         } else {
             if (eventTasks[i].first == eventTasks[i].second->startTime())
                 event = Event::create(eventNames().enterEvent, false, false);
@@ -1337,7 +1337,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
                 event = Event::create(eventNames().exitEvent, false, false);
 
             event->setTarget(eventTasks[i].second);
-            m_asyncEventQueue->enqueueEvent(event.release());
+            m_asyncEventQueue.enqueueEvent(event.release());
         }
     }
 
@@ -1351,7 +1351,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
         RefPtr<Event> event = Event::create(eventNames().cuechangeEvent, false, false);
         event->setTarget(affectedTracks[i]);
 
-        m_asyncEventQueue->enqueueEvent(event.release());
+        m_asyncEventQueue.enqueueEvent(event.release());
 
         // ... if the text track has a corresponding track element, to then fire a
         // simple event named cuechange at the track element as well.
@@ -1361,7 +1361,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
             ASSERT(trackElement);
             event->setTarget(trackElement);
             
-            m_asyncEventQueue->enqueueEvent(event.release());
+            m_asyncEventQueue.enqueueEvent(event.release());
         }
     }
 
@@ -1653,7 +1653,7 @@ void HTMLMediaElement::mediaEngineError(PassRefPtr<MediaError> err)
 void HTMLMediaElement::cancelPendingEventsAndCallbacks()
 {
     LOG(Media, "HTMLMediaElement::cancelPendingEventsAndCallbacks");
-    m_asyncEventQueue->cancelAllEvents();
+    m_asyncEventQueue.cancelAllEvents();
 
     auto sourceChildren = childrenOfType<HTMLSourceElement>(this);
     for (auto source = sourceChildren.begin(), end = sourceChildren.end(); source != end; ++source)
@@ -1943,7 +1943,7 @@ void HTMLMediaElement::mediaPlayerKeyAdded(MediaPlayer*, const String& keySystem
 
     RefPtr<Event> event = MediaKeyEvent::create(eventNames().webkitkeyaddedEvent, initializer);
     event->setTarget(this);
-    m_asyncEventQueue->enqueueEvent(event.release());
+    m_asyncEventQueue.enqueueEvent(event.release());
 }
 
 void HTMLMediaElement::mediaPlayerKeyError(MediaPlayer*, const String& keySystem, const String& sessionId, MediaPlayerClient::MediaKeyErrorCode errorCode, unsigned short systemCode)
@@ -1980,7 +1980,7 @@ void HTMLMediaElement::mediaPlayerKeyError(MediaPlayer*, const String& keySystem
 
     RefPtr<Event> event = MediaKeyEvent::create(eventNames().webkitkeyerrorEvent, initializer);
     event->setTarget(this);
-    m_asyncEventQueue->enqueueEvent(event.release());
+    m_asyncEventQueue.enqueueEvent(event.release());
 }
 
 void HTMLMediaElement::mediaPlayerKeyMessage(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength, const KURL& defaultURL)
@@ -1995,7 +1995,7 @@ void HTMLMediaElement::mediaPlayerKeyMessage(MediaPlayer*, const String& keySyst
 
     RefPtr<Event> event = MediaKeyEvent::create(eventNames().webkitkeymessageEvent, initializer);
     event->setTarget(this);
-    m_asyncEventQueue->enqueueEvent(event.release());
+    m_asyncEventQueue.enqueueEvent(event.release());
 }
 
 bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* initData, unsigned initDataLength)
@@ -2015,7 +2015,7 @@ bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, const String& keySyste
 
     RefPtr<Event> event = MediaKeyEvent::create(eventNames().webkitneedkeyEvent, initializer);
     event->setTarget(this);
-    m_asyncEventQueue->enqueueEvent(event.release());
+    m_asyncEventQueue.enqueueEvent(event.release());
     return true;
 }
 #endif
@@ -2036,7 +2036,7 @@ bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array* initData)
 
     RefPtr<Event> event = MediaKeyNeededEvent::create(eventNames().webkitneedkeyEvent, initializer);
     event->setTarget(this);
-    m_asyncEventQueue->enqueueEvent(event.release());
+    m_asyncEventQueue.enqueueEvent(event.release());
 
     return true;
 }
@@ -4179,7 +4179,7 @@ void HTMLMediaElement::stop()
     stopPeriodicTimers();
     cancelPendingEventsAndCallbacks();
 
-    m_asyncEventQueue->close();
+    m_asyncEventQueue.close();
 
     // Once an active DOM object has been stopped it can not be restarted, so we can deallocate
     // the media player now. Note that userCancelledLoad will already have cleared the player
@@ -4238,7 +4238,7 @@ void HTMLMediaElement::resume()
 
 bool HTMLMediaElement::hasPendingActivity() const
 {
-    return (hasAudio() && isPlaying()) || m_asyncEventQueue->hasPendingEvents();
+    return (hasAudio() && isPlaying()) || m_asyncEventQueue.hasPendingEvents();
 }
 
 void HTMLMediaElement::mediaVolumeDidChange()

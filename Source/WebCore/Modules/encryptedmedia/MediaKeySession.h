@@ -84,7 +84,7 @@ protected:
     String m_keySystem;
     String m_sessionId;
     RefPtr<MediaKeyError> m_error;
-    OwnPtr<GenericEventQueue> m_asyncEventQueue;
+    GenericEventQueue m_asyncEventQueue;
     OwnPtr<CDMSession> m_session;
 
     struct PendingKeyRequest {

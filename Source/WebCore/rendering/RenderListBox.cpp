@@ -645,7 +645,7 @@ void RenderListBox::scrollTo(int newOffset)
 
     m_indexOffset = newOffset;
     repaint();
-    node()->document().eventQueue()->enqueueOrDispatchScrollEvent(node(), DocumentEventQueue::ScrollEventElementTarget);
+    node()->document().eventQueue().enqueueOrDispatchScrollEvent(*node());
 }
 
 LayoutUnit RenderListBox::itemHeight() const

@@ -150,7 +150,7 @@ public:
     void didChangeTimerAlignmentInterval();
     virtual double timerAlignmentInterval() const;
 
-    virtual EventQueue* eventQueue() const = 0;
+    virtual EventQueue& eventQueue() const = 0;
 
 #if ENABLE(SQL_DATABASE)
     void setDatabaseContext(DatabaseContext*);

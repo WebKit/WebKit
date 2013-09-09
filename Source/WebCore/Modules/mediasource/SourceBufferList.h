@@ -44,13 +44,13 @@ class GenericEventQueue;
 
 class SourceBufferList : public RefCounted<SourceBufferList>, public EventTarget {
 public:
-    static PassRefPtr<SourceBufferList> create(ScriptExecutionContext* context, GenericEventQueue* asyncEventQueue)
+    static PassRefPtr<SourceBufferList> create(ScriptExecutionContext& context, GenericEventQueue& asyncEventQueue)
     {
         return adoptRef(new SourceBufferList(context, asyncEventQueue));
     }
     virtual ~SourceBufferList() { }
 
-    unsigned long length() const;
+    unsigned length() const;
     SourceBuffer* item(unsigned index) const;
 
     void add(PassRefPtr<SourceBuffer>);
@@ -77,8 +77,8 @@ private:
     virtual void derefEventTarget() OVERRIDE { deref(); }
 
     EventTargetData m_eventTargetData;
-    ScriptExecutionContext* m_scriptExecutionContext;
-    GenericEventQueue* m_asyncEventQueue;
+    ScriptExecutionContext& m_scriptExecutionContext;
+    GenericEventQueue& m_asyncEventQueue;
 
     Vector<RefPtr<SourceBuffer> > m_list;
 };

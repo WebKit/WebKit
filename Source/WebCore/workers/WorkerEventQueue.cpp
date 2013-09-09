@@ -35,12 +35,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<WorkerEventQueue> WorkerEventQueue::create(ScriptExecutionContext* context)
-{
-    return adoptPtr(new WorkerEventQueue(context));
-}
-
-WorkerEventQueue::WorkerEventQueue(ScriptExecutionContext* context)
+WorkerEventQueue::WorkerEventQueue(ScriptExecutionContext& context)
     : m_scriptExecutionContext(context)
     , m_isClosed(false)
 {
@@ -51,9 +46,9 @@ WorkerEventQueue::~WorkerEventQueue()
     close();
 }
 
-class WorkerEventQueue::EventDispatcherTask : public ScriptExecutionContext::Task {
+class WorkerEventQueue::EventDispatcherTask FINAL : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<EventDispatcherTask> create(PassRefPtr<Event> event, WorkerEventQueue* eventQueue)
+    static PassOwnPtr<EventDispatcherTask> create(PassRefPtr<Event> event, WorkerEventQueue& eventQueue)
     {
         return adoptPtr(new EventDispatcherTask(event, eventQueue));
     }
@@ -61,7 +56,7 @@ public:
     virtual ~EventDispatcherTask()
     {
         if (m_event)
-            m_eventQueue->removeEvent(m_event.get());
+            m_eventQueue.m_eventTaskMap.remove(m_event.get());
     }
 
     void dispatchEvent(ScriptExecutionContext*, PassRefPtr<Event> event)
@@ -69,11 +64,11 @@ public:
         event->target()->dispatchEvent(event);
     }
 
-    virtual void performTask(ScriptExecutionContext* context)
+    virtual void performTask(ScriptExecutionContext* context) OVERRIDE
     {
         if (m_isCancelled)
             return;
-        m_eventQueue->removeEvent(m_event.get());
+        m_eventQueue.m_eventTaskMap.remove(m_event.get());
         dispatchEvent(context, m_event);
         m_event.clear();
     }
@@ -85,7 +80,7 @@ public:
     }
 
 private:
-    EventDispatcherTask(PassRefPtr<Event> event, WorkerEventQueue* eventQueue)
+    EventDispatcherTask(PassRefPtr<Event> event, WorkerEventQueue& eventQueue)
         : m_event(event)
         , m_eventQueue(eventQueue)
         , m_isCancelled(false)
@@ -93,33 +88,27 @@ private:
     }
 
     RefPtr<Event> m_event;
-    WorkerEventQueue* m_eventQueue;
+    WorkerEventQueue& m_eventQueue;
     bool m_isCancelled;
 };
-
-void WorkerEventQueue::removeEvent(Event* event)
-{
-    m_eventTaskMap.remove(event);
-}
 
 bool WorkerEventQueue::enqueueEvent(PassRefPtr<Event> prpEvent)
 {
     if (m_isClosed)
         return false;
     RefPtr<Event> event = prpEvent;
-    OwnPtr<EventDispatcherTask> task = EventDispatcherTask::create(event, this);
+    OwnPtr<EventDispatcherTask> task = EventDispatcherTask::create(event, *this);
     m_eventTaskMap.add(event.release(), task.get());
-    m_scriptExecutionContext->postTask(task.release());
+    m_scriptExecutionContext.postTask(task.release());
     return true;
 }
 
-bool WorkerEventQueue::cancelEvent(Event* event)
+bool WorkerEventQueue::cancelEvent(Event& event)
 {
-    EventDispatcherTask* task = m_eventTaskMap.get(event);
+    EventDispatcherTask* task = m_eventTaskMap.take(&event);
     if (!task)
         return false;
     task->cancel();
-    removeEvent(event);
     return true;
 }
 

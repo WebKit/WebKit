@@ -29,33 +29,23 @@
 
 #include "EventQueue.h"
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Event;
-class Node;
 class ScriptExecutionContext;
 
-class WorkerEventQueue : public EventQueue {
-    WTF_MAKE_FAST_ALLOCATED;
+class WorkerEventQueue FINAL : public EventQueue {
 public:
-
-    static PassOwnPtr<WorkerEventQueue> create(ScriptExecutionContext*);
+    explicit WorkerEventQueue(ScriptExecutionContext&);
     virtual ~WorkerEventQueue();
 
-    // EventQueue
     virtual bool enqueueEvent(PassRefPtr<Event>) OVERRIDE;
-    virtual bool cancelEvent(Event*) OVERRIDE;
+    virtual bool cancelEvent(Event&) OVERRIDE;
     virtual void close() OVERRIDE;
 
 private:
-    explicit WorkerEventQueue(ScriptExecutionContext*);
-    void removeEvent(Event*);
-
-    ScriptExecutionContext* m_scriptExecutionContext;
+    ScriptExecutionContext& m_scriptExecutionContext;
     bool m_isClosed;
 
     class EventDispatcherTask;

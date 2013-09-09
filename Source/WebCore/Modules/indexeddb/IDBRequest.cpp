@@ -171,9 +171,9 @@ void IDBRequest::abort()
     // Enqueued events may be the only reference to this object.
     RefPtr<IDBRequest> self(this);
 
-    EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
+    EventQueue& eventQueue = scriptExecutionContext()->eventQueue();
     for (size_t i = 0; i < m_enqueuedEvents.size(); ++i) {
-        bool removed = eventQueue->cancelEvent(m_enqueuedEvents[i].get());
+        bool removed = eventQueue.cancelEvent(*m_enqueuedEvents[i]);
         ASSERT_UNUSED(removed, removed);
     }
     m_enqueuedEvents.clear();
@@ -552,10 +552,9 @@ void IDBRequest::enqueueEvent(PassRefPtr<Event> event)
 
     ASSERT_WITH_MESSAGE(m_readyState == PENDING || m_didFireUpgradeNeededEvent, "When queueing event %s, m_readyState was %d", event->type().string().utf8().data(), m_readyState);
 
-    EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
     event->setTarget(this);
 
-    if (eventQueue->enqueueEvent(event.get()))
+    if (scriptExecutionContext()->eventQueue().enqueueEvent(event.get()))
         m_enqueuedEvents.append(event);
 }
 

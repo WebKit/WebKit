@@ -626,7 +626,7 @@ private:
     Timer<HTMLMediaElement> m_progressEventTimer;
     Timer<HTMLMediaElement> m_playbackProgressTimer;
     RefPtr<TimeRanges> m_playedTimeRanges;
-    OwnPtr<GenericEventQueue> m_asyncEventQueue;
+    GenericEventQueue m_asyncEventQueue;
 
     double m_playbackRate;
     double m_defaultPlaybackRate;

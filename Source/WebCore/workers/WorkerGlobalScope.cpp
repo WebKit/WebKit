@@ -94,7 +94,7 @@ WorkerGlobalScope::WorkerGlobalScope(const KURL& url, const String& userAgent, P
     , m_workerInspectorController(adoptPtr(new WorkerInspectorController(this)))
 #endif
     , m_closing(false)
-    , m_eventQueue(WorkerEventQueue::create(this))
+    , m_eventQueue(*this)
     , m_topOrigin(topOrigin)
 {
     setSecurityOrigin(SecurityOrigin::create(url));
@@ -365,9 +365,9 @@ void WorkerGlobalScope::notifyObserversOfStop()
     }
 }
 
-WorkerEventQueue* WorkerGlobalScope::eventQueue() const
+WorkerEventQueue& WorkerGlobalScope::eventQueue() const
 {
-    return m_eventQueue.get();
+    return m_eventQueue;
 }
 
 } // namespace WebCore

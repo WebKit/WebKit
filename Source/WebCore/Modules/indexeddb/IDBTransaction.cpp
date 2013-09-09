@@ -432,9 +432,8 @@ void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)
     if (m_contextStopped || !scriptExecutionContext())
         return;
 
-    EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
     event->setTarget(this);
-    eventQueue->enqueueEvent(event);
+    scriptExecutionContext()->eventQueue().enqueueEvent(event);
 }
 
 EventTargetData* IDBTransaction::eventTargetData()

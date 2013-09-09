@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All Rights Reserved.
+ * Copyright (C) 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,49 +29,38 @@
 #define DocumentEventQueue_h
 
 #include "EventQueue.h"
-#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class Document;
 class Event;
-class DocumentEventQueueTimer;
 class Node;
-class ScriptExecutionContext;
 
-class DocumentEventQueue : public RefCounted<DocumentEventQueue>, public EventQueue {
+class DocumentEventQueue FINAL : public EventQueue {
 public:
-    enum ScrollEventTargetType {
-        ScrollEventDocumentTarget,
-        ScrollEventElementTarget
-    };
+    explicit DocumentEventQueue(Document&);
+    ~DocumentEventQueue();
 
-    static PassRefPtr<DocumentEventQueue> create(ScriptExecutionContext*);
-    virtual ~DocumentEventQueue();
-
-    // EventQueue
     virtual bool enqueueEvent(PassRefPtr<Event>) OVERRIDE;
-    virtual bool cancelEvent(Event*) OVERRIDE;
+    virtual bool cancelEvent(Event&) OVERRIDE;
     virtual void close() OVERRIDE;
 
-    void enqueueOrDispatchScrollEvent(PassRefPtr<Node>, ScrollEventTargetType);
+    void enqueueOrDispatchScrollEvent(Node&);
 
 private:
-    explicit DocumentEventQueue(ScriptExecutionContext*);
-
     void pendingEventTimerFired();
-    void dispatchEvent(PassRefPtr<Event>);
+    void dispatchEvent(Event&);
 
-    OwnPtr<DocumentEventQueueTimer> m_pendingEventTimer;
+    class Timer;
+
+    Document& m_document;
+    OwnPtr<Timer> m_pendingEventTimer;
     ListHashSet<RefPtr<Event>, 16> m_queuedEvents;
     HashSet<Node*> m_nodesWithQueuedScrollEvents;
     bool m_isClosed;
-
-    friend class DocumentEventQueueTimer;    
 };
 
 }

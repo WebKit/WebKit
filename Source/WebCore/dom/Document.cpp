@@ -448,7 +448,7 @@ Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
     , m_sawElementsInKnownNamespaces(false)
     , m_isSrcdocDocument(false)
     , m_renderView(0)
-    , m_eventQueue(DocumentEventQueue::create(this))
+    , m_eventQueue(*this)
     , m_weakFactory(this)
     , m_idAttributeName(idAttr)
 #if ENABLE(FULLSCREEN_API)
@@ -2057,7 +2057,7 @@ void Document::detach()
         clearAXObjectCache();
 
     stopActiveDOMObjects();
-    m_eventQueue->close();
+    m_eventQueue.close();
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenChangeEventTargetQueue.clear();
     m_fullScreenErrorEventTargetQueue.clear();
@@ -3630,13 +3630,13 @@ void Document::dispatchWindowLoadEvent()
 void Document::enqueueWindowEvent(PassRefPtr<Event> event)
 {
     event->setTarget(domWindow());
-    m_eventQueue->enqueueEvent(event);
+    m_eventQueue.enqueueEvent(event);
 }
 
 void Document::enqueueDocumentEvent(PassRefPtr<Event> event)
 {
     event->setTarget(this);
-    m_eventQueue->enqueueEvent(event);
+    m_eventQueue.enqueueEvent(event);
 }
 
 PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& ec)

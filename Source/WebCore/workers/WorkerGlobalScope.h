@@ -104,9 +104,6 @@ namespace WebCore {
         int setInterval(PassOwnPtr<ScheduledAction>, int timeout);
         void clearInterval(int timeoutId);
 
-        // ScriptExecutionContext
-        virtual WorkerEventQueue* eventQueue() const OVERRIDE;
-
         virtual bool isContextThread() const OVERRIDE;
         virtual bool isJSExecutionForbidden() const OVERRIDE;
 
@@ -162,6 +159,8 @@ namespace WebCore {
 
         virtual EventTarget* errorEventTarget() OVERRIDE;
 
+        virtual WorkerEventQueue& eventQueue() const OVERRIDE FINAL;
+
         KURL m_url;
         String m_userAgent;
         OwnPtr<GroupSettings> m_groupSettings;
@@ -180,7 +179,7 @@ namespace WebCore {
 
         HashSet<Observer*> m_workerObservers;
 
-        OwnPtr<WorkerEventQueue> m_eventQueue;
+        mutable WorkerEventQueue m_eventQueue;
 
         RefPtr<SecurityOrigin> m_topOrigin;
     };

@@ -292,13 +292,13 @@ void IDBDatabase::closeConnection()
     if (m_contextStopped || !scriptExecutionContext())
         return;
 
-    EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
+    EventQueue& eventQueue = scriptExecutionContext()->eventQueue();
     // Remove any pending versionchange events scheduled to fire on this
     // connection. They would have been scheduled by the backend when another
     // connection called setVersion, but the frontend connection is being
     // closed before they could fire.
     for (size_t i = 0; i < m_enqueuedEvents.size(); ++i) {
-        bool removed = eventQueue->cancelEvent(m_enqueuedEvents[i].get());
+        bool removed = eventQueue.cancelEvent(*m_enqueuedEvents[i]);
         ASSERT_UNUSED(removed, removed);
     }
 }
@@ -320,9 +320,8 @@ void IDBDatabase::enqueueEvent(PassRefPtr<Event> event)
 {
     ASSERT(!m_contextStopped);
     ASSERT(scriptExecutionContext());
-    EventQueue* eventQueue = scriptExecutionContext()->eventQueue();
     event->setTarget(this);
-    eventQueue->enqueueEvent(event.get());
+    scriptExecutionContext()->eventQueue().enqueueEvent(event.get());
     m_enqueuedEvents.append(event);
 }
 

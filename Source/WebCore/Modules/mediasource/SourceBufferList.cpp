@@ -39,14 +39,13 @@
 
 namespace WebCore {
 
-SourceBufferList::SourceBufferList(ScriptExecutionContext* context,
-                                   GenericEventQueue* asyncEventQueue)
+SourceBufferList::SourceBufferList(ScriptExecutionContext& context, GenericEventQueue& asyncEventQueue)
     : m_scriptExecutionContext(context)
     , m_asyncEventQueue(asyncEventQueue)
 {
 }
 
-unsigned long SourceBufferList::length() const
+unsigned SourceBufferList::length() const
 {
     return m_list.size();
 }
@@ -86,12 +85,9 @@ void SourceBufferList::clear()
 
 void SourceBufferList::createAndFireEvent(const AtomicString& eventName)
 {
-    ASSERT(m_asyncEventQueue);
-
     RefPtr<Event> event = Event::create(eventName, false, false);
     event->setTarget(this);
-
-    m_asyncEventQueue->enqueueEvent(event.release());
+    m_asyncEventQueue.enqueueEvent(event.release());
 }
 
 const AtomicString& SourceBufferList::interfaceName() const
@@ -101,7 +97,7 @@ const AtomicString& SourceBufferList::interfaceName() const
 
 ScriptExecutionContext* SourceBufferList::scriptExecutionContext() const
 {
-    return m_scriptExecutionContext;
+    return &m_scriptExecutionContext;
 }
 
 EventTargetData* SourceBufferList::eventTargetData()
