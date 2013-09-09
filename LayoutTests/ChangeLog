@@ -1,3 +1,17 @@
+2013-09-09  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [WK2] Assertion failure in WebCore::Page::checkSubframeCountConsistency when going back
+        https://bugs.webkit.org/show_bug.cgi?id=119781
+
+        Reviewed by Alexey Proskuryakov.
+
+        To verify this fix, we need to use the CachedPage in WK2 debug mode.
+        And the test page should have at least one iframe with plugin.
+
+        * fast/history/go-back-to-iframe-with-plugin-expected.txt: Added.
+        * fast/history/go-back-to-iframe-with-plugin.html: Added.
+        * fast/history/resources/subframe-with-plugin.html: Added.
+
 2013-09-09  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Heap-buffer-overflow in WebCore::ShapeInterval<float>::subtractShapeIntervals

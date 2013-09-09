@@ -1,3 +1,24 @@
+2013-09-09  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [WK2] Assertion failure in WebCore::Page::checkSubframeCountConsistency when going back
+        https://bugs.webkit.org/show_bug.cgi?id=119781
+
+        Reviewed by Alexey Proskuryakov.
+
+        We should pair restoring a cached frame and adding it to FrameTree so that
+        actual added frame count in FrameTree keeps same with restored frame count.
+        Otherwise assert failure occurs in Page::CheckSubframeCountConsistency.
+        We have added cached frames to FrameTree ahead and then restored them by tree travelsal.
+        But this way doesn't guarantee subframecount of Page and the number of child of FrameTree are equal.
+        In addition, we still make sure that adding a cached frame to FrameTree should happen
+        before opening it. Because FrameTree might be used while restoring a cached page.
+
+        Test: fast/history/go-back-to-iframe-with-plugin.html
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        (WebCore::CachedFrame::open):
+
 2013-09-09  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         Nix upstreaming - Adding stubs and Nix specific platform files
