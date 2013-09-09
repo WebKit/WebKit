@@ -1,3 +1,15 @@
+2013-09-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Prevent overflow of width/height of layout overflow rectangle which can cause scroll bar to misfunction
+        https://bugs.webkit.org/show_bug.cgi?id=121041
+
+        Reviewed by Darin Adler.
+
+        Merge the test from https://chromium.googlesource.com/chromium/blink/+/d050f9be579d02e40c8924b4153376bc32ffba1a
+
+        * scrollbars/scrollbar-large-overflow-rectangle-expected.txt: Added.
+        * scrollbars/scrollbar-large-overflow-rectangle.html: Added.
+
 2013-09-09  Mark Lam  <mark.lam@apple.com>
 
         Remove old fast/js/resources pre and post test files.
