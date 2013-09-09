@@ -69,6 +69,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSBatteryManager.h \
 	DerivedSources/WebCore/JSBeforeLoadEvent.cpp \
 	DerivedSources/WebCore/JSBeforeLoadEvent.h \
+	DerivedSources/WebCore/JSBeforeUnloadEvent.cpp \
+	DerivedSources/WebCore/JSBeforeUnloadEvent.h \
 	DerivedSources/WebCore/JSBiquadFilterNode.cpp \
 	DerivedSources/WebCore/JSBiquadFilterNode.h \
 	DerivedSources/WebCore/JSBlob.cpp \
@@ -1358,6 +1360,7 @@ dom_binding_idls += \
 	$(WebCore)/css/WebKitCSSViewportRule.idl \
 	$(WebCore)/dom/Attr.idl \
 	$(WebCore)/dom/BeforeLoadEvent.idl \
+	$(WebCore)/dom/BeforeUnloadEvent.idl \
 	$(WebCore)/dom/CDATASection.idl \
 	$(WebCore)/dom/CharacterData.idl \
 	$(WebCore)/dom/ChildNode.idl \

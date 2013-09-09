@@ -23,6 +23,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'BeforeLoadEvent').hasOwnProperty('
 PASS Object.getOwnPropertyDescriptor(global, 'BeforeLoadEvent').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'BeforeLoadEvent').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'BeforeLoadEvent').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'BeforeUnloadEvent').value is BeforeUnloadEvent
+PASS Object.getOwnPropertyDescriptor(global, 'BeforeUnloadEvent').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'BeforeUnloadEvent').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'BeforeUnloadEvent').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'BeforeUnloadEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Blob').value is Blob
 PASS Object.getOwnPropertyDescriptor(global, 'Blob').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Blob').hasOwnProperty('set') is false

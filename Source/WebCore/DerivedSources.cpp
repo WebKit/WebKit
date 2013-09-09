@@ -31,6 +31,7 @@
 #include "JSAttr.cpp"
 #include "JSBarProp.cpp"
 #include "JSBeforeLoadEvent.cpp"
+#include "JSBeforeUnloadEvent.cpp"
 #include "JSBlob.cpp"
 #include "JSCanvasGradient.cpp"
 #include "JSCanvasPattern.cpp"

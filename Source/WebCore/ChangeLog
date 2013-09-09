@@ -1,3 +1,57 @@
+2013-09-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Add support for BeforeUnloadEvent interface
+        https://bugs.webkit.org/show_bug.cgi?id=120849
+
+        Reviewed by Darin Adler.
+
+        Add support for BeforeUnloadEvent as per the specification:
+        http://www.whatwg.org/specs/web-apps/current-work/#beforeunloadevent
+
+        BeforeUnloadEvent has a returnValue attribute. Setting returnValue to a non-empty
+        string in an event handler causes the user agent should ask the user to confirm
+        that they wish to unload the document. This is equivalent to returning a non-empty
+        string in the EventHandler:
+        http://www.whatwg.org/specs/web-apps/current-work/#onbeforeunloadeventhandler
+
+        BeforeUnloadEvent and returnValue are already supported by IE and Firefox. Previously,
+        WebKit was passing a base Event type to the beforeunload event handlers instead of
+        a BeforeUnloadEvent.
+
+        Note that this patch keeps support for the legacy Event.returnValue attribute. This used
+        to be an IE extension but this is no longer supported by IE (nor Firefox). The standard
+        preventDefault() should be used instead however (supported in IE >= 9).
+
+        Test: fast/events/before-unload-returnValue.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * WebCore.order:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * dom/BeforeUnloadEvent.cpp:
+        (WebCore::BeforeUnloadEvent::isBeforeUnloadEvent):
+        (WebCore::BeforeUnloadEvent::~BeforeUnloadEvent):
+        * dom/BeforeUnloadEvent.h:
+        (WebCore::BeforeUnloadEvent::create):
+        (WebCore::BeforeUnloadEvent::returnValue):
+        (WebCore::BeforeUnloadEvent::setReturnValue):
+        (WebCore::toBeforeUnloadEvent):
+        * dom/BeforeUnloadEvent.idl: Added.
+        * dom/Event.cpp:
+        (WebCore::Event::isBeforeUnloadEvent):
+        * dom/Event.h:
+        (WebCore::Event::legacyReturnValue):
+        (WebCore::Event::setLegacyReturnValue):
+        * dom/Event.idl:
+        * dom/EventNames.in:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::handleBeforeUnloadEvent):
+
 2013-09-06  David Hyatt  <hyatt@apple.com>
 
         Get rid of isBlockFlowFlexBoxOrGrid().

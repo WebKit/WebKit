@@ -240,6 +240,7 @@ BINDING_IDLS = \
     $(WebCore)/css/WebKitCSSViewportRule.idl \
     $(WebCore)/dom/Attr.idl \
     $(WebCore)/dom/BeforeLoadEvent.idl \
+    $(WebCore)/dom/BeforeUnloadEvent.idl \
     $(WebCore)/dom/CDATASection.idl \
     $(WebCore)/dom/CharacterData.idl \
     $(WebCore)/dom/ChildNode.idl \

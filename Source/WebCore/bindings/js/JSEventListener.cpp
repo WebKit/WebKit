@@ -20,6 +20,7 @@
 #include "config.h"
 #include "JSEventListener.h"
 
+#include "BeforeUnloadEvent.h"
 #include "Event.h"
 #include "Frame.h"
 #include "InspectorCounters.h"
@@ -147,8 +148,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
             event->target()->uncaughtExceptionInEventHandler();
             reportCurrentException(exec);
         } else {
-            if (!retval.isUndefinedOrNull() && event->storesResultAsString())
-                event->storeResult(retval.toString(exec)->value(exec));
+            if (!retval.isUndefinedOrNull() && event->isBeforeUnloadEvent())
+                toBeforeUnloadEvent(event)->setReturnValue(retval.toString(exec)->value(exec));
             if (m_isAttribute) {
                 if (retval.isFalse())
                     event->preventDefault();

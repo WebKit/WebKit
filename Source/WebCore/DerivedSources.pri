@@ -226,6 +226,7 @@ IDL_BINDINGS += \
     $$PWD/css/WebKitCSSViewportRule.idl \
     $$PWD/dom/Attr.idl \
     $$PWD/dom/BeforeLoadEvent.idl \
+    $$PWD/dom/BeforeUnloadEvent.idl \
     $$PWD/dom/CharacterData.idl \
     $$PWD/dom/ChildNode.idl \
     $$PWD/dom/ClientRect.idl \

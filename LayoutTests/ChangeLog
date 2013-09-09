@@ -1,3 +1,22 @@
+2013-09-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Add support for BeforeUnloadEvent interface
+        https://bugs.webkit.org/show_bug.cgi?id=120849
+
+        Reviewed by Darin Adler.
+
+        Add layout test for validate support for the BeforeUnloadEvent.
+        Also rebaseline fast/js/global-constructors-attributes.html as
+        BeforeUnloadEvent is now exposed on the global Window object.
+
+        * fast/events/before-unload-returnValue-expected.txt: Added.
+        * fast/events/before-unload-returnValue.html: Added.
+        * fast/js/global-constructors-attributes-expected.txt:
+        * platform/efl/fast/js/global-constructors-attributes-expected.txt:
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt:
+        * platform/mac-lion/fast/js/global-constructors-attributes-expected.txt:
+        * platform/qt/fast/js/global-constructors-attributes-expected.txt:
+
 2013-09-09  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [WK2] Assertion failure in WebCore::Page::checkSubframeCountConsistency when going back

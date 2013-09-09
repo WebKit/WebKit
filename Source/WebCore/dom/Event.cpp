@@ -166,18 +166,14 @@ bool Event::isClipboardEvent() const
     return false;
 }
 
-bool Event::storesResultAsString() const
-{
-    return false;
-}
-
 bool Event::isBeforeTextInsertedEvent() const
 {
     return false;
 }
 
-void Event::storeResult(const String&)
+bool Event::isBeforeUnloadEvent() const
 {
+    return false;
 }
 
 PassRefPtr<Event> Event::cloneFor(HTMLIFrameElement*) const

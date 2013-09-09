@@ -3,6 +3,7 @@
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2013 Samsung Electronics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,25 +29,33 @@
 
 namespace WebCore {
 
-    class BeforeUnloadEvent : public Event {
-    public:
-        virtual ~BeforeUnloadEvent();
+class BeforeUnloadEvent FINAL : public Event {
+public:
+    virtual ~BeforeUnloadEvent();
 
-        static PassRefPtr<BeforeUnloadEvent> create()
-        {
-            return adoptRef(new BeforeUnloadEvent);
-        }
+    static PassRefPtr<BeforeUnloadEvent> create()
+    {
+        return adoptRef(new BeforeUnloadEvent);
+    }
 
-        virtual bool storesResultAsString() const;
-        virtual void storeResult(const String&);
+    String returnValue() const { return m_returnValue; }
+    void setReturnValue(const String& returnValue) { m_returnValue = returnValue; }
 
-        String result() const { return m_result; }
+    virtual const AtomicString& interfaceName() const OVERRIDE { return eventNames().interfaceForBeforeUnloadEvent; }
 
-    private:
-        BeforeUnloadEvent();
+private:
+    BeforeUnloadEvent();
 
-        String m_result;
-    };
+    virtual bool isBeforeUnloadEvent() const OVERRIDE;
+
+    String m_returnValue;
+};
+
+inline BeforeUnloadEvent* toBeforeUnloadEvent(Event* event)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!event || event->isBeforeUnloadEvent());
+    return static_cast<BeforeUnloadEvent*>(event);
+}
 
 } // namespace WebCore
 

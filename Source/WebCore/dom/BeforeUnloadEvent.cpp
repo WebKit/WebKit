@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
@@ -32,18 +32,13 @@ BeforeUnloadEvent::BeforeUnloadEvent()
 {
 }
 
-BeforeUnloadEvent::~BeforeUnloadEvent()
-{
-}
-
-bool BeforeUnloadEvent::storesResultAsString() const
+bool BeforeUnloadEvent::isBeforeUnloadEvent() const
 {
     return true;
 }
 
-void BeforeUnloadEvent::storeResult(const String& s)
+BeforeUnloadEvent::~BeforeUnloadEvent()
 {
-    m_result = s;
 }
 
 } // namespace WebCore
