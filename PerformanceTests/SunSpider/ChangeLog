@@ -1,3 +1,14 @@
+2013-09-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Stress tests should test the jsc profiler (-p)
+        https://bugs.webkit.org/show_bug.cgi?id=121043
+
+        Reviewed by Mark Hahnenberg.
+        
+        Add a jsc-stress-test that tries to profile SunSpider.
+
+        * profiler-test.yaml: Added.
+
 2013-08-08  Cosmin Truta  <ctruta@blackberry.com>
 
         SunSpider: Move the 3d-morph fix from version 1.0 to version 1.0.1

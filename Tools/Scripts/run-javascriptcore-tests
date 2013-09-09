@@ -243,7 +243,8 @@ if ($runJSCStress) {
         "-j", jscPath($productDir), "-o", $jscStressResultsDir,
         "PerformanceTests/SunSpider/tests/sunspider-1.0",
         "PerformanceTests/SunSpider/tests/v8-v6",
-        "LayoutTests/fast/js/regress/script-tests"
+        "LayoutTests/fast/js/regress/script-tests",
+        "PerformanceTests/SunSpider/profiler-test.yaml"
     );
     if ($enableFTL) {
         push(@jscStressDriverCmd, "--ftl-jit");

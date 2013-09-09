@@ -25,6 +25,14 @@
 
 require 'getoptlong'
 require 'pathname'
+require 'yaml'
+
+THIS_SCRIPT_PATH = Pathname.new(__FILE__).realpath
+SCRIPTS_PATH = THIS_SCRIPT_PATH.dirname
+raise unless SCRIPTS_PATH.basename.to_s == "Scripts"
+raise unless SCRIPTS_PATH.dirname.basename.to_s == "Tools"
+
+HELPERS_PATH = SCRIPTS_PATH + "jsc-stress-test-helpers"
 
 $haveShellwords = false
 
@@ -36,13 +44,28 @@ rescue => e
     $stderr.puts "Error: #{e.inspect}"
 end
 
-def mysys(*cmd)
+$canRunDisplayProfilerOutput = false
+
+begin
+    require 'json'
+    require 'highline'
+    $canRunDisplayProfilerOutput = true
+rescue => e
+    $stderr.puts "Warning: did not find json or highline; some features will be disabled."
+    $stderr.puts "Error: #{e.inspect}"
+end
+
+def printCommandArray(*cmd)
     begin
         commandArray = cmd.each{|value| Shellwords.shellescape(value.to_s)}.join(' ')
     rescue
         commandArray = cmd.join(' ')
     end
     $stderr.puts ">> #{commandArray}"
+end
+
+def mysys(*cmd)
+    printCommandArray(*cmd)
     raise "Command failed: #{$?.inspect}" unless system(*cmd)
 end
 
@@ -53,6 +76,7 @@ $enableFTL = false
 $collections = []
 $outputDir = Pathname.new("results")
 $parallel = ($haveShellwords and numProcessors > 1)
+$verbosity = 0
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -61,6 +85,7 @@ def usage
     puts "--ftl-jit               Indicate that we have the FTL JIT."
     puts "--[no-]parallel         Run in parallel, or not. Default is #{$parallel}."
     puts "--output-dir     (-o)   Path where to put results. Default is #{$outputDir}."
+    puts "--verbose        (-v)   Print more things while running."
     puts "--help           (-h)   Print this message."
     exit 1
 end
@@ -70,7 +95,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--ftl-jit', GetoptLong::NO_ARGUMENT],
                ['--parallel', GetoptLong::NO_ARGUMENT],
                ['--no-parallel', GetoptLong::NO_ARGUMENT],
-               ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT]).each {
+               ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
+               ['--verbose', '-v', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
     when '--help'
@@ -85,6 +111,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $parallel = true
     when '--no-parallel'
         $parallel = false
+    when '--verbose'
+        $verbosity += 1
     end
 }
 
@@ -113,17 +141,32 @@ class Plan
         File.open(filename, "w") {
             | outp |
             outp.puts "echo Running #{Shellwords.shellescape(@name)}"
-            outp.puts("(cd #{Shellwords.shellescape(@directory.to_s)} && " +
-                      @arguments.map{|v| Shellwords.shellescape(v)}.join(' ') +
-                      ") || #{failCommand}")
+            cmd = ("(cd #{Shellwords.shellescape(@directory.to_s)} && " +
+                   @arguments.map{|v| Shellwords.shellescape(v)}.join(' ') +
+                   ") || #{failCommand}")
+            if $verbosity >= 1
+                outp.puts "echo #{Shellwords.shellescape(cmd)}"
+            end
+            outp.puts cmd
         }
     end
 end
 
+$uniqueFilenameCounter = 0
+def uniqueFilename(extension)
+    payloadDir = $outputDir + "_payload"
+    Dir.mkdir payloadDir unless payloadDir.directory?
+    result = payloadDir.realpath + "temp-#{$uniqueFilenameCounter}#{extension}"
+    $uniqueFilenameCounter += 1
+    result
+end
+
+def addRunCommand(kind, command)
+    $runlist << Plan.new($benchmarkDirectory, command, "#{$collectionName}/#{$benchmark}.#{kind}")
+end
+
 def run(kind, *options)
-    $runlist << Plan.new($collection,
-                         [$jscPath.to_s] + options + [$benchmark],
-                         "#{$collectionName}/#{$benchmark}.#{kind}")
+    addRunCommand(kind, [$jscPath.to_s] + options + [$benchmark.to_s])
 end
 
 def runDefault
@@ -150,6 +193,15 @@ def runFTLEager
     run("ftl-eager", "--useExperimentalFTL=true", *EAGER_OPTIONS)
 end
 
+def runProfiler
+    profilerOutput = uniqueFilename(".json")
+    if $haveShellwords and $canRunDisplayProfilerOutput
+        addRunCommand("profiler", ["ruby", (HELPERS_PATH + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, $jscPath.to_s, "-p", profilerOutput.to_s, $benchmark.to_s])
+    else
+        run("profiler-simple", "-p", profilerOutput.to_s)
+    end
+end
+
 def defaultRun
     runDefault
     runNoCJIT
@@ -166,8 +218,6 @@ def skip
     puts "Skipping #{$collectionName}/#{$benchmark}"
 end
 
-collectionNames = {}
-
 Dir.mkdir($outputDir) unless $outputDir.directory?
 begin
     File.delete($outputDir + "failed")
@@ -176,51 +226,107 @@ end
 
 $outputDir = $outputDir.realpath
 
-ARGV.each {
-    | collection |
-    $collection = Pathname.new(collection)
-    outerDir = $collection.dirname
-    name = $collection.basename
-    lastName = name
-    while lastName.to_s =~ /test/
-        lastName = outerDir.basename
-        name = lastName + name
-        outerDir = outerDir.dirname
+def allJSFiles(path)
+    if path.file?
+        [path]
+    else
+        result = []
+        Dir.foreach(path) {
+            | filename |
+            next unless filename =~ /\.js$/
+            next unless (path + filename).file?
+            result << path + filename
+        }
+        result
     end
-    $collectionName = name.to_s
+end
+
+# Returns [collectionPath, collectionName]
+def simplifyCollectionName(collectionNames, collectionPath)
+    outerDir = collectionPath.dirname
+    name = collectionPath.basename
+    lastName = name
+    if collectionPath.directory?
+        while lastName.to_s =~ /test/
+            lastName = outerDir.basename
+            name = lastName + name
+            outerDir = outerDir.dirname
+        end
+    end
+    collectionName = name.to_s
     toAdd = 1
-    while collectionNames[$collectionName]
-        $collectionName = File.basename(name.to_s) + "-#{toAdd}"
+    while collectionNames[collectionName]
+        collectionName = File.basename(name.to_s) + "-#{toAdd}"
         toAdd += 1
     end
-    collectionNames[$collectionName] = true
+    collectionNames[collectionName] = true
+    [collectionPath, collectionName]
+end
+
+def prepareCollection(name)
     dir = $outputDir
-    name.each_filename {
+    Pathname.new(name).each_filename {
         | filename |
         dir = dir + filename
         Dir.mkdir(dir) unless dir.directory?
     }
+end
 
-    Dir.foreach($collection) {
-        | benchmark |
-        next unless benchmark =~ /\.js$/
-        next unless ($collection + benchmark).file?
-        
-        $benchmark = benchmark
-        
-        didRun = false
-        File.open($collection + benchmark) {
-            | inp |
-            inp.each_line {
-                | line |
-                next unless line =~ /^\/\/@/
-                eval $~.post_match
-                didRun = true
+collectionNames = {}
+
+ARGV.each {
+    | collection |
+    collection, collectionName = simplifyCollectionName(collectionNames, Pathname.new(collection))
+    
+    if collection.file?
+        subCollectionNames = {}
+        YAML::load(IO::read(collection)).each {
+            | entry |
+            path = collection.dirname + entry["path"]
+            
+            subCollection, subCollectionName = simplifyCollectionName(subCollectionNames, path)
+            
+            $collection = subCollection
+            $collectionName = (Pathname.new(collectionName) + subCollectionName).to_s
+            
+            prepareCollection($collectionName)
+            
+            allJSFiles(path).each {
+                | path |
+                
+                path = path.realpath
+                
+                $benchmark = path.basename
+                $benchmarkDirectory = path.dirname
+                
+                eval entry["cmd"]
             }
         }
+    else
+        prepareCollection(collectionName)
         
-        defaultRun unless didRun
-    }
+        $collection = collection
+        $collectionName = collectionName
+        $benchmarkDirectory = $collection
+        allJSFiles($collection).each {
+            | path |
+            
+            $benchmark = path.basename
+            
+            didRun = false
+            File.open($collection + $benchmark) {
+                | inp |
+                inp.each_line {
+                    | line |
+                    next unless line =~ /^\/\/@/
+                    eval $~.post_match
+                    didRun = true
+                }
+            }
+            
+            defaultRun unless didRun
+        }
+    end
 }
 
 def appendFailure(plan)
@@ -343,6 +449,9 @@ else
         print "#{plan.name}: "
         
         Dir.chdir(plan.directory) {
+            if $verbosity >= 1
+                printCommandArray(*plan.arguments)
+            end
             if system(*plan.arguments)
                 puts "OK."
             else

@@ -1,3 +1,24 @@
+2013-09-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Stress tests should test the jsc profiler (-p)
+        https://bugs.webkit.org/show_bug.cgi?id=121043
+
+        Reviewed by Mark Hahnenberg.
+        
+        Add a runProfiler command that all tests could use. This requires profiler-test-helper,
+        which first runs the JS test and then tries the output with display-profiler-output.
+        But if any of the things required for this to work aren't present, we just do a simpler
+        test that just uses "-p".
+        
+        Because I didn't want to pollute SunSpider with "//@ runProfiler", I added the ability
+        to create test collections using a yaml file that specifies the test path and the
+        command to run.
+
+        * Scripts/jsc-stress-test-helpers: Added.
+        * Scripts/jsc-stress-test-helpers/profiler-test-helper: Added.
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-jsc-stress-tests:
+
 2013-09-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [webkitpy] Remove the DeprecatedPort class
