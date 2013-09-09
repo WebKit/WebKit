@@ -896,12 +896,14 @@ WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase* webkitWebViewBase)
 
 void webkitWebViewBaseUpdatePreferences(WebKitWebViewBase* webkitWebViewBase)
 {
-#if USE(TEXTURE_MAPPER_GL)
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 
-    if (!priv->redirectedWindow)
-        priv->pageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(false);
+#if USE(TEXTURE_MAPPER_GL)
+    if (priv->redirectedWindow)
+        return;
 #endif
+
+    priv->pageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(false);
 }
 
 void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebContext* context, WebPageGroup* pageGroup)
