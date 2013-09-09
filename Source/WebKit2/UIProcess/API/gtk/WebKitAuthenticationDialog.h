@@ -49,7 +49,7 @@ struct _WebKitAuthenticationDialogClass {
 };
 
 GType webkit_authentication_dialog_get_type();
-GtkWidget* webkitAuthenticationDialogNew(WebKitAuthenticationRequest*, CredentialStorageMode, WebKitWebView*);
+GtkWidget* webkitAuthenticationDialogNew(WebKitAuthenticationRequest*, CredentialStorageMode);
 
 G_END_DECLS
 

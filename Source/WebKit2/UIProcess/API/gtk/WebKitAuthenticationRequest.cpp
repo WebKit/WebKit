@@ -51,6 +51,12 @@ using namespace WebCore;
  * WebKitAuthenticationRequest object.
  */
 
+enum {
+    CANCELLED,
+
+    LAST_SIGNAL
+};
+
 struct _WebKitAuthenticationRequestPrivate {
     RefPtr<AuthenticationChallengeProxy> authenticationChallenge;
     bool privateBrowsingEnabled;
@@ -58,6 +64,8 @@ struct _WebKitAuthenticationRequestPrivate {
     CString host;
     CString realm;
 };
+
+static guint signals[LAST_SIGNAL] = { 0, };
 
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_AUTHENTICATION_SCHEME_DEFAULT, ProtectionSpaceAuthenticationSchemeDefault);
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_AUTHENTICATION_SCHEME_HTTP_BASIC, ProtectionSpaceAuthenticationSchemeHTTPBasic);
@@ -86,6 +94,24 @@ static void webkit_authentication_request_class_init(WebKitAuthenticationRequest
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(requestClass);
     objectClass->dispose = webkitAuthenticationRequestDispose;
+
+    /**
+     * WebKitAuthenticationRequest::cancelled:
+     * @request: the #WebKitAuthenticationRequest
+     *
+     * This signal is emitted when the user authentication request is
+     * cancelled. It allows the application to dismiss its authentication
+     * dialog in case of page load failure for example.
+     *
+     * Since: 2.2
+     */
+    signals[CANCELLED] =
+        g_signal_new("cancelled",
+            G_TYPE_FROM_CLASS(objectClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
 }
 
 WebKitAuthenticationRequest* webkitAuthenticationRequestCreate(AuthenticationChallengeProxy* authenticationChallenge, bool privateBrowsingEnabled)
@@ -288,4 +314,6 @@ void webkit_authentication_request_cancel(WebKitAuthenticationRequest* request)
     g_return_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request));
 
     request->priv->authenticationChallenge->listener()->cancel();
+
+    g_signal_emit(request, signals[CANCELLED], 0);
 }
