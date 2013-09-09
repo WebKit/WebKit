@@ -1,5 +1,11 @@
 2013-09-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        Unreviewed fixup of expectation name.
+
+        * fast/events/mouseenterleave-on-subframe-expected.txt: Renamed from LayoutTests/fast/events/mouseenterleave-on-subframe-expected.html.
+
+2013-09-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         MouseLeave not always emitted when cursor leaves subframe
         https://bugs.webkit.org/show_bug.cgi?id=121026
 
