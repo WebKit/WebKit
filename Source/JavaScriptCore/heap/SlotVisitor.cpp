@@ -18,6 +18,8 @@ namespace JSC {
 
 SlotVisitor::SlotVisitor(GCThreadSharedData& shared)
     : m_stack(shared.m_vm->heap.blockAllocator())
+    , m_bytesVisited(0)
+    , m_bytesCopied(0)
     , m_visitCount(0)
     , m_isInParallelMode(false)
     , m_shared(shared)
@@ -46,6 +48,8 @@ void SlotVisitor::setup()
 
 void SlotVisitor::reset()
 {
+    m_bytesVisited = 0;
+    m_bytesCopied = 0;
     m_visitCount = 0;
     ASSERT(m_stack.isEmpty());
 #if ENABLE(PARALLEL_GC)

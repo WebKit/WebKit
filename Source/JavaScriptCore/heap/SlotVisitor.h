@@ -72,6 +72,8 @@ public:
     void setup();
     void reset();
 
+    size_t bytesVisited() const { return m_bytesVisited; }
+    size_t bytesCopied() const { return m_bytesCopied; }
     size_t visitCount() const { return m_visitCount; }
 
     void donate();
@@ -123,6 +125,8 @@ private:
     MarkStackArray m_stack;
     HashSet<void*> m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
     
+    size_t m_bytesVisited;
+    size_t m_bytesCopied;
     size_t m_visitCount;
     bool m_isInParallelMode;
     

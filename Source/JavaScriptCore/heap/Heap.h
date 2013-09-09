@@ -232,6 +232,8 @@ namespace JSC {
         void zombifyDeadObjects();
         void markDeadObjects();
 
+        size_t sizeAfterCollect();
+
         JSStack& stack();
         BlockAllocator& blockAllocator();
         
@@ -247,6 +249,9 @@ namespace JSC {
         size_t m_bytesAllocatedLimit;
         size_t m_bytesAllocated;
         size_t m_bytesAbandoned;
+
+        size_t m_totalBytesVisited;
+        size_t m_totalBytesCopied;
         
         OperationInProgress m_operationInProgress;
         BlockAllocator m_blockAllocator;

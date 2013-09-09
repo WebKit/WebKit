@@ -50,6 +50,22 @@ size_t GCThreadSharedData::childVisitCount()
         result += m_gcThreads[i]->slotVisitor()->visitCount();
     return result;
 }
+
+size_t GCThreadSharedData::childBytesVisited()
+{       
+    size_t result = 0;
+    for (unsigned i = 0; i < m_gcThreads.size(); ++i)
+        result += m_gcThreads[i]->slotVisitor()->bytesVisited();
+    return result;
+}
+
+size_t GCThreadSharedData::childBytesCopied()
+{       
+    size_t result = 0;
+    for (unsigned i = 0; i < m_gcThreads.size(); ++i)
+        result += m_gcThreads[i]->slotVisitor()->bytesCopied();
+    return result;
+}
 #endif
 
 GCThreadSharedData::GCThreadSharedData(VM* vm)

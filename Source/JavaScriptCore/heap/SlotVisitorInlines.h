@@ -100,6 +100,7 @@ ALWAYS_INLINE void SlotVisitor::internalAppend(void* from, JSCell* cell)
     if (Heap::testAndSetMarked(cell) || !cell->structure())
         return;
 
+    m_bytesVisited += MarkedBlock::blockFor(cell)->cellSize();
     m_visitCount++;
         
     MARK_LOG_CHILD(*this, cell);
@@ -211,6 +212,8 @@ inline void SlotVisitor::donateAndDrain()
 inline void SlotVisitor::copyLater(JSCell* owner, CopyToken token, void* ptr, size_t bytes)
 {
     ASSERT(bytes);
+    m_bytesCopied += bytes;
+
     CopiedBlock* block = CopiedSpace::blockFor(ptr);
     if (block->isOversize()) {
         m_shared.m_copiedSpace->pin(block);
