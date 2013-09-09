@@ -136,7 +136,7 @@ void RenderTextControlSingleLine::layout()
         setNeedsLayoutOnAncestors(innerBlockRenderer, this);
     }
 
-    RenderBlock::layoutBlock(false);
+    RenderBlockFlow::layoutBlock(false);
 
     HTMLElement* container = containerElement();
     RenderBox* containerRenderer = container ? container->renderBox() : 0;
@@ -173,7 +173,7 @@ void RenderTextControlSingleLine::layout()
 
     // If we need another layout pass, we have changed one of children's height so we need to relayout them.
     if (needsLayout())
-        RenderBlock::layoutBlock(true);
+        RenderBlockFlow::layoutBlock(true);
 
     // Center the child block in the block progression direction (vertical centering for horizontal text fields).
     if (!container && innerTextRenderer && innerTextRenderer->height() != contentLogicalHeight()) {

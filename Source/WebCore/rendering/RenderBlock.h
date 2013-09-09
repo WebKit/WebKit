@@ -587,17 +587,6 @@ protected:
 
     virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) OVERRIDE;
 
-#if ENABLE(SVG)
-    // Only used by RenderSVGText, which explicitely overrides RenderBlock::layoutBlock(), do NOT use for anything else.
-    void forceLayoutInlineChildren()
-    {
-        LayoutUnit repaintLogicalTop = 0;
-        LayoutUnit repaintLogicalBottom = 0;
-        clearFloats();
-        layoutInlineChildren(true, repaintLogicalTop, repaintLogicalBottom);
-    }
-#endif
-
     bool updateShapesBeforeBlockLayout();
     void updateShapesAfterBlockLayout(bool heightChanged = false);
     void computeRegionRangeForBoxChild(const RenderBox*) const;
@@ -651,8 +640,6 @@ private:
 
     virtual void repaintOverhangingFloats(bool paintAllDescendants) OVERRIDE FINAL;
 
-    void layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom);
-    void layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
     BidiRun* handleTrailingSpaces(BidiRunList<BidiRun>&, BidiContext*);
 
     void insertIntoTrackedRendererMaps(RenderBox* descendant, TrackedDescendantsMap*&, TrackedContainerMap*&);
@@ -926,8 +913,6 @@ private:
     // Returns true if and only if it has positioned any floats.
     bool positionNewFloats();
 
-    void clearFloats();
-
     LayoutUnit getClearDelta(RenderBox* child, LayoutUnit yPos);
 
     virtual bool avoidsFloats() const;
@@ -1190,6 +1175,10 @@ protected:
 public:
     virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const;
     RenderRegion* regionAtBlockOffset(LayoutUnit) const;
+
+    // FIXME: This is temporary to allow us to move code from RenderBlock into RenderBlockFlow that accesses member variables that we haven't moved out of
+    // RenderBlock yet.
+    friend class RenderBlockFlow;
 
 protected:
     struct FloatingObjectHashFunctions {

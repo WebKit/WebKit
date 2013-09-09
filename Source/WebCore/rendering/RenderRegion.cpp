@@ -186,7 +186,7 @@ void RenderRegion::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOff
     if (style()->visibility() != VISIBLE)
         return;
 
-    RenderBlock::paintObject(paintInfo, paintOffset);
+    RenderBlockFlow::paintObject(paintInfo, paintOffset);
 
     if (!isValid())
         return;
@@ -276,7 +276,7 @@ bool RenderRegion::shouldHaveAutoLogicalHeight() const
     
 void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderBlock::styleDidChange(diff, oldStyle);
+    RenderBlockFlow::styleDidChange(diff, oldStyle);
 
     // If the region is not attached to any thread, there is no need to check
     // whether the region has region styling since no content will be displayed
@@ -296,7 +296,7 @@ void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 void RenderRegion::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
-    RenderBlock::layoutBlock(relayoutChildren);
+    RenderBlockFlow::layoutBlock(relayoutChildren);
 
     if (isValid()) {
         LayoutRect oldRegionRect(flowThreadPortionRect());
@@ -553,14 +553,14 @@ void RenderRegion::restoreRegionObjectsOriginalStyle()
 
 void RenderRegion::insertedIntoTree()
 {
-    RenderBlock::insertedIntoTree();
+    RenderBlockFlow::insertedIntoTree();
 
     attachRegion();
 }
 
 void RenderRegion::willBeRemovedFromTree()
 {
-    RenderBlock::willBeRemovedFromTree();
+    RenderBlockFlow::willBeRemovedFromTree();
 
     detachRegion();
 }
@@ -639,7 +639,7 @@ void RenderRegion::clearObjectStyleInRegion(const RenderObject* object)
 void RenderRegion::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     if (!isValid()) {
-        RenderBlock::computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
+        RenderBlockFlow::computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
         return;
     }
 
@@ -652,7 +652,7 @@ void RenderRegion::computePreferredLogicalWidths()
     ASSERT(preferredLogicalWidthsDirty());
 
     if (!isValid()) {
-        RenderBlock::computePreferredLogicalWidths();
+        RenderBlockFlow::computePreferredLogicalWidths();
         return;
     }
 
@@ -690,7 +690,7 @@ void RenderRegion::getRanges(Vector<RefPtr<Range> >& rangeObjects) const
 
 void RenderRegion::updateLogicalHeight()
 {
-    RenderBlock::updateLogicalHeight();
+    RenderBlockFlow::updateLogicalHeight();
 
     if (!hasAutoLogicalHeight())
         return;
@@ -714,7 +714,7 @@ void RenderRegion::updateLogicalHeight()
         setLogicalHeight(newLogicalHeight);
         // Recalculate position of the render block after new logical height is set.
         // (needed in absolute positioning case with bottom alignment for example)
-        RenderBlock::updateLogicalHeight();
+        RenderBlockFlow::updateLogicalHeight();
     }
 }
 

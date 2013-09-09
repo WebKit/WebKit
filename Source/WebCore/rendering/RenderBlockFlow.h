@@ -33,6 +33,20 @@ public:
     virtual ~RenderBlockFlow();
     
     virtual bool isRenderBlockFlow() const OVERRIDE FINAL { return true; }
+    
+    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
+    
+protected:
+    // This method is called at the start of layout to wipe away all of the floats in our floating objects list. It also
+    // repopulates the list with any floats that intrude from previous siblings or parents. Floats that were added by
+    // descendants are gone when this call completes and will get added back later on after the children have gotten
+    // a relayout.
+    void clearFloats();
+
+    // RenderBlockFlow always contains either lines or paragraphs. When the children are all blocks (e.g. paragraphs), we call layoutBlockChildren.
+    // When the children are are all inline (e.g., lines), we call layoutInlineChildren.
+    void layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom);
+    void layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 };
 
 inline RenderBlockFlow& toRenderBlockFlow(RenderObject& object)

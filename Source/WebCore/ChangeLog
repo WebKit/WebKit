@@ -1,3 +1,59 @@
+2013-09-09  David Hyatt  <hyatt@apple.com>
+
+        Move layoutBlock and layoutBlockChildren into RenderBlockFlow
+        https://bugs.webkit.org/show_bug.cgi?id=121036
+
+        Reviewed by Dean Jackson.
+
+        Move layoutBlock into RenderBlockFlow and make the base class version of
+        the method ASSERT_NOT_REACHED. Begin the process of moving block layout 
+        into RenderBlockFlow by putting layoutBlockChildren there as well.
+        
+        This patch also puts clearFloats into RenderBlockFlow and just ditches the
+        SVG-specific forceLayoutInlineChildren by letting RenderSVGText do what it
+        needs in its own file.
+
+        Convert RenderListBox to be a RenderBlockFlow, since this is necessary for it
+        to get the correct layoutBlock method.
+        
+        Patch RenderRegion to call RenderBlockFlow::layoutBlock rather than RenderBlock::layoutBlock.
+        
+        Fix run-ins so that they create block flows rather than blocks, and restrict run-ins to
+        only be block flows.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::createReplacementRunIn):
+        (WebCore::RenderBlock::moveRunInUnderSiblingBlockIfNeeded):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::clearFloats):
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::layoutBlockChildren):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::RenderListBox):
+        (WebCore::RenderListBox::layout):
+        (WebCore::RenderListBox::paintObject):
+        (WebCore::RenderListBox::addFocusRingRects):
+        (WebCore::RenderListBox::nodeAtPoint):
+        * rendering/RenderListBox.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::paintObject):
+        (WebCore::RenderRegion::styleDidChange):
+        (WebCore::RenderRegion::layoutBlock):
+        (WebCore::RenderRegion::insertedIntoTree):
+        (WebCore::RenderRegion::willBeRemovedFromTree):
+        (WebCore::RenderRegion::computeIntrinsicLogicalWidths):
+        (WebCore::RenderRegion::computePreferredLogicalWidths):
+        (WebCore::RenderRegion::updateLogicalHeight):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+
 2013-09-09  Antti Koivisto  <antti@apple.com>
 
         Try to fix GTK build.
