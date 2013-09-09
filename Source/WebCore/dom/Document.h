@@ -541,10 +541,6 @@ public:
     // returns renderer so callers can avoid verbose casts.
     RenderView* renderView() const { return m_renderView; }
 
-    // FIXME: Remove this, callers that have a Document* should call renderView().
-    // Shadow the implementations on Node to provide faster access for documents.
-    RenderView* renderer() const { return m_renderView; }
-
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
 
     AXObjectCache* existingAXObjectCache() const;
@@ -1188,6 +1184,7 @@ private:
     friend class Node;
     friend class IgnoreDestructiveWriteCountIncrementer;
 
+    RenderObject* renderer() const WTF_DELETED_FUNCTION;
     void setRenderer(RenderObject*) WTF_DELETED_FUNCTION;
     void setRenderView(RenderView*);
 

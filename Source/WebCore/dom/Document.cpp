@@ -543,7 +543,7 @@ static bool isAttributeOnAllOwners(const WebCore::QualifiedName& attribute, cons
 
 Document::~Document()
 {
-    ASSERT(!renderer());
+    ASSERT(!renderView());
     ASSERT(!m_inPageCache);
     ASSERT(!m_savedRenderView);
     ASSERT(m_ranges.isEmpty());
@@ -1151,7 +1151,7 @@ bool Document::cssGridLayoutEnabled() const
 
 PassRefPtr<DOMNamedFlowCollection> Document::webkitGetNamedFlows()
 {
-    if (!cssRegionsEnabled() || !renderer())
+    if (!cssRegionsEnabled() || !renderView())
         return 0;
 
     updateStyleIfNeeded();
@@ -1274,7 +1274,7 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
         return;
 
     FrameView* frameView = view();
-    bool needsLayout = frameView && renderer() && (frameView->layoutPending() || renderer()->needsLayout());
+    bool needsLayout = frameView && renderView() && (frameView->layoutPending() || renderView()->needsLayout());
     if (needsLayout)
         updateLayout();
 
@@ -1416,7 +1416,7 @@ String Document::suggestedMIMEType() const
 
 Element* Document::elementFromPoint(int x, int y) const
 {
-    if (!renderer())
+    if (!renderView())
         return 0;
 
     return TreeScope::elementFromPoint(x, y);
@@ -1424,7 +1424,7 @@ Element* Document::elementFromPoint(int x, int y) const
 
 PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
 {
-    if (!renderer())
+    if (!renderView())
         return 0;
     LayoutPoint localPoint;
     Node* node = nodeFromPoint(this, x, y, &localPoint);
@@ -1851,7 +1851,7 @@ void Document::updateLayout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
     // Only do a layout if changes have occurred that make it necessary.      
-    if (frameView && renderer() && (frameView->layoutPending() || renderer()->needsLayout()))
+    if (frameView && renderView() && (frameView->layoutPending() || renderView()->needsLayout()))
         frameView->layout();
 }
 
@@ -2161,7 +2161,7 @@ AXObjectCache* Document::existingAXObjectCache() const
 
     // If the renderer is gone then we are in the process of destruction.
     // This method will be called before m_frame = 0.
-    if (!topDocument()->renderer())
+    if (!topDocument()->renderView())
         return 0;
 
     return topDocument()->m_axObjectCache.get();
@@ -2179,7 +2179,7 @@ AXObjectCache* Document::axObjectCache() const
     Document* topDocument = this->topDocument();
 
     // If the document has already been detached, do not make a new axObjectCache.
-    if (!topDocument->renderer())
+    if (!topDocument->renderView())
         return 0;
 
     ASSERT(topDocument == this || !m_axObjectCache);
@@ -2191,8 +2191,8 @@ AXObjectCache* Document::axObjectCache() const
 void Document::setVisuallyOrdered()
 {
     m_visuallyOrdered = true;
-    if (renderer())
-        renderer()->style()->setRTLOrdering(VisualOrder);
+    if (renderView())
+        renderView()->style()->setRTLOrdering(VisualOrder);
 }
 
 PassRefPtr<DocumentParser> Document::createParser()
@@ -2454,25 +2454,25 @@ void Document::implicitClose()
         updateStyleIfNeeded();
         
         // Always do a layout after loading if needed.
-        if (view() && renderer() && (!renderer()->firstChild() || renderer()->needsLayout()))
+        if (view() && renderView() && (!renderView()->firstChild() || renderView()->needsLayout()))
             view()->layout();
     }
 
     m_processingLoadEvent = false;
 
 #if PLATFORM(MAC) || PLATFORM(WIN)
-    if (f && renderer() && AXObjectCache::accessibilityEnabled()) {
+    if (f && renderView() && AXObjectCache::accessibilityEnabled()) {
         // The AX cache may have been cleared at this point, but we need to make sure it contains an
         // AX object to send the notification to. getOrCreate will make sure that an valid AX object
         // exists in the cache (we ignore the return value because we don't need it here). This is 
         // only safe to call when a layout is not in progress, so it can not be used in postNotification.    
-        axObjectCache()->getOrCreate(renderer());
+        axObjectCache()->getOrCreate(renderView());
         if (this == topDocument())
-            axObjectCache()->postNotification(renderer(), AXObjectCache::AXLoadComplete, true);
+            axObjectCache()->postNotification(renderView(), AXObjectCache::AXLoadComplete, true);
         else {
             // AXLoadComplete can only be posted on the top document, so if it's a document
             // in an iframe that just finished loading, post AXLayoutComplete instead.
-            axObjectCache()->postNotification(renderer(), AXObjectCache::AXLayoutComplete, true);
+            axObjectCache()->postNotification(renderView(), AXObjectCache::AXLayoutComplete, true);
         }
     }
 #endif
@@ -2968,9 +2968,7 @@ void Document::processReferrerPolicy(const String& policy)
 
 MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const LayoutPoint& documentPoint, const PlatformMouseEvent& event)
 {
-    ASSERT(!renderer() || renderer()->isRenderView());
-
-    if (!renderer())
+    if (!renderView())
         return MouseEventWithHitTestResults(event, HitTestResult(LayoutPoint()));
 
     HitTestResult result(documentPoint);
@@ -3181,7 +3179,7 @@ void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
 
     if (didLayoutWithPendingStylesheets() && !m_styleSheetCollection->hasPendingSheets()) {
         m_pendingSheetLayout = IgnoreLayoutWithPendingSheets;
-        if (renderer())
+        if (renderView())
             renderView()->repaintViewAndCompositedLayers();
     }
 
@@ -3200,8 +3198,8 @@ void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
         printf("Finished update of style selector at time %d\n", elapsedTime());
 #endif
 
-    if (renderer()) {
-        renderer()->setNeedsLayoutAndPrefWidthsRecalc();
+    if (renderView()) {
+        renderView()->setNeedsLayoutAndPrefWidthsRecalc();
         if (view())
             view()->scheduleRelayout();
     }
@@ -4020,7 +4018,7 @@ void Document::setInPageCache(bool flag)
 void Document::documentWillBecomeInactive()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (renderer())
+    if (renderView())
         renderView()->setIsInWindow(false);
 #endif
 }
@@ -4049,7 +4047,7 @@ void Document::documentDidResumeFromPageCache()
         (*i)->documentDidResumeFromPageCache();
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (renderer())
+    if (renderView())
         renderView()->setIsInWindow(true);
 #endif
 

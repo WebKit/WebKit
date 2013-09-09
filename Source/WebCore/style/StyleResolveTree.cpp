@@ -811,9 +811,9 @@ void resolveTree(Document& document, Change change)
         }
 #endif
 
-        Style::Change documentChange = determineChange(documentStyle.get(), document.renderer()->style(), document.settings());
+        Style::Change documentChange = determineChange(documentStyle.get(), document.renderView()->style(), document.settings());
         if (documentChange != NoChange)
-            document.renderer()->setStyle(documentStyle.release());
+            document.renderView()->setStyle(documentStyle.release());
     }
 
     Element* documentElement = document.documentElement();

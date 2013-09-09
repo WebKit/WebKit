@@ -81,9 +81,9 @@ static bool mediaAttributeMatches(Frame* frame, RenderStyle* renderStyle, const 
 void HTMLResourcePreloader::preload(PassOwnPtr<PreloadRequest> preload)
 {
     ASSERT(m_document->frame());
-    ASSERT(m_document->renderer());
-    ASSERT(m_document->renderer()->style());
-    if (!preload->media().isEmpty() && !mediaAttributeMatches(m_document->frame(), m_document->renderer()->style(), preload->media()))
+    ASSERT(m_document->renderView());
+    ASSERT(m_document->renderView()->style());
+    if (!preload->media().isEmpty() && !mediaAttributeMatches(m_document->frame(), m_document->renderView()->style(), preload->media()))
         return;
 
     CachedResourceRequest request = preload->resourceRequest(m_document);

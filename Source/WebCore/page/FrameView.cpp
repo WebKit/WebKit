@@ -1171,7 +1171,7 @@ void FrameView::layout(bool allowSubtree)
         if (hasOneRef())
             return;
 
-        root = subtree ? m_layoutRoot : document->renderer();
+        root = subtree ? m_layoutRoot : document->renderView();
         if (!root) {
             // FIXME: Do we need to set m_size here?
             return;
@@ -3447,7 +3447,7 @@ bool FrameView::doLayoutWithFrameFlattening(bool allowSubtree)
 
     parentView->layout(allowSubtree);
 
-    RenderObject* root = m_layoutRoot ? m_layoutRoot : frame().document()->renderer();
+    RenderObject* root = m_layoutRoot ? m_layoutRoot : frame().document()->renderView();
     ASSERT_UNUSED(root, !root->needsLayout());
 
     return true;

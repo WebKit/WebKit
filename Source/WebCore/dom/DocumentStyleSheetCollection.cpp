@@ -463,7 +463,7 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
         return false;
 
     }
-    if (!m_document->renderer() || !m_document->attached())
+    if (!m_document->renderView() || !m_document->attached())
         return false;
 
     Vector<RefPtr<StyleSheet> > activeStyleSheets;

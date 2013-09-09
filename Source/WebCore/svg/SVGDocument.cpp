@@ -88,8 +88,8 @@ void SVGDocument::updatePan(const FloatPoint& pos) const
 {
     if (rootElement()) {
         rootElement()->setCurrentTranslate(FloatPoint(pos.x() - m_translate.x(), pos.y() - m_translate.y()));
-        if (renderer())
-            renderer()->repaint();
+        if (renderView())
+            renderView()->repaint();
     }
 }
 

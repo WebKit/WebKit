@@ -727,7 +727,7 @@ void AXObjectCache::postNotification(AccessibilityObject* object, Document* docu
         object = object->observableObject();
 
     if (!object && document)
-        object = get(document->renderer());
+        object = get(document->renderView());
 
     if (!object)
         return;

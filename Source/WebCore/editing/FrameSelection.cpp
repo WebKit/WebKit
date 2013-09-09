@@ -1559,7 +1559,7 @@ bool FrameSelection::contains(const LayoutPoint& point)
     // Treat a collapsed selection like no selection.
     if (!isRange())
         return false;
-    if (!document->renderer()) 
+    if (!document->renderView()) 
         return false;
     
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);

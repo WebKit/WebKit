@@ -1354,7 +1354,7 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
     if (m_frameCountWhilePlaying > 10) {
         Frame* frame = m_player->frameView() ? &m_player->frameView()->frame() : NULL;
         Document* document = frame ? frame->document() : NULL;
-        RenderObject* renderer = document ? document->renderer() : NULL;
+        RenderObject* renderer = document ? document->renderView() : NULL;
         RenderStyle* styleToUse = renderer ? renderer->style() : NULL;
         if (styleToUse) {
             double frameRate = (m_frameCountWhilePlaying - 1) / ( m_startedPlaying ? ([NSDate timeIntervalSinceReferenceDate] - m_timeStartedPlaying) :

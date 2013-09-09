@@ -168,7 +168,7 @@ void ImageLoader::updateFromElement()
     // If we're not making renderers for the page, then don't load images.  We don't want to slow
     // down the raw HTML parsing case by loading images we don't intend to display.
     Document& document = m_element->document();
-    if (!document.renderer())
+    if (!document.renderView())
         return;
 
     AtomicString attr = m_element->imageSourceURL();

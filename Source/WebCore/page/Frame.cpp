@@ -885,7 +885,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
         child->setPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor);
 
     if (FrameView* view = this->view()) {
-        if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
+        if (document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout())
             view->layout();
     }
 

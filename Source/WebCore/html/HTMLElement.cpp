@@ -914,7 +914,7 @@ void HTMLElement::calculateAndAdjustDirectionality()
 void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChangeType changeType)
 {
     // FIXME: This function looks suspicious.
-    if (document().renderer() && (changeType == ElementRemoved || changeType == TextRemoved)) {
+    if (document().renderView() && (changeType == ElementRemoved || changeType == TextRemoved)) {
         Node* node = beforeChange ? beforeChange->nextSibling() : 0;
         for (; node; node = node->nextSibling()) {
             if (elementAffectsDirectionality(node))

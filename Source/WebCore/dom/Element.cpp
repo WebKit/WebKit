@@ -162,7 +162,7 @@ PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document* docu
 Element::~Element()
 {
 #ifndef NDEBUG
-    if (document().renderer()) {
+    if (document().renderView()) {
         // When the document is not destroyed, an element that was part of a named flow
         // content nodes should have been removed from the content nodes collection
         // and the inNamedFlow flag reset.

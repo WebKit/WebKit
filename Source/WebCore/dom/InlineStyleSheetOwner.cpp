@@ -70,7 +70,7 @@ void InlineStyleSheetOwner::removedFromDocument(Document* document, Element* ele
         clearSheet();
 
     // If we're in document teardown, then we don't need to do any notification of our sheet's removal.
-    if (document->renderer())
+    if (document->renderView())
         document->styleResolverChanged(DeferRecalcStyle);
 }
 

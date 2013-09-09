@@ -1,3 +1,79 @@
+2013-09-09  Antti Koivisto  <antti@apple.com>
+
+        Hide Document::renderer()
+        https://bugs.webkit.org/show_bug.cgi?id=121028
+
+        Reviewed by Andreas Kling.
+
+        Use less generic Document::renderView() instead.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::postNotification):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::appendAccessibilityObject):
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::webAreaObject):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::dispatchInvalidationCallbacks):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::appendAuthorStyleSheets):
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::webkitGetNamedFlows):
+        (WebCore::Document::setVisualUpdatesAllowed):
+        (WebCore::Document::elementFromPoint):
+        (WebCore::Document::caretRangeFromPoint):
+        (WebCore::Document::updateLayout):
+        (WebCore::Document::existingAXObjectCache):
+        (WebCore::Document::axObjectCache):
+        (WebCore::Document::setVisuallyOrdered):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::prepareMouseEvent):
+        (WebCore::Document::styleResolverChanged):
+        (WebCore::Document::documentWillBecomeInactive):
+        (WebCore::Document::documentDidResumeFromPageCache):
+        * dom/Document.h:
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::removedFromDocument):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::removedFrom):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::contains):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::removedFrom):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseAttribute):
+        (WebCore::HTMLStyleElement::registerWithScopingNode):
+        (WebCore::HTMLStyleElement::unregisterWithScopingNode):
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::HTMLResourcePreloader::preload):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::handleGestureScrollBegin):
+        * page/Frame.cpp:
+        (WebCore::Frame::setPageAndTextZoomFactors):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::doLayoutWithFrameFlattening):
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::spoolAllPagesWithBoundaries):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::paint):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resolveTree):
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::updatePan):
+
 2013-09-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [DOM4] Have ProcessingInstruction inherit CharacterData

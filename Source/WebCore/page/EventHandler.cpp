@@ -2459,7 +2459,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 {
     Document* doc = m_frame.document();
 
-    RenderObject* docRenderer = doc->renderer();
+    RenderObject* docRenderer = doc->renderView();
     if (!docRenderer)
         return false;
     
@@ -2797,7 +2797,7 @@ bool EventHandler::passGestureEventToWidgetIfPossible(const PlatformGestureEvent
 bool EventHandler::handleGestureScrollBegin(const PlatformGestureEvent& gestureEvent)
 {
     Document* document = m_frame.document();
-    RenderObject* documentRenderer = document->renderer();
+    RenderObject* documentRenderer = document->renderView();
     if (!documentRenderer)
         return false;
 
