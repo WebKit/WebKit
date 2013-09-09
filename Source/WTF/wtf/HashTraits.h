@@ -23,7 +23,6 @@
 
 #include <wtf/HashFunctions.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TypeTraits.h>
 #include <utility>
 #include <limits>
 
@@ -63,7 +62,7 @@ namespace WTF {
         static bool isDeletedValue(T value) { return value == static_cast<T>(-1); }
     };
 
-    template<typename T> struct GenericHashTraits : GenericHashTraitsBase<IsInteger<T>::value, T> {
+    template<typename T> struct GenericHashTraits : GenericHashTraitsBase<std::is_integral<T>::value, T> {
         typedef T TraitType;
         typedef T EmptyValueType;
 

@@ -30,7 +30,6 @@
 #include "WeakSetInlines.h"
 #include <wtf/Assertions.h>
 #include <wtf/NullPtr.h>
-#include <wtf/TypeTraits.h>
 
 namespace JSC {
 

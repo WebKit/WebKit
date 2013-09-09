@@ -29,7 +29,6 @@
 #include "ArgumentCoder.h"
 #include "Attachment.h"
 #include <wtf/PassOwnPtr.h>
-#include <wtf/TypeTraits.h>
 #include <wtf/Vector.h>
 
 namespace CoreIPC {

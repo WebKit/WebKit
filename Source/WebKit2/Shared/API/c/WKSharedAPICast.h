@@ -55,7 +55,6 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>
-#include <wtf/TypeTraits.h>
 
 namespace WebKit {
 
@@ -142,8 +141,8 @@ inline typename APITypeInfo<T>::ImplType toImpl(T t)
     // An example of the conversions that take place:
     // const struct OpaqueWKArray* -> const struct OpaqueWKArray -> struct OpaqueWKArray -> struct OpaqueWKArray* -> ImmutableArray*
     
-    typedef typename WTF::RemovePointer<T>::Type PotentiallyConstValueType;
-    typedef typename WTF::RemoveConst<PotentiallyConstValueType>::Type NonConstValueType;
+    typedef typename std::remove_pointer<T>::type PotentiallyConstValueType;
+    typedef typename std::remove_const<PotentiallyConstValueType>::type NonConstValueType;
 
     return reinterpret_cast<typename APITypeInfo<T>::ImplType>(const_cast<NonConstValueType*>(t));
 }

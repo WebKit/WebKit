@@ -28,10 +28,10 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/EnumClass.h>
-#include <wtf/TypeTraits.h>
 
 #include <limits>
 #include <stdint.h>
+#include <type_traits>
 
 /* Checked<T>
  *
@@ -161,7 +161,7 @@ template <typename Target, typename Source> struct BoundsChecker<Target, Source,
     }
 };
 
-template <typename Target, typename Source, bool CanElide = IsSameType<Target, Source>::value || (sizeof(Target) > sizeof(Source)) > struct BoundsCheckElider;
+template <typename Target, typename Source, bool CanElide = std::is_same<Target, Source>::value || (sizeof(Target) > sizeof(Source)) > struct BoundsCheckElider;
 template <typename Target, typename Source> struct BoundsCheckElider<Target, Source, true> {
     static bool inBounds(Source) { return true; }
 };

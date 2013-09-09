@@ -29,7 +29,6 @@
 #include <wtf/Alignment.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TypeTraits.h>
 
 // NeverDestroyed is a smart pointer like class who ensures that the destructor
 // for the given object is never called, but doesn't use the heap to allocate it.
@@ -75,7 +74,7 @@ private:
     NeverDestroyed& operator=(NeverDestroyed&&) WTF_DELETED_FUNCTION;
 #endif
 
-    typedef typename WTF::RemoveConst<T>::Type *PointerType;
+    typedef typename std::remove_const<T>::type *PointerType;
 
     PointerType asPtr() { return reinterpret_cast<PointerType>(&m_storage); }
 

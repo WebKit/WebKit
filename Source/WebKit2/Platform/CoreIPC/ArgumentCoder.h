@@ -26,8 +26,6 @@
 #ifndef ArgumentCoder_h
 #define ArgumentCoder_h
 
-#include <wtf/TypeTraits.h>
-
 namespace CoreIPC {
 
 class ArgumentDecoder;

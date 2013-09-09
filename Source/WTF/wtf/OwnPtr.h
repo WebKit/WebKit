@@ -25,7 +25,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/NullPtr.h>
 #include <wtf/OwnPtrCommon.h>
-#include <wtf/TypeTraits.h>
 #include <algorithm>
 #include <memory>
 
@@ -43,7 +42,7 @@ namespace WTF {
         WTF_MAKE_NONCOPYABLE(OwnPtr);
 #endif
     public:
-        typedef typename RemovePointer<T>::Type ValueType;
+        typedef typename std::remove_pointer<T>::type ValueType;
         typedef ValueType* PtrType;
 
         OwnPtr() : m_ptr(0) { }

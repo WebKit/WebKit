@@ -1,3 +1,19 @@
+2013-09-08  Anders Carlsson  <andersca@apple.com>
+
+        Begin moving off of TypeTraits.h
+        https://bugs.webkit.org/show_bug.cgi?id=121006
+
+        Reviewed by Darin Adler.
+
+        Convert uses of WTF type traits to STL type traits.
+
+        * heap/PassWeak.h:
+        * runtime/JSCell.h:
+        (JSC::jsCast):
+        (JSC::jsDynamicCast):
+        * runtime/WriteBarrier.h:
+        (JSC::validateCell):
+
 2013-09-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Calculating the size of the Heap should not require walking over it

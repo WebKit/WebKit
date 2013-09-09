@@ -1,3 +1,21 @@
+2013-09-08  Anders Carlsson  <andersca@apple.com>
+
+        Begin moving off of TypeTraits.h
+        https://bugs.webkit.org/show_bug.cgi?id=121006
+
+        Reviewed by Darin Adler.
+
+        The C++11 has its own type traits implementation that is more complete and handles corner cases better
+        since it ties into the compiler. Begin switching uses of WTF type traits to STL type traits.
+
+        * wtf/CheckedArithmetic.h:
+        * wtf/HashTraits.h:
+        * wtf/NeverDestroyed.h:
+        * wtf/OwnPtr.h:
+        * wtf/PassOwnPtr.h:
+        (WTF::adoptPtr):
+        * wtf/RetainPtr.h:
+
 2013-09-09  Julien Brianceau  <jbriance@cisco.com>
 
         [Qt] Remove FastAllocBase.h from WTF.pro.

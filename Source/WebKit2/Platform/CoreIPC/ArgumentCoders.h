@@ -31,7 +31,6 @@
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/TypeTraits.h>
 #include <wtf/Vector.h>
 
 namespace CoreIPC {

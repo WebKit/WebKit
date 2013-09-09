@@ -31,7 +31,6 @@
 #include "TypedArrayType.h"
 #include "WriteBarrier.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/TypeTraits.h>
 
 namespace JSC {
 
@@ -178,27 +177,27 @@ private:
 template<typename To, typename From>
 inline To jsCast(From* from)
 {
-    ASSERT(!from || from->JSCell::inherits(WTF::RemovePointer<To>::Type::info()));
+    ASSERT(!from || from->JSCell::inherits(std::remove_pointer<To>::type::info()));
     return static_cast<To>(from);
 }
     
 template<typename To>
 inline To jsCast(JSValue from)
 {
-    ASSERT(from.isCell() && from.asCell()->JSCell::inherits(WTF::RemovePointer<To>::Type::info()));
+    ASSERT(from.isCell() && from.asCell()->JSCell::inherits(std::remove_pointer<To>::type::info()));
     return static_cast<To>(from.asCell());
 }
 
 template<typename To, typename From>
 inline To jsDynamicCast(From* from)
 {
-    return from->inherits(WTF::RemovePointer<To>::Type::info()) ? static_cast<To>(from) : 0;
+    return from->inherits(std::remove_pointer<To>::type::info()) ? static_cast<To>(from) : 0;
 }
 
 template<typename To>
 inline To jsDynamicCast(JSValue from)
 {
-    return from.isCell() && from.asCell()->inherits(WTF::RemovePointer<To>::Type::info()) ? static_cast<To>(from.asCell()) : 0;
+    return from.isCell() && from.asCell()->inherits(std::remove_pointer<To>::type::info()) ? static_cast<To>(from.asCell()) : 0;
 }
 
 } // namespace JSC
