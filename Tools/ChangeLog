@@ -1,3 +1,10 @@
+2013-09-09  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Update Cygwin Downloader to include lighttpd and download setup-x86.exe.
+
+        * CygwinDownloader/cygwin-downloader.py:
+        * CygwinDownloader/cygwin-downloader.zip:
+
 2013-09-09  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix Ruby exception handling.

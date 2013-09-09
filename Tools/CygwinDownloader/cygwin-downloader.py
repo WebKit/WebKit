@@ -55,6 +55,7 @@ required_packages = frozenset(["apache",
                                "gcc",
                                "gperf",
                                "keychain",
+                               "lighttpd",
                                "make",
                                "minires",
                                "nano",
@@ -134,7 +135,7 @@ for name in package_names:
                 downloaded_so_far += 1
                 download_package(packages[name], "Downloading package %3d of %3d (%s)" % (downloaded_so_far, len(names_to_download), name))
 
-download_url_to_file("http://cygwin.com/setup.exe", "setup.exe", "Downloading setup.exe")
+download_url_to_file("http://cygwin.com/setup-x86.exe", "setup.exe", "Downloading setup.exe")
 
 seconds_to_sleep = 10
 
