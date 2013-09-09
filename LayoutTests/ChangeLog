@@ -1,3 +1,21 @@
+2013-09-09  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Added new expected results after r153435
+        https://bugs.webkit.org/show_bug.cgi?id=121025
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk1/accessibility/lists-expected.txt: Added.
+        * platform/efl-wk1/accessibility/plugin-expected.txt: Added.
+        * platform/efl-wk1/accessibility/table-with-aria-role-expected.txt: Added.
+        * platform/efl-wk1/accessibility/transformed-element-expected.txt: Added.
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl-wk2/accessibility/lists-expected.txt: Added.
+        * platform/efl-wk2/accessibility/plugin-expected.txt: Added.
+        * platform/efl-wk2/accessibility/table-with-aria-role-expected.txt: Added.
+        * platform/efl-wk2/accessibility/transformed-element-expected.txt: Added.
+
 2013-09-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [DOM4] Have ProcessingInstruction inherit CharacterData

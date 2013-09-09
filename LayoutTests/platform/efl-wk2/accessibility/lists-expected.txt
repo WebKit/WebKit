@@ -1,0 +1,304 @@
+test 1
+test 2
+test 1
+test 2
+term 1
+meaning 2
+term b
+meaning 1
+meaning 2
+
+
+
+
+AXRole: AXList
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 784.000000, 36.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+AXRole: AXList
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 784.000000, 36.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+AXRole: AXList
+AXParent: AXWebArea
+AXChildren: 5
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 784.000000, 90.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+AXRole: AXGroup
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 784.000000, 54.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: <\n><\n><\n>
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+AXRole: AXHorizontalRule
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 784.000000, 2.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+AXRole: AXGroup
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 784.000000, 18.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: <\n>
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+
+
+AXRole: AXListItem
+AXParent: AXList
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 729.000000, 18.000000 }
+AXTitle: test 1
+AXDescription: 
+AXValue: â¢ test 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+AXRole: AXListItem
+AXParent: AXList
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 729.000000, 18.000000 }
+AXTitle: test 2
+AXDescription: 
+AXValue: â¢ test 2
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+
+
+AXRole: AXListItem
+AXParent: AXList
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 729.000000, 18.000000 }
+AXTitle: test 1
+AXDescription: 
+AXValue: 1. test 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+AXRole: AXListItem
+AXParent: AXList
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 729.000000, 18.000000 }
+AXTitle: test 2
+AXDescription: 
+AXValue: 2. test 2
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+
+
+AXRole: AXUnknown
+AXParent: AXList
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 769.000000, 18.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: term 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+AXRole: AXUnknown
+AXParent: AXList
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 729.000000, 18.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: meaning 2
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+AXRole: AXUnknown
+AXParent: AXList
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 769.000000, 18.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: term b
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+AXRole: AXUnknown
+AXParent: AXList
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 729.000000, 18.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: meaning 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+AXRole: AXUnknown
+AXParent: AXList
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 729.000000, 18.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: meaning 2
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+------------
+
+
+

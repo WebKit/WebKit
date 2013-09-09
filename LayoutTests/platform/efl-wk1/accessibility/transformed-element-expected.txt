@@ -1,0 +1,19 @@
+hello
+AXRole: AXDiv
+AXParent: AXWebArea
+AXChildren: 1
+AXPosition: { 8.000000, 9.000000 }
+AXSize: { 291.000000, 123.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: hello
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: aria-sort:AXUnknownSortDirection, html-id:hiddenDiv, toolkit:WebKitEfl
