@@ -39,7 +39,7 @@ $haveShellwords = false
 begin
     require 'shellwords'
     $haveShellwords = true
-rescue => e
+rescue Exception => e
     $stderr.puts "Warning: did not find shellwords; some features will be disabled."
     $stderr.puts "Error: #{e.inspect}"
 end
@@ -50,7 +50,7 @@ begin
     require 'json'
     require 'highline'
     $canRunDisplayProfilerOutput = true
-rescue => e
+rescue Exception => e
     $stderr.puts "Warning: did not find json or highline; some features will be disabled."
     $stderr.puts "Error: #{e.inspect}"
 end
@@ -198,6 +198,7 @@ def runProfiler
     if $haveShellwords and $canRunDisplayProfilerOutput
         addRunCommand("profiler", ["ruby", (HELPERS_PATH + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, $jscPath.to_s, "-p", profilerOutput.to_s, $benchmark.to_s])
     else
+        puts "Running simple version of #{$collectionName}/#{$benchmark} because some required Ruby features are unavailable."
         run("profiler-simple", "-p", profilerOutput.to_s)
     end
 end

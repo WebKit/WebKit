@@ -74,8 +74,11 @@ function test(x)
     return x();
 };
 
+noInline(test);
+noInline(doesntDFGCompile);
+
 // warmup the test method
-for (i = 0; i < 200; ++i)
+while (!dfgCompiled({f:test}))
     test(doesntDFGCompile);
 
 //
