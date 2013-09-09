@@ -3375,6 +3375,8 @@
 		98CE432A129E00E5005821DC /* LinkLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 98CE4329129E00E5005821DC /* LinkLoader.h */; };
 		98EB1F951313FE0500D0E1EA /* NotImplemented.h in Headers */ = {isa = PBXBuildFile; fileRef = 98EB1F941313FE0500D0E1EA /* NotImplemented.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9A1B6F97158869C80011A8C4 /* JSDOMStringListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A1B6F96158869C80011A8C4 /* JSDOMStringListCustom.cpp */; };
+		9A528E8317D7F52F00AA9518 /* FloatingObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A528E8117D7F52F00AA9518 /* FloatingObjects.cpp */; };
+		9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A528E8217D7F52F00AA9518 /* FloatingObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B1AB07C1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B1AB07B1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp */; };
 		9B24DE8E15194B9500C59C27 /* HTMLBDIElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */; };
 		9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B2D8A7814997CCF00ECEF3E /* UndoStep.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9961,6 +9963,8 @@
 		98CE4329129E00E5005821DC /* LinkLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkLoader.h; sourceTree = "<group>"; };
 		98EB1F941313FE0500D0E1EA /* NotImplemented.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotImplemented.h; sourceTree = "<group>"; };
 		9A1B6F96158869C80011A8C4 /* JSDOMStringListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMStringListCustom.cpp; sourceTree = "<group>"; };
+		9A528E8117D7F52F00AA9518 /* FloatingObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatingObjects.cpp; sourceTree = "<group>"; };
+		9A528E8217D7F52F00AA9518 /* FloatingObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatingObjects.h; sourceTree = "<group>"; };
 		9B1AB0791648C69D0051F3F2 /* HTMLFormControlsCollection.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTMLFormControlsCollection.idl; sourceTree = "<group>"; };
 		9B1AB07B1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormControlsCollectionCustom.cpp; sourceTree = "<group>"; };
 		9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLBDIElement.h; sourceTree = "<group>"; };
@@ -20356,6 +20360,8 @@
 				31313F641443B35E006E2A90 /* FilterEffectRenderer.h */,
 				A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */,
 				A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */,
+				9A528E8117D7F52F00AA9518 /* FloatingObjects.cpp */,
+				9A528E8217D7F52F00AA9518 /* FloatingObjects.h */,
 				D72F6D77153159A3001EE44E /* FlowThreadController.cpp */,
 				D72F6D78153159A3001EE44E /* FlowThreadController.h */,
 				935C477409AC4D8D00A6AAB4 /* GapRects.h */,
@@ -21343,6 +21349,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE115FAB167988CD00249134 /* AbstractDatabaseServer.h in Headers */,
+				9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */,
 				FE4AADEE16D2C37400026FFC /* AbstractSQLStatement.h in Headers */,
 				6E84E9E117668BF100815B68 /* RasterShape.h in Headers */,
 				FE4AADEF16D2C37400026FFC /* AbstractSQLStatementBackend.h in Headers */,
@@ -24929,6 +24936,7 @@
 				FD31603D12B0267600C1A359 /* AnalyserNode.cpp in Sources */,
 				490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */,
 				49E912AA0EFAC906009D0CAF /* Animation.cpp in Sources */,
+				9A528E8317D7F52F00AA9518 /* FloatingObjects.cpp in Sources */,
 				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,
 				316FE1130E6E1DA700BF6088 /* AnimationController.cpp in Sources */,
 				49E912AC0EFAC906009D0CAF /* AnimationList.cpp in Sources */,

@@ -9528,6 +9528,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\rendering\FloatingObjects.cpp" />
     <ClCompile Include="..\rendering\FlowThreadController.cpp" />
     <ClCompile Include="..\rendering\HitTestingTransformState.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -20001,6 +20002,7 @@
     <ClInclude Include="..\rendering\EllipsisBox.h" />
     <ClInclude Include="..\rendering\FilterEffectRenderer.h" />
     <ClInclude Include="..\rendering\FixedTableLayout.h" />
+    <ClInclude Include="..\rendering\FloatingObjects.h" />
     <ClInclude Include="..\rendering\FlowThreadController.h" />
     <ClInclude Include="..\rendering\GapRects.h" />
     <ClInclude Include="..\rendering\HitTestingTransformState.h" />

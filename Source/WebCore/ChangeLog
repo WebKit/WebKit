@@ -1,3 +1,111 @@
+2013-09-09  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Move Floats out of RenderBlock
+        https://bugs.webkit.org/show_bug.cgi?id=120779
+
+        Reviewed by Alexandru Chiculita.
+
+        Move FloatingObject, FloatingObjects and related code into
+        FloatingObjects.{h,cpp}. This not only makes the code more readable
+        and maintainable, it also will allow for more decoupling of
+        RenderBlock and the FloatingObjects, hopefully making it possible for
+        FloatingObjects to be more central and not need to have one for each
+        RenderBlock that is affected by floats.
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/FloatingObjects.cpp: Added.
+        (WebCore::ComputeFloatOffsetAdapter::ComputeFloatOffsetAdapter):
+        (WebCore::ComputeFloatOffsetAdapter::lowValue):
+        (WebCore::ComputeFloatOffsetAdapter::highValue):
+        (WebCore::ComputeFloatOffsetAdapter::outermostFloat):
+        (WebCore::FloatingObjects::FloatingObjects):
+        (WebCore::FloatingObjects::~FloatingObjects):
+        (WebCore::FloatingObjects::clearLineBoxTreePointers):
+        (WebCore::FloatingObjects::clear):
+        (WebCore::FloatingObjects::increaseObjectsCount):
+        (WebCore::FloatingObjects::decreaseObjectsCount):
+        (WebCore::FloatingObjects::intervalForFloatingObject):
+        (WebCore::FloatingObjects::addPlacedObject):
+        (WebCore::FloatingObjects::removePlacedObject):
+        (WebCore::FloatingObjects::add):
+        (WebCore::FloatingObjects::remove):
+        (WebCore::FloatingObjects::computePlacedFloatsTree):
+        (WebCore::FloatingObjects::logicalLeftOffset):
+        (WebCore::FloatingObjects::logicalRightOffset):
+        (WebCore::rangesIntersect):
+        (WebCore::::updateOffsetIfNeeded):
+        (WebCore::::collectIfNeeded):
+        (WebCore::::getHeightRemaining):
+        (WebCore::::string):
+        * rendering/FloatingObjects.h: Added.
+        (WebCore::FloatingObject::FloatingObject):
+        (WebCore::FloatingObject::clone):
+        (WebCore::FloatingObject::type):
+        (WebCore::FloatingObject::renderer):
+        (WebCore::FloatingObject::isPlaced):
+        (WebCore::FloatingObject::setIsPlaced):
+        (WebCore::FloatingObject::x):
+        (WebCore::FloatingObject::maxX):
+        (WebCore::FloatingObject::y):
+        (WebCore::FloatingObject::maxY):
+        (WebCore::FloatingObject::width):
+        (WebCore::FloatingObject::height):
+        (WebCore::FloatingObject::setX):
+        (WebCore::FloatingObject::setY):
+        (WebCore::FloatingObject::setWidth):
+        (WebCore::FloatingObject::setHeight):
+        (WebCore::FloatingObject::frameRect):
+        (WebCore::FloatingObject::setFrameRect):
+        (WebCore::FloatingObject::paginationStrut):
+        (WebCore::FloatingObject::setPaginationStrut):
+        (WebCore::FloatingObject::isInPlacedTree):
+        (WebCore::FloatingObject::setIsInPlacedTree):
+        (WebCore::FloatingObject::shouldPaint):
+        (WebCore::FloatingObject::setShouldPaint):
+        (WebCore::FloatingObject::isDescendant):
+        (WebCore::FloatingObject::setIsDescendant):
+        (WebCore::FloatingObject::setRenderer):
+        (WebCore::FloatingObject::originatingLine):
+        (WebCore::FloatingObject::setOriginatingLine):
+        (WebCore::FloatingObject::logicalTop):
+        (WebCore::FloatingObject::logicalBottom):
+        (WebCore::FloatingObject::logicalLeft):
+        (WebCore::FloatingObject::logicalRight):
+        (WebCore::FloatingObject::logicalWidth):
+        (WebCore::FloatingObject::pixelSnappedLogicalTop):
+        (WebCore::FloatingObject::pixelSnappedLogicalBottom):
+        (WebCore::FloatingObject::pixelSnappedLogicalLeft):
+        (WebCore::FloatingObject::pixelSnappedLogicalRight):
+        (WebCore::FloatingObject::setLogicalTop):
+        (WebCore::FloatingObject::setLogicalLeft):
+        (WebCore::FloatingObject::setLogicalHeight):
+        (WebCore::FloatingObject::setLogicalWidth):
+        (WebCore::FloatingObjectHashFunctions::hash):
+        (WebCore::FloatingObjectHashFunctions::equal):
+        (WebCore::FloatingObjectHashTranslator::hash):
+        (WebCore::FloatingObjectHashTranslator::equal):
+        (WebCore::FloatingObjects::setHorizontalWritingMode):
+        (WebCore::FloatingObjects::hasLeftObjects):
+        (WebCore::FloatingObjects::hasRightObjects):
+        (WebCore::FloatingObjects::set):
+        (WebCore::FloatingObjects::placedFloatsTree):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::insertFloatingObject):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        (WebCore::LineLayoutState::lastFloat):
+        (WebCore::LineLayoutState::setLastFloat):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::intervalArena):
+
 2013-09-09  David Hyatt  <hyatt@apple.com>
 
         REGRESSION (r155377): Convert the media elements that were RenderBlocks to RenderBlockFlows

@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderBlockFlow.h"
 
+#include "FloatingObjects.h"
 #include "LayoutRepainter.h"
 #include "RenderFlowThread.h"
 #include "RenderLayer.h"

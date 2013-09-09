@@ -2097,6 +2097,7 @@ set(WebCore_SOURCES
     rendering/EllipsisBox.cpp
     rendering/FilterEffectRenderer.cpp
     rendering/FixedTableLayout.cpp
+    rendering/FloatingObjects.cpp
     rendering/FlowThreadController.cpp
     rendering/HitTestingTransformState.cpp
     rendering/HitTestLocation.cpp

@@ -24,6 +24,7 @@
 #include "config.h"
 
 #include "BidiResolver.h"
+#include "FloatingObjects.h"
 #include "Hyphenation.h"
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
@@ -134,7 +135,7 @@ public:
     float availableWidth() const { return m_availableWidth; }
 
     void updateAvailableWidth(LayoutUnit minimumHeight = 0);
-    void shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::FloatingObject*);
+    void shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject*);
     void addUncommittedWidth(float delta) { m_uncommittedWidth += delta; }
     void commit()
     {
@@ -188,7 +189,7 @@ inline void LineWidth::updateAvailableWidth(LayoutUnit replacedHeight)
     computeAvailableWidthFromLeftAndRight();
 }
 
-inline void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::FloatingObject* newFloat)
+inline void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat)
 {
     LayoutUnit height = m_block->logicalHeight();
     if (height < newFloat->logicalTop(m_block->isHorizontalWritingMode()) || height >= newFloat->logicalBottom(m_block->isHorizontalWritingMode()))
@@ -201,11 +202,11 @@ inline void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::Floa
     // based on the margin box. In order to do this, we need to walk back through the floating object list to find
     // the first previous float that is on the same side as our newFloat.
     ShapeOutsideInfo* previousShapeOutsideInfo = 0;
-    const RenderBlock::FloatingObjectSet& floatingObjectSet = m_block->m_floatingObjects->set();
-    RenderBlock::FloatingObjectSetIterator it = floatingObjectSet.end();
-    RenderBlock::FloatingObjectSetIterator begin = floatingObjectSet.begin();
+    const FloatingObjectSet& floatingObjectSet = m_block->m_floatingObjects->set();
+    FloatingObjectSetIterator it = floatingObjectSet.end();
+    FloatingObjectSetIterator begin = floatingObjectSet.begin();
     for (--it; it != begin; --it) {
-        RenderBlock::FloatingObject* previousFloat = *it;
+        FloatingObject* previousFloat = *it;
         if (previousFloat != newFloat && previousFloat->type() == newFloat->type()) {
             previousShapeOutsideInfo = previousFloat->renderer()->shapeOutsideInfo();
             if (previousShapeOutsideInfo) {
@@ -221,7 +222,7 @@ inline void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::Floa
     }
 #endif
 
-    if (newFloat->type() == RenderBlock::FloatingObject::FloatLeft) {
+    if (newFloat->type() == FloatingObject::FloatLeft) {
         float newLeft = newFloat->logicalRight(m_block->isHorizontalWritingMode());
 #if ENABLE(CSS_SHAPES)
         if (previousShapeOutsideInfo)
@@ -1502,8 +1503,8 @@ public:
     RootInlineBox* endLine() const { return m_endLine; }
     void setEndLine(RootInlineBox* line) { m_endLine = line; }
 
-    RenderBlock::FloatingObject* lastFloat() const { return m_lastFloat; }
-    void setLastFloat(RenderBlock::FloatingObject* lastFloat) { m_lastFloat = lastFloat; }
+    FloatingObject* lastFloat() const { return m_lastFloat; }
+    void setLastFloat(FloatingObject* lastFloat) { m_lastFloat = lastFloat; }
 
     Vector<RenderBlock::FloatWithRect>& floats() { return m_floats; }
     
@@ -1518,7 +1519,7 @@ public:
 
 private:
     Vector<RenderBlock::FloatWithRect> m_floats;
-    RenderBlock::FloatingObject* m_lastFloat;
+    FloatingObject* m_lastFloat;
     RootInlineBox* m_endLine;
     LineInfo m_lineInfo;
     unsigned m_floatIndex;

@@ -25,6 +25,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
+#include "FloatingObjects.h"
 #include "FlowThreadController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -1242,7 +1243,7 @@ void RenderView::popLayoutStateForCurrentFlowThread()
     currentFlowThread->popFlowThreadLayoutState();
 }
 
-RenderBlock::IntervalArena* RenderView::intervalArena()
+IntervalArena* RenderView::intervalArena()
 {
     if (!m_intervalArena)
         m_intervalArena = IntervalArena::create();
