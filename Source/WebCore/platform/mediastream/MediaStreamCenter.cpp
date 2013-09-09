@@ -56,20 +56,6 @@ void MediaStreamCenter::endLocalMediaStream(MediaStreamDescriptor* streamDescrip
         streamDescriptor->setEnded();
 }
 
-void MediaStreamCenter::addMediaStreamTrack(MediaStreamDescriptor* streamDescriptor, MediaStreamComponent* component)
-{
-    MediaStreamDescriptorClient* client = streamDescriptor->client();
-    if (client)
-        client->addRemoteTrack(component);
-}
-
-void MediaStreamCenter::removeMediaStreamTrack(MediaStreamDescriptor* streamDescriptor, MediaStreamComponent* component)
-{
-    MediaStreamDescriptorClient* client = streamDescriptor->client();
-    if (client)
-        client->removeRemoteTrack(component);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

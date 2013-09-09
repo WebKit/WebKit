@@ -167,7 +167,7 @@ void MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode&
     MediaStreamCenter::instance().didAddMediaStreamTrack(m_descriptor.get(), newTrack->component());
 }
 
-void MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack , ExceptionCode& ec)
+void MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode& ec)
 {
     if (ended()) {
         ec = INVALID_STATE_ERR;
@@ -280,9 +280,11 @@ void MediaStream::addRemoteTrack(MediaStreamComponent* component)
     RefPtr<MediaStreamTrack> track = MediaStreamTrack::create(scriptExecutionContext(), component);
     switch (component->source()->type()) {
     case MediaStreamSource::TypeAudio:
+        m_descriptor->addAudioComponent(component);
         m_audioTracks.append(track);
         break;
     case MediaStreamSource::TypeVideo:
+        m_descriptor->addVideoComponent(component);
         m_videoTracks.append(track);
         break;
     }
@@ -314,6 +316,15 @@ void MediaStream::removeRemoteTrack(MediaStreamComponent* component)
     }
     if (index == notFound)
         return;
+
+    switch (component->source()->type()) {
+    case MediaStreamSource::TypeAudio:
+        m_descriptor->removeAudioComponent(component);
+        break;
+    case MediaStreamSource::TypeVideo:
+        m_descriptor->removeAudioComponent(component);
+        break;
+    }
 
     RefPtr<MediaStreamTrack> track = (*tracks)[index];
     tracks->remove(index);

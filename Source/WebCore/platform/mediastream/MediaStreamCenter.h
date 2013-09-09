@@ -51,8 +51,6 @@ public:
 
     virtual void queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient>) = 0;
 
-    // FIXME: add a way to mute a MediaStreamSource from the WebKit API layer
-
     // Calls from the DOM objects to notify the platform
     virtual void didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*) = 0;
     virtual bool didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) = 0;
@@ -64,8 +62,6 @@ protected:
     MediaStreamCenter();
 
     void endLocalMediaStream(MediaStreamDescriptor*);
-    void addMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*);
-    void removeMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*);
 };
 
 } // namespace WebCore

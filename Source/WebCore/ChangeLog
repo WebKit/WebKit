@@ -1,3 +1,24 @@
+2013-09-09  Eric Carlson  <eric.carlson@apple.com>
+
+        MediaStream API: Moving Add/Remove track from WebMediaStreamCenterClient to WebMediaStream
+        https://bugs.webkit.org/show_bug.cgi?id=120872
+
+        Reviewed by Jer Noble.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/7d740fd27c1f345b59c846df01c3adce53c18e6e
+        Simple cleanup that makes the API cleaner.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::removeTrack):
+        (WebCore::MediaStream::addRemoteTrack):
+        (WebCore::MediaStream::removeRemoteTrack):
+        * platform/mediastream/MediaStreamCenter.cpp:
+        * platform/mediastream/MediaStreamCenter.h:
+        * platform/mediastream/MediaStreamDescriptor.h:
+        (WebCore::MediaStreamDescriptor::removeAudioComponent):
+        (WebCore::MediaStreamDescriptor::addRemoteTrack):
+        (WebCore::MediaStreamDescriptor::removeRemoteTrack):
+
 2013-09-09  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [WK2] Assertion failure in WebCore::Page::checkSubframeCountConsistency when going back
