@@ -90,4 +90,7 @@ PASS new StorageEvent('eventType', { bubbles: true, cancelable: true, key: 'abc'
 PASS new StorageEvent('eventType', { bubbles: true, cancelable: true, key: 'abc', oldValue: 'def', newValue: 'ghi', url: 'jkl', storageArea: localStorage }).newValue is "ghi"
 PASS new StorageEvent('eventType', { bubbles: true, cancelable: true, key: 'abc', oldValue: 'def', newValue: 'ghi', url: 'jkl', storageArea: localStorage }).url is "jkl"
 PASS new StorageEvent('eventType', { bubbles: true, cancelable: true, key: 'abc', oldValue: 'def', newValue: 'ghi', url: 'jkl', storageArea: localStorage }).storageArea is localStorage
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

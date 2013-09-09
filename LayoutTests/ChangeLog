@@ -1,3 +1,15 @@
+2013-09-09  Mark Lam  <mark.lam@apple.com>
+
+        Fix path to post file in a fwe tests, and adjust the expected results to match.
+        https://bugs.webkit.org/show_bug.cgi?id=120899.
+
+        Rubber stamped by Filip Pizlo.
+
+        * fast/events/constructors/speech-recognition-error-constructor-expected.txt:
+        * fast/events/constructors/speech-recognition-error-constructor.html:
+        * fast/events/constructors/storage-event-constructor-expected.txt:
+        * fast/events/constructors/storage-event-constructor.html:
+
 2013-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Prevent overflow of width/height of layout overflow rectangle which can cause scroll bar to misfunction

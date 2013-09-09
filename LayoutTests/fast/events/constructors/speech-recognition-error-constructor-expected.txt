@@ -13,4 +13,7 @@ FAIL new webkitSpeechRecognitionError('eventType', { cancelable: false }).cancel
 FAIL new webkitSpeechRecognitionError('eventType', { cancelable: true }).cancelable should be true. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
 FAIL new webkitSpeechRecognitionError('eventType', { error: 'bar' }).error should be bar. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
 FAIL new webkitSpeechRecognitionError('eventType', { message: 'foo' }).message should be foo. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
