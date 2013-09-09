@@ -324,7 +324,7 @@ void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, RenderObject* object, 
             return; // probably have -webkit-appearance: slider..
 
         RenderSlider* renderSlider = toRenderSlider(object);
-        HTMLInputElement* input = renderSlider->node()->toInputElement();
+        HTMLInputElement* input = renderSlider->element()->toInputElement();
         double valueRange = input->maximum() - input->minimum();
 
         OwnPtr<Edje_Message_Float_Set> msg = adoptPtr(static_cast<Edje_Message_Float_Set*>(::operator new (sizeof(Edje_Message_Float_Set) + sizeof(double))));
