@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function log(message) {
+    document.getElementById('console').innerHTML += (message + "\n");
+}
+
+function logMouseEvent(ev) {
+    var target = (ev.target)? ev.target : ev.srcElement;
+    log(ev.type + " on " + target.nodeName);
+}
+
+function doTest() {
+    document.body.offsetLeft;
+    var innerDocument = window.frames[0].document;
+    innerDocument.addEventListener('mouseenter', logMouseEvent, true);
+    innerDocument.addEventListener('mouseleave', logMouseEvent, true);
+    if (window.testRunner) {
+        eventSender.mouseMoveTo(50, 50);
+        eventSender.mouseMoveTo(200, 200);
+        testRunner.dumpAsText();
+    }
+}
+</script>
+</head>
+<body onload="doTest()">
+<iframe id="iframe1" style="width:120px; height:120px;" src="data:text/html,<div style='width:100px; height:100px'></div>"></iframe>
+<p>This is a test of a mouseleave events in an inner-document. The test is success if we get matching mouseleave events for every mouseenter event, and if the logged nodeNames of event targets does not
+include '#document'.
+<pre id="console"></pre>
+</body>
+</html>

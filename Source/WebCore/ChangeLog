@@ -1,3 +1,18 @@
+2013-09-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        MouseLeave not always emitted when cursor leaves subframe
+        https://bugs.webkit.org/show_bug.cgi?id=121026
+
+        Reviewed by Antonio Gomes.
+
+        Forward the PlatformMouseEvent in the recursive calls so nested documents
+        also get a chance to emit mouseleave when the hover moves out.
+
+        Test: fast/events/mouseenterleave-on-subframe.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateHoverActiveState):
+
 2013-09-09  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Adding username to RTCIceServer

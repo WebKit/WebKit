@@ -1,3 +1,16 @@
+2013-09-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        MouseLeave not always emitted when cursor leaves subframe
+        https://bugs.webkit.org/show_bug.cgi?id=121026
+
+        Reviewed by Antonio Gomes.
+
+        Test or mouseenter/mouseleave events in an inner document. Note this test also
+        tests bug 120862, but the initial expectations assume that part to fail.
+
+        * fast/events/mouseenterleave-on-subframe-expected.html: Added.
+        * fast/events/mouseenterleave-on-subframe.html: Added.
+
 2013-09-09  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Added new expected results after r153435
