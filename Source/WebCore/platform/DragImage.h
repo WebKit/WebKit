@@ -61,7 +61,7 @@ namespace WebCore {
     typedef HBITMAP DragImageRef;
 #elif PLATFORM(GTK)
     typedef cairo_surface_t* DragImageRef;
-#elif PLATFORM(EFL) || PLATFORM(BLACKBERRY)
+#elif PLATFORM(EFL) || PLATFORM(BLACKBERRY) || PLATFORM(NIX)
     typedef void* DragImageRef;
 #endif
     

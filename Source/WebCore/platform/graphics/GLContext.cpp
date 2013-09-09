@@ -19,7 +19,7 @@
 #include "config.h"
 #include "GLContext.h"
 
-#if USE(OPENGL)
+#if USE(OPENGL) || (PLATFORM(NIX) && USE(OPENGL_ES_2))
 
 #if USE(EGL)
 #include "GLContextEGL.h"
@@ -159,6 +159,7 @@ PassOwnPtr<GLContext> GLContext::createContextForWindow(GLNativeWindowType windo
     }
 #endif
 
+#if !PLATFORM(NIX)
 #if USE(GLX)
     if (OwnPtr<GLContext> glxContext = GLContextGLX::createContext(windowHandle, sharingContext))
         return glxContext.release();
@@ -166,6 +167,7 @@ PassOwnPtr<GLContext> GLContext::createContextForWindow(GLNativeWindowType windo
 #if USE(EGL)
     if (OwnPtr<GLContext> eglContext = GLContextEGL::createContext(windowHandle, sharingContext))
         return eglContext.release();
+#endif
 #endif
     return nullptr;
 }

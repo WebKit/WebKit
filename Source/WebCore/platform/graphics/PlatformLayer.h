@@ -45,7 +45,7 @@ class TextureMapperPlatformLayer;
 typedef TextureMapperPlatformLayer PlatformLayer;
 };
 #endif
-#elif PLATFORM(EFL)
+#elif PLATFORM(EFL) || PLATFORM(NIX)
 #if USE(TEXTURE_MAPPER)
 namespace WebCore {
 class TextureMapperPlatformLayer;

@@ -29,7 +29,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-#if !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(BLACKBERRY) && !PLATFORM(QT) && !PLATFORM(WIN)
+#if !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(BLACKBERRY) && !PLATFORM(QT) && !PLATFORM(WIN) && !PLATFORM(NIX)
 #include "ANGLE/ShaderLang.h"
 #elif PLATFORM(WIN)
 #include "GLSLANG/ShaderLang.h"

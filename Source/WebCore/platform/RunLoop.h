@@ -36,7 +36,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 
-#if PLATFORM(GTK)
+#if USE(GLIB)
 #include <wtf/gobject/GRefPtr.h>
 #endif
 
@@ -99,16 +99,16 @@ public:
         static void timerFired(RunLoop*, int ID);
         int m_ID;
         bool m_isRepeating;
-#elif PLATFORM(GTK)
+#elif PLATFORM(EFL)
+        static bool timerFired(void* data);
+        Ecore_Timer* m_timer;
+        bool m_isRepeating;
+#elif USE(GLIB)
         static gboolean timerFiredCallback(RunLoop::TimerBase*);
         gboolean isRepeating() const { return m_isRepeating; }
         void clearTimerSource();
         GRefPtr<GSource> m_timerSource;
         gboolean m_isRepeating;
-#elif PLATFORM(EFL)
-        static bool timerFired(void* data);
-        Ecore_Timer* m_timer;
-        bool m_isRepeating;
 #endif
     };
 
@@ -159,15 +159,6 @@ private:
     TimerMap m_activeTimers;
     class TimerObject;
     TimerObject* m_timerObject;
-#elif PLATFORM(GTK)
-public:
-    static gboolean queueWork(RunLoop*);
-    GMainLoop* innermostLoop();
-    void pushNestedMainLoop(GMainLoop*);
-    void popNestedMainLoop();
-private:
-    GRefPtr<GMainContext> m_runLoopContext;
-    Vector<GRefPtr<GMainLoop> > m_runLoopMainLoops;
 #elif PLATFORM(EFL)
     bool m_initEfl;
 
@@ -178,6 +169,15 @@ private:
     bool m_wakeUpEventRequested;
 
     static void wakeUpEvent(void* data, void*, unsigned int);
+#elif USE(GLIB)
+public:
+    static gboolean queueWork(RunLoop*);
+    GMainLoop* innermostLoop();
+    void pushNestedMainLoop(GMainLoop*);
+    void popNestedMainLoop();
+private:
+    GRefPtr<GMainContext> m_runLoopContext;
+    Vector<GRefPtr<GMainLoop> > m_runLoopMainLoops;
 #endif
 };
 

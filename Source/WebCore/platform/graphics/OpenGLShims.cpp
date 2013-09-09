@@ -26,6 +26,10 @@
 #include <dlfcn.h>
 #endif
 
+#if PLATFORM(NIX) && USE(EGL)
+#include <EGL/egl.h>
+#endif
+
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,6 +52,11 @@ static void* getProcAddress(const char* procName)
 static void* getProcAddress(const char* procName)
 {
     return GetProcAddress(GetModuleHandleA("libGLESv2"), procName);
+}
+#elif PLATFORM(NIX) && USE(EGL)
+static void* getProcAddress(const char* procName)
+{
+    return reinterpret_cast<void*>(eglGetProcAddress(procName));
 }
 #else
 typedef void* (*glGetProcAddressType) (const char* procName);
@@ -106,7 +115,7 @@ static void* lookupOpenGLFunctionAddress(const char* functionName, bool* success
     return target;
 }
 
-#if PLATFORM(QT) && defined(QT_OPENGL_ES_2)
+#if (PLATFORM(QT) && defined(QT_OPENGL_ES_2)) || (PLATFORM(NIX) && USE(OPENGL_ES_2))
 
 // With Angle only EGL/GLES2 extensions are available through eglGetProcAddress, not the regular standardized functions.
 #define ASSIGN_FUNCTION_TABLE_ENTRY(FunctionName, success) \

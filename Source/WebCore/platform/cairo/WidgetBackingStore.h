@@ -39,6 +39,8 @@ namespace WebCore {
 typedef GtkWidget* PlatformWidget;
 #elif PLATFORM(EFL)
 typedef Evas_Object* PlatformWidget;
+#elif PLATFORM(NIX)
+typedef void* PlatformWidget;
 #endif
 
 class WidgetBackingStore {

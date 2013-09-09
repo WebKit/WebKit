@@ -29,7 +29,7 @@
 #include "qt/FontPlatformData.h"
 #elif USE(WINGDI)
 #include "wince/FontPlatformData.h"
-#elif PLATFORM(EFL) || PLATFORM(GTK)
+#elif PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(NIX)
 #include "freetype/FontPlatformData.h"
 #else
 

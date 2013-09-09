@@ -65,7 +65,7 @@ QT_END_NAMESPACE
 typedef QObject* PlatformWidget;
 #endif
 
-#if PLATFORM(BLACKBERRY)
+#if PLATFORM(BLACKBERRY) || PLATFORM(NIX)
 typedef void* PlatformWidget;
 #endif
 

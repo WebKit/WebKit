@@ -61,7 +61,7 @@ typedef struct HINSTANCE__* HINSTANCE;
 typedef HINSTANCE HMODULE;
 #endif
 
-#if PLATFORM(GTK)
+#if USE(GLIB)
 typedef struct _GFileIOStream GFileIOStream;
 typedef struct _GModule GModule;
 #endif
@@ -75,8 +75,6 @@ namespace WebCore {
 // PlatformModule
 #if OS(WINDOWS)
 typedef HMODULE PlatformModule;
-#elif PLATFORM(GTK)
-typedef GModule* PlatformModule;
 #elif PLATFORM(EFL)
 typedef Eina_Module* PlatformModule;
 #elif PLATFORM(QT)
@@ -87,6 +85,8 @@ typedef QLibrary* PlatformModule;
 #else
 typedef void* PlatformModule;
 #endif
+#elif USE(GLIB)
+typedef GModule* PlatformModule;
 #elif USE(CF)
 typedef CFBundleRef PlatformModule;
 #else
@@ -120,7 +120,7 @@ typedef unsigned PlatformModuleVersion;
 #if PLATFORM(QT)
 typedef QFile* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
-#elif PLATFORM(GTK)
+#elif USE(GLIB) && !PLATFORM(EFL)
 typedef GFileIOStream* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
 #elif OS(WINDOWS)
@@ -212,7 +212,7 @@ RetainPtr<CFURLRef> pathAsURL(const String&);
 void setMetadataURL(String& URLString, const String& referrer, const String& path);
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(NIX)
 String filenameToString(const char*);
 String filenameForDisplay(const String&);
 CString applicationDirectoryPath();

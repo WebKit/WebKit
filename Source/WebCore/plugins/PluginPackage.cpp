@@ -177,7 +177,7 @@ PassRefPtr<PluginPackage> PluginPackage::createPackageFromCache(const String& pa
 }
 #endif
 
-#if defined(XP_UNIX)
+#if defined(XP_UNIX) && !PLATFORM(NIX)
 void PluginPackage::determineQuirks(const String& mimeType)
 {
     if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {

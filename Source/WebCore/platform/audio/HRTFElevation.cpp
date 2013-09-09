@@ -61,7 +61,7 @@ const size_t ResponseFrameSize = 256;
 // The impulse responses may be resampled to a different sample-rate (depending on the audio hardware) when they are loaded.
 const float ResponseSampleRate = 44100;
 
-#if PLATFORM(MAC) || USE(WEBAUDIO_GSTREAMER)
+#if PLATFORM(MAC) || USE(WEBAUDIO_GSTREAMER) || PLATFORM(NIX)
 #define USE_CONCATENATED_IMPULSE_RESPONSES
 #endif
 

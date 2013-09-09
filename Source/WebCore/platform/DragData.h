@@ -60,7 +60,7 @@ namespace WebCore {
 class DataObjectGtk;
 }
 typedef WebCore::DataObjectGtk* DragDataRef;
-#elif PLATFORM(EFL) || PLATFORM(BLACKBERRY)
+#elif PLATFORM(EFL) || PLATFORM(BLACKBERRY) || PLATFORM(NIX)
 typedef void* DragDataRef;
 #endif
 
