@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2013 Samsung Electronics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,12 +19,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-interface ProcessingInstruction : Node {
+interface ProcessingInstruction : CharacterData {
 
     // DOM Level 1
 
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString target;
-    [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, SetterRaisesException] attribute DOMString data;
 
     // interface LinkStyle from DOM Level 2 Style Sheets
     readonly attribute StyleSheet sheet;

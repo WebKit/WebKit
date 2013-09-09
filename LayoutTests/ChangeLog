@@ -1,3 +1,18 @@
+2013-09-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [DOM4] Have ProcessingInstruction inherit CharacterData
+        https://bugs.webkit.org/show_bug.cgi?id=120691
+
+        Reviewed by Darin Adler.
+
+        Add layout test to validate that ProcessingInstruction inherits from
+        CharacterData.
+
+        * fast/dom/coreDOM-element-attribute-js-null-expected.txt:
+        * fast/dom/coreDOM-element-attribute-js-null.xhtml:
+        * fast/dom/processing-instruction-inherit-characterdata-expected.txt: Added.
+        * fast/dom/processing-instruction-inherit-characterdata.xhtml: Added.
+
 2013-09-09  Krzysztof Czech  <k.czech@samsung.com>
 
         [AX][ATK] AccessibilityObject representing ProgressBar element should be ATK_VALUE type

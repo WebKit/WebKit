@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
  * Copyright (C) 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,9 +40,8 @@
 namespace WebCore {
 
 inline ProcessingInstruction::ProcessingInstruction(Document* document, const String& target, const String& data)
-    : Node(document, CreateOther)
+    : CharacterData(document, data, CreateOther)
     , m_target(target)
-    , m_data(data)
     , m_cachedSheet(0)
     , m_loading(false)
     , m_alternate(false)
@@ -70,14 +70,6 @@ ProcessingInstruction::~ProcessingInstruction()
         document().styleSheetCollection()->removeStyleSheetCandidateNode(this);
 }
 
-void ProcessingInstruction::setData(const String& data, ExceptionCode&)
-{
-    int oldLength = m_data.length();
-    m_data = data;
-    document().textRemoved(this, 0, oldLength);
-    checkStyleSheet();
-}
-
 String ProcessingInstruction::nodeName() const
 {
     return m_target;
@@ -88,22 +80,11 @@ Node::NodeType ProcessingInstruction::nodeType() const
     return PROCESSING_INSTRUCTION_NODE;
 }
 
-String ProcessingInstruction::nodeValue() const
-{
-    return m_data;
-}
-
-void ProcessingInstruction::setNodeValue(const String& nodeValue, ExceptionCode& ec)
-{
-    // NO_MODIFICATION_ALLOWED_ERR: taken care of by setData()
-    setData(nodeValue, ec);
-}
-
 PassRefPtr<Node> ProcessingInstruction::cloneNode(bool /*deep*/)
 {
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?
-    return create(&document(), m_target, m_data);
+    return create(&document(), m_target, data());
 }
 
 void ProcessingInstruction::checkStyleSheet()
@@ -113,7 +94,7 @@ void ProcessingInstruction::checkStyleSheet()
         // ### support stylesheet included in a fragment of this (or another) document
         // ### make sure this gets called when adding from javascript
         bool attrsOk;
-        const HashMap<String, String> attrs = parseAttributes(m_data, attrsOk);
+        const HashMap<String, String> attrs = parseAttributes(data(), attrsOk);
         if (!attrsOk)
             return;
         HashMap<String, String>::const_iterator i = attrs.find("type");
@@ -273,16 +254,6 @@ void ProcessingInstruction::setCSSStyleSheet(PassRefPtr<CSSStyleSheet> sheet)
     sheet->setDisabled(m_alternate);
 }
 
-bool ProcessingInstruction::offsetInCharacters() const
-{
-    return true;
-}
-
-int ProcessingInstruction::maxCharacterOffset() const 
-{
-    return static_cast<int>(m_data.length());
-}
-
 void ProcessingInstruction::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     if (!sheet())
@@ -293,7 +264,7 @@ void ProcessingInstruction::addSubresourceAttributeURLs(ListHashSet<KURL>& urls)
 
 Node::InsertionNotificationRequest ProcessingInstruction::insertedInto(ContainerNode* insertionPoint)
 {
-    Node::insertedInto(insertionPoint);
+    CharacterData::insertedInto(insertionPoint);
     if (!insertionPoint->inDocument())
         return InsertionDone;
     document().styleSheetCollection()->addStyleSheetCandidateNode(this, m_createdByParser);
@@ -303,7 +274,7 @@ Node::InsertionNotificationRequest ProcessingInstruction::insertedInto(Container
 
 void ProcessingInstruction::removedFrom(ContainerNode* insertionPoint)
 {
-    Node::removedFrom(insertionPoint);
+    CharacterData::removedFrom(insertionPoint);
     if (!insertionPoint->inDocument())
         return;
     
@@ -323,7 +294,7 @@ void ProcessingInstruction::removedFrom(ContainerNode* insertionPoint)
 void ProcessingInstruction::finishParsingChildren()
 {
     m_createdByParser = false;
-    Node::finishParsingChildren();
+    CharacterData::finishParsingChildren();
 }
 
 } // namespace

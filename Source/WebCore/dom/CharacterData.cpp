@@ -31,6 +31,7 @@
 #include "MutationEvent.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
+#include "ProcessingInstruction.h"
 #include "RenderText.h"
 #include "StyleInheritedData.h"
 #include "Text.h"
@@ -201,6 +202,9 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     ASSERT(!renderer() || isTextNode());
     if (isTextNode())
         Style::updateTextRendererAfterContentChange(*toText(this), offsetOfReplacedData, oldLength);
+
+    if (nodeType() == PROCESSING_INSTRUCTION_NODE)
+        toProcessingInstruction(this)->checkStyleSheet();
 
     if (document().frame())
         document().frame()->selection().textWasReplaced(this, offsetOfReplacedData, oldLength, newLength);

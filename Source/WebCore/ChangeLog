@@ -1,3 +1,36 @@
+2013-09-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [DOM4] Have ProcessingInstruction inherit CharacterData
+        https://bugs.webkit.org/show_bug.cgi?id=120691
+
+        Reviewed by Darin Adler.
+
+        Have ProcessingInstruction inherit CharacterData as per the latest DOM4
+        specification:
+        http://dom.spec.whatwg.org/#processinginstruction
+
+        Previously, ProcessingInstruction was inheriting from Node as per DOM
+        Level 3.
+
+        Firefox and Blink already follow DOM4 here but not IE10.
+        This change leads to less code duplication.
+
+        Test: fast/dom/processing-instruction-inherit-characterdata.xhtml
+
+        * bindings/objc/PublicDOMInterfaces.h:
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setDataAndUpdate):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::ProcessingInstruction):
+        (WebCore::ProcessingInstruction::cloneNode):
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::insertedInto):
+        (WebCore::ProcessingInstruction::removedFrom):
+        (WebCore::ProcessingInstruction::finishParsingChildren):
+        * dom/ProcessingInstruction.h:
+        (WebCore::toProcessingInstruction):
+        * dom/ProcessingInstruction.idl:
+
 2013-09-09  Krzysztof Czech  <k.czech@samsung.com>
 
         [AX][ATK] AccessibilityObject representing ProgressBar element should be ATK_VALUE type

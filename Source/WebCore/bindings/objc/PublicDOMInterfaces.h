@@ -315,9 +315,8 @@
 @property(readonly, copy) NSString *systemId;
 @end
 
-@interface DOMProcessingInstruction : DOMNode WEBKIT_VERSION_1_3
+@interface DOMProcessingInstruction : DOMCharacterData WEBKIT_VERSION_1_3
 @property(readonly, copy) NSString *target;
-@property(copy) NSString *data;
 @property(readonly, retain) DOMStyleSheet *sheet AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 @end
 
