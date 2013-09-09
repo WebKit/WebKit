@@ -1,3 +1,17 @@
+2013-09-09  Anders Carlsson  <andersca@apple.com>
+
+        Stop using WTF type traits in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=121042
+
+        Reviewed by Andreas Kling.
+
+        Replace uses of WTF type traits in CrossThreadCopier with a simpler solution
+        that uses std::is_convertible_to and some helpers.
+
+        * dom/CrossThreadTask.h:
+        * platform/CrossThreadCopier.h:
+        * platform/MainThreadTask.h:
+
 2013-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Internals should always cause a layout before calling into TextIterator

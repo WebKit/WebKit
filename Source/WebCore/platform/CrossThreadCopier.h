@@ -37,7 +37,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
-#include <wtf/TypeTraits.h>
 
 namespace WebCore {
 
@@ -50,6 +49,31 @@ namespace WebCore {
     struct CrossThreadResourceResponseData;
     struct CrossThreadResourceRequestData;
     struct ThreadableLoaderOptions;
+
+    struct CrossThreadCopierBaseHelper {
+        template<typename T> struct RemovePointer {
+            typedef T Type;
+        };
+        template<typename T> struct RemovePointer<T*> {
+            typedef T Type;
+        };
+
+        template<typename T> struct RemovePointer<RefPtr<T>> {
+            typedef T Type;
+        };
+
+        template<typename T> struct RemovePointer<PassRefPtr<T>> {
+            typedef T Type;
+        };
+
+        template<typename T> struct IsConvertibleToInteger {
+            static const bool value = std::is_integral<T>::value || std::is_convertible<T, long double>::value;
+        };
+
+        template<typename T> struct IsThreadSafeRefCountedPointer {
+            static const bool value = std::is_convertible<typename RemovePointer<T>::Type*, ThreadSafeRefCounted<typename RemovePointer<T>::Type>*>::value;
+        };
+    };
 
     template<typename T> struct CrossThreadCopierPassThrough {
         typedef T Type;
@@ -78,15 +102,8 @@ namespace WebCore {
 
     // Custom copy methods.
     template<typename T> struct CrossThreadCopierBase<false, true, T> {
-        typedef typename WTF::RemoveTemplate<T, RefPtr>::Type TypeWithoutRefPtr;
-        typedef typename WTF::RemoveTemplate<TypeWithoutRefPtr, PassRefPtr>::Type TypeWithoutPassRefPtr;
-        typedef typename WTF::RemovePointer<TypeWithoutPassRefPtr>::Type RefCountedType;
-
-        // Verify that only one of the above did a change.
-        COMPILE_ASSERT((WTF::IsSameType<RefPtr<RefCountedType>, T>::value
-                        || WTF::IsSameType<PassRefPtr<RefCountedType>, T>::value
-                        || WTF::IsSameType<RefCountedType*, T>::value),
-                       OnlyAllowOneTypeModification);
+        typedef typename CrossThreadCopierBaseHelper::RemovePointer<T>::Type RefCountedType;
+        static_assert(std::is_convertible<RefCountedType*, ThreadSafeRefCounted<RefCountedType>*>::value, "T is not convertible to ThreadSafeRefCounted!");
 
         typedef PassRefPtr<RefCountedType> Type;
         static Type copy(const T& refPtr)
@@ -128,11 +145,8 @@ namespace WebCore {
         static Type copy(const ResourceResponse&);
     };
 
-    template<typename T> struct CrossThreadCopier : public CrossThreadCopierBase<WTF::IsConvertibleToInteger<T>::value,
-                                                                                 WTF::IsSubclassOfTemplate<typename WTF::RemoveTemplate<T, RefPtr>::Type, ThreadSafeRefCounted>::value
-                                                                                     || WTF::IsSubclassOfTemplate<typename WTF::RemovePointer<T>::Type, ThreadSafeRefCounted>::value
-                                                                                     || WTF::IsSubclassOfTemplate<typename WTF::RemoveTemplate<T, PassRefPtr>::Type, ThreadSafeRefCounted>::value,
-                                                                                 T> {
+    template<typename T>
+    struct CrossThreadCopier : public CrossThreadCopierBase<CrossThreadCopierBaseHelper::IsConvertibleToInteger<T>::value, CrossThreadCopierBaseHelper::IsThreadSafeRefCountedPointer<T>::value, T> {
     };
 
     template<typename T> struct AllowCrossThreadAccessWrapper {
