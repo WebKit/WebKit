@@ -88,7 +88,7 @@ public:
 #else
         JIT::Jump noException = m_jit->branchTest64(JIT::Zero, JIT::AbsoluteAddress(m_jit->m_codeBlock->vm()->addressOfException()));
 #endif
-        m_jit->reloadCallFrameFromTopCallFrame();
+        m_jit->updateTopCallFrame();
         m_jit->move(JIT::TrustedImmPtr(FunctionPtr(ctiVMHandleException).value()), JIT::regT1);
         m_jit->jump(JIT::regT1);
         noException.link(m_jit);
