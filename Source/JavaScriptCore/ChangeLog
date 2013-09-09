@@ -1,3 +1,19 @@
+2013-08-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSArray::shiftCountWithArrayStorage doesn't change indexBias when shifting the last element in m_vector
+        https://bugs.webkit.org/show_bug.cgi?id=120389
+
+        Reviewed by Michael Saboff.
+
+        Went through and cleaned up shiftCountWithArrayStorage. Gave meaningful variable names
+        and commented the confusing parts. This led to realizing how to fix this bug, which has
+        been done. The issue was that we were modifying the vector length unconditionally, even
+        when we weren't logically changing the length of the vector. Instead, we should only modify
+        the vector length when we modify the index bias.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::shiftCountWithArrayStorage):
+
 2013-09-08  Anders Carlsson  <andersca@apple.com>
 
         Begin moving off of TypeTraits.h

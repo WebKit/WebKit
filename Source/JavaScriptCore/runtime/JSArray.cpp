@@ -700,29 +700,50 @@ bool JSArray::shiftCountWithArrayStorage(unsigned startIndex, unsigned count, Ar
     
     unsigned usedVectorLength = min(vectorLength, oldLength);
     
-    vectorLength -= count;
-    storage->setVectorLength(vectorLength);
-    
-    if (vectorLength) {
-        if (startIndex < usedVectorLength - (startIndex + count)) {
-            if (startIndex) {
-                memmove(
-                    storage->m_vector + count,
-                    storage->m_vector,
-                    sizeof(JSValue) * startIndex);
-            }
-            m_butterfly = m_butterfly->shift(structure(), count);
-            storage = m_butterfly->arrayStorage();
-            storage->m_indexBias += count;
-        } else {
+    unsigned numElementsBeforeShiftRegion = startIndex;
+    unsigned firstIndexAfterShiftRegion = startIndex + count;
+    unsigned numElementsAfterShiftRegion = usedVectorLength - firstIndexAfterShiftRegion;
+    ASSERT(numElementsBeforeShiftRegion + count + numElementsAfterShiftRegion == usedVectorLength);
+
+    // The point of this comparison seems to be to minimize the amount of elements that have to 
+    // be moved during a shift operation.
+    if (numElementsBeforeShiftRegion < numElementsAfterShiftRegion) {
+        // The number of elements before the shift region is less than the number of elements
+        // after the shift region, so we move the elements before to the right.
+        if (numElementsBeforeShiftRegion) {
+            RELEASE_ASSERT(count + startIndex <= vectorLength);
             memmove(
-                storage->m_vector + startIndex,
-                storage->m_vector + startIndex + count,
-                sizeof(JSValue) * (usedVectorLength - (startIndex + count)));
-            for (unsigned i = usedVectorLength - count; i < usedVectorLength; ++i)
-                storage->m_vector[i].clear();
+                storage->m_vector + count,
+                storage->m_vector,
+                sizeof(JSValue) * startIndex);
         }
+        // Adjust the Butterfly and the index bias. We only need to do this here because we're changing
+        // the start of the Butterfly, which needs to point at the first indexed property in the used
+        // portion of the vector.
+        m_butterfly = m_butterfly->shift(structure(), count);
+        storage = m_butterfly->arrayStorage();
+        storage->m_indexBias += count;
+
+        // Since we're consuming part of the vector by moving its beginning to the left,
+        // we need to modify the vector length appropriately.
+        storage->setVectorLength(vectorLength - count);
+    } else {
+        // The number of elements before the shift region is greater than or equal to the number 
+        // of elements after the shift region, so we move the elements after the shift region to the left.
+        memmove(
+            storage->m_vector + startIndex,
+            storage->m_vector + firstIndexAfterShiftRegion,
+            sizeof(JSValue) * numElementsAfterShiftRegion);
+        // Clear the slots of the elements we just moved.
+        unsigned startOfEmptyVectorTail = usedVectorLength - count;
+        for (unsigned i = startOfEmptyVectorTail; i < usedVectorLength; ++i)
+            storage->m_vector[i].clear();
+        // We don't modify the index bias or the Butterfly pointer in this case because we're not changing 
+        // the start of the Butterfly, which needs to point at the first indexed property in the used 
+        // portion of the vector. We also don't modify the vector length because we're not actually changing
+        // its length; we're just using less of it.
     }
+    
     return true;
 }
 
