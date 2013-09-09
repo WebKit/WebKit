@@ -522,7 +522,7 @@ void MediaControlsApple::showClosedCaptionTrackList()
     m_panel->setInlineStyleProperty(CSSPropertyPointerEvents, CSSValueNone);
 
     RefPtr<EventListener> listener = eventListener();
-    m_closedCaptionsContainer->addEventListener(eventNames().mousewheelEvent, listener, true);
+    m_closedCaptionsContainer->addEventListener(eventNames().wheelEvent, listener, true);
 
     // Track click events in the capture phase at two levels, first at the document level
     // such that a click outside of the <video> may dismiss the track list, second at the
@@ -544,7 +544,7 @@ void MediaControlsApple::hideClosedCaptionTrackList()
     m_panel->removeInlineStyleProperty(CSSPropertyPointerEvents);
 
     EventListener* listener = eventListener().get();
-    m_closedCaptionsContainer->removeEventListener(eventNames().mousewheelEvent, listener, true);
+    m_closedCaptionsContainer->removeEventListener(eventNames().wheelEvent, listener, true);
     document().removeEventListener(eventNames().clickEvent, listener, true);
     removeEventListener(eventNames().clickEvent, listener, true);
 }
@@ -602,7 +602,8 @@ void MediaControlsAppleEventListener::handleEvent(ScriptExecutionContext*, Event
     if (event->type() == eventNames().clickEvent)
         m_mediaControls->handleClickEvent(event);
 
-    else if (event->type() == eventNames().mousewheelEvent && event->hasInterface(eventNames().interfaceForWheelEvent)) {
+    else if ((event->type() == eventNames().wheelEvent || event->type() == eventNames().mousewheelEvent)
+        && event->hasInterface(eventNames().interfaceForWheelEvent)) {
         WheelEvent* wheelEvent = static_cast<WheelEvent*>(event);
         if (m_mediaControls->shouldClosedCaptionsContainerPreventPageScrolling(wheelEvent->wheelDeltaY()))
             event->preventDefault();

@@ -890,7 +890,8 @@ void PluginView::handleEvent(Event* event)
         didHandleEvent = m_plugin->handleMouseEvent(static_cast<const WebMouseEvent&>(*currentEvent));
         if (event->type() != eventNames().mousemoveEvent)
             pluginDidReceiveUserInteraction();
-    } else if (event->type() == eventNames().mousewheelEvent && currentEvent->type() == WebEvent::Wheel && m_plugin->wantsWheelEvents()) {
+    } else if ((event->type() == eventNames().wheelEvent || event->type() == eventNames().mousewheelEvent)
+        && currentEvent->type() == WebEvent::Wheel && m_plugin->wantsWheelEvents()) {
         didHandleEvent = m_plugin->handleWheelEvent(static_cast<const WebWheelEvent&>(*currentEvent));
         pluginDidReceiveUserInteraction();
     } else if (event->type() == eventNames().mouseoverEvent && currentEvent->type() == WebEvent::MouseMove)

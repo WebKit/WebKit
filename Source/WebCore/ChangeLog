@@ -1,3 +1,19 @@
+2013-09-08  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [wk2] REGRESSION (r154673): PDF scrolling moves very slowly
+        https://bugs.webkit.org/show_bug.cgi?id=120542
+
+        Reviewed by Tim Horton.
+
+        Handle 'wheel' events in addition to 'mousewheel'.
+
+        * html/shadow/MediaControlsApple.cpp:
+        Listen for the standard 'wheel' event instead of the legacy 'mousewheel' one.
+        While not strictly needed, we should use the legacy events as little as
+        possible.
+        * plugins/PluginView.cpp:
+        Handle 'wheel' events in addition to 'mousewheel'.
+
 2013-09-08  Darin Adler  <darin@apple.com>
 
         Make Editor::deleteButtonController a reference

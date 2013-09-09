@@ -173,7 +173,7 @@ void PluginView::handleEvent(Event* event)
     else if (event->isKeyboardEvent())
         handleKeyboardEvent(static_cast<KeyboardEvent*>(event));
 #if defined(XP_MACOSX)
-    else if (event->type() == eventNames().mousewheelEvent)
+    else if (event->type() == eventNames().wheelEvent || event->type() == eventNames().mousewheelEvent)
         handleWheelEvent(static_cast<WheelEvent*>(event));
 #endif
     else if (event->type() == eventNames().contextmenuEvent)
