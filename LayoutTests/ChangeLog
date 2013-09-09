@@ -1,3 +1,23 @@
+2013-09-09  Filip Pizlo  <fpizlo@apple.com>
+
+        fast/js/dfg-* tests should wait for the concurrent JIT
+        https://bugs.webkit.org/show_bug.cgi?id=120723
+
+        Rubber stamped by Oliver Hunt.
+        
+        Convert more tests.
+
+        * fast/js/dfg-ensure-array-storage-on-string-expected.txt:
+        * fast/js/dfg-ensure-array-storage-on-window-expected.txt:
+        * fast/js/dfg-ensure-contiguous-on-string-expected.txt:
+        * fast/js/dfg-ensure-non-array-array-storage-on-window-expected.txt:
+        * fast/js/script-tests/dfg-ensure-array-storage-on-string.js:
+        (while):
+        * fast/js/script-tests/dfg-ensure-array-storage-on-window.js:
+        (while):
+        * fast/js/script-tests/dfg-ensure-contiguous-on-string.js:
+        * fast/js/script-tests/dfg-ensure-non-array-array-storage-on-window.js:
+
 2013-09-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Internals should always cause a layout before calling into TextIterator

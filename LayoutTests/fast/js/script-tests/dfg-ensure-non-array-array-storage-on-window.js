@@ -13,12 +13,16 @@ function bar(array) {
     array[1] = 42;
 }
 
+noInline(foo);
+noInline(bar);
+silentTestPass = true;
+
 var array = {};
 array.length = 3;
 array[0] = 1;
 array[1] = 2;
 array[2] = 3;
-for (var i = 0; i < 200; ++i) {
+for (var i = 0; i < 200; i = dfgIncrement({f:[foo, bar], i:i + 1, n:100})) {
     shouldBe("foo(array)", "6");
     
     var otherArray = {};
@@ -26,7 +30,7 @@ for (var i = 0; i < 200; ++i) {
     shouldBe("otherArray[1]", "42");
 }
 
-for (var i = 0; i < 1000; ++i) {
+for (var i = 0; i < 1000; i = dfgIncrement({f:[foo, bar], i:i + 1, n:500, compiles:2})) {
     // Do strange things to ensure that the get_by_id on length goes polymorphic.
     var array = {};
     if (i % 2)
