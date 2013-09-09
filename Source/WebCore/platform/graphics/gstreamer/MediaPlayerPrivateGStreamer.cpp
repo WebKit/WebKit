@@ -75,6 +75,9 @@ static const gint64 gPercentMax = GST_FORMAT_PERCENT_MAX;
 static const char* gPlaybinName = "playbin2";
 static const gint64 gPercentMax = 100;
 #endif
+// Max interval in seconds to stay in the READY state on manual
+// state change requests.
+static const guint gReadyStateTimerInterval = 60;
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
@@ -129,6 +132,14 @@ static gboolean mediaPlayerPrivateVideoChangeTimeoutCallback(MediaPlayerPrivateG
 {
     // This is the callback of the timeout source created in ::videoChanged.
     player->notifyPlayerOfVideo();
+    return FALSE;
+}
+
+static gboolean mediaPlayerPrivateReadyStateTimeoutCallback(MediaPlayerPrivateGStreamer* player)
+{
+    // This is the callback of the timeout source created in ::changePipelineState.
+    // Reset pipeline if we are sitting on READY state when timeout is reached
+    player->changePipelineState(GST_STATE_NULL);
     return FALSE;
 }
 
@@ -230,6 +241,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_hasAudio(false)
     , m_audioTimerHandler(0)
     , m_videoTimerHandler(0)
+    , m_readyTimerHandler(0)
     , m_webkitAudioSink(0)
     , m_totalBytes(-1)
     , m_preservesPitch(false)
@@ -251,6 +263,9 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (m_autoAudioSink)
         g_signal_handlers_disconnect_by_func(G_OBJECT(m_autoAudioSink.get()),
             reinterpret_cast<gpointer>(setAudioStreamPropertiesCallback), this);
+
+    if (m_readyTimerHandler)
+        g_source_remove(m_readyTimerHandler);
 
     if (m_playBin) {
         GRefPtr<GstBus> bus = webkitGstPipelineGetBus(GST_PIPELINE(m_playBin.get()));
@@ -329,7 +344,7 @@ void MediaPlayerPrivateGStreamer::commitLoad()
 
     // GStreamer needs to have the pipeline set to a paused state to
     // start providing anything useful.
-    gst_element_set_state(m_playBin.get(), GST_STATE_PAUSED);
+    changePipelineState(GST_STATE_PAUSED);
 
     setDownloadBuffering();
     updateStates();
@@ -370,7 +385,7 @@ float MediaPlayerPrivateGStreamer::playbackPosition() const
 
 bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
 {
-    ASSERT(newState == GST_STATE_PLAYING || newState == GST_STATE_PAUSED);
+    ASSERT(m_playBin);
 
     GstState currentState;
     GstState pending;
@@ -391,6 +406,18 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
         loadingFailed(MediaPlayer::Empty);
         return false;
     }
+
+    // Create a timer when entering the READY state so that we can free resources
+    // if we stay for too long on READY.
+    // Also lets remove the timer if we request a state change for any state other than READY.
+    // See also https://bugs.webkit.org/show_bug.cgi?id=117354
+    if (newState == GST_STATE_READY && !m_readyTimerHandler) {
+        m_readyTimerHandler = g_timeout_add_seconds(gReadyStateTimerInterval, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateReadyStateTimeoutCallback), this);
+    } else if (newState != GST_STATE_READY && m_readyTimerHandler) {
+        g_source_remove(m_readyTimerHandler);
+        m_readyTimerHandler = 0;
+    }
+
     return true;
 }
 
@@ -615,7 +642,7 @@ void MediaPlayerPrivateGStreamer::setRate(float rate)
     m_changingRate = true;
 
     if (!rate) {
-        gst_element_set_state(m_playBin.get(), GST_STATE_PAUSED);
+        changePipelineState(GST_STATE_PAUSED);
         return;
     }
 
@@ -825,8 +852,8 @@ void MediaPlayerPrivateGStreamer::handlePluginInstallerResult(GstInstallPluginsR
 {
     m_missingPlugins = false;
     if (result == GST_INSTALL_PLUGINS_SUCCESS) {
-        gst_element_set_state(m_playBin.get(), GST_STATE_READY);
-        gst_element_set_state(m_playBin.get(), GST_STATE_PAUSED);
+        changePipelineState(GST_STATE_READY);
+        changePipelineState(GST_STATE_PAUSED);
     }
 }
 
@@ -1031,7 +1058,7 @@ void MediaPlayerPrivateGStreamer::cancelLoad()
         return;
 
     if (m_playBin)
-        gst_element_set_state(m_playBin.get(), GST_STATE_NULL);
+        changePipelineState(GST_STATE_READY);
 }
 
 void MediaPlayerPrivateGStreamer::asyncStateChangeDone()
@@ -1098,8 +1125,12 @@ void MediaPlayerPrivateGStreamer::updateStates()
             m_networkState = MediaPlayer::Empty;
             break;
         case GST_STATE_READY:
-            m_readyState = MediaPlayer::HaveMetadata;
-            m_networkState = MediaPlayer::Empty;
+            // Do not change network/ready states if on EOS and state changed to READY to avoid
+            // recreating the player on HTMLMediaElement.
+            if (!m_isEndReached) {
+                m_readyState = MediaPlayer::HaveMetadata;
+                m_networkState = MediaPlayer::Empty;
+            }
             break;
         case GST_STATE_PAUSED:
         case GST_STATE_PLAYING:
@@ -1140,14 +1171,14 @@ void MediaPlayerPrivateGStreamer::updateStates()
 
             if (didBuffering && !m_buffering && !m_paused) {
                 LOG_MEDIA_MESSAGE("[Buffering] Restarting playback.");
-                gst_element_set_state(m_playBin.get(), GST_STATE_PLAYING);
+                changePipelineState(GST_STATE_PLAYING);
             }
         } else if (state == GST_STATE_PLAYING) {
             m_paused = false;
 
             if (m_buffering && !isLiveStream()) {
                 LOG_MEDIA_MESSAGE("[Buffering] Pausing stream for buffering.");
-                gst_element_set_state(m_playBin.get(), GST_STATE_PAUSED);
+                changePipelineState(GST_STATE_PAUSED);
             }
         } else
             m_paused = true;
@@ -1170,8 +1201,8 @@ void MediaPlayerPrivateGStreamer::updateStates()
 
         // A live stream was paused, reset the pipeline.
         if (state == GST_STATE_PAUSED && pending == GST_STATE_PLAYING && isLiveStream()) {
-            gst_element_set_state(m_playBin.get(), GST_STATE_NULL);
-            gst_element_set_state(m_playBin.get(), GST_STATE_PLAYING);
+            changePipelineState(GST_STATE_READY);
+            changePipelineState(GST_STATE_PLAYING);
         }
 
         break;
@@ -1195,7 +1226,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
             m_paused = false;
 
         if (!m_paused)
-            gst_element_set_state(m_playBin.get(), GST_STATE_PLAYING);
+            changePipelineState(GST_STATE_PLAYING);
 
         m_networkState = MediaPlayer::Loading;
         break;
@@ -1300,7 +1331,7 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
 
             // Reset pipeline state.
             m_resetPipeline = true;
-            gst_element_set_state(m_playBin.get(), GST_STATE_READY);
+            changePipelineState(GST_STATE_READY);
 
             GstState state;
             gst_element_get_state(m_playBin.get(), &state, 0, 0);
@@ -1308,7 +1339,7 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
                 // Set the new uri and start playing.
                 g_object_set(m_playBin.get(), "uri", newUrl.string().utf8().data(), NULL);
                 m_url = newUrl;
-                gst_element_set_state(m_playBin.get(), GST_STATE_PLAYING);
+                changePipelineState(GST_STATE_PLAYING);
                 return true;
             }
         } else
@@ -1346,7 +1377,7 @@ void MediaPlayerPrivateGStreamer::didEnd()
 
     if (!m_player->mediaPlayerClient()->mediaPlayerIsLooping()) {
         m_paused = true;
-        gst_element_set_state(m_playBin.get(), GST_STATE_NULL);
+        changePipelineState(GST_STATE_READY);
         m_downloadFinished = false;
     }
 }
@@ -1390,6 +1421,13 @@ void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState error)
     if (m_readyState != MediaPlayer::HaveNothing) {
         m_readyState = MediaPlayer::HaveNothing;
         m_player->readyStateChanged();
+    }
+
+    // Loading failed, force reset pipeline and remove ready timer.
+    gst_element_set_state(m_playBin.get(), GST_STATE_NULL);
+    if (m_readyTimerHandler) {
+        g_source_remove(m_readyTimerHandler);
+        m_readyTimerHandler = 0;
     }
 }
 
