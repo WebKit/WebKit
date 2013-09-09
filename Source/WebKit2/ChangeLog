@@ -1,3 +1,12 @@
+2013-09-09  Dean Jackson  <dino@apple.com>
+
+        Enable WebGL for OS X nightlies
+        https://bugs.webkit.org/show_bug.cgi?id=121040
+
+        Reviewed by Beth Dakin.
+
+        * Shared/WebPreferencesStore.h: Set initial value to true.
+
 2013-09-08  Anders Carlsson  <andersca@apple.com>
 
         Begin moving off of TypeTraits.h

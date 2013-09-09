@@ -380,7 +380,7 @@ public:
         [NSNumber numberWithBool:NO],  WebKitCanvasUsesAcceleratedDrawingPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowDebugBordersPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowRepaintCounterPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitWebGLEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitWebGLEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAccelerated2dCanvasEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitFrameFlatteningEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitSpatialNavigationEnabledPreferenceKey,

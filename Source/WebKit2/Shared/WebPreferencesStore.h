@@ -92,7 +92,7 @@ namespace WebKit {
     macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false) \
     macro(TiledScrollingIndicatorVisible, tiledScrollingIndicatorVisible, Bool, bool, false) \
     macro(CSSCustomFilterEnabled, cssCustomFilterEnabled, Bool, bool, true) \
-    macro(WebGLEnabled, webGLEnabled, Bool, bool, false) \
+    macro(WebGLEnabled, webGLEnabled, Bool, bool, true) \
     macro(Accelerated2dCanvasEnabled, accelerated2dCanvasEnabled, Bool, bool, false) \
     macro(CSSRegionsEnabled, cssRegionsEnabled, Bool, bool, true) \
     macro(CSSCompositingEnabled, cssCompositingEnabled, Bool, bool, true) \
