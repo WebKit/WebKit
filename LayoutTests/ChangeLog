@@ -1,3 +1,25 @@
+2013-09-09  Mihai Maerean  <mmaerean@adobe.com>
+
+        [Qt] fast/regions/overflow* converted reftests failing after r155114
+        https://bugs.webkit.org/show_bug.cgi?id=120848
+
+        Reviewed by Antti Koivisto.
+
+        The tests are now platform independent by specifing the font.
+
+        * fast/regions/overflow-in-uniform-regions-dynamic-expected.html:
+        * fast/regions/overflow-in-uniform-regions-dynamic.html:
+        * fast/regions/overflow-in-variable-width-regions-expected.html:
+        * fast/regions/overflow-in-variable-width-regions.html:
+        * fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.html:
+        * fast/regions/overflow-moving-below-floats-in-variable-width-regions.html:
+        * fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.html:
+        * fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html:
+        * fast/regions/overflow-rtl-in-variable-width-regions-expected.html:
+        * fast/regions/overflow-rtl-in-variable-width-regions.html:
+        * fast/regions/overflow-size-change-in-variable-width-regions-expected.html:
+        * fast/regions/overflow-size-change-in-variable-width-regions.html:
+
 2013-09-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Unreviewed fixup of expectation name.
