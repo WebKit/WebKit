@@ -757,14 +757,14 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkupWithContext(Document* docum
 String createMarkup(const Node* node, EChildrenOnly childrenOnly, Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, Vector<QualifiedName>* tagNamesToSkip, EFragmentSerialization fragmentSerialization)
 {
     if (!node)
-        return "";
+        return emptyString();
 
     HTMLElement* deleteButtonContainerElement = 0;
 #if ENABLE(DELETION_UI)
     if (Frame* frame = node->document().frame()) {
-        deleteButtonContainerElement = frame->editor().deleteButtonController()->containerElement();
+        deleteButtonContainerElement = frame->editor().deleteButtonController().containerElement();
         if (node->isDescendantOf(deleteButtonContainerElement))
-            return "";
+            return emptyString();
     }
 #endif
     MarkupAccumulator accumulator(nodes, shouldResolveURLs, 0, fragmentSerialization);

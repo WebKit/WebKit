@@ -92,15 +92,6 @@ public:
     EditorClient* client() const;
     TextCheckerClient* textChecker() const;
 
-#if ENABLE(DELETION_UI)
-    DeleteButtonController* deleteButtonController() const { return m_deleteButtonController.get(); }
-    PassRefPtr<Range> avoidIntersectionWithDeleteButtonController(const Range*) const;
-    VisibleSelection avoidIntersectionWithDeleteButtonController(const VisibleSelection&) const;
-#else
-    PassRefPtr<Range> avoidIntersectionWithDeleteButtonController(Range* range) const { return range; }
-    VisibleSelection avoidIntersectionWithDeleteButtonController(const VisibleSelection& selection) const { return selection; }
-#endif
-
     CompositeEditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
 
     void handleKeyboardEvent(KeyboardEvent*);
@@ -213,10 +204,6 @@ public:
     bool insertLineBreak();
     bool insertParagraphSeparator();
 
-#if PLATFORM(MAC)
-    bool insertParagraphSeparatorInQuotedContent();
-#endif
-    
     bool isContinuousSpellCheckingEnabled() const;
     void toggleContinuousSpellChecking();
     bool isGrammarCheckingEnabled();
@@ -239,28 +226,6 @@ public:
 
     bool isOverwriteModeEnabled() const { return m_overwriteModeEnabled; }
     void toggleOverwriteModeEnabled();
-
-#if USE(APPKIT)
-    void uppercaseWord();
-    void lowercaseWord();
-    void capitalizeWord();
-#endif
-
-#if USE(AUTOMATIC_TEXT_REPLACEMENT)
-    void showSubstitutionsPanel();
-    bool substitutionsPanelIsShowing();
-    void toggleSmartInsertDelete();
-    bool isAutomaticQuoteSubstitutionEnabled();
-    void toggleAutomaticQuoteSubstitution();
-    bool isAutomaticLinkDetectionEnabled();
-    void toggleAutomaticLinkDetection();
-    bool isAutomaticDashSubstitutionEnabled();
-    void toggleAutomaticDashSubstitution();
-    bool isAutomaticTextReplacementEnabled();
-    void toggleAutomaticTextReplacement();
-    bool isAutomaticSpellingCorrectionEnabled();
-    void toggleAutomaticSpellingCorrection();
-#endif
 
     void markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask, Range* spellingRange, Range* grammarRange);
     void changeBackToReplacedString(const String& replacedString);
@@ -382,20 +347,6 @@ public:
     void textDidChangeInTextArea(Element*);
     WritingDirection baseWritingDirectionForSelectionStart() const;
 
-#if PLATFORM(MAC)
-    const SimpleFontData* fontForSelection(bool&) const;
-    NSDictionary* fontAttributesForSelectionStart() const;
-    bool canCopyExcludingStandaloneImages();
-    void takeFindStringFromSelection();
-    void writeSelectionToPasteboard(Pasteboard&);
-    void readSelectionFromPasteboard(const String& pasteboardName);
-    String stringSelectionForPasteboard();
-    String stringSelectionForPasteboardWithImageAltText();
-    PassRefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
-    void writeURLToPasteboard(Pasteboard&, const KURL&, const String& title);
-    void writeImageToPasteboard(Pasteboard&, Element& imageElement, const KURL&, const String& title);
-#endif
-
     void replaceSelectionWithFragment(PassRefPtr<DocumentFragment>, bool selectReplacement, bool smartReplace, bool matchStyle);
     void replaceSelectionWithText(const String&, bool selectReplacement, bool smartReplace);
     bool selectionStartHasMarkerFor(DocumentMarker::MarkerType, int from, int length) const;
@@ -411,10 +362,77 @@ public:
     Vector<String> dictationAlternativesForMarker(const DocumentMarker*);
     void applyDictationAlternativelternative(const String& alternativeString);
 
+    PassRefPtr<Range> avoidIntersectionWithDeleteButtonController(const Range*) const;
+    VisibleSelection avoidIntersectionWithDeleteButtonController(const VisibleSelection&) const;
+
+#if USE(APPKIT)
+    void uppercaseWord();
+    void lowercaseWord();
+    void capitalizeWord();
+#endif
+
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+    void showSubstitutionsPanel();
+    bool substitutionsPanelIsShowing();
+    void toggleSmartInsertDelete();
+    bool isAutomaticQuoteSubstitutionEnabled();
+    void toggleAutomaticQuoteSubstitution();
+    bool isAutomaticLinkDetectionEnabled();
+    void toggleAutomaticLinkDetection();
+    bool isAutomaticDashSubstitutionEnabled();
+    void toggleAutomaticDashSubstitution();
+    bool isAutomaticTextReplacementEnabled();
+    void toggleAutomaticTextReplacement();
+    bool isAutomaticSpellingCorrectionEnabled();
+    void toggleAutomaticSpellingCorrection();
+#endif
+
+#if ENABLE(DELETION_UI)
+    DeleteButtonController& deleteButtonController() const { return *m_deleteButtonController; }
+#endif
+
+#if PLATFORM(MAC)
+    bool insertParagraphSeparatorInQuotedContent();
+    const SimpleFontData* fontForSelection(bool&) const;
+    NSDictionary* fontAttributesForSelectionStart() const;
+    bool canCopyExcludingStandaloneImages();
+    void takeFindStringFromSelection();
+    void writeSelectionToPasteboard(Pasteboard&);
+    void readSelectionFromPasteboard(const String& pasteboardName);
+    String stringSelectionForPasteboard();
+    String stringSelectionForPasteboardWithImageAltText();
+    PassRefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
+    void writeURLToPasteboard(Pasteboard&, const KURL&, const String& title);
+    void writeImageToPasteboard(Pasteboard&, Element& imageElement, const KURL&, const String& title);
+    String readPlainTextFromPasteboard(Pasteboard&);
+#endif
+
 private:
     explicit Editor(Frame&);
 
     Document& document() const;
+
+    bool canDeleteRange(Range*) const;
+    bool canSmartReplaceWithPasteboard(Pasteboard*);
+    void pasteAsPlainTextWithPasteboard(Pasteboard*);
+    void pasteWithPasteboard(Pasteboard*, bool allowPlainText);
+
+    void revealSelectionAfterEditingOperation(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = DoNotRevealExtent);
+    void markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling, RefPtr<Range>& firstMisspellingRange);
+    TextCheckingTypeMask resolveTextCheckingTypeMask(TextCheckingTypeMask);
+
+    String selectedText(TextIteratorBehavior) const;
+
+    void selectComposition();
+    enum SetCompositionMode { ConfirmComposition, CancelComposition };
+    void setComposition(const String&, SetCompositionMode);
+
+    void changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions);
+    void notifyComponentsOnChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions);
+
+    Node* findEventTargetFromSelection() const;
+
+    bool unifiedTextCheckerEnabled() const;
 
 #if PLATFORM(MAC)
     PassRefPtr<SharedBuffer> selectionInWebArchiveFormat();
@@ -440,28 +458,6 @@ private:
     bool m_areMarkedTextMatchesHighlighted;
     EditorParagraphSeparator m_defaultParagraphSeparator;
     bool m_overwriteModeEnabled;
-
-    bool canDeleteRange(Range*) const;
-    bool canSmartReplaceWithPasteboard(Pasteboard*);
-    void pasteAsPlainTextWithPasteboard(Pasteboard*);
-    void pasteWithPasteboard(Pasteboard*, bool allowPlainText);
-
-    void revealSelectionAfterEditingOperation(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = DoNotRevealExtent);
-    void markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling, RefPtr<Range>& firstMisspellingRange);
-    TextCheckingTypeMask resolveTextCheckingTypeMask(TextCheckingTypeMask);
-
-    String selectedText(TextIteratorBehavior) const;
-
-    void selectComposition();
-    enum SetCompositionMode { ConfirmComposition, CancelComposition };
-    void setComposition(const String&, SetCompositionMode);
-
-    void changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions);
-    void notifyComponentsOnChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions);
-
-    Node* findEventTargetFromSelection() const;
-
-    bool unifiedTextCheckerEnabled() const;
 };
 
 inline void Editor::setStartNewKillRingSequence(bool flag)
@@ -484,6 +480,19 @@ inline bool Editor::markedTextMatchesAreHighlighted() const
     return m_areMarkedTextMatchesHighlighted;
 }
 
+#if !ENABLE(DELETION_UI)
+
+inline PassRefPtr<Range> Editor::avoidIntersectionWithDeleteButtonController(const Range* range) const
+{
+    return const_cast<Range*>(range);
+}
+
+inline VisibleSelection Editor::avoidIntersectionWithDeleteButtonController(const VisibleSelection& selection) const
+{
+    return selection;
+}
+
+#endif
 
 } // namespace WebCore
 

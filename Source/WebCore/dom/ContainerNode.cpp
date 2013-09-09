@@ -865,7 +865,7 @@ void ContainerNode::cloneChildNodes(ContainerNode *clone)
 #if ENABLE(DELETION_UI)
     HTMLElement* deleteButtonContainerElement = 0;
     if (Frame* frame = document().frame())
-        deleteButtonContainerElement = frame->editor().deleteButtonController()->containerElement();
+        deleteButtonContainerElement = frame->editor().deleteButtonController().containerElement();
     cloneChildNodesAvoidingDeleteButton(this, clone, deleteButtonContainerElement);
 #else
     cloneChildNodesAvoidingDeleteButton(this, clone, 0);

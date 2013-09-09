@@ -104,10 +104,10 @@ using namespace WTF;
 using namespace Unicode;
 
 #if ENABLE(DELETION_UI)
+
 PassRefPtr<Range> Editor::avoidIntersectionWithDeleteButtonController(const Range* range) const
 {
-    DeleteButtonController* controller = deleteButtonController();
-    if (!range || !controller)
+    if (!range)
         return 0;
 
     Node* startContainer = range->startContainer();
@@ -120,7 +120,7 @@ PassRefPtr<Range> Editor::avoidIntersectionWithDeleteButtonController(const Rang
 
     ASSERT(endContainer);
 
-    Element* element = controller->containerElement();
+    Element* element = m_deleteButtonController->containerElement();
     if (startContainer == element || startContainer->isDescendantOf(element)) {
         ASSERT(element->parentNode());
         startContainer = element->parentNode();
@@ -137,11 +137,10 @@ PassRefPtr<Range> Editor::avoidIntersectionWithDeleteButtonController(const Rang
 
 VisibleSelection Editor::avoidIntersectionWithDeleteButtonController(const VisibleSelection& selection) const
 {
-    DeleteButtonController* controller = deleteButtonController();
-    if (selection.isNone() || !controller)
+    if (selection.isNone())
         return selection;
 
-    Element* element = controller->containerElement();
+    Element* element = m_deleteButtonController->containerElement();
     if (!element)
         return selection;
     VisibleSelection updatedSelection = selection;
@@ -158,6 +157,7 @@ VisibleSelection Editor::avoidIntersectionWithDeleteButtonController(const Visib
 
     return updatedSelection;
 }
+
 #endif
 
 // When an event handler has moved the selection outside of a text control
@@ -893,6 +893,9 @@ void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 
 Editor::Editor(Frame& frame)
     : m_frame(frame)
+#if ENABLE(DELETION_UI)
+    , m_deleteButtonController(adoptPtr(new DeleteButtonController(frame)))
+#endif
     , m_ignoreCompositionSelectionChange(false)
     , m_shouldStartNewKillRingSequence(false)
     // This is off by default, since most editors want this behavior (this matches IE but not FF).
@@ -904,9 +907,6 @@ Editor::Editor(Frame& frame)
     , m_defaultParagraphSeparator(EditorParagraphSeparatorIsDiv)
     , m_overwriteModeEnabled(false)
 {
-#if ENABLE(DELETION_UI)
-    m_deleteButtonController = adoptPtr(new DeleteButtonController(&frame));
-#endif
 }
 
 Editor::~Editor()
@@ -921,7 +921,7 @@ void Editor::clear()
     m_defaultParagraphSeparator = EditorParagraphSeparatorIsDiv;
 
 #if ENABLE(DELETION_UI)
-    m_deleteButtonController = adoptPtr(new DeleteButtonController(&m_frame));
+    m_deleteButtonController = adoptPtr(new DeleteButtonController(m_frame));
 #endif
 }
 

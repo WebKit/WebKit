@@ -1,3 +1,40 @@
+2013-09-08  Darin Adler  <darin@apple.com>
+
+        Make Editor::deleteButtonController a reference
+        https://bugs.webkit.org/show_bug.cgi?id=121019
+
+        Reviewed by Andreas Kling.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::cloneChildNodes): Updated to use . instead of ->.
+        * editing/DeleteButton.cpp:
+        (WebCore::DeleteButton::defaultEventHandler): Ditto.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::DeleteButtonController): Updated to take a Frame&
+        instead of a Frame*.
+        (WebCore::DeleteButtonController::respondToChangedSelection): Ditto.
+        (WebCore::DeleteButtonController::createDeletionUI): Ditto.
+        (WebCore::DeleteButtonController::show): Ditto.
+        (WebCore::DeleteButtonController::enable): Ditto.
+        (WebCore::DeleteButtonController::deleteTarget): Ditto.
+        * editing/DeleteButtonController.h: Ditto.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::avoidIntersectionWithDeleteButtonController): Removed bogus
+        null check from both versions of this function.
+        (WebCore::Editor::Editor): Use construction rather than assignment and pass
+        a reference instead of a pointer to make m_deleteButtonController.
+        (WebCore::Editor::clear): Ditto.
+
+        * editing/Editor.h: Made deleteButtonController return a reference.
+        Also reorganized the header to put all the conditional functions together,
+        and not mixed in with non-conditional ones.
+
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Updated to use . instead of -> and also to use
+        emptyString() instead of constructing a new empty string.
+
 2013-09-08  Andreas Kling  <akling@apple.com>
 
         InlineBox::root() should return a reference.
