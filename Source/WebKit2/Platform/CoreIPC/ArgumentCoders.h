@@ -154,7 +154,7 @@ template<typename T> struct VectorArgumentCoder<true, T> {
     }
 };
 
-template<typename T> struct ArgumentCoder<Vector<T>> : VectorArgumentCoder<WTF::IsArithmetic<T>::value, T> { };
+template<typename T> struct ArgumentCoder<Vector<T>> : VectorArgumentCoder<std::is_arithmetic<T>::value, T> { };
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>> {
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;

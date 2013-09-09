@@ -109,7 +109,6 @@
     <ClCompile Include="..\wtf\threadspecificWin.cpp" />
     <ClCompile Include="..\wtf\threads\BinarySemaphore.cpp" />
     <ClCompile Include="..\wtf\threads\win\BinarySemaphoreWin.cpp" />
-    <ClCompile Include="..\wtf\TypeTraits.cpp" />
     <ClCompile Include="..\wtf\unicode\icu\CollatorICU.cpp" />
     <ClCompile Include="..\wtf\unicode\UTF8.cpp" />
     <ClCompile Include="..\wtf\win\MainThreadWin.cpp" />
@@ -261,7 +260,6 @@
     <ClInclude Include="..\wtf\threadsafeRefCounted.h" />
     <ClInclude Include="..\wtf\threadspecific.h" />
     <ClInclude Include="..\wtf\threads\BinarySemaphore.h" />
-    <ClInclude Include="..\wtf\TypeTraits.h" />
     <ClInclude Include="..\wtf\unicode\CharacterNames.h" />
     <ClInclude Include="..\wtf\unicode\Collator.h" />
     <ClInclude Include="..\wtf\unicode\icu\UnicodeIcu.h" />

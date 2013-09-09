@@ -25,7 +25,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
-#include <wtf/TypeTraits.h>
 #include <utility>
 #include <memory>
 
@@ -63,7 +62,7 @@ namespace WTF {
     };
 
     template<typename T>
-    struct VectorTraits : VectorTraitsBase<IsPod<T>::value, T> { };
+    struct VectorTraits : VectorTraitsBase<std::is_pod<T>::value, T> { };
 
     struct SimpleClassVectorTraits : VectorTraitsBase<false, void>
     {
@@ -90,7 +89,7 @@ namespace WTF {
     struct VectorTraits<AtomicString> : SimpleClassVectorTraits { };
 
     template<typename First, typename Second>
-    struct VectorTraits<pair<First, Second> >
+    struct VectorTraits<std::pair<First, Second> >
     {
         typedef VectorTraits<First> FirstTraits;
         typedef VectorTraits<Second> SecondTraits;

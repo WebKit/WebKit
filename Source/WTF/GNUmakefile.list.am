@@ -178,8 +178,6 @@ wtf_sources += \
     Source/WTF/wtf/ThreadingPthreads.cpp \
     Source/WTF/wtf/ThreadingWin.cpp \
     Source/WTF/wtf/TriState.h \
-    Source/WTF/wtf/TypeTraits.cpp \
-    Source/WTF/wtf/TypeTraits.h \
     Source/WTF/wtf/UnionFind.h \
     Source/WTF/wtf/UniStdExtras.h \
     Source/WTF/wtf/VMTags.h \

@@ -139,8 +139,6 @@ protected:
     }
 };
 
-COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);
-
 const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, 0, ExecState::globalObjectTable, CREATE_METHOD_TABLE(GlobalObject) };
 
 GlobalObject::GlobalObject(VM& vm, Structure* structure, const Vector<String>& arguments)

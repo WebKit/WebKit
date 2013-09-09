@@ -154,7 +154,6 @@ HEADERS += \
     ThreadRestrictionVerifier.h \
     ThreadSafeRefCounted.h \
     ThreadSpecific.h \
-    TypeTraits.h \
     unicode/CharacterNames.h \
     unicode/Collator.h \
     unicode/icu/UnicodeIcu.h \
@@ -220,7 +219,6 @@ SOURCES += \
     StringPrintStream.cpp \
     TCSystemAlloc.cpp \
     Threading.cpp \
-    TypeTraits.cpp \
     WTFThreadData.cpp \
     text/AtomicString.cpp \
     text/AtomicStringTable.cpp \

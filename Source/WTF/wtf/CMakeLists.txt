@@ -106,7 +106,6 @@ set(WTF_HEADERS
     ThreadSpecific.h
     Threading.h
     ThreadingPrimitives.h
-    TypeTraits.h
     VMTags.h
     ValueCheck.h
     Vector.h
@@ -182,7 +181,6 @@ set(WTF_SOURCES
     StringPrintStream.cpp
     TCSystemAlloc.cpp
     Threading.cpp
-    TypeTraits.cpp
     WTFThreadData.cpp
     dtoa.cpp
 

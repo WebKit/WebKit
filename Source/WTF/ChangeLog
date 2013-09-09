@@ -1,3 +1,20 @@
+2013-09-09  Anders Carlsson  <andersca@apple.com>
+
+        Remove wtf/TypeTraits.h
+        https://bugs.webkit.org/show_bug.cgi?id=121047
+
+        Reviewed by Darin Adler.
+
+        * GNUmakefile.list.am:
+        * WTF.pro:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/TypeTraits.cpp: Removed.
+        * wtf/TypeTraits.h: Removed.
+        * wtf/VectorTraits.h:
+
 2013-09-09  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         Nix upstreaming - Adding stubs and Nix specific platform files

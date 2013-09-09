@@ -63,7 +63,7 @@ public:
 
     template<typename T> bool decodeEnum(T& result)
     {
-        COMPILE_ASSERT(sizeof(T) <= sizeof(uint64_t), enum_type_must_not_be_larger_than_64_bits);
+        static_assert(sizeof(T) <= 8, "Enum type T must not be larger than 64 bits!");
 
         uint64_t value;
         if (!decode(value))
@@ -76,8 +76,8 @@ public:
     template<typename T>
     bool bufferIsLargeEnoughToContain(size_t numElements) const
     {
-        COMPILE_ASSERT(WTF::IsArithmetic<T>::value, type_must_have_known_encoded_size);
-      
+        static_assert(std::is_arithmetic<T>::value, "Type T must have a fixed, known encoded size!");
+
         if (numElements > std::numeric_limits<size_t>::max() / sizeof(T))
             return false;
 
