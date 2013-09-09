@@ -120,7 +120,7 @@ class BaseTest(unittest.TestCase):
 
         tmpdir = tempfile.mkdtemp(prefix='webkitpytest')
         self.maybe_make_dir(tmpdir, 'http', 'tests', 'websocket')
-        self.maybe_make_dir(tmpdir, 'fast', 'js', 'resources')
+        self.maybe_make_dir(tmpdir, 'resources')
         self.maybe_make_dir(tmpdir, 'media')
 
         self.assert_servers_are_down([18000])

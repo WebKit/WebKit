@@ -1,3 +1,16 @@
+2013-09-09  Mark Lam  <mark.lam@apple.com>
+
+        Remove old fast/js/resources pre and post test files.
+        https://bugs.webkit.org/show_bug.cgi?id=120899.
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/js/resources/js-test-post-async.js: Removed.
+        * fast/js/resources/js-test-post.js: Removed.
+        * fast/js/resources/js-test-pre.js: Removed.
+        * fast/js/resources/standalone-post.js: Removed.
+        * fast/js/resources/standalone-pre.js: Removed.
+
 2013-09-09  Beth Dakin  <bdakin@apple.com>
 
         Skipping this newly-added test since it asserts on debug builds.

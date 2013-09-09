@@ -105,7 +105,7 @@ sub getDefaultConfigForTestDirectory
 
     my $httpdConfig = getHTTPDConfigPathForTestDirectory($testDirectory);
     my $documentRoot = "$testDirectory/http/tests";
-    my $jsTestResourcesDirectory = $testDirectory . "/fast/js/resources";
+    my $jsTestResourcesDirectory = $testDirectory . "/resources";
     my $mediaResourcesDirectory = $testDirectory . "/media";
     my $typesConfig = "$testDirectory/http/conf/mime.types";
     my $httpdLockFile = File::Spec->catfile($httpdPidDir, "httpd.lock");

@@ -74,8 +74,8 @@ then
     testList=$testRoot/fast/js/jsc-test-list
 fi
 
-preScript=$testRoot/fast/js/resources/standalone-pre.js
-postScript=$testRoot/fast/js/resources/standalone-post.js
+preScript=$testRoot/resources/standalone-pre.js
+postScript=$testRoot/resources/standalone-post.js
 passList=$resultsRoot/passed
 failList=$resultsRoot/failed
 crashList=$resultsRoot/crashed
