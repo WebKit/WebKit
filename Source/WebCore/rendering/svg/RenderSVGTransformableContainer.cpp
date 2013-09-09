@@ -40,7 +40,7 @@ RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGGraphicsElem
 
 bool RenderSVGTransformableContainer::calculateLocalTransform()
 {
-    SVGGraphicsElement* element = toSVGGraphicsElement(node());
+    SVGGraphicsElement* element = toSVGGraphicsElement(this->element());
 
     // If we're either the renderer for a <use> element, or for any <g> element inside the shadow
     // tree, that was created during the use/symbol/svg expansion in SVGUseElement. These containers

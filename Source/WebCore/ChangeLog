@@ -1,3 +1,13 @@
+2013-09-09  Andreas Kling  <akling@apple.com>
+
+        Hide node() below RenderSVGModelObject, use element() instead.
+        <https://webkit.org/b/121051>
+
+        Reviewed by Darin Adler.
+
+        This was almost already there, just delete node() and add an element() that returns a SVGElement*.
+        The SVG render tree is crazy casual about compile-time types, this is only scratching the surface.
+
 2013-09-09  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Fixing EFL build

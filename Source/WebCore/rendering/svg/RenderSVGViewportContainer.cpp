@@ -44,10 +44,10 @@ RenderSVGViewportContainer::RenderSVGViewportContainer(SVGElement* node)
 
 void RenderSVGViewportContainer::determineIfLayoutSizeChanged()
 {
-    if (!node()->hasTagName(SVGNames::svgTag))
+    if (!element()->hasTagName(SVGNames::svgTag))
         return;
 
-    m_isLayoutSizeChanged = toSVGSVGElement(node())->hasRelativeLengths() && selfNeedsLayout();
+    m_isLayoutSizeChanged = toSVGSVGElement(element())->hasRelativeLengths() && selfNeedsLayout();
 }
 
 void RenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)
@@ -58,7 +58,7 @@ void RenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)
 
 void RenderSVGViewportContainer::calcViewport()
 {
-    SVGElement* element = toSVGElement(node());
+    SVGElement* element = this->element();
     if (!element->hasTagName(SVGNames::svgTag))
         return;
     SVGSVGElement* svg = toSVGSVGElement(element);
@@ -132,8 +132,8 @@ bool RenderSVGViewportContainer::calculateLocalTransform()
 
 AffineTransform RenderSVGViewportContainer::viewportTransform() const
 {
-    if (node()->hasTagName(SVGNames::svgTag)) {
-        SVGSVGElement* svg = toSVGSVGElement(node());
+    if (element()->hasTagName(SVGNames::svgTag)) {
+        SVGSVGElement* svg = toSVGSVGElement(element());
         return svg->viewBoxToViewTransform(m_viewport.width(), m_viewport.height());
     }
 
@@ -152,8 +152,8 @@ bool RenderSVGViewportContainer::pointIsInsideViewportClip(const FloatPoint& poi
 void RenderSVGViewportContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // An empty viewBox disables rendering.
-    if (node()->hasTagName(SVGNames::svgTag)) {
-        if (toSVGSVGElement(node())->hasEmptyViewBox())
+    if (element()->hasTagName(SVGNames::svgTag)) {
+        if (toSVGSVGElement(element())->hasEmptyViewBox())
             return;
     }
 

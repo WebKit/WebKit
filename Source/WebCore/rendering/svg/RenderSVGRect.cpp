@@ -52,7 +52,7 @@ void RenderSVGRect::updateShapeFromElement()
     m_fillBoundingBox = FloatRect();
     m_innerStrokeRect = FloatRect();
     m_outerStrokeRect = FloatRect();
-    SVGRectElement* rect = toSVGRectElement(node());
+    SVGRectElement* rect = toSVGRectElement(element());
     ASSERT(rect);
 
     // Fallback to RenderSVGShape if rect has rounded corners or a non-scaling stroke.

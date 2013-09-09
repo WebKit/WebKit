@@ -34,6 +34,7 @@
 #if ENABLE(SVG)
 
 #include "RenderObject.h"
+#include "SVGElement.h"
 #include "SVGRenderSupport.h"
 
 namespace WebCore {
@@ -68,10 +69,14 @@ public:
     bool hasSVGShadow() const { return m_hasSVGShadow; }
     void setHasSVGShadow(bool hasShadow) { m_hasSVGShadow = hasShadow; }
 
+    SVGElement* element() const { return toSVGElement(RenderObject::node()); }
+
 protected:
     virtual void willBeDestroyed() OVERRIDE;
 
 private:
+    void node() const WTF_DELETED_FUNCTION;
+
     // This method should never be called, SVG uses a different nodeAtPoint method
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
     virtual void absoluteFocusRingQuads(Vector<FloatQuad>&) OVERRIDE FINAL;

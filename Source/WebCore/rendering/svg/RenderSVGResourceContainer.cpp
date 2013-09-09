@@ -32,10 +32,10 @@
 
 namespace WebCore {
 
-static inline SVGDocumentExtensions* svgExtensionsFromNode(Node* node)
+static inline SVGDocumentExtensions* svgExtensionsFromElement(SVGElement* element)
 {
-    ASSERT(node);
-    return node->document().accessSVGExtensions();
+    ASSERT(element);
+    return element->document().accessSVGExtensions();
 }
 
 RenderSVGResourceContainer::RenderSVGResourceContainer(SVGElement* node)
@@ -49,7 +49,7 @@ RenderSVGResourceContainer::RenderSVGResourceContainer(SVGElement* node)
 RenderSVGResourceContainer::~RenderSVGResourceContainer()
 {
     if (m_registered)
-        svgExtensionsFromNode(node())->removeResource(m_id);
+        svgExtensionsFromElement(element())->removeResource(m_id);
 }
 
 void RenderSVGResourceContainer::layout()
@@ -84,9 +84,9 @@ void RenderSVGResourceContainer::idChanged()
     removeAllClientsFromCache();
 
     // Remove old id, that is guaranteed to be present in cache.
-    SVGDocumentExtensions* extensions = svgExtensionsFromNode(node());
+    SVGDocumentExtensions* extensions = svgExtensionsFromElement(element());
     extensions->removeResource(m_id);
-    m_id = toElement(node())->getIdAttribute();
+    m_id = element()->getIdAttribute();
 
     registerResource();
 }
@@ -174,7 +174,7 @@ void RenderSVGResourceContainer::removeClientRenderLayer(RenderLayer* client)
 
 void RenderSVGResourceContainer::registerResource()
 {
-    SVGDocumentExtensions* extensions = svgExtensionsFromNode(node());
+    SVGDocumentExtensions* extensions = svgExtensionsFromElement(element());
     if (!extensions->hasPendingResource(m_id)) {
         extensions->addResource(m_id, this);
         return;

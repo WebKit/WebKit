@@ -94,7 +94,7 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
     FloatRect repaintRect = object->repaintRectInLocalCoordinates();
 
     if (!maskerData->maskImage && !repaintRect.isEmpty()) {
-        SVGMaskElement* maskElement = toSVGMaskElement(node());
+        SVGMaskElement* maskElement = toSVGMaskElement(element());
         if (!maskElement)
             return false;
 
@@ -161,7 +161,7 @@ bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, C
 
 void RenderSVGResourceMasker::calculateMaskContentRepaintRect()
 {
-    for (Node* childNode = node()->firstChild(); childNode; childNode = childNode->nextSibling()) {
+    for (Node* childNode = element()->firstChild(); childNode; childNode = childNode->nextSibling()) {
         RenderObject* renderer = childNode->renderer();
         if (!childNode->isSVGElement() || !renderer)
             continue;
@@ -174,7 +174,7 @@ void RenderSVGResourceMasker::calculateMaskContentRepaintRect()
 
 FloatRect RenderSVGResourceMasker::resourceBoundingBox(RenderObject* object)
 {
-    SVGMaskElement* maskElement = toSVGMaskElement(node());
+    SVGMaskElement* maskElement = toSVGMaskElement(element());
     ASSERT(maskElement);
 
     FloatRect objectBoundingBox = object->objectBoundingBox();

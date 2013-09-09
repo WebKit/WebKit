@@ -647,33 +647,33 @@ void SVGResources::dump(const RenderObject* object)
     fprintf(stderr, "\n | List of resources:\n");
     if (m_clipperFilterMaskerData) {
         if (RenderSVGResourceClipper* clipper = m_clipperFilterMaskerData->clipper)
-            fprintf(stderr, " |-> Clipper    : %p (node=%p)\n", clipper, clipper->node());
+            fprintf(stderr, " |-> Clipper    : %p (node=%p)\n", clipper, clipper->element());
 #if ENABLE(FILTERS)
         if (RenderSVGResourceFilter* filter = m_clipperFilterMaskerData->filter)
-            fprintf(stderr, " |-> Filter     : %p (node=%p)\n", filter, filter->node());
+            fprintf(stderr, " |-> Filter     : %p (node=%p)\n", filter, filter->element());
 #endif
         if (RenderSVGResourceMasker* masker = m_clipperFilterMaskerData->masker)
-            fprintf(stderr, " |-> Masker     : %p (node=%p)\n", masker, masker->node());
+            fprintf(stderr, " |-> Masker     : %p (node=%p)\n", masker, masker->element());
     }
 
     if (m_markerData) {
         if (RenderSVGResourceMarker* markerStart = m_markerData->markerStart)
-            fprintf(stderr, " |-> MarkerStart: %p (node=%p)\n", markerStart, markerStart->node());
+            fprintf(stderr, " |-> MarkerStart: %p (node=%p)\n", markerStart, markerStart->element());
         if (RenderSVGResourceMarker* markerMid = m_markerData->markerMid)
-            fprintf(stderr, " |-> MarkerMid  : %p (node=%p)\n", markerMid, markerMid->node());
+            fprintf(stderr, " |-> MarkerMid  : %p (node=%p)\n", markerMid, markerMid->element());
         if (RenderSVGResourceMarker* markerEnd = m_markerData->markerEnd)
-            fprintf(stderr, " |-> MarkerEnd  : %p (node=%p)\n", markerEnd, markerEnd->node());
+            fprintf(stderr, " |-> MarkerEnd  : %p (node=%p)\n", markerEnd, markerEnd->element());
     }
 
     if (m_fillStrokeData) {
         if (RenderSVGResourceContainer* fill = m_fillStrokeData->fill)
-            fprintf(stderr, " |-> Fill       : %p (node=%p)\n", fill, fill->node());
+            fprintf(stderr, " |-> Fill       : %p (node=%p)\n", fill, fill->element());
         if (RenderSVGResourceContainer* stroke = m_fillStrokeData->stroke)
-            fprintf(stderr, " |-> Stroke     : %p (node=%p)\n", stroke, stroke->node());
+            fprintf(stderr, " |-> Stroke     : %p (node=%p)\n", stroke, stroke->element());
     }
 
     if (m_linkedResource)
-        fprintf(stderr, " |-> xlink:href : %p (node=%p)\n", m_linkedResource, m_linkedResource->node());
+        fprintf(stderr, " |-> xlink:href : %p (node=%p)\n", m_linkedResource, m_linkedResource->element());
 }
 #endif
 

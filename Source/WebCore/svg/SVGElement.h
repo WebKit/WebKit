@@ -218,6 +218,8 @@ inline const SVGElement* toSVGElement(const Node* node)
     return static_cast<const SVGElement*>(node);
 }
 
+void toSVGElement(const SVGElement*);
+
 template <> inline bool isElementOfType<SVGElement>(const Element* element) { return element->isSVGElement(); }
 
 }
