@@ -77,9 +77,9 @@ public:
     void addAudioComponent(PassRefPtr<MediaStreamComponent> component) { m_audioComponents.append(component); }
     void removeAudioComponent(MediaStreamComponent* component)
     {
-        size_t pos = m_videoComponents.find(component);
+        size_t pos = m_audioComponents.find(component);
         if (pos != notFound)
-            m_videoComponents.remove(pos);
+            m_audioComponents.remove(pos);
     }
 
     void addRemoteTrack(MediaStreamComponent* component)
