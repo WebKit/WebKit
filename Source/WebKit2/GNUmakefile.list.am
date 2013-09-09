@@ -1262,7 +1262,7 @@ webkit2_sources += \
 if TARGET_X11
 webkit2_sources += \
 	Source/WebKit2/Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
-	Source/WebKit2/WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp \
+	Source/WebKit2/WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp
 else
 webkit2_sources += \
 	Source/WebKit2/Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
