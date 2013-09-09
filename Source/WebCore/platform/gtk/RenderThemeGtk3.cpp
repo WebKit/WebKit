@@ -90,8 +90,10 @@ static GtkStyleContext* getStyleContext(GType widgetType)
         gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_ENTRY);
     else if (widgetType == GTK_TYPE_ARROW)
         gtk_widget_path_iter_add_class(path, 0, "arrow");
-    else if (widgetType == GTK_TYPE_BUTTON)
+    else if (widgetType == GTK_TYPE_BUTTON) {
         gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_BUTTON);
+        gtk_widget_path_iter_add_class(path, 1, "text-button");
+    }
     else if (widgetType == GTK_TYPE_SCALE)
         gtk_widget_path_iter_add_class(path, 0, GTK_STYLE_CLASS_SCALE);
     else if (widgetType == GTK_TYPE_SEPARATOR)
@@ -988,7 +990,7 @@ Color RenderThemeGtk::systemColor(CSSValueID cssValueId) const
 
     switch (cssValueId) {
     case CSSValueButtontext:
-        gtk_style_context_get_color(getStyleContext(GTK_TYPE_BUTTON), static_cast<GtkStateFlags>(0), &gdkRGBAColor);
+        gtk_style_context_get_color(getStyleContext(GTK_TYPE_BUTTON), GTK_STATE_FLAG_ACTIVE, &gdkRGBAColor);
         return gdkRGBAColor;
     case CSSValueCaptiontext:
         gtk_style_context_get_color(getStyleContext(GTK_TYPE_ENTRY), static_cast<GtkStateFlags>(0), &gdkRGBAColor);
