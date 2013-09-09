@@ -226,7 +226,7 @@ void RenderScrollbar::updateScrollbarPart(ScrollbarPart partType, bool destroy)
 
     RefPtr<RenderStyle> partStyle = !destroy ? getScrollbarPseudoStyle(partType,  pseudoForScrollbarPart(partType)) : PassRefPtr<RenderStyle>(0);
     
-    bool needRenderer = !destroy && partStyle && partStyle->display() != NONE && partStyle->visibility() == VISIBLE;
+    bool needRenderer = !destroy && partStyle && partStyle->display() != NONE;
     
     if (needRenderer && partStyle->display() != BLOCK) {
         // See if we are a button that should not be visible according to OS settings.

@@ -1,3 +1,18 @@
+2013-09-08  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        Scrollbar width is not applied when element hidden
+        https://bugs.webkit.org/show_bug.cgi?id=90546
+
+        Reviewed by Simon Fraser.
+
+        * fast/dom/Element/scroll-width-hidden-expected.txt: Added.
+        * fast/dom/Element/scroll-width-hidden.html: Added.
+        * fast/dom/Element/scroll-width-visible-expected.txt: Added.
+        * fast/dom/Element/scroll-width-visible.html: Added.
+
+        Added new test for verifying that scroll width returns proper
+        values for element which is visible and hidden.
+
 2013-09-08  Filip Pizlo  <fpizlo@apple.com>
 
         fast/js/dfg-* tests should wait for the concurrent JIT
