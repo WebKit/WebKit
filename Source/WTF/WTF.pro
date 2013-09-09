@@ -58,7 +58,6 @@ HEADERS += \
     Encoder.h \
     EnumClass.h \
     ExportMacros.h \
-    FastAllocBase.h \
     FastMalloc.h \
     FeatureDefines.h \
     FilePrintStream.h \

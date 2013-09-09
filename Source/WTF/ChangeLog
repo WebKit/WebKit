@@ -1,3 +1,12 @@
+2013-09-09  Julien Brianceau  <jbriance@cisco.com>
+
+        [Qt] Remove FastAllocBase.h from WTF.pro.
+        https://bugs.webkit.org/show_bug.cgi?id=121024
+
+        Reviewed by Jocelyn Turcotte.
+
+        * WTF.pro: Remove FastAllocBase.h as this file disappeared in r155251.
+
 2013-09-08  Darin Adler  <darin@apple.com>
 
         Deprecate AdoptCF and AdoptNS (on all platforms except iOS for now)
