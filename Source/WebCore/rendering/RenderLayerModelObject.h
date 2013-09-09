@@ -31,7 +31,7 @@ class RenderLayer;
 
 class RenderLayerModelObject : public RenderObject {
 public:
-    explicit RenderLayerModelObject(ContainerNode*);
+    explicit RenderLayerModelObject(Element*);
     virtual ~RenderLayerModelObject();
 
     // Called by RenderObject::willBeDestroyed() and is the only way layers should ever be destroyed
@@ -51,7 +51,7 @@ public:
     virtual bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect&) const { return false; }
 
     // This is null for anonymous renderers.
-    ContainerNode* node() const { return toContainerNode(RenderObject::node()); }
+    Element* element() const { return toElement(RenderObject::node()); }
 
 protected:
     void ensureLayer();
@@ -61,6 +61,8 @@ protected:
 
 private:
     virtual bool isLayerModelObject() const OVERRIDE FINAL { return true; }
+
+    void node() const WTF_DELETED_FUNCTION;
 
     RenderLayer* m_layer;
 

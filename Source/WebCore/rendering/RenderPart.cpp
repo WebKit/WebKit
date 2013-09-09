@@ -83,11 +83,11 @@ bool RenderPart::requiresAcceleratedCompositing() const
     if (widget() && widget()->isPluginViewBase() && toPluginViewBase(widget())->platformLayer())
         return true;
 
-    if (!node() || !node()->isFrameOwnerElement())
+    if (!element() || !element()->isFrameOwnerElement())
         return false;
 
-    HTMLFrameOwnerElement* element = toFrameOwnerElement(node());
-    if (Document* contentDocument = element->contentDocument()) {
+    HTMLFrameOwnerElement* frameOwnerElement = toFrameOwnerElement(element());
+    if (Document* contentDocument = frameOwnerElement->contentDocument()) {
         if (RenderView* view = contentDocument->renderView())
             return view->usesCompositing();
     }
@@ -105,7 +105,7 @@ bool RenderPart::needsPreferredWidthsRecalculation() const
 
 RenderBox* RenderPart::embeddedContentBox() const
 {
-    if (!node() || !widget() || !widget()->isFrameView())
+    if (!element() || !widget() || !widget()->isFrameView())
         return 0;
     return toFrameView(widget())->embeddedContentBox();
 }

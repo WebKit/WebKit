@@ -84,7 +84,7 @@ void RenderVideo::updateIntrinsicSize()
     size.scale(style()->effectiveZoom());
 
     // Never set the element size to zero when in a media document.
-    if (size.isEmpty() && node()->ownerDocument() && node()->ownerDocument()->isMediaDocument())
+    if (size.isEmpty() && element()->document().isMediaDocument())
         return;
 
     if (size == intrinsicSize())
@@ -213,7 +213,7 @@ void RenderVideo::layout()
     
 HTMLVideoElement* RenderVideo::videoElement() const
 {
-    return toHTMLVideoElement(node()); 
+    return toHTMLVideoElement(element()); 
 }
 
 void RenderVideo::updateFromElement()

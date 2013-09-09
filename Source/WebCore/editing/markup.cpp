@@ -524,7 +524,7 @@ static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterch
 
     Node* checkAncestor = specialCommonAncestor ? specialCommonAncestor : commonAncestor;
     if (checkAncestor->renderer() && checkAncestor->renderer()->containingBlock()) {
-        Node* newSpecialCommonAncestor = highestEnclosingNodeOfType(firstPositionInNode(checkAncestor), &isElementPresentational, CanCrossEditingBoundary, checkAncestor->renderer()->containingBlock()->node());
+        Node* newSpecialCommonAncestor = highestEnclosingNodeOfType(firstPositionInNode(checkAncestor), &isElementPresentational, CanCrossEditingBoundary, checkAncestor->renderer()->containingBlock()->element());
         if (newSpecialCommonAncestor)
             specialCommonAncestor = newSpecialCommonAncestor;
     }

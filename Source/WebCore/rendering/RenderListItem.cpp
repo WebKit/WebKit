@@ -93,19 +93,19 @@ void RenderListItem::willBeRemovedFromTree()
     updateListMarkerNumbers();
 }
 
-static bool isList(const Node* node)
+static bool isList(const Element* element)
 {
-    return (node->hasTagName(ulTag) || node->hasTagName(olTag));
+    return element->hasTagName(ulTag) || element->hasTagName(olTag);
 }
 
 // Returns the enclosing list with respect to the DOM order.
-static Node* enclosingList(const RenderListItem* listItem)
+static Element* enclosingList(const RenderListItem* listItem)
 {
-    Node* listItemNode = listItem->node();
-    Node* firstNode = 0;
-    Node* parent = listItemNode->isPseudoElement() ? toPseudoElement(listItemNode)->hostElement() : listItemNode->parentNode();
+    Element* listItemNode = listItem->element();
+    Element* firstNode = 0;
+    Element* parent = listItemNode->isPseudoElement() ? toPseudoElement(listItemNode)->hostElement() : listItemNode->parentElement();
     // We use parentNode because the enclosing list could be a ShadowRoot that's not Element.
-    for (; parent; parent = parent->parentNode()) {
+    for (; parent; parent = parent->parentElement()) {
         if (isList(parent))
             return parent;
         if (!firstNode)
@@ -119,12 +119,12 @@ static Node* enclosingList(const RenderListItem* listItem)
 }
 
 // Returns the next list item with respect to the DOM order.
-static RenderListItem* nextListItem(const Node* listNode, const RenderListItem* item = 0)
+static RenderListItem* nextListItem(const Element* listNode, const RenderListItem* item = 0)
 {
     if (!listNode)
         return 0;
 
-    const Node* current = item ? item->node() : listNode;
+    const Element* current = item ? item->element() : listNode;
     current = ElementTraversal::nextIncludingPseudo(current, listNode);
 
     while (current) {
@@ -146,9 +146,9 @@ static RenderListItem* nextListItem(const Node* listNode, const RenderListItem* 
 }
 
 // Returns the previous list item with respect to the DOM order.
-static RenderListItem* previousListItem(const Node* listNode, const RenderListItem* item)
+static RenderListItem* previousListItem(const Element* listNode, const RenderListItem* item)
 {
-    Node* current = item->node();
+    Element* current = item->element();
     for (current = ElementTraversal::previousIncludingPseudo(current, listNode); current; current = ElementTraversal::previousIncludingPseudo(current, listNode)) {
         RenderObject* renderer = current->renderer();
         if (!renderer || (renderer && !renderer->isListItem()))
@@ -191,7 +191,7 @@ inline int RenderListItem::calcValue() const
     if (m_hasExplicitValue)
         return m_explicitValue;
 
-    Node* list = enclosingList(this);
+    Element* list = enclosingList(this);
     HTMLOListElement* oListElement = (list && list->hasTagName(olTag)) ? static_cast<HTMLOListElement*>(list) : 0;
     int valueStep = 1;
     if (oListElement && oListElement->isReversed())
@@ -464,14 +464,14 @@ void RenderListItem::explicitValueChanged()
 {
     if (m_marker)
         m_marker->setNeedsLayoutAndPrefWidthsRecalc();
-    Node* listNode = enclosingList(this);
+    Element* listNode = enclosingList(this);
     for (RenderListItem* item = this; item; item = nextListItem(listNode, item))
         item->updateValue();
 }
 
 void RenderListItem::setExplicitValue(int value)
 {
-    ASSERT(node());
+    ASSERT(element());
 
     if (m_hasExplicitValue && m_explicitValue == value)
         return;
@@ -483,7 +483,7 @@ void RenderListItem::setExplicitValue(int value)
 
 void RenderListItem::clearExplicitValue()
 {
-    ASSERT(node());
+    ASSERT(element());
 
     if (!m_hasExplicitValue)
         return;
@@ -492,14 +492,14 @@ void RenderListItem::clearExplicitValue()
     explicitValueChanged();
 }
 
-static RenderListItem* previousOrNextItem(bool isListReversed, Node* list, RenderListItem* item)
+static RenderListItem* previousOrNextItem(bool isListReversed, Element* list, RenderListItem* item)
 {
     return isListReversed ? previousListItem(list, item) : nextListItem(list, item);
 }
 
 void RenderListItem::updateListMarkerNumbers()
 {
-    Node* listNode = enclosingList(this);
+    Element* listNode = enclosingList(this);
     // The list node can be the shadow root which has no renderer.
     ASSERT(listNode);
     if (!listNode)

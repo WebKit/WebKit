@@ -78,24 +78,24 @@ void RenderTableCell::willBeRemovedFromTree()
 
 unsigned RenderTableCell::parseColSpanFromDOM() const
 {
-    ASSERT(node());
-    if (node()->hasTagName(tdTag) || node()->hasTagName(thTag))
-        return min<unsigned>(toHTMLTableCellElement(node())->colSpan(), maxColumnIndex);
+    ASSERT(element());
+    if (element()->hasTagName(tdTag) || element()->hasTagName(thTag))
+        return min<unsigned>(toHTMLTableCellElement(element())->colSpan(), maxColumnIndex);
 #if ENABLE(MATHML)
-    if (node()->hasTagName(MathMLNames::mtdTag))
-        return min<unsigned>(toMathMLElement(node())->colSpan(), maxColumnIndex);
+    if (element()->hasTagName(MathMLNames::mtdTag))
+        return min<unsigned>(toMathMLElement(element())->colSpan(), maxColumnIndex);
 #endif
     return 1;
 }
 
 unsigned RenderTableCell::parseRowSpanFromDOM() const
 {
-    ASSERT(node());
-    if (node()->hasTagName(tdTag) || node()->hasTagName(thTag))
-        return min<unsigned>(toHTMLTableCellElement(node())->rowSpan(), maxRowIndex);
+    ASSERT(element());
+    if (element()->hasTagName(tdTag) || element()->hasTagName(thTag))
+        return min<unsigned>(toHTMLTableCellElement(element())->rowSpan(), maxRowIndex);
 #if ENABLE(MATHML)
-    if (node()->hasTagName(MathMLNames::mtdTag))
-        return min<unsigned>(toMathMLElement(node())->rowSpan(), maxRowIndex);
+    if (element()->hasTagName(MathMLNames::mtdTag))
+        return min<unsigned>(toMathMLElement(element())->rowSpan(), maxRowIndex);
 #endif
     return 1;
 }
@@ -104,17 +104,17 @@ void RenderTableCell::updateColAndRowSpanFlags()
 {
     // The vast majority of table cells do not have a colspan or rowspan,
     // so we keep a bool to know if we need to bother reading from the DOM.
-    m_hasColSpan = node() && parseColSpanFromDOM() != 1;
-    m_hasRowSpan = node() && parseRowSpanFromDOM() != 1;
+    m_hasColSpan = element() && parseColSpanFromDOM() != 1;
+    m_hasRowSpan = element() && parseRowSpanFromDOM() != 1;
 }
 
 void RenderTableCell::colSpanOrRowSpanChanged()
 {
-    ASSERT(node());
+    ASSERT(element());
 #if ENABLE(MATHML)
-    ASSERT(node()->hasTagName(tdTag) || node()->hasTagName(thTag) || node()->hasTagName(MathMLNames::mtdTag));
+    ASSERT(element()->hasTagName(tdTag) || element()->hasTagName(thTag) || element()->hasTagName(MathMLNames::mtdTag));
 #else
-    ASSERT(node()->hasTagName(tdTag) || node()->hasTagName(thTag));
+    ASSERT(element()->hasTagName(tdTag) || element()->hasTagName(thTag));
 #endif
 
     updateColAndRowSpanFlags();
@@ -166,10 +166,10 @@ void RenderTableCell::computePreferredLogicalWidths()
     table()->recalcSectionsIfNeeded();
 
     RenderBlock::computePreferredLogicalWidths();
-    if (node() && style()->autoWrap()) {
+    if (element() && style()->autoWrap()) {
         // See if nowrap was set.
         Length w = styleOrColLogicalWidth();
-        String nowrap = toElement(node())->getAttribute(nowrapAttr);
+        String nowrap = element()->getAttribute(nowrapAttr);
         if (!nowrap.isNull() && w.isFixed())
             // Nowrap is set, but we didn't actually use it because of the
             // fixed width set on the cell.  Even so, it is a WinIE/Moz trait

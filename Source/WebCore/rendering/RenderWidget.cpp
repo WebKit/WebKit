@@ -140,7 +140,7 @@ static inline IntRect roundedIntRect(const LayoutRect& rect)
 
 bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
 {
-    if (!node())
+    if (!element())
         return false;
 
     IntRect clipRect = roundedIntRect(enclosingLayer()->childrenClipRect());
@@ -154,7 +154,7 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
     m_clipRect = clipRect;
 
     RenderWidgetProtector protector(this);
-    Ref<Node> protectNode(*node());
+    Ref<Element> protectNode(*element());
     m_widget->setFrameRect(newFrame);
 
     if (clipChanged && !boundsChanged)
@@ -342,7 +342,7 @@ void RenderWidget::deref(RenderArena *arena)
 
 void RenderWidget::updateWidgetPosition()
 {
-    if (!m_widget || !node()) // Check the node in case destroy() has been called.
+    if (!m_widget || !element()) // Check the node in case destroy() has been called.
         return;
 
     bool boundsChanged = updateWidgetGeometry();
@@ -397,7 +397,7 @@ bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     bool inside = RenderReplaced::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, action);
 
     // Check to see if we are really over the widget itself (and not just in the border/padding area).
-    if ((inside || result.isRectBasedTest()) && !hadResult && result.innerNode() == node())
+    if ((inside || result.isRectBasedTest()) && !hadResult && result.innerNode() == element())
         result.setIsOverWidget(contentBoxRect().contains(result.localPoint()));
     return inside;
 }

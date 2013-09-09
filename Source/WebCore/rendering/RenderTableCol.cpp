@@ -59,9 +59,9 @@ void RenderTableCol::styleDidChange(StyleDifference diff, const RenderStyle* old
 void RenderTableCol::updateFromElement()
 {
     unsigned oldSpan = m_span;
-    Node* n = node();
-    if (n && (n->hasTagName(colTag) || n->hasTagName(colgroupTag))) {
-        HTMLTableColElement* tc = static_cast<HTMLTableColElement*>(n);
+    Element* element = this->element();
+    if (element && (element->hasTagName(colTag) || element->hasTagName(colgroupTag))) {
+        HTMLTableColElement* tc = static_cast<HTMLTableColElement*>(element);
         m_span = tc->span();
     } else
         m_span = !(style() && style()->display() == TABLE_COLUMN_GROUP);

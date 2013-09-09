@@ -2045,10 +2045,10 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(RenderObject* o, const PaintI
     // from our node. Assuming this node is the plugin overlay element, we should get to the
     // plugin itself by asking for the shadow root parent, and then its parent.
 
-    if (!renderBlock->node()->isHTMLElement())
+    if (!renderBlock->element()->isHTMLElement())
         return true;
 
-    HTMLElement* plugInOverlay = toHTMLElement(renderBlock->node());
+    HTMLElement* plugInOverlay = toHTMLElement(renderBlock->element());
     Element* parent = plugInOverlay->parentOrShadowHostElement();
     while (parent && !parent->isPluginElement())
         parent = parent->parentOrShadowHostElement();

@@ -221,10 +221,8 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
         m_hasVisibleContent = renderer().style()->visibility() == VISIBLE;
     }
 
-    Node* node = renderer().node();
-    if (node && node->isElementNode()) {
+    if (Element* element = renderer().element()) {
         // We save and restore only the scrollOffset as the other scroll values are recalculated.
-        Element* element = toElement(node);
         m_scrollOffset = element->savedLayerScrollOffset();
         if (!m_scrollOffset.isZero())
             scrollAnimator()->setCurrentPosition(FloatPoint(m_scrollOffset.width(), m_scrollOffset.height()));
@@ -240,9 +238,8 @@ RenderLayer::~RenderLayer()
     renderer().view().frameView().removeScrollableArea(this);
 
     if (!renderer().documentBeingDestroyed()) {
-        Node* node = renderer().node();
-        if (node && node->isElementNode())
-            toElement(node)->setSavedLayerScrollOffset(m_scrollOffset);
+        if (Element* element = renderer().element())
+            element->setSavedLayerScrollOffset(m_scrollOffset);
     }
 
     destroyScrollbar(HorizontalScrollbar);
@@ -278,7 +275,7 @@ String RenderLayer::name() const
     StringBuilder name;
     name.append(renderer().renderName());
 
-    if (Element* element = renderer().node() && renderer().node()->isElementNode() ? toElement(renderer().node()) : 0) {
+    if (Element* element = renderer().element()) {
         name.append(' ');
         name.append(element->tagName());
 
@@ -1579,7 +1576,7 @@ bool RenderLayer::cannotBlitToWindow() const
 bool RenderLayer::isTransparent() const
 {
 #if ENABLE(SVG)
-    if (renderer().node() && renderer().node()->namespaceURI() == SVGNames::svgNamespaceURI)
+    if (renderer().element() && renderer().element()->namespaceURI() == SVGNames::svgNamespaceURI)
         return false;
 #endif
     return renderer().isTransparent() || renderer().hasMask();
@@ -2262,8 +2259,8 @@ void RenderLayer::scrollTo(int x, int y)
         renderer().repaintUsingContainer(repaintContainer, pixelSnappedIntRect(m_repaintRect));
 
     // Schedule the scroll DOM event.
-    if (Node* node = renderer().node())
-        node->document().eventQueue().enqueueOrDispatchScrollEvent(*node);
+    if (Node* element = renderer().element())
+        element->document().eventQueue().enqueueOrDispatchScrollEvent(*element);
 
     InspectorInstrumentation::didScrollLayer(&frame);
     if (scrollsOverflow())
@@ -2482,11 +2479,12 @@ bool RenderLayer::canResize() const
 void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOffset)
 {
     // FIXME: This should be possible on generated content but is not right now.
-    if (!inResizeMode() || !canResize() || !renderer().node())
+    if (!inResizeMode() || !canResize() || !renderer().element())
         return;
 
-    ASSERT(renderer().node()->isElementNode());
-    Element* element = toElement(renderer().node());
+    // FIXME: The only case where renderer->element()->renderer() != renderer is with continuations. Do they matter here?
+    // If they do it would still be better to deal with them explicitly.
+    Element* element = renderer().element();
     RenderBox* renderer = toRenderBox(element->renderer());
 
     Document& document = element->document();
@@ -6480,7 +6478,7 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
 
 void RenderLayer::filterNeedsRepaint()
 {
-    renderer().node()->setNeedsStyleRecalc(SyntheticStyleChange);
+    renderer().element()->setNeedsStyleRecalc(SyntheticStyleChange);
     renderer().repaint();
 }
 

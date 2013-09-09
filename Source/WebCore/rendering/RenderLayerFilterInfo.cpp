@@ -102,7 +102,7 @@ void RenderLayer::FilterInfo::setRenderer(PassRefPtr<FilterEffectRenderer> rende
 
 void RenderLayer::FilterInfo::notifyFinished(CachedResource*)
 {
-    m_layer.renderer().node()->setNeedsStyleRecalc(SyntheticStyleChange);
+    m_layer.renderer().element()->setNeedsStyleRecalc(SyntheticStyleChange);
     m_layer.renderer().repaint();
 }
 
@@ -124,7 +124,7 @@ void RenderLayer::FilterInfo::updateReferenceFilterClients(const FilterOperation
         } else {
             // Reference is internal; add layer as a client so we can trigger
             // filter repaint on SVG attribute change.
-            Element* filter = m_layer.renderer().node()->document().getElementById(referenceFilterOperation->fragment());
+            Element* filter = m_layer.renderer().element()->document().getElementById(referenceFilterOperation->fragment());
             if (!filter || !filter->renderer() || !filter->renderer()->isSVGResourceFilter())
                 continue;
             filter->renderer()->toRenderSVGResourceContainer()->addClientRenderLayer(&m_layer);
@@ -153,7 +153,7 @@ void RenderLayer::FilterInfo::removeReferenceFilterClients()
 
 void RenderLayer::FilterInfo::notifyCustomFilterProgramLoaded(CustomFilterProgram*)
 {
-    m_layer.renderer().node()->setNeedsStyleRecalc(SyntheticStyleChange);
+    m_layer.renderer().element()->setNeedsStyleRecalc(SyntheticStyleChange);
     m_layer.renderer().repaint();
 }
 

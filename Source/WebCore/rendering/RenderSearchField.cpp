@@ -199,7 +199,7 @@ EVisibility RenderSearchField::visibilityForCancelButton() const
 
 const AtomicString& RenderSearchField::autosaveName() const
 {
-    return toElement(node())->getAttribute(autosaveAttr);
+    return element()->getAttribute(autosaveAttr);
 }
 
 // PopupMenuClient methods
@@ -357,7 +357,7 @@ PassRefPtr<Scrollbar> RenderSearchField::createScrollbar(ScrollableArea* scrolla
     RefPtr<Scrollbar> widget;
     bool hasCustomScrollbarStyle = style()->hasPseudoStyle(SCROLLBAR);
     if (hasCustomScrollbarStyle)
-        widget = RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, this->node());
+        widget = RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, element());
     else
         widget = Scrollbar::createNativeScrollbar(scrollableArea, orientation, controlSize);
     return widget.release();

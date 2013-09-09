@@ -1,5 +1,250 @@
 2013-09-09  Antti Koivisto  <antti@apple.com>
 
+        Hide node() below RenderLayerModelObject, use element() instead
+        https://bugs.webkit.org/show_bug.cgi?id=121038
+
+        Reviewed by Dave Hyatt.
+
+        Switch all call sites to element(). Remove now unnecessary casts, type checks and dead code.
+        Make constructors below RenderLayerModelObject take an Element instead of a ContainerNode.
+        
+        This also removes a branch from many hasTagName() and isFooElement() calls.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::startOfContinuations):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::titleUIElement):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObjectForSection):
+        * editing/markup.cpp:
+        (WebCore::highestAncestorToWrapMarkup):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::cellAbove):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderThumb::updateAppearance):
+        (WebCore::RenderSliderContainer::computeLogicalHeight):
+        (WebCore::RenderSliderContainer::layout):
+        * page/Frame.cpp:
+        (WebCore::Frame::frameForWidget):
+        * rendering/RenderBlock.cpp:
+        (WebCore::OverflowEventDispatcher::~OverflowEventDispatcher):
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::clone):
+        (WebCore::RenderBlock::createReplacementRunIn):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::isSelectionRoot):
+        (WebCore::RenderBlock::nodeForHitTest):
+        (WebCore::RenderBlock::hasLineIfEmpty):
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::RenderBlockFlow):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::addOverflowFromInlineChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::RenderBox):
+        (WebCore::RenderBox::updateFromStyle):
+        (WebCore::RenderBox::scroll):
+        (WebCore::RenderBox::logicalScroll):
+        (WebCore::RenderBox::canBeProgramaticallyScrolled):
+        (WebCore::RenderBox::nodeAtPoint):
+        (WebCore::RenderBox::paintCustomHighlight):
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        (WebCore::RenderBox::sizesLogicalWidthToFitContent):
+        (WebCore::RenderBox::localCaretRect):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::RenderBoxModelObject):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::updateFromElement):
+        (WebCore::RenderButton::canHaveGeneratedChildren):
+        * rendering/RenderButton.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintContents):
+        (WebCore::RenderEmbeddedObject::isReplacementObscured):
+        (WebCore::RenderEmbeddedObject::layout):
+        (WebCore::RenderEmbeddedObject::viewCleared):
+        (WebCore::RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::updateFromElement):
+        (WebCore::RenderFileUploadControl::maxFilenameWidth):
+        (WebCore::RenderFileUploadControl::paintObject):
+        (WebCore::RenderFileUploadControl::computeIntrinsicLogicalWidths):
+        (WebCore::RenderFileUploadControl::uploadButton):
+        (WebCore::RenderFileUploadControl::fileTextValue):
+        * rendering/RenderFrame.cpp:
+        (WebCore::RenderFrame::edgeInfo):
+        (WebCore::RenderFrame::viewCleared):
+        * rendering/RenderFrameBase.cpp:
+        (WebCore::RenderFrameBase::layoutWithFlattening):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::frameSet):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::requiresLayer):
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        (WebCore::RenderHTMLCanvas::canvasSizeChanged):
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::isSeamless):
+        (WebCore::RenderIFrame::flattenFrame):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+        (WebCore::RenderImage::areaElementFocusChanged):
+        (WebCore::RenderImage::paintIntoRect):
+        (WebCore::RenderImage::imageMap):
+        (WebCore::RenderImage::nodeAtPoint):
+        (WebCore::RenderImage::updateAltText):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clone):
+        (WebCore::RenderInline::hitTestCulledInline):
+        (WebCore::RenderInline::updateHitTestResult):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::name):
+        (WebCore::RenderLayer::isTransparent):
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::resize):
+        (WebCore::RenderLayer::filterNeedsRepaint):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameContentsCompositor):
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayer::FilterInfo::notifyFinished):
+        (WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients):
+        (WebCore::RenderLayer::FilterInfo::notifyCustomFilterProgramLoaded):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::RenderLayerModelObject):
+        * rendering/RenderLayerModelObject.h:
+        (WebCore::RenderLayerModelObject::element):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::selectElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        (WebCore::RenderListBox::scrollTo):
+        (WebCore::RenderListBox::createScrollbar):
+        * rendering/RenderListItem.cpp:
+        (WebCore::isList):
+        (WebCore::enclosingList):
+        (WebCore::nextListItem):
+        (WebCore::previousListItem):
+        (WebCore::RenderListItem::calcValue):
+        (WebCore::RenderListItem::explicitValueChanged):
+        (WebCore::RenderListItem::setExplicitValue):
+        (WebCore::RenderListItem::clearExplicitValue):
+        (WebCore::previousOrNextItem):
+        (WebCore::RenderListItem::updateListMarkerNumbers):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::marqueeSpeed):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::mediaElement):
+        * rendering/RenderMediaControlElements.cpp:
+        (WebCore::RenderMediaControlTimelineContainer::layout):
+        (WebCore::RenderTextTrackContainerElement::layout):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::selectElement):
+        (WebCore::RenderMenuList::valueChanged):
+        (WebCore::RenderMenuList::createScrollbar):
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::meterElement):
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::requiresAcceleratedCompositing):
+        (WebCore::RenderPart::embeddedContentBox):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::progressElement):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint):
+        (WebCore::RenderReplaced::isSelected):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::autosaveName):
+        (WebCore::RenderSearchField::createScrollbar):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::layout):
+        (WebCore::RenderSlider::inDragMode):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::plugInImageElement):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::convertStyleLogicalWidthToComputedWidth):
+        (WebCore::RenderTable::convertStyleLogicalHeightToComputedHeight):
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::parseColSpanFromDOM):
+        (WebCore::RenderTableCell::parseRowSpanFromDOM):
+        (WebCore::RenderTableCell::updateColAndRowSpanFlags):
+        (WebCore::RenderTableCell::colSpanOrRowSpanChanged):
+        (WebCore::RenderTableCell::computePreferredLogicalWidths):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::updateFromElement):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::textFormControlElement):
+        (WebCore::RenderTextControl::adjustInnerTextStyle):
+        (WebCore::RenderTextControl::updateFromElement):
+        (WebCore::RenderTextControl::layoutSpecialExcludedChild):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::~RenderTextControlMultiLine):
+        (WebCore::RenderTextControlMultiLine::nodeAtPoint):
+        (WebCore::RenderTextControlMultiLine::preferredContentLogicalWidth):
+        (WebCore::RenderTextControlMultiLine::computeControlLogicalHeight):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        (WebCore::RenderTextControlSingleLine::capsLockStateMayHaveChanged):
+        (WebCore::RenderTextControlSingleLine::textShouldBeTruncated):
+        (WebCore::RenderTextControlSingleLine::inputElement):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSnapshottedPluginOverlay):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderRegionList):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updateIntrinsicSize):
+        (WebCore::RenderVideo::videoElement):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry):
+        (WebCore::RenderWidget::updateWidgetPosition):
+        (WebCore::RenderWidget::nodeAtPoint):
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::updateFromElement):
+        (WebCore::RenderMathMLFenced::createMathMLOperator):
+        (WebCore::RenderMathMLFenced::styleDidChange):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::updateFromElement):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::updateFromElement):
+        (WebCore::RenderMathMLOperator::createGlyph):
+        * rendering/mathml/RenderMathMLSpace.cpp:
+        (WebCore::RenderMathMLSpace::updateFromElement):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::layout):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeIntrinsicRatioInformation):
+        (WebCore::RenderSVGRoot::isEmbeddedThroughSVGImage):
+        (WebCore::RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight):
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::paintReplaced):
+        (WebCore::RenderSVGRoot::buildLocalToBorderBoxTransform):
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        (WebCore::RenderSVGRoot::hasRelativeDimensions):
+        (WebCore::RenderSVGRoot::hasRelativeIntrinsicLogicalWidth):
+        (WebCore::RenderSVGRoot::hasRelativeLogicalHeight):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        (WebCore::RenderSVGText::strokeBoundingBox):
+        * rendering/svg/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::layoutPath):
+        (WebCore::RenderSVGTextPath::startOffset):
+        (WebCore::RenderSVGTextPath::exactAlignment):
+        (WebCore::RenderSVGTextPath::stretchMethod):
+
+2013-09-09  Antti Koivisto  <antti@apple.com>
+
         Make RenderView anonymous
         https://bugs.webkit.org/show_bug.cgi?id=121013
 

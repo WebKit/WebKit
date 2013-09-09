@@ -111,12 +111,11 @@ bool AccessibilityTable::isDataTable() const
     // between a "layout" table and a "data" table.
     
     RenderTable* table = toRenderTable(m_renderer);
-    Node* tableNode = table->node();
-    if (!tableNode || !isHTMLTableElement(tableNode))
+    if (!table->element() || !isHTMLTableElement(table->element()))
         return false;
 
     // if there is a caption element, summary, THEAD, or TFOOT section, it's most certainly a data table
-    HTMLTableElement* tableElement = toHTMLTableElement(tableNode);
+    HTMLTableElement* tableElement = toHTMLTableElement(table->element());
     if (!tableElement->summary().isEmpty() || tableElement->tHead() || tableElement->tFoot() || tableElement->caption())
         return true;
     
@@ -178,8 +177,7 @@ bool AccessibilityTable::isDataTable() const
             RenderTableCell* cell = firstBody->primaryCellAt(row, col);
             if (!cell)
                 continue;
-            Node* cellNode = cell->node();
-            if (!cellNode)
+            if (!cell->element())
                 continue;
             
             if (cell->width() < 1 || cell->height() < 1)
@@ -187,7 +185,7 @@ bool AccessibilityTable::isDataTable() const
             
             validCellCount++;
             
-            HTMLTableCellElement* cellElement = static_cast<HTMLTableCellElement*>(cellNode);
+            HTMLTableCellElement* cellElement = static_cast<HTMLTableCellElement*>(cell->element());
             
             bool isTHCell = cellElement->hasTagName(thTag);
             // If the first row is comprised of all <th> tags, assume it is a data table.

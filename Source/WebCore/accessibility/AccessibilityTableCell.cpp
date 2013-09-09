@@ -174,8 +174,7 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
     if (!headerCell || headerCell == renderCell)
         return 0;
 
-    Node* cellElement = headerCell->node();
-    if (!cellElement || !cellElement->hasTagName(thTag))
+    if (!headerCell->element() || !headerCell->element()->hasTagName(thTag))
         return 0;
     
     return axObjectCache()->getOrCreate(headerCell);

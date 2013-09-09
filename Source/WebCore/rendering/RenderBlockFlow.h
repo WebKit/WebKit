@@ -29,7 +29,7 @@ namespace WebCore {
 
 class RenderBlockFlow : public RenderBlock {
 public:
-    explicit RenderBlockFlow(ContainerNode*);
+    explicit RenderBlockFlow(Element*);
     virtual ~RenderBlockFlow();
     
     virtual bool isRenderBlockFlow() const OVERRIDE FINAL { return true; }

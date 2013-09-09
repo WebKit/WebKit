@@ -354,7 +354,7 @@ void RenderSVGText::layout()
 
     bool updateCachedBoundariesInParents = false;
     if (m_needsTransformUpdate) {
-        SVGTextElement* text = static_cast<SVGTextElement*>(node());
+        SVGTextElement* text = static_cast<SVGTextElement*>(element());
         m_localTransform = text->animatedLocalTransform();
         m_needsTransformUpdate = false;
         updateCachedBoundariesInParents = true;
@@ -512,9 +512,9 @@ FloatRect RenderSVGText::strokeBoundingBox() const
     if (!svgStyle->hasStroke())
         return strokeBoundaries;
 
-    ASSERT(node());
-    ASSERT(node()->isSVGElement());
-    SVGLengthContext lengthContext(toSVGElement(node()));
+    ASSERT(element());
+    ASSERT(element()->isSVGElement());
+    SVGLengthContext lengthContext(toSVGElement(element()));
     strokeBoundaries.inflate(svgStyle->strokeWidth().value(lengthContext));
     return strokeBoundaries;
 }

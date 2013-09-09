@@ -505,7 +505,7 @@ VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point)
     if (blockDirectionPosition >= bottom)
         return createVisiblePosition(caretMaxOffset(), DOWNSTREAM); // coordinates are below
     
-    if (node()) {
+    if (element()) {
         if (lineDirectionPosition <= logicalLeft() + (logicalWidth() / 2))
             return createVisiblePosition(0, DOWNSTREAM);
         return createVisiblePosition(1, DOWNSTREAM);
@@ -568,7 +568,7 @@ bool RenderReplaced::isSelected() const
     if (s == SelectionStart)
         return selectionStart == 0;
         
-    int end = node()->hasChildNodes() ? node()->childNodeCount() : 1;
+    int end = element()->hasChildNodes() ? element()->childNodeCount() : 1;
     if (s == SelectionEnd)
         return selectionEnd == end;
     if (s == SelectionBoth)

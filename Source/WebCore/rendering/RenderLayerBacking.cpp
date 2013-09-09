@@ -313,7 +313,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 
 #if PLATFORM(MAC) && USE(CA)
     if (!compositor().acceleratedDrawingEnabled() && renderer().isCanvas()) {
-        const HTMLCanvasElement* canvas = toHTMLCanvasElement(renderer().node());
+        const HTMLCanvasElement* canvas = toHTMLCanvasElement(renderer().element());
         if (canvas->shouldAccelerate(canvas->size()))
             m_graphicsLayer->setAcceleratesDrawing(true);
     }
@@ -556,13 +556,13 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     }
 #if ENABLE(VIDEO)
     else if (renderer().isVideo()) {
-        HTMLMediaElement* mediaElement = toHTMLMediaElement(renderer().node());
+        HTMLMediaElement* mediaElement = toHTMLMediaElement(renderer().element());
         m_graphicsLayer->setContentsToMedia(mediaElement->platformLayer());
     }
 #endif
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
     else if (isAcceleratedCanvas(&renderer())) {
-        const HTMLCanvasElement* canvas = toHTMLCanvasElement(renderer().node());
+        const HTMLCanvasElement* canvas = toHTMLCanvasElement(renderer().element());
         if (CanvasRenderingContext* context = canvas->renderingContext())
             m_graphicsLayer->setContentsToCanvas(context->platformLayer());
         layerConfigChanged = true;

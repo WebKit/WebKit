@@ -61,7 +61,7 @@ class StickyPositionViewportConstraints;
 
 class RenderBoxModelObject : public RenderLayerModelObject {
 public:
-    RenderBoxModelObject(ContainerNode*);
+    RenderBoxModelObject(Element*);
     virtual ~RenderBoxModelObject();
     
     LayoutSize relativePositionOffset() const;

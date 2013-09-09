@@ -112,7 +112,7 @@ void RenderSliderThumb::updateAppearance(RenderStyle* parentStyle)
     else if (parentStyle->appearance() == MediaFullScreenVolumeSliderPart)
         style()->setAppearance(MediaFullScreenVolumeSliderThumbPart);
     if (style()->hasAppearance())
-        theme()->adjustSliderThumbSize(style(), toElement(node()));
+        theme()->adjustSliderThumbSize(style(), element());
 }
 
 bool RenderSliderThumb::isSliderThumb() const
@@ -137,7 +137,7 @@ private:
 
 void RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
-    HTMLInputElement* input = node()->shadowHost()->toInputElement();
+    HTMLInputElement* input = element()->shadowHost()->toInputElement();
     bool isVertical = hasVerticalAppearance(input);
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -165,7 +165,7 @@ void RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, Layou
 
 void RenderSliderContainer::layout()
 {
-    HTMLInputElement* input = node()->shadowHost()->toInputElement();
+    HTMLInputElement* input = element()->shadowHost()->toInputElement();
     bool isVertical = hasVerticalAppearance(input);
     style()->setFlexDirection(isVertical ? FlowColumn : FlowRow);
     TextDirection oldTextDirection = style()->direction();

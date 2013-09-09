@@ -148,7 +148,7 @@ public:
         bool horizontalLayoutOverflowChanged = hasHorizontalLayoutOverflow != m_hadHorizontalLayoutOverflow;
         bool verticalLayoutOverflowChanged = hasVerticalLayoutOverflow != m_hadVerticalLayoutOverflow;
         if (horizontalLayoutOverflowChanged || verticalLayoutOverflowChanged)
-            m_block->view().frameView().scheduleEvent(OverflowEvent::create(horizontalLayoutOverflowChanged, hasHorizontalLayoutOverflow, verticalLayoutOverflowChanged, hasVerticalLayoutOverflow), m_block->node());
+            m_block->view().frameView().scheduleEvent(OverflowEvent::create(horizontalLayoutOverflowChanged, hasHorizontalLayoutOverflow, verticalLayoutOverflowChanged, hasVerticalLayoutOverflow), m_block->element());
     }
 
 private:
@@ -193,8 +193,8 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, LayoutUnit beforeBorderP
 
 // -------------------------------------------------------------------------------------------------------
 
-RenderBlock::RenderBlock(ContainerNode* node)
-    : RenderBox(node)
+RenderBlock::RenderBlock(Element* element)
+    : RenderBox(element)
     , m_lineHeight(-1)
     , m_hasMarginBeforeQuirk(false)
     , m_hasMarginAfterQuirk(false)
@@ -572,7 +572,7 @@ RenderBlock* RenderBlock::clone() const
         cloneBlock->setChildrenInline(childrenInline());
     }
     else {
-        RenderObject* cloneRenderer = toElement(node())->createRenderer(renderArena(), style());
+        RenderObject* cloneRenderer = element()->createRenderer(renderArena(), style());
         cloneBlock = toRenderBlock(cloneRenderer);
         cloneBlock->setStyle(style());
 
@@ -2014,15 +2014,15 @@ void RenderBlock::placeRunInIfNeeded(RenderObject* newChild)
 RenderBoxModelObject* RenderBlock::createReplacementRunIn(RenderBoxModelObject* runIn)
 {
     ASSERT(runIn->isRunIn());
-    ASSERT(runIn->node());
+    ASSERT(runIn->element());
 
     RenderBoxModelObject* newRunIn = 0;
     if (!runIn->isRenderBlock())
-        newRunIn = new (renderArena()) RenderBlock(runIn->node());
+        newRunIn = new (renderArena()) RenderBlock(runIn->element());
     else
-        newRunIn = new (renderArena()) RenderInline(toElement(runIn->node()));
+        newRunIn = new (renderArena()) RenderInline(runIn->element());
 
-    runIn->node()->setRenderer(newRunIn);
+    runIn->element()->setRenderer(newRunIn);
     newRunIn->setStyle(runIn->style());
 
     runIn->moveAllChildrenTo(newRunIn, true);
@@ -3386,7 +3386,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseChildOutlines)) {
         RenderInline* inlineCont = inlineElementContinuation();
         if (inlineCont && inlineCont->hasOutline() && inlineCont->style()->visibility() == VISIBLE) {
-            RenderInline* inlineRenderer = toRenderInline(inlineCont->node()->renderer());
+            RenderInline* inlineRenderer = toRenderInline(inlineCont->element()->renderer());
             RenderBlock* cb = containingBlock();
 
             bool inlineEnclosedInSelfPaintingLayer = false;
@@ -3545,7 +3545,7 @@ bool RenderBlock::isSelectionRoot() const
 {
     if (isPseudoElement())
         return false;
-    ASSERT(node() || isAnonymous());
+    ASSERT(element() || isAnonymous());
         
     // FIXME: Eventually tables should have to learn how to fill gaps between cells, at least in simple non-spanning cases.
     if (isTable())
@@ -3560,7 +3560,7 @@ bool RenderBlock::isSelectionRoot() const
     
     if (view().selectionStart()) {
         Node* startElement = view().selectionStart()->node();
-        if (startElement && startElement->rootEditableElement() == node())
+        if (startElement && startElement->rootEditableElement() == element())
             return true;
     }
     
@@ -5167,7 +5167,7 @@ Node* RenderBlock::nodeForHitTest() const
     // that was split. Use the appropriate inner node.
     if (isRenderView())
         return &document();
-    return isAnonymousBlockContinuation() ? continuation()->node() : node();
+    return isAnonymousBlockContinuation() ? continuation()->element() : element();
 }
 
 bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
@@ -6648,13 +6648,10 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
 
 bool RenderBlock::hasLineIfEmpty() const
 {
-    if (!node())
+    if (!element())
         return false;
     
-    if (node()->isRootEditableElement())
-        return true;
-    
-    if (node()->isShadowRoot() && isHTMLInputElement(toShadowRoot(node())->hostElement()))
+    if (element()->isRootEditableElement())
         return true;
     
     return false;
@@ -7480,7 +7477,7 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& a
         // FIXME: This is wrong. The principal renderer may not be the continuation preceding this block.
         // FIXME: This is wrong for block-flows that are horizontal.
         // https://bugs.webkit.org/show_bug.cgi?id=46781
-        bool prevInlineHasLineBox = toRenderInline(inlineElementContinuation()->node()->renderer())->firstLineBox();
+        bool prevInlineHasLineBox = toRenderInline(inlineElementContinuation()->element()->renderer())->firstLineBox();
         float topMargin = prevInlineHasLineBox ? collapsedMarginBefore() : LayoutUnit();
         float bottomMargin = nextInlineHasLineBox ? collapsedMarginAfter() : LayoutUnit();
         LayoutRect rect(additionalOffset.x(), additionalOffset.y() - topMargin, width(), height() + topMargin + bottomMargin);

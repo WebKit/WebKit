@@ -26,8 +26,8 @@
 
 namespace WebCore {
 
-RenderBlockFlow::RenderBlockFlow(ContainerNode* node)
-    : RenderBlock(node)
+RenderBlockFlow::RenderBlockFlow(Element* element)
+    : RenderBlock(element)
 {
 }
 

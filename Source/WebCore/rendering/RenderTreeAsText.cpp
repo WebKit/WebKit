@@ -670,7 +670,7 @@ static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, 
         writeIndent(ts, indent + 2);
         ts << "RenderRegion";
         if (renderRegion->generatingElement()) {
-            String tagName = getTagName(renderRegion->node());
+            String tagName = getTagName(renderRegion->element());
             if (!tagName.isEmpty())
                 ts << " {" << tagName << "}";
             if (renderRegion->generatingElement()->hasID())

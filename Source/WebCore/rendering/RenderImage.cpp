@@ -183,10 +183,10 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     // Set image dimensions, taking into account the size of the alt text.
     if (m_imageResource->errorOccurred()) {
         if (!m_altText.isEmpty() && document().hasPendingStyleRecalc()) {
-            ASSERT(node());
-            if (node()) {
+            ASSERT(element());
+            if (element()) {
                 m_needsToSetSizeForAltText = true;
-                node()->setNeedsStyleRecalc(SyntheticStyleChange);
+                element()->setNeedsStyleRecalc(SyntheticStyleChange);
             }
             return;
         }
@@ -458,7 +458,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
         return;
 
     HTMLAreaElement* areaElement = toHTMLAreaElement(focusedElement);
-    if (areaElement->imageElement() != node())
+    if (areaElement->imageElement() != element())
         return;
 
     // Even if the theme handles focus ring drawing for entire elements, it won't do it for
@@ -482,7 +482,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
 
 void RenderImage::areaElementFocusChanged(HTMLAreaElement* element)
 {
-    ASSERT_UNUSED(element, element->imageElement() == node());
+    ASSERT_UNUSED(element, element->imageElement() == this->element());
 
     // It would be more efficient to only repaint the focus ring rectangle
     // for the passed-in area element. That would require adding functions
@@ -500,7 +500,7 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const LayoutRect& rect
     if (!img || img->isNull())
         return;
 
-    HTMLImageElement* imageElt = (node() && isHTMLImageElement(node())) ? toHTMLImageElement(node()) : 0;
+    HTMLImageElement* imageElt = (element() && isHTMLImageElement(element())) ? toHTMLImageElement(element()) : 0;
     CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
     Image* image = m_imageResource->image().get();
     bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, alignedRect.size());
@@ -562,7 +562,7 @@ LayoutUnit RenderImage::minimumReplacedHeight() const
 
 HTMLMapElement* RenderImage::imageMap() const
 {
-    HTMLImageElement* i = node() && isHTMLImageElement(node()) ? toHTMLImageElement(node()) : 0;
+    HTMLImageElement* i = element() && isHTMLImageElement(element()) ? toHTMLImageElement(element()) : 0;
     return i ? i->treeScope()->getImageMap(i->fastGetAttribute(usemapAttr)) : 0;
 }
 
@@ -571,7 +571,7 @@ bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     HitTestResult tempResult(result.hitTestLocation());
     bool inside = RenderReplaced::nodeAtPoint(request, tempResult, locationInContainer, accumulatedOffset, hitTestAction);
 
-    if (tempResult.innerNode() && node()) {
+    if (tempResult.innerNode() && element()) {
         if (HTMLMapElement* map = imageMap()) {
             LayoutRect contentBox = contentBoxRect();
             float scaleFactor = 1 / style()->effectiveZoom();
@@ -579,7 +579,7 @@ bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
             mapLocation.scale(scaleFactor, scaleFactor);
 
             if (map->mapMouseEvent(mapLocation, contentBox.size(), tempResult))
-                tempResult.setInnerNonSharedNode(node());
+                tempResult.setInnerNonSharedNode(element());
         }
     }
 
@@ -592,13 +592,13 @@ bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
 void RenderImage::updateAltText()
 {
-    if (!node())
+    if (!element())
         return;
 
-    if (isHTMLInputElement(node()))
-        m_altText = toHTMLInputElement(node())->altText();
-    else if (isHTMLImageElement(node()))
-        m_altText = toHTMLImageElement(node())->altText();
+    if (isHTMLInputElement(element()))
+        m_altText = toHTMLInputElement(element())->altText();
+    else if (isHTMLImageElement(element()))
+        m_altText = toHTMLImageElement(element())->altText();
 }
 
 void RenderImage::layout()

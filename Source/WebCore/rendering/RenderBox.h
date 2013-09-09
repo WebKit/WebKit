@@ -44,7 +44,7 @@ enum ShouldComputePreferred { ComputeActual, ComputePreferred };
 
 class RenderBox : public RenderBoxModelObject {
 public:
-    explicit RenderBox(ContainerNode*);
+    explicit RenderBox(Element*);
     virtual ~RenderBox();
 
     // hasAutoZIndex only returns true if the element is positioned or a flex-item since

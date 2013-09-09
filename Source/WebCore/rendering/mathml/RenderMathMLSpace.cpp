@@ -52,7 +52,7 @@ void RenderMathMLSpace::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
 
 void RenderMathMLSpace::updateFromElement()
 {
-    Element* space = toElement(node());
+    Element* space = element();
 
     // This parses the mspace attributes, using 0 as the default values.
     m_width = 0;

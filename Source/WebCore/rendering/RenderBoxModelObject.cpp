@@ -159,8 +159,8 @@ bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext* context, Ima
     return view().imageQualityController().shouldPaintAtLowQuality(context, this, image, layer, size);
 }
 
-RenderBoxModelObject::RenderBoxModelObject(ContainerNode* node)
-    : RenderLayerModelObject(node)
+RenderBoxModelObject::RenderBoxModelObject(Element* element)
+    : RenderLayerModelObject(element)
 {
 }
 

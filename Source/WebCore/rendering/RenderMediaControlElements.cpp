@@ -73,7 +73,7 @@ void RenderMediaControlTimelineContainer::layout()
     RenderFlexibleBox::layout();
 
     LayoutStateDisabler layoutStateDisabler(&view());
-    MediaControlTimelineContainerElement* container = static_cast<MediaControlTimelineContainerElement*>(node());
+    MediaControlTimelineContainerElement* container = static_cast<MediaControlTimelineContainerElement*>(element());
     container->setTimeDisplaysHidden(width().toInt() < minWidthToDisplayTimeDisplays);
 }
 
@@ -92,10 +92,10 @@ void RenderTextTrackContainerElement::layout()
     if (style()->display() == NONE)
         return;
 
-    ASSERT(mediaControlElementType(node()) == MediaTextTrackDisplayContainer);
+    ASSERT(mediaControlElementType(element()) == MediaTextTrackDisplayContainer);
 
     LayoutStateDisabler layoutStateDisabler(&view());
-    static_cast<MediaControlTextTrackContainerElement*>(node())->updateSizes();
+    static_cast<MediaControlTextTrackContainerElement*>(element())->updateSizes();
 }
 
 #endif // ENABLE(VIDEO_TRACK)

@@ -265,7 +265,7 @@ static inline RenderInline* startOfContinuations(RenderObject* r)
 
     // Blocks with a previous continuation always have a next continuation
     if (r->isRenderBlock() && toRenderBlock(r)->inlineElementContinuation())
-        return toRenderInline(toRenderBlock(r)->inlineElementContinuation()->node()->renderer());
+        return toRenderInline(toRenderBlock(r)->inlineElementContinuation()->element()->renderer());
 
     return 0;
 }

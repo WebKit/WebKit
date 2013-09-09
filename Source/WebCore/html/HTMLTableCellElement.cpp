@@ -179,7 +179,7 @@ HTMLTableCellElement* HTMLTableCellElement::cellAbove() const
     if (!cellAboveRenderer)
         return 0;
 
-    return static_cast<HTMLTableCellElement*>(cellAboveRenderer->node());
+    return static_cast<HTMLTableCellElement*>(cellAboveRenderer->element());
 }
 
 #ifndef NDEBUG

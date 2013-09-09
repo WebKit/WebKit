@@ -320,7 +320,7 @@ LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const Length& st
 
     // HTML tables' width styles already include borders and paddings, but CSS tables' width styles do not.
     LayoutUnit borders = 0;
-    bool isCSSTable = !node() || !isHTMLTableElement(node());
+    bool isCSSTable = !element() || !isHTMLTableElement(element());
     if (isCSSTable && styleLogicalWidth.isSpecified() && styleLogicalWidth.isPositive() && style()->boxSizing() == CONTENT_BOX)
         borders = borderStart() + borderEnd() + (collapseBorders() ? LayoutUnit() : paddingStart() + paddingEnd());
 
@@ -334,7 +334,7 @@ LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& 
         // HTML tables size as though CSS height includes border/padding, CSS tables do not.
         LayoutUnit borders = LayoutUnit();
         // FIXME: We cannot apply box-sizing: content-box on <table> which other browsers allow.
-        if ((node() && isHTMLTableElement(node())) || style()->boxSizing() == BORDER_BOX) {
+        if ((element() && isHTMLTableElement(element())) || style()->boxSizing() == BORDER_BOX) {
             LayoutUnit borderAndPaddingBefore = borderBefore() + (collapseBorders() ? LayoutUnit() : paddingBefore());
             LayoutUnit borderAndPaddingAfter = borderAfter() + (collapseBorders() ? LayoutUnit() : paddingAfter());
             borders = borderAndPaddingBefore + borderAndPaddingAfter;
@@ -1406,7 +1406,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     LayoutRect boundsRect(adjustedLocation, size());
     if (visibleToHitTesting() && (action == HitTestBlockBackground || action == HitTestChildBlockBackground) && locationInContainer.intersects(boundsRect)) {
         updateHitTestResult(result, flipForWritingMode(locationInContainer.point() - toLayoutSize(adjustedLocation)));
-        if (!result.addNodeToRectBasedTestResult(node(), request, locationInContainer, boundsRect))
+        if (!result.addNodeToRectBasedTestResult(element(), request, locationInContainer, boundsRect))
             return true;
     }
 

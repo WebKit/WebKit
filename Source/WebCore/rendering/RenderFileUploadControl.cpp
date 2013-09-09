@@ -67,7 +67,7 @@ bool RenderFileUploadControl::canBeReplacedWithInlineRunIn() const
 
 void RenderFileUploadControl::updateFromElement()
 {
-    HTMLInputElement* input = toHTMLInputElement(node());
+    HTMLInputElement* input = toHTMLInputElement(element());
     ASSERT(input->isFileUpload());
 
     if (HTMLInputElement* button = uploadButton()) {
@@ -93,7 +93,7 @@ static int nodeWidth(Node* node)
 
 int RenderFileUploadControl::maxFilenameWidth() const
 {
-    HTMLInputElement* input = toHTMLInputElement(node());
+    HTMLInputElement* input = toHTMLInputElement(element());
     return max(0, contentBoxRect().pixelSnappedWidth() - nodeWidth(uploadButton()) - afterButtonSpacing
         - (input->icon() ? iconWidth + iconFilenameSpacing : 0));
 }
@@ -126,7 +126,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
         if (!button)
             return;
 
-        HTMLInputElement* input = toHTMLInputElement(node());
+        HTMLInputElement* input = toHTMLInputElement(element());
         LayoutUnit buttonWidth = nodeWidth(button);
         LayoutUnit buttonAndIconWidth = buttonWidth + afterButtonSpacing
             + (input->icon() ? iconWidth + iconFilenameSpacing : 0);
@@ -178,7 +178,7 @@ void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogic
     RenderFileUploadControl* renderer = const_cast<RenderFileUploadControl*>(this);
     float minDefaultLabelWidth = defaultWidthNumChars * font.width(constructTextRun(renderer, font, characterAsString, style(), TextRun::AllowTrailingExpansion));
 
-    const String label = theme()->fileListDefaultLabel(node()->toInputElement()->multiple());
+    const String label = theme()->fileListDefaultLabel(element()->toInputElement()->multiple());
     float defaultLabelWidth = font.width(constructTextRun(renderer, font, label, style(), TextRun::AllowTrailingExpansion));
     if (HTMLInputElement* button = uploadButton())
         if (RenderObject* buttonRenderer = button->renderer())
@@ -225,7 +225,7 @@ VisiblePosition RenderFileUploadControl::positionForPoint(const LayoutPoint&)
 
 HTMLInputElement* RenderFileUploadControl::uploadButton() const
 {
-    HTMLInputElement* input = toHTMLInputElement(node());
+    HTMLInputElement* input = toHTMLInputElement(element());
 
     ASSERT(input->shadowRoot());
 
@@ -243,7 +243,7 @@ String RenderFileUploadControl::buttonValue()
 
 String RenderFileUploadControl::fileTextValue() const
 {
-    HTMLInputElement* input = toHTMLInputElement(node());
+    HTMLInputElement* input = toHTMLInputElement(element());
     ASSERT(input->files());
     return theme()->fileListNameForWidth(input->files(), style()->font(), maxFilenameWidth(), input->multiple());
 }

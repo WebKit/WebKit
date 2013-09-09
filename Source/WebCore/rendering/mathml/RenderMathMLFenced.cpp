@@ -55,7 +55,7 @@ RenderMathMLFenced::RenderMathMLFenced(Element* element)
 
 void RenderMathMLFenced::updateFromElement()
 {
-    Element* fenced = toElement(node());
+    Element* fenced = element();
  
     // FIXME: Handle open/close values with more than one character (they should be treated like text).
     AtomicString openValue = fenced->getAttribute(MathMLNames::openAttr);
@@ -89,7 +89,7 @@ RenderMathMLOperator* RenderMathMLFenced::createMathMLOperator(UChar uChar, Rend
     newStyle->setMarginEnd(Length((operatorType == RenderMathMLOperator::Fence ? gFenceMarginEms : gSeparatorMarginEndEms) * style()->fontSize(), Fixed));
     if (operatorType == RenderMathMLOperator::Fence)
         newStyle->setMarginStart(Length(gFenceMarginEms * style()->fontSize(), Fixed));
-    RenderMathMLOperator* newOperator = new (renderArena()) RenderMathMLOperator(toElement(node()), uChar);
+    RenderMathMLOperator* newOperator = new (renderArena()) RenderMathMLOperator(element(), uChar);
     newOperator->setOperatorType(operatorType);
     newOperator->setStyle(newStyle.release());
     return newOperator;
@@ -156,7 +156,7 @@ void RenderMathMLFenced::styleDidChange(StyleDifference diff, const RenderStyle*
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
     
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->node() == node()) {
+        if (child->node() == element()) {
             ASSERT(child->style()->refCount() == 1);
             child->style()->inheritFrom(style());
             bool isFence = child == firstChild() || child == lastChild();

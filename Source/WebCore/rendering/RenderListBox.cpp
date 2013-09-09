@@ -105,7 +105,7 @@ RenderListBox::~RenderListBox()
 
 inline HTMLSelectElement* RenderListBox::selectElement() const
 {
-    return toHTMLSelectElement(node());
+    return toHTMLSelectElement(element());
 }
 
 void RenderListBox::updateFromElement()
@@ -391,9 +391,9 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     HTMLSelectElement* select = selectElement();
 
     const Vector<HTMLElement*>& listItems = select->listItems();
-    HTMLElement* element = listItems[listIndex];
+    HTMLElement* listItemElement = listItems[listIndex];
 
-    RenderStyle* itemStyle = element->renderStyle();
+    RenderStyle* itemStyle = listItemElement->renderStyle();
     if (!itemStyle)
         itemStyle = style();
 
@@ -401,19 +401,19 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         return;
 
     String itemText;
-    bool isOptionElement = isHTMLOptionElement(element);
+    bool isOptionElement = isHTMLOptionElement(listItemElement);
     if (isOptionElement)
-        itemText = toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
-    else if (isHTMLOptGroupElement(element))
-        itemText = toHTMLOptGroupElement(element)->groupLabelText();
+        itemText = toHTMLOptionElement(listItemElement)->textIndentedToRespectGroupLabel();
+    else if (isHTMLOptGroupElement(listItemElement))
+        itemText = toHTMLOptGroupElement(listItemElement)->groupLabelText();
     applyTextTransform(style(), itemText, ' ');
 
-    Color textColor = element->renderStyle() ? element->renderStyle()->visitedDependentColor(CSSPropertyColor) : style()->visitedDependentColor(CSSPropertyColor);
-    if (isOptionElement && toHTMLOptionElement(element)->selected()) {
-        if (frame().selection().isFocusedAndActive() && document().focusedElement() == node())
+    Color textColor = listItemElement->renderStyle() ? listItemElement->renderStyle()->visitedDependentColor(CSSPropertyColor) : style()->visitedDependentColor(CSSPropertyColor);
+    if (isOptionElement && toHTMLOptionElement(listItemElement)->selected()) {
+        if (frame().selection().isFocusedAndActive() && document().focusedElement() == element())
             textColor = theme()->activeListBoxSelectionForegroundColor();
         // Honor the foreground color for disabled items
-        else if (!element->isDisabledFormControl() && !select->isDisabledFormControl())
+        else if (!listItemElement->isDisabledFormControl() && !select->isDisabledFormControl())
             textColor = theme()->inactiveListBoxSelectionForegroundColor();
     }
 
@@ -425,7 +425,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     LayoutRect r = itemBoundingBoxRect(paintOffset, listIndex);
     r.move(itemOffsetForAlignment(textRun, itemStyle, itemFont, r));
 
-    if (isHTMLOptGroupElement(element)) {
+    if (isHTMLOptGroupElement(listItemElement)) {
         FontDescription d = itemFont.fontDescription();
         d.setWeight(d.bolderWeight());
         itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
@@ -439,20 +439,20 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
 void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listIndex)
 {
     const Vector<HTMLElement*>& listItems = selectElement()->listItems();
-    HTMLElement* element = listItems[listIndex];
+    HTMLElement* listItemElement = listItems[listIndex];
 
     Color backColor;
-    if (isHTMLOptionElement(element) && toHTMLOptionElement(element)->selected()) {
-        if (frame().selection().isFocusedAndActive() && document().focusedElement() == node())
+    if (isHTMLOptionElement(listItemElement) && toHTMLOptionElement(listItemElement)->selected()) {
+        if (frame().selection().isFocusedAndActive() && document().focusedElement() == element())
             backColor = theme()->activeListBoxSelectionBackgroundColor();
         else
             backColor = theme()->inactiveListBoxSelectionBackgroundColor();
     } else
-        backColor = element->renderStyle() ? element->renderStyle()->visitedDependentColor(CSSPropertyBackgroundColor) : style()->visitedDependentColor(CSSPropertyBackgroundColor);
+        backColor = listItemElement->renderStyle() ? listItemElement->renderStyle()->visitedDependentColor(CSSPropertyBackgroundColor) : style()->visitedDependentColor(CSSPropertyBackgroundColor);
 
     // Draw the background for this list box item
-    if (!element->renderStyle() || element->renderStyle()->visibility() != HIDDEN) {
-        ColorSpace colorSpace = element->renderStyle() ? element->renderStyle()->colorSpace() : style()->colorSpace();
+    if (!listItemElement->renderStyle() || listItemElement->renderStyle()->visibility() != HIDDEN) {
+        ColorSpace colorSpace = listItemElement->renderStyle() ? listItemElement->renderStyle()->colorSpace() : style()->colorSpace();
         LayoutRect itemRect = itemBoundingBoxRect(paintOffset, listIndex);
         itemRect.intersect(controlClipRect(paintOffset));
         paintInfo.context->fillRect(pixelSnappedIntRect(itemRect), backColor, colorSpace);
@@ -645,7 +645,7 @@ void RenderListBox::scrollTo(int newOffset)
 
     m_indexOffset = newOffset;
     repaint();
-    node()->document().eventQueue().enqueueOrDispatchScrollEvent(*node());
+    element()->document().eventQueue().enqueueOrDispatchScrollEvent(*element());
 }
 
 LayoutUnit RenderListBox::itemHeight() const
@@ -830,7 +830,7 @@ PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
     RefPtr<Scrollbar> widget;
     bool hasCustomScrollbarStyle = style()->hasPseudoStyle(SCROLLBAR);
     if (hasCustomScrollbarStyle)
-        widget = RenderScrollbar::createCustomScrollbar(this, VerticalScrollbar, this->node());
+        widget = RenderScrollbar::createCustomScrollbar(this, VerticalScrollbar, element());
     else {
         widget = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, theme()->scrollbarControlSizeForPart(ListboxPart));
         didAddScrollbar(widget.get(), VerticalScrollbar);

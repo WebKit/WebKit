@@ -53,7 +53,7 @@ bool RenderHTMLCanvas::requiresLayer() const
     if (RenderReplaced::requiresLayer())
         return true;
     
-    HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(node());
+    HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(element());
     return canvas && canvas->renderingContext() && canvas->renderingContext()->isAccelerated();
 }
 
@@ -78,12 +78,12 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
     }
 
     bool useLowQualityScale = style()->imageRendering() == ImageRenderingCrispEdges || style()->imageRendering() == ImageRenderingOptimizeSpeed;
-    static_cast<HTMLCanvasElement*>(node())->paint(context, paintRect, useLowQualityScale);
+    static_cast<HTMLCanvasElement*>(element())->paint(context, paintRect, useLowQualityScale);
 }
 
 void RenderHTMLCanvas::canvasSizeChanged()
 {
-    IntSize canvasSize = static_cast<HTMLCanvasElement*>(node())->size();
+    IntSize canvasSize = static_cast<HTMLCanvasElement*>(element())->size();
     LayoutSize zoomedSize(canvasSize.width() * style()->effectiveZoom(), canvasSize.height() * style()->effectiveZoom());
 
     if (zoomedSize == intrinsicSize())

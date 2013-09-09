@@ -40,7 +40,7 @@ public:
     virtual const char* renderName() const { return "RenderButton"; }
     virtual bool isRenderButton() const { return true; }
 
-    virtual bool canBeSelectionLeaf() const OVERRIDE { return node() && node()->rendererIsEditable(); }
+    virtual bool canBeSelectionLeaf() const OVERRIDE { return element() && element()->rendererIsEditable(); }
 
     virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0);
     virtual void removeChild(RenderObject*);
@@ -61,7 +61,7 @@ private:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    virtual bool hasLineIfEmpty() const { return node() && node()->toInputElement(); }
+    virtual bool hasLineIfEmpty() const { return element() && element()->toInputElement(); }
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 

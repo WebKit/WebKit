@@ -42,8 +42,6 @@ public:
 
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
 
-    Element* node() const { return toElement(RenderBoxModelObject::node()); }
-
     virtual LayoutUnit marginLeft() const OVERRIDE FINAL;
     virtual LayoutUnit marginRight() const OVERRIDE FINAL;
     virtual LayoutUnit marginTop() const OVERRIDE FINAL;

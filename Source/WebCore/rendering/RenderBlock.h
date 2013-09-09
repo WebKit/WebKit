@@ -90,7 +90,7 @@ public:
 #endif
 
 protected:
-    explicit RenderBlock(ContainerNode*);
+    explicit RenderBlock(Element*);
     virtual ~RenderBlock();
 
 public:

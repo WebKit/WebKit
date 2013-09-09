@@ -1409,10 +1409,10 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
 
 RenderLayerCompositor* RenderLayerCompositor::frameContentsCompositor(RenderPart* renderer)
 {
-    if (!renderer->node()->isFrameOwnerElement())
+    if (!renderer->element()->isFrameOwnerElement())
         return 0;
         
-    HTMLFrameOwnerElement* element = toFrameOwnerElement(renderer->node());
+    HTMLFrameOwnerElement* element = toFrameOwnerElement(renderer->element());
     if (Document* contentDocument = element->contentDocument()) {
         if (RenderView* view = contentDocument->renderView())
             return &view->compositor();

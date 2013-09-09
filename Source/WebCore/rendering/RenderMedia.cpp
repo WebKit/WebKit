@@ -54,7 +54,7 @@ RenderMedia::~RenderMedia()
 
 HTMLMediaElement* RenderMedia::mediaElement() const
 { 
-    return toHTMLMediaElement(node()); 
+    return toHTMLMediaElement(element()); 
 }
 
 void RenderMedia::layout()

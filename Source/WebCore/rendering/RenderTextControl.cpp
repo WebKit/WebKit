@@ -48,7 +48,7 @@ RenderTextControl::~RenderTextControl()
 
 HTMLTextFormControlElement* RenderTextControl::textFormControlElement() const
 {
-    return toHTMLTextFormControlElement(node());
+    return toHTMLTextFormControlElement(element());
 }
 
 HTMLElement* RenderTextControl::innerTextElement() const
@@ -96,7 +96,7 @@ void RenderTextControl::adjustInnerTextStyle(const RenderStyle* startStyle, Rend
     textBlockStyle->setDirection(style()->direction());
     textBlockStyle->setUnicodeBidi(style()->unicodeBidi());
 
-    bool disabled = updateUserModifyProperty(node(), textBlockStyle);
+    bool disabled = updateUserModifyProperty(element(), textBlockStyle);
     if (disabled)
         textBlockStyle->setColor(theme()->disabledTextColor(textBlockStyle->visitedDependentColor(CSSPropertyColor), startStyle->visitedDependentColor(CSSPropertyBackgroundColor)));
 }
@@ -122,7 +122,7 @@ void RenderTextControl::updateFromElement()
 {
     Element* innerText = innerTextElement();
     if (innerText && innerText->renderer())
-        updateUserModifyProperty(node(), innerText->renderer()->style());
+        updateUserModifyProperty(element(), innerText->renderer()->style());
 }
 
 int RenderTextControl::scrollbarThickness() const
@@ -297,7 +297,7 @@ void RenderTextControl::addFocusRingRects(Vector<IntRect>& rects, const LayoutPo
 
 RenderObject* RenderTextControl::layoutSpecialExcludedChild(bool relayoutChildren)
 {
-    HTMLElement* placeholder = toHTMLTextFormControlElement(node())->placeholderElement();
+    HTMLElement* placeholder = toHTMLTextFormControlElement(element())->placeholderElement();
     RenderObject* placeholderRenderer = placeholder ? placeholder->renderer() : 0;
     if (!placeholderRenderer)
         return 0;

@@ -233,7 +233,7 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     //  - we hit the <input> element (e.g. we're over the border or padding), or
     //  - we hit regions not in any decoration buttons.
     HTMLElement* container = containerElement();
-    if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == node() || (container && container == result.innerNode())) {
+    if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == element() || (container && container == result.innerNode())) {
         LayoutPoint pointInParent = locationInContainer.point();
         if (container && innerBlockElement()) {
             if (innerBlockElement()->renderBox())
@@ -273,7 +273,7 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
 
 void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
 {
-    if (!node())
+    if (!element())
         return;
 
     // Only draw the caps lock indicator if these things are true:
@@ -284,7 +284,7 @@ void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
     bool shouldDrawCapsLockIndicator =
         inputElement()->isPasswordField()
         && frame().selection().isFocusedAndActive()
-        && document().focusedElement() == node()
+        && document().focusedElement() == element()
         && PlatformKeyboardEvent::currentCapsLockState();
 
     if (shouldDrawCapsLockIndicator != m_shouldDrawCapsLockIndicator) {
@@ -404,7 +404,7 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const
 
 bool RenderTextControlSingleLine::textShouldBeTruncated() const
 {
-    return document().focusedElement() != node()
+    return document().focusedElement() != element()
         && style()->textOverflow() == TextOverflowEllipsis;
 }
 
@@ -479,7 +479,7 @@ bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction
 
 HTMLInputElement* RenderTextControlSingleLine::inputElement() const
 {
-    return node()->toInputElement();
+    return element()->toInputElement();
 }
 
 }

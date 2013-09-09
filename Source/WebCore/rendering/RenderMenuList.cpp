@@ -134,7 +134,7 @@ void RenderMenuList::adjustInnerStyle()
 
 inline HTMLSelectElement* RenderMenuList::selectElement() const
 {
-    return toHTMLSelectElement(node());
+    return toHTMLSelectElement(element());
 }
 
 void RenderMenuList::addChild(RenderObject* newChild, RenderObject* beforeChild)
@@ -356,7 +356,7 @@ void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
 {
     // Check to ensure a page navigation has not occurred while
     // the popup was up.
-    Document& document = toElement(node())->document();
+    Document& document = element()->document();
     if (&document != document.frame()->document())
         return;
     
@@ -539,7 +539,7 @@ PassRefPtr<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea* scrollable
     RefPtr<Scrollbar> widget;
     bool hasCustomScrollbarStyle = style()->hasPseudoStyle(SCROLLBAR);
     if (hasCustomScrollbarStyle)
-        widget = RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, this->node());
+        widget = RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, element());
     else
         widget = Scrollbar::createNativeScrollbar(scrollableArea, orientation, controlSize);
     return widget.release();

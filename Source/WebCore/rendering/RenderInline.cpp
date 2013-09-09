@@ -334,7 +334,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
 
 RenderInline* RenderInline::clone() const
 {
-    RenderInline* cloneInline = new (renderArena()) RenderInline(node());
+    RenderInline* cloneInline = new (renderArena()) RenderInline(element());
     cloneInline->setStyle(style());
     cloneInline->setFlowThreadState(flowThreadState());
     return cloneInline;
@@ -802,7 +802,7 @@ bool RenderInline::hitTestCulledInline(const HitTestRequest& request, HitTestRes
         updateHitTestResult(result, tmpLocation.point());
         // We can not use addNodeToRectBasedTestResult to determine if we fully enclose the hit-test area
         // because it can only handle rectangular targets.
-        result.addNodeToRectBasedTestResult(node(), request, locationInContainer);
+        result.addNodeToRectBasedTestResult(element(), request, locationInContainer);
         return regionResult.contains(tmpLocation.boundingBox());
     }
     return false;
@@ -1250,22 +1250,21 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint&
     if (result.innerNode())
         return;
 
-    Node* n = node();
     LayoutPoint localPoint(point);
-    if (n) {
+    if (Element* element = this->element()) {
         if (isInlineElementContinuation()) {
             // We're in the continuation of a split inline.  Adjust our local point to be in the coordinate space
             // of the principal renderer's containing block.  This will end up being the innerNonSharedNode.
-            RenderBlock* firstBlock = n->renderer()->containingBlock();
+            RenderBlock* firstBlock = element->renderer()->containingBlock();
             
             // Get our containing block.
             RenderBox* block = containingBlock();
             localPoint.moveBy(block->location() - firstBlock->locationOffset());
         }
 
-        result.setInnerNode(n);
+        result.setInnerNode(element);
         if (!result.innerNonSharedNode())
-            result.setInnerNonSharedNode(n);
+            result.setInnerNonSharedNode(element);
         result.setLocalPoint(localPoint);
     }
 }

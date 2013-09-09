@@ -205,11 +205,10 @@ void RenderEmbeddedObject::paintSnapshotImage(PaintInfo& paintInfo, const Layout
 
 void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    Element* element = toElement(node());
-    if (!element || !element->isPluginElement())
+    if (!element() || !element()->isPluginElement())
         return;
 
-    HTMLPlugInElement* plugInElement = toHTMLPlugInElement(element);
+    HTMLPlugInElement* plugInElement = toHTMLPlugInElement(element());
 
     if (plugInElement->displayState() > HTMLPlugInElement::DisplayingSnapshot) {
         RenderPart::paintContents(paintInfo, paintOffset);
@@ -421,27 +420,27 @@ bool RenderEmbeddedObject::isReplacementObscured() const
     bool hit = false;
     location = LayoutPoint(x + width / 2, y + height / 2);
     hit = rootRenderView->hitTest(request, location, result);
-    if (!hit || result.innerNode() != node())
+    if (!hit || result.innerNode() != element())
         return true;
     
     location = LayoutPoint(x, y);
     hit = rootRenderView->hitTest(request, location, result);
-    if (!hit || result.innerNode() != node())
+    if (!hit || result.innerNode() != element())
         return true;
     
     location = LayoutPoint(x + width, y);
     hit = rootRenderView->hitTest(request, location, result);
-    if (!hit || result.innerNode() != node())
+    if (!hit || result.innerNode() != element())
         return true;
     
     location = LayoutPoint(x + width, y + height);
     hit = rootRenderView->hitTest(request, location, result);
-    if (!hit || result.innerNode() != node())
+    if (!hit || result.innerNode() != element())
         return true;
     
     location = LayoutPoint(x, y + height);
     hit = rootRenderView->hitTest(request, location, result);
-    if (!hit || result.innerNode() != node())
+    if (!hit || result.innerNode() != element())
         return true;
 
     return false;
@@ -475,7 +474,7 @@ void RenderEmbeddedObject::layout()
     LayoutSize newSize = contentBoxRect().size();
 
     if (!wasMissingWidget && newSize.width() >= oldSize.width() && newSize.height() >= oldSize.height()) {
-        Element* element = toElement(node());
+        Element* element = this->element();
         if (element && element->isPluginElement() && toHTMLPlugInElement(element)->isPlugInImageElement()) {
             HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(element);
             if (plugInImageElement->displayState() > HTMLPlugInElement::DisplayingSnapshot && plugInImageElement->snapshotDecision() == HTMLPlugInImageElement::MaySnapshotWhenResized) {
@@ -520,12 +519,12 @@ void RenderEmbeddedObject::layout()
 void RenderEmbeddedObject::viewCleared()
 {
     // This is required for <object> elements whose contents are rendered by WebCore (e.g. src="foo.html").
-    if (node() && widget() && widget()->isFrameView()) {
+    if (element() && widget() && widget()->isFrameView()) {
         FrameView* view = toFrameView(widget());
         int marginWidth = -1;
         int marginHeight = -1;
-        if (node()->hasTagName(iframeTag)) {
-            HTMLIFrameElement* frame = toHTMLIFrameElement(node());
+        if (element()->hasTagName(iframeTag)) {
+            HTMLIFrameElement* frame = toHTMLIFrameElement(element());
             marginWidth = frame->marginWidth();
             marginHeight = frame->marginHeight();
         }
@@ -606,7 +605,7 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
         return;
 
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
-    HTMLPlugInElement* element = toHTMLPlugInElement(node());
+    HTMLPlugInElement* element = toHTMLPlugInElement(this->element());
     if (event->type() == eventNames().mousedownEvent && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         m_mouseDownWasInUnavailablePluginIndicator = isInUnavailablePluginIndicator(mouseEvent);
         if (m_mouseDownWasInUnavailablePluginIndicator) {
