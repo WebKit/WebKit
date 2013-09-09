@@ -1,3 +1,14 @@
+2013-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Internals should always cause a layout before calling into TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=120891
+
+        Reviewed by Antti Koivisto.
+
+        Progression.
+
+        * platform/mac/editing/input/caret-primary-bidi-expected.txt:
+
 2013-09-09  Mark Lam  <mark.lam@apple.com>
 
         Change some remaining fast/* files to use pre and post js files in LayoutTests/resources.

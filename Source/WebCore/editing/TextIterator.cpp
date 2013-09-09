@@ -293,6 +293,8 @@ TextIterator::TextIterator(const Range* r, TextIteratorBehavior behavior)
     if (!r)
         return;
 
+    r->ownerDocument().updateLayoutIgnorePendingStylesheets();
+
     // get and validate the range endpoints
     Node* startContainer = r->startContainer();
     if (!startContainer)
@@ -1117,6 +1119,8 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r,
 
     if (!r)
         return;
+
+    r->ownerDocument().updateLayoutIgnorePendingStylesheets();
 
     Node* startNode = r->startContainer();
     if (!startNode)
@@ -2427,7 +2431,6 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope,
             // FIXME: This is a workaround for the fact that the end of a run is often at the wrong
             // position for emitted '\n's.
             if (len == 1 && it.characterAt(0) == '\n') {
-                scope->document().updateLayoutIgnorePendingStylesheets();
                 it.advance();
                 if (!it.atEnd()) {
                     RefPtr<Range> range = it.range();
@@ -2593,9 +2596,6 @@ tryAgain:
 
 PassRefPtr<Range> findPlainText(const Range* range, const String& target, FindOptions options)
 {
-    // CharacterIterator requires renderers to be up-to-date
-    range->ownerDocument().updateLayout();
-
     // First, find the text.
     size_t matchStart;
     size_t matchLength;

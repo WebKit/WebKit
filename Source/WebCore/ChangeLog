@@ -1,3 +1,25 @@
+2013-09-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Internals should always cause a layout before calling into TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=120891
+
+        Reviewed by Antti Koivisto.
+
+        Inspired by https://chromium.googlesource.com/chromium/blink/+/5fee5da7b04a710171c79bd6e87eca3533188e45.
+
+        Force a layout in the constructors of TextIterator, and SimplifiedBackwardsTextIterator and remove
+        superfluous calls to updateLayout() in other places.
+
+        As much as I hate for a constructor to have a side effect like this, I couldn't think of a better place
+        to update the layout. Unfortunately, we're slowly moving away from manually createing TextIterator and
+        wrapping them in a static function.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator):
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        (WebCore::TextIterator::rangeFromLocationAndLength):
+        (WebCore::findPlainText):
+
 2013-09-09  David Hyatt  <hyatt@apple.com>
 
         Move layoutBlock and layoutBlockChildren into RenderBlockFlow
