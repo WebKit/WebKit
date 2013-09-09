@@ -1,3 +1,21 @@
+2013-09-09  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION (r155377): Convert the media elements that were RenderBlocks to RenderBlockFlows
+        https://bugs.webkit.org/show_bug.cgi?id=121052
+
+        Reviewed by Anders Carlsson.
+
+        Convert a couple of media renderers that I missed from RenderBlock to RenderBlockFlow.
+        The previous patch that I landed added asserts that get triggered now when this
+        situation occurs.
+
+        * rendering/RenderMediaControlElements.cpp:
+        (WebCore::RenderMediaVolumeSliderContainer::RenderMediaVolumeSliderContainer):
+        (WebCore::RenderMediaVolumeSliderContainer::layout):
+        (WebCore::RenderTextTrackContainerElement::RenderTextTrackContainerElement):
+        (WebCore::RenderTextTrackContainerElement::layout):
+        * rendering/RenderMediaControlElements.h:
+
 2013-09-09  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         [Bug Fix] Calling m_audioComponents.remove in removeAudioComponent (MediaStreamDescriptor)
