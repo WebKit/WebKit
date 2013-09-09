@@ -711,8 +711,8 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         // InlineTextBoxes that they should just add their contents to the clip.
         PaintInfo info(maskImageContext, maskRect, PaintPhaseTextClip, PaintBehaviorForceBlackText, 0, paintInfo.renderRegion);
         if (box) {
-            RootInlineBox* root = box->root();
-            box->paint(info, LayoutPoint(scrolledPaintRect.x() - box->x(), scrolledPaintRect.y() - box->y()), root->lineTop(), root->lineBottom());
+            const RootInlineBox& rootBox = box->root();
+            box->paint(info, LayoutPoint(scrolledPaintRect.x() - box->x(), scrolledPaintRect.y() - box->y()), rootBox.lineTop(), rootBox.lineBottom());
         } else {
             LayoutSize localOffset = isBox() ? toRenderBox(this)->locationOffset() : LayoutSize();
             paint(info, scrolledPaintRect.location() - localOffset);

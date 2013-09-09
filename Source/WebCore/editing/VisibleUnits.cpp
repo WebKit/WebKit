@@ -205,11 +205,11 @@ static const InlineTextBox* logicallyPreviousBox(const VisiblePosition& visibleP
 {
     const InlineBox* startBox = textBox;
 
-    const InlineTextBox* previousBox = leafBoxes.previousTextBox(startBox->root(), textBox);
+    const InlineTextBox* previousBox = leafBoxes.previousTextBox(&startBox->root(), textBox);
     if (previousBox)
         return previousBox;
 
-    previousBox = leafBoxes.previousTextBox(startBox->root()->prevRootBox(), 0);
+    previousBox = leafBoxes.previousTextBox(startBox->root().prevRootBox(), 0);
     if (previousBox)
         return previousBox;
 
@@ -246,11 +246,11 @@ static const InlineTextBox* logicallyNextBox(const VisiblePosition& visiblePosit
 {
     const InlineBox* startBox = textBox;
 
-    const InlineTextBox* nextBox = leafBoxes.nextTextBox(startBox->root(), textBox);
+    const InlineTextBox* nextBox = leafBoxes.nextTextBox(&startBox->root(), textBox);
     if (nextBox)
         return nextBox;
 
-    nextBox = leafBoxes.nextTextBox(startBox->root()->nextRootBox(), 0);
+    nextBox = leafBoxes.nextTextBox(startBox->root().nextRootBox(), 0);
     if (nextBox)
         return nextBox;
 
@@ -931,7 +931,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     int ignoredCaretOffset;
     visiblePosition.getInlineBoxAndOffset(box, ignoredCaretOffset);
     if (box) {
-        root = box->root()->prevRootBox();
+        root = box->root().prevRootBox();
         // We want to skip zero height boxes.
         // This could happen in case it is a TrailingFloatsRootInlineBox.
         if (!root || !root->logicalHeight() || !root->firstLeafChild())
@@ -986,7 +986,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int lin
     int ignoredCaretOffset;
     visiblePosition.getInlineBoxAndOffset(box, ignoredCaretOffset);
     if (box) {
-        root = box->root()->nextRootBox();
+        root = box->root().nextRootBox();
         // We want to skip zero height boxes.
         // This could happen in case it is a TrailingFloatsRootInlineBox.
         if (!root || !root->logicalHeight() || !root->firstLeafChild())

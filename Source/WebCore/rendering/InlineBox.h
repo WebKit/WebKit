@@ -190,8 +190,8 @@ public:
     }
     void setParent(InlineFlowBox* par) { m_parent = par; }
 
-    const RootInlineBox* root() const;
-    RootInlineBox* root();
+    const RootInlineBox& root() const;
+    RootInlineBox& root();
 
     // x() is the left side of the box in the containing block's coordinate system.
     void setX(float x) { m_topLeft.setX(x); }

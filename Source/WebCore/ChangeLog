@@ -1,5 +1,15 @@
 2013-09-08  Andreas Kling  <akling@apple.com>
 
+        InlineBox::root() should return a reference.
+        <https://webkit.org/b/121014>
+
+        Reviewed by Antti Koivisto.
+
+        There is always a root inline box, so make root() return a reference.
+        Also make some effort to cache the result in a local at call sites.
+
+2013-09-08  Andreas Kling  <akling@apple.com>
+
         FrameView::scheduleEvent() is over-engineered.
         <https://webkit.org/b/121004>
 

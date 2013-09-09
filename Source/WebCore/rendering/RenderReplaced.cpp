@@ -189,8 +189,9 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     LayoutUnit top = adjustedPaintOffset.y() + visualOverflowRect().y();
     LayoutUnit bottom = adjustedPaintOffset.y() + visualOverflowRect().maxY();
     if (isSelected() && m_inlineBoxWrapper) {
-        LayoutUnit selTop = paintOffset.y() + m_inlineBoxWrapper->root()->selectionTop();
-        LayoutUnit selBottom = paintOffset.y() + selTop + m_inlineBoxWrapper->root()->selectionHeight();
+        const RootInlineBox& rootBox = m_inlineBoxWrapper->root();
+        LayoutUnit selTop = paintOffset.y() + rootBox.selectionTop();
+        LayoutUnit selBottom = paintOffset.y() + selTop + rootBox.selectionHeight();
         top = min(selTop, top);
         bottom = max(selBottom, bottom);
     }
@@ -490,7 +491,7 @@ VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point)
 {
     // FIXME: This code is buggy if the replaced element is relative positioned.
     InlineBox* box = inlineBoxWrapper();
-    RootInlineBox* rootBox = box ? box->root() : 0;
+    const RootInlineBox* rootBox = box ? &box->root() : 0;
     
     LayoutUnit top = rootBox ? rootBox->selectionTop() : logicalTop();
     LayoutUnit bottom = rootBox ? rootBox->selectionBottom() : logicalBottom();
@@ -538,11 +539,11 @@ LayoutRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
         // We're a block-level replaced element.  Just return our own dimensions.
         return LayoutRect(LayoutPoint(), size());
     
-    RootInlineBox* root = m_inlineBoxWrapper->root();
-    LayoutUnit newLogicalTop = root->block().style()->isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - root->selectionBottom() : root->selectionTop() - m_inlineBoxWrapper->logicalTop();
-    if (root->block().style()->isHorizontalWritingMode())
-        return LayoutRect(0, newLogicalTop, width(), root->selectionHeight());
-    return LayoutRect(newLogicalTop, 0, root->selectionHeight(), height());
+    const RootInlineBox& rootBox = m_inlineBoxWrapper->root();
+    LayoutUnit newLogicalTop = rootBox.block().style()->isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - rootBox.selectionBottom() : rootBox.selectionTop() - m_inlineBoxWrapper->logicalTop();
+    if (rootBox.block().style()->isHorizontalWritingMode())
+        return LayoutRect(0, newLogicalTop, width(), rootBox.selectionHeight());
+    return LayoutRect(newLogicalTop, 0, rootBox.selectionHeight(), height());
 }
 
 void RenderReplaced::setSelectionState(SelectionState state)
@@ -551,8 +552,7 @@ void RenderReplaced::setSelectionState(SelectionState state)
     RenderBox::setSelectionState(state);
 
     if (m_inlineBoxWrapper && canUpdateSelectionOnRootLineBoxes())
-        if (RootInlineBox* root = m_inlineBoxWrapper->root())
-            root->setHasSelectedChildren(isSelected());
+        m_inlineBoxWrapper->root().setHasSelectedChildren(isSelected());
 }
 
 bool RenderReplaced::isSelected() const

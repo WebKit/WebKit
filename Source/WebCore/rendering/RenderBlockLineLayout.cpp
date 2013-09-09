@@ -719,7 +719,7 @@ RootInlineBox* RenderBlock::constructLine(BidiRunList<BidiRun>& bidiRuns, const 
     // Set the m_selectedChildren flag on the root inline box if one of the leaf inline box
     // from the bidi runs walk above has a selection state.
     if (rootHasSelectedChildren)
-        lastLineBox()->root()->setHasSelectedChildren(true);
+        lastLineBox()->root().setHasSelectedChildren(true);
 
     // Set bits on our inline flow boxes that indicate which sides should
     // paint borders/margins/padding.  This knowledge will ultimately be used when

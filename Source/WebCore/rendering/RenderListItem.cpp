@@ -341,12 +341,11 @@ void RenderListItem::positionListMarker()
 
         bool adjustOverflow = false;
         LayoutUnit markerLogicalLeft;
-        RootInlineBox* root = m_marker->inlineBoxWrapper()->root();
         bool hitSelfPaintingLayer = false;
         
-        RootInlineBox* rootBox = m_marker->inlineBoxWrapper()->root();
-        LayoutUnit lineTop = rootBox->lineTop();
-        LayoutUnit lineBottom = rootBox->lineBottom();
+        const RootInlineBox& rootBox = m_marker->inlineBoxWrapper()->root();
+        LayoutUnit lineTop = rootBox.lineTop();
+        LayoutUnit lineBottom = rootBox.lineBottom();
 
         // FIXME: Need to account for relative positioning in the layout overflow.
         if (style()->isLeftToRightDirection()) {
@@ -359,13 +358,13 @@ void RenderListItem::positionListMarker()
                 if (markerLogicalLeft < newLogicalVisualOverflowRect.x() && !hitSelfPaintingLayer) {
                     newLogicalVisualOverflowRect.setWidth(newLogicalVisualOverflowRect.maxX() - markerLogicalLeft);
                     newLogicalVisualOverflowRect.setX(markerLogicalLeft);
-                    if (box == root)
+                    if (box == &rootBox)
                         adjustOverflow = true;
                 }
                 if (markerLogicalLeft < newLogicalLayoutOverflowRect.x()) {
                     newLogicalLayoutOverflowRect.setWidth(newLogicalLayoutOverflowRect.maxX() - markerLogicalLeft);
                     newLogicalLayoutOverflowRect.setX(markerLogicalLeft);
-                    if (box == root)
+                    if (box == &rootBox)
                         adjustOverflow = true;
                 }
                 box->setOverflowFromLogicalRects(newLogicalLayoutOverflowRect, newLogicalVisualOverflowRect, lineTop, lineBottom);
@@ -381,12 +380,12 @@ void RenderListItem::positionListMarker()
                 LayoutRect newLogicalLayoutOverflowRect = box->logicalLayoutOverflowRect(lineTop, lineBottom);
                 if (markerLogicalLeft + m_marker->logicalWidth() > newLogicalVisualOverflowRect.maxX() && !hitSelfPaintingLayer) {
                     newLogicalVisualOverflowRect.setWidth(markerLogicalLeft + m_marker->logicalWidth() - newLogicalVisualOverflowRect.x());
-                    if (box == root)
+                    if (box == &rootBox)
                         adjustOverflow = true;
                 }
                 if (markerLogicalLeft + m_marker->logicalWidth() > newLogicalLayoutOverflowRect.maxX()) {
                     newLogicalLayoutOverflowRect.setWidth(markerLogicalLeft + m_marker->logicalWidth() - newLogicalLayoutOverflowRect.x());
-                    if (box == root)
+                    if (box == &rootBox)
                         adjustOverflow = true;
                 }
                 box->setOverflowFromLogicalRects(newLogicalLayoutOverflowRect, newLogicalVisualOverflowRect, lineTop, lineBottom);

@@ -154,7 +154,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
                     InlineBox* boxOnLeft;
                     int offsetOnLeft;
                     positionOnLeft.getInlineBoxAndOffset(m_affinity, primaryDirection, boxOnLeft, offsetOnLeft);
-                    if (boxOnLeft && boxOnLeft->root() == box->root())
+                    if (boxOnLeft && &boxOnLeft->root() == &box->root())
                         return Position();
                     return positionOnLeft;
                 }
@@ -174,7 +174,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             if (box->direction() == primaryDirection) {
                 if (!prevBox) {
                     InlineBox* logicalStart = 0;
-                    if (primaryDirection == LTR ? box->root()->getLogicalStartBoxWithNode(logicalStart) : box->root()->getLogicalEndBoxWithNode(logicalStart)) {
+                    if (primaryDirection == LTR ? box->root().getLogicalStartBoxWithNode(logicalStart) : box->root().getLogicalEndBoxWithNode(logicalStart)) {
                         box = logicalStart;
                         renderer = &box->renderer();
                         offset = primaryDirection == LTR ? box->caretMinOffset() : box->caretMaxOffset();
@@ -319,7 +319,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
                     InlineBox* boxOnRight;
                     int offsetOnRight;
                     positionOnRight.getInlineBoxAndOffset(m_affinity, primaryDirection, boxOnRight, offsetOnRight);
-                    if (boxOnRight && boxOnRight->root() == box->root())
+                    if (boxOnRight && &boxOnRight->root() == &box->root())
                         return Position();
                     return positionOnRight;
                 }
@@ -339,7 +339,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
             if (box->direction() == primaryDirection) {
                 if (!nextBox) {
                     InlineBox* logicalEnd = 0;
-                    if (primaryDirection == LTR ? box->root()->getLogicalEndBoxWithNode(logicalEnd) : box->root()->getLogicalStartBoxWithNode(logicalEnd)) {
+                    if (primaryDirection == LTR ? box->root().getLogicalEndBoxWithNode(logicalEnd) : box->root().getLogicalStartBoxWithNode(logicalEnd)) {
                         box = logicalEnd;
                         renderer = &box->renderer();
                         offset = primaryDirection == LTR ? box->caretMaxOffset() : box->caretMinOffset();

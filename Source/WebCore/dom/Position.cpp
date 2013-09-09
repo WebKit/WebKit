@@ -1060,7 +1060,7 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
         return false;
     }
 
-    if (b1->root() != b2->root()) {
+    if (&b1->root() != &b2->root()) {
         return true;
     }
 

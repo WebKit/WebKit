@@ -49,7 +49,7 @@ public:
     bool isEquivalent(const RenderedPosition&) const;
 
     bool isNull() const { return !m_renderer; }
-    RootInlineBox* rootBox() { return m_inlineBox ? m_inlineBox->root() : 0; }
+    RootInlineBox* rootBox() { return m_inlineBox ? &m_inlineBox->root() : 0; }
 
     unsigned char bidiLevelOnLeft() const;
     unsigned char bidiLevelOnRight() const;

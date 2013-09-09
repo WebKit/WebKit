@@ -1590,7 +1590,7 @@ void RenderBox::paintCustomHighlight(const LayoutPoint& paintOffset, const Atomi
         return;
 
     InlineBox* boxWrap = inlineBoxWrapper();
-    RootInlineBox* r = boxWrap ? boxWrap->root() : 0;
+    RootInlineBox* r = boxWrap ? &boxWrap->root() : 0;
     if (r) {
         FloatRect rootRect(paintOffset.x() + r->x(), paintOffset.y() + r->selectionTop(), r->logicalWidth(), r->selectionHeight());
         FloatRect imageRect(paintOffset.x() + x(), rootRect.y(), width(), rootRect.height());
@@ -1973,8 +1973,8 @@ void RenderBox::positionLineBox(InlineBox* box)
             // The value is cached in the xPos of the box.  We only need this value if
             // our object was inline originally, since otherwise it would have ended up underneath
             // the inlines.
-            RootInlineBox* root = box->root();
-            root->block().setStaticInlinePositionForChild(this, root->lineTopWithLeading(), roundedLayoutUnit(box->logicalLeft()));
+            RootInlineBox& rootBox = box->root();
+            rootBox.block().setStaticInlinePositionForChild(this, rootBox.lineTopWithLeading(), roundedLayoutUnit(box->logicalLeft()));
             if (style()->hasStaticInlinePosition(box->isHorizontal()))
                 setChildNeedsLayout(true, MarkOnlyThis); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
         } else {
@@ -4030,10 +4030,10 @@ LayoutRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, LayoutUnit
         rect.move(LayoutSize(width() - caretWidth, 0));
 
     if (box) {
-        RootInlineBox* rootBox = box->root();
-        LayoutUnit top = rootBox->lineTop();
+        const RootInlineBox& rootBox = box->root();
+        LayoutUnit top = rootBox.lineTop();
         rect.setY(top);
-        rect.setHeight(rootBox->lineBottom() - top);
+        rect.setHeight(rootBox.lineBottom() - top);
     }
 
     // If height of box is smaller than font height, use the latter one,

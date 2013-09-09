@@ -2815,10 +2815,8 @@ void RenderBlock::simplifiedNormalFlowLayout()
             RenderObject* o = walker.current();
             if (!o->isOutOfFlowPositioned() && (o->isReplaced() || o->isFloating())) {
                 o->layoutIfNeeded();
-                if (toRenderBox(o)->inlineBoxWrapper()) {
-                    RootInlineBox* box = toRenderBox(o)->inlineBoxWrapper()->root();
-                    lineBoxes.add(box);
-                }
+                if (toRenderBox(o)->inlineBoxWrapper())
+                    lineBoxes.add(&toRenderBox(o)->inlineBoxWrapper()->root());
             } else if (o->isText() || (o->isRenderInline() && !walker.atEndOfInline()))
                 o->setNeedsLayout(false);
         }
@@ -5545,7 +5543,7 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoin
         }
 
         // pass the box a top position that is inside it
-        LayoutPoint point(pointInLogicalContents.x(), closestBox->root()->blockDirectionPointInLine());
+        LayoutPoint point(pointInLogicalContents.x(), closestBox->root().blockDirectionPointInLine());
         if (!isHorizontalWritingMode())
             point = point.transposedPoint();
         if (closestBox->renderer().isReplaced())
