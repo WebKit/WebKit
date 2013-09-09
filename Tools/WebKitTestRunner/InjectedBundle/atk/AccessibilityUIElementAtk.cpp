@@ -241,6 +241,8 @@ static const gchar* roleToString(AtkRole role)
         return "AXParagraph";
     case ATK_ROLE_PASSWORD_TEXT:
         return "AXPasswordField";
+    case ATK_ROLE_PROGRESS_BAR:
+        return "AXProgressIndicator";
     case ATK_ROLE_PUSH_BUTTON:
         return "AXButton";
     case ATK_ROLE_RADIO_BUTTON:

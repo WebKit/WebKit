@@ -1,3 +1,17 @@
+2013-09-09  Krzysztof Czech  <k.czech@samsung.com>
+
+        [AX][ATK] AccessibilityObject representing ProgressBar element should be ATK_VALUE type
+        https://bugs.webkit.org/show_bug.cgi?id=121023
+
+        Reviewed by Mario Sanchez Prada.
+
+        Added mappings to ATK's ProgressBar element.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (roleToString):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::roleToString):
+
 2013-09-08  Filip Pizlo  <fpizlo@apple.com>
 
         run-jsc-stress-tests should be more paranoid about calling make

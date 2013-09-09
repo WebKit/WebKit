@@ -1,3 +1,17 @@
+2013-09-09  Krzysztof Czech  <k.czech@samsung.com>
+
+        [AX][ATK] AccessibilityObject representing ProgressBar element should be ATK_VALUE type
+        https://bugs.webkit.org/show_bug.cgi?id=121023
+
+        Reviewed by Mario Sanchez Prada.
+
+        Test: accessibility/progressbar.html
+
+        ProgressBar element should support ATK_VALUE interface.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (getInterfaceMaskFromObject):
+
 2013-09-09  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK]  ghost cursor when mouse hovers over an image file in a tab

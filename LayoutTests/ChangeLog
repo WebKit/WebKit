@@ -1,3 +1,15 @@
+2013-09-09  Krzysztof Czech  <k.czech@samsung.com>
+
+        [AX][ATK] AccessibilityObject representing ProgressBar element should be ATK_VALUE type
+        https://bugs.webkit.org/show_bug.cgi?id=121023
+
+        Reviewed by Mario Sanchez Prada.
+
+        Sharing progressbar.html specific mac test with efl and gtk.
+
+        * accessibility/progressbar-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/progressbar-expected.txt.
+        * accessibility/progressbar.html: Renamed from LayoutTests/platform/mac/accessibility/progressbar.html.
+
 2013-09-08  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         defining line height affects height of text box
