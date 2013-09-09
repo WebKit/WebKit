@@ -51,7 +51,7 @@ from webkitpy.common import find_files
 from webkitpy.common import read_checksum_from_png
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system import path
-from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
@@ -1413,6 +1413,9 @@ class Port(object):
         # For example --qt on linux, since a user might have both Gtk and Qt libraries installed.
         return None
 
+    def tooling_flag(self):
+        return "--port=%s%s" % (self.port_name, '-wk2' if self.get_option('webkit_test_runner') else '')
+
     # This is modeled after webkitdirs.pm argumentsForConfiguration() from old-run-webkit-tests
     def _arguments_for_configuration(self):
         config_args = []
@@ -1535,6 +1538,53 @@ class Port(object):
         # By current convention, the WebKit2 name is always mac-wk2, win-wk2, not mac-leopard-wk2, etc,
         # except for Qt because WebKit2 is only supported by Qt 5.0 (therefore: qt-5.0-wk2).
         return "%s-wk2" % self.port_name
+
+    # We might need to pass scm into this function for scm.checkout_root
+    @staticmethod
+    def script_shell_command(script_name):
+        script_path = os.path.join("Tools", "Scripts", script_name)
+        return Executive.shell_command_for_script(script_path)
+
+    def make_args(self):
+        args = "--makeargs=\"-j%s\"" % self._executive.cpu_count()
+        if "MAKEFLAGS" in os.environ:
+            args = "--makeargs=\"%s\"" % os.environ["MAKEFLAGS"]
+        return args
+
+    def update_webkit_command(self, non_interactive=False):
+        return self.script_shell_command("update-webkit")
+
+    def check_webkit_style_command(self):
+        return self.script_shell_command("check-webkit-style")
+
+    def prepare_changelog_command(self):
+        return self.script_shell_command("prepare-ChangeLog")
+
+    def build_webkit_command(self, build_style=None):
+        command = self.script_shell_command("build-webkit")
+        if build_style == "debug":
+            command.append("--debug")
+        if build_style == "release":
+            command.append("--release")
+        return command
+
+    def run_javascriptcore_tests_command(self):
+        return self.script_shell_command("run-javascriptcore-tests")
+
+    def run_webkit_unit_tests_command(self):
+        return None
+
+    def run_webkit_tests_command(self):
+        return self.script_shell_command("run-webkit-tests")
+
+    def run_python_unittests_command(self):
+        return self.script_shell_command("test-webkitpy")
+
+    def run_perl_unittests_command(self):
+        return self.script_shell_command("test-webkitperl")
+
+    def run_bindings_tests_command(self):
+        return self.script_shell_command("run-bindings-tests")
 
 
 class VirtualTestSuite(object):

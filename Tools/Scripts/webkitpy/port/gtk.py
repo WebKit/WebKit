@@ -220,3 +220,20 @@ Crash log for %(name)s (pid %(pid_representation)s):
 
 %(crash_log)s
 %(errors_str)s""" % locals())
+
+    def build_webkit_command(self, build_style=None):
+        command = super(GtkPort, self).build_webkit_command(build_style)
+        command.extend(["--gtk", "--update-gtk"])
+        if self.get_option('webkit_test_runner'):
+            command.append("--no-webkit1")
+        else:
+            command.append("--no-webkit2")
+        command.append(super(GtkPort, self).make_args())
+        return command
+
+    def run_webkit_tests_command(self):
+        command = super(GtkPort, self).run_webkit_tests_command()
+        command.append("--gtk")
+        if self.get_option('webkit_test_runner'):
+            command.append("-2")
+        return command

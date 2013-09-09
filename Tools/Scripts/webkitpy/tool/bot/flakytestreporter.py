@@ -43,7 +43,7 @@ class FlakyTestReporter(object):
         self._tool = tool
         self._bot_name = bot_name
         # FIXME: Use the real port object
-        self._bot_info = BotInfo(tool, tool.deprecated_port().name())
+        self._bot_info = BotInfo(tool, tool.port().name())
 
     def _author_emails_for_test(self, flaky_test):
         test_path = path_for_layout_test(flaky_test)

@@ -463,6 +463,12 @@ class PortTest(unittest.TestCase):
         port = self.make_port(options=optparse.Values({'build_directory': '/my-build-directory/'}))
         self.assertEqual(port._build_path(), '/my-build-directory/Release')
 
+    def test_build_webkit_command(self):
+        port = self.make_port()
+        self.assertEqual(port.build_webkit_command(), ["Tools/Scripts/build-webkit"])
+        self.assertEqual(port.build_webkit_command("release"), ["Tools/Scripts/build-webkit", "--release"])
+        self.assertEqual(port.build_webkit_command("debug"), ["Tools/Scripts/build-webkit", "--debug"])
+
 
 class NaturalCompareTest(unittest.TestCase):
     def setUp(self):

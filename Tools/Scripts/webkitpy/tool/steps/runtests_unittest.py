@@ -37,8 +37,8 @@ from webkitpy.tool.steps.runtests import RunTests
 class RunTestsTest(unittest.TestCase):
     def test_webkit_run_unit_tests(self):
         tool = MockTool(log_executive=True)
-        tool._deprecated_port.run_python_unittests_command = lambda: None
-        tool._deprecated_port.run_perl_unittests_command = lambda: None
+        tool._port.run_python_unittests_command = lambda: None
+        tool._port.run_perl_unittests_command = lambda: None
         step = RunTests(tool, MockOptions(test=True, non_interactive=True, quiet=False))
 
         if sys.platform != "cygwin":

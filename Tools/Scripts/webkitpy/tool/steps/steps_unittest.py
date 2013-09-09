@@ -29,7 +29,6 @@
 import unittest2 as unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.tool.mocktool import MockOptions, MockTool
 
 from webkitpy.tool import steps
@@ -100,18 +99,18 @@ class StepsTest(unittest.TestCase):
         mock_options.non_interactive = False
         step = steps.RunTests(MockTool(log_executive=True), mock_options)
         tool = MockTool(log_executive=True)
-        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
-        tool._deprecated_port = DeprecatedPort()
         step = steps.RunTests(tool, mock_options)
         expected_logs = """Running Python unit tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['mock-test-webkitpy'], cwd=/mock-checkout
 Running Perl unit tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['mock-test-webkitperl'], cwd=/mock-checkout
 Running JavaScriptCore tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['mock-run-javascriptcore-tests'], cwd=/mock-checkout
 Running bindings generation tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/run-bindings-tests'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['mock-run-bindings-tests'], cwd=/mock-checkout
+Running WebKit unit tests
+MOCK run_and_throw_if_fail: ['mock-run-webkit-unit-tests'], cwd=/mock-checkout
 Running run-webkit-tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--quiet'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['mock-run-webkit-tests', '--quiet'], cwd=/mock-checkout
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)

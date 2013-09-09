@@ -537,6 +537,39 @@ class TestPort(Port):
             VirtualTestSuite('virtual/skipped', 'failures/expected', ['--virtual-arg2']),
         ]
 
+    def make_args(self):
+        return '--makeargs="-j4"'
+
+    def check_webkit_style_command(self):
+        return ["mock-check-webkit-style"]
+
+    def update_webkit_command(self, non_interactive=False):
+        return ["mock-update-webkit"]
+
+    def build_webkit_command(self, build_style=None):
+        return ["mock-build-webkit"]
+
+    def prepare_changelog_command(self):
+        return ['mock-prepare-ChangeLog']
+
+    def run_python_unittests_command(self):
+        return ['mock-test-webkitpy']
+
+    def run_perl_unittests_command(self):
+        return ['mock-test-webkitperl']
+
+    def run_javascriptcore_tests_command(self):
+        return ['mock-run-javascriptcore-tests']
+
+    def run_webkit_unit_tests_command(self):
+        return ['mock-run-webkit-unit-tests']
+
+    def run_webkit_tests_command(self):
+        return ['mock-run-webkit-tests']
+
+    def run_bindings_tests_command(self):
+        return ['mock-run-bindings-tests']
+
 
 class TestDriver(Driver):
     """Test/Dummy implementation of the DumpRenderTree interface."""

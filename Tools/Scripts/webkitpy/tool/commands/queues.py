@@ -39,7 +39,6 @@ from optparse import make_option
 from StringIO import StringIO
 
 from webkitpy.common.config.committervalidator import CommitterValidator
-from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import ScriptError
@@ -273,11 +272,9 @@ class PatchProcessingQueue(AbstractPatchQueue):
         AbstractPatchQueue.begin_work_queue(self)
         if not self.port_name:
             return
-        # FIXME: This is only used for self._deprecated_port.flag()
-        self._deprecated_port = DeprecatedPort.port(self.port_name)
-        # FIXME: This violates abstraction
-        self._tool._deprecated_port = self._deprecated_port
         self._port = self._tool.port_factory.get(self._new_port_name_from_old(self.port_name, self._tool.platform))
+        # FIXME: This violates abstraction
+        self._tool._port = self._port
 
     def _upload_results_archive_for_patch(self, patch, results_archive_zip):
         if not self._port:
@@ -350,7 +347,7 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
     # CommitQueueTaskDelegate methods
 
     def run_command(self, command):
-        self.run_webkit_patch(command + [self._deprecated_port.flag()])
+        self.run_webkit_patch(command + [self._port.tooling_flag()])
 
     def command_passed(self, message, patch):
         self._update_status(message, patch=patch)

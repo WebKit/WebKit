@@ -31,7 +31,6 @@ import logging
 from optparse import make_option
 
 from webkitpy.common.config.committers import CommitterList
-from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.earlywarningsystemtask import EarlyWarningSystemTask, EarlyWarningSystemTaskDelegate
@@ -103,7 +102,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         return self.name
 
     def run_command(self, command):
-        self.run_webkit_patch(command + [self._deprecated_port.flag()])
+        self.run_webkit_patch(command + [self._port.tooling_flag()])
 
     def command_passed(self, message, patch):
         pass

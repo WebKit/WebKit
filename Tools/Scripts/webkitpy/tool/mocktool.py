@@ -32,9 +32,7 @@ from webkitpy.common.host_mock import MockHost
 from webkitpy.common.net.buildbot.buildbot_mock import MockBuildBot
 from webkitpy.common.net.statusserver_mock import MockStatusServer
 from webkitpy.common.net.irc.irc_mock import MockIRC
-
-# FIXME: Old-style "Ports" need to die and be replaced by modern layout_tests.port which needs to move to common.
-from webkitpy.common.config.ports_mock import MockPort
+from webkitpy.port.test import TestPort
 
 
 # FIXME: We should just replace this with optparse.Values(default=kwargs)
@@ -64,15 +62,16 @@ class MockTool(MockHost):
     def __init__(self, *args, **kwargs):
         MockHost.__init__(self, *args, **kwargs)
 
-        self._deprecated_port = MockPort()
+        self._port = TestPort(self)
+        self._port.name = lambda: "MockPort"
         self.status_server = MockStatusServer()
 
         self._irc = None
         self.irc_password = "MOCK irc password"
         self.wakeup_event = threading.Event()
 
-    def deprecated_port(self):
-        return self._deprecated_port
+    def port(self):
+        return self._port
 
     def path(self):
         return "echo"

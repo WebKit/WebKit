@@ -134,3 +134,13 @@ class EflPort(Port):
 
     def check_sys_deps(self, needs_http):
         return super(EflPort, self).check_sys_deps(needs_http) and self._driver_class().check_driver(self)
+
+    def build_webkit_command(self, build_style=None):
+        command = super(EflPort, self).build_webkit_command(build_style)
+        command.extend(["--efl", "--update-efl"])
+        if self.get_option('webkit_test_runner'):
+            command.append("--no-webkit1")
+        else:
+            command.append("--no-webkit2")
+        command.append(super(EflPort, self).make_args())
+        return command

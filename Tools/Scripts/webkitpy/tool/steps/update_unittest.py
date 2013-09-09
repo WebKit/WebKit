@@ -28,7 +28,6 @@
 
 import unittest2 as unittest
 
-from webkitpy.common.config.ports import MacPort, MacWK2Port
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.update import Update
 
@@ -41,10 +40,10 @@ class UpdateTest(unittest.TestCase):
         step = Update(tool, options)
         self.assertEqual(["mock-update-webkit"], step._update_command())
 
-        tool._deprecated_port = MacPort()
+        tool._port = tool.port_factory.get("mac")
         self.assertEqual(["Tools/Scripts/update-webkit"], step._update_command())
 
-        tool._deprecated_port = MacWK2Port()
+        tool._port = tool.port_factory.get("mac-wk2")
         self.assertEqual(["Tools/Scripts/update-webkit"], step._update_command())
 
     def test_update_command_interactive(self):
@@ -53,8 +52,8 @@ class UpdateTest(unittest.TestCase):
         step = Update(tool, options)
         self.assertEqual(["mock-update-webkit"], step._update_command())
 
-        tool._deprecated_port = MacPort()
+        tool._port = tool.port_factory.get("mac")
         self.assertEqual(["Tools/Scripts/update-webkit"], step._update_command())
 
-        tool._deprecated_port = MacWK2Port()
+        tool._port = tool.port_factory.get("mac-wk2")
         self.assertEqual(["Tools/Scripts/update-webkit"], step._update_command())

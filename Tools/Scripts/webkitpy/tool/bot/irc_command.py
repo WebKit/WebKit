@@ -216,7 +216,7 @@ class Rollout(IRCCommand):
 
     def _update_working_copy(self, tool):
         tool.scm().discard_local_changes()
-        tool.executive.run_and_throw_if_fail(tool.deprecated_port().update_webkit_command(), quiet=True, cwd=tool.scm().checkout_root)
+        tool.executive.run_and_throw_if_fail(tool.port().update_webkit_command(), quiet=True, cwd=tool.scm().checkout_root)
 
     def _check_diff_failure(self, error_log, tool):
         if not error_log:

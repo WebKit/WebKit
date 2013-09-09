@@ -36,6 +36,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.port.gtk import GtkPort
 from webkitpy.port.pulseaudio_sanitizer_mock import PulseAudioSanitizerMock
 from webkitpy.port import port_testcase
+from webkitpy.port.base import Port
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 
@@ -108,3 +109,30 @@ STDERR: <empty>""" % locals()
         stderr, log = port._get_crash_log("DumpRenderTree", 28529, "", "", newer_than=0.0)
         self.assertEqual(stderr, "")
         self.assertMultiLineEqual(log, mock_empty_crash_log)
+
+    def test_commands(self):
+        port = self.make_port(port_name="gtk")
+        self.assertEqual(port.tooling_flag(), "--port=gtk")
+        self.assertEqual(port.update_webkit_command(), Port.script_shell_command("update-webkit"))
+        self.assertEqual(port.check_webkit_style_command(), Port.script_shell_command("check-webkit-style"))
+        self.assertEqual(port.prepare_changelog_command(), Port.script_shell_command("prepare-ChangeLog"))
+        self.assertEqual(port.build_webkit_command(), Port.script_shell_command("build-webkit") + ["--gtk", "--update-gtk", "--no-webkit2", port.make_args()])
+        self.assertEqual(port.run_javascriptcore_tests_command(), Port.script_shell_command("run-javascriptcore-tests"))
+        self.assertEqual(port.run_webkit_unit_tests_command(), None)
+        self.assertEqual(port.run_webkit_tests_command(), Port.script_shell_command("run-webkit-tests") + ["--gtk"])
+        self.assertEqual(port.run_python_unittests_command(), Port.script_shell_command("test-webkitpy"))
+        self.assertEqual(port.run_perl_unittests_command(), Port.script_shell_command("test-webkitperl"))
+        self.assertEqual(port.run_bindings_tests_command(), Port.script_shell_command("run-bindings-tests"))
+
+        port = self.make_port(port_name="gtk", options=MockOptions(webkit_test_runner=True))
+        self.assertEqual(port.tooling_flag(), "--port=gtk-wk2")
+        self.assertEqual(port.update_webkit_command(), Port.script_shell_command("update-webkit"))
+        self.assertEqual(port.check_webkit_style_command(), Port.script_shell_command("check-webkit-style"))
+        self.assertEqual(port.prepare_changelog_command(), Port.script_shell_command("prepare-ChangeLog"))
+        self.assertEqual(port.build_webkit_command(), Port.script_shell_command("build-webkit") + ["--gtk", "--update-gtk", "--no-webkit1", port.make_args()])
+        self.assertEqual(port.run_javascriptcore_tests_command(), Port.script_shell_command("run-javascriptcore-tests"))
+        self.assertEqual(port.run_webkit_unit_tests_command(), None)
+        self.assertEqual(port.run_webkit_tests_command(), Port.script_shell_command("run-webkit-tests") + ["--gtk", "-2"])
+        self.assertEqual(port.run_python_unittests_command(), Port.script_shell_command("test-webkitpy"))
+        self.assertEqual(port.run_perl_unittests_command(), Port.script_shell_command("test-webkitperl"))
+        self.assertEqual(port.run_bindings_tests_command(), Port.script_shell_command("run-bindings-tests"))

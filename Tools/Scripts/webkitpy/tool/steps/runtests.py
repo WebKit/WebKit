@@ -56,22 +56,22 @@ class RunTests(AbstractStep):
         if not self._options.non_interactive:
             # FIXME: We should teach the commit-queue and the EWS how to run these tests.
 
-            python_unittests_command = self._tool.deprecated_port().run_python_unittests_command()
+            python_unittests_command = self._tool.port().run_python_unittests_command()
             if python_unittests_command:
                 _log.info("Running Python unit tests")
                 self._tool.executive.run_and_throw_if_fail(python_unittests_command, cwd=self._tool.scm().checkout_root)
 
-            perl_unittests_command = self._tool.deprecated_port().run_perl_unittests_command()
+            perl_unittests_command = self._tool.port().run_perl_unittests_command()
             if perl_unittests_command:
                 _log.info("Running Perl unit tests")
                 self._tool.executive.run_and_throw_if_fail(perl_unittests_command, cwd=self._tool.scm().checkout_root)
 
-            javascriptcore_tests_command = self._tool.deprecated_port().run_javascriptcore_tests_command()
+            javascriptcore_tests_command = self._tool.port().run_javascriptcore_tests_command()
             if javascriptcore_tests_command:
                 _log.info("Running JavaScriptCore tests")
                 self._tool.executive.run_and_throw_if_fail(javascriptcore_tests_command, quiet=True, cwd=self._tool.scm().checkout_root)
 
-        bindings_tests_command = self._tool.deprecated_port().run_bindings_tests_command()
+        bindings_tests_command = self._tool.port().run_bindings_tests_command()
         if bindings_tests_command:
             _log.info("Running bindings generation tests")
             args = bindings_tests_command
@@ -80,7 +80,7 @@ class RunTests(AbstractStep):
             except ScriptError, e:
                 _log.info("Error running run-bindings-tests: %s" % e.message_with_output())
 
-        webkit_unit_tests_command = self._tool.deprecated_port().run_webkit_unit_tests_command()
+        webkit_unit_tests_command = self._tool.port().run_webkit_unit_tests_command()
         if webkit_unit_tests_command:
             _log.info("Running WebKit unit tests")
             args = webkit_unit_tests_command
@@ -91,7 +91,7 @@ class RunTests(AbstractStep):
 
 
         _log.info("Running run-webkit-tests")
-        args = self._tool.deprecated_port().run_webkit_tests_command()
+        args = self._tool.port().run_webkit_tests_command()
         if self._options.non_interactive:
             args.extend([
                 "--no-new-test-results",

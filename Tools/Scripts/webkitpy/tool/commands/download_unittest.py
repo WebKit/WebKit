@@ -168,7 +168,7 @@ MOCK run_and_throw_if_fail: ['mock-test-webkitpy'], cwd=/mock-checkout
 Running Perl unit tests
 MOCK run_and_throw_if_fail: ['mock-test-webkitperl'], cwd=/mock-checkout
 Running JavaScriptCore tests
-MOCK run_and_throw_if_fail: ['mock-run-javacriptcore-tests'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['mock-run-javascriptcore-tests'], cwd=/mock-checkout
 Running bindings generation tests
 MOCK run_and_throw_if_fail: ['mock-run-bindings-tests'], cwd=/mock-checkout
 Running WebKit unit tests

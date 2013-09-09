@@ -1,5 +1,120 @@
 2013-09-09  Zan Dobersek  <zdobersek@igalia.com>
 
+        [webkitpy] Remove the DeprecatedPort class
+        https://bugs.webkit.org/show_bug.cgi?id=121030
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the remaining uses of DeprecatedPort, folding its functionality into the Port class.
+
+        The various methods returning commands are moved from the DeprecatedPort class into the Port class,
+        with the Port subclasses overriding specific methods as required.
+
+        * Scripts/webkitpy/common/config/ports.py: Removed.
+        * Scripts/webkitpy/common/config/ports_mock.py: Removed.
+        * Scripts/webkitpy/common/config/ports_unittest.py: Removed.
+        * Scripts/webkitpy/port/base.py:
+        (Port.tooling_flag): This method returns the command line argument that corresponds to the type of the port.
+        It's formatted as '--port=port_name', where port_name is the port's name that's additionally appended the '-wk2'
+        string if the port instance represents the WK2 variation of the port.
+        (Port.script_shell_command): Moved here from the DeprecatedPort interface.
+        (Port.make_args): Ditto.
+        (Port.update_webkit_command): Ditto.
+        (Port.check_webkit_style_command): Ditto.
+        (Port.prepare_changelog_command): Ditto.
+        (Port.build_webkit_command): Ditto.
+        (Port.run_javascriptcore_tests_command): Ditto.
+        (Port.run_webkit_unit_tests_command): Ditto.
+        (Port.run_webkit_tests_command): Ditto.
+        (Port.run_python_unittests_command): Ditto.
+        (Port.run_perl_unittests_command): Ditto.
+        (Port.run_bindings_tests_command): Ditto.
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_build_webkit_command): Add a test for the Port.build_webkit_command() method that tests correct
+        return value with different build types passed to the method.
+        * Scripts/webkitpy/port/efl.py:
+        (EflPort.build_webkit_command): Override the Port.build_webkit_command() method, appending the necessary options
+        to the command line.
+        * Scripts/webkitpy/port/efl_unittest.py:
+        (EflPortTest.test_commands): A thorough test of return values for all the new methods, for both the WK1 and WK2
+        variations of the EflPort class.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.build_webkit_command): Override the Port.build_webkit_command() method, appending the necessary options
+        to the command line.
+        (GtkPort.run_webkit_tests_command): Ditto for Port.run_webkit_tests_command().
+        * Scripts/webkitpy/port/gtk_unittest.py:
+        (GtkPortTest.test_commands): A thorough test of return values for all the new methods, for both the WK1
+        and WK2 variations of the GtkPort class.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_commands): A thorough test of return values for all the new methods, for both the WK1 and WK2
+        variations of the MacPort class.
+        * Scripts/webkitpy/port/qt.py:
+        (QtPort.build_webkit_command): Override the Port.build_webkit_command() method, appending the necessary options
+        to the command line.
+        (QtPort.run_webkit_tests_command): Ditto for Port.run_webkit_tests_command().
+        * Scripts/webkitpy/port/qt_unittest.py:
+        (QtPortTest.test_commands): A thorough test of return values for all the new methods, for both the WK1 and WK2
+        variations of the QtPort class.
+        * Scripts/webkitpy/port/test.py:
+        (TestPort.make_args): Return a mock value that's intended for testing.
+        (TestPort.check_webkit_style_command): Return the script's name prepended with 'mock-'.
+        (TestPort.update_webkit_command): Ditto.
+        (TestPort.build_webkit_command): Ditto.
+        (TestPort.prepare_changelog_command): Ditto.
+        (TestPort.run_python_unittests_command): Ditto.
+        (TestPort.run_perl_unittests_command): Ditto.
+        (TestPort.run_javascriptcore_tests_command): Ditto.
+        (TestPort.run_webkit_unit_tests_command): Ditto.
+        (TestPort.run_webkit_tests_command): Ditto.
+        (TestPort.run_bindings_tests_command): Ditto.
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        (FlakyTestReporter.__init__): WebKitPatch.port() should be called now.
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Rollout._update_working_copy): Ditto.
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (DownloadCommandsTest.test_land_cowhand): Fix a typo, javacriptcore -> javascriptcore.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.run_command): Use the tooling flag as provided by the Port interface.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (PatchProcessingQueue.begin_work_queue): Remove the use of the DeprecatedPort. Create the port that will be used
+        by the PatchProcessingQueue through the tool's port factory, and also pass it to the tool, keeping the nasty
+        abstraction violation.
+        (CommitQueue.run_command): Use the tooling flag as provided by the Port interface.
+        * Scripts/webkitpy/tool/main.py:
+        (WebKitPatch.__init__): self._deprecated_port -> self._port.
+        (WebKitPatch.port): Replaces the WebKitPatch.deprecated_port() method, returns self._port.
+        (WebKitPatch.handle_global_options): Create the Port object through the PortFactory.
+        * Scripts/webkitpy/tool/mocktool.py:
+        (MockTool.__init__): self._deprecated_port -> self._port. The TestPort object also has its name method overridden
+        to return 'MockPort', as many output comparisons rely on the MockPort name. These should all be replaced later, in
+        a separate patch.
+        (MockTool.port): Mimicks WebKitPatch.port().
+        * Scripts/webkitpy/tool/steps/build.py:
+        (Build.build): WebKitPatch.port() should be called now.
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        (CheckStyle.run): Ditto.
+        * Scripts/webkitpy/tool/steps/commit.py:
+        (Commit._check_test_expectations): Ditto.
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog.run): Ditto.
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+        (PrepareChangeLogForRevert.run): Ditto.
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run): Ditto.
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        (RunTestsTest.test_webkit_run_unit_tests): The unnecessary methods should now be overridden on MockTool._port.
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (StepsTest.test_runtests_args): Remove the MockTool._deprecated_port override, but don't replace it. Rather than
+        that the expected test output is adjusted to contain the mock-* command names.
+        * Scripts/webkitpy/tool/steps/update.py:
+        (Update._update_command): WebKitPatch.port() should be called now.
+        * Scripts/webkitpy/tool/steps/update_unittest.py:
+        (UpdateTest.test_update_command_non_interactive): Override the MockTool._port for testing purposes with the port
+        that corresponds to the removed DeprecatedPort subclasses.
+        (UpdateTest.test_update_command_interactive): Ditto.
+
+2013-09-09  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] 32-bit builder should run the JSC tests
         https://bugs.webkit.org/show_bug.cgi?id=119215
 

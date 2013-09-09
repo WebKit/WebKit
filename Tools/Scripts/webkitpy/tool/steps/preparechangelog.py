@@ -107,7 +107,7 @@ class PrepareChangeLog(AbstractStep):
             if not self._options.update_changelogs:
                 return
 
-        args = self._tool.deprecated_port().prepare_changelog_command()
+        args = self._tool.port().prepare_changelog_command()
         if state.get("bug_id"):
             args.append("--bug=%s" % state["bug_id"])
             args.append("--description=%s" % self.cached_lookup(state, 'bug_title'))
