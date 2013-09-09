@@ -308,7 +308,7 @@ bool AccessibilityTable::isTableExposableThroughAccessibility() const
 
     // Gtk+ ATs expect all tables to be exposed as tables.
 #if PLATFORM(GTK)
-    Node* tableNode = toRenderTable(m_renderer)->node();
+    Element* tableNode = toRenderTable(m_renderer)->element();
     return tableNode && isHTMLTableElement(tableNode);
 #endif
 
