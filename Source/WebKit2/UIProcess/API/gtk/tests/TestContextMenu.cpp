@@ -238,6 +238,7 @@ public:
         Image,
         LinkImage,
         Video,
+        Audio,
         Editable
     };
 
@@ -311,6 +312,21 @@ public:
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_OPEN_VIDEO_IN_NEW_WINDOW, Visible | Enabled);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_VIDEO_TO_DISK, Visible | Enabled);
             break;
+        case Audio:
+            g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
+            g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
+            g_assert(webkit_hit_test_result_context_is_media(hitTestResult));
+            g_assert(!webkit_hit_test_result_context_is_editable(hitTestResult));
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PLAY, Visible | Enabled);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_MEDIA_MUTE, Visible);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_TOGGLE_MEDIA_CONTROLS, Visible | Enabled | Checked);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_TOGGLE_MEDIA_LOOP, Visible | Enabled);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_ENTER_VIDEO_FULLSCREEN, Visible);
+            iter = checkCurrentItemIsSeparatorAndGetNext(iter);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_COPY_AUDIO_LINK_TO_CLIPBOARD, Visible | Enabled);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_OPEN_AUDIO_IN_NEW_WINDOW, Visible | Enabled);
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_AUDIO_TO_DISK, Visible | Enabled);
+            break;
         case Editable:
             g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
             g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
@@ -357,6 +373,7 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
         " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
         " <input style='position:absolute; left:1; top:30' size='10'></input>"
         " <video style='position:absolute; left:1; top:50' width='300' height='300' controls='controls' preload='none'><source src='movie.ogg' type='video/ogg' /></video>"
+        " <audio style='position:absolute; left:1; top:60' width='50' height='20' controls='controls' preload='none'><source src='track.mp3' type='audio/mp3' /></audio>"
         "</body></html>";
     test->loadHtml(linksHTML, "file:///");
     test->waitUntilLoadFinished();
@@ -381,9 +398,13 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
     test->m_expectedMenuType = ContextMenuDefaultTest::LinkImage;
     test->showContextMenuAtPositionAndWaitUntilFinished(1, 20);
 
-    // Context menu for image video.
+    // Context menu for video.
     test->m_expectedMenuType = ContextMenuDefaultTest::Video;
     test->showContextMenuAtPositionAndWaitUntilFinished(1, 50);
+
+    // Context menu for audio.
+    test->m_expectedMenuType = ContextMenuDefaultTest::Audio;
+    test->showContextMenuAtPositionAndWaitUntilFinished(1, 60);
 
     // Context menu for editable.
     test->m_expectedMenuType = ContextMenuDefaultTest::Editable;

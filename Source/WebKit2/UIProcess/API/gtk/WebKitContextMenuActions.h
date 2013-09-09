@@ -72,8 +72,8 @@ G_BEGIN_DECLS
  * @WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PLAY: Play current media element.
  * @WEBKIT_CONTEXT_MENU_ACTION_MEDIA_PAUSE: Pause current media element.
  * @WEBKIT_CONTEXT_MENU_ACTION_MEDIA_MUTE: Mute current media element.
- * @WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_VIDEO_TO_DISK: Download video to disk.
- * @WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_AUDIO_TO_DISK: Download audio to disk.
+ * @WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_VIDEO_TO_DISK: Download video to disk. Since 2.2
+ * @WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_AUDIO_TO_DISK: Download audio to disk. Since 2.2
  * @WEBKIT_CONTEXT_MENU_ACTION_CUSTOM: Custom action defined by applications.
  *
  * Enum values used to denote the stock actions for

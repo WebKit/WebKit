@@ -1,3 +1,17 @@
+2013-09-09  Brian Holt  <brian.holt@samsung.com>
+
+        [GTK][WK2] Update ContextMenu Download API
+        https://bugs.webkit.org/show_bug.cgi?id=120763
+
+        Reviewed by Carlos Garcia Campos.
+
+        Mark the new Download items in the Context Menu with the Since
+        tag, and include a unit test for Context Menu audio.
+
+        * UIProcess/API/gtk/WebKitContextMenuActions.h:
+        * UIProcess/API/gtk/tests/TestContextMenu.cpp:
+        (testContextMenuDefaultMenu):
+
 2013-09-08  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [wk2] REGRESSION (r154673): PDF scrolling moves very slowly
