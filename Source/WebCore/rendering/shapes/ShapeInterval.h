@@ -157,33 +157,42 @@ public:
         ShapeInterval<T> aValue = *aNext;
         ShapeInterval<T> bValue = *bNext;
 
-        while (aNext != a.end() && bNext != b.end()) {
+        do {
+            bool aIncrement = false;
+            bool bIncrement = false;
+
             if (bValue.contains(aValue)) {
-                aValue = *++aNext;
+                aIncrement = true;
             } else if (aValue.contains(bValue)) {
                 if (bValue.x1() > aValue.x1())
                     result.append(ShapeInterval<T>(aValue.x1(), bValue.x1()));
                 if (aValue.x2() > bValue.x2())
                     aValue.setX1(bValue.x2());
                 else
-                    aValue = *++aNext;
-                bValue = *++bNext;
+                    aIncrement = true;
+                bIncrement = true;
             } else if (aValue.overlaps(bValue)) {
                 if (aValue.x1() < bValue.x1()) {
                     result.append(ShapeInterval<T>(aValue.x1(), bValue.x1()));
-                    aValue = *++aNext;
+                    aIncrement = true;
                 } else {
                     aValue.setX1(bValue.x2());
-                    bValue = *++bNext;
+                    bIncrement = true;
                 }
             } else {
                 if (aValue.x1() < bValue.x1()) {
                     result.append(aValue);
-                    aValue = *++aNext;
+                    aIncrement = true;
                 } else
-                    bValue = *++bNext;
+                    bIncrement = true;
             }
-        }
+
+            if (aIncrement && ++aNext != a.end())
+                aValue = *aNext;
+            if (bIncrement && ++bNext != b.end())
+                bValue = *bNext;
+
+        } while (aNext != a.end() && bNext != b.end());
 
         if (aNext != a.end()) {
             result.append(aValue);

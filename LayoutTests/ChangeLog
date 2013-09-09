@@ -1,3 +1,15 @@
+2013-09-09  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Heap-buffer-overflow in WebCore::ShapeInterval<float>::subtractShapeIntervals
+        https://bugs.webkit.org/show_bug.cgi?id=120802
+
+        Reviewed by Darin Adler.
+
+        Added a test case that crashed a bounds-checking runtime prior to this fix.
+
+        * fast/shapes/shape-inside/shape-inside-subtract-intervals-crash-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-subtract-intervals-crash.html: Added.
+
 2013-09-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         MouseEnter and MouseLeave may be emitted on Document nodes

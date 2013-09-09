@@ -1,3 +1,18 @@
+2013-09-09  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Heap-buffer-overflow in WebCore::ShapeInterval<float>::subtractShapeIntervals
+        https://bugs.webkit.org/show_bug.cgi?id=120802
+
+        Reviewed by Darin Adler.
+
+        Revised the implementation of subtractShapeIntervals() to isloate and check the
+        places where it dereferences ShapeInterval vector iterators.
+
+        Test: fast/shapes/shape-inside/shape-inside-subtract-intervals-crash.html
+
+        * rendering/shapes/ShapeInterval.h:
+        (WebCore::ShapeInterval::subtractShapeIntervals):
+
 2013-09-09  Darin Adler  <darin@apple.com>
 
         matchingShorthandsForLonghand builds map using a giant function
