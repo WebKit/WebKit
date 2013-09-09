@@ -406,12 +406,6 @@ public:
 
     bool isTablePart() const { return isTableCell() || isRenderTableCol() || isTableCaption() || isTableRow() || isTableSection(); }
 
-    // FIXME: This is the renamed version of isBlockFlow() and it makes it more obvious that flexible boxes and grids are being included. Most
-    // of the current callers did not in fact intend to include flexible boxes and grids (but have been for years), so we will want to
-    // convert those callers over to isRenderBlockFlow() instead. We'll do this call site by call site in order to try to find the
-    // code that is making bad assumptions and change it. Once that's finished, this method will just go away.
-    bool isBlockFlowFlexBoxOrGrid() const { return isRenderBlockFlow() || isFlexibleBoxIncludingDeprecated() || isRenderGrid(); }
-
     inline bool isBeforeContent() const;
     inline bool isAfterContent() const;
     inline bool isBeforeOrAfterContent() const;

@@ -1271,7 +1271,7 @@ static RenderObject* caretRenderer(Node* node)
         return 0;
 
     // if caretNode is a block and caret is inside it then caret should be painted by that block
-    bool paintedByBlock = renderer->isBlockFlowFlexBoxOrGrid() && caretRendersInsideNode(node);
+    bool paintedByBlock = renderer->isRenderBlockFlow() && caretRendersInsideNode(node);
     return paintedByBlock ? renderer : renderer->containingBlock();
 }
 

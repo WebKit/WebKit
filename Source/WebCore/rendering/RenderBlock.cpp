@@ -1720,7 +1720,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
         if (oldHeight > newHeight && maxFloatLogicalBottom > newHeight && !childrenInline()) {
             // One of our children's floats may have become an overhanging float for us. We need to look for it.
             for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-                if (child->isBlockFlowFlexBoxOrGrid() && !child->isFloatingOrOutOfFlowPositioned()) {
+                if (child->isRenderBlockFlow() && !child->isFloatingOrOutOfFlowPositioned()) {
                     RenderBlock* block = toRenderBlock(child);
                     if (block->lowestFloatLogicalBottom() + block->logicalTop() > newHeight)
                         addOverhangingFloats(block, false);
@@ -2258,7 +2258,7 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
     LayoutUnit oldLogicalHeight = logicalHeight();
     setLogicalHeight(logicalTop);
     RenderObject* prev = child->previousSibling();
-    if (prev && prev->isBlockFlowFlexBoxOrGrid() && !prev->isFloatingOrOutOfFlowPositioned()) {
+    if (prev && prev->isRenderBlockFlow() && !prev->isFloatingOrOutOfFlowPositioned()) {
         RenderBlock* block = toRenderBlock(prev);
         if (block->containsFloats() && !block->avoidsFloats() && (block->logicalTop() + block->lowestFloatLogicalBottom()) > logicalTop) 
             addOverhangingFloats(block, false);
@@ -3681,7 +3681,7 @@ GapRects RenderBlock::selectionGaps(RenderBlock* rootBlock, const LayoutPoint& r
     // FIXME: overflow: auto/scroll regions need more math here, since painting in the border box is different from painting in the padding box (one is scrolled, the other is
     // fixed).
     GapRects result;
-    if (!isBlockFlowFlexBoxOrGrid()) // FIXME: Make multi-column selection gap filling work someday.
+    if (!isRenderBlockFlow()) // FIXME: Make multi-column selection gap filling work someday.
         return result;
 
     if (hasColumns() || hasTransform() || style()->columnSpan()) {
@@ -6760,7 +6760,7 @@ int RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLine, Lin
 
 int RenderBlock::firstLineBoxBaseline() const
 {
-    if (!isBlockFlowFlexBoxOrGrid() || (isWritingModeRoot() && !isRubyRun()))
+    if (isWritingModeRoot() && !isRubyRun())
         return -1;
 
     if (childrenInline()) {
@@ -6789,7 +6789,7 @@ int RenderBlock::inlineBlockBaseline(LineDirectionMode direction) const
 
 int RenderBlock::lastLineBoxBaseline(LineDirectionMode lineDirection) const
 {
-    if (!isBlockFlowFlexBoxOrGrid() || (isWritingModeRoot() && !isRubyRun()))
+    if (isWritingModeRoot() && !isRubyRun())
         return -1;
 
     if (childrenInline()) {
@@ -6850,8 +6850,7 @@ RenderBlock* RenderBlock::firstLineBlock() const
         // FIXME: Remove when buttons are implemented with align-items instead
         // of flexbox.
         if (firstLineBlock->isReplaced() || firstLineBlock->isFloating()
-            || !parentBlock || parentBlock->firstChild() != firstLineBlock || !parentBlock->isBlockFlowFlexBoxOrGrid()
-            || (parentBlock->isFlexibleBox() && !parentBlock->isRenderButton()))
+            || !parentBlock || parentBlock->firstChild() != firstLineBlock || (!parentBlock->isRenderBlockFlow() && !parentBlock->isRenderButton()))
             break;
         ASSERT_WITH_SECURITY_IMPLICATION(parentBlock->isRenderBlock());
         firstLineBlock = toRenderBlock(parentBlock);
@@ -6909,7 +6908,7 @@ static inline RenderObject* findFirstLetterBlock(RenderBlock* start)
 
         RenderObject* parentBlock = firstLetterBlock->parent();
         if (firstLetterBlock->isReplaced() || !parentBlock || parentBlock->firstChild() != firstLetterBlock || 
-            !parentBlock->isBlockFlowFlexBoxOrGrid() || (parentBlock->isFlexibleBox() && !parentBlock->isRenderButton()))
+            (!parentBlock->isRenderBlockFlow() && !parentBlock->isRenderButton()))
             return 0;
         firstLetterBlock = parentBlock;
     } 
@@ -7091,7 +7090,7 @@ void RenderBlock::updateFirstLetter()
 static bool shouldCheckLines(RenderObject* obj)
 {
     return !obj->isFloatingOrOutOfFlowPositioned() && !obj->isRunIn()
-            && obj->isBlockFlowFlexBoxOrGrid() && obj->style()->height().isAuto()
+            && obj->isRenderBlock() && obj->style()->height().isAuto()
             && (!obj->isDeprecatedFlexibleBox() || obj->style()->boxOrient() == VERTICAL);
 }
 
@@ -7196,7 +7195,7 @@ void RenderBlock::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit&
         else {
             for (RenderBox* obj = firstChildBox(); obj; obj = obj->nextSiblingBox()) {
                 if (!obj->isFloatingOrOutOfFlowPositioned()) {
-                    if (obj->isBlockFlowFlexBoxOrGrid() && !obj->hasOverflowClip())
+                    if (obj->isRenderBlockFlow() && !obj->hasOverflowClip())
                         toRenderBlock(obj)->adjustForBorderFit(x + obj->x(), left, right);
                     else if (obj->style()->visibility() == VISIBLE) {
                         // We are a replaced element or some kind of non-block-flow object.
