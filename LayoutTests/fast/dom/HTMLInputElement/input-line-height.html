@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../js/resources/js-test-pre.js"></script>
+        <script>
+		    function runTest() {
+                description('Tests that line-height is not applied for input element');
+                                
+                shouldBe("window.getComputedStyle(document.getElementById('tagButton'),null).getPropertyValue('line-height')","document.getElementById('tagButton').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputButton'),null).getPropertyValue('line-height')","document.getElementById('inputButton').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputText'),null).getPropertyValue('line-height')","document.getElementById('inputText').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputSubmit'),null).getPropertyValue('line-height')","document.getElementById('inputSubmit').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputReset'),null).getPropertyValue('line-height')","document.getElementById('inputReset').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputPassword'),null).getPropertyValue('line-height')","document.getElementById('inputPassword').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputSearch'),null).getPropertyValue('line-height')","document.getElementById('inputSearch').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputHidden'),null).getPropertyValue('line-height')","document.getElementById('inputHidden').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputDate'),null).getPropertyValue('line-height')","document.getElementById('inputDate').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputDateTime'),null).getPropertyValue('line-height')","document.getElementById('inputDateTime').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputDateTimeLocal'),null).getPropertyValue('line-height')","document.getElementById('inputDateTimeLocal').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputMonth'),null).getPropertyValue('line-height')","document.getElementById('inputMonth').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputTime'),null).getPropertyValue('line-height')","document.getElementById('inputTime').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputWeek'),null).getPropertyValue('line-height')","document.getElementById('inputWeek').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputImage'),null).getPropertyValue('line-height')","document.getElementById('inputImage').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputFile'),null).getPropertyValue('line-height')","document.getElementById('inputFile').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputRadio'),null).getPropertyValue('line-height')","document.getElementById('inputRadio').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputCheckbox'),null).getPropertyValue('line-height')","document.getElementById('inputCheckbox').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputRange'),null).getPropertyValue('line-height')","document.getElementById('inputRange').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputColor'),null).getPropertyValue('line-height')","document.getElementById('inputColor').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputEmail'),null).getPropertyValue('line-height')","document.getElementById('inputEmail').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputUrl'),null).getPropertyValue('line-height')","document.getElementById('inputUrl').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputTel'),null).getPropertyValue('line-height')","document.getElementById('inputTel').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('inputNumber'),null).getPropertyValue('line-height')","document.getElementById('inputNumber').style.lineHeight");
+                shouldNotBe("window.getComputedStyle(document.getElementById('tagSelect'),null).getPropertyValue('line-height')","document.getElementById('tagSelect').style.lineHeight");
+                shouldBe("window.getComputedStyle(document.getElementById('tagTextarea'),null).getPropertyValue('line-height')","document.getElementById('tagTextarea').style.lineHeight");
+				isSuccessfullyParsed();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <form>
+            <button id="tagButton" style="line-height: 50px">Button</button><br>
+            <input id="inputButton" style="line-height: 50px" type="button" value="Button"/><br>
+            <input id="inputText" style="line-height: 50px" type="text"/><br>
+            <input id="inputSubmit" style="line-height: 50px" type="submit" value="Submit"/><br>
+            <input id="inputReset" style="line-height: 50px" type="reset" value="Reset"/><br>
+            <input id="inputPassword" style="line-height: 50px" type="password"/><br>
+            <input id="inputSearch" style="line-height: 50px" type="search"/><br>
+            <input id="inputHidden" style="line-height: 50px" type="hidden"/><br>
+            <input id="inputDate" style="line-height: 50px" type="date"/><br>
+            <input id="inputDateTime" style="line-height: 50px" type="datetime"/><br>
+            <input id="inputDateTimeLocal" style="line-height: 50px" type="datetime-local"/><br>
+            <input id="inputMonth" style="line-height: 50px" type="month"/><br>
+            <input id="inputTime" style="line-height: 50px" type="time"/><br>
+            <input id="inputWeek" style="line-height: 50px" type="week"/><br>
+            <input id="inputImage" style="line-height: 50px" type="image"/><br>
+            <input id="inputFile" style="line-height: 50px" type="file"/><br>
+            <input id="inputRadio" style="line-height: 50px" type="radio"/><br>
+            <input id="inputCheckbox" style="line-height: 50px" type="checkbox"/><br>
+            <input id="inputRange" style="line-height: 50px" type="range"/><br>
+            <input id="inputColor" style="line-height: 50px" type="color"/><br>
+            <input id="inputEmail" style="line-height: 50px" type="email"/><br>
+            <input id="inputUrl" style="line-height: 50px" type="url"/><br>
+            <input id="inputTel" style="line-height: 50px" type="tel"/><br>
+            <input id="inputNumber" style="line-height: 50px" type="number"/><br>
+            <select id="tagSelect" style="line-height: 50px">
+                <option>A select</option>
+                <option>An option</option>
+            </select><br>
+            <textarea id="tagTextarea" style="line-height: 50px"></textarea><br>
+        </form>       
+    </body>
+</html>

@@ -1,5 +1,24 @@
 2013-09-08  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
+        defining line height affects height of text box
+        https://bugs.webkit.org/show_bug.cgi?id=17619
+
+        Reviewed by Darin Adler.
+
+        Giving line height to input elements increase the height
+        of the element. To make it work similiar as Mozilla and IE
+        line-height :normal should be applied for input elements.
+
+        Test: fast/dom/HTMLInputElement/input-line-height.html
+
+        * css/html.css:
+        (input):
+        Made the line-height: normal as !important so that it does not
+        consider any other line-height specified through internal or 
+        external styles.
+
+2013-09-08  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
         Scrollbar width is not applied when element hidden
         https://bugs.webkit.org/show_bug.cgi?id=90546
 

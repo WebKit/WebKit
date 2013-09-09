@@ -411,6 +411,10 @@ input, textarea, keygen, select, button, isindex {
     text-align: start;
 }
 
+input {
+    line-height: normal !important;
+}
+
 input[type="hidden"] {
     display: none
 }

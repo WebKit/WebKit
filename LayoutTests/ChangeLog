@@ -1,5 +1,25 @@
 2013-09-08  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
+        defining line height affects height of text box
+        https://bugs.webkit.org/show_bug.cgi?id=17619
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/HTMLInputElement/input-line-height-expected.txt: Added.
+        * fast/dom/HTMLInputElement/input-line-height.html: Added.
+
+        Added new test for verifying that giving line-height to input element
+        has no affect on its height.
+
+        * fast/forms/placeholder-position-expected.txt:
+        * platform/mac/fast/forms/placeholder-position-expected.png:
+
+        Rebaselining existing tests as per the new behavior. The position
+        of input elements have been modified since line-height is not being 
+        considered.
+
+2013-09-08  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
         Scrollbar width is not applied when element hidden
         https://bugs.webkit.org/show_bug.cgi?id=90546
 

@@ -1,0 +1,61 @@
+Tests that line-height is not applied for input element
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getComputedStyle(document.getElementById('tagButton'),null).getPropertyValue('line-height') is document.getElementById('tagButton').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputButton'),null).getPropertyValue('line-height') is not document.getElementById('inputButton').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputText'),null).getPropertyValue('line-height') is not document.getElementById('inputText').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputSubmit'),null).getPropertyValue('line-height') is not document.getElementById('inputSubmit').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputReset'),null).getPropertyValue('line-height') is not document.getElementById('inputReset').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputPassword'),null).getPropertyValue('line-height') is not document.getElementById('inputPassword').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputSearch'),null).getPropertyValue('line-height') is not document.getElementById('inputSearch').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputHidden'),null).getPropertyValue('line-height') is not document.getElementById('inputHidden').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputDate'),null).getPropertyValue('line-height') is not document.getElementById('inputDate').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputDateTime'),null).getPropertyValue('line-height') is not document.getElementById('inputDateTime').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputDateTimeLocal'),null).getPropertyValue('line-height') is not document.getElementById('inputDateTimeLocal').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputMonth'),null).getPropertyValue('line-height') is not document.getElementById('inputMonth').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputTime'),null).getPropertyValue('line-height') is not document.getElementById('inputTime').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputWeek'),null).getPropertyValue('line-height') is not document.getElementById('inputWeek').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputImage'),null).getPropertyValue('line-height') is not document.getElementById('inputImage').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputFile'),null).getPropertyValue('line-height') is not document.getElementById('inputFile').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputRadio'),null).getPropertyValue('line-height') is not document.getElementById('inputRadio').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputCheckbox'),null).getPropertyValue('line-height') is not document.getElementById('inputCheckbox').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputRange'),null).getPropertyValue('line-height') is not document.getElementById('inputRange').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputColor'),null).getPropertyValue('line-height') is not document.getElementById('inputColor').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputEmail'),null).getPropertyValue('line-height') is not document.getElementById('inputEmail').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputUrl'),null).getPropertyValue('line-height') is not document.getElementById('inputUrl').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputTel'),null).getPropertyValue('line-height') is not document.getElementById('inputTel').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('inputNumber'),null).getPropertyValue('line-height') is not document.getElementById('inputNumber').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('tagSelect'),null).getPropertyValue('line-height') is not document.getElementById('tagSelect').style.lineHeight
+PASS window.getComputedStyle(document.getElementById('tagTextarea'),null).getPropertyValue('line-height') is document.getElementById('tagTextarea').style.lineHeight
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Button
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
