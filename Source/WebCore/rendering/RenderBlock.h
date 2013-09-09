@@ -1264,19 +1264,17 @@ public:
         bool hasLeftObjects() const { return m_leftObjectsCount > 0; }
         bool hasRightObjects() const { return m_rightObjectsCount > 0; }
         const FloatingObjectSet& set() const { return m_set; }
-        const FloatingObjectTree& placedFloatsTree()
-        {
-            computePlacedFloatsTreeIfNeeded();
-            return m_placedFloatsTree; 
-        }
         void clearLineBoxTreePointers();
+        LayoutUnit logicalLeftOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight, ShapeOutsideFloatOffsetMode = ShapeOutsideFloatShapeOffset, LayoutUnit* heightRemaining = 0);
+        LayoutUnit logicalRightOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight, ShapeOutsideFloatOffsetMode = ShapeOutsideFloatShapeOffset, LayoutUnit* heightRemaining = 0);
     private:
         FloatingObjects(const RenderBlock*, bool horizontalWritingMode);
         void computePlacedFloatsTree();
-        inline void computePlacedFloatsTreeIfNeeded()
+        const FloatingObjectTree& placedFloatsTree()
         {
             if (!m_placedFloatsTree.isInitialized())
                 computePlacedFloatsTree();
+            return m_placedFloatsTree;
         }
         void increaseObjectsCount(FloatingObject::Type);
         void decreaseObjectsCount(FloatingObject::Type);

@@ -1,3 +1,24 @@
+2013-09-09  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Move logical(Left|Right)FloatOffsetForLine methods into FloatingObjects
+        https://bugs.webkit.org/show_bug.cgi?id=120705
+
+        Reviewed by Sam Weinig.
+
+        These are the only consumers of the CalculateFloatOffsetAdapter and
+        the placed floats tree, so it will allow us to reduce the public
+        interface of FloatingObjects and make the placed floats tree private.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalLeftFloatOffsetForLine):
+        (WebCore::RenderBlock::logicalRightFloatOffsetForLine):
+        (WebCore::RenderBlock::FloatingObjects::logicalLeftOffset):
+        (WebCore::RenderBlock::FloatingObjects::logicalRightOffset):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObjects::placedFloatsTree):
+
 2013-09-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Add support for BeforeUnloadEvent interface
