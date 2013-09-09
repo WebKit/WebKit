@@ -5819,8 +5819,8 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     // Locate the common ancestor render object for the two renderers.
     RenderObject* ancestor = nearestCommonHoverAncestor(oldHoverObj, newHoverObj);
 
-    Vector<RefPtr<Node>, 32> nodesToRemoveFromChain;
-    Vector<RefPtr<Node>, 32> nodesToAddToChain;
+    Vector<RefPtr<Element>, 32> elementsToRemoveFromChain;
+    Vector<RefPtr<Element>, 32> elementsToAddToChain;
 
     // mouseenter and mouseleave events are only dispatched if there is a capturing eventhandler on an ancestor
     // or a normal eventhandler on the element itself (they don't bubble).
@@ -5847,18 +5847,19 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
         // (for instance by setting display:none in the :hover pseudo-class). In this case, the old hovered element (and its ancestors)
         // must be updated, to ensure it's normal style is re-applied.
         if (oldHoveredElement && !oldHoverObj) {
-            for (Node* node = oldHoveredElement.get(); node; node = node->parentNode()) {
-                if (!mustBeInActiveChain || (node->isElementNode() && toElement(node)->inActiveChain()))
-                    nodesToRemoveFromChain.append(node);
+            for (Element* element= oldHoveredElement.get(); element; element = element->parentElement()) {
+                if (!mustBeInActiveChain || element->inActiveChain())
+                    elementsToRemoveFromChain.append(element);
             }
         }
 
         // The old hover path only needs to be cleared up to (and not including) the common ancestor;
         for (RenderObject* curr = oldHoverObj; curr && curr != ancestor; curr = curr->hoverAncestor()) {
-            if (!curr->node() || curr->isText())
+            if (!curr->node() || !curr->node()->isElementNode())
                 continue;
-            if (!mustBeInActiveChain || (curr->node()->isElementNode() && toElement(curr->node())->inActiveChain()))
-                nodesToRemoveFromChain.append(curr->node());
+            Element* element = toElement(curr->node());
+            if (!mustBeInActiveChain || element->inActiveChain())
+                elementsToRemoveFromChain.append(element);
         }
         // Unset hovered nodes in sub frame documents if the old hovered node was a frame owner.
         if (oldHoveredElement && oldHoveredElement->isFrameOwnerElement()) {
@@ -5869,33 +5870,31 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 
     // Now set the hover state for our new object up to the root.
     for (RenderObject* curr = newHoverObj; curr; curr = curr->hoverAncestor()) {
-        if (!curr->node() || curr->isText())
+        if (!curr->node() || !curr->node()->isElementNode())
             continue;
-        if (!mustBeInActiveChain || (curr->node()->isElementNode() && toElement(curr->node())->inActiveChain()))
-            nodesToAddToChain.append(curr->node());
+        Element* element = toElement(curr->node());
+        if (!mustBeInActiveChain || element->inActiveChain())
+            elementsToAddToChain.append(element);
     }
 
-    size_t removeCount = nodesToRemoveFromChain.size();
+    size_t removeCount = elementsToRemoveFromChain.size();
     for (size_t i = 0; i < removeCount; ++i) {
-        if (nodesToRemoveFromChain[i]->isElementNode())
-            toElement(nodesToRemoveFromChain[i].get())->setHovered(false);
-        if (event && (hasCapturingMouseLeaveListener || nodesToRemoveFromChain[i]->hasEventListeners(eventNames().mouseleaveEvent)))
-            nodesToRemoveFromChain[i]->dispatchMouseEvent(*event, eventNames().mouseleaveEvent, 0, newHoveredElement);
+        elementsToRemoveFromChain[i]->setHovered(false);
+        if (event && (hasCapturingMouseLeaveListener || elementsToRemoveFromChain[i]->hasEventListeners(eventNames().mouseleaveEvent)))
+            elementsToRemoveFromChain[i]->dispatchMouseEvent(*event, eventNames().mouseleaveEvent, 0, newHoveredElement);
     }
 
     bool sawCommonAncestor = false;
-    size_t addCount = nodesToAddToChain.size();
-    for (size_t i = 0; i < addCount; ++i) {
-        if (allowActiveChanges && nodesToAddToChain[i]->isElementNode())
-            toElement(nodesToAddToChain[i].get())->setActive(true);
-        if (ancestor && nodesToAddToChain[i] == ancestor->node())
+    for (size_t i = 0, size = elementsToAddToChain.size(); i < size; ++i) {
+        if (allowActiveChanges)
+            elementsToAddToChain[i]->setActive(true);
+        if (ancestor && elementsToAddToChain[i] == ancestor->node())
             sawCommonAncestor = true;
         if (!sawCommonAncestor) {
             // Elements after the common hover ancestor does not change hover state, but are iterated over because they may change active state.
-            if (nodesToAddToChain[i]->isElementNode())
-                toElement(nodesToAddToChain[i].get())->setHovered(true);
-            if (event && (hasCapturingMouseEnterListener || nodesToAddToChain[i]->hasEventListeners(eventNames().mouseenterEvent)))
-                nodesToAddToChain[i]->dispatchMouseEvent(*event, eventNames().mouseenterEvent, 0, oldHoveredElement.get());
+            elementsToAddToChain[i]->setHovered(true);
+            if (event && (hasCapturingMouseEnterListener || elementsToAddToChain[i]->hasEventListeners(eventNames().mouseenterEvent)))
+                elementsToAddToChain[i]->dispatchMouseEvent(*event, eventNames().mouseenterEvent, 0, oldHoveredElement.get());
         }
     }
 

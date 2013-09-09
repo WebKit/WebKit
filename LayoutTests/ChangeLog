@@ -1,3 +1,15 @@
+2013-09-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        MouseEnter and MouseLeave may be emitted on Document nodes
+        https://bugs.webkit.org/show_bug.cgi?id=120862
+
+        Reviewed by Antonio Gomes.
+
+        Update expectations now we correctly do not get mouseenter/mouseleave events
+        targeted for Document nodes.
+
+        * fast/events/mouseenterleave-on-subframe-expected.txt:
+
 2013-09-09  Mihai Maerean  <mmaerean@adobe.com>
 
         [Qt] fast/regions/overflow* converted reftests failing after r155114
