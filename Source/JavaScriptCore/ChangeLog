@@ -1,18 +1,3 @@
-2013-09-09  Lucas Forschler  <lforschler@apple.com>
-
-        Merge fix for <rdar:/problem/14909253>
-    
-    2013-09-09  Filip Pizlo  <fpizlo@apple.com>
-    
-            * runtime/ArrayPrototype.cpp:
-            (JSC::arrayProtoFuncSort):
-            * runtime/JSArray.cpp:
-            (JSC::JSArray::sortNumeric):
-            (JSC::JSArray::sort):
-            (JSC::JSArray::compactForSorting):
-            * runtime/JSArray.h:
-            (JSC::JSArray::hasSparseMap):
-
 2013-03-14  Lucas Forschler  <lforschler@apple.com>
 
         Merge r138606
