@@ -1,0 +1,27 @@
+From e0bb1fe30985aa0784825388500cc4fa92c1ff9c Mon Sep 17 00:00:00 2001
+From: Wim Taymans <wim.taymans@collabora.co.uk>
+Date: Wed, 12 Dec 2012 11:09:42 +0100
+Subject: [PATCH 2/2] rtspsrc: timeout on udpsrc is in nanoseconds
+
+---
+ gst/rtsp/gstrtspsrc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/gst/rtsp/gstrtspsrc.c b/gst/rtsp/gstrtspsrc.c
+index 98577b8..902d8ff 100644
+--- a/gst/rtsp/gstrtspsrc.c
++++ b/gst/rtsp/gstrtspsrc.c
+@@ -2812,8 +2812,8 @@ gst_rtspsrc_stream_configure_udp (GstRTSPSrc * src, GstRTSPStream * stream,
+     /* configure a timeout on the UDP port. When the timeout message is
+      * posted, we assume UDP transport is not possible. We reconnect using TCP
+      * if we can. */
+-    g_object_set (G_OBJECT (stream->udpsrc[0]), "timeout", src->udp_timeout,
+-        NULL);
++    g_object_set (G_OBJECT (stream->udpsrc[0]), "timeout",
++        src->udp_timeout * 1000, NULL);
+ 
+     /* get output pad of the UDP source. */
+     *outpad = gst_element_get_static_pad (stream->udpsrc[0], "src");
+-- 
+1.8.1.2
+
