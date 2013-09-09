@@ -33,7 +33,7 @@ Features:
 
 GTK+ configuration:
  GTK+ version                                             : $with_gtk
- GDK target                                               : $with_target
+ GDK targets                                              : $with_target
  Introspection support                                    : $enable_introspection
  Generate documentation                                   : $enable_gtk_doc
 "

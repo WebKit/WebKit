@@ -445,7 +445,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
 	Source/WebKit2/Shared/Plugins/Netscape/PluginInformation.cpp \
 	Source/WebKit2/Shared/Plugins/Netscape/PluginInformation.h \
-	Source/WebKit2/Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
 	Source/WebKit2/Shared/Plugins/NPIdentifierData.cpp \
 	Source/WebKit2/Shared/Plugins/NPIdentifierData.h \
 	Source/WebKit2/Shared/Plugins/NPObjectMessageReceiver.cpp \
@@ -1141,7 +1140,6 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NPRuntimeUtilities.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp \
-	Source/WebKit2/WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp \
 	Source/WebKit2/WebProcess/Plugins/PluginController.h \
 	Source/WebKit2/WebProcess/Plugins/Plugin.cpp \
 	Source/WebKit2/WebProcess/Plugins/Plugin.h \
@@ -1261,6 +1259,16 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebProcess.cpp \
 	Source/WebKit2/WebProcess/WebProcess.h
 
+if TARGET_X11
+webkit2_sources += \
+	Source/WebKit2/Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
+	Source/WebKit2/WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp \
+else
+webkit2_sources += \
+	Source/WebKit2/Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
+	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePluginNone.cpp
+endif # END TARGET_X11
+
 if USE_TEXTURE_MAPPER_GL
 webkit2_sources += \
    Source/WebKit2/WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp \
@@ -1313,7 +1321,6 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/Shared/Plugins/NPVariantData.h \
 	Source/WebKit2/Shared/Plugins/Netscape/NetscapePluginModule.cpp \
 	Source/WebKit2/Shared/Plugins/Netscape/NetscapePluginModule.h \
-	Source/WebKit2/Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
 	Source/WebKit2/Shared/ShareableBitmap.cpp \
 	Source/WebKit2/Shared/ShareableBitmap.h \
 	Source/WebKit2/Shared/WebCoreArgumentCoders.cpp \
@@ -1347,5 +1354,14 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePlugin.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePluginStream.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePluginStream.h \
-	Source/WebKit2/WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp \
 	Source/WebKit2/unix/PluginMainUnix.cpp
+
+if TARGET_X11
+webkit2_plugin_process_sources += \
+	Source/WebKit2/Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
+	Source/WebKit2/WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp
+else
+webkit2_plugin_process_sources += \
+	Source/WebKit2/Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
+	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePluginNone.cpp
+endif # END TARGET_X11

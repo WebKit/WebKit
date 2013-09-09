@@ -122,7 +122,7 @@ Programs_DumpRenderTree_CPPFLAGS = \
 	$(platformgtk_cppflags) \
 	$(webcore_cppflags)
 
-if TARGET_X11
+if TARGET_X11_OR_WAYLAND
 Programs_DumpRenderTree_CPPFLAGS += \
 	-DTEST_PLUGIN_DIR=\"${shell pwd}/${top_builddir}/TestNetscapePlugin/.libs\" \
 	-DFONTS_CONF_DIR=\"${shell pwd}/${srcdir}/Tools/DumpRenderTree/gtk/fonts\"

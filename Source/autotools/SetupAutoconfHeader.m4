@@ -36,13 +36,17 @@ if test "$os_win32" = "yes"; then
     AC_DEFINE([XP_WIN], [1], [ ])
     AC_DEFINE([UNICODE], [1], [ ])
     AC_DEFINE([_UNICODE], [1], [ ])
-else
+elif test "$with_x11_target" = "yes" || test "$with_wayland_target" != "yes"; then
     AC_DEFINE([XP_UNIX], [1], [ ])
 fi
 
-if test "$with_target" = "x11"; then
+if test "$with_x11_target" = "yes"; then
     AC_DEFINE([MOZ_X11], [1], [ ])
     AC_DEFINE([WTF_PLATFORM_X11], [1], [Define if target is X11])
+fi
+
+if test "$with_wayland_target" = "yes"; then
+    AC_DEFINE([WTF_PLATFORM_WAYLAND], [1], [Define if target is Wayland])
 fi
 
 if test "$enable_fast_malloc" = "no"; then
