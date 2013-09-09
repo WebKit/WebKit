@@ -29,9 +29,6 @@
 
 namespace WebCore {
 
-class FrameView;
-class HTMLElement;
-
 class HTMLDocument : public Document, public CachedResourceClient {
 public:
     static PassRefPtr<HTMLDocument> create(Frame* frame, const KURL& url)

@@ -1,3 +1,15 @@
+2013-09-08  Santosh Mahto  <santosh.ma@samsung.com>
+
+        HTMLDocument.h : Removing unnecessary forward declaration.
+        https://bugs.webkit.org/show_bug.cgi?id=121002
+
+        Reviewed by Darin Adler.
+
+        Just code cleanup.
+        Removed the two forward declaration in HTMLDocument.h file.
+
+        * html/HTMLDocument.h:
+
 2013-09-08  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         defining line height affects height of text box
