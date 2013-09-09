@@ -173,6 +173,11 @@ namespace JSC {
         }
 
         static void visitChildren(JSCell*, SlotVisitor&);
+        
+        bool hasSparseMap()
+        {
+            return !!m_storage->m_sparseValueMap;
+        }
 
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
