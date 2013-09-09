@@ -1,3 +1,9 @@
+2013-09-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix build.
+
+        * Modules/encryptedmedia/MediaKeySession.h:
+
 2013-09-09  Eric Carlson  <eric.carlson@apple.com>
 
         MediaStream API: Moving Add/Remove track from WebMediaStreamCenterClient to WebMediaStream
