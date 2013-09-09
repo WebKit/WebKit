@@ -1,3 +1,16 @@
+2013-09-09  Mark Lam  <mark.lam@apple.com>
+
+        Change some remaining fast/* files to use pre and post js files in LayoutTests/resources.
+        https://bugs.webkit.org/show_bug.cgi?id=120899.
+
+        Rubber stamped by Filip Pizlo.
+
+        * fast/dom/Element/scroll-width-hidden.html:
+        * fast/dom/Element/scroll-width-visible.html:
+        * fast/dom/HTMLInputElement/input-line-height.html:
+        * fast/dom/processing-instruction-inherit-characterdata.xhtml:
+        * fast/events/before-unload-returnValue.html:
+
 2013-09-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Add support for BeforeUnloadEvent interface
