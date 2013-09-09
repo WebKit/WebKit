@@ -1,3 +1,9 @@
+2013-09-09  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix.
+
+        * GNUmakefile.list.am: Typo - left-over \ from a copy/paste, most likely.
+
 2013-09-09  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] Cancel the current active WebKitAuthenticationRequest on load failed
