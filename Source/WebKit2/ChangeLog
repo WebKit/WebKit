@@ -1,3 +1,35 @@
+2013-09-09  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] Cancel the current active WebKitAuthenticationRequest on load failed
+        https://bugs.webkit.org/show_bug.cgi?id=120350
+
+        Reviewed by Carlos Garcia Campos.
+
+        The default dialog does not get closed and the authentication is not cancelled
+        if loading fails or is stopped on a page which requires HTTP authentication.
+
+        This patch cancels the authentication request on load failed
+        and adds new authentication cancelled signal in WebKitAuthenticationRequest
+        to allow the application handling of authentication UI.
+
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:
+        (authenticationCancelled):
+        (webkitAuthenticationDialogInitialize):
+        (webkitAuthenticationDialogDispose):
+        (webkitAuthenticationDialogNew):
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.h:
+        * UIProcess/API/gtk/WebKitAuthenticationRequest.cpp:
+        (webkit_authentication_request_class_init):
+        (webkit_authentication_request_cancel):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewAuthenticate):
+        (webkitWebViewLoadFailed):
+        (webkitWebViewHandleAuthenticationChallenge):
+        (webkitWebViewCancelAuthenticationRequest):
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewAuthenticationLoadCancelled):
+        (beforeAll):
+
 2013-09-09  Brian Holt  <brian.holt@samsung.com>
 
         [GTK][WK2] Update ContextMenu Download API

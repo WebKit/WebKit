@@ -190,6 +190,7 @@ struct _WebKitWebViewPrivate {
     unsigned long faviconChangedHandlerID;
 
     SnapshotResultsMap snapshotResultsMap;
+    GRefPtr<WebKitAuthenticationRequest> authenticationRequest;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -437,7 +438,7 @@ static void webkitWebViewDisconnectFaviconDatabaseSignalHandlers(WebKitWebView* 
 static gboolean webkitWebViewAuthenticate(WebKitWebView* webView, WebKitAuthenticationRequest* request)
 {
     CredentialStorageMode credentialStorageMode = webkit_authentication_request_can_save_credentials(request) ? AllowPersistentStorage : DisallowPersistentStorage;
-    webkitWebViewBaseAddAuthenticationDialog(WEBKIT_WEB_VIEW_BASE(webView), webkitAuthenticationDialogNew(request, credentialStorageMode, webView));
+    webkitWebViewBaseAddAuthenticationDialog(WEBKIT_WEB_VIEW_BASE(webView), webkitAuthenticationDialogNew(request, credentialStorageMode));
 
     return TRUE;
 }
@@ -1430,15 +1431,24 @@ static void webkitWebViewSetIsLoading(WebKitWebView* webView, bool isLoading)
     g_object_thaw_notify(G_OBJECT(webView));
 }
 
+static void webkitWebViewCancelAuthenticationRequest(WebKitWebView* webView)
+{
+    if (!webView->priv->authenticationRequest)
+        return;
+
+    webkit_authentication_request_cancel(webView->priv->authenticationRequest.get());
+    webView->priv->authenticationRequest.clear();
+}
+
 static void webkitWebViewEmitLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 {
     if (loadEvent == WEBKIT_LOAD_STARTED) {
         webkitWebViewSetIsLoading(webView, true);
         webkitWebViewWatchForChangesInFavicon(webView);
-        webkitWebViewBaseCancelAuthenticationDialog(WEBKIT_WEB_VIEW_BASE(webView));
+        webkitWebViewCancelAuthenticationRequest(webView);
     } else if (loadEvent == WEBKIT_LOAD_FINISHED) {
         webkitWebViewSetIsLoading(webView, false);
-        webView->priv->waitingForMainResource = false;
+        webkitWebViewCancelAuthenticationRequest(webView);
         webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
     } else
         webkitWebViewUpdateURI(webView);
@@ -1492,6 +1502,8 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError *error)
 {
     webkitWebViewSetIsLoading(webView, false);
+    webkitWebViewCancelAuthenticationRequest(webView);
+
     gboolean returnValue;
     g_signal_emit(webView, signals[LOAD_FAILED], 0, loadEvent, failingURI, error, &returnValue);
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
@@ -1500,6 +1512,7 @@ void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, 
 void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* failingURI, GError *error, GTlsCertificateFlags tlsErrors, GTlsCertificate* certificate)
 {
     webkitWebViewSetIsLoading(webView, false);
+    webkitWebViewCancelAuthenticationRequest(webView);
 
     WebKitTLSErrorsPolicy tlsErrorsPolicy = webkit_web_context_get_tls_errors_policy(webView->priv->context);
     if (tlsErrorsPolicy == WEBKIT_TLS_ERRORS_POLICY_FAIL) {
@@ -1786,9 +1799,9 @@ void webkitWebViewSubmitFormRequest(WebKitWebView* webView, WebKitFormSubmission
 void webkitWebViewHandleAuthenticationChallenge(WebKitWebView* webView, AuthenticationChallengeProxy* authenticationChallenge)
 {
     gboolean privateBrowsingEnabled = webkit_settings_get_enable_private_browsing(webkit_web_view_get_settings(webView));
-    GRefPtr<WebKitAuthenticationRequest> request = adoptGRef(webkitAuthenticationRequestCreate(authenticationChallenge, privateBrowsingEnabled));
+    webView->priv->authenticationRequest = adoptGRef(webkitAuthenticationRequestCreate(authenticationChallenge, privateBrowsingEnabled));
     gboolean returnValue;
-    g_signal_emit(webView, signals[AUTHENTICATE], 0, request.get(), &returnValue);
+    g_signal_emit(webView, signals[AUTHENTICATE], 0, webView->priv->authenticationRequest.get(), &returnValue);
 }
 
 void webkitWebViewInsecureContentDetected(WebKitWebView* webView, WebKitInsecureContentEvent type)

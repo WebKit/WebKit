@@ -298,13 +298,6 @@ void webkitWebViewBaseAddAuthenticationDialog(WebKitWebViewBase* webViewBase, Gt
     gtk_widget_queue_draw(GTK_WIDGET(webViewBase));
 }
 
-void webkitWebViewBaseCancelAuthenticationDialog(WebKitWebViewBase* webViewBase)
-{
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (priv->authenticationDialog)
-        gtk_widget_destroy(priv->authenticationDialog);
-}
-
 void webkitWebViewBaseAddWebInspector(WebKitWebViewBase* webViewBase, GtkWidget* inspector)
 {
     webViewBase->priv->inspectorView = inspector;
