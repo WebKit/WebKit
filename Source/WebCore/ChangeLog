@@ -1,3 +1,88 @@
+2013-09-09  Darin Adler  <darin@apple.com>
+
+        matchingShorthandsForLonghand builds map using a giant function
+        https://bugs.webkit.org/show_bug.cgi?id=121029
+
+        Reviewed by Anders Carlsson.
+
+        There is no need to use a map for this; a switch statement is fine.
+        Also, these structures are simple enough that we can build them
+        every time; we don't need to keep them in globals.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addProperty): Got rid of non-helpful local in
+        CSS_VARIABLES code. Updated for change in return value of the
+        matchingShorthandsForLonghand.
+        (WebCore::CSSParser::parseShorthand): Updated for change in return
+        type of propertiesForInitialization.
+
+        * css/CSSProperty.cpp:
+        (WebCore::StylePropertyMetadata::shorthandID): Updated for change in
+        return value of matchingShorthandsForLonghand.
+
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::backgroundShorthand): Got rid of local variable, constructing
+        the StylePropertyShorthand every time.
+        (WebCore::backgroundPositionShorthand): Ditto.
+        (WebCore::backgroundRepeatShorthand): Ditto.
+        (WebCore::borderShorthand): Ditto.
+        (WebCore::borderAbridgedShorthand): Ditto.
+        (WebCore::borderBottomShorthand): Ditto.
+        (WebCore::borderColorShorthand): Ditto.
+        (WebCore::borderImageShorthand): Ditto.
+        (WebCore::borderLeftShorthand): Ditto.
+        (WebCore::borderRadiusShorthand): Ditto.
+        (WebCore::webkitBorderRadiusShorthand): Ditto.
+        (WebCore::borderRightShorthand): Ditto.
+        (WebCore::borderSpacingShorthand): Ditto.
+        (WebCore::borderStyleShorthand): Ditto.
+        (WebCore::borderTopShorthand): Ditto.
+        (WebCore::borderWidthShorthand): Ditto.
+        (WebCore::listStyleShorthand): Ditto.
+        (WebCore::fontShorthand): Ditto.
+        (WebCore::marginShorthand): Ditto. Ditto.
+        (WebCore::markerShorthand): Ditto.
+        (WebCore::outlineShorthand): Ditto.
+        (WebCore::overflowShorthand): Ditto.
+        (WebCore::paddingShorthand): Ditto.
+        (WebCore::transitionShorthand): Ditto.
+        (WebCore::webkitAnimationShorthand): Ditto.
+        (WebCore::webkitAnimationShorthandForParsing): Ditto.
+        (WebCore::webkitBorderAfterShorthand): Ditto.
+        (WebCore::webkitBorderBeforeShorthand): Ditto.
+        (WebCore::webkitBorderEndShorthand): Ditto.
+        (WebCore::webkitBorderStartShorthand): Ditto.
+        (WebCore::webkitColumnsShorthand): Ditto.
+        (WebCore::webkitColumnRuleShorthand): Ditto.
+        (WebCore::webkitFlexFlowShorthand): Ditto.
+        (WebCore::webkitFlexShorthand): Ditto.
+        (WebCore::webkitMarginCollapseShorthand): Ditto.
+        (WebCore::webkitGridColumnShorthand): Ditto.
+        (WebCore::webkitGridRowShorthand): Ditto.
+        (WebCore::webkitMarqueeShorthand): Ditto.
+        (WebCore::webkitMaskShorthand): Ditto.
+        (WebCore::webkitMaskPositionShorthand): Ditto.
+        (WebCore::webkitMaskRepeatShorthand): Ditto.
+        (WebCore::webkitTextDecorationShorthand): Ditto.
+        (WebCore::webkitTextEmphasisShorthand): Ditto.
+        (WebCore::webkitTextStrokeShorthand): Ditto.
+        (WebCore::webkitTransitionShorthand): Ditto.
+        (WebCore::webkitTransformOriginShorthand): Ditto.
+        (WebCore::widthShorthand): Ditto.
+        (WebCore::heightShorthand): Ditto.
+        (WebCore::shorthandForProperty): Ditto.
+        (WebCore::makeVector): Added. Helper function for the cases in the
+        switch inside matchingShorthandsForLonghand.
+        (WebCore::matchingShorthandsForLonghand): Rewrote this to use a switch
+        instead of a map.
+        (WebCore::indexOfShorthandForLonghand): Tightened up the coding style a bit.
+
+        * css/StylePropertyShorthand.h: Changed type of StylePropertyShorthand's
+        propertiesForInitialization to be an array of shorthands rather than an
+        array of pointers to shorthands. Changed return types of the shorthand
+        functions to return a shorthand object rather than a reference. Did the same
+        for the other functions.
+
 2013-09-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         MouseEnter and MouseLeave may be emitted on Document nodes

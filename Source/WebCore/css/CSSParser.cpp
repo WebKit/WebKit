@@ -1578,21 +1578,17 @@ void CSSParser::addPropertyWithPrefixingVariant(CSSPropertyID propId, PassRefPtr
 
 void CSSParser::addProperty(CSSPropertyID propId, PassRefPtr<CSSValue> value, bool important, bool implicit)
 {
-#if ENABLE(CSS_VARIABLES)
-    CSSPrimitiveValue* primitiveValue = value->isPrimitiveValue() ? static_cast<CSSPrimitiveValue*>(value.get()) : 0;
-#endif
     // This property doesn't belong to a shorthand or is a CSS variable (which will be resolved later).
     if (!m_currentShorthand
 #if ENABLE(CSS_VARIABLES)
-        || (primitiveValue && primitiveValue->isVariableName())
+        || (value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value.get())->isVariableName())
 #endif
         ) {
         m_parsedProperties.append(CSSProperty(propId, value, important, false, CSSPropertyInvalid, m_implicitShorthand || implicit));
         return;
     }
 
-    const Vector<const StylePropertyShorthand*> shorthands = matchingShorthandsForLonghand(propId);
-    // The longhand does not belong to multiple shorthands.
+    Vector<StylePropertyShorthand> shorthands = matchingShorthandsForLonghand(propId);
     if (shorthands.size() == 1)
         m_parsedProperties.append(CSSProperty(propId, value, important, true, CSSPropertyInvalid, m_implicitShorthand || implicit));
     else
@@ -3553,13 +3549,13 @@ bool CSSParser::parseShorthand(CSSPropertyID propId, const StylePropertyShorthan
 
     // Fill in any remaining properties with the initial value.
     ImplicitScope implicitScope(this, PropertyImplicit);
-    const StylePropertyShorthand* const* const propertiesForInitialization = shorthand.propertiesForInitialization();
+    const StylePropertyShorthand* propertiesForInitialization = shorthand.propertiesForInitialization();
     for (unsigned i = 0; i < shorthand.length(); ++i) {
         if (propertyFound[i])
             continue;
 
         if (propertiesForInitialization) {
-            const StylePropertyShorthand& initProperties = *(propertiesForInitialization[i]);
+            const StylePropertyShorthand& initProperties = propertiesForInitialization[i];
             for (unsigned propIndex = 0; propIndex < initProperties.length(); ++propIndex)
                 addProperty(initProperties.properties()[propIndex], cssValuePool().createImplicitInitialValue(), important);
         } else

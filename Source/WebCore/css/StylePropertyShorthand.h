@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -28,7 +28,6 @@
 namespace WebCore {
 
 class StylePropertyShorthand {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     StylePropertyShorthand()
         : m_properties(0)
@@ -46,7 +45,7 @@ public:
     {
     }
 
-    StylePropertyShorthand(CSSPropertyID id, const CSSPropertyID* properties, const StylePropertyShorthand** propertiesForInitialization, unsigned numProperties)
+    StylePropertyShorthand(CSSPropertyID id, const CSSPropertyID* properties, const StylePropertyShorthand* propertiesForInitialization, unsigned numProperties)
         : m_properties(properties)
         , m_propertiesForInitialization(propertiesForInitialization)
         , m_length(numProperties)
@@ -55,77 +54,78 @@ public:
     }
 
     const CSSPropertyID* properties() const { return m_properties; }
-    const StylePropertyShorthand** propertiesForInitialization() const { return m_propertiesForInitialization; }
+    const StylePropertyShorthand* propertiesForInitialization() const { return m_propertiesForInitialization; }
     unsigned length() const { return m_length; }
     CSSPropertyID id() const { return m_shorthandID; }
 
 private:
     const CSSPropertyID* m_properties;
-    const StylePropertyShorthand** m_propertiesForInitialization;
+    const StylePropertyShorthand* m_propertiesForInitialization;
     unsigned m_length;
     CSSPropertyID m_shorthandID;
 };
 
-const StylePropertyShorthand& backgroundShorthand();
-const StylePropertyShorthand& backgroundPositionShorthand();
-const StylePropertyShorthand& backgroundRepeatShorthand();
-const StylePropertyShorthand& borderShorthand();
-const StylePropertyShorthand& borderAbridgedShorthand();
-const StylePropertyShorthand& borderBottomShorthand();
-const StylePropertyShorthand& borderColorShorthand();
-const StylePropertyShorthand& borderImageShorthand();
-const StylePropertyShorthand& borderLeftShorthand();
-const StylePropertyShorthand& borderRadiusShorthand();
-const StylePropertyShorthand& borderRightShorthand();
-const StylePropertyShorthand& borderSpacingShorthand();
-const StylePropertyShorthand& borderStyleShorthand();
-const StylePropertyShorthand& borderTopShorthand();
-const StylePropertyShorthand& borderWidthShorthand();
-const StylePropertyShorthand& listStyleShorthand();
-const StylePropertyShorthand& fontShorthand();
-const StylePropertyShorthand& heightShorthand();
-const StylePropertyShorthand& marginShorthand();
-#if ENABLE(SVG)
-const StylePropertyShorthand& markerShorthand();
-#endif
-const StylePropertyShorthand& outlineShorthand();
-const StylePropertyShorthand& overflowShorthand();
-const StylePropertyShorthand& paddingShorthand();
-const StylePropertyShorthand& transitionShorthand();
-const StylePropertyShorthand& webkitAnimationShorthand();
-const StylePropertyShorthand& webkitAnimationShorthandForParsing();
-const StylePropertyShorthand& webkitBorderAfterShorthand();
-const StylePropertyShorthand& webkitBorderBeforeShorthand();
-const StylePropertyShorthand& webkitBorderEndShorthand();
-const StylePropertyShorthand& webkitBorderRadiusShorthand();
-const StylePropertyShorthand& webkitBorderStartShorthand();
-const StylePropertyShorthand& webkitColumnsShorthand();
-const StylePropertyShorthand& webkitColumnRuleShorthand();
-const StylePropertyShorthand& webkitFlexFlowShorthand();
-const StylePropertyShorthand& webkitFlexShorthand();
-const StylePropertyShorthand& webkitGridColumnShorthand();
-const StylePropertyShorthand& webkitGridRowShorthand();
-const StylePropertyShorthand& webkitMarginCollapseShorthand();
-const StylePropertyShorthand& webkitMarqueeShorthand();
-const StylePropertyShorthand& webkitMaskShorthand();
-const StylePropertyShorthand& webkitMaskPositionShorthand();
-const StylePropertyShorthand& webkitMaskRepeatShorthand();
-const StylePropertyShorthand& webkitTextEmphasisShorthand();
-const StylePropertyShorthand& webkitTextStrokeShorthand();
-const StylePropertyShorthand& webkitTransitionShorthand();
-const StylePropertyShorthand& webkitTransformOriginShorthand();
-const StylePropertyShorthand& widthShorthand();
+StylePropertyShorthand backgroundShorthand();
+StylePropertyShorthand backgroundPositionShorthand();
+StylePropertyShorthand backgroundRepeatShorthand();
+StylePropertyShorthand borderShorthand();
+StylePropertyShorthand borderAbridgedShorthand();
+StylePropertyShorthand borderBottomShorthand();
+StylePropertyShorthand borderColorShorthand();
+StylePropertyShorthand borderImageShorthand();
+StylePropertyShorthand borderLeftShorthand();
+StylePropertyShorthand borderRadiusShorthand();
+StylePropertyShorthand borderRightShorthand();
+StylePropertyShorthand borderSpacingShorthand();
+StylePropertyShorthand borderStyleShorthand();
+StylePropertyShorthand borderTopShorthand();
+StylePropertyShorthand borderWidthShorthand();
+StylePropertyShorthand listStyleShorthand();
+StylePropertyShorthand fontShorthand();
+StylePropertyShorthand heightShorthand();
+StylePropertyShorthand marginShorthand();
+StylePropertyShorthand outlineShorthand();
+StylePropertyShorthand overflowShorthand();
+StylePropertyShorthand paddingShorthand();
+StylePropertyShorthand transitionShorthand();
+StylePropertyShorthand webkitAnimationShorthand();
+StylePropertyShorthand webkitAnimationShorthandForParsing();
+StylePropertyShorthand webkitBorderAfterShorthand();
+StylePropertyShorthand webkitBorderBeforeShorthand();
+StylePropertyShorthand webkitBorderEndShorthand();
+StylePropertyShorthand webkitBorderRadiusShorthand();
+StylePropertyShorthand webkitBorderStartShorthand();
+StylePropertyShorthand webkitColumnsShorthand();
+StylePropertyShorthand webkitColumnRuleShorthand();
+StylePropertyShorthand webkitFlexFlowShorthand();
+StylePropertyShorthand webkitFlexShorthand();
+StylePropertyShorthand webkitGridColumnShorthand();
+StylePropertyShorthand webkitGridRowShorthand();
+StylePropertyShorthand webkitMarginCollapseShorthand();
+StylePropertyShorthand webkitMarqueeShorthand();
+StylePropertyShorthand webkitMaskShorthand();
+StylePropertyShorthand webkitMaskPositionShorthand();
+StylePropertyShorthand webkitMaskRepeatShorthand();
+StylePropertyShorthand webkitTextEmphasisShorthand();
+StylePropertyShorthand webkitTextStrokeShorthand();
+StylePropertyShorthand webkitTransitionShorthand();
+StylePropertyShorthand webkitTransformOriginShorthand();
+StylePropertyShorthand widthShorthand();
 
 #if ENABLE(CSS3_TEXT)
-const StylePropertyShorthand& webkitTextDecorationShorthand();
+StylePropertyShorthand webkitTextDecorationShorthand();
 #endif
 
-// Returns an empty list if the property is not a shorthand.
-const StylePropertyShorthand& shorthandForProperty(CSSPropertyID);
+#if ENABLE(SVG)
+StylePropertyShorthand markerShorthand();
+#endif
+
+// Returns empty value if the property is not a shorthand.
+StylePropertyShorthand shorthandForProperty(CSSPropertyID);
 
 // Return the list of shorthands for a given longhand.
-const Vector<const StylePropertyShorthand*> matchingShorthandsForLonghand(CSSPropertyID);
-unsigned indexOfShorthandForLonghand(CSSPropertyID, const Vector<const StylePropertyShorthand*>&);
+Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID);
+unsigned indexOfShorthandForLonghand(CSSPropertyID, const Vector<StylePropertyShorthand>&);
 
 bool isExpandedShorthand(CSSPropertyID);
 
