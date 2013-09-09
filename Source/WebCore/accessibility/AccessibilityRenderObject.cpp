@@ -671,10 +671,14 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
 }
 
 Node* AccessibilityRenderObject::node() const
-{ 
-    return m_renderer ? m_renderer->node() : 0; 
+{
+    if (!m_renderer)
+        return 0;
+    if (m_renderer->isRenderView())
+        return &m_renderer->document();
+    return m_renderer->node();
 }    
-    
+
 String AccessibilityRenderObject::stringValue() const
 {
     if (!m_renderer)

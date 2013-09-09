@@ -1,3 +1,65 @@
+2013-09-09  Antti Koivisto  <antti@apple.com>
+
+        Make RenderView anonymous
+        https://bugs.webkit.org/show_bug.cgi?id=121013
+
+        Reviewed by Darin Adler and Dave Hyatt.
+
+        RenderView is currently the only renderer that has an associated Node that is not either Element or Text.
+        By making it anonymous (not have associated node, RenderView::node() returns null) we will be able to 
+        significantly tighten typing in both render and DOM trees.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::node):
+        
+            We need to grab document() instead of node() in a few places for RenderViews to keep existing code
+            behaving like it did.
+
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::buildObjectForLayer):
+        
+            Don't tell inspector that the root layer is anonymous for now to avoid changing behavior.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeForHitTest):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::canBeProgramaticallyScrolled):
+        
+            The old non-virtual RenderView test renderer->node == &renderer->document() does not work anymore.
+            Switch to isRenderView() which is now non-virtual in a number of places.
+
+        (WebCore::RenderBox::canAutoscroll):
+        (WebCore::RenderBox::findAutoscrollable):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderReplaced):
+        (WebCore::RenderObject::isAnonymousBlock):
+        
+            RenderView is anonymous but not a CSS anonymous block.
+
+        (WebCore::RenderObject::isText):
+        (WebCore::RenderObject::isRenderView):
+        
+            Make isRenderView non-virtual since it is now hot. Reuse existing bits.
+
+        (WebCore::RenderObject::setIsText):
+        (WebCore::RenderObject::setIsRenderView):
+        (WebCore::RenderObject::RenderObjectBitfields::RenderObjectBitfields):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeSelection):
+        * rendering/RenderView.cpp:
+        
+            Make anonymous.
+
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight):
+
 2013-09-09  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Move logical(Left|Right)FloatOffsetForLine methods into FloatingObjects

@@ -167,7 +167,9 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
     bool isGenerated = (isReflection ? renderer->parent() : renderer)->isBeforeOrAfterContent();
     bool isAnonymous = renderer->isAnonymous();
 
-    if (isReflection && isGenerated)
+    if (renderer->isRenderView())
+        node = &renderer->document();
+    else if (isReflection && isGenerated)
         node = renderer->parent()->generatingNode();
     else if (isGenerated)
         node = renderer->generatingNode();
@@ -200,7 +202,8 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
             layerObject->setPseudoElement("after");
     }
 
-    if (isAnonymous) {
+    // FIXME: RenderView is now really anonymous but don't tell about it to the frontend before making sure it can handle it.
+    if (isAnonymous && !renderer->isRenderView()) {
         layerObject->setIsAnonymous(true);
         if (RenderStyle* style = renderer->style()) {
             if (style->styleType() == FIRST_LETTER)

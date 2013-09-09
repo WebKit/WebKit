@@ -835,14 +835,12 @@ static String nodePosition(Node* node)
     return result.toString();
 }
 
-static void writeSelection(TextStream& ts, const RenderObject* o)
+static void writeSelection(TextStream& ts, const RenderObject* renderer)
 {
-    Node* n = o->node();
-    if (!n || !n->isDocumentNode())
+    if (!renderer->isRenderView())
         return;
 
-    Document* doc = toDocument(n);
-    Frame* frame = doc->frame();
+    Frame* frame = renderer->document().frame();
     if (!frame)
         return;
 

@@ -358,7 +358,6 @@ public:
     virtual bool isRenderPart() const { return false; }
     virtual bool isRenderRegion() const { return false; }
     virtual bool isRenderReplaced() const { return false; }
-    virtual bool isRenderView() const { return false; }
     virtual bool isReplica() const { return false; }
 
     virtual bool isRuby() const { return false; }
@@ -521,7 +520,7 @@ public:
         // RenderBlock::createAnonymousBlock(). This includes creating an anonymous
         // RenderBlock having a BLOCK or BOX display. Other classes such as RenderTextFragment
         // are not RenderBlocks and will return false. See https://bugs.webkit.org/show_bug.cgi?id=56709. 
-        return isAnonymous() && (style()->display() == BLOCK || style()->display() == BOX) && style()->styleType() == NOPSEUDO && isRenderBlock() && !isListMarker() && !isRenderFlowThread()
+        return isAnonymous() && (style()->display() == BLOCK || style()->display() == BOX) && style()->styleType() == NOPSEUDO && isRenderBlock() && !isListMarker() && !isRenderFlowThread() && !isRenderView()
 #if ENABLE(FULLSCREEN_API)
             && !isRenderFullScreen()
             && !isRenderFullScreenPlaceholder()
@@ -546,8 +545,9 @@ public:
     bool isStickyPositioned() const { return m_bitfields.isStickyPositioned(); }
     bool isPositioned() const { return m_bitfields.isPositioned(); }
 
-    bool isText() const  { return m_bitfields.isText(); }
+    bool isText() const  { return !m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isBox() const { return m_bitfields.isBox(); }
+    bool isRenderView() const  { return m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isInline() const { return m_bitfields.isInline(); } // inline object
     bool isRunIn() const { return style()->display() == RUN_IN; } // run-in object
     bool isDragging() const { return m_bitfields.isDragging(); }
@@ -680,8 +680,9 @@ public:
     void invalidateBackgroundObscurationStatus();
     virtual bool computeBackgroundIsKnownToBeObscured() { return false; }
 
-    void setIsText() { m_bitfields.setIsText(true); }
+    void setIsText() { ASSERT(!isBox()); m_bitfields.setIsTextOrRenderView(true); }
     void setIsBox() { m_bitfields.setIsBox(true); }
+    void setIsRenderView() { ASSERT(isBox()); m_bitfields.setIsTextOrRenderView(true); }
     void setReplaced(bool b = true) { m_bitfields.setIsReplaced(b); }
     void setHorizontalWritingMode(bool b = true) { m_bitfields.setHorizontalWritingMode(b); }
     void setHasOverflowClip(bool b = true) { m_bitfields.setHasOverflowClip(b); }
@@ -1075,7 +1076,7 @@ private:
             , m_preferredLogicalWidthsDirty(false)
             , m_floating(false)
             , m_isAnonymous(!node)
-            , m_isText(false)
+            , m_isTextOrRenderView(false)
             , m_isBox(false)
             , m_isInline(true)
             , m_isReplaced(false)
@@ -1106,7 +1107,7 @@ private:
         ADD_BOOLEAN_BITFIELD(floating, Floating);
 
         ADD_BOOLEAN_BITFIELD(isAnonymous, IsAnonymous);
-        ADD_BOOLEAN_BITFIELD(isText, IsText);
+        ADD_BOOLEAN_BITFIELD(isTextOrRenderView, IsTextOrRenderView);
         ADD_BOOLEAN_BITFIELD(isBox, IsBox);
         ADD_BOOLEAN_BITFIELD(isInline, IsInline);
         ADD_BOOLEAN_BITFIELD(isReplaced, IsReplaced);

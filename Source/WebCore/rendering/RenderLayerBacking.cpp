@@ -1568,7 +1568,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
     if (renderer().isRenderRegion())
         return false;
 
-    if (renderer().node() && renderer().node()->isDocumentNode()) {
+    if (renderer().isRenderView()) {
         // Look to see if the root object has a non-simple background
         RenderObject* rootObject = renderer().document().documentElement() ? renderer().document().documentElement()->renderer() : 0;
         if (!rootObject)

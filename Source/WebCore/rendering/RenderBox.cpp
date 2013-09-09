@@ -801,8 +801,7 @@ bool RenderBox::canBeScrolledAndHasScrollableArea() const
     
 bool RenderBox::canBeProgramaticallyScrolled() const
 {
-    Node* node = this->node();
-    if (node && node->isDocumentNode())
+    if (isRenderView())
         return true;
 
     if (!hasOverflowClip())
@@ -812,6 +811,7 @@ bool RenderBox::canBeProgramaticallyScrolled() const
     if (scrollsOverflow() && hasScrollableOverflow)
         return true;
 
+    Node* node = this->node();
     return node && node->rendererIsEditable();
 }
 
@@ -829,7 +829,7 @@ void RenderBox::autoscroll(const IntPoint& position)
 // There are two kinds of renderer that can autoscroll.
 bool RenderBox::canAutoscroll() const
 {
-    if (node() && node()->isDocumentNode())
+    if (isRenderView())
         return view().frameView().isScrollable();
 
     // Check for a box that can be scrolled in its own right.
@@ -862,7 +862,7 @@ IntSize RenderBox::calculateAutoscrollDirection(const IntPoint& windowPoint) con
 RenderBox* RenderBox::findAutoscrollable(RenderObject* renderer)
 {
     while (renderer && !(renderer->isBox() && toRenderBox(renderer)->canAutoscroll())) {
-        if (!renderer->parent() && renderer->node() == &renderer->document() && renderer->document().ownerElement())
+        if (renderer->isRenderView() && renderer->document().ownerElement())
             renderer = renderer->document().ownerElement()->renderer();
         else
             renderer = renderer->parent();
@@ -2843,7 +2843,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) co
         case Calculated:
         {
             RenderObject* cb = isOutOfFlowPositioned() ? container() : containingBlock();
-            while (cb->isAnonymous()) {
+            while (cb->isAnonymous() && !cb->isRenderView()) {
                 cb = cb->containingBlock();
                 toRenderBlock(cb)->addPercentHeightDescendant(const_cast<RenderBox*>(this));
             }
