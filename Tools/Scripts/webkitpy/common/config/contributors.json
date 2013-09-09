@@ -1550,6 +1550,16 @@
             "maheshk"
          ]
       },
+      "Manuel Rego Casasnovas" : {
+         "emails" : [
+            "rego@igalia.com"
+         ],
+         "expertise" : "WebKitGTK+ port, WebKit2",
+         "nicks" : [
+            "rego",
+            "mrego"
+         ]
+      },
       "Marcelo Lira" : {
          "emails" : [
             "marcelo.lira@openbossa.org",
