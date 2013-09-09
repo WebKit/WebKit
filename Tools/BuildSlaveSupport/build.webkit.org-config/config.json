@@ -151,7 +151,7 @@
                       "slavenames": ["apple-windows-3", "apple-windows-4"]
                     },
                     {
-                      "name": "GTK Linux 32-bit Release", "type": "BuildAndAPITest", "builddir": "gtk-linux-32-release",
+                      "name": "GTK Linux 32-bit Release", "type": "BuildAndNonLayoutTest", "builddir": "gtk-linux-32-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["gtk-linux-slave-1"]
                     },
