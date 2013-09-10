@@ -1059,6 +1059,11 @@ double RenderTheme::animationDurationForProgressBar(RenderProgress*) const
 void RenderTheme::adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const
 {
 }
+
+IntRect RenderTheme::progressBarRectForBounds(const RenderObject*, const IntRect& bounds) const
+{
+    return bounds;
+}
 #endif
 
 bool RenderTheme::shouldHaveSpinButton(HTMLInputElement* inputElement) const

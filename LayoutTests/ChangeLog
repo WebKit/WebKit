@@ -1,3 +1,17 @@
+2013-09-10  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] <progress> has rendering artifacts along the bottom
+        https://bugs.webkit.org/show_bug.cgi?id=120865
+        <rdar://problem/11571240>
+
+        Reviewed by Simon Fraser.
+
+        Add a Mac-specific test that an unstyled indeterminate progress bar
+        overrides its specified height with its fixed system height.
+
+        * platform/mac/fast/forms/indeterminate-progress-inline-height-expected.txt: Added.
+        * platform/mac/fast/forms/indeterminate-progress-inline-height.html: Added.
+
 2013-09-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Expose DOM ID and ClassList to AX APIs for automation and AT element hashes

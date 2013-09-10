@@ -28,6 +28,7 @@
 #import "Element.h"
 #import "ExceptionCodePlaceholder.h"
 #import "FileList.h"
+#import "Frame.h"
 #import "FrameView.h"
 #import "GraphicsContextCG.h"
 #import "HTMLAudioElement.h"
@@ -40,6 +41,7 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalizedStrings.h"
 #import "MediaControlElements.h"
+#import "Page.h"
 #import "PaintInfo.h"
 #import "RenderLayer.h"
 #import "RenderMedia.h"
@@ -1274,6 +1276,25 @@ const int* RenderThemeMac::progressBarMargins(NSControlSize controlSize) const
     return margins[controlSize];
 }
 
+IntRect RenderThemeMac::progressBarRectForBounds(const RenderObject* renderObject, const IntRect& bounds) const
+{
+    if (NoControlPart == renderObject->style()->appearance())
+        return bounds;
+
+    float zoomLevel = renderObject->style()->effectiveZoom();
+    int controlSize = controlSizeForFont(renderObject->style());
+    IntSize size = progressBarSizes()[controlSize];
+    size.setHeight(size.height() * zoomLevel);
+    size.setWidth(bounds.width());
+
+    // Now inflate it to account for the shadow.
+    IntRect inflatedRect = bounds;
+    if (bounds.height() <= minimumProgressBarHeight(renderObject->style()))
+        inflatedRect = inflateRect(inflatedRect, size, progressBarMargins(controlSize), zoomLevel);
+
+    return inflatedRect;
+}
+
 int RenderThemeMac::minimumProgressBarHeight(RenderStyle* style) const
 {
     return sizeForSystemFont(style, progressBarSizes()).height();
@@ -1298,16 +1319,8 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
     if (!renderObject->isProgress())
         return true;
 
-    float zoomLevel = renderObject->style()->effectiveZoom();
+    IntRect inflatedRect = progressBarRectForBounds(renderObject, rect);
     int controlSize = controlSizeForFont(renderObject->style());
-    IntSize size = progressBarSizes()[controlSize];
-    size.setHeight(size.height() * zoomLevel);
-    size.setWidth(rect.width());
-
-    // Now inflate it to account for the shadow.
-    IntRect inflatedRect = rect;
-    if (rect.height() <= minimumProgressBarHeight(renderObject->style()))
-        inflatedRect = inflateRect(inflatedRect, size, progressBarMargins(controlSize), zoomLevel);
 
     RenderProgress* renderProgress = toRenderProgress(renderObject);
     HIThemeTrackDrawInfo trackInfo;
@@ -1317,17 +1330,21 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
     else
         trackInfo.kind = renderProgress->position() < 0 ? kThemeMediumIndeterminateBar : kThemeMediumProgressBar;
 
+    float deviceScaleFactor = 1;
+    if (Page* page = renderObject->frame().page())
+        deviceScaleFactor = page->deviceScaleFactor();
+
     trackInfo.bounds = IntRect(IntPoint(), inflatedRect.size());
     trackInfo.min = 0;
     trackInfo.max = numeric_limits<SInt32>::max();
     trackInfo.value = lround(renderProgress->position() * nextafter(trackInfo.max, 0));
-    trackInfo.trackInfo.progress.phase = lround(renderProgress->animationProgress() * nextafter(progressAnimationNumFrames, 0));
+    trackInfo.trackInfo.progress.phase = lround(renderProgress->animationProgress() * nextafter(progressAnimationNumFrames, 0) * deviceScaleFactor);
     trackInfo.attributes = kThemeTrackHorizontal;
     trackInfo.enableState = isActive(renderObject) ? kThemeTrackActive : kThemeTrackInactive;
     trackInfo.reserved = 0;
     trackInfo.filler1 = 0;
 
-    OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(inflatedRect.size(), 1);
+    OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(inflatedRect.size(), deviceScaleFactor);
     if (!imageBuffer)
         return true;
 

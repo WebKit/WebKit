@@ -38,15 +38,16 @@ public:
     double animationStartTime() const { return m_animationStartTime; }
 
     bool isDeterminate() const;
-    virtual void updateFromElement();
+    virtual void updateFromElement() OVERRIDE;
 
     HTMLProgressElement* progressElement() const;
 
 private:
-    virtual const char* renderName() const { return "RenderProgress"; }
-    virtual bool isProgress() const { return true; }
-    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+    virtual const char* renderName() const OVERRIDE { return "RenderProgress"; }
+    virtual bool isProgress() const OVERRIDE { return true; }
+    virtual bool requiresForcedStyleRecalcPropagation() const OVERRIDE { return true; }
     virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 
     void animationTimerFired(Timer<RenderProgress>*);
     void updateAnimationState();

@@ -1,3 +1,41 @@
+2013-09-10  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] <progress> has rendering artifacts along the bottom
+        https://bugs.webkit.org/show_bug.cgi?id=120865
+        <rdar://problem/11571240>
+
+        Reviewed by Simon Fraser.
+
+        Allow RenderTheme to force the height of a <progress> bar.
+
+        Test: platform/mac/fast/forms/indeterminate-progress-inline-height.html
+
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::computeLogicalHeight):
+        Borrowed from RenderMeter, allow the theme to override the size of the progress bar.
+
+        * rendering/RenderProgress.h:
+        Drive-by add OVERRIDE to a few things.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::progressBarRectForBounds):
+        * rendering/RenderTheme.h:
+        Add a default implementation of progressBarRectForBounds that just passes the bounds through.
+
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::progressBarRectForBounds):
+        Override progressBarRectForBounds; the implementation is factored out of paintProgressBar.
+
+        (WebCore::RenderThemeMac::paintProgressBar):
+        Make use of the factored-out progressBarRectForBounds().
+
+        Drive-by apply the device scale factor to the progress bar's image buffer,
+        so that it is rendered at 2x on appropriate hardware. Also, multiply the
+        progress animation phase by the device scale factor, as the phase value seems
+        to be proportional to the actual pixel offset of the animation; without this,
+        the animation would appear to progress half as slowly in HiDPI.
+
 2013-09-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Expose DOM ID and ClassList to AX APIs for automation and AT element hashes

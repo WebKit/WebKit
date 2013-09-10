@@ -189,6 +189,7 @@ public:
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
     // Returns the duration of the animation for the progress bar.
     virtual double animationDurationForProgressBar(RenderProgress*) const;
+    virtual IntRect progressBarRectForBounds(const RenderObject*, const IntRect&) const;
 #endif
 
 #if ENABLE(VIDEO)

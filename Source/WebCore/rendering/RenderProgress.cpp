@@ -60,6 +60,19 @@ void RenderProgress::updateFromElement()
     RenderBlock::updateFromElement();
 }
 
+void RenderProgress::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+{
+    RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
+
+    LayoutRect frame = frameRect();
+    if (isHorizontalWritingMode())
+        frame.setHeight(computedValues.m_extent);
+    else
+        frame.setWidth(computedValues.m_extent);
+    IntSize frameSize = theme()->progressBarRectForBounds(this, pixelSnappedIntRect(frame)).size();
+    computedValues.m_extent = isHorizontalWritingMode() ? frameSize.height() : frameSize.width();
+}
+
 bool RenderProgress::canBeReplacedWithInlineRunIn() const
 {
     return false;
