@@ -836,8 +836,6 @@ set(WebCore_SOURCES
     Modules/mediastream/LocalMediaStream.cpp
     Modules/mediastream/MediaConstraintsImpl.cpp
     Modules/mediastream/MediaStream.cpp
-    Modules/mediastream/MediaStreamComponent.cpp
-    Modules/mediastream/MediaStreamDescriptor.cpp
     Modules/mediastream/MediaStreamEvent.cpp
     Modules/mediastream/MediaStreamRegistry.cpp
     Modules/mediastream/MediaStreamTrack.cpp
@@ -2015,6 +2013,8 @@ set(WebCore_SOURCES
     platform/leveldb/LevelDBWriteBatch.cpp
 
     platform/mediastream/MediaStreamCenter.cpp
+    platform/mediastream/MediaStreamComponent.cpp
+    platform/mediastream/MediaStreamDescriptor.cpp
     platform/mediastream/MediaStreamSource.cpp
     platform/mediastream/RTCIceCandidateDescriptor.cpp
     platform/mediastream/RTCPeerConnectionHandler.cpp

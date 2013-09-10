@@ -1,3 +1,15 @@
+2013-09-10  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Fix EFL build after r155477
+        https://bugs.webkit.org/show_bug.cgi?id=121126
+
+        Reviewed by Antonio Gomes.
+
+        No new tests, build fix.
+
+        * CMakeLists.txt: MediaStreamComponent.cpp and MediaStreamDescriptor.cpp
+        were added with an incorrect path.
+
 2013-09-10  Andreas Kling  <akling@apple.com>
 
         AnimationController should have a Frame& internally.
