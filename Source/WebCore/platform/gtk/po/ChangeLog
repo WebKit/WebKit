@@ -1,3 +1,12 @@
+2013-09-10  Daniel Mustieles  <daniel.mustieles@gmail.com>
+
+        Updated Spanish translation for WebKitGtk+
+        https://bugs.webkit.org/show_bug.cgi?id=121032
+
+        Reviewed by Gustavo Noronha.
+
+        * es.po: updated.
+
 2013-09-10  Enrico Nicoletto  <liverig@gmail.com>
 
         [l10n] [pt_BR] Updated Brazilian Portuguese translation of WebKitGTK+
