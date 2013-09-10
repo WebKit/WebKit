@@ -91,7 +91,7 @@ static inline bool nodeMayOverflow(NodeFlags flags)
     return !!(flags & NodeMayOverflow);
 }
 
-static inline bool nodeCanSpeculateInteger(NodeFlags flags)
+static inline bool nodeCanSpeculateInt32(NodeFlags flags)
 {
     if (flags & NodeMayOverflow)
         return !nodeUsedAsNumber(flags);

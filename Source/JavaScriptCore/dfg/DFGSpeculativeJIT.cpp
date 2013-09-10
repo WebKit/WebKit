@@ -769,7 +769,7 @@ void SpeculativeJIT::arrayify(Node* node)
         return;
     }
     
-    SpeculateIntegerOperand property(this, node->child2());
+    SpeculateInt32Operand property(this, node->child2());
     
     arrayify(node, base.gpr(), property.gpr());
 }
@@ -1184,7 +1184,7 @@ GPRTemporary::GPRTemporary(SpeculativeJIT* jit, GPRReg specific)
     m_gpr = m_jit->allocate(specific);
 }
 
-GPRTemporary::GPRTemporary(SpeculativeJIT* jit, SpeculateIntegerOperand& op1)
+GPRTemporary::GPRTemporary(SpeculativeJIT* jit, SpeculateInt32Operand& op1)
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
 {
@@ -1194,7 +1194,7 @@ GPRTemporary::GPRTemporary(SpeculativeJIT* jit, SpeculateIntegerOperand& op1)
         m_gpr = m_jit->allocate();
 }
 
-GPRTemporary::GPRTemporary(SpeculativeJIT* jit, SpeculateIntegerOperand& op1, SpeculateIntegerOperand& op2)
+GPRTemporary::GPRTemporary(SpeculativeJIT* jit, SpeculateInt32Operand& op1, SpeculateInt32Operand& op2)
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
 {
@@ -1480,15 +1480,15 @@ void SpeculativeJIT::compilePeepHoleIntegerBranch(Node* node, Node* branchNode, 
 
     if (isInt32Constant(node->child1().node())) {
         int32_t imm = valueOfInt32Constant(node->child1().node());
-        SpeculateIntegerOperand op2(this, node->child2());
+        SpeculateInt32Operand op2(this, node->child2());
         branch32(condition, JITCompiler::Imm32(imm), op2.gpr(), taken);
     } else if (isInt32Constant(node->child2().node())) {
-        SpeculateIntegerOperand op1(this, node->child1());
+        SpeculateInt32Operand op1(this, node->child1());
         int32_t imm = valueOfInt32Constant(node->child2().node());
         branch32(condition, op1.gpr(), JITCompiler::Imm32(imm), taken);
     } else {
-        SpeculateIntegerOperand op1(this, node->child1());
-        SpeculateIntegerOperand op2(this, node->child2());
+        SpeculateInt32Operand op1(this, node->child1());
+        SpeculateInt32Operand op2(this, node->child2());
         branch32(condition, op1.gpr(), op2.gpr(), taken);
     }
 
@@ -2211,7 +2211,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 {
     switch (node->child1().useKind()) {
     case Int32Use: {
-        SpeculateIntegerOperand op1(this, node->child1());
+        SpeculateInt32Operand op1(this, node->child1());
         GPRTemporary result(this, op1);
         m_jit.move(op1.gpr(), result.gpr());
         integerResult(result.gpr(), node, op1.format());
@@ -2222,7 +2222,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
     case NotCellUse: {
         switch (checkGeneratedTypeForToInt32(node->child1().node())) {
         case GeneratedOperandInteger: {
-            SpeculateIntegerOperand op1(this, node->child1(), ManualOperandSpeculation);
+            SpeculateInt32Operand op1(this, node->child1(), ManualOperandSpeculation);
             GPRTemporary result(this, op1);
             m_jit.move(op1.gpr(), result.gpr());
             integerResult(result.gpr(), node, op1.format());
@@ -2379,7 +2379,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 
 void SpeculativeJIT::compileUInt32ToNumber(Node* node)
 {
-    if (!nodeCanSpeculateInteger(node->arithNodeFlags())) {
+    if (!nodeCanSpeculateInt32(node->arithNodeFlags())) {
         // We know that this sometimes produces doubles. So produce a double every
         // time. This at least allows subsequent code to not have weird conditionals.
             
@@ -2437,7 +2437,7 @@ void SpeculativeJIT::compileInt32ToDouble(Node* node)
     ASSERT(!isInt32Constant(node->child1().node())); // This should have been constant folded.
     
     if (isInt32Speculation(m_state.forNode(node->child1()).m_type)) {
-        SpeculateIntegerOperand op1(this, node->child1(), ManualOperandSpeculation);
+        SpeculateInt32Operand op1(this, node->child1(), ManualOperandSpeculation);
         FPRTemporary result(this);
         m_jit.convertInt32ToDouble(op1.gpr(), result.fpr());
         doubleResult(result.fpr(), node);
@@ -2611,7 +2611,7 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
     }
     
     ASSERT(elementSize(type) == 4 && !isSigned(type));
-    if (node->shouldSpeculateInteger()) {
+    if (node->shouldSpeculateInt32()) {
         forwardSpeculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, resultReg, TrustedImm32(0)), ValueRecovery::uint32InGPR(resultReg));
         integerResult(resultReg, node);
         return;
@@ -2657,7 +2657,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
     } else {
         switch (valueUse.useKind()) {
         case Int32Use: {
-            SpeculateIntegerOperand valueOp(this, valueUse);
+            SpeculateInt32Operand valueOp(this, valueUse);
             GPRTemporary scratch(this);
             GPRReg scratchReg = scratch.gpr();
             m_jit.move(valueOp.gpr(), scratchReg);
@@ -2926,7 +2926,7 @@ void SpeculativeJIT::compileAdd(Node* node)
     case Int32Use: {
         if (isNumberConstant(node->child1().node())) {
             int32_t imm1 = valueOfInt32Constant(node->child1().node());
-            SpeculateIntegerOperand op2(this, node->child2());
+            SpeculateInt32Operand op2(this, node->child2());
             GPRTemporary result(this);
 
             if (nodeCanTruncateInteger(node->arithNodeFlags())) {
@@ -2940,7 +2940,7 @@ void SpeculativeJIT::compileAdd(Node* node)
         }
                 
         if (isNumberConstant(node->child2().node())) {
-            SpeculateIntegerOperand op1(this, node->child1());
+            SpeculateInt32Operand op1(this, node->child1());
             int32_t imm2 = valueOfInt32Constant(node->child2().node());
             GPRTemporary result(this);
                 
@@ -2954,8 +2954,8 @@ void SpeculativeJIT::compileAdd(Node* node)
             return;
         }
                 
-        SpeculateIntegerOperand op1(this, node->child1());
-        SpeculateIntegerOperand op2(this, node->child2());
+        SpeculateInt32Operand op1(this, node->child1());
+        SpeculateInt32Operand op2(this, node->child2());
         GPRTemporary result(this, op1, op2);
 
         GPRReg gpr1 = op1.gpr();
@@ -3079,7 +3079,7 @@ void SpeculativeJIT::compileArithSub(Node* node)
     switch (node->binaryUseKind()) {
     case Int32Use: {
         if (isNumberConstant(node->child2().node())) {
-            SpeculateIntegerOperand op1(this, node->child1());
+            SpeculateInt32Operand op1(this, node->child1());
             int32_t imm2 = valueOfInt32Constant(node->child2().node());
             GPRTemporary result(this);
 
@@ -3101,7 +3101,7 @@ void SpeculativeJIT::compileArithSub(Node* node)
             
         if (isNumberConstant(node->child1().node())) {
             int32_t imm1 = valueOfInt32Constant(node->child1().node());
-            SpeculateIntegerOperand op2(this, node->child2());
+            SpeculateInt32Operand op2(this, node->child2());
             GPRTemporary result(this);
                 
             m_jit.move(Imm32(imm1), result.gpr());
@@ -3114,8 +3114,8 @@ void SpeculativeJIT::compileArithSub(Node* node)
             return;
         }
             
-        SpeculateIntegerOperand op1(this, node->child1());
-        SpeculateIntegerOperand op2(this, node->child2());
+        SpeculateInt32Operand op1(this, node->child1());
+        SpeculateInt32Operand op2(this, node->child2());
         GPRTemporary result(this);
 
         if (nodeCanTruncateInteger(node->arithNodeFlags())) {
@@ -3151,7 +3151,7 @@ void SpeculativeJIT::compileArithNegate(Node* node)
 {
     switch (node->child1().useKind()) {
     case Int32Use: {
-        SpeculateIntegerOperand op1(this, node->child1());
+        SpeculateInt32Operand op1(this, node->child1());
         GPRTemporary result(this);
 
         m_jit.move(op1.gpr(), result.gpr());
@@ -3185,8 +3185,8 @@ void SpeculativeJIT::compileArithNegate(Node* node)
 }
 void SpeculativeJIT::compileArithIMul(Node* node)
 {
-    SpeculateIntegerOperand op1(this, node->child1());
-    SpeculateIntegerOperand op2(this, node->child2());
+    SpeculateInt32Operand op1(this, node->child1());
+    SpeculateInt32Operand op2(this, node->child2());
     GPRTemporary result(this);
 
     GPRReg reg1 = op1.gpr();
@@ -3202,8 +3202,8 @@ void SpeculativeJIT::compileArithMul(Node* node)
 {
     switch (node->binaryUseKind()) {
     case Int32Use: {
-        SpeculateIntegerOperand op1(this, node->child1());
-        SpeculateIntegerOperand op2(this, node->child2());
+        SpeculateInt32Operand op1(this, node->child1());
+        SpeculateInt32Operand op2(this, node->child2());
         GPRTemporary result(this);
 
         GPRReg reg1 = op1.gpr();
@@ -3258,8 +3258,8 @@ void SpeculativeJIT::compileArithDiv(Node* node)
     switch (node->binaryUseKind()) {
     case Int32Use: {
 #if CPU(X86) || CPU(X86_64)
-        SpeculateIntegerOperand op1(this, node->child1());
-        SpeculateIntegerOperand op2(this, node->child2());
+        SpeculateInt32Operand op1(this, node->child1());
+        SpeculateInt32Operand op2(this, node->child2());
         GPRTemporary eax(this, X86Registers::eax);
         GPRTemporary edx(this, X86Registers::edx);
         GPRReg op1GPR = op1.gpr();
@@ -3340,8 +3340,8 @@ void SpeculativeJIT::compileArithDiv(Node* node)
         done.link(&m_jit);
         integerResult(eax.gpr(), node);
 #elif CPU(APPLE_ARMV7S)
-        SpeculateIntegerOperand op1(this, node->child1());
-        SpeculateIntegerOperand op2(this, node->child2());
+        SpeculateInt32Operand op1(this, node->child1());
+        SpeculateInt32Operand op2(this, node->child2());
         GPRReg op1GPR = op1.gpr();
         GPRReg op2GPR = op2.gpr();
         GPRTemporary quotient(this);
@@ -3500,7 +3500,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
         }
 #endif
 
-        SpeculateIntegerOperand op2(this, node->child2());
+        SpeculateInt32Operand op2(this, node->child2());
 #if CPU(X86) || CPU(X86_64)
         GPRTemporary eax(this, X86Registers::eax);
         GPRTemporary edx(this, X86Registers::edx);
@@ -4482,7 +4482,7 @@ void SpeculativeJIT::compileNewTypedArray(Node* node)
     TypedArrayType type = node->typedArrayType();
     Structure* structure = globalObject->typedArrayStructure(type);
     
-    SpeculateIntegerOperand size(this, node->child1());
+    SpeculateInt32Operand size(this, node->child1());
     GPRReg sizeGPR = size.gpr();
     
     GPRTemporary result(this);
@@ -4558,7 +4558,7 @@ void SpeculativeJIT::speculateInt32(Edge edge)
     if (!needsTypeCheck(edge, SpecInt32))
         return;
     
-    (SpeculateIntegerOperand(this, edge)).gpr();
+    (SpeculateInt32Operand(this, edge)).gpr();
 }
 
 void SpeculativeJIT::speculateNumber(Edge edge)
@@ -4913,7 +4913,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
 {
     switch (node->child1().useKind()) {
     case Int32Use: {
-        SpeculateIntegerOperand value(this, node->child1());
+        SpeculateInt32Operand value(this, node->child1());
         GPRTemporary temp(this);
         emitSwitchIntJump(data, value.gpr(), temp.gpr());
         noResult(node);

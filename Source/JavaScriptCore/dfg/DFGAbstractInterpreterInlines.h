@@ -265,7 +265,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
         }
-        if (!node->canSpeculateInteger())
+        if (!node->canSpeculateInt32())
             forNode(node).setType(SpecDouble);
         else {
             forNode(node).setType(SpecInt32);
@@ -850,7 +850,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             forNode(node).setType(SpecInt32);
             break;
         case Array::Uint32Array:
-            if (node->shouldSpeculateInteger())
+            if (node->shouldSpeculateInt32())
                 forNode(node).setType(SpecInt32);
             else
                 forNode(node).setType(SpecDouble);

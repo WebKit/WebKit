@@ -48,7 +48,7 @@ class GPRTemporary;
 class JSValueOperand;
 class SlowPathGenerator;
 class SpeculativeJIT;
-class SpeculateIntegerOperand;
+class SpeculateInt32Operand;
 class SpeculateStrictInt32Operand;
 class SpeculateDoubleOperand;
 class SpeculateCellOperand;
@@ -2494,8 +2494,8 @@ public:
     GPRTemporary();
     GPRTemporary(SpeculativeJIT*);
     GPRTemporary(SpeculativeJIT*, GPRReg specific);
-    GPRTemporary(SpeculativeJIT*, SpeculateIntegerOperand&);
-    GPRTemporary(SpeculativeJIT*, SpeculateIntegerOperand&, SpeculateIntegerOperand&);
+    GPRTemporary(SpeculativeJIT*, SpeculateInt32Operand&);
+    GPRTemporary(SpeculativeJIT*, SpeculateInt32Operand&, SpeculateInt32Operand&);
     GPRTemporary(SpeculativeJIT*, SpeculateStrictInt32Operand&);
     GPRTemporary(SpeculativeJIT*, IntegerOperand&);
     GPRTemporary(SpeculativeJIT*, IntegerOperand&, IntegerOperand&);
@@ -2599,7 +2599,7 @@ private:
 
 // === Speculative Operand types ===
 //
-// SpeculateIntegerOperand, SpeculateStrictInt32Operand and SpeculateCellOperand.
+// SpeculateInt32Operand, SpeculateStrictInt32Operand and SpeculateCellOperand.
 //
 // These are used to lock the operands to a node into machine registers within the
 // SpeculativeJIT. The classes operate like those above, however these will
@@ -2607,9 +2607,9 @@ private:
 // determine the operand to have. If the operand does not have the requested type,
 // a bail-out to the non-speculative path will be taken.
 
-class SpeculateIntegerOperand {
+class SpeculateInt32Operand {
 public:
-    explicit SpeculateIntegerOperand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    explicit SpeculateInt32Operand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
         : m_jit(jit)
         , m_edge(edge)
         , m_gprOrInvalid(InvalidGPRReg)
@@ -2623,7 +2623,7 @@ public:
             gpr();
     }
 
-    ~SpeculateIntegerOperand()
+    ~SpeculateInt32Operand()
     {
         ASSERT(m_gprOrInvalid != InvalidGPRReg);
         m_jit->unlock(m_gprOrInvalid);

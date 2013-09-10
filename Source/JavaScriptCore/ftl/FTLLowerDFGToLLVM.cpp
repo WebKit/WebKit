@@ -1073,7 +1073,7 @@ private:
     {
         LValue value = lowInt32(m_node->child1());
 
-        if (!nodeCanSpeculateInteger(m_node->arithNodeFlags())) {
+        if (!nodeCanSpeculateInt32(m_node->arithNodeFlags())) {
             setDouble(m_out.unsignedToDouble(value));
             return;
         }
@@ -1375,7 +1375,7 @@ private:
                         return;
                     }
                     
-                    if (m_node->shouldSpeculateInteger()) {
+                    if (m_node->shouldSpeculateInt32()) {
                         speculateForward(
                             Overflow, noValue(), 0, m_out.lessThan(result, m_out.int32Zero),
                             uInt32Value(result));

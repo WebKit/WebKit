@@ -1199,17 +1199,17 @@ struct Node {
         return mergeSpeculation(m_prediction, prediction);
     }
     
-    bool shouldSpeculateInteger()
+    bool shouldSpeculateInt32()
     {
         return isInt32Speculation(prediction());
     }
     
-    bool shouldSpeculateIntegerForArithmetic()
+    bool shouldSpeculateInt32ForArithmetic()
     {
         return isInt32SpeculationForArithmetic(prediction());
     }
     
-    bool shouldSpeculateIntegerExpectingDefined()
+    bool shouldSpeculateInt32ExpectingDefined()
     {
         return isInt32SpeculationExpectingDefined(prediction());
     }
@@ -1349,19 +1349,19 @@ struct Node {
         return op1->shouldSpeculateBoolean() && op2->shouldSpeculateBoolean();
     }
     
-    static bool shouldSpeculateInteger(Node* op1, Node* op2)
+    static bool shouldSpeculateInt32(Node* op1, Node* op2)
     {
-        return op1->shouldSpeculateInteger() && op2->shouldSpeculateInteger();
+        return op1->shouldSpeculateInt32() && op2->shouldSpeculateInt32();
     }
     
-    static bool shouldSpeculateIntegerForArithmetic(Node* op1, Node* op2)
+    static bool shouldSpeculateInt32ForArithmetic(Node* op1, Node* op2)
     {
-        return op1->shouldSpeculateIntegerForArithmetic() && op2->shouldSpeculateIntegerForArithmetic();
+        return op1->shouldSpeculateInt32ForArithmetic() && op2->shouldSpeculateInt32ForArithmetic();
     }
     
-    static bool shouldSpeculateIntegerExpectingDefined(Node* op1, Node* op2)
+    static bool shouldSpeculateInt32ExpectingDefined(Node* op1, Node* op2)
     {
-        return op1->shouldSpeculateIntegerExpectingDefined() && op2->shouldSpeculateIntegerExpectingDefined();
+        return op1->shouldSpeculateInt32ExpectingDefined() && op2->shouldSpeculateInt32ExpectingDefined();
     }
     
     static bool shouldSpeculateDoubleForArithmetic(Node* op1, Node* op2)
@@ -1389,9 +1389,9 @@ struct Node {
         return op1->shouldSpeculateArray() && op2->shouldSpeculateArray();
     }
     
-    bool canSpeculateInteger()
+    bool canSpeculateInt32()
     {
-        return nodeCanSpeculateInteger(arithNodeFlags());
+        return nodeCanSpeculateInt32(arithNodeFlags());
     }
     
     void dumpChildren(PrintStream& out)

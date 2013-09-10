@@ -32,4 +32,4 @@ var run = function() {
 
 var result = run();
 if (result !== 495000000)
-    throw "Bad result";
+    throw "Bad result: " + result;

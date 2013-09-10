@@ -1572,8 +1572,8 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
 
 void SpeculativeJIT::compileIntegerCompare(Node* node, MacroAssembler::RelationalCondition condition)
 {
-    SpeculateIntegerOperand op1(this, node->child1());
-    SpeculateIntegerOperand op2(this, node->child2());
+    SpeculateInt32Operand op1(this, node->child1());
+    SpeculateInt32Operand op2(this, node->child2());
     GPRTemporary result(this, op1, op2);
     
     m_jit.compare32(condition, op1.gpr(), op2.gpr(), result.gpr());
@@ -1697,7 +1697,7 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
     }
         
     case Int32Use: {
-        SpeculateIntegerOperand value(this, node->child1());
+        SpeculateInt32Operand value(this, node->child1());
         GPRTemporary result(this, value);
         m_jit.compare32(MacroAssembler::Equal, value.gpr(), MacroAssembler::TrustedImm32(0), result.gpr());
         m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
@@ -1845,7 +1845,7 @@ void SpeculativeJIT::emitBranch(Node* node)
                 notTaken = tmp;
             }
 
-            SpeculateIntegerOperand value(this, node->child1());
+            SpeculateInt32Operand value(this, node->child1());
             branchTest32(invert ? MacroAssembler::Zero : MacroAssembler::NonZero, value.gpr(), taken);
         } else {
             SpeculateDoubleOperand value(this, node->child1());
@@ -2051,7 +2051,7 @@ void SpeculativeJIT::compile(Node* node)
         
             SpeculatedType predictedType = node->variableAccessData()->argumentAwarePrediction();
             if (isInt32Speculation(predictedType)) {
-                SpeculateIntegerOperand value(this, node->child1());
+                SpeculateInt32Operand value(this, node->child1());
                 m_jit.store32(value.gpr(), JITCompiler::payloadFor(node->local()));
                 noResult(node);
                 recordSetLocal(node->local(), ValueSource(Int32InJSStack));
@@ -2102,22 +2102,22 @@ void SpeculativeJIT::compile(Node* node)
     case BitOr:
     case BitXor:
         if (isInt32Constant(node->child1().node())) {
-            SpeculateIntegerOperand op2(this, node->child2());
+            SpeculateInt32Operand op2(this, node->child2());
             GPRTemporary result(this, op2);
 
             bitOp(op, valueOfInt32Constant(node->child1().node()), op2.gpr(), result.gpr());
 
             integerResult(result.gpr(), node);
         } else if (isInt32Constant(node->child2().node())) {
-            SpeculateIntegerOperand op1(this, node->child1());
+            SpeculateInt32Operand op1(this, node->child1());
             GPRTemporary result(this, op1);
 
             bitOp(op, valueOfInt32Constant(node->child2().node()), op1.gpr(), result.gpr());
 
             integerResult(result.gpr(), node);
         } else {
-            SpeculateIntegerOperand op1(this, node->child1());
-            SpeculateIntegerOperand op2(this, node->child2());
+            SpeculateInt32Operand op1(this, node->child1());
+            SpeculateInt32Operand op2(this, node->child2());
             GPRTemporary result(this, op1, op2);
 
             GPRReg reg1 = op1.gpr();
@@ -2132,7 +2132,7 @@ void SpeculativeJIT::compile(Node* node)
     case BitLShift:
     case BitURShift:
         if (isInt32Constant(node->child2().node())) {
-            SpeculateIntegerOperand op1(this, node->child1());
+            SpeculateInt32Operand op1(this, node->child1());
             GPRTemporary result(this, op1);
 
             shiftOp(op, op1.gpr(), valueOfInt32Constant(node->child2().node()) & 0x1f, result.gpr());
@@ -2140,8 +2140,8 @@ void SpeculativeJIT::compile(Node* node)
             integerResult(result.gpr(), node);
         } else {
             // Do not allow shift amount to be used as the result, MacroAssembler does not permit this.
-            SpeculateIntegerOperand op1(this, node->child1());
-            SpeculateIntegerOperand op2(this, node->child2());
+            SpeculateInt32Operand op1(this, node->child1());
+            SpeculateInt32Operand op2(this, node->child2());
             GPRTemporary result(this, op1);
 
             GPRReg reg1 = op1.gpr();

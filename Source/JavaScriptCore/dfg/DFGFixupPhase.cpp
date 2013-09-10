@@ -118,7 +118,7 @@ private:
         }
             
         case ValueToInt32: {
-            if (node->child1()->shouldSpeculateInteger()) {
+            if (node->child1()->shouldSpeculateInt32()) {
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                 node->setOpAndDefaultFlags(Identity);
                 break;
@@ -193,7 +193,7 @@ private:
         }
             
         case ArithNegate: {
-            if (m_graph.negateShouldSpeculateInteger(node)) {
+            if (m_graph.negateShouldSpeculateInt32(node)) {
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                 break;
             }
@@ -202,7 +202,7 @@ private:
         }
             
         case ArithMul: {
-            if (m_graph.mulShouldSpeculateInteger(node)) {
+            if (m_graph.mulShouldSpeculateInt32(node)) {
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child2());
                 break;
@@ -214,8 +214,8 @@ private:
 
         case ArithDiv:
         case ArithMod: {
-            if (Node::shouldSpeculateIntegerForArithmetic(node->child1().node(), node->child2().node())
-                && node->canSpeculateInteger()) {
+            if (Node::shouldSpeculateInt32ForArithmetic(node->child1().node(), node->child2().node())
+                && node->canSpeculateInt32()) {
                 if (isX86() || isARMv7s()) {
                     setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                     setUseKindAndUnboxIfProfitable<Int32Use>(node->child2());
@@ -240,8 +240,8 @@ private:
             
         case ArithMin:
         case ArithMax: {
-            if (Node::shouldSpeculateIntegerForArithmetic(node->child1().node(), node->child2().node())
-                && node->canSpeculateInteger()) {
+            if (Node::shouldSpeculateInt32ForArithmetic(node->child1().node(), node->child2().node())
+                && node->canSpeculateInt32()) {
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child2());
                 break;
@@ -252,8 +252,8 @@ private:
         }
             
         case ArithAbs: {
-            if (node->child1()->shouldSpeculateIntegerForArithmetic()
-                && node->canSpeculateInteger()) {
+            if (node->child1()->shouldSpeculateInt32ForArithmetic()
+                && node->canSpeculateInt32()) {
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                 break;
             }
@@ -271,7 +271,7 @@ private:
                 setUseKindAndUnboxIfProfitable<BooleanUse>(node->child1());
             else if (node->child1()->shouldSpeculateObjectOrOther())
                 setUseKindAndUnboxIfProfitable<ObjectOrOtherUse>(node->child1());
-            else if (node->child1()->shouldSpeculateInteger())
+            else if (node->child1()->shouldSpeculateInt32())
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
             else if (node->child1()->shouldSpeculateNumber())
                 fixDoubleEdge<NumberUse>(node->child1());
@@ -295,7 +295,7 @@ private:
         case CompareLessEq:
         case CompareGreater:
         case CompareGreaterEq: {
-            if (Node::shouldSpeculateInteger(node->child1().node(), node->child2().node())) {
+            if (Node::shouldSpeculateInt32(node->child1().node(), node->child2().node())) {
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child2());
                 break;
@@ -350,7 +350,7 @@ private:
                 setUseKindAndUnboxIfProfitable<BooleanUse>(node->child2());
                 break;
             }
-            if (Node::shouldSpeculateInteger(node->child1().node(), node->child2().node())) {
+            if (Node::shouldSpeculateInt32(node->child1().node(), node->child2().node())) {
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child2());
                 break;
@@ -491,7 +491,7 @@ private:
             case Array::Uint32Array:
                 setUseKindAndUnboxIfProfitable<KnownCellUse>(child1);
                 setUseKindAndUnboxIfProfitable<Int32Use>(child2);
-                if (child3->shouldSpeculateInteger())
+                if (child3->shouldSpeculateInt32())
                     setUseKindAndUnboxIfProfitable<Int32Use>(child3);
                 else
                     fixDoubleEdge<NumberUse>(child3);
@@ -559,7 +559,7 @@ private:
                 setUseKindAndUnboxIfProfitable<BooleanUse>(node->child1());
             else if (node->child1()->shouldSpeculateObjectOrOther())
                 setUseKindAndUnboxIfProfitable<ObjectOrOtherUse>(node->child1());
-            else if (node->child1()->shouldSpeculateInteger())
+            else if (node->child1()->shouldSpeculateInt32())
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
             else if (node->child1()->shouldSpeculateNumber())
                 fixDoubleEdge<NumberUse>(node->child1());
@@ -604,7 +604,7 @@ private:
             SwitchData* data = node->switchData();
             switch (data->kind) {
             case SwitchImm:
-                if (node->child1()->shouldSpeculateInteger())
+                if (node->child1()->shouldSpeculateInt32())
                     setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                 break;
             case SwitchChar:
@@ -674,7 +674,7 @@ private:
         }
             
         case NewTypedArray: {
-            if (node->child1()->shouldSpeculateInteger()) {
+            if (node->child1()->shouldSpeculateInt32()) {
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                 node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
                 break;
@@ -823,7 +823,7 @@ private:
         case Identity: {
             switch (node->child1().useKind()) {
             case NumberUse:
-                if (node->child1()->shouldSpeculateIntegerForArithmetic())
+                if (node->child1()->shouldSpeculateInt32ForArithmetic())
                     node->child1().setUseKind(Int32Use);
                 break;
             default:
@@ -1004,7 +1004,7 @@ private:
     
     void fixupToPrimitive(Node* node)
     {
-        if (node->child1()->shouldSpeculateInteger()) {
+        if (node->child1()->shouldSpeculateInt32()) {
             setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
             node->convertToIdentity();
             return;
@@ -1347,7 +1347,7 @@ private:
             return;
         }
         
-        ASSERT(newEdge->shouldSpeculateInteger());
+        ASSERT(newEdge->shouldSpeculateInt32());
         edge = newEdge;
     }
     
@@ -1410,7 +1410,7 @@ private:
     
     void truncateConstantsIfNecessary(Node* node, AddSpeculationMode mode)
     {
-        if (mode != SpeculateIntegerAndTruncateConstants)
+        if (mode != SpeculateInt32AndTruncateConstants)
             return;
         
         ASSERT(node->child1()->hasConstant() || node->child2()->hasConstant());
@@ -1423,7 +1423,7 @@ private:
     bool attemptToMakeIntegerAdd(Node* node)
     {
         AddSpeculationMode mode = m_graph.addSpeculationMode(node);
-        if (mode == DontSpeculateInteger)
+        if (mode == DontSpeculateInt32)
             return false;
         
         truncateConstantsIfNecessary(node, mode);

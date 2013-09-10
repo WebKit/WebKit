@@ -1,5 +1,74 @@
 2013-09-10  Filip Pizlo  <fpizlo@apple.com>
 
+        We should say Int32 when we mean Int32. Saying Integer is just weird.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupToPrimitive):
+        (JSC::DFG::FixupPhase::fixIntEdge):
+        (JSC::DFG::FixupPhase::truncateConstantsIfNecessary):
+        (JSC::DFG::FixupPhase::attemptToMakeIntegerAdd):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addSpeculationMode):
+        (JSC::DFG::Graph::valueAddSpeculationMode):
+        (JSC::DFG::Graph::arithAddSpeculationMode):
+        (JSC::DFG::Graph::addShouldSpeculateInt32):
+        (JSC::DFG::Graph::mulShouldSpeculateInt32):
+        (JSC::DFG::Graph::negateShouldSpeculateInt32):
+        (JSC::DFG::Graph::addImmediateShouldSpeculateInt32):
+        (JSC::DFG::Graph::mulImmediateShouldSpeculateInt32):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateInt32):
+        (JSC::DFG::Node::shouldSpeculateInt32ForArithmetic):
+        (JSC::DFG::Node::shouldSpeculateInt32ExpectingDefined):
+        (JSC::DFG::Node::canSpeculateInt32):
+        * dfg/DFGNodeFlags.h:
+        (JSC::DFG::nodeCanSpeculateInt32):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::doDoubleVoting):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::arrayify):
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleIntegerBranch):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileUInt32ToNumber):
+        (JSC::DFG::SpeculativeJIT::compileInt32ToDouble):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+        (JSC::DFG::SpeculativeJIT::compileArithIMul):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArray):
+        (JSC::DFG::SpeculativeJIT::speculateInt32):
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculateInt32Operand::SpeculateInt32Operand):
+        (JSC::DFG::SpeculateInt32Operand::~SpeculateInt32Operand):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIntegerCompare):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIntegerCompare):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileUInt32ToNumber):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+
+2013-09-10  Filip Pizlo  <fpizlo@apple.com>
+
         Introduce a SpecInt48 type and be more careful about what we mean by "Top"
         https://bugs.webkit.org/show_bug.cgi?id=121116
 
