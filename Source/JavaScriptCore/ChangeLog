@@ -1,5 +1,30 @@
 2013-09-09  Michael Saboff  <msaboff@apple.com>
 
+        There should be one "invalid" virtual register constant
+        https://bugs.webkit.org/show_bug.cgi?id=121057
+
+        Reviewed by Filip Pizlo.
+
+        Unify all references to an invalid virtual register to be the enum InvalidVirtualRegister.
+        Changed the value of InvalidVirtualRegister to be maximum integer value.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setArgumentsRegister):
+        (JSC::CodeBlock::usesArguments):
+        * bytecode/LazyOperandValueProfile.h:
+        (JSC::LazyOperandValueProfileKey::LazyOperandValueProfileKey):
+        (JSC::LazyOperandValueProfileKey::operator!):
+        (JSC::LazyOperandValueProfileKey::isHashTableDeletedValue):
+        (JSC::LazyOperandValueProfile::LazyOperandValueProfile):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::usesArguments):
+        (JSC::UnlinkedCodeBlock::usesGlobalObject):
+        * bytecode/VirtualRegister.h:
+
+2013-09-09  Michael Saboff  <msaboff@apple.com>
+
         Change virtual register function arguments from unsigned to int
         https://bugs.webkit.org/show_bug.cgi?id=121055
 

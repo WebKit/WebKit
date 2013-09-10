@@ -38,6 +38,7 @@
 #include "RegExp.h"
 #include "SpecialPointer.h"
 #include "SymbolTable.h"
+#include "VirtualRegister.h"
 
 #include <wtf/Compression.h>
 #include <wtf/RefCountedArray.h>
@@ -257,11 +258,11 @@ public:
     void setActivationRegister(int activationRegister) { m_activationRegister = activationRegister; }
 
     void setArgumentsRegister(int argumentsRegister) { m_argumentsRegister = argumentsRegister; }
-    bool usesArguments() const { return m_argumentsRegister != -1; }
+    bool usesArguments() const { return m_argumentsRegister != (int)InvalidVirtualRegister; }
     int argumentsRegister() const { return m_argumentsRegister; }
 
 
-    bool usesGlobalObject() const { return m_globalObjectRegister != -1; }
+    bool usesGlobalObject() const { return m_globalObjectRegister != (int)InvalidVirtualRegister; }
     void setGlobalObjectRegister(int globalObjectRegister) { m_globalObjectRegister = globalObjectRegister; }
     int globalObjectRegister() const { return m_globalObjectRegister; }
 

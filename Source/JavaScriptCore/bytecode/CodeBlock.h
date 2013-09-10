@@ -324,7 +324,7 @@ public:
 
     void setArgumentsRegister(int argumentsRegister)
     {
-        ASSERT(argumentsRegister != -1);
+        ASSERT(argumentsRegister != (int)InvalidVirtualRegister);
         m_argumentsRegister = argumentsRegister;
         ASSERT(usesArguments());
     }
@@ -354,7 +354,7 @@ public:
             return InvalidVirtualRegister;
         return activationRegister();
     }
-    bool usesArguments() const { return m_argumentsRegister != -1; }
+    bool usesArguments() const { return m_argumentsRegister != (int)InvalidVirtualRegister; }
 
     bool needsActivation() const
     {

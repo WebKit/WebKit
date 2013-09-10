@@ -32,6 +32,7 @@
 
 #include "ConcurrentJITLock.h"
 #include "ValueProfile.h"
+#include "VirtualRegister.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -45,13 +46,13 @@ class LazyOperandValueProfileKey {
 public:
     LazyOperandValueProfileKey()
         : m_bytecodeOffset(0) // 0 = empty value
-        , m_operand(-1) // not a valid operand index in our current scheme
+        , m_operand(InvalidVirtualRegister) // not a valid operand index in our current scheme
     {
     }
     
     LazyOperandValueProfileKey(WTF::HashTableDeletedValueType)
         : m_bytecodeOffset(1) // 1 = deleted value
-        , m_operand(-1) // not a valid operand index in our current scheme
+        , m_operand(InvalidVirtualRegister) // not a valid operand index in our current scheme
     {
     }
     
@@ -59,12 +60,12 @@ public:
         : m_bytecodeOffset(bytecodeOffset)
         , m_operand(operand)
     {
-        ASSERT(operand != -1);
+        ASSERT(operand != InvalidVirtualRegister);
     }
     
     bool operator!() const
     {
-        return m_operand == -1;
+        return m_operand == InvalidVirtualRegister;
     }
     
     bool operator==(const LazyOperandValueProfileKey& other) const
@@ -91,7 +92,7 @@ public:
     
     bool isHashTableDeletedValue() const
     {
-        return m_operand == -1 && m_bytecodeOffset;
+        return m_operand == InvalidVirtualRegister && m_bytecodeOffset;
     }
 private: 
     unsigned m_bytecodeOffset;
@@ -128,7 +129,7 @@ namespace JSC {
 struct LazyOperandValueProfile : public MinimalValueProfile {
     LazyOperandValueProfile()
         : MinimalValueProfile()
-        , m_operand(-1)
+        , m_operand(InvalidVirtualRegister)
     {
     }
     
