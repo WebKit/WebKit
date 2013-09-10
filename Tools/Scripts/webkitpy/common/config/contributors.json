@@ -1931,6 +1931,15 @@
             "qi"
          ]
       },
+      "Radu Stavila" : {
+         "emails" : [
+            "stavila@adobe.com"
+         ],
+         "nicks" : [
+            "radustavila",
+            "stavila"
+         ]
+      },
       "Rafael Antognolli" : {
          "emails" : [
             "antognolli@profusion.mobi"
@@ -2924,14 +2933,6 @@
       "Radar WebKit Bug Importer" : {
          "emails" : [
             "webkit-bug-importer@group.apple.com"
-         ]
-      },
-      "Radu Stavila" : {
-         "emails" : [
-            "stavila@adobe.com"
-         ],
-         "nicks" : [
-            "radustavila"
          ]
       },
       "Raul Hudea" : {
