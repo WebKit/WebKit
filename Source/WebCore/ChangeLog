@@ -1,3 +1,21 @@
+2013-09-09  Darin Adler  <darin@apple.com>
+
+        Some refinements in FrameView::layout
+        https://bugs.webkit.org/show_bug.cgi?id=121076
+
+        Reviewed by Andreas Kling.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Use a reference for the document in
+        this function since code assumes it's non-null anyway. Change code to
+        only call styleResolverIfExists once. Rewrite comments about blocks
+        and the scopes they create for better clarity. Make m_nestedLayoutCount
+        easier to read. Use HTMLElement* for the pointer to the body element.
+        Moved the call to calculateScrollbarModesForLayout in so we don't
+        waste time doing it for subtree layouts. Get rid of the unhelpful
+        currentHMode and currentVMode local variables. Get rid of an extra
+        block scope we did not need.
+
 2013-09-09  Santosh Mahto  <santosh.ma@samsung.com>
 
         Adding "explicit" keyword in DOM related classes constructor
