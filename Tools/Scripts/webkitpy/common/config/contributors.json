@@ -2291,6 +2291,15 @@
             "vcarbune"
          ]
       },
+      "Victor Jaquez" : {
+         "emails" : [
+            "vjaquez@igalia.com"
+         ],
+         "nicks" : [
+            "vjaquez",
+            "ceyusa"
+         ]
+      },
       "Victor Wang" : {
          "emails" : [
             "victorw@chromium.org"
