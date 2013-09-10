@@ -60,7 +60,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
 
         test_dir = self._port_obj.layout_tests_dir()
-        js_test_resources_dir = self._filesystem.join(test_dir, "fast", "js", "resources")
+        js_test_resources_dir = self._filesystem.join(test_dir, "resources")
         media_resources_dir = self._filesystem.join(test_dir, "media")
         mime_types_path = self._filesystem.join(test_dir, "http", "conf", "mime.types")
         cert_file = self._filesystem.join(test_dir, "http", "conf", "webkit-httpd.pem")

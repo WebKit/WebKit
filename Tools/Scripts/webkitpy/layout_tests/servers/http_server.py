@@ -65,7 +65,7 @@ class Lighttpd(http_server_base.HttpServerBase):
             self._layout_tests_dir = self._port_obj.layout_tests_dir()
 
         self._webkit_tests = os.path.join(self._layout_tests_dir, 'http', 'tests')
-        self._js_test_resource = os.path.join(self._layout_tests_dir, 'fast', 'js', 'resources')
+        self._js_test_resource = os.path.join(self._layout_tests_dir, 'resources')
         self._media_resource = os.path.join(self._layout_tests_dir, 'media')
 
         # Self generated certificate for SSL server (for client cert get

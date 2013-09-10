@@ -80,7 +80,7 @@ sub makePathToSharedSources
     if ($isHTTPTest) {
         return "/js-test-resources";
     } else {
-        return File::Spec->abs2rel("fast/js/resources/", dirname($testAbsolutePath));
+        return File::Spec->abs2rel("resources/", dirname($testAbsolutePath));
     }
 }
 

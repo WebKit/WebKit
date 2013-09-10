@@ -67,14 +67,13 @@ class TestTranslation(unittest.TestCase):
     def test_include_rewriting(self):
         # Mappings to None are unchanged
         styles = {
-            "../resources/js-test-style.css": "../../js/resources/js-test-style.css",
             "fail.css": None,
             "resources/stylesheet.css": None,
             "../resources/style.css": None,
         }
         scripts = {
-            "../resources/js-test-pre.js": "../../js/resources/js-test-pre.js",
-            "../resources/js-test-post.js": "../../js/resources/js-test-post.js",
+            "../resources/js-test-pre.js": "../../../resources/js-test-pre.js",
+            "../resources/js-test-post.js": "../../../resources/js-test-post.js",
             "../resources/desktop-gl-constants.js": "resources/desktop-gl-constants.js",
 
             "resources/shadow-offset.js": None,

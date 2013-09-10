@@ -1,5 +1,18 @@
 2013-09-09  Mark Lam  <mark.lam@apple.com>
 
+        Re-landing 155392 (Remove old fast/js/resources pre and post test files).
+        https://bugs.webkit.org/show_bug.cgi?id=120899.
+
+        Not reviewed.
+
+        * fast/js/resources/js-test-post-async.js: Removed.
+        * fast/js/resources/js-test-post.js: Removed.
+        * fast/js/resources/js-test-pre.js: Removed.
+        * fast/js/resources/standalone-post.js: Removed.
+        * fast/js/resources/standalone-pre.js: Removed.
+
+2013-09-09  Mark Lam  <mark.lam@apple.com>
+
         Remove un-needed js-test-style.css.
         https://bugs.webkit.org/show_bug.cgi?id=120899.
 
