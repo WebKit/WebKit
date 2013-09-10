@@ -27,8 +27,8 @@
 #define FilePrintStream_h
 
 #include <stdio.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PrintStream.h>
+#include <wtf/OwnPtr.h>
 
 namespace WTF {
 
@@ -42,7 +42,7 @@ public:
     FilePrintStream(FILE*, AdoptionMode = Adopt);
     virtual ~FilePrintStream();
     
-    WTF_EXPORT_PRIVATE static PassOwnPtr<FilePrintStream> open(const char* filename, const char* mode);
+    WTF_EXPORT_PRIVATE static OwnPtr<FilePrintStream> open(const char* filename, const char* mode);
     
     FILE* file() { return m_file; }
     

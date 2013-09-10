@@ -555,10 +555,10 @@ namespace WTF {
         , m_deletedCount(0)
 #if CHECK_HASHTABLE_ITERATORS
         , m_iterators(0)
-        , m_mutex(adoptPtr(new Mutex))
+        , m_mutex(createOwned<Mutex>())
 #endif
 #if DUMP_HASHTABLE_STATS_PER_TABLE
-        , m_stats(adoptPtr(new Stats))
+        , m_stats(createOwned<Stats>())
 #endif
     {
     }
@@ -1166,10 +1166,10 @@ namespace WTF {
         , m_deletedCount(0)
 #if CHECK_HASHTABLE_ITERATORS
         , m_iterators(0)
-        , m_mutex(adoptPtr(new Mutex))
+        , m_mutex(createOwned<Mutex>())
 #endif
 #if DUMP_HASHTABLE_STATS_PER_TABLE
-        , m_stats(adoptPtr(new Stats(*other.m_stats)))
+        , m_stats(createOwned<Stats>(*other.m_stats))
 #endif
     {
         // Copy the hash table the dumb way, by adding each element to the new table.

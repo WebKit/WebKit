@@ -1,5 +1,31 @@
 2013-09-09  Anders Carlsson  <andersca@apple.com>
 
+        Introduce WTF::createOwned
+        https://bugs.webkit.org/show_bug.cgi?id=121059
+
+        Reviewed by Andreas Kling.
+
+        WTF::createOwned is a function template that does adoptPtr + new in a single function call,
+        with all the arguments being perfectly forwarded thanks to C++11.
+        
+        Being forward-looking, createOwned returns an OwnPtr rather than a PassOwnPtr since the plan is 
+        to get rid of PassOwnPtr and just use std::move instead.
+
+        * wtf/FilePrintStream.cpp:
+        * wtf/FilePrintStream.h:
+        * wtf/HashTable.h:
+        * wtf/ListHashSet.h:
+        * wtf/OwnPtr.h:
+        (WTF::OwnPtr::OwnPtr):
+        (WTF::createOwned):
+        (WTF::createThread):
+        (WTF::establishIdentifierForPthreadHandle):
+        (WTF::createThreadInternal):
+        (WTF::Collator::userDefault):
+        (WTF::Collator::userDefault):
+
+2013-09-09  Anders Carlsson  <andersca@apple.com>
+
         Remove wtf/TypeTraits.h
         https://bugs.webkit.org/show_bug.cgi?id=121047
 

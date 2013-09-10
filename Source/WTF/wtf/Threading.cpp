@@ -116,7 +116,7 @@ static void compatEntryPoint(void* param)
 
 ThreadIdentifier createThread(ThreadFunctionWithReturnValue entryPoint, void* data, const char* name)
 {
-    OwnPtr<ThreadFunctionWithReturnValueInvocation> invocation = adoptPtr(new ThreadFunctionWithReturnValueInvocation(entryPoint, data));
+    auto invocation = createOwned<ThreadFunctionWithReturnValueInvocation>(entryPoint, data);
 
     // Balanced by adoptPtr() in compatEntryPoint.
     return createThread(compatEntryPoint, invocation.leakPtr(), name);
@@ -136,7 +136,7 @@ WTF_EXPORT_PRIVATE ThreadIdentifier createThread(ThreadFunctionWithReturnValue e
 
 ThreadIdentifier createThread(ThreadFunctionWithReturnValue entryPoint, void* data)
 {
-    OwnPtr<ThreadFunctionWithReturnValueInvocation> invocation = adoptPtr(new ThreadFunctionWithReturnValueInvocation(entryPoint, data));
+    auto invocation = createOwned<ThreadFunctionWithReturnValueInvocation>(entryPoint, data);
 
     // Balanced by adoptPtr() in compatEntryPoint.
     return createThread(compatEntryPoint, invocation.leakPtr(), 0);

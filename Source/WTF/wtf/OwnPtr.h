@@ -36,11 +36,6 @@ namespace WTF {
     template<typename T> PassOwnPtr<T> adoptPtr(T*);
 
     template<typename T> class OwnPtr {
-#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
-        // If rvalue references are not supported, the copy constructor is
-        // public so OwnPtr cannot be marked noncopyable. See note below.
-        WTF_MAKE_NONCOPYABLE(OwnPtr);
-#endif
     public:
         typedef typename std::remove_pointer<T>::type ValueType;
         typedef ValueType* PtrType;
@@ -91,6 +86,12 @@ namespace WTF {
         void swap(OwnPtr& o) { std::swap(m_ptr, o.m_ptr); }
 
     private:
+        explicit OwnPtr(PtrType ptr) : m_ptr(ptr) { }
+
+        template<typename U> friend OwnPtr<U> createOwned();
+        template<typename U, typename A1> friend OwnPtr<U> createOwned(A1&&);
+        template<typename U, typename A1, typename A2> friend OwnPtr<U> createOwned(A1&&, A2&&);
+
 #if !COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
         // If rvalue references are supported, noncopyable takes care of this.
         OwnPtr& operator=(const OwnPtr&);
@@ -212,8 +213,27 @@ namespace WTF {
         return p.get();
     }
 
+template<typename T>
+inline OwnPtr<T> createOwned()
+{
+    return OwnPtr<T>(new T);
+}
+
+template<typename T, typename A1>
+inline OwnPtr<T> createOwned(A1&& a1)
+{
+    return OwnPtr<T>(new T(std::forward<A1>(a1)));
+}
+
+template<typename T, typename A1, typename A2>
+inline OwnPtr<T> createOwned(A1&& a1, A2&& a2)
+{
+    return OwnPtr<T>(new T(std::forward<A1>(a1), std::forward<A2>(a2)));
+}
+
 } // namespace WTF
 
 using WTF::OwnPtr;
+using WTF::createOwned;
 
 #endif // WTF_OwnPtr_h
