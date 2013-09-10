@@ -1,3 +1,24 @@
+2013-09-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Expose DOM ID and ClassList to AX APIs for automation and AT element hashes
+        https://bugs.webkit.org/show_bug.cgi?id=120552
+
+        Reviewed by Darin Adler.
+
+        Add Mac support for exposing the DOM ID and DOM class list so that accessibility
+        clients can leverage that information.
+
+        Test: platform/mac/accessibility/id-class-attributes.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::domIdentifier):
+        (WebCore::AccessibilityObject::domClassList):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+        (convertStringsToNSArray):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2013-09-10  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] accessibility/loading-iframe-sends-notification.html is failing

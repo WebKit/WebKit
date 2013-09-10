@@ -833,3 +833,9 @@ void AccessibilityUIElement::scrollToGlobalPoint(int x, int y)
 {
     // FIXME: implement
 }
+
+JSStringRef AccessibilityUIElement::classList()
+{
+    // FIXME: implement
+    return 0;
+}

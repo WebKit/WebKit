@@ -160,6 +160,7 @@ public:
     JSStringRef documentEncoding();
     JSStringRef documentURI();
     JSStringRef url();
+    JSStringRef classList() const;
 
     // CSS3-speech properties.
     JSStringRef speak();

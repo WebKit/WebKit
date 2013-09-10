@@ -360,6 +360,9 @@ using namespace std;
 #define NSAccessibilityPathAttribute @"AXPath"
 #endif
 
+#define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
+#define NSAccessibilityDOMClassListAttribute @"AXDOMClassList"
+
 // Math attributes
 #define NSAccessibilityMathRootRadicandAttribute @"AXMathRootRadicand"
 #define NSAccessibilityMathRootIndexAttribute @"AXMathRootIndex"
@@ -1117,6 +1120,8 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
                       NSAccessibilityBlockQuoteLevelAttribute,
                       NSAccessibilityTopLevelUIElementAttribute,
                       NSAccessibilityLanguageAttribute,
+                      NSAccessibilityDOMIdentifierAttribute,
+                      NSAccessibilityDOMClassListAttribute,
                       nil];
     }
     if (commonMenuAttrs == nil) {
@@ -1490,6 +1495,15 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
                 [array addObject:wrapper];
         }
     }
+    return array;
+}
+
+static NSMutableArray *convertStringsToNSArray(const Vector<String>& vector)
+{
+    size_t length = vector.size();
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:length];
+    for (size_t i = 0; i < length; ++i)
+        [array addObject:vector[i]];
     return array;
 }
 
@@ -2668,12 +2682,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString:NSAccessibilityDropEffectsAttribute]) {
         Vector<String> dropEffects;
         m_object->determineARIADropEffects(dropEffects);
-        size_t length = dropEffects.size();
-        
-        NSMutableArray* dropEffectsArray = [NSMutableArray arrayWithCapacity:length];
-        for (size_t i = 0; i < length; ++i)
-            [dropEffectsArray addObject:dropEffects[i]];
-        return dropEffectsArray;
+        return convertStringsToNSArray(dropEffects);
     }
     
     if ([attributeName isEqualToString:NSAccessibilityPlaceholderValueAttribute])
@@ -2722,6 +2731,14 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return [self accessibilityMathPostscriptPairs];
         if ([attributeName isEqualToString:NSAccessibilityMathPrescriptsAttribute])
             return [self accessibilityMathPrescriptPairs];
+    }
+    
+    if ([attributeName isEqualToString:NSAccessibilityDOMIdentifierAttribute])
+        return m_object->identifierAttribute();
+    if ([attributeName isEqualToString:NSAccessibilityDOMClassListAttribute]) {
+        Vector<String> classList;
+        m_object->classList(classList);
+        return convertStringsToNSArray(classList);
     }
     
     // this is used only by DumpRenderTree for testing

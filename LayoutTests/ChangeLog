@@ -1,3 +1,36 @@
+2013-09-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Expose DOM ID and ClassList to AX APIs for automation and AT element hashes
+        https://bugs.webkit.org/show_bug.cgi?id=120552
+
+        Reviewed by Darin Adler.
+
+        Tests that output all attributes need to be updated, since the DOM ID and DOM
+        class list are new on all elements.
+
+        * accessibility/transformed-element-expected.txt:
+        * platform/mac/accessibility/aria-columnrowheaders-expected.txt:
+        * platform/mac/accessibility/bounds-for-range-expected.txt:
+        * platform/mac/accessibility/document-attributes-expected.txt:
+        * platform/mac/accessibility/document-links-expected.txt:
+        * platform/mac/accessibility/id-class-attributes-expected.txt: Added.
+        * platform/mac/accessibility/id-class-attributes.html: Added.
+        * platform/mac/accessibility/image-link-expected.txt:
+        * platform/mac/accessibility/image-map2-expected.txt:
+        * platform/mac/accessibility/internal-link-anchors-expected.txt:
+        * platform/mac/accessibility/internal-link-anchors2-expected.txt:
+        * platform/mac/accessibility/lists-expected.txt:
+        * platform/mac/accessibility/plugin-expected.txt:
+        * platform/mac/accessibility/radio-button-group-members-expected.txt:
+        * platform/mac/accessibility/table-attributes-expected.txt:
+        * platform/mac/accessibility/table-cell-spans-expected.txt:
+        * platform/mac/accessibility/table-cells-expected.txt:
+        * platform/mac/accessibility/table-detection-expected.txt:
+        * platform/mac/accessibility/table-one-cell-expected.txt:
+        * platform/mac/accessibility/table-sections-expected.txt:
+        * platform/mac/accessibility/table-with-aria-role-expected.txt:
+        * platform/mac/accessibility/table-with-rules-expected.txt:
+
 2013-09-10  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] accessibility/loading-iframe-sends-notification.html is failing

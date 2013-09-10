@@ -544,7 +544,9 @@ public:
     AccessibilitySortDirection sortDirection() const;
     virtual bool canvasHasFallbackContent() const { return false; }
     bool supportsRangeValue() const;
-
+    String identifierAttribute() const;
+    void classList(Vector<String>&) const;
+    
     bool supportsARIASetSize() const;
     bool supportsARIAPosInSet() const;
     int ariaSetSize() const;

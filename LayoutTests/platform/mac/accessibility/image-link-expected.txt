@@ -25,6 +25,8 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXLink: 'Delicious cake'>
 AXLanguage: 
+AXDOMIdentifier: test
+AXDOMClassList: <array of size 0>
 AXURL: http://www.wowhead.com/?item=33924
 AXAccessKey: (null)
 AXARIABusy: 0
@@ -53,6 +55,8 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXImage>
 AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
 AXURL: LayoutTests/accessibility/resources/cake.png
 AXAccessKey: (null)
 AXARIABusy: 0

@@ -21,5 +21,7 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
+AXDOMIdentifier: hiddenDiv
+AXDOMClassList: <array of size 0>
 AXARIABusy: 0
 

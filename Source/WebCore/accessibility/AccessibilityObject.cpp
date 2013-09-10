@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityRenderObject.h"
 #include "AccessibilityTable.h"
+#include "DOMTokenList.h"
 #include "Editor.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -1647,6 +1648,27 @@ int AccessibilityObject::ariaPosInSet() const
 {
     return getAttribute(aria_posinsetAttr).toInt();
 }
+    
+String AccessibilityObject::identifierAttribute() const
+{
+    return getAttribute(idAttr);
+}
+    
+void AccessibilityObject::classList(Vector<String>& classList) const
+{
+    Node* node = this->node();
+    if (!node || !node->isElementNode())
+        return;
+    
+    Element* element = toElement(node);
+    DOMTokenList* list = element->classList();
+    if (!list)
+        return;
+    unsigned length = list->length();
+    for (unsigned k = 0; k < length; k++)
+        classList.append(list->item(k).string());
+}
+
     
 bool AccessibilityObject::supportsARIAExpanded() const
 {

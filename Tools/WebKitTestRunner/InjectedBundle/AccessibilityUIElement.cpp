@@ -151,6 +151,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsElementAtInde
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned) { return 0; }
 bool AccessibilityUIElement::ariaIsGrabbed() const { return false; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::ariaDropEffects() const { return 0; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::classList() const { return 0; }
 int AccessibilityUIElement::lineForIndex(int) { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForLine(int) { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::rangeForPosition(int, int) { return 0; }

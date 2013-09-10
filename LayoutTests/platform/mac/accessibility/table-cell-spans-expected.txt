@@ -30,6 +30,8 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 1>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXARIABusy: 0
@@ -61,6 +63,8 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 1>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXARIABusy: 0
@@ -92,6 +96,8 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 1>
 AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
 AXARIABusy: 0
@@ -123,6 +129,8 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 1>
 AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
 AXARIABusy: 0
@@ -154,6 +162,8 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXCell>
 AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 1>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {3, 1}
 AXARIABusy: 0

@@ -86,7 +86,8 @@ interface AccessibilityUIElement {
     readonly attribute int hierarchicalLevel;
     readonly attribute boolean ariaIsGrabbed;
     readonly attribute DOMString ariaDropEffects;
-    
+    readonly attribute DOMString classList;
+
     readonly attribute int x;
     readonly attribute int y;
     readonly attribute int width;

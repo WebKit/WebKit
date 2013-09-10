@@ -723,6 +723,12 @@ static JSValueRef getARIADropEffectsCallback(JSContextRef context, JSObjectRef t
     return JSValueMakeString(context, dropEffects.get());
 }
 
+static JSValueRef getClassListCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> classList(Adopt, toAXElement(thisObject)->classList());
+    return JSValueMakeString(context, classList.get());
+}
+
 static JSValueRef getARIAIsGrabbedCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     return JSValueMakeBoolean(context, toAXElement(thisObject)->ariaIsGrabbed());
@@ -1260,6 +1266,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "orientation", getOrientationCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "ariaIsGrabbed", getARIAIsGrabbedCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "ariaDropEffects", getARIADropEffectsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "classList", getClassListCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isIgnored", isIgnoredCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "speak", speakCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "selectedChildrenCount", selectedChildrenCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

@@ -162,6 +162,7 @@ public:
     JSRetainPtr<JSStringRef> documentEncoding();
     JSRetainPtr<JSStringRef> documentURI();
     JSRetainPtr<JSStringRef> url();
+    JSRetainPtr<JSStringRef> classList() const;
 
     // CSS3-speech properties.
     JSRetainPtr<JSStringRef> speak();

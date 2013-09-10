@@ -21,6 +21,8 @@ AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
 AXARIABusy: 0
 

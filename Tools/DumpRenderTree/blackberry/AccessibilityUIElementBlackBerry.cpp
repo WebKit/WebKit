@@ -649,3 +649,8 @@ bool AccessibilityUIElement::isFocusable() const
     return false;
 }
 
+JSStringRef AccessibilityUIElement::classList()
+{
+    notImplemented();
+    return 0;
+}

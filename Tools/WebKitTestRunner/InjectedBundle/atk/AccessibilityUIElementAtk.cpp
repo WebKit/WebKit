@@ -1295,6 +1295,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::mathPrescriptsDescription() con
     return 0;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::classList() const
+{
+    notImplemented();
+    return 0;
+}
+
 } // namespace WTR
 
 #endif
