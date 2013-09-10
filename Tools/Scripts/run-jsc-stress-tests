@@ -206,8 +206,13 @@ def runProfiler
     end
 end
 
+def runAlwaysTriggerCopyPhase
+    run("always-trigger-copy-phase", "--minHeapUtilization=2.0", "--minCopiedBlockUtilization=2.0")
+end
+
 def defaultRun
     runDefault
+    runAlwaysTriggerCopyPhase
     runNoCJIT
     if $enableFTL
         runDefaultFTL

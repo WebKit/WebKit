@@ -1,3 +1,15 @@
+2013-09-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        run-jsc-stress-tests should have a mode for always running the copy phase
+        https://bugs.webkit.org/show_bug.cgi?id=121128
+
+        Reviewed by Geoffrey Garen.
+
+        This will increase test coverage of the copying phase, which might not always get 
+        triggered normally with our default parameters for required Heap/CopiedBlock utilization.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-09-10  Sergio Correia  <sergio.correia@openbossa.org>
 
         [EFL][JHBUILD] Use a tarball for libseccomp, instead of git
