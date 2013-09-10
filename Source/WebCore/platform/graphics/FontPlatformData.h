@@ -40,7 +40,7 @@
 #include "FontWidthVariant.h"
 
 #if PLATFORM(WIN)
-#include "RefCountedGDIHandle.h"
+#include "SharedGDIObject.h"
 #endif
 
 #if USE(CAIRO)
@@ -112,7 +112,7 @@ public:
     ~FontPlatformData();
 
 #if PLATFORM(WIN)
-    HFONT hfont() const { return m_font ? m_font->handle() : 0; }
+    HFONT hfont() const { return m_font ? m_font->get() : 0; }
     bool useGDI() const { return m_useGDI; }
 #elif OS(DARWIN)
     NSFont* font() const { return m_font; }
@@ -228,7 +228,7 @@ private:
 #if OS(DARWIN)
     NSFont* m_font;
 #elif PLATFORM(WIN)
-    RefPtr<RefCountedGDIHandle<HFONT> > m_font;
+    RefPtr<SharedGDIObject<HFONT>> m_font;
 #endif
 
 #if USE(CG)

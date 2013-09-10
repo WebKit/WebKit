@@ -57,7 +57,7 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
 }
 
 FontPlatformData::FontPlatformData(HFONT font, cairo_font_face_t* fontFace, float size, bool bold, bool oblique)
-    : m_font(RefCountedGDIHandle<HFONT>::create(font))
+    : m_font(SharedGDIObject<HFONT>::create(adoptGDIObject<HFONT>(font)))
     , m_size(size)
     , m_orientation(Horizontal)
     , m_widthVariant(RegularWidth)

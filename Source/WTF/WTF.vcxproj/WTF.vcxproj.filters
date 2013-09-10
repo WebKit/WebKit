@@ -78,9 +78,6 @@
     <ClCompile Include="..\wtf\win\MainThreadWin.cpp">
       <Filter>win</Filter>
     </ClCompile>
-    <ClCompile Include="..\wtf\win\OwnPtrWin.cpp">
-      <Filter>win</Filter>
-    </ClCompile>
     <ClCompile Include="..\wtf\threads\win\BinarySemaphoreWin.cpp">
       <Filter>threads\win</Filter>
     </ClCompile>

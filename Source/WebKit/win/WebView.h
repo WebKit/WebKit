@@ -34,7 +34,7 @@
 #include <WebCore/COMPtr.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/RefCountedGDIHandle.h>
+#include <WebCore/SharedGDIObject.h>
 #include <WebCore/SuspendableTimer.h>
 #include <WebCore/WindowMessageListener.h>
 #include <wtf/HashSet.h>
@@ -69,9 +69,6 @@ class WebBackForwardList;
 class WebFrame;
 class WebInspector;
 class WebInspectorClient;
-
-typedef WebCore::RefCountedGDIHandle<HBITMAP> RefCountedHBITMAP;
-typedef WebCore::RefCountedGDIHandle<HRGN> RefCountedHRGN;
 
 WebView* kit(WebCore::Page*);
 WebCore::Page* core(IWebView*);
@@ -880,7 +877,7 @@ public:
     void paintIntoWindow(HDC bitmapDC, HDC windowDC, const WebCore::IntRect& dirtyRect);
     bool ensureBackingStore();
     void addToDirtyRegion(const WebCore::IntRect&);
-    void addToDirtyRegion(HRGN);
+    void addToDirtyRegion(GDIObject<HRGN>);
     void scrollBackingStore(WebCore::FrameView*, int dx, int dy, const WebCore::IntRect& scrollViewRect, const WebCore::IntRect& clipRect);
     void deleteBackingStore();
     void repaint(const WebCore::IntRect&, bool contentChanged, bool immediate = false, bool repaintContentOnly = false);
@@ -1086,9 +1083,9 @@ protected:
     WebInspectorClient* m_inspectorClient;
 #endif // ENABLE(INSPECTOR)
     
-    RefPtr<RefCountedHBITMAP> m_backingStoreBitmap;
+    RefPtr<WebCore::SharedGDIObject<HBITMAP>> m_backingStoreBitmap;
     SIZE m_backingStoreSize;
-    RefPtr<RefCountedHRGN> m_backingStoreDirtyRegion;
+    RefPtr<WebCore::SharedGDIObject<HRGN>> m_backingStoreDirtyRegion;
 
     COMPtr<IAccessibilityDelegate> m_accessibilityDelegate;
     COMPtr<IWebEditingDelegate> m_editingDelegate;

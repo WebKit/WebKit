@@ -42,7 +42,7 @@ public:
     GDIObject() : m_object(0) { }
     ~GDIObject() { deleteObject<T>(m_object); }
 
-    T get() { return m_object; }
+    T get() const { return m_object; }
 
     void clear();
     T leak() WARN_UNUSED_RETURN;

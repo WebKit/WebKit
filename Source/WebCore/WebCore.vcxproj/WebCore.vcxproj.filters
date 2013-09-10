@@ -7097,6 +7097,8 @@
     <ClCompile Include="..\platform\win\StructuredExceptionHandlerSuppressor.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSBeforeUnloadEvent.cpp" />
+    <ClCompile Include="..\rendering\FloatingObjects.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -8579,9 +8581,6 @@
       <Filter>platform\graphics\win</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\opentype\OpenTypeVerticalData.h">
-      <Filter>platform\graphics\win</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\win\RefCountedGDIHandle.h">
       <Filter>platform\graphics\win</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\win\UniscribeController.h">
@@ -14897,6 +14896,11 @@
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLElementTypeHelpers.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementTypeHelpers.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSBeforeUnloadEvent.h" />
+    <ClInclude Include="..\rendering\FloatingObjects.h" />
+    <ClInclude Include="..\platform\graphics\win\SharedGDIObject.h">
+      <Filter>platform\graphics\win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">

@@ -1,3 +1,28 @@
+2013-09-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Create SharedGDIObject Class Template
+        https://bugs.webkit.org/show_bug.cgi?id=121037
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Remove RefCountedGDIHandle.h, and
+        add new SharedGDIObject.h file.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::hfont): Switch to new SharedGDIObject.
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Ditto.
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Ditto.
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Ditto.
+        * platform/graphics/win/RefCountedGDIHandle.h: Removed.
+        * platform/graphics/win/SharedGDIObject.h: Added.
+        (WebCore::SharedGDIObject::create):
+        (WebCore::SharedGDIObject::get):
+        (WebCore::SharedGDIObject::hash):
+        (WebCore::SharedGDIObject::SharedGDIObject):
+
 2013-09-10  Tim Horton  <timothy_horton@apple.com>
 
         [mac] PDFDocumentImage should use PDFKit to draw

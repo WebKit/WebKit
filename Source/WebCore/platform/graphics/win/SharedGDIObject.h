@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
- * Copyright (C) 2008, 2009 Torch Mobile, Inc.
+ * Copyright (C) 2013 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,46 +10,54 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "OwnPtr.h"
+#ifndef SharedGDIObject_h
+#define SharedGDIObject_h
 
-#if OS(WINDOWS)
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/win/GDIObject.h>
 
-#include <windows.h>
+namespace WebCore {
 
-namespace WTF {
+template <typename T> class SharedGDIObject : public RefCounted<SharedGDIObject<T>> {
+public:
+    static PassRefPtr<SharedGDIObject> create(GDIObject<T> object)
+    {
+        return adoptRef(new SharedGDIObject<T>(std::move(object)));
+    }
 
-void deleteOwnedPtr(HBITMAP ptr)
-{
-    if (ptr)
-        DeleteObject(ptr);
-}
+    T get() const
+    {
+        return m_object.get();
+    }
 
-void deleteOwnedPtr(HDC ptr)
-{
-    if (ptr)
-        DeleteDC(ptr);
-}
+    unsigned hash() const
+    {
+        return WTF::PtrHash<T>::hash(m_object.get());
+    }
 
-void deleteOwnedPtr(HRGN ptr)
-{
-    if (ptr)
-        DeleteObject(ptr);
-}
+private:
+    explicit SharedGDIObject(GDIObject<T> object)
+        : m_object(std::move(object))
+    {
+    }
 
-} // namespace WTF
+    GDIObject<T> m_object;
+};
 
-#endif // OS(WINDOWS)
+} // namespace WebCore
+
+#endif // SharedGDIObject_h

@@ -112,7 +112,6 @@
     <ClCompile Include="..\wtf\unicode\icu\CollatorICU.cpp" />
     <ClCompile Include="..\wtf\unicode\UTF8.cpp" />
     <ClCompile Include="..\wtf\win\MainThreadWin.cpp" />
-    <ClCompile Include="..\wtf\win\OwnPtrWin.cpp" />
     <ClCompile Include="..\wtf\WTFThreadData.cpp" />
     <ClCompile Include="..\wtf\SchedulePairCF.cpp" />
   </ItemGroup>

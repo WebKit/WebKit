@@ -24,6 +24,7 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#include "SharedGDIObject.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/HashMap.h>
@@ -120,7 +121,7 @@ FontPlatformData::FontPlatformData(HFONT hfont, CGFontRef font, float size, bool
     , m_orientation(Horizontal)
     , m_size(size)
     , m_widthVariant(RegularWidth)
-    , m_font(RefCountedGDIHandle<HFONT>::create(hfont))
+    , m_font(SharedGDIObject<HFONT>::create(adoptGDIObject<HFONT>(hfont)))
     , m_cgFont(font)
     , m_isColorBitmapFont(false)
     , m_useGDI(useGDI)

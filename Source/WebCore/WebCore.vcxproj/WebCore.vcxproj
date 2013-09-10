@@ -19299,6 +19299,7 @@
     <ClInclude Include="..\platform\graphics\opengl\GLPlatformContext.h" />
     <ClInclude Include="..\platform\graphics\opengl\GLPlatformSurface.h" />
     <ClInclude Include="..\platform\graphics\VideoTrackPrivate.h" />
+    <ClInclude Include="..\platform\graphics\win\SharedGDIObject.h" />
     <ClInclude Include="..\platform\HistogramSupport.h" />
     <ClInclude Include="..\platform\HostWindow.h" />
     <ClInclude Include="..\platform\KillRing.h" />
@@ -19467,7 +19468,6 @@
     <ClInclude Include="..\platform\graphics\opentype\OpenTypeTypes.h" />
     <ClInclude Include="..\platform\graphics\opentype\OpenTypeUtilities.h" />
     <ClInclude Include="..\platform\graphics\opentype\OpenTypeVerticalData.h" />
-    <ClInclude Include="..\platform\graphics\win\RefCountedGDIHandle.h" />
     <ClInclude Include="..\platform\graphics\win\UniscribeController.h" />
     <CustomBuildStep Include="..\platform\graphics\win\WKCAImageQueue.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>

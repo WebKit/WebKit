@@ -1,3 +1,20 @@
+2013-09-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Create SharedGDIObject Class Template
+        https://bugs.webkit.org/show_bug.cgi?id=121037
+
+        Reviewed by Anders Carlsson.
+
+        * WebView.cpp: Change implementations to use the new SharedGDIObject
+        class.
+        (WebView::addToDirtyRegion):
+        (WebView::scrollBackingStore):
+        (WebView::updateBackingStore):
+        (WebView::performLayeredWindowUpdate):
+        (WebView::paint):
+        (WebView::backingStore):
+        * WebView.h: Ditto.
+
 2013-09-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Change from using OwnPtr<GDI Stuff> to new GDIObject template.

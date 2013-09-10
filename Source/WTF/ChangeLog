@@ -1,3 +1,24 @@
+2013-09-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Create SharedGDIObject Class Template
+        https://bugs.webkit.org/show_bug.cgi?id=121037
+
+        Reviewed by Anders Carlsson.
+
+        Now that the SharedGDIObject class exists we can get rid of
+        the Windows-specific code in OwnPtr.
+
+        * WTF.vcxproj/WTF.vcxproj: Remove OwnPtrWin.cpp.
+        * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+        * wtf/OwnPtrCommon.h: 
+        (WTF::deleteOwnedPtr): Remove Windows declarations that
+        are no longer needed.
+        * wtf/win/GDIObject.h:
+        (WTF::GDIObject::get): Change to 'const' to match
+        signature (and use cases) elsewhere in the code base for
+        our smart pointer classes.
+        * wtf/win/OwnPtrWin.cpp: Removed.
+
 2013-09-10  Anders Carlsson  <andersca@apple.com>
 
         Remove more uses of WTF::AlignedBuffer
