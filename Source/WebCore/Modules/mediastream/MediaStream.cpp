@@ -155,15 +155,14 @@ void MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode&
 
     switch (component->source()->type()) {
     case MediaStreamSource::TypeAudio:
-        m_descriptor->addAudioComponent(component.release());
         m_audioTracks.append(newTrack);
         break;
     case MediaStreamSource::TypeVideo:
-        m_descriptor->addVideoComponent(component.release());
         m_videoTracks.append(newTrack);
         break;
     }
 
+    m_descriptor->addComponent(component.release());
     MediaStreamCenter::instance().didAddMediaStreamTrack(m_descriptor.get(), newTrack->component());
 }
 
@@ -181,24 +180,24 @@ void MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCo
 
     RefPtr<MediaStreamTrack> track = prpTrack;
 
+    size_t pos = notFound;
     switch (track->component()->source()->type()) {
-    case MediaStreamSource::TypeAudio: {
-        size_t pos = m_audioTracks.find(track);
-        if (pos != notFound) {
+    case MediaStreamSource::TypeAudio:
+        pos = m_audioTracks.find(track);
+        if (pos != notFound)
             m_audioTracks.remove(pos);
-            m_descriptor->removeAudioComponent(track->component());
-        }
         break;
-    }
-    case MediaStreamSource::TypeVideo: {
-        size_t pos = m_videoTracks.find(track);
-        if (pos != notFound) {
+    case MediaStreamSource::TypeVideo:
+        pos = m_videoTracks.find(track);
+        if (pos != notFound)
             m_videoTracks.remove(pos);
-            m_descriptor->removeVideoComponent(track->component());
-        }
         break;
     }
-    }
+
+    if (pos == notFound)
+        return;
+
+    m_descriptor->removeComponent(track->component());
 
     if (!m_audioTracks.size() && !m_videoTracks.size())
         m_descriptor->setEnded();
@@ -280,14 +279,13 @@ void MediaStream::addRemoteTrack(MediaStreamComponent* component)
     RefPtr<MediaStreamTrack> track = MediaStreamTrack::create(scriptExecutionContext(), component);
     switch (component->source()->type()) {
     case MediaStreamSource::TypeAudio:
-        m_descriptor->addAudioComponent(component);
         m_audioTracks.append(track);
         break;
     case MediaStreamSource::TypeVideo:
-        m_descriptor->addVideoComponent(component);
         m_videoTracks.append(track);
         break;
     }
+    m_descriptor->addComponent(component);
 
     scheduleDispatchEvent(MediaStreamTrackEvent::create(eventNames().addtrackEvent, false, false, track));
 }
@@ -317,14 +315,7 @@ void MediaStream::removeRemoteTrack(MediaStreamComponent* component)
     if (index == notFound)
         return;
 
-    switch (component->source()->type()) {
-    case MediaStreamSource::TypeAudio:
-        m_descriptor->removeAudioComponent(component);
-        break;
-    case MediaStreamSource::TypeVideo:
-        m_descriptor->removeAudioComponent(component);
-        break;
-    }
+    m_descriptor->removeComponent(component);
 
     RefPtr<MediaStreamTrack> track = (*tracks)[index];
     tracks->remove(index);
