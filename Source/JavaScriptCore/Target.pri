@@ -350,6 +350,7 @@ SOURCES += \
     runtime/JSTypedArrayPrototypes.cpp \
     runtime/JSTypedArrays.cpp \
     runtime/JSVariableObject.cpp \
+    runtime/JSWeakMap.cpp \
     runtime/JSWithScope.cpp \
     runtime/JSWrapperObject.cpp \
     runtime/LiteralParser.cpp \
@@ -404,6 +405,9 @@ SOURCES += \
     runtime/VM.cpp \
     runtime/Watchdog.cpp \
     runtime/WatchdogNone.cpp \
+    runtime/WeakMapConstructor.cpp \
+    runtime/WeakMapData.cpp \
+    runtime/WeakMapPrototype.cpp \
     tools/CodeProfile.cpp \
     tools/CodeProfiling.cpp \
     yarr/YarrJIT.cpp \

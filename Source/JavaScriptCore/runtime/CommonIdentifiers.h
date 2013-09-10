@@ -143,6 +143,7 @@
     macro(size) \
     macro(Map)\
     macro(Set)\
+    macro(WeakMap)\
     macro(add)
 
 #define JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(macro) \

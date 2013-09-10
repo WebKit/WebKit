@@ -939,6 +939,14 @@
 		A7C1EAF017987AB600299DB2 /* JSStackInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C1EAEB17987AB600299DB2 /* JSStackInlines.h */; };
 		A7C1EAF117987AB600299DB2 /* StackVisitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7C1EAEC17987AB600299DB2 /* StackVisitor.cpp */; };
 		A7C1EAF217987AB600299DB2 /* StackVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C1EAED17987AB600299DB2 /* StackVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7CA3AE317DA41AE006538AF /* WeakMapConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CA3ADD17DA41AE006538AF /* WeakMapConstructor.cpp */; };
+		A7CA3AE417DA41AE006538AF /* WeakMapConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA3ADE17DA41AE006538AF /* WeakMapConstructor.h */; };
+		A7CA3AE517DA41AE006538AF /* WeakMapPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CA3ADF17DA41AE006538AF /* WeakMapPrototype.cpp */; };
+		A7CA3AE617DA41AE006538AF /* WeakMapPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA3AE017DA41AE006538AF /* WeakMapPrototype.h */; };
+		A7CA3AE717DA41AE006538AF /* JSWeakMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CA3AE117DA41AE006538AF /* JSWeakMap.cpp */; };
+		A7CA3AE817DA41AE006538AF /* JSWeakMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA3AE217DA41AE006538AF /* JSWeakMap.h */; };
+		A7CA3AEB17DA5168006538AF /* WeakMapData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CA3AE917DA5168006538AF /* WeakMapData.cpp */; };
+		A7CA3AEC17DA5168006538AF /* WeakMapData.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA3AEA17DA5168006538AF /* WeakMapData.h */; };
 		A7D89CF217A0B8CC00773AD8 /* DFGBasicBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D89CE317A0B8CC00773AD8 /* DFGBasicBlock.cpp */; };
 		A7D89CF317A0B8CC00773AD8 /* DFGBlockInsertionSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D89CE417A0B8CC00773AD8 /* DFGBlockInsertionSet.cpp */; };
 		A7D89CF417A0B8CC00773AD8 /* DFGBlockInsertionSet.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D89CE517A0B8CC00773AD8 /* DFGBlockInsertionSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2147,6 +2155,14 @@
 		A7C1EAED17987AB600299DB2 /* StackVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackVisitor.h; sourceTree = "<group>"; };
 		A7C225CC139981F100FF1662 /* KeywordLookupGenerator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = KeywordLookupGenerator.py; sourceTree = "<group>"; };
 		A7C225CD1399849C00FF1662 /* KeywordLookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeywordLookup.h; sourceTree = "<group>"; };
+		A7CA3ADD17DA41AE006538AF /* WeakMapConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakMapConstructor.cpp; sourceTree = "<group>"; };
+		A7CA3ADE17DA41AE006538AF /* WeakMapConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakMapConstructor.h; sourceTree = "<group>"; };
+		A7CA3ADF17DA41AE006538AF /* WeakMapPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakMapPrototype.cpp; sourceTree = "<group>"; };
+		A7CA3AE017DA41AE006538AF /* WeakMapPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakMapPrototype.h; sourceTree = "<group>"; };
+		A7CA3AE117DA41AE006538AF /* JSWeakMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWeakMap.cpp; sourceTree = "<group>"; };
+		A7CA3AE217DA41AE006538AF /* JSWeakMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakMap.h; sourceTree = "<group>"; };
+		A7CA3AE917DA5168006538AF /* WeakMapData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakMapData.cpp; sourceTree = "<group>"; };
+		A7CA3AEA17DA5168006538AF /* WeakMapData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakMapData.h; sourceTree = "<group>"; };
 		A7D89CE317A0B8CC00773AD8 /* DFGBasicBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGBasicBlock.cpp; path = dfg/DFGBasicBlock.cpp; sourceTree = "<group>"; };
 		A7D89CE417A0B8CC00773AD8 /* DFGBlockInsertionSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGBlockInsertionSet.cpp; path = dfg/DFGBlockInsertionSet.cpp; sourceTree = "<group>"; };
 		A7D89CE517A0B8CC00773AD8 /* DFGBlockInsertionSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBlockInsertionSet.h; path = dfg/DFGBlockInsertionSet.h; sourceTree = "<group>"; };
@@ -3380,6 +3396,14 @@
 				14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */,
 				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
 				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
+				A7CA3ADD17DA41AE006538AF /* WeakMapConstructor.cpp */,
+				A7CA3ADE17DA41AE006538AF /* WeakMapConstructor.h */,
+				A7CA3ADF17DA41AE006538AF /* WeakMapPrototype.cpp */,
+				A7CA3AE017DA41AE006538AF /* WeakMapPrototype.h */,
+				A7CA3AE117DA41AE006538AF /* JSWeakMap.cpp */,
+				A7CA3AE217DA41AE006538AF /* JSWeakMap.h */,
+				A7CA3AE917DA5168006538AF /* WeakMapData.cpp */,
+				A7CA3AEA17DA5168006538AF /* WeakMapData.h */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -3992,6 +4016,7 @@
 				0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */,
 				0F235BEC17178E7300690C7F /* DFGOSRExitBase.h in Headers */,
 				0FFB921C16D02F110055A5DB /* DFGOSRExitCompilationInfo.h in Headers */,
+				A7CA3AEC17DA5168006538AF /* WeakMapData.h in Headers */,
 				0FC0977114693AF500CF2442 /* DFGOSRExitCompiler.h in Headers */,
 				0F7025AA1714B0FC00382C0E /* DFGOSRExitCompilerCommon.h in Headers */,
 				0FEFC9AB1681A3B600567F53 /* DFGOSRExitJumpPlaceholder.h in Headers */,
@@ -4212,6 +4237,7 @@
 				14874AE615EBDE4A002E3587 /* JSScope.h in Headers */,
 				A7C0C4AC168103020017011D /* JSScriptRefPrivate.h in Headers */,
 				0F919D11157F332C004A4E7D /* JSSegmentedVariableObject.h in Headers */,
+				A7CA3AE817DA41AE006538AF /* JSWeakMap.h in Headers */,
 				A7299D9E17D12837005F5FF9 /* JSSet.h in Headers */,
 				BC18C45E0E16F5CD00B34460 /* JSStack.h in Headers */,
 				A7C1EAF017987AB600299DB2 /* JSStackInlines.h in Headers */,
@@ -4337,6 +4363,7 @@
 				0FF729BA166AD360000F5BA3 /* ProfilerCompilation.h in Headers */,
 				0FF729BB166AD360000F5BA3 /* ProfilerCompilationKind.h in Headers */,
 				0FD8A32617D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h in Headers */,
+				A7CA3AE417DA41AE006538AF /* WeakMapConstructor.h in Headers */,
 				0FF729BC166AD360000F5BA3 /* ProfilerCompiledBytecode.h in Headers */,
 				0FF729BD166AD360000F5BA3 /* ProfilerDatabase.h in Headers */,
 				0FF729BE166AD360000F5BA3 /* ProfilerExecutionCounter.h in Headers */,
@@ -4402,6 +4429,7 @@
 				BC18C46A0E16F5CD00B34460 /* StringPrototype.h in Headers */,
 				142E313B134FF0A600AFADB5 /* Strong.h in Headers */,
 				145722861437E140005FDE26 /* StrongInlines.h in Headers */,
+				A7CA3AE617DA41AE006538AF /* WeakMapPrototype.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
 				0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */,
@@ -4986,6 +5014,7 @@
 				147F39CC107EC37600427A48 /* FunctionPrototype.cpp in Sources */,
 				C2D58C3415912FEE0021A844 /* GCActivityCallback.cpp in Sources */,
 				0F766D2F15A8DCE0008F363E /* GCAwareJITStubRoutine.cpp in Sources */,
+				A7CA3AEB17DA5168006538AF /* WeakMapData.cpp in Sources */,
 				C2239D1A16262BDD005AC5FD /* GCThread.cpp in Sources */,
 				C21122E115DD9AB300790E3A /* GCThreadSharedData.cpp in Sources */,
 				0F93329F14CA7DCA0085F3C6 /* GetByIdStatus.cpp in Sources */,
@@ -5127,6 +5156,7 @@
 				14469DE2107EC7E700650446 /* NumberConstructor.cpp in Sources */,
 				14469DE3107EC7E700650446 /* NumberObject.cpp in Sources */,
 				14469DE4107EC7E700650446 /* NumberPrototype.cpp in Sources */,
+				A7CA3AE317DA41AE006538AF /* WeakMapConstructor.cpp in Sources */,
 				86F3EEBE168CDE930077B92A /* ObjCCallbackFunction.mm in Sources */,
 				14469DE5107EC7E700650446 /* ObjectConstructor.cpp in Sources */,
 				14469DE6107EC7E700650446 /* ObjectPrototype.cpp in Sources */,
@@ -5160,9 +5190,11 @@
 				ADE39FFF16DD144B0003CD4A /* PropertyTable.cpp in Sources */,
 				1474C33C16AA2D9B0062F01D /* PrototypeMap.cpp in Sources */,
 				0F9332A314CA7DD70085F3C6 /* PutByIdStatus.cpp in Sources */,
+				A7CA3AE517DA41AE006538AF /* WeakMapPrototype.cpp in Sources */,
 				0FF60AC316740F8800029779 /* ReduceWhitespace.cpp in Sources */,
 				14280841107EC0930013E7B2 /* RegExp.cpp in Sources */,
 				A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */,
+				A7CA3AE717DA41AE006538AF /* JSWeakMap.cpp in Sources */,
 				8642C510151C06A90046D4EF /* RegExpCachedResult.cpp in Sources */,
 				0FD8A32B17D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.cpp in Sources */,
 				14280842107EC0930013E7B2 /* RegExpConstructor.cpp in Sources */,

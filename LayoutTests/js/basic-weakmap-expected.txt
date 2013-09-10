@@ -1,0 +1,46 @@
+Tests basic correctness of ES WeakMap object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WeakMap instanceof WeakMap is false
+PASS WeakMap.prototype instanceof WeakMap is false
+PASS new WeakMap() instanceof WeakMap is true
+PASS WeakMap() threw exception TypeError: Function is not a function (evaluating 'WeakMap()').
+PASS map.set(0, 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
+PASS map.set(0.5, 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
+PASS map.set('foo', 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
+PASS map.set(true, 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
+PASS map.set(false, 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
+PASS map.set(null, 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
+PASS map.set(undefined, 1) threw exception TypeError: Attempted to set a non-object key in a WeakMap.
+PASS map.get(0) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.get(0.5) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.get('foo') threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.get(true) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.get(false) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.get(null) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.get(undefined) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.has(0) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.has(0.5) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.has('foo') threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.has(true) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.has(false) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.has(null) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.has(undefined) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.delete(0) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.delete(0.5) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.delete('foo') threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.delete(true) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.delete(false) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.delete(null) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.delete(undefined) threw exception TypeError: A WeakMap cannot have a non-object key.
+PASS map.set(new String('foo'), 'foo') is map
+PASS map.get(new String('foo')) is undefined
+PASS map.has(new String('foo')) is false
+PASS Math.abs(currentObjectCount - keyLessObjectCount) < 100 is true
+PASS (keyLessObjectCount - valueLessObjectCount) > 1500 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

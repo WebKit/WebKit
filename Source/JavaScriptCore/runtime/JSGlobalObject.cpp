@@ -71,6 +71,7 @@
 #include "JSTypedArrayConstructors.h"
 #include "JSTypedArrayPrototypes.h"
 #include "JSTypedArrays.h"
+#include "JSWeakMap.h"
 #include "JSWithScope.h"
 #include "LegacyProfiler.h"
 #include "Lookup.h"
@@ -99,6 +100,9 @@
 #include "StrictEvalActivation.h"
 #include "StringConstructor.h"
 #include "StringPrototype.h"
+#include "WeakMapConstructor.h"
+#include "WeakMapData.h"
+#include "WeakMapPrototype.h"
 
 #if ENABLE(PROMISES)
 #include "JSPromise.h"
@@ -309,6 +313,7 @@ void JSGlobalObject::reset(JSValue prototype)
 
 
     m_mapDataStructure.set(exec->vm(), this, MapData::createStructure(exec->vm(), this, jsNull()));
+    m_weakMapDataStructure.set(exec->vm(), this, WeakMapData::createStructure(exec->vm(), this, jsNull()));
 
 #define CREATE_PROTOTYPE_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
     m_ ## lowerName ## Prototype.set(exec->vm(), this, capitalName##Prototype::create(exec, this, capitalName##Prototype::createStructure(exec->vm(), this, m_objectPrototype.get()))); \
@@ -640,6 +645,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 #undef VISIT_SIMPLE_TYPE
 
     visitor.append(&thisObject->m_mapDataStructure);
+    visitor.append(&thisObject->m_weakMapDataStructure);
 
     for (unsigned i = NUMBER_OF_TYPED_ARRAY_TYPES; i--;) {
         visitor.append(&thisObject->m_typedArrays[i].prototype);

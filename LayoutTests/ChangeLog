@@ -1,3 +1,16 @@
+2013-09-10  Oliver Hunt  <oliver@apple.com>
+
+        Support WeakMap
+        https://bugs.webkit.org/show_bug.cgi?id=120912
+
+        Reviewed by Geoffrey Garen.
+
+        Basic tests.
+
+        * js/basic-weakmap-expected.txt: Added.
+        * js/basic-weakmap.html: Added.
+        * js/script-tests/basic-weakmap.js: Added.
+
 2013-09-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix race in fast/loader/onunload-form-submit-crash.html

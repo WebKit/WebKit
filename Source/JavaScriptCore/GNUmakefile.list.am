@@ -921,6 +921,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSUint32Array.h \
 	Source/JavaScriptCore/runtime/JSUint8Array.h \
 	Source/JavaScriptCore/runtime/JSUint8ClampedArray.h \
+	Source/JavaScriptCore/runtime/JSWeakMap.cpp \
+	Source/JavaScriptCore/runtime/JSWeakMap.h \
 	Source/JavaScriptCore/runtime/JSWithScope.cpp \
 	Source/JavaScriptCore/runtime/JSNameScope.cpp \
 	Source/JavaScriptCore/runtime/JSNameScope.h \
@@ -1070,6 +1072,12 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/Watchdog.h \
 	Source/JavaScriptCore/runtime/WatchdogNone.cpp \
 	Source/JavaScriptCore/runtime/WeakGCMap.h \
+	Source/JavaScriptCore/runtime/WeakMapConstructor.cpp \
+	Source/JavaScriptCore/runtime/WeakMapConstructor.h \
+	Source/JavaScriptCore/runtime/WeakMapData.cpp \
+	Source/JavaScriptCore/runtime/WeakMapData.h \
+	Source/JavaScriptCore/runtime/WeakMapPrototype.cpp \
+	Source/JavaScriptCore/runtime/WeakMapPrototype.h \
 	Source/JavaScriptCore/runtime/WeakRandom.h \
 	Source/JavaScriptCore/runtime/WriteBarrier.h \
 	Source/JavaScriptCore/tools/CodeProfile.cpp \

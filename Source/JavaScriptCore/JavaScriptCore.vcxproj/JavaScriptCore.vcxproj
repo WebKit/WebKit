@@ -493,6 +493,7 @@
     <ClCompile Include="..\runtime\JSTypedArrayPrototypes.cpp" />
     <ClCompile Include="..\runtime\JSTypedArrays.cpp" />
     <ClCompile Include="..\runtime\JSVariableObject.cpp" />
+    <ClCompile Include="..\runtime\JSWeakMap.cpp" />
     <ClCompile Include="..\runtime\JSWithScope.cpp" />
     <ClCompile Include="..\runtime\JSWrapperObject.cpp" />
     <ClCompile Include="..\runtime\LiteralParser.cpp" />
@@ -546,6 +547,9 @@
     <ClCompile Include="..\runtime\VM.cpp" />
     <ClCompile Include="..\runtime\Watchdog.cpp" />
     <ClCompile Include="..\runtime\WatchdogNone.cpp" />
+    <ClCompile Include="..\runtime\WeakMapConstructor.cpp" />
+    <ClCompile Include="..\runtime\WeakMapData.cpp" />
+    <ClCompile Include="..\runtime\WeakMapPrototype.cpp" />
     <ClCompile Include="..\tools\CodeProfile.cpp" />
     <ClCompile Include="..\tools\CodeProfiling.cpp" />
     <ClCompile Include="..\yarr\YarrCanonicalizeUCS2.cpp" />
@@ -934,6 +938,7 @@
     <ClInclude Include="..\runtime\JSUint8Array.h" />
     <ClInclude Include="..\runtime\JSUint8ClampedArray.h" />
     <ClInclude Include="..\runtime\JSVariableObject.h" />
+    <ClInclude Include="..\runtime\JSWeakMap.h" />
     <ClInclude Include="..\runtime\JSWithScope.h" />
     <ClInclude Include="..\runtime\JSWrapperObject.h" />
     <ClInclude Include="..\runtime\LiteralParser.h" />
@@ -1009,6 +1014,9 @@
     <ClInclude Include="..\runtime\VM.h" />
     <ClInclude Include="..\runtime\Watchdog.h" />
     <ClInclude Include="..\runtime\WeakGCMap.h" />
+    <ClInclude Include="..\runtime\WeakMapConstructor.h" />
+    <ClInclude Include="..\runtime\WeakMapData.h" />
+    <ClInclude Include="..\runtime\WeakMapPrototype.h" />
     <ClInclude Include="..\runtime\WeakRandom.h" />
     <ClInclude Include="..\runtime\WriteBarrier.h" />
     <ClInclude Include="..\tools\CodeProfile.h" />
