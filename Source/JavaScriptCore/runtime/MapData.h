@@ -107,6 +107,8 @@ private:
     typedef HashMap<EncodedJSValue, int32_t, EncodedJSValueHash, EncodedJSValueHashTraits, IndexTraits> ValueKeyedMap;
     typedef HashMap<StringImpl*, int32_t, typename WTF::DefaultHash<StringImpl*>::Hash, WTF::HashTraits<StringImpl*>, IndexTraits> StringKeyedMap;
 
+    size_t capacityInBytes() { return m_capacity * sizeof(Entry); }
+
     MapData(VM&, JSGlobalObject*);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);

@@ -1,3 +1,36 @@
+2013-09-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        MapData has some issues
+        https://bugs.webkit.org/show_bug.cgi?id=121118
+
+        Reviewed by Geoffrey Garen.
+
+        * heap/CopiedBlock.h: Added some debug-only consistency checking logic. We now make sure that 
+        m_liveBytes is consistent with another field, m_liveObjects. m_liveObjects is the number of 
+        "objects" that currently reside in the CopiedBlock. If we have zero live bytes then we should have
+        zero live objects. The converse and the inverse should also be true.
+        (JSC::CopiedBlock::CopiedBlock):
+        (JSC::CopiedBlock::didSurviveGC):
+        (JSC::CopiedBlock::didEvacuateBytes):
+        (JSC::CopiedBlock::canBeRecycled):
+        (JSC::CopiedBlock::shouldEvacuate):
+        (JSC::CopiedBlock::liveBytes):
+        (JSC::CopiedBlock::checkConsistency):
+        * heap/CopiedBlockInlines.h:
+        (JSC::CopiedBlock::reportLiveBytes):
+        * heap/CopyVisitorInlines.h:
+        (JSC::CopyVisitor::didCopy):
+        * runtime/MapData.cpp:
+        (JSC::MapData::replaceAndPackBackingStore): Renamed parameter to be consistent with its meaning.
+        (JSC::MapData::replaceBackingStore): Ditto. Also removed an unnecessary local variable.
+        (JSC::MapData::visitChildren): Before we passed the size of the MapData to copyLater(), which 
+        was wrong. Now we pass capacity * sizeof(Entry).
+        (JSC::MapData::copyBackingStore): Before when we reassigned the newly copied backing store, we 
+        set the capacity (in elements) to the size (in bytes) of the backing store. This made us think 
+        we're way bigger than we actually are. Now we just pass the old capacity in.
+        * runtime/MapData.h:
+        (JSC::MapData::capacityInBytes): Helper function to calculate the size of the backing store.
+
 2013-09-10  Filip Pizlo  <fpizlo@apple.com>
 
         We should say Int32 when we mean Int32. Saying Integer is just weird.

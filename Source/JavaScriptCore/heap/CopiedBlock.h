@@ -86,6 +86,8 @@ private:
     CopiedBlock(Region*);
     void zeroFillWilderness(); // Can be called at any time to zero-fill to the end of the block.
 
+    void checkConsistency();
+
 #if ENABLE(PARALLEL_GC)
     SpinLock m_workListLock;
 #endif
@@ -94,6 +96,9 @@ private:
     size_t m_remaining;
     uintptr_t m_isPinned;
     unsigned m_liveBytes;
+#ifndef NDEBUG
+    unsigned m_liveObjects;
+#endif
 };
 
 inline CopiedBlock* CopiedBlock::createNoZeroFill(DeadBlock* block)
@@ -126,6 +131,9 @@ inline CopiedBlock::CopiedBlock(Region* region)
     , m_remaining(payloadCapacity())
     , m_isPinned(false)
     , m_liveBytes(0)
+#ifndef NDEBUG
+    , m_liveObjects(0)
+#endif
 {
 #if ENABLE(PARALLEL_GC)
     m_workListLock.Init();
@@ -135,7 +143,11 @@ inline CopiedBlock::CopiedBlock(Region* region)
 
 inline void CopiedBlock::didSurviveGC()
 {
+    checkConsistency();
     m_liveBytes = 0;
+#ifndef NDEBUG
+    m_liveObjects = 0;
+#endif
     m_isPinned = false;
     if (m_workList)
         m_workList.clear();
@@ -144,16 +156,23 @@ inline void CopiedBlock::didSurviveGC()
 inline void CopiedBlock::didEvacuateBytes(unsigned bytes)
 {
     ASSERT(m_liveBytes >= bytes);
+    checkConsistency();
     m_liveBytes -= bytes;
+#ifndef NDEBUG
+    m_liveObjects--;
+#endif
+    checkConsistency();
 }
 
 inline bool CopiedBlock::canBeRecycled()
 {
+    checkConsistency();
     return !m_liveBytes;
 }
 
 inline bool CopiedBlock::shouldEvacuate()
 {
+    checkConsistency();
     return static_cast<double>(m_liveBytes) / static_cast<double>(payloadCapacity()) <= Options::minCopiedBlockUtilization();
 }
 
@@ -176,6 +195,7 @@ inline bool CopiedBlock::isOversize()
 
 inline unsigned CopiedBlock::liveBytes()
 {
+    checkConsistency();
     return m_liveBytes;
 }
 
@@ -242,6 +262,11 @@ inline bool CopiedBlock::hasWorkList()
 inline CopyWorkList& CopiedBlock::workList()
 {
     return *m_workList;
+}
+
+inline void CopiedBlock::checkConsistency()
+{
+    ASSERT(!!m_liveBytes == !!m_liveObjects);
 }
 
 } // namespace JSC

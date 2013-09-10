@@ -130,16 +130,16 @@ bool MapData::remove(CallFrame* callFrame, KeyType key)
     return true;
 }
 
-void MapData::replaceAndPackBackingStore(Entry* destination, int32_t newSize)
+void MapData::replaceAndPackBackingStore(Entry* destination, int32_t newCapacity)
 {
     ASSERT(shouldPack());
     int32_t newEnd = 0;
-    RELEASE_ASSERT(newSize > 0);
+    RELEASE_ASSERT(newCapacity > 0);
     for (int32_t i = 0; i < m_size; i++) {
         Entry& entry = m_entries[i];
         if (!entry.key)
             continue;
-        ASSERT(newEnd < newSize);
+        ASSERT(newEnd < newCapacity);
         destination[newEnd] = entry;
 
         // We overwrite the old entry with a forwarding index for the new entry,
@@ -158,22 +158,19 @@ void MapData::replaceAndPackBackingStore(Entry* destination, int32_t newSize)
     ASSERT((m_size - newEnd) == m_deletedCount);
     m_deletedCount = 0;
 
-    m_capacity = newSize;
+    m_capacity = newCapacity;
     m_size = newEnd;
     m_entries = destination;
 
 }
 
-void MapData::replaceBackingStore(Entry* destination, int32_t newSize)
+void MapData::replaceBackingStore(Entry* destination, int32_t newCapacity)
 {
     ASSERT(!shouldPack());
-    int32_t newEnd = 0;
-    RELEASE_ASSERT(newSize > 0);
-    ASSERT(newSize >= m_capacity);
+    RELEASE_ASSERT(newCapacity > 0);
+    ASSERT(newCapacity >= m_capacity);
     memcpy(destination, m_entries, sizeof(Entry) * m_size);
-    newEnd = m_size;
-    m_capacity = newSize;
-    m_size = newEnd;
+    m_capacity = newCapacity;
     m_entries = destination;
 }
 
@@ -215,21 +212,20 @@ void MapData::visitChildren(JSCell* cell, SlotVisitor& visitor)
     } else
         visitor.appendValues(&entries[0].key, size * (sizeof(Entry) / sizeof(WriteBarrier<Unknown>)));
 
-    visitor.copyLater(thisObject, MapBackingStoreCopyToken, entries, size);
+    visitor.copyLater(thisObject, MapBackingStoreCopyToken, entries, thisObject->capacityInBytes());
 }
 
 void MapData::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken token)
 {
     MapData* thisObject = jsCast<MapData*>(cell);
     if (token == MapBackingStoreCopyToken && visitor.checkIfShouldCopy(thisObject->m_entries)) {
-        size_t requiredSize = thisObject->m_capacity * sizeof(Entry);
         Entry* oldEntries = thisObject->m_entries;
-        Entry* newEntries = static_cast<Entry*>(visitor.allocateNewSpace(thisObject->m_capacity * sizeof(Entry)));
+        Entry* newEntries = static_cast<Entry*>(visitor.allocateNewSpace(thisObject->capacityInBytes()));
         if (thisObject->shouldPack())
-            thisObject->replaceAndPackBackingStore(newEntries, requiredSize);
+            thisObject->replaceAndPackBackingStore(newEntries, thisObject->m_capacity);
         else
-            thisObject->replaceBackingStore(newEntries, requiredSize);
-        visitor.didCopy(oldEntries, thisObject->m_capacity * sizeof(Entry));
+            thisObject->replaceBackingStore(newEntries, thisObject->m_capacity);
+        visitor.didCopy(oldEntries, thisObject->capacityInBytes());
     }
     Base::copyBackingStore(cell, visitor, token);
 }

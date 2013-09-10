@@ -36,6 +36,10 @@ inline void CopiedBlock::reportLiveBytes(JSCell* owner, CopyToken token, unsigne
 #if ENABLE(PARALLEL_GC)
     SpinLockHolder locker(&m_workListLock);
 #endif
+#ifndef NDEBUG
+    checkConsistency();
+    m_liveObjects++;
+#endif
     m_liveBytes += bytes;
 
     if (!shouldEvacuate()) {
