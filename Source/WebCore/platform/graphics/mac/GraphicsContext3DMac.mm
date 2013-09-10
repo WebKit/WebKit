@@ -160,6 +160,15 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 
     // Set the current context to the one given to us.
     CGLSetCurrentContext(m_contextObj);
+
+    if (attrs.multithreaded) {
+        err = CGLEnable(m_contextObj, kCGLCEMPEngine);
+        if (err != kCGLNoError) {
+            // We could not create a multi-threaded context.
+            m_contextObj = 0;
+            return;
+        }
+    }
     
     validateAttributes();
 

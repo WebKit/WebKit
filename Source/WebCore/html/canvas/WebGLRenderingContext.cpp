@@ -430,6 +430,9 @@ PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElemen
     attributes.shareResources = false;
     attributes.preferDiscreteGPU = true;
 
+    if (frame->settings().multithreadedWebGLEnabled())
+        attributes.multithreaded = true;
+
     RefPtr<GraphicsContext3D> context(GraphicsContext3D::create(attributes, hostWindow));
 
     if (!context || !context->makeContextCurrent()) {

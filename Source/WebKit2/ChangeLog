@@ -1,5 +1,23 @@
 2013-09-09  Dean Jackson  <dino@apple.com>
 
+        [WebGL] Allow multithreaded OpenGL contexts
+        https://bugs.webkit.org/show_bug.cgi?id=121062
+
+        Reviewed by Simon Fraser.
+
+        Expose a new preference "multithreadedWebGLEnabled".
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMultithreadedWebGLEnabled):
+        (WKPreferencesGetMultithreadedWebGLEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * mac/WebKit2.order:
+
+2013-09-09  Dean Jackson  <dino@apple.com>
+
         Enable WebGL for OS X nightlies
         https://bugs.webkit.org/show_bug.cgi?id=121040
 

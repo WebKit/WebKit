@@ -1,3 +1,25 @@
+2013-09-09  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Allow multithreaded OpenGL contexts
+        https://bugs.webkit.org/show_bug.cgi?id=121062
+
+        Reviewed by Simon Fraser.
+
+        Expose a new preference "multithreadedWebGLEnabled".
+
+        Also examine the value of that preference and, on Mac,
+        tell the CGLContext that it should go to multithreaded mode.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create): Look at the value of the new setting, and
+        toggle a flag on the context attributes.
+        * page/Settings.in: New Setting "multithreadedWebGLEnabled".
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::Attributes::Attributes): Add a "multithreaded" flag.
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D): If the context attributes
+        suggest we should, tell the OpenGL context to go into multithreaded mode.
+
 2013-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove HTMLTextFormControl::fixPlaceholderRenderer
