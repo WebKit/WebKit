@@ -1,3 +1,10 @@
+2013-09-10  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed. Updated paths for JS resources in test after r155411.
+
+        * accessibility/paragraph-with-linebreaks.html: Use ../resources/js-test-pre.js
+        instead of ../fast/js/resources/js-test-pre.js.
+
 2013-09-10  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Incorrect type for holding float value
