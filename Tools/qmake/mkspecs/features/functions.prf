@@ -195,14 +195,6 @@ defineTest(haveQt) {
     return(true)
 }
 
-defineTest(haveQtModule) {
-    unset(module)
-    module = $$1
-
-    haveQt(5):!isEmpty(QT.$${module}.name): return(true)
-    return(false)
-}
-
 defineTest(programExistsInPath) {
     win32: program = $${1}.exe
     else: program = $$1

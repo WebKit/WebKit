@@ -48,7 +48,7 @@ macx:QT += xml
 
 have?(FONTCONFIG): PKGCONFIG += fontconfig
 
-contains(QT_CONFIG, opengl) {
+qtHaveModule(opengl) {
     QT += opengl
     DEFINES += QT_CONFIGURED_WITH_OPENGL
 }

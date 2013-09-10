@@ -1,3 +1,15 @@
+2013-09-10  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] make use of qtHaveModule() 
+        https://bugs.webkit.org/show_bug.cgi?id=121090
+
+        Reviewed by Jocelyn Turcotte.
+        Patch by Oswald Buddenhagen <oswald.buddenhagen@digia.com>
+
+        Use qtHaveModule instead of our own haveQtModule.
+
+        * WebProcess.pro:
+
 2013-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] /webkit2/WebKitWebView/default-menu fails when GtkSettings:gtk-show-input-method-menu is disabled

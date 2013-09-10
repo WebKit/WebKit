@@ -31,14 +31,14 @@ defineTest(detectFeatures) {
     # Please note: static feature defaults go in features.pri
     #
 
-    haveQtModule(quick): WEBKIT_CONFIG += have_qtquick
+    qtHaveModule(quick): WEBKIT_CONFIG += have_qtquick
     else: CONFIGURE_WARNINGS += "QtQuick module not found, QML APIs will not be built"
 
-    haveQtModule(printsupport): WEBKIT_CONFIG += have_qtprintsupport
-    haveQtModule(widgets): WEBKIT_CONFIG += have_qstyle
-    haveQtModule(testlib): WEBKIT_CONFIG += have_qttestlib
-    haveQtModule(location): WEBKIT_CONFIG += have_qtlocation
-    haveQtModule(sensors): WEBKIT_CONFIG += have_qtsensors
+    qtHaveModule(printsupport): WEBKIT_CONFIG += have_qtprintsupport
+    qtHaveModule(widgets): WEBKIT_CONFIG += have_qstyle
+    qtHaveModule(testlib): WEBKIT_CONFIG += have_qttestlib
+    qtHaveModule(location): WEBKIT_CONFIG += have_qtlocation
+    qtHaveModule(sensors): WEBKIT_CONFIG += have_qtsensors
 
     config_libxml2: WEBKIT_CONFIG += use_libxml2
     config_libxslt: WEBKIT_CONFIG += xslt
@@ -116,7 +116,7 @@ defineTest(detectFeatures) {
         }
     }
 
-    !enable?(video):haveQtModule(multimediawidgets) {
+    !enable?(video):qtHaveModule(multimediawidgets) {
         WEBKIT_CONFIG += video use_qt_multimedia
     }
 

@@ -57,7 +57,7 @@ defineTest(runConfigure) {
     # to determine which pro-files to include. The remaining sanitazion
     # is done when finalizing configure.
 
-    !haveQtModule(widgets) {
+    !qtHaveModule(widgets) {
         CONFIGURE_WARNINGS += "Missing QtWidgets module, disabling WebKit1"
         WEBKIT_CONFIG -= build_webkit1
     }
@@ -89,7 +89,7 @@ defineTest(finalizeConfigure) {
     santizeFeatures()
 
     # Sanitize build options
-    !haveQtModule(testlib) {
+    !qtHaveModule(testlib) {
         CONFIGURE_WARNINGS += "Missing QtTest module, disabling DumpRenderTree, WebKitTestRunner and tests"
         WEBKIT_CONFIG -= build_drt build_wtr build_tests
     }
