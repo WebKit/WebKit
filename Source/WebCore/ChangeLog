@@ -1,5 +1,9 @@
 2013-09-09  Andreas Kling  <akling@apple.com>
 
+        Remove unreviewed gunk I just accidentally committed :|
+
+2013-09-09  Andreas Kling  <akling@apple.com>
+
         HTMLTextAreaElement no longer needs custom style resolve callbacks.
         <https://webkit.org/b/121073>
 
