@@ -35,6 +35,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamComponent.h"
+#include "MediaStreamSource.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -57,15 +58,8 @@ public:
         virtual ~ExtraData() { }
     };
 
-    static PassRefPtr<MediaStreamDescriptor> create(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
-    {
-        return adoptRef(new MediaStreamDescriptor(id, audioSources, videoSources));
-    }
-
-    static PassRefPtr<MediaStreamDescriptor> create(const String& id, const MediaStreamComponentVector& audioComponents, const MediaStreamComponentVector& videoComponents)
-    {
-        return adoptRef(new MediaStreamDescriptor(id, audioComponents, videoComponents));
-    }
+    static PassRefPtr<MediaStreamDescriptor> create(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
+    static PassRefPtr<MediaStreamDescriptor> create(const MediaStreamComponentVector& audioComponents, const MediaStreamComponentVector& videoComponents);
 
     MediaStreamDescriptorClient* client() const { return m_client; }
     void setClient(MediaStreamDescriptorClient* client) { m_client = client; }
@@ -75,55 +69,14 @@ public:
     unsigned numberOfAudioComponents() const { return m_audioComponents.size(); }
     MediaStreamComponent* audioComponent(unsigned index) const { return m_audioComponents[index].get(); }
 
-    void addRemoteTrack(MediaStreamComponent* component)
-    {
-        if (m_client)
-            m_client->addRemoteTrack(component);
-        else
-            addComponent(component);
-    }
-
-    void removeRemoteTrack(MediaStreamComponent* component)
-    {
-        if (m_client)
-            m_client->removeRemoteTrack(component);
-        else
-            removeComponent(component);
-    }
-
     unsigned numberOfVideoComponents() const { return m_videoComponents.size(); }
     MediaStreamComponent* videoComponent(unsigned index) const { return m_videoComponents[index].get(); }
 
-    void addComponent(PassRefPtr<MediaStreamComponent> component)
-    {
-        switch (component->source()->type()) {
-        case MediaStreamSource::TypeAudio:
-            if (m_audioComponents.find(component) == notFound)
-                m_audioComponents.append(component);
-            break;
-        case MediaStreamSource::TypeVideo:
-            if (m_videoComponents.find(component) == notFound)
-                m_videoComponents.append(component);
-            break;
-        }
-    }
+    void addComponent(PassRefPtr<MediaStreamComponent>);
+    void removeComponent(PassRefPtr<MediaStreamComponent>);
 
-    void removeComponent(PassRefPtr<MediaStreamComponent> component)
-    {
-        size_t pos = notFound;
-        switch (component->source()->type()) {
-        case MediaStreamSource::TypeAudio:
-            pos = m_audioComponents.find(component);
-            if (pos != notFound)
-                m_audioComponents.remove(pos);
-            break;
-        case MediaStreamSource::TypeVideo:
-            pos = m_videoComponents.find(component);
-            if (pos != notFound)
-                m_videoComponents.remove(pos);
-            break;
-        }
-    }
+    void addRemoteTrack(MediaStreamComponent*);
+    void removeRemoteTrack(MediaStreamComponent*);
 
     bool ended() const { return m_ended; }
     void setEnded() { m_ended = true; }
@@ -132,34 +85,8 @@ public:
     void setExtraData(PassRefPtr<ExtraData> extraData) { m_extraData = extraData; }
 
 private:
-    MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
-        : m_client(0)
-        , m_id(id)
-        , m_ended(false)
-    {
-        ASSERT(m_id.length());
-        for (size_t i = 0; i < audioSources.size(); i++)
-            m_audioComponents.append(MediaStreamComponent::create(this, audioSources[i]));
-
-        for (size_t i = 0; i < videoSources.size(); i++)
-            m_videoComponents.append(MediaStreamComponent::create(this, videoSources[i]));
-    }
-
-    MediaStreamDescriptor(const String& id, const MediaStreamComponentVector& audioComponents, const MediaStreamComponentVector& videoComponents)
-        : m_client(0)
-        , m_id(id)
-        , m_ended(false)
-    {
-        ASSERT(m_id.length());
-        for (MediaStreamComponentVector::const_iterator iter = audioComponents.begin(); iter != audioComponents.end(); ++iter) {
-            (*iter)->setStream(this);
-            m_audioComponents.append((*iter));
-        }
-        for (MediaStreamComponentVector::const_iterator iter = videoComponents.begin(); iter != videoComponents.end(); ++iter) {
-            (*iter)->setStream(this);
-            m_videoComponents.append((*iter));
-        }
-    }
+    MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
+    MediaStreamDescriptor(const String& id, const MediaStreamComponentVector& audioComponents, const MediaStreamComponentVector& videoComponents);
 
     MediaStreamDescriptorClient* m_client;
     String m_id;

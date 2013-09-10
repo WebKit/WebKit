@@ -1,3 +1,29 @@
+2013-09-10  Eric Carlson  <eric.carlson@apple.com>
+
+        Split MediaStreamDescriptor.h and MediaStreamComponent.h into .h and .cpp
+        https://bugs.webkit.org/show_bug.cgi?id=120878
+
+        Reviewed by Jer Noble.
+
+        No new tests, no functional change.
+
+        * CMakeLists.txt: Add MediaStreamComponent.cpp and MediaStreamDescriptor.cpp.
+        * GNUmakefile.list.am: Ditto.
+
+        * Modules/mediastream/LocalMediaStream.cpp:
+        (WebCore::LocalMediaStream::create): MediaStreamDescriptor::create() doesn't take a UUID.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::createFromSourceVectors): Ditto.
+
+        * WebCore.xcodeproj/project.pbxproj: Add MediaStreamComponent.cpp and MediaStreamDescriptor.cpp.
+
+        * platform/mediastream/MediaStreamComponent.cpp: Added.
+        * platform/mediastream/MediaStreamComponent.h:
+
+        * platform/mediastream/MediaStreamDescriptor.cpp: Added.
+        * platform/mediastream/MediaStreamDescriptor.h:
+
 2013-09-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Create SharedGDIObject Class Template

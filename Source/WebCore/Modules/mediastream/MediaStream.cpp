@@ -33,7 +33,6 @@
 #include "MediaStreamCenter.h"
 #include "MediaStreamSource.h"
 #include "MediaStreamTrackEvent.h"
-#include "UUID.h"
 
 namespace WebCore {
 
@@ -58,7 +57,7 @@ static void processTrack(MediaStreamTrack* track, MediaStreamSourceVector& sourc
 
 static PassRefPtr<MediaStream> createFromSourceVectors(ScriptExecutionContext* context, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
 {
-    RefPtr<MediaStreamDescriptor> descriptor = MediaStreamDescriptor::create(createCanonicalUUIDString(), audioSources, videoSources);
+    RefPtr<MediaStreamDescriptor> descriptor = MediaStreamDescriptor::create(audioSources, videoSources);
     MediaStreamCenter::instance().didCreateMediaStream(descriptor.get());
 
     return MediaStream::create(context, descriptor.release());

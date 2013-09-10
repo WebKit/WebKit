@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,29 +34,19 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamSource.h"
-#include "UUID.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class MediaStreamDescriptor;
+class MediaStreamSource;
 
 class MediaStreamComponent : public RefCounted<MediaStreamComponent> {
 public:
-    static PassRefPtr<MediaStreamComponent> create(PassRefPtr<MediaStreamSource> source)
-    {
-        return adoptRef(new MediaStreamComponent(createCanonicalUUIDString(), 0, source));
-    }
-
-    static PassRefPtr<MediaStreamComponent> create(const String& id, PassRefPtr<MediaStreamSource> source)
-    {
-        return adoptRef(new MediaStreamComponent(id, 0, source));
-    }
-
-    static PassRefPtr<MediaStreamComponent> create(MediaStreamDescriptor* stream, PassRefPtr<MediaStreamSource> source)
-    {
-        return adoptRef(new MediaStreamComponent(createCanonicalUUIDString(), stream, source));
-    }
+    static PassRefPtr<MediaStreamComponent> create(PassRefPtr<MediaStreamSource>);
+    static PassRefPtr<MediaStreamComponent> create(MediaStreamDescriptor*, PassRefPtr<MediaStreamSource>);
 
     MediaStreamDescriptor* stream() const { return m_stream; }
     void setStream(MediaStreamDescriptor* stream) { ASSERT(!m_stream && stream); m_stream = stream; }
@@ -67,14 +58,7 @@ public:
     void setEnabled(bool enabled) { m_enabled = enabled; }
 
 private:
-    MediaStreamComponent(const String& id, MediaStreamDescriptor* stream, PassRefPtr<MediaStreamSource> source)
-        : m_stream(stream)
-        , m_source(source)
-        , m_id(id)
-        , m_enabled(true)
-    {
-        ASSERT(m_id.length());
-    }
+    MediaStreamComponent(const String& id, MediaStreamDescriptor*, PassRefPtr<MediaStreamSource>);
 
     MediaStreamDescriptor* m_stream;
     RefPtr<MediaStreamSource> m_source;

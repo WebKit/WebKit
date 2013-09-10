@@ -29,13 +29,12 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamCenter.h"
-#include "UUID.h"
 
 namespace WebCore {
 
 PassRefPtr<LocalMediaStream> LocalMediaStream::create(ScriptExecutionContext* context, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
 {
-    return adoptRef(new LocalMediaStream(context, MediaStreamDescriptor::create(createCanonicalUUIDString(), audioSources, videoSources)));
+    return adoptRef(new LocalMediaStream(context, MediaStreamDescriptor::create(audioSources, videoSources)));
 }
 
 PassRefPtr<LocalMediaStream> LocalMediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
