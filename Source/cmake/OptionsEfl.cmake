@@ -234,6 +234,7 @@ endif ()
 
 if (ENABLE_INSPECTOR)
     set(WEB_INSPECTOR_DIR "${DATA_INSTALL_DIR}/inspector")
+    set(WEBINSPECTORUI_DIR "${CMAKE_SOURCE_DIR}/Source/WebInspectorUI")
     add_definitions(-DWEB_INSPECTOR_DIR=\"${CMAKE_BINARY_DIR}/${WEB_INSPECTOR_DIR}\")
     add_definitions(-DWEB_INSPECTOR_INSTALL_DIR=\"${CMAKE_INSTALL_PREFIX}/${WEB_INSPECTOR_DIR}\")
 endif ()

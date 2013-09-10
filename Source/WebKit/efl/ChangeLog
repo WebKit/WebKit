@@ -1,3 +1,16 @@
+2013-09-10  Marcelo Morais  <m.morais@samsung.com>
+
+        [EFL] WebInspector: Move to new webinspector
+        https://bugs.webkit.org/show_bug.cgi?id=119559
+
+        Reviewed by Gyuyoung Kim.
+
+        Loading the new Web Inspector page instead of the old inspector.
+        Co-author: Andre Loureiro <andre.vl@samsung.com>
+
+        * WebCoreSupport/InspectorClientEfl.cpp:
+        (WebCore::InspectorClientEfl::openInspectorFrontend):
+
 2013-09-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] Add c++0x into CXX_FLAGS as a default

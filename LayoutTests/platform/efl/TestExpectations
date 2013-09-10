@@ -268,8 +268,7 @@ http/tests/xmlhttprequest/cross-origin-no-authorization.html
 http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 
-# These test -apple- and -khtml- prefixed CSS properties, which we don't support.
-inspector/styles/vendor-prefixes.html [ WontFix ]
+webkit.org/b/121096 inspector [ Skip ]
 
 # There are no expected result set yet.
 editing/unsupported-content/list-delete-001.html 
@@ -303,15 +302,6 @@ fast/profiler/dead-time.html
 
 # following tests started failing on EFL afrer r122952.
 http/tests/inspector/resource-parameters.html
-inspector/styles/svg-style.xhtml
-inspector/debugger/live-edit.html
-inspector/debugger/live-edit-breakpoints.html
-inspector/debugger/debugger-compile-and-run.html
-
-webkit.org/b/88780 inspector/debugger/dom-breakpoints.html [ Timeout Failure ]
-webkit.org/b/88780 inspector/debugger/event-listener-breakpoints.html [ Failure ]
-webkit.org/b/88780 inspector/debugger/step-through-event-listeners.html [ Failure ]
-webkit.org/b/89056 inspector/debugger/xhr-breakpoints.html [ Failure Timeout ]
 
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
@@ -370,7 +360,6 @@ Bug(EFL) fast/dom/shadow [ WontFix ]
 Bug(EFL) editing/text-iterator/basic-iteration-shadowdom.html [ WontFix ]
 Bug(EFL) accessibility/corresponding-control-deleted-crash.html [ WontFix ]
 Bug(EFL) fast/dom/HTMLTemplateElement/cycles-in-shadow.html [ WontFix ]
-Bug(EFL) inspector/elements/update-shadowdom.html [ WontFix ]
 
 # Rounding issues when running on 32-bits machines.
 svg/css/stars-with-shadow.html
@@ -508,7 +497,6 @@ webkit.org/b/101809 fast/canvas/canvas-resize-reset-pixelRatio.html [ Skip ]
 # DeviceOrientation support is not enabled by default.
 Bug(EFL) fast/dom/DeviceOrientation [ Skip ]
 Bug(EFL) fast/dom/Window/window-properties-device-orientation.html [ Skip ]
-Bug(EFL) inspector/device-orientation-success.html [ Skip ]
 
 # EFL port does not enable ORIENTATION_EVENTS
 webkit.org/b/90928 fast/dom/Orientation [ Skip ]
@@ -628,15 +616,6 @@ webkit.org/b/78869 http/tests/inspector/inspect-element.html [ Failure Pass ]
 webkit.org/b/91958 http/tests/inspector-enabled/injected-script-discard.html [ Failure Pass ]
 webkit.org/b/85615 http/tests/inspector/resource-har-pages.html [ Failure Pass ]
 Bug(EFL) http/tests/inspector/search/resources-search-match-index.html [ Failure Pass ]
-webkit.org/b/93820 inspector/console/console-format-collections.html [ Failure Pass ]
-webkit.org/b/96886 [ Release ] inspector/debugger/dynamic-script-tag.html [ Failure Pass ]
-webkit.org/b/114160 [ Debug ] inspector/debugger/dynamic-script-tag.html [ Crash Failure Pass ]
-
-Bug(EFL) inspector/profiler/heap-snapshot.html [ Failure Pass ]
-Bug(EFL) inspector/timeline/timeline-enum-stability.html [ Failure Pass ]
-
-# New test added in r139405 that gives different output every run.
-webkit.org/b/104384 inspector/debugger/debugger-script-preprocessor.html [ Failure Pass ]
 
 # Sometimes asserts in MessagePort::contextDestroyed
 webkit.org/b/94458 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Crash Failure Pass ]
@@ -1068,8 +1047,6 @@ Bug(EFL) storage/domstorage/localstorage/storagetracker
 
 # JSC does not support setIsolatedWorldSecurityOrigin.
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Failure ]
-webkit.org/b/61540 inspector/extensions/extensions-audits-content-script.html [ Failure ]
-webkit.org/b/61540 inspector/extensions/extensions-eval-content-script.html [ Failure ]
 
 #__worldID is undefined in isolated world
 Bug(EFL) http/tests/security/isolatedWorld/didClearWindowObject.html
@@ -1257,9 +1234,6 @@ Bug(EFL) fast/media/media-query-list-06.html [ Failure ]
 # EFL's TestRunner should support for the Geolocation API
 webkit.org/b/82140 fast/dom/Geolocation [ Skip ]
 webkit.org/b/82140 fast/dom/Window/window-properties-geolocation.html [ Failure ]
-webkit.org/b/82140 inspector/geolocation-error.html [ Failure ]
-webkit.org/b/82140 inspector/geolocation-success.html [ Failure ]
-webkit.org/b/82140 inspector/geolocation-watchPosition.html [ Failure ]
 
 # IETC namespace failures
 webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
@@ -1336,16 +1310,6 @@ webkit.org/b/61799 canvas/philip/tests/2d.text.draw.space.collapse.start.html [ 
 webkit.org/b/61799 canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
 
 # JSC doesn't support heap profiling
-webkit.org/b/50485 inspector/profiler/heap-snapshot-inspect-dom-wrapper.html [ Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-comparison-dom-groups-change.html [ Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-comparison-show-all.html [ Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-loader.html [ Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-reveal-in-dominators-view.html [ Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-retainers.html [ Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-show-ranges.html [ Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting-fields.html [ Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting.html [ Skip ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting-instances.html [ Skip ]
 webkit.org/b/50485 inspector-protocol/heap-profiler [ Skip ]
 
 webkit.org/b/93976 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailure ]
@@ -1367,9 +1331,6 @@ webkit.org/b/84037 fast/text/international/spaces-combined-in-vertical-text.html
 
 # Failed table/mozilla test, fields are not on the same line
 webkit.org/b/97109 tables/mozilla/bugs/bug99948.html [ Pass ]
-
-# New test introduced in r125790 fails
-webkit.org/b/94341 inspector/timeline/timeline-decode-resize.html [ Failure ]
 
 # Fails after r126350
 webkit.org/b/94788 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
@@ -1420,10 +1381,6 @@ webkit.org/b/100324 css3/supports-dom-api.html
 # Occasionally fails if run after right after
 # fast/selectors/unqualified-hover-quirks.html or itself.
 webkit.org/b/10890 fast/selectors/unqualified-hover-strict.html [ Failure Pass ]
-
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-stack-trace.html
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html
 
 # EFL port does not support Emacs commands.
 Bug(EFL) editing/pasteboard/emacs-cntl-y-001.html [ Missing ]
@@ -1593,13 +1550,6 @@ webkit.org/b/106439 editing/pasteboard/paste-noplugin.html [ Failure ]
 
 # Mark as missing image result, same as other ports. Test should be updated to text-based repaint test.
 webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
-
-# New inspector/editor/text-editor-formatter.html introduced in r139617 fails on EFL, Mac, QT
-# https://bugs.webkit.org/show_bug.cgi?id=106883
-inspector/editor/text-editor-formatter.html
-inspector/editor/text-editor-word-jumps.html
-inspector/editor/text-editor-home-button.html
-inspector/editor/text-editor-smart-braces.html
 
 # Test fails on JSC platforms due to GC timing problems
 webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]

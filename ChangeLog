@@ -1,3 +1,16 @@
+2013-09-10  Marcelo Morais  <m.morais@samsung.com>
+
+        [EFL] WebInspector: Move to new webinspector
+        https://bugs.webkit.org/show_bug.cgi?id=119559
+
+        Reviewed by Gyuyoung Kim.
+
+        Enabling the new Web Inspector on EFL port.
+        Co-author: Andre Loureiro <andre.vl@samsung.com>
+
+        * Source/PlatformEfl.cmake:
+        * Source/cmake/OptionsEfl.cmake:
+
 2013-09-06  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r155143): Build failures on GTK port with Clang and libstdc++ < 4.8.1

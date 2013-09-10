@@ -172,7 +172,7 @@ String WebInspectorProxy::inspectorPageURL() const
 {
     StringBuilder builder;
     builder.append(inspectorBaseURL());
-    builder.appendLiteral("/inspector.html");
+    builder.appendLiteral("/Main.html");
 
     return builder.toString();
 }

@@ -94,7 +94,7 @@ InspectorFrontendChannel* InspectorClientEfl::openInspectorFrontend(InspectorCon
 
     m_inspectorView = inspectorView;
 
-    String inspectorUri = inspectorFilesPath() + "/inspector.html";
+    String inspectorUri = inspectorFilesPath() + "/Main.html";
     ewk_view_uri_set(m_inspectorView, inspectorUri.utf8().data());
 
     OwnPtr<InspectorFrontendClientEfl> frontendClient = adoptPtr(new InspectorFrontendClientEfl(m_inspectedView, m_inspectorView, this));

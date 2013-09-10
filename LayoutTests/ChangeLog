@@ -1,3 +1,16 @@
+2013-09-10  Marcelo Morais  <m.morais@samsung.com>
+
+        [EFL] WebInspector: Move to new webinspector
+        https://bugs.webkit.org/show_bug.cgi?id=119559
+
+        Reviewed by Gyuyoung Kim.
+        
+        Skipping the tests for the old inspector.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2013-09-10  Oliver Hunt  <oliver@apple.com>
 
         Support WeakMap

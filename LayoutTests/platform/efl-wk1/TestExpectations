@@ -236,7 +236,6 @@ webkit.org/b/86498 http/tests/appcache/origins-with-appcache.html [ Failure ]
 webkit.org/b/84589 fast/animation/request-animation-frame-during-modal.html [ Failure ]
 webkit.org/b/84589 fast/dom/Window/open-window-min-size.html [ Failure ]
 webkit.org/b/84589 http/tests/security/cross-frame-access-call.html [ Failure ]
-webkit.org/b/84589 inspector/console/console-long-eval-crash.html [ Failure ]
 
 # Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
 webkit.org/b/87972 fast/forms/mailto/formenctype-attribute-button-html.html [ Failure ]
@@ -313,10 +312,6 @@ fast/block/lineboxcontain/block-font.html
 fast/block/lineboxcontain/block-glyphs.html
 fast/block/lineboxcontain/font.html
 
-# following tests started failing on EFL after r122952.
-webkit.org/b/82886 inspector/styles/override-screen-size.html
-inspector/timeline/timeline-paint.html
-
 # Incorrect rendering results after r115846
 webkit.org/b/85599 http/tests/navigation/postredirect-basic.html [ Failure ]
 webkit.org/b/85599 http/tests/navigation/postredirect-goback1.html [ Failure ]
@@ -365,7 +360,6 @@ webkit.org/b/77219 http/tests/canvas/webgl/origin-clean-conformance.html [ Skip 
 webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
 webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
 webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
-webkit.org/b/77219 inspector/profiler/webgl [ Skip ]
 webkit.org/b/77219 fast/canvas/webgl/oes-vertex-array-object.html [ Skip ]
 webkit.org/b/77219 fast/canvas/webgl/read-pixels-test.html [ Skip ]
 webkit.org/b/77219 fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html [ Skip ]
