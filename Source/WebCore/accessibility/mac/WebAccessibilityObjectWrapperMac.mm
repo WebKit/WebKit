@@ -1214,6 +1214,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         [tempArray addObject:NSAccessibilityTitleAttribute];
         [tempArray addObject:NSAccessibilityHelpAttribute];
         [tempArray addObject:NSAccessibilitySelectedAttribute];
+        [tempArray addObject:NSAccessibilityValueAttribute];
         [tempArray addObject:(NSString*)kAXMenuItemCmdCharAttribute];
         [tempArray addObject:(NSString*)kAXMenuItemCmdVirtualKeyAttribute];
         [tempArray addObject:(NSString*)kAXMenuItemCmdGlyphAttribute];
@@ -1643,6 +1644,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { MenuBarRole, NSAccessibilityMenuBarRole },
         { MenuRole, NSAccessibilityMenuRole },
         { MenuItemRole, NSAccessibilityMenuItemRole },
+        { MenuItemCheckboxRole, NSAccessibilityMenuItemRole },
+        { MenuItemRadioRole, NSAccessibilityMenuItemRole },
         { ColumnRole, NSAccessibilityColumnRole },
         { RowRole, NSAccessibilityRowRole },
         { ToolbarRole, NSAccessibilityToolbarRole },
@@ -2283,7 +2286,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if (m_object->isHeading())
             return [NSNumber numberWithInt:m_object->headingLevel()];
         
-        if (m_object->isCheckboxOrRadio()) {
+        if (m_object->isCheckboxOrRadio() || m_object->isMenuItem()) {
             switch (m_object->checkboxOrRadioValue()) {
                 case ButtonStateOff:
                     return [NSNumber numberWithInt:0];

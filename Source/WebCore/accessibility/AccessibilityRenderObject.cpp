@@ -1168,7 +1168,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (m_renderer->isText()) {
         // static text beneath MenuItems and MenuButtons are just reported along with the menu item, so it's ignored on an individual level
         AccessibilityObject* parent = parentObjectUnignored();
-        if (parent && (parent->ariaRoleAttribute() == MenuItemRole || parent->ariaRoleAttribute() == MenuButtonRole))
+        if (parent && (parent->isMenuItem() || parent->ariaRoleAttribute() == MenuButtonRole))
             return true;
         RenderText* renderText = toRenderText(m_renderer);
         if (m_renderer->isBR() || !renderText->firstTextBox())

@@ -1,3 +1,36 @@
+2013-09-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: AXValue/AXMenuItemMarkChar not defined for menuitemradio (should be false (0) with aria-checked=mixed | undefined)
+        https://bugs.webkit.org/show_bug.cgi?id=120372
+
+        Reviewed by Mario Sanchez Prada.
+
+        Add new roles to make the distinction between menu item, menu item radio and menu item checkbox.
+        Expose AXValue for menu items, so that they can convey the, on/off/mixed state of aria-checked.
+
+        Test: platform/mac/accessibility/menu-item-values.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::isMenuRelated):
+        (WebCore::AccessibilityNodeObject::isMenuItem):
+        (WebCore::AccessibilityNodeObject::isChecked):
+        (WebCore::AccessibilityNodeObject::actionElement):
+        (WebCore::AccessibilityNodeObject::visibleText):
+        (WebCore::AccessibilityNodeObject::title):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::createARIARoleMap):
+        (WebCore::AccessibilityObject::checkboxOrRadioValue):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityCanFuzzyHitTest]):
+        (-[WebAccessibilityObjectWrapper accessibilityTraits]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2013-09-10  Anders Carlsson  <andersca@apple.com>
 
         Remove wtf/Alignment.h
@@ -21,6 +54,7 @@
 
         * Target.pri:
 
+>>>>>>> .r155491
 2013-09-10  Sergio Correia  <sergio.correia@openbossa.org>
 
         Fix EFL build after r155477

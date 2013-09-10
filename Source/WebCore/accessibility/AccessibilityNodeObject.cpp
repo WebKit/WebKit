@@ -554,6 +554,8 @@ bool AccessibilityNodeObject::isMenuRelated() const
     case MenuBarRole:
     case MenuButtonRole:
     case MenuItemRole:
+    case MenuItemCheckboxRole:
+    case MenuItemRadioRole:
         return true;
     default:
         return false;
@@ -577,7 +579,14 @@ bool AccessibilityNodeObject::isMenuButton() const
 
 bool AccessibilityNodeObject::isMenuItem() const
 {
-    return roleValue() == MenuItemRole;
+    switch (roleValue()) {
+    case MenuItemRole:
+    case MenuItemRadioRole:
+    case MenuItemCheckboxRole:
+        return true;
+    default:
+        return false;
+    }
 }
 
 bool AccessibilityNodeObject::isNativeCheckboxOrRadio() const
@@ -656,6 +665,8 @@ bool AccessibilityNodeObject::isChecked() const
     case RadioButtonRole:
     case CheckBoxRole:
     case MenuItemRole:
+    case MenuItemCheckboxRole:
+    case MenuItemRadioRole:
         validRole = true;
         break;
     default:
@@ -959,6 +970,8 @@ Element* AccessibilityNodeObject::actionElement() const
     case ToggleButtonRole:
     case TabRole:
     case MenuItemRole:
+    case MenuItemCheckboxRole:
+    case MenuItemRadioRole:
     case ListItemRole:
         return toElement(node);
     default:
@@ -1256,6 +1269,8 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
     case ListItemRole:
     case MenuButtonRole:
     case MenuItemRole:
+    case MenuItemCheckboxRole:
+    case MenuItemRadioRole:
     case RadioButtonRole:
     case TabRole:
     case ProgressIndicatorRole:
@@ -1620,6 +1635,8 @@ String AccessibilityNodeObject::title() const
     case ListItemRole:
     case MenuButtonRole:
     case MenuItemRole:
+    case MenuItemCheckboxRole:
+    case MenuItemRadioRole:
     case RadioButtonRole:
     case TabRole:
         return textUnderElement();

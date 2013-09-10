@@ -1,3 +1,13 @@
+2013-09-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: AXValue/AXMenuItemMarkChar not defined for menuitemradio (should be false (0) with aria-checked=mixed | undefined)
+        https://bugs.webkit.org/show_bug.cgi?id=120372
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/mac/accessibility/menu-item-values-expected.txt: Added.
+        * platform/mac/accessibility/menu-item-values.html: Added.
+
 2013-09-10  Marcelo Morais  <m.morais@samsung.com>
 
         [EFL] WebInspector: Move to new webinspector

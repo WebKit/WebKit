@@ -276,6 +276,8 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case ListBoxOptionRole:
     case MenuButtonRole:
     case MenuItemRole:
+    case MenuItemCheckboxRole:
+    case MenuItemRadioRole:
     case PopUpButtonRole:
     case RadioButtonRole:
     case ScrollBarRole:
@@ -548,6 +550,8 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             break;
         case MenuButtonRole:
         case MenuItemRole:
+        case MenuItemCheckboxRole:
+        case MenuItemRadioRole:
             traits |= [self _axMenuItemTrait];
             break;
         default:
