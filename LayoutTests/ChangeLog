@@ -1,3 +1,16 @@
+2013-09-10  Mark Lam  <mark.lam@apple.com>
+
+        Move image-preload-helper.js from LayoutTests/js/resources to LayoutTests/resources.
+        https://bugs.webkit.org/show_bug.cgi?id=120899.
+
+        Rubber stamped by Filip Pizlo.
+
+        This was missing from the r155452 commit, and should resolve failures in the
+        fast/events/mouse-cursor*.html tests.
+
+        * js/resources/image-preload-helper.js: Removed.
+        * resources/image-preload-helper.js: Copied from LayoutTests/js/resources/image-preload-helper.js.
+
 2013-09-10  Tim Horton  <timothy_horton@apple.com>
 
         [mac] PDFDocumentImage should use PDFKit to draw
