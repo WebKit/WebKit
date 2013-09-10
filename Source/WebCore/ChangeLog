@@ -4,6 +4,16 @@
         https://bugs.webkit.org/show_bug.cgi?id=120651
         <rdar://problem/12810731>
 
+        Unreviewed hopeful build fix.
+
+        * platform/graphics/mac/PDFDocumentImageMac.mm:
+
+2013-09-10  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] PDFDocumentImage should use PDFKit to draw
+        https://bugs.webkit.org/show_bug.cgi?id=120651
+        <rdar://problem/12810731>
+
         Reviewed by Alexey Proskuryakov.
 
         Use PDFKit to draw PDF-in-<img> on Mac, so that annotations in PDF are painted.
