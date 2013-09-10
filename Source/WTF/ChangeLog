@@ -1,5 +1,21 @@
 2013-09-10  Anders Carlsson  <andersca@apple.com>
 
+        Remove wtf/Alignment.h
+        https://bugs.webkit.org/show_bug.cgi?id=121077
+
+        Reviewed by Andreas Kling.
+
+        * GNUmakefile.list.am:
+        * WTF.pro:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Alignment.h: Removed.
+        * wtf/CMakeLists.txt:
+        * wtf/text/ASCIIFastPath.h:
+
+2013-09-10  Anders Carlsson  <andersca@apple.com>
+
         More WTF/Alignment.h removal
         https://bugs.webkit.org/show_bug.cgi?id=121125
 

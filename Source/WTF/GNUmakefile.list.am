@@ -3,7 +3,6 @@ wtf_sources += \
     Source/WTF/wtf/Platform.h \
     Source/WTF/wtf/ASCIICType.h \
     Source/WTF/wtf/AVLTree.h \
-    Source/WTF/wtf/Alignment.h \
     Source/WTF/wtf/Assertions.cpp \
     Source/WTF/wtf/Assertions.h \
     Source/WTF/wtf/Atomics.cpp \

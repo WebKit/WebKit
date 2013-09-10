@@ -20,7 +20,6 @@ wince* {
 }
 
 HEADERS += \
-    Alignment.h \
     ASCIICType.h \
     Assertions.h \
     Atomics.h \

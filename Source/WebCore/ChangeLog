@@ -1,3 +1,15 @@
+2013-09-10  Anders Carlsson  <andersca@apple.com>
+
+        Remove wtf/Alignment.h
+        https://bugs.webkit.org/show_bug.cgi?id=121077
+
+        Reviewed by Andreas Kling.
+
+        * platform/PODArena.h:
+        (WebCore::PODArena::minAlignment):
+        * platform/graphics/cpu/arm/filters/FELightingNEON.h:
+        (WebCore::FELighting::platformApplyNeon):
+
 2013-09-10  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Add FloatingObjects.h to Target.pri

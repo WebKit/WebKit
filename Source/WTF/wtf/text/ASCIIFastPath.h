@@ -26,7 +26,6 @@
 #include <emmintrin.h>
 #endif
 #include <stdint.h>
-#include <wtf/Alignment.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/Unicode.h>
 

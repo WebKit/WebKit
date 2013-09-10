@@ -27,7 +27,6 @@
 #define PODArena_h
 
 #include <stdint.h>
-#include <wtf/Alignment.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
@@ -52,7 +51,7 @@ protected:
     // current platform.
     template <class T> static size_t minAlignment()
     {
-        return WTF_ALIGN_OF(T);
+        return std::alignment_of<T>::value;
     }
 
     // Rounds up the given allocation size to the specified alignment.

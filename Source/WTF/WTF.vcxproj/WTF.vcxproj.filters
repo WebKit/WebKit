@@ -323,9 +323,6 @@
     <ClInclude Include="..\wtf\unicode\UTF8.h">
       <Filter>wtf\unicode</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\Alignment.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\WTFThreadData.h">
       <Filter>wtf</Filter>
     </ClInclude>

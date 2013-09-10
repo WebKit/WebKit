@@ -29,8 +29,6 @@
 
 #if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC)
 
-#include <wtf/Alignment.h>
-
 namespace WebCore {
 
 // These constants are copied to the following SIMD registers:

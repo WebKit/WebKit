@@ -118,7 +118,6 @@
   <ItemGroup>
     <ClInclude Include="..\wtf\CompilationThread.h" />
     <ClInclude Include="..\WTF\config.h" />
-    <ClInclude Include="..\wtf\Alignment.h" />
     <ClInclude Include="..\wtf\ASCIICType.h" />
     <ClInclude Include="..\wtf\Assertions.h" />
     <ClInclude Include="..\wtf\Atomics.h" />

@@ -1,7 +1,6 @@
 set(WTF_HEADERS
     ASCIICType.h
     AVLTree.h
-    Alignment.h
     Assertions.h
     Atomics.h
     BitArray.h
