@@ -65,7 +65,7 @@ class ScriptController {
     typedef WTF::HashMap< RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindowShell> > ShellMap;
 
 public:
-    ScriptController(Frame*);
+    explicit ScriptController(Frame&);
     ~ScriptController();
 
     static PassRefPtr<DOMWrapperWorld> createWorld();
@@ -165,7 +165,7 @@ private:
     void disconnectPlatformScriptObjects();
 
     ShellMap m_windowShells;
-    Frame* m_frame;
+    Frame& m_frame;
     const String* m_sourceURL;
 
     bool m_paused;

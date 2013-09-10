@@ -65,7 +65,7 @@ void ScriptController::initializeThreading()
     WTF::initializeMainThread();
 }
 
-ScriptController::ScriptController(Frame* frame)
+ScriptController::ScriptController(Frame& frame)
     : m_frame(frame)
     , m_sourceURL(0)
     , m_paused(false)
@@ -107,7 +107,7 @@ JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld* world)
 {
     ASSERT(!m_windowShells.contains(world));
     Structure* structure = JSDOMWindowShell::createStructure(*world->vm(), jsNull());
-    Strong<JSDOMWindowShell> windowShell(*world->vm(), JSDOMWindowShell::create(m_frame->document()->domWindow(), structure, world));
+    Strong<JSDOMWindowShell> windowShell(*world->vm(), JSDOMWindowShell::create(m_frame.document()->domWindow(), structure, world));
     Strong<JSDOMWindowShell> windowShell2(windowShell);
     m_windowShells.add(world, windowShell);
     world->didCreateWindowShell(this);
@@ -133,9 +133,9 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
 
     JSLockHolder lock(exec);
 
-    RefPtr<Frame> protect = m_frame;
+    Ref<Frame> protect(m_frame);
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL, sourceCode.startLine());
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willEvaluateScript(&m_frame, sourceURL, sourceCode.startLine());
 
     JSValue evaluationException;
 
@@ -192,7 +192,7 @@ void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoP
         if (m_cacheableBindingRootObject)
             m_cacheableBindingRootObject->updateGlobalObject(windowShell->window());
 
-        if (Page* page = m_frame->page()) {
+        if (Page* page = m_frame.page()) {
             attachDebugger(windowShell, page->debugger());
             windowShell->window()->setProfileGroup(page->group().identifier());
         }
@@ -214,22 +214,22 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
 
     windowShell->window()->updateDocument();
 
-    if (m_frame->document())
-        windowShell->window()->setEvalEnabled(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport), m_frame->document()->contentSecurityPolicy()->evalDisabledErrorMessage());   
+    if (m_frame.document())
+        windowShell->window()->setEvalEnabled(m_frame.document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport), m_frame.document()->contentSecurityPolicy()->evalDisabledErrorMessage());
 
-    if (Page* page = m_frame->page()) {
+    if (Page* page = m_frame.page()) {
         attachDebugger(windowShell, page->debugger());
         windowShell->window()->setProfileGroup(page->group().identifier());
     }
 
-    m_frame->loader().dispatchDidClearWindowObjectInWorld(world);
+    m_frame.loader().dispatchDidClearWindowObjectInWorld(world);
 
     return windowShell;
 }
 
 TextPosition ScriptController::eventHandlerPosition() const
 {
-    ScriptableDocumentParser* parser = m_frame->document()->scriptableDocumentParser();
+    ScriptableDocumentParser* parser = m_frame.document()->scriptableDocumentParser();
     if (parser)
         return parser->textPosition();
     return TextPosition::minimumPosition();
@@ -458,7 +458,7 @@ void ScriptController::clearScriptObjects()
 ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld* world, const String& script, bool forceUserGesture)
 {
     UserGestureIndicator gestureIndicator(forceUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
-    ScriptSourceCode sourceCode(script, m_frame->document()->url());
+    ScriptSourceCode sourceCode(script, m_frame.document()->url());
 
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
         return ScriptValue();

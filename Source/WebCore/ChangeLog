@@ -1,5 +1,15 @@
 2013-09-09  Andreas Kling  <akling@apple.com>
 
+        ScriptController should have a Frame& internally.
+        <https://webkit.org/b/121071>
+
+        Reviewed by Anders Carlsson.
+
+        Change ScriptController::m_frame to a reference since it's tied to
+        the lifetime of the owning Frame.
+
+2013-09-09  Andreas Kling  <akling@apple.com>
+
         ScriptRunner should have a Document& internally.
         <https://webkit.org/b/121072>
 
