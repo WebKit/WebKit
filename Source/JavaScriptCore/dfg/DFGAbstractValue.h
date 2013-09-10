@@ -62,14 +62,14 @@ struct AbstractValue {
     bool isClear() const { return m_type == SpecNone; }
     bool operator!() const { return isClear(); }
     
-    void makeTop()
+    void makeHeapTop()
     {
-        m_type |= SpecTop; // The state may have included SpecEmpty, in which case we want this to become SpecEmptyOrTop.
-        m_arrayModes = ALL_ARRAY_MODES;
-        m_currentKnownStructure.makeTop();
-        m_futurePossibleStructure.makeTop();
-        m_value = JSValue();
-        checkConsistency();
+        makeTop(SpecHeapTop);
+    }
+    
+    void makeBytecodeTop()
+    {
+        makeTop(SpecBytecodeTop);
     }
     
     void clobberStructures()
@@ -89,9 +89,9 @@ struct AbstractValue {
         m_value = JSValue();
     }
     
-    bool isTop() const
+    bool isHeapTop() const
     {
-        return m_type == SpecTop && m_currentKnownStructure.isTop() && m_futurePossibleStructure.isTop();
+        return (m_type | SpecHeapTop) == m_type && m_currentKnownStructure.isTop() && m_futurePossibleStructure.isTop();
     }
     
     bool valueIsTop() const
@@ -104,10 +104,10 @@ struct AbstractValue {
         return m_value;
     }
     
-    static AbstractValue top()
+    static AbstractValue heapTop()
     {
         AbstractValue result;
-        result.makeTop();
+        result.makeHeapTop();
         return result;
     }
     
@@ -195,7 +195,7 @@ struct AbstractValue {
     
     bool validateType(JSValue value) const
     {
-        if (isTop())
+        if (isHeapTop())
             return true;
         
         if (mergeSpeculations(m_type, speculationFromValue(value)) != m_type)
@@ -211,7 +211,7 @@ struct AbstractValue {
     
     bool validate(JSValue value) const
     {
-        if (isTop())
+        if (isHeapTop())
             return true;
         
         if (!!m_value && m_value != value)
@@ -361,6 +361,16 @@ private:
         // FIXME: We could make this try to predict the set of array modes that this object
         // could have in the future. For now, just do the simple thing.
         m_arrayModes = ALL_ARRAY_MODES;
+    }
+    
+    void makeTop(SpeculatedType top)
+    {
+        m_type |= top;
+        m_arrayModes = ALL_ARRAY_MODES;
+        m_currentKnownStructure.makeTop();
+        m_futurePossibleStructure.makeTop();
+        m_value = JSValue();
+        checkConsistency();
     }
     
     void setFuturePossibleStructure(Graph&, Structure* structure);

@@ -1,3 +1,38 @@
+2013-09-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Introduce a SpecInt48 type and be more careful about what we mean by "Top"
+        https://bugs.webkit.org/show_bug.cgi?id=121116
+
+        Reviewed by Oliver Hunt.
+        
+        SpecInt48 will mean that we have something that would be a double if it was a JSValue,
+        but it's profitable to represent it as something other than a double.
+        
+        SpecInt48AsDouble means that it has a value that could have been represented like
+        SpecInt48, but we're making a heuristic decision not to do it.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isInt48Speculation):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        (JSC::DFG::::clobberCapturedVars):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::filter):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::makeHeapTop):
+        (JSC::DFG::AbstractValue::makeBytecodeTop):
+        (JSC::DFG::AbstractValue::isHeapTop):
+        (JSC::DFG::AbstractValue::heapTop):
+        (JSC::DFG::AbstractValue::validateType):
+        (JSC::DFG::AbstractValue::validate):
+        (JSC::DFG::AbstractValue::makeTop):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+
 2013-09-09  Oliver Hunt  <oliver@apple.com>
 
         Support WeakMap

@@ -166,6 +166,11 @@ void dumpSpeculation(PrintStream& out, SpeculatedType value)
         else
             isTop = false;
         
+        if (value & SpecInt48)
+            myOut.print("Int48");
+        else
+            isTop = false;
+        
         if (value & SpecNonIntAsDouble)
             myOut.print("Nonintasdouble");
         else
@@ -240,6 +245,8 @@ static const char* speculationToAbbreviatedString(SpeculatedType prediction)
         return "<Int32>";
     if (isInt48AsDoubleSpeculation(prediction))
         return "<Int48AsDouble>";
+    if (isInt48Speculation(prediction))
+        return "<Int48>";
     if (isDoubleSpeculation(prediction))
         return "<Double>";
     if (isNumberSpeculation(prediction))

@@ -62,19 +62,21 @@ static const SpeculatedType SpecString            = 0x00030000; // It's definite
 static const SpeculatedType SpecCellOther         = 0x00040000; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString.
 static const SpeculatedType SpecCell              = 0x0007ffff; // It's definitely a JSCell.
 static const SpeculatedType SpecInt32             = 0x00800000; // It's definitely an Int32.
-static const SpeculatedType SpecInt48AsDouble     = 0x01000000; // It's definitely an Int48 and it's inside a double.
-static const SpeculatedType SpecInteger           = 0x01800000; // It's definitely some kind of integer.
-static const SpeculatedType SpecNonIntAsDouble    = 0x02000000; // It's definitely not an Int48 but it's a real number and it's a double.
-static const SpeculatedType SpecDoubleReal        = 0x03000000; // It's definitely a non-NaN double.
-static const SpeculatedType SpecDoubleNaN         = 0x04000000; // It's definitely a NaN.
-static const SpeculatedType SpecDouble            = 0x07000000; // It's either a non-NaN or a NaN double.
-static const SpeculatedType SpecRealNumber        = 0x03800000; // It's either an Int32 or a DoubleReal.
-static const SpeculatedType SpecNumber            = 0x07800000; // It's either an Int32 or a Double.
-static const SpeculatedType SpecBoolean           = 0x08000000; // It's definitely a Boolean.
-static const SpeculatedType SpecOther             = 0x10000000; // It's definitely none of the above.
-static const SpeculatedType SpecTop               = 0x1fffffff; // It can be any of the above.
-static const SpeculatedType SpecEmpty             = 0x20000000; // It's definitely an empty value marker.
-static const SpeculatedType SpecEmptyOrTop        = 0x3fffffff; // It can be any of the above.
+static const SpeculatedType SpecInt48             = 0x01000000; // It's definitely an Int48, it's inside a double, but it doesn't need to be.
+static const SpeculatedType SpecInt48AsDouble     = 0x02000000; // It's definitely an Int48 and it's inside a double.
+static const SpeculatedType SpecInteger           = 0x03800000; // It's definitely some kind of integer.
+static const SpeculatedType SpecNonIntAsDouble    = 0x04000000; // It's definitely not an Int48 but it's a real number and it's a double.
+static const SpeculatedType SpecDoubleReal        = 0x07000000; // It's definitely a non-NaN double.
+static const SpeculatedType SpecDoubleNaN         = 0x08000000; // It's definitely a NaN.
+static const SpeculatedType SpecDouble            = 0x0f000000; // It's either a non-NaN or a NaN double.
+static const SpeculatedType SpecRealNumber        = 0x07800000; // It's either an Int32 or a DoubleReal.
+static const SpeculatedType SpecNumber            = 0x0f800000; // It's either an Int32 or a Double.
+static const SpeculatedType SpecBoolean           = 0x10000000; // It's definitely a Boolean.
+static const SpeculatedType SpecOther             = 0x20000000; // It's definitely none of the above.
+static const SpeculatedType SpecHeapTop           = 0x3fffffff; // It can be any of the above.
+static const SpeculatedType SpecEmpty             = 0x40000000; // It's definitely an empty value marker.
+static const SpeculatedType SpecBytecodeTop       = 0x7fffffff; // It can be any of the above.
+static const SpeculatedType SpecFullTop           = 0x7fffffff; // It can be any of the above plus anything the DFG chooses.
 
 typedef bool (*SpeculatedTypeChecker)(SpeculatedType);
 
@@ -243,6 +245,11 @@ inline bool isInt32SpeculationForArithmetic(SpeculatedType value)
 inline bool isInt32SpeculationExpectingDefined(SpeculatedType value)
 {
     return isInt32Speculation(value & ~SpecOther);
+}
+
+inline bool isInt48Speculation(SpeculatedType value)
+{
+    return value == SpecInt48;
 }
 
 inline bool isInt48AsDoubleSpeculation(SpeculatedType value)

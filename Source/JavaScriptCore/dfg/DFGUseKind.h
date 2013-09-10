@@ -62,7 +62,7 @@ ALWAYS_INLINE SpeculatedType typeFilterFor(UseKind useKind)
 {
     switch (useKind) {
     case UntypedUse:
-        return SpecEmptyOrTop; // TOP isn't good enough; untyped uses may use the normally unseen empty value, in the case of lazy registers.
+        return SpecFullTop;
     case Int32Use:
     case KnownInt32Use:
         return SpecInt32;
@@ -97,7 +97,7 @@ ALWAYS_INLINE SpeculatedType typeFilterFor(UseKind useKind)
         return SpecOther;
     default:
         RELEASE_ASSERT_NOT_REACHED();
-        return SpecTop;
+        return SpecFullTop;
     }
 }
 

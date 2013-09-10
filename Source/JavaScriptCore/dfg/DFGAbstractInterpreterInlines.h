@@ -143,7 +143,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         ASSERT(m_graph.m_form == SSA);
         VariableAccessData* variable = node->variableAccessData();
         AbstractValue& value = m_state.variables().operand(variable->local());
-        ASSERT(value.isTop());
+        ASSERT(value.isHeapTop());
         FiltrationResult result =
             value.filter(typeFilterFor(useKindFor(variable->flushFormat())));
         ASSERT_UNUSED(result, result == FiltrationOK);
@@ -152,7 +152,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case ExtractOSREntryLocal: {
-        forNode(node).makeTop();
         if (!operandIsArgument(node->unlinkedLocal())
             && m_graph.m_lazyVars.get(operandToLocal(node->unlinkedLocal()))) {
             // This is kind of pessimistic - we could know in some cases that the
@@ -160,8 +159,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // variable. But maybe this is fine, since we're inserting OSR
             // entrypoints very early in the pipeline - so any lazy initializations
             // ought to be hoisted out anyway.
-            forNode(node).merge(SpecEmpty);
-        }
+            forNode(node).makeBytecodeTop();
+        } else
+            forNode(node).makeHeapTop();
         break;
     }
             
@@ -786,7 +786,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         case Array::Generic:
             clobberWorld(node->codeOrigin, clobberLimit);
-            forNode(node).makeTop();
+            forNode(node).makeHeapTop();
             break;
         case Array::String:
             if (node->arrayMode().isOutOfBounds()) {
@@ -801,24 +801,24 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 // so we're going with TOP for now. The same thing applies to
                 // clobbering the world.
                 clobberWorld(node->codeOrigin, clobberLimit);
-                forNode(node).makeTop();
+                forNode(node).makeHeapTop();
             } else
                 forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
             break;
         case Array::Arguments:
-            forNode(node).makeTop();
+            forNode(node).makeHeapTop();
             break;
         case Array::Int32:
             if (node->arrayMode().isOutOfBounds()) {
                 clobberWorld(node->codeOrigin, clobberLimit);
-                forNode(node).makeTop();
+                forNode(node).makeHeapTop();
             } else
                 forNode(node).setType(SpecInt32);
             break;
         case Array::Double:
             if (node->arrayMode().isOutOfBounds()) {
                 clobberWorld(node->codeOrigin, clobberLimit);
-                forNode(node).makeTop();
+                forNode(node).makeHeapTop();
             } else if (node->arrayMode().isSaneChain())
                 forNode(node).setType(SpecDouble);
             else
@@ -829,7 +829,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Array::SlowPutArrayStorage:
             if (node->arrayMode().isOutOfBounds())
                 clobberWorld(node->codeOrigin, clobberLimit);
-            forNode(node).makeTop();
+            forNode(node).makeHeapTop();
             break;
         case Array::Int8Array:
             forNode(node).setType(SpecInt32);
@@ -910,11 +910,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArrayPop:
         node->setCanExit(true);
         clobberWorld(node->codeOrigin, clobberLimit);
-        forNode(node).makeTop();
+        forNode(node).makeHeapTop();
         break;
             
     case RegExpExec:
-        forNode(node).makeTop();
+        forNode(node).makeHeapTop();
         break;
 
     case RegExpTest:
@@ -997,7 +997,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
         SpeculatedType type = source.m_type;
         if (type & ~(SpecNumber | SpecString | SpecBoolean))
-            type = (SpecTop & ~SpecCell) | SpecString;
+            type = (SpecHeapTop & ~SpecCell) | SpecString;
 
         destination.setType(type);
         if (destination.isClear())
@@ -1152,7 +1152,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld(node->codeOrigin, clobberLimit);
         // We currently make no guarantee about what this returns because it does not
         // speculate that the length property is actually a length.
-        forNode(node).makeTop();
+        forNode(node).makeHeapTop();
         break;
         
     case GetMyArgumentByVal:
@@ -1160,7 +1160,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // We know that this executable does not escape its arguments, so we can optimize
         // the arguments a bit. Note that this ends up being further optimized by the
         // ArgumentsSimplificationPhase.
-        forNode(node).makeTop();
+        forNode(node).makeHeapTop();
         break;
         
     case GetMyArgumentByValSafe:
@@ -1169,7 +1169,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // a getter. We don't speculate against this.
         clobberWorld(node->codeOrigin, clobberLimit);
         // And the result is unknown.
-        forNode(node).makeTop();
+        forNode(node).makeHeapTop();
         break;
         
     case NewFunction: {
@@ -1220,7 +1220,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case GetClosureVar:
-        forNode(node).makeTop();
+        forNode(node).makeHeapTop();
         break;
             
     case PutClosureVar:
@@ -1248,7 +1248,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     if (status.specificValue())
                         forNode(node).set(m_graph, status.specificValue());
                     else
-                        forNode(node).makeTop();
+                        forNode(node).makeHeapTop();
                     filter(node->child1(), status.structureSet());
                     
                     m_state.setFoundConstants(true);
@@ -1257,7 +1257,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
         }
         clobberWorld(node->codeOrigin, clobberLimit);
-        forNode(node).makeTop();
+        forNode(node).makeHeapTop();
         break;
             
     case GetArrayLength:
@@ -1415,7 +1415,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case GetByOffset: {
-        forNode(node).makeTop();
+        forNode(node).makeHeapTop();
         break;
     }
             
@@ -1470,7 +1470,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
             
     case GetGlobalVar:
-        forNode(node).makeTop();
+        forNode(node).makeHeapTop();
         break;
         
     case GlobalVarWatchpoint:
@@ -1514,7 +1514,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case Construct:
         node->setCanExit(true);
         clobberWorld(node->codeOrigin, clobberLimit);
-        forNode(node).makeTop();
+        forNode(node).makeHeapTop();
         break;
 
     case ForceOSRExit:
@@ -1594,18 +1594,18 @@ void AbstractInterpreter<AbstractStateType>::clobberCapturedVars(const CodeOrigi
         for (size_t i = capturedVars.size(); i--;) {
             if (!capturedVars.quickGet(i))
                 continue;
-            m_state.variables().local(i).makeTop();
+            m_state.variables().local(i).makeHeapTop();
         }
     } else {
         for (size_t i = m_codeBlock->m_numVars; i--;) {
             if (m_codeBlock->isCaptured(localToOperand(i)))
-                m_state.variables().local(i).makeTop();
+                m_state.variables().local(i).makeHeapTop();
         }
     }
 
     for (size_t i = m_state.variables().numberOfArguments(); i--;) {
         if (m_codeBlock->isCaptured(argumentToOperand(i)))
-            m_state.variables().argument(i).makeTop();
+            m_state.variables().argument(i).makeHeapTop();
     }
 }
 
