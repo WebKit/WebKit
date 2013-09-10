@@ -1,5 +1,18 @@
 2013-09-09  Mark Lam  <mark.lam@apple.com>
 
+        Rolling out r155392(Remove old fast/js/resources pre and post test files): breaks tests.
+        https://bugs.webkit.org/show_bug.cgi?id=120899.
+
+        Not reviewed.
+
+        * fast/js/resources/js-test-post-async.js: Copied from LayoutTests/fast/js/resources/js-test-post-async.js.
+        * fast/js/resources/js-test-post.js: Copied from LayoutTests/fast/js/resources/js-test-post.js.
+        * fast/js/resources/js-test-pre.js: Copied from LayoutTests/fast/js/resources/js-test-pre.js.
+        * fast/js/resources/standalone-post.js: Copied from LayoutTests/fast/js/resources/standalone-post.js.
+        * fast/js/resources/standalone-pre.js: Copied from LayoutTests/fast/js/resources/standalone-pre.js.
+
+2013-09-09  Mark Lam  <mark.lam@apple.com>
+
         Fix path to post file in a fwe tests, and adjust the expected results to match.
         https://bugs.webkit.org/show_bug.cgi?id=120899.
 

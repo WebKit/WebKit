@@ -44,8 +44,8 @@ def translate_includes(text):
     # Assumption: these filenames are globally unique.
     include_mapping = {
         "js-test-style.css": "../../js/resources",
-        "js-test-pre.js": "../../../resources",
-        "js-test-post.js": "../../../resources",
+        "js-test-pre.js": "../../js/resources",
+        "js-test-post.js": "../../js/resources",
         "desktop-gl-constants.js": "resources",
     }
 

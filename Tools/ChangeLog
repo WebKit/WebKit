@@ -1,5 +1,30 @@
 2013-09-09  Mark Lam  <mark.lam@apple.com>
 
+        Rolling out r155392 (Point Tools scripts to LayoutTests/resources): breaks tests.
+        https://bugs.webkit.org/show_bug.cgi?id=120899.
+
+        Not reviewed.
+
+        * Scripts/make-new-script-test:
+        (makePathToSharedSources):
+        * Scripts/run-fast-jsc:
+        * Scripts/webkitperl/httpd.pm:
+        (getDefaultConfigForTestDirectory):
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__):
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        (Lighttpd.__init__):
+        * Scripts/webkitpy/layout_tests/servers/http_server_integrationtest.py:
+        (BaseTest.integration_test_port_and_root):
+        * Scripts/webkitpy/layout_tests/servers/http_server_unittest.py:
+        (TestHttpServer.test_start_cmd):
+        * Scripts/webkitpy/to_be_moved/update_webgl_conformance_tests.py:
+        (translate_includes):
+        * Scripts/webkitpy/to_be_moved/update_webgl_conformance_tests_unittest.py:
+        (TestTranslation.test_include_rewriting):
+
+2013-09-09  Mark Lam  <mark.lam@apple.com>
+
         Point Tools scripts to LayoutTests/resources.
         https://bugs.webkit.org/show_bug.cgi?id=120899.
 
