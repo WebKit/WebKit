@@ -43,7 +43,6 @@ def translate_includes(text):
     # Mapping of single filename to relative path under WebKit root.
     # Assumption: these filenames are globally unique.
     include_mapping = {
-        "js-test-style.css": "../../js/resources",
         "js-test-pre.js": "../../../resources",
         "js-test-post.js": "../../../resources",
         "desktop-gl-constants.js": "resources",

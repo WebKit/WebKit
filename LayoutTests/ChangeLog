@@ -1,5 +1,89 @@
 2013-09-09  Mark Lam  <mark.lam@apple.com>
 
+        Remove more references to the deleted js-test-style.css.
+        https://bugs.webkit.org/show_bug.cgi?id=120899.
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/canvas/webgl/array-unit-tests.html:
+        * fast/canvas/webgl/context-lost-restored.html:
+        * fast/canvas/webgl/context-lost.html:
+        * fast/canvas/webgl/typed-arrays-in-workers.html:
+        * fast/css/aspect-ratio-parsing-tests.html:
+        * fast/forms/fieldset/fieldset-disabled.html:
+        * fast/js/apply-varargs.html:
+        * fast/js/line-column-numbers.html:
+        * fast/js/stack-at-creation-for-error-objects.html:
+        * fast/js/stack-trace.html:
+        * platform/iphone-simulator/accessibility/accessibility-aria-table-children.html:
+        * platform/iphone-simulator/accessibility/accessibility-crash-in-axcontainer.html:
+        * platform/iphone-simulator/accessibility/accessibility-hint.html:
+        * platform/iphone-simulator/accessibility/aria-label-with-internal-text.html:
+        * platform/iphone-simulator/accessibility/aria-pressed-state.html:
+        * platform/iphone-simulator/accessibility/centerpoint.html:
+        * platform/iphone-simulator/accessibility/file-upload-button.html:
+        * platform/iphone-simulator/accessibility/focus-change-notifications.html:
+        * platform/iphone-simulator/accessibility/header-elements.html:
+        * platform/iphone-simulator/accessibility/identifier.html:
+        * platform/iphone-simulator/accessibility/internal-link.html:
+        * platform/iphone-simulator/accessibility/landmark-type.html:
+        * platform/iphone-simulator/accessibility/link-with-images-text.html:
+        * platform/iphone-simulator/accessibility/link-with-only-image.html:
+        * platform/iphone-simulator/accessibility/math.html:
+        * platform/iphone-simulator/accessibility/mixed-checkboxes.html:
+        * platform/iphone-simulator/accessibility/password-value.html:
+        * platform/iphone-simulator/accessibility/placeholder-value.html:
+        * platform/iphone-simulator/accessibility/popup-button-value-label.html:
+        * platform/iphone-simulator/accessibility/progressbar.html:
+        * platform/iphone-simulator/accessibility/selected-buttons.html:
+        * platform/iphone-simulator/accessibility/selected-text.html:
+        * platform/iphone-simulator/accessibility/svg-path-crash.html:
+        * platform/iphone-simulator/accessibility/tab-role.html:
+        * platform/iphone-simulator/accessibility/table-cell-for-row-col.html:
+        * platform/iphone-simulator/accessibility/table-cell-ranges.html:
+        * platform/iphone-simulator/accessibility/tables-lists.html:
+        * platform/iphone-simulator/accessibility/text-line-no-ignored-elements.html:
+        * platform/iphone-simulator/accessibility/text-marker-list-item.html:
+        * platform/iphone-simulator/accessibility/text-marker-validation.html:
+        * platform/iphone-simulator/accessibility/text-role.html:
+        * platform/iphone-simulator/accessibility/textfield-in-axvalue.html:
+        * platform/iphone-simulator/accessibility/url-test.html:
+        * platform/mac/accessibility/document-title-used-for-description.html:
+        * platform/mac/accessibility/iframe-aria-hidden.html:
+        * platform/mac/accessibility/scrollbars.html:
+        * platform/mac/accessibility/search-with-frames.html:
+        * platform/mac/accessibility/selected-tab-crash.html:
+        * platform/mac/accessibility/submit-button-default-value.html:
+        * platform/mac/accessibility/supports-focus-setting.html:
+        * platform/mac/fast/forms/input-appearance-spinbutton-up.html:
+        * platform/mac/fast/forms/input-appearance-spinbutton.html:
+        * svg/dom/css-transforms.xhtml:
+        * svg/dynamic-updates/SVG-dynamic-css-transform.html:
+        * svg/dynamic-updates/SVGClipPathElement-css-transform-influences-hitTesting.html:
+        * webaudio/audiobuffersource-loop-comprehensive.html:
+        * webaudio/audiobuffersource-start.html:
+        * webaudio/audioparam-connect-audioratesignal.html:
+        * webaudio/audioparam-summingjunction.html:
+        * webaudio/biquad-allpass.html:
+        * webaudio/biquad-bandpass.html:
+        * webaudio/biquad-highpass.html:
+        * webaudio/biquad-highshelf.html:
+        * webaudio/biquad-lowpass.html:
+        * webaudio/biquad-lowshelf.html:
+        * webaudio/biquad-notch.html:
+        * webaudio/biquad-peaking.html:
+        * webaudio/convolution-mono-mono.html:
+        * webaudio/convolver-setBuffer-null.html:
+        * webaudio/distance-exponential.html:
+        * webaudio/distance-inverse.html:
+        * webaudio/distance-linear.html:
+        * webaudio/javascriptaudionode-zero-input-channels.html:
+        * webaudio/oscillator-basic.html:
+        * webaudio/panner-equalpower-stereo.html:
+        * webaudio/panner-equalpower.html:
+
+2013-09-09  Mark Lam  <mark.lam@apple.com>
+
         Re-landing 155392 (Remove old fast/js/resources pre and post test files).
         https://bugs.webkit.org/show_bug.cgi?id=120899.
 

@@ -1,5 +1,15 @@
 2013-09-09  Mark Lam  <mark.lam@apple.com>
 
+        Remove more references to the deleted js-test-style.css.
+        https://bugs.webkit.org/show_bug.cgi?id=120899.
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/to_be_moved/update_webgl_conformance_tests.py:
+        (translate_includes):
+
+2013-09-09  Mark Lam  <mark.lam@apple.com>
+
         Re-landing r155392 (Point Tools scripts to LayoutTests/resources).
         https://bugs.webkit.org/show_bug.cgi?id=120899.
 
