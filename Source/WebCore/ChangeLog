@@ -1,5 +1,15 @@
 2013-09-09  Andreas Kling  <akling@apple.com>
 
+        ScriptRunner should have a Document& internally.
+        <https://webkit.org/b/121072>
+
+        Reviewed by Anders Carlsson.
+
+        Change ScriptRunner::m_document to a reference since it's tied to
+        the lifetime of the Document.
+
+2013-09-09  Andreas Kling  <akling@apple.com>
+
         Ref-ify more stack guards.
         <https://webkit.org/b/121070>
 
