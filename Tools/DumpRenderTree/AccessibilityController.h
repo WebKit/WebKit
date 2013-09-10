@@ -35,6 +35,7 @@
 #include <windows.h>
 #endif
 #if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#include "AccessibilityNotificationHandlerAtk.h"
 #include <atk/atk.h>
 #endif
 
@@ -87,6 +88,10 @@ private:
 
 #if PLATFORM(MAC)
     RetainPtr<NotificationHandler> m_globalNotificationHandler;
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(EFL)
+    RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
 };
 

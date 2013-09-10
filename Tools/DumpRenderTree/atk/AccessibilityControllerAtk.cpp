@@ -38,6 +38,7 @@
 bool loggingAccessibilityEvents = false;
 
 AccessibilityController::AccessibilityController()
+    : m_globalNotificationHandler(0)
 {
 }
 
@@ -79,13 +80,27 @@ void AccessibilityController::setLogAccessibilityEvents(bool logAccessibilityEve
     loggingAccessibilityEvents = true;
 }
 
-bool AccessibilityController::addNotificationListener(JSObjectRef)
+bool AccessibilityController::addNotificationListener(JSObjectRef functionCallback)
 {
-    return false;
+    if (!functionCallback)
+        return false;
+
+    // Only one global notification listener.
+    if (m_globalNotificationHandler)
+        return false;
+
+    m_globalNotificationHandler = AccessibilityNotificationHandler::create();
+    m_globalNotificationHandler->setNotificationFunctionCallback(functionCallback);
+
+    return true;
 }
 
 void AccessibilityController::removeNotificationListener()
 {
+    // Programmers should not be trying to remove a listener that's already removed.
+    ASSERT(m_globalNotificationHandler);
+
+    m_globalNotificationHandler = 0;
 }
 
 AtkObject* AccessibilityController::childElementById(AtkObject* parent, const char* id)
