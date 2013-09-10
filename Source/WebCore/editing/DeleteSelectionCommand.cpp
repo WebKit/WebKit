@@ -281,8 +281,12 @@ void DeleteSelectionCommand::saveTypingStyleState()
     // typing style at the start of the selection, nor is there a reason to 
     // compute the style at the start of the selection after deletion (see the 
     // early return in calculateTypingStyleAfterDelete).
-    if (m_upstreamStart.deprecatedNode() == m_downstreamEnd.deprecatedNode() && m_upstreamStart.deprecatedNode()->isTextNode())
+    // However, if typing style was previously set from another text node at the previous
+    // position (now deleted), we need to clear that style as well.
+    if (m_upstreamStart.deprecatedNode() == m_downstreamEnd.deprecatedNode() && m_upstreamStart.deprecatedNode()->isTextNode()) {
+        frame().selection().clearTypingStyle();
         return;
+    }
 
     // Figure out the typing style in effect before the delete is done.
     m_typingStyle = EditingStyle::create(m_selectionToDelete.start());

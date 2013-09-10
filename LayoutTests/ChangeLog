@@ -1,3 +1,15 @@
+2013-09-10  Arpita Bahuguna  <a.bah@samsung.com>
+
+        When deleting editable content, typing style should be reset when moving into another node.
+        https://bugs.webkit.org/show_bug.cgi?id=120726
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/deleting/maintain-style-after-delete-expected.txt: Added.
+        * editing/deleting/maintain-style-after-delete.html: Added.
+        Testcase added for verifying that style of the text node being deleted
+        is maintained.
+
 2013-09-09  Mark Lam  <mark.lam@apple.com>
 
         Remove more references to the deleted js-test-style.css.
