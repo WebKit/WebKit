@@ -106,6 +106,8 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint, guint n
             notificationName = "CheckedStateChanged";
         else if (!g_strcmp0(g_value_get_string(&paramValues[1]), "invalid-entry"))
             notificationName = "AXInvalidStatusChanged";
+        else if (!g_strcmp0(g_value_get_string(&paramValues[1]), "layout-complete"))
+            notificationName = "AXLayoutComplete";
     } else if (!g_strcmp0(signalQuery.signal_name, "focus-event")) {
         signalName.set(g_strdup("focus-event"));
         signalValue.set(g_strdup_printf("%d", g_value_get_boolean(&paramValues[1])));

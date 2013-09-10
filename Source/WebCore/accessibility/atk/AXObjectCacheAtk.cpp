@@ -164,7 +164,9 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
         atk_value_get_current_value(ATK_VALUE(axObject), &propertyValues.new_value);
 
         g_signal_emit_by_name(ATK_OBJECT(axObject), "property-change::accessible-value", &propertyValues, NULL);
-    } else if (notification == AXInvalidStatusChanged)
+    } else if (notification == AXLayoutComplete)
+        g_signal_emit_by_name(axObject, "state-change", "layout-complete", true);
+    else if (notification == AXInvalidStatusChanged)
         g_signal_emit_by_name(axObject, "state-change", "invalid-entry", coreObject->invalidStatus() != "false");
 }
 
