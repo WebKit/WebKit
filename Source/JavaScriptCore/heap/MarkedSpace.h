@@ -59,10 +59,6 @@ struct Size : MarkedBlock::CountFunctor {
     void operator()(MarkedBlock* block) { count(block->markCount() * block->cellSize()); }
 };
 
-struct Capacity : MarkedBlock::CountFunctor {
-    void operator()(MarkedBlock* block) { count(block->capacity()); }
-};
-
 class MarkedSpace {
     WTF_MAKE_NONCOPYABLE(MarkedSpace);
 public:
@@ -136,6 +132,7 @@ private:
     Subspace m_normalSpace;
 
     Heap* m_heap;
+    size_t m_capacity;
     MarkedBlockSet m_blocks;
 };
 
@@ -245,6 +242,7 @@ template <typename Functor> inline typename Functor::ReturnType MarkedSpace::for
 
 inline void MarkedSpace::didAddBlock(MarkedBlock* block)
 {
+    m_capacity += block->capacity();
     m_blocks.add(block);
 }
 
@@ -265,7 +263,7 @@ inline size_t MarkedSpace::size()
 
 inline size_t MarkedSpace::capacity()
 {
-    return forEachBlock<Capacity>();
+    return m_capacity;
 }
 
 } // namespace JSC

@@ -1,3 +1,19 @@
+2013-09-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        CopiedSpace::startedCopying should not call MarkedSpace::capacity
+        https://bugs.webkit.org/show_bug.cgi?id=121045
+
+        Reviewed by Geoffrey Garen.
+
+        MarkedSpace::capacity() iterates every block in MarkedSpace. Instead we should just 
+        keep track of our total capacity in MarkedSpace as we add and remove MarkedBlocks.
+
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::freeBlock):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::didAddBlock):
+        (JSC::MarkedSpace::capacity):
+
 2013-09-09  Michael Saboff  <msaboff@apple.com>
 
         Wrong for SlowPathCall to load callFrame reg from vm.topCallFrame after call

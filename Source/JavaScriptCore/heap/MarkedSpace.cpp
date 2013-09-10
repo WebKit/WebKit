@@ -79,6 +79,7 @@ struct ReapWeakSet : MarkedBlock::VoidFunctor {
 
 MarkedSpace::MarkedSpace(Heap* heap)
     : m_heap(heap)
+    , m_capacity(0)
 {
     for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep) {
         allocatorFor(cellSize).init(heap, this, cellSize, MarkedBlock::None);
@@ -195,6 +196,7 @@ bool MarkedSpace::isPagedOut(double deadline)
 void MarkedSpace::freeBlock(MarkedBlock* block)
 {
     block->allocator()->removeBlock(block);
+    m_capacity -= block->capacity();
     m_blocks.remove(block);
     if (block->capacity() == MarkedBlock::blockSize) {
         m_heap->blockAllocator().deallocate(MarkedBlock::destroy(block));
