@@ -1,3 +1,14 @@
+2013-09-10  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Add FloatingObjects.h to Target.pri
+        https://bugs.webkit.org/show_bug.cgi?id=121117
+
+        Reviewed by Andreas Kling.
+
+        No new tests, no behavior change.
+
+        * Target.pri:
+
 2013-09-10  Sergio Correia  <sergio.correia@openbossa.org>
 
         Fix EFL build after r155477
