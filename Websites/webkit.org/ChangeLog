@@ -1,3 +1,9 @@
+2013-09-10  Beth Dakin  <bdakin@apple.com>
+
+        Adding another screenshot for a potential blog post.
+
+        * blog-files/regions/unstyled-article.png: Added.
+
 2013-09-09  Roger Fong  <roger_fong@apple.com>
 
         Update build instructions for Apple Windows port to include cygwin php install steps.
