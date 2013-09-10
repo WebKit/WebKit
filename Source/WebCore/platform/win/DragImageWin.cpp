@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #include "TextRun.h"
 #include "WebCoreTextRenderer.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/win/GDIObject.h>
 
 #include <windows.h>
 
@@ -179,18 +180,16 @@ DragImageRef createDragImageForLink(KURL& url, const String& inLabel, FontRender
     // fill the background
     HBITMAP image = 0;
     HWndDC dc(0);
-    HDC workingDC = CreateCompatibleDC(dc);
+    auto workingDC = adoptGDIObject(::CreateCompatibleDC(dc));
     if (!workingDC)
         return 0;
 
     PlatformGraphicsContext* contextRef;
-    image = allocImage(workingDC, imageSize, &contextRef);
-    if (!image) {
-        DeleteDC(workingDC);
+    image = allocImage(workingDC.get(), imageSize, &contextRef);
+    if (!image)
         return 0;
-    }
         
-    SelectObject(workingDC, image);
+    ::SelectObject(workingDC.get(), image);
     GraphicsContext context(contextRef);
     // On Mac alpha is {0.7, 0.7, 0.7, 0.8}, however we can't control alpha
     // for drag images on win, so we use 1
@@ -216,7 +215,6 @@ DragImageRef createDragImageForLink(KURL& url, const String& inLabel, FontRender
     WebCoreDrawDoubledTextAtPoint(context, label, textPos, *labelFont, topColor, bottomColor);
 
     deallocContext(contextRef);
-    DeleteDC(workingDC);
     return image;
 }
 

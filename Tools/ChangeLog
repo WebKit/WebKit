@@ -1,3 +1,18 @@
+2013-09-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Change from using OwnPtr<GDI Stuff> to new GDIObject.
+        https://bugs.webkit.org/show_bug.cgi?id=120778
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (createBitmapContextFromWebView): Use GDIObject.
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_for_leaky_patterns): Update for GDIObject instead of adoptPtr and OwnPtr.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (LeakyPatternTest.test_create_dc): Update for GDIObject instead of adoptPtr/OwnPtr.
+        (LeakyPatternTest.test_create_compatible_dc): Ditto.
+
 2013-09-10  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         Unreviewed. Add myself as a committer.

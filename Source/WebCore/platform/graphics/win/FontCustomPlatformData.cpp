@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/Base64.h>
+#include <wtf/win/GDIObject.h>
 
 namespace WebCore {
 
@@ -62,10 +63,10 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     logFont.lfItalic = italic;
     logFont.lfWeight = bold ? 700 : 400;
 
-    HFONT hfont = CreateFontIndirect(&logFont);
+    auto hfont = adoptGDIObject(::CreateFontIndirect(&logFont));
 
     RetainPtr<CGFontRef> cgFont = adoptCF(CGFontCreateWithPlatformFont(&logFont));
-    return FontPlatformData(hfont, cgFont.get(), size, bold, italic, renderingMode == AlternateRenderingMode);
+    return FontPlatformData(hfont.leak(), cgFont.get(), size, bold, italic, renderingMode == AlternateRenderingMode);
 }
 
 // Creates a unique and unpredictable font name, in order to avoid collisions and to

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include "HWndDC.h"
 #include <mlang.h>
 #include <wtf/MathExtras.h>
+#include <wtf/win/GDIObject.h>
 
 namespace WebCore {
 
@@ -138,8 +139,8 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
     LOGFONT winfont;
     GetObject(m_platformData.hfont(), sizeof(LOGFONT), &winfont);
     winfont.lfHeight = -lroundf(scaledSize * (m_platformData.useGDI() ? 1 : 32));
-    HFONT hfont = CreateFontIndirect(&winfont);
-    return SimpleFontData::create(FontPlatformData(hfont, scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.useGDI()), isCustomFont(), false);
+    auto hfont = adoptGDIObject(::CreateFontIndirect(&winfont));
+    return SimpleFontData::create(FontPlatformData(hfont.leak(), scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.useGDI()), isCustomFont(), false);
 }
 
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const

@@ -180,6 +180,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
+#include <wtf/win/GDIObject.h>
 
 // Soft link functions for gestures and panning feedback
 SOFT_LINK_LIBRARY(USER32);
@@ -893,13 +894,13 @@ void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const Int
 
     // Collect our device context info and select the bitmap to scroll.
     HWndDC windowDC(m_viewWindow);
-    HDC bitmapDC = ::CreateCompatibleDC(windowDC);
-    HGDIOBJ oldBitmap = ::SelectObject(bitmapDC, m_backingStoreBitmap->handle());
+    auto bitmapDC = adoptGDIObject(::CreateCompatibleDC(windowDC));
+    HGDIOBJ oldBitmap = ::SelectObject(bitmapDC.get(), m_backingStoreBitmap->handle());
     
     // Scroll the bitmap.
     RECT scrollRectWin(scrollViewRect);
     RECT clipRectWin(clipRect);
-    ::ScrollDC(bitmapDC, dx, dy, &scrollRectWin, &clipRectWin, updateRegion, 0);
+    ::ScrollDC(bitmapDC.get(), dx, dy, &scrollRectWin, &clipRectWin, updateRegion, 0);
     RECT regionBox;
     ::GetRgnBox(updateRegion, &regionBox);
 
@@ -913,11 +914,10 @@ void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const Int
         m_uiDelegatePrivate->webViewScrolled(this);
 
     // Update the backing store.
-    updateBackingStore(frameView, bitmapDC, false);
+    updateBackingStore(frameView, bitmapDC.get(), false);
 
     // Clean up.
-    ::SelectObject(bitmapDC, oldBitmap);
-    ::DeleteDC(bitmapDC);
+    ::SelectObject(bitmapDC.get(), oldBitmap);
 }
 
 void WebView::sizeChanged(const IntSize& newSize)
@@ -987,11 +987,14 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
 
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
+    GDIObject<HDC> bitmapDCObject;
+
     HDC bitmapDC = dc;
     HGDIOBJ oldBitmap = 0;
     if (!dc) {
         HWndDC windowDC(m_viewWindow);
-        bitmapDC = ::CreateCompatibleDC(windowDC);
+        bitmapDCObject = adoptGDIObject(::CreateCompatibleDC(windowDC));
+        bitmapDC = bitmapDCObject.get();
         oldBitmap = ::SelectObject(bitmapDC, m_backingStoreBitmap->handle());
     }
 
@@ -1021,10 +1024,8 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
         m_backingStoreDirtyRegion.clear();
     }
 
-    if (!dc) {
+    if (!dc)
         ::SelectObject(bitmapDC, oldBitmap);
-        ::DeleteDC(bitmapDC);
-    }
 
     GdiFlush();
 }
@@ -1036,7 +1037,7 @@ void WebView::performLayeredWindowUpdate()
         return;
 
     HWndDC hdcScreen(m_viewWindow);
-    OwnPtr<HDC> hdcMem = adoptPtr(::CreateCompatibleDC(hdcScreen));
+    auto hdcMem = adoptGDIObject(::CreateCompatibleDC(hdcScreen));
     HBITMAP hbmOld = static_cast<HBITMAP>(::SelectObject(hdcMem.get(), m_backingStoreBitmap->handle()));
 
     BITMAP bmpInfo;
@@ -1110,11 +1111,11 @@ void WebView::paint(HDC dc, LPARAM options)
 
     m_paintCount++;
 
-    HDC bitmapDC = ::CreateCompatibleDC(hdc);
-    HGDIOBJ oldBitmap = ::SelectObject(bitmapDC, m_backingStoreBitmap->handle());
+    auto bitmapDC = adoptGDIObject(::CreateCompatibleDC(hdc));
+    HGDIOBJ oldBitmap = ::SelectObject(bitmapDC.get(), m_backingStoreBitmap->handle());
 
     // Update our backing store if needed.
-    updateBackingStore(frameView, bitmapDC, backingStoreCompletelyDirty, windowsToPaint);
+    updateBackingStore(frameView, bitmapDC.get(), backingStoreCompletelyDirty, windowsToPaint);
 
     // Now we blit the updated backing store
     IntRect windowDirtyRect = rcPaint;
@@ -1127,10 +1128,9 @@ void WebView::paint(HDC dc, LPARAM options)
         blitRects.append(windowDirtyRect);
 
     for (unsigned i = 0; i < blitRects.size(); ++i)
-        paintIntoWindow(bitmapDC, hdc, blitRects[i]);
+        paintIntoWindow(bitmapDC.get(), hdc, blitRects[i]);
 
-    ::SelectObject(bitmapDC, oldBitmap);
-    ::DeleteDC(bitmapDC);
+    ::SelectObject(bitmapDC.get(), oldBitmap);
 
     if (!dc)
         EndPaint(m_viewWindow, &ps);
@@ -1160,7 +1160,7 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
 #if FLASH_BACKING_STORE_REDRAW
     {
         HWndDC dc(m_viewWindow);
-        OwnPtr<HBRUSH> yellowBrush(CreateSolidBrush(RGB(255, 255, 0)));
+        auto yellowBrush = adoptGDIObject(::CreateSolidBrush(RGB(255, 255, 0)));
         FillRect(dc, &rect, yellowBrush.get());
         GdiFlush();
         Sleep(50);
@@ -1197,7 +1197,7 @@ void WebView::paintIntoWindow(HDC bitmapDC, HDC windowDC, const IntRect& dirtyRe
 
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 #if FLASH_WINDOW_REDRAW
-    OwnPtr<HBRUSH> greenBrush = CreateSolidBrush(RGB(0, 255, 0));
+    auto greenBrush = adoptGDIObject(::CreateSolidBrush(RGB(0, 255, 0)));
     RECT rect = dirtyRect;
     FillRect(windowDC, &rect, greenBrush.get());
     GdiFlush();
@@ -3577,8 +3577,8 @@ HRESULT STDMETHODCALLTYPE WebView::generateSelectionImage(BOOL forceWhiteText, O
 
     WebCore::Frame& frame = m_page->focusController().focusedOrMainFrame();
 
-    OwnPtr<HBITMAP> bitmap = imageFromSelection(&frame, forceWhiteText ? TRUE : FALSE);
-    *hBitmap = static_cast<OLE_HANDLE>(reinterpret_cast<ULONG64>(bitmap.leakPtr()));
+    auto bitmap = imageFromSelection(&frame, forceWhiteText ? TRUE : FALSE);
+    *hBitmap = static_cast<OLE_HANDLE>(reinterpret_cast<ULONG64>(bitmap.leak()));
 
     return S_OK;
 }

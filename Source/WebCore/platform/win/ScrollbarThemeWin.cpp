@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "Scrollbar.h"
 #include "SoftLinking.h"
 #include "SystemInfo.h"
+#include <wtf/win/GDIObject.h>
 
 // Generic state constants
 #define TS_NORMAL    1
@@ -256,8 +257,8 @@ void ScrollbarThemeWin::paintTrackPiece(GraphicsContext* context, ScrollbarTheme
             ::FillRect(hdc, &themeRect, HBRUSH(COLOR_SCROLLBAR+1));
         else {
             static WORD patternBits[8] = { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 };
-            OwnPtr<HBITMAP> patternBitmap = adoptPtr(::CreateBitmap(8, 8, 1, 1, patternBits));
-            OwnPtr<HBRUSH> brush = adoptPtr(::CreatePatternBrush(patternBitmap.get()));
+            auto patternBitmap = adoptGDIObject(::CreateBitmap(8, 8, 1, 1, patternBits));
+            auto brush = adoptGDIObject(::CreatePatternBrush(patternBitmap.get()));
             SaveDC(hdc);
             ::SetTextColor(hdc, ::GetSysColor(COLOR_3DHILIGHT));
             ::SetBkColor(hdc, ::GetSysColor(COLOR_3DFACE));

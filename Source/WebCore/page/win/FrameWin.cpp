@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,22 +45,22 @@ void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float head
     outPages = printContext.pageRects();
 }
 
-PassOwnPtr<HBITMAP> imageFromSelection(Frame* frame, bool forceBlackText)
+GDIObject<HBITMAP> imageFromSelection(Frame* frame, bool forceBlackText)
 {
     frame->document()->updateLayout();
 
     frame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | (forceBlackText ? PaintBehaviorForceBlackText : 0));
     FloatRect fr = frame->selection().bounds();
     IntRect ir(static_cast<int>(fr.x()), static_cast<int>(fr.y()), static_cast<int>(fr.width()), static_cast<int>(fr.height()));
-    OwnPtr<HBITMAP> image = imageFromRect(frame, ir);
+    GDIObject<HBITMAP> image = imageFromRect(frame, ir);
     frame->view()->setPaintBehavior(PaintBehaviorNormal);
-    return image.release();
+    return image;
 }
 
 DragImageRef Frame::dragImageForSelection()
 {
     if (selection().isRange())
-        return imageFromSelection(this, false).leakPtr();
+        return imageFromSelection(this, false).leak();
 
     return 0;
 }
@@ -77,10 +77,10 @@ DragImageRef Frame::nodeImage(Node* node)
     IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
 
     m_view->setNodeToDraw(node); // invoke special sub-tree drawing mode
-    OwnPtr<HBITMAP> result = imageFromRect(this, paintingRect);
+    GDIObject<HBITMAP> result = imageFromRect(this, paintingRect);
     m_view->setNodeToDraw(0);
 
-    return result.leakPtr();
+    return result.leak();
 }
 
 } // namespace WebCore

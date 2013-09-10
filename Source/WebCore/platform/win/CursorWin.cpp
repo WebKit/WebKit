@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/win/GDIObject.h>
 
 #include <windows.h>
 
@@ -51,19 +52,19 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
     BitmapInfo cursorImage = BitmapInfo::create(IntSize(img->width(), img->height()));
 
     HWndDC dc(0);
-    HDC workingDC = CreateCompatibleDC(dc);
+    auto workingDC = adoptGDIObject(::CreateCompatibleDC(dc));
     if (doAlpha) {
-        OwnPtr<HBITMAP> hCursor = adoptPtr(CreateDIBSection(dc, (BITMAPINFO *)&cursorImage, DIB_RGB_COLORS, 0, 0, 0));
+        auto hCursor = adoptGDIObject(::CreateDIBSection(dc, (BITMAPINFO *)&cursorImage, DIB_RGB_COLORS, 0, 0, 0));
         ASSERT(hCursor);
 
         img->getHBITMAP(hCursor.get()); 
-        HBITMAP hOldBitmap = (HBITMAP)SelectObject(workingDC, hCursor.get());
-        SetBkMode(workingDC, TRANSPARENT);
-        SelectObject(workingDC, hOldBitmap);
+        HBITMAP hOldBitmap = (HBITMAP)SelectObject(workingDC.get(), hCursor.get());
+        SetBkMode(workingDC.get(), TRANSPARENT);
+        SelectObject(workingDC.get(), hOldBitmap);
 
         Vector<unsigned char, 128> maskBits;
         maskBits.fill(0xff, (img->width() + 7) / 8 * img->height());
-        OwnPtr<HBITMAP> hMask = adoptPtr(CreateBitmap(img->width(), img->height(), 1, 1, maskBits.data()));
+        auto hMask = adoptGDIObject(::CreateBitmap(img->width(), img->height(), 1, 1, maskBits.data()));
 
         ICONINFO ii;
         ii.fIcon = FALSE;
@@ -72,34 +73,34 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
         ii.hbmMask = hMask.get();
         ii.hbmColor = hCursor.get();
 
-        impl = SharedCursor::create(CreateIconIndirect(&ii));
+        impl = SharedCursor::create(::CreateIconIndirect(&ii));
     } else {
         // Platform doesn't support alpha blended cursors, so we need
         // to create the mask manually
-        HDC andMaskDC = CreateCompatibleDC(dc);
-        HDC xorMaskDC = CreateCompatibleDC(dc);
-        OwnPtr<HBITMAP> hCursor = adoptPtr(CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, 0, 0, 0));
+        auto andMaskDC = adoptGDIObject(::CreateCompatibleDC(dc));
+        auto xorMaskDC = adoptGDIObject(::CreateCompatibleDC(dc));
+        auto hCursor = adoptGDIObject(::CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, 0, 0, 0));
         ASSERT(hCursor);
         img->getHBITMAP(hCursor.get()); 
         BITMAP cursor;
         GetObject(hCursor.get(), sizeof(BITMAP), &cursor);
-        OwnPtr<HBITMAP> andMask = adoptPtr(CreateBitmap(cursor.bmWidth, cursor.bmHeight, 1, 1, NULL));
-        OwnPtr<HBITMAP> xorMask = adoptPtr(CreateCompatibleBitmap(dc, cursor.bmWidth, cursor.bmHeight));
-        HBITMAP oldCursor = (HBITMAP)SelectObject(workingDC, hCursor.get());
-        HBITMAP oldAndMask = (HBITMAP)SelectObject(andMaskDC, andMask.get());
-        HBITMAP oldXorMask = (HBITMAP)SelectObject(xorMaskDC, xorMask.get());
+        auto andMask = adoptGDIObject(::CreateBitmap(cursor.bmWidth, cursor.bmHeight, 1, 1, 0));
+        auto xorMask = adoptGDIObject(::CreateCompatibleBitmap(dc, cursor.bmWidth, cursor.bmHeight));
+        HBITMAP oldCursor = (HBITMAP)SelectObject(workingDC.get(), hCursor.get());
+        HBITMAP oldAndMask = (HBITMAP)SelectObject(andMaskDC.get(), andMask.get());
+        HBITMAP oldXorMask = (HBITMAP)SelectObject(xorMaskDC.get(), xorMask.get());
 
-        SetBkColor(workingDC, RGB(0,0,0));  
-        BitBlt(andMaskDC, 0, 0, cursor.bmWidth, cursor.bmHeight, workingDC, 0, 0, SRCCOPY);
+        SetBkColor(workingDC.get(), RGB(0, 0, 0));  
+        BitBlt(andMaskDC.get(), 0, 0, cursor.bmWidth, cursor.bmHeight, workingDC.get(), 0, 0, SRCCOPY);
     
-        SetBkColor(xorMaskDC, RGB(255, 255, 255));
-        SetTextColor(xorMaskDC, RGB(255, 255, 255));
-        BitBlt(xorMaskDC, 0, 0, cursor.bmWidth, cursor.bmHeight, andMaskDC, 0, 0, SRCCOPY);
-        BitBlt(xorMaskDC, 0, 0, cursor.bmWidth, cursor.bmHeight, workingDC, 0,0, SRCAND);
+        SetBkColor(xorMaskDC.get(), RGB(255, 255, 255));
+        SetTextColor(xorMaskDC.get(), RGB(255, 255, 255));
+        BitBlt(xorMaskDC.get(), 0, 0, cursor.bmWidth, cursor.bmHeight, andMaskDC.get(), 0, 0, SRCCOPY);
+        BitBlt(xorMaskDC.get(), 0, 0, cursor.bmWidth, cursor.bmHeight, workingDC.get(), 0, 0, SRCAND);
 
-        SelectObject(workingDC, oldCursor);
-        SelectObject(andMaskDC, oldAndMask);
-        SelectObject(xorMaskDC, oldXorMask);
+        SelectObject(workingDC.get(), oldCursor);
+        SelectObject(andMaskDC.get(), oldAndMask);
+        SelectObject(xorMaskDC.get(), oldXorMask);
 
         ICONINFO icon = {0};
         icon.fIcon = FALSE;
@@ -108,11 +109,7 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
         icon.hbmMask = andMask.get();
         icon.hbmColor = xorMask.get();
         impl = SharedCursor::create(CreateIconIndirect(&icon));
-
-        DeleteDC(xorMaskDC);
-        DeleteDC(andMaskDC);
     }
-    DeleteDC(workingDC);
 
     return impl.release();
 }

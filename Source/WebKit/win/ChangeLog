@@ -1,3 +1,27 @@
+2013-09-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Change from using OwnPtr<GDI Stuff> to new GDIObject template.
+        https://bugs.webkit.org/show_bug.cgi?id=120778
+
+        Reviewed by Anders Carlsson.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::createHUDWindow): Switch to GDIObject.
+        (FullscreenVideoController::draw): Ditto.
+        * FullscreenVideoController.h:
+        * WebCoreSupport/EmbeddedWidget.cpp:
+        (EmbeddedWidget::frameRectsChanged): Switch to GDIObject.
+        * WebNodeHighlight.cpp:
+        (WebNodeHighlight::update): Switch to GDIObject.
+        * WebView.cpp:
+        (WebView::scrollBackingStore): Switch to GDIObject.
+        (WebView::updateBackingStore): Ditto.
+        (WebView::performLayeredWindowUpdate): Ditto.
+        (WebView::paint): Ditto.
+        (WebView::paintIntoBackingStore): Ditto.
+        (WebView::paintIntoWindow): Ditto.
+        (WebView::generateSelectionImage): Ditto.
+
 2013-09-05  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Implement text offset methods of IAccessibleText interface.

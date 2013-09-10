@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/win/GDIObject.h>
 
 #include <windows.h>
 
@@ -91,11 +92,11 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
     IntSize dstSize(static_cast<int>(srcSize.width() * scale.width()), static_cast<int>(srcSize.height() * scale.height()));
     HBITMAP hbmp = 0;
     HWndDC dc(0);
-    HDC dstDC = CreateCompatibleDC(dc);
+    auto dstDC = adoptGDIObject(::CreateCompatibleDC(dc));
     if (!dstDC)
         goto exit;
 
-    hbmp = allocImage(dstDC, dstSize, &targetContext);
+    hbmp = allocImage(dstDC.get(), dstSize, &targetContext);
     if (!hbmp)
         goto exit;
 
@@ -115,8 +116,6 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
 exit:
     if (!hbmp)
         hbmp = image;
-    if (dstDC)
-        DeleteDC(dstDC);
     return hbmp;
 }
     
@@ -124,15 +123,15 @@ DragImageRef createDragImageFromImage(Image* img, ImageOrientationDescription)
 {
     HBITMAP hbmp = 0;
     HWndDC dc(0);
-    HDC workingDC = CreateCompatibleDC(dc);
+    auto workingDC = adoptGDIObject(::CreateCompatibleDC(dc));
     CGContextRef drawContext = 0;
     if (!workingDC)
-        goto exit;
+        return 0;
 
-    hbmp = allocImage(workingDC, img->size(), &drawContext);
+    hbmp = allocImage(workingDC.get(), img->size(), &drawContext);
 
     if (!hbmp)
-        goto exit;
+        return 0;
 
     if (!drawContext) {
         ::DeleteObject(hbmp);
@@ -154,9 +153,6 @@ DragImageRef createDragImageFromImage(Image* img, ImageOrientationDescription)
     }
     CGContextRelease(drawContext);
 
-exit:
-    if (workingDC)
-        DeleteDC(workingDC);
     return hbmp;
 }
     

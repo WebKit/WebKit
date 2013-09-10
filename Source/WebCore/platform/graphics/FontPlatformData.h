@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2010 Apple Inc.
+ * Copyright (C) 2006, 2007, 2008, 2010, 2013 Apple Inc.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Pioneer Research Center USA, Inc.
@@ -62,6 +62,7 @@ typedef const struct __CTFont* CTFontRef;
 #include <wtf/text/StringImpl.h>
 
 #if PLATFORM(WIN)
+#include <wtf/win/GDIObject.h>
 typedef struct HFONT__* HFONT;
 #endif
 

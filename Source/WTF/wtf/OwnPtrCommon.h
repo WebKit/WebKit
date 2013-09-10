@@ -30,11 +30,7 @@
 
 #if OS(WINDOWS)
 typedef struct HBITMAP__* HBITMAP;
-typedef struct HBRUSH__* HBRUSH;
 typedef struct HDC__* HDC;
-typedef struct HFONT__* HFONT;
-typedef struct HPALETTE__* HPALETTE;
-typedef struct HPEN__* HPEN;
 typedef struct HRGN__* HRGN;
 #endif
 
@@ -65,11 +61,7 @@ namespace WTF {
 
 #if OS(WINDOWS)
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(HBITMAP);
-    WTF_EXPORT_PRIVATE void deleteOwnedPtr(HBRUSH);
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(HDC);
-    WTF_EXPORT_PRIVATE void deleteOwnedPtr(HFONT);
-    WTF_EXPORT_PRIVATE void deleteOwnedPtr(HPALETTE);
-    WTF_EXPORT_PRIVATE void deleteOwnedPtr(HPEN);
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(HRGN);
 #endif
 

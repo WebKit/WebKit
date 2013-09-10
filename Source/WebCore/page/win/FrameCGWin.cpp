@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include "Settings.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <windows.h>
+#include <wtf/win/GDIObject.h>
 
 namespace WebCore {
 
@@ -49,19 +50,19 @@ static void drawRectIntoContext(IntRect rect, FrameView* view, GraphicsContext* 
     view->paint(gc, rect);
 }
 
-PassOwnPtr<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
+GDIObject<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
 {
     PaintBehavior oldPaintBehavior = frame->view()->paintBehavior();
     frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehaviorFlattenCompositingLayers);
 
     void* bits;
-    HDC hdc = CreateCompatibleDC(0);
+    auto hdc = adoptGDIObject(::CreateCompatibleDC(0));
     int w = ir.width();
     int h = ir.height();
     BitmapInfo bmp = BitmapInfo::create(IntSize(w, h));
 
-    OwnPtr<HBITMAP> hbmp = adoptPtr(CreateDIBSection(0, &bmp, DIB_RGB_COLORS, static_cast<void**>(&bits), 0, 0));
-    HGDIOBJ hbmpOld = SelectObject(hdc, hbmp.get());
+    GDIObject<HBITMAP> hbmp = adoptGDIObject(::CreateDIBSection(0, &bmp, DIB_RGB_COLORS, static_cast<void**>(&bits), 0, 0));
+    HGDIOBJ hbmpOld = SelectObject(hdc.get(), hbmp.get());
     CGContextRef context = CGBitmapContextCreate(static_cast<void*>(bits), w, h,
         8, w * sizeof(RGBQUAD), deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
     CGContextSaveGState(context);
@@ -71,12 +72,11 @@ PassOwnPtr<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
     drawRectIntoContext(ir, frame->view(), &gc);
 
     CGContextRelease(context);
-    SelectObject(hdc, hbmpOld);
-    DeleteDC(hdc);
+    SelectObject(hdc.get(), hbmpOld);
 
     frame->view()->setPaintBehavior(oldPaintBehavior);
 
-    return hbmp.release();
+    return hbmp;
 }
 
 } // namespace WebCore

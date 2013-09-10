@@ -37,6 +37,7 @@
 #include "SoftLinking.h"
 #include "SystemInfo.h"
 #include "UserAgentStyleSheets.h"
+#include <wtf/win/GDIObject.h>
 
 #if ENABLE(VIDEO)
 #include "RenderMediaControls.h"
@@ -690,9 +691,9 @@ static void drawControl(GraphicsContext* context, RenderObject* o, HANDLE theme,
             ::DrawEdge(hdc, &widgetRect, EDGE_RAISED, BF_RECT | BF_SOFT | BF_MIDDLE | BF_ADJUST);
             if (themeData.m_state == TUS_DISABLED) {
                 static WORD patternBits[8] = {0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55};
-                OwnPtr<HBITMAP> patternBmp = adoptPtr(::CreateBitmap(8, 8, 1, 1, patternBits));
+                auto patternBmp = adoptGDIObject(::CreateBitmap(8, 8, 1, 1, patternBits));
                 if (patternBmp) {
-                    OwnPtr<HBRUSH> brush = adoptPtr(::CreatePatternBrush(patternBmp.get()));
+                    auto brush = adoptGDIObject(::CreatePatternBrush(patternBmp.get()));
                     COLORREF oldForeColor = ::SetTextColor(hdc, ::GetSysColor(COLOR_3DFACE));
                     COLORREF oldBackColor = ::SetBkColor(hdc, ::GetSysColor(COLOR_3DHILIGHT));
                     POINT p;

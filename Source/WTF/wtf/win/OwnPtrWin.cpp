@@ -39,34 +39,10 @@ void deleteOwnedPtr(HBITMAP ptr)
         DeleteObject(ptr);
 }
 
-void deleteOwnedPtr(HBRUSH ptr)
-{
-    if (ptr)
-        DeleteObject(ptr);
-}
-
 void deleteOwnedPtr(HDC ptr)
 {
     if (ptr)
         DeleteDC(ptr);
-}
-
-void deleteOwnedPtr(HFONT ptr)
-{
-    if (ptr)
-        DeleteObject(ptr);
-}
-
-void deleteOwnedPtr(HPALETTE ptr)
-{
-    if (ptr)
-        DeleteObject(ptr);
-}
-
-void deleteOwnedPtr(HPEN ptr)
-{
-    if (ptr)
-        DeleteObject(ptr);
 }
 
 void deleteOwnedPtr(HRGN ptr)

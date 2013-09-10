@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -443,7 +443,7 @@ void FullscreenVideoController::createHUDWindow()
     // will get cleaned up when m_bitmap is destroyed in the dtor
     void* pixels;
     BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(IntSize(windowWidth, windowHeight));
-    m_bitmap = adoptPtr(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
+    m_bitmap = adoptGDIObject(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
 
     // Dirty the window so the HUD draws
     RECT clearRect = { m_hudPosition.x(), m_hudPosition.y(), m_hudPosition.x() + windowWidth, m_hudPosition.y() + windowHeight };
@@ -487,7 +487,7 @@ static String timeToString(float time)
 
 void FullscreenVideoController::draw()
 {
-    OwnPtr<HDC> bitmapDC = adoptPtr(CreateCompatibleDC(HWndDC(m_hudWindow)));
+    auto bitmapDC = adoptGDIObject(::CreateCompatibleDC(HWndDC(m_hudWindow)));
     HGDIOBJ oldBitmap = SelectObject(bitmapDC.get(), m_bitmap.get());
 
     GraphicsContext context(bitmapDC.get(), true);

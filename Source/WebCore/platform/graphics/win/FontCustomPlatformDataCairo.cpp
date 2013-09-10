@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Computer, Inc.
+ * Copyright (C) 2007, 2008, 2013 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,6 +28,7 @@
 #include <cairo-win32.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/Base64.h>
+#include <wtf/win/GDIObject.h>
 
 namespace WebCore {
 
@@ -58,11 +59,11 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     logFont.lfItalic = italic;
     logFont.lfWeight = bold ? 700 : 400;
 
-    HFONT hfont = CreateFontIndirect(&logFont);
+    auto hfont = adoptGDIObject(::CreateFontIndirect(&logFont));
 
     cairo_font_face_t* fontFace = cairo_win32_font_face_create_for_hfont(hfont);
 
-    FontPlatformData fontPlatformData(hfont, fontFace, size, bold, italic);
+    FontPlatformData fontPlatformData(hfont.leak(), fontFace, size, bold, italic);
 
     cairo_font_face_destroy(fontFace);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
 #include <wtf/RefPtr.h>
+#include <wtf/win/GDIObject.h>
 
 namespace WebCore {
 class GraphicsContext;
@@ -153,7 +154,7 @@ private:
     RefPtr<WebCore::HTMLMediaElement> m_mediaElement;
 
     HWND m_hudWindow;
-    OwnPtr<HBITMAP> m_bitmap;
+    GDIObject<HBITMAP> m_bitmap;
     WebCore::IntSize m_fullscreenSize;
     WebCore::IntPoint m_hudPosition;
     OwnPtr<WebCore::MediaPlayerPrivateFullscreenWindow> m_fullscreenWindow;

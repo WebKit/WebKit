@@ -3526,20 +3526,20 @@ class LeakyPatternTest(CppStyleTestBase):
     def test_create_dc(self):
         self.assert_leaky_pattern_check(
             'HDC dc2 = ::CreateDC();',
-            'Use adoptPtr and OwnPtr<HDC> when calling CreateDC to avoid potential '
+            'Use adoptGDIObject and GDIObject<HDC> when calling CreateDC to avoid potential '
             'memory leaks.  [runtime/leaky_pattern] [5]')
 
         self.assert_leaky_pattern_check(
-            'adoptPtr(CreateDC());',
+            'adoptGDIObject(CreateDC());',
             '')
 
     def test_create_compatible_dc(self):
         self.assert_leaky_pattern_check(
             'HDC dc2 = CreateCompatibleDC(dc);',
-            'Use adoptPtr and OwnPtr<HDC> when calling CreateCompatibleDC to avoid potential '
+            'Use adoptGDIObject and GDIObject<HDC> when calling CreateCompatibleDC to avoid potential '
             'memory leaks.  [runtime/leaky_pattern] [5]')
         self.assert_leaky_pattern_check(
-            'adoptPtr(CreateCompatibleDC(dc));',
+            'adoptGDIObject(CreateCompatibleDC(dc));',
             '')
 
 

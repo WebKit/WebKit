@@ -491,9 +491,6 @@
     <ClInclude Include="..\wtf\NeverDestroyed.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\Ref.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\Noncopyable.h">
       <Filter>wtf</Filter>
     </ClInclude>
@@ -680,6 +677,9 @@
     </ClInclude>
     <ClInclude Include="..\wtf\DeferrableRefCounted.h">
       <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\win\GDIObject.h">
+      <Filter>win</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

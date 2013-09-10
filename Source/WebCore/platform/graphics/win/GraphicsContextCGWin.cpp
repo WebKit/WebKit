@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,12 @@
 #include "GraphicsContextCG.h"
 
 #include "AffineTransform.h"
+#include "GraphicsContextPlatformPrivateCG.h"
 #include "Path.h"
 
 #include <CoreGraphics/CGBitmapContext.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
-#include "GraphicsContextPlatformPrivateCG.h"
+#include <wtf/win/GDIObject.h>
 
 using namespace std;
 
@@ -99,7 +100,7 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     if (dstRect.isEmpty())
         return;
 
-    OwnPtr<HBITMAP> bitmap = adoptPtr(static_cast<HBITMAP>(GetCurrentObject(hdc, OBJ_BITMAP)));
+    auto bitmap = adoptGDIObject(static_cast<HBITMAP>(::GetCurrentObject(hdc, OBJ_BITMAP)));
 
     DIBPixelData pixelData(bitmap.get());
 

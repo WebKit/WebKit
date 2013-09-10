@@ -1,3 +1,33 @@
+2013-09-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Change from using OwnPtr<GDI Stuff> to new GDIObject template.
+        https://bugs.webkit.org/show_bug.cgi?id=120778
+
+        Reviewed by Anders Carlsson.
+
+        * WTF.vcxproj/WTF.vcxproj: Add new GDIObject header file.
+        * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+        * WTF.vcxproj/copy-files.cmd: Copy new header file.
+        * wtf/OwnPtrCommon.h: Remove some GDI specializations.
+        * wtf/win/GDIObject.h: Added.
+        (WTF::GDIObject::GDIObject):
+        (WTF::GDIObject::~GDIObject):
+        (WTF::GDIObject::get):
+        (WTF::GDIObject::operator!):
+        (WTF::GDIObject::operator UnspecifiedBoolType):
+        (WTF::GDIObject::operator=):
+        (WTF::GDIObject::swap):
+        (WTF::::clear):
+        (WTF::::leak):
+        (WTF::::GDIObject):
+        (WTF::=):
+        (WTF::adoptGDIObject):
+        (WTF::swap):
+        (WTF::T):
+        (WTF::HDC):
+        * wtf/win/OwnPtrWin.cpp:
+        (WTF::deleteOwnedPtr): Remove some GDI specializations.
+
 2013-09-09  Anders Carlsson  <andersca@apple.com>
 
         Introduce WTF::createOwned

@@ -269,6 +269,7 @@
     <ClInclude Include="..\wtf\ValueCheck.h" />
     <ClInclude Include="..\wtf\Vector.h" />
     <ClInclude Include="..\wtf\VMTags.h" />
+    <ClInclude Include="..\wtf\win\GDIObject.h" />
     <ClInclude Include="..\wtf\WTFThreadData.h" />
   </ItemGroup>
   <ItemGroup>

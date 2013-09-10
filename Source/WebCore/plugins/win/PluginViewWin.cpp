@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc. All rights reserved.
  *
@@ -71,6 +71,7 @@
 #include <runtime/JSLock.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/win/GDIObject.h>
 
 #if OS(WINCE)
 #undef LOG_NPERROR
@@ -457,7 +458,6 @@ void PluginView::updatePluginWidget()
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 
     if (platformPluginWidget() && (!m_haveUpdatedPluginWidget || m_windowRect != oldWindowRect || m_clipRect != oldClipRect)) {
-        HRGN rgn;
 
         setCallingPlugin(true);
 
@@ -467,19 +467,19 @@ void PluginView::updatePluginWidget()
         bool clipToZeroRect = !m_plugin->quirks().contains(PluginQuirkDontClipToZeroRectWhenScrolling);
 
         if (clipToZeroRect) {
-            rgn = ::CreateRectRgn(0, 0, 0, 0);
-            ::SetWindowRgn(platformPluginWidget(), rgn, FALSE);
+            auto rgn = adoptGDIObject(::CreateRectRgn(0, 0, 0, 0));
+            ::SetWindowRgn(platformPluginWidget(), rgn.leak(), FALSE);
         } else {
-            rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.maxX(), m_clipRect.maxY());
-            ::SetWindowRgn(platformPluginWidget(), rgn, TRUE);
+            auto rgn = adoptGDIObject(::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.maxX(), m_clipRect.maxY()));
+            ::SetWindowRgn(platformPluginWidget(), rgn.leak(), TRUE);
         }
 
         if (!m_haveUpdatedPluginWidget || m_windowRect != oldWindowRect)
             ::MoveWindow(platformPluginWidget(), m_windowRect.x(), m_windowRect.y(), m_windowRect.width(), m_windowRect.height(), TRUE);
 
         if (clipToZeroRect) {
-            rgn = ::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.maxX(), m_clipRect.maxY());
-            ::SetWindowRgn(platformPluginWidget(), rgn, TRUE);
+            auto rgn = adoptGDIObject(::CreateRectRgn(m_clipRect.x(), m_clipRect.y(), m_clipRect.maxX(), m_clipRect.maxY()));
+            ::SetWindowRgn(platformPluginWidget(), rgn.leak(), TRUE);
         }
 
         setCallingPlugin(false);
@@ -1068,7 +1068,7 @@ void PluginView::platformDestroy()
 PassRefPtr<Image> PluginView::snapshot()
 {
 #if !PLATFORM(GTK) && !USE(WINGDI)
-    OwnPtr<HDC> hdc = adoptPtr(CreateCompatibleDC(0));
+    auto hdc = adoptGDIObject(::CreateCompatibleDC(0));
 
     if (!m_isWindowed) {
         // Enable world transforms.
@@ -1088,7 +1088,7 @@ PassRefPtr<Image> PluginView::snapshot()
 
     void* bits;
     BitmapInfo bmp = BitmapInfo::createBottomUp(frameRect().size());
-    OwnPtr<HBITMAP> hbmp = adoptPtr(CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, 0, 0));
+    auto hbmp = adoptGDIObject(::CreateDIBSection(0, &bmp, DIB_RGB_COLORS, &bits, 0, 0));
 
     HBITMAP hbmpOld = static_cast<HBITMAP>(SelectObject(hdc.get(), hbmp.get()));
 

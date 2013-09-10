@@ -26,19 +26,16 @@
 #ifndef FrameWin_h
 #define FrameWin_h
 
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
-
-// Forward declared so we don't need wingdi.h.
-typedef struct HBITMAP__* HBITMAP;
+#include <wtf/win/GDIObject.h>
 
 namespace WebCore {
 
 class Frame;
 class IntRect;
 
-PassOwnPtr<HBITMAP> imageFromRect(const Frame*, IntRect&);
-PassOwnPtr<HBITMAP> imageFromSelection(Frame*, bool forceWhiteText);
+GDIObject<HBITMAP> imageFromRect(const Frame*, IntRect&);
+GDIObject<HBITMAP> imageFromSelection(Frame*, bool forceWhiteText);
 void computePageRectsForFrame(Frame*, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& outPages, int& outPageHeight);
 
 } // namespace WebCore

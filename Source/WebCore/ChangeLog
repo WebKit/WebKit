@@ -1,3 +1,62 @@
+2013-09-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Change from using OwnPtr<GDI Stuff> to new GDIObject template.
+        https://bugs.webkit.org/show_bug.cgi?id=120778
+
+        Reviewed by Anders Carlsson.
+
+        Change code to use a GDI-specific smart pointer, rather than OwnPtr. This
+        is a first step to simplifying OwnPtr. It also gets rid of some Windows-
+        specific code in WTF.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Add the new header file.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * page/win/FrameCGWin.cpp:
+        (WebCore::imageFromRect): Switch to GDIObject.
+        * page/win/FrameCairoWin.cpp:
+        (WebCore::imageFromRect): Switch to GDIObject.
+        * page/win/FrameWin.cpp:
+        (WebCore::imageFromSelection): Switch to GDIObject.
+        (WebCore::Frame::dragImageForSelection): Ditto.
+        (WebCore::Frame::nodeImage): Ditto.
+        * page/win/FrameWin.h:
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::getDirtyRects): Switch from OwnPtr to GDIObject.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::createGDIFont): Switch to GDIObject.
+        (WebCore::FontCache::createFontPlatformData): Ditto.
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Switch to GDIObject.
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Switch to GDIObject.
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext): Switch to GDIObject.
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext): Switch to GDIObject.
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::getWindowsContext): Switch to GDIObject.
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::platformCreateScaledFontData): Switch to GDIObject.
+        * platform/win/CursorWin.cpp:
+        (WebCore::createSharedCursor): Switch to GDIObject.
+        * platform/win/DragImageCGWin.cpp:
+        (WebCore::scaleDragImage): Switch to GDIObject.
+        (WebCore::createDragImageFromImage):
+        * platform/win/DragImageCairoWin.cpp: 
+        (WebCore::scaleDragImage): Switch to GDIObject.
+        (WebCore::createDragImageFromImage): Ditto.
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageForLink): Switch to GDIObject.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeImage): Switch to GDIObject.
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::paintTrackPiece): Switch to GDIObject.
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::updatePluginWidget): Switch to GDIObject.
+        (WebCore::PluginView::snapshot): Ditto.
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::drawControl): Switch to GDIObject.
+
 2013-09-10  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         REGRESSION (r147454): Youtube annotation links to new window broken

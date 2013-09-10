@@ -3177,9 +3177,6 @@
     <ClCompile Include="..\dom\Comment.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\ComposedShadowTreeWalker.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
     <ClCompile Include="..\dom\CompositionEvent.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -10241,9 +10238,6 @@
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\Comment.h">
-      <Filter>dom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\dom\ComposedShadowTreeWalker.h">
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\CompositionEvent.h">

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/win/GDIObject.h>
 
 using namespace WebCore;
 
@@ -140,7 +141,7 @@ void WebNodeHighlight::update()
 {
     ASSERT(m_overlay);
 
-    HDC hdc = ::CreateCompatibleDC(HWndDC(m_overlay));
+    auto hdc = adoptGDIObject(::CreateCompatibleDC(HWndDC(m_overlay)));
     if (!hdc)
         return;
 
@@ -157,12 +158,12 @@ void WebNodeHighlight::update()
     BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(IntSize(size));
 
     void* pixels = 0;
-    OwnPtr<HBITMAP> hbmp = adoptPtr(::CreateDIBSection(hdc, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
+    auto hbmp = adoptGDIObject(::CreateDIBSection(hdc.get(), &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
     ASSERT_WITH_MESSAGE(hbmp, "::CreateDIBSection failed with error %lu", ::GetLastError());
 
-    ::SelectObject(hdc, hbmp.get());
+    ::SelectObject(hdc.get(), hbmp.get());
 
-    GraphicsContext context(hdc);
+    GraphicsContext context(hdc.get());
 #if ENABLE(INSPECTOR)
     m_inspectedWebView->page()->inspectorController()->drawHighlight(context);
 #endif // ENABLE(INSPECTOR)
@@ -181,8 +182,7 @@ void WebNodeHighlight::update()
     dstPoint.x = webViewRect.left;
     dstPoint.y = webViewRect.top;
 
-    ::UpdateLayeredWindow(m_overlay, HWndDC(0), &dstPoint, &size, hdc, &srcPoint, 0, &bf, ULW_ALPHA);
-    ::DeleteDC(hdc);
+    ::UpdateLayeredWindow(m_overlay, HWndDC(0), &dstPoint, &size, hdc.get(), &srcPoint, 0, &bf, ULW_ALPHA);
 }
 
 void WebNodeHighlight::placeBehindWindow(HWND window)
