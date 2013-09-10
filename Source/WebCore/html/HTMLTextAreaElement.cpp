@@ -98,7 +98,6 @@ HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document*
 {
     ASSERT(hasTagName(textareaTag));
     setFormControlValueMatchesRenderer(true);
-    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)

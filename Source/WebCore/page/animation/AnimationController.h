@@ -46,7 +46,7 @@ class RenderStyle;
 
 class AnimationController {
 public:
-    AnimationController(Frame*);
+    explicit AnimationController(Frame&);
     ~AnimationController();
 
     void cancelAnimations(RenderObject*);
@@ -83,7 +83,7 @@ public:
     static bool supportsAcceleratedAnimationOfProperty(CSSPropertyID);
 
 private:
-    OwnPtr<AnimationControllerPrivate> m_data;
+    const OwnPtr<AnimationControllerPrivate> m_data;
     int m_beginAnimationUpdateCount;
 };
 
