@@ -75,15 +75,12 @@ function findFirstTextNode(node)
         return iterToFindFirstTextNode(node);
 }
 
-function verifyMarker(node, expectedMarked, needsFocus)
+function verifyMarker(node, expectedMarked)
 {
-    if (true) {
-        if (node instanceof HTMLInputElement || node instanceof HTMLTextAreaElement) {
-            node.focus();
-        } else {
-            sel.selectAllChildren(node);
-        }
-    }
+    if (node instanceof HTMLInputElement || node instanceof HTMLTextAreaElement)
+        node.focus();
+    else
+        sel.selectAllChildren(node);
 
     var textNode = findFirstTextNode(node);
     var num = internals.markerCountForNode(textNode, "grammar");

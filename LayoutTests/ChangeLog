@@ -1,3 +1,15 @@
+2013-09-10  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        needsFocus is always undefined in grammar-paste.html
+        https://bugs.webkit.org/show_bug.cgi?id=121097
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary needsFocus parameter which is always undefined.
+        In addition, remove if (true) condition in the test.
+
+        * editing/spelling/grammar-paste.html:
+
 2013-09-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Integrate Mac results from paragraph-with-linebreaks.html
