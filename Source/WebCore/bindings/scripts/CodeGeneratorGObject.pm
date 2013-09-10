@@ -843,7 +843,7 @@ sub GetGReturnMacro {
         }
     } else {
         if (ParamCanBeNull($functionName, $paramName)) {
-            return;
+            return "";
         }
         $condition = "$paramName";
     }
