@@ -1093,9 +1093,9 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
     test->loadHtml("<html><title></title>"
         "<body><p>Test Web Page Visibility</p>"
         "<script>"
-        "document.addEventListener(\"webkitvisibilitychange\", onVisibilityChange, false);"
+        "document.addEventListener(\"visibilitychange\", onVisibilityChange, false);"
         "function onVisibilityChange() {"
-        "    document.title = document.webkitVisibilityState;"
+        "    document.title = document.visibilityState;"
         "}"
         "</script>"
         "</body></html>",
@@ -1105,13 +1105,13 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 
     GOwnPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.webkitVisibilityState;", &error.outPtr());
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.visibilityState;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
     GOwnPtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "hidden");
 
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.webkitHidden;", &error.outPtr());
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.hidden;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
     g_assert(WebViewTest::javascriptResultToBoolean(javascriptResult));
@@ -1120,13 +1120,13 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
     test->showInWindow();
     test->waitUntilTitleChanged();
 
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.webkitVisibilityState;", &error.outPtr());
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.visibilityState;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
     valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "visible");
 
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.webkitHidden;", &error.outPtr());
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.hidden;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
     g_assert(!WebViewTest::javascriptResultToBoolean(javascriptResult));
@@ -1135,13 +1135,13 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
     gtk_widget_hide(GTK_WIDGET(test->m_webView));
     test->waitUntilTitleChanged();
 
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.webkitVisibilityState;", &error.outPtr());
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.visibilityState;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
     valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
     g_assert_cmpstr(valueString.get(), ==, "hidden");
 
-    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.webkitHidden;", &error.outPtr());
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.hidden;", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
     g_assert(WebViewTest::javascriptResultToBoolean(javascriptResult));
