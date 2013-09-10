@@ -1,3 +1,25 @@
+2013-09-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Enable JSC stress tests for the rest of non-Windows platforms
+        https://bugs.webkit.org/show_bug.cgi?id=121021
+
+        Reviewed by Filip Pizlo.
+
+        The JSC stress tests can already be enabled on Linux-based ports.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunJavaScriptCoreTests.commandComplete): Reformulate the regular expressions used to find the number of regressed
+        JSC tests of various test suites. The expressions now look for the suite-specific report compartment over the
+        complete output, with the number of failing or crashing tests properly extracted.
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py: Add a couple of unit tests and expand the tested
+        output in other unit tests testing the parsing of the output in the new format.
+        (test_jsc_stress_failure_new_output):
+        (test_fast_js_crashes_and_jsc_stress_failures_new_output):
+        * Scripts/run-javascriptcore-tests: Enable the JSC stress tests on all but the Apple Win port.
+        * Scripts/run-jsc-stress-tests: `sysctl -n hw.availcpu` doesn't work on Linux-based ports but the numProcesses
+        variable is still gracefully assigned a zero value. In that case, try running `nproc --all` to gather the number
+        of available CPUs so the stress tests can be run in parallel.
+
 2013-09-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Expose DOM ID and ClassList to AX APIs for automation and AT element hashes

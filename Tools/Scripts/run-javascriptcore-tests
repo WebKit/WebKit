@@ -78,7 +78,7 @@ my $runFastJS = !isAppleWinWebKit();
 
 # FIXME: run-jsc-stress-tests should be ported to other platforms.
 # https://bugs.webkit.org/show_bug.cgi?id=120809
-my $runJSCStress = isAppleMacWebKit();
+my $runJSCStress = !isAppleWinWebKit();
 
 my $enableFTL = 0;
 
