@@ -54,6 +54,7 @@
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLOptionsCollection.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLPlugInImageElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
@@ -1542,6 +1543,15 @@ static bool shouldUseAccessiblityObjectInnerText(AccessibilityObject* obj, Acces
     return true;
 }
 
+static bool shouldAddSpaceBeforeAppendingNextElement(StringBuilder& builder, String& childText)
+{
+    if (!builder.length() || !childText.length())
+        return false;
+
+    // We don't need to add an additional space before or after a line break.
+    return !(isHTMLLineBreak(childText[0]) || isHTMLLineBreak(builder[builder.length() - 1]));
+}
+
 String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMode mode) const
 {
     Node* node = this->node();
@@ -1557,7 +1567,7 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
             Vector<AccessibilityText> textOrder;
             toAccessibilityNodeObject(child)->alternativeText(textOrder);
             if (textOrder.size() > 0 && textOrder[0].text.length()) {
-                if (builder.length())
+                if (shouldAddSpaceBeforeAppendingNextElement(builder, textOrder[0].text))
                     builder.append(' ');
                 builder.append(textOrder[0].text);
                 continue;
@@ -1566,13 +1576,13 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
 
         String childText = child->textUnderElement(mode);
         if (childText.length()) {
-            if (builder.length())
+            if (shouldAddSpaceBeforeAppendingNextElement(builder, childText))
                 builder.append(' ');
             builder.append(childText);
         }
     }
 
-    return builder.toString().stripWhiteSpace().simplifyWhiteSpace();
+    return builder.toString().stripWhiteSpace().simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
 }
 
 String AccessibilityNodeObject::title() const

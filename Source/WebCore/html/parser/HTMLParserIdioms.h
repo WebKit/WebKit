@@ -38,6 +38,7 @@ class Decimal;
 bool isHTMLSpace(UChar);
 bool isHTMLLineBreak(UChar);
 bool isNotHTMLSpace(UChar);
+bool isHTMLSpaceButNotLineBreak(UChar character);
 
 // Strip leading and trailing whitespace as defined by the HTML specification. 
 String stripLeadingAndTrailingHTMLSpaces(const String&);
@@ -90,6 +91,11 @@ inline bool isHTMLLineBreak(UChar character)
 inline bool isNotHTMLSpace(UChar character)
 {
     return !isHTMLSpace(character);
+}
+
+inline bool isHTMLSpaceButNotLineBreak(UChar character)
+{
+    return isHTMLSpace(character) && !isHTMLLineBreak(character);
 }
 
 bool threadSafeMatch(const QualifiedName&, const QualifiedName&);

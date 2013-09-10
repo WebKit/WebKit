@@ -1,3 +1,16 @@
+2013-09-10  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Test /webkit/atk/getTextInParagraphAndBodyModerate fails
+        https://bugs.webkit.org/show_bug.cgi?id=105538
+
+        Reviewed by Chris Fleizach.
+
+        Added new Layout test and platform specific expectations.
+
+        * platform/efl/accessibility/paragraph-with-linebreaks-expected.txt: Added.
+        * platform/gtk/accessibility/paragraph-with-linebreaks-expected.txt: Added.
+        * accessibility/paragraph-with-linebreaks.html: Added.
+
 2013-09-10  Arpita Bahuguna  <a.bah@samsung.com>
 
         When deleting editable content, typing style should be reset when moving into another node.

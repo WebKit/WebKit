@@ -1,3 +1,15 @@
+2013-09-10  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Test /webkit/atk/getTextInParagraphAndBodyModerate fails
+        https://bugs.webkit.org/show_bug.cgi?id=105538
+
+        Reviewed by Chris Fleizach.
+
+        Unskip passing test getTextInParagraphAndBodyModerate.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Unskip pasing test.
+
 2013-09-09  Mark Lam  <mark.lam@apple.com>
 
         Remove more references to the deleted js-test-style.css.

@@ -1,3 +1,28 @@
+2013-09-10  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Test /webkit/atk/getTextInParagraphAndBodyModerate fails
+        https://bugs.webkit.org/show_bug.cgi?id=105538
+
+        Reviewed by Chris Fleizach.
+
+        Expose '\n' for linebreaks when they were explicitly set by the
+        author of the web content with a <br> tag.
+
+        Tests: accessibility/paragraph-with-linebreaks.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::shouldAddSpaceBeforeAppendingNextElement): Helper
+        function to decide when to append spaces when building the text
+        under an element, considering line breaks.
+        (WebCore::AccessibilityNodeObject::textUnderElement): Use the
+        shouldAddSpaceBeforeAppendingNextElement() function here.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement): Return the
+        renderer's text for accessibility objects exposing <br> elements.
+        * html/parser/HTMLParserIdioms.h:
+        (WebCore::isHTMLSpaceButNotLineBreak): New helper function, useful
+        to be passed to other functions like simplifyWhiteSpace().
+
 2013-09-10  Arpita Bahuguna  <a.bah@samsung.com>
 
         When deleting editable content, typing style should be reset when moving into another node.

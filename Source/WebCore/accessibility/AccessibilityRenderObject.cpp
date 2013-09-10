@@ -65,6 +65,7 @@
 #include "NodeList.h"
 #include "Page.h"
 #include "ProgressTracker.h"
+#include "RenderBR.h"
 #include "RenderButton.h"
 #include "RenderFieldset.h"
 #include "RenderFileUploadControl.h"
@@ -630,6 +631,10 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
     if (m_renderer->isFileUploadControl())
         return toRenderFileUploadControl(m_renderer)->buttonValue();
     
+    // Reflect when a content author has explicitly marked a line break.
+    if (m_renderer->isBR())
+        return toRenderBR(*m_renderer).text();
+
 #if ENABLE(MATHML)
     // Math operators create RenderText nodes on the fly that are not tied into the DOM in a reasonable way,
     // so rangeOfContents does not work for them (nor does regular text selection).
