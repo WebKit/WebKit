@@ -21,7 +21,10 @@
 #ifndef WTF_Vector_h
 #define WTF_Vector_h
 
-#include <wtf/Alignment.h>
+#include <limits>
+#include <string.h>
+#include <type_traits>
+#include <utility>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/MallocPtr.h>
@@ -30,9 +33,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/ValueCheck.h>
 #include <wtf/VectorTraits.h>
-#include <limits>
-#include <string.h>
-#include <utility>
 
 namespace WTF {
 
@@ -455,20 +455,20 @@ public:
         Base::reallocateBuffer(newCapacity);
     }
 
-    void swap(VectorBuffer<T, inlineCapacity>& other)
+    void swap(VectorBuffer& other)
     {
         if (buffer() == inlineBuffer() && other.buffer() == other.inlineBuffer()) {
-            WTF::swap(m_inlineBuffer, other.m_inlineBuffer);
+            std::swap_ranges(m_inlineBuffer, m_inlineBuffer + inlineCapacity, other.m_inlineBuffer);
             std::swap(m_capacity, other.m_capacity);
         } else if (buffer() == inlineBuffer()) {
             m_buffer = other.m_buffer;
             other.m_buffer = other.inlineBuffer();
-            WTF::swap(m_inlineBuffer, other.m_inlineBuffer);
+            std::swap_ranges(m_inlineBuffer, m_inlineBuffer + inlineCapacity, other.m_inlineBuffer);
             std::swap(m_capacity, other.m_capacity);
         } else if (other.buffer() == other.inlineBuffer()) {
             other.m_buffer = m_buffer;
             m_buffer = inlineBuffer();
-            WTF::swap(m_inlineBuffer, other.m_inlineBuffer);
+            std::swap_ranges(m_inlineBuffer, m_inlineBuffer + inlineCapacity, other.m_inlineBuffer);
             std::swap(m_capacity, other.m_capacity);
         } else {
             std::swap(m_buffer, other.m_buffer);
@@ -501,11 +501,10 @@ private:
     using Base::m_buffer;
     using Base::m_capacity;
 
-    static const size_t m_inlineBufferSize = inlineCapacity * sizeof(T);
-    T* inlineBuffer() { return reinterpret_cast_ptr<T*>(m_inlineBuffer.buffer); }
-    const T* inlineBuffer() const { return reinterpret_cast_ptr<const T*>(m_inlineBuffer.buffer); }
+    T* inlineBuffer() { return reinterpret_cast_ptr<T*>(m_inlineBuffer); }
+    const T* inlineBuffer() const { return reinterpret_cast_ptr<const T*>(m_inlineBuffer); }
 
-    AlignedBuffer<m_inlineBufferSize, WTF_ALIGN_OF(T)> m_inlineBuffer;
+    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_inlineBuffer[inlineCapacity];
 };
 
 struct UnsafeVectorOverflow {

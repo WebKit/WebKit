@@ -27,6 +27,7 @@
 #define PODArena_h
 
 #include <stdint.h>
+#include <wtf/Alignment.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
