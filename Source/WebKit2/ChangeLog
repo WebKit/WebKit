@@ -1,3 +1,19 @@
+2013-09-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2][GTK] Frequent crashes when showing context menus in Debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=121099
+
+        Reviewed by Carlos Garcia Campos.
+
+        Disconnect signal handlers when destroying the context menu proxy
+        object. This avoids use-after-free crashes when opening several
+        context menus in a row.
+
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::append):
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk):
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+
 2013-09-10  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] make use of qtHaveModule() 

@@ -31,6 +31,7 @@
 #include "WebContextMenuProxy.h"
 #include <WebCore/ContextMenu.h>
 #include <WebCore/IntPoint.h>
+#include <wtf/HashMap.h>
 
 namespace WebKit {
 
@@ -62,6 +63,7 @@ private:
     WebPageProxy* m_page;
     WebCore::ContextMenu m_menu;
     WebCore::IntPoint m_popupPosition;
+    HashMap<unsigned long, GtkAction*> m_signalHandlers;
 };
 
 

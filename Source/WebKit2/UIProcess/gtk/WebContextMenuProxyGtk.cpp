@@ -84,16 +84,19 @@ static void contextMenuItemVisibilityChanged(GtkAction* action, GParamSpec*, Web
 
 void WebContextMenuProxyGtk::append(ContextMenuItem& menuItem)
 {
+    unsigned long signalHandlerId;
     GtkAction* action = menuItem.gtkAction();
     if (action) {
         switch (menuItem.type()) {
         case ActionType:
         case CheckableActionType:
             g_object_set_data(G_OBJECT(action), gContextMenuActionId, GINT_TO_POINTER(menuItem.action()));
-            g_signal_connect(action, "activate", G_CALLBACK(contextMenuItemActivatedCallback), m_page);
+            signalHandlerId = g_signal_connect(action, "activate", G_CALLBACK(contextMenuItemActivatedCallback), m_page);
+            m_signalHandlers.set(signalHandlerId, action);
             // Fall through.
         case SubmenuType:
-            g_signal_connect(action, "notify::visible", G_CALLBACK(contextMenuItemVisibilityChanged), this);
+            signalHandlerId = g_signal_connect(action, "notify::visible", G_CALLBACK(contextMenuItemVisibilityChanged), this);
+            m_signalHandlers.set(signalHandlerId, action);
             break;
         case SeparatorType:
             break;
@@ -167,6 +170,9 @@ WebContextMenuProxyGtk::WebContextMenuProxyGtk(GtkWidget* webView, WebPageProxy*
 
 WebContextMenuProxyGtk::~WebContextMenuProxyGtk()
 {
+    for (auto iter = m_signalHandlers.begin(); iter != m_signalHandlers.end(); ++iter)
+        g_signal_handler_disconnect(iter->value, iter->key);
+
     webkitWebViewBaseSetActiveContextMenuProxy(WEBKIT_WEB_VIEW_BASE(m_webView), 0);
 }
 
