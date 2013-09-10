@@ -50,6 +50,8 @@ private:
     CachedResourceHandle<CachedFont> m_cachedFont;
 };
 
+ELEMENT_TYPE_CASTS(SVGFontFaceUriElement)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG_FONTS)

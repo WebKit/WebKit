@@ -34,6 +34,8 @@ private:
     SVGFEFuncBElement(const QualifiedName&, Document*);
 };
 
+ELEMENT_TYPE_CASTS(SVGFEFuncBElement)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

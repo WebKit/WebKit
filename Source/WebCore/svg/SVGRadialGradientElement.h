@@ -57,6 +57,8 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
+ELEMENT_TYPE_CASTS(SVGRadialGradientElement)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

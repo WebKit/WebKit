@@ -82,6 +82,8 @@ private:
     RefPtr<MeterValueElement> m_value;
 };
 
+ELEMENT_TYPE_CASTS(HTMLMeterElement)
+
 } // namespace
 
 #endif

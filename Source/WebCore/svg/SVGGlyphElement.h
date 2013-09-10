@@ -57,6 +57,8 @@ private:
     void invalidateGlyphCache();
 };
 
+ELEMENT_TYPE_CASTS(SVGGlyphElement)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG_FONTS)

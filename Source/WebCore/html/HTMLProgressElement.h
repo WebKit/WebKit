@@ -69,6 +69,8 @@ private:
     ProgressValueElement* m_value;
 };
 
+ELEMENT_TYPE_CASTS(HTMLProgressElement)
+
 } // namespace
 
 #endif

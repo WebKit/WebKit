@@ -628,17 +628,13 @@ sub printTypeHelpers
 
         my $class = $parsedTags{$name}{interfaceName};
         my $checkHelper = "is$class";
-        my $castingHelper = "to$class";
 
         print F "class $class;\n";
         print F "inline bool $checkHelper(const Element& element) { return element.hasTagName(".$parameters{namespace}."Names::".$name."Tag); }\n";
         print F "inline bool $checkHelper(const Element* element) { ASSERT(element); return $checkHelper(*element); }\n";
         print F "inline bool $checkHelper(const Node* node) { ASSERT(node); return node->isElementNode() && $checkHelper(toElement(node)); }\n";
+        print F "inline bool $checkHelper(const Node& node) { return node.isElementNode() && $checkHelper(toElement(node)); }\n";
         print F "template <> inline bool isElementOfType<$class>(const Element* element) { return $checkHelper(element); }\n";
-        print F "inline $class* $castingHelper(Node* node) { ASSERT_WITH_SECURITY_IMPLICATION(!node || $checkHelper(node)); return reinterpret_cast<".$class."*>(node); }\n";
-        print F "inline $class* $castingHelper(Element* element) { ASSERT_WITH_SECURITY_IMPLICATION(!element || $checkHelper(element)); return reinterpret_cast<".$class."*>(element); }\n";
-        print F "inline const $class* $castingHelper(const Node* node) { ASSERT_WITH_SECURITY_IMPLICATION(!node || $checkHelper(node)); return reinterpret_cast<const ".$class."*>(node); }\n";
-        print F "inline const $class* $castingHelper(const Element* element) { ASSERT_WITH_SECURITY_IMPLICATION(!element || $checkHelper(element)); return reinterpret_cast<const ".$class."*>(element); }\n";
 
         print F "\n";
     }

@@ -45,6 +45,8 @@ private:
     virtual HTMLFormElement* virtualForm() const OVERRIDE;
 };
 
+ELEMENT_TYPE_CASTS(HTMLLegendElement)
+
 } //namespace
 
 #endif

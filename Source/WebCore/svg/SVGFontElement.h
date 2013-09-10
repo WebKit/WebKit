@@ -88,6 +88,8 @@ private:
     bool m_isGlyphCacheValid;
 };
 
+ELEMENT_TYPE_CASTS(SVGFontElement)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG_FONTS)

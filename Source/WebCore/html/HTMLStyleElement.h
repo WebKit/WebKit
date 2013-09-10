@@ -93,6 +93,8 @@ private:
     ScopedStyleRegistrationState m_scopedStyleRegistrationState;
 };
 
+ELEMENT_TYPE_CASTS(HTMLStyleElement)
+
 } //namespace
 
 #endif

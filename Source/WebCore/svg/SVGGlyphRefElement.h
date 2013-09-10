@@ -61,6 +61,8 @@ private:
     float m_dy;
 };
 
+ELEMENT_TYPE_CASTS(SVGGlyphRefElement)
+
 }
 
 #endif

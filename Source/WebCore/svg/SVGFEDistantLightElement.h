@@ -35,6 +35,8 @@ private:
     virtual PassRefPtr<LightSource> lightSource() const;
 };
 
+ELEMENT_TYPE_CASTS(SVGFEDistantLightElement)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

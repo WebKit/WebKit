@@ -70,6 +70,8 @@ private:
     Shape m_shape;
 };
 
+ELEMENT_TYPE_CASTS(HTMLAreaElement)
+
 } //namespace
 
 #endif

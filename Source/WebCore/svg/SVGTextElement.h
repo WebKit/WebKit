@@ -41,6 +41,8 @@ private:
     virtual bool childShouldCreateRenderer(const Node*) const;
 };
 
+ELEMENT_TYPE_CASTS(SVGTextElement)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

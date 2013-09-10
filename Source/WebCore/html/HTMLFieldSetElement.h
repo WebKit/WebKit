@@ -63,6 +63,8 @@ private:
     mutable uint64_t m_documentVersion;
 };
 
+ELEMENT_TYPE_CASTS(HTMLFieldSetElement)
+
 } // namespace
 
 #endif

@@ -115,6 +115,8 @@ private:
     AtomicString m_bestFitImageURL;
 };
 
+ELEMENT_TYPE_CASTS(HTMLImageElement)
+
 } //namespace
 
 #endif

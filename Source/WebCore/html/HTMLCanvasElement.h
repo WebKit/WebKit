@@ -188,8 +188,7 @@ private:
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
 };
 
-// This will catch anyone doing an unnecessary cast.
-void toHTMLCanvasElement(const HTMLCanvasElement*);
+ELEMENT_TYPE_CASTS(HTMLCanvasElement)
 
 } //namespace
 

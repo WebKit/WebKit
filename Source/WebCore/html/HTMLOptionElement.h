@@ -95,6 +95,8 @@ private:
     RefPtr<RenderStyle> m_style;
 };
 
+ELEMENT_TYPE_CASTS(HTMLOptionElement)
+
 } // namespace
 
 #endif

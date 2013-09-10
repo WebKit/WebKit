@@ -69,6 +69,8 @@ private:
     Timer<SVGElement> m_svgLoadEventTimer;
 };
 
+ELEMENT_TYPE_CASTS(SVGStyleElement)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

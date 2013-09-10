@@ -443,5 +443,7 @@ private:
 #endif
 };
 
+ELEMENT_TYPE_CASTS(HTMLInputElement)
+
 } //namespace
 #endif

@@ -97,6 +97,8 @@ private:
     Timer<HTMLTrackElement> m_loadTimer;
 };
 
+ELEMENT_TYPE_CASTS(HTMLTrackElement)
+
 }
 
 #endif

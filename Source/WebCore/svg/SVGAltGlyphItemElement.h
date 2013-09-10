@@ -38,6 +38,8 @@ private:
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
 };
 
+ELEMENT_TYPE_CASTS(SVGAltGlyphItemElement)
+
 }
 
 #endif

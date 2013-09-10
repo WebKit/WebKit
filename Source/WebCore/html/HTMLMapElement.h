@@ -54,6 +54,8 @@ private:
     AtomicString m_name;
 };
 
+ELEMENT_TYPE_CASTS(HTMLMapElement)
+
 } // namespaces
 
 #endif

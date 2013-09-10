@@ -1,3 +1,110 @@
+2013-09-10  Andreas Kling  <akling@apple.com>
+
+        toFooElement() should use static_cast, not reinterpret_cast.
+        <https://webkit.org/b/121087>
+
+        Reviewed by Antti Koivisto.
+
+        reinterpret_cast is not safe for downcasting with multiple inheritance.
+        Add a ELEMENT_TYPE_CASTS(classname) macro that goes after class definitions.
+        It expands into the following methods:
+
+            - FooElement* toFooElement(Node*)
+            - const FooElement* toFooElement(const Node*)
+            - FooElement& toFooElement(Node&)
+            - const FooElement& toFooElement(const Node&)
+
+        As a bonus, it also adds these to catch unnecessary casting:
+
+            - void toFooElement(const Node*)
+            - void toFooElement(const Node&)
+
+        There might be a more clever way of doing this, but this gets us to a
+        correct place so we can think in peace.
+
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::assignToHTMLImageElement):
+        (JSC::Bindings::QtPixmapRuntime::toQt):
+        * dom/Element.h:
+        (WebCore::isElement):
+        * dom/make_names.pl:
+        (printTypeHelpers):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAreaElement.h:
+        * html/HTMLAudioElement.h:
+        * html/HTMLBaseElement.h:
+        * html/HTMLCanvasElement.h:
+        * html/HTMLElement.h:
+        (WebCore::isHTMLElement):
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormElement.h:
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.h:
+        * html/HTMLLabelElement.h:
+        * html/HTMLLegendElement.h:
+        * html/HTMLMapElement.h:
+        * html/HTMLMeterElement.h:
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.h:
+        * html/HTMLParamElement.h:
+        * html/HTMLProgressElement.h:
+        * html/HTMLScriptElement.h:
+        * html/HTMLSourceElement.h:
+        * html/HTMLStyleElement.h:
+        * html/HTMLTableElement.h:
+        * html/HTMLTableRowElement.h:
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTitleElement.h:
+        * html/HTMLTrackElement.h:
+        * svg/SVGAltGlyphDefElement.h:
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGAltGlyphItemElement.h:
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimateTransformElement.h:
+        * svg/SVGCircleElement.h:
+        * svg/SVGClipPathElement.h:
+        * svg/SVGCursorElement.h:
+        * svg/SVGEllipseElement.h:
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFEFuncAElement.h:
+        * svg/SVGFEFuncBElement.h:
+        * svg/SVGFEFuncGElement.h:
+        * svg/SVGFEFuncRElement.h:
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFESpotLightElement.h:
+        * svg/SVGFilterElement.h:
+        * svg/SVGFontElement.h:
+        * svg/SVGFontFaceElement.h:
+        * svg/SVGFontFaceNameElement.h:
+        * svg/SVGFontFaceSrcElement.h:
+        * svg/SVGFontFaceUriElement.h:
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGlyphElement.h:
+        * svg/SVGGlyphRefElement.h:
+        * svg/SVGHKernElement.h:
+        * svg/SVGImageElement.h:
+        * svg/SVGLineElement.h:
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMPathElement.h:
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.h:
+        * svg/SVGMissingGlyphElement.h:
+        * svg/SVGPathElement.h:
+        * svg/SVGPatternElement.h:
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.h:
+        * svg/SVGScriptElement.h:
+        * svg/SVGStyleElement.h:
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTitleElement.h:
+        * svg/SVGUseElement.h:
+        * svg/SVGVKernElement.h:
+        * svg/SVGViewElement.h:
+
 2013-09-10  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Test /webkit/atk/getTextInParagraphAndBodyModerate fails

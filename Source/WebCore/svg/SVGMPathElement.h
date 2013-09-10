@@ -66,6 +66,8 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
+ELEMENT_TYPE_CASTS(SVGMPathElement)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
