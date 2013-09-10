@@ -1,3 +1,15 @@
+2013-09-10  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        REGRESSION (r147454): Youtube annotation links to new window broken
+        https://bugs.webkit.org/show_bug.cgi?id=114242
+
+        Reviewed by Anders Carlsson.
+
+        Set the UserGestureIndicator to allow popups the same way the issue was solved for WebKit2.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::performRequest):
+
 2013-09-10  Alberto Garcia  <berto@igalia.com>
 
         [GTK] The code generator produces a warning if a parameter can be NULL

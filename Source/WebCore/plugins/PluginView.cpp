@@ -64,6 +64,7 @@
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "UserGestureIndicator.h"
 #include "WheelEvent.h"
 #include "c_instance.h"
 #include "npruntime_impl.h"
@@ -427,6 +428,8 @@ void PluginView::performRequest(PluginRequest* request)
 
     KURL requestURL = request->frameLoadRequest().resourceRequest().url();
     String jsString = scriptStringIfJavaScriptURL(requestURL);
+
+    UserGestureIndicator gestureIndicator(request->shouldAllowPopups() ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
 
     if (jsString.isNull()) {
         // if this is not a targeted request, create a stream for it. otherwise,
