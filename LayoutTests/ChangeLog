@@ -1,3 +1,12 @@
+2013-09-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Integrate Mac results from paragraph-with-linebreaks.html
+        https://bugs.webkit.org/show_bug.cgi?id=121110
+
+        Unreviewed. Add in new expected results for Mac platform.
+
+        * platform/mac/accessibility/paragraph-with-linebreaks-expected.txt: Added.
+
 2013-09-10  Mark Lam  <mark.lam@apple.com>
 
         Move image-preload-helper.js from LayoutTests/js/resources to LayoutTests/resources.
