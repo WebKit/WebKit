@@ -1,3 +1,139 @@
+2013-09-09  Mark Lam  <mark.lam@apple.com>
+
+        Remove un-needed js-test-style.css.
+        https://bugs.webkit.org/show_bug.cgi?id=120899.
+
+        Reviewed by Ryosuke Niwa.
+
+        Also adjusted a line number in fast/events/suspend-timers-expected.txt to
+        account for the deleted line.
+
+        * accessibility/anonymous-render-block-in-continuation-causes-crash.html:
+        * accessibility/duplicate-axrenderobject-crash.html:
+        * accessibility/loading-iframe-sends-notification.html:
+        * accessibility/multiselect-list-reports-active-option.html:
+        * accessibility/notification-listeners.html:
+        * css3/filters/custom-with-at-rule-syntax/parsing-at-rule-invalid.html:
+        * css3/filters/custom-with-at-rule-syntax/parsing-at-rule-valid.html:
+        * css3/filters/custom-with-at-rule-syntax/parsing-custom-function-invalid.html:
+        * css3/filters/custom-with-at-rule-syntax/parsing-custom-function-valid.html:
+        * css3/filters/custom-with-at-rule-syntax/parsing-geometry-property-invalid.html:
+        * css3/filters/custom-with-at-rule-syntax/parsing-geometry-property-valid.html:
+        * css3/filters/custom-with-at-rule-syntax/parsing-mix-property-invalid.html:
+        * css3/filters/custom-with-at-rule-syntax/parsing-mix-property-valid.html:
+        * css3/filters/custom-with-at-rule-syntax/parsing-parameters-property-invalid.html:
+        * css3/filters/custom-with-at-rule-syntax/parsing-parameters-property-valid.html:
+        * css3/filters/custom-with-at-rule-syntax/parsing-src-property-invalid.html:
+        * css3/filters/custom-with-at-rule-syntax/parsing-src-property-valid.html:
+        * css3/filters/custom/custom-filter-crash-inline-computed-style.html:
+        * css3/filters/custom/custom-filter-property-computed-style.html:
+        * css3/filters/custom/custom-filter-property-parsing-invalid.html:
+        * css3/filters/custom/custom-filter-property-parsing.html:
+        * css3/filters/custom/effect-custom-disabled.html:
+        * editing/spelling/spellcheck-async-mutation.html:
+        * editing/spelling/spellcheck-async.html:
+        * editing/spelling/spelling-unified-emulation.html:
+        * editing/text-iterator/findString-selection-disabled.html:
+        * fast/box-shadow/box-shadow-parsing-invalid.html:
+        * fast/box-sizing/table-cell.html:
+        * fast/canvas/webgl/arraybuffer-transfer-of-control.html:
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html:
+        * fast/canvas/webgl/context-creation-and-destruction.html:
+        * fast/canvas/webgl/context-release-upon-reload.html:
+        * fast/canvas/webgl/framebuffer-bindings-unaffected-on-resize.html:
+        * fast/canvas/webgl/functions-returning-strings.html:
+        * fast/canvas/webgl/index-validation.html:
+        * fast/canvas/webgl/instanceof-test.html:
+        * fast/canvas/webgl/oes-texture-half-float-not-supported.html:
+        * fast/canvas/webgl/oes-texture-half-float.html:
+        * fast/canvas/webgl/shader-precision-format.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgb565.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba4444.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba5551.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgb565.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgba4444.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgba5551.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html:
+        * fast/canvas/webgl/tex-image-with-greyscale-image.html:
+        * fast/canvas/webgl/texture-color-profile.html:
+        * fast/css/content-language-case-insensitivity.html:
+        * fast/css/content-language-comma-separated-list.html:
+        * fast/css/content-language-dynamically-added.html:
+        * fast/css/content-language-dynamically-changed.html:
+        * fast/css/content-language-dynamically-removed.html:
+        * fast/css/content-language-empty.html:
+        * fast/css/content-language-late.html:
+        * fast/css/content-language-mapped-to-webkit-locale.html:
+        * fast/css/content-language-multiple.html:
+        * fast/css/content-language-no-content.html:
+        * fast/css/content-language-only-whitespace.html:
+        * fast/css/content-language-with-whitespace.html:
+        * fast/css/getComputedStyle/computed-style-select-overflow.html:
+        * fast/css/image-orientation/image-orientation.html:
+        * fast/css/image-resolution/image-resolution.html:
+        * fast/css/lang-mapped-to-webkit-locale-dynamic.xhtml:
+        * fast/css/lang-mapped-to-webkit-locale.xhtml:
+        * fast/css/style-scoped/basic-attribute.html:
+        * fast/css/style-scoped/registering-shadowroot.html:
+        * fast/css/style-scoped/registering.html:
+        * fast/css/table-border-spacing.html:
+        * fast/css/xml-lang-ignored-in-html.html:
+        * fast/dom/gc-attribute-node.html:
+        * fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html:
+        * fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html:
+        * fast/events/platform-wheelevent-paging-x-in-scrolling-div.html:
+        * fast/events/platform-wheelevent-paging-x-in-scrolling-page.html:
+        * fast/events/platform-wheelevent-paging-xy-in-scrolling-div.html:
+        * fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html:
+        * fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html:
+        * fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html:
+        * fast/events/platform-wheelevent-paging-y-in-scrolling-div.html:
+        * fast/events/platform-wheelevent-paging-y-in-scrolling-page.html:
+        * fast/events/suspend-timers-expected.txt:
+        * fast/events/suspend-timers.html:
+        * fast/events/touch/gesture/touch-gesture-noscroll-body-propagated.html:
+        * fast/events/touch/gesture/touch-gesture-noscroll-body-xhidden.html:
+        * fast/events/touch/gesture/touch-gesture-noscroll-body-yhidden.html:
+        * fast/events/touch/gesture/touch-gesture-noscroll-body.html:
+        * fast/events/touch/gesture/touch-gesture-noscroll-iframe.html:
+        * fast/events/touch/gesture/touch-gesture-scroll-div-not-propagated.html:
+        * fast/events/touch/gesture/touch-gesture-scroll-div-propagated.html:
+        * fast/events/touch/gesture/touch-gesture-scroll-div-twice-propagated.html:
+        * fast/events/touch/gesture/touch-gesture-scroll-iframe-editable.html:
+        * fast/events/touch/gesture/touch-gesture-scroll-iframe-not-propagated.html:
+        * fast/events/touch/gesture/touch-gesture-scroll-iframe-propagated.html:
+        * fast/events/touch/gesture/touch-gesture-scroll-iframe.html:
+        * fast/events/touch/gesture/touch-gesture-scroll-page-not-propagated.html:
+        * fast/events/touch/gesture/touch-gesture-scroll-page-propagated.html:
+        * fast/events/touch/gesture/touch-gesture-scroll-page.html:
+        * fast/events/touch/gesture/touch-gesture-scroll-shy-target.html:
+        * fast/files/url-null.html:
+        * fast/filesystem/simple-required-arguments-getdirectory.html:
+        * fast/filesystem/simple-required-arguments-getfile.html:
+        * fast/filesystem/simple-required-arguments-getmetadata.html:
+        * fast/filesystem/simple-required-arguments-remove.html:
+        * fast/forms/form-dirname-attribute.html:
+        * fast/forms/setCustomValidity-arguments.html:
+        * fast/js/resources/js-test-style.css: Removed.
+        * fast/mediastream/LocalMediaStream-onended.html:
+        * fast/mediastream/MediaStream-add-remove-tracks.html:
+        * fast/mediastream/MediaStream-onended.html:
+        * fast/mediastream/MediaStreamConstructor.html:
+        * fast/mediastream/MediaStreamTrack.html:
+        * fast/mediastream/RTCIceCandidate.html:
+        * fast/mediastream/RTCSessionDescription.html:
+        * fast/mediastream/constructors.html:
+        * fast/mediastream/getusermedia.html:
+
 2013-09-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove HTMLTextFormControl::fixPlaceholderRenderer

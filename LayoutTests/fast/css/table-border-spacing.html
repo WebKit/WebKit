@@ -178,7 +178,7 @@ function cssRule(ruleName)
             var rules = document.styleSheets[i].rules || document.styleSheets[i].cssRules; // IE has "rules" property; WebKit and Firefox have "cssRules". 
         } catch (e) {
             // Firefox's same-origin policy for file URLs prevents access to cssRules for stylesheets that aren't within the
-            // same directory as the web page (e.g. ../js/resources/js-test-style.css). So, we ignore such exceptions that arise.
+            // same directory as the web page (e.g. ../js/resources/). So, we ignore such exceptions that arise.
             continue;
         } 
         for (var r = 0; r < rules.length; ++r) {
