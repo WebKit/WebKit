@@ -36,12 +36,6 @@ private:
     virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
 };
 
-inline SVGMissingGlyphElement* toSVGMissingGlyphElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(SVGNames::missing_glyphTag));
-    return static_cast<SVGMissingGlyphElement*>(node);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(SVG_FONTS)

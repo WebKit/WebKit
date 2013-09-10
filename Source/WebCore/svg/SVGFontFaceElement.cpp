@@ -32,6 +32,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Document.h"
+#include "ElementIterator.h"
 #include "Font.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGFontElement.h"
@@ -228,11 +229,9 @@ void SVGFontFaceElement::rebuildFontFace()
 
     // we currently ignore all but the first src element, alternatively we could concat them
     SVGFontFaceSrcElement* srcElement = 0;
-
-    for (Node* child = firstChild(); child && !srcElement; child = child->nextSibling()) {
-        if (child->hasTagName(font_face_srcTag))
-            srcElement = static_cast<SVGFontFaceSrcElement*>(child);
-    }
+    auto firstFontFaceSrcElementChild = childrenOfType<SVGFontFaceSrcElement>(this).begin();
+    if (firstFontFaceSrcElementChild != childrenOfType<SVGFontFaceSrcElement>(this).end())
+        srcElement = &*firstFontFaceSrcElementChild;
 
     bool describesParentFont = isSVGFontElement(parentNode());
     RefPtr<CSSValueList> list;

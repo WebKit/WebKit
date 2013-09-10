@@ -1229,7 +1229,7 @@ InspectorStyleSheet* InspectorCSSAgent::viaInspectorStyleSheet(Document* documen
         cssStyleSheet = toHTMLStyleElement(styleElement.get())->sheet();
 #if ENABLE(SVG)
     else if (styleElement->isSVGElement())
-        cssStyleSheet = static_cast<SVGStyleElement*>(styleElement.get())->sheet();
+        cssStyleSheet = toSVGStyleElement(styleElement.get())->sheet();
 #endif
 
     if (!cssStyleSheet)

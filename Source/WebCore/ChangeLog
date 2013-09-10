@@ -1,3 +1,19 @@
+2013-09-09  Andreas Kling  <akling@apple.com>
+
+        Generate more SVG type checks and conversions.
+        <https://webkit.org/b/121066>
+
+        Reviewed by Anders Carlsson.
+
+        Switch another slew of SVG elements to auto-generated isFooElement()
+        and toFooElement() helpers.
+
+        Removed now-unnecessary casts and assertions as appropriate.
+        Converted some simple loops to childrenOfType iteration instead of
+        traversing child Nodes.
+
+        PS. This patch also adds const versions of toFooElement().
+
 2013-09-09  Dean Jackson  <dino@apple.com>
 
         [WebGL] Allow multithreaded OpenGL contexts

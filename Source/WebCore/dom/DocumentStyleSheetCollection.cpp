@@ -325,8 +325,8 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
             // Get the current preferred styleset. This is the
             // set of sheets that will be enabled.
 #if ENABLE(SVG)
-            if (e->hasTagName(SVGNames::styleTag))
-                sheet = static_cast<SVGStyleElement*>(n)->sheet();
+            if (isSVGStyleElement(e))
+                sheet = toSVGStyleElement(e)->sheet();
             else
 #endif
             {

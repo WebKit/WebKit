@@ -69,12 +69,6 @@ private:
     virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 };
 
-inline SVGMaskElement* toSVGMaskElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(SVGNames::maskTag));
-    return static_cast<SVGMaskElement*>(node);
-}
-
 }
 
 #endif

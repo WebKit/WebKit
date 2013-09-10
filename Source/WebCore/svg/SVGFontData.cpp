@@ -173,8 +173,8 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
         if (Element* parentRenderObjectElement = toElement(parentRenderObject->node())) {
             language = parentRenderObjectElement->getAttribute(XMLNames::langAttr);
 
-            if (parentRenderObjectElement->hasTagName(SVGNames::altGlyphTag)) {
-                SVGAltGlyphElement* altGlyph = static_cast<SVGAltGlyphElement*>(parentRenderObjectElement);
+            if (isSVGAltGlyphElement(parentRenderObjectElement)) {
+                SVGAltGlyphElement* altGlyph = toSVGAltGlyphElement(parentRenderObjectElement);
                 if (!altGlyph->hasValidGlyphElements(altGlyphNames))
                     altGlyphNames.clear();
             }

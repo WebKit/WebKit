@@ -23,6 +23,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEMergeElement.h"
 
+#include "ElementIterator.h"
 #include "FilterEffect.h"
 #include "SVGFEMergeNodeElement.h"
 #include "SVGFilterBuilder.h"
@@ -45,13 +46,12 @@ PassRefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilde
 {
     RefPtr<FilterEffect> effect = FEMerge::create(filter);
     FilterEffectVector& mergeInputs = effect->inputEffects();
-    for (Node* node = firstChild(); node; node = node->nextSibling()) {
-        if (node->hasTagName(SVGNames::feMergeNodeTag)) {
-            FilterEffect* mergeEffect = filterBuilder->getEffectById(static_cast<SVGFEMergeNodeElement*>(node)->in1());
-            if (!mergeEffect)
-                return 0;
-            mergeInputs.append(mergeEffect);
-        }
+
+    for (auto mergeNode = childrenOfType<SVGFEMergeNodeElement>(this).begin(), end = childrenOfType<SVGFEMergeNodeElement>(this).end(); mergeNode != end; ++mergeNode) {
+        FilterEffect* mergeEffect = filterBuilder->getEffectById(mergeNode->in1());
+        if (!mergeEffect)
+            return 0;
+        mergeInputs.append(mergeEffect);
     }
 
     if (mergeInputs.isEmpty())

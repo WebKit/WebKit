@@ -25,6 +25,7 @@
 #include "SVGFELightElement.h"
 
 #include "Attribute.h"
+#include "ElementIterator.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
@@ -70,12 +71,9 @@ SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document* doc
 
 SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElement)
 {
-    for (Node* node = svgElement->firstChild(); node; node = node->nextSibling()) {
-        if (node->hasTagName(SVGNames::feDistantLightTag)
-            || node->hasTagName(SVGNames::fePointLightTag)
-            || node->hasTagName(SVGNames::feSpotLightTag)) {
-            return static_cast<SVGFELightElement*>(node);
-        }
+    for (auto child = childrenOfType<SVGElement>(svgElement).begin(), end = childrenOfType<SVGElement>(svgElement).end(); child != end; ++child) {
+        if (isSVGFEDistantLightElement(*child) || isSVGFEPointLightElement(*child) || isSVGFESpotLightElement(*child))
+            return static_cast<SVGFELightElement*>(const_cast<SVGElement*>(&*child));
     }
     return 0;
 }

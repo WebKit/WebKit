@@ -164,8 +164,8 @@ void SVGMPathElement::targetPathChanged()
 
 void SVGMPathElement::notifyParentOfPathChange(ContainerNode* parent)
 {
-    if (parent && parent->hasTagName(SVGNames::animateMotionTag))
-        static_cast<SVGAnimateMotionElement*>(parent)->updateAnimationPath();
+    if (parent && isSVGAnimateMotionElement(parent))
+        toSVGAnimateMotionElement(parent)->updateAnimationPath();
 }
 
 } // namespace WebCore

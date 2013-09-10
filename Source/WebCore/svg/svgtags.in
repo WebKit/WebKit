@@ -6,24 +6,24 @@ fallbackJSInterfaceName="SVGElement"
 
 a
 #if ENABLE_SVG_FONTS
-altGlyph
-altGlyphDef
-altGlyphItem
+altGlyph generateTypeHelpers
+altGlyphDef generateTypeHelpers
+altGlyphItem generateTypeHelpers
 #endif
 animate
 animateColor
-animateMotion
-animateTransform
+animateMotion generateTypeHelpers
+animateTransform generateTypeHelpers
 set
-circle
-clipPath
+circle generateTypeHelpers
+clipPath generateTypeHelpers
 #if 0
 color_profile
 #endif
-cursor
+cursor generateTypeHelpers
 defs
 desc
-ellipse
+ellipse generateTypeHelpers
 #if ENABLE_FILTERS
 feBlend
 feColorMatrix
@@ -32,70 +32,70 @@ feComposite
 feConvolveMatrix
 feDiffuseLighting
 feDisplacementMap
-feDistantLight
+feDistantLight generateTypeHelpers
 feDropShadow
 feFlood
-feFuncA
-feFuncB
-feFuncG
-feFuncR
+feFuncA generateTypeHelpers
+feFuncB generateTypeHelpers
+feFuncG generateTypeHelpers
+feFuncR generateTypeHelpers
 feGaussianBlur
 feImage
 feMerge
-feMergeNode
+feMergeNode generateTypeHelpers
 feMorphology
 feOffset
-fePointLight
+fePointLight generateTypeHelpers
 feSpecularLighting
-feSpotLight
+feSpotLight generateTypeHelpers
 feTile
 feTurbulence
-filter
+filter generateTypeHelpers
 #endif
 #if ENABLE_SVG_FONTS
 font generateTypeHelpers
 font_face generateTypeHelpers
 font_face_format
-font_face_name
-font_face_src
-font_face_uri
+font_face_name generateTypeHelpers
+font_face_src generateTypeHelpers
+font_face_uri generateTypeHelpers
 #endif
 foreignObject generateTypeHelpers
 g
 #if ENABLE_SVG_FONTS
-glyph
-glyphRef
-hkern interfaceName=SVGHKernElement
+glyph generateTypeHelpers
+glyphRef generateTypeHelpers
+hkern interfaceName=SVGHKernElement, generateTypeHelpers
 #endif
 image generateTypeHelpers
-line
-linearGradient
-marker
-mask
+line generateTypeHelpers
+linearGradient generateTypeHelpers
+marker generateTypeHelpers
+mask generateTypeHelpers
 metadata
 #if ENABLE_SVG_FONTS
-missing_glyph
+missing_glyph generateTypeHelpers
 #endif
-mpath interfaceName=SVGMPathElement
-path
-pattern
+mpath interfaceName=SVGMPathElement, generateTypeHelpers
+path generateTypeHelpers
+pattern generateTypeHelpers
 polygon
 polyline
-radialGradient
-rect
+radialGradient generateTypeHelpers
+rect generateTypeHelpers
 script constructorNeedsCreatedByParser, generateTypeHelpers
 stop
-style constructorNeedsCreatedByParser
-svg interfaceName=SVGSVGElement
+style constructorNeedsCreatedByParser, generateTypeHelpers
+svg interfaceName=SVGSVGElement, generateTypeHelpers
 switch
 symbol
-text
-textPath
-title
+text generateTypeHelpers
+textPath generateTypeHelpers
+title generateTypeHelpers
 tref interfaceName=SVGTRefElement
 tspan interfaceName=SVGTSpanElement
-use constructorNeedsCreatedByParser
-view
+use constructorNeedsCreatedByParser, generateTypeHelpers
+view generateTypeHelpers
 #if ENABLE_SVG_FONTS
-vkern interfaceName=SVGVKernElement
+vkern interfaceName=SVGVKernElement, generateTypeHelpers
 #endif

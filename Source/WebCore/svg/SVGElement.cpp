@@ -220,7 +220,7 @@ SVGElementRareData& SVGElement::ensureSVGRareData()
 
 bool SVGElement::isOutermostSVGSVGElement() const
 {
-    if (!hasTagName(SVGNames::svgTag))
+    if (!isSVGSVGElement(this))
         return false;
 
     // If we're living in a shadow tree, we're a <svg> element that got created as replacement

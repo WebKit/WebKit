@@ -37,8 +37,8 @@ namespace WebCore {
 
 static void updatePathFromCircleElement(SVGElement* element, Path& path)
 {
-    ASSERT(element->hasTagName(SVGNames::circleTag));
-    SVGCircleElement* circle = static_cast<SVGCircleElement*>(element);
+    ASSERT(isSVGCircleElement(element));
+    SVGCircleElement* circle = toSVGCircleElement(element);
 
     SVGLengthContext lengthContext(element);
     float r = circle->r().value(lengthContext);

@@ -141,12 +141,6 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 };
 
-inline SVGTextPathElement* toSVGTextPathElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(SVGNames::textPathTag));
-    return static_cast<SVGTextPathElement*>(node);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
