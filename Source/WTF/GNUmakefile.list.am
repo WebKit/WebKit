@@ -253,5 +253,4 @@ wtf_sources += \
     Source/WTF/wtf/unicode/Unicode.h \
     Source/WTF/wtf/unicode/UnicodeMacrosFromICU.h \
     Source/WTF/wtf/unicode/icu/CollatorICU.cpp \
-    Source/WTF/wtf/unicode/icu/UnicodeIcu.h \
-    Source/WTF/wtf/win/OwnPtrWin.cpp
+    Source/WTF/wtf/unicode/icu/UnicodeIcu.h

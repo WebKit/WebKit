@@ -1,5 +1,13 @@
 2013-09-10  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed build fix after r155476.
+
+        * GNUmakefile.list.am: Remove reference to deleted OwnPtrWin.cpp file.
+        * WTF.pro: Ditto.
+        * wtf/CMakeLists.txt: Ditto.
+
+2013-09-10  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Create SharedGDIObject Class Template
         https://bugs.webkit.org/show_bug.cgi?id=121037
 

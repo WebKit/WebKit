@@ -250,8 +250,6 @@ if (WIN32)
         OSAllocatorWin.cpp
         ThreadSpecificWin.cpp
         ThreadingWin.cpp
-
-        win/OwnPtrWin.cpp
     )
 else ()
     list(APPEND WTF_HEADERS
