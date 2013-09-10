@@ -50,7 +50,7 @@ namespace WebCore {
 static const double cAnimationTimerDelay = 0.025;
 static const double cBeginAnimationUpdateTimeNotSet = -1;
 
-AnimationControllerPrivate::AnimationControllerPrivate(Frame* frame)
+AnimationControllerPrivate::AnimationControllerPrivate(Frame& frame)
     : m_animationTimer(this, &AnimationControllerPrivate::animationTimerFired)
     , m_updateStyleIfNeededDispatcher(this, &AnimationControllerPrivate::updateStyleIfNeededDispatcherFired)
     , m_frame(frame)
@@ -112,7 +112,7 @@ double AnimationControllerPrivate::updateAnimations(SetChanged callSetChanged/* 
     }
 
     if (calledSetChanged)
-        m_frame->document()->updateStyleIfNeeded();
+        m_frame.document()->updateStyleIfNeeded();
 
     return timeToNextService;
 }
@@ -163,7 +163,7 @@ void AnimationControllerPrivate::updateStyleIfNeededDispatcherFired(Timer<Animat
 void AnimationControllerPrivate::fireEventsAndUpdateStyle()
 {
     // Protect the frame from getting destroyed in the event handler
-    RefPtr<Frame> protector = m_frame;
+    Ref<Frame> protector(m_frame);
 
     bool updateStyle = !m_eventsToDispatch.isEmpty() || !m_nodeChangesToDispatch.isEmpty();
 
@@ -186,8 +186,8 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
 
     m_nodeChangesToDispatch.clear();
 
-    if (updateStyle && m_frame)
-        m_frame->document()->updateStyleIfNeeded();
+    if (updateStyle)
+        m_frame.document()->updateStyleIfNeeded();
 }
 
 void AnimationControllerPrivate::startUpdateStyleIfNeededDispatcher()
@@ -224,7 +224,7 @@ void AnimationControllerPrivate::animationFrameCallbackFired()
     double timeToNextService = updateAnimations(CallSetChanged);
 
     if (timeToNextService >= 0)
-        m_frame->document()->view()->scheduleAnimation();
+        m_frame.document()->view()->scheduleAnimation();
 }
 #endif
 
@@ -266,10 +266,10 @@ void AnimationControllerPrivate::suspendAnimations()
     if (isSuspended())
         return;
 
-    suspendAnimationsForDocument(m_frame->document());
+    suspendAnimationsForDocument(m_frame.document());
 
     // Traverse subframes
-    for (Frame* child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling())
+    for (Frame* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
         child->animation().suspendAnimations();
 
     m_isSuspended = true;
@@ -280,10 +280,10 @@ void AnimationControllerPrivate::resumeAnimations()
     if (!isSuspended())
         return;
 
-    resumeAnimationsForDocument(m_frame->document());
+    resumeAnimationsForDocument(m_frame.document());
 
     // Traverse subframes
-    for (Frame* child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling())
+    for (Frame* child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
         child->animation().resumeAnimations();
 
     m_isSuspended = false;
@@ -490,8 +490,8 @@ void AnimationControllerPrivate::animationWillBeRemoved(AnimationBase* animation
     removeFromAnimationsWaitingForStartTimeResponse(animation);
 }
 
-AnimationController::AnimationController(Frame* frame)
-    : m_data(adoptPtr(new AnimationControllerPrivate(frame)))
+AnimationController::AnimationController(Frame& frame)
+    : m_data(createOwned<AnimationControllerPrivate>(frame))
     , m_beginAnimationUpdateCount(0)
 {
 }

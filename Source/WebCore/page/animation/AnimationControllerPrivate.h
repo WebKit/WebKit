@@ -58,7 +58,7 @@ enum SetChanged {
 class AnimationControllerPrivate {
     WTF_MAKE_NONCOPYABLE(AnimationControllerPrivate); WTF_MAKE_FAST_ALLOCATED;
 public:
-    AnimationControllerPrivate(Frame*);
+    explicit AnimationControllerPrivate(Frame&);
     ~AnimationControllerPrivate();
 
     // Returns the time until the next animation needs to be serviced, or -1 if there are none.
@@ -125,7 +125,7 @@ private:
     RenderObjectAnimationMap m_compositeAnimations;
     Timer<AnimationControllerPrivate> m_animationTimer;
     Timer<AnimationControllerPrivate> m_updateStyleIfNeededDispatcher;
-    Frame* m_frame;
+    Frame& m_frame;
     
     class EventToDispatch {
     public:

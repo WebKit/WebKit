@@ -1,3 +1,13 @@
+2013-09-10  Andreas Kling  <akling@apple.com>
+
+        AnimationController should have a Frame& internally.
+        <https://webkit.org/b/121078>
+
+        Reviewed by Anders Carlsson.
+
+        The AnimationController is owned by the Frame so make the back-pointer
+        a reference. This knocks off a couple of null checks.
+
 2013-09-10  Anders Carlsson  <andersca@apple.com>
 
         More WTF/Alignment.h removal
