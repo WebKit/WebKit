@@ -904,6 +904,7 @@
 		2D5A592F152525230036EE51 /* ImageOrientation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8748D7412CC3F89001FBA41 /* ImageOrientation.cpp */; };
 		2D5A5931152525D00036EE51 /* ImageOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = A8748D6612CC3763001FBA41 /* ImageOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D5BC42716F882EE007048D0 /* SecurityPolicyViolationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5BC42516F882BE007048D0 /* SecurityPolicyViolationEvent.h */; };
+		2D6E468417D660F500ECF8BB /* PDFDocumentImageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */; };
 		2D8287F616E4A0380086BD00 /* HitTestLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D8287F416E4A0380086BD00 /* HitTestLocation.cpp */; };
 		2D8287F716E4A0380086BD00 /* HitTestLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8287F516E4A0380086BD00 /* HitTestLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D8FEBDC143E3EF70072502B /* CSSCrossfadeValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D8FEBDA143E3EF70072502B /* CSSCrossfadeValue.cpp */; };
@@ -7348,6 +7349,7 @@
 		2D46F04F17B96FD2005647F0 /* IntSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntSize.cpp; sourceTree = "<group>"; };
 		2D5BC42516F882BE007048D0 /* SecurityPolicyViolationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityPolicyViolationEvent.h; sourceTree = "<group>"; };
 		2D5BC42616F882BE007048D0 /* SecurityPolicyViolationEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SecurityPolicyViolationEvent.idl; sourceTree = "<group>"; };
+		2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFDocumentImageMac.mm; sourceTree = "<group>"; };
 		2D8287F416E4A0380086BD00 /* HitTestLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestLocation.cpp; sourceTree = "<group>"; };
 		2D8287F516E4A0380086BD00 /* HitTestLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HitTestLocation.h; sourceTree = "<group>"; };
 		2D8FEBDA143E3EF70072502B /* CSSCrossfadeValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCrossfadeValue.cpp; sourceTree = "<group>"; };
@@ -18727,6 +18729,7 @@
 				E4B41E100CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.h */,
 				E4B41E110CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.mm */,
 				0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */,
+				2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */,
 				163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */,
 				B2AFFC770D00A5C10030074D /* SimpleFontDataMac.mm */,
 				49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */,
@@ -26011,6 +26014,7 @@
 				4ACBC0CA12713D0A0094F9B2 /* JSDOMSettableTokenList.cpp in Sources */,
 				C5137CF211A58378004ADB99 /* JSDOMStringList.cpp in Sources */,
 				9A1B6F97158869C80011A8C4 /* JSDOMStringListCustom.cpp in Sources */,
+				2D6E468417D660F500ECF8BB /* PDFDocumentImageMac.mm in Sources */,
 				BC64649711D82349006455B0 /* JSDOMStringMap.cpp in Sources */,
 				BC64649C11D8238C006455B0 /* JSDOMStringMapCustom.cpp in Sources */,
 				7694563C1214D97C0007CBAE /* JSDOMTokenList.cpp in Sources */,

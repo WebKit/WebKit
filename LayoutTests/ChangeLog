@@ -1,5 +1,22 @@
 2013-09-10  Tim Horton  <timothy_horton@apple.com>
 
+        [mac] PDFDocumentImage should use PDFKit to draw
+        https://bugs.webkit.org/show_bug.cgi?id=120651
+        <rdar://problem/12810731>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/images/pdf-as-image-with-annotations-expected.html: Added.
+        * fast/images/pdf-as-image-with-annotations.html: Added.
+        * fast/images/resources/annotation.pdf: Added.
+        Add a test that ensures that PDF-in-<img> draws simple annotations.
+
+        * platform/mac/fast/images/pdf-as-image-landscape-expected.png:
+        * platform/mac/fast/images/pdf-as-image-landscape-expected.txt:
+        Extremely minor rebaselines probably due to PDFKit handling rotation in the new implementation.
+
+2013-09-10  Tim Horton  <timothy_horton@apple.com>
+
         [mac] <progress> has rendering artifacts along the bottom
         https://bugs.webkit.org/show_bug.cgi?id=120865
         <rdar://problem/11571240>
