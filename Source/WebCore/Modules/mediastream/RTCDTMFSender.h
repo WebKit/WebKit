@@ -31,6 +31,7 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "RTCDTMFSenderHandlerClient.h"
+#include "ScriptWrappable.h"
 #include "Timer.h"
 #include <wtf/RefCounted.h>
 
@@ -40,7 +41,7 @@ class MediaStreamTrack;
 class RTCPeerConnectionHandler;
 class RTCDTMFSenderHandler;
 
-class RTCDTMFSender : public RefCounted<RTCDTMFSender>, public EventTarget, public RTCDTMFSenderHandlerClient, public ActiveDOMObject {
+class RTCDTMFSender : public RefCounted<RTCDTMFSender>, public ScriptWrappable, public EventTarget, public RTCDTMFSenderHandlerClient, public ActiveDOMObject {
 public:
     static PassRefPtr<RTCDTMFSender> create(ScriptExecutionContext*, RTCPeerConnectionHandler*, PassRefPtr<MediaStreamTrack>, ExceptionCode&);
     ~RTCDTMFSender();

@@ -1,5 +1,22 @@
 2013-09-10  Eric Carlson  <eric.carlson@apple.com>
 
+        Make MediaStream objects ScriptWrappable
+        https://bugs.webkit.org/show_bug.cgi?id=120879
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediastream/MediaStream.h: Inherit from ScriptWrappable.
+        * Modules/mediastream/MediaStreamTrack.h: Ditto.
+        * Modules/mediastream/RTCDTMFSender.h: Ditto.
+        * Modules/mediastream/RTCDataChannel.h: Ditto.
+        * Modules/mediastream/RTCIceCandidate.h: Ditto.
+        * Modules/mediastream/RTCPeerConnection.h: Ditto.
+        * Modules/mediastream/RTCSessionDescription.h: Ditto.
+        * Modules/mediastream/RTCStatsReport.h: Ditto.
+        * Modules/mediastream/RTCStatsResponse.h: Ditto.
+
+2013-09-10  Eric Carlson  <eric.carlson@apple.com>
+
         Split MediaStreamDescriptor.h and MediaStreamComponent.h into .h and .cpp
         https://bugs.webkit.org/show_bug.cgi?id=120878
 

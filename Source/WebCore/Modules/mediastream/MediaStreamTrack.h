@@ -32,6 +32,7 @@
 #include "EventTarget.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamSource.h"
+#include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -41,7 +42,7 @@ namespace WebCore {
 
 class MediaStreamComponent;
 
-class MediaStreamTrack : public RefCounted<MediaStreamTrack>, public ActiveDOMObject, public EventTarget, public MediaStreamSource::Observer {
+class MediaStreamTrack : public RefCounted<MediaStreamTrack>, public ScriptWrappable, public ActiveDOMObject, public EventTarget, public MediaStreamSource::Observer {
 public:
     static PassRefPtr<MediaStreamTrack> create(ScriptExecutionContext*, MediaStreamComponent*);
     virtual ~MediaStreamTrack();

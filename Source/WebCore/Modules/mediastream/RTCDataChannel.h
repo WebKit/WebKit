@@ -29,6 +29,7 @@
 
 #include "EventTarget.h"
 #include "RTCDataChannelHandlerClient.h"
+#include "ScriptWrappable.h"
 #include "Timer.h"
 #include <wtf/RefCounted.h>
 
@@ -43,7 +44,7 @@ class Blob;
 class RTCDataChannelHandler;
 class RTCPeerConnectionHandler;
 
-class RTCDataChannel : public RefCounted<RTCDataChannel>, public EventTarget, public RTCDataChannelHandlerClient {
+class RTCDataChannel : public RefCounted<RTCDataChannel>, public ScriptWrappable, public EventTarget, public RTCDataChannelHandlerClient {
 public:
     static PassRefPtr<RTCDataChannel> create(ScriptExecutionContext*, RTCPeerConnectionHandler*, const String& label, bool reliable, ExceptionCode&);
     static PassRefPtr<RTCDataChannel> create(ScriptExecutionContext*, PassOwnPtr<RTCDataChannelHandler>);

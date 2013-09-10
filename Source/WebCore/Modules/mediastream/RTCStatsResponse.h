@@ -35,11 +35,12 @@
 #include "MediaStreamTrack.h"
 #include "RTCStatsReport.h"
 #include "RTCStatsResponseBase.h"
+#include "ScriptWrappable.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 
-class RTCStatsResponse : public RTCStatsResponseBase {
+class RTCStatsResponse : public RTCStatsResponseBase, public ScriptWrappable {
 public:
     static PassRefPtr<RTCStatsResponse> create();
 

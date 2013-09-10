@@ -34,6 +34,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ExceptionBase.h"
+#include "ScriptWrappable.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -44,7 +45,7 @@ namespace WebCore {
 class Dictionary;
 class RTCIceCandidateDescriptor;
 
-class RTCIceCandidate : public RefCounted<RTCIceCandidate> {
+class RTCIceCandidate : public RefCounted<RTCIceCandidate>, public ScriptWrappable {
 public:
     static PassRefPtr<RTCIceCandidate> create(const Dictionary&, ExceptionCode&);
     static PassRefPtr<RTCIceCandidate> create(PassRefPtr<RTCIceCandidateDescriptor>);

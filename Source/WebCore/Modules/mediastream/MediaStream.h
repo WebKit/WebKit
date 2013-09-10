@@ -33,13 +33,14 @@
 #include "ExceptionBase.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamTrack.h"
+#include "ScriptWrappable.h"
 #include "Timer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class MediaStream : public RefCounted<MediaStream>, public MediaStreamDescriptorClient, public EventTarget, public ContextDestructionObserver {
+class MediaStream : public RefCounted<MediaStream>, public ScriptWrappable, public MediaStreamDescriptorClient, public EventTarget, public ContextDestructionObserver {
 public:
     static PassRefPtr<MediaStream> create(ScriptExecutionContext*);
     static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStream>);
