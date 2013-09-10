@@ -1,3 +1,17 @@
+2013-09-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: [JSC] Caught exception is treated as uncaught
+        https://bugs.webkit.org/show_bug.cgi?id=93607
+
+        Reviewed by Geoff Garen.
+
+        Check up the entire call stack to see if there is an exception handler.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::GetExceptionHandlerFunctor::GetExceptionHandlerFunctor):
+        (JSC::GetExceptionHandlerFunctor::handler):
+        (JSC::GetExceptionHandlerFunctor::operator()):
+
 2013-09-10  Filip Pizlo  <fpizlo@apple.com>
 
         SpecType should have SpecInt48AsDouble

@@ -1,3 +1,20 @@
+2013-09-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: [JSC] Caught exception is treated as uncaught
+        https://bugs.webkit.org/show_bug.cgi?id=93607
+
+        Reviewed by Geoff Garen.
+
+        Add tests for different inspector pause on exceptions states.
+
+        * inspector-protocol/debugger/resources/exception.js: Added.
+        * inspector-protocol/debugger/setPauseOnExceptions-all-expected.txt: Added.
+        * inspector-protocol/debugger/setPauseOnExceptions-all.html: Added.
+        * inspector-protocol/debugger/setPauseOnExceptions-none-expected.txt: Added.
+        * inspector-protocol/debugger/setPauseOnExceptions-none.html: Added.
+        * inspector-protocol/debugger/setPauseOnExceptions-uncaught-expected.txt: Added.
+        * inspector-protocol/debugger/setPauseOnExceptions-uncaught.html: Added.
+
 2013-09-10  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         needsFocus is always undefined in grammar-paste.html

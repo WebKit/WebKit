@@ -1,0 +1,52 @@
+CONSOLE MESSAGE: line 1: caught inline: {"line":1,"column":36}
+CONSOLE MESSAGE: line 38: catchNested caught exception: {"line":3,"column":11,"sourceURL":"exception.js"}
+CONSOLE MESSAGE: line 38: catchNested caught exception: {"code":8,"message":"NotFoundError: DOM Exception 8","name":"NotFoundError","line":8,"column":30,"sourceURL":"exception.js"}
+CONSOLE MESSAGE: line 38: catchNested caught exception: "exception in host function"
+CONSOLE MESSAGE: line 38: catchNested caught exception: "exception string"
+CONSOLE MESSAGE: line 38: catchNested caught exception: {"line":18,"column":12,"sourceURL":"exception.js"}
+CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating '({}).a.b')
+CONSOLE MESSAGE: line 3: TypeError: undefined is not an object (evaluating '({}).a.b')
+CONSOLE MESSAGE: line 8: NotFoundError: DOM Exception 8: An attempt was made to reference a Node in a context where it does not exist.
+CONSOLE MESSAGE: line 24: exception in host function
+CONSOLE MESSAGE: line 13: exception string
+CONSOLE MESSAGE: line 18: [object Object]
+CONSOLE MESSAGE: line 18: Error: error message
+Debugger.setPauseOnExceptions all
+
+Breakpoints Enabled
+Debugger.setPauseOnExceptions - all
+PASS - did not pause on non-exception statements
+Paused!
+Resumed
+Paused!
+Resumed
+Paused!
+Resumed
+Paused!
+Resumed
+Paused!
+Resumed
+Paused!
+Resumed
+Paused!
+Resumed
+PASS - paused for each caught exception
+Paused!
+Resumed
+Paused!
+Resumed
+Paused!
+Resumed
+Paused!
+Resumed
+Paused!
+Resumed
+Paused!
+Resumed
+Paused!
+Resumed
+Paused!
+Resumed
+PASS - paused for each uncaught exception
+PASS - did not pause on non-exception statements
+

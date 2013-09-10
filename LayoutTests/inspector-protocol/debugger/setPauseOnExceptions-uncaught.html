@@ -1,0 +1,118 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/exception.js"></script>
+<script>
+function test()
+{
+    var expectPause = false;
+
+    var statementsWithoutExceptions = [
+        "1+1;",
+        "noException();",
+        "catchNested(noException, 7);"
+    ];
+
+    var statementsWithCaughtExceptions = [
+        "try{ ({}).a.b.c.d } catch (e) { console.log('caught inline: ' + JSON.stringify(e)); }",
+        "catchNested(exceptionBasic, 1);",
+        "catchNested(exceptionDOM, 2);",
+        "catchNested(exceptionInHostFunction, 3);",
+        "catchNested(throwString, 10);",
+        "catchNested(throwParam, 5, new Error('error message'));"
+    ];
+
+    var currentUncaughtExceptionStatement = 0;
+    var statementsWithUncaughtExceptions = [
+        "({}).a.b.c.d;",
+        "exceptionBasic();",
+        "exceptionDOM();",
+        "exceptionInHostFunction();",
+        "throwString();",
+        "throwParam({x:1});",
+        "throwParam(new Error('error message'));"
+    ];
+
+    // FIXME: <https://webkit.org/b/121108> Web Inspector gets paused twice when there is an exception in host function
+    var extraPauses = 1;
+
+    function evaluateStatements(list, callback)
+    {
+        for (var i = 0; i < list.length; ++i) {
+            var statement = list[i];
+            var last = i === list.length - 1;
+            var responseCallback = last ? function() { setTimeout(callback, 10); } : function(){};
+            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { " + statement + " }, 0);"}, responseCallback);
+        }
+    }
+
+    function evaluateExpectedNoPauses(callback)
+    {
+        var statements = statementsWithoutExceptions.concat(statementsWithCaughtExceptions);
+        evaluateStatements(statements, function() {
+            InspectorTest.log("PASS - did not pause on non-exception statements or caught exception statements");
+            callback();
+        });
+    }
+
+    function triggerNextUncaughtException()
+    {
+        // Evaluate statement and expect to pause.
+        if (currentUncaughtExceptionStatement < statementsWithUncaughtExceptions.length) {
+            var statement = statementsWithUncaughtExceptions[currentUncaughtExceptionStatement++];
+            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { " + statement + " }, 0);"});
+            return;
+        }
+
+        // FIXME: <https://webkit.org/b/121108> Web Inspector gets paused twice when there is an exception in host function
+        if (extraPauses-- > 0)
+            return;
+
+        // Done evaluating statements to pause. Evaluate some more we do not expect to pause.
+        InspectorTest.log("PASS - paused for each uncaught exception");
+        expectPause = false;
+        evaluateExpectedNoPauses(function() {
+            InspectorTest.log("PASS");
+            InspectorTest.completeTest();
+        });
+    }
+
+
+    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
+        InspectorTest.log("Breakpoints Enabled");
+        InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "uncaught"}, function(responseObject) {
+            InspectorTest.checkForError(responseObject);
+            InspectorTest.log("Debugger.setPauseOnExceptions - uncaught");
+            evaluateExpectedNoPauses(function() {
+                expectPause = true;
+                triggerNextUncaughtException();
+            });
+        });
+    });
+
+    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        InspectorTest.log("Paused!");
+
+        if (!expectPause) {
+            InspectorTest.log("FAIL - debugger paused when we did not expect to");
+            InspectorTest.completeTest();
+            return;
+        }
+
+        InspectorTest.sendCommand("Debugger.resume", {});
+    }
+
+    InspectorTest.eventHandler["Debugger.resumed"] = function(messageObject)
+    {
+        InspectorTest.log("Resumed");
+        triggerNextUncaughtException();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.setPauseOnExceptions uncaught</p>
+</body>
+</html>
