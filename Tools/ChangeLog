@@ -3,6 +3,16 @@
         AX: Expose DOM ID and ClassList to AX APIs for automation and AT element hashes
         https://bugs.webkit.org/show_bug.cgi?id=120552
 
+        Unreviewed build fix.
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::classList):
+
+2013-09-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Expose DOM ID and ClassList to AX APIs for automation and AT element hashes
+        https://bugs.webkit.org/show_bug.cgi?id=120552
+
         Reviewed by Darin Adler.
 
         * DumpRenderTree/AccessibilityUIElement.cpp:
