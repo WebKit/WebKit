@@ -66,7 +66,7 @@ NetscapePluginStream::~NetscapePluginStream()
 void NetscapePluginStream::didReceiveResponse(const KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
 {
     // Starting the stream could cause the plug-in stream to go away so we keep a reference to it here.
-    RefPtr<NetscapePluginStream> protect(this);
+    Ref<NetscapePluginStream> protect(*this);
 
     start(responseURL, streamLength, lastModifiedTime, mimeType, headers);
 }
@@ -74,7 +74,7 @@ void NetscapePluginStream::didReceiveResponse(const KURL& responseURL, uint32_t 
 void NetscapePluginStream::didReceiveData(const char* bytes, int length)
 {
     // Delivering the data could cause the plug-in stream to go away so we keep a reference to it here.
-    RefPtr<NetscapePluginStream> protect(this);
+    Ref<NetscapePluginStream> protect(*this);
 
     deliverData(bytes, length);
 }
@@ -82,7 +82,7 @@ void NetscapePluginStream::didReceiveData(const char* bytes, int length)
 void NetscapePluginStream::didFinishLoading()
 {
     // Stopping the stream could cause the plug-in stream to go away so we keep a reference to it here.
-    RefPtr<NetscapePluginStream> protect(this);
+    Ref<NetscapePluginStream> protect(*this);
 
     stop(NPRES_DONE);
 }
@@ -90,7 +90,7 @@ void NetscapePluginStream::didFinishLoading()
 void NetscapePluginStream::didFail(bool wasCancelled)
 {
     // Stopping the stream could cause the plug-in stream to go away so we keep a reference to it here.
-    RefPtr<NetscapePluginStream> protect(this);
+    Ref<NetscapePluginStream> protect(*this);
 
     stop(wasCancelled ? NPRES_USER_BREAK : NPRES_NETWORK_ERR);
 }
@@ -99,7 +99,7 @@ void NetscapePluginStream::sendJavaScriptStream(const String& result)
 {
     // starting the stream or delivering the data to it might cause the plug-in stream to go away, so we keep
     // a reference to it here.
-    RefPtr<NetscapePluginStream> protect(this);
+    Ref<NetscapePluginStream> protect(*this);
 
     CString resultCString = result.utf8();
     if (resultCString.isNull()) {

@@ -306,7 +306,7 @@ void PluginProcessProxy::beginModal()
 
     // The call to -[NSApp runModalForWindow:] below will run a nested run loop, and if the plug-in process
     // crashes the PluginProcessProxy object can be destroyed. Protect against this here.
-    RefPtr<PluginProcessProxy> protect(this);
+    Ref<PluginProcessProxy> protect(*this);
 
     [NSApp runModalForWindow:m_placeholderWindow.get()];
     

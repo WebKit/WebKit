@@ -381,7 +381,7 @@ void WebNetscapePluginStream::destroyStream()
     if (m_isTerminated)
         return;
 
-    RefPtr<WebNetscapePluginStream> protect(this);
+    Ref<WebNetscapePluginStream> protect(*this);
 
     ASSERT(m_reason != WEB_REASON_NONE);
     ASSERT([m_deliveryData.get() length] == 0);
@@ -458,7 +458,7 @@ void WebNetscapePluginStream::destroyStreamWithReason(NPReason reason)
         return;
     }
 
-    RefPtr<WebNetscapePluginStream> protect(this);
+    Ref<WebNetscapePluginStream> protect(*this);
     destroyStream();
     ASSERT(!m_stream.ndata);
 }
@@ -492,7 +492,7 @@ void WebNetscapePluginStream::didFail(WebCore::NetscapePlugInStreamLoader*, cons
 
 void WebNetscapePluginStream::cancelLoadAndDestroyStreamWithError(NSError *error)
 {
-    RefPtr<WebNetscapePluginStream> protect(this);
+    Ref<WebNetscapePluginStream> protect(*this);
     cancelLoadWithError(error);
     destroyStreamWithError(error);
     setPlugin(0);
@@ -503,7 +503,7 @@ void WebNetscapePluginStream::deliverData()
     if (!m_stream.ndata || [m_deliveryData.get() length] == 0)
         return;
 
-    RefPtr<WebNetscapePluginStream> protect(this);
+    Ref<WebNetscapePluginStream> protect(*this);
 
     int32_t totalBytes = [m_deliveryData.get() length];
     int32_t totalBytesDelivered = 0;

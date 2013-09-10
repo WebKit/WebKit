@@ -93,7 +93,7 @@ void NetworkConnectionToWebProcess::didReceiveSyncMessage(CoreIPC::Connection* c
 void NetworkConnectionToWebProcess::didClose(CoreIPC::Connection*)
 {
     // Protect ourself as we might be otherwise be deleted during this function.
-    RefPtr<NetworkConnectionToWebProcess> protector(this);
+    Ref<NetworkConnectionToWebProcess> protector(*this);
 
     HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>>::iterator end = m_networkResourceLoaders.end();
     for (HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader>>::iterator i = m_networkResourceLoaders.begin(); i != end; ++i)

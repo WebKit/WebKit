@@ -209,11 +209,11 @@ int HTMLSelectElement::activeSelectionEndListIndex() const
 
 void HTMLSelectElement::add(HTMLElement* element, HTMLElement* before, ExceptionCode& ec)
 {
-    // Make sure the element is ref'd and deref'd so we don't leak it.
-    RefPtr<HTMLElement> protectNewChild(element);
-
     if (!element || !(element->hasLocalName(optionTag) || element->hasLocalName(hrTag)))
         return;
+
+    // Make sure the element is ref'd and deref'd so we don't leak it.
+    Ref<HTMLElement> protectNewChild(*element);
 
     insertBefore(element, before, ec);
     setNeedsValidityCheck();

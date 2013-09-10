@@ -349,7 +349,7 @@ void NetscapePluginInstanceProxy::destroy()
  
     // If the plug-in host crashes while we're waiting for a reply, the last reference to the instance proxy
     // will go away. Prevent this by protecting it here.
-    RefPtr<NetscapePluginInstanceProxy> protect(this);
+    Ref<NetscapePluginInstanceProxy> protect(*this);
     
     // We don't care about the reply here - we just want to block until the plug-in instance has been torn down.
     waitForReply<NetscapePluginInstanceProxy::BooleanReply>(requestID);
@@ -635,7 +635,7 @@ NPError NetscapePluginInstanceProxy::loadURL(const char* url, const char* target
 void NetscapePluginInstanceProxy::performRequest(PluginRequest* pluginRequest)
 {
     // Loading the request can cause the instance proxy to go away, so protect it.
-    RefPtr<NetscapePluginInstanceProxy> protect(this);
+    Ref<NetscapePluginInstanceProxy> protect(*this);
 
     ASSERT(m_pluginView);
     
@@ -708,7 +708,7 @@ void NetscapePluginInstanceProxy::evaluateJavaScript(PluginRequest* pluginReques
     NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
     ASSERT(JSString);
 
-    RefPtr<NetscapePluginInstanceProxy> protect(this); // Executing arbitrary JavaScript can destroy the proxy.
+    Ref<NetscapePluginInstanceProxy> protect(*this); // Executing arbitrary JavaScript can destroy the proxy.
 
     NSString *result = [[m_pluginView webFrame] _stringByEvaluatingJavaScriptFromString:JSString forceUserGesture:pluginRequest->allowPopups()];
     

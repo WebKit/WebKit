@@ -468,7 +468,7 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequestID, P
 
     // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so
     // keep an extra reference to the connection here in case it's invalidated.
-    RefPtr<Connection> protect(this);
+    Ref<Connection> protect(*this);
     OwnPtr<MessageDecoder> reply = waitForSyncReply(syncRequestID, timeout, syncSendFlags);
 
     --m_inSendSyncCount;

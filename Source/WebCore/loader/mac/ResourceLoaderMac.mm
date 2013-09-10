@@ -74,7 +74,7 @@ void ResourceLoader::didReceiveDataArray(CFArrayRef dataArray)
 {
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
-    RefPtr<ResourceLoader> protector(this);
+    Ref<ResourceLoader> protect(*this);
 
     CFIndex arrayCount = CFArrayGetCount(dataArray);
     for (CFIndex i = 0; i < arrayCount; ++i) {

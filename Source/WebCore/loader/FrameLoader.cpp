@@ -2396,7 +2396,7 @@ void FrameLoader::frameDetached()
 
 void FrameLoader::detachFromParent()
 {
-    RefPtr<Frame> protect(&m_frame);
+    Ref<Frame> protect(m_frame);
 
     closeURL();
     history().saveScrollPositionAndViewStateToItem(history().currentItem());

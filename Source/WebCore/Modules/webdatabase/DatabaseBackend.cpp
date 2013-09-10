@@ -104,7 +104,7 @@ void DatabaseBackend::close()
     // to it with a local pointer here for a liitle longer, so that we can
     // unschedule any DatabaseTasks that refer to it before the database gets
     // deleted.
-    RefPtr<DatabaseBackend> protect = this;
+    Ref<DatabaseBackend> protect(*this);
     databaseContext()->databaseThread()->recordDatabaseClosed(this);
     databaseContext()->databaseThread()->unscheduleDatabaseTasks(this);
 }

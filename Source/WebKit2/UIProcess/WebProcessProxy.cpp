@@ -395,7 +395,7 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
 {
     // Protect ourselves, as the call to disconnect() below may otherwise cause us
     // to be deleted before we can finish our work.
-    RefPtr<WebProcessProxy> protect(this);
+    Ref<WebProcessProxy> protect(*this);
 
     webConnection()->didClose();
 

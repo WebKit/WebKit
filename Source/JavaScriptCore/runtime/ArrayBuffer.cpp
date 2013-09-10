@@ -34,7 +34,7 @@ namespace JSC {
 
 bool ArrayBuffer::transfer(ArrayBufferContents& result)
 {
-    RefPtr<ArrayBuffer> keepAlive(this);
+    Ref<ArrayBuffer> protect(*this);
 
     if (!m_contents.m_data) {
         result.m_data = 0;

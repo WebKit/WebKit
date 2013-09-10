@@ -567,7 +567,7 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
 
             // Protect against NPP_HandleEvent causing the plug-in to be destroyed, since we
             // access m_currentMouseEvent afterwards.
-            RefPtr<NetscapePlugin> protect(this);
+            Ref<NetscapePlugin> protect(*this);
 
             NPP_HandleEvent(&event);
 

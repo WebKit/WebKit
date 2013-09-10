@@ -233,7 +233,7 @@ void PluginView::Stream::didReceiveData(NetscapePlugInStreamLoader*, const char*
 void PluginView::Stream::didFail(NetscapePlugInStreamLoader*, const ResourceError& error) 
 {
     // Calling streamDidFail could cause us to be deleted, so we hold on to a reference here.
-    RefPtr<Stream> protect(this);
+    Ref<Stream> protect(*this);
 
     // We only want to call streamDidFail if the stream was not explicitly cancelled by the plug-in.
     if (!m_streamWasCancelled)
@@ -246,7 +246,7 @@ void PluginView::Stream::didFail(NetscapePlugInStreamLoader*, const ResourceErro
 void PluginView::Stream::didFinishLoading(NetscapePlugInStreamLoader*)
 {
     // Calling streamDidFinishLoading could cause us to be deleted, so we hold on to a reference here.
-    RefPtr<Stream> protectStream(this);
+    Ref<Stream> protect(*this);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     // Protect the plug-in while we're calling into it.
@@ -1088,7 +1088,7 @@ void PluginView::pendingURLRequestsTimerFired()
 void PluginView::performURLRequest(URLRequest* request)
 {
     // This protector is needed to make sure the PluginView is not destroyed while it is still needed.
-    RefPtr<PluginView> protect(this);
+    Ref<PluginView> protect(*this);
 
     // First, check if this is a javascript: url.
     if (protocolIsJavaScript(request->request().url())) {

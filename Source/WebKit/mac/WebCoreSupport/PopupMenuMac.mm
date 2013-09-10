@@ -175,7 +175,7 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
     RefPtr<Frame> frame = &v->frame();
     RetainPtr<NSEvent> event = frame->eventHandler().currentNSEvent();
     
-    RefPtr<PopupMenuMac> protector(this);
+    Ref<PopupMenuMac> protector(*this);
 
     RetainPtr<NSView> dummyView = adoptNS([[NSView alloc] initWithFrame:r]);
     [view addSubview:dummyView.get()];

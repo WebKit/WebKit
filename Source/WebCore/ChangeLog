@@ -1,5 +1,14 @@
 2013-09-09  Andreas Kling  <akling@apple.com>
 
+        Ref-ify more stack guards.
+        <https://webkit.org/b/121070>
+
+        Rubber-stamped by Anders Carlsson.
+
+        RefPtr<Foo> protect(this) => Ref<Foo> protect(*this).
+
+2013-09-09  Andreas Kling  <akling@apple.com>
+
         Generate more SVG type checks and conversions.
         <https://webkit.org/b/121066>
 

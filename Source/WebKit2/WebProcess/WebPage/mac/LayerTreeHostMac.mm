@@ -351,7 +351,7 @@ void LayerTreeHostMac::initialize()
 void LayerTreeHostMac::performScheduledLayerFlush()
 {
     {
-        RefPtr<LayerTreeHostMac> protect(this);
+        Ref<LayerTreeHostMac> protect(*this);
         m_webPage->layoutIfNeeded();
 
         if (!m_isValid)

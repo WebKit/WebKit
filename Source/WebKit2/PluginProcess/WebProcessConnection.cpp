@@ -292,7 +292,7 @@ void WebProcessConnection::createPluginAsynchronously(const PluginCreationParame
 
     // The call to createPluginInternal can potentially cause the plug-in to be destroyed and
     // thus free the WebProcessConnection object. Protect it.
-    RefPtr<WebProcessConnection> protect(this);
+    Ref<WebProcessConnection> protect(*this);
     createPluginInternal(creationParameters, result, wantsWheelEvents, remoteLayerClientID);
 
     if (!m_connection) {

@@ -3110,7 +3110,7 @@ sub GenerateCallbackImplementation
             push(@implContent, @argsCheck) if @argsCheck;
             push(@implContent, "    if (!canInvokeCallback())\n");
             push(@implContent, "        return true;\n\n");
-            push(@implContent, "    RefPtr<$className> protect(this);\n\n");
+            push(@implContent, "    Ref<$className> protect(*this);\n\n");
             push(@implContent, "    JSLockHolder lock(m_data->globalObject()->vm());\n\n");
             if (@params) {
                 push(@implContent, "    ExecState* exec = m_data->globalObject()->globalExec();\n");

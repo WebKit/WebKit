@@ -268,7 +268,7 @@ PassRefPtr<InspectorBackendDispatcher> InspectorBackendDispatcher::create(Inspec
 
 void InspectorBackendDispatcherImpl::dispatch(const String& message)
 {
-    RefPtr<InspectorBackendDispatcher> protect = this;
+    Ref<InspectorBackendDispatcher> protect(*this);
     typedef void (InspectorBackendDispatcherImpl::*CallHandler)(long callId, InspectorObject* messageObject);
     typedef HashMap<String, CallHandler> DispatchMap;
     DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, );
