@@ -1,3 +1,14 @@
+2013-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] /webkit2/WebKitWebView/default-menu fails when GtkSettings:gtk-show-input-method-menu is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=121088
+
+        Reviewed by Xan Lopez.
+
+        * UIProcess/API/gtk/tests/TestContextMenu.cpp: Always check
+        Unicode submenu is present in default context menu for editable
+        content.
+
 2013-09-09  Dean Jackson  <dino@apple.com>
 
         [WebGL] Allow multithreaded OpenGL contexts

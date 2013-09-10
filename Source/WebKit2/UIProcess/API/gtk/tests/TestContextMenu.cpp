@@ -338,11 +338,10 @@ public:
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_DELETE, Visible);
             iter = checkCurrentItemIsSeparatorAndGetNext(iter);
             iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_SELECT_ALL, Visible | Enabled);
-            if (shouldShowInputMethodsMenu()) {
-                iter = checkCurrentItemIsSeparatorAndGetNext(iter);
+            iter = checkCurrentItemIsSeparatorAndGetNext(iter);
+            if (shouldShowInputMethodsMenu())
                 iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_INPUT_METHODS, Visible | Enabled);
-                iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_UNICODE, Visible | Enabled);
-            }
+            iter = checkCurrentItemIsStockActionAndGetNext(iter, WEBKIT_CONTEXT_MENU_ACTION_UNICODE, Visible | Enabled);
             break;
         default:
             g_assert_not_reached();
