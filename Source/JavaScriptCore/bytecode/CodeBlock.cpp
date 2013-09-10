@@ -171,7 +171,7 @@ CString CodeBlock::registerName(int r) const
         return toCString("arg", operandToArgument(r));
     }
 
-    return toCString("loc", r);
+    return toCString("loc", operandToLocal(r));
 }
 
 static CString regexpToSourceString(RegExp* regExp)

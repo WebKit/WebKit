@@ -367,7 +367,7 @@ public:
             return operandToArgument(operand) && usesArguments();
 
         if (inlineCallFrame)
-            return inlineCallFrame->capturedVars.get(operand);
+            return inlineCallFrame->capturedVars.get(operandToLocal(operand));
 
         // The activation object isn't in the captured region, but it's "captured"
         // in the sense that stores to its location can be observed indirectly.

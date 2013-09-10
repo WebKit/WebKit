@@ -154,7 +154,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ExtractOSREntryLocal: {
         forNode(node).makeTop();
         if (!operandIsArgument(node->unlinkedLocal())
-            && m_graph.m_lazyVars.get(node->unlinkedLocal())) {
+            && m_graph.m_lazyVars.get(operandToLocal(node->unlinkedLocal()))) {
             // This is kind of pessimistic - we could know in some cases that the
             // DFG code at the point of the OSR had already initialized the lazy
             // variable. But maybe this is fine, since we're inserting OSR
@@ -1598,7 +1598,7 @@ void AbstractInterpreter<AbstractStateType>::clobberCapturedVars(const CodeOrigi
         }
     } else {
         for (size_t i = m_codeBlock->m_numVars; i--;) {
-            if (m_codeBlock->isCaptured(i))
+            if (m_codeBlock->isCaptured(localToOperand(i)))
                 m_state.variables().local(i).makeTop();
         }
     }

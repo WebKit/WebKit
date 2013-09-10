@@ -1,3 +1,44 @@
+2013-09-09  Michael Saboff  <msaboff@apple.com>
+
+        Add local to/from operand helpers similar to argument to/from operand2
+        https://bugs.webkit.org/show_bug.cgi?id=121056
+
+        Reviewed by Geoffrey Garen.
+
+        Added localToOperand(), operandToLocal() and operandIsLocal() to Operands.h, very similar to
+        argumentToOperand(), et al.  Used the new helpers everywhere where an index into a data
+        structure is intended instead of the actual virtual register offset.  When the stack is
+        changed to grow down, local register offsets can be negative.  Also added the helper
+        DFG::SpeculativeJIT::generationInfoFromVirtualRegister() for the common case accessing 
+        m_generationInfo[operandToLocal(val)].
+
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        * bytecode/Operands.h:
+        (JSC::localToOperand):
+        (JSC::operandIsLocal):
+        (JSC::operandToLocal):
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        * dfg/DFGOSREntry.cpp:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        * dfg/DFGOSRExitCompiler64.cpp:
+        * dfg/DFGScoreBoard.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::generationInfoFromVirtualRegister):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * dfg/DFGValidate.cpp:
+        * dfg/DFGVariableEventStream.cpp:
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        * jit/JITInlines.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+
 2013-09-09  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, disable GC logging.

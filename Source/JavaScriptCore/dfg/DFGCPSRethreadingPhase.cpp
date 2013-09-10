@@ -220,7 +220,7 @@ private:
         if (operandIsArgument(variable->local()))
             canonicalizeGetLocalFor<ArgumentOperand>(node, variable, operandToArgument(variable->local()));
         else
-            canonicalizeGetLocalFor<LocalOperand>(node, variable, variable->local());
+            canonicalizeGetLocalFor<LocalOperand>(node, variable, operandToLocal(variable->local()));
     }
     
     void canonicalizeSetLocal(Node* node)
@@ -288,7 +288,7 @@ private:
         if (operandIsArgument(variable->local()))
             canonicalizeFlushOrPhantomLocalFor<nodeType, ArgumentOperand>(node, variable, operandToArgument(variable->local()));
         else
-            canonicalizeFlushOrPhantomLocalFor<nodeType, LocalOperand>(node, variable, variable->local());
+            canonicalizeFlushOrPhantomLocalFor<nodeType, LocalOperand>(node, variable, operandToLocal(variable->local()));
     }
     
     void canonicalizeSetArgument(Node* node)

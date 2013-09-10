@@ -758,7 +758,7 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
         return;
     }
 
-    if (src == m_lastResultBytecodeRegister && m_codeBlock->isTemporaryRegisterIndex(src) && !atJumpTarget()) {
+    if (src == m_lastResultBytecodeRegister && m_codeBlock->isTemporaryRegisterIndex(operandToLocal(src)) && !atJumpTarget()) {
         // The argument we want is already stored in eax
         if (dst != cachedResultRegister)
             move(cachedResultRegister, dst);

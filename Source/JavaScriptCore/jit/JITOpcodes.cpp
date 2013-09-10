@@ -836,7 +836,7 @@ void JIT::emit_op_enter(Instruction*)
     // object lifetime and increasing GC pressure.
     size_t count = m_codeBlock->m_numVars;
     for (size_t j = 0; j < count; ++j)
-        emitInitRegister(j);
+        emitInitRegister(localToOperand(j));
 }
 
 void JIT::emit_op_create_activation(Instruction* currentInstruction)

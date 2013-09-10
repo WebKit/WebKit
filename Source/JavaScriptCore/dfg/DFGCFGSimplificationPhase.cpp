@@ -328,7 +328,7 @@ private:
         for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfArguments(); ++i)
             keepOperandAlive(block, jettisonedBlock, boundaryCodeOrigin, argumentToOperand(i));
         for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfLocals(); ++i)
-            keepOperandAlive(block, jettisonedBlock, boundaryCodeOrigin, i);
+            keepOperandAlive(block, jettisonedBlock, boundaryCodeOrigin, localToOperand(i));
         
         fixJettisonedPredecessors(block, jettisonedBlock);
     }
@@ -382,7 +382,7 @@ private:
             for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfArguments(); ++i)
                 keepOperandAlive(firstBlock, jettisonedBlock, boundaryCodeOrigin, argumentToOperand(i));
             for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfLocals(); ++i)
-                keepOperandAlive(firstBlock, jettisonedBlock, boundaryCodeOrigin, i);
+                keepOperandAlive(firstBlock, jettisonedBlock, boundaryCodeOrigin, localToOperand(i));
         }
         
         for (size_t i = 0; i < secondBlock->phis.size(); ++i)

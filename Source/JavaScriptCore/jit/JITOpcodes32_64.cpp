@@ -1099,7 +1099,7 @@ void JIT::emit_op_enter(Instruction*)
     // registers to zap stale pointers, to avoid unnecessarily prolonging
     // object lifetime and increasing GC pressure.
     for (int i = 0; i < m_codeBlock->m_numVars; ++i)
-        emitStore(i, jsUndefined());
+        emitStore(localToOperand(i), jsUndefined());
 }
 
 void JIT::emit_op_create_activation(Instruction* currentInstruction)

@@ -126,7 +126,7 @@ public:
         for (size_t i = 0; i < inlineCallFrameCount; i++) {
             InlineCallFrame& inlineCallFrame = codeBlock()->inlineCallFrames()[i];
             CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(&inlineCallFrame);
-            unsigned requiredCalleeRegisters = inlineCallFrame.stackOffset + codeBlock->m_numCalleeRegisters;
+            unsigned requiredCalleeRegisters = operandToLocal(inlineCallFrame.stackOffset) + codeBlock->m_numCalleeRegisters;
             if (requiredCalleeRegisters > calleeRegisters)
                 calleeRegisters = requiredCalleeRegisters;
         }

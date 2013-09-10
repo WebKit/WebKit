@@ -74,11 +74,11 @@ public:
     {
         // NB. This code is not written for performance, since it is not intended to run
         // in release builds.
-        
+
         // Validate that all local variables at the head of the root block are dead.
         BasicBlock* root = m_graph.block(0);
         for (unsigned i = 0; i < root->variablesAtHead.numberOfLocals(); ++i)
-            V_EQUAL((static_cast<VirtualRegister>(i), 0), static_cast<Node*>(0), root->variablesAtHead.local(i));
+            V_EQUAL((static_cast<VirtualRegister>(localToOperand(i)), 0), static_cast<Node*>(0), root->variablesAtHead.local(i));
         
         // Validate ref counts and uses.
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
@@ -325,9 +325,9 @@ private:
                 setLocalPositions.argument(i) = notSet;
             }
             for (size_t i = 0; i < block->variablesAtHead.numberOfLocals(); ++i) {
-                VALIDATE((static_cast<VirtualRegister>(i), block), !block->variablesAtHead.local(i) || block->variablesAtHead.local(i)->hasVariableAccessData(m_graph));
+                VALIDATE((static_cast<VirtualRegister>(localToOperand(i)), block), !block->variablesAtHead.local(i) || block->variablesAtHead.local(i)->hasVariableAccessData(m_graph));
                 if (m_graph.m_form == ThreadedCPS)
-                    VALIDATE((static_cast<VirtualRegister>(i), block), !block->variablesAtTail.local(i) || block->variablesAtTail.local(i)->hasVariableAccessData(m_graph));
+                    VALIDATE((static_cast<VirtualRegister>(localToOperand(i)), block), !block->variablesAtTail.local(i) || block->variablesAtTail.local(i)->hasVariableAccessData(m_graph));
 
                 getLocalPositions.local(i) = notSet;
                 setLocalPositions.local(i) = notSet;
@@ -393,7 +393,7 @@ private:
             }
             for (size_t i = 0; i < block->variablesAtHead.numberOfLocals(); ++i) {
                 checkOperand(
-                    block, getLocalPositions, setLocalPositions, i);
+                    block, getLocalPositions, setLocalPositions, localToOperand(i));
             }
         }
     }

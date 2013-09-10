@@ -89,25 +89,25 @@ public:
             // Use count must have hit zero for it to have been added to the free list!
             ASSERT(!m_used[index]);
             m_highWatermark = std::max(m_highWatermark, static_cast<unsigned>(index) + 1);
-            return (VirtualRegister)index;
+            return localToOperand(index);
         }
 
         // Allocate a new VirtualRegister, and add a corresponding entry to m_used.
         size_t next = m_used.size();
         m_used.append(0);
         m_highWatermark = std::max(m_highWatermark, static_cast<unsigned>(next) + 1);
-        return (VirtualRegister)next;
+        return localToOperand(next);
     }
 
-    // Increment the usecount for the VirtualRegsiter associated with 'child',
-    // if it reaches the node's refcount, free the VirtualRegsiter.
+    // Increment the usecount for the VirtualRegister associated with 'child',
+    // if it reaches the node's refcount, free the VirtualRegister.
     void use(Node* child)
     {
         if (!child)
             return;
 
         // Find the virtual register number for this child, increment its use count.
-        uint32_t index = child->virtualRegister();
+        uint32_t index = operandToLocal(child->virtualRegister());
         ASSERT(m_used[index] != max());
         if (child->refCount() == ++m_used[index]) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)

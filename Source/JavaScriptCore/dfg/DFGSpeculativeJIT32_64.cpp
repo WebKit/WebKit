@@ -46,7 +46,7 @@ GPRReg SpeculativeJIT::fillInteger(Edge edge, DataFormat& returnFormat)
     ASSERT(!needsTypeCheck(edge, SpecInt32));
     
     VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     if (info.registerFormat() == DataFormatNone) {
         GPRReg gpr = allocate();
@@ -122,7 +122,7 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
     UNUSED_PARAM(fpr);
 
     VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
@@ -865,7 +865,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(Edge edge, DataFormat& returnFor
     ASSERT(edge.useKind() != KnownInt32Use || !(value.m_type & ~SpecInt32));
     m_interpreter.filter(value, SpecInt32);
     VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
@@ -966,7 +966,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
     ASSERT(edge.useKind() != KnownNumberUse || !(value.m_type & ~SpecNumber));
     m_interpreter.filter(value, SpecNumber);
     VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     if (info.registerFormat() == DataFormatNone) {
 
@@ -1103,7 +1103,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     ASSERT((edge.useKind() != KnownCellUse && edge.useKind() != KnownStringUse) || !(value.m_type & ~SpecCell));
     m_interpreter.filter(value, SpecCell);
     VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
@@ -1184,7 +1184,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
     SpeculatedType type = value.m_type;
     m_interpreter.filter(value, SpecBoolean);
     VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
@@ -2002,7 +2002,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.loadDouble(JITCompiler::addressFor(node->local()), result.fpr());
             VirtualRegister virtualRegister = node->virtualRegister();
             m_fprs.retain(result.fpr(), virtualRegister, SpillOrderDouble);
-            m_generationInfo[virtualRegister].initDouble(node, node->refCount(), result.fpr());
+            generationInfoFromVirtualRegister(virtualRegister).initDouble(node, node->refCount(), result.fpr());
             break;
         }
         
@@ -2014,7 +2014,7 @@ void SpeculativeJIT::compile(Node* node)
             // and don't represent values within this dataflow with virtual registers.
             VirtualRegister virtualRegister = node->virtualRegister();
             m_gprs.retain(result.gpr(), virtualRegister, SpillOrderInteger);
-            m_generationInfo[virtualRegister].initInteger(node, node->refCount(), result.gpr());
+            generationInfoFromVirtualRegister(virtualRegister).initInteger(node, node->refCount(), result.gpr());
             break;
         }
         
@@ -2026,7 +2026,7 @@ void SpeculativeJIT::compile(Node* node)
             // and don't represent values within this dataflow with virtual registers.
             VirtualRegister virtualRegister = node->virtualRegister();
             m_gprs.retain(result.gpr(), virtualRegister, SpillOrderCell);
-            m_generationInfo[virtualRegister].initCell(node, node->refCount(), result.gpr());
+            generationInfoFromVirtualRegister(virtualRegister).initCell(node, node->refCount(), result.gpr());
             break;
         }
         
@@ -2038,7 +2038,7 @@ void SpeculativeJIT::compile(Node* node)
             // and don't represent values within this dataflow with virtual registers.
             VirtualRegister virtualRegister = node->virtualRegister();
             m_gprs.retain(result.gpr(), virtualRegister, SpillOrderBoolean);
-            m_generationInfo[virtualRegister].initBoolean(node, node->refCount(), result.gpr());
+            generationInfoFromVirtualRegister(virtualRegister).initBoolean(node, node->refCount(), result.gpr());
             break;
         }
 
@@ -2053,7 +2053,7 @@ void SpeculativeJIT::compile(Node* node)
         m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
         m_gprs.retain(tag.gpr(), virtualRegister, SpillOrderJS);
 
-        m_generationInfo[virtualRegister].initJSValue(node, node->refCount(), tag.gpr(), result.gpr(), DataFormatJS);
+        generationInfoFromVirtualRegister(virtualRegister).initJSValue(node, node->refCount(), tag.gpr(), result.gpr(), DataFormatJS);
         break;
     }
         
@@ -2101,7 +2101,7 @@ void SpeculativeJIT::compile(Node* node)
                 break;
             }
             SpeculatedType predictedType = node->variableAccessData()->argumentAwarePrediction();
-            if (m_generationInfo[node->child1()->virtualRegister()].registerFormat() == DataFormatDouble) {
+            if (generationInfoFromVirtualRegister(node->child1()->virtualRegister()).registerFormat() == DataFormatDouble) {
                 SpeculateDoubleOperand value(this, node->child1(), ManualOperandSpeculation);
                 m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node->local()));
                 noResult(node);

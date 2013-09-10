@@ -28,10 +28,15 @@
 
 #include "CallFrame.h"
 #include "JSObject.h"
+#include "VirtualRegister.h"
 #include <wtf/PrintStream.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
+
+inline VirtualRegister localToOperand(int local) { return (VirtualRegister)local; }
+inline bool operandIsLocal(int operand) { return operand >= 0; }
+inline int operandToLocal(int operand) { return operand; }
 
 // argument 0 is 'this'.
 inline bool operandIsArgument(int operand) { return operand < 0; }
@@ -143,7 +148,7 @@ public:
             return m_arguments[argument];
         }
         
-        return m_locals[operand];
+        return m_locals[operandToLocal(operand)];
     }
     
     const T& operand(int operand) const { return const_cast<const T&>(const_cast<Operands*>(this)->operand(operand)); }
@@ -152,7 +157,7 @@ public:
     {
         if (operandIsArgument(operand))
             return true;
-        return static_cast<size_t>(operand) < numberOfLocals();
+        return static_cast<size_t>(operandToLocal(operand)) < numberOfLocals();
     }
     
     void setOperand(int operand, const T& value)
@@ -163,7 +168,7 @@ public:
             return;
         }
         
-        setLocal(operand, value);
+        setLocal(operandToLocal(operand), value);
     }
     
     size_t size() const { return numberOfArguments() + numberOfLocals(); }
@@ -196,7 +201,7 @@ public:
     {
         if (index < numberOfArguments())
             return argumentToOperand(index);
-        return index - numberOfArguments();
+        return localToOperand(index - numberOfArguments());
     }
     
     void setOperandFirstTime(int operand, const T& value)
@@ -206,7 +211,7 @@ public:
             return;
         }
         
-        setLocalFirstTime(operand, value);
+        setLocalFirstTime(operandToLocal(operand), value);
     }
     
     void fill(T value)

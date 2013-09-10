@@ -317,7 +317,7 @@ void SpeculativeJIT::clearGenerationInfo()
 
 SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForGPR(VirtualRegister spillMe, GPRReg source)
 {
-    GenerationInfo& info = m_generationInfo[spillMe];
+    GenerationInfo& info = generationInfoFromVirtualRegister(spillMe);
     Node* node = info.node();
     DataFormat registerFormat = info.registerFormat();
     ASSERT(registerFormat != DataFormatNone);
@@ -436,7 +436,7 @@ SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForGPR(VirtualRegister spil
     
 SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForFPR(VirtualRegister spillMe, FPRReg source)
 {
-    GenerationInfo& info = m_generationInfo[spillMe];
+    GenerationInfo& info = generationInfoFromVirtualRegister(spillMe);
     Node* node = info.node();
     ASSERT(info.registerFormat() == DataFormatDouble);
 
@@ -777,7 +777,7 @@ void SpeculativeJIT::arrayify(Node* node)
 GPRReg SpeculativeJIT::fillStorage(Edge edge)
 {
     VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
     
     switch (info.registerFormat()) {
     case DataFormatNone: {
@@ -1076,7 +1076,7 @@ void SpeculativeJIT::checkConsistency()
 
     for (unsigned i = 0; i < m_generationInfo.size(); ++i) {
         VirtualRegister virtualRegister = (VirtualRegister)i;
-        GenerationInfo& info = m_generationInfo[virtualRegister];
+        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
         if (!info.alive())
             continue;
         switch (info.registerFormat()) {
@@ -1124,7 +1124,7 @@ void SpeculativeJIT::checkConsistency()
         if (virtualRegister == InvalidVirtualRegister)
             continue;
 
-        GenerationInfo& info = m_generationInfo[virtualRegister];
+        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 #if USE(JSVALUE64)
         if (iter.regID() != info.gpr()) {
             dataLogF("DFG_CONSISTENCY_CHECK failed: name mismatch for gpr %s (virtual register %d).\n", iter.debugName(), virtualRegister);
@@ -1150,7 +1150,7 @@ void SpeculativeJIT::checkConsistency()
         if (virtualRegister == InvalidVirtualRegister)
             continue;
 
-        GenerationInfo& info = m_generationInfo[virtualRegister];
+        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
         if (iter.regID() != info.fpr()) {
             dataLogF("DFG_CONSISTENCY_CHECK failed: name mismatch for fpr %s (virtual register %d).\n", iter.debugName(), virtualRegister);
             failed = true;
@@ -1548,7 +1548,7 @@ void SpeculativeJIT::noticeOSRBirth(Node* node)
         return;
     
     VirtualRegister virtualRegister = node->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
     
     info.noticeOSRBirth(*m_stream, node, virtualRegister);
 }
@@ -1681,7 +1681,7 @@ void SpeculativeJIT::compileCurrentBlock()
             valueSource = ValueSource::forSpeculation(node->variableAccessData()->argumentAwarePrediction());
         m_variables[i] = valueSource;
         // FIXME: Don't emit SetLocal(Dead). https://bugs.webkit.org/show_bug.cgi?id=108019
-        m_stream->appendAndLog(VariableEvent::setLocal(i, valueSource.dataFormat()));
+        m_stream->appendAndLog(VariableEvent::setLocal(localToOperand(i), valueSource.dataFormat()));
     }
     
     m_lastSetOperand = std::numeric_limits<int>::max();
@@ -2176,7 +2176,7 @@ GeneratedOperandType SpeculativeJIT::checkGeneratedTypeForToInt32(Node* node)
     dataLogF("checkGeneratedTypeForToInt32@%d   ", node->index());
 #endif
     VirtualRegister virtualRegister = node->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     switch (info.registerFormat()) {
     case DataFormatStorage:
@@ -2290,7 +2290,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 #else
             Node* childNode = node->child1().node();
             VirtualRegister virtualRegister = childNode->virtualRegister();
-            GenerationInfo& info = m_generationInfo[virtualRegister];
+            GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
             JSValueOperand op1(this, node->child1(), ManualOperandSpeculation);
 

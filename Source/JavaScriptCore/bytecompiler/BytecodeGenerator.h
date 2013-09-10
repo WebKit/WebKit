@@ -498,14 +498,14 @@ namespace JSC {
 
         RegisterID& registerFor(int index)
         {
-            if (index >= 0)
-                return m_calleeRegisters[index];
+            if (operandIsLocal(index))
+                return m_calleeRegisters[operandToLocal(index)];
 
             if (index == JSStack::Callee)
                 return m_calleeRegister;
 
             ASSERT(m_parameters.size());
-            return m_parameters[index + m_parameters.size() + JSStack::CallFrameHeaderSize];
+            return m_parameters[operandToArgument(index)];
         }
 
         unsigned addConstant(const Identifier&);

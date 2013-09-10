@@ -180,9 +180,9 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         switch (recovery.technique()) {
         case Int32DisplacedInJSStack:
         case DoubleDisplacedInJSStack:
-        case DisplacedInJSStack:
+        case DisplacedInJSStack: {
             numberOfDisplacedVirtualRegisters++;
-            ASSERT((int)recovery.virtualRegister() >= 0);
+            ASSERT(operandIsLocal(recovery.virtualRegister()));
             
             // See if we might like to store to this virtual register before doing
             // virtual register shuffling. If so, we say that the virtual register
@@ -191,14 +191,15 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             // to ensure this happens efficiently. Note that we expect this case
             // to be rare, so the handling of it is optimized for the cases in
             // which it does not happen.
-            if (recovery.virtualRegister() < (int)operands.numberOfLocals()) {
-                switch (operands.local(recovery.virtualRegister()).technique()) {
+            int local = operandToLocal(recovery.virtualRegister());
+            if (local < (int)operands.numberOfLocals()) {
+                switch (operands.local(local).technique()) {
                 case InGPR:
                 case UnboxedInt32InGPR:
                 case UInt32InGPR:
                 case InFPR:
-                    if (!poisonedVirtualRegisters[recovery.virtualRegister()]) {
-                        poisonedVirtualRegisters[recovery.virtualRegister()] = true;
+                    if (!poisonedVirtualRegisters[local]) {
+                        poisonedVirtualRegisters[local] = true;
                         numberOfPoisonedVirtualRegisters++;
                     }
                     break;
@@ -207,7 +208,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 }
             }
             break;
-            
+            }
         case UnboxedInt32InGPR:
         case AlreadyInJSStackAsUnboxedInt32:
             haveUnboxedInt32s = true;
@@ -530,7 +531,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             case UInt32InGPR:
             case InFPR:
                 m_jit.load64(scratchDataBuffer + poisonIndex(virtualRegister), GPRInfo::regT0);
-                m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)virtualRegister));
+                m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(localToOperand(virtualRegister)));
                 break;
                 
             default:

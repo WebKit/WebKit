@@ -45,7 +45,7 @@ GPRReg SpeculativeJIT::fillInteger(Edge edge, DataFormat& returnFormat)
     ASSERT(!needsTypeCheck(edge, SpecInt32));
     
     VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     if (info.registerFormat() == DataFormatNone) {
         GPRReg gpr = allocate();
@@ -123,7 +123,7 @@ GPRReg SpeculativeJIT::fillInteger(Edge edge, DataFormat& returnFormat)
 GPRReg SpeculativeJIT::fillJSValue(Edge edge)
 {
     VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
     
     switch (info.registerFormat()) {
     case DataFormatNone: {
@@ -825,7 +825,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(Edge edge, DataFormat& returnFor
     ASSERT(edge.useKind() != KnownInt32Use || !(value.m_type & ~SpecInt32));
     m_interpreter.filter(value, SpecInt32);
     VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
@@ -975,7 +975,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
     ASSERT(edge.useKind() != KnownNumberUse || !(value.m_type & ~SpecNumber));
     m_interpreter.filter(value, SpecNumber);
     VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     if (info.registerFormat() == DataFormatNone) {
         if (edge->hasConstant()) {
@@ -1132,7 +1132,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     ASSERT((edge.useKind() != KnownCellUse && edge.useKind() != KnownStringUse) || !(value.m_type & ~SpecCell));
     m_interpreter.filter(value, SpecCell);
     VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
@@ -1214,7 +1214,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
     SpeculatedType type = value.m_type;
     m_interpreter.filter(value, SpecBoolean);
     VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
@@ -1969,7 +1969,7 @@ void SpeculativeJIT::compile(Node* node)
             m_jit.loadDouble(JITCompiler::addressFor(node->local()), result.fpr());
             VirtualRegister virtualRegister = node->virtualRegister();
             m_fprs.retain(result.fpr(), virtualRegister, SpillOrderDouble);
-            m_generationInfo[virtualRegister].initDouble(node, node->refCount(), result.fpr());
+            generationInfoFromVirtualRegister(virtualRegister).initDouble(node, node->refCount(), result.fpr());
             break;
         }
         
@@ -1981,7 +1981,7 @@ void SpeculativeJIT::compile(Node* node)
             // and don't represent values within this dataflow with virtual registers.
             VirtualRegister virtualRegister = node->virtualRegister();
             m_gprs.retain(result.gpr(), virtualRegister, SpillOrderInteger);
-            m_generationInfo[virtualRegister].initInteger(node, node->refCount(), result.gpr());
+            generationInfoFromVirtualRegister(virtualRegister).initInteger(node, node->refCount(), result.gpr());
             break;
         }
 
@@ -2001,7 +2001,7 @@ void SpeculativeJIT::compile(Node* node)
         else
             format = DataFormatJS;
 
-        m_generationInfo[virtualRegister].initJSValue(node, node->refCount(), result.gpr(), format);
+        generationInfoFromVirtualRegister(virtualRegister).initJSValue(node, node->refCount(), result.gpr(), format);
         break;
     }
 
