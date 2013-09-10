@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: webkit HEAD\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
-"POT-Creation-Date: 2013-08-19 02:25+0000\n"
-"PO-Revision-Date: 2013-08-22 22:34-0300\n"
+"POT-Creation-Date: 2013-09-03 14:26+0000\n"
+"PO-Revision-Date: 2013-09-03 14:48-0300\n"
 "Last-Translator: Enrico Nicoletto <liverig@gmail.com>\n"
 "Language-Team: Brazilian Portuguese\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -323,282 +324,286 @@ msgid "footer"
 msgstr "rodapé"
 
 #: ../LocalizedStringsGtk.cpp:457
+msgid "cancel"
+msgstr "cancelar"
+
+#: ../LocalizedStringsGtk.cpp:462
 msgid "press"
 msgstr "pressionar"
 
-#: ../LocalizedStringsGtk.cpp:462
+#: ../LocalizedStringsGtk.cpp:467
 msgid "select"
 msgstr "selecionar"
 
-#: ../LocalizedStringsGtk.cpp:467
+#: ../LocalizedStringsGtk.cpp:472
 msgid "activate"
 msgstr "ativar"
 
-#: ../LocalizedStringsGtk.cpp:472
+#: ../LocalizedStringsGtk.cpp:477
 msgid "uncheck"
 msgstr "desmarcar"
 
-#: ../LocalizedStringsGtk.cpp:477
+#: ../LocalizedStringsGtk.cpp:482
 msgid "check"
 msgstr "marcar"
 
-#: ../LocalizedStringsGtk.cpp:482
+#: ../LocalizedStringsGtk.cpp:487
 msgid "jump"
 msgstr "pular"
 
-#: ../LocalizedStringsGtk.cpp:502
+#: ../LocalizedStringsGtk.cpp:507
 msgid "Missing Plug-in"
 msgstr "Plug-in em falta"
 
-#: ../LocalizedStringsGtk.cpp:508
+#: ../LocalizedStringsGtk.cpp:513
 msgid "Plug-in Failure"
 msgstr "Falha em plug-in"
 
 #. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
-#: ../LocalizedStringsGtk.cpp:532
+#: ../LocalizedStringsGtk.cpp:537
 msgid " files"
 msgstr " arquivos"
 
-#: ../LocalizedStringsGtk.cpp:537
+#: ../LocalizedStringsGtk.cpp:542
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: ../LocalizedStringsGtk.cpp:542
+#: ../LocalizedStringsGtk.cpp:547
 #, c-format
 msgctxt "Title string for images"
 msgid "%s  (%dx%d pixels)"
 msgstr "%s  (%dx%d pixels)"
 
-#: ../LocalizedStringsGtk.cpp:554
+#: ../LocalizedStringsGtk.cpp:559
 msgid "Loading..."
 msgstr "Carregando..."
 
-#: ../LocalizedStringsGtk.cpp:559
+#: ../LocalizedStringsGtk.cpp:564
 msgid "Live Broadcast"
 msgstr "Transmissão ao vivo"
 
-#: ../LocalizedStringsGtk.cpp:565
+#: ../LocalizedStringsGtk.cpp:570
 msgid "audio playback"
 msgstr "Reprodução de áudio"
 
-#: ../LocalizedStringsGtk.cpp:567
+#: ../LocalizedStringsGtk.cpp:572
 msgid "video playback"
 msgstr "Reprodução de vídeo"
 
-#: ../LocalizedStringsGtk.cpp:569
+#: ../LocalizedStringsGtk.cpp:574
 msgid "mute"
 msgstr "Mudo"
 
-#: ../LocalizedStringsGtk.cpp:571
+#: ../LocalizedStringsGtk.cpp:576
 msgid "unmute"
 msgstr "Desligar mudo"
 
-#: ../LocalizedStringsGtk.cpp:573
+#: ../LocalizedStringsGtk.cpp:578
 msgid "play"
 msgstr "Reproduzir"
 
-#: ../LocalizedStringsGtk.cpp:575
+#: ../LocalizedStringsGtk.cpp:580
 msgid "pause"
 msgstr "Pausar"
 
-#: ../LocalizedStringsGtk.cpp:577
+#: ../LocalizedStringsGtk.cpp:582
 msgid "movie time"
 msgstr "Tempo do filme"
 
-#: ../LocalizedStringsGtk.cpp:579
+#: ../LocalizedStringsGtk.cpp:584
 msgid "timeline slider thumb"
 msgstr "Puxador da linha do tempo"
 
-#: ../LocalizedStringsGtk.cpp:581
+#: ../LocalizedStringsGtk.cpp:586
 msgid "back 30 seconds"
 msgstr "Voltar 30 segundos"
 
-#: ../LocalizedStringsGtk.cpp:583
+#: ../LocalizedStringsGtk.cpp:588
 msgid "return to realtime"
 msgstr "Retornar ao tempo real"
 
-#: ../LocalizedStringsGtk.cpp:585
+#: ../LocalizedStringsGtk.cpp:590
 msgid "elapsed time"
 msgstr "Tempo decorrido"
 
-#: ../LocalizedStringsGtk.cpp:587
+#: ../LocalizedStringsGtk.cpp:592
 msgid "remaining time"
 msgstr "Tempo restante"
 
-#: ../LocalizedStringsGtk.cpp:589
+#: ../LocalizedStringsGtk.cpp:594
 msgid "status"
 msgstr "Estado"
 
-#: ../LocalizedStringsGtk.cpp:591
+#: ../LocalizedStringsGtk.cpp:596
 msgid "enter fullscreen"
 msgstr "Entrar em tela cheia"
 
-#: ../LocalizedStringsGtk.cpp:593
+#: ../LocalizedStringsGtk.cpp:598
 msgid "exit fullscreen"
 msgstr "Sair da tela cheia"
 
-#: ../LocalizedStringsGtk.cpp:595
+#: ../LocalizedStringsGtk.cpp:600
 msgid "fast forward"
 msgstr "Avanço rápido"
 
-#: ../LocalizedStringsGtk.cpp:597
+#: ../LocalizedStringsGtk.cpp:602
 msgid "fast reverse"
 msgstr "Retrocesso rápido"
 
-#: ../LocalizedStringsGtk.cpp:599
+#: ../LocalizedStringsGtk.cpp:604
 msgid "show closed captions"
 msgstr "Mostrar legendas codificadas"
 
-#: ../LocalizedStringsGtk.cpp:601
+#: ../LocalizedStringsGtk.cpp:606
 msgid "hide closed captions"
 msgstr "Ocultar legendas codificadas"
 
-#: ../LocalizedStringsGtk.cpp:603
+#: ../LocalizedStringsGtk.cpp:608
 msgid "media controls"
 msgstr "Controles de mídia"
 
-#: ../LocalizedStringsGtk.cpp:612
+#: ../LocalizedStringsGtk.cpp:617
 msgid "audio element playback controls and status display"
 msgstr "Mostrador dos controles de reprodução de áudio e estado"
 
-#: ../LocalizedStringsGtk.cpp:614
+#: ../LocalizedStringsGtk.cpp:619
 msgid "video element playback controls and status display"
 msgstr "Mostrador dos controles de reprodução de vídeo e estado"
 
-#: ../LocalizedStringsGtk.cpp:616
+#: ../LocalizedStringsGtk.cpp:621
 msgid "mute audio tracks"
 msgstr "Emudecer trilhas de áudio"
 
-#: ../LocalizedStringsGtk.cpp:618
+#: ../LocalizedStringsGtk.cpp:623
 msgid "unmute audio tracks"
 msgstr "Retirar mudo de trilhas de áudio"
 
-#: ../LocalizedStringsGtk.cpp:620
+#: ../LocalizedStringsGtk.cpp:625
 msgid "begin playback"
 msgstr "Iniciar reprodução"
 
-#: ../LocalizedStringsGtk.cpp:622
+#: ../LocalizedStringsGtk.cpp:627
 msgid "pause playback"
 msgstr "Pausar reprodução"
 
-#: ../LocalizedStringsGtk.cpp:624
+#: ../LocalizedStringsGtk.cpp:629
 msgid "movie time scrubber"
 msgstr "Depurador de tempo de filme"
 
-#: ../LocalizedStringsGtk.cpp:626
+#: ../LocalizedStringsGtk.cpp:631
 msgid "movie time scrubber thumb"
 msgstr "Miniatura do depurador de tempo"
 
-#: ../LocalizedStringsGtk.cpp:628
+#: ../LocalizedStringsGtk.cpp:633
 msgid "seek movie back 30 seconds"
 msgstr "Voltar 30 segundos do filme"
 
-#: ../LocalizedStringsGtk.cpp:630
+#: ../LocalizedStringsGtk.cpp:635
 msgid "return streaming movie to real time"
 msgstr "Retornar o fluxo do filme ao tempo real"
 
-#: ../LocalizedStringsGtk.cpp:632
+#: ../LocalizedStringsGtk.cpp:637
 msgid "current movie time in seconds"
 msgstr "Tempo atual do filme em segundos"
 
-#: ../LocalizedStringsGtk.cpp:634
+#: ../LocalizedStringsGtk.cpp:639
 msgid "number of seconds of movie remaining"
 msgstr "Número de segundos do filme restantes"
 
-#: ../LocalizedStringsGtk.cpp:636
+#: ../LocalizedStringsGtk.cpp:641
 msgid "current movie status"
 msgstr "Estado do filme atual"
 
-#: ../LocalizedStringsGtk.cpp:638
+#: ../LocalizedStringsGtk.cpp:643
 msgid "seek quickly back"
 msgstr "Pesquisar rapidamente para trás"
 
-#: ../LocalizedStringsGtk.cpp:640
+#: ../LocalizedStringsGtk.cpp:645
 msgid "seek quickly forward"
 msgstr "Pesquisar rapidamente para a frente"
 
-#: ../LocalizedStringsGtk.cpp:642
+#: ../LocalizedStringsGtk.cpp:647
 msgid "Play movie in fullscreen mode"
 msgstr "Reproduzir filme em modo de tela cheia"
 
-#: ../LocalizedStringsGtk.cpp:644
+#: ../LocalizedStringsGtk.cpp:649
 msgid "Exit fullscreen mode"
 msgstr "Sai do modo de tela cheia"
 
-#: ../LocalizedStringsGtk.cpp:646
+#: ../LocalizedStringsGtk.cpp:651
 msgid "start displaying closed captions"
 msgstr "Iniciar exibição de legendas codificadas"
 
-#: ../LocalizedStringsGtk.cpp:648
+#: ../LocalizedStringsGtk.cpp:653
 msgid "stop displaying closed captions"
 msgstr "Parar exibição de legendas codificadas"
 
-#: ../LocalizedStringsGtk.cpp:657
+#: ../LocalizedStringsGtk.cpp:662
 msgid "indefinite time"
 msgstr "Tempo indefinido"
 
-#: ../LocalizedStringsGtk.cpp:687
+#: ../LocalizedStringsGtk.cpp:692
 msgid "value missing"
 msgstr "Faltando valor"
 
-#: ../LocalizedStringsGtk.cpp:723
+#: ../LocalizedStringsGtk.cpp:728
 msgid "type mismatch"
 msgstr "Tipo desconhecido"
 
-#: ../LocalizedStringsGtk.cpp:746
+#: ../LocalizedStringsGtk.cpp:751
 msgid "pattern mismatch"
 msgstr "Padrão desconhecido"
 
-#: ../LocalizedStringsGtk.cpp:751
+#: ../LocalizedStringsGtk.cpp:756
 msgid "too long"
 msgstr "Muito longo"
 
-#: ../LocalizedStringsGtk.cpp:756
+#: ../LocalizedStringsGtk.cpp:761
 msgid "range underflow"
 msgstr "Fora da faixa"
 
-#: ../LocalizedStringsGtk.cpp:761
+#: ../LocalizedStringsGtk.cpp:766
 msgid "range overflow"
 msgstr "Estouro de faixa"
 
-#: ../LocalizedStringsGtk.cpp:766
+#: ../LocalizedStringsGtk.cpp:771
 msgid "step mismatch"
 msgstr "Passo desconhecido"
 
-#: ../LocalizedStringsGtk.cpp:771
+#: ../LocalizedStringsGtk.cpp:776
 msgid "Unacceptable TLS certificate"
 msgstr "Certificado TLS inaceitável"
 
-#: ../LocalizedStringsGtk.cpp:788
+#: ../LocalizedStringsGtk.cpp:793
 msgctxt "Closed Captions"
 msgid "Menu section heading for closed captions"
 msgstr "Seção de menu de cabeçalho para legendas codificadas"
 
-#: ../LocalizedStringsGtk.cpp:793
+#: ../LocalizedStringsGtk.cpp:798
 msgctxt "Subtitles"
 msgid "Menu section heading for subtitles"
 msgstr "Seção de menu de cabeçalho para legendas"
 
-#: ../LocalizedStringsGtk.cpp:798
+#: ../LocalizedStringsGtk.cpp:803
 msgctxt "Off"
 msgid "Menu item label for the track that represents disabling closed captions"
 msgstr ""
 "Rótulo de item de menu para a faixa que representa desabilitar legendas "
 "codificadas"
 
-#: ../LocalizedStringsGtk.cpp:803
+#: ../LocalizedStringsGtk.cpp:808
 msgctxt "No label"
 msgid "Menu item label for a closed captions track that has no other name"
 msgstr ""
 "Rótulo de item de menu para uma faixa de legenda codificada que não possua "
 "outro nome"
 
-#: ../LocalizedStringsGtk.cpp:809
+#: ../LocalizedStringsGtk.cpp:814
 msgctxt "Snapshotted Plug-In"
 msgid "Title of the label to show on a snapshotted plug-in"
 msgstr "Título do rótulo a mostrar em um plug-in capturado pela tela"
 
-#: ../LocalizedStringsGtk.cpp:814
+#: ../LocalizedStringsGtk.cpp:819
 msgctxt "Click to restart"
 msgid "Subtitle of the label to show on a snapshotted plug-in"
 msgstr "Legenda do rótulo a mostrar em um plug-in capturado pela tela"
@@ -845,7 +850,7 @@ msgstr "A coordenadaY do evento relacionado à janela da visão."
 #: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:467
 #: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:176
 #: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:209
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3242
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3236
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:95
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:99
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:109
@@ -1096,7 +1101,7 @@ msgstr "O nome do quadro"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:460
 #: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:144
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3228
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3222
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:657
 msgid "Title"
 msgstr "Título"
@@ -1253,7 +1258,7 @@ msgid "The MIME type of the resource"
 msgstr "O título MIME do recurso"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:239
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3377
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3371
 msgid "Encoding"
 msgstr "Codificação"
 
@@ -1787,110 +1792,110 @@ msgstr "Selecionar arquivos"
 msgid "Select File"
 msgstr "Selecionar arquivo"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3229
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3223
 msgid "Returns the @web_view's document title"
 msgstr "Retorna o título da visão web"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3243
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3237
 msgid "Returns the current URI of the contents displayed by the @web_view"
 msgstr "Retorna o URI atual dos conteúdos exibidos pela visão web (@web_view)"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3256
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3250
 msgid "Copy target list"
 msgstr "Lista de alvos de cópia"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3257
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3251
 msgid "The list of targets this web view supports for clipboard copying"
 msgstr ""
 "A lista de alvos que essa visão web suporta para cópia para área de "
 "transferência"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3270
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3264
 msgid "Paste target list"
 msgstr "Lista de alvos de cola"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3271
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3265
 msgid "The list of targets this web view supports for clipboard pasting"
 msgstr ""
 "A lista de alvos que essa visão web suporta para cola da área de "
 "transferência"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3277
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3271
 msgid "Settings"
 msgstr "Configurações"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3278
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3272
 msgid "An associated WebKitWebSettings instance"
 msgstr "Uma instância de WebKitWebSettings associada"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3291
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3285
 #: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:92
 #: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:157
 msgid "Web Inspector"
 msgstr "Inspetor Web"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3292
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3286
 msgid "The associated WebKitWebInspector instance"
 msgstr "A instância de WebKitWebInspector que está associada a essa visão"
 
 # Viewport traduzido como Porta de visualização.
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3305
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3299
 msgid "Viewport Attributes"
 msgstr "Atributos da porta de visualização"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3306
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3300
 msgid "The associated WebKitViewportAttributes instance"
 msgstr "A instância de WebKitViewportAttributes associada"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3326
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3320
 msgid "Editable"
 msgstr "Editável"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3327
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3321
 msgid "Whether content can be modified by the user"
 msgstr "Se o conteúdo pode ser modificado pelo usuário"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3333
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3327
 msgid "Transparent"
 msgstr "Transparente"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3334
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3328
 msgid "Whether content has a transparent background"
 msgstr "Se o conteúdo tem um fundo transparente"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3347
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3341
 msgid "Zoom level"
 msgstr "Nível de zoom"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3348
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3342
 msgid "The level of zoom of the content"
 msgstr "O nível de zoom do conteúdo"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3363
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3357
 msgid "Full content zoom"
 msgstr "Zoom completo do conteúdo"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3364
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3358
 msgid "Whether the full content is scaled when zooming"
 msgstr "Se todo o conteúdo é redimensionado no zoom"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3378
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3372
 msgid "The default encoding of the web view"
 msgstr "A codificação padrão da visão web"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3391
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3385
 msgid "Custom Encoding"
 msgstr "Codificação personalizada"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3392
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3386
 msgid "The custom encoding of the web view"
 msgstr "A codificação personalizada da visão web"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3444
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3438
 msgid "Icon URI"
 msgstr "URI do ícone"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3445
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3439
 msgid "The URI for the favicon for the #WebKitWebView."
 msgstr "O URI para o favicon do #WebKitWebView."
 

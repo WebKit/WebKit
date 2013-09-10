@@ -1,3 +1,12 @@
+2013-09-10  Enrico Nicoletto  <liverig@gmail.com>
+
+        [l10n] [pt_BR] Updated Brazilian Portuguese translation of WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=120642
+
+        Reviewed by Gustavo Noronha.
+
+        * pt_BR.po: updated.
+
 2013-08-28  Christian Kirbach  <Christian.Kirbach@googlemail.com>
 
         [GTK] Please incorporate German translation update
