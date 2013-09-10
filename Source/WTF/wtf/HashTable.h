@@ -23,7 +23,8 @@
 #define WTF_HashTable_h
 
 #include <string.h>
-#include <wtf/Alignment.h>
+#include <type_traits>
+#include <utility>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashTraits.h>
@@ -590,8 +591,8 @@ namespace WTF {
         if (!HashFunctions::safeToCompareToEmptyOrDeleted)
             return;
         ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
-        AlignedBuffer<sizeof(ValueType), WTF_ALIGN_OF(ValueType)> deletedValueBuffer;
-        ValueType* deletedValuePtr = reinterpret_cast_ptr<ValueType*>(deletedValueBuffer.buffer);
+        typename std::aligned_storage<sizeof(ValueType), std::alignment_of<ValueType>::value>::type deletedValueBuffer;
+        ValueType* deletedValuePtr = reinterpret_cast_ptr<ValueType*>(&deletedValueBuffer);
         ValueType& deletedValue = *deletedValuePtr;
         Traits::constructDeletedValue(deletedValue);
         ASSERT(!HashTranslator::equal(Extractor::extract(deletedValue), key));
