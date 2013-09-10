@@ -1,3 +1,18 @@
+2013-09-10  Mark Lam  <mark.lam@apple.com>
+
+        Replace remaining "fast js" names in scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=120899.
+
+        Rubber stamped by Filip Pizlo.
+
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (test_layout_failure_new_output):
+        (test_layout_crash_new_output):
+        (test_mozilla_and_layout_failure_new_output):
+        * Scripts/run-fast-jsc: Removed.
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-layout-jsc: Copied from Tools/Scripts/run-fast-jsc.
+
 2013-09-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Enable JSC stress tests for the rest of non-Windows platforms

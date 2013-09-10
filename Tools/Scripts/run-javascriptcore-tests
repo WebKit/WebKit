@@ -72,9 +72,9 @@ my $runTestAPI = isAppleMacWebKit() || isAppleWinWebKit();
 
 my $runMozilla = 1;
 
-# FIXME: run-fast-jsc tests doesn't work properly on Windows
+# FIXME: run-layout-jsc tests doesn't work properly on Windows
 # https://bugs.webkit.org/show_bug.cgi?id=120765
-my $runFastJS = !isAppleWinWebKit();
+my $runLayout = !isAppleWinWebKit();
 
 # FIXME: run-jsc-stress-tests should be ported to other platforms.
 # https://bugs.webkit.org/show_bug.cgi?id=120809
@@ -86,7 +86,7 @@ my $programName = basename($0);
 my $buildJSCDefault = $buildJSC ? "will check" : "will not check";
 my $testapiDefault = $runTestAPI ? "will run" : "will not run";
 my $mozillaDefault = $runMozilla ? "will run" : "will not run";
-my $fastJSDefault = $runFastJS ? "will run" : "will not run";
+my $layoutJSDefault = $runLayout ? "will run" : "will not run";
 my $jscStressDefault = $runJSCStress ? "will run" : " will not run";
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
@@ -97,7 +97,7 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]build                  Check (or don't check) to see if the jsc build is up-to-date (default: $buildJSCDefault)
   --[no-]testapi                Run (or don't run) testapi (default: $testapiDefault)
   --[no-]mozilla                Run (or don't run) the Mozilla tests (default: $mozillaDefault)
-  --[no-]fast-js                Run (or don't run) the js tests (default: $fastJSDefault)
+  --[no-]layout                 Run (or don't run) the LayoutTests js tests (default: $layoutJSDefault)
   --[no-]jsc-stress             Run (or don't run) the JSC stress tests (default: $jscStressDefault)
 EOF
 
@@ -108,7 +108,7 @@ GetOptions(
     'ftl-jit!' => \$enableFTL,
     'testapi!' => \$runTestAPI,
     'mozilla!' => \$runMozilla,
-    'fast-js!' => \$runFastJS,
+    'layout!' => \$runLayout,
     'jsc-stress!' => \$runJSCStress,
     'help' => \$showHelp
 );
@@ -225,13 +225,13 @@ if ($runMozilla) {
 }
 
 chdirWebKit();
-my $fastJSResultsDir = $productDir . "/fast-jsc-results";
+my $layoutJSResultsDir = $productDir . "/layout-jsc-results";
 
-if ($runFastJS) {
+if ($runLayout) {
     # Run the js tests.
-    my @fastJSDriverCmd = ("/bin/sh", "Tools/Scripts/run-fast-jsc", "-j", jscPath($productDir), "-r", $fastJSResultsDir, "-t", "LayoutTests");
-    print "Running: " . join(" ", @fastJSDriverCmd) . "\n";
-    my $result = system(@fastJSDriverCmd);
+    my @layoutJSDriverCmd = ("/bin/sh", "Tools/Scripts/run-layout-jsc", "-j", jscPath($productDir), "-r", $layoutJSResultsDir, "-t", "LayoutTests");
+    print "Running: " . join(" ", @layoutJSDriverCmd) . "\n";
+    my $result = system(@layoutJSDriverCmd);
     exit exitStatus($result) if $result;
 }
 
@@ -298,20 +298,20 @@ sub printThingsFound
     print " $verb.\n";
 }
 
-my @fastJSFailList = readAllLines($fastJSResultsDir . "/failed");
-my @fastJSCrashList = readAllLines($fastJSResultsDir . "/crashed");
-my $numJSFailures = @fastJSFailList;
-my $numJSCrashes = @fastJSCrashList;
+my @layoutJSFailList = readAllLines($layoutJSResultsDir . "/failed");
+my @layoutJSCrashList = readAllLines($layoutJSResultsDir . "/crashed");
+my $numJSFailures = @layoutJSFailList;
+my $numJSCrashes = @layoutJSCrashList;
 
 if ($numJSFailures) {
     print "\n** The following js test failures have been introduced:\n";
-    foreach my $testFailure (@fastJSFailList) {
+    foreach my $testFailure (@layoutJSFailList) {
         print "\t$testFailure";
     }
 }
 if ($numJSCrashes) {
     print "\n** The following js test crashes have been introduced:\n";
-    foreach my $testCrash (@fastJSCrashList) {
+    foreach my $testCrash (@layoutJSCrashList) {
         print "\t$testCrash";
     }
 }
@@ -337,7 +337,7 @@ if ($runMozilla) {
     print "\n";
 }
 
-if ($runFastJS) {
+if ($runLayout) {
     print "Results for js tests:\n";
     printThingsFound($numJSFailures, "failure", "failures", "found");
     printThingsFound($numJSCrashes, "crash", "crashes", "found");
@@ -354,4 +354,4 @@ if ($runJSCStress) {
     print "\n";
 }
 
-exit(1)  if ($runMozilla && $numNewMozillaFailures) || ($runFastJS && ($numJSFailures || $numJSCrashes)) || ($runJSCStress && $numJSCStressFailures);
+exit(1)  if ($runMozilla && $numNewMozillaFailures) || ($runLayout && ($numJSFailures || $numJSCrashes)) || ($runJSCStress && $numJSCStressFailures);
