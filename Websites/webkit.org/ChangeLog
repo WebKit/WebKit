@@ -1,3 +1,9 @@
+2013-09-09  Roger Fong  <roger_fong@apple.com>
+
+        Update build instructions for Apple Windows port to include cygwin php install steps.
+
+        * building/tools.html:
+
 2013-09-04  Beth Dakin  <bdakin@apple.com>
 
         Fixing a typo in demo files and screenshot.

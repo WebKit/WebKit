@@ -70,7 +70,14 @@ Those lines would prevent picking up the Windows TMP and TEMP environment variab
 <li><p>Install DirectX SDK</p>
 <p>Download the <a href="http://www.microsoft.com/en-us/download/details.aspx?id=6812">June 2010 DirectX SDK</a>  This is needed for accelerated compositing.</p>
 </p>
-
+<li><p>Install php, we use the following steps (you need this to run http layout tests):</p>
+<ol>
+<li>cd /usr/local/bin</li>
+<li>wget http://apt-cyg.googlecode.com/svn/trunk/apt-cyg</li>
+<li>chmod a+x apt-cyg</li>
+<li>Change line 341 of the apt-cyg script to "wget -nc $mirror/../$install"</li>
+<li>apt-cyg -m ftp://sourceware.org/pub/cygwinports/x86 install php</li>
+</ol>
 <li><p>Optional: Install the 32-bit version of Debugging Tools for Windows</p>
 <p>Debugging Tools for Windows includes many useful debugging tools such as WinDbg and NTSD. Some of WebKit&rsquo;s tests and scripts use these tools. Follow the <a target="installtools" href="http://www.microsoft.com/whdc/devtools/debugging/installx86.mspx#b">instructions for installing the 32-bit version of Debugging Tools for Windows</a>.</p>
 <li><p>Optional: Hotfix for 64-bit Windows to disable the user-mode callback filter for exceptions</p>
