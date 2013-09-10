@@ -158,7 +158,7 @@ static void alterCurrentValue(PlatformUIElement element, int factor)
     atk_value_get_minimum_increment(ATK_VALUE(element.get()), &increment);
 
     GValue newValue = G_VALUE_INIT;
-    g_value_init(&newValue, G_TYPE_DOUBLE);
+    g_value_init(&newValue, G_TYPE_FLOAT);
 
     g_value_set_float(&newValue, g_value_get_float(&currentValue) + factor * g_value_get_float(&increment));
     atk_value_set_current_value(ATK_VALUE(element.get()), &newValue);

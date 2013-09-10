@@ -1,3 +1,15 @@
+2013-09-10  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Incorrect type for holding float value
+        https://bugs.webkit.org/show_bug.cgi?id=121091
+
+        Reviewed by Mario Sanchez Prada.
+
+        Variable is not set properly, because of it's type.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::alterCurrentValue):
+
 2013-09-10  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] make use of qtHaveModule() 

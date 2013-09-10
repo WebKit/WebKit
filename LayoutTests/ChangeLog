@@ -1,3 +1,17 @@
+2013-09-10  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Incorrect type for holding float value
+        https://bugs.webkit.org/show_bug.cgi?id=121091
+
+        Reviewed by Mario Sanchez Prada.
+
+        Sharing specific mac tests with efl and gtk.
+
+        * accessibility/aria-slider-value-change-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/aria-slider-value-change-expected.txt.
+        * accessibility/aria-slider-value-change.html: Renamed from LayoutTests/platform/mac/accessibility/aria-slider-value-change.html.
+        * accessibility/range-alter-by-step-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/range-alter-by-step-expected.txt.
+        * accessibility/range-alter-by-step.html: Renamed from LayoutTests/platform/mac/accessibility/range-alter-by-step.html.
+
 2013-09-10  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Changed expected results after r154702
