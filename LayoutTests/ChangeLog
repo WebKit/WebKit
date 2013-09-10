@@ -1,3 +1,16 @@
+2013-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix race in fast/loader/onunload-form-submit-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=121122
+
+        Reviewed by Alexey Proskuryakov.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/c7ab0900c147f9a2f4c69d62b6460f98abc5d796
+
+        The setTimeout was sometimes firing before the form was parsed, so document.myForm would be null.
+
+        * fast/loader/onunload-form-submit-crash.html:
+
 2013-09-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: [JSC] Caught exception is treated as uncaught
