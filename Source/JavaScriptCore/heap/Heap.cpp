@@ -55,7 +55,7 @@ namespace {
 static const size_t largeHeapSize = 32 * MB; // About 1.5X the average webpage.
 static const size_t smallHeapSize = 1 * MB; // Matches the FastMalloc per-thread cache.
 
-#define ENABLE_GC_LOGGING 1
+#define ENABLE_GC_LOGGING 0
 
 #if ENABLE(GC_LOGGING)
 #if COMPILER(CLANG)

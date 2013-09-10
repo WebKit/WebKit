@@ -1,3 +1,9 @@
+2013-09-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, disable GC logging.
+
+        * heap/Heap.cpp:
+
 2013-09-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         CopiedSpace::startedCopying should not call MarkedSpace::capacity
