@@ -1984,6 +1984,10 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
 
 extern "C" void DFG_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
 {
+    // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
+    // really be profitable.
+    DeferGCForAWhile deferGC(codeBlock->vm()->heap);
+    
     if (Options::verboseOSR())
         dataLog(*codeBlock, ": Entered reoptimize\n");
     // We must be called with the baseline code block.
