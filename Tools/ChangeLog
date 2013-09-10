@@ -1,3 +1,17 @@
+2013-09-10  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [EFL][JHBUILD] Use a tarball for libseccomp, instead of git
+        https://bugs.webkit.org/show_bug.cgi?id=121114
+
+        Reviewed by Christophe Dumez.
+
+        Use a tarball for libseccomp instead of git to avoid network issues on
+        the buildbots while checking out the git repo. Using tarballs has the
+        advantage of them being cached if the checksum matches, in which case
+        there will be no need to download them again.
+
+        * efl/jhbuild.modules:
+
 2013-09-10  Mark Lam  <mark.lam@apple.com>
 
         Replace remaining "fast js" names in scripts.

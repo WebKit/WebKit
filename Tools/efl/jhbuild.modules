@@ -49,8 +49,8 @@
       href="http://download.enlightenment.org"/>
   <repository type="tarball" name="gstreamer"
       href="http://gstreamer.freedesktop.org/src/"/>
-  <repository type="git" name="git.code.sf.net"
-      href="git://git.code.sf.net/p/"/>
+  <repository type="tarball" name="downloads.sourceforge.net"
+      href="http://downloads.sourceforge.net/project/"/>
 
   <autotools id="cairo" autogen-sh="configure">
     <dependencies>
@@ -331,9 +331,9 @@
   </autotools> 
 
   <autotools id="libseccomp" autogen-sh="configure">
-      <branch module="libseccomp/libseccomp"
-          repo="git.code.sf.net"
-          tag="bbd7ca07a7c76d5cd884dbddec58385e1b7439d2"/>
+      <branch module="libseccomp/libseccomp-2.0.0.tar.gz" version="2.0.0"
+          repo="downloads.sourceforge.net"
+          hash="sha256:07d8308502bb87ced8f03aa84e9de598940ff6b0c7235d1654712678821f9d76"/>
   </autotools>
 
   <autotools id="atk"
