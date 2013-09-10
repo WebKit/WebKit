@@ -50,7 +50,7 @@ compositing/backface-visibility/backface-visibility-webgl.html
 
 # faling tests, more investigation needed
 fast/dom/Window/window-postmessage-clone-deep-array.html
-fast/js/toString-stack-overflow.html
+js/toString-stack-overflow.html
 fast/repaint/obscured-background-no-repaint.html
 fast/replaced/border-radius-clip.html
 fast/ruby/ruby-svg-crash.html
@@ -79,4 +79,4 @@ http/tests/cache/subresource-multiple-instances.html
 
 # crashing tests
 fast/multicol/huge-column-gap-crash.html
-fast/js/create-lots-of-workers.html
+js/create-lots-of-workers.html

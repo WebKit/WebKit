@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test</title>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <a id="foo" href="bar">nerget</a>
+    <script>
+        var realShouldBe = function(expectedValue, actualString, actualValue) {
+            if (expectedValue === actualValue)
+                testPassed(actualString + " is " + expectedValue);
+            else
+                testFailed(actualString + " should be " + expectedValue + ". Was " + actualValue);
+        };
+
+        description(
+        "Checks that get_by_pname doesn't get confused about which properties go where when it comes to stacic properties."
+        );
+
+        function f(a) {
+            for (var i in a) {
+                var actual = a[i];
+                var expected = a["" + i];
+                // Function toString causes eval to choke.
+                if (typeof expected === "function")
+                    continue;
+                if (i === "href" || i === "pathname" || i === "baseURI")
+                    continue;
+                realShouldBe(expected, "a[\"" + i + "\"]", actual);
+            }
+        }
+        var g = document.getElementById("foo");
+        g.foo="1";
+        g.bar="2";
+        g.wibble="3";
+        g.hick="4";
+        g.hock="5";
+        g.snood="6";
+        f(g);
+    </script>
+    <script src="../resources/js-test-post.js"></script>
+</body>
+</html>

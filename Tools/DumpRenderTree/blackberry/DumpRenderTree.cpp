@@ -386,7 +386,7 @@ void DumpRenderTree::runTests()
         addTest(testFile);
     } else {
         // Get Test file name from PPS: /pps/services/drt/input
-        // Example: test_file::fast/js/arguments.html
+        // Example: test_file::js/arguments.html
         waitForTest();
     }
 }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test Promise.');
+
+window.jsTestIsAsync = true;
+
+var resolver1, resolver2, resolver3;
+var resolver4, resolver5, resolver6;
+var promise1 = new Promise(function(r) { resolver1 = r; });
+var promise2 = new Promise(function(r) { resolver2 = r; });
+var promise3 = new Promise(function(r) { resolver3 = r; });
+var promise4 = new Promise(function(r) { resolver4 = r; });
+var promise5 = new Promise(function(r) { resolver5 = r; });
+var promise6 = new Promise(function(r) { resolver6 = r; });
+
+resolver3.resolve(promise2);
+resolver2.resolve(promise1);
+resolver6.resolve(promise5);
+resolver5.resolve(promise4);
+
+promise3.then(function(result) {
+  window.result = result;
+  shouldBeEqualToString('result', 'hello');
+}, function() {
+  testFailed('rejected');
+});
+
+promise6.then(function() {
+  testFailed('fulfilled');
+  finishJSTest();
+}, function(result) {
+  window.result = result;
+  shouldBeEqualToString('result', 'bye');
+  finishJSTest();
+});
+
+resolver1.resolve('hello');
+resolver4.reject('bye');
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

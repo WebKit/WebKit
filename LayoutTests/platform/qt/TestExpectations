@@ -282,7 +282,7 @@ inspector/styles/svg-style.xhtml
 
 # Disable private names by default in WebCore
 # https://bugs.webkit.org/show_bug.cgi?id=87088
-fast/js/names.html
+js/names.html
 
 # Don't have GestureTapCancel event type
 touchadjustment/touch-links-active.html
@@ -2266,9 +2266,9 @@ fast/notifications/notifications-without-permission.html
 fast/notifications/notifications-constructor-with-permission.html
 fast/notifications/notifications-constructor-without-permission.html
 
-# [Qt] unexpected result in fast/js/large-expressions.html
+# [Qt] unexpected result in js/large-expressions.html
 # https://bugs.webkit.org/show_bug.cgi?id=76379
-fast/js/large-expressions.html
+js/large-expressions.html
 
 # This should only be a layer change.
 # http://webkit.org/b/82129
@@ -2539,7 +2539,7 @@ webkit.org/b/64526 [ Debug ] svg/animations/svgtransform-animation-1.html [ Cras
 Bug(_qt_slow) [ Debug ] editing/selection/empty-cell-right-click.html [ Pass Slow ]
 Bug(_qt_slow) [ Debug ] editing/selection/dump-as-markup.html [ Pass Slow ]
 Bug(_qt_slow) [ Debug ] fast/overflow/lots-of-sibling-inline-boxes.html [ Pass Slow ]
-Bug(_qt_slow) [ Debug ] fast/js/dfg-inline-function-dot-caller.html [ Pass Slow ]
+Bug(_qt_slow) [ Debug ] js/dfg-inline-function-dot-caller.html [ Pass Slow ]
 
 webkit.org/b/62662 [ Debug ] inspector/cookie-parser.html [ Crash Pass ]
 
@@ -2707,8 +2707,8 @@ fast/workers/worker-close-more.html
 fast/workers/worker-lifecycle.html
 fast/workers/storage/interrupt-database.html
 
-# [Qt] New fast/js/dfg-create-inlined-arguments-in-closure-inline.html asserts on 32 bit
-webkit.org/b/106459 [ Debug ] fast/js/dfg-create-inlined-arguments-in-closure-inline.html
+# [Qt] New js/dfg-create-inlined-arguments-in-closure-inline.html asserts on 32 bit
+webkit.org/b/106459 [ Debug ] js/dfg-create-inlined-arguments-in-closure-inline.html
 
 # Enable when support drag-and-drop autoscrolling
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
@@ -2755,8 +2755,8 @@ webkit.org/b/113513 inspector/styles/paste-property.html [ Skip ]
 # New test crashes after r147388
 webkit.org/b/113770 editing/execCommand/format-block-at-root.html [ Skip ]
 
-#[Qt] New test fast/js/dom-static-property-for-in-iteration.html fails on Qt after r147570
-webkit.org/b/114157 fast/js/dom-static-property-for-in-iteration.html [ Failure ]
+#[Qt] New test js/dom-static-property-for-in-iteration.html fails on Qt after r147570
+webkit.org/b/114157 js/dom-static-property-for-in-iteration.html [ Failure ]
 
 # Nested opacity with overflow may display wrong results when composited
 webkit.org/b/114338 compositing/overlap-blending/nested-overlap-overflow.html [ Skip ]
@@ -2782,8 +2782,8 @@ webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cac
 # [Qt] Newly added test http/tests/uri/curly-braces-escaping.html fails
 webkit.org/b/117036 http/tests/uri/curly-braces-escaping.html [ Skip ]
 
-# [Qt] REGRESSION(r151020): fast/js/custom-constructors.html makes next test crashing
-webkit.org/b/117141 fast/js/custom-constructors.html [ Skip ]
+# [Qt] REGRESSION(r151020): js/custom-constructors.html makes next test crashing
+webkit.org/b/117141 js/custom-constructors.html [ Skip ]
 
 # REGRESSION(r151146) fast/forms/control-clip-overflow.html fails
 webkit.org/b/117185 fast/forms/control-clip-overflow.html [ Skip ]

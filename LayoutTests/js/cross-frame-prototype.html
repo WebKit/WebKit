@@ -1,0 +1,18 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe></iframe>
+<script>
+
+    var arrayConstructor = frames[0].Array;
+    arrayConstructor.prototype.foo = "bar";
+    var x = new arrayConstructor();
+
+    shouldBe("x.foo", '"bar"');
+
+</script><script src="../resources/js-test-post.js"></script>
+</body>
+</html>

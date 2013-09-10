@@ -5617,7 +5617,7 @@ fast/forms/textarea-setinnerhtml.html
 fast/html/details-marker-style.html
 fast/inline/inline-borders-with-bidi-override.html
 fast/invalid/016.html
-fast/js/stack-trace.html
+js/stack-trace.html
 fast/layers/scroll-rect-to-visible.html
 fast/overflow/image-selection-highlight.html
 fast/overflow/unreachable-overflow-rtl-bug.html
@@ -5689,7 +5689,7 @@ webkit.org/b/64526 [ Debug ] svg/animations/svgtransform-animation-1.html [ Cras
 Bug(_qt_slow) [ Debug ] editing/selection/empty-cell-right-click.html [ Pass Slow ]
 Bug(_qt_slow) [ Debug ] editing/selection/dump-as-markup.html [ Pass Slow ]
 Bug(_qt_slow) [ Debug ] fast/overflow/lots-of-sibling-inline-boxes.html [ Pass Slow ]
-Bug(_qt_slow) [ Debug ] fast/js/dfg-inline-function-dot-caller.html [ Pass Slow ]
+Bug(_qt_slow) [ Debug ] js/dfg-inline-function-dot-caller.html [ Pass Slow ]
 
 webkit.org/b/62662 [ Debug ] inspector/cookie-parser.html [ Crash Pass ]
 

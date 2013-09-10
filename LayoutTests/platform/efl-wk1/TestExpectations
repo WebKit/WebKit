@@ -249,7 +249,7 @@ webkit.org/b/86182 fast/frames/seamless/seamless-inherited-document-style.html [
 webkit.org/b/97021 fast/events/dont-loose-last-event.html [ Failure ]
 
 # Feature not mature yet and disabled by default on WebCore
-webkit.org/b/87088 fast/js/names.html [ Failure ]
+webkit.org/b/87088 js/names.html [ Failure ]
 
 # Failing after 125592
 webkit.org/b/94194 http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Failure ]

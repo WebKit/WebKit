@@ -715,17 +715,17 @@ class TestExpectations(object):
     in which case the expectations apply to all test cases in that
     directory and any subdirectory. The format is along the lines of:
 
-      LayoutTests/fast/js/fixme.js [ Failure ]
-      LayoutTests/fast/js/flaky.js [ Failure Pass ]
-      LayoutTests/fast/js/crash.js [ Crash Failure Pass Timeout ]
+      LayoutTests/js/fixme.js [ Failure ]
+      LayoutTests/js/flaky.js [ Failure Pass ]
+      LayoutTests/js/crash.js [ Crash Failure Pass Timeout ]
       ...
 
     To add modifiers:
-      LayoutTests/fast/js/no-good.js
-      [ Debug ] LayoutTests/fast/js/no-good.js [ Pass Timeout ]
-      [ Debug ] LayoutTests/fast/js/no-good.js [ Pass Skip Timeout ]
-      [ Linux Debug ] LayoutTests/fast/js/no-good.js [ Pass Skip Timeout ]
-      [ Linux Win ] LayoutTests/fast/js/no-good.js [ Pass Skip Timeout ]
+      LayoutTests/js/no-good.js
+      [ Debug ] LayoutTests/js/no-good.js [ Pass Timeout ]
+      [ Debug ] LayoutTests/js/no-good.js [ Pass Skip Timeout ]
+      [ Linux Debug ] LayoutTests/js/no-good.js [ Pass Skip Timeout ]
+      [ Linux Win ] LayoutTests/js/no-good.js [ Pass Skip Timeout ]
 
     Skip: Doesn't run the test.
     Slow: The test takes a long time to run, but does not timeout indefinitely.

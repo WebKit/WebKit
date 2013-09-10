@@ -177,7 +177,7 @@ webkit.org/b/93978 fast/hidpi/clip-text-in-hidpi.html [ Failure ]
 webkit.org/b/93978 fast/hidpi/image-set-background-dynamic.html [ Failure ]
 webkit.org/b/93978 fast/hidpi/image-set-border-image-dynamic.html [ Failure ]
 
-webkit.org/b/87088 fast/js/names.html [ Failure ]
+webkit.org/b/87088 js/names.html [ Failure ]
 
 webkit.org/b/68855 editing/selection/select-bidi-run.html [ Failure ]
 

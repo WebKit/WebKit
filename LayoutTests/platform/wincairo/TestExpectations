@@ -373,9 +373,9 @@ fast/innerHTML/003.html
 fast/innerHTML/006.html 
 fast/inspector-support/matchedrules.html 
 fast/invalid
-fast/js/custom-constructors.html 
-fast/js/instanceof-XMLHttpRequest.html 
-fast/js/large-expressions.html 
+js/custom-constructors.html 
+js/instanceof-XMLHttpRequest.html 
+js/large-expressions.html 
 fast/layers
 fast/lists
 fast/loader/file-protocol-fragment.html 
@@ -736,7 +736,7 @@ fast/html/keygen.html
 fast/invalid/residual-style.html
 
 # Number LayoutTest fails on boomer <rdar://problem/5130681>
-fast/js/kde/Number.html
+js/kde/Number.html
 
 #<rdar://problem/5224271> Some LayoutTests fail when not run by themselves.
 http/tests/navigation/anchor-frames.html
@@ -955,7 +955,7 @@ fast/workers/storage/use-same-database-in-page-and-workers.html
 fast/frames/sandboxed-iframe-storage.html
 
 # Times out on apple-windows-3 http://webkit.org/b/48999
-fast/js/exceptions-thrown-in-callbacks.html
+js/exceptions-thrown-in-callbacks.html
 
 # Sometimes times out http://webkit.org/b/48753
 http/tests/security/window-events-clear-port.html
@@ -1231,7 +1231,7 @@ fast/forms/select-change-popup-to-listbox.html
 fast/forms/select-initial-position.html
 fast/forms/select-item-background-clip.html
 fast/forms/select-list-box-with-height.html
-fast/js/sort-stability.html
+js/sort-stability.html
 fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/null-request-after-willSendRequest.html
 fast/loader/stop-provisional-loads.html
@@ -1298,7 +1298,7 @@ plugins/npruntime/npruntime.html
 fast/cookies/local-file-can-set-cookies.html
 
 # Bug 12216: Stack overflow crash in JavaScript garbage collector mark pass <https://bugs.webkit.org/show_bug.cgi?id=12216>
-fast/js/toString-stack-overflow.html
+js/toString-stack-overflow.html
 
 # Failures following r42379
 fast/text/international/001.html
@@ -1433,7 +1433,7 @@ platform/win/editing/selection/doubleclick-should-not-expand-across-lines.html
 fast/multicol/single-line.html
 
 # Needs rebaseline
-fast/js/constructor-length.html
+js/constructor-length.html
 
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
@@ -2368,7 +2368,7 @@ userscripts/user-script-plugin-document.html
 
 # JavaScript Experiments are not enabled on Windows
 # https://bugs.webkit.org/show_bug.cgi?id=87858
-fast/js/names.html
+js/names.html
 
 # New plugins/npruntime/delete-plugin-within-* tests introduced in r117012 fail/crash
 # https://bugs.webkit.org/show_bug.cgi?id=86443
@@ -2447,7 +2447,7 @@ fast/events/dropzone-005.html
 fast/harness/results.html
 fast/images/exif-orientation.html
 fast/images/support-broken-image-delegate.html
-fast/js/stack-trace.html
+js/stack-trace.html
 fast/layers/video-layer.html
 fast/loader/javascript-url-iframe-remove-on-navigate.html
 fast/dom/MutationObserver/inline-event-listener.html

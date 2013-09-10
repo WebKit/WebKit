@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("This test how deep we can recurse, and that we get an exception when we do, as opposed to a stack overflow.");
+
+    function simpleRecursion(depth) {
+        if (depth)
+            simpleRecursion(depth - 1);
+    }
+
+    try {
+        simpleRecursion(17472);
+    } catch (ex) {
+        debug("FAIL: " + ex);
+    }
+
+    try {
+        simpleRecursion(10000000);
+    } catch (ex) {
+        var msg = String(eval(ex));
+        shouldBe("msg", "'RangeError: Maximum call stack size exceeded.'");
+    }
+    
+    try {
+        simpleRecursion(1000000000);
+    } catch (ex) {
+        var msg = String(eval(ex));
+        shouldBe("msg", "'RangeError: Maximum call stack size exceeded.'");
+    }
+
+    var tooFewArgsDepth = 0;
+
+    function tooFewArgsRecursion(a) {
+        if (tooFewArgsDepth) {
+            tooFewArgsDepth--;
+            tooFewArgsRecursion();
+        }
+    }
+
+    try {
+        tooFewArgsDepth = 10000000;
+        tooFewArgsRecursion();
+    } catch (ex) {
+        var msg = String(eval(ex));
+        shouldBe("msg", "'RangeError: Maximum call stack size exceeded.'");
+    }
+
+    function tooManyArgsRecursion(depth) {
+        if (depth)
+            tooManyArgsRecursion(depth - 1, 1);
+    }
+
+    try {
+        tooManyArgsRecursion(10000000, 1);
+    } catch (ex) {
+        var msg = String(eval(ex));
+        shouldBe("msg", "'RangeError: Maximum call stack size exceeded.'");
+    }
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

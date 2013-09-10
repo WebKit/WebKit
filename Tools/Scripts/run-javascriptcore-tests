@@ -28,7 +28,7 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Script to run the WebKit Open Source Project JavaScriptCore tests (adapted from Mozilla),
-# as well as other tests: testapi on Mac and LayoutTests/fast/js.
+# as well as other tests: testapi on Mac and LayoutTests/js.
 
 use strict;
 use FindBin;
@@ -97,7 +97,7 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]build                  Check (or don't check) to see if the jsc build is up-to-date (default: $buildJSCDefault)
   --[no-]testapi                Run (or don't run) testapi (default: $testapiDefault)
   --[no-]mozilla                Run (or don't run) the Mozilla tests (default: $mozillaDefault)
-  --[no-]fast-js                Run (or don't run) the fast/js tests (default: $fastJSDefault)
+  --[no-]fast-js                Run (or don't run) the js tests (default: $fastJSDefault)
   --[no-]jsc-stress             Run (or don't run) the JSC stress tests (default: $jscStressDefault)
 EOF
 
@@ -228,7 +228,7 @@ chdirWebKit();
 my $fastJSResultsDir = $productDir . "/fast-jsc-results";
 
 if ($runFastJS) {
-    # Run the fast/js tests.
+    # Run the js tests.
     my @fastJSDriverCmd = ("/bin/sh", "Tools/Scripts/run-fast-jsc", "-j", jscPath($productDir), "-r", $fastJSResultsDir, "-t", "LayoutTests");
     print "Running: " . join(" ", @fastJSDriverCmd) . "\n";
     my $result = system(@fastJSDriverCmd);
@@ -243,7 +243,7 @@ if ($runJSCStress) {
         "-j", jscPath($productDir), "-o", $jscStressResultsDir,
         "PerformanceTests/SunSpider/tests/sunspider-1.0",
         "PerformanceTests/SunSpider/tests/v8-v6",
-        "LayoutTests/fast/js/regress/script-tests",
+        "LayoutTests/js/regress/script-tests",
         "PerformanceTests/SunSpider/profiler-test.yaml"
     );
     if ($enableFTL) {
@@ -304,13 +304,13 @@ my $numJSFailures = @fastJSFailList;
 my $numJSCrashes = @fastJSCrashList;
 
 if ($numJSFailures) {
-    print "\n** The following fast/js test failures have been introduced:\n";
+    print "\n** The following js test failures have been introduced:\n";
     foreach my $testFailure (@fastJSFailList) {
         print "\t$testFailure";
     }
 }
 if ($numJSCrashes) {
-    print "\n** The following fast/js test crashes have been introduced:\n";
+    print "\n** The following js test crashes have been introduced:\n";
     foreach my $testCrash (@fastJSCrashList) {
         print "\t$testCrash";
     }
@@ -338,7 +338,7 @@ if ($runMozilla) {
 }
 
 if ($runFastJS) {
-    print "Results for fast/js tests:\n";
+    print "Results for js tests:\n";
     printThingsFound($numJSFailures, "failure", "failures", "found");
     printThingsFound($numJSCrashes, "crash", "crashes", "found");
     print "    OK.\n" if $numJSFailures == 0 && $numJSCrashes == 0;

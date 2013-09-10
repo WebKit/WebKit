@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
-# Script to run selected LayoutTests/fast/{js,regex} tests using jsc
+# Script to run selected LayoutTests/{js,fast/regex} tests using jsc
 
 jscCmd="/System/Library/Frameworks/JavaScriptCore.framework/Resources/jsc"
 testRoot=/tmp/LayoutTests
@@ -71,7 +71,7 @@ fi
 
 if [ $testList = "unset" ]
 then
-    testList=$testRoot/fast/js/jsc-test-list
+    testList=$testRoot/js/jsc-test-list
 fi
 
 preScript=$testRoot/resources/standalone-pre.js

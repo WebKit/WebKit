@@ -445,7 +445,7 @@ webkit.org/b/86176 [ Debug ] ietestcenter/css3/valuesandunits/units-000.htm [ Cr
 
 webkit.org/b/93812 [ Debug ] svg/custom/use-instanceRoot-as-event-target.xhtml [ Crash Pass ]
 
-webkit.org/b/90957 [ Release ] fast/js/random-array-gc-stress.html [ Crash Pass ]
+webkit.org/b/90957 [ Release ] js/random-array-gc-stress.html [ Crash Pass ]
 
 webkit.org/b/94458 [ Debug ] fast/events/message-port-context-destroyed.html [ Crash Pass ]
 
@@ -686,9 +686,9 @@ webkit.org/b/119042 animations/resume-after-page-cache.html [ Failure Pass ]
 
 # These tests started to time out (or time out more often) since the FTL merge
 webkit.org/b/119253 [ Release ] css3/autoclose-braces-and-parentheses.html [ Timeout Pass ]
-webkit.org/b/119253 [ Debug ] fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html [ Timeout Pass ]
-webkit.org/b/119253 [ Debug ] fast/js/regress/nested-function-parsing.html [ Timeout Pass ]
-webkit.org/b/119253 [ Debug ] fast/js/regress/new-array-buffer-dead.html [ Timeout Pass ]
+webkit.org/b/119253 [ Debug ] js/dfg-osr-entry-hoisted-clobbered-structure-check.html [ Timeout Pass ]
+webkit.org/b/119253 [ Debug ] js/regress/nested-function-parsing.html [ Timeout Pass ]
+webkit.org/b/119253 [ Debug ] js/regress/new-array-buffer-dead.html [ Timeout Pass ]
 webkit.org/b/119253 [ Debug ] fast/media/update-media-query-css-parser.html [ Timeout Pass ]
 webkit.org/b/119253 fast/workers/dedicated-worker-lifecycle.html [ Timeout Pass ]
 
@@ -721,23 +721,23 @@ Bug(GTK) css3/flexbox/position-absolute-child.html [ Pass Slow ]
 Bug(GTK) css3/flexbox/multiline-justify-content.html [ Pass Slow ]
 Bug(GTK) [ Debug ] editing/selection/move-by-word-visually-crash-test-5.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/css/visited-link-hang.html [ Pass Slow ]
-Bug(GTK) fast/js/create-lots-of-workers.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/dfg-double-vote-fuzz.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/dfg-float32array.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/dfg-float64array.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/dfg-int16array.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/dfg-int32array.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/dfg-int32array-overflow-values.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/dfg-int8array.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/dfg-uint16array.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/dfg-uint32array.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/dfg-uint32array-overflow-values.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/dfg-uint8array.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/dfg-uint8clampedarray.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/random-array-gc-stress.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/regress/method-on-number.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/string-replacement-outofmemory.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/toString-and-valueOf-override.html [ Pass Slow ]
+Bug(GTK) js/create-lots-of-workers.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/dfg-double-vote-fuzz.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/dfg-float32array.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/dfg-float64array.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/dfg-int16array.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/dfg-int32array.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/dfg-int32array-overflow-values.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/dfg-int8array.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/dfg-uint16array.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/dfg-uint32array.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/dfg-uint32array-overflow-values.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/dfg-uint8array.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/dfg-uint8clampedarray.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/random-array-gc-stress.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/regress/method-on-number.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/string-replacement-outofmemory.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/toString-and-valueOf-override.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/frames/lots-of-iframes.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/frames/lots-of-objects.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/workers/worker-cloneport.html [ Pass Slow ]
@@ -773,7 +773,7 @@ webkit.org/b/116958 http/tests/navigation/slowtimerredirect-basic.html [ Pass Sl
 
 webkit.org/b/119264 transitions/created-while-suspended.html [ Pass Slow ]
 
-webkit.org/b/120201 fast/js/regress/emscripten-memops.html [ Pass Slow ]
+webkit.org/b/120201 js/regress/emscripten-memops.html [ Pass Slow ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests
@@ -812,7 +812,7 @@ webkit.org/b/116958 http/tests/navigation/scrollstate-after-http-equiv-refresh.h
 webkit.org/b/116958 http/tests/navigation/scrollstate-after-location-reload.html [ Timeout ]
 
 # These tests time out after the FTL merge
-webkit.org/b/119254 fast/js/regress/marsaglia.html [ Timeout ]
+webkit.org/b/119254 js/regress/marsaglia.html [ Timeout ]
 webkit.org/b/119254 fast/workers/worker-call.html [ Timeout ]
 
 webkit.org/b/120682 inspector-protocol/page/archive.html [ Timeout ]

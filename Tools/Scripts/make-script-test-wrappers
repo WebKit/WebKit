@@ -130,7 +130,7 @@ sub findTemplateFiles(@) {
         push @templateFiles, $File::Find::name if $_ eq "TEMPLATE.html";
     };
 
-    find({ preprocess => \&directoryFilter, wanted => $fileFilter }, "LayoutTests/fast/js");
+    find({ preprocess => \&directoryFilter, wanted => $fileFilter }, "LayoutTests/js");
 
     return @templateFiles;
 }
