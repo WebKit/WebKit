@@ -75,7 +75,7 @@ public:
 
 protected:
     ElementData();
-    ElementData(unsigned arraySize);
+    explicit ElementData(unsigned arraySize);
     ElementData(const ElementData&, bool isUnique);
 
     unsigned m_isUnique : 1;

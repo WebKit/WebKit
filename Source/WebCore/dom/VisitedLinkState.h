@@ -50,7 +50,7 @@ public:
     EInsideLink determineLinkState(Element*);
 
 private:
-    VisitedLinkState(Document*);
+    explicit VisitedLinkState(Document*);
 
     EInsideLink determineLinkStateSlowCase(Element*);
 

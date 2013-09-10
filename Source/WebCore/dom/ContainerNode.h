@@ -124,7 +124,7 @@ public:
     virtual bool childShouldCreateRenderer(const Node*) const { return true; }
 
 protected:
-    ContainerNode(Document*, ConstructionType = CreateContainer);
+    explicit ContainerNode(Document*, ConstructionType = CreateContainer);
 
     static void queuePostAttachCallback(NodeCallback, Node*, unsigned = 0);
     static bool postAttachCallbacksAreSuspended();

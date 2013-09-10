@@ -66,7 +66,7 @@ public:
     };
 
     QualifiedName(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI);
-    QualifiedName(WTF::HashTableDeletedValueType) : m_impl(hashTableDeletedValue()) { }
+    explicit QualifiedName(WTF::HashTableDeletedValueType) : m_impl(hashTableDeletedValue()) { }
     bool isHashTableDeletedValue() const { return m_impl == hashTableDeletedValue(); }
     ~QualifiedName();
 #ifdef QNAME_DEFAULT_CONSTRUCTOR

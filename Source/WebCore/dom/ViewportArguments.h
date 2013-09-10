@@ -75,7 +75,7 @@ struct ViewportArguments {
         ValueLandscape = -5
     };
 
-    ViewportArguments(Type type = Implicit)
+    explicit ViewportArguments(Type type = Implicit)
         : type(type)
         , width(ValueAuto)
         , minWidth(ValueAuto)

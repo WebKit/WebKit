@@ -79,7 +79,7 @@ class EventListenerIterator {
     WTF_MAKE_NONCOPYABLE(EventListenerIterator);
 public:
     EventListenerIterator();
-    EventListenerIterator(EventTarget*);
+    explicit EventListenerIterator(EventTarget*);
 #ifndef NDEBUG
     ~EventListenerIterator();
 #endif

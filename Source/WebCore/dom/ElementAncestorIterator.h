@@ -34,7 +34,7 @@ template <typename ElementType>
 class ElementAncestorIterator : public ElementIterator<ElementType> {
 public:
     ElementAncestorIterator();
-    ElementAncestorIterator(ElementType* current);
+    explicit ElementAncestorIterator(ElementType* current);
     ElementAncestorIterator& operator++();
 };
 
@@ -42,14 +42,14 @@ template <typename ElementType>
 class ElementAncestorConstIterator : public ElementConstIterator<ElementType> {
 public:
     ElementAncestorConstIterator();
-    ElementAncestorConstIterator(const ElementType* current);
+    explicit ElementAncestorConstIterator(const ElementType* current);
     ElementAncestorConstIterator& operator++();
 };
 
 template <typename ElementType>
 class ElementAncestorIteratorAdapter {
 public:
-    ElementAncestorIteratorAdapter(ElementType* descendant);
+    explicit ElementAncestorIteratorAdapter(ElementType* descendant);
     ElementAncestorIterator<ElementType> begin();
     ElementAncestorIterator<ElementType> end();
 
@@ -60,7 +60,7 @@ private:
 template <typename ElementType>
 class ElementAncestorConstIteratorAdapter {
 public:
-    ElementAncestorConstIteratorAdapter(const ElementType* descendant);
+    explicit ElementAncestorConstIteratorAdapter(const ElementType* descendant);
     ElementAncestorConstIterator<ElementType> begin() const;
     ElementAncestorConstIterator<ElementType> end() const;
 

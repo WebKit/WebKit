@@ -166,7 +166,7 @@ private:
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;
 
-    ElementRareData(RenderObject*);
+    explicit ElementRareData(RenderObject*);
     void releasePseudoElement(PseudoElement*);
 };
 

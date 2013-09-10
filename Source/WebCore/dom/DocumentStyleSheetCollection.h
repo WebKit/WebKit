@@ -118,7 +118,7 @@ public:
     bool activeStyleSheetsContains(const CSSStyleSheet*) const;
 
 private:
-    DocumentStyleSheetCollection(Document*);
+    explicit DocumentStyleSheetCollection(Document*);
 
     void collectActiveStyleSheets(Vector<RefPtr<StyleSheet> >&);
     enum StyleResolverUpdateType {

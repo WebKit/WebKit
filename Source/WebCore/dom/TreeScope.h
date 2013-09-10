@@ -133,7 +133,7 @@ public:
 
 protected:
     TreeScope(ContainerNode*, Document*);
-    TreeScope(Document*);
+    explicit TreeScope(Document*);
     virtual ~TreeScope();
 
     void destroyTreeScopeData();
