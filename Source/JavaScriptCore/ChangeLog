@@ -1,5 +1,21 @@
 2013-09-10  Filip Pizlo  <fpizlo@apple.com>
 
+        SpecType should have SpecInt48AsDouble
+        https://bugs.webkit.org/show_bug.cgi?id=121065
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationToAbbreviatedString):
+        (JSC::speculationFromValue):
+        * bytecode/SpeculatedType.h:
+        (JSC::isInt48AsDoubleSpeculation):
+        (JSC::isIntegerSpeculation):
+        (JSC::isDoubleRealSpeculation):
+
+2013-09-10  Filip Pizlo  <fpizlo@apple.com>
+
         Don't GC while in the OSR-triggered jettison code
         https://bugs.webkit.org/show_bug.cgi?id=121106
 
