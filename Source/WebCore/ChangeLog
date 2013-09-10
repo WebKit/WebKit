@@ -1,3 +1,32 @@
+2013-09-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove HTMLTextFormControl::fixPlaceholderRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=121058
+
+        Reviewed by Kent Tamura.
+
+        HTMLTextFormControl::fixPlaceholderRenderer was added in r118733 to swap the order in which placeholder appears.
+        Namely, when a text form control element is focused, placeholder should be rendered behind the text for the caret
+        to render on top of, not behind, the placeholder text.  However, we can achieve the same effect by changing
+        the order of elements in the shadow DOM instead of manually manipuating the render tree as the assertion failure
+        mentioned in the change log is a bogus one.
+
+        Cleaned up the code by removing HTMLTextFormControl::fixPlaceholderRenderer and changed the order in which inner
+        text element and placeholder element appear. Also fixed the assertion in Position's constructor.
+
+        * dom/Position.cpp:
+        (WebCore::Position::Position): The original assertion was bogus. What we don't want have is for a Position to be
+        before or after a shadow root. It's fine for it be anchroed against the shadow root as long as it's inside.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updatePlaceholderText): Insert the placeholder before the inner text element.
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        * html/HTMLTextFormControlElement.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::updatePlaceholderText): Ditto.
+        * html/TextFieldInputType.h:
+
 2013-09-09  Andreas Kling  <akling@apple.com>
 
         Hide node() below RenderSVGModelObject, use element() instead.

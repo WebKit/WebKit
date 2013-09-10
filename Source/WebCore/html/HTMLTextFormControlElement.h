@@ -54,7 +54,6 @@ public:
     bool placeholderShouldBeVisible() const;
     virtual HTMLElement* placeholderElement() const = 0;
     void updatePlaceholderVisibility(bool);
-    static void fixPlaceholderRenderer(HTMLElement* placeholder, HTMLElement* siblingElement);
 
     int indexForVisiblePosition(const VisiblePosition&) const;
     VisiblePosition visiblePositionForIndex(int index) const;

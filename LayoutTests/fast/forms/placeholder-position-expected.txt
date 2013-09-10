@@ -73,10 +73,10 @@ layer at (35,82) size 117x13
   RenderBlock {DIV} at (0,0) size 117x13
 layer at (10,102) size 161x32 clip at (11,103) size 159x30
   RenderTextControl {TEXTAREA} at (2,94) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 155x13
     RenderBlock {DIV} at (3,3) size 155x13 [color=#A9A9A9]
       RenderText {#text} at (0,0) size 63x13
         text run at (0,0) width 63: "placeholder"
-    RenderBlock {DIV} at (3,3) size 155x13
 layer at (13,141) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 63x13
@@ -85,10 +85,10 @@ layer at (13,141) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13
 layer at (10,175) size 161x45 clip at (11,176) size 159x43
   RenderTextControl {TEXTAREA} at (2,167) size 161x45 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,16) size 155x13
     RenderBlock {DIV} at (3,16) size 155x13 [color=#A9A9A9]
       RenderText {#text} at (0,0) size 63x13
         text run at (0,0) width 63: "placeholder"
-    RenderBlock {DIV} at (3,16) size 155x13
 layer at (19,233) size 162x18
   RenderBlock {DIV} at (6,6) size 162x18 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 85x18

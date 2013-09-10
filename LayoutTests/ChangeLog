@@ -1,3 +1,19 @@
+2013-09-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove HTMLTextFormControl::fixPlaceholderRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=121058
+
+        Reviewed by Kent Tamura.
+
+        Rebaseline tests now that the placeholder appears before the inner text element.
+
+        * fast/forms/placeholder-position-expected.txt:
+        * platform/mac/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/mac/fast/forms/input-placeholder-visibility-3-expected.txt:
+        * platform/mac/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/mac/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/mac/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+
 2013-09-09  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r155392(Remove old fast/js/resources pre and post test files): breaks tests.

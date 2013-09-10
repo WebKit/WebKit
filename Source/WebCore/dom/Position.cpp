@@ -85,10 +85,9 @@ Position::Position(PassRefPtr<Node> anchorNode, LegacyEditingOffset offset)
     , m_isLegacyEditingPosition(true)
 {
 #if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && RuntimeEnabledFeatures::shadowDOMEnabled())
-           || !m_anchorNode || !m_anchorNode->isShadowRoot());
+    ASSERT((m_anchorNode && RuntimeEnabledFeatures::shadowDOMEnabled()) || !m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
 #else
-    ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot());
+    ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
 #endif
     ASSERT(!m_anchorNode || !m_anchorNode->isPseudoElement());
 }
@@ -100,10 +99,9 @@ Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
     , m_isLegacyEditingPosition(false)
 {
 #if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && RuntimeEnabledFeatures::shadowDOMEnabled())
-           || !m_anchorNode || !m_anchorNode->isShadowRoot());
+    ASSERT((m_anchorNode && RuntimeEnabledFeatures::shadowDOMEnabled()) || !m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
 #else
-    ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot());
+    ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
 #endif
 
     ASSERT(!m_anchorNode || !m_anchorNode->isPseudoElement());

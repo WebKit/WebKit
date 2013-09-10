@@ -57,7 +57,6 @@ protected:
 #endif
 
 protected:
-    virtual void attach() OVERRIDE;
     virtual bool needsContainer() const;
     virtual bool shouldHaveSpinButton() const;
     virtual void createShadowSubtree() OVERRIDE;
