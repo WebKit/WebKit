@@ -97,7 +97,7 @@ struct InlineCallFrame {
     WriteBarrier<JSFunction> callee; // This may be null, indicating that this is a closure call and that the JSFunction and JSScope are already on the stack.
     CodeOrigin caller;
     BitVector capturedVars; // Indexed by the machine call frame's variable numbering.
-    unsigned stackOffset : 31;
+    signed int stackOffset : 31;
     bool isCall : 1;
     
     CodeSpecializationKind specializationKind() const { return specializationFromIsCall(isCall); }

@@ -438,7 +438,7 @@ namespace JSC {
 
         enum CompileOpStrictEqType { OpStrictEq, OpNStrictEq };
         void compileOpStrictEq(Instruction* instruction, CompileOpStrictEqType type);
-        bool isOperandConstantImmediateDouble(unsigned src);
+        bool isOperandConstantImmediateDouble(int src);
         
         void emitLoadDouble(int index, FPRegisterID value);
         void emitLoadInt32ToDouble(int index, FPRegisterID value);
@@ -509,7 +509,7 @@ namespace JSC {
         enum FinalObjectMode { MayBeFinal, KnownNotFinal };
 
 #if USE(JSVALUE32_64)
-        bool getOperandConstantImmediateInt(unsigned op1, unsigned op2, unsigned& op, int32_t& constant);
+        bool getOperandConstantImmediateInt(int op1, int op2, int& op, int32_t& constant);
 
         void emitLoadTag(int index, RegisterID tag);
         void emitLoadPayload(int index, RegisterID payload);
@@ -546,9 +546,9 @@ namespace JSC {
         void compilePutDirectOffset(RegisterID base, RegisterID valueTag, RegisterID valuePayload, PropertyOffset cachedOffset);
 
         // Arithmetic opcode helpers
-        void emitAdd32Constant(unsigned dst, unsigned op, int32_t constant, ResultType opType);
-        void emitSub32Constant(unsigned dst, unsigned op, int32_t constant, ResultType opType);
-        void emitBinaryDoubleOp(OpcodeID, unsigned dst, unsigned op1, unsigned op2, OperandTypes, JumpList& notInt32Op1, JumpList& notInt32Op2, bool op1IsInRegisters = true, bool op2IsInRegisters = true);
+        void emitAdd32Constant(int dst, int op, int32_t constant, ResultType opType);
+        void emitSub32Constant(int dst, int op, int32_t constant, ResultType opType);
+        void emitBinaryDoubleOp(OpcodeID, int dst, int op1, int op2, OperandTypes, JumpList& notInt32Op1, JumpList& notInt32Op2, bool op1IsInRegisters = true, bool op2IsInRegisters = true);
 
 #if CPU(ARM_TRADITIONAL)
         // sequenceOpCall
@@ -580,17 +580,17 @@ namespace JSC {
 
 #else // USE(JSVALUE32_64)
         /* This function is deprecated. */
-        void emitGetJITStubArg(unsigned argumentNumber, RegisterID dst);
+        void emitGetJITStubArg(int argumentNumber, RegisterID dst);
 
         void emitGetVirtualRegister(int src, RegisterID dst);
         void emitGetVirtualRegisters(int src1, RegisterID dst1, int src2, RegisterID dst2);
-        void emitPutVirtualRegister(unsigned dst, RegisterID from = regT0);
-        void emitStoreCell(unsigned dst, RegisterID payload, bool /* only used in JSValue32_64 */ = false)
+        void emitPutVirtualRegister(int dst, RegisterID from = regT0);
+        void emitStoreCell(int dst, RegisterID payload, bool /* only used in JSValue32_64 */ = false)
         {
             emitPutVirtualRegister(dst, payload);
         }
 
-        int32_t getConstantOperandImmediateInt(unsigned src);
+        int32_t getConstantOperandImmediateInt(int src);
 
         void killLastResultRegister();
 
@@ -609,8 +609,8 @@ namespace JSC {
         void emitFastArithReTagImmediate(RegisterID src, RegisterID dest);
 
         void emitTagAsBoolImmediate(RegisterID reg);
-        void compileBinaryArithOp(OpcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi);
-        void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator&, unsigned dst, unsigned src1, unsigned src2, OperandTypes, bool op1HasImmediateIntFastCase, bool op2HasImmediateIntFastCase);
+        void compileBinaryArithOp(OpcodeID, int dst, int src1, int src2, OperandTypes opi);
+        void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator&, int dst, int src1, int src2, OperandTypes, bool op1HasImmediateIntFastCase, bool op2HasImmediateIntFastCase);
 
         void compileGetByIdHotPath(int baseVReg, const Identifier*);
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, const Identifier*, Vector<SlowCaseEntry>::iterator&);
@@ -635,8 +635,8 @@ namespace JSC {
 #define END_UNINTERRUPTED_SEQUENCE_FOR_PUT(name, dst)
 #endif
 
-        void emit_compareAndJump(OpcodeID, unsigned op1, unsigned op2, unsigned target, RelationalCondition);
-        void emit_compareAndJumpSlow(unsigned op1, unsigned op2, unsigned target, DoubleCondition, int (JIT_STUB *stub)(STUB_ARGS_DECLARATION), bool invert, Vector<SlowCaseEntry>::iterator&);
+        void emit_compareAndJump(OpcodeID, int op1, int op2, unsigned target, RelationalCondition);
+        void emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondition, int (JIT_STUB *stub)(STUB_ARGS_DECLARATION), bool invert, Vector<SlowCaseEntry>::iterator&);
 
         void emit_op_add(Instruction*);
         void emit_op_bitand(Instruction*);
@@ -794,16 +794,16 @@ namespace JSC {
         void emitRightShiftSlowCase(Instruction*, Vector<SlowCaseEntry>::iterator&, bool isUnsigned);
 
         void emitVarInjectionCheck(bool needsVarInjectionChecks);
-        void emitResolveClosure(unsigned dst, bool needsVarInjectionChecks, unsigned depth);
-        void emitLoadWithStructureCheck(unsigned scope, Structure** structureSlot);
+        void emitResolveClosure(int dst, bool needsVarInjectionChecks, unsigned depth);
+        void emitLoadWithStructureCheck(int scope, Structure** structureSlot);
         void emitGetGlobalProperty(uintptr_t* operandSlot);
         void emitGetGlobalVar(uintptr_t operand);
-        void emitGetClosureVar(unsigned scope, uintptr_t operand);
-        void emitPutGlobalProperty(uintptr_t* operandSlot, unsigned value);
-        void emitPutGlobalVar(uintptr_t operand, unsigned value);
-        void emitPutClosureVar(unsigned scope, uintptr_t operand, unsigned value);
+        void emitGetClosureVar(int scope, uintptr_t operand);
+        void emitPutGlobalProperty(uintptr_t* operandSlot, int value);
+        void emitPutGlobalVar(uintptr_t operand, int value);
+        void emitPutClosureVar(int scope, uintptr_t operand, int value);
 
-        void emitInitRegister(unsigned dst);
+        void emitInitRegister(int dst);
 
         void emitPutIntToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
         void emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry, RegisterID to, RegisterID from = callFrameRegister);
@@ -812,9 +812,9 @@ namespace JSC {
         void emitGetFromCallFrameHeader64(JSStack::CallFrameHeaderEntry, RegisterID to, RegisterID from = callFrameRegister);
 #endif
 
-        JSValue getConstantOperand(unsigned src);
-        bool isOperandConstantImmediateInt(unsigned src);
-        bool isOperandConstantImmediateChar(unsigned src);
+        JSValue getConstantOperand(int src);
+        bool isOperandConstantImmediateInt(int src);
+        bool isOperandConstantImmediateChar(int src);
 
         bool atJumpTarget();
 
@@ -851,7 +851,7 @@ namespace JSC {
 #endif
 
 #ifndef NDEBUG
-        void printBytecodeOperandTypes(unsigned src1, unsigned src2);
+        void printBytecodeOperandTypes(int src1, int src2);
 #endif
 
 #if ENABLE(SAMPLING_FLAGS)

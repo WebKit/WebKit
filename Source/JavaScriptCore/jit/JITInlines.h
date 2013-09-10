@@ -33,12 +33,12 @@
 
 namespace JSC {
 
-ALWAYS_INLINE bool JIT::isOperandConstantImmediateDouble(unsigned src)
+ALWAYS_INLINE bool JIT::isOperandConstantImmediateDouble(int src)
 {
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isDouble();
 }
 
-ALWAYS_INLINE JSValue JIT::getConstantOperand(unsigned src)
+ALWAYS_INLINE JSValue JIT::getConstantOperand(int src)
 {
     ASSERT(m_codeBlock->isConstantRegisterIndex(src));
     return m_codeBlock->getConstant(src);
@@ -312,7 +312,7 @@ ALWAYS_INLINE void JIT::sampleCodeBlock(CodeBlock* codeBlock)
 #endif
 #endif
 
-ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(unsigned src)
+ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(int src)
 {
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
@@ -605,7 +605,7 @@ inline void JIT::emitStore(int index, const JSValue constant, RegisterID base)
     store32(Imm32(constant.tag()), tagFor(index, base));
 }
 
-ALWAYS_INLINE void JIT::emitInitRegister(unsigned dst)
+ALWAYS_INLINE void JIT::emitInitRegister(int dst)
 {
     emitStore(dst, jsUndefined());
 }
@@ -705,12 +705,12 @@ inline void JIT::emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex, RegisterI
     }
 }
 
-ALWAYS_INLINE bool JIT::isOperandConstantImmediateInt(unsigned src)
+ALWAYS_INLINE bool JIT::isOperandConstantImmediateInt(int src)
 {
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isInt32();
 }
 
-ALWAYS_INLINE bool JIT::getOperandConstantImmediateInt(unsigned op1, unsigned op2, unsigned& op, int32_t& constant)
+ALWAYS_INLINE bool JIT::getOperandConstantImmediateInt(int op1, int op2, int& op, int32_t& constant)
 {
     if (isOperandConstantImmediateInt(op1)) {
         constant = getConstantOperand(op1).asInt32();
@@ -731,9 +731,9 @@ ALWAYS_INLINE bool JIT::getOperandConstantImmediateInt(unsigned op1, unsigned op
 
 /* Deprecated: Please use JITStubCall instead. */
 
-ALWAYS_INLINE void JIT::emitGetJITStubArg(unsigned argumentNumber, RegisterID dst)
+ALWAYS_INLINE void JIT::emitGetJITStubArg(int argumentNumber, RegisterID dst)
 {
-    unsigned argumentStackOffset = (argumentNumber * (sizeof(JSValue) / sizeof(void*))) + JITSTACKFRAME_ARGS_INDEX;
+    int argumentStackOffset = (argumentNumber * (sizeof(JSValue) / sizeof(void*))) + JITSTACKFRAME_ARGS_INDEX;
     peek64(dst, argumentStackOffset);
 }
 
@@ -781,23 +781,23 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegisters(int src1, RegisterID dst1, int s
     }
 }
 
-ALWAYS_INLINE int32_t JIT::getConstantOperandImmediateInt(unsigned src)
+ALWAYS_INLINE int32_t JIT::getConstantOperandImmediateInt(int src)
 {
     return getConstantOperand(src).asInt32();
 }
 
-ALWAYS_INLINE bool JIT::isOperandConstantImmediateInt(unsigned src)
+ALWAYS_INLINE bool JIT::isOperandConstantImmediateInt(int src)
 {
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isInt32();
 }
 
-ALWAYS_INLINE void JIT::emitPutVirtualRegister(unsigned dst, RegisterID from)
+ALWAYS_INLINE void JIT::emitPutVirtualRegister(int dst, RegisterID from)
 {
     store64(from, Address(callFrameRegister, dst * sizeof(Register)));
-    m_lastResultBytecodeRegister = (from == cachedResultRegister) ? static_cast<int>(dst) : std::numeric_limits<int>::max();
+    m_lastResultBytecodeRegister = (from == cachedResultRegister) ? dst : std::numeric_limits<int>::max();
 }
 
-ALWAYS_INLINE void JIT::emitInitRegister(unsigned dst)
+ALWAYS_INLINE void JIT::emitInitRegister(int dst)
 {
     store64(TrustedImm64(JSValue::encode(jsUndefined())), Address(callFrameRegister, dst * sizeof(Register)));
 }

@@ -214,8 +214,9 @@ private:
             return getArgument(operand);
 
         // Must be a local.
-        return getLocal((unsigned)operand);
+        return getLocal(operand);
     }
+
     Node* get(int operand)
     {
         if (operand == JSStack::Callee) {
@@ -227,6 +228,7 @@ private:
         
         return getDirect(m_inlineStackTop->remapOperand(operand));
     }
+
     enum SetMode { NormalSet, SetOnEntry };
     void setDirect(int operand, Node* value, SetMode setMode = NormalSet)
     {
@@ -237,8 +239,9 @@ private:
         }
 
         // Must be a local.
-        setLocal((unsigned)operand, value, setMode);
+        setLocal(operand, value, setMode);
     }
+
     void set(int operand, Node* value, SetMode setMode = NormalSet)
     {
         setDirect(m_inlineStackTop->remapOperand(operand), value, setMode);
@@ -259,7 +262,7 @@ private:
     }
 
     // Used in implementing get/set, above, where the operand is a local variable.
-    Node* getLocal(unsigned operand)
+    Node* getLocal(int operand)
     {
         unsigned local = operandToLocal(operand);
         Node* node = m_currentBlock->variablesAtTail.local(local);
@@ -296,7 +299,8 @@ private:
         m_currentBlock->variablesAtTail.local(local) = node;
         return node;
     }
-    void setLocal(unsigned operand, Node* value, SetMode setMode = NormalSet)
+
+    void setLocal(int operand, Node* value, SetMode setMode = NormalSet)
     {
         unsigned local = operandToLocal(operand);
         bool isCaptured = m_codeBlock->isCaptured(operand, inlineCallFrame());
@@ -2089,14 +2093,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         // === Increment/Decrement opcodes ===
 
         case op_inc: {
-            unsigned srcDst = currentInstruction[1].u.operand;
+            int srcDst = currentInstruction[1].u.operand;
             Node* op = get(srcDst);
             set(srcDst, makeSafe(addToGraph(ArithAdd, op, one())));
             NEXT_OPCODE(op_inc);
         }
 
         case op_dec: {
-            unsigned srcDst = currentInstruction[1].u.operand;
+            int srcDst = currentInstruction[1].u.operand;
             Node* op = get(srcDst);
             set(srcDst, makeSafe(addToGraph(ArithSub, op, one())));
             NEXT_OPCODE(op_dec);
@@ -2996,7 +3000,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jneq_ptr);
 
         case op_resolve_scope: {
-            unsigned dst = currentInstruction[1].u.operand;
+            int dst = currentInstruction[1].u.operand;
             ResolveType resolveType = static_cast<ResolveType>(currentInstruction[3].u.operand);
             unsigned depth = currentInstruction[4].u.operand;
 
@@ -3023,7 +3027,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_get_from_scope: {
-            unsigned dst = currentInstruction[1].u.operand;
+            int dst = currentInstruction[1].u.operand;
             unsigned scope = currentInstruction[2].u.operand;
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
             StringImpl* uid = m_graph.identifiers()[identifierNumber];

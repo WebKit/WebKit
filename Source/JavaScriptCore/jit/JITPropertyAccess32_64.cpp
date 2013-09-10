@@ -54,9 +54,9 @@ namespace JSC {
     
 void JIT::emit_op_put_by_index(Instruction* currentInstruction)
 {
-    unsigned base = currentInstruction[1].u.operand;
-    unsigned property = currentInstruction[2].u.operand;
-    unsigned value = currentInstruction[3].u.operand;
+    int base = currentInstruction[1].u.operand;
+    int property = currentInstruction[2].u.operand;
+    int value = currentInstruction[3].u.operand;
     
     JITStubCall stubCall(this, cti_op_put_by_index);
     stubCall.addArgument(base);
@@ -67,10 +67,10 @@ void JIT::emit_op_put_by_index(Instruction* currentInstruction)
 
 void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
 {
-    unsigned base = currentInstruction[1].u.operand;
-    unsigned property = currentInstruction[2].u.operand;
-    unsigned getter = currentInstruction[3].u.operand;
-    unsigned setter = currentInstruction[4].u.operand;
+    int base = currentInstruction[1].u.operand;
+    int property = currentInstruction[2].u.operand;
+    int getter = currentInstruction[3].u.operand;
+    int setter = currentInstruction[4].u.operand;
     
     JITStubCall stubCall(this, cti_op_put_getter_setter);
     stubCall.addArgument(base);
@@ -82,9 +82,9 @@ void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
 
 void JIT::emit_op_del_by_id(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned base = currentInstruction[2].u.operand;
-    unsigned property = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int base = currentInstruction[2].u.operand;
+    int property = currentInstruction[3].u.operand;
     
     JITStubCall stubCall(this, cti_op_del_by_id);
     stubCall.addArgument(base);
@@ -136,9 +136,9 @@ JIT::CodeRef JIT::stringGetByValStubGenerator(VM* vm)
 
 void JIT::emit_op_get_by_val(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned base = currentInstruction[2].u.operand;
-    unsigned property = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int base = currentInstruction[2].u.operand;
+    int property = currentInstruction[3].u.operand;
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
@@ -239,9 +239,9 @@ JIT::JumpList JIT::emitArrayStorageGetByVal(Instruction*, PatchableJump& badType
     
 void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned base = currentInstruction[2].u.operand;
-    unsigned property = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int base = currentInstruction[2].u.operand;
+    int property = currentInstruction[3].u.operand;
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     
     linkSlowCase(iter); // property int32 check
@@ -283,8 +283,8 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
 
 void JIT::emit_op_put_by_val(Instruction* currentInstruction)
 {
-    unsigned base = currentInstruction[1].u.operand;
-    unsigned property = currentInstruction[2].u.operand;
+    int base = currentInstruction[1].u.operand;
+    int property = currentInstruction[2].u.operand;
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
@@ -327,7 +327,7 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
 
 JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction, PatchableJump& badType, IndexingType indexingShape)
 {
-    unsigned value = currentInstruction[3].u.operand;
+    int value = currentInstruction[3].u.operand;
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     
     JumpList slowCases;
@@ -383,7 +383,7 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
 
 JIT::JumpList JIT::emitArrayStoragePutByVal(Instruction* currentInstruction, PatchableJump& badType)
 {
-    unsigned value = currentInstruction[3].u.operand;
+    int value = currentInstruction[3].u.operand;
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     
     JumpList slowCases;
@@ -419,9 +419,9 @@ JIT::JumpList JIT::emitArrayStoragePutByVal(Instruction* currentInstruction, Pat
 
 void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned base = currentInstruction[1].u.operand;
-    unsigned property = currentInstruction[2].u.operand;
-    unsigned value = currentInstruction[3].u.operand;
+    int base = currentInstruction[1].u.operand;
+    int property = currentInstruction[2].u.operand;
+    int value = currentInstruction[3].u.operand;
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     
     linkSlowCase(iter); // property int32 check
@@ -1196,12 +1196,12 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID resultTag, Register
 
 void JIT::emit_op_get_by_pname(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned base = currentInstruction[2].u.operand;
-    unsigned property = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int base = currentInstruction[2].u.operand;
+    int property = currentInstruction[3].u.operand;
     unsigned expected = currentInstruction[4].u.operand;
-    unsigned iter = currentInstruction[5].u.operand;
-    unsigned i = currentInstruction[6].u.operand;
+    int iter = currentInstruction[5].u.operand;
+    int i = currentInstruction[6].u.operand;
     
     emitLoad2(property, regT1, regT0, base, regT3, regT2);
     emitJumpSlowCaseIfNotJSCell(property, regT1);
@@ -1228,9 +1228,9 @@ void JIT::emit_op_get_by_pname(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_get_by_pname(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned base = currentInstruction[2].u.operand;
-    unsigned property = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int base = currentInstruction[2].u.operand;
+    int property = currentInstruction[3].u.operand;
     
     linkSlowCaseIfNotJSCell(iter, property);
     linkSlowCase(iter);
@@ -1251,7 +1251,7 @@ void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks)
     addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_codeBlock->globalObject()->varInjectionWatchpoint()->addressOfIsInvalidated())));
 }
 
-void JIT::emitResolveClosure(unsigned dst, bool needsVarInjectionChecks, unsigned depth)
+void JIT::emitResolveClosure(int dst, bool needsVarInjectionChecks, unsigned depth)
 {
     emitVarInjectionCheck(needsVarInjectionChecks);
     move(TrustedImm32(JSValue::CellTag), regT1);
@@ -1270,7 +1270,7 @@ void JIT::emitResolveClosure(unsigned dst, bool needsVarInjectionChecks, unsigne
 
 void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
+    int dst = currentInstruction[1].u.operand;
     ResolveType resolveType = static_cast<ResolveType>(currentInstruction[3].u.operand);
     unsigned depth = currentInstruction[4].u.operand;
 
@@ -1297,7 +1297,7 @@ void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_resolve_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned dst = currentInstruction[1].u.operand;
+    int dst = currentInstruction[1].u.operand;
     ResolveType resolveType = static_cast<ResolveType>(currentInstruction[3].u.operand);
 
     if (resolveType == GlobalProperty || resolveType == GlobalVar || resolveType == ClosureVar)
@@ -1310,7 +1310,7 @@ void JIT::emitSlow_op_resolve_scope(Instruction* currentInstruction, Vector<Slow
     stubCall.call(dst);
 }
 
-void JIT::emitLoadWithStructureCheck(unsigned scope, Structure** structureSlot)
+void JIT::emitLoadWithStructureCheck(int scope, Structure** structureSlot)
 {
     emitLoad(scope, regT1, regT0);
     loadPtr(structureSlot, regT2);
@@ -1330,7 +1330,7 @@ void JIT::emitGetGlobalVar(uintptr_t operand)
     load32(reinterpret_cast<char*>(operand) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), regT0);
 }
 
-void JIT::emitGetClosureVar(unsigned scope, uintptr_t operand)
+void JIT::emitGetClosureVar(int scope, uintptr_t operand)
 {
     emitLoad(scope, regT1, regT0);
     loadPtr(Address(regT0, JSVariableObject::offsetOfRegisters()), regT0);
@@ -1340,8 +1340,8 @@ void JIT::emitGetClosureVar(unsigned scope, uintptr_t operand)
 
 void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned scope = currentInstruction[2].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int scope = currentInstruction[2].u.operand;
     ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
     Structure** structureSlot = currentInstruction[5].u.structure.slot();
     uintptr_t* operandSlot = reinterpret_cast<uintptr_t*>(&currentInstruction[6].u.pointer);
@@ -1373,7 +1373,7 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_get_from_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned dst = currentInstruction[1].u.operand;
+    int dst = currentInstruction[1].u.operand;
     ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
 
     if (resolveType == GlobalVar || resolveType == ClosureVar)
@@ -1387,7 +1387,7 @@ void JIT::emitSlow_op_get_from_scope(Instruction* currentInstruction, Vector<Slo
     emitValueProfilingSite(regT4);
 }
 
-void JIT::emitPutGlobalProperty(uintptr_t* operandSlot, unsigned value)
+void JIT::emitPutGlobalProperty(uintptr_t* operandSlot, int value)
 {
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT0);
     loadPtr(operandSlot, regT1);
@@ -1397,14 +1397,14 @@ void JIT::emitPutGlobalProperty(uintptr_t* operandSlot, unsigned value)
     store32(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
 }
 
-void JIT::emitPutGlobalVar(uintptr_t operand, unsigned value)
+void JIT::emitPutGlobalVar(uintptr_t operand, int value)
 {
     emitLoad(value, regT1, regT0);
     store32(regT1, reinterpret_cast<char*>(operand) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     store32(regT0, reinterpret_cast<char*>(operand) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
 }
 
-void JIT::emitPutClosureVar(unsigned scope, uintptr_t operand, unsigned value)
+void JIT::emitPutClosureVar(int scope, uintptr_t operand, int value)
 {
     emitLoad(value, regT3, regT2);
     emitLoad(scope, regT1, regT0);
@@ -1415,8 +1415,8 @@ void JIT::emitPutClosureVar(unsigned scope, uintptr_t operand, unsigned value)
 
 void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
 {
-    unsigned scope = currentInstruction[1].u.operand;
-    unsigned value = currentInstruction[3].u.operand;
+    int scope = currentInstruction[1].u.operand;
+    int value = currentInstruction[3].u.operand;
     ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
     Structure** structureSlot = currentInstruction[5].u.structure.slot();
     uintptr_t* operandSlot = reinterpret_cast<uintptr_t*>(&currentInstruction[6].u.pointer);

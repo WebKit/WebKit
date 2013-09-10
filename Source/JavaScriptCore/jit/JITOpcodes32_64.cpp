@@ -182,8 +182,8 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
 
 void JIT::emit_op_mov(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned src = currentInstruction[2].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int src = currentInstruction[2].u.operand;
 
     if (m_codeBlock->isConstantRegisterIndex(src))
         emitStore(dst, getConstantOperand(src));
@@ -233,7 +233,7 @@ void JIT::emitSlow_op_new_object(Instruction* currentInstruction, Vector<SlowCas
 
 void JIT::emit_op_check_has_instance(Instruction* currentInstruction)
 {
-    unsigned baseVal = currentInstruction[3].u.operand;
+    int baseVal = currentInstruction[3].u.operand;
 
     emitLoadPayload(baseVal, regT0);
 
@@ -247,9 +247,9 @@ void JIT::emit_op_check_has_instance(Instruction* currentInstruction)
 
 void JIT::emit_op_instanceof(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned value = currentInstruction[2].u.operand;
-    unsigned proto = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int value = currentInstruction[2].u.operand;
+    int proto = currentInstruction[3].u.operand;
 
     // Load the operands into registers.
     // We use regT0 for baseVal since we will be done with this first, and we can then use it for the result.
@@ -287,9 +287,9 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_check_has_instance(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned value = currentInstruction[2].u.operand;
-    unsigned baseVal = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int value = currentInstruction[2].u.operand;
+    int baseVal = currentInstruction[3].u.operand;
 
     linkSlowCaseIfNotJSCell(iter, baseVal);
     linkSlowCase(iter);
@@ -304,9 +304,9 @@ void JIT::emitSlow_op_check_has_instance(Instruction* currentInstruction, Vector
 
 void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned value = currentInstruction[2].u.operand;
-    unsigned proto = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int value = currentInstruction[2].u.operand;
+    int proto = currentInstruction[3].u.operand;
 
     linkSlowCaseIfNotJSCell(iter, value);
     linkSlowCaseIfNotJSCell(iter, proto);
@@ -320,8 +320,8 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
 
 void JIT::emit_op_is_undefined(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned value = currentInstruction[2].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int value = currentInstruction[2].u.operand;
     
     emitLoad(value, regT1, regT0);
     Jump isCell = branch32(Equal, regT1, TrustedImm32(JSValue::CellTag));
@@ -347,8 +347,8 @@ void JIT::emit_op_is_undefined(Instruction* currentInstruction)
 
 void JIT::emit_op_is_boolean(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned value = currentInstruction[2].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int value = currentInstruction[2].u.operand;
     
     emitLoadTag(value, regT0);
     compare32(Equal, regT0, TrustedImm32(JSValue::BooleanTag), regT0);
@@ -357,8 +357,8 @@ void JIT::emit_op_is_boolean(Instruction* currentInstruction)
 
 void JIT::emit_op_is_number(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned value = currentInstruction[2].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int value = currentInstruction[2].u.operand;
     
     emitLoadTag(value, regT0);
     add32(TrustedImm32(1), regT0);
@@ -368,8 +368,8 @@ void JIT::emit_op_is_number(Instruction* currentInstruction)
 
 void JIT::emit_op_is_string(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned value = currentInstruction[2].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int value = currentInstruction[2].u.operand;
     
     emitLoad(value, regT1, regT0);
     Jump isNotCell = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
@@ -387,7 +387,7 @@ void JIT::emit_op_is_string(Instruction* currentInstruction)
 
 void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
 {
-    unsigned activation = currentInstruction[1].u.operand;
+    int activation = currentInstruction[1].u.operand;
     Jump activationNotCreated = branch32(Equal, tagFor(activation), TrustedImm32(JSValue::EmptyValueTag));
     JITStubCall stubCall(this, cti_op_tear_off_activation);
     stubCall.addArgument(activation);
@@ -443,8 +443,8 @@ void JIT::emit_op_strcat(Instruction* currentInstruction)
 
 void JIT::emit_op_not(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned src = currentInstruction[2].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int src = currentInstruction[2].u.operand;
 
     emitLoadTag(src, regT0);
 
@@ -457,7 +457,7 @@ void JIT::emit_op_not(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_not(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned dst = currentInstruction[1].u.operand;
+    int dst = currentInstruction[1].u.operand;
 
     linkSlowCase(iter);
 
@@ -468,7 +468,7 @@ void JIT::emitSlow_op_not(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
 void JIT::emit_op_jfalse(Instruction* currentInstruction)
 {
-    unsigned cond = currentInstruction[1].u.operand;
+    int cond = currentInstruction[1].u.operand;
     unsigned target = currentInstruction[2].u.operand;
 
     emitLoad(cond, regT1, regT0);
@@ -480,7 +480,7 @@ void JIT::emit_op_jfalse(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_jfalse(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned cond = currentInstruction[1].u.operand;
+    int cond = currentInstruction[1].u.operand;
     unsigned target = currentInstruction[2].u.operand;
 
     linkSlowCase(iter);
@@ -504,7 +504,7 @@ void JIT::emitSlow_op_jfalse(Instruction* currentInstruction, Vector<SlowCaseEnt
 
 void JIT::emit_op_jtrue(Instruction* currentInstruction)
 {
-    unsigned cond = currentInstruction[1].u.operand;
+    int cond = currentInstruction[1].u.operand;
     unsigned target = currentInstruction[2].u.operand;
 
     emitLoad(cond, regT1, regT0);
@@ -516,7 +516,7 @@ void JIT::emit_op_jtrue(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned cond = currentInstruction[1].u.operand;
+    int cond = currentInstruction[1].u.operand;
     unsigned target = currentInstruction[2].u.operand;
 
     linkSlowCase(iter);
@@ -540,7 +540,7 @@ void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntr
 
 void JIT::emit_op_jeq_null(Instruction* currentInstruction)
 {
-    unsigned src = currentInstruction[1].u.operand;
+    int src = currentInstruction[1].u.operand;
     unsigned target = currentInstruction[2].u.operand;
 
     emitLoad(src, regT1, regT0);
@@ -566,7 +566,7 @@ void JIT::emit_op_jeq_null(Instruction* currentInstruction)
 
 void JIT::emit_op_jneq_null(Instruction* currentInstruction)
 {
-    unsigned src = currentInstruction[1].u.operand;
+    int src = currentInstruction[1].u.operand;
     unsigned target = currentInstruction[2].u.operand;
 
     emitLoad(src, regT1, regT0);
@@ -592,7 +592,7 @@ void JIT::emit_op_jneq_null(Instruction* currentInstruction)
 
 void JIT::emit_op_jneq_ptr(Instruction* currentInstruction)
 {
-    unsigned src = currentInstruction[1].u.operand;
+    int src = currentInstruction[1].u.operand;
     Special::Pointer ptr = currentInstruction[2].u.specialPointer;
     unsigned target = currentInstruction[3].u.operand;
 
@@ -603,9 +603,9 @@ void JIT::emit_op_jneq_ptr(Instruction* currentInstruction)
 
 void JIT::emit_op_eq(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned src1 = currentInstruction[2].u.operand;
-    unsigned src2 = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int src1 = currentInstruction[2].u.operand;
+    int src2 = currentInstruction[3].u.operand;
 
     emitLoad2(src1, regT1, regT0, src2, regT3, regT2);
     addSlowCase(branch32(NotEqual, regT1, regT3));
@@ -619,9 +619,9 @@ void JIT::emit_op_eq(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned op1 = currentInstruction[2].u.operand;
-    unsigned op2 = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int op1 = currentInstruction[2].u.operand;
+    int op2 = currentInstruction[3].u.operand;
 
     JumpList storeResult;
     JumpList genericCase;
@@ -653,9 +653,9 @@ void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>:
 
 void JIT::emit_op_neq(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned src1 = currentInstruction[2].u.operand;
-    unsigned src2 = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int src1 = currentInstruction[2].u.operand;
+    int src2 = currentInstruction[3].u.operand;
 
     emitLoad2(src1, regT1, regT0, src2, regT3, regT2);
     addSlowCase(branch32(NotEqual, regT1, regT3));
@@ -669,7 +669,7 @@ void JIT::emit_op_neq(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_neq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned dst = currentInstruction[1].u.operand;
+    int dst = currentInstruction[1].u.operand;
 
     JumpList storeResult;
     JumpList genericCase;
@@ -702,9 +702,9 @@ void JIT::emitSlow_op_neq(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
 void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqType type)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned src1 = currentInstruction[2].u.operand;
-    unsigned src2 = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int src1 = currentInstruction[2].u.operand;
+    int src2 = currentInstruction[3].u.operand;
 
     emitLoad2(src1, regT1, regT0, src2, regT3, regT2);
 
@@ -735,7 +735,7 @@ void JIT::emit_op_stricteq(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_stricteq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned dst = currentInstruction[1].u.operand;
+    int dst = currentInstruction[1].u.operand;
 
     linkSlowCase(iter);
     linkSlowCase(iter);
@@ -753,7 +753,7 @@ void JIT::emit_op_nstricteq(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_nstricteq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned dst = currentInstruction[1].u.operand;
+    int dst = currentInstruction[1].u.operand;
 
     linkSlowCase(iter);
     linkSlowCase(iter);
@@ -766,8 +766,8 @@ void JIT::emitSlow_op_nstricteq(Instruction* currentInstruction, Vector<SlowCase
 
 void JIT::emit_op_eq_null(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned src = currentInstruction[2].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int src = currentInstruction[2].u.operand;
 
     emitLoad(src, regT1, regT0);
     Jump isImmediate = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
@@ -797,8 +797,8 @@ void JIT::emit_op_eq_null(Instruction* currentInstruction)
 
 void JIT::emit_op_neq_null(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned src = currentInstruction[2].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int src = currentInstruction[2].u.operand;
 
     emitLoad(src, regT1, regT0);
     Jump isImmediate = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
@@ -1104,7 +1104,7 @@ void JIT::emit_op_enter(Instruction*)
 
 void JIT::emit_op_create_activation(Instruction* currentInstruction)
 {
-    unsigned activation = currentInstruction[1].u.operand;
+    int activation = currentInstruction[1].u.operand;
     
     Jump activationCreated = branch32(NotEqual, tagFor(activation), TrustedImm32(JSValue::EmptyValueTag));
     JITStubCall(this, cti_op_push_activation).call(activation);
@@ -1113,7 +1113,7 @@ void JIT::emit_op_create_activation(Instruction* currentInstruction)
 
 void JIT::emit_op_create_arguments(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
+    int dst = currentInstruction[1].u.operand;
 
     Jump argsCreated = branch32(NotEqual, tagFor(dst), TrustedImm32(JSValue::EmptyValueTag));
 
@@ -1125,7 +1125,7 @@ void JIT::emit_op_create_arguments(Instruction* currentInstruction)
 
 void JIT::emit_op_init_lazy_reg(Instruction* currentInstruction)
 {
-    unsigned dst = currentInstruction[1].u.operand;
+    int dst = currentInstruction[1].u.operand;
 
     emitStore(dst, JSValue());
 }
@@ -1170,7 +1170,7 @@ void JIT::emitSlow_op_create_this(Instruction* currentInstruction, Vector<SlowCa
 
 void JIT::emit_op_to_this(Instruction* currentInstruction)
 {
-    unsigned thisRegister = currentInstruction[1].u.operand;
+    int thisRegister = currentInstruction[1].u.operand;
 
     emitLoad(thisRegister, regT3, regT2);
 
@@ -1252,9 +1252,9 @@ void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned arguments = currentInstruction[2].u.operand;
-    unsigned property = currentInstruction[3].u.operand;
+    int dst = currentInstruction[1].u.operand;
+    int arguments = currentInstruction[2].u.operand;
+    int property = currentInstruction[3].u.operand;
 
     linkSlowCase(iter);
     Jump skipArgumentsCreation = jump();

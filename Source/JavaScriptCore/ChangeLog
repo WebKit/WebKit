@@ -1,5 +1,27 @@
 2013-09-09  Michael Saboff  <msaboff@apple.com>
 
+        Change virtual register function arguments from unsigned to int
+        https://bugs.webkit.org/show_bug.cgi?id=121055
+
+        Reviewed by Filip Pizlo.
+
+        This is a largely mechanical change.  This changes function paramaters and local variables used to
+        represent bytecode operands from being unsigned to be int.
+
+        * bytecode/CodeOrigin.h:
+        * dfg/DFGByteCodeParser.cpp:
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        * jit/JITArithmetic32_64.cpp:
+        * jit/JITInlines.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITPropertyAccess.cpp:
+        * jit/JITPropertyAccess32_64.cpp:
+        * jit/JITStubCall.h:
+
+2013-09-09  Michael Saboff  <msaboff@apple.com>
+
         Add local to/from operand helpers similar to argument to/from operand2
         https://bugs.webkit.org/show_bug.cgi?id=121056
 
