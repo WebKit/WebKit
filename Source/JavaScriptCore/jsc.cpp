@@ -389,6 +389,12 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 
     GlobalObject* globalObject = GlobalObject::create(exec->vm(), GlobalObject::createStructure(exec->vm(), jsNull()), Vector<String>());
 
+    JSArray* array = constructEmptyArray(globalObject->globalExec(), 0);
+    for (unsigned i = 1; i < exec->argumentCount(); ++i)
+        array->putDirectIndex(globalObject->globalExec(), i - 1, exec->argument(i));
+    globalObject->putDirect(
+        exec->vm(), Identifier(globalObject->globalExec(), "arguments"), array);
+
     JSValue exception;
     StopWatch stopWatch;
     stopWatch.start();

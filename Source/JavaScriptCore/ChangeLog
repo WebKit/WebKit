@@ -1,3 +1,13 @@
+2013-09-10  Filip Pizlo  <fpizlo@apple.com>
+
+        jsc commandline's run() function should take extra arguments
+        https://bugs.webkit.org/show_bug.cgi?id=121098
+
+        Reviewed by Michael Saboff.
+
+        * jsc.cpp:
+        (functionRun):
+
 2013-09-09  Michael Saboff  <msaboff@apple.com>
 
         There should be one "invalid" virtual register constant
