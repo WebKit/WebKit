@@ -1,3 +1,9 @@
+2013-09-10  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-09-10  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Test /webkit/atk/getTextInParagraphAndBodyModerate fails
