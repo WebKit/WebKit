@@ -116,10 +116,8 @@ void LayerTreeHostGtk::initialize()
     m_layerTreeContext.windowHandle = m_webPage->nativeWindowHandle();
 
     GLContext* context = glContext();
-    if (!context) {
-        m_isValid = false;
+    if (!context)
         return;
-    }
 
     // The creation of the TextureMapper needs an active OpenGL context.
     context->makeContextCurrent();

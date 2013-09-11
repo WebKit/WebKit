@@ -1,3 +1,20 @@
+2013-09-11  Alberto Garcia  <berto@igalia.com>
+
+        [WK2] [GTK] LayerTreeHostGtk: don't set m_isValid to false if glContext() returns null
+        https://bugs.webkit.org/show_bug.cgi?id=120892
+
+        Reviewed by Martin Robinson.
+
+        If the GL context cannot be created then m_isValid is set to false
+        during the initialization of LayerTreeHostGtk.
+
+        This is not really necessary since the rest of the code already
+        deals with that situation, so it doesn't have any effect other
+        than breaking the assertion in invalidate().
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::initialize):
+
 2013-09-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r154899.
