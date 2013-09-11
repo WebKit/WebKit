@@ -144,6 +144,8 @@ for my $file (sort @files) {
             next unless s-.*\*/--;
             $inComment = 0;
         }
+
+        next unless /(\"|\/\*)/;
     
         # Handle all the tokens in the line.
         while (s-^\s*([#\w]+|/\*|//|[^#\w/'"()\[\],]+|.)--) {

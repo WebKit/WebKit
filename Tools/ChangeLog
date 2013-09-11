@@ -1,3 +1,14 @@
+2013-09-11  Dan Bernstein  <mitz@apple.com>
+
+        update-webkit-localizable-strings is at least 5.8x slower than it should be
+        https://bugs.webkit.org/show_bug.cgi?id=121178
+
+        Reviewed by Darin Adler.
+
+        * Scripts/extract-localizable-strings: Quickly skip over lines that contain neither " nor /*.
+        Note that this does not change functionality, because the script already does not understand
+        the line continuation sequence (backslash followed by a newline).
+
 2013-09-11  Anders Carlsson  <andersca@apple.com>
 
         Vector::append doesn't work if element type has overloaded operator&
