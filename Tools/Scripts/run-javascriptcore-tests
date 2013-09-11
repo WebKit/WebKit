@@ -338,7 +338,7 @@ if ($runMozilla) {
 }
 
 if ($runLayout) {
-    print "Results for js tests:\n";
+    print "Results for LayoutTests/js tests:\n";
     printThingsFound($numJSFailures, "failure", "failures", "found");
     printThingsFound($numJSCrashes, "crash", "crashes", "found");
     print "    OK.\n" if $numJSFailures == 0 && $numJSCrashes == 0;

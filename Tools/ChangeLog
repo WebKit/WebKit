@@ -1,3 +1,10 @@
+2013-09-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, be a bit more clear about what we mean by 'js' tests. I think this
+        got a bit overlooked from the fast/js->js refactoring.
+
+        * Scripts/run-javascriptcore-tests:
+
 2013-09-10  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream text autosizing
