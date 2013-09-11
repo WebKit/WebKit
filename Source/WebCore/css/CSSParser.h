@@ -175,11 +175,11 @@ public:
     bool parseClipShape(CSSPropertyID, bool important);
 
     bool parseBasicShape(CSSPropertyID, bool important);
-    PassRefPtr<CSSBasicShape> parseBasicShapeRectangle(CSSParserValueList* args);
-    PassRefPtr<CSSBasicShape> parseBasicShapeCircle(CSSParserValueList* args);
-    PassRefPtr<CSSBasicShape> parseBasicShapeEllipse(CSSParserValueList* args);
-    PassRefPtr<CSSBasicShape> parseBasicShapePolygon(CSSParserValueList* args);
-    PassRefPtr<CSSBasicShape> parseBasicShapeInsetRectangle(CSSParserValueList* args);
+    PassRefPtr<CSSBasicShape> parseBasicShapeRectangle(CSSParserValueList*);
+    PassRefPtr<CSSBasicShape> parseBasicShapeCircle(CSSParserValueList*);
+    PassRefPtr<CSSBasicShape> parseBasicShapeEllipse(CSSParserValueList*);
+    PassRefPtr<CSSBasicShape> parseBasicShapePolygon(CSSParserValueList*);
+    PassRefPtr<CSSBasicShape> parseBasicShapeInsetRectangle(CSSParserValueList*);
 
     bool parseFont(bool important);
     PassRefPtr<CSSValueList> parseFontFamily();
@@ -282,7 +282,7 @@ public:
     bool parseTextDecoration(CSSPropertyID propId, bool important);
 #if ENABLE(CSS3_TEXT)
     bool parseTextUnderlinePosition(bool important);
-#endif // CSS3_TEXT
+#endif
 
     PassRefPtr<CSSValue> parseTextIndent();
     
@@ -300,75 +300,46 @@ public:
 
     bool parseFontVariantLigatures(bool important);
 
-    CSSParserSelector* createFloatingSelector();
-    CSSParserSelector* createFloatingSelectorWithTagName(const QualifiedName&);
-    PassOwnPtr<CSSParserSelector> sinkFloatingSelector(CSSParserSelector*);
+    // Faster than doing a new/delete each time since it keeps one vector.
+    OwnPtr<Vector<OwnPtr<CSSParserSelector>>> createSelectorVector();
+    void recycleSelectorVector(OwnPtr<Vector<OwnPtr<CSSParserSelector>>>);
 
-    Vector<OwnPtr<CSSParserSelector> >* createFloatingSelectorVector();
-    PassOwnPtr<Vector<OwnPtr<CSSParserSelector> > > sinkFloatingSelectorVector(Vector<OwnPtr<CSSParserSelector> >*);
+    PassRefPtr<StyleRuleBase> createImportRule(const CSSParserString&, PassRefPtr<MediaQuerySet>);
+    PassRefPtr<StyleKeyframe> createKeyframe(CSSParserValueList&);
+    PassRefPtr<StyleRuleKeyframes> createKeyframesRule(const String&, PassOwnPtr<Vector<RefPtr<StyleKeyframe>>>);
 
-    CSSParserValueList* createFloatingValueList();
-    PassOwnPtr<CSSParserValueList> sinkFloatingValueList(CSSParserValueList*);
-
-    CSSParserFunction* createFloatingFunction();
-    PassOwnPtr<CSSParserFunction> sinkFloatingFunction(CSSParserFunction*);
-
-    CSSParserValue& sinkFloatingValue(CSSParserValue&);
-
-    MediaQuerySet* createMediaQuerySet();
-    StyleRuleBase* createImportRule(const CSSParserString&, MediaQuerySet*);
-    StyleKeyframe* createKeyframe(CSSParserValueList*);
-    StyleRuleKeyframes* createKeyframesRule(const String&, PassOwnPtr<Vector<RefPtr<StyleKeyframe> > >);
-
-    typedef Vector<RefPtr<StyleRuleBase> > RuleList;
-    StyleRuleBase* createMediaRule(MediaQuerySet*, RuleList*);
-    StyleRuleBase* createEmptyMediaRule(RuleList*);
-    RuleList* createRuleList();
-    StyleRuleBase* createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selectors);
-    StyleRuleBase* createFontFaceRule();
-    StyleRuleBase* createPageRule(PassOwnPtr<CSSParserSelector> pageSelector);
-    StyleRuleBase* createRegionRule(Vector<OwnPtr<CSSParserSelector> >* regionSelector, RuleList* rules);
-    StyleRuleBase* createMarginAtRule(CSSSelector::MarginBoxType);
+    typedef Vector<RefPtr<StyleRuleBase>> RuleList;
+    PassRefPtr<StyleRuleBase> createMediaRule(PassRefPtr<MediaQuerySet>, RuleList*);
+    PassRefPtr<StyleRuleBase> createEmptyMediaRule(RuleList*);
+    PassRefPtr<StyleRuleBase> createStyleRule(Vector<OwnPtr<CSSParserSelector>>* selectors);
+    PassRefPtr<StyleRuleBase> createFontFaceRule();
+    PassRefPtr<StyleRuleBase> createPageRule(PassOwnPtr<CSSParserSelector> pageSelector);
+    PassRefPtr<StyleRuleBase> createRegionRule(Vector<OwnPtr<CSSParserSelector>>* regionSelector, RuleList* rules);
+    void createMarginAtRule(CSSSelector::MarginBoxType);
 #if ENABLE(CSS3_CONDITIONAL_RULES)
-    StyleRuleBase* createSupportsRule(bool conditionIsSupported, RuleList*);
+    PassRefPtr<StyleRuleBase> createSupportsRule(bool conditionIsSupported, RuleList*);
     void markSupportsRuleHeaderStart();
     void markSupportsRuleHeaderEnd();
     PassRefPtr<CSSRuleSourceData> popSupportsRuleData();
 #endif
 #if ENABLE(SHADOW_DOM)
-    StyleRuleBase* createHostRule(RuleList* rules);
+    PassRefPtr<StyleRuleBase> createHostRule(RuleList*);
 #endif
 #if ENABLE(CSS_SHADERS)
-    StyleRuleBase* createFilterRule(const CSSParserString&);
+    PassRefPtr<StyleRuleBase> createFilterRule(const CSSParserString&);
 #endif
 
     void startDeclarationsForMarginBox();
     void endDeclarationsForMarginBox();
 
-    MediaQueryExp* createFloatingMediaQueryExp(const AtomicString&, CSSParserValueList*);
-    PassOwnPtr<MediaQueryExp> sinkFloatingMediaQueryExp(MediaQueryExp*);
-    Vector<OwnPtr<MediaQueryExp> >* createFloatingMediaQueryExpList();
-    PassOwnPtr<Vector<OwnPtr<MediaQueryExp> > > sinkFloatingMediaQueryExpList(Vector<OwnPtr<MediaQueryExp> >*);
-    MediaQuery* createFloatingMediaQuery(MediaQuery::Restrictor, const String&, PassOwnPtr<Vector<OwnPtr<MediaQueryExp> > >);
-    MediaQuery* createFloatingMediaQuery(PassOwnPtr<Vector<OwnPtr<MediaQueryExp> > >);
-    PassOwnPtr<MediaQuery> sinkFloatingMediaQuery(MediaQuery*);
-
-    Vector<RefPtr<StyleKeyframe> >* createFloatingKeyframeVector();
-    PassOwnPtr<Vector<RefPtr<StyleKeyframe> > > sinkFloatingKeyframeVector(Vector<RefPtr<StyleKeyframe> >*);
-
     void addNamespace(const AtomicString& prefix, const AtomicString& uri);
     QualifiedName determineNameInNamespace(const AtomicString& prefix, const AtomicString& localName);
 
-    CSSParserSelector* rewriteSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSParserSelector*, bool isNamespacePlaceholder = false);
-    CSSParserSelector* rewriteSpecifiersWithNamespaceIfNeeded(CSSParserSelector*);
-    CSSParserSelector* rewriteSpecifiers(CSSParserSelector*, CSSParserSelector*);
+    void rewriteSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSParserSelector&, bool isNamespacePlaceholder = false);
+    void rewriteSpecifiersWithNamespaceIfNeeded(CSSParserSelector&);
+    OwnPtr<CSSParserSelector> rewriteSpecifiers(OwnPtr<CSSParserSelector>, OwnPtr<CSSParserSelector>);
 
     void invalidBlockHit();
-
-    Vector<OwnPtr<CSSParserSelector> >* reusableSelectorVector() { return &m_reusableSelectorVector; }
-
-    void setReusableRegionSelectorVector(Vector<OwnPtr<CSSParserSelector> >* selectors);
-    Vector<OwnPtr<CSSParserSelector> >* reusableRegionSelectorVector() { return &m_reusableRegionSelectorVector; }
 
     void updateLastSelectorLineAndPosition();
     void updateLastMediaLine(MediaQuerySet*);
@@ -442,7 +413,7 @@ public:
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     void markViewportRuleBodyStart() { m_inViewport = true; }
     void markViewportRuleBodyEnd() { m_inViewport = false; }
-    StyleRuleBase* createViewportRule();
+    PassRefPtr<StyleRuleBase> createViewportRule();
 #endif
 
     PassRefPtr<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue*);
@@ -613,23 +584,7 @@ private:
 
     int (CSSParser::*m_lexFunc)(void*);
 
-    Vector<RefPtr<StyleRuleBase> > m_parsedRules;
-    Vector<RefPtr<StyleKeyframe> > m_parsedKeyframes;
-    Vector<RefPtr<MediaQuerySet> > m_parsedMediaQuerySets;
-    Vector<OwnPtr<RuleList> > m_parsedRuleLists;
-    HashSet<CSSParserSelector*> m_floatingSelectors;
-    HashSet<Vector<OwnPtr<CSSParserSelector> >*> m_floatingSelectorVectors;
-    HashSet<CSSParserValueList*> m_floatingValueLists;
-    HashSet<CSSParserFunction*> m_floatingFunctions;
-
-    OwnPtr<MediaQuery> m_floatingMediaQuery;
-    OwnPtr<MediaQueryExp> m_floatingMediaQueryExp;
-    OwnPtr<Vector<OwnPtr<MediaQueryExp> > > m_floatingMediaQueryExpList;
-
-    OwnPtr<Vector<RefPtr<StyleKeyframe> > > m_floatingKeyframeVector;
-
-    Vector<OwnPtr<CSSParserSelector> > m_reusableSelectorVector;
-    Vector<OwnPtr<CSSParserSelector> > m_reusableRegionSelectorVector;
+    OwnPtr<Vector<OwnPtr<CSSParserSelector>>> m_recycledSelectorVector;
 
     RefPtr<CSSCalcValue> m_parsedCalculation;
 

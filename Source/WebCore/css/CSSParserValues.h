@@ -125,9 +125,10 @@ struct CSSParserValue {
     };
     int unit;
 
-
     PassRefPtr<CSSValue> createCSSValue();
 };
+
+void destroy(const CSSParserValue&);
 
 class CSSParserValueList {
     WTF_MAKE_FAST_ALLOCATED;

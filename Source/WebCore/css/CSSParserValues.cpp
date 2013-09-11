@@ -33,13 +33,16 @@ namespace WebCore {
 
 using namespace WTF;
 
+void destroy(const CSSParserValue& value)
+{
+    if (value.unit == CSSParserValue::Function)
+        delete value.function;
+}
+
 CSSParserValueList::~CSSParserValueList()
 {
-    size_t numValues = m_values.size();
-    for (size_t i = 0; i < numValues; i++) {
-        if (m_values[i].unit == CSSParserValue::Function)
-            delete m_values[i].function;
-    }
+    for (size_t i = 0, size = m_values.size(); i < size; i++)
+        destroy(m_values[i]);
 }
 
 void CSSParserValueList::addValue(const CSSParserValue& v)

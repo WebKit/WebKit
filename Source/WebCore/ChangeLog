@@ -1,3 +1,82 @@
+2013-09-11  Darin Adler  <darin@apple.com>
+
+        Rework CSS parser, eliminating "floating" concept and using %destructor
+        https://bugs.webkit.org/show_bug.cgi?id=121161
+
+        Reviewed by Antti Koivisto.
+
+        This is some basic improvement, but there is still room for a lot more
+        consistent approach and formatting in this file. There is a mix of code that
+        works by side effects in the CSSParser class and code that works with the
+        values that bison generates in the union that is more or less random. And
+        the data structures seem too costly, with too much heap allocation. And the
+        CSSParser class has grown massive, with a mix of both function for use by
+        code that wants to trigger parsing, and helper functions called by code in
+        the grammar file. All of that can benefit from more refinement in the future.
+
+        * css/CSSGrammar.y.in: Made some incremental improvements to the structure
+        of the grammar file, including:
+        - Breaking up the %union so types are declared next to their use
+        - Eliminating one shift/reduce conflict caused by two "maybe_space" in a row
+        - Breaking the conditional sections out into their own sections instead of
+          scattering them in with the other code.
+        - Eliminating unused return values in productions such as charset,
+          ignored_charset, namespace, margin_box, invalid_rule, save_block,
+          invalid_at, and declarations_and_margins.
+        - Adding %destructor to productions that return values that need to be deleted
+          or deref'd. This removes the need for CSSParser to separately track these
+          as "floating" to clean up in case of errors.
+        - Removing unneeded productions such as media_feature, region_selector,
+          attr_name, and medium.
+        - Removing explicit code blocks that just say "$$ = $1" or empty blocks when
+          there is no return type, since those are default.
+        - Formatting many productions on single lines since I find them easier to read.
+          Later I think we could make many more CSSParser functions and make even
+          more of the production single lines in the grammar file.
+        - Using adoptPtr, adoptRef, delete, deref, leakPtr, and leakRef to put
+          heap allocated values into and out of the union without storage leaks.
+          
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::~CSSParser): Remove the now-unneeded deleteAllValues for
+        the various colections of floating things.
+        (WebCore::CSSParser::createFilterRule): Don't put the rule into m_parsedRules,
+        just return a PassRefPtr instead.
+        (WebCore::CSSParser::createImportRule): Ditto.
+        (WebCore::CSSParser::createMediaRule): Ditto.
+        (WebCore::CSSParser::createEmptyMediaRule): Ditto.
+        (WebCore::CSSParser::createSupportsRule): Ditto.
+        (WebCore::CSSParser::createKeyframesRule): Ditto.
+        (WebCore::CSSParser::createStyleRule): Ditto.
+        (WebCore::CSSParser::createFontFaceRule): Ditto.
+        (WebCore::CSSParser::createHostRule): Ditto.
+        (WebCore::CSSParser::rewriteSpecifiersWithNamespaceIfNeeded): Got rid of the
+        unused return value from this function and changed it to to take a reference
+        instead of a pointer.
+        (WebCore::CSSParser::rewriteSpecifiersWithElementName): Ditto.
+        (WebCore::CSSParser::rewriteSpecifiers): Changed this to take and return OwnPtr.
+        (WebCore::CSSParser::createPageRule): Don't put rule into m_parsedRules, return
+        PassRefPtr instead.
+        (WebCore::CSSParser::createSelectorVector): Added. Used to implement the
+        optimization where we recycle a single selector vector. Not sure we still need
+        this, or maybe we need more optimizations like it, but for now keep it.
+        (WebCore::CSSParser::recycleSelectorVector): Ditto.
+        (WebCore::CSSParser::createRegionRule): Don't put rule into m_parsedRules, return
+        PassRefPtr instead.
+        (WebCore::CSSParser::createMarginAtRule): Got rid of unused return value.
+        When this function is implemented for real, we might add a return value.
+        (WebCore::CSSParser::createKeyframe): Don't put keyframe into m_parsedKeyframes,
+        return PassRefPtr instead.
+        (WebCore::CSSParser::createViewportRule): Don't put rule into m_parsedRules, return
+        PassRefPtr instead.
+
+        * css/CSSParser.h: Removed many now-needed functions to manage floating items.
+        Changed rule creation functions to return PassRefPtr. Other changes as mentioned above.
+
+        * css/CSSParserValues.cpp:
+        (WebCore::destroy): Added.
+        (WebCore::CSSParserValueList::~CSSParserValueList): Updated to call destroy.
+        * css/CSSParserValues.h: Ditto.
+
 2013-09-11  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Remove Gail dependency from build system for GTK3
