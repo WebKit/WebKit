@@ -33,8 +33,6 @@
 
 namespace WTF {
 
-    // Unlike most of our smart pointers, PassOwnPtr can take either the pointer type or the pointed-to type.
-
     template<typename T> class OwnPtr;
     template<typename T> class PassOwnPtr;
     template<typename T> PassOwnPtr<T> adoptPtr(T*);
@@ -44,7 +42,7 @@ namespace WTF {
 
     template<typename T> class PassOwnPtr {
     public:
-        typedef typename std::remove_pointer<T>::type ValueType;
+        typedef T ValueType;
         typedef ValueType* PtrType;
 
         PassOwnPtr() : m_ptr(0) { }

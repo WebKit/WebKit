@@ -77,7 +77,7 @@ struct Ewk_Database_Origins_Async_Get_Context {
 
 static void getDatabaseOriginsCallback(WKArrayRef origins, WKErrorRef wkError, void* context)
 {
-    OwnPtr<Ewk_Database_Origins_Async_Get_Context*> webDatabaseContext = adoptPtr(static_cast<Ewk_Database_Origins_Async_Get_Context*>(context));
+    OwnPtr<Ewk_Database_Origins_Async_Get_Context> webDatabaseContext = adoptPtr(static_cast<Ewk_Database_Origins_Async_Get_Context*>(context));
     Eina_List* originList = webDatabaseContext->manager->createOriginList(origins);
     OwnPtr<EwkError> ewkError = EwkError::create(wkError);
     webDatabaseContext->callback(originList, ewkError.get(), webDatabaseContext->userData);

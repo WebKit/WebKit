@@ -672,7 +672,7 @@ public:
     }
 
 private:
-    PassOwnPtr<ShadowData*> blendSimpleOrMatchedShadowLists(const AnimationBase* anim, double progress, const ShadowData* shadowA, const ShadowData* shadowB) const
+    PassOwnPtr<ShadowData> blendSimpleOrMatchedShadowLists(const AnimationBase* anim, double progress, const ShadowData* shadowA, const ShadowData* shadowB) const
     {
         OwnPtr<ShadowData> newShadowData;
         ShadowData* lastShadow = 0;
@@ -698,7 +698,7 @@ private:
         return newShadowData.release();
     }
 
-    PassOwnPtr<ShadowData*> blendMismatchedShadowLists(const AnimationBase* anim, double progress, const ShadowData* shadowA, const ShadowData* shadowB, int fromLength, int toLength) const
+    PassOwnPtr<ShadowData> blendMismatchedShadowLists(const AnimationBase* anim, double progress, const ShadowData* shadowA, const ShadowData* shadowB, int fromLength, int toLength) const
     {
         // The shadows in ShadowData are stored in reverse order, so when animating mismatched lists,
         // reverse them and match from the end.

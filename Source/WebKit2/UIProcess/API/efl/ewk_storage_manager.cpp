@@ -78,7 +78,7 @@ struct Ewk_Storage_Origins_Async_Get_Context {
 static void getStorageOriginsCallback(WKArrayRef origins, WKErrorRef wkError, void* context)
 {
     Eina_List* originList = 0;
-    OwnPtr<Ewk_Storage_Origins_Async_Get_Context*> webStorageContext = adoptPtr(static_cast<Ewk_Storage_Origins_Async_Get_Context*>(context));
+    OwnPtr<Ewk_Storage_Origins_Async_Get_Context> webStorageContext = adoptPtr(static_cast<Ewk_Storage_Origins_Async_Get_Context*>(context));
 
     originList = webStorageContext->manager->createOriginList(origins);
 
