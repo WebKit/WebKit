@@ -303,7 +303,7 @@ namespace WTF {
     public:
         template<typename T> static unsigned hash(const T& key) { return HashFunctions::hash(key); }
         template<typename T, typename U> static bool equal(const T& a, const U& b) { return HashFunctions::equal(a, b); }
-        template<typename T, typename U> static void translate(T& location, const U&, const T& value) { location = value; }
+        template<typename T, typename U, typename V> static void translate(T& location, const U&, V&& value) { location = std::forward<V>(value); }
     };
 
     template<typename IteratorType> struct HashTableAddResult {
@@ -396,11 +396,12 @@ namespace WTF {
         bool isEmpty() const { return !m_keyCount; }
 
         AddResult add(const ValueType& value) { return add<IdentityTranslatorType>(Extractor::extract(value), value); }
+        AddResult add(ValueType&& value) { return add<IdentityTranslatorType>(Extractor::extract(value), std::move(value)); }
 
         // A special version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
         // in the table.
-        template<typename HashTranslator, typename T, typename Extra> AddResult add(const T& key, const Extra&);
+        template<typename HashTranslator, typename T, typename Extra> AddResult add(T&& key, Extra&&);
         template<typename HashTranslator, typename T, typename Extra> AddResult addPassingHashCode(const T& key, const Extra&);
 
         iterator find(const KeyType& key) { return find<IdentityTranslatorType>(key); }
@@ -811,7 +812,7 @@ namespace WTF {
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     template<typename HashTranslator, typename T, typename Extra>
-    inline typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::AddResult HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::add(const T& key, const Extra& extra)
+    inline typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::AddResult HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::add(T&& key, Extra&& extra)
     {
         checkKey<HashTranslator>(key);
 
@@ -885,7 +886,7 @@ namespace WTF {
             --m_deletedCount; 
         }
 
-        HashTranslator::translate(*entry, key, extra);
+        HashTranslator::translate(*entry, key, std::forward<Extra>(extra));
         ++m_keyCount;
         
         if (shouldExpand())

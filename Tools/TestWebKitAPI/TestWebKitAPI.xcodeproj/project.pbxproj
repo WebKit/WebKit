@@ -325,6 +325,7 @@
 		1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EvaluateJavaScript.cpp; sourceTree = "<group>"; };
 		1A7BFC0A171A0BDB00BC5F64 /* WillSendSubmitEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WillSendSubmitEvent.mm; sourceTree = "<group>"; };
 		1AA9E55714980A9900001A8A /* Functional.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Functional.cpp; path = WTF/Functional.cpp; sourceTree = "<group>"; };
+		1AB09DCC17E0F92B0039E2EA /* MoveOnly.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoveOnly.h; sourceTree = "<group>"; };
 		1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForceRepaint.cpp; sourceTree = "<group>"; };
 		1ADBEFBC130C6A0100D61D19 /* simple-accelerated-compositing.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "simple-accelerated-compositing.html"; sourceTree = "<group>"; };
 		1AE72F47173EB214006362F0 /* TerminateTwice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TerminateTwice.cpp; sourceTree = "<group>"; };
@@ -808,6 +809,7 @@
 				B4039F9C15E6D8B3007255D6 /* MathExtras.cpp */,
 				CD5497B315857F0C00B5BC30 /* MediaTime.cpp */,
 				0FC6C4CE141034AD005B7F0C /* MetaAllocator.cpp */,
+				1AB09DCC17E0F92B0039E2EA /* MoveOnly.h */,
 				0FC6C4CB141027E0005B7F0C /* RedBlackTree.cpp */,
 				CD5393C91757BAC400C07123 /* SHA1.cpp */,
 				14F3B11215E45EAB00210069 /* SaturatedArithmeticOperations.cpp */,

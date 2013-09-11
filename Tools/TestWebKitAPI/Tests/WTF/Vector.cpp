@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+
+#include "MoveOnly.h"
 #include <wtf/Vector.h>
 
 namespace TestWebKitAPI {
@@ -118,38 +120,6 @@ TEST(WTF_Vector, ReverseIterator)
 
     EXPECT_TRUE(end == it);
 }
-
-class MoveOnly {
-public:
-    MoveOnly(unsigned value)
-        : m_value(value)
-    {
-    }
-
-    unsigned value() const
-    {
-        return m_value;
-    }
-
-    MoveOnly(MoveOnly&& other)
-        : m_value(other.m_value)
-    {
-        other.m_value = 0;
-    }
-
-    MoveOnly& operator=(MoveOnly&& other)
-    {
-        if (this == &other)
-            return *this;
-
-        m_value = other.m_value;
-        other.m_value = 0;
-        return *this;
-    }
-
-private:
-    unsigned m_value;
-};
 
 TEST(WTF_Vector, MoveOnly_UncheckedAppend)
 {

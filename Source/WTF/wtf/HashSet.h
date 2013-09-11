@@ -74,6 +74,7 @@ namespace WTF {
         // The return value is a pair of an interator to the new value's location, 
         // and a bool that is true if an new entry was added.
         AddResult add(const ValueType&);
+        AddResult add(ValueType&&);
 
         // An alternate version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
@@ -183,6 +184,12 @@ namespace WTF {
     inline typename HashSet<T, U, V>::AddResult HashSet<T, U, V>::add(const ValueType& value)
     {
         return m_impl.add(value);
+    }
+
+    template<typename T, typename U, typename V>
+    inline typename HashSet<T, U, V>::AddResult HashSet<T, U, V>::add(ValueType&& value)
+    {
+        return m_impl.add(std::move(value));
     }
 
     template<typename Value, typename HashFunctions, typename Traits>

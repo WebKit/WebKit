@@ -1,3 +1,21 @@
+2013-09-11  Anders Carlsson  <andersca@apple.com>
+
+        HashSet should work with move only types
+        https://bugs.webkit.org/show_bug.cgi?id=121188
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/MoveOnly.h: Added.
+        Move the MoveOnly class from Vector out into its own header.
+
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::TEST):
+        Add aHashSet<MoveOnly> test.
+
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        Include MoveOnly.h.
+
 2013-09-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Avoid converting from IntSize->SIZE->IntSize
