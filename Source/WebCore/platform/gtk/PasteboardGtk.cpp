@@ -194,7 +194,7 @@ static KURL getURLForImageNode(Node* node)
     else if (node->hasTagName(SVGNames::imageTag))
         urlString = toElement(node)->getAttribute(XLinkNames::hrefAttr);
 #endif
-    else if (node->hasTagName(HTMLNames::embedTag) || node->hasTagName(HTMLNames::objectTag)) {
+    else if (node->hasTagName(HTMLNames::embedTag) || isHTMLObjectElement(node)) {
         Element* element = toElement(node);
         urlString = element->imageSourceURL();
     }

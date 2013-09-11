@@ -47,11 +47,7 @@ private:
     virtual void didRecalcStyle(Style::Change) OVERRIDE;
 };
 
-inline HTMLIFrameElement* toHTMLIFrameElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(HTMLNames::iframeTag));
-    return static_cast<HTMLIFrameElement*>(node);
-}
+ELEMENT_TYPE_CASTS(HTMLIFrameElement)
 
 } // namespace WebCore
 

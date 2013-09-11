@@ -2086,7 +2086,7 @@ bool RenderLayerCompositor::requiresCompositingForVideo(RenderObject* renderer) 
             return false;
 
         Node* node = renderer->node();
-        if (!node || (!node->hasTagName(HTMLNames::videoTag) && !isHTMLAudioElement(node)))
+        if (!node || (!isHTMLVideoElement(node) && !isHTMLAudioElement(node)))
             return false;
 
         HTMLMediaElement* mediaElement = toHTMLMediaElement(node);

@@ -608,7 +608,7 @@ bool WebFrame::containsAnyFormControls() const
     for (Node* node = document->documentElement(); node; node = NodeTraversal::next(node)) {
         if (!node->isElementNode())
             continue;
-        if (isHTMLInputElement(node) || toElement(node)->hasTagName(HTMLNames::selectTag) || isHTMLTextAreaElement(node))
+        if (isHTMLInputElement(node) || isHTMLSelectElement(node) || isHTMLTextAreaElement(node))
             return true;
     }
     return false;

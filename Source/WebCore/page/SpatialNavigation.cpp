@@ -449,7 +449,7 @@ bool canScrollInDirection(const Node* container, FocusDirection direction)
 {
     ASSERT(container);
 
-    if (container->hasTagName(HTMLNames::selectTag))
+    if (isHTMLSelectElement(container))
         return false;
 
     if (container->isDocumentNode())

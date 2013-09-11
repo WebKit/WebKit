@@ -900,7 +900,7 @@ void WebChromeClient::scheduleCompositingLayerFlush()
 
 bool WebChromeClient::supportsFullscreenForNode(const Node* node)
 {
-    return node->hasTagName(WebCore::HTMLNames::videoTag);
+    return isHTMLVideoElement(node);
 }
 
 void WebChromeClient::enterFullscreenForNode(Node* node)

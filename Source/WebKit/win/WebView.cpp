@@ -6257,7 +6257,7 @@ HRESULT WebView::setCanStartPlugins(BOOL canStartPlugins)
 
 void WebView::enterFullscreenForNode(Node* node)
 {
-    if (!node->hasTagName(HTMLNames::videoTag) || !node->isElementNode())
+    if (!isHTMLVideoElement(node) || !node->isElementNode())
         return;
 
 #if ENABLE(VIDEO)

@@ -368,7 +368,7 @@ bool HitTestResult::mediaSupportsFullscreen() const
 {
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElt(mediaElement());
-    return (mediaElt && mediaElt->hasTagName(HTMLNames::videoTag) && mediaElt->supportsFullscreen());
+    return (mediaElt && isHTMLVideoElement(mediaElt) && mediaElt->supportsFullscreen());
 #else
     return false;
 #endif
@@ -383,7 +383,7 @@ HTMLMediaElement* HitTestResult::mediaElement() const
     if (!(m_innerNonSharedNode->renderer() && m_innerNonSharedNode->renderer()->isMedia()))
         return 0;
 
-    if (m_innerNonSharedNode->hasTagName(HTMLNames::videoTag) || isHTMLAudioElement(m_innerNonSharedNode.get()))
+    if (isHTMLVideoElement(m_innerNonSharedNode.get()) || isHTMLAudioElement(m_innerNonSharedNode.get()))
         return toHTMLMediaElement(m_innerNonSharedNode.get());
     return 0;
 }
@@ -430,7 +430,7 @@ void HitTestResult::enterFullscreenForVideo() const
 {
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElt(mediaElement());
-    if (mediaElt && mediaElt->hasTagName(HTMLNames::videoTag)) {
+    if (mediaElt && isHTMLVideoElement(mediaElt)) {
         HTMLVideoElement* videoElt = toHTMLVideoElement(mediaElt);
         if (!videoElt->isFullscreen() && mediaElt->supportsFullscreen()) {
             UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
@@ -488,7 +488,7 @@ bool HitTestResult::mediaIsVideo() const
 {
 #if ENABLE(VIDEO)
     if (HTMLMediaElement* mediaElt = mediaElement())
-        return mediaElt->hasTagName(HTMLNames::videoTag);
+        return isHTMLVideoElement(mediaElt);
 #endif
     return false;
 }

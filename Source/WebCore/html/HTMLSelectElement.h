@@ -202,11 +202,7 @@ private:
     mutable bool m_shouldRecalcListItems;
 };
 
-inline HTMLSelectElement* toHTMLSelectElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(HTMLNames::selectTag));
-    return static_cast<HTMLSelectElement*>(node);
-}
+ELEMENT_TYPE_CASTS(HTMLSelectElement)
 
 } // namespace
 

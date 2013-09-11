@@ -697,7 +697,7 @@ void ChromeClientBlackBerry::chooseIconForFiles(const Vector<String>&, FileChoos
 
 bool ChromeClientBlackBerry::supportsFullscreenForNode(const Node* node)
 {
-    return node->hasTagName(HTMLNames::videoTag);
+    return isHTMLVideoElement(node);
 }
 
 void ChromeClientBlackBerry::enterFullscreenForNode(Node* node)

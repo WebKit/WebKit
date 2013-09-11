@@ -416,7 +416,7 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
     loadEventSender().cancelEvent(this);
     m_hasPendingLoadEvent = false;
     
-    if (m_element->hasTagName(HTMLNames::objectTag))
+    if (isHTMLObjectElement(m_element))
         static_cast<HTMLObjectElement*>(m_element)->renderFallbackContent();
 
     // Only consider updating the protection ref-count of the Element immediately before returning

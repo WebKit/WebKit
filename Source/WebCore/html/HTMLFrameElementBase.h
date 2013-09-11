@@ -83,7 +83,7 @@ private:
 
 inline HTMLFrameElementBase* toHTMLFrameElementBase(Node* node)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(HTMLNames::frameTag) || node->hasTagName(HTMLNames::iframeTag));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFrameElement(node) || isHTMLIFrameElement(node));
     return static_cast<HTMLFrameElementBase*>(node);
 }
 

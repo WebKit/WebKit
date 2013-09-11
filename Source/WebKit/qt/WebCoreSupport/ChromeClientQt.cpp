@@ -690,7 +690,7 @@ FullScreenVideoQt* ChromeClientQt::fullScreenVideo()
 bool ChromeClientQt::supportsFullscreenForNode(const Node* node)
 {
     ASSERT(node);
-    return node->hasTagName(HTMLNames::videoTag) && fullScreenVideo()->isValid();
+    return isHTMLVideoElement(node) && fullScreenVideo()->isValid();
 }
 
 bool ChromeClientQt::requiresFullscreenForVideoPlayback()
@@ -700,14 +700,14 @@ bool ChromeClientQt::requiresFullscreenForVideoPlayback()
 
 void ChromeClientQt::enterFullscreenForNode(Node* node)
 {
-    ASSERT(node && node->hasTagName(HTMLNames::videoTag));
+    ASSERT(node && isHTMLVideoElement(node));
 
     fullScreenVideo()->enterFullScreenForNode(node);
 }
 
 void ChromeClientQt::exitFullscreenForNode(Node* node)
 {
-    ASSERT(node && node->hasTagName(HTMLNames::videoTag));
+    ASSERT(node && isHTMLVideoElement(node));
 
     fullScreenVideo()->exitFullScreenForNode(node);
 } 

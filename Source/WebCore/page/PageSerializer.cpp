@@ -91,7 +91,7 @@ static bool shouldIgnoreElement(Element* element)
 static const QualifiedName& frameOwnerURLAttributeName(const HTMLFrameOwnerElement& frameOwner)
 {
     // FIXME: We should support all frame owners including applets.
-    return frameOwner.hasTagName(HTMLNames::objectTag) ? HTMLNames::dataAttr : HTMLNames::srcAttr;
+    return isHTMLObjectElement(frameOwner) ? HTMLNames::dataAttr : HTMLNames::srcAttr;
 }
 
 class SerializerMarkupAccumulator : public WebCore::MarkupAccumulator {

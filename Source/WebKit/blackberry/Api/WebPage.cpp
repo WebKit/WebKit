@@ -2819,7 +2819,7 @@ IntRect WebPagePrivate::adjustRectOffsetForFrameOffset(const IntRect& rect, cons
 
         Node* ownerNode = static_cast<Node*>(frame->ownerElement());
         tnode = ownerNode;
-        if (ownerNode && (ownerNode->hasTagName(HTMLNames::iframeTag) || ownerNode->hasTagName(HTMLNames::frameTag))) {
+        if (ownerNode && (isHTMLIFrameElement(ownerNode) || isHTMLFrameNode(ownerNode))) {
             IntRect iFrameRect;
             do {
                 iFrameRect = rectForNode(ownerNode);
@@ -5015,7 +5015,7 @@ void WebPage::notifyFullScreenVideoExited(bool done)
     Element* element = toElement(d->m_fullscreenNode.get());
     if (!element)
         return;
-    if (d->m_webSettings->fullScreenVideoCapable() && element->hasTagName(HTMLNames::videoTag))
+    if (d->m_webSettings->fullScreenVideoCapable() && isHTMLVideoElement(element))
         toHTMLMediaElement(element)->exitFullscreen();
 #if ENABLE(FULLSCREEN_API)
     else
@@ -5664,7 +5664,7 @@ void WebPagePrivate::notifyFlushRequired(const GraphicsLayer*)
 void WebPagePrivate::enterFullscreenForNode(Node* node)
 {
 #if ENABLE(VIDEO)
-    if (!node || !node->hasTagName(HTMLNames::videoTag))
+    if (!node || !isHTMLVideoElement(node))
         return;
 
     MediaPlayer* player = toHTMLMediaElement(node)->player();
@@ -5697,7 +5697,7 @@ void WebPagePrivate::exitFullscreenForNode(Node* node)
         m_fullscreenNode = 0;
     }
 
-    if (!node || !node->hasTagName(HTMLNames::videoTag))
+    if (!node || !isHTMLVideoElement(node))
         return;
 
     MediaPlayer* player = toHTMLMediaElement(node)->player();
@@ -5719,7 +5719,7 @@ void WebPagePrivate::enterFullScreenForElement(Element* element)
 #if ENABLE(VIDEO)
     if (!element)
         return;
-    if (m_webSettings->fullScreenVideoCapable() && element->hasTagName(HTMLNames::videoTag)) {
+    if (m_webSettings->fullScreenVideoCapable() && isHTMLVideoElement(element)) {
         // The Browser chrome has its own fullscreen video widget it wants to
         // use, and this is a video element. The only reason that
         // webkitWillEnterFullScreenForElement() and
@@ -5764,7 +5764,7 @@ void WebPagePrivate::exitFullScreenForElement(Element* element)
 #if ENABLE(VIDEO)
     if (!element)
         return;
-    if (m_webSettings->fullScreenVideoCapable() && element->hasTagName(HTMLNames::videoTag)) {
+    if (m_webSettings->fullScreenVideoCapable() && isHTMLVideoElement(element)) {
         // The Browser chrome has its own fullscreen video widget.
         exitFullscreenForNode(element);
     } else {

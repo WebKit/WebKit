@@ -1983,7 +1983,7 @@ bool InputHandler::willOpenPopupForNode(Node* node)
 
     ASSERT(!node->isInShadowTree());
 
-    if (node->hasTagName(HTMLNames::selectTag) || isHTMLOptionElement(node)) {
+    if (isHTMLSelectElement(node) || isHTMLOptionElement(node)) {
         // We open list popups for options and selects.
         return true;
     }
@@ -2005,7 +2005,7 @@ bool InputHandler::didNodeOpenPopup(Node* node)
 
     ASSERT(!node->isInShadowTree());
 
-    if (node->hasTagName(HTMLNames::selectTag))
+    if (isHTMLSelectElement(node))
         return openSelectPopup(toHTMLSelectElement(node));
 
     if (isHTMLOptionElement(node)) {

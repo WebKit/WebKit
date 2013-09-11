@@ -1987,7 +1987,7 @@ void Internals::simulateAudioInterruption(Node* node)
 
 bool Internals::isSelectPopupVisible(Node* node)
 {
-    if (!node->hasTagName(HTMLNames::selectTag))
+    if (!isHTMLSelectElement(node))
         return false;
 
     HTMLSelectElement* select = toHTMLSelectElement(node);

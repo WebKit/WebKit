@@ -31,7 +31,7 @@ code interfaceName=HTMLElement
 col interfaceName=HTMLTableColElement
 colgroup interfaceName=HTMLTableColElement
 command interfaceName=HTMLElement
-content interfaceName=HTMLContentElement, conditional=SHADOW_DOM, runtimeConditional=shadowDOM
+content interfaceName=HTMLContentElement, conditional=SHADOW_DOM, runtimeConditional=shadowDOM, generateTypeHelpers
 webkitShadowContent interfaceName=HTMLElement, noConstructor
 datalist interfaceName=HTMLDataListElement, conditional=DATALIST_ELEMENT
 dd interfaceName=HTMLElement
@@ -50,7 +50,7 @@ figure interfaceName=HTMLElement
 font
 footer interfaceName=HTMLElement
 form generateTypeHelpers
-frame
+frame generateTypeHelpers
 frameset interfaceName=HTMLFrameSetElement, generateTypeHelpers
 h1 interfaceName=HTMLHeadingElement
 h2 interfaceName=HTMLHeadingElement
@@ -64,7 +64,7 @@ hgroup interfaceName=HTMLElement
 hr interfaceName=HTMLHRElement
 html
 i interfaceName=HTMLElement
-iframe interfaceName=HTMLIFrameElement
+iframe interfaceName=HTMLIFrameElement, generateTypeHelpers
 image interfaceName=HTMLElement
 img interfaceName=HTMLImageElement, constructorNeedsFormElement, generateTypeHelpers
 input constructorNeedsFormElement, constructorNeedsCreatedByParser, generateTypeHelpers
@@ -90,7 +90,7 @@ nobr interfaceName=HTMLElement
 noembed interfaceName=HTMLElement
 noframes interfaceName=HTMLElement
 nolayer interfaceName=HTMLElement
-object constructorNeedsFormElement, constructorNeedsCreatedByParser
+object constructorNeedsFormElement, constructorNeedsCreatedByParser, generateTypeHelpers
 ol interfaceName=HTMLOListElement
 optgroup interfaceName=HTMLOptGroupElement, generateTypeHelpers
 option generateTypeHelpers
@@ -108,7 +108,7 @@ s interfaceName=HTMLElement
 samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser, generateTypeHelpers
 section interfaceName=HTMLElement
-select constructorNeedsFormElement
+select constructorNeedsFormElement, generateTypeHelpers
 small interfaceName=HTMLElement
 source wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, generateTypeHelpers
 span
@@ -133,7 +133,7 @@ tt interfaceName=HTMLElement
 u interfaceName=HTMLElement
 ul interfaceName=HTMLUListElement
 var interfaceName=HTMLElement
-video wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedByParser
+video wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedByParser, generateTypeHelpers
 wbr interfaceName=HTMLElement
 xmp interfaceName=HTMLPreElement
 noscript interfaceName=HTMLElement

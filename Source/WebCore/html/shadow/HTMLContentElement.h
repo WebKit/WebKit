@@ -80,18 +80,6 @@ inline const CSSSelectorList& HTMLContentElement::selectorList()
     return m_selectorList;
 }
 
-inline bool isHTMLContentElement(const Node* node)
-{
-    ASSERT(node);
-    return node->isInsertionPoint() && toInsertionPoint(node)->insertionPointType() == InsertionPoint::HTMLContentElementType;
-}
-
-inline HTMLContentElement* toHTMLContentElement(Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLContentElement(node));
-    return static_cast<HTMLContentElement*>(node);
-}
-
 #endif // if ENABLE(SHADOW_DOM)
 
 }

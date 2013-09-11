@@ -1,3 +1,35 @@
+2013-09-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Generate more HTML type checks and casting
+        https://bugs.webkit.org/show_bug.cgi?id=121080
+
+        Reviewed by Andreas Kling.
+
+        Clean-up remained functions of HTML elements using auto-generated isFooElement(),
+        and replace toFooElement() with ELEMENT_TYPE_CASTS() macro.
+
+        Besides this patch clean-up unnecessary checks which are being supported by
+        auto-generated isFooElement().
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::adjustRectOffsetForFrameOffset):
+        (BlackBerry::WebKit::WebPage::notifyFullScreenVideoExited):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullscreenForNode):
+        (BlackBerry::WebKit::WebPagePrivate::exitFullscreenForNode):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullScreenForElement):
+        (BlackBerry::WebKit::WebPagePrivate::exitFullScreenForElement):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::supportsFullscreenForNode):
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::shouldChangeSelectedRange):
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::isElementTypePlugin):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::willOpenPopupForNode):
+        (BlackBerry::WebKit::InputHandler::didNodeOpenPopup):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+
 2013-09-08  Anders Carlsson  <andersca@apple.com>
 
         Move WTF::notFound to Vector.h and delete NotFound.h

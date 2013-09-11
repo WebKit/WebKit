@@ -191,7 +191,7 @@ bool EditorClientBlackBerry::shouldChangeSelectedRange(Range* fromRange, Range* 
     Frame* frame = m_webPagePrivate->focusedOrMainFrame();
     if (frame && frame->document()) {
         if (Element* focusedElement = frame->document()->focusedElement()) {
-            if (focusedElement->hasTagName(HTMLNames::selectTag))
+            if (isHTMLSelectElement(focusedElement))
                 return false;
             if (DOMSupport::isPopupInputField(focusedElement))
                 return false;

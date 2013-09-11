@@ -149,7 +149,7 @@ bool isElementTypePlugin(const Element* element)
     if (!element)
         return false;
 
-    if (element->hasTagName(HTMLNames::objectTag)
+    if (isHTMLObjectElement(element)
         || element->hasTagName(HTMLNames::embedTag)
         || element->hasTagName(HTMLNames::appletTag))
         return true;

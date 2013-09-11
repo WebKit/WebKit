@@ -92,7 +92,7 @@ RenderListBox::RenderListBox(Element* element)
 {
     ASSERT(element);
     ASSERT(element->isHTMLElement());
-    ASSERT(element->hasTagName(HTMLNames::selectTag));
+    ASSERT(isHTMLSelectElement(element));
 
     view().frameView().addScrollableArea(this);
 }

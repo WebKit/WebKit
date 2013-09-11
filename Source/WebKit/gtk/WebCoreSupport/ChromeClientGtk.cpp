@@ -927,7 +927,7 @@ PassRefPtr<WebCore::SearchPopupMenu> ChromeClient::createSearchPopupMenu(WebCore
 #if ENABLE(VIDEO) && USE(NATIVE_FULLSCREEN_VIDEO)
 bool ChromeClient::supportsFullscreenForNode(const Node* node)
 {
-    return node->hasTagName(HTMLNames::videoTag);
+    return isHTMLVideoElement(node);
 }
 
 void ChromeClient::enterFullscreenForNode(Node* node)

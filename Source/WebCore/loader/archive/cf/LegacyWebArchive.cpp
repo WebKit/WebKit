@@ -518,8 +518,8 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
     for (size_t i = 0; i < nodesSize; ++i) {
         Node* node = nodes[i];
         Frame* childFrame;
-        if ((node->hasTagName(HTMLNames::frameTag) || node->hasTagName(HTMLNames::iframeTag) || node->hasTagName(HTMLNames::objectTag)) &&
-            (childFrame = toFrameOwnerElement(node)->contentFrame())) {
+        if ((isHTMLFrameElement(node) || isHTMLIFrameElement(node) || isHTMLObjectElement(node))
+            && (childFrame = toFrameOwnerElement(node)->contentFrame())) {
             if (frameFilter && !frameFilter->shouldIncludeSubframe(childFrame))
                 continue;
                 
