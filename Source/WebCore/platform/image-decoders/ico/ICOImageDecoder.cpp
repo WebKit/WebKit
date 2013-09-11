@@ -35,7 +35,6 @@
 
 #include "BMPImageReader.h"
 #include "PNGImageDecoder.h"
-#include "PlatformInstrumentation.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -118,11 +117,8 @@ ImageFrame* ICOImageDecoder::frameBufferAtIndex(size_t index)
         return 0;
 
     ImageFrame* buffer = &m_frameBufferCache[index];
-    if (buffer->status() != ImageFrame::FrameComplete) {
-        PlatformInstrumentation::willDecodeImage("ICO");
+    if (buffer->status() != ImageFrame::FrameComplete)
         decode(index, false);
-        PlatformInstrumentation::didDecodeImage();
-    }
     return buffer;
 }
 

@@ -32,7 +32,6 @@
 #include "BMPImageDecoder.h"
 
 #include "BMPImageReader.h"
-#include "PlatformInstrumentation.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -78,11 +77,8 @@ ImageFrame* BMPImageDecoder::frameBufferAtIndex(size_t index)
     }
 
     ImageFrame* buffer = &m_frameBufferCache.first();
-    if (buffer->status() != ImageFrame::FrameComplete) {
-        PlatformInstrumentation::willDecodeImage("BMP");
+    if (buffer->status() != ImageFrame::FrameComplete)
         decode(false);
-        PlatformInstrumentation::didDecodeImage();
-    }
     return buffer;
 }
 

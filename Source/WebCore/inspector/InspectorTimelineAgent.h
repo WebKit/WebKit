@@ -37,7 +37,6 @@
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "LayoutRect.h"
-#include "PlatformInstrumentation.h"
 #include "ScriptGCEvent.h"
 #include "ScriptGCEventListener.h"
 #include <wtf/PassOwnPtr.h>
@@ -63,11 +62,6 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-namespace TimelineRecordType {
-extern const char DecodeImage[];
-extern const char Rasterize[];
-};
-
 class TimelineTimeConverter {
 public:
     TimelineTimeConverter()
@@ -82,10 +76,9 @@ private:
 };
 
 class InspectorTimelineAgent
-    : public InspectorBaseAgent<InspectorTimelineAgent>,
-      public ScriptGCEventListener,
-      public InspectorBackendDispatcher::TimelineCommandHandler,
-      public PlatformInstrumentationClient {
+    : public InspectorBaseAgent<InspectorTimelineAgent>
+    , public ScriptGCEventListener
+    , public InspectorBackendDispatcher::TimelineCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
     enum InspectorType { PageInspector, WorkerInspector };
@@ -186,12 +179,6 @@ public:
     // ScriptGCEventListener methods.
     virtual void didGC(double, double, size_t);
 
-    // PlatformInstrumentationClient methods.
-    virtual void willDecodeImage(const String& imageType) OVERRIDE;
-    virtual void didDecodeImage() OVERRIDE;
-    virtual void willResizeImage(bool shouldCache) OVERRIDE;
-    virtual void didResizeImage() OVERRIDE;
-
 private:
     friend class TimelineRecordStack;
 
@@ -211,7 +198,7 @@ private:
 
     void sendEvent(PassRefPtr<InspectorObject>);
     void appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame*);
-    void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*, bool hasLowLevelDetails = false);
+    void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*);
 
     void setDOMCounters(TypeBuilder::Timeline::TimelineEvent* record);
     void setNativeHeapStatistics(TypeBuilder::Timeline::TimelineEvent* record);
@@ -254,7 +241,6 @@ private:
     typedef Vector<GCEvent> GCEvents;
     GCEvents m_gcEvents;
     int m_maxCallStackDepth;
-    unsigned m_platformInstrumentationClientInstalledAtStackDepth;
     RefPtr<InspectorObject> m_pendingFrameRecord;
     InspectorType m_inspectorType;
     InspectorClient* m_client;

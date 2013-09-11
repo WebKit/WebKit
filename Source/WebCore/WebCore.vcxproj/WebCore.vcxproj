@@ -7445,7 +7445,6 @@
     <ClCompile Include="..\platform\MIMETypeRegistry.cpp" />
     <ClCompile Include="..\platform\NotImplemented.cpp" />
     <ClCompile Include="..\platform\PlatformEvent.cpp" />
-    <ClCompile Include="..\platform\PlatformInstrumentation.cpp" />
     <ClCompile Include="..\platform\PlatformStrategies.cpp" />
     <ClCompile Include="..\platform\RunLoop.cpp" />
     <ClCompile Include="..\platform\RuntimeApplicationChecks.cpp" />
@@ -19311,7 +19310,6 @@
     <ClInclude Include="..\platform\NotImplemented.h" />
     <ClInclude Include="..\platform\Pasteboard.h" />
     <ClInclude Include="..\platform\PlatformEvent.h" />
-    <ClInclude Include="..\platform\PlatformInstrumentation.h" />
     <ClInclude Include="..\platform\PlatformKeyboardEvent.h" />
     <ClInclude Include="..\platform\PlatformMenuDescription.h" />
     <ClInclude Include="..\platform\PlatformMouseEvent.h" />

@@ -27,7 +27,6 @@
 #include "GIFImageDecoder.h"
 
 #include "GIFImageReader.h"
-#include "PlatformInstrumentation.h"
 #include <limits>
 #include <wtf/PassOwnPtr.h>
 
@@ -119,11 +118,8 @@ ImageFrame* GIFImageDecoder::frameBufferAtIndex(size_t index)
         return 0;
 
     ImageFrame& frame = m_frameBufferCache[index];
-    if (frame.status() != ImageFrame::FrameComplete) {
-        PlatformInstrumentation::willDecodeImage("GIF");
+    if (frame.status() != ImageFrame::FrameComplete)
         decode(index + 1, GIFFullQuery);
-        PlatformInstrumentation::didDecodeImage();
-    }
     return &frame;
 }
 

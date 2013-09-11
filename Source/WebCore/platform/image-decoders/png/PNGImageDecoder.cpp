@@ -41,7 +41,6 @@
 #include "PNGImageDecoder.h"
 
 #include "Color.h"
-#include "PlatformInstrumentation.h"
 #include "png.h"
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -259,11 +258,8 @@ ImageFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
     }
 
     ImageFrame& frame = m_frameBufferCache[0];
-    if (frame.status() != ImageFrame::FrameComplete) {
-        PlatformInstrumentation::willDecodeImage("PNG");
+    if (frame.status() != ImageFrame::FrameComplete)
         decode(false);
-        PlatformInstrumentation::didDecodeImage();
-    }
     return &frame;
 }
 

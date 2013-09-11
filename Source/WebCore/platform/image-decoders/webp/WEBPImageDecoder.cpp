@@ -31,8 +31,6 @@
 
 #if USE(WEBP)
 
-#include "PlatformInstrumentation.h"
-
 #ifdef QCMS_WEBP_COLOR_CORRECTION
 #include "qcms.h"
 #include "webp/demux.h"
@@ -105,11 +103,8 @@ ImageFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
     }
 
     ImageFrame& frame = m_frameBufferCache[0];
-    if (frame.status() != ImageFrame::FrameComplete) {
-        PlatformInstrumentation::willDecodeImage("WEBP");
+    if (frame.status() != ImageFrame::FrameComplete)
         decode(false);
-        PlatformInstrumentation::didDecodeImage();
-    }
     return &frame;
 }
 

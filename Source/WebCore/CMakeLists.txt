@@ -1816,7 +1816,6 @@ set(WebCore_SOURCES
     platform/MemoryPressureHandler.cpp
     platform/NotImplemented.cpp
     platform/PlatformEvent.cpp
-    platform/PlatformInstrumentation.cpp
     platform/PlatformStrategies.cpp
     platform/RunLoop.cpp
     platform/RuntimeApplicationChecks.cpp

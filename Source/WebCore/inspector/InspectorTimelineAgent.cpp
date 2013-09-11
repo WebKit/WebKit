@@ -114,10 +114,6 @@ static const char WebSocketCreate[] = "WebSocketCreate";
 static const char WebSocketSendHandshakeRequest[] = "WebSocketSendHandshakeRequest";
 static const char WebSocketReceiveHandshakeResponse[] = "WebSocketReceiveHandshakeResponse";
 static const char WebSocketDestroy[] = "WebSocketDestroy";
-
-// Event names visible to other modules.
-const char DecodeImage[] = "DecodeImage";
-const char Rasterize[] = "Rasterize";
 }
 
 void TimelineTimeConverter::reset()
@@ -302,7 +298,7 @@ void InspectorTimelineAgent::didRecalculateStyle()
 
 void InspectorTimelineAgent::willPaint(Frame* frame)
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Paint, true, frame, true);
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Paint, true, frame);
 }
 
 void InspectorTimelineAgent::didPaint(RenderObject* renderer, const LayoutRect& clipRect)
@@ -323,26 +319,6 @@ void InspectorTimelineAgent::willScroll(Frame* frame)
 void InspectorTimelineAgent::didScroll()
 {
     didCompleteCurrentRecord(TimelineRecordType::ScrollLayer);
-}
-
-void InspectorTimelineAgent::willDecodeImage(const String& imageType)
-{
-    pushCurrentRecord(TimelineRecordFactory::createDecodeImageData(imageType), TimelineRecordType::DecodeImage, true, 0);
-}
-
-void InspectorTimelineAgent::didDecodeImage()
-{
-    didCompleteCurrentRecord(TimelineRecordType::DecodeImage);
-}
-
-void InspectorTimelineAgent::willResizeImage(bool shouldCache)
-{
-    pushCurrentRecord(TimelineRecordFactory::createResizeImageData(shouldCache), TimelineRecordType::ResizeImage, true, 0);
-}
-
-void InspectorTimelineAgent::didResizeImage()
-{
-    didCompleteCurrentRecord(TimelineRecordType::ResizeImage);
 }
 
 void InspectorTimelineAgent::willComposite()
@@ -618,11 +594,6 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
     // An empty stack could merely mean that the timeline agent was turned on in the middle of
     // an event.  Don't treat as an error.
     if (!m_recordStack.isEmpty()) {
-        if (m_platformInstrumentationClientInstalledAtStackDepth == m_recordStack.size()) {
-            m_platformInstrumentationClientInstalledAtStackDepth = 0;
-            PlatformInstrumentation::setClient(0);
-        }
-
         pushGCEventRecords();
         TimelineRecordEntry entry = m_recordStack.last();
         m_recordStack.removeLast();
@@ -644,7 +615,6 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     , m_frontend(0)
     , m_id(1)
     , m_maxCallStackDepth(5)
-    , m_platformInstrumentationClientInstalledAtStackDepth(0)
     , m_inspectorType(type)
     , m_client(client)
     , m_weakFactory(this)
@@ -667,17 +637,13 @@ void InspectorTimelineAgent::sendEvent(PassRefPtr<InspectorObject> event)
     m_frontend->eventRecorded(recordChecked.release());
 }
 
-void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame* frame, bool hasLowLevelDetails)
+void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame* frame)
 {
     pushGCEventRecords();
     commitFrameRecord();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
     setFrameIdentifier(record.get(), frame);
     m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type, getUsedHeapSize()));
-    if (hasLowLevelDetails && !m_platformInstrumentationClientInstalledAtStackDepth && !PlatformInstrumentation::hasClient()) {
-        m_platformInstrumentationClientInstalledAtStackDepth = m_recordStack.size();
-        PlatformInstrumentation::setClient(this);
-    }
 }
 
 void InspectorTimelineAgent::commitFrameRecord()
@@ -691,10 +657,6 @@ void InspectorTimelineAgent::commitFrameRecord()
 
 void InspectorTimelineAgent::clearRecordStack()
 {
-    if (m_platformInstrumentationClientInstalledAtStackDepth) {
-        m_platformInstrumentationClientInstalledAtStackDepth = 0;
-        PlatformInstrumentation::setClient(0);
-    }
     m_pendingFrameRecord.clear();
     m_recordStack.clear();
     m_id++;

@@ -1158,9 +1158,6 @@
     <ClCompile Include="..\platform\PlatformEvent.cpp">
       <Filter>platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\PlatformInstrumentation.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\PlatformStrategies.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -8212,9 +8209,6 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\PlatformEvent.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\PlatformInstrumentation.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\PlatformKeyboardEvent.h">

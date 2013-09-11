@@ -39,7 +39,6 @@
 
 #include "config.h"
 #include "JPEGImageDecoder.h"
-#include "PlatformInstrumentation.h"
 #include <wtf/PassOwnPtr.h>
 
 extern "C" {
@@ -624,11 +623,8 @@ ImageFrame* JPEGImageDecoder::frameBufferAtIndex(size_t index)
     }
 
     ImageFrame& frame = m_frameBufferCache[0];
-    if (frame.status() != ImageFrame::FrameComplete) {
-        PlatformInstrumentation::willDecodeImage("JPEG");
+    if (frame.status() != ImageFrame::FrameComplete)
         decode(false);
-        PlatformInstrumentation::didDecodeImage();
-    }
     return &frame;
 }
 

@@ -6062,8 +6062,6 @@ platform_sources += \
 	Source/WebCore/platform/PlatformEvent.cpp \
 	Source/WebCore/platform/PlatformEvent.h \
 	Source/WebCore/platform/PlatformExportMacros.h \
-	Source/WebCore/platform/PlatformInstrumentation.cpp \
-	Source/WebCore/platform/PlatformInstrumentation.h \
 	Source/WebCore/platform/PlatformKeyboardEvent.h \
 	Source/WebCore/platform/PlatformMenuDescription.h \
 	Source/WebCore/platform/PlatformMouseEvent.h \
