@@ -1,3 +1,15 @@
+2013-09-11  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Split out generic Windows files into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=119514
+
+        Reviewed by Gyuyoung Kim.
+
+        This allows us to add smaller CMakeLists.txt files when
+        adding additional Windows ports.
+
+        * wtf/PlatformWin.cmake: Renamed from Source/WTF/wtf/PlatformWinCE.cmake.
+
 2013-09-10  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream text autosizing

@@ -181,6 +181,9 @@ macro(MAKE_HASH_TOOLS _source)
 endmacro()
 
 macro(WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS)
+    if (PORT_FALLBACK)
+        INCLUDE_IF_EXISTS(${CMAKE_CURRENT_SOURCE_DIR}/Platform${PORT_FALLBACK}.cmake)
+    endif ()
     INCLUDE_IF_EXISTS(${CMAKE_CURRENT_SOURCE_DIR}/Platform${PORT}.cmake)
 endmacro()
 
