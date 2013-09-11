@@ -838,7 +838,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 
     priv->mainFrame = &priv->page->mainFrame();
 
-    priv->history = ewk_history_new(static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList()));
+    priv->history = ewk_history_new(static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardClient()));
 
     priv->storageSession = &WebCore::NetworkStorageSession::defaultStorageSession();
 
@@ -1697,14 +1697,14 @@ Eina_Bool ewk_view_history_enable_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
-    return static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList())->enabled();
+    return static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardClient())->enabled();
 }
 
 Eina_Bool ewk_view_history_enable_set(Evas_Object* ewkView, Eina_Bool enable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
-    static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList())->setEnabled(enable);
+    static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardClient())->setEnabled(enable);
     return true;
 }
 
@@ -1712,7 +1712,7 @@ Ewk_History* ewk_view_history_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
-    if (!static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList())->enabled()) {
+    if (!static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardClient())->enabled()) {
         ERR("asked history, but it's disabled! Returning 0!");
         return 0;
     }

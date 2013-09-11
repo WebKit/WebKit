@@ -354,7 +354,7 @@ void Page::setOpenedByDOM()
     m_openedByDOM = true;
 }
 
-BackForwardList* Page::backForwardList() const
+BackForwardClient* Page::backForwardClient() const
 {
     return m_backForwardController->client();
 }

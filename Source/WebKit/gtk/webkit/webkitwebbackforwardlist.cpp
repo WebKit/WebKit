@@ -116,7 +116,7 @@ WebKitWebBackForwardList* webkit_web_back_forward_list_new_with_web_view(WebKitW
     webBackForwardList = WEBKIT_WEB_BACK_FORWARD_LIST(g_object_new(WEBKIT_TYPE_WEB_BACK_FORWARD_LIST, NULL));
     WebKitWebBackForwardListPrivate* priv = webBackForwardList->priv;
 
-    priv->backForwardList = static_cast<WebCore::BackForwardListImpl*>(core(webView)->backForwardList());
+    priv->backForwardList = static_cast<WebCore::BackForwardListImpl*>(core(webView)->backForwardClient());
     priv->backForwardList->setEnabled(TRUE);
 
     return webBackForwardList;

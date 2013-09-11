@@ -4047,7 +4047,7 @@ void webkit_web_view_set_maintains_back_forward_list(WebKitWebView* webView, gbo
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    static_cast<BackForwardListImpl*>(core(webView)->backForwardList())->setEnabled(flag);
+    static_cast<BackForwardListImpl*>(core(webView)->backForwardClient())->setEnabled(flag);
 }
 
 /**
@@ -4062,7 +4062,7 @@ void webkit_web_view_set_maintains_back_forward_list(WebKitWebView* webView, gbo
 WebKitWebBackForwardList* webkit_web_view_get_back_forward_list(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-    if (!core(webView) || !static_cast<BackForwardListImpl*>(core(webView)->backForwardList())->enabled())
+    if (!core(webView) || !static_cast<BackForwardListImpl*>(core(webView)->backForwardClient())->enabled())
         return 0;
     return webView->priv->backForwardList.get();
 }
@@ -4143,7 +4143,7 @@ gboolean webkit_web_view_can_go_back(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    if (!core(webView) || !core(webView)->backForwardList()->backItem())
+    if (!core(webView) || !core(webView)->backForwardClient()->backItem())
         return FALSE;
 
     return TRUE;
@@ -4184,7 +4184,7 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
     if (!page)
         return FALSE;
 
-    if (!page->backForwardList()->forwardItem())
+    if (!page->backForwardClient()->forwardItem())
         return FALSE;
 
     return TRUE;

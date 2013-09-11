@@ -56,7 +56,7 @@ namespace WebCore {
 
 class AlternativeTextClient;
 class BackForwardController;
-class BackForwardList;
+class BackForwardClient;
 class Chrome;
 class ChromeClient;
 class ClientRectList;
@@ -136,7 +136,7 @@ public:
         DragClient* dragClient;
         InspectorClient* inspectorClient;
         PlugInClient* plugInClient;
-        RefPtr<BackForwardList> backForwardClient;
+        RefPtr<BackForwardClient> backForwardClient;
         ValidationMessageClient* validationMessageClient;
         FrameLoaderClient* loaderClientForMainFrame;
     };
@@ -168,7 +168,7 @@ public:
     void setOpenedByDOM();
 
     // DEPRECATED. Use backForward() instead of the following 6 functions.
-    BackForwardList* backForwardList() const;
+    BackForwardClient* backForwardClient() const;
     bool goBack();
     bool goForward();
     bool canGoBackOrForward(int distance) const;

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-BackForwardController::BackForwardController(Page* page, PassRefPtr<BackForwardList> client)
+BackForwardController::BackForwardController(Page* page, PassRefPtr<BackForwardClient> client)
     : m_page(page)
     , m_client(client)
 {
@@ -44,7 +44,7 @@ BackForwardController::~BackForwardController()
 {
 }
 
-PassOwnPtr<BackForwardController> BackForwardController::create(Page* page, PassRefPtr<BackForwardList> client)
+PassOwnPtr<BackForwardController> BackForwardController::create(Page* page, PassRefPtr<BackForwardClient> client)
 {
     return adoptPtr(new BackForwardController(page, client));
 }

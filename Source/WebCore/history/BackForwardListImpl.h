@@ -41,7 +41,7 @@ typedef HashSet<RefPtr<HistoryItem> > HistoryItemHashSet;
 
 // FIXME: After renaming BackForwardList to BackForwardClient,
 // rename this to BackForwardList.
-class BackForwardListImpl : public BackForwardList {
+class BackForwardListImpl : public BackForwardClient {
 public: 
     static PassRefPtr<BackForwardListImpl> create(Page* page) { return adoptRef(new BackForwardListImpl(page)); }
     virtual ~BackForwardListImpl();

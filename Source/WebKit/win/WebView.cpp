@@ -3049,7 +3049,7 @@ HRESULT STDMETHODCALLTYPE WebView::backForwardList(
     if (!m_useBackForwardList)
         return E_FAIL;
  
-    *list = WebBackForwardList::createInstance(static_cast<WebCore::BackForwardListImpl*>(m_page->backForwardList()));
+    *list = WebBackForwardList::createInstance(static_cast<WebCore::BackForwardListImpl*>(m_page->backForwardClient()));
 
     return S_OK;
 }
@@ -3881,7 +3881,7 @@ HRESULT STDMETHODCALLTYPE WebView::canGoBack(
         /* [in] */ IUnknown* /*sender*/,
         /* [retval][out] */ BOOL* result)
 {
-    *result = !!(m_page->backForwardList()->backItem() && !m_page->defersLoading());
+    *result = !!(m_page->backForwardClient()->backItem() && !m_page->defersLoading());
     return S_OK;
 }
     
@@ -3896,7 +3896,7 @@ HRESULT STDMETHODCALLTYPE WebView::canGoForward(
         /* [in] */ IUnknown* /*sender*/,
         /* [retval][out] */ BOOL* result)
 {
-    *result = !!(m_page->backForwardList()->forwardItem() && !m_page->defersLoading());
+    *result = !!(m_page->backForwardClient()->forwardItem() && !m_page->defersLoading());
     return S_OK;
 }
     
@@ -5375,13 +5375,13 @@ HRESULT STDMETHODCALLTYPE WebView::loadBackForwardListFromOtherView(
     // It turns out the right combination of behavior is done with the back/forward load
     // type.  (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
     // in the back forward list, and go to the current one.
-    BackForwardList* backForwardList = m_page->backForwardList();
+    BackForwardList* backForwardList = m_page->backForwardClient();
     ASSERT(!backForwardList->currentItem()); // destination list should be empty
 
     COMPtr<WebView> otherWebView;
     if (FAILED(otherView->QueryInterface(&otherWebView)))
         return E_FAIL;
-    BackForwardList* otherBackForwardList = otherWebView->m_page->backForwardList();
+    BackForwardList* otherBackForwardList = otherWebView->m_page->backForwardClient();
     if (!otherBackForwardList->currentItem())
         return S_OK; // empty back forward list, bail
     

@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BackForwardList_h
-#define BackForwardList_h
+#ifndef BackForwardClient_h
+#define BackForwardClient_h
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -35,11 +35,9 @@ namespace WebCore {
 
 class HistoryItem;
 
-// FIXME: Rename this class to BackForwardClient, and rename the
-// getter in Page accordingly.
-class BackForwardList : public RefCounted<BackForwardList> {
+class BackForwardClient : public RefCounted<BackForwardClient> {
 public: 
-    virtual ~BackForwardList()
+    virtual ~BackForwardClient()
     {
     }
 
@@ -64,4 +62,4 @@ public:
 
 } // namespace WebCore
 
-#endif // BackForwardList_h
+#endif // BackForwardClient_h
