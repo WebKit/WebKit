@@ -48,7 +48,6 @@ LineWidth::LineWidth(RenderBlock& block, bool isFirstLine, IndentTextOrNot shoul
     , m_isFirstLine(isFirstLine)
     , m_shouldIndentText(shouldIndentText)
 {
-    ASSERT(block);
 #if ENABLE(CSS_SHAPES)
     if (ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo())
         m_segment = shapeInsideInfo->currentSegment();
