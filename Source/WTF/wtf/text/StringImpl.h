@@ -26,6 +26,7 @@
 #include <limits.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CompilationThread.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
@@ -331,7 +332,7 @@ private:
         // keys means that we don't need them to match any other string (in fact,
         // that's exactly the oposite of what we want!), and teh normal hash would
         // lead to lots of conflicts.
-        unsigned hash = static_cast<uint32_t>(reinterpret_cast<uintptr_t>(this));
+        unsigned hash = cryptographicallyRandomNumber() | 1;
         hash <<= s_flagCount;
         if (!hash)
             hash = 1 << s_flagCount;

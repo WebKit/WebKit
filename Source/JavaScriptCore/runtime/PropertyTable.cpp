@@ -65,7 +65,6 @@ PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity)
     , m_index(static_cast<unsigned*>(fastZeroedMalloc(dataSize())))
     , m_keyCount(0)
     , m_deletedCount(0)
-    , m_entropy(cryptographicallyRandomNumber())
 {
     ASSERT(isPowerOf2(m_indexSize));
 }
@@ -77,7 +76,6 @@ PropertyTable::PropertyTable(VM& vm, JSCell* owner, const PropertyTable& other)
     , m_index(static_cast<unsigned*>(fastMalloc(dataSize())))
     , m_keyCount(other.m_keyCount)
     , m_deletedCount(other.m_deletedCount)
-    , m_entropy(other.m_entropy)
 {
     ASSERT(isPowerOf2(m_indexSize));
 
@@ -102,7 +100,6 @@ PropertyTable::PropertyTable(VM& vm, JSCell* owner, unsigned initialCapacity, co
     , m_index(static_cast<unsigned*>(fastZeroedMalloc(dataSize())))
     , m_keyCount(0)
     , m_deletedCount(0)
-    , m_entropy(cryptographicallyRandomNumber())
 {
     ASSERT(isPowerOf2(m_indexSize));
     ASSERT(initialCapacity >= other.m_keyCount);

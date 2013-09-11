@@ -1,3 +1,16 @@
+2013-09-11  Oliver Hunt  <oliver@apple.com>
+
+        Partial Information Leakage in Hash Table implementations (PrivateName)
+        https://bugs.webkit.org/show_bug.cgi?id=120663
+
+        Reviewed by Michael Saboff.
+
+        Unique strings now just generate a completely random value as their
+        hash, rather than using their this pointer.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+
 2013-09-11  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build correction.
