@@ -201,10 +201,13 @@ void WebViewTest::showInWindowAndWaitUntilMapped(GtkWindowType windowType)
 
 void WebViewTest::resizeView(int width, int height)
 {
-    gtk_window_resize(GTK_WINDOW(m_parentWindow), width, height);
-
-    while (gtk_events_pending())
-        gtk_main_iteration();
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(GTK_WIDGET(m_webView), &allocation);
+    if (width != -1)
+        allocation.width = width;
+    if (height != -1)
+        allocation.height = height;
+    gtk_widget_size_allocate(GTK_WIDGET(m_webView), &allocation);
 }
 
 void WebViewTest::selectAll()
