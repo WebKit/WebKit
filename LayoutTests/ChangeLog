@@ -1,3 +1,27 @@
+2013-09-11  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] Changed expected results after r155253
+        https://bugs.webkit.org/show_bug.cgi?id=121157
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/editing/deleting/delete-br-004-expected.png:
+        * platform/efl/editing/deleting/delete-br-004-expected.txt:
+        * platform/efl/editing/deleting/delete-br-005-expected.png:
+        * platform/efl/editing/deleting/delete-br-005-expected.txt:
+        * platform/efl/editing/deleting/delete-br-006-expected.png:
+        * platform/efl/editing/deleting/delete-br-006-expected.txt:
+        * platform/efl/editing/selection/caret-ltr-right-expected.png:
+        * platform/efl/editing/selection/caret-ltr-right-expected.txt:
+        * platform/efl/editing/selection/caret-rtl-2-left-expected.png:
+        * platform/efl/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/efl/editing/selection/caret-rtl-right-expected.png:
+        * platform/efl/editing/selection/caret-rtl-right-expected.txt:
+        * platform/efl/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/efl/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/efl/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png:
+        * platform/efl/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+
 2013-09-11  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Mouseenter/-leave not triggered when element under cursor is moved/removed

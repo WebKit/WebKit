@@ -25,11 +25,9 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 3 of SPAN > DIV > BODY > HTML > #document to 4 of SPAN > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 9 of #text > SPAN > DIV > BODY > HTML > #document to 9 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 3 of SPAN > DIV > BODY > HTML > #document to 3 of SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 2 of SPAN > DIV > BODY > HTML > #document to 3 of SPAN > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 9 of #text > SPAN > DIV > BODY > HTML > #document to 9 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 2 of SPAN > DIV > BODY > HTML > #document to 2 of SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of SPAN > DIV > BODY > HTML > #document to 2 of SPAN > DIV > BODY > HTML > #document
@@ -49,4 +47,5 @@ layer at (0,0) size 800x600
             text run at (157,15) width 61: "seven "
           RenderText {#text} at (218,15) size 92x26
             text run at (218,15) width 92: "years ago"
+        RenderText {#text} at (0,0) size 0x0
 caret: position 23 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body
