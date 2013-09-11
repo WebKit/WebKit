@@ -1,3 +1,29 @@
+2013-09-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream API] Updating NavigatorUserMediaError to match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=120880
+
+        Reviewed by Darin Adler.
+        
+        Merge https://chromium.googlesource.com/chromium/blink/+/f07305e49ddebaa166f5dee514bcc881a8efd341
+        by Tommy Widenflycht.
+
+        The Blink change did not have any test changes because they don't appear to have any tests 
+        for NavigatorUserMediaError. I can't add tests now because the MediaStream feature isn't enabled 
+        yet, so https://bugs.webkit.org/show_bug.cgi?id=121182 tracks adding tests.
+
+        * Modules/mediastream/NavigatorUserMediaError.h:
+        (WebCore::NavigatorUserMediaError::create):
+        (WebCore::NavigatorUserMediaError::name):
+        (WebCore::NavigatorUserMediaError::message):
+        (WebCore::NavigatorUserMediaError::constraintName):
+        (WebCore::NavigatorUserMediaError::NavigatorUserMediaError):
+        * Modules/mediastream/NavigatorUserMediaError.idl:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::fail):
+        (WebCore::UserMediaRequest::failConstraint):
+        * Modules/mediastream/UserMediaRequest.h:
+
 2013-09-11  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         MediaStream API: Remove LocalMediaStream

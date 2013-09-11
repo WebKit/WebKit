@@ -26,7 +26,8 @@
     NoInterfaceObject,
     Conditional=MEDIA_STREAM
 ] interface NavigatorUserMediaError {
-    const unsigned short PERMISSION_DENIED = 1;
-    readonly attribute unsigned short code;
+    readonly attribute DOMString name;
+    readonly attribute DOMString message;
+    readonly attribute DOMString constraintName;
 };
 

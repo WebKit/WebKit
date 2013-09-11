@@ -34,24 +34,28 @@ namespace WebCore {
 
 class NavigatorUserMediaError : public RefCounted<NavigatorUserMediaError> {
 public:
-    // Should be kept in sync with the values in the idl file.
-    enum ErrorCode {
-        PERMISSION_DENIED = 1
-    };
-
-    static PassRefPtr<NavigatorUserMediaError> create(ErrorCode code)
+    static PassRefPtr<NavigatorUserMediaError> create(const String& name, const String& message, const String& constraintName)
     {
-        return adoptRef(new NavigatorUserMediaError(code));
+        return adoptRef(new NavigatorUserMediaError(name, message, constraintName));
     }
 
     virtual ~NavigatorUserMediaError() { }
 
-    ErrorCode code() const { return m_code; }
+    const String& name() const { return m_name; }
+    const String& message() const { return m_message; }
+    const String& constraintName() const { return m_constraintName; }
 
 private:
-    explicit NavigatorUserMediaError(ErrorCode code) : m_code(code) { }
+    NavigatorUserMediaError(const String& name, const String& message, const String& constraintName)
+        : m_name(name)
+        , m_message(message)
+        , m_constraintName(constraintName)
+    {
+    }
 
-    ErrorCode m_code;
+    String m_name;
+    String m_message;
+    String m_constraintName;
 };
 
 } // namespace WebCore

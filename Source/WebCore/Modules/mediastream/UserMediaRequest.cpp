@@ -144,15 +144,23 @@ void UserMediaRequest::succeed(PassRefPtr<MediaStreamDescriptor> streamDescripto
     m_successCallback->handleEvent(stream.get());
 }
 
-void UserMediaRequest::fail()
+void UserMediaRequest::fail(const String& description)
 {
     if (!m_scriptExecutionContext)
         return;
 
-    if (m_errorCallback) {
-        RefPtr<NavigatorUserMediaError> error = NavigatorUserMediaError::create(NavigatorUserMediaError::PERMISSION_DENIED);
-        m_errorCallback->handleEvent(error.get());
-    }
+    if (m_errorCallback)
+        m_errorCallback->handleEvent(NavigatorUserMediaError::create(ASCIILiteral("PERMISSION_DENIED"), description, String()).get());
+}
+
+void UserMediaRequest::failConstraint(const String& constraintName, const String& description)
+{
+    ASSERT(!constraintName.isEmpty());
+    if (!m_scriptExecutionContext)
+        return;
+    
+    if (m_errorCallback)
+        m_errorCallback->handleEvent(NavigatorUserMediaError::create(ASCIILiteral("CONSTRAINT_NOT_SATISFIED"), description, constraintName).get());
 }
 
 void UserMediaRequest::contextDestroyed()
