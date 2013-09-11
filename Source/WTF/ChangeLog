@@ -1,3 +1,10 @@
+2013-09-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build correction.
+
+        * WTF.vcxproj/copy-files.cmd: Touch file to force WTFGenerated
+        build to copy updated GDIObject.h header file on build machines.
+
 2013-09-11  Anders Carlsson  <andersca@apple.com>
 
         Vector::append doesn't work if element type has overloaded operator&

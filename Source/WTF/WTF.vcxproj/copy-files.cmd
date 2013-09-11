@@ -39,3 +39,4 @@ goto :EOF
 echo Deleting copied files...
 if exist "%PrivateHeadersDirectory%" rmdir /s /q "%PrivateHeadersDirectory%" >NUL
 endlocal
+
