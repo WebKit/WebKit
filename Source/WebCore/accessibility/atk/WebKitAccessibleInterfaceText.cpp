@@ -54,11 +54,6 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(GTK)
-#include <libgail-util/gail-util.h>
-#include <pango/pango.h>
-#endif
-
 using namespace WebCore;
 
 static AccessibilityObject* core(AtkText* text)
@@ -163,39 +158,6 @@ static gchar* textForObject(const AccessibilityObject* coreObject)
 
     return g_string_free(str, FALSE);
 }
-
-static gchar* webkitAccessibleTextGetText(AtkText*, gint startOffset, gint endOffset);
-
-#if PLATFORM(GTK)
-static GailTextUtil* getGailTextUtilForAtk(AtkText* textObject)
-{
-    GailTextUtil* gailTextUtil = gail_text_util_new();
-    GOwnPtr<char> text(webkitAccessibleTextGetText(textObject, 0, -1));
-    gail_text_util_text_setup(gailTextUtil, text.get());
-    return gailTextUtil;
-}
-
-static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
-{
-    AccessibilityObject* coreObject = core(textObject);
-
-    Document* document = coreObject->document();
-    if (!document)
-        return 0;
-
-    HostWindow* hostWindow = document->view()->hostWindow();
-    if (!hostWindow)
-        return 0;
-    PlatformPageClient webView = hostWindow->platformPageClient();
-    if (!webView)
-        return 0;
-
-    // Create a string with the layout as it appears on the screen
-    GOwnPtr<char> objectText(textForObject(coreObject));
-    PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), objectText.get());
-    return layout;
-}
-#endif
 
 static int baselinePositionForRenderObject(RenderObject* renderObject)
 {
@@ -367,6 +329,8 @@ static AtkAttributeSet* attributeSetDifference(AtkAttributeSet* attributeSet1, A
     atk_attribute_set_free(toDelete);
     return attributeSet1;
 }
+
+static gchar* webkitAccessibleTextGetText(AtkText*, gint startOffset, gint endOffset);
 
 static guint accessibilityObjectLength(const AccessibilityObject* object)
 {
@@ -1086,46 +1050,27 @@ static gchar* webkitAccessibleTextGetTextForOffset(AtkText* text, gint offset, A
     if (!coreObject || !coreObject->isAccessibilityRenderObject())
         return emptyTextSelectionAtOffset(0, startOffset, endOffset);
 
-    if (boundaryType == ATK_TEXT_BOUNDARY_CHAR)
+    switch (boundaryType) {
+    case ATK_TEXT_BOUNDARY_CHAR:
         return webkitAccessibleTextGetChar(text, offset, textPosition, startOffset, endOffset);
 
-    if (boundaryType == ATK_TEXT_BOUNDARY_WORD_START || boundaryType == ATK_TEXT_BOUNDARY_WORD_END)
+    case ATK_TEXT_BOUNDARY_WORD_START:
+    case ATK_TEXT_BOUNDARY_WORD_END:
         return webkitAccessibleTextWordForBoundary(text, offset, boundaryType, textPosition, startOffset, endOffset);
 
-    if (boundaryType == ATK_TEXT_BOUNDARY_SENTENCE_START || boundaryType == ATK_TEXT_BOUNDARY_SENTENCE_END)
-        return webkitAccessibleTextSentenceForBoundary(text, offset, boundaryType, textPosition, startOffset, endOffset);
-
-    if (boundaryType == ATK_TEXT_BOUNDARY_LINE_START || boundaryType == ATK_TEXT_BOUNDARY_LINE_END)
+    case ATK_TEXT_BOUNDARY_LINE_START:
+    case ATK_TEXT_BOUNDARY_LINE_END:
         return webkitAccessibleTextLineForBoundary(text, offset, boundaryType, textPosition, startOffset, endOffset);
 
-#if PLATFORM(GTK)
-    // FIXME: Get rid of the code below once every single part above
-    // has been properly implemented without using Pango/Cairo.
-    GailOffsetType offsetType = GAIL_AT_OFFSET;
-    switch (textPosition) {
-    case GetTextPositionBefore:
-        offsetType = GAIL_BEFORE_OFFSET;
-        break;
-
-    case GetTextPositionAt:
-        break;
-
-    case GetTextPositionAfter:
-        offsetType = GAIL_AFTER_OFFSET;
-        break;
+    case ATK_TEXT_BOUNDARY_SENTENCE_START:
+    case ATK_TEXT_BOUNDARY_SENTENCE_END:
+        return webkitAccessibleTextSentenceForBoundary(text, offset, boundaryType, textPosition, startOffset, endOffset);
 
     default:
         ASSERT_NOT_REACHED();
     }
 
-    // Make sure we always return valid valid values for offsets.
-    *startOffset = 0;
-    *endOffset = 0;
-
-    return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), offsetType, boundaryType, offset, startOffset, endOffset);
-#endif
-
-    notImplemented();
+    // This should never be reached.
     return 0;
 }
 
