@@ -1,3 +1,10 @@
+2013-09-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build correction after r155507.
+
+        * WebCoreSupport/WebChromeClient.cpp: Add missing header include
+        to define isHTMLVideoElement.
+
 2013-09-11  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] Compile error when VIDEO is not enabled.
