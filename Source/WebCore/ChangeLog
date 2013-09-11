@@ -15,6 +15,12 @@
 
 2013-09-11  Andreas Kling  <akling@apple.com>
 
+        Rename BackForwardList.h => BackForwardClient.h
+
+        Rubber-stamped by Antti Koivisto.
+
+2013-09-11  Andreas Kling  <akling@apple.com>
+
         Rename BackForwardList => BackForwardClient.
         <https://webkit.org/b/121143>
 

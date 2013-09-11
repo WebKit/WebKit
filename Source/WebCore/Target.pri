@@ -1774,9 +1774,9 @@ HEADERS += \
     fileapi/FileThread.h \
     fileapi/FileThreadTask.h \
     fileapi/WebKitBlobBuilder.h \
+    history/BackForwardClient.h \
     history/BackForwardController.h \
     history/BackForwardListImpl.h \
-    history/BackForwardList.h \
     history/CachedFrame.h \
     history/CachedPage.h \
     history/HistoryItem.h \

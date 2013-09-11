@@ -21039,8 +21039,8 @@
     <ClInclude Include="..\ForwardingHeaders\profiler\Profile.h" />
     <ClInclude Include="..\ForwardingHeaders\profiler\ProfileNode.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\Strong.h" />
+    <ClInclude Include="..\history\BackForwardClient.h" />
     <ClInclude Include="..\history\BackForwardController.h" />
-    <ClInclude Include="..\history\BackForwardList.h" />
     <ClInclude Include="..\history\BackForwardListImpl.h" />
     <ClInclude Include="..\history\CachedFrame.h" />
     <ClInclude Include="..\history\CachedFramePlatformData.h" />

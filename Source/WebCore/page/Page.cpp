@@ -22,8 +22,8 @@
 
 #include "AlternativeTextClient.h"
 #include "AnimationController.h"
+#include "BackForwardClient.h"
 #include "BackForwardController.h"
-#include "BackForwardList.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClientRectList.h"

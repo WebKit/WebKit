@@ -12393,10 +12393,10 @@
     <ClInclude Include="..\ForwardingHeaders\heap\Strong.h">
       <Filter>ForwardingHeaders\heap</Filter>
     </ClInclude>
-    <ClInclude Include="..\history\BackForwardController.h">
+    <ClInclude Include="..\history\BackForwardClient.h">
       <Filter>history</Filter>
     </ClInclude>
-    <ClInclude Include="..\history\BackForwardList.h">
+    <ClInclude Include="..\history\BackForwardController.h">
       <Filter>history</Filter>
     </ClInclude>
     <ClInclude Include="..\history\BackForwardListImpl.h">

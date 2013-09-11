@@ -26,7 +26,7 @@
 #ifndef WebBackForwardListProxy_h
 #define WebBackForwardListProxy_h
 
-#include <WebCore/BackForwardList.h>
+#include <WebCore/BackForwardClient.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 

@@ -28,7 +28,7 @@
 #ifndef BackForwardListImpl_h
 #define BackForwardListImpl_h
 
-#include "BackForwardList.h"
+#include "BackForwardClient.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
