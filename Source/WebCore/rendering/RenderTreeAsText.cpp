@@ -485,6 +485,19 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         if (needsLayout)
             ts << ")";
     }
+    
+    if (behavior & RenderAsTextShowOverflow && o.isBox()) {
+        const RenderBox& box = toRenderBox(o);
+        if (box.hasRenderOverflow()) {
+            LayoutRect layoutOverflow = box.layoutOverflowRect();
+            ts << " (layout overflow " << layoutOverflow.x().toInt() << "," << layoutOverflow.y().toInt() << " " << layoutOverflow.width().toInt() << "x" << layoutOverflow.height().toInt() << ")";
+            
+            if (box.hasVisualOverflow()) {
+                LayoutRect visualOverflow = box.visualOverflowRect();
+                ts << " (visual overflow " << visualOverflow.x().toInt() << "," << visualOverflow.y().toInt() << " " << visualOverflow.width().toInt() << "x" << visualOverflow.height().toInt() << ")";
+            }
+        }
+    }
 
 #if PLATFORM(QT)
     // Print attributes of embedded QWidgets. E.g. when the WebCore::Widget
@@ -590,7 +603,8 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
         if (widget && widget->isFrameView()) {
             FrameView* view = toFrameView(widget);
             if (RenderView* root = view->frame().contentRenderer()) {
-                view->layout();
+                if (!(behavior & RenderAsTextDontUpdateLayout))
+                    view->layout();
                 RenderLayer* l = root->layer();
                 if (l)
                     writeLayers(ts, l, l, l->rect(), indent + 1, behavior);

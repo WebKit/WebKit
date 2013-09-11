@@ -1,3 +1,23 @@
+2013-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Optionally show visual and layout overflow rects in layer tree dumps
+        https://bugs.webkit.org/show_bug.cgi?id=121135
+
+        Reviewed by Beth Dakin.
+
+        When calling showLayerTree() from the debugger, show overflow rects
+        (visaul and layout) for renderers.
+        
+        Does not affect test output.
+
+        * rendering/RenderLayer.cpp:
+        (showLayerTree): Pass the new flag to show overflow rects.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject): Print the rects.
+        (WebCore::write): Don't force layout on subframes if the "dont' layout"
+        flag is set.
+        * rendering/RenderTreeAsText.h: New flag.
+
 2013-09-11  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit exposes AXTitleUIElement incorrectly on checkboxes and radio buttons
