@@ -1,3 +1,111 @@
+2013-09-11  David Hyatt  <hyatt@apple.com>
+
+        Move all collapsing margin code out of RenderBlock and into RenderBlockFlow.
+        https://bugs.webkit.org/show_bug.cgi?id=121049
+
+        Reviewed by Dean Jackson.
+
+        This patch begins the migration of the rare data struct of RenderBlock into
+        RenderBlockFlow. During this process we will temporarily have rare data structs
+        in both places, but ultimately all of the members are going to move down into
+        RenderBlockFlow, and if any don't, they will get forced into a hash.
+        
+        For this patch, the margin information is being shifted out of RenderBlock and into
+        RenderBlockFlow. Any functions that refer to MarginValues or to MarginInfo also got
+        moved down into RenderBlockFlow. Most of block child layout is now in RenderBlockFlow
+        after this patch.
+        
+        Note that in many cases the code didn't simply move. There is some type tightening
+        that happened as well, i.e., places that look for RenderBlock can now look for
+        RenderBlockFlow instead and let RenderBlock execute the base RenderBox functions.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::setPaginationStrut):
+        (WebCore::RenderBlock::setPageLogicalOffset):
+        (WebCore::RenderBlock::setBreakAtLineToAvoidWidow):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::setLineGridBox):
+        (WebCore::RenderBlock::setShapeInsideInfo):
+        (WebCore::RenderBlock::RenderBlockRareData::RenderBlockRareData):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::MarginInfo::MarginInfo):
+        (WebCore::RenderBlockFlow::RenderBlockFlow):
+        (WebCore::RenderBlockFlow::layoutBlockChild):
+        (WebCore::RenderBlockFlow::adjustPositionedBlock):
+        (WebCore::RenderBlockFlow::adjustFloatingBlock):
+        (WebCore::RenderBlockFlow::marginValuesForChild):
+        (WebCore::RenderBlockFlow::collapseMargins):
+        (WebCore::RenderBlockFlow::clearFloatsIfNeeded):
+        (WebCore::RenderBlockFlow::marginBeforeEstimateForChild):
+        (WebCore::RenderBlockFlow::estimateLogicalTopPosition):
+        (WebCore::RenderBlockFlow::setCollapsedBottomMargin):
+        (WebCore::RenderBlockFlow::handleAfterSideOfBlock):
+        (WebCore::RenderBlockFlow::setMaxMarginBeforeValues):
+        (WebCore::RenderBlockFlow::setMaxMarginAfterValues):
+        (WebCore::RenderBlockFlow::setMustDiscardMarginBefore):
+        (WebCore::RenderBlockFlow::setMustDiscardMarginAfter):
+        (WebCore::RenderBlockFlow::mustDiscardMarginBefore):
+        (WebCore::RenderBlockFlow::mustDiscardMarginAfter):
+        (WebCore::RenderBlockFlow::mustDiscardMarginBeforeForChild):
+        (WebCore::RenderBlockFlow::mustDiscardMarginAfterForChild):
+        (WebCore::RenderBlockFlow::mustSeparateMarginBeforeForChild):
+        (WebCore::RenderBlockFlow::mustSeparateMarginAfterForChild):
+        (WebCore::inNormalFlow):
+        (WebCore::RenderBlockFlow::applyBeforeBreak):
+        (WebCore::RenderBlockFlow::applyAfterBreak):
+        (WebCore::RenderBlockFlow::adjustBlockChildForPagination):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::MarginValues::MarginValues):
+        (WebCore::RenderBlockFlow::MarginValues::positiveMarginBefore):
+        (WebCore::RenderBlockFlow::MarginValues::negativeMarginBefore):
+        (WebCore::RenderBlockFlow::MarginValues::positiveMarginAfter):
+        (WebCore::RenderBlockFlow::MarginValues::negativeMarginAfter):
+        (WebCore::RenderBlockFlow::MarginValues::setPositiveMarginBefore):
+        (WebCore::RenderBlockFlow::MarginValues::setNegativeMarginBefore):
+        (WebCore::RenderBlockFlow::MarginValues::setPositiveMarginAfter):
+        (WebCore::RenderBlockFlow::MarginValues::setNegativeMarginAfter):
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::RenderBlockFlowRareData):
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::positiveMarginBeforeDefault):
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::negativeMarginBeforeDefault):
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::positiveMarginAfterDefault):
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::negativeMarginAfterDefault):
+        (WebCore::RenderBlockFlow::MarginInfo::setAtBeforeSideOfBlock):
+        (WebCore::RenderBlockFlow::MarginInfo::setAtAfterSideOfBlock):
+        (WebCore::RenderBlockFlow::MarginInfo::clearMargin):
+        (WebCore::RenderBlockFlow::MarginInfo::setHasMarginBeforeQuirk):
+        (WebCore::RenderBlockFlow::MarginInfo::setHasMarginAfterQuirk):
+        (WebCore::RenderBlockFlow::MarginInfo::setDeterminedMarginBeforeQuirk):
+        (WebCore::RenderBlockFlow::MarginInfo::setPositiveMargin):
+        (WebCore::RenderBlockFlow::MarginInfo::setNegativeMargin):
+        (WebCore::RenderBlockFlow::MarginInfo::setPositiveMarginIfLarger):
+        (WebCore::RenderBlockFlow::MarginInfo::setNegativeMarginIfLarger):
+        (WebCore::RenderBlockFlow::MarginInfo::setMargin):
+        (WebCore::RenderBlockFlow::MarginInfo::setCanCollapseMarginAfterWithChildren):
+        (WebCore::RenderBlockFlow::MarginInfo::setDiscardMargin):
+        (WebCore::RenderBlockFlow::MarginInfo::atBeforeSideOfBlock):
+        (WebCore::RenderBlockFlow::MarginInfo::canCollapseWithMarginBefore):
+        (WebCore::RenderBlockFlow::MarginInfo::canCollapseWithMarginAfter):
+        (WebCore::RenderBlockFlow::MarginInfo::canCollapseMarginBeforeWithChildren):
+        (WebCore::RenderBlockFlow::MarginInfo::canCollapseMarginAfterWithChildren):
+        (WebCore::RenderBlockFlow::MarginInfo::quirkContainer):
+        (WebCore::RenderBlockFlow::MarginInfo::determinedMarginBeforeQuirk):
+        (WebCore::RenderBlockFlow::MarginInfo::hasMarginBeforeQuirk):
+        (WebCore::RenderBlockFlow::MarginInfo::hasMarginAfterQuirk):
+        (WebCore::RenderBlockFlow::MarginInfo::positiveMargin):
+        (WebCore::RenderBlockFlow::MarginInfo::negativeMargin):
+        (WebCore::RenderBlockFlow::MarginInfo::discardMargin):
+        (WebCore::RenderBlockFlow::MarginInfo::margin):
+        (WebCore::RenderBlockFlow::maxPositiveMarginBefore):
+        (WebCore::RenderBlockFlow::maxNegativeMarginBefore):
+        (WebCore::RenderBlockFlow::maxPositiveMarginAfter):
+        (WebCore::RenderBlockFlow::maxNegativeMarginAfter):
+        (WebCore::RenderBlockFlow::initMaxMarginValues):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+
 2013-09-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix nested unicode-bidi: isolate

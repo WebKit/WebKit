@@ -349,7 +349,7 @@ public:
     void setLineGridBox(RootInlineBox* box)
     {
         if (!m_rareData)
-            m_rareData = adoptPtr(new RenderBlockRareData(this));
+            m_rareData = adoptPtr(new RenderBlockRareData());
         if (m_rareData->m_lineGridBox)
             m_rareData->m_lineGridBox->destroy(renderArena());
         m_rareData->m_lineGridBox = box;
@@ -377,33 +377,6 @@ public:
     void updateLogicalWidthForAlignment(const ETextAlign&, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount);
 
     virtual void updateFirstLetter();
-
-    class MarginValues {
-    public:
-        MarginValues(LayoutUnit beforePos, LayoutUnit beforeNeg, LayoutUnit afterPos, LayoutUnit afterNeg)
-            : m_positiveMarginBefore(beforePos)
-            , m_negativeMarginBefore(beforeNeg)
-            , m_positiveMarginAfter(afterPos)
-            , m_negativeMarginAfter(afterNeg)
-        { }
-        
-        LayoutUnit positiveMarginBefore() const { return m_positiveMarginBefore; }
-        LayoutUnit negativeMarginBefore() const { return m_negativeMarginBefore; }
-        LayoutUnit positiveMarginAfter() const { return m_positiveMarginAfter; }
-        LayoutUnit negativeMarginAfter() const { return m_negativeMarginAfter; }
-        
-        void setPositiveMarginBefore(LayoutUnit pos) { m_positiveMarginBefore = pos; }
-        void setNegativeMarginBefore(LayoutUnit neg) { m_negativeMarginBefore = neg; }
-        void setPositiveMarginAfter(LayoutUnit pos) { m_positiveMarginAfter = pos; }
-        void setNegativeMarginAfter(LayoutUnit neg) { m_negativeMarginAfter = neg; }
-    
-    private:
-        LayoutUnit m_positiveMarginBefore;
-        LayoutUnit m_negativeMarginBefore;
-        LayoutUnit m_positiveMarginAfter;
-        LayoutUnit m_negativeMarginAfter;
-    };
-    MarginValues marginValuesForChild(RenderBox* child) const;
 
     virtual void scrollbarsChanged(bool /*horizontalScrollbarChanged*/, bool /*verticalScrollbarChanged*/) { };
 
@@ -485,7 +458,7 @@ public:
     void setShapeInsideInfo(PassOwnPtr<ShapeInsideInfo> value)
     {
         if (!m_rareData)
-            m_rareData = adoptPtr(new RenderBlockRareData(this));
+            m_rareData = adoptPtr(new RenderBlockRareData());
         m_rareData->m_shapeInsideInfo = value;
     }
     void markShapeInsideDescendantsForLayout();
@@ -496,38 +469,6 @@ public:
 
 protected:
     virtual void willBeDestroyed();
-
-    LayoutUnit maxPositiveMarginBefore() const { return m_rareData ? m_rareData->m_margins.positiveMarginBefore() : RenderBlockRareData::positiveMarginBeforeDefault(this); }
-    LayoutUnit maxNegativeMarginBefore() const { return m_rareData ? m_rareData->m_margins.negativeMarginBefore() : RenderBlockRareData::negativeMarginBeforeDefault(this); }
-    LayoutUnit maxPositiveMarginAfter() const { return m_rareData ? m_rareData->m_margins.positiveMarginAfter() : RenderBlockRareData::positiveMarginAfterDefault(this); }
-    LayoutUnit maxNegativeMarginAfter() const { return m_rareData ? m_rareData->m_margins.negativeMarginAfter() : RenderBlockRareData::negativeMarginAfterDefault(this); }
-    
-    void setMaxMarginBeforeValues(LayoutUnit pos, LayoutUnit neg);
-    void setMaxMarginAfterValues(LayoutUnit pos, LayoutUnit neg);
-
-    void setMustDiscardMarginBefore(bool = true);
-    void setMustDiscardMarginAfter(bool = true);
-
-    bool mustDiscardMarginBefore() const;
-    bool mustDiscardMarginAfter() const;
-
-    bool mustDiscardMarginBeforeForChild(const RenderBox*) const;
-    bool mustDiscardMarginAfterForChild(const RenderBox*) const;
-
-    bool mustSeparateMarginBeforeForChild(const RenderBox*) const;
-    bool mustSeparateMarginAfterForChild(const RenderBox*) const;
-
-    void initMaxMarginValues()
-    {
-        if (m_rareData) {
-            m_rareData->m_margins = MarginValues(RenderBlockRareData::positiveMarginBeforeDefault(this) , RenderBlockRareData::negativeMarginBeforeDefault(this),
-                                                 RenderBlockRareData::positiveMarginAfterDefault(this), RenderBlockRareData::negativeMarginAfterDefault(this));
-            m_rareData->m_paginationStrut = 0;
-
-            m_rareData->m_discardMarginBefore = false;
-            m_rareData->m_discardMarginAfter = false;
-        }
-    }
 
     virtual void layout();
 
@@ -649,9 +590,6 @@ private:
     void addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild = 0);
     
     virtual bool isSelfCollapsingBlock() const OVERRIDE FINAL;
-
-    virtual LayoutUnit collapsedMarginBefore() const OVERRIDE FINAL { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
-    virtual LayoutUnit collapsedMarginAfter() const OVERRIDE FINAL { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
 
     virtual void repaintOverhangingFloats(bool paintAllDescendants) OVERRIDE FINAL;
 
@@ -876,100 +814,9 @@ private:
     RenderBlock* containingColumnsBlock(bool allowAnonymousColumnBlock = true);
     RenderBlock* columnsBlockForSpanningElement(RenderObject* newChild);
 
-    class MarginInfo {
-        // Collapsing flags for whether we can collapse our margins with our children's margins.
-        bool m_canCollapseWithChildren : 1;
-        bool m_canCollapseMarginBeforeWithChildren : 1;
-        bool m_canCollapseMarginAfterWithChildren : 1;
-
-        // Whether or not we are a quirky container, i.e., do we collapse away top and bottom
-        // margins in our container.  Table cells and the body are the common examples. We
-        // also have a custom style property for Safari RSS to deal with TypePad blog articles.
-        bool m_quirkContainer : 1;
-
-        // This flag tracks whether we are still looking at child margins that can all collapse together at the beginning of a block.  
-        // They may or may not collapse with the top margin of the block (|m_canCollapseTopWithChildren| tells us that), but they will
-        // always be collapsing with one another.  This variable can remain set to true through multiple iterations 
-        // as long as we keep encountering self-collapsing blocks.
-        bool m_atBeforeSideOfBlock : 1;
-
-        // This flag is set when we know we're examining bottom margins and we know we're at the bottom of the block.
-        bool m_atAfterSideOfBlock : 1;
-
-        // These variables are used to detect quirky margins that we need to collapse away (in table cells
-        // and in the body element).
-        bool m_hasMarginBeforeQuirk : 1;
-        bool m_hasMarginAfterQuirk : 1;
-        bool m_determinedMarginBeforeQuirk : 1;
-
-        bool m_discardMargin : 1;
-
-        // These flags track the previous maximal positive and negative margins.
-        LayoutUnit m_positiveMargin;
-        LayoutUnit m_negativeMargin;
-
-    public:
-        MarginInfo(RenderBlock*, LayoutUnit beforeBorderPadding, LayoutUnit afterBorderPadding);
-
-        void setAtBeforeSideOfBlock(bool b) { m_atBeforeSideOfBlock = b; }
-        void setAtAfterSideOfBlock(bool b) { m_atAfterSideOfBlock = b; }
-        void clearMargin()
-        {
-            m_positiveMargin = 0;
-            m_negativeMargin = 0;
-        }
-        void setHasMarginBeforeQuirk(bool b) { m_hasMarginBeforeQuirk = b; }
-        void setHasMarginAfterQuirk(bool b) { m_hasMarginAfterQuirk = b; }
-        void setDeterminedMarginBeforeQuirk(bool b) { m_determinedMarginBeforeQuirk = b; }
-        void setPositiveMargin(LayoutUnit p) { ASSERT(!m_discardMargin); m_positiveMargin = p; }
-        void setNegativeMargin(LayoutUnit n) { ASSERT(!m_discardMargin); m_negativeMargin = n; }
-        void setPositiveMarginIfLarger(LayoutUnit p)
-        {
-            ASSERT(!m_discardMargin);
-            if (p > m_positiveMargin)
-                m_positiveMargin = p;
-        }
-        void setNegativeMarginIfLarger(LayoutUnit n)
-        {
-            ASSERT(!m_discardMargin);
-            if (n > m_negativeMargin)
-                m_negativeMargin = n;
-        }
-
-        void setMargin(LayoutUnit p, LayoutUnit n) { ASSERT(!m_discardMargin); m_positiveMargin = p; m_negativeMargin = n; }
-        void setCanCollapseMarginAfterWithChildren(bool collapse) { m_canCollapseMarginAfterWithChildren = collapse; }
-        void setDiscardMargin(bool value) { m_discardMargin = value; }
-
-        bool atBeforeSideOfBlock() const { return m_atBeforeSideOfBlock; }
-        bool canCollapseWithMarginBefore() const { return m_atBeforeSideOfBlock && m_canCollapseMarginBeforeWithChildren; }
-        bool canCollapseWithMarginAfter() const { return m_atAfterSideOfBlock && m_canCollapseMarginAfterWithChildren; }
-        bool canCollapseMarginBeforeWithChildren() const { return m_canCollapseMarginBeforeWithChildren; }
-        bool canCollapseMarginAfterWithChildren() const { return m_canCollapseMarginAfterWithChildren; }
-        bool quirkContainer() const { return m_quirkContainer; }
-        bool determinedMarginBeforeQuirk() const { return m_determinedMarginBeforeQuirk; }
-        bool hasMarginBeforeQuirk() const { return m_hasMarginBeforeQuirk; }
-        bool hasMarginAfterQuirk() const { return m_hasMarginAfterQuirk; }
-        LayoutUnit positiveMargin() const { return m_positiveMargin; }
-        LayoutUnit negativeMargin() const { return m_negativeMargin; }
-        bool discardMargin() const { return m_discardMargin; }
-        LayoutUnit margin() const { return m_positiveMargin - m_negativeMargin; }
-    };
-
-    void layoutBlockChild(RenderBox* child, MarginInfo&, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom);
-    void adjustPositionedBlock(RenderBox* child, const MarginInfo&);
-    void adjustFloatingBlock(const MarginInfo&);
-
     RenderBoxModelObject* createReplacementRunIn(RenderBoxModelObject* runIn);
     void moveRunInUnderSiblingBlockIfNeeded(RenderObject* runIn);
     void moveRunInToOriginalPosition(RenderObject* runIn);
-
-    LayoutUnit collapseMargins(RenderBox* child, MarginInfo&);
-    LayoutUnit clearFloatsIfNeeded(RenderBox* child, MarginInfo&, LayoutUnit oldTopPosMargin, LayoutUnit oldTopNegMargin, LayoutUnit yPos);
-    LayoutUnit estimateLogicalTopPosition(RenderBox* child, const MarginInfo&, LayoutUnit& estimateWithoutPagination);
-    void marginBeforeEstimateForChild(RenderBox*, LayoutUnit&, LayoutUnit&, bool&) const;
-    void handleAfterSideOfBlock(LayoutUnit top, LayoutUnit bottom, MarginInfo&);
-    void setCollapsedBottomMargin(const MarginInfo&);
-    // End helper functions and structs used by layoutBlockChildren.
 
     // Helper function for layoutInlineChildren()
     RootInlineBox* createLineBoxesFromBidiRuns(BidiRunList<BidiRun>&, const InlineIterator& end, LineInfo&, VerticalPositionCache&, BidiRun* trailingSpaceRun, WordMeasurements&);
@@ -1003,9 +850,6 @@ protected:
 
     virtual ColumnInfo::PaginationUnit paginationUnit() const;
 
-    LayoutUnit applyBeforeBreak(RenderBox* child, LayoutUnit logicalOffset); // If the child has a before break, then return a new yPos that shifts to the top of the next page/column.
-    LayoutUnit applyAfterBreak(RenderBox* child, LayoutUnit logicalOffset, MarginInfo&); // If the child has an after break, then return a new offset that shifts to the top of the next page/column.
-
 public:
     LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const;
     LayoutUnit pageLogicalHeightForOffset(LayoutUnit offset) const;
@@ -1024,7 +868,6 @@ protected:
 
     LayoutUnit adjustForUnsplittableChild(RenderBox* child, LayoutUnit logicalOffset, bool includeMargins = false); // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.
     void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset, RenderFlowThread*); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
-    LayoutUnit adjustBlockChildForPagination(LayoutUnit logicalTopAfterClear, LayoutUnit estimateWithoutPagination, RenderBox* child, bool atBeforeSideOfBlock);
 
     // Adjust from painting offsets to the local coords of this renderer
     void offsetForContents(LayoutPoint&) const;
@@ -1058,36 +901,15 @@ public:
     struct RenderBlockRareData {
         WTF_MAKE_NONCOPYABLE(RenderBlockRareData); WTF_MAKE_FAST_ALLOCATED;
     public:
-        RenderBlockRareData(const RenderBlock* block) 
-            : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
-            , m_paginationStrut(0)
+        RenderBlockRareData() 
+            : m_paginationStrut(0)
             , m_pageLogicalOffset(0)
             , m_lineGridBox(0)
             , m_lineBreakToAvoidWidow(-1)
             , m_shouldBreakAtLineToAvoidWidow(false)
-            , m_discardMarginBefore(false)
-            , m_discardMarginAfter(false)
         { 
         }
 
-        static LayoutUnit positiveMarginBeforeDefault(const RenderBlock* block)
-        { 
-            return std::max<LayoutUnit>(block->marginBefore(), 0);
-        }
-        static LayoutUnit negativeMarginBeforeDefault(const RenderBlock* block)
-        { 
-            return std::max<LayoutUnit>(-block->marginBefore(), 0);
-        }
-        static LayoutUnit positiveMarginAfterDefault(const RenderBlock* block)
-        {
-            return std::max<LayoutUnit>(block->marginAfter(), 0);
-        }
-        static LayoutUnit negativeMarginAfterDefault(const RenderBlock* block)
-        {
-            return std::max<LayoutUnit>(-block->marginAfter(), 0);
-        }
-        
-        MarginValues m_margins;
         LayoutUnit m_paginationStrut;
         LayoutUnit m_pageLogicalOffset;
         
@@ -1098,8 +920,6 @@ public:
         OwnPtr<ShapeInsideInfo> m_shapeInsideInfo;
 #endif
         bool m_shouldBreakAtLineToAvoidWidow : 1;
-        bool m_discardMarginBefore : 1;
-        bool m_discardMarginAfter : 1;
      };
 
 protected:

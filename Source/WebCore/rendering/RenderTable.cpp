@@ -408,8 +408,6 @@ void RenderTable::layout()
     LayoutStateMaintainer statePusher(&view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
 
     setLogicalHeight(0);
-
-    initMaxMarginValues();
     
     LayoutUnit oldLogicalWidth = logicalWidth();
     updateLogicalWidth();
