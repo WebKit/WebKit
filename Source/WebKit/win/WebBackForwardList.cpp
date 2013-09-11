@@ -40,15 +40,15 @@ using namespace WebCore;
 
 // WebBackForwardList ----------------------------------------------------------------
 
-// FIXME: Instead of this we could just create a class derived from BackForwardListImpl
+// FIXME: Instead of this we could just create a class derived from BackForwardList
 // with a pointer to a WebBackForwardList in it.
-static HashMap<BackForwardListImpl*, WebBackForwardList*>& backForwardListWrappers()
+static HashMap<BackForwardList*, WebBackForwardList*>& backForwardListWrappers()
 {
-    static HashMap<BackForwardListImpl*, WebBackForwardList*> staticBackForwardListWrappers;
+    static HashMap<BackForwardList*, WebBackForwardList*> staticBackForwardListWrappers;
     return staticBackForwardListWrappers;
 }
 
-WebBackForwardList::WebBackForwardList(PassRefPtr<BackForwardListImpl> backForwardList)
+WebBackForwardList::WebBackForwardList(PassRefPtr<BackForwardList> backForwardList)
     : m_refCount(0)
     , m_backForwardList(backForwardList)
 {
@@ -70,7 +70,7 @@ WebBackForwardList::~WebBackForwardList()
     gClassNameCount.remove("WebBackForwardList");
 }
 
-WebBackForwardList* WebBackForwardList::createInstance(PassRefPtr<BackForwardListImpl> backForwardList)
+WebBackForwardList* WebBackForwardList::createInstance(PassRefPtr<BackForwardList> backForwardList)
 {
     WebBackForwardList* instance;
 

@@ -53,7 +53,7 @@ public:
 
 class QWebHistoryPrivate : public QSharedData {
 public:
-    QWebHistoryPrivate(WebCore::BackForwardListImpl* l)
+    QWebHistoryPrivate(WebCore::BackForwardList* l)
     {
         l->ref();
         lst = l;
@@ -65,7 +65,7 @@ public:
 
     QWebPageAdapter* page();
 
-    WebCore::BackForwardListImpl* lst;
+    WebCore::BackForwardList* lst;
 };
 
 

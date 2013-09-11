@@ -3049,7 +3049,7 @@ HRESULT STDMETHODCALLTYPE WebView::backForwardList(
     if (!m_useBackForwardList)
         return E_FAIL;
  
-    *list = WebBackForwardList::createInstance(static_cast<WebCore::BackForwardListImpl*>(m_page->backForwardClient()));
+    *list = WebBackForwardList::createInstance(static_cast<WebCore::BackForwardList*>(m_page->backForwardClient()));
 
     return S_OK;
 }
@@ -5375,30 +5375,30 @@ HRESULT STDMETHODCALLTYPE WebView::loadBackForwardListFromOtherView(
     // It turns out the right combination of behavior is done with the back/forward load
     // type.  (See behavior matrix at the top of WebFramePrivate.)  So we copy all the items
     // in the back forward list, and go to the current one.
-    BackForwardList* backForwardList = m_page->backForwardClient();
-    ASSERT(!backForwardList->currentItem()); // destination list should be empty
+    BackForwardClient* backForwardClient = m_page->backForwardClient();
+    ASSERT(!backForwardClient->currentItem()); // destination list should be empty
 
     COMPtr<WebView> otherWebView;
     if (FAILED(otherView->QueryInterface(&otherWebView)))
         return E_FAIL;
-    BackForwardList* otherBackForwardList = otherWebView->m_page->backForwardClient();
-    if (!otherBackForwardList->currentItem())
+    BackForwardClient* otherBackForwardClient = otherWebView->m_page->backForwardClient();
+    if (!otherBackForwardClient->currentItem())
         return S_OK; // empty back forward list, bail
     
     HistoryItem* newItemToGoTo = 0;
 
-    int lastItemIndex = otherBackForwardList->forwardListCount();
-    for (int i = -otherBackForwardList->backListCount(); i <= lastItemIndex; ++i) {
+    int lastItemIndex = otherBackForwardClient->forwardListCount();
+    for (int i = -otherBackForwardClient->backListCount(); i <= lastItemIndex; ++i) {
         if (!i) {
             // If this item is showing , save away its current scroll and form state,
             // since that might have changed since loading and it is normally not saved
             // until we leave that page.
             otherWebView->m_page->mainFrame().loader().history().saveDocumentAndScrollState();
         }
-        RefPtr<HistoryItem> newItem = otherBackForwardList->itemAtIndex(i)->copy();
+        RefPtr<HistoryItem> newItem = otherBackForwardClient->itemAtIndex(i)->copy();
         if (!i) 
             newItemToGoTo = newItem.get();
-        backForwardList->addItem(newItem.release());
+        backForwardClient->addItem(newItem.release());
     }
     
     ASSERT(newItemToGoTo);

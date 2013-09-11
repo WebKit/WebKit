@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BackForwardListImpl_h
-#define BackForwardListImpl_h
+#ifndef BackForwardList_h
+#define BackForwardList_h
 
 #include "BackForwardClient.h"
 #include <wtf/HashSet.h>
@@ -39,12 +39,10 @@ class Page;
 typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
 typedef HashSet<RefPtr<HistoryItem> > HistoryItemHashSet;
 
-// FIXME: After renaming BackForwardList to BackForwardClient,
-// rename this to BackForwardList.
-class BackForwardListImpl : public BackForwardClient {
+class BackForwardList : public BackForwardClient {
 public: 
-    static PassRefPtr<BackForwardListImpl> create(Page* page) { return adoptRef(new BackForwardListImpl(page)); }
-    virtual ~BackForwardListImpl();
+    static PassRefPtr<BackForwardList> create(Page* page) { return adoptRef(new BackForwardList(page)); }
+    virtual ~BackForwardList();
 
     Page* page() { return m_page; }
     
@@ -76,7 +74,7 @@ public:
     HistoryItemVector& entries();
 
 private:
-    explicit BackForwardListImpl(Page*);
+    explicit BackForwardList(Page*);
 
     virtual bool isActive() { return enabled() && capacity(); }
 
@@ -91,4 +89,4 @@ private:
     
 } // namespace WebCore
 
-#endif // BackForwardListImpl_h
+#endif // BackForwardList_h

@@ -56,7 +56,7 @@
 using namespace WebKit;
 
 struct _WebKitWebBackForwardListPrivate {
-    WebCore::BackForwardListImpl* backForwardList;
+    WebCore::BackForwardList* backForwardList;
     gboolean disposed;
 };
 
@@ -65,7 +65,7 @@ G_DEFINE_TYPE(WebKitWebBackForwardList, webkit_web_back_forward_list, G_TYPE_OBJ
 static void webkit_web_back_forward_list_dispose(GObject* object)
 {
     WebKitWebBackForwardList* list = WEBKIT_WEB_BACK_FORWARD_LIST(object);
-    WebCore::BackForwardListImpl* backForwardList = core(list);
+    WebCore::BackForwardList* backForwardList = core(list);
     WebKitWebBackForwardListPrivate* priv = list->priv;
 
     if (!priv->disposed) {
@@ -116,7 +116,7 @@ WebKitWebBackForwardList* webkit_web_back_forward_list_new_with_web_view(WebKitW
     webBackForwardList = WEBKIT_WEB_BACK_FORWARD_LIST(g_object_new(WEBKIT_TYPE_WEB_BACK_FORWARD_LIST, NULL));
     WebKitWebBackForwardListPrivate* priv = webBackForwardList->priv;
 
-    priv->backForwardList = static_cast<WebCore::BackForwardListImpl*>(core(webView)->backForwardClient());
+    priv->backForwardList = static_cast<WebCore::BackForwardList*>(core(webView)->backForwardClient());
     priv->backForwardList->setEnabled(TRUE);
 
     return webBackForwardList;
@@ -132,7 +132,7 @@ void webkit_web_back_forward_list_go_forward(WebKitWebBackForwardList* webBackFo
 {
     g_return_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList));
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (backForwardList->enabled())
         backForwardList->goForward();
 }
@@ -147,7 +147,7 @@ void webkit_web_back_forward_list_go_back(WebKitWebBackForwardList* webBackForwa
 {
     g_return_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList));
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (backForwardList->enabled())
         backForwardList->goBack();
 }
@@ -170,7 +170,7 @@ gboolean webkit_web_back_forward_list_contains_item(WebKitWebBackForwardList* we
 
     g_return_val_if_fail(historyItem != NULL, FALSE);
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
 
     return (backForwardList->enabled() ? backForwardList->containsItem(historyItem) : FALSE);
 }
@@ -188,7 +188,7 @@ void webkit_web_back_forward_list_go_to_item(WebKitWebBackForwardList* webBackFo
     g_return_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem));
 
     WebCore::HistoryItem* historyItem = core(webHistoryItem);
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
 
     if (backForwardList->enabled() && historyItem)
         backForwardList->goToItem(historyItem);
@@ -207,7 +207,7 @@ GList* webkit_web_back_forward_list_get_forward_list_with_limit(WebKitWebBackFor
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList || !backForwardList->enabled())
         return NULL;
 
@@ -237,7 +237,7 @@ GList* webkit_web_back_forward_list_get_back_list_with_limit(WebKitWebBackForwar
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList || !backForwardList->enabled())
         return NULL;
 
@@ -266,7 +266,7 @@ WebKitWebHistoryItem* webkit_web_back_forward_list_get_back_item(WebKitWebBackFo
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList || !backForwardList->enabled())
         return NULL;
 
@@ -289,7 +289,7 @@ WebKitWebHistoryItem* webkit_web_back_forward_list_get_current_item(WebKitWebBac
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList || !backForwardList->enabled())
         return NULL;
 
@@ -312,7 +312,7 @@ WebKitWebHistoryItem* webkit_web_back_forward_list_get_forward_item(WebKitWebBac
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList || !backForwardList->enabled())
         return NULL;
 
@@ -334,7 +334,7 @@ WebKitWebHistoryItem* webkit_web_back_forward_list_get_nth_item(WebKitWebBackFor
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList)
         return NULL;
 
@@ -355,7 +355,7 @@ gint webkit_web_back_forward_list_get_back_length(WebKitWebBackForwardList* webB
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), 0);
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList || !backForwardList->enabled())
         return 0;
 
@@ -374,7 +374,7 @@ gint webkit_web_back_forward_list_get_forward_length(WebKitWebBackForwardList* w
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), 0);
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList || !backForwardList->enabled())
         return 0;
 
@@ -393,7 +393,7 @@ gint webkit_web_back_forward_list_get_limit(WebKitWebBackForwardList* webBackFor
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), 0);
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList || !backForwardList->enabled())
         return 0;
 
@@ -413,7 +413,7 @@ void webkit_web_back_forward_list_set_limit(WebKitWebBackForwardList* webBackFor
 {
     g_return_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList));
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (backForwardList)
         backForwardList->setCapacity(limit);
 }
@@ -436,7 +436,7 @@ void webkit_web_back_forward_list_add_item(WebKitWebBackForwardList *webBackForw
 
     g_object_ref(webHistoryItem);
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     WebCore::HistoryItem* historyItem = core(webHistoryItem);
 
     backForwardList->addItem(historyItem);
@@ -457,7 +457,7 @@ void webkit_web_back_forward_list_clear(WebKitWebBackForwardList* webBackForward
 {
     g_return_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList));
 
-    WebCore::BackForwardListImpl* backForwardList = core(webBackForwardList);
+    WebCore::BackForwardList* backForwardList = core(webBackForwardList);
     if (!backForwardList)
         return;
 
@@ -474,7 +474,7 @@ void webkit_web_back_forward_list_clear(WebKitWebBackForwardList* webBackForward
     backForwardList->setCapacity(capacity);
 }
 
-WebCore::BackForwardListImpl* WebKit::core(WebKitWebBackForwardList* webBackForwardList)
+WebCore::BackForwardList* WebKit::core(WebKitWebBackForwardList* webBackForwardList)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_BACK_FORWARD_LIST(webBackForwardList), NULL);
 

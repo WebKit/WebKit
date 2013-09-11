@@ -34,15 +34,15 @@
 #include <WTF/RefPtr.h>
 
 namespace WebCore {
-    class BackForwardListImpl;
+    class BackForwardList;
 }
 
 class WebBackForwardList : public IWebBackForwardList, IWebBackForwardListPrivate
 {
 public:
-    static WebBackForwardList* createInstance(PassRefPtr<WebCore::BackForwardListImpl>);
+    static WebBackForwardList* createInstance(PassRefPtr<WebCore::BackForwardList>);
 protected:
-    WebBackForwardList(PassRefPtr<WebCore::BackForwardListImpl>);
+    WebBackForwardList(PassRefPtr<WebCore::BackForwardList>);
     ~WebBackForwardList();
 
 public:
@@ -109,7 +109,7 @@ public:
 
 protected:
     ULONG m_refCount;
-    RefPtr<WebCore::BackForwardListImpl> m_backForwardList;
+    RefPtr<WebCore::BackForwardList> m_backForwardList;
 };
 
 #endif

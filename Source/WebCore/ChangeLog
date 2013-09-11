@@ -1,3 +1,12 @@
+2013-09-11  Andreas Kling  <akling@apple.com>
+
+        Rename BackForwardListImpl => BackForwardList.
+        <https://webkit.org/b/121146>
+
+        Reviewed by Antti Koivisto.
+
+        Nuke another old FIXME.
+
 2013-09-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate more HTML type checks and casting

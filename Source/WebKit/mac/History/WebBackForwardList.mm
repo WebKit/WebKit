@@ -54,9 +54,9 @@
 
 using namespace WebCore;
 
-typedef HashMap<BackForwardListImpl*, WebBackForwardList*> BackForwardListMap;
+typedef HashMap<BackForwardList*, WebBackForwardList*> BackForwardListMap;
 
-// FIXME: Instead of this we could just create a class derived from BackForwardListImpl
+// FIXME: Instead of this we could just create a class derived from BackForwardList
 // with a pointer to a WebBackForwardList in it.
 static BackForwardListMap& backForwardLists()
 {
@@ -66,15 +66,15 @@ static BackForwardListMap& backForwardLists()
 
 @implementation WebBackForwardList (WebBackForwardListInternal)
 
-BackForwardListImpl* core(WebBackForwardList *webBackForwardList)
+BackForwardList* core(WebBackForwardList *webBackForwardList)
 {
     if (!webBackForwardList)
         return 0;
 
-    return reinterpret_cast<BackForwardListImpl*>(webBackForwardList->_private);
+    return reinterpret_cast<BackForwardList*>(webBackForwardList->_private);
 }
 
-WebBackForwardList *kit(BackForwardListImpl* backForwardList)
+WebBackForwardList *kit(BackForwardList* backForwardList)
 {
     if (!backForwardList)
         return nil;
@@ -85,7 +85,7 @@ WebBackForwardList *kit(BackForwardListImpl* backForwardList)
     return [[[WebBackForwardList alloc] initWithBackForwardList:backForwardList] autorelease];
 }
 
-- (id)initWithBackForwardList:(PassRefPtr<BackForwardListImpl>)backForwardList
+- (id)initWithBackForwardList:(PassRefPtr<BackForwardList>)backForwardList
 {   
     WebCoreThreadViolationCheckRoundOne();
     self = [super init];
@@ -111,7 +111,7 @@ WebBackForwardList *kit(BackForwardListImpl* backForwardList)
 
 - (id)init
 {
-    return [self initWithBackForwardList:BackForwardListImpl::create(0)];
+    return [self initWithBackForwardList:BackForwardList::create(0)];
 }
 
 - (void)dealloc
@@ -119,7 +119,7 @@ WebBackForwardList *kit(BackForwardListImpl* backForwardList)
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebBackForwardList class], self))
         return;
 
-    BackForwardListImpl* backForwardList = core(self);
+    BackForwardList* backForwardList = core(self);
     ASSERT(backForwardList);
     if (backForwardList) {
         ASSERT(backForwardList->closed());
@@ -133,7 +133,7 @@ WebBackForwardList *kit(BackForwardListImpl* backForwardList)
 - (void)finalize
 {
     WebCoreThreadViolationCheckRoundOne();
-    BackForwardListImpl* backForwardList = core(self);
+    BackForwardList* backForwardList = core(self);
     ASSERT(backForwardList);
     if (backForwardList) {
         ASSERT(backForwardList->closed());
@@ -267,7 +267,7 @@ static bool bumperCarBackForwardHackNeeded()
     [result appendString:@"\n--------------------------------------------\n"];    
     [result appendString:@"WebBackForwardList:\n"];
     
-    BackForwardListImpl* backForwardList = core(self);
+    BackForwardList* backForwardList = core(self);
     HistoryItemVector& entries = backForwardList->entries();
     
     unsigned size = entries.size();

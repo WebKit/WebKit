@@ -3541,7 +3541,7 @@ static bool needsWebViewInitThreadWorkaround()
 
         LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)useBackForwardList);
         [result _commonInitializationWithFrameName:frameName groupName:groupName];
-        static_cast<BackForwardListImpl*>([result page]->backForwardClient())->setEnabled(useBackForwardList);
+        static_cast<BackForwardList*>([result page]->backForwardClient())->setEnabled(useBackForwardList);
         result->_private->allowsUndo = allowsUndo;
         if (preferences)
             [result setPreferences:preferences];
@@ -3565,7 +3565,7 @@ static bool needsWebViewInitThreadWorkaround()
     // Restore the subviews we set aside.
     _subviews = originalSubviews;
 
-    BOOL useBackForwardList = _private->page && static_cast<BackForwardListImpl*>(_private->page->backForwardClient())->enabled();
+    BOOL useBackForwardList = _private->page && static_cast<BackForwardList*>(_private->page->backForwardClient())->enabled();
     if ([encoder allowsKeyedCoding]) {
         [encoder encodeObject:[[self mainFrame] name] forKey:@"FrameName"];
         [encoder encodeObject:[self groupName] forKey:@"GroupName"];
@@ -3937,7 +3937,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     if (!_private->page)
         return nil;
-    BackForwardListImpl* list = static_cast<BackForwardListImpl*>(_private->page->backForwardClient());
+    BackForwardList* list = static_cast<BackForwardList*>(_private->page->backForwardClient());
     if (!list->enabled())
         return nil;
     return kit(list);
@@ -3947,7 +3947,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     if (!_private->page)
         return;
-    static_cast<BackForwardListImpl*>(_private->page->backForwardClient())->setEnabled(flag);
+    static_cast<BackForwardList*>(_private->page->backForwardClient())->setEnabled(flag);
 }
 
 - (BOOL)goBack

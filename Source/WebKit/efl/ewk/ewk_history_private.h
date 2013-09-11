@@ -25,11 +25,11 @@
 
 namespace WebCore {
 class HistoryItem;
-class BackForwardListImpl;
+class BackForwardList;
 }
 
 Ewk_History_Item *ewk_history_item_new_from_core(WebCore::HistoryItem *core);
-Ewk_History* ewk_history_new(WebCore::BackForwardListImpl* history);
+Ewk_History* ewk_history_new(WebCore::BackForwardList* history);
 void ewk_history_free(Ewk_History* history);
 
 namespace EWKPrivate {

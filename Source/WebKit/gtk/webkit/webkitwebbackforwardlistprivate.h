@@ -27,7 +27,7 @@
 
 namespace WebKit {
 
-WebCore::BackForwardListImpl* core(WebKitWebBackForwardList*);
+WebCore::BackForwardList* core(WebKitWebBackForwardList*);
 
 }
 

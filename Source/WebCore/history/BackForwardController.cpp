@@ -37,7 +37,7 @@ BackForwardController::BackForwardController(Page* page, PassRefPtr<BackForwardC
     , m_client(client)
 {
     if (!m_client)
-        m_client = BackForwardListImpl::create(page);
+        m_client = BackForwardList::create(page);
 }
 
 BackForwardController::~BackForwardController()

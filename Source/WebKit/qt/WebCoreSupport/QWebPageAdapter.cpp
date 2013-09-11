@@ -275,7 +275,7 @@ void QWebPageAdapter::initializeWebCorePage()
     WebCore::provideNotification(page, NotificationPresenterClientQt::notificationPresenter());
 #endif
 
-    history.d = new QWebHistoryPrivate(static_cast<WebCore::BackForwardListImpl*>(page->backForwardClient()));
+    history.d = new QWebHistoryPrivate(static_cast<WebCore::BackForwardList*>(page->backForwardClient()));
 
     PageGroup::setShouldTrackVisitedLinks(true);
 }

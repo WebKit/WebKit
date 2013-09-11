@@ -257,11 +257,11 @@ QWebHistory::~QWebHistory()
 */
 void QWebHistory::clear()
 {
-    //shortcut to private BackForwardListImpl
-    WebCore::BackForwardListImpl* lst = d->lst;
+    //shortcut to private BackForwardList
+    WebCore::BackForwardList* lst = d->lst;
 
     //clear visited links
-    WebCore::Page* page = static_cast<WebCore::BackForwardListImpl*>(lst)->page();
+    WebCore::Page* page = static_cast<WebCore::BackForwardList*>(lst)->page();
     if (page && page->groupPtr())
         page->groupPtr()->removeVisitedLinks();
 
@@ -365,7 +365,7 @@ bool QWebHistory::canGoForward() const
 void QWebHistory::back()
 {
     if (canGoBack()) {
-        WebCore::Page* page = static_cast<WebCore::BackForwardListImpl*>(d->lst)->page();
+        WebCore::Page* page = static_cast<WebCore::BackForwardList*>(d->lst)->page();
         page->goToItem(d->lst->backItem(), WebCore::FrameLoadTypeIndexedBackForward);
     }
 }
@@ -379,7 +379,7 @@ void QWebHistory::back()
 void QWebHistory::forward()
 {
     if (canGoForward()) {
-        WebCore::Page* page = static_cast<WebCore::BackForwardListImpl*>(d->lst)->page();
+        WebCore::Page* page = static_cast<WebCore::BackForwardList*>(d->lst)->page();
         page->goToItem(d->lst->forwardItem(), WebCore::FrameLoadTypeIndexedBackForward);
     }
 }
@@ -391,7 +391,7 @@ void QWebHistory::forward()
 */
 void QWebHistory::goToItem(const QWebHistoryItem &item)
 {
-    WebCore::Page* page = static_cast<WebCore::BackForwardListImpl*>(d->lst)->page();
+    WebCore::Page* page = static_cast<WebCore::BackForwardList*>(d->lst)->page();
     page->goToItem(item.d->item, WebCore::FrameLoadTypeIndexedBackForward);
 }
 
@@ -563,7 +563,7 @@ QDataStream& operator>>(QDataStream& source, QWebHistory& history)
 
 QWebPageAdapter* QWebHistoryPrivate::page()
 {
-    return QWebPageAdapter::kit(static_cast<WebCore::BackForwardListImpl*>(lst)->page());
+    return QWebPageAdapter::kit(static_cast<WebCore::BackForwardList*>(lst)->page());
 }
 
 WebCore::HistoryItem* QWebHistoryItemPrivate::core(const QWebHistoryItem* q)
