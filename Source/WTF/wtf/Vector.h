@@ -1053,7 +1053,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::appendSlowCase(U&& value)
 {
     ASSERT(size() == capacity());
 
-    auto ptr = &value;
+    auto ptr = std::addressof(value);
     ptr = expandCapacity(size() + 1, ptr);
     if (!begin())
         return;
@@ -1069,7 +1069,8 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler> template<t
 inline void Vector<T, inlineCapacity, OverflowHandler>::uncheckedAppend(U&& value)
 {
     ASSERT(size() < capacity());
-    auto ptr = &value;
+
+    auto ptr = std::addressof(value);
     new (NotNull, end()) T(std::forward<U>(*ptr));
     ++m_size;
 }

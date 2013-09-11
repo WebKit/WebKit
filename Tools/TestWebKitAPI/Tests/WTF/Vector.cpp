@@ -60,6 +60,17 @@ TEST(WTF_Vector, Iterator)
     EXPECT_TRUE(end == it);
 }
 
+TEST(WTF_Vector, OverloadedOperatorAmpersand)
+{
+    struct Test {
+    private:
+        Test* operator&();
+    };
+
+    Vector<Test> vector;
+    vector.append(Test());
+}
+
 TEST(WTF_Vector, Reverse)
 {
     Vector<int> intVector;

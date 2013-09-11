@@ -1,5 +1,18 @@
 2013-09-11  Anders Carlsson  <andersca@apple.com>
 
+        Vector::append doesn't work if element type has overloaded operator&
+        https://bugs.webkit.org/show_bug.cgi?id=121175
+
+        Reviewed by Brent Fulgham.
+
+        Use std::addressof to get the address of the given object.
+
+        * wtf/Vector.h:
+        (WTF::::appendSlowCase):
+        (WTF::::uncheckedAppend):
+
+2013-09-11  Anders Carlsson  <andersca@apple.com>
+
         VectorBuffer::swap doesn't need to use std::swap_ranges
         https://bugs.webkit.org/show_bug.cgi?id=121164
 

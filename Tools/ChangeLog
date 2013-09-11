@@ -1,5 +1,17 @@
 2013-09-11  Anders Carlsson  <andersca@apple.com>
 
+        Vector::append doesn't work if element type has overloaded operator&
+        https://bugs.webkit.org/show_bug.cgi?id=121175
+
+        Reviewed by Brent Fulgham.
+
+        Add a test case.
+
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+
+2013-09-11  Anders Carlsson  <andersca@apple.com>
+
         Implement Vector::append for move-only types
         https://bugs.webkit.org/show_bug.cgi?id=120805
 
