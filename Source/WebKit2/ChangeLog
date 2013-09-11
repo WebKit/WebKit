@@ -1,3 +1,10 @@
+2013-09-11  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed build fix.
+
+        * GNUmakefile.list.am: Duplicated NetscapePluginModuleNone.cpp & NetscapePluginNone.cpp.
+        They cause build breaks of multiple definitions when targeting wayland build.
+
 2013-09-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate more HTML type checks and casting
