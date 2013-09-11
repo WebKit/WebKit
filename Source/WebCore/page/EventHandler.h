@@ -287,6 +287,7 @@ private:
 
     OptionalCursor selectCursor(const HitTestResult&, bool shiftKey);
 
+    void hoverTimerFired(Timer<EventHandler>*);
     void cursorUpdateTimerFired(Timer<EventHandler>*);
 
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
@@ -429,6 +430,7 @@ private:
 
     bool m_panScrollButtonPressed;
 
+    Timer<EventHandler> m_hoverTimer;
     Timer<EventHandler> m_cursorUpdateTimer;
 
     OwnPtr<AutoscrollController> m_autoscrollController;

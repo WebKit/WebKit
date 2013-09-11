@@ -3269,14 +3269,11 @@ void Document::hoveredElementDidDetach(Element* element)
     if (!m_hoveredElement || element != m_hoveredElement)
         return;
 
-    RenderObject* hoverAncestor = element->renderer()->hoverAncestor();
-    if (hoverAncestor && hoverAncestor->node() && hoverAncestor->node()->isElementNode())
-        m_hoveredElement = toElement(hoverAncestor->node());
-    else
-        m_hoveredElement = 0;
-
+    m_hoveredElement = element->parentElement();
+    while (m_hoveredElement && !m_hoveredElement->renderer())
+        m_hoveredElement = m_hoveredElement->parentElement();
     if (frame())
-        frame()->eventHandler().dispatchFakeMouseMoveEventSoon();
+        frame()->eventHandler().scheduleHoverStateUpdate();
 }
 
 void Document::elementInActiveChainDidDetach(Element* element)
