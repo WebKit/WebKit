@@ -182,6 +182,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
 
     if (toCString(NodeFlagsDump(node->flags())) != "<empty>")
         out.print(comma, NodeFlagsDump(node->flags()));
+    if (node->prediction())
+        out.print(comma, SpeculationDump(node->prediction()));
     if (node->hasArrayMode())
         out.print(comma, node->arrayMode());
     if (node->hasVarNumber())

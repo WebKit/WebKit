@@ -107,6 +107,14 @@ static inline bool nodeCanSpeculateInt32(NodeFlags flags)
     return true;
 }
 
+static inline bool nodeCanSpeculateInt48(NodeFlags flags)
+{
+    if (nodeMayNegZero(flags))
+        return bytecodeCanIgnoreNegativeZero(flags);
+    
+    return true;
+}
+
 void dumpNodeFlags(PrintStream&, NodeFlags);
 MAKE_PRINT_ADAPTOR(NodeFlagsDump, NodeFlags, dumpNodeFlags);
 

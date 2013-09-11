@@ -1214,6 +1214,21 @@ struct Node {
         return isInt32SpeculationExpectingDefined(prediction());
     }
     
+    bool shouldSpeculateMachineInt()
+    {
+        return isMachineIntSpeculation(prediction());
+    }
+    
+    bool shouldSpeculateMachineIntForArithmetic()
+    {
+        return isMachineIntSpeculationForArithmetic(prediction());
+    }
+    
+    bool shouldSpeculateMachineIntExpectingDefined()
+    {
+        return isMachineIntSpeculationExpectingDefined(prediction());
+    }
+    
     bool shouldSpeculateDouble()
     {
         return isDoubleSpeculation(prediction());
@@ -1364,6 +1379,21 @@ struct Node {
         return op1->shouldSpeculateInt32ExpectingDefined() && op2->shouldSpeculateInt32ExpectingDefined();
     }
     
+    static bool shouldSpeculateMachineInt(Node* op1, Node* op2)
+    {
+        return op1->shouldSpeculateMachineInt() && op2->shouldSpeculateMachineInt();
+    }
+    
+    static bool shouldSpeculateMachineIntForArithmetic(Node* op1, Node* op2)
+    {
+        return op1->shouldSpeculateMachineIntForArithmetic() && op2->shouldSpeculateMachineIntForArithmetic();
+    }
+    
+    static bool shouldSpeculateMachineIntExpectingDefined(Node* op1, Node* op2)
+    {
+        return op1->shouldSpeculateMachineIntExpectingDefined() && op2->shouldSpeculateMachineIntExpectingDefined();
+    }
+    
     static bool shouldSpeculateDoubleForArithmetic(Node* op1, Node* op2)
     {
         return op1->shouldSpeculateDoubleForArithmetic() && op2->shouldSpeculateDoubleForArithmetic();
@@ -1392,6 +1422,11 @@ struct Node {
     bool canSpeculateInt32()
     {
         return nodeCanSpeculateInt32(arithNodeFlags());
+    }
+    
+    bool canSpeculateInt48()
+    {
+        return nodeCanSpeculateInt48(arithNodeFlags());
     }
     
     void dumpChildren(PrintStream& out)

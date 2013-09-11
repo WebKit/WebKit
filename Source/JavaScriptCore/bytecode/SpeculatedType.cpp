@@ -347,11 +347,12 @@ SpeculatedType speculationFromValue(JSValue value)
         double number = value.asNumber();
         if (number == number) {
             int64_t asInt64 = static_cast<int64_t>(number);
-            if (asInt64 == number && (!asInt64 || std::signbit(number))
+            if (asInt64 == number && (asInt64 || !std::signbit(number))
                 && asInt64 < (static_cast<int64_t>(1) << 47)
-                && asInt64 >= -(static_cast<int64_t>(1) << 47))
+                && asInt64 >= -(static_cast<int64_t>(1) << 47)) {
                 return SpecInt48AsDouble;
-            return SpecDoubleReal;
+            }
+            return SpecNonIntAsDouble;
         }
         return SpecDoubleNaN;
     }

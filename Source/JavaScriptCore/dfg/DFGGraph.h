@@ -228,6 +228,20 @@ public:
         return addSpeculationMode(add) != DontSpeculateInt32;
     }
     
+    bool addShouldSpeculateMachineInt(Node* add)
+    {
+        Node* left = add->child1().node();
+        Node* right = add->child2().node();
+
+        bool speculation;
+        if (add->op() == ValueAdd)
+            speculation = Node::shouldSpeculateMachineIntExpectingDefined(left, right);
+        else
+            speculation = Node::shouldSpeculateMachineIntForArithmetic(left, right);
+
+        return speculation && !hasExitSite(add, Int48Overflow);
+    }
+    
     bool mulShouldSpeculateInt32(Node* mul)
     {
         ASSERT(mul->op() == ArithMul);
@@ -235,13 +249,34 @@ public:
         Node* left = mul->child1().node();
         Node* right = mul->child2().node();
         
-        return Node::shouldSpeculateInt32ForArithmetic(left, right) && mul->canSpeculateInt32();
+        return Node::shouldSpeculateInt32ForArithmetic(left, right)
+            && mul->canSpeculateInt32();
+    }
+    
+    bool mulShouldSpeculateMachineInt(Node* mul)
+    {
+        ASSERT(mul->op() == ArithMul);
+        
+        Node* left = mul->child1().node();
+        Node* right = mul->child2().node();
+
+        return Node::shouldSpeculateMachineIntForArithmetic(left, right)
+            && mul->canSpeculateInt48()
+            && !hasExitSite(mul, Int48Overflow);
     }
     
     bool negateShouldSpeculateInt32(Node* negate)
     {
         ASSERT(negate->op() == ArithNegate);
         return negate->child1()->shouldSpeculateInt32ForArithmetic() && negate->canSpeculateInt32();
+    }
+    
+    bool negateShouldSpeculateMachineInt(Node* negate)
+    {
+        ASSERT(negate->op() == ArithNegate);
+        return negate->child1()->shouldSpeculateMachineIntForArithmetic()
+            && !hasExitSite(negate, Int48Overflow)
+            && negate->canSpeculateInt48();
     }
     
     // Helper methods to check nodes for constants.
@@ -378,6 +413,11 @@ public:
     bool hasExitSite(const CodeOrigin& codeOrigin, ExitKind exitKind)
     {
         return baselineCodeBlockFor(codeOrigin)->hasExitSite(FrequentExitSite(codeOrigin.bytecodeIndex, exitKind));
+    }
+    
+    bool hasExitSite(Node* node, ExitKind exitKind)
+    {
+        return hasExitSite(node->codeOrigin, exitKind);
     }
     
     int argumentsRegisterFor(const CodeOrigin& codeOrigin)

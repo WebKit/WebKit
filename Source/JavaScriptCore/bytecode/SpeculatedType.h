@@ -63,6 +63,7 @@ static const SpeculatedType SpecCellOther         = 0x00040000; // It's definite
 static const SpeculatedType SpecCell              = 0x0007ffff; // It's definitely a JSCell.
 static const SpeculatedType SpecInt32             = 0x00800000; // It's definitely an Int32.
 static const SpeculatedType SpecInt48             = 0x01000000; // It's definitely an Int48, it's inside a double, but it doesn't need to be.
+static const SpeculatedType SpecMachineInt        = 0x01800000; // It's something that we can do machine int arithmetic on.
 static const SpeculatedType SpecInt48AsDouble     = 0x02000000; // It's definitely an Int48 and it's inside a double.
 static const SpeculatedType SpecInteger           = 0x03800000; // It's definitely some kind of integer.
 static const SpeculatedType SpecNonIntAsDouble    = 0x04000000; // It's definitely not an Int48 but it's a real number and it's a double.
@@ -250,6 +251,21 @@ inline bool isInt32SpeculationExpectingDefined(SpeculatedType value)
 inline bool isInt48Speculation(SpeculatedType value)
 {
     return value == SpecInt48;
+}
+
+inline bool isMachineIntSpeculation(SpeculatedType value)
+{
+    return !!value && (value & SpecMachineInt) == value;
+}
+
+inline bool isMachineIntSpeculationExpectingDefined(SpeculatedType value)
+{
+    return isMachineIntSpeculation(value & ~SpecOther);
+}
+
+inline bool isMachineIntSpeculationForArithmetic(SpeculatedType value)
+{
+    return !(value & (SpecDouble & ~SpecMachineInt));
 }
 
 inline bool isInt48AsDoubleSpeculation(SpeculatedType value)

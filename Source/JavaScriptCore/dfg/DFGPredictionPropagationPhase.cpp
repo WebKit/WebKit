@@ -141,7 +141,10 @@ private:
         switch (op) {
         case JSConstant:
         case WeakJSConstant: {
-            changed |= setPrediction(speculationFromValue(m_graph.valueOfJSConstant(node)));
+            SpeculatedType type = speculationFromValue(m_graph.valueOfJSConstant(node));
+            if (type == SpecInt48AsDouble)
+                type = SpecInt48;
+            changed |= setPrediction(type);
             break;
         }
             
@@ -212,6 +215,8 @@ private:
                 if (isNumberSpeculationExpectingDefined(left) && isNumberSpeculationExpectingDefined(right)) {
                     if (m_graph.addSpeculationMode(node) != DontSpeculateInt32)
                         changed |= mergePrediction(SpecInt32);
+                    else if (m_graph.addShouldSpeculateMachineInt(node))
+                        changed |= mergePrediction(SpecInt48);
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
                 } else if (!(left & SpecNumber) || !(right & SpecNumber)) {
@@ -230,6 +235,8 @@ private:
             if (left && right) {
                 if (m_graph.addSpeculationMode(node) != DontSpeculateInt32)
                     changed |= mergePrediction(SpecInt32);
+                else if (m_graph.addShouldSpeculateMachineInt(node))
+                    changed |= mergePrediction(SpecInt48);
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }
@@ -243,6 +250,8 @@ private:
             if (left && right) {
                 if (m_graph.addSpeculationMode(node) != DontSpeculateInt32)
                     changed |= mergePrediction(SpecInt32);
+                else if (m_graph.addShouldSpeculateMachineInt(node))
+                    changed |= mergePrediction(SpecInt48);
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }
@@ -253,6 +262,8 @@ private:
             if (node->child1()->prediction()) {
                 if (m_graph.negateShouldSpeculateInt32(node))
                     changed |= mergePrediction(SpecInt32);
+                else if (m_graph.negateShouldSpeculateMachineInt(node))
+                    changed |= mergePrediction(SpecInt48);
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPrediction(node->child1()->prediction()));
             }
@@ -280,6 +291,8 @@ private:
             if (left && right) {
                 if (m_graph.mulShouldSpeculateInt32(node))
                     changed |= mergePrediction(SpecInt32);
+                else if (m_graph.mulShouldSpeculateMachineInt(node))
+                    changed |= mergePrediction(SpecInt48);
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }

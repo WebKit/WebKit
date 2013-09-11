@@ -1,5 +1,41 @@
 2013-09-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Propagate the Int48 stuff into the prediction propagator.
+        https://bugs.webkit.org/show_bug.cgi?id=121132
+
+        Reviewed by Mark Hahnenberg.
+        
+        This still has no effect on codegen since Int48 still looks like a Double right now.
+
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromValue):
+        * bytecode/SpeculatedType.h:
+        (JSC::isMachineIntSpeculation):
+        (JSC::isMachineIntSpeculationExpectingDefined):
+        (JSC::isMachineIntSpeculationForArithmetic):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addShouldSpeculateMachineInt):
+        (JSC::DFG::Graph::mulShouldSpeculateInt32):
+        (JSC::DFG::Graph::mulShouldSpeculateMachineInt):
+        (JSC::DFG::Graph::negateShouldSpeculateMachineInt):
+        (JSC::DFG::Graph::hasExitSite):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateMachineInt):
+        (JSC::DFG::Node::shouldSpeculateMachineIntForArithmetic):
+        (JSC::DFG::Node::shouldSpeculateMachineIntExpectingDefined):
+        (JSC::DFG::Node::canSpeculateInt48):
+        * dfg/DFGNodeFlags.h:
+        (JSC::DFG::nodeCanSpeculateInt48):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+
+2013-09-10  Filip Pizlo  <fpizlo@apple.com>
+
         Be explicit about backwards propagation properties that care about escaping to bytecode, as opposed to just escaping within DFG code.
 
         Rubber stamped by Mark Hahnenberg.
