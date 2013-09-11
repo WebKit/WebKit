@@ -180,10 +180,6 @@ bool HTMLEmbedElement::rendererIsNeeded(const RenderStyle& style)
     if (isImageType())
         return HTMLPlugInImageElement::rendererIsNeeded(style);
 
-    Frame* frame = document().frame();
-    if (!frame)
-        return false;
-
     // If my parent is an <object> and is not set to use fallback content, I
     // should be ignored and not get a renderer.
     ContainerNode* p = parentNode();
@@ -198,7 +194,7 @@ bool HTMLEmbedElement::rendererIsNeeded(const RenderStyle& style)
 
 #if ENABLE(DASHBOARD_SUPPORT)
     // Workaround for <rdar://problem/6642221>.
-    if (frame->settings().usesDashboardBackwardCompatibilityMode())
+    if (document().frame()->settings().usesDashboardBackwardCompatibilityMode())
         return true;
 #endif
 

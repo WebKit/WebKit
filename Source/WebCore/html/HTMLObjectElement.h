@@ -73,7 +73,6 @@ private:
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
     virtual void removedFrom(ContainerNode*) OVERRIDE;
 
-    virtual bool rendererIsNeeded(const RenderStyle&);
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
     virtual void childrenChanged(const ChildChange&) OVERRIDE;

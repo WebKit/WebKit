@@ -323,16 +323,6 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
         renderFallbackContent();
 }
 
-bool HTMLObjectElement::rendererIsNeeded(const RenderStyle& style)
-{
-    // FIXME: This check should not be needed, detached documents never render!
-    Frame* frame = document().frame();
-    if (!frame)
-        return false;
-
-    return HTMLPlugInImageElement::rendererIsNeeded(style);
-}
-
 Node::InsertionNotificationRequest HTMLObjectElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLPlugInImageElement::insertedInto(insertionPoint);

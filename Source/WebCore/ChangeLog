@@ -1,3 +1,20 @@
+2013-09-11  Andreas Kling  <akling@apple.com>
+
+        Remove unnecessary Document::frame() null checks in rendererIsNeeded().
+        <https://webkit.org/b/121166>
+
+        Reviewed by Anders Carlsson.
+
+        rendererIsNeeded() is only called during style resolve, which only happens
+        while there's a Frame present.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::rendererIsNeeded):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::rendererIsNeeded):
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLObjectElement.h:
+
 2013-09-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         ARM buildfix after r155491
