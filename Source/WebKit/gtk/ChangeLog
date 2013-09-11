@@ -1,3 +1,21 @@
+2013-09-10  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Reimplement atk_text_get_text_*_offset for LINE boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=114872
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Fixed wrong unit test.
+
+        * tests/testatk.c:
+        (testWebkitAtkGetTextAtOffsetWithPreformattedText): This test was
+        reporting a trailing '\n' for some reason for a <pre> block, which
+        is plainly wrong since, in order to return that, there should be
+        at least a trailing empty space after that and before the </pre>
+        closing tag. This is fixed now.
+        (testWebkitAtkGetTextAtOffsetWithWrappedLines): Uncommented tests
+        that were previously not passing due to a bug in GailTextUtil.
+
 2013-09-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate more HTML type checks and casting

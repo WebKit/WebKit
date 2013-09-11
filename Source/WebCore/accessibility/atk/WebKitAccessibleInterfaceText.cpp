@@ -973,6 +973,113 @@ static char* webkitAccessibleTextSentenceForBoundary(AtkText* text, int offset, 
     return webkitAccessibleTextGetText(text, *startOffset, *endOffset);
 }
 
+static VisibleSelection lineAtPositionForAtkBoundary(const AccessibilityObject* coreObject, const VisiblePosition& position, AtkTextBoundary boundaryType)
+{
+    VisiblePosition startPosition;
+    VisiblePosition endPosition;
+
+    switch (boundaryType) {
+    case ATK_TEXT_BOUNDARY_LINE_START:
+        startPosition = isStartOfLine(position) ? position : logicalStartOfLine(position);
+        endPosition = logicalEndOfLine(position);
+
+        // In addition to checking that we are not at the end of a block, we need
+        // to check that endPosition has not UPSTREAM affinity, since that would
+        // cause trouble inside of text controls (we would be advancing too much).
+        if (!isEndOfBlock(endPosition) && endPosition.affinity() != UPSTREAM)
+            endPosition = endPosition.next();
+        break;
+
+    case ATK_TEXT_BOUNDARY_LINE_END:
+        startPosition = isEndOfLine(position) ? position : logicalStartOfLine(position);
+        if (!isStartOfBlock(startPosition))
+            startPosition = startPosition.previous();
+        endPosition = logicalEndOfLine(position);
+        break;
+
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    VisibleSelection selectedLine(startPosition, endPosition);
+
+    // We mark the selection as 'upstream' so we can use that information later,
+    // when finding the actual offsets in getSelectionOffsetsForObject().
+    if (boundaryType == ATK_TEXT_BOUNDARY_LINE_END)
+        selectedLine.setAffinity(UPSTREAM);
+
+    return selectedLine;
+}
+
+static char* webkitAccessibleTextLineForBoundary(AtkText* text, int offset, AtkTextBoundary boundaryType, GetTextRelativePosition textPosition, int* startOffset, int* endOffset)
+{
+    AccessibilityObject* coreObject = core(text);
+    Document* document = coreObject->document();
+    if (!document)
+        return emptyTextSelectionAtOffset(0, startOffset, endOffset);
+
+    Node* node = getNodeForAccessibilityObject(coreObject);
+    if (!node)
+        return emptyTextSelectionAtOffset(0, startOffset, endOffset);
+
+    int actualOffset = atkOffsetToWebCoreOffset(text, offset);
+
+    // Besides the usual conversion from ATK offsets to WebCore offsets,
+    // we need to consider the potential embedded objects that might have been
+    // inserted in the text exposed through AtkText when calculating the offset.
+    actualOffset -= numberOfReplacedElementsBeforeOffset(text, actualOffset);
+
+    VisiblePosition caretPosition = coreObject->visiblePositionForIndex(actualOffset);
+    VisibleSelection currentLine = lineAtPositionForAtkBoundary(coreObject, caretPosition, boundaryType);
+
+    // Take into account other relative positions, if needed, by
+    // calculating the new position that we would need to consider.
+    VisiblePosition newPosition = caretPosition;
+    switch (textPosition) {
+    case GetTextPositionAt:
+        // No need to do additional work if we are using the "at" position, we just
+        // explicitly list this case option to catch invalid values in the default case.
+        break;
+
+    case GetTextPositionBefore:
+        // Early return if asking for the previous line while already at the beginning.
+        if (isFirstVisiblePositionInNode(currentLine.visibleStart(), node))
+            return emptyTextSelectionAtOffset(0, startOffset, endOffset);
+        newPosition = currentLine.visibleStart().previous();
+        break;
+
+    case GetTextPositionAfter:
+        // Early return if asking for the following word while already at the end.
+        if (isLastVisiblePositionInNode(currentLine.visibleEnd(), node))
+            return emptyTextSelectionAtOffset(accessibilityObjectLength(coreObject), startOffset, endOffset);
+        newPosition = currentLine.visibleEnd().next();
+        break;
+
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    // Determine the relevant line we are actually interested in
+    // and calculate the ATK offsets for it, then return everything.
+    VisibleSelection selectedLine = newPosition != caretPosition ? lineAtPositionForAtkBoundary(coreObject, newPosition, boundaryType) : currentLine;
+    getSelectionOffsetsForObject(coreObject, selectedLine, *startOffset, *endOffset);
+
+    // We might need to adjust the start or end offset to include the list item marker,
+    // if present, when printing the first or the last full line for a list item.
+    RenderObject* renderer = coreObject->renderer();
+    if (renderer->isListItem()) {
+        // For Left-to-Right, the list item marker is at the beginning of the exposed text.
+        if (renderer->style()->direction() == LTR && isFirstVisiblePositionInNode(selectedLine.visibleStart(), node))
+            *startOffset = 0;
+
+        // For Right-to-Left, the list item marker is at the end of the exposed text.
+        if (renderer->style()->direction() == RTL && isLastVisiblePositionInNode(selectedLine.visibleEnd(), node))
+            *endOffset = accessibilityObjectLength(coreObject);
+    }
+
+    return webkitAccessibleTextGetText(text, *startOffset, *endOffset);
+}
+
 static gchar* webkitAccessibleTextGetTextForOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, GetTextRelativePosition textPosition, gint* startOffset, gint* endOffset)
 {
     AccessibilityObject* coreObject = core(text);
@@ -987,6 +1094,9 @@ static gchar* webkitAccessibleTextGetTextForOffset(AtkText* text, gint offset, A
 
     if (boundaryType == ATK_TEXT_BOUNDARY_SENTENCE_START || boundaryType == ATK_TEXT_BOUNDARY_SENTENCE_END)
         return webkitAccessibleTextSentenceForBoundary(text, offset, boundaryType, textPosition, startOffset, endOffset);
+
+    if (boundaryType == ATK_TEXT_BOUNDARY_LINE_START || boundaryType == ATK_TEXT_BOUNDARY_LINE_END)
+        return webkitAccessibleTextLineForBoundary(text, offset, boundaryType, textPosition, startOffset, endOffset);
 
 #if PLATFORM(GTK)
     // FIXME: Get rid of the code below once every single part above

@@ -33,7 +33,7 @@ static const char* contents = "<html><body><p>This is a test. This is the second
 
 static const char* contentsWithNewlines = "<html><body><p>This is a test. \n\nThis\n is the second sentence. And this the third.</p></body></html>";
 
-static const char* contentsWithPreformattedText = "<html><body><pre>\n\t\n\tfirst line\n\tsecond line\n</pre></body></html>";
+static const char* contentsWithPreformattedText = "<html><body><pre>\n\t\n\tfirst line\n\tsecond line\n\t\n</pre></body></html>";
 
 static const char* contentsWithSpecialChars = "<html><body><p>&laquo;&nbsp;This is a paragraph with &ldquo;special&rdquo; characters inside.&nbsp;&raquo;</p><ul><li style='max-width:100px;'>List item with some text that wraps across different lines.</li><li style='max-width:100px;'><p>List item with some text that wraps across different lines.</p></li></ul></body></html>";
 
@@ -907,7 +907,7 @@ static void testWebkitAtkGetTextAtOffsetWithPreformattedText()
     g_assert(atk_object_get_role(preformattedText) == ATK_ROLE_PANEL);
     g_assert(ATK_IS_TEXT(preformattedText));
     char* text = atk_text_get_text(ATK_TEXT(preformattedText), 0, -1);
-    g_assert_cmpstr(text, ==, "\t\n\tfirst line\n\tsecond line\n");
+    g_assert_cmpstr(text, ==, "\t\n\tfirst line\n\tsecond line\n\t\n");
     g_free(text);
 
     /* Try retrieving all the lines indicating the position of the offsets at the beginning of each of them. */
@@ -1027,9 +1027,7 @@ static void testWebkitAtkGetTextAtOffsetWithWrappedLines()
     testGetTextFunction(paragraph1, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 17, "wrapped because ", 17, 33);
     testGetTextFunction(paragraph1, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_LINE_START, 17, "of the maximum ", 33, 48);
 
-    /* The following line won't work at the moment because of a bug in GailTextUtil.
-       see https://bugzilla.gnome.org/show_bug.cgi?id=703554
-       testGetTextFunction(paragraph1, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_LINE_END, 17, "This is one line", 0, 16); */
+    testGetTextFunction(paragraph1, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_LINE_END, 17, "This is one line", 0, 16);
     testGetTextFunction(paragraph1, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END, 17, " wrapped because", 16, 32);
     testGetTextFunction(paragraph1, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_LINE_END, 17, " of the maximum", 32, 47);
 
@@ -1059,9 +1057,7 @@ static void testWebkitAtkGetTextAtOffsetWithWrappedLines()
     testGetTextFunction(paragraph2, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 30, "because of one forced\n", 29, 51);
     testGetTextFunction(paragraph2, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_LINE_START, 30, "line break in the middle.", 51, 76);
 
-    /* The following line won't work at the moment because of a bug in GailTextUtil.
-       see https://bugzilla.gnome.org/show_bug.cgi?id=703554
-       testGetTextFunction(paragraph2, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_LINE_END, 30, "This is another line wrapped", 0, 28); */
+    testGetTextFunction(paragraph2, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_LINE_END, 30, "This is another line wrapped", 0, 28);
     testGetTextFunction(paragraph2, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END, 30, "\nbecause of one forced", 28, 50);
     testGetTextFunction(paragraph2, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_LINE_END, 30, "\nline break in the middle.", 50, 76);
 
