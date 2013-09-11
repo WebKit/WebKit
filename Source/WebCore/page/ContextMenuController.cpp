@@ -292,11 +292,11 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         break;
     case ContextMenuItemTagGoBack:
         if (Page* page = frame->page())
-            page->backForward()->goBackOrForward(-1);
+            page->backForward().goBackOrForward(-1);
         break;
     case ContextMenuItemTagGoForward:
         if (Page* page = frame->page())
-            page->backForward()->goBackOrForward(1);
+            page->backForward().goBackOrForward(1);
         break;
     case ContextMenuItemTagStop:
         frame->loader().stop();
@@ -912,10 +912,10 @@ void ContextMenuController::populate()
                 appendItem(StopItem, m_contextMenu.get());
                 appendItem(ReloadItem, m_contextMenu.get());
 #else
-                if (frame->page() && frame->page()->backForward()->canGoBackOrForward(-1))
+                if (frame->page() && frame->page()->backForward().canGoBackOrForward(-1))
                     appendItem(BackItem, m_contextMenu.get());
 
-                if (frame->page() && frame->page()->backForward()->canGoBackOrForward(1))
+                if (frame->page() && frame->page()->backForward().canGoBackOrForward(1))
                     appendItem(ForwardItem, m_contextMenu.get());
 
                 // use isLoadingInAPISense rather than isLoading because Stop/Reload are
@@ -1293,10 +1293,10 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
 #endif
 #if PLATFORM(GTK)
         case ContextMenuItemTagGoBack:
-            shouldEnable = frame->page() && frame->page()->backForward()->canGoBackOrForward(-1);
+            shouldEnable = frame->page() && frame->page()->backForward().canGoBackOrForward(-1);
             break;
         case ContextMenuItemTagGoForward:
-            shouldEnable = frame->page() && frame->page()->backForward()->canGoBackOrForward(1);
+            shouldEnable = frame->page() && frame->page()->backForward().canGoBackOrForward(1);
             break;
         case ContextMenuItemTagStop:
             shouldEnable = frame->loader().documentLoader()->isLoadingInAPISense();

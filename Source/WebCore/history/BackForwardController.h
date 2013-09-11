@@ -39,9 +39,8 @@ class Page;
 class BackForwardController {
     WTF_MAKE_NONCOPYABLE(BackForwardController); WTF_MAKE_FAST_ALLOCATED;
 public:
+    BackForwardController(Page&, PassRefPtr<BackForwardClient>);
     ~BackForwardController();
-
-    static PassOwnPtr<BackForwardController> create(Page*, PassRefPtr<BackForwardClient>);
 
     BackForwardClient* client() const { return m_client.get(); }
 
@@ -69,9 +68,7 @@ public:
     HistoryItem* forwardItem() { return itemAtIndex(1); }
 
 private:
-    BackForwardController(Page*, PassRefPtr<BackForwardClient>);
-
-    Page* m_page;
+    Page& m_page;
     RefPtr<BackForwardClient> m_client;
 };
 

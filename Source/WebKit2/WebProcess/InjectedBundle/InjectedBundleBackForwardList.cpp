@@ -43,7 +43,7 @@ PassRefPtr<InjectedBundleBackForwardListItem> InjectedBundleBackForwardList::ite
     Page* page = m_page->corePage();
     if (!page)
         return 0;
-    return InjectedBundleBackForwardListItem::create(page->backForward()->itemAtIndex(index));
+    return InjectedBundleBackForwardListItem::create(page->backForward().itemAtIndex(index));
 }
 
 int InjectedBundleBackForwardList::backListCount() const
@@ -53,7 +53,7 @@ int InjectedBundleBackForwardList::backListCount() const
     Page* page = m_page->corePage();
     if (!page)
         return 0;
-    return page->backForward()->backCount();
+    return page->backForward().backCount();
 }
 
 int InjectedBundleBackForwardList::forwardListCount() const
@@ -63,7 +63,7 @@ int InjectedBundleBackForwardList::forwardListCount() const
     Page* page = m_page->corePage();
     if (!page)
         return 0;
-    return page->backForward()->forwardCount();
+    return page->backForward().forwardCount();
 }
 
 void InjectedBundleBackForwardList::clear()
@@ -73,7 +73,7 @@ void InjectedBundleBackForwardList::clear()
     Page* page = m_page->corePage();
     if (!page)
         return;
-    static_cast<WebBackForwardListProxy*>(page->backForward()->client())->clear();
+    static_cast<WebBackForwardListProxy*>(page->backForward().client())->clear();
 }
 
 } // namespace WebKit

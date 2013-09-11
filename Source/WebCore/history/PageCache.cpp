@@ -217,7 +217,7 @@ static void logCanCachePageDecision(Page* page)
     if (frameRejectReasons)
         rejectReasons |= 1 << FrameCannotBeInPageCache;
     
-    if (!page->backForward()->isActive()) {
+    if (!page->backForward().isActive()) {
         PCLOG("   -The back/forward list is disabled or has 0 capacity");
         rejectReasons |= 1 << DisabledBackForwardList;
     }
@@ -355,7 +355,7 @@ bool PageCache::canCache(Page* page) const
     
     return m_capacity > 0
         && canCachePageContainingThisFrame(&page->mainFrame())
-        && page->backForward()->isActive()
+        && page->backForward().isActive()
         && page->settings().usesPageCache()
 #if ENABLE(DEVICE_ORIENTATION)
         && !DeviceMotionController::isActiveAt(page)

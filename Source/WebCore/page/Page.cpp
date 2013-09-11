@@ -141,7 +141,7 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_settings(Settings::create(this))
     , m_progress(ProgressTracker::create())
-    , m_backForwardController(BackForwardController::create(this, pageClients.backForwardClient))
+    , m_backForwardController(createOwned<BackForwardController>(*this, pageClients.backForwardClient))
     , m_mainFrame(Frame::create(this, 0, pageClients.loaderClientForMainFrame))
     , m_theme(RenderTheme::themeForPage(this))
     , m_editorClient(pageClients.editorClient)
@@ -230,7 +230,7 @@ Page::~Page()
     if (m_scrollingCoordinator)
         m_scrollingCoordinator->pageDestroyed();
 
-    backForward()->close();
+    backForward().close();
 
 #ifndef NDEBUG
     pageCounter.decrement();
@@ -356,12 +356,12 @@ void Page::setOpenedByDOM()
 
 BackForwardClient* Page::backForwardClient() const
 {
-    return m_backForwardController->client();
+    return backForward().client();
 }
 
 bool Page::goBack()
 {
-    HistoryItem* item = backForward()->backItem();
+    HistoryItem* item = backForward().backItem();
     
     if (item) {
         goToItem(item, FrameLoadTypeBack);
@@ -372,7 +372,7 @@ bool Page::goBack()
 
 bool Page::goForward()
 {
-    HistoryItem* item = backForward()->forwardItem();
+    HistoryItem* item = backForward().forwardItem();
     
     if (item) {
         goToItem(item, FrameLoadTypeForward);
@@ -385,9 +385,9 @@ bool Page::canGoBackOrForward(int distance) const
 {
     if (distance == 0)
         return true;
-    if (distance > 0 && distance <= backForward()->forwardCount())
+    if (distance > 0 && distance <= backForward().forwardCount())
         return true;
-    if (distance < 0 && -distance <= backForward()->backCount())
+    if (distance < 0 && -distance <= backForward().backCount())
         return true;
     return false;
 }
@@ -397,14 +397,14 @@ void Page::goBackOrForward(int distance)
     if (distance == 0)
         return;
 
-    HistoryItem* item = backForward()->itemAtIndex(distance);
+    HistoryItem* item = backForward().itemAtIndex(distance);
     if (!item) {
         if (distance > 0) {
-            if (int forwardCount = backForward()->forwardCount()) 
-                item = backForward()->itemAtIndex(forwardCount);
+            if (int forwardCount = backForward().forwardCount())
+                item = backForward().itemAtIndex(forwardCount);
         } else {
-            if (int backCount = backForward()->backCount())
-                item = backForward()->itemAtIndex(-backCount);
+            if (int backCount = backForward().backCount())
+                item = backForward().itemAtIndex(-backCount);
         }
     }
 
@@ -428,7 +428,7 @@ void Page::goToItem(HistoryItem* item, FrameLoadType type)
 
 int Page::getHistoryLength()
 {
-    return backForward()->backCount() + 1 + backForward()->forwardCount();
+    return backForward().backCount() + 1 + backForward().forwardCount();
 }
 
 void Page::setGroupName(const String& name)

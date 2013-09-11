@@ -972,7 +972,7 @@ void DOMWindow::close(ScriptExecutionContext* context)
 
     bool allowScriptsToCloseWindows = m_frame->settings().allowScriptsToCloseWindows();
 
-    if (!(page->openedByDOM() || page->backForward()->count() <= 1 || allowScriptsToCloseWindows)) {
+    if (!(page->openedByDOM() || page->backForward().count() <= 1 || allowScriptsToCloseWindows)) {
         pageConsole()->addMessage(JSMessageSource, WarningMessageLevel, ASCIILiteral("Can't close the window since it was not opened by JavaScript"));
         return;
     }

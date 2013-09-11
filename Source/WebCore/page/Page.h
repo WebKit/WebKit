@@ -212,7 +212,7 @@ public:
 
     Settings& settings() const { return *m_settings; }
     ProgressTracker& progress() const { return *m_progress; }
-    BackForwardController* backForward() const { return m_backForwardController.get(); }
+    BackForwardController& backForward() const { return *m_backForwardController; }
 
     FeatureObserver* featureObserver() { return &m_featureObserver; }
 
@@ -463,7 +463,7 @@ private:
     const RefPtr<Settings> m_settings;
     const OwnPtr<ProgressTracker> m_progress;
 
-    OwnPtr<BackForwardController> m_backForwardController;
+    const OwnPtr<BackForwardController> m_backForwardController;
     const RefPtr<Frame> m_mainFrame;
 
     mutable RefPtr<PluginData> m_pluginData;

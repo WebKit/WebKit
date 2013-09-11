@@ -825,7 +825,7 @@ void WebFrameLoaderClient::updateGlobalHistoryItemForPage()
 
     if (Page* page = webView->page()) {
         if (!page->settings().privateBrowsingEnabled())
-            historyItem = page->backForward()->currentItem();
+            historyItem = page->backForward().currentItem();
     }
 
     webView->setGlobalHistoryItem(historyItem);

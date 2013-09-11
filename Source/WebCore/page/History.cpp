@@ -53,7 +53,7 @@ unsigned History::length() const
         return 0;
     if (!m_frame->page())
         return 0;
-    return m_frame->page()->backForward()->count();
+    return m_frame->page()->backForward().count();
 }
 
 PassRefPtr<SerializedScriptValue> History::state()

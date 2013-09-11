@@ -1,3 +1,13 @@
+2013-09-11  Andreas Kling  <akling@apple.com>
+
+        Page::backForward() should return a reference.
+        <https://webkit.org/b/121151>
+
+        Reviewed by Anders Carlsson.
+
+        There is always a BackForwardController, so make backForward() return a reference.
+        Also made it store a Page& internally since it's tied to the lifetime of Page.
+
 2013-09-11  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         WTF::OwnPtr should behave similarly with the rest of WTF smart pointers

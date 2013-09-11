@@ -468,10 +468,10 @@ void Settings::setUsesPageCache(bool usesPageCache)
         
     m_usesPageCache = usesPageCache;
     if (!m_usesPageCache) {
-        int first = -m_page->backForward()->backCount();
-        int last = m_page->backForward()->forwardCount();
+        int first = -m_page->backForward().backCount();
+        int last = m_page->backForward().forwardCount();
         for (int i = first; i <= last; i++)
-            pageCache()->remove(m_page->backForward()->itemAtIndex(i));
+            pageCache()->remove(m_page->backForward().itemAtIndex(i));
     }
 }
 
