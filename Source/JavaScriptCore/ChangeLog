@@ -1,3 +1,82 @@
+2013-09-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Be explicit about backwards propagation properties that care about escaping to bytecode, as opposed to just escaping within DFG code.
+
+        Rubber stamped by Mark Hahnenberg.
+        
+        We need to care about escaping to bytecode if we're doing a lossy optimization,
+        i.e. the optimization means we produce less information and so we can't rescue
+        ourselves during OSR exit.
+        
+        We only need to care about escaping within the DFG code (and can ignore what
+        might happen in bytecode) if we're doing an optimization that is lossless, i.e.
+        we can always still reconstruct the values that bytecode wants.
+        
+        Example #1:
+        
+            Large int32 + int32 which overflows. We want to optimize away the overflow
+            check and just do a 32-bit add.
+            
+            This is lossy; the result should have one extra bit but we simply throw
+            that bit away by doing a check-less 32-bit add. Hence we need to know that 
+            even the bytecode wouldn't have cared about that bit. This is true in cases
+            like (a + b) | 0.
+        
+        Example #2:
+        
+            Larbe int32 + int32 which overflows. We want to optimize away the overflow
+            check by doing a 64-bit add.
+            
+            This is lossless. We can always convert the resulting 64-bit int back to a
+            double if that's what bytecode wants. Hence we only need to know that the
+            DFG code won't want to do something to this value that would make 64-bit
+            ints either unprofitable or unsound.
+        
+        The backwards propagator's notions of flags (NodeUsedAsValue, etc) are for lossy
+        optimizations and so should be named in a way that reflects this. This patch
+        calls then NodeBytecodeUsesAsValue, etc.
+        
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::mergeDefaultFlags):
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addImmediateShouldSpeculateInt32):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::arithNodeFlags):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        * dfg/DFGNodeFlags.h:
+        (JSC::DFG::bytecodeUsesAsNumber):
+        (JSC::DFG::bytecodeCanTruncateInteger):
+        (JSC::DFG::bytecodeCanIgnoreNegativeZero):
+        (JSC::DFG::nodeMayNegZero):
+        (JSC::DFG::nodeCanSpeculateInt32):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDoubleAsInt32):
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::shouldUseDoubleFormatAccordingToVote):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileAdd):
+        (JSC::FTL::LowerDFGToLLVM::compileArithSub):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMul):
+        (JSC::FTL::LowerDFGToLLVM::compileArithDiv):
+        (JSC::FTL::LowerDFGToLLVM::compileArithMod):
+        (JSC::FTL::LowerDFGToLLVM::compileArithNegate):
+
 2013-09-10  Chris Curtis  <chris_curtis@apple.com>
 
         WebKit crashes when trying to send a msg via 'today's birthdays' dialogue box on Facebook

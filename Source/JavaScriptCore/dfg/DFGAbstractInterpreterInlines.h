@@ -334,7 +334,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         switch (node->binaryUseKind()) {
         case Int32Use:
             forNode(node).setType(SpecInt32);
-            if (!nodeCanTruncateInteger(node->arithNodeFlags()))
+            if (!bytecodeCanTruncateInteger(node->arithNodeFlags()))
                 node->setCanExit(true);
             break;
         case NumberUse:
@@ -369,7 +369,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         switch (node->binaryUseKind()) {
         case Int32Use:
             forNode(node).setType(SpecInt32);
-            if (!nodeCanTruncateInteger(node->arithNodeFlags()))
+            if (!bytecodeCanTruncateInteger(node->arithNodeFlags()))
                 node->setCanExit(true);
             break;
         case NumberUse:
@@ -392,7 +392,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         switch (node->child1().useKind()) {
         case Int32Use:
             forNode(node).setType(SpecInt32);
-            if (!nodeCanTruncateInteger(node->arithNodeFlags()))
+            if (!bytecodeCanTruncateInteger(node->arithNodeFlags()))
                 node->setCanExit(true);
             break;
         case NumberUse:
@@ -416,8 +416,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         switch (node->binaryUseKind()) {
         case Int32Use:
             forNode(node).setType(SpecInt32);
-            if (!nodeCanTruncateInteger(node->arithNodeFlags())
-                || !nodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+            if (!bytecodeCanTruncateInteger(node->arithNodeFlags())
+                || !bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                 node->setCanExit(true);
             break;
         case NumberUse:

@@ -77,13 +77,13 @@ void dumpNodeFlags(PrintStream& out, NodeFlags flags)
         out.print(comma, "MightClobber");
     
     if (flags & NodeResultMask) {
-        if (!(flags & NodeUsedAsNumber) && !(flags & NodeNeedsNegZero))
+        if (!(flags & NodeBytecodeUsesAsNumber) && !(flags & NodeBytecodeNeedsNegZero))
             out.print(comma, "PureInt");
-        else if (!(flags & NodeUsedAsNumber))
+        else if (!(flags & NodeBytecodeUsesAsNumber))
             out.print(comma, "PureInt(w/ neg zero)");
-        else if (!(flags & NodeNeedsNegZero))
+        else if (!(flags & NodeBytecodeNeedsNegZero))
             out.print(comma, "PureNum");
-        if (flags & NodeUsedAsOther)
+        if (flags & NodeBytecodeUsesAsOther)
             out.print(comma, "UseAsOther");
     }
     
@@ -93,7 +93,7 @@ void dumpNodeFlags(PrintStream& out, NodeFlags flags)
     if (flags & NodeMayNegZero)
         out.print(comma, "MayNegZero");
     
-    if (flags & NodeUsedAsInt)
+    if (flags & NodeBytecodeUsesAsInt)
         out.print(comma, "UseAsInt");
     
     if (!(flags & NodeDoesNotExit))

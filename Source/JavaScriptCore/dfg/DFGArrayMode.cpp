@@ -169,14 +169,14 @@ ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index, Speculate
         return withTypeAndConversion(Array::Contiguous, Array::Convert);
         
     case Array::Double:
-        if (flags & NodeUsedAsInt)
+        if (flags & NodeBytecodeUsesAsInt)
             return withTypeAndConversion(Array::Contiguous, Array::RageConvert);
         if (!value || isNumberSpeculation(value))
             return *this;
         return withTypeAndConversion(Array::Contiguous, Array::Convert);
         
     case Array::Contiguous:
-        if (doesConversion() && (flags & NodeUsedAsInt))
+        if (doesConversion() && (flags & NodeBytecodeUsesAsInt))
             return withConversion(Array::RageConvert);
         return *this;
         

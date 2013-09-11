@@ -249,7 +249,7 @@ public:
         
         // If the variable is known to be used as an integer, then be safe -
         // don't force it to be a double.
-        if (flags() & NodeUsedAsInt)
+        if (flags() & NodeBytecodeUsesAsInt)
             return false;
         
         // If the variable has been voted to become a double, then make it a

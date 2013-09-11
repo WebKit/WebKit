@@ -602,7 +602,7 @@ struct Node {
         NodeFlags result = m_flags & NodeArithFlagsMask;
         if (op() == ArithMul || op() == ArithDiv || op() == ArithMod || op() == ArithNegate || op() == DoubleAsInt32)
             return result;
-        return result & ~NodeNeedsNegZero;
+        return result & ~NodeBytecodeNeedsNegZero;
     }
     
     bool hasConstantBuffer()

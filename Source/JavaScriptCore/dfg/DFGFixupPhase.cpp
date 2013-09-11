@@ -407,7 +407,7 @@ private:
                 if (arrayMode.arrayClass() == Array::OriginalArray
                     && arrayMode.speculation() == Array::InBounds
                     && m_graph.globalObjectFor(node->codeOrigin)->arrayPrototypeChainIsSane()
-                    && !(node->flags() & NodeUsedAsOther))
+                    && !(node->flags() & NodeBytecodeUsesAsOther))
                     node->setArrayMode(arrayMode.withSpeculation(Array::SaneChain));
                 break;
                 
