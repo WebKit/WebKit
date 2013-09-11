@@ -115,7 +115,7 @@ RenderEmbeddedObject::RenderEmbeddedObject(Element* element)
 RenderEmbeddedObject::~RenderEmbeddedObject()
 {
     if (frameView())
-        frameView()->removeWidgetToUpdate(this);
+        frameView()->removeEmbeddedObjectToUpdate(*this);
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -466,7 +466,7 @@ void RenderEmbeddedObject::layout()
     bool wasMissingWidget = false;
     if (!widget() && frameView() && canHaveWidget()) {
         wasMissingWidget = true;
-        frameView()->addWidgetToUpdate(this);
+        frameView()->addEmbeddedObjectToUpdate(*this);
     }
 
     setNeedsLayout(false);
@@ -479,7 +479,7 @@ void RenderEmbeddedObject::layout()
             HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(element);
             if (plugInImageElement->displayState() > HTMLPlugInElement::DisplayingSnapshot && plugInImageElement->snapshotDecision() == HTMLPlugInImageElement::MaySnapshotWhenResized) {
                 plugInImageElement->setNeedsCheckForSizeChange();
-                view().frameView().addWidgetToUpdate(this);
+                view().frameView().addEmbeddedObjectToUpdate(*this);
             }
         }
     }

@@ -54,6 +54,7 @@ class RenderObject;
 class RenderScrollbarPart;
 class RenderStyle;
 class RenderView;
+class RenderWidget;
 
 Pagination::Mode paginationModeForRenderStyle(RenderStyle*);
 
@@ -267,8 +268,8 @@ public:
     bool safeToPropagateScrollToParent() const { return m_safeToPropagateScrollToParent; }
     void setSafeToPropagateScrollToParent(bool isSafe) { m_safeToPropagateScrollToParent = isSafe; }
 
-    void addWidgetToUpdate(RenderObject*);
-    void removeWidgetToUpdate(RenderObject*);
+    void addEmbeddedObjectToUpdate(RenderEmbeddedObject&);
+    void removeEmbeddedObjectToUpdate(RenderEmbeddedObject&);
 
     virtual void paintContents(GraphicsContext*, const IntRect& damageRect) OVERRIDE;
     void setPaintBehavior(PaintBehavior);
@@ -522,8 +523,8 @@ private:
     void updateDeferredRepaintDelayAfterRepaint();
     double adjustedDeferredRepaintDelay() const;
 
-    bool updateWidgets();
-    void updateWidget(RenderObject*);
+    bool updateEmbeddedObjects();
+    void updateEmbeddedObject(RenderEmbeddedObject&);
     void scrollToAnchor();
     void scrollPositionChanged();
 
@@ -547,11 +548,11 @@ private:
 
     LayoutSize m_size;
     LayoutSize m_margins;
-    
-    typedef HashSet<RenderObject*> RenderObjectSet;
-    OwnPtr<RenderObjectSet> m_widgetUpdateSet;
+
+    OwnPtr<HashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;
     const RefPtr<Frame> m_frame;
 
+    typedef HashSet<RenderObject*> RenderObjectSet;
     OwnPtr<RenderObjectSet> m_slowRepaintObjects;
 
     bool m_needsFullRepaint;

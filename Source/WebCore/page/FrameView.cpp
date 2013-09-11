@@ -127,8 +127,8 @@ double FrameView::s_maxDeferredRepaintDelayDuringLoading = 0;
 double FrameView::s_deferredRepaintDelayIncrementDuringLoading = 0;
 #endif
 
-// The maximum number of updateWidgets iterations that should be done before returning.
-static const unsigned maxUpdateWidgetsIterations = 2;
+// The maximum number of updateEmbeddedObjects iterations that should be done before returning.
+static const unsigned maxUpdateEmbeddedObjectsIterations = 2;
 
 static RenderLayer::UpdateLayerPositionsFlags updateLayerPositionFlags(RenderLayer* layer, bool isRelayoutingSubtree, bool didFullRepaint)
 {
@@ -1395,28 +1395,29 @@ RenderBox* FrameView::embeddedContentBox() const
     return 0;
 }
 
-void FrameView::addWidgetToUpdate(RenderObject* object)
+void FrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
 {
-    if (!m_widgetUpdateSet)
-        m_widgetUpdateSet = adoptPtr(new RenderObjectSet);
+    if (!m_embeddedObjectsToUpdate)
+        m_embeddedObjectsToUpdate = adoptPtr(new HashSet<RenderEmbeddedObject*>);
 
-    // Tell the DOM element that it needs a widget update.
-    Node* node = object->node();
-    if (node->hasTagName(objectTag) || node->hasTagName(embedTag)) {
-        HTMLPlugInImageElement* pluginElement = toHTMLPlugInImageElement(node);
-        if (!pluginElement->needsCheckForSizeChange())
-            pluginElement->setNeedsWidgetUpdate(true);
+    ASSERT(embeddedObject.element());
+    Element& element = *embeddedObject.element();
+    if (isHTMLObjectElement(element) || isHTMLEmbedElement(element)) {
+        // Tell the DOM element that it needs a widget update.
+        HTMLPlugInImageElement& pluginElement = toHTMLPlugInImageElement(element);
+        if (!pluginElement.needsCheckForSizeChange())
+            pluginElement.setNeedsWidgetUpdate(true);
     }
 
-    m_widgetUpdateSet->add(object);
+    m_embeddedObjectsToUpdate->add(&embeddedObject);
 }
 
-void FrameView::removeWidgetToUpdate(RenderObject* object)
+void FrameView::removeEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
 {
-    if (!m_widgetUpdateSet)
+    if (!m_embeddedObjectsToUpdate)
         return;
 
-    m_widgetUpdateSet->remove(object);
+    m_embeddedObjectsToUpdate->remove(&embeddedObject);
 }
 
 void FrameView::setMediaType(const String& mediaType)
@@ -2644,92 +2645,80 @@ void FrameView::scrollToAnchor()
     m_maintainScrollPositionAnchor = anchorNode;
 }
 
-void FrameView::updateWidget(RenderObject* object)
+void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
 {
-    ASSERT(!object->node() || object->node()->isElementNode());
-    Element* ownerElement = toElement(object->node());
-    // The object may have already been destroyed (thus node cleared),
+    ASSERT(m_embeddedObjectsToUpdate->contains(&embeddedObject));
+
+    // The object may have already been destroyed (thus element cleared),
     // but FrameView holds a manual ref, so it won't have been deleted.
-    ASSERT(m_widgetUpdateSet->contains(object));
-    if (!ownerElement)
+    if (!embeddedObject.element())
         return;
 
-    if (object->isEmbeddedObject()) {
-        RenderEmbeddedObject* embeddedObject = static_cast<RenderEmbeddedObject*>(object);
-        // No need to update if it's already crashed or known to be missing.
-        if (embeddedObject->isPluginUnavailable())
-            return;
+    // No need to update if it's already crashed or known to be missing.
+    if (embeddedObject.isPluginUnavailable())
+        return;
 
-        if (object->isSnapshottedPlugIn()) {
-            if (ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag)) {
-                HTMLPlugInImageElement* pluginElement = toHTMLPlugInImageElement(ownerElement);
-                pluginElement->checkSnapshotStatus();
-            }
-            return;
+    Element& element = *embeddedObject.element();
+
+    if (embeddedObject.isSnapshottedPlugIn()) {
+        if (isHTMLObjectElement(element) || isHTMLEmbedElement(element)) {
+            HTMLPlugInImageElement& pluginElement = toHTMLPlugInImageElement(element);
+            pluginElement.checkSnapshotStatus();
         }
-
-        // FIXME: This could turn into a real virtual dispatch if we defined
-        // updateWidget(PluginCreationOption) on HTMLElement.
-        if (ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag) || ownerElement->hasTagName(appletTag)) {
-            HTMLPlugInImageElement* pluginElement = toHTMLPlugInImageElement(ownerElement);
-            if (pluginElement->needsCheckForSizeChange()) {
-                pluginElement->checkSnapshotStatus();
-                return;
-            }
-            if (pluginElement->needsWidgetUpdate())
-                pluginElement->updateWidget(CreateAnyWidgetType);
-        }
-        // FIXME: It is not clear that Media elements need or want this updateWidget() call.
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        else if (ownerElement->isMediaElement())
-            toHTMLMediaElement(ownerElement)->updateWidget(CreateAnyWidgetType);
-#endif
-        else
-            ASSERT_NOT_REACHED();
-
-        // Caution: it's possible the object was destroyed again, since loading a
-        // plugin may run any arbitrary JavaScript.
-        embeddedObject->updateWidgetPosition();
+        return;
     }
+
+    // FIXME: This could turn into a real virtual dispatch if we defined
+    // updateWidget(PluginCreationOption) on HTMLElement.
+    if (isHTMLObjectElement(element) || isHTMLEmbedElement(element) || isHTMLAppletElement(element)) {
+        HTMLPlugInImageElement& pluginElement = toHTMLPlugInImageElement(element);
+        if (pluginElement.needsCheckForSizeChange()) {
+            pluginElement.checkSnapshotStatus();
+            return;
+        }
+        if (pluginElement.needsWidgetUpdate())
+            pluginElement.updateWidget(CreateAnyWidgetType);
+    }
+
+    // FIXME: It is not clear that Media elements need or want this updateWidget() call.
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    else if (element.isMediaElement())
+        toHTMLMediaElement(element).updateWidget(CreateAnyWidgetType);
+#endif
+    else
+        ASSERT_NOT_REACHED();
+
+    // Caution: it's possible the object was destroyed again, since loading a
+    // plugin may run any arbitrary JavaScript.
+    embeddedObject.updateWidgetPosition();
 }
 
-bool FrameView::updateWidgets()
+bool FrameView::updateEmbeddedObjects()
 {
-    if (m_nestedLayoutCount > 1 || !m_widgetUpdateSet || m_widgetUpdateSet->isEmpty())
+    if (m_nestedLayoutCount > 1 || !m_embeddedObjectsToUpdate || m_embeddedObjectsToUpdate->isEmpty())
         return true;
-    
-    size_t size = m_widgetUpdateSet->size();
 
-    Vector<RenderObject*> objects;
-    objects.reserveInitialCapacity(size);
     // Protect RendereArena from getting wiped out, when Document is detached during updateWidget().
     RefPtr<RenderArena> protectedArena = frame().document()->renderArena();
 
-    RenderObjectSet::const_iterator end = m_widgetUpdateSet->end();
-    for (RenderObjectSet::const_iterator it = m_widgetUpdateSet->begin(); it != end; ++it) {
-        RenderObject* object = *it;
-        objects.uncheckedAppend(object);
-        if (object->isEmbeddedObject()) {
-            RenderEmbeddedObject* embeddedObject = static_cast<RenderEmbeddedObject*>(object);
-            embeddedObject->ref();
-        }
+    Vector<RenderEmbeddedObject*> embeddedObjects;
+    embeddedObjects.reserveInitialCapacity(m_embeddedObjectsToUpdate->size());
+    for (auto it = m_embeddedObjectsToUpdate->begin(), end = m_embeddedObjectsToUpdate->end(); it != end; ++it) {
+        RenderEmbeddedObject& object = **it;
+        embeddedObjects.uncheckedAppend(&object);
+        object.ref();
     }
 
-    for (size_t i = 0; i < size; ++i) {
-        RenderObject* object = objects[i];
-        updateWidget(object);
-        m_widgetUpdateSet->remove(object);
+    for (unsigned i = 0; i < embeddedObjects.size(); ++i) {
+        RenderEmbeddedObject& object = *embeddedObjects[i];
+        updateEmbeddedObject(object);
+        m_embeddedObjectsToUpdate->remove(&object);
     }
 
-    for (size_t i = 0; i < size; ++i) {
-        RenderObject* object = objects[i];
-        if (object->isEmbeddedObject()) {
-            RenderEmbeddedObject* embeddedObject = static_cast<RenderEmbeddedObject*>(object);
-            embeddedObject->deref(protectedArena.get());
-        }
-    }
+    for (unsigned i = 0; i < embeddedObjects.size(); ++i)
+        embeddedObjects[i]->deref(protectedArena.get());
     
-    return m_widgetUpdateSet->isEmpty();
+    return m_embeddedObjectsToUpdate->isEmpty();
 }
 
 void FrameView::flushAnyPendingPostLayoutTasks()
@@ -2790,8 +2779,8 @@ void FrameView::performPostLayoutTasks()
     // layout() protects FrameView, but it still can get destroyed when updateWidgets()
     // is called through the post layout timer.
     Ref<FrameView> protect(*this);
-    for (unsigned i = 0; i < maxUpdateWidgetsIterations; i++) {
-        if (updateWidgets())
+    for (unsigned i = 0; i < maxUpdateEmbeddedObjectsIterations; i++) {
+        if (updateEmbeddedObjects())
             break;
     }
 

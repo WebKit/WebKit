@@ -76,7 +76,7 @@ void RenderSnapshottedPlugIn::layout()
     if (newSize == oldSize)
         return;
 
-    view().frameView().addWidgetToUpdate(this);
+    view().frameView().addEmbeddedObjectToUpdate(*this);
 }
 
 void RenderSnapshottedPlugIn::updateSnapshot(PassRefPtr<Image> image)

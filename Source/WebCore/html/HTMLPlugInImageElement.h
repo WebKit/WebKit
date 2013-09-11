@@ -166,6 +166,14 @@ private:
     SnapshotDecision m_snapshotDecision;
 };
 
+inline HTMLPlugInImageElement& toHTMLPlugInImageElement(Node& node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(node.isPluginElement());
+    HTMLPlugInElement& plugInElement = static_cast<HTMLPlugInElement&>(node);
+    ASSERT_WITH_SECURITY_IMPLICATION(plugInElement.isPlugInImageElement());
+    return static_cast<HTMLPlugInImageElement&>(plugInElement);
+}
+
 inline HTMLPlugInImageElement* toHTMLPlugInImageElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isPluginElement());

@@ -1,3 +1,39 @@
+2013-09-11  Andreas Kling  <akling@apple.com>
+
+        FrameView: Tighten widget handling code.
+        <https://webkit.org/b/121155>
+
+        Reviewed by Antti Koivisto.
+
+        Harden typing in this code to work with RenderEmbeddedObject& instead of RenderObject*.
+        Functions and members renamed to reflect that they only deal with embedded objects.
+
+        * html/HTMLPlugInImageElement.h:
+        (WebCore::toHTMLPlugInImageElement):
+
+            Add a toHTMLPlugInImageElement that takes an Element&.
+
+        * html/HTMLTagNames.in:
+
+            Generate type helpers for applet and embed elements.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addEmbeddedObjectToUpdate):
+        (WebCore::FrameView::removeEmbeddedObjectToUpdate):
+        (WebCore::FrameView::updateEmbeddedObjects):
+        (WebCore::FrameView::updateEmbeddedObject):
+
+            Re-ordered this function in early return style. Change locals into references.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::~RenderEmbeddedObject):
+        (WebCore::RenderEmbeddedObject::layout):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::layout):
+
+            Updated for new FrameView function signatures.
+
 2013-09-11  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Split out generic Windows files into its own file
