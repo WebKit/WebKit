@@ -1,3 +1,12 @@
+2013-09-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after the unreviewed r155498 to unbreak the failure
+        counter of run-javascriptcore-tests build step on build.webkit.org.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunJavaScriptCoreTests.commandComplete):
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+
 2013-09-10  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, be a bit more clear about what we mean by 'js' tests. I think this

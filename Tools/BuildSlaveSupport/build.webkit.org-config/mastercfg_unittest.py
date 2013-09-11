@@ -128,7 +128,7 @@ class RunJavaScriptCoreTestsTest(unittest.TestCase):
     1 regression found.
     0 tests fixed.
 
-Results for js tests:
+Results for LayoutTests/js tests:
     0 failures found.
     0 crashes found.
     OK.""")
@@ -139,7 +139,7 @@ Results for js tests:
     0 tests fixed.
     OK.
 
-Results for js tests:
+Results for LayoutTests/js tests:
     469 failures found.
     0 crashes found.
 
@@ -153,7 +153,7 @@ Results for JSC stress tests:
     0 tests fixed.
     OK.
 
-Results for js tests:
+Results for LayoutTests/js tests:
     0 failures found.
     1 crashes found.
 
@@ -166,7 +166,7 @@ Results for JSC stress tests:
     1 regression found.
     0 tests fixed.
 
-Results for js tests:
+Results for LayoutTests/js tests:
     469 failures found.
     0 crashes found.
 
@@ -179,7 +179,7 @@ Results for JSC stress tests:
     0 regression found.
     0 tests fixed.
 
-Results for js tests:
+Results for LayoutTests/js tests:
     0 failures found.
     0 crashes found.
 
@@ -192,7 +192,7 @@ Results for JSC stress tests:
     0 regression found.
     0 tests fixed.
 
-Results for js tests:
+Results for LayoutTests/js tests:
     0 failures found.
     25 crashes found.
 
