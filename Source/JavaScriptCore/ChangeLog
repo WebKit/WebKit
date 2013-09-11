@@ -1,5 +1,13 @@
 2013-09-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Remove needsDataFormatConversion because it is unused.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * bytecode/DataFormat.h:
+
+2013-09-11  Filip Pizlo  <fpizlo@apple.com>
+
         Rename fillSpeculateInt to fillSpeculateInt32.
 
         Rubber stamped by Mark Hahnenberg.
