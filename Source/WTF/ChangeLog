@@ -1,3 +1,24 @@
+2013-09-11  Anders Carlsson  <andersca@apple.com>
+
+        Implement Vector::append for move-only types
+        https://bugs.webkit.org/show_bug.cgi?id=120805
+
+        Reviewed by Andreas Kling.
+
+        * wtf/Vector.h:
+        (WTF::::expandCapacity):
+        Remove const from the pointer passed to expandCapacity, it can be non-const if we're moving.
+
+        (WTF::::append):
+        Change append to take U&& and use std::forward when constructing the element and when passing
+        the element along to appendSlowCase if that's necessary.
+        
+        (WTF::::appendSlowCase):
+        Use std::forward.
+
+        (WTF::::uncheckedAppend):
+        Rename val to value.
+
 2013-09-11  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         WTF::OwnPtr should behave similarly with the rest of WTF smart pointers

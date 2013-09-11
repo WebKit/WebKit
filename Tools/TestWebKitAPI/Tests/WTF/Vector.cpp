@@ -155,4 +155,34 @@ TEST(WTF_Vector, MoveOnly_UncheckedAppend)
         EXPECT_EQ(vector[i].value(), i);
 }
 
+TEST(WTF_Vector, MoveOnly_Append)
+{
+    Vector<MoveOnly> vector;
+
+    for (size_t i = 0; i < 100; ++i) {
+        MoveOnly moveOnly(i);
+        vector.append(std::move(moveOnly));
+        EXPECT_EQ(moveOnly.value(), 0U);
+    }
+
+    for (size_t i = 0; i < 100; ++i)
+        EXPECT_EQ(vector[i].value(), i);
+
+    for (size_t i = 0; i < 16; ++i) {
+        Vector<MoveOnly> vector;
+
+        vector.append(i);
+
+        for (size_t j = 0; j < i; ++j)
+            vector.append(j);
+        vector.append(std::move(vector[0]));
+
+        EXPECT_EQ(vector[0].value(), 0U);
+
+        for (size_t j = 0; j < i; ++j)
+            EXPECT_EQ(vector[j + 1].value(), j);
+        EXPECT_EQ(vector.last().value(), i);
+    }
+}
+
 } // namespace TestWebKitAPI
