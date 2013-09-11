@@ -1,3 +1,15 @@
+2013-09-11  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile errors.
+        https://bugs.webkit.org/show_bug.cgi?id=121153
+
+        Reviewed by Brent Fulgham.
+
+        * page/win/FrameCairoWin.cpp:
+        (WebCore::imageFromRect): Return empty GDIObject.
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Get actual handle from GDIObject.
+
 2013-09-11  Darin Adler  <darin@apple.com>
 
         Rework CSS parser, eliminating "floating" concept and using %destructor

@@ -35,7 +35,7 @@ namespace WebCore {
 GDIObject<HBITMAP> imageFromRect(const Frame*, IntRect&)
 {
     notImplemented();
-    return nullptr;
+    return GDIObject<HBITMAP>();
 }
 
 } // namespace WebCore
