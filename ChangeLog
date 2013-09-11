@@ -1,3 +1,16 @@
+2013-09-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Stop disabling deprecated symbols in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=121145
+
+        Reviewed by Carlos Garcia Campos.
+
+        Disabling the dependencies' deprecated symbols in debug builds is only causing unnecessary
+        build failures. Compiler warnings are being thrown whenever a deprecated symbol is being
+        used, so a build failure is an overreach in this case.
+
+        * Source/autotools/SetupAutoconfHeader.m4:
+
 2013-09-10  Marcelo Morais  <m.morais@samsung.com>
 
         [EFL] WebInspector: Move to new webinspector

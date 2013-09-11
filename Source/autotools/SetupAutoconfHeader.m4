@@ -1,12 +1,7 @@
 # Configuration flags that are used throughout WebKitGTK+.
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [The gettext catalog name])
 
-if test "$enable_debug" = "yes"; then
-    AC_DEFINE([GDK_PIXBUF_DISABLE_DEPRECATED], [1], [ ])
-    AC_DEFINE([GDK_DISABLE_DEPRECATED], [1], [ ])
-    AC_DEFINE([GTK_DISABLE_DEPRECATED], [1], [ ])
-    AC_DEFINE([PANGO_DISABLE_DEPRECATED], [1], [ ])
-else
+if test "$enable_debug" = "no"; then
     AC_DEFINE([NDEBUG], [1], [Define to disable debugging])
 fi
 
@@ -59,9 +54,6 @@ fi
 
 if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
     AC_DEFINE([WTF_USE_GSTREAMER], [1], [ ])
-    if test "$enable_debug" = "yes"; then
-        AC_DEFINE([GST_DISABLE_DEPRECATED], [1], [ ])
-    fi
 fi
 
 if test "$enable_web_audio" = "yes"; then
