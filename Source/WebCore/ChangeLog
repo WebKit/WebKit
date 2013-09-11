@@ -1,3 +1,15 @@
+2013-09-11  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Adds mapping MenuItemRadioRole to ATK
+        https://bugs.webkit.org/show_bug.cgi?id=121149
+
+        Reviewed by Mario Sanchez Prada.
+
+        Adds mapping MenuItemRadioRole to ATK.
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+
 2013-09-10  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Reimplement atk_text_get_text_*_offset for LINE boundaries

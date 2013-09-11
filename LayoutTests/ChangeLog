@@ -1,3 +1,15 @@
+2013-09-11  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Adds mapping MenuItemRadioRole to ATK
+        https://bugs.webkit.org/show_bug.cgi?id=121149
+
+        Reviewed by Mario Sanchez Prada.
+
+        Corrected expectations so that they can properly test MenuItemRadioRole.
+
+        * platform/efl/accessibility/aria-menubar-menuitems-expected.txt:
+        * platform/gtk/accessibility/aria-menubar-menuitems-expected.txt:
+
 2013-09-11  Chris Fleizach  <cfleizach@apple.com>
 
         AX: AXValue/AXMenuItemMarkChar not defined for menuitemradio (should be false (0) with aria-checked=mixed | undefined)

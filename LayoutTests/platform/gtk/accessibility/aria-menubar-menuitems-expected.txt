@@ -16,7 +16,7 @@ AXRole: AXGroup
 PASS menuSubItem1.childrenCount is 0
 AXRole: AXMenu
 PASS menuSubItem2.childrenCount is 1
-AXRole: AXMenuItem
+AXRole: AXRadioMenuItem
 PASS subMenuSubItem.childrenCount is 0
 PASS successfullyParsed is true
 

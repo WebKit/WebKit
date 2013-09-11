@@ -158,6 +158,8 @@ static inline const char* roleToString(AtkRole role)
         return "AXButton";
     case ATK_ROLE_RADIO_BUTTON:
         return "AXRadioButton";
+    case ATK_ROLE_RADIO_MENU_ITEM:
+        return "AXRadioMenuItem";
     case ATK_ROLE_ROW_HEADER:
         return "AXRowHeader";
     case ATK_ROLE_RULER:
