@@ -1,3 +1,13 @@
+2013-09-11  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] Compile error when VIDEO is not enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=121156
+
+        Reviewed by Andreas Kling.
+
+        * WebView.cpp:
+        (WebView::enterFullscreenForNode): Protect isHTMLVideoElement() function with ENABLE(VIDEO) guard.
+
 2013-09-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate more HTML type checks and casting
