@@ -93,13 +93,7 @@ void neonDrawLighting(FELightingPaintingDataForNeon*);
 
 inline void FELighting::platformApplyNeon(LightingData& data, LightSource::PaintingData& paintingData)
 {
-    union {
-        FELightingFloatArgumentsForNeon floatArguments;
-        std::aligned_storage<sizeof(FELightingFloatArgumentsForNeon), 16>::type forAlignment;
-    } alignedArguments;
-
-    auto& floatArguments = alignedArguments.floatArguments;
-
+    FELightingFloatArgumentsForNeon floatArguments __attribute__((__aligned__(16)));
     FELightingPaintingDataForNeon neonData = {
         data.pixels->data(),
         1,

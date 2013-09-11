@@ -34,7 +34,8 @@ namespace WebCore {
 // These constants are copied to the following SIMD registers:
 //   ALPHAX_Q ALPHAY_Q REMAPX_D REMAPY_D
 
-static WTF_ALIGNED(short, s_FELightingConstantsForNeon[], 16) = {
+
+static short s_FELightingConstantsForNeon[] __attribute__((__aligned__(16))) = {
     // Alpha coefficients.
     -2, 1, 0, -1, 2, 1, 0, -1,
     0, -1, -2, -1, 0, 1, 2, 1,

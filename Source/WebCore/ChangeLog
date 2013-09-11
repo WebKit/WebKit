@@ -1,3 +1,16 @@
+2013-09-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        ARM buildfix after r155491
+        https://bugs.webkit.org/show_bug.cgi?id=121152
+
+        Reviewed by Anders Carlsson.
+
+        FELightingNEON.cpp and FELightingNEON.h is inside COMPILER(GCC) guard, so it's safe to use GCC attribute.
+
+        * platform/graphics/cpu/arm/filters/FELightingNEON.cpp: Use __aligned__ GCC attribute directly.
+        * platform/graphics/cpu/arm/filters/FELightingNEON.h: Use __aligned__ GCC attribute instead of ugly template magic.
+        (WebCore::FELighting::platformApplyNeon):
+
 2013-09-11  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile errors.
