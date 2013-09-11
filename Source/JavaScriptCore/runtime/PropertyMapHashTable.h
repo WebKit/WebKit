@@ -24,6 +24,7 @@
 #include "PropertyOffset.h"
 #include "Structure.h"
 #include "WriteBarrier.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HashTable.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
@@ -250,6 +251,7 @@ private:
     unsigned* m_index;
     unsigned m_keyCount;
     unsigned m_deletedCount;
+    unsigned m_entropy;
     OwnPtr< Vector<PropertyOffset> > m_deletedOffsets;
 
     static const unsigned MinimumTableSize = 8;
@@ -280,7 +282,7 @@ inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
 {
     ASSERT(key);
     ASSERT(key->isIdentifier() || key->isEmptyUnique());
-    unsigned hash = key->existingHash();
+    unsigned hash = key->existingHash() ^ m_entropy;
     unsigned step = 0;
 
 #if DUMP_PROPERTYMAP_STATS
@@ -299,7 +301,7 @@ inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
 #endif
 
         if (!step)
-            step = WTF::doubleHash(key->existingHash()) | 1;
+            step = WTF::doubleHash(key->existingHash() ^ m_entropy) | 1;
         hash += step;
 
 #if DUMP_PROPERTYMAP_STATS
@@ -312,7 +314,7 @@ inline PropertyTable::find_iterator PropertyTable::findWithString(const KeyType&
 {
     ASSERT(key);
     ASSERT(!key->isIdentifier() && !key->hasHash());
-    unsigned hash = key->hash();
+    unsigned hash = key->hash() ^ m_entropy;
     unsigned step = 0;
 
 #if DUMP_PROPERTYMAP_STATS
@@ -332,7 +334,7 @@ inline PropertyTable::find_iterator PropertyTable::findWithString(const KeyType&
 #endif
 
         if (!step)
-            step = WTF::doubleHash(key->existingHash()) | 1;
+            step = WTF::doubleHash(key->existingHash() ^ m_entropy) | 1;
         hash += step;
 
 #if DUMP_PROPERTYMAP_STATS
@@ -499,6 +501,7 @@ inline void PropertyTable::rehash(unsigned newCapacity)
     m_indexMask = m_indexSize - 1;
     m_keyCount = 0;
     m_deletedCount = 0;
+    m_entropy = WTF::cryptographicallyRandomNumber();
     m_index = static_cast<unsigned*>(fastZeroedMalloc(dataSize()));
 
     for (; iter != end; ++iter) {

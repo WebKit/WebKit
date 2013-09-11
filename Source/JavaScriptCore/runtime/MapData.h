@@ -105,6 +105,7 @@ private:
         WriteBarrier<Unknown> value;
     };
 
+    typedef HashMap<JSCell*, int32_t, typename WTF::DefaultHash<JSCell*>::Hash, WTF::HashTraits<JSCell*>, IndexTraits> CellKeyedMap;
     typedef HashMap<EncodedJSValue, int32_t, EncodedJSValueHash, EncodedJSValueHashTraits, IndexTraits> ValueKeyedMap;
     typedef HashMap<StringImpl*, int32_t, typename WTF::DefaultHash<StringImpl*>::Hash, WTF::HashTraits<StringImpl*>, IndexTraits> StringKeyedMap;
 
@@ -126,6 +127,7 @@ private:
     ALWAYS_INLINE void replaceAndPackBackingStore(Entry* destination, int32_t newSize);
     ALWAYS_INLINE void replaceBackingStore(Entry* destination, int32_t newSize);
 
+    CellKeyedMap m_cellKeyedTable;
     ValueKeyedMap m_valueKeyedTable;
     StringKeyedMap m_stringKeyedTable;
     int32_t m_capacity;

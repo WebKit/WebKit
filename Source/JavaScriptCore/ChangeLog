@@ -1,3 +1,27 @@
+2013-09-11  Oliver Hunt  <oliver@apple.com>
+
+        Partial Information Leakage in Hash Table implementations (PrivateName)
+        https://bugs.webkit.org/show_bug.cgi?id=120663
+
+        Reviewed by Michael Saboff.
+
+        These hashtables mix keys that are hashed on pointers or user controlled
+        data.  To prevent any potential information leak we mask the keys with
+        a per table entropy value.
+
+        * runtime/MapData.cpp:
+        (JSC::MapData::MapData):
+        (JSC::MapData::find):
+        (JSC::MapData::add):
+        (JSC::MapData::remove):
+        * runtime/MapData.h:
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::find):
+        (JSC::PropertyTable::findWithString):
+        (JSC::PropertyTable::rehash):
+        * runtime/PropertyTable.cpp:
+        (JSC::PropertyTable::PropertyTable):
+
 2013-09-11  Sam Weinig  <sam@webkit.org>
 
         MapData and WeakMapData don't need to be objects

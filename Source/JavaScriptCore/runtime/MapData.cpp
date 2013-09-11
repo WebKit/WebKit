@@ -32,6 +32,7 @@
 #include "JSCJSValueInlines.h"
 #include "SlotVisitorInlines.h"
 
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MathExtras.h>
 
 
@@ -59,6 +60,13 @@ MapData::Entry* MapData::find(CallFrame* callFrame, KeyType key)
             return 0;
         return &m_entries[iter->value];
     }
+    if (key.value.isCell()) {
+        auto iter = m_cellKeyedTable.find(key.value.asCell());
+        if (iter == m_cellKeyedTable.end())
+            return 0;
+        return &m_entries[iter->value];
+    }
+
     auto iter = m_valueKeyedTable.find(JSValue::encode(key.value));
     if (iter == m_valueKeyedTable.end())
         return 0;
@@ -96,9 +104,11 @@ void MapData::set(CallFrame* callFrame, KeyType key, JSValue value)
     
 MapData::Entry* MapData::add(CallFrame* callFrame, KeyType key)
 {
-    if (!key.value.isString())
-        return add(callFrame, m_valueKeyedTable, JSValue::encode(key.value), key);
-    return add(callFrame, m_stringKeyedTable, asString(key.value)->value(callFrame).impl(), key);
+    if (key.value.isString())
+        return add(callFrame, m_stringKeyedTable, asString(key.value)->value(callFrame).impl(), key);
+    if (key.value.isCell())
+        return add(callFrame, m_cellKeyedTable, key.value.asCell(), key);
+    return add(callFrame, m_valueKeyedTable, JSValue::encode(key.value), key);
 }
 
 JSValue MapData::get(CallFrame* callFrame, KeyType key)
@@ -117,6 +127,12 @@ bool MapData::remove(CallFrame* callFrame, KeyType key)
             return false;
         location = iter->value;
         m_stringKeyedTable.remove(iter);
+    } else if (key.value.isCell()) {
+        auto iter = m_cellKeyedTable.find(key.value.asCell());
+        if (iter == m_cellKeyedTable.end())
+            return false;
+        location = iter->value;
+        m_cellKeyedTable.remove(iter);
     } else {
         auto iter = m_valueKeyedTable.find(JSValue::encode(key.value));
         if (iter == m_valueKeyedTable.end())
