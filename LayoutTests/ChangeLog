@@ -1,3 +1,11 @@
+2013-09-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed test expectation maintenance.
+
+        * platform/win/TestExpectations: Rearrange some test declarations
+        to match Mac for easier comparison. Disable some unrelated tests
+        (e.g., Ogg Vorbis tests).
+
 2013-09-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: AXValue/AXMenuItemMarkChar not defined for menuitemradio (should be false (0) with aria-checked=mixed | undefined)
