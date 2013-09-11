@@ -1,3 +1,11 @@
+2013-09-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * wtf/win/GDIObject.h:
+        (WTF::GDIObject::GDIObject): I forgot to check in as part of
+        r155557 by using webkit-patch land in a sub-directory!
+
 2013-09-11  Oliver Hunt  <oliver@apple.com>
 
         Partial Information Leakage in Hash Table implementations (PrivateName)

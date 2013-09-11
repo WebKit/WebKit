@@ -40,6 +40,7 @@ template<typename T> class GDIObject {
     WTF_MAKE_NONCOPYABLE(GDIObject);
 public:
     GDIObject() : m_object(0) { }
+    GDIObject(std::nullptr_t) : m_object(0) { }
     ~GDIObject() { deleteObject<T>(m_object); }
 
     T get() const { return m_object; }
