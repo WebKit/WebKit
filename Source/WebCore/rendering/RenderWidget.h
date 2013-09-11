@@ -64,7 +64,6 @@ public:
     static RenderWidget* find(const Widget*);
 
     void updateWidgetPosition();
-    void widgetPositionsUpdated();
     IntRect windowClipRect() const;
 
     void notifyWidget(WidgetNotification);

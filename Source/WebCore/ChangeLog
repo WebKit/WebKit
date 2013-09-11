@@ -1,5 +1,14 @@
 2013-09-11  Andreas Kling  <akling@apple.com>
 
+        Remove Widget::widgetPositionsUpdated().
+        <https://webkit.org/b/121160>
+
+        Reviewed by Anders Carlsson.
+
+        Remove this no-op virtual that was only used by chromium.
+
+2013-09-11  Andreas Kling  <akling@apple.com>
+
         Page::backForward() should return a reference.
         <https://webkit.org/b/121151>
 

@@ -357,13 +357,6 @@ void RenderWidget::updateWidgetPosition()
     }
 }
 
-void RenderWidget::widgetPositionsUpdated()
-{
-    if (!m_widget)
-        return;
-    m_widget->widgetPositionsUpdated();
-}
-
 IntRect RenderWidget::windowClipRect() const
 {
     if (!m_frameView)

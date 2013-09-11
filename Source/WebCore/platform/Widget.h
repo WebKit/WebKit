@@ -194,9 +194,6 @@ public:
 
     virtual void frameRectsChanged() { }
 
-    // Notifies this widget that other widgets on the page have been repositioned.
-    virtual void widgetPositionsUpdated() {}
-
     // Notifies this widget that its clip rect changed.
     virtual void clipRectChanged() { }
 

@@ -989,9 +989,6 @@ void RenderView::updateWidgetPositions()
     for (size_t i = 0; i < size; ++i)
         renderWidgets[i]->updateWidgetPosition();
 
-    for (size_t i = 0; i < size; ++i)
-        renderWidgets[i]->widgetPositionsUpdated();
-
     releaseWidgets(renderWidgets);
 }
 
