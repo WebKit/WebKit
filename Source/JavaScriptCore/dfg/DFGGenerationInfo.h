@@ -73,7 +73,7 @@ public:
     {
         m_node = node;
         m_useCount = useCount;
-        m_registerFormat = DataFormatInteger;
+        m_registerFormat = DataFormatInt32;
         m_spillFormat = DataFormatNone;
         m_canFill = false;
         u.gpr = gpr;
@@ -220,9 +220,9 @@ public:
         return JSC::isJSFormat(registerFormat(), expectedFormat) || JSC::isJSFormat(spillFormat(), expectedFormat);
     }
     
-    bool isJSInteger()
+    bool isJSInt32()
     {
-        return isJSFormat(DataFormatJSInteger);
+        return isJSFormat(DataFormatJSInt32);
     }
     
     bool isJSDouble()
@@ -339,7 +339,7 @@ public:
 #endif
     void fillInteger(VariableEventStream& stream, GPRReg gpr)
     {
-        m_registerFormat = DataFormatInteger;
+        m_registerFormat = DataFormatInt32;
         u.gpr = gpr;
         
         if (m_bornForOSR)

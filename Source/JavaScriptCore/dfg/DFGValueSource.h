@@ -54,7 +54,7 @@ enum ValueSourceKind {
 static inline ValueSourceKind dataFormatToValueSourceKind(DataFormat dataFormat)
 {
     switch (dataFormat) {
-    case DataFormatInteger:
+    case DataFormatInt32:
         return Int32InJSStack;
     case DataFormatDouble:
         return DoubleInJSStack;
@@ -78,7 +78,7 @@ static inline DataFormat valueSourceKindToDataFormat(ValueSourceKind kind)
     case ValueInJSStack:
         return DataFormatJS;
     case Int32InJSStack:
-        return DataFormatInteger;
+        return DataFormatInt32;
     case CellInJSStack:
         return DataFormatCell;
     case BooleanInJSStack:

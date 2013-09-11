@@ -331,7 +331,7 @@ SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForGPR(VirtualRegister spil
     else {
 #if USE(JSVALUE64)
         ASSERT(info.gpr() == source);
-        if (registerFormat == DataFormatInteger)
+        if (registerFormat == DataFormatInt32)
             spillAction = Store32Payload;
         else if (registerFormat == DataFormatCell || registerFormat == DataFormatStorage)
             spillAction = StorePtr;
@@ -350,9 +350,9 @@ SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForGPR(VirtualRegister spil
 #endif
     }
         
-    if (registerFormat == DataFormatInteger) {
+    if (registerFormat == DataFormatInt32) {
         ASSERT(info.gpr() == source);
-        ASSERT(isJSInteger(info.registerFormat()));
+        ASSERT(isJSInt32(info.registerFormat()));
         if (node->hasConstant()) {
             ASSERT(isInt32Constant(node));
             fillAction = SetInt32Constant;
@@ -395,8 +395,8 @@ SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForGPR(VirtualRegister spil
                 fillAction = SetTrustedJSConstant;
             else
                 fillAction = SetJSConstant;
-        } else if (info.spillFormat() == DataFormatInteger) {
-            ASSERT(registerFormat == DataFormatJSInteger);
+        } else if (info.spillFormat() == DataFormatInt32) {
+            ASSERT(registerFormat == DataFormatJSInt32);
             fillAction = Load32PayloadBoxInt;
         } else if (info.spillFormat() == DataFormatDouble) {
             ASSERT(registerFormat == DataFormatJSDouble);
@@ -411,8 +411,8 @@ SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForGPR(VirtualRegister spil
             fillAction = Load32Payload;
         else { // Fill the Tag
             switch (info.spillFormat()) {
-            case DataFormatInteger:
-                ASSERT(registerFormat == DataFormatJSInteger);
+            case DataFormatInt32:
+                ASSERT(registerFormat == DataFormatJSInt32);
                 fillAction = SetInt32Tag;
                 break;
             case DataFormatCell:
@@ -1083,14 +1083,14 @@ void SpeculativeJIT::checkConsistency()
         case DataFormatNone:
             break;
         case DataFormatJS:
-        case DataFormatJSInteger:
+        case DataFormatJSInt32:
         case DataFormatJSDouble:
         case DataFormatJSCell:
         case DataFormatJSBoolean:
 #if USE(JSVALUE32_64)
             break;
 #endif
-        case DataFormatInteger:
+        case DataFormatInt32:
         case DataFormatCell:
         case DataFormatBoolean:
         case DataFormatStorage: {
@@ -2218,8 +2218,8 @@ GeneratedOperandType SpeculativeJIT::checkGeneratedTypeForToInt32(Node* node)
     case DataFormatJSBoolean:
         return GeneratedOperandJSValue;
 
-    case DataFormatJSInteger:
-    case DataFormatInteger:
+    case DataFormatJSInt32:
+    case DataFormatInt32:
         return GeneratedOperandInteger;
 
     case DataFormatJSDouble:
@@ -2324,7 +2324,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
         
             JITCompiler::JumpList converted;
 
-            if (info.registerFormat() == DataFormatJSInteger)
+            if (info.registerFormat() == DataFormatJSInt32)
                 m_jit.move(payloadGPR, resultGpr);
             else {
                 GPRReg tagGPR = op1.tagGPR();

@@ -506,9 +506,9 @@ public:
             return;
         }
 
-        case DataFormatInteger: {
+        case DataFormatInt32: {
             m_jit.store32(info.gpr(), JITCompiler::payloadFor(spillMe));
-            info.spill(*m_stream, spillMe, DataFormatInteger);
+            info.spill(*m_stream, spillMe, DataFormatInt32);
             return;
         }
 
@@ -526,7 +526,7 @@ public:
             GPRReg reg = info.gpr();
             // We need to box int32 and cell values ...
             // but on JSVALUE64 boxing a cell is a no-op!
-            if (spillFormat == DataFormatInteger)
+            if (spillFormat == DataFormatInt32)
                 m_jit.or64(GPRInfo::tagTypeNumberRegister, reg);
             
             // Spill the value, and record it as spilled in its boxed form.
@@ -790,7 +790,7 @@ public:
 
     // These method called to initialize the the GenerationInfo
     // to describe the result of an operation.
-    void integerResult(GPRReg reg, Node* node, DataFormat format = DataFormatInteger, UseChildrenMode mode = CallUseChildren)
+    void integerResult(GPRReg reg, Node* node, DataFormat format = DataFormatInt32, UseChildrenMode mode = CallUseChildren)
     {
         if (mode == CallUseChildren)
             useChildren(node);
@@ -798,13 +798,13 @@ public:
         VirtualRegister virtualRegister = node->virtualRegister();
         GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
-        if (format == DataFormatInteger) {
+        if (format == DataFormatInt32) {
             m_jit.jitAssertIsInt32(reg);
             m_gprs.retain(reg, virtualRegister, SpillOrderInteger);
             info.initInteger(node, node->refCount(), reg);
         } else {
 #if USE(JSVALUE64)
-            RELEASE_ASSERT(format == DataFormatJSInteger);
+            RELEASE_ASSERT(format == DataFormatJSInt32);
             m_jit.jitAssertIsJSInt32(reg);
             m_gprs.retain(reg, virtualRegister, SpillOrderJS);
             info.initJSValue(node, node->refCount(), reg, format);
@@ -815,7 +815,7 @@ public:
     }
     void integerResult(GPRReg reg, Node* node, UseChildrenMode mode)
     {
-        integerResult(reg, node, DataFormatInteger, mode);
+        integerResult(reg, node, DataFormatInt32, mode);
     }
     void noResult(Node* node, UseChildrenMode mode = CallUseChildren)
     {
@@ -846,7 +846,7 @@ public:
 #if USE(JSVALUE64)
     void jsValueResult(GPRReg reg, Node* node, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
     {
-        if (format == DataFormatJSInteger)
+        if (format == DataFormatJSInt32)
             m_jit.jitAssertIsJSInt32(reg);
         
         if (mode == CallUseChildren)
@@ -1887,7 +1887,7 @@ public:
         VirtualRegister virtualRegister = node->virtualRegister();
         GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
         
-        return info.isJSInteger();
+        return info.isJSInt32();
     }
     
     bool compare(Node*, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
@@ -2291,7 +2291,7 @@ public:
     DataFormat format()
     {
         gpr(); // m_format is set when m_gpr is locked.
-        ASSERT(m_format == DataFormatInteger || m_format == DataFormatJSInteger);
+        ASSERT(m_format == DataFormatInt32 || m_format == DataFormatJSInt32);
         return m_format;
     }
 
@@ -2642,7 +2642,7 @@ public:
     DataFormat format()
     {
         gpr(); // m_format is set when m_gpr is locked.
-        ASSERT(m_format == DataFormatInteger || m_format == DataFormatJSInteger);
+        ASSERT(m_format == DataFormatInt32 || m_format == DataFormatJSInt32);
         return m_format;
     }
 

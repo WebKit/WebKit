@@ -118,10 +118,10 @@ public:
     {
         ASSERT(dataFormat != DataFormatNone);
 #if USE(JSVALUE32_64)
-        ASSERT(dataFormat == DataFormatInteger || dataFormat == DataFormatCell || dataFormat == DataFormatBoolean);
+        ASSERT(dataFormat == DataFormatInt32 || dataFormat == DataFormatCell || dataFormat == DataFormatBoolean);
 #endif
         ValueRecovery result;
-        if (dataFormat == DataFormatInteger)
+        if (dataFormat == DataFormatInt32)
             result.m_technique = UnboxedInt32InGPR;
         else if (dataFormat == DataFormatBoolean)
             result.m_technique = UnboxedBooleanInGPR;
@@ -162,7 +162,7 @@ public:
     {
         ValueRecovery result;
         switch (dataFormat) {
-        case DataFormatInteger:
+        case DataFormatInt32:
             result.m_technique = Int32DisplacedInJSStack;
             break;
             

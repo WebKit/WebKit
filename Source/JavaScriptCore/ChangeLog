@@ -1,5 +1,55 @@
 2013-09-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Rename DataFormatInteger to DataFormatInt32.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * bytecode/DataFormat.h:
+        (JSC::dataFormatToString):
+        (JSC::needDataFormatConversion):
+        (JSC::isJSInt32):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::inGPR):
+        (JSC::ValueRecovery::displacedInJSStack):
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::initInteger):
+        (JSC::DFG::GenerationInfo::isJSInt32):
+        (JSC::DFG::GenerationInfo::fillInteger):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::silentSavePlanForGPR):
+        (JSC::DFG::SpeculativeJIT::checkConsistency):
+        (JSC::DFG::SpeculativeJIT::checkGeneratedTypeForToInt32):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::spill):
+        (JSC::DFG::SpeculativeJIT::integerResult):
+        (JSC::DFG::SpeculativeJIT::jsValueResult):
+        (JSC::DFG::SpeculativeJIT::isInteger):
+        (JSC::DFG::IntegerOperand::format):
+        (JSC::DFG::SpeculateInt32Operand::format):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntStrict):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntStrict):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::dataFormatToValueSourceKind):
+        (JSC::DFG::valueSourceKindToDataFormat):
+
+2013-09-11  Filip Pizlo  <fpizlo@apple.com>
+
         Int32ToDouble should be predicted SpecInt48 and predictions should have nothing to do with constant folding
         https://bugs.webkit.org/show_bug.cgi?id=121141
 
