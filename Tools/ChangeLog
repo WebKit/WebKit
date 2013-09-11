@@ -1,3 +1,16 @@
+2013-09-11  Anders Carlsson  <andersca@apple.com>
+
+        The style checker shouldn't complain about returning or passing OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=121163
+
+        Reviewed by Antti Koivisto.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_function_definition_and_pass_ptr):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (PassPtrTest.test_pass_ref_ptr_return_value):
+        (PassPtrTest.test_own_ptr_parameter_value):
+
 2013-09-11  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Remove Gail dependency from build system for GTK3

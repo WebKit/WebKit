@@ -3445,7 +3445,7 @@ class PassPtrTest(CppStyleTestBase):
             'OwnPtr<Type1> myFunction(int)\n'
             '{\n'
             '}',
-            'The return type should use PassOwnPtr instead of OwnPtr.  [readability/pass_ptr] [5]')
+            '')
 
     def test_ref_ptr_parameter_value(self):
         self.assert_pass_ptr_check(
@@ -3479,7 +3479,7 @@ class PassPtrTest(CppStyleTestBase):
             'int myFunction(OwnPtr<Type1>)\n'
             '{\n'
             '}',
-            'The parameter type should use PassOwnPtr instead of OwnPtr.  [readability/pass_ptr] [5]')
+            '')
         self.assert_pass_ptr_check(
             'int myFunction(OwnPtr<Type1>& simple)\n'
             '{\n'
