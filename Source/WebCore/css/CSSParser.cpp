@@ -1011,6 +1011,12 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueDisc || valueID == CSSValueCircle || valueID == CSSValueSquare || valueID == CSSValueNone)
             return true;
         break;
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    case CSSPropertyWebkitTextSizeAdjust:
+        if (valueID == CSSValueAuto || valueID == CSSValueNone)
+            return true;
+        break;
+#endif
     case CSSPropertyWebkitTransformStyle:
         if (valueID == CSSValueFlat || valueID == CSSValuePreserve3d)
             return true;
@@ -2771,6 +2777,16 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         // When specifying either type of unit, require non-negative integers
         validPrimitive = (!id && (value->unit == CSSPrimitiveValue::CSS_PERCENTAGE || value->fValue) && validUnit(value, FInteger | FPercent | FNonNeg, CSSQuirksMode));
         break;
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    case CSSPropertyWebkitTextSizeAdjust:
+        if (id == CSSValueAuto || id == CSSValueNone)
+            validPrimitive = true;
+        else {
+            // FIXME: Handle multilength case where we allow relative units.
+            validPrimitive = (!id && validUnit(value, FPercent | FNonNeg, CSSStrictMode));
+        }
+        break;
+#endif
 
     case CSSPropertyWebkitFontSizeDelta:           // <length>
         validPrimitive = validUnit(value, FLength);

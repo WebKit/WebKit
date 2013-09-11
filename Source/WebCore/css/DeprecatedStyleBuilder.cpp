@@ -1413,6 +1413,65 @@ public:
     }
 };
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+// FIXME: Share more code with class ApplyPropertyLineHeight.
+class ApplyPropertyLineHeightForIOSTextAutosizing {
+public:
+    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        Length lineHeight;
+
+        if (primitiveValue->getIdent() == CSSValueNormal)
+            lineHeight = RenderStyle::initialLineHeight();
+        else if (primitiveValue->isLength()) {
+            double multiplier = styleResolver->style()->effectiveZoom();
+            if (styleResolver->style()->textSizeAdjust().isNone()) {
+                if (Frame* frame = styleResolver->document().frame())
+                    multiplier *= frame->textZoomFactor();
+            }
+            lineHeight = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), multiplier);
+            if (styleResolver->style()->textSizeAdjust().isPercentage())
+                lineHeight = Length(lineHeight.value() * styleResolver->style()->textSizeAdjust().multiplier(), Fixed);
+        } else if (primitiveValue->isPercentage()) {
+            // FIXME: percentage should not be restricted to an integer here.
+            lineHeight = Length((styleResolver->style()->fontSize() * primitiveValue->getIntValue()) / 100, Fixed);
+        } else if (primitiveValue->isNumber()) {
+            // FIXME: number and percentage values should produce the same type of Length (ie. Fixed or Percent).
+            if (styleResolver->style()->textSizeAdjust().isPercentage())
+                lineHeight = Length(primitiveValue->getDoubleValue() * styleResolver->style()->textSizeAdjust().multiplier() * 100.0, Percent);
+            else
+                lineHeight = Length(primitiveValue->getDoubleValue() * 100.0, Percent);
+        } else if (primitiveValue->isViewportPercentageLength())
+            lineHeight = primitiveValue->viewportPercentageLength();
+        else
+            return;
+        styleResolver->style()->setLineHeight(lineHeight);
+        styleResolver->style()->setSpecifiedLineHeight(lineHeight);
+    }
+
+    static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
+    {
+        styleResolver->style()->setLineHeight(RenderStyle::initialLineHeight());
+        styleResolver->style()->setSpecifiedLineHeight(RenderStyle::initialSpecifiedLineHeight());
+    }
+
+    static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
+    {
+        styleResolver->style()->setLineHeight(styleResolver->parentStyle()->lineHeight());
+        styleResolver->style()->setSpecifiedLineHeight(styleResolver->parentStyle()->specifiedLineHeight());
+    }
+
+    static PropertyHandler createHandler()
+    {
+        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
+    }
+};
+#endif
+
 class ApplyPropertyPageSize {
 private:
     static Length mmLength(double mm) { return CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM)->computeLength<Length>(0, 0); }
@@ -2155,7 +2214,11 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
 #endif
     setPropertyHandler(CSSPropertyLeft, ApplyPropertyLength<&RenderStyle::left, &RenderStyle::setLeft, &RenderStyle::initialOffset, AutoEnabled>::createHandler());
     setPropertyHandler(CSSPropertyLetterSpacing, ApplyPropertyComputeLength<int, &RenderStyle::letterSpacing, &RenderStyle::setLetterSpacing, &RenderStyle::initialLetterWordSpacing, NormalEnabled, ThicknessDisabled, SVGZoomEnabled>::createHandler());
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    setPropertyHandler(CSSPropertyLineHeight, ApplyPropertyLineHeightForIOSTextAutosizing::createHandler());
+#else
     setPropertyHandler(CSSPropertyLineHeight, ApplyPropertyLineHeight::createHandler());
+#endif
     setPropertyHandler(CSSPropertyListStyleImage, ApplyPropertyStyleImage<&RenderStyle::listStyleImage, &RenderStyle::setListStyleImage, &RenderStyle::initialListStyleImage, CSSPropertyListStyleImage>::createHandler());
     setPropertyHandler(CSSPropertyListStylePosition, ApplyPropertyDefault<EListStylePosition, &RenderStyle::listStylePosition, EListStylePosition, &RenderStyle::setListStylePosition, EListStylePosition, &RenderStyle::initialListStylePosition>::createHandler());
     setPropertyHandler(CSSPropertyListStyleType, ApplyPropertyDefault<EListStyleType, &RenderStyle::listStyleType, EListStyleType, &RenderStyle::setListStyleType, EListStyleType, &RenderStyle::initialListStyleType>::createHandler());

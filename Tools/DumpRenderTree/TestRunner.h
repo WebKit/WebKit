@@ -126,7 +126,11 @@ public:
     void waitForPolicyDelegate();
     size_t webHistoryItemCount();
     int windowCount();
-    
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    void setTextAutosizingEnabled(bool);
+#endif
+
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(EFL)
     JSRetainPtr<JSStringRef> platformName() const;
 #endif

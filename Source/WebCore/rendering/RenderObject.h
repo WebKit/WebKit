@@ -195,6 +195,29 @@ public:
     RenderObject* firstLeafChild() const;
     RenderObject* lastLeafChild() const;
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    // Minimal distance between the block with fixed height and overflowing content and the text block to apply text autosizing.
+    // The greater this constant is the more potential places we have where autosizing is turned off.
+    // So it should be as low as possible. There are sites that break at 2.
+    static const int TextAutoSizingFixedHeightDepth = 3;
+
+    enum BlockContentHeightType {
+        FixedHeight,
+        FlexibleHeight,
+        OverflowHeight
+    };
+
+    RenderObject* traverseNext(const RenderObject* stayWithin) const;
+    typedef bool (*TraverseNextInclusionFunction)(const RenderObject*);
+    typedef BlockContentHeightType (*HeightTypeTraverseNextInclusionFunction)(const RenderObject*);
+
+    RenderObject* traverseNext(const RenderObject* stayWithin, TraverseNextInclusionFunction) const;
+    RenderObject* traverseNext(const RenderObject* stayWithin, HeightTypeTraverseNextInclusionFunction, int& currentDepth,  int& newFixedDepth) const;
+
+    void adjustComputedFontSizesOnBlocks(float size, float visibleWidth);
+    void resetTextAutosizing();
+#endif
+
     // The following six functions are used when the render tree hierarchy changes to make sure layers get
     // properly added and removed.  Since containership can be implemented by any subclass, and since a hierarchy
     // can contain a mixture of boxes and other object types, these functions need to be in the base class.

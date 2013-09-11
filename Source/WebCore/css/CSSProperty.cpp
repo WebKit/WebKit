@@ -350,6 +350,9 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWebkitTextSecurity:
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    case CSSPropertyWebkitTextSizeAdjust:
+#endif
     case CSSPropertyWebkitTextStroke:
     case CSSPropertyWebkitTextStrokeColor:
     case CSSPropertyWebkitTextStrokeWidth:

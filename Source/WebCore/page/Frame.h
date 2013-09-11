@@ -184,6 +184,11 @@ namespace WebCore {
         String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);
         String matchLabelsAgainstElement(const Vector<String>& labels, Element*);
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+        void setTextAutosizingWidth(float);
+        float textAutosizingWidth() const;
+#endif
+
         void suspendActiveDOMObjectsAndAnimations();
         void resumeActiveDOMObjectsAndAnimations();
         bool activeDOMObjectsAndAnimationsSuspended() const { return m_activeDOMObjectsAndAnimationsSuspendedCount > 0; }
@@ -214,6 +219,10 @@ namespace WebCore {
         const OwnPtr<FrameSelection> m_selection;
         const OwnPtr<EventHandler> m_eventHandler;
         const OwnPtr<AnimationController> m_animationController;
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+        float m_textAutosizingWidth;
+#endif
 
         float m_pageZoomFactor;
         float m_textZoomFactor;

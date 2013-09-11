@@ -92,6 +92,10 @@
 #define ENABLE_LETTERPRESS 1
 #endif
 
+#if !defined(ENABLE_IOS_TEXT_AUTOSIZING)
+#define ENABLE_IOS_TEXT_AUTOSIZING 1
+#endif
+
 #if !defined(ENABLE_METER_ELEMENT)
 #define ENABLE_METER_ELEMENT 0
 #endif

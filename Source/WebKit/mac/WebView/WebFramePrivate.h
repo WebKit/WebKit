@@ -99,6 +99,10 @@ typedef enum {
 - (JSContext *)_javaScriptContextForScriptWorld:(WebScriptWorld *)world;
 #endif
 
+- (void)resetTextAutosizingBeforeLayout;
+- (void)_setVisibleSize:(CGSize)size;
+- (void)_setTextAutosizingWidth:(CGFloat)width;
+
 - (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle;
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
 - (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;

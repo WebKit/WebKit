@@ -214,6 +214,15 @@ private:
     friend class SVGTextRunRenderingContext;
 
 public:
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    bool equalForTextAutoSizing(const Font& other) const
+    {
+        return m_fontDescription.equalForTextAutoSizing(other.m_fontDescription)
+            && m_letterSpacing == other.m_letterSpacing
+            && m_wordSpacing == other.m_wordSpacing;
+    }
+#endif
+
     // Useful for debugging the different font rendering code paths.
     static void setCodePath(CodePath);
     static CodePath codePath();

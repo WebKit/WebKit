@@ -1327,6 +1327,7 @@
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; };
 		448A29C00A46D9CB0030759F /* JSHTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */; };
 		448AD27C0A48137A0023D179 /* JSHTMLOptionsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */; };
+		448B1B7A0F3A2F9B0047A9E2 /* TextSizeAdjustment.h in Headers */ = {isa = PBXBuildFile; fileRef = 448B1B780F3A2F9B0047A9E2 /* TextSizeAdjustment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4496E39D1398136C003EE32A /* JSSVGAnimateMotionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4496E39B1398136C003EE32A /* JSSVGAnimateMotionElement.cpp */; };
 		4496E39E1398136C003EE32A /* JSSVGAnimateMotionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4496E39C1398136C003EE32A /* JSSVGAnimateMotionElement.h */; };
 		4496E3A0139813A5003EE32A /* JSSVGMPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4496E39F139813A5003EE32A /* JSSVGMPathElement.h */; };
@@ -7827,6 +7828,7 @@
 		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
 		448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollectionCustom.cpp; sourceTree = "<group>"; };
+		448B1B780F3A2F9B0047A9E2 /* TextSizeAdjustment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextSizeAdjustment.h; path = style/TextSizeAdjustment.h; sourceTree = "<group>"; };
 		449098B10F8F82520076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		4496E39B1398136C003EE32A /* JSSVGAnimateMotionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAnimateMotionElement.cpp; sourceTree = "<group>"; };
 		4496E39C1398136C003EE32A /* JSSVGAnimateMotionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGAnimateMotionElement.h; sourceTree = "<group>"; };
@@ -19456,6 +19458,7 @@
 				BC2274750E8366E200E7F975 /* SVGRenderStyle.h */,
 				BC2274760E8366E200E7F975 /* SVGRenderStyleDefs.cpp */,
 				BC2274770E8366E200E7F975 /* SVGRenderStyleDefs.h */,
+				448B1B780F3A2F9B0047A9E2 /* TextSizeAdjustment.h */,
 			);
 			name = style;
 			sourceTree = "<group>";
@@ -24278,6 +24281,7 @@
 				930FC68A1072B9280045293E /* TextRenderingMode.h in Headers */,
 				93F198F608245E59001E9ABC /* TextResourceDecoder.h in Headers */,
 				A824B4650E2EF2EA0081A7B7 /* TextRun.h in Headers */,
+				448B1B7A0F3A2F9B0047A9E2 /* TextSizeAdjustment.h in Headers */,
 				B2C3DA4B0D006C1D00EF6F26 /* TextStream.h in Headers */,
 				9759E94014EF1CF80026A2DD /* TextTrack.h in Headers */,
 				9759E94314EF1CF80026A2DD /* TextTrackCue.h in Headers */,

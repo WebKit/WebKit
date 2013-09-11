@@ -413,7 +413,9 @@ public:
                                         WebKitScreenFontSubstitutionEnabledKey,
         [NSNumber numberWithInt:WebAllowAllStorage], WebKitStorageBlockingPolicyKey,
         [NSNumber numberWithBool:NO],   WebKitPlugInSnapshottingEnabledPreferenceKey,
-
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+        [NSNumber numberWithFloat:WKGetMinimumZoomFontSize()], WebKitMinimumZoomFontSizePreferenceKey,
+#endif
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
         [NSNumber numberWithBool:YES],  WebKitQTKitEnabledPreferenceKey,
@@ -1080,6 +1082,18 @@ public:
 {
     return (NSTimeInterval)[self _floatValueForKey:WebKitBackForwardCacheExpirationIntervalKey];
 }
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+- (void)_setMinimumZoomFontSize:(float)size
+{
+    [self _setFloatValue:size forKey:WebKitMinimumZoomFontSizePreferenceKey];
+}
+
+- (float)_minimumZoomFontSize
+{
+    return [self _floatValueForKey:WebKitMinimumZoomFontSizePreferenceKey];
+}
+#endif
 
 - (float)PDFScaleFactor
 {

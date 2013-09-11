@@ -207,6 +207,10 @@
 #include "ScriptedAnimationController.h"
 #endif
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+#include "TextAutoSizing.h"
+#endif
+
 #if ENABLE(TEXT_AUTOSIZING)
 #include "TextAutosizer.h"
 #endif
@@ -384,6 +388,18 @@ static void printNavigationErrorMessage(Frame* frame, const KURL& activeURL, con
 uint64_t Document::s_globalTreeVersion = 0;
 
 static const double timeBeforeThrowingAwayStyleResolverAfterLastUseInSeconds = 30;
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+void TextAutoSizingTraits::constructDeletedValue(TextAutoSizingKey& slot)
+{
+    new (&slot) TextAutoSizingKey(TextAutoSizingKey::deletedKeyStyle(), TextAutoSizingKey::deletedKeyDoc());
+}
+
+bool TextAutoSizingTraits::isDeletedValue(const TextAutoSizingKey& value)
+{
+    return value.style() == TextAutoSizingKey::deletedKeyStyle() && value.doc() == TextAutoSizingKey::deletedKeyDoc();
+}
+#endif
 
 Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
     : ContainerNode(0, CreateDocument)
@@ -2112,6 +2128,12 @@ void Document::detach()
     // or this setting of the frame to 0 could be made explicit in each of the
     // callers of Document::detach().
     m_frame = 0;
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    // Do this before the arena is cleared, which is needed to deref the RenderStyle on TextAutoSizingKey.
+    m_textAutoSizedNodes.clear();
+#endif
+
     m_renderArena.clear();
 
     if (m_mediaQueryMatcher)
@@ -4715,6 +4737,47 @@ HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
         element = HTMLCanvasElement::create(this);
     return element.get();
 }
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+void Document::addAutoSizingNode(Node* node, float candidateSize)
+{
+    TextAutoSizingKey key(node->renderer()->style(), &document());
+    TextAutoSizingMap::AddResult result = m_textAutoSizedNodes.add(key, nullptr);
+    if (result.isNewEntry)
+        result.iterator->value = TextAutoSizingValue::create();
+    result.iterator->value->addNode(node, candidateSize);
+}
+
+void Document::validateAutoSizingNodes()
+{
+    Vector<TextAutoSizingKey> nodesForRemoval;
+    for (auto it = m_textAutoSizedNodes.begin(), end = m_textAutoSizedNodes.end(); it != end; ++it) {
+        RefPtr<TextAutoSizingValue> value = it->value;
+        // Update all the nodes in the collection to reflect the new
+        // candidate size.
+        if (!value)
+            continue;
+
+        value->adjustNodeSizes();
+        if (!value->numNodes())
+            nodesForRemoval.append(it->key);
+    }
+    unsigned count = nodesForRemoval.size();
+    for (unsigned i = 0; i < count; i++)
+        m_textAutoSizedNodes.remove(nodesForRemoval[i]);
+}
+    
+void Document::resetAutoSizingNodes()
+{
+    for (auto it = m_textAutoSizedNodes.begin(), end = m_textAutoSizedNodes.end(); it != end; ++it) {
+        RefPtr<TextAutoSizingValue> value = it->value;
+        if (value)
+            value->reset();
+    }
+    m_textAutoSizedNodes.clear();
+}
+
+#endif // ENABLE(IOS_TEXT_AUTOSIZING)
 
 void Document::initDNSPrefetch()
 {

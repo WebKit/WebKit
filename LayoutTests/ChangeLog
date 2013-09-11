@@ -1,3 +1,31 @@
+2013-09-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream text autosizing
+        https://bugs.webkit.org/show_bug.cgi?id=121111
+
+        Reviewed by Andy Estes and Sam Weinig.
+
+        Add tests to ensure we don't regress iOS text autosizing.
+
+        * platform/iphone-simulator/text-autosizing/anonymous-block-expected.txt: Added.
+        * platform/iphone-simulator/text-autosizing/anonymous-block.html: Added.
+        * platform/iphone-simulator/text-autosizing/contenteditable-expected.txt: Added.
+        * platform/iphone-simulator/text-autosizing/contenteditable.html: Added.
+        * platform/iphone-simulator/text-autosizing/first-letter-expected.txt: Added.
+        * platform/iphone-simulator/text-autosizing/first-letter.html: Added.
+        * platform/iphone-simulator/text-autosizing/font-family-case-insensitive-expected.txt: Added.
+        * platform/iphone-simulator/text-autosizing/font-family-case-insensitive.html: Added.
+        * platform/iphone-simulator/text-autosizing/lists-expected.txt: Added.
+        * platform/iphone-simulator/text-autosizing/lists.html: Added.
+        * platform/iphone-simulator/text-autosizing/overflow-expected.txt: Added.
+        * platform/iphone-simulator/text-autosizing/overflow.html: Added.
+        * platform/iphone-simulator/text-autosizing/percent-adjust-length-line-height-expected.txt: Added.
+        * platform/iphone-simulator/text-autosizing/percent-adjust-length-line-height.html: Added.
+        * platform/iphone-simulator/text-autosizing/percent-adjust-number-line-height-expected.txt: Added.
+        * platform/iphone-simulator/text-autosizing/percent-adjust-number-line-height.html: Added.
+        * platform/iphone-simulator/text-autosizing/percent-adjust-percent-line-height-expected.txt: Added.
+        * platform/iphone-simulator/text-autosizing/percent-adjust-percent-line-height.html: Added.
+
 2013-09-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed test expectation maintenance.

@@ -136,6 +136,11 @@ public:
 
     void removeAndDestroyTextBoxes();
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    float candidateComputedTextSize() const { return m_candidateComputedTextSize; }
+    void setCandidateComputedTextSize(float s) { m_candidateComputedTextSize = s; }
+#endif
+
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
     virtual void willBeDestroyed();
@@ -186,6 +191,10 @@ private:
     mutable bool m_knownToHaveNoOverflowAndNoFallbackFonts : 1;
     bool m_needsTranscoding : 1;
     
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.
+    float m_candidateComputedTextSize;
+#endif
     float m_minWidth;
     float m_maxWidth;
     float m_beginMinWidth;

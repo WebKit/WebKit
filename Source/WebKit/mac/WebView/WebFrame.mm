@@ -932,6 +932,46 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 }
 #endif
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+- (void)resetTextAutosizingBeforeLayout
+{
+    id documentView = [_private->webFrameView documentView];    
+    if (![documentView isKindOfClass:[WebHTMLView class]])
+        return;
+    
+    Frame* coreFrame = core(self);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        Document *doc = frame->document();
+        if (!doc || !doc->renderer())
+            continue;
+        doc->renderer()->resetTextAutosizing();
+    }
+}
+
+- (void)_setVisibleSize:(CGSize)size
+{
+    [self _setTextAutosizingWidth:size.width];
+}
+
+- (void)_setTextAutosizingWidth:(CGFloat)width
+{
+    WebCore::Frame *frame = core(self);
+    frame->setTextAutosizingWidth(width);
+}
+#else
+- (void)resetTextAutosizingBeforeLayout
+{
+}
+
+- (void)_setVisibleSize:(CGSize)size
+{
+}
+
+- (void)_setTextAutosizingWidth:(CGFloat)width
+{
+}
+#endif // ENABLE(IOS_TEXT_AUTOSIZING)
+
 - (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
     if (_private->coreFrame->selection().isNone() || !fragment)

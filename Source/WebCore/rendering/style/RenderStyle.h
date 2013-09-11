@@ -82,6 +82,10 @@
 #include "StyleDashboardRegion.h"
 #endif
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+#include "TextSizeAdjustment.h"
+#endif
+
 #if ENABLE(SVG)
 #include "SVGPaint.h"
 #include "SVGRenderStyle.h"
@@ -933,6 +937,9 @@ public:
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     bool useTouchOverflowScrolling() const { return rareInheritedData->useTouchOverflowScrolling; }
 #endif
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    TextSizeAdjustment textSizeAdjust() const { return rareInheritedData->textSizeAdjust; }
+#endif
     ETextSecurity textSecurity() const { return static_cast<ETextSecurity>(rareInheritedData->textSecurity); }
 
     WritingMode writingMode() const { return static_cast<WritingMode>(inherited_flags.m_writingMode); }
@@ -1153,6 +1160,9 @@ public:
     void setTextUnderlinePosition(TextUnderlinePosition v) { SET_VAR(rareInheritedData, m_textUnderlinePosition, v); }
 #endif // CSS3_TEXT
     void setDirection(TextDirection v) { inherited_flags._direction = v; }
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    void setSpecifiedLineHeight(Length v);
+#endif
     void setLineHeight(Length specifiedLineHeight);
     bool setZoom(float);
     void setZoomWithoutReturnValue(float f) { setZoom(f); }
@@ -1434,6 +1444,9 @@ public:
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     void setUseTouchOverflowScrolling(bool v) { SET_VAR(rareInheritedData, useTouchOverflowScrolling, v); }
 #endif
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    void setTextSizeAdjust(TextSizeAdjustment anAdjustment) { SET_VAR(rareInheritedData, textSizeAdjust, anAdjustment); }
+#endif
     void setTextSecurity(ETextSecurity aTextSecurity) { SET_VAR(rareInheritedData, textSecurity, aTextSecurity); }
 
 #if ENABLE(SVG)
@@ -1542,6 +1555,11 @@ public:
     bool inheritedNotEqual(const RenderStyle*) const;
     bool inheritedDataShared(const RenderStyle*) const;
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    uint32_t hashForTextAutosizing() const;
+    bool equalForTextAutosizing(const RenderStyle *other) const;
+#endif
+
     StyleDifference diff(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
     bool diffRequiresRepaint(const RenderStyle*) const;
 
@@ -1637,6 +1655,9 @@ public:
     static short initialWidows() { return 2; }
     static short initialOrphans() { return 2; }
     static Length initialLineHeight() { return Length(-100.0, Percent); }
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    static Length initialSpecifiedLineHeight() { return Length(-100, Percent); }
+#endif
     static ETextAlign initialTextAlign() { return TASTART; }
     static TextDecoration initialTextDecoration() { return TextDecorationNone; }
 #if ENABLE(CSS3_TEXT)
@@ -1757,6 +1778,9 @@ public:
     // Keep these at the end.
     static LineClampValue initialLineClamp() { return LineClampValue(); }
     static ETextSecurity initialTextSecurity() { return TSNONE; }
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    static TextSizeAdjustment initialTextSizeAdjust() { return TextSizeAdjustment(); }
+#endif
 #if ENABLE(TOUCH_EVENTS)
     static Color initialTapHighlightColor();
 #endif

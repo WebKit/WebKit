@@ -201,3 +201,5 @@ selectTrailingWhitespaceEnabled initial=defaultSelectTrailingWhitespaceEnabled
 
 selectionIncludesAltImageText initial=true
 useLegacyBackgroundSizeShorthandBehavior initial=false
+
+minimumZoomFontSize type=float, initial=15, conditional=IOS_TEXT_AUTOSIZING

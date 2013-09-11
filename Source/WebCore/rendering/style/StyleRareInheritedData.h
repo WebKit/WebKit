@@ -36,6 +36,10 @@
 #include "StyleVariableData.h"
 #endif
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+#include "TextSizeAdjustment.h"
+#endif
+
 namespace WebCore {
 
 class CursorList;
@@ -136,6 +140,10 @@ public:
 
     AtomicString m_lineGrid;
     unsigned m_tabSize;
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    TextSizeAdjustment textSizeAdjust;
+#endif
 
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     float m_imageResolution;

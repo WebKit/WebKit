@@ -1275,6 +1275,16 @@ void FrameView::layout(bool allowSubtree)
         beginDeferredRepaints();
         forceLayoutParentViewIfNeeded();
         root->layout();
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+        float minZoomFontSize = frame().settings().minimumZoomFontSize();
+        float visWidth = frame().page()->mainFrame().textAutosizingWidth();
+        if (minZoomFontSize && visWidth && !root->view().printing()) {
+            root->adjustComputedFontSizesOnBlocks(minZoomFontSize, visWidth);    
+            bool needsLayout = root->needsLayout();
+            if (needsLayout)
+                root->layout();
+        }
+#endif
 #if ENABLE(TEXT_AUTOSIZING)
         if (document.textAutosizer()->processSubtree(root) && root->needsLayout())
             root->layout();

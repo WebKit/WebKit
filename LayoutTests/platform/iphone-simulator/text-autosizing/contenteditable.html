@@ -1,0 +1,24 @@
+<script>
+    if (window.testRunner)
+        window.testRunner.setTextAutosizingEnabled(true);
+</script>
+<p>
+    This tests that text autosizing is not applied to editable elements and
+    documents.
+</p>
+<div contenteditable style="width: 600px;">
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eu nisl leo, vel commodo nibh. Fusce suscipit arcu eu elit vulputate non hendrerit velit consequat.
+    <br>
+    Etiam venenatis posuere nisl id sagittis. Fusce tincidunt velit at sapien porta ornare. Morbi egestas, diam nec ultricies molestie, est velit ultricies leo, aliquet placerat justo libero id arcu.
+</div>
+<iframe src='data:text/html,
+    <script>
+        document.designMode = "on";
+    </script>
+    <div contenteditable style="width: 600px;">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eu nisl leo, vel commodo nibh. Fusce suscipit arcu eu elit vulputate non hendrerit velit consequat.
+        <br>
+        Etiam venenatis posuere nisl id sagittis. Fusce tincidunt velit at sapien porta ornare. Morbi egestas, diam nec ultricies molestie, est velit ultricies leo, aliquet placerat justo libero id arcu.
+    </div>
+'>
+</iframe>

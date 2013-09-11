@@ -1,3 +1,14 @@
+2013-09-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream text autosizing
+        https://bugs.webkit.org/show_bug.cgi?id=121111
+
+        Reviewed by Andy Estes and Sam Weinig.
+
+        Define iOS text autosizing to be enabled on iOS unless otherwise defined.
+
+        * wtf/FeatureDefines.h:
+
 2013-09-10  Anders Carlsson  <andersca@apple.com>
 
         Remove wtf/Alignment.h

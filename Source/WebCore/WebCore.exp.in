@@ -2698,6 +2698,11 @@ __ZN7WebCore8Document13svgExtensionsEv
 __ZN7WebCore8Document19accessSVGExtensionsEv
 #endif
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+__ZN7WebCore12RenderObject19resetTextAutosizingEv
+__ZN7WebCore5Frame22setTextAutosizingWidthEf
+#endif
+
 #if ENABLE(THREADED_SCROLLING)
 __ZN7WebCore13ScrollingTree37setScrollingPerformanceLoggingEnabledEb
 __ZN7WebCore13ScrollingTree21tryToHandleWheelEventERKNS_18PlatformWheelEventE

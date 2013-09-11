@@ -159,3 +159,5 @@
 #define WebKitPageCacheSizePreferenceKey @"WebKitPageCacheSizePreferenceKey"
 #define WebKitObjectCacheSizePreferenceKey @"WebKitObjectCacheSizePreferenceKey"
 #define WebKitDebugFullPageZoomPreferenceKey @"WebKitDebugFullPageZoomPreferenceKey"
+
+#define WebKitMinimumZoomFontSizePreferenceKey @"WebKitMinimumZoomFontSizePreferenceKey"

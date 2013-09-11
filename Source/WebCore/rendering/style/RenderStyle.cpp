@@ -44,6 +44,10 @@
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+#include <wtf/text/StringHash.h>
+#endif
+
 #if ENABLE(TEXT_AUTOSIZING)
 #include "TextAutosizer.h"
 #endif
@@ -330,6 +334,64 @@ bool RenderStyle::inheritedNotEqual(const RenderStyle* other) const
            || rareInheritedData != other->rareInheritedData;
 }
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+inline unsigned computeFontHash(const Font& font)
+{
+    unsigned hashCodes[2] = {
+        CaseFoldingHash::hash(font.fontDescription().firstFamily().impl()),
+        static_cast<unsigned>(font.fontDescription().specifiedSize())
+    };
+    return StringHasher::computeHash(reinterpret_cast<UChar*>(hashCodes), 2 * sizeof(unsigned) / sizeof(UChar));
+}
+
+uint32_t RenderStyle::hashForTextAutosizing() const
+{
+    // FIXME: Not a very smart hash. Could be improved upon. See <https://bugs.webkit.org/show_bug.cgi?id=121131>.
+    uint32_t hash = 0;
+    
+    hash ^= rareNonInheritedData->m_appearance;
+    hash ^= rareNonInheritedData->marginBeforeCollapse;
+    hash ^= rareNonInheritedData->marginAfterCollapse;
+    hash ^= rareNonInheritedData->lineClamp.value();
+    hash ^= rareInheritedData->overflowWrap;
+    hash ^= rareInheritedData->nbspMode;
+    hash ^= rareInheritedData->lineBreak;
+    hash ^= WTF::FloatHash<float>::hash(inherited->specifiedLineHeight.value());
+    hash ^= computeFontHash(inherited->font);
+    hash ^= inherited->horizontal_border_spacing;
+    hash ^= inherited->vertical_border_spacing;
+    hash ^= inherited_flags._box_direction;
+    hash ^= inherited_flags.m_rtlOrdering;
+    hash ^= noninherited_flags._position;
+    hash ^= noninherited_flags._floating;
+    hash ^= rareNonInheritedData->textOverflow;
+    hash ^= rareInheritedData->textSecurity;
+    return hash;
+}
+
+bool RenderStyle::equalForTextAutosizing(const RenderStyle* other) const
+{
+    return rareNonInheritedData->m_appearance == other->rareNonInheritedData->m_appearance
+        && rareNonInheritedData->marginBeforeCollapse == other->rareNonInheritedData->marginBeforeCollapse
+        && rareNonInheritedData->marginAfterCollapse == other->rareNonInheritedData->marginAfterCollapse
+        && rareNonInheritedData->lineClamp == other->rareNonInheritedData->lineClamp
+        && rareInheritedData->textSizeAdjust == other->rareInheritedData->textSizeAdjust
+        && rareInheritedData->overflowWrap == other->rareInheritedData->overflowWrap
+        && rareInheritedData->nbspMode == other->rareInheritedData->nbspMode
+        && rareInheritedData->lineBreak == other->rareInheritedData->lineBreak
+        && rareInheritedData->textSecurity == other->rareInheritedData->textSecurity
+        && inherited->specifiedLineHeight == other->inherited->specifiedLineHeight
+        && inherited->font.equalForTextAutoSizing(other->inherited->font)
+        && inherited->horizontal_border_spacing == other->inherited->horizontal_border_spacing
+        && inherited->vertical_border_spacing == other->inherited->vertical_border_spacing
+        && inherited_flags._box_direction == other->inherited_flags._box_direction
+        && inherited_flags.m_rtlOrdering == other->inherited_flags.m_rtlOrdering
+        && noninherited_flags._position == other->noninherited_flags._position
+        && noninherited_flags._floating == other->noninherited_flags._floating
+        && rareNonInheritedData->textOverflow == other->rareNonInheritedData->textOverflow;
+}
+#endif // ENABLE(IOS_TEXT_AUTOSIZING)
+
 bool RenderStyle::inheritedDataShared(const RenderStyle* other) const
 {
     // This is a fast check that only looks if the data structures are shared.
@@ -480,6 +542,9 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
             || rareInheritedData->m_textIndentLine != other->rareInheritedData->m_textIndentLine
 #endif
             || rareInheritedData->m_effectiveZoom != other->rareInheritedData->m_effectiveZoom
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+            || rareInheritedData->textSizeAdjust != other->rareInheritedData->textSizeAdjust
+#endif
             || rareInheritedData->wordBreak != other->rareInheritedData->wordBreak
             || rareInheritedData->overflowWrap != other->rareInheritedData->overflowWrap
             || rareInheritedData->nbspMode != other->rareInheritedData->nbspMode
@@ -524,6 +589,9 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
 #endif
 
     if (inherited->line_height != other->inherited->line_height
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+        || inherited->specifiedLineHeight != other->inherited->specifiedLineHeight
+#endif
         || inherited->font != other->inherited->font
         || inherited->horizontal_border_spacing != other->inherited->horizontal_border_spacing
         || inherited->vertical_border_spacing != other->inherited->vertical_border_spacing
@@ -1354,7 +1422,13 @@ bool RenderStyle::setFontDescription(const FontDescription& v)
     return false;
 }
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+Length RenderStyle::specifiedLineHeight() const { return inherited->specifiedLineHeight; }
+void RenderStyle::setSpecifiedLineHeight(Length v) { SET_VAR(inherited, specifiedLineHeight, v); }
+#else
 Length RenderStyle::specifiedLineHeight() const { return inherited->line_height; }
+#endif
+
 Length RenderStyle::lineHeight() const
 {
     const Length& lh = inherited->line_height;

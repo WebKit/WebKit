@@ -696,6 +696,11 @@ static void resetDefaultsToConsistentValues()
     } else
         [preferences setUserStyleSheetEnabled:NO];
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    // Disable text autosizing by default.
+    [preferences _setMinimumZoomFontSize:0];
+#endif
+
     // The back/forward cache is causing problems due to layouts during transition from one page to another.
     // So, turn it off for now, but we might want to turn it back on some day.
     [preferences setUsesPageCache:NO];

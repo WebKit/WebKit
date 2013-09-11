@@ -358,6 +358,9 @@ private:
     // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
     void checkForGenericFamilyChange(RenderStyle*, RenderStyle* parentStyle);
     void checkForZoomChange(RenderStyle*, RenderStyle* parentStyle);
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    void checkForTextSizeAdjust(RenderStyle*);
+#endif
 
     void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
     void adjustGridItemPosition(RenderStyle* styleToAdjust) const;

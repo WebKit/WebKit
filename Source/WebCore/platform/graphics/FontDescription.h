@@ -168,6 +168,20 @@ public:
     void setScript(UScriptCode s) { m_script = s; }
     void setFeatureSettings(PassRefPtr<FontFeatureSettings> settings) { m_featureSettings = settings; }
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    bool familiesEqualForTextAutoSizing(const FontDescription& other) const;
+
+    bool equalForTextAutoSizing(const FontDescription& other) const
+    {
+        return familiesEqualForTextAutoSizing(other)
+            && m_specifiedSize == other.m_specifiedSize
+            && m_smallCaps == other.m_smallCaps
+            && m_isAbsoluteSize == other.m_isAbsoluteSize
+            && m_genericFamily == other.m_genericFamily
+            && m_usePrinterFont == other.m_usePrinterFont;
+    }
+#endif
+
 private:
     Vector<AtomicString, 1> m_families;
     RefPtr<FontFeatureSettings> m_featureSettings;

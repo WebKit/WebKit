@@ -1452,6 +1452,9 @@ void StyleResolver::updateFont()
         return;
 
     RenderStyle* style = m_state.style();
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    checkForTextSizeAdjust(style);
+#endif
     checkForGenericFamilyChange(style, m_state.parentStyle());
     checkForZoomChange(style, m_state.parentStyle());
     checkForOrientationChange(style);
@@ -1545,7 +1548,11 @@ void StyleResolver::applyProperties(const StylePropertySet* properties, StyleRul
 #endif
         case HighPriorityProperties:
             COMPILE_ASSERT(firstCSSProperty == CSSPropertyColor, CSS_color_is_first_property);
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+            COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 18, CSS_zoom_is_end_of_first_prop_range);
+#else
             COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 17, CSS_zoom_is_end_of_first_prop_range);
+#endif
             COMPILE_ASSERT(CSSPropertyLineHeight == CSSPropertyZoom + 1, CSS_line_height_is_after_zoom);
 #if ENABLE(CSS_VARIABLES)
             if (property == CSSPropertyVariable)
@@ -2433,6 +2440,23 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         setFontDescription(fontDescription);
         return;
     }
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    case CSSPropertyWebkitTextSizeAdjust: {
+        HANDLE_INHERIT_AND_INITIAL(textSizeAdjust, TextSizeAdjust)
+        if (!primitiveValue)
+            return;
+
+        if (primitiveValue->getValueID() == CSSValueAuto)
+            state.style()->setTextSizeAdjust(TextSizeAdjustment(AutoTextSizeAdjustment));
+        else if (primitiveValue->getValueID() == CSSValueNone)
+            state.style()->setTextSizeAdjust(TextSizeAdjustment(NoTextSizeAdjustment));
+        else
+            state.style()->setTextSizeAdjust(TextSizeAdjustment(primitiveValue->getFloatValue()));
+
+        state.setFontDirty(true);
+        return;
+    }
+#endif
 #if ENABLE(DASHBOARD_SUPPORT)
     case CSSPropertyWebkitDashboardRegion:
     {
@@ -3105,6 +3129,21 @@ PassRefPtr<StyleImage> StyleResolver::cursorOrPendingFromValue(CSSPropertyID pro
         m_state.pendingImageProperties().set(property, value);
     return image.release();
 }
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+void StyleResolver::checkForTextSizeAdjust(RenderStyle* style)
+{
+    if (style->textSizeAdjust().isAuto())
+        return;
+
+    FontDescription newFontDescription(style->fontDescription());
+    if (!style->textSizeAdjust().isNone())
+        newFontDescription.setComputedSize(newFontDescription.specifiedSize() * style->textSizeAdjust().multiplier());
+    else
+        newFontDescription.setComputedSize(newFontDescription.specifiedSize());
+    style->setFontDescription(newFontDescription);
+}
+#endif
 
 void StyleResolver::checkForZoomChange(RenderStyle* style, RenderStyle* parentStyle)
 {

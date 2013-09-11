@@ -74,6 +74,12 @@ typedef Vector<WordMeasurement, 64> WordMeasurements;
 enum CaretType { CursorCaret, DragCaret };
 enum ContainingBlockState { NewContainingBlock, SameContainingBlock };
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+enum LineCount {
+    NOT_SET = 0, NO_LINE = 1, ONE_LINE = 2, MULTI_LINE = 3
+};
+#endif
+
 enum TextRunFlag {
     DefaultTextRunFlags = 0,
     RespectDirection = 1 << 0,
@@ -450,6 +456,16 @@ public:
 #ifndef NDEBUG
     void checkPositionedObjectsNeedLayout();
     void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0) const;
+#endif
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    int immediateLineCount();
+    void adjustComputedFontSizes(float size, float visibleWidth);
+    void resetComputedFontSize()
+    {
+        m_widthForTextAutosizing = -1;
+        m_lineCountForTextAutosizing = NOT_SET;
+    }
 #endif
 
 #if ENABLE(CSS_SHAPES)
@@ -1101,6 +1117,11 @@ protected:
     unsigned m_hasMarkupTruncation : 1;
     unsigned m_hasBorderOrPaddingLogicalWidthChanged : 1;
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    int m_widthForTextAutosizing;
+    unsigned m_lineCountForTextAutosizing : 2;
+#endif
+    
     // RenderRubyBase objects need to be able to split and merge, moving their children around
     // (calling moveChildTo, moveAllChildrenTo, and makeChildrenNonInline).
     friend class RenderRubyBase;

@@ -116,4 +116,22 @@ FontDescription FontDescription::makeNormalFeatureSettings() const
     return normalDescription;
 }
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+bool FontDescription::familiesEqualForTextAutoSizing(const FontDescription& other) const
+{
+    unsigned thisFamilyCount = familyCount();
+    unsigned otherFamilyCount = other.familyCount();
+
+    if (thisFamilyCount != otherFamilyCount)
+        return false;
+
+    for (unsigned i = 0; i < thisFamilyCount; ++i) {
+        if (!equalIgnoringCase(familyAt(i), other.familyAt(i)))
+            return false;
+    }
+
+    return true;
+}
+#endif // ENABLE(IOS_TEXT_AUTOSIZING)
+
 } // namespace WebCore

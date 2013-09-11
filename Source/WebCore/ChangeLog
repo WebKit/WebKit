@@ -1,3 +1,117 @@
+2013-09-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream text autosizing
+        https://bugs.webkit.org/show_bug.cgi?id=121111
+
+        Reviewed by Andy Estes and Sam Weinig.
+
+        Tests: platform/iphone-simulator/text-autosizing/anonymous-block.html
+               platform/iphone-simulator/text-autosizing/contenteditable.html
+               platform/iphone-simulator/text-autosizing/first-letter.html
+               platform/iphone-simulator/text-autosizing/font-family-case-insensitive.html
+               platform/iphone-simulator/text-autosizing/lists.html
+               platform/iphone-simulator/text-autosizing/overflow.html
+               platform/iphone-simulator/text-autosizing/percent-adjust-length-line-height.html
+               platform/iphone-simulator/text-autosizing/percent-adjust-number-line-height.html
+               platform/iphone-simulator/text-autosizing/percent-adjust-percent-line-height.html
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in: Add property -webkit-text-size-adjust.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyLineHeightForIOSTextAutosizing::applyValue): Added.
+        (WebCore::ApplyPropertyLineHeightForIOSTextAutosizing::applyInitialValue): Added.
+        (WebCore::ApplyPropertyLineHeightForIOSTextAutosizing::applyInheritValue): Added.
+        (WebCore::ApplyPropertyLineHeightForIOSTextAutosizing::createHandler): Added.
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::updateFont):
+        (WebCore::StyleResolver::applyProperties): Add COMPILE_ASSERT to ensure that
+        all properties that affect font size, including -webkit-text-size-adjust, are
+        resolved before properties that depend on them; see <rdar://problem/13522835>.
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::checkForTextSizeAdjust): Added.
+        * css/StyleResolver.h:
+        * dom/Document.cpp:
+        (WebCore::TextAutoSizingTraits::constructDeletedValue): Added.
+        (WebCore::TextAutoSizingTraits::isDeletedValue): Added.
+        (WebCore::Document::detach):
+        (WebCore::Document::addAutoSizingNode): Added.
+        (WebCore::Document::validateAutoSizingNodes): Added.
+        (WebCore::Document::resetAutoSizingNodes): Added.
+        * dom/Document.h:
+        * editing/EditingStyle.cpp:
+        * page/Frame.h: Add declarations for setTextAutosizingWidth(), textAutosizingWidth().
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * page/Settings.in: Generate setter and getter for setting minimumZoomFontSize.
+        * platform/graphics/Font.h:
+        (WebCore::Font::equalForTextAutoSizing): Added.
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::FontDescription::familiesEqualForTextAutoSizing): Added.
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::equalForTextAutoSizing): Added.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::isVisibleRenderText): Added.
+        (WebCore::resizeTextPermitted): Added.
+        (WebCore::RenderBlock::immediateLineCount): Added.
+        (WebCore::isNonBlocksOrNonFixedHeightListItems): Added.
+        (WebCore::oneLineTextMultiplier): Added.
+        (WebCore::textMultiplier): Added.
+        (WebCore::RenderBlock::adjustComputedFontSizes): Added.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::resetComputedFontSize): Added.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::traverseNext): Added.
+        (WebCore::includeNonFixedHeight): Added.
+        (WebCore::RenderObject::adjustComputedFontSizesOnBlocks): Added.
+        (WebCore::RenderObject::resetTextAutosizing): Added.
+        * rendering/RenderObject.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::RenderText):
+        * rendering/RenderText.h:
+        (WebCore::RenderText::candidateComputedTextSize): Added.
+        (WebCore::RenderText::setCandidateComputedTextSize): Added.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::computeFontHash):
+        (WebCore::RenderStyle::hashForTextAutosizing): Added.
+        (WebCore::RenderStyle::equalForTextAutosizing): Added.
+        (WebCore::RenderStyle::changeRequiresLayout):
+        (WebCore::RenderStyle::specifiedLineHeight): Added; iOS-specific variant.
+        We should reconcile this getter with the getter of the same name that is
+        compiled when building with IOS_TEXT_AUTOSIZING disabled.
+        (WebCore::RenderStyle::setSpecifiedLineHeight): Added.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::initialSpecifiedLineHeight): Added.
+        (WebCore::RenderStyle::initialTextSizeAdjust): Added.
+        (WebCore::RenderStyle::setTextSizeAdjust): Added.
+        (WebCore::RenderStyle::textSizeAdjust): Added.
+        * rendering/style/StyleInheritedData.cpp:
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        (WebCore::StyleInheritedData::operator==):
+        * rendering/style/StyleInheritedData.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/TextSizeAdjustment.h: Added.
+        (TextSizeAdjustment::TextSizeAdjustment):
+        (TextSizeAdjustment::percentage):
+        (TextSizeAdjustment::multiplier):
+        (TextSizeAdjustment::isAuto):
+        (TextSizeAdjustment::isNone):
+        (TextSizeAdjustment::isPercentage):
+        (TextSizeAdjustment::operator == ):
+        (TextSizeAdjustment::operator != ):
+
 2013-09-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: AXValue/AXMenuItemMarkChar not defined for menuitemradio (should be false (0) with aria-checked=mixed | undefined)

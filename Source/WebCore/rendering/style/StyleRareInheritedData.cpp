@@ -46,6 +46,10 @@ struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareI
     unsigned unsigneds[1];
     short hyphenationShorts[3];
 
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    TextSizeAdjustment textSizeAdjust;
+#endif
+
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     float imageResolutionFloats;
 #endif
@@ -114,6 +118,9 @@ StyleRareInheritedData::StyleRareInheritedData()
     , hyphenationLimitLines(-1)
     , m_lineGrid(RenderStyle::initialLineGrid())
     , m_tabSize(RenderStyle::initialTabSize())
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    , textSizeAdjust(RenderStyle::initialTextSizeAdjust())
+#endif
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     , m_imageResolution(RenderStyle::initialImageResolution())
 #endif
@@ -192,6 +199,9 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , textEmphasisCustomMark(o.textEmphasisCustomMark)
     , m_lineGrid(o.m_lineGrid)
     , m_tabSize(o.m_tabSize)
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    , textSizeAdjust(o.textSizeAdjust)
+#endif
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     , m_imageResolution(o.m_imageResolution)
 #endif
@@ -255,6 +265,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && lineBreak == o.lineBreak
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
         && useTouchOverflowScrolling == o.useTouchOverflowScrolling
+#endif
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+        && textSizeAdjust == o.textSizeAdjust
 #endif
         && resize == o.resize
         && userSelect == o.userSelect

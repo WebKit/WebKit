@@ -28,6 +28,9 @@ text-rendering
 -webkit-locale
 -webkit-text-orientation
 -epub-text-orientation = -webkit-text-orientation
+#if defined(ENABLE_IOS_TEXT_AUTOSIZING) && ENABLE_IOS_TEXT_AUTOSIZING
+-webkit-text-size-adjust
+#endif
 -webkit-writing-mode
 -epub-writing-mode = -webkit-writing-mode
 zoom
