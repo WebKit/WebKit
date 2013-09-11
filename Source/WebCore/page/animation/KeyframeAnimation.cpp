@@ -184,8 +184,9 @@ void KeyframeAnimation::animate(CompositeAnimation* compositeAnimation, RenderOb
         const RenderStyle* toStyle = 0;
         double progress = 0.0;
         fetchIntervalEndpointsForProperty(*it, fromStyle, toStyle, progress);
-#if USE(ACCELERATED_COMPOSITING)
+
         bool needsAnim = CSSPropertyAnimation::blendProperties(this, *it, animatedStyle.get(), fromStyle, toStyle, progress);
+#if USE(ACCELERATED_COMPOSITING)
         if (!needsAnim)
             // If we are running an accelerated animation, set a flag in the style
             // to indicate it. This can be used to make sure we get an updated

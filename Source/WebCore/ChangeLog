@@ -1,3 +1,18 @@
+2013-09-11  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix animations with !USE(ACCELERATED_COMPOSITING) after r147792.
+        https://bugs.webkit.org/show_bug.cgi?id=121159
+
+        Reviewed by Simon Fraser.
+
+        CSSPropertyAnimation::blendProperties() is available always
+        and needs to be called to make the animations work.
+
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+
 2013-09-11  David Hyatt  <hyatt@apple.com>
 
         Move all collapsing margin code out of RenderBlock and into RenderBlockFlow.
