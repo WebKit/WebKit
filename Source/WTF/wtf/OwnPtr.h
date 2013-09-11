@@ -164,21 +164,17 @@ namespace WTF {
 
     template<typename T> inline OwnPtr<T>& OwnPtr<T>::operator=(OwnPtr<T>&& o)
     {
-        PtrType ptr = m_ptr;
-        m_ptr = o.leakPtr();
-        ASSERT(!ptr || m_ptr != ptr);
-        deleteOwnedPtr(ptr);
-
+        ASSERT(!o || o != m_ptr);
+        auto ptr = std::move(o);
+        swap(ptr);
         return *this;
     }
 
     template<typename T> template<typename U> inline OwnPtr<T>& OwnPtr<T>::operator=(OwnPtr<U>&& o)
     {
-        PtrType ptr = m_ptr;
-        m_ptr = o.leakPtr();
-        ASSERT(!ptr || m_ptr != ptr);
-        deleteOwnedPtr(ptr);
-
+        ASSERT(!o || o != m_ptr);
+        auto ptr = std::move(o);
+        swap(ptr);
         return *this;
     }
 #endif

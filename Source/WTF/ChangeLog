@@ -1,3 +1,17 @@
+2013-09-11  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        OwnPtr: Use copy/move-and-swap for assignment operators
+        https://bugs.webkit.org/show_bug.cgi?id=121154
+
+        Reviewed by Anders Carlsson.
+
+        Rationals:
+        - decrease of repeated code
+        - consistency with RefPtr
+
+        * wtf/OwnPtr.h:
+        (WTF::=):
+
 2013-09-11  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Split out generic Windows files into its own file
