@@ -1389,6 +1389,7 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
         return;
     m_videoDisplaySize = videoBox;
 
+    // FIXME (121170): This function is called during layout, and should lay out the text tracks immediately.
     m_updateTimer.startOneShot(0);
 }
 

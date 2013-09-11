@@ -1,3 +1,13 @@
+2013-09-11  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=121169
+        media/track/track-cue-rendering-vertical.html is flaky on Mac
+
+        Reviewed by Eric Carlson.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes): Added a FIXME.
+
 2013-09-11  Anders Carlsson  <andersca@apple.com>
 
         Stop using deleteAllValues in SVG code

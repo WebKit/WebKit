@@ -1,3 +1,15 @@
+2013-09-11  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=121169
+        media/track/track-cue-rendering-vertical.html is flaky on Mac
+
+        Reviewed by Eric Carlson.
+
+        * media/media-reparent.html: Changed to use setTimeout directly.
+
+        * media/video-test.js:
+        (endTest): Added a zero delay timer to let text track layout do its work.
+
 2013-09-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r155519.

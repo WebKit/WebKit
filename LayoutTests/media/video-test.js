@@ -229,8 +229,11 @@ function endTest()
 {
     consoleWrite("END OF TEST");
     testEnded = true;
-    if (window.testRunner)
-        testRunner.notifyDone();
+    if (window.testRunner) {
+        // FIXME (121170): We shouldn't need the zero-delay timer. But text track layout
+        // happens asynchronously, so we need it to run first to have stable test results.
+        setTimeout("testRunner.notifyDone()", 0);
+    }
 }
 
 function endTestLater()
