@@ -1155,19 +1155,10 @@ private:
             if (cseMode == NormalCSE) {
                 // Need to be conservative at this time; if the SetLocal has any chance of performing
                 // any speculations then we cannot do anything.
-                if (variableAccessData->isCaptured()) {
-                    // Captured SetLocals never speculate and hence never exit.
-                } else {
-                    if (variableAccessData->shouldUseDoubleFormat())
-                        break;
-                    SpeculatedType prediction = variableAccessData->argumentAwarePrediction();
-                    if (isInt32Speculation(prediction))
-                        break;
-                    if (isArraySpeculation(prediction))
-                        break;
-                    if (isBooleanSpeculation(prediction))
-                        break;
-                }
+                FlushFormat format = variableAccessData->flushFormat();
+                ASSERT(format != DeadFlush);
+                if (format != FlushedJSValue)
+                    break;
             } else {
                 if (replacement->canExit())
                     break;

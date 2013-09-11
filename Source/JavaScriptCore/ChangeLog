@@ -1,3 +1,42 @@
+2013-09-10  Filip Pizlo  <fpizlo@apple.com>
+
+        VariableAccessData::flushFormat() should be the universal way of deciding how to speculate on stores to locals and how locals are formatted
+        https://bugs.webkit.org/show_bug.cgi?id=121142
+
+        Reviewed by Geoffrey Garen.
+        
+        Make everyone rely on VariableAccessData::flushFormat() instead of trying to
+        compute that information from scratch. The FTL already used flushFormat(), now
+        the DFG does, too.
+
+        * dfg/DFGArgumentPosition.h:
+        (JSC::DFG::ArgumentPosition::someVariable):
+        (JSC::DFG::ArgumentPosition::flushFormat):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupSetLocalsInBlock):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::mergeStateAtTail):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInlineStart):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::ValueSource::forFlushFormat):
+        * dfg/DFGVariableAccessDataDump.cpp:
+        (JSC::DFG::VariableAccessDataDump::dump):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileSetLocal):
+
 2013-09-11  Oliver Hunt  <oliver@apple.com>
 
         Partial Information Leakage in Hash Table implementations (PrivateName)

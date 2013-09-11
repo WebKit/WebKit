@@ -1589,18 +1589,24 @@ void SpeculativeJIT::compileInlineStart(Node* node)
             ArgumentPosition& argumentPosition =
                 m_jit.graph().m_argumentPositions[argumentPositionStart + i];
             ValueSource valueSource;
-            if (!argumentPosition.shouldUnboxIfPossible())
+            switch (argumentPosition.flushFormat()) {
+            case DeadFlush:
+            case FlushedJSValue:
                 valueSource = ValueSource(ValueInJSStack);
-            else if (argumentPosition.shouldUseDoubleFormat())
+                break;
+            case FlushedDouble:
                 valueSource = ValueSource(DoubleInJSStack);
-            else if (isInt32Speculation(argumentPosition.prediction()))
+                break;
+            case FlushedInt32:
                 valueSource = ValueSource(Int32InJSStack);
-            else if (isCellSpeculation(argumentPosition.prediction()))
+                break;
+            case FlushedCell:
                 valueSource = ValueSource(CellInJSStack);
-            else if (isBooleanSpeculation(argumentPosition.prediction()))
+                break;
+            case FlushedBoolean:
                 valueSource = ValueSource(BooleanInJSStack);
-            else
-                valueSource = ValueSource(ValueInJSStack);
+                break;
+            }
             recovery = computeValueRecoveryFor(valueSource);
         }
         // The recovery should refer either to something that has already been
@@ -1673,12 +1679,8 @@ void SpeculativeJIT::compileCurrentBlock()
             valueSource = ValueSource(ArgumentsSource);
         else if (!node->refCount())
             valueSource = ValueSource(SourceIsDead);
-        else if (!node->variableAccessData()->shouldUnboxIfPossible())
-            valueSource = ValueSource(ValueInJSStack);
-        else if (node->variableAccessData()->shouldUseDoubleFormat())
-            valueSource = ValueSource(DoubleInJSStack);
         else
-            valueSource = ValueSource::forSpeculation(node->variableAccessData()->argumentAwarePrediction());
+            valueSource = ValueSource::forFlushFormat(node->variableAccessData()->flushFormat());
         m_variables[i] = valueSource;
         // FIXME: Don't emit SetLocal(Dead). https://bugs.webkit.org/show_bug.cgi?id=108019
         m_stream->appendAndLog(VariableEvent::setLocal(localToOperand(i), valueSource.dataFormat()));
@@ -1840,31 +1842,54 @@ void SpeculativeJIT::checkArgumentTypes()
         }
         
         VariableAccessData* variableAccessData = node->variableAccessData();
-        if (!variableAccessData->shouldUnboxIfPossible())
+        FlushFormat format = variableAccessData->flushFormat();
+        
+        if (format == FlushedJSValue)
             continue;
         
         VirtualRegister virtualRegister = variableAccessData->local();
-        SpeculatedType predictedType = variableAccessData->argumentAwarePrediction();
 
         JSValueSource valueSource = JSValueSource(JITCompiler::addressFor(virtualRegister));
         
 #if USE(JSVALUE64)
-        if (isInt32Speculation(predictedType))
+        switch (format) {
+        case FlushedInt32: {
             speculationCheck(BadType, valueSource, node, m_jit.branch64(MacroAssembler::Below, JITCompiler::addressFor(virtualRegister), GPRInfo::tagTypeNumberRegister));
-        else if (isBooleanSpeculation(predictedType)) {
+            break;
+        }
+        case FlushedBoolean: {
             GPRTemporary temp(this);
             m_jit.load64(JITCompiler::addressFor(virtualRegister), temp.gpr());
             m_jit.xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), temp.gpr());
             speculationCheck(BadType, valueSource, node, m_jit.branchTest64(MacroAssembler::NonZero, temp.gpr(), TrustedImm32(static_cast<int32_t>(~1))));
-        } else if (isCellSpeculation(predictedType))
+            break;
+        }
+        case FlushedCell: {
             speculationCheck(BadType, valueSource, node, m_jit.branchTest64(MacroAssembler::NonZero, JITCompiler::addressFor(virtualRegister), GPRInfo::tagMaskRegister));
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
 #else
-        if (isInt32Speculation(predictedType))
+        switch (format) {
+        case FlushedInt32: {
             speculationCheck(BadType, valueSource, node, m_jit.branch32(MacroAssembler::NotEqual, JITCompiler::tagFor(virtualRegister), TrustedImm32(JSValue::Int32Tag)));
-        else if (isBooleanSpeculation(predictedType))
+            break;
+        }
+        case FlushedBoolean: {
             speculationCheck(BadType, valueSource, node, m_jit.branch32(MacroAssembler::NotEqual, JITCompiler::tagFor(virtualRegister), TrustedImm32(JSValue::BooleanTag)));
-        else if (isCellSpeculation(predictedType))
+            break;
+        }
+        case FlushedCell: {
             speculationCheck(BadType, valueSource, node, m_jit.branch32(MacroAssembler::NotEqual, JITCompiler::tagFor(virtualRegister), TrustedImm32(JSValue::CellTag)));
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
 #endif
     }
     m_isCheckingArgumentTypes = false;

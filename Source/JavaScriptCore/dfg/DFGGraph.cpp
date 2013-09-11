@@ -292,7 +292,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
 
     if (!skipped) {
         if (node->hasVariableAccessData(*this))
-            out.print("  predicting ", SpeculationDump(node->variableAccessData()->prediction()), node->variableAccessData()->shouldUseDoubleFormat() ? ", forcing double" : "");
+            out.print("  predicting ", SpeculationDump(node->variableAccessData()->prediction()));
         else if (node->hasHeapPrediction())
             out.print("  predicting ", SpeculationDump(node->getHeapPrediction()));
     }

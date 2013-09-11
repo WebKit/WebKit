@@ -1997,7 +1997,8 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         
-        if (node->variableAccessData()->shouldUseDoubleFormat()) {
+        switch (node->variableAccessData()->flushFormat()) {
+        case FlushedDouble: {
             FPRTemporary result(this);
             m_jit.loadDouble(JITCompiler::addressFor(node->local()), result.fpr());
             VirtualRegister virtualRegister = node->virtualRegister();
@@ -2006,7 +2007,7 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         
-        if (isInt32Speculation(value.m_type)) {
+        case FlushedInt32: {
             GPRTemporary result(this);
             m_jit.load32(JITCompiler::payloadFor(node->local()), result.gpr());
             
@@ -2018,7 +2019,7 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         
-        if (isCellSpeculation(value.m_type)) {
+        case FlushedCell: {
             GPRTemporary result(this);
             m_jit.load32(JITCompiler::payloadFor(node->local()), result.gpr());
             
@@ -2029,8 +2030,8 @@ void SpeculativeJIT::compile(Node* node)
             generationInfoFromVirtualRegister(virtualRegister).initCell(node, node->refCount(), result.gpr());
             break;
         }
-        
-        if (isBooleanSpeculation(value.m_type)) {
+            
+        case FlushedBoolean: {
             GPRTemporary result(this);
             m_jit.load32(JITCompiler::payloadFor(node->local()), result.gpr());
             
@@ -2041,19 +2042,26 @@ void SpeculativeJIT::compile(Node* node)
             generationInfoFromVirtualRegister(virtualRegister).initBoolean(node, node->refCount(), result.gpr());
             break;
         }
-
-        GPRTemporary result(this);
-        GPRTemporary tag(this);
-        m_jit.load32(JITCompiler::payloadFor(node->local()), result.gpr());
-        m_jit.load32(JITCompiler::tagFor(node->local()), tag.gpr());
-
-        // Like jsValueResult, but don't useChildren - our children are phi nodes,
-        // and don't represent values within this dataflow with virtual registers.
-        VirtualRegister virtualRegister = node->virtualRegister();
-        m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
-        m_gprs.retain(tag.gpr(), virtualRegister, SpillOrderJS);
-
-        generationInfoFromVirtualRegister(virtualRegister).initJSValue(node, node->refCount(), tag.gpr(), result.gpr(), DataFormatJS);
+            
+        case FlushedJSValue: {
+            GPRTemporary result(this);
+            GPRTemporary tag(this);
+            m_jit.load32(JITCompiler::payloadFor(node->local()), result.gpr());
+            m_jit.load32(JITCompiler::tagFor(node->local()), tag.gpr());
+            
+            // Like jsValueResult, but don't useChildren - our children are phi nodes,
+            // and don't represent values within this dataflow with virtual registers.
+            VirtualRegister virtualRegister = node->virtualRegister();
+            m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
+            m_gprs.retain(tag.gpr(), virtualRegister, SpillOrderJS);
+            
+            generationInfoFromVirtualRegister(virtualRegister).initJSValue(node, node->refCount(), tag.gpr(), result.gpr(), DataFormatJS);
+            break;
+        }
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
         break;
     }
         
@@ -2089,18 +2097,44 @@ void SpeculativeJIT::compile(Node* node)
         // stack.
         compileMovHint(node);
         
-        if (node->variableAccessData()->shouldUnboxIfPossible()) {
-            if (node->variableAccessData()->shouldUseDoubleFormat()) {
-                SpeculateDoubleOperand value(this, node->child1());
-                m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node->local()));
-                noResult(node);
-                // Indicate that it's no longer necessary to retrieve the value of
-                // this bytecode variable from registers or other locations in the stack,
-                // but that it is stored as a double.
-                recordSetLocal(node->local(), ValueSource(DoubleInJSStack));
-                break;
-            }
-            SpeculatedType predictedType = node->variableAccessData()->argumentAwarePrediction();
+        switch (node->variableAccessData()->flushFormat()) {
+        case FlushedDouble: {
+            SpeculateDoubleOperand value(this, node->child1());
+            m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node->local()));
+            noResult(node);
+            // Indicate that it's no longer necessary to retrieve the value of
+            // this bytecode variable from registers or other locations in the stack,
+            // but that it is stored as a double.
+            recordSetLocal(node->local(), ValueSource(DoubleInJSStack));
+            break;
+        }
+            
+        case FlushedInt32: {
+            SpeculateInt32Operand value(this, node->child1());
+            m_jit.store32(value.gpr(), JITCompiler::payloadFor(node->local()));
+            noResult(node);
+            recordSetLocal(node->local(), ValueSource(Int32InJSStack));
+            break;
+        }
+            
+        case FlushedCell: {
+            SpeculateCellOperand cell(this, node->child1());
+            GPRReg cellGPR = cell.gpr();
+            m_jit.storePtr(cellGPR, JITCompiler::payloadFor(node->local()));
+            noResult(node);
+            recordSetLocal(node->local(), ValueSource(CellInJSStack));
+            break;
+        }
+            
+        case FlushedBoolean: {
+            SpeculateBooleanOperand value(this, node->child1());
+            m_jit.store32(value.gpr(), JITCompiler::payloadFor(node->local()));
+            noResult(node);
+            recordSetLocal(node->local(), ValueSource(BooleanInJSStack));
+            break;
+        }
+            
+        case FlushedJSValue: {
             if (generationInfoFromVirtualRegister(node->child1()->virtualRegister()).registerFormat() == DataFormatDouble) {
                 SpeculateDoubleOperand value(this, node->child1(), ManualOperandSpeculation);
                 m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node->local()));
@@ -2108,43 +2142,27 @@ void SpeculativeJIT::compile(Node* node)
                 recordSetLocal(node->local(), ValueSource(DoubleInJSStack));
                 break;
             }
-            if (isInt32Speculation(predictedType)) {
-                SpeculateInt32Operand value(this, node->child1());
-                m_jit.store32(value.gpr(), JITCompiler::payloadFor(node->local()));
-                noResult(node);
-                recordSetLocal(node->local(), ValueSource(Int32InJSStack));
-                break;
-            }
-            if (isCellSpeculation(predictedType)) {
-                SpeculateCellOperand cell(this, node->child1());
-                GPRReg cellGPR = cell.gpr();
-                m_jit.storePtr(cellGPR, JITCompiler::payloadFor(node->local()));
-                noResult(node);
-                recordSetLocal(node->local(), ValueSource(CellInJSStack));
-                break;
-            }
-            if (isBooleanSpeculation(predictedType)) {
-                SpeculateBooleanOperand value(this, node->child1());
-                m_jit.store32(value.gpr(), JITCompiler::payloadFor(node->local()));
-                noResult(node);
-                recordSetLocal(node->local(), ValueSource(BooleanInJSStack));
-                break;
-            }
+            
+            JSValueOperand value(this, node->child1());
+            m_jit.store32(value.payloadGPR(), JITCompiler::payloadFor(node->local()));
+            m_jit.store32(value.tagGPR(), JITCompiler::tagFor(node->local()));
+            noResult(node);
+            recordSetLocal(node->local(), ValueSource(ValueInJSStack));
+            
+            // If we're storing an arguments object that has been optimized away,
+            // our variable event stream for OSR exit now reflects the optimized
+            // value (JSValue()). On the slow path, we want an arguments object
+            // instead. We add an additional move hint to show OSR exit that it
+            // needs to reconstruct the arguments object.
+            if (node->child1()->op() == PhantomArguments)
+                compileMovHint(node);
+            break;
         }
-        JSValueOperand value(this, node->child1());
-        m_jit.store32(value.payloadGPR(), JITCompiler::payloadFor(node->local()));
-        m_jit.store32(value.tagGPR(), JITCompiler::tagFor(node->local()));
-        noResult(node);
-        recordSetLocal(node->local(), ValueSource(ValueInJSStack));
-
-        // If we're storing an arguments object that has been optimized away,
-        // our variable event stream for OSR exit now reflects the optimized
-        // value (JSValue()). On the slow path, we want an arguments object
-        // instead. We add an additional move hint to show OSR exit that it
-        // needs to reconstruct the arguments object.
-        if (node->child1()->op() == PhantomArguments)
-            compileMovHint(node);
-
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
         break;
     }
 

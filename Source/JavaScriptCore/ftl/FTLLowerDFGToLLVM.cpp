@@ -569,41 +569,49 @@ private:
         observeMovHint(m_node);
         
         VariableAccessData* variable = m_node->variableAccessData();
-        SpeculatedType prediction = variable->argumentAwarePrediction();
-        
-        if (variable->shouldUnboxIfPossible()) {
-            if (variable->shouldUseDoubleFormat()) {
-                LValue value = lowDouble(m_node->child1());
-                m_out.storeDouble(value, addressFor(variable->local()));
-                m_valueSources.operand(variable->local()) = ValueSource(DoubleInJSStack);
-                return;
-            }
+        switch (variable->flushFormat()) {
+        case FlushedJSValue: {
+            LValue value = lowJSValue(m_node->child1());
+            m_out.store64(value, addressFor(variable->local()));
+            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
+            return;
+        }
             
-            if (isInt32Speculation(prediction)) {
-                LValue value = lowInt32(m_node->child1());
-                m_out.store32(value, payloadFor(variable->local()));
-                m_valueSources.operand(variable->local()) = ValueSource(Int32InJSStack);
-                return;
-            }
-            if (isCellSpeculation(prediction)) {
-                LValue value = lowCell(m_node->child1());
-                m_out.store64(value, addressFor(variable->local()));
-                m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
-                return;
-            }
-            if (isBooleanSpeculation(prediction)) {
-                speculateBoolean(m_node->child1());
-                m_out.store64(
-                    lowJSValue(m_node->child1(), ManualOperandSpeculation),
-                    addressFor(variable->local()));
-                m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
-                return;
-            }
+        case FlushedDouble: {
+            LValue value = lowDouble(m_node->child1());
+            m_out.storeDouble(value, addressFor(variable->local()));
+            m_valueSources.operand(variable->local()) = ValueSource(DoubleInJSStack);
+            return;
+        }
+            
+        case FlushedInt32: {
+            LValue value = lowInt32(m_node->child1());
+            m_out.store32(value, payloadFor(variable->local()));
+            m_valueSources.operand(variable->local()) = ValueSource(Int32InJSStack);
+            return;
+        }
+            
+        case FlushedCell: {
+            LValue value = lowCell(m_node->child1());
+            m_out.store64(value, addressFor(variable->local()));
+            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
+            return;
+        }
+            
+        case FlushedBoolean: {
+            speculateBoolean(m_node->child1());
+            m_out.store64(
+                lowJSValue(m_node->child1(), ManualOperandSpeculation),
+                addressFor(variable->local()));
+            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
+            return;
+        }
+            
+        case DeadFlush:
+            RELEASE_ASSERT_NOT_REACHED();
         }
         
-        LValue value = lowJSValue(m_node->child1());
-        m_out.store64(value, addressFor(variable->local()));
-        m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack);
+        RELEASE_ASSERT_NOT_REACHED();
     }
     
     void compileMovHint()

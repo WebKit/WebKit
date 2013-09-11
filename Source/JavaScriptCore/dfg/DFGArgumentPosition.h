@@ -48,6 +48,20 @@ public:
         m_variables.append(variable);
     }
     
+    VariableAccessData* someVariable() const
+    {
+        if (m_variables.isEmpty())
+            return 0;
+        return m_variables[0];
+    }
+    
+    FlushFormat flushFormat() const
+    {
+        if (VariableAccessData* variable = someVariable())
+            return variable->flushFormat();
+        return DeadFlush;
+    }
+    
     bool mergeShouldNeverUnbox(bool shouldNeverUnbox)
     {
         return checkAndSet(m_shouldNeverUnbox, m_shouldNeverUnbox | shouldNeverUnbox);

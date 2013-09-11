@@ -451,7 +451,7 @@ public:
             Node* node = basicBlock.variablesAtHead.local(local);
             if (!node || !node->shouldGenerate())
                 entry->m_expectedValues.local(local).makeHeapTop();
-            else if (node->variableAccessData()->shouldUseDoubleFormat())
+            else if (node->variableAccessData()->flushFormat() == FlushedDouble)
                 entry->m_localsForcedDouble.set(local);
         }
 #else

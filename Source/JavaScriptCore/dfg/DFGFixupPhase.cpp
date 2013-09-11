@@ -1171,22 +1171,25 @@ private:
                 continue;
             
             VariableAccessData* variable = node->variableAccessData();
-            
-            if (!variable->shouldUnboxIfPossible())
-                continue;
-            
-            if (variable->shouldUseDoubleFormat()) {
+            switch (variable->flushFormat()) {
+            case FlushedJSValue:
+                break;
+            case FlushedDouble:
                 fixDoubleEdge<NumberUse>(node->child1(), ForwardSpeculation);
-                continue;
-            }
-            
-            SpeculatedType predictedType = variable->argumentAwarePrediction();
-            if (isInt32Speculation(predictedType))
+                break;
+            case FlushedInt32:
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
-            else if (isCellSpeculation(predictedType))
+                break;
+            case FlushedCell:
                 setUseKindAndUnboxIfProfitable<CellUse>(node->child1());
-            else if (isBooleanSpeculation(predictedType))
+                break;
+            case FlushedBoolean:
                 setUseKindAndUnboxIfProfitable<BooleanUse>(node->child1());
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
         }
         m_insertionSet.execute(block);
     }
