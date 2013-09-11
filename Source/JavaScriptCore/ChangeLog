@@ -1,3 +1,13 @@
+2013-09-10  Mark Lam  <mark.lam@apple.com>
+
+        Fix some indentation in Interpreter.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=121136.
+
+        Reviewed by Darin Adler.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::operator()):
+
 2013-09-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         MapData has some issues

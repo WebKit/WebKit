@@ -612,16 +612,16 @@ public:
         unsigned bytecodeOffset = visitor->bytecodeOffset();
 
         if (m_isTermination || !(m_handler = m_codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
-        if (!unwindCallFrame(visitor, m_exceptionValue)) {
-            if (LegacyProfiler* profiler = vm.enabledProfiler())
-                profiler->exceptionUnwind(m_callFrame);
+            if (!unwindCallFrame(visitor, m_exceptionValue)) {
+                if (LegacyProfiler* profiler = vm.enabledProfiler())
+                    profiler->exceptionUnwind(m_callFrame);
+                return StackVisitor::Done;
+            }
+        } else
             return StackVisitor::Done;
-        }
-    } else
-        return StackVisitor::Done;
 
-    return StackVisitor::Continue;
-}
+        return StackVisitor::Continue;
+    }
 
 private:
     CallFrame*& m_callFrame;
