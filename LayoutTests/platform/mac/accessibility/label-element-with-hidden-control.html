@@ -6,7 +6,7 @@
 <body id="body">
 
 <label for="control1">Test label1</label><input type="checkbox" name="control1" id="control1" style="visibility:hidden;">
-<label for="control2">Test label2</label><input type="checkbox" name="control2" id="control2" >
+<label id="label2" for="control2">Test label2</label><input type="checkbox" name="control2" id="control2" >
 
 <p id="description"></p>
 <div id="console"></div>
@@ -24,8 +24,9 @@
             shouldBe("container.childAtIndex('0').role", "'AXRole: AXGroup'");            
             shouldBe("container.childAtIndex('0').childAtIndex(0).role", "'AXRole: AXStaticText'");            
             shouldBe("container.childAtIndex('0').childAtIndex(0).stringValue", "'AXValue: Test label1'");            
-            shouldBe("container.childAtIndex('1').role", "'AXRole: AXCheckBox'");
-            shouldBe("container.childAtIndex('1').title", "'AXTitle: Test label2'");            
+            shouldBe("container.childAtIndex('2').role", "'AXRole: AXCheckBox'");
+            var labelForCheckbox = accessibilityController.accessibleElementById("label2");
+            shouldBeTrue("container.childAtIndex('2').titleUIElement().isEqual(labelForCheckbox)");            
         }
     }
 </script>

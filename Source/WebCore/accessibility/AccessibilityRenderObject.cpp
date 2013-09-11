@@ -975,10 +975,7 @@ bool AccessibilityRenderObject::hasTextAlternative() const
 {
     // ARIA: section 2A, bullet #3 says if aria-labeledby or aria-label appears, it should
     // override the "label" element association.
-    if (!ariaLabeledByAttribute().isEmpty() || !getAttribute(aria_labelAttr).isEmpty())
-        return true;
-        
-    return false;   
+    return ariaAccessibilityDescription().length();
 }
     
 bool AccessibilityRenderObject::ariaHasPopup() const
@@ -1047,12 +1044,6 @@ bool AccessibilityRenderObject::exposesTitleUIElement() const
     if (accessibilityIsIgnored())
         return true;
     
-    // Checkboxes and radio buttons use the text of their title ui element as their own AXTitle.
-    // This code controls whether the title ui element should appear in the AX tree (usually, no).
-    // It should appear if the control already has a label (which will be used as the AXTitle instead).
-    if (isCheckboxOrRadio())
-        return hasTextAlternative();
-
     // When controls have their own descriptions, the title element should be ignored.
     if (hasTextAlternative())
         return false;

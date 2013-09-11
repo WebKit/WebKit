@@ -1186,7 +1186,8 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
         if (label) {
             AccessibilityObject* labelObject = axObjectCache()->getOrCreate(label);
             String innerText = label->innerText();
-            if (!innerText.isEmpty())
+            // Only use the <label> text if there's no ARIA override.
+            if (!innerText.isEmpty() && !ariaAccessibilityDescription())
                 textOrder.append(AccessibilityText(innerText, LabelByElementText, labelObject));
             return;
         }
@@ -1615,7 +1616,8 @@ String AccessibilityNodeObject::title() const
 
     if (isInputTag || AccessibilityObject::isARIAInput(ariaRoleAttribute()) || isControl()) {
         HTMLLabelElement* label = labelForElement(toElement(node));
-        if (label && !exposesTitleUIElement())
+        // Use the label text as the title if 1) the title element is NOT an exposed element and 2) there's no ARIA override.
+        if (label && !exposesTitleUIElement() && !ariaAccessibilityDescription().length())
             return label->innerText();
     }
 

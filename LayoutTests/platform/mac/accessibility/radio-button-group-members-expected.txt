@@ -1,290 +1,45 @@
-Radio group in a form
-----------------------
-AXRole: AXRadioButton
-AXSubrole: (null)
-AXRoleDescription: radio button
-AXChildren: <array of size 0>
-AXHelp: 
-AXParent: <AXRadioButton>
-AXSize: NSSize: {16, 19}
-AXTitle: 
-AXDescription: 
-AXValue: 0
-AXFocused: 1
-AXEnabled: 1
-AXWindow: <AXRadioButton>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXRadioButton>
-AXEndTextMarker: <AXRadioButton>
-AXVisited: 0
-AXLinkedUIElements: <array of size 3>
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXRadioButton>
-AXLanguage: 
-AXDOMIdentifier: test1
-AXDOMClassList: <array of size 0>
-AXTitleUIElement: (null)
-AXAccessKey: (null)
-AXRequired: 0
-AXInvalid: false
-AXARIABusy: 0
-AXRequired: 0
-
-------------
-AXRole: AXRadioButton
-AXSubrole: (null)
-AXRoleDescription: radio button
-AXChildren: <array of size 0>
-AXHelp: 
-AXParent: <AXRadioButton>
-AXSize: NSSize: {16, 19}
-AXTitle: 
-AXDescription: 
-AXValue: 0
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXRadioButton>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXRadioButton>
-AXEndTextMarker: <AXRadioButton>
-AXVisited: 0
-AXLinkedUIElements: <array of size 3>
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXRadioButton>
-AXLanguage: 
-AXDOMIdentifier: test1
-AXDOMClassList: <array of size 0>
-AXTitleUIElement: (null)
-AXAccessKey: (null)
-AXRequired: 0
-AXInvalid: false
-AXARIABusy: 0
-AXRequired: 0
-
-------------
-AXRole: AXRadioButton
-AXSubrole: (null)
-AXRoleDescription: radio button
-AXChildren: <array of size 0>
-AXHelp: 
-AXParent: <AXRadioButton>
-AXSize: NSSize: {16, 19}
-AXTitle: 
-AXDescription: 
-AXValue: 0
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXRadioButton>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXRadioButton>
-AXEndTextMarker: <AXRadioButton>
-AXVisited: 0
-AXLinkedUIElements: <array of size 3>
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXRadioButton>
-AXLanguage: 
-AXDOMIdentifier: test1
-AXDOMClassList: <array of size 0>
-AXTitleUIElement: (null)
-AXAccessKey: (null)
-AXRequired: 0
-AXInvalid: false
-AXARIABusy: 0
-AXRequired: 0
-
-------------
 
 
-Radio group without a form
-----------------------
-AXRole: AXRadioButton
-AXSubrole: (null)
-AXRoleDescription: radio button
-AXChildren: <array of size 0>
-AXHelp: 
-AXParent: <AXRadioButton>
-AXSize: NSSize: {16, 19}
-AXTitle: 
-AXDescription: 
-AXValue: 0
-AXFocused: 1
-AXEnabled: 1
-AXWindow: <AXRadioButton>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXRadioButton>
-AXEndTextMarker: <AXRadioButton>
-AXVisited: 0
-AXLinkedUIElements: <array of size 2>
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXRadioButton>
-AXLanguage: 
-AXDOMIdentifier: test2
-AXDOMClassList: <array of size 0>
-AXTitleUIElement: (null)
-AXAccessKey: (null)
-AXRequired: 0
-AXInvalid: false
-AXARIABusy: 0
-AXRequired: 0
-
-------------
-AXRole: AXRadioButton
-AXSubrole: (null)
-AXRoleDescription: radio button
-AXChildren: <array of size 0>
-AXHelp: 
-AXParent: <AXRadioButton>
-AXSize: NSSize: {16, 19}
-AXTitle: 
-AXDescription: 
-AXValue: 0
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXRadioButton>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXRadioButton>
-AXEndTextMarker: <AXRadioButton>
-AXVisited: 0
-AXLinkedUIElements: <array of size 2>
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXRadioButton>
-AXLanguage: 
-AXDOMIdentifier: test2
-AXDOMClassList: <array of size 0>
-AXTitleUIElement: (null)
-AXAccessKey: (null)
-AXRequired: 0
-AXInvalid: false
-AXARIABusy: 0
-AXRequired: 0
-
-------------
 
 
-Radio group with labels
-----------------------
-AXRole: AXRadioButton
-AXSubrole: (null)
-AXRoleDescription: radio button
-AXChildren: <array of size 0>
-AXHelp: 
-AXParent: <AXRadioButton: 'Yes'>
-AXSize: NSSize: {41, 19}
-AXTitle: Yes
-AXDescription: 
-AXValue: 0
-AXFocused: 1
-AXEnabled: 1
-AXWindow: <AXRadioButton: 'Yes'>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXRadioButton: 'Yes'>
-AXEndTextMarker: <AXRadioButton: 'Yes'>
-AXVisited: 0
-AXLinkedUIElements: <array of size 2>
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXRadioButton: 'Yes'>
-AXLanguage: 
-AXDOMIdentifier: test3
-AXDOMClassList: <array of size 0>
-AXTitleUIElement: (null)
-AXAccessKey: (null)
-AXRequired: 0
-AXInvalid: false
-AXARIABusy: 0
-AXRequired: 0
-
-------------
-AXRole: AXRadioButton
-AXSubrole: (null)
-AXRoleDescription: radio button
-AXChildren: <array of size 0>
-AXHelp: 
-AXParent: <AXRadioButton: 'No'>
-AXSize: NSSize: {36, 19}
-AXTitle: No
-AXDescription: 
-AXValue: 0
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXRadioButton: 'No'>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXRadioButton: 'No'>
-AXEndTextMarker: <AXRadioButton: 'No'>
-AXVisited: 0
-AXLinkedUIElements: <array of size 2>
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXRadioButton: 'No'>
-AXLanguage: 
-AXDOMIdentifier: test3_1
-AXDOMClassList: <array of size 0>
-AXTitleUIElement: (null)
-AXAccessKey: (null)
-AXRequired: 0
-AXInvalid: false
-AXARIABusy: 0
-AXRequired: 0
-
-------------
 
 
-Radio button without a group
-----------------------
-AXRole: AXRadioButton
-AXSubrole: (null)
-AXRoleDescription: radio button
-AXChildren: <array of size 0>
-AXHelp: 
-AXParent: <AXRadioButton>
-AXSize: NSSize: {16, 19}
-AXTitle: 
-AXDescription: 
-AXValue: 0
-AXFocused: 1
-AXEnabled: 1
-AXWindow: <AXRadioButton>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXRadioButton>
-AXEndTextMarker: <AXRadioButton>
-AXVisited: 0
-AXLinkedUIElements: <array of size 1>
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXRadioButton>
-AXLanguage: 
-AXDOMIdentifier: test4
-AXDOMClassList: <array of size 0>
-AXTitleUIElement: (null)
-AXAccessKey: (null)
-AXRequired: 0
-AXInvalid: false
-AXARIABusy: 0
-AXRequired: 0
-
-------------
 
 
-Yes
-No
-Maybe
 
 
-Yes
-No
 
 
-Yes
-No
 
 
-Yes
-No
 
 
+
+This tests that linked UI elements withing a radio group work
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Radio buttons within the same named group should be able to access their siblings
+PASS test1.linkedUIElementAtIndex(0).isEqual(test1) is true
+PASS test1.linkedUIElementAtIndex(1).isEqual(accessibilityController.accessibleElementById('test1_No')) is true
+PASS test1.linkedUIElementAtIndex(2).isEqual(accessibilityController.accessibleElementById('test1_Maybe')) is true
+
+
+Radio buttons that are not in a form, but in the same named group should be able to access their siblings
+PASS test2.linkedUIElementAtIndex(0).isEqual(test2) is true
+PASS test2.linkedUIElementAtIndex(1).isEqual(accessibilityController.accessibleElementById('test2_No')) is true
+
+
+Radio buttons labeled by  should be able to access their siblings
+PASS test3.linkedUIElementAtIndex(0).isEqual(test3) is true
+PASS test3.linkedUIElementAtIndex(1).isEqual(accessibilityController.accessibleElementById('test3_No')) is true
+
+
+Radio buttons not in a groups should not have siblings (the first linked element is itself)
+PASS test4.linkedUIElementAtIndex(0).isEqual(test4) is true
+PASS !test4.linkedUIElementAtIndex(1) || !test4.linkedUIElementAtIndex(1).isValid is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

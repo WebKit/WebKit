@@ -1,3 +1,27 @@
+2013-09-11  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit exposes AXTitleUIElement incorrectly on checkboxes and radio buttons
+        https://bugs.webkit.org/show_bug.cgi?id=121039
+
+        Reviewed by Sam Weinig.
+
+        Stop hiding <label> elements for radio buttons and checkboxes (and using the text inside them for the AXTitle).
+        Instead, expose the <label> element as the titleUIElement if appropriate for the input.
+
+        This implies:
+           1) The web will no longer match MacOS behavior exactly (the text and the checkbox control are combined on MacOS into one element)
+           2) But, the user will now be able to explore the <label> element which may include links or other important controls.
+        I think sacrificing 1) here is a good tradeoff. The user will likely never know the difference in terms of output.
+
+        Test: platform/mac/accessibility/label-elements-exposed-as-title-ui-elements.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::titleElementText):
+        (WebCore::AccessibilityNodeObject::title):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::hasTextAlternative):
+        (WebCore::AccessibilityRenderObject::exposesTitleUIElement):
+
 2013-09-11  Andreas Kling  <akling@apple.com>
 
         Remove unnecessary Document::frame() null checks in rendererIsNeeded().
@@ -575,7 +599,6 @@
 
         * Target.pri:
 
->>>>>>> .r155491
 2013-09-10  Sergio Correia  <sergio.correia@openbossa.org>
 
         Fix EFL build after r155477

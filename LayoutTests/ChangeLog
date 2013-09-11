@@ -1,3 +1,27 @@
+2013-09-11  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit exposes AXTitleUIElement incorrectly on checkboxes and radio buttons
+        https://bugs.webkit.org/show_bug.cgi?id=121039
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/label-for-control-hittest-expected.txt: Removed.
+        * accessibility/label-for-control-hittest.html: Removed.
+              We no longer need this test since we are not combining label + control into one element anymore.
+        * accessibility/radio-button-group-members.html:
+              Rewrite this test to be more modern (don't just dump attributes). 
+              Instead test for what we want to know (whether radio button group members can identify their siblings)
+        * accessibility/radio-button-title-label-expected.txt:
+        * accessibility/radio-button-title-label.html:
+              Rewrite this test so that it understands that controls won't hide their <label> elements.
+        * platform/mac/accessibility/label-element-with-hidden-control-expected.txt:
+        * platform/mac/accessibility/label-element-with-hidden-control.html:
+              Update test to reflect that title UI elements are exposed for some controls.
+        * platform/mac/accessibility/label-elements-exposed-as-title-ui-elements-expected.txt: Added.
+        * platform/mac/accessibility/label-elements-exposed-as-title-ui-elements.html: Added.
+              New test to explicitly confirm that <label> is exposed as a title UI element.
+        * platform/mac/accessibility/radio-button-group-members-expected.txt:
+
 2013-09-11  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Changed expected results after r155253
