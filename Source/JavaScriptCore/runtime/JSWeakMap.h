@@ -43,12 +43,16 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
+    static JSWeakMap* create(VM& vm, Structure* structure)
+    {
+        JSWeakMap* instance = new (NotNull, allocateCell<JSWeakMap>(vm.heap)) JSWeakMap(vm, structure);
+        instance->finishCreation(vm);
+        return instance;
+    }
+
     static JSWeakMap* create(ExecState* exec, Structure* structure)
     {
-        VM& vm = exec->vm();
-        JSWeakMap* instance = new (NotNull, allocateCell<JSWeakMap>(vm.heap)) JSWeakMap(vm, structure);
-        instance->finishCreation(vm, structure->globalObject());
-        return instance;
+        return create(exec->vm(), structure);
     }
 
     WeakMapData* weakMapData() { return m_weakMapData.get(); }
@@ -61,7 +65,6 @@ public:
     void clear(CallFrame*);
 
 private:
-
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
     JSWeakMap(VM& vm, Structure* structure)
@@ -69,7 +72,7 @@ private:
     {
     }
 
-    void finishCreation(VM&, JSGlobalObject*);
+    void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<WeakMapData> m_weakMapData;

@@ -46,7 +46,7 @@ public:
     static JSSet* create(VM& vm, Structure* structure)
     {
         JSSet* instance = new (NotNull, allocateCell<JSSet>(vm.heap)) JSSet(vm, structure);
-        instance->finishCreation(vm, structure->globalObject());
+        instance->finishCreation(vm);
         return instance;
     }
 
@@ -66,7 +66,7 @@ private:
     {
     }
 
-    JS_EXPORT_PRIVATE void finishCreation(VM&, JSGlobalObject*);
+    JS_EXPORT_PRIVATE void finishCreation(VM&);
     
     static void visitChildren(JSCell*, SlotVisitor&);
     

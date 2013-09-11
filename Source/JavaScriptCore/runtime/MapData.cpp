@@ -37,12 +37,12 @@
 
 namespace JSC {
 
-const ClassInfo MapData::s_info = { "MapData", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(MapData) };
+const ClassInfo MapData::s_info = { "MapData", 0, 0, 0, CREATE_METHOD_TABLE(MapData) };
 
 static const int32_t minimumMapSize = 8;
 
-MapData::MapData(VM& vm, JSGlobalObject* globalObject)
-    : Base(vm, globalObject->mapDataStructure())
+MapData::MapData(VM& vm)
+    : Base(vm, vm.mapDataStructure.get())
     , m_capacity(0)
     , m_size(0)
     , m_deletedCount(0)

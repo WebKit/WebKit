@@ -26,47 +26,45 @@
 #ifndef WeakMapData_h
 #define WeakMapData_h
 
-#include "CallFrame.h"
-#include "JSCJSValue.h"
-#include "JSDestructibleObject.h"
-
+#include "JSCell.h"
+#include "Structure.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 
 namespace JSC {
 
-class WeakImpl;
-class WeakMapData;
-
-class WeakMapData : public JSDestructibleObject {
+class WeakMapData : public JSCell {
 public:
-    typedef JSDestructibleObject Base;
+    typedef JSCell Base;
 
-    static WeakMapData* create(VM& vm, JSGlobalObject* globalObject)
+    static WeakMapData* create(VM& vm)
     {
-        WeakMapData* weakMapData = new (NotNull, allocateCell<WeakMapData>(vm.heap)) WeakMapData(vm, globalObject);
+        WeakMapData* weakMapData = new (NotNull, allocateCell<WeakMapData>(vm.heap)) WeakMapData(vm);
         weakMapData->finishCreation(vm);
         return weakMapData;
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, StructureFlags), info());
     }
 
-    void set(CallFrame*, JSObject*, JSValue);
+    static const bool needsDestruction = true;
+    static const bool hasImmortalStructure = true;
+
+    void set(VM&, JSObject*, JSValue);
     JSValue get(JSObject*);
     bool remove(JSObject*);
-    void removeDead(JSObject*);
     bool contains(JSObject*);
     void clear();
 
     DECLARE_INFO;
+
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
 private:
-    WeakMapData(VM&, JSGlobalObject*);
+    WeakMapData(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
     void finishCreation(VM&);

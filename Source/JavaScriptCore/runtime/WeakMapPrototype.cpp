@@ -119,7 +119,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakMapSet(CallFrame* callFrame)
     JSValue key = callFrame->argument(0);
     if (!key.isObject())
         return JSValue::encode(throwTypeError(callFrame, WTF::ASCIILiteral("Attempted to set a non-object key in a WeakMap")));
-    map->set(callFrame, asObject(key), callFrame->argument(1));
+    map->set(callFrame->vm(), asObject(key), callFrame->argument(1));
     return JSValue::encode(callFrame->thisValue());
 }
 

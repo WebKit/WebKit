@@ -26,19 +26,17 @@
 #ifndef MapData_h
 #define MapData_h
 
-#include "CallFrame.h"
-#include "JSCJSValue.h"
-#include "JSDestructibleObject.h"
-
+#include "JSCell.h"
+#include "Structure.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 
 namespace JSC {
 
-class MapData : public JSDestructibleObject {
+class MapData : public JSCell {
 public:
-    typedef JSDestructibleObject Base;
+    typedef JSCell Base;
 
     struct const_iterator {
         const_iterator(const MapData*);
@@ -68,17 +66,20 @@ public:
         JSValue value;
     };
 
-    static MapData* create(VM& vm, JSGlobalObject* globalObject)
+    static MapData* create(VM& vm)
     {
-        MapData* mapData = new (NotNull, allocateCell<MapData>(vm.heap)) MapData(vm, globalObject);
+        MapData* mapData = new (NotNull, allocateCell<MapData>(vm.heap)) MapData(vm);
         mapData->finishCreation(vm);
         return mapData;
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, StructureFlags), info());
     }
+
+    static const bool needsDestruction = true;
+    static const bool hasImmortalStructure = true;
 
     JS_EXPORT_PRIVATE void set(CallFrame*, KeyType, JSValue);
     JSValue get(CallFrame*, KeyType);
@@ -109,7 +110,7 @@ private:
 
     size_t capacityInBytes() { return m_capacity * sizeof(Entry); }
 
-    MapData(VM&, JSGlobalObject*);
+    MapData(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
     static void copyBackingStore(JSCell*, CopyVisitor&, CopyToken);

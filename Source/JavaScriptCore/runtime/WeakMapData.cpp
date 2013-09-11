@@ -34,13 +34,12 @@
 
 #include <wtf/MathExtras.h>
 
-
 namespace JSC {
 
-const ClassInfo WeakMapData::s_info = { "WeakMapData", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(WeakMapData) };
+const ClassInfo WeakMapData::s_info = { "WeakMapData", 0, 0, 0, CREATE_METHOD_TABLE(WeakMapData) };
 
-WeakMapData::WeakMapData(VM& vm, JSGlobalObject* globalObject)
-    : Base(vm, globalObject->weakMapDataStructure())
+WeakMapData::WeakMapData(VM& vm)
+    : Base(vm, vm.weakMapDataStructure.get())
     , m_deadKeyCleaner(this)
 {
 }
@@ -68,11 +67,11 @@ void WeakMapData::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.reportExtraMemoryUsage(thisObj->m_map.capacity() * (sizeof(JSObject*) + sizeof(WriteBarrier<Unknown>)));
 }
 
-void WeakMapData::set(CallFrame* callFrame, JSObject* key, JSValue value)
+void WeakMapData::set(VM& vm, JSObject* key, JSValue value)
 {
     // Here we force the write barrier on the key.
-    auto result = m_map.add(WriteBarrier<JSObject>(callFrame->vm(), this, key).get(), WriteBarrier<Unknown>());
-    result.iterator->value.set(callFrame->vm(), this, value);
+    auto result = m_map.add(WriteBarrier<JSObject>(vm, this, key).get(), WriteBarrier<Unknown>());
+    result.iterator->value.set(vm, this, value);
 }
 
 JSValue WeakMapData::get(JSObject* key)

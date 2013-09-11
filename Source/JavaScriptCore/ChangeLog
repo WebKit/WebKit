@@ -1,3 +1,54 @@
+2013-09-11  Sam Weinig  <sam@webkit.org>
+
+        MapData and WeakMapData don't need to be objects
+        https://bugs.webkit.org/show_bug.cgi?id=121167
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::mapStructure):
+        Remove MapData and WeakMapData structures (they moved to VM with other non-object Structures).
+
+        * runtime/JSMap.cpp:
+        (JSC::JSMap::finishCreation):
+        * runtime/JSMap.h:
+        (JSC::JSMap::create):
+        * runtime/JSSet.cpp:
+        (JSC::JSSet::finishCreation):
+        * runtime/JSSet.h:
+        (JSC::JSSet::create):
+        * runtime/JSWeakMap.cpp:
+        (JSC::JSWeakMap::finishCreation):
+        * runtime/JSWeakMap.h:
+        (JSC::JSWeakMap::create):
+        Update to not pass a global object to the MapData or WeakMapData Structure.
+
+        * runtime/MapData.cpp:
+        (JSC::MapData::MapData):
+        * runtime/MapData.h:
+        (JSC::MapData::create):
+        (JSC::MapData::createStructure):
+        * runtime/WeakMapData.cpp:
+        (JSC::WeakMapData::WeakMapData):
+        (JSC::WeakMapData::set): Change to take a VM rather than a CallFrame, as that it all it needs.
+        * runtime/WeakMapData.h:
+        (JSC::WeakMapData::create):
+        (JSC::WeakMapData::createStructure):
+        Instead of inheriting from JSDestructibleObject, inherit from JSCell and mark self as needing destruction
+        and having an immortal structure.
+
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        Add MapData and WeakMapData Structures.
+
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::protoFuncWeakMapSet):
+        Pass a VM rather than an ExecState.
+
 2013-09-10  Filip Pizlo  <fpizlo@apple.com>
 
         Propagate the Int48 stuff into the prediction propagator.

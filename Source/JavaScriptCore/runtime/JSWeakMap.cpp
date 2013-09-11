@@ -34,10 +34,10 @@ namespace JSC {
 
 const ClassInfo JSWeakMap::s_info = { "WeakMap", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSWeakMap) };
 
-void JSWeakMap::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void JSWeakMap::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    m_weakMapData.set(vm, this, WeakMapData::create(vm, globalObject));
+    m_weakMapData.set(vm, this, WeakMapData::create(vm));
 }
 
 void JSWeakMap::visitChildren(JSCell* cell, SlotVisitor& visitor)

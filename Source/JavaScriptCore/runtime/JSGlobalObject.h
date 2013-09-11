@@ -200,9 +200,6 @@ protected:
     WriteBarrier<Structure> m_promiseWrapperCallbackStructure;
 #endif // ENABLE(PROMISES)
 
-    WriteBarrier<Structure> m_mapDataStructure;
-    WriteBarrier<Structure> m_weakMapDataStructure;
-
 #define DEFINE_STORAGE_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
     WriteBarrier<capitalName ## Prototype> m_ ## lowerName ## Prototype; \
     WriteBarrier<Structure> m_ ## properName ## Structure;
@@ -399,8 +396,6 @@ public:
     Structure* privateNameStructure() const { return m_privateNameStructure.get(); }
     Structure* internalFunctionStructure() const { return m_internalFunctionStructure.get(); }
     Structure* mapStructure() const { return m_mapStructure.get(); }
-    Structure* mapDataStructure() const { return m_mapDataStructure.get(); }
-    Structure* weakMapDataStructure() const { return m_weakMapDataStructure.get(); }
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
     Structure* setStructure() const { return m_setStructure.get(); }

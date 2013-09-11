@@ -46,7 +46,7 @@ public:
     static JSMap* create(VM& vm, Structure* structure)
     {
         JSMap* instance = new (NotNull, allocateCell<JSMap>(vm.heap)) JSMap(vm, structure);
-        instance->finishCreation(vm, structure->globalObject());
+        instance->finishCreation(vm);
         return instance;
     }
 
@@ -58,7 +58,6 @@ public:
     MapData* mapData() { return m_mapData.get(); }
 
 private:
-
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
     JSMap(VM& vm, Structure* structure)
@@ -66,7 +65,7 @@ private:
     {
     }
 
-    JS_EXPORT_PRIVATE void finishCreation(VM&, JSGlobalObject*);
+    JS_EXPORT_PRIVATE void finishCreation(VM&);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

@@ -46,8 +46,8 @@
 #include "Identifier.h"
 #include "IncrementalSweeper.h"
 #include "Interpreter.h"
-#include "JSActivation.h"
 #include "JSAPIValueWrapper.h"
+#include "JSActivation.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
@@ -68,6 +68,7 @@
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlock.h"
+#include "WeakMapData.h"
 #include <wtf/ProcessID.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StringPrintStream.h>
@@ -241,6 +242,9 @@ VM::VM(VMType vmType, HeapType heapType)
     unlinkedEvalCodeBlockStructure.set(*this, UnlinkedEvalCodeBlock::createStructure(*this, 0, jsNull()));
     unlinkedFunctionCodeBlockStructure.set(*this, UnlinkedFunctionCodeBlock::createStructure(*this, 0, jsNull()));
     propertyTableStructure.set(*this, PropertyTable::createStructure(*this, 0, jsNull()));
+    mapDataStructure.set(*this, MapData::createStructure(*this, 0, jsNull()));
+    weakMapDataStructure.set(*this, WeakMapData::createStructure(*this, 0, jsNull()));
+
     smallStrings.initializeCommonStrings(*this);
 
     wtfThreadData().setCurrentIdentifierTable(existingEntryIdentifierTable);

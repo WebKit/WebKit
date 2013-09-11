@@ -41,10 +41,10 @@ void JSMap::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_mapData);
 }
 
-void JSMap::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void JSMap::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    m_mapData.set(vm, this, MapData::create(vm, globalObject));
+    m_mapData.set(vm, this, MapData::create(vm));
 }
 
 
