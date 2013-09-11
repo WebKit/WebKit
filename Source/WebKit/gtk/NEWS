@@ -1,3 +1,27 @@
+=================
+WebKitGTK+ 2.1.91
+=================
+
+What's new in WebKitGTK+ 2.1.91?
+
+  - Add a cancelled signal to WebKitAuthenticationRequest in WebKit2
+    GTK+ API.
+  - Add support for building with Wayland as the target.
+  - Fix issues with rtsp streams embedded on <video> not loading.
+  - Fix the media player to not set the system volume to 100%.
+  - Ensure volume slider value is 0 when audio is muted.
+  - Make GStreamer source element thread-safe.
+  - Adjust internal size on GStreamer source element when receiving
+    data if necessary.
+  - Disable accelerated compositing if the system doesn't support it.
+  - Fix rendering of input buttons text with recent
+    gnome-themes-standard.
+  - Fix the cursor rendering when the mouse is over an image document
+    with recent versions of GTK+.
+  - Fix a crash in some cases when context menu is shown.
+  - Fix the build on GNU/Hurd.
+  - Translation updates: Brazilian Portuguese, Spanish.
+
 ===================
 WebKitGTK+ 2.1.90.1
 ===================
