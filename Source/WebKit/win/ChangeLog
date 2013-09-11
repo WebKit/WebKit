@@ -1,5 +1,24 @@
 2013-09-11  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Avoid converting from IntSize->SIZE->IntSize
+        https://bugs.webkit.org/show_bug.cgi?id=121180
+
+        Reviewed by Anders Carlsson.
+
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::iconForURL): Guard against null SIZE argument.
+        This was dereferenced with checking before! Use IntSize arguments.
+        (WebIconDatabase::defaultIconWithSize): Used passed-in IntSize.
+        (createDIB): Take an IntSize argument.
+        (WebIconDatabase::getOrCreateSharedBitmap): Take IntSize argument.
+        (WebIconDatabase::getOrCreateDefaultIconBitmap): Ditto.
+        * WebIconDatabase.h: Update for IntSize arguments.
+        * WebView.cpp:
+        (WebView::dispatchDidReceiveIconFromWebFrame): Pass address of
+        IntSize directly, rather than casting to SIZE first.
+
+2013-09-11  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Unreviewed build correction after r155507.
 
         * WebCoreSupport/WebChromeClient.cpp: Add missing header include

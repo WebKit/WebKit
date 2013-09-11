@@ -1,3 +1,13 @@
+2013-09-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Avoid converting from IntSize->SIZE->IntSize
+        https://bugs.webkit.org/show_bug.cgi?id=121180
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Remove unused symbol export.
+
 2013-09-08  Antti Koivisto  <antti@apple.com>
 
         Fix window build.

@@ -1,3 +1,20 @@
+2013-09-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Avoid converting from IntSize->SIZE->IntSize.
+        https://bugs.webkit.org/show_bug.cgi?id=121180
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/BitmapImage.h: Take const IntSize* as
+        argument, rather than LPSIZE.
+        * platform/graphics/Image.h: Ditto.
+        (WebCore::Image::getHBITMAPOfSize):
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize): Use passed-in
+        IntSize, rather than converting from SIZE.
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize): Ditto.
+
 2013-09-11  Zoltan Horvath  <zoltan@webkit.org>
 
         Unreviewed debug build fix after r155567.

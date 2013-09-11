@@ -2894,7 +2894,7 @@ void WebView::dispatchDidReceiveIconFromWebFrame(WebFrame* frame)
         if (icon && icon->width()) {
             HWndDC dc(0);
             hBitmap = CreateDIBSection(dc, &bmInfo, DIB_RGB_COLORS, 0, 0, 0);
-            icon->getHBITMAPOfSize(hBitmap, &static_cast<SIZE>(sz));
+            icon->getHBITMAPOfSize(hBitmap, &sz);
         }
 
         HRESULT hr = m_frameLoadDelegate->didReceiveIcon(this, (OLE_HANDLE)hBitmap, frame);

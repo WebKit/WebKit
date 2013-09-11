@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -161,12 +161,15 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::sharedIconDatabase(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebIconDatabase::iconForURL(
+HRESULT WebIconDatabase::iconForURL(
         /* [in] */ BSTR url,
         /* [optional][in] */ LPSIZE size,
         /* [optional][in] */ BOOL /*cache*/,
         /* [retval][out] */ OLE_HANDLE* bitmap)
 {
+    if (!size)
+        return E_POINTER;
+
     IntSize intSize(*size);
 
     Image* icon = 0;
@@ -175,8 +178,8 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::iconForURL(
 
     // Make sure we check for the case of an "empty image"
     if (icon && icon->width()) {
-        *bitmap = (OLE_HANDLE)(ULONG64)getOrCreateSharedBitmap(size);
-        if (!icon->getHBITMAPOfSize((HBITMAP)(ULONG64)*bitmap, size)) {
+        *bitmap = (OLE_HANDLE)(ULONG64)getOrCreateSharedBitmap(intSize);
+        if (!icon->getHBITMAPOfSize((HBITMAP)(ULONG64)*bitmap, &intSize)) {
             LOG_ERROR("Failed to draw Image to HBITMAP");
             *bitmap = 0;
             return E_FAIL;
@@ -191,7 +194,12 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::defaultIconWithSize(
         /* [in] */ LPSIZE size,
         /* [retval][out] */ OLE_HANDLE* result)
 {
-    *result = (OLE_HANDLE)(ULONG64)getOrCreateDefaultIconBitmap(size);
+    if (!size)
+        return E_POINTER;
+
+    IntSize intSize(*size);
+
+    *result = (OLE_HANDLE)(ULONG64)getOrCreateDefaultIconBitmap(intSize);
     return S_OK;
 }
 
@@ -280,34 +288,34 @@ HRESULT STDMETHODCALLTYPE WebIconDatabase::hasIconForURL(
     return S_OK;
 }
 
-HBITMAP createDIB(LPSIZE size)
+static HBITMAP createDIB(const IntSize& size)
 {
-    BitmapInfo bmInfo = BitmapInfo::create(IntSize(*size));
+    BitmapInfo bmInfo = BitmapInfo::create(size);
 
     HWndDC dc(0);
     return CreateDIBSection(dc, &bmInfo, DIB_RGB_COLORS, 0, 0, 0);
 }
 
-HBITMAP WebIconDatabase::getOrCreateSharedBitmap(LPSIZE size)
+HBITMAP WebIconDatabase::getOrCreateSharedBitmap(const IntSize& size)
 {
-    HBITMAP result = m_sharedIconMap.get(*size);
+    HBITMAP result = m_sharedIconMap.get(size);
     if (result)
         return result;
     result = createDIB(size);
-    m_sharedIconMap.set(*size, result);
+    m_sharedIconMap.set(size, result);
     return result;
 }
 
-HBITMAP WebIconDatabase::getOrCreateDefaultIconBitmap(LPSIZE size)
+HBITMAP WebIconDatabase::getOrCreateDefaultIconBitmap(const IntSize& size)
 {
-    HBITMAP result = m_defaultIconMap.get(*size);
+    HBITMAP result = m_defaultIconMap.get(size);
     if (result)
         return result;
 
     result = createDIB(size);
 
-    m_defaultIconMap.set(*size, result);
-    if (!iconDatabase().defaultIcon(*size) || !iconDatabase().defaultIcon(*size)->getHBITMAPOfSize(result, size)) {
+    m_defaultIconMap.set(size, result);
+    if (!iconDatabase().defaultIcon(size) || !iconDatabase().defaultIcon(size)->getHBITMAPOfSize(result, &size)) {
         LOG_ERROR("Failed to draw Image to HBITMAP");
         return 0;
     }

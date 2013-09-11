@@ -382,7 +382,6 @@ EXPORTS
         symbolWithPointer(?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z, ?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z)
 #endif
         symbolWithPointer(?getHBITMAP@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@@Z, ?getHBITMAP@BitmapImage@WebCore@@UEAA_NPEAUHBITMAP__@@@Z)
-        symbolWithPointer(?getHBITMAPOfSize@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@PAUtagSIZE@@@Z, ?getHBITMAPOfSize@BitmapImage@WebCore@@UEAA_NPEAUHBITMAP__@@PEAUtagSIZE@@@Z)
         symbolWithPointer(?drawPattern@Image@WebCore@@UAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVAffineTransform@2@ABVFloatPoint@2@W4ColorSpace@2@W4CompositeOperator@2@1W4BlendMode@2@@Z, ?drawPattern@Image@WebCore@@UEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@AEBVAffineTransform@2@AEBVFloatPoint@2@W4ColorSpace@2@W4CompositeOperator@2@1W4BlendMode@2@@Z)
         symbolWithPointer(?drawFrameMatchingSourceSize@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVIntSize@2@W4ColorSpace@2@W4CompositeOperator@2@@Z, ?drawFrameMatchingSourceSize@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@AEBVIntSize@2@W4ColorSpace@2@W4CompositeOperator@2@@Z)
         symbolWithPointer(?mayFillWithSolidColor@BitmapImage@WebCore@@MAE_NXZ, ?mayFillWithSolidColor@BitmapImage@WebCore@@MEAA_NXZ)

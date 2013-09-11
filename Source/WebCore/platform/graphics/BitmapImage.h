@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2013 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -150,7 +150,7 @@ public:
 #endif
 #if PLATFORM(WIN)
     virtual bool getHBITMAP(HBITMAP);
-    virtual bool getHBITMAPOfSize(HBITMAP, LPSIZE);
+    virtual bool getHBITMAPOfSize(HBITMAP, const IntSize*) OVERRIDE;
 #endif
 
 #if PLATFORM(GTK)
