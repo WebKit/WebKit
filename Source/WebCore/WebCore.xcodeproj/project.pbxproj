@@ -3420,6 +3420,8 @@
 		A07D3356152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = A07D3354152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h */; };
 		A07D3358152B632D001B6393 /* WebGLShaderPrecisionFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = A07D3357152B632D001B6393 /* WebGLShaderPrecisionFormat.h */; };
 		A08CF154152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A08CF153152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp */; };
+		A0CB002417DF82660017896B /* LineWidth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0CB002317DF81AC0017896B /* LineWidth.cpp */; };
+		A0CB002517DF826C0017896B /* LineWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CB002117DE9CD00017896B /* LineWidth.h */; settings = {ATTRIBUTES = (); }; };
 		A0EE0DF5144F825500F80B0D /* WebGLDebugRendererInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0EE0DF1144F825500F80B0D /* WebGLDebugRendererInfo.cpp */; };
 		A0EE0DF6144F825500F80B0D /* WebGLDebugRendererInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0EE0DF2144F825500F80B0D /* WebGLDebugRendererInfo.h */; };
 		A0EE0DF7144F825500F80B0D /* WebGLDebugShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0EE0DF3144F825500F80B0D /* WebGLDebugShaders.cpp */; };
@@ -10015,6 +10017,8 @@
 		A07D3357152B632D001B6393 /* WebGLShaderPrecisionFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLShaderPrecisionFormat.h; path = canvas/WebGLShaderPrecisionFormat.h; sourceTree = "<group>"; };
 		A07D3359152B633E001B6393 /* WebGLShaderPrecisionFormat.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLShaderPrecisionFormat.idl; path = canvas/WebGLShaderPrecisionFormat.idl; sourceTree = "<group>"; };
 		A08CF153152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLShaderPrecisionFormat.cpp; path = canvas/WebGLShaderPrecisionFormat.cpp; sourceTree = "<group>"; };
+		A0CB002117DE9CD00017896B /* LineWidth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineWidth.h; sourceTree = "<group>"; };
+		A0CB002317DF81AC0017896B /* LineWidth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineWidth.cpp; sourceTree = "<group>"; };
 		A0EE0DEF144F823200F80B0D /* WebGLDebugShaders.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLDebugShaders.idl; path = canvas/WebGLDebugShaders.idl; sourceTree = "<group>"; };
 		A0EE0DF0144F824300F80B0D /* WebGLDebugRendererInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLDebugRendererInfo.idl; path = canvas/WebGLDebugRendererInfo.idl; sourceTree = "<group>"; };
 		A0EE0DF1144F825500F80B0D /* WebGLDebugRendererInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLDebugRendererInfo.cpp; path = canvas/WebGLDebugRendererInfo.cpp; sourceTree = "<group>"; };
@@ -20391,6 +20395,8 @@
 				A120ACA013F9983700FE4AC7 /* LayoutRepainter.h */,
 				2D9066040BE141D400956998 /* LayoutState.cpp */,
 				2D9066050BE141D400956998 /* LayoutState.h */,
+				A0CB002317DF81AC0017896B /* LineWidth.cpp */,
+				A0CB002117DE9CD00017896B /* LineWidth.h */,
 				9BA273F3172206BB0097CE47 /* LogicalSelectionOffsetCaches.h */,
 				3774ABA30FA21EB400AD7DE9 /* OverlapTestRequestClient.h */,
 				9377AB9F15DEFEEF0031FD04 /* Pagination.h */,
@@ -24560,6 +24566,7 @@
 				BE16C59317CFE17200852C04 /* InbandGenericTextTrack.h in Headers */,
 				BE16C59517CFE17200852C04 /* InbandWebVTTTextTrack.h in Headers */,
 				BC10D76817D8EE71005E2626 /* RenderBlockFlow.h in Headers */,
+				A0CB002517DF826C0017896B /* LineWidth.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27586,6 +27593,7 @@
 				BE16C59217CFE17200852C04 /* InbandGenericTextTrack.cpp in Sources */,
 				BE16C59417CFE17200852C04 /* InbandWebVTTTextTrack.cpp in Sources */,
 				BC10D76717D8EE6E005E2626 /* RenderBlockFlow.cpp in Sources */,
+				A0CB002417DF82660017896B /* LineWidth.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

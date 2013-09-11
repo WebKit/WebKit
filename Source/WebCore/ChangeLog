@@ -1,3 +1,42 @@
+2013-09-11  Zoltan Horvath  <zoltan@webkit.org>
+
+        Move LineWidth out of RenderBlockLineLayout
+        https://bugs.webkit.org/show_bug.cgi?id=121107
+
+        Reviewed by David Hyatt.
+
+        Move LineWidth class and related code into LineWidth.{h,cpp}.
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/LineWidth.cpp: Added.
+        (WebCore::LineWidth::applyOverhang):
+        (WebCore::LineWidth::fitBelowFloats):
+        * rendering/LineWidth.h: Added.
+        (WebCore::logicalHeightForLine):
+        (WebCore::LineWidth::LineWidth):
+        (WebCore::LineWidth::fitsOnLine):
+        (WebCore::LineWidth::fitsOnLineIncludingExtraWidth):
+        (WebCore::LineWidth::fitsOnLineExcludingTrailingWhitespace):
+        (WebCore::LineWidth::currentWidth):
+        (WebCore::LineWidth::uncommittedWidth):
+        (WebCore::LineWidth::committedWidth):
+        (WebCore::LineWidth::availableWidth):
+        (WebCore::LineWidth::addUncommittedWidth):
+        (WebCore::LineWidth::commit):
+        (WebCore::LineWidth::setTrailingWhitespaceWidth):
+        (WebCore::LineWidth::shouldIndentText):
+        (WebCore::LineWidth::computeAvailableWidthFromLeftAndRight):
+        (WebCore::LineWidth::fitsOnLineExcludingTrailingCollapsedWhitespace):
+        (WebCore::LineWidth::updateAvailableWidth):
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        * rendering/RenderBlockLineLayout.cpp:
+
 2013-09-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLEntityTable could use char to reduce binary size

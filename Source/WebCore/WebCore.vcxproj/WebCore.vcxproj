@@ -9634,6 +9634,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\rendering\LineWidth.cpp" />
     <ClCompile Include="..\rendering\PointerEventsHitRules.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -20006,6 +20007,7 @@
     <ClInclude Include="..\rendering\InlineTextBox.h" />
     <ClInclude Include="..\rendering\LayoutRepainter.h" />
     <ClInclude Include="..\rendering\LayoutState.h" />
+    <ClInclude Include="..\rendering\LineWidth.h" />
     <ClInclude Include="..\rendering\PaintInfo.h" />
     <ClInclude Include="..\rendering\PaintPhase.h" />
     <ClInclude Include="..\rendering\PointerEventsHitRules.h" />
