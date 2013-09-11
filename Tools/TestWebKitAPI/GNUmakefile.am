@@ -143,7 +143,6 @@ Programs_TestWebKitAPI_TestWebCore_LDADD = \
 	$(FREETYPE_LIBS) \
 	$(GAMEPAD_LIBS) \
 	$(GEOCLUE_LIBS) \
-	$(GAIL_LIBS) \
 	$(GLIB_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(GTK_LIBS) \

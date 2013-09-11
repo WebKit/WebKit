@@ -1,3 +1,13 @@
+2013-09-11  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Remove Gail dependency from build system for GTK3
+        https://bugs.webkit.org/show_bug.cgi?id=119673
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Removed GAIL_CFLAGS.
+        * PlatformGTK.cmake: Removed GAIL3_INCLUDE_DIRS and GAIL3_LIBRARIES.
+
 2013-09-11  Andreas Kling  <akling@apple.com>
 
         Remove Widget::widgetPositionsUpdated().

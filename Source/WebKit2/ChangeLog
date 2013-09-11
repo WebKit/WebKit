@@ -1,3 +1,12 @@
+2013-09-11  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Remove Gail dependency from build system for GTK3
+        https://bugs.webkit.org/show_bug.cgi?id=119673
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Removed GAIL_LIBS.
+
 2013-09-11  Alberto Garcia  <berto@igalia.com>
 
         [WK2] [GTK] LayerTreeHostGtk: don't set m_isValid to false if glContext() returns null

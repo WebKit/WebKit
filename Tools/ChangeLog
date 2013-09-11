@@ -1,3 +1,15 @@
+2013-09-11  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Remove Gail dependency from build system for GTK3
+        https://bugs.webkit.org/show_bug.cgi?id=119673
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * EWSTools/ubuntu-ews-packages: Removed libgail-dev package.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server): Do not load the 'gail' module anymore.
+        * TestWebKitAPI/GNUmakefile.am: Removed GAIL_LIBS.
+
 2013-09-11  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         Performance tester bots should report the number of failing tests

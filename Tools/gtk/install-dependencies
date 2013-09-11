@@ -49,8 +49,6 @@ function installDependenciesWithApt {
         libatk1.0-dev \
         libenchant-dev \
         libfaad-dev \
-        libgail-3-dev \
-        libgail-dev \
         libgeoclue-dev \
         libgirepository1.0-dev \
         libgl1-mesa-dev \
