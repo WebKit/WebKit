@@ -1,3 +1,18 @@
+2013-09-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLEntityTable could use char to reduce binary size
+        https://bugs.webkit.org/show_bug.cgi?id=121176
+
+        Reviewed by Anders Carlsson.
+
+        Use LChar instead.
+
+        * html/parser/HTMLEntityParser.cpp:
+        (WebCore::HTMLEntityParser::consumeNamedEntity):
+        * html/parser/HTMLEntityTable.h:
+        (WebCore::HTMLEntityTableEntry::lastCharacter):
+        * html/parser/create-html-entity-table:
+
 2013-09-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Revise GDI Create Functions to use GDIObject Smart Pointer.

@@ -31,9 +31,9 @@
 namespace WebCore {
 
 struct HTMLEntityTableEntry {
-    UChar lastCharacter() const { return entity[length - 1]; }
+    LChar lastCharacter() const { return entity[length - 1]; }
 
-    const UChar* entity;
+    const LChar* entity;
     int length;
     UChar32 firstValue;
     UChar32 secondValue;

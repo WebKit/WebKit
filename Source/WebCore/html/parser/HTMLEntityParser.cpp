@@ -100,7 +100,7 @@ public:
             unconsumeCharacters(source, consumedCharacters);
             consumedCharacters.clear();
             const int length = entitySearch.mostRecentMatch()->length;
-            const UChar* reference = entitySearch.mostRecentMatch()->entity;
+            const LChar* reference = entitySearch.mostRecentMatch()->entity;
             for (int i = 0; i < length; ++i) {
                 cc = source.currentChar();
                 ASSERT_UNUSED(reference, cc == *reference++);

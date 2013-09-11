@@ -42,10 +42,6 @@ def convert_entity_to_cpp_name(entity):
     return "%s%s" % (entity, postfix)
 
 
-def convert_entity_to_uchar_array(entity):
-    return "{'%s'}" % "', '".join(entity)
-
-
 def convert_value_to_int(value):
     if not value:
         return "0";
@@ -78,6 +74,7 @@ output_file = open(output_path, "w")
 
 output_file.write("""/*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,9 +110,7 @@ namespace {
 """)
 
 for entry in entries:
-    output_file.write("static const UChar %s[] = %s;\n" % (
-        convert_entity_to_cpp_name(entry[ENTITY]),
-        convert_entity_to_uchar_array(entry[ENTITY])))
+    output_file.write("static const LChar %s[] = \"%s\";\n" % (convert_entity_to_cpp_name(entry[ENTITY]), entry[ENTITY]))
 
 output_file.write("""
 static const HTMLEntityTableEntry staticEntityTable[%s] = {\n""" % entity_count)
