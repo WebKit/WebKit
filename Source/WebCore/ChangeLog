@@ -1,3 +1,27 @@
+2013-09-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix nested unicode-bidi: isolate
+        https://bugs.webkit.org/show_bug.cgi?id=120504
+
+        Reviewed by Darin Adler.
+
+        When we have a nested isolate renderer if the outer isolate has a text
+        and this text is not the first child, the isolated chain is not
+        rendered correctly. This happens because constructBidiRunsForSegment
+        uses always the first inner isolated renderer as isolated inline
+        container. This patch fixes the behavior described changing
+        containingIsolate to find the right isolated container.
+
+        Merged from Blink: https://chromium.googlesource.com/chromium/blink/+/840a57050eade39dd04dde0c6603e129b783151c
+
+        Tests: fast/text/international/unicode-bidi-isolate-nested-first-child-text.html
+               fast/text/international/unicode-bidi-isolate-nested-simple.html
+
+        * rendering/InlineIterator.h:
+        (WebCore::containingIsolate):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::constructBidiRunsForSegment):
+
 2013-09-11  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=121169

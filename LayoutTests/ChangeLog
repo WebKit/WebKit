@@ -1,3 +1,15 @@
+2013-09-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix nested unicode-bidi: isolate
+        https://bugs.webkit.org/show_bug.cgi?id=120504
+
+        Reviewed by Darin Adler.
+
+        * fast/text/international/unicode-bidi-isolate-nested-first-child-text-expected.html: Added.
+        * fast/text/international/unicode-bidi-isolate-nested-first-child-text.html: Added.
+        * fast/text/international/unicode-bidi-isolate-nested-simple-expected.html: Added.
+        * fast/text/international/unicode-bidi-isolate-nested-simple.html: Added.
+
 2013-09-11  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=121169
