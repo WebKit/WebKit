@@ -1,3 +1,12 @@
+2013-09-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Fix the indentation after r105848. Typo fix after r155523.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunAndUploadPerfTests):
+        (RunAndUploadPerfTests.start):
+        (RunAndUploadPerfTests.getText2):
+
 2013-09-11  Anders Carlsson  <andersca@apple.com>
 
         The style checker shouldn't complain about returning or passing OwnPtr
