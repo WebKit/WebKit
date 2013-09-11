@@ -11,6 +11,9 @@ function test()
     function selectedNodeChanged(event)
     {
         var node = event.data;
+        if (!node)
+            return;
+
         if (node.getAttribute("id") == "div") {
             InspectorTest.addResult(node.appropriateSelectorFor());
             InspectorTest.completeTest();

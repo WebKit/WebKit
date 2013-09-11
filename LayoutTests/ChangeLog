@@ -1,3 +1,15 @@
+2013-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Flaky Test: http/tests/inspector/inspect-element.html
+        https://bugs.webkit.org/show_bug.cgi?id=78869
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a check to fix flakiness when multiple inspector tests run. The
+        issue is with the old frontend, and does not affect the new frontend.
+
+        * http/tests/inspector/inspect-element.html:
+
 2013-09-11  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         MediaStream API: Remove LocalMediaStream
