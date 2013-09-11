@@ -1043,6 +1043,44 @@ static bool checkForCycleInPrototypeChain()
     return result;
 }
 
+static JSValueRef valueToObjectExceptionCallAsFunction(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    UNUSED_PARAM(function);
+    UNUSED_PARAM(thisObject);
+    UNUSED_PARAM(argumentCount);
+    UNUSED_PARAM(arguments);
+    JSValueRef jsUndefined = JSValueMakeUndefined(JSContextGetGlobalContext(ctx));
+    JSValueToObject(JSContextGetGlobalContext(ctx), jsUndefined, exception);
+    
+    return JSValueMakeUndefined(ctx);
+}
+static bool valueToObjectExceptionTest()
+{
+    JSGlobalContextRef testContext;
+    JSClassDefinition globalObjectClassDefinition = kJSClassDefinitionEmpty;
+    globalObjectClassDefinition.initialize = globalObject_initialize;
+    globalObjectClassDefinition.staticValues = globalObject_staticValues;
+    globalObjectClassDefinition.staticFunctions = globalObject_staticFunctions;
+    globalObjectClassDefinition.attributes = kJSClassAttributeNoAutomaticPrototype;
+    JSClassRef globalObjectClass = JSClassCreate(&globalObjectClassDefinition);
+    testContext = JSGlobalContextCreateInGroup(NULL, globalObjectClass);
+    JSObjectRef globalObject = JSContextGetGlobalObject(testContext);
+
+    JSStringRef valueToObject = JSStringCreateWithUTF8CString("valueToObject");
+    JSObjectRef valueToObjectFunction = JSObjectMakeFunctionWithCallback(testContext, valueToObject, valueToObjectExceptionCallAsFunction);
+    JSObjectSetProperty(testContext, globalObject, valueToObject, valueToObjectFunction, kJSPropertyAttributeNone, NULL);
+    JSStringRelease(valueToObject);
+
+    JSStringRef test = JSStringCreateWithUTF8CString("valueToObject();");
+    JSEvaluateScript(testContext, test, NULL, NULL, 1, NULL);
+    
+    JSStringRelease(test);
+    JSClassRelease(globalObjectClass);
+    JSGlobalContextRelease(testContext);
+    
+    return true;
+}
+
 static void checkConstnessInJSObjectNames()
 {
     JSStaticFunction fun;
@@ -1975,6 +2013,8 @@ int main(int argc, char* argv[])
         printf("FAIL: A cycle in a prototype chain can be created.\n");
         failed = true;
     }
+    if (valueToObjectExceptionTest())
+        printf("PASS: throwException did not crash when handling an error with appendMessageToError set and no codeBlock available.\n");
 
     if (failed) {
         printf("FAIL: Some tests failed.\n");

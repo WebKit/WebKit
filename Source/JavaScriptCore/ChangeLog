@@ -1,3 +1,20 @@
+2013-09-10  Chris Curtis  <chris_curtis@apple.com>
+
+        WebKit crashes when trying to send a msg via 'today's birthdays' dialogue box on Facebook
+        https://bugs.webkit.org/show_bug.cgi?id=120612#add_comment
+        Reviewed by Geoffrey Garen.
+
+        The codeBlock was assumed to exist when appendSourceToMessage was set.
+        This was an invalid assumption. I added a check to ensure that there is a
+        valid codeBlock before accessing it.
+
+        * API/tests/testapi.c:
+        (valueToObjectExceptionCallAsFunction):
+        (valueToObjectExceptionTest):
+        (main):
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+
 2013-09-10  Mark Lam  <mark.lam@apple.com>
 
         Fix some indentation in Interpreter.cpp.

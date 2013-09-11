@@ -635,9 +635,11 @@ JSValue VM::throwException(ExecState* exec, JSValue error)
         CallFrame* callFrame;
         for (callFrame = exec; callFrame && !callFrame->codeBlock(); callFrame = callFrame->callerFrame()->removeHostCallFrameFlag())
             stackIndex++;
-        stackFrame = stackTrace.at(stackIndex);
-        bytecodeOffset = stackFrame.bytecodeOffset;
-        appendSourceToError(callFrame, static_cast<ErrorInstance*>(exception), bytecodeOffset);
+        if (callFrame && callFrame->codeBlock()) {
+            stackFrame = stackTrace.at(stackIndex);
+            bytecodeOffset = stackFrame.bytecodeOffset;
+            appendSourceToError(callFrame, static_cast<ErrorInstance*>(exception), bytecodeOffset);
+        }
     }
 
     if (exception->hasProperty(exec, this->propertyNames->stack))
