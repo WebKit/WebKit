@@ -1,5 +1,23 @@
 2013-09-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Rename fillSpeculateInt to fillSpeculateInt32.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculateInt32Operand::gpr):
+        (JSC::DFG::SpeculateStrictInt32Operand::gpr):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpecualteInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpecualteInt32):
+        (JSC::DFG::SpeculativeJIT::fillSpecualteInt32Strict):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpecualteInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpecualteInt32):
+        (JSC::DFG::SpeculativeJIT::fillSpecualteInt32Strict):
+
+2013-09-11  Filip Pizlo  <fpizlo@apple.com>
+
         Rename DataFormatInteger to DataFormatInt32.
 
         Rubber stamped by Mark Hahnenberg.

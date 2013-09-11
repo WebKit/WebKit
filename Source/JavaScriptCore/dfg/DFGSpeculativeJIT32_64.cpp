@@ -855,7 +855,7 @@ void SpeculativeJIT::emitCall(Node* node)
 }
 
 template<bool strict>
-GPRReg SpeculativeJIT::fillSpeculateIntInternal(Edge edge, DataFormat& returnFormat)
+GPRReg SpeculativeJIT::fillSpecualteInt32Internal(Edge edge, DataFormat& returnFormat)
 {
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLogF("SpecInt@%d   ", edge->index());
@@ -943,15 +943,15 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(Edge edge, DataFormat& returnFor
     }
 }
 
-GPRReg SpeculativeJIT::fillSpeculateInt(Edge edge, DataFormat& returnFormat)
+GPRReg SpeculativeJIT::fillSpecualteInt32(Edge edge, DataFormat& returnFormat)
 {
-    return fillSpeculateIntInternal<false>(edge, returnFormat);
+    return fillSpecualteInt32Internal<false>(edge, returnFormat);
 }
 
-GPRReg SpeculativeJIT::fillSpeculateIntStrict(Edge edge)
+GPRReg SpeculativeJIT::fillSpecualteInt32Strict(Edge edge)
 {
     DataFormat mustBeDataFormatInt32;
-    GPRReg result = fillSpeculateIntInternal<true>(edge, mustBeDataFormatInt32);
+    GPRReg result = fillSpecualteInt32Internal<true>(edge, mustBeDataFormatInt32);
     ASSERT(mustBeDataFormatInt32 == DataFormatInt32);
     return result;
 }
