@@ -1,5 +1,17 @@
 2013-09-11  Anders Carlsson  <andersca@apple.com>
 
+        VectorBuffer::swap doesn't need to use std::swap_ranges
+        https://bugs.webkit.org/show_bug.cgi?id=121164
+
+        Reviewed by Darin Adler.
+
+        There's a std::swap overload for swapping arrays, just use it instead.
+
+        * wtf/Vector.h:
+        (WTF::VectorBuffer::swap):
+
+2013-09-11  Anders Carlsson  <andersca@apple.com>
+
         Implement Vector::append for move-only types
         https://bugs.webkit.org/show_bug.cgi?id=120805
 

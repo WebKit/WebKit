@@ -458,17 +458,17 @@ public:
     void swap(VectorBuffer& other)
     {
         if (buffer() == inlineBuffer() && other.buffer() == other.inlineBuffer()) {
-            std::swap_ranges(m_inlineBuffer, m_inlineBuffer + inlineCapacity, other.m_inlineBuffer);
+            std::swap(m_inlineBuffer, other.m_inlineBuffer);
             std::swap(m_capacity, other.m_capacity);
         } else if (buffer() == inlineBuffer()) {
             m_buffer = other.m_buffer;
             other.m_buffer = other.inlineBuffer();
-            std::swap_ranges(m_inlineBuffer, m_inlineBuffer + inlineCapacity, other.m_inlineBuffer);
+            std::swap(m_inlineBuffer, other.m_inlineBuffer);
             std::swap(m_capacity, other.m_capacity);
         } else if (other.buffer() == other.inlineBuffer()) {
             other.m_buffer = m_buffer;
             m_buffer = inlineBuffer();
-            std::swap_ranges(m_inlineBuffer, m_inlineBuffer + inlineCapacity, other.m_inlineBuffer);
+            std::swap(m_inlineBuffer, other.m_inlineBuffer);
             std::swap(m_capacity, other.m_capacity);
         } else {
             std::swap(m_buffer, other.m_buffer);
