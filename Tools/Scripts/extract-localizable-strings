@@ -145,7 +145,7 @@ for my $file (sort @files) {
             $inComment = 0;
         }
 
-        next unless /(\"|\/\*)/;
+        next unless defined $nestingLevel or /(\"|\/\*)/;
     
         # Handle all the tokens in the line.
         while (s-^\s*([#\w]+|/\*|//|[^#\w/'"()\[\],]+|.)--) {
