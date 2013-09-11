@@ -1,0 +1,7 @@
+This is a test that mouseenter/mouseleave events are emitted correctly when a hovered element is removed from the document.
+
+mouseenter on DIV#mydiv1
+removing DIV#mydiv1
+mouseenter on DIV#mydiv2
+PASS
+

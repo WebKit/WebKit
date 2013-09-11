@@ -319,7 +319,6 @@ EventHandler::EventHandler(Frame& frame)
 #endif
     , m_mouseDownWasSingleClickInSelection(false)
     , m_selectionInitiationState(HaveNotStartedSelection)
-    , m_hoverTimer(this, &EventHandler::hoverTimerFired)
     , m_cursorUpdateTimer(this, &EventHandler::cursorUpdateTimerFired)
     , m_autoscrollController(adoptPtr(new AutoscrollController))
     , m_mouseDownMayStartAutoscroll(false)
@@ -377,7 +376,6 @@ DragState& EventHandler::dragState()
     
 void EventHandler::clear()
 {
-    m_hoverTimer.stop();
     m_cursorUpdateTimer.stop();
     m_fakeMouseMoveEventTimer.stop();
 #if ENABLE(CURSOR_VISIBILITY)
@@ -1731,9 +1729,6 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     RefPtr<FrameView> protector(m_frame.view());
     
     setLastKnownMousePosition(mouseEvent);
-
-    if (m_hoverTimer.isActive())
-        m_hoverTimer.stop();
 
     m_cursorUpdateTimer.stop();
 
@@ -3101,12 +3096,6 @@ bool EventHandler::sendContextMenuEventForGesture(const PlatformGestureEvent& ev
 #endif // ENABLE(GESTURE_EVENTS)
 #endif // ENABLE(CONTEXT_MENUS)
 
-void EventHandler::scheduleHoverStateUpdate()
-{
-    if (!m_hoverTimer.isActive())
-        m_hoverTimer.startOneShot(0);
-}
-
 void EventHandler::scheduleCursorUpdate()
 {
     if (!m_cursorUpdateTimer.isActive())
@@ -3188,22 +3177,6 @@ void EventHandler::resizeLayerDestroyed()
 {
     ASSERT(m_resizeLayer);
     m_resizeLayer = 0;
-}
-
-void EventHandler::hoverTimerFired(Timer<EventHandler>*)
-{
-    m_hoverTimer.stop();
-
-    ASSERT(m_frame.document());
-
-    if (RenderView* renderer = m_frame.contentRenderer()) {
-        if (FrameView* view = m_frame.view()) {
-            HitTestRequest request(HitTestRequest::Move | HitTestRequest::DisallowShadowContent);
-            HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
-            renderer->hitTest(request, result);
-            m_frame.document()->updateHoverActiveState(request, result.innerElement());
-        }
-    }
 }
 
 bool EventHandler::handleAccessKey(const PlatformKeyboardEvent& evt)

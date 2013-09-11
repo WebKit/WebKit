@@ -1,3 +1,15 @@
+2013-09-11  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Mouseenter/-leave not triggered when element under cursor is moved/removed
+        https://bugs.webkit.org/show_bug.cgi?id=120786
+
+        Reviewed by Antonio Gomes.
+
+        Test of mouseenter/mouseleave events when a hovered element is removed.
+
+        * fast/events/mouseenterleave-detached-element-expected.txt: Added.
+        * fast/events/mouseenterleave-detached-element.html: Added.
+
 2013-09-11  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Adds mapping MenuItemRadioRole to ATK

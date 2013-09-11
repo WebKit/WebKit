@@ -1,3 +1,23 @@
+2013-09-11  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Mouseenter/-leave not triggered when element under cursor is moved/removed
+        https://bugs.webkit.org/show_bug.cgi?id=120786
+
+        Reviewed by Antonio Gomes.
+
+        When a hovered element is detached it will now emit a fake mousemove event
+        similar to what happens when a hovered element has CSS display set to none.
+
+        Test: fast/events/mouseenterleave-detached-element.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::hoveredElementDidDetach):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        * page/EventHandler.h:
+
 2013-09-11  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Adds mapping MenuItemRadioRole to ATK
