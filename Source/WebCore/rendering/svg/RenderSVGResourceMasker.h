@@ -61,7 +61,7 @@ private:
     void calculateMaskContentRepaintRect();
 
     FloatRect m_maskContentBoundaries;
-    HashMap<RenderObject*, MaskerData*> m_masker;
+    HashMap<RenderObject*, OwnPtr<MaskerData>> m_masker;
 };
 
 }

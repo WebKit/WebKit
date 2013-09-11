@@ -60,20 +60,12 @@ RenderSVGResourceClipper::RenderSVGResourceClipper(SVGClipPathElement* node)
 
 RenderSVGResourceClipper::~RenderSVGResourceClipper()
 {
-    if (m_clipper.isEmpty())
-        return;
-
-    deleteAllValues(m_clipper);
-    m_clipper.clear();
 }
 
 void RenderSVGResourceClipper::removeAllClientsFromCache(bool markForInvalidation)
 {
     m_clipBoundaries = FloatRect();
-    if (!m_clipper.isEmpty()) {
-        deleteAllValues(m_clipper);
-        m_clipper.clear();
-    }
+    m_clipper.clear();
 
     markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
 }
@@ -81,8 +73,7 @@ void RenderSVGResourceClipper::removeAllClientsFromCache(bool markForInvalidatio
 void RenderSVGResourceClipper::removeClientFromCache(RenderObject* client, bool markForInvalidation)
 {
     ASSERT(client);
-    if (m_clipper.contains(client))
-        delete m_clipper.take(client);
+    m_clipper.remove(client);
 
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
@@ -156,7 +147,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderObject* object, cons
 {
     bool missingClipperData = !m_clipper.contains(object);
     if (missingClipperData)
-        m_clipper.set(object, new ClipperData);
+        m_clipper.set(object, createOwned<ClipperData>().release());
 
     bool shouldCreateClipData = false;
     AffineTransform animatedLocalTransform = toSVGClipPathElement(element())->animatedLocalTransform();
