@@ -60,7 +60,6 @@ class Page;
 class RenderObject;
 class ResourceRequest;
 class ResourceResponse;
-class TimelineTraceEventProcessor;
 
 typedef String ErrorString;
 
@@ -195,7 +194,6 @@ public:
 
 private:
     friend class TimelineRecordStack;
-    friend class TimelineTraceEventProcessor;
 
     struct TimelineRecordEntry {
         TimelineRecordEntry(PassRefPtr<InspectorObject> record, PassRefPtr<InspectorObject> data, PassRefPtr<InspectorArray> children, const String& type, size_t usedHeapSizeAtStart)
@@ -261,7 +259,6 @@ private:
     InspectorType m_inspectorType;
     InspectorClient* m_client;
     WeakPtrFactory<InspectorTimelineAgent> m_weakFactory;
-    RefPtr<TimelineTraceEventProcessor> m_traceEventProcessor;
 };
 
 } // namespace WebCore

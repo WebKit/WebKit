@@ -52,7 +52,6 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "TimelineRecordFactory.h"
-#include "TimelineTraceEventProcessor.h"
 
 #include <wtf/CurrentTime.h>
 
@@ -191,8 +190,6 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth, c
     m_instrumentingAgents->setInspectorTimelineAgent(this);
     ScriptGCEvent::addEventListener(this);
     m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, true);
-    if (m_client && m_pageAgent)
-        m_traceEventProcessor = adoptRef(new TimelineTraceEventProcessor(m_weakFactory.createWeakPtr(), m_client));
 }
 
 void InspectorTimelineAgent::stop(ErrorString*)
@@ -200,8 +197,6 @@ void InspectorTimelineAgent::stop(ErrorString*)
     if (!m_state->getBoolean(TimelineAgentState::timelineAgentEnabled))
         return;
 
-    m_traceEventProcessor->shutdown();
-    m_traceEventProcessor.clear();
     m_weakFactory.revokeAll();
     m_instrumentingAgents->setInspectorTimelineAgent(0);
     ScriptGCEvent::removeEventListener(this);

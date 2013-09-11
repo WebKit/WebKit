@@ -1387,19 +1387,6 @@ void InspectorInstrumentation::pseudoElementDestroyedImpl(InstrumentingAgents* i
 }
 #endif
 
-namespace InstrumentationEvents {
-const char PaintLayer[] = "PaintLayer";
-const char RasterTask[] = "RasterTask";
-const char Paint[] = "Paint";
-const char Layer[] = "Layer";
-const char BeginFrame[] = "BeginFrame";
-};
-
-namespace InstrumentationEventArguments {
-const char LayerId[] = "layerId";
-const char PageId[] = "pageId";
-};
-
 } // namespace WebCore
 
 #endif // !ENABLE(INSPECTOR)

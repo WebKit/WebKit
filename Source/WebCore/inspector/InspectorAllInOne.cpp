@@ -81,7 +81,6 @@
 #include "ScriptCallFrame.cpp"
 #include "ScriptCallStack.cpp"
 #include "TimelineRecordFactory.cpp"
-#include "TimelineTraceEventProcessor.cpp"
 #include "WorkerConsoleAgent.cpp"
 #include "WorkerDebuggerAgent.cpp"
 #include "WorkerInspectorController.cpp"

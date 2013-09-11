@@ -5353,9 +5353,6 @@
     <ClCompile Include="..\svg\graphics\SVGImageForContainer.cpp">
       <Filter>rendering\svg\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\inspector\TimelineTraceEventProcessor.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
     <ClCompile Include="..\rendering\HitTestLocation.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
@@ -13132,9 +13129,6 @@
     </ClInclude>
     <ClInclude Include="..\svg\graphics\SVGImageForContainer.h">
       <Filter>rendering\svg\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\TimelineTraceEventProcessor.h">
-      <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\HitTestLocation.h">
       <Filter>rendering</Filter>
