@@ -120,8 +120,8 @@ private:
     PopupMenuClient* m_popupClient;
     RefPtr<Scrollbar> m_scrollbar;
     HWND m_popup;
-    HDC m_DC;
-    HBITMAP m_bmp;
+    GDIObject<HDC> m_DC;
+    GDIObject<HBITMAP> m_bmp;
     bool m_wasClicked;
     IntRect m_windowRect;
     int m_itemHeight;

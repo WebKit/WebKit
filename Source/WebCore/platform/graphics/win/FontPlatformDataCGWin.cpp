@@ -115,13 +115,13 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
     m_cgFont = adoptCF(CGFontCreateWithPlatformFont(&logfont));
 }
 
-FontPlatformData::FontPlatformData(HFONT hfont, CGFontRef font, float size, bool bold, bool oblique, bool useGDI)
+FontPlatformData::FontPlatformData(GDIObject<HFONT> hfont, CGFontRef font, float size, bool bold, bool oblique, bool useGDI)
     : m_syntheticBold(bold)
     , m_syntheticOblique(oblique)
     , m_orientation(Horizontal)
     , m_size(size)
     , m_widthVariant(RegularWidth)
-    , m_font(SharedGDIObject<HFONT>::create(adoptGDIObject<HFONT>(hfont)))
+    , m_font(SharedGDIObject<HFONT>::create(std::move(hfont)))
     , m_cgFont(font)
     , m_isColorBitmapFont(false)
     , m_useGDI(useGDI)

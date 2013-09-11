@@ -441,7 +441,7 @@ static int CALLBACK matchImprovingEnumProc(CONST LOGFONT* candidate, CONST TEXTM
     return 1;
 }
 
-static HFONT createGDIFont(const AtomicString& family, LONG desiredWeight, bool desiredItalic, int size, bool synthesizeItalic)
+static GDIObject<HFONT> createGDIFont(const AtomicString& family, LONG desiredWeight, bool desiredItalic, int size, bool synthesizeItalic)
 {
     HWndDC hdc(0);
 
@@ -456,7 +456,7 @@ static HFONT createGDIFont(const AtomicString& family, LONG desiredWeight, bool 
     EnumFontFamiliesEx(hdc, &logFont, matchImprovingEnumProc, reinterpret_cast<LPARAM>(&matchData), 0);
 
     if (!matchData.m_hasMatched)
-        return 0;
+        return nullptr;
 
     matchData.m_chosen.lfHeight = -size;
     matchData.m_chosen.lfWidth = 0;
@@ -478,7 +478,7 @@ static HFONT createGDIFont(const AtomicString& family, LONG desiredWeight, bool 
 
     auto chosenFont = adoptGDIObject(::CreateFontIndirect(&matchData.m_chosen));
     if (!chosenFont)
-        return 0;
+        return nullptr;
 
     HWndDC dc(0);
     SaveDC(dc);
@@ -488,9 +488,9 @@ static HFONT createGDIFont(const AtomicString& family, LONG desiredWeight, bool 
     RestoreDC(dc, -1);
 
     if (wcsicmp(matchData.m_chosen.lfFaceName, actualName))
-        return 0;
+        return nullptr;
 
-    return chosenFont.leak();
+    return chosenFont;
 }
 
 struct TraitsInFamilyProcData {
@@ -553,8 +553,8 @@ PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescrip
     // FIXME: We will eventually want subpixel precision for GDI mode, but the scaled rendering doesn't
     // look as nice. That may be solvable though.
     LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
-    auto hfont = adoptGDIObject(createGDIFont(family, weight, fontDescription.italic(),
-        fontDescription.computedPixelSize() * (useGDI ? 1 : 32), useGDI));
+    auto hfont = createGDIFont(family, weight, fontDescription.italic(),
+        fontDescription.computedPixelSize() * (useGDI ? 1 : 32), useGDI);
 
     if (!hfont)
         return nullptr;
@@ -568,7 +568,7 @@ PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescrip
     bool synthesizeBold = isGDIFontWeightBold(weight) && !isGDIFontWeightBold(logFont.lfWeight);
     bool synthesizeItalic = fontDescription.italic() && !logFont.lfItalic;
 
-    FontPlatformData* result = new FontPlatformData(hfont.get(), fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI);
+    FontPlatformData* result = new FontPlatformData(std::move(hfont), fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic, useGDI);
 
 #if USE(CG)
     bool fontCreationFailed = !result->cgFont();
@@ -583,8 +583,6 @@ PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescrip
         delete result;
         return nullptr;
     }        
-
-    hfont.leak(); // result now owns the HFONT.
 
     return adoptPtr(result);
 }

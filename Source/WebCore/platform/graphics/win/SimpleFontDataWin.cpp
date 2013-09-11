@@ -140,7 +140,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
     GetObject(m_platformData.hfont(), sizeof(LOGFONT), &winfont);
     winfont.lfHeight = -lroundf(scaledSize * (m_platformData.useGDI() ? 1 : 32));
     auto hfont = adoptGDIObject(::CreateFontIndirect(&winfont));
-    return SimpleFontData::create(FontPlatformData(hfont.leak(), scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.useGDI()), isCustomFont(), false);
+    return SimpleFontData::create(FontPlatformData(std::move(hfont), scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.useGDI()), isCustomFont(), false);
 }
 
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const

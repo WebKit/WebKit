@@ -63,7 +63,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
 
     cairo_font_face_t* fontFace = cairo_win32_font_face_create_for_hfont(hfont.get());
 
-    FontPlatformData fontPlatformData(hfont.leak(), fontFace, size, bold, italic);
+    FontPlatformData fontPlatformData(std::move(hfont), fontFace, size, bold, italic);
 
     cairo_font_face_destroy(fontFace);
 

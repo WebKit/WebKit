@@ -45,12 +45,12 @@ void deallocContext(CGContextRef target)
     CGContextRelease(target);
 }
 
-HBITMAP allocImage(HDC dc, IntSize size, CGContextRef *targetRef)
+GDIObject<HBITMAP> allocImage(HDC dc, IntSize size, CGContextRef *targetRef)
 {
     BitmapInfo bmpInfo = BitmapInfo::create(size);
 
     LPVOID bits;
-    HBITMAP hbmp = CreateDIBSection(dc, &bmpInfo, DIB_RGB_COLORS, &bits, 0, 0);
+    auto hbmp = adoptGDIObject(::CreateDIBSection(dc, &bmpInfo, DIB_RGB_COLORS, &bits, 0, 0));
 
     if (!targetRef)
         return hbmp;
@@ -58,10 +58,8 @@ HBITMAP allocImage(HDC dc, IntSize size, CGContextRef *targetRef)
     CGContextRef bitmapContext = CGBitmapContextCreate(bits, bmpInfo.bmiHeader.biWidth, bmpInfo.bmiHeader.biHeight, 8,
                                                        bmpInfo.bmiHeader.biWidth * 4, deviceRGBColorSpaceRef(),
                                                        kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst);
-    if (!bitmapContext) {
-        DeleteObject(hbmp);
-        return 0;
-    }
+    if (!bitmapContext)
+        return GDIObject<HBITMAP>();
 
     *targetRef = bitmapContext;
     return hbmp;
@@ -78,30 +76,31 @@ static CGContextRef createCgContextFromBitmap(HBITMAP bitmap)
     return bitmapContext;
 }
 
-DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
+DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
 {
     // FIXME: due to the way drag images are done on windows we need 
     // to preprocess the alpha channel <rdar://problem/5015946>
-
-    if (!image)
+    if (!imageRef)
         return 0;
-    CGContextRef targetContext;
-    CGContextRef srcContext;
-    CGImageRef srcImage;
-    IntSize srcSize = dragImageSize(image);
+
+    GDIObject<HBITMAP> hbmp;
+    auto image = adoptGDIObject(imageRef);
+
+    IntSize srcSize = dragImageSize(image.get());
     IntSize dstSize(static_cast<int>(srcSize.width() * scale.width()), static_cast<int>(srcSize.height() * scale.height()));
-    HBITMAP hbmp = 0;
+
     HWndDC dc(0);
     auto dstDC = adoptGDIObject(::CreateCompatibleDC(dc));
     if (!dstDC)
         goto exit;
 
+    CGContextRef targetContext;
     hbmp = allocImage(dstDC.get(), dstSize, &targetContext);
     if (!hbmp)
         goto exit;
 
-    srcContext = createCgContextFromBitmap(image);
-    srcImage = CGBitmapContextCreateImage(srcContext);
+    CGContextRef srcContext = createCgContextFromBitmap(image.get());
+    CGImageRef srcImage = CGBitmapContextCreateImage(srcContext);
     CGRect rect;
     rect.origin.x = 0;
     rect.origin.y = 0;
@@ -110,33 +109,24 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
     CGImageRelease(srcImage);
     CGContextRelease(srcContext);
     CGContextRelease(targetContext);
-    ::DeleteObject(image);
-    image = 0;
 
 exit:
     if (!hbmp)
-        hbmp = image;
-    return hbmp;
+        hbmp.swap(image);
+    return hbmp.leak();
 }
     
 DragImageRef createDragImageFromImage(Image* img, ImageOrientationDescription)
 {
-    HBITMAP hbmp = 0;
     HWndDC dc(0);
     auto workingDC = adoptGDIObject(::CreateCompatibleDC(dc));
-    CGContextRef drawContext = 0;
     if (!workingDC)
         return 0;
 
-    hbmp = allocImage(workingDC.get(), img->size(), &drawContext);
-
-    if (!hbmp)
+    CGContextRef drawContext = 0;
+    auto hbmp = allocImage(workingDC.get(), img->size(), &drawContext);
+    if (!hbmp || !drawContext)
         return 0;
-
-    if (!drawContext) {
-        ::DeleteObject(hbmp);
-        hbmp = 0;
-    }
 
     CGImageRef srcImage = img->getCGImageRef();
     CGRect rect;
@@ -153,7 +143,7 @@ DragImageRef createDragImageFromImage(Image* img, ImageOrientationDescription)
     }
     CGContextRelease(drawContext);
 
-    return hbmp;
+    return hbmp.leak();
 }
     
 }

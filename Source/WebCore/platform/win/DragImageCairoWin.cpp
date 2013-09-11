@@ -43,12 +43,12 @@ void deallocContext(PlatformContextCairo* target)
     delete target;
 }
 
-HBITMAP allocImage(HDC dc, IntSize size, PlatformContextCairo** targetRef)
+GDIObject<HBITMAP> allocImage(HDC dc, IntSize size, PlatformContextCairo** targetRef)
 {
     BitmapInfo bmpInfo = BitmapInfo::create(size);
 
     LPVOID bits;
-    HBITMAP hbmp = CreateDIBSection(dc, &bmpInfo, DIB_RGB_COLORS, &bits, 0, 0);
+    auto hbmp = adoptGDIObject(::CreateDIBSection(dc, &bmpInfo, DIB_RGB_COLORS, &bits, 0, 0));
 
     // At this point, we have a Cairo surface that points to a Windows DIB.  The DIB interprets
     // with the opposite meaning of positive Y axis, so everything we draw into this cairo
@@ -62,10 +62,8 @@ HBITMAP allocImage(HDC dc, IntSize size, PlatformContextCairo** targetRef)
                                                bmpInfo.bmiHeader.biHeight,
                                                bmpInfo.bmiHeader.biWidth * 4);
 
-    if (!bitmapContext) {
-        DeleteObject(hbmp);
-        return 0;
-    }
+    if (!bitmapContext)
+        return GDIObject<HBITMAP>();
 
     cairo_t* cr = cairo_create(bitmapContext);
     cairo_surface_destroy(bitmapContext);
@@ -102,20 +100,21 @@ static cairo_surface_t* createCairoContextFromBitmap(HBITMAP bitmap)
                                                info.bmWidthBytes);
 }
 
-DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
+DragImageRef scaleDragImage(DragImageRef imageRef, FloatSize scale)
 {
     // FIXME: due to the way drag images are done on windows we need 
     // to preprocess the alpha channel <rdar://problem/5015946>
-    if (!image)
+    if (!imageRef)
         return 0;
 
-    IntSize srcSize = dragImageSize(image);
+    GDIObject<HBITMAP> hbmp;
+    auto image = adoptGDIObject(imageRef);
+
+    IntSize srcSize = dragImageSize(image.get());
     IntSize dstSize(static_cast<int>(srcSize.width() * scale.width()), static_cast<int>(srcSize.height() * scale.height()));
 
-    HBITMAP hbmp = 0;
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     auto dstDC = adoptGDIObject(::CreateCompatibleDC(dc));
-
     if (!dstDC)
         goto exit;
 
@@ -124,7 +123,7 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
     if (!hbmp)
         goto exit;
 
-    cairo_surface_t* srcImage = createCairoContextFromBitmap(image);
+    cairo_surface_t* srcImage = createCairoContextFromBitmap(image.get());
 
     // Scale the target surface to the new image size, and flip it
     // so that when we set the srcImage as the surface it will draw
@@ -139,52 +138,39 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
 
     cairo_surface_destroy(srcImage);
     deallocContext(targetContext);
-    ::DeleteObject(image);
-    image = 0;
 
 exit:
     if (!hbmp)
-        hbmp = image;
-    ReleaseDC(0, dc);
-    return hbmp;
+        hbmp.swap(image);
+    return hbmp.leak();
 }
     
 DragImageRef createDragImageFromImage(Image* img, ImageOrientationDescription)
 {
-    HBITMAP hbmp = 0;
-    HDC dc = GetDC(0);
+    HWndDC dc(0);
     auto workingDC = adoptGDIObject(::CreateCompatibleDC(dc));
     if (!workingDC)
-        goto exit;
+        return 0;
 
     PlatformContextCairo* drawContext = 0;
-    hbmp = allocImage(workingDC.get(), img->size(), &drawContext);
-    if (!hbmp)
-        goto exit;
+    auto hbmp = allocImage(workingDC.get(), img->size(), &drawContext);
+    if (!hbmp || !drawContext)
+        return 0;
 
-    if (!drawContext) {
-        ::DeleteObject(hbmp);
-        hbmp = 0;
-    }
+    cairo_t* cr = drawContext->cr();
+    cairo_set_source_rgb(cr, 1.0, 0.0, 1.0);
+    cairo_fill_preserve(cr);
 
-    { // This block is required due to the msvc compiler error C2362.
-        cairo_t* cr = drawContext->cr();
-        cairo_set_source_rgb(cr, 1.0, 0.0, 1.0);
-        cairo_fill_preserve(cr);
-
-        RefPtr<cairo_surface_t> surface = img->nativeImageForCurrentFrame();
-        if (surface) {
-            // Draw the image.
-            cairo_set_source_surface(cr, surface.get(), 0.0, 0.0);
-            cairo_paint(cr);
-        }
+    RefPtr<cairo_surface_t> surface = img->nativeImageForCurrentFrame();
+    if (surface) {
+        // Draw the image.
+        cairo_set_source_surface(cr, surface.get(), 0.0, 0.0);
+        cairo_paint(cr);
     }
 
     deallocContext(drawContext);
 
-exit:
-    ReleaseDC(0, dc);
-    return hbmp;
+    return hbmp.leak();
 }
     
 }

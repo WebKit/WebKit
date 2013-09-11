@@ -1,3 +1,45 @@
+2013-09-11  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Revise GDI Create Functions to use GDIObject Smart Pointer.
+        https://bugs.webkit.org/show_bug.cgi?id=121100
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/FontPlatformData.h: Use GDIObject instead of bare pointer.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::createGDIFont): No longer need to leak the pointer; use move semantic
+        to pass ownership to FontPlatformData.
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Use move operation.
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Ditto.
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Ditto.
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Ditto.
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Ditto.
+        * platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp:
+        (WebCore::GlyphPage::fill): Use HWndDC smart pointer instead of bare HDC.
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::platformCreateScaledFontData): Use move operation.
+        * platform/win/DragImageCGWin.cpp:
+        (WebCore::allocImage): Change to use GDIObject.
+        (WebCore::scaleDragImage): Use smart pointers to avoid manual deallocs.
+        (WebCore::createDragImageFromImage): Ditto.
+        * platform/win/DragImageCairoWin.cpp:
+        (WebCore::allocImage): Change to use GDIObject.
+        (WebCore::scaleDragImage): Use smart pointers to avoid manual deallocs.
+        (WebCore::createDragImageFromImage): Ditto.
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageForLink): Update for GDIObject.
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::PopupMenuWin): Switch to GDIObject.
+        (WebCore::PopupMenuWin::~PopupMenuWin): Remove uneeded deallocs.
+        (WebCore::PopupMenuWin::paint): Update for GDIObject.
+        * platform/win/PopupMenuWin.h: Use smart pointers instead of bare GDI objects.
+
 2013-09-11  Patrick Gansterer  <paroga@webkit.org>
 
         Fix animations with !USE(ACCELERATED_COMPOSITING) after r147792.

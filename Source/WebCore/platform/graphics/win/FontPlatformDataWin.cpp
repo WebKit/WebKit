@@ -37,8 +37,8 @@ using std::min;
 
 namespace WebCore {
 
-FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool oblique, bool useGDI)
-    : m_font(SharedGDIObject<HFONT>::create(adoptGDIObject<HFONT>(font)))
+FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold, bool oblique, bool useGDI)
+    : m_font(SharedGDIObject<HFONT>::create(std::move(font)))
     , m_size(size)
     , m_orientation(Horizontal)
     , m_widthVariant(RegularWidth)
@@ -55,7 +55,7 @@ FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool obliq
     HWndDC hdc(0);
     SaveDC(hdc);
     
-    SelectObject(hdc, font);
+    ::SelectObject(hdc, m_font->get());
     UINT bufferSize = GetOutlineTextMetrics(hdc, 0, NULL);
 
     ASSERT_WITH_MESSAGE(bufferSize, "Bitmap fonts not supported with CoreGraphics.");
@@ -66,7 +66,7 @@ FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool obliq
         GetOutlineTextMetricsW(hdc, bufferSize, metrics);
         WCHAR* faceName = (WCHAR*)((uintptr_t)metrics + (uintptr_t)metrics->otmpFaceName);
 
-        platformDataInit(font, size, hdc, faceName);
+        platformDataInit(m_font->get(), size, hdc, faceName);
 
         free(metrics);
     }

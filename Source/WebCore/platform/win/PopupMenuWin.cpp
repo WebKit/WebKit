@@ -107,8 +107,6 @@ PopupMenuWin::PopupMenuWin(PopupMenuClient* client)
     : m_popupClient(client)
     , m_scrollbar(0)
     , m_popup(0)
-    , m_DC(0)
-    , m_bmp(0)
     , m_wasClicked(false)
     , m_itemHeight(0)
     , m_scrollOffset(0)
@@ -121,10 +119,6 @@ PopupMenuWin::PopupMenuWin(PopupMenuClient* client)
 
 PopupMenuWin::~PopupMenuWin()
 {
-    if (m_bmp)
-        ::DeleteObject(m_bmp);
-    if (m_DC)
-        ::DeleteDC(m_DC);
     if (m_popup)
         ::DestroyWindow(m_popup);
     if (m_scrollbar)
@@ -589,7 +583,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         return;
 
     if (!m_DC) {
-        m_DC = ::CreateCompatibleDC(HWndDC(m_popup));
+        m_DC = adoptGDIObject(::CreateCompatibleDC(HWndDC(m_popup)));
         if (!m_DC)
             return;
     }
@@ -597,13 +591,11 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
     if (m_bmp) {
         bool keepBitmap = false;
         BITMAP bitmap;
-        if (GetObject(m_bmp, sizeof(bitmap), &bitmap))
+        if (::GetObject(m_bmp.get(), sizeof(bitmap), &bitmap))
             keepBitmap = bitmap.bmWidth == clientRect().width()
                 && bitmap.bmHeight == clientRect().height();
-        if (!keepBitmap) {
-            DeleteObject(m_bmp);
-            m_bmp = 0;
-        }
+        if (!keepBitmap)
+            m_bmp.clear();
     }
     if (!m_bmp) {
 #if OS(WINCE)
@@ -612,14 +604,14 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(clientRect().size());
 #endif
         void* pixels = 0;
-        m_bmp = ::CreateDIBSection(m_DC, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0);
+        m_bmp = adoptGDIObject(::CreateDIBSection(m_DC.get(), &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
         if (!m_bmp)
             return;
 
-        ::SelectObject(m_DC, m_bmp);
+        ::SelectObject(m_DC.get(), m_bmp.get());
     }
 
-    GraphicsContext context(m_DC);
+    GraphicsContext context(m_DC.get());
 
     int itemCount = client()->listSize();
 
@@ -684,7 +676,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
     HWndDC hWndDC;
     HDC localDC = hdc ? hdc : hWndDC.setHWnd(m_popup);
 
-    ::BitBlt(localDC, damageRect.x(), damageRect.y(), damageRect.width(), damageRect.height(), m_DC, damageRect.x(), damageRect.y(), SRCCOPY);
+    ::BitBlt(localDC, damageRect.x(), damageRect.y(), damageRect.width(), damageRect.height(), m_DC.get(), damageRect.x(), damageRect.y(), SRCCOPY);
 }
 
 int PopupMenuWin::scrollSize(ScrollbarOrientation orientation) const
