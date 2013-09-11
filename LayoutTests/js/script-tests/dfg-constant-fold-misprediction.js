@@ -34,7 +34,8 @@ silentTestPass = true;
 noInline(foo);
 
 // Call foo() enough times to make it optimize three times.
-for (var i = 0; i < 2; i = dfgIncrement({f:foo, i:i + 1, n:1, compiles:2}))
+// NOTE: We no longer recompile this three times.
+for (var i = 0; i < 2; i = dfgIncrement({f:foo, i:i + 1, n:1}))
     shouldBe("foo(0.5)", "1000.50025");
 
 

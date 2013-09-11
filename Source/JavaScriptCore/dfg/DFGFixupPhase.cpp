@@ -1370,7 +1370,7 @@ private:
     void injectInt32ToDoubleNode(Edge& edge, UseKind useKind = NumberUse, SpeculationDirection direction = BackwardSpeculation)
     {
         Node* result = m_insertionSet.insertNode(
-            m_indexInBlock, SpecDouble, Int32ToDouble,
+            m_indexInBlock, SpecInt48, Int32ToDouble,
             m_currentNode->codeOrigin, Edge(edge.node(), NumberUse));
         if (direction == ForwardSpeculation)
             result->mergeFlags(NodeExitsForward);

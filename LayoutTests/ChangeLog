@@ -1,3 +1,14 @@
+2013-09-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Int32ToDouble should be predicted SpecInt48 and predictions should have nothing to do with constant folding
+        https://bugs.webkit.org/show_bug.cgi?id=121141
+
+        Reviewed by Oliver Hunt.
+        
+        Fixing this means that this test no longer recompiles.
+
+        * js/script-tests/dfg-constant-fold-misprediction.js:
+
 2013-09-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix nested unicode-bidi: isolate

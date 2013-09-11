@@ -1,3 +1,21 @@
+2013-09-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Int32ToDouble should be predicted SpecInt48 and predictions should have nothing to do with constant folding
+        https://bugs.webkit.org/show_bug.cgi?id=121141
+
+        Reviewed by Oliver Hunt.
+        
+        Just changing Int32ToDouble to be predicted SpecInt48 breaks constant folding on that
+        node because of soooper old code that prevented constant folding on mismatched
+        predictions. Kill that code.
+
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::setConstant):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::injectInt32ToDoubleNode):
+
 2013-09-10  Filip Pizlo  <fpizlo@apple.com>
 
         VariableAccessData::flushFormat() should be the universal way of deciding how to speculate on stores to locals and how locals are formatted

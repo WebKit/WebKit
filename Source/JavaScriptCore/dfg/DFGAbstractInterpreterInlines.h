@@ -223,34 +223,30 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (left && right && left.isInt32() && right.isInt32()) {
             int32_t a = left.asInt32();
             int32_t b = right.asInt32();
-            bool constantWasSet;
             switch (node->op()) {
             case BitAnd:
-                constantWasSet = trySetConstant(node, JSValue(a & b));
+                setConstant(node, JSValue(a & b));
                 break;
             case BitOr:
-                constantWasSet = trySetConstant(node, JSValue(a | b));
+                setConstant(node, JSValue(a | b));
                 break;
             case BitXor:
-                constantWasSet = trySetConstant(node, JSValue(a ^ b));
+                setConstant(node, JSValue(a ^ b));
                 break;
             case BitRShift:
-                constantWasSet = trySetConstant(node, JSValue(a >> static_cast<uint32_t>(b)));
+                setConstant(node, JSValue(a >> static_cast<uint32_t>(b)));
                 break;
             case BitLShift:
-                constantWasSet = trySetConstant(node, JSValue(a << static_cast<uint32_t>(b)));
+                setConstant(node, JSValue(a << static_cast<uint32_t>(b)));
                 break;
             case BitURShift:
-                constantWasSet = trySetConstant(node, JSValue(static_cast<uint32_t>(a) >> static_cast<uint32_t>(b)));
+                setConstant(node, JSValue(static_cast<uint32_t>(a) >> static_cast<uint32_t>(b)));
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
-                constantWasSet = false;
-            }
-            if (constantWasSet) {
-                m_state.setFoundConstants(true);
                 break;
             }
+            break;
         }
         forNode(node).setType(SpecInt32);
         break;
@@ -260,10 +256,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()) {
             ASSERT(child.isInt32());
-            if (trySetConstant(node, JSValue(child.asUInt32()))) {
-                m_state.setFoundConstants(true);
-                break;
-            }
+            setConstant(node, JSValue(child.asUInt32()));
+            break;
         }
         if (!node->canSpeculateInt32())
             forNode(node).setType(SpecDouble);
@@ -279,9 +273,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (child && child.isNumber()) {
             double asDouble = child.asNumber();
             int32_t asInt = JSC::toInt32(asDouble);
-            if (bitwise_cast<int64_t>(static_cast<double>(asInt)) == bitwise_cast<int64_t>(asDouble)
-                && trySetConstant(node, JSValue(asInt))) {
-                m_state.setFoundConstants(true);
+            if (bitwise_cast<int64_t>(static_cast<double>(asInt)) == bitwise_cast<int64_t>(asDouble)) {
+                setConstant(node, JSValue(asInt));
                 break;
             }
         }
@@ -293,15 +286,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ValueToInt32: {
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()) {
-            bool constantWasSet;
             if (child.isInt32())
-                constantWasSet = trySetConstant(node, child);
+                setConstant(node, child);
             else
-                constantWasSet = trySetConstant(node, JSValue(JSC::toInt32(child.asDouble())));
-            if (constantWasSet) {
-                m_state.setFoundConstants(true);
-                break;
-            }
+                setConstant(node, JSValue(JSC::toInt32(child.asDouble())));
+            break;
         }
         
         forNode(node).setType(SpecInt32);
@@ -310,9 +299,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case Int32ToDouble: {
         JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()
-            && trySetConstant(node, JSValue(JSValue::EncodeAsDouble, child.asNumber()))) {
-            m_state.setFoundConstants(true);
+        if (child && child.isNumber()) {
+            setConstant(node, JSValue(JSValue::EncodeAsDouble, child.asNumber()));
             break;
         }
         if (isInt32Speculation(forNode(node->child1()).m_type))
@@ -326,9 +314,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithAdd: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
-        if (left && right && left.isNumber() && right.isNumber()
-            && trySetConstant(node, JSValue(left.asNumber() + right.asNumber()))) {
-            m_state.setFoundConstants(true);
+        if (left && right && left.isNumber() && right.isNumber()) {
+            setConstant(node, JSValue(left.asNumber() + right.asNumber()));
             break;
         }
         switch (node->binaryUseKind()) {
@@ -361,9 +348,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithSub: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
-        if (left && right && left.isNumber() && right.isNumber()
-            && trySetConstant(node, JSValue(left.asNumber() - right.asNumber()))) {
-            m_state.setFoundConstants(true);
+        if (left && right && left.isNumber() && right.isNumber()) {
+            setConstant(node, JSValue(left.asNumber() - right.asNumber()));
             break;
         }
         switch (node->binaryUseKind()) {
@@ -384,9 +370,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case ArithNegate: {
         JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()
-            && trySetConstant(node, JSValue(-child.asNumber()))) {
-            m_state.setFoundConstants(true);
+        if (child && child.isNumber()) {
+            setConstant(node, JSValue(-child.asNumber()));
             break;
         }
         switch (node->child1().useKind()) {
@@ -408,9 +393,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithMul: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
-        if (left && right && left.isNumber() && right.isNumber()
-            && trySetConstant(node, JSValue(left.asNumber() * right.asNumber()))) {
-            m_state.setFoundConstants(true);
+        if (left && right && left.isNumber() && right.isNumber()) {
+            setConstant(node, JSValue(left.asNumber() * right.asNumber()));
             break;
         }
         switch (node->binaryUseKind()) {
@@ -445,37 +429,31 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithMod: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
-        if (node->op() == ArithMod && right && right.isNumber() && right.asNumber() == 1
-            && trySetConstant(node, JSValue(0))) {
-            m_state.setFoundConstants(true);
+        if (node->op() == ArithMod && right && right.isNumber() && right.asNumber() == 1) {
+            setConstant(node, JSValue(0));
             break;
         }
         if (left && right && left.isNumber() && right.isNumber()) {
             double a = left.asNumber();
             double b = right.asNumber();
-            bool constantWasSet;
             switch (node->op()) {
             case ArithDiv:
-                constantWasSet = trySetConstant(node, JSValue(a / b));
+                setConstant(node, JSValue(a / b));
                 break;
             case ArithMin:
-                constantWasSet = trySetConstant(node, JSValue(a < b ? a : (b <= a ? b : a + b)));
+                setConstant(node, JSValue(a < b ? a : (b <= a ? b : a + b)));
                 break;
             case ArithMax:
-                constantWasSet = trySetConstant(node, JSValue(a > b ? a : (b >= a ? b : a + b)));
+                setConstant(node, JSValue(a > b ? a : (b >= a ? b : a + b)));
                 break;
             case ArithMod:
-                constantWasSet = trySetConstant(node, JSValue(fmod(a, b)));
+                setConstant(node, JSValue(fmod(a, b)));
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
-                constantWasSet = false;
                 break;
             }
-            if (constantWasSet) {
-                m_state.setFoundConstants(true);
-                break;
-            }
+            break;
         }
         switch (node->binaryUseKind()) {
         case Int32Use:
@@ -494,9 +472,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case ArithAbs: {
         JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()
-            && trySetConstant(node, JSValue(fabs(child.asNumber())))) {
-            m_state.setFoundConstants(true);
+        if (child && child.isNumber()) {
+            setConstant(node, JSValue(fabs(child.asNumber())));
             break;
         }
         switch (node->child1().useKind()) {
@@ -516,9 +493,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case ArithSqrt: {
         JSValue child = forNode(node->child1()).value();
-        if (child && child.isNumber()
-            && trySetConstant(node, JSValue(sqrt(child.asNumber())))) {
-            m_state.setFoundConstants(true);
+        if (child && child.isNumber()) {
+            setConstant(node, JSValue(sqrt(child.asNumber())));
             break;
         }
         forNode(node).setType(SpecDouble);
@@ -526,35 +502,30 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
             
     case LogicalNot: {
-        bool didSetConstant = false;
         switch (booleanResult(node, forNode(node->child1()))) {
         case DefinitelyTrue:
-            didSetConstant = trySetConstant(node, jsBoolean(false));
+            setConstant(node, jsBoolean(false));
             break;
         case DefinitelyFalse:
-            didSetConstant = trySetConstant(node, jsBoolean(true));
+            setConstant(node, jsBoolean(true));
             break;
         default:
+            switch (node->child1().useKind()) {
+            case BooleanUse:
+            case Int32Use:
+            case NumberUse:
+            case UntypedUse:
+                break;
+            case ObjectOrOtherUse:
+                node->setCanExit(true);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            forNode(node).setType(SpecBoolean);
             break;
         }
-        if (didSetConstant) {
-            m_state.setFoundConstants(true);
-            break;
-        }
-        switch (node->child1().useKind()) {
-        case BooleanUse:
-        case Int32Use:
-        case NumberUse:
-        case UntypedUse:
-            break;
-        case ObjectOrOtherUse:
-            node->setCanExit(true);
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-        forNode(node).setType(SpecBoolean);
         break;
     }
         
@@ -569,36 +540,36 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             && m_graph.masqueradesAsUndefinedWatchpointIsStillValid(node->codeOrigin));
         JSValue child = forNode(node->child1()).value();
         if (child) {
-            bool constantWasSet;
+            bool constantWasSet = true;
             switch (node->op()) {
             case IsUndefined:
-                constantWasSet = trySetConstant(node, jsBoolean(
+                setConstant(node, jsBoolean(
                     child.isCell()
                     ? child.asCell()->structure()->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->codeOrigin))
                     : child.isUndefined()));
                 break;
             case IsBoolean:
-                constantWasSet = trySetConstant(node, jsBoolean(child.isBoolean()));
+                setConstant(node, jsBoolean(child.isBoolean()));
                 break;
             case IsNumber:
-                constantWasSet = trySetConstant(node, jsBoolean(child.isNumber()));
+                setConstant(node, jsBoolean(child.isNumber()));
                 break;
             case IsString:
-                constantWasSet = trySetConstant(node, jsBoolean(isJSString(child)));
+                setConstant(node, jsBoolean(isJSString(child)));
                 break;
             case IsObject:
                 if (child.isNull() || !child.isObject()) {
-                    constantWasSet = trySetConstant(node, jsBoolean(child.isNull()));
+                    setConstant(node, jsBoolean(child.isNull()));
                     break;
                 }
+                constantWasSet = false;
+                break;
             default:
                 constantWasSet = false;
                 break;
             }
-            if (constantWasSet) {
-                m_state.setFoundConstants(true);
+            if (constantWasSet)
                 break;
-            }
         }
 
         forNode(node).setType(SpecBoolean);
@@ -611,40 +582,33 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         AbstractValue& abstractChild = forNode(node->child1());
         if (child) {
             JSValue typeString = jsTypeStringForValue(*vm, m_codeBlock->globalObjectFor(node->codeOrigin), child);
-            if (trySetConstant(node, typeString)) {
-                m_state.setFoundConstants(true);
-                break;
-            }
-        } else if (isNumberSpeculation(abstractChild.m_type)) {
-            if (trySetConstant(node, vm->smallStrings.numberString())) {
-                filter(node->child1(), SpecNumber);
-                m_state.setFoundConstants(true);
-                break;
-            }
-        } else if (isStringSpeculation(abstractChild.m_type)) {
-            if (trySetConstant(node, vm->smallStrings.stringString())) {
-                filter(node->child1(), SpecString);
-                m_state.setFoundConstants(true);
-                break;
-            }
-        } else if (isFinalObjectSpeculation(abstractChild.m_type) || isArraySpeculation(abstractChild.m_type) || isArgumentsSpeculation(abstractChild.m_type)) {
-            if (trySetConstant(node, vm->smallStrings.objectString())) {
-                filter(node->child1(), SpecFinalObject | SpecArray | SpecArguments);
-                m_state.setFoundConstants(true);
-                break;
-            }
-        } else if (isFunctionSpeculation(abstractChild.m_type)) {
-            if (trySetConstant(node, vm->smallStrings.functionString())) {
-                filter(node->child1(), SpecFunction);
-                m_state.setFoundConstants(true);
-                break;
-            }
-        } else if (isBooleanSpeculation(abstractChild.m_type)) {
-            if (trySetConstant(node, vm->smallStrings.booleanString())) {
-                filter(node->child1(), SpecBoolean);
-                m_state.setFoundConstants(true);
-                break;
-            }
+            setConstant(node, typeString);
+            break;
+        }
+        
+        if (isNumberSpeculation(abstractChild.m_type)) {
+            setConstant(node, vm->smallStrings.numberString());
+            break;
+        }
+        
+        if (isStringSpeculation(abstractChild.m_type)) {
+            setConstant(node, vm->smallStrings.stringString());
+            break;
+        }
+        
+        if (isFinalObjectSpeculation(abstractChild.m_type) || isArraySpeculation(abstractChild.m_type) || isArgumentsSpeculation(abstractChild.m_type)) {
+            setConstant(node, vm->smallStrings.objectString());
+            break;
+        }
+        
+        if (isFunctionSpeculation(abstractChild.m_type)) {
+            setConstant(node, vm->smallStrings.functionString());
+            break;
+        }
+        
+        if (isBooleanSpeculation(abstractChild.m_type)) {
+            setConstant(node, vm->smallStrings.booleanString());
+            break;
         }
 
         switch (node->child1().useKind()) {
@@ -668,8 +632,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CompareGreaterEq:
     case CompareEq:
     case CompareEqConstant: {
-        bool constantWasSet = false;
-
         JSValue leftConst = forNode(node->child1()).value();
         JSValue rightConst = forNode(node->child2()).value();
         if (leftConst && rightConst) {
@@ -678,47 +640,45 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 double b = rightConst.asNumber();
                 switch (node->op()) {
                 case CompareLess:
-                    constantWasSet = trySetConstant(node, jsBoolean(a < b));
+                    setConstant(node, jsBoolean(a < b));
                     break;
                 case CompareLessEq:
-                    constantWasSet = trySetConstant(node, jsBoolean(a <= b));
+                    setConstant(node, jsBoolean(a <= b));
                     break;
                 case CompareGreater:
-                    constantWasSet = trySetConstant(node, jsBoolean(a > b));
+                    setConstant(node, jsBoolean(a > b));
                     break;
                 case CompareGreaterEq:
-                    constantWasSet = trySetConstant(node, jsBoolean(a >= b));
+                    setConstant(node, jsBoolean(a >= b));
                     break;
                 case CompareEq:
-                    constantWasSet = trySetConstant(node, jsBoolean(a == b));
+                    setConstant(node, jsBoolean(a == b));
                     break;
                 default:
                     RELEASE_ASSERT_NOT_REACHED();
-                    constantWasSet = false;
+                    break;
+                }
+                break;
+            }
+            
+            if (node->op() == CompareEq && leftConst.isString() && rightConst.isString()) {
+                const StringImpl* a = asString(leftConst)->tryGetValueImpl();
+                const StringImpl* b = asString(rightConst)->tryGetValueImpl();
+                if (a && b) {
+                    setConstant(node, jsBoolean(WTF::equal(a, b)));
                     break;
                 }
             }
-            
-            if (!constantWasSet && node->op() == CompareEq
-                && leftConst.isString() && rightConst.isString()) {
-                const StringImpl* a = asString(leftConst)->tryGetValueImpl();
-                const StringImpl* b = asString(rightConst)->tryGetValueImpl();
-                if (a && b)
-                    constantWasSet = trySetConstant(node, jsBoolean(WTF::equal(a, b)));
-            }
         }
         
-        if (!constantWasSet && (node->op() == CompareEqConstant || node->op() == CompareEq)) {
+        if (node->op() == CompareEqConstant || node->op() == CompareEq) {
             SpeculatedType leftType = forNode(node->child1()).m_type;
             SpeculatedType rightType = forNode(node->child2()).m_type;
             if ((isInt32Speculation(leftType) && isOtherSpeculation(rightType))
-                || (isOtherSpeculation(leftType) && isInt32Speculation(rightType)))
-                constantWasSet = trySetConstant(node, jsBoolean(false));
-        }
-        
-        if (constantWasSet) {
-            m_state.setFoundConstants(true);
-            break;
+                || (isOtherSpeculation(leftType) && isInt32Speculation(rightType))) {
+                setConstant(node, jsBoolean(false));
+                break;
+            }
         }
         
         forNode(node).setType(SpecBoolean);
@@ -740,16 +700,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         JSValue left = forNode(leftNode).value();
         JSValue right = forNode(rightNode).value();
         if (left && right) {
-            if (left.isNumber() && right.isNumber()
-                && trySetConstant(node, jsBoolean(left.asNumber() == right.asNumber()))) {
-                m_state.setFoundConstants(true);
+            if (left.isNumber() && right.isNumber()) {
+                setConstant(node, jsBoolean(left.asNumber() == right.asNumber()));
                 break;
             }
             if (left.isString() && right.isString()) {
                 const StringImpl* a = asString(left)->tryGetValueImpl();
                 const StringImpl* b = asString(right)->tryGetValueImpl();
-                if (a && b && trySetConstant(node, jsBoolean(WTF::equal(a, b)))) {
-                    m_state.setFoundConstants(true);
+                if (a && b) {
+                    setConstant(node, jsBoolean(WTF::equal(a, b)));
                     break;
                 }
             }
@@ -962,8 +921,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case ToPrimitive: {
         JSValue childConst = forNode(node->child1()).value();
-        if (childConst && childConst.isNumber() && trySetConstant(node, childConst)) {
-            m_state.setFoundConstants(true);
+        if (childConst && childConst.isNumber()) {
+            setConstant(node, childConst);
             break;
         }
         
@@ -1207,8 +1166,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case SkipScope: {
         JSValue child = forNode(node->child1()).value();
-        if (child && trySetConstant(node, JSValue(jsCast<JSScope*>(child.asCell())->next()))) {
-            m_state.setFoundConstants(true);
+        if (child) {
+            setConstant(node, JSValue(jsCast<JSScope*>(child.asCell())->next()));
             break;
         }
         forNode(node).setType(SpecObjectOther);
@@ -1246,7 +1205,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     ASSERT(!status.chain());
                     
                     if (status.specificValue())
-                        forNode(node).set(m_graph, status.specificValue());
+                        setConstant(node, status.specificValue());
                     else
                         forNode(node).makeHeapTop();
                     filter(node->child1(), status.structureSet());
