@@ -488,8 +488,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSJavaScriptCallFrame.h \
 	DerivedSources/WebCore/JSKeyboardEvent.cpp \
 	DerivedSources/WebCore/JSKeyboardEvent.h \
-	DerivedSources/WebCore/JSLocalMediaStream.cpp \
-	DerivedSources/WebCore/JSLocalMediaStream.h \
 	DerivedSources/WebCore/JSLocation.cpp \
 	DerivedSources/WebCore/JSLocation.h \
 	DerivedSources/WebCore/JSMediaController.cpp \
@@ -1240,7 +1238,6 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediasource/MediaSource.idl \
 	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
 	$(WebCore)/Modules/mediasource/SourceBufferList.idl \
-	$(WebCore)/Modules/mediastream/LocalMediaStream.idl \
 	$(WebCore)/Modules/mediastream/MediaStream.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamEvent.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamTrack.idl \
@@ -1945,8 +1942,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediasource/SourceBuffer.h \
 	Source/WebCore/Modules/mediasource/SourceBufferList.cpp \
 	Source/WebCore/Modules/mediasource/SourceBufferList.h \
-	Source/WebCore/Modules/mediastream/LocalMediaStream.cpp \
-	Source/WebCore/Modules/mediastream/LocalMediaStream.h \
 	Source/WebCore/Modules/mediastream/MediaConstraintsImpl.cpp \
 	Source/WebCore/Modules/mediastream/MediaConstraintsImpl.h \
 	Source/WebCore/Modules/mediastream/MediaStream.cpp \

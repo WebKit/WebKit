@@ -30,7 +30,7 @@
 
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
-#include "LocalMediaStream.h"
+#include "MediaStream.h"
 #include "MediaStreamCenter.h"
 #include "RTCPeerConnectionHandler.h"
 #include "UUID.h"
@@ -53,7 +53,7 @@ MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode(AudioContext* c
     MediaStreamSourceVector audioSources;
     audioSources.append(m_source);
     MediaStreamSourceVector videoSources;
-    m_stream = LocalMediaStream::create(context->scriptExecutionContext(), audioSources, videoSources);
+    m_stream = MediaStream::create(context->scriptExecutionContext(), MediaStreamDescriptor::create(audioSources, videoSources));
     MediaStreamCenter::instance().didCreateMediaStream(m_stream->descriptor());
 
     m_source->setAudioFormat(numberOfChannels, context->sampleRate());

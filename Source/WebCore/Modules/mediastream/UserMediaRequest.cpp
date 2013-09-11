@@ -38,8 +38,8 @@
 #include "Dictionary.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "LocalMediaStream.h"
 #include "MediaConstraintsImpl.h"
+#include "MediaStream.h"
 #include "MediaStreamCenter.h"
 #include "MediaStreamDescriptor.h"
 #include "SpaceSplitString.h"
@@ -135,21 +135,12 @@ void UserMediaRequest::didCompleteQuery(const MediaStreamSourceVector& audioSour
         m_controller->requestUserMedia(this, audioSources, videoSources);
 }
 
-void UserMediaRequest::succeed(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
-{
-    if (!m_scriptExecutionContext)
-        return;
-
-    RefPtr<LocalMediaStream> stream = LocalMediaStream::create(m_scriptExecutionContext, audioSources, videoSources);
-    m_successCallback->handleEvent(stream.get());
-}
-
 void UserMediaRequest::succeed(PassRefPtr<MediaStreamDescriptor> streamDescriptor)
 {
     if (!m_scriptExecutionContext)
         return;
 
-    RefPtr<LocalMediaStream> stream = LocalMediaStream::create(m_scriptExecutionContext, streamDescriptor);
+    RefPtr<MediaStream> stream = MediaStream::create(m_scriptExecutionContext, streamDescriptor);
     m_successCallback->handleEvent(stream.get());
 }
 

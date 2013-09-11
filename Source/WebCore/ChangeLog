@@ -1,3 +1,38 @@
+2013-09-11  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        MediaStream API: Remove LocalMediaStream
+        https://bugs.webkit.org/show_bug.cgi?id=120875
+
+        blink merge: https://chromium.googlesource.com/chromium/blink/+/81643ee3fe048a64fa8931132e1294fa2c8e821a
+
+        Reviewed by Eric Carlson.
+
+        Existing tests were updated.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * Modules/mediastream/LocalMediaStream.cpp: Removed.
+        * Modules/mediastream/LocalMediaStream.h: Removed.
+        * Modules/mediastream/LocalMediaStream.idl: Removed.
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::stop):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStream.idl:
+        * Modules/mediastream/NavigatorUserMediaSuccessCallback.h:
+        * Modules/mediastream/NavigatorUserMediaSuccessCallback.idl:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::succeed):
+        * Modules/mediastream/UserMediaRequest.h:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createMediaStreamSource):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventTarget.h:
+        * dom/EventTargetFactory.in:
+        * platform/mediastream/MediaStreamDescriptor.h:
+
 2013-09-11  Timothy Hatcher  <timothy@apple.com>
 
         Remove PlatformInstrumentation since we don't show decode or resize in the new Web Inspector

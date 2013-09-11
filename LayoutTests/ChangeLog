@@ -1,3 +1,17 @@
+2013-09-11  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        MediaStream API: Remove LocalMediaStream
+        https://bugs.webkit.org/show_bug.cgi?id=120875
+
+        blink merge: https://chromium.googlesource.com/chromium/blink/+/81643ee3fe048a64fa8931132e1294fa2c8e821a
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/LocalMediaStream-onended-expected.txt: Removed.
+        * fast/mediastream/LocalMediaStream-onended.html: Removed.
+        * fast/mediastream/MediaStream-onended-expected.txt:
+        * fast/mediastream/MediaStream-onended.html:
+
 2013-09-10  Filip Pizlo  <fpizlo@apple.com>
 
         Int32ToDouble should be predicted SpecInt48 and predictions should have nothing to do with constant folding

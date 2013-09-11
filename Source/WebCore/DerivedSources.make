@@ -116,7 +116,6 @@ BINDING_IDLS = \
     $(WebCore)/Modules/mediasource/MediaSource.idl \
     $(WebCore)/Modules/mediasource/SourceBuffer.idl \
     $(WebCore)/Modules/mediasource/SourceBufferList.idl \
-    $(WebCore)/Modules/mediastream/LocalMediaStream.idl \
     $(WebCore)/Modules/mediastream/MediaStream.idl \
     $(WebCore)/Modules/mediastream/MediaStreamEvent.idl \
     $(WebCore)/Modules/mediastream/MediaStreamTrack.idl \

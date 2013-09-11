@@ -132,6 +132,15 @@ bool MediaStream::ended() const
     return m_stopped || m_descriptor->ended();
 }
 
+void MediaStream::stop()
+{
+    if (ended())
+        return;
+
+    MediaStreamCenter::instance().didStopLocalMediaStream(descriptor());
+    streamEnded();
+}
+
 void MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode& ec)
 {
     if (ended()) {

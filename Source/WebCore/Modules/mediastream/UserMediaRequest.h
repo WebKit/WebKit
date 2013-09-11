@@ -63,7 +63,6 @@ public:
 
     void start();
 
-    void succeed(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
     void succeed(PassRefPtr<MediaStreamDescriptor>);
     void fail();
 

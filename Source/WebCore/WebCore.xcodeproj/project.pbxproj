@@ -138,8 +138,6 @@
 		07846342145B151A00A58DF1 /* JSTrackEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07846340145B151A00A58DF1 /* JSTrackEvent.cpp */; };
 		07846343145B151A00A58DF1 /* JSTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07846341145B151A00A58DF1 /* JSTrackEvent.h */; };
 		07846385145B1B8E00A58DF1 /* JSTrackCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 07846384145B1B8E00A58DF1 /* JSTrackCustom.h */; };
-		078E08FC17D14CBD00420AA1 /* LocalMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B4817CEC32700848E51 /* LocalMediaStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		078E08FD17D14CC600420AA1 /* LocalMediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B4717CEC32700848E51 /* LocalMediaStream.cpp */; };
 		078E08FE17D14CEE00420AA1 /* MediaConstraintsImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B4A17CEC32700848E51 /* MediaConstraintsImpl.cpp */; };
 		078E08FF17D14CEE00420AA1 /* MediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B4C17CEC32700848E51 /* MediaStream.cpp */; };
 		078E090017D14CEE00420AA1 /* MediaStreamEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B4F17CEC32700848E51 /* MediaStreamEvent.cpp */; };
@@ -219,8 +217,6 @@
 		07941791166E855F009416C2 /* InbandTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0794178F166E855F009416C2 /* InbandTextTrack.cpp */; };
 		07941792166E855F009416C2 /* InbandTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07941790166E855F009416C2 /* InbandTextTrack.h */; };
 		07941794166EA04E009416C2 /* InbandTextTrackPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 07941793166EA04E009416C2 /* InbandTextTrackPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		07969D8F17D13F43007FF842 /* JSLocalMediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07969D8D17D13F43007FF842 /* JSLocalMediaStream.cpp */; };
-		07969D9017D13F43007FF842 /* JSLocalMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 07969D8E17D13F43007FF842 /* JSLocalMediaStream.h */; };
 		07969DAB17D14151007FF842 /* JSRTCDataChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07969D9117D14151007FF842 /* JSRTCDataChannel.cpp */; };
 		07969DAC17D14151007FF842 /* JSRTCDataChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 07969D9217D14151007FF842 /* JSRTCDataChannel.h */; };
 		07969DAD17D14151007FF842 /* JSRTCDataChannelEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07969D9317D14151007FF842 /* JSRTCDataChannelEvent.cpp */; };
@@ -6438,9 +6434,6 @@
 		0720B09F14D3323500642955 /* GenericEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericEventQueue.h; sourceTree = "<group>"; };
 		0720B09F14D3323500642956 /* GestureEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GestureEvent.cpp; sourceTree = "<group>"; };
 		0720B09F14D3323500642957 /* GestureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GestureEvent.h; sourceTree = "<group>"; };
-		07221B4717CEC32700848E51 /* LocalMediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalMediaStream.cpp; sourceTree = "<group>"; };
-		07221B4817CEC32700848E51 /* LocalMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalMediaStream.h; sourceTree = "<group>"; };
-		07221B4917CEC32700848E51 /* LocalMediaStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LocalMediaStream.idl; sourceTree = "<group>"; };
 		07221B4A17CEC32700848E51 /* MediaConstraintsImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaConstraintsImpl.cpp; sourceTree = "<group>"; };
 		07221B4B17CEC32700848E51 /* MediaConstraintsImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaConstraintsImpl.h; sourceTree = "<group>"; };
 		07221B4C17CEC32700848E51 /* MediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStream.cpp; sourceTree = "<group>"; };
@@ -6580,8 +6573,6 @@
 		0794178F166E855F009416C2 /* InbandTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandTextTrack.cpp; sourceTree = "<group>"; };
 		07941790166E855F009416C2 /* InbandTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrack.h; sourceTree = "<group>"; };
 		07941793166EA04E009416C2 /* InbandTextTrackPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivate.h; sourceTree = "<group>"; };
-		07969D8D17D13F43007FF842 /* JSLocalMediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLocalMediaStream.cpp; sourceTree = "<group>"; };
-		07969D8E17D13F43007FF842 /* JSLocalMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSLocalMediaStream.h; sourceTree = "<group>"; };
 		07969D9117D14151007FF842 /* JSRTCDataChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCDataChannel.cpp; sourceTree = "<group>"; };
 		07969D9217D14151007FF842 /* JSRTCDataChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRTCDataChannel.h; sourceTree = "<group>"; };
 		07969D9317D14151007FF842 /* JSRTCDataChannelEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCDataChannelEvent.cpp; sourceTree = "<group>"; };
@@ -13240,9 +13231,6 @@
 		07221B4617CEC32700848E51 /* mediastream */ = {
 			isa = PBXGroup;
 			children = (
-				07221B4717CEC32700848E51 /* LocalMediaStream.cpp */,
-				07221B4817CEC32700848E51 /* LocalMediaStream.h */,
-				07221B4917CEC32700848E51 /* LocalMediaStream.idl */,
 				07221B4A17CEC32700848E51 /* MediaConstraintsImpl.cpp */,
 				07221B4B17CEC32700848E51 /* MediaConstraintsImpl.h */,
 				07221B4C17CEC32700848E51 /* MediaStream.cpp */,
@@ -13378,8 +13366,6 @@
 		07CFD99317D01405001C4FFC /* MediaStream */ = {
 			isa = PBXGroup;
 			children = (
-				07969D8D17D13F43007FF842 /* JSLocalMediaStream.cpp */,
-				07969D8E17D13F43007FF842 /* JSLocalMediaStream.h */,
 				07277E3E17D018CC0015534D /* JSMediaSource.cpp */,
 				07277E3F17D018CC0015534D /* JSMediaSource.h */,
 				07277E4017D018CC0015534D /* JSMediaStream.cpp */,
@@ -23053,8 +23039,6 @@
 				4496E39E1398136C003EE32A /* JSSVGAnimateMotionElement.h in Headers */,
 				B2FA3D550AB75A6F000E5AC4 /* JSSVGAnimateTransformElement.h in Headers */,
 				B2FA3D570AB75A6F000E5AC4 /* JSSVGAnimationElement.h in Headers */,
-				078E08FC17D14CBD00420AA1 /* LocalMediaStream.h in Headers */,
-				07969D9017D13F43007FF842 /* JSLocalMediaStream.h in Headers */,
 				B2FA3D590AB75A6F000E5AC4 /* JSSVGCircleElement.h in Headers */,
 				B2FA3D5B0AB75A6F000E5AC4 /* JSSVGClipPathElement.h in Headers */,
 				B2FA3D5D0AB75A6F000E5AC4 /* JSSVGColor.h in Headers */,
@@ -26972,7 +26956,6 @@
 				0F605AEC15F94848004DF0C0 /* ScrollingConstraints.cpp in Sources */,
 				1AF62EE714DA22A70041556C /* ScrollingCoordinator.cpp in Sources */,
 				1AF62EE614DA22A70041556C /* ScrollingCoordinatorMac.mm in Sources */,
-				07969D8F17D13F43007FF842 /* JSLocalMediaStream.cpp in Sources */,
 				93C38BFE164473C700091EB2 /* ScrollingStateFixedNode.cpp in Sources */,
 				931CBD0C161A44E900E4C874 /* ScrollingStateNode.cpp in Sources */,
 				931CBD13161A44F800E4C874 /* ScrollingStateNodeMac.mm in Sources */,
@@ -27460,7 +27443,6 @@
 				49C7B9D41042D32F0009D447 /* WebGLObject.cpp in Sources */,
 				49C7B9D61042D32F0009D447 /* WebGLProgram.cpp in Sources */,
 				49C7B9D91042D32F0009D447 /* WebGLRenderbuffer.cpp in Sources */,
-				078E08FD17D14CC600420AA1 /* LocalMediaStream.cpp in Sources */,
 				49C7B9DF1042D32F0009D447 /* WebGLRenderingContext.cpp in Sources */,
 				49C7B9E21042D32F0009D447 /* WebGLShader.cpp in Sources */,
 				A08CF154152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp in Sources */,
