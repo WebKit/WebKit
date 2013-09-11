@@ -33,7 +33,10 @@
           for (var k = 1; k < 11; k++) {
               var item = accessibilityController.accessibleElementById("item" + k);
               debug("Item " + k + " Value: " + item.stringValue);
-              debug("Item " + k + " Char mark: " + item.stringAttributeValue('AXMenuItemMarkChar'));
+              var itemMark = item.stringAttributeValue('AXMenuItemMarkChar');
+              if (itemMark == null)
+                  itemMark = "";
+              debug("Item " + k + " Char mark: " + itemMark);
               shouldBeTrue("item.isAttributeSupported('AXValue')");
               debug("\n");
           }
