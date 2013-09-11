@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "BackForwardListImpl.h"
+#include "BackForwardList.h"
 
 #include "Frame.h"
 #include "FrameLoader.h"

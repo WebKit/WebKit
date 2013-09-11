@@ -1,5 +1,11 @@
 2013-09-11  Andreas Kling  <akling@apple.com>
 
+        Missed one BackForwardListImpl.h in the last commit.
+
+        * history/BackForwardList.cpp:
+
+2013-09-11  Andreas Kling  <akling@apple.com>
+
         Rename BackForwardListImpl.{cpp,h} => BackForwardClient.{cpp,h}
 
         Rubber-stamped by Antti Koivisto.
