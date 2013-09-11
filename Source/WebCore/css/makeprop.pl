@@ -202,7 +202,7 @@ String getJSPropertyName(CSSPropertyID id)
     return WTF::String(result);
 }
 
-bool isInheritedPropertyTable[numCSSProperties + $numPredefinedProperties] = {
+static const bool isInheritedPropertyTable[numCSSProperties + $numPredefinedProperties] = {
     false, // CSSPropertyInvalid
     false, // CSSPropertyVariable
 EOF

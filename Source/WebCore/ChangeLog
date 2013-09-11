@@ -1,3 +1,9 @@
+2013-09-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make the table static const.
+
+        * css/makeprop.pl:
+
 2013-09-11  Timothy Hatcher  <timothy@apple.com>
 
         Remove TimelineTraceEventProcessor since no current ports use it
