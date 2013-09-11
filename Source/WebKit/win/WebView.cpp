@@ -71,7 +71,7 @@
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/BString.h>
-#include <WebCore/BackForwardListImpl.h>
+#include <WebCore/BackForwardList.h>
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenu.h>

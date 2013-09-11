@@ -33,7 +33,7 @@
 
 #include "AXObjectCache.h"
 #include "ArchiveResource.h"
-#include "BackForwardListImpl.h"
+#include "BackForwardList.h"
 #include "CairoUtilities.h"
 #include "Chrome.h"
 #include "ChromeClientGtk.h"

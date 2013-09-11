@@ -20,7 +20,7 @@
 #ifndef QWEBHISTORY_P_H
 #define QWEBHISTORY_P_H
 
-#include "BackForwardListImpl.h"
+#include "BackForwardList.h"
 #include "HistoryItem.h"
 #include "qwebkitglobal.h"
 #include <QtCore/qglobal.h>

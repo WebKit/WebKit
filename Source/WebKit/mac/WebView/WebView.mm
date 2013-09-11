@@ -115,7 +115,7 @@
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/AnimationController.h>
 #import <WebCore/ApplicationCacheStorage.h>
-#import <WebCore/BackForwardListImpl.h>
+#import <WebCore/BackForwardList.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>

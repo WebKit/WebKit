@@ -23,7 +23,7 @@
 #include "config.h"
 #include "ewk_view.h"
 
-#include "BackForwardListImpl.h"
+#include "BackForwardList.h"
 #include "Bridge.h"
 #include "Chrome.h"
 #include "ChromeClientEfl.h"

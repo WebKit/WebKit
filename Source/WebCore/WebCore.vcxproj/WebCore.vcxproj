@@ -17704,7 +17704,7 @@
     <ClCompile Include="..\svg\properties\SVGAttributeToPropertyMap.cpp" />
     <ClCompile Include="..\svg\properties\SVGPathSegListPropertyTearOff.cpp" />
     <ClCompile Include="..\history\BackForwardController.cpp" />
-    <ClCompile Include="..\history\BackForwardListImpl.cpp" />
+    <ClCompile Include="..\history\BackForwardList.cpp" />
     <ClCompile Include="..\history\CachedFrame.cpp" />
     <ClCompile Include="..\history\CachedPage.cpp" />
     <ClCompile Include="..\history\HistoryItem.cpp" />
@@ -21041,7 +21041,7 @@
     <ClInclude Include="..\ForwardingHeaders\heap\Strong.h" />
     <ClInclude Include="..\history\BackForwardClient.h" />
     <ClInclude Include="..\history\BackForwardController.h" />
-    <ClInclude Include="..\history\BackForwardListImpl.h" />
+    <ClInclude Include="..\history\BackForwardList.h" />
     <ClInclude Include="..\history\CachedFrame.h" />
     <ClInclude Include="..\history\CachedFramePlatformData.h" />
     <ClInclude Include="..\history\CachedPage.h" />

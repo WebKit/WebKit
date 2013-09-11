@@ -21,7 +21,7 @@
 #include "config.h"
 #include "webkitwebbackforwardlist.h"
 
-#include "BackForwardListImpl.h"
+#include "BackForwardList.h"
 #include "HistoryItem.h"
 #include "Page.h"
 #include "PageGroup.h"

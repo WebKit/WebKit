@@ -26,7 +26,7 @@
 #include "config.h"
 #include "BackForwardController.h"
 
-#include "BackForwardListImpl.h"
+#include "BackForwardList.h"
 #include "HistoryItem.h"
 #include "Page.h"
 

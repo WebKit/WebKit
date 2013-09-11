@@ -38,7 +38,7 @@
 #import "WebPreferencesPrivate.h"
 #import "WebTypesInternal.h"
 #import "WebViewPrivate.h"
-#import <WebCore/BackForwardListImpl.h>
+#import <WebCore/BackForwardList.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageCache.h>

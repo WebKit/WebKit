@@ -21,7 +21,7 @@
 #ifndef ewk_history_private_h
 #define ewk_history_private_h
 
-#include "BackForwardListImpl.h"
+#include "BackForwardList.h"
 
 namespace WebCore {
 class HistoryItem;

@@ -4845,7 +4845,7 @@
     <ClCompile Include="..\history\BackForwardController.cpp">
       <Filter>history</Filter>
     </ClCompile>
-    <ClCompile Include="..\history\BackForwardListImpl.cpp">
+    <ClCompile Include="..\history\BackForwardList.cpp">
       <Filter>history</Filter>
     </ClCompile>
     <ClCompile Include="..\history\CachedFrame.cpp">
@@ -12399,7 +12399,7 @@
     <ClInclude Include="..\history\BackForwardController.h">
       <Filter>history</Filter>
     </ClInclude>
-    <ClInclude Include="..\history\BackForwardListImpl.h">
+    <ClInclude Include="..\history\BackForwardList.h">
       <Filter>history</Filter>
     </ClInclude>
     <ClInclude Include="..\history\CachedFrame.h">

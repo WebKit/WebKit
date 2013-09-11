@@ -31,7 +31,7 @@
 #include "WebKit.h"
 #include "WebPreferences.h"
 
-#include <WebCore/BackForwardListImpl.h>
+#include <WebCore/BackForwardList.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/HistoryItem.h>
 

@@ -21,7 +21,7 @@
 #include "config.h"
 #include "ewk_history.h"
 
-#include "BackForwardListImpl.h"
+#include "BackForwardList.h"
 #include "CairoUtilitiesEfl.h"
 #include "HistoryItem.h"
 #include "IconDatabaseBase.h"

@@ -570,7 +570,7 @@ SOURCES += \
     fileapi/ThreadableBlobRegistry.cpp \
     fileapi/WebKitBlobBuilder.cpp \
     history/BackForwardController.cpp \
-    history/BackForwardListImpl.cpp \
+    history/BackForwardList.cpp \
     history/CachedFrame.cpp \
     history/CachedPage.cpp \
     history/HistoryItem.cpp \
@@ -1776,7 +1776,7 @@ HEADERS += \
     fileapi/WebKitBlobBuilder.h \
     history/BackForwardClient.h \
     history/BackForwardController.h \
-    history/BackForwardListImpl.h \
+    history/BackForwardList.h \
     history/CachedFrame.h \
     history/CachedPage.h \
     history/HistoryItem.h \

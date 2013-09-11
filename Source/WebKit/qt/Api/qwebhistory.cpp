@@ -21,7 +21,7 @@
 #include "qwebhistory.h"
 #include "qwebhistory_p.h"
 
-#include "BackForwardListImpl.h"
+#include "BackForwardList.h"
 #include "Frame.h"
 #include "IconDatabaseBase.h"
 #include "Image.h"
