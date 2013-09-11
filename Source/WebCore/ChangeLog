@@ -1,3 +1,22 @@
+2013-09-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        CSSProperty::isInheritedProperty is large
+        https://bugs.webkit.org/show_bug.cgi?id=121083
+
+        Reviewed by Sam Weinig.
+
+        Support [Inherited] option in makeprop.pl and generate CSSProperty::isInheritedProperty in CSSPropertyNames.cpp
+        using a lookup table. We can pack the table better by using bitfield in the future but I think boolean lookup
+        table is a good first cut.
+
+        Updated CSSPropertyNames.in and SVGCSSPropertyNames.in to use the new option and removed the old code from
+        CSSProperty.cpp.
+
+        * css/CSSProperty.cpp:
+        * css/CSSPropertyNames.in:
+        * css/SVGCSSPropertyNames.in:
+        * css/makeprop.pl:
+
 2013-09-11  Andreas Kling  <akling@apple.com>
 
         Rename BackForwardListImpl => BackForwardList.

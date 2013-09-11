@@ -11,32 +11,32 @@
 
 // high-priority property names have to be listed first, to simplify the check
 // for applying them first.
-color
-direction
+color [Inherited]
+direction [Inherited]
 display
-font
-font-family
-font-size
-font-style
-font-variant
-font-weight
-text-rendering
--webkit-font-feature-settings
--webkit-font-kerning
--webkit-font-smoothing
--webkit-font-variant-ligatures
--webkit-locale
--webkit-text-orientation
+font [Inherited]
+font-family [Inherited]
+font-size [Inherited]
+font-style [Inherited]
+font-variant [Inherited]
+font-weight [Inherited]
+text-rendering [Inherited]
+-webkit-font-feature-settings [Inherited]
+-webkit-font-kerning [Inherited]
+-webkit-font-smoothing [Inherited]
+-webkit-font-variant-ligatures [Inherited]
+-webkit-locale [Inherited]
+-webkit-text-orientation [Inherited]
 -epub-text-orientation = -webkit-text-orientation
 #if defined(ENABLE_IOS_TEXT_AUTOSIZING) && ENABLE_IOS_TEXT_AUTOSIZING
--webkit-text-size-adjust
+-webkit-text-size-adjust [Inherited]
 #endif
--webkit-writing-mode
+-webkit-writing-mode [Inherited]
 -epub-writing-mode = -webkit-writing-mode
 zoom
 
 // line height needs to be right after the above high-priority properties
-line-height
+line-height [Inherited]
 
 // The remaining properties are listed in alphabetical order
 background
@@ -61,7 +61,7 @@ border-bottom-right-radius
 -webkit-border-bottom-right-radius = border-bottom-right-radius
 border-bottom-style
 border-bottom-width
-border-collapse
+border-collapse [Inherited]
 border-color
 border-image
 border-image-outset
@@ -78,7 +78,7 @@ border-right
 border-right-color
 border-right-style
 border-right-width
-border-spacing
+border-spacing [Inherited]
 border-style
 border-top
 border-top-color
@@ -94,7 +94,7 @@ box-shadow
 box-sizing
 // -webkit-box-sizing worked in Safari 4 and earlier.
 -webkit-box-sizing = box-sizing
-caption-side
+caption-side [Inherited]
 -epub-caption-side = caption-side
 clear
 clip
@@ -102,11 +102,11 @@ clip
 content
 counter-increment
 counter-reset
-cursor
+cursor [Inherited]
 #if defined(ENABLE_CURSOR_VISIBILITY) && ENABLE_CURSOR_VISIBILITY
--webkit-cursor-visibility
+-webkit-cursor-visibility [Inherited]
 #endif
-empty-cells
+empty-cells [Inherited]
 float
 font-stretch
 #if defined(ENABLE_CSS_SHADERS) && ENABLE_CSS_SHADERS
@@ -114,18 +114,18 @@ geometry
 #endif
 height
 #if defined(ENABLE_CSS_IMAGE_ORIENTATION) && ENABLE_CSS_IMAGE_ORIENTATION
-image-orientation
+image-orientation [Inherited]
 #endif
-image-rendering
+image-rendering [Inherited]
 #if defined(ENABLE_CSS_IMAGE_RESOLUTION) && ENABLE_CSS_IMAGE_RESOLUTION
-image-resolution
+image-resolution [Inherited]
 #endif
 left
-letter-spacing
-list-style
-list-style-image
-list-style-position
-list-style-type
+letter-spacing [Inherited]
+list-style [Inherited]
+list-style-image [Inherited]
+list-style-position [Inherited]
+list-style-type [Inherited]
 margin
 margin-bottom
 margin-left
@@ -144,7 +144,7 @@ opacity
 // Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1,
 // and may be in use on some websites and widgets.
 -webkit-opacity = opacity
-orphans
+orphans [Inherited]
 outline
 outline-color
 outline-offset
@@ -163,19 +163,19 @@ page
 page-break-after
 page-break-before
 page-break-inside
-pointer-events
+pointer-events [Inherited]
 position
-quotes
-resize
+quotes [Inherited]
+resize [Inherited]
 right
 size
 src
-speak
+speak [Inherited]
 table-layout
-tab-size
-text-align
+tab-size [Inherited]
+text-align [Inherited]
 text-decoration
-text-indent
+text-indent [Inherited]
 text-line-through
 text-line-through-color
 text-line-through-mode
@@ -187,8 +187,8 @@ text-overline-color
 text-overline-mode
 text-overline-style
 text-overline-width
-text-shadow
-text-transform
+text-shadow [Inherited]
+text-transform [Inherited]
 -epub-text-transform = text-transform
 text-underline
 text-underline-color
@@ -205,14 +205,14 @@ transition-timing-function
 unicode-bidi
 unicode-range
 vertical-align
-visibility
-white-space
-widows
+visibility [Inherited]
+white-space [Inherited]
+widows [Inherited]
 width
-word-break
+word-break [Inherited]
 -epub-word-break = word-break
-word-spacing
-word-wrap
+word-spacing [Inherited]
+word-wrap [Inherited]
 z-index
 -webkit-animation
 -webkit-animation-delay
@@ -224,7 +224,7 @@ z-index
 -webkit-animation-play-state
 -webkit-animation-timing-function
 -webkit-appearance
--webkit-aspect-ratio
+-webkit-aspect-ratio [Inherited]
 -webkit-backface-visibility
 -webkit-background-blend-mode
 -webkit-background-clip
@@ -247,7 +247,7 @@ z-index
 -webkit-border-end-style
 -webkit-border-end-width
 -webkit-border-fit
--webkit-border-horizontal-spacing
+-webkit-border-horizontal-spacing [Inherited]
 -webkit-border-image
 // -webkit-border-radius differs from border-radius only in the interpretation of
 // a value consisting of two lengths: "-webkit-border-radius: l1 l2;" is equivalent
@@ -257,9 +257,9 @@ z-index
 -webkit-border-start-color
 -webkit-border-start-style
 -webkit-border-start-width
--webkit-border-vertical-spacing
+-webkit-border-vertical-spacing [Inherited]
 -webkit-box-align
--webkit-box-direction
+-webkit-box-direction [Inherited]
 -webkit-box-flex
 -webkit-box-flex-group
 -webkit-box-lines
@@ -268,7 +268,7 @@ z-index
 -webkit-box-pack
 -webkit-box-reflect
 -webkit-box-shadow
--webkit-color-correction
+-webkit-color-correction [Inherited]
 -webkit-column-axis
 -webkit-column-break-after
 -webkit-column-break-before
@@ -315,19 +315,19 @@ z-index
 -webkit-grid-column
 -webkit-grid-row
 -webkit-grid-auto-flow
--webkit-highlight
--webkit-hyphenate-character
--webkit-hyphenate-limit-after
--webkit-hyphenate-limit-before
--webkit-hyphenate-limit-lines
--webkit-hyphens
+-webkit-highlight [Inherited]
+-webkit-hyphenate-character [Inherited]
+-webkit-hyphenate-limit-after [Inherited]
+-webkit-hyphenate-limit-before [Inherited]
+-webkit-hyphenate-limit-lines [Inherited]
+-webkit-hyphens [Inherited]
 -epub-hyphens = -webkit-hyphens
--webkit-line-box-contain
--webkit-line-align
--webkit-line-break
+-webkit-line-box-contain [Inherited]
+-webkit-line-align [Inherited]
+-webkit-line-break [Inherited]
 -webkit-line-clamp
--webkit-line-grid
--webkit-line-snap
+-webkit-line-grid [Inherited]
+-webkit-line-snap [Inherited]
 -webkit-logical-width
 -webkit-logical-height
 -webkit-margin-after-collapse
@@ -368,7 +368,7 @@ z-index
 -webkit-max-logical-height
 -webkit-min-logical-width
 -webkit-min-logical-height
--webkit-nbsp-mode
+-webkit-nbsp-mode [Inherited]
 -webkit-order
 -webkit-padding-after
 -webkit-padding-before
@@ -378,33 +378,33 @@ z-index
 -webkit-perspective-origin
 -webkit-perspective-origin-x
 -webkit-perspective-origin-y
--webkit-print-color-adjust
--webkit-rtl-ordering
--webkit-ruby-position
--webkit-text-combine
+-webkit-print-color-adjust [Inherited]
+-webkit-rtl-ordering [Inherited]
+-webkit-ruby-position [Inherited]
+-webkit-text-combine [Inherited]
 -epub-text-combine = -webkit-text-combine
 #if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT
 -webkit-text-decoration
 -webkit-text-decoration-line
 -webkit-text-decoration-style
 -webkit-text-decoration-color
--webkit-text-align-last
--webkit-text-justify
--webkit-text-underline-position
+-webkit-text-align-last [Inherited]
+-webkit-text-justify [Inherited]
+-webkit-text-underline-position [Inherited]
 #endif
--webkit-text-decorations-in-effect
--webkit-text-emphasis
+-webkit-text-decorations-in-effect [Inherited]
+-webkit-text-emphasis [Inherited]
 -epub-text-emphasis = -webkit-text-emphasis
--webkit-text-emphasis-color
+-webkit-text-emphasis-color [Inherited]
 -epub-text-emphasis-color = -webkit-text-emphasis-color
--webkit-text-emphasis-position
--webkit-text-emphasis-style
+-webkit-text-emphasis-position [Inherited]
+-webkit-text-emphasis-style [Inherited]
 -epub-text-emphasis-style = -webkit-text-emphasis-style
--webkit-text-fill-color
--webkit-text-security
--webkit-text-stroke
--webkit-text-stroke-color
--webkit-text-stroke-width
+-webkit-text-fill-color [Inherited]
+-webkit-text-security [Inherited]
+-webkit-text-stroke [Inherited]
+-webkit-text-stroke-color [Inherited]
+-webkit-text-stroke-width [Inherited]
 -webkit-transform
 -webkit-transform-origin
 -webkit-transform-origin-x
@@ -417,8 +417,8 @@ z-index
 -webkit-transition-property
 -webkit-transition-timing-function
 -webkit-user-drag
--webkit-user-modify
--webkit-user-select
+-webkit-user-modify [Inherited]
+-webkit-user-select [Inherited]
 #if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
 -webkit-flow-into
 -webkit-flow-from
@@ -444,7 +444,7 @@ orientation
 user-zoom
 #endif
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
--webkit-tap-highlight-color
+-webkit-tap-highlight-color [Inherited]
 #endif
 #if defined(ENABLE_DASHBOARD_SUPPORT) && ENABLE_DASHBOARD_SUPPORT
 -webkit-dashboard-region
@@ -453,5 +453,5 @@ user-zoom
 -webkit-app-region
 #endif
 #if defined(ENABLE_ACCELERATED_OVERFLOW_SCROLLING) && ENABLE_ACCELERATED_OVERFLOW_SCROLLING
--webkit-overflow-scrolling
+-webkit-overflow-scrolling [Inherited]
 #endif
