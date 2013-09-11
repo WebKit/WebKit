@@ -1,5 +1,27 @@
 2013-09-10  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (143483): overflow:hidden doesn't quash big repaints from text-indent: -9999px
+        https://bugs.webkit.org/show_bug.cgi?id=121137
+
+        Reviewed by Ryosuke Niwa.
+        
+        The change in r143483 made it so that negative text-indent gets added
+        to visual oveflow even when we have overflow:hidden, which is really bad
+        because it causes large repaints (and large layers) for a common-on-the-web
+        pattern.
+        
+        Revert the change, and add a new test to make sure it doesn't regress.
+        
+        I can't reproduce the bug it was trying to fix with the change reverted.
+
+        Tests: compositing/geometry/negative-text-indent-with-overflow-hidden-layer.html
+               fast/repaint/negative-text-indent-with-overflow-hidden.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeOverflow):
+
+2013-09-10  Simon Fraser  <simon.fraser@apple.com>
+
         Optionally show visual and layout overflow rects in layer tree dumps
         https://bugs.webkit.org/show_bug.cgi?id=121135
 

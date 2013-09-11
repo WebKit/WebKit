@@ -1,3 +1,17 @@
+2013-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (143483): overflow:hidden doesn't quash big repaints from text-indent: -9999px
+        https://bugs.webkit.org/show_bug.cgi?id=121137
+
+        Reviewed by Ryosuke Niwa.
+        
+        Text-based repaint test, and test for compositing layer geometry.
+
+        * compositing/geometry/negative-text-indent-with-overflow-hidden-layer-expected.txt: Added.
+        * compositing/geometry/negative-text-indent-with-overflow-hidden-layer.html: Added.
+        * fast/repaint/negative-text-indent-with-overflow-hidden-expected.txt: Added.
+        * fast/repaint/negative-text-indent-with-overflow-hidden.html: Added.
+
 2013-09-11  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit exposes AXTitleUIElement incorrectly on checkboxes and radio buttons
