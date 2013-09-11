@@ -1,3 +1,18 @@
+2013-09-11  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Mac platform is not using accessibilityTitle from the Base implementation
+        https://bugs.webkit.org/show_bug.cgi?id=121109
+
+        Reviewed by Sam Weinig.
+
+        Remove the Mac platform overrides of accessibilityTitle, Description, HelpText. 
+        The Base implementation has these and we can share them between iOS and Mac
+
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase accessibilityTitle]):
+        (-[WebAccessibilityObjectWrapperBase accessibilityDescription]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+
 2013-09-11  Andreas Kling  <akling@apple.com>
 
         Rename BackForwardList => BackForwardClient.

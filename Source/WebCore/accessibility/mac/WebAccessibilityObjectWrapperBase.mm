@@ -182,11 +182,6 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
         // that text as our title.
         if (text.textSource == LabelByElementText && !m_object->exposesTitleUIElement())
             return text.text;
-        
-        // FIXME: The title tag is used in certain cases for the title. This usage should
-        // probably be in the description field since it's not "visible".
-        if (text.textSource == TitleTagText && ![self titleTagShouldBeUsedInDescriptionField])
-            return text.text;
     }
     
     return [NSString string];
@@ -203,13 +198,23 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
     m_object->accessibilityText(textOrder);
     
     unsigned length = textOrder.size();
+    bool visibleTextAvailable = false;
     for (unsigned k = 0; k < length; k++) {
         const AccessibilityText& text = textOrder[k];
         
         if (text.textSource == AlternativeText)
             return text.text;
         
-        if (text.textSource == TitleTagText && [self titleTagShouldBeUsedInDescriptionField])
+        switch (text.textSource) {
+        case VisibleText:
+        case ChildrenText:
+        case LabelByElementText:
+            visibleTextAvailable = true;
+        default:
+            break;
+        }
+        
+        if (text.textSource == TitleTagText && !visibleTextAvailable)
             return text.text;
     }
     
