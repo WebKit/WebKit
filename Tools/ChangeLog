@@ -1,3 +1,16 @@
+2013-09-12  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Add jhbuild-wayland.modules
+        https://bugs.webkit.org/show_bug.cgi?id=120455
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Current versions of gtk+, gdk-pixbuf and glib don't fit the requirement for wayland support.
+        With this patch, you can build extra gtk+, gdk-pixbuf and glib through jhbuild with exporting
+        WEBKIT_EXTRA_MODULESETS.
+
+        * gtk/jhbuild-wayland.modules: Added.
+
 2013-09-12  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK][WK2] a11y tests unconditionally launching a11y daemons
