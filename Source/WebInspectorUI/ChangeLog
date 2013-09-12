@@ -1,5 +1,25 @@
 2013-09-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Duplicated color swatches changing autocompletes color names
+        https://bugs.webkit.org/show_bug.cgi?id=121265
+
+        Reviewed by Timothy Hatcher.
+
+        CodeMirror bookmarks at position used to be unique but no longer are.
+        Define an extension to give us unique bookmarks as we expected, and
+        update all the old locations using setBookmark.
+
+        * UserInterface/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.didDismissPopover):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._updateTextMarkers):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createColorSwatches):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.event.newColorText):
+        * UserInterface/CodeMirrorAdditions.js:
+
+2013-09-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Update CodeMirror for gutter fix
         https://bugs.webkit.org/show_bug.cgi?id=121262
 

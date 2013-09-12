@@ -271,6 +271,20 @@
         return paddedClass.indexOf(" " + className + " ", index) !== -1;
     });
 
+    CodeMirror.defineExtension("setUniqueBookmark", function(position, options) {
+        var marks = this.findMarksAt(position);
+        for (var i = 0; i < marks.length; ++i) {
+            if (marks[i].__uniqueBookmark) {
+                marks[i].clear();
+                break;
+            }
+        }
+
+        var uniqueBookmark = this.setBookmark(position, options);
+        uniqueBookmark.__uniqueBookmark = true;
+        return uniqueBookmark;
+    });
+
     CodeMirror.defineExtension("toggleLineClass", function(line, where, className) {
         if (this.hasLineClass(line, where, className)) {
             this.removeLineClass(line, where, className);

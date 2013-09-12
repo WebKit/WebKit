@@ -191,7 +191,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
 
     // Protected
 
-    didDismissPopover: function(popover) 
+    didDismissPopover: function(popover)
     {
         if (popover === this._colorPickerPopover)
             delete this._colorPickerPopover;
@@ -362,7 +362,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
                         var from = {line: i, ch: match.index};
                         var to = {line: i, ch: match.index + match[0].length};
 
-                        var checkboxMarker = this._codeMirror.setBookmark(from, checkboxElement);
+                        var checkboxMarker = this._codeMirror.setUniqueBookmark(from, checkboxElement);
                         checkboxMarker.__propertyCheckbox = true;
 
                         var commentTextMarker = this._codeMirror.markText(from, to);
@@ -439,10 +439,10 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
                     swatchElement.addEventListener("click", this._colorSwatchClicked.bind(this));
 
                     var swatchInnerElement = document.createElement("span");
-                    swatchInnerElement.style.setProperty("background-color", match[0]);
+                    swatchInnerElement.style.backgroundColor = match[0];
                     swatchElement.appendChild(swatchInnerElement);
 
-                    var swatchMarker = this._codeMirror.setBookmark(from, swatchElement);
+                    var swatchMarker = this._codeMirror.setUniqueBookmark(from, swatchElement);
 
                     var colorTextMarker = this._codeMirror.markText(from, to);
                     colorTextMarker.__markedColor = true;
@@ -489,7 +489,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             checkboxElement.addEventListener("change", this._propertyCheckboxChanged.bind(this));
             checkboxElement.__cssProperty = property;
 
-            var checkboxMarker = this._codeMirror.setBookmark(from, checkboxElement);
+            var checkboxMarker = this._codeMirror.setUniqueBookmark(from, checkboxElement);
             checkboxMarker.__propertyCheckbox = true;
         }
 
@@ -713,7 +713,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
 
                 this._codeMirror.replaceRange(newColorText, range.from, range.to);
 
-                // The color's text format could have changed, so we need to update the "range" 
+                // The color's text format could have changed, so we need to update the "range"
                 // variable to anticipate a different "range.to" property.
                 range.to.ch = range.from.ch + newColorText.length;
 
@@ -751,7 +751,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             }.bind(this));
 
             var bounds = WebInspector.Rect.rectFromClientRect(swatch.getBoundingClientRect());
-            
+
             this._colorPickerPopover.content = colorPicker.element;
             this._colorPickerPopover.present(bounds, [WebInspector.RectEdge.MIN_X]);
 
@@ -815,7 +815,7 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             var placeholderElement = document.createElement("div");
             placeholderElement.className = WebInspector.CSSStyleDeclarationTextEditor.CheckboxPlaceholderElementStyleClassName;
 
-            var placeholderMark = this._codeMirror.setBookmark(position, placeholderElement);
+            var placeholderMark = this._codeMirror.setUniqueBookmark(position, placeholderElement);
             placeholderMark.__checkboxPlaceholder = true;
         }
     },
