@@ -1,5 +1,11 @@
 2013-09-11  Andreas Kling  <akling@apple.com>
 
+        Fix Windows build.
+
+        * rendering/RenderingAllInOne.cpp:
+
+2013-09-11  Andreas Kling  <akling@apple.com>
+
         Merge RenderPart into RenderWidget.
         <https://webkit.org/b/121200>
 

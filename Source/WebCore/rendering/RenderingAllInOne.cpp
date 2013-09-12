@@ -85,7 +85,6 @@
 #include "RenderMultiColumnSet.cpp"
 #include "RenderObject.cpp"
 #include "RenderObjectChildList.cpp"
-#include "RenderPart.cpp"
 #include "RenderProgress.cpp"
 #include "RenderQuote.cpp"
 #include "RenderReplaced.cpp"
