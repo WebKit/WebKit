@@ -28,8 +28,8 @@
 
 #include "JSCell.h"
 #include "WeakSetInlines.h"
+#include <cstddef>
 #include <wtf/Assertions.h>
-#include <wtf/NullPtr.h>
 
 namespace JSC {
 

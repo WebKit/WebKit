@@ -27,10 +27,10 @@
 #define GDIObject_h
 
 #include <algorithm>
+#include <cstddef>
 #include <memory>
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/NullPtr.h>
 
 namespace WTF {
 

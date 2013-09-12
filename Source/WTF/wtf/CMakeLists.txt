@@ -55,7 +55,6 @@ set(WTF_HEADERS
     ThreadRestrictionVerifier.h
     Ref.h
     Noncopyable.h
-    NullPtr.h
     NumberOfCores.h
     RAMSize.h
     OSAllocator.h
@@ -164,7 +163,6 @@ set(WTF_SOURCES
     MainThread.cpp
     MediaTime.cpp
     MetaAllocator.cpp
-    NullPtr.cpp
     OSRandomSource.cpp
     NumberOfCores.cpp
     RAMSize.cpp

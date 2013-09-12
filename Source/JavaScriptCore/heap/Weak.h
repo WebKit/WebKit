@@ -26,8 +26,8 @@
 #ifndef Weak_h
 #define Weak_h
 
+#include <cstddef>
 #include <wtf/Noncopyable.h>
-#include <wtf/NullPtr.h>
 
 namespace JSC {
 

@@ -31,6 +31,7 @@
 #include "ScriptWrappable.h"
 #include "ScriptWrappableInlines.h"
 #include "WebCoreTypedArrayController.h"
+#include <cstddef>
 #include <heap/Weak.h>
 #include <heap/WeakInlines.h>
 #include <runtime/Error.h>
@@ -46,7 +47,6 @@
 #include <runtime/TypedArrays.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/NullPtr.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

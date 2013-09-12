@@ -20,7 +20,6 @@
 #include "EWKTestView.h"
 
 #include <EWebKit.h>
-#include <wtf/NullPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 

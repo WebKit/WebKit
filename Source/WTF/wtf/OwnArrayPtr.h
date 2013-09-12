@@ -23,8 +23,8 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/NullPtr.h>
 #include <algorithm>
+#include <cstddef>
 
 namespace WTF {
 

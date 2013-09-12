@@ -24,8 +24,8 @@
 #if USE(CF) || defined(__OBJC__)
 
 #include <wtf/HashTraits.h>
-#include <wtf/NullPtr.h>
 #include <algorithm>
+#include <cstddef>
 
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>

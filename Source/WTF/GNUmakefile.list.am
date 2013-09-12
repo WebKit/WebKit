@@ -91,7 +91,6 @@ wtf_sources += \
     Source/WTF/wtf/NeverDestroyed.h \
     Source/WTF/wtf/NoLock.h \
     Source/WTF/wtf/Noncopyable.h \
-    Source/WTF/wtf/NullPtr.h \
     Source/WTF/wtf/NumberOfCores.cpp \
     Source/WTF/wtf/NumberOfCores.h \
     Source/WTF/wtf/RAMSize.cpp \

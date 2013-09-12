@@ -86,7 +86,6 @@ HEADERS += \
     MetaAllocatorHandle.h \
     Ref.h \
     Noncopyable.h \
-    NullPtr.h \
     NumberOfCores.h \
     RAMSize.h \
     OSAllocator.h \
@@ -200,7 +199,6 @@ SOURCES += \
     MainThread.cpp \
     MediaTime.cpp \
     MetaAllocator.cpp \
-    NullPtr.cpp \
     NumberOfCores.cpp \
     RAMSize.cpp \
     OSRandomSource.cpp \

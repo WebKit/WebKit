@@ -79,7 +79,6 @@
     <ClCompile Include="..\wtf\MD5.cpp" />
     <ClCompile Include="..\wtf\MediaTime.cpp" />
     <ClCompile Include="..\wtf\MetaAllocator.cpp" />
-    <ClCompile Include="..\wtf\NullPtr.cpp" />
     <ClCompile Include="..\wtf\NumberOfCores.cpp" />
     <ClCompile Include="..\wtf\OSAllocatorWin.cpp" />
     <ClCompile Include="..\wtf\OSRandomSource.cpp" />
@@ -189,7 +188,6 @@
     <ClInclude Include="..\wtf\MetaAllocatorHandle.h" />
     <ClInclude Include="..\wtf\NeverDestroyed.h" />
     <ClInclude Include="..\wtf\Noncopyable.h" />
-    <ClInclude Include="..\wtf\NullPtr.h" />
     <ClInclude Include="..\wtf\NumberOfCores.h" />
     <ClInclude Include="..\wtf\OSRandomSource.h" />
     <ClInclude Include="..\wtf\OwnArrayPtr.h" />
