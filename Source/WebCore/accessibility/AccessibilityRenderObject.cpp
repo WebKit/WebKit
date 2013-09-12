@@ -2670,6 +2670,9 @@ bool AccessibilityRenderObject::canSetValueAttribute() const
     if (isNativeTextControl())
         return !isReadOnly();
 
+    if (isMeter())
+        return false;
+
     if (equalIgnoringCase(getAttribute(aria_readonlyAttr), "true"))
         return false;
     

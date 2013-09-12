@@ -1,3 +1,15 @@
+2013-09-12  Samuel White  <samuel_white@apple.com>
+
+        <meter> element AXValue is listed as a writable value
+        https://bugs.webkit.org/show_bug.cgi?id=117650
+
+        Reviewed by Chris Fleizach.
+
+        Added writability check to meter element test.
+
+        * accessibility/meter-element.html:
+        * platform/mac/accessibility/meter-element-expected.txt:
+
 2013-09-12  Renata Hodovan  <reni@webkit.org>
 
         [Qt] SHOULD NEVER BE REACHED is touched WebCore::InputType::createStepRange
