@@ -1,3 +1,13 @@
+2013-09-11  Vivek Galatage  <vivek.vg@samsung.com>
+
+        DOMParser.parseFromString() should support creating HTML Document with mime-type text/html
+        https://bugs.webkit.org/show_bug.cgi?id=120826
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/domparser-parsefromstring-mimetype-support-expected.txt: Added.
+        * fast/dom/domparser-parsefromstring-mimetype-support.html: Added.
+
 2013-09-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Flaky Test: http/tests/inspector/inspect-element.html

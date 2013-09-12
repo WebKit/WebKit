@@ -1,3 +1,23 @@
+2013-09-11  Vivek Galatage  <vivek.vg@samsung.com>
+
+        DOMParser.parseFromString() should support creating HTML Document with mime-type text/html
+        https://bugs.webkit.org/show_bug.cgi?id=120826
+
+        Reviewed by Darin Adler.
+
+        The specification http://domparsing.spec.whatwg.org/#the-domparser-interface for DOMParser.parseFromString()
+        allows the document creation if the mimeType is one of the supported types:
+        ["text/html", "text/xml", "application/xml", "application/xhtml+xml", "image/svg+xml"]
+
+        Also script elements get marked unexecutable and the contents of noscript get parsed as markup.
+
+        blink review URL: https://codereview.chromium.org/23903014/
+
+        Test: fast/dom/domparser-parsefromstring-mimetype-support.html
+
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::parseFromString):
+
 2013-09-11  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Improve the performance of image valued shapes
