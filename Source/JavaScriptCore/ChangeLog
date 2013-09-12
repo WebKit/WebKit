@@ -1,3 +1,20 @@
+2013-09-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Add back c++11 features removed by buildfixes after all ports did the switch
+        https://bugs.webkit.org/show_bug.cgi?id=119266
+
+        Reviewed by Anders Carlsson.
+
+        * bytecode/GetByIdStatus.h:
+        (JSC::GetByIdStatus::GetByIdStatus):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::~Worklist):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::codeType):
+        (JSC::StackVisitor::Frame::functionName):
+        (JSC::StackVisitor::Frame::sourceURL):
+        (JSC::StackVisitor::Frame::print):
+
 2013-09-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Remove home-brewed nullptr

@@ -167,18 +167,18 @@ void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin
 StackVisitor::Frame::CodeType StackVisitor::Frame::codeType() const
 {
     if (!isJSFrame())
-        return StackVisitor::Frame::Native;
+        return CodeType::Native;
 
     switch (codeBlock()->codeType()) {
     case EvalCode:
-        return StackVisitor::Frame::Eval;
+        return CodeType::Eval;
     case FunctionCode:
-        return StackVisitor::Frame::Function;
+        return CodeType::Function;
     case GlobalCode:
-        return StackVisitor::Frame::Global;
+        return CodeType::Global;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return StackVisitor::Frame::Global;
+    return CodeType::Global;
 }
 
 String StackVisitor::Frame::functionName()
@@ -187,17 +187,17 @@ String StackVisitor::Frame::functionName()
     JSObject* callee = this->callee();
 
     switch (codeType()) {
-    case StackVisitor::Frame::Eval:
+    case CodeType::Eval:
         traceLine = "eval code";
         break;
-    case StackVisitor::Frame::Native:
+    case CodeType::Native:
         if (callee)
             traceLine = getCalculatedDisplayName(callFrame(), callee).impl();
         break;
-    case StackVisitor::Frame::Function:
+    case CodeType::Function:
         traceLine = getCalculatedDisplayName(callFrame(), callee).impl();
         break;
-    case StackVisitor::Frame::Global:
+    case CodeType::Global:
         traceLine = "global code";
         break;
     }
@@ -209,15 +209,15 @@ String StackVisitor::Frame::sourceURL()
     String traceLine;
 
     switch (codeType()) {
-    case StackVisitor::Frame::Eval:
-    case StackVisitor::Frame::Function:
-    case StackVisitor::Frame::Global: {
+    case CodeType::Eval:
+    case CodeType::Function:
+    case CodeType::Global: {
         String sourceURL = codeBlock()->ownerExecutable()->sourceURL();
         if (!sourceURL.isEmpty())
             traceLine = sourceURL.impl();
         break;
     }
-    case StackVisitor::Frame::Native:
+    case CodeType::Native:
         traceLine = "[native code]";
         break;
     }
@@ -360,7 +360,7 @@ void StackVisitor::Frame::print(int indentLevel)
 
     CallFrame* callFrame = m_callFrame;
     CallFrame* callerFrame = this->callerFrame();
-    void* returnPC = callFrame->hasReturnPC() ? callFrame->returnPC().value() : 0;
+    void* returnPC = callFrame->hasReturnPC() ? callFrame->returnPC().value() : nullptr;
 
     printif(i, "   name '%s'\n", functionName().utf8().data());
     printif(i, "   sourceURL '%s'\n", sourceURL().utf8().data());

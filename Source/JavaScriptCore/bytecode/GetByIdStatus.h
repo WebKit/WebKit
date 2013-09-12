@@ -59,7 +59,7 @@ public:
     
     GetByIdStatus(
         State state, bool wasSeenInJIT, const StructureSet& structureSet = StructureSet(),
-        PropertyOffset offset = invalidOffset, JSValue specificValue = JSValue(), PassRefPtr<IntendedStructureChain> chain = 0)
+        PropertyOffset offset = invalidOffset, JSValue specificValue = JSValue(), PassRefPtr<IntendedStructureChain> chain = nullptr)
         : m_state(state)
         , m_structureSet(structureSet)
         , m_chain(chain)

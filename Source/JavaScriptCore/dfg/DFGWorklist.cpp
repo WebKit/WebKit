@@ -44,7 +44,7 @@ Worklist::~Worklist()
     {
         MutexLocker locker(m_lock);
         for (unsigned i = m_threads.size(); i--;)
-            m_queue.append(RefPtr<Plan>(0)); // Use null plan to indicate that we want the thread to terminate.
+            m_queue.append(nullptr); // Use null plan to indicate that we want the thread to terminate.
         m_planEnqueued.broadcast();
     }
     for (unsigned i = m_threads.size(); i--;)
