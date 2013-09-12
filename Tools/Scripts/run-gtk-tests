@@ -92,6 +92,7 @@ class TestRunner:
         self._programs_path = common.build_path_for_build_types((self._build_type,), "Programs")
         self._tests = self._get_tests(tests)
         self._skipped_tests = TestRunner.SKIPPED
+        self._disabled_tests = []
         if not sys.stdout.isatty():
             self._tty_colors_pattern = re.compile("\033\[[0-9;]*m")
 
@@ -198,8 +199,8 @@ class TestRunner:
 
         # If we cannot start the accessibility daemons, we can just skip the accessibility tests.
         if not self._start_accessibility_daemons():
-            print "Could not start accessibility bus, so skipping TestWebKitAccessibility"
-            self._skipped_tests.append(SkippedTest("WebKit2APITests/TestWebKitAccessibility", SkippedTest.ENTIRE_SUITE, "Could not start accessibility bus"))
+            print "Could not start accessibility bus, so disabling TestWebKitAccessibility"
+            self._disabled_tests.append("WebKit2APITests/TestWebKitAccessibility")
         return True
 
     def _tear_down_testing_environment(self):
@@ -221,8 +222,13 @@ class TestRunner:
         return test_cases
 
     def _should_run_test_program(self, test_program):
-        # This is not affected by the command-line arguments, since programs are skipped for
-        # problems in the harness, such as failing to start the accessibility bus.
+        for disabled_test in self._disabled_tests:
+            if test_program.endswith(disabled_test):
+                return False
+
+        if self._options.skipped_action != 'skip':
+            return True
+
         for skipped in self._skipped_tests:
             if test_program.endswith(skipped.test) and skipped.skip_entire_suite():
                 return False

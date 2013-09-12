@@ -1,3 +1,25 @@
+2013-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] run-gtk-tests option --skipped=ignore doesn't work when the entire suite is skipped
+        https://bugs.webkit.org/show_bug.cgi?id=121218
+
+        Reviewed by Philippe Normand.
+
+        Skipping the entire suite was added to skip tests when they can't
+        be run because of the environment, for example to skip the a11y
+        tests when the at-spi daemons fail to start. This is no longer
+        true for all the cases, so we can disable the tests that are
+        impossible to run instead of skipping them.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner.__init__): Initialize the skipped tests list.
+        (TestRunner._setup_testing_environment): Add
+        TestWebKitAccessibility path to the list of disabled tests when
+        at-spi daemon fail to start.
+        (TestRunner._should_run_test_program): Check first if the test
+        program is disabled and then whether it's skipped honoring the
+        skipped command line option.
+
 2013-09-12  Samuel White  <samuel_white@apple.com>
 
         <meter> element text value exposed as AXTitle; should be exposing AXValueDescription
