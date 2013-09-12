@@ -137,7 +137,6 @@ ALWAYS_INLINE bool isNumerical(UseKind kind)
 ALWAYS_INLINE bool isDouble(UseKind kind)
 {
     switch (kind) {
-    case KnownInt32Use:
     case RealNumberUse:
     case NumberUse:
     case KnownNumberUse:

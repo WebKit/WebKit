@@ -1,3 +1,42 @@
+2013-09-11  Filip Pizlo  <fpizlo@apple.com>
+
+        FixupPhase's setUseKindAndUnboxBlahbittyblah and fixDoubleEdge methods should be merged and given intuitive names
+        https://bugs.webkit.org/show_bug.cgi?id=121202
+
+        Reviewed by Geoffrey Garen.
+        
+        Got rid of a method whose name was so descriptive that I couldn't ever remember
+        it. And despite the descriptive name, I always had to look at its implementation
+        to remind myself what it did, anyway.
+        
+        Now that method is called fixEdge(). This is a good name because we're in a phase
+        called FixupPhase, and we call this fixEdge() method on pretty much every edge.
+        For the Int48 work, it makes more sense for this method to be a kind of hook into
+        which we can place various things: it's just a way of observing edges that need
+        attention.
+        
+        As part of this refactoring, I also fold fixDoubleEdge into fixEdge. This makes
+        sense because previously it was never correct to call fixDoubleEdge with non-
+        double use kinds; and conversely it was never correct to call fixEdge with double
+        use kinds.
+        
+        Also I found that isDouble() in DFGUseKind.h would return true for KnownInt32Use.
+        That's almost certainly wrong, and removing that behavior doesn't fail any tests.
+        I'm assuming that was just a bug.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupToPrimitive):
+        (JSC::DFG::FixupPhase::fixupToString):
+        (JSC::DFG::FixupPhase::fixupSetLocalsInBlock):
+        (JSC::DFG::FixupPhase::fixEdge):
+        (JSC::DFG::FixupPhase::fixIntEdge):
+        (JSC::DFG::FixupPhase::attemptToMakeIntegerAdd):
+        (JSC::DFG::FixupPhase::convertToGetArrayLength):
+        (JSC::DFG::FixupPhase::attemptToMakeGetTypedArrayByteOffset):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::isDouble):
+
 2013-09-11  Mark Lam  <mark.lam@apple.com>
 
         Fixed indentation in JSC Debugger header files.
