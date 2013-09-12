@@ -401,32 +401,6 @@ private:
     CSSPropertyID m_prop;
 };
 
-static int gPropertyWrapperMap[numCSSProperties];
-static const int cInvalidPropertyWrapperIndex = -1;
-static Vector<AnimationPropertyWrapperBase*>* gPropertyWrappers = 0;
-
-static void addPropertyWrapper(CSSPropertyID propertyID, AnimationPropertyWrapperBase* wrapper)
-{
-    int propIndex = propertyID - firstCSSProperty;
-
-    ASSERT(gPropertyWrapperMap[propIndex] == cInvalidPropertyWrapperIndex);
-
-    unsigned wrapperIndex = gPropertyWrappers->size();
-    gPropertyWrappers->append(wrapper);
-    gPropertyWrapperMap[propIndex] = wrapperIndex;
-}
-
-static AnimationPropertyWrapperBase* wrapperForProperty(CSSPropertyID propertyID)
-{
-    int propIndex = propertyID - firstCSSProperty;
-    if (propIndex >= 0 && propIndex < numCSSProperties) {
-        int wrapperIndex = gPropertyWrapperMap[propIndex];
-        if (wrapperIndex >= 0)
-            return (*gPropertyWrappers)[wrapperIndex];
-    }
-    return 0;
-}
-
 template <typename T>
 class PropertyWrapperGetter : public AnimationPropertyWrapperBase {
 public:
@@ -982,14 +956,10 @@ private:
 
 class ShorthandPropertyWrapper : public AnimationPropertyWrapperBase {
 public:
-    ShorthandPropertyWrapper(CSSPropertyID property, const StylePropertyShorthand& shorthand)
+    ShorthandPropertyWrapper(CSSPropertyID property, Vector<AnimationPropertyWrapperBase*> longhandWrappers)
         : AnimationPropertyWrapperBase(property)
     {
-        for (unsigned i = 0; i < shorthand.length(); ++i) {
-            AnimationPropertyWrapperBase* wrapper = wrapperForProperty(shorthand.properties()[i]);
-            if (wrapper)
-                m_propertyWrappers.append(wrapper);
-        }
+        m_propertyWrappers.swap(longhandWrappers);
     }
 
     virtual bool isShorthandWrapper() const { return true; }
@@ -1105,7 +1075,66 @@ private:
 };
 #endif
 
-static void addShorthandProperties()
+class CSSPropertyAnimationWrapperMap {
+public:
+    static CSSPropertyAnimationWrapperMap& instance()
+    {
+        // FIXME: This data is never destroyed. Maybe we should ref count it and toss it when the last AnimationController is destroyed?
+        DEFINE_STATIC_LOCAL(OwnPtr<CSSPropertyAnimationWrapperMap>, map, ());
+        if (!map) {
+            map = adoptPtr(new CSSPropertyAnimationWrapperMap);
+            map->ensurePropertyMap(); // FIXME: ensurePropertyMap() calls instance() inside addShorthandProperties().
+        }
+        return *map;
+    }
+
+    AnimationPropertyWrapperBase* wrapperForProperty(CSSPropertyID propertyID)
+    {
+        int propIndex = propertyID - firstCSSProperty;
+        if (propertyID < firstCSSProperty || propertyID > lastCSSProperty)
+            return 0;
+
+        unsigned wrapperIndex = m_propertyToIdMap[propIndex];
+        if (wrapperIndex == cInvalidPropertyWrapperIndex)
+            return 0;
+
+        return m_propertyWrappers[wrapperIndex];
+    }
+
+    AnimationPropertyWrapperBase* wrapperForIndex(unsigned index)
+    {
+        ASSERT(index < m_propertyWrappers.size());
+        return m_propertyWrappers[index];
+    }
+
+    unsigned size()
+    {
+        return m_propertyWrappers.size();
+    }
+
+
+private:
+    void addShorthandProperties();
+    void ensurePropertyMap();
+
+    void addPropertyWrapper(CSSPropertyID propertyID, AnimationPropertyWrapperBase* wrapper)
+    {
+        int propIndex = propertyID - firstCSSProperty;
+
+        ASSERT(m_propertyToIdMap[propIndex] == cInvalidPropertyWrapperIndex);
+
+        unsigned wrapperIndex = m_propertyWrappers.size();
+        m_propertyWrappers.append(wrapper);
+        m_propertyToIdMap[propIndex] = wrapperIndex;
+    }
+
+    Vector<AnimationPropertyWrapperBase*> m_propertyWrappers;
+    unsigned m_propertyToIdMap[numCSSProperties];
+
+    const unsigned cInvalidPropertyWrapperIndex = UINT_MAX;
+};
+
+void CSSPropertyAnimationWrapperMap::addShorthandProperties()
 {
     static const CSSPropertyID animatableShorthandProperties[] = {
         CSSPropertyBackground, // for background-color, background-position, background-image
@@ -1130,21 +1159,27 @@ static void addShorthandProperties()
         CSSPropertyWebkitTransformOrigin
     };
 
+    CSSPropertyAnimationWrapperMap& map = CSSPropertyAnimationWrapperMap::instance();
+
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(animatableShorthandProperties); ++i) {
         CSSPropertyID propertyID = animatableShorthandProperties[i];
         StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
-        if (shorthand.length() > 0)
-            addPropertyWrapper(propertyID, new ShorthandPropertyWrapper(propertyID, shorthand));
+        if (!shorthand.length())
+            continue;
+
+        Vector<AnimationPropertyWrapperBase*> longhandWrappers;
+        for (unsigned i = 0; i < shorthand.length(); ++i) {
+            if (AnimationPropertyWrapperBase* wrapper = map.wrapperForProperty(shorthand.properties()[i]))
+                longhandWrappers.append(wrapper);
+        }
+
+        map.addPropertyWrapper(propertyID, new ShorthandPropertyWrapper(propertyID, longhandWrappers));
     }
 }
 
-void CSSPropertyAnimation::ensurePropertyMap()
+void CSSPropertyAnimationWrapperMap::ensurePropertyMap()
 {
-    // FIXME: This data is never destroyed. Maybe we should ref count it and toss it when the last AnimationController is destroyed?
-    if (gPropertyWrappers)
-        return;
-
-    gPropertyWrappers = new Vector<AnimationPropertyWrapperBase*>();
+    Vector<AnimationPropertyWrapperBase*>* gPropertyWrappers = &m_propertyWrappers; // FIXME: Remove this aliasing.
 
     // build the list of property wrappers to do the comparisons and blends
     gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyLeft, &RenderStyle::left, &RenderStyle::setLeft));
@@ -1307,14 +1342,14 @@ void CSSPropertyAnimation::ensurePropertyMap()
 
     // Make sure unused slots have a value
     for (unsigned int i = 0; i < static_cast<unsigned int>(numCSSProperties); ++i)
-        gPropertyWrapperMap[i] = cInvalidPropertyWrapperIndex;
+        m_propertyToIdMap[i] = cInvalidPropertyWrapperIndex;
 
     // First we put the non-shorthand property wrappers into the map, so the shorthand-building
     // code can find them.
     size_t n = gPropertyWrappers->size();
     for (unsigned int i = 0; i < n; ++i) {
-        ASSERT((*gPropertyWrappers)[i]->property() - firstCSSProperty < numCSSProperties);
-        gPropertyWrapperMap[(*gPropertyWrappers)[i]->property() - firstCSSProperty] = i;
+        ASSERT(m_propertyWrappers[i]->property() - firstCSSProperty < numCSSProperties);
+        m_propertyToIdMap[m_propertyWrappers[i]->property() - firstCSSProperty] = i;
     }
 
     // Now add the shorthand wrappers.
@@ -1347,9 +1382,7 @@ bool CSSPropertyAnimation::blendProperties(const AnimationBase* anim, CSSPropert
 {
     ASSERT(prop != CSSPropertyInvalid);
 
-    ensurePropertyMap();
-
-    AnimationPropertyWrapperBase* wrapper = wrapperForProperty(prop);
+    AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::instance().wrapperForProperty(prop);
     if (wrapper) {
         wrapper->blend(anim, dst, a, b, progress);
 #if USE(ACCELERATED_COMPOSITING)
@@ -1365,8 +1398,7 @@ bool CSSPropertyAnimation::blendProperties(const AnimationBase* anim, CSSPropert
 #if USE(ACCELERATED_COMPOSITING)
 bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(CSSPropertyID prop)
 {
-    ensurePropertyMap();
-    AnimationPropertyWrapperBase* wrapper = wrapperForProperty(prop);
+    AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::instance().wrapperForProperty(prop);
     return wrapper ? wrapper->animationIsAccelerated() : false;
 }
 #endif
@@ -1374,20 +1406,18 @@ bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(CSSPropertyID prop)
 // Note: this is inefficient. It's only called from pauseTransitionAtTime().
 HashSet<CSSPropertyID> CSSPropertyAnimation::animatableShorthandsAffectingProperty(CSSPropertyID property)
 {
-    ensurePropertyMap();
+    CSSPropertyAnimationWrapperMap& map = CSSPropertyAnimationWrapperMap::instance();
 
     HashSet<CSSPropertyID> foundProperties;
-    for (int i = 0; i < getNumProperties(); ++i)
-        gatherEnclosingShorthandProperties(property, (*gPropertyWrappers)[i], foundProperties);
+    for (unsigned i = 0; i < map.size(); ++i)
+        gatherEnclosingShorthandProperties(property, map.wrapperForIndex(i), foundProperties);
 
     return foundProperties;
 }
 
 bool CSSPropertyAnimation::propertiesEqual(CSSPropertyID prop, const RenderStyle* a, const RenderStyle* b)
 {
-    ensurePropertyMap();
-
-    AnimationPropertyWrapperBase* wrapper = wrapperForProperty(prop);
+    AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::instance().wrapperForProperty(prop);
     if (wrapper)
         return wrapper->equals(a, b);
     return true;
@@ -1395,21 +1425,19 @@ bool CSSPropertyAnimation::propertiesEqual(CSSPropertyID prop, const RenderStyle
 
 CSSPropertyID CSSPropertyAnimation::getPropertyAtIndex(int i, bool& isShorthand)
 {
-    ensurePropertyMap();
+    CSSPropertyAnimationWrapperMap& map = CSSPropertyAnimationWrapperMap::instance();
 
-    if (i < 0 || i >= getNumProperties())
+    if (i < 0 || static_cast<unsigned>(i) >= map.size())
         return CSSPropertyInvalid;
 
-    AnimationPropertyWrapperBase* wrapper = (*gPropertyWrappers)[i];
+    AnimationPropertyWrapperBase* wrapper = map.wrapperForIndex(i);
     isShorthand = wrapper->isShorthandWrapper();
     return wrapper->property();
 }
 
 int CSSPropertyAnimation::getNumProperties()
 {
-    ensurePropertyMap();
-
-    return gPropertyWrappers->size();
+    return CSSPropertyAnimationWrapperMap::instance().size();
 }
 
 }

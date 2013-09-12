@@ -1,3 +1,36 @@
+2013-09-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Encapsulate globals in CSSPropertyAnimation.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=121205
+
+        Reviewed by Antti Koivisto.
+
+        Encapsulated the globals inside a newly added CSSPropertyAnimationWrapperMap. Also removed the circular
+        dependency from ShorthandPropertyWrapper's constructor to CSSPropertyAnimationWrapperMap::instance().
+        The circular dependency still exists in ensurePropertyMap but I'm going to remove it in the bug 121199.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::ShorthandPropertyWrapper::ShorthandPropertyWrapper): Takes a Vector of longhand wrappers instead of
+        calling wrapperForProperty in the middle of constructing the very table. This circular dependency is now
+        encapsulated in CSSPropertyAnimationWrapperMap::ensurePropertyMap.
+        (WebCore::CSSPropertyAnimationWrapperMap::instance): Added.
+        (WebCore::CSSPropertyAnimationWrapperMap::wrapperForProperty): Renamed from WebCore::wrapperForProperty.
+        (WebCore::CSSPropertyAnimationWrapperMap::wrapperForIndex): Added.
+        (WebCore::CSSPropertyAnimationWrapperMap::size): Added.
+        (WebCore::CSSPropertyAnimationWrapperMap::addPropertyWrapper): Renamed from WebCore::addPropertyWrapper. Also
+        cleaned up boolean logics to use early exits instead of nested ifs.
+        (WebCore::CSSPropertyAnimationWrapperMap::addShorthandProperties): Renamed from WebCore::addShorthandProperties.
+        (WebCore::CSSPropertyAnimationWrapperMap::ensurePropertyMap): Renamed from WebCore::ensurePropertyMap.
+        Added an alias gPropertyWrappers for m_propertyWrappers; this aliasing will be removed in the bug 121199.
+        (WebCore::CSSPropertyAnimation::blendProperties):
+        (WebCore::CSSPropertyAnimation::animationOfPropertyIsAccelerated):
+        (WebCore::CSSPropertyAnimation::animatableShorthandsAffectingProperty):
+        (WebCore::CSSPropertyAnimation::propertiesEqual):
+        (WebCore::CSSPropertyAnimation::getPropertyAtIndex):
+        (WebCore::CSSPropertyAnimation::getNumProperties):
+        * page/animation/CSSPropertyAnimation.h:
+        * rendering/style/RenderStyle.h:
+
 2013-09-12  Anders Carlsson  <andersca@apple.com>
 
         SharedBuffer::createNSData should return a RetainPtr<NSData>

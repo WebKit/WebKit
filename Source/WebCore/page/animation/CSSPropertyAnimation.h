@@ -51,8 +51,6 @@ public:
 
     // Return true if we need to start software animation timers
     static bool blendProperties(const AnimationBase*, CSSPropertyID, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress);
-private:
-    static void ensurePropertyMap();
 };
 
 } // namespace WebCore

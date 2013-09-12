@@ -127,7 +127,7 @@ class ContentData;
 typedef Vector<RefPtr<RenderStyle>, 4> PseudoStyleCache;
 
 class RenderStyle: public RefCounted<RenderStyle> {
-    friend class CSSPropertyAnimation; // Used by CSS animations. We can't allow them to animate based off visited colors.
+    friend class CSSPropertyAnimationWrapperMap; // Used by CSS animations. We can't allow them to animate based off visited colors.
     friend class ApplyStyleCommand; // Editing has to only reveal unvisited info.
     friend class DeprecatedStyleBuilder; // Sets members directly.
     friend class EditingStyle; // Editing has to only reveal unvisited info.
