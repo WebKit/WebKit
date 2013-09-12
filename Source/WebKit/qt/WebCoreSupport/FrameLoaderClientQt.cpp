@@ -67,7 +67,6 @@
 #include "QWebPageAdapter.h"
 #include "QWebPageClient.h"
 #include "QtPluginWidgetAdapter.h"
-#include "RenderPart.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceLoader.h"

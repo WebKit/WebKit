@@ -28,9 +28,9 @@
 
 #include "Frame.h"
 #include "FrameView.h"
-#include "RenderPart.h"
 #include "RenderScrollbarPart.h"
 #include "RenderScrollbarTheme.h"
+#include "RenderWidget.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
 
@@ -82,7 +82,7 @@ RenderScrollbar::~RenderScrollbar()
 RenderBox* RenderScrollbar::owningRenderer() const
 {
     if (m_owningFrame) {
-        RenderBox* currentRenderer = m_owningFrame->ownerRenderer();
+        RenderWidget* currentRenderer = m_owningFrame->ownerRenderer();
         return currentRenderer;
     }
     return m_owner && m_owner->renderer() ? m_owner->renderer()->enclosingBox() : 0;

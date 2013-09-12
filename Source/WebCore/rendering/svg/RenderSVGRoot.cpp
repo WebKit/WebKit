@@ -33,7 +33,6 @@
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "Page.h"
-#include "RenderPart.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceContainer.h"

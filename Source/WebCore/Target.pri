@@ -1197,7 +1197,6 @@ SOURCES += \
     rendering/RenderNamedFlowThread.cpp \
     rendering/RenderObject.cpp \
     rendering/RenderObjectChildList.cpp \
-    rendering/RenderPart.cpp \
     rendering/RenderProgress.cpp \
     rendering/RenderQuote.cpp \
     rendering/RenderRegion.cpp \
@@ -2466,7 +2465,6 @@ HEADERS += \
     rendering/RenderMultiColumnBlock.h \
     rendering/RenderObjectChildList.h \
     rendering/RenderObject.h \
-    rendering/RenderPart.h \
     rendering/RenderProgress.h \
     rendering/RenderQuote.h \
     rendering/RenderReplaced.h \

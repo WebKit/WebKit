@@ -89,7 +89,7 @@ RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
         return 0;
 
     document().updateLayoutIgnorePendingStylesheets();
-    return renderPart();
+    return renderWidget();
 }
 
 void HTMLAppletElement::updateWidget(PluginCreationOption pluginCreationOption)

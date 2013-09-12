@@ -51,7 +51,7 @@
 #include "Page.h"
 #include "PluginDatabase.h"
 #include "ProgressTracker.h"
-#include "RenderPart.h"
+#include "RenderWidget.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptController.h"

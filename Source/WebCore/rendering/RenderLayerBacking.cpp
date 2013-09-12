@@ -457,11 +457,11 @@ void RenderLayerBacking::updateCompositedBounds()
 
 void RenderLayerBacking::updateAfterWidgetResize()
 {
-    if (renderer().isRenderPart()) {
-        if (RenderLayerCompositor* innerCompositor = RenderLayerCompositor::frameContentsCompositor(toRenderPart(&renderer()))) {
-            innerCompositor->frameViewDidChangeSize();
-            innerCompositor->frameViewDidChangeLocation(flooredIntPoint(contentsBox().location()));
-        }
+    if (!renderer().isWidget())
+        return;
+    if (RenderLayerCompositor* innerCompositor = RenderLayerCompositor::frameContentsCompositor(toRenderWidget(&renderer()))) {
+        innerCompositor->frameViewDidChangeSize();
+        innerCompositor->frameViewDidChangeLocation(flooredIntPoint(contentsBox().location()));
     }
 }
 
@@ -568,8 +568,8 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
         layerConfigChanged = true;
     }
 #endif
-    if (renderer().isRenderPart())
-        layerConfigChanged = RenderLayerCompositor::parentFrameContentLayers(toRenderPart(&renderer()));
+    if (renderer().isWidget())
+        layerConfigChanged = RenderLayerCompositor::parentFrameContentLayers(toRenderWidget(&renderer()));
 
     return layerConfigChanged;
 }

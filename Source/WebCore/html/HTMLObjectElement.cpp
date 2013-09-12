@@ -80,7 +80,7 @@ PassRefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tag
 RenderWidget* HTMLObjectElement::renderWidgetForJSBindings() const
 {
     document().updateLayoutIgnorePendingStylesheets();
-    return renderPart(); // This will return 0 if the renderer is not a RenderPart.
+    return renderWidget(); // This will return 0 if the renderer is not a RenderWidget.
 }
 
 bool HTMLObjectElement::isPresentationAttribute(const QualifiedName& name) const

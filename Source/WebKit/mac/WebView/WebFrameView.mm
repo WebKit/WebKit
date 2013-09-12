@@ -61,8 +61,8 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Page.h>
-#import <WebCore/RenderPart.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/RenderWidget.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreFrameView.h>
 #import <WebCore/WebCoreView.h>
@@ -289,9 +289,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     view->setPlatformWidget(_private->frameScrollView);
 
     // FIXME: Frame tries to do this too. Is this code needed?
-    if (RenderPart* owner = frame->ownerRenderer()) {
+    if (RenderWidget* owner = frame->ownerRenderer()) {
         owner->setWidget(view);
-        // Now the render part owns the view, so we don't any more.
+        // Now the RenderWidget owns the view, so we don't any more.
     }
 
     view->updateCanHaveScrollbars();

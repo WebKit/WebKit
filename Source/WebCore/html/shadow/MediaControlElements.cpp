@@ -61,7 +61,7 @@
 #endif
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "RenderPart.h"
+#include "RenderWidget.h"
 #endif
 
 namespace WebCore {
@@ -1375,9 +1375,9 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
         videoBox = m_textTrackRepresentation->bounds();
     else {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        if (!mediaElement->renderer() || !mediaElement->renderer()->isRenderPart())
+        if (!mediaElement->renderer() || !mediaElement->renderer()->isRenderWidget())
             return;
-        videoBox = pixelSnappedIntRect(toRenderPart(mediaElement->renderer())->contentBoxRect());
+        videoBox = pixelSnappedIntRect(toRenderWidget(mediaElement->renderer())->contentBoxRect());
 #else
         if (!mediaElement->renderer() || !mediaElement->renderer()->isVideo())
             return;

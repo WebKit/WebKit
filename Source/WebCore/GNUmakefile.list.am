@@ -4472,8 +4472,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderObject.cpp \
 	Source/WebCore/rendering/RenderObject.h \
 	Source/WebCore/rendering/RenderOverflow.h \
-	Source/WebCore/rendering/RenderPart.cpp \
-	Source/WebCore/rendering/RenderPart.h \
 	Source/WebCore/rendering/RenderProgress.cpp \
 	Source/WebCore/rendering/RenderProgress.h \
 	Source/WebCore/rendering/RenderQuote.cpp \

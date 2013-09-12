@@ -76,7 +76,7 @@
 #include <WebCore/PluginPackage.h>
 #include <WebCore/PluginView.h>
 #include <WebCore/PolicyChecker.h>
-#include <WebCore/RenderPart.h>
+#include <WebCore/RenderWidget.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/ScriptController.h>

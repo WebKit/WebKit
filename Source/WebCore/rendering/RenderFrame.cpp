@@ -33,7 +33,6 @@ namespace WebCore {
 RenderFrame::RenderFrame(HTMLFrameElement* frame)
     : RenderFrameBase(frame)
 {
-    setInline(false);
 }
 
 FrameEdgeInfo RenderFrame::edgeInfo() const

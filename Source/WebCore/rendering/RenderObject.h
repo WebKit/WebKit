@@ -378,7 +378,6 @@ public:
     virtual bool isRenderIFrame() const { return false; }
     virtual bool isRenderImage() const { return false; }
     virtual bool isRenderInline() const { return false; }
-    virtual bool isRenderPart() const { return false; }
     virtual bool isRenderRegion() const { return false; }
     virtual bool isRenderReplaced() const { return false; }
     virtual bool isReplica() const { return false; }

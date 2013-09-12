@@ -40,7 +40,7 @@ class FixedPositionViewportConstraints;
 class GraphicsLayer;
 class GraphicsLayerUpdater;
 class RenderEmbeddedObject;
-class RenderPart;
+class RenderWidget;
 class ScrollingCoordinator;
 class StickyPositionViewportConstraints;
 #if ENABLE(VIDEO)
@@ -227,9 +227,9 @@ public:
     static bool allowsIndependentlyCompositedFrames(const FrameView*);
     bool shouldPropagateCompositingToEnclosingFrame() const;
 
-    static RenderLayerCompositor* frameContentsCompositor(RenderPart*);
+    static RenderLayerCompositor* frameContentsCompositor(RenderWidget*);
     // Return true if the layers changed.
-    static bool parentFrameContentLayers(RenderPart*);
+    static bool parentFrameContentLayers(RenderWidget*);
 
     // Update the geometry of the layers used for clipping and scrolling in frames.
     void frameViewDidChangeLocation(const IntPoint& contentsOffset);

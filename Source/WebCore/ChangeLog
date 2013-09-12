@@ -1,3 +1,14 @@
+2013-09-11  Andreas Kling  <akling@apple.com>
+
+        Merge RenderPart into RenderWidget.
+        <https://webkit.org/b/121200>
+
+        Reviewed by Anders Carlsson.
+
+        Remove the RenderPart class and move its functionality into RenderWidget.
+        It was acting as a pointless extra layer between RenderWidget and renderers
+        for embedded objects, frames and iframes.
+
 2013-09-11  Geoffrey Garen  <ggaren@apple.com>
 
         Removed some unused functions from the debugger interface

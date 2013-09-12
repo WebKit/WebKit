@@ -75,11 +75,11 @@
 #include "PageCache.h"
 #include "PageGroup.h"
 #include "RegularExpression.h"
-#include "RenderPart.h"
 #include "RenderTableCell.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "RenderWidget.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGNames.h"
 #include "ScriptController.h"
@@ -563,7 +563,7 @@ RenderView* Frame::contentRenderer() const
     return document() ? document()->renderView() : 0;
 }
 
-RenderPart* Frame::ownerRenderer() const
+RenderWidget* Frame::ownerRenderer() const
 {
     HTMLFrameOwnerElement* ownerElement = m_ownerElement;
     if (!ownerElement)
@@ -575,9 +575,9 @@ RenderPart* Frame::ownerRenderer() const
     // that it has started but canceled, then this can turn into an ASSERT
     // since m_ownerElement would be 0 when the load is canceled.
     // https://bugs.webkit.org/show_bug.cgi?id=18585
-    if (!object->isRenderPart())
+    if (!object->isWidget())
         return 0;
-    return toRenderPart(object);
+    return toRenderWidget(object);
 }
 
 Frame* Frame::frameForWidget(const Widget* widget)

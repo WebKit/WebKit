@@ -211,7 +211,7 @@ RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena* arena, RenderS
 
     // Fallback content breaks the DOM->Renderer class relationship of this
     // class and all superclasses because createObject won't necessarily
-    // return a RenderEmbeddedObject, RenderPart or even RenderWidget.
+    // return a RenderEmbeddedObject or RenderWidget.
     if (useFallbackContent())
         return RenderObject::createObject(this, style);
 

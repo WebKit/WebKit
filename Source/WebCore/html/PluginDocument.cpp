@@ -120,7 +120,7 @@ void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
     // can synchronously redirect data to the plugin.
     frame->view()->flushAnyPendingPostLayoutTasks();
 
-    if (RenderPart* renderer = m_embedElement->renderPart()) {
+    if (RenderWidget* renderer = m_embedElement->renderWidget()) {
         if (Widget* widget = renderer->widget()) {
             frame->loader().client().redirectDataToPlugin(widget);
             // In a plugin document, the main resource is the plugin. If we have a null widget, that means

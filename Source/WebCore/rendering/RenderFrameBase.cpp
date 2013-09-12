@@ -34,7 +34,7 @@
 namespace WebCore {
     
 RenderFrameBase::RenderFrameBase(Element* element)
-    : RenderPart(element)
+    : RenderWidget(element)
 {
 }
 

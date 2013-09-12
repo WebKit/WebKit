@@ -101,7 +101,7 @@ static const Color& unavailablePluginBorderColor()
 }
 
 RenderEmbeddedObject::RenderEmbeddedObject(Element* element)
-    : RenderPart(element)
+    : RenderWidget(element)
     , m_hasFallbackContent(false)
     , m_isPluginUnavailable(false)
     , m_isUnavailablePluginIndicatorHidden(false)
@@ -121,7 +121,7 @@ RenderEmbeddedObject::~RenderEmbeddedObject()
 #if USE(ACCELERATED_COMPOSITING)
 bool RenderEmbeddedObject::requiresLayer() const
 {
-    if (RenderPart::requiresLayer())
+    if (RenderWidget::requiresLayer())
         return true;
     
     return allowsAcceleratedCompositing();
@@ -211,7 +211,7 @@ void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint
     HTMLPlugInElement* plugInElement = toHTMLPlugInElement(element());
 
     if (plugInElement->displayState() > HTMLPlugInElement::DisplayingSnapshot) {
-        RenderPart::paintContents(paintInfo, paintOffset);
+        RenderWidget::paintContents(paintInfo, paintOffset);
         if (!plugInElement->isRestartedPlugin())
             return;
     }
@@ -238,7 +238,7 @@ void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (page && paintInfo.phase == PaintPhaseForeground)
         page->addRelevantRepaintedObject(this, visualOverflowRect());
 
-    RenderPart::paint(paintInfo, paintOffset);
+    RenderWidget::paint(paintInfo, paintOffset);
 }
 
 static void drawReplacementArrow(GraphicsContext* context, const FloatRect& insideRect)
@@ -456,7 +456,7 @@ void RenderEmbeddedObject::layout()
     updateLogicalWidth();
     updateLogicalHeight();
 
-    RenderPart::layout();
+    RenderWidget::layout();
 
     clearOverflow();
     addVisualEffectOverflow();
@@ -537,7 +537,7 @@ void RenderEmbeddedObject::viewCleared()
 
 bool RenderEmbeddedObject::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    if (!RenderPart::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))
+    if (!RenderWidget::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))
         return false;
 
     if (!widget() || !widget()->isPluginViewBase())
@@ -640,7 +640,7 @@ CursorDirective RenderEmbeddedObject::getCursor(const LayoutPoint& point, Cursor
         cursor = handCursor();
         return SetCursor;
     }
-    return RenderPart::getCursor(point, cursor);
+    return RenderWidget::getCursor(point, cursor);
 }
 
 bool RenderEmbeddedObject::canHaveChildren() const

@@ -44,7 +44,6 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderNamedFlowThread.h"
-#include "RenderPart.h"
 #include "RenderRegion.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
@@ -502,8 +501,8 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 #if PLATFORM(QT)
     // Print attributes of embedded QWidgets. E.g. when the WebCore::Widget
     // is invisible the QWidget should be invisible too.
-    if (o.isRenderPart()) {
-        const RenderPart* part = toRenderPart(const_cast<RenderObject*>(&o));
+    if (o.isWidget()) {
+        const RenderWidget* part = toRenderWidget(const_cast<RenderObject*>(&o));
         if (part->widget() && part->widget()->platformWidget()) {
             QObject* wid = part->widget()->platformWidget();
 

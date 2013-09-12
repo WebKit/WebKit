@@ -36,7 +36,7 @@
 #include "Page.h"
 #include "PluginDatabase.h"
 #include "PolicyChecker.h"
-#include "RenderPart.h"
+#include "RenderWidget.h"
 #include "SystemInfo.h"
 #include "WebKitVersion.h"
 #include "WebView.h"
