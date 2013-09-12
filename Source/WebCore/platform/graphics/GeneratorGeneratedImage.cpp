@@ -41,14 +41,14 @@ void GeneratorGeneratedImage::draw(GraphicsContext* destContext, const FloatRect
     if (destRect.size() != srcRect.size())
         destContext->scale(FloatSize(destRect.width() / srcRect.width(), destRect.height() / srcRect.height()));
     destContext->translate(-srcRect.x(), -srcRect.y());
-    destContext->fillRect(FloatRect(FloatPoint(), m_size), *m_gradient.get());
+    destContext->fillRect(FloatRect(FloatPoint(), size()), *m_gradient.get());
 }
 
 void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform,
     const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& destRect, BlendMode)
 {
     // Allow the generator to provide visually-equivalent tiling parameters for better performance.
-    IntSize adjustedSize = m_size;
+    IntSize adjustedSize = size();
     FloatRect adjustedSrcRect = srcRect;
     m_gradient->adjustParametersForTiledDrawing(adjustedSize, adjustedSrcRect);
 

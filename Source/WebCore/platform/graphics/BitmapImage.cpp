@@ -67,16 +67,10 @@ BitmapImage::~BitmapImage()
     stopAnimation();
 }
 
-bool BitmapImage::isBitmapImage() const
-{
-    return true;
-}
-
 bool BitmapImage::hasSingleSecurityOrigin() const
 {
     return true;
 }
-
 
 void BitmapImage::destroyDecodedData(bool destroyAll)
 {

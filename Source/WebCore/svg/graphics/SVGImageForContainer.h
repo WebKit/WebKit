@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class SVGImageForContainer : public Image {
+class SVGImageForContainer FINAL : public Image {
 public:
     static PassRefPtr<SVGImageForContainer> create(SVGImage* image, const FloatSize& containerSize, float zoom)
     {
@@ -72,8 +72,8 @@ private:
     {
     }
 
-    virtual void destroyDecodedData(bool /*destroyAll*/ = true) { }
-    virtual unsigned decodedSize() const { return 0; }
+    virtual void destroyDecodedData(bool /*destroyAll*/ = true) OVERRIDE { }
+    virtual unsigned decodedSize() const OVERRIDE { return 0; }
 
     SVGImage* m_image;
     const FloatSize m_containerSize;

@@ -35,30 +35,31 @@ namespace WebCore {
 
 class GeneratedImage : public Image {
 public:
-    virtual bool hasSingleSecurityOrigin() const { return true; }
+    virtual bool hasSingleSecurityOrigin() const OVERRIDE { return true; }
 
-    virtual void setContainerSize(const IntSize& size) { m_size = size; }
-    virtual bool usesContainerSize() const { return true; }
-    virtual bool hasRelativeWidth() const { return true; }
-    virtual bool hasRelativeHeight() const { return true; }
-    virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
+    virtual void setContainerSize(const IntSize& size) OVERRIDE { m_size = size; }
+    virtual bool usesContainerSize() const OVERRIDE { return true; }
+    virtual bool hasRelativeWidth() const OVERRIDE { return true; }
+    virtual bool hasRelativeHeight() const OVERRIDE { return true; }
+    virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) OVERRIDE;
 
-    virtual IntSize size() const { return m_size; }
+    virtual IntSize size() const OVERRIDE { return m_size; }
 
     // Assume that generated content has no decoded data we need to worry about
-    virtual void destroyDecodedData(bool /*destroyAll*/ = true) { }
-    virtual unsigned decodedSize() const { return 0; }
+    virtual void destroyDecodedData(bool /*destroyAll*/ = true) OVERRIDE { }
+    virtual unsigned decodedSize() const OVERRIDE { return 0; }
 
 protected:
-    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode) = 0;
+    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode) OVERRIDE = 0;
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
-        const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode) = 0;
+        const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode) OVERRIDE = 0;
 
     // FIXME: Implement this to be less conservative.
     virtual bool currentFrameKnownToBeOpaque() OVERRIDE { return false; }
 
     GeneratedImage() { }
 
+private:
     IntSize m_size;
 };
 
