@@ -31,8 +31,8 @@
 #define RasterShape_h
 
 #include "FloatRect.h"
-#include "Region.h"
 #include "Shape.h"
+#include "ShapeInterval.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
@@ -40,18 +40,31 @@ namespace WebCore {
 
 class RasterShapeIntervals {
 public:
-    RasterShapeIntervals() { }
+    RasterShapeIntervals(unsigned size)
+    {
+        m_intervalLists.resize(size);
+    }
 
-    IntRect bounds() const;
-    bool isEmpty() const  { return m_region.isEmpty(); }
-    void addInterval(int y, int x1, int x2);
-    void getIncludedIntervals(int y1, int y2, SegmentList&) const;
-    void getExcludedIntervals(int y1, int y2, SegmentList&) const;
-    bool firstIncludedIntervalY(int minY, const IntSize& minIntervalSize, LayoutUnit&) const;
+    const IntRect& bounds() const { return m_bounds; }
+    bool isEmpty() const { return m_bounds.isEmpty(); }
+    void appendInterval(int y, int x1, int x2);
+
+    void getIncludedIntervals(int y1, int y2, IntShapeIntervals& result) const;
+    void getExcludedIntervals(int y1, int y2, IntShapeIntervals& result) const;
+    bool firstIncludedIntervalY(int minY, const IntSize& minSize, LayoutUnit& result) const;
 
 private:
-    Region m_region;
-    mutable OwnPtr<IntRect> m_bounds; // Cached value of m_region.bounds().
+    int size() const { return m_intervalLists.size(); }
+    const IntShapeIntervals& getIntervals(int y) const
+    {
+        ASSERT(y >= 0 && y < size());
+        return m_intervalLists[y];
+    }
+    bool contains(const IntRect&) const;
+    bool getIntervalX1Values(int minY, int maxY, int minIntervalWidth, Vector<int>& result) const;
+
+    IntRect m_bounds;
+    Vector<IntShapeIntervals > m_intervalLists;
 };
 
 class RasterShape : public Shape {
