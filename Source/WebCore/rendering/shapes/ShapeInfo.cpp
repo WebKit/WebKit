@@ -45,7 +45,6 @@ const Shape* ShapeInfo<RenderType, shapeGetter, intervalGetter>::computedShape()
     if (Shape* shape = m_shape.get())
         return shape;
 
-    const LayoutSize logicalBoxSize(m_shapeLogicalWidth, m_shapeLogicalHeight);
     WritingMode writingMode = m_renderer->style()->writingMode();
     Length margin = m_renderer->style()->shapeMargin();
     Length padding = m_renderer->style()->shapePadding();
@@ -55,11 +54,11 @@ const Shape* ShapeInfo<RenderType, shapeGetter, intervalGetter>::computedShape()
     switch (shapeValue->type()) {
     case ShapeValue::Shape:
         ASSERT(shapeValue->shape());
-        m_shape = Shape::createShape(shapeValue->shape(), logicalBoxSize, writingMode, margin, padding);
+        m_shape = Shape::createShape(shapeValue->shape(), m_shapeLogicalSize, writingMode, margin, padding);
         break;
     case ShapeValue::Image:
         ASSERT(shapeValue->image());
-        m_shape = Shape::createShape(shapeValue->image(), 0, logicalBoxSize, writingMode, margin, padding);
+        m_shape = Shape::createShape(shapeValue->image(), 0, m_shapeLogicalSize, writingMode, margin, padding);
         break;
     default:
         ASSERT_NOT_REACHED();

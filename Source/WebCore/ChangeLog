@@ -1,3 +1,18 @@
+2013-09-12  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Turn shape's logicalwidth/height into a LayoutSize
+        https://bugs.webkit.org/show_bug.cgi?id=121187
+
+        Reviewed by David Hyatt.
+
+        No new tests, no behavior change.
+
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::::computedShape):
+        * rendering/shapes/ShapeInfo.h:
+        (WebCore::ShapeInfo::setShapeSize):
+        (WebCore::ShapeInfo::shapeContainingBlockHeight):
+
 2013-09-12  Darin Adler  <darin@apple.com>
 
         Move layering-violating code from Pasteboard::plainText into Editor (Mac only at first)
