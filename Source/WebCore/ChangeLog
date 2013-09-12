@@ -1,3 +1,35 @@
+2013-09-12  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r132516): Javascript menu text incorrectly disappearing and reappearing
+        https://bugs.webkit.org/show_bug.cgi?id=101047
+
+        Reviewed by Simon Fraser.
+
+        Compositing layers keep track of ancestors' clipping by constructing the RenderLayerBacking::m_ancestorClippingLayer.
+        It helps setting up the proper clipping context for the corresponding graphics layer.
+        When a RenderObject's clipping style changes, it needs to propagate this change not only
+        to the associated RenderLayer, but also to the descendants', if applicable.
+        Before r132516, it was mainly covered by initiating full style recalcs, which ensured that
+        style recalc on the descendant rendering tree took care of creating/destroying
+        RenderLayerBacking::m_ancestorClippingLayer at every compositing layer node. Without the full
+        recalc, the clipping of the compositing render layers and the corresponding render subtrees can get out of sync.
+        This patch updates the clipping context on the descendant subtree, when the clipping behaviour
+        changes on a render node.
+
+        Tests: compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants.html
+               compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateDescendantClippingContext):
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        (WebCore::RenderLayerBacking::updateAncestorClippingLayer):
+        (WebCore::RenderLayerBacking::updateDescendantClippingLayer):
+        * rendering/RenderLayerBacking.h:
+
 2013-09-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Remove home-brewed nullptr

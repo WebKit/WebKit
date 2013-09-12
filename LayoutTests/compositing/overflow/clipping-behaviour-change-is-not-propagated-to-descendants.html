@@ -1,0 +1,73 @@
+<html>
+<head>
+<style>
+  div {
+    position:relative;
+  }
+
+  #container {
+    z-index:1;
+  }
+
+  #transform {
+    -webkit-transform: translateZ(0);
+    height: 20px;
+    width: 20px;
+    top: 0px;
+    z-index:0;
+    border: solid 1px red;
+  }
+
+  .changeThis {
+    border: solid 1px green;
+    top: 10px;
+    width: 100px;
+  }
+
+  #disappearing {
+    display: list-item;
+    white-space: nowrap;
+  }
+</style>
+
+
+<script type="text/javascript">
+  if (testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+
+  function changeAndRemove() {
+    var parentDiv = document.getElementById('idToRemoveLater');
+    parentDiv.style.overflow = 'visible';
+    parentDiv.removeAttribute('id');
+
+    if (window.internals)
+      document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS);
+
+    if (testRunner)
+      testRunner.notifyDone();
+  }
+
+  function run() {
+    var parentDiv = document.getElementsByClassName('changeThis')[0];
+    parentDiv.id = 'idToRemoveLater';
+    parentDiv.style.overflow = 'hidden';
+    setTimeout('changeAndRemove();', 0);
+  }
+</script>
+</head>
+<body onload='run();'>
+<p>This tests if changing the clipping behaviour on the parent compositing layer makes the child layer disappear.</p>
+<p>Text in the green box should stay visible.</p>
+<div id='container'>
+  <div class='changeThis'>
+    <div id='disappearing'>
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </div>
+  </div>
+</div>
+<div id='transform'></div>
+<pre id="layers">Layer tree goes here when testing</pre>
+</body>
+</html>

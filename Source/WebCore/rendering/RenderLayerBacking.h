@@ -199,6 +199,9 @@ public:
     void setBlendMode(BlendMode);
 #endif
 
+    // Update the current layer's clipping context, when ancestor's clipping behaviour changes.
+    bool updateAncestorClippingLayer(bool needsAncestorClip);
+
 private:
     void createPrimaryGraphicsLayer();
     void destroyGraphicsLayers();
@@ -211,7 +214,7 @@ private:
     RenderLayerCompositor& compositor() const { return m_owningLayer->compositor(); }
 
     void updateInternalHierarchy();
-    bool updateClippingLayers(bool needsAncestorClip, bool needsDescendantClip);
+    bool updateDescendantClippingLayer(bool needsDescendantClip);
     bool updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer);
     bool updateForegroundLayer(bool needsForegroundLayer);
     bool updateBackgroundLayer(bool needsBackgroundLayer);
