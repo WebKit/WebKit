@@ -1,3 +1,27 @@
+2013-09-12  Darin Adler  <darin@apple.com>
+
+        Reorganize Pasteboard.h to make it easier to read, and express plan for future work
+        https://bugs.webkit.org/show_bug.cgi?id=121234
+
+        Reviewed by Anders Carlsson.
+
+        * platform/Pasteboard.h: Move Mac/iOS-specific pasteboard names to the bottom of the
+        file rather than putting them up with forward declarations before the class. Removed
+        unneeded forward class declarations. Changed #if statements about migration to the
+        more modern non-layering-violation API to list platforms not yet migrated, rather than
+        listing platforms that have migrated (Mac). Move conditional code down below the
+        uncondiditional code so it's easier to see what the class is doing. Move layering-
+        violation code down to the bottom too, so it's easier to see the future class without
+        having the design mistakes mixed in. Sort platform-specific sections in alphabetical
+        order instead of random order. Did the destructor in a cleaner way so the #if is out
+        of the way after the class rather than in the class. Removed WebSmartPastePboardType,
+        WebURLPboardType, and WebURLsWithTitlesPboard declarations, since they are only used
+        inside the PasteboardMac.mm source file.
+
+        * platform/ios/PasteboardIOS.mm: Aded a FIXME comment.
+        * platform/mac/PasteboardMac.mm: Made the constants for pasteboard types be actual
+        constants, rather than global variables.
+
 2013-09-12  Tamas Czene  <tczene@inf.u-szeged.hu>
 
         [curl] Use utf8 for headers in CurlDownload.

@@ -33,7 +33,6 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(GTK)
-#include "DragData.h"
 typedef struct _GtkClipboard GtkClipboard;
 #endif
 
@@ -54,23 +53,11 @@ typedef struct HWND__* HWND;
 
 namespace WebCore {
 
-#if PLATFORM(MAC)
-#if PLATFORM(IOS)
-extern NSString *WebArchivePboardType;
-#else
-extern const char* WebArchivePboardType;
-#endif
-extern const char* WebSmartPastePboardType;
-extern const char* WebURLNamePboardType;
-extern const char* WebURLPboardType;
-extern const char* WebURLsWithTitlesPboardType;
-#endif
-
+class DataObjectGtk;
 class DocumentFragment;
 class DragData;
 class Element;
 class Frame;
-class KURL;
 class Node;
 class Range;
 class SharedBuffer;
@@ -79,7 +66,7 @@ enum ShouldSerializeSelectedTextForClipboard { DefaultSelectedTextType, IncludeI
 
 // For writing web content to the pasteboard. Generally sorted with the richest formats on top.
 struct PasteboardWebContent {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT))
     bool canSmartCopyOrDelete;
     RefPtr<SharedBuffer> dataInWebArchiveFormat;
     RefPtr<SharedBuffer> dataInRTFDFormat;
@@ -91,7 +78,7 @@ struct PasteboardWebContent {
 };
 
 struct PasteboardURL {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT))
     KURL url;
     String title;
     String userVisibleForm;
@@ -99,7 +86,7 @@ struct PasteboardURL {
 };
 
 struct PasteboardImage {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT))
     PasteboardURL url;
     RefPtr<Image> image;
     RefPtr<SharedBuffer> resourceData;
@@ -108,7 +95,7 @@ struct PasteboardImage {
 };
 
 struct PasteboardPlainText {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT))
     String plainText;
     String url;
 #endif
@@ -117,49 +104,22 @@ struct PasteboardPlainText {
 class Pasteboard {
     WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum SmartReplaceOption {
-        CanSmartReplace,
-        CannotSmartReplace
-    };
-
-#if PLATFORM(MAC) && !PLATFORM(IOS)
-    static PassOwnPtr<Pasteboard> create(const String& pasteboardName);
-    String name() const { return m_pasteboardName; }
-
-    explicit Pasteboard(const String& pasteboardName);
-#endif
-
-#if PLATFORM(GTK)
-    static PassOwnPtr<Pasteboard> create(PassRefPtr<DataObjectGtk>);
-    static PassOwnPtr<Pasteboard> create(GtkClipboard*);
-    PassRefPtr<DataObjectGtk> dataObject() const;
-#endif
-
-#if PLATFORM(QT)
-    static PassOwnPtr<Pasteboard> create(const QMimeData* readableClipboard = 0, bool isForDragAndDrop = false);
-    QMimeData* clipboardData() const { return m_writableData; }
-    void invalidateWritableData() const { m_writableData = 0; }
-    bool isForDragAndDrop() const { return m_isForDragAndDrop; }
-    bool isForCopyAndPaste() const { return !m_isForDragAndDrop; }
-#endif
+    ~Pasteboard();
 
     static PassOwnPtr<Pasteboard> createForCopyAndPaste();
     static PassOwnPtr<Pasteboard> createPrivate(); // Corresponds to the "unique pasteboard" concept on Mac. Used in editing, not sure exactly for what purpose.
 
-#if ENABLE(DRAG_SUPPORT)
-    static PassOwnPtr<Pasteboard> createForDragAndDrop();
-    static PassOwnPtr<Pasteboard> createForDragAndDrop(const DragData&);
-#endif
-
     bool hasData();
     Vector<String> types();
-
     String readString(const String& type);
     bool writeString(const String& type, const String& data);
-
-    Vector<String> readFilenames();
+    void clear();
+    void clear(const String& type);
 
     void read(PasteboardPlainText&);
+
+    Vector<String> readFilenames();
+    bool canSmartReplace();
 
     void write(const PasteboardWebContent&);
     void write(const PasteboardURL&);
@@ -170,42 +130,61 @@ public:
     void setTypes(const PasteboardWebContent&);
     void writeAfterSettingTypes(const PasteboardWebContent&);
 
-#if !(PLATFORM(MAC) && !PLATFORM(IOS))
-    void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType); // FIXME: Layering violation.
-#endif
     void writeMarkup(const String& markup);
-    void writePlainText(const String&, SmartReplaceOption);
-#if !PLATFORM(MAC)
-    void writeURL(const KURL&, const String&, Frame* = 0); // FIXME: Layering violation.
-    void writeImage(Node*, const KURL&, const String& title); // FIXME: Layering violation.
-#endif
-#if PLATFORM(IOS)
-    void writeImage(Node*, Frame*); // FIXME: Layering violation.
-    void writePlainText(const String&, Frame*); // FIXME: Layering violation.
-    static NSArray* supportedPasteboardTypes();
-#endif
+    enum SmartReplaceOption { CanSmartReplace, CannotSmartReplace };
+    void writePlainText(const String&, SmartReplaceOption); // FIXME: It seems that two separate functions would be better than one function with an argument.
     void writePasteboard(const Pasteboard& sourcePasteboard);
 
-    void clear();
-    void clear(const String& type);
-
-    bool canSmartReplace();
-
 #if ENABLE(DRAG_SUPPORT)
+    static PassOwnPtr<Pasteboard> createForDragAndDrop();
+    static PassOwnPtr<Pasteboard> createForDragAndDrop(const DragData&);
+
     void setDragImage(DragImageRef, const IntPoint& hotSpot);
 #endif
 
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
-#if !(PLATFORM(MAC) && !PLATFORM(IOS))
+
+#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT)
     String plainText(Frame* = 0); // FIXME: Layering violation.
+    void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
 
-#if PLATFORM(IOS)
-    void setFrame(Frame*); // FIXME: Layering violation.
+#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT)
+    void writeURL(const KURL&, const String&, Frame* = 0); // FIXME: Layering violation.
+    void writeImage(Node*, const KURL&, const String& title); // FIXME: Layering violation.
+#endif
+
+#if PLATFORM(GTK)
+    static PassOwnPtr<Pasteboard> create(PassRefPtr<DataObjectGtk>);
+    static PassOwnPtr<Pasteboard> create(GtkClipboard*);
+    PassRefPtr<DataObjectGtk> dataObject() const;
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(QT)
     static PassOwnPtr<Pasteboard> createForGlobalSelection();
+#endif
+
+#if PLATFORM(IOS)
+    void setFrame(Frame*); // FIXME: Layering violation.
+
+    void writeImage(Node*, Frame*); // FIXME: Layering violation.
+    void writePlainText(const String&, Frame*); // FIXME: Layering violation.
+
+    static NSArray* supportedPasteboardTypes();
+#endif
+
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    static PassOwnPtr<Pasteboard> create(const String& pasteboardName);
+    String name() const { return m_pasteboardName; }
+    explicit Pasteboard(const String& pasteboardName);
+#endif
+
+#if PLATFORM(QT)
+    static PassOwnPtr<Pasteboard> create(const QMimeData* readableClipboard = 0, bool isForDragAndDrop = false);
+    QMimeData* clipboardData() const { return m_writableData; }
+    void invalidateWritableData() const { m_writableData = 0; }
+    bool isForDragAndDrop() const { return m_isForDragAndDrop; }
+    bool isForCopyAndPaste() const { return !m_isForDragAndDrop; }
 #endif
 
 #if PLATFORM(WIN)
@@ -214,10 +193,6 @@ public:
     void writeURLToWritableDataObject(const KURL&, const String&);
     COMPtr<WCDataObject> writableDataObject() const { return m_writableDataObject; }
     void writeImageToDataObject(Element*, const KURL&); // FIXME: Layering violation.
-#endif
-
-#if PLATFORM(GTK) || PLATFORM(QT)
-    ~Pasteboard();
 #endif
 
 private:
@@ -278,6 +253,23 @@ private:
     DragDataMap m_dragDataMap;
 #endif
 };
+
+#if PLATFORM(IOS)
+extern NSString *WebArchivePboardType;
+#endif
+
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+extern const char* const WebArchivePboardType;
+extern const char* const WebURLNamePboardType;
+#endif
+
+#if !(PLATFORM(GTK) || PLATFORM(QT))
+
+inline Pasteboard::~Pasteboard()
+{
+}
+
+#endif
 
 } // namespace WebCore
 

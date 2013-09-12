@@ -98,6 +98,7 @@ SOFT_LINK(AppSupport, CPSharedResourcesDirectory, CFStringRef, (void), ())
 
 namespace WebCore {
 
+// FIXME: Does this need to be declared in the header file?
 NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
 
 Pasteboard::Pasteboard()

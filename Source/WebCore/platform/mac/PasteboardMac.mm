@@ -65,12 +65,12 @@
 
 namespace WebCore {
 
-// FIXME: It's not great to have these both here and in WebKit.
-const char* WebArchivePboardType = "Apple Web Archive pasteboard type";
-const char* WebSmartPastePboardType = "NeXT smart paste pasteboard type";
-const char* WebURLNamePboardType = "public.url-name";
-const char* WebURLPboardType = "public.url";
-const char* WebURLsWithTitlesPboardType = "WebURLsWithTitlesPboardType";
+const char* const WebArchivePboardType = "Apple Web Archive pasteboard type";
+const char* const WebURLNamePboardType = "public.url-name";
+
+const char WebSmartPastePboardType[] = "NeXT smart paste pasteboard type";
+const char WebURLPboardType[] = "public.url";
+const char WebURLsWithTitlesPboardType[] = "WebURLsWithTitlesPboardType";
 
 static const Vector<String> writableTypesForURL()
 {
