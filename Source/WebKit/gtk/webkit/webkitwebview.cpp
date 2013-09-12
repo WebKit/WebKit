@@ -122,6 +122,10 @@
 #include "DeviceOrientationClientGtk.h"
 #endif
 
+#if PLATFORM(WAYLAND) && defined(GDK_WINDOWING_WAYLAND)
+#include <gdk/gdkwayland.h>
+#endif
+
 /**
  * SECTION:webkitwebview
  * @short_description: The central class of the WebKitGTK+ API
@@ -3493,6 +3497,27 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 }
 
+static void updateAcceleratedCompositingSetting(Settings& settings, bool value)
+{
+#if PLATFORM(WAYLAND) && defined(GDK_WINDOWING_WAYLAND)
+    GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
+    if (GDK_IS_WAYLAND_DISPLAY(display)) {
+        if (!value)
+            return;
+
+        static bool unsupportedACWarningShown = false;
+        if (!unsupportedACWarningShown) {
+            g_warning("Accelerated compositing is not supported under Wayland displays, disabling.");
+            unsupportedACWarningShown = true;
+        }
+        settings.setAcceleratedCompositingEnabled(false);
+        return;
+    }
+#endif
+
+    settings.setAcceleratedCompositingEnabled(value);
+}
+
 static void webkit_web_view_update_settings(WebKitWebView* webView)
 {
     WebKitWebSettingsPrivate* settingsPrivate = webView->priv->webSettings->priv;
@@ -3562,7 +3587,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-    coreSettings.setAcceleratedCompositingEnabled(settingsPrivate->enableAcceleratedCompositing);
+    updateAcceleratedCompositingSetting(coreSettings, settingsPrivate->enableAcceleratedCompositing);
     char* debugVisualsEnvironment = getenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS");
     bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
     coreSettings.setShowDebugBorders(showDebugVisuals);
@@ -3711,7 +3736,7 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
 
 #if USE(ACCELERATED_COMPOSITING)
     else if (name == g_intern_string("enable-accelerated-compositing"))
-        settings.setAcceleratedCompositingEnabled(g_value_get_boolean(&value));
+        updateAcceleratedCompositingSetting(settings, g_value_get_boolean(&value));
 #endif
 
 #if ENABLE(WEB_AUDIO)

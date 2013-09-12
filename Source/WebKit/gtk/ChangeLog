@@ -1,3 +1,29 @@
+2013-09-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WK1] Block accelerated compositing under non-X11 displays
+        https://bugs.webkit.org/show_bug.cgi?id=121165
+
+        Reviewed by Martin Robinson.
+
+        This is analogous to the changes in r154728 and r154729 that enforce disabling accelerated compositing
+        under Wayland displays and made the RedirectedXCompositeWindow use in WebKit2 limited only to the X11 displays.
+
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp: Remove two unnecessary header includes that also
+        introduce symbols that conflict with the symbols defined in the X headers. Include the <gdk/gdkx.h> header
+        if the GTK+ dependency can provide it.
+        (WebKit::AcceleratedCompositingContext::initialize): Only set up the RedirectedXCompositeWindow instance
+        if running under an X11 display.
+        (WebKit::AcceleratedCompositingContext::renderLayersToWindow): The removal of the unnecessary header
+        inclusions also removed the std::max() injection into the global scope. Using std::max directly instead.
+        (WebKit::AcceleratedCompositingContext::scheduleLayerFlush): Ditto.
+        * webkit/webkitwebview.cpp:
+        (updateAcceleratedCompositingSetting): A helper function that ensures the accelerated compositing feature
+        stays disabled under Wayland displays. It also prints out a warning message the first time the user tries
+        to enable accelerated compositing under Wayland displays, telling that the feature is not supported and
+        will remain disabled.
+        (webkit_web_view_update_settings): Call updateAcceleratedCompositingSetting() to enable the feature if possible.
+        (webkit_web_view_settings_notify): Ditto.
+
 2013-09-11  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Remove Gail dependency from build system for GTK3
