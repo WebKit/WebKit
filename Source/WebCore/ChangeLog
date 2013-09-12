@@ -1,3 +1,33 @@
+2013-09-12  Zoltan Horvath  <zoltan@webkit.org>
+
+        Move LineInfo class into LineInfo.h
+        https://bugs.webkit.org/show_bug.cgi?id=121191
+
+        Reviewed by David Hyatt.
+
+        No new tests, no behavior change.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/LineInfo.h: Added.
+        (WebCore::LineInfo::LineInfo):
+        (WebCore::LineInfo::isFirstLine):
+        (WebCore::LineInfo::isLastLine):
+        (WebCore::LineInfo::isEmpty):
+        (WebCore::LineInfo::previousLineBrokeCleanly):
+        (WebCore::LineInfo::floatPaginationStrut):
+        (WebCore::LineInfo::runsFromLeadingWhitespace):
+        (WebCore::LineInfo::resetRunsFromLeadingWhitespace):
+        (WebCore::LineInfo::incrementRunsFromLeadingWhitespace):
+        (WebCore::LineInfo::setFirstLine):
+        (WebCore::LineInfo::setLastLine):
+        (WebCore::LineInfo::setEmpty):
+        (WebCore::LineInfo::setPreviousLineBrokeCleanly):
+        (WebCore::LineInfo::setFloatPaginationStrut):
+        * rendering/RenderBlockLineLayout.cpp:
+
 2013-09-12  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Remove unnecessarily complex template from ShapeInfo classes
