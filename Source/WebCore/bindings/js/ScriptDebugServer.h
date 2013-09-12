@@ -135,20 +135,20 @@ protected:
     void dispatchDidParseSource(const ListenerSet& listeners, JSC::SourceProvider*, bool isContentScript);
     void dispatchFailedToParseSource(const ListenerSet& listeners, JSC::SourceProvider*, int errorLine, const String& errorMessage);
 
-    void createCallFrame(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
-    void updateCallFrameAndPauseIfNeeded(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
+    void createCallFrame(const JSC::DebuggerCallFrame&);
+    void updateCallFrameAndPauseIfNeeded(const JSC::DebuggerCallFrame&);
     void pauseIfNeeded(JSC::JSGlobalObject* dynamicGlobalObject);
 
     virtual void detach(JSC::JSGlobalObject*);
 
     virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg);
-    virtual void callEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
-    virtual void atStatement(const JSC::DebuggerCallFrame&, intptr_t sourceID, int firstLine, int columnNumber);
-    virtual void returnEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
-    virtual void exception(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber, bool hasHandler);
-    virtual void willExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno, int columnNumber);
-    virtual void didExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno, int columnNumber);
-    virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno, int columnNumber);
+    virtual void callEvent(const JSC::DebuggerCallFrame&);
+    virtual void atStatement(const JSC::DebuggerCallFrame&);
+    virtual void returnEvent(const JSC::DebuggerCallFrame&);
+    virtual void exception(const JSC::DebuggerCallFrame&, bool hasHandler);
+    virtual void willExecuteProgram(const JSC::DebuggerCallFrame&);
+    virtual void didExecuteProgram(const JSC::DebuggerCallFrame&);
+    virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&);
 
     typedef Vector<ScriptBreakpoint> BreakpointsInLine;
     typedef HashMap<long, BreakpointsInLine> LineToBreakpointMap;

@@ -397,11 +397,12 @@ static bool unwindCallFrame(StackVisitor& visitor, JSValue exceptionValue)
     JSScope* scope = callFrame->scope();
 
     if (Debugger* debugger = callFrame->dynamicGlobalObject()->debugger()) {
-        DebuggerCallFrame debuggerCallFrame(callFrame, exceptionValue);
+        int line = codeBlock->ownerExecutable()->lastLine();
+        DebuggerCallFrame debuggerCallFrame(callFrame, line, 0, exceptionValue);
         if (callFrame->callee())
-            debugger->returnEvent(debuggerCallFrame, codeBlock->ownerExecutable()->sourceID(), codeBlock->ownerExecutable()->lastLine(), 0);
+            debugger->returnEvent(debuggerCallFrame);
         else
-            debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerExecutable()->sourceID(), codeBlock->ownerExecutable()->lastLine(), 0);
+            debugger->didExecuteProgram(debuggerCallFrame);
     }
 
     JSValue activation;
@@ -654,7 +655,9 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& ex
         // We need to clear the exception and the exception stack here in order to see if a new exception happens.
         // Afterwards, the values are put back to continue processing this error.
         ClearExceptionScope scope(&callFrame->vm());
-        DebuggerCallFrame debuggerCallFrame(callFrame, exceptionValue);
+        int line = codeBlock->lineNumberForBytecodeOffset(bytecodeOffset);
+        int column = codeBlock->columnNumberForBytecodeOffset(bytecodeOffset);
+        DebuggerCallFrame debuggerCallFrame(callFrame, line, column, exceptionValue);
 
         bool hasHandler;
         if (isTermination)
@@ -665,7 +668,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& ex
             hasHandler = !!functor.handler();
         }
 
-        debugger->exception(debuggerCallFrame, codeBlock->ownerExecutable()->sourceID(), codeBlock->lineNumberForBytecodeOffset(bytecodeOffset), 0, hasHandler);
+        debugger->exception(debuggerCallFrame, hasHandler);
     }
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
@@ -1253,22 +1256,22 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHook
 
     switch (debugHookID) {
         case DidEnterCallFrame:
-            debugger->callEvent(callFrame, callFrame->codeBlock()->ownerExecutable()->sourceID(), firstLine, column);
+            debugger->callEvent(DebuggerCallFrame(callFrame, firstLine, column));
             return;
         case WillLeaveCallFrame:
-            debugger->returnEvent(callFrame, callFrame->codeBlock()->ownerExecutable()->sourceID(), lastLine, column);
+            debugger->returnEvent(DebuggerCallFrame(callFrame, lastLine, column));
             return;
         case WillExecuteStatement:
-            debugger->atStatement(callFrame, callFrame->codeBlock()->ownerExecutable()->sourceID(), firstLine, column);
+            debugger->atStatement(DebuggerCallFrame(callFrame, firstLine, column));
             return;
         case WillExecuteProgram:
-            debugger->willExecuteProgram(callFrame, callFrame->codeBlock()->ownerExecutable()->sourceID(), firstLine, column);
+            debugger->willExecuteProgram(DebuggerCallFrame(callFrame, firstLine, column));
             return;
         case DidExecuteProgram:
-            debugger->didExecuteProgram(callFrame, callFrame->codeBlock()->ownerExecutable()->sourceID(), lastLine, column);
+            debugger->didExecuteProgram(DebuggerCallFrame(callFrame, lastLine, column));
             return;
         case DidReachBreakpoint:
-            debugger->didReachBreakpoint(callFrame, callFrame->codeBlock()->ownerExecutable()->sourceID(), lastLine, column);
+            debugger->didReachBreakpoint(DebuggerCallFrame(callFrame, lastLine, column));
             return;
     }
 }    

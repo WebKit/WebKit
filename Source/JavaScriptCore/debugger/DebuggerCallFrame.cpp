@@ -37,6 +37,11 @@
 
 namespace JSC {
 
+intptr_t DebuggerCallFrame::sourceId() const
+{
+    return m_callFrame->codeBlock()->ownerExecutable()->sourceID();
+}
+
 String DebuggerCallFrame::functionName() const
 {
     if (!m_callFrame->codeBlock())
@@ -104,6 +109,12 @@ JSValue DebuggerCallFrame::evaluate(const String& script, JSValue& exception) co
     }
     ASSERT(result);
     return result;
+}
+
+void DebuggerCallFrame::clear()
+{
+    m_callFrame = 0;
+    m_exception = JSValue();
 }
 
 } // namespace JSC

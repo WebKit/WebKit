@@ -59,7 +59,7 @@ private:
 
     virtual bool isContentScript(JSC::ExecState*) { return false; }
 
-    virtual void willExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno, int columnNumber);
+    virtual void willExecuteProgram(const JSC::DebuggerCallFrame&);
 
     virtual void runEventLoopWhilePaused();
 
