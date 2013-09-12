@@ -1,3 +1,18 @@
+2013-09-12  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK][WK2] a11y tests unconditionally launching a11y daemons
+        https://bugs.webkit.org/show_bug.cgi?id=120299
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use the right variable name to store a reference to the at-spi2
+        bus launcher process, so we can be sure we are terminating it when
+        calling _tear_down_testing_environment().
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._start_accessibility_daemons): Use _spi_bus_launcher
+        instead of _ally_bus_launcher.
+
 2013-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] run-gtk-tests option --skipped=ignore doesn't work when the entire suite is skipped

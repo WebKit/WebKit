@@ -147,7 +147,7 @@ class TestRunner:
             return False
 
         try:
-            self._ally_bus_launcher = subprocess.Popen([spi_bus_launcher_path], env=self._test_env)
+            self._spi_bus_launcher = subprocess.Popen([spi_bus_launcher_path], env=self._test_env)
         except:
             sys.stderr.write("Failed to launch the accessibility bus\n")
             sys.stderr.flush()
