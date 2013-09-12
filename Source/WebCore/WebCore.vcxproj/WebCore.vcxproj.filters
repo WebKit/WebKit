@@ -1968,6 +1968,9 @@
     <ClCompile Include="..\platform\network\curl\FormDataStreamCurl.cpp">
       <Filter>platform\network\curl</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\network\curl\MultipartHandle.cpp">
+      <Filter>platform\network\curl</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\network\curl\ProxyServerCurl.cpp">
       <Filter>platform\network\curl</Filter>
     </ClCompile>
@@ -15793,6 +15796,9 @@
       <Filter>platform\network\curl</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\network\curl\FormDataStreamCurl.h">
+      <Filter>platform\network\curl</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\platform\network\curl\MultipartHandle.h">
       <Filter>platform\network\curl</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\network\curl\ResourceError.h">

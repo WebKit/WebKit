@@ -605,7 +605,7 @@ size_t parseHTTPRequestLine(const char* data, size_t length, String& failureReas
     return end - data;
 }
 
-size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, AtomicString& nameStr, String& valueStr)
+size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, AtomicString& nameStr, String& valueStr, bool strict)
 {
     const char* p = start;
     const char* end = start + length;
@@ -648,17 +648,20 @@ size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, 
         case '\r':
             break;
         case '\n':
-            failureReason = "Unexpected LF in value at " + trimInputSample(value.data(), value.size());
-            return 0;
+            if (strict) {
+                failureReason = "Unexpected LF in value at " + trimInputSample(value.data(), value.size());
+                return 0;
+            }
+            break;
         default:
             value.append(*p);
         }
-        if (*p == '\r') {
+        if (*p == '\r' || (!strict && *p == '\n')) {
             ++p;
             break;
         }
     }
-    if (p >= end || *p != '\n') {
+    if (p >= end || (strict && *p != '\n')) {
         failureReason = "CR doesn't follow LF after value at " + trimInputSample(p, end - p);
         return 0;
     }

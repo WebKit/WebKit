@@ -1,3 +1,41 @@
+2013-09-12  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        [curl] Improve multipart response handling
+        https://bugs.webkit.org/show_bug.cgi?id=117735
+
+        Reviewed by Brent Fulgham.
+
+        The multipart/x-mixed-replace mime type in responses are ignored
+        with the curl network backend. To handle such responses the
+        MultipartHandle is introduced which will split the content using
+        the boundary specified by the mime type.
+
+        There are already existing tests (http/tests/multipart).
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseHTTPHeader):
+        * platform/network/HTTPParsers.h:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/curl/MultipartHandle.cpp: Added.
+        (WebCore::MultipartHandle::extractBoundary):
+        (WebCore::MultipartHandle::matchForBoundary):
+        (WebCore::MultipartHandle::checkForBoundary):
+        (WebCore::MultipartHandle::parseHeadersIfPossible):
+        (WebCore::MultipartHandle::contentReceived):
+        (WebCore::MultipartHandle::processContent):
+        (WebCore::MultipartHandle::contentEnded):
+        (WebCore::MultipartHandle::didReceiveData):
+        (WebCore::MultipartHandle::didReceiveResponse):
+        * platform/network/curl/MultipartHandle.h: Added.
+        (WebCore::MultipartHandle::MultipartHandle):
+        (WebCore::MultipartHandle::~MultipartHandle):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::writeCallback):
+        (WebCore::headerCallback):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+
 2013-09-12  Andreas Kling  <akling@apple.com>
 
         Remove RenderApplet.

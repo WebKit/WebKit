@@ -44,6 +44,7 @@
 #if USE(CURL)
 #include <curl/curl.h>
 #include "FormDataStreamCurl.h"
+#include "MultipartHandle.h"
 #endif
 
 #if USE(SOUP)
@@ -190,6 +191,8 @@ namespace WebCore {
 
         FormDataStream m_formDataStream;
         Vector<char> m_postBytes;
+
+        OwnPtr<MultipartHandle> m_multipartHandle;
 #endif
 #if USE(SOUP)
         GRefPtr<SoupMessage> m_soupMessage;
