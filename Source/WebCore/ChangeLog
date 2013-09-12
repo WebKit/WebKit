@@ -1,3 +1,9 @@
+2013-09-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Qt and Windows build fix.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+
 2013-09-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Encapsulate globals in CSSPropertyAnimation.cpp

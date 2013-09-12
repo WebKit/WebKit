@@ -1131,7 +1131,7 @@ private:
     Vector<AnimationPropertyWrapperBase*> m_propertyWrappers;
     unsigned m_propertyToIdMap[numCSSProperties];
 
-    const unsigned cInvalidPropertyWrapperIndex = UINT_MAX;
+    static const unsigned cInvalidPropertyWrapperIndex = UINT_MAX;
 };
 
 void CSSPropertyAnimationWrapperMap::addShorthandProperties()

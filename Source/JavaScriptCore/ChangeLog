@@ -1,3 +1,10 @@
+2013-09-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Qt build fix. Add a return to make the compiler happy.
+
+        * dfg/DFGGPRInfo.h:
+        (JSC::DFG::JSValueRegs::gpr):
+
 2013-09-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::GenerationInfo init/fill methods shouldn't duplicate a bunch of logic

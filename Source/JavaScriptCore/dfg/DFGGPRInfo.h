@@ -166,6 +166,8 @@ public:
         case PayloadWord:
             return payloadGPR();
         }
+        ASSERT_NOT_REACHED();
+        return tagGPR();
     }
 
 private:
