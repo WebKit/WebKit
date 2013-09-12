@@ -1752,18 +1752,30 @@ void AccessibilityNodeObject::colorValue(int& r, int& g, int& b) const
 // ARIA Implementer's Guide.                                                                                            
 static String accessibleNameForNode(Node* node)
 {
-    if (node->isTextNode())
-        return toText(node)->data();
-
+    if (!node->isHTMLElement())
+        return String();
+    
+    HTMLElement* element = toHTMLElement(node);
+    
+    const AtomicString& ariaLabel = element->fastGetAttribute(aria_labelAttr);
+    if (!ariaLabel.isEmpty())
+        return ariaLabel;
+    
+    const AtomicString& alt = element->fastGetAttribute(altAttr);
+    if (!alt.isEmpty())
+        return alt;
+    
     if (isHTMLInputElement(node))
         return toHTMLInputElement(node)->value();
-
-    if (node->isHTMLElement()) {
-        const AtomicString& alt = toHTMLElement(node)->getAttribute(altAttr);
-        if (!alt.isEmpty())
-            return alt;
-    }
-
+    
+    String text = node->document().axObjectCache()->getOrCreate(node)->textUnderElement();
+    if (!text.isEmpty())
+        return text;
+    
+    const AtomicString& title = element->fastGetAttribute(titleAttr);
+    if (!title.isEmpty())
+        return title;
+    
     return String();
 }
 
@@ -1772,14 +1784,10 @@ String AccessibilityNodeObject::accessibilityDescriptionForElements(Vector<Eleme
     StringBuilder builder;
     unsigned size = elements.size();
     for (unsigned i = 0; i < size; ++i) {
-        Element* idElement = elements[i];
-
-        builder.append(accessibleNameForNode(idElement));
-        for (Node* n = idElement->firstChild(); n; n = NodeTraversal::next(n, idElement))
-            builder.append(accessibleNameForNode(n));
-
-        if (i != size - 1)
+        if (i)
             builder.append(' ');
+        
+        builder.append(accessibleNameForNode(elements[i]));
     }
     return builder.toString();
 }

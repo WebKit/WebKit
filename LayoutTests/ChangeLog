@@ -1,3 +1,15 @@
+2013-09-12  Samuel White  <samuel_white@apple.com>
+
+        AX: Self-referencing aria-labelledby only uses contents.
+        https://bugs.webkit.org/show_bug.cgi?id=120814
+
+        Reviewed by Mario Sanchez Prada.
+
+        Test to verify that self-referencing aria-labelledby behavior works as expected.
+
+        * accessibility/self-referencing-aria-labelledby-expected.txt: Added.
+        * accessibility/self-referencing-aria-labelledby.html: Added.
+
 2013-09-12  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         REGRESSION(r154781): accessibility/notification-listeners.html is failing

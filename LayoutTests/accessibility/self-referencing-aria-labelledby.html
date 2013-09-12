@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<title>Self-Referencing aria-labelledby</title>
+</head>
+<body>
+
+<!-- Self-referencing label should be the content text. -->
+<a aria-labelledby="t0 s0 s1" class="test" href="#" id="t0">X</a>
+
+<!-- Self-referencing label should be the aria-label text. -->
+<a aria-label="X" aria-labelledby="t1 s0 s1" class="test" href="#" id="t1">?</a>
+
+<!-- Self-referencing label should be the title text. -->
+<img alt="" aria-labelledby="t2 s0 s1" class="test" id="t2" src="resources/cake.png" title="X">
+
+<!-- Self-referencing label should be the alt text. -->
+<img alt="X" aria-labelledby="t3 s0 s1" class="test" id="t3" src="resources/cake.png" title="?">
+
+<!-- Self-referencing label should be the aria-label text. -->
+<img alt="?" aria-label="X" aria-labelledby="t4 s0 s1" class="test" id="t4" src="resources/cake.png" title="?">
+
+<!-- Self-referencing label should be the value text. -->
+<input aria-labelledby="t5 s0 s1" class="test" id="t5" type="text" value="X">
+
+<!-- Self-referencing label should be the aria-label text. -->
+<input aria-label="X" aria-labelledby="t6 s0 s1" class="test" id="t6" type="button" value="?">
+
+<span id="s0">Y</span>
+<span id="s1">Z</span>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that self-referencing aria-labelledby is exposed correctly.");
+    
+    if (window.accessibilityController) {
+        testCount = document.getElementsByClassName("test").length;
+        for (var i = 0; i < testCount; ++i) {
+            var test = accessibilityController.accessibleElementById("t" + i);
+            shouldBe("test.description", "'AXDescription: X Y Z'");
+        }
+    }
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
