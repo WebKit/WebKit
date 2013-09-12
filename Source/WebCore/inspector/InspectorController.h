@@ -120,9 +120,6 @@ public:
     InspectorClient* inspectorClient() const { return m_inspectorClient; }
     InspectorPageAgent* pageAgent() const { return m_pageAgent; }
 
-    void willProcessTask();
-    void didProcessTask();
-
     void didBeginFrame();
     void didCancelFrame();
     void willComposite();

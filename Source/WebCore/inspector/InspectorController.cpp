@@ -398,25 +398,6 @@ void InspectorController::setResourcesDataSizeLimitsFromInternals(int maximumRes
     m_resourceAgent->setResourcesDataSizeLimitsFromInternals(maximumResourcesContentSize, maximumSingleResourceContentSize);
 }
 
-void InspectorController::willProcessTask()
-{
-    if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->willProcessTask();
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_profilerAgent->willProcessTask();
-#endif
-}
-
-void InspectorController::didProcessTask()
-{
-    if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->didProcessTask();
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_profilerAgent->didProcessTask();
-    m_domDebuggerAgent->didProcessTask();
-#endif
-}
-
 void InspectorController::didBeginFrame()
 {
     if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())

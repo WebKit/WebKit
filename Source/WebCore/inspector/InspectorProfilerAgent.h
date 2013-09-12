@@ -101,9 +101,6 @@ public:
     virtual void getObjectByHeapObjectId(ErrorString*, const String& heapSnapshotObjectId, const String* objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result);
     virtual void getHeapObjectId(ErrorString*, const String& objectId, String* heapSnapshotObjectId);
 
-    void willProcessTask();
-    void didProcessTask();
-
 protected:
     InspectorProfilerAgent(InstrumentingAgents*, InspectorConsoleAgent*, InspectorCompositeState*, InjectedScriptManager*);
     virtual void startProfiling(const String& title) = 0;
@@ -132,7 +129,6 @@ private:
 
     typedef HashMap<String, double> ProfileNameIdleTimeMap;
     ProfileNameIdleTimeMap* m_profileNameIdleTimeMap;
-    double m_previousTaskEndTime;
 };
 
 } // namespace WebCore

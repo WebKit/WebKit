@@ -166,9 +166,6 @@ public:
     void willFireAnimationFrame(int callbackId, Frame*);
     void didFireAnimationFrame();
 
-    void willProcessTask();
-    void didProcessTask();
-
 #if ENABLE(WEB_SOCKETS)
     void didCreateWebSocket(unsigned long identifier, const KURL&, const String& protocol, Frame*);
     void willSendWebSocketHandshakeRequest(unsigned long identifier, Frame*);
@@ -201,7 +198,6 @@ private:
     void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*);
 
     void setDOMCounters(TypeBuilder::Timeline::TimelineEvent* record);
-    void setNativeHeapStatistics(TypeBuilder::Timeline::TimelineEvent* record);
     void setFrameIdentifier(InspectorObject* record, Frame*);
     void pushGCEventRecords();
 

@@ -138,7 +138,6 @@ InspectorProfilerAgent::InspectorProfilerAgent(InstrumentingAgents* instrumentin
     , m_nextUserInitiatedProfileNumber(1)
     , m_nextUserInitiatedHeapSnapshotNumber(1)
     , m_profileNameIdleTimeMap(ScriptProfiler::currentProfileNameIdleTimeMap())
-    , m_previousTaskEndTime(0.0)
 {
     m_instrumentingAgents->setInspectorProfilerAgent(this);
 }
@@ -479,27 +478,6 @@ void InspectorProfilerAgent::getHeapObjectId(ErrorString* errorString, const Str
     }
     unsigned id = ScriptProfiler::getHeapObjectId(value);
     *heapSnapshotObjectId = String::number(id);
-}
-
-void InspectorProfilerAgent::willProcessTask()
-{
-    if (!m_profileNameIdleTimeMap || !m_profileNameIdleTimeMap->size())
-        return;
-    if (!m_previousTaskEndTime)
-        return;
-
-    double idleTime = monotonicallyIncreasingTime() - m_previousTaskEndTime;
-    m_previousTaskEndTime = 0.0;
-    ProfileNameIdleTimeMap::iterator end = m_profileNameIdleTimeMap->end();
-    for (ProfileNameIdleTimeMap::iterator it = m_profileNameIdleTimeMap->begin(); it != end; ++it)
-        it->value += idleTime;
-}
-
-void InspectorProfilerAgent::didProcessTask()
-{
-    if (!m_profileNameIdleTimeMap || !m_profileNameIdleTimeMap->size())
-        return;
-    m_previousTaskEndTime = monotonicallyIncreasingTime();
 }
 
 } // namespace WebCore

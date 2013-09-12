@@ -66,8 +66,6 @@ static const char includeNativeMemoryStatistics[] = "includeNativeMemoryStatisti
 
 // Must be kept in sync with WebInspector.TimelineModel.RecordType in TimelineModel.js
 namespace TimelineRecordType {
-static const char Program[] = "Program";
-
 static const char EventDispatch[] = "EventDispatch";
 static const char BeginFrame[] = "BeginFrame";
 static const char ScheduleStyleRecalculation[] = "ScheduleStyleRecalculation";
@@ -485,16 +483,6 @@ void InspectorTimelineAgent::didFireAnimationFrame()
     didCompleteCurrentRecord(TimelineRecordType::FireAnimationFrame);
 }
 
-void InspectorTimelineAgent::willProcessTask()
-{
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Program, false, 0);
-}
-
-void InspectorTimelineAgent::didProcessTask()
-{
-    didCompleteCurrentRecord(TimelineRecordType::Program);
-}
-
 #if ENABLE(WEB_SOCKETS)
 void InspectorTimelineAgent::didCreateWebSocket(unsigned long identifier, const KURL& url, const String& protocol, Frame* frame)
 {
@@ -527,10 +515,8 @@ void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject
 {
     prpRecord->setString("type", type);
     RefPtr<TypeBuilder::Timeline::TimelineEvent> record = TypeBuilder::Timeline::TimelineEvent::runtimeCast(prpRecord);
-    if (type == TimelineRecordType::Program)
-        setNativeHeapStatistics(record.get());
-    else
-        setDOMCounters(record.get());
+
+    setDOMCounters(record.get());
 
     if (m_recordStack.isEmpty())
         sendEvent(record.release());
@@ -565,18 +551,6 @@ void InspectorTimelineAgent::setDOMCounters(TypeBuilder::Timeline::TimelineEvent
             .setJsEventListeners(listenerCount);
         record->setCounters(counters.release());
     }
-}
-
-// FIXME: This entire function can probably be removed, since it's a no-op.
-void InspectorTimelineAgent::setNativeHeapStatistics(TypeBuilder::Timeline::TimelineEvent* record)
-{
-    if (!m_memoryAgent)
-        return;
-    if (!m_state->getBoolean(TimelineAgentState::includeNativeMemoryStatistics))
-        return;
-    RefPtr<InspectorObject> stats = InspectorObject::create();
-    stats->setNumber("PrivateBytes", 0);
-    record->setNativeHeapStatistics(stats.release());
 }
 
 void InspectorTimelineAgent::setFrameIdentifier(InspectorObject* record, Frame* frame)

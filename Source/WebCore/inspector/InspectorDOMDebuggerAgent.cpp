@@ -111,15 +111,6 @@ void InspectorDOMDebuggerAgent::didPause()
     m_pauseInNextEventListener = false;
 }
 
-void InspectorDOMDebuggerAgent::didProcessTask()
-{
-    if (!m_pauseInNextEventListener)
-        return;
-    if (m_debuggerAgent && m_debuggerAgent->runningNestedMessageLoop())
-        return;
-    m_pauseInNextEventListener = false;
-}
-
 void InspectorDOMDebuggerAgent::disable()
 {
     m_instrumentingAgents->setInspectorDOMDebuggerAgent(0);

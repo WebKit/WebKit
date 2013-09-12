@@ -81,8 +81,6 @@ public:
     void willSendXMLHttpRequest(const String& url);
     void pauseOnNativeEventIfNeeded(bool isDOMEvent, const String& eventName, bool synchronous);
 
-    void didProcessTask();
-
     virtual void clearFrontend();
     virtual void discardAgent();
 
