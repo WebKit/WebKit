@@ -1,3 +1,13 @@
+2013-09-12  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rolling out r155632
+
+        Broke some tests.
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        * heap/MarkedBlock.h:
+
 2013-09-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Qt build fix. Add a return to make the compiler happy.

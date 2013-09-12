@@ -133,7 +133,6 @@ namespace JSC {
         // of these functions:
         void didConsumeFreeList(); // Call this once you've allocated all the items in the free list.
         void canonicalizeCellLivenessData(const FreeList&);
-        void didConsumeEmptyFreeList(); // Call this if you sweep a block, but the returned FreeList is empty.
 
         // Returns true if the "newly allocated" bitmap was non-null 
         // and was successfully cleared and false otherwise.
@@ -276,14 +275,6 @@ namespace JSC {
 
         ASSERT(m_state == FreeListed);
         m_state = Allocated;
-    }
-
-    inline void MarkedBlock::didConsumeEmptyFreeList()
-    {
-        HEAP_LOG_BLOCK_STATE_TRANSITION(this);
-
-        ASSERT(m_state == FreeListed);
-        m_state = Marked;
     }
 
     inline void MarkedBlock::clearMarks()
