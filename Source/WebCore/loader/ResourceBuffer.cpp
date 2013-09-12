@@ -126,7 +126,7 @@ PassOwnPtr<PurgeableBuffer> ResourceBuffer::releasePurgeableBuffer()
 }
 
 #if USE(CF)
-CFDataRef ResourceBuffer::createCFData()
+RetainPtr<CFDataRef> ResourceBuffer::createCFData()
 {
     return m_sharedBuffer->createCFData();
 }

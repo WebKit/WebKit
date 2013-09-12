@@ -41,7 +41,7 @@ SharedBuffer::SharedBuffer(CFDataRef cfData)
 // Mac is a CF platform but has an even more efficient version of this method,
 // so only use this version for non-Mac
 #if !PLATFORM(MAC)
-CFDataRef SharedBuffer::createCFData()
+RetainPtr<CFDataRef> SharedBuffer::createCFData()
 {
     if (m_cfData) {
         CFRetain(m_cfData.get());
@@ -50,7 +50,7 @@ CFDataRef SharedBuffer::createCFData()
 
     // Internal data in SharedBuffer can be segmented. We need to get the contiguous buffer.
     const Vector<char>& contiguousBuffer = buffer();
-    return CFDataCreate(0, reinterpret_cast<const UInt8*>(contiguousBuffer.data()), contiguousBuffer.size());
+    return adoptCF(CFDataCreate(0, reinterpret_cast<const UInt8*>(contiguousBuffer.data()), contiguousBuffer.size()));
 }
 #endif
 

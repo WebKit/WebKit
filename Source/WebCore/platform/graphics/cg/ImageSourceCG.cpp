@@ -133,8 +133,7 @@ void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
         m_decoder = CGImageSourceCreateIncremental(0);
     // On Mac the NSData inside the SharedBuffer can be secretly appended to without the SharedBuffer's knowledge.  We use SharedBuffer's ability
     // to wrap itself inside CFData to get around this, ensuring that ImageIO is really looking at the SharedBuffer.
-    RetainPtr<CFDataRef> cfData = adoptCF(data->createCFData());
-    CGImageSourceUpdateData(m_decoder, cfData.get(), allDataReceived);
+    CGImageSourceUpdateData(m_decoder, data->createCFData().get(), allDataReceived);
 #else
     if (!m_decoder) {
         m_decoder = CGImageSourceCreateIncremental(0);

@@ -1,3 +1,15 @@
+2013-09-12  Anders Carlsson  <andersca@apple.com>
+
+        SharedBuffer::createCFData should return RetainPtr<CFDataRef>
+        https://bugs.webkit.org/show_bug.cgi?id=121230
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer):
+        * Shared/WebArchiveResource.cpp:
+        (WebKit::WebArchiveResource::data):
+
 2013-09-12  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION: Inline PDF that are cached fail to appear in iframe.

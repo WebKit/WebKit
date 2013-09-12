@@ -101,14 +101,12 @@ NSData *SharedBuffer::createNSData()
     return [[WebCoreSharedBufferData alloc] initWithSharedBuffer:this];
 }
 
-CFDataRef SharedBuffer::createCFData()
+RetainPtr<CFDataRef> SharedBuffer::createCFData()
 {
-    if (m_cfData) {
-        CFRetain(m_cfData.get());
-        return m_cfData.get();
-    }
-    
-    return (CFDataRef)adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBuffer:this]).leakRef();
+    if (m_cfData)
+        return m_cfData;
+
+    return adoptCF((CFDataRef)adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBuffer:this]).leakRef());
 }
 
 PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& filePath)

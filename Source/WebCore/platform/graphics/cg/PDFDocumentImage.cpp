@@ -145,8 +145,7 @@ void PDFDocumentImage::draw(GraphicsContext* context, const FloatRect& dstRect, 
 #if !USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)
 void PDFDocumentImage::createPDFDocument()
 {
-    RetainPtr<CFDataRef> data = adoptCF(this->data()->createCFData());
-    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
+    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(data()->createCFData().get()));
     m_document = CGPDFDocumentCreateWithProvider(dataProvider.get());
 }
 

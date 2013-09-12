@@ -69,7 +69,7 @@ static void releaseCFData(unsigned char*, const void* data)
 
 PassRefPtr<WebData> WebArchiveResource::data()
 {
-    RetainPtr<CFDataRef> cfData = adoptCF(m_archiveResource->data()->createCFData());
+    RetainPtr<CFDataRef> cfData = m_archiveResource->data()->createCFData();
 
     // Balanced by CFRelease in releaseCFData.
     CFRetain(cfData.get());

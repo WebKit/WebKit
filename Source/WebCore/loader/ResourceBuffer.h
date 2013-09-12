@@ -79,7 +79,7 @@ public:
     NSData *createNSData();
 #endif
 #if USE(CF)
-    CFDataRef createCFData();
+    RetainPtr<CFDataRef> createCFData();
 #endif
 
 protected:

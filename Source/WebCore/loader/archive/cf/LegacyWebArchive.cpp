@@ -83,7 +83,7 @@ RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Ar
     SharedBuffer* data = resource->data();
     RetainPtr<CFDataRef> cfData;
     if (data)
-        cfData = adoptCF(data->createCFData());
+        cfData = data->createCFData();
     else
         cfData = adoptCF(CFDataCreate(0, 0, 0));
     CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceDataKey, cfData.get());
@@ -268,7 +268,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const KURL&, SharedBuffer*
     if (!data)
         return 0;
         
-    RetainPtr<CFDataRef> cfData = adoptCF(data->createCFData());
+    RetainPtr<CFDataRef> cfData = data->createCFData();
     if (!cfData)
         return 0;
         

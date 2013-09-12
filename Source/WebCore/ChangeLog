@@ -1,3 +1,28 @@
+2013-09-12  Anders Carlsson  <andersca@apple.com>
+
+        SharedBuffer::createCFData should return RetainPtr<CFDataRef>
+        https://bugs.webkit.org/show_bug.cgi?id=121230
+
+        Reviewed by Darin Adler.
+
+        * loader/ResourceBuffer.cpp:
+        (WebCore::ResourceBuffer::createCFData):
+        * loader/ResourceBuffer.h:
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createPropertyListRepresentation):
+        (WebCore::LegacyWebArchive::create):
+        * platform/SharedBuffer.h:
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::createCFData):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::setData):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::createPDFDocument):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::createCFData):
+
 2013-09-12  Zoltan Horvath  <zoltan@webkit.org>
 
         Move LineInfo class into LineInfo.h

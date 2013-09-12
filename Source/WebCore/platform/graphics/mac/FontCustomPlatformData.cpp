@@ -63,7 +63,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 
     ATSFontContainerRef containerRef = 0;
 
-    RetainPtr<CFDataRef> bufferData = adoptCF(buffer->createCFData());
+    RetainPtr<CFDataRef> bufferData = buffer->createCFData();
     RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(bufferData.get()));
 
     RetainPtr<CGFontRef> cgFontRef = adoptCF(CGFontCreateWithDataProvider(dataProvider.get()));

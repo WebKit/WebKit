@@ -88,7 +88,7 @@ void NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(ShareableResou
     if (!cache)
         return;
 
-    RetainPtr<CFDataRef> data = adoptCF(buffer->createCFData());
+    RetainPtr<CFDataRef> data = buffer->createCFData();
     if (_CFURLCacheIsResponseDataMemMapped(cache.get(), data.get()) == kCFBooleanFalse)
         return;
 

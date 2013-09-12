@@ -67,7 +67,7 @@ public:
     static PassRefPtr<SharedBuffer> wrapNSData(NSData *data);
 #endif
 #if USE(CF)
-    CFDataRef createCFData();
+    RetainPtr<CFDataRef> createCFData();
     static PassRefPtr<SharedBuffer> wrapCFData(CFDataRef);
 #endif
 
