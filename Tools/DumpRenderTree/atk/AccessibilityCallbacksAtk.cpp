@@ -86,11 +86,11 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint, guint n
 {
     // At least we should receive the instance emitting the signal.
     if (numParamValues < 1)
-        return TRUE;
+        return true;
 
     AtkObject* accessible = ATK_OBJECT(g_value_get_object(&paramValues[0]));
     if (!accessible || !ATK_IS_OBJECT(accessible))
-        return TRUE;
+        return true;
 
     GSignalQuery signalQuery;
     GOwnPtr<gchar> signalName;
@@ -111,13 +111,16 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint, guint n
     } else if (!g_strcmp0(signalQuery.signal_name, "focus-event")) {
         signalName.set(g_strdup("focus-event"));
         signalValue.set(g_strdup_printf("%d", g_value_get_boolean(&paramValues[1])));
-        notificationName = "AXFocusedUIElementChanged";
+        if (g_value_get_boolean(&paramValues[1]))
+            notificationName = "AXFocusedUIElementChanged";
     } else if (!g_strcmp0(signalQuery.signal_name, "children-changed")) {
         signalName.set(g_strdup("children-changed"));
         signalValue.set(g_strdup_printf("%d", g_value_get_uint(&paramValues[1])));
-    } else if (!g_strcmp0(signalQuery.signal_name, "property-change"))
+    } else if (!g_strcmp0(signalQuery.signal_name, "property-change")) {
         signalName.set(g_strdup_printf("property-change:%s", g_quark_to_string(signalHint->detail)));
-    else
+        if (!g_strcmp0(g_quark_to_string(signalHint->detail), "accessible-value"))
+            notificationName = "AXValueChanged";
+    } else
         signalName.set(g_strdup(signalQuery.signal_name));
 
     if (loggingAccessibilityEvents)
@@ -129,7 +132,7 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint, guint n
     JSContextRef jsContext = 0;
 #endif
     if (!jsContext)
-        return TRUE;
+        return true;
 
     if (notificationName.length()) {
         JSRetainPtr<JSStringRef> jsNotificationEventName(Adopt, JSStringCreateWithUTF8CString(notificationName.utf8().data()));
@@ -138,7 +141,9 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint, guint n
         if (elementNotificationHandler != notificationHandlers.end()) {
             // Listener for one element just gets one argument, the notification name.
             JSObjectCallAsFunction(jsContext, elementNotificationHandler->value->notificationFunctionCallback(), 0, 1, &notificationNameArgument, 0);
-        } else if (globalNotificationHandler) {
+        }
+
+        if (globalNotificationHandler) {
             // A global listener gets the element and the notification name as arguments.
             JSValueRef arguments[2];
             arguments[0] = AccessibilityUIElement::makeJSAccessibilityUIElement(jsContext, AccessibilityUIElement(accessible));
@@ -147,13 +152,14 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint, guint n
         }
     }
 
-    return TRUE;
+    return true;
 }
 
 void connectAccessibilityCallbacks()
 {
     // Ensure no callbacks are connected before.
-    disconnectAccessibilityCallbacks();
+    if (!disconnectAccessibilityCallbacks())
+        return;
 
     // Ensure that accessibility is initialized for the WebView by querying for
     // the root accessible object, which will create the full hierarchy.
@@ -179,11 +185,11 @@ void connectAccessibilityCallbacks()
     g_object_unref(dummyAxObject);
 }
 
-void disconnectAccessibilityCallbacks()
+bool disconnectAccessibilityCallbacks()
 {
     // Only disconnect if logging is off and there is no notification handler.
-    if (loggingAccessibilityEvents || !notificationHandlers.isEmpty())
-        return;
+    if (loggingAccessibilityEvents || !notificationHandlers.isEmpty() || globalNotificationHandler)
+        return false;
 
     // AtkObject signals.
     if (stateChangeListenerId) {
@@ -210,6 +216,8 @@ void disconnectAccessibilityCallbacks()
         atk_remove_global_event_listener(visibleDataChangedListenerId);
         visibleDataChangedListenerId = 0;
     }
+
+    return true;
 }
 
 void addAccessibilityNotificationHandler(AccessibilityNotificationHandler* notificationHandler)

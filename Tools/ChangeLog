@@ -1,3 +1,41 @@
+2013-09-12  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        REGRESSION(r154781): accessibility/notification-listeners.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=120669
+
+        Reviewed by Chris Fleizach.
+
+        Fixed 4 problems that were causing notification-listeners.html to fail.
+
+        Notifications for AXFocusedUIElementChanged and AXValueChanged had to be
+        implemented in axObjectEventListener().
+
+        A notification for AXFocusedUIElementChanged was incorrectly sent when
+        the element lost focus.
+
+        Global notification was not dispatched if an element notification was
+        present in the HashMap.
+
+        connectAccessibilityCallbacks() was connecting signals to callbacks
+        multiple times because it was not checking if
+        disconnectAccessibilityCallbacks() had an early return if there were
+        active handlers.
+
+        * DumpRenderTree/atk/AccessibilityCallbacks.h: Modified
+        disconnectAccessibilityCallbacks() to inform if the callbacks were
+        successfully disconnected.
+        * DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp:
+        (axObjectEventListener): Implemented notifications for
+        AXFocusedUIElementChanged and AXValueChanged. Fixed the global
+        notification, which was not dispatched if an element notification
+        existed. Fixed the notification for AXFocusedUIElementChanged that was
+        incorrectly sent when the element lost focus. In addition, fixed a typo
+        where TRUE should be true.
+        (connectAccessibilityCallbacks): Added early return if
+        disconnectAccessibilityCallbacks() did not disconnect the callbacks.
+        (disconnectAccessibilityCallbacks): Added a return value to inform if
+        callbacks were successfully disconnected.
+
 2013-09-11  Anders Carlsson  <andersca@apple.com>
 
         Try to fix GCC builds.

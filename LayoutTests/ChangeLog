@@ -1,3 +1,20 @@
+2013-09-12  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        REGRESSION(r154781): accessibility/notification-listeners.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=120669
+
+        Reviewed by Chris Fleizach.
+
+        Updated the expectation for notification-listeners.html, which was
+        failing before this fix.
+
+        * platform/gtk/TestExpectations: Removed notification-listeners.html.
+        * platform/gtk/accessibility/notification-listeners-expected.txt:
+        Updated the expectation for notification-listeners.html. There is one
+        difference from the results on the Mac port, which was used as
+        reference. The element role for <select> is AXComboBox while on Mac
+        is AXPopUpButton.
+
 2013-09-11  Rashmi Shyamasundar  <rashmi.s2@samsung.com>
 
         Canvas fillText and measureText handle ideographic spaces differently

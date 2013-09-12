@@ -38,6 +38,7 @@ void AccessibilityNotificationHandler::setNotificationFunctionCallback(JSObjectR
 {
     if (!notificationFunctionCallback) {
         removeAccessibilityNotificationHandler(this);
+        disconnectAccessibilityCallbacks();
         return;
     }
 

@@ -5,9 +5,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Slider
-FAIL selectNotificationCount should be 1. Was 0.
-FAIL sliderNotificationCount should be 1. Was 0.
-FAIL globalNotificationCount should be 2. Was 0.
+SELECT AXInvalidStatusChanged
+GLOBAL AXInvalidStatusChanged on element with role AXRole: AXComboBox
+SLIDER AXValueChanged
+GLOBAL AXValueChanged on element with role AXRole: AXSlider
+PASS selectNotificationCount is 1
+PASS sliderNotificationCount is 1
+PASS globalNotificationCount is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

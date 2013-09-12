@@ -33,7 +33,7 @@
 #include "AccessibilityUIElement.h"
 
 void connectAccessibilityCallbacks();
-void disconnectAccessibilityCallbacks();
+bool disconnectAccessibilityCallbacks();
 void addAccessibilityNotificationHandler(AccessibilityNotificationHandler*);
 void removeAccessibilityNotificationHandler(AccessibilityNotificationHandler*);
 
