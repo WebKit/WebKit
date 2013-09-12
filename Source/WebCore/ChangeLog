@@ -1,3 +1,15 @@
+2013-09-12  Santosh Mahto  <santosh.ma@samsung.com>
+
+        class WeekInputType invokes wrong constructor
+        https://bugs.webkit.org/show_bug.cgi?id=120768
+
+        Reviewed by Andreas Kling.
+
+        Correcting wrong constuctor invocation.
+
+        * html/WeekInputType.h:
+        (WebCore::WeekInputType::WeekInputType):
+
 2013-09-12  Samuel White  <samuel_white@apple.com>
 
         AX: Self-referencing aria-labelledby only uses contents.
