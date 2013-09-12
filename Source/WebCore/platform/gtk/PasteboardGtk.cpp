@@ -23,6 +23,7 @@
 #include "CachedImage.h"
 #include "DataObjectGtk.h"
 #include "DocumentFragment.h"
+#include "DragData.h"
 #include "Editor.h"
 #include "Frame.h"
 #include "HTMLImageElement.h"
