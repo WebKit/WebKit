@@ -96,7 +96,7 @@ public:
     LayoutUnit logicalLineTop() const { return m_shapeLineTop + logicalTopOffset(); }
     LayoutUnit logicalLineBottom() const { return m_shapeLineTop + m_lineHeight + logicalTopOffset(); }
 
-    LayoutUnit shapeContainingBlockHeight() const { return (m_renderer->style()->boxSizing() == CONTENT_BOX) ? (m_shapeLogicalSize.height() + m_renderer->borderAndPaddingLogicalHeight()) : m_shapeLogicalSize.height(); }
+    LayoutUnit shapeContainingBlockLogicalHeight() const { return (m_renderer->style()->boxSizing() == CONTENT_BOX) ? (m_shapeLogicalSize.height() + m_renderer->borderAndPaddingLogicalHeight()) : m_shapeLogicalSize.height(); }
 
     bool lineOverlapsShapeBounds() const { return logicalLineTop() < shapeLogicalBottom() && shapeLogicalTop() <= logicalLineBottom(); }
 

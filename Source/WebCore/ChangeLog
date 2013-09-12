@@ -1,3 +1,17 @@
+2013-09-12  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Rename shapeContainingBlockHeight to shapeContainingBlockLogicalHeight
+        https://bugs.webkit.org/show_bug.cgi?id=121252
+
+        Reviewed by Oliver Hunt.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::pushShapeContentOverflowBelowTheContentBox):
+        * rendering/shapes/ShapeInfo.h:
+        (WebCore::ShapeInfo::shapeContainingBlockLogicalHeight):
+
 2013-09-12  Samuel White  <samuel_white@apple.com>
 
         <meter> element AXValue is listed as a writable value

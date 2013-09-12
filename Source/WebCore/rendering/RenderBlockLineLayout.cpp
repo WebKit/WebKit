@@ -1407,18 +1407,18 @@ static inline void pushShapeContentOverflowBelowTheContentBox(RenderBlock* block
 
     LayoutUnit logicalLineBottom = lineTop + lineHeight;
     LayoutUnit shapeLogicalBottom = shapeInsideInfo->shapeLogicalBottom();
-    LayoutUnit shapeContainingBlockHeight = shapeInsideInfo->shapeContainingBlockHeight();
+    LayoutUnit shapeContainingBlockLogicalHeight = shapeInsideInfo->shapeContainingBlockLogicalHeight();
 
-    bool isOverflowPositionedAlready = (shapeContainingBlockHeight - shapeInsideInfo->owner()->borderAndPaddingAfter() + lineHeight) <= lineTop;
+    bool isOverflowPositionedAlready = (shapeContainingBlockLogicalHeight - shapeInsideInfo->owner()->borderAndPaddingAfter() + lineHeight) <= lineTop;
 
     // If the last line overlaps with the shape, we don't need the segments anymore
     if (lineTop < shapeLogicalBottom && shapeLogicalBottom < logicalLineBottom)
         shapeInsideInfo->clearSegments();
 
-    if (logicalLineBottom <= shapeLogicalBottom || !shapeContainingBlockHeight || isOverflowPositionedAlready)
+    if (logicalLineBottom <= shapeLogicalBottom || !shapeContainingBlockLogicalHeight || isOverflowPositionedAlready)
         return;
 
-    LayoutUnit newLogicalHeight = block->logicalHeight() + (shapeContainingBlockHeight - (lineTop + shapeInsideInfo->owner()->borderAndPaddingAfter()));
+    LayoutUnit newLogicalHeight = block->logicalHeight() + (shapeContainingBlockLogicalHeight - (lineTop + shapeInsideInfo->owner()->borderAndPaddingAfter()));
     block->setLogicalHeight(newLogicalHeight);
 }
 
