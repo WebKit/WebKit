@@ -1,3 +1,16 @@
+2013-09-11  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the build.
+
+        Move MoveOnly.h to Tests/WTF and fix the broken Xcode project that caused me to add the header
+        file in the Tests/ directory in the first place.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPICommon.props:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPICommonWinCairo.props:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/MoveOnly.h: Renamed from Tools/TestWebKitAPI/Tests/MoveOnly.h.
+
 2013-09-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Build fix for MoveOnly
