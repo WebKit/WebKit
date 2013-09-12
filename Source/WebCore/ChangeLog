@@ -1,3 +1,49 @@
+2013-09-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r155597.
+        http://trac.webkit.org/changeset/155597
+        https://bugs.webkit.org/show_bug.cgi?id=121220
+
+        broke windows build because there's no ews :( (Requested by
+        thorton on #webkit).
+
+        * WebCore.exp.in:
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::isBitmapImage):
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::create):
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::CrossfadeGeneratedImage):
+        (WebCore::CrossfadeGeneratedImage::drawPattern):
+        * platform/graphics/CrossfadeGeneratedImage.h:
+        (WebCore::CrossfadeGeneratedImage::setContainerSize):
+        (WebCore::CrossfadeGeneratedImage::usesContainerSize):
+        (WebCore::CrossfadeGeneratedImage::hasRelativeWidth):
+        (WebCore::CrossfadeGeneratedImage::hasRelativeHeight):
+        (WebCore::CrossfadeGeneratedImage::size):
+        * platform/graphics/GeneratedImage.h:
+        (WebCore::GeneratedImage::hasSingleSecurityOrigin):
+        (WebCore::GeneratedImage::setContainerSize):
+        (WebCore::GeneratedImage::usesContainerSize):
+        (WebCore::GeneratedImage::hasRelativeWidth):
+        (WebCore::GeneratedImage::hasRelativeHeight):
+        (WebCore::GeneratedImage::size):
+        (WebCore::GeneratedImage::destroyDecodedData):
+        (WebCore::GeneratedImage::decodedSize):
+        * platform/graphics/GeneratorGeneratedImage.cpp:
+        (WebCore::GeneratorGeneratedImage::draw):
+        (WebCore::GeneratorGeneratedImage::drawPattern):
+        * platform/graphics/GeneratorGeneratedImage.h:
+        (WebCore::GeneratorGeneratedImage::GeneratorGeneratedImage):
+        * svg/graphics/SVGImage.h:
+        (WebCore::SVGImage::isSVGImage):
+        (WebCore::SVGImage::usesContainerSize):
+        (WebCore::SVGImage::destroyDecodedData):
+        (WebCore::SVGImage::decodedSize):
+        * svg/graphics/SVGImageForContainer.h:
+        (WebCore::SVGImageForContainer::destroyDecodedData):
+        (WebCore::SVGImageForContainer::decodedSize):
+
 2013-09-12  Andreas Kling  <akling@apple.com>
 
         RenderWidget elements are always HTMLFrameOwnerElement subclasses.
