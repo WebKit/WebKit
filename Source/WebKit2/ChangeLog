@@ -1,3 +1,17 @@
+2013-09-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Make sure that layout is up-to-date when moving a WKView into a window, to avoid !needsLayout() assertions in RenderView::paint()
+        https://bugs.webkit.org/show_bug.cgi?id=121196
+
+        Reviewed by Tim Horton.
+        
+        When a WKView was moved into a window, it was possible for us to paint
+        without ensuring that layout is up-to-date. Fix this by having
+        WebPage::setIsInWindow() update layout if we are moving to a window.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setIsInWindow):
+
 2013-09-11  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Remove Gail dependency from build system for GTK3

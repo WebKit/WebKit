@@ -2138,6 +2138,9 @@ void WebPage::setIsInWindow(bool isInWindow, bool wantsDidUpdateViewInWindowStat
 
     m_page->setIsInWindow(isInWindow);
 
+    if (isInWindow)
+        layoutIfNeeded();
+
     if (wantsDidUpdateViewInWindowState)
         m_sendDidUpdateInWindowStateTimer.startOneShot(0);
 }
