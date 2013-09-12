@@ -1860,6 +1860,15 @@
             "beverloo"
          ]
       },
+      "Peter Gal" : {
+         "emails" : [
+            "galpeter@inf.u-szeged.hu"
+         ],
+         "expertise": "Python, CURL HTTP backend",
+         "nicks" : [
+            "elecro"
+         ]
+      },
       "Peter Kasting" : {
          "emails" : [
             "pkasting@google.com",
@@ -2921,14 +2930,6 @@
          ],
          "nicks" : [
             "TwistO"
-         ]
-      },
-      "Peter Gal" : {
-         "emails" : [
-            "galpeter@inf.u-szeged.hu"
-         ],
-         "nicks" : [
-            "elecro"
          ]
       },
       "Peter Linss" : {
