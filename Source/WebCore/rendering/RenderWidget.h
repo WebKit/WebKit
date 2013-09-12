@@ -22,6 +22,7 @@
 #ifndef RenderWidget_h
 #define RenderWidget_h
 
+#include "HTMLFrameOwnerElement.h"
 #include "OverlapTestRequestClient.h"
 #include "RenderReplaced.h"
 #include "Widget.h"
@@ -58,6 +59,8 @@ class RenderWidget : public RenderReplaced, private OverlapTestRequestClient {
 public:
     virtual ~RenderWidget();
 
+    HTMLFrameOwnerElement* frameOwnerElement() const { return toFrameOwnerElement(RenderObject::node()); }
+
     Widget* widget() const { return m_widget.get(); }
     void setWidget(PassRefPtr<Widget>);
 
@@ -78,7 +81,7 @@ public:
     virtual void viewCleared() { }
 
 protected:
-    RenderWidget(Element*);
+    RenderWidget(HTMLFrameOwnerElement*);
 
     FrameView* frameView() const { return m_frameView; }
 
@@ -95,6 +98,8 @@ protected:
 #endif
 
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
     virtual bool isWidget() const OVERRIDE FINAL { return true; }
 
     virtual bool needsPreferredWidthsRecalculation() const OVERRIDE FINAL;

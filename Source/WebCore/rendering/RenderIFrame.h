@@ -34,7 +34,7 @@ class RenderView;
 
 class RenderIFrame FINAL : public RenderFrameBase {
 public:
-    explicit RenderIFrame(Element*);
+    explicit RenderIFrame(HTMLIFrameElement*);
 
     bool flattenFrame() const;
     bool isSeamless() const;

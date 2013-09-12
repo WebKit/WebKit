@@ -1402,8 +1402,8 @@ void FrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
     if (!m_embeddedObjectsToUpdate)
         m_embeddedObjectsToUpdate = adoptPtr(new HashSet<RenderEmbeddedObject*>);
 
-    ASSERT(embeddedObject.element());
-    Element& element = *embeddedObject.element();
+    ASSERT(embeddedObject.frameOwnerElement());
+    Element& element = *embeddedObject.frameOwnerElement();
     if (isHTMLObjectElement(element) || isHTMLEmbedElement(element)) {
         // Tell the DOM element that it needs a widget update.
         HTMLPlugInImageElement& pluginElement = toHTMLPlugInImageElement(element);
@@ -2653,14 +2653,14 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
 
     // The object may have already been destroyed (thus element cleared),
     // but FrameView holds a manual ref, so it won't have been deleted.
-    if (!embeddedObject.element())
+    if (!embeddedObject.frameOwnerElement())
         return;
 
     // No need to update if it's already crashed or known to be missing.
     if (embeddedObject.isPluginUnavailable())
         return;
 
-    Element& element = *embeddedObject.element();
+    HTMLFrameOwnerElement& element = *embeddedObject.frameOwnerElement();
 
     if (embeddedObject.isSnapshottedPlugIn()) {
         if (isHTMLObjectElement(element) || isHTMLEmbedElement(element)) {

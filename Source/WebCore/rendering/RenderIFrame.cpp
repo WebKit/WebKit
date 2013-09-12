@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
     
-RenderIFrame::RenderIFrame(Element* element)
+RenderIFrame::RenderIFrame(HTMLIFrameElement* element)
     : RenderFrameBase(element)
 {
 }
@@ -81,7 +81,7 @@ LayoutUnit RenderIFrame::maxPreferredLogicalWidth() const
 
 bool RenderIFrame::isSeamless() const
 {
-    return element() && element()->hasTagName(iframeTag) && toHTMLIFrameElement(element())->shouldDisplaySeamlessly();
+    return frameOwnerElement() && frameOwnerElement()->hasTagName(iframeTag) && toHTMLIFrameElement(frameOwnerElement())->shouldDisplaySeamlessly();
 }
 
 bool RenderIFrame::requiresLayer() const
@@ -99,10 +99,10 @@ RenderView* RenderIFrame::contentRootRenderer() const
 
 bool RenderIFrame::flattenFrame() const
 {
-    if (!element() || !element()->hasTagName(iframeTag))
+    if (!frameOwnerElement() || !frameOwnerElement()->hasTagName(iframeTag))
         return false;
 
-    HTMLIFrameElement* iFrameElement = toHTMLIFrameElement(element());
+    HTMLIFrameElement* iFrameElement = toHTMLIFrameElement(frameOwnerElement());
     Frame* frame = iFrameElement->document().frame();
 
     if (isSeamless())

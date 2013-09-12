@@ -1,3 +1,16 @@
+2013-09-12  Andreas Kling  <akling@apple.com>
+
+        RenderWidget elements are always HTMLFrameOwnerElement subclasses.
+        <https://webkit.org/b/121217>
+
+        Reviewed by Antti Koivisto.
+
+        Make RenderWidget constructor take HTMLFrameOwnerElement* and update subclasses
+        with even tighter types where possible.
+
+        Also added RenderWidget::frameOwnerElement() and deleted element().
+        Removed a handful of unnecessary type checks that were exposed by this.
+
 2013-09-11  Tim Horton  <timothy_horton@apple.com>
 
         Apply OVERRIDE and FINAL to Image subclasses and clean them up

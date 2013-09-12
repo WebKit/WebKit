@@ -30,10 +30,12 @@
 
 namespace WebCore {
 
+class HTMLFrameElementBase;
+
 // Base class for RenderFrame and RenderIFrame
 class RenderFrameBase : public RenderWidget {
 protected:
-    explicit RenderFrameBase(Element*);
+    explicit RenderFrameBase(HTMLFrameElementBase*);
 
 public:
     void layoutWithFlattening(bool fixedWidth, bool fixedHeight);
