@@ -1216,7 +1216,7 @@ GPRTemporary::GPRTemporary(SpeculativeJIT* jit, SpeculateStrictInt32Operand& op1
         m_gpr = m_jit->allocate();
 }
 
-GPRTemporary::GPRTemporary(SpeculativeJIT* jit, IntegerOperand& op1)
+GPRTemporary::GPRTemporary(SpeculativeJIT* jit, Int32Operand& op1)
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
 {
@@ -1226,7 +1226,7 @@ GPRTemporary::GPRTemporary(SpeculativeJIT* jit, IntegerOperand& op1)
         m_gpr = m_jit->allocate();
 }
 
-GPRTemporary::GPRTemporary(SpeculativeJIT* jit, IntegerOperand& op1, IntegerOperand& op2)
+GPRTemporary::GPRTemporary(SpeculativeJIT* jit, Int32Operand& op1, Int32Operand& op2)
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
 {
@@ -2408,7 +2408,7 @@ void SpeculativeJIT::compileUInt32ToNumber(Node* node)
         // We know that this sometimes produces doubles. So produce a double every
         // time. This at least allows subsequent code to not have weird conditionals.
             
-        IntegerOperand op1(this, node->child1());
+        Int32Operand op1(this, node->child1());
         FPRTemporary result(this);
             
         GPRReg inputGPR = op1.gpr();
@@ -2424,7 +2424,7 @@ void SpeculativeJIT::compileUInt32ToNumber(Node* node)
         return;
     }
 
-    IntegerOperand op1(this, node->child1());
+    Int32Operand op1(this, node->child1());
     GPRTemporary result(this); // For the benefit of OSR exit, force these to be in different registers. In reality the OSR exit compiler could find cases where you have uint32(%r1) followed by int32(%r1) and then use different registers, but that seems like too much effort.
 
     m_jit.move(op1.gpr(), result.gpr());

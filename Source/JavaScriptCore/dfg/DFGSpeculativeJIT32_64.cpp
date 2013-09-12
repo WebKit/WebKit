@@ -41,7 +41,7 @@ namespace JSC { namespace DFG {
 
 #if USE(JSVALUE32_64)
 
-GPRReg SpeculativeJIT::fillInteger(Edge edge, DataFormat& returnFormat)
+GPRReg SpeculativeJIT::fillInt32(Edge edge, DataFormat& returnFormat)
 {
     ASSERT(!needsTypeCheck(edge, SpecInt32));
     
@@ -68,7 +68,7 @@ GPRReg SpeculativeJIT::fillInteger(Edge edge, DataFormat& returnFormat)
             m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
         }
 
-        info.fillInteger(*m_stream, gpr);
+        info.fillInt32(*m_stream, gpr);
         returnFormat = DataFormatInt32;
         return gpr;
     }
@@ -97,7 +97,7 @@ GPRReg SpeculativeJIT::fillInteger(Edge edge, DataFormat& returnFormat)
         m_gprs.release(tagGPR);
         m_gprs.release(payloadGPR);
         m_gprs.retain(payloadGPR, virtualRegister, SpillOrderInteger);
-        info.fillInteger(*m_stream, payloadGPR);
+        info.fillInt32(*m_stream, payloadGPR);
         returnFormat = DataFormatInt32;
         return payloadGPR;
     }
@@ -244,7 +244,7 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
 
 void SpeculativeJIT::nonSpeculativeUInt32ToNumber(Node* node)
 {
-    IntegerOperand op1(this, node->child1());
+    Int32Operand op1(this, node->child1());
     FPRTemporary boxer(this);
     GPRTemporary resultTag(this, op1);
     GPRTemporary resultPayload(this);
@@ -880,7 +880,7 @@ GPRReg SpeculativeJIT::fillSpecualteInt32Internal(Edge edge, DataFormat& returnF
             GPRReg gpr = allocate();
             m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(edge.node())), gpr);
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-            info.fillInteger(*m_stream, gpr);
+            info.fillInt32(*m_stream, gpr);
             returnFormat = DataFormatInt32;
             return gpr;
         }
@@ -895,7 +895,7 @@ GPRReg SpeculativeJIT::fillSpecualteInt32Internal(Edge edge, DataFormat& returnF
         GPRReg gpr = allocate();
         m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-        info.fillInteger(*m_stream, gpr);
+        info.fillInt32(*m_stream, gpr);
         returnFormat = DataFormatInt32;
         return gpr;
     }
@@ -913,7 +913,7 @@ GPRReg SpeculativeJIT::fillSpecualteInt32Internal(Edge edge, DataFormat& returnF
         m_gprs.release(tagGPR);
         m_gprs.release(payloadGPR);
         m_gprs.retain(payloadGPR, virtualRegister, SpillOrderInteger);
-        info.fillInteger(*m_stream, payloadGPR);
+        info.fillInt32(*m_stream, payloadGPR);
         // If !strict we're done, return.
         returnFormat = DataFormatInt32;
         return payloadGPR;
@@ -975,7 +975,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
                 GPRReg gpr = allocate();
                 m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(edge.node())), gpr);
                 m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-                info.fillInteger(*m_stream, gpr);
+                info.fillInt32(*m_stream, gpr);
                 unlock(gpr);
             } else if (isNumberConstant(edge.node())) {
                 FPRReg fpr = fprAllocate();

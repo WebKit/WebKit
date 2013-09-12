@@ -337,7 +337,7 @@ public:
             appendFill(Fill, stream);
     }
 #endif
-    void fillInteger(VariableEventStream& stream, GPRReg gpr)
+    void fillInt32(VariableEventStream& stream, GPRReg gpr)
     {
         m_registerFormat = DataFormatInt32;
         u.gpr = gpr;

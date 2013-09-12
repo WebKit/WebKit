@@ -40,7 +40,7 @@ namespace JSC { namespace DFG {
 
 #if USE(JSVALUE64)
 
-GPRReg SpeculativeJIT::fillInteger(Edge edge, DataFormat& returnFormat)
+GPRReg SpeculativeJIT::fillInt32(Edge edge, DataFormat& returnFormat)
 {
     ASSERT(!needsTypeCheck(edge, SpecInt32));
     
@@ -54,7 +54,7 @@ GPRReg SpeculativeJIT::fillInteger(Edge edge, DataFormat& returnFormat)
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             if (isInt32Constant(edge.node())) {
                 m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(edge.node())), gpr);
-                info.fillInteger(*m_stream, gpr);
+                info.fillInt32(*m_stream, gpr);
                 returnFormat = DataFormatInt32;
                 return gpr;
             }
@@ -69,7 +69,7 @@ GPRReg SpeculativeJIT::fillInteger(Edge edge, DataFormat& returnFormat)
         } else if (info.spillFormat() == DataFormatInt32) {
             m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
             m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
-            // Tag it, since fillInteger() is used when we want a boxed integer.
+            // Tag it, since fillInt32() is used when we want a boxed integer.
             m_jit.or64(GPRInfo::tagTypeNumberRegister, gpr);
         } else {
             RELEASE_ASSERT(info.spillFormat() == DataFormatJS || info.spillFormat() == DataFormatJSInt32);
@@ -219,7 +219,7 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
 
 void SpeculativeJIT::nonSpeculativeUInt32ToNumber(Node* node)
 {
-    IntegerOperand op1(this, node->child1());
+    Int32Operand op1(this, node->child1());
     FPRTemporary boxer(this);
     GPRTemporary result(this, op1);
     
@@ -841,7 +841,7 @@ GPRReg SpeculativeJIT::fillSpecualteInt32Internal(Edge edge, DataFormat& returnF
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             ASSERT(isInt32Constant(edge.node()));
             m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(edge.node())), gpr);
-            info.fillInteger(*m_stream, gpr);
+            info.fillInt32(*m_stream, gpr);
             returnFormat = DataFormatInt32;
             return gpr;
         }
@@ -856,7 +856,7 @@ GPRReg SpeculativeJIT::fillSpecualteInt32Internal(Edge edge, DataFormat& returnF
             // If we know this was spilled as an integer we can fill without checking.
             if (strict) {
                 m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
-                info.fillInteger(*m_stream, gpr);
+                info.fillInt32(*m_stream, gpr);
                 returnFormat = DataFormatInt32;
                 return gpr;
             }
@@ -903,7 +903,7 @@ GPRReg SpeculativeJIT::fillSpecualteInt32Internal(Edge edge, DataFormat& returnF
                 result = allocate();
             else {
                 m_gprs.lock(gpr);
-                info.fillInteger(*m_stream, gpr);
+                info.fillInt32(*m_stream, gpr);
                 result = gpr;
             }
             m_jit.zeroExtend32ToPtr(gpr, result);
@@ -1021,7 +1021,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
             
             m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
             m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
-            info.fillInteger(*m_stream, gpr);
+            info.fillInt32(*m_stream, gpr);
             unlock(gpr);
             break;
         }

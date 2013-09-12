@@ -130,7 +130,7 @@ public:
         }
     }
     
-    GPRReg fillInteger(Edge, DataFormat& returnFormat);
+    GPRReg fillInt32(Edge, DataFormat& returnFormat);
 #if USE(JSVALUE64)
     GPRReg fillJSValue(Edge);
 #elif USE(JSVALUE32_64)
@@ -2247,7 +2247,7 @@ public:
 
 // === Operand types ===
 //
-// IntegerOperand and JSValueOperand.
+// Int32Operand and JSValueOperand.
 //
 // These classes are used to lock the operands to a node into machine
 // registers. These classes implement of pattern of locking a value
@@ -2256,9 +2256,9 @@ public:
 // used. We do so in order to attempt to avoid spilling one operand
 // in order to make space available for another.
 
-class IntegerOperand {
+class Int32Operand {
 public:
-    explicit IntegerOperand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    explicit Int32Operand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
         : m_jit(jit)
         , m_edge(edge)
         , m_gprOrInvalid(InvalidGPRReg)
@@ -2272,7 +2272,7 @@ public:
             gpr();
     }
 
-    ~IntegerOperand()
+    ~Int32Operand()
     {
         ASSERT(m_gprOrInvalid != InvalidGPRReg);
         m_jit->unlock(m_gprOrInvalid);
@@ -2298,7 +2298,7 @@ public:
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillInteger(m_edge, m_format);
+            m_gprOrInvalid = m_jit->fillInt32(m_edge, m_format);
         return m_gprOrInvalid;
     }
     
@@ -2497,8 +2497,8 @@ public:
     GPRTemporary(SpeculativeJIT*, SpeculateInt32Operand&);
     GPRTemporary(SpeculativeJIT*, SpeculateInt32Operand&, SpeculateInt32Operand&);
     GPRTemporary(SpeculativeJIT*, SpeculateStrictInt32Operand&);
-    GPRTemporary(SpeculativeJIT*, IntegerOperand&);
-    GPRTemporary(SpeculativeJIT*, IntegerOperand&, IntegerOperand&);
+    GPRTemporary(SpeculativeJIT*, Int32Operand&);
+    GPRTemporary(SpeculativeJIT*, Int32Operand&, Int32Operand&);
     GPRTemporary(SpeculativeJIT*, SpeculateCellOperand&);
     GPRTemporary(SpeculativeJIT*, SpeculateBooleanOperand&);
 #if USE(JSVALUE64)
