@@ -1,3 +1,13 @@
+2013-09-12  Tamas Czene  <tczene@inf.u-szeged.hu>
+
+        [curl] Use utf8 for headers in CurlDownload.
+        https://bugs.webkit.org/show_bug.cgi?id=120413
+
+        Reviewed by Brent Fulgham.
+
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::headerCallback):
+
 2013-09-12  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [curl] Improve multipart response handling

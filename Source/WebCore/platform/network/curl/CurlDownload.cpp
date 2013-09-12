@@ -464,7 +464,7 @@ size_t CurlDownload::headerCallback(char* ptr, size_t size, size_t nmemb, void* 
     size_t totalSize = size * nmemb;
     CurlDownload* download = reinterpret_cast<CurlDownload*>(data);
 
-    String header(static_cast<const char*>(ptr), totalSize);
+    String header = String::fromUTF8WithLatin1Fallback(static_cast<const char*>(ptr), totalSize);
 
     if (download)
         download->didReceiveHeader(header);
