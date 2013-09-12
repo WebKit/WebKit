@@ -801,7 +801,7 @@ public:
         if (format == DataFormatInt32) {
             m_jit.jitAssertIsInt32(reg);
             m_gprs.retain(reg, virtualRegister, SpillOrderInteger);
-            info.initInteger(node, node->refCount(), reg);
+            info.initInt32(node, node->refCount(), reg);
         } else {
 #if USE(JSVALUE64)
             RELEASE_ASSERT(format == DataFormatJSInt32);

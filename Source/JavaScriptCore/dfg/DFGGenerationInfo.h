@@ -69,7 +69,7 @@ public:
         m_isConstant = true;
         ASSERT(m_useCount);
     }
-    void initInteger(Node* node, uint32_t useCount, GPRReg gpr)
+    void initInt32(Node* node, uint32_t useCount, GPRReg gpr)
     {
         m_node = node;
         m_useCount = useCount;

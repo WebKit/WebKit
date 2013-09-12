@@ -1,5 +1,20 @@
 2013-09-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Rename initInteger() to initInt32()
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::initInt32):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::integerResult):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2013-09-11  Filip Pizlo  <fpizlo@apple.com>
+
         Rename IntegerOperand to Int32Operand and fillInteger() to fillInt32().
 
         Rubber stamped by Mark Hahnenberg.

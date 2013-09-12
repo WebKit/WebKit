@@ -2015,7 +2015,7 @@ void SpeculativeJIT::compile(Node* node)
             // and don't represent values within this dataflow with virtual registers.
             VirtualRegister virtualRegister = node->virtualRegister();
             m_gprs.retain(result.gpr(), virtualRegister, SpillOrderInteger);
-            generationInfoFromVirtualRegister(virtualRegister).initInteger(node, node->refCount(), result.gpr());
+            generationInfoFromVirtualRegister(virtualRegister).initInt32(node, node->refCount(), result.gpr());
             break;
         }
         
