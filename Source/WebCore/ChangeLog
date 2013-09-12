@@ -1,3 +1,11 @@
+2013-09-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Build fix after r155635.
+
+        Rubber Stamped by Darin Adler.
+
+        * platform/Pasteboard.h: Add missing compile guards for Windows port.
+
 2013-09-12  Darin Adler  <darin@apple.com>
 
         Reorganize Pasteboard.h to make it easier to read, and express plan for future work

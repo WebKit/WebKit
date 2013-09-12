@@ -66,7 +66,7 @@ enum ShouldSerializeSelectedTextForClipboard { DefaultSelectedTextType, IncludeI
 
 // For writing web content to the pasteboard. Generally sorted with the richest formats on top.
 struct PasteboardWebContent {
-#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT))
+#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN))
     bool canSmartCopyOrDelete;
     RefPtr<SharedBuffer> dataInWebArchiveFormat;
     RefPtr<SharedBuffer> dataInRTFDFormat;
@@ -78,7 +78,7 @@ struct PasteboardWebContent {
 };
 
 struct PasteboardURL {
-#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT))
+#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN))
     KURL url;
     String title;
     String userVisibleForm;
@@ -86,7 +86,7 @@ struct PasteboardURL {
 };
 
 struct PasteboardImage {
-#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT))
+#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN))
     PasteboardURL url;
     RefPtr<Image> image;
     RefPtr<SharedBuffer> resourceData;
@@ -95,7 +95,7 @@ struct PasteboardImage {
 };
 
 struct PasteboardPlainText {
-#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT))
+#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN))
     String plainText;
     String url;
 #endif
@@ -144,12 +144,12 @@ public:
 
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
 
-#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT)
+#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN)
     String plainText(Frame* = 0); // FIXME: Layering violation.
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
 
-#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT)
+#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(WIN)
     void writeURL(const KURL&, const String&, Frame* = 0); // FIXME: Layering violation.
     void writeImage(Node*, const KURL&, const String& title); // FIXME: Layering violation.
 #endif
