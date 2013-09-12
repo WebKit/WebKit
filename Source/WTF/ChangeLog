@@ -1,3 +1,30 @@
+2013-09-12  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Bitmap's WordType should be a template parameter
+        https://bugs.webkit.org/show_bug.cgi?id=121238
+
+        Reviewed by Darin Adler.
+
+        The code is written as if it already is. We just need to lift it out of the class.
+        This simplifies code that wants to load, for example, a single byte rather than an 
+        entire 32-bit word. 
+
+        * wtf/Bitmap.h:
+        (WTF::Bitmap::Bitmap):
+        (WTF::Bitmap::get):
+        (WTF::Bitmap::set):
+        (WTF::Bitmap::testAndSet):
+        (WTF::Bitmap::testAndClear):
+        (WTF::Bitmap::concurrentTestAndSet):
+        (WTF::Bitmap::concurrentTestAndClear):
+        (WTF::Bitmap::clear):
+        (WTF::Bitmap::clearAll):
+        (WTF::Bitmap::nextPossiblyUnset):
+        (WTF::Bitmap::findRunOfZeros):
+        (WTF::Bitmap::count):
+        (WTF::Bitmap::isEmpty):
+        (WTF::Bitmap::isFull):
+
 2013-09-12  Anders Carlsson  <andersca@apple.com>
 
         Add rudimentary support for move-only types as values in HashMap
