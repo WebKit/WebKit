@@ -1,3 +1,26 @@
+2013-09-11  Rashmi Shyamasundar  <rashmi.s2@samsung.com>
+
+        Canvas fillText and measureText handle ideographic spaces differently
+        https://bugs.webkit.org/show_bug.cgi?id=108881
+
+        Reviewed by Darin Adler.
+
+        According to spec for text preparation algorithm
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#text-preparation-algorithm
+        all the space characters mentioned in the spec
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#space-character
+        should be replaced by U+0020 space character.
+        The canvas functions fillText and measureText should run the text preparation algorithm.
+        This patch modifies the canvas functions drawTextInternal and measureText to conform to the above spec.
+
+        Tests: fast/canvas/canvas-measureText-ideographicSpace.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::shouldSpaceBeReplaced):
+        (WebCore::replaceCharacterInString):
+        (WebCore::CanvasRenderingContext2D::measureText):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+
 2013-09-11  Andreas Kling  <akling@apple.com>
 
         Fix Windows build.
