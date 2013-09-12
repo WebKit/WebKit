@@ -1,5 +1,22 @@
 2013-09-12  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix mispelling (Specualte -> Speculate) that I introduced in an
+        earlier patch.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculateInt32Operand::gpr):
+        (JSC::DFG::SpeculateStrictInt32Operand::gpr):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Strict):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Strict):
+
+2013-09-12  Filip Pizlo  <fpizlo@apple.com>
+
         GPRTemporary's reuse constructor should be templatized to reduce code duplication, and the bool to denote tag or payload should be replaced with an enum
         https://bugs.webkit.org/show_bug.cgi?id=121250
 

@@ -332,8 +332,8 @@ public:
 
     // Called by the speculative operand types, below, to fill operand to
     // machine registers, implicitly generating speculation checks as needed.
-    GPRReg fillSpecualteInt32(Edge, DataFormat& returnFormat);
-    GPRReg fillSpecualteInt32Strict(Edge);
+    GPRReg fillSpeculateInt32(Edge, DataFormat& returnFormat);
+    GPRReg fillSpeculateInt32Strict(Edge);
     FPRReg fillSpeculateDouble(Edge);
     GPRReg fillSpeculateCell(Edge);
     GPRReg fillSpeculateBoolean(Edge);
@@ -2141,7 +2141,7 @@ public:
     void arrayify(Node*);
     
     template<bool strict>
-    GPRReg fillSpecualteInt32Internal(Edge, DataFormat& returnFormat);
+    GPRReg fillSpeculateInt32Internal(Edge, DataFormat& returnFormat);
     
     // It is possible, during speculative generation, to reach a situation in which we
     // can statically determine a speculation will fail (for example, when two nodes
@@ -2668,7 +2668,7 @@ public:
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillSpecualteInt32(edge(), m_format);
+            m_gprOrInvalid = m_jit->fillSpeculateInt32(edge(), m_format);
         return m_gprOrInvalid;
     }
     
@@ -2716,7 +2716,7 @@ public:
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillSpecualteInt32Strict(edge());
+            m_gprOrInvalid = m_jit->fillSpeculateInt32Strict(edge());
         return m_gprOrInvalid;
     }
     
