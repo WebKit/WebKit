@@ -793,7 +793,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
             if (enclosingTextFormControl(src->selection().start()))
                 clipboard->pasteboard().writePlainText(src->editor().selectedTextForClipboard(), Pasteboard::CannotSmartReplace);
             else {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(EFL)
                 src->editor().writeSelectionToPasteboard(clipboard->pasteboard());
 #else
                 // FIXME: Convert all other platforms to match Mac and delete this.
@@ -835,7 +835,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
         if (!clipboard->pasteboard().hasData())
             // Simplify whitespace so the title put on the clipboard resembles what the user sees
             // on the web page. This includes replacing newlines with spaces.
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(EFL)
             src->editor().writeURLToPasteboard(clipboard->pasteboard(), linkURL, hitTestResult.textContent().simplifyWhiteSpace());
 #else
             clipboard->pasteboard().writeURL(linkURL, hitTestResult.textContent().simplifyWhiteSpace(), src);

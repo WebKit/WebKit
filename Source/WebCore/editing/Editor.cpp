@@ -417,7 +417,7 @@ void Editor::pasteAsPlainTextBypassingDHTML()
 
 void Editor::pasteAsPlainTextWithPasteboard(Pasteboard& pasteboard)
 {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if (PLATFORM(MAC) && !PLATFORM(IOS)) || PLATFORM(EFL)
     String text = readPlainTextFromPasteboard(pasteboard);
 #else
     String text = pasteboard.plainText(&m_frame);
@@ -426,7 +426,7 @@ void Editor::pasteAsPlainTextWithPasteboard(Pasteboard& pasteboard)
         pasteAsPlainText(text, canSmartReplaceWithPasteboard(&pasteboard));
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !PLATFORM(EFL)
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
 {
     RefPtr<Range> range = selectedRange();
@@ -1052,7 +1052,7 @@ void Editor::cut()
         if (enclosingTextFormControl(m_frame.selection().start()))
             Pasteboard::createForCopyAndPaste()->writePlainText(selectedTextForClipboard(), canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
         else {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if (PLATFORM(MAC) && !PLATFORM(IOS)) || PLATFORM(EFL)
             writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste());
 #else
             // FIXME: Convert all other platforms to match Mac and delete this.
@@ -1080,13 +1080,13 @@ void Editor::copy()
     } else {
         Document* document = m_frame.document();
         if (HTMLImageElement* imageElement = imageElementFromImageDocument(document)) {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if (PLATFORM(MAC) && !PLATFORM(IOS)) || PLATFORM(EFL)
             writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), *imageElement, document->url(), document->title());
 #else
             Pasteboard::createForCopyAndPaste()->writeImage(imageElement, document->url(), document->title());
 #endif
         } else {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if (PLATFORM(MAC) && !PLATFORM(IOS)) || PLATFORM(EFL)
             writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste());
 #else
             // FIXME: Convert all other platforms to match Mac and delete this.
@@ -1169,7 +1169,7 @@ void Editor::copyURL(const KURL& url, const String& title)
 
 void Editor::copyURL(const KURL& url, const String& title, Pasteboard& pasteboard)
 {
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if (PLATFORM(MAC) && !PLATFORM(IOS)) || PLATFORM(EFL)
     writeURLToPasteboard(pasteboard, url, title);
 #else
     pasteboard.writeURL(url, title, &m_frame);
@@ -1186,7 +1186,7 @@ void Editor::copyImage(const HitTestResult& result)
     if (url.isEmpty())
         url = result.absoluteImageURL();
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
+#if (PLATFORM(MAC) && !PLATFORM(IOS)) || PLATFORM(EFL)
     writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), *element, url, result.altDisplayString());
 #else
     Pasteboard::createForCopyAndPaste()->writeImage(element, url, result.altDisplayString());

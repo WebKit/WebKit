@@ -1,3 +1,36 @@
+2013-09-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL] Get rid of layering violations in PasteboardEfl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=121241
+
+        Reviewed by Darin Adler.
+
+        Get rid of layering violations in PasteboardEfl.cpp. For now, just mimic
+        the Mac port to avoid divergences and leave port-specific functions
+        unimplemented as the EFL port does not support the pasteboard functionality
+        yet.
+
+        No new tests, no behavior change.
+
+        * PlatformEfl.cmake:
+        * editing/Editor.cpp:
+        (WebCore::Editor::pasteAsPlainTextWithPasteboard):
+        (WebCore::Editor::cut):
+        (WebCore::Editor::copy):
+        (WebCore::Editor::copyURL):
+        (WebCore::Editor::copyImage):
+        * editing/Editor.h:
+        * editing/efl/EditorEfl.cpp: Added.
+        (WebCore::Editor::writeSelectionToPasteboard):
+        (WebCore::Editor::writeURLToPasteboard):
+        (WebCore::Editor::writeImageToPasteboard):
+        (WebCore::Editor::readPlainTextFromPasteboard):
+        (WebCore::Editor::pasteWithPasteboard):
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        * platform/Pasteboard.h:
+        * platform/efl/PasteboardEfl.cpp:
+
 2013-09-12  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Unreviewed build fix after r155635.

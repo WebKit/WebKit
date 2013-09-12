@@ -142,14 +142,16 @@ public:
     void setDragImage(DragImageRef, const IntPoint& hotSpot);
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(WIN)
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
+#endif
 
-#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN)
+#if PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN)
     String plainText(Frame* = 0); // FIXME: Layering violation.
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
 
-#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(WIN)
+#if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(WIN)
     void writeURL(const KURL&, const String&, Frame* = 0); // FIXME: Layering violation.
     void writeImage(Node*, const KURL&, const String& title); // FIXME: Layering violation.
 #endif

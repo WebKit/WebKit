@@ -37,6 +37,8 @@ list(APPEND WebCore_SOURCES
 
     editing/atk/FrameSelectionAtk.cpp
 
+    editing/efl/EditorEfl.cpp
+
     loader/soup/CachedRawResourceSoup.cpp
     loader/soup/SubresourceLoaderSoup.cpp
 
