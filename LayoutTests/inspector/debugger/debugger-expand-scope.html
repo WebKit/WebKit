@@ -7,14 +7,14 @@
 function makeClosure(n) {
   var makeClosureLocalVar = 'local.' + n;
   return function innerFunction(x) {
-    var innerFunctionLocalVar = x + 2;
+    var innerFunctionLocalVar = arguments[0] + 2;
     try {
       throw new Error("An exception");
     } catch (e) {
       e.toString();
       debugger;
     }
-    return n + makeClosureLocalVar + x + innerFunctionLocalVar;
+    return n + makeClosureLocalVar + arguments[0] + innerFunctionLocalVar;
   }
 }
 

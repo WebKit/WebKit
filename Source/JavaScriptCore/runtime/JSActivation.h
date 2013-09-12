@@ -95,7 +95,6 @@ namespace JSC {
         bool symbolTablePutWithAttributes(VM&, PropertyName, JSValue, unsigned attributes);
 
         static JSValue argumentsGetter(ExecState*, JSValue, PropertyName);
-        NEVER_INLINE PropertySlot::GetValueFunc getArgumentsGetter();
 
         static size_t allocationSize(SharedSymbolTable*);
         static size_t storageOffset();

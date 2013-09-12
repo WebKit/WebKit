@@ -16,7 +16,6 @@ Local
 WindowWith Block
     innerFunction: function innerFunction(x) {
 Closure
-    arguments: Arguments[1]
     makeClosureLocalVar: "local.TextParam"
     n: "TextParam"
 WindowGlobal

@@ -1,3 +1,45 @@
+2013-09-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Web Inspector shouldn't artificially allocate the arguments object in functions that don't use it
+        https://bugs.webkit.org/show_bug.cgi?id=121206
+        <rdar://problem/6911886>
+
+        Reviewed by Joseph Pecoraro.
+
+        This is a step toward better tools, and a 23% speedup in a simple
+        JavaScript benchmark run with the Web Inspector open.
+
+        We want the Web Inspector to be fast, and we want it to produce reliable
+        CPU and memory profiles. We can't do that if just opening the Web Inspector
+        incurs huge CPU/memory penalties like the arguments object.
+
+        Also, since use of the 'arguments' identifier is an API for allocating
+        an object, I think it's good for the UI to let developers know when
+        they've invoked that API and when they haven't.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): No need to allocate the
+        arguments object artificially for the debugger's sake. The activation
+        object no longer assumes that the stack frame is laid out for one.
+
+        (Long-term, this code will move out of the activation object, into a
+        special object for interfacing with the debugger.)
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::getOwnNonIndexPropertyNames):
+        (JSC::JSActivation::getOwnPropertySlot): Don't advertise or provide an
+        arguments object if the user function didn't include one. The bytecode
+        generator will not have laid out the stack frame to support one.
+
+        (Eventually, we do want the Web Inspector to see an arguments
+        object in scope in the console. That's a one-line change in JSActivation,
+        but it's blocked by https://bugs.webkit.org/show_bug.cgi?id=121208.)
+
+        (JSC::JSActivation::argumentsGetter):
+        * runtime/JSActivation.h: Removed this obsolete performance
+        work-around. C++ property access to an activation object is no longer
+        hot.
+
 2013-09-12  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rolling out r155632

@@ -225,7 +225,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 
     m_symbolTable->setCaptureStart(m_codeBlock->m_numVars);
 
-    if (functionBody->usesArguments() || codeBlock->usesEval() || m_shouldEmitDebugHooks) { // May reify arguments object.
+    if (functionBody->usesArguments() || codeBlock->usesEval()) { // May reify arguments object.
         RegisterID* unmodifiedArgumentsRegister = addVar(); // Anonymous, so it can't be modified by user code.
         RegisterID* argumentsRegister = addVar(propertyNames().arguments, false); // Can be changed by assigning to 'arguments'.
 
@@ -239,14 +239,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         emitInitLazyRegister(unmodifiedArgumentsRegister);
         
         if (shouldTearOffArgumentsEagerly()) {
-            emitOpcode(op_create_arguments);
-            instructions().append(argumentsRegister->index());
-        }
-
-        // The debugger currently retrieves the arguments object from an activation rather than pulling
-        // it from a call frame.  In the long-term it should stop doing that (<rdar://problem/6911886>),
-        // but for now we force eager creation of the arguments object when debugging.
-        if (m_shouldEmitDebugHooks) {
             emitOpcode(op_create_arguments);
             instructions().append(argumentsRegister->index());
         }

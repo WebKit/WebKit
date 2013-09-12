@@ -1,3 +1,19 @@
+2013-09-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Web Inspector shouldn't artificially allocate the arguments object in functions that don't use it
+        https://bugs.webkit.org/show_bug.cgi?id=121206
+
+        Reviewed by Joseph Pecoraro.
+        <rdar://problem/6911886>
+
+        * inspector/debugger/debugger-expand-scope-expected.txt: Updated these
+        results to reflect the fact that it's correct to exclude the 'arguments'
+        identifier from function scopes that don't use it.
+
+        * inspector/debugger/debugger-expand-scope.html: Edited this test to
+        include one frame that uses the 'arguments' identifier and one frame
+        that doesn't, so we test both cases.
+
 2013-09-12  Samuel White  <samuel_white@apple.com>
 
         <meter> element AXValue is listed as a writable value
