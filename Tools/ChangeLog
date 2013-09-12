@@ -1,3 +1,15 @@
+2013-09-12  Lucas Forschler  <lforschler@apple.com>
+
+        Create short build logs for errors and warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=120614
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+            -include StringIO 
+        (CompileWebKit.createSummary):
+            -add a createSummary function which will parse out errors and warnings into a concise log file for quick viewing
+
 2013-09-12  Roger Fong  <roger_fong@apple.com>
 
         Update cygwin downloader to search for packages in the right location.
