@@ -30,10 +30,16 @@ bool MarkedAllocator::isPagedOut(double deadline)
 inline void* MarkedAllocator::tryAllocateHelper(size_t bytes)
 {
     if (!m_freeList.head) {
+        if (m_currentBlock) {
+            ASSERT(m_currentBlock == m_blocksToSweep);
+            m_currentBlock->didConsumeFreeList();
+            m_blocksToSweep = m_currentBlock->next();
+        }
+
         for (MarkedBlock*& block = m_blocksToSweep; block; block = block->next()) {
             MarkedBlock::FreeList freeList = block->sweep(MarkedBlock::SweepToFreeList);
             if (!freeList.head) {
-                block->didConsumeFreeList();
+                block->didConsumeEmptyFreeList();
                 continue;
             }
 

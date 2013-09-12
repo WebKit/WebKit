@@ -1,3 +1,25 @@
+2013-09-12  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        MarkedBlocks shouldn't be put in Allocated state if they didn't produce a FreeList
+        https://bugs.webkit.org/show_bug.cgi?id=121236
+
+        Reviewed by Geoffrey Garen.
+
+        Right now, after a collection all MarkedBlocks are in the Marked block state. When lazy sweeping 
+        happens, if a block returns an empty free list after being swept, we call didConsumeFreeList(), 
+        which moves the block into the Allocated block state. This happens to both the block that was 
+        just being allocated out of (i.e. m_currentBlock) as well as any blocks who are completely full. 
+        We should distinguish between these two cases: m_currentBlock should transition to 
+        Allocated (because we were just allocating out of it) and any subsequent block that returns an 
+        empty free list should transition back to the Marked state. This will make the block state more 
+        consistent with the actual state the block is in, and it will also allow us to speed up moving 
+        all blocks to the Marked state during generational collection.
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::didConsumeEmptyFreeList):
+
 2013-09-12  Mark Lam  <mark.lam@apple.com>
 
         Change debug hooks to pass sourceID and position info via the DebuggerCallFrame.
