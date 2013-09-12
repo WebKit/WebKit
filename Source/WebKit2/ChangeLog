@@ -1,5 +1,19 @@
 2013-09-12  Anders Carlsson  <andersca@apple.com>
 
+        SharedBuffer::createNSData should return a RetainPtr<NSData>
+        https://bugs.webkit.org/show_bug.cgi?id=121237
+
+        Reviewed by Darin Adler.
+
+        Update for WebCore changes.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView writeSelectionToPasteboard:types:]):
+        (-[WKView _setPromisedData:WebCore::withFileName:withExtension:withTitle:withURL:withVisibleURL:withArchive:WebCore::forPasteboard:]):
+        (-[WKView namesOfPromisedFilesDroppedAtDestination:]):
+
+2013-09-12  Anders Carlsson  <andersca@apple.com>
+
         SharedBuffer::createCFData should return RetainPtr<CFDataRef>
         https://bugs.webkit.org/show_bug.cgi?id=121230
 

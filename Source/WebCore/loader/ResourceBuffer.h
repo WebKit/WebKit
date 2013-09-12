@@ -76,7 +76,7 @@ public:
     PassOwnPtr<PurgeableBuffer> releasePurgeableBuffer();
 
 #if PLATFORM(MAC)
-    NSData *createNSData();
+    SharedBuffer::NSDataRetainPtrWithoutImplicitConversionOperator createNSData();
 #endif
 #if USE(CF)
     RetainPtr<CFDataRef> createCFData();

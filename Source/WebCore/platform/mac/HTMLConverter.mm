@@ -803,7 +803,7 @@ static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
         if (flag && resource && mimeType == "text/html")
             notFound = YES;
         if (resource && !notFound) {
-            fileWrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[resource->data()->createNSData() autorelease]] autorelease];
+            fileWrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:resource->data()->createNSData().get()] autorelease];
             [fileWrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, mimeType)];
         }
     }
@@ -1731,7 +1731,7 @@ static NSFileWrapper *fileWrapperForURL(DocumentLoader *dataSource, NSURL *URL)
     
     RefPtr<ArchiveResource> resource = dataSource->subresource(URL);
     if (resource) {
-        NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[resource->data()->createNSData() autorelease]] autorelease];
+        NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:resource->data()->createNSData().get()] autorelease];
         NSString *filename = resource->response().suggestedFilename();
         if (!filename || ![filename length])
             filename = suggestedFilenameWithMIMEType(resource->url(), resource->mimeType());

@@ -1,3 +1,34 @@
+2013-09-12  Anders Carlsson  <andersca@apple.com>
+
+        SharedBuffer::createNSData should return a RetainPtr<NSData>
+        https://bugs.webkit.org/show_bug.cgi?id=121237
+
+        Reviewed by Darin Adler.
+
+        This makes memory management cleared and fixes a leak in PDFDocumentImage::createPDFDocument.
+        We use a RetainPtr subclass as a stopgap measure to prevent code that does [buffer->createNSData() autorelease]
+        from compiling and crashing due to the NSData object being overreleased.
+
+        * loader/ResourceBuffer.h:
+        * loader/mac/ResourceBuffer.mm:
+        (WebCore::ResourceBuffer::createNSData):
+        * platform/SharedBuffer.h:
+        (WebCore::SharedBuffer::NSDataRetainPtr::NSDataRetainPtr):
+        * platform/graphics/mac/PDFDocumentImageMac.mm:
+        (WebCore::PDFDocumentImage::createPDFDocument):
+        * platform/mac/HTMLConverter.mm:
+        (-[WebHTMLConverter _addAttachmentForElement:URL:needsParagraph:usePlaceholder:]):
+        (fileWrapperForURL):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::fileWrapper):
+        (WebCore::Pasteboard::read):
+        (WebCore::documentFragmentWithRTF):
+        (WebCore::fragmentFromWebArchive):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::setBufferForType):
+        * platform/mac/SharedBufferMac.mm:
+        (WebCore::SharedBuffer::createNSData):
+
 2013-09-12  Timothy Hatcher  <timothy@apple.com>
 
         Remove more Timeline stuff we don't use

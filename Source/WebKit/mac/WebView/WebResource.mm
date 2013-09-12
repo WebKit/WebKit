@@ -175,7 +175,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     
     if (resource) {
         if (resource->data())
-            data = [resource->data()->createNSData() autorelease];
+            data = resource->data()->createNSData().get();
         url = resource->url();
         mimeType = resource->mimeType();
         textEncoding = resource->textEncoding();
@@ -209,7 +209,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
         return nil;
     if (!_private->coreResource->data())
         return nil;
-    return [_private->coreResource->data()->createNSData() autorelease];
+    return [_private->coreResource->data()->createNSData().leakRef() autorelease];
 }
 
 - (NSURL *)URL

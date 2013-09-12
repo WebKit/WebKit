@@ -405,7 +405,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     RefPtr<ResourceBuffer> mainResourceData = toPrivate(_private)->loader->mainResourceData();
     if (!mainResourceData)
         return nil;
-    return [mainResourceData->createNSData() autorelease];
+    return [mainResourceData->createNSData().leakRef() autorelease];
 }
 
 - (id <WebDocumentRepresentation>)representation

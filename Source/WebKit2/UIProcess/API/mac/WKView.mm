@@ -661,7 +661,7 @@ WEBCORE_COMMAND(yankAndSelect)
             [pasteboard setString:_data->_page->stringSelectionForPasteboard() forType:NSStringPboardType];
         else {
             RefPtr<SharedBuffer> buffer = _data->_page->dataSelectionForPasteboard([types objectAtIndex:i]);
-            [pasteboard setData:buffer ? [buffer->createNSData() autorelease] : nil forType:[types objectAtIndex:i]];
+            [pasteboard setData:buffer ? buffer->createNSData().get() : nil forType:[types objectAtIndex:i]];
        }
     }
     return YES;
@@ -2791,7 +2791,7 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
     [pasteboard setPropertyList:[NSArray arrayWithObject:extension] forType:NSFilesPromisePboardType];
 
     if (archiveBuffer)
-        [pasteboard setData:[archiveBuffer->createNSData() autorelease] forType:PasteboardTypes::WebArchivePboardType];
+        [pasteboard setData:archiveBuffer->createNSData().get() forType:PasteboardTypes::WebArchivePboardType];
 
     _data->_promisedImage = image;
     _data->_promisedFilename = filename;
@@ -2859,9 +2859,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     RetainPtr<NSData> data;
     
     if (_data->_promisedImage) {
-        data = adoptNS(_data->_promisedImage->data()->createNSData());
+        data = _data->_promisedImage->data()->createNSData();
         wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
-        [wrapper.get() setPreferredFilename:_data->_promisedFilename];
+        [wrapper setPreferredFilename:_data->_promisedFilename];
     }
     
     if (!wrapper) {

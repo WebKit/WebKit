@@ -96,9 +96,9 @@ PassRefPtr<SharedBuffer> SharedBuffer::wrapNSData(NSData *nsData)
     return adoptRef(new SharedBuffer((CFDataRef)nsData));
 }
 
-NSData *SharedBuffer::createNSData()
+SharedBuffer::NSDataRetainPtrWithoutImplicitConversionOperator SharedBuffer::createNSData()
 {    
-    return [[WebCoreSharedBufferData alloc] initWithSharedBuffer:this];
+    return adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBuffer:this]);
 }
 
 RetainPtr<CFDataRef> SharedBuffer::createCFData()

@@ -136,7 +136,7 @@ long PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes)
 
 long PlatformPasteboard::setBufferForType(PassRefPtr<SharedBuffer> buffer, const String& pasteboardType)
 {
-    BOOL didWriteData = [m_pasteboard.get() setData:buffer ? [buffer->createNSData() autorelease] : nil forType:pasteboardType];
+    BOOL didWriteData = [m_pasteboard setData:buffer ? buffer->createNSData().get() : nil forType:pasteboardType];
     if (!didWriteData)
         return 0;
     return changeCount();

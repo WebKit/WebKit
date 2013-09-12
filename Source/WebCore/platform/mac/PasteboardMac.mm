@@ -227,9 +227,7 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
 
 static NSFileWrapper* fileWrapper(const PasteboardImage& pasteboardImage)
 {
-    NSData *data = pasteboardImage.resourceData->createNSData();
-    NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];
-    [data release];
+    NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:pasteboardImage.resourceData->createNSData().get()] autorelease];
     [wrapper setPreferredFilename:suggestedFilenameWithMIMEType(pasteboardImage.url.url, pasteboardImage.resourceMIMEType)];
     return wrapper;
 }
@@ -285,7 +283,7 @@ void Pasteboard::read(PasteboardPlainText& text)
     
     if (types.contains(String(NSRTFDPboardType))) {
         if (RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFDPboardType, m_pasteboardName)) {
-            if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTFD:[data->createNSData() autorelease] documentAttributes:NULL])) {
+            if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTFD:data->createNSData().get() documentAttributes:NULL])) {
                 text.plainText = [attributedString string];
                 return;
             }
@@ -294,7 +292,7 @@ void Pasteboard::read(PasteboardPlainText& text)
 
     if (types.contains(String(NSRTFPboardType))) {
         if (RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFPboardType, m_pasteboardName)) {
-            if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTF:[data->createNSData() autorelease] documentAttributes:NULL])) {
+            if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTF:data->createNSData().get() documentAttributes:NULL])) {
                 text.plainText = [attributedString string];
                 return;
             }
@@ -349,12 +347,12 @@ static PassRefPtr<DocumentFragment> documentFragmentWithRTF(Frame* frame, NSStri
     if (pasteboardType == NSRTFDPboardType) {
         RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFDPboardType, pastebordName);
         if (data)
-            string = [[NSAttributedString alloc] initWithRTFD:[data->createNSData() autorelease] documentAttributes:NULL];
+            string = [[NSAttributedString alloc] initWithRTFD:data->createNSData().get() documentAttributes:NULL];
     }
     if (string == nil) {
         RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFPboardType, pastebordName);
         if (data)
-            string = [[NSAttributedString alloc] initWithRTF:[data->createNSData() autorelease] documentAttributes:NULL];
+            string = [[NSAttributedString alloc] initWithRTF:data->createNSData().get() documentAttributes:NULL];
     }
     if (string == nil)
         return nil;
@@ -404,7 +402,7 @@ static PassRefPtr<DocumentFragment> fragmentFromWebArchive(Frame* frame, PassRef
         return 0;
 
     if (frame->loader().client().canShowMIMETypeAsHTML(MIMEType)) {
-        RetainPtr<NSString> markupString = adoptNS([[NSString alloc] initWithData:[mainResource->data()->createNSData() autorelease] encoding:NSUTF8StringEncoding]);
+        RetainPtr<NSString> markupString = adoptNS([[NSString alloc] initWithData:mainResource->data()->createNSData().get() encoding:NSUTF8StringEncoding]);
         // FIXME: seems poor form to do this as a side effect of getting a document fragment
         if (DocumentLoader* loader = frame->loader().documentLoader())
             loader->addAllArchiveResources(coreArchive.get());
