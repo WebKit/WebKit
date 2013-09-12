@@ -1,3 +1,13 @@
+2013-09-12  Vivek Galatage  <vivek.vg@samsung.com>
+
+        XMLSerializer.serializeToString() should throw exception for invalid node value.
+        https://bugs.webkit.org/show_bug.cgi?id=121209
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/xmlserializer-serialize-to-string-exception-expected.txt: Added.
+        * fast/dom/xmlserializer-serialize-to-string-exception.html: Added.
+
 2013-09-12  Zalan Bujtas  <zalan@apple.com>
 
         Crash in ScrollingStateStickyNode::updateConstraints

@@ -1,3 +1,21 @@
+2013-09-12  Vivek Galatage  <vivek.vg@samsung.com>
+
+        XMLSerializer.serializeToString() should throw exception for invalid node value.
+        https://bugs.webkit.org/show_bug.cgi?id=121209
+
+        Reviewed by Darin Adler.
+
+        FF and Opera 12 (pre blink/webkit) throw exception in case the node value is invalid.
+        Blink sends an empty string as the result of serializeToString operation with invalid node.
+        We should match with other browsers for throwing it as an exception.
+
+        Blink review URL: https://chromiumcodereview.appspot.com/23532055/
+
+        Test: fast/dom/xmlserializer-serialize-to-string-exception.html
+
+        * xml/XMLSerializer.cpp:
+        (WebCore::XMLSerializer::serializeToString):
+
 2013-09-12  Zalan Bujtas  <zalan@apple.com>
 
         Crash in ScrollingStateStickyNode::updateConstraints

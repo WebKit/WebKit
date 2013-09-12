@@ -27,10 +27,12 @@
 
 namespace WebCore {
 
-String XMLSerializer::serializeToString(Node* node, ExceptionCode&)
+String XMLSerializer::serializeToString(Node* node, ExceptionCode& ec)
 {
-    if (!node)
+    if (!node) {
+        ec = TypeError;
         return String();
+    }
     return createMarkup(node, IncludeNode, 0, DoNotResolveURLs, 0, XMLFragmentSerialization);
 }
 
