@@ -1,5 +1,23 @@
 2013-09-12  Zalan Bujtas  <zalan@apple.com>
 
+        Crash in ScrollingStateStickyNode::updateConstraints
+        https://bugs.webkit.org/show_bug.cgi?id=119638
+
+        Reviewed by Simon Fraser.
+
+        Ensure when a scrolling state node is removed from the state tree,
+        we remove both the current node and all its children from the
+        associated m_stateNodeMap lookup table.
+
+        Test: fast/css/sticky/multiple-layers-sticky-crash.html
+
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::removeChild):
+        (WebCore::ScrollingStateNode::willBeRemovedFromStateTree):
+        * page/scrolling/ScrollingStateNode.h:
+
+2013-09-12  Zalan Bujtas  <zalan@apple.com>
+
         REGRESSION (r132516): Javascript menu text incorrectly disappearing and reappearing
         https://bugs.webkit.org/show_bug.cgi?id=101047
 

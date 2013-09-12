@@ -102,7 +102,7 @@ void ScrollingStateNode::removeChild(ScrollingStateNode* node)
     // The index will be notFound if the node to remove is a deeper-than-1-level descendant or
     // if node is the root state node.
     if (index != notFound) {
-        m_scrollingStateTree->didRemoveNode(node->scrollingNodeID());
+        node->willBeRemovedFromStateTree();
         m_children->remove(index);
         return;
     }
@@ -110,6 +110,20 @@ void ScrollingStateNode::removeChild(ScrollingStateNode* node)
     size_t size = m_children->size();
     for (size_t i = 0; i < size; ++i)
         m_children->at(i)->removeChild(node);
+}
+
+void ScrollingStateNode::willBeRemovedFromStateTree()
+{
+    ASSERT(m_scrollingStateTree);
+
+    m_scrollingStateTree->didRemoveNode(scrollingNodeID());
+
+    if (!m_children)
+        return;
+
+    size_t size = m_children->size();
+    for (size_t i = 0; i < size; ++i)
+        m_children->at(i)->willBeRemovedFromStateTree();
 }
 
 void ScrollingStateNode::writeIndent(TextStream& ts, int indent)

@@ -101,6 +101,7 @@ private:
 
     virtual void dumpProperties(TextStream&, int indent) const = 0;
     ChangedProperties changedProperties() const { return m_changedProperties; }
+    void willBeRemovedFromStateTree();
 
     ScrollingNodeID m_nodeID;
     ChangedProperties m_changedProperties;
