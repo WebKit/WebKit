@@ -25,7 +25,6 @@ layer at (0,0) size 800x600
                               text run at (33,0) width 24: "inside"
                           RenderText {#text} at (0,0) size 0x0
                         RenderBlock (anonymous) at (2,14) size 90x0
-                          RenderText {#text} at (0,0) size 0x0
                 RenderBlock (anonymous) at (0,22) size 100x19
                   RenderText {#text} at (12,0) size 76x19
                     text run at (12,0) width 76: "outside table"

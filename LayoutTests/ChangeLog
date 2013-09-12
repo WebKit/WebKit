@@ -1,3 +1,44 @@
+2013-09-12  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebase after r155253.
+
+        * platform/qt-wk2/editing/style/style-boundary-005-expected.png: Added.
+        * platform/qt/editing/pasteboard/4989774-expected.png:
+        * platform/qt/editing/pasteboard/4989774-expected.txt:
+        * platform/qt/editing/pasteboard/paste-match-style-001-expected.png:
+        * platform/qt/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/qt/editing/selection/caret-ltr-2-expected.png:
+        * platform/qt/editing/selection/caret-ltr-2-expected.txt:
+        * platform/qt/editing/selection/caret-ltr-2-left-expected.png:
+        * platform/qt/editing/selection/caret-ltr-2-left-expected.txt:
+        * platform/qt/editing/selection/caret-ltr-expected.png:
+        * platform/qt/editing/selection/caret-ltr-expected.txt:
+        * platform/qt/editing/selection/caret-ltr-right-expected.png:
+        * platform/qt/editing/selection/caret-ltr-right-expected.txt:
+        * platform/qt/editing/selection/caret-rtl-2-expected.png:
+        * platform/qt/editing/selection/caret-rtl-2-expected.txt:
+        * platform/qt/editing/selection/caret-rtl-2-left-expected.png:
+        * platform/qt/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/qt/editing/selection/caret-rtl-expected.png:
+        * platform/qt/editing/selection/caret-rtl-expected.txt:
+        * platform/qt/editing/selection/caret-rtl-right-expected.png:
+        * platform/qt/editing/selection/caret-rtl-right-expected.txt:
+        * platform/qt/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/qt/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/qt/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png:
+        * platform/qt/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/qt/editing/style/style-boundary-005-expected.png:
+        * platform/qt/editing/style/style-boundary-005-expected.txt:
+        * platform/qt/fast/forms/formmove3-expected.txt:
+        * platform/qt/fast/forms/input-align-image-expected.png:
+        * platform/qt/fast/forms/input-align-image-expected.txt:
+        * platform/qt/fast/forms/preserveFormDuringResidualStyle-expected.png:
+        * platform/qt/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/qt/fast/invalid/003-expected.png:
+        * platform/qt/fast/invalid/003-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug647-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug647-expected.txt:
+
 2013-09-12  Vivek Galatage  <vivek.vg@samsung.com>
 
         XMLSerializer.serializeToString() should throw exception for invalid node value.
