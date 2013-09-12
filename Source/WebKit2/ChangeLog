@@ -1,3 +1,34 @@
+2013-09-12  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
+
+        Web Inspector: Do not try to parse incomplete HTTP requests
+        https://bugs.webkit.org/show_bug.cgi?id=121123
+
+        Reviewed by Darin Adler.
+
+        When working on a patch for bug #121121 I found an issue with the InspectorServer where it would try
+        to parse an HTTP message before receiving the full message and thus fail connecting with the
+        chromedevtools plugin.
+
+        What happens is that the WebSocketServerConnection receives buffers on
+        WebSocketServerConnection::didReceiveSocketStreamData and calls
+        WebSocketServerConnection::readHTTPMessage which then checks if we have a valid request by calling
+        HTTPRequest::parseHTTPRequestFromBuffer. If the request is valid it tries to parse the message and
+        clears the buffer, otherwise it continues adding data to the internal buffer until we have a valid
+        request.
+
+        The problem is that currently HTTPRequest::parseHTTPRequestFromBuffer considers the request as valid
+        before receiving the full message. To solve this we should make the method check if the request
+        headers end with a blank line otherwise we consider the request as invalid (see also
+        http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html).
+
+        * UIProcess/API/gtk/tests/TestInspectorServer.cpp:
+        (sendIncompleteRequest):
+        (beforeAll):
+        Add GTK specific test to check if the inspector server replies to incomplete requests.
+        * UIProcess/InspectorServer/HTTPRequest.cpp:
+        (WebKit::HTTPRequest::parseHeaders):
+        Do not consider request valid if headers didn't end with a blank line.
+
 2013-09-12  Anders Carlsson  <andersca@apple.com>
 
         SharedBuffer::createNSData should return a RetainPtr<NSData>
