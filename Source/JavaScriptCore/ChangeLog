@@ -1,5 +1,26 @@
 2013-09-12  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::GenerationInfo init/fill methods shouldn't duplicate a bunch of logic
+        https://bugs.webkit.org/show_bug.cgi?id=121253
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::initGPR):
+        (JSC::DFG::GenerationInfo::initInt32):
+        (JSC::DFG::GenerationInfo::initJSValue):
+        (JSC::DFG::GenerationInfo::initCell):
+        (JSC::DFG::GenerationInfo::initBoolean):
+        (JSC::DFG::GenerationInfo::initStorage):
+        (JSC::DFG::GenerationInfo::fillGPR):
+        (JSC::DFG::GenerationInfo::fillJSValue):
+        (JSC::DFG::GenerationInfo::fillCell):
+        (JSC::DFG::GenerationInfo::fillInt32):
+        (JSC::DFG::GenerationInfo::fillBoolean):
+        (JSC::DFG::GenerationInfo::fillStorage):
+
+2013-09-12  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix mispelling (Specualte -> Speculate) that I introduced in an
         earlier patch.
 

@@ -69,23 +69,9 @@ public:
         m_isConstant = true;
         ASSERT(m_useCount);
     }
-    void initInt32(Node* node, uint32_t useCount, GPRReg gpr)
+    void initGPR(Node* node, uint32_t useCount, GPRReg gpr, DataFormat format)
     {
-        m_node = node;
-        m_useCount = useCount;
-        m_registerFormat = DataFormatInt32;
-        m_spillFormat = DataFormatNone;
-        m_canFill = false;
-        u.gpr = gpr;
-        m_bornForOSR = false;
-        m_isConstant = false;
-        ASSERT(m_useCount);
-    }
-#if USE(JSVALUE64)
-    void initJSValue(Node* node, uint32_t useCount, GPRReg gpr, DataFormat format = DataFormatJS)
-    {
-        ASSERT(format & DataFormatJS);
-
+        ASSERT(gpr != InvalidGPRReg);
         m_node = node;
         m_useCount = useCount;
         m_registerFormat = format;
@@ -95,6 +81,16 @@ public:
         m_bornForOSR = false;
         m_isConstant = false;
         ASSERT(m_useCount);
+    }
+    void initInt32(Node* node, uint32_t useCount, GPRReg gpr)
+    {
+        initGPR(node, useCount, gpr, DataFormatInt32);
+    }
+#if USE(JSVALUE64)
+    void initJSValue(Node* node, uint32_t useCount, GPRReg gpr, DataFormat format = DataFormatJS)
+    {
+        ASSERT(format & DataFormatJS);
+        initGPR(node, useCount, gpr, format);
     }
 #elif USE(JSVALUE32_64)
     void initJSValue(Node* node, uint32_t useCount, GPRReg tagGPR, GPRReg payloadGPR, DataFormat format = DataFormatJS)
@@ -115,27 +111,11 @@ public:
 #endif
     void initCell(Node* node, uint32_t useCount, GPRReg gpr)
     {
-        m_node = node;
-        m_useCount = useCount;
-        m_registerFormat = DataFormatCell;
-        m_spillFormat = DataFormatNone;
-        m_canFill = false;
-        u.gpr = gpr;
-        m_bornForOSR = false;
-        m_isConstant = false;
-        ASSERT(m_useCount);
+        initGPR(node, useCount, gpr, DataFormatCell);
     }
     void initBoolean(Node* node, uint32_t useCount, GPRReg gpr)
     {
-        m_node = node;
-        m_useCount = useCount;
-        m_registerFormat = DataFormatBoolean;
-        m_spillFormat = DataFormatNone;
-        m_canFill = false;
-        u.gpr = gpr;
-        m_bornForOSR = false;
-        m_isConstant = false;
-        ASSERT(m_useCount);
+        initGPR(node, useCount, gpr, DataFormatBoolean);
     }
     void initDouble(Node* node, uint32_t useCount, FPRReg fpr)
     {
@@ -152,15 +132,7 @@ public:
     }
     void initStorage(Node* node, uint32_t useCount, GPRReg gpr)
     {
-        m_node = node;
-        m_useCount = useCount;
-        m_registerFormat = DataFormatStorage;
-        m_spillFormat = DataFormatNone;
-        m_canFill = false;
-        u.gpr = gpr;
-        m_bornForOSR = false;
-        m_isConstant = false;
-        ASSERT(m_useCount);
+        initGPR(node, useCount, gpr, DataFormatStorage);
     }
 
     // Get the node that produced this value.
@@ -304,6 +276,15 @@ public:
         m_spillFormat = DataFormatNone;
         m_canFill = false;
     }
+    
+    void fillGPR(VariableEventStream& stream, GPRReg gpr, DataFormat format)
+    {
+        ASSERT(gpr != InvalidGPRReg);
+        m_registerFormat = format;
+        u.gpr = gpr;
+        if (m_bornForOSR)
+            appendFill(Fill, stream);
+    }
 
     // Record that this value is filled into machine registers,
     // tracking which registers, and what format the value has.
@@ -311,11 +292,7 @@ public:
     void fillJSValue(VariableEventStream& stream, GPRReg gpr, DataFormat format = DataFormatJS)
     {
         ASSERT(format & DataFormatJS);
-        m_registerFormat = format;
-        u.gpr = gpr;
-        
-        if (m_bornForOSR)
-            appendFill(Fill, stream);
+        fillGPR(stream, gpr, format);
     }
 #elif USE(JSVALUE32_64)
     void fillJSValue(VariableEventStream& stream, GPRReg tagGPR, GPRReg payloadGPR, DataFormat format = DataFormatJS)
@@ -330,28 +307,16 @@ public:
     }
     void fillCell(VariableEventStream& stream, GPRReg gpr)
     {
-        m_registerFormat = DataFormatCell;
-        u.gpr = gpr;
-        
-        if (m_bornForOSR)
-            appendFill(Fill, stream);
+        fillGPR(stream, gpr, DataFormatCell);
     }
 #endif
     void fillInt32(VariableEventStream& stream, GPRReg gpr)
     {
-        m_registerFormat = DataFormatInt32;
-        u.gpr = gpr;
-        
-        if (m_bornForOSR)
-            appendFill(Fill, stream);
+        fillGPR(stream, gpr, DataFormatInt32);
     }
     void fillBoolean(VariableEventStream& stream, GPRReg gpr)
     {
-        m_registerFormat = DataFormatBoolean;
-        u.gpr = gpr;
-        
-        if (m_bornForOSR)
-            appendFill(Fill, stream);
+        fillGPR(stream, gpr, DataFormatBoolean);
     }
     void fillDouble(VariableEventStream& stream, FPRReg fpr)
     {
@@ -364,11 +329,7 @@ public:
     }
     void fillStorage(VariableEventStream& stream, GPRReg gpr)
     {
-        m_registerFormat = DataFormatStorage;
-        u.gpr = gpr;
-        
-        if (m_bornForOSR)
-            appendFill(Fill, stream);
+        fillGPR(stream, gpr, DataFormatStorage);
     }
 
     bool alive()
