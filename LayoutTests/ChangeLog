@@ -1,3 +1,15 @@
+2013-09-12  Renata Hodovan  <reni@webkit.org>
+
+        [Qt] SHOULD NEVER BE REACHED is touched WebCore::InputType::createStepRange
+        https://bugs.webkit.org/show_bug.cgi?id=121148
+
+        Reviewed by Kent Tamura.
+
+        Trying to render text input as slider-vertical. Expecting to run without crash.
+
+        * platform/qt/fast/forms/range/slider-crash-on-input.html: Added.
+        * platform/qt/platform/qt/fast/forms/range/slider-crash-on-input-expected.txt: Added.
+
 2013-09-12  Alexey Proskuryakov  <ap@apple.com>
 
         Canvas fillText and measureText handle ideographic spaces differently

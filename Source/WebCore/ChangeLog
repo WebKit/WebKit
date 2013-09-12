@@ -1,3 +1,18 @@
+2013-09-12  Renata Hodovan  <reni@webkit.org>
+
+        [Qt] SHOULD NEVER BE REACHED is touched WebCore::InputType::createStepRange
+        https://bugs.webkit.org/show_bug.cgi?id=121148
+
+        Reviewed by Kent Tamura.
+
+        Non-steppable input types must not rendered as slider even if its webkit-apperance style
+        property is set to slider-vertical/horizontal.
+
+        Test: platform/qt/fast/forms/range/slider-crash-on-input.html
+
+        * platform/qt/RenderThemeQStyle.cpp:
+        (WebCore::RenderThemeQStyle::paintSliderTrack):
+
 2013-09-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Qt and Windows build fix.

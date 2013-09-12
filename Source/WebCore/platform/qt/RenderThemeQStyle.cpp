@@ -433,7 +433,7 @@ bool RenderThemeQStyle::paintSliderTrack(RenderObject* o, const PaintInfo& pi, c
 
     // some styles need this to show a highlight on one side of the groove
     HTMLInputElement* slider = o->node()->toInputElement();
-    if (slider) {
+    if (slider && slider->isSteppable()) {
         p.styleOption.slider.upsideDown = (p.appearance == SliderHorizontalPart) && !o->style()->isLeftToRightDirection();
         // Use the width as a multiplier in case the slider values are <= 1
         const int width = r.width() > 0 ? r.width() : 100;
