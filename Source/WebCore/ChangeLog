@@ -1,3 +1,32 @@
+2013-09-12  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Remove unnecessarily complex template from ShapeInfo classes
+        https://bugs.webkit.org/show_bug.cgi?id=121213
+
+        Reviewed by Darin Adler.
+
+        These classes were trying to be way too clever, and as a result were
+        hard to read and hard to debug. Replace the complex templated method
+        calls with virtual methods to make these classes much easier to
+        understand and maintain.
+
+        No new tests, no behavior change.
+
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::::computedShape):
+        (WebCore::::computeSegmentsForLine):
+        * rendering/shapes/ShapeInfo.h:
+        * rendering/shapes/ShapeInsideInfo.cpp:
+        (WebCore::ShapeInsideInfo::getShapeValue):
+        * rendering/shapes/ShapeInsideInfo.h:
+        (WebCore::ShapeInsideInfo::computeSegmentsForLine):
+        (WebCore::ShapeInsideInfo::ShapeInsideInfo):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::computeSegmentsForLine):
+        (WebCore::ShapeOutsideInfo::getShapeValue):
+        * rendering/shapes/ShapeOutsideInfo.h:
+        (WebCore::ShapeOutsideInfo::ShapeOutsideInfo):
+
 2013-09-12  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Turn shape's logicalwidth/height into a LayoutSize

@@ -61,7 +61,7 @@ bool ShapeOutsideInfo::computeSegmentsForContainingBlockLine(LayoutUnit lineTop,
 bool ShapeOutsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
 {
     if (shapeSizeDirty() || m_lineTop != lineTop || m_lineHeight != lineHeight) {
-        if (ShapeInfo<RenderBox, &RenderStyle::shapeOutside, &Shape::getExcludedIntervals>::computeSegmentsForLine(lineTop, lineHeight)) {
+        if (ShapeInfo<RenderBox>::computeSegmentsForLine(lineTop, lineHeight)) {
             m_leftSegmentMarginBoxDelta = m_segments[0].logicalLeft + m_renderer->marginStart();
             m_rightSegmentMarginBoxDelta = m_segments[m_segments.size()-1].logicalRight - m_renderer->logicalWidth() - m_renderer->marginEnd();
         } else {
@@ -72,6 +72,11 @@ bool ShapeOutsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lin
     }
 
     return m_segments.size();
+}
+
+ShapeValue* ShapeOutsideInfo::shapeValue() const
+{
+    return m_renderer->style()->shapeOutside();
 }
 
 }

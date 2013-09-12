@@ -62,7 +62,7 @@ struct LineSegmentRange {
 
 typedef Vector<LineSegmentRange> SegmentRangeList;
 
-class ShapeInsideInfo : public ShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &Shape::getIncludedIntervals> {
+class ShapeInsideInfo FINAL : public ShapeInfo<RenderBlock> { 
 public:
     static PassOwnPtr<ShapeInsideInfo> createInfo(const RenderBlock* renderer) { return adoptPtr(new ShapeInsideInfo(renderer)); }
 
@@ -71,7 +71,7 @@ public:
     bool computeSegmentsForLine(LayoutSize lineOffset, LayoutUnit lineHeight)
     {
         m_segmentRanges.clear();
-        bool result = ShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &Shape::getIncludedIntervals>::computeSegmentsForLine(lineOffset.height(), lineHeight);
+        bool result = ShapeInfo<RenderBlock>::computeSegmentsForLine(lineOffset.height(), lineHeight);
         for (size_t i = 0; i < m_segments.size(); i++) {
             m_segments[i].logicalLeft -= lineOffset.width();
             m_segments[i].logicalRight -= lineOffset.width();
@@ -82,7 +82,7 @@ public:
     virtual bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) OVERRIDE
     {
         m_segmentRanges.clear();
-        return ShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &Shape::getIncludedIntervals>::computeSegmentsForLine(lineTop, lineHeight);
+        return ShapeInfo<RenderBlock>::computeSegmentsForLine(lineTop, lineHeight);
     }
 
     bool hasSegments() const
@@ -110,10 +110,15 @@ public:
 
 protected:
     virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape()->shapePaddingLogicalBoundingBox(); }
+    virtual ShapeValue* shapeValue() const OVERRIDE;
+    virtual void getIntervals(LayoutUnit lineTop, LayoutUnit lineHeight, SegmentList& segments) const OVERRIDE
+    {
+        return computedShape()->getIncludedIntervals(lineTop, lineHeight, segments);
+    }
 
 private:
     ShapeInsideInfo(const RenderBlock* renderer)
-    : ShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &Shape::getIncludedIntervals> (renderer)
+    : ShapeInfo<RenderBlock> (renderer)
     , m_needsLayout(false)
     { }
 

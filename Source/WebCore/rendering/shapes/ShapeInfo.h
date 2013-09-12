@@ -64,7 +64,7 @@ private:
     }
 };
 
-template<class RenderType, ShapeValue* (RenderStyle::*shapeGetter)() const, void (Shape::*intervalGetter)(LayoutUnit, LayoutUnit, SegmentList&) const>
+template<class RenderType>
 class ShapeInfo {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -109,6 +109,8 @@ protected:
 
     const Shape* computedShape() const;
     virtual LayoutRect computedShapeLogicalBoundingBox() const = 0;
+    virtual ShapeValue* shapeValue() const = 0;
+    virtual void getIntervals(LayoutUnit, LayoutUnit, SegmentList&) const = 0;
 
     LayoutUnit logicalTopOffset() const { return m_renderer->style()->boxSizing() == CONTENT_BOX ? m_renderer->borderAndPaddingBefore() : LayoutUnit(); };
     LayoutUnit logicalLeftOffset() const { return (m_renderer->style()->boxSizing() == CONTENT_BOX && !m_renderer->isRenderRegion()) ? m_renderer->borderAndPaddingStart() : LayoutUnit(); }

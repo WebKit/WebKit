@@ -76,5 +76,10 @@ bool ShapeInsideInfo::adjustLogicalLineTop(float minSegmentWidth)
     return false;
 }
 
+ShapeValue* ShapeInsideInfo::shapeValue() const
+{
+    return m_renderer->style()->resolvedShapeInside();
+}
+
 }
 #endif

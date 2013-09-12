@@ -39,7 +39,7 @@ namespace WebCore {
 
 class RenderBox;
 
-class ShapeOutsideInfo : public ShapeInfo<RenderBox, &RenderStyle::shapeOutside, &Shape::getExcludedIntervals>, public MappedInfo<RenderBox, ShapeOutsideInfo> {
+class ShapeOutsideInfo FINAL : public ShapeInfo<RenderBox>, public MappedInfo<RenderBox, ShapeOutsideInfo> {
 public:
     LayoutUnit leftSegmentMarginBoxDelta() const { return m_leftSegmentMarginBoxDelta; }
     LayoutUnit rightSegmentMarginBoxDelta() const { return m_rightSegmentMarginBoxDelta; }
@@ -52,9 +52,14 @@ public:
 
 protected:
     virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape()->shapeMarginLogicalBoundingBox(); }
+    virtual ShapeValue* shapeValue() const OVERRIDE;
+    virtual void getIntervals(LayoutUnit lineTop, LayoutUnit lineHeight, SegmentList& segments) const OVERRIDE
+    {
+        return computedShape()->getExcludedIntervals(lineTop, lineHeight, segments);
+    }
 
 private:
-    ShapeOutsideInfo(const RenderBox* renderer) : ShapeInfo<RenderBox, &RenderStyle::shapeOutside, &Shape::getExcludedIntervals>(renderer) { }
+    ShapeOutsideInfo(const RenderBox* renderer) : ShapeInfo<RenderBox>(renderer) { }
 
     LayoutUnit m_leftSegmentMarginBoxDelta;
     LayoutUnit m_rightSegmentMarginBoxDelta;
