@@ -315,8 +315,9 @@ protected:
     virtual void fixedLayoutSizeChanged();
 
     // These functions are used to create/destroy scrollbars.
-    void setHasHorizontalScrollbar(bool);
-    void setHasVerticalScrollbar(bool);
+    // They return true if the space taken up by the scrollbar changed.
+    bool setHasHorizontalScrollbar(bool);
+    bool setHasVerticalScrollbar(bool);
 
     virtual void updateScrollCorner();
     virtual void invalidateScrollCornerRect(const IntRect&) OVERRIDE;

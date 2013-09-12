@@ -1,3 +1,31 @@
+2013-09-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid extra scrollbar-related layouts for overlay scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=121267
+
+        Reviewed by Beth Dakin.
+
+        If ScrollView::updateScrollbars() detected that scrollbars were added
+        and removed, it would call contentsResized(), which calls setNeedsLayout(),
+        followed by visibleContentsResized() which would trigger layout. There is no
+        point doing this with overlay scrollbars, so avoid it by having 
+        setHas*Scrollbar() return true if the addition/removal of a scrollbar changed
+        the available width.
+        
+        No tests: we can't test overlay scrollbars in tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setContentsSize): Drive-by assertion that
+        checks that the unsigned m_deferSetNeedsLayouts doesn't wrap when
+        decremented.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setHasHorizontalScrollbar): Return true if the addition/removal
+        changed available space.
+        (WebCore::ScrollView::setHasVerticalScrollbar): Ditto.
+        (WebCore::ScrollView::updateScrollbars): Only set sendContentResizedNotification
+        if available space was changed by addition/removal of scrollbars.
+        * platform/ScrollView.h:
+
 2013-09-12  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Rename shapeContainingBlockHeight to shapeContainingBlockLogicalHeight

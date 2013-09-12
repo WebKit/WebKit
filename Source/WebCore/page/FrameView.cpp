@@ -581,6 +581,7 @@ void FrameView::setContentsSize(const IntSize& size)
 
     page->chrome().contentsSizeChanged(&frame(), size); // Notify only.
 
+    ASSERT(m_deferSetNeedsLayouts);
     m_deferSetNeedsLayouts--;
     
     if (!m_deferSetNeedsLayouts)

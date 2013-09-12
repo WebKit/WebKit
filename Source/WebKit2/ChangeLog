@@ -1,3 +1,16 @@
+2013-09-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid extra scrollbar-related layouts for overlay scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=121267
+
+        Reviewed by Beth Dakin.
+        
+        view->resize() will call setNeedsLayout() if necessary, and may already have
+        done layout, so the extra setNeedsLayout() here was bad.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setSize):
+
 2013-09-12  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
 
         Web Inspector: Do not try to parse incomplete HTTP requests

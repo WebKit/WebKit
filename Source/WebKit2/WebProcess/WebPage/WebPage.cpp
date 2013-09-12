@@ -1068,7 +1068,6 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
 
     FrameView* view = m_page->mainFrame().view();
     view->resize(viewSize);
-    view->setNeedsLayout();
     m_drawingArea->setNeedsDisplay();
     
     m_viewSize = viewSize;
