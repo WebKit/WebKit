@@ -1,3 +1,31 @@
+2013-09-12  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        CSS Unit vw in border-width maps to 0px.
+        https://bugs.webkit.org/show_bug.cgi?id=109229
+
+        Reviewed by Darin Adler.
+
+        Border and outline properties were not applied incase
+        its values were given in vh/vw units.
+
+        Tests: fast/css/viewport-height-border.html
+               fast/css/viewport-height-outline.html
+               fast/css/viewport-width-border.html
+               fast/css/viewport-width-outline.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        Added case CSS_VH and CSS_VW. 
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isViewportPercentageWidth):
+        (WebCore::CSSPrimitiveValue::isViewportPercentageHeight):
+        Added APIs to check the unit type(CSS_VW and CSS_VH). 
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyComputeLength::applyValue):
+        Calculating the border values which has been specified
+        in vh/vw units.The vh/vw units are calcultated as percent
+        of viewport height and viewport width respectively.
+
 2013-09-12  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Coordinated Graphics] Fix the build on MacOS 10.9

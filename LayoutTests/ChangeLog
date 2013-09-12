@@ -1,3 +1,25 @@
+2013-09-12  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        CSS Unit vw in border-width maps to 0px.
+        https://bugs.webkit.org/show_bug.cgi?id=109229
+
+        Reviewed by Darin Adler.
+
+        * fast/css/viewport-height-border-expected.txt: Added.
+        * fast/css/viewport-height-border.html: Added.
+        * fast/css/viewport-height-outline-expected.txt: Added.
+        * fast/css/viewport-height-outline.html: Added.
+        * fast/css/viewport-width-border-expected.txt: Added.
+        * fast/css/viewport-width-border.html: Added.
+        * fast/css/viewport-width-outline-expected.txt: Added.
+        * fast/css/viewport-width-outline.html: Added.
+        Added new tests for verifying that border and outline properties are
+        applied when its values are given in vh/vw units.
+        * resources/js-test-pre.js:
+        (shouldNotBeEqualToString):
+        Added this API so that can compare two strings.Similiar to 
+        shouldBeEqualToString.
+
 2013-09-12  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Changed expected results after turning on WTF_USE_TILED_BACKING_STORE (r133898)

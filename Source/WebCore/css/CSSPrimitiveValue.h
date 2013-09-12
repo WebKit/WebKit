@@ -202,6 +202,8 @@ public:
     bool isVariableName() const { return primitiveType() == CSS_VARIABLE_NAME; }
 #endif
     bool isViewportPercentageLength() const { return m_primitiveUnitType >= CSS_VW && m_primitiveUnitType <= CSS_VMAX; }
+    bool isViewportPercentageWidth() const { return m_primitiveUnitType == CSS_VW; }
+    bool isViewportPercentageHeight() const { return m_primitiveUnitType == CSS_VH; }
     bool isValueID() const { return m_primitiveUnitType == CSS_VALUE_ID; }
     
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(CSSValueID valueID) { return adoptRef(new CSSPrimitiveValue(valueID)); }

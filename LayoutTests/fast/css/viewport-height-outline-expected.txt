@@ -1,0 +1,10 @@
+Tests that vh unit works for outline-width property
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getComputedStyle(document.getElementById('borderDiv'),null).getPropertyValue('outline-width') is not "0px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

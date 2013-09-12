@@ -31,6 +31,7 @@
 #include "CSSAspectRatioValue.h"
 #include "CSSCalculationValue.h"
 #include "CSSCursorImageValue.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSToStyleMap.h"
 #include "CSSValueList.h"
@@ -614,7 +615,10 @@ public:
                 if (originalLength >= 1.0)
                     length = 1.0;
             }
-
+            if (primitiveValue->isViewportPercentageHeight())
+                length = styleResolver->document().renderView()->viewportSize().height() * length / 100.0f;
+            else if (primitiveValue->isViewportPercentageWidth())
+                length = styleResolver->document().renderView()->viewportSize().width() * length / 100.0f;
         } else {
             ASSERT_NOT_REACHED();
             length = 0;
