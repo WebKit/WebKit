@@ -78,7 +78,7 @@ required_packages = frozenset(["apache",
 
 print "Using Cygwin mirror server " + package_mirror_url + " to download setup.ini..."
 
-urllib.urlretrieve(package_mirror_url + "setup.ini", "setup.ini.orig")
+urllib.urlretrieve(package_mirror_url + "x86/setup.ini", "setup.ini.orig")
 
 downloaded_packages_file_path = "setup.ini.orig"
 downloaded_packages_file = file(downloaded_packages_file_path, "r")

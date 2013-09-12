@@ -1,3 +1,10 @@
+2013-09-12  Roger Fong  <roger_fong@apple.com>
+
+        Update cygwin downloader to search for packages in the right location.
+
+        * CygwinDownloader/cygwin-downloader.py:
+        * CygwinDownloader/cygwin-downloader.zip:
+
 2013-09-12  Anders Carlsson  <andersca@apple.com>
 
         Add rudimentary support for move-only types as values in HashMap
