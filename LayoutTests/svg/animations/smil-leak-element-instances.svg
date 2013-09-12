@@ -32,21 +32,6 @@ function createAnimatedRectInstance() {
     return use;
 }
 
-function cleanup() {
-    while (g.hasChildNodes())
-        g.removeChild(g.lastChild);
-
-    GCController.collect();
-
-    var liveDelta = window.internals.numberOfLiveNodes() - originalLiveElements;
-    if (liveDelta == 0)
-        log("PASS");
-    else
-        log("FAIL: " + liveDelta + " extra live node(s)");
-
-    testRunner.notifyDone();
-}
-
 function startTest() {
     // Collect garbage before recording starting live node count, in case there are live elements from previous tests.
     GCController.collect();
@@ -58,7 +43,26 @@ function startTest() {
     for (var i = 0; i < 100; i++)
         g.appendChild(createAnimatedRectInstance());
 
-    setTimeout(cleanup, 0);
+    setTimeout(continueTest, 0);
+}
+
+function continueTest() {
+    while (g.hasChildNodes())
+        g.removeChild(g.lastChild);
+
+    setTimeout(finishTest, 0);
+}
+
+function finishTest() {
+    GCController.collect();
+
+    var liveDelta = window.internals.numberOfLiveNodes() - originalLiveElements;
+    if (liveDelta == 0)
+        log("PASS");
+    else
+        log("FAIL: " + liveDelta + " extra live node(s)");
+
+    testRunner.notifyDone();
 }
 
 function load() {

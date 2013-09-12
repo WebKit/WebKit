@@ -1,5 +1,22 @@
 2013-09-12  Alexey Proskuryakov  <ap@apple.com>
 
+        svg/animations/smil-leak-*.svg tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=114280
+
+        Reviewed by Tim Horton.
+
+        Moved garbage collection out of the function that touches nodes to be collected,
+        making sure that they are definitely not on the stack.
+
+        I could not reproduce locally, so this is a speculative fix.
+
+        * svg/animations/smil-leak-dynamically-added-element-instances.svg:
+        * svg/animations/smil-leak-element-instances-noBaseValRef.svg:
+        * svg/animations/smil-leak-element-instances.svg:
+        * svg/animations/smil-leak-elements.svg:
+
+2013-09-12  Alexey Proskuryakov  <ap@apple.com>
+
         Flaky Test: plugins/mouse-events.html
         https://bugs.webkit.org/show_bug.cgi?id=116665
 

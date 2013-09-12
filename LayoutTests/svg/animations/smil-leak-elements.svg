@@ -30,10 +30,25 @@ function createAnimatedRect() {
     return rect;
 }
 
-function cleanup() {
+function startTest() {
+    // Collect garbage before recording starting live node count, in case there are live elements from previous tests.
+    GCController.collect();
+    originalLiveElements = window.internals.numberOfLiveNodes();
+
+    for (var i = 0; i < 100; i++)
+        g.appendChild(createAnimatedRect());
+
+    setTimeout(continueTest, 0);
+}
+
+function continueTest() {
     while (g.hasChildNodes())
         g.removeChild(g.lastChild);
 
+    setTimeout(finishTest, 0);
+}
+
+function finishTest() {
     GCController.collect();
 
     var liveDelta = window.internals.numberOfLiveNodes() - originalLiveElements;
@@ -43,17 +58,6 @@ function cleanup() {
         log("FAIL: " + liveDelta + " extra live node(s)");
 
     testRunner.notifyDone();
-}
-
-function startTest() {
-    // Collect garbage before recording starting live node count, in case there are live elements from previous tests.
-    GCController.collect();
-    originalLiveElements = window.internals.numberOfLiveNodes();
-
-    for (var i = 0; i < 100; i++)
-        g.appendChild(createAnimatedRect());
-
-    setTimeout(cleanup, 0);
 }
 
 function load() {
