@@ -33,6 +33,7 @@ from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.base import Port
 from webkitpy.port.pulseaudio_sanitizer import PulseAudioSanitizer
 from webkitpy.port.xvfbdriver import XvfbDriver
+from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
 
 
 class EflPort(Port):
@@ -144,3 +145,6 @@ class EflPort(Port):
             command.append("--no-webkit2")
         command.append(super(EflPort, self).make_args())
         return command
+
+    def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
+        return GDBCrashLogGenerator(name, pid, newer_than, self._filesystem, self._path_to_driver).generate_crash_log(stdout, stderr)

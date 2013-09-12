@@ -77,3 +77,7 @@ class EflPortTest(port_testcase.PortTestCase):
         self.assertEqual(port.run_python_unittests_command(), Port.script_shell_command("test-webkitpy"))
         self.assertEqual(port.run_perl_unittests_command(), Port.script_shell_command("test-webkitperl"))
         self.assertEqual(port.run_bindings_tests_command(), Port.script_shell_command("run-bindings-tests"))
+
+    def test_get_crash_log(self):
+        # This function tested in linux_get_crash_log_unittest.py
+        pass

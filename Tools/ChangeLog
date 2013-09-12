@@ -1,3 +1,41 @@
+2013-09-12  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        Auto GDB backtrace generation for EFL/GTK/Qt bots.
+        https://bugs.webkit.org/show_bug.cgi?id=119338
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/port/efl.py:
+        (EflPort.check_sys_deps):
+        (EflPort):
+        (EflPort._get_crash_log):
+        * Scripts/webkitpy/port/efl_unittest.py:
+        (EflPortTest.test_show_results_html_file):
+        (EflPortTest):
+        (EflPortTest.test_get_crash_log):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._get_crash_log):
+        * Scripts/webkitpy/port/gtk_unittest.py:
+        (GtkPortTest.test_get_crash_log):
+        * Scripts/webkitpy/port/linux_get_crash_log.py: Added.
+        (GDBCrashLogGenerator):
+        (GDBCrashLogGenerator.__init__):
+        (GDBCrashLogGenerator._get_gdb_output):
+        (GDBCrashLogGenerator.generate_crash_log):
+        (GDBCrashLogGenerator.generate_crash_log.match_filename):
+        * Scripts/webkitpy/port/linux_get_crash_log_unittest.py: Added.
+        (GDBCrashLogGeneratorTest):
+        (GDBCrashLogGeneratorTest.test_generate_crash_log):
+        (_mock_gdb_output):
+        * Scripts/webkitpy/port/qt.py:
+        (QtPort.default_child_processes):
+        (QtPort):
+        (QtPort._get_crash_log):
+        * Scripts/webkitpy/port/qt_unittest.py:
+        (QtPortTest.test_check_sys_deps):
+        (QtPortTest):
+        (QtPortTest.test_get_crash_log):
+
 2013-09-12  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         Unreviewed. Moving myself to the commiters list.

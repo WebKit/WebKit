@@ -39,6 +39,7 @@ from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.base import Port
 from webkitpy.port.xvfbdriver import XvfbDriver
+from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
 
 _log = logging.getLogger(__name__)
 
@@ -203,3 +204,6 @@ class QtPort(Port):
         if self.get_option('webkit_test_runner'):
             command.append("-2")
         return command
+
+    def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
+        return GDBCrashLogGenerator(name, pid, newer_than, self._filesystem, self._path_to_driver).generate_crash_log(stdout, stderr)

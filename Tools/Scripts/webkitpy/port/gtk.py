@@ -37,6 +37,7 @@ from webkitpy.port.base import Port
 from webkitpy.port.pulseaudio_sanitizer import PulseAudioSanitizer
 from webkitpy.port.xvfbdriver import XvfbDriver
 from webkitpy.port.westondriver import WestonDriver
+from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
 
 
 class GtkPort(Port):
@@ -172,53 +173,8 @@ class GtkPort(Port):
     def check_sys_deps(self, needs_http):
         return super(GtkPort, self).check_sys_deps(needs_http) and self._driver_class().check_driver(self)
 
-    def _get_gdb_output(self, coredump_path):
-        cmd = ['gdb', '-ex', 'thread apply all bt 1024', '--batch', str(self._path_to_driver()), coredump_path]
-        proc = subprocess.Popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = proc.communicate()
-        errors = [l.strip().decode('utf8', 'ignore') for l in stderr.splitlines()]
-        return (stdout.decode('utf8', 'ignore'), errors)
-
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
-        pid_representation = str(pid or '<unknown>')
-        log_directory = os.environ.get("WEBKIT_CORE_DUMPS_DIRECTORY")
-        errors = []
-        crash_log = ''
-        expected_crash_dump_filename = "core-pid_%s-_-process_%s" % (pid_representation, name)
-
-        def match_filename(filesystem, directory, filename):
-            if pid:
-                return filename == expected_crash_dump_filename
-            return filename.find(name) > -1
-
-        if log_directory:
-            dumps = self._filesystem.files_under(log_directory, file_filter=match_filename)
-            if dumps:
-                # Get the most recent coredump matching the pid and/or process name.
-                coredump_path = list(reversed(sorted(dumps)))[0]
-                if not newer_than or self._filesystem.mtime(coredump_path) > newer_than:
-                    crash_log, errors = self._get_gdb_output(coredump_path)
-
-        stderr_lines = errors + (stderr or '<empty>').decode('utf8', 'ignore').splitlines()
-        errors_str = '\n'.join(('STDERR: ' + l) for l in stderr_lines)
-        if not crash_log:
-            if not log_directory:
-                log_directory = "/path/to/coredumps"
-            core_pattern = os.path.join(log_directory, "core-pid_%p-_-process_%e")
-            crash_log = """\
-Coredump %(expected_crash_dump_filename)s not found. To enable crash logs:
-
-- run this command as super-user: echo "%(core_pattern)s" > /proc/sys/kernel/core_pattern
-- enable core dumps: ulimit -c unlimited
-- set the WEBKIT_CORE_DUMPS_DIRECTORY environment variable: export WEBKIT_CORE_DUMPS_DIRECTORY=%(log_directory)s
-
-""" % locals()
-
-        return (stderr, """\
-Crash log for %(name)s (pid %(pid_representation)s):
-
-%(crash_log)s
-%(errors_str)s""" % locals())
+        return GDBCrashLogGenerator(name, pid, newer_than, self._filesystem, self._path_to_driver).generate_crash_log(stdout, stderr)
 
     def build_webkit_command(self, build_style=None):
         command = super(GtkPort, self).build_webkit_command(build_style)

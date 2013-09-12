@@ -83,32 +83,8 @@ class GtkPortTest(port_testcase.PortTestCase):
         self.assertEqual(self.make_port(options=MockOptions(configuration='Debug')).default_timeout_ms(), 12000)
 
     def test_get_crash_log(self):
-        core_directory = os.environ.get('WEBKIT_CORE_DUMPS_DIRECTORY', '/path/to/coredumps')
-        core_pattern = os.path.join(core_directory, "core-pid_%p-_-process_%e")
-        mock_empty_crash_log = """\
-Crash log for DumpRenderTree (pid 28529):
-
-Coredump core-pid_28529-_-process_DumpRenderTree not found. To enable crash logs:
-
-- run this command as super-user: echo "%(core_pattern)s" > /proc/sys/kernel/core_pattern
-- enable core dumps: ulimit -c unlimited
-- set the WEBKIT_CORE_DUMPS_DIRECTORY environment variable: export WEBKIT_CORE_DUMPS_DIRECTORY=%(core_directory)s
-
-
-STDERR: <empty>""" % locals()
-
-        def _mock_gdb_output(coredump_path):
-            return (mock_empty_crash_log, [])
-
-        port = self.make_port()
-        port._get_gdb_output = mock_empty_crash_log
-        stderr, log = port._get_crash_log("DumpRenderTree", 28529, "", "", newer_than=None)
-        self.assertEqual(stderr, "")
-        self.assertMultiLineEqual(log, mock_empty_crash_log)
-
-        stderr, log = port._get_crash_log("DumpRenderTree", 28529, "", "", newer_than=0.0)
-        self.assertEqual(stderr, "")
-        self.assertMultiLineEqual(log, mock_empty_crash_log)
+        # This function tested in linux_get_crash_log_unittest.py
+        pass
 
     def test_commands(self):
         port = self.make_port(port_name="gtk")
