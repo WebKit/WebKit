@@ -290,7 +290,7 @@ CodeMirror.extendMode("javascript", {
     }
 });
 
-CodeMirror.extendMode("css-base", {
+CodeMirror.extendMode("css", {
     shouldHaveSpaceBeforeToken: function(lastToken, lastContent, token, state, content, isComment)
     {
         if (!token) {

@@ -185,7 +185,7 @@ WebInspector.TextEditor.prototype = {
     {
         const supportedModes = {
             "javascript": true,
-            "css-base": true,
+            "css": true,
         };
 
         var mode = this._codeMirror.getMode();

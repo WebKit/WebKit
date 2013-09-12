@@ -550,7 +550,7 @@ WebInspector.DebuggerManager.prototype = {
         function didRemoveBreakpoint(error)
         {
             if (error)
-                console.log(error);
+                console.error(error);
 
             delete this._breakpointIdMap[breakpoint.id];
 

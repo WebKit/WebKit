@@ -1,5 +1,35 @@
 2013-09-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Update CodeMirror for gutter fix
+        https://bugs.webkit.org/show_bug.cgi?id=121262
+
+        Update CodeMirror to 757944449 to fix gutter click issue:
+        <https://github.com/marijnh/CodeMirror/issues/1807>
+
+        Reviewed by Timothy Hatcher.
+
+        * Tools/PrettyPrinting/CodeMirrorFormatters.js:
+        * Tools/PrettyPrinting/FormatterContentBuilder.js:
+        (FormatterContentBuilder.prototype._appendIndent):
+        * Tools/PrettyPrinting/codemirror.css:
+        * Tools/PrettyPrinting/codemirror.js:
+        * Tools/PrettyPrinting/css.js:
+        * UserInterface/CodeMirrorAdditions.js:
+        * UserInterface/CodeMirrorFormatters.js:
+        * UserInterface/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.didRemoveBreakpoint):
+        (WebInspector.DebuggerManager.prototype._removeBreakpoint):
+        * UserInterface/External/CodeMirror/codemirror.css:
+        * UserInterface/External/CodeMirror/codemirror.js:
+        * UserInterface/External/CodeMirror/coffeescript.js:
+        * UserInterface/External/CodeMirror/css.js:
+        * UserInterface/External/CodeMirror/less.js:
+        * UserInterface/External/CodeMirror/sql.js:
+        * UserInterface/TextEditor.js:
+        (WebInspector.TextEditor.prototype.hasFormatter):
+
+2013-09-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Update License copyrights in minified JavaScript
         https://bugs.webkit.org/show_bug.cgi?id=121264
 

@@ -240,12 +240,12 @@
         return state;
     }
 
-    CodeMirror.extendMode("css-base", {token: extendedCSSToken, alternateName: "css"});
+    CodeMirror.extendMode("css", {token: extendedCSSToken});
     CodeMirror.extendMode("xml", {token: extendedXMLToken});
     CodeMirror.extendMode("javascript", {token: extendedToken});
 
     CodeMirror.defineMode("css-rule", CodeMirror.modes.css);
-    CodeMirror.extendMode("css-rule", {startState: extendedCSSRuleStartState});
+    CodeMirror.extendMode("css-rule", {token: extendedCSSToken, startState: extendedCSSRuleStartState, alternateName: "css"});
 
     CodeMirror.defineExtension("hasLineClass", function(line, where, className) {
         // This matches the arguments to addLineClass and removeLineClass.
