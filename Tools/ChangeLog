@@ -1,5 +1,11 @@
 2013-09-11  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix GCC builds.
+
+        * TestWebKitAPI/Tests/WTF/MoveOnly.h:
+
+2013-09-11  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the build.
 
         Move MoveOnly.h to Tests/WTF and fix the broken Xcode project that caused me to add the header

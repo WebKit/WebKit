@@ -71,12 +71,13 @@ private:
     unsigned m_value;
 };
 
+namespace WTF {
+
 template<> struct HashTraits<MoveOnly> : public GenericHashTraits<MoveOnly> {
     static void constructDeletedValue(MoveOnly& slot) { slot = MoveOnly(std::numeric_limits<unsigned>::max()); }
     static bool isDeletedValue(const MoveOnly& slot) { return slot.value() == std::numeric_limits<unsigned>::max(); }
 };
 
-namespace WTF {
 template<> struct DefaultHash<MoveOnly> {
     struct Hash {
         static unsigned hash(const MoveOnly& key)
