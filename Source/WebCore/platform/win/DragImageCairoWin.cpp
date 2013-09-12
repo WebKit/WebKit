@@ -30,6 +30,7 @@
 #include "CachedImage.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextPlatformPrivateCairo.h"
+#include "HWndDC.h"
 #include "Image.h"
 #include <cairo-win32.h>
 #include <windows.h>

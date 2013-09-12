@@ -29,6 +29,7 @@
 #include "config.h"
 #include "GlyphPageTreeNode.h"
 
+#include "HWndDC.h"
 #include "SimpleFontData.h"
 
 namespace WebCore {
