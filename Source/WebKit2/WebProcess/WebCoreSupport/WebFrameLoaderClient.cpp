@@ -1184,7 +1184,6 @@ void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)
 
 void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
 {
-    m_frameCameFromPageCache = true;
 }
 
 void WebFrameLoaderClient::transitionToCommittedForNewPage()
@@ -1240,6 +1239,7 @@ void WebFrameLoaderClient::didSaveToPageCache()
 
 void WebFrameLoaderClient::didRestoreFromPageCache()
 {
+    m_frameCameFromPageCache = true;
 }
 
 void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool value)

@@ -1,3 +1,21 @@
+2013-09-12  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION: Inline PDF that are cached fail to appear in iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=75449
+
+        Reviewed by Darin Adler.
+
+        Make sure 'frame is from page cache' flag is set for subframes too.
+
+        WebFrameLoaderClient::m_frameCameFromPageCache == true forces plugins
+        to be loaded manually. It ensures that the plugin raw data is fetched again
+        while the containing frame is being restored from the page cache.
+        (Plugins get destroyed when the frame goes to page cache.)
+
+        * fast/history/history-back-while-pdf-in-pagecache-expected.html: Added.
+        * fast/history/history-back-while-pdf-in-pagecache.html: Added.
+        * fast/history/resources/history-back-for-pfd-test.html: Added.
+
 2013-09-12  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebase after r155253.

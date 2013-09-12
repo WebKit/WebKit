@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function runTest() {
+        setTimeout(function () {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 200);
+    }
+</script>
+</head>
+<body onload='runTest();'>
+    <!-- This tests if plugins from page cache show up after history navigation. -->
+    <iframe src='../images/resources/green_rectangle.pdf'></iframe>
+</body>
+</html>

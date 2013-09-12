@@ -1,3 +1,23 @@
+2013-09-12  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION: Inline PDF that are cached fail to appear in iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=75449
+
+        Reviewed by Darin Adler.
+
+        Make sure 'frame is from page cache' flag is set for subframes too.
+
+        WebFrameLoaderClient::m_frameCameFromPageCache == true forces plugins
+        to be loaded manually. It ensures that the plugin raw data is fetched again
+        while the containing frame is being restored from the page cache.
+        (Plugins get destroyed when the frame goes to page cache.)
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedFromCachedFrame):
+        This gets called only on the frame where the actual history navigation happens.
+        (WebKit::WebFrameLoaderClient::didRestoreFromPageCache):
+        This gets called for all the restored frames.
+
 2013-09-11  Simon Fraser  <simon.fraser@apple.com>
 
         Make sure that layout is up-to-date when moving a WKView into a window, to avoid !needsLayout() assertions in RenderView::paint()
