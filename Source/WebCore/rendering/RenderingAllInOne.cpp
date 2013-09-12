@@ -42,7 +42,6 @@
 #include "LayoutRepainter.cpp"
 #include "LayoutState.cpp"
 #include "PointerEventsHitRules.cpp"
-#include "RenderApplet.cpp"
 #include "RenderArena.cpp"
 #include "RenderBR.cpp"
 #include "RenderBlock.cpp"

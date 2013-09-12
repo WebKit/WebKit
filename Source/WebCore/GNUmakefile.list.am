@@ -4369,8 +4369,6 @@ webcore_sources += \
 	Source/WebCore/rendering/PointerEventsHitRules.cpp \
 	Source/WebCore/rendering/PointerEventsHitRules.h \
 	Source/WebCore/rendering/RegionOversetState.h \
-	Source/WebCore/rendering/RenderApplet.cpp \
-	Source/WebCore/rendering/RenderApplet.h \
 	Source/WebCore/rendering/RenderArena.cpp \
 	Source/WebCore/rendering/RenderArena.h \
 	Source/WebCore/rendering/RenderBlock.cpp \

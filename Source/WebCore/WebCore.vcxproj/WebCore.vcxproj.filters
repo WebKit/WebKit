@@ -2484,9 +2484,6 @@
     <ClCompile Include="..\rendering\PointerEventsHitRules.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\RenderApplet.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
     <ClCompile Include="..\rendering\RenderArena.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
@@ -9478,9 +9475,6 @@
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\PointerEventsHitRules.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\RenderApplet.h">
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\RenderArena.h">

@@ -1150,7 +1150,6 @@ SOURCES += \
     rendering/LayoutState.cpp \
     rendering/LayoutRepainter.cpp \
     rendering/LineWidth.cpp \
-    rendering/RenderApplet.cpp \
     rendering/RenderArena.cpp \
     rendering/RenderBlock.cpp \
     rendering/RenderBlockFlow.cpp \
@@ -2422,7 +2421,6 @@ HEADERS += \
     rendering/PaintPhase.h \
     rendering/PointerEventsHitRules.h \
     rendering/RegionOversetState.h \
-    rendering/RenderApplet.h \
     rendering/RenderArena.h \
     rendering/RenderBlock.h \
     rendering/RenderBox.h \

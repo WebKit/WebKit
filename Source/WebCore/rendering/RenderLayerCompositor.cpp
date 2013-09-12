@@ -45,7 +45,6 @@
 #include "Logging.h"
 #include "NodeList.h"
 #include "Page.h"
-#include "RenderApplet.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFullScreen.h"
 #include "RenderGeometryMap.h"

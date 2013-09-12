@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "GraphicsContext.h"
+#include "HTMLAppletElement.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
@@ -116,6 +117,13 @@ RenderEmbeddedObject::~RenderEmbeddedObject()
 {
     if (frameView())
         frameView()->removeEmbeddedObjectToUpdate(*this);
+}
+
+RenderEmbeddedObject* RenderEmbeddedObject::createForApplet(HTMLAppletElement& applet)
+{
+    RenderEmbeddedObject* renderer = new (applet.document().renderArena()) RenderEmbeddedObject(&applet);
+    renderer->setInline(true);
+    return renderer;
 }
 
 #if USE(ACCELERATED_COMPOSITING)

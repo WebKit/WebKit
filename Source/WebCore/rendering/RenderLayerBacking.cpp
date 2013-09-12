@@ -47,7 +47,6 @@
 #include "KeyframeList.h"
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
-#include "RenderApplet.h"
 #include "RenderIFrame.h"
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"

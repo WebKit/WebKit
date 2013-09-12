@@ -1433,7 +1433,6 @@ void PluginView::pluginProcessCrashed()
     if (!m_pluginElement->renderer())
         return;
 
-    // FIXME: The renderer could also be a RenderApplet, we should handle that.
     if (!m_pluginElement->renderer()->isEmbeddedObject())
         return;
 

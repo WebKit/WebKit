@@ -2108,7 +2108,6 @@ set(WebCore_SOURCES
     rendering/LayoutRepainter.cpp
     rendering/LineWidth.cpp
     rendering/PointerEventsHitRules.cpp
-    rendering/RenderApplet.cpp
     rendering/RenderArena.cpp
     rendering/RenderBR.cpp
     rendering/RenderBlock.cpp

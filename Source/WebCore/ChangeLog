@@ -1,3 +1,13 @@
+2013-09-12  Andreas Kling  <akling@apple.com>
+
+        Remove RenderApplet.
+        <https://webkit.org/b/121231>
+
+        Reviewed by Darin Adler.
+
+        Add a RenderEmbeddedObject::createForApplet(HTMLAppletElement&) and nuke
+        the RenderApplet class from orbit.
+
 2013-09-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Build fix after r155621

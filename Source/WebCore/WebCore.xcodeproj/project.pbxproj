@@ -5110,8 +5110,6 @@
 		BCEA4855097D93020094C9E4 /* break_lines.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4816097D93020094C9E4 /* break_lines.h */; };
 		BCEA4859097D93020094C9E4 /* InlineTextBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */; };
 		BCEA485A097D93020094C9E4 /* InlineTextBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA481B097D93020094C9E4 /* InlineTextBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCEA485B097D93020094C9E4 /* RenderApplet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA481C097D93020094C9E4 /* RenderApplet.cpp */; };
-		BCEA485C097D93020094C9E4 /* RenderApplet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA481D097D93020094C9E4 /* RenderApplet.h */; };
 		BCEA485D097D93020094C9E4 /* RenderArena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA481E097D93020094C9E4 /* RenderArena.cpp */; };
 		BCEA485E097D93020094C9E4 /* RenderArena.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA481F097D93020094C9E4 /* RenderArena.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA485F097D93020094C9E4 /* RenderBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4820097D93020094C9E4 /* RenderBlock.cpp */; };
@@ -11950,8 +11948,6 @@
 		BCEA4816097D93020094C9E4 /* break_lines.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = break_lines.h; sourceTree = "<group>"; };
 		BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InlineTextBox.cpp; sourceTree = "<group>"; };
 		BCEA481B097D93020094C9E4 /* InlineTextBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InlineTextBox.h; sourceTree = "<group>"; };
-		BCEA481C097D93020094C9E4 /* RenderApplet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderApplet.cpp; sourceTree = "<group>"; };
-		BCEA481D097D93020094C9E4 /* RenderApplet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderApplet.h; sourceTree = "<group>"; };
 		BCEA481E097D93020094C9E4 /* RenderArena.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderArena.cpp; sourceTree = "<group>"; };
 		BCEA481F097D93020094C9E4 /* RenderArena.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderArena.h; sourceTree = "<group>"; };
 		BCEA4820097D93020094C9E4 /* RenderBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderBlock.cpp; sourceTree = "<group>"; };
@@ -20384,8 +20380,6 @@
 				B2B1F7140D00CAA8004AEA64 /* PointerEventsHitRules.cpp */,
 				B2B1F7150D00CAA8004AEA64 /* PointerEventsHitRules.h */,
 				6C70A81417707C49009A446E /* RegionOversetState.h */,
-				BCEA481C097D93020094C9E4 /* RenderApplet.cpp */,
-				BCEA481D097D93020094C9E4 /* RenderApplet.h */,
 				BCEA481E097D93020094C9E4 /* RenderArena.cpp */,
 				BCEA481F097D93020094C9E4 /* RenderArena.h */,
 				BCEA4820097D93020094C9E4 /* RenderBlock.cpp */,
@@ -23562,7 +23556,6 @@
 				D06C0D8F0CFD11460065F43F /* RemoveFormatCommand.h in Headers */,
 				93309E05099E64920056E581 /* RemoveNodeCommand.h in Headers */,
 				93309E07099E64920056E581 /* RemoveNodePreservingChildrenCommand.h in Headers */,
-				BCEA485C097D93020094C9E4 /* RenderApplet.h in Headers */,
 				BCEA485E097D93020094C9E4 /* RenderArena.h in Headers */,
 				BCEA4860097D93020094C9E4 /* RenderBlock.h in Headers */,
 				BCEA4862097D93020094C9E4 /* RenderBox.h in Headers */,
@@ -26762,7 +26755,6 @@
 				D06C0D900CFD11460065F43F /* RemoveFormatCommand.cpp in Sources */,
 				93309E04099E64920056E581 /* RemoveNodeCommand.cpp in Sources */,
 				93309E06099E64920056E581 /* RemoveNodePreservingChildrenCommand.cpp in Sources */,
-				BCEA485B097D93020094C9E4 /* RenderApplet.cpp in Sources */,
 				BCEA485D097D93020094C9E4 /* RenderArena.cpp in Sources */,
 				BCEA485F097D93020094C9E4 /* RenderBlock.cpp in Sources */,
 				BCEA4852097D93020094C9E4 /* RenderBlockLineLayout.cpp in Sources */,

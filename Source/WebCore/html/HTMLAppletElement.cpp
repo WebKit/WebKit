@@ -30,7 +30,7 @@
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"
-#include "RenderApplet.h"
+#include "RenderEmbeddedObject.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
@@ -80,7 +80,7 @@ RenderObject* HTMLAppletElement::createRenderer(RenderArena*, RenderStyle* style
     if (!canEmbedJava())
         return RenderObject::createObject(this, style);
 
-    return new (document().renderArena()) RenderApplet(this);
+    return RenderEmbeddedObject::createForApplet(*this);
 }
 
 RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
