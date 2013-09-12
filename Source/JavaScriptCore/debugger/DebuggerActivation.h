@@ -30,41 +30,41 @@
 
 namespace JSC {
 
-    class DebuggerActivation : public JSNonFinalObject {
-    public:
-        typedef JSNonFinalObject Base;
+class DebuggerActivation : public JSNonFinalObject {
+public:
+    typedef JSNonFinalObject Base;
 
-        static DebuggerActivation* create(VM& vm, JSObject* object)
-        {
-            DebuggerActivation* activation = new (NotNull, allocateCell<DebuggerActivation>(vm.heap)) DebuggerActivation(vm);
-            activation->finishCreation(vm, object);
-            return activation;
-        }
+    static DebuggerActivation* create(VM& vm, JSObject* object)
+    {
+        DebuggerActivation* activation = new (NotNull, allocateCell<DebuggerActivation>(vm.heap)) DebuggerActivation(vm);
+        activation->finishCreation(vm, object);
+        return activation;
+    }
 
-        static void visitChildren(JSCell*, SlotVisitor&);
-        static String className(const JSObject*);
-        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-        static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
-        static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-        static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-        static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    static void visitChildren(JSCell*, SlotVisitor&);
+    static String className(const JSObject*);
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool deleteProperty(JSCell*, ExecState*, PropertyName);
+    static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
-        DECLARE_EXPORT_INFO;
+    DECLARE_EXPORT_INFO;
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
-        {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info()); 
-        }
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info()); 
+    }
 
-    protected:
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | JSObject::StructureFlags;
+protected:
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | JSObject::StructureFlags;
 
-        JS_EXPORT_PRIVATE void finishCreation(VM&, JSObject* activation);
+    JS_EXPORT_PRIVATE void finishCreation(VM&, JSObject* activation);
 
-    private:
-        JS_EXPORT_PRIVATE DebuggerActivation(VM&);
-        WriteBarrier<JSActivation> m_activation;
-    };
+private:
+    JS_EXPORT_PRIVATE DebuggerActivation(VM&);
+    WriteBarrier<JSActivation> m_activation;
+};
 
 } // namespace JSC
 

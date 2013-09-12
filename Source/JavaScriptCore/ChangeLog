@@ -1,3 +1,21 @@
+2013-09-11  Mark Lam  <mark.lam@apple.com>
+
+        Fixed indentation in JSC Debugger header files.
+        https://bugs.webkit.org/show_bug.cgi?id=121203.
+
+        Reviewed by Ryosuke Niwa.
+
+        * debugger/Debugger.h:
+        * debugger/DebuggerActivation.h:
+        (JSC::DebuggerActivation::create):
+        (JSC::DebuggerActivation::createStructure):
+        * debugger/DebuggerCallFrame.h:
+        (JSC::DebuggerCallFrame::DebuggerCallFrame):
+        (JSC::DebuggerCallFrame::callFrame):
+        (JSC::DebuggerCallFrame::dynamicGlobalObject):
+        (JSC::DebuggerCallFrame::scope):
+        (JSC::DebuggerCallFrame::exception):
+
 2013-09-11  Filip Pizlo  <fpizlo@apple.com>
 
         Remove needsDataFormatConversion because it is unused.

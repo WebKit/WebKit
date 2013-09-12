@@ -33,35 +33,35 @@
 
 namespace JSC {
     
-    class DebuggerCallFrame {
-    public:
-        enum Type { ProgramType, FunctionType };
+class DebuggerCallFrame {
+public:
+    enum Type { ProgramType, FunctionType };
 
-        DebuggerCallFrame(CallFrame* callFrame)
-            : m_callFrame(callFrame)
-        {
-        }
+    DebuggerCallFrame(CallFrame* callFrame)
+        : m_callFrame(callFrame)
+    {
+    }
 
-        DebuggerCallFrame(CallFrame* callFrame, JSValue exception)
-            : m_callFrame(callFrame)
-            , m_exception(exception)
-        {
-        }
+    DebuggerCallFrame(CallFrame* callFrame, JSValue exception)
+        : m_callFrame(callFrame)
+        , m_exception(exception)
+    {
+    }
 
-        CallFrame* callFrame() const { return m_callFrame; }
-        JSGlobalObject* dynamicGlobalObject() const { return m_callFrame->dynamicGlobalObject(); }
-        JSScope* scope() const { return m_callFrame->scope(); }
-        JS_EXPORT_PRIVATE String functionName() const;
-        JS_EXPORT_PRIVATE String calculatedFunctionName() const;
-        JS_EXPORT_PRIVATE Type type() const;
-        JS_EXPORT_PRIVATE JSObject* thisObject() const;
-        JS_EXPORT_PRIVATE JSValue evaluate(const String&, JSValue& exception) const;
-        JSValue exception() const { return m_exception; }
+    CallFrame* callFrame() const { return m_callFrame; }
+    JSGlobalObject* dynamicGlobalObject() const { return m_callFrame->dynamicGlobalObject(); }
+    JSScope* scope() const { return m_callFrame->scope(); }
+    JS_EXPORT_PRIVATE String functionName() const;
+    JS_EXPORT_PRIVATE String calculatedFunctionName() const;
+    JS_EXPORT_PRIVATE Type type() const;
+    JS_EXPORT_PRIVATE JSObject* thisObject() const;
+    JS_EXPORT_PRIVATE JSValue evaluate(const String&, JSValue& exception) const;
+    JSValue exception() const { return m_exception; }
 
-    private:
-        CallFrame* m_callFrame;
-        JSValue m_exception;
-    };
+private:
+    CallFrame* m_callFrame;
+    JSValue m_exception;
+};
 
 } // namespace JSC
 
