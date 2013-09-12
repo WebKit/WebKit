@@ -273,58 +273,49 @@ bool Pasteboard::canSmartReplace()
     return types.contains(WebSmartPastePboardType);
 }
 
-String Pasteboard::plainText(Frame* frame)
+void Pasteboard::read(PasteboardPlainText& text)
 {
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
     
-    if (types.contains(String(NSStringPboardType)))
-        return [(NSString *)platformStrategies()->pasteboardStrategy()->stringForType(NSStringPboardType, m_pasteboardName) precomposedStringWithCanonicalMapping];
+    if (types.contains(String(NSStringPboardType))) {
+        text.plainText = platformStrategies()->pasteboardStrategy()->stringForType(NSStringPboardType, m_pasteboardName);
+        return;
+    }
     
-    NSAttributedString *attributedString = nil;
-    NSString *string;
-
     if (types.contains(String(NSRTFDPboardType))) {
-        RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFDPboardType, m_pasteboardName);
-        if (data)
-            attributedString = [[NSAttributedString alloc] initWithRTFD:[data->createNSData() autorelease] documentAttributes:NULL];
+        if (RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFDPboardType, m_pasteboardName)) {
+            if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTFD:[data->createNSData() autorelease] documentAttributes:NULL])) {
+                text.plainText = [attributedString string];
+                return;
+            }
+        }
     }
-    if (attributedString == nil && types.contains(String(NSRTFPboardType))) {
-        RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFPboardType, m_pasteboardName);
-        if (data)
-            attributedString = [[NSAttributedString alloc] initWithRTF:[data->createNSData() autorelease] documentAttributes:NULL];
+
+    if (types.contains(String(NSRTFPboardType))) {
+        if (RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFPboardType, m_pasteboardName)) {
+            if (auto attributedString = adoptNS([[NSAttributedString alloc] initWithRTF:[data->createNSData() autorelease] documentAttributes:NULL])) {
+                text.plainText = [attributedString string];
+                return;
+            }
+        }
     }
-    if (attributedString != nil) {
-        string = [[attributedString string] precomposedStringWithCanonicalMapping];
-        [attributedString release];
-        return string;
-    }
-    
+
     if (types.contains(String(NSFilenamesPboardType))) {
         Vector<String> pathnames;
         platformStrategies()->pasteboardStrategy()->getPathnamesForType(pathnames, NSFilenamesPboardType, m_pasteboardName);
         StringBuilder builder;
-        for (size_t i = 0; i < pathnames.size(); i++) {
+        for (size_t i = 0, size = pathnames.size(); i < size; i++) {
             if (i)
                 builder.append('\n');
             builder.append(pathnames[i]);
         }
-        string = builder.toString();
-        return [string precomposedStringWithCanonicalMapping];
-    }
-    
-    string = platformStrategies()->pasteboardStrategy()->stringForType(NSURLPboardType, m_pasteboardName);
-    if ([string length]) {
-        // FIXME: using the editorClient to call into webkit, for now, since 
-        // calling _web_userVisibleString from WebCore involves migrating a sizable web of 
-        // helper code that should either be done in a separate patch or figured out in another way.
-        string = frame->editor().client()->userVisibleString([NSURL URLWithString:string]);
-        if ([string length] > 0)
-            return [string precomposedStringWithCanonicalMapping];
+        text.plainText = builder.toString();
+        return;
     }
 
-    
-    return String(); 
+    // FIXME: All the other cases look at the types vector first, but this just gets the string without checking. Why?
+    text.url = platformStrategies()->pasteboardStrategy()->stringForType(NSURLPboardType, m_pasteboardName);
 }
     
 static PassRefPtr<DocumentFragment> documentFragmentWithImageResource(Frame* frame, PassRefPtr<ArchiveResource> resource)

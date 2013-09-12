@@ -110,7 +110,7 @@ bool DragData::containsPlainText() const
 
 String DragData::asPlainText(Frame *frame) const
 {
-    return Pasteboard(m_pasteboardName).plainText(frame);
+    return frame->editor().readPlainTextFromPasteboard(*Pasteboard::create(m_pasteboardName));
 }
 
 Color DragData::asColor() const
@@ -140,10 +140,9 @@ bool DragData::containsURL(Frame* frame, FilenameConversionPolicy filenamePolicy
     return !asURL(frame, filenamePolicy).isEmpty();
 }
 
-String DragData::asURL(Frame* frame, FilenameConversionPolicy filenamePolicy, String* title) const
+String DragData::asURL(Frame* frame, FilenameConversionPolicy, String* title) const
 {
     // FIXME: Use filenamePolicy.
-    (void)filenamePolicy;
 
     if (title) {
         String URLTitleString = platformStrategies()->pasteboardStrategy()->stringForType(String(WebURLNamePboardType), m_pasteboardName);

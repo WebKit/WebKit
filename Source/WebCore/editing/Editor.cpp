@@ -412,14 +412,18 @@ void Editor::pasteAsFragment(PassRefPtr<DocumentFragment> pastingFragment, bool 
 
 void Editor::pasteAsPlainTextBypassingDHTML()
 {
-    pasteAsPlainTextWithPasteboard(Pasteboard::createForCopyAndPaste().get());
+    pasteAsPlainTextWithPasteboard(*Pasteboard::createForCopyAndPaste());
 }
 
-void Editor::pasteAsPlainTextWithPasteboard(Pasteboard* pasteboard)
+void Editor::pasteAsPlainTextWithPasteboard(Pasteboard& pasteboard)
 {
-    String text = pasteboard->plainText(&m_frame);
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    String text = readPlainTextFromPasteboard(pasteboard);
+#else
+    String text = pasteboard.plainText(&m_frame);
+#endif
     if (client() && client()->shouldInsertText(text, selectedRange().get(), EditorInsertActionPasted))
-        pasteAsPlainText(text, canSmartReplaceWithPasteboard(pasteboard));
+        pasteAsPlainText(text, canSmartReplaceWithPasteboard(&pasteboard));
 }
 
 #if !PLATFORM(MAC)
@@ -1112,7 +1116,7 @@ void Editor::paste(Pasteboard& pasteboard)
     if (m_frame.selection().isContentRichlyEditable())
         pasteWithPasteboard(&pasteboard, true);
     else
-        pasteAsPlainTextWithPasteboard(&pasteboard);
+        pasteAsPlainTextWithPasteboard(pasteboard);
 }
 
 void Editor::pasteAsPlainText()
@@ -1122,7 +1126,7 @@ void Editor::pasteAsPlainText()
     if (!canPaste())
         return;
     updateMarkersForWordsAffectedByEditing(false);
-    pasteAsPlainTextWithPasteboard(Pasteboard::createForCopyAndPaste().get());
+    pasteAsPlainTextWithPasteboard(*Pasteboard::createForCopyAndPaste());
 }
 
 void Editor::performDelete()

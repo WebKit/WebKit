@@ -251,7 +251,7 @@ void Editor::readSelectionFromPasteboard(const String& pasteboardName)
     if (m_frame.selection().isContentRichlyEditable())
         pasteWithPasteboard(&pasteboard, true);
     else
-        pasteAsPlainTextWithPasteboard(&pasteboard);   
+        pasteAsPlainTextWithPasteboard(pasteboard);
 }
 
 // FIXME: Makes no sense that selectedTextForClipboard always includes alt text, but stringSelectionForPasteboard does not.
@@ -394,6 +394,22 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboardImage.resourceMIMEType = cachedImage->response().mimeType();
 
     pasteboard.write(pasteboardImage);
+}
+
+String Editor::readPlainTextFromPasteboard(Pasteboard& pasteboard)
+{
+    PasteboardPlainText text;
+    pasteboard.read(text);
+
+    String string = text.plainText;
+
+    // FIXME: It's not clear this is 100% correct since we know -[NSURL URLWithString:] does not handle
+    // all the same cases we handle well in the KURL code for creating an NSURL.
+    if (string.isNull() && !text.url.isNull())
+        string = client()->userVisibleString([NSURL URLWithString:text.url]);
+
+    // FIXME: WTF should offer a non-Mac-specific way to convert string to precomposed form so we can do it for all platforms.
+    return [(NSString *)string precomposedStringWithCanonicalMapping];
 }
 
 } // namespace WebCore

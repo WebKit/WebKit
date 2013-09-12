@@ -1,3 +1,36 @@
+2013-09-12  Darin Adler  <darin@apple.com>
+
+        Move layering-violating code from Pasteboard::plainText into Editor (Mac only at first)
+        https://bugs.webkit.org/show_bug.cgi?id=121075
+
+        Reviewed by Anders Carlsson.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::pasteAsPlainTextBypassingDHTML): Pass pasteboard as a reference.
+        (WebCore::Editor::pasteAsPlainTextWithPasteboard): Use readPlainTextFromPasteboard
+        for Mac. Also update to take a reference.
+        (WebCore::Editor::paste): Pass pasteboard as a reference.
+        (WebCore::Editor::pasteAsPlainText): Ditto.
+        * editing/Editor.h: Ditto.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::readSelectionFromPasteboard): Pass pasteboard as a reference.
+        (WebCore::Editor::readPlainTextFromPasteboard): Added. The declaration of this
+        was added (by mistake) in an earlier patch. This has code that used to be inside
+        Pasteboard::plainText.
+
+        * platform/Pasteboard.h: Added PasteboardPlainText. Reorganized functions in the
+        Pasteboard class and added some FIXMEs. Sorted platforms alphabetically and grouped
+        functions together and data members separate from them.
+
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::asPlainText): Updated to call readPlainTextFromPasteboard.
+        (WebCore::DragData::asURL): Tweaked style of unused parameter.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::read): Renamed this from plainText, and refactored so that
+        the data goes out in the PasteboardPlainText structure.
+
 2013-09-12  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         CSS Unit vw in border-width maps to 0px.

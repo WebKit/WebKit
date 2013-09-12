@@ -107,6 +107,13 @@ struct PasteboardImage {
 #endif
 };
 
+struct PasteboardPlainText {
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    String plainText;
+    String url;
+#endif
+};
+
 class Pasteboard {
     WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -148,18 +155,21 @@ public:
     Vector<String> types();
 
     String readString(const String& type);
+    bool writeString(const String& type, const String& data);
+
     Vector<String> readFilenames();
 
-    // FIXME: It would be nicer if the two functions below were just parts of a single writeWebContent function,
-    // but for now Mac supports an editor client call that happens after setting the types but before writing to the pasteboard.
-    void setTypes(const PasteboardWebContent&);
-    void writeAfterSettingTypes(const PasteboardWebContent&);
+    void read(PasteboardPlainText&);
 
     void write(const PasteboardWebContent&);
     void write(const PasteboardURL&);
     void write(const PasteboardImage&);
 
-    bool writeString(const String& type, const String& data);
+    // FIXME: These two functions together are the same as calling write. It would be nice if these two separate functions
+    // could be eliminated, but Mac supports an editor client call that happens after setting the types but before writing to the pasteboard.
+    void setTypes(const PasteboardWebContent&);
+    void writeAfterSettingTypes(const PasteboardWebContent&);
+
 #if !(PLATFORM(MAC) && !PLATFORM(IOS))
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
@@ -186,7 +196,9 @@ public:
 #endif
 
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
+#if !(PLATFORM(MAC) && !PLATFORM(IOS))
     String plainText(Frame* = 0); // FIXME: Layering violation.
+#endif
 
 #if PLATFORM(IOS)
     void setFrame(Frame*); // FIXME: Layering violation.
@@ -216,47 +228,25 @@ private:
     Pasteboard(GtkClipboard*);
 #endif
 
+#if PLATFORM(IOS)
+    PassRefPtr<DocumentFragment> documentFragmentForPasteboardItemAtIndex(Frame*, int index, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
+#endif
+
 #if PLATFORM(QT)
     Pasteboard(const QMimeData* , bool);
+
+    const QMimeData* readData() const;
 #endif
 
 #if PLATFORM(WIN)
     explicit Pasteboard(IDataObject*);
     explicit Pasteboard(WCDataObject*);
     explicit Pasteboard(const DragDataMap&);
-#endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS)
-    String m_pasteboardName;
-    long m_changeCount;
-#endif
-
-#if PLATFORM(IOS)
-    PassRefPtr<DocumentFragment> documentFragmentForPasteboardItemAtIndex(Frame*, int index, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
-
-    Frame* m_frame; // FIXME: Layering violation.
-    long m_changeCount;
-#endif
-
-#if PLATFORM(WIN)
     void finishCreatingPasteboard();
     void writeRangeToDataObject(Range*, Frame*); // FIXME: Layering violation.
     void writeURLToDataObject(const KURL&, const String&, Frame*); // FIXME: Layering violation.
     void writePlainTextToDataObject(const String&, SmartReplaceOption);
-
-    HWND m_owner;
-    COMPtr<IDataObject> m_dataObject;
-    COMPtr<WCDataObject> m_writableDataObject;
-    DragDataMap m_dragDataMap;
-#endif
-
-#if PLATFORM(QT)
-    const QMimeData* readData() const;
-
-    bool m_selectionMode;
-    const QMimeData* m_readableData;
-    mutable QMimeData* m_writableData;
-    bool m_isForDragAndDrop;
 #endif
 
 #if PLATFORM(GTK)
@@ -264,6 +254,29 @@ private:
     GtkClipboard* m_gtkClipboard;
 #endif
 
+#if PLATFORM(IOS)
+    Frame* m_frame; // FIXME: Layering violation.
+    long m_changeCount;
+#endif
+
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    String m_pasteboardName;
+    long m_changeCount;
+#endif
+
+#if PLATFORM(QT)
+    bool m_selectionMode;
+    const QMimeData* m_readableData;
+    mutable QMimeData* m_writableData;
+    bool m_isForDragAndDrop;
+#endif
+
+#if PLATFORM(WIN)
+    HWND m_owner;
+    COMPtr<IDataObject> m_dataObject;
+    COMPtr<WCDataObject> m_writableDataObject;
+    DragDataMap m_dragDataMap;
+#endif
 };
 
 } // namespace WebCore
