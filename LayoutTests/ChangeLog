@@ -1,3 +1,25 @@
+2013-09-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Flaky Test: plugins/mouse-events.html
+        https://bugs.webkit.org/show_bug.cgi?id=116665
+
+        Reviewed by Anders Carlsson.
+
+        * plugins/mouse-events-expected.txt:
+        * plugins/mouse-events.html:
+        This test used async calls for events, and then usually logged responses while waiting
+        for a plg.eventLoggingEnabled setter synchronously. Depending on sync/async event
+        order is not reliable, especially with old WebKit1 plug-in IPC code.
+
+        * platform/mac-wk2/plugins/mouse-events-expected.txt: For some unclear reason,
+        focus works differently in WebKit2.
+
+        * platform/gtk/plugins/mouse-events-expected.txt: Removed.
+        * platform/qt/plugins/mouse-events-expected.txt: Removed.
+        * platform/win/plugins/mouse-events-expected.txt: Removed.
+        These results looked similar to new cross-platform ones, hopefully custom results
+        won't be needed any more.
+
 2013-09-12  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         CSS Unit vw in border-width maps to 0px.
