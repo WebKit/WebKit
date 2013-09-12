@@ -1,5 +1,34 @@
 2013-09-11  Filip Pizlo  <fpizlo@apple.com>
 
+        FixupPhase should always call fixEdge() exactly once for every edge
+        https://bugs.webkit.org/show_bug.cgi?id=121211
+
+        Reviewed by Geoffrey Garen.
+        
+        Previously we only call fixEdge() on edges that we want to make typed. UntypedUse
+        edges don't get fixEdge() called. This makes it difficult to add functionality in
+        fixEdge() that runs for UntypedUses. It's difficult to remember to call fixEdge()
+        for every edge that we don't want to turn into a typed edge; in an alternative
+        universe where we did this, it would mean that every case in FixupPhase would
+        have to make a fixEdge() call for *every* edge even ones that it doesn't want to
+        modify.
+        
+        This patch takes a different path. fixEdge() must never be called explicitly with
+        UntypedUse. fixEdge() should be used to set the UseKind of edges. Consequently,
+        all that FixupPhase has to do is call fixEdge<UntypedUse>(edge) for every edge
+        that was still UntypedUse after we are done processing a node.
+        
+        This is cheap and easy to implement and ought to be easy to maintain. We won't
+        have a need to call fixEdge<UntypedUse>(edge) explicitly, so depending on that is
+        only natural.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::observeUntypedEdge):
+        (JSC::DFG::FixupPhase::observeUseKindOnNode):
+
+2013-09-11  Filip Pizlo  <fpizlo@apple.com>
+
         FixupPhase's setUseKindAndUnboxBlahbittyblah and fixDoubleEdge methods should be merged and given intuitive names
         https://bugs.webkit.org/show_bug.cgi?id=121202
 

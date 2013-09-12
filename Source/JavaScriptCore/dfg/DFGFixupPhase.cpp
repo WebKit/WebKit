@@ -907,6 +907,8 @@ private:
             break;
 #endif
         }
+        
+        DFG_NODE_DO_TO_CHILDREN(m_graph, node, observeUntypedEdge);
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         if (!(node->flags() & NodeHasVarArgs)) {
@@ -915,6 +917,13 @@ private:
         }
         dataLogF("\n");
 #endif
+    }
+    
+    void observeUntypedEdge(Node*, Edge& edge)
+    {
+        if (edge.useKind() != UntypedUse)
+            return;
+        fixEdge<UntypedUse>(edge);
     }
     
     template<UseKind useKind>
@@ -1280,6 +1289,8 @@ private:
     template<UseKind useKind>
     void observeUseKindOnNode(Node* node)
     {
+        if (useKind == UntypedUse)
+            return;
         observeUseKindOnNode(node, useKind);
     }
 
@@ -1326,8 +1337,13 @@ private:
         }
     }
     
-    // Set the use kind of the edge. In the future (https://bugs.webkit.org/show_bug.cgi?id=110433),
-    // this can be used to notify the GetLocal that the variable is profitable to unbox.
+    // Set the use kind of the edge and perform any actions that need to be done for
+    // that use kind, like inserting intermediate conversion nodes. Never call this
+    // with useKind = UntypedUse explicitly; edges have UntypedUse implicitly and any
+    // edge that survives fixup and still has UntypedUse will have this method called
+    // from observeUntypedEdge(). Also, make sure that if you do change the type of an
+    // edge, you either call fixEdge() or perform the equivalent functionality
+    // yourself. Obviously, you should have a really good reason if you do the latter.
     template<UseKind useKind>
     void fixEdge(Edge& edge, SpeculationDirection direction = BackwardSpeculation)
     {
