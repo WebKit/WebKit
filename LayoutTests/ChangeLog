@@ -1,5 +1,17 @@
 2013-09-12  Alexey Proskuryakov  <ap@apple.com>
 
+        Canvas fillText and measureText handle ideographic spaces differently
+        https://bugs.webkit.org/show_bug.cgi?id=108881
+
+        Fixing the test:
+        1. Updated paths to js-test scripts.
+        2. Removed "meta charcode" - we don't need to specify a charset here, and it's
+        "charset", not "charcode" anyway.
+
+        * fast/canvas/canvas-measureText-ideographicSpace.html:
+
+2013-09-12  Alexey Proskuryakov  <ap@apple.com>
+
         svg/animations/smil-leak-*.svg tests are flaky
         https://bugs.webkit.org/show_bug.cgi?id=114280
 
