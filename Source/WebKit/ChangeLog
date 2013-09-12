@@ -1,3 +1,12 @@
+2013-09-12  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] TestWebKitAPI fails to link.
+        https://bugs.webkit.org/show_bug.cgi?id=121223
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add required symbol.
+
 2013-09-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Avoid converting from IntSize->SIZE->IntSize
