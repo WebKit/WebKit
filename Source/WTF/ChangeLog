@@ -1,5 +1,16 @@
 2013-09-11  Anders Carlsson  <andersca@apple.com>
 
+        Use the new C++11 function declaration syntax throughout our hash collection classes
+        https://bugs.webkit.org/show_bug.cgi?id=121195
+
+        Reviewed by Andreas Kling.
+
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+        * wtf/HashTable.h:
+
+2013-09-11  Anders Carlsson  <andersca@apple.com>
+
         Add HashSet::take
         https://bugs.webkit.org/show_bug.cgi?id=121192
 
