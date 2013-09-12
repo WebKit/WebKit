@@ -9,6 +9,10 @@ LICENSE=$(cat <<EOF
  * Copyright (C) 2008-2009 Anthony Ricaud <rik@webkit.org>
  * Copyright (C) 2009 280 North Inc. All Rights Reserved.
  * Copyright (C) 2010 Nikita Vasilyev. All rights reserved.
+ * Copyright (C) 2011 Brian Grinstead All rights reserved.
+ * Copyright (C) 2013 Matt Holden <jftholden@yahoo.com>
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2013 Seokju Kwon (seokju.kwon@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
