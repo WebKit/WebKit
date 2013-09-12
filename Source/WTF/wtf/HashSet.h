@@ -93,6 +93,8 @@ namespace WTF {
         bool remove(iterator);
         void clear();
 
+        ValueType take(const ValueType&);
+
         static bool isValidValue(const ValueType&);
         
         bool operator==(const HashSet&) const;
@@ -230,6 +232,18 @@ namespace WTF {
     inline void HashSet<T, U, V>::clear()
     {
         m_impl.clear(); 
+    }
+
+    template<typename T, typename U, typename V>
+    auto HashSet<T, U, V>::take(const ValueType& value) -> ValueType
+    {
+        auto it = find(value);
+        if (it == end())
+            return ValueTraits::emptyValue();
+
+        ValueType result = std::move(const_cast<ValueType&>(*it));
+        remove(it);
+        return result;
     }
 
     template<typename T, typename U, typename V>

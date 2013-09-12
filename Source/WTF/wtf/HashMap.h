@@ -402,8 +402,7 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V, typename W, typename MappedTraits>
-    typename HashMap<T, U, V, W, MappedTraits>::MappedPassOutType
-    HashMap<T, U, V, W, MappedTraits>::take(const KeyType& key)
+    auto HashMap<T, U, V, W, MappedTraits>::take(const KeyType& key) -> MappedPassOutType
     {
         iterator it = find(key);
         if (it == end())

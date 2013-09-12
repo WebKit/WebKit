@@ -1,5 +1,18 @@
 2013-09-11  Anders Carlsson  <andersca@apple.com>
 
+        Add HashSet::take
+        https://bugs.webkit.org/show_bug.cgi?id=121192
+
+        Reviewed by Darin Adler.
+
+        This is mostly done to see if we can use the new C++11 function declaration syntax,
+        and for parity with HashMap::take. 
+
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+
+2013-09-11  Anders Carlsson  <andersca@apple.com>
+
         HashSet should work with move only types
         https://bugs.webkit.org/show_bug.cgi?id=121188
 
