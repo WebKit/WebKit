@@ -48,12 +48,6 @@ JSValue JSJavaScriptCallFrame::evaluate(ExecState* exec)
     return result;
 }
 
-JSValue JSJavaScriptCallFrame::restart(ExecState*)
-{
-    // FIXME(40300): implement this.
-    return JSValue(JSValue::JSFalse);
-}
-
 JSValue JSJavaScriptCallFrame::thisObject(ExecState*) const
 {
     return impl()->thisObject() ? JSValue(impl()->thisObject()) : jsNull();
@@ -127,13 +121,6 @@ JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
 
         --index;
     }
-    return jsUndefined();
-}
-
-JSValue JSJavaScriptCallFrame::setVariableValue(JSC::ExecState* exec)
-{
-    // FIXME: implement this. https://bugs.webkit.org/show_bug.cgi?id=107830
-    exec->vm().throwException(exec, createTypeError(exec, "Variable value mutation is not supported"));
     return jsUndefined();
 }
 

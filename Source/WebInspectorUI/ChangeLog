@@ -1,3 +1,14 @@
+2013-09-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed some unused functions from the debugger interface
+        https://bugs.webkit.org/show_bug.cgi?id=121194
+
+        Reviewed by Joseph Pecoraro.
+
+        We plan to use the "evaluate" API and debugger activation property access for all the features we need.
+
+        * UserInterface/InspectorBackendCommands.js: Updated by script.
+
 2013-09-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Download Archive button incorrectly styled when disabled and tree element is not-selected

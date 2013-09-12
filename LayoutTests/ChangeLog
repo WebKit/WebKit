@@ -1,3 +1,19 @@
+2013-09-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed some unused functions from the debugger interface
+        https://bugs.webkit.org/show_bug.cgi?id=121194
+
+        Reviewed by Joseph Pecoraro.
+
+        We plan to use the "evaluate" API and debugger activation property access for all the features we need.
+
+        * inspector/debugger/debugger-change-variable-expected.txt: Removed.
+        * inspector/debugger/debugger-change-variable.html: Removed. This test was failing
+        because we don't support this API.
+
+        * platform/mac/inspector/console/command-line-api-expected.txt: This test changed line numbers
+        because I changed inspector .js files.
+
 2013-09-11  Vivek Galatage  <vivek.vg@samsung.com>
 
         DOMParser.parseFromString() should support creating HTML Document with mime-type text/html

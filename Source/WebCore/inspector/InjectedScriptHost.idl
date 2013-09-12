@@ -51,7 +51,4 @@
 
     [Custom] DOMString databaseId(any database);
     [Custom] DOMString storageId(any storage);
-
-    // Only declarative scope (local, with and catch) is accepted. Returns undefined. 
-    [Custom] any setFunctionVariableValue(any functionObject, int scopeIndex, DOMString variableName, any newValue);
 };

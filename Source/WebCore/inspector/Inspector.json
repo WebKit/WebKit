@@ -2838,17 +2838,6 @@
                 "description": "Edits JavaScript source live."
             },
             {
-                "name": "restartFrame",
-                "parameters": [
-                    { "name": "callFrameId", "$ref": "CallFrameId", "description": "Call frame identifier to evaluate on." }
-                ],
-                "returns": [
-                    { "name": "callFrames", "type": "array", "items": { "$ref": "CallFrame"}, "description": "New stack trace." },
-                    { "name": "result", "type": "object", "description": "VM-specific description." }
-                ],
-                "description": "Restarts particular call frame from the beginning."
-            },
-            {
                 "name": "getScriptSource",
                 "parameters": [
                     { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to get source for." }
@@ -2924,17 +2913,6 @@
                     { "name": "message", "type": "string", "optional": true, "description": "Overlay message to display when paused in debugger." }
                 ],
                 "description": "Sets overlay message."
-            },
-            {
-                "name": "setVariableValue",
-                "parameters": [
-                    { "name": "scopeNumber", "type": "integer", "description": "0-based number of scope as was listed in scope chain. Only 'local', 'closure' and 'catch' scope types are allowed. Other scopes could be manipulated manually." },
-                    { "name": "variableName", "type": "string", "description": "Variable name." },
-                    { "name": "newValue", "$ref": "Runtime.CallArgument", "description": "New variable value." },
-                    { "name": "callFrameId", "$ref": "CallFrameId", "optional": true, "description": "Id of callframe that holds variable." },
-                    { "name": "functionObjectId", "$ref": "Runtime.RemoteObjectId", "optional": true, "description": "Object id of closure (function) that holds variable." }
-                ],
-                "description": "Changes value of variable in a callframe or a closure. Either callframe or function must be specified. Object-based scopes are not supported and must be mutated manually."
             }
         ],
         "events": [

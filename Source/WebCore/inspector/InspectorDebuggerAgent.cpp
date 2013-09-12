@@ -469,18 +469,6 @@ void InspectorDebuggerAgent::setScriptSource(ErrorString* error, const String& s
     if (object)
         result = object;
 }
-void InspectorDebuggerAgent::restartFrame(ErrorString* errorString, const String& callFrameId, RefPtr<Array<TypeBuilder::Debugger::CallFrame> >& newCallFrames, RefPtr<InspectorObject>& result)
-{
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(callFrameId);
-    if (injectedScript.hasNoValue()) {
-        *errorString = "Inspected frame has gone";
-        return;
-    }
-
-    injectedScript.restartFrame(errorString, m_currentCallStack, callFrameId, &result);
-    scriptDebugServer().updateCallStack(&m_currentCallStack);
-    newCallFrames = currentCallFrames();
-}
 
 void InspectorDebuggerAgent::getScriptSource(ErrorString* error, const String& scriptId, String* scriptSource)
 {
@@ -665,30 +653,6 @@ void InspectorDebuggerAgent::runScript(ErrorString* errorString, const ScriptId&
 
 void InspectorDebuggerAgent::setOverlayMessage(ErrorString*, const String*)
 {
-}
-
-void InspectorDebuggerAgent::setVariableValue(ErrorString* errorString, int scopeNumber, const String& variableName, const RefPtr<InspectorObject>& newValue, const String* callFrameId, const String* functionObjectId)
-{
-    InjectedScript injectedScript;
-    if (callFrameId) {
-        injectedScript = m_injectedScriptManager->injectedScriptForObjectId(*callFrameId);
-        if (injectedScript.hasNoValue()) {
-            *errorString = "Inspected frame has gone";
-            return;
-        }
-    } else if (functionObjectId) {
-        injectedScript = m_injectedScriptManager->injectedScriptForObjectId(*functionObjectId);
-        if (injectedScript.hasNoValue()) {
-            *errorString = "Function object id cannot be resolved";
-            return;
-        }
-    } else {
-        *errorString = "Either call frame or function object must be specified";
-        return;
-    }
-    String newValueString = newValue->toJSONString();
-
-    injectedScript.setVariableValue(errorString, m_currentCallStack, callFrameId, functionObjectId, scopeNumber, variableName, newValueString);
 }
 
 void InspectorDebuggerAgent::scriptExecutionBlockedByCSP(const String& directiveText)

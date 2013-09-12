@@ -262,10 +262,7 @@ WebInspector.RemoteObject.prototype = {
                 return;
             }
             
-            if (this._scopeRef)
-                this._setDeclarativeVariableValue(result, name, callback);
-            else
-                this._setObjectPropertyValue(result, name, callback);
+            this._setObjectPropertyValue(result, name, callback);
 
             if (result._objectId)
                 RuntimeAgent.releaseObject(result._objectId);
@@ -299,42 +296,6 @@ WebInspector.RemoteObject.prototype = {
         {
             if (error || wasThrown) {
                 callback(error || result.description);
-                return;
-            }
-            callback();
-        }
-    },
-
-    /**
-     * @param {WebInspector.RemoteObject} result
-     * @param {string} name
-     * @param {function(string=)} callback
-     */
-    _setDeclarativeVariableValue: function(result, name, callback)
-    {
-        var newValue;
-        
-        switch (result.type) {
-            case "undefined":
-                newValue = {};
-                break;
-            case "object":
-            case "function":
-                newValue = { objectId: result.objectId };
-                break;
-            default:
-                newValue = { value: result.value };
-        }
-        
-        DebuggerAgent.setVariableValue(this._scopeRef.number, name, newValue, this._scopeRef.callFrameId, this._scopeRef.functionId, setVariableValueCallback.bind(this));
-
-        /**
-         * @param {?Protocol.Error} error
-         */
-        function setVariableValueCallback(error)
-        {
-            if (error) {
-                callback(error);
                 return;
             }
             callback();

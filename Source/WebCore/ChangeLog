@@ -1,3 +1,28 @@
+2013-09-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed some unused functions from the debugger interface
+        https://bugs.webkit.org/show_bug.cgi?id=121194
+
+        Reviewed by Joseph Pecoraro.
+
+        We plan to use the "evaluate" API and debugger activation property access for all the features we need.
+
+        * inspector/JavaScriptCallFrame.idl: These are the interfaces I removed.
+
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        * inspector/InjectedScript.cpp:
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setScriptSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/JavaScriptCallFrame.idl:
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.):
+        (WebInspector.RemoteObject.prototype.setPropertyValue): These files are mechanical removals of code that used
+        or implemented the interfaces I removed.
+
 2013-09-11  Vivek Galatage  <vivek.vg@samsung.com>
 
         DOMParser.parseFromString() should support creating HTML Document with mime-type text/html
