@@ -1,3 +1,14 @@
+2013-09-12  Anders Carlsson  <andersca@apple.com>
+
+        Add rudimentary support for move-only types as values in HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=121226
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+        Add a HashMap<unsigned, MoveOnly> test.
+
 2013-09-12  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         Auto GDB backtrace generation for EFL/GTK/Qt bots.

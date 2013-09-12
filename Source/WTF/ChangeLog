@@ -1,3 +1,17 @@
+2013-09-12  Anders Carlsson  <andersca@apple.com>
+
+        Add rudimentary support for move-only types as values in HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=121226
+
+        Reviewed by Andreas Kling.
+
+        * wtf/HashMap.h:
+        Change a bunch of functions to so they can take both rvalue and lvalue references and use std::forward.
+
+        * wtf/HashTraits.h:
+        (WTF::KeyValuePair::KeyValuePair):
+        Change constructors to accept both lvalues and rvalues.
+
 2013-09-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Remove home-brewed nullptr

@@ -201,16 +201,17 @@ namespace WTF {
         {
         }
 
-        KeyValuePair(const KeyTypeArg& key, const ValueTypeArg& value)
-            : key(key)
-            , value(value)
+        template<typename K, typename V>
+        KeyValuePair(K&& key, V&& value)
+            : key(std::forward<K>(key))
+            , value(std::forward<V>(value))
         {
         }
 
         template <typename OtherKeyType, typename OtherValueType>
-        KeyValuePair(const KeyValuePair<OtherKeyType, OtherValueType>& other)
-            : key(other.key)
-            , value(other.value)
+        KeyValuePair(KeyValuePair<OtherKeyType, OtherValueType>&& other)
+            : key(std::forward<OtherKeyType>(other.key))
+            , value(std::forward<OtherValueType>(other.value))
         {
         }
 
