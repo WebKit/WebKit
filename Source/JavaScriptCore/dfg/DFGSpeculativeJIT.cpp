@@ -2315,7 +2315,7 @@ void SpeculativeJIT::compileUInt32ToNumber(Node* node)
         // We know that this sometimes produces doubles. So produce a double every
         // time. This at least allows subsequent code to not have weird conditionals.
             
-        Int32Operand op1(this, node->child1());
+        SpeculateInt32Operand op1(this, node->child1());
         FPRTemporary result(this);
             
         GPRReg inputGPR = op1.gpr();
@@ -2331,7 +2331,7 @@ void SpeculativeJIT::compileUInt32ToNumber(Node* node)
         return;
     }
 
-    Int32Operand op1(this, node->child1());
+    SpeculateInt32Operand op1(this, node->child1());
     GPRTemporary result(this); // For the benefit of OSR exit, force these to be in different registers. In reality the OSR exit compiler could find cases where you have uint32(%r1) followed by int32(%r1) and then use different registers, but that seems like too much effort.
 
     m_jit.move(op1.gpr(), result.gpr());

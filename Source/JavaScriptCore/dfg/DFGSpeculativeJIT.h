@@ -130,7 +130,6 @@ public:
         }
     }
     
-    GPRReg fillInt32(Edge, DataFormat& returnFormat);
 #if USE(JSVALUE64)
     GPRReg fillJSValue(Edge);
 #elif USE(JSVALUE32_64)
@@ -2247,72 +2246,12 @@ public:
 
 // === Operand types ===
 //
-// Int32Operand and JSValueOperand.
-//
 // These classes are used to lock the operands to a node into machine
 // registers. These classes implement of pattern of locking a value
 // into register at the point of construction only if it is already in
 // registers, and otherwise loading it lazily at the point it is first
 // used. We do so in order to attempt to avoid spilling one operand
 // in order to make space available for another.
-
-class Int32Operand {
-public:
-    explicit Int32Operand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
-        : m_jit(jit)
-        , m_edge(edge)
-        , m_gprOrInvalid(InvalidGPRReg)
-#ifndef NDEBUG
-        , m_format(DataFormatNone)
-#endif
-    {
-        ASSERT(m_jit);
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == KnownInt32Use);
-        if (jit->isFilled(edge.node()))
-            gpr();
-    }
-
-    ~Int32Operand()
-    {
-        ASSERT(m_gprOrInvalid != InvalidGPRReg);
-        m_jit->unlock(m_gprOrInvalid);
-    }
-
-    Edge edge() const
-    {
-        return m_edge;
-    }
-    
-    Node* node() const
-    {
-        return edge().node();
-    }
-
-    DataFormat format()
-    {
-        gpr(); // m_format is set when m_gpr is locked.
-        ASSERT(m_format == DataFormatInt32 || m_format == DataFormatJSInt32);
-        return m_format;
-    }
-
-    GPRReg gpr()
-    {
-        if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillInt32(m_edge, m_format);
-        return m_gprOrInvalid;
-    }
-    
-    void use()
-    {
-        m_jit->use(node());
-    }
-
-private:
-    SpeculativeJIT* m_jit;
-    Edge m_edge;
-    GPRReg m_gprOrInvalid;
-    DataFormat m_format;
-};
 
 class JSValueOperand {
 public:

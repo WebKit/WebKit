@@ -40,86 +40,6 @@ namespace JSC { namespace DFG {
 
 #if USE(JSVALUE64)
 
-GPRReg SpeculativeJIT::fillInt32(Edge edge, DataFormat& returnFormat)
-{
-    ASSERT(!needsTypeCheck(edge, SpecInt32));
-    
-    VirtualRegister virtualRegister = edge->virtualRegister();
-    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
-
-    if (info.registerFormat() == DataFormatNone) {
-        GPRReg gpr = allocate();
-
-        if (edge->hasConstant()) {
-            m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-            if (isInt32Constant(edge.node())) {
-                m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(edge.node())), gpr);
-                info.fillInt32(*m_stream, gpr);
-                returnFormat = DataFormatInt32;
-                return gpr;
-            }
-            if (isNumberConstant(edge.node())) {
-                JSValue jsValue = jsNumber(valueOfNumberConstant(edge.node()));
-                m_jit.move(MacroAssembler::Imm64(JSValue::encode(jsValue)), gpr);
-            } else {
-                ASSERT(isJSConstant(edge.node()));
-                JSValue jsValue = valueOfJSConstant(edge.node());
-                m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsValue)), gpr);
-            }
-        } else if (info.spillFormat() == DataFormatInt32) {
-            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-            m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
-            // Tag it, since fillInt32() is used when we want a boxed integer.
-            m_jit.or64(GPRInfo::tagTypeNumberRegister, gpr);
-        } else {
-            RELEASE_ASSERT(info.spillFormat() == DataFormatJS || info.spillFormat() == DataFormatJSInt32);
-            m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-            m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
-        }
-
-        // Since we statically know that we're filling an integer, and values
-        // in the JSStack are boxed, this must be DataFormatJSInt32.
-        // We will check this with a jitAssert below.
-        info.fillJSValue(*m_stream, gpr, DataFormatJSInt32);
-        unlock(gpr);
-    }
-    
-    switch (info.registerFormat()) {
-    case DataFormatNone:
-        // Should have filled, above.
-    case DataFormatJSDouble:
-    case DataFormatDouble:
-    case DataFormatJS:
-    case DataFormatCell:
-    case DataFormatJSCell:
-    case DataFormatBoolean:
-    case DataFormatJSBoolean:
-    case DataFormatStorage:
-        // Should only be calling this function if we know this operand to be integer.
-        RELEASE_ASSERT_NOT_REACHED();
-
-    case DataFormatJSInt32: {
-        GPRReg gpr = info.gpr();
-        m_gprs.lock(gpr);
-        m_jit.jitAssertIsJSInt32(gpr);
-        returnFormat = DataFormatJSInt32;
-        return gpr;
-    }
-
-    case DataFormatInt32: {
-        GPRReg gpr = info.gpr();
-        m_gprs.lock(gpr);
-        m_jit.jitAssertIsInt32(gpr);
-        returnFormat = DataFormatInt32;
-        return gpr;
-    }
-        
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return InvalidGPRReg;
-    }
-}
-
 GPRReg SpeculativeJIT::fillJSValue(Edge edge)
 {
     VirtualRegister virtualRegister = edge->virtualRegister();
@@ -219,7 +139,7 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
 
 void SpeculativeJIT::nonSpeculativeUInt32ToNumber(Node* node)
 {
-    Int32Operand op1(this, node->child1());
+    SpeculateInt32Operand op1(this, node->child1());
     FPRTemporary boxer(this);
     GPRTemporary result(this, Reuse, op1);
     

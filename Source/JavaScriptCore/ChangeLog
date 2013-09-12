@@ -1,3 +1,18 @@
+2013-09-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::Int32Operand and fillInt32() should go away and all uses should be replaced with SpeculateInt32Operand
+        https://bugs.webkit.org/show_bug.cgi?id=121268
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileUInt32ToNumber):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeUInt32ToNumber):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeUInt32ToNumber):
+
 2013-09-12  Geoffrey Garen  <ggaren@apple.com>
 
         Web Inspector shouldn't artificially allocate the arguments object in functions that don't use it
