@@ -2398,10 +2398,15 @@ public:
         ASSERT(!m_isDouble);
         return m_register.pair.payloadGPR;
     }
-
+    
     JSValueRegs jsValueRegs()
     {
         return JSValueRegs(tagGPR(), payloadGPR());
+    }
+
+    GPRReg gpr(WhichValueWord which)
+    {
+        return jsValueRegs().gpr(which);
     }
 
     FPRReg fpr()
@@ -2489,24 +2494,38 @@ private:
 // currently allocated to child nodes whose value is consumed
 // by, and not live after, this operation.
 
+enum ReuseTag { Reuse };
+
 class GPRTemporary {
 public:
     GPRTemporary();
     GPRTemporary(SpeculativeJIT*);
     GPRTemporary(SpeculativeJIT*, GPRReg specific);
-    GPRTemporary(SpeculativeJIT*, SpeculateInt32Operand&);
-    GPRTemporary(SpeculativeJIT*, SpeculateInt32Operand&, SpeculateInt32Operand&);
-    GPRTemporary(SpeculativeJIT*, SpeculateStrictInt32Operand&);
-    GPRTemporary(SpeculativeJIT*, Int32Operand&);
-    GPRTemporary(SpeculativeJIT*, Int32Operand&, Int32Operand&);
-    GPRTemporary(SpeculativeJIT*, SpeculateCellOperand&);
-    GPRTemporary(SpeculativeJIT*, SpeculateBooleanOperand&);
-#if USE(JSVALUE64)
-    GPRTemporary(SpeculativeJIT*, JSValueOperand&);
-#elif USE(JSVALUE32_64)
-    GPRTemporary(SpeculativeJIT*, JSValueOperand&, bool tag = true);
+    template<typename T>
+    GPRTemporary(SpeculativeJIT* jit, ReuseTag, T& operand)
+        : m_jit(jit)
+        , m_gpr(InvalidGPRReg)
+    {
+        if (m_jit->canReuse(operand.node()))
+            m_gpr = m_jit->reuse(operand.gpr());
+        else
+            m_gpr = m_jit->allocate();
+    }
+    template<typename T1, typename T2>
+    GPRTemporary(SpeculativeJIT* jit, ReuseTag, T1& op1, T2& op2)
+        : m_jit(jit)
+        , m_gpr(InvalidGPRReg)
+    {
+        if (m_jit->canReuse(op1.node()))
+            m_gpr = m_jit->reuse(op1.gpr());
+        else if (m_jit->canReuse(op2.node()))
+            m_gpr = m_jit->reuse(op2.gpr());
+        else
+            m_gpr = m_jit->allocate();
+    }
+#if USE(JSVALUE32_64)
+    GPRTemporary(SpeculativeJIT*, ReuseTag, JSValueOperand&, WhichValueWord);
 #endif
-    GPRTemporary(SpeculativeJIT*, StorageOperand&);
 
     void adopt(GPRTemporary&);
 

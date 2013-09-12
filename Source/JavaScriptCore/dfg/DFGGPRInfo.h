@@ -158,6 +158,15 @@ public:
     
     GPRReg tagGPR() const { return static_cast<GPRReg>(m_tagGPR); }
     GPRReg payloadGPR() const { return static_cast<GPRReg>(m_payloadGPR); }
+    GPRReg gpr(WhichValueWord which) const
+    {
+        switch (which) {
+        case TagWord:
+            return tagGPR();
+        case PayloadWord:
+            return payloadGPR();
+        }
+    }
 
 private:
     int8_t m_tagGPR;

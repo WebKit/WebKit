@@ -221,7 +221,7 @@ void SpeculativeJIT::nonSpeculativeUInt32ToNumber(Node* node)
 {
     Int32Operand op1(this, node->child1());
     FPRTemporary boxer(this);
-    GPRTemporary result(this, op1);
+    GPRTemporary result(this, Reuse, op1);
     
     JITCompiler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, op1.gpr(), TrustedImm32(0));
     
@@ -330,7 +330,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull(Edge operand, bool inv
     JSValueOperand arg(this, operand);
     GPRReg argGPR = arg.gpr();
     
-    GPRTemporary result(this, arg);
+    GPRTemporary result(this, Reuse, arg);
     GPRReg resultGPR = result.gpr();
     
     JITCompiler::Jump notCell;
@@ -398,7 +398,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNull(Edge operand, Node* branch
     JSValueOperand arg(this, operand);
     GPRReg argGPR = arg.gpr();
     
-    GPRTemporary result(this, arg);
+    GPRTemporary result(this, Reuse, arg);
     GPRReg resultGPR = result.gpr();
     
     JITCompiler::Jump notCell;
@@ -499,7 +499,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranch(Node* node, Node* branchNode, 
 
         branchTest32(callResultCondition, resultGPR, taken);
     } else {
-        GPRTemporary result(this, arg2);
+        GPRTemporary result(this, Reuse, arg2);
         GPRReg resultGPR = result.gpr();
     
         arg1.use();
@@ -582,7 +582,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompare(Node* node, MacroAssembler
         m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
         jsValueResult(resultGPR, m_currentNode, DataFormatJSBoolean, UseChildrenCalledExplicitly);
     } else {
-        GPRTemporary result(this, arg2);
+        GPRTemporary result(this, Reuse, arg2);
         GPRReg resultGPR = result.gpr();
 
         arg1.use();
@@ -1312,7 +1312,7 @@ void SpeculativeJIT::compileObjectEquality(Node* node)
 {
     SpeculateCellOperand op1(this, node->child1());
     SpeculateCellOperand op2(this, node->child2());
-    GPRTemporary result(this, op1);
+    GPRTemporary result(this, Reuse, op1);
     
     GPRReg op1GPR = op1.gpr();
     GPRReg op2GPR = op2.gpr();
@@ -1574,7 +1574,7 @@ void SpeculativeJIT::compileIntegerCompare(Node* node, MacroAssembler::Relationa
 {
     SpeculateInt32Operand op1(this, node->child1());
     SpeculateInt32Operand op2(this, node->child2());
-    GPRTemporary result(this, op1, op2);
+    GPRTemporary result(this, Reuse, op1, op2);
     
     m_jit.compare32(condition, op1.gpr(), op2.gpr(), result.gpr());
     
@@ -1698,7 +1698,7 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
         
     case Int32Use: {
         SpeculateInt32Operand value(this, node->child1());
-        GPRTemporary result(this, value);
+        GPRTemporary result(this, Reuse, value);
         m_jit.compare32(MacroAssembler::Equal, value.gpr(), MacroAssembler::TrustedImm32(0), result.gpr());
         m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
         jsValueResult(result.gpr(), node, DataFormatJSBoolean);
@@ -1720,7 +1720,7 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
     case BooleanUse: {
         if (!needsTypeCheck(node->child1(), SpecBoolean)) {
             SpeculateBooleanOperand value(this, node->child1());
-            GPRTemporary result(this, value);
+            GPRTemporary result(this, Reuse, value);
             
             m_jit.move(value.gpr(), result.gpr());
             m_jit.xor64(TrustedImm32(true), result.gpr());
@@ -2115,14 +2115,14 @@ void SpeculativeJIT::compile(Node* node)
     case BitXor:
         if (isInt32Constant(node->child1().node())) {
             SpeculateInt32Operand op2(this, node->child2());
-            GPRTemporary result(this, op2);
+            GPRTemporary result(this, Reuse, op2);
 
             bitOp(op, valueOfInt32Constant(node->child1().node()), op2.gpr(), result.gpr());
 
             integerResult(result.gpr(), node);
         } else if (isInt32Constant(node->child2().node())) {
             SpeculateInt32Operand op1(this, node->child1());
-            GPRTemporary result(this, op1);
+            GPRTemporary result(this, Reuse, op1);
 
             bitOp(op, valueOfInt32Constant(node->child2().node()), op1.gpr(), result.gpr());
 
@@ -2130,7 +2130,7 @@ void SpeculativeJIT::compile(Node* node)
         } else {
             SpeculateInt32Operand op1(this, node->child1());
             SpeculateInt32Operand op2(this, node->child2());
-            GPRTemporary result(this, op1, op2);
+            GPRTemporary result(this, Reuse, op1, op2);
 
             GPRReg reg1 = op1.gpr();
             GPRReg reg2 = op2.gpr();
@@ -2145,7 +2145,7 @@ void SpeculativeJIT::compile(Node* node)
     case BitURShift:
         if (isInt32Constant(node->child2().node())) {
             SpeculateInt32Operand op1(this, node->child1());
-            GPRTemporary result(this, op1);
+            GPRTemporary result(this, Reuse, op1);
 
             shiftOp(op, op1.gpr(), valueOfInt32Constant(node->child2().node()) & 0x1f, result.gpr());
 
@@ -2154,7 +2154,7 @@ void SpeculativeJIT::compile(Node* node)
             // Do not allow shift amount to be used as the result, MacroAssembler does not permit this.
             SpeculateInt32Operand op1(this, node->child1());
             SpeculateInt32Operand op2(this, node->child2());
-            GPRTemporary result(this, op1);
+            GPRTemporary result(this, Reuse, op1);
 
             GPRReg reg1 = op1.gpr();
             GPRReg reg2 = op2.gpr();
@@ -2257,7 +2257,7 @@ void SpeculativeJIT::compile(Node* node)
         case Int32Use: {
             SpeculateStrictInt32Operand op1(this, node->child1());
             SpeculateStrictInt32Operand op2(this, node->child2());
-            GPRTemporary result(this, op1);
+            GPRTemporary result(this, Reuse, op1);
             
             MacroAssembler::Jump op1Less = m_jit.branch32(op == ArithMin ? MacroAssembler::LessThan : MacroAssembler::GreaterThan, op1.gpr(), op2.gpr());
             m_jit.move(op2.gpr(), result.gpr());
@@ -3179,7 +3179,7 @@ void SpeculativeJIT::compile(Node* node)
     case ToPrimitive: {
         RELEASE_ASSERT(node->child1().useKind() == UntypedUse);
         JSValueOperand op1(this, node->child1());
-        GPRTemporary result(this, op1);
+        GPRTemporary result(this, Reuse, op1);
         
         GPRReg op1GPR = op1.gpr();
         GPRReg resultGPR = result.gpr();
@@ -3683,7 +3683,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case GetScope: {
         SpeculateCellOperand function(this, node->child1());
-        GPRTemporary result(this, function);
+        GPRTemporary result(this, Reuse, function);
         m_jit.loadPtr(JITCompiler::Address(function.gpr(), JSFunction::offsetOfScopeChain()), result.gpr());
         cellResult(result.gpr(), node);
         break;
@@ -3707,7 +3707,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case SkipTopScope: {
         SpeculateCellOperand scope(this, node->child1());
-        GPRTemporary result(this, scope);
+        GPRTemporary result(this, Reuse, scope);
         GPRReg resultGPR = result.gpr();
         m_jit.move(scope.gpr(), resultGPR);
         JITCompiler::Jump activationNotCreated =
@@ -3723,7 +3723,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case SkipScope: {
         SpeculateCellOperand scope(this, node->child1());
-        GPRTemporary result(this, scope);
+        GPRTemporary result(this, Reuse, scope);
         m_jit.loadPtr(JITCompiler::Address(scope.gpr(), JSScope::offsetOfNext()), result.gpr());
         cellResult(result.gpr(), node);
         break;
@@ -3774,7 +3774,7 @@ void SpeculativeJIT::compile(Node* node)
         switch (node->child1().useKind()) {
         case CellUse: {
             SpeculateCellOperand base(this, node->child1());
-            GPRTemporary result(this, base);
+            GPRTemporary result(this, Reuse, base);
             
             GPRReg baseGPR = base.gpr();
             GPRReg resultGPR = result.gpr();
@@ -3789,7 +3789,7 @@ void SpeculativeJIT::compile(Node* node)
         
         case UntypedUse: {
             JSValueOperand base(this, node->child1());
-            GPRTemporary result(this, base);
+            GPRTemporary result(this, Reuse, base);
         
             GPRReg baseGPR = base.gpr();
             GPRReg resultGPR = result.gpr();
@@ -3981,7 +3981,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case GetButterfly: {
         SpeculateCellOperand base(this, node->child1());
-        GPRTemporary result(this, base);
+        GPRTemporary result(this, Reuse, base);
         
         GPRReg baseGPR = base.gpr();
         GPRReg resultGPR = result.gpr();
@@ -4004,7 +4004,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case GetByOffset: {
         StorageOperand storage(this, node->child1());
-        GPRTemporary result(this, storage);
+        GPRTemporary result(this, Reuse, storage);
         
         GPRReg storageGPR = storage.gpr();
         GPRReg resultGPR = result.gpr();
@@ -4185,7 +4185,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case IsBoolean: {
         JSValueOperand value(this, node->child1());
-        GPRTemporary result(this, value);
+        GPRTemporary result(this, Reuse, value);
         
         m_jit.move(value.gpr(), result.gpr());
         m_jit.xor64(JITCompiler::TrustedImm32(ValueFalse), result.gpr());
@@ -4197,7 +4197,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case IsNumber: {
         JSValueOperand value(this, node->child1());
-        GPRTemporary result(this, value);
+        GPRTemporary result(this, Reuse, value);
         
         m_jit.test64(JITCompiler::NonZero, value.gpr(), GPRInfo::tagTypeNumberRegister, result.gpr());
         m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
@@ -4207,7 +4207,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case IsString: {
         JSValueOperand value(this, node->child1());
-        GPRTemporary result(this, value);
+        GPRTemporary result(this, Reuse, value);
         
         JITCompiler::Jump isNotCell = m_jit.branchTest64(JITCompiler::NonZero, value.gpr(), GPRInfo::tagMaskRegister);
         
@@ -4327,7 +4327,7 @@ void SpeculativeJIT::compile(Node* node)
         RELEASE_ASSERT(!node->codeOrigin.inlineCallFrame);
         
         JSValueOperand value(this, node->child1());
-        GPRTemporary result(this, value);
+        GPRTemporary result(this, Reuse, value);
         
         GPRReg valueGPR = value.gpr();
         GPRReg resultGPR = result.gpr();
@@ -4345,7 +4345,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case CreateArguments: {
         JSValueOperand value(this, node->child1());
-        GPRTemporary result(this, value);
+        GPRTemporary result(this, Reuse, value);
         
         GPRReg valueGPR = value.gpr();
         GPRReg resultGPR = result.gpr();
@@ -4646,7 +4646,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case NewFunction: {
         JSValueOperand value(this, node->child1());
-        GPRTemporary result(this, value);
+        GPRTemporary result(this, Reuse, value);
         
         GPRReg valueGPR = value.gpr();
         GPRReg resultGPR = result.gpr();

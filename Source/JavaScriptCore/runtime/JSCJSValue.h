@@ -98,6 +98,11 @@ union EncodedValueDescriptor {
 #endif
 };
 
+enum WhichValueWord {
+    TagWord,
+    PayloadWord
+};
+
 // This implements ToInt32, defined in ECMA-262 9.5.
 JS_EXPORT_PRIVATE int32_t toInt32(double);
 
