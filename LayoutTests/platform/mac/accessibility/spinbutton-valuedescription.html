@@ -17,7 +17,7 @@
     if (window.accessibilityController) {
 
           var spin = accessibilityController.accessibleElementById("spin");
-          shouldBe("spin.valueDescription", "'Monday'");
+          shouldBe("spin.valueDescription", "'AXValueDescription: Monday'");
           shouldBe("spin.stringValue", "'AXValue: 4'");
           shouldBe("spin.minValue", "1");
           shouldBe("spin.maxValue", "7");

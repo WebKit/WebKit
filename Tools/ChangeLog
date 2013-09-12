@@ -1,3 +1,17 @@
+2013-09-12  Samuel White  <samuel_white@apple.com>
+
+        <meter> element text value exposed as AXTitle; should be exposing AXValueDescription
+        https://bugs.webkit.org/show_bug.cgi?id=117651
+
+        Reviewed by Mario Sanchez Prada.
+
+        Prepended 'AXValueDescription: ' to valueDescription output and updated impacted tests.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::valueDescription):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::valueDescription):
+
 2013-09-12  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         REGRESSION(r154781): accessibility/notification-listeners.html is failing

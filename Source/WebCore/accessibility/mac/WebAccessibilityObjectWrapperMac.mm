@@ -2159,6 +2159,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
         }
         
+        // Meter elements should communicate their content via AXValueDescription.
+        if (m_object->isMeter())
+            return [NSString string];
+        
         return [self accessibilityTitle];
     }
     
@@ -2516,8 +2520,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return nil;
     }
     
-    if ([attributeName isEqualToString:NSAccessibilityValueDescriptionAttribute])
+    if ([attributeName isEqualToString:NSAccessibilityValueDescriptionAttribute]) {
+        if (m_object->isMeter())
+            return [self accessibilityTitle];
+        
         return m_object->valueDescription();
+    }
     
     if ([attributeName isEqualToString:NSAccessibilityOrientationAttribute]) {
         AccessibilityOrientation elementOrientation = m_object->orientation();

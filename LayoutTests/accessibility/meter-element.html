@@ -16,7 +16,7 @@
 <div id="console"></div>
 <script>
 
-description("This tests that the <meter> element is accessible.")
+description("This tests that the meter element is accessible.");
 
 if (window.testRunner && window.accessibilityController) {
     for (var k = 1; k < 8; k++) {
@@ -25,6 +25,7 @@ if (window.testRunner && window.accessibilityController) {
         debug(meter.role);
         debug(meter.title);
         debug(meter.description);
+        debug(meter.valueDescription);
         debug("\n");
     }
 

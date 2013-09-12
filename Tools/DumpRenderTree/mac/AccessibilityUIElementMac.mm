@@ -658,9 +658,9 @@ JSStringRef AccessibilityUIElement::valueDescription()
     BEGIN_AX_OBJC_EXCEPTIONS
     NSString* valueDescription = [m_element accessibilityAttributeValue:NSAccessibilityValueDescriptionAttribute];
     if ([valueDescription isKindOfClass:[NSString class]])
-         return [valueDescription createJSStringRef];
-
+        return concatenateAttributeAndValue(@"AXValueDescription", valueDescription);
     END_AX_OBJC_EXCEPTIONS
+    
     return 0;
 }
 

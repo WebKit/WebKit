@@ -19,7 +19,7 @@
           // this text field should be required.
           document.getElementById("body").focus();
           var obj = accessibilityController.focusedElement.childAtIndex(0);
-          var succeeded = obj.valueDescription == "MAX";
+          var succeeded = obj.valueDescription == "AXValueDescription: MAX";
           shouldBe("succeeded", "true");
     }
 

@@ -1,5 +1,22 @@
 2013-09-12  Samuel White  <samuel_white@apple.com>
 
+        <meter> element text value exposed as AXTitle; should be exposing AXValueDescription
+        https://bugs.webkit.org/show_bug.cgi?id=117651
+
+        Reviewed by Mario Sanchez Prada.
+
+        Updated existing meter element test to cover platform specific output.
+
+        * accessibility/meter-element.html:
+        * platform/mac/accessibility/aria-valuetext-on-native-slider-expected.txt:
+        * platform/mac/accessibility/aria-valuetext-on-native-slider.html:
+        * platform/mac/accessibility/aria-valuetext.html:
+        * platform/mac/accessibility/meter-element-expected.txt: Renamed from LayoutTests/accessibility/meter-element-expected.txt.
+        * platform/mac/accessibility/spinbutton-valuedescription-expected.txt:
+        * platform/mac/accessibility/spinbutton-valuedescription.html:
+
+2013-09-12  Samuel White  <samuel_white@apple.com>
+
         AX: Self-referencing aria-labelledby only uses contents.
         https://bugs.webkit.org/show_bug.cgi?id=120814
 

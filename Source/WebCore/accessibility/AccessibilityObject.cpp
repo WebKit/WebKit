@@ -537,6 +537,16 @@ bool AccessibilityObject::isRangeControl() const
     }
 }
 
+bool AccessibilityObject::isMeter() const
+{
+#if ENABLE(METER_ELEMENT)
+    RenderObject* renderer = this->renderer();
+    return renderer && renderer->isMeter();
+#else
+    return false;
+#endif
+}
+
 IntPoint AccessibilityObject::clickPoint()
 {
     LayoutRect rect = elementRect();
