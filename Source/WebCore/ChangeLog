@@ -1,3 +1,49 @@
+2013-09-13  Darin Adler  <darin@apple.com>
+
+        Remove layering-violating Pasteboard::plainText function (for all platforms now)
+        https://bugs.webkit.org/show_bug.cgi?id=121312
+
+        Reviewed by Antti Koivisto.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::pasteAsPlainTextWithPasteboard): Call readPlainTextFromPasteboard
+        on all platforms, not just Mac and EFL. Also call canSmartReplaceWithPasteboard with
+        a reference instead of a pointer.
+        (WebCore::Editor::readPlainTextFromPasteboard): Added. This is a cross-platform
+        version of what was previously a Mac-only function.
+        (WebCore::Editor::plainTextFromPasteboard): Added. This is the simple non-Mac version
+        of this function.
+        (WebCore::Editor::pasteWithPasteboard): Updated to call canSmartReplaceWithPasteboard
+        with a reference.
+        (WebCore::Editor::canSmartReplaceWithPasteboard): Updated to take a reference.
+
+        * editing/Editor.h: Make readPlainTextFromPasteboard cross-platform instead of
+        Mac-only. Also changed argument to canSmartReplaceWithPasteboard to be a reference.
+        Also added private plainTextFromPasteboard function.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::pasteWithPasteboard): Updated to call canSmartReplaceWithPasteboard
+        with a reference.
+        (WebCore::Editor::plainTextFromPasteboard): Added. Contains the Mac-specific parts
+        of the readPlainTextFromPasteboard function.
+
+        * platform/Pasteboard.h: Fixed a conditional in the PasteboardPlainText struct to
+        omit iOS. Removed the layering-voiolating plainText function.
+
+        * platform/blackberry/PasteboardBlackBerry.cpp:
+        (WebCore::Pasteboard::read): Renamed from plainText and updated to new calling
+        convention.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::read): Ditto.
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::read): Ditto.
+        * platform/nix/PasteboardNix.cpp:
+        (WebCore::Pasteboard::read): Ditto.
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::read): Ditto.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::read): Ditto.
+
 2013-09-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Move to the new web inspector

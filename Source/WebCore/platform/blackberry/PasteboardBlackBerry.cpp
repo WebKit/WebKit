@@ -76,9 +76,9 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
     BlackBerry::Platform::Clipboard::writePlainText(text);
 }
 
-String Pasteboard::plainText(Frame*)
+void Pasteboard::read(PasteboardPlainText& text)
 {
-    return BlackBerry::Platform::Clipboard::readPlainText();
+    text.text = BlackBerry::Platform::Clipboard::readPlainText();
 }
 
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context, bool allowPlainText, bool& chosePlainText)

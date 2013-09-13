@@ -117,7 +117,7 @@ public:
 
 struct PasteboardPlainText {
     String text;
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     bool isURL;
 #endif
 };
@@ -167,7 +167,6 @@ public:
 
 #if PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN)
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
-    String plainText(Frame* = 0); // FIXME: Layering violation.
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
 

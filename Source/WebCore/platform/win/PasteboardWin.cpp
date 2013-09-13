@@ -774,33 +774,28 @@ bool Pasteboard::canSmartReplace()
     return ::IsClipboardFormatAvailable(WebSmartPasteFormat);
 }
 
-String Pasteboard::plainText(Frame* frame)
+void Pasteboard::read(PasteboardPlainText& text)
 {
     if (::IsClipboardFormatAvailable(CF_UNICODETEXT) && ::OpenClipboard(m_owner)) {
-        HANDLE cbData = ::GetClipboardData(CF_UNICODETEXT);
-        if (cbData) {
-            UChar* buffer = static_cast<UChar*>(GlobalLock(cbData));
-            String fromClipboard(buffer);
+        if (HANDLE cbData = ::GetClipboardData(CF_UNICODETEXT)) {
+            text.text = static_cast<UChar*>(GlobalLock(cbData));
             GlobalUnlock(cbData);
             ::CloseClipboard();
-            return fromClipboard;
+            return;
         }
         ::CloseClipboard();
     }
 
     if (::IsClipboardFormatAvailable(CF_TEXT) && ::OpenClipboard(m_owner)) {
-        HANDLE cbData = ::GetClipboardData(CF_TEXT);
-        if (cbData) {
-            char* buffer = static_cast<char*>(GlobalLock(cbData));
-            String fromClipboard(buffer);
+        if (HANDLE cbData = ::GetClipboardData(CF_TEXT)) {
+            // FIXME: This treats the characters as Latin-1, not UTF-8 or even Windows Latin-1. Is that the right encoding?
+            text.text = static_cast<char*>(GlobalLock(cbData));
             GlobalUnlock(cbData);
             ::CloseClipboard();
-            return fromClipboard;
+            return;
         }
         ::CloseClipboard();
     }
-
-    return String();
 }
 
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context, bool allowPlainText, bool& chosePlainText)

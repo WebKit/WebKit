@@ -144,12 +144,10 @@ bool Pasteboard::canSmartReplace()
     return false;
 }
 
-String Pasteboard::plainText(Frame*)
+void Pasteboard::read(PasteboardPlainText& text)
 {
 #ifndef QT_NO_CLIPBOARD
-    return QGuiApplication::clipboard()->text(m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
-#else
-    return String();
+    text.text = QGuiApplication::clipboard()->text(m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 #endif
 }
 

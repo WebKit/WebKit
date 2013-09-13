@@ -417,14 +417,26 @@ void Editor::pasteAsPlainTextBypassingDHTML()
 
 void Editor::pasteAsPlainTextWithPasteboard(Pasteboard& pasteboard)
 {
-#if (PLATFORM(MAC) && !PLATFORM(IOS)) || PLATFORM(EFL)
     String text = readPlainTextFromPasteboard(pasteboard);
-#else
-    String text = pasteboard.plainText(&m_frame);
-#endif
     if (client() && client()->shouldInsertText(text, selectedRange().get(), EditorInsertActionPasted))
-        pasteAsPlainText(text, canSmartReplaceWithPasteboard(&pasteboard));
+        pasteAsPlainText(text, canSmartReplaceWithPasteboard(pasteboard));
 }
+
+String Editor::readPlainTextFromPasteboard(Pasteboard& pasteboard)
+{
+    PasteboardPlainText text;
+    pasteboard.read(text);
+    return plainTextFromPasteboard(text);
+}
+
+#if !(PLATFORM(MAC) && !PLATFORM(IOS))
+
+String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
+{
+    return text.text;
+}
+
+#endif
 
 #if !PLATFORM(MAC) && !PLATFORM(EFL)
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
@@ -433,13 +445,13 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
     bool chosePlainText;
     RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(&m_frame, range, allowPlainText, chosePlainText);
     if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
-        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), chosePlainText);
+        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(*pasteboard), chosePlainText);
 }
 #endif
 
-bool Editor::canSmartReplaceWithPasteboard(Pasteboard* pasteboard)
+bool Editor::canSmartReplaceWithPasteboard(Pasteboard& pasteboard)
 {
-    return client() && client()->smartInsertDeleteEnabled() && pasteboard->canSmartReplace();
+    return client() && client()->smartInsertDeleteEnabled() && pasteboard.canSmartReplace();
 }
 
 bool Editor::shouldInsertFragment(PassRefPtr<DocumentFragment> fragment, PassRefPtr<Range> replacingDOMRange, EditorInsertAction givenAction)

@@ -325,11 +325,11 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     return 0;
 }
 
-String Pasteboard::plainText(Frame* frame)
+void Pasteboard::read(PasteboardPlainText& text)
 {
     if (m_gtkClipboard)
         PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_gtkClipboard);
-    return m_dataObject->text();
+    text.text = m_dataObject->text();
 }
 
 bool Pasteboard::hasData()

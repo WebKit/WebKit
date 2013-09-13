@@ -83,10 +83,9 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame*, PassRefPtr<Ran
     return 0;
 }
 
-String Pasteboard::plainText(Frame*)
+void Pasteboard::read(PasteboardPlainText&)
 {
     notImplemented();
-    return String();
 }
 
 PassOwnPtr<Pasteboard> Pasteboard::createForCopyAndPaste()

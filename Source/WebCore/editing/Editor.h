@@ -71,6 +71,7 @@ class Text;
 class TextCheckerClient;
 class TextEvent;
 
+struct PasteboardPlainText;
 struct PasteboardURL;
 struct TextCheckingResult;
 
@@ -128,6 +129,8 @@ public:
     void copyURL(const KURL&, const String& title);
     void copyURL(const KURL&, const String& title, Pasteboard&);
     void copyImage(const HitTestResult&);
+
+    String readPlainTextFromPasteboard(Pasteboard&);
 
     void indent();
     void outdent();
@@ -411,7 +414,6 @@ public:
 #if PLATFORM(MAC) || PLATFORM(EFL)
     void writeSelectionToPasteboard(Pasteboard&);
     void writeImageToPasteboard(Pasteboard&, Element& imageElement, const KURL&, const String& title);
-    String readPlainTextFromPasteboard(Pasteboard&);
 #endif
 
 private:
@@ -422,9 +424,10 @@ private:
     Document& document() const;
 
     bool canDeleteRange(Range*) const;
-    bool canSmartReplaceWithPasteboard(Pasteboard*);
+    bool canSmartReplaceWithPasteboard(Pasteboard&);
     void pasteAsPlainTextWithPasteboard(Pasteboard&);
     void pasteWithPasteboard(Pasteboard*, bool allowPlainText);
+    String plainTextFromPasteboard(const PasteboardPlainText&);
 
     void revealSelectionAfterEditingOperation(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = DoNotRevealExtent);
     void markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling, RefPtr<Range>& firstMisspellingRange);

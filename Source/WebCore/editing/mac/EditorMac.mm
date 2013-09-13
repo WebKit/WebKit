@@ -92,7 +92,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
     RefPtr<DocumentFragment> fragment = webContentFromPasteboard(*pasteboard, *range, allowPlainText, chosePlainText);
 
     if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
-        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), false);
+        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(*pasteboard), false);
 
     client()->setInsertionPasteboard(String());
 }
@@ -383,6 +383,19 @@ void Editor::fillInUserVisibleForm(PasteboardURL& pasteboardURL)
     pasteboardURL.userVisibleForm = client()->userVisibleString(pasteboardURL.url);
 }
 
+String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
+{
+    String string = text.text;
+
+    // FIXME: It's not clear this is 100% correct since we know -[NSURL URLWithString:] does not handle
+    // all the same cases we handle well in the KURL code for creating an NSURL.
+    if (text.isURL)
+        string = client()->userVisibleString([NSURL URLWithString:string]);
+
+    // FIXME: WTF should offer a non-Mac-specific way to convert string to precomposed form so we can do it for all platforms.
+    return [(NSString *)string precomposedStringWithCanonicalMapping];
+}
+
 void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const KURL& url, const String& title)
 {
     PasteboardImage pasteboardImage;
@@ -400,22 +413,6 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboardImage.resourceMIMEType = cachedImage->response().mimeType();
 
     pasteboard.write(pasteboardImage);
-}
-
-String Editor::readPlainTextFromPasteboard(Pasteboard& pasteboard)
-{
-    PasteboardPlainText text;
-    pasteboard.read(text);
-
-    String string = text.text;
-
-    // FIXME: It's not clear this is 100% correct since we know -[NSURL URLWithString:] does not handle
-    // all the same cases we handle well in the KURL code for creating an NSURL.
-    if (text.isURL)
-        string = client()->userVisibleString([NSURL URLWithString:string]);
-
-    // FIXME: WTF should offer a non-Mac-specific way to convert string to precomposed form so we can do it for all platforms.
-    return [(NSString *)string precomposedStringWithCanonicalMapping];
 }
 
 class Editor::WebContentReader FINAL : public PasteboardWebContentReader {
