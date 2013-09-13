@@ -340,11 +340,6 @@ void LayerRenderer::compositeLayers(const TransformationMatrix& matrix, LayerCom
         compositeLayersRecursive(sublayers[i].get(), currentStencilValue, clipRect);
     }
 
-    // We need to make sure that all texture resource usage is finished before
-    // unlocking the texture resources, so force a glFinish() in that case.
-    if (m_layersLockingTextureResources.size())
-        glFinish();
-
     m_client->context()->swapBuffers();
 
     glDisable(GL_SCISSOR_TEST);
