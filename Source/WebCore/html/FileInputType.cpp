@@ -214,7 +214,8 @@ void FileInputType::handleDOMActivateEvent(Event* event)
 
 RenderObject* FileInputType::createRenderer(RenderArena* arena, RenderStyle*) const
 {
-    return new (arena) RenderFileUploadControl(element());
+    ASSERT(element()); // FIXME: element() should return a reference.
+    return new (arena) RenderFileUploadControl(*element());
 }
 
 bool FileInputType::canSetStringValue() const

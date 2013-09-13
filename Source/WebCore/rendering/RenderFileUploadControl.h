@@ -33,15 +33,19 @@ class HTMLInputElement;
 
 class RenderFileUploadControl FINAL : public RenderBlockFlow {
 public:
-    RenderFileUploadControl(HTMLInputElement*);
+    explicit RenderFileUploadControl(HTMLInputElement&);
     virtual ~RenderFileUploadControl();
-
-    virtual bool isFileUploadControl() const { return true; }
 
     String buttonValue();
     String fileTextValue() const;
+
+    HTMLInputElement& inputElement() const;
     
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
+    virtual bool isFileUploadControl() const OVERRIDE { return true; }
+
     virtual const char* renderName() const { return "RenderFileUploadControl"; }
 
     virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
