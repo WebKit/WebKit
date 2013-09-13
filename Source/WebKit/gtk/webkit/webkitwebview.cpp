@@ -1945,7 +1945,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         NULL,
         webkit_marshal_BOOLEAN__OBJECT,
         G_TYPE_BOOLEAN, 1,
-        G_TYPE_OBJECT);
+        WEBKIT_TYPE_DOWNLOAD);
 
     /**
      * WebKitWebView::load-started:
