@@ -234,7 +234,7 @@ RenderObject* RenderObject::createObject(Element* element, RenderStyle* style)
         return new (arena) RenderFlexibleBox(element);
     case GRID:
     case INLINE_GRID:
-        return new (arena) RenderGrid(element);
+        return new (arena) RenderGrid(*element);
     }
 
     return 0;

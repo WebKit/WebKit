@@ -34,10 +34,10 @@ class GridTrack;
 
 class RenderGrid FINAL : public RenderBlock {
 public:
-    RenderGrid(Element*);
+    explicit RenderGrid(Element&);
     virtual ~RenderGrid();
 
-    virtual const char* renderName() const OVERRIDE;
+    Element& existingElement() const { return *RenderBlock::element(); }
 
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
 
@@ -52,6 +52,9 @@ public:
     };
 
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
+    virtual const char* renderName() const OVERRIDE;
     virtual bool isRenderGrid() const OVERRIDE { return true; }
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
     virtual void computePreferredLogicalWidths() OVERRIDE;

@@ -1,5 +1,14 @@
 2013-09-13  Andreas Kling  <akling@apple.com>
 
+        [CTTE] RenderGrid is never anonymous.
+        <https://webkit.org/b/121290>
+
+        Reviewed by Antti Koivisto.
+
+        Hide element() and provide existingElement() instead, returning an Element&.
+
+2013-09-13  Andreas Kling  <akling@apple.com>
+
         [CTTE] RenderTableCaption is never anonymous.
         <https://webkit.org/b/121289>
 

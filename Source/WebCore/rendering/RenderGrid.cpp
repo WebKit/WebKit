@@ -126,8 +126,8 @@ private:
     size_t m_childIndex;
 };
 
-RenderGrid::RenderGrid(Element* element)
-    : RenderBlock(element)
+RenderGrid::RenderGrid(Element& element)
+    : RenderBlock(&element)
 {
     // All of our children must be block level.
     setChildrenInline(false);
