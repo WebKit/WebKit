@@ -773,8 +773,7 @@ void DumpRenderTree::initJSObjects()
                                                                                    "    }\n"
                                                                                    "for (var prop in this.jscBasedTestRunner) {\n"
                                                                                    "    var pd = Object.getOwnPropertyDescriptor(this.qtBasedTestRunner, prop);\n"
-                                                                                   "    if (pd !== undefined && !pd.writable) continue;\n"
-                                                                                   "    pd = Object.getOwnPropertyDescriptor(this.jscBasedTestRunner, prop);\n"
+                                                                                   "    if (pd !== undefined && (pd.writable === false || pd.configurable === false)) continue;\n"
                                                                                    "    this.qtBasedTestRunner[prop] = bind(this.jscBasedTestRunner[prop], this.jscBasedTestRunner);\n"
                                                                                    "}\n"
                                                                                    "}).apply(this)\n"));
