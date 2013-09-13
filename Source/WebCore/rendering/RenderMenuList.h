@@ -43,10 +43,11 @@ class RenderText;
 class RenderMenuList FINAL : public RenderFlexibleBox, private PopupMenuClient {
 
 public:
-    RenderMenuList(Element*);
+    explicit RenderMenuList(HTMLSelectElement&);
     virtual ~RenderMenuList();
 
-public:
+    HTMLSelectElement& selectElement() const;
+
     bool popupIsVisible() const { return m_popupIsVisible; }
     void showPopup();
     void hidePopup();
@@ -58,7 +59,7 @@ public:
     String text() const;
 
 private:
-    HTMLSelectElement* selectElement() const;
+    void element() const WTF_DELETED_FUNCTION;
 
     virtual bool isMenuList() const { return true; }
 

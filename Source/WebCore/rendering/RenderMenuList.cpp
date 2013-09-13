@@ -54,8 +54,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderMenuList::RenderMenuList(Element* element)
-    : RenderFlexibleBox(element)
+RenderMenuList::RenderMenuList(HTMLSelectElement& element)
+    : RenderFlexibleBox(&element)
     , m_buttonText(0)
     , m_innerBlock(0)
     , m_needsOptionsWidthUpdate(true)
@@ -63,9 +63,6 @@ RenderMenuList::RenderMenuList(Element* element)
     , m_lastActiveIndex(-1)
     , m_popupIsVisible(false)
 {
-    ASSERT(element);
-    ASSERT(element->isHTMLElement());
-    ASSERT(isHTMLSelectElement(element));
 }
 
 RenderMenuList::~RenderMenuList()
@@ -132,9 +129,10 @@ void RenderMenuList::adjustInnerStyle()
     }
 }
 
-inline HTMLSelectElement* RenderMenuList::selectElement() const
+HTMLSelectElement& RenderMenuList::selectElement() const
 {
-    return toHTMLSelectElement(element());
+    ASSERT(RenderObject::node());
+    return toHTMLSelectElement(*RenderObject::node());
 }
 
 void RenderMenuList::addChild(RenderObject* newChild, RenderObject* beforeChild)
@@ -175,7 +173,7 @@ void RenderMenuList::styleDidChange(StyleDifference diff, const RenderStyle* old
 void RenderMenuList::updateOptionsWidth()
 {
     float maxOptionWidth = 0;
-    const Vector<HTMLElement*>& listItems = selectElement()->listItems();
+    const Vector<HTMLElement*>& listItems = selectElement().listItems();
     int size = listItems.size();    
     FontCachePurgePreventer fontCachePurgePreventer;
 
@@ -217,16 +215,15 @@ void RenderMenuList::updateFromElement()
     if (m_popupIsVisible)
         m_popup->updateFromElement();
     else
-        setTextFromOption(selectElement()->selectedIndex());
+        setTextFromOption(selectElement().selectedIndex());
 }
 
 void RenderMenuList::setTextFromOption(int optionIndex)
 {
-    HTMLSelectElement* select = selectElement();
-    const Vector<HTMLElement*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = selectElement().listItems();
     int size = listItems.size();
 
-    int i = select->optionToListIndex(optionIndex);
+    int i = selectElement().optionToListIndex(optionIndex);
     String text = emptyString();
     if (i >= 0 && i < size) {
         Element* element = listItems[i];
@@ -342,8 +339,7 @@ void RenderMenuList::showPopup()
     FloatPoint absTopLeft = localToAbsolute(FloatPoint(), UseTransforms);
     IntRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
     absBounds.setLocation(roundedIntPoint(absTopLeft));
-    HTMLSelectElement* select = selectElement();
-    m_popup->show(absBounds, &view().frameView(), select->optionToListIndex(select->selectedIndex()));
+    m_popup->show(absBounds, &view().frameView(), selectElement().optionToListIndex(selectElement().selectedIndex()));
 }
 
 void RenderMenuList::hidePopup()
@@ -356,27 +352,25 @@ void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
 {
     // Check to ensure a page navigation has not occurred while
     // the popup was up.
-    Document& document = element()->document();
-    if (&document != document.frame()->document())
+    if (&document() != document().frame()->document())
         return;
-    
-    HTMLSelectElement* select = selectElement();
-    select->optionSelectedByUser(select->listToOptionIndex(listIndex), fireOnChange);
+
+    selectElement().optionSelectedByUser(selectElement().listToOptionIndex(listIndex), fireOnChange);
 }
 
 void RenderMenuList::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
 {
-    selectElement()->listBoxSelectItem(listIndex, allowMultiplySelections, shift, fireOnChangeNow);
+    selectElement().listBoxSelectItem(listIndex, allowMultiplySelections, shift, fireOnChangeNow);
 }
 
 bool RenderMenuList::multiple() const
 {
-    return selectElement()->multiple();
+    return selectElement().multiple();
 }
 
 void RenderMenuList::didSetSelectedIndex(int listIndex)
 {
-    didUpdateActiveOption(selectElement()->listToOptionIndex(listIndex));
+    didUpdateActiveOption(selectElement().listToOptionIndex(listIndex));
 }
 
 void RenderMenuList::didUpdateActiveOption(int optionIndex)
@@ -388,12 +382,11 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
         return;
     m_lastActiveIndex = optionIndex;
 
-    HTMLSelectElement* select = selectElement();
-    int listIndex = select->optionToListIndex(optionIndex);
-    if (listIndex < 0 || listIndex >= static_cast<int>(select->listItems().size()))
+    int listIndex = selectElement().optionToListIndex(optionIndex);
+    if (listIndex < 0 || listIndex >= static_cast<int>(selectElement().listItems().size()))
         return;
 
-    HTMLElement* listItem = select->listItems()[listIndex];
+    HTMLElement* listItem = selectElement().listItems()[listIndex];
     ASSERT(listItem);
     if (listItem->attached()) {
         if (AccessibilityMenuList* menuList = static_cast<AccessibilityMenuList*>(document().axObjectCache()->get(this)))
@@ -403,8 +396,7 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
 
 String RenderMenuList::itemText(unsigned listIndex) const
 {
-    HTMLSelectElement* select = selectElement();
-    const Vector<HTMLElement*>& listItems = select->listItems();
+    const Vector<HTMLElement*>& listItems = selectElement().listItems();
     if (listIndex >= listItems.size())
         return String();
 
@@ -432,7 +424,7 @@ String RenderMenuList::itemIcon(unsigned) const
 String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
 {
     // Allow the accessible name be changed if necessary.
-    const Vector<HTMLElement*>& listItems = selectElement()->listItems();
+    const Vector<HTMLElement*>& listItems = selectElement().listItems();
     if (listIndex >= listItems.size())
         return String();
     return listItems[listIndex]->fastGetAttribute(aria_labelAttr);
@@ -440,7 +432,7 @@ String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
     
 String RenderMenuList::itemToolTip(unsigned listIndex) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement()->listItems();
+    const Vector<HTMLElement*>& listItems = selectElement().listItems();
     if (listIndex >= listItems.size())
         return String();
     return listItems[listIndex]->title();
@@ -448,7 +440,7 @@ String RenderMenuList::itemToolTip(unsigned listIndex) const
 
 bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement()->listItems();
+    const Vector<HTMLElement*>& listItems = selectElement().listItems();
     if (listIndex >= listItems.size())
         return false;
     HTMLElement* element = listItems[listIndex];
@@ -468,7 +460,7 @@ bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
 
 PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement()->listItems();
+    const Vector<HTMLElement*>& listItems = selectElement().listItems();
     if (listIndex >= listItems.size()) {
         // If we are making an out of bounds access, then we want to use the style
         // of a different option element (index 0). However, if there isn't an option element
@@ -493,7 +485,7 @@ PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
 
 void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackgroundColor, bool& itemHasCustomBackgroundColor) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement()->listItems();
+    const Vector<HTMLElement*>& listItems = selectElement().listItems();
     if (listIndex >= listItems.size()) {
         itemBackgroundColor = style()->visitedDependentColor(CSSPropertyBackgroundColor);
         itemHasCustomBackgroundColor = false;
@@ -539,7 +531,7 @@ PassRefPtr<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea* scrollable
     RefPtr<Scrollbar> widget;
     bool hasCustomScrollbarStyle = style()->hasPseudoStyle(SCROLLBAR);
     if (hasCustomScrollbarStyle)
-        widget = RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, element());
+        widget = RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, &selectElement());
     else
         widget = Scrollbar::createNativeScrollbar(scrollableArea, orientation, controlSize);
     return widget.release();
@@ -578,13 +570,12 @@ LayoutUnit RenderMenuList::clientPaddingRight() const
 
 int RenderMenuList::listSize() const
 {
-    return selectElement()->listItems().size();
+    return selectElement().listItems().size();
 }
 
 int RenderMenuList::selectedIndex() const
 {
-    HTMLSelectElement* select = selectElement();
-    return select->optionToListIndex(select->selectedIndex());
+    return selectElement().optionToListIndex(selectElement().selectedIndex());
 }
 
 void RenderMenuList::popupDidHide()
@@ -594,19 +585,19 @@ void RenderMenuList::popupDidHide()
 
 bool RenderMenuList::itemIsSeparator(unsigned listIndex) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement()->listItems();
+    const Vector<HTMLElement*>& listItems = selectElement().listItems();
     return listIndex < listItems.size() && listItems[listIndex]->hasTagName(hrTag);
 }
 
 bool RenderMenuList::itemIsLabel(unsigned listIndex) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement()->listItems();
+    const Vector<HTMLElement*>& listItems = selectElement().listItems();
     return listIndex < listItems.size() && isHTMLOptGroupElement(listItems[listIndex]);
 }
 
 bool RenderMenuList::itemIsSelected(unsigned listIndex) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement()->listItems();
+    const Vector<HTMLElement*>& listItems = selectElement().listItems();
     if (listIndex >= listItems.size())
         return false;
     HTMLElement* element = listItems[listIndex];
@@ -615,7 +606,7 @@ bool RenderMenuList::itemIsSelected(unsigned listIndex) const
 
 void RenderMenuList::setTextFromItem(unsigned listIndex)
 {
-    setTextFromOption(selectElement()->listToOptionIndex(listIndex));
+    setTextFromOption(selectElement().listToOptionIndex(listIndex));
 }
 
 FontSelector* RenderMenuList::fontSelector() const
