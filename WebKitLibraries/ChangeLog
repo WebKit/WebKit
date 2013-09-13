@@ -1,3 +1,10 @@
+2013-09-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Update WKSI library for Open Source builders.
+
+        * win/lib32/WebKitSystemInterface.lib: Recompile with latest WebKit to use newer
+        WTF.dll symbol exports.
+
 2013-08-29  Filip Pizlo  <fpizlo@apple.com>
 
         Just linking LLVM into JSC causes all plugin tests to fail
