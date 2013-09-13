@@ -835,11 +835,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
         if (!clipboard->pasteboard().hasData())
             // Simplify whitespace so the title put on the clipboard resembles what the user sees
             // on the web page. This includes replacing newlines with spaces.
-#if PLATFORM(MAC) || PLATFORM(EFL)
-            src->editor().writeURLToPasteboard(clipboard->pasteboard(), linkURL, hitTestResult.textContent().simplifyWhiteSpace());
-#else
-            clipboard->pasteboard().writeURL(linkURL, hitTestResult.textContent().simplifyWhiteSpace(), src);
-#endif
+            src->editor().copyURL(linkURL, hitTestResult.textContent().simplifyWhiteSpace(), clipboard->pasteboard());
 
         if (src->selection().isCaret() && src->selection().isContentEditable()) {
             // a user can initiate a drag on a link without having any text

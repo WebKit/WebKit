@@ -1169,11 +1169,15 @@ void Editor::copyURL(const KURL& url, const String& title)
 
 void Editor::copyURL(const KURL& url, const String& title, Pasteboard& pasteboard)
 {
-#if (PLATFORM(MAC) && !PLATFORM(IOS)) || PLATFORM(EFL)
-    writeURLToPasteboard(pasteboard, url, title);
-#else
-    pasteboard.writeURL(url, title, &m_frame);
+    PasteboardURL pasteboardURL;
+    pasteboardURL.url = url;
+    pasteboardURL.title = title;
+
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    fillInUserVisibleForm(pasteboardURL);
 #endif
+
+    pasteboard.write(pasteboardURL);
 }
 
 void Editor::copyImage(const HitTestResult& result)

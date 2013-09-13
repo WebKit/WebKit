@@ -194,13 +194,13 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartRepl
 #endif
 }
 
-void Pasteboard::writeURL(const KURL& url, const String&, Frame*)
+void Pasteboard::write(const PasteboardURL& pasteboardURL)
 {
-    ASSERT(!url.isEmpty());
+    ASSERT(!pasteboardURL.url.isEmpty());
 
 #ifndef QT_NO_CLIPBOARD
     QMimeData* md = new QMimeData;
-    QString urlString = url.string();
+    QString urlString = pasteboardURL.url.string();
     md->setText(urlString);
     md->setUrls(QList<QUrl>() << url);
     QGuiApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);

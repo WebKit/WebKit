@@ -79,9 +79,9 @@ struct PasteboardWebContent {
 };
 
 struct PasteboardURL {
-#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN))
     KURL url;
     String title;
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     String userVisibleForm;
 #endif
 };
@@ -172,7 +172,6 @@ public:
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(WIN)
-    void writeURL(const KURL&, const String&, Frame* = 0); // FIXME: Layering violation.
     void writeImage(Node*, const KURL&, const String& title); // FIXME: Layering violation.
 #endif
 
@@ -244,7 +243,7 @@ private:
 
     void finishCreatingPasteboard();
     void writeRangeToDataObject(Range*, Frame*); // FIXME: Layering violation.
-    void writeURLToDataObject(const KURL&, const String&, Frame*); // FIXME: Layering violation.
+    void writeURLToDataObject(const KURL&, const String&);
     void writePlainTextToDataObject(const String&, SmartReplaceOption);
 #endif
 

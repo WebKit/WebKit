@@ -48,6 +48,7 @@ OBJC_CLASS NSDictionary;
 
 namespace WebCore {
 
+class AlternativeTextController;
 class ArchiveResource;
 class Clipboard;
 class CompositeEditCommand;
@@ -61,15 +62,16 @@ class HTMLElement;
 class HitTestResult;
 class KillRing;
 class Pasteboard;
-class SimpleFontData;
-class SpellChecker;
-class SpellCheckRequest;
-class AlternativeTextController;
 class SharedBuffer;
+class SimpleFontData;
+class SpellCheckRequest;
+class SpellChecker;
 class StylePropertySet;
 class Text;
 class TextCheckerClient;
 class TextEvent;
+
+struct PasteboardURL;
 struct TextCheckingResult;
 
 struct CompositionUnderline {
@@ -408,7 +410,6 @@ public:
 
 #if PLATFORM(MAC) || PLATFORM(EFL)
     void writeSelectionToPasteboard(Pasteboard&);
-    void writeURLToPasteboard(Pasteboard&, const KURL&, const String& title);
     void writeImageToPasteboard(Pasteboard&, Element& imageElement, const KURL&, const String& title);
     String readPlainTextFromPasteboard(Pasteboard&);
 #endif
@@ -447,6 +448,7 @@ private:
     PassRefPtr<Range> adjustedSelectionRange();
     PassRefPtr<DocumentFragment> createFragmentForImageResourceAndAddResource(PassRefPtr<ArchiveResource>);
     PassRefPtr<DocumentFragment> createFragmentAndAddResources(NSAttributedString *);
+    void fillInUserVisibleForm(PasteboardURL&);
 #endif
 
     Frame& m_frame;

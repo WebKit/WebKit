@@ -37,11 +37,6 @@ void Editor::writeSelectionToPasteboard(Pasteboard&)
     notImplemented();
 }
 
-void Editor::writeURLToPasteboard(Pasteboard&, const KURL&, const String&)
-{
-    notImplemented();
-}
-
 void Editor::writeImageToPasteboard(Pasteboard&, Element&, const KURL&, const String&)
 {
     notImplemented();

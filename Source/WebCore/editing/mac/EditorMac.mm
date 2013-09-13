@@ -378,14 +378,9 @@ static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& 
     cachedImage = tentativeCachedImage;
 }
 
-void Editor::writeURLToPasteboard(Pasteboard& pasteboard, const KURL& url, const String& title)
+void Editor::fillInUserVisibleForm(PasteboardURL& pasteboardURL)
 {
-    PasteboardURL pasteboardURL;
-    pasteboardURL.url = url;
-    pasteboardURL.title = title;
     pasteboardURL.userVisibleForm = client()->userVisibleString(pasteboardURL.url);
-
-    pasteboard.write(pasteboardURL);
 }
 
 void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const KURL& url, const String& title)

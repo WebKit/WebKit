@@ -1,3 +1,43 @@
+2013-09-13  Darin Adler  <darin@apple.com>
+
+        Remove layering-violating Pasteboard::writeURL (for all platforms now)
+        https://bugs.webkit.org/show_bug.cgi?id=121306
+
+        Reviewed by Antti Koivisto.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::copyURL): Move the contents of the writeURLToPasteboard function
+        in here.
+
+        * editing/Editor.h: Removed Mac-specific writeURLToPasteboard, added private
+        Mac-specific fillInUserVisibleForm function for the one Mac-specific part of writing URLs.
+
+        * editing/efl/EditorEfl.cpp: Deleted Editor::writeURLToPasteboard.
+
+        * editing/mac/EditorMac.mm: Deleted Editor::writeURLToPasteboard, moving the code
+        into copyURL.
+        (WebCore::Editor::fillInUserVisibleForm): Added.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag): Call copyURL instead of writeURL or
+        writeURLToPasteboard.
+
+        * platform/Pasteboard.h: Fixed up the PasteboardURL struct so it's suitable for
+        cross-platform use. Removed the writeURL function. Removed the Frame* argument from
+        the Windows-specific writeURLToDataObject function.
+
+        * platform/blackberry/PasteboardBlackBerry.cpp:
+        (WebCore::Pasteboard::write): Renamed/refactored from writeURL.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::write): Ditto.
+        * platform/nix/PasteboardNix.cpp:
+        (WebCore::Pasteboard::write): Ditto.
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::write): Ditto.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeURLToDataObject): Removed unused Frame* argument.
+        (WebCore::Pasteboard::write): Renamed/refactored from writeURL.
+
 2013-09-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: AXPress does not work in SVG

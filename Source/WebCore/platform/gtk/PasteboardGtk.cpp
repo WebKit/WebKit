@@ -174,12 +174,12 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartRepl
         PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard, (smartReplaceOption == CanSmartReplace) ? PasteboardHelper::IncludeSmartPaste : PasteboardHelper::DoNotIncludeSmartPaste);
 }
 
-void Pasteboard::writeURL(const KURL& url, const String& label, Frame* frame)
+void Pasteboard::write(const PasteboardURL& pasteboardURL)
 {
     ASSERT(!url.isEmpty());
 
     m_dataObject->clearAll();
-    m_dataObject->setURL(url, label);
+    m_dataObject->setURL(pasteboardURL.url, pasteboardURL.title);
 
     if (m_gtkClipboard)
         PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard);
