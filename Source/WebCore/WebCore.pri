@@ -114,8 +114,10 @@ use?(LIBXML2) {
     mac {
         INCLUDEPATH += /usr/include/libxml2
         LIBS += -lxml2
-    } else {
+    } else:!contains(QT_CONFIG, no-pkg-config) {
         PKGCONFIG += libxml-2.0
+    } else {
+        LIBS += -lxml2
     }
 }
 
@@ -123,8 +125,10 @@ enable?(XSLT) {
     mac {
         INCLUDEPATH += /usr/include/libxslt
         LIBS += -lxslt
-    } else {
+    } else:!contains(QT_CONFIG, no-pkg-config) {
         PKGCONFIG += libxslt
+    } else {
+        LIBS += -lxslt
     }
 }
 

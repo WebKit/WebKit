@@ -886,15 +886,6 @@
 #endif
 #endif
 
-/* Use the QXmlStreamReader implementation for XMLDocumentParser */
-/* Use the QXmlQuery implementation for XSLTProcessor */
-#if PLATFORM(QT)
-#if !USE(LIBXML2)
-#define WTF_USE_QXMLSTREAM 1
-#define WTF_USE_QXMLQUERY 1
-#endif
-#endif
-
 /* Accelerated compositing */
 #if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(QT) || (PLATFORM(WIN) && !USE(WINGDI) && !PLATFORM(WIN_CAIRO))
 #define WTF_USE_ACCELERATED_COMPOSITING 1

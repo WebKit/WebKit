@@ -1,3 +1,26 @@
+2013-09-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Remove support for QXmlStream as the XML parser.
+        https://bugs.webkit.org/show_bug.cgi?id=121229
+
+        Reviewed by Andreas Kling.
+
+        Remove the implementation and all the #ifdef related to it.
+
+        * Target.pri:
+        * WebCore.pri:
+        * dom/TransformSource.h:
+        * xml/XMLErrors.h:
+        * xml/XSLStyleSheet.h:
+        * xml/XSLTProcessor.h:
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::enterText):
+        (WebCore::toString):
+        (WebCore::XMLDocumentParser::exitText):
+        (WebCore::XMLDocumentParser::insertErrorMessageBlock):
+        * xml/parser/XMLDocumentParser.h:
+        * xml/parser/XMLDocumentParserQt.cpp: Removed.
+
 2013-09-13  Andreas Kling  <akling@apple.com>
 
         [CTTE] RenderSVGViewportContainer always has a SVGSVGElement.

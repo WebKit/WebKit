@@ -2952,8 +2952,6 @@ use?(LIBXML2) {
     SOURCES += \
             xml/parser/XMLDocumentParserLibxml2.cpp \
             xml/parser/XMLDocumentParserScope.cpp
-} else {
-    SOURCES += xml/parser/XMLDocumentParserQt.cpp
 }
 
 enable?(SMOOTH_SCROLLING) {

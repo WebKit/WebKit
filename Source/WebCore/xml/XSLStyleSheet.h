@@ -28,10 +28,8 @@
 #include "ProcessingInstruction.h"
 #include "StyleSheet.h"
 
-#if !USE(QXMLQUERY)
 #include <libxml/parser.h>
 #include <libxslt/transform.h>
-#endif
 
 #include <wtf/PassRefPtr.h>
 
@@ -42,12 +40,10 @@ class XSLImportRule;
     
 class XSLStyleSheet FINAL : public StyleSheet {
 public:
-#if !USE(QXMLQUERY)
     static PassRefPtr<XSLStyleSheet> create(XSLImportRule* parentImport, const String& originalURL, const KURL& finalURL)
     {
         return adoptRef(new XSLStyleSheet(parentImport, originalURL, finalURL));
     }
-#endif
     static PassRefPtr<XSLStyleSheet> create(ProcessingInstruction* parentNode, const String& originalURL, const KURL& finalURL)
     {
         return adoptRef(new XSLStyleSheet(parentNode, originalURL, finalURL, false));
@@ -81,13 +77,9 @@ public:
     virtual XSLStyleSheet* parentStyleSheet() const OVERRIDE { return m_parentStyleSheet; }
     void setParentStyleSheet(XSLStyleSheet* parent);
 
-#if USE(QXMLQUERY)
-    String sheetString() const { return m_sheetString; }
-#else
     xmlDocPtr document();
     xsltStylesheetPtr compileStyleSheet();
     xmlDocPtr locateStylesheetSubResource(xmlDocPtr parentDoc, const xmlChar* uri);
-#endif
 
     void clearDocuments();
 
@@ -109,9 +101,7 @@ public:
 
 private:
     XSLStyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL, bool embedded);
-#if !USE(QXMLQUERY)
     XSLStyleSheet(XSLImportRule* parentImport, const String& originalURL, const KURL& finalURL);
-#endif
     
     Node* m_ownerNode;
     String m_originalURL;
@@ -123,12 +113,8 @@ private:
     bool m_embedded;
     bool m_processed;
 
-#if USE(QXMLQUERY)
-    String m_sheetString;
-#else
     xmlDocPtr m_stylesheetDoc;
     bool m_stylesheetDocTaken;
-#endif
     
     XSLStyleSheet* m_parentStyleSheet;
 };

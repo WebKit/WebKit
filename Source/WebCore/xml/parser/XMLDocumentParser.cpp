@@ -145,20 +145,16 @@ void XMLDocumentParser::handleError(XMLErrors::ErrorType type, const char* m, Te
 
 void XMLDocumentParser::enterText()
 {
-#if !USE(QXMLSTREAM)
     ASSERT(m_bufferedText.size() == 0);
-#endif
     ASSERT(!m_leafTextNode);
     m_leafTextNode = Text::create(&m_currentNode->document(), "");
     m_currentNode->parserAppendChild(m_leafTextNode.get());
 }
 
-#if !USE(QXMLSTREAM)
 static inline String toString(const xmlChar* string, size_t size) 
 { 
     return String::fromUTF8(reinterpret_cast<const char*>(string), size); 
 }
-#endif
 
 
 void XMLDocumentParser::exitText()
@@ -169,11 +165,9 @@ void XMLDocumentParser::exitText()
     if (!m_leafTextNode)
         return;
 
-#if !USE(QXMLSTREAM)
     m_leafTextNode->appendData(toString(m_bufferedText.data(), m_bufferedText.size()), IGNORE_EXCEPTION);
     Vector<xmlChar> empty;
     m_bufferedText.swap(empty);
-#endif
 
     if (m_view && m_leafTextNode->parentNode() && m_leafTextNode->parentNode()->attached() && !m_leafTextNode->attached())
         Style::attachTextRenderer(*m_leafTextNode);
@@ -232,10 +226,6 @@ void XMLDocumentParser::finish()
 
 void XMLDocumentParser::insertErrorMessageBlock()
 {
-#if USE(QXMLSTREAM)
-    if (m_parsingFragment)
-        return;
-#endif
     ASSERT(m_xmlErrors);
     m_xmlErrors->insertErrorMessageBlock();
 }

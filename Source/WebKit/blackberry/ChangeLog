@@ -1,3 +1,14 @@
+2013-09-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Remove support for QXmlStream as the XML parser.
+        https://bugs.webkit.org/show_bug.cgi?id=121229
+
+        Reviewed by Andreas Kling.
+
+        Removed USE flags.
+
+        * WebCoreSupport/AboutDataUseFeatures.in:
+
 2013-09-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate more HTML type checks and casting
