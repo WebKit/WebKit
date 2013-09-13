@@ -107,7 +107,7 @@
 #endif
 
 // Harden the pointers stored in the TCMalloc linked lists
-#if COMPILER(GCC) && !PLATFORM(QT)
+#if !PLATFORM(QT)
 #define ENABLE_TCMALLOC_HARDENING 1
 #endif
 
@@ -556,8 +556,11 @@ static ALWAYS_INLINE uintptr_t internalEntropyValue()
 
 #define HARDENING_ENTROPY internalEntropyValue()
 #define ROTATE_VALUE(value, amount) (((value) >> (amount)) | ((value) << (sizeof(value) * 8 - (amount))))
+#if COMPILER(MSVC)
+#define XOR_MASK_PTR_WITH_KEY(ptr, key, entropy) (reinterpret_cast<decltype(ptr)>(reinterpret_cast<uintptr_t>(ptr)^(ROTATE_VALUE(reinterpret_cast<uintptr_t>(key), MaskKeyShift)^entropy)))
+#else
 #define XOR_MASK_PTR_WITH_KEY(ptr, key, entropy) (reinterpret_cast<__typeof__(ptr)>(reinterpret_cast<uintptr_t>(ptr)^(ROTATE_VALUE(reinterpret_cast<uintptr_t>(key), MaskKeyShift)^entropy)))
-
+#endif
 
 static ALWAYS_INLINE uint32_t freedObjectStartPoison()
 {
@@ -829,7 +832,8 @@ static inline int LgFloor(size_t n) {
 
 // Functions for using our simple hardened singly linked list
 static ALWAYS_INLINE HardenedSLL SLL_Next(HardenedSLL t, uintptr_t entropy) {
-    return HardenedSLL::create(XOR_MASK_PTR_WITH_KEY(*(reinterpret_cast<void**>(t.value())), t.value(), entropy));
+    void* tValueNext = *(reinterpret_cast<void**>(t.value()));
+    return HardenedSLL::create(XOR_MASK_PTR_WITH_KEY(tValueNext, t.value(), entropy));
 }
 
 static ALWAYS_INLINE void SLL_SetNext(HardenedSLL t, HardenedSLL n, uintptr_t entropy) {
