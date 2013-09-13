@@ -56,8 +56,8 @@
 
 namespace WebCore {
 
-RenderSVGText::RenderSVGText(SVGTextElement* node) 
-    : RenderSVGBlock(node)
+RenderSVGText::RenderSVGText(SVGTextElement& element)
+    : RenderSVGBlock(&element)
     , m_needsReordering(false)
     , m_needsPositioningValuesUpdate(false)
     , m_needsTransformUpdate(true)
@@ -68,6 +68,11 @@ RenderSVGText::RenderSVGText(SVGTextElement* node)
 RenderSVGText::~RenderSVGText()
 {
     ASSERT(m_layoutAttributes.isEmpty());
+}
+
+SVGTextElement& RenderSVGText::textElement() const
+{
+    return toSVGTextElement(*RenderSVGBlock::element());
 }
 
 bool RenderSVGText::isChildAllowed(RenderObject* child, RenderStyle*) const
@@ -354,8 +359,7 @@ void RenderSVGText::layout()
 
     bool updateCachedBoundariesInParents = false;
     if (m_needsTransformUpdate) {
-        SVGTextElement* text = toSVGTextElement(element());
-        m_localTransform = text->animatedLocalTransform();
+        m_localTransform = textElement().animatedLocalTransform();
         m_needsTransformUpdate = false;
         updateCachedBoundariesInParents = true;
     }
@@ -515,9 +519,7 @@ FloatRect RenderSVGText::strokeBoundingBox() const
     if (!svgStyle->hasStroke())
         return strokeBoundaries;
 
-    ASSERT(element());
-    ASSERT(element()->isSVGElement());
-    SVGLengthContext lengthContext(toSVGElement(element()));
+    SVGLengthContext lengthContext(&textElement());
     strokeBoundaries.inflate(svgStyle->strokeWidth().value(lengthContext));
     return strokeBoundaries;
 }

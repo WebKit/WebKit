@@ -35,8 +35,10 @@ class RenderSVGInlineText;
 
 class RenderSVGText FINAL : public RenderSVGBlock {
 public:
-    RenderSVGText(SVGTextElement*);
+    explicit RenderSVGText(SVGTextElement&);
     virtual ~RenderSVGText();
+
+    SVGTextElement& textElement() const;
 
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
 
@@ -58,6 +60,8 @@ public:
     void subtreeTextDidChange(RenderSVGInlineText*);
 
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
     virtual const char* renderName() const { return "RenderSVGText"; }
     virtual bool isSVGText() const { return true; }
 

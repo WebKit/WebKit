@@ -1,3 +1,13 @@
+2013-09-13  Andreas Kling  <akling@apple.com>
+
+        [CTTE] RenderSVGText always has a SVGTextElement.
+        <https://webkit.org/b/121299>
+
+        Reviewed by Antti Koivisto.
+
+        This renderer is never anonymous, and always has a corresponding <svg> element.
+        Tighten this up and remove some pointless assertions.
+
 2013-09-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Remove support for QXmlStream as the XML parser.
