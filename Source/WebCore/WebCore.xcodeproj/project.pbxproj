@@ -24748,12 +24748,9 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/inspector/front-end",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore/InspectorBackendCommands.js",
 			);
 			name = "Copy Inspector Resources";
 			outputPaths = (
-				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/inspector",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

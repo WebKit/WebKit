@@ -1,3 +1,14 @@
+2013-09-13  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] WebCore Web Inspector files are only copied as part of clean build
+        https://bugs.webkit.org/show_bug.cgi?id=121316
+
+        Reviewed by Timothy Hatcher.
+
+        Removed insufficient dependencies to make the phase run unconditionally.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-09-13  Eric Carlson  <eric.carlson@apple.com>
 
         CodeGeneratorJS doesn't generate header includes for sequence<type>
