@@ -1,3 +1,17 @@
+2013-09-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Layout Test fast/dom/Window/window-postmessage-clone.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=111898
+
+        Reviewed by Oliver Hunt.
+
+        * fast/dom/Window/script-tests/postmessage-clone.js: The test was checking
+        modification times of non-existent files. When you do this, you get current time,
+        and current time changes over time, making comparisons non-reliable.
+
+        * fast/dom/Window/resources/file1.txt: Added.
+        * fast/dom/Window/resources/file2.txt: Added.
+
 2013-09-13  Oliver Hunt  <oliver@apple.com>
 
         Try to kill initialiser expression in for-in statements
