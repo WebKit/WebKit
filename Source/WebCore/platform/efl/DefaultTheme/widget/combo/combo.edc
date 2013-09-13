@@ -31,6 +31,14 @@ group {
         image: "widget/combo/combo_focus_button.png" COMP;
         image: "widget/combo/combo_press.png" COMP;
         image: "widget/combo/combo_press_button.png" COMP;
+        image: "widget/combo/combo_normal_transparent.png" COMP;
+        image: "widget/combo/combo_normal_button_transparent.png" COMP;
+        image: "widget/combo/combo_hover_transparent.png" COMP;
+        image: "widget/combo/combo_hover_button_transparent.png" COMP;
+        image: "widget/combo/combo_focus_transparent.png" COMP;
+        image: "widget/combo/combo_focus_button_transparent.png" COMP;
+        image: "widget/combo/combo_press_transparent.png" COMP;
+        image: "widget/combo/combo_press_button_transparent.png" COMP;
         image: "widget/combo/icon.png" COMP;
     }
 
@@ -40,6 +48,7 @@ group {
         public isChecked;
         public isFocused;
         public isHovered;
+        public styled;
 
         public show() {
             if (get_int(isEnabled) == 1) {
@@ -67,6 +76,31 @@ group {
                 set_state(PART:"combo", "disabled", 0.0);
                 set_state(PART:"combo_button", "disabled", 0.0);
                 set_state(PART:"combo_button_icon", "disabled", 0.0);
+            }
+            if(get_int(styled) == 1) {
+                new state[24];
+                new Float:v;
+                get_state(PART:"combo", state, 24, v);
+                if(strcmp(state, "disabled")) {
+                    set_state(PART:"combo", "disabled_styled", 0.0);
+                    set_state(PART:"combo_button", "disabled_styled", 0.0);
+                }
+                else if (strcmp(state, "default")) {
+                    set_state(PART:"combo", "default_styled", 0.0);
+                    set_state(PART:"combo_button", "default_styled", 0.0);
+                }
+                else if(strcmp(state, "focused")) {
+                    set_state(PART:"combo", "focused_styled", 0.0);
+                    set_state(PART:"combo_button", "focused_styled", 0.0);
+                }
+                else if(strcmp(state, "hovered")) {
+                    set_state(PART:"combo", "hovered_styled", 0.0);
+                    set_state(PART:"combo_button", "hovered_styled", 0.0);
+                }
+                else if(strcmp(state, "pressed")) {
+                    set_state(PART:"combo", "pressed_styled", 0.0);
+                    set_state(PART:"combo_button", "pressed_styled", 0.0);
+                }
             }
         }
     }
@@ -108,8 +142,21 @@ group {
                 }
             }
             description {
+                state: "default_styled" 0.0;
+                min: 36 20;
+                image {
+                    normal: "widget/combo/combo_normal_transparent.png";
+                    border: 15 0 8 11;
+                }
+            }
+            description {
                state: "disabled" 0.0;
                inherit: "default" 0.0;
+               color: 255 255 255 150;
+            }
+            description {
+               state: "disabled_styled" 0.0;
+               inherit: "default_styled" 0.0;
                color: 255 255 255 150;
             }
             description {
@@ -117,6 +164,14 @@ group {
                inherit: "default" 0.0;
                image {
                   normal: "widget/combo/combo_hover.png";
+                  border: 15 0 8 11;
+               }
+            }
+            description {
+               state: "hovered_styled" 0.0;
+               inherit: "default_styled" 0.0;
+               image {
+                  normal: "widget/combo/combo_hover_transparent.png";
                   border: 15 0 8 11;
                }
             }
@@ -129,10 +184,26 @@ group {
                }
             }
             description {
+               state: "focused_styled" 0.0;
+               inherit: "default_styled" 0.0;
+               image {
+                  normal: "widget/combo/combo_focus_transparent.png";
+                  border: 15 0 8 11;
+               }
+            }
+            description {
                state: "pressed" 0.0;
                inherit: "default" 0.0;
                image {
                   normal: "widget/combo/combo_press.png";
+                  border: 15 0 8 11;
+               }
+            }
+            description {
+               state: "pressed_styled" 0.0;
+               inherit: "default_styled" 0.0;
+               image {
+                  normal: "widget/combo/combo_press_transparent.png";
                   border: 15 0 8 11;
                }
             }
@@ -169,8 +240,23 @@ group {
                }
             }
             description {
+                state: "default_styled" 0.0;
+                min: 18 20; // 3 + 5 + image width (10), 5 + 5 + image height (10)
+                rel1.to: "bt_combo_clipper";
+                image {
+                     normal: "widget/combo/combo_normal_button_transparent.png";
+                     border: 1 15 8 10;
+               }
+            }
+            description {
                 state: "disabled" 0.0;
                 inherit: "default" 0.0;
+                color: 255 255 255 150;
+                rel1.to: "bt_combo_clipper";
+            }
+            description {
+                state: "disabled_styled" 0.0;
+                inherit: "default_styled" 0.0;
                 color: 255 255 255 150;
                 rel1.to: "bt_combo_clipper";
             }
@@ -184,6 +270,15 @@ group {
                 }
             }
             description {
+                state: "hovered_styled" 0.0;
+                inherit: "default_styled" 0.0;
+                rel1.to: "bt_combo_clipper";
+                image {
+                    normal: "widget/combo/combo_hover_button_transparent.png";
+                    border: 1 15 8 10;
+                }
+            }
+            description {
                 state: "focused" 0.0;
                 inherit: "default" 0.0;
                 rel1.to: "bt_combo_clipper";
@@ -193,11 +288,29 @@ group {
                 }
             }
             description {
+                state: "focused_styled" 0.0;
+                inherit: "default_styled" 0.0;
+                rel1.to: "bt_combo_clipper";
+                image {
+                    normal: "widget/combo/combo_focus_button_transparent.png";
+                    border: 1 15 8 10;
+                }
+            }
+            description {
                 state: "pressed" 0.0;
                 inherit: "default" 0.0;
                 rel1.to: "bt_combo_clipper";
                 image {
                     normal: "widget/combo/combo_press_button.png";
+                    border: 1 15 8 10;
+                }
+            }
+            description {
+                state: "pressed_styled" 0.0;
+                inherit: "default_styled" 0.0;
+                rel1.to: "bt_combo_clipper";
+                image {
+                    normal: "widget/combo/combo_press_button_transparent.png";
                     border: 1 15 8 10;
                 }
             }
@@ -291,6 +404,14 @@ group {
             }
         }
         program {
+            name: "styled";
+            signal: "styled";
+            script {
+                set_int(styled, 1);
+                show();
+            }
+        }
+        program {
             name: "reset";
             signal: "reset";
             script {
@@ -299,6 +420,7 @@ group {
                 set_int(isChecked, 0);
                 set_int(isFocused, 0);
                 set_int(isHovered, 0);
+                set_int(styled, 0);
                 show();
             }
         }

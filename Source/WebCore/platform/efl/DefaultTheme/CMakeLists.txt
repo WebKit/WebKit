@@ -21,13 +21,21 @@ macro(GENERATE_THEME _target_name _name _option)
             widget/check/img_check_on.png
             widget/combo/combo.edc
             widget/combo/combo_focus_button.png
+            widget/combo/combo_focus_button_transparent.png
             widget/combo/combo_focus.png
+            widget/combo/combo_focus_transparent.png
             widget/combo/combo_hover_button.png
+            widget/combo/combo_hover_button_transparent.png
             widget/combo/combo_hover.png
+            widget/combo/combo_hover_transparent.png
             widget/combo/combo_normal_button.png
+            widget/combo/combo_normal_button_transparent.png
             widget/combo/combo_normal.png
+            widget/combo/combo_normal_transparent.png
             widget/combo/combo_press_button.png
+            widget/combo/combo_press_button_transparent.png
             widget/combo/combo_press.png
+            widget/combo/combo_press_transparent.png
             widget/combo/icon.png
             widget/cursor/cursor.edc
             widget/entry/entry.edc

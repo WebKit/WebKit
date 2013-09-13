@@ -1,3 +1,19 @@
+2013-09-12  Santosh Mahto  <santosh.ma@samsung.com>
+
+        [EFL] Background Style of element not visible because of default theme style
+        https://bugs.webkit.org/show_bug.cgi?id=117405
+
+        Reviewed by Gyuyoung Kim.
+
+        Updating expected image oputput of pixel test reflecting the
+        background image visible over combo box.
+
+        * platform/efl/fast/forms/menulist-narrow-width-expected.png:
+        * platform/efl/fast/forms/menulist-restrict-line-height-expected.png:
+        * platform/efl/fast/forms/menulist-style-color-expected.png:
+        * platform/efl/fast/forms/select-background-none-expected.png:
+        * platform/efl/fast/forms/select-style-expected.png:
+
 2013-09-12  Tim Horton  <timothy_horton@apple.com>
 
         [mac] Cache rendered image in PDFDocumentImage

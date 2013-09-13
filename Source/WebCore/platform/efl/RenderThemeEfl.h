@@ -83,6 +83,9 @@ public:
     // A method asking if the theme's controls actually care about redrawing when hovered.
     virtual bool supportsHover(const RenderStyle*) const { return true; }
 
+    // A method Returning whether the control is styled by css or not e.g specifying background-color.
+    virtual bool isControlStyled(const RenderStyle*, const BorderData&, const FillLayer&, const Color& backgroundColor) const;
+
     // A method asking if the theme is able to draw the focus ring.
     virtual bool supportsFocusRing(const RenderStyle*) const;
 
@@ -225,7 +228,7 @@ private:
 
     void applyPartDescriptionsFrom(const String& themePath);
 
-    void applyEdjeStateFromForm(Evas_Object*, ControlStates);
+    void applyEdjeStateFromForm(Evas_Object*, ControlStates, bool);
     void applyEdjeRTLState(Evas_Object*, RenderObject*, FormType, const IntRect&);
     bool paintThemePart(RenderObject*, FormType, const PaintInfo&, const IntRect&);
 

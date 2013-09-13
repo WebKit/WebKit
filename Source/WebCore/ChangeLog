@@ -1,3 +1,37 @@
+2013-09-12  Santosh Mahto  <santosh.ma@samsung.com>
+
+        [EFL]Background Style of element not visible because of  default theme style
+        https://bugs.webkit.org/show_bug.cgi?id=117405
+
+        Reviewed by Gyuyoung Kim.
+
+        When select element is styled with css background property(color/image) the styling
+        gets hidden by Combo box non transparent image. This patch handle the
+        case and transparent images are used when select image is styled. So
+        now background-color and background-image are visible across the Combo box
+        
+        The code is added to support css styling of other theme control,
+        Basically an extra signal is emitted to edje which change the state 
+        of edje object whenever the control is styled.
+
+        Covered by existing test case, updated the test expected image.
+
+        * platform/efl/DefaultTheme/CMakeLists.txt:
+        * platform/efl/DefaultTheme/widget/combo/combo.edc:
+        * platform/efl/DefaultTheme/widget/combo/combo_focus_button_transparent.png: Added.
+        * platform/efl/DefaultTheme/widget/combo/combo_focus_transparent.png: Added.
+        * platform/efl/DefaultTheme/widget/combo/combo_hover_button_transparent.png: Added.
+        * platform/efl/DefaultTheme/widget/combo/combo_hover_transparent.png: Added.
+        * platform/efl/DefaultTheme/widget/combo/combo_normal_button_transparent.png: Added.
+        * platform/efl/DefaultTheme/widget/combo/combo_normal_transparent.png: Added.
+        * platform/efl/DefaultTheme/widget/combo/combo_press_button_transparent.png: Added.
+        * platform/efl/DefaultTheme/widget/combo/combo_press_transparent.png: Added.
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::applyEdjeStateFromForm):
+        (WebCore::RenderThemeEfl::isControlStyled):
+        (WebCore::RenderThemeEfl::paintThemePart):
+        * platform/efl/RenderThemeEfl.h:
+
 2013-09-12  Andreas Kling  <akling@apple.com>
 
         [CTTE] RenderMenuList always has a HTMLSelectElement.
