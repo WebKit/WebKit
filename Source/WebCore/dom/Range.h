@@ -161,7 +161,7 @@ private:
     int maxStartOffset() const;
     int maxEndOffset() const;
 
-    enum ActionType { DELETE_CONTENTS, EXTRACT_CONTENTS, CLONE_CONTENTS };
+    enum ActionType { Delete, Extract, Clone };
     PassRefPtr<DocumentFragment> processContents(ActionType, ExceptionCode&);
     static PassRefPtr<Node> processContentsBetweenOffsets(ActionType, PassRefPtr<DocumentFragment>, Node*, unsigned startOffset, unsigned endOffset, ExceptionCode&);
     static void processNodes(ActionType, Vector<RefPtr<Node> >&, PassRefPtr<Node> oldContainer, PassRefPtr<Node> newContainer, ExceptionCode&);

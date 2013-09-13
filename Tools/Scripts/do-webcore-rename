@@ -96,7 +96,9 @@ sub wanted
 my $isDOMTypeRename = 1;
 my %renames = (
     # Renames go here in the form of:
-    "WaveTable" => "PeriodicWave",
+    "CLONE_CONTENTS" => "Clone",
+    "DELETE_CONTENTS" => "Delete",
+    "EXTRACT_CONTENTS" => "Extract",
 );
 
 my %renamesContemplatedForTheFuture = (
@@ -110,10 +112,6 @@ my %renamesContemplatedForTheFuture = (
     "runtimeObjectCustomPut" => "pluginElementCustomPut",
     "runtimeObjectImplementsCall" => "pluginElementImplementsCall",
     "runtimeObjectCallAsFunction" => "pluginElementCallAsFunction",
-
-    "CLONE_CONTENTS" => "Clone",
-    "DELETE_CONTENTS" => "Delete",
-    "EXTRACT_CONTENTS" => "Extract",
 
     "DateInstance" => "JSDate",
     "ErrorInstance" => "JSError",
@@ -158,7 +156,8 @@ my %renamesContemplatedForTheFuture = (
     "WTF_UNICODE_QT4_H" => "UnicodeQt4_h",
     "UnicodeIcu" => "UnicodeICU",
 
-    "m_invertibleCTM" => "m_transformIsInvertible",
+    "isTransformInvertible" => "hasInvertibleTransform",
+    "m_invertibleCTM" => "m_hasInvertibleTransform",
 
     "NativeFunctionWrapper_h" => "JSHostFunction_h",
     "NativeFunctionWrapper" => "JSHostFunction",

@@ -567,7 +567,7 @@ void Range::deleteContents(ExceptionCode& ec)
     if (ec)
         return;
 
-    processContents(DELETE_CONTENTS, ec);
+    processContents(Delete, ec);
 }
 
 bool Range::intersectsNode(Node* refNode, ExceptionCode& ec)
@@ -674,7 +674,7 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
     typedef Vector<RefPtr<Node> > NodeVector;
 
     RefPtr<DocumentFragment> fragment;
-    if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS)
+    if (action == Extract || action == Clone)
         fragment = DocumentFragment::create(m_ownerDocument.get());
 
     ec = 0;
@@ -740,7 +740,7 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
     RefPtr<Node> processEnd = childOfCommonRootBeforeOffset(originalEnd.container(), originalEnd.offset(), commonRoot.get());
 
     // Collapse the range, making sure that the result is not within a node that was partially selected.
-    if (action == EXTRACT_CONTENTS || action == DELETE_CONTENTS) {
+    if (action == Extract || action == Delete) {
         if (partialStart && commonRoot->contains(partialStart.get()))
             setStart(partialStart->parentNode(), partialStart->nodeIndex() + 1, ec);
         else if (partialEnd && commonRoot->contains(partialEnd.get()))
@@ -753,7 +753,7 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
     // Now add leftContents, stuff in between, and rightContents to the fragment
     // (or just delete the stuff in between)
 
-    if ((action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) && leftContents)
+    if ((action == Extract || action == Clone) && leftContents)
         fragment->appendChild(leftContents, ec);
 
     if (processStart) {
@@ -763,7 +763,7 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
         processNodes(action, nodes, commonRoot, fragment, ec);
     }
 
-    if ((action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) && rightContents)
+    if ((action == Extract || action == Clone) && rightContents)
         fragment->appendChild(rightContents, ec);
 
     return fragment.release();
@@ -790,7 +790,7 @@ PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRef
     case Node::CDATA_SECTION_NODE:
     case Node::COMMENT_NODE:
         ASSERT(endOffset <= static_cast<CharacterData*>(container)->length());
-        if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
+        if (action == Extract || action == Clone) {
             RefPtr<CharacterData> c = static_pointer_cast<CharacterData>(container->cloneNode(true));
             deleteCharacterData(c, startOffset, endOffset, ec);
             if (fragment) {
@@ -799,12 +799,12 @@ PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRef
             } else
                 result = c.release();
         }
-        if (action == EXTRACT_CONTENTS || action == DELETE_CONTENTS)
+        if (action == Extract || action == Delete)
             static_cast<CharacterData*>(container)->deleteData(startOffset, endOffset - startOffset, ec);
         break;
     case Node::PROCESSING_INSTRUCTION_NODE:
         ASSERT(endOffset <= static_cast<ProcessingInstruction*>(container)->data().length());
-        if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
+        if (action == Extract || action == Clone) {
             RefPtr<ProcessingInstruction> c = static_pointer_cast<ProcessingInstruction>(container->cloneNode(true));
             c->setData(c->data().substring(startOffset, endOffset - startOffset), ec);
             if (fragment) {
@@ -813,7 +813,7 @@ PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRef
             } else
                 result = c.release();
         }
-        if (action == EXTRACT_CONTENTS || action == DELETE_CONTENTS) {
+        if (action == Extract || action == Delete) {
             ProcessingInstruction* pi = static_cast<ProcessingInstruction*>(container);
             String data(pi->data());
             data.remove(startOffset, endOffset - startOffset);
@@ -830,7 +830,7 @@ PassRefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRef
     case Node::NOTATION_NODE:
     case Node::XPATH_NAMESPACE_NODE:
         // FIXME: Should we assert that some nodes never appear here?
-        if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
+        if (action == Extract || action == Clone) {
             if (fragment)
                 result = fragment;
             else
@@ -855,13 +855,13 @@ void Range::processNodes(ActionType action, Vector<RefPtr<Node> >& nodes, PassRe
 {
     for (unsigned i = 0; i < nodes.size(); i++) {
         switch (action) {
-        case DELETE_CONTENTS:
+        case Delete:
             oldContainer->removeChild(nodes[i].get(), ec);
             break;
-        case EXTRACT_CONTENTS:
+        case Extract:
             newContainer->appendChild(nodes[i].release(), ec); // will remove n from its parent
             break;
-        case CLONE_CONTENTS:
+        case Clone:
             newContainer->appendChild(nodes[i]->cloneNode(true), ec);
             break;
         }
@@ -880,7 +880,7 @@ PassRefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node
     RefPtr<Node> firstChildInAncestorToProcess = direction == ProcessContentsForward ? container->nextSibling() : container->previousSibling();
     for (Vector<RefPtr<Node> >::const_iterator it = ancestors.begin(); it != ancestors.end(); ++it) {
         RefPtr<Node> ancestor = *it;
-        if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
+        if (action == Extract || action == Clone) {
             if (RefPtr<Node> clonedAncestor = ancestor->cloneNode(false)) { // Might have been removed already during mutation event.
                 clonedAncestor->appendChild(clonedContainer, ec);
                 clonedContainer = clonedAncestor;
@@ -900,16 +900,16 @@ PassRefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node
         for (NodeVector::const_iterator it = nodes.begin(); it != nodes.end(); ++it) {
             Node* child = it->get();
             switch (action) {
-            case DELETE_CONTENTS:
+            case Delete:
                 ancestor->removeChild(child, ec);
                 break;
-            case EXTRACT_CONTENTS: // will remove child from ancestor
+            case Extract: // will remove child from ancestor
                 if (direction == ProcessContentsForward)
                     clonedContainer->appendChild(child, ec);
                 else
                     clonedContainer->insertBefore(child, clonedContainer->firstChild(), ec);
                 break;
-            case CLONE_CONTENTS:
+            case Clone:
                 if (direction == ProcessContentsForward)
                     clonedContainer->appendChild(child->cloneNode(true), ec);
                 else
@@ -929,7 +929,7 @@ PassRefPtr<DocumentFragment> Range::extractContents(ExceptionCode& ec)
     if (ec)
         return 0;
 
-    return processContents(EXTRACT_CONTENTS, ec);
+    return processContents(Extract, ec);
 }
 
 PassRefPtr<DocumentFragment> Range::cloneContents(ExceptionCode& ec)
@@ -939,7 +939,7 @@ PassRefPtr<DocumentFragment> Range::cloneContents(ExceptionCode& ec)
         return 0;
     }
 
-    return processContents(CLONE_CONTENTS, ec);
+    return processContents(Clone, ec);
 }
 
 void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)

@@ -1,3 +1,24 @@
+2013-09-13  Darin Adler  <darin@apple.com>
+
+        Give actions in Range class NON_SHOUTING_NAMES
+        https://bugs.webkit.org/show_bug.cgi?id=121280
+
+        Reviewed by Andreas Kling.
+
+        * dom/Range.cpp:
+        (WebCore::Range::deleteContents):
+        (WebCore::Range::processContents):
+        (WebCore::Range::processContentsBetweenOffsets):
+        (WebCore::Range::processNodes):
+        (WebCore::Range::processAncestorsAndTheirSiblings):
+        (WebCore::Range::extractContents):
+        (WebCore::Range::cloneContents):
+        * dom/Range.h:
+        Just let do-webcore-rename do its thing.
+        - DELETE_CONTENTS -> Delete
+        - EXTRACT_CONTENTS -> Extract
+        - CLONE_CONTENTS -> Clone
+
 2013-09-12  Santosh Mahto  <santosh.ma@samsung.com>
 
         [EFL]Background Style of element not visible because of  default theme style
