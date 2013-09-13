@@ -572,12 +572,13 @@ public:
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
 
-    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32, GPRReg arg2, GPRReg arg3, FPRReg arg4)
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32, FPRReg arg4)
     {
         moveDouble(arg4, FPRInfo::argumentFPR0);
-        setupStubArguments(arg2, arg3);
+        setupStubArguments(arg1, arg2);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
+
 #else
     ALWAYS_INLINE void setupArguments(FPRReg arg1)
     {
