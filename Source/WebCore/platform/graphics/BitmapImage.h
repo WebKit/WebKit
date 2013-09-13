@@ -97,7 +97,7 @@ public:
 // BitmapImage Class
 // =================================================
 
-class BitmapImage : public Image {
+class BitmapImage FINAL : public Image {
     friend class GeneratedImage;
     friend class CrossfadeGeneratedImage;
     friend class GeneratorGeneratedImage;
@@ -111,64 +111,60 @@ public:
     {
         return adoptRef(new BitmapImage(observer));
     }
+#if PLATFORM(WIN) || (PLATFORM(QT) && OS(WINDOWS))
+    static PassRefPtr<BitmapImage> create(HBITMAP);
+#endif
     virtual ~BitmapImage();
     
-    virtual bool isBitmapImage() const;
+    virtual bool isBitmapImage() const OVERRIDE { return true; }
 
-    virtual bool hasSingleSecurityOrigin() const;
+    virtual bool hasSingleSecurityOrigin() const OVERRIDE;
 
-    virtual IntSize size() const;
+    virtual IntSize size() const OVERRIDE;
     IntSize sizeRespectingOrientation() const;
     IntSize currentFrameSize() const;
-    virtual bool getHotSpot(IntPoint&) const;
+    virtual bool getHotSpot(IntPoint&) const OVERRIDE;
 
-    virtual bool dataChanged(bool allDataReceived);
-    virtual String filenameExtension() const; 
+    virtual bool dataChanged(bool allDataReceived) OVERRIDE;
+    virtual String filenameExtension() const OVERRIDE;
 
     // It may look unusual that there is no start animation call as public API.  This is because
     // we start and stop animating lazily.  Animation begins whenever someone draws the image.  It will
     // automatically pause once all observers no longer want to render the image anywhere.
-    virtual void stopAnimation();
-    virtual void resetAnimation();
+    virtual void stopAnimation() OVERRIDE;
+    virtual void resetAnimation() OVERRIDE;
 
-    virtual unsigned decodedSize() const;
+    virtual unsigned decodedSize() const OVERRIDE;
 
 #if PLATFORM(MAC)
     // Accessors for native image formats.
-    virtual NSImage* getNSImage();
-    virtual CFDataRef getTIFFRepresentation();
-#endif
-    
-#if USE(CG)
-    virtual CGImageRef getCGImageRef();
-    virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&);
-    virtual RetainPtr<CFArrayRef> getCGImageArray();
+    virtual NSImage* getNSImage() OVERRIDE;
+    virtual CFDataRef getTIFFRepresentation() OVERRIDE;
 #endif
 
-#if PLATFORM(WIN) || (PLATFORM(QT) && OS(WINDOWS))
-    static PassRefPtr<BitmapImage> create(HBITMAP);
+#if USE(CG)
+    virtual CGImageRef getCGImageRef() OVERRIDE;
+    virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&) OVERRIDE;
+    virtual RetainPtr<CFArrayRef> getCGImageArray() OVERRIDE;
 #endif
+
 #if PLATFORM(WIN)
-    virtual bool getHBITMAP(HBITMAP);
+    virtual bool getHBITMAP(HBITMAP) OVERRIDE;
     virtual bool getHBITMAPOfSize(HBITMAP, const IntSize*) OVERRIDE;
 #endif
 
 #if PLATFORM(GTK)
-    virtual GdkPixbuf* getGdkPixbuf();
+    virtual GdkPixbuf* getGdkPixbuf() OVERRIDE;
 #endif
 
 #if PLATFORM(EFL)
-    virtual Evas_Object* getEvasObject(Evas*);
+    virtual Evas_Object* getEvasObject(Evas*) OVERRIDE;
 #endif
 
     virtual PassNativeImagePtr nativeImageForCurrentFrame() OVERRIDE;
     virtual ImageOrientation orientationForCurrentFrame() OVERRIDE { return frameOrientationAtIndex(currentFrame()); }
 
     virtual bool currentFrameKnownToBeOpaque() OVERRIDE;
-
-#if !ASSERT_DISABLED
-    virtual bool notSolidColor();
-#endif
     
     bool canAnimate();
 
@@ -186,20 +182,20 @@ protected:
     BitmapImage(ImageObserver* = 0);
 
 #if PLATFORM(WIN)
-    virtual void drawFrameMatchingSourceSize(GraphicsContext*, const FloatRect& dstRect, const IntSize& srcSize, ColorSpace styleColorSpace, CompositeOperator);
+    virtual void drawFrameMatchingSourceSize(GraphicsContext*, const FloatRect& dstRect, const IntSize& srcSize, ColorSpace styleColorSpace, CompositeOperator) OVERRIDE;
 #endif
-    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode);
+    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode) OVERRIDE;
 #if USE(CG) || USE(CAIRO) || PLATFORM(BLACKBERRY)
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) OVERRIDE;
 #endif
 
 #if USE(WINGDI)
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
-                             const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
+        const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect) OVERRIDE;
 #endif
 
     size_t currentFrame() const { return m_currentFrame; }
-    virtual size_t frameCount();
+    size_t frameCount();
     PassNativeImagePtr frameAtIndex(size_t);
     bool frameIsCompleteAtIndex(size_t);
     float frameDurationAtIndex(size_t);
@@ -217,7 +213,7 @@ protected:
     // cache.  If |destroyAll| is false, we only delete frames up to the current
     // one; this is used while animating large images to keep memory footprint
     // low without redecoding the whole image on every frame.
-    virtual void destroyDecodedData(bool destroyAll = true);
+    virtual void destroyDecodedData(bool destroyAll = true) OVERRIDE;
 
     // If the image is large enough, calls destroyDecodedData() and passes
     // |destroyAll| along.
@@ -228,7 +224,7 @@ protected:
     // decreased by |frameBytesCleared|.
     void destroyMetadataAndNotify(unsigned frameBytesCleared);
 
-    // Whether or not size is available yet.    
+    // Whether or not size is available yet.
     bool isSizeAvailable();
 
     // Called after asking the source for any information that may require
@@ -240,7 +236,7 @@ protected:
     // Animation.
     int repetitionCount(bool imageKnownToBeComplete);  // |imageKnownToBeComplete| should be set if the caller knows the entire image has been decoded.
     bool shouldAnimate();
-    virtual void startAnimation(bool catchUpIfNecessary = true);
+    virtual void startAnimation(bool catchUpIfNecessary = true) OVERRIDE;
     void advanceAnimation(Timer<BitmapImage>*);
 
     // Function that does the real work of advancing the animation.  When
@@ -252,19 +248,24 @@ protected:
 
     // Handle platform-specific data
     void invalidatePlatformData();
-    
+
     // Checks to see if the image is a 1x1 solid color.  We optimize these images and just do a fill rect instead.
     // This check should happen regardless whether m_checkedForSolidColor is already set, as the frame may have
     // changed.
     void checkForSolidColor();
-    
-    virtual bool mayFillWithSolidColor();
-    virtual Color solidColor() const;
-    
+
+    virtual bool mayFillWithSolidColor() OVERRIDE;
+    virtual Color solidColor() const OVERRIDE;
+
+#if !ASSERT_DISABLED
+    virtual bool notSolidColor() OVERRIDE;
+#endif
+
+private:
     ImageSource m_source;
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).
     mutable IntSize m_sizeRespectingOrientation;
-    
+
     size_t m_currentFrame; // The index of the current frame of animation.
     Vector<FrameData, 1> m_frames; // An array of the cached frames of the animation. We have to ref frames to pin them in the cache.
 

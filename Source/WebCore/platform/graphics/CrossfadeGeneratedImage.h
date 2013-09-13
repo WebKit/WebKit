@@ -36,23 +36,23 @@ namespace WebCore {
 
 class CSSCrossfadeValue;
 
-class CrossfadeGeneratedImage : public GeneratedImage {
+class CrossfadeGeneratedImage FINAL : public GeneratedImage {
 public:
     static PassRefPtr<CrossfadeGeneratedImage> create(Image* fromImage, Image* toImage, float percentage, IntSize crossfadeSize, const IntSize& size)
     {
         return adoptRef(new CrossfadeGeneratedImage(fromImage, toImage, percentage, crossfadeSize, size));
     }
 
-    virtual void setContainerSize(const IntSize&) { }
-    virtual bool usesContainerSize() const { return false; }
-    virtual bool hasRelativeWidth() const { return false; }
-    virtual bool hasRelativeHeight() const { return false; }
+    virtual void setContainerSize(const IntSize&) OVERRIDE { }
+    virtual bool usesContainerSize() const OVERRIDE { return false; }
+    virtual bool hasRelativeWidth() const OVERRIDE { return false; }
+    virtual bool hasRelativeHeight() const OVERRIDE { return false; }
 
-    virtual IntSize size() const { return m_crossfadeSize; }
+    virtual IntSize size() const OVERRIDE { return m_crossfadeSize; }
 
 protected:
-    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode);
-    virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& dstRect, BlendMode);
+    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode) OVERRIDE;
+    virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& dstRect, BlendMode) OVERRIDE;
 
     CrossfadeGeneratedImage(Image* fromImage, Image* toImage, float percentage, IntSize crossfadeSize, const IntSize&);
 

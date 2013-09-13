@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class GeneratorGeneratedImage : public GeneratedImage {
+class GeneratorGeneratedImage FINAL : public GeneratedImage {
 public:
     static PassRefPtr<GeneratorGeneratedImage> create(PassRefPtr<Gradient> generator, const IntSize& size)
     {
@@ -45,16 +45,17 @@ public:
     virtual ~GeneratorGeneratedImage() { }
 
 protected:
-    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode);
+    virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode) OVERRIDE;
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
-        const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode);
+        const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode) OVERRIDE;
 
     GeneratorGeneratedImage(PassRefPtr<Gradient> generator, const IntSize& size)
         : m_gradient(generator)
     {
-        m_size = size;
+        setContainerSize(size);
     }
 
+private:
     RefPtr<Gradient> m_gradient;
     OwnPtr<ImageBuffer> m_cachedImageBuffer;
     IntSize m_cachedAdjustedSize;
