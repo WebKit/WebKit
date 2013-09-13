@@ -1,3 +1,23 @@
+2013-09-13  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r155615): Lots of reftests fail with single line or single pixel differences
+        https://bugs.webkit.org/show_bug.cgi?id=121245
+
+        Reviewed by Darin Adler.
+
+        Similar to https://bugs.webkit.org/show_bug.cgi?id=120963,
+        we need to manually ensure that some pieces of persistent
+        CoreGraphics state are restored after PDFKit changes them.
+
+        In this case, we bookend our restoration around the various
+        _recursiveDisplay... functions that we also use in WebHTMLView.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+        (-[WebPDFView _recursiveDisplayAllDirtyWithLockFocus:visRect:]):
+        (-[WebPDFView _recursive:displayRectIgnoringOpacity:inContext:topView:]):
+        (-[WebPDFView _recursive:displayRectIgnoringOpacity:inGraphicsContext:CGContext:topView:shouldChangeFontReferenceColor:]):
+
 2013-09-12  Anders Carlsson  <andersca@apple.com>
 
         SharedBuffer::createNSData should return a RetainPtr<NSData>

@@ -65,6 +65,17 @@
 #import <wtf/Assertions.h>
 #import <wtf/CurrentTime.h>
 
+#ifdef __has_include
+#if __has_include(<ApplicationServices/ApplicationServicesPriv.h>)
+#import <ApplicationServices/ApplicationServicesPriv.h>
+#endif
+#endif
+
+extern "C" {
+    bool CGContextGetAllowsFontSmoothing(CGContextRef context);
+    bool CGContextGetAllowsFontSubpixelQuantization(CGContextRef context);
+}
+
 using namespace WebCore;
 
 // Redeclarations of PDFKit notifications. We can't use the API since we use a weak link to the framework.
@@ -99,6 +110,13 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 - (void)_updatePreferencesSoon;
 - (NSSet *)_visiblePDFPages;
 @end;
+
+@interface NSView (Details)
+- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
+- (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
+- (void)_recursive:(BOOL)recurse displayRectIgnoringOpacity:(NSRect)displayRect inContext:(NSGraphicsContext *)context topView:(BOOL)topView;
+- (void)_recursive:(BOOL)recurseX displayRectIgnoringOpacity:(NSRect)displayRect inGraphicsContext:(NSGraphicsContext *)graphicsContext CGContext:(CGContextRef)ctx topView:(BOOL)isTopView shouldChangeFontReferenceColor:(BOOL)shouldChangeFontReferenceColor;
+@end
 
 // WebPDFPrefUpdatingProxy is a class that forwards everything it gets to a target and updates the PDF viewing prefs
 // after each of those messages.  We use it as a way to hook all the places that the PDF viewing attrs change.
@@ -344,6 +362,59 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     }
     
     return self;
+}
+
+// These states can be mutated by PDFKit but are not saved
+// on the context's state stack. (<rdar://problem/14951759>)
+
+- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
+{
+    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    
+    bool allowsSmoothing = CGContextGetAllowsFontSmoothing(context);
+    bool allowsSubpixelQuantization = CGContextGetAllowsFontSubpixelQuantization(context);
+    
+    [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect rectIsVisibleRectForView:visibleView topView:topView];
+    
+    CGContextSetAllowsFontSmoothing(context, allowsSmoothing);
+    CGContextSetAllowsFontSubpixelQuantization(context, allowsSubpixelQuantization);
+}
+
+- (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect
+{
+    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    
+    bool allowsSmoothing = CGContextGetAllowsFontSmoothing(context);
+    bool allowsSubpixelQuantization = CGContextGetAllowsFontSubpixelQuantization(context);
+    
+    [super _recursiveDisplayAllDirtyWithLockFocus:needsLockFocus visRect:visRect];
+    
+    CGContextSetAllowsFontSmoothing(context, allowsSmoothing);
+    CGContextSetAllowsFontSubpixelQuantization(context, allowsSubpixelQuantization);
+}
+
+- (void)_recursive:(BOOL)recurse displayRectIgnoringOpacity:(NSRect)displayRect inContext:(NSGraphicsContext *)graphicsContext topView:(BOOL)topView
+{
+    CGContextRef context = (CGContextRef)[graphicsContext graphicsPort];
+    
+    bool allowsSmoothing = CGContextGetAllowsFontSmoothing(context);
+    bool allowsSubpixelQuantization = CGContextGetAllowsFontSubpixelQuantization(context);
+    
+    [super _recursive:recurse displayRectIgnoringOpacity:displayRect inContext:graphicsContext topView:topView];
+    
+    CGContextSetAllowsFontSmoothing(context, allowsSmoothing);
+    CGContextSetAllowsFontSubpixelQuantization(context, allowsSubpixelQuantization);
+}
+
+- (void)_recursive:(BOOL)recurseX displayRectIgnoringOpacity:(NSRect)displayRect inGraphicsContext:(NSGraphicsContext *)graphicsContext CGContext:(CGContextRef)context topView:(BOOL)isTopView shouldChangeFontReferenceColor:(BOOL)shouldChangeFontReferenceColor
+{
+    bool allowsSmoothing = CGContextGetAllowsFontSmoothing(context);
+    bool allowsSubpixelQuantization = CGContextGetAllowsFontSubpixelQuantization(context);
+    
+    [super _recursive:recurseX displayRectIgnoringOpacity:displayRect inGraphicsContext:graphicsContext CGContext:context topView:isTopView shouldChangeFontReferenceColor:shouldChangeFontReferenceColor];
+    
+    CGContextSetAllowsFontSmoothing(context, allowsSmoothing);
+    CGContextSetAllowsFontSubpixelQuantization(context, allowsSubpixelQuantization);
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
