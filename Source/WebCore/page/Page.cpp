@@ -131,7 +131,7 @@ Page::Page(PageClients& pageClients)
 #endif
     , m_focusController(FocusController::create(this))
 #if ENABLE(CONTEXT_MENUS)
-    , m_contextMenuController(ContextMenuController::create(this, pageClients.contextMenuClient))
+    , m_contextMenuController(createOwned<ContextMenuController>(*this, *pageClients.contextMenuClient))
 #endif
 #if ENABLE(INSPECTOR)
     , m_inspectorController(InspectorController::create(this, pageClients.inspectorClient))

@@ -1,3 +1,24 @@
+2013-09-13  Sam Weinig  <sam@webkit.org>
+
+        ContextMenuController should hold onto a Page&
+        https://bugs.webkit.org/show_bug.cgi?id=121320
+
+        Reviewed by Anders Carlsson.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::ContextMenuController):
+        (WebCore::ContextMenuController::~ContextMenuController):
+        (WebCore::ContextMenuController::showContextMenu):
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded):
+        (WebCore::ContextMenuController::showContextMenuAt):
+        * page/ContextMenuController.h:
+        Store the Page and ContextMenuClient as references.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        Pass the Page and ContextMenuClient as references and switch to using createOwned<>().
+
 2013-09-13  Tim Horton  <timothy_horton@apple.com>
 
         Apply OVERRIDE and FINAL to Image subclasses and clean them up
