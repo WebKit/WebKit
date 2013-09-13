@@ -1,5 +1,15 @@
 2013-09-13  Andreas Kling  <akling@apple.com>
 
+        [CTTE] RenderListItem is never anonymous.
+        <https://webkit.org/b/121285>
+
+        Reviewed by Antti Koivisto.
+
+        Hide element() and provide existingElement() instead, returning an Element&.
+        Removed some bogus assertions that were exposed by this.
+
+2013-09-13  Andreas Kling  <akling@apple.com>
+
         [CTTE] Tighter element types for RenderSVGInline and subclasses.
         <https://webkit.org/b/121283>
 

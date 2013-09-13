@@ -209,7 +209,7 @@ RenderObject* RenderObject::createObject(Element* element, RenderStyle* style)
             return new (arena) RenderMultiColumnBlock(element);
         return new (arena) RenderBlockFlow(element);
     case LIST_ITEM:
-        return new (arena) RenderListItem(element);
+        return new (arena) RenderListItem(*element);
     case TABLE:
     case INLINE_TABLE:
         return new (arena) RenderTable(element);

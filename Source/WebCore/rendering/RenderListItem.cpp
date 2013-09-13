@@ -41,8 +41,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderListItem::RenderListItem(Element* element)
-    : RenderBlockFlow(element)
+RenderListItem::RenderListItem(Element& element)
+    : RenderBlockFlow(&element)
     , m_marker(0)
     , m_hasExplicitValue(false)
     , m_isValueUpToDate(false)
@@ -101,9 +101,9 @@ static bool isList(const Element* element)
 // Returns the enclosing list with respect to the DOM order.
 static Element* enclosingList(const RenderListItem* listItem)
 {
-    Element* listItemNode = listItem->element();
+    Element& listItemElement = listItem->existingElement();
     Element* firstNode = 0;
-    Element* parent = listItemNode->isPseudoElement() ? toPseudoElement(listItemNode)->hostElement() : listItemNode->parentElement();
+    Element* parent = listItemElement.isPseudoElement() ? toPseudoElement(listItemElement).hostElement() : listItemElement.parentElement();
     // We use parentNode because the enclosing list could be a ShadowRoot that's not Element.
     for (; parent; parent = parent->parentElement()) {
         if (isList(parent))
@@ -124,7 +124,7 @@ static RenderListItem* nextListItem(const Element* listNode, const RenderListIte
     if (!listNode)
         return 0;
 
-    const Element* current = item ? item->element() : listNode;
+    const Element* current = item ? &item->existingElement() : listNode;
     current = ElementTraversal::nextIncludingPseudo(current, listNode);
 
     while (current) {
@@ -148,7 +148,7 @@ static RenderListItem* nextListItem(const Element* listNode, const RenderListIte
 // Returns the previous list item with respect to the DOM order.
 static RenderListItem* previousListItem(const Element* listNode, const RenderListItem* item)
 {
-    Element* current = item->element();
+    Element* current = &item->existingElement();
     for (current = ElementTraversal::previousIncludingPseudo(current, listNode); current; current = ElementTraversal::previousIncludingPseudo(current, listNode)) {
         RenderObject* renderer = current->renderer();
         if (!renderer || (renderer && !renderer->isListItem()))
@@ -471,8 +471,6 @@ void RenderListItem::explicitValueChanged()
 
 void RenderListItem::setExplicitValue(int value)
 {
-    ASSERT(element());
-
     if (m_hasExplicitValue && m_explicitValue == value)
         return;
     m_explicitValue = value;
@@ -483,8 +481,6 @@ void RenderListItem::setExplicitValue(int value)
 
 void RenderListItem::clearExplicitValue()
 {
-    ASSERT(element());
-
     if (!m_hasExplicitValue)
         return;
     m_hasExplicitValue = false;

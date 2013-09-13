@@ -77,6 +77,12 @@ inline bool pseudoElementRendererIsNeeded(const RenderStyle* style)
     return style && style->display() != NONE && (style->contentData() || !style->regionThread().isEmpty());
 }
 
+inline PseudoElement& toPseudoElement(Node& node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(node.isPseudoElement());
+    return static_cast<PseudoElement&>(node);
+}
+
 inline PseudoElement* toPseudoElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isPseudoElement());
