@@ -743,11 +743,11 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
         return QVariant();
     }
     case Qt::ImCurrentSelection: {
-        if (!editor.hasComposition() && renderTextControl && renderTextControl->textFormControlElement()) {
+        if (!editor.hasComposition() && renderTextControl) {
             int start = frame->selection().start().offsetInContainerNode();
             int end = frame->selection().end().offsetInContainerNode();
             if (end > start)
-                return QVariant(QString(renderTextControl->textFormControlElement()->value()).mid(start, end - start));
+                return QVariant(QString(renderTextControl->textFormControlElement().value()).mid(start, end - start));
         }
         return QVariant();
 

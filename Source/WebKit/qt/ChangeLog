@@ -1,3 +1,10 @@
+2013-09-12  Andreas Kling  <akling@apple.com>
+
+        Fix Qt build.
+
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::inputMethodQuery):
+
 2013-09-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate more HTML type checks and casting
