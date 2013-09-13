@@ -485,7 +485,7 @@ RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)
     if (isOutermostSVGSVGElement())
         return new (arena) RenderSVGRoot(*this);
 
-    return new (arena) RenderSVGViewportContainer(this);
+    return new (arena) RenderSVGViewportContainer(*this);
 }
 
 Node::InsertionNotificationRequest SVGSVGElement::insertedInto(ContainerNode* rootParent)
