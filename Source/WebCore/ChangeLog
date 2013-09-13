@@ -1,5 +1,20 @@
 2013-09-13  Andreas Kling  <akling@apple.com>
 
+        Remove support for anonymous deprecated flexboxes.
+        <https://webkit.org/b/121288>
+
+        Reviewed by Antti Koivisto.
+
+        There are no remaining internal clients of RenderDeprecatedFlexibleBox,
+        Nuke a FIXME from r143643 where the move to basing renderers on new flexbox started.
+
+        This was the only user of anonymous deprecated flexbox, so removed the ability to
+        construct those.
+
+        Also removed some Chrome-related feature observation gunk from constructor.
+
+2013-09-13  Andreas Kling  <akling@apple.com>
+
         [CTTE] RenderMultiColumnBlock is never anonymous.
         <https://webkit.org/b/121292>
 

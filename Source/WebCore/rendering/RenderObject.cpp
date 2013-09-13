@@ -228,7 +228,7 @@ RenderObject* RenderObject::createObject(Element* element, RenderStyle* style)
         return new (arena) RenderTableCaption(*element);
     case BOX:
     case INLINE_BOX:
-        return new (arena) RenderDeprecatedFlexibleBox(element);
+        return new (arena) RenderDeprecatedFlexibleBox(*element);
     case FLEX:
     case INLINE_FLEX:
         return new (arena) RenderFlexibleBox(element);

@@ -6906,11 +6906,7 @@ RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const Rend
     // FIXME: Do we need to convert all our inline displays to block-type in the anonymous logic ?
     EDisplay newDisplay;
     RenderBlock* newBox = 0;
-    if (display == BOX || display == INLINE_BOX) {
-        // FIXME: Remove this case once we have eliminated all internal users of old flexbox
-        newBox = RenderDeprecatedFlexibleBox::createAnonymous(&parent->document());
-        newDisplay = BOX;
-    } else if (display == FLEX || display == INLINE_FLEX) {
+    if (display == FLEX || display == INLINE_FLEX) {
         newBox = RenderFlexibleBox::createAnonymous(&parent->document());
         newDisplay = FLEX;
     } else {
