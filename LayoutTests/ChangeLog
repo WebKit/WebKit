@@ -1,3 +1,15 @@
+2013-09-12  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] Cache rendered image in PDFDocumentImage
+        https://bugs.webkit.org/show_bug.cgi?id=121207
+
+        Reviewed by Simon Fraser.
+
+        Add a test ensuring that very large PDF-in-<img> elements don't crash.
+
+        * fast/images/pdf-as-image-too-big-expected.txt: Added.
+        * fast/images/pdf-as-image-too-big.html: Added.
+
 2013-09-12  Geoffrey Garen  <ggaren@apple.com>
 
         Web Inspector shouldn't artificially allocate the arguments object in functions that don't use it

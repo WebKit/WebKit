@@ -1,5 +1,65 @@
 2013-09-12  Tim Horton  <timothy_horton@apple.com>
 
+        [mac] Cache rendered image in PDFDocumentImage
+        https://bugs.webkit.org/show_bug.cgi?id=121207
+
+        Reviewed by Simon Fraser.
+
+        Tests: fast/images/pdf-as-image-too-big.html
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::createImage):
+        PDFDocumentImage takes a ImageObserver now so that it can report
+        decoded data size changes to the memory cache.
+
+        * platform/graphics/Image.h:
+        (WebCore::Image::isPDFDocumentImage): Added.
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::PDFDocumentImage):
+        PDFDocumentImage takes a ImageObserver now so that it can report
+        decoded data size changes to the memory cache.
+
+        (WebCore::PDFDocumentImage::applyRotationForPainting):
+        Fix up some comments, and use GraphicsContext instead of CG API.
+
+        (WebCore::PDFDocumentImage::cacheParametersMatch):
+        Determine whether our cached image is still valid, given the new
+        destination's size, CTM scale, and source rect.
+
+        (WebCore::transformContextForPainting): Added.
+
+        (WebCore::PDFDocumentImage::updateCachedImageIfNeeded):
+        Cache a rendered bitmap of the PDF. Invalidate the cache if cacheParametersMatch
+        decides that the parameters don't match, unless we're painting in low quality mode,
+        in which case we'll scale the existing image (and then fully repaint when the
+        high-quality repaint timer fires).
+        Inform the memory cache of our new size.
+
+        (WebCore::PDFDocumentImage::draw):
+        Update the cached image if needed.
+        Paint the cached image into the context if it's available (which it might not be,
+        if the image is way too big and the allocation fails). Otherwise, paint straight
+        into the context as we previously did.
+
+        (WebCore::PDFDocumentImage::destroyDecodedData):
+        Throw away the cached image if requested.
+
+        (WebCore::PDFDocumentImage::decodedSize):
+        (WebCore::PDFDocumentImage::drawPDFPage):
+        Drive-by use GraphicsContext instead of CG directly.
+
+        * platform/graphics/cg/PDFDocumentImage.h:
+        (WebCore::PDFDocumentImage::create):
+        Override isPDFDocumentImage().
+        Add storage for the cached image buffer and various cache parameters.
+
+        * rendering/ImageQualityController.cpp:
+        (WebCore::ImageQualityController::shouldPaintAtLowQuality):
+        PDFDocumentImage is also interested in/capable of low-quality painting now.
+
+2013-09-12  Tim Horton  <timothy_horton@apple.com>
+
         Image doesn't always repaint at high quality in all tiles after a live resize
         https://bugs.webkit.org/show_bug.cgi?id=121244
 
