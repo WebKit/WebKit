@@ -225,7 +225,7 @@ RenderObject* RenderObject::createObject(Element* element, RenderStyle* style)
     case TABLE_CELL:
         return new (arena) RenderTableCell(element);
     case TABLE_CAPTION:
-        return new (arena) RenderTableCaption(element);
+        return new (arena) RenderTableCaption(*element);
     case BOX:
     case INLINE_BOX:
         return new (arena) RenderDeprecatedFlexibleBox(element);
