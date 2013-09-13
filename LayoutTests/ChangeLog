@@ -1,3 +1,18 @@
+2013-09-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG AI assumes that ToThis can never return non-object if it is passed an object, and operationToThis will get the wrong value of isStrictMode() if there's inlining
+        https://bugs.webkit.org/show_bug.cgi?id=121330
+
+        Reviewed by Mark Hahnenberg and Oliver Hunt.
+
+        * js/dfg-strict-mode-to-this-expected.txt: Added.
+        * js/dfg-strict-mode-to-this.html: Added.
+        * js/jsc-test-list:
+        * js/script-tests/dfg-strict-mode-to-this.js: Added.
+        (thingy.bar):
+        (thingy.foo):
+        (thingy):
+
 2013-09-13  Alexey Proskuryakov  <ap@apple.com>
 
         svg/animations/smil-leak-*.svg tests are flaky

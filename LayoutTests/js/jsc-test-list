@@ -225,6 +225,7 @@ js/dfg-resolve-global-polymorphic-non-dictionary
 js/dfg-resolve-global-specific-dictionary
 js/dfg-side-effect-assignment-osr-exit
 js/dfg-sqrt-backwards-propagation
+js/dfg-strict-mode-to-this
 js/dfg-string-out-of-bounds-check-structure
 js/dfg-string-out-of-bounds-cse
 js/dfg-string-out-of-bounds-negative-check-structure

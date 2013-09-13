@@ -471,7 +471,15 @@ EncodedJSValue DFG_OPERATION operationToThis(ExecState* exec, EncodedJSValue enc
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
-    return JSValue::encode(JSValue::decode(encodedOp).toThis(exec, exec->codeBlock()->isStrictMode() ? StrictMode : NotStrictMode));
+    return JSValue::encode(JSValue::decode(encodedOp).toThis(exec, NotStrictMode));
+}
+
+EncodedJSValue DFG_OPERATION operationToThisStrict(ExecState* exec, EncodedJSValue encodedOp)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    return JSValue::encode(JSValue::decode(encodedOp).toThis(exec, StrictMode));
 }
 
 JSCell* DFG_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor, int32_t inlineCapacity)

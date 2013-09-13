@@ -110,7 +110,10 @@ void InlineCallFrame::dumpBriefFunctionInformation(PrintStream& out) const
 
 void InlineCallFrame::dumpInContext(PrintStream& out, DumpContext* context) const
 {
-    out.print(briefFunctionInformation(), ":<", RawPointer(executable.get()), ", bc#", caller.bytecodeIndex, ", ", specializationKind());
+    out.print(briefFunctionInformation(), ":<", RawPointer(executable.get()));
+    if (executable->isStrictMode())
+        out.print(" (StrictMode)");
+    out.print(", bc#", caller.bytecodeIndex, ", ", specializationKind());
     if (callee)
         out.print(", known callee: ", inContext(JSValue(callee.get()), context));
     else

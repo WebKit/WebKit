@@ -106,7 +106,7 @@ do
         mkdir -p "$resultsRoot/$dirName"
     fi
 
-    if [ -f $expectedOut -a -f $jsTest ]
+    if [ -f $jsTest ]
     then
         if [ `uname` = 'Darwin' ]; then
             echo "Testing $test ... \c"

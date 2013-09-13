@@ -3515,8 +3515,13 @@ void SpeculativeJIT::compile(Node* node)
             MacroAssembler::Address(tempGPR, Structure::typeInfoTypeOffset()),
             TrustedImm32(FinalObjectType)));
         m_jit.move(thisValueGPR, tempGPR);
+        J_DFGOperation_EJ function;
+        if (m_jit.graph().executableFor(node->codeOrigin)->isStrictMode())
+            function = operationToThisStrict;
+        else
+            function = operationToThis;
         addSlowPathGenerator(
-            slowPathCall(slowCases, this, operationToThis, tempGPR, thisValueGPR));
+            slowPathCall(slowCases, this, function, tempGPR, thisValueGPR));
 
         jsValueResult(tempGPR, node);
         break;

@@ -1,3 +1,25 @@
+2013-09-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG AI assumes that ToThis can never return non-object if it is passed an object, and operationToThis will get the wrong value of isStrictMode() if there's inlining
+        https://bugs.webkit.org/show_bug.cgi?id=121330
+
+        Reviewed by Mark Hahnenberg and Oliver Hunt.
+        
+        Also print whether a function is strict mode in debug dumps.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpAssumingJITType):
+        * bytecode/CodeOrigin.cpp:
+        (JSC::InlineCallFrame::dumpInContext):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-09-13  Anders Carlsson  <andersca@apple.com>
 
         Use nullptr instead of 0 in calls to HashMap::add

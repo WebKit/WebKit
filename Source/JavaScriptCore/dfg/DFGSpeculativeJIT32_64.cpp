@@ -3611,9 +3611,14 @@ void SpeculativeJIT::compile(Node* node)
             TrustedImm32(FinalObjectType)));
         m_jit.move(thisValuePayloadGPR, tempGPR);
         m_jit.move(thisValueTagGPR, tempTagGPR);
+        J_DFGOperation_EJ function;
+        if (m_jit.graph().executableFor(node->codeOrigin)->isStrictMode())
+            function = operationToThisStrict;
+        else
+            function = operationToThis;
         addSlowPathGenerator(
             slowPathCall(
-                slowCases, this, operationToThis,
+                slowCases, this, function,
                 JSValueRegs(tempTagGPR, tempGPR), thisValueTagGPR, thisValuePayloadGPR));
 
         jsValueResult(tempTagGPR, tempGPR, node);
