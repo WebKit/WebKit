@@ -33,11 +33,11 @@ class RenderTextControl : public RenderBlockFlow {
 public:
     virtual ~RenderTextControl();
 
-    HTMLTextFormControlElement* textFormControlElement() const;
+    HTMLTextFormControlElement& textFormControlElement() const;
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
 protected:
-    RenderTextControl(Element*);
+    RenderTextControl(HTMLTextFormControlElement&);
 
     // This convenience function should not be made public because innerTextElement may outlive the render tree.
     HTMLElement* innerTextElement() const;
@@ -65,6 +65,8 @@ protected:
     virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren);
 
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
     virtual const char* renderName() const OVERRIDE { return "RenderTextControl"; }
     virtual bool isTextControl() const OVERRIDE FINAL { return true; }
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;

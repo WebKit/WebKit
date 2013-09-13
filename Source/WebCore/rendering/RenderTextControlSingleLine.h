@@ -32,7 +32,7 @@ class HTMLInputElement;
 
 class RenderTextControlSingleLine : public RenderTextControl {
 public:
-    RenderTextControlSingleLine(Element*);
+    RenderTextControlSingleLine(HTMLInputElement&);
     virtual ~RenderTextControlSingleLine();
     // FIXME: Move create*Style() to their classes.
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
@@ -45,10 +45,12 @@ protected:
     virtual LayoutUnit computeLogicalHeightLimit() const;
     HTMLElement* containerElement() const;
     HTMLElement* innerBlockElement() const;
-    HTMLInputElement* inputElement() const;
     virtual void updateFromElement() OVERRIDE;
+    HTMLInputElement& inputElement() const;
 
 private:
+    void textFormControlElement() const WTF_DELETED_FUNCTION;
+
     virtual bool hasControlClip() const OVERRIDE;
     virtual LayoutRect controlClipRect(const LayoutPoint&) const OVERRIDE;
     virtual bool isTextField() const OVERRIDE FINAL { return true; }
@@ -89,12 +91,12 @@ private:
 
 inline HTMLElement* RenderTextControlSingleLine::containerElement() const
 {
-    return inputElement()->containerElement();
+    return inputElement().containerElement();
 }
 
 inline HTMLElement* RenderTextControlSingleLine::innerBlockElement() const
 {
-    return inputElement()->innerBlockElement();
+    return inputElement().innerBlockElement();
 }
 
 inline RenderTextControlSingleLine* toRenderTextControlSingleLine(RenderObject* object)

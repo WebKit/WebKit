@@ -1,5 +1,21 @@
 2013-09-12  Andreas Kling  <akling@apple.com>
 
+        [CTTE] Tighten RenderTextControl element typing.
+        <https://webkit.org/b/121275>
+
+        Reviewed by Anders Carlsson.
+
+        Codify these invariants:
+
+        - RenderTextControl always has a HTMLTextFormControl.
+        - RenderSearchField always has a HTMLInputElement.
+        - RenderTextControlSingleLine always has a HTMLInputElement.
+
+        None of these renderers are ever anonymous. Deleted element() and added
+        strongly typed reference getters instead.
+
+2013-09-12  Andreas Kling  <akling@apple.com>
+
         [CTTE] RenderListMarker is always anonymous and owned by RenderListItem.
         <https://webkit.org/b/121274>
 

@@ -733,8 +733,8 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
         return QVariant(frame->selection().extent().offsetInContainerNode());
     }
     case Qt::ImSurroundingText: {
-        if (renderTextControl && renderTextControl->textFormControlElement()) {
-            QString text = renderTextControl->textFormControlElement()->value();
+        if (renderTextControl) {
+            QString text = renderTextControl->textFormControlElement().value();
             RefPtr<Range> range = editor.compositionRange();
             if (range)
                 text.remove(range->startPosition().offsetInContainerNode(), TextIterator::rangeLength(range.get()));

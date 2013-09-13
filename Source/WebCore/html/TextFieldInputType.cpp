@@ -203,7 +203,8 @@ bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
 
 RenderObject* TextFieldInputType::createRenderer(RenderArena* arena, RenderStyle*) const
 {
-    return new (arena) RenderTextControlSingleLine(element());
+    ASSERT(element()); // FIXME: element() should return a reference.
+    return new (arena) RenderTextControlSingleLine(*element());
 }
 
 bool TextFieldInputType::needsContainer() const

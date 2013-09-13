@@ -33,7 +33,7 @@
 namespace WebCore {
 
 RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element)
-    : RenderTextControl(&element)
+    : RenderTextControl(element)
 {
 }
 

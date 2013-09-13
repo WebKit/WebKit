@@ -51,13 +51,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTextControlSingleLine::RenderTextControlSingleLine(Element* element)
+RenderTextControlSingleLine::RenderTextControlSingleLine(HTMLInputElement& element)
     : RenderTextControl(element)
     , m_shouldDrawCapsLockIndicator(false)
     , m_desiredInnerTextLogicalHeight(-1)
 {
-    ASSERT(element->isHTMLElement());
-    ASSERT(element->toInputElement());
 }
 
 RenderTextControlSingleLine::~RenderTextControlSingleLine()
@@ -66,7 +64,7 @@ RenderTextControlSingleLine::~RenderTextControlSingleLine()
 
 inline HTMLElement* RenderTextControlSingleLine::innerSpinButtonElement() const
 {
-    return inputElement()->innerSpinButtonElement();
+    return inputElement().innerSpinButtonElement();
 }
 
 RenderStyle* RenderTextControlSingleLine::textBaseStyle() const
@@ -192,7 +190,7 @@ void RenderTextControlSingleLine::layout()
         innerSpinBox->setLogicalHeight(logicalHeight() - borderBefore() - borderAfter());
     }
 
-    HTMLElement* placeholderElement = inputElement()->placeholderElement();
+    HTMLElement* placeholderElement = inputElement().placeholderElement();
     if (RenderBox* placeholderBox = placeholderElement ? placeholderElement->renderBox() : 0) {
         LayoutSize innerTextSize;
         if (innerTextRenderer)
@@ -233,7 +231,7 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     //  - we hit the <input> element (e.g. we're over the border or padding), or
     //  - we hit regions not in any decoration buttons.
     HTMLElement* container = containerElement();
-    if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == element() || (container && container == result.innerNode())) {
+    if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == &inputElement() || (container && container == result.innerNode())) {
         LayoutPoint pointInParent = locationInContainer.point();
         if (container && innerBlockElement()) {
             if (innerBlockElement()->renderBox())
@@ -266,25 +264,22 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
     RenderObject* innerTextRenderer = innerTextElement()->renderer();
     if (innerTextRenderer && diff == StyleDifferenceLayout)
         innerTextRenderer->setNeedsLayout(true, MarkContainingBlockChain);
-    if (HTMLElement* placeholder = inputElement()->placeholderElement())
+    if (HTMLElement* placeholder = inputElement().placeholderElement())
         placeholder->setInlineStyleProperty(CSSPropertyTextOverflow, textShouldBeTruncated() ? CSSValueEllipsis : CSSValueClip);
     setHasOverflowClip(false);
 }
 
 void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
 {
-    if (!element())
-        return;
-
     // Only draw the caps lock indicator if these things are true:
     // 1) The field is a password field
     // 2) The frame is active
     // 3) The element is focused
     // 4) The caps lock is on
     bool shouldDrawCapsLockIndicator =
-        inputElement()->isPasswordField()
+        inputElement().isPasswordField()
         && frame().selection().isFocusedAndActive()
-        && document().focusedElement() == element()
+        && document().focusedElement() == &inputElement()
         && PlatformKeyboardEvent::currentCapsLockState();
 
     if (shouldDrawCapsLockIndicator != m_shouldDrawCapsLockIndicator) {
@@ -324,7 +319,7 @@ float RenderTextControlSingleLine::getAvgCharWidth(AtomicString family)
 LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charWidth) const
 {
     int factor;
-    bool includesDecoration = inputElement()->sizeShouldIncludeDecoration(factor);
+    bool includesDecoration = inputElement().sizeShouldIncludeDecoration(factor);
     if (factor <= 0)
         factor = 20;
 
@@ -346,7 +341,7 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
         result += maxCharWidth - charWidth;
 
     if (includesDecoration)
-        result += inputElement()->decorationWidth();
+        result += inputElement().decorationWidth();
 
     return result;
 }
@@ -404,8 +399,7 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const
 
 bool RenderTextControlSingleLine::textShouldBeTruncated() const
 {
-    return document().focusedElement() != element()
-        && style()->textOverflow() == TextOverflowEllipsis;
+    return document().focusedElement() != &inputElement() && style()->textOverflow() == TextOverflowEllipsis;
 }
 
 void RenderTextControlSingleLine::autoscroll(const IntPoint& position)
@@ -477,9 +471,10 @@ bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction
     return RenderBlock::logicalScroll(direction, granularity, multiplier, stopNode);
 }
 
-HTMLInputElement* RenderTextControlSingleLine::inputElement() const
+HTMLInputElement& RenderTextControlSingleLine::inputElement() const
 {
-    return element()->toInputElement();
+    ASSERT(RenderObject::node());
+    return toHTMLInputElement(*RenderObject::node());
 }
 
 }
