@@ -1203,6 +1203,9 @@ webkit.org/b/112176 fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pa
 
 webkit.org/b/76364 fast/css/lang-mapped-to-webkit-locale-dynamic.xhtml [ Pass Failure ]
 
+# Always very slow, frequently timing out (only on bots, not locally).
+webkit.org/b/121331 http/tests/misc/submit-post-keygen.html [ Pass Timeout ]
+
 # Feature not implemented
 webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 
