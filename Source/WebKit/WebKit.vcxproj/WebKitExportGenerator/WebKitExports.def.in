@@ -357,9 +357,6 @@ EXPORTS
         symbolWithPointer(?isBitmapImage@BitmapImage@WebCore@@UBE_NXZ, ?isBitmapImage@BitmapImage@WebCore@@UEBA_NXZ)
         symbolWithPointer(?currentFrameKnownToBeOpaque@BitmapImage@WebCore@@UAE_NXZ, ?currentFrameKnownToBeOpaque@BitmapImage@WebCore@@UEAA_NXZ)
         symbolWithPointer(?hasSingleSecurityOrigin@BitmapImage@WebCore@@UBE_NXZ, ?hasSingleSecurityOrigin@BitmapImage@WebCore@@UEBA_NXZ)
-#if !ASSERT_DISABLED
-        symbolWithPointer(?notSolidColor@BitmapImage@WebCore@@UAE_NXZ, ?notSolidColor@BitmapImage@WebCore@@UEAA_NXZ)
-#endif
         symbolWithPointer(?computeIntrinsicDimensions@Image@WebCore@@UAEXAAULength@2@0AAVFloatSize@2@@Z, ?computeIntrinsicDimensions@Image@WebCore@@UEAAXAEAULength@2@0AEAVFloatSize@2@@Z)
         symbolWithPointer(?size@BitmapImage@WebCore@@UBE?AVIntSize@2@XZ, ?size@BitmapImage@WebCore@@UEBA?AVIntSize@2@XZ)
         symbolWithPointer(?getHotSpot@BitmapImage@WebCore@@UBE_NAAVIntPoint@2@@Z, ?getHotSpot@BitmapImage@WebCore@@UEBA_NAEAVIntPoint@2@@Z)
@@ -387,7 +384,6 @@ EXPORTS
         symbolWithPointer(?drawFrameMatchingSourceSize@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVIntSize@2@W4ColorSpace@2@W4CompositeOperator@2@@Z, ?drawFrameMatchingSourceSize@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@AEBVIntSize@2@W4ColorSpace@2@W4CompositeOperator@2@@Z)
         symbolWithPointer(?mayFillWithSolidColor@BitmapImage@WebCore@@MAE_NXZ, ?mayFillWithSolidColor@BitmapImage@WebCore@@MEAA_NXZ)
         symbolWithPointer(?solidColor@BitmapImage@WebCore@@MBE?AVColor@2@XZ, ?solidColor@BitmapImage@WebCore@@MEBA?AVColor@2@XZ)
-        symbolWithPointer(?frameCount@BitmapImage@WebCore@@MAEIXZ, ?frameCount@BitmapImage@WebCore@@MEAA_KXZ)
         symbolWithPointer(?frameOrientationAtIndex@BitmapImage@WebCore@@IAE?AVImageOrientation@2@I@Z, ?frameOrientationAtIndex@BitmapImage@WebCore@@IEAA?AVImageOrientation@2@_K@Z)
         symbolWithPointer(?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QAEXV?$PassRefPtr@VStyleSheetContents@WebCore@@@WTF@@@Z, ?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QEAAXV?$PassRefPtr@VStyleSheetContents@WebCore@@@WTF@@@Z)
         symbolWithPointer(?parseString@StyleSheetContents@WebCore@@QAE_NABVString@WTF@@@Z, ?parseString@StyleSheetContents@WebCore@@QEAA_NAEBVString@WTF@@@Z)

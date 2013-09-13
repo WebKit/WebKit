@@ -1,3 +1,10 @@
+2013-09-13  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed; part one of build fix for Windows.
+        Sorry for the noise, I thought I'd fixed it.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-09-12  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] TestWebKitAPI fails to link.
