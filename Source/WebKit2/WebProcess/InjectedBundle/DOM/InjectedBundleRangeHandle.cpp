@@ -54,7 +54,7 @@ PassRefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Ran
     if (!range)
         return 0;
 
-    DOMHandleCache::AddResult result = domHandleCache().add(range, 0);
+    DOMHandleCache::AddResult result = domHandleCache().add(range, nullptr);
     if (!result.isNewEntry)
         return PassRefPtr<InjectedBundleRangeHandle>(result.iterator->value);
 

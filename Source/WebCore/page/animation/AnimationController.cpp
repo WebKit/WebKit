@@ -69,7 +69,7 @@ AnimationControllerPrivate::~AnimationControllerPrivate()
 
 CompositeAnimation& AnimationControllerPrivate::ensureCompositeAnimation(RenderObject* renderer)
 {
-    RenderObjectAnimationMap::AddResult result = m_compositeAnimations.add(renderer, 0);
+    RenderObjectAnimationMap::AddResult result = m_compositeAnimations.add(renderer, nullptr);
     if (result.isNewEntry)
         result.iterator->value = CompositeAnimation::create(this);
     return *result.iterator->value;

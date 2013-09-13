@@ -66,7 +66,7 @@ IdentifierRep* IdentifierRep::get(int intID)
         return identifier;
     }
     
-    IntIdentifierMap::AddResult result = intIdentifierMap().add(intID, 0);
+    IntIdentifierMap::AddResult result = intIdentifierMap().add(intID, nullptr);
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);
         result.iterator->value = new IdentifierRep(intID);

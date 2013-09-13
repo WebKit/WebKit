@@ -171,7 +171,7 @@ void ScrollbarThemeMac::registerScrollbar(ScrollbarThemeClient* scrollbar)
         updateEnabledState(scrollbar);
         updateScrollbarOverlayStyle(scrollbar);
     } else {
-        scrollbarMap()->add(scrollbar, nil);
+        scrollbarMap()->add(scrollbar, nullptr);
     }
 }
 

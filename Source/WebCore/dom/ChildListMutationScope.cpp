@@ -67,7 +67,7 @@ ChildListMutationAccumulator::~ChildListMutationAccumulator()
 
 PassRefPtr<ChildListMutationAccumulator> ChildListMutationAccumulator::getOrCreate(Node* target)
 {
-    AccumulatorMap::AddResult result = accumulatorMap().add(target, 0);
+    AccumulatorMap::AddResult result = accumulatorMap().add(target, nullptr);
     RefPtr<ChildListMutationAccumulator> accumulator;
     if (!result.isNewEntry)
         accumulator = result.iterator->value;

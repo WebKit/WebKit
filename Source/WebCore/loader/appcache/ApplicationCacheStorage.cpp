@@ -139,7 +139,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const KUR
 {
     ASSERT(!manifestURL.hasFragmentIdentifier());
 
-    CacheGroupMap::AddResult result = m_cachesInMemory.add(manifestURL, 0);
+    CacheGroupMap::AddResult result = m_cachesInMemory.add(manifestURL, nullptr);
     
     if (!result.isNewEntry) {
         ASSERT(result.iterator->value);

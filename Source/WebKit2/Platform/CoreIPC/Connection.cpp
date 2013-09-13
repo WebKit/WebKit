@@ -111,7 +111,7 @@ public:
 PassRefPtr<Connection::SyncMessageState> Connection::SyncMessageState::getOrCreate(RunLoop* runLoop)
 {
     MutexLocker locker(syncMessageStateMapMutex());
-    SyncMessageStateMap::AddResult result = syncMessageStateMap().add(runLoop, 0);
+    SyncMessageStateMap::AddResult result = syncMessageStateMap().add(runLoop, nullptr);
 
     if (!result.isNewEntry) {
         ASSERT(result.iterator->value);

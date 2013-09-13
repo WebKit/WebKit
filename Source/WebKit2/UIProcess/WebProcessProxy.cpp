@@ -292,7 +292,7 @@ void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& original
     MESSAGE_CHECK_URL(originalURL);
     MESSAGE_CHECK_URL(url);
 
-    WebBackForwardListItemMap::AddResult result = m_backForwardListItemMap.add(itemID, 0);
+    WebBackForwardListItemMap::AddResult result = m_backForwardListItemMap.add(itemID, nullptr);
     if (result.isNewEntry) {
         result.iterator->value = WebBackForwardListItem::create(originalURL, url, title, backForwardData.data(), backForwardData.size(), itemID);
         return;

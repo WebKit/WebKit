@@ -74,7 +74,7 @@ PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(Node*
     if (!node)
         return 0;
 
-    DOMHandleCache::AddResult result = domHandleCache().add(node, 0);
+    DOMHandleCache::AddResult result = domHandleCache().add(node, nullptr);
     if (!result.isNewEntry)
         return PassRefPtr<InjectedBundleNodeHandle>(result.iterator->value);
 

@@ -68,7 +68,7 @@ NetscapePluginHostManager::~NetscapePluginHostManager()
 
 NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WTF::String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier)
 {
-    PluginHostMap::AddResult result = m_pluginHosts.add(pluginPath, 0);
+    PluginHostMap::AddResult result = m_pluginHosts.add(pluginPath, nullptr);
     
     // The package was already in the map, just return it.
     if (!result.isNewEntry)

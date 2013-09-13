@@ -679,7 +679,7 @@ private:
     
     Node* cellConstant(JSCell* cell)
     {
-        HashMap<JSCell*, Node*>::AddResult result = m_cellConstantNodes.add(cell, 0);
+        HashMap<JSCell*, Node*>::AddResult result = m_cellConstantNodes.add(cell, nullptr);
         if (result.isNewEntry)
             result.iterator->value = addToGraph(WeakJSConstant, OpInfo(cell));
         

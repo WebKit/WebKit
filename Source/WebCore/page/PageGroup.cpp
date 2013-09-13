@@ -96,7 +96,7 @@ PageGroup* PageGroup::pageGroup(const String& groupName)
     if (!pageGroups)
         pageGroups = new PageGroupMap;
 
-    PageGroupMap::AddResult result = pageGroups->add(groupName, 0);
+    PageGroupMap::AddResult result = pageGroups->add(groupName, nullptr);
 
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);

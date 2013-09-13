@@ -60,7 +60,7 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::localStorageNamespace(PageGro
     unsigned quota = pageGroup->groupSettings().localStorageQuotaBytes();
     const String lookupPath = path.isNull() ? emptyString() : path;
 
-    LocalStorageNamespaceMap::AddResult result = localStorageNamespaceMap().add(lookupPath, 0);
+    LocalStorageNamespaceMap::AddResult result = localStorageNamespaceMap().add(lookupPath, nullptr);
     if (!result.isNewEntry)
         return result.iterator->value;
 

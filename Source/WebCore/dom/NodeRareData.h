@@ -89,7 +89,7 @@ public:
     template<typename T>
     PassRefPtr<T> addCacheWithAtomicName(Node* node, CollectionType collectionType, const AtomicString& name)
     {
-        NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(collectionType, name), 0);
+        NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(collectionType, name), nullptr);
         if (!result.isNewEntry)
             return static_cast<T*>(result.iterator->value);
 
@@ -102,7 +102,7 @@ public:
     template<typename T>
     PassRefPtr<T> addCacheWithAtomicName(Node* node, CollectionType collectionType)
     {
-        NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(collectionType, starAtom), 0);
+        NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(collectionType, starAtom), nullptr);
         if (!result.isNewEntry)
             return static_cast<T*>(result.iterator->value);
 
@@ -120,7 +120,7 @@ public:
     template<typename T>
     PassRefPtr<T> addCacheWithName(Node* node, CollectionType collectionType, const String& name)
     {
-        NodeListNameCacheMap::AddResult result = m_nameCaches.add(namedNodeListKey(collectionType, name), 0);
+        NodeListNameCacheMap::AddResult result = m_nameCaches.add(namedNodeListKey(collectionType, name), nullptr);
         if (!result.isNewEntry)
             return static_cast<T*>(result.iterator->value);
 
@@ -132,7 +132,7 @@ public:
     PassRefPtr<TagNodeList> addCacheWithQualifiedName(Node* node, const AtomicString& namespaceURI, const AtomicString& localName)
     {
         QualifiedName name(nullAtom, localName, namespaceURI);
-        TagNodeListCacheNS::AddResult result = m_tagNodeListCacheNS.add(name, 0);
+        TagNodeListCacheNS::AddResult result = m_tagNodeListCacheNS.add(name, nullptr);
         if (!result.isNewEntry)
             return result.iterator->value;
 

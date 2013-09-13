@@ -1,3 +1,13 @@
+2013-09-13  Anders Carlsson  <andersca@apple.com>
+
+        Use nullptr instead of 0 in calls to HashMap::add
+        https://bugs.webkit.org/show_bug.cgi?id=121322
+
+        Reviewed by Sam Weinig.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::hostForPlugin):
+
 2013-09-13  Dan Bernstein  <mitz@apple.com>
 
         [mac WK1] Introduce WebViewWillCloseNotification

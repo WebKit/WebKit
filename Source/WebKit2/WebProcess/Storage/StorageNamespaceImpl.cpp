@@ -52,7 +52,7 @@ PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespa
 {
     uint64_t pageGroupID = WebProcess::shared().webPageGroup(pageGroup)->pageGroupID();
 
-    LocalStorageNamespaceMap::AddResult result = localStorageNamespaceMap().add(pageGroupID, 0);
+    LocalStorageNamespaceMap::AddResult result = localStorageNamespaceMap().add(pageGroupID, nullptr);
     if (!result.isNewEntry)
         return result.iterator->value;
 
