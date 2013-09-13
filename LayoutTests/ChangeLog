@@ -1,5 +1,24 @@
 2013-09-13  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
+        [Qt] Unreviewed gardening. Rebaseline tests after r155408.
+
+        * platform/qt/fast/forms/control-restrict-line-height-expected.png:
+        * platform/qt/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/qt/fast/forms/input-placeholder-visibility-1-expected.png:
+        * platform/qt/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/qt/fast/forms/input-placeholder-visibility-3-expected.png:
+        * platform/qt/fast/forms/input-placeholder-visibility-3-expected.txt:
+        * platform/qt/fast/forms/placeholder-position-expected.png:
+        * platform/qt/fast/forms/placeholder-position-expected.txt:
+        * platform/qt/fast/forms/textarea-placeholder-pseudo-style-expected.png:
+        * platform/qt/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/qt/fast/forms/textarea-placeholder-visibility-1-expected.png:
+        * platform/qt/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/qt/fast/forms/textarea-placeholder-visibility-2-expected.png:
+        * platform/qt/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+
+2013-09-13  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
         [Qt] Unreviewed gardening. Skip some failing tests.
         https://bugs.webkit.org/show_bug.cgi?id=120848.
 
