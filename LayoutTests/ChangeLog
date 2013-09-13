@@ -1,5 +1,15 @@
 2013-09-13  Alexey Proskuryakov  <ap@apple.com>
 
+        svg/dom/SVGScriptElement/script-load-and-error-events.svg is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=25817
+
+        Reviewed by Tim Horton.
+
+        * svg/dom/SVGScriptElement/script-load-and-error-events.svg: Let test 5 finish
+        before starting test 6.
+
+2013-09-13  Alexey Proskuryakov  <ap@apple.com>
+
         http/tests/misc/submit-post-keygen.html is extremely slow on bots, often timing out
         https://bugs.webkit.org/show_bug.cgi?id=121331
 

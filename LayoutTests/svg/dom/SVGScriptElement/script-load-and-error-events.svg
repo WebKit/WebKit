@@ -97,11 +97,12 @@ function continueDynamicTest1() {
     scriptElement.type.baseVal = "text/javascript";
     scriptElement.href.baseVal = "resources/nonexistent.js";
 
-    scriptElement.onload = function(loadEvent) {
-        loadEventHandler(loadEvent);
+    scriptElement.onload = loadEventHandler;
+
+    scriptElement.onerror = function(errorEvent) {
+        errorEventHandler(errorEvent);
         window.setTimeout('continueDynamicTest2()', 0);
     };
-    scriptElement.onerror = errorEventHandler;
 
     document.getElementsByTagName("defs")[0].appendChild(scriptElement);  
 }
