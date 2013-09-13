@@ -1,5 +1,20 @@
 2013-09-13  Alexey Proskuryakov  <ap@apple.com>
 
+        svg/animations/smil-leak-*.svg tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=114280
+
+        Approved in person by Geoff Garen.
+
+        Increased the number of nodes in the test 10x to see what happens with the number
+        of leaked nodes.
+
+        * svg/animations/smil-leak-dynamically-added-element-instances.svg:
+        * svg/animations/smil-leak-element-instances-noBaseValRef.svg:
+        * svg/animations/smil-leak-element-instances.svg:
+        * svg/animations/smil-leak-elements.svg:
+
+2013-09-13  Alexey Proskuryakov  <ap@apple.com>
+
         Flaky Test: svg/dom/SVGScriptElement/script-load-and-error-events.svg
         https://bugs.webkit.org/show_bug.cgi?id=25817
 

@@ -40,7 +40,7 @@ function startTest() {
     // Hold a reference to rect.x.baseVal on the root instance.
     xBaseVal = document.getElementById("rect").x.baseVal;
 
-    for (var i = 0; i < 100; i++)
+    for (var i = 0; i < 1000; i++)
         g.appendChild(createAnimatedRectInstance());
 
     setTimeout(continueTest, 0);
