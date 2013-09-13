@@ -1,5 +1,15 @@
 2013-09-12  Andreas Kling  <akling@apple.com>
 
+        [CTTE] RenderListBox's element is always a HTMLSelectElement.
+        <https://webkit.org/b/121273>
+
+        Reviewed by Anders Carlsson.
+
+        Hide element() on RenderListBox and make selectElement() return a reference
+        since this renderer cannot be anonymous.
+
+2013-09-12  Andreas Kling  <akling@apple.com>
+
         [CTTE] RenderHTMLCanvas's element is always a HTMLCanvasElement.
         <https://webkit.org/b/121272>
 

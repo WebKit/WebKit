@@ -341,7 +341,7 @@ RenderObject* HTMLSelectElement::createRenderer(RenderArena* arena, RenderStyle*
 {
     if (usesMenuList())
         return new (arena) RenderMenuList(this);
-    return new (arena) RenderListBox(this);
+    return new (arena) RenderListBox(*this);
 }
 
 bool HTMLSelectElement::childShouldCreateRenderer(const Node* child) const

@@ -40,8 +40,10 @@ class HTMLSelectElement;
 
 class RenderListBox FINAL : public RenderBlockFlow, private ScrollableArea {
 public:
-    explicit RenderListBox(Element*);
+    explicit RenderListBox(HTMLSelectElement&);
     virtual ~RenderListBox();
+
+    HTMLSelectElement& selectElement() const;
 
     void selectionChanged();
 
@@ -58,7 +60,7 @@ public:
     int size() const;
 
 private:
-    HTMLSelectElement* selectElement() const;
+    void element() const WTF_DELETED_FUNCTION;
 
     virtual const char* renderName() const { return "RenderListBox"; }
 
