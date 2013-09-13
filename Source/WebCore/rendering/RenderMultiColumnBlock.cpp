@@ -35,8 +35,8 @@ using namespace std;
 
 namespace WebCore {
 
-RenderMultiColumnBlock::RenderMultiColumnBlock(Element* element)
-    : RenderBlockFlow(element)
+RenderMultiColumnBlock::RenderMultiColumnBlock(Element& element)
+    : RenderBlockFlow(&element)
     , m_flowThread(0)
     , m_columnCount(1)
     , m_columnWidth(0)

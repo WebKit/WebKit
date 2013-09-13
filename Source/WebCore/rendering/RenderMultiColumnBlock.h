@@ -35,7 +35,8 @@ class RenderMultiColumnFlowThread;
 
 class RenderMultiColumnBlock FINAL : public RenderBlockFlow {
 public:
-    RenderMultiColumnBlock(Element*);
+    explicit RenderMultiColumnBlock(Element&);
+    Element& existingElement() const { return *RenderBlockFlow::element(); }
 
     LayoutUnit columnHeightAvailable() const { return m_columnHeightAvailable; }
 
@@ -47,8 +48,9 @@ public:
     bool requiresBalancing() const { return !m_columnHeightAvailable; }
 
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
     virtual bool isRenderMultiColumnBlock() const { return true; }
-    
     virtual const char* renderName() const;
 
     virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) OVERRIDE;
