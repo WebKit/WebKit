@@ -1,3 +1,20 @@
+2013-09-13  Youngho Yoo  <youngho33.yoo@lge.com>
+
+        Fixed crash in V8 benchmark suite in ARM,softp,EABI environment. 
+        https://bugs.webkit.org/show_bug.cgi?id=117281
+
+        Reviewed by Michael Saboff.
+
+        Fix the missing EABI_32BIT_DUMMY_ARG in FPRReg using callOperation function.
+
+        Test 1 : fast/js/array-with-double-assign.html
+        Test 2 : fast/js/array-with-double-push.html
+
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+
 2013-09-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::Int32Operand and fillInt32() should go away and all uses should be replaced with SpeculateInt32Operand

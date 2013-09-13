@@ -1071,12 +1071,6 @@ public:
         return appendCallWithExceptionCheck(operation);
     }
 
-    JITCompiler::Call callOperation(V_DFGOperation_EOZD operation, GPRReg arg1, GPRReg arg2, FPRReg arg3)
-    {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
-        return appendCallWithExceptionCheck(operation);
-    }
-
     JITCompiler::Call callOperation(V_DFGOperation_W operation, WatchpointSet* watchpointSet)
     {
         m_jit.setupArguments(TrustedImmPtr(watchpointSet));
@@ -1308,6 +1302,12 @@ public:
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
 
+    JITCompiler::Call callOperation(V_DFGOperation_EOZD operation, GPRReg arg1, GPRReg arg2, FPRReg arg3)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
+        return appendCallWithExceptionCheck(operation);
+    }
+
     JITCompiler::Call callOperation(V_DFGOperation_EJPP operation, GPRReg arg1, GPRReg arg2, void* pointer)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(pointer));
@@ -1455,7 +1455,7 @@ public:
     }
     JITCompiler::Call callOperation(J_DFGOperation_EDA operation, GPRReg resultTag, GPRReg resultPayload, FPRReg arg1, GPRReg arg2)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2);
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJA operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2)
@@ -1557,6 +1557,12 @@ public:
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
+    }
+
+    JITCompiler::Call callOperation(V_DFGOperation_EOZD operation, GPRReg arg1, GPRReg arg2, FPRReg arg3)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG arg3);
+        return appendCallWithExceptionCheck(operation);
     }
 
     JITCompiler::Call callOperation(V_DFGOperation_EJPP operation, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2, void* pointer)

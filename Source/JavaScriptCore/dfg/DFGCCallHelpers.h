@@ -498,6 +498,12 @@ public:
             swap(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3);
     }
 
+#if CPU(MIPS)
+#define POKE_ARGUMENT_OFFSET 4
+#else
+#define POKE_ARGUMENT_OFFSET 0
+#endif
+
 #if CPU(X86_64)
     ALWAYS_INLINE void setupArguments(FPRReg arg1)
     {
@@ -558,6 +564,20 @@ public:
         setupStubArguments(arg1, arg2);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32, FPRReg arg2, GPRReg arg3)
+    {
+        moveDouble(arg2, FPRInfo::argumentFPR0);
+        move(arg3, GPRInfo::argumentGPR1);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32, GPRReg arg2, GPRReg arg3, FPRReg arg4)
+    {
+        moveDouble(arg4, FPRInfo::argumentFPR0);
+        setupStubArguments(arg2, arg3);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
 #else
     ALWAYS_INLINE void setupArguments(FPRReg arg1)
     {
@@ -583,6 +603,24 @@ public:
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         assembler().vmov(GPRInfo::argumentGPR3, GPRInfo::nonArgGPR0, arg3);
         poke(GPRInfo::nonArgGPR0);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, FPRReg arg2, GPRReg arg3)
+    {
+        poke(arg3, POKE_ARGUMENT_OFFSET);
+        move(arg1, GPRInfo::argumentGPR1);
+        assembler().vmov(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3, arg2);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32 arg3, FPRReg arg4)
+    {
+        setupStubArguments(arg1, arg2);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        move(arg3, GPRInfo::argumentGPR3);
+        assembler().vmov(GPRInfo::nonArgGPR0, GPRInfo::nonArgGPR1, arg4);
+        poke(GPRInfo::nonArgGPR0, POKE_ARGUMENT_OFFSET);
+        poke(GPRInfo::nonArgGPR1, POKE_ARGUMENT_OFFSET + 1);
     }
 #endif // CPU(ARM_HARDFP)
 #elif CPU(MIPS)
@@ -883,12 +921,6 @@ public:
     // These methods are suitable for any calling convention that provides for
     // exactly 4 argument registers, e.g. ARMv7.
 #if NUMBER_OF_ARGUMENT_REGISTERS == 4
-
-#if CPU(MIPS)
-#define POKE_ARGUMENT_OFFSET 4
-#else
-#define POKE_ARGUMENT_OFFSET 0
-#endif
 
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4)
     {

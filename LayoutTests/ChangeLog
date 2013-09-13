@@ -1,3 +1,21 @@
+2013-09-13  Youngho Yoo  <youngho33.yoo@lge.com>
+
+        Fixed crash in V8 benchmark suite in ARM,softp,EABI environment. 
+        https://bugs.webkit.org/show_bug.cgi?id=117281
+
+        Reviewed by Michael Saboff.
+
+        Fix the missing EABI_32BIT_DUMMY_ARG in FPRReg using callOperation function.
+
+        * fast/js/array-with-double-assign-expected.txt: Added.
+        * fast/js/array-with-double-assign.html: Added.
+        * fast/js/array-with-double-push-expected.txt: Added.
+        * fast/js/array-with-double-push.html: Added.
+        * fast/js/script-tests/array-with-double-assign.js: Added.
+        (foo):
+        * fast/js/script-tests/array-with-double-push.js: Added.
+        (foo):
+
 2013-09-12  Santosh Mahto  <santosh.ma@samsung.com>
 
         [EFL] Background Style of element not visible because of default theme style
