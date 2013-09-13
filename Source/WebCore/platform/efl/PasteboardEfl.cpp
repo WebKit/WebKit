@@ -24,6 +24,7 @@
 #include "Pasteboard.h"
 
 #include "NotImplemented.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

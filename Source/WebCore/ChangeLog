@@ -1,3 +1,10 @@
+2013-09-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [EFL] Speculative build fix after r155638.
+
+        * platform/efl/PasteboardEfl.cpp: Add include for PassRefPtr, which
+        is no longer implicitly included.
+
 2013-09-12  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid extra scrollbar-related layouts for overlay scrollbars
