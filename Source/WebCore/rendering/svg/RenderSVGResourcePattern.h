@@ -45,9 +45,8 @@ public:
 
 class RenderSVGResourcePattern FINAL : public RenderSVGResourceContainer {
 public:
-    RenderSVGResourcePattern(SVGPatternElement*);
-
-    virtual const char* renderName() const { return "RenderSVGResourcePattern"; }
+    explicit RenderSVGResourcePattern(SVGPatternElement&);
+    SVGPatternElement& patternElement() const;
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true);
     virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true);
@@ -60,7 +59,10 @@ public:
     static RenderSVGResourceType s_resourceType;
 
 private:
-    bool buildTileImageTransform(RenderObject*, const PatternAttributes&, const SVGPatternElement*, FloatRect& patternBoundaries, AffineTransform& tileImageTransform) const;
+    void element() const WTF_DELETED_FUNCTION;
+    virtual const char* renderName() const OVERRIDE { return "RenderSVGResourcePattern"; }
+
+    bool buildTileImageTransform(RenderObject*, const PatternAttributes&, const SVGPatternElement&, FloatRect& patternBoundaries, AffineTransform& tileImageTransform) const;
 
     PassOwnPtr<ImageBuffer> createTileImage(const PatternAttributes&, const FloatRect& tileBoundaries,
                                             const FloatRect& absoluteTileBoundaries, const AffineTransform& tileImageTransform,

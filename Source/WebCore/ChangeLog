@@ -1,3 +1,13 @@
+2013-09-13  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderSVGResourcePattern always has an SVGPatternElement.
+        <https://webkit.org/b/121313>
+
+        Reviewed by Anders Carlsson.
+
+        This renderer is never anonymous. Tighten things up with a patternElement()
+        reference getter. Removed some unnecessary null checks and assertions.
+
 2013-09-13  Darin Adler  <darin@apple.com>
 
         Remove layering-violating Pasteboard::plainText function (for all platforms now)

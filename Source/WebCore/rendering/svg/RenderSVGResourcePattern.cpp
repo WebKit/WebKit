@@ -35,10 +35,15 @@ namespace WebCore {
 
 RenderSVGResourceType RenderSVGResourcePattern::s_resourceType = PatternResourceType;
 
-RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement* node)
-    : RenderSVGResourceContainer(node)
+RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement& element)
+    : RenderSVGResourceContainer(&element)
     , m_shouldCollectPatternAttributes(true)
 {
+}
+
+SVGPatternElement& RenderSVGResourcePattern::patternElement() const
+{
+    return toSVGPatternElement(*RenderSVGResourceContainer::element());
 }
 
 void RenderSVGResourcePattern::removeAllClientsFromCache(bool markForInvalidation)
@@ -61,15 +66,11 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderObject* object, unsign
     if (currentData && currentData->pattern)
         return currentData;
 
-    SVGPatternElement* patternElement = toSVGPatternElement(element());
-    if (!patternElement)
-        return 0;
-
     if (m_shouldCollectPatternAttributes) {
-        patternElement->synchronizeAnimatedSVGAttribute(anyQName());
+        patternElement().synchronizeAnimatedSVGAttribute(anyQName());
 
         m_attributes = PatternAttributes();
-        patternElement->collectPatternAttributes(m_attributes);
+        patternElement().collectPatternAttributes(m_attributes);
         m_shouldCollectPatternAttributes = false;
     }
 
@@ -84,7 +85,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderObject* object, unsign
     // Compute all necessary transformations to build the tile image & the pattern.
     FloatRect tileBoundaries;
     AffineTransform tileImageTransform;
-    if (!buildTileImageTransform(object, m_attributes, patternElement, tileBoundaries, tileImageTransform))
+    if (!buildTileImageTransform(object, m_attributes, patternElement(), tileBoundaries, tileImageTransform))
         return 0;
 
     AffineTransform absoluteTransformIgnoringRotation;
@@ -212,20 +213,18 @@ void RenderSVGResourcePattern::postApplyResource(RenderObject*, GraphicsContext*
 
 static inline FloatRect calculatePatternBoundaries(const PatternAttributes& attributes,
                                                    const FloatRect& objectBoundingBox,
-                                                   const SVGPatternElement* patternElement)
+                                                   const SVGPatternElement& patternElement)
 {
-    ASSERT(patternElement);
-    return SVGLengthContext::resolveRectangle(patternElement, attributes.patternUnits(), objectBoundingBox, attributes.x(), attributes.y(), attributes.width(), attributes.height());
+    return SVGLengthContext::resolveRectangle(&patternElement, attributes.patternUnits(), objectBoundingBox, attributes.x(), attributes.y(), attributes.width(), attributes.height());
 }
 
 bool RenderSVGResourcePattern::buildTileImageTransform(RenderObject* renderer,
                                                        const PatternAttributes& attributes,
-                                                       const SVGPatternElement* patternElement,
+                                                       const SVGPatternElement& patternElement,
                                                        FloatRect& patternBoundaries,
                                                        AffineTransform& tileImageTransform) const
 {
     ASSERT(renderer);
-    ASSERT(patternElement);
 
     FloatRect objectBoundingBox = renderer->objectBoundingBox();
     patternBoundaries = calculatePatternBoundaries(attributes, objectBoundingBox, patternElement); 
