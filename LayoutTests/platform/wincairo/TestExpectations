@@ -2731,7 +2731,6 @@ inspector/timeline/timeline-decode-resize.html
 
 # Flaky inspector tests
 # https://bugs.webkit.org/show_bug.cgi?id=95802
-http/tests/inspector/appcache/appcache-manifest-with-non-existing-file.html
 http/tests/inspector/console-resource-errors.html
 http/tests/inspector/resource-tree/resource-request-content-while-loading.html
 http/tests/inspector/search/resources-search-match-index.html

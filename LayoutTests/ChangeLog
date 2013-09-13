@@ -1,3 +1,17 @@
+2013-09-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Flaky Test: http/tests/inspector/appcache/appcache-manifest-with-non-existing-file.html
+        https://bugs.webkit.org/show_bug.cgi?id=114209
+
+        Reviewed by Joseph Pecoraro.
+
+        * TestExpectations: Marked the test as WontFix. It is hopelessly broken, and
+        doesn't test anything specific anyway.
+
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        Removed from the lists, as the test is now skipped globally.
+
 2013-09-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Move to the new web inspector
