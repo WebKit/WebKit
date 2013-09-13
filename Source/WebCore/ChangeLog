@@ -1,5 +1,15 @@
 2013-09-13  Andreas Kling  <akling@apple.com>
 
+        [CTTE] RenderSVGTransformableContainer is never anonymous.
+        <https://webkit.org/b/121304>
+
+        Reviewed by Anders Carlsson.
+
+        This renderer is never anonymous. Tighten things up with a graphicsElement()
+        reference getter.
+
+2013-09-13  Andreas Kling  <akling@apple.com>
+
         [CTTE] RenderSVGImage always has a SVGImageElement.
         <https://webkit.org/b/121301>
 

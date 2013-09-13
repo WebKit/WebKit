@@ -61,7 +61,7 @@ font_face_src generateTypeHelpers
 font_face_uri generateTypeHelpers
 #endif
 foreignObject generateTypeHelpers
-g
+g generateTypeHelpers
 #if ENABLE_SVG_FONTS
 glyph generateTypeHelpers
 glyphRef generateTypeHelpers

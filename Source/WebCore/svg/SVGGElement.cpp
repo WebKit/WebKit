@@ -98,7 +98,7 @@ RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style
     if (style->display() == NONE)
         return new (arena) RenderSVGHiddenContainer(this);
 
-    return new (arena) RenderSVGTransformableContainer(this);
+    return new (arena) RenderSVGTransformableContainer(*this);
 }
 
 bool SVGGElement::rendererIsNeeded(const RenderStyle&)
