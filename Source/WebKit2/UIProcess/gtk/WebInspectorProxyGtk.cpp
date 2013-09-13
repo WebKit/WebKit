@@ -43,17 +43,6 @@
 
 namespace WebKit {
 
-static const char* inspectorFilesBasePath()
-{
-    const gchar* environmentPath = g_getenv("WEBKIT_INSPECTOR_PATH");
-    if (environmentPath && g_file_test(environmentPath, G_FILE_TEST_IS_DIR))
-        return environmentPath;
-
-    static const char* inspectorFilesPath = DATA_DIR G_DIR_SEPARATOR_S "webkitgtk-" WEBKITGTK_API_VERSION_STRING
-        G_DIR_SEPARATOR_S "webinspector" G_DIR_SEPARATOR_S;
-    return inspectorFilesPath;
-}
-
 static void inspectorViewDestroyed(GtkWidget*, gpointer userData)
 {
     WebInspectorProxy* inspectorProxy = static_cast<WebInspectorProxy*>(userData);
@@ -160,15 +149,12 @@ void WebInspectorProxy::platformInspectedURLChanged(const String& url)
 
 String WebInspectorProxy::inspectorPageURL() const
 {
-    GOwnPtr<gchar> filePath(g_build_filename(inspectorFilesBasePath(), "inspector.html", NULL));
-    GOwnPtr<gchar> fileURI(g_filename_to_uri(filePath.get(), 0, 0));
-    return WebCore::filenameToString(fileURI.get());
+    return String("resource:///org/webkitgtk/inspector/UserInterface/Main.html");
 }
 
 String WebInspectorProxy::inspectorBaseURL() const
 {
-    GOwnPtr<gchar> fileURI(g_filename_to_uri(inspectorFilesBasePath(), 0, 0));
-    return WebCore::filenameToString(fileURI.get());
+    return String("resource:///org/webkitgtk/inspector/UserInterface/");
 }
 
 unsigned WebInspectorProxy::platformInspectedWindowHeight()

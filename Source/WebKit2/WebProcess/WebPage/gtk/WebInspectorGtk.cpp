@@ -43,15 +43,7 @@ bool WebInspector::canSave() const
 
 String WebInspector::localizedStringsURL() const
 {
-    GOwnPtr<gchar> filePath;
-    const gchar* environmentPath = g_getenv("WEBKIT_INSPECTOR_PATH");
-    if (environmentPath && g_file_test(environmentPath, G_FILE_TEST_IS_DIR))
-        filePath.set(g_build_filename(environmentPath, "localizedStrings.js", NULL));
-    else
-        filePath.set(g_build_filename(WebCore::sharedResourcesPath().data(), "webinspector", "localizedStrings.js", NULL));
-
-    GOwnPtr<gchar> fileURI(g_filename_to_uri(filePath.get(), 0, 0));
-    return WebCore::filenameToString(fileURI.get());
+    return String("resource:///org/webkitgtk/inspector/Localizations/en.lproj/localizedStrings.js");
 }
 
 } // namespace WebKit

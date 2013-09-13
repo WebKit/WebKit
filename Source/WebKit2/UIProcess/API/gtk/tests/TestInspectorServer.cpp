@@ -155,7 +155,7 @@ public:
 };
 
 // Test to get inspector server page list from the test server.
-// Should contain only one entry pointing to http://127.0.0.1:2999/webinspector/inspector.html?page=1
+// Should contain only one entry pointing to http://127.0.0.1:2999/webinspector/Main.html?page=1
 static void testInspectorServerPageList(InspectorServerTest* test, gconstpointer)
 {
     GOwnPtr<GError> error;
@@ -184,7 +184,7 @@ static void testInspectorServerPageList(InspectorServerTest* test, gconstpointer
     g_assert(javascriptResult);
     g_assert(!error.get());
     valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
-    String validInspectorURL = String("/inspector.html?page=") + String::number(pageId);
+    String validInspectorURL = String("/Main.html?page=") + String::number(pageId);
     ASSERT_CMP_CSTRING(valueString.get(), ==, validInspectorURL.utf8());
 }
 

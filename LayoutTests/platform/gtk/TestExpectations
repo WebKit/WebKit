@@ -69,7 +69,7 @@ webkit.org/b/71851 http/tests/security/contentTypeOptions [ Skip ]
 fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
 
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
-inspector/styles/vendor-prefixes.html [ WontFix Pass ]
+inspector/styles/vendor-prefixes.html [ Skip ]
 
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html [ WontFix Timeout Failure ]
@@ -966,46 +966,6 @@ Bug(GTK) fast/overflow/scrollbar-restored-and-then-locked.html [ Failure ]
 
 webkit.org/b/83174 inspector [ Skip ]
 webkit.org/b/83174 http/tests/inspector [ Skip ]
-
-webkit.org/b/82886 inspector/styles/override-screen-size.html [ Failure ]
-webkit.org/b/88780 inspector/debugger/dom-breakpoints.html [ Timeout Failure ]
-webkit.org/b/88780 inspector/debugger/event-listener-breakpoints.html [ Failure ]
-webkit.org/b/88780 inspector/debugger/step-through-event-listeners.html [ Failure ]
-webkit.org/b/89056 inspector/debugger/xhr-breakpoints.html [ Failure Timeout ]
-webkit.org/b/40300 inspector/debugger/live-edit.html [ Timeout Failure ]
-webkit.org/b/40300 inspector/debugger/live-edit-breakpoints.html [ Failure ]
-webkit.org/b/89652 inspector/debugger/debugger-compile-and-run.html [ Failure ]
-webkit.org/b/85709 inspector/extensions/extensions-eval-content-script.html [ Failure ]
-webkit.org/b/85709 inspector/extensions/extensions-audits-content-script.html [ Failure ]
-
-# These inspector tests fell out of the radar after the transition to NRWT
-# Some time out and some are flaky or present different baselines.
-Bug(GTK) inspector/debugger/scripts-panel.html [ Failure Pass ]
-Bug(GTK) inspector/elements/edit-dom-actions.html [ Failure Timeout Pass ]
-Bug(GTK) inspector/timeline/timeline-paint.html [ Failure ]
-Bug(GTK) inspector/timeline/timeline-decode-resize.html [ Failure ]
-Bug(GTK) http/tests/inspector/resource-har-pages.html [ Failure ]
-Bug(GTK) http/tests/inspector/resource-parameters.html [ Timeout ]
-
-webkit.org/b/56691 http/tests/inspector/network/network-size-chunked.html [ Failure ]
-webkit.org/b/56691 http/tests/inspector/network/network-size-sync.html [ Failure ]
-webkit.org/b/56691 http/tests/inspector/network/network-size.html [ Failure ]
-webkit.org/b/51380 http/tests/inspector/console-websocket-error.html [ Failure Timeout ]
-
-# JSC doesn't support heap profiling
-webkit.org/b/50485 inspector/profiler/heap-snapshot-comparison-dom-groups-change.html [ Failure ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-inspect-dom-wrapper.html [ Timeout Failure ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-loader.html [ Failure ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-reveal-in-dominators-view.html [ Failure ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-retainers.html [ Failure ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-show-ranges.html [ Failure ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting-fields.html [ Failure ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting-instances.html [ Failure ]
-webkit.org/b/50485 inspector-protocol/heap-profiler [ Skip ]
-
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html [ Failure ]
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-stack-trace.html [ Failure ]
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html [ Timeout Failure ]
 
 webkit.org/b/37613 webkit.org/b/20011 printing [ Skip ]
 webkit.org/b/37613 editing/execCommand/print.html [ Skip ]

@@ -1,3 +1,37 @@
+2013-09-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Move to the new web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=120647
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: bundle the remote inspector page list HTML into libwebkit2gtk as a GResource.
+        * UIProcess/API/gtk/tests/GNUmakefile.am: no need to set WEBKIT_INSPECTOR_PATH anymore.
+        * UIProcess/API/gtk/tests/InspectorTestServer.cpp:
+        (main): ditto.
+        * UIProcess/API/gtk/tests/TestInspector.cpp:
+        (beforeAll): ditto.
+        * UIProcess/API/gtk/tests/TestInspectorServer.cpp:
+        (testInspectorServerPageList): update paths to the internal resource ones.
+        * UIProcess/InspectorServer/WebInspectorServer.h:
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp:
+        (WebKit::WebInspectorServer::platformResourceForPath): ditto.
+        (WebKit::WebInspectorServer::buildPageList): ditto.
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::isMainInspectorPage): factor out checking for the inspector main resource, to make
+        the code more readable.
+        (WebKit::decidePolicyForNavigationAction): use SchemeRegistry to figure out whether the
+        request is for a local resource instead of KURL::isLocalFile() to allow using schemes
+        other than file:// for the inspector resources.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::inspectorPageURL): use the new internal resource URL; since it's now
+        static we no longer need to generate and store the string.
+        (WebKit::WebInspectorProxy::inspectorBaseURL): ditto.
+        * WebProcess/WebPage/gtk/WebInspectorGtk.cpp:
+        (WebKit::WebInspector::localizedStringsURL): use the new internal resource URL.
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess): register resource as a local scheme.
+
 2013-09-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Fix build with namespaced Qt.

@@ -104,9 +104,7 @@ InspectorFrontendChannel* InspectorClient::openInspectorFrontend(InspectorContro
 
     webkit_web_inspector_set_web_view(webInspector, inspectorWebView);
  
-    GOwnPtr<gchar> inspectorPath(g_build_filename(inspectorFilesPath(), "inspector.html", NULL));
-    GOwnPtr<gchar> inspectorURI(g_filename_to_uri(inspectorPath.get(), 0, 0));
-    webkit_web_view_load_uri(inspectorWebView, inspectorURI.get());
+    webkit_web_view_load_uri(inspectorWebView, "resource:///org/webkitgtk/inspector/UserInterface/Main.html");
 
     gtk_widget_show(GTK_WIDGET(inspectorWebView));
 
@@ -155,20 +153,6 @@ void InspectorClient::hideHighlight()
 bool InspectorClient::sendMessageToFrontend(const String& message)
 {
     return doDispatchMessageOnFrontendPage(m_frontendPage, message);
-}
-
-const char* InspectorClient::inspectorFilesPath()
-{
-    if (m_inspectorFilesPath)
-        return m_inspectorFilesPath.get();
-
-    const char* environmentPath = getenv("WEBKIT_INSPECTOR_PATH");
-    if (environmentPath && g_file_test(environmentPath, G_FILE_TEST_IS_DIR))
-        m_inspectorFilesPath.set(g_strdup(environmentPath));
-    else
-        m_inspectorFilesPath.set(g_build_filename(sharedResourcesPath().data(), "webinspector", NULL));
-
-    return m_inspectorFilesPath.get();
 }
 
 InspectorFrontendClient::InspectorFrontendClient(WebKitWebView* inspectedWebView, WebKitWebView* inspectorWebView, WebKitWebInspector* webInspector, Page* inspectorPage, InspectorClient* inspectorClient)
@@ -220,11 +204,8 @@ void InspectorFrontendClient::destroyInspectorWindow(bool notifyInspectorControl
 
 String InspectorFrontendClient::localizedStringsURL()
 {
-    GOwnPtr<gchar> stringsPath(g_build_filename(m_inspectorClient->inspectorFilesPath(), "localizedStrings.js", NULL));
-    GOwnPtr<gchar> stringsURI(g_filename_to_uri(stringsPath.get(), 0, 0));
-
     // FIXME: support l10n of localizedStrings.js
-    return String::fromUTF8(stringsURI.get());
+    return String("resource:///org/webkitgtk/inspector/Localizations/en.lproj/localizedStrings.js");
 }
 
 void InspectorFrontendClient::bringToFront()

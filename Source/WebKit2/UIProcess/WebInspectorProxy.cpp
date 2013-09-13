@@ -39,6 +39,7 @@
 #include "WebPreferences.h"
 #include "WebProcessProxy.h"
 #include "WebURLRequest.h"
+#include <WebCore/SchemeRegistry.h>
 
 #if ENABLE(INSPECTOR_SERVER)
 #include "WebInspectorServer.h"
@@ -313,6 +314,17 @@ bool WebInspectorProxy::isInspectorPage(WebPageProxy* page)
     return page->pageGroup() == inspectorPageGroup();
 }
 
+static bool isMainInspectorPage(const WebInspectorProxy* webInspectorProxy, WKURLRequestRef requestRef)
+{
+    // Use KURL so we can compare just the paths.
+    KURL inspectorURL(KURL(), webInspectorProxy->inspectorPageURL());
+    KURL requestURL(KURL(), toImpl(requestRef)->url());
+
+    ASSERT(WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(inspectorURL.protocol()));
+
+    return WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(requestURL.protocol()) && decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(inspectorURL.path());
+}
+
 static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef requestRef, WKFramePolicyListenerRef listenerRef, WKTypeRef, const void* clientInfo)
 {
     // Allow non-main frames to navigate anywhere.
@@ -324,14 +336,8 @@ static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFr
     const WebInspectorProxy* webInspectorProxy = static_cast<const WebInspectorProxy*>(clientInfo);
     ASSERT(webInspectorProxy);
 
-    // Use KURL so we can compare just the fileSystemPaths.
-    KURL inspectorURL(KURL(), webInspectorProxy->inspectorPageURL());
-    KURL requestURL(KURL(), toImpl(requestRef)->url());
-
-    ASSERT(inspectorURL.isLocalFile());
-
     // Allow loading of the main inspector file.
-    if (requestURL.isLocalFile() && requestURL.fileSystemPath() == inspectorURL.fileSystemPath()) {
+    if (isMainInspectorPage(webInspectorProxy, requestRef)) {
         toImpl(listenerRef)->use();
         return;
     }

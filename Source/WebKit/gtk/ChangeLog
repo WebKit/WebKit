@@ -1,3 +1,19 @@
+2013-09-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Move to the new web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=120647
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::openInspectorFrontend): update paths to the internal resource ones.
+        (WebKit::InspectorClient::inspectorFilesPath): ditto.
+        * tests/testwebinspector.c:
+        (consoleMessageCallback): the new inspector currently emits an error when loading, so add it to
+        the list of messages which are not considered failures.
+        * webkit/webkitglobals.cpp:
+        (webkitInit): register resource as a local scheme; currently used by the inspector.
+
 2013-09-13  Alberto Garcia  <berto@igalia.com>
 
         download-requested arg should be WEBKIT_TYPE_DOWNLOAD not G_TYPE_OBJECT

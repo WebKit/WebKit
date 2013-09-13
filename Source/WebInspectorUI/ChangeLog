@@ -1,3 +1,12 @@
+2013-09-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Move to the new web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=120647
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Added. Generate the GResource source and link it into libWebCore.
+
 2013-09-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Duplicated color swatches changing autocompletes color names

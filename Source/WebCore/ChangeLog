@@ -1,3 +1,15 @@
+2013-09-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Move to the new web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=120647
+
+        Reviewed by Carlos Garcia Campos.
+
+        No tests for the new inspector UI as of yet.
+
+        * GNUmakefile.am: no longer install the deprecated inspector UI files.
+        * WebCore.exp.in: add SchemeRegistry symbol that is now used.
+
 2013-09-13  Darin Adler  <darin@apple.com>
 
         Try to fix Qt build.

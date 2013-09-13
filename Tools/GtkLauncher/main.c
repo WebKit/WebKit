@@ -534,10 +534,6 @@ int main(int argc, char* argv[])
     }
 #endif
 
-#ifdef WEBKIT_EXEC_PATH
-    g_setenv("WEBKIT_INSPECTOR_PATH", WEBKIT_EXEC_PATH "resources/inspector", FALSE);
-#endif /* WEBKIT_EXEC_PATH */
-
     WebKitWebView *webView;
     GtkWidget *main_window = createWindow(&webView);
 

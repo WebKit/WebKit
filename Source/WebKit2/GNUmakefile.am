@@ -19,6 +19,28 @@ libexec_PROGRAMS += \
 	Programs/WebKitPluginProcess
 endif
 
+${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml: GNUmakefile \
+	$(WebKit2)/UIProcess/InspectorServer/front-end/inspectorPageIndex.html
+	$(AM_V_GEN)
+	$(AM_V_at)mkdir -p ${GENSOURCES_WEBINSPECTOR_UI}
+	$(AM_V_at)echo '<?xml version="1.0" encoding="UTF-8"?>' > ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
+	$(AM_V_at)echo '<gresources>' >> ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
+	$(AM_V_at)echo '  <gresource prefix="/org/webkitgtk/inspector/UserInterface">' >> ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
+	$(AM_V_at)echo "    <file>inspectorPageIndex.html</file>" >> ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
+	$(AM_V_at)echo '  </gresource>' >> ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
+	$(AM_V_at)echo '</gresources>' >> ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
+
+${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.c: DerivedSources/WebInspectorUI/WebKit2GResourceBundle.xml
+	$(AM_V_GEN)
+	$(AM_V_at)glib-compile-resources --generate --sourcedir=$(WebKit2)/UIProcess/InspectorServer/front-end \
+		--target=${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.c ${GENSOURCES_WEBINSPECTOR_UI}/WebKit2GResourceBundle.xml
+
+BUILT_SOURCES += \
+	DerivedSources/WebInspectorUI/WebKit2GResourceBundle.xml
+
+webkit2gtk_built_sources += \
+	DerivedSources/WebInspectorUI/WebKit2GResourceBundle.c
+
 # Platform
 libWebKit2Platform_la_SOURCES = \
 	$(webkit2platform_sources)
@@ -721,9 +743,4 @@ EXTRA_DIST += \
 	$(shell ls $(WebKit2)/WebProcess/WebCoreSupport/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/WebPage/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/soup/*.in)
-
-# Installing remote inspector files
-remoteinspectordir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/webinspector
-remoteinspector_DATA = \
-	$(WebKit2)/UIProcess/InspectorServer/front-end/inspectorPageIndex.html
 

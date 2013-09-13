@@ -1,3 +1,13 @@
+2013-09-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Move to the new web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=120647
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations: the new inspector UI does not support the current
+        inspector testing harness so keep it skipped, a new one will eventually be landed.
+
 2013-09-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: AXPress does not work in SVG

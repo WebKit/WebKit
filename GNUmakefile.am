@@ -34,6 +34,7 @@ DISTCHECK_CONFIGURE_FLAGS = \
 GENSOURCES := $(top_builddir)/DerivedSources
 GENSOURCES_JAVASCRIPTCORE := $(top_builddir)/DerivedSources/JavaScriptCore
 GENSOURCES_WEBCORE := $(top_builddir)/DerivedSources/WebCore
+GENSOURCES_WEBINSPECTOR_UI := $(top_builddir)/DerivedSources/WebInspectorUI
 GENSOURCES_WEBKIT := $(top_builddir)/DerivedSources/webkit
 GENSOURCES_WEBKIT2 := $(top_builddir)/DerivedSources/WebKit2
 GENSOURCES_WEBKITDOM := $(top_builddir)/DerivedSources/webkitdom
@@ -41,6 +42,7 @@ GENSOURCES_PLATFORM := $(top_builddir)/DerivedSources/Platform
 GENPROGRAMS := $(top_builddir)/Programs
 GENSOURCES_INSPECTOR := $(GENPROGRAMS)/resources/inspector
 WebCore := $(srcdir)/Source/WebCore
+WebInspectorUI := $(srcdir)/Source/WebInspectorUI
 WebKit := $(srcdir)/Source/WebKit/gtk
 WebKit2 := $(srcdir)/Source/WebKit2
 pkgconfigdir := $(libdir)/pkgconfig
@@ -197,6 +199,7 @@ include Source/Platform/GNUmakefile.am
 include Source/WebCore/GNUmakefile.am
 include Source/WebCore/bindings/gobject/GNUmakefile.am
 include Source/WebCore/platform/gtk/po/GNUmakefile.am
+include Source/WebInspectorUI/GNUmakefile.am
 include Source/WebKit/gtk/GNUmakefile.am
 include Tools/GNUmakefile.am
 
