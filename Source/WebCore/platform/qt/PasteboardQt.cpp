@@ -202,7 +202,7 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
     QMimeData* md = new QMimeData;
     QString urlString = pasteboardURL.url.string();
     md->setText(urlString);
-    md->setUrls(QList<QUrl>() << url);
+    md->setUrls(QList<QUrl>() << pasteboardURL.url);
     QGuiApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 #endif
 }

@@ -1,3 +1,10 @@
+2013-09-13  Darin Adler  <darin@apple.com>
+
+        Try to fix Qt build.
+
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::write): Update variable name at one place I missed.
+
 2013-09-13  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Scrolling and zooming is slow when Flash plugin visible
