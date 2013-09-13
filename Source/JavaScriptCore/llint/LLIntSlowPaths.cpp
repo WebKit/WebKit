@@ -245,12 +245,12 @@ LLINT_SLOW_PATH_DECL(trace_arityCheck_for_construct)
 
 LLINT_SLOW_PATH_DECL(trace)
 {
-    dataLogF("%p / %p: executing bc#%zu, %s, scope %p\n",
+    dataLogF("%p / %p: executing bc#%zu, %s, scope %p, pc = %p\n",
             exec->codeBlock(),
             exec,
             static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
             opcodeNames[exec->vm().interpreter->getOpcodeID(pc[0].u.opcode)],
-            exec->scope());
+            exec->scope(), pc);
     if (exec->vm().interpreter->getOpcodeID(pc[0].u.opcode) == op_ret) {
         dataLogF("Will be returning to %p\n", exec->returnPC().value());
         dataLogF("The new cfr will be %p\n", exec->callerFrame());
@@ -429,8 +429,8 @@ LLINT_SLOW_PATH_DECL(stack_check)
     dataLogF("Num vars = %u.\n", exec->codeBlock()->m_numVars);
     dataLogF("Current end is at %p.\n", exec->vm().interpreter->stack().end());
 #endif
-    ASSERT(&exec->registers()[exec->codeBlock()->m_numCalleeRegisters] > exec->vm().interpreter->stack().end());
-    if (UNLIKELY(!vm.interpreter->stack().grow(&exec->registers()[exec->codeBlock()->m_numCalleeRegisters]))) {
+    ASSERT(!exec->vm().interpreter->stack().containsAddress(&exec->registers()[-exec->codeBlock()->m_numCalleeRegisters]));
+    if (UNLIKELY(!vm.interpreter->stack().grow(&exec->registers()[-exec->codeBlock()->m_numCalleeRegisters]))) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
         CommonSlowPaths::interpreterThrowInCaller(exec, returnPC, createStackOverflowError(exec));
@@ -459,7 +459,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_object)
 LLINT_SLOW_PATH_DECL(slow_path_new_array)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(constructArray(exec, pc[4].u.arrayAllocationProfile, bitwise_cast<JSValue*>(&LLINT_OP(2)), pc[3].u.operand));
+    LLINT_RETURN(constructArrayNegativeIndexed(exec, pc[4].u.arrayAllocationProfile, bitwise_cast<JSValue*>(&LLINT_OP(2)), pc[3].u.operand));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_array_with_size)
@@ -1054,7 +1054,7 @@ inline SlowPathReturnType genericCall(ExecState* exec, Instruction* pc, CodeSpec
     
     JSValue calleeAsValue = LLINT_OP_C(2).jsValue();
     
-    ExecState* execCallee = exec + pc[4].u.operand;
+    ExecState* execCallee = exec - pc[4].u.operand;
     
     execCallee->setArgumentCountIncludingThis(pc[3].u.operand);
     execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
@@ -1103,7 +1103,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     LLINT_BEGIN_NO_SET_PC();
     JSValue calleeAsValue = LLINT_OP(2).jsValue();
     
-    ExecState* execCallee = exec + pc[4].u.operand;
+    ExecState* execCallee = exec - pc[4].u.operand;
     
     execCallee->setArgumentCountIncludingThis(pc[3].u.operand);
     execCallee->setCallerFrame(exec);
@@ -1143,7 +1143,7 @@ LLINT_SLOW_PATH_DECL(slow_path_tear_off_arguments)
 LLINT_SLOW_PATH_DECL(slow_path_strcat)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(jsString(exec, &LLINT_OP(2), pc[3].u.operand));
+    LLINT_RETURN(jsStringFromRegisterArray(exec, &LLINT_OP(2), pc[3].u.operand));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_to_primitive)

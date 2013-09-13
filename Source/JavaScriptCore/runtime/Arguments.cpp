@@ -312,7 +312,7 @@ void Arguments::tearOff(CallFrame* callFrame)
     ASSERT(bitwise_cast<WriteBarrier<Unknown>*>(callFrame) == m_registers);
     
     m_registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[m_numArguments]);
-    m_registers = m_registerArray.get() + CallFrame::offsetFor(m_numArguments + 1);
+    m_registers = m_registerArray.get() - CallFrame::offsetFor(1) - 1;
 
     // If we have a captured argument that logically aliases activation storage,
     // but we optimize away the activation, the argument needs to tear off into
@@ -358,7 +358,7 @@ void Arguments::tearOff(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
         return;
     
     m_registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[m_numArguments]);
-    m_registers = m_registerArray.get() + CallFrame::offsetFor(m_numArguments + 1);
+    m_registers = m_registerArray.get() - CallFrame::offsetFor(1) - 1;
 
     tearOffForInlineCallFrame(
         callFrame->vm(), callFrame->registers() + inlineCallFrame->stackOffset,

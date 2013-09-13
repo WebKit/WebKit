@@ -705,7 +705,7 @@ void SpeculativeJIT::emitCall(Node* node)
     CallBeginToken token;
     m_jit.beginCall(node->codeOrigin, token);
     
-    m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
+    m_jit.addPtr(TrustedImm32(-(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register))), GPRInfo::callFrameRegister);
     
     slowPath.append(m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleeGPR, targetToCheck, MacroAssembler::TrustedImmPtr(0)));
 
@@ -2764,7 +2764,6 @@ void SpeculativeJIT::compile(Node* node)
                         baseReg, OBJECT_OFFSETOF(Arguments, m_slowArguments))));
     
             m_jit.move(propertyReg, scratch2Reg);
-            m_jit.neg32(scratch2Reg);
             m_jit.signExtend32ToPtr(scratch2Reg, scratch2Reg);
             m_jit.loadPtr(
                 MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_registers)),
@@ -2774,7 +2773,7 @@ void SpeculativeJIT::compile(Node* node)
                 valueReg,
                 MacroAssembler::BaseIndex(
                     scratchReg, scratch2Reg, MacroAssembler::TimesEight,
-                    CallFrame::thisArgumentOffset() * sizeof(Register) - sizeof(Register)));
+                    CallFrame::thisArgumentOffset() * sizeof(Register) + sizeof(Register)));
             
             noResult(node);
             break;
@@ -4302,7 +4301,7 @@ void SpeculativeJIT::compile(Node* node)
         int registersOffset = JSActivation::registersOffset(symbolTable);
 
         int captureEnd = symbolTable->captureEnd();
-        for (int i = symbolTable->captureStart(); i < captureEnd; ++i) {
+        for (int i = symbolTable->captureStart(); i > captureEnd; --i) {
             m_jit.load64(
                 JITCompiler::Address(
                     GPRInfo::callFrameRegister, i * sizeof(Register)), scratchGPR);
@@ -4453,7 +4452,6 @@ void SpeculativeJIT::compile(Node* node)
         }
         slowArgumentOutOfBounds.link(&m_jit);
 
-        m_jit.neg32(resultGPR);
         m_jit.signExtend32ToPtr(resultGPR, resultGPR);
             
         m_jit.load64(
@@ -4518,7 +4516,6 @@ void SpeculativeJIT::compile(Node* node)
         }
         slowArgumentOutOfBounds.link(&m_jit);
 
-        m_jit.neg32(resultGPR);
         m_jit.signExtend32ToPtr(resultGPR, resultGPR);
         
         m_jit.load64(

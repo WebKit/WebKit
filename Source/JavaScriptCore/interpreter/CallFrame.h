@@ -214,7 +214,7 @@ namespace JSC  {
             CallFrame* callerFrame, int argc, JSObject* callee)
         {
             ASSERT(callerFrame); // Use noCaller() rather than 0 for the outer host call frame caller.
-            ASSERT(callerFrame == noCaller() || callerFrame->removeHostCallFrameFlag()->stack()->end() >= this);
+            ASSERT(callerFrame == noCaller() || callerFrame->removeHostCallFrameFlag()->stack()->containsAddress(this));
 
             setCodeBlock(codeBlock);
             setScope(scope);
@@ -232,8 +232,8 @@ namespace JSC  {
         // Access to arguments as passed. (After capture, arguments may move to a different location.)
         size_t argumentCount() const { return argumentCountIncludingThis() - 1; }
         size_t argumentCountIncludingThis() const { return this[JSStack::ArgumentCount].payload(); }
-        static int argumentOffset(int argument) { return s_firstArgumentOffset - argument; }
-        static int argumentOffsetIncludingThis(int argument) { return s_thisArgumentOffset - argument; }
+        static int argumentOffset(int argument) { return (s_firstArgumentOffset + argument); }
+        static int argumentOffsetIncludingThis(int argument) { return (s_thisArgumentOffset + argument); }
 
         // In the following (argument() and setArgument()), the 'argument'
         // parameter is the index of the arguments of the target function of
@@ -293,8 +293,8 @@ namespace JSC  {
 
     private:
         static const intptr_t HostCallFrameFlag = 1;
-        static const int s_thisArgumentOffset = -1 - JSStack::CallFrameHeaderSize;
-        static const int s_firstArgumentOffset = s_thisArgumentOffset - 1;
+        static const int s_thisArgumentOffset = JSStack::CallFrameHeaderSize + 1;
+        static const int s_firstArgumentOffset = s_thisArgumentOffset + 1;
 
 #ifndef NDEBUG
         JSStack* stack();
@@ -318,7 +318,7 @@ namespace JSC  {
             //       offset = s_firstArgumentOffset - argIndex;
             // Hence:
             //       argIndex = s_firstArgumentOffset - offset;
-            size_t argIndex = s_firstArgumentOffset - offset;
+            size_t argIndex = offset - s_firstArgumentOffset;
             return argIndex;
         }
 

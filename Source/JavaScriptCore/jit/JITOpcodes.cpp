@@ -844,8 +844,7 @@ void JIT::emit_op_create_activation(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     
     Jump activationCreated = branchTest64(NonZero, Address(callFrameRegister, sizeof(Register) * dst));
-    JITStubCall(this, cti_op_push_activation).call(currentInstruction[1].u.operand);
-    emitPutVirtualRegister(dst);
+    JITStubCall(this, cti_op_push_activation).call(dst);
     activationCreated.link(this);
 }
 
@@ -1115,7 +1114,6 @@ void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
     emitGetFromCallFrameHeader32(JSStack::ArgumentCount, regT2);
     addSlowCase(branch32(AboveOrEqual, regT1, regT2));
 
-    neg32(regT1);
     signExtend32ToPtr(regT1, regT1);
     load64(BaseIndex(callFrameRegister, regT1, TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT0);
     emitValueProfilingSite(regT4);

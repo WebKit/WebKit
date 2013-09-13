@@ -389,11 +389,11 @@ private:
             InlineCallFrame* inlineCallFrame = stack->m_inlineCallFrame;
             if (!inlineCallFrame)
                 break;
-            if (operand >= static_cast<int>(inlineCallFrame->stackOffset - JSStack::CallFrameHeaderSize))
+            if (operand <= static_cast<int>(inlineCallFrame->stackOffset + JSStack::CallFrameHeaderSize))
                 continue;
             if (operand == inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset())
                 continue;
-            if (operand < static_cast<int>(inlineCallFrame->stackOffset - JSStack::CallFrameHeaderSize - inlineCallFrame->arguments.size()))
+            if (operand > static_cast<int>(inlineCallFrame->stackOffset + JSStack::CallFrameHeaderSize + inlineCallFrame->arguments.size()))
                 continue;
             int argument = operandToArgument(operand - inlineCallFrame->stackOffset);
             return stack->m_argumentPositions[argument];
@@ -773,7 +773,7 @@ private:
         if (JSStack::CallFrameHeaderSize + (unsigned)argCount > m_parameterSlots)
             m_parameterSlots = JSStack::CallFrameHeaderSize + argCount;
 
-        int registerOffset = currentInstruction[4].u.operand;
+        int registerOffset = -currentInstruction[4].u.operand;
         int dummyThisArgument = op == Call ? 0 : 1;
         for (int i = 0 + dummyThisArgument; i < argCount; ++i)
             addVarArgChild(get(registerOffset + argumentToOperand(i)));
@@ -1158,7 +1158,7 @@ void ByteCodeParser::handleCall(Instruction* currentInstruction, NodeType op, Co
     }
     
     int argumentCountIncludingThis = currentInstruction[3].u.operand;
-    int registerOffset = currentInstruction[4].u.operand;
+    int registerOffset = -currentInstruction[4].u.operand;
 
     int resultOperand = currentInstruction[1].u.operand;
     unsigned nextOffset = m_currentIndex + OPCODE_LENGTH(op_call);
@@ -1283,7 +1283,7 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     
     // FIXME: Don't flush constants!
     
-    int inlineCallFrameStart = m_inlineStackTop->remapOperand(registerOffset) - JSStack::CallFrameHeaderSize;
+    int inlineCallFrameStart = m_inlineStackTop->remapOperand(registerOffset) + JSStack::CallFrameHeaderSize;
     
     // Make sure that the area used by the call frame is reserved.
     for (int arg = operandToLocal(inlineCallFrameStart) + JSStack::CallFrameHeaderSize + codeBlock->m_numVars; arg-- > operandToLocal(inlineCallFrameStart);)
@@ -1957,7 +1957,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             int startOperand = currentInstruction[2].u.operand;
             int numOperands = currentInstruction[3].u.operand;
             ArrayAllocationProfile* profile = currentInstruction[4].u.arrayAllocationProfile;
-            for (int operandIdx = startOperand; operandIdx < startOperand + numOperands; ++operandIdx)
+            for (int operandIdx = startOperand; operandIdx > startOperand - numOperands; --operandIdx)
                 addVarArgChild(get(operandIdx));
             set(currentInstruction[1].u.operand, addToGraph(Node::VarArg, NewArray, OpInfo(profile->selectIndexingType()), OpInfo(0)));
             NEXT_OPCODE(op_new_array);
@@ -2237,7 +2237,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 #endif
             OwnArrayPtr<Node*> toStringNodes = adoptArrayPtr(new Node*[numOperands]);
             for (int i = 0; i < numOperands; i++)
-                toStringNodes[i] = addToGraph(ToString, get(startOperand + i));
+                toStringNodes[i] = addToGraph(ToString, get(startOperand - i));
 
             for (int i = 0; i < numOperands; i++)
                 addToGraph(Phantom, toStringNodes[i]);
@@ -3369,7 +3369,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
             byteCodeParser->m_codeBlock->inlineCallFrames().size(),
             byteCodeParser->m_codeBlock->ownerExecutable(), 
             codeBlock->ownerExecutable());
-        inlineCallFrame.stackOffset = inlineCallFrameStart + JSStack::CallFrameHeaderSize;
+        inlineCallFrame.stackOffset = inlineCallFrameStart - JSStack::CallFrameHeaderSize;
         if (callee) {
             initializeLazyWriteBarrierForInlineCallFrameCallee(
                 byteCodeParser->m_graph.m_plan.writeBarriers,

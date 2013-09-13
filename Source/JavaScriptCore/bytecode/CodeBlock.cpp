@@ -507,7 +507,7 @@ void CodeBlock::dumpBytecode(PrintStream& out)
     if (symbolTable() && symbolTable()->captureCount()) {
         out.printf(
             "; %d captured var(s) (from r%d to r%d, inclusive)",
-            symbolTable()->captureCount(), symbolTable()->captureStart(), symbolTable()->captureEnd() - 1);
+            symbolTable()->captureCount(), symbolTable()->captureStart(), symbolTable()->captureEnd() + 1);
     }
     if (usesArguments()) {
         out.printf(

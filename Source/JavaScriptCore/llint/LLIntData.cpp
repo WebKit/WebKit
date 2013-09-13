@@ -71,13 +71,13 @@ void Data::performAssertions(VM& vm)
     // Assertions to match LowLevelInterpreter.asm.  If you change any of this code, be
     // prepared to change LowLevelInterpreter.asm as well!!
     ASSERT(JSStack::CallFrameHeaderSize * 8 == 48);
-    ASSERT(JSStack::ArgumentCount * 8 == -48);
-    ASSERT(JSStack::CallerFrame * 8 == -40);
-    ASSERT(JSStack::Callee * 8 == -32);
-    ASSERT(JSStack::ScopeChain * 8 == -24);
-    ASSERT(JSStack::ReturnPC * 8 == -16);
-    ASSERT(JSStack::CodeBlock * 8 == -8);
-    ASSERT(CallFrame::argumentOffsetIncludingThis(0) == -JSStack::CallFrameHeaderSize - 1);
+    ASSERT(JSStack::ArgumentCount * 8 == 48);
+    ASSERT(JSStack::CallerFrame * 8 == 40);
+    ASSERT(JSStack::Callee * 8 == 32);
+    ASSERT(JSStack::ScopeChain * 8 == 24);
+    ASSERT(JSStack::ReturnPC * 8 == 16);
+    ASSERT(JSStack::CodeBlock * 8 == 8);
+    ASSERT(CallFrame::argumentOffsetIncludingThis(0) == JSStack::CallFrameHeaderSize + 1);
 #if CPU(BIG_ENDIAN)
     ASSERT(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag) == 0);
     ASSERT(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload) == 4);

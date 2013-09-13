@@ -86,7 +86,7 @@ class ExecState;
 class LLIntOffsetsExtractor;
 class RepatchBuffer;
 
-inline int unmodifiedArgumentsRegister(int argumentsRegister) { return argumentsRegister - 1; }
+inline int unmodifiedArgumentsRegister(int argumentsRegister) { return argumentsRegister + 1; }
 
 static ALWAYS_INLINE int missingThisObjectMarker() { return std::numeric_limits<int>::max(); }
 
@@ -386,8 +386,8 @@ public:
         if (!symbolTable())
             return false;
 
-        return operand >= symbolTable()->captureStart()
-        && operand < symbolTable()->captureEnd();
+        return operand <= symbolTable()->captureStart()
+            && operand > symbolTable()->captureEnd();
     }
 
     CodeType codeType() const { return m_unlinkedCode->codeType(); }

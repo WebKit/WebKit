@@ -313,9 +313,10 @@ macro functionArityCheck(doneLabel, slow_path)
 .isArityFixupNeeded:
     btiz t1, .continue
 
-    // Move frame down "t1" slots
+    // Move frame up "t1" slots
+    negi t1
     move cfr, t3
-    subp 8, t3
+    addp 8, t3
     loadi PayloadOffset + ArgumentCount[cfr], t2
     addi CallFrameHeaderSlots, t2
 .copyLoop:
@@ -323,7 +324,7 @@ macro functionArityCheck(doneLabel, slow_path)
     storei t0, PayloadOffset[t3, t1, 8]
     loadi TagOffset[t3], t0
     storei t0, TagOffset[t3, t1, 8]
-    subp 8, t3
+    addp 8, t3
     bsubinz 1, t2, .copyLoop
 
     // Fill new slots with JSUndefined
@@ -333,8 +334,8 @@ macro functionArityCheck(doneLabel, slow_path)
     storei t0, PayloadOffset[t3, t1, 8]
     move UndefinedTag, t0
     storei t0, TagOffset[t3, t1, 8]
-    subp 8, t3
-    bsubinz 1, t2, .fillLoop
+    addp 8, t3
+    baddinz 1, t2, .fillLoop
 
     lshiftp 3, t1
     addp t1, cfr
@@ -355,8 +356,9 @@ _llint_op_enter:
     btiz t2, .opEnterDone
     move UndefinedTag, t0
     move 0, t1
+    negi t2
 .opEnterLoop:
-    subi 1, t2
+    addi 1, t2
     storei t0, TagOffset[cfr, t2, 8]
     storei t1, PayloadOffset[cfr, t2, 8]
     btinz t2, .opEnterLoop
@@ -1232,7 +1234,6 @@ _llint_op_get_argument_by_val:
     addi 1, t2
     loadi ArgumentCount + PayloadOffset[cfr], t1
     biaeq t2, t1, .opGetArgumentByValSlow
-    negi t2
     loadi 4[PC], t3
     loadi ThisArgumentOffset + TagOffset[cfr, t2, 8], t0
     loadi ThisArgumentOffset + PayloadOffset[cfr, t2, 8], t1
@@ -1574,6 +1575,7 @@ _llint_op_new_func:
 macro arrayProfileForCall()
     if VALUE_PROFILER
         loadi 16[PC], t3
+        negi t3
         bineq ThisArgumentOffset + TagOffset[cfr, t3, 8], CellTag, .done
         loadi ThisArgumentOffset + PayloadOffset[cfr, t3, 8], t0
         loadp JSCell::m_structure[t0], t0
@@ -1591,6 +1593,7 @@ macro doCall(slowPath)
     bineq t3, t2, .opCallSlow
     loadi 16[PC], t3
     lshifti 3, t3
+    negi t3
     addp cfr, t3  # t3 contains the new value of cfr
     loadp JSFunction::m_scope[t2], t0
     storei t2, Callee + PayloadOffset[t3]
@@ -1621,7 +1624,7 @@ _llint_op_tear_off_activation:
 _llint_op_tear_off_arguments:
     traceExecution()
     loadi 4[PC], t0
-    subi 1, t0   # Get the unmodifiedArgumentsRegister
+    addi 1, t0   # Get the unmodifiedArgumentsRegister
     bieq TagOffset[cfr, t0, 8], EmptyValueTag, .opTearOffArgumentsNotCreated
     callSlowPath(_llint_slow_path_tear_off_arguments)
 .opTearOffArgumentsNotCreated:

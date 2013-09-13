@@ -208,6 +208,13 @@ public:
     }
 #endif
 
+    // Immediate shifts only have 5 controllable bits
+    // so we'll consider them safe for now.
+    TrustedImm32 trustedImm32ForShift(Imm32 imm)
+    {
+        return TrustedImm32(imm.asTrustedImm32().m_value & 31);
+    }
+
     // Backwards banches, these are currently all implemented using existing forwards branch mechanisms.
     void branchPtr(RelationalCondition cond, RegisterID op1, TrustedImmPtr imm, Label target)
     {
@@ -629,6 +636,11 @@ public:
         and64(imm, srcDest);
     }
     
+    void lshiftPtr(Imm32 imm, RegisterID srcDest)
+    {
+        lshift64(trustedImm32ForShift(imm), srcDest);
+    }
+
     void negPtr(RegisterID dest)
     {
         neg64(dest);
@@ -1411,13 +1423,6 @@ public:
         return branchSub32(cond, src, imm.asTrustedImm32(), dest);            
     }
     
-    // Immediate shifts only have 5 controllable bits
-    // so we'll consider them safe for now.
-    TrustedImm32 trustedImm32ForShift(Imm32 imm)
-    {
-        return TrustedImm32(imm.asTrustedImm32().m_value & 31);
-    }
-
     void lshift32(Imm32 imm, RegisterID dest)
     {
         lshift32(trustedImm32ForShift(imm), dest);

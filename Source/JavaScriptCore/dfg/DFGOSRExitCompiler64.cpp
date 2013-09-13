@@ -531,7 +531,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             case UInt32InGPR:
             case InFPR:
                 m_jit.load64(scratchDataBuffer + poisonIndex(virtualRegister), GPRInfo::regT0);
-                m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(localToOperand(virtualRegister)));
+                m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)localToOperand(virtualRegister)));
                 break;
                 
             default:

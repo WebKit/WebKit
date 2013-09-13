@@ -1,3 +1,180 @@
+2013-09-12  Michael Saboff  <msaboff@apple.com>
+
+        fourthTier: Change JSStack to grow from high to low addresses
+        https://bugs.webkit.org/show_bug.cgi?id=118758
+
+        Reviewed by Oliver Hunt.
+
+        Changed the JSC stack to grow down.  Effectively the JSC stack frame is flipped from
+        what it was.  See JSStack.h for the new offsets.  Changed JSStack begin() and end()
+        to be getBaseOfStack() and getLimitOfStack().  Most of the changes are address or offset
+        calculation changes.  Decoupled a local register ordinal (loop variable or array index)
+        from the offset into the callFrame using localToOperand() and the inverse operandToLocal().
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::trustedImm32ForShift):
+        (JSC::MacroAssembler::lshiftPtr): Added to create scaled addresses with a negative index
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::lshift64): Added to create scaled addresses with a negative index
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::shlq_i8r): Added to create scaled addresses with a negative index
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/CodeBlock.h:
+        (JSC::unmodifiedArgumentsRegister):
+        (JSC::CodeBlock::isCaptured):
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::stackOffset):
+        * bytecode/Operands.h:
+        (JSC::localToOperand):
+        (JSC::operandIsLocal):
+        (JSC::operandToLocal):
+        (JSC::operandIsArgument):
+        (JSC::operandToArgument):
+        (JSC::argumentToOperand):
+        * bytecode/VirtualRegister.h: Made InvalidVirtualRegister a positive value that fits in
+        31 bits since it can be placed into the 31 bit field "stackOffset" in struct InlineCallFrame.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addVar):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::createLazyRegisterIfNecessary):
+        (JSC::BytecodeGenerator::newRegister):
+        (JSC::BytecodeGenerator::emitNewArray):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::CallArguments::registerOffset):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallArguments::CallArguments):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::findArgumentPositionForLocal):
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::allocate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnArguments):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callFrameSlot):
+        (JSC::DFG::SpeculativeJIT::argumentSlot):
+        (JSC::DFG::SpeculativeJIT::callFrameTagSlot):
+        (JSC::DFG::SpeculativeJIT::callFramePayloadSlot):
+        (JSC::DFG::SpeculativeJIT::argumentTagSlot):
+        (JSC::DFG::SpeculativeJIT::argumentPayloadSlot):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::reportValidationContext):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::genericAddSpan):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::frameExtentInternal):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::init):
+        (JSC::ExecState::argumentOffset):
+        (JSC::ExecState::argumentOffsetIncludingThis):
+        (JSC::ExecState::argIndexForRegister):
+        * interpreter/Interpreter.cpp:
+        (JSC::loadVarargs):
+        (JSC::Interpreter::dumpRegisters):
+        * interpreter/JSStack.cpp:
+        (JSC::JSStack::JSStack):
+        (JSC::JSStack::~JSStack):
+        (JSC::JSStack::growSlowCase):
+        (JSC::JSStack::gatherConservativeRoots):
+        (JSC::JSStack::releaseExcessCapacity):
+        (JSC::JSStack::disableErrorStackReserve):
+        * interpreter/JSStack.h:
+        (JSC::JSStack::getBaseOfStack):
+        (JSC::JSStack::getLimitOfStack):
+        (JSC::JSStack::size):
+        (JSC::JSStack::end):
+        (JSC::JSStack::containsAddress):
+        (JSC::JSStack::lowAddress):
+        (JSC::JSStack::highAddress):
+        (JSC::JSStack::reservationEnd):
+        (JSC::JSStack::shrink):
+        (JSC::JSStack::grow):
+        * interpreter/JSStackInlines.h:
+        (JSC::JSStack::getTopOfFrame):
+        (JSC::JSStack::pushFrame):
+        (JSC::JSStack::popFrame):
+        (JSC::JSStack::installTrapsAfterFrame):
+        * interpreter/StackVisitor.cpp:
+        (JSC::inlinedFrameOffset):
+        (JSC::StackVisitor::readInlinedFrame):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        (JSC::JIT::compileOpCall):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_activation):
+        (JSC::JIT::emit_op_get_argument_by_val):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_argument_by_val):
+        * jit/JITStubs.cpp:
+        (JSC::throwExceptionFromOpCall):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/ThunkGenerators.cpp:
+        (JSC::arityFixup):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::genericCall):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArgList.cpp:
+        (JSC::ArgList::getSlice):
+        (JSC::MarkedArgumentBuffer::slowAppend):
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::MarkedArgumentBuffer):
+        (JSC::MarkedArgumentBuffer::slotFor):
+        (JSC::MarkedArgumentBuffer::mallocBase):
+        (JSC::ArgList::at):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOff):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::registersOffset):
+        (JSC::JSActivation::tearOff):
+        (JSC::JSActivation::isValidIndex):
+        * runtime/JSArray.h:
+        (JSC::constructArrayNegativeIndexed): New method to create an array from registers that grow down.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::globalExec):
+        * runtime/JSGlobalObject.h:
+        (JSC::constructArrayNegativeIndexed):
+        * runtime/JSString.h:
+        * runtime/Operations.h:
+        (JSC::jsStringFromRegisterArray):
+        * runtime/SymbolTable.h:
+        (JSC::SharedSymbolTable::captureCount):
+
 2013-09-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         ARM EABI hardfp buildfix after r155675

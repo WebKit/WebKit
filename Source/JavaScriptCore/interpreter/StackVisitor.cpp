@@ -117,10 +117,10 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
 }
 
 #if ENABLE(DFG_JIT)
-static unsigned inlinedFrameOffset(CodeOrigin* codeOrigin)
+static int inlinedFrameOffset(CodeOrigin* codeOrigin)
 {
     InlineCallFrame* inlineCallFrame = codeOrigin->inlineCallFrame;
-    unsigned frameOffset = inlineCallFrame ? inlineCallFrame->stackOffset : 0;
+    int frameOffset = inlineCallFrame ? inlineCallFrame->stackOffset : 0;
     return frameOffset;
 }
 
@@ -129,7 +129,7 @@ void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin
     ASSERT(codeOrigin);
     ASSERT(!callFrame->hasHostCallFrameFlag());
 
-    unsigned frameOffset = inlinedFrameOffset(codeOrigin);
+    int frameOffset = inlinedFrameOffset(codeOrigin);
     bool isInlined = !!frameOffset;
     if (isInlined) {
         InlineCallFrame* inlineCallFrame = codeOrigin->inlineCallFrame;

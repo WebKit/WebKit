@@ -76,7 +76,7 @@ struct CodeOrigin {
     // would have owned the code if it had not been inlined. Otherwise returns 0.
     ScriptExecutable* codeOriginOwner() const;
     
-    unsigned stackOffset() const;
+    int stackOffset() const;
     
     static unsigned inlineDepthForCallFrame(InlineCallFrame*);
     
@@ -97,7 +97,7 @@ struct InlineCallFrame {
     WriteBarrier<JSFunction> callee; // This may be null, indicating that this is a closure call and that the JSFunction and JSScope are already on the stack.
     CodeOrigin caller;
     BitVector capturedVars; // Indexed by the machine call frame's variable numbering.
-    signed int stackOffset : 31;
+    signed stackOffset : 31;
     bool isCall : 1;
     
     CodeSpecializationKind specializationKind() const { return specializationFromIsCall(isCall); }
@@ -119,7 +119,7 @@ struct InlineCallFrame {
     MAKE_PRINT_METHOD(InlineCallFrame, dumpBriefFunctionInformation, briefFunctionInformation);
 };
 
-inline unsigned CodeOrigin::stackOffset() const
+inline int CodeOrigin::stackOffset() const
 {
     if (!inlineCallFrame)
         return 0;

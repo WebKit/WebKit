@@ -46,7 +46,7 @@ public:
     MarkedArgumentBuffer()
         : m_size(0)
         , m_capacity(inlineCapacity)
-        , m_buffer(&m_inlineBuffer[m_capacity - 1])
+        , m_buffer(m_inlineBuffer)
         , m_markSet(0)
     {
     }
@@ -104,14 +104,14 @@ private:
         
     EncodedJSValue& slotFor(int item) const
     {
-        return m_buffer[-item];
+        return m_buffer[item];
     }
         
     EncodedJSValue* mallocBase()
     {
         if (m_capacity == static_cast<int>(inlineCapacity))
             return 0;
-        return &slotFor(m_capacity - 1);
+        return &slotFor(0);
     }
         
     int m_size;
@@ -163,7 +163,7 @@ public:
     {
         if (i >= m_argCount)
             return jsUndefined();
-        return m_args[-i];
+        return m_args[i];
     }
 
     bool isEmpty() const { return !m_argCount; }

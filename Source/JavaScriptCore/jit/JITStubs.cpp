@@ -408,6 +408,7 @@ template<typename T> static T throwExceptionFromOpCall(JITStackFrame& jitStackFr
 {
     CallFrame* callFrame = newCallFrame->callerFrame()->removeHostCallFrameFlag();
     jitStackFrame.callFrame = callFrame;
+    ASSERT(callFrame);
     callFrame->vm().topCallFrame = callFrame;
     if (createError)
         callFrame->vm().throwException(callFrame, (*createError)(callFrame));
@@ -438,7 +439,7 @@ DEFINE_STUB_FUNCTION(void*, stack_check)
     STUB_INIT_STACK_FRAME(stackFrame);
     CallFrame* callFrame = stackFrame.callFrame;
 
-    if (UNLIKELY(!stackFrame.stack->grow(&callFrame->registers()[callFrame->codeBlock()->m_numCalleeRegisters]))) {
+    if (UNLIKELY(!stackFrame.stack->grow(&callFrame->registers()[-callFrame->codeBlock()->m_numCalleeRegisters]))) {
         ErrorWithExecFunctor functor = ErrorWithExecFunctor(createStackOverflowError);
         return throwExceptionFromOpCall<void*>(stackFrame, callFrame, STUB_RETURN_ADDRESS, &functor);
     }
@@ -1477,7 +1478,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_array)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    return constructArray(stackFrame.callFrame, stackFrame.args[2].arrayAllocationProfile(), reinterpret_cast<JSValue*>(&stackFrame.callFrame->registers()[stackFrame.args[0].int32()]), stackFrame.args[1].int32());
+    return constructArrayNegativeIndexed(stackFrame.callFrame, stackFrame.args[2].arrayAllocationProfile(), reinterpret_cast<JSValue*>(&stackFrame.callFrame->registers()[stackFrame.args[0].int32()]), stackFrame.args[1].int32());
 }
 
 DEFINE_STUB_FUNCTION(JSObject*, op_new_array_with_size)

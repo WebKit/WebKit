@@ -371,8 +371,8 @@ void JITCompiler::compileFunction()
     Label fromArityCheck(this);
     // Plant a check that sufficient space is available in the JSStack.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56291
-    addPtr(TrustedImm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
-    Jump stackCheck = branchPtr(Below, AbsoluteAddress(m_vm->interpreter->stack().addressOfEnd()), GPRInfo::regT1);
+    addPtr(TrustedImm32(-m_codeBlock->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
+    Jump stackCheck = branchPtr(Above, AbsoluteAddress(m_vm->interpreter->stack().addressOfEnd()), GPRInfo::regT1);
     // Return here after stack check.
     Label fromStackCheck = label();
 

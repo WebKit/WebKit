@@ -393,7 +393,7 @@ inline CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode*
     m_argv.grow(argumentCountIncludingThis);
     for (int i = argumentCountIncludingThis - 1; i >= 0; --i) {
         m_argv[i] = generator.newTemporary();
-        ASSERT(static_cast<size_t>(i) == m_argv.size() - 1 || m_argv[i]->index() == m_argv[i + 1]->index() + 1);
+        ASSERT(static_cast<size_t>(i) == m_argv.size() - 1 || m_argv[i]->index() == m_argv[i + 1]->index() - 1);
     }
 }
 

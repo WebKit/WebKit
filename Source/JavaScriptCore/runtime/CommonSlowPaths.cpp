@@ -463,7 +463,7 @@ SLOW_PATH_DECL(slow_path_del_by_val)
 SLOW_PATH_DECL(slow_path_strcat)
 {
     BEGIN();
-    RETURN(jsString(exec, &OP(2), pc[3].u.operand));
+    RETURN(jsStringFromRegisterArray(exec, &OP(2), pc[3].u.operand));
 }
 
 SLOW_PATH_DECL(slow_path_to_primitive)

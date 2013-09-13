@@ -199,15 +199,16 @@ macro functionArityCheck(doneLabel, slow_path)
 .isArityFixupNeeded:
     btiz t1, .continue
 
-    // Move frame down "t1" slots
+    // Move frame up "t1" slots
+    negq t1
     move cfr, t3
-    subp 8, t3
+    addp 8, t3
     loadi PayloadOffset + ArgumentCount[cfr], t2
     addi CallFrameHeaderSlots, t2
 .copyLoop:
     loadq [t3], t0
     storeq t0, [t3, t1, 8]
-    subp 8, t3
+    addp 8, t3
     bsubinz 1, t2, .copyLoop
 
     // Fill new slots with JSUndefined
@@ -215,8 +216,8 @@ macro functionArityCheck(doneLabel, slow_path)
     move ValueUndefined, t0
 .fillLoop:
     storeq t0, [t3, t1, 8]
-    subp 8, t3
-    bsubinz 1, t2, .fillLoop
+    addp 8, t3
+    baddinz 1, t2, .fillLoop
 
     lshiftp 3, t1
     addp t1, cfr
@@ -238,10 +239,12 @@ _llint_op_enter:
     loadi CodeBlock::m_numVars[t2], t2      // t2<size_t> = t2<CodeBlock>.m_numVars
     btiz t2, .opEnterDone
     move ValueUndefined, t0
+    negi t2
+    sxi2q t2, t2
 .opEnterLoop:
-    subi 1, t2
+    addq 1, t2
     storeq t0, [cfr, t2, 8]
-    btinz t2, .opEnterLoop
+    btqnz t2, .opEnterLoop
 .opEnterDone:
     dispatch(1)
 
@@ -1079,8 +1082,6 @@ _llint_op_get_argument_by_val:
     addi 1, t2
     loadi ArgumentCount + PayloadOffset[cfr], t1
     biaeq t2, t1, .opGetArgumentByValSlow
-    negi t2
-    sxi2q t2, t2
     loadisFromInstruction(1, t3)
     loadpFromInstruction(5, t1)
     loadq ThisArgumentOffset[cfr, t2, 8], t0
@@ -1422,6 +1423,7 @@ _llint_op_new_func:
 macro arrayProfileForCall()
     if VALUE_PROFILER
         loadisFromInstruction(4, t3)
+        negp t3
         loadq ThisArgumentOffset[cfr, t3, 8], t0
         btqnz t0, tagMask, .done
         loadp JSCell::m_structure[t0], t0
@@ -1439,6 +1441,7 @@ macro doCall(slowPath)
     bqneq t3, t2, .opCallSlow
     loadisFromInstruction(4, t3)
     lshifti 3, t3
+    negp t3
     addp cfr, t3
     loadp JSFunction::m_scope[t2], t0
     storeq t2, Callee[t3]
@@ -1467,7 +1470,7 @@ _llint_op_tear_off_activation:
 _llint_op_tear_off_arguments:
     traceExecution()
     loadisFromInstruction(1, t0)
-    subi 1, t0   # Get the unmodifiedArgumentsRegister
+    addq 1, t0   # Get the unmodifiedArgumentsRegister
     btqz [cfr, t0, 8], .opTearOffArgumentsNotCreated
     callSlowPath(_llint_slow_path_tear_off_arguments)
 .opTearOffArgumentsNotCreated:

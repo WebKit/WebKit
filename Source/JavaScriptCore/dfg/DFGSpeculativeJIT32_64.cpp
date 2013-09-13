@@ -739,7 +739,7 @@ void SpeculativeJIT::emitCall(Node* node)
     CallBeginToken token;
     m_jit.beginCall(node->codeOrigin, token);
     
-    m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
+    m_jit.addPtr(TrustedImm32(-(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register))), GPRInfo::callFrameRegister);
     
     slowPath.append(m_jit.branch32(MacroAssembler::NotEqual, calleeTagGPR, TrustedImm32(JSValue::CellTag)));
     slowPath.append(m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleePayloadGPR, targetToCheck));
@@ -4424,7 +4424,7 @@ void SpeculativeJIT::compile(Node* node)
         int registersOffset = JSActivation::registersOffset(symbolTable);
 
         int captureEnd = symbolTable->captureEnd();
-        for (int i = symbolTable->captureStart(); i < captureEnd; ++i) {
+        for (int i = symbolTable->captureStart(); i > captureEnd; --i) {
             m_jit.loadPtr(
                 JITCompiler::Address(
                     GPRInfo::callFrameRegister, i * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)),
@@ -4611,8 +4611,6 @@ void SpeculativeJIT::compile(Node* node)
         }
         slowArgumentOutOfBounds.link(&m_jit);
 
-        m_jit.neg32(resultPayloadGPR);
-        
         m_jit.load32(
             JITCompiler::BaseIndex(
                 GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,
@@ -4687,8 +4685,6 @@ void SpeculativeJIT::compile(Node* node)
         }
         slowArgumentOutOfBounds.link(&m_jit);
 
-        m_jit.neg32(resultPayloadGPR);
-        
         m_jit.load32(
             JITCompiler::BaseIndex(
                 GPRInfo::callFrameRegister, resultPayloadGPR, JITCompiler::TimesEight,

@@ -28,20 +28,19 @@
 
 #include "CallFrame.h"
 #include "JSObject.h"
-#include "VirtualRegister.h"
 #include <wtf/PrintStream.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
-inline VirtualRegister localToOperand(int local) { return (VirtualRegister)local; }
-inline bool operandIsLocal(int operand) { return operand >= 0; }
-inline int operandToLocal(int operand) { return operand; }
+inline int localToOperand(int local) { return -local; }
+inline bool operandIsLocal(int operand) { return operand <= 0; }
+inline int operandToLocal(int operand) { return -operand; }
 
 // argument 0 is 'this'.
-inline bool operandIsArgument(int operand) { return operand < 0; }
-inline int operandToArgument(int operand) { return -operand + CallFrame::thisArgumentOffset(); }
-inline int argumentToOperand(int argument) { return -argument + CallFrame::thisArgumentOffset(); }
+inline bool operandIsArgument(int operand) { return operand > 0; }
+inline int operandToArgument(int operand) { return operand - CallFrame::thisArgumentOffset(); }
+inline int argumentToOperand(int argument) { return argument + CallFrame::thisArgumentOffset(); }
 
 template<typename T> struct OperandValueTraits;
 

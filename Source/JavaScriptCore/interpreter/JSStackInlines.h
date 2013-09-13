@@ -35,7 +35,7 @@ namespace JSC {
 inline Register* JSStack::getTopOfFrame(CallFrame* frame)
 {
     if (UNLIKELY(!frame))
-        return begin();
+        return getBaseOfStack();
     return frame->frameExtent();
 }
 
@@ -64,13 +64,15 @@ inline CallFrame* JSStack::pushFrame(CallFrame* callerFrame,
             paddedArgsCount = numParameters;
     }
 
-    Register* newCallFrameSlot = oldEnd + paddedArgsCount + JSStack::CallFrameHeaderSize;
+    Register* newCallFrameSlot = oldEnd - paddedArgsCount - JSStack::CallFrameHeaderSize;
+
 #if ENABLE(DEBUG_JSSTACK)
-    newCallFrameSlot += JSStack::FenceSize;
+    newCallFrameSlot -= JSStack::FenceSize;
 #endif
+
     Register* newEnd = newCallFrameSlot;
     if (!!codeBlock)
-        newEnd += codeBlock->m_numCalleeRegisters;
+        newEnd -= codeBlock->m_numCalleeRegisters;
 
     // Ensure that we have the needed stack capacity to push the new frame:
     if (!grow(newEnd))
@@ -120,7 +122,7 @@ inline void JSStack::popFrame(CallFrame* frame)
     // this case, we're shrinking all the way to the beginning since there
     // are no more frames on the stack.
     if (!callerFrame)
-        shrink(begin());
+        shrink(getBaseOfStack());
 
     installTrapsAfterFrame(callerFrame);
 }
@@ -212,17 +214,17 @@ inline void JSStack::installTrapsAfterFrame(CallFrame* frame)
     Register* topOfFrame = getTopOfFrame(frame);
     const int sizeOfTrap = 64;
     int32_t* startOfTrap = reinterpret_cast<int32_t*>(topOfFrame);
-    int32_t* endOfTrap = startOfTrap + sizeOfTrap;
+    int32_t* endOfTrap = startOfTrap - sizeOfTrap;
     int32_t* endOfCommitedMemory = reinterpret_cast<int32_t*>(m_commitEnd);
 
     // Make sure we're not exceeding the amount of available memory to write to:
-    if (endOfTrap > endOfCommitedMemory)
+    if (endOfTrap < endOfCommitedMemory)
         endOfTrap = endOfCommitedMemory;
 
     // Lay the traps:
     int32_t* p = startOfTrap;
-    while (p < endOfTrap)
-        *p++ = 0xabadcafe; // A bad word to trigger a crash if deref'ed.
+    while (p > endOfTrap)
+        *p-- = 0xabadcafe; // A bad word to trigger a crash if deref'ed.
 }
 #endif // ENABLE(DEBUG_JSSTACK)
 

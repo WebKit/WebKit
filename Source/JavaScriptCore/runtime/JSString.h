@@ -312,7 +312,7 @@ namespace JSC {
         static const unsigned s_maxInternalRopeLength = 3;
             
     private:
-        friend JSValue jsString(ExecState*, Register*, unsigned);
+        friend JSValue jsStringFromRegisterArray(ExecState*, Register*, unsigned);
         friend JSValue jsStringFromArguments(ExecState*, JSValue);
 
         JS_EXPORT_PRIVATE void resolveRope(ExecState*) const;

@@ -431,6 +431,11 @@ private:
     
     void reportValidationContext(VirtualRegister local, BasicBlock* block)
     {
+        if (!block) {
+            dataLog("r", static_cast<int>(local), " in null Block ");
+            return;
+        }
+
         dataLog("r", static_cast<int>(local), " in Block ", *block);
     }
     

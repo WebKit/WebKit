@@ -1414,7 +1414,7 @@ char* DFG_OPERATION operationNewArray(ExecState* exec, Structure* arrayStructure
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    return bitwise_cast<char*>(constructArray(exec, arrayStructure, static_cast<JSValue*>(buffer), size));
+    return bitwise_cast<char*>(constructArrayNegativeIndexed(exec, arrayStructure, static_cast<JSValue*>(buffer), size));
 }
 
 char* DFG_OPERATION operationNewEmptyArray(ExecState* exec, Structure* arrayStructure)
@@ -1440,7 +1440,7 @@ char* DFG_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayStr
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    return bitwise_cast<char*>(constructArray(exec, arrayStructure, exec->codeBlock()->constantBuffer(start), size));
+    return bitwise_cast<char*>(constructArrayNegativeIndexed(exec, arrayStructure, exec->codeBlock()->constantBuffer(start), size));
 }
 
 char* DFG_OPERATION operationNewInt8ArrayWithSize(
@@ -2258,7 +2258,7 @@ asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "mov -40(%r13), %r13\n"
+    "mov 40(%r13), %r13\n"
     "mov %r13, %rdi\n"
     "jmp " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
@@ -2268,7 +2268,7 @@ asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "mov -40(%edi), %edi\n"
+    "mov 40(%edi), %edi\n"
     "mov %edi, 4(%esp)\n"
     "jmp " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
@@ -2281,7 +2281,7 @@ HIDE_SYMBOL(getHostCallReturnValue) "\n"
 ".thumb" "\n"
 ".thumb_func " THUMB_FUNC_PARAM(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "ldr r5, [r5, #-40]" "\n"
+    "ldr r5, [r5, #40]" "\n"
     "mov r0, r5" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
@@ -2292,7 +2292,7 @@ asm (
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 INLINE_ARM_FUNCTION(getHostCallReturnValue)
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "ldr r5, [r5, #-40]" "\n"
+    "ldr r5, [r5, #40]" "\n"
     "mov r0, r5" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
@@ -2303,7 +2303,7 @@ asm(
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     LOAD_FUNCTION_TO_T9(getHostCallReturnValueWithExecState)
-    "lw $s0, -40($s0)" "\n"
+    "lw $s0, 40($s0)" "\n"
     "move $a0, $s0" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
@@ -2313,7 +2313,7 @@ asm(
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "add #-40, r14" "\n"
+    "add #40, r14" "\n"
     "mov.l @r14, r14" "\n"
     "mov r14, r4" "\n"
     "mov.l 2f, " SH4_SCRATCH_REGISTER "\n"

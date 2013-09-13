@@ -66,7 +66,7 @@ namespace JSC {
 
         RegisterID* thisRegister() { return m_argv[0].get(); }
         RegisterID* argumentRegister(unsigned i) { return m_argv[i + 1].get(); }
-        unsigned registerOffset() { return m_argv.last()->index() + CallFrame::offsetFor(argumentCountIncludingThis()); }
+        unsigned registerOffset() { return -m_argv.last()->index() + CallFrame::offsetFor(argumentCountIncludingThis()); }
         unsigned argumentCountIncludingThis() { return m_argv.size(); }
         RegisterID* profileHookRegister() { return m_profileHookRegister.get(); }
         ArgumentsNode* argumentsNode() { return m_argumentsNode; }

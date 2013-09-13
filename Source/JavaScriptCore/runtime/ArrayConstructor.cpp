@@ -76,7 +76,7 @@ bool ArrayConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, Pro
 JSObject* constructArrayWithSizeQuirk(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, JSValue length)
 {
     if (!length.isNumber())
-        return constructArray(exec, profile, globalObject, &length, 1);
+        return constructArrayNegativeIndexed(exec, profile, globalObject, &length, 1);
     
     uint32_t n = length.toUInt32(exec);
     if (n != length.toNumber(exec))

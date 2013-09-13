@@ -464,7 +464,7 @@ public:
     int captureEnd() { return m_captureEnd; }
     void setCaptureEnd(int captureEnd) { m_captureEnd = captureEnd; }
 
-    int captureCount() { return m_captureEnd - m_captureStart; }
+    int captureCount() { return -(m_captureEnd - m_captureStart); }
 
     int parameterCount() { return m_parameterCountIncludingThis - 1; }
     int parameterCountIncludingThis() { return m_parameterCountIncludingThis; }

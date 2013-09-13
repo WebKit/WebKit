@@ -616,8 +616,8 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         }
 #endif
 
-        addPtr(TrustedImm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), callFrameRegister, regT1);
-        stackCheck = branchPtr(Below, AbsoluteAddress(m_vm->interpreter->stack().addressOfEnd()), regT1);
+        addPtr(TrustedImm32(-m_codeBlock->m_numCalleeRegisters * sizeof(Register)), callFrameRegister, regT1);
+        stackCheck = branchPtr(Above, AbsoluteAddress(m_vm->interpreter->stack().addressOfEnd()), regT1);
     }
 
     Label functionBody = label();

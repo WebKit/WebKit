@@ -750,33 +750,33 @@ public:
     // Access to our fixed callee CallFrame.
     MacroAssembler::Address callFrameSlot(int slot)
     {
-        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + slot) * static_cast<int>(sizeof(Register)));
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (-m_jit.codeBlock()->m_numCalleeRegisters + slot) * static_cast<int>(sizeof(Register)));
     }
 
     // Access to our fixed callee CallFrame.
     MacroAssembler::Address argumentSlot(int argument)
     {
-        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + argumentToOperand(argument)) * static_cast<int>(sizeof(Register)));
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (-m_jit.codeBlock()->m_numCalleeRegisters + argumentToOperand(argument)) * static_cast<int>(sizeof(Register)));
     }
 
     MacroAssembler::Address callFrameTagSlot(int slot)
     {
-        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + slot) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (-m_jit.codeBlock()->m_numCalleeRegisters + slot) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
 
     MacroAssembler::Address callFramePayloadSlot(int slot)
     {
-        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + slot) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (-m_jit.codeBlock()->m_numCalleeRegisters + slot) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 
     MacroAssembler::Address argumentTagSlot(int argument)
     {
-        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + argumentToOperand(argument)) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (-m_jit.codeBlock()->m_numCalleeRegisters + argumentToOperand(argument)) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
 
     MacroAssembler::Address argumentPayloadSlot(int argument)
     {
-        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + argumentToOperand(argument)) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (-m_jit.codeBlock()->m_numCalleeRegisters + argumentToOperand(argument)) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 
     void emitCall(Node*);

@@ -4032,7 +4032,6 @@ void SpeculativeJIT::compileGetByValOnArguments(Node* node)
                 baseReg, OBJECT_OFFSETOF(Arguments, m_slowArguments))));
     
     m_jit.move(propertyReg, resultReg);
-    m_jit.neg32(resultReg);
     m_jit.signExtend32ToPtr(resultReg, resultReg);
     m_jit.loadPtr(
         MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_registers)),
@@ -4042,13 +4041,13 @@ void SpeculativeJIT::compileGetByValOnArguments(Node* node)
     m_jit.load32(
         MacroAssembler::BaseIndex(
             scratchReg, resultReg, MacroAssembler::TimesEight,
-            CallFrame::thisArgumentOffset() * sizeof(Register) - sizeof(Register) +
+            CallFrame::thisArgumentOffset() * sizeof(Register) + sizeof(Register) +
             OBJECT_OFFSETOF(JSValue, u.asBits.tag)),
         resultTagReg);
     m_jit.load32(
         MacroAssembler::BaseIndex(
             scratchReg, resultReg, MacroAssembler::TimesEight,
-            CallFrame::thisArgumentOffset() * sizeof(Register) - sizeof(Register) +
+            CallFrame::thisArgumentOffset() * sizeof(Register) + sizeof(Register) +
             OBJECT_OFFSETOF(JSValue, u.asBits.payload)),
         resultReg);
     jsValueResult(resultTagReg, resultReg, node);
@@ -4056,7 +4055,7 @@ void SpeculativeJIT::compileGetByValOnArguments(Node* node)
     m_jit.load64(
         MacroAssembler::BaseIndex(
             scratchReg, resultReg, MacroAssembler::TimesEight,
-            CallFrame::thisArgumentOffset() * sizeof(Register) - sizeof(Register)),
+            CallFrame::thisArgumentOffset() * sizeof(Register) + sizeof(Register)),
         resultReg);
     jsValueResult(resultReg, node);
 #endif

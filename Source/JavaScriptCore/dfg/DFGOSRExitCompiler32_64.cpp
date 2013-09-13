@@ -545,7 +545,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             case UnboxedInt32InGPR:
             case UnboxedBooleanInGPR: {
                 m_jit.load32(reinterpret_cast<char*>(scratchDataBuffer + poisonIndex(virtualRegister)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
-                m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor(localToOperand(virtualRegister)));
+                m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor((VirtualRegister)localToOperand(virtualRegister)));
                 uint32_t tag = JSValue::EmptyValueTag;
                 if (recovery.technique() == InGPR)
                     tag = JSValue::CellTag;
@@ -553,7 +553,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                     tag = JSValue::Int32Tag;
                 else
                     tag = JSValue::BooleanTag;
-                m_jit.store32(AssemblyHelpers::TrustedImm32(tag), AssemblyHelpers::tagFor(localToOperand(virtualRegister)));
+                m_jit.store32(AssemblyHelpers::TrustedImm32(tag), AssemblyHelpers::tagFor((VirtualRegister)localToOperand(virtualRegister)));
                 break;
             }
 
@@ -562,8 +562,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             case UInt32InGPR:
                 m_jit.load32(reinterpret_cast<char*>(scratchDataBuffer + poisonIndex(virtualRegister)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
                 m_jit.load32(reinterpret_cast<char*>(scratchDataBuffer + poisonIndex(virtualRegister)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag), GPRInfo::regT1);
-                m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor(localToOperand(virtualRegister)));
-                m_jit.store32(GPRInfo::regT1, AssemblyHelpers::tagFor(localToOperand(virtualRegister)));
+                m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor((VirtualRegister)localToOperand(virtualRegister)));
+                m_jit.store32(GPRInfo::regT1, AssemblyHelpers::tagFor((VirtualRegister)localToOperand(virtualRegister)));
                 break;
                 
             default:

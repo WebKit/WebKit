@@ -653,7 +653,7 @@ JSValue JSGlobalObject::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode)
 
 ExecState* JSGlobalObject::globalExec()
 {
-    return CallFrame::create(m_globalCallFrame + JSStack::CallFrameHeaderSize);
+    return CallFrame::create(m_globalCallFrame);
 }
 
 void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)

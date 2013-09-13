@@ -320,6 +320,21 @@ inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const
     return array;
 }
 
+inline JSArray* constructArrayNegativeIndexed(ExecState* exec, Structure* arrayStructure, const JSValue* values, unsigned length)
+{
+    VM& vm = exec->vm();
+    JSArray* array = JSArray::tryCreateUninitialized(vm, arrayStructure, length);
+
+    // FIXME: we should probably throw an out of memory error here, but
+    // when making this change we should check that all clients of this
+    // function will correctly handle an exception being thrown from here.
+    RELEASE_ASSERT(array);
+
+    for (int i = 0; i < static_cast<int>(length); ++i)
+        array->initializeIndex(vm, i, values[-i]);
+    return array;
+}
+
 } // namespace JSC
 
 #endif // JSArray_h

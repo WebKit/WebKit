@@ -33,7 +33,7 @@ namespace JSC {
 
 // Type for a virtual register number (spill location).
 // Using an enum to make this type-checked at compile time, to avert programmer errors.
-enum VirtualRegister { InvalidVirtualRegister = 0x7fffffff };
+enum VirtualRegister { InvalidVirtualRegister = 0x3fffffff };
 COMPILE_ASSERT(sizeof(VirtualRegister) == sizeof(int), VirtualRegister_is_32bit);
 
 } // namespace JSC

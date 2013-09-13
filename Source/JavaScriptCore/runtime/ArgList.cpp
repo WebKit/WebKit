@@ -37,7 +37,7 @@ void ArgList::getSlice(int startIndex, ArgList& result) const
         return;
     }
 
-    result.m_args = m_args - startIndex;
+    result.m_args = m_args + startIndex;
     result.m_argCount =  m_argCount - startIndex;
 }
 
@@ -54,9 +54,9 @@ void MarkedArgumentBuffer::markLists(HeapRootVisitor& heapRootVisitor, ListSet& 
 void MarkedArgumentBuffer::slowAppend(JSValue v)
 {
     int newCapacity = m_capacity * 4;
-    EncodedJSValue* newBuffer = &(new EncodedJSValue[newCapacity])[newCapacity - 1];
+    EncodedJSValue* newBuffer = new EncodedJSValue[newCapacity];
     for (int i = 0; i < m_capacity; ++i)
-        newBuffer[-i] = m_buffer[-i];
+        newBuffer[i] = m_buffer[i];
 
     if (EncodedJSValue* base = mallocBase())
         delete [] base;

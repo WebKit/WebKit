@@ -116,7 +116,7 @@ ParserError BytecodeGenerator::generate()
 bool BytecodeGenerator::addVar(const Identifier& ident, bool isConstant, RegisterID*& r0)
 {
     ConcurrentJITLocker locker(symbolTable().m_lock);
-    int index = m_calleeRegisters.size();
+    int index = localToOperand(m_calleeRegisters.size());
     SymbolTableEntry newEntry(index, isConstant ? ReadOnly : 0);
     SymbolTable::Map::AddResult result = symbolTable().add(locker, ident.impl(), newEntry);
 
@@ -223,7 +223,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         m_codeBlock->setActivationRegister(m_activationRegister->index());
     }
 
-    m_symbolTable->setCaptureStart(m_codeBlock->m_numVars);
+    m_symbolTable->setCaptureStart(localToOperand(m_codeBlock->m_numVars));
 
     if (functionBody->usesArguments() || codeBlock->usesEval()) { // May reify arguments object.
         RegisterID* unmodifiedArgumentsRegister = addVar(); // Anonymous, so it can't be modified by user code.
@@ -310,7 +310,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         instructions().append(m_activationRegister->index());
     }
 
-    m_symbolTable->setCaptureEnd(codeBlock->m_numVars);
+    m_symbolTable->setCaptureEnd(localToOperand(codeBlock->m_numVars));
 
     m_firstLazyFunction = codeBlock->m_numVars;
     for (size_t i = 0; i < functionStack.size(); ++i) {
@@ -325,7 +325,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
                 emitNewFunction(reg.get(), function);
             else {
                 emitInitLazyRegister(reg.get());
-                m_lazyFunctions.set(reg->index(), function);
+                m_lazyFunctions.set(localToOperand(reg->index()), function);
             }
         }
     }
@@ -337,17 +337,17 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     }
 
     if (shouldCaptureAllTheThings)
-        m_symbolTable->setCaptureEnd(codeBlock->m_numVars);
+        m_symbolTable->setCaptureEnd(localToOperand(codeBlock->m_numVars));
 
     FunctionParameters& parameters = *functionBody->parameters();
     m_parameters.grow(parameters.size() + 1); // reserve space for "this"
 
     // Add "this" as a parameter
     int nextParameterIndex = CallFrame::thisArgumentOffset();
-    m_thisRegister.setIndex(nextParameterIndex--);
+    m_thisRegister.setIndex(nextParameterIndex++);
     m_codeBlock->addParameter();
     
-    for (size_t i = 0; i < parameters.size(); ++i, --nextParameterIndex) {
+    for (size_t i = 0; i < parameters.size(); ++i, ++nextParameterIndex) {
         int index = nextParameterIndex;
         if (capturedArguments.size() && capturedArguments[i]) {
             ASSERT((functionBody->hasCapturedVariables() && functionBody->captures(parameters.at(i))) || shouldCaptureAllTheThings);
@@ -505,15 +505,17 @@ RegisterID* BytecodeGenerator::uncheckedRegisterForArguments()
 
 RegisterID* BytecodeGenerator::createLazyRegisterIfNecessary(RegisterID* reg)
 {
-    if (m_lastLazyFunction <= reg->index() || reg->index() < m_firstLazyFunction)
+    int localVariableNumber = operandToLocal(reg->index());
+    
+    if (m_lastLazyFunction <= localVariableNumber || localVariableNumber < m_firstLazyFunction)
         return reg;
-    emitLazyNewFunction(reg, m_lazyFunctions.get(reg->index()));
+    emitLazyNewFunction(reg, m_lazyFunctions.get(localVariableNumber));
     return reg;
 }
 
 RegisterID* BytecodeGenerator::newRegister()
 {
-    m_calleeRegisters.append(m_calleeRegisters.size());
+    m_calleeRegisters.append(localToOperand(m_calleeRegisters.size()));
     m_codeBlock->m_numCalleeRegisters = max<int>(m_codeBlock->m_numCalleeRegisters, m_calleeRegisters.size());
     return &m_calleeRegisters.last();
 }
@@ -1484,7 +1486,7 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
             break;
         argv.append(newTemporary());
         // op_new_array requires the initial values to be a sequential range of registers
-        ASSERT(argv.size() == 1 || argv[argv.size() - 1]->index() == argv[argv.size() - 2]->index() + 1);
+        ASSERT(argv.size() == 1 || argv[argv.size() - 1]->index() == argv[argv.size() - 2]->index() - 1);
         emitNode(argv.last().get(), n->value());
     }
     emitOpcode(op_new_array);

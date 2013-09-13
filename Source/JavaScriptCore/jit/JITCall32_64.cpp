@@ -157,12 +157,13 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         // regT2: argumentCountIncludingThis
 
         move(regT2, regT3);
-        add32(TrustedImm32(firstFreeRegister + JSStack::CallFrameHeaderSize), regT3);
+        neg32(regT3);
+        add32(TrustedImm32(firstFreeRegister - JSStack::CallFrameHeaderSize), regT3);
         lshift32(TrustedImm32(3), regT3);
         addPtr(callFrameRegister, regT3);
         // regT3: newCallFrame
 
-        slowCase.append(branchPtr(Below, AbsoluteAddress(m_vm->interpreter->stack().addressOfEnd()), regT3));
+        slowCase.append(branchPtr(Above, AbsoluteAddress(m_vm->interpreter->stack().addressOfEnd()), regT3));
 
         // Initialize ArgumentCount.
         store32(regT2, payloadFor(JSStack::ArgumentCount, regT3));
@@ -173,16 +174,15 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         store32(regT1, Address(regT3, OBJECT_OFFSETOF(JSValue, u.asBits.tag) + (CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)))));
 
         // Copy arguments.
-        neg32(regT2);
-        end.append(branchAdd32(Zero, TrustedImm32(1), regT2));
-        // regT2: -argumentCount;
+        end.append(branchSub32(Zero, TrustedImm32(1), regT2));
+        // regT2: argumentCount;
 
         Label copyLoop = label();
         load32(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) +(CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)))), regT0);
         load32(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) +(CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)))), regT1);
         store32(regT0, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) +(CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)))));
         store32(regT1, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) +(CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)))));
-        branchAdd32(NonZero, TrustedImm32(1), regT2).linkTo(copyLoop, this);
+        branchSub32(NonZero, TrustedImm32(1), regT2).linkTo(copyLoop, this);
 
         end.append(jump());
     }
@@ -246,7 +246,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         compileLoadVarargs(instruction);
     else {
         int argCount = instruction[3].u.operand;
-        int registerOffset = instruction[4].u.operand;
+        int registerOffset = -instruction[4].u.operand;
         
         if (opcodeID == op_call && shouldEmitProfiling()) {
             emitLoad(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0, regT1);

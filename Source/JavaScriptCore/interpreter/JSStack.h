@@ -54,12 +54,12 @@ namespace JSC {
         enum CallFrameHeaderEntry {
             CallFrameHeaderSize = 6,
 
-            ArgumentCount = -6,
-            CallerFrame = -5,
-            Callee = -4,
-            ScopeChain = -3,
-            ReturnPC = -2, // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
-            CodeBlock = -1,
+            ArgumentCount = 6,
+            CallerFrame = 5,
+            Callee = 4,
+            ScopeChain = 3,
+            ReturnPC = 2, // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
+            CodeBlock = 1,
         };
 
         static const size_t defaultCapacity = 512 * 1024;
@@ -73,9 +73,13 @@ namespace JSC {
         void gatherConservativeRoots(ConservativeRoots&);
         void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&);
 
-        Register* begin() const { return static_cast<Register*>(m_reservation.base()); }
-        Register* end() const { return m_end; }
-        size_t size() const { return end() - begin(); }
+        Register* getBaseOfStack() const
+        {
+            return highAddress() - 1;
+        }
+
+        Register* getLimitOfStack() const { return m_end; }
+        size_t size() const { return highAddress() - lowAddress(); }
 
         bool grow(Register*);
         
@@ -90,11 +94,14 @@ namespace JSC {
         Register* getTopOfFrame(CallFrame*);
         Register* getStartOfFrame(CallFrame*);
         Register* getTopOfStack();
+        Register* end() const { return m_end; }
 
         CallFrame* pushFrame(CallFrame* callerFrame, class CodeBlock*,
             JSScope*, int argsCount, JSObject* callee);
 
         void popFrame(CallFrame*);
+
+        bool containsAddress(Register* address) { return (lowAddress() <= address && address <= highAddress()); }
 
         void enableErrorStackReserve();
         void disableErrorStackReserve();
@@ -109,10 +116,19 @@ namespace JSC {
 #endif // !ENABLE(DEBUG_JSSTACK)
 
     private:
+        Register* lowAddress() const
+        {
+            return m_end;
+        }
+
+        Register* highAddress() const
+        {
+            return reinterpret_cast_ptr<Register*>(static_cast<char*>(m_reservation.base()) + m_reservation.size());
+        }
+
         Register* reservationEnd() const
         {
-            char* base = static_cast<char*>(m_reservation.base());
-            char* reservationEnd = base + m_reservation.size();
+            char* reservationEnd = static_cast<char*>(m_reservation.base());
             return reinterpret_cast_ptr<Register*>(reservationEnd);
         }
 
@@ -142,13 +158,13 @@ namespace JSC {
         if (newEnd >= m_end)
             return;
         m_end = newEnd;
-        if (m_end == m_reservation.base() && (m_commitEnd - begin()) >= maxExcessCapacity)
+        if (m_end == getBaseOfStack() && (m_commitEnd - getBaseOfStack()) >= maxExcessCapacity)
             releaseExcessCapacity();
     }
 
     inline bool JSStack::grow(Register* newEnd)
     {
-        if (newEnd <= m_end)
+        if (newEnd >= m_end)
             return true;
         return growSlowCase(newEnd);
     }

@@ -140,7 +140,9 @@ private:
 
 protected:
 
-    Register m_globalCallFrame[JSStack::CallFrameHeaderSize];
+    // Add one so we don't need to index with -1 to get current frame pointer.
+    // An index of -1 is an error for some compilers.
+    Register m_globalCallFrame[JSStack::CallFrameHeaderSize + 1];
 
     WriteBarrier<JSObject> m_globalThis;
 
@@ -602,6 +604,16 @@ inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile,
 inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, unsigned length)
 {
     return constructArray(exec, profile, exec->lexicalGlobalObject(), values, length);
+}
+
+inline JSArray* constructArrayNegativeIndexed(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const JSValue* values, unsigned length)
+{
+    return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArrayNegativeIndexed(exec, globalObject->arrayStructureForProfileDuringAllocation(profile), values, length));
+}
+
+inline JSArray* constructArrayNegativeIndexed(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, unsigned length)
+{
+    return constructArrayNegativeIndexed(exec, profile, exec->lexicalGlobalObject(), values, length);
 }
 
 class DynamicGlobalObjectScope {

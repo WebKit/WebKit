@@ -79,7 +79,7 @@ ALWAYS_INLINE JSValue jsString(ExecState* exec, const String& u1, const String& 
     return JSRopeString::create(exec->vm(), jsString(vm, u1), jsString(vm, u2), jsString(vm, u3));
 }
 
-ALWAYS_INLINE JSValue jsString(ExecState* exec, Register* strings, unsigned count)
+ALWAYS_INLINE JSValue jsStringFromRegisterArray(ExecState* exec, Register* strings, unsigned count)
 {
     VM* vm = &exec->vm();
     JSRopeString::RopeBuilder ropeBuilder(*vm);
@@ -87,7 +87,7 @@ ALWAYS_INLINE JSValue jsString(ExecState* exec, Register* strings, unsigned coun
     unsigned oldLength = 0;
 
     for (unsigned i = 0; i < count; ++i) {
-        JSValue v = strings[i].jsValue();
+        JSValue v = strings[-static_cast<int>(i)].jsValue();
         ropeBuilder.append(v.toString(exec));
 
         if (ropeBuilder.length() < oldLength) // True for overflow
