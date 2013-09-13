@@ -26,12 +26,18 @@
 
 namespace WebCore {
 
+class HTMLTextAreaElement;
+
 class RenderTextControlMultiLine FINAL : public RenderTextControl {
 public:
-    RenderTextControlMultiLine(Element*);
+    explicit RenderTextControlMultiLine(HTMLTextAreaElement&);
     virtual ~RenderTextControlMultiLine();
 
+    HTMLTextAreaElement& textAreaElement() const;
+
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
     virtual bool isTextArea() const { return true; }
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;

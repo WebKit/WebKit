@@ -1,3 +1,13 @@
+2013-09-12  Andreas Kling  <akling@apple.com>
+
+        [CTTE] RenderTextControlMultiLine's element is always a HTMLTextAreaElement.
+        <https://webkit.org/b/121271>
+
+        Reviewed by Anders Carlsson.
+
+        Add RenderTextControlMultiLine::textAreaElement(), hiding element().
+        This function also returns a reference since this renderer cannot be anonymous.
+
 2013-09-12  Tim Horton  <timothy_horton@apple.com>
 
         [mac] Cache rendered image in PDFDocumentImage
