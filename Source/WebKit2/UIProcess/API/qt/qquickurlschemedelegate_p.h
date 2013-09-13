@@ -25,9 +25,12 @@
 #include <QObject>
 #include <QtQuick/qquickitem.h>
 
+QT_BEGIN_NAMESPACE
+class QUrl;
+QT_END_NAMESPACE
+
 class QQuickNetworkRequest;
 class QQuickNetworkReply;
-class QUrl;
 
 class QWEBKIT_EXPORT QQuickUrlSchemeDelegate : public QObject {
     Q_OBJECT
