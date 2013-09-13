@@ -1,3 +1,16 @@
+2013-09-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r155675. Move new tests from fast/js to js.
+
+        * js/array-with-double-assign-expected.txt: Renamed from LayoutTests/fast/js/array-with-double-assign-expected.txt.
+        * js/array-with-double-assign.html: Renamed from LayoutTests/fast/js/array-with-double-assign.html.
+        * js/array-with-double-push-expected.txt: Renamed from LayoutTests/fast/js/array-with-double-push-expected.txt.
+        * js/array-with-double-push.html: Renamed from LayoutTests/fast/js/array-with-double-push.html.
+        * js/script-tests/array-with-double-assign.js: Renamed from LayoutTests/fast/js/script-tests/array-with-double-assign.js.
+        (foo):
+        * js/script-tests/array-with-double-push.js: Renamed from LayoutTests/fast/js/script-tests/array-with-double-push.js.
+        (foo):
+
 2013-09-13  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] unreviewed gardening. Rebaseline after r155253.
