@@ -1673,9 +1673,6 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine(), startOffset(), lineStartOffset());
 
-    if (m_init)
-        generator.emitNode(generator.ignoredResult(), m_init);
-
     RefPtr<RegisterID> base = generator.newTemporary();
     generator.emitNode(base.get(), m_expr);
     RefPtr<RegisterID> i = generator.newTemporary();

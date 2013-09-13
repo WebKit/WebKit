@@ -1,3 +1,22 @@
+2013-09-13  Oliver Hunt  <oliver@apple.com>
+
+        Try to kill initialiser expression in for-in statements
+        https://bugs.webkit.org/show_bug.cgi?id=121311
+
+        Reviewed by Gavin Barraclough.
+
+        Update test cases to represent the new reality
+
+        * js/line-column-numbers-expected.txt:
+        * js/line-column-numbers.html:
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/function-declaration-statement.js:
+        * js/script-tests/line-column-numbers.js:
+        (try.toFuzz22b):
+        * js/script-tests/parser-syntax-check.js:
+        * js/script-tests/toString-for-var-decl.js:
+        (f1):
+
 2013-09-13  Alexey Proskuryakov  <ap@apple.com>
 
         Flaky Test: http/tests/inspector/appcache/appcache-manifest-with-non-existing-file.html

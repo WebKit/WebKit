@@ -1242,12 +1242,11 @@ namespace JSC {
     class ForInNode : public StatementNode, public ThrowableExpressionData {
     public:
         ForInNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*);
-        ForInNode(VM*, const JSTokenLocation&, const Identifier&, ExpressionNode*, ExpressionNode*, StatementNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+        ForInNode(VM*, const JSTokenLocation&, const Identifier&, ExpressionNode*, StatementNode*, const JSTextPosition& divotStart);
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        ExpressionNode* m_init;
         ExpressionNode* m_lexpr;
         ExpressionNode* m_expr;
         StatementNode* m_statement;

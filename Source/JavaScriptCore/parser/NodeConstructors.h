@@ -808,27 +808,18 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
 
     inline ForInNode::ForInNode(const JSTokenLocation& location, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
         : StatementNode(location)
-        , m_init(0)
         , m_lexpr(l)
         , m_expr(expr)
         , m_statement(statement)
     {
     }
 
-    inline ForInNode::ForInNode(VM* vm, const JSTokenLocation& location, const Identifier& ident, ExpressionNode* in, ExpressionNode* expr, StatementNode* statement, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+    inline ForInNode::ForInNode(VM* vm, const JSTokenLocation& location, const Identifier& ident, ExpressionNode* expr, StatementNode* statement, const JSTextPosition& divotStart)
         : StatementNode(location)
-        , m_init(0)
         , m_lexpr(new (vm) ResolveNode(location, ident, divotStart))
         , m_expr(expr)
         , m_statement(statement)
     {
-        if (in) {
-            AssignResolveNode* node = new (vm) AssignResolveNode(location, ident, in);
-            ASSERT(divot.offset >= divot.lineStartOffset);
-            node->setExceptionSourceCode(divot, divotStart, divotEnd);
-            m_init = node;
-        }
-        // for( var foo = bar in baz )
     }
 
 } // namespace JSC

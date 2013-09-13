@@ -150,8 +150,8 @@ try {
 testId++;
 try {
     function toFuzz22b() {
-        for (var conf = new ConfigObject({
-        }) in str1.localeCompare) {
+        var conf = new ConfigObject({})
+        for (conf in str1.localeCompare) {
         }
     }
     toFuzz22b();

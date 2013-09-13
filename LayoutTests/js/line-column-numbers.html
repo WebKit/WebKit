@@ -217,8 +217,8 @@ try {
 <script>
 try {
     function toFuzz22() {
-        for (var conf = new ConfigObject({
-        }) in str1.localeCompare) {
+        var conf = new ConfigObject({})
+        for (conf in str1.localeCompare) {
         }
     }
     toFuzz22();

@@ -122,7 +122,7 @@ shouldBeTrue("forInVarTest()");
 function forInVarInitTest()
 {
     var a;
-    for (var a = false in { field: false })
+    for (var a in { field: false })
         function f()
         {
             return true;

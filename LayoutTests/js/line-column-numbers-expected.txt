@@ -142,7 +142,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     1   global code at line-column-numbers.html:209:13
 
 --> Case 22 Stack Trace:
-    0   toFuzz22 at line-column-numbers.html:220:41
+    0   toFuzz22 at line-column-numbers.html:220:36
     1   global code at line-column-numbers.html:224:13
 
 --> Case 1 Stack Trace:
@@ -284,7 +284,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     1   global code at line-column-numbers.js:144:14
 
 --> Case 22 Stack Trace:
-    0   toFuzz22b at line-column-numbers.js:153:41
+    0   toFuzz22b at line-column-numbers.js:153:36
     1   global code at line-column-numbers.js:157:14
 
 PASS successfullyParsed is true

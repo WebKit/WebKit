@@ -361,9 +361,9 @@ public:
         return result;
     }
 
-    StatementNode* createForInLoop(const JSTokenLocation& location, const Identifier* ident, ExpressionNode* initializer, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end, const JSTextPosition& initStart, const JSTextPosition& initEnd, int startLine, int endLine)
+    StatementNode* createForInLoop(const JSTokenLocation& location, const Identifier* ident, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end, int startLine, int endLine)
     {
-        ForInNode* result = new (m_vm) ForInNode(m_vm, location, *ident, initializer, iter, statements, initStart, start, initEnd);
+        ForInNode* result = new (m_vm) ForInNode(m_vm, location, *ident, iter, statements, start);
         result->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);
         setExceptionLocation(result, start, divot + 1, end);
         return result;

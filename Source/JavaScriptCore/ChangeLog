@@ -1,3 +1,28 @@
+2013-09-13  Oliver Hunt  <oliver@apple.com>
+
+        Try to kill initialiser expression in for-in statements
+        https://bugs.webkit.org/show_bug.cgi?id=121311
+
+        Reviewed by Gavin Barraclough.
+
+        We'd like to get rid of this pointless initialiser expression
+        in for-in statements.  Unfortunately we have to keep the no_in
+        variant of expression parsing to avoid ambiguity in the grammar.
+        There's a possibility that this will need to be rolled out, but
+        we'll need to live on it to see.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createForInLoop):
+        * parser/NodeConstructors.h:
+        (JSC::ForInNode::ForInNode):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::::parseForStatement):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createForInLoop):
+
 2013-09-12  Michael Saboff  <msaboff@apple.com>
 
         fourthTier: Change JSStack to grow from high to low addresses

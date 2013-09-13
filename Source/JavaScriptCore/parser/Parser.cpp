@@ -368,7 +368,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
             goto standardForLoop;
         
         failIfFalse(declarations == 1);
-        
+        failIfTrueWithMessage(forInInitializer, "Cannot use initialiser syntax in a for-in loop");
+
         // Handle for-in with var declaration
         JSTextPosition inLocation = tokenStartPosition();
         consumeOrFail(INTOKEN);
@@ -386,7 +387,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         endLoop();
         failIfFalse(statement);
         
-        return context.createForInLoop(location, forInTarget, forInInitializer, expr, statement, declsStart, inLocation, exprEnd, initStart, initEnd, startLine, endLine);
+        return context.createForInLoop(location, forInTarget, expr, statement, declsStart, inLocation, exprEnd, startLine, endLine);
     }
     
     if (!match(SEMICOLON)) {

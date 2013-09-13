@@ -185,7 +185,7 @@ public:
     int createIfStatement(const JSTokenLocation&, int, int, int, int) { return 1; }
     int createIfStatement(const JSTokenLocation&, int, int, int, int, int) { return 1; }
     int createForLoop(const JSTokenLocation&, int, int, int, int, int, int) { return 1; }
-    int createForInLoop(const JSTokenLocation&, const Identifier*, int, int, int, int, int, int, int, int, int, int) { return 1; }
+    int createForInLoop(const JSTokenLocation&, const Identifier*, int, int, int, int, int, int, int) { return 1; }
     int createForInLoop(const JSTokenLocation&, int, int, int, int, int, int, int, int) { return 1; }
     int createEmptyStatement(const JSTokenLocation&) { return 1; }
     int createVarStatement(const JSTokenLocation&, int, int, int) { return 1; }
