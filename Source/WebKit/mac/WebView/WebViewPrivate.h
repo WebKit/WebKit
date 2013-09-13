@@ -70,6 +70,8 @@ extern NSString *WebElementIsInScrollBarKey;
 // One of the subviews of the WebView entered compositing mode.
 extern NSString *_WebViewDidStartAcceleratedCompositingNotification;
 
+extern NSString * const WebViewWillCloseNotification;
+
 #if ENABLE_DASHBOARD_SUPPORT
 typedef enum {
     WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows,

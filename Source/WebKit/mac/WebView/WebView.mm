@@ -506,6 +506,7 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
 
 NSString *_WebViewDidStartAcceleratedCompositingNotification = @"_WebViewDidStartAcceleratedCompositing";
+NSString * const WebViewWillCloseNotification = @"WebViewWillCloseNotification";
 
 NSString *WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey = @"WebKitKerningAndLigaturesEnabledByDefault";
 
@@ -1083,6 +1084,8 @@ static bool fastDocumentTeardownEnabled()
 {
     if (!_private || _private->closed)
         return;
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewWillCloseNotification object:self];
 
     _private->closed = YES;
     [self _removeFromAllWebViewsSet];
