@@ -33,8 +33,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderButton::RenderButton(Element* element)
-    : RenderFlexibleBox(element)
+RenderButton::RenderButton(HTMLFormControlElement& element)
+    : RenderFlexibleBox(&element)
     , m_buttonText(0)
     , m_inner(0)
     , m_default(false)
@@ -43,6 +43,22 @@ RenderButton::RenderButton(Element* element)
 
 RenderButton::~RenderButton()
 {
+}
+
+HTMLFormControlElement& RenderButton::formControlElement() const
+{
+    ASSERT(RenderObject::node());
+    return *toHTMLFormControlElement(RenderObject::node());
+}
+
+bool RenderButton::canBeSelectionLeaf() const
+{
+    return formControlElement().rendererIsEditable();
+}
+
+bool RenderButton::hasLineIfEmpty() const
+{
+    return formControlElement().toInputElement();
 }
 
 void RenderButton::addChild(RenderObject* newChild, RenderObject* beforeChild)
@@ -122,9 +138,9 @@ void RenderButton::setupInnerStyle(RenderStyle* innerStyle)
 void RenderButton::updateFromElement()
 {
     // If we're an input element, we may need to change our button text.
-    if (isHTMLInputElement(element())) {
-        HTMLInputElement* input = toHTMLInputElement(element());
-        String value = input->valueWithDefault();
+    if (isHTMLInputElement(formControlElement())) {
+        HTMLInputElement& input = toHTMLInputElement(formControlElement());
+        String value = input.valueWithDefault();
         setText(value);
     }
 }
@@ -157,7 +173,7 @@ bool RenderButton::canHaveGeneratedChildren() const
     // Input elements can't have generated children, but button elements can. We'll
     // write the code assuming any other button types that might emerge in the future
     // can also have children.
-    return !isHTMLInputElement(element());
+    return !isHTMLInputElement(formControlElement());
 }
 
 LayoutRect RenderButton::controlClipRect(const LayoutPoint& additionalOffset) const

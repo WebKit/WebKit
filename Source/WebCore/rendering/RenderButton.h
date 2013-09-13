@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+class HTMLFormControlElement;
 class RenderTextFragment;
 
 // RenderButtons are just like normal flexboxes except that they will generate an anonymous block child.
@@ -34,13 +35,12 @@ class RenderTextFragment;
 // to date as the button changes.
 class RenderButton FINAL : public RenderFlexibleBox {
 public:
-    explicit RenderButton(Element*);
+    explicit RenderButton(HTMLFormControlElement&);
     virtual ~RenderButton();
 
-    virtual const char* renderName() const { return "RenderButton"; }
-    virtual bool isRenderButton() const { return true; }
+    HTMLFormControlElement& formControlElement() const;
 
-    virtual bool canBeSelectionLeaf() const OVERRIDE { return element() && element()->rendererIsEditable(); }
+    virtual bool canBeSelectionLeaf() const OVERRIDE;
 
     virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0);
     virtual void removeChild(RenderObject*);
@@ -58,10 +58,15 @@ public:
     String text() const;
 
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
+    virtual const char* renderName() const OVERRIDE { return "RenderButton"; }
+    virtual bool isRenderButton() const OVERRIDE { return true; }
+
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    virtual bool hasLineIfEmpty() const { return element() && element()->toInputElement(); }
+    virtual bool hasLineIfEmpty() const OVERRIDE;
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 

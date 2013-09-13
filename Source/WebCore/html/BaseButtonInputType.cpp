@@ -54,7 +54,8 @@ bool BaseButtonInputType::appendFormData(FormDataList&, bool) const
 
 RenderObject* BaseButtonInputType::createRenderer(RenderArena* arena, RenderStyle*) const
 {
-    return new (arena) RenderButton(element());
+    ASSERT(element()); // FIXME: element() should return a reference.
+    return new (arena) RenderButton(*element());
 }
 
 bool BaseButtonInputType::storesValueSeparateFromAttribute()

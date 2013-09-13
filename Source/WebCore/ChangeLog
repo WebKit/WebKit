@@ -1,3 +1,13 @@
+2013-09-13  Andreas Kling  <akling@apple.com>
+
+        [CTTE] RenderButton always has a HTMLFormControlElement.
+        <https://webkit.org/b/121281>
+
+        Reviewed by Antti Koivisto.
+
+        RenderButton is never anonymous and has either a <button> or an <input> element,
+        and their nearest shared ancestor is HTMLFormControlElement.
+
 2013-09-13  Darin Adler  <darin@apple.com>
 
         Give actions in Range class NON_SHOUTING_NAMES
