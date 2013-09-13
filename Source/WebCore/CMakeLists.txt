@@ -2276,7 +2276,6 @@ set(WebCore_SOURCES
     rendering/svg/RenderSVGResourceSolidColor.cpp
     rendering/svg/RenderSVGRoot.cpp
     rendering/svg/RenderSVGShape.cpp
-    rendering/svg/RenderSVGTSpan.cpp
     rendering/svg/RenderSVGText.cpp
     rendering/svg/RenderSVGTextPath.cpp
     rendering/svg/RenderSVGTransformableContainer.cpp

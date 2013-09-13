@@ -1,5 +1,21 @@
 2013-09-13  Andreas Kling  <akling@apple.com>
 
+        [CTTE] Tighter element types for RenderSVGInline and subclasses.
+        <https://webkit.org/b/121283>
+
+        Reviewed by Antti Koivisto.
+
+        Codify the following:
+
+        - RenderSVGInline always has an SVGGraphicsElement.
+        - RenderSVGTextPath always has an SVGTextPathElement.
+        - RenderSVGTSpan always has an SVGTextPositioningElement.
+
+        None of these renderers are ever anonymous, so delete element() and provide
+        strongly typed reference getters instead.
+
+2013-09-13  Andreas Kling  <akling@apple.com>
+
         [CTTE] RenderFileUploadControl always has a HTMLInputElement.
         <https://webkit.org/b/121278>
 

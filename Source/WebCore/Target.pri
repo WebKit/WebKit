@@ -3700,7 +3700,6 @@ enable?(SVG) {
         rendering/svg/RenderSVGResourceRadialGradient.cpp \
         rendering/svg/RenderSVGResourceSolidColor.cpp \
         rendering/svg/RenderSVGRoot.cpp \
-        rendering/svg/RenderSVGTSpan.cpp \
         rendering/svg/RenderSVGText.cpp \
         rendering/svg/RenderSVGTextPath.cpp \
         rendering/svg/RenderSVGTransformableContainer.cpp \

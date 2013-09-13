@@ -34,15 +34,19 @@
 
 namespace WebCore {
 
-RenderSVGTextPath::RenderSVGTextPath(Element* element)
+RenderSVGTextPath::RenderSVGTextPath(SVGTextPathElement& element)
     : RenderSVGInline(element)
 {
 }
 
+SVGTextPathElement& RenderSVGTextPath::textPathElement() const
+{
+    return toSVGTextPathElement(RenderSVGInline::graphicsElement());
+}
+
 Path RenderSVGTextPath::layoutPath() const
 {
-    SVGTextPathElement* textPathElement = toSVGTextPathElement(element());
-    Element* targetElement = SVGURIReference::targetElementFromIRIString(textPathElement->href(), &textPathElement->document());
+    Element* targetElement = SVGURIReference::targetElementFromIRIString(textPathElement().href(), &document());
     if (!targetElement || !targetElement->hasTagName(SVGNames::pathTag))
         return Path();
     
@@ -62,17 +66,17 @@ Path RenderSVGTextPath::layoutPath() const
 
 float RenderSVGTextPath::startOffset() const
 {
-    return toSVGTextPathElement(element())->startOffset().valueAsPercentage();
+    return textPathElement().startOffset().valueAsPercentage();
 }
 
 bool RenderSVGTextPath::exactAlignment() const
 {
-    return toSVGTextPathElement(element())->spacing() == SVGTextPathSpacingExact;
+    return textPathElement().spacing() == SVGTextPathSpacingExact;
 }
 
 bool RenderSVGTextPath::stretchMethod() const
 {
-    return toSVGTextPathElement(element())->method() == SVGTextPathMethodStretch;
+    return textPathElement().method() == SVGTextPathMethodStretch;
 }
 
 }

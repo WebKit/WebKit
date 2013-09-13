@@ -24,11 +24,20 @@
 
 #if ENABLE(SVG)
 #include "RenderSVGInline.h"
+#include "SVGTextPositioningElement.h"
 
 namespace WebCore {
 class RenderSVGTSpan FINAL : public RenderSVGInline {
 public:
-    explicit RenderSVGTSpan(Element*);
+    explicit RenderSVGTSpan(SVGTextPositioningElement& element)
+        : RenderSVGInline(element)
+    {
+    }
+
+    SVGTextPositioningElement& textPositioningElement() const { return static_cast<SVGTextPositioningElement&>(RenderSVGInline::graphicsElement()); }
+
+private:
+    void graphicsElement() const WTF_DELETED_FUNCTION;
     virtual const char* renderName() const { return "RenderSVGTSpan"; }
 };
 }

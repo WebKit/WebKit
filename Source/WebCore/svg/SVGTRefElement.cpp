@@ -222,7 +222,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderObject* SVGTRefElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderSVGInline(this);
+    return new (arena) RenderSVGInline(*this);
 }
 
 bool SVGTRefElement::childShouldCreateRenderer(const Node* child) const

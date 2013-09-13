@@ -23,14 +23,18 @@
 
 #if ENABLE(SVG)
 #include "RenderInline.h"
-
-#include "SVGRenderSupport.h"
+#include "SVGGraphicsElement.h"
 
 namespace WebCore {
 
 class RenderSVGInline : public RenderInline {
 public:
-    explicit RenderSVGInline(Element*);
+    explicit RenderSVGInline(SVGGraphicsElement&);
+
+    SVGGraphicsElement& graphicsElement() const { return *toSVGGraphicsElement(RenderInline::element()); }
+
+private:
+    void element() const WTF_DELETED_FUNCTION;
 
     virtual const char* renderName() const OVERRIDE { return "RenderSVGInline"; }
     virtual bool requiresLayer() const OVERRIDE FINAL { return false; }
@@ -51,7 +55,6 @@ public:
     virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const OVERRIDE FINAL;
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const OVERRIDE FINAL;
 
-private:
     virtual InlineFlowBox* createInlineFlowBox() OVERRIDE FINAL;
 
     virtual void willBeDestroyed() OVERRIDE FINAL;

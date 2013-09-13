@@ -6653,7 +6653,6 @@
 		0854B0071255E4E600B9CDD0 /* RenderSVGText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGText.h; sourceTree = "<group>"; };
 		0854B0081255E4E600B9CDD0 /* RenderSVGTextPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGTextPath.cpp; sourceTree = "<group>"; };
 		0854B0091255E4E600B9CDD0 /* RenderSVGTextPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGTextPath.h; sourceTree = "<group>"; };
-		0854B00A1255E4E600B9CDD0 /* RenderSVGTSpan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGTSpan.cpp; sourceTree = "<group>"; };
 		0854B00B1255E4E600B9CDD0 /* RenderSVGTSpan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGTSpan.h; sourceTree = "<group>"; };
 		0854B00C1255E4E600B9CDD0 /* SVGInlineFlowBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGInlineFlowBox.cpp; sourceTree = "<group>"; };
 		0854B00D1255E4E600B9CDD0 /* SVGInlineFlowBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGInlineFlowBox.h; sourceTree = "<group>"; };
@@ -13569,7 +13568,6 @@
 				0854B0091255E4E600B9CDD0 /* RenderSVGTextPath.h */,
 				436708A912D9CA4B00044234 /* RenderSVGTransformableContainer.cpp */,
 				436708AA12D9CA4B00044234 /* RenderSVGTransformableContainer.h */,
-				0854B00A1255E4E600B9CDD0 /* RenderSVGTSpan.cpp */,
 				0854B00B1255E4E600B9CDD0 /* RenderSVGTSpan.h */,
 				436708AB12D9CA4B00044234 /* RenderSVGViewportContainer.cpp */,
 				436708AC12D9CA4B00044234 /* RenderSVGViewportContainer.h */,

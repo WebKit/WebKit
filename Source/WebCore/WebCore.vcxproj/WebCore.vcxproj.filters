@@ -2982,9 +2982,6 @@
     <ClCompile Include="..\rendering\svg\RenderSVGTextPath.cpp">
       <Filter>rendering\svg</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\svg\RenderSVGTSpan.cpp">
-      <Filter>rendering\svg</Filter>
-    </ClCompile>
     <ClCompile Include="..\rendering\svg\SVGInlineFlowBox.cpp">
       <Filter>rendering\svg</Filter>
     </ClCompile>

@@ -28,17 +28,20 @@ namespace WebCore {
 
 class RenderSVGTextPath FINAL : public RenderSVGInline {
 public:
-    RenderSVGTextPath(Element*);
+    explicit RenderSVGTextPath(SVGTextPathElement&);
+
+    SVGTextPathElement& textPathElement() const;
 
     Path layoutPath() const;
     float startOffset() const;
     bool exactAlignment() const;
     bool stretchMethod() const;
 
-    virtual bool isSVGTextPath() const { return true; }
-
 private:
-    virtual const char* renderName() const { return "RenderSVGTextPath"; }
+    void graphicsElement() const WTF_DELETED_FUNCTION;
+
+    virtual bool isSVGTextPath() const OVERRIDE { return true; }
+    virtual const char* renderName() const OVERRIDE { return "RenderSVGTextPath"; }
 
     Path m_layoutPath;
 };

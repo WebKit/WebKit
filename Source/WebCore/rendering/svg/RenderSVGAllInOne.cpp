@@ -51,7 +51,6 @@
 #include "RenderSVGResourceSolidColor.cpp"
 #include "RenderSVGRoot.cpp"
 #include "RenderSVGShape.cpp"
-#include "RenderSVGTSpan.cpp"
 #include "RenderSVGText.cpp"
 #include "RenderSVGTextPath.cpp"
 #include "RenderSVGTransformableContainer.cpp"
