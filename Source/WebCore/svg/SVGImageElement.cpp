@@ -185,7 +185,7 @@ bool SVGImageElement::selfHasRelativeLengths() const
 
 RenderObject* SVGImageElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderSVGImage(this);
+    return new (arena) RenderSVGImage(*this);
 }
 
 bool SVGImageElement::haveLoadedRequiredResources()

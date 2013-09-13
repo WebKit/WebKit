@@ -38,8 +38,10 @@ class SVGImageElement;
 
 class RenderSVGImage FINAL : public RenderSVGModelObject {
 public:
-    RenderSVGImage(SVGImageElement*);
+    explicit RenderSVGImage(SVGImageElement&);
     virtual ~RenderSVGImage();
+
+    SVGImageElement& imageElement() const;
 
     bool updateImageViewport();
     virtual void setNeedsBoundariesUpdate() { m_needsBoundariesUpdate = true; }
@@ -53,6 +55,8 @@ public:
     void paintForeground(PaintInfo&);
 
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
     virtual const char* renderName() const { return "RenderSVGImage"; }
     virtual bool isSVGImage() const OVERRIDE { return true; }
 

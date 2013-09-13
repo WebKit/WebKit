@@ -48,8 +48,8 @@
 
 namespace WebCore {
 
-RenderSVGImage::RenderSVGImage(SVGImageElement* impl)
-    : RenderSVGModelObject(impl)
+RenderSVGImage::RenderSVGImage(SVGImageElement& element)
+    : RenderSVGModelObject(&element)
     , m_needsBoundariesUpdate(true)
     , m_needsTransformUpdate(true)
     , m_imageResource(RenderImageResource::create())
@@ -62,13 +62,17 @@ RenderSVGImage::~RenderSVGImage()
     m_imageResource->shutdown();
 }
 
+SVGImageElement& RenderSVGImage::imageElement() const
+{
+    return toSVGImageElement(*RenderSVGModelObject::element());
+}
+
 bool RenderSVGImage::updateImageViewport()
 {
-    SVGImageElement* image = toSVGImageElement(element());
     FloatRect oldBoundaries = m_objectBoundingBox;
 
-    SVGLengthContext lengthContext(image);
-    m_objectBoundingBox = FloatRect(image->x().value(lengthContext), image->y().value(lengthContext), image->width().value(lengthContext), image->height().value(lengthContext));
+    SVGLengthContext lengthContext(&imageElement());
+    m_objectBoundingBox = FloatRect(imageElement().x().value(lengthContext), imageElement().y().value(lengthContext), imageElement().width().value(lengthContext), imageElement().height().value(lengthContext));
 
     if (oldBoundaries == m_objectBoundingBox)
         return false;
@@ -88,7 +92,7 @@ void RenderSVGImage::layout()
 
     bool transformOrBoundariesUpdate = m_needsTransformUpdate || m_needsBoundariesUpdate;
     if (m_needsTransformUpdate) {
-        m_localTransform = toSVGImageElement(element())->animatedLocalTransform();
+        m_localTransform = imageElement().animatedLocalTransform();
         m_needsTransformUpdate = false;
     }
 
@@ -151,8 +155,7 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo)
     FloatRect destRect = m_objectBoundingBox;
     FloatRect srcRect(0, 0, image->width(), image->height());
 
-    SVGImageElement* imageElement = toSVGImageElement(element());
-    imageElement->preserveAspectRatio().transformRect(destRect, srcRect);
+    imageElement().preserveAspectRatio().transformRect(destRect, srcRect);
 
     paintInfo.context->drawImage(image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
 }
