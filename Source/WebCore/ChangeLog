@@ -1,3 +1,26 @@
+2013-09-12  Tim Horton  <timothy_horton@apple.com>
+
+        Image doesn't always repaint at high quality in all tiles after a live resize
+        https://bugs.webkit.org/show_bug.cgi?id=121244
+
+        Reviewed by Darin Adler.
+
+        Currently, ImageQualityController removes an image from its low-quality-images
+        list from inside shouldPaintAtLowQuality, if this is the first paint outside
+        of a live resize, but does not force the renderer to repaint in its entirety.
+
+        However, there's no guarantee we've invalidated the whole renderer, so this can
+        leave some parts of the image painted in low-quality.
+
+        This just removes a short-circuit, instead using the ordinary high-quality-repaint
+        timer to ensure that the entire renderer is repainted.
+
+        No new test; all attempts have failed, as this depends on tiled drawing
+        and a live resize occurring.
+
+        * rendering/ImageQualityController.cpp:
+        (WebCore::ImageQualityController::shouldPaintAtLowQuality):
+
 2013-09-12  Brent Fulgham  <bfulgham@apple.com>
 
         [EFL] Speculative build fix after r155638.

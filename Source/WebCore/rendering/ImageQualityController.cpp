@@ -142,11 +142,8 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
             m_liveResizeOptimizationIsActive = true;
             return true;
         }
-        if (m_liveResizeOptimizationIsActive) {
-            // Live resize has ended, paint in HQ and remove this object from the list.
-            removeLayer(object, innerMap, layer);
+        if (m_liveResizeOptimizationIsActive)
             return false;
-        }
     }
 
     const AffineTransform& currentTransform = context->getCTM();
