@@ -51,11 +51,12 @@ namespace WebCore {
     class DragController {
         WTF_MAKE_NONCOPYABLE(DragController); WTF_MAKE_FAST_ALLOCATED;
     public:
+        DragController(Page&, DragClient&);
         ~DragController();
 
         static PassOwnPtr<DragController> create(Page*, DragClient*);
 
-        DragClient* client() const { return m_client; }
+        DragClient& client() const { return m_client; }
 
         DragSession dragEntered(DragData*);
         void dragExited(DragData*);
@@ -91,8 +92,6 @@ namespace WebCore {
         static const float DragImageAlpha;
 
     private:
-        DragController(Page*, DragClient*);
-
         bool dispatchTextInputEventFor(Frame*, DragData*);
         bool canProcessDrag(DragData*);
         bool concludeEditDrag(DragData*);
@@ -112,8 +111,8 @@ namespace WebCore {
         void cleanupAfterSystemDrag();
         void declareAndWriteDragImage(Clipboard*, Element*, const KURL&, const String& label);
 
-        Page* m_page;
-        DragClient* m_client;
+        Page& m_page;
+        DragClient& m_client;
 
         RefPtr<Document> m_documentUnderMouse; // The document the mouse was last dragged over.
         RefPtr<Document> m_dragInitiator; // The Document (if any) that initiated the drag.

@@ -1,3 +1,36 @@
+2013-09-13  Sam Weinig  <sam@webkit.org>
+
+        Chrome, DragController and FocusController should hold onto a Page&
+        https://bugs.webkit.org/show_bug.cgi?id=121325
+
+        Reviewed by Anders Carlsson.
+
+        * editing/FrameSelection.cpp:
+        * editing/FrameSelection.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::Chrome):
+        (WebCore::Chrome::scroll):
+        (WebCore::Chrome::createWindow):
+        (WebCore::canRunModalIfDuringPageDismissal):
+        (WebCore::Chrome::runBeforeUnloadConfirmPanel):
+        (WebCore::Chrome::runJavaScriptAlert):
+        (WebCore::Chrome::runJavaScriptConfirm):
+        (WebCore::Chrome::runJavaScriptPrompt):
+        (WebCore::Chrome::mouseDidMoveOverElement):
+        (WebCore::Chrome::setToolTip):
+        (WebCore::Chrome::windowScreenDidChange):
+        * page/Chrome.h:
+        * page/DragController.cpp:
+        * page/DragController.h:
+        * page/mac/DragControllerMac.mm:
+        * page/FocusController.cpp:
+        * page/FocusController.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/PageGroupLoadDeferrer.cpp:
+        * page/PageGroupLoadDeferrer.h:
+        Take references where possible.
+
 2013-09-13  Anders Carlsson  <andersca@apple.com>
 
         Use nullptr instead of 0 in calls to HashMap::add

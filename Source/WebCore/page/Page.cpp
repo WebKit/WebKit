@@ -124,12 +124,12 @@ float deviceScaleFactor(Frame* frame)
 }
 
 Page::Page(PageClients& pageClients)
-    : m_chrome(Chrome::create(this, pageClients.chromeClient))
-    , m_dragCaretController(DragCaretController::create())
+    : m_chrome(createOwned<Chrome>(*this, *pageClients.chromeClient))
+    , m_dragCaretController(createOwned<DragCaretController>())
 #if ENABLE(DRAG_SUPPORT)
-    , m_dragController(DragController::create(this, pageClients.dragClient))
+    , m_dragController(createOwned<DragController>(*this, *pageClients.dragClient))
 #endif
-    , m_focusController(FocusController::create(this))
+    , m_focusController(createOwned<FocusController>(*this))
 #if ENABLE(CONTEXT_MENUS)
     , m_contextMenuController(createOwned<ContextMenuController>(*this, *pageClients.contextMenuClient))
 #endif

@@ -31,7 +31,7 @@ namespace WebCore {
     class PageGroupLoadDeferrer {
         WTF_MAKE_NONCOPYABLE(PageGroupLoadDeferrer);
     public:
-        PageGroupLoadDeferrer(Page*, bool deferSelf);
+        PageGroupLoadDeferrer(Page&, bool deferSelf);
         ~PageGroupLoadDeferrer();
 
     private:

@@ -62,22 +62,16 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace std;
 
-Chrome::Chrome(Page* page, ChromeClient* client)
+Chrome::Chrome(Page& page, ChromeClient& client)
     : m_page(page)
-    , m_client(*client)
+    , m_client(client)
     , m_displayID(0)
 {
-    ASSERT(client);
 }
 
 Chrome::~Chrome()
 {
     m_client.chromeDestroyed();
-}
-
-PassOwnPtr<Chrome> Chrome::create(Page* page, ChromeClient* client)
-{
-    return adoptPtr(new Chrome(page, client));
 }
 
 void Chrome::invalidateRootView(const IntRect& updateRect, bool immediate)
@@ -98,7 +92,7 @@ void Chrome::invalidateContentsForSlowScroll(const IntRect& updateRect, bool imm
 void Chrome::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
     m_client.scroll(scrollDelta, rectToScroll, clipRect);
-    InspectorInstrumentation::didScroll(m_page);
+    InspectorInstrumentation::didScroll(&m_page);
 }
 
 #if USE(TILED_BACKING_STORE)
@@ -194,7 +188,7 @@ Page* Chrome::createWindow(Frame* frame, const FrameLoadRequest& request, const 
     if (!newPage)
         return 0;
 
-    if (StorageNamespace* oldSessionStorage = m_page->sessionStorage(false))
+    if (StorageNamespace* oldSessionStorage = m_page.sessionStorage(false))
         newPage->setSessionStorage(oldSessionStorage->copy(newPage));
 
     return newPage;
@@ -210,12 +204,12 @@ bool Chrome::canRunModal() const
     return m_client.canRunModal();
 }
 
-static bool canRunModalIfDuringPageDismissal(Page* page, ChromeClient::DialogType dialog, const String& message)
+static bool canRunModalIfDuringPageDismissal(Page& page, ChromeClient::DialogType dialog, const String& message)
 {
-    for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameLoader::PageDismissalType dismissal = frame->loader().pageDismissalEventBeingDispatched();
         if (dismissal != FrameLoader::NoDismissal)
-            return page->chrome().client().shouldRunModalDialogDuringPageDismissal(dialog, message, dismissal);
+            return page.chrome().client().shouldRunModalDialogDuringPageDismissal(dialog, message, dismissal);
     }
     return true;
 }
@@ -294,7 +288,7 @@ bool Chrome::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(m_page, true);
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRunJavaScriptDialog(m_page, message);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRunJavaScriptDialog(&m_page, message);
     bool ok = m_client.runBeforeUnloadConfirmPanel(message, frame);
     InspectorInstrumentation::didRunJavaScriptDialog(cookie);
     return ok;
@@ -318,7 +312,7 @@ void Chrome::runJavaScriptAlert(Frame* frame, const String& message)
     notifyPopupOpeningObservers();
     String displayMessage = frame->displayStringModifiedByEncoding(message);
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRunJavaScriptDialog(m_page, displayMessage);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRunJavaScriptDialog(&m_page, displayMessage);
     m_client.runJavaScriptAlert(frame, displayMessage);
     InspectorInstrumentation::didRunJavaScriptDialog(cookie);
 }
@@ -336,7 +330,7 @@ bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
     notifyPopupOpeningObservers();
     String displayMessage = frame->displayStringModifiedByEncoding(message);
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRunJavaScriptDialog(m_page, displayMessage);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRunJavaScriptDialog(&m_page, displayMessage);
     bool ok = m_client.runJavaScriptConfirm(frame, displayMessage);
     InspectorInstrumentation::didRunJavaScriptDialog(cookie);
     return ok;
@@ -355,7 +349,7 @@ bool Chrome::runJavaScriptPrompt(Frame* frame, const String& prompt, const Strin
     notifyPopupOpeningObservers();
     String displayPrompt = frame->displayStringModifiedByEncoding(prompt);
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRunJavaScriptDialog(m_page, displayPrompt);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRunJavaScriptDialog(&m_page, displayPrompt);
     bool ok = m_client.runJavaScriptPrompt(frame, displayPrompt, frame->displayStringModifiedByEncoding(defaultValue), result);
     InspectorInstrumentation::didRunJavaScriptDialog(cookie);
 
@@ -391,7 +385,7 @@ void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modif
         prefetchDNS(result.absoluteLinkURL().host());
     m_client.mouseDidMoveOverElement(result, modifierFlags);
 
-    InspectorInstrumentation::mouseDidMoveOverElement(m_page, result, modifierFlags);
+    InspectorInstrumentation::mouseDidMoveOverElement(&m_page, result, modifierFlags);
 }
 
 void Chrome::setToolTip(const HitTestResult& result)
@@ -401,7 +395,7 @@ void Chrome::setToolTip(const HitTestResult& result)
     String toolTip = result.spellingToolTip(toolTipDirection);
 
     // Next priority is a toolTip from a URL beneath the mouse (if preference is set to show those).
-    if (toolTip.isEmpty() && m_page->settings().showsURLsInToolTips()) {
+    if (toolTip.isEmpty() && m_page.settings().showsURLsInToolTips()) {
         if (Element* element = result.innerNonSharedElement()) {
             // Get tooltip representing form action, if relevant
             if (isHTMLInputElement(element)) {
@@ -431,7 +425,7 @@ void Chrome::setToolTip(const HitTestResult& result)
     if (toolTip.isEmpty())
         toolTip = result.title(toolTipDirection);
 
-    if (toolTip.isEmpty() && m_page->settings().showsToolTipOverTruncatedText())
+    if (toolTip.isEmpty() && m_page.settings().showsToolTipOverTruncatedText())
         toolTip = result.innerTextIfTruncated(toolTipDirection);
 
     // Lastly, for <input type="file"> that allow multiple files, we'll consider a tooltip for the selected filenames
@@ -539,7 +533,7 @@ void Chrome::windowScreenDidChange(PlatformDisplayID displayID)
 
     m_displayID = displayID;
 
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->windowScreenDidChange(displayID);
     }

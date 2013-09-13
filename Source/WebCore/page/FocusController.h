@@ -62,7 +62,7 @@ private:
 class FocusController {
     WTF_MAKE_NONCOPYABLE(FocusController); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<FocusController> create(Page*);
+    explicit FocusController(Page&);
 
     void setFocusedFrame(PassRefPtr<Frame>);
     Frame* focusedFrame() const { return m_focusedFrame.get(); }
@@ -83,8 +83,6 @@ public:
     bool containingWindowIsVisible() const { return m_containingWindowIsVisible; }
 
 private:
-    explicit FocusController(Page*);
-
     bool advanceFocusDirectionally(FocusDirection, KeyboardEvent*);
     bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);
 
@@ -111,7 +109,7 @@ private:
     bool advanceFocusDirectionallyInContainer(Node* container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*);
     void findFocusCandidateInContainer(Node* container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*, FocusCandidate& closest);
 
-    Page* m_page;
+    Page& m_page;
     RefPtr<Frame> m_focusedFrame;
     bool m_isActive;
     bool m_isFocused;

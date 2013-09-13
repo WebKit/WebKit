@@ -87,7 +87,7 @@ class DragCaretController : private CaretBase {
     WTF_MAKE_NONCOPYABLE(DragCaretController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<DragCaretController> create();
+    DragCaretController();
 
     RenderObject* caretRenderer() const;
     void paintDragCaret(Frame*, GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
@@ -103,8 +103,6 @@ public:
     void nodeWillBeRemoved(Node*);
 
 private:
-    DragCaretController();
-
     VisiblePosition m_position;
 };
 

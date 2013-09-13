@@ -33,14 +33,14 @@ namespace WebCore {
 
 using namespace std;
 
-PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
+PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page& page, bool deferSelf)
 {
-    const HashSet<Page*>& pages = page->group().pages();
+    const HashSet<Page*>& pages = page.group().pages();
 
     HashSet<Page*>::const_iterator end = pages.end();
     for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
         Page* otherPage = *it;
-        if ((deferSelf || otherPage != page)) {
+        if ((deferSelf || otherPage != &page)) {
             if (!otherPage->defersLoading()) {
                 m_deferredFrames.append(&otherPage->mainFrame());
 

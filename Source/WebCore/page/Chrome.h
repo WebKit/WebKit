@@ -63,9 +63,8 @@ struct WindowFeatures;
     
 class Chrome : public HostWindow {
 public:
+    Chrome(Page&, ChromeClient&);
     ~Chrome();
-
-    static PassOwnPtr<Chrome> create(Page*, ChromeClient*);
 
     ChromeClient& client() { return m_client; }
 
@@ -184,10 +183,9 @@ public:
     void unregisterPopupOpeningObserver(PopupOpeningObserver*);
 
 private:
-    Chrome(Page*, ChromeClient*);
     void notifyPopupOpeningObservers() const;
 
-    Page* m_page;
+    Page& m_page;
     ChromeClient& m_client;
     PlatformDisplayID m_displayID;
     Vector<PopupOpeningObserver*> m_popupOpeningObservers;
