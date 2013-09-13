@@ -1,3 +1,41 @@
+2013-09-13  Zoltan Horvath  <zoltan@webkit.org>
+
+        Move LineLayoutState class to LineLayoutState.h
+        https://bugs.webkit.org/show_bug.cgi?id=121263
+
+        Reviewed by Ryosuke Niwa.
+
+        I added bitfields, reordered the members and a functions too.
+
+        No new tests, no behavior change.
+
+        * rendering/LineLayoutState.h: Added.
+        (WebCore::LineLayoutState::LineLayoutState):
+        (WebCore::LineLayoutState::markForFullLayout):
+        (WebCore::LineLayoutState::isFullLayout):
+        (WebCore::LineLayoutState::usesRepaintBounds):
+        (WebCore::LineLayoutState::setRepaintRange):
+        (WebCore::LineLayoutState::updateRepaintRangeFromBox):
+        (WebCore::LineLayoutState::endLineMatched):
+        (WebCore::LineLayoutState::setEndLineMatched):
+        (WebCore::LineLayoutState::checkForFloatsFromLastLine):
+        (WebCore::LineLayoutState::setCheckForFloatsFromLastLine):
+        (WebCore::LineLayoutState::lineInfo):
+        (WebCore::LineLayoutState::endLineLogicalTop):
+        (WebCore::LineLayoutState::setEndLineLogicalTop):
+        (WebCore::LineLayoutState::endLine):
+        (WebCore::LineLayoutState::setEndLine):
+        (WebCore::LineLayoutState::lastFloat):
+        (WebCore::LineLayoutState::setLastFloat):
+        (WebCore::LineLayoutState::floats):
+        (WebCore::LineLayoutState::floatIndex):
+        (WebCore::LineLayoutState::setFloatIndex):
+        (WebCore::LineLayoutState::adjustedLogicalLineTop):
+        (WebCore::LineLayoutState::setAdjustedLogicalLineTop):
+        (WebCore::LineLayoutState::flowThread):
+        (WebCore::LineLayoutState::setFlowThread):
+        * rendering/RenderBlockLineLayout.cpp: Remove LineLayoutState.
+
 2013-09-13  Darin Adler  <darin@apple.com>
 
         Remove layering-violating Pasteboard::writeURL (for all platforms now)

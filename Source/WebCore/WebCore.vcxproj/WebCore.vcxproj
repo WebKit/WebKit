@@ -19976,6 +19976,7 @@
     <ClInclude Include="..\rendering\LayoutRepainter.h" />
     <ClInclude Include="..\rendering\LayoutState.h" />
     <ClInclude Include="..\rendering\LineInfo.h" />
+    <ClInclude Include="..\rendering\LineLayoutState.h" />
     <ClInclude Include="..\rendering\LineWidth.h" />
     <ClInclude Include="..\rendering\PaintInfo.h" />
     <ClInclude Include="..\rendering\PaintPhase.h" />

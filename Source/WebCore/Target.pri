@@ -2404,6 +2404,7 @@ HEADERS += \
     rendering/LayoutState.h \
     rendering/LineInfo.h \
     rendering/LineWidth.h \
+    rendering/LineLayoutState.h \
     rendering/LogicalSelectionOffsetCaches.h \
     rendering/mathml/RenderMathMLBlock.h \
     rendering/mathml/RenderMathMLFenced.h \
