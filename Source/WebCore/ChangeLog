@@ -1,3 +1,18 @@
+2013-09-13  Eric Carlson  <eric.carlson@apple.com>
+
+        CodeGeneratorJS doesn't generate header includes for sequence<type>
+        https://bugs.webkit.org/show_bug.cgi?id=121314
+
+        Reviewed by Dean Jackson.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (SkipIncludeHeader): Don't return false for sequence and array types.
+        (AddIncludesForType): Do add includes for sequence and array types.
+        (GenerateCallbackImplementation):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp: Regenerated
+        * bindings/scripts/test/JS/JSTestTypedefs.h: Ditto.
+        * bindings/scripts/test/TestTypedefs.idl: Add a method that takes a sequence<TestEventTarget>.
+
 2013-09-13  Andreas Kling  <akling@apple.com>
 
         CTTE: RenderSVGResourcePattern always has an SVGPatternElement.

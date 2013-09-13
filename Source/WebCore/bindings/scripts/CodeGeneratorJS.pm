@@ -206,7 +206,6 @@ sub SkipIncludeHeader
     my $type = shift;
 
     return 1 if $codeGenerator->SkipIncludeHeader($type);
-    return 1 if $codeGenerator->GetSequenceType($type) or $codeGenerator->GetArrayType($type);
     return $typesWithoutHeader{$type};
 }
 
@@ -225,6 +224,19 @@ sub AddIncludesForType
         $includesRef->{"JSCustomXPathNSResolver.h"} = 1;
     } elsif ($isCallback && $codeGenerator->IsWrapperType($type)) {
         $includesRef->{"JS${type}.h"} = 1;
+    } elsif ($codeGenerator->GetSequenceType($type) or $codeGenerator->GetArrayType($type)) {
+        my $arrayType = $codeGenerator->GetArrayType($type);
+        my $sequenceType = $codeGenerator->GetSequenceType($type);
+        my $arrayOrSequenceType = $arrayType || $sequenceType;
+
+        if ($arrayType eq "DOMString") {
+            $includesRef->{"JSDOMStringList.h"} = 1;
+            $includesRef->{"DOMStringList.h"} = 1;
+        } elsif ($codeGenerator->IsRefPtrType($arrayOrSequenceType)) {
+            $includesRef->{"JS${arrayOrSequenceType}.h"} = 1;
+            $includesRef->{"${arrayOrSequenceType}.h"} = 1;
+        }
+        $includesRef->{"<runtime/JSArray.h>"} = 1;
     } else {
         # default, include the same named file
         $includesRef->{"${type}.h"} = 1;

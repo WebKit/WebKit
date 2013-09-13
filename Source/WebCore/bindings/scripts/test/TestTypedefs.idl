@@ -55,6 +55,8 @@
     [RaisesException] ARRAY_OF_STRINGS stringArrayFunction(ARRAY_OF_STRINGS values);
     [RaisesException] STRING[] stringArrayFunction2(STRING[] values);
 
+    boolean callWithSequenceThatRequiresInclude(sequence<TestEventTarget> sequenceArg);
+
     // Exceptions
     [RaisesException] void methodWithException();
     [GetterRaisesException] attribute long attrWithGetterException;
@@ -75,3 +77,4 @@ typedef TestCallback               TEST_CALLBACK;
 typedef TestSubObjConstructor      T;
 typedef Int32Array                 ARRAY;
 typedef DOMException               E;
+typedef TestEventTarget            TEST_EVENT_TARGET;
