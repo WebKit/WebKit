@@ -221,7 +221,7 @@ RenderObject* RenderObject::createObject(Element* element, RenderStyle* style)
         return new (arena) RenderTableRow(element);
     case TABLE_COLUMN_GROUP:
     case TABLE_COLUMN:
-        return new (arena) RenderTableCol(element);
+        return new (arena) RenderTableCol(*element);
     case TABLE_CELL:
         return new (arena) RenderTableCell(element);
     case TABLE_CAPTION:

@@ -1,5 +1,15 @@
 2013-09-13  Andreas Kling  <akling@apple.com>
 
+        [CTTE] RenderTableCol is never anonymous.
+        <https://webkit.org/b/121286>
+
+        Reviewed by Antti Koivisto.
+
+        Hide element() and provide existingElement() instead, returning an Element&.
+        Removed one bogus null check that was exposed.
+
+2013-09-13  Andreas Kling  <akling@apple.com>
+
         [CTTE] RenderListItem is never anonymous.
         <https://webkit.org/b/121285>
 
