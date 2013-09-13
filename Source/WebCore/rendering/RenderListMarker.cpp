@@ -1053,9 +1053,9 @@ String listMarkerText(EListStyleType type, int value)
     return "";
 }
 
-RenderListMarker::RenderListMarker(RenderListItem* item)
+RenderListMarker::RenderListMarker(RenderListItem& listItem)
     : RenderBox(0)
-    , m_listItem(item)
+    , m_listItem(listItem)
 {
     // init RenderObject attributes
     setInline(true);   // our object is Inline
@@ -1068,10 +1068,10 @@ RenderListMarker::~RenderListMarker()
         m_image->removeClient(this);
 }
 
-RenderListMarker* RenderListMarker::createAnonymous(RenderListItem* item)
+RenderListMarker* RenderListMarker::createAnonymous(RenderListItem& listItem)
 {
-    Document& document = item->document();
-    RenderListMarker* renderer = new (document.renderArena()) RenderListMarker(item);
+    Document& document = listItem.document();
+    RenderListMarker* renderer = new (document.renderArena()) RenderListMarker(listItem);
     renderer->setDocumentForAnonymous(&document);
     return renderer;
 }
@@ -1303,7 +1303,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
             textRun.setText(reversedText.characters(), length);
         }
 
-        const UChar suffix = listMarkerSuffix(type, m_listItem->value());
+        const UChar suffix = listMarkerSuffix(type, m_listItem.value());
         if (style()->isLeftToRightDirection()) {
             int width = font.width(textRun);
             context->drawText(font, textRun, textOrigin);
@@ -1467,7 +1467,7 @@ void RenderListMarker::updateContent()
     case UpperNorwegian:
     case UpperRoman:
     case Urdu:
-        m_text = listMarkerText(type, m_listItem->value());
+        m_text = listMarkerText(type, m_listItem.value());
         break;
     }
 }
@@ -1580,7 +1580,7 @@ void RenderListMarker::computePreferredLogicalWidths()
                 logicalWidth = 0;
             else {
                 LayoutUnit itemWidth = font.width(m_text);
-                UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem->value()), ' ' };
+                UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem.value()), ' ' };
                 LayoutUnit suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));
                 logicalWidth = itemWidth + suffixSpaceWidth;
             }
@@ -1663,21 +1663,21 @@ void RenderListMarker::updateMargins()
 LayoutUnit RenderListMarker::lineHeight(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     if (!isImage())
-        return m_listItem->lineHeight(firstLine, direction, PositionOfInteriorLineBoxes);
+        return m_listItem.lineHeight(firstLine, direction, PositionOfInteriorLineBoxes);
     return RenderBox::lineHeight(firstLine, direction, linePositionMode);
 }
 
 int RenderListMarker::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     if (!isImage())
-        return m_listItem->baselinePosition(baselineType, firstLine, direction, PositionOfInteriorLineBoxes);
+        return m_listItem.baselinePosition(baselineType, firstLine, direction, PositionOfInteriorLineBoxes);
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
 String RenderListMarker::suffix() const
 {
     EListStyleType type = style()->listStyleType();
-    const UChar suffix = listMarkerSuffix(type, m_listItem->value());
+    const UChar suffix = listMarkerSuffix(type, m_listItem.value());
 
     if (suffix == ' ')
         return String(" ");
@@ -1697,7 +1697,7 @@ String RenderListMarker::suffix() const
 
 bool RenderListMarker::isInside() const
 {
-    return m_listItem->notInList() || style()->listStylePosition() == INSIDE;
+    return m_listItem.notInList() || style()->listStylePosition() == INSIDE;
 }
 
 IntRect RenderListMarker::getRelativeMarkerRect()
@@ -1805,7 +1805,7 @@ IntRect RenderListMarker::getRelativeMarkerRect()
                 return IntRect();
             const Font& font = style()->font();
             int itemWidth = font.width(m_text);
-            UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem->value()), ' ' };
+            UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem.value()), ' ' };
             int suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));
             relativeRect = IntRect(0, 0, itemWidth + suffixSpaceWidth, font.fontMetrics().height());
     }

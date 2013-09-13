@@ -35,7 +35,7 @@ String listMarkerText(EListStyleType, int value);
 // The RenderListMarker always has to be a child of a RenderListItem.
 class RenderListMarker FINAL : public RenderBox {
 public:
-    static RenderListMarker* createAnonymous(RenderListItem*);
+    static RenderListMarker* createAnonymous(RenderListItem&);
 
     virtual ~RenderListMarker();
 
@@ -47,7 +47,9 @@ public:
     void updateMarginsAndContent();
 
 private:
-    RenderListMarker(RenderListItem*);
+    void element() const WTF_DELETED_FUNCTION;
+
+    explicit RenderListMarker(RenderListItem&);
 
     virtual const char* renderName() const { return "RenderListMarker"; }
     virtual void computePreferredLogicalWidths() OVERRIDE;
@@ -83,7 +85,7 @@ private:
 
     String m_text;
     RefPtr<StyleImage> m_image;
-    RenderListItem* m_listItem;
+    RenderListItem& m_listItem;
 };
 
 inline RenderListMarker& toRenderListMarker(RenderObject& object)
