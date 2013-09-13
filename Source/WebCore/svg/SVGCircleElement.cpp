@@ -141,7 +141,7 @@ bool SVGCircleElement::selfHasRelativeLengths() const
 
 RenderObject* SVGCircleElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderSVGEllipse(this);
+    return new (arena) RenderSVGEllipse(*this);
 }
 
 }

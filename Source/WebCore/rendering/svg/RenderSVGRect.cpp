@@ -35,14 +35,19 @@
 
 namespace WebCore {
 
-RenderSVGRect::RenderSVGRect(SVGRectElement* node)
-    : RenderSVGShape(node)
+RenderSVGRect::RenderSVGRect(SVGRectElement& element)
+    : RenderSVGShape(element)
     , m_usePathFallback(false)
 {
 }
 
 RenderSVGRect::~RenderSVGRect()
 {
+}
+
+SVGRectElement& RenderSVGRect::rectElement() const
+{
+    return toSVGRectElement(RenderSVGShape::graphicsElement());
 }
 
 void RenderSVGRect::updateShapeFromElement()
@@ -52,23 +57,21 @@ void RenderSVGRect::updateShapeFromElement()
     m_fillBoundingBox = FloatRect();
     m_innerStrokeRect = FloatRect();
     m_outerStrokeRect = FloatRect();
-    SVGRectElement* rect = toSVGRectElement(element());
-    ASSERT(rect);
 
     // Fallback to RenderSVGShape if rect has rounded corners or a non-scaling stroke.
-    if (rect->hasAttribute(SVGNames::rxAttr) || rect->hasAttribute(SVGNames::ryAttr) || hasNonScalingStroke()) {
+    if (rectElement().hasAttribute(SVGNames::rxAttr) || rectElement().hasAttribute(SVGNames::ryAttr) || hasNonScalingStroke()) {
         RenderSVGShape::updateShapeFromElement();
         m_usePathFallback = true;
         return;
     } else
         m_usePathFallback = false;
 
-    SVGLengthContext lengthContext(rect);
-    FloatSize boundingBoxSize(rect->width().value(lengthContext), rect->height().value(lengthContext));
+    SVGLengthContext lengthContext(&rectElement());
+    FloatSize boundingBoxSize(rectElement().width().value(lengthContext), rectElement().height().value(lengthContext));
     if (boundingBoxSize.isEmpty())
         return;
 
-    m_fillBoundingBox = FloatRect(FloatPoint(rect->x().value(lengthContext), rect->y().value(lengthContext)), boundingBoxSize);
+    m_fillBoundingBox = FloatRect(FloatPoint(rectElement().x().value(lengthContext), rectElement().y().value(lengthContext)), boundingBoxSize);
 
     // To decide if the stroke contains a point we create two rects which represent the inner and
     // the outer stroke borders. A stroke contains the point, if the point is between them.

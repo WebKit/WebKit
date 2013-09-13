@@ -1,5 +1,22 @@
 2013-09-13  Andreas Kling  <akling@apple.com>
 
+        [CTTE] Tighter element types for RenderSVGShape and subclasses.
+        <https://webkit.org/b/121302>
+
+        Reviewed by Antti Koivisto.
+
+        Codify the following:
+
+        - RenderSVGPath always has an SVGGraphicsElement.
+        - RenderSVGEllipse always has an SVGGraphicsElement.
+        - RenderSVGRect always has an SVGRectElement.
+        - RenderSVGShape always has an SVGGraphicsElement.
+
+        None of these renderers are ever anonymous, so delete element() and provide
+        strongly typed reference getters instead.
+
+2013-09-13  Andreas Kling  <akling@apple.com>
+
         [CTTE] RenderSVGResourceFilterPrimitive always has an SVGFilterPrimitiveStandardAttributes.
         <https://webkit.org/b/121300>
 

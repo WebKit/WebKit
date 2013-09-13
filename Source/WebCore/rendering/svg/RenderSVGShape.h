@@ -30,6 +30,7 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
+#include "SVGGraphicsElement.h"
 #include "SVGMarkerData.h"
 #include "StrokeStyleApplier.h"
 #include <wtf/OwnPtr.h>
@@ -66,9 +67,11 @@ private:
 
 class RenderSVGShape : public RenderSVGModelObject {
 public:
-    explicit RenderSVGShape(SVGGraphicsElement*);
-    RenderSVGShape(SVGGraphicsElement*, Path*, bool);
+    explicit RenderSVGShape(SVGGraphicsElement&);
+    RenderSVGShape(SVGGraphicsElement&, Path*, bool);
     virtual ~RenderSVGShape();
+
+    SVGGraphicsElement& graphicsElement() const { return *toSVGGraphicsElement(RenderSVGModelObject::element()); }
 
     void setNeedsShapeUpdate() { m_needsShapeUpdate = true; }
     virtual void setNeedsBoundariesUpdate() OVERRIDE FINAL { m_needsBoundariesUpdate = true; }
@@ -85,6 +88,8 @@ public:
     }
 
 protected:
+    void element() const WTF_DELETED_FUNCTION;
+
     virtual void updateShapeFromElement();
     virtual bool isEmpty() const;
     virtual bool shapeDependentStrokeContains(const FloatPoint&);

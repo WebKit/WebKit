@@ -162,7 +162,7 @@ bool SVGRectElement::selfHasRelativeLengths() const
 
 RenderObject* SVGRectElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderSVGRect(this);
+    return new (arena) RenderSVGRect(*this);
 }
 
 }

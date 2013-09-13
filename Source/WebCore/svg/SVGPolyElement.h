@@ -65,6 +65,12 @@ protected:
     mutable SVGSynchronizableAnimatedProperty<SVGPointList> m_points;
 };
 
+inline SVGPolyElement& toSVGPolyElement(SVGElement& element)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(element.hasTagName(SVGNames::polygonTag) || element.hasTagName(SVGNames::polylineTag));
+    return static_cast<SVGPolyElement&>(element);
+}
+
 inline SVGPolyElement* toSVGPolyElement(SVGElement* element)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!element || element->hasTagName(SVGNames::polygonTag) || element->hasTagName(SVGNames::polylineTag));
