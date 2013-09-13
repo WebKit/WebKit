@@ -1,3 +1,12 @@
+2013-09-13  Andreas Kling  <akling@apple.com>
+
+        [CTTE] RenderSVGResourceFilterPrimitive always has an SVGFilterPrimitiveStandardAttributes.
+        <https://webkit.org/b/121300>
+
+        Reviewed by Anders Carlsson.
+
+        This renderer is never anonymous, and always has a corresponding SVGFilterPrimitiveStandardAttributes element. 
+
 2013-09-12  Darin Adler  <darin@apple.com>
 
         Finish removing layer-violating code from Pasteboard (just for Mac during this first step)
