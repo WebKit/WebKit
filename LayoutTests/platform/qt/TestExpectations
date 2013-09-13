@@ -1407,6 +1407,12 @@ webkit.org/b/114913 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.
 fast/regions/autoheight-middleregion.html
 fast/regions/autoheight-singleregion-breakbeforealways-minheight.html
 
+webkit.org/b/120848 fast/regions/overflow-in-variable-width-regions.html [ Skip ]
+webkit.org/b/120848 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html [ Skip ]
+webkit.org/b/120848 fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html [ Skip ]
+webkit.org/b/120848 fast/regions/overflow-rtl-in-variable-width-regions.html [ Skip ]
+webkit.org/b/120848 fast/regions/overflow-size-change-in-variable-width-regions.html [ Skip ]
+
 # [Qt] svg/css/text-gradient-shadow.svg fails
 # https://bugs.webkit.org/show_bug.cgi?id=92734
 svg/css/text-gradient-shadow.svg

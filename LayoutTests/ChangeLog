@@ -1,3 +1,10 @@
+2013-09-13  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip some failing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=120848.
+
+        * platform/qt/TestExpectations:
+
 2013-09-13  Youngho Yoo  <youngho33.yoo@lge.com>
 
         Fixed crash in V8 benchmark suite in ARM,softp,EABI environment. 
