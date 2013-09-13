@@ -32,12 +32,14 @@
 namespace WebCore {
 
 class AffineTransform;
-class SVGElement;
+class SVGSVGElement;
 
 class RenderSVGRoot FINAL : public RenderReplaced {
 public:
-    explicit RenderSVGRoot(SVGElement*);
+    explicit RenderSVGRoot(SVGSVGElement&);
     virtual ~RenderSVGRoot();
+
+    SVGSVGElement& svgSVGElement() const;
 
     bool isEmbeddedThroughSVGImage() const;
     bool isEmbeddedThroughFrameContainingSVGDocument() const;
@@ -73,6 +75,8 @@ public:
     void setHasSVGShadow(bool hasShadow) { m_hasSVGShadow = hasShadow; }
 
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
 
