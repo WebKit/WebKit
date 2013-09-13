@@ -1,5 +1,14 @@
 2013-09-13  Csaba Osztrogonác  <ossy@webkit.org>
 
+        One more Unreviewed fix after r155675.
+
+        * js/array-with-double-assign-expected.txt: 
+        * js/array-with-double-assign.html: Path fixed.
+        * js/array-with-double-push-expected.txt:
+        * js/array-with-double-push.html: Path fixed.
+
+2013-09-13  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed fix after r155675. Move new tests from fast/js to js.
 
         * js/array-with-double-assign-expected.txt: Renamed from LayoutTests/fast/js/array-with-double-assign-expected.txt.
