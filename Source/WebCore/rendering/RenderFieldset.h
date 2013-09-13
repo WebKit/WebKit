@@ -24,18 +24,25 @@
 #ifndef RenderFieldset_h
 #define RenderFieldset_h
 
+#include "HTMLFieldSetElement.h"
 #include "RenderBlockFlow.h"
 
 namespace WebCore {
 
+class HTMLFieldSetElement;
+
 class RenderFieldset FINAL : public RenderBlockFlow {
 public:
-    explicit RenderFieldset(Element*);
+    explicit RenderFieldset(HTMLFieldSetElement&);
 
     enum FindLegendOption { IgnoreFloatingOrOutOfFlow, IncludeFloatingOrOutOfFlow };
     RenderBox* findLegend(FindLegendOption = IgnoreFloatingOrOutOfFlow) const;
 
+    HTMLFieldSetElement& fieldSetElement() const { return *toHTMLFieldSetElement(RenderObject::node()); }
+
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
     virtual const char* renderName() const { return "RenderFieldSet"; }
     virtual bool isFieldset() const { return true; }
 

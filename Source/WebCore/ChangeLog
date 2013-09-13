@@ -1,5 +1,14 @@
 2013-09-13  Andreas Kling  <akling@apple.com>
 
+        [CTTE] RenderFieldset always has a HTMLFieldSetElement.
+        <https://webkit.org/b/121277>
+
+        Reviewed by Darin Adler.
+
+        RenderFieldset is never anonymous and always has a corresponding HTMLFieldSetElement.
+
+2013-09-13  Andreas Kling  <akling@apple.com>
+
         [CTTE] RenderButton always has a HTMLFormControlElement.
         <https://webkit.org/b/121281>
 

@@ -26,6 +26,7 @@
 
 #include "CSSPropertyNames.h"
 #include "GraphicsContext.h"
+#include "HTMLFieldSetElement.h"
 #include "HTMLNames.h"
 #include "PaintInfo.h"
 
@@ -36,8 +37,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderFieldset::RenderFieldset(Element* element)
-    : RenderBlockFlow(element)
+RenderFieldset::RenderFieldset(HTMLFieldSetElement& element)
+    : RenderBlockFlow(&element)
 {
 }
 
