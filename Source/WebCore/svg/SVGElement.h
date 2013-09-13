@@ -184,7 +184,8 @@ private:
     void buildPendingResourcesIfNeeded();
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
-
+    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
+    
     HashSet<SVGElement*> m_elementsWithRelativeLengths;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGElement)

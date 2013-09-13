@@ -1,3 +1,19 @@
+2013-09-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: AXPress does not work in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=121248
+
+        Reviewed by Mario Sanchez Prada.
+
+        Implement accessKeyAction() on SVGElements, which is what accessibility code
+        uses in order to activate Elements.
+
+        Test: accessibility/svg-element-press.html
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::accessKeyAction):
+        * svg/SVGElement.h:
+
 2013-09-13  Andreas Kling  <akling@apple.com>
 
         [CTTE] RenderSVGTransformableContainer is never anonymous.

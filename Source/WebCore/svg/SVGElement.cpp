@@ -1147,6 +1147,11 @@ bool SVGElement::isKeyboardFocusable(KeyboardEvent*) const
 {
     return isMouseFocusable();
 }
+    
+void SVGElement::accessKeyAction(bool sendMouseEvents)
+{
+    dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
+}
 
 }
 

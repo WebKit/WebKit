@@ -1,3 +1,13 @@
+2013-09-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: AXPress does not work in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=121248
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/svg-element-press-expected.txt: Added.
+        * accessibility/svg-element-press.html: Added.
+
 2013-09-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] REGRESSION(r154444): xss-DENIED test results changed
