@@ -37,7 +37,6 @@ public:
     OwnArrayPtr() : m_ptr(nullptr) { }
     OwnArrayPtr(std::nullptr_t) : m_ptr(nullptr) { }
     OwnArrayPtr(OwnArrayPtr&&);
-    template<typename U> OwnArrayPtr(OwnArrayPtr<U>&&);
 
     ~OwnArrayPtr() { deleteOwnedArrayPtr(m_ptr); }
 
@@ -59,7 +58,6 @@ public:
 
     OwnArrayPtr& operator=(std::nullptr_t) { clear(); return *this; }
     OwnArrayPtr& operator=(OwnArrayPtr&&);
-    template<typename U> OwnArrayPtr& operator=(OwnArrayPtr<U>&&);
 
     void swap(OwnArrayPtr& o) { std::swap(m_ptr, o.m_ptr); }
 
@@ -72,12 +70,6 @@ private:
 
 template<typename T>
 inline OwnArrayPtr<T>::OwnArrayPtr(OwnArrayPtr&& other)
-    : m_ptr(other.leakPtr())
-{
-}
-
-template<typename T> template<typename U>
-inline OwnArrayPtr<T>::OwnArrayPtr(OwnArrayPtr<U>&& other)
     : m_ptr(other.leakPtr())
 {
 }
@@ -100,14 +92,6 @@ inline typename OwnArrayPtr<T>::PtrType OwnArrayPtr<T>::leakPtr()
 
 template<typename T>
 inline OwnArrayPtr<T>& OwnArrayPtr<T>::operator=(OwnArrayPtr&& other)
-{
-    auto ptr = std::move(other);
-    swap(ptr);
-    return *this;
-}
-
-template<typename T> template<typename U>
-inline OwnArrayPtr<T>& OwnArrayPtr<T>::operator=(OwnArrayPtr<U>&& other)
 {
     auto ptr = std::move(other);
     swap(ptr);

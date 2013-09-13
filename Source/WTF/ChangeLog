@@ -1,3 +1,18 @@
+2013-09-13  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        OwnArrayPtr: Never allow implicit pointer conversion
+        https://bugs.webkit.org/show_bug.cgi?id=121291
+
+        Reviewed by Anders Carlsson.
+
+        We should never allow implicit pointer conversion in OwnArrayPtr 
+        and remove its template copy constructor & template assignment operator, as:
+        - these methods are never used
+        - these methods are inappropriate to have in OwnArrayPtr as arrays do not
+          interact well with polymorphism.
+
+        * wtf/OwnArrayPtr.h:
+
 2013-09-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Remove support for QXmlStream as the XML parser.
