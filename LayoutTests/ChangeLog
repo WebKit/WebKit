@@ -1,5 +1,19 @@
 2013-09-13  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
+        [Qt] unreviewed gardening. Rebaseline after r155253.
+
+        * platform/qt-wk2/editing/selection/caret-rtl-2-expected.png: Removed.
+        * platform/qt-wk2/editing/selection/caret-rtl-2-left-expected.png: Removed.
+        * platform/qt-wk2/editing/selection/caret-rtl-expected.png: Removed.
+        * platform/qt-wk2/editing/selection/caret-rtl-right-expected.png: Removed.
+        * platform/qt-wk2/editing/selection/caret-rtl-right-expected.txt: Removed.
+        * platform/qt/editing/selection/caret-rtl-2-expected.txt:
+        * platform/qt/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/qt/editing/selection/caret-rtl-expected.txt:
+        * platform/qt/editing/selection/caret-rtl-right-expected.txt:
+
+2013-09-13  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
         [Qt] Unreviewed gardening. Rebaseline tests after r155408.
 
         * platform/qt/fast/forms/control-restrict-line-height-expected.png:
