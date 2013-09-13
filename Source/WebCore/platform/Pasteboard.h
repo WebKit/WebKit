@@ -64,7 +64,8 @@ class SharedBuffer;
 
 enum ShouldSerializeSelectedTextForClipboard { DefaultSelectedTextType, IncludeImageAltTextForClipboard };
 
-// For writing web content to the pasteboard. Generally sorted with the richest formats on top.
+// For writing to the pasteboard. Generally sorted with the richest formats on top.
+
 struct PasteboardWebContent {
 #if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN))
     bool canSmartCopyOrDelete;
@@ -88,16 +89,36 @@ struct PasteboardURL {
 struct PasteboardImage {
 #if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN))
     PasteboardURL url;
+#endif
     RefPtr<Image> image;
+#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN))
     RefPtr<SharedBuffer> resourceData;
     String resourceMIMEType;
 #endif
 };
 
-struct PasteboardPlainText {
+// For reading from the pasteboard.
+
+class PasteboardWebContentReader {
+public:
+    virtual ~PasteboardWebContentReader() { }
+
 #if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN))
-    String plainText;
-    String url;
+    virtual bool readWebArchive(PassRefPtr<SharedBuffer>) = 0;
+    virtual bool readFilenames(const Vector<String>&) = 0;
+    virtual bool readHTML(const String&) = 0;
+    virtual bool readRTFD(PassRefPtr<SharedBuffer>) = 0;
+    virtual bool readRTF(PassRefPtr<SharedBuffer>) = 0;
+    virtual bool readImage(PassRefPtr<SharedBuffer>, const String& type) = 0;
+    virtual bool readURL(const KURL&, const String& title) = 0;
+#endif
+    virtual bool readPlainText(const String&) = 0;
+};
+
+struct PasteboardPlainText {
+    String text;
+#if PLATFORM(MAC)
+    bool isURL;
 #endif
 };
 
@@ -107,32 +128,34 @@ public:
     ~Pasteboard();
 
     static PassOwnPtr<Pasteboard> createForCopyAndPaste();
-    static PassOwnPtr<Pasteboard> createPrivate(); // Corresponds to the "unique pasteboard" concept on Mac. Used in editing, not sure exactly for what purpose.
+    static PassOwnPtr<Pasteboard> createPrivate(); // Temporary pasteboard. Can put data on this and then write to another pasteboard with writePasteboard.
 
     bool hasData();
     Vector<String> types();
     String readString(const String& type);
+
     bool writeString(const String& type, const String& data);
     void clear();
     void clear(const String& type);
 
     void read(PasteboardPlainText&);
+    void read(PasteboardWebContentReader&);
+
+    void write(const PasteboardURL&);
+    void write(const PasteboardImage&);
+    void write(const PasteboardWebContent&);
+
+    // FIXME: These two functions called one after the other are the same as calling write. It would be nice if these two separate functions
+    // could be eliminated, however Mac supports an editor client call that happens after setting the types but before writing to the pasteboard.
+    void setTypes(const PasteboardWebContent&);
+    void writeAfterSettingTypes(const PasteboardWebContent&);
 
     Vector<String> readFilenames();
     bool canSmartReplace();
 
-    void write(const PasteboardWebContent&);
-    void write(const PasteboardURL&);
-    void write(const PasteboardImage&);
-
-    // FIXME: These two functions together are the same as calling write. It would be nice if these two separate functions
-    // could be eliminated, but Mac supports an editor client call that happens after setting the types but before writing to the pasteboard.
-    void setTypes(const PasteboardWebContent&);
-    void writeAfterSettingTypes(const PasteboardWebContent&);
-
     void writeMarkup(const String& markup);
     enum SmartReplaceOption { CanSmartReplace, CannotSmartReplace };
-    void writePlainText(const String&, SmartReplaceOption); // FIXME: It seems that two separate functions would be better than one function with an argument.
+    void writePlainText(const String&, SmartReplaceOption); // FIXME: Two separate functions would be clearer than one function with an argument.
     void writePasteboard(const Pasteboard& sourcePasteboard);
 
 #if ENABLE(DRAG_SUPPORT)
@@ -142,11 +165,8 @@ public:
     void setDragImage(DragImageRef, const IntPoint& hotSpot);
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(WIN)
-    PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
-#endif
-
 #if PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN)
+    PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
     String plainText(Frame* = 0); // FIXME: Layering violation.
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
@@ -176,13 +196,15 @@ public:
 #endif
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
-    static PassOwnPtr<Pasteboard> create(const String& pasteboardName);
-    String name() const { return m_pasteboardName; }
     explicit Pasteboard(const String& pasteboardName);
+    static PassOwnPtr<Pasteboard> create(const String& pasteboardName);
+
+    const String& name() const { return m_pasteboardName; }
 #endif
 
 #if PLATFORM(QT)
     static PassOwnPtr<Pasteboard> create(const QMimeData* readableClipboard = 0, bool isForDragAndDrop = false);
+
     QMimeData* clipboardData() const { return m_writableData; }
     void invalidateWritableData() const { m_writableData = 0; }
     bool isForDragAndDrop() const { return m_isForDragAndDrop; }

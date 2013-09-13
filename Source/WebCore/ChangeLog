@@ -1,3 +1,49 @@
+2013-09-12  Darin Adler  <darin@apple.com>
+
+        Finish removing layer-violating code from Pasteboard (just for Mac during this first step)
+        https://bugs.webkit.org/show_bug.cgi?id=121279
+
+        Reviewed by Anders Carlsson.
+
+        * editing/Editor.h: Added webContentFromPasteboard member function, private nested class
+        WebContentReader, private createFragmentForImageResourceAndAddResource and
+        createFragmentAndAddResources member functions.
+
+        * editing/mac/EditorMac.mm: Re-sorted includes and added some.
+        (WebCore::Editor::pasteWithPasteboard): Call the new webContentFromPasteboard function.
+        (WebCore::Editor::insertParagraphSeparatorInQuotedContent): Comment tweak.
+        (WebCore::styleForSelectionStart): Removed an unneeded call to String::impl.
+        (WebCore::Editor::readPlainTextFromPasteboard): Updated to use an isURL boolean instead
+        of a separate string named "url".
+        (WebCore::Editor::WebContentReader::readWebArchive): Added. Contains reworked code that
+        was originally in Pasteboard::documentFragment.
+        (WebCore::Editor::WebContentReader::readFilenames): Ditto.
+        (WebCore::Editor::WebContentReader::readHTML): Ditto.
+        (WebCore::Editor::WebContentReader::readRTFD): Ditto.
+        (WebCore::Editor::WebContentReader::readRTF): Ditto.
+        (WebCore::Editor::WebContentReader::readImage): Ditto.
+        (WebCore::Editor::WebContentReader::readURL): Ditto.
+        (WebCore::Editor::WebContentReader::readPlainText): Ditto.
+        (WebCore::Editor::webContentFromPasteboard): Added. Uses WebContentReader to read the
+        content from the pasteboard.
+        (WebCore::Editor::createFragmentForImageResourceAndAddResource): Added. Helper used
+        by code above.
+        (WebCore::Editor::createFragmentAndAddResources): Ditto.
+
+        * platform/Pasteboard.h: Added new PasteboardWebContentReader abstract class so
+        client can get the various types of pasteboard content and stop on the kind it
+        can handle. Improved comments and formatting a bit. Removed documentFragment
+        when compiling for PLATFORM(MAC).
+
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::asFragment): Changed to use Editor::webContentFromPasteboard.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::read): Updated the plain text overload of this for changes
+        to the struct that holds the result. Added a new web content overload of this,
+        which retains the pasteboard-reading part of Pasteboard::documentFragment, but
+        omits the document fragment construction part.
+
 2013-09-13  Andreas Kling  <akling@apple.com>
 
         [CTTE] RenderSVGText always has a SVGTextElement.

@@ -42,11 +42,13 @@
 #include "WritingDirection.h"
 
 #if PLATFORM(MAC)
+OBJC_CLASS NSAttributedString;
 OBJC_CLASS NSDictionary;
 #endif
 
 namespace WebCore {
 
+class ArchiveResource;
 class Clipboard;
 class CompositeEditCommand;
 class DeleteButtonController;
@@ -401,6 +403,7 @@ public:
     String stringSelectionForPasteboard();
     String stringSelectionForPasteboardWithImageAltText();
     PassRefPtr<SharedBuffer> dataSelectionForPasteboard(const String& pasteboardName);
+    PassRefPtr<DocumentFragment> webContentFromPasteboard(Pasteboard&, Range& context, bool allowPlainText, bool& chosePlainText);
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(EFL)
@@ -411,6 +414,8 @@ public:
 #endif
 
 private:
+    class WebContentReader;
+
     explicit Editor(Frame&);
 
     Document& document() const;
@@ -440,6 +445,8 @@ private:
 #if PLATFORM(MAC)
     PassRefPtr<SharedBuffer> selectionInWebArchiveFormat();
     PassRefPtr<Range> adjustedSelectionRange();
+    PassRefPtr<DocumentFragment> createFragmentForImageResourceAndAddResource(PassRefPtr<ArchiveResource>);
+    PassRefPtr<DocumentFragment> createFragmentAndAddResources(NSAttributedString *);
 #endif
 
     Frame& m_frame;

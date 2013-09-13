@@ -191,7 +191,8 @@ String DragData::asURL(Frame* frame, FilenameConversionPolicy, String* title) co
 
 PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, PassRefPtr<Range> range, bool allowPlainText, bool& chosePlainText) const
 {
-    return Pasteboard(m_pasteboardName).documentFragment(frame, range, allowPlainText, chosePlainText);
+    Pasteboard pasteboard(m_pasteboardName);
+    return frame->editor().webContentFromPasteboard(pasteboard, *range, allowPlainText, chosePlainText);
 }
     
 } // namespace WebCore
