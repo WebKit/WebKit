@@ -1138,8 +1138,8 @@ public:
 #if ENABLE(CUSTOM_ELEMENTS)
     PassRefPtr<Element> createElement(const AtomicString& localName, const AtomicString& typeExtension, ExceptionCode&);
     PassRefPtr<Element> createElementNS(const AtomicString& namespaceURI, const String& qualifiedName, const AtomicString& typeExtension, ExceptionCode&);
-    PassRefPtr<CustomElementConstructor> registerElement(WebCore::JSC::ExecState*, const AtomicString& name, ExceptionCode&);
-    PassRefPtr<CustomElementConstructor> registerElement(WebCore::JSC::ExecState*, const AtomicString& name, const Dictionary& options, ExceptionCode&);
+    PassRefPtr<CustomElementConstructor> registerElement(JSC::ExecState*, const AtomicString& name, ExceptionCode&);
+    PassRefPtr<CustomElementConstructor> registerElement(JSC::ExecState*, const AtomicString& name, const Dictionary& options, ExceptionCode&);
     CustomElementRegistry* registry() const { return m_registry.get(); }
     void didCreateCustomElement(Element*, CustomElementConstructor*);
 #endif

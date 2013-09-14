@@ -1,5 +1,13 @@
 2013-09-13  Sam Weinig  <sam@webkit.org>
 
+        Part 2 of Replace ScriptState with JSC::ExecState
+        https://bugs.webkit.org/show_bug.cgi?id=121336
+
+        * dom/Document.h:
+        There is no WebCore::JSC namespace!
+
+2013-09-13  Sam Weinig  <sam@webkit.org>
+
         Replace ScriptState with JSC::ExecState
         https://bugs.webkit.org/show_bug.cgi?id=121336
 
