@@ -44,13 +44,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLEmbedElement::HTMLEmbedElement(const QualifiedName& tagName, Document* document, bool createdByParser)
-    : HTMLPlugInImageElement(tagName, document, createdByParser, ShouldPreferPlugInsForImages)
+inline HTMLEmbedElement::HTMLEmbedElement(const QualifiedName& tagName, Document& document, bool createdByParser)
+    : HTMLPlugInImageElement(tagName, &document, createdByParser, ShouldPreferPlugInsForImages)
 {
     ASSERT(hasTagName(embedTag));
 }
 
-PassRefPtr<HTMLEmbedElement> HTMLEmbedElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
+PassRefPtr<HTMLEmbedElement> HTMLEmbedElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
     return adoptRef(new HTMLEmbedElement(tagName, document, createdByParser));
 }

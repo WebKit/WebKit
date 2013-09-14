@@ -112,7 +112,7 @@ void MediaControlElement::setDisplayType(MediaControlElementType displayType)
 // ----------------------------
 
 MediaControlDivElement::MediaControlDivElement(Document* document, MediaControlElementType displayType)
-    : HTMLDivElement(divTag, document)
+    : HTMLDivElement(divTag, *document)
     , MediaControlElement(displayType, this)
 {
 }
@@ -120,7 +120,7 @@ MediaControlDivElement::MediaControlDivElement(Document* document, MediaControlE
 // ----------------------------
 
 MediaControlInputElement::MediaControlInputElement(Document* document, MediaControlElementType displayType)
-    : HTMLInputElement(inputTag, document, 0, false)
+    : HTMLInputElement(inputTag, *document, 0, false)
     , MediaControlElement(displayType, this)
 {
 }

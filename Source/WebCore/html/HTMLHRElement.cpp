@@ -34,18 +34,18 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLHRElement::HTMLHRElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+HTMLHRElement::HTMLHRElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, &document)
 {
     ASSERT(hasTagName(hrTag));
 }
 
-PassRefPtr<HTMLHRElement> HTMLHRElement::create(Document* document)
+PassRefPtr<HTMLHRElement> HTMLHRElement::create(Document& document)
 {
     return adoptRef(new HTMLHRElement(hrTag, document));
 }
 
-PassRefPtr<HTMLHRElement> HTMLHRElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLHRElement> HTMLHRElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLHRElement(tagName, document));
 }

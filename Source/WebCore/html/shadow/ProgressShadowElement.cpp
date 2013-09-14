@@ -41,7 +41,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 ProgressShadowElement::ProgressShadowElement(Document* document)
-    : HTMLDivElement(HTMLNames::divTag, document)
+    : HTMLDivElement(HTMLNames::divTag, *document)
 {
 }
 

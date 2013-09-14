@@ -207,7 +207,7 @@ void RenderSliderContainer::layout()
 // --------------------------------
 
 SliderThumbElement::SliderThumbElement(Document* document)
-    : HTMLDivElement(HTMLNames::divTag, document)
+    : HTMLDivElement(HTMLNames::divTag, *document)
     , m_inDragMode(false)
 {
     setHasCustomStyleResolveCallbacks();
@@ -445,7 +445,7 @@ const AtomicString& SliderThumbElement::shadowPseudoId() const
 // --------------------------------
 
 inline SliderContainerElement::SliderContainerElement(Document* document)
-    : HTMLDivElement(HTMLNames::divTag, document)
+    : HTMLDivElement(HTMLNames::divTag, *document)
 {
 }
 

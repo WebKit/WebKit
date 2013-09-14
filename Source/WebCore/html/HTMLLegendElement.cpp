@@ -35,13 +35,13 @@ namespace WebCore {
 using namespace HTMLNames;
 
 
-inline HTMLLegendElement::HTMLLegendElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+inline HTMLLegendElement::HTMLLegendElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, &document)
 {
     ASSERT(hasTagName(legendTag));
 }
 
-PassRefPtr<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLLegendElement(tagName, document));
 }

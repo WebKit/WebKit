@@ -29,10 +29,10 @@ namespace WebCore {
 
 class HTMLPreElement FINAL : public HTMLElement {
 public:
-    static PassRefPtr<HTMLPreElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLPreElement> create(const QualifiedName&, Document&);
 
 private:
-    HTMLPreElement(const QualifiedName&, Document*);
+    HTMLPreElement(const QualifiedName&, Document&);
 
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) OVERRIDE;

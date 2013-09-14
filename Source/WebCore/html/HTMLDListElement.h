@@ -29,10 +29,10 @@ namespace WebCore {
 
 class HTMLDListElement FINAL : public HTMLElement {
 public:
-    static PassRefPtr<HTMLDListElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLDListElement> create(const QualifiedName&, Document&);
 
 private:
-    HTMLDListElement(const QualifiedName&, Document*);
+    HTMLDListElement(const QualifiedName&, Document&);
 };
 
 } //namespace

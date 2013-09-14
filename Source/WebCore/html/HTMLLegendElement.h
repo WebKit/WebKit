@@ -32,10 +32,10 @@ class HTMLFormControlElement;
 
 class HTMLLegendElement FINAL : public HTMLElement {
 public:
-    static PassRefPtr<HTMLLegendElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLLegendElement> create(const QualifiedName&, Document&);
 
 private:
-    HTMLLegendElement(const QualifiedName&, Document*);
+    HTMLLegendElement(const QualifiedName&, Document&);
 
     // Control in the legend's fieldset that gets focus and access key.
     HTMLFormControlElement* associatedControl();

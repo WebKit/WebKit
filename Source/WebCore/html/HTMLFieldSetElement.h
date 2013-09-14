@@ -33,7 +33,7 @@ class HTMLCollection;
 
 class HTMLFieldSetElement FINAL : public HTMLFormControlElement {
 public:
-    static PassRefPtr<HTMLFieldSetElement> create(const QualifiedName&, Document*, HTMLFormElement*);
+    static PassRefPtr<HTMLFieldSetElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
     const HTMLLegendElement* legend() const;
     PassRefPtr<HTMLCollection> elements();
@@ -45,7 +45,7 @@ protected:
     virtual void disabledAttributeChanged() OVERRIDE;
 
 private:
-    HTMLFieldSetElement(const QualifiedName&, Document*, HTMLFormElement*);
+    HTMLFieldSetElement(const QualifiedName&, Document&, HTMLFormElement*);
 
     virtual bool isEnumeratable() const { return true; }
     virtual bool supportsFocus() const OVERRIDE;

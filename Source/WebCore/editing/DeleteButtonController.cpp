@@ -203,7 +203,7 @@ void DeleteButtonController::deviceScaleFactorChanged()
 
 void DeleteButtonController::createDeletionUI()
 {
-    RefPtr<HTMLDivElement> container = HTMLDivElement::create(&m_target->document());
+    RefPtr<HTMLDivElement> container = HTMLDivElement::create(m_target->document());
     container->setIdAttribute(containerElementIdentifier);
 
     container->setInlineStyleProperty(CSSPropertyWebkitUserDrag, CSSValueNone);
@@ -217,7 +217,7 @@ void DeleteButtonController::createDeletionUI()
     container->setInlineStyleProperty(CSSPropertyBottom, 0, CSSPrimitiveValue::CSS_PX);
     container->setInlineStyleProperty(CSSPropertyLeft, 0, CSSPrimitiveValue::CSS_PX);
 
-    RefPtr<HTMLDivElement> outline = HTMLDivElement::create(&m_target->document());
+    RefPtr<HTMLDivElement> outline = HTMLDivElement::create(m_target->document());
     outline->setIdAttribute(outlineElementIdentifier);
 
     const int borderWidth = 4;
@@ -241,7 +241,7 @@ void DeleteButtonController::createDeletionUI()
     if (ec)
         return;
 
-    RefPtr<DeleteButton> button = DeleteButton::create(&m_target->document());
+    RefPtr<DeleteButton> button = DeleteButton::create(m_target->document());
     button->setIdAttribute(buttonElementIdentifier);
 
     const int buttonWidth = 30;

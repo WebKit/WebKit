@@ -33,12 +33,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLPreElement::HTMLPreElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+inline HTMLPreElement::HTMLPreElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, &document)
 {
 }
 
-PassRefPtr<HTMLPreElement> HTMLPreElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLPreElement> HTMLPreElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLPreElement(tagName, document));
 }

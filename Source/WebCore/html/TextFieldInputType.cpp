@@ -417,7 +417,7 @@ void TextFieldInputType::updatePlaceholderText()
         return;
     }
     if (!m_placeholder) {
-        m_placeholder = HTMLDivElement::create(&element()->document());
+        m_placeholder = HTMLDivElement::create(element()->document());
         m_placeholder->setPseudo(AtomicString("-webkit-input-placeholder", AtomicString::ConstructFromLiteral));
         element()->userAgentShadowRoot()->insertBefore(m_placeholder, m_container ? m_container.get() : innerTextElement(), ASSERT_NO_EXCEPTION);
     }

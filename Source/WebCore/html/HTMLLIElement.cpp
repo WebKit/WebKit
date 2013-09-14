@@ -34,19 +34,19 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLLIElement::HTMLLIElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+HTMLLIElement::HTMLLIElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, &document)
 {
     ASSERT(hasTagName(liTag));
     setHasCustomStyleResolveCallbacks();
 }
 
-PassRefPtr<HTMLLIElement> HTMLLIElement::create(Document* document)
+PassRefPtr<HTMLLIElement> HTMLLIElement::create(Document& document)
 {
     return adoptRef(new HTMLLIElement(liTag, document));
 }
 
-PassRefPtr<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLLIElement(tagName, document));
 }

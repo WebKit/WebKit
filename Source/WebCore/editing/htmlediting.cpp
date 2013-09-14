@@ -908,7 +908,7 @@ PassRefPtr<HTMLElement> createDefaultParagraphElement(Document* document)
 {
     switch (document->frame()->editor().defaultParagraphSeparator()) {
     case EditorParagraphSeparatorIsDiv:
-        return HTMLDivElement::create(document);
+        return HTMLDivElement::create(*document);
     case EditorParagraphSeparatorIsP:
         return HTMLParagraphElement::create(document);
     }
@@ -919,7 +919,7 @@ PassRefPtr<HTMLElement> createDefaultParagraphElement(Document* document)
 
 PassRefPtr<HTMLElement> createBreakElement(Document* document)
 {
-    return HTMLBRElement::create(document);
+    return HTMLBRElement::create(*document);
 }
 
 PassRefPtr<HTMLElement> createOrderedListElement(Document* document)
@@ -934,7 +934,7 @@ PassRefPtr<HTMLElement> createUnorderedListElement(Document* document)
 
 PassRefPtr<HTMLElement> createListItemElement(Document* document)
 {
-    return HTMLLIElement::create(document);
+    return HTMLLIElement::create(*document);
 }
 
 PassRefPtr<HTMLElement> createHTMLElement(Document* document, const QualifiedName& name)

@@ -537,7 +537,7 @@ void HTMLTextAreaElement::updatePlaceholderText()
         return;
     }
     if (!m_placeholder) {
-        RefPtr<HTMLDivElement> placeholder = HTMLDivElement::create(&document());
+        RefPtr<HTMLDivElement> placeholder = HTMLDivElement::create(document());
         m_placeholder = placeholder.get();
         m_placeholder->setPseudo(AtomicString("-webkit-input-placeholder", AtomicString::ConstructFromLiteral));
         userAgentShadowRoot()->insertBefore(m_placeholder, innerTextElement()->nextSibling());

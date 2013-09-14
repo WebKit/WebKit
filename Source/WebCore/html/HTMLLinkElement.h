@@ -44,7 +44,7 @@ typedef EventSender<HTMLLinkElement> LinkEventSender;
 
 class HTMLLinkElement FINAL : public HTMLElement, public CachedStyleSheetClient, public LinkLoaderClient {
 public:
-    static PassRefPtr<HTMLLinkElement> create(const QualifiedName&, Document*, bool createdByParser);
+    static PassRefPtr<HTMLLinkElement> create(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLLinkElement();
 
     KURL href() const;
@@ -98,6 +98,8 @@ private:
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
 private:
+    HTMLLinkElement(const QualifiedName&, Document&, bool createdByParser);
+
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     virtual void finishParsingChildren();
@@ -111,9 +113,6 @@ private:
     };
 
     void removePendingSheet(RemovePendingSheetNotificationType = RemovePendingSheetNotifyImmediately);
-
-private:
-    HTMLLinkElement(const QualifiedName&, Document*, bool createdByParser);
 
     LinkLoader m_linkLoader;
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;

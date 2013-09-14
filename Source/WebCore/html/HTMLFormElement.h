@@ -42,8 +42,8 @@ class TextEncoding;
 
 class HTMLFormElement FINAL : public HTMLElement {
 public:
-    static PassRefPtr<HTMLFormElement> create(Document*);
-    static PassRefPtr<HTMLFormElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLFormElement> create(Document&);
+    static PassRefPtr<HTMLFormElement> create(const QualifiedName&, Document&);
     virtual ~HTMLFormElement();
 
     PassRefPtr<HTMLCollection> elements();
@@ -109,7 +109,7 @@ public:
     static HTMLFormElement* findClosestFormAncestor(const Element&);
 
 private:
-    HTMLFormElement(const QualifiedName&, Document*);
+    HTMLFormElement(const QualifiedName&, Document&);
 
     virtual bool rendererIsNeeded(const RenderStyle&);
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;

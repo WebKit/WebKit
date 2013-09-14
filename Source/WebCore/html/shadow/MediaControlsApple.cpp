@@ -176,7 +176,7 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document* docu
     panel->appendChild(fullScreenButton.release(), ec, AttachLazily);
 
     // The mute button and the slider element should be in the same div.
-    RefPtr<HTMLDivElement> panelVolumeControlContainer = HTMLDivElement::create(document);
+    RefPtr<HTMLDivElement> panelVolumeControlContainer = HTMLDivElement::create(*document);
 
     if (document->page()->theme()->usesMediaControlVolumeSlider()) {
         RefPtr<MediaControlVolumeSliderContainerElement> volumeSliderContainer = MediaControlVolumeSliderContainerElement::create(document);

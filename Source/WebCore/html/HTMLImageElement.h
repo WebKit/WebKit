@@ -36,8 +36,10 @@ class HTMLFormElement;
 class HTMLImageElement : public HTMLElement, public FormNamedItem {
     friend class HTMLFormElement;
 public:
-    static PassRefPtr<HTMLImageElement> create(Document*);
-    static PassRefPtr<HTMLImageElement> create(const QualifiedName&, Document*, HTMLFormElement*);
+    static PassRefPtr<HTMLImageElement> create(Document&);
+    static PassRefPtr<HTMLImageElement> create(const QualifiedName&, Document&, HTMLFormElement*);
+
+    // FIXME: Fix the bindinds to pass a Document&.
     static PassRefPtr<HTMLImageElement> createForJSConstructor(Document*, const int* optionalWidth, const int* optionalHeight);
 
     virtual ~HTMLImageElement();
@@ -80,7 +82,7 @@ public:
     virtual const AtomicString& imageSourceURL() const OVERRIDE;
 
 protected:
-    HTMLImageElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
+    HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = 0);
 
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 

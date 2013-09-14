@@ -32,18 +32,18 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLDivElement::HTMLDivElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+HTMLDivElement::HTMLDivElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, &document)
 {
     ASSERT(hasTagName(divTag));
 }
 
-PassRefPtr<HTMLDivElement> HTMLDivElement::create(Document* document)
+PassRefPtr<HTMLDivElement> HTMLDivElement::create(Document& document)
 {
     return adoptRef(new HTMLDivElement(divTag, document));
 }
 
-PassRefPtr<HTMLDivElement> HTMLDivElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLDivElement> HTMLDivElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLDivElement(tagName, document));
 }

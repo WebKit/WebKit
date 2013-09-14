@@ -425,7 +425,7 @@ PassRefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, Exc
             return 0;
 
         if (c == '\r' || c == '\n') {
-            fragment->appendChild(HTMLBRElement::create(&document()), ec);
+            fragment->appendChild(HTMLBRElement::create(document()), ec);
             if (ec)
                 return 0;
             // Make sure \r\n doesn't result in two line breaks.

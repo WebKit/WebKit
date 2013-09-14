@@ -25,12 +25,12 @@
 
 namespace WebCore {
 
-inline HTMLHeadingElement::HTMLHeadingElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+inline HTMLHeadingElement::HTMLHeadingElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, &document)
 {
 }
 
-PassRefPtr<HTMLHeadingElement> HTMLHeadingElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLHeadingElement> HTMLHeadingElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLHeadingElement(tagName, document));
 }

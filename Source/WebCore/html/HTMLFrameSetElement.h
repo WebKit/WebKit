@@ -31,7 +31,7 @@ namespace WebCore {
 
 class HTMLFrameSetElement FINAL : public HTMLElement {
 public:
-    static PassRefPtr<HTMLFrameSetElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLFrameSetElement> create(const QualifiedName&, Document&);
 
     bool hasFrameBorder() const { return m_frameborder; }
     bool noResize() const { return m_noresize; }
@@ -67,7 +67,7 @@ public:
 #endif
 
 private:
-    HTMLFrameSetElement(const QualifiedName&, Document*);
+    HTMLFrameSetElement(const QualifiedName&, Document&);
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;

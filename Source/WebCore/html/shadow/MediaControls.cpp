@@ -35,7 +35,7 @@
 namespace WebCore {
 
 MediaControls::MediaControls(Document* document)
-    : HTMLDivElement(HTMLNames::divTag, document)
+    : HTMLDivElement(HTMLNames::divTag, *document)
     , m_mediaController(0)
     , m_panel(0)
 #if ENABLE(VIDEO_TRACK)

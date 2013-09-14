@@ -45,7 +45,7 @@ struct DateTimeChooserParameters;
 
 class HTMLInputElement : public HTMLTextFormControlElement {
 public:
-    static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
+    static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitspeechchange);
@@ -306,7 +306,7 @@ public:
 #endif
 
 protected:
-    HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
+    HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 
     virtual void defaultEventHandler(Event*);
 

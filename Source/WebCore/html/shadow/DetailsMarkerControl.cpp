@@ -40,7 +40,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-DetailsMarkerControl::DetailsMarkerControl(Document* document) 
+DetailsMarkerControl::DetailsMarkerControl(Document& document)
     : HTMLDivElement(divTag, document)
 {
 }

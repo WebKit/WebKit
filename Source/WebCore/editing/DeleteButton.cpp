@@ -40,12 +40,12 @@ using namespace HTMLNames;
 
 #if ENABLE(DELETION_UI)
 
-inline DeleteButton::DeleteButton(Document* document)
+inline DeleteButton::DeleteButton(Document& document)
     : HTMLImageElement(imgTag, document)
 {
 }
 
-PassRefPtr<DeleteButton> DeleteButton::create(Document* document)
+PassRefPtr<DeleteButton> DeleteButton::create(Document& document)
 {
     return adoptRef(new DeleteButton(document));
 }

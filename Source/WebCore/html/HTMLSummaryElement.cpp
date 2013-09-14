@@ -39,16 +39,16 @@ using namespace HTMLNames;
 
 class SummaryContentElement : public InsertionPoint {
 public:
-    static PassRefPtr<SummaryContentElement> create(Document*);
+    static PassRefPtr<SummaryContentElement> create(Document&);
 
 private:
-    SummaryContentElement(Document* document)
-        : InsertionPoint(HTMLNames::webkitShadowContentTag, document)
+    SummaryContentElement(Document& document)
+        : InsertionPoint(HTMLNames::webkitShadowContentTag, &document)
     {
     }
 };
 
-PassRefPtr<SummaryContentElement> SummaryContentElement::create(Document* document)
+PassRefPtr<SummaryContentElement> SummaryContentElement::create(Document& document)
 {
     return adoptRef(new SummaryContentElement(document));
 }
@@ -81,8 +81,8 @@ bool HTMLSummaryElement::childShouldCreateRenderer(const Node* child) const
 
 void HTMLSummaryElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
-    root->appendChild(DetailsMarkerControl::create(&document()), ASSERT_NO_EXCEPTION, AttachLazily);
-    root->appendChild(SummaryContentElement::create(&document()), ASSERT_NO_EXCEPTION, AttachLazily);
+    root->appendChild(DetailsMarkerControl::create(document()), ASSERT_NO_EXCEPTION, AttachLazily);
+    root->appendChild(SummaryContentElement::create(document()), ASSERT_NO_EXCEPTION, AttachLazily);
 }
 
 HTMLDetailsElement* HTMLSummaryElement::detailsElement() const

@@ -46,13 +46,13 @@ static LabelableElement* nodeAsSupportedLabelableElement(Node* node)
     return labelableElement;
 }
 
-inline HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+inline HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, &document)
 {
     ASSERT(hasTagName(labelTag));
 }
 
-PassRefPtr<HTMLLabelElement> HTMLLabelElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLLabelElement> HTMLLabelElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLLabelElement(tagName, document));
 }

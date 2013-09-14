@@ -70,13 +70,13 @@ PassRefPtr<DocumentParser> HTMLViewSourceDocument::createParser()
 
 void HTMLViewSourceDocument::createContainingTable()
 {
-    RefPtr<HTMLHtmlElement> html = HTMLHtmlElement::create(this);
+    RefPtr<HTMLHtmlElement> html = HTMLHtmlElement::create(*this);
     parserAppendChild(html);
     RefPtr<HTMLBodyElement> body = HTMLBodyElement::create(*this);
     html->parserAppendChild(body);
     // Create a line gutter div that can be used to make sure the gutter extends down the height of the whole
     // document.
-    RefPtr<HTMLDivElement> div = HTMLDivElement::create(this);
+    RefPtr<HTMLDivElement> div = HTMLDivElement::create(*this);
     div->setAttribute(classAttr, "webkit-line-gutter-backdrop");
     body->parserAppendChild(div);
 
@@ -225,7 +225,7 @@ void HTMLViewSourceDocument::addLine(const AtomicString& className)
 void HTMLViewSourceDocument::finishLine()
 {
     if (!m_current->hasChildNodes()) {
-        RefPtr<HTMLBRElement> br = HTMLBRElement::create(this);
+        RefPtr<HTMLBRElement> br = HTMLBRElement::create(*this);
         m_current->parserAppendChild(br);
         Style::attachRenderTree(*br);
     }
@@ -280,7 +280,7 @@ int HTMLViewSourceDocument::addRange(const String& source, int start, int end, c
 
 PassRefPtr<Element> HTMLViewSourceDocument::addBase(const AtomicString& href)
 {
-    RefPtr<HTMLBaseElement> base = HTMLBaseElement::create(baseTag, this);
+    RefPtr<HTMLBaseElement> base = HTMLBaseElement::create(baseTag, *this);
     base->setAttribute(hrefAttr, href);
     m_current->parserAppendChild(base);
     Style::attachRenderTree(*base);

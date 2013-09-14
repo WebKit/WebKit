@@ -30,10 +30,10 @@ namespace WebCore {
 
 class HTMLModElement FINAL : public HTMLElement {
 public:
-    static PassRefPtr<HTMLModElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLModElement> create(const QualifiedName&, Document&);
 
 private:
-    HTMLModElement(const QualifiedName&, Document*);
+    HTMLModElement(const QualifiedName&, Document&);
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 };

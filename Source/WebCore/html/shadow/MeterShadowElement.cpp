@@ -45,7 +45,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 MeterShadowElement::MeterShadowElement(Document* document) 
-    : HTMLDivElement(HTMLNames::divTag, document)
+    : HTMLDivElement(HTMLNames::divTag, *document)
 {
 }
 

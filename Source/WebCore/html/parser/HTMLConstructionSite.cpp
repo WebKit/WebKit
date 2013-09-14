@@ -207,7 +207,7 @@ void HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded()
 
 void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken* token)
 {
-    RefPtr<HTMLHtmlElement> element = HTMLHtmlElement::create(m_document);
+    RefPtr<HTMLHtmlElement> element = HTMLHtmlElement::create(*m_document);
     setAttributes(element.get(), token, m_parserContentPolicy);
     attachLater(m_attachmentRoot, element);
     m_openElements.pushHTMLHtmlElement(HTMLStackItem::create(element, token));

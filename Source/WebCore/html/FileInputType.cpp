@@ -49,16 +49,16 @@ using namespace HTMLNames;
 
 class UploadButtonElement : public HTMLInputElement {
 public:
-    static PassRefPtr<UploadButtonElement> create(Document*);
-    static PassRefPtr<UploadButtonElement> createForMultiple(Document*);
+    static PassRefPtr<UploadButtonElement> create(Document&);
+    static PassRefPtr<UploadButtonElement> createForMultiple(Document&);
 
 private:
-    UploadButtonElement(Document*);
+    UploadButtonElement(Document&);
 
     virtual const AtomicString& shadowPseudoId() const;
 };
 
-PassRefPtr<UploadButtonElement> UploadButtonElement::create(Document* document)
+PassRefPtr<UploadButtonElement> UploadButtonElement::create(Document& document)
 {
     RefPtr<UploadButtonElement> button = adoptRef(new UploadButtonElement(document));
     button->setType("button");
@@ -66,7 +66,7 @@ PassRefPtr<UploadButtonElement> UploadButtonElement::create(Document* document)
     return button.release();
 }
 
-PassRefPtr<UploadButtonElement> UploadButtonElement::createForMultiple(Document* document)
+PassRefPtr<UploadButtonElement> UploadButtonElement::createForMultiple(Document& document)
 {
     RefPtr<UploadButtonElement> button = adoptRef(new UploadButtonElement(document));
     button->setType("button");
@@ -74,7 +74,7 @@ PassRefPtr<UploadButtonElement> UploadButtonElement::createForMultiple(Document*
     return button.release();
 }
 
-UploadButtonElement::UploadButtonElement(Document* document)
+UploadButtonElement::UploadButtonElement(Document& document)
     : HTMLInputElement(inputTag, document, 0, false)
 {
 }
@@ -314,7 +314,7 @@ bool FileInputType::isFileUpload() const
 void FileInputType::createShadowSubtree()
 {
     ASSERT(element()->shadowRoot());
-    element()->userAgentShadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(&element()->document()): UploadButtonElement::create(&element()->document()), IGNORE_EXCEPTION);
+    element()->userAgentShadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()), IGNORE_EXCEPTION);
 }
 
 void FileInputType::disabledAttributeChanged()

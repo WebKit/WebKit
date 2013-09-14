@@ -49,7 +49,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 TextControlInnerContainer::TextControlInnerContainer(Document* document)
-    : HTMLDivElement(divTag, document)
+    : HTMLDivElement(divTag, *document)
 {
 }
 
@@ -64,7 +64,7 @@ RenderObject* TextControlInnerContainer::createRenderer(RenderArena* arena, Rend
 }
 
 TextControlInnerElement::TextControlInnerElement(Document* document)
-    : HTMLDivElement(divTag, document)
+    : HTMLDivElement(divTag, *document)
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -83,7 +83,7 @@ PassRefPtr<RenderStyle> TextControlInnerElement::customStyleForRenderer()
 // ---------------------------
 
 inline TextControlInnerTextElement::TextControlInnerTextElement(Document* document)
-    : HTMLDivElement(divTag, document)
+    : HTMLDivElement(divTag, *document)
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -126,7 +126,7 @@ PassRefPtr<RenderStyle> TextControlInnerTextElement::customStyleForRenderer()
 // ----------------------------
 
 inline SearchFieldResultsButtonElement::SearchFieldResultsButtonElement(Document* document)
-    : HTMLDivElement(divTag, document)
+    : HTMLDivElement(divTag, *document)
 {
 }
 
@@ -180,7 +180,7 @@ bool SearchFieldResultsButtonElement::willRespondToMouseClickEvents()
 // ----------------------------
 
 inline SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document* document)
-    : HTMLDivElement(divTag, document)
+    : HTMLDivElement(divTag, *document)
     , m_capturing(false)
 {
     setHasCustomStyleResolveCallbacks();
@@ -259,7 +259,7 @@ bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents()
 #if ENABLE(INPUT_SPEECH)
 
 inline InputFieldSpeechButtonElement::InputFieldSpeechButtonElement(Document* document)
-    : HTMLDivElement(divTag, document)
+    : HTMLDivElement(divTag, *document)
     , m_capturing(false)
     , m_state(Idle)
     , m_listenerId(0)

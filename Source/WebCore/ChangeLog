@@ -1,3 +1,55 @@
+2013-09-14  Sam Weinig  <sam@webkit.org>
+
+        [CTTE] Node subclasses should take a Document by reference in their constructor (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=121368
+
+        Reviewed by Darin Adler.
+
+        Converts the following to take a Document reference:
+            - DeleteButton
+            - DetailsContentElement
+            - DetailsMarkerControl
+            - DetailsSummaryElement
+            - HTMLBDIElement
+            - HTMLBRElement
+            - HTMLBaseElement
+            - HTMLBaseFontElement
+            - HTMLButtonElement
+            - HTMLCanvasElement
+            - HTMLDListElement
+            - HTMLDataListElement
+            - HTMLDetailsElement
+            - HTMLDirectoryElement
+            - HTMLDivElement
+            - HTMLEmbedElement
+            - HTMLFieldSetElement
+            - HTMLFontElement
+            - HTMLFormElement
+            - HTMLFrameElement
+            - HTMLFrameSetElement
+            - HTMLHRElement
+            - HTMLHeadElement
+            - HTMLHeadingElement
+            - HTMLHtmlElement
+            - HTMLIFrameElement
+            - HTMLImageElement
+            - HTMLInputElement
+            - HTMLKeygenElement
+            - HTMLLIElement
+            - HTMLLabelElement
+            - HTMLLegendElement
+            - HTMLLinkElement
+            - HTMLModElement
+            - HTMLPreElement
+            - HTMLQuoteElement
+            - HTMLTableCaptionElement
+            - HTMLTableColElement
+            - ImageDocumentElement
+            - KeygenSelectElement
+            - SummaryContentElement
+            - UploadButtonElement
+
+
 2013-09-14  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r155228): Call to DragData::asFragment() nullifies PassRefPtr<Range> in documentFragmentFromDragData

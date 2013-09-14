@@ -30,13 +30,13 @@ namespace WebCore {
 
 class HTMLHtmlElement FINAL : public HTMLElement {
 public:
-    static PassRefPtr<HTMLHtmlElement> create(Document*);
-    static PassRefPtr<HTMLHtmlElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLHtmlElement> create(Document&);
+    static PassRefPtr<HTMLHtmlElement> create(const QualifiedName&, Document&);
 
     void insertedByParser();
 
 private:
-    HTMLHtmlElement(const QualifiedName&, Document*);
+    HTMLHtmlElement(const QualifiedName&, Document&);
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 };

@@ -4736,7 +4736,7 @@ HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
 {
     RefPtr<HTMLCanvasElement>& element = m_cssCanvasElements.add(name, nullptr).iterator->value;
     if (!element)
-        element = HTMLCanvasElement::create(this);
+        element = HTMLCanvasElement::create(*this);
     return element.get();
 }
 
