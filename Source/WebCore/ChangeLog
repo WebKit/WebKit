@@ -1,3 +1,33 @@
+2013-09-14  Sam Weinig  <sam@webkit.org>
+
+        There is no need for any custom bindings for Console
+        https://bugs.webkit.org/show_bug.cgi?id=121338
+
+        Reviewed by Timothy Hatcher.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Remove JSConsoleCustom.cpp from project files.
+
+        * bindings/js/JSConsoleCustom.cpp:
+        Removed.
+
+        * page/Console.cpp:
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd):
+        * page/Console.h:
+        Swap the order of the arguments to appease the bindings generator.
+
+        * page/Console.idl:
+        Add the [CallWith=ScriptState] attribute to pass the ExecState
+        and [TreatNullAs=NullString, TreatUndefinedAs=NullString] to get
+        the right stringification.
+
 2013-09-14  Anders Carlsson  <andersca@apple.com>
 
         AnimationBase::m_animation is never null

@@ -176,7 +176,7 @@ void Console::count(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-void Console::profile(const String& title, JSC::ExecState* state)
+void Console::profile(JSC::ExecState* state, const String& title)
 {
     Page* page = this->page();
     if (!page)
@@ -197,7 +197,7 @@ void Console::profile(const String& title, JSC::ExecState* state)
     InspectorInstrumentation::addStartProfilingMessageToConsole(page, resolvedTitle, lastCaller.lineNumber(), lastCaller.columnNumber(), lastCaller.sourceURL());
 }
 
-void Console::profileEnd(const String& title, JSC::ExecState* state)
+void Console::profileEnd(JSC::ExecState* state, const String& title)
 {
     Page* page = this->page();
     if (!page)
