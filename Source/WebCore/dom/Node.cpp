@@ -353,7 +353,7 @@ Node::~Node()
             willBeDeletedFrom(document);
     }
 
-    m_treeScope->guardDeref();
+    m_treeScope->selfOnlyDeref();
 
     InspectorCounters::decrementCounter(InspectorCounters::NodeCounter);
 }
@@ -2259,22 +2259,22 @@ bool Node::willRespondToTouchEvents()
 #endif
 }
 
-// This is here for inlining
+// This is here so it can be inlined into Node::removedLastRef.
+// FIXME: Really? Seems like this could be inlined into Node::removedLastRef if it was in TreeScope.h.
+// FIXME: It also not seem important to inline this. Is this really hot?
 inline void TreeScope::removedLastRefToScope()
 {
     ASSERT(!deletionHasBegun());
-    if (m_guardRefCount) {
-        // If removing a child removes the last self-only ref, we don't
-        // want the scope to be destructed until after
-        // removeDetachedChildren returns, so we guard ourselves with an
-        // extra self-only ref.
-        guardRef();
-        dispose();
+    if (m_selfOnlyRefCount) {
+        // If removing a child removes the last self-only ref, we don't want the scope to be destroyed
+        // until after removeDetachedChildren returns, so we protect ourselves with an extra self-only ref.
+        selfOnlyRef();
+        dropChildren();
 #ifndef NDEBUG
-        // We need to do this right now since guardDeref() can delete this.
+        // We need to do this right now since selfOnlyDeref() can delete this.
         rootNode()->m_inRemovedLastRefFunction = false;
 #endif
-        guardDeref();
+        selfOnlyDeref();
     } else {
 #ifndef NDEBUG
         rootNode()->m_inRemovedLastRefFunction = false;

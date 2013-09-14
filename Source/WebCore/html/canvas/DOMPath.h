@@ -29,49 +29,42 @@
 #define DOMPath_h
 
 #if ENABLE(CANVAS_PATH)
+
 #include "CanvasPathMethods.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+
 #if ENABLE(SVG)
 #include "SVGPathUtilities.h"
 #endif
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class DOMPath : public RefCounted<DOMPath>, public CanvasPathMethods {
-    WTF_MAKE_NONCOPYABLE(DOMPath); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<DOMPath> create() { return adoptRef(new DOMPath); }
-    static PassRefPtr<DOMPath> create(const String& pathData) { return adoptRef(new DOMPath(pathData)); }
-    static PassRefPtr<DOMPath> create(DOMPath* path) { return adoptRef(new DOMPath(path)); }
-
     static PassRefPtr<DOMPath> create(const Path& path) { return adoptRef(new DOMPath(path)); }
+    static PassRefPtr<DOMPath> create(const DOMPath* path) { return create(path->path()); }
+
+#if ENABLE(SVG)
+    static PassRefPtr<DOMPath> create(const String& pathData)
+    {
+        Path path;
+        buildPathFromString(pathData, path);
+        return create(path);
+    }
+#endif
 
     const Path& path() const { return m_path; }
 
-    virtual ~DOMPath() { }
 private:
-    DOMPath() : CanvasPathMethods() { }
-    DOMPath(const Path& path)
-        : CanvasPathMethods()
-    {
-        m_path = path;
-    }
-    DOMPath(DOMPath* path)
-        : CanvasPathMethods()
-    {
-        m_path = path->path();
-    }
-    DOMPath(const String& pathData)
-        : CanvasPathMethods()
-    {
-#if ENABLE(SVG)
-        buildPathFromString(pathData, m_path);
-#else
-        UNUSED_PARAM(pathData);
-#endif
-    }
+    DOMPath() { }
+    DOMPath(const Path& path) : CanvasPathMethods(path) { }
 };
+
 }
+
 #endif
+
 #endif

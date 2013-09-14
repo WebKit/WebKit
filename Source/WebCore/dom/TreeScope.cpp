@@ -68,13 +68,13 @@ TreeScope::TreeScope(ContainerNode* rootNode, Document* document)
     : m_rootNode(rootNode)
     , m_documentScope(document)
     , m_parentTreeScope(document)
-    , m_guardRefCount(0)
+    , m_selfOnlyRefCount(0)
     , m_idTargetObserverRegistry(IdTargetObserverRegistry::create())
 {
     ASSERT(rootNode);
     ASSERT(document);
     ASSERT(rootNode != document);
-    m_parentTreeScope->guardRef();
+    m_parentTreeScope->selfOnlyRef();
     m_rootNode->setTreeScope(this);
 }
 
@@ -82,7 +82,7 @@ TreeScope::TreeScope(Document* document)
     : m_rootNode(document)
     , m_documentScope(document)
     , m_parentTreeScope(0)
-    , m_guardRefCount(0)
+    , m_selfOnlyRefCount(0)
     , m_idTargetObserverRegistry(IdTargetObserverRegistry::create())
 {
     ASSERT(document);
@@ -93,13 +93,13 @@ TreeScope::TreeScope()
     : m_rootNode(0)
     , m_documentScope(0)
     , m_parentTreeScope(0)
-    , m_guardRefCount(0)
+    , m_selfOnlyRefCount(0)
 {
 }
 
 TreeScope::~TreeScope()
 {
-    ASSERT(!m_guardRefCount);
+    ASSERT(!m_selfOnlyRefCount);
     m_rootNode->setTreeScope(noDocumentInstance());
 
     if (m_selection) {
@@ -108,7 +108,7 @@ TreeScope::~TreeScope()
     }
 
     if (m_parentTreeScope)
-        m_parentTreeScope->guardDeref();
+        m_parentTreeScope->selfOnlyDeref();
 }
 
 void TreeScope::destroyTreeScopeData()
@@ -131,9 +131,9 @@ void TreeScope::setParentTreeScope(TreeScope* newParentScope)
     // Every scope other than document needs a parent scope.
     ASSERT(newParentScope);
 
-    newParentScope->guardRef();
+    newParentScope->selfOnlyRef();
     if (m_parentTreeScope)
-        m_parentTreeScope->guardDeref();
+        m_parentTreeScope->selfOnlyDeref();
     m_parentTreeScope = newParentScope;
     setDocumentScope(newParentScope->documentScope());
 }

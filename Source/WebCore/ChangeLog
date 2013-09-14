@@ -1,3 +1,59 @@
+2013-09-13  Darin Adler  <darin@apple.com>
+
+        Use a better name than m_invertibleCTM
+        https://bugs.webkit.org/show_bug.cgi?id=121341
+
+        Reviewed by Andreas Kling.
+
+        Rename isTransformInvertible to hasInvertibleTransform, and
+        m_invertibleCTM to m_hasInvertibleTransform.
+
+        * html/canvas/CanvasPathMethods.cpp:
+        (WebCore::CanvasPathMethods::moveTo):
+        (WebCore::CanvasPathMethods::lineTo):
+        (WebCore::CanvasPathMethods::quadraticCurveTo):
+        (WebCore::CanvasPathMethods::bezierCurveTo):
+        (WebCore::CanvasPathMethods::arcTo):
+        (WebCore::CanvasPathMethods::arc):
+        (WebCore::CanvasPathMethods::rect):
+        Updated for name change. Not really sure the name is good here,
+        because DOMPath doesn't have a transform at all; should switch
+        to a better name some day.
+
+        * html/canvas/CanvasPathMethods.h: Renamed, added a new constructor,
+        and made the virtual function private.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State):
+        (WebCore::CanvasRenderingContext2D::State::operator=):
+        (WebCore::CanvasRenderingContext2D::scale):
+        (WebCore::CanvasRenderingContext2D::rotate):
+        (WebCore::CanvasRenderingContext2D::translate):
+        (WebCore::CanvasRenderingContext2D::transform):
+        (WebCore::CanvasRenderingContext2D::setTransform):
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+        (WebCore::CanvasRenderingContext2D::clip):
+        (WebCore::CanvasRenderingContext2D::isPointInPath):
+        (WebCore::CanvasRenderingContext2D::isPointInStroke):
+        (WebCore::CanvasRenderingContext2D::clearRect):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::strokeRect):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::didDraw):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        Updated for name change.
+
+        * html/canvas/CanvasRenderingContext2D.h: Updated for name change.
+        Also got rid of unneeded conditional around forward class declaration.
+
+        * html/canvas/DOMPath.h: Moved SVG-specific include into a
+        separate paragraph. Removed unneeded invocation  of WTF_MAKE_NONCOPYABLE,
+        which is already true since we inherit from RefCounted. Changed create
+        function argument to be a const*. Eliminated extra constructors that were
+        unneeded. Made the path-parsing create function SVG-only, rather than
+        compiling a useless empty one when compiling without SVG.
+
 2013-09-13  Andreas Kling  <akling@apple.com>
 
         CTTE: Tighter element types for RenderSVGResourceGradient and subclasses.

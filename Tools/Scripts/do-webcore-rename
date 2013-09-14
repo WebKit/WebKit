@@ -96,10 +96,8 @@ sub wanted
 my $isDOMTypeRename = 1;
 my %renames = (
     # Renames go here in the form of:
-    "runtimeObjectPropertyGetter" => "pluginElementPropertyGetter",
-    "runtimeObjectCustomGetOwnPropertySlot" => "pluginElementCustomGetOwnPropertySlot",
-    "runtimeObjectCustomPut" => "pluginElementCustomPut",
-    "runtimeObjectGetCallData" => "pluginElementGetCallData",
+    "isTransformInvertible" => "hasInvertibleTransform",
+    "m_invertibleCTM" => "m_hasInvertibleTransform",
 );
 
 my %renamesContemplatedForTheFuture = (
@@ -138,9 +136,6 @@ my %renamesContemplatedForTheFuture = (
 
     "LegacyWebArchive" => "WebArchive",
     "LegacyWebArchive_h" => "WebArchive_h",
-
-    "isTransformInvertible" => "hasInvertibleTransform",
-    "m_invertibleCTM" => "m_hasInvertibleTransform",
 
     "NativeFunctionWrapper_h" => "JSHostFunction_h",
     "NativeFunctionWrapper" => "JSHostFunction",

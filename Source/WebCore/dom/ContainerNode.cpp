@@ -96,6 +96,9 @@ static void collectChildrenAndRemoveFromOldParent(Node* node, NodeVector& nodes,
     toContainerNode(node)->removeChildren();
 }
 
+// FIXME: This function must get a new name.
+// It removes all children, not just a category called "detached children".
+// So this name is terribly confusing.
 void ContainerNode::removeDetachedChildren()
 {
     if (connectedSubframeCount()) {

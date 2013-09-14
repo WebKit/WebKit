@@ -1,3 +1,12 @@
+2013-09-13  Darin Adler  <darin@apple.com>
+
+        Use a better name than m_invertibleCTM
+        https://bugs.webkit.org/show_bug.cgi?id=121341
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/do-webcore-rename: Updated to do this replace as we do.
+
 2013-09-13  Anders Carlsson  <andersca@apple.com>
 
         Pick the correct overload when a const reference is passed to appendSlowCase.

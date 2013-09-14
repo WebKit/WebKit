@@ -108,22 +108,22 @@ public:
         return &instance;
     }
 
-    // Nodes belonging to this scope hold guard references -
+    // Nodes belonging to this scope hold self-only references -
     // these are enough to keep the scope from being destroyed, but
     // not enough to keep it from removing its children. This allows a
     // node that outlives its scope to still have a valid document
     // pointer without introducing reference cycles.
-    void guardRef()
+    void selfOnlyRef()
     {
         ASSERT(!deletionHasBegun());
-        ++m_guardRefCount;
+        ++m_selfOnlyRefCount;
     }
 
-    void guardDeref()
+    void selfOnlyDeref()
     {
         ASSERT(!deletionHasBegun());
-        --m_guardRefCount;
-        if (!m_guardRefCount && !refCount() && this != noDocumentInstance()) {
+        --m_selfOnlyRefCount;
+        if (!m_selfOnlyRefCount && !refCount() && this != noDocumentInstance()) {
             beginDeletion();
             delete this;
         }
@@ -145,12 +145,10 @@ protected:
         m_documentScope = document;
     }
 
-    bool hasGuardRefCount() const { return m_guardRefCount; }
-
 private:
     TreeScope();
 
-    virtual void dispose() { }
+    virtual void dropChildren() { }
 
     int refCount() const;
 #ifndef NDEBUG
@@ -164,7 +162,7 @@ private:
     ContainerNode* m_rootNode;
     Document* m_documentScope;
     TreeScope* m_parentTreeScope;
-    int m_guardRefCount;
+    unsigned m_selfOnlyRefCount;
 
     OwnPtr<DocumentOrderedMap> m_elementsById;
     OwnPtr<DocumentOrderedMap> m_elementsByName;

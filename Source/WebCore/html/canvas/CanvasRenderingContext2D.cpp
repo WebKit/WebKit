@@ -183,7 +183,7 @@ CanvasRenderingContext2D::State::State()
     , m_globalAlpha(1)
     , m_globalComposite(CompositeSourceOver)
     , m_globalBlend(BlendModeNormal)
-    , m_invertibleCTM(true)
+    , m_hasInvertibleTransform(true)
     , m_lineDashOffset(0)
     , m_imageSmoothingEnabled(true)
     , m_textAlign(StartTextAlign)
@@ -210,7 +210,7 @@ CanvasRenderingContext2D::State::State(const State& other)
     , m_globalComposite(other.m_globalComposite)
     , m_globalBlend(other.m_globalBlend)
     , m_transform(other.m_transform)
-    , m_invertibleCTM(other.m_invertibleCTM)
+    , m_hasInvertibleTransform(other.m_hasInvertibleTransform)
     , m_lineDashOffset(other.m_lineDashOffset)
     , m_imageSmoothingEnabled(other.m_imageSmoothingEnabled)
     , m_textAlign(other.m_textAlign)
@@ -246,7 +246,7 @@ CanvasRenderingContext2D::State& CanvasRenderingContext2D::State::operator=(cons
     m_globalComposite = other.m_globalComposite;
     m_globalBlend = other.m_globalBlend;
     m_transform = other.m_transform;
-    m_invertibleCTM = other.m_invertibleCTM;
+    m_hasInvertibleTransform = other.m_hasInvertibleTransform;
     m_imageSmoothingEnabled = other.m_imageSmoothingEnabled;
     m_textAlign = other.m_textAlign;
     m_textBaseline = other.m_textBaseline;
@@ -621,7 +621,7 @@ void CanvasRenderingContext2D::scale(float sx, float sy)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
 
     if (!std::isfinite(sx) | !std::isfinite(sy))
@@ -635,7 +635,7 @@ void CanvasRenderingContext2D::scale(float sx, float sy)
     realizeSaves();
 
     if (!newTransform.isInvertible()) {
-        modifiableState().m_invertibleCTM = false;
+        modifiableState().m_hasInvertibleTransform = false;
         return;
     }
 
@@ -649,7 +649,7 @@ void CanvasRenderingContext2D::rotate(float angleInRadians)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
 
     if (!std::isfinite(angleInRadians))
@@ -663,7 +663,7 @@ void CanvasRenderingContext2D::rotate(float angleInRadians)
     realizeSaves();
 
     if (!newTransform.isInvertible()) {
-        modifiableState().m_invertibleCTM = false;
+        modifiableState().m_hasInvertibleTransform = false;
         return;
     }
 
@@ -677,7 +677,7 @@ void CanvasRenderingContext2D::translate(float tx, float ty)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
 
     if (!std::isfinite(tx) | !std::isfinite(ty))
@@ -691,7 +691,7 @@ void CanvasRenderingContext2D::translate(float tx, float ty)
     realizeSaves();
 
     if (!newTransform.isInvertible()) {
-        modifiableState().m_invertibleCTM = false;
+        modifiableState().m_hasInvertibleTransform = false;
         return;
     }
 
@@ -705,7 +705,7 @@ void CanvasRenderingContext2D::transform(float m11, float m12, float m21, float 
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
 
     if (!std::isfinite(m11) | !std::isfinite(m21) | !std::isfinite(dx) | !std::isfinite(m12) | !std::isfinite(m22) | !std::isfinite(dy))
@@ -719,7 +719,7 @@ void CanvasRenderingContext2D::transform(float m11, float m12, float m21, float 
     realizeSaves();
 
     if (!newTransform.isInvertible()) {
-        modifiableState().m_invertibleCTM = false;
+        modifiableState().m_hasInvertibleTransform = false;
         return;
     }
 
@@ -747,7 +747,7 @@ void CanvasRenderingContext2D::setTransform(float m11, float m12, float m21, flo
     modifiableState().m_transform = AffineTransform();
     m_path.transform(ctm);
 
-    modifiableState().m_invertibleCTM = true;
+    modifiableState().m_hasInvertibleTransform = true;
     transform(m11, m12, m21, m22, dx, dy);
 }
 
@@ -841,6 +841,7 @@ void CanvasRenderingContext2D::beginPath()
 }
 
 #if ENABLE(CANVAS_PATH)
+
 PassRefPtr<DOMPath> CanvasRenderingContext2D::currentPath()
 {
     return DOMPath::create(m_path);
@@ -852,6 +853,7 @@ void CanvasRenderingContext2D::setCurrentPath(DOMPath* path)
         return;
     m_path = path->path();
 }
+
 #endif
 
 static bool validateRectForCanvas(float& x, float& y, float& width, float& height)
@@ -908,7 +910,7 @@ void CanvasRenderingContext2D::fill(const String& windingRuleString)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
 
     // If gradient size is zero, then paint nothing.
@@ -948,7 +950,7 @@ void CanvasRenderingContext2D::stroke()
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
 
     // If gradient size is zero, then paint nothing.
@@ -974,7 +976,7 @@ void CanvasRenderingContext2D::clip(const String& windingRuleString)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
 
     WindRule newWindRule = RULE_NONZERO;
@@ -994,7 +996,7 @@ bool CanvasRenderingContext2D::isPointInPath(const float x, const float y, const
     GraphicsContext* c = drawingContext();
     if (!c)
         return false;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return false;
 
     FloatPoint point(x, y);
@@ -1016,7 +1018,7 @@ bool CanvasRenderingContext2D::isPointInStroke(const float x, const float y)
     GraphicsContext* c = drawingContext();
     if (!c)
         return false;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return false;
 
     FloatPoint point(x, y);
@@ -1036,7 +1038,7 @@ void CanvasRenderingContext2D::clearRect(float x, float y, float width, float he
     GraphicsContext* context = drawingContext();
     if (!context)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
     FloatRect rect(x, y, width, height);
 
@@ -1074,7 +1076,7 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
 
     // from the HTML5 Canvas spec:
@@ -1110,7 +1112,7 @@ void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float h
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
     if (!(state().m_lineWidth >= 0))
         return;
@@ -1298,7 +1300,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
 
     CachedImage* cachedImage = image->cachedImage();
@@ -1369,7 +1371,7 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
 
     // FIXME: Do this through platform-independent GraphicsContext API.
@@ -1460,7 +1462,7 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
 
     checkOrigin(video);
@@ -1733,7 +1735,7 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
 
 #if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
@@ -2162,7 +2164,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-    if (!state().m_invertibleCTM)
+    if (!state().m_hasInvertibleTransform)
         return;
     if (!std::isfinite(x) | !std::isfinite(y))
         return;

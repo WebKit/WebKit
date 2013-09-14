@@ -1201,7 +1201,7 @@ private:
     void setRenderView(RenderView*);
 
     virtual void createRenderTree();
-    virtual void dispose() OVERRIDE;
+    virtual void dropChildren() OVERRIDE;
 
     void detachParser();
 
@@ -1625,17 +1625,16 @@ inline bool Node::isDocumentNode() const
 inline Node::Node(Document* document, ConstructionType type)
     : m_nodeFlags(type)
     , m_parentNode(0)
-    , m_treeScope(document)
+    , m_treeScope(document ? document : TreeScope::noDocumentInstance())
     , m_previous(0)
     , m_next(0)
 {
-    if (!m_treeScope)
-        m_treeScope = TreeScope::noDocumentInstance();
-    m_treeScope->guardRef();
+    m_treeScope->selfOnlyRef();
 
 #if !defined(NDEBUG) || (defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS)
     trackForDebugging();
 #endif
+
     InspectorCounters::incrementCounter(InspectorCounters::NodeCounter);
 }
 

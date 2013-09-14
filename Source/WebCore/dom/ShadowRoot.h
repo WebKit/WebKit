@@ -84,7 +84,7 @@ public:
 private:
     ShadowRoot(Document*, ShadowRootType);
 
-    virtual void dispose() OVERRIDE;
+    virtual void dropChildren() OVERRIDE;
     virtual bool childTypeAllowed(NodeType) const OVERRIDE;
     virtual void childrenChanged(const ChildChange&) OVERRIDE;
 

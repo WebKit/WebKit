@@ -83,7 +83,7 @@ ShadowRoot::~ShadowRoot()
         clearRareData();
 }
 
-void ShadowRoot::dispose()
+void ShadowRoot::dropChildren()
 {
     removeDetachedChildren();
 }

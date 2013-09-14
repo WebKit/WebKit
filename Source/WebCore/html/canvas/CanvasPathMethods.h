@@ -50,12 +50,15 @@ public:
     void arc(float x, float y, float r, float sa, float ea, bool anticlockwise, ExceptionCode&);
     void rect(float x, float y, float width, float height);
 
-    virtual bool isTransformInvertible() const { return true; }
-
 protected:
     CanvasPathMethods() { }
+    CanvasPathMethods(const Path& path) : m_path(path) { }
+
+    virtual bool hasInvertibleTransform() const { return true; }
+
     Path m_path;
 };
+
 }
 
 #endif

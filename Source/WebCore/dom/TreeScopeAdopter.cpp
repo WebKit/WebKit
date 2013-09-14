@@ -22,6 +22,7 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "TreeScopeAdopter.h"
 
@@ -39,7 +40,7 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
 {
     ASSERT(needsScopeChange());
 
-    m_oldScope->guardRef();
+    m_oldScope->selfOnlyRef();
 
     // If an element is moved from a document and then eventually back again the collection cache for
     // that element may contain stale data as changes made to it will have updated the DOMTreeVersion
@@ -66,7 +67,7 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
             continue;
 
         if (node->hasSyntheticAttrChildNodes()) {
-            const Vector<RefPtr<Attr> >& attrs = toElement(node)->attrNodeList();
+            const Vector<RefPtr<Attr>>& attrs = toElement(node)->attrNodeList();
             for (unsigned i = 0; i < attrs.size(); ++i)
                 moveTreeToNewScope(attrs[i].get());
         }
@@ -78,7 +79,7 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
         }
     }
 
-    m_oldScope->guardDeref();
+    m_oldScope->selfOnlyDeref();
 }
 
 void TreeScopeAdopter::moveTreeToNewDocument(Node* root, Document* oldDocument, Document* newDocument) const
@@ -106,8 +107,8 @@ inline void TreeScopeAdopter::updateTreeScope(Node* node) const
 {
     ASSERT(!node->isTreeScope());
     ASSERT(node->treeScope() == m_oldScope);
-    m_newScope->guardRef();
-    m_oldScope->guardDeref();
+    m_newScope->selfOnlyRef();
+    m_oldScope->selfOnlyDeref();
     node->setTreeScope(m_newScope);
 }
 

@@ -55,7 +55,7 @@ void CanvasPathMethods::moveTo(float x, float y)
 {
     if (!std::isfinite(x) || !std::isfinite(y))
         return;
-    if (!isTransformInvertible())
+    if (!hasInvertibleTransform())
         return;
     m_path.moveTo(FloatPoint(x, y));
 }
@@ -64,7 +64,7 @@ void CanvasPathMethods::lineTo(float x, float y)
 {
     if (!std::isfinite(x) || !std::isfinite(y))
         return;
-    if (!isTransformInvertible())
+    if (!hasInvertibleTransform())
         return;
 
     FloatPoint p1 = FloatPoint(x, y);
@@ -78,7 +78,7 @@ void CanvasPathMethods::quadraticCurveTo(float cpx, float cpy, float x, float y)
 {
     if (!std::isfinite(cpx) || !std::isfinite(cpy) || !std::isfinite(x) || !std::isfinite(y))
         return;
-    if (!isTransformInvertible())
+    if (!hasInvertibleTransform())
         return;
     if (!m_path.hasCurrentPoint())
         m_path.moveTo(FloatPoint(cpx, cpy));
@@ -93,7 +93,7 @@ void CanvasPathMethods::bezierCurveTo(float cp1x, float cp1y, float cp2x, float 
 {
     if (!std::isfinite(cp1x) || !std::isfinite(cp1y) || !std::isfinite(cp2x) || !std::isfinite(cp2y) || !std::isfinite(x) || !std::isfinite(y))
         return;
-    if (!isTransformInvertible())
+    if (!hasInvertibleTransform())
         return;
     if (!m_path.hasCurrentPoint())
         m_path.moveTo(FloatPoint(cp1x, cp1y));
@@ -116,7 +116,7 @@ void CanvasPathMethods::arcTo(float x1, float y1, float x2, float y2, float r, E
         return;
     }
 
-    if (!isTransformInvertible())
+    if (!hasInvertibleTransform())
         return;
 
     FloatPoint p1 = FloatPoint(x1, y1);
@@ -147,7 +147,7 @@ void CanvasPathMethods::arc(float x, float y, float r, float sa, float ea, bool 
         return;
     }
 
-    if (!isTransformInvertible())
+    if (!hasInvertibleTransform())
         return;
 
     // If 'sa' and 'ea' differ by more than 2Pi, just add a circle starting/ending at 'sa'.
@@ -165,7 +165,7 @@ void CanvasPathMethods::arc(float x, float y, float r, float sa, float ea, bool 
 
 void CanvasPathMethods::rect(float x, float y, float width, float height)
 {
-    if (!isTransformInvertible())
+    if (!hasInvertibleTransform())
         return;
 
     if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(width) || !std::isfinite(height))

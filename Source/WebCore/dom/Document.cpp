@@ -565,7 +565,6 @@ Document::~Document()
     ASSERT(m_ranges.isEmpty());
     ASSERT(!m_styleRecalcTimer.isActive());
     ASSERT(!m_parentTreeScope);
-    ASSERT(!hasGuardRefCount());
 
 #if ENABLE(TEMPLATE_ELEMENT)
     if (m_templateDocument)
@@ -635,9 +634,10 @@ Document::~Document()
     InspectorCounters::decrementCounter(InspectorCounters::DocumentCounter);
 }
 
-void Document::dispose()
+void Document::dropChildren()
 {
     ASSERT(!m_deletionHasBegun);
+
     // We must make sure not to be retaining any of our children through
     // these extra pointers or we will create a reference cycle.
     m_focusedElement = 0;
@@ -659,7 +659,9 @@ void Document::dispose()
 #endif
 
     // removeDetachedChildren() doesn't always unregister IDs,
-    // so tear down scope information upfront to avoid having stale references in the map.
+    // so tear down scope information up front to avoid having
+    // stale references in the map.
+
     destroyTreeScopeData();
     removeDetachedChildren();
     m_formController.clear();
@@ -878,7 +880,7 @@ PassRefPtr<CustomElementConstructor> Document::registerElement(JSC::ExecState* s
 
 void Document::didCreateCustomElement(Element* element, CustomElementConstructor* constructor)
 {
-    // m_registry is cleared Document::dispose() and can be null here.
+    // m_registry is cleared Document::releaseChildren() and can be null here.
     if (m_registry)
         m_registry->didCreateElement(element);
 }
