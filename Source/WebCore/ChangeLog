@@ -1,5 +1,16 @@
 2013-09-14  Andreas Kling  <akling@apple.com>
 
+        CTTE: RenderRubyAs{Block,Inline} are never anonymous.
+        <https://webkit.org/b/121353>
+
+        Reviewed by Darin Adler.
+
+        Replace element() with existingElement() and spam class with OVERRIDE.
+        Removed bogus removeLeftoverAnonymousBlock() override in RenderRubyAsInline
+        since it didn't override anything from a parent class.
+
+2013-09-14  Andreas Kling  <akling@apple.com>
+
         CTTE: RenderRubyText is never anonymous.
         <https://webkit.org/b/121352>
 

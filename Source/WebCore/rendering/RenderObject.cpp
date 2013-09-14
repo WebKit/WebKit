@@ -187,9 +187,9 @@ RenderObject* RenderObject::createObject(Element* element, RenderStyle* style)
 
     if (element->hasTagName(rubyTag)) {
         if (style->display() == INLINE)
-            return new (arena) RenderRubyAsInline(element);
+            return new (arena) RenderRubyAsInline(*element);
         else if (style->display() == BLOCK)
-            return new (arena) RenderRubyAsBlock(element);
+            return new (arena) RenderRubyAsBlock(*element);
     }
     // treat <rt> as ruby text ONLY if it still has its default treatment of block
     if (element->hasTagName(rtTag) && style->display() == BLOCK)
