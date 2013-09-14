@@ -66,8 +66,8 @@ public:
     void count(JSC::ExecState*, PassRefPtr<ScriptArguments>);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     const ProfilesArray& profiles() const { return m_profiles; }
-    void profile(const String&, JSC::ExecState*);
-    void profileEnd(const String&, JSC::ExecState*);
+    void profile(JSC::ExecState*, const String&);
+    void profileEnd(JSC::ExecState*, const String&);
 #endif
     void time(const String&);
     void timeEnd(JSC::ExecState*, const String&);
