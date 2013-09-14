@@ -1,3 +1,12 @@
+2013-09-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        Skip additional inspector tests that are failing after switching to the new Web Inspector.
+
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2013-09-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: InjectedScriptSource_js and InjectedScriptCanvasModuleSource_js should be minified
