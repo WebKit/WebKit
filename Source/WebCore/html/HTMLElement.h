@@ -131,8 +131,6 @@ private:
     TextDirection directionality(Node** strongDirectionalityTextNode= 0) const;
 
     TranslateAttributeMode translateAttributeMode() const;
-
-    AtomicString eventNameForAttributeName(const QualifiedName& attrName) const;
 };
 
 inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document* document, ConstructionType type = CreateHTMLElement)

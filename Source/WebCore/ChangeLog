@@ -1,3 +1,20 @@
+2013-09-14  Darin Adler  <darin@apple.com>
+
+        Shrink the function that builds the event listener attribute name map
+        https://bugs.webkit.org/show_bug.cgi?id=121354
+
+        Reviewed by Andreas Kling.
+
+        * html/HTMLElement.cpp:
+        (WebCore::populateEventNameForAttributeLocalNameMap): Added. Uses a
+        table to populate the map.
+        (WebCore::eventNameForAttributeLocalNameMap): Added. Uses NeverDestroyed
+        to allocate a map, but does not initialize it.
+        (WebCore::HTMLElement::parseAttribute): Put code to use map in here.
+
+        * html/HTMLElement.h: Removed eventNameForAttributeName, no longer
+        a member function.
+
 2013-09-14  Alberto Garcia  <berto@igalia.com>
 
         [GTK] WebKitGTK+ is linking against libxslt in too many places
