@@ -1,3 +1,29 @@
+2013-09-14  Darin Adler  <darin@apple.com>
+
+        Shrink the listMarkerText function
+        https://bugs.webkit.org/show_bug.cgi?id=121364
+
+        Reviewed by Andreas Kling.
+
+        Changed code to use StringBuilder, which is a better fit for what we are
+        doing here. But mainly, inlining was out of hand, so hit that with the
+        NEVER_INLINE stick. Might be worth revisiting this to optimize further for
+        speed by making StringBuilder better at this.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toRoman): NEVER_INLINE and use StringBuilder.
+        (WebCore::toAlphabeticOrNumeric): Use StringBuilder.
+        (WebCore::toSymbolic): NEVER_INLINE and use StringBuilder.
+        (WebCore::toAlphabetic): Ditto.
+        (WebCore::toNumeric): Ditto.
+        (WebCore::toHebrewUnder1000): NEVER_INLINE.
+        (WebCore::toHebrew): NEVER_INLINE and use StringBuilder.
+        (WebCore::toArmenianUnder10000): NEVER_INLINE.
+        (WebCore::toArmenian): NEVER_INLINE and use StringBuilder.
+        (WebCore::toGeorgian): NEVER_INLINE and use StringBuilder.
+        (WebCore::toCJKIdeographic): NEVER_INLINE and use StringBuilder.
+        (WebCore::listMarkerText): Use StringBuilder.
+
 2013-09-14  Sam Weinig  <sam@webkit.org>
 
         [CTTE] Node subclasses should take a Document by reference in their 
