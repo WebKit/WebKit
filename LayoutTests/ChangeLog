@@ -1,5 +1,15 @@
 2013-09-14  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK gardening. Rebaselining after r155408.
+
+        * platform/gtk/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/gtk/fast/forms/input-placeholder-visibility-3-expected.txt:
+        * platform/gtk/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/gtk/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/gtk/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+
+2013-09-14  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK gardening. Rebaselining after r155253.
 
         * platform/gtk/editing/pasteboard/4989774-expected.txt:
