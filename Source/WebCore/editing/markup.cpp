@@ -661,7 +661,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
 PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const String& markup, const String& baseURL, ParserContentPolicy parserContentPolicy)
 {
     // We use a fake body element here to trick the HTML parser to using the InBody insertion mode.
-    RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(document);
+    RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(*document);
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
 
     fragment->parseHTML(markup, fakeBody.get(), parserContentPolicy);
@@ -996,7 +996,7 @@ PassRefPtr<DocumentFragment> createFragmentForTransformToFragment(const String& 
         // Based on the documentation I can find, it looks like we want to start parsing the fragment in the InBody insertion mode.
         // Unfortunately, that's an implementation detail of the parser.
         // We achieve that effect here by passing in a fake body element as context for the fragment.
-        RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(outputDoc);
+        RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(*outputDoc);
         fragment->parseHTML(sourceString, fakeBody.get());
     } else if (sourceMIMEType == "text/plain")
         fragment->parserAppendChild(Text::create(outputDoc, sourceString));

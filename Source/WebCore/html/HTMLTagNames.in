@@ -20,7 +20,7 @@ bdo interfaceName=HTMLElement
 bgsound interfaceName=HTMLElement
 big interfaceName=HTMLElement
 blockquote interfaceName=HTMLQuoteElement
-body
+body constructorTakesDocumentReference
 br interfaceName=HTMLBRElement
 button constructorNeedsFormElement
 canvas generateTypeHelpers

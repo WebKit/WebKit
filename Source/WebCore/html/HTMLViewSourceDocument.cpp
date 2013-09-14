@@ -72,7 +72,7 @@ void HTMLViewSourceDocument::createContainingTable()
 {
     RefPtr<HTMLHtmlElement> html = HTMLHtmlElement::create(this);
     parserAppendChild(html);
-    RefPtr<HTMLBodyElement> body = HTMLBodyElement::create(this);
+    RefPtr<HTMLBodyElement> body = HTMLBodyElement::create(*this);
     html->parserAppendChild(body);
     // Create a line gutter div that can be used to make sure the gutter extends down the height of the whole
     // document.
