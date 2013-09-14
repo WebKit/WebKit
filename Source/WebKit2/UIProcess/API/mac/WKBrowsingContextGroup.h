@@ -24,7 +24,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WebKit2/WKBase.h>
+#import <WebKit2/WKDeclarationSpecifiers.h>
+#import <WebKit2/WKUserScriptInjectionTime.h>
 
 @class WKBrowsingContextGroupData;
 

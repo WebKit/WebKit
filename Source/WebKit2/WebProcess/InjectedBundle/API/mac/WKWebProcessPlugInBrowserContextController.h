@@ -26,7 +26,7 @@
 #if defined(__LP64__) && defined(__clang__)
 
 #import <Foundation/Foundation.h>
-#import <WebKit2/WKBase.h>
+#import <WebKit2/WKDeclarationSpecifiers.h>
 
 @class WKDOMDocument;
 @class WKDOMRange;

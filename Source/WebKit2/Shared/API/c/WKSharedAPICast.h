@@ -37,6 +37,8 @@
 #include "WKPageLoadTypes.h"
 #include "WKPageLoadTypesPrivate.h"
 #include "WKPageVisibilityTypes.h"
+#include "WKUserContentInjectedFrames.h"
+#include "WKUserScriptInjectionTime.h"
 #include "WebError.h"
 #include "WebEvent.h"
 #include "WebFindOptions.h"

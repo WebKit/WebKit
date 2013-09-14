@@ -24,6 +24,7 @@
  */
 
 #import <WebKit2/WKConnection.h>
+#import <WebKit2/WKBase.h>
 
 @interface WKConnection (Internal)
 

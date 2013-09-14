@@ -32,6 +32,9 @@
 #include <stdbool.h>
 #endif
 
+#include <WebKit2/WKUserContentInjectedFrames.h>
+#include <WebKit2/WKUserScriptInjectionTime.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

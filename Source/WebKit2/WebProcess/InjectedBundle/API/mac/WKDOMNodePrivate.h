@@ -26,6 +26,7 @@
 #if defined(__LP64__) && defined(__clang__)
 
 #import <WebKit2/WKDOMNode.h>
+#import <WebKit2/WKBase.h>
 
 @interface WKDOMNode (WKPrivate)
 

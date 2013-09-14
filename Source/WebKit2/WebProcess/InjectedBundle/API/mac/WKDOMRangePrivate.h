@@ -26,6 +26,7 @@
 #if defined(__LP64__) && defined(__clang__)
 
 #import <WebKit2/WKDOMRange.h>
+#import <WebKit2/WKBase.h>
 
 @interface WKDOMRange (WKPrivate)
 

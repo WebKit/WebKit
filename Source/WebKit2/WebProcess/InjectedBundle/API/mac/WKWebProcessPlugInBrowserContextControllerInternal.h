@@ -26,6 +26,7 @@
 #if defined(__LP64__) && defined(__clang__)
 
 #import "WKWebProcessPlugInBrowserContextController.h"
+#import "WKBase.h"
 
 @interface WKWebProcessPlugInBrowserContextController (Internal)
 

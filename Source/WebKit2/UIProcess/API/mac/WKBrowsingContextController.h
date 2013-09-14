@@ -24,7 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WebKit2/WKBase.h>
+#import <WebKit2/WKDeclarationSpecifiers.h>
 
 @class WKBrowsingContextControllerData;
 @protocol WKBrowsingContextLoadDelegate;

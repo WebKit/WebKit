@@ -24,6 +24,7 @@
  */
 
 #import <WebKit2/WKBrowsingContextGroup.h>
+#import <WebKit2/WKBase.h>
 
 @interface WKBrowsingContextGroup (Private)
 

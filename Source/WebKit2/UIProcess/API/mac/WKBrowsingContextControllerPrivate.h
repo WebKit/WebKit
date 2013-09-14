@@ -24,6 +24,7 @@
  */
 
 #import <WebKit2/WKBrowsingContextController.h>
+#import <WebKit2/WKBase.h>
 
 enum {
     WKPaginationModeUnpaginated,

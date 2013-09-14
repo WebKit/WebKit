@@ -24,7 +24,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
-#import <WebKit2/WKBase.h>
+#import <WebKit2/WKDeclarationSpecifiers.h>
 
 @class WKBrowsingContextController;
 @class WKBrowsingContextGroup;

@@ -24,6 +24,7 @@
  */
 
 #import <WebKit2/WKProcessGroup.h>
+#import <WebKit2/WKBase.h>
 
 @interface WKProcessGroup (Private)
 

@@ -24,7 +24,6 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WebKit2/WKBase.h>
 
 @class WKBrowsingContextController;
 

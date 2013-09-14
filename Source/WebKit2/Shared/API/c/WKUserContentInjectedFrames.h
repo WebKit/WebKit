@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKDeclarationSpecifiers.h>
+#ifndef WKUserContentInjectedFrames_h
+#define WKUserContentInjectedFrames_h
 
-@class WKConnection, WKConnectionData;
+enum WKUserContentInjectedFrames {
+    kWKInjectInAllFrames,
+    kWKInjectInTopFrameOnly
+};
+typedef enum WKUserContentInjectedFrames WKUserContentInjectedFrames;
 
-@protocol WKConnectionDelegate <NSObject>
-
-- (void)connection:(WKConnection *)connection didReceiveMessageWithName:(NSString *)messageName body:(id)messageBody;
-- (void)connectionDidClose:(WKConnection *)connection;
-
-@end
-
-WK_EXPORT
-@interface WKConnection : NSObject {
-@private
-    WKConnectionData *_data;
-}
-
-- (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody;
-
-#pragma mark Delegates
-
-@property(assign) id<WKConnectionDelegate> delegate;
-
-@end
+#endif /* WKUserContentInjectedFrames_h */

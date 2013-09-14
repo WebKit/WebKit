@@ -1,3 +1,48 @@
+2013-09-14  Dan Bernstein  <mitz@apple.com>
+
+        [mac] Public header WKBase.h imports a private header, WKBaseMac.h
+        https://bugs.webkit.org/show_bug.cgi?id=121216
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/c/WKBase.h: Moved definitions of enums and WK_EXPORT and WK_INLINE macros
+        out of this files.
+        * Shared/API/c/WKDeclarationSpecifiers.h: Copied from Source/WebKit2/Shared/API/c/WKBase.h.
+        Contains definitions of WK_EXPORT and WK_INLINE.
+        * Shared/API/c/WKSharedAPICast.h: Added #includes.
+        * Shared/API/c/WKUserContentInjectedFrames.h: Copied from Source/WebKit2/Shared/API/c/WKBase.h.
+        Contains enum definition.
+        * Shared/API/c/WKUserScriptInjectionTime.h: Copied from Source/WebKit2/Shared/API/c/WKBase.h.
+        Contains enum definition.
+        * UIProcess/API/C/WKPageGroup.h: Added #includes.
+        * UIProcess/API/mac/WKBrowsingContextController.h: Removed WKBase.h import from this public
+        header, replacing it with WKDeclarationSpecifiers.h import.
+        * UIProcess/API/mac/WKBrowsingContextControllerPrivate.h: Added WKBase.h import.
+        * UIProcess/API/mac/WKBrowsingContextGroup.h: Removed WKBase.h import from this public
+        header, added necessary public imports.
+        * UIProcess/API/mac/WKBrowsingContextGroupPrivate.h: Added WKBase.h import.
+        * UIProcess/API/mac/WKBrowsingContextLoadDelegate.h: Removed WKBase.h import from public
+        header.
+        * UIProcess/API/mac/WKConnection.h: Ditto. Added WKDeclarationSpecifiers.h import.
+        * UIProcess/API/mac/WKConnectionInternal.h: Added WKBase.h import.
+        * UIProcess/API/mac/WKProcessGroup.h: Removed WKBase.h import from public header, added
+        WKDeclarationSpecifiers.h import.
+        * UIProcess/API/mac/WKProcessGroupPrivate.h: Added WKBase.h import.
+        * UIProcess/API/mac/WKView.h: Removed WKBase.h import from public header, added
+        WKDeclarationSpecifiers.h import.
+        * WebKit2.xcodeproj/project.pbxproj: Added new public header files, made WKBase.h private.
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.h: Removed WKBase.h import from public header,
+        added WKDeclarationSpecifiers.h import.
+        * WebProcess/InjectedBundle/API/mac/WKDOMNodePrivate.h: Added WKBase.h import.
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.h: Removed WKBase.h import from public
+        header, added WKDeclarationSpecifiers.h import.
+        * WebProcess/InjectedBundle/API/mac/WKDOMRangePrivate.h: Added WKBase.h import.
+        * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.h: Removed WKBase.h import from public
+        header, added WKDeclarationSpecifiers.h import.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.h: Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerInternal.h:
+        Added WKBase.h import.
+
 2013-09-14  Alberto Garcia  <berto@igalia.com>
 
         [GTK] WebKitGTK+ is linking against libxslt in too many places

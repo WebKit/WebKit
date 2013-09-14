@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +24,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKDeclarationSpecifiers.h>
+#ifndef WKDeclarationSpecifiers_h
+#define WKDeclarationSpecifiers_h
 
-@class WKConnection, WKConnectionData;
+#undef WK_EXPORT
+#if defined(WK_NO_EXPORT)
+#define WK_EXPORT
+#elif defined(__GNUC__) && !defined(__CC_ARM) && !defined(__ARMCC__)
+#define WK_EXPORT __attribute__((visibility("default")))
+#elif defined(WIN32) || defined(_WIN32) || defined(_WIN32_WCE) || defined(__CC_ARM) || defined(__ARMCC__)
+#if BUILDING_WEBKIT
+#define WK_EXPORT __declspec(dllexport)
+#else
+#define WK_EXPORT __declspec(dllimport)
+#endif
+#else /* !defined(WK_NO_EXPORT) */
+#define WK_EXPORT
+#endif /* defined(WK_NO_EXPORT) */
 
-@protocol WKConnectionDelegate <NSObject>
+#if !defined(WK_INLINE)
+#if defined(__cplusplus)
+#define WK_INLINE static inline
+#elif defined(__GNUC__)
+#define WK_INLINE static __inline__
+#elif defined(__WIN32__)
+#define WK_INLINE static __inline
+#else
+#define WK_INLINE static    
+#endif
+#endif /* !defined(WK_INLINE) */
 
-- (void)connection:(WKConnection *)connection didReceiveMessageWithName:(NSString *)messageName body:(id)messageBody;
-- (void)connectionDidClose:(WKConnection *)connection;
-
-@end
-
-WK_EXPORT
-@interface WKConnection : NSObject {
-@private
-    WKConnectionData *_data;
-}
-
-- (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody;
-
-#pragma mark Delegates
-
-@property(assign) id<WKConnectionDelegate> delegate;
-
-@end
+#endif /* WKDeclarationSpecifiers_h */
