@@ -81,10 +81,20 @@ void Pasteboard::clear(const String&)
     notImplemented();
 }
 
+void Pasteboard::read(PasteboardPlainText&)
+{
+    notImplemented();
+}
+
 String Pasteboard::readString(const String&)
 {
     notImplemented();
     return String();
+}
+
+void Pasteboard::write(const PasteboardURL&)
+{
+    notImplemented();
 }
 
 bool Pasteboard::writeString(const String&, const String&)

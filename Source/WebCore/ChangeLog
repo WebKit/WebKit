@@ -1,3 +1,12 @@
+2013-09-13  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix for EFL port.
+
+        * editing/efl/EditorEfl.cpp:
+        * platform/efl/PasteboardEfl.cpp:
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::write):
+
 2013-09-13  Sam Weinig  <sam@webkit.org>
 
         Fix a few lingering ScriptStates.

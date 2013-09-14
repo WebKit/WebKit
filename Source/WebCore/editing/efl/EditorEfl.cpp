@@ -42,12 +42,6 @@ void Editor::writeImageToPasteboard(Pasteboard&, Element&, const KURL&, const St
     notImplemented();
 }
 
-String Editor::readPlainTextFromPasteboard(Pasteboard&)
-{
-    notImplemented();
-    return String();
-}
-
 void Editor::pasteWithPasteboard(Pasteboard*, bool)
 {
     notImplemented();
