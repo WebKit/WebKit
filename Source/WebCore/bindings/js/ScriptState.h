@@ -46,7 +46,13 @@ class Page;
 class ScriptExecutionContext;
 class WorkerGlobalScope;
 
-DOMWindow* domWindowFromExecState(JSC::ExecState*);
+// The idea is to expose "state-like" methods (hadException, and any other
+// methods where ExecState just dips into vm) of JSC::ExecState as a
+// separate abstraction.
+// For now, the separation is purely by convention.
+typedef JSC::ExecState ScriptState;
+
+DOMWindow* domWindowFromExecState(ScriptState*);
 ScriptExecutionContext* scriptExecutionContextFromExecState(JSC::ExecState*);
 
 JSC::ExecState* mainWorldExecState(Frame*);

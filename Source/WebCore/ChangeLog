@@ -1,3 +1,28 @@
+2013-09-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r155738.
+        http://trac.webkit.org/changeset/155738
+        https://bugs.webkit.org/show_bug.cgi?id=121342
+
+        Broke many tests (Requested by ap on #webkit).
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSConsoleCustom.cpp: Added.
+        (WebCore::JSConsole::profile):
+        (WebCore::JSConsole::profileEnd):
+        * bindings/js/ScriptState.h:
+        * page/Console.cpp:
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd):
+        * page/Console.h:
+        * page/Console.idl:
+
 2013-09-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         CSSPropertyAnimation::ensurePropertyMap() is large
