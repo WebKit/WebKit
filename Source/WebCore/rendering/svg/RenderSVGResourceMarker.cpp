@@ -37,8 +37,8 @@ namespace WebCore {
 
 RenderSVGResourceType RenderSVGResourceMarker::s_resourceType = MarkerResourceType;
 
-RenderSVGResourceMarker::RenderSVGResourceMarker(SVGMarkerElement* node)
-    : RenderSVGResourceContainer(node)
+RenderSVGResourceMarker::RenderSVGResourceMarker(SVGMarkerElement& element)
+    : RenderSVGResourceContainer(&element)
 {
 }
 
@@ -96,32 +96,23 @@ const AffineTransform& RenderSVGResourceMarker::localToParentTransform() const
 
 FloatPoint RenderSVGResourceMarker::referencePoint() const
 {
-    SVGMarkerElement* marker = toSVGMarkerElement(element());
-    ASSERT(marker);
-
-    SVGLengthContext lengthContext(marker);
-    return FloatPoint(marker->refX().value(lengthContext), marker->refY().value(lengthContext));
+    SVGLengthContext lengthContext(&markerElement());
+    return FloatPoint(markerElement().refX().value(lengthContext), markerElement().refY().value(lengthContext));
 }
 
 float RenderSVGResourceMarker::angle() const
 {
-    SVGMarkerElement* marker = toSVGMarkerElement(element());
-    ASSERT(marker);
-
     float angle = -1;
-    if (marker->orientType() == SVGMarkerOrientAngle)
-        angle = marker->orientAngle().value();
+    if (markerElement().orientType() == SVGMarkerOrientAngle)
+        angle = markerElement().orientAngle().value();
 
     return angle;
 }
 
 AffineTransform RenderSVGResourceMarker::markerTransformation(const FloatPoint& origin, float autoAngle, float strokeWidth) const
 {
-    SVGMarkerElement* marker = toSVGMarkerElement(element());
-    ASSERT(marker);
-
     float markerAngle = angle();
-    bool useStrokeWidth = marker->markerUnits() == SVGMarkerUnitsStrokeWidth;
+    bool useStrokeWidth = markerElement().markerUnits() == SVGMarkerUnitsStrokeWidth;
 
     AffineTransform transform;
     transform.translate(origin.x(), origin.y());
@@ -133,9 +124,7 @@ AffineTransform RenderSVGResourceMarker::markerTransformation(const FloatPoint& 
 void RenderSVGResourceMarker::draw(PaintInfo& paintInfo, const AffineTransform& transform)
 {
     // An empty viewBox disables rendering.
-    SVGMarkerElement* marker = toSVGMarkerElement(element());
-    ASSERT(marker);
-    if (marker->hasAttribute(SVGNames::viewBoxAttr) && marker->viewBoxIsValid() && marker->viewBox().isEmpty())
+    if (markerElement().hasAttribute(SVGNames::viewBoxAttr) && markerElement().viewBoxIsValid() && markerElement().viewBox().isEmpty())
         return;
 
     PaintInfo info(paintInfo);
@@ -159,10 +148,7 @@ AffineTransform RenderSVGResourceMarker::markerContentTransformation(const Affin
 
 AffineTransform RenderSVGResourceMarker::viewportTransform() const
 {
-    SVGMarkerElement* marker = toSVGMarkerElement(element());
-    ASSERT(marker);
-
-    return marker->viewBoxToViewTransform(m_viewport.width(), m_viewport.height());
+    return markerElement().viewBoxToViewTransform(m_viewport.width(), m_viewport.height());
 }
 
 void RenderSVGResourceMarker::calcViewport()
@@ -170,12 +156,9 @@ void RenderSVGResourceMarker::calcViewport()
     if (!selfNeedsLayout())
         return;
 
-    SVGMarkerElement* marker = toSVGMarkerElement(element());
-    ASSERT(marker);
-    
-    SVGLengthContext lengthContext(marker);
-    float w = marker->markerWidth().value(lengthContext);
-    float h = marker->markerHeight().value(lengthContext);
+    SVGLengthContext lengthContext(&markerElement());
+    float w = markerElement().markerWidth().value(lengthContext);
+    float h = markerElement().markerHeight().value(lengthContext);
     m_viewport = FloatRect(0, 0, w, h);
 }
 

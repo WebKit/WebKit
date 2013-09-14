@@ -35,10 +35,10 @@ class RenderObject;
 
 class RenderSVGResourceMarker FINAL : public RenderSVGResourceContainer {
 public:
-    RenderSVGResourceMarker(SVGMarkerElement*);
+    explicit RenderSVGResourceMarker(SVGMarkerElement&);
     virtual ~RenderSVGResourceMarker();
 
-    virtual const char* renderName() const { return "RenderSVGResourceMarker"; }
+    SVGMarkerElement& markerElement() const { return toSVGMarkerElement(*RenderSVGResourceContainer::element()); }
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true);
     virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true);
@@ -60,12 +60,16 @@ public:
 
     FloatPoint referencePoint() const;
     float angle() const;
-    SVGMarkerUnitsType markerUnits() const { return toSVGMarkerElement(element())->markerUnits(); }
+    SVGMarkerUnitsType markerUnits() const { return markerElement().markerUnits(); }
 
     virtual RenderSVGResourceType resourceType() const { return s_resourceType; }
     static RenderSVGResourceType s_resourceType;
 
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
+    virtual const char* renderName() const OVERRIDE { return "RenderSVGResourceMarker"; }
+
     // Generates a transformation matrix usable to render marker content. Handles scaling the marker content
     // acording to SVGs markerUnits="strokeWidth" concept, when a strokeWidth value != -1 is passed in.
     AffineTransform markerContentTransformation(const AffineTransform& contentTransformation, const FloatPoint& origin, float strokeWidth = -1) const;

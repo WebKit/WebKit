@@ -658,11 +658,11 @@ void SVGResources::dump(const RenderObject* object)
 
     if (m_markerData) {
         if (RenderSVGResourceMarker* markerStart = m_markerData->markerStart)
-            fprintf(stderr, " |-> MarkerStart: %p (node=%p)\n", markerStart, markerStart->element());
+            fprintf(stderr, " |-> MarkerStart: %p (node=%p)\n", markerStart, &markerStart->markerElement());
         if (RenderSVGResourceMarker* markerMid = m_markerData->markerMid)
-            fprintf(stderr, " |-> MarkerMid  : %p (node=%p)\n", markerMid, markerMid->element());
+            fprintf(stderr, " |-> MarkerMid  : %p (node=%p)\n", markerMid, &markerMid->markerElement());
         if (RenderSVGResourceMarker* markerEnd = m_markerData->markerEnd)
-            fprintf(stderr, " |-> MarkerEnd  : %p (node=%p)\n", markerEnd, markerEnd->element());
+            fprintf(stderr, " |-> MarkerEnd  : %p (node=%p)\n", markerEnd, &markerEnd->markerElement());
     }
 
     if (m_fillStrokeData) {
