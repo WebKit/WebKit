@@ -46,7 +46,7 @@ InjectedScriptModule::InjectedScriptModule(const String& name)
 {
 }
 
-void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptManager, ScriptState* scriptState)
+void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptManager, JSC::ExecState* scriptState)
 {
     InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(scriptState);
     ASSERT(!injectedScript.hasNoValue());

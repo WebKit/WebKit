@@ -43,25 +43,25 @@ namespace WebCore {
 
     class ScriptObject : public ScriptValue {
     public:
-        ScriptObject(ScriptState*, JSC::JSObject*);
-        ScriptObject(ScriptState*, const ScriptValue&);
+        ScriptObject(JSC::ExecState*, JSC::JSObject*);
+        ScriptObject(JSC::ExecState*, const ScriptValue&);
         ScriptObject() : m_scriptState(0) { }
         JSC::JSObject* jsObject() const { return asObject(jsValue()); }
-        ScriptState* scriptState() const { return m_scriptState; }
+        JSC::ExecState* scriptState() const { return m_scriptState; }
 
     protected:
-        ScriptState* m_scriptState;
+        JSC::ExecState* m_scriptState;
     };
 
     class ScriptGlobalObject {
     public:
-        static bool set(ScriptState*, const char* name, const ScriptObject&);
+        static bool set(JSC::ExecState*, const char* name, const ScriptObject&);
 #if ENABLE(INSPECTOR)
-        static bool set(ScriptState*, const char* name, InspectorFrontendHost*);
-        static bool set(ScriptState*, const char* name, InjectedScriptHost*);
+        static bool set(JSC::ExecState*, const char* name, InspectorFrontendHost*);
+        static bool set(JSC::ExecState*, const char* name, InjectedScriptHost*);
 #endif
-        static bool get(ScriptState*, const char* name, ScriptObject&);
-        static bool remove(ScriptState*, const char* name);
+        static bool get(JSC::ExecState*, const char* name, ScriptObject&);
+        static bool remove(JSC::ExecState*, const char* name);
     private:
         ScriptGlobalObject() { }
     };

@@ -66,7 +66,7 @@ void PageConsoleAgent::clearMessages(ErrorString* errorString)
 class InspectableNode : public InjectedScriptHost::InspectableObject {
 public:
     explicit InspectableNode(Node* node) : m_node(node) { }
-    virtual ScriptValue get(ScriptState* state)
+    virtual ScriptValue get(JSC::ExecState* state)
     {
         return InjectedScriptHost::nodeAsScriptValue(state, m_node);
     }

@@ -58,7 +58,7 @@ public:
     virtual void disable(ErrorString*);
 
     void didCreateMainWorldContext(Frame*);
-    void didCreateIsolatedContext(Frame*, ScriptState*, SecurityOrigin*);
+    void didCreateIsolatedContext(Frame*, JSC::ExecState*, SecurityOrigin*);
 
 private:
     PageRuntimeAgent(InstrumentingAgents*, InspectorCompositeState*, InjectedScriptManager*, Page*, InspectorPageAgent*);
@@ -67,7 +67,7 @@ private:
     virtual void muteConsole();
     virtual void unmuteConsole();
     void reportExecutionContextCreation();
-    void notifyContextCreated(const String& frameId, ScriptState*, SecurityOrigin*, bool isPageContext);
+    void notifyContextCreated(const String& frameId, JSC::ExecState*, SecurityOrigin*, bool isPageContext);
 
     Page* m_inspectedPage;
     InspectorPageAgent* m_pageAgent;

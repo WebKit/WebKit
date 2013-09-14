@@ -76,7 +76,7 @@ Node* InjectedScriptHost::scriptValueAsNode(ScriptValue value)
     return toNode(value.jsValue());
 }
 
-ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node)
+ScriptValue InjectedScriptHost::nodeAsScriptValue(JSC::ExecState* state, Node* node)
 {
     if (!shouldAllowAccessToNode(state, node))
         return ScriptValue(state->vm(), jsNull());

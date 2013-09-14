@@ -103,7 +103,7 @@ String eventListenerHandlerBody(Document* document, EventListener* eventListener
     JSC::JSObject* jsFunction = jsListener->jsFunction(document);
     if (!jsFunction)
         return "";
-    ScriptState* scriptState = scriptStateFromNode(jsListener->isolatedWorld(), document);
+    JSC::ExecState* scriptState = execStateFromNode(jsListener->isolatedWorld(), document);
     return jsFunction->toString(scriptState)->value(scriptState);
 }
 
@@ -120,7 +120,7 @@ ScriptValue eventListenerHandler(Document* document, EventListener* eventListene
     return ScriptValue(*jsListener->isolatedWorld()->vm(), jsFunction);
 }
 
-ScriptState* eventListenerHandlerScriptState(Frame* frame, EventListener* eventListener)
+JSC::ExecState* eventListenerHandlerScriptState(Frame* frame, EventListener* eventListener)
 {
     const JSEventListener* jsListener = JSEventListener::cast(eventListener);
     ASSERT(jsListener);

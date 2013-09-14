@@ -49,11 +49,11 @@ public:
     {
         if (m_scriptExecutionContext->isDocument()) {
             Document* document = toDocument(m_scriptExecutionContext);
-            m_exec = scriptStateFromPage(mainThreadNormalWorld(), document->page());
+            m_exec = execStateFromPage(mainThreadNormalWorld(), document->page());
         } else {
 #if ENABLE(WORKERS)
             WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(m_scriptExecutionContext);
-            m_exec = scriptStateFromWorkerGlobalScope(workerGlobalScope);
+            m_exec = execStateFromWorkerGlobalScope(workerGlobalScope);
 #endif
         }
     }

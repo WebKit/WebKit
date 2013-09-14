@@ -98,9 +98,9 @@ public:
     bool isPaused() { return m_paused; }
     bool runningNestedMessageLoop() { return m_runningNestedMessageLoop; }
 
-    void compileScript(ScriptState*, const String& expression, const String& sourceURL, String* scriptId, String* exceptionMessage);
+    void compileScript(JSC::ExecState*, const String& expression, const String& sourceURL, String* scriptId, String* exceptionMessage);
     void clearCompiledScripts();
-    void runScript(ScriptState*, const String& scriptId, ScriptValue* result, bool* wasThrown, String* exceptionMessage);
+    void runScript(JSC::ExecState*, const String& scriptId, ScriptValue* result, bool* wasThrown, String* exceptionMessage);
 
     class Task {
         WTF_MAKE_FAST_ALLOCATED;

@@ -54,7 +54,7 @@ InjectedScriptCanvasModule::InjectedScriptCanvasModule()
 {
 }
 
-InjectedScriptCanvasModule InjectedScriptCanvasModule::moduleForState(InjectedScriptManager* injectedScriptManager, ScriptState* scriptState)
+InjectedScriptCanvasModule InjectedScriptCanvasModule::moduleForState(InjectedScriptManager* injectedScriptManager, JSC::ExecState* scriptState)
 {
     InjectedScriptCanvasModule result;
     result.ensureInjected(injectedScriptManager, scriptState);

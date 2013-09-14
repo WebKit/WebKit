@@ -57,7 +57,7 @@ unsigned ScriptProfiler::getHeapObjectId(const ScriptValue&)
     return 0;
 }
 
-void ScriptProfiler::start(ScriptState* state, const String& title)
+void ScriptProfiler::start(JSC::ExecState* state, const String& title)
 {
     JSC::LegacyProfiler::profiler()->startProfiling(state, title);
 }
@@ -71,11 +71,11 @@ void ScriptProfiler::startForPage(Page* inspectedPage, const String& title)
 #if ENABLE(WORKERS)
 void ScriptProfiler::startForWorkerGlobalScope(WorkerGlobalScope* context, const String& title)
 {
-    start(scriptStateFromWorkerGlobalScope(context), title);
+    start(execStateFromWorkerGlobalScope(context), title);
 }
 #endif
 
-PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String& title)
+PassRefPtr<ScriptProfile> ScriptProfiler::stop(JSC::ExecState* state, const String& title)
 {
     RefPtr<JSC::Profile> profile = JSC::LegacyProfiler::profiler()->stopProfiling(state, title);
     return ScriptProfile::create(profile);
@@ -90,7 +90,7 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stopForPage(Page* inspectedPage, const
 #if ENABLE(WORKERS)
 PassRefPtr<ScriptProfile> ScriptProfiler::stopForWorkerGlobalScope(WorkerGlobalScope* context, const String& title)
 {
-    return stop(scriptStateFromWorkerGlobalScope(context), title);
+    return stop(execStateFromWorkerGlobalScope(context), title);
 }
 #endif
 

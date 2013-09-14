@@ -158,7 +158,7 @@ public:
     static InspectorInstrumentationCookie willEvaluateScript(Frame*, const String& url, int lineNumber);
     static void didEvaluateScript(const InspectorInstrumentationCookie&);
     static void scriptsEnabled(Page*, bool isEnabled);
-    static void didCreateIsolatedContext(Frame*, ScriptState*, SecurityOrigin*);
+    static void didCreateIsolatedContext(Frame*, JSC::ExecState*, SecurityOrigin*);
     static InspectorInstrumentationCookie willFireTimer(ScriptExecutionContext*, int timerId);
     static void didFireTimer(const InspectorInstrumentationCookie&);
     static void didInvalidateLayout(Frame*);
@@ -230,14 +230,14 @@ public:
 
     // FIXME: Remove once we no longer generate stacks outside of Inspector.
     static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
-    static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, ScriptState*, PassRefPtr<ScriptArguments>, unsigned long requestIdentifier = 0);
-    static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, ScriptState* = 0, unsigned long requestIdentifier = 0);
+    static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, JSC::ExecState*, PassRefPtr<ScriptArguments>, unsigned long requestIdentifier = 0);
+    static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
 #if ENABLE(WORKERS)
     // FIXME: Convert to ScriptArguments to match non-worker context.
     static void addMessageToConsole(WorkerGlobalScope*, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
-    static void addMessageToConsole(WorkerGlobalScope*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, ScriptState* = 0, unsigned long requestIdentifier = 0);
+    static void addMessageToConsole(WorkerGlobalScope*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
 #endif
-    static void consoleCount(Page*, ScriptState*, PassRefPtr<ScriptArguments>);
+    static void consoleCount(Page*, JSC::ExecState*, PassRefPtr<ScriptArguments>);
     static void startConsoleTiming(Frame*, const String& title);
     static void stopConsoleTiming(Frame*, const String& title, PassRefPtr<ScriptCallStack>);
     static void consoleTimeStamp(Frame*, PassRefPtr<ScriptArguments>);
@@ -363,7 +363,7 @@ private:
     static InspectorInstrumentationCookie willEvaluateScriptImpl(InstrumentingAgents*, const String& url, int lineNumber, Frame*);
     static void didEvaluateScriptImpl(const InspectorInstrumentationCookie&);
     static void scriptsEnabledImpl(InstrumentingAgents*, bool isEnabled);
-    static void didCreateIsolatedContextImpl(InstrumentingAgents*, Frame*, ScriptState*, SecurityOrigin*);
+    static void didCreateIsolatedContextImpl(InstrumentingAgents*, Frame*, JSC::ExecState*, SecurityOrigin*);
     static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents*, int timerId, ScriptExecutionContext*);
     static void didFireTimerImpl(const InspectorInstrumentationCookie&);
     static void didInvalidateLayoutImpl(InstrumentingAgents*, Frame*);
@@ -432,13 +432,13 @@ private:
     static InspectorInstrumentationCookie willWriteHTMLImpl(InstrumentingAgents*, unsigned startLine, Frame*);
     static void didWriteHTMLImpl(const InspectorInstrumentationCookie&, unsigned endLine);
 
-    static void addMessageToConsoleImpl(InstrumentingAgents*, MessageSource, MessageType, MessageLevel, const String& message, ScriptState*, PassRefPtr<ScriptArguments>, unsigned long requestIdentifier);
-    static void addMessageToConsoleImpl(InstrumentingAgents*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, ScriptState*, unsigned long requestIdentifier);
+    static void addMessageToConsoleImpl(InstrumentingAgents*, MessageSource, MessageType, MessageLevel, const String& message, JSC::ExecState*, PassRefPtr<ScriptArguments>, unsigned long requestIdentifier);
+    static void addMessageToConsoleImpl(InstrumentingAgents*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, JSC::ExecState*, unsigned long requestIdentifier);
 
     // FIXME: Remove once we no longer generate stacks outside of Inspector.
     static void addMessageToConsoleImpl(InstrumentingAgents*, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier);
 
-    static void consoleCountImpl(InstrumentingAgents*, ScriptState*, PassRefPtr<ScriptArguments>);
+    static void consoleCountImpl(InstrumentingAgents*, JSC::ExecState*, PassRefPtr<ScriptArguments>);
     static void startConsoleTimingImpl(InstrumentingAgents*, Frame*, const String& title);
     static void stopConsoleTimingImpl(InstrumentingAgents*, Frame*, const String& title, PassRefPtr<ScriptCallStack>);
     static void consoleTimeStampImpl(InstrumentingAgents*, Frame*, PassRefPtr<ScriptArguments>);
@@ -996,7 +996,7 @@ inline void InspectorInstrumentation::scriptsEnabled(Page* page, bool isEnabled)
 #endif
 }
 
-inline void InspectorInstrumentation::didCreateIsolatedContext(Frame* frame, ScriptState* scriptState, SecurityOrigin* origin)
+inline void InspectorInstrumentation::didCreateIsolatedContext(Frame* frame, JSC::ExecState* scriptState, SecurityOrigin* origin)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());

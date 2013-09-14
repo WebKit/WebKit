@@ -45,23 +45,23 @@ namespace WebCore {
         Node* currentNode() const { return m_current.get(); }
         void setCurrentNode(PassRefPtr<Node>, ExceptionCode&);
 
-        Node* parentNode(ScriptState*);
-        Node* firstChild(ScriptState*);
-        Node* lastChild(ScriptState*);
-        Node* previousSibling(ScriptState*);
-        Node* nextSibling(ScriptState*);
-        Node* previousNode(ScriptState*);
-        Node* nextNode(ScriptState*);
+        Node* parentNode(JSC::ExecState*);
+        Node* firstChild(JSC::ExecState*);
+        Node* lastChild(JSC::ExecState*);
+        Node* previousSibling(JSC::ExecState*);
+        Node* nextSibling(JSC::ExecState*);
+        Node* previousNode(JSC::ExecState*);
+        Node* nextNode(JSC::ExecState*);
 
         // Do not call these functions. They are just scaffolding to support the Objective-C bindings.
         // They operate in the main thread normal world, and they swallow JS exceptions.
-        Node* parentNode() { return parentNode(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
-        Node* firstChild() { return firstChild(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
-        Node* lastChild() { return lastChild(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
-        Node* previousSibling() { return previousSibling(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
-        Node* nextSibling() { return nextSibling(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
-        Node* previousNode() { return previousNode(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
-        Node* nextNode() { return nextNode(scriptStateFromNode(mainThreadNormalWorld(), m_current.get())); }
+        Node* parentNode() { return parentNode(execStateFromNode(mainThreadNormalWorld(), m_current.get())); }
+        Node* firstChild() { return firstChild(execStateFromNode(mainThreadNormalWorld(), m_current.get())); }
+        Node* lastChild() { return lastChild(execStateFromNode(mainThreadNormalWorld(), m_current.get())); }
+        Node* previousSibling() { return previousSibling(execStateFromNode(mainThreadNormalWorld(), m_current.get())); }
+        Node* nextSibling() { return nextSibling(execStateFromNode(mainThreadNormalWorld(), m_current.get())); }
+        Node* previousNode() { return previousNode(execStateFromNode(mainThreadNormalWorld(), m_current.get())); }
+        Node* nextNode() { return nextNode(execStateFromNode(mainThreadNormalWorld(), m_current.get())); }
 
     private:
         TreeWalker(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);

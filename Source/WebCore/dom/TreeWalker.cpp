@@ -55,7 +55,7 @@ inline Node* TreeWalker::setCurrent(PassRefPtr<Node> node)
     return m_current.get();
 }
 
-Node* TreeWalker::parentNode(ScriptState* state)
+Node* TreeWalker::parentNode(JSC::ExecState* state)
 {
     RefPtr<Node> node = m_current;
     while (node != root()) {
@@ -71,7 +71,7 @@ Node* TreeWalker::parentNode(ScriptState* state)
     return 0;
 }
 
-Node* TreeWalker::firstChild(ScriptState* state)
+Node* TreeWalker::firstChild(JSC::ExecState* state)
 {
     for (RefPtr<Node> node = m_current->firstChild(); node; ) {
         short acceptNodeResult = acceptNode(state, node.get());
@@ -104,7 +104,7 @@ Node* TreeWalker::firstChild(ScriptState* state)
     return 0;
 }
 
-Node* TreeWalker::lastChild(ScriptState* state)
+Node* TreeWalker::lastChild(JSC::ExecState* state)
 {
     for (RefPtr<Node> node = m_current->lastChild(); node; ) {
         short acceptNodeResult = acceptNode(state, node.get());
@@ -137,7 +137,7 @@ Node* TreeWalker::lastChild(ScriptState* state)
     return 0;
 }
 
-Node* TreeWalker::previousSibling(ScriptState* state)
+Node* TreeWalker::previousSibling(JSC::ExecState* state)
 {
     RefPtr<Node> node = m_current;
     if (node == root())
@@ -174,7 +174,7 @@ Node* TreeWalker::previousSibling(ScriptState* state)
     }
 }
 
-Node* TreeWalker::nextSibling(ScriptState* state)
+Node* TreeWalker::nextSibling(JSC::ExecState* state)
 {
     RefPtr<Node> node = m_current;
     if (node == root())
@@ -211,7 +211,7 @@ Node* TreeWalker::nextSibling(ScriptState* state)
     }
 }
 
-Node* TreeWalker::previousNode(ScriptState* state)
+Node* TreeWalker::previousNode(JSC::ExecState* state)
 {
     RefPtr<Node> node = m_current;
     while (node != root()) {
@@ -250,7 +250,7 @@ Node* TreeWalker::previousNode(ScriptState* state)
     return 0;
 }
 
-Node* TreeWalker::nextNode(ScriptState* state)
+Node* TreeWalker::nextNode(JSC::ExecState* state)
 {
     RefPtr<Node> node = m_current;
 Children:

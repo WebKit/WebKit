@@ -142,7 +142,7 @@ protected:
 
     virtual void enable();
     virtual void disable();
-    virtual void didPause(ScriptState*, const ScriptValue& callFrames, const ScriptValue& exception);
+    virtual void didPause(JSC::ExecState*, const ScriptValue& callFrames, const ScriptValue& exception);
     virtual void didContinue();
     void reset();
 
@@ -168,7 +168,7 @@ private:
 
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Debugger* m_frontend;
-    ScriptState* m_pausedScriptState;
+    JSC::ExecState* m_pausedScriptState;
     ScriptValue m_currentCallStack;
     ScriptsMap m_scripts;
     BreakpointIdToDebugServerBreakpointIdsMap m_breakpointIdToDebugServerBreakpointIds;

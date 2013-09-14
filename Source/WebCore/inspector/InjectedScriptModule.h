@@ -50,7 +50,7 @@ protected:
     // a static factory method that would create a new instance of the class
     // and call its ensureInjected() method immediately.
     InjectedScriptModule(const String& name);
-    void ensureInjected(InjectedScriptManager*, ScriptState*);
+    void ensureInjected(InjectedScriptManager*, JSC::ExecState*);
 };
 
 #endif

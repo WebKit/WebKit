@@ -41,7 +41,7 @@ namespace WebCore {
     class NodeFilterCondition : public RefCounted<NodeFilterCondition> {
     public:
         virtual ~NodeFilterCondition() { }
-        virtual short acceptNode(ScriptState*, Node*) const = 0;
+        virtual short acceptNode(JSC::ExecState*, Node*) const = 0;
         virtual void visitAggregate(JSC::SlotVisitor&) { }
     };
 

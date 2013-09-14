@@ -165,7 +165,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
     addConsoleMessage(adoptPtr(new ConsoleMessage(!isWorkerAgent(), source, type, level, message, callStack, requestIdentifier)));
 }
 
-void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, ScriptState* state, PassRefPtr<ScriptArguments> arguments, unsigned long requestIdentifier)
+void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments, unsigned long requestIdentifier)
 {
     if (!developerExtrasEnabled())
         return;
@@ -178,7 +178,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
     addConsoleMessage(adoptPtr(new ConsoleMessage(!isWorkerAgent(), source, type, level, message, arguments, state, requestIdentifier)));
 }
 
-void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, ScriptState* state, unsigned long requestIdentifier)
+void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (!developerExtrasEnabled())
         return;
@@ -229,7 +229,7 @@ void InspectorConsoleAgent::stopTiming(const String& title, PassRefPtr<ScriptCal
     addMessageToConsole(ConsoleAPIMessageSource, TimingMessageType, DebugMessageLevel, message, callStack);
 }
 
-void InspectorConsoleAgent::count(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void InspectorConsoleAgent::count(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state));
     const ScriptCallFrame& lastCaller = callStack->at(0);
@@ -336,7 +336,7 @@ void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> console
 class InspectableHeapObject : public InjectedScriptHost::InspectableObject {
 public:
     explicit InspectableHeapObject(int heapObjectId) : m_heapObjectId(heapObjectId) { }
-    virtual ScriptValue get(ScriptState*)
+    virtual ScriptValue get(JSC::ExecState*)
     {
         return ScriptProfiler::objectByHeapObjectId(m_heapObjectId);
     }

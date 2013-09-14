@@ -120,11 +120,11 @@ void PageRuntimeAgent::didCreateMainWorldContext(Frame* frame)
         return;
     ASSERT(m_frontend);
     String frameId = m_pageAgent->frameId(frame);
-    ScriptState* scriptState = mainWorldScriptState(frame);
+    JSC::ExecState* scriptState = mainWorldExecState(frame);
     notifyContextCreated(frameId, scriptState, 0, true);
 }
 
-void PageRuntimeAgent::didCreateIsolatedContext(Frame* frame, ScriptState* scriptState, SecurityOrigin* origin)
+void PageRuntimeAgent::didCreateIsolatedContext(Frame* frame, JSC::ExecState* scriptState, SecurityOrigin* origin)
 {
     if (!m_enabled)
         return;
@@ -136,7 +136,7 @@ void PageRuntimeAgent::didCreateIsolatedContext(Frame* frame, ScriptState* scrip
 InjectedScript PageRuntimeAgent::injectedScriptForEval(ErrorString* errorString, const int* executionContextId)
 {
     if (!executionContextId) {
-        ScriptState* scriptState = mainWorldScriptState(&m_inspectedPage->mainFrame());
+        JSC::ExecState* scriptState = mainWorldExecState(&m_inspectedPage->mainFrame());
         InjectedScript result = injectedScriptManager()->injectedScriptFor(scriptState);
         if (result.hasNoValue())
             *errorString = "Internal error: main world execution context not found.";
@@ -160,13 +160,13 @@ void PageRuntimeAgent::unmuteConsole()
 
 void PageRuntimeAgent::reportExecutionContextCreation()
 {
-    Vector<std::pair<ScriptState*, SecurityOrigin*> > isolatedContexts;
+    Vector<std::pair<JSC::ExecState*, SecurityOrigin*> > isolatedContexts;
     for (Frame* frame = &m_inspectedPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
             continue;
         String frameId = m_pageAgent->frameId(frame);
 
-        ScriptState* scriptState = mainWorldScriptState(frame);
+        JSC::ExecState* scriptState = mainWorldExecState(frame);
         notifyContextCreated(frameId, scriptState, 0, true);
         frame->script().collectIsolatedContexts(isolatedContexts);
         if (isolatedContexts.isEmpty())
@@ -177,7 +177,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
     }
 }
 
-void PageRuntimeAgent::notifyContextCreated(const String& frameId, ScriptState* scriptState, SecurityOrigin* securityOrigin, bool isPageContext)
+void PageRuntimeAgent::notifyContextCreated(const String& frameId, JSC::ExecState* scriptState, SecurityOrigin* securityOrigin, bool isPageContext)
 {
     ASSERT(securityOrigin || isPageContext);
     int executionContextId = injectedScriptManager()->injectedScriptIdFor(scriptState);

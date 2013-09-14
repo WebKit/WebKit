@@ -35,12 +35,12 @@
 
 namespace WebCore {
 
-PassRefPtr<ScriptArguments> ScriptArguments::create(ScriptState* scriptState, Vector<ScriptValue>& arguments)
+PassRefPtr<ScriptArguments> ScriptArguments::create(JSC::ExecState* scriptState, Vector<ScriptValue>& arguments)
 {
     return adoptRef(new ScriptArguments(scriptState, arguments));
 }
 
-ScriptArguments::ScriptArguments(ScriptState* scriptState, Vector<ScriptValue>& arguments)
+ScriptArguments::ScriptArguments(JSC::ExecState* scriptState, Vector<ScriptValue>& arguments)
     : m_globalObject(scriptState->vm(), scriptState->lexicalGlobalObject())
 {
     m_arguments.swap(arguments);
@@ -56,7 +56,7 @@ const ScriptValue &ScriptArguments::argumentAt(size_t index) const
     return m_arguments[index];
 }
 
-ScriptState* ScriptArguments::globalState() const
+JSC::ExecState* ScriptArguments::globalState() const
 {
     if (m_globalObject)
         return const_cast<JSC::JSGlobalObject*>(m_globalObject.get())->globalExec();

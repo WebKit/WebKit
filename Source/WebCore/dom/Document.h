@@ -1138,8 +1138,8 @@ public:
 #if ENABLE(CUSTOM_ELEMENTS)
     PassRefPtr<Element> createElement(const AtomicString& localName, const AtomicString& typeExtension, ExceptionCode&);
     PassRefPtr<Element> createElementNS(const AtomicString& namespaceURI, const String& qualifiedName, const AtomicString& typeExtension, ExceptionCode&);
-    PassRefPtr<CustomElementConstructor> registerElement(WebCore::ScriptState*, const AtomicString& name, ExceptionCode&);
-    PassRefPtr<CustomElementConstructor> registerElement(WebCore::ScriptState*, const AtomicString& name, const Dictionary& options, ExceptionCode&);
+    PassRefPtr<CustomElementConstructor> registerElement(WebCore::JSC::ExecState*, const AtomicString& name, ExceptionCode&);
+    PassRefPtr<CustomElementConstructor> registerElement(WebCore::JSC::ExecState*, const AtomicString& name, const Dictionary& options, ExceptionCode&);
     CustomElementRegistry* registry() const { return m_registry.get(); }
     void didCreateCustomElement(Element*, CustomElementConstructor*);
 #endif
@@ -1220,7 +1220,7 @@ private:
     virtual void refScriptExecutionContext() { ref(); }
     virtual void derefScriptExecutionContext() { deref(); }
 
-    virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack>, ScriptState* = 0, unsigned long requestIdentifier = 0);
+    virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack>, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
 
     virtual double minimumTimerInterval() const;
 

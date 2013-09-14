@@ -65,7 +65,7 @@ Console::~Console()
 {
 }
 
-static void internalAddMessage(Page* page, MessageType type, MessageLevel level, ScriptState* state, PassRefPtr<ScriptArguments> prpArguments, bool acceptNoArguments = false, bool printTrace = false)
+static void internalAddMessage(Page* page, MessageType type, MessageLevel level, JSC::ExecState* state, PassRefPtr<ScriptArguments> prpArguments, bool acceptNoArguments = false, bool printTrace = false)
 {
     RefPtr<ScriptArguments> arguments = prpArguments;
 
@@ -111,57 +111,57 @@ static void internalAddMessage(Page* page, MessageType type, MessageLevel level,
     }
 }
 
-void Console::debug(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void Console::debug(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     internalAddMessage(page(), LogMessageType, DebugMessageLevel, state, arguments);
 }
 
-void Console::error(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void Console::error(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     internalAddMessage(page(), LogMessageType, ErrorMessageLevel, state, arguments);
 }
 
-void Console::info(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void Console::info(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     log(state, arguments);
 }
 
-void Console::log(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void Console::log(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     internalAddMessage(page(), LogMessageType, LogMessageLevel, state, arguments);
 }
 
-void Console::warn(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void Console::warn(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     internalAddMessage(page(), LogMessageType, WarningMessageLevel, state, arguments);
 }
 
-void Console::dir(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void Console::dir(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     internalAddMessage(page(), DirMessageType, LogMessageLevel, state, arguments);
 }
 
-void Console::dirxml(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void Console::dirxml(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     internalAddMessage(page(), DirXMLMessageType, LogMessageLevel, state, arguments);
 }
 
-void Console::table(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void Console::table(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     internalAddMessage(page(), TableMessageType, LogMessageLevel, state, arguments);
 }
 
-void Console::clear(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void Console::clear(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     internalAddMessage(page(), ClearMessageType, LogMessageLevel, state, arguments, true);
 }
 
-void Console::trace(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void Console::trace(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     internalAddMessage(page(), TraceMessageType, LogMessageLevel, state, arguments, true, true);
 }
 
-void Console::assertCondition(ScriptState* state, PassRefPtr<ScriptArguments> arguments, bool condition)
+void Console::assertCondition(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments, bool condition)
 {
     if (condition)
         return;
@@ -169,14 +169,14 @@ void Console::assertCondition(ScriptState* state, PassRefPtr<ScriptArguments> ar
     internalAddMessage(page(), AssertMessageType, ErrorMessageLevel, state, arguments, true);
 }
 
-void Console::count(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void Console::count(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     InspectorInstrumentation::consoleCount(page(), state, arguments);
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
-void Console::profile(const String& title, ScriptState* state)
+void Console::profile(const String& title, JSC::ExecState* state)
 {
     Page* page = this->page();
     if (!page)
@@ -197,7 +197,7 @@ void Console::profile(const String& title, ScriptState* state)
     InspectorInstrumentation::addStartProfilingMessageToConsole(page, resolvedTitle, lastCaller.lineNumber(), lastCaller.columnNumber(), lastCaller.sourceURL());
 }
 
-void Console::profileEnd(const String& title, ScriptState* state)
+void Console::profileEnd(const String& title, JSC::ExecState* state)
 {
     Page* page = this->page();
     if (!page)
@@ -222,7 +222,7 @@ void Console::time(const String& title)
     InspectorInstrumentation::startConsoleTiming(m_frame, title);
 }
 
-void Console::timeEnd(ScriptState* state, const String& title)
+void Console::timeEnd(JSC::ExecState* state, const String& title)
 {
     RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state));
     InspectorInstrumentation::stopConsoleTiming(m_frame, title, callStack.release());
@@ -233,12 +233,12 @@ void Console::timeStamp(PassRefPtr<ScriptArguments> arguments)
     InspectorInstrumentation::consoleTimeStamp(m_frame, arguments);
 }
 
-void Console::group(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void Console::group(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     InspectorInstrumentation::addMessageToConsole(page(), ConsoleAPIMessageSource, StartGroupMessageType, LogMessageLevel, String(), state, arguments);
 }
 
-void Console::groupCollapsed(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void Console::groupCollapsed(JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     InspectorInstrumentation::addMessageToConsole(page(), ConsoleAPIMessageSource, StartGroupCollapsedMessageType, LogMessageLevel, String(), state, arguments);
 }

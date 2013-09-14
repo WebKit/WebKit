@@ -63,7 +63,7 @@ ConsoleMessage::ConsoleMessage(bool canGenerateCallStack, MessageSource source, 
     autogenerateMetadata(canGenerateCallStack);
 }
 
-ConsoleMessage::ConsoleMessage(bool canGenerateCallStack, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned line, unsigned column, ScriptState* state, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(bool canGenerateCallStack, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned line, unsigned column, JSC::ExecState* state, unsigned long requestIdentifier)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -97,7 +97,7 @@ ConsoleMessage::ConsoleMessage(bool, MessageSource source, MessageType type, Mes
     m_callStack = callStack;
 }
 
-ConsoleMessage::ConsoleMessage(bool canGenerateCallStack, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, ScriptState* state, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(bool canGenerateCallStack, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, JSC::ExecState* state, unsigned long requestIdentifier)
     : m_source(source)
     , m_type(type)
     , m_level(level)
@@ -116,7 +116,7 @@ ConsoleMessage::~ConsoleMessage()
 {
 }
 
-void ConsoleMessage::autogenerateMetadata(bool canGenerateCallStack, ScriptState* state)
+void ConsoleMessage::autogenerateMetadata(bool canGenerateCallStack, JSC::ExecState* state)
 {
     if (m_type == EndGroupMessageType)
         return;
@@ -271,7 +271,7 @@ void ConsoleMessage::windowCleared(DOMWindow* window)
 {
     if (!m_arguments)
         return;
-    if (domWindowFromScriptState(m_arguments->globalState()) != window)
+    if (domWindowFromExecState(m_arguments->globalState()) != window)
         return;
     if (!m_message)
         m_message = "<message collected>";

@@ -99,7 +99,7 @@ void PageDebuggerAgent::unmuteConsole()
 InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString* errorString, const int* executionContextId)
 {
     if (!executionContextId) {
-        ScriptState* scriptState = mainWorldScriptState(m_pageAgent->mainFrame());
+        JSC::ExecState* scriptState = mainWorldExecState(m_pageAgent->mainFrame());
         return injectedScriptManager()->injectedScriptFor(scriptState);
     }
     InjectedScript injectedScript = injectedScriptManager()->injectedScriptForId(*executionContextId);

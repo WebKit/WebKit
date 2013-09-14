@@ -151,7 +151,7 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     addMessage(source, level, message, String(), 0, 0, callStack, 0);
 }
 
-void PageConsole::addMessage(MessageSource source, MessageLevel level, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
+void PageConsole::addMessage(MessageSource source, MessageLevel level, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (muteCount && source != ConsoleAPIMessageSource)
         return;

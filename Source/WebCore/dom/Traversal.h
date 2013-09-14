@@ -42,7 +42,7 @@ namespace WebCore {
 
     protected:
         NodeIteratorBase(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
-        short acceptNode(ScriptState*, Node*) const;
+        short acceptNode(JSC::ExecState*, Node*) const;
 
     private:
         RefPtr<Node> m_root;

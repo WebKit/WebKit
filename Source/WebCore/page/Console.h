@@ -52,28 +52,28 @@ public:
     static PassRefPtr<Console> create(Frame* frame) { return adoptRef(new Console(frame)); }
     virtual ~Console();
 
-    void debug(ScriptState*, PassRefPtr<ScriptArguments>);
-    void error(ScriptState*, PassRefPtr<ScriptArguments>);
-    void info(ScriptState*, PassRefPtr<ScriptArguments>);
-    void log(ScriptState*, PassRefPtr<ScriptArguments>);
-    void clear(ScriptState*, PassRefPtr<ScriptArguments>);
-    void warn(ScriptState*, PassRefPtr<ScriptArguments>);
-    void dir(ScriptState*, PassRefPtr<ScriptArguments>);
-    void dirxml(ScriptState*, PassRefPtr<ScriptArguments>);
-    void table(ScriptState*, PassRefPtr<ScriptArguments>);
-    void trace(ScriptState*, PassRefPtr<ScriptArguments>);
-    void assertCondition(ScriptState*, PassRefPtr<ScriptArguments>, bool condition);
-    void count(ScriptState*, PassRefPtr<ScriptArguments>);
+    void debug(JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    void error(JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    void info(JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    void log(JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    void clear(JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    void warn(JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    void dir(JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    void dirxml(JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    void table(JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    void trace(JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    void assertCondition(JSC::ExecState*, PassRefPtr<ScriptArguments>, bool condition);
+    void count(JSC::ExecState*, PassRefPtr<ScriptArguments>);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     const ProfilesArray& profiles() const { return m_profiles; }
-    void profile(const String&, ScriptState*);
-    void profileEnd(const String&, ScriptState*);
+    void profile(const String&, JSC::ExecState*);
+    void profileEnd(const String&, JSC::ExecState*);
 #endif
     void time(const String&);
-    void timeEnd(ScriptState*, const String&);
+    void timeEnd(JSC::ExecState*, const String&);
     void timeStamp(PassRefPtr<ScriptArguments>);
-    void group(ScriptState*, PassRefPtr<ScriptArguments>);
-    void groupCollapsed(ScriptState*, PassRefPtr<ScriptArguments>);
+    void group(JSC::ExecState*, PassRefPtr<ScriptArguments>);
+    void groupCollapsed(JSC::ExecState*, PassRefPtr<ScriptArguments>);
     void groupEnd();
 
 private:

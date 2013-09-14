@@ -92,7 +92,7 @@ public:
 private:
     InspectorCanvasAgent(InstrumentingAgents*, InspectorCompositeState*, InspectorPageAgent*, InjectedScriptManager*);
 
-    InjectedScriptCanvasModule injectedScriptCanvasModule(ErrorString*, ScriptState*);
+    InjectedScriptCanvasModule injectedScriptCanvasModule(ErrorString*, JSC::ExecState*);
     InjectedScriptCanvasModule injectedScriptCanvasModule(ErrorString*, const ScriptObject&);
     InjectedScriptCanvasModule injectedScriptCanvasModule(ErrorString*, const String&);
 

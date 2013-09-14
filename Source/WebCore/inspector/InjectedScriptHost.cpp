@@ -123,7 +123,7 @@ void InjectedScriptHost::copyText(const String& text)
     Pasteboard::createForCopyAndPaste()->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
 
-ScriptValue InjectedScriptHost::InspectableObject::get(ScriptState*)
+ScriptValue InjectedScriptHost::InspectableObject::get(JSC::ExecState*)
 {
     return ScriptValue();
 };

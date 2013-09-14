@@ -1090,7 +1090,7 @@ void InspectorDOMAgent::focusNode()
     if (!frame)
         return;
 
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldScriptState(frame));
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldExecState(frame));
     if (injectedScript.hasNoValue())
         return;
 
@@ -1491,7 +1491,7 @@ PassRefPtr<TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildObjectForEve
         ScriptValue functionValue = eventListenerHandler(&node->document(), eventListener.get());
         if (!functionValue.hasNoValue()) {
             if (Frame* frame = node->document().frame()) {
-                ScriptState* scriptState = eventListenerHandlerScriptState(frame, eventListener.get());
+                JSC::ExecState* scriptState = eventListenerHandlerScriptState(frame, eventListener.get());
                 if (scriptState) {
                     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
                     if (!injectedScript.hasNoValue()) {
@@ -1815,7 +1815,7 @@ PassRefPtr<TypeBuilder::Runtime::RemoteObject> InspectorDOMAgent::resolveNode(No
     if (!frame)
         return 0;
 
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldScriptState(frame));
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldExecState(frame));
     if (injectedScript.hasNoValue())
         return 0;
 

@@ -80,16 +80,16 @@ InjectedScript InjectedScriptManager::injectedScriptForId(int id)
     IdToInjectedScriptMap::iterator it = m_idToInjectedScript.find(id);
     if (it != m_idToInjectedScript.end())
         return it->value;
-    for (ScriptStateToId::iterator it = m_scriptStateToId.begin(); it != m_scriptStateToId.end(); ++it) {
+    for (ExecStateToId::iterator it = m_scriptStateToId.begin(); it != m_scriptStateToId.end(); ++it) {
         if (it->value == id)
             return injectedScriptFor(it->key);
     }
     return InjectedScript();
 }
 
-int InjectedScriptManager::injectedScriptIdFor(ScriptState* scriptState)
+int InjectedScriptManager::injectedScriptIdFor(JSC::ExecState* scriptState)
 {
-    ScriptStateToId::iterator it = m_scriptStateToId.find(scriptState);
+    ExecStateToId::iterator it = m_scriptStateToId.find(scriptState);
     if (it != m_scriptStateToId.end())
         return it->value;
     int id = m_nextInjectedScriptId++;
@@ -123,8 +123,8 @@ void InjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
     Vector<long> idsToRemove;
     IdToInjectedScriptMap::iterator end = m_idToInjectedScript.end();
     for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != end; ++it) {
-        ScriptState* scriptState = it->value.scriptState();
-        if (window != domWindowFromScriptState(scriptState))
+        JSC::ExecState* scriptState = it->value.scriptState();
+        if (window != domWindowFromExecState(scriptState))
             continue;
         m_scriptStateToId.remove(scriptState);
         idsToRemove.append(it->key);
@@ -134,17 +134,17 @@ void InjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
         m_idToInjectedScript.remove(idsToRemove[i]);
 
     // Now remove script states that have id but no injected script.
-    Vector<ScriptState*> scriptStatesToRemove;
-    for (ScriptStateToId::iterator it = m_scriptStateToId.begin(); it != m_scriptStateToId.end(); ++it) {
-        ScriptState* scriptState = it->key;
-        if (window == domWindowFromScriptState(scriptState))
+    Vector<JSC::ExecState*> scriptStatesToRemove;
+    for (ExecStateToId::iterator it = m_scriptStateToId.begin(); it != m_scriptStateToId.end(); ++it) {
+        JSC::ExecState* scriptState = it->key;
+        if (window == domWindowFromExecState(scriptState))
             scriptStatesToRemove.append(scriptState);
     }
     for (size_t i = 0; i < scriptStatesToRemove.size(); i++)
         m_scriptStateToId.remove(scriptStatesToRemove[i]);
 }
 
-bool InjectedScriptManager::canAccessInspectedWorkerGlobalScope(ScriptState*)
+bool InjectedScriptManager::canAccessInspectedWorkerGlobalScope(JSC::ExecState*)
 {
     return true;
 }
@@ -160,20 +160,20 @@ String InjectedScriptManager::injectedScriptSource()
     return String(reinterpret_cast<const char*>(InjectedScriptSource_js), sizeof(InjectedScriptSource_js));
 }
 
-InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState* inspectedScriptState)
+InjectedScript InjectedScriptManager::injectedScriptFor(JSC::ExecState* inspectedExecState)
 {
-    ScriptStateToId::iterator it = m_scriptStateToId.find(inspectedScriptState);
+    ExecStateToId::iterator it = m_scriptStateToId.find(inspectedExecState);
     if (it != m_scriptStateToId.end()) {
         IdToInjectedScriptMap::iterator it1 = m_idToInjectedScript.find(it->value);
         if (it1 != m_idToInjectedScript.end())
             return it1->value;
     }
 
-    if (!m_inspectedStateAccessCheck(inspectedScriptState))
+    if (!m_inspectedStateAccessCheck(inspectedExecState))
         return InjectedScript();
 
-    int id = injectedScriptIdFor(inspectedScriptState);
-    ScriptObject injectedScriptObject = createInjectedScript(injectedScriptSource(), inspectedScriptState, id);
+    int id = injectedScriptIdFor(inspectedExecState);
+    ScriptObject injectedScriptObject = createInjectedScript(injectedScriptSource(), inspectedExecState, id);
     InjectedScript result(injectedScriptObject, m_inspectedStateAccessCheck);
     m_idToInjectedScript.set(id, result);
     return result;

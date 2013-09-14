@@ -44,7 +44,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool ScriptValue::getString(ScriptState* scriptState, String& result) const
+bool ScriptValue::getString(JSC::ExecState* scriptState, String& result) const
 {
     if (!m_value)
         return false;
@@ -54,7 +54,7 @@ bool ScriptValue::getString(ScriptState* scriptState, String& result) const
     return true;
 }
 
-String ScriptValue::toString(ScriptState* scriptState) const
+String ScriptValue::toString(JSC::ExecState* scriptState) const
 {
     String result = m_value.get().toString(scriptState)->value(scriptState);
     // Handle the case where an exception is thrown as part of invoking toString on the object.
@@ -63,7 +63,7 @@ String ScriptValue::toString(ScriptState* scriptState) const
     return result;
 }
 
-bool ScriptValue::isEqual(ScriptState* scriptState, const ScriptValue& anotherValue) const
+bool ScriptValue::isEqual(JSC::ExecState* scriptState, const ScriptValue& anotherValue) const
 {
     if (hasNoValue())
         return anotherValue.hasNoValue();
@@ -98,25 +98,25 @@ bool ScriptValue::isFunction() const
     return getCallData(m_value.get(), callData) != CallTypeNone;
 }
 
-PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptState, SerializationErrorMode throwExceptions)
+PassRefPtr<SerializedScriptValue> ScriptValue::serialize(JSC::ExecState* scriptState, SerializationErrorMode throwExceptions)
 {
     return SerializedScriptValue::create(scriptState, jsValue(), 0, 0, throwExceptions);
 }
 
-PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptState, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow)
+PassRefPtr<SerializedScriptValue> ScriptValue::serialize(JSC::ExecState* scriptState, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow)
 {
     RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(scriptState, jsValue(), messagePorts, arrayBuffers);
     didThrow = scriptState->hadException();
     return serializedValue.release();
 }
 
-ScriptValue ScriptValue::deserialize(ScriptState* scriptState, SerializedScriptValue* value, SerializationErrorMode throwExceptions)
+ScriptValue ScriptValue::deserialize(JSC::ExecState* scriptState, SerializedScriptValue* value, SerializationErrorMode throwExceptions)
 {
     return ScriptValue(scriptState->vm(), value->deserialize(scriptState, scriptState->lexicalGlobalObject(), 0, throwExceptions));
 }
 
 #if ENABLE(INSPECTOR)
-static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, JSValue value, int maxDepth)
+static PassRefPtr<InspectorValue> jsToInspectorValue(JSC::ExecState* scriptState, JSValue value, int maxDepth)
 {
     if (!value) {
         ASSERT_NOT_REACHED();
@@ -169,7 +169,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
     return 0;
 }
 
-PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(ScriptState* scriptState) const
+PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(JSC::ExecState* scriptState) const
 {
     JSC::JSLockHolder holder(scriptState);
     return jsToInspectorValue(scriptState, m_value.get(), InspectorValue::maxDepth);

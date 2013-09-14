@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-DOMWindow* domWindowFromScriptState(ScriptState* scriptState)
+DOMWindow* domWindowFromExecState(JSC::ExecState* scriptState)
 {
     JSC::JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
     if (!globalObject->inherits(JSDOMWindowBase::info()))
@@ -57,7 +57,7 @@ DOMWindow* domWindowFromScriptState(ScriptState* scriptState)
     return JSC::jsCast<JSDOMWindowBase*>(globalObject)->impl();
 }
 
-ScriptExecutionContext* scriptExecutionContextFromScriptState(ScriptState* scriptState)
+ScriptExecutionContext* scriptExecutionContextFromExecState(JSC::ExecState* scriptState)
 {
     JSC::JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
     if (!globalObject->inherits(JSDOMGlobalObject::info()))
@@ -65,7 +65,7 @@ ScriptExecutionContext* scriptExecutionContextFromScriptState(ScriptState* scrip
     return JSC::jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext();
 }
 
-ScriptState* mainWorldScriptState(Frame* frame)
+JSC::ExecState* mainWorldExecState(Frame* frame)
 {
     if (!frame)
         return 0;
@@ -73,7 +73,7 @@ ScriptState* mainWorldScriptState(Frame* frame)
     return shell->window()->globalExec();
 }
 
-ScriptState* scriptStateFromNode(DOMWrapperWorld* world, Node* node)
+JSC::ExecState* execStateFromNode(DOMWrapperWorld* world, Node* node)
 {
     if (!node)
         return 0;
@@ -85,13 +85,13 @@ ScriptState* scriptStateFromNode(DOMWrapperWorld* world, Node* node)
     return frame->script().globalObject(world)->globalExec();
 }
 
-ScriptState* scriptStateFromPage(DOMWrapperWorld* world, Page* page)
+JSC::ExecState* execStateFromPage(DOMWrapperWorld* world, Page* page)
 {
     return page->mainFrame().script().globalObject(world)->globalExec();
 }
 
 #if ENABLE(WORKERS)
-ScriptState* scriptStateFromWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
+JSC::ExecState* execStateFromWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
 {
     return workerGlobalScope->script()->workerGlobalScopeWrapper()->globalExec();
 }

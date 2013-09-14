@@ -53,9 +53,9 @@ class ConsoleMessage {
     WTF_MAKE_NONCOPYABLE(ConsoleMessage); WTF_MAKE_FAST_ALLOCATED;
 public:
     ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, unsigned long requestIdentifier = 0);
-    ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned line, unsigned column, ScriptState* = 0, unsigned long requestIdentifier = 0);
+    ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned line, unsigned column, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
     ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
-    ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, ScriptState*, unsigned long requestIdentifier = 0);
+    ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, JSC::ExecState*, unsigned long requestIdentifier = 0);
     ~ConsoleMessage();
 
     void addToFrontend(InspectorFrontend::Console*, InjectedScriptManager*, bool generatePreview);
@@ -72,7 +72,7 @@ public:
     unsigned argumentCount();
 
 private:
-    void autogenerateMetadata(bool canGenerateCallStack, ScriptState* = 0);
+    void autogenerateMetadata(bool canGenerateCallStack, JSC::ExecState* = 0);
 
     MessageSource m_source;
     MessageType m_type;

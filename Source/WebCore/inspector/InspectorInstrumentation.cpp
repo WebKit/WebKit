@@ -463,7 +463,7 @@ void InspectorInstrumentation::scriptsEnabledImpl(InstrumentingAgents* instrumen
         pageAgent->scriptsEnabled(isEnabled);
 }
 
-void InspectorInstrumentation::didCreateIsolatedContextImpl(InstrumentingAgents* instrumentingAgents, Frame* frame, ScriptState* scriptState, SecurityOrigin* origin)
+void InspectorInstrumentation::didCreateIsolatedContextImpl(InstrumentingAgents* instrumentingAgents, Frame* frame, JSC::ExecState* scriptState, SecurityOrigin* origin)
 {
     if (PageRuntimeAgent* runtimeAgent = instrumentingAgents->pageRuntimeAgent())
         runtimeAgent->didCreateIsolatedContext(frame, scriptState, origin);
@@ -1026,7 +1026,7 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* inst
 #endif
 }
 
-void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* instrumentingAgents, MessageSource source, MessageType type, MessageLevel level, const String& message, ScriptState* state, PassRefPtr<ScriptArguments> arguments, unsigned long requestIdentifier)
+void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* instrumentingAgents, MessageSource source, MessageType type, MessageLevel level, const String& message, JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments, unsigned long requestIdentifier)
 {
     if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
         consoleAgent->addMessageToConsole(source, type, level, message, state, arguments, requestIdentifier);
@@ -1036,13 +1036,13 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* inst
 #endif
 }
 
-void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* instrumentingAgents, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, ScriptState* state, unsigned long requestIdentifier)
+void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* instrumentingAgents, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
         consoleAgent->addMessageToConsole(source, type, level, message, scriptId, lineNumber, columnNumber, state, requestIdentifier);
 }
 
-void InspectorInstrumentation::consoleCountImpl(InstrumentingAgents* instrumentingAgents, ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+void InspectorInstrumentation::consoleCountImpl(InstrumentingAgents* instrumentingAgents, JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
     if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
         consoleAgent->count(state, arguments);

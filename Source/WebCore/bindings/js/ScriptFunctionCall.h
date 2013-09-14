@@ -46,7 +46,7 @@ namespace WebCore {
 
     class ScriptCallArgumentHandler {
     public:
-        ScriptCallArgumentHandler(ScriptState* state) : m_exec(state) { }
+        ScriptCallArgumentHandler(JSC::ExecState* state) : m_exec(state) { }
 
         void appendArgument(const ScriptObject&);
         void appendArgument(const ScriptValue&);
@@ -62,7 +62,7 @@ namespace WebCore {
 
     protected:
         JSC::MarkedArgumentBuffer m_arguments;
-        ScriptState* m_exec;
+        JSC::ExecState* m_exec;
 
     private:
         // MarkedArgumentBuffer must be stack allocated, so prevent heap
@@ -85,7 +85,7 @@ namespace WebCore {
 
     class ScriptCallback : public ScriptCallArgumentHandler {
     public:
-        ScriptCallback(ScriptState*, const ScriptValue&);
+        ScriptCallback(JSC::ExecState*, const ScriptValue&);
 
         ScriptValue call();
 

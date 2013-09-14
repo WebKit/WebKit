@@ -63,7 +63,7 @@ InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString* error, con
         *error = "Execution context id is not supported for workers as there is only one execution context.";
         return InjectedScript();
     }
-    ScriptState* scriptState = scriptStateFromWorkerGlobalScope(m_workerGlobalScope);
+    JSC::ExecState* scriptState = execStateFromWorkerGlobalScope(m_workerGlobalScope);
     return injectedScriptManager()->injectedScriptFor(scriptState);
 }
 

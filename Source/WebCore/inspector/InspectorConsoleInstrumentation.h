@@ -55,7 +55,7 @@ inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSou
 #endif
 }
 
-inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, ScriptState* state, PassRefPtr<ScriptArguments> arguments, unsigned long requestIdentifier)
+inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
@@ -72,7 +72,7 @@ inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSou
 #endif
 }
 
-inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, ScriptState* state, unsigned long requestIdentifier)
+inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
@@ -107,7 +107,7 @@ inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* wor
 #endif
 }
 
-inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* workerGlobalScope, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, ScriptState* state, unsigned long requestIdentifier)
+inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* workerGlobalScope, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerGlobalScope(workerGlobalScope))
@@ -127,7 +127,7 @@ inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* wor
 }
 #endif
 
-inline void InspectorInstrumentation::consoleCount(Page* page, ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+inline void InspectorInstrumentation::consoleCount(Page* page, JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))

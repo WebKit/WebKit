@@ -38,7 +38,7 @@ NodeIteratorBase::NodeIteratorBase(PassRefPtr<Node> rootNode, unsigned whatToSho
 {
 }
 
-short NodeIteratorBase::acceptNode(ScriptState* state, Node* node) const
+short NodeIteratorBase::acceptNode(JSC::ExecState* state, Node* node) const
 {
     // FIXME: To handle XML properly we would have to check m_expandEntityReferences.
 

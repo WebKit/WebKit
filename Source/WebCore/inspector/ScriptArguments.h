@@ -44,25 +44,24 @@ class JSGlobalObject;
 
 namespace WebCore {
 
-typedef JSC::ExecState ScriptState;
 class ScriptValue;
 
 class ScriptArguments : public RefCounted<ScriptArguments> {
 public:
-    static PassRefPtr<ScriptArguments> create(ScriptState*, Vector<ScriptValue>& arguments);
+    static PassRefPtr<ScriptArguments> create(JSC::ExecState*, Vector<ScriptValue>& arguments);
 
     ~ScriptArguments();
 
     const ScriptValue& argumentAt(size_t) const;
     size_t argumentCount() const { return m_arguments.size(); }
 
-    ScriptState* globalState() const;
+    JSC::ExecState* globalState() const;
 
     bool getFirstArgumentAsString(WTF::String& result, bool checkForNullOrUndefined = false);
     bool isEqual(ScriptArguments*) const;
 
 private:
-    ScriptArguments(ScriptState*, Vector<ScriptValue>& arguments);
+    ScriptArguments(JSC::ExecState*, Vector<ScriptValue>& arguments);
 
     JSC::Strong<JSC::JSGlobalObject> m_globalObject;
     Vector<ScriptValue> m_arguments;

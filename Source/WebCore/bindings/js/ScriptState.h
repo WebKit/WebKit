@@ -52,16 +52,16 @@ class WorkerGlobalScope;
 // For now, the separation is purely by convention.
 typedef JSC::ExecState ScriptState;
 
-DOMWindow* domWindowFromScriptState(ScriptState*);
-ScriptExecutionContext* scriptExecutionContextFromScriptState(ScriptState*);
+DOMWindow* domWindowFromExecState(ScriptState*);
+ScriptExecutionContext* scriptExecutionContextFromExecState(JSC::ExecState*);
 
-ScriptState* mainWorldScriptState(Frame*);
+JSC::ExecState* mainWorldExecState(Frame*);
 
-ScriptState* scriptStateFromNode(DOMWrapperWorld*, Node*);
-ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page*);
+JSC::ExecState* execStateFromNode(DOMWrapperWorld*, Node*);
+JSC::ExecState* execStateFromPage(DOMWrapperWorld*, Page*);
 
 #if ENABLE(WORKERS)
-ScriptState* scriptStateFromWorkerGlobalScope(WorkerGlobalScope*);
+JSC::ExecState* execStateFromWorkerGlobalScope(WorkerGlobalScope*);
 #endif
 
 } // namespace WebCore

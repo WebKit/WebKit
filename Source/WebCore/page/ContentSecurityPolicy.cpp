@@ -837,7 +837,7 @@ public:
     bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
     bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
     bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
-    bool allowEval(ScriptState*, ContentSecurityPolicy::ReportingStatus) const;
+    bool allowEval(JSC::ExecState*, ContentSecurityPolicy::ReportingStatus) const;
     bool allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const KURL&) const;
     bool allowPluginType(const String& type, const String& typeAttribute, const KURL&, ContentSecurityPolicy::ReportingStatus) const;
 
@@ -875,7 +875,7 @@ private:
     void setCSPDirective(const String& name, const String& value, OwnPtr<CSPDirectiveType>&);
 
     SourceListDirective* operativeDirective(SourceListDirective*) const;
-    void reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const KURL& blockedURL = KURL(), const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), ScriptState* = 0) const;
+    void reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const KURL& blockedURL = KURL(), const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = 0) const;
 
     bool checkEval(SourceListDirective*) const;
     bool checkInline(SourceListDirective*) const;
@@ -885,7 +885,7 @@ private:
 
     void setEvalDisabledErrorMessage(const String& errorMessage) { m_evalDisabledErrorMessage = errorMessage; }
 
-    bool checkEvalAndReportViolation(SourceListDirective*, const String& consoleMessage, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), ScriptState* = 0) const;
+    bool checkEvalAndReportViolation(SourceListDirective*, const String& consoleMessage, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = 0) const;
     bool checkInlineAndReportViolation(SourceListDirective*, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine, bool isScript) const;
     bool checkNonceAndReportViolation(NonceDirective*, const String& nonce, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
 
@@ -948,7 +948,7 @@ PassOwnPtr<CSPDirectiveList> CSPDirectiveList::create(ContentSecurityPolicy* pol
     return directives.release();
 }
 
-void CSPDirectiveList::reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const KURL& blockedURL, const String& contextURL, const WTF::OrdinalNumber& contextLine, ScriptState* state) const
+void CSPDirectiveList::reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const KURL& blockedURL, const String& contextURL, const WTF::OrdinalNumber& contextLine, JSC::ExecState* state) const
 {
     String message = m_reportOnly ? "[Report Only] " + consoleMessage : consoleMessage;
     m_policy->reportViolation(directiveText, effectiveDirective, message, blockedURL, m_reportURIs, m_header, contextURL, contextLine, state);
@@ -988,7 +988,7 @@ SourceListDirective* CSPDirectiveList::operativeDirective(SourceListDirective* d
     return directive ? directive : m_defaultSrc.get();
 }
 
-bool CSPDirectiveList::checkEvalAndReportViolation(SourceListDirective* directive, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine, ScriptState* state) const
+bool CSPDirectiveList::checkEvalAndReportViolation(SourceListDirective* directive, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine, JSC::ExecState* state) const
 {
     if (checkEval(directive))
         return true;
@@ -1120,7 +1120,7 @@ bool CSPDirectiveList::allowInlineStyle(const String& contextURL, const WTF::Ord
         checkInline(operativeDirective(m_styleSrc.get()));
 }
 
-bool CSPDirectiveList::allowEval(ScriptState* state, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool CSPDirectiveList::allowEval(JSC::ExecState* state, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
     DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to evaluate script because it violates the following Content Security Policy directive: ")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
@@ -1516,8 +1516,8 @@ bool isAllowedByAll(const CSPDirectiveListVector& policies, ContentSecurityPolic
     return true;
 }
 
-template<bool (CSPDirectiveList::*allowed)(ScriptState* state, ContentSecurityPolicy::ReportingStatus) const>
-bool isAllowedByAllWithState(const CSPDirectiveListVector& policies, ScriptState* state, ContentSecurityPolicy::ReportingStatus reportingStatus)
+template<bool (CSPDirectiveList::*allowed)(JSC::ExecState* state, ContentSecurityPolicy::ReportingStatus) const>
+bool isAllowedByAllWithState(const CSPDirectiveListVector& policies, JSC::ExecState* state, ContentSecurityPolicy::ReportingStatus reportingStatus)
 {
     for (size_t i = 0; i < policies.size(); ++i) {
         if (!(policies[i].get()->*allowed)(state, reportingStatus))
@@ -1581,7 +1581,7 @@ bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const WTF
     return isAllowedByAllWithContext<&CSPDirectiveList::allowInlineStyle>(m_policies, contextURL, contextLine, reportingStatus);
 }
 
-bool ContentSecurityPolicy::allowEval(ScriptState* state, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+bool ContentSecurityPolicy::allowEval(JSC::ExecState* state, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
     return isAllowedByAllWithState<&CSPDirectiveList::allowEval>(m_policies, state, reportingStatus);
 }
@@ -1735,7 +1735,7 @@ static void gatherSecurityPolicyViolationEventData(SecurityPolicyViolationEventI
 }
 #endif
 
-void ContentSecurityPolicy::reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const KURL& blockedURL, const Vector<KURL>& reportURIs, const String& header, const String& contextURL, const WTF::OrdinalNumber& contextLine, ScriptState* state) const
+void ContentSecurityPolicy::reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const KURL& blockedURL, const Vector<KURL>& reportURIs, const String& header, const String& contextURL, const WTF::OrdinalNumber& contextLine, JSC::ExecState* state) const
 {
     logToConsole(consoleMessage, contextURL, contextLine, state);
 
@@ -1891,7 +1891,7 @@ void ContentSecurityPolicy::reportMissingReportURI(const String& policy) const
     logToConsole("The Content Security Policy '" + policy + "' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header.");
 }
 
-void ContentSecurityPolicy::logToConsole(const String& message, const String& contextURL, const WTF::OrdinalNumber& contextLine, ScriptState* state) const
+void ContentSecurityPolicy::logToConsole(const String& message, const String& contextURL, const WTF::OrdinalNumber& contextLine, JSC::ExecState* state) const
 {
     // FIXME: <http://webkit.org/b/114317> ContentSecurityPolicy::logToConsole should include a column number
     m_scriptExecutionContext->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, message, contextURL, contextLine.oneBasedInt(), 0, state);

@@ -142,7 +142,7 @@ void InspectorCanvasAgent::captureFrame(ErrorString* errorString, const FrameId*
     Frame* frame = frameId ? m_pageAgent->assertFrame(errorString, *frameId) : m_pageAgent->mainFrame();
     if (!frame)
         return;
-    InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, mainWorldScriptState(frame));
+    InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, mainWorldExecState(frame));
     if (!module.hasNoValue())
         module.captureFrame(errorString, traceLogId);
 }
@@ -152,7 +152,7 @@ void InspectorCanvasAgent::startCapturing(ErrorString* errorString, const FrameI
     Frame* frame = frameId ? m_pageAgent->assertFrame(errorString, *frameId) : m_pageAgent->mainFrame();
     if (!frame)
         return;
-    InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, mainWorldScriptState(frame));
+    InjectedScriptCanvasModule module = injectedScriptCanvasModule(errorString, mainWorldExecState(frame));
     if (!module.hasNoValue())
         module.startCapturing(errorString, traceLogId);
 }
@@ -215,8 +215,8 @@ ScriptObject InspectorCanvasAgent::wrapWebGLRenderingContextForInstrumentation(c
 ScriptObject InspectorCanvasAgent::notifyRenderingContextWasWrapped(const ScriptObject& wrappedContext)
 {
     ASSERT(m_frontend);
-    ScriptState* scriptState = wrappedContext.scriptState();
-    DOMWindow* domWindow = scriptState ? domWindowFromScriptState(scriptState) : 0;
+    JSC::ExecState* scriptState = wrappedContext.scriptState();
+    DOMWindow* domWindow = scriptState ? domWindowFromExecState(scriptState) : 0;
     Frame* frame = domWindow ? domWindow->frame() : 0;
     if (frame && !m_framesWithUninstrumentedCanvases.contains(frame))
         m_framesWithUninstrumentedCanvases.set(frame, false);
@@ -226,7 +226,7 @@ ScriptObject InspectorCanvasAgent::notifyRenderingContextWasWrapped(const Script
     return wrappedContext;
 }
 
-InjectedScriptCanvasModule InspectorCanvasAgent::injectedScriptCanvasModule(ErrorString* errorString, ScriptState* scriptState)
+InjectedScriptCanvasModule InspectorCanvasAgent::injectedScriptCanvasModule(ErrorString* errorString, JSC::ExecState* scriptState)
 {
     if (!checkIsEnabled(errorString))
         return InjectedScriptCanvasModule();
@@ -330,7 +330,7 @@ void InspectorCanvasAgent::didBeginFrame()
         return;
     ErrorString error;
     for (FramesWithUninstrumentedCanvases::iterator it = m_framesWithUninstrumentedCanvases.begin(); it != m_framesWithUninstrumentedCanvases.end(); ++it) {
-        InjectedScriptCanvasModule module = injectedScriptCanvasModule(&error, mainWorldScriptState(it->key));
+        InjectedScriptCanvasModule module = injectedScriptCanvasModule(&error, mainWorldExecState(it->key));
         if (!module.hasNoValue())
             module.markFrameEnd();
     }

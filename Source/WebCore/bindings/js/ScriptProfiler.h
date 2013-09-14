@@ -59,12 +59,12 @@ public:
     static void collectGarbage();
     static ScriptObject objectByHeapObjectId(unsigned id);
     static unsigned getHeapObjectId(const ScriptValue&);
-    static void start(ScriptState* state, const String& title);
+    static void start(JSC::ExecState*, const String& title);
     static void startForPage(Page*, const String& title);
 #if ENABLE(WORKERS)
     static void startForWorkerGlobalScope(WorkerGlobalScope*, const String& title);
 #endif
-    static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);
+    static PassRefPtr<ScriptProfile> stop(JSC::ExecState*, const String& title);
     static PassRefPtr<ScriptProfile> stopForPage(Page*, const String& title);
 #if ENABLE(WORKERS)
     static PassRefPtr<ScriptProfile> stopForWorkerGlobalScope(WorkerGlobalScope*, const String& title);

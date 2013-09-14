@@ -50,7 +50,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-ScriptObject InjectedScriptManager::createInjectedScript(const String& source, ScriptState* scriptState, int id)
+ScriptObject InjectedScriptManager::createInjectedScript(const String& source, JSC::ExecState* scriptState, int id)
 {
     JSLockHolder lock(scriptState);
 
@@ -86,7 +86,7 @@ ScriptObject InjectedScriptManager::createInjectedScript(const String& source, S
     return ScriptObject();
 }
 
-bool InjectedScriptManager::canAccessInspectedWindow(ScriptState* scriptState)
+bool InjectedScriptManager::canAccessInspectedWindow(JSC::ExecState* scriptState)
 {
     JSLockHolder lock(scriptState);
     JSDOMWindow* inspectedWindow = toJSDOMWindow(scriptState->lexicalGlobalObject());

@@ -52,9 +52,9 @@ public:
     virtual ~ScriptValue() {}
 
     JSC::JSValue jsValue() const { return m_value.get(); }
-    bool getString(ScriptState*, String& result) const;
-    String toString(ScriptState*) const;
-    bool isEqual(ScriptState*, const ScriptValue&) const;
+    bool getString(JSC::ExecState*, String& result) const;
+    String toString(JSC::ExecState*) const;
+    bool isEqual(JSC::ExecState*, const ScriptValue&) const;
     bool isNull() const;
     bool isUndefined() const;
     bool isObject() const;
@@ -65,12 +65,12 @@ public:
 
     bool operator==(const ScriptValue& other) const { return m_value == other.m_value; }
 
-    PassRefPtr<SerializedScriptValue> serialize(ScriptState*, SerializationErrorMode = Throwing);
-    PassRefPtr<SerializedScriptValue> serialize(ScriptState*, MessagePortArray*, ArrayBufferArray*, bool&);
-    static ScriptValue deserialize(ScriptState*, SerializedScriptValue*, SerializationErrorMode = Throwing);
+    PassRefPtr<SerializedScriptValue> serialize(JSC::ExecState*, SerializationErrorMode = Throwing);
+    PassRefPtr<SerializedScriptValue> serialize(JSC::ExecState*, MessagePortArray*, ArrayBufferArray*, bool&);
+    static ScriptValue deserialize(JSC::ExecState*, SerializedScriptValue*, SerializationErrorMode = Throwing);
 
 #if ENABLE(INSPECTOR)
-    PassRefPtr<InspectorValue> toInspectorValue(ScriptState*) const;
+    PassRefPtr<InspectorValue> toInspectorValue(JSC::ExecState*) const;
 #endif
 
 private:

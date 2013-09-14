@@ -54,33 +54,33 @@ public:
 
     InjectedScriptHost* injectedScriptHost();
 
-    InjectedScript injectedScriptFor(ScriptState*);
+    InjectedScript injectedScriptFor(JSC::ExecState*);
     InjectedScript injectedScriptForId(int);
-    int injectedScriptIdFor(ScriptState*);
+    int injectedScriptIdFor(JSC::ExecState*);
     InjectedScript injectedScriptForObjectId(const String& objectId);
     void discardInjectedScripts();
     void discardInjectedScriptsFor(DOMWindow*);
     void releaseObjectGroup(const String& objectGroup);
 
-    typedef bool (*InspectedStateAccessCheck)(ScriptState*);
+    typedef bool (*InspectedStateAccessCheck)(JSC::ExecState*);
     InspectedStateAccessCheck inspectedStateAccessCheck() const { return m_inspectedStateAccessCheck; }
 
 private:
     explicit InjectedScriptManager(InspectedStateAccessCheck);
 
     String injectedScriptSource();
-    ScriptObject createInjectedScript(const String& source, ScriptState*, int id);
+    ScriptObject createInjectedScript(const String& source, JSC::ExecState*, int id);
 
-    static bool canAccessInspectedWindow(ScriptState*);
-    static bool canAccessInspectedWorkerGlobalScope(ScriptState*);
+    static bool canAccessInspectedWindow(JSC::ExecState*);
+    static bool canAccessInspectedWorkerGlobalScope(JSC::ExecState*);
 
     int m_nextInjectedScriptId;
     typedef HashMap<int, InjectedScript> IdToInjectedScriptMap;
     IdToInjectedScriptMap m_idToInjectedScript;
     RefPtr<InjectedScriptHost> m_injectedScriptHost;
     InspectedStateAccessCheck m_inspectedStateAccessCheck;
-    typedef HashMap<ScriptState*, int> ScriptStateToId;
-    ScriptStateToId m_scriptStateToId;
+    typedef HashMap<JSC::ExecState*, int> ExecStateToId;
+    ExecStateToId m_scriptStateToId;
 };
 
 } // namespace WebCore

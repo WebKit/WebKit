@@ -752,7 +752,7 @@ void InspectorDebuggerAgent::failedToParseSource(const String& url, const String
     m_frontend->scriptFailedToParse(url, data, firstLine, errorLine, errorMessage);
 }
 
-void InspectorDebuggerAgent::didPause(ScriptState* scriptState, const ScriptValue& callFrames, const ScriptValue& exception)
+void InspectorDebuggerAgent::didPause(JSC::ExecState* scriptState, const ScriptValue& callFrames, const ScriptValue& exception)
 {
     ASSERT(scriptState && !m_pausedScriptState);
     m_pausedScriptState = scriptState;

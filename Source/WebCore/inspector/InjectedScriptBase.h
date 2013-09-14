@@ -51,10 +51,10 @@ public:
 
     const String& name() const { return m_name; }
     bool hasNoValue() const { return m_injectedScriptObject.hasNoValue(); }
-    ScriptState* scriptState() const { return m_injectedScriptObject.scriptState(); }
+    JSC::ExecState* scriptState() const { return m_injectedScriptObject.scriptState(); }
 
 protected:
-    typedef bool (*InspectedStateAccessCheck)(ScriptState*);
+    typedef bool (*InspectedStateAccessCheck)(JSC::ExecState*);
     InjectedScriptBase(const String& name);
     InjectedScriptBase(const String& name, ScriptObject, InspectedStateAccessCheck);
 

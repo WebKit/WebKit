@@ -859,12 +859,12 @@ PassRefPtr<Element> Document::createElementNS(const AtomicString& namespaceURI, 
     return setTypeExtension(createElementNS(namespaceURI, qualifiedName, ec), typeExtension);
 }
 
-PassRefPtr<CustomElementConstructor> Document::registerElement(WebCore::ScriptState* state, const AtomicString& name, ExceptionCode& ec)
+PassRefPtr<CustomElementConstructor> Document::registerElement(JSC::ExecState* state, const AtomicString& name, ExceptionCode& ec)
 {
     return registerElement(state, name, Dictionary(), ec);
 }
 
-PassRefPtr<CustomElementConstructor> Document::registerElement(WebCore::ScriptState* state, const AtomicString& name, const Dictionary& options, ExceptionCode& ec)
+PassRefPtr<CustomElementConstructor> Document::registerElement(JSC::ExecState* state, const AtomicString& name, const Dictionary& options, ExceptionCode& ec)
 {
     if (!isHTMLDocument() && !isXHTMLDocument()) {
         ec = NOT_SUPPORTED_ERR;
@@ -4815,7 +4815,7 @@ void Document::addConsoleMessage(MessageSource source, MessageLevel level, const
         page->console().addMessage(source, level, message, requestIdentifier, this);
 }
 
-void Document::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
+void Document::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
         postTask(AddConsoleMessageTask::create(source, level, message));

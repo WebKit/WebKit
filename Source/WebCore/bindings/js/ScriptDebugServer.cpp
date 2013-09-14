@@ -304,7 +304,7 @@ void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
 {
     ASSERT(m_paused);
     JSGlobalObject* globalObject = m_currentCallFrame->scopeChain()->globalObject();
-    ScriptState* state = globalObject->globalExec();
+    JSC::ExecState* state = globalObject->globalExec();
     JSValue jsCallFrame;
     {
         if (m_currentCallFrame->isValid() && globalObject->inherits(JSDOMGlobalObject::info())) {
@@ -574,7 +574,7 @@ void ScriptDebugServer::recompileAllJSFunctionsSoon()
     m_recompileTimer.startOneShot(0);
 }
 
-void ScriptDebugServer::compileScript(ScriptState*, const String&, const String&, String*, String*)
+void ScriptDebugServer::compileScript(JSC::ExecState*, const String&, const String&, String*, String*)
 {
     // FIXME(89652): implement this.
 }
@@ -584,7 +584,7 @@ void ScriptDebugServer::clearCompiledScripts()
     // FIXME(89652): implement this.
 }
 
-void ScriptDebugServer::runScript(ScriptState*, const String&, ScriptValue*, bool*, String*)
+void ScriptDebugServer::runScript(JSC::ExecState*, const String&, ScriptValue*, bool*, String*)
 {
     // FIXME(89652): implement this.
 }

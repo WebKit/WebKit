@@ -48,7 +48,7 @@ public:
     
     virtual String source() const;
 
-    static InjectedScriptCanvasModule moduleForState(InjectedScriptManager*, ScriptState*);
+    static InjectedScriptCanvasModule moduleForState(InjectedScriptManager*, JSC::ExecState*);
 
     ScriptObject wrapCanvas2DContext(const ScriptObject&);
 #if ENABLE(WEBGL)

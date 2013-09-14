@@ -92,7 +92,7 @@ public:
     JSValueRef deserialize(JSContextRef, JSValueRef* exception);
 
 #if ENABLE(INSPECTOR)
-    ScriptValue deserializeForInspector(ScriptState*);
+    ScriptValue deserializeForInspector(JSC::ExecState*);
 #endif
 
     const Vector<uint8_t>& data() { return m_data; }

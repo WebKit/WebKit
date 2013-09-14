@@ -43,8 +43,8 @@ namespace WebCore {
         }
         ~NodeIterator();
 
-        PassRefPtr<Node> nextNode(ScriptState*, ExceptionCode&);
-        PassRefPtr<Node> previousNode(ScriptState*, ExceptionCode&);
+        PassRefPtr<Node> nextNode(JSC::ExecState*, ExceptionCode&);
+        PassRefPtr<Node> previousNode(JSC::ExecState*, ExceptionCode&);
         void detach();
 
         Node* referenceNode() const { return m_referenceNode.node.get(); }
@@ -55,8 +55,8 @@ namespace WebCore {
 
         // Do not call these functions. They are just scaffolding to support the Objective-C bindings.
         // They operate in the main thread normal world, and they swallow JS exceptions.
-        PassRefPtr<Node> nextNode(ExceptionCode& ec) { return nextNode(scriptStateFromNode(mainThreadNormalWorld(), referenceNode()), ec); }
-        PassRefPtr<Node> previousNode(ExceptionCode& ec) { return previousNode(scriptStateFromNode(mainThreadNormalWorld(), referenceNode()), ec); }
+        PassRefPtr<Node> nextNode(ExceptionCode& ec) { return nextNode(execStateFromNode(mainThreadNormalWorld(), referenceNode()), ec); }
+        PassRefPtr<Node> previousNode(ExceptionCode& ec) { return previousNode(execStateFromNode(mainThreadNormalWorld(), referenceNode()), ec); }
 
     private:
         NodeIterator(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);

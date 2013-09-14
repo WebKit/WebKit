@@ -138,9 +138,9 @@ void InspectorFrontendClientLocal::windowObjectCleared()
     if (m_frontendHost)
         m_frontendHost->disconnectClient();
     
-    ScriptState* frontendScriptState = scriptStateFromPage(debuggerWorld(), m_frontendPage);
+    JSC::ExecState* frontendExecState = execStateFromPage(debuggerWorld(), m_frontendPage);
     m_frontendHost = InspectorFrontendHost::create(this, m_frontendPage);
-    ScriptGlobalObject::set(frontendScriptState, "InspectorFrontendHost", m_frontendHost.get());
+    ScriptGlobalObject::set(frontendExecState, "InspectorFrontendHost", m_frontendHost.get());
 }
 
 void InspectorFrontendClientLocal::frontendLoaded()
@@ -345,7 +345,7 @@ bool InspectorFrontendClientLocal::isUnderTest()
 bool InspectorFrontendClientLocal::evaluateAsBoolean(const String& expression)
 {
     ScriptValue value = m_frontendPage->mainFrame().script().executeScript(expression);
-    return value.toString(mainWorldScriptState(&m_frontendPage->mainFrame())) == "true";
+    return value.toString(mainWorldExecState(&m_frontendPage->mainFrame())) == "true";
 }
 
 void InspectorFrontendClientLocal::evaluateOnLoad(const String& expression)

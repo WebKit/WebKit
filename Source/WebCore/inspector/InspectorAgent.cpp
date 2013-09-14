@@ -89,7 +89,7 @@ void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* 
     String script = m_injectedScriptForOrigin.get(origin);
     if (script.isEmpty())
         return;
-    int injectedScriptId = m_injectedScriptManager->injectedScriptIdFor(mainWorldScriptState(frame));
+    int injectedScriptId = m_injectedScriptManager->injectedScriptIdFor(mainWorldExecState(frame));
     StringBuilder scriptSource;
     scriptSource.append(script);
     scriptSource.append("(");

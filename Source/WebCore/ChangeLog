@@ -1,5 +1,94 @@
 2013-09-13  Sam Weinig  <sam@webkit.org>
 
+        Replace ScriptState with JSC::ExecState
+        https://bugs.webkit.org/show_bug.cgi?id=121336
+
+        Reviewed by Darin Adler.
+
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBObjectStore.h:
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        * bindings/js/JSInjectedScriptManager.cpp:
+        * bindings/js/JSNodeCustom.cpp:
+        * bindings/js/JSNodeFilterCondition.h:
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/ScriptDebugServer.cpp:
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/ScriptEventListener.cpp:
+        * bindings/js/ScriptEventListener.h:
+        * bindings/js/ScriptFunctionCall.cpp:
+        * bindings/js/ScriptFunctionCall.h:
+        * bindings/js/ScriptObject.cpp:
+        * bindings/js/ScriptObject.h:
+        * bindings/js/ScriptProfiler.cpp:
+        * bindings/js/ScriptProfiler.h:
+        * bindings/js/ScriptState.cpp:
+        * bindings/js/ScriptState.h:
+        * bindings/js/ScriptValue.cpp:
+        * bindings/js/ScriptValue.h:
+        * bindings/js/SerializedScriptValue.cpp:
+        * bindings/js/SerializedScriptValue.h:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/NodeFilter.cpp:
+        * dom/NodeFilter.h:
+        * dom/NodeFilterCondition.cpp:
+        * dom/NodeFilterCondition.h:
+        * dom/NodeIterator.cpp:
+        * dom/NodeIterator.h:
+        * dom/ScriptExecutionContext.cpp:
+        * dom/ScriptExecutionContext.h:
+        * dom/Traversal.cpp:
+        * dom/Traversal.h:
+        * dom/TreeWalker.cpp:
+        * dom/TreeWalker.h:
+        * inspector/ConsoleMessage.cpp:
+        * inspector/ConsoleMessage.h:
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptBase.cpp:
+        * inspector/InjectedScriptBase.h:
+        * inspector/InjectedScriptCanvasModule.cpp:
+        * inspector/InjectedScriptCanvasModule.h:
+        * inspector/InjectedScriptHost.cpp:
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptManager.cpp:
+        * inspector/InjectedScriptManager.h:
+        * inspector/InjectedScriptModule.cpp:
+        * inspector/InjectedScriptModule.h:
+        * inspector/InspectorAgent.cpp:
+        * inspector/InspectorCanvasAgent.cpp:
+        * inspector/InspectorCanvasAgent.h:
+        * inspector/InspectorConsoleAgent.cpp:
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorConsoleInstrumentation.h:
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorDebuggerAgent.cpp:
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        * inspector/InspectorFrontendHost.cpp:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InspectorInstrumentation.h:
+        * inspector/PageConsoleAgent.cpp:
+        * inspector/PageDebuggerAgent.cpp:
+        * inspector/PageRuntimeAgent.cpp:
+        * inspector/PageRuntimeAgent.h:
+        * inspector/ScriptArguments.cpp:
+        * inspector/ScriptArguments.h:
+        * inspector/ScriptDebugListener.h:
+        * inspector/WorkerDebuggerAgent.cpp:
+        * inspector/WorkerRuntimeAgent.cpp:
+        * page/Console.cpp:
+        * page/Console.h:
+        * page/ContentSecurityPolicy.cpp:
+        * page/ContentSecurityPolicy.h:
+        * page/PageConsole.cpp:
+        * page/PageConsole.h:
+        * workers/WorkerGlobalScope.cpp:
+        * workers/WorkerGlobalScope.h:
+
+2013-09-13  Sam Weinig  <sam@webkit.org>
+
         Chrome, DragController and FocusController should hold onto a Page&
         https://bugs.webkit.org/show_bug.cgi?id=121325
 

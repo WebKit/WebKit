@@ -65,8 +65,8 @@ public:
     PassRefPtr<IDBTransaction> transaction() const { return m_transaction; }
     bool autoIncrement() const { return m_metadata.autoIncrement; }
 
-    PassRefPtr<IDBRequest> add(ScriptState*, ScriptValue&, ExceptionCode&);
-    PassRefPtr<IDBRequest> put(ScriptState*, ScriptValue&, ExceptionCode&);
+    PassRefPtr<IDBRequest> add(JSC::ExecState*, ScriptValue&, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(JSC::ExecState*, ScriptValue&, ExceptionCode&);
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) { return openCursor(context, static_cast<IDBKeyRange*>(0), ec); }
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec) { return openCursor(context, keyRange, IDBCursor::directionNext(), ec); }
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, const ScriptValue& key, ExceptionCode& ec) { return openCursor(context, key, IDBCursor::directionNext(), ec); }
@@ -76,8 +76,8 @@ public:
 
     PassRefPtr<IDBRequest> get(ScriptExecutionContext*, const ScriptValue& key, ExceptionCode&);
     PassRefPtr<IDBRequest> get(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
-    PassRefPtr<IDBRequest> add(ScriptState*, ScriptValue&, const ScriptValue& key, ExceptionCode&);
-    PassRefPtr<IDBRequest> put(ScriptState*, ScriptValue&, const ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> add(JSC::ExecState*, ScriptValue&, const ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(JSC::ExecState*, ScriptValue&, const ScriptValue& key, ExceptionCode&);
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, const ScriptValue& key, ExceptionCode&);
     PassRefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&);
@@ -94,8 +94,8 @@ public:
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, const ScriptValue& key, ExceptionCode&);
 
-    PassRefPtr<IDBRequest> put(IDBDatabaseBackendInterface::PutMode, PassRefPtr<IDBAny> source, ScriptState*, ScriptValue&, const ScriptValue& key, ExceptionCode&);
-    PassRefPtr<IDBRequest> put(IDBDatabaseBackendInterface::PutMode, PassRefPtr<IDBAny> source, ScriptState*, ScriptValue&, PassRefPtr<IDBKey>, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(IDBDatabaseBackendInterface::PutMode, PassRefPtr<IDBAny> source, JSC::ExecState*, ScriptValue&, const ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(IDBDatabaseBackendInterface::PutMode, PassRefPtr<IDBAny> source, JSC::ExecState*, ScriptValue&, PassRefPtr<IDBKey>, ExceptionCode&);
     void markDeleted() { m_deleted = true; }
     void transactionFinished();
 

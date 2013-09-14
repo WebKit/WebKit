@@ -2005,7 +2005,7 @@ JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* glob
 }
 
 #if ENABLE(INSPECTOR)
-ScriptValue SerializedScriptValue::deserializeForInspector(ScriptState* scriptState)
+ScriptValue SerializedScriptValue::deserializeForInspector(JSC::ExecState* scriptState)
 {
     JSValue value = deserialize(scriptState, scriptState->lexicalGlobalObject(), 0);
     return ScriptValue(scriptState->vm(), value);

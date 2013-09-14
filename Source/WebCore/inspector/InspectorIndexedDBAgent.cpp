@@ -657,7 +657,7 @@ void InspectorIndexedDBAgent::requestData(ErrorString* errorString, const String
     if (!idbFactory)
         return;
 
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldScriptState(frame));
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldExecState(frame));
 
     RefPtr<IDBKeyRange> idbKeyRange = keyRange ? idbKeyRangeFromKeyRange(keyRange->get()) : 0;
     if (keyRange && !idbKeyRange) {

@@ -68,7 +68,7 @@ public:
     const ScriptValue& value() const;
     IDBAny* source() const;
 
-    PassRefPtr<IDBRequest> update(ScriptState*, ScriptValue&, ExceptionCode&);
+    PassRefPtr<IDBRequest> update(JSC::ExecState*, ScriptValue&, ExceptionCode&);
     void advance(unsigned long, ExceptionCode&);
     // FIXME: Try to modify the code generator so this overload is unneeded.
     void continueFunction(ScriptExecutionContext*, ExceptionCode& ec) { continueFunction(static_cast<IDBKey*>(0), ec); }

@@ -190,7 +190,7 @@ ScriptObject ScriptFunctionCall::construct(bool& hadException, bool reportExcept
     return ScriptObject(m_exec, asObject(result));
 }
 
-ScriptCallback::ScriptCallback(ScriptState* state, const ScriptValue& function)
+ScriptCallback::ScriptCallback(JSC::ExecState* state, const ScriptValue& function)
     : ScriptCallArgumentHandler(state)
     , m_function(function)
 {
