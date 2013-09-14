@@ -5761,6 +5761,7 @@
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WebKit2" */;
 			buildPhases = (
 				8DC2EF500486A6940098B216 /* Headers */,
+				375A248817E5048E00C9A086 /* Postprocess WKBase.h */,
 				8DC2EF520486A6940098B216 /* Resources */,
 				7CB16FEE1724BA05007A0A95 /* Copy Plug-in Sandbox Profiles */,
 				5D1A239015E75B100023E981 /* Copy Message Generation Scripts */,
@@ -6117,6 +6118,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names WK || exit $?\nfi";
+		};
+		375A248817E5048E00C9A086 /* Postprocess WKBase.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WKBase.h",
+			);
+			name = "Postprocess WKBase.h";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "WKBASE_H=${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}/WKBase.h\n\nunifdef -B -D__APPLE__ -UBUILDING_GTK__ -UWTF_USE_SOUP -UBUILDING_EFL__ -UBUILDING_QT__ -o ${WKBASE_H} ${WKBASE_H}\n\nif [[ $? > 1 ]]; then\n    exit 1;\nfi";
 		};
 		5D1A239215E760590023E981 /* Remove Compiled Python Files */ = {
 			isa = PBXShellScriptBuildPhase;

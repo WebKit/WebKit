@@ -1,5 +1,17 @@
 2013-09-14  Dan Bernstein  <mitz@apple.com>
 
+        Remove non-Apple cruft from the installed WKBase.h
+        https://bugs.webkit.org/show_bug.cgi?id=121370
+
+        Reviewed by Darin Adler.
+
+        * Configurations/WebKit2.xcconfig: Set INSTALLHDRS_SCRIPT_PHASE to YES.
+        * WebKit2.xcodeproj/project.pbxproj: Added a script build phase that runs unifdef on
+        the installed WKBase.h with __APPLE__ defined and various BUILDING_* and WTF_USE_* symbols
+        undefined.
+
+2013-09-14  Dan Bernstein  <mitz@apple.com>
+
         Build fix after r155770.
 
         * UIProcess/API/mac/WKViewPrivate.h: Added WKBase.h import.
