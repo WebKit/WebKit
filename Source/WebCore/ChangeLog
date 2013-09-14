@@ -1,5 +1,14 @@
 2013-09-14  Andreas Kling  <akling@apple.com>
 
+        CTTE: RenderRubyText is never anonymous.
+        <https://webkit.org/b/121352>
+
+        Reviewed by Darin Adler.
+
+        Replace element() with existingElement() and spam class with OVERRIDE.
+
+2013-09-14  Andreas Kling  <akling@apple.com>
+
         CTTE: RenderSVGBlock renderers are never anonymous.
         <https://webkit.org/b/121351>
 

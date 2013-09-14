@@ -193,7 +193,7 @@ RenderObject* RenderObject::createObject(Element* element, RenderStyle* style)
     }
     // treat <rt> as ruby text ONLY if it still has its default treatment of block
     if (element->hasTagName(rtTag) && style->display() == BLOCK)
-        return new (arena) RenderRubyText(element);
+        return new (arena) RenderRubyText(*element);
     if (document.cssRegionsEnabled() && style->isDisplayRegionType() && !style->regionThread().isEmpty())
         return new (arena) RenderRegion(element, 0);
     switch (style->display()) {

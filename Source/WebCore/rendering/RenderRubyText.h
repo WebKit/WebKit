@@ -37,20 +37,23 @@ namespace WebCore {
 
 class RenderRubyText FINAL : public RenderBlockFlow {
 public:
-    RenderRubyText(Element*);
+    explicit RenderRubyText(Element&);
     virtual ~RenderRubyText();
 
-    virtual const char* renderName() const { return "RenderRubyText"; }
+    Element& existingElement() const { return *RenderBlockFlow::element(); }
 
-    virtual bool isRubyText() const { return true; }
-
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
+    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
 
 private:
-    virtual bool avoidsFloats() const;
+    void element() const WTF_DELETED_FUNCTION;
 
-    virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const;
-    virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const;
+    virtual const char* renderName() const OVERRIDE { return "RenderRubyText"; }
+    virtual bool isRubyText() const OVERRIDE { return true; }
+
+    virtual bool avoidsFloats() const OVERRIDE;
+
+    virtual ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const OVERRIDE;
+    virtual void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const OVERRIDE;
 };
 
 } // namespace WebCore

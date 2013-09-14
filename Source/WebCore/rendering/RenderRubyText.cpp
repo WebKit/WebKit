@@ -37,8 +37,8 @@ using namespace std;
 
 namespace WebCore {
 
-RenderRubyText::RenderRubyText(Element* element)
-    : RenderBlockFlow(element)
+RenderRubyText::RenderRubyText(Element& element)
+    : RenderBlockFlow(&element)
 {
 }
 
