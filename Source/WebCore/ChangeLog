@@ -1,3 +1,40 @@
+2013-09-13  Darin Adler  <darin@apple.com>
+
+        Rename confusingly named "runtimeObject" functions
+        https://bugs.webkit.org/show_bug.cgi?id=121339
+
+        Also CTTE: HTMLElement.
+
+        Reviewed by Sam Weinig.
+
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        (WebCore::JSHTMLAppletElement::putDelegate): Renamed.
+        (WebCore::JSHTMLAppletElement::getCallData): Renamed.
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        (WebCore::JSHTMLEmbedElement::putDelegate): Renamed.
+        (WebCore::JSHTMLEmbedElement::getCallData): Renamed.
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        (WebCore::JSHTMLObjectElement::putDelegate): Renamed.
+        (WebCore::JSHTMLObjectElement::getCallData): Renamed.
+
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::isPluginElement): Changed to take HTMLElement&.
+        (WebCore::pluginInstance): Ditto.
+        (WebCore::pluginScriptObjectFromPluginViewBase): Updated for name and type change.
+        (WebCore::pluginScriptObject): Ditto.
+        (WebCore::pluginElementPropertyGetter): Ditto.
+        (WebCore::pluginElementCustomGetOwnPropertySlot): Ditto.
+        (WebCore::pluginElementCustomPut): Ditto.
+        (WebCore::pluginElementGetCallData): Ditto.
+
+        * bindings/js/JSPluginElementFunctions.h: Updated names and types.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:JSC::originRootObject:rootObject:]):
+        Updated for type change.
+        * bridge/runtime_method.cpp:
+        (JSC::callRuntimeMethod): Ditto.
+
 2013-09-13  Sam Weinig  <sam@webkit.org>
 
         There is no need for any custom bindings for Console

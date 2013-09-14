@@ -40,12 +40,12 @@ bool JSHTMLEmbedElement::getOwnPropertySlotDelegate(ExecState* exec, PropertyNam
 
 bool JSHTMLEmbedElement::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    return runtimeObjectCustomPut(exec, propertyName, value, this, slot);
+    return pluginElementCustomPut(exec, propertyName, value, this, slot);
 }
 
 CallType JSHTMLEmbedElement::getCallData(JSCell* cell, CallData& callData)
 {
-    return runtimeObjectGetCallData(jsCast<JSHTMLEmbedElement*>(cell), callData);
+    return pluginElementGetCallData(jsCast<JSHTMLEmbedElement*>(cell), callData);
 }
 
 } // namespace WebCore

@@ -32,16 +32,16 @@ namespace WebCore {
 
     class HTMLElement;
     class JSHTMLElement;
-    class Node;
 
-    // Runtime object support code for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
-    JSC::Bindings::Instance* pluginInstance(Node*);
-    JSC::JSObject* pluginScriptObject(JSC::ExecState* exec, JSHTMLElement* jsHTMLElement);
+    // JavaScript access to plug-in-exported properties for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
 
-    JSC::JSValue runtimeObjectPropertyGetter(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
-    bool runtimeObjectCustomGetOwnPropertySlot(JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&, JSHTMLElement*);
-    bool runtimeObjectCustomPut(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSHTMLElement*, JSC::PutPropertySlot&);
-    JSC::CallType runtimeObjectGetCallData(JSHTMLElement*, JSC::CallData&);
+    JSC::Bindings::Instance* pluginInstance(HTMLElement&);
+    JSC::JSObject* pluginScriptObject(JSC::ExecState*, JSHTMLElement*);
+
+    JSC::JSValue pluginElementPropertyGetter(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+    bool pluginElementCustomGetOwnPropertySlot(JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&, JSHTMLElement*);
+    bool pluginElementCustomPut(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSHTMLElement*, JSC::PutPropertySlot&);
+    JSC::CallType pluginElementGetCallData(JSHTMLElement*, JSC::CallData&);
 
     template <class Type, class Base> bool pluginElementCustomGetOwnPropertySlot(JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertySlot& slot, Type* element)
     {
@@ -54,7 +54,7 @@ namespace WebCore {
                 return false;
         }
         
-        return runtimeObjectCustomGetOwnPropertySlot(exec, propertyName, slot, element);
+        return pluginElementCustomGetOwnPropertySlot(exec, propertyName, slot, element);
     }
 
 } // namespace WebCore

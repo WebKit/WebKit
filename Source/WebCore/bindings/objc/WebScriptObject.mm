@@ -536,9 +536,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
         if (object->inherits(JSHTMLElement::info())) {
             // Plugin elements cache the instance internally.
-            HTMLElement* el = jsCast<JSHTMLElement*>(object)->impl();
-            ObjcInstance* instance = static_cast<ObjcInstance*>(pluginInstance(el));
-            if (instance)
+            if (ObjcInstance* instance = static_cast<ObjcInstance*>(pluginInstance(*jsCast<JSHTMLElement*>(object)->impl())))
                 return instance->getObject();
         } else if (object->inherits(ObjCRuntimeObject::info())) {
             ObjCRuntimeObject* runtimeObject = static_cast<ObjCRuntimeObject*>(object);

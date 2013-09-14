@@ -96,22 +96,16 @@ sub wanted
 my $isDOMTypeRename = 1;
 my %renames = (
     # Renames go here in the form of:
-    "CLONE_CONTENTS" => "Clone",
-    "DELETE_CONTENTS" => "Delete",
-    "EXTRACT_CONTENTS" => "Extract",
+    "runtimeObjectPropertyGetter" => "pluginElementPropertyGetter",
+    "runtimeObjectCustomGetOwnPropertySlot" => "pluginElementCustomGetOwnPropertySlot",
+    "runtimeObjectCustomPut" => "pluginElementCustomPut",
+    "runtimeObjectGetCallData" => "pluginElementGetCallData",
 );
 
 my %renamesContemplatedForTheFuture = (
     "HTMLPlugInImageElement" => "HTMLEmbeddedObjectElement",
 
     "DOMObject" => "JSDOMObject",
-
-    "runtimeObjectGetter" => "pluginElementGetter",
-    "runtimeObjectPropertyGetter" => "pluginElementPropertyGetter",
-    "runtimeObjectCustomGetOwnPropertySlot" => "pluginElementCustomGetOwnPropertySlot",
-    "runtimeObjectCustomPut" => "pluginElementCustomPut",
-    "runtimeObjectImplementsCall" => "pluginElementImplementsCall",
-    "runtimeObjectCallAsFunction" => "pluginElementCallAsFunction",
 
     "DateInstance" => "JSDate",
     "ErrorInstance" => "JSError",
@@ -138,23 +132,12 @@ my %renamesContemplatedForTheFuture = (
 
     "equalIgnoringCase" => "equalFoldingCase",
 
-    "FTPDirectoryTokenizer" => "FTPDirectoryDocumentBuilder",
-    "HTMLTokenizer" => "HTMLDocumentBuilder",
-    "ImageTokenizer" => "ImageDocumentBuilder",
-    "PluginTokenizer" => "PluginDocumentBuilder",
-    "TextTokenizer" => "TextDocumentBuilder",
-    "Tokenizer" => "DocumentBuilder",
-    "Tokenizer_h" => "DocumentBuilder_h",
-    "XMLTokenizer" => "XMLDocumentBuilder",
-    "isHTMLTokenizer" => "isHTMLDocumentBuilder",
-    "m_tokenizer" => "m_builder",
-    "createTokenizer" => "createBuilder",
-    "tokenizerProcessedData" => "documentBuilderProcessedData",
-
     "WTF_UNICODE_H" => "Unicode_h",
     "WTF_UNICODE_ICU_H" => "UnicodeICU_h",
-    "WTF_UNICODE_QT4_H" => "UnicodeQt4_h",
     "UnicodeIcu" => "UnicodeICU",
+
+    "LegacyWebArchive" => "WebArchive",
+    "LegacyWebArchive_h" => "WebArchive_h",
 
     "isTransformInvertible" => "hasInvertibleTransform",
     "m_invertibleCTM" => "m_hasInvertibleTransform",
@@ -164,6 +147,8 @@ my %renamesContemplatedForTheFuture = (
     "nativeFunctionThunk" => "hostFunctionThunk",
     "nativeFunction" => "hostFunction",
     "NativeFunction" => "HostFunction",
+
+    "OVERRIDE" => "override",
 );
 
 # Sort the keys of the renames hash in order of decreasing length. This

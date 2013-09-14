@@ -40,12 +40,12 @@ bool JSHTMLAppletElement::getOwnPropertySlotDelegate(ExecState* exec, PropertyNa
 
 bool JSHTMLAppletElement::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    return runtimeObjectCustomPut(exec, propertyName, value, this, slot);
+    return pluginElementCustomPut(exec, propertyName, value, this, slot);
 }
 
 CallType JSHTMLAppletElement::getCallData(JSCell* cell, CallData& callData)
 {
-    return runtimeObjectGetCallData(jsCast<JSHTMLAppletElement*>(cell), callData);
+    return pluginElementGetCallData(jsCast<JSHTMLAppletElement*>(cell), callData);
 }
 
 } // namespace WebCore

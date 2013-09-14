@@ -33,23 +33,19 @@ namespace WebCore {
 using namespace Bindings;
 using namespace HTMLNames;
 
-// Runtime object support code for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
+// JavaScript access to plug-in-exported properties for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
 
-static inline bool isPluginElement(Node* node)
+static inline bool isPluginElement(HTMLElement& element)
 {
-    return node->hasTagName(objectTag) || node->hasTagName(embedTag) || node->hasTagName(appletTag);
+    return element.hasTagName(objectTag) || element.hasTagName(embedTag) || element.hasTagName(appletTag);
 }
 
-Instance* pluginInstance(Node* node)
+Instance* pluginInstance(HTMLElement& element)
 {
-    if (!node)
-        return 0;
-    if (!isPluginElement(node))
-        return 0;
-
-    HTMLPlugInElement* plugInElement = static_cast<HTMLPlugInElement*>(node);
     // The plugin element holds an owning reference, so we don't have to.
-    Instance* instance = plugInElement->getInstance().get();
+    if (!isPluginElement(element))
+        return 0;
+    Instance* instance = static_cast<HTMLPlugInElement&>(element).getInstance().get();
     if (!instance || !instance->rootObject())
         return 0;
     return instance;
@@ -71,7 +67,7 @@ static JSObject* pluginScriptObjectFromPluginViewBase(HTMLPlugInElement* pluginE
 static JSObject* pluginScriptObjectFromPluginViewBase(JSHTMLElement* jsHTMLElement)
 {
     HTMLElement* element = jsHTMLElement->impl();
-    if (!isPluginElement(element))
+    if (!isPluginElement(*element))
         return 0;
 
     HTMLPlugInElement* pluginElement = static_cast<HTMLPlugInElement*>(element);
@@ -81,7 +77,7 @@ static JSObject* pluginScriptObjectFromPluginViewBase(JSHTMLElement* jsHTMLEleme
 JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
 {
     HTMLElement* element = jsHTMLElement->impl();
-    if (!isPluginElement(element))
+    if (!isPluginElement(*element))
         return 0;
 
     HTMLPlugInElement* pluginElement = static_cast<HTMLPlugInElement*>(element);
@@ -100,7 +96,7 @@ JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
     return instance->createRuntimeObject(exec);
 }
     
-JSValue runtimeObjectPropertyGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+JSValue pluginElementPropertyGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSHTMLElement* element = jsCast<JSHTMLElement*>(asObject(slotBase));
     JSObject* scriptObject = pluginScriptObject(exec, element);
@@ -110,7 +106,7 @@ JSValue runtimeObjectPropertyGetter(ExecState* exec, JSValue slotBase, PropertyN
     return scriptObject->get(exec, propertyName);
 }
 
-bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot, JSHTMLElement* element)
+bool pluginElementCustomGetOwnPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot, JSHTMLElement* element)
 {
     JSObject* scriptObject = pluginScriptObject(exec, element);
     if (!scriptObject)
@@ -118,11 +114,11 @@ bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, PropertyName propert
 
     if (!scriptObject->hasProperty(exec, propertyName))
         return false;
-    slot.setCustom(element, DontDelete | DontEnum, runtimeObjectPropertyGetter);
+    slot.setCustom(element, DontDelete | DontEnum, pluginElementPropertyGetter);
     return true;
 }
 
-bool runtimeObjectCustomPut(ExecState* exec, PropertyName propertyName, JSValue value, JSHTMLElement* element, PutPropertySlot& slot)
+bool pluginElementCustomPut(ExecState* exec, PropertyName propertyName, JSValue value, JSHTMLElement* element, PutPropertySlot& slot)
 {
     JSObject* scriptObject = pluginScriptObject(exec, element);
     if (!scriptObject)
@@ -155,7 +151,7 @@ static EncodedJSValue JSC_HOST_CALL callPlugin(ExecState* exec)
     return JSValue::encode(result);
 }
 
-CallType runtimeObjectGetCallData(JSHTMLElement* element, CallData& callData)
+CallType pluginElementGetCallData(JSHTMLElement* element, CallData& callData)
 {
     // First, ask the plug-in view base for its runtime object.
     if (JSObject* scriptObject = pluginScriptObjectFromPluginViewBase(element)) {
@@ -168,7 +164,7 @@ CallType runtimeObjectGetCallData(JSHTMLElement* element, CallData& callData)
         return CallTypeHost;
     }
     
-    Instance* instance = pluginInstance(element->impl());
+    Instance* instance = pluginInstance(*element->impl());
     if (!instance || !instance->supportsInvokeDefaultMethod())
         return CallTypeNone;
     callData.native.function = callPlugin;
