@@ -174,7 +174,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
                 // <https://bugs.webkit.org/show_bug.cgi?id=24787>
                 if (!equal && isActiveTransition) {
                     // Add the new transition
-                    RefPtr<ImplicitAnimation> implicitAnimation = ImplicitAnimation::create(const_cast<Animation*>(&animation), prop, renderer, this, modifiedCurrentStyle ? modifiedCurrentStyle.get() : fromStyle);
+                    RefPtr<ImplicitAnimation> implicitAnimation = ImplicitAnimation::create(animation, prop, renderer, this, modifiedCurrentStyle ? modifiedCurrentStyle.get() : fromStyle);
                     LOG(Animations, "Created ImplicitAnimation %p for property %s duration %.2f delay %.2f", implicitAnimation.get(), getPropertyName(prop), animation.duration(), animation.delay());
                     m_transitions.set(prop, implicitAnimation.release());
                 }
@@ -254,18 +254,17 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, Render
                     keyframeAnim->updatePlayState(animation.playState());
                                 
                     // Set the saved animation to this new one, just in case the play state has changed.
-                    keyframeAnim->setAnimation(&animation);
+                    keyframeAnim->setAnimation(animation);
                     keyframeAnim->setIndex(i);
                 } else if ((animation.duration() || animation.delay()) && animation.iterationCount() && animationName != none) {
-                    keyframeAnim = KeyframeAnimation::create(const_cast<Animation*>(&animation), renderer, i, this, targetStyle);
+                    keyframeAnim = KeyframeAnimation::create(animation, renderer, i, this, targetStyle);
                     LOG(Animations, "Creating KeyframeAnimation %p with keyframes %s, duration %.2f, delay %.2f, iterations %.2f", keyframeAnim.get(), animation.name().utf8().data(), animation.duration(), animation.delay(), animation.iterationCount());
                     if (m_suspended) {
                         keyframeAnim->updatePlayState(AnimPlayStatePaused);
                         LOG(Animations, "  (created in suspended/paused state)");
                     }
 #if !LOG_DISABLED
-                    HashSet<CSSPropertyID>::const_iterator endProperties = keyframeAnim->keyframes().endProperties();
-                    for (HashSet<CSSPropertyID>::const_iterator it = keyframeAnim->keyframes().beginProperties(); it != endProperties; ++it)
+                    for (auto it = keyframeAnim->keyframes().beginProperties(), end = keyframeAnim->keyframes().endProperties(); it != end; ++it)
                         LOG(Animations, "  property %s", getPropertyName(*it));
 #endif
                     m_keyframeAnimations.set(keyframeAnim->name().impl(), keyframeAnim);

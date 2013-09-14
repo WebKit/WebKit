@@ -42,9 +42,9 @@ using namespace std;
 
 namespace WebCore {
 
-KeyframeAnimation::KeyframeAnimation(const Animation* animation, RenderObject* renderer, int index, CompositeAnimation* compAnim, RenderStyle* unanimatedStyle)
+KeyframeAnimation::KeyframeAnimation(const Animation& animation, RenderObject* renderer, int index, CompositeAnimation* compAnim, RenderStyle* unanimatedStyle)
     : AnimationBase(animation, renderer, compAnim)
-    , m_keyframes(renderer, animation->name())
+    , m_keyframes(renderer, animation.name())
     , m_index(index)
     , m_startEventDispatched(false)
     , m_unanimatedStyle(unanimatedStyle)

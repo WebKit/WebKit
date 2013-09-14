@@ -70,7 +70,7 @@ static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t
     return floor(numSteps * t) / numSteps;
 }
 
-AnimationBase::AnimationBase(const Animation* transition, RenderObject* renderer, CompositeAnimation* compAnim)
+AnimationBase::AnimationBase(const Animation& transition, RenderObject* renderer, CompositeAnimation* compAnim)
     : m_animState(AnimationStateNew)
     , m_isAccelerated(false)
     , m_transformFunctionListValid(false)
@@ -83,7 +83,7 @@ AnimationBase::AnimationBase(const Animation* transition, RenderObject* renderer
     , m_totalDuration(-1)
     , m_nextIterationDuration(-1)
     , m_object(renderer)
-    , m_animation(const_cast<Animation*>(transition))
+    , m_animation(const_cast<Animation*>(&transition))
     , m_compAnim(compAnim)
 {
     // Compute the total duration

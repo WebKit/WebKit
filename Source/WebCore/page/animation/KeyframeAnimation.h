@@ -41,7 +41,7 @@ class RenderStyle;
 // for a single RenderObject.
 class KeyframeAnimation : public AnimationBase {
 public:
-    static PassRefPtr<KeyframeAnimation> create(const Animation* animation, RenderObject* renderer, int index, CompositeAnimation* compositeAnimation, RenderStyle* unanimatedStyle)
+    static PassRefPtr<KeyframeAnimation> create(const Animation& animation, RenderObject* renderer, int index, CompositeAnimation* compositeAnimation, RenderStyle* unanimatedStyle)
     {
         return adoptRef(new KeyframeAnimation(animation, renderer, index, compositeAnimation, unanimatedStyle));
     };
@@ -84,7 +84,7 @@ protected:
 #endif
 
 private:
-    KeyframeAnimation(const Animation* animation, RenderObject*, int index, CompositeAnimation*, RenderStyle* unanimatedStyle);
+    KeyframeAnimation(const Animation&, RenderObject*, int index, CompositeAnimation*, RenderStyle* unanimatedStyle);
     virtual ~KeyframeAnimation();
     
     // Get the styles for the given property surrounding the current animation time and the progress between them.

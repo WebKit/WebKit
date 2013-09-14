@@ -53,7 +53,7 @@ class AnimationBase : public RefCounted<AnimationBase> {
     friend class CSSPropertyAnimation;
 
 public:
-    AnimationBase(const Animation* transition, RenderObject* renderer, CompositeAnimation* compAnim);
+    AnimationBase(const Animation& transition, RenderObject* renderer, CompositeAnimation* compAnim);
     virtual ~AnimationBase() { }
 
     RenderObject* renderer() const { return m_object; }
@@ -143,7 +143,7 @@ public:
 
     bool animationsMatch(const Animation*) const;
 
-    void setAnimation(const Animation* anim) { m_animation = const_cast<Animation*>(anim); }
+    void setAnimation(const Animation& animation) { m_animation = const_cast<Animation*>(&animation); }
 
     // Return true if this animation is overridden. This will only be the case for
     // ImplicitAnimations and is used to determine whether or not we should force
@@ -190,7 +190,7 @@ public:
         updateStateMachine(AnimationBase::AnimationStateInputStyleAvailable, -1);
     }
 
-    const Animation* animation() const { return m_animation.get(); }
+    const Animation& animation() const { return *m_animation; }
 
 protected:
     virtual void overrideAnimations() { }

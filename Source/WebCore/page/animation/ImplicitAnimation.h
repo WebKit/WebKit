@@ -39,7 +39,7 @@ namespace WebCore {
 // for a single RenderObject.
 class ImplicitAnimation : public AnimationBase {
 public:
-    static PassRefPtr<ImplicitAnimation> create(const Animation* animation, CSSPropertyID animatingProperty, RenderObject* renderer, CompositeAnimation* compositeAnimation, RenderStyle* fromStyle)
+    static PassRefPtr<ImplicitAnimation> create(const Animation& animation, CSSPropertyID animatingProperty, RenderObject* renderer, CompositeAnimation* compositeAnimation, RenderStyle* fromStyle)
     {
         return adoptRef(new ImplicitAnimation(animation, animatingProperty, renderer, compositeAnimation, fromStyle));
     };
@@ -82,7 +82,7 @@ protected:
 #endif
 
 private:
-    ImplicitAnimation(const Animation*, CSSPropertyID, RenderObject*, CompositeAnimation*, RenderStyle*);
+    ImplicitAnimation(const Animation&, CSSPropertyID, RenderObject*, CompositeAnimation*, RenderStyle*);
     virtual ~ImplicitAnimation();
 
     CSSPropertyID m_transitionProperty; // Transition property as specified in the RenderStyle.

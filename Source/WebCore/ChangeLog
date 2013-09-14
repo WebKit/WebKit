@@ -1,3 +1,20 @@
+2013-09-14  Anders Carlsson  <andersca@apple.com>
+
+        AnimationBase::m_animation is never null
+        https://bugs.webkit.org/show_bug.cgi?id=121360
+
+        Reviewed by Darin Adler.
+
+        Enforce this by using references instead of pointers.
+
+        * page/animation/AnimationBase.cpp:
+        * page/animation/AnimationBase.h:
+        * page/animation/CompositeAnimation.cpp:
+        * page/animation/ImplicitAnimation.cpp:
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        * page/animation/KeyframeAnimation.h:
+
 2013-09-14  Darin Adler  <darin@apple.com>
 
         Shrink the function that builds the event listener attribute name map
