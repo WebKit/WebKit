@@ -1,3 +1,18 @@
+2013-09-14  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] WebKitGTK+ is linking against libxslt in too many places
+        https://bugs.webkit.org/show_bug.cgi?id=121356
+
+        Reviewed by Martin Robinson.
+
+        Don't use LIBXSLT_CFLAGS when compiling libwebkitgtk, no source
+        files use libxslt there.
+
+        The webkit tests don't use libxslt, so we shouldn't link against
+        it.
+
+        * GNUmakefile.am:
+
 2013-09-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Move to the new web inspector

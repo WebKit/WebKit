@@ -40,7 +40,6 @@ Programs_MiniBrowser_LDADD = \
 	$(FREETYPE_LIBS) \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
-	$(LIBXSLT_LIBS) \
 	$(LIBSOUP_LIBS)
 
 Programs_MiniBrowser_LDFLAGS = \

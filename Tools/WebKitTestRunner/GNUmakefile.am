@@ -59,7 +59,6 @@ Programs_WebKitTestRunner_LDADD = \
 	$(FREETYPE_LIBS) \
 	$(WINMM_LIBS) \
 	$(XRENDER_LIBS) \
-	$(LIBXSLT_LIBS) \
 	$(XT_LIBS)
 
 Programs_WebKitTestRunner_LDFLAGS = \

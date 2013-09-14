@@ -64,7 +64,6 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPF
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(LIBXML_CFLAGS) \
-	$(LIBXSLT_CFLAGS) \
 	$(SQLITE3_CFLAGS) \
 	$(UNICODE_CFLAGS) \
 	$(XCOMPOSITE_CFLAGS) \
@@ -440,7 +439,6 @@ webkit_tests_ldadd = \
 	$(GTK_LIBS) \
 	$(GLIB_LIBS) \
 	$(LIBSOUP_LIBS) \
-	$(LIBXSLT_LIBS) \
 	$(XRENDER_LIBS)
 
 webkit_tests_ldflags = \

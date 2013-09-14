@@ -150,7 +150,6 @@ Programs_TestWebKitAPI_TestWebCore_LDADD = \
 	$(LIBSECRET_LIBS) \
 	$(LIBSOUP_LIBS) \
 	$(LIBXML_LIBS) \
-	$(LIBXSLT_LIBS) \
 	$(OPENGL_LIBS) \
 	$(PANGO_LIBS) \
 	$(PNG_LIBS) \
