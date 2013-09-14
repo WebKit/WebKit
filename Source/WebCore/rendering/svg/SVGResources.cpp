@@ -653,7 +653,7 @@ void SVGResources::dump(const RenderObject* object)
             fprintf(stderr, " |-> Filter     : %p (node=%p)\n", filter, filter->element());
 #endif
         if (RenderSVGResourceMasker* masker = m_clipperFilterMaskerData->masker)
-            fprintf(stderr, " |-> Masker     : %p (node=%p)\n", masker, masker->element());
+            fprintf(stderr, " |-> Masker     : %p (node=%p)\n", masker, &masker->maskElement());
     }
 
     if (m_markerData) {

@@ -1,3 +1,13 @@
+2013-09-13  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderSVGResourceMasker always has an SVGMaskElement.
+        <https://webkit.org/b/121344>
+
+        Reviewed by Brent Fulgham.
+
+        This renderer is never anonymous. Tighten things up with a maskElement()
+        reference getter. Removed some unnecessary null checks and assertions.
+
 2013-09-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r155738.
