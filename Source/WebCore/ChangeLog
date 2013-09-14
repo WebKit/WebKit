@@ -1,5 +1,19 @@
 2013-09-14  Darin Adler  <darin@apple.com>
 
+        Shrink the nameToPseudoTypeMap function
+        https://bugs.webkit.org/show_bug.cgi?id=121367
+
+        Reviewed by Andreas Kling.
+
+        * css/CSSSelector.cpp:
+        (WebCore::populatePseudoTypeByNameMap): Replaces the old nameToPseudoTypeMap
+        function. Use a table instead of lots of globals and unrolled code to set up
+        the map.
+        (WebCore::CSSSelector::parsePseudoType): Updated to use the code above, and
+        also use a different style that's tighter.
+
+2013-09-14  Darin Adler  <darin@apple.com>
+
         Shrink the listMarkerText function
         https://bugs.webkit.org/show_bug.cgi?id=121364
 
