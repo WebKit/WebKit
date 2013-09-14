@@ -45,7 +45,7 @@ class GraphicsContext;
 
 class RenderSVGResourceGradient : public RenderSVGResourceContainer {
 public:
-    RenderSVGResourceGradient(SVGGradientElement*);
+    SVGGradientElement& gradientElement() const { return static_cast<SVGGradientElement&>(*RenderSVGResourceContainer::element()); }
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true) OVERRIDE FINAL;
     virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true) OVERRIDE FINAL;
@@ -55,11 +55,15 @@ public:
     virtual FloatRect resourceBoundingBox(RenderObject*) OVERRIDE FINAL { return FloatRect(); }
 
 protected:
+    explicit RenderSVGResourceGradient(SVGGradientElement&);
+
+    void element() const WTF_DELETED_FUNCTION;
+
     void addStops(GradientData*, const Vector<Gradient::ColorStop>&) const;
 
     virtual SVGUnitTypes::SVGUnitType gradientUnits() const = 0;
     virtual void calculateGradientTransform(AffineTransform&) = 0;
-    virtual bool collectGradientAttributes(SVGGradientElement*) = 0;
+    virtual bool collectGradientAttributes() = 0;
     virtual void buildGradient(GradientData*) const = 0;
 
     GradientSpreadMethod platformSpreadMethodFromSVGType(SVGSpreadMethodType) const;

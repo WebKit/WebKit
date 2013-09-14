@@ -1,5 +1,24 @@
 2013-09-13  Andreas Kling  <akling@apple.com>
 
+        CTTE: Tighter element types for RenderSVGResourceGradient and subclasses.
+        <https://webkit.org/b/121346>
+
+        Reviewed by Darin Adler
+
+        Codify the following:
+
+        - RenderSVGResourceGradient always has an SVGGradientElement.
+        - RenderSVGResourceLinearGradient always has an SVGLinearGradientElement.
+        - RenderSVGResourceRadialGradient always has an SVGRadialGradientElement.
+
+        None of these renderers are ever anonymous, so delete element() and provide
+        strongly typed reference getters instead.
+
+        Also made RenderSVGResourceGradient constructor protected since it should
+        never be instantiated directly.
+
+2013-09-13  Andreas Kling  <akling@apple.com>
+
         CTTE: RenderSVGResourceMarker always has an SVGMarkerElement.
         <https://webkit.org/b/121345>
 

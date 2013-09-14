@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-RenderSVGResourceGradient::RenderSVGResourceGradient(SVGGradientElement* node)
-    : RenderSVGResourceContainer(node)
+RenderSVGResourceGradient::RenderSVGResourceGradient(SVGGradientElement& node)
+    : RenderSVGResourceContainer(&node)
     , m_shouldCollectGradientAttributes(true)
 #if USE(CG)
     , m_savedContext(0)
@@ -121,13 +121,9 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
     // Otherwhise the call to collectGradientAttributes() in createTileImage(), may cause the SVG DOM property
     // synchronization to kick in, which causes removeAllClientsFromCache() to be called, which in turn deletes our
     // GradientData object! Leaving out the line below will cause svg/dynamic-updates/SVG*GradientElement-svgdom* to crash.
-    SVGGradientElement* gradientElement = toSVGGradientElement(element());
-    if (!gradientElement)
-        return false;
-
     if (m_shouldCollectGradientAttributes) {
-        gradientElement->synchronizeAnimatedSVGAttribute(anyQName());
-        if (!collectGradientAttributes(gradientElement))
+        gradientElement().synchronizeAnimatedSVGAttribute(anyQName());
+        if (!collectGradientAttributes())
             return false;
 
         m_shouldCollectGradientAttributes = false;

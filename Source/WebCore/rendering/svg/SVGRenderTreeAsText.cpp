@@ -545,10 +545,8 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
 
         // Dump final results that are used for rendering. No use in asking SVGGradientElement for its gradientUnits(), as it may
         // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
-        SVGLinearGradientElement* linearGradientElement = toSVGLinearGradientElement(gradient->element());
-
         LinearGradientAttributes attributes;
-        linearGradientElement->collectGradientAttributes(attributes);
+        gradient->linearGradientElement().collectGradientAttributes(attributes);
         writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.gradientUnits());
 
         ts << " [start=" << gradient->startPoint(attributes) << "] [end=" << gradient->endPoint(attributes) << "]\n";
@@ -558,7 +556,7 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
         // Dump final results that are used for rendering. No use in asking SVGGradientElement for its gradientUnits(), as it may
         // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
         RadialGradientAttributes attributes;
-        toSVGRadialGradientElement(gradient->element())->collectGradientAttributes(attributes);
+        gradient->radialGradientElement().collectGradientAttributes(attributes);
         writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.gradientUnits());
 
         FloatPoint focalPoint = gradient->focalPoint(attributes);

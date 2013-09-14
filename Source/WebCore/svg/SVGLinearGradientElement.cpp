@@ -120,7 +120,7 @@ void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName
 
 RenderObject* SVGLinearGradientElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderSVGResourceLinearGradient(this);
+    return new (arena) RenderSVGResourceLinearGradient(*this);
 }
 
 bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttributes& attributes)
