@@ -132,7 +132,7 @@ private:
     virtual const AtomicString& shadowPseudoId() const;
     virtual bool isMouseFocusable() const OVERRIDE { return false; }
     virtual void willAttachRenderers() OVERRIDE;
-    virtual void willDetachRenderera) OVERRIDE;
+    virtual void willDetachRenderers() OVERRIDE;
 
 
     bool m_capturing;

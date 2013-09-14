@@ -4427,6 +4427,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderImageResourceStyleImage.h \
 	Source/WebCore/rendering/RenderInline.cpp \
 	Source/WebCore/rendering/RenderInline.h \
+	Source/WebCore/rendering/RenderInputSpeech.cpp \
+	Source/WebCore/rendering/RenderInputSpeech.h \
 	Source/WebCore/rendering/RenderLayerBacking.h \
 	Source/WebCore/rendering/RenderLayer.cpp \
 	Source/WebCore/rendering/RenderLayer.h \

@@ -1,3 +1,22 @@
+2013-09-14  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Get INPUT_SPEECH compiling for Nix, EFL and GTK
+        https://bugs.webkit.org/show_bug.cgi?id=121362
+
+        r154257 was not applied completely in HTMLInputElement.cpp and there was a wrong method signature
+        in TextControlInnerElements.
+        Also adding the files needed to build INPUT_SPEECH to each build system files.
+
+        Reviewed by Andreas Kling.
+
+        No new tests needed.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute):
+        * html/shadow/TextControlInnerElements.h:
+
 2013-09-14  Alberto Garcia  <berto@igalia.com>
 
         Missing  allow-none introspection annotation for DomDocument.evaluate method

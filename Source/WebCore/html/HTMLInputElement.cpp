@@ -749,11 +749,11 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
             // This renderer and its children have quite different layouts and styles depending on
             // whether the speech button is visible or not. So we reset the whole thing and recreate
             // to get the right styles and layout.
-            detach();
+            Style::detachRenderTree(*this);
             m_inputType->destroyShadowSubtree();
             m_inputType->createShadowSubtree();
             if (!attached())
-                attach();
+                Style::attachRenderTree(*this);
         } else {
             m_inputType->destroyShadowSubtree();
             m_inputType->createShadowSubtree();

@@ -1760,6 +1760,10 @@ set(WebCore_SOURCES
     page/SecurityOrigin.cpp
     page/SecurityPolicy.cpp
     page/Settings.cpp
+    page/SpeechInput.cpp
+    page/SpeechInputEvent.cpp
+    page/SpeechInputResult.cpp
+    page/SpeechInputResultList.cpp
     page/SpatialNavigation.cpp
     page/SuspendableTimer.cpp
     page/UserContentURLPattern.cpp
@@ -2137,6 +2141,7 @@ set(WebCore_SOURCES
     rendering/RenderImageResource.cpp
     rendering/RenderImageResourceStyleImage.cpp
     rendering/RenderInline.cpp
+    rendering/RenderInputSpeech.cpp
     rendering/RenderLayer.cpp
     rendering/RenderLayerBacking.cpp
     rendering/RenderLayerCompositor.cpp
