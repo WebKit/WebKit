@@ -1,5 +1,15 @@
 2013-09-13  Andreas Kling  <akling@apple.com>
 
+        CTTE: RenderSVGResourceClipper always has an SVGClipPathElement.
+        <https://webkit.org/b/121349>
+
+        Reviewed by Darin Adler.
+
+        This renderer is never anonymous. Tighten things up with a clipPathElement()
+        reference getter. Removed some unnecessary null checks and type casts.
+
+2013-09-13  Andreas Kling  <akling@apple.com>
+
         CTTE: RenderSVGResourceFilter always has an SVGFilterElement.
         <https://webkit.org/b/121348>
 
