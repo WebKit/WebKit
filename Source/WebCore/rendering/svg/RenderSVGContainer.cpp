@@ -39,8 +39,8 @@
 
 namespace WebCore {
 
-RenderSVGContainer::RenderSVGContainer(SVGElement* node)
-    : RenderSVGModelObject(node)
+RenderSVGContainer::RenderSVGContainer(SVGElement& element)
+    : RenderSVGModelObject(element)
     , m_objectBoundingBoxValid(false)
     , m_needsBoundariesUpdate(true)
 {

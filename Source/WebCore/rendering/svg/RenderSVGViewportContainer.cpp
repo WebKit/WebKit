@@ -35,7 +35,7 @@
 namespace WebCore {
 
 RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element)
-    : RenderSVGContainer(&element)
+    : RenderSVGContainer(element)
     , m_didTransformToRootUpdate(false)
     , m_isLayoutSizeChanged(false)
     , m_needsTransformUpdate(true)
@@ -44,7 +44,7 @@ RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element)
 
 SVGSVGElement& RenderSVGViewportContainer::svgSVGElement() const
 {
-    return toSVGSVGElement(*RenderSVGContainer::element());
+    return toSVGSVGElement(RenderSVGContainer::element());
 }
 
 void RenderSVGViewportContainer::determineIfLayoutSizeChanged()

@@ -36,14 +36,14 @@ namespace WebCore {
 RenderSVGResourceType RenderSVGResourcePattern::s_resourceType = PatternResourceType;
 
 RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement& element)
-    : RenderSVGResourceContainer(&element)
+    : RenderSVGResourceContainer(element)
     , m_shouldCollectPatternAttributes(true)
 {
 }
 
 SVGPatternElement& RenderSVGResourcePattern::patternElement() const
 {
-    return toSVGPatternElement(*RenderSVGResourceContainer::element());
+    return toSVGPatternElement(RenderSVGResourceContainer::element());
 }
 
 void RenderSVGResourcePattern::removeAllClientsFromCache(bool markForInvalidation)

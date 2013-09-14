@@ -251,8 +251,7 @@ static void writeSVGPaintingResource(TextStream& ts, RenderSVGResource* resource
 
     // All other resources derive from RenderSVGResourceContainer
     RenderSVGResourceContainer* container = static_cast<RenderSVGResourceContainer*>(resource);
-    SVGElement* element = container->element();
-    ASSERT(element);
+    SVGElement& element = container->element();
 
     if (resource->resourceType() == PatternResourceType)
         ts << "[type=PATTERN]";
@@ -261,7 +260,7 @@ static void writeSVGPaintingResource(TextStream& ts, RenderSVGResource* resource
     else if (resource->resourceType() == RadialGradientResourceType)
         ts << "[type=RADIAL-GRADIENT]";
 
-    ts << " [id=\"" << element->getIdAttribute() << "\"]";
+    ts << " [id=\"" << element.getIdAttribute() << "\"]";
 }
 
 static void writeStyle(TextStream& ts, const RenderObject& object)

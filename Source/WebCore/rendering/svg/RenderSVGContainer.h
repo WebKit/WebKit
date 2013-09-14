@@ -33,7 +33,6 @@ class SVGElement;
 
 class RenderSVGContainer : public RenderSVGModelObject {
 public:
-    explicit RenderSVGContainer(SVGElement*);
     virtual ~RenderSVGContainer();
 
     RenderObject* firstChild() const { ASSERT(children() == virtualChildren()); return children()->firstChild(); }
@@ -49,6 +48,8 @@ public:
     bool isObjectBoundingBoxValid() const { return m_objectBoundingBoxValid; }
 
 protected:
+    explicit RenderSVGContainer(SVGElement&);
+
     virtual RenderObjectChildList* virtualChildren() OVERRIDE FINAL { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const OVERRIDE FINAL { return children(); }
 

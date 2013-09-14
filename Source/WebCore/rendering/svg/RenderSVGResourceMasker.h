@@ -43,7 +43,7 @@ public:
     explicit RenderSVGResourceMasker(SVGMaskElement&);
     virtual ~RenderSVGResourceMasker();
 
-    SVGMaskElement& maskElement() const { return toSVGMaskElement(*RenderSVGResourceContainer::element()); }
+    SVGMaskElement& maskElement() const { return toSVGMaskElement(RenderSVGResourceContainer::element()); }
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true);
     virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true);

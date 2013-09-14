@@ -193,11 +193,11 @@ void SVGResourcesCache::resourceDestroyed(RenderSVGResourceContainer* resource)
         it->value->resourceDestroyed(resource);
 
         // Mark users of destroyed resources as pending resolution based on the id of the old resource.
-        Element* resourceElement = resource->element();
+        Element& resourceElement = resource->element();
         Element* clientElement = toElement(it->key->node());
         SVGDocumentExtensions* extensions = clientElement->document().accessSVGExtensions();
 
-        extensions->addPendingResource(resourceElement->fastGetAttribute(HTMLNames::idAttr), clientElement);
+        extensions->addPendingResource(resourceElement.fastGetAttribute(HTMLNames::idAttr), clientElement);
     }
 }
 

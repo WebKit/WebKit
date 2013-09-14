@@ -48,8 +48,6 @@ class SVGElement;
 
 class RenderSVGModelObject : public RenderObject {
 public:
-    explicit RenderSVGModelObject(SVGElement*);
-
     virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE;
     virtual void computeFloatRectForRepaint(const RenderLayerModelObject* repaintContainer, FloatRect&, bool fixed = false) const OVERRIDE FINAL;
     virtual LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap*) const OVERRIDE FINAL;
@@ -69,9 +67,11 @@ public:
     bool hasSVGShadow() const { return m_hasSVGShadow; }
     void setHasSVGShadow(bool hasShadow) { m_hasSVGShadow = hasShadow; }
 
-    SVGElement* element() const { return toSVGElement(RenderObject::node()); }
+    SVGElement& element() const { return *toSVGElement(RenderObject::node()); }
 
 protected:
+    explicit RenderSVGModelObject(SVGElement&);
+
     virtual void willBeDestroyed() OVERRIDE;
 
 private:

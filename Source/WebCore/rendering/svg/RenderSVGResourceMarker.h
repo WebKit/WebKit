@@ -38,7 +38,7 @@ public:
     explicit RenderSVGResourceMarker(SVGMarkerElement&);
     virtual ~RenderSVGResourceMarker();
 
-    SVGMarkerElement& markerElement() const { return toSVGMarkerElement(*RenderSVGResourceContainer::element()); }
+    SVGMarkerElement& markerElement() const { return toSVGMarkerElement(RenderSVGResourceContainer::element()); }
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true);
     virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true);

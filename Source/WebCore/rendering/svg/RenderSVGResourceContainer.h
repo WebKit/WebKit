@@ -31,7 +31,6 @@ class RenderLayer;
 class RenderSVGResourceContainer : public RenderSVGHiddenContainer,
                                    public RenderSVGResource {
 public:
-    RenderSVGResourceContainer(SVGElement*);
     virtual ~RenderSVGResourceContainer();
 
     virtual void layout() OVERRIDE;
@@ -48,6 +47,8 @@ public:
     void removeClientRenderLayer(RenderLayer*);
 
 protected:
+    explicit RenderSVGResourceContainer(SVGElement&);
+
     enum InvalidationMode {
         LayoutAndBoundariesInvalidation,
         BoundariesInvalidation,

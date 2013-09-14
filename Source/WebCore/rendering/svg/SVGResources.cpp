@@ -667,13 +667,13 @@ void SVGResources::dump(const RenderObject* object)
 
     if (m_fillStrokeData) {
         if (RenderSVGResourceContainer* fill = m_fillStrokeData->fill)
-            fprintf(stderr, " |-> Fill       : %p (node=%p)\n", fill, fill->element());
+            fprintf(stderr, " |-> Fill       : %p (node=%p)\n", fill, &fill->element());
         if (RenderSVGResourceContainer* stroke = m_fillStrokeData->stroke)
-            fprintf(stderr, " |-> Stroke     : %p (node=%p)\n", stroke, stroke->element());
+            fprintf(stderr, " |-> Stroke     : %p (node=%p)\n", stroke, &stroke->element());
     }
 
     if (m_linkedResource)
-        fprintf(stderr, " |-> xlink:href : %p (node=%p)\n", m_linkedResource, m_linkedResource->element());
+        fprintf(stderr, " |-> xlink:href : %p (node=%p)\n", m_linkedResource, &m_linkedResource->element());
 }
 #endif
 

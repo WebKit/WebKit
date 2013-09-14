@@ -39,13 +39,13 @@
 namespace WebCore {
 
 RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement)
-    : RenderSVGHiddenContainer(&filterPrimitiveElement)
+    : RenderSVGHiddenContainer(filterPrimitiveElement)
 {
 }
 
 SVGFilterPrimitiveStandardAttributes& RenderSVGResourceFilterPrimitive::filterPrimitiveElement() const
 {
-    return static_cast<SVGFilterPrimitiveStandardAttributes&>(*RenderSVGHiddenContainer::element());
+    return static_cast<SVGFilterPrimitiveStandardAttributes&>(RenderSVGHiddenContainer::element());
 }
 
 void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

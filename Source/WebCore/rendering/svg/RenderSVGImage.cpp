@@ -49,7 +49,7 @@
 namespace WebCore {
 
 RenderSVGImage::RenderSVGImage(SVGImageElement& element)
-    : RenderSVGModelObject(&element)
+    : RenderSVGModelObject(element)
     , m_needsBoundariesUpdate(true)
     , m_needsTransformUpdate(true)
     , m_imageResource(RenderImageResource::create())
@@ -64,7 +64,7 @@ RenderSVGImage::~RenderSVGImage()
 
 SVGImageElement& RenderSVGImage::imageElement() const
 {
-    return toSVGImageElement(*RenderSVGModelObject::element());
+    return toSVGImageElement(RenderSVGModelObject::element());
 }
 
 bool RenderSVGImage::updateImageViewport()

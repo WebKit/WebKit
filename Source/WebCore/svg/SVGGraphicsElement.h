@@ -74,6 +74,12 @@ private:
     OwnPtr<AffineTransform> m_supplementalTransform;
 };
 
+inline SVGGraphicsElement& toSVGGraphicsElement(SVGElement& element)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(element.isSVGGraphicsElement());
+    return static_cast<SVGGraphicsElement&>(element);
+}
+
 inline SVGGraphicsElement* toSVGGraphicsElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isSVGElement());

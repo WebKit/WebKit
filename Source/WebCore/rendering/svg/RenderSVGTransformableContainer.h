@@ -31,7 +31,7 @@ class SVGGraphicsElement;
 class RenderSVGTransformableContainer FINAL : public RenderSVGContainer {
 public:
     explicit RenderSVGTransformableContainer(SVGGraphicsElement&);
-    SVGGraphicsElement& graphicsElement() { return *toSVGGraphicsElement(RenderSVGContainer::element()); }
+    SVGGraphicsElement& graphicsElement() { return toSVGGraphicsElement(RenderSVGContainer::element()); }
 
     virtual bool isSVGTransformableContainer() const { return true; }
     virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }

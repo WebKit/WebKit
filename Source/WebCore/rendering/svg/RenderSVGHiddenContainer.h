@@ -31,15 +31,14 @@ class SVGElement;
 // <defs>, <linearGradient>, <radialGradient> are all good examples
 class RenderSVGHiddenContainer : public RenderSVGContainer {
 public:
-    explicit RenderSVGHiddenContainer(SVGElement*);
-
-    virtual const char* renderName() const OVERRIDE { return "RenderSVGHiddenContainer"; }
+    explicit RenderSVGHiddenContainer(SVGElement&);
 
 protected:
     virtual void layout() OVERRIDE;
 
 private:
     virtual bool isSVGHiddenContainer() const OVERRIDE FINAL { return true; }
+    virtual const char* renderName() const OVERRIDE { return "RenderSVGHiddenContainer"; }
 
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE FINAL;
     

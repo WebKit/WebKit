@@ -71,7 +71,7 @@ public:
     RenderSVGShape(SVGGraphicsElement&, Path*, bool);
     virtual ~RenderSVGShape();
 
-    SVGGraphicsElement& graphicsElement() const { return *toSVGGraphicsElement(RenderSVGModelObject::element()); }
+    SVGGraphicsElement& graphicsElement() const { return toSVGGraphicsElement(RenderSVGModelObject::element()); }
 
     void setNeedsShapeUpdate() { m_needsShapeUpdate = true; }
     virtual void setNeedsBoundariesUpdate() OVERRIDE FINAL { m_needsBoundariesUpdate = true; }

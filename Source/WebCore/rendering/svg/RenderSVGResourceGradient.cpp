@@ -35,7 +35,7 @@
 namespace WebCore {
 
 RenderSVGResourceGradient::RenderSVGResourceGradient(SVGGradientElement& node)
-    : RenderSVGResourceContainer(&node)
+    : RenderSVGResourceContainer(node)
     , m_shouldCollectGradientAttributes(true)
 #if USE(CG)
     , m_savedContext(0)

@@ -32,7 +32,7 @@
 namespace WebCore {
     
 RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGGraphicsElement& element)
-    : RenderSVGContainer(&element)
+    : RenderSVGContainer(element)
     , m_needsTransformUpdate(true)
     , m_didTransformToRootUpdate(false)
 {

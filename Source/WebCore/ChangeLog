@@ -1,3 +1,12 @@
+2013-09-14  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderSVGModelObject renderers are never anonymous.
+        <https://webkit.org/b/121350>
+
+        Reviewed by Darin Adler.
+
+        Flip the switch, turning RenderSVGModelObject::element() into a reference.
+
 2013-09-13  Andreas Kling  <akling@apple.com>
 
         CTTE: RenderSVGResourceClipper always has an SVGClipPathElement.

@@ -68,7 +68,7 @@ public:
     explicit RenderSVGResourceFilter(SVGFilterElement&);
     virtual ~RenderSVGResourceFilter();
 
-    SVGFilterElement& filterElement() const { return toSVGFilterElement(*RenderSVGResourceContainer::element()); }
+    SVGFilterElement& filterElement() const { return toSVGFilterElement(RenderSVGResourceContainer::element()); }
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true);
     virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true);
