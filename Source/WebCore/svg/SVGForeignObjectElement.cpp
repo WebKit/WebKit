@@ -128,7 +128,7 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderObject* SVGForeignObjectElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderSVGForeignObject(this);
+    return new (arena) RenderSVGForeignObject(*this);
 }
 
 bool SVGForeignObjectElement::childShouldCreateRenderer(const Node* child) const

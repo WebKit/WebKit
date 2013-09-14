@@ -39,14 +39,19 @@
 
 namespace WebCore {
 
-RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement* node) 
-    : RenderSVGBlock(node)
+RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement& element)
+    : RenderSVGBlock(element)
     , m_needsTransformUpdate(true)
 {
 }
 
 RenderSVGForeignObject::~RenderSVGForeignObject()
 {
+}
+
+SVGForeignObjectElement& RenderSVGForeignObject::foreignObjectElement() const
+{
+    return toSVGForeignObjectElement(RenderSVGBlock::graphicsElement());
 }
 
 void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
@@ -129,11 +134,10 @@ void RenderSVGForeignObject::layout()
     ASSERT(!view().layoutStateEnabled()); // RenderSVGRoot disables layoutState for the SVG rendering tree.
 
     LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(this));
-    SVGForeignObjectElement* foreign = toSVGForeignObjectElement(element());
 
     bool updateCachedBoundariesInParents = false;
     if (m_needsTransformUpdate) {
-        m_localTransform = foreign->animatedLocalTransform();
+        m_localTransform = foreignObjectElement().animatedLocalTransform();
         m_needsTransformUpdate = false;
         updateCachedBoundariesInParents = true;
     }
@@ -141,9 +145,9 @@ void RenderSVGForeignObject::layout()
     FloatRect oldViewport = m_viewport;
 
     // Cache viewport boundaries
-    SVGLengthContext lengthContext(foreign);
-    FloatPoint viewportLocation(foreign->x().value(lengthContext), foreign->y().value(lengthContext));
-    m_viewport = FloatRect(viewportLocation, FloatSize(foreign->width().value(lengthContext), foreign->height().value(lengthContext)));
+    SVGLengthContext lengthContext(&foreignObjectElement());
+    FloatPoint viewportLocation(foreignObjectElement().x().value(lengthContext), foreignObjectElement().y().value(lengthContext));
+    m_viewport = FloatRect(viewportLocation, FloatSize(foreignObjectElement().width().value(lengthContext), foreignObjectElement().height().value(lengthContext)));
     if (!updateCachedBoundariesInParents)
         updateCachedBoundariesInParents = oldViewport != m_viewport;
 

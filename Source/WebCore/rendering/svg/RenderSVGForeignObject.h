@@ -33,10 +33,10 @@ class SVGForeignObjectElement;
 
 class RenderSVGForeignObject FINAL : public RenderSVGBlock {
 public:
-    explicit RenderSVGForeignObject(SVGForeignObjectElement*);
+    explicit RenderSVGForeignObject(SVGForeignObjectElement&);
     virtual ~RenderSVGForeignObject();
 
-    virtual const char* renderName() const { return "RenderSVGForeignObject"; }
+    SVGForeignObjectElement& foreignObjectElement() const;
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
@@ -59,6 +59,9 @@ public:
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
 private:
+    void graphicsElement() const WTF_DELETED_FUNCTION;
+    virtual const char* renderName() const OVERRIDE { return "RenderSVGForeignObject"; }
+
     virtual void updateLogicalWidth() OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 

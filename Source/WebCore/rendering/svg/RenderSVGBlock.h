@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG)
 #include "RenderBlockFlow.h"
+#include "SVGGraphicsElement.h"
 #include "SVGRenderSupport.h"
 
 namespace WebCore {
@@ -30,14 +31,17 @@ class SVGElement;
 
 class RenderSVGBlock : public RenderBlockFlow {
 public:
-    explicit RenderSVGBlock(SVGElement*);
-
     virtual LayoutRect visualOverflowRect() const OVERRIDE FINAL;
 
+    SVGGraphicsElement& graphicsElement() const { return *toSVGGraphicsElement(RenderBlockFlow::element()); }
+
 protected:
+    explicit RenderSVGBlock(SVGGraphicsElement&);
     virtual void willBeDestroyed() OVERRIDE;
 
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
     virtual void setStyle(PassRefPtr<RenderStyle>) OVERRIDE FINAL;
     virtual void updateFromStyle() OVERRIDE FINAL;
 

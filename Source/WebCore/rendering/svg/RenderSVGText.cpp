@@ -57,7 +57,7 @@
 namespace WebCore {
 
 RenderSVGText::RenderSVGText(SVGTextElement& element)
-    : RenderSVGBlock(&element)
+    : RenderSVGBlock(element)
     , m_needsReordering(false)
     , m_needsPositioningValuesUpdate(false)
     , m_needsTransformUpdate(true)
@@ -72,7 +72,7 @@ RenderSVGText::~RenderSVGText()
 
 SVGTextElement& RenderSVGText::textElement() const
 {
-    return toSVGTextElement(*RenderSVGBlock::element());
+    return toSVGTextElement(RenderSVGBlock::graphicsElement());
 }
 
 bool RenderSVGText::isChildAllowed(RenderObject* child, RenderStyle*) const

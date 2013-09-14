@@ -1,5 +1,18 @@
 2013-09-14  Andreas Kling  <akling@apple.com>
 
+        CTTE: RenderSVGBlock renderers are never anonymous.
+        <https://webkit.org/b/121351>
+
+        Reviewed by Antti Koivisto.
+
+        RenderSVGBlock inherits from RenderBlockFlow, so needs separate treatment
+        from RenderSVGModelObject.
+
+        But like RSMO, these renderers are never anonymous, so add strongly typed
+        reference getters and do away with some magical type casts.
+
+2013-09-14  Andreas Kling  <akling@apple.com>
+
         CTTE: RenderSVGModelObject renderers are never anonymous.
         <https://webkit.org/b/121350>
 
