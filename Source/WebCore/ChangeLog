@@ -1,5 +1,9 @@
 2013-09-14  Darin Adler  <darin@apple.com>
 
+        * rendering/RenderListMarker.cpp: Roll out accidentally-checked-in-code.
+
+2013-09-14  Darin Adler  <darin@apple.com>
+
         Add NeverDestroyed::get
         https://bugs.webkit.org/show_bug.cgi?id=121358
 
