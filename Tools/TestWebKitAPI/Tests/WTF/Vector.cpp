@@ -73,6 +73,16 @@ TEST(WTF_Vector, OverloadedOperatorAmpersand)
     vector.append(Test());
 }
 
+TEST(WTF_Vector, AppendLast)
+{
+    Vector<unsigned> vector;
+    vector.append(0);
+
+    // FIXME: This test needs to be run with GuardMalloc to show the bug.
+    for (size_t i = 0; i < 100; ++i)
+        vector.append(const_cast<const unsigned&>(vector.last()));
+}
+
 TEST(WTF_Vector, Reverse)
 {
     Vector<int> intVector;

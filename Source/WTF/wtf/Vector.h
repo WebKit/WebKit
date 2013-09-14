@@ -1053,7 +1053,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::appendSlowCase(U&& value)
 {
     ASSERT(size() == capacity());
 
-    auto ptr = std::addressof(value);
+    auto ptr = const_cast<typename std::remove_const<typename std::remove_reference<U>::type>::type*>(std::addressof(value));
     ptr = expandCapacity(size() + 1, ptr);
     if (!begin())
         return;
