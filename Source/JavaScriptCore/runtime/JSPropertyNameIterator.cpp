@@ -39,7 +39,7 @@ inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyN
     : JSCell(exec->vm(), exec->vm().propertyNameIteratorStructure.get())
     , m_numCacheableSlots(numCacheableSlots)
     , m_jsStringsSize(propertyNameArrayData->propertyNameVector().size())
-    , m_jsStrings(adoptArrayPtr(new WriteBarrier<Unknown>[m_jsStringsSize]))
+    , m_jsStrings(m_jsStringsSize ? adoptArrayPtr(new WriteBarrier<Unknown>[m_jsStringsSize]) : nullptr)
 {
 }
 

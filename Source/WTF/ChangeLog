@@ -1,3 +1,15 @@
+2013-09-13  Anders Carlsson  <andersca@apple.com>
+
+        Avoid a couple of zero-sized fastMalloc calls
+        https://bugs.webkit.org/show_bug.cgi?id=121333
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/text/StringBuffer.h:
+        (WTF::StringBuffer::StringBuffer):
+        Initialize m_data to null if m_length is null, and use Checked<size_t> to check for
+        overflow when multiplying m_length with the character size.
+
 2013-09-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Activate FastMalloc hardening

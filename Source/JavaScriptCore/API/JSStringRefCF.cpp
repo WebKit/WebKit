@@ -58,5 +58,8 @@ JSStringRef JSStringCreateWithCFString(CFStringRef string)
 
 CFStringRef JSStringCopyCFString(CFAllocatorRef alloc, JSStringRef string)
 {
+    if (!string->length())
+        return CFSTR("");
+
     return CFStringCreateWithCharacters(alloc, reinterpret_cast<const UniChar*>(string->characters()), string->length());
 }

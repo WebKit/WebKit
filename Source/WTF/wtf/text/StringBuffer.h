@@ -41,10 +41,8 @@ class StringBuffer {
 public:
     explicit StringBuffer(unsigned length)
         : m_length(length)
+        , m_data(m_length ? static_cast<CharType*>(fastMalloc((Checked<size_t>(m_length) * sizeof(CharType)).unsafeGet())) : nullptr)
     {
-        if (m_length > std::numeric_limits<unsigned>::max() / sizeof(CharType))
-            CRASH();
-        m_data = static_cast<CharType*>(fastMalloc(m_length * sizeof(CharType)));
     }
 
     ~StringBuffer()
