@@ -335,7 +335,7 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& 
     } else if (name.namespaceURI().isNull()) {
         // FIXME: Can we do this even faster by checking the local name "on" prefix before we do anything with the map?
         static NeverDestroyed<HashMap<AtomicString, AtomicString>> eventNamesGlobal;
-        HashMap<AtomicString, AtomicString>& eventNames = eventNamesGlobal;
+        auto& eventNames = eventNamesGlobal.get();
         if (eventNames.isEmpty())
             populateEventNameForAttributeLocalNameMap(eventNames);
         const AtomicString& eventName = eventNames.get(name.localName());

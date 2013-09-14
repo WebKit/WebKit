@@ -1,3 +1,14 @@
+2013-09-14  Darin Adler  <darin@apple.com>
+
+        Add NeverDestroyed::get
+        https://bugs.webkit.org/show_bug.cgi?id=121358
+
+        Reviewed by Anders Carlsson.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseAttribute): Use auto and the new get
+        function to make this code less repetitive.
+
 2013-09-14  Sam Weinig  <sam@webkit.org>
 
         There is no need for any custom bindings for Console

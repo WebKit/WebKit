@@ -1,3 +1,15 @@
+2013-09-14  Darin Adler  <darin@apple.com>
+
+        Add NeverDestroyed::get
+        https://bugs.webkit.org/show_bug.cgi?id=121358
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/NeverDestroyed.h: Removed code to make this non-copyable, since we also
+        use a macro to accomplish that.
+        (WTF::NeverDestroyed::get): Added. Useful in conjuction with auto to avoid
+        having to repeat the type when we want to put one of these into a reference.
+
 2013-09-13  Anders Carlsson  <andersca@apple.com>
 
         Pick the correct overload when a const reference is passed to appendSlowCase.

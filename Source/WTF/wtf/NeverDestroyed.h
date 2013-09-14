@@ -39,7 +39,6 @@
 //   static NeverDestroyed<MySharedGlobal> myGlobal("Hello", 42);
 //   return myGlobal;
 // }
-//
 
 namespace WTF {
 
@@ -67,12 +66,10 @@ public:
 #endif
 
     operator T&() { return *asPtr(); }
+    T& get() { return *asPtr(); }
 
 private:
-    NeverDestroyed(NeverDestroyed&&) WTF_DELETED_FUNCTION;
-    NeverDestroyed& operator=(NeverDestroyed&&) WTF_DELETED_FUNCTION;
-
-    typedef typename std::remove_const<T>::type *PointerType;
+    typedef typename std::remove_const<T>::type* PointerType;
 
     PointerType asPtr() { return reinterpret_cast<PointerType>(&m_storage); }
 
