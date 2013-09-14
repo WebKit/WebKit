@@ -1,3 +1,13 @@
+2013-09-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Enable Page Visibility API
+        https://bugs.webkit.org/show_bug.cgi?id=121340
+
+        Reviewed by Anders Carlsson.
+
+        * win/tools/vsprops/FeatureDefines.props: Activate feature.
+        * win/tools/vsprops/FeatureDefinesCairo.props: Ditto.
+
 2013-09-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Update WKSI library for Open Source builders.
