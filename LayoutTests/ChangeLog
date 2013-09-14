@@ -1,5 +1,12 @@
 2013-09-14  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK gardening. Rebaselining after r155324.
+
+        * platform/gtk/fast/forms/placeholder-position-expected.png:
+        * platform/gtk/fast/forms/placeholder-position-expected.txt:
+
+2013-09-14  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK gardening. Rebaselining after r155408.
 
         * platform/gtk/fast/forms/input-placeholder-visibility-1-expected.txt:
