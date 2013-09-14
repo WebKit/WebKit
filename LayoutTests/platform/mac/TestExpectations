@@ -1309,3 +1309,6 @@ webkit.org/b/120922 compositing/overlap-blending/children-opacity-no-overlap.htm
 webkit.org/b/120923 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/121053 fast/history/go-back-to-iframe-with-plugin.html [ Crash Timeout Pass ]
+
+webkit.org/b/121343 http/tests/inspector/network/network-size-chunked.html [ Failure ]
+webkit.org/b/121343 http/tests/inspector/network/network-size-sync.html [ Failure ]
