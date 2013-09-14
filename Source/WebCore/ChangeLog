@@ -1,3 +1,13 @@
+2013-09-13  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderSVGResourceFilter always has an SVGFilterElement.
+        <https://webkit.org/b/121348>
+
+        Reviewed by Darin Adler.
+
+        This renderer is never anonymous. Tighten things up with a filterElement()
+        reference getter. Removed some unnecessary null checks and type casts.
+
 2013-09-13  Darin Adler  <darin@apple.com>
 
         Use a better name than m_invertibleCTM

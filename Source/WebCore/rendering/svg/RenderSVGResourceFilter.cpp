@@ -58,8 +58,8 @@ namespace WebCore {
 
 RenderSVGResourceType RenderSVGResourceFilter::s_resourceType = FilterResourceType;
 
-RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement* node)
-    : RenderSVGResourceContainer(node)
+RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement& element)
+    : RenderSVGResourceContainer(&element)
 {
 }
 
@@ -90,12 +90,11 @@ void RenderSVGResourceFilter::removeClientFromCache(RenderObject* client, bool m
 
 PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter* filter)
 {
-    SVGFilterElement* filterElement = toSVGFilterElement(element());
     FloatRect targetBoundingBox = filter->targetBoundingBox();
 
     // Add effects to the builder
     RefPtr<SVGFilterBuilder> builder = SVGFilterBuilder::create(SourceGraphic::create(filter), SourceAlpha::create(filter));
-    for (Node* node = filterElement->firstChild(); node; node = node->nextSibling()) {
+    for (Node* node = filterElement().firstChild(); node; node = node->nextSibling()) {
         if (!node->isSVGElement())
             continue;
 
@@ -111,7 +110,7 @@ PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter*
         }
         builder->appendEffectToEffectReferences(effect, effectElement->renderer());
         effectElement->setStandardAttributes(effect.get());
-        effect->setEffectBoundaries(SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(effectElement, filterElement->primitiveUnits(), targetBoundingBox));
+        effect->setEffectBoundaries(SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(effectElement, filterElement().primitiveUnits(), targetBoundingBox));
         effect->setOperatingColorSpace(
             effectElement->renderer()->style()->svgStyle()->colorInterpolationFilters() == CI_LINEARRGB ? ColorSpaceLinearRGB : ColorSpaceDeviceRGB);
         builder->add(effectElement->result(), effect);
@@ -150,8 +149,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     auto filterData = createOwned<FilterData>();
     FloatRect targetBoundingBox = object->objectBoundingBox();
 
-    SVGFilterElement* filterElement = toSVGFilterElement(element());
-    filterData->boundaries = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement, filterElement->filterUnits(), targetBoundingBox);
+    filterData->boundaries = SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), targetBoundingBox);
     if (filterData->boundaries.isEmpty())
         return false;
 
@@ -171,7 +169,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     FloatRect absoluteDrawingRegion = filterData->shearFreeAbsoluteTransform.mapRect(filterData->drawingRegion);
 
     // Create the SVGFilter object.
-    bool primitiveBoundingBoxMode = filterElement->primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+    bool primitiveBoundingBoxMode = filterElement().primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     filterData->filter = SVGFilter::create(filterData->shearFreeAbsoluteTransform, absoluteDrawingRegion, targetBoundingBox, filterData->boundaries, primitiveBoundingBoxMode);
 
     // Create all relevant filter primitives.
@@ -182,9 +180,9 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     // Calculate the scale factor for the use of filterRes.
     // Also see http://www.w3.org/TR/SVG/filters.html#FilterEffectsRegion
     FloatSize scale(1, 1);
-    if (filterElement->hasAttribute(SVGNames::filterResAttr)) {
-        scale.setWidth(filterElement->filterResX() / absoluteFilterBoundaries.width());
-        scale.setHeight(filterElement->filterResY() / absoluteFilterBoundaries.height());
+    if (filterElement().hasAttribute(SVGNames::filterResAttr)) {
+        scale.setWidth(filterElement().filterResX() / absoluteFilterBoundaries.width());
+        scale.setHeight(filterElement().filterResY() / absoluteFilterBoundaries.height());
     }
 
     if (scale.isEmpty())
@@ -322,10 +320,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
 
 FloatRect RenderSVGResourceFilter::resourceBoundingBox(RenderObject* object)
 {
-    if (SVGFilterElement* element = toSVGFilterElement(this->element()))
-        return SVGLengthContext::resolveRectangle<SVGFilterElement>(element, element->filterUnits(), object->objectBoundingBox());
-
-    return FloatRect();
+    return SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), object->objectBoundingBox());
 }
 
 void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, const QualifiedName& attribute)

@@ -65,11 +65,10 @@ class GraphicsContext;
 
 class RenderSVGResourceFilter FINAL : public RenderSVGResourceContainer {
 public:
-    RenderSVGResourceFilter(SVGFilterElement*);
+    explicit RenderSVGResourceFilter(SVGFilterElement&);
     virtual ~RenderSVGResourceFilter();
 
-    virtual const char* renderName() const { return "RenderSVGResourceFilter"; }
-    virtual bool isSVGResourceFilter() const OVERRIDE { return true; }
+    SVGFilterElement& filterElement() const { return toSVGFilterElement(*RenderSVGResourceContainer::element()); }
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true);
     virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true);
@@ -81,8 +80,8 @@ public:
 
     PassRefPtr<SVGFilterBuilder> buildPrimitives(SVGFilter*);
 
-    SVGUnitTypes::SVGUnitType filterUnits() const { return toSVGFilterElement(element())->filterUnits(); }
-    SVGUnitTypes::SVGUnitType primitiveUnits() const { return toSVGFilterElement(element())->primitiveUnits(); }
+    SVGUnitTypes::SVGUnitType filterUnits() const { return filterElement().filterUnits(); }
+    SVGUnitTypes::SVGUnitType primitiveUnits() const { return filterElement().primitiveUnits(); }
 
     void primitiveAttributeChanged(RenderObject*, const QualifiedName&);
 
@@ -91,6 +90,11 @@ public:
 
     FloatRect drawingRegion(RenderObject*) const;
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
+    virtual const char* renderName() const OVERRIDE { return "RenderSVGResourceFilter"; }
+    virtual bool isSVGResourceFilter() const OVERRIDE { return true; }
+
     bool fitsInMaximumImageSize(const FloatSize&, FloatSize&);
 
     HashMap<RenderObject*, OwnPtr<FilterData>> m_filter;

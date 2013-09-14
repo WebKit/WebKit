@@ -190,7 +190,7 @@ void SVGFilterElement::childrenChanged(const ChildChange& change)
 
 RenderObject* SVGFilterElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderSVGResourceFilter(this);
+    return new (arena) RenderSVGResourceFilter(*this);
 }
 
 bool SVGFilterElement::childShouldCreateRenderer(const Node* child) const
