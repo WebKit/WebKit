@@ -1,5 +1,17 @@
 2013-09-14  Zan Dobersek  <zdobersek@igalia.com>
 
+        REGRESSION(r155228): Call to DragData::asFragment() nullifies PassRefPtr<Range> in documentFragmentFromDragData
+        https://bugs.webkit.org/show_bug.cgi?id=121359
+
+        Reviewed by Darin Adler.
+
+        * page/DragController.cpp:
+        (WebCore::documentFragmentFromDragData): Pass the naked pointer as the PassRefPtr<Range> argument to the DragData::asFragment()
+        call. The naked pointer will get wrapped and protected by a new PassRefPtr. Passing the original PassRefPtr will also create
+        a new PassRefPtr, but will leak the reference of the original one, leaving its pointer nullified.
+
+2013-09-14  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK build fix after r155774.
 
         * bindings/scripts/CodeGeneratorGObject.pm:

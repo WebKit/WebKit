@@ -124,7 +124,7 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
 
     Document& document = context->ownerDocument();
     if (dragData->containsCompatibleContent()) {
-        if (PassRefPtr<DocumentFragment> fragment = dragData->asFragment(frame, context, allowPlainText, chosePlainText))
+        if (PassRefPtr<DocumentFragment> fragment = dragData->asFragment(frame, context.get(), allowPlainText, chosePlainText))
             return fragment;
 
         if (dragData->containsURL(frame, DragData::DoNotConvertFilenames)) {
