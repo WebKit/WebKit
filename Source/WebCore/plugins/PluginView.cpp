@@ -472,7 +472,7 @@ void PluginView::performRequest(PluginRequest* request)
     if (targetFrameName.isNull()) {
         String resultString;
 
-        ScriptState* scriptState = m_parentFrame->script().globalObject(pluginWorld())->globalExec();
+        JSC::ExecState* scriptState = m_parentFrame->script().globalObject(pluginWorld())->globalExec();
         CString cstr;
         if (result.getString(scriptState, resultString))
             cstr = resultString.utf8();

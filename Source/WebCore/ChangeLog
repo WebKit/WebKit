@@ -1,3 +1,26 @@
+2013-09-13  Sam Weinig  <sam@webkit.org>
+
+        Fix a few lingering ScriptStates.
+
+        Reviewed by Andy Estes.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::update):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        * bindings/cpp/WebNativeNodeFilterCondition.cpp:
+        (WebNativeNodeFilterCondition::acceptNode):
+        * bindings/cpp/WebNativeNodeFilterCondition.h:
+        * dom/CustomElementConstructor.cpp:
+        (WebCore::CustomElementConstructor::create):
+        * dom/CustomElementConstructor.h:
+        * dom/CustomElementRegistry.cpp:
+        (WebCore::CustomElementRegistry::registerElement):
+        * dom/CustomElementRegistry.h:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::performRequest):
+
 2013-09-13  Darin Adler  <darin@apple.com>
 
         Rename confusingly named "runtimeObject" functions

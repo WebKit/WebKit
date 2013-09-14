@@ -33,7 +33,7 @@ public:
 
     virtual ~WebNativeNodeFilterCondition();
 
-    virtual short acceptNode(WebCore::ScriptState*, WebCore::Node*) const;
+    virtual short acceptNode(JSC::ExecState*, WebCore::Node*) const;
 
 protected:
     WebNativeNodeFilterCondition(WebUserNodeFilter*);

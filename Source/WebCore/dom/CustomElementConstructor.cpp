@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-PassRefPtr<CustomElementConstructor> CustomElementConstructor::create(ScriptState* state, Document* document, const QualifiedName& typeName, const QualifiedName& localName, const ScriptValue& prototype)
+PassRefPtr<CustomElementConstructor> CustomElementConstructor::create(JSC::ExecState* state, Document* document, const QualifiedName& typeName, const QualifiedName& localName, const ScriptValue& prototype)
 {
     ASSERT(CustomElementHelpers::isValidPrototypeParameter(prototype, state));
     ASSERT(localName == typeName || localName == *CustomElementHelpers::findLocalName(prototype));

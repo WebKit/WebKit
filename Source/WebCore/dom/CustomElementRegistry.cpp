@@ -108,7 +108,7 @@ bool CustomElementRegistry::isValidName(const AtomicString& name)
     return Document::isValidName(name.string());
 }
 
-PassRefPtr<CustomElementConstructor> CustomElementRegistry::registerElement(ScriptState* state, const AtomicString& name, const Dictionary& options, ExceptionCode& ec)
+PassRefPtr<CustomElementConstructor> CustomElementRegistry::registerElement(JSC::ExecState* state, const AtomicString& name, const Dictionary& options, ExceptionCode& ec)
 {
     RefPtr<CustomElementRegistry> protect(this);
 

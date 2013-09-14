@@ -34,7 +34,7 @@ WebNativeNodeFilterCondition::~WebNativeNodeFilterCondition()
     m_filter->deref();
 }
 
-short WebNativeNodeFilterCondition::acceptNode(WebCore::ScriptState*, WebCore::Node* node) const
+short WebNativeNodeFilterCondition::acceptNode(JSC::ExecState*, WebCore::Node* node) const
 {
     return m_filter->acceptNode(toWebKit(node));
 }

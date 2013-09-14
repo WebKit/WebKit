@@ -45,14 +45,13 @@ namespace WebCore {
 
 class Document;
 class Element;
-class ScriptState;
 class ScriptValue;
 
 PassRefPtr<Element> setTypeExtension(PassRefPtr<Element>, const AtomicString& typeExtension);
 
 class CustomElementConstructor : public RefCounted<CustomElementConstructor> , public ContextDestructionObserver {
 public:
-    static PassRefPtr<CustomElementConstructor> create(ScriptState*, Document*, const QualifiedName& typeName, const QualifiedName& localName, const ScriptValue&);
+    static PassRefPtr<CustomElementConstructor> create(JSC::ExecState*, Document*, const QualifiedName& typeName, const QualifiedName& localName, const ScriptValue&);
 
     virtual ~CustomElementConstructor();
 

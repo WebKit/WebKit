@@ -119,39 +119,39 @@ static void generateIndexKeysForValue(DOMRequestState* requestState, const IDBIn
     }
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptState* state, ScriptValue& value, const ScriptValue& key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::add(JSC::ExecState* state, ScriptValue& value, const ScriptValue& key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::add");
     return put(IDBDatabaseBackendInterface::AddOnly, IDBAny::create(this), state, value, key, ec);
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptState* state, ScriptValue& value, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::add(JSC::ExecState* state, ScriptValue& value, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::add");
     return put(IDBDatabaseBackendInterface::AddOnly, IDBAny::create(this), state, value, static_cast<IDBKey*>(0), ec);
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptState* state, ScriptValue& value, const ScriptValue& key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::put(JSC::ExecState* state, ScriptValue& value, const ScriptValue& key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::put");
     return put(IDBDatabaseBackendInterface::AddOrUpdate, IDBAny::create(this), state, value, key, ec);
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptState* state, ScriptValue& value, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::put(JSC::ExecState* state, ScriptValue& value, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::put");
     return put(IDBDatabaseBackendInterface::AddOrUpdate, IDBAny::create(this), state, value, static_cast<IDBKey*>(0), ec);
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBAny> source, ScriptState* state, ScriptValue& value, const ScriptValue& keyValue, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBAny> source, JSC::ExecState* state, ScriptValue& value, const ScriptValue& keyValue, ExceptionCode& ec)
 {
-    ScriptExecutionContext* context = scriptExecutionContextFromScriptState(state);
+    ScriptExecutionContext* context = scriptExecutionContextFromExecState(state);
     DOMRequestState requestState(context);
     RefPtr<IDBKey> key = scriptValueToIDBKey(&requestState, keyValue);
     return put(putMode, source, state, value, key.release(), ec);
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBAny> source, ScriptState* state, ScriptValue& value, PassRefPtr<IDBKey> prpKey, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBAny> source, JSC::ExecState* state, ScriptValue& value, PassRefPtr<IDBKey> prpKey, ExceptionCode& ec)
 {
     RefPtr<IDBKey> key = prpKey;
     if (m_deleted) {
@@ -185,7 +185,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackendInterface::PutMode 
     const bool usesInLineKeys = !keyPath.isNull();
     const bool hasKeyGenerator = autoIncrement();
 
-    ScriptExecutionContext* context = scriptExecutionContextFromScriptState(state);
+    ScriptExecutionContext* context = scriptExecutionContextFromExecState(state);
     DOMRequestState requestState(context);
 
     if (putMode != IDBDatabaseBackendInterface::CursorUpdate && usesInLineKeys && key) {

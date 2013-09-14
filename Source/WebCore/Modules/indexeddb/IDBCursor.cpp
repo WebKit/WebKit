@@ -121,7 +121,7 @@ IDBAny* IDBCursor::source() const
     return m_source.get();
 }
 
-PassRefPtr<IDBRequest> IDBCursor::update(ScriptState* state, ScriptValue& value, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBCursor::update(JSC::ExecState* state, ScriptValue& value, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursor::update");
 

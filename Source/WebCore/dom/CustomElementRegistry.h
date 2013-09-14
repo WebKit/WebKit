@@ -78,7 +78,7 @@ public:
     explicit CustomElementRegistry(Document*);
     ~CustomElementRegistry();
 
-    PassRefPtr<CustomElementConstructor> registerElement(WebCore::ScriptState*, const AtomicString& name, const Dictionary& options, ExceptionCode&);
+    PassRefPtr<CustomElementConstructor> registerElement(JSC::ExecState*, const AtomicString& name, const Dictionary& options, ExceptionCode&);
     PassRefPtr<CustomElementConstructor> findFor(Element*) const;
     PassRefPtr<CustomElementConstructor> find(const QualifiedName& elementName, const QualifiedName& localName) const;
     PassRefPtr<Element> createElement(const QualifiedName& localName, const AtomicString& typeExtension) const;
