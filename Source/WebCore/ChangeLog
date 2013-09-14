@@ -1,3 +1,16 @@
+2013-09-14  Alberto Garcia  <berto@igalia.com>
+
+        Missing  allow-none introspection annotation for DomDocument.evaluate method
+        https://bugs.webkit.org/show_bug.cgi?id=118310
+
+        Reviewed by Martin Robinson.
+
+        Add (allow-none) introspection annotation to parameters that can
+        be NULL.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateFunction):
+
 2013-09-14  Sam Weinig  <sam@webkit.org>
 
         [CTTE] Node subclasses should take a Document by reference in their constructor (HTMLBodyElement)
