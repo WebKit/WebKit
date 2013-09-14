@@ -1,3 +1,25 @@
+2013-09-13  Michael Saboff  <msaboff@apple.com>
+
+        FTL JIT broke after r155711
+        https://bugs.webkit.org/show_bug.cgi?id=121332
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed OSR entry to use the local variable's index instead of its VirtualRegister.
+        Initialized ExitArgumentForOperand::m_operand to InvalidVirtualRegister instead of -1.
+        Fixed compileCallOrConstruct() to update locals on callframe going down.
+        Fixed prepareOSREntry() to grow stack down if needed.
+
+        * ftl/FTLExitArgumentForOperand.h:
+        (JSC::FTL::ExitArgumentForOperand::ExitArgumentForOperand):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileExtractOSREntryLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileCallOrConstruct):
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+
 2013-09-13  Anders Carlsson  <andersca@apple.com>
 
         Avoid a couple of zero-sized fastMalloc calls

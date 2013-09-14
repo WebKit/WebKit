@@ -31,13 +31,14 @@
 #if ENABLE(FTL_JIT)
 
 #include "FTLExitArgument.h"
+#include "VirtualRegister.h"
 
 namespace JSC { namespace FTL {
 
 class ExitArgumentForOperand {
 public:
     ExitArgumentForOperand()
-        : m_operand(-1)
+        : m_operand(InvalidVirtualRegister)
     {
     }
     

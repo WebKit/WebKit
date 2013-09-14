@@ -77,8 +77,8 @@ void* prepareOSREntry(
     for (int local = values.numberOfLocals(); local--;)
         scratch[local] = JSValue::encode(values.local(local));
     
-    unsigned stackFrameSize = entryCodeBlock->m_numCalleeRegisters;
-    if (!vm.interpreter->stack().grow(&exec->registers()[stackFrameSize])) {
+    int stackFrameSize = entryCodeBlock->m_numCalleeRegisters;
+    if (!vm.interpreter->stack().grow(&exec->registers()[localToOperand(stackFrameSize)])) {
         if (Options::verboseOSR())
             dataLog("    OSR failed bcause stack growth failed.\n");
         return 0;
