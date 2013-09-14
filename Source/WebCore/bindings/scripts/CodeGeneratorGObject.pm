@@ -273,7 +273,7 @@ sub SkipFunction {
         return 1;
     }
 
-    if ($function->signature->name eq "timeEnd") {
+    if ($function->signature->name eq "timeEnd" || $function->signature->name eq "profile" || $function->signature->name eq "profileEnd") {
         return 1;
     }
 

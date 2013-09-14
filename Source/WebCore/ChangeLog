@@ -1,3 +1,11 @@
+2013-09-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix after r155774.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipFunction): Temporarily skip generation of bindings for the Console::profile() and Console::profileEnd() methods
+        as they're not correctly generated for the moment.
+
 2013-09-14  Darin Adler  <darin@apple.com>
 
         Shrink the nameToPseudoTypeMap function
