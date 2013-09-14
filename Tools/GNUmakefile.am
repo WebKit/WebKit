@@ -403,7 +403,9 @@ if ENABLE_WEBKIT2
 	  fi; \
 	fi
 endif
+if ENABLE_GTK_DOC
 	@$(AM_V_GEN) PKG_CONFIG=$(PKG_CONFIG) $(PYTHON) $(srcdir)/Tools/gtk/generate-gtkdoc --rebase --virtual-root=$${DESTDIR}
+endif
 
 uninstall-local:
 if ENABLE_WEBKIT1
