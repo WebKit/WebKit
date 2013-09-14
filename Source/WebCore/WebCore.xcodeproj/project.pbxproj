@@ -10072,6 +10072,9 @@
 		A454424D119B3687009BE912 /* RenderMeter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMeter.h; sourceTree = "<group>"; };
 		A456FA2411AD4A830020B420 /* LabelsNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelsNodeList.cpp; sourceTree = "<group>"; };
 		A456FA2511AD4A830020B420 /* LabelsNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelsNodeList.h; sourceTree = "<group>"; };
+		A518225317E28CF100A9BA1D /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
+		A518225417E2A0D400A9BA1D /* InspectorOverlayPage.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = InspectorOverlayPage.css; sourceTree = "<group>"; };
+		A518225517E2A0D400A9BA1D /* InspectorOverlayPage.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = InspectorOverlayPage.js; sourceTree = "<group>"; };
 		A54A82EA15228CA300C72BA6 /* DOMNodePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMNodePrivate.h; sourceTree = "<group>"; };
 		A5732B08136A161D005C8D7C /* DateComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateComponents.cpp; sourceTree = "<group>"; };
 		A5732B09136A161D005C8D7C /* DateComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateComponents.h; sourceTree = "<group>"; };
@@ -13949,6 +13952,7 @@
 		1C81B94D0E9732D900266E07 /* inspector */ = {
 			isa = PBXGroup;
 			children = (
+				A518225317E28CF100A9BA1D /* Scripts */,
 				F35AE5AB14925F5B004D5776 /* BindingVisitors.h */,
 				2DF2E9D4166E39740035BEF2 /* ConsoleAPITypes.h */,
 				41F0618D0F5F069800A07EAC /* ConsoleMessage.cpp */,
@@ -14037,7 +14041,9 @@
 				7AA51DD4148506A900AD2752 /* InspectorMemoryAgent.h */,
 				7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */,
 				7C522D4A15B478B2009B7C95 /* InspectorOverlay.h */,
+				A518225417E2A0D400A9BA1D /* InspectorOverlayPage.css */,
 				7A7256B915EB9F5B007323A7 /* InspectorOverlayPage.html */,
+				A518225517E2A0D400A9BA1D /* InspectorOverlayPage.js */,
 				4F6FDD621341DEDD001F8EE3 /* InspectorPageAgent.cpp */,
 				4F6FDD631341DEDD001F8EE3 /* InspectorPageAgent.h */,
 				9F0D6B2C121BFEBA006C0288 /* InspectorProfilerAgent.cpp */,

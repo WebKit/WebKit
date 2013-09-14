@@ -1,3 +1,14 @@
+2013-09-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: InjectedScriptSource_js and InjectedScriptCanvasModuleSource_js should be minified
+        https://bugs.webkit.org/show_bug.cgi?id=121183
+
+        Reviewed by Timothy Hatcher.
+
+        Now that the file is minified, a line number changed.
+
+        * platform/mac/inspector/console/command-line-api-expected.txt:
+
 2013-09-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Enable Page Visibility API

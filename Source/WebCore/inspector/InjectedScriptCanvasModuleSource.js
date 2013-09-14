@@ -309,7 +309,7 @@ Call.prototype = {
     {
         return !this._functionName;
     },
-    
+
     /**
      * @return {!Array}
      */
@@ -426,7 +426,7 @@ Call.prototype = {
                     resource.setWrappedObject(replayResult);
             }
         }
-    
+
         this._thisObject = replayObject;
         this._functionName = replayableCall.functionName();
         this._args = replayArgs;
@@ -1391,7 +1391,7 @@ WebGLProgramResource.prototype = {
 
         var originalProgram = /** @type {WebGLProgram} */ (gl.getParameter(gl.CURRENT_PROGRAM));
         var currentProgram = originalProgram;
-        
+
         data.uniforms.forEach(function(uniform) {
             var uniformLocation = gl.getUniformLocation(program, uniform.name);
             if (!uniformLocation)

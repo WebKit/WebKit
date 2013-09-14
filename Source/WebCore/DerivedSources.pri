@@ -59,7 +59,10 @@ INSPECTOR_JSON = $$PWD/inspector/Inspector.json
 
 INSPECTOR_BACKEND_COMMANDS_QRC = $$PWD/inspector/front-end/InspectorBackendCommands.qrc
 
-INSPECTOR_OVERLAY_PAGE = $$PWD/inspector/InspectorOverlayPage.html
+INSPECTOR_OVERLAY_PAGE = \
+    $$PWD/inspector/InspectorOverlayPage.html \
+    $$PWD/inspector/InspectorOverlayPage.css \
+    $$PWD/inspector/InspectorOverlayPage.js
 
 INJECTED_SCRIPT_SOURCE = $$PWD/inspector/InjectedScriptSource.js
 
@@ -825,21 +828,22 @@ GENERATORS += inspectorBackendCommands
 
 inspectorOverlayPage.output = InspectorOverlayPage.h
 inspectorOverlayPage.input = INSPECTOR_OVERLAY_PAGE
-inspectorOverlayPage.commands = perl $$PWD/inspector/xxd.pl InspectorOverlayPage_html ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+inspectorOverlayPage.commands = python $$PWD/inspector/Scripts/inline-and-minify-stylesheets-and-scripts.py $$PWD/inspector/InspectorOverlayPage.html ${QMAKE_FUNC_FILE_OUT_PATH}/InspectorOverlayPage.combined.html && perl $$PWD/inspector/xxd.pl InspectorOverlayPage_html ${QMAKE_FUNC_FILE_OUT_PATH}/InspectorOverlayPage.combined.html ${QMAKE_FILE_OUT}
+inspectorOverlayPage.depends = $$INSPECTOR_OVERLAY_PAGE $$PWD/inspector/Scripts/inline-and-minify-stylesheets-and-scripts.py
 inspectorOverlayPage.add_output_to_sources = false
 GENERATORS += inspectorOverlayPage
 
 # GENERATOR 2: inspector injected script source compiler
 injectedScriptSource.output = InjectedScriptSource.h
 injectedScriptSource.input = INJECTED_SCRIPT_SOURCE
-injectedScriptSource.commands = perl $$PWD/inspector/xxd.pl InjectedScriptSource_js ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+injectedScriptSource.commands = python $$PWD/inspector/Scripts/jsmin.py <${QMAKE_FILE_IN} > ${QMAKE_FUNC_FILE_OUT_PATH}/InjectedScriptSource.min.js && perl $$PWD/inspector/xxd.pl InjectedScriptSource_js ${QMAKE_FUNC_FILE_OUT_PATH}/InjectedScriptSource.min.js ${QMAKE_FILE_OUT}
 injectedScriptSource.add_output_to_sources = false
 GENERATORS += injectedScriptSource
 
 # GENERATOR 3: inspector canvas injected script source compiler
 InjectedScriptCanvasModuleSource.output = InjectedScriptCanvasModuleSource.h
 InjectedScriptCanvasModuleSource.input = INJECTED_SCRIPT_CANVAS_MODULE_SOURCE
-InjectedScriptCanvasModuleSource.commands = perl $$PWD/inspector/xxd.pl InjectedScriptCanvasModuleSource_js ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+InjectedScriptCanvasModuleSource.commands = python $$PWD/inspector/Scripts/jsmin.py <${QMAKE_FILE_IN} > ${QMAKE_FUNC_FILE_OUT_PATH}/InjectedScriptCanvasModuleSource.min.js && perl $$PWD/inspector/xxd.pl InjectedScriptCanvasModuleSource_js ${QMAKE_FUNC_FILE_OUT_PATH}/InjectedScriptCanvasModuleSource.min.js ${QMAKE_FILE_OUT}
 InjectedScriptCanvasModuleSource.add_output_to_sources = false
 GENERATORS += InjectedScriptCanvasModuleSource
 

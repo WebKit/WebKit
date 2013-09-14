@@ -1052,18 +1052,24 @@ InspectorFrontend.h : Inspector.json $(INSPECTOR_GENERATOR_SCRIPTS)
 
 all : InspectorOverlayPage.h
 
-InspectorOverlayPage.h : InspectorOverlayPage.html
-	perl $(WebCore)/inspector/xxd.pl InspectorOverlayPage_html $(WebCore)/inspector/InspectorOverlayPage.html InspectorOverlayPage.h
+InspectorOverlayPage.h : InspectorOverlayPage.html InspectorOverlayPage.css InspectorOverlayPage.js
+	python "$(WebCore)/inspector/Scripts/inline-and-minify-stylesheets-and-scripts.py" "$(WebCore)/inspector/InspectorOverlayPage.html" ./InspectorOverlayPage.combined.html
+	perl "$(WebCore)/inspector/xxd.pl" InspectorOverlayPage_html ./InspectorOverlayPage.combined.html InspectorOverlayPage.h
+	rm -f ./InspectorOverlayPage.combined.html
 
 all : InjectedScriptSource.h
 
 InjectedScriptSource.h : InjectedScriptSource.js
-	perl $(WebCore)/inspector/xxd.pl InjectedScriptSource_js $(WebCore)/inspector/InjectedScriptSource.js InjectedScriptSource.h
+	python "$(WebCore)/inspector/Scripts/jsmin.py" <"$(WebCore)/inspector/InjectedScriptSource.js" > ./InjectedScriptSource.min.js
+	perl "$(WebCore)/inspector/xxd.pl" InjectedScriptSource_js ./InjectedScriptSource.min.js InjectedScriptSource.h
+	rm -f ./InjectedScriptSource.min.js
 
 all : InjectedScriptCanvasModuleSource.h
 
 InjectedScriptCanvasModuleSource.h : InjectedScriptCanvasModuleSource.js
-	perl $(WebCore)/inspector/xxd.pl InjectedScriptCanvasModuleSource_js $(WebCore)/inspector/InjectedScriptCanvasModuleSource.js InjectedScriptCanvasModuleSource.h
+	python "$(WebCore)/inspector/Scripts/jsmin.py" <"$(WebCore)/inspector/InjectedScriptCanvasModuleSource.js" > ./InjectedScriptCanvasModuleSource.min.js
+	perl "$(WebCore)/inspector/xxd.pl" InjectedScriptCanvasModuleSource_js ./InjectedScriptCanvasModuleSource.min.js InjectedScriptCanvasModuleSource.h
+	rm -f ./InjectedScriptCanvasModuleSource.min.js
 
 -include $(JS_DOM_HEADERS:.h=.dep)
 

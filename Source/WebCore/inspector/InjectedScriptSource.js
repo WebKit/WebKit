@@ -331,7 +331,7 @@ InjectedScript.prototype = {
                     value: this._wrapObject(property.value, objectGroupName)
                 };
                 descriptors.push(descriptor);
-            } 
+            }
         }
         return descriptors;
     },
@@ -403,7 +403,7 @@ InjectedScript.prototype = {
                         // Not all bindings provide proper descriptors. Fall back to the writable, configurable property.
                         try {
                             descriptor = { name: name, value: object[name], writable: false, configurable: false, enumerable: false};
-                            if (o === object) 
+                            if (o === object)
                                 descriptor.isOwn = true;
                             descriptors.push(descriptor);
                         } catch (e) {
@@ -418,7 +418,7 @@ InjectedScript.prototype = {
                 }
 
                 descriptor.name = name;
-                if (o === object) 
+                if (o === object)
                     descriptor.isOwn = true;
                 descriptors.push(descriptor);
             }
@@ -483,7 +483,7 @@ InjectedScript.prototype = {
             return this._createThrownValue(e, objectGroup);
         }
     },
-    
+
     /**
      * Resolves a value from CallArgument description.
      * @param {RuntimeAgent.CallArgument} callArgumentJson
@@ -699,7 +699,7 @@ InjectedScript.prototype = {
     /**
      * @param {string} name
      * @return {Object}
-     */ 
+     */
     module: function(name)
     {
         return this._modules[name];
@@ -709,7 +709,7 @@ InjectedScript.prototype = {
      * @param {string} name
      * @param {string} source
      * @return {Object}
-     */ 
+     */
     injectModule: function(name, source)
     {
         delete this._modules[name];
@@ -944,7 +944,7 @@ InjectedScript.RemoteObject.prototype = {
                     this._appendPropertyPreview(preview, { name: name, type: "object", value: "null" }, propertiesThreshold);
                     continue;
                 }
-    
+
                 const maxLength = 100;
                 var type = typeof value;
 

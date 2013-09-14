@@ -337,12 +337,18 @@ DerivedSources/WebCore/InspectorFrontend.h: DerivedSources/WebCore/InspectorFron
 DerivedSources/WebCore/InspectorFrontend.cpp: DerivedSources/WebCore/InspectorBackendCommands.js
 DerivedSources/WebCore/InspectorBackendCommands.js: DerivedSources/WebCore/InspectorBackendDispatcher.h
 DerivedSources/WebCore/InspectorBackendDispatcher.h: DerivedSources/WebCore/InspectorBackendDispatcher.cpp
-DerivedSources/WebCore/InspectorOverlayPage.h: $(WebCore)/inspector/InspectorOverlayPage.html
-	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InspectorOverlayPage_html $(WebCore)/inspector/InspectorOverlayPage.html $(GENSOURCES_WEBCORE)/InspectorOverlayPage.h
+
+DerivedSources/WebCore/InspectorOverlayPage.h: $(WebCore)/inspector/InspectorOverlayPage.html $(WebCore)/inspector/InspectorOverlayPage.css $(WebCore)/inspector/InspectorOverlayPage.js
+	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/Scripts/inline-and-minify-stylesheets-and-scripts.py $(WebCore)/inspector/InspectorOverlayPage.html $(GENSOURCES_WEBCORE)/InspectorOverlayPage.combined.html
+	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InspectorOverlayPage_html $(GENSOURCES_WEBCORE)/InspectorOverlayPage.combined.html $(GENSOURCES_WEBCORE)/InspectorOverlayPage.h
+
 DerivedSources/WebCore/InjectedScriptCanvasModuleSource.h: $(WebCore)/inspector/InjectedScriptCanvasModuleSource.js
-	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InjectedScriptCanvasModuleSource_js $(WebCore)/inspector/InjectedScriptCanvasModuleSource.js $(GENSOURCES_WEBCORE)/InjectedScriptCanvasModuleSource.h
+	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/Scripts/jsmin.py <$(WebCore)/inspector/InjectedScriptCanvasModuleSource.js > $(GENSOURCES_WEBCORE)/InjectedScriptCanvasModuleSource.min.js
+	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InjectedScriptCanvasModuleSource_js $(GENSOURCES_WEBCORE)/InjectedScriptCanvasModuleSource.min.js $(GENSOURCES_WEBCORE)/InjectedScriptCanvasModuleSource.h
+
 DerivedSources/WebCore/InjectedScriptSource.h: $(WebCore)/inspector/InjectedScriptSource.js
-	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InjectedScriptSource_js $(WebCore)/inspector/InjectedScriptSource.js $(GENSOURCES_WEBCORE)/InjectedScriptSource.h
+	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/Scripts/jsmin.py <$(WebCore)/inspector/InjectedScriptSource.js > $(GENSOURCES_WEBCORE)/InjectedScriptSource.min.js
+	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl InjectedScriptSource_js $(GENSOURCES_WEBCORE)/InjectedScriptSource.min.js $(GENSOURCES_WEBCORE)/InjectedScriptSource.h
 
 if ENABLE_WEB_AUDIO
 # Installing HRTF database wav files

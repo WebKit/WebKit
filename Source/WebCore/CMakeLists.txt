@@ -3004,27 +3004,34 @@ list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorBackendDispa
 
 # Generate InspectorOverlayPage.h
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.h
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.h ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.combined.html
     MAIN_DEPENDENCY inspector/InspectorOverlayPage.html
-    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl InspectorOverlayPage_html ${WEBCORE_DIR}/inspector/InspectorOverlayPage.html ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.h
+    DEPENDS ${WEBCORE_DIR}/inspector/xxd.pl ${WEBCORE_DIR}/inspector/Scripts/inline-and-minify-stylesheets-and-scripts.py
+    DEPENDS inspector/InspectorOverlayPage.css inspector/InspectorOverlayPage.js
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/inspector/Scripts/inline-and-minify-stylesheets-and-scripts.py ${WEBCORE_DIR}/inspector/InspectorOverlayPage.html ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.combined.html
+    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl InspectorOverlayPage_html ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.combined.html ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.h
     VERBATIM)
 list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.h)
 
 
 # Generate InjectedScriptSource.h
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.h
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.h ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.min.js
     MAIN_DEPENDENCY inspector/InjectedScriptSource.js
-    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl InjectedScriptSource_js ${WEBCORE_DIR}/inspector/InjectedScriptSource.js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.h
+    DEPENDS ${WEBCORE_DIR}/inspector/xxd.pl ${WEBCORE_DIR}/inspector/Scripts/jsmin.py
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/inspector/Scripts/jsmin.py <${WEBCORE_DIR}/inspector/InjectedScriptSource.js > ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.min.js
+    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl InjectedScriptSource_js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.min.js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.h
     VERBATIM)
 list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.h)
 
 
 # Generate InjectedScriptCanvasModuleSource.h
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.h
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.h ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.min.js
     MAIN_DEPENDENCY inspector/InjectedScriptCanvasModuleSource.js
-    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl InjectedScriptCanvasModuleSource_js ${WEBCORE_DIR}/inspector/InjectedScriptCanvasModuleSource.js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.h
+    DEPENDS ${WEBCORE_DIR}/inspector/xxd.pl ${WEBCORE_DIR}/inspector/Scripts/jsmin.py
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/inspector/Scripts/jsmin.py <${WEBCORE_DIR}/inspector/InjectedScriptCanvasModuleSource.js > ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.min.js
+    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl InjectedScriptCanvasModuleSource_js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.min.js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.h
     VERBATIM)
 list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.h)
 
