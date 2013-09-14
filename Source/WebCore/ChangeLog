@@ -1,5 +1,16 @@
 2013-09-14  Andreas Kling  <akling@apple.com>
 
+        CTTE: RenderDetailsMarker is never anonymous.
+        <https://webkit.org/b/121355>
+
+        Reviewed by Darin Adler.
+
+        This renderer is never anonymous, and always has a corresponding DetailsMarkerControl.
+        Couldn't resist cleaning up the class a little bit, adding OVERRIDE and making
+        toRenderDetailsMarker() into a reference version.
+
+2013-09-14  Andreas Kling  <akling@apple.com>
+
         CTTE: RenderRubyAs{Block,Inline} are never anonymous.
         <https://webkit.org/b/121353>
 

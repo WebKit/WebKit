@@ -392,7 +392,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 #if ENABLE(DETAILS_ELEMENT)
     if (o.isDetailsMarker()) {
         ts << ": ";
-        switch (toRenderDetailsMarker(&o)->orientation()) {
+        switch (toRenderDetailsMarker(o).orientation()) {
         case RenderDetailsMarker::Left:
             ts << "left";
             break;

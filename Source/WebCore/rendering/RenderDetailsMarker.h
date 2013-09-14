@@ -22,42 +22,38 @@
 #define RenderDetailsMarker_h
 
 #if ENABLE(DETAILS_ELEMENT)
+#include "DetailsMarkerControl.h"
 #include "RenderBlockFlow.h"
 
 namespace WebCore {
 
 class RenderDetailsMarker FINAL : public RenderBlockFlow {
 public:
-    RenderDetailsMarker(Element*);
+    explicit RenderDetailsMarker(DetailsMarkerControl&);
+    DetailsMarkerControl& detailsMarkerControl() const { return static_cast<DetailsMarkerControl&>(*RenderBlockFlow::element()); }
 
     enum Orientation { Up, Down, Left, Right };
-
     Orientation orientation() const;
 
 private:
-    virtual const char* renderName() const { return "RenderDetailsMarker"; }
-    virtual bool isDetailsMarker() const { return true; }
-    virtual void paint(PaintInfo&, const LayoutPoint&);
+    void element() const WTF_DELETED_FUNCTION;
+
+    virtual const char* renderName() const OVERRIDE { return "RenderDetailsMarker"; }
+    virtual bool isDetailsMarker() const OVERRIDE { return true; }
+    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
     bool isOpen() const;
     Path getCanonicalPath() const;
     Path getPath(const LayoutPoint& origin) const;
 };
 
-inline RenderDetailsMarker* toRenderDetailsMarker(RenderObject* object)
+inline const RenderDetailsMarker& toRenderDetailsMarker(const RenderObject& object)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isDetailsMarker());
-    return static_cast<RenderDetailsMarker*>(object);
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isDetailsMarker());
+    return static_cast<const RenderDetailsMarker&>(object);
 }
 
-inline const RenderDetailsMarker* toRenderDetailsMarker(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isDetailsMarker());
-    return static_cast<const RenderDetailsMarker*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderDetailsMarker(const RenderDetailsMarker*);
+void toRenderDetailsMarker(const RenderDetailsMarker&);
 
 }
 
