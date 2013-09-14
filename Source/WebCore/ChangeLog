@@ -1,3 +1,22 @@
+2013-09-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        CSSPropertyAnimation::ensurePropertyMap() is large
+        https://bugs.webkit.org/show_bug.cgi?id=121199
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by repeated calls to Vector::append. Avoid it by storing pointers in a local array
+        and then adding them as we traverse them through to fill m_propertyToIdMap. Also reserve the full
+        initial capacity at once to avoid repeated calls to FastMalloc and FastFree.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::instance):
+        (WebCore::CSSPropertyAnimationWrapperMap::wrapperForProperty):
+        (WebCore::CSSPropertyAnimationWrapperMap::wrapperForIndex):
+        (WebCore::CSSPropertyAnimationWrapperMap::indexFromPropertyID):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap): Renamed from ensurePropertyMap.
+        Also merged addShorthandProperties into it since they have to access local variables of the other.
+
 2013-09-13  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix for EFL port.

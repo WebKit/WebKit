@@ -1081,30 +1081,27 @@ public:
     {
         // FIXME: This data is never destroyed. Maybe we should ref count it and toss it when the last AnimationController is destroyed?
         DEFINE_STATIC_LOCAL(OwnPtr<CSSPropertyAnimationWrapperMap>, map, ());
-        if (!map) {
+        if (!map)
             map = adoptPtr(new CSSPropertyAnimationWrapperMap);
-            map->ensurePropertyMap(); // FIXME: ensurePropertyMap() calls instance() inside addShorthandProperties().
-        }
         return *map;
     }
 
     AnimationPropertyWrapperBase* wrapperForProperty(CSSPropertyID propertyID)
     {
-        int propIndex = propertyID - firstCSSProperty;
         if (propertyID < firstCSSProperty || propertyID > lastCSSProperty)
             return 0;
 
-        unsigned wrapperIndex = m_propertyToIdMap[propIndex];
+        unsigned wrapperIndex = indexFromPropertyID(propertyID);
         if (wrapperIndex == cInvalidPropertyWrapperIndex)
             return 0;
 
-        return m_propertyWrappers[wrapperIndex];
+        return m_propertyWrappers[wrapperIndex].get();
     }
 
     AnimationPropertyWrapperBase* wrapperForIndex(unsigned index)
     {
         ASSERT(index < m_propertyWrappers.size());
-        return m_propertyWrappers[index];
+        return m_propertyWrappers[index].get();
     }
 
     unsigned size()
@@ -1112,30 +1109,174 @@ public:
         return m_propertyWrappers.size();
     }
 
-
 private:
-    void addShorthandProperties();
-    void ensurePropertyMap();
-
-    void addPropertyWrapper(CSSPropertyID propertyID, AnimationPropertyWrapperBase* wrapper)
+    CSSPropertyAnimationWrapperMap();
+    unsigned char& indexFromPropertyID(CSSPropertyID propertyID)
     {
-        int propIndex = propertyID - firstCSSProperty;
-
-        ASSERT(m_propertyToIdMap[propIndex] == cInvalidPropertyWrapperIndex);
-
-        unsigned wrapperIndex = m_propertyWrappers.size();
-        m_propertyWrappers.append(wrapper);
-        m_propertyToIdMap[propIndex] = wrapperIndex;
+        return m_propertyToIdMap[propertyID - firstCSSProperty];
     }
 
-    Vector<AnimationPropertyWrapperBase*> m_propertyWrappers;
-    unsigned m_propertyToIdMap[numCSSProperties];
+    Vector<OwnPtr<AnimationPropertyWrapperBase>> m_propertyWrappers;
+    unsigned char m_propertyToIdMap[numCSSProperties];
 
-    static const unsigned cInvalidPropertyWrapperIndex = UINT_MAX;
+    static const unsigned char cInvalidPropertyWrapperIndex = UCHAR_MAX;
 };
 
-void CSSPropertyAnimationWrapperMap::addShorthandProperties()
+CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 {
+    // build the list of property wrappers to do the comparisons and blends
+    AnimationPropertyWrapperBase* animatableLonghandPropertyWrappers[] = {
+        new PropertyWrapper<Length>(CSSPropertyLeft, &RenderStyle::left, &RenderStyle::setLeft),
+        new PropertyWrapper<Length>(CSSPropertyRight, &RenderStyle::right, &RenderStyle::setRight),
+        new PropertyWrapper<Length>(CSSPropertyTop, &RenderStyle::top, &RenderStyle::setTop),
+        new PropertyWrapper<Length>(CSSPropertyBottom, &RenderStyle::bottom, &RenderStyle::setBottom),
+
+        new PropertyWrapper<Length>(CSSPropertyWidth, &RenderStyle::width, &RenderStyle::setWidth),
+        new PropertyWrapper<Length>(CSSPropertyMinWidth, &RenderStyle::minWidth, &RenderStyle::setMinWidth),
+        new PropertyWrapper<Length>(CSSPropertyMaxWidth, &RenderStyle::maxWidth, &RenderStyle::setMaxWidth),
+
+        new PropertyWrapper<Length>(CSSPropertyHeight, &RenderStyle::height, &RenderStyle::setHeight),
+        new PropertyWrapper<Length>(CSSPropertyMinHeight, &RenderStyle::minHeight, &RenderStyle::setMinHeight),
+        new PropertyWrapper<Length>(CSSPropertyMaxHeight, &RenderStyle::maxHeight, &RenderStyle::setMaxHeight),
+
+        new PropertyWrapperFlex(),
+
+        new PropertyWrapper<unsigned>(CSSPropertyBorderLeftWidth, &RenderStyle::borderLeftWidth, &RenderStyle::setBorderLeftWidth),
+        new PropertyWrapper<unsigned>(CSSPropertyBorderRightWidth, &RenderStyle::borderRightWidth, &RenderStyle::setBorderRightWidth),
+        new PropertyWrapper<unsigned>(CSSPropertyBorderTopWidth, &RenderStyle::borderTopWidth, &RenderStyle::setBorderTopWidth),
+        new PropertyWrapper<unsigned>(CSSPropertyBorderBottomWidth, &RenderStyle::borderBottomWidth, &RenderStyle::setBorderBottomWidth),
+        new PropertyWrapper<Length>(CSSPropertyMarginLeft, &RenderStyle::marginLeft, &RenderStyle::setMarginLeft),
+        new PropertyWrapper<Length>(CSSPropertyMarginRight, &RenderStyle::marginRight, &RenderStyle::setMarginRight),
+        new PropertyWrapper<Length>(CSSPropertyMarginTop, &RenderStyle::marginTop, &RenderStyle::setMarginTop),
+        new PropertyWrapper<Length>(CSSPropertyMarginBottom, &RenderStyle::marginBottom, &RenderStyle::setMarginBottom),
+        new PropertyWrapper<Length>(CSSPropertyPaddingLeft, &RenderStyle::paddingLeft, &RenderStyle::setPaddingLeft),
+        new PropertyWrapper<Length>(CSSPropertyPaddingRight, &RenderStyle::paddingRight, &RenderStyle::setPaddingRight),
+        new PropertyWrapper<Length>(CSSPropertyPaddingTop, &RenderStyle::paddingTop, &RenderStyle::setPaddingTop),
+        new PropertyWrapper<Length>(CSSPropertyPaddingBottom, &RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom),
+        new PropertyWrapperVisitedAffectedColor(CSSPropertyColor, &RenderStyle::color, &RenderStyle::setColor, &RenderStyle::visitedLinkColor, &RenderStyle::setVisitedLinkColor),
+
+        new PropertyWrapperVisitedAffectedColor(CSSPropertyBackgroundColor, &RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor, &RenderStyle::visitedLinkBackgroundColor, &RenderStyle::setVisitedLinkBackgroundColor),
+
+        new FillLayersPropertyWrapper(CSSPropertyBackgroundImage, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers),
+        new StyleImagePropertyWrapper(CSSPropertyListStyleImage, &RenderStyle::listStyleImage, &RenderStyle::setListStyleImage),
+        new StyleImagePropertyWrapper(CSSPropertyWebkitMaskImage, &RenderStyle::maskImage, &RenderStyle::setMaskImage),
+
+        new StyleImagePropertyWrapper(CSSPropertyBorderImageSource, &RenderStyle::borderImageSource, &RenderStyle::setBorderImageSource),
+        new PropertyWrapper<LengthBox>(CSSPropertyBorderImageSlice, &RenderStyle::borderImageSlices, &RenderStyle::setBorderImageSlices),
+        new PropertyWrapper<LengthBox>(CSSPropertyBorderImageWidth, &RenderStyle::borderImageWidth, &RenderStyle::setBorderImageWidth),
+        new PropertyWrapper<LengthBox>(CSSPropertyBorderImageOutset, &RenderStyle::borderImageOutset, &RenderStyle::setBorderImageOutset),
+
+        new StyleImagePropertyWrapper(CSSPropertyWebkitMaskBoxImageSource, &RenderStyle::maskBoxImageSource, &RenderStyle::setMaskBoxImageSource),
+        new PropertyWrapper<const NinePieceImage&>(CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBoxImage, &RenderStyle::setMaskBoxImage),
+
+        new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionX, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers),
+        new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionY, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers),
+        new FillLayersPropertyWrapper(CSSPropertyBackgroundSize, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers),
+        new FillLayersPropertyWrapper(CSSPropertyWebkitBackgroundSize, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers),
+
+        new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionX, &RenderStyle::maskLayers, &RenderStyle::accessMaskLayers),
+        new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionY, &RenderStyle::maskLayers, &RenderStyle::accessMaskLayers),
+        new FillLayersPropertyWrapper(CSSPropertyWebkitMaskSize, &RenderStyle::maskLayers, &RenderStyle::accessMaskLayers),
+
+        new PropertyWrapper<float>(CSSPropertyFontSize,
+            // Must pass a specified size to setFontSize if Text Autosizing is enabled, but a computed size
+            // if text zoom is enabled (if neither is enabled it's irrelevant as they're probably the same).
+            // FIXME: Find some way to assert that text zoom isn't activated when Text Autosizing is compiled in.
+#if ENABLE(TEXT_AUTOSIZING)
+            &RenderStyle::specifiedFontSize,
+#else
+            &RenderStyle::computedFontSize,
+#endif
+            &RenderStyle::setFontSize),
+        new PropertyWrapper<unsigned short>(CSSPropertyWebkitColumnRuleWidth, &RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth),
+        new PropertyWrapper<float>(CSSPropertyWebkitColumnGap, &RenderStyle::columnGap, &RenderStyle::setColumnGap),
+        new PropertyWrapper<unsigned short>(CSSPropertyWebkitColumnCount, &RenderStyle::columnCount, &RenderStyle::setColumnCount),
+        new PropertyWrapper<float>(CSSPropertyWebkitColumnWidth, &RenderStyle::columnWidth, &RenderStyle::setColumnWidth),
+        new PropertyWrapper<short>(CSSPropertyWebkitBorderHorizontalSpacing, &RenderStyle::horizontalBorderSpacing, &RenderStyle::setHorizontalBorderSpacing),
+        new PropertyWrapper<short>(CSSPropertyWebkitBorderVerticalSpacing, &RenderStyle::verticalBorderSpacing, &RenderStyle::setVerticalBorderSpacing),
+        new PropertyWrapper<int>(CSSPropertyZIndex, &RenderStyle::zIndex, &RenderStyle::setZIndex),
+        new PropertyWrapper<short>(CSSPropertyOrphans, &RenderStyle::orphans, &RenderStyle::setOrphans),
+        new PropertyWrapper<short>(CSSPropertyWidows, &RenderStyle::widows, &RenderStyle::setWidows),
+        new PropertyWrapper<Length>(CSSPropertyLineHeight, &RenderStyle::specifiedLineHeight, &RenderStyle::setLineHeight),
+        new PropertyWrapper<int>(CSSPropertyOutlineOffset, &RenderStyle::outlineOffset, &RenderStyle::setOutlineOffset),
+        new PropertyWrapper<unsigned short>(CSSPropertyOutlineWidth, &RenderStyle::outlineWidth, &RenderStyle::setOutlineWidth),
+        new PropertyWrapper<int>(CSSPropertyLetterSpacing, &RenderStyle::letterSpacing, &RenderStyle::setLetterSpacing),
+        new PropertyWrapper<int>(CSSPropertyWordSpacing, &RenderStyle::wordSpacing, &RenderStyle::setWordSpacing),
+        new PropertyWrapper<Length>(CSSPropertyTextIndent, &RenderStyle::textIndent, &RenderStyle::setTextIndent),
+
+        new PropertyWrapper<float>(CSSPropertyWebkitPerspective, &RenderStyle::perspective, &RenderStyle::setPerspective),
+        new PropertyWrapper<Length>(CSSPropertyWebkitPerspectiveOriginX, &RenderStyle::perspectiveOriginX, &RenderStyle::setPerspectiveOriginX),
+        new PropertyWrapper<Length>(CSSPropertyWebkitPerspectiveOriginY, &RenderStyle::perspectiveOriginY, &RenderStyle::setPerspectiveOriginY),
+        new PropertyWrapper<Length>(CSSPropertyWebkitTransformOriginX, &RenderStyle::transformOriginX, &RenderStyle::setTransformOriginX),
+        new PropertyWrapper<Length>(CSSPropertyWebkitTransformOriginY, &RenderStyle::transformOriginY, &RenderStyle::setTransformOriginY),
+        new PropertyWrapper<float>(CSSPropertyWebkitTransformOriginZ, &RenderStyle::transformOriginZ, &RenderStyle::setTransformOriginZ),
+        new PropertyWrapper<LengthSize>(CSSPropertyBorderTopLeftRadius, &RenderStyle::borderTopLeftRadius, &RenderStyle::setBorderTopLeftRadius),
+        new PropertyWrapper<LengthSize>(CSSPropertyBorderTopRightRadius, &RenderStyle::borderTopRightRadius, &RenderStyle::setBorderTopRightRadius),
+        new PropertyWrapper<LengthSize>(CSSPropertyBorderBottomLeftRadius, &RenderStyle::borderBottomLeftRadius, &RenderStyle::setBorderBottomLeftRadius),
+        new PropertyWrapper<LengthSize>(CSSPropertyBorderBottomRightRadius, &RenderStyle::borderBottomRightRadius, &RenderStyle::setBorderBottomRightRadius),
+        new PropertyWrapper<EVisibility>(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility),
+        new PropertyWrapper<float>(CSSPropertyZoom, &RenderStyle::zoom, &RenderStyle::setZoomWithoutReturnValue),
+
+        new PropertyWrapper<LengthBox>(CSSPropertyClip, &RenderStyle::clip, &RenderStyle::setClip),
+
+#if USE(ACCELERATED_COMPOSITING)
+        new PropertyWrapperAcceleratedOpacity(),
+        new PropertyWrapperAcceleratedTransform(),
+#if ENABLE(CSS_FILTERS)
+        new PropertyWrapperAcceleratedFilter(),
+#endif
+#else
+        new PropertyWrapper<float>(CSSPropertyOpacity, &RenderStyle::opacity, &RenderStyle::setOpacity),
+        new PropertyWrapper<const TransformOperations&>(CSSPropertyWebkitTransform, &RenderStyle::transform, &RenderStyle::setTransform),
+#if ENABLE(CSS_FILTERS)
+        new PropertyWrapper<const FilterOperations&>(CSSPropertyWebkitFilter, &RenderStyle::filter, &RenderStyle::setFilter),
+#endif
+#endif
+
+        new PropertyWrapperClipPath(CSSPropertyWebkitClipPath, &RenderStyle::clipPath, &RenderStyle::setClipPath),
+
+#if ENABLE(CSS_SHAPES)
+        new PropertyWrapperShape(CSSPropertyWebkitShapeInside, &RenderStyle::shapeInside, &RenderStyle::setShapeInside),
+#endif
+
+        new PropertyWrapperVisitedAffectedColor(CSSPropertyWebkitColumnRuleColor, MaybeInvalidColor, &RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::visitedLinkColumnRuleColor, &RenderStyle::setVisitedLinkColumnRuleColor),
+        new PropertyWrapperVisitedAffectedColor(CSSPropertyWebkitTextStrokeColor, MaybeInvalidColor, &RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::visitedLinkTextStrokeColor, &RenderStyle::setVisitedLinkTextStrokeColor),
+        new PropertyWrapperVisitedAffectedColor(CSSPropertyWebkitTextFillColor, MaybeInvalidColor, &RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::visitedLinkTextFillColor, &RenderStyle::setVisitedLinkTextFillColor),
+        new PropertyWrapperVisitedAffectedColor(CSSPropertyBorderLeftColor, MaybeInvalidColor, &RenderStyle::borderLeftColor, &RenderStyle::setBorderLeftColor, &RenderStyle::visitedLinkBorderLeftColor, &RenderStyle::setVisitedLinkBorderLeftColor),
+        new PropertyWrapperVisitedAffectedColor(CSSPropertyBorderRightColor, MaybeInvalidColor, &RenderStyle::borderRightColor, &RenderStyle::setBorderRightColor, &RenderStyle::visitedLinkBorderRightColor, &RenderStyle::setVisitedLinkBorderRightColor),
+        new PropertyWrapperVisitedAffectedColor(CSSPropertyBorderTopColor, MaybeInvalidColor, &RenderStyle::borderTopColor, &RenderStyle::setBorderTopColor, &RenderStyle::visitedLinkBorderTopColor, &RenderStyle::setVisitedLinkBorderTopColor),
+        new PropertyWrapperVisitedAffectedColor(CSSPropertyBorderBottomColor, MaybeInvalidColor, &RenderStyle::borderBottomColor, &RenderStyle::setBorderBottomColor, &RenderStyle::visitedLinkBorderBottomColor, &RenderStyle::setVisitedLinkBorderBottomColor),
+        new PropertyWrapperVisitedAffectedColor(CSSPropertyOutlineColor, MaybeInvalidColor, &RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::visitedLinkOutlineColor, &RenderStyle::setVisitedLinkOutlineColor),
+
+        new PropertyWrapperShadow(CSSPropertyBoxShadow, &RenderStyle::boxShadow, &RenderStyle::setBoxShadow),
+        new PropertyWrapperShadow(CSSPropertyWebkitBoxShadow, &RenderStyle::boxShadow, &RenderStyle::setBoxShadow),
+        new PropertyWrapperShadow(CSSPropertyTextShadow, &RenderStyle::textShadow, &RenderStyle::setTextShadow),
+
+#if ENABLE(SVG)
+        new PropertyWrapperSVGPaint(CSSPropertyFill, &RenderStyle::fillPaintType, &RenderStyle::fillPaintColor, &RenderStyle::setFillPaintColor),
+        new PropertyWrapper<float>(CSSPropertyFillOpacity, &RenderStyle::fillOpacity, &RenderStyle::setFillOpacity),
+
+        new PropertyWrapperSVGPaint(CSSPropertyStroke, &RenderStyle::strokePaintType, &RenderStyle::strokePaintColor, &RenderStyle::setStrokePaintColor),
+        new PropertyWrapper<float>(CSSPropertyStrokeOpacity, &RenderStyle::strokeOpacity, &RenderStyle::setStrokeOpacity),
+        new PropertyWrapper<SVGLength>(CSSPropertyStrokeWidth, &RenderStyle::strokeWidth, &RenderStyle::setStrokeWidth),
+        new PropertyWrapper< Vector<SVGLength> >(CSSPropertyStrokeDasharray, &RenderStyle::strokeDashArray, &RenderStyle::setStrokeDashArray),
+        new PropertyWrapper<SVGLength>(CSSPropertyStrokeDashoffset, &RenderStyle::strokeDashOffset, &RenderStyle::setStrokeDashOffset),
+        new PropertyWrapper<float>(CSSPropertyStrokeMiterlimit, &RenderStyle::strokeMiterLimit, &RenderStyle::setStrokeMiterLimit),
+
+        new PropertyWrapper<float>(CSSPropertyFloodOpacity, &RenderStyle::floodOpacity, &RenderStyle::setFloodOpacity),
+        new PropertyWrapperMaybeInvalidColor(CSSPropertyFloodColor, &RenderStyle::floodColor, &RenderStyle::setFloodColor),
+
+        new PropertyWrapper<float>(CSSPropertyStopOpacity, &RenderStyle::stopOpacity, &RenderStyle::setStopOpacity),
+        new PropertyWrapperMaybeInvalidColor(CSSPropertyStopColor, &RenderStyle::stopColor, &RenderStyle::setStopColor),
+
+        new PropertyWrapperMaybeInvalidColor(CSSPropertyLightingColor, &RenderStyle::lightingColor, &RenderStyle::setLightingColor),
+
+        new PropertyWrapper<SVGLength>(CSSPropertyBaselineShift, &RenderStyle::baselineShiftValue, &RenderStyle::setBaselineShiftValue),
+        new PropertyWrapper<SVGLength>(CSSPropertyKerning, &RenderStyle::kerning, &RenderStyle::setKerning),
+#endif
+    };
+    const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
+
     static const CSSPropertyID animatableShorthandProperties[] = {
         CSSPropertyBackground, // for background-color, background-position, background-image
         CSSPropertyBackgroundPosition,
@@ -1158,178 +1299,7 @@ void CSSPropertyAnimationWrapperMap::addShorthandProperties()
         CSSPropertyWebkitBorderRadius,
         CSSPropertyWebkitTransformOrigin
     };
-
-    CSSPropertyAnimationWrapperMap& map = CSSPropertyAnimationWrapperMap::instance();
-
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(animatableShorthandProperties); ++i) {
-        CSSPropertyID propertyID = animatableShorthandProperties[i];
-        StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
-        if (!shorthand.length())
-            continue;
-
-        Vector<AnimationPropertyWrapperBase*> longhandWrappers;
-        for (unsigned i = 0; i < shorthand.length(); ++i) {
-            if (AnimationPropertyWrapperBase* wrapper = map.wrapperForProperty(shorthand.properties()[i]))
-                longhandWrappers.append(wrapper);
-        }
-
-        map.addPropertyWrapper(propertyID, new ShorthandPropertyWrapper(propertyID, longhandWrappers));
-    }
-}
-
-void CSSPropertyAnimationWrapperMap::ensurePropertyMap()
-{
-    Vector<AnimationPropertyWrapperBase*>* gPropertyWrappers = &m_propertyWrappers; // FIXME: Remove this aliasing.
-
-    // build the list of property wrappers to do the comparisons and blends
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyLeft, &RenderStyle::left, &RenderStyle::setLeft));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyRight, &RenderStyle::right, &RenderStyle::setRight));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyTop, &RenderStyle::top, &RenderStyle::setTop));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyBottom, &RenderStyle::bottom, &RenderStyle::setBottom));
-
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyWidth, &RenderStyle::width, &RenderStyle::setWidth));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyMinWidth, &RenderStyle::minWidth, &RenderStyle::setMinWidth));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyMaxWidth, &RenderStyle::maxWidth, &RenderStyle::setMaxWidth));
-
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyHeight, &RenderStyle::height, &RenderStyle::setHeight));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyMinHeight, &RenderStyle::minHeight, &RenderStyle::setMinHeight));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyMaxHeight, &RenderStyle::maxHeight, &RenderStyle::setMaxHeight));
-
-    gPropertyWrappers->append(new PropertyWrapperFlex());
-
-    gPropertyWrappers->append(new PropertyWrapper<unsigned>(CSSPropertyBorderLeftWidth, &RenderStyle::borderLeftWidth, &RenderStyle::setBorderLeftWidth));
-    gPropertyWrappers->append(new PropertyWrapper<unsigned>(CSSPropertyBorderRightWidth, &RenderStyle::borderRightWidth, &RenderStyle::setBorderRightWidth));
-    gPropertyWrappers->append(new PropertyWrapper<unsigned>(CSSPropertyBorderTopWidth, &RenderStyle::borderTopWidth, &RenderStyle::setBorderTopWidth));
-    gPropertyWrappers->append(new PropertyWrapper<unsigned>(CSSPropertyBorderBottomWidth, &RenderStyle::borderBottomWidth, &RenderStyle::setBorderBottomWidth));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyMarginLeft, &RenderStyle::marginLeft, &RenderStyle::setMarginLeft));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyMarginRight, &RenderStyle::marginRight, &RenderStyle::setMarginRight));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyMarginTop, &RenderStyle::marginTop, &RenderStyle::setMarginTop));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyMarginBottom, &RenderStyle::marginBottom, &RenderStyle::setMarginBottom));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyPaddingLeft, &RenderStyle::paddingLeft, &RenderStyle::setPaddingLeft));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyPaddingRight, &RenderStyle::paddingRight, &RenderStyle::setPaddingRight));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyPaddingTop, &RenderStyle::paddingTop, &RenderStyle::setPaddingTop));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyPaddingBottom, &RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom));
-    gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyColor, &RenderStyle::color, &RenderStyle::setColor, &RenderStyle::visitedLinkColor, &RenderStyle::setVisitedLinkColor));
-
-    gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyBackgroundColor, &RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor, &RenderStyle::visitedLinkBackgroundColor, &RenderStyle::setVisitedLinkBackgroundColor));
-
-    gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundImage, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
-    gPropertyWrappers->append(new StyleImagePropertyWrapper(CSSPropertyListStyleImage, &RenderStyle::listStyleImage, &RenderStyle::setListStyleImage));
-    gPropertyWrappers->append(new StyleImagePropertyWrapper(CSSPropertyWebkitMaskImage, &RenderStyle::maskImage, &RenderStyle::setMaskImage));
-
-    gPropertyWrappers->append(new StyleImagePropertyWrapper(CSSPropertyBorderImageSource, &RenderStyle::borderImageSource, &RenderStyle::setBorderImageSource));
-    gPropertyWrappers->append(new PropertyWrapper<LengthBox>(CSSPropertyBorderImageSlice, &RenderStyle::borderImageSlices, &RenderStyle::setBorderImageSlices));
-    gPropertyWrappers->append(new PropertyWrapper<LengthBox>(CSSPropertyBorderImageWidth, &RenderStyle::borderImageWidth, &RenderStyle::setBorderImageWidth));
-    gPropertyWrappers->append(new PropertyWrapper<LengthBox>(CSSPropertyBorderImageOutset, &RenderStyle::borderImageOutset, &RenderStyle::setBorderImageOutset));
-
-    gPropertyWrappers->append(new StyleImagePropertyWrapper(CSSPropertyWebkitMaskBoxImageSource, &RenderStyle::maskBoxImageSource, &RenderStyle::setMaskBoxImageSource));
-    gPropertyWrappers->append(new PropertyWrapper<const NinePieceImage&>(CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBoxImage, &RenderStyle::setMaskBoxImage));
-
-    gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionX, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
-    gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionY, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
-    gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundSize, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
-    gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyWebkitBackgroundSize, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
-
-    gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionX, &RenderStyle::maskLayers, &RenderStyle::accessMaskLayers));
-    gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionY, &RenderStyle::maskLayers, &RenderStyle::accessMaskLayers));
-    gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyWebkitMaskSize, &RenderStyle::maskLayers, &RenderStyle::accessMaskLayers));
-
-    gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyFontSize,
-        // Must pass a specified size to setFontSize if Text Autosizing is enabled, but a computed size
-        // if text zoom is enabled (if neither is enabled it's irrelevant as they're probably the same).
-        // FIXME: Find some way to assert that text zoom isn't activated when Text Autosizing is compiled in.
-#if ENABLE(TEXT_AUTOSIZING)
-        &RenderStyle::specifiedFontSize,
-#else
-        &RenderStyle::computedFontSize,
-#endif
-        &RenderStyle::setFontSize));
-    gPropertyWrappers->append(new PropertyWrapper<unsigned short>(CSSPropertyWebkitColumnRuleWidth, &RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth));
-    gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyWebkitColumnGap, &RenderStyle::columnGap, &RenderStyle::setColumnGap));
-    gPropertyWrappers->append(new PropertyWrapper<unsigned short>(CSSPropertyWebkitColumnCount, &RenderStyle::columnCount, &RenderStyle::setColumnCount));
-    gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyWebkitColumnWidth, &RenderStyle::columnWidth, &RenderStyle::setColumnWidth));
-    gPropertyWrappers->append(new PropertyWrapper<short>(CSSPropertyWebkitBorderHorizontalSpacing, &RenderStyle::horizontalBorderSpacing, &RenderStyle::setHorizontalBorderSpacing));
-    gPropertyWrappers->append(new PropertyWrapper<short>(CSSPropertyWebkitBorderVerticalSpacing, &RenderStyle::verticalBorderSpacing, &RenderStyle::setVerticalBorderSpacing));
-    gPropertyWrappers->append(new PropertyWrapper<int>(CSSPropertyZIndex, &RenderStyle::zIndex, &RenderStyle::setZIndex));
-    gPropertyWrappers->append(new PropertyWrapper<short>(CSSPropertyOrphans, &RenderStyle::orphans, &RenderStyle::setOrphans));
-    gPropertyWrappers->append(new PropertyWrapper<short>(CSSPropertyWidows, &RenderStyle::widows, &RenderStyle::setWidows));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyLineHeight, &RenderStyle::specifiedLineHeight, &RenderStyle::setLineHeight));
-    gPropertyWrappers->append(new PropertyWrapper<int>(CSSPropertyOutlineOffset, &RenderStyle::outlineOffset, &RenderStyle::setOutlineOffset));
-    gPropertyWrappers->append(new PropertyWrapper<unsigned short>(CSSPropertyOutlineWidth, &RenderStyle::outlineWidth, &RenderStyle::setOutlineWidth));
-    gPropertyWrappers->append(new PropertyWrapper<int>(CSSPropertyLetterSpacing, &RenderStyle::letterSpacing, &RenderStyle::setLetterSpacing));
-    gPropertyWrappers->append(new PropertyWrapper<int>(CSSPropertyWordSpacing, &RenderStyle::wordSpacing, &RenderStyle::setWordSpacing));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyTextIndent, &RenderStyle::textIndent, &RenderStyle::setTextIndent));
-
-    gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyWebkitPerspective, &RenderStyle::perspective, &RenderStyle::setPerspective));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyWebkitPerspectiveOriginX, &RenderStyle::perspectiveOriginX, &RenderStyle::setPerspectiveOriginX));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyWebkitPerspectiveOriginY, &RenderStyle::perspectiveOriginY, &RenderStyle::setPerspectiveOriginY));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyWebkitTransformOriginX, &RenderStyle::transformOriginX, &RenderStyle::setTransformOriginX));
-    gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyWebkitTransformOriginY, &RenderStyle::transformOriginY, &RenderStyle::setTransformOriginY));
-    gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyWebkitTransformOriginZ, &RenderStyle::transformOriginZ, &RenderStyle::setTransformOriginZ));
-    gPropertyWrappers->append(new PropertyWrapper<LengthSize>(CSSPropertyBorderTopLeftRadius, &RenderStyle::borderTopLeftRadius, &RenderStyle::setBorderTopLeftRadius));
-    gPropertyWrappers->append(new PropertyWrapper<LengthSize>(CSSPropertyBorderTopRightRadius, &RenderStyle::borderTopRightRadius, &RenderStyle::setBorderTopRightRadius));
-    gPropertyWrappers->append(new PropertyWrapper<LengthSize>(CSSPropertyBorderBottomLeftRadius, &RenderStyle::borderBottomLeftRadius, &RenderStyle::setBorderBottomLeftRadius));
-    gPropertyWrappers->append(new PropertyWrapper<LengthSize>(CSSPropertyBorderBottomRightRadius, &RenderStyle::borderBottomRightRadius, &RenderStyle::setBorderBottomRightRadius));
-    gPropertyWrappers->append(new PropertyWrapper<EVisibility>(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility));
-    gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyZoom, &RenderStyle::zoom, &RenderStyle::setZoomWithoutReturnValue));
-
-    gPropertyWrappers->append(new PropertyWrapper<LengthBox>(CSSPropertyClip, &RenderStyle::clip, &RenderStyle::setClip));
-
-#if USE(ACCELERATED_COMPOSITING)
-    gPropertyWrappers->append(new PropertyWrapperAcceleratedOpacity());
-    gPropertyWrappers->append(new PropertyWrapperAcceleratedTransform());
-#if ENABLE(CSS_FILTERS)
-    gPropertyWrappers->append(new PropertyWrapperAcceleratedFilter());
-#endif
-#else
-    gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyOpacity, &RenderStyle::opacity, &RenderStyle::setOpacity));
-    gPropertyWrappers->append(new PropertyWrapper<const TransformOperations&>(CSSPropertyWebkitTransform, &RenderStyle::transform, &RenderStyle::setTransform));
-#if ENABLE(CSS_FILTERS)
-    gPropertyWrappers->append(new PropertyWrapper<const FilterOperations&>(CSSPropertyWebkitFilter, &RenderStyle::filter, &RenderStyle::setFilter));
-#endif
-#endif
-
-    gPropertyWrappers->append(new PropertyWrapperClipPath(CSSPropertyWebkitClipPath, &RenderStyle::clipPath, &RenderStyle::setClipPath));
-
-#if ENABLE(CSS_SHAPES)
-    gPropertyWrappers->append(new PropertyWrapperShape(CSSPropertyWebkitShapeInside, &RenderStyle::shapeInside, &RenderStyle::setShapeInside));
-#endif
-
-    gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyWebkitColumnRuleColor, MaybeInvalidColor, &RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::visitedLinkColumnRuleColor, &RenderStyle::setVisitedLinkColumnRuleColor));
-    gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyWebkitTextStrokeColor, MaybeInvalidColor, &RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::visitedLinkTextStrokeColor, &RenderStyle::setVisitedLinkTextStrokeColor));
-    gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyWebkitTextFillColor, MaybeInvalidColor, &RenderStyle::textFillColor, &RenderStyle::setTextFillColor, &RenderStyle::visitedLinkTextFillColor, &RenderStyle::setVisitedLinkTextFillColor));
-    gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyBorderLeftColor, MaybeInvalidColor, &RenderStyle::borderLeftColor, &RenderStyle::setBorderLeftColor, &RenderStyle::visitedLinkBorderLeftColor, &RenderStyle::setVisitedLinkBorderLeftColor));
-    gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyBorderRightColor, MaybeInvalidColor, &RenderStyle::borderRightColor, &RenderStyle::setBorderRightColor, &RenderStyle::visitedLinkBorderRightColor, &RenderStyle::setVisitedLinkBorderRightColor));
-    gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyBorderTopColor, MaybeInvalidColor, &RenderStyle::borderTopColor, &RenderStyle::setBorderTopColor, &RenderStyle::visitedLinkBorderTopColor, &RenderStyle::setVisitedLinkBorderTopColor));
-    gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyBorderBottomColor, MaybeInvalidColor, &RenderStyle::borderBottomColor, &RenderStyle::setBorderBottomColor, &RenderStyle::visitedLinkBorderBottomColor, &RenderStyle::setVisitedLinkBorderBottomColor));
-    gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyOutlineColor, MaybeInvalidColor, &RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::visitedLinkOutlineColor, &RenderStyle::setVisitedLinkOutlineColor));
-
-    gPropertyWrappers->append(new PropertyWrapperShadow(CSSPropertyBoxShadow, &RenderStyle::boxShadow, &RenderStyle::setBoxShadow));
-    gPropertyWrappers->append(new PropertyWrapperShadow(CSSPropertyWebkitBoxShadow, &RenderStyle::boxShadow, &RenderStyle::setBoxShadow));
-    gPropertyWrappers->append(new PropertyWrapperShadow(CSSPropertyTextShadow, &RenderStyle::textShadow, &RenderStyle::setTextShadow));
-
-#if ENABLE(SVG)
-    gPropertyWrappers->append(new PropertyWrapperSVGPaint(CSSPropertyFill, &RenderStyle::fillPaintType, &RenderStyle::fillPaintColor, &RenderStyle::setFillPaintColor));
-    gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyFillOpacity, &RenderStyle::fillOpacity, &RenderStyle::setFillOpacity));
-
-    gPropertyWrappers->append(new PropertyWrapperSVGPaint(CSSPropertyStroke, &RenderStyle::strokePaintType, &RenderStyle::strokePaintColor, &RenderStyle::setStrokePaintColor));
-    gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyStrokeOpacity, &RenderStyle::strokeOpacity, &RenderStyle::setStrokeOpacity));
-    gPropertyWrappers->append(new PropertyWrapper<SVGLength>(CSSPropertyStrokeWidth, &RenderStyle::strokeWidth, &RenderStyle::setStrokeWidth));
-    gPropertyWrappers->append(new PropertyWrapper< Vector<SVGLength> >(CSSPropertyStrokeDasharray, &RenderStyle::strokeDashArray, &RenderStyle::setStrokeDashArray));
-    gPropertyWrappers->append(new PropertyWrapper<SVGLength>(CSSPropertyStrokeDashoffset, &RenderStyle::strokeDashOffset, &RenderStyle::setStrokeDashOffset));
-    gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyStrokeMiterlimit, &RenderStyle::strokeMiterLimit, &RenderStyle::setStrokeMiterLimit));
-
-    gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyFloodOpacity, &RenderStyle::floodOpacity, &RenderStyle::setFloodOpacity));
-    gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyFloodColor, &RenderStyle::floodColor, &RenderStyle::setFloodColor));
-
-    gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyStopOpacity, &RenderStyle::stopOpacity, &RenderStyle::setStopOpacity));
-    gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyStopColor, &RenderStyle::stopColor, &RenderStyle::setStopColor));
-
-    gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyLightingColor, &RenderStyle::lightingColor, &RenderStyle::setLightingColor));
-
-    gPropertyWrappers->append(new PropertyWrapper<SVGLength>(CSSPropertyBaselineShift, &RenderStyle::baselineShiftValue, &RenderStyle::setBaselineShiftValue));
-    gPropertyWrappers->append(new PropertyWrapper<SVGLength>(CSSPropertyKerning, &RenderStyle::kerning, &RenderStyle::setKerning));
-#endif
+    const unsigned animatableShorthandPropertiesCount = WTF_ARRAY_LENGTH(animatableShorthandProperties);
 
     // TODO:
     //
@@ -1341,19 +1311,41 @@ void CSSPropertyAnimationWrapperMap::ensurePropertyMap()
     //  CSSPropertyWebkitBoxReflect
 
     // Make sure unused slots have a value
-    for (unsigned int i = 0; i < static_cast<unsigned int>(numCSSProperties); ++i)
+    for (int i = 0; i < numCSSProperties; ++i)
         m_propertyToIdMap[i] = cInvalidPropertyWrapperIndex;
+
+    COMPILE_ASSERT(animatableLonghandPropertiesCount + animatableShorthandPropertiesCount < UCHAR_MAX, numberOfAnimatablePropertiesMustBeLessThanUCharMax);
+    m_propertyWrappers.reserveInitialCapacity(animatableLonghandPropertiesCount + animatableShorthandPropertiesCount);
 
     // First we put the non-shorthand property wrappers into the map, so the shorthand-building
     // code can find them.
-    size_t n = gPropertyWrappers->size();
-    for (unsigned int i = 0; i < n; ++i) {
-        ASSERT(m_propertyWrappers[i]->property() - firstCSSProperty < numCSSProperties);
-        m_propertyToIdMap[m_propertyWrappers[i]->property() - firstCSSProperty] = i;
+
+    for (unsigned i = 0; i < animatableLonghandPropertiesCount; ++i) {
+        AnimationPropertyWrapperBase* wrapper = animatableLonghandPropertyWrappers[i];
+        m_propertyWrappers.uncheckedAppend(adoptPtr(wrapper));
+        indexFromPropertyID(wrapper->property()) = i;
     }
 
-    // Now add the shorthand wrappers.
-    addShorthandProperties();
+    for (size_t i = 0; i < animatableShorthandPropertiesCount; ++i) {
+        CSSPropertyID propertyID = animatableShorthandProperties[i];
+        StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
+        if (!shorthand.length())
+            continue;
+
+        Vector<AnimationPropertyWrapperBase*> longhandWrappers;
+        longhandWrappers.reserveInitialCapacity(shorthand.length());
+        const CSSPropertyID* properties = shorthand.properties();
+        for (unsigned i = 0; i < shorthand.length(); ++i) {
+            unsigned wrapperIndex = indexFromPropertyID(properties[i]);
+            if (wrapperIndex == cInvalidPropertyWrapperIndex)
+                continue;
+            ASSERT(m_propertyWrappers[wrapperIndex]);
+            longhandWrappers.uncheckedAppend(m_propertyWrappers[wrapperIndex].get());
+        }
+
+        m_propertyWrappers.uncheckedAppend(adoptPtr(new ShorthandPropertyWrapper(propertyID, longhandWrappers)));
+        indexFromPropertyID(propertyID) = animatableLonghandPropertiesCount + i;
+    }
 }
 
 static bool gatherEnclosingShorthandProperties(CSSPropertyID property, AnimationPropertyWrapperBase* wrapper, HashSet<CSSPropertyID>& propertySet)
