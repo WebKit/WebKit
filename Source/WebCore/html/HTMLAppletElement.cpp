@@ -40,15 +40,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLAppletElement::HTMLAppletElement(const QualifiedName& tagName, Document* document, bool createdByParser)
-    : HTMLPlugInImageElement(tagName, document, createdByParser, ShouldNotPreferPlugInsForImages)
+HTMLAppletElement::HTMLAppletElement(const QualifiedName& tagName, Document& document, bool createdByParser)
+    : HTMLPlugInImageElement(tagName, &document, createdByParser, ShouldNotPreferPlugInsForImages)
 {
     ASSERT(hasTagName(appletTag));
 
     m_serviceType = "application/x-java-applet";
 }
 
-PassRefPtr<HTMLAppletElement> HTMLAppletElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
+PassRefPtr<HTMLAppletElement> HTMLAppletElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
     return adoptRef(new HTMLAppletElement(tagName, document, createdByParser));
 }

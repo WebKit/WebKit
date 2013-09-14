@@ -131,7 +131,7 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
             String title;
             String url = dragData->asURL(frame, DragData::DoNotConvertFilenames, &title);
             if (!url.isEmpty()) {
-                RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(&document);
+                RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(document);
                 anchor->setHref(url);
                 if (title.isEmpty()) {
                     // Try the plain text first because the url might be normalized or escaped.

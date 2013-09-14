@@ -293,7 +293,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addLink(const AtomicString& url, boo
         addLine("webkit-html-tag");
 
     // Now create a link for the attribute value instead of a span.
-    RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(this);
+    RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(*this);
     const char* classValue;
     if (isAnchor)
         classValue = "webkit-html-attribute-value webkit-html-external-link";

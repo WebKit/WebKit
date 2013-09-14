@@ -1,3 +1,38 @@
+2013-09-14  Sam Weinig  <sam@webkit.org>
+
+        [CTTE] Node subclasses should take a Document by reference in their 
+        constructor (HTMLAnchorElement, HTMLAppletElement, HTMLAreaElement, HTMLAudioElement)
+        https://bugs.webkit.org/show_bug.cgi?id=121365
+
+        Reviewed by Andreas Kling.
+
+        * editing/CreateLinkCommand.cpp:
+        (WebCore::CreateLinkCommand::doApply):
+        * editing/UnlinkCommand.cpp:
+        (WebCore::UnlinkCommand::doApply):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::HTMLAnchorElement):
+        (WebCore::HTMLAnchorElement::create):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::HTMLAppletElement):
+        (WebCore::HTMLAppletElement::create):
+        * html/HTMLAppletElement.h:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::HTMLAreaElement):
+        (WebCore::HTMLAreaElement::create):
+        * html/HTMLAreaElement.h:
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::HTMLAudioElement):
+        (WebCore::HTMLAudioElement::create):
+        (WebCore::HTMLAudioElement::createForJSConstructor):
+        * html/HTMLAudioElement.h:
+        * html/HTMLTagNames.in:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addLink):
+        * page/DragController.cpp:
+        (WebCore::documentFragmentFromDragData):
+
 2013-09-14  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Get INPUT_SPEECH compiling for Nix, EFL and GTK

@@ -3,15 +3,15 @@ namespacePrefix="xhtml"
 namespaceURI="http://www.w3.org/1999/xhtml"
 fallbackInterfaceName="HTMLUnknownElement"
 
-a interfaceName=HTMLAnchorElement, generateTypeHelpers
+a interfaceName=HTMLAnchorElement, generateTypeHelpers, constructorTakesDocumentReference
 abbr interfaceName=HTMLElement
 acronym interfaceName=HTMLElement
 address interfaceName=HTMLElement
-applet constructorNeedsCreatedByParser, generateTypeHelpers
-area generateTypeHelpers
+applet constructorNeedsCreatedByParser, generateTypeHelpers, constructorTakesDocumentReference
+area generateTypeHelpers, constructorTakesDocumentReference
 article interfaceName=HTMLElement
 aside interfaceName=HTMLElement
-audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedByParser, generateTypeHelpers
+audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedByParser, generateTypeHelpers, constructorTakesDocumentReference
 b interfaceName=HTMLElement
 base generateTypeHelpers
 basefont interfaceName=HTMLBaseFontElement

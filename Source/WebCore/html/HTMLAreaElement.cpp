@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLAreaElement::HTMLAreaElement(const QualifiedName& tagName, Document* document)
+inline HTMLAreaElement::HTMLAreaElement(const QualifiedName& tagName, Document& document)
     : HTMLAnchorElement(tagName, document)
     , m_coordsLen(0)
     , m_lastSize(-1, -1)
@@ -48,7 +48,7 @@ inline HTMLAreaElement::HTMLAreaElement(const QualifiedName& tagName, Document* 
     ASSERT(hasTagName(areaTag));
 }
 
-PassRefPtr<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLAreaElement(tagName, document));
 }

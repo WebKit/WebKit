@@ -41,7 +41,7 @@ void UnlinkCommand::doApply()
     if (!endingSelection().isNonOrphanedRange())
         return;
 
-    removeStyledElement(HTMLAnchorElement::create(&document()));
+    removeStyledElement(HTMLAnchorElement::create(document()));
 }
 
 }
