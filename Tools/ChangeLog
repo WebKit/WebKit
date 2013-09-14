@@ -1,3 +1,16 @@
+2013-09-14  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] Fails to compile if the build directory is in a different partition
+        https://bugs.webkit.org/show_bug.cgi?id=121296
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use symlinks instead of hard links to support building on a
+        different file system.
+
+        * gtk/gtkdoc.py:
+        (GTKDoc._copy_doc_files_to_output_dir.copy_file_replacing_existing):
+
 2013-09-13  Darin Adler  <darin@apple.com>
 
         Use a better name than m_invertibleCTM
