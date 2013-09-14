@@ -176,7 +176,7 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartRepl
 
 void Pasteboard::write(const PasteboardURL& pasteboardURL)
 {
-    ASSERT(!url.isEmpty());
+    ASSERT(!pasteboardURL.url.isEmpty());
 
     m_dataObject->clearAll();
     m_dataObject->setURL(pasteboardURL.url, pasteboardURL.title);

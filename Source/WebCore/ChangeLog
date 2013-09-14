@@ -1,3 +1,10 @@
+2013-09-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, fixing debug GTK builds after r155709.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::write): Assert that the PasteboardURL's URL is not empty.
+
 2013-09-14  Andreas Kling  <akling@apple.com>
 
         CTTE: RenderDetailsMarker is never anonymous.
