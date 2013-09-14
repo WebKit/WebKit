@@ -222,7 +222,10 @@ class GTKDoc(object):
             self._delete_file_if_exists(dest)
 
             self.logger.debug('created %s', dest)
-            os.symlink(src, dest)
+            try:
+                os.link(src, dest)
+            except OSError:
+                os.symlink(src, dest)
 
         def copy_all_files_in_directory(src, dest):
             for path in os.listdir(src):
