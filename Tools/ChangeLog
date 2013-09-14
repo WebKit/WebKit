@@ -1,3 +1,15 @@
+2013-09-14  Dan Bernstein  <mitz@apple.com>
+
+        [mac] Check For Framework Include Consistency build phase checks the wrong framework
+        https://bugs.webkit.org/show_bug.cgi?id=121215
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/check-for-webkit-framework-include-consistency: Replaced hard-coded paths to
+        WebKit.framework’s Headers and PrivateHeaders directories with the current target’s
+        public and private headers folder paths. Also tweaked the error messages’ format to make
+        Xcode recognize them as errors.
+
 2013-09-14  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Fails to compile if the build directory is in a different partition
