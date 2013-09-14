@@ -1,5 +1,11 @@
 2013-09-14  Dan Bernstein  <mitz@apple.com>
 
+        Build fix after r155770.
+
+        * UIProcess/API/mac/WKViewPrivate.h: Added WKBase.h import.
+
+2013-09-14  Dan Bernstein  <mitz@apple.com>
+
         [mac] Public header WKBase.h imports a private header, WKBaseMac.h
         https://bugs.webkit.org/show_bug.cgi?id=121216
 

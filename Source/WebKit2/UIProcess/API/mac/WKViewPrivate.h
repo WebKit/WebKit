@@ -24,6 +24,7 @@
  */
 
 #import <WebKit2/WKView.h>
+#import <WebKit2/WKBase.h>
 
 typedef enum {
     WKContentAnchorTopLeft,
