@@ -1,3 +1,10 @@
+2013-09-13  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix attempt for WK2 build.
+
+        * WebProcess/Plugins/PluginView.cpp: Changed ScriptState to ExecState.
+        (WebKit::PluginView::performJavaScriptURLRequest):
+
 2013-09-13  Anders Carlsson  <andersca@apple.com>
 
         Use nullptr instead of 0 in calls to HashMap::add
