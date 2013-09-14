@@ -1,5 +1,28 @@
 2013-09-14  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK gardening. Rebaselining after r155253.
+
+        * platform/gtk/editing/pasteboard/4989774-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/gtk/editing/selection/caret-ltr-2-expected.txt:
+        * platform/gtk/editing/selection/caret-ltr-2-left-expected.txt:
+        * platform/gtk/editing/selection/caret-ltr-expected.txt:
+        * platform/gtk/editing/selection/caret-ltr-right-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-2-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-right-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/gtk/editing/style/style-boundary-005-expected.txt:
+        * platform/gtk/fast/forms/formmove3-expected.txt:
+        * platform/gtk/fast/forms/input-align-image-expected.txt:
+        * platform/gtk/fast/forms/preserveFormDuringResidualStyle-expected.txt:
+        * platform/gtk/fast/invalid/003-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug647-expected.txt:
+
+2013-09-14  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK gardening.
 
         Skip additional inspector tests that are failing after switching to the new Web Inspector.

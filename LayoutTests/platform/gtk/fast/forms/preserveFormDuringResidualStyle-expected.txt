@@ -23,7 +23,6 @@ layer at (0,0) size 800x600
           RenderInline {FONT} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,25) size 784x0
-        RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,25) size 784x34
         RenderText {#text} at (0,0) size 775x34
           text run at (0,0) width 775: "Success! This test succeeds if the input named mover is not detached from its form when it is moved around in the DOM to"

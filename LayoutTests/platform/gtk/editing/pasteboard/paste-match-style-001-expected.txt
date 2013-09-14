@@ -44,5 +44,4 @@ layer at (0,0) size 800x600
             RenderText {#text} at (2,2) size 25x26
               text run at (2,2) width 25: "ab"
         RenderBlock (anonymous) at (0,30) size 784x0
-          RenderText {#text} at (0,0) size 0x0
 caret: position 2 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of body
