@@ -1,3 +1,20 @@
+2013-09-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename IntegerBranch/IntegerCompare to Int32Branch/Int32Compare.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleInt32Branch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInt32Compare):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInt32Compare):
+
 2013-09-13  Filip Pizlo  <fpizlo@apple.com>
 
         Rename SpeculativeJIT::integerResult() to int32Result().

@@ -1371,7 +1371,7 @@ void SpeculativeJIT::compilePeepHoleBooleanBranch(Node* node, Node* branchNode, 
     jump(notTaken);
 }
 
-void SpeculativeJIT::compilePeepHoleIntegerBranch(Node* node, Node* branchNode, JITCompiler::RelationalCondition condition)
+void SpeculativeJIT::compilePeepHoleInt32Branch(Node* node, Node* branchNode, JITCompiler::RelationalCondition condition)
 {
     BasicBlock* taken = branchNode->takenBlock();
     BasicBlock* notTaken = branchNode->notTakenBlock();
@@ -1415,7 +1415,7 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, MacroAssembler::Relationa
         ASSERT(node->adjustedRefCount() == 1);
 
         if (node->isBinaryUseKind(Int32Use))
-            compilePeepHoleIntegerBranch(node, branchNode, condition);
+            compilePeepHoleInt32Branch(node, branchNode, condition);
         else if (node->isBinaryUseKind(NumberUse))
             compilePeepHoleDoubleBranch(node, branchNode, doubleCondition);
         else if (node->op() == CompareEq) {
@@ -3584,7 +3584,7 @@ bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition con
         return true;
 
     if (node->isBinaryUseKind(Int32Use)) {
-        compileIntegerCompare(node, condition);
+        compileInt32Compare(node, condition);
         return false;
     }
 
@@ -3727,14 +3727,14 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
             Node* branchNode = m_block->at(branchIndexInBlock);
-            compilePeepHoleIntegerBranch(node, branchNode, MacroAssembler::Equal);
+            compilePeepHoleInt32Branch(node, branchNode, MacroAssembler::Equal);
             use(node->child1());
             use(node->child2());
             m_indexInBlock = branchIndexInBlock;
             m_currentNode = branchNode;
             return true;
         }
-        compileIntegerCompare(node, MacroAssembler::Equal);
+        compileInt32Compare(node, MacroAssembler::Equal);
         return false;
     }
         
