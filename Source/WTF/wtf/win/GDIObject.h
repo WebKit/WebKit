@@ -29,6 +29,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <memory>
+#include <windows.h>
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 
