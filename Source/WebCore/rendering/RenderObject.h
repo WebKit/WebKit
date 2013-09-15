@@ -164,25 +164,25 @@ public:
     RenderObject* nextSibling() const { return m_next; }
 
     // FIXME: These should be renamed slowFirstChild, slowLastChild, etc.
-    // to discourage their use. The virtualChildren() call inside these
+    // to discourage their use. The virtual call to children inside these
     // can be slow for hot code paths.
-    // Currently, some subclasses like RenderBlock, override these NON-virtual
-    // functions to make these fast when we already have a more specific pointer type.
+    // Derived classes like RenderBlock override these non-virtual
+    // functions to make them fast when we already have a more specific pointer type.
     RenderObject* firstChild() const
     {
-        if (const RenderObjectChildList* children = virtualChildren())
+        if (const RenderObjectChildList* children = this->children())
             return children->firstChild();
         return 0;
     }
     RenderObject* lastChild() const
     {
-        if (const RenderObjectChildList* children = virtualChildren())
+        if (const RenderObjectChildList* children = this->children())
             return children->lastChild();
         return 0;
     }
 
-    virtual RenderObjectChildList* virtualChildren() { return 0; }
-    virtual const RenderObjectChildList* virtualChildren() const { return 0; }
+    virtual RenderObjectChildList* children() { return 0; }
+    virtual const RenderObjectChildList* children() const { return 0; }
 
     RenderObject* nextInPreOrder() const;
     RenderObject* nextInPreOrder(const RenderObject* stayWithin) const;
@@ -275,7 +275,7 @@ public:
     
     // RenderObject tree manipulation
     //////////////////////////////////////////
-    virtual bool canHaveChildren() const { return virtualChildren(); }
+    virtual bool canHaveChildren() const { return children(); }
     virtual bool canHaveGeneratedChildren() const;
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const { return true; }
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);

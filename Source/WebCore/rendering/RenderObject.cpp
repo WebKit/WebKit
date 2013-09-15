@@ -319,7 +319,7 @@ void RenderObject::setFlowThreadStateIncludingDescendants(FlowThreadState state)
 
 void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
-    RenderObjectChildList* children = virtualChildren();
+    RenderObjectChildList* children = this->children();
     ASSERT(children);
     if (!children)
         return;
@@ -373,7 +373,7 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
 
 void RenderObject::removeChild(RenderObject* oldChild)
 {
-    RenderObjectChildList* children = virtualChildren();
+    RenderObjectChildList* children = this->children();
     ASSERT(children);
     if (!children)
         return;
@@ -1899,7 +1899,7 @@ void RenderObject::handleDynamicFloatPositionChange()
         else {
             // An anonymous block must be made to wrap this inline.
             RenderBlock* block = toRenderBlock(parent())->createAnonymousBlock();
-            RenderObjectChildList* childlist = parent()->virtualChildren();
+            RenderObjectChildList* childlist = parent()->children();
             childlist->insertChildNode(parent(), block, this);
             block->children()->appendChildNode(block, childlist->removeChildNode(parent(), this));
         }
@@ -2647,7 +2647,7 @@ inline void RenderObject::clearLayoutRootIfNeeded() const
 void RenderObject::willBeDestroyed()
 {
     // Destroy any leftover anonymous children.
-    RenderObjectChildList* children = virtualChildren();
+    RenderObjectChildList* children = this->children();
     if (children)
         children->destroyLeftoverChildren();
 
@@ -2787,7 +2787,7 @@ void RenderObject::removeFromRenderFlowThread()
 
 void RenderObject::removeFromRenderFlowThreadRecursive(RenderFlowThread* renderFlowThread)
 {
-    if (const RenderObjectChildList* children = virtualChildren()) {
+    if (const RenderObjectChildList* children = this->children()) {
         for (RenderObject* child = children->firstChild(); child; child = child->nextSibling())
             child->removeFromRenderFlowThreadRecursive(renderFlowThread);
     }

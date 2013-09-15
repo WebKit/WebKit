@@ -1,3 +1,44 @@
+2013-09-14  Darin Adler  <darin@apple.com>
+
+        Use FINAL instead of virtualChildren trick in render tree classes
+        https://bugs.webkit.org/show_bug.cgi?id=121373
+
+        Reviewed by Andreas Kling.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetterStyle): Use children instead of
+        virtualChildren.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::splitAnonymousBoxesAroundChild): Ditto.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::moveChildTo): Ditto.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild): Ditto.
+        (WebCore::RenderObject::removeChild): Ditto.
+        (WebCore::RenderObject::handleDynamicFloatPositionChange): Ditto.
+        (WebCore::RenderObject::willBeDestroyed): Ditto.
+        (WebCore::RenderObject::removeFromRenderFlowThreadRecursive): Ditto.
+
+        * rendering/RenderBlock.h: Changed firstChild and lastChild to use
+        m_children directly instead of a function. Made the children function
+        a final virtual override. Deleted the virtualChildren override. Added
+        override keywords to other virtual functions.
+        * rendering/RenderEmbeddedObject.h: Ditto.
+        * rendering/RenderFrameSet.h: Ditto.
+        * rendering/RenderInline.h: Ditto.
+        * rendering/RenderMedia.h: Ditto.
+        * rendering/RenderTableCol.h: Ditto.
+        * rendering/RenderTableRow.h: Ditto.
+        * rendering/RenderTableSection.h: Ditto.
+        * rendering/svg/RenderSVGContainer.h: Ditto.
+        * rendering/svg/RenderSVGRoot.h: Ditto.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::firstChild): Use children instead of virtualChildren.
+        (WebCore::RenderObject::lastChild): Ditto.
+        (WebCore::RenderObject::children): Renamed from virtualChildren.
+        (WebCore::RenderObject::canHaveChildren): Use children instead of virtualChildren.
+
 2013-09-15  Darin Adler  <darin@apple.com>
 
         Shrink factory functions

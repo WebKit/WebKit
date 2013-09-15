@@ -58,11 +58,11 @@ public:
     RenderFrameSet(HTMLFrameSetElement*);
     virtual ~RenderFrameSet();
 
-    RenderObject* firstChild() const { ASSERT(children() == virtualChildren()); return children()->firstChild(); }
-    RenderObject* lastChild() const { ASSERT(children() == virtualChildren()); return children()->lastChild(); }
+    RenderObject* firstChild() const { return m_children.firstChild(); }
+    RenderObject* lastChild() const { return m_children.lastChild(); }
 
-    const RenderObjectChildList* children() const { return &m_children; }
-    RenderObjectChildList* children() { return &m_children; }
+    virtual const RenderObjectChildList* children() const OVERRIDE { return &m_children; }
+    virtual RenderObjectChildList* children() OVERRIDE { return &m_children; }
 
     FrameEdgeInfo edgeInfo() const;
 
@@ -93,16 +93,13 @@ private:
         int m_splitResizeOffset;
     };
 
-    virtual RenderObjectChildList* virtualChildren() { return children(); }
-    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
+    virtual const char* renderName() const OVERRIDE { return "RenderFrameSet"; }
+    virtual bool isFrameSet() const OVERRIDE { return true; }
 
-    virtual const char* renderName() const { return "RenderFrameSet"; }
-    virtual bool isFrameSet() const { return true; }
-
-    virtual void layout();
-    virtual void paint(PaintInfo&, const LayoutPoint&);
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
-    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
+    virtual void layout() OVERRIDE;
+    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
+    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
+    virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const OVERRIDE;
 
     inline HTMLFrameSetElement* frameSet() const;
 

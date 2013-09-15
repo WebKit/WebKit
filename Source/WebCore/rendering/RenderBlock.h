@@ -103,17 +103,17 @@ protected:
 public:
     static RenderBlock* createAnonymous(Document*);
 
-    RenderObject* firstChild() const { ASSERT(children() == virtualChildren()); return children()->firstChild(); }
-    RenderObject* lastChild() const { ASSERT(children() == virtualChildren()); return children()->lastChild(); }
+    RenderObject* firstChild() const { return m_children.firstChild(); }
+    RenderObject* lastChild() const { return m_children.lastChild(); }
 
-    const RenderObjectChildList* children() const { return &m_children; }
-    RenderObjectChildList* children() { return &m_children; }
+    virtual const RenderObjectChildList* children() const OVERRIDE FINAL { return &m_children; }
+    virtual RenderObjectChildList* children() OVERRIDE FINAL { return &m_children; }
 
     bool beingDestroyed() const { return m_beingDestroyed; }
 
     // These two functions are overridden for inline-block.
     virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE FINAL;
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
 
     RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
     const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
@@ -568,10 +568,8 @@ private:
     void relayoutShapeDescendantIfMoved(RenderBlock* child, LayoutSize offset);
     LayoutSize logicalOffsetFromShapeAncestorContainer(const RenderBlock* container) const;
 #endif
-    virtual RenderObjectChildList* virtualChildren() { return children(); }
-    virtual const RenderObjectChildList* virtualChildren() const { return children(); }
 
-    virtual const char* renderName() const;
+    virtual const char* renderName() const OVERRIDE;
 
     virtual bool isRenderBlock() const OVERRIDE FINAL { return true; }
     virtual bool isInlineBlockOrInlineTable() const OVERRIDE FINAL { return isInline() && isReplaced(); }
@@ -778,8 +776,8 @@ private:
     
     friend class LogicalSelectionOffsetCaches;
 
-    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const;
+    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const OVERRIDE;
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const OVERRIDE;
 
     LayoutUnit desiredColumnWidth() const;
     unsigned desiredColumnCount() const;
@@ -886,7 +884,7 @@ protected:
     virtual bool canCollapseAnonymousBlockChild() const { return true; }
 
 public:
-    virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const;
+    virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const OVERRIDE;
     RenderRegion* regionAtBlockOffset(LayoutUnit) const;
 
     // FIXME: This is temporary to allow us to move code from RenderBlock into RenderBlockFlow that accesses member variables that we haven't moved out of

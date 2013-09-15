@@ -72,14 +72,14 @@ protected:
 
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const OVERRIDE;
 
-    const RenderObjectChildList* children() const { return &m_children; }
-    RenderObjectChildList* children() { return &m_children; }
+    virtual const RenderObjectChildList* children() const OVERRIDE FINAL { return &m_children; }
+    virtual RenderObjectChildList* children() OVERRIDE FINAL { return &m_children; }
 
 protected:
     virtual void layout() OVERRIDE;
 
 private:
-    virtual const char* renderName() const { return "RenderEmbeddedObject"; }
+    virtual const char* renderName() const OVERRIDE { return "RenderEmbeddedObject"; }
     virtual bool isEmbeddedObject() const OVERRIDE FINAL { return true; }
 
     void paintSnapshotImage(PaintInfo&, const LayoutPoint&, Image*);
@@ -103,8 +103,6 @@ private:
     LayoutRect unavailablePluginIndicatorBounds(const LayoutPoint&) const;
 
     virtual bool canHaveChildren() const OVERRIDE FINAL;
-    virtual RenderObjectChildList* virtualChildren() OVERRIDE FINAL { return children(); }
-    virtual const RenderObjectChildList* virtualChildren() const OVERRIDE FINAL { return children(); }
     
     virtual bool canHaveWidget() const { return true; }
 
