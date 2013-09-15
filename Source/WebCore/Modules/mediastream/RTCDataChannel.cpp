@@ -29,6 +29,7 @@
 #include "RTCDataChannel.h"
 
 #include "Blob.h"
+#include "Dictionary.h"
 #include "Event.h"
 #include "ExceptionCode.h"
 #include "MessageEvent.h"
@@ -37,12 +38,33 @@
 #include "ScriptExecutionContext.h"
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-PassRefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* context, RTCPeerConnectionHandler* peerConnectionHandler, const String& label, bool reliable, ExceptionCode& ec)
+static const AtomicString& blobKeyword()
 {
-    OwnPtr<RTCDataChannelHandler> handler = peerConnectionHandler->createDataChannel(label, reliable);
+    static NeverDestroyed<AtomicString> blob("blob", AtomicString::ConstructFromLiteral);
+    return blob;
+}
+
+static const AtomicString& arraybufferKeyword()
+{
+    static NeverDestroyed<AtomicString> arraybuffer("arraybuffer", AtomicString::ConstructFromLiteral);
+    return arraybuffer;
+}
+
+PassRefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* context, RTCPeerConnectionHandler* peerConnectionHandler, const String& label, const Dictionary& options, ExceptionCode& ec)
+{
+    RTCDataChannelInit initData;
+    options.get("ordered", initData.ordered);
+    options.get("negotiated", initData.negotiated);
+    options.get("id", initData.id);
+    options.get("maxRetransmits", initData.maxRetransmits);
+    options.get("maxRetransmitTime", initData.maxRetransmitTime);
+    options.get("protocol", initData.protocol);
+
+    OwnPtr<RTCDataChannelHandler> handler = peerConnectionHandler->createDataChannel(label, initData);
     if (!handler) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
@@ -106,21 +128,26 @@ unsigned short RTCDataChannel::id() const
     return m_handler->id();
 }
 
-String RTCDataChannel::readyState() const
+AtomicString RTCDataChannel::readyState() const
 {
+    static NeverDestroyed<AtomicString> connectingState("connecting", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> openState("open", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> closingState("closing", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> closedState("closed", AtomicString::ConstructFromLiteral);
+    
     switch (m_readyState) {
     case ReadyStateConnecting:
-        return ASCIILiteral("connecting");
+        return connectingState;
     case ReadyStateOpen:
-        return ASCIILiteral("open");
+        return openState;
     case ReadyStateClosing:
-        return ASCIILiteral("closing");
+        return closingState;
     case ReadyStateClosed:
-        return ASCIILiteral("closed");
+        return closedState;
     }
 
     ASSERT_NOT_REACHED();
-    return String();
+    return emptyAtom;
 }
 
 unsigned long RTCDataChannel::bufferedAmount() const
@@ -128,23 +155,24 @@ unsigned long RTCDataChannel::bufferedAmount() const
     return m_handler->bufferedAmount();
 }
 
-String RTCDataChannel::binaryType() const
+AtomicString RTCDataChannel::binaryType() const
 {
     switch (m_binaryType) {
     case BinaryTypeBlob:
-        return ASCIILiteral("blob");
+        return blobKeyword();
     case BinaryTypeArrayBuffer:
-        return ASCIILiteral("arraybuffer");
+        return arraybufferKeyword();
     }
+
     ASSERT_NOT_REACHED();
-    return String();
+    return emptyAtom;
 }
 
-void RTCDataChannel::setBinaryType(const String& binaryType, ExceptionCode& ec)
+void RTCDataChannel::setBinaryType(const AtomicString& binaryType, ExceptionCode& ec)
 {
-    if (binaryType == "blob")
+    if (binaryType == blobKeyword())
         ec = NOT_SUPPORTED_ERR;
-    else if (binaryType == "arraybuffer")
+    else if (binaryType == arraybufferKeyword())
         m_binaryType = BinaryTypeArrayBuffer;
     else
         ec = TYPE_MISMATCH_ERR;
@@ -156,6 +184,7 @@ void RTCDataChannel::send(const String& data, ExceptionCode& ec)
         ec = INVALID_STATE_ERR;
         return;
     }
+
     if (!m_handler->sendStringData(data)) {
         // FIXME: Decide what the right exception here is.
         ec = SYNTAX_ERR;
@@ -205,7 +234,7 @@ void RTCDataChannel::close()
 
 void RTCDataChannel::didChangeReadyState(ReadyState newState)
 {
-    if (m_stopped || m_readyState == ReadyStateClosed)
+    if (m_stopped || m_readyState == ReadyStateClosed || m_readyState == newState)
         return;
 
     m_readyState = newState;
@@ -239,6 +268,7 @@ void RTCDataChannel::didReceiveRawData(const char* data, size_t dataLength)
         // FIXME: Implement.
         return;
     }
+
     if (m_binaryType == BinaryTypeArrayBuffer) {
         RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(data, dataLength);
         scheduleDispatchEvent(MessageEvent::create(buffer.release()));

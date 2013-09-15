@@ -34,20 +34,21 @@
 #include <wtf/RefCounted.h>
 
 namespace JSC {
-class ArrayBuffer;
-class ArrayBufferView;
+    class ArrayBuffer;
+    class ArrayBufferView;
 }
 
 namespace WebCore {
 
 class Blob;
+class Dictionary;
 class RTCDataChannelHandler;
 class RTCPeerConnectionHandler;
 
 class RTCDataChannel : public RefCounted<RTCDataChannel>, public ScriptWrappable, public EventTarget, public RTCDataChannelHandlerClient {
 public:
-    static PassRefPtr<RTCDataChannel> create(ScriptExecutionContext*, RTCPeerConnectionHandler*, const String& label, bool reliable, ExceptionCode&);
     static PassRefPtr<RTCDataChannel> create(ScriptExecutionContext*, PassOwnPtr<RTCDataChannelHandler>);
+    static PassRefPtr<RTCDataChannel> create(ScriptExecutionContext*, RTCPeerConnectionHandler*, const String& , const Dictionary&, ExceptionCode&);
     ~RTCDataChannel();
 
     String label() const;
@@ -57,11 +58,11 @@ public:
     String protocol() const;
     bool negotiated() const;
     unsigned short id() const;
-    String readyState() const;
+    AtomicString readyState() const;
     unsigned long bufferedAmount() const;
 
-    String binaryType() const;
-    void setBinaryType(const String&, ExceptionCode&);
+    AtomicString binaryType() const;
+    void setBinaryType(const AtomicString&, ExceptionCode&);
 
     void send(const String&, ExceptionCode&);
     void send(PassRefPtr<JSC::ArrayBuffer>, ExceptionCode&);
@@ -95,6 +96,7 @@ private:
     virtual EventTargetData& ensureEventTargetData() OVERRIDE;
     virtual void refEventTarget() OVERRIDE { ref(); }
     virtual void derefEventTarget() OVERRIDE { deref(); }
+
     EventTargetData m_eventTargetData;
     ScriptExecutionContext* m_scriptExecutionContext;
 

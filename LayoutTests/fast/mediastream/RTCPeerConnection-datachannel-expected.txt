@@ -7,9 +7,13 @@ PASS dc = pc.createDataChannel("label1"); did not throw exception.
 PASS dc.reliable is true
 PASS dc = pc.createDataChannel("label2", {}); did not throw exception.
 PASS dc.reliable is true
-PASS dc = pc.createDataChannel("label3", {reliable:true}); did not throw exception.
+PASS dc = pc.createDataChannel("label3", {ordered:true}); did not throw exception.
 PASS dc.reliable is true
-PASS dc = pc.createDataChannel("label3", {reliable:false}); did not throw exception.
+PASS dc = pc.createDataChannel("label3", {ordered:false}); did not throw exception.
+PASS dc.reliable is false
+PASS dc = pc.createDataChannel("label3", {maxRetransmits:0}); did not throw exception.
+PASS dc.reliable is false
+PASS dc = pc.createDataChannel("label3", {maxRetransmitTime:0}); did not throw exception.
 PASS dc.reliable is false
 PASS pc is connected
 PASS dc = pc.createDataChannel("label"); did not throw exception.

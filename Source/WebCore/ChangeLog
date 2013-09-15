@@ -1,3 +1,31 @@
+2013-09-14  Eric Carlson  <eric.carlson@apple.com>
+
+        MediaStream API: Update RTCDataChannel
+        https://bugs.webkit.org/show_bug.cgi?id=121102
+
+        Reviewed by Sam Weinig.
+
+        Based on https://chromium.googlesource.com/chromium/blink/+/c6975c41956acded7cf0363012d7d6b69d0c6d96,
+        and https://chromium.googlesource.com/chromium/blink/+/214dab0bd6385f573c918ba5ce58a5aa206ce186.
+
+        No new tests, existing tests updated.
+
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::create): Take an options Dictionary.
+        (WebCore::RTCDataChannel::didChangeReadyState): String -> AtomicString. Early return if the
+            state hasn't changed.
+        (WebCore::RTCDataChannel::binaryType): String -> AtomicString.
+        (WebCore::RTCDataChannel::setBinaryType): String -> AtomicString.
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCDataChannel.idl:
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::createDataChannel): Take an options struct.
+        * platform/mediastream/RTCDataChannelHandler.h:
+
+        * platform/mediastream/RTCPeerConnectionHandler.h:
+        (WebCore::RTCDataChannelInit::RTCDataChannelInit): Take an options struct.
+
 2013-09-14  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         MediaStream API: Update RTCDataChannel to match the specification
