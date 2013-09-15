@@ -4008,7 +4008,7 @@ END
                 push(@$outputArray, "        return throwVMError(exec, createReferenceError(exec, \"${interfaceName} constructor associated document is unavailable\"));\n");
             }
             if ($generatingNamedConstructor) {
-                push(@constructorArgList, "castedThis->document()");
+                push(@constructorArgList, "*castedThis->document()");
             }
 
             my $index = 0;

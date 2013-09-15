@@ -72,9 +72,9 @@ HTMLImageElement::~HTMLImageElement()
         m_form->removeImgElement(this);
 }
 
-PassRefPtr<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document* document, const int* optionalWidth, const int* optionalHeight)
+PassRefPtr<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document& document, const int* optionalWidth, const int* optionalHeight)
 {
-    RefPtr<HTMLImageElement> image = adoptRef(new HTMLImageElement(imgTag, *document));
+    RefPtr<HTMLImageElement> image = adoptRef(new HTMLImageElement(imgTag, document));
     if (optionalWidth)
         image->setWidth(*optionalWidth);
     if (optionalHeight)

@@ -36,9 +36,7 @@ class HTMLOptionElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLOptionElement> create(Document&);
     static PassRefPtr<HTMLOptionElement> create(const QualifiedName&, Document&);
-
-    // FIXME: Fix the bindinds to pass a Document&.
-    static PassRefPtr<HTMLOptionElement> createForJSConstructor(Document*, const String& data, const String& value,
+    static PassRefPtr<HTMLOptionElement> createForJSConstructor(Document&, const String& data, const String& value,
        bool defaultSelected, bool selected, ExceptionCode&);
 
     virtual String text() const;

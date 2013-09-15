@@ -71,7 +71,7 @@ static EncodedJSValue JSC_HOST_CALL constructImage(ExecState* exec)
     }
 
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(),
-        HTMLImageElement::createForJSConstructor(document, optionalWidth, optionalHeight))));
+        HTMLImageElement::createForJSConstructor(*document, optionalWidth, optionalHeight))));
 }
 
 ConstructType JSImageConstructor::getConstructData(JSCell*, ConstructData& constructData)

@@ -37,9 +37,7 @@ class Document;
 class HTMLAudioElement FINAL : public HTMLMediaElement {
 public:
     static PassRefPtr<HTMLAudioElement> create(const QualifiedName&, Document&, bool);
-    
-    // FIXME: Fix the bindinds to pass a Document&.
-    static PassRefPtr<HTMLAudioElement> createForJSConstructor(Document*, const String& src);
+    static PassRefPtr<HTMLAudioElement> createForJSConstructor(Document&, const String& src);
 
 private:
     HTMLAudioElement(const QualifiedName&, Document&, bool);

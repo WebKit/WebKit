@@ -38,9 +38,7 @@ class HTMLImageElement : public HTMLElement, public FormNamedItem {
 public:
     static PassRefPtr<HTMLImageElement> create(Document&);
     static PassRefPtr<HTMLImageElement> create(const QualifiedName&, Document&, HTMLFormElement*);
-
-    // FIXME: Fix the bindinds to pass a Document&.
-    static PassRefPtr<HTMLImageElement> createForJSConstructor(Document*, const int* optionalWidth, const int* optionalHeight);
+    static PassRefPtr<HTMLImageElement> createForJSConstructor(Document&, const int* optionalWidth, const int* optionalHeight);
 
     virtual ~HTMLImageElement();
 

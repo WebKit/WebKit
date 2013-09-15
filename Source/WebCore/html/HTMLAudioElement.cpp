@@ -46,9 +46,9 @@ PassRefPtr<HTMLAudioElement> HTMLAudioElement::create(const QualifiedName& tagNa
     return audioElement.release();
 }
 
-PassRefPtr<HTMLAudioElement> HTMLAudioElement::createForJSConstructor(Document* document, const String& src)
+PassRefPtr<HTMLAudioElement> HTMLAudioElement::createForJSConstructor(Document& document, const String& src)
 {
-    RefPtr<HTMLAudioElement> audio = adoptRef(new HTMLAudioElement(audioTag, *document, false));
+    RefPtr<HTMLAudioElement> audio = adoptRef(new HTMLAudioElement(audioTag, document, false));
     audio->setPreload("auto");
     if (!src.isNull()) {
         audio->setSrc(src);
