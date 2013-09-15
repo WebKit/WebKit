@@ -33,11 +33,20 @@
 #include "DFGJITCode.h"
 #include "DFGOSRExitPreparation.h"
 #include "LinkBuffer.h"
+#include "OperandsInlines.h"
 #include "Operations.h"
 #include "RepatchBuffer.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace DFG {
+
+static CString shortOperandsDump(const Operands<ValueRecovery>& operands)
+{
+    DumpContext context;
+    StringPrintStream out;
+    out.print(inContext(operands, &context));
+    return out.toCString();
+}
 
 extern "C" {
 
@@ -101,9 +110,10 @@ void compileOSRExit(ExecState* exec)
         exit.m_code = FINALIZE_CODE_IF(
             shouldShowDisassembly(),
             patchBuffer,
-            ("DFG OSR exit #%u (%s, %s) from %s",
+            ("DFG OSR exit #%u (%s, %s) from %s, with operands = %s",
                 exitIndex, toCString(exit.m_codeOrigin).data(),
-                exitKindToString(exit.m_kind), toCString(*codeBlock).data()));
+                exitKindToString(exit.m_kind), toCString(*codeBlock).data(),
+                shortOperandsDump(operands).data()));
     }
     
     {

@@ -35,6 +35,8 @@
 
 namespace JSC {
 
+struct DumpContext;
+
 // Describes how to recover a given bytecode virtual register at a given
 // code point.
 enum ValueRecoveryTechnique {
@@ -274,72 +276,75 @@ public:
         return JSValue::decode(m_source.constant);
     }
     
-    void dump(PrintStream& out) const
+    void dumpInContext(PrintStream& out, DumpContext* context) const
     {
         switch (technique()) {
         case AlreadyInJSStack:
             out.printf("-");
-            break;
+            return;
         case AlreadyInJSStackAsUnboxedInt32:
             out.printf("(int32)");
-            break;
+            return;
         case AlreadyInJSStackAsUnboxedCell:
             out.printf("(cell)");
-            break;
+            return;
         case AlreadyInJSStackAsUnboxedBoolean:
             out.printf("(bool)");
-            break;
+            return;
         case AlreadyInJSStackAsUnboxedDouble:
             out.printf("(double)");
-            break;
+            return;
         case InGPR:
             out.printf("%%r%d", gpr());
-            break;
+            return;
         case UnboxedInt32InGPR:
             out.printf("int32(%%r%d)", gpr());
-            break;
+            return;
         case UnboxedBooleanInGPR:
             out.printf("bool(%%r%d)", gpr());
-            break;
+            return;
         case UInt32InGPR:
             out.printf("uint32(%%r%d)", gpr());
-            break;
+            return;
         case InFPR:
             out.printf("%%fr%d", fpr());
-            break;
+            return;
 #if USE(JSVALUE32_64)
         case InPair:
             out.printf("pair(%%r%d, %%r%d)", tagGPR(), payloadGPR());
-            break;
+            return;
 #endif
         case DisplacedInJSStack:
             out.printf("*%d", virtualRegister());
-            break;
+            return;
         case Int32DisplacedInJSStack:
             out.printf("*int32(%d)", virtualRegister());
-            break;
+            return;
         case DoubleDisplacedInJSStack:
             out.printf("*double(%d)", virtualRegister());
-            break;
+            return;
         case CellDisplacedInJSStack:
             out.printf("*cell(%d)", virtualRegister());
-            break;
+            return;
         case BooleanDisplacedInJSStack:
             out.printf("*bool(%d)", virtualRegister());
-            break;
+            return;
         case ArgumentsThatWereNotCreated:
             out.printf("arguments");
-            break;
+            return;
         case Constant:
-            out.print("[", constant(), "]");
-            break;
+            out.print("[", inContext(constant(), context), "]");
+            return;
         case DontKnow:
             out.printf("!");
-            break;
-        default:
-            out.printf("?%d", technique());
-            break;
+            return;
         }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    void dump(PrintStream& out) const
+    {
+        dumpInContext(out, 0);
     }
     
 private:
