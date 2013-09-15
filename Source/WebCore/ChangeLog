@@ -1,3 +1,18 @@
+2013-09-15  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderMedia and RenderVideo are never anonymous.
+        <https://webkit.org/b/121388>
+
+        Reviewed by Sam Weinig.
+
+        Codify the following:
+
+        - RenderMedia always has an HTMLMediaElement.
+        - RenderVideo always has an HTMLVideoElement.
+
+        None of these renderers are ever anonymous, so delete element() and provide
+        strongly typed reference getters instead.
+
 2013-09-15  Sam Weinig  <sam@webkit.org>
 
         [CTTE] Node subclasses should take a Document by reference in their constructor (Part 6)

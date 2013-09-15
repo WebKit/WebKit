@@ -560,7 +560,7 @@ RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     // Setup the renderer if we already have a proxy widget.
-    RenderEmbeddedObject* mediaRenderer = new (arena) RenderEmbeddedObject(this);
+    RenderEmbeddedObject* mediaRenderer = new (arena) RenderEmbeddedObject(*this);
     if (m_proxyWidget) {
         mediaRenderer->setWidget(m_proxyWidget);
 
@@ -569,7 +569,7 @@ RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
     }
     return mediaRenderer;
 #else
-    return new (arena) RenderMedia(this);
+    return new (arena) RenderMedia(*this);
 #endif
 }
 
