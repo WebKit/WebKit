@@ -213,12 +213,13 @@ class Driver(object):
     def _get_crash_log(self, stdout, stderr, newer_than):
         return self._port._get_crash_log(self._crashed_process_name, self._crashed_pid, stdout, stderr, newer_than)
 
-    # FIXME: Seems this could just be inlined into callers.
-    @classmethod
-    def _command_wrapper(cls, wrapper_option):
-        # Hook for injecting valgrind or other runtime instrumentation,
-        # used by e.g. tools/valgrind/valgrind_tests.py.
-        return shlex.split(wrapper_option) if wrapper_option else []
+    def _command_wrapper(self):
+        # Hook for injecting valgrind or other runtime instrumentation, used by e.g. tools/valgrind/valgrind_tests.py.
+        if self._port.get_option('wrapper'):
+            return shlex.split(self._port.get_option('wrapper'))
+        if self._profiler:
+            return self._profiler.wrapper_arguments()
+        return []
 
     HTTP_DIR = "http/tests/"
     HTTP_LOCAL_DIR = "http/tests/local/"
@@ -327,7 +328,7 @@ class Driver(object):
             self._driver_tempdir = None
 
     def cmd_line(self, pixel_tests, per_test_args):
-        cmd = self._command_wrapper(self._port.get_option('wrapper'))
+        cmd = self._command_wrapper()
         cmd.append(self._port._path_to_driver())
         if self._port.get_option('gc_between_tests'):
             cmd.append('--gc-between-tests')

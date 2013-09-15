@@ -79,6 +79,9 @@ class Profiler(object):
     def attach_to_pid(self, pid):
         pass
 
+    def wrapper_arguments(self):
+        return []
+
     def profile_after_exit(self):
         pass
 
@@ -131,42 +134,54 @@ class Perf(SingleFileOutputProfiler):
 
     def __init__(self, host, executable_path, output_dir, identifier=None):
         super(Perf, self).__init__(host, executable_path, output_dir, "data", identifier)
-        self._perf_process = None
-        self._pid_being_profiled = None
+        self._watched_pid = None
+        self._wait_process = None
 
     def _perf_path(self):
         # FIXME: We may need to support finding the perf binary in other locations.
         return 'perf'
 
     def attach_to_pid(self, pid):
-        assert(not self._perf_process and not self._pid_being_profiled)
-        self._pid_being_profiled = pid
-        cmd = [self._perf_path(), "record", "--call-graph", "--pid", pid, "--output", self._output_path]
-        self._perf_process = self._host.executive.popen(cmd)
+        # The passed-in pid here is the pid of the profiler. A wait process is launched here that
+        # watches that pid and returns the same return code as the profiler process.
+        self._watched_pid = pid
+        self._wait_process = self._host.executive.popen(["wait", "%d" % pid], shell=True)
+
+    def wrapper_arguments(self):
+        return [self._perf_path(), "record", "--call-graph", "--output", self._output_path]
 
     def _first_ten_lines_of_profile(self, perf_output):
-        match = re.search("^#[^\n]*\n((?: [^\n]*\n){1,10})", perf_output, re.MULTILINE)
-        return match.group(1) if match else None
+        output_lines = re.finditer(r"^(?:( [^\n]*?)\s*\n)", perf_output, re.MULTILINE)
+        prettified_lines = []
+        for i in range(0, 10):
+            line = next(output_lines, None)
+            if not line:
+                break
+            prettified_lines.append(line.group(1))
+
+        return prettified_lines
 
     def profile_after_exit(self):
-        # Perf doesn't automatically watch the attached pid for death notifications,
-        # so we have to do it for it, and then tell it its time to stop sampling. :(
-        self._host.executive.wait_limited(self._pid_being_profiled, limit_in_seconds=10)
-        perf_exitcode = self._perf_process.poll()
-        if perf_exitcode is None:  # This should always be the case, unless perf error'd out early.
-            self._host.executive.interrupt(self._perf_process.pid)
+        # Kill the watched process if it's still running.
+        if self._wait_process.poll() is None:
+            self._host.executive.kill_process(self._watched_pid)
 
-        perf_exitcode = self._perf_process.wait()
-        if perf_exitcode not in (0, -2):  # The exit code should always be -2, as we're always interrupting perf.
-            print "'perf record' failed (exit code: %i), can't process results:" % perf_exitcode
+        # Return early if the process produced non-zero exit code or is still running (if it couldn't be killed).
+        exit_code = self._wait_process.poll()
+        if exit_code is not 0:
+            print "'perf record' failed, ",
+            if exit_code:
+                print "exit code was %i." % exit_code
+            else:
+                print "the profiled process with pid %i is still running." % self._watched_pid
             return
 
-        perf_args = [self._perf_path(), 'report', '--call-graph', 'none', '--input', self._output_path]
+        perf_report_args = [self._perf_path(), 'report', '--call-graph', 'none', '--input', self._output_path]
+        perf_report_output = self._host.executive.run_command(perf_report_args)
         print "First 10 lines of 'perf report --call-graph=none':"
 
-        print " ".join(perf_args)
-        perf_output = self._host.executive.run_command(perf_args)
-        print self._first_ten_lines_of_profile(perf_output)
+        print " ".join(perf_report_args)
+        print "\n".join(self._first_ten_lines_of_profile(perf_report_output))
 
         print "To view the full profile, run:"
         print ' '.join([self._perf_path(), 'report', '-i', self._output_path])

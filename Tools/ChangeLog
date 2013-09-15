@@ -1,3 +1,52 @@
+2013-09-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [webkitpy] perf profiler attaches to WKTR after the WebProcess was launched
+        https://bugs.webkit.org/show_bug.cgi?id=119631
+
+        Reviewed by Ryosuke Niwa.
+
+        The perf profiler is attached to the test runner after the test runner has been launched,
+        but in the case of WebKitTestRunner, this is done after the WebProcess was spawned by the
+        UIProcess, meaning that WebProcess operations will not be profiled.
+
+        To avoid that, the perf profiler is changed to provide a wrapper command for the test runner.
+        This is done in the scope of already present support for wrapper scripts (such as valgrind)
+        that are settable through the --wrapper option. This causes the perf profiler to correctly
+        continue profiling the WebProcess after it was spawned.
+
+        When the profiler is launched, a wait process is launched with the profiler's pid as the
+        argument. This ensures we can check that the profiler exited normally. If it did not, its
+        output can be corrupted and can cause problems when that output is examined. The after-exit
+        report is avoided in that case.
+
+        * Scripts/webkitpy/common/system/profiler.py:
+        (Profiler.wrapper_arguments): The method returns an empty list by default.
+        (Perf.__init__): Remove unnecessary member variables.
+        (Perf.attach_to_pid): Launch the wait process with the profiler's pid as the argument.
+        (Perf.wrapper_arguments): Used instead of attaching the profiler to the profiled process' pid,
+        the method returns a list of arguments that should be used as a wrapper for the test runner.
+        The arguments specify the 'perf record' command, with the output file and the instruction to
+        construct the call graph given as well.
+        (Perf._first_ten_lines_of_profile): Prettify the output by avoiding the unnecessary trailing
+        whitespace in the profile lines.
+        (Perf.profile_after_exit): Kill the profiler process through its pid if the wait process is still
+        running. If it is running even after that, or if the profiler process produced a non-zero exit
+        code, the method reports the profiling failure and returns. Otherwise it continues on reporting
+        the top 10 lines of the profile and how to examine the profile further.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._command_wrapper): The method is now a member of the Driver class, returning the wrapper
+        as specified by the --wrapper option if given, or the profiler wrapper if the profiler is present,
+        or an empty list otherwise.
+        (Driver.cmd_line):
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.make_port): Adjusted so mock host or options objects can be specified
+        for the testing-specific Port object.
+        (DriverTest._assert_wrapper): Pass a MockOptions object with the wrapper value to the make_port method,
+        as the Driver._command_wrapper now operates on the option's value directly rather than accepting it through
+        a parameter.
+        (DriverTest.test_profiler_as_wrapper): Provide a test case to check the correct profiler wrapper is used
+        when profiling on the Linux platform with the perf profiler.
+
 2013-09-14  Dan Bernstein  <mitz@apple.com>
 
         [mac] Check For Framework Include Consistency build phase checks the wrong framework

@@ -81,13 +81,13 @@ class DriverOutputTest(unittest.TestCase):
 
 
 class DriverTest(unittest.TestCase):
-    def make_port(self):
-        port = Port(MockSystemHost(), 'test', MockOptions(configuration='Release'))
+    def make_port(self, host=None, options=None):
+        port = Port(host or MockSystemHost(), 'test', options or MockOptions(configuration='Release'))
         port._config.build_directory = lambda configuration: '/mock-build'
         return port
 
     def _assert_wrapper(self, wrapper_string, expected_wrapper):
-        wrapper = Driver(self.make_port(), None, pixel_tests=False)._command_wrapper(wrapper_string)
+        wrapper = Driver(self.make_port(options=MockOptions(wrapper=wrapper_string)), None, pixel_tests=False)._command_wrapper()
         self.assertEqual(wrapper, expected_wrapper)
 
     def test_command_wrapper(self):
@@ -98,6 +98,10 @@ class DriverTest(unittest.TestCase):
         command_with_spaces = "valgrind --smc-check=\"check with spaces!\" --foo"
         expected_parse = ["valgrind", "--smc-check=check with spaces!", "--foo"]
         self._assert_wrapper(command_with_spaces, expected_parse)
+
+    def test_profiler_as_wrapper(self):
+        driver = Driver(self.make_port(MockSystemHost(os_name='linux'), MockOptions(profile=True, profiler='perf')), None, False)
+        self.assertEqual(driver._command_wrapper(), ['perf', 'record', '--call-graph', '--output', '/mock-build/layout-test-results/test.data'])
 
     def test_test_to_uri(self):
         port = self.make_port()
