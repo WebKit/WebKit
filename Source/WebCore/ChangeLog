@@ -1,3 +1,13 @@
+2013-09-15  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderFrameSet is never anonymous.
+        <https://webkit.org/b/121396>
+
+        Reviewed by Antti Koivisto.
+
+        This renderer is never anonymous, and always has a corresponding HTMLFrameSetElement.
+        Replaced element() with a frameSetElement().
+
 2013-09-15  Sam Weinig  <sam@webkit.org>
 
         CTTE: Node subclasses should take a Document by reference in their constructor (Part 10)

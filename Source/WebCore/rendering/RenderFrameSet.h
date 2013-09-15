@@ -55,8 +55,10 @@ private:
 
 class RenderFrameSet FINAL : public RenderBox {
 public:
-    RenderFrameSet(HTMLFrameSetElement*);
+    explicit RenderFrameSet(HTMLFrameSetElement&);
     virtual ~RenderFrameSet();
+
+    HTMLFrameSetElement& frameSetElement() const;
 
     RenderObject* firstChild() const { return m_children.firstChild(); }
     RenderObject* lastChild() const { return m_children.lastChild(); }
@@ -77,6 +79,8 @@ public:
     void notifyFrameEdgeInfoChanged();
 
 private:
+    void element() const WTF_DELETED_FUNCTION;
+
     static const int noSplit = -1;
 
     class GridAxis {
@@ -100,8 +104,6 @@ private:
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const OVERRIDE;
-
-    inline HTMLFrameSetElement* frameSet() const;
 
     bool flattenFrameSet() const;
 
