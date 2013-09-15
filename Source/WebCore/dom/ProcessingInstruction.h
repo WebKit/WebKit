@@ -34,7 +34,7 @@ class CSSStyleSheet;
 
 class ProcessingInstruction FINAL : public CharacterData, private CachedStyleSheetClient {
 public:
-    static PassRefPtr<ProcessingInstruction> create(Document*, const String& target, const String& data);
+    static PassRefPtr<ProcessingInstruction> create(Document&, const String& target, const String& data);
     virtual ~ProcessingInstruction();
 
     const String& target() const { return m_target; }
@@ -54,7 +54,7 @@ public:
 
 private:
     friend class CharacterData;
-    ProcessingInstruction(Document*, const String& target, const String& data);
+    ProcessingInstruction(Document&, const String& target, const String& data);
 
     virtual String nodeName() const;
     virtual NodeType nodeType() const;

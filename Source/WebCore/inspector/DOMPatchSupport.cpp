@@ -131,7 +131,7 @@ Node* DOMPatchSupport::patchNode(Node* node, const String& markup, ExceptionCode
 
     Node* previousSibling = node->previousSibling();
     // FIXME: This code should use one of createFragment* in markup.h
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(m_document);
+    RefPtr<DocumentFragment> fragment = DocumentFragment::create(*m_document);
     if (m_document->isHTMLDocument())
         fragment->parseHTML(markup, node->parentElement() ? node->parentElement() : m_document->documentElement());
     else

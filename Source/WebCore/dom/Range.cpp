@@ -675,7 +675,7 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
 
     RefPtr<DocumentFragment> fragment;
     if (action == Extract || action == Clone)
-        fragment = DocumentFragment::create(m_ownerDocument.get());
+        fragment = DocumentFragment::create(ownerDocument());
 
     ec = 0;
     if (collapsed(ec))

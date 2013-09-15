@@ -91,7 +91,7 @@ private:
 PassRefPtr<DetailsSummaryElement> DetailsSummaryElement::create(Document& document)
 {
     RefPtr<HTMLSummaryElement> summary = HTMLSummaryElement::create(summaryTag, document);
-    summary->appendChild(Text::create(&document, defaultDetailsSummaryText()), ASSERT_NO_EXCEPTION);
+    summary->appendChild(Text::create(document, defaultDetailsSummaryText()), ASSERT_NO_EXCEPTION);
 
     RefPtr<DetailsSummaryElement> detailsSummary = adoptRef(new DetailsSummaryElement(document));
     detailsSummary->appendChild(summary);

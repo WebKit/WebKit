@@ -524,7 +524,7 @@ PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
     if (!m_webVTTNodeTree)
         return 0;
 
-    RefPtr<DocumentFragment> clonedFragment = DocumentFragment::create(&ownerDocument());
+    RefPtr<DocumentFragment> clonedFragment = DocumentFragment::create(ownerDocument());
     copyWebVTTNodeToDOMTree(m_webVTTNodeTree.get(), clonedFragment.get());
     return clonedFragment.release();
 }
@@ -536,7 +536,7 @@ PassRefPtr<DocumentFragment> TextTrackCue::createCueRenderingTree()
     if (!m_webVTTNodeTree)
         return 0;
 
-    clonedFragment = DocumentFragment::create(&ownerDocument());
+    clonedFragment = DocumentFragment::create(ownerDocument());
     m_webVTTNodeTree->cloneChildNodes(clonedFragment.get());
     return clonedFragment.release();
 }

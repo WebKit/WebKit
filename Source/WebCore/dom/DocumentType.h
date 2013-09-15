@@ -32,7 +32,7 @@ class NamedNodeMap;
 
 class DocumentType FINAL : public Node {
 public:
-    static PassRefPtr<DocumentType> create(Document* document, const String& name, const String& publicId, const String& systemId)
+    static PassRefPtr<DocumentType> create(Document& document, const String& name, const String& publicId, const String& systemId)
     {
         return adoptRef(new DocumentType(document, name, publicId, systemId));
     }
@@ -47,7 +47,7 @@ public:
     const String& internalSubset() const { return m_subset; }
 
 private:
-    DocumentType(Document*, const String& name, const String& publicId, const String& systemId);
+    DocumentType(Document&, const String& name, const String& publicId, const String& systemId);
 
     virtual KURL baseURI() const;
     virtual String nodeName() const;

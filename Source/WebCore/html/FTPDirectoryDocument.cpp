@@ -114,7 +114,7 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
     rowElement->setAttribute("class", "ftpDirectoryEntryRow", IGNORE_EXCEPTION);
 
     RefPtr<Element> element = document()->createElement(tdTag, false);
-    element->appendChild(Text::create(document(), String(&noBreakSpace, 1)), IGNORE_EXCEPTION);
+    element->appendChild(Text::create(*document(), String(&noBreakSpace, 1)), IGNORE_EXCEPTION);
     if (isDirectory)
         element->setAttribute("class", "ftpDirectoryIcon ftpDirectoryTypeDirectory", IGNORE_EXCEPTION);
     else
@@ -126,12 +126,12 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
     rowElement->appendChild(element, IGNORE_EXCEPTION);
 
     element = document()->createElement(tdTag, false);
-    element->appendChild(Text::create(document(), date), IGNORE_EXCEPTION);
+    element->appendChild(Text::create(*document(), date), IGNORE_EXCEPTION);
     element->setAttribute("class", "ftpDirectoryFileDate", IGNORE_EXCEPTION);
     rowElement->appendChild(element, IGNORE_EXCEPTION);
 
     element = document()->createElement(tdTag, false);
-    element->appendChild(Text::create(document(), size), IGNORE_EXCEPTION);
+    element->appendChild(Text::create(*document(), size), IGNORE_EXCEPTION);
     element->setAttribute("class", "ftpDirectoryFileSize", IGNORE_EXCEPTION);
     rowElement->appendChild(element, IGNORE_EXCEPTION);
 }
@@ -146,7 +146,7 @@ PassRefPtr<Element> FTPDirectoryDocumentParser::createTDForFilename(const String
 
     RefPtr<Element> anchorElement = document()->createElement(aTag, false);
     anchorElement->setAttribute("href", fullURL, IGNORE_EXCEPTION);
-    anchorElement->appendChild(Text::create(document(), filename), IGNORE_EXCEPTION);
+    anchorElement->appendChild(Text::create(*document(), filename), IGNORE_EXCEPTION);
 
     RefPtr<Element> tdElement = document()->createElement(tdTag, false);
     tdElement->appendChild(anchorElement, IGNORE_EXCEPTION);

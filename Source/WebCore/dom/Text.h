@@ -34,9 +34,9 @@ class Text : public CharacterData {
 public:
     static const unsigned defaultLengthLimit = 1 << 16;
 
-    static PassRefPtr<Text> create(Document*, const String&);
-    static PassRefPtr<Text> createWithLengthLimit(Document*, const String&, unsigned positionInString, unsigned lengthLimit = defaultLengthLimit);
-    static PassRefPtr<Text> createEditingText(Document*, const String&);
+    static PassRefPtr<Text> create(Document&, const String&);
+    static PassRefPtr<Text> createWithLengthLimit(Document&, const String&, unsigned positionInString, unsigned lengthLimit = defaultLengthLimit);
+    static PassRefPtr<Text> createEditingText(Document&, const String&);
 
     virtual ~Text();
 
@@ -52,7 +52,7 @@ public:
     virtual bool canContainRangeEndPoint() const OVERRIDE FINAL { return true; }
 
 protected:
-    Text(Document* document, const String& data, ConstructionType type)
+    Text(Document& document, const String& data, ConstructionType type)
         : CharacterData(document, data, type)
     {
     }

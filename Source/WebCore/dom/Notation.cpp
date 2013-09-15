@@ -25,8 +25,8 @@
 
 namespace WebCore {
 
-Notation::Notation(Document* document, const String& name, const String& publicId, const String& systemId)
-    : ContainerNode(document)
+Notation::Notation(Document& document, const String& name, const String& publicId, const String& systemId)
+    : ContainerNode(&document)
     , m_name(name)
     , m_publicId(publicId)
     , m_systemId(systemId)

@@ -77,7 +77,7 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
     for (size_t i = 0; i < keys.size(); ++i) {
         RefPtr<HTMLOptionElement> option = HTMLOptionElement::create(document);
         select->appendChild(option, IGNORE_EXCEPTION);
-        option->appendChild(Text::create(&document, keys[i]), IGNORE_EXCEPTION);
+        option->appendChild(Text::create(document, keys[i]), IGNORE_EXCEPTION);
     }
 
     ensureUserAgentShadowRoot().appendChild(select, IGNORE_EXCEPTION);

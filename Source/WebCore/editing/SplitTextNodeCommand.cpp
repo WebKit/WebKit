@@ -58,7 +58,7 @@ void SplitTextNodeCommand::doApply()
     if (prefixText.isEmpty())
         return;
 
-    m_text1 = Text::create(&document(), prefixText);
+    m_text1 = Text::create(document(), prefixText);
     ASSERT(m_text1);
     document().markers().copyMarkers(m_text2.get(), 0, m_offset, m_text1.get(), 0);
 

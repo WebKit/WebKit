@@ -42,7 +42,7 @@ class MutableStylePropertySet;
 class Attr FINAL : public ContainerNode {
 public:
     static PassRefPtr<Attr> create(Element*, const QualifiedName&);
-    static PassRefPtr<Attr> create(Document*, const QualifiedName&, const AtomicString& value);
+    static PassRefPtr<Attr> create(Document&, const QualifiedName&, const AtomicString& value);
     virtual ~Attr();
 
     String name() const { return qualifiedName().toString(); }
@@ -66,7 +66,7 @@ public:
 
 private:
     Attr(Element*, const QualifiedName&);
-    Attr(Document*, const QualifiedName&, const AtomicString& value);
+    Attr(Document&, const QualifiedName&, const AtomicString& value);
 
     void createTextChild();
 

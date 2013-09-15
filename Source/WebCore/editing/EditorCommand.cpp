@@ -200,7 +200,7 @@ static bool executeInsertFragment(Frame& frame, PassRefPtr<DocumentFragment> fra
 
 static bool executeInsertNode(Frame& frame, PassRefPtr<Node> content)
 {
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(frame.document());
+    RefPtr<DocumentFragment> fragment = DocumentFragment::create(*frame.document());
     ExceptionCode ec = 0;
     fragment->appendChild(content, ec);
     if (ec)

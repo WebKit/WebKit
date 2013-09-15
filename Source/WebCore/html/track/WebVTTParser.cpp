@@ -330,7 +330,7 @@ WebVTTParser::ParseState WebVTTParser::ignoreBadCue(const String& line)
     return Id;
 }
 
-PassRefPtr<DocumentFragment>  WebVTTParser::createDocumentFragmentFromCueText(const String& text)
+PassRefPtr<DocumentFragment> WebVTTParser::createDocumentFragmentFromCueText(const String& text)
 {
     // Cue text processing based on
     // 4.8.10.13.4 WebVTT cue text parsing rules and
@@ -342,7 +342,7 @@ PassRefPtr<DocumentFragment>  WebVTTParser::createDocumentFragmentFromCueText(co
     ASSERT(m_scriptExecutionContext->isDocument());
     Document* document = toDocument(m_scriptExecutionContext);
     
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
+    RefPtr<DocumentFragment> fragment = DocumentFragment::create(*document);
     m_currentNode = fragment;
     m_tokenizer->reset();
     m_token.clear();
@@ -500,7 +500,7 @@ void WebVTTParser::constructTreeFromToken(Document* document)
     switch (m_token.type()) {
     case WebVTTTokenTypes::Character: {
         String content(m_token.characters()); // FIXME: This should be 8bit if possible.
-        RefPtr<Text> child = Text::create(document, content);
+        RefPtr<Text> child = Text::create(*document, content);
         m_currentNode->parserAppendChild(child);
         break;
     }
@@ -541,7 +541,7 @@ void WebVTTParser::constructTreeFromToken(Document* document)
         String charactersString(StringImpl::create8BitIfPossible(m_token.characters()));
         double time = collectTimeStamp(charactersString, &position);
         if (time != malformedTime)
-            m_currentNode->parserAppendChild(ProcessingInstruction::create(document, "timestamp", charactersString));
+            m_currentNode->parserAppendChild(ProcessingInstruction::create(*document, "timestamp", charactersString));
         break;
     }
     default:

@@ -209,7 +209,7 @@ void HTMLViewSourceDocument::addLine(const AtomicString& className)
     m_current = m_td = td;
 
 #ifdef DEBUG_LINE_NUMBERS
-    RefPtr<Text> lineNumberText = Text::create(this, String::number(parser()->lineNumber() + 1) + " ");
+    RefPtr<Text> lineNumberText = Text::create(*this, String::number(parser()->lineNumber() + 1) + " ");
     td->addChild(lineNumberText);
     Style::attachRenderTree(lineNumberText.get());
 #endif
@@ -251,7 +251,7 @@ void HTMLViewSourceDocument::addText(const String& text, const AtomicString& cla
             finishLine();
             continue;
         }
-        RefPtr<Text> text = Text::create(this, substring);
+        RefPtr<Text> text = Text::create(*this, substring);
         m_current->parserAppendChild(text);
         Style::attachTextRenderer(*text);
         if (i < size - 1)

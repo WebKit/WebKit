@@ -131,7 +131,7 @@ void ValidationMessage::setMessageDOMAndStartTimer(Timer<ValidationMessage>*)
     Document& document = m_messageHeading->document();
     for (unsigned i = 0; i < lines.size(); ++i) {
         if (i) {
-            m_messageBody->appendChild(Text::create(&document, lines[i]), ASSERT_NO_EXCEPTION);
+            m_messageBody->appendChild(Text::create(document, lines[i]), ASSERT_NO_EXCEPTION);
             if (i < lines.size() - 1)
                 m_messageBody->appendChild(HTMLBRElement::create(document), ASSERT_NO_EXCEPTION);
         } else

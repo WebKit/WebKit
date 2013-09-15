@@ -48,8 +48,8 @@ public:
     unsigned parserAppendData(const String& string, unsigned offset, unsigned lengthLimit);
 
 protected:
-    CharacterData(Document* document, const String& text, ConstructionType type)
-        : Node(document, type)
+    CharacterData(Document& document, const String& text, ConstructionType type)
+        : Node(&document, type)
         , m_data(!text.isNull() ? text : emptyString())
     {
         ASSERT(type == CreateOther || type == CreateText || type == CreateEditingText);

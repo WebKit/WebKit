@@ -191,7 +191,7 @@ static bool isSupportedSVG11Feature(const String& feature, const String& version
 }
 #endif
 
-DOMImplementation::DOMImplementation(Document* document)
+DOMImplementation::DOMImplementation(Document& document)
     : m_document(document)
 {
 }
@@ -242,8 +242,8 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
     else
         doc = Document::create(0, KURL());
 
-    doc->setSecurityOrigin(m_document->securityOrigin());
-    doc->setContextFeatures(m_document->contextFeatures());
+    doc->setSecurityOrigin(m_document.securityOrigin());
+    doc->setContextFeatures(m_document.contextFeatures());
 
     RefPtr<Node> documentElement;
     if (!qualifiedName.isEmpty()) {
@@ -317,8 +317,8 @@ PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& tit
     d->write("<!doctype html><html><body></body></html>");
     if (!title.isNull())
         d->setTitle(title);
-    d->setSecurityOrigin(m_document->securityOrigin());
-    d->setContextFeatures(m_document->contextFeatures());
+    d->setSecurityOrigin(m_document.securityOrigin());
+    d->setContextFeatures(m_document.contextFeatures());
     return d.release();
 }
 

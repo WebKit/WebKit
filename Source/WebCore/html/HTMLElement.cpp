@@ -408,7 +408,7 @@ void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
 
 PassRefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionCode& ec)
 {
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(&document());
+    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document());
     unsigned int i, length = text.length();
     UChar c = 0;
     for (unsigned int start = 0; start < length; ) {
@@ -420,7 +420,7 @@ PassRefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, Exc
               break;
         }
 
-        fragment->appendChild(Text::create(&document(), text.substring(start, i - start)), ec);
+        fragment->appendChild(Text::create(document(), text.substring(start, i - start)), ec);
         if (ec)
             return 0;
 
@@ -516,7 +516,7 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
     if (text.contains('\r') || text.contains('\n'))
         newChild = textToFragment(text, ec);
     else
-        newChild = Text::create(&document(), text);
+        newChild = Text::create(document(), text);
 
     if (!this || !parentNode())
         ec = HIERARCHY_REQUEST_ERR;

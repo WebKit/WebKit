@@ -34,7 +34,7 @@ public:
     const String& systemId() const { return m_systemId; }
 
 private:
-    Notation(Document*, const String& name, const String& publicId, const String& systemId);
+    Notation(Document&, const String& name, const String& publicId, const String& systemId);
 
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
