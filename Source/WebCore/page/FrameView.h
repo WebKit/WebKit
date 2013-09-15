@@ -33,6 +33,7 @@
 #include "PaintPhase.h"
 #include "ScrollView.h"
 #include <wtf/Forward.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -437,6 +438,10 @@ public:
     
     void setScrollPinningBehavior(ScrollPinningBehavior);
 
+    void updateWidgetPositions();
+    void didAddWidgetToRenderTree(Widget&);
+    void willRemoveWidgetFromRenderTree(Widget&);
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) OVERRIDE;
     virtual void scrollContentsSlowPath(const IntRect& updateRect) OVERRIDE;
@@ -523,7 +528,7 @@ private:
     void updateDeferredRepaintDelayAfterRepaint();
     double adjustedDeferredRepaintDelay() const;
 
-    bool updateEmbeddedObjects();
+    void updateEmbeddedObjects();
     void updateEmbeddedObject(RenderEmbeddedObject&);
     void scrollToAnchor();
     void scrollPositionChanged();
@@ -543,13 +548,16 @@ private:
     AXObjectCache* axObjectCache() const;
     void notifyWidgetsInAllFrames(WidgetNotification);
     void removeFromAXObjectCache();
-    
+    void notifyWidgets(WidgetNotification);
+
+    HashSet<Widget*> m_widgetsInRenderTree;
+
     static double sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
 
     LayoutSize m_size;
     LayoutSize m_margins;
 
-    OwnPtr<HashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;
+    OwnPtr<ListHashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;
     const RefPtr<Frame> m_frame;
 
     typedef HashSet<RenderObject*> RenderObjectSet;

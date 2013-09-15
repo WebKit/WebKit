@@ -33,7 +33,6 @@ namespace WebCore {
 class FlowThreadController;
 class ImageQualityController;
 class RenderQuote;
-class RenderWidget;
 
 #if USE(ACCELERATED_COMPOSITING)
 class RenderLayerCompositor;
@@ -108,12 +107,6 @@ public:
     int maximalOutlineSize() const { return m_maximalOutlineSize; }
 
     virtual LayoutRect viewRect() const OVERRIDE;
-
-    void updateWidgetPositions();
-    void addWidget(RenderWidget*);
-    void removeWidget(RenderWidget*);
-    
-    void notifyWidgets(WidgetNotification);
 
     // layoutDelta is used transiently during layout to store how far an object has moved from its
     // last layout location, in order to repaint correctly.
@@ -292,16 +285,13 @@ private:
     void checkLayoutState(const LayoutState&);
 #endif
 
-    size_t getRetainedWidgets(Vector<RenderWidget*>&);
-    void releaseWidgets(Vector<RenderWidget*>&);
-
     void pushLayoutStateForCurrentFlowThread(const RenderObject*);
     void popLayoutStateForCurrentFlowThread();
     
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
 
-protected:
+private:
     FrameView& m_frameView;
 
     RenderObject* m_selectionStart;
@@ -329,10 +319,6 @@ protected:
 
     int m_maximalOutlineSize; // Used to apply a fudge factor to dirty-rect checks on blocks/tables.
 
-    typedef HashSet<RenderWidget*> RenderWidgetSet;
-    RenderWidgetSet m_widgets;
-
-private:
     bool shouldUsePrintingLayout() const;
 
     OwnPtr<ImageQualityController> m_imageQualityController;

@@ -4540,7 +4540,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderView.h \
 	Source/WebCore/rendering/RenderWidget.cpp \
 	Source/WebCore/rendering/RenderWidget.h \
-	Source/WebCore/rendering/RenderWidgetProtector.h \
 	Source/WebCore/rendering/RenderWordBreak.cpp \
 	Source/WebCore/rendering/RenderWordBreak.h \
 	Source/WebCore/rendering/RootInlineBox.cpp \

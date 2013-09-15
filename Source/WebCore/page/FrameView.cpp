@@ -127,9 +127,6 @@ double FrameView::s_maxDeferredRepaintDelayDuringLoading = 0;
 double FrameView::s_deferredRepaintDelayIncrementDuringLoading = 0;
 #endif
 
-// The maximum number of updateEmbeddedObjects iterations that should be done before returning.
-static const unsigned maxUpdateEmbeddedObjectsIterations = 2;
-
 static RenderLayer::UpdateLayerPositionsFlags updateLayerPositionFlags(RenderLayer* layer, bool isRelayoutingSubtree, bool didFullRepaint)
 {
     RenderLayer::UpdateLayerPositionsFlags flags = RenderLayer::defaultFlags;
@@ -1345,10 +1342,9 @@ void FrameView::layout(bool allowSubtree)
         resumeScheduledEvents();
     else {
         if (!m_inSynchronousPostLayout) {
-            if (inChildFrameLayoutWithFrameFlattening) {
-                if (RenderView* renderView = this->renderView())
-                    renderView->updateWidgetPositions();
-            } else {
+            if (inChildFrameLayoutWithFrameFlattening)
+                updateWidgetPositions();
+            else {
                 m_inSynchronousPostLayout = true;
                 performPostLayoutTasks(); // Calls resumeScheduledEvents().
                 m_inSynchronousPostLayout = false;
@@ -1401,7 +1397,7 @@ RenderBox* FrameView::embeddedContentBox() const
 void FrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
 {
     if (!m_embeddedObjectsToUpdate)
-        m_embeddedObjectsToUpdate = adoptPtr(new HashSet<RenderEmbeddedObject*>);
+        m_embeddedObjectsToUpdate = adoptPtr(new ListHashSet<RenderEmbeddedObject*>);
 
     ASSERT(embeddedObject.frameOwnerElement());
     Element& element = *embeddedObject.frameOwnerElement();
@@ -1994,7 +1990,7 @@ void FrameView::repaintFixedElementsAfterScrolling()
     // but only if we're not inside of layout.
     if (m_nestedLayoutCount <= 1 && hasViewportConstrainedObjects()) {
         if (RenderView* renderView = this->renderView()) {
-            renderView->updateWidgetPositions();
+            updateWidgetPositions();
             renderView->layer()->updateLayerPositionsAfterDocumentScroll();
         }
     }
@@ -2650,16 +2646,12 @@ void FrameView::scrollToAnchor()
 
 void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
 {
-    ASSERT(m_embeddedObjectsToUpdate->contains(&embeddedObject));
-
-    // The object may have already been destroyed (thus element cleared),
-    // but FrameView holds a manual ref, so it won't have been deleted.
-    if (!embeddedObject.frameOwnerElement())
-        return;
-
     // No need to update if it's already crashed or known to be missing.
     if (embeddedObject.isPluginUnavailable())
         return;
+
+    // FIXME: RenderEmbeddedObject::frameOwnerElement() should return a reference.
+    ASSERT(embeddedObject.frameOwnerElement());
 
     HTMLFrameOwnerElement& element = *embeddedObject.frameOwnerElement();
 
@@ -2670,6 +2662,8 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
         }
         return;
     }
+
+    auto weakRenderer = embeddedObject.createWeakPtr();
 
     // FIXME: This could turn into a real virtual dispatch if we defined
     // updateWidget(PluginCreationOption) on HTMLElement.
@@ -2691,37 +2685,30 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
     else
         ASSERT_NOT_REACHED();
 
-    // Caution: it's possible the object was destroyed again, since loading a
-    // plugin may run any arbitrary JavaScript.
+    // It's possible the renderer was destroyed below updateWidget() since loading a plugin may execute arbitrary JavaScript.
+    if (!weakRenderer)
+        return;
+
     embeddedObject.updateWidgetPosition();
 }
 
-bool FrameView::updateEmbeddedObjects()
+void FrameView::updateEmbeddedObjects()
 {
     if (m_nestedLayoutCount > 1 || !m_embeddedObjectsToUpdate || m_embeddedObjectsToUpdate->isEmpty())
-        return true;
+        return;
 
-    // Protect RendereArena from getting wiped out, when Document is detached during updateWidget().
-    RefPtr<RenderArena> protectedArena = frame().document()->renderArena();
+    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
-    Vector<RenderEmbeddedObject*> embeddedObjects;
-    embeddedObjects.reserveInitialCapacity(m_embeddedObjectsToUpdate->size());
-    for (auto it = m_embeddedObjectsToUpdate->begin(), end = m_embeddedObjectsToUpdate->end(); it != end; ++it) {
-        RenderEmbeddedObject& object = **it;
-        embeddedObjects.uncheckedAppend(&object);
-        object.ref();
+    // Insert a marker for where we should stop.
+    ASSERT(!m_embeddedObjectsToUpdate->contains(nullptr));
+    m_embeddedObjectsToUpdate->add(nullptr);
+
+    while (!m_embeddedObjectsToUpdate->isEmpty()) {
+        RenderEmbeddedObject* embeddedObject = m_embeddedObjectsToUpdate->takeFirst();
+        if (!embeddedObject)
+            break;
+        updateEmbeddedObject(*embeddedObject);
     }
-
-    for (unsigned i = 0; i < embeddedObjects.size(); ++i) {
-        RenderEmbeddedObject& object = *embeddedObjects[i];
-        updateEmbeddedObject(object);
-        m_embeddedObjectsToUpdate->remove(&object);
-    }
-
-    for (unsigned i = 0; i < embeddedObjects.size(); ++i)
-        embeddedObjects[i]->deref(protectedArena.get());
-    
-    return m_embeddedObjectsToUpdate->isEmpty();
 }
 
 void FrameView::flushAnyPendingPostLayoutTasks()
@@ -2776,16 +2763,13 @@ void FrameView::performPostLayoutTasks()
     // with didLayout(LayoutMilestones).
     frame().loader().client().dispatchDidLayout();
 
-    if (RenderView* renderView = this->renderView())
-        renderView->updateWidgetPositions();
+    updateWidgetPositions();
     
-    // layout() protects FrameView, but it still can get destroyed when updateWidgets()
+    // layout() protects FrameView, but it still can get destroyed when updateEmbeddedObjects()
     // is called through the post layout timer.
     Ref<FrameView> protect(*this);
-    for (unsigned i = 0; i < maxUpdateEmbeddedObjectsIterations; i++) {
-        if (updateEmbeddedObjects())
-            break;
-    }
+
+    updateEmbeddedObjects();
 
     if (page) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
@@ -4154,8 +4138,8 @@ bool FrameView::isFlippedDocument() const
 void FrameView::notifyWidgetsInAllFrames(WidgetNotification notification)
 {
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
-        if (RenderView* root = frame->contentRenderer())
-            root->notifyWidgets(notification);
+        if (FrameView* view = frame->view())
+            view->notifyWidgets(notification);
     }
 }
     
@@ -4255,6 +4239,46 @@ int FrameView::mapFromLayoutToCSSUnits(LayoutUnit value) const
 LayoutUnit FrameView::mapFromCSSToLayoutUnits(int value) const
 {
     return value * frame().pageZoomFactor() * frame().frameScaleFactor();
+}
+
+void FrameView::didAddWidgetToRenderTree(Widget& widget)
+{
+    ASSERT(!m_widgetsInRenderTree.contains(&widget));
+    m_widgetsInRenderTree.add(&widget);
+}
+
+void FrameView::willRemoveWidgetFromRenderTree(Widget& widget)
+{
+    ASSERT(m_widgetsInRenderTree.contains(&widget));
+    m_widgetsInRenderTree.remove(&widget);
+}
+
+static Vector<RefPtr<Widget>> collectAndProtectWidgets(const HashSet<Widget*>& set)
+{
+    Vector<RefPtr<Widget>> widgets;
+    copyToVector(set, widgets);
+    return widgets;
+}
+
+void FrameView::updateWidgetPositions()
+{
+    // updateWidgetPosition() can possibly cause layout to be re-entered (via plug-ins running
+    // scripts in response to NPP_SetWindow, for example), so we need to keep the Widgets
+    // alive during enumeration.
+    auto protectedWidgets = collectAndProtectWidgets(m_widgetsInRenderTree);
+
+    for (unsigned i = 0, size = protectedWidgets.size(); i < size; ++i) {
+        if (RenderWidget* renderWidget = RenderWidget::find(protectedWidgets[i].get()))
+            renderWidget->updateWidgetPosition();
+    }
+}
+
+void FrameView::notifyWidgets(WidgetNotification notification)
+{
+    auto protectedWidgets = collectAndProtectWidgets(m_widgetsInRenderTree);
+
+    for (unsigned i = 0, size = protectedWidgets.size(); i < size; ++i)
+        protectedWidgets[i]->notifyWidget(notification);
 }
 
 } // namespace WebCore

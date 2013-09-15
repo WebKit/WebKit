@@ -100,6 +100,7 @@ public:
     WeakPtr(PassRefPtr<WeakReference<T> > ref) : m_ref(ref) { }
 
     T* get() const { return m_ref->get(); }
+    bool operator!() const { return !m_ref; }
 
 private:
     RefPtr<WeakReference<T> > m_ref;

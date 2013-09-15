@@ -53,7 +53,6 @@
 #include "RenderLayer.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "RenderWidgetProtector.h"
 #include "Settings.h"
 #include "Text.h"
 #include "TextRun.h"

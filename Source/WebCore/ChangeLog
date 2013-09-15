@@ -1,3 +1,127 @@
+2013-09-15  Andreas Kling  <akling@apple.com>
+
+        Get rid of ref-counting on RenderWidget.
+        <https://webkit.org/b/121357>
+
+        Reviewed by Darin Adler.
+
+        Instead of RenderView tracking RenderWidgets, have FrameView track Widgets
+        that are currently in the render tree.
+
+        To protect ourselves during NPAPI tomfoolery, we now let RenderWidget hand
+        out weak pointers through a createWeakPtr() method so call sites can monitor
+        the renderer for deletion without having to take shared ownership.
+
+        This works out quite nicely since instead of keeping a limping object alive
+        for a little longer just so we can call methods on it (to accomplish nothing),
+        we're forced to check right away if it's gone, and take immediate action.
+
+        De-virtualized RenderObject::destroy() since it's no longer needed for
+        RenderWidget to defer destruction.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::repaintFixedElementsAfterScrolling):
+
+            Call updateWidgetPositions() on FrameView instead of RenderView.
+
+        (WebCore::FrameView::updateEmbeddedObject):
+
+            Turn null checking of embedded object's element backpointer into an
+            assertion. This will eventually go away completely once that renderer
+            can return a HTMLFrameOwnerElement&.
+
+            Use WeakPtr to check for renderer destruction following the call out
+            to updateWidget().
+
+        (WebCore::FrameView::updateEmbeddedObjects):
+
+            Slap a WidgetHierarchyUpdatesSuspensionScope guard on this function
+            to defer Widget updates until all the updateEmbeddedObject calls are
+            done. This avoids RenderWidget::setWidget() having to handle 'this'
+            disappearing from underneath.
+
+            Also use a ListHashSet with a null sentinel to avoid looping forever.
+
+        (WebCore::FrameView::performPostLayoutTasks):
+
+            Only call updateEmbeddedObjects() once since that function no longer
+            operates in chunks.
+
+        (WebCore::FrameView::notifyWidgetsInAllFrames):
+
+            Call notifyWidgets() on FrameView instead of RenderView.
+
+        (WebCore::FrameView::didAddWidgetToRenderTree):
+        (WebCore::FrameView::willRemoveWidgetFromRenderTree):
+
+            Added. These are called by RenderWidget when a Widget is being
+            added or removed from a RenderWidget.
+
+        (WebCore::collectWidgets):
+
+            Helper to collect raw Widget pointers into a Vector and ref them.
+
+        (WebCore::FrameView::updateWidgetPositions):
+
+            Moved here from RenderView. This function holds a ref on all the
+            attached Widgets and calls RenderWidget::updateWidgetPosition() on
+            their corresponding renderers.
+
+        (WebCore::FrameView::notifyWidgets):
+
+            Moved here from RenderView. Holds a ref on all the widgets while
+            calling Widget::notifyWidget() on each one.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+
+            Call updateWidgetPositions() on FrameView instead of RenderView.
+
+        * rendering/RenderObject.h:
+
+            De-virtualized destroy().
+
+        * rendering/RenderView.cpp:
+        * rendering/RenderView.h:
+
+            Moved a bunch of things to FrameView. Made protected section private
+            since nothing inherits from RenderView.
+
+        * rendering/RenderWidget.h:
+        (WebCore::RenderWidget::createWeakPtr):
+
+            Added a WeakPtr factory for clients that want to monitor this object
+            for destruction.
+            
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::RenderWidget):
+        (WebCore::RenderWidget::willBeDestroyed):
+        (WebCore::RenderWidget::~RenderWidget):
+
+            Removed ref counting.
+            Removed registration with RenderView in ctor/willBeDestroyed.
+
+        (WebCore::RenderWidget::setWidgetGeometry):
+
+            Monitor the RenderWidget itself through a WeakPtr and check on it
+            after each step that we're still alive. In that case just bail out.
+
+        (WebCore::RenderWidget::setWidget):
+
+            Register the incoming/outgoing Widget with the FrameView.
+            Use a WeakPtr to check on 'this' after updateWidgetGeometry().
+
+        (WebCore::RenderWidget::updateWidgetPosition):
+
+            Use a WeakPtr to check on 'this' after updateWidgetGeometry().
+
+        * GNUmakefile.list.am:
+        * rendering/RenderWidgetProtector.h:
+
+            Removed.
+
+
 2013-09-14  Sam Weinig  <sam@webkit.org>
 
         [CTTE] Node subclasses should take a Document by reference in their constructor (Part 5)

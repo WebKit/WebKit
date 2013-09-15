@@ -1,3 +1,15 @@
+2013-09-14  Andreas Kling  <akling@apple.com>
+
+        Get rid of ref-counting on RenderWidget.
+        <https://webkit.org/b/121357>
+
+        Reviewed by Darin Adler.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtr::operator!):
+
+            Add operator! to WeakPtr.
+
 2013-09-14  Darin Adler  <darin@apple.com>
 
         Add NeverDestroyed::get

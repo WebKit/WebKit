@@ -942,7 +942,7 @@ public:
     bool documentBeingDestroyed() const;
 
     void destroyAndCleanupAnonymousWrappers();
-    virtual void destroy();
+    void destroy();
 
     // Virtual function helpers for the deprecated Flexible Box Layout (display: -webkit-box).
     virtual bool isDeprecatedFlexibleBox() const { return false; }

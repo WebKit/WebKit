@@ -26,6 +26,7 @@
 #include "OverlapTestRequestClient.h"
 #include "RenderReplaced.h"
 #include "Widget.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -71,12 +72,11 @@ public:
 
     void notifyWidget(WidgetNotification);
 
-    RenderArena* ref() { ++m_refCount; return renderArena(); }
-    void deref(RenderArena*);
-
 #if USE(ACCELERATED_COMPOSITING)
     bool requiresAcceleratedCompositing() const;
 #endif
+
+    WeakPtr<RenderWidget> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
     virtual void viewCleared() { }
 
@@ -84,8 +84,6 @@ protected:
     RenderWidget(HTMLFrameOwnerElement*);
 
     FrameView* frameView() const { return m_frameView; }
-
-    void clearWidget();
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE FINAL;
     virtual void layout() OVERRIDE;
@@ -106,17 +104,16 @@ private:
     virtual RenderBox* embeddedContentBox() const OVERRIDE FINAL;
 
     virtual void willBeDestroyed() OVERRIDE FINAL;
-    virtual void destroy() OVERRIDE FINAL;
     virtual void setSelectionState(SelectionState) OVERRIDE FINAL;
     virtual void setOverlapTestResult(bool) OVERRIDE FINAL;
 
     bool setWidgetGeometry(const LayoutRect&);
     bool updateWidgetGeometry();
 
+    WeakPtrFactory<RenderWidget> m_weakPtrFactory;
     RefPtr<Widget> m_widget;
     FrameView* m_frameView;
     IntRect m_clipRect; // The rectangle needs to remain correct after scrolling, so it is stored in content view coordinates, and not clipped to window.
-    int m_refCount;
 };
 
 inline RenderWidget* toRenderWidget(RenderObject* object)
