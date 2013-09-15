@@ -305,22 +305,65 @@ inline NodeFlags defaultFlags(NodeType op)
     }
 }
 
-inline bool needsOSRBackwardRewiring(NodeType op)
-{
-    return op == UInt32ToNumber;
-}
-
-inline bool needsOSRForwardRewiring(NodeType op)
+inline bool permitsOSRBackwardRewiring(NodeType op)
 {
     switch (op) {
-    case Int32ToDouble:
-    case ValueToInt32:
+    case Identity:
+        RELEASE_ASSERT_NOT_REACHED();
+        return true;
     case UInt32ToNumber:
-    case DoubleAsInt32:
+        // This is the only node where we do:
+        //
+        //     b: UInt32ToNumber(@a)
+        //     c: SetLocal(@b)
+        //
+        // and then also have some uses of @a without Phantom'ing @b.
         return true;
     default:
         return false;
     }
+}
+
+// Returns the priority with which we should select the given node for forward
+// rewiring. Higher is better. Zero means that the node is not useful for rewiring.
+// By convention, we use 100 to mean that the node is totally equivalent to its
+// input with no information loss.
+inline unsigned forwardRewiringSelectionScore(NodeType op)
+{
+    switch (op) {
+    case Identity:
+        // We shouldn't see these by the time we get to OSR even though it clearly
+        // is a perfect identity function.
+        RELEASE_ASSERT_NOT_REACHED();
+        return 100;
+        
+    case DoubleAsInt32:
+        // This speculates that the incoming double is convertible to an int32. So
+        // its result is totally equivalent.
+        return 100;
+        
+    case Int32ToDouble:
+        // This converts an int32 to a double, but that loses a bit of information.
+        // OTOH it's still an equivalent number.
+        return 75;
+        
+    case UInt32ToNumber:
+        // It's completely fine to use this for OSR exit, since the uint32 isn't
+        // actually representable in bytecode.
+        return 100;
+
+    case ValueToInt32:
+        // This loses information. Only use it if there are no better alternatives.
+        return 25;
+        
+    default:
+        return 0;
+    }
+}
+
+inline bool permitsOSRForwardRewiring(NodeType op)
+{
+    return forwardRewiringSelectionScore(op) > 0;
 }
 
 } } // namespace JSC::DFG

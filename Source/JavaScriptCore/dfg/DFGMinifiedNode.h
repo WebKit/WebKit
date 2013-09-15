@@ -50,7 +50,7 @@ inline bool belongsInMinifiedGraph(NodeType type)
     case PhantomArguments:
         return true;
     default:
-        ASSERT(!needsOSRBackwardRewiring(type) && !needsOSRForwardRewiring(type));
+        ASSERT(!permitsOSRBackwardRewiring(type) && !permitsOSRForwardRewiring(type));
         return false;
     }
 }

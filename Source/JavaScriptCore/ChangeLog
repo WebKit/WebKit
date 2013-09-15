@@ -1,5 +1,80 @@
 2013-09-14  Filip Pizlo  <fpizlo@apple.com>
 
+        It should be easy to add new nodes that do OSR forward rewiring in both DFG and FTL
+        https://bugs.webkit.org/show_bug.cgi?id=121371
+
+        Reviewed by Sam Weinig.
+        
+        Forward rewiring is a tricky part of OSR that handles the following:
+        
+            a: Something(...)
+               SetLocal(@a, locX)
+            b: Int32ToDouble(@a)
+            c: SomethingThatExits(@b)
+               <no further uses of @a or @b>
+
+        Note that at @c, OSR will think that locX->@a, but @a will be dead. So it must be
+        smart enough to find @b, which contains an equivalent value. It must do this for
+        any identity functions we support. Currently we support four such functions.
+        
+        Currently the code for doing this is basically duplicated between the DFG and the
+        FTL. Also both versions of the code have some really weirdly written logic for
+        picking the "best" identity function to use.
+        
+        We should fix this by simply having a way to ask "is this node an identity
+        function, and if so, then how good is it?"  Then both the DFG and FTL could use
+        this and have no hard-wired knowledge of those identity functions.
+        
+        While we're at it, this also changes some terminology because I found the use of
+        the word "needs" confusing. Note that this retains the somewhat confusing behavior
+        that we don't search all possible forward/backward uses. We only search one step
+        in each direction. This is because we only need to handle cases that FixupPhase
+        and the parser insert. All other code that tries to insert intermediate conversion
+        nodes should ensure to Phantom the original node. For example, the following
+        transformation is illegal:
+        
+        Before:
+            x: SomethingThatExits(@a)
+        
+        After:
+            w: Conversion(@a)
+            x: SomethingThatExits(@w)
+        
+        The correct form of that transformation is one of these:
+        
+        Correct #1:
+        
+            v: DoAllChecks(@a) // exit here
+            w: Conversion(@a)
+            x: Something(@w) // no exit
+        
+        Correct #2:
+        
+            w: Conversion(@a)
+            x: SomethingThatExits(@w)
+            y: Phantom(@a)
+        
+        Correct #3:
+        
+            w: Conversion(@a)
+            x: SomethingThatExits(@w, @a)
+        
+        Note that we use #3 for some heap accesses, but of course it requires that the
+        node you're using has an extra slot for a "dummy" use child.
+        
+        Broadly speaking though, such transformations should be relegated to something
+        below DFG IR, like LLVM IR.
+
+        * dfg/DFGNodeType.h:
+        (JSC::DFG::forwardRewiringSelectionScore):
+        (JSC::DFG::needsOSRForwardRewiring):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::addExitArgumentForNode):
+
+2013-09-14  Filip Pizlo  <fpizlo@apple.com>
+
         Rename IntegerBranch/IntegerCompare to Int32Branch/Int32Compare.
 
         Rubber stamped by Mark Hahnenberg.

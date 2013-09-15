@@ -3087,7 +3087,7 @@ private:
         if (!isLive(node)) {
             bool found = false;
             
-            if (needsOSRBackwardRewiring(node->op())) {
+            if (permitsOSRBackwardRewiring(node->op())) {
                 node = node->child1().node();
                 if (tryToSetConstantExitArgument(exit, index, node))
                     return;
@@ -3096,10 +3096,8 @@ private:
             }
             
             if (!found) {
-                Node* int32ToDouble = 0;
-                Node* valueToInt32 = 0;
-                Node* uint32ToNumber = 0;
-                Node* doubleAsInt32 = 0;
+                Node* bestNode = 0;
+                unsigned bestScore = 0;
                 
                 HashSet<Node*>::iterator iter = m_live.begin();
                 HashSet<Node*>::iterator end = m_live.end();
@@ -3111,36 +3109,18 @@ private:
                         continue;
                     if (candidate->child1() != node)
                         continue;
-                    switch (candidate->op()) {
-                    case Int32ToDouble:
-                        int32ToDouble = candidate;
-                        break;
-                    case ValueToInt32:
-                        valueToInt32 = candidate;
-                        break;
-                    case UInt32ToNumber:
-                        uint32ToNumber = candidate;
-                        break;
-                    case DoubleAsInt32:
-                        uint32ToNumber = candidate;
-                        break;
-                    default:
-                        ASSERT(!needsOSRForwardRewiring(candidate->op()));
-                        break;
-                    }
+                    unsigned myScore = forwardRewiringSelectionScore(candidate->op());
+                    if (myScore <= bestScore)
+                        continue;
+                    bestNode = candidate;
+                    bestScore = myScore;
                 }
                 
-                if (doubleAsInt32)
-                    node = doubleAsInt32;
-                else if (int32ToDouble)
-                    node = int32ToDouble;
-                else if (valueToInt32)
-                    node = valueToInt32;
-                else if (uint32ToNumber)
-                    node = uint32ToNumber;
-                
-                if (isLive(node))
+                if (bestNode) {
+                    ASSERT(isLive(bestNode));
+                    node = bestNode;
                     found = true;
+                }
             }
             
             if (!found) {
