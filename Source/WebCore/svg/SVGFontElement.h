@@ -54,7 +54,7 @@ class SVGMissingGlyphElement;
 class SVGFontElement FINAL : public SVGElement
                            , public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGFontElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGFontElement> create(const QualifiedName&, Document&);
 
     void invalidateGlyphCache();
     void collectGlyphsForString(const String&, Vector<SVGGlyph>&);
@@ -70,7 +70,7 @@ public:
     SVGMissingGlyphElement* firstMissingGlyphElement() const;
 
 private:
-    SVGFontElement(const QualifiedName&, Document*);
+    SVGFontElement(const QualifiedName&, Document&);
 
     virtual bool rendererIsNeeded(const RenderStyle&) { return false; }  
 

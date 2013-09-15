@@ -50,7 +50,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGEllipseElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document* document)
+inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
     , m_cx(LengthModeWidth)
     , m_cy(LengthModeHeight)
@@ -61,7 +61,7 @@ inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Docume
     registerAnimatedPropertiesForSVGEllipseElement();
 }    
 
-PassRefPtr<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGEllipseElement(tagName, document));
 }

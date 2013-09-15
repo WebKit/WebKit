@@ -45,7 +45,7 @@ class SVGSVGElement FINAL : public SVGGraphicsElement,
                             public SVGFitToViewBox,
                             public SVGZoomAndPan {
 public:
-    static PassRefPtr<SVGSVGElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGSVGElement> create(const QualifiedName&, Document&);
 
     using SVGGraphicsElement::ref;
     using SVGGraphicsElement::deref;
@@ -133,12 +133,11 @@ public:
 
     bool hasEmptyViewBox() const { return viewBoxIsValid() && viewBox().isEmpty(); }
 
-protected:
-    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
-
 private:
-    SVGSVGElement(const QualifiedName&, Document*);
+    SVGSVGElement(const QualifiedName&, Document&);
     virtual ~SVGSVGElement();
+
+    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 

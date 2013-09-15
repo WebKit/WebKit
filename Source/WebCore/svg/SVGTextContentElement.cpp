@@ -64,7 +64,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGTextContentElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document* document)
+SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
     , m_textLength(LengthModeOther)
     , m_specifiedTextLength(LengthModeOther)

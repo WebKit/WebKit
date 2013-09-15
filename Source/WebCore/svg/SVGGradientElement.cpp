@@ -55,7 +55,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGGradientElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
 END_REGISTER_ANIMATED_PROPERTIES
  
-SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* document)
+SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
     , m_spreadMethod(SVGSpreadMethodPad)
     , m_gradientUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)

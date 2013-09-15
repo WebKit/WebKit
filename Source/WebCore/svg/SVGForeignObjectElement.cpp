@@ -53,7 +53,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGForeignObjectElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tagName, Document* document)
+inline SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
@@ -64,7 +64,7 @@ inline SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tag
     registerAnimatedPropertiesForSVGForeignObjectElement();
 }
 
-PassRefPtr<SVGForeignObjectElement> SVGForeignObjectElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGForeignObjectElement> SVGForeignObjectElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGForeignObjectElement(tagName, document));
 }

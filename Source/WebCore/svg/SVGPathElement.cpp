@@ -82,7 +82,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGPathElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document* document)
+inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
     , m_pathByteStream(SVGPathByteStream::create())
     , m_pathSegList(PathSegUnalteredRole)
@@ -92,7 +92,7 @@ inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document* do
     registerAnimatedPropertiesForSVGPathElement();
 }
 
-PassRefPtr<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGPathElement(tagName, document));
 }

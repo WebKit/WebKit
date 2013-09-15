@@ -40,14 +40,14 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFEMergeNodeElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(in1)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document* document)
+inline SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feMergeNodeTag));
     registerAnimatedPropertiesForSVGFEMergeNodeElement();
 }
 
-PassRefPtr<SVGFEMergeNodeElement> SVGFEMergeNodeElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGFEMergeNodeElement> SVGFEMergeNodeElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGFEMergeNodeElement(tagName, document));
 }

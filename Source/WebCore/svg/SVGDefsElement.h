@@ -31,10 +31,10 @@ namespace WebCore {
 class SVGDefsElement FINAL : public SVGGraphicsElement,
                              public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGDefsElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGDefsElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGDefsElement(const QualifiedName&, Document*);
+    SVGDefsElement(const QualifiedName&, Document&);
 
     virtual bool isValid() const;
 

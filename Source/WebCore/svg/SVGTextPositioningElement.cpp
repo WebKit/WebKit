@@ -49,7 +49,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGTextPositioningElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTextContentElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document* document)
+SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document& document)
     : SVGTextContentElement(tagName, document)
 {
     registerAnimatedPropertiesForSVGTextPositioningElement();

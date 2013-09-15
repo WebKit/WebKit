@@ -32,10 +32,10 @@ namespace WebCore {
 class SVGLineElement FINAL : public SVGGraphicsElement,
                              public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGLineElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGLineElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGLineElement(const QualifiedName&, Document*);
+    SVGLineElement(const QualifiedName&, Document&);
     
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool supportsFocus() const OVERRIDE { return true; }

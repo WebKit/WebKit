@@ -59,12 +59,12 @@ struct SVGPropertyTraits<MorphologyOperatorType> {
 
 class SVGFEMorphologyElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEMorphologyElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGFEMorphologyElement> create(const QualifiedName&, Document&);
 
     void setRadius(float radiusX, float radiusY);
 
 private:
-    SVGFEMorphologyElement(const QualifiedName&, Document*);
+    SVGFEMorphologyElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

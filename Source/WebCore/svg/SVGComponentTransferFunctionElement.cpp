@@ -50,7 +50,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGComponentTransferFunctionElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(offset)
 END_REGISTER_ANIMATED_PROPERTIES
 
-SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document* document)
+SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
     , m_type(FECOMPONENTTRANSFER_TYPE_IDENTITY)
     , m_slope(1)

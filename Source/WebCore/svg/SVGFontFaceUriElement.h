@@ -31,14 +31,14 @@ class CSSFontFaceSrcValue;
 
 class SVGFontFaceUriElement FINAL : public SVGElement, public CachedFontClient {
 public:
-    static PassRefPtr<SVGFontFaceUriElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGFontFaceUriElement> create(const QualifiedName&, Document&);
 
     virtual ~SVGFontFaceUriElement();
 
     PassRefPtr<CSSFontFaceSrcValue> srcValue() const;
 
 private:
-    SVGFontFaceUriElement(const QualifiedName&, Document*);
+    SVGFontFaceUriElement(const QualifiedName&, Document&);
     
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual void childrenChanged(const ChildChange&) OVERRIDE;

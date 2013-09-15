@@ -73,7 +73,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGMarkerElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* document)
+inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
     , m_refX(LengthModeWidth)
     , m_refY(LengthModeHeight)
@@ -87,7 +87,7 @@ inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document
     registerAnimatedPropertiesForSVGMarkerElement();
 }
 
-PassRefPtr<SVGMarkerElement> SVGMarkerElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGMarkerElement> SVGMarkerElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGMarkerElement(tagName, document));
 }

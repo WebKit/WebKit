@@ -46,7 +46,7 @@ public:
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
 
 protected:
-    SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document*);
+    SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

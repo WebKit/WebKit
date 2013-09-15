@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-inline SVGFEMergeElement::SVGFEMergeElement(const QualifiedName& tagName, Document* document)
+inline SVGFEMergeElement::SVGFEMergeElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feMergeTag));
 }
 
-PassRefPtr<SVGFEMergeElement> SVGFEMergeElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGFEMergeElement> SVGFEMergeElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGFEMergeElement(tagName, document));
 }

@@ -152,8 +152,8 @@ static inline AttributeToPropertyTypeMap& cssPropertyToTypeMap()
     return s_cssPropertyMap;
 }
 
-SVGElement::SVGElement(const QualifiedName& tagName, Document* document)
-    : StyledElement(tagName, *document, CreateSVGElement)
+SVGElement::SVGElement(const QualifiedName& tagName, Document& document)
+    : StyledElement(tagName, document, CreateSVGElement)
 {
     registerAnimatedPropertiesForSVGElement();
 }

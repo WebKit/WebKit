@@ -32,12 +32,12 @@ class SVGTRefTargetEventListener;
 class SVGTRefElement FINAL : public SVGTextPositioningElement,
                              public SVGURIReference {
 public:
-    static PassRefPtr<SVGTRefElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGTRefElement> create(const QualifiedName&, Document&);
 
 private:
     friend class SVGTRefTargetEventListener;
 
-    SVGTRefElement(const QualifiedName&, Document*);
+    SVGTRefElement(const QualifiedName&, Document&);
     virtual ~SVGTRefElement();
 
     bool isSupportedAttribute(const QualifiedName&);

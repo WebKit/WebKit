@@ -42,14 +42,14 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGSymbolElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document* document)
+inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::symbolTag));
     registerAnimatedPropertiesForSVGSymbolElement();
 }
 
-PassRefPtr<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGSymbolElement(tagName, document));
 }

@@ -38,7 +38,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGGlyphRefElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGGlyphRefElement::SVGGlyphRefElement(const QualifiedName& tagName, Document* document)
+inline SVGGlyphRefElement::SVGGlyphRefElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
     , m_x(0)
     , m_y(0)
@@ -49,7 +49,7 @@ inline SVGGlyphRefElement::SVGGlyphRefElement(const QualifiedName& tagName, Docu
     registerAnimatedPropertiesForSVGGlyphRefElement();
 }
 
-PassRefPtr<SVGGlyphRefElement> SVGGlyphRefElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGGlyphRefElement> SVGGlyphRefElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGGlyphRefElement(tagName, document));
 }

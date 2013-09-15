@@ -96,10 +96,10 @@ struct SVGPropertyTraits<TurbulenceType> {
 
 class SVGFETurbulenceElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFETurbulenceElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGFETurbulenceElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGFETurbulenceElement(const QualifiedName&, Document*);
+    SVGFETurbulenceElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

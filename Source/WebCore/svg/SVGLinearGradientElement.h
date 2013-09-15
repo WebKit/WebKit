@@ -32,12 +32,12 @@ struct LinearGradientAttributes;
 
 class SVGLinearGradientElement FINAL : public SVGGradientElement {
 public:
-    static PassRefPtr<SVGLinearGradientElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGLinearGradientElement> create(const QualifiedName&, Document&);
 
     bool collectGradientAttributes(LinearGradientAttributes&);
 
 private:
-    SVGLinearGradientElement(const QualifiedName&, Document*);
+    SVGLinearGradientElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

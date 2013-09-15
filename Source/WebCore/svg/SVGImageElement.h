@@ -36,10 +36,10 @@ class SVGImageElement FINAL : public SVGGraphicsElement,
                               public SVGExternalResourcesRequired,
                               public SVGURIReference {
 public:
-    static PassRefPtr<SVGImageElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGImageElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGImageElement(const QualifiedName&, Document*);
+    SVGImageElement(const QualifiedName&, Document&);
     
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool supportsFocus() const OVERRIDE { return true; }

@@ -33,12 +33,12 @@ class AffineTransform;
 
 class SVGAnimateTransformElement FINAL : public SVGAnimateElement {
 public:
-    static PassRefPtr<SVGAnimateTransformElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGAnimateTransformElement> create(const QualifiedName&, Document&);
 
     SVGTransform::SVGTransformType transformType() const { return m_type; }
 
 private:
-    SVGAnimateTransformElement(const QualifiedName&, Document*);
+    SVGAnimateTransformElement(const QualifiedName&, Document&);
     
     virtual bool hasValidAttributeType();
 

@@ -32,7 +32,7 @@ class SVGFontData;
 
 class SVGGlyphElement FINAL : public SVGElement {
 public:
-    static PassRefPtr<SVGGlyphElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGGlyphElement> create(const QualifiedName&, Document&);
 
     SVGGlyph buildGlyphIdentifier() const;
 
@@ -44,7 +44,7 @@ public:
     static SVGGlyph buildGenericGlyphIdentifier(const SVGElement*);
 
 private:
-    SVGGlyphElement(const QualifiedName&, Document*);
+    SVGGlyphElement(const QualifiedName&, Document&);
 
     // FIXME: svgAttributeChanged missing.
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

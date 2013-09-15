@@ -36,10 +36,10 @@ class SVGMaskElement FINAL : public SVGElement,
                              public SVGTests,
                              public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGMaskElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGMaskElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGMaskElement(const QualifiedName&, Document*);
+    SVGMaskElement(const QualifiedName&, Document&);
 
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool needsPendingResourceHandling() const { return false; }

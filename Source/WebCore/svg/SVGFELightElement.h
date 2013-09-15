@@ -36,7 +36,7 @@ public:
     static PassRefPtr<LightSource> findLightSource(const SVGElement*);
 
 protected:
-    SVGFELightElement(const QualifiedName&, Document*);
+    SVGFELightElement(const QualifiedName&, Document&);
 
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
 

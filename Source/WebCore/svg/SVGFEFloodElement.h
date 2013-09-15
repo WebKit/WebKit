@@ -29,10 +29,10 @@ namespace WebCore {
 
 class SVGFEFloodElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEFloodElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGFEFloodElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGFEFloodElement(const QualifiedName&, Document*);
+    SVGFEFloodElement(const QualifiedName&, Document&);
 
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);

@@ -43,14 +43,14 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFEOffsetElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document* document)
+inline SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feOffsetTag));
     registerAnimatedPropertiesForSVGFEOffsetElement();
 }
 
-PassRefPtr<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGFEOffsetElement(tagName, document));
 }

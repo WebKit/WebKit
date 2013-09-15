@@ -88,7 +88,7 @@ public:
     Vector<Gradient::ColorStop> buildStops();
  
 protected:
-    SVGGradientElement(const QualifiedName&, Document*);
+    SVGGradientElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

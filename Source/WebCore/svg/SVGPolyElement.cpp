@@ -59,7 +59,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGPolyElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document* document)
+SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
 {
     registerAnimatedPropertiesForSVGPolyElement();    

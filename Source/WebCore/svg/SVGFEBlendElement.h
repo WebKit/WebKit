@@ -71,10 +71,10 @@ struct SVGPropertyTraits<BlendModeType> {
 
 class SVGFEBlendElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEBlendElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGFEBlendElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGFEBlendElement(const QualifiedName&, Document*);
+    SVGFEBlendElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

@@ -57,7 +57,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGMaskElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* document)
+inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
     , m_maskUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_maskContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
@@ -72,7 +72,7 @@ inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* do
     registerAnimatedPropertiesForSVGMaskElement();
 }
 
-PassRefPtr<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGMaskElement(tagName, document));
 }

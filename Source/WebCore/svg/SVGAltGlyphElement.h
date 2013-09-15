@@ -34,7 +34,7 @@ class SVGGlyphElement;
 class SVGAltGlyphElement FINAL : public SVGTextPositioningElement,
                                  public SVGURIReference {
 public:
-    static PassRefPtr<SVGAltGlyphElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGAltGlyphElement> create(const QualifiedName&, Document&);
 
     const AtomicString& glyphRef() const;
     void setGlyphRef(const AtomicString&, ExceptionCode&);
@@ -44,7 +44,7 @@ public:
     bool hasValidGlyphElements(Vector<String>& glyphNames) const;
 
 private:
-    SVGAltGlyphElement(const QualifiedName&, Document*);
+    SVGAltGlyphElement(const QualifiedName&, Document&);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool childShouldCreateRenderer(const Node*) const;

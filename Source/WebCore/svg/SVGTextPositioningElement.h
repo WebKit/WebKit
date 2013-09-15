@@ -33,7 +33,7 @@ public:
     static SVGTextPositioningElement* elementFromRenderer(RenderObject*);
 
 protected:
-    SVGTextPositioningElement(const QualifiedName&, Document*);
+    SVGTextPositioningElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

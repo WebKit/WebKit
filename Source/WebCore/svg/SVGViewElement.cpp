@@ -43,7 +43,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGViewElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document* document)
+inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
     , m_zoomAndPan(SVGZoomAndPanMagnify)
     , m_viewTarget(SVGNames::viewTargetAttr)
@@ -52,7 +52,7 @@ inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document* do
     registerAnimatedPropertiesForSVGViewElement();
 }
 
-PassRefPtr<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGViewElement(tagName, document));
 }

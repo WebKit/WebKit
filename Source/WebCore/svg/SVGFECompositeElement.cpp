@@ -51,7 +51,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFECompositeElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Document* document)
+inline SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_svgOperator(FECOMPOSITE_OPERATOR_OVER)
 {
@@ -59,7 +59,7 @@ inline SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName
     registerAnimatedPropertiesForSVGFECompositeElement();
 }
 
-PassRefPtr<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGFECompositeElement(tagName, document));
 }

@@ -29,10 +29,10 @@ namespace WebCore {
 
 class SVGAnimateColorElement FINAL : public SVGAnimateElement {
 public:
-    static PassRefPtr<SVGAnimateColorElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGAnimateColorElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGAnimateColorElement(const QualifiedName&, Document*);
+    SVGAnimateColorElement(const QualifiedName&, Document&);
     virtual void determinePropertyValueTypes(const String& from, const String& to);
 };
 

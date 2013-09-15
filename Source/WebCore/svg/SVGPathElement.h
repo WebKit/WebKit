@@ -56,7 +56,7 @@ class SVGPathSegListPropertyTearOff;
 class SVGPathElement FINAL : public SVGGraphicsElement,
                              public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGPathElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGPathElement> create(const QualifiedName&, Document&);
     
     float getTotalLength();
     SVGPoint getPointAtLength(float distance);
@@ -99,7 +99,7 @@ public:
     bool isAnimValObserved() const { return m_isAnimValObserved; }
 
 private:
-    SVGPathElement(const QualifiedName&, Document*);
+    SVGPathElement(const QualifiedName&, Document&);
 
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool supportsFocus() const OVERRIDE { return true; }

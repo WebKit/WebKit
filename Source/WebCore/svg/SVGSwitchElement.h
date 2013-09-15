@@ -31,10 +31,10 @@ namespace WebCore {
 class SVGSwitchElement FINAL : public SVGGraphicsElement,
                                public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGSwitchElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGSwitchElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGSwitchElement(const QualifiedName&, Document*);
+    SVGSwitchElement(const QualifiedName&, Document&);
     
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool supportsFocus() const OVERRIDE { return true; }

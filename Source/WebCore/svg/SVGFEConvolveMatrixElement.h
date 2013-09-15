@@ -66,13 +66,13 @@ struct SVGPropertyTraits<EdgeModeType> {
 
 class SVGFEConvolveMatrixElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEConvolveMatrixElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGFEConvolveMatrixElement> create(const QualifiedName&, Document&);
 
     void setOrder(float orderX, float orderY);
     void setKernelUnitLength(float kernelUnitLengthX, float kernelUnitLengthY);
 
 private:
-    SVGFEConvolveMatrixElement(const QualifiedName&, Document*);
+    SVGFEConvolveMatrixElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

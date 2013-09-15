@@ -67,12 +67,12 @@ struct SVGPropertyTraits<ChannelSelectorType> {
 
 class SVGFEDisplacementMapElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEDisplacementMapElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGFEDisplacementMapElement> create(const QualifiedName&, Document&);
 
     static ChannelSelectorType stringToChannel(const String&);
     
 private:
-    SVGFEDisplacementMapElement(const QualifiedName& tagName, Document*);
+    SVGFEDisplacementMapElement(const QualifiedName& tagName, Document&);
     
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

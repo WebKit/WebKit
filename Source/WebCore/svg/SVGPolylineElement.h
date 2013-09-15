@@ -28,10 +28,10 @@ namespace WebCore {
 
 class SVGPolylineElement FINAL : public SVGPolyElement {
 public:
-    static PassRefPtr<SVGPolylineElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGPolylineElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGPolylineElement(const QualifiedName&, Document*);
+    SVGPolylineElement(const QualifiedName&, Document&);
 };
 
 } // namespace WebCore

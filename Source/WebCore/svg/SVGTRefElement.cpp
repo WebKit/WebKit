@@ -49,7 +49,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGTRefElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTextPositioningElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-PassRefPtr<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGTRefElement> SVGTRefElement::create(const QualifiedName& tagName, Document& document)
 {
     RefPtr<SVGTRefElement> element = adoptRef(new SVGTRefElement(tagName, document));
     element->ensureUserAgentShadowRoot();
@@ -129,7 +129,7 @@ void SVGTRefTargetEventListener::handleEvent(ScriptExecutionContext*, Event* eve
         m_trefElement->detachTarget();
 }
 
-inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document* document)
+inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document& document)
     : SVGTextPositioningElement(tagName, document)
     , m_targetListener(SVGTRefTargetEventListener::create(this))
 {

@@ -94,7 +94,7 @@ public:
     static const SVGPropertyInfo* textLengthPropertyInfo();
 
 protected:
-    SVGTextContentElement(const QualifiedName&, Document*);
+    SVGTextContentElement(const QualifiedName&, Document&);
 
     virtual bool isValid() const { return SVGTests::isValid(); }
 

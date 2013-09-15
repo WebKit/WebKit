@@ -68,10 +68,10 @@ struct SVGPropertyTraits<ColorMatrixType> {
 
 class SVGFEColorMatrixElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEColorMatrixElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGFEColorMatrixElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGFEColorMatrixElement(const QualifiedName&, Document*);
+    SVGFEColorMatrixElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

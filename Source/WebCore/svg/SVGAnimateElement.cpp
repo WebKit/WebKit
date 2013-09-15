@@ -36,14 +36,14 @@
 
 namespace WebCore {
 
-SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* document)
+SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document& document)
     : SVGAnimationElement(tagName, document)
     , m_animatedPropertyType(AnimatedString)
 {
     ASSERT(hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::setTag) || hasTagName(SVGNames::animateColorTag) || hasTagName(SVGNames::animateTransformTag));
 }
 
-PassRefPtr<SVGAnimateElement> SVGAnimateElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGAnimateElement> SVGAnimateElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGAnimateElement(tagName, document));
 }

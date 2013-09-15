@@ -139,7 +139,7 @@ public:
 #endif
 
 protected:
-    SVGElement(const QualifiedName&, Document*);
+    SVGElement(const QualifiedName&, Document&);
     virtual ~SVGElement();
 
     virtual bool rendererIsNeeded(const RenderStyle&);

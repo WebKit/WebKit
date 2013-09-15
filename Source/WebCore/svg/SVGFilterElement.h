@@ -40,12 +40,12 @@ class SVGFilterElement FINAL : public SVGElement,
                                public SVGURIReference,
                                public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGFilterElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGFilterElement> create(const QualifiedName&, Document&);
 
     void setFilterRes(unsigned filterResX, unsigned filterResY);
 
 private:
-    SVGFilterElement(const QualifiedName&, Document*);
+    SVGFilterElement(const QualifiedName&, Document&);
 
     virtual bool needsPendingResourceHandling() const { return false; }
 

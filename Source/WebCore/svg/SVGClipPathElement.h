@@ -35,10 +35,10 @@ class RenderObject;
 class SVGClipPathElement FINAL : public SVGGraphicsElement,
                                  public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGClipPathElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGClipPathElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGClipPathElement(const QualifiedName&, Document*);
+    SVGClipPathElement(const QualifiedName&, Document&);
 
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool needsPendingResourceHandling() const { return false; }

@@ -28,12 +28,12 @@ namespace WebCore {
 
 class SVGTextElement FINAL : public SVGTextPositioningElement {
 public:
-    static PassRefPtr<SVGTextElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGTextElement> create(const QualifiedName&, Document&);
 
     virtual AffineTransform animatedLocalTransform() const;
 
 private:
-    SVGTextElement(const QualifiedName&, Document*);
+    SVGTextElement(const QualifiedName&, Document&);
 
     virtual bool supportsFocus() const OVERRIDE { return true; }
 

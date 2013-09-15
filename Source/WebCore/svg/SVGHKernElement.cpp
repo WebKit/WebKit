@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-inline SVGHKernElement::SVGHKernElement(const QualifiedName& tagName, Document* document)
+inline SVGHKernElement::SVGHKernElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::hkernTag));
 }
 
-PassRefPtr<SVGHKernElement> SVGHKernElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGHKernElement> SVGHKernElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGHKernElement(tagName, document));
 }

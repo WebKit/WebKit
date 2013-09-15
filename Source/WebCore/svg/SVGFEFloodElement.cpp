@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-inline SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Document* document)
+inline SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feFloodTag));
 }
 
-PassRefPtr<SVGFEFloodElement> SVGFEFloodElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGFEFloodElement> SVGFEFloodElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGFEFloodElement(tagName, document));
 }

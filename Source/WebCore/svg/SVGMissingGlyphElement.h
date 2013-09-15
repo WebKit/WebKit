@@ -28,10 +28,10 @@ namespace WebCore {
 
 class SVGMissingGlyphElement FINAL : public SVGElement {
 public:
-    static PassRefPtr<SVGMissingGlyphElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGMissingGlyphElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGMissingGlyphElement(const QualifiedName&, Document*);
+    SVGMissingGlyphElement(const QualifiedName&, Document&);
 
     virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
 };

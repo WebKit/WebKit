@@ -29,7 +29,7 @@ namespace WebCore {
 class SVGGlyphRefElement FINAL : public SVGElement,
                                  public SVGURIReference {
 public:
-    static PassRefPtr<SVGGlyphRefElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGGlyphRefElement> create(const QualifiedName&, Document&);
 
     bool hasValidGlyphElement(String& glyphName) const;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
@@ -47,7 +47,7 @@ public:
     void setDy(float, ExceptionCode&);
 
 private:
-    SVGGlyphRefElement(const QualifiedName&, Document*);
+    SVGGlyphRefElement(const QualifiedName&, Document&);
 
     virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
 

@@ -62,7 +62,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFELightElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(limitingConeAngle)
 END_REGISTER_ANIMATED_PROPERTIES
 
-SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document* document)
+SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
     , m_specularExponent(1)
 {

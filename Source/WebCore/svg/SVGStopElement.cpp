@@ -41,7 +41,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGStopElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document* document)
+inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
     , m_offset(0)
 {
@@ -49,7 +49,7 @@ inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document* do
     registerAnimatedPropertiesForSVGStopElement();
 }
 
-PassRefPtr<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGStopElement(tagName, document));
 }

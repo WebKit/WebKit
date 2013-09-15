@@ -49,7 +49,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGLineElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document* document)
+inline SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
     , m_x1(LengthModeWidth)
     , m_y1(LengthModeHeight)
@@ -60,7 +60,7 @@ inline SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document* do
     registerAnimatedPropertiesForSVGLineElement();
 }
 
-PassRefPtr<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGLineElement(tagName, document));
 }

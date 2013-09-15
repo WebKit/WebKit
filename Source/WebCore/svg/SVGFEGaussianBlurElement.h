@@ -32,12 +32,12 @@ namespace WebCore {
 
 class SVGFEGaussianBlurElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEGaussianBlurElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGFEGaussianBlurElement> create(const QualifiedName&, Document&);
 
     void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
 private:
-    SVGFEGaussianBlurElement(const QualifiedName&, Document*);
+    SVGFEGaussianBlurElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

@@ -75,7 +75,7 @@ public:
     ComponentTransferFunction transferFunction() const;
 
 protected:
-    SVGComponentTransferFunctionElement(const QualifiedName&, Document*);
+    SVGComponentTransferFunctionElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

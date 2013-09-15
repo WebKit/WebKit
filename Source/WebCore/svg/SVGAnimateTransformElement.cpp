@@ -31,14 +31,14 @@
 
 namespace WebCore {
 
-inline SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedName& tagName, Document* document)
+inline SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedName& tagName, Document& document)
     : SVGAnimateElement(tagName, document)
     , m_type(SVGTransform::SVG_TRANSFORM_UNKNOWN)
 {
     ASSERT(hasTagName(SVGNames::animateTransformTag));
 }
 
-PassRefPtr<SVGAnimateTransformElement> SVGAnimateTransformElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGAnimateTransformElement> SVGAnimateTransformElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGAnimateTransformElement(tagName, document));
 }

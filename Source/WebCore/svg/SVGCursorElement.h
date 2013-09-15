@@ -37,7 +37,7 @@ class SVGCursorElement FINAL : public SVGElement,
                                public SVGExternalResourcesRequired,
                                public SVGURIReference {
 public:
-    static PassRefPtr<SVGCursorElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGCursorElement> create(const QualifiedName&, Document&);
 
     virtual ~SVGCursorElement();
 
@@ -46,7 +46,7 @@ public:
     void removeReferencedElement(SVGElement*);
 
 private:
-    SVGCursorElement(const QualifiedName&, Document*);
+    SVGCursorElement(const QualifiedName&, Document&);
 
     virtual bool isValid() const { return SVGTests::isValid(); }
 

@@ -164,7 +164,7 @@ public:
     }
 
 protected:
-    SVGAnimationElement(const QualifiedName&, Document*);
+    SVGAnimationElement(const QualifiedName&, Document&);
 
     void computeCSSPropertyValue(SVGElement*, CSSPropertyID, String& value);
     virtual void determinePropertyValueTypes(const String& from, const String& to);

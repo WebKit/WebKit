@@ -30,10 +30,10 @@ namespace WebCore {
 
 class SVGFEOffsetElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEOffsetElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGFEOffsetElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGFEOffsetElement(const QualifiedName&, Document*);
+    SVGFEOffsetElement(const QualifiedName&, Document&);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

@@ -29,10 +29,10 @@ namespace WebCore {
 
 class SVGFEComponentTransferElement FINAL : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEComponentTransferElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGFEComponentTransferElement> create(const QualifiedName&, Document&);
 
 private:
-    SVGFEComponentTransferElement(const QualifiedName&, Document*);
+    SVGFEComponentTransferElement(const QualifiedName&, Document&);
 
     // FIXME: svgAttributeChanged missing.
     bool isSupportedAttribute(const QualifiedName&);

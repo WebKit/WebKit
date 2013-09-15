@@ -53,7 +53,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGRectElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGGraphicsElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document* document)
+inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
@@ -66,7 +66,7 @@ inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document* do
     registerAnimatedPropertiesForSVGRectElement();
 }
 
-PassRefPtr<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGRectElement(tagName, document));
 }

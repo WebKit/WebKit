@@ -25,13 +25,13 @@
 
 namespace WebCore {
 
-inline SVGDescElement::SVGDescElement(const QualifiedName& tagName, Document* document)
+inline SVGDescElement::SVGDescElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::descTag));
 }
 
-PassRefPtr<SVGDescElement> SVGDescElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGDescElement> SVGDescElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGDescElement(tagName, document));
 }

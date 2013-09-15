@@ -43,7 +43,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFEBlendElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGFilterPrimitiveStandardAttributes)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document* document)
+inline SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document& document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_mode(FEBLEND_MODE_NORMAL)
 {
@@ -51,7 +51,7 @@ inline SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Docume
     registerAnimatedPropertiesForSVGFEBlendElement();
 }
 
-PassRefPtr<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new SVGFEBlendElement(tagName, document));
 }
