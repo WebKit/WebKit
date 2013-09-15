@@ -16,6 +16,10 @@ webkit.org/b/116473 editing/selection/user-drag-element-and-user-select-none.htm
 # media/W3C/video/networkState/networkState_during_progress.html is flaky
 webkit.org/b/76280 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
 
+# MathML pixel tests
+webkit.org/b/99618  mathml/presentation/roots.xhtml [ Failure ]
+webkit.org/b/99618  mathml/presentation/mo-stretch.html [ Failure ]
+
 # These conformace tests are no longer in sync with the latest specification
 # and expect compareDocumentPosition() to return:
 # DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_DISCONNECTED

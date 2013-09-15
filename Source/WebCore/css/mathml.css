@@ -32,16 +32,8 @@ math[display="block"] {
     -webkit-margin-after: 1em;
 }
 
-mo, mrow, mfenced, mfrac, msub, msup, msubsup, munder, mover, munderover, msqrt, mroot {
+mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot {
     display: -webkit-inline-flex !important;
-}
-
-msup {
-    -webkit-align-items: flex-start;
-}
-
-msub {
-    -webkit-align-items: flex-end;
 }
 
 math, mrow, mfenced, msqrt, mroot {
@@ -85,11 +77,11 @@ mfrac {
     -webkit-margin-end: 1px;
 }
 
-msubsup > :last-child, mover > :last-child, munderover > :last-child {
+mover > :last-child, munderover > :last-child {
     -webkit-order: -1;
 }
 
-msub > * + *, msup > * + *, msubsup > * + *, munder > * + *, mover > * + *, munderover > * + * {
+msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + * {
     font-size: 0.75em; /* FIXME: MathML standard is 0.71em */
 }
 
@@ -169,7 +161,12 @@ mphantom {
     visibility: hidden;
 }
 
-merror {
+/* This is a special style for erroneous markup:
+  - <merror> element.
+  - extra children in script elements.
+  - <mprescripts/> and <none/> elements in msub/msup/msubsup.
+ */
+merror, msub > * + * + *, msup > * + * + *, msubsup > * + * + * + *, msub > mprescripts, msup > mprescripts, msubsup > mprescripts, msub > none, msup > none, msubsup > none, mmultiscripts > mprescripts ~ mprescripts, mmultiscripts > mprescripts ~ mprescripts ~ * {
     outline: solid thin red;
     font-weight: bold;
     font-family: sans-serif;

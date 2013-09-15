@@ -24,8 +24,8 @@ mtable interfaceName=MathMLInlineContainerElement
 mtr interfaceName=MathMLElement
 mtd interfaceName=MathMLElement
 mmultiscripts interfaceName=MathMLInlineContainerElement
-mprescripts interfaceName=MathMLElement
-none interfaceName=MathMLElement
+mprescripts interfaceName=MathMLInlineContainerElement
+none interfaceName=MathMLInlineContainerElement
 
 #if 0 // Curently only for MathMLNames used by HTMLTreeBuilder.
 ms

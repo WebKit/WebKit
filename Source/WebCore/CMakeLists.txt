@@ -2211,7 +2211,7 @@ set(WebCore_SOURCES
     rendering/mathml/RenderMathMLRow.cpp
     rendering/mathml/RenderMathMLSpace.cpp
     rendering/mathml/RenderMathMLSquareRoot.cpp
-    rendering/mathml/RenderMathMLSubSup.cpp
+    rendering/mathml/RenderMathMLScripts.cpp
     rendering/mathml/RenderMathMLUnderOver.cpp
 
     rendering/shapes/PolygonShape.cpp

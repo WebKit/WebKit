@@ -1,3 +1,41 @@
+2013-09-15  Frédéric Wang  <fred.wang@free.fr>
+
+        Implement the mmultiscripts tag
+        https://bugs.webkit.org/show_bug.cgi?id=99618
+
+        Reviewed by Chris Fleizach.
+
+        Add many tests for script msub/msup/msubsup/mmultiscripts:
+        - invalid markup
+        - equivalence between mmultiscripts without scripts and mrow
+        - equivalence between mmultiscripts and msub/msup/msubsup
+        - position of scripts in mmultiscripts
+        - baseline alignment of msub/msup/msubsup elements
+        - horizontal/vertical alignment of scripts
+        - adding/removing children with the DOM
+
+        * TestExpectations: Some remaining MathML pixel tests are broken by this patch.
+        * mathml/invalid-scripts-crash-expected.txt: Added.
+        * mathml/invalid-scripts-crash.html: Added.
+        * mathml/presentation/multiscripts-equivalence-expected.html: Added.
+        * mathml/presentation/multiscripts-equivalence.html: Added.
+        * mathml/presentation/multiscripts-noscripts-expected.html: Added.
+        * mathml/presentation/multiscripts-noscripts.html: Added.
+        * mathml/presentation/multiscripts-positions-expected.html: Added.
+        * mathml/presentation/multiscripts-positions.html: Added.
+        * mathml/presentation/scripts-base-alignment-expected.html: Added.
+        * mathml/presentation/scripts-base-alignment.html: Added.
+        * mathml/presentation/scripts-horizontal-alignment-expected.html: Added.
+        * mathml/presentation/scripts-horizontal-alignment.html: Added.
+        * mathml/presentation/scripts-vertical-alignment-expected.html: Added.
+        * mathml/presentation/scripts-vertical-alignment.html: Added.
+        * mathml/scripts-addChild-expected.html: Added.
+        * mathml/scripts-addChild.html: Added.
+        * mathml/scripts-removeChild-expected.html: Added.
+        * mathml/scripts-removeChild.html: Added.
+        * platform/mac/accessibility/mathml-multiscript-expected.txt: Reference updated.
+
+
 2013-09-14  Eric Carlson  <eric.carlson@apple.com>
 
         MediaStream API: Update RTCDataChannel

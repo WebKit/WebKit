@@ -3434,7 +3434,7 @@ bool AccessibilityRenderObject::isMathSubscriptSuperscript() const
     if (!m_renderer || !m_renderer->isRenderMathMLBlock())
         return false;
     
-    return toRenderMathMLBlock(m_renderer)->isRenderMathMLSubSup();
+    return toRenderMathMLBlock(m_renderer)->isRenderMathMLScripts() && !isMathMultiscript();
 }
 
 bool AccessibilityRenderObject::isMathRow() const
@@ -3690,12 +3690,12 @@ AccessibilityObject* AccessibilityRenderObject::mathSuperscriptObject()
         return 0;
     
     AccessibilityChildrenVector children = this->children();
-    if (children.size() < 2)
-        return 0;
-    
-    if (node()->hasTagName(MathMLNames::msupTag))
+    unsigned count = children.size();
+
+    if (count >= 2 && node()->hasTagName(MathMLNames::msupTag))
         return children[1].get();
-    if (node()->hasTagName(MathMLNames::msubsupTag))
+
+    if (count >= 3 && node()->hasTagName(MathMLNames::msubsupTag))
         return children[2].get();
     
     return 0;

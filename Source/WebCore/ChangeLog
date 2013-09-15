@@ -1,3 +1,72 @@
+2013-09-15  Frédéric Wang  <fred.wang@free.fr>
+
+        Implement the mmultiscripts tag
+        https://bugs.webkit.org/show_bug.cgi?id=99618
+
+        Reviewed by Chris Fleizach.
+
+        Tests: mathml/invalid-scripts-crash.html
+               mathml/presentation/multiscripts-equivalence.html
+               mathml/presentation/multiscripts-noscripts.html
+               mathml/presentation/multiscripts-positions.html
+               mathml/presentation/scripts-base-alignment.html
+               mathml/presentation/scripts-horizontal-alignment.html
+               mathml/presentation/scripts-vertical-alignment.html
+               mathml/scripts-addChild.html
+               mathml/scripts-removeChild.html
+
+        This relies on the existing msub/msup/msubsup code to implement the mmultiscripts tag. This also improves dynamic addition/removal of children for these MathML elements and adds a specific style for invalid children, so that they render like an merror tag. Finally, this fixes a bad memory access in the Accessibility render object of msubsup.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isMathSubscriptSuperscript):
+        (WebCore::AccessibilityRenderObject::mathSuperscriptObject):
+        * css/mathml.css:
+        (mo, mrow, mfenced, mfrac, msub, msup, msubsup, mmultiscripts, mprescripts, none, munder, mover, munderover, msqrt, mroot):
+        (mover > :last-child, munderover > :last-child):
+        (msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + *):
+        (merror, msub > * + * + *, msup > * + * + *, msubsup > * + * + * + *, msub > mprescripts, msup > mprescripts, msubsup > mprescripts, msub > none, msup > none, msubsup > none, mmultiscripts > mprescripts ~ mprescripts, mmultiscripts > mprescripts ~ mprescripts ~ *):
+        * mathml/MathMLInlineContainerElement.cpp:
+        (WebCore::MathMLInlineContainerElement::createRenderer):
+        * mathml/mathtags.in:
+        * rendering/mathml/RenderMathMLBlock.h:
+        (WebCore::RenderMathMLBlock::isRenderMathMLScripts):
+        (WebCore::RenderMathMLBlock::isRenderMathMLScriptsWrapper):
+        * rendering/mathml/RenderMathMLScripts.cpp: Added.
+        (WebCore::isMPrescripts):
+        (WebCore::RenderMathMLScripts::RenderMathMLScripts):
+        (WebCore::RenderMathMLScripts::base):
+        (WebCore::RenderMathMLScripts::fixAnonymousStyleForSubSupPair):
+        (WebCore::RenderMathMLScripts::fixAnonymousStyles):
+        (WebCore::RenderMathMLScripts::addChildInternal):
+        (WebCore::RenderMathMLScripts::removeChildInternal):
+        (WebCore::RenderMathMLScripts::addChild):
+        (WebCore::RenderMathMLScripts::removeChild):
+        (WebCore::RenderMathMLScripts::styleDidChange):
+        (WebCore::RenderMathMLScripts::unembellishedOperator):
+        (WebCore::RenderMathMLScripts::layout):
+        (WebCore::RenderMathMLScripts::firstLineBoxBaseline):
+        (WebCore::RenderMathMLScriptsWrapper::createAnonymousWrapper):
+        (WebCore::RenderMathMLScriptsWrapper::addChildInternal):
+        (WebCore::RenderMathMLScriptsWrapper::addChild):
+        (WebCore::RenderMathMLScriptsWrapper::removeChildInternal):
+        (WebCore::RenderMathMLScriptsWrapper::removeChild):
+        * rendering/mathml/RenderMathMLScripts.h: Added.
+        (WebCore::RenderMathMLScriptsWrapper::RenderMathMLScriptsWrapper):
+        (WebCore::RenderMathMLScriptsWrapper::renderName):
+        (WebCore::RenderMathMLScriptsWrapper::isRenderMathMLScriptsWrapper):
+        (WebCore::toRenderMathMLScriptsWrapper):
+        (WebCore::RenderMathMLScripts::isRenderMathMLScripts):
+        (WebCore::RenderMathMLScripts::renderName):
+        (WebCore::toRenderMathMLScripts):
+        * rendering/mathml/RenderMathMLSubSup.cpp: Removed.
+        * rendering/mathml/RenderMathMLSubSup.h: Removed.
+
 2013-09-15  Andreas Kling  <akling@apple.com>
 
         Get rid of ref-counting on RenderWidget.

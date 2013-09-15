@@ -4567,8 +4567,8 @@ webcore_sources += \
 	Source/WebCore/rendering/mathml/RenderMathMLSpace.h \
 	Source/WebCore/rendering/mathml/RenderMathMLSquareRoot.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLSquareRoot.h \
-	Source/WebCore/rendering/mathml/RenderMathMLSubSup.cpp \
-	Source/WebCore/rendering/mathml/RenderMathMLSubSup.h \
+	Source/WebCore/rendering/mathml/RenderMathMLScripts.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLScripts.h \
 	Source/WebCore/rendering/mathml/RenderMathMLUnderOver.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLUnderOver.h \
 	Source/WebCore/rendering/shapes/PolygonShape.cpp \

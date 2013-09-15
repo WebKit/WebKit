@@ -54,7 +54,8 @@ public:
     virtual bool isRenderMathMLRoot() const { return false; }
     virtual bool isRenderMathMLSpace() const { return false; }
     virtual bool isRenderMathMLSquareRoot() const { return false; }
-    virtual bool isRenderMathMLSubSup() const { return false; }
+    virtual bool isRenderMathMLScripts() const { return false; }
+    virtual bool isRenderMathMLScriptsWrapper() const { return false; }
     virtual bool isRenderMathMLUnderOver() const { return false; }
     
     // MathML defines an "embellished operator" as roughly an <mo> that may have subscripts,

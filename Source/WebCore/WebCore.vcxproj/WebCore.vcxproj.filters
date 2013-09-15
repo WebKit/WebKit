@@ -2862,7 +2862,7 @@
     <ClCompile Include="..\rendering\mathml\RenderMathMLSquareRoot.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\mathml\RenderMathMLSubSup.cpp">
+    <ClCompile Include="..\rendering\mathml\RenderMathMLScripts.cpp">
       <Filter>rendering\mathml</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\mathml\RenderMathMLUnderOver.cpp">
@@ -9840,7 +9840,7 @@
     <ClInclude Include="..\rendering\mathml\RenderMathMLSquareRoot.h">
       <Filter>rendering\mathml</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\mathml\RenderMathMLSubSup.h">
+    <ClInclude Include="..\rendering\mathml\RenderMathMLScripts.h">
       <Filter>rendering\mathml</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\mathml\RenderMathMLUnderOver.h">
