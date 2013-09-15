@@ -1,3 +1,14 @@
+2013-09-15  Andreas Kling  <akling@apple.com>
+
+        Unreviewed, fix ridiculous bug in WeakPtr.
+
+        I made operator!() null check the pointer to the WeakReference. :|
+
+        Caught by plugins/destroy-on-setwindow.html on bots.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtr::operator!):
+
 2013-09-14  Andreas Kling  <akling@apple.com>
 
         Get rid of ref-counting on RenderWidget.
