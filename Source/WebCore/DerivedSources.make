@@ -766,7 +766,9 @@ CSSValueKeywords.h : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl $(PLATFORM_
 all : XMLViewerCSS.h
 
 XMLViewerCSS.h : xml/XMLViewer.css
-	perl $(WebCore)/inspector/xxd.pl XMLViewer_css $(WebCore)/xml/XMLViewer.css XMLViewerCSS.h
+	python "$(WebCore)/inspector/Scripts/cssmin.py" <"$(WebCore)/xml/XMLViewer.css" > ./XMLViewer.min.css
+	perl $(WebCore)/inspector/xxd.pl XMLViewer_css ./XMLViewer.min.css XMLViewerCSS.h
+	rm -f ./XMLViewer.min.css
 
 # --------
 
@@ -775,7 +777,9 @@ XMLViewerCSS.h : xml/XMLViewer.css
 all : XMLViewerJS.h
 
 XMLViewerJS.h : xml/XMLViewer.js
-	perl $(WebCore)/inspector/xxd.pl XMLViewer_js $(WebCore)/xml/XMLViewer.js XMLViewerJS.h
+	python "$(WebCore)/inspector/Scripts/jsmin.py" <"$(WebCore)/xml/XMLViewer.js" > ./XMLViewer.min.js
+	perl $(WebCore)/inspector/xxd.pl XMLViewer_js ./XMLViewer.min.js XMLViewerJS.h
+	rm -f ./XMLViewer.min.js
 
 # --------
 

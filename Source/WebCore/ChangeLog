@@ -1,3 +1,17 @@
+2013-09-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        XMLViewer_js and XMLViewer_css should be minified
+        https://bugs.webkit.org/show_bug.cgi?id=121334
+
+        Reviewed by Timothy Hatcher.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * xml/XMLViewer.css:
+        * xml/XMLViewer.js:
+
 2013-09-14  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] remove MediaStream.label

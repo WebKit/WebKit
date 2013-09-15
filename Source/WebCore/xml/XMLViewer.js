@@ -386,8 +386,7 @@ function drawArrows()
 
 function expandFunction(sectionId)
 {
-    return function()
-    {
+    return function() {
         document.querySelector('#' + sectionId + ' > .expanded').className = 'expanded';
         document.querySelector('#' + sectionId + ' > .collapsed').className = 'collapsed hidden';
     };
@@ -395,8 +394,7 @@ function expandFunction(sectionId)
 
 function collapseFunction(sectionId)
 {
-    return function()
-    {
+    return function() {
         document.querySelector('#' + sectionId + ' > .expanded').className = 'expanded hidden';
         document.querySelector('#' + sectionId + ' > .collapsed').className = 'collapsed';
     };
@@ -419,7 +417,6 @@ function initButtons()
         expandButton.onclick = expandFunction(sectionId);
         expandButton.onmousedown = handleButtonMouseDown;
     }
-
 }
 
 function handleButtonMouseDown(e)

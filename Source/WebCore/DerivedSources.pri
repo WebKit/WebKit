@@ -935,9 +935,9 @@ enable?(XSLT) {
     xmlviewercss.output = XMLViewerCSS.h
     xmlviewercss.input = XMLVIEWER_CSS
     xmlviewercss.script = $$PWD/inspector/xxd.pl
-    xmlviewercss.commands = perl $$xmlviewercss.script XMLViewer_css $$XMLVIEWER_CSS ${QMAKE_FILE_OUT}
-    xmlviewercss.clean = ${QMAKE_FILE_OUT}
-    xmlviewercss.depends = $$PWD/inspector/xxd.pl
+    xmlviewercss.commands = python $$PWD/inspector/Scripts/cssmin.py <$$XMLVIEWER_CSS > ${QMAKE_FUNC_FILE_OUT_PATH}/XMLViewer.min.css && perl $$xmlviewercss.script XMLViewer_css ${QMAKE_FUNC_FILE_OUT_PATH}/XMLViewer.min.css ${QMAKE_FILE_OUT}
+    xmlviewercss.clean = ${QMAKE_FILE_OUT} ${QMAKE_FUNC_FILE_OUT_PATH}/XMLViewer.min.css
+    xmlviewercss.depends = $$PWD/inspector/xxd.pl $$PWD/inspector/Scripts/cssmin.py
     xmlviewercss.add_output_to_sources = false
     GENERATORS += xmlviewercss
 
@@ -945,9 +945,9 @@ enable?(XSLT) {
     xmlviewerjs.output = XMLViewerJS.h
     xmlviewerjs.input = XMLVIEWER_JS
     xmlviewerjs.script = $$PWD/inspector/xxd.pl
-    xmlviewerjs.commands = perl $$xmlviewerjs.script XMLViewer_js $$XMLVIEWER_JS ${QMAKE_FILE_OUT}
-    xmlviewerjs.clean = ${QMAKE_FILE_OUT}
-    xmlviewerjs.depends = $$PWD/inspector/xxd.pl
+    xmlviewerjs.commands = python $$PWD/inspector/Scripts/jsmin.py <$$XMLVIEWER_JS > ${QMAKE_FUNC_FILE_OUT_PATH}/XMLViewer.min.js && perl $$xmlviewerjs.script XMLViewer_js ${QMAKE_FUNC_FILE_OUT_PATH}/XMLViewer.min.js ${QMAKE_FILE_OUT}
+    xmlviewerjs.clean = ${QMAKE_FILE_OUT} ${QMAKE_FUNC_FILE_OUT_PATH}/XMLViewer.min.js
+    xmlviewerjs.depends = $$PWD/inspector/xxd.pl $$PWD/inspector/Scripts/jsmin.py
     xmlviewerjs.add_output_to_sources = false
     GENERATORS += xmlviewerjs
 }

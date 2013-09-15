@@ -240,11 +240,13 @@ DerivedSources/WebCore/CSSValueKeywords.h: $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCo
 
 # XML Viewer CSS
 DerivedSources/WebCore/XMLViewerCSS.h: $(WebCore)/xml/XMLViewer.css
-	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl XMLViewer_css $(WebCore)/xml/XMLViewer.css $(GENSOURCES_WEBCORE)/XMLViewerCSS.h
+	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/Scripts/cssmin.py <$(WebCore)/xml/XMLViewer.css > $(GENSOURCES_WEBCORE)/XMLViewer.min.css
+	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl XMLViewer_css $(GENSOURCES_WEBCORE)/XMLViewer.min.css $(GENSOURCES_WEBCORE)/XMLViewerCSS.h
 
 # XML Viewer JS
 DerivedSources/WebCore/XMLViewerJS.h: $(WebCore)/xml/XMLViewer.js
-	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl XMLViewer_js $(WebCore)/xml/XMLViewer.js $(GENSOURCES_WEBCORE)/XMLViewerJS.h
+	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/Scripts/jsmin.py <$(WebCore)/xml/XMLViewer.js > $(GENSOURCES_WEBCORE)/XMLViewer.min.js
+	$(AM_V_GEN)$(PERL) $(WebCore)/inspector/xxd.pl XMLViewer_js $(GENSOURCES_WEBCORE)/XMLViewer.min.js $(GENSOURCES_WEBCORE)/XMLViewerJS.h
 
 # HTML entity names
 DerivedSources/WebCore/HTMLEntityTable.cpp: $(WebCore)/html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table
