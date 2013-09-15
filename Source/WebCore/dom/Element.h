@@ -66,7 +66,7 @@ enum SpellcheckAttributeState {
 
 class Element : public ContainerNode {
 public:
-    static PassRefPtr<Element> create(const QualifiedName&, Document*);
+    static PassRefPtr<Element> create(const QualifiedName&, Document&);
     virtual ~Element();
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
@@ -551,8 +551,8 @@ public:
     void clearHoverAndActiveStatusBeforeDetachingRenderer();
 
 protected:
-    Element(const QualifiedName& tagName, Document* document, ConstructionType type)
-        : ContainerNode(document, type)
+    Element(const QualifiedName& tagName, Document& document, ConstructionType type)
+        : ContainerNode(&document, type)
         , m_tagName(tagName)
     {
     }

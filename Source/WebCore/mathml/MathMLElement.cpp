@@ -39,12 +39,12 @@ namespace WebCore {
     
 using namespace MathMLNames;
     
-MathMLElement::MathMLElement(const QualifiedName& tagName, Document* document)
-    : StyledElement(tagName, *document, CreateStyledElement)
+MathMLElement::MathMLElement(const QualifiedName& tagName, Document& document)
+    : StyledElement(tagName, document, CreateStyledElement)
 {
 }
     
-PassRefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new MathMLElement(tagName, document));
 }

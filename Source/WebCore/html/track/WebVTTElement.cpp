@@ -69,7 +69,7 @@ static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
 }
 
 WebVTTElement::WebVTTElement(WebVTTNodeType nodeType, Document& document)
-    : Element(nodeTypeToTagName(nodeType), &document, CreateElement)
+    : Element(nodeTypeToTagName(nodeType), document, CreateElement)
     , m_isPastNode(0)
     , m_webVTTNodeType(nodeType)
 {

@@ -35,13 +35,13 @@ namespace WebCore {
 
 class MathMLElement : public StyledElement {
 public:
-    static PassRefPtr<MathMLElement> create(const QualifiedName& tagName, Document*);
+    static PassRefPtr<MathMLElement> create(const QualifiedName& tagName, Document&);
 
     int colSpan() const;
     int rowSpan() const;
 
 protected:
-    MathMLElement(const QualifiedName& tagName, Document*);
+    MathMLElement(const QualifiedName& tagName, Document&);
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 

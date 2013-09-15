@@ -55,7 +55,7 @@ String PseudoElement::pseudoElementNameForEvents(PseudoId pseudoId)
 }
 
 PseudoElement::PseudoElement(Element* host, PseudoId pseudoId)
-    : Element(pseudoElementTagName(), &host->document(), CreatePseudoElement)
+    : Element(pseudoElementTagName(), host->document(), CreatePseudoElement)
     , m_hostElement(host)
     , m_pseudoId(pseudoId)
 {

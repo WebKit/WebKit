@@ -34,10 +34,10 @@ namespace WebCore {
 
 class MathMLMathElement : public MathMLInlineContainerElement {
 public:
-    static PassRefPtr<MathMLMathElement> create(const QualifiedName& tagName, Document*);
+    static PassRefPtr<MathMLMathElement> create(const QualifiedName& tagName, Document&);
 
 private:
-    MathMLMathElement(const QualifiedName& tagName, Document*);
+    MathMLMathElement(const QualifiedName& tagName, Document&);
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

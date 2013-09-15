@@ -154,7 +154,7 @@ static Attr* findAttrNodeInList(AttrNodeList& attrNodeList, const QualifiedName&
     return 0;
 }
 
-PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new Element(tagName, document, CreateElement));
 }

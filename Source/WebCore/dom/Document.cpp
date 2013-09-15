@@ -1132,7 +1132,7 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& name, bool crea
     if (element)
         m_sawElementsInKnownNamespaces = true;
     else
-        element = Element::create(name, &document());
+        element = Element::create(name, document());
 
     // <image> uses imgTag so we need a special rule.
     ASSERT((name.matches(imageTag) && element->tagQName().matches(imgTag) && element->tagQName().prefix() == name.prefix()) || name == element->tagQName());

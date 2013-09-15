@@ -44,12 +44,12 @@ namespace WebCore {
     
 using namespace MathMLNames;
 
-MathMLInlineContainerElement::MathMLInlineContainerElement(const QualifiedName& tagName, Document* document)
+MathMLInlineContainerElement::MathMLInlineContainerElement(const QualifiedName& tagName, Document& document)
     : MathMLElement(tagName, document)
 {
 }
 
-PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new MathMLInlineContainerElement(tagName, document));
 }

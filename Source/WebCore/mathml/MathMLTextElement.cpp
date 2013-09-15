@@ -38,12 +38,12 @@ namespace WebCore {
     
 using namespace MathMLNames;
 
-inline MathMLTextElement::MathMLTextElement(const QualifiedName& tagName, Document* document)
+inline MathMLTextElement::MathMLTextElement(const QualifiedName& tagName, Document& document)
     : MathMLElement(tagName, document)
 {
 }
 
-PassRefPtr<MathMLTextElement> MathMLTextElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<MathMLTextElement> MathMLTextElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new MathMLTextElement(tagName, document));
 }
