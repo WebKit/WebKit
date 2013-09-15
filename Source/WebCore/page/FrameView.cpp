@@ -127,6 +127,9 @@ double FrameView::s_maxDeferredRepaintDelayDuringLoading = 0;
 double FrameView::s_deferredRepaintDelayIncrementDuringLoading = 0;
 #endif
 
+// The maximum number of updateEmbeddedObjects iterations that should be done before returning.
+static const unsigned maxUpdateEmbeddedObjectsIterations = 2;
+
 static RenderLayer::UpdateLayerPositionsFlags updateLayerPositionFlags(RenderLayer* layer, bool isRelayoutingSubtree, bool didFullRepaint)
 {
     RenderLayer::UpdateLayerPositionsFlags flags = RenderLayer::defaultFlags;
@@ -2692,10 +2695,10 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
     embeddedObject.updateWidgetPosition();
 }
 
-void FrameView::updateEmbeddedObjects()
+bool FrameView::updateEmbeddedObjects()
 {
     if (m_nestedLayoutCount > 1 || !m_embeddedObjectsToUpdate || m_embeddedObjectsToUpdate->isEmpty())
-        return;
+        return true;
 
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
@@ -2709,6 +2712,8 @@ void FrameView::updateEmbeddedObjects()
             break;
         updateEmbeddedObject(*embeddedObject);
     }
+
+    return m_embeddedObjectsToUpdate->isEmpty();
 }
 
 void FrameView::flushAnyPendingPostLayoutTasks()
@@ -2769,7 +2774,10 @@ void FrameView::performPostLayoutTasks()
     // is called through the post layout timer.
     Ref<FrameView> protect(*this);
 
-    updateEmbeddedObjects();
+    for (unsigned i = 0; i < maxUpdateEmbeddedObjectsIterations; i++) {
+        if (updateEmbeddedObjects())
+            break;
+    }
 
     if (page) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())

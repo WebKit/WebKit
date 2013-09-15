@@ -528,7 +528,7 @@ private:
     void updateDeferredRepaintDelayAfterRepaint();
     double adjustedDeferredRepaintDelay() const;
 
-    void updateEmbeddedObjects();
+    bool updateEmbeddedObjects();
     void updateEmbeddedObject(RenderEmbeddedObject&);
     void scrollToAnchor();
     void scrollPositionChanged();

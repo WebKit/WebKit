@@ -1,3 +1,13 @@
+2013-09-15  Andreas Kling  <akling@apple.com>
+
+        Restore two-pass mechanism for FrameView::updateEmbeddedObjects().
+        <https://webkit.org/b/121380>
+
+        Reviewed by Darin Adler.
+
+        Restore the code to make a second pass over the embedded objects needing
+        an update in case more objects were added to the set during the first pass.
+
 2013-09-15  Frédéric Wang  <fred.wang@free.fr>
 
         Implement the mmultiscripts tag
