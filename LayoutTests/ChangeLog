@@ -1,3 +1,11 @@
+2013-09-15  Zalan Bujtas  <zalan@apple.com>
+
+        Attempt to fix a local flakiness on Lion.
+
+        Rubber stamped by Andreas Kling.
+
+        * fast/history/history-back-while-pdf-in-pagecache.html:
+
 2013-09-15  Frédéric Wang  <fred.wang@free.fr>
 
         Implement the mmultiscripts tag
