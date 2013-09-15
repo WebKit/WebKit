@@ -1,3 +1,10 @@
+2013-09-15  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * GNUmakefile.list.am: remove FastAllocBase.h, this file disappeared
+        in r155251.
+
 2013-09-15  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Fix build without precompiled header after r155454.
