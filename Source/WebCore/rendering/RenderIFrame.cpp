@@ -39,9 +39,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
     
-RenderIFrame::RenderIFrame(HTMLIFrameElement* element)
+RenderIFrame::RenderIFrame(HTMLIFrameElement& element)
     : RenderFrameBase(element)
 {
+}
+
+HTMLIFrameElement& RenderIFrame::iframeElement() const
+{
+    return toHTMLIFrameElement(RenderFrameBase::frameOwnerElement());
 }
 
 bool RenderIFrame::shouldComputeSizeAsReplaced() const
@@ -81,7 +86,7 @@ LayoutUnit RenderIFrame::maxPreferredLogicalWidth() const
 
 bool RenderIFrame::isSeamless() const
 {
-    return frameOwnerElement() && frameOwnerElement()->hasTagName(iframeTag) && toHTMLIFrameElement(frameOwnerElement())->shouldDisplaySeamlessly();
+    return iframeElement().shouldDisplaySeamlessly();
 }
 
 bool RenderIFrame::requiresLayer() const
@@ -99,11 +104,7 @@ RenderView* RenderIFrame::contentRootRenderer() const
 
 bool RenderIFrame::flattenFrame() const
 {
-    if (!frameOwnerElement() || !frameOwnerElement()->hasTagName(iframeTag))
-        return false;
-
-    HTMLIFrameElement* iFrameElement = toHTMLIFrameElement(frameOwnerElement());
-    Frame* frame = iFrameElement->document().frame();
+    Frame* frame = iframeElement().document().frame();
 
     if (isSeamless())
         return false; // Seamless iframes are already "flat", don't try to flatten them.
@@ -115,7 +116,7 @@ bool RenderIFrame::flattenFrame() const
 
     if (style()->width().isFixed() && style()->height().isFixed()) {
         // Do not flatten iframes with scrolling="no".
-        if (iFrameElement->scrollingMode() == ScrollbarAlwaysOff)
+        if (iframeElement().scrollingMode() == ScrollbarAlwaysOff)
             return false;
         if (style()->width().value() <= 0 || style()->height().value() <= 0)
             return false;

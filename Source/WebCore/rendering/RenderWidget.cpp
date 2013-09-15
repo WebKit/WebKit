@@ -88,11 +88,11 @@ static void moveWidgetToParentSoon(Widget* child, FrameView* parent)
     WidgetHierarchyUpdatesSuspensionScope::scheduleWidgetToMove(child, parent);
 }
 
-RenderWidget::RenderWidget(HTMLFrameOwnerElement* element)
-    : RenderReplaced(element)
+RenderWidget::RenderWidget(HTMLFrameOwnerElement& element)
+    : RenderReplaced(&element)
     , m_weakPtrFactory(this)
     , m_widget(0)
-    , m_frameView(element->document().view())
+    , m_frameView(element.document().view())
 {
     setInline(false);
 }
@@ -123,9 +123,6 @@ static inline IntRect roundedIntRect(const LayoutRect& rect)
 
 bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
 {
-    if (!frameOwnerElement())
-        return false;
-
     IntRect clipRect = roundedIntRect(enclosingLayer()->childrenClipRect());
     IntRect newFrame = roundedIntRect(frame);
     bool clipChanged = m_clipRect != clipRect;
@@ -339,7 +336,7 @@ void RenderWidget::setOverlapTestResult(bool isOverlapped)
 
 void RenderWidget::updateWidgetPosition()
 {
-    if (!m_widget || !frameOwnerElement()) // Check the node in case destroy() has been called.
+    if (!m_widget)
         return;
 
     WeakPtr<RenderWidget> weakThis = createWeakPtr();
@@ -408,7 +405,7 @@ bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     bool inside = RenderReplaced::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, action);
 
     // Check to see if we are really over the widget itself (and not just in the border/padding area).
-    if ((inside || result.isRectBasedTest()) && !hadResult && result.innerNode() == frameOwnerElement())
+    if ((inside || result.isRectBasedTest()) && !hadResult && result.innerNode() == &frameOwnerElement())
         result.setIsOverWidget(contentBoxRect().contains(result.localPoint()));
     return inside;
 }
@@ -438,10 +435,7 @@ bool RenderWidget::requiresAcceleratedCompositing() const
     if (widget() && widget()->isPluginViewBase() && toPluginViewBase(widget())->platformLayer())
         return true;
 
-    if (!frameOwnerElement())
-        return false;
-
-    if (Document* contentDocument = frameOwnerElement()->contentDocument()) {
+    if (Document* contentDocument = frameOwnerElement().contentDocument()) {
         if (RenderView* view = contentDocument->renderView())
             return view->usesCompositing();
     }
@@ -459,7 +453,7 @@ bool RenderWidget::needsPreferredWidthsRecalculation() const
 
 RenderBox* RenderWidget::embeddedContentBox() const
 {
-    if (!frameOwnerElement() || !widget() || !widget()->isFrameView())
+    if (!widget() || !widget()->isFrameView())
         return 0;
     return toFrameView(widget())->embeddedContentBox();
 }

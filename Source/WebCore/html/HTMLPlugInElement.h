@@ -117,6 +117,12 @@ private:
     DisplayState m_displayState;
 };
 
+inline HTMLPlugInElement& toHTMLPlugInElement(Node& node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(node.isPluginElement());
+    return static_cast<HTMLPlugInElement&>(node);
+}
+
 inline HTMLPlugInElement* toHTMLPlugInElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isPluginElement());

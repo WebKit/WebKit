@@ -54,6 +54,8 @@ private:
     bool m_frameBorderSet;
 };
 
+ELEMENT_TYPE_CASTS(HTMLFrameElement)
+
 } // namespace WebCore
 
 #endif // HTMLFrameElement_h

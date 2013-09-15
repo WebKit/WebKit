@@ -584,10 +584,8 @@ Frame* Frame::frameForWidget(const Widget* widget)
 {
     ASSERT_ARG(widget, widget);
 
-    if (RenderWidget* renderer = RenderWidget::find(widget)) {
-        if (HTMLFrameOwnerElement* element = renderer->frameOwnerElement())
-            return element->document().frame();
-    }
+    if (RenderWidget* renderer = RenderWidget::find(widget))
+        return renderer->frameOwnerElement().document().frame();
 
     // Assume all widgets are either a FrameView or owned by a RenderWidget.
     // FIXME: That assumption is not right for scroll bars!

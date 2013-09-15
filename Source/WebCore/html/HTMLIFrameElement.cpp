@@ -97,7 +97,7 @@ bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)
 
 RenderObject* HTMLIFrameElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderIFrame(this);
+    return new (arena) RenderIFrame(*this);
 }
 
 bool HTMLIFrameElement::shouldDisplaySeamlessly() const

@@ -1402,8 +1402,7 @@ void FrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
     if (!m_embeddedObjectsToUpdate)
         m_embeddedObjectsToUpdate = adoptPtr(new ListHashSet<RenderEmbeddedObject*>);
 
-    ASSERT(embeddedObject.frameOwnerElement());
-    Element& element = *embeddedObject.frameOwnerElement();
+    HTMLFrameOwnerElement& element = embeddedObject.frameOwnerElement();
     if (isHTMLObjectElement(element) || isHTMLEmbedElement(element)) {
         // Tell the DOM element that it needs a widget update.
         HTMLPlugInImageElement& pluginElement = toHTMLPlugInImageElement(element);
@@ -2653,10 +2652,7 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
     if (embeddedObject.isPluginUnavailable())
         return;
 
-    // FIXME: RenderEmbeddedObject::frameOwnerElement() should return a reference.
-    ASSERT(embeddedObject.frameOwnerElement());
-
-    HTMLFrameOwnerElement& element = *embeddedObject.frameOwnerElement();
+    HTMLFrameOwnerElement& element = embeddedObject.frameOwnerElement();
 
     if (embeddedObject.isSnapshottedPlugIn()) {
         if (isHTMLObjectElement(element) || isHTMLEmbedElement(element)) {

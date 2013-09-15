@@ -100,7 +100,7 @@ static const Color& unavailablePluginBorderColor()
     return standard;
 }
 
-RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement* element)
+RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element)
     : RenderWidget(element)
     , m_hasFallbackContent(false)
     , m_isPluginUnavailable(false)
@@ -120,7 +120,7 @@ RenderEmbeddedObject::~RenderEmbeddedObject()
 
 RenderEmbeddedObject* RenderEmbeddedObject::createForApplet(HTMLAppletElement& applet)
 {
-    RenderEmbeddedObject* renderer = new (applet.document().renderArena()) RenderEmbeddedObject(&applet);
+    RenderEmbeddedObject* renderer = new (applet.document().renderArena()) RenderEmbeddedObject(applet);
     renderer->setInline(true);
     return renderer;
 }
@@ -212,21 +212,21 @@ void RenderEmbeddedObject::paintSnapshotImage(PaintInfo& paintInfo, const Layout
 
 void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!frameOwnerElement() || !frameOwnerElement()->isPluginElement())
+    if (!frameOwnerElement().isPluginElement())
         return;
 
-    HTMLPlugInElement* plugInElement = toHTMLPlugInElement(frameOwnerElement());
+    HTMLPlugInElement& plugInElement = toHTMLPlugInElement(frameOwnerElement());
 
-    if (plugInElement->displayState() > HTMLPlugInElement::DisplayingSnapshot) {
+    if (plugInElement.displayState() > HTMLPlugInElement::DisplayingSnapshot) {
         RenderWidget::paintContents(paintInfo, paintOffset);
-        if (!plugInElement->isRestartedPlugin())
+        if (!plugInElement.isRestartedPlugin())
             return;
     }
 
-    if (!plugInElement->isPlugInImageElement())
+    if (!plugInElement.isPlugInImageElement())
         return;
 
-    Image* snapshot = toHTMLPlugInImageElement(plugInElement)->snapshotImage();
+    Image* snapshot = toHTMLPlugInImageElement(plugInElement).snapshotImage();
     if (snapshot)
         paintSnapshotImage(paintInfo, paintOffset, snapshot);
 }
@@ -427,27 +427,27 @@ bool RenderEmbeddedObject::isReplacementObscured() const
     bool hit = false;
     location = LayoutPoint(x + width / 2, y + height / 2);
     hit = rootRenderView->hitTest(request, location, result);
-    if (!hit || result.innerNode() != frameOwnerElement())
+    if (!hit || result.innerNode() != &frameOwnerElement())
         return true;
     
     location = LayoutPoint(x, y);
     hit = rootRenderView->hitTest(request, location, result);
-    if (!hit || result.innerNode() != frameOwnerElement())
+    if (!hit || result.innerNode() != &frameOwnerElement())
         return true;
     
     location = LayoutPoint(x + width, y);
     hit = rootRenderView->hitTest(request, location, result);
-    if (!hit || result.innerNode() != frameOwnerElement())
+    if (!hit || result.innerNode() != &frameOwnerElement())
         return true;
     
     location = LayoutPoint(x + width, y + height);
     hit = rootRenderView->hitTest(request, location, result);
-    if (!hit || result.innerNode() != frameOwnerElement())
+    if (!hit || result.innerNode() != &frameOwnerElement())
         return true;
     
     location = LayoutPoint(x, y + height);
     hit = rootRenderView->hitTest(request, location, result);
-    if (!hit || result.innerNode() != frameOwnerElement())
+    if (!hit || result.innerNode() != &frameOwnerElement())
         return true;
 
     return false;
@@ -481,11 +481,11 @@ void RenderEmbeddedObject::layout()
     LayoutSize newSize = contentBoxRect().size();
 
     if (!wasMissingWidget && newSize.width() >= oldSize.width() && newSize.height() >= oldSize.height()) {
-        HTMLFrameOwnerElement* element = frameOwnerElement();
-        if (element && element->isPluginElement() && toHTMLPlugInElement(element)->isPlugInImageElement()) {
-            HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(element);
-            if (plugInImageElement->displayState() > HTMLPlugInElement::DisplayingSnapshot && plugInImageElement->snapshotDecision() == HTMLPlugInImageElement::MaySnapshotWhenResized) {
-                plugInImageElement->setNeedsCheckForSizeChange();
+        HTMLFrameOwnerElement& element = frameOwnerElement();
+        if (element.isPluginElement() && toHTMLPlugInElement(element).isPlugInImageElement()) {
+            HTMLPlugInImageElement& plugInImageElement = toHTMLPlugInImageElement(element);
+            if (plugInImageElement.displayState() > HTMLPlugInElement::DisplayingSnapshot && plugInImageElement.snapshotDecision() == HTMLPlugInImageElement::MaySnapshotWhenResized) {
+                plugInImageElement.setNeedsCheckForSizeChange();
                 view().frameView().addEmbeddedObjectToUpdate(*this);
             }
         }
@@ -526,14 +526,14 @@ void RenderEmbeddedObject::layout()
 void RenderEmbeddedObject::viewCleared()
 {
     // This is required for <object> elements whose contents are rendered by WebCore (e.g. src="foo.html").
-    if (frameOwnerElement() && widget() && widget()->isFrameView()) {
+    if (widget() && widget()->isFrameView()) {
         FrameView* view = toFrameView(widget());
         int marginWidth = -1;
         int marginHeight = -1;
-        if (frameOwnerElement()->hasTagName(iframeTag)) {
-            HTMLIFrameElement* frame = toHTMLIFrameElement(frameOwnerElement());
-            marginWidth = frame->marginWidth();
-            marginHeight = frame->marginHeight();
+        if (isHTMLIFrameElement(frameOwnerElement())) {
+            HTMLIFrameElement& iframe = toHTMLIFrameElement(frameOwnerElement());
+            marginWidth = iframe.marginWidth();
+            marginHeight = iframe.marginHeight();
         }
         if (marginWidth != -1)
             view->setMarginWidth(marginWidth);
@@ -612,12 +612,12 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
         return;
 
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
-    HTMLPlugInElement* element = toHTMLPlugInElement(frameOwnerElement());
+    HTMLPlugInElement& element = toHTMLPlugInElement(frameOwnerElement());
     if (event->type() == eventNames().mousedownEvent && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         m_mouseDownWasInUnavailablePluginIndicator = isInUnavailablePluginIndicator(mouseEvent);
         if (m_mouseDownWasInUnavailablePluginIndicator) {
-            frame().eventHandler().setCapturingMouseEventsNode(element);
-            element->setIsCapturingMouseEvents(true);
+            frame().eventHandler().setCapturingMouseEventsNode(&element);
+            element.setIsCapturingMouseEvents(true);
             setUnavailablePluginIndicatorIsPressed(true);
         }
         event->setDefaultHandled();
@@ -625,12 +625,12 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
     if (event->type() == eventNames().mouseupEvent && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         if (m_unavailablePluginIndicatorIsPressed) {
             frame().eventHandler().setCapturingMouseEventsNode(0);
-            element->setIsCapturingMouseEvents(false);
+            element.setIsCapturingMouseEvents(false);
             setUnavailablePluginIndicatorIsPressed(false);
         }
         if (m_mouseDownWasInUnavailablePluginIndicator && isInUnavailablePluginIndicator(mouseEvent)) {
             if (Page* page = document().page())
-                page->chrome().client().unavailablePluginButtonClicked(element, m_pluginUnavailabilityReason);
+                page->chrome().client().unavailablePluginButtonClicked(&element, m_pluginUnavailabilityReason);
         }
         m_mouseDownWasInUnavailablePluginIndicator = false;
         event->setDefaultHandled();

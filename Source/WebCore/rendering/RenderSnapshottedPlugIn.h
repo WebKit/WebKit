@@ -36,15 +36,17 @@ class HTMLPlugInImageElement;
 
 class RenderSnapshottedPlugIn FINAL : public RenderEmbeddedObject {
 public:
-    explicit RenderSnapshottedPlugIn(HTMLPlugInImageElement*);
+    explicit RenderSnapshottedPlugIn(HTMLPlugInImageElement&);
     virtual ~RenderSnapshottedPlugIn();
+
+    HTMLPlugInImageElement& plugInImageElement() const;
 
     void updateSnapshot(PassRefPtr<Image>);
 
     void handleEvent(Event*);
 
 private:
-    HTMLPlugInImageElement* plugInImageElement() const;
+    void frameOwnerElement() const WTF_DELETED_FUNCTION;
     virtual const char* renderName() const { return "RenderSnapshottedPlugIn"; }
 
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const OVERRIDE FINAL;

@@ -56,7 +56,7 @@ bool HTMLFrameElement::rendererIsNeeded(const RenderStyle&)
 
 RenderObject* HTMLFrameElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderFrame(this);
+    return new (arena) RenderFrame(*this);
 }
 
 bool HTMLFrameElement::noResize() const

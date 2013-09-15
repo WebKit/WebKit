@@ -204,7 +204,7 @@ RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena* arena, RenderS
     }
 
     if (displayState() == DisplayingSnapshot) {
-        RenderSnapshottedPlugIn* renderSnapshottedPlugIn = new (arena) RenderSnapshottedPlugIn(this);
+        RenderSnapshottedPlugIn* renderSnapshottedPlugIn = new (arena) RenderSnapshottedPlugIn(*this);
         renderSnapshottedPlugIn->updateSnapshot(m_snapshotImage);
         return renderSnapshottedPlugIn;
     }
@@ -221,7 +221,7 @@ RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena* arena, RenderS
         return image;
     }
 
-    return new (arena) RenderEmbeddedObject(this);
+    return new (arena) RenderEmbeddedObject(*this);
 }
 
 bool HTMLPlugInImageElement::willRecalcStyle(Style::Change)

@@ -1,3 +1,21 @@
+2013-09-15  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderWidgets are never anonymous.
+        <https://webkit.org/b/121385>
+
+        Reviewed by Anders Carlsson.
+
+        Codify the following:
+
+        - RenderWidget always has an HTMLFrameOwnerElement.
+        - RenderEmbeddedObject always has an HTMLFrameOwnerElement.
+        - RenderSnapshottedPlugIn always has an HTMLPlugInImageElement.
+        - RenderFrame always has an HTMLFrameElement.
+        - RenderIFrame always has an HTMLIFrameElement.
+
+        None of these renderers are ever anonymous, so delete element() and provide
+        strongly typed reference getters instead.
+
 2013-09-14  Darin Adler  <darin@apple.com>
 
         Use FINAL instead of virtualChildren trick in render tree classes

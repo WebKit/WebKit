@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement* element)
+RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement& element)
     : RenderEmbeddedObject(element)
     , m_snapshotResource(RenderImageResource::create())
     , m_isPotentialMouseActivation(false)
@@ -60,9 +60,9 @@ RenderSnapshottedPlugIn::~RenderSnapshottedPlugIn()
     m_snapshotResource->shutdown();
 }
 
-HTMLPlugInImageElement* RenderSnapshottedPlugIn::plugInImageElement() const
+HTMLPlugInImageElement& RenderSnapshottedPlugIn::plugInImageElement() const
 {
-    return toHTMLPlugInImageElement(frameOwnerElement());
+    return toHTMLPlugInImageElement(RenderEmbeddedObject::frameOwnerElement());
 }
 
 void RenderSnapshottedPlugIn::layout()
@@ -91,7 +91,7 @@ void RenderSnapshottedPlugIn::updateSnapshot(PassRefPtr<Image> image)
 
 void RenderSnapshottedPlugIn::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.phase == PaintPhaseForeground && plugInImageElement()->displayState() < HTMLPlugInElement::Restarting) {
+    if (paintInfo.phase == PaintPhaseForeground && plugInImageElement().displayState() < HTMLPlugInElement::Restarting) {
         paintSnapshot(paintInfo, paintOffset);
     }
 
@@ -148,7 +148,7 @@ void RenderSnapshottedPlugIn::paintSnapshot(PaintInfo& paintInfo, const LayoutPo
 
 CursorDirective RenderSnapshottedPlugIn::getCursor(const LayoutPoint& point, Cursor& overrideCursor) const
 {
-    if (plugInImageElement()->displayState() < HTMLPlugInElement::Restarting) {
+    if (plugInImageElement().displayState() < HTMLPlugInElement::Restarting) {
         overrideCursor = handCursor();
         return SetCursor;
     }
@@ -178,8 +178,8 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
 
     if (event->type() == eventNames().clickEvent || (m_isPotentialMouseActivation && event->type() == eventNames().mouseupEvent)) {
         m_isPotentialMouseActivation = false;
-        bool clickWasOnOverlay = plugInImageElement()->partOfSnapshotOverlay(event->target()->toNode());
-        plugInImageElement()->userDidClickSnapshot(mouseEvent, !clickWasOnOverlay);
+        bool clickWasOnOverlay = plugInImageElement().partOfSnapshotOverlay(event->target()->toNode());
+        plugInImageElement().userDidClickSnapshot(mouseEvent, !clickWasOnOverlay);
         event->setDefaultHandled();
     } else if (event->type() == eventNames().mousedownEvent) {
         m_isPotentialMouseActivation = true;

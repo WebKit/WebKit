@@ -35,7 +35,7 @@ class HTMLFrameElementBase;
 // Base class for RenderFrame and RenderIFrame
 class RenderFrameBase : public RenderWidget {
 protected:
-    explicit RenderFrameBase(HTMLFrameElementBase*);
+    explicit RenderFrameBase(HTMLFrameElementBase&);
 
 public:
     void layoutWithFlattening(bool fixedWidth, bool fixedHeight);

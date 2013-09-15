@@ -34,12 +34,16 @@ class RenderView;
 
 class RenderIFrame FINAL : public RenderFrameBase {
 public:
-    explicit RenderIFrame(HTMLIFrameElement*);
+    explicit RenderIFrame(HTMLIFrameElement&);
+
+    HTMLIFrameElement& iframeElement() const;
 
     bool flattenFrame() const;
     bool isSeamless() const;
 
 private:
+    void frameOwnerElement() const WTF_DELETED_FUNCTION;
+
     virtual LayoutUnit minPreferredLogicalWidth() const OVERRIDE;
     virtual LayoutUnit maxPreferredLogicalWidth() const OVERRIDE;
 

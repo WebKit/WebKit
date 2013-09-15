@@ -1408,7 +1408,7 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
 
 RenderLayerCompositor* RenderLayerCompositor::frameContentsCompositor(RenderWidget* renderer)
 {
-    if (Document* contentDocument = renderer->frameOwnerElement()->contentDocument()) {
+    if (Document* contentDocument = renderer->frameOwnerElement().contentDocument()) {
         if (RenderView* view = contentDocument->renderView())
             return &view->compositor();
     }

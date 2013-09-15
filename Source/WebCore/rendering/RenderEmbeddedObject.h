@@ -35,7 +35,7 @@ class TextRun;
 // For example, <embed src="foo.html"> does not invoke a plug-in.
 class RenderEmbeddedObject : public RenderWidget {
 public:
-    RenderEmbeddedObject(HTMLFrameOwnerElement*);
+    explicit RenderEmbeddedObject(HTMLFrameOwnerElement&);
     virtual ~RenderEmbeddedObject();
 
     static RenderEmbeddedObject* createForApplet(HTMLAppletElement&);
