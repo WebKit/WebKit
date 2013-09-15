@@ -1,3 +1,12 @@
+2013-09-15  Andreas Kling  <akling@apple.com>
+
+        Get rid of ref-counting on RenderArena.
+        <https://webkit.org/b/121379>
+
+        Reviewed by Darin Adler.
+
+        This was used to guard the arena during ref-counted RenderWidget teardown.
+
 2013-09-15  Darin Adler  <darin@apple.com>
 
         Fix Qt build.

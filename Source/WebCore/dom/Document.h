@@ -1377,7 +1377,7 @@ private:
     bool m_titleSetExplicitly;
     RefPtr<Element> m_titleElement;
 
-    RefPtr<RenderArena> m_renderArena;
+    OwnPtr<RenderArena> m_renderArena;
 
     OwnPtr<AXObjectCache> m_axObjectCache;
     const OwnPtr<DocumentMarkerController> m_markers;

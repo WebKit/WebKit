@@ -1998,7 +1998,7 @@ void Document::createRenderTree()
     ASSERT(!m_axObjectCache || this != topDocument());
 
     if (!m_renderArena)
-        m_renderArena = RenderArena::create();
+        m_renderArena = createOwned<RenderArena>();
     
     setRenderView(new (m_renderArena.get()) RenderView(this));
 #if USE(ACCELERATED_COMPOSITING)

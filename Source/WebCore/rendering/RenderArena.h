@@ -38,16 +38,15 @@
 #include "Arena.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 static const size_t gMaxRecycledSize = 1024;
 
-class RenderArena : public RefCounted<RenderArena> {
+class RenderArena {
+    WTF_MAKE_NONCOPYABLE(RenderArena);
 public:
-    static PassRefPtr<RenderArena> create() { return adoptRef(new RenderArena); }
+    explicit RenderArena(unsigned arenaSize = 8192);
     ~RenderArena();
 
     // Memory management functions
@@ -58,8 +57,6 @@ public:
     size_t totalRenderArenaAllocatedBytes() const { return m_totalAllocated; }
 
 private:
-    RenderArena(unsigned arenaSize = 8192);
-    
     // Underlying arena pool
     ArenaPool m_pool;
 
