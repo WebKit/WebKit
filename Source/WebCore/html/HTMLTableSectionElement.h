@@ -32,7 +32,7 @@ namespace WebCore {
 
 class HTMLTableSectionElement FINAL : public HTMLTablePartElement {
 public:
-    static PassRefPtr<HTMLTableSectionElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLTableSectionElement> create(const QualifiedName&, Document&);
 
     PassRefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
@@ -54,7 +54,7 @@ public:
     PassRefPtr<HTMLCollection> rows();
 
 private:
-    HTMLTableSectionElement(const QualifiedName& tagName, Document*);
+    HTMLTableSectionElement(const QualifiedName& tagName, Document&);
 
     virtual const StylePropertySet* additionalPresentationAttributeStyle() OVERRIDE;
 };

@@ -52,8 +52,8 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace std;
 
-HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document* doc, HTMLFormElement* form)
-    : HTMLFormControlElementWithState(tagName, doc, form)
+HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+    : HTMLFormControlElementWithState(tagName, document, form)
     , m_lastChangeWasUserEdit(false)
     , m_cachedSelectionStart(-1)
     , m_cachedSelectionEnd(-1)

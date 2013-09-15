@@ -34,7 +34,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLAudioElement::HTMLAudioElement(const QualifiedName& tagName, Document& document, bool createdByParser)
-    : HTMLMediaElement(tagName, &document, createdByParser)
+    : HTMLMediaElement(tagName, document, createdByParser)
 {
     ASSERT(hasTagName(audioTag));
 }

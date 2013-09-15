@@ -38,7 +38,7 @@ class HTMLOptionElement;
 
 class HTMLSelectElement : public HTMLFormControlElementWithState, public TypeAheadDataSource {
 public:
-    static PassRefPtr<HTMLSelectElement> create(const QualifiedName&, Document*, HTMLFormElement*);
+    static PassRefPtr<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
     int selectedIndex() const;
     void setSelectedIndex(int);
@@ -106,7 +106,7 @@ public:
     void optionSelectionStateChanged(HTMLOptionElement*, bool optionIsSelected);
 
 protected:
-    HTMLSelectElement(const QualifiedName&, Document*, HTMLFormElement*);
+    HTMLSelectElement(const QualifiedName&, Document&, HTMLFormElement*);
 
 private:
     virtual const AtomicString& formControlType() const;

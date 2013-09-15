@@ -53,15 +53,15 @@ PassRefPtr<SummaryContentElement> SummaryContentElement::create(Document& docume
     return adoptRef(new SummaryContentElement(document));
 }
 
-PassRefPtr<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document& document)
 {
     RefPtr<HTMLSummaryElement> summary = adoptRef(new HTMLSummaryElement(tagName, document));
     summary->ensureUserAgentShadowRoot();
     return summary.release();
 }
 
-HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, &document)
 {
     ASSERT(hasTagName(summaryTag));
 }

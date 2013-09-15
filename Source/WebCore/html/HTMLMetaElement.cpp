@@ -31,13 +31,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLMetaElement::HTMLMetaElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+inline HTMLMetaElement::HTMLMetaElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, &document)
 {
     ASSERT(hasTagName(metaTag));
 }
 
-PassRefPtr<HTMLMetaElement> HTMLMetaElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLMetaElement> HTMLMetaElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLMetaElement(tagName, document));
 }

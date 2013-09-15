@@ -251,9 +251,9 @@ private:
 };
 #endif
 
-HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* document, bool createdByParser)
-    : HTMLElement(tagName, document)
-    , ActiveDOMObject(document)
+HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
+    : HTMLElement(tagName, &document)
+    , ActiveDOMObject(&document)
     , m_loadTimer(this, &HTMLMediaElement::loadTimerFired)
     , m_progressEventTimer(this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(this, &HTMLMediaElement::playbackProgressTimerFired)
@@ -331,20 +331,20 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     LOG(Media, "HTMLMediaElement::HTMLMediaElement");
     setHasCustomStyleResolveCallbacks();
 
-    document->registerForMediaVolumeCallbacks(this);
-    document->registerForPrivateBrowsingStateChangedCallbacks(this);
+    document.registerForMediaVolumeCallbacks(this);
+    document.registerForPrivateBrowsingStateChangedCallbacks(this);
 
-    if (document->settings() && document->settings()->mediaPlaybackRequiresUserGesture()) {
+    if (document.settings() && document.settings()->mediaPlaybackRequiresUserGesture()) {
         addBehaviorRestriction(RequireUserGestureForRateChangeRestriction);
         addBehaviorRestriction(RequireUserGestureForLoadRestriction);
     }
 
-    addElementToDocumentMap(this, document);
+    addElementToDocumentMap(this, &document);
 
 #if ENABLE(VIDEO_TRACK)
-    document->registerForCaptionPreferencesChangedCallbacks(this);
-    if (document->page())
-        m_captionDisplayMode = document->page()->group().captionPreferences()->captionDisplayMode();
+    document.registerForCaptionPreferencesChangedCallbacks(this);
+    if (document.page())
+        m_captionDisplayMode = document.page()->group().captionPreferences()->captionDisplayMode();
 #endif
 }
 
@@ -4647,7 +4647,7 @@ bool HTMLMediaElement::createMediaControls()
     if (hasMediaControls())
         return true;
 
-    RefPtr<MediaControls> mediaControls = MediaControls::create(&document());
+    RefPtr<MediaControls> mediaControls = MediaControls::create(document());
     if (!mediaControls)
         return false;
 

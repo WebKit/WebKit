@@ -36,7 +36,7 @@ namespace WebCore {
 
 inline SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* document, bool createdByParser)
     : SVGElement(tagName, document)
-    , m_styleSheetOwner(document, createdByParser)
+    , m_styleSheetOwner(*document, createdByParser)
     , m_svgLoadEventTimer(this, &SVGElement::svgLoadEventTimerFired)
 {
     ASSERT(hasTagName(SVGNames::styleTag));

@@ -111,7 +111,7 @@ const int defaultSize = 20;
 const int maxSavedResults = 256;
 
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
-    : HTMLTextFormControlElement(tagName, &document, form)
+    : HTMLTextFormControlElement(tagName, document, form)
     , m_size(defaultSize)
     , m_maxLength(maximumLength)
     , m_maxResults(-1)

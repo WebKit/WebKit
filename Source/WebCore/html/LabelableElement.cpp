@@ -31,8 +31,8 @@
 
 namespace WebCore {
 
-LabelableElement::LabelableElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+LabelableElement::LabelableElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, &document)
 {
 }
 

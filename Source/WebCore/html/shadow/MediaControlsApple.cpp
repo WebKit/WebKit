@@ -49,7 +49,7 @@ using namespace std;
 
 namespace WebCore {
 
-MediaControlsApple::MediaControlsApple(Document* document)
+MediaControlsApple::MediaControlsApple(Document& document)
     : MediaControls(document)
     , m_rewindButton(0)
     , m_returnToRealTimeButton(0)
@@ -68,14 +68,14 @@ MediaControlsApple::MediaControlsApple(Document* document)
 {
 }
 
-PassRefPtr<MediaControls> MediaControls::create(Document* document)
+PassRefPtr<MediaControls> MediaControls::create(Document& document)
 {
     return MediaControlsApple::createControls(document);
 }
 
-PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document* document)
+PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document& document)
 {
-    if (!document->page())
+    if (!document.page())
         return 0;
 
     RefPtr<MediaControlsApple> controls = adoptRef(new MediaControlsApple(document));
@@ -102,7 +102,7 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document* docu
     if (ec)
         return 0;
 
-    if (document->page()->theme()->usesMediaControlStatusDisplay()) {
+    if (document.page()->theme()->usesMediaControlStatusDisplay()) {
         RefPtr<MediaControlStatusDisplayElement> statusDisplay = MediaControlStatusDisplayElement::create(document);
         controls->m_statusDisplay = statusDisplay.get();
         panel->appendChild(statusDisplay.release(), ec, AttachLazily);
@@ -149,7 +149,7 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document* docu
     if (ec)
         return 0;
 
-    if (document->page()->theme()->supportsClosedCaptioning()) {
+    if (document.page()->theme()->supportsClosedCaptioning()) {
         RefPtr<MediaControlClosedCaptionsContainerElement> closedCaptionsContainer = MediaControlClosedCaptionsContainerElement::create(document);
 
         RefPtr<MediaControlClosedCaptionsTrackListElement> closedCaptionsTrackList = MediaControlClosedCaptionsTrackListElement::create(document, controls.get());
@@ -176,9 +176,9 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document* docu
     panel->appendChild(fullScreenButton.release(), ec, AttachLazily);
 
     // The mute button and the slider element should be in the same div.
-    RefPtr<HTMLDivElement> panelVolumeControlContainer = HTMLDivElement::create(*document);
+    RefPtr<HTMLDivElement> panelVolumeControlContainer = HTMLDivElement::create(document);
 
-    if (document->page()->theme()->usesMediaControlVolumeSlider()) {
+    if (document.page()->theme()->usesMediaControlVolumeSlider()) {
         RefPtr<MediaControlVolumeSliderContainerElement> volumeSliderContainer = MediaControlVolumeSliderContainerElement::create(document);
 
         RefPtr<MediaControlPanelVolumeSliderElement> slider = MediaControlPanelVolumeSliderElement::create(document);

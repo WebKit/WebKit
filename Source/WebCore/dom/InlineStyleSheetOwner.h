@@ -32,7 +32,7 @@ class Element;
 
 class InlineStyleSheetOwner {
 public:
-    InlineStyleSheetOwner(Document*, bool createdByParser);
+    InlineStyleSheetOwner(Document&, bool createdByParser);
     ~InlineStyleSheetOwner();
 
     void setContentType(const AtomicString& contentType) { m_contentType = contentType; }

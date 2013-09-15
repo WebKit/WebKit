@@ -60,7 +60,7 @@ private:
     MediaControlsGtk* m_mediaControls;
 };
 
-MediaControlsGtk::MediaControlsGtk(Document* document)
+MediaControlsGtk::MediaControlsGtk(Document& document)
     : MediaControls(document)
     , m_durationDisplay(0)
     , m_enclosure(0)
@@ -70,14 +70,14 @@ MediaControlsGtk::MediaControlsGtk(Document* document)
 {
 }
 
-PassRefPtr<MediaControls> MediaControls::create(Document* document)
+PassRefPtr<MediaControls> MediaControls::create(Document& document)
 {
     return MediaControlsGtk::createControls(document);
 }
 
-PassRefPtr<MediaControlsGtk> MediaControlsGtk::createControls(Document* document)
+PassRefPtr<MediaControlsGtk> MediaControlsGtk::createControls(Document& document)
 {
-    if (!document->page())
+    if (!document.page())
         return 0;
 
     RefPtr<MediaControlsGtk> controls = adoptRef(new MediaControlsGtk(document));
@@ -88,7 +88,7 @@ PassRefPtr<MediaControlsGtk> MediaControlsGtk::createControls(Document* document
     return 0;
 }
 
-bool MediaControlsGtk::initializeControls(Document* document)
+bool MediaControlsGtk::initializeControls(Document& document)
 {
     // Create an enclosing element for the panel so we can visually offset the controls correctly.
     RefPtr<MediaControlPanelEnclosureElement> enclosure = MediaControlPanelEnclosureElement::create(document);
@@ -120,7 +120,7 @@ bool MediaControlsGtk::initializeControls(Document* document)
     if (exceptionCode)
         return false;
 
-    if (document->page()->theme()->supportsClosedCaptioning()) {
+    if (document.page()->theme()->supportsClosedCaptioning()) {
         RefPtr<MediaControlClosedCaptionsContainerElement> closedCaptionsContainer = MediaControlClosedCaptionsContainerElement::create(document);
 
         RefPtr<MediaControlClosedCaptionsTrackListElement> closedCaptionsTrackList = MediaControlClosedCaptionsTrackListElement::create(document, this);
@@ -281,7 +281,7 @@ void MediaControlsGtk::createTextTrackDisplay()
     if (m_textDisplayContainer)
         return;
 
-    RefPtr<MediaControlTextTrackContainerElement> textDisplayContainer = MediaControlTextTrackContainerElement::create(&document());
+    RefPtr<MediaControlTextTrackContainerElement> textDisplayContainer = MediaControlTextTrackContainerElement::create(document());
     m_textDisplayContainer = textDisplayContainer.get();
 
     if (m_mediaController)

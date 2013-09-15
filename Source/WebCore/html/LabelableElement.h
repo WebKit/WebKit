@@ -44,7 +44,7 @@ public:
     virtual bool supportLabels() const { return false; }
 
 protected:
-    LabelableElement(const QualifiedName& tagName, Document*);
+    LabelableElement(const QualifiedName& tagName, Document&);
 
 private:
     virtual bool isLabelable() const OVERRIDE FINAL { return true; }

@@ -88,7 +88,7 @@ public:
     void setTextAsOfLastFormControlChangeEvent(const String& text) { m_textAsOfLastFormControlChangeEvent = text; }
 
 protected:
-    HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
+    HTMLTextFormControlElement(const QualifiedName&, Document&, HTMLFormElement*);
     bool isPlaceholderEmpty() const;
     virtual void updatePlaceholderText() = 0;
 

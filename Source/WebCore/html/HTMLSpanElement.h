@@ -32,10 +32,10 @@ namespace WebCore {
 
 class HTMLSpanElement : public HTMLElement {
 public:
-    static PassRefPtr<HTMLSpanElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLSpanElement> create(const QualifiedName&, Document&);
 
 private:
-    HTMLSpanElement(const QualifiedName&, Document*);
+    HTMLSpanElement(const QualifiedName&, Document&);
 };
 
 }

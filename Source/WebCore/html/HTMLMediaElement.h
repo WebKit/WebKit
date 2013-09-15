@@ -381,7 +381,7 @@ public:
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
 
 protected:
-    HTMLMediaElement(const QualifiedName&, Document*, bool);
+    HTMLMediaElement(const QualifiedName&, Document&, bool);
     virtual ~HTMLMediaElement();
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

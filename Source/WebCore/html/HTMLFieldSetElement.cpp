@@ -38,7 +38,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLFieldSetElement::HTMLFieldSetElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, &document, form)
+    : HTMLFormControlElement(tagName, document, form)
     , m_documentVersion(0)
 {
     ASSERT(hasTagName(fieldsetTag));

@@ -36,14 +36,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Document* document, bool wasInsertedByParser, bool alreadyStarted)
-    : HTMLElement(tagName, document)
+inline HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
+    : HTMLElement(tagName, &document)
     , ScriptElement(this, wasInsertedByParser, alreadyStarted)
 {
     ASSERT(hasTagName(scriptTag));
 }
 
-PassRefPtr<HTMLScriptElement> HTMLScriptElement::create(const QualifiedName& tagName, Document* document, bool wasInsertedByParser, bool alreadyStarted)
+PassRefPtr<HTMLScriptElement> HTMLScriptElement::create(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
 {
     return adoptRef(new HTMLScriptElement(tagName, document, wasInsertedByParser, alreadyStarted));
 }
@@ -173,7 +173,7 @@ void HTMLScriptElement::dispatchLoadEvent()
 
 PassRefPtr<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren()
 {
-    return adoptRef(new HTMLScriptElement(tagQName(), &document(), false, alreadyStarted()));
+    return adoptRef(new HTMLScriptElement(tagQName(), document(), false, alreadyStarted()));
 }
 
 }

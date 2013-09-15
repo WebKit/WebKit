@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-MediaControls::MediaControls(Document* document)
-    : HTMLDivElement(HTMLNames::divTag, *document)
+MediaControls::MediaControls(Document& document)
+    : HTMLDivElement(HTMLNames::divTag, document)
     , m_mediaController(0)
     , m_panel(0)
 #if ENABLE(VIDEO_TRACK)
@@ -385,7 +385,7 @@ void MediaControls::createTextTrackDisplay()
     if (m_textDisplayContainer)
         return;
 
-    RefPtr<MediaControlTextTrackContainerElement> textDisplayContainer = MediaControlTextTrackContainerElement::create(&document());
+    RefPtr<MediaControlTextTrackContainerElement> textDisplayContainer = MediaControlTextTrackContainerElement::create(document());
     m_textDisplayContainer = textDisplayContainer.get();
 
     if (m_mediaController)

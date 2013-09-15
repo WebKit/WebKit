@@ -380,7 +380,7 @@ void HTMLConstructionSite::insertDoctype(AtomicHTMLToken* token)
 void HTMLConstructionSite::insertComment(AtomicHTMLToken* token)
 {
     ASSERT(token->type() == HTMLToken::Comment);
-    attachLater(currentNode(), Comment::create(ownerDocumentForCurrentNode(), token->comment()));
+    attachLater(currentNode(), Comment::create(&ownerDocumentForCurrentNode(), token->comment()));
 }
 
 void HTMLConstructionSite::insertCommentOnDocument(AtomicHTMLToken* token)
@@ -530,18 +530,18 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
 PassRefPtr<Element> HTMLConstructionSite::createElement(AtomicHTMLToken* token, const AtomicString& namespaceURI)
 {
     QualifiedName tagName(nullAtom, token->name(), namespaceURI);
-    RefPtr<Element> element = ownerDocumentForCurrentNode()->createElement(tagName, true);
+    RefPtr<Element> element = ownerDocumentForCurrentNode().createElement(tagName, true);
     setAttributes(element.get(), token, m_parserContentPolicy);
     return element.release();
 }
 
-inline Document* HTMLConstructionSite::ownerDocumentForCurrentNode()
+inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
 {
 #if ENABLE(TEMPLATE_ELEMENT)
     if (currentNode()->hasTagName(templateTag))
-        return &toHTMLTemplateElement(currentElement())->content()->document();
+        return toHTMLTemplateElement(currentElement())->content()->document();
 #endif
-    return &currentNode()->document();
+    return currentNode()->document();
 }
 
 PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken* token)
@@ -550,7 +550,7 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken* tok
     // FIXME: This can't use HTMLConstructionSite::createElement because we
     // have to pass the current form element.  We should rework form association
     // to occur after construction to allow better code sharing here.
-    RefPtr<Element> element = HTMLElementFactory::createHTMLElement(tagName, ownerDocumentForCurrentNode(), form(), true);
+    RefPtr<Element> element = HTMLElementFactory::createHTMLElement(tagName, &ownerDocumentForCurrentNode(), form(), true);
     setAttributes(element.get(), token, m_parserContentPolicy);
     ASSERT(element->isHTMLElement());
     return element.release();

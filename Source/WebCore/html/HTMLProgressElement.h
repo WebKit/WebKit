@@ -34,7 +34,7 @@ public:
     static const double IndeterminatePosition;
     static const double InvalidPosition;
 
-    static PassRefPtr<HTMLProgressElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLProgressElement> create(const QualifiedName&, Document&);
 
     double value() const;
     void setValue(double, ExceptionCode&);
@@ -47,7 +47,7 @@ public:
     virtual bool canContainRangeEndPoint() const { return false; }
 
 private:
-    HTMLProgressElement(const QualifiedName&, Document*);
+    HTMLProgressElement(const QualifiedName&, Document&);
     virtual ~HTMLProgressElement();
 
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }

@@ -51,7 +51,7 @@ public:
 
 protected:
     KeygenSelectElement(Document& document)
-        : HTMLSelectElement(selectTag, &document, 0)
+        : HTMLSelectElement(selectTag, document, 0)
     {
         DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-keygen-select", AtomicString::ConstructFromLiteral));
         setPseudo(pseudoId);
@@ -65,7 +65,7 @@ private:
 };
 
 inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLFormControlElementWithState(tagName, &document, form)
+    : HTMLFormControlElementWithState(tagName, document, form)
 {
     ASSERT(hasTagName(keygenTag));
 
@@ -75,7 +75,7 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
 
     RefPtr<HTMLSelectElement> select = KeygenSelectElement::create(document);
     for (size_t i = 0; i < keys.size(); ++i) {
-        RefPtr<HTMLOptionElement> option = HTMLOptionElement::create(&document);
+        RefPtr<HTMLOptionElement> option = HTMLOptionElement::create(document);
         select->appendChild(option, IGNORE_EXCEPTION);
         option->appendChild(Text::create(&document, keys[i]), IGNORE_EXCEPTION);
     }

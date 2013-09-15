@@ -31,13 +31,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLParamElement::HTMLParamElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+inline HTMLParamElement::HTMLParamElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, &document)
 {
     ASSERT(hasTagName(paramTag));
 }
 
-PassRefPtr<HTMLParamElement> HTMLParamElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLParamElement> HTMLParamElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLParamElement(tagName, document));
 }

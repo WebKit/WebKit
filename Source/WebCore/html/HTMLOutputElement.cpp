@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-inline HTMLOutputElement::HTMLOutputElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+inline HTMLOutputElement::HTMLOutputElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLFormControlElement(tagName, document, form)
     , m_isDefaultValueMode(true)
     , m_isSetTextContentInProgress(false)
@@ -46,7 +46,7 @@ inline HTMLOutputElement::HTMLOutputElement(const QualifiedName& tagName, Docume
 {
 }
 
-PassRefPtr<HTMLOutputElement> HTMLOutputElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+PassRefPtr<HTMLOutputElement> HTMLOutputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
     return adoptRef(new HTMLOutputElement(tagName, document, form));
 }

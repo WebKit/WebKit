@@ -80,9 +80,9 @@ void HTMLViewSourceDocument::createContainingTable()
     div->setAttribute(classAttr, "webkit-line-gutter-backdrop");
     body->parserAppendChild(div);
 
-    RefPtr<HTMLTableElement> table = HTMLTableElement::create(this);
+    RefPtr<HTMLTableElement> table = HTMLTableElement::create(*this);
     body->parserAppendChild(table);
-    m_tbody = HTMLTableSectionElement::create(tbodyTag, this);
+    m_tbody = HTMLTableSectionElement::create(tbodyTag, *this);
     table->parserAppendChild(m_tbody);
     m_current = m_tbody;
 
@@ -191,18 +191,18 @@ PassRefPtr<Element> HTMLViewSourceDocument::addSpanWithClassName(const AtomicStr
 void HTMLViewSourceDocument::addLine(const AtomicString& className)
 {
     // Create a table row.
-    RefPtr<HTMLTableRowElement> trow = HTMLTableRowElement::create(this);
+    RefPtr<HTMLTableRowElement> trow = HTMLTableRowElement::create(*this);
     m_tbody->parserAppendChild(trow);
     Style::reattachRenderTree(*trow);
 
     // Create a cell that will hold the line number (it is generated in the stylesheet using counters).
-    RefPtr<HTMLTableCellElement> td = HTMLTableCellElement::create(tdTag, this);
+    RefPtr<HTMLTableCellElement> td = HTMLTableCellElement::create(tdTag, *this);
     td->setAttribute(classAttr, "webkit-line-number");
     trow->parserAppendChild(td);
     Style::attachRenderTree(*td);
 
     // Create a second cell for the line contents
-    td = HTMLTableCellElement::create(tdTag, this);
+    td = HTMLTableCellElement::create(tdTag, *this);
     td->setAttribute(classAttr, "webkit-line-content");
     trow->parserAppendChild(td);
     Style::attachRenderTree(*td);

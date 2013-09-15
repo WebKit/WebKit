@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-HTMLFormControlElementWithState::HTMLFormControlElementWithState(const QualifiedName& tagName, Document* doc, HTMLFormElement* f)
-    : HTMLFormControlElement(tagName, doc, f)
+HTMLFormControlElementWithState::HTMLFormControlElementWithState(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+    : HTMLFormControlElement(tagName, document, form)
 {
 }
 

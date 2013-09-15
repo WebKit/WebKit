@@ -41,7 +41,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLButtonElement::HTMLButtonElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, &document, form)
+    : HTMLFormControlElement(tagName, document, form)
     , m_type(SUBMIT)
     , m_isActivatedSubmit(false)
 {

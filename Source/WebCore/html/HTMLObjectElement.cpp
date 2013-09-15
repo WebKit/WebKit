@@ -59,8 +59,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser) 
-    : HTMLPlugInImageElement(tagName, document, createdByParser, ShouldNotPreferPlugInsForImages)
+inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
+    : HTMLPlugInImageElement(tagName, &document, createdByParser, ShouldNotPreferPlugInsForImages)
     , m_docNamedItem(true)
     , m_useFallbackContent(false)
 {
@@ -72,7 +72,7 @@ inline HTMLObjectElement::~HTMLObjectElement()
 {
 }
 
-PassRefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser)
+PassRefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
 {
     return adoptRef(new HTMLObjectElement(tagName, document, form, createdByParser));
 }

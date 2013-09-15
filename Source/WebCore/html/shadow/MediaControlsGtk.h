@@ -40,7 +40,7 @@ class MediaControlsGtkEventListener;
 class MediaControlsGtk : public MediaControls {
 public:
     // Called from port-specific parent create function to create custom controls.
-    static PassRefPtr<MediaControlsGtk> createControls(Document*);
+    static PassRefPtr<MediaControlsGtk> createControls(Document&);
 
     virtual void setMediaController(MediaControllerInterface*) OVERRIDE;
     virtual void reset() OVERRIDE;
@@ -58,8 +58,8 @@ public:
 #endif
 
 protected:
-    explicit MediaControlsGtk(Document*);
-    bool initializeControls(Document*);
+    explicit MediaControlsGtk(Document&);
+    bool initializeControls(Document&);
 
 private:
     void showClosedCaptionTrackList();

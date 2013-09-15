@@ -43,7 +43,7 @@ public:
     void notifyFormStateChanged();
 
 protected:
-    HTMLFormControlElementWithState(const QualifiedName& tagName, Document*, HTMLFormElement*);
+    HTMLFormControlElementWithState(const QualifiedName& tagName, Document&, HTMLFormElement*);
 
     virtual bool shouldAutocomplete() const;
     virtual void finishParsingChildren();

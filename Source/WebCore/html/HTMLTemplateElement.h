@@ -40,16 +40,16 @@ namespace WebCore {
 
 class HTMLTemplateElement FINAL : public HTMLElement {
 public:
-    static PassRefPtr<HTMLTemplateElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLTemplateElement> create(const QualifiedName&, Document&);
     virtual ~HTMLTemplateElement();
 
     DocumentFragment* content() const;
 
 private:
+    HTMLTemplateElement(const QualifiedName&, Document&);
+
     virtual PassRefPtr<Node> cloneNode(bool deep) OVERRIDE;
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
-
-    HTMLTemplateElement(const QualifiedName&, Document*);
 
     mutable RefPtr<DocumentFragment> m_content;
 };

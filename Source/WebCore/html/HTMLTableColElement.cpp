@@ -37,7 +37,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLTableColElement::HTMLTableColElement(const QualifiedName& tagName, Document& document)
-    : HTMLTablePartElement(tagName, &document)
+    : HTMLTablePartElement(tagName, document)
     , m_span(1)
 {
 }

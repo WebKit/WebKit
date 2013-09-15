@@ -202,7 +202,7 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, double start, double
     , m_isActive(false)
     , m_pauseOnExit(false)
     , m_snapToLines(true)
-    , m_cueBackgroundBox(HTMLSpanElement::create(spanTag, toDocument(context)))
+    , m_cueBackgroundBox(HTMLSpanElement::create(spanTag, *toDocument(context)))
     , m_displayTreeShouldChange(true)
     , m_displayDirection(CSSValueLtr)
 {

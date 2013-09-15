@@ -910,7 +910,7 @@ PassRefPtr<HTMLElement> createDefaultParagraphElement(Document* document)
     case EditorParagraphSeparatorIsDiv:
         return HTMLDivElement::create(*document);
     case EditorParagraphSeparatorIsP:
-        return HTMLParagraphElement::create(document);
+        return HTMLParagraphElement::create(*document);
     }
 
     ASSERT_NOT_REACHED();
@@ -924,12 +924,12 @@ PassRefPtr<HTMLElement> createBreakElement(Document* document)
 
 PassRefPtr<HTMLElement> createOrderedListElement(Document* document)
 {
-    return HTMLOListElement::create(document);
+    return HTMLOListElement::create(*document);
 }
 
 PassRefPtr<HTMLElement> createUnorderedListElement(Document* document)
 {
-    return HTMLUListElement::create(document);
+    return HTMLUListElement::create(*document);
 }
 
 PassRefPtr<HTMLElement> createListItemElement(Document* document)

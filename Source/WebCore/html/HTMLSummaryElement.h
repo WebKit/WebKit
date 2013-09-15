@@ -29,12 +29,12 @@ class HTMLDetailsElement;
 
 class HTMLSummaryElement FINAL : public HTMLElement {
 public:
-    static PassRefPtr<HTMLSummaryElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLSummaryElement> create(const QualifiedName&, Document&);
     bool isMainSummary() const;
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
 
 private:
-    HTMLSummaryElement(const QualifiedName&, Document*);
+    HTMLSummaryElement(const QualifiedName&, Document&);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;

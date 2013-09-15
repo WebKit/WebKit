@@ -36,13 +36,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLTitleElement::HTMLTitleElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+inline HTMLTitleElement::HTMLTitleElement(const QualifiedName& tagName, Document& document)
+    : HTMLElement(tagName, &document)
 {
     ASSERT(hasTagName(titleTag));
 }
 
-PassRefPtr<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLTitleElement(tagName, document));
 }

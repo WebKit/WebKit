@@ -106,7 +106,7 @@ public:
     using Node::deref;
 
 protected:
-    HTMLFormControlElement(const QualifiedName& tagName, Document*, HTMLFormElement*);
+    HTMLFormControlElement(const QualifiedName& tagName, Document&, HTMLFormElement*);
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual void requiredAttributeChanged();

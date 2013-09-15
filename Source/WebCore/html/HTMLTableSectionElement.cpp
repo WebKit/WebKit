@@ -37,12 +37,12 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLTableSectionElement::HTMLTableSectionElement(const QualifiedName& tagName, Document* document)
+inline HTMLTableSectionElement::HTMLTableSectionElement(const QualifiedName& tagName, Document& document)
     : HTMLTablePartElement(tagName, document)
 {
 }
 
-PassRefPtr<HTMLTableSectionElement> HTMLTableSectionElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLTableSectionElement> HTMLTableSectionElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLTableSectionElement(tagName, document));
 }
@@ -64,7 +64,7 @@ PassRefPtr<HTMLElement> HTMLTableSectionElement::insertRow(int index, ExceptionC
     if (index < -1 || index > numRows)
         ec = INDEX_SIZE_ERR; // per the DOM
     else {
-        row = HTMLTableRowElement::create(trTag, &document());
+        row = HTMLTableRowElement::create(trTag, document());
         if (numRows == index || index == -1)
             appendChild(row, ec);
         else {
