@@ -32,8 +32,6 @@ namespace WTF {
 
 template<typename T> class Ref {
 public:
-    // Ref(const T&) looks awkward but makes Vector<Ref<T>> possible.
-    Ref(const T& object) : m_ptr(&const_cast<T&>(object)) { m_ptr->ref(); }
     Ref(T& object) : m_ptr(&object) { m_ptr->ref(); }
 
     ~Ref() { m_ptr->deref(); }

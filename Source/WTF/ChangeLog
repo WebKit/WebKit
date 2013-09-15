@@ -1,5 +1,17 @@
 2013-09-15  Andreas Kling  <akling@apple.com>
 
+        Remove Ref(const T&) constructor.
+        <https://webkit.org/b/121384>
+
+        Reviewed by Anders Carlsson.
+
+        This constructor was added as a stopgap measure until we got better support
+        for move semantics in Vector.
+
+        * wtf/Ref.h:
+
+2013-09-15  Andreas Kling  <akling@apple.com>
+
         Unreviewed, fix ridiculous bug in WeakPtr.
 
         I made operator!() null check the pointer to the WeakReference. :|
