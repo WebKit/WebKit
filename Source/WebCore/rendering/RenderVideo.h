@@ -31,15 +31,14 @@
 #include "RenderMedia.h"
 
 namespace WebCore {
-
+    
+class HTMLMediaElement;
 class HTMLVideoElement;
 
 class RenderVideo FINAL : public RenderMedia {
 public:
-    explicit RenderVideo(HTMLVideoElement&);
+    RenderVideo(HTMLVideoElement*);
     virtual ~RenderVideo();
-
-    HTMLVideoElement& videoElement() const;
 
     IntRect videoBox() const;
 
@@ -55,9 +54,8 @@ public:
     virtual bool shouldDisplayVideo() const;
 
 private:
-    void mediaElement() const WTF_DELETED_FUNCTION;
-
     virtual void updateFromElement();
+    inline HTMLVideoElement* videoElement() const;
 
     virtual void intrinsicSizeChanged();
     LayoutSize calculateIntrinsicSize();

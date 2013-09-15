@@ -28,18 +28,17 @@
 
 #if ENABLE(VIDEO)
 
-#include "HTMLMediaElement.h"
 #include "RenderImage.h"
 
 namespace WebCore {
 
+class HTMLMediaElement;
+
 class RenderMedia : public RenderImage {
 public:
-    explicit RenderMedia(HTMLMediaElement&);
-    RenderMedia(HTMLMediaElement&, const IntSize& intrinsicSize);
+    explicit RenderMedia(HTMLMediaElement*);
+    RenderMedia(HTMLMediaElement*, const IntSize& intrinsicSize);
     virtual ~RenderMedia();
-
-    HTMLMediaElement& mediaElement() const { return *toHTMLMediaElement(RenderImage::element()); }
 
     RenderObject* firstChild() const { return m_children.firstChild(); }
     RenderObject* lastChild() const { return m_children.lastChild(); }
@@ -47,12 +46,12 @@ public:
     virtual const RenderObjectChildList* children() const OVERRIDE FINAL { return &m_children; }
     virtual RenderObjectChildList* children() OVERRIDE FINAL { return &m_children; }
 
+    HTMLMediaElement* mediaElement() const;
+
 protected:
     virtual void layout();
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
-
     virtual bool canHaveChildren() const OVERRIDE FINAL { return true; }
 
     virtual const char* renderName() const OVERRIDE { return "RenderMedia"; }

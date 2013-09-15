@@ -28,20 +28,21 @@
 #if ENABLE(VIDEO)
 #include "RenderMedia.h"
 
+#include "HTMLMediaElement.h"
 #include "RenderFlowThread.h"
 #include "RenderView.h"
 #include <wtf/StackStats.h>
 
 namespace WebCore {
 
-RenderMedia::RenderMedia(HTMLMediaElement& element)
-    : RenderImage(&element)
+RenderMedia::RenderMedia(HTMLMediaElement* video)
+    : RenderImage(video)
 {
     setImageResource(RenderImageResource::create());
 }
 
-RenderMedia::RenderMedia(HTMLMediaElement& element, const IntSize& intrinsicSize)
-    : RenderImage(&element)
+RenderMedia::RenderMedia(HTMLMediaElement* video, const IntSize& intrinsicSize)
+    : RenderImage(video)
 {
     setImageResource(RenderImageResource::create());
     setIntrinsicSize(intrinsicSize);
@@ -49,6 +50,11 @@ RenderMedia::RenderMedia(HTMLMediaElement& element, const IntSize& intrinsicSize
 
 RenderMedia::~RenderMedia()
 {
+}
+
+HTMLMediaElement* RenderMedia::mediaElement() const
+{ 
+    return toHTMLMediaElement(element()); 
 }
 
 void RenderMedia::layout()
