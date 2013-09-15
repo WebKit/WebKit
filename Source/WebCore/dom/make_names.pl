@@ -181,7 +181,6 @@ sub defaultTagPropertyHash
     return (
         'constructorNeedsCreatedByParser' => 0,
         'constructorNeedsFormElement' => 0,
-        'constructorTakesDocumentReference' => $parameters{constructorTakesDocumentReference},
         'noConstructor' => 0,
         'interfaceName' => defaultInterfaceName($_[0]),
         # By default, the JSInterfaceName is the same as the interfaceName.
@@ -206,7 +205,6 @@ sub defaultParametersHash
         'attrsNullNamespace' => 0,
         'fallbackInterfaceName' => '',
         'fallbackJSInterfaceName' => '',
-        'constructorTakesDocumentReference' => 0
     );
 }
 
@@ -426,8 +424,7 @@ END
     }
 
     # Call the constructor with the right parameters.
-    print F "    return ${interfaceName}::create($constructorTagName";
-    print F ($enabledTags{$tagName}{constructorTakesDocumentReference} ? ", document" : ", &document");
+    print F "    return ${interfaceName}::create($constructorTagName, document";
     print F ", formElement" if $enabledTags{$tagName}{constructorNeedsFormElement};
     print F ", createdByParser" if $enabledTags{$tagName}{constructorNeedsCreatedByParser};
     print F ");\n}\n";
@@ -1003,7 +1000,7 @@ END
     }
 
     print F "   }\n";
-    print F "   return $parameters{fallbackInterfaceName}::create(name, " . ($parameters{constructorTakesDocumentReference} ? "" : "&") . "document);\n";
+    print F "   return $parameters{fallbackInterfaceName}::create(name, document);\n";
 
     print F <<END
 }
