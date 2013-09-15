@@ -1,5 +1,16 @@
 2013-09-15  Andreas Kling  <akling@apple.com>
 
+        Remove RenderObject::clearNode().
+        <https://webkit.org/b/121386>
+
+        Reviewed by Anders Carlsson.
+
+        This was used by ref-counted RenderWidgets after getting removed from their
+        parent renderer but kept alive by an external ref. We have no need for this
+        awkward state anymore, so remove clearNode().
+
+2013-09-15  Andreas Kling  <akling@apple.com>
+
         CTTE: RenderWidgets are never anonymous.
         <https://webkit.org/b/121385>
 
