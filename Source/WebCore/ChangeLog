@@ -1,3 +1,12 @@
+2013-09-15  Andreas Kling  <akling@apple.com>
+
+        CTTE: EllipsisBox owner renderer is always a RenderBlock.
+        <https://webkit.org/b/121402>
+
+        Reviewed by Antti Koivisto.
+
+        Let the constructor reflect this. Also out-of-line it because reasons.
+
 2013-09-15  Sam Weinig  <sam@webkit.org>
 
         CTTE: RenderObject's createAnonymous() and setDocumentForAnonymous() should take Document references

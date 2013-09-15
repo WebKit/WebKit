@@ -133,7 +133,7 @@ float RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, f
                                   InlineBox* markupBox)
 {
     // Create an ellipsis box.
-    EllipsisBox* ellipsisBox = new (renderer().renderArena()) EllipsisBox(renderer(), ellipsisStr, this,
+    EllipsisBox* ellipsisBox = new (renderer().renderArena()) EllipsisBox(block(), ellipsisStr, this,
                                                               ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(),
                                                               y(), !prevRootBox(), isHorizontal(), markupBox);
     
