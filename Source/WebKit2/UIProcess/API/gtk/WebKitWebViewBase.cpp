@@ -418,7 +418,7 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
 
 #if USE(TEXTURE_MAPPER_GL)
     if (webkitWebViewRenderAcceleratedCompositingResults(webViewBase, drawingArea, cr, &clipRect))
-        return FALSE;
+        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->draw(widget, cr);
 #endif
 
     WebCore::Region unpaintedRegion; // This is simply unused.
