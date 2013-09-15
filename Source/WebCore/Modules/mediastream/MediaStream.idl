@@ -31,8 +31,6 @@
     ConstructorCallWith=ScriptExecutionContext,
     InterfaceName=webkitMediaStream
 ] interface MediaStream {
-    // DEPRECATED
-    readonly attribute DOMString label;
 
     readonly attribute DOMString id;
 

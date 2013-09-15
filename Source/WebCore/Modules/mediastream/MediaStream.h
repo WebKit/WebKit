@@ -48,9 +48,6 @@ public:
     static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>);
     virtual ~MediaStream();
 
-    // DEPRECATED
-    String label() const { return m_descriptor->id(); }
-
     String id() const { return m_descriptor->id(); }
 
     void addTrack(PassRefPtr<MediaStreamTrack>, ExceptionCode&);
