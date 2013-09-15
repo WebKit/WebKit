@@ -40,9 +40,9 @@ RenderMultiColumnFlowThread::~RenderMultiColumnFlowThread()
 {
 }
 
-RenderMultiColumnFlowThread* RenderMultiColumnFlowThread::createAnonymous(Document* document)
+RenderMultiColumnFlowThread* RenderMultiColumnFlowThread::createAnonymous(Document& document)
 {
-    RenderMultiColumnFlowThread* renderer = new (document->renderArena()) RenderMultiColumnFlowThread();
+    RenderMultiColumnFlowThread* renderer = new (document.renderArena()) RenderMultiColumnFlowThread();
     renderer->setDocumentForAnonymous(document);
     return renderer;
 }
@@ -92,7 +92,7 @@ void RenderMultiColumnFlowThread::autoGenerateRegionsToBlockOffset(LayoutUnit /*
     invalidateRegions();
 
     RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
-    firstSet = RenderMultiColumnSet::createAnonymous(this);
+    firstSet = RenderMultiColumnSet::createAnonymous(*this);
     firstSet->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parentBlock->style(), BLOCK));
     parentBlock->RenderBlock::addChild(firstSet);
 

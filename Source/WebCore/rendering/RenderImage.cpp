@@ -65,7 +65,7 @@ RenderImage::RenderImage(Element* element)
 RenderImage* RenderImage::createAnonymous(Document& document)
 {
     RenderImage* image = new (document.renderArena()) RenderImage(0);
-    image->setDocumentForAnonymous(&document);
+    image->setDocumentForAnonymous(document);
     return image;
 }
 

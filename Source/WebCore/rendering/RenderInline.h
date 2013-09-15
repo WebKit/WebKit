@@ -35,7 +35,7 @@ class RenderInline : public RenderBoxModelObject {
 public:
     explicit RenderInline(Element*);
 
-    static RenderInline* createAnonymous(Document*);
+    static RenderInline* createAnonymous(Document&);
 
     RenderObject* firstChild() const { return m_children.firstChild(); }
     RenderObject* lastChild() const { return m_children.lastChild(); }

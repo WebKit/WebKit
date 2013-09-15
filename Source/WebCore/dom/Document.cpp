@@ -2000,7 +2000,7 @@ void Document::createRenderTree()
     if (!m_renderArena)
         m_renderArena = createOwned<RenderArena>();
     
-    setRenderView(new (m_renderArena.get()) RenderView(this));
+    setRenderView(new (m_renderArena.get()) RenderView(*this));
 #if USE(ACCELERATED_COMPOSITING)
     renderView()->setIsInWindow(true);
 #endif

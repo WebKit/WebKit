@@ -1364,16 +1364,16 @@ void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool ve
         setIntrinsicPaddingAfter(intrinsicPaddingAfter() - scrollbarHeight);
 }
 
-RenderTableCell* RenderTableCell::createAnonymous(Document* document)
+RenderTableCell* RenderTableCell::createAnonymous(Document& document)
 {
-    RenderTableCell* renderer = new (document->renderArena()) RenderTableCell(0);
+    RenderTableCell* renderer = new (document.renderArena()) RenderTableCell(0);
     renderer->setDocumentForAnonymous(document);
     return renderer;
 }
 
 RenderTableCell* RenderTableCell::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    RenderTableCell* newCell = RenderTableCell::createAnonymous(&parent->document());
+    RenderTableCell* newCell = RenderTableCell::createAnonymous(parent->document());
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_CELL);
     newCell->setStyle(newStyle.release());
     return newCell;

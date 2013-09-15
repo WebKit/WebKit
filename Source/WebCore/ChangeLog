@@ -1,5 +1,58 @@
 2013-09-15  Sam Weinig  <sam@webkit.org>
 
+        CTTE: RenderObject's createAnonymous() and setDocumentForAnonymous() should take Document references
+        https://bugs.webkit.org/show_bug.cgi?id=121400
+
+        Reviewed by Andreas Kling.
+
+        The Document used for anonymous renderers is never null.
+
+        * dom/Document.cpp:
+        * page/FrameView.cpp:
+        * rendering/FlowThreadController.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlexibleBox.cpp:
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFullScreen.cpp:
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderListMarker.cpp:
+        * rendering/RenderMultiColumnBlock.cpp:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderObject.h:
+        * rendering/RenderReplica.cpp:
+        * rendering/RenderReplica.h:
+        * rendering/RenderRuby.cpp:
+        * rendering/RenderRubyBase.cpp:
+        * rendering/RenderRubyBase.h:
+        * rendering/RenderRubyRun.cpp:
+        * rendering/RenderScrollbar.cpp:
+        * rendering/RenderScrollbarPart.cpp:
+        * rendering/RenderScrollbarPart.h:
+        * rendering/RenderTable.cpp:
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableRow.cpp:
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        * rendering/RenderText.cpp:
+        * rendering/RenderView.cpp:
+        * rendering/RenderView.h:
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        * rendering/mathml/RenderMathMLRow.cpp:
+        * rendering/mathml/RenderMathMLScripts.cpp:
+
+2013-09-15  Sam Weinig  <sam@webkit.org>
+
         CTTE: ContentData::createRenderer() should take references
         https://bugs.webkit.org/show_bug.cgi?id=121399
 

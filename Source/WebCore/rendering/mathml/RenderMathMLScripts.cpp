@@ -364,7 +364,7 @@ RenderMathMLScriptsWrapper* RenderMathMLScriptsWrapper::createAnonymousWrapper(R
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(renderObject->style(), FLEX);
     RenderMathMLScriptsWrapper* newBlock = new (renderObject->renderArena()) RenderMathMLScriptsWrapper(0, type);
-    newBlock->setDocumentForAnonymous(&renderObject->document());
+    newBlock->setDocumentForAnonymous(renderObject->document());
     newBlock->setStyle(newStyle.release());
     return newBlock;
 }

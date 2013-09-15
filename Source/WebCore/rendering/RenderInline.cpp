@@ -56,9 +56,9 @@ RenderInline::RenderInline(Element* element)
     setChildrenInline(true);
 }
 
-RenderInline* RenderInline::createAnonymous(Document* document)
+RenderInline* RenderInline::createAnonymous(Document& document)
 {
-    RenderInline* renderer = new (document->renderArena()) RenderInline(0);
+    RenderInline* renderer = new (document.renderArena()) RenderInline(0);
     renderer->setDocumentForAnonymous(document);
     return renderer;
 }
@@ -318,7 +318,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         if (RenderObject* positionedAncestor = inFlowPositionedInlineAncestor(this))
             newStyle->setPosition(positionedAncestor->style()->position());
 
-        RenderBlock* newBox = RenderBlock::createAnonymous(&document());
+        RenderBlock* newBox = RenderBlock::createAnonymous(document());
         newBox->setStyle(newStyle.release());
         RenderBoxModelObject* oldContinuation = continuation();
         setContinuation(newBox);

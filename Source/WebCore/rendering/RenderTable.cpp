@@ -1415,7 +1415,7 @@ RenderTable* RenderTable::createAnonymousWithParentRenderer(const RenderObject* 
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE);
     RenderTable* newTable = new (parent->renderArena()) RenderTable(0);
-    newTable->setDocumentForAnonymous(&parent->document());
+    newTable->setDocumentForAnonymous(parent->document());
     newTable->setStyle(newStyle.release());
     return newTable;
 }

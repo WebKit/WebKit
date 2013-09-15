@@ -34,7 +34,7 @@ namespace WebCore {
 
 class RenderFullScreen FINAL : public RenderFlexibleBox {
 public:
-    static RenderFullScreen* createAnonymous(Document*);
+    static RenderFullScreen* createAnonymous(Document&);
 
     virtual bool isRenderFullScreen() const { return true; }
     virtual const char* renderName() const { return "RenderFullScreen"; }

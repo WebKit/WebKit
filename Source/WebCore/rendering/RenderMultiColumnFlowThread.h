@@ -35,7 +35,7 @@ class RenderMultiColumnFlowThread FINAL : public RenderFlowThread {
 public:
     ~RenderMultiColumnFlowThread();
 
-    static RenderMultiColumnFlowThread* createAnonymous(Document*);
+    static RenderMultiColumnFlowThread* createAnonymous(Document&);
 
 private:
     RenderMultiColumnFlowThread();

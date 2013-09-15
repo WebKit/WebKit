@@ -41,7 +41,7 @@ class RenderRubyBase FINAL : public RenderBlockFlow {
 public:
     virtual ~RenderRubyBase();
     
-    static RenderRubyBase* createAnonymous(Document*);
+    static RenderRubyBase* createAnonymous(Document&);
 
     virtual const char* renderName() const { return "RenderRubyBase (anonymous)"; }
 

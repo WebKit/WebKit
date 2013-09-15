@@ -1030,7 +1030,7 @@ protected:
     virtual void insertedIntoTree();
     virtual void willBeRemovedFromTree();
 
-    void setDocumentForAnonymous(Document* document) { ASSERT(isAnonymous()); m_node = document; }
+    void setDocumentForAnonymous(Document& document) { ASSERT(isAnonymous()); m_node = &document; }
 
 private:
     RenderFlowThread* locateFlowThreadContainingBlock() const;

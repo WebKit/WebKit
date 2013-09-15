@@ -43,7 +43,7 @@ public:
         : RenderBlockFlow(0)
         , m_owner(owner) 
     {
-        setDocumentForAnonymous(&owner->document());
+        setDocumentForAnonymous(owner->document());
     }
 private:
     virtual bool isRenderFullScreenPlaceholder() const { return true; }
@@ -64,9 +64,9 @@ RenderFullScreen::RenderFullScreen()
     setReplaced(false); 
 }
 
-RenderFullScreen* RenderFullScreen::createAnonymous(Document* document)
+RenderFullScreen* RenderFullScreen::createAnonymous(Document& document)
 {
-    RenderFullScreen* renderer = new (document->renderArena()) RenderFullScreen();
+    RenderFullScreen* renderer = new (document.renderArena()) RenderFullScreen();
     renderer->setDocumentForAnonymous(document);
     return renderer;
 }
@@ -116,7 +116,7 @@ static PassRefPtr<RenderStyle> createFullScreenStyle()
 
 RenderObject* RenderFullScreen::wrapRenderer(RenderObject* object, RenderObject* parent, Document* document)
 {
-    RenderFullScreen* fullscreenRenderer = RenderFullScreen::createAnonymous(document);
+    RenderFullScreen* fullscreenRenderer = RenderFullScreen::createAnonymous(*document);
     fullscreenRenderer->setStyle(createFullScreenStyle());
     if (parent && !parent->isChildAllowed(fullscreenRenderer, fullscreenRenderer->style())) {
         fullscreenRenderer->destroy();

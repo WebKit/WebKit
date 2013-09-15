@@ -47,7 +47,7 @@ class RenderNamedFlowThread FINAL : public RenderFlowThread {
 public:
     virtual ~RenderNamedFlowThread();
 
-    static RenderNamedFlowThread* createAnonymous(Document*, PassRefPtr<WebKitNamedFlow>);
+    static RenderNamedFlowThread* createAnonymous(Document&, PassRefPtr<WebKitNamedFlow>);
 
     const AtomicString& flowThreadName() const;
 

@@ -101,7 +101,7 @@ protected:
     virtual ~RenderBlock();
 
 public:
-    static RenderBlock* createAnonymous(Document*);
+    static RenderBlock* createAnonymous(Document&);
 
     RenderObject* firstChild() const { return m_children.firstChild(); }
     RenderObject* lastChild() const { return m_children.lastChild(); }

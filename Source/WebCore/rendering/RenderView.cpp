@@ -56,9 +56,9 @@
 
 namespace WebCore {
 
-RenderView::RenderView(Document* document)
+RenderView::RenderView(Document& document)
     : RenderBlockFlow(0)
-    , m_frameView(*document->view())
+    , m_frameView(*document.view())
     , m_selectionStart(0)
     , m_selectionEnd(0)
     , m_selectionStartPos(-1)
@@ -79,7 +79,7 @@ RenderView::RenderView(Document* document)
     setDocumentForAnonymous(document);
 
     // FIXME: We should find a way to enforce this at compile time.
-    ASSERT(document->view());
+    ASSERT(document.view());
 
     // init RenderObject attributes
     setInline(false);

@@ -194,9 +194,9 @@ RenderBlock::~RenderBlock()
         removeBlockFromDescendantAndContainerMaps(this, gPositionedDescendantsMap, gPositionedContainerMap);
 }
 
-RenderBlock* RenderBlock::createAnonymous(Document* document)
+RenderBlock* RenderBlock::createAnonymous(Document& document)
 {
-    RenderBlock* renderer = new (document->renderArena()) RenderBlockFlow(0);
+    RenderBlock* renderer = new (document.renderArena()) RenderBlockFlow(0);
     renderer->setDocumentForAnonymous(document);
     return renderer;
 }
@@ -5842,9 +5842,9 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
         // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
         RenderBoxModelObject* newFirstLetter;
         if (pseudoStyle->display() == INLINE)
-            newFirstLetter = RenderInline::createAnonymous(&document());
+            newFirstLetter = RenderInline::createAnonymous(document());
         else
-            newFirstLetter = RenderBlock::createAnonymous(&document());
+            newFirstLetter = RenderBlock::createAnonymous(document());
         newFirstLetter->setStyle(pseudoStyle);
 
         // Move the first letter into the new renderer.
@@ -5884,9 +5884,9 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
     RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     RenderObject* firstLetter = 0;
     if (pseudoStyle->display() == INLINE)
-        firstLetter = RenderInline::createAnonymous(&document());
+        firstLetter = RenderInline::createAnonymous(document());
     else
-        firstLetter = RenderBlock::createAnonymous(&document());
+        firstLetter = RenderBlock::createAnonymous(document());
     firstLetter->setStyle(pseudoStyle);
     firstLetterContainer->addChild(firstLetter, currentChild);
 
@@ -6907,10 +6907,10 @@ RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const Rend
     EDisplay newDisplay;
     RenderBlock* newBox = 0;
     if (display == FLEX || display == INLINE_FLEX) {
-        newBox = RenderFlexibleBox::createAnonymous(&parent->document());
+        newBox = RenderFlexibleBox::createAnonymous(parent->document());
         newDisplay = FLEX;
     } else {
-        newBox = RenderBlock::createAnonymous(&parent->document());
+        newBox = RenderBlock::createAnonymous(parent->document());
         newDisplay = BLOCK;
     }
 
@@ -6924,7 +6924,7 @@ RenderBlock* RenderBlock::createAnonymousColumnsWithParentRenderer(const RenderO
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
     newStyle->inheritColumnPropertiesFrom(parent->style());
 
-    RenderBlock* newBox = RenderBlock::createAnonymous(&parent->document());
+    RenderBlock* newBox = RenderBlock::createAnonymous(parent->document());
     newBox->setStyle(newStyle.release());
     return newBox;
 }
@@ -6934,7 +6934,7 @@ RenderBlock* RenderBlock::createAnonymousColumnSpanWithParentRenderer(const Rend
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
     newStyle->setColumnSpan(ColumnSpanAll);
 
-    RenderBlock* newBox = RenderBlock::createAnonymous(&parent->document());
+    RenderBlock* newBox = RenderBlock::createAnonymous(parent->document());
     newBox->setStyle(newStyle.release());
     return newBox;
 }
