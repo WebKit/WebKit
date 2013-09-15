@@ -1,3 +1,13 @@
+2013-09-15  Andreas Kling  <akling@apple.com>
+
+        RenderWidget doesn't need to cache a FrameView pointer.
+        <https://webkit.org/b/121158>
+
+        Reviewed by Antti Koivisto.
+
+        The FrameView can be found through RenderObject::view().frameView().
+        This way also gets you a reference, so no need for null-checking.
+
 2013-09-15  Sam Weinig  <sam@webkit.org>
 
         CTTE: Node subclasses should take a Document by reference in their constructor (Part 8)

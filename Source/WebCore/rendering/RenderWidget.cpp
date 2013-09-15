@@ -91,8 +91,6 @@ static void moveWidgetToParentSoon(Widget* child, FrameView* parent)
 RenderWidget::RenderWidget(HTMLFrameOwnerElement& element)
     : RenderReplaced(&element)
     , m_weakPtrFactory(this)
-    , m_widget(0)
-    , m_frameView(element.document().view())
 {
     setInline(false);
 }
@@ -207,7 +205,7 @@ void RenderWidget::setWidget(PassRefPtr<Widget> widget)
                 repaint();
             }
         }
-        moveWidgetToParentSoon(m_widget.get(), m_frameView);
+        moveWidgetToParentSoon(m_widget.get(), &view().frameView());
     }
     // make sure the scrollbars are set correctly for restore
     // ### find better fix
@@ -290,7 +288,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && hasOutline())
         paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, size()));
 
-    if (!m_frameView || paintInfo.phase != PaintPhaseForeground)
+    if (paintInfo.phase != PaintPhaseForeground)
         return;
 
 #if PLATFORM(MAC)
@@ -358,10 +356,7 @@ void RenderWidget::updateWidgetPosition()
 
 IntRect RenderWidget::windowClipRect() const
 {
-    if (!m_frameView)
-        return IntRect();
-
-    return intersection(m_frameView->contentsToWindow(m_clipRect), m_frameView->windowClipRect());
+    return intersection(view().frameView().contentsToWindow(m_clipRect), view().frameView().windowClipRect());
 }
 
 void RenderWidget::setSelectionState(SelectionState state)
