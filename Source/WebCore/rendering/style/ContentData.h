@@ -51,7 +51,7 @@ public:
     virtual bool isQuote() const { return false; }
     virtual bool isText() const { return false; }
 
-    virtual RenderObject* createRenderer(Document*, RenderStyle*) const = 0;
+    virtual RenderObject* createRenderer(Document&, RenderStyle&) const = 0;
 
     virtual PassOwnPtr<ContentData> clone() const;
 
@@ -66,7 +66,7 @@ private:
     OwnPtr<ContentData> m_next;
 };
 
-class ImageContentData : public ContentData {
+class ImageContentData FINAL : public ContentData {
     friend class ContentData;
 public:
     const StyleImage* image() const { return m_image.get(); }
@@ -74,7 +74,7 @@ public:
     void setImage(PassRefPtr<StyleImage> image) { m_image = image; }
 
     virtual bool isImage() const OVERRIDE { return true; }
-    virtual RenderObject* createRenderer(Document*, RenderStyle*) const OVERRIDE;
+    virtual RenderObject* createRenderer(Document&, RenderStyle&) const OVERRIDE;
 
     virtual bool equals(const ContentData& data) const OVERRIDE
     {
@@ -98,14 +98,14 @@ private:
     RefPtr<StyleImage> m_image;
 };
 
-class TextContentData : public ContentData {
+class TextContentData FINAL : public ContentData {
     friend class ContentData;
 public:
     const String& text() const { return m_text; }
     void setText(const String& text) { m_text = text; }
 
     virtual bool isText() const OVERRIDE { return true; }
-    virtual RenderObject* createRenderer(Document*, RenderStyle*) const OVERRIDE;
+    virtual RenderObject* createRenderer(Document&, RenderStyle&) const OVERRIDE;
 
     virtual bool equals(const ContentData& data) const OVERRIDE
     {
@@ -125,14 +125,14 @@ private:
     String m_text;
 };
 
-class CounterContentData : public ContentData {
+class CounterContentData FINAL : public ContentData {
     friend class ContentData;
 public:
     const CounterContent* counter() const { return m_counter.get(); }
     void setCounter(PassOwnPtr<CounterContent> counter) { m_counter = counter; }
 
     virtual bool isCounter() const OVERRIDE { return true; }
-    virtual RenderObject* createRenderer(Document*, RenderStyle*) const OVERRIDE;
+    virtual RenderObject* createRenderer(Document&, RenderStyle&) const OVERRIDE;
 
 private:
     CounterContentData(PassOwnPtr<CounterContent> counter)
@@ -156,14 +156,14 @@ private:
     OwnPtr<CounterContent> m_counter;
 };
 
-class QuoteContentData : public ContentData {
+class QuoteContentData FINAL : public ContentData {
     friend class ContentData;
 public:
     QuoteType quote() const { return m_quote; }
     void setQuote(QuoteType quote) { m_quote = quote; }
 
     virtual bool isQuote() const OVERRIDE { return true; }
-    virtual RenderObject* createRenderer(Document*, RenderStyle*) const OVERRIDE;
+    virtual RenderObject* createRenderer(Document&, RenderStyle&) const OVERRIDE;
 
     virtual bool equals(const ContentData& data) const OVERRIDE
     {

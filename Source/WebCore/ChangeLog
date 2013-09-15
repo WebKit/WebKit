@@ -1,3 +1,25 @@
+2013-09-15  Sam Weinig  <sam@webkit.org>
+
+        CTTE: ContentData::createRenderer() should take references
+        https://bugs.webkit.org/show_bug.cgi?id=121399
+
+        Reviewed by Andreas Kling.
+
+        - Convert createRenderer(Document*, RenderStyle*) to createRenderer(Document&, RenderStyle&)
+        - Do a drive by final-ing of ContentData derived classes.
+
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::didAttachRenderers):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::createAnonymous):
+        * rendering/RenderImage.h:
+        * rendering/style/ContentData.cpp:
+        (WebCore::ImageContentData::createRenderer):
+        (WebCore::TextContentData::createRenderer):
+        (WebCore::CounterContentData::createRenderer):
+        (WebCore::QuoteContentData::createRenderer):
+        * rendering/style/ContentData.h:
+
 2013-09-15  Andreas Kling  <akling@apple.com>
 
         CTTE: RenderFrameSet is never anonymous.

@@ -67,10 +67,10 @@ PassOwnPtr<ContentData> ContentData::clone() const
     return result.release();
 }
 
-RenderObject* ImageContentData::createRenderer(Document* doc, RenderStyle* pseudoStyle) const
+RenderObject* ImageContentData::createRenderer(Document& document, RenderStyle& pseudoStyle) const
 {
-    RenderImage* image = RenderImage::createAnonymous(doc);
-    image->setPseudoStyle(pseudoStyle);
+    RenderImage* image = RenderImage::createAnonymous(document);
+    image->setPseudoStyle(&pseudoStyle);
     if (m_image)
         image->setImageResource(RenderImageResourceStyleImage::create(m_image.get()));
     else
@@ -78,24 +78,24 @@ RenderObject* ImageContentData::createRenderer(Document* doc, RenderStyle* pseud
     return image;
 }
 
-RenderObject* TextContentData::createRenderer(Document* doc, RenderStyle* pseudoStyle) const
+RenderObject* TextContentData::createRenderer(Document& document, RenderStyle& pseudoStyle) const
 {
-    RenderObject* renderer = new (doc->renderArena()) RenderTextFragment(doc, m_text.impl());
-    renderer->setPseudoStyle(pseudoStyle);
+    RenderObject* renderer = new (document.renderArena()) RenderTextFragment(&document, m_text.impl());
+    renderer->setPseudoStyle(&pseudoStyle);
     return renderer;
 }
 
-RenderObject* CounterContentData::createRenderer(Document* doc, RenderStyle* pseudoStyle) const
+RenderObject* CounterContentData::createRenderer(Document& document, RenderStyle& pseudoStyle) const
 {
-    RenderObject* renderer = new (doc->renderArena()) RenderCounter(doc, *m_counter);
-    renderer->setPseudoStyle(pseudoStyle);
+    RenderObject* renderer = new (document.renderArena()) RenderCounter(&document, *m_counter);
+    renderer->setPseudoStyle(&pseudoStyle);
     return renderer;
 }
 
-RenderObject* QuoteContentData::createRenderer(Document* doc, RenderStyle* pseudoStyle) const
+RenderObject* QuoteContentData::createRenderer(Document& document, RenderStyle& pseudoStyle) const
 {
-    RenderObject* renderer = new (doc->renderArena()) RenderQuote(doc, m_quote);
-    renderer->setPseudoStyle(pseudoStyle);
+    RenderObject* renderer = new (document.renderArena()) RenderQuote(&document, m_quote);
+    renderer->setPseudoStyle(&pseudoStyle);
     return renderer;
 }
 
