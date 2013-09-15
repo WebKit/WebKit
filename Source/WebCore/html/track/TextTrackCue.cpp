@@ -509,7 +509,7 @@ void TextTrackCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerN
     for (Node* node = webVTTNode->firstChild(); node; node = node->nextSibling()) {
         RefPtr<Node> clonedNode;
         if (node->isWebVTTElement())
-            clonedNode = toWebVTTElement(node)->createEquivalentHTMLElement(&ownerDocument());
+            clonedNode = toWebVTTElement(node)->createEquivalentHTMLElement(ownerDocument());
         else
             clonedNode = node->cloneNode(false);
         parent->appendChild(clonedNode, ASSERT_NO_EXCEPTION);

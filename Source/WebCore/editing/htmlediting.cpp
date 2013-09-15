@@ -939,7 +939,9 @@ PassRefPtr<HTMLElement> createListItemElement(Document* document)
 
 PassRefPtr<HTMLElement> createHTMLElement(Document* document, const QualifiedName& name)
 {
-    return HTMLElementFactory::createHTMLElement(name, document, 0, false);
+    if (!document)
+        return nullptr;
+    return HTMLElementFactory::createElement(name, *document);
 }
 
 PassRefPtr<HTMLElement> createHTMLElement(Document* document, const AtomicString& tagName)

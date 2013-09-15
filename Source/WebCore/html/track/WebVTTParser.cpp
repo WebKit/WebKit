@@ -508,7 +508,7 @@ void WebVTTParser::constructTreeFromToken(Document* document)
         RefPtr<WebVTTElement> child;
         WebVTTNodeType nodeType = tokenToNodeType(m_token);
         if (nodeType != WebVTTNodeTypeNone)
-            child = WebVTTElement::create(nodeType, document);
+            child = WebVTTElement::create(nodeType, *document);
         if (child) {
             if (m_token.classes().size() > 0)
                 child->setAttribute(classAttr, AtomicString(m_token.classes()));

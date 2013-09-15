@@ -87,7 +87,7 @@ COMPILE_ASSERT(kHTMLAttrsIndexOffset > HTMLTagsCount, kHTMLAttrsIndexOffset_shou
 static const String& nameForIndex(unsigned index)
 {
     unsigned adjustedIndex;
-    QualifiedName** names;
+    const QualifiedName* const * names;
     if (index < kHTMLAttrsIndexOffset) {
         ASSERT(index < kHTMLNamesIndexOffset + HTMLTagsCount);
         adjustedIndex = index - kHTMLNamesIndexOffset;
@@ -119,7 +119,7 @@ const StringImpl* HTMLIdentifier::asStringImpl() const
     return m_string.impl();
 }
 
-void HTMLIdentifier::addNames(QualifiedName** names, unsigned namesCount, unsigned indexOffset)
+void HTMLIdentifier::addNames(const QualifiedName* const * names, unsigned namesCount, unsigned indexOffset)
 {
     IdentifierTable& table = identifierTable();
     for (unsigned i = 0; i < namesCount; ++i) {

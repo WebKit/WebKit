@@ -43,9 +43,8 @@ enum WebVTTNodeType {
 
 class WebVTTElement FINAL : public Element {
 public:
-    static PassRefPtr<WebVTTElement> create(const WebVTTNodeType, Document*);
-    static PassRefPtr<WebVTTElement> create(const QualifiedName&, Document*);
-    PassRefPtr<HTMLElement> createEquivalentHTMLElement(Document*);
+    static PassRefPtr<WebVTTElement> create(const WebVTTNodeType, Document&);
+    PassRefPtr<HTMLElement> createEquivalentHTMLElement(Document&);
 
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() OVERRIDE;
 
@@ -72,8 +71,7 @@ public:
     }
 
 private:
-    WebVTTElement(const QualifiedName&, Document*);
-    WebVTTElement(WebVTTNodeType, Document*);
+    WebVTTElement(WebVTTNodeType, Document&);
 
     unsigned m_isPastNode : 1;
     unsigned m_webVTTNodeType : 4;

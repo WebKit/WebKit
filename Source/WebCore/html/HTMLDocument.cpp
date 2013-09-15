@@ -293,7 +293,7 @@ PassRefPtr<Element> HTMLDocument::createElement(const AtomicString& name, Except
         ec = INVALID_CHARACTER_ERR;
         return 0;
     }
-    return HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, name.lower(), xhtmlNamespaceURI), this, 0, false);
+    return HTMLElementFactory::createElement(QualifiedName(nullAtom, name.lower(), xhtmlNamespaceURI), *this);
 }
 
 static void addLocalNameToSet(HashSet<AtomicStringImpl*>* set, const QualifiedName& qName)

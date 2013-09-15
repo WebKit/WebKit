@@ -212,7 +212,7 @@ void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name
         StyledElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-static void populateEventNameForAttributeLocalNameMap(HashMap<AtomicString, AtomicString>& map)
+static void populateEventNameForAttributeLocalNameMap(HashMap<AtomicStringImpl*, AtomicString>& map)
 {
     const QualifiedName* const simpleTable[] = {
         &onabortAttr,
@@ -297,24 +297,24 @@ static void populateEventNameForAttributeLocalNameMap(HashMap<AtomicString, Atom
         // by not using pointers from eventNames(), simpleTable can be initialized at compile time.
         AtomicString eventName = attributeName.string().substring(2);
 
-        map.add(attributeName, eventName);
+        map.add(attributeName.impl(), eventName);
     }
 
     struct CustomMapping {
-        const QualifiedName* attributeName;
-        const AtomicString* eventName;
+        const QualifiedName& attributeName;
+        const AtomicString& eventName;
     };
 
     const CustomMapping customTable[] = {
-        { &ontransitionendAttr, &eventNames().webkitTransitionEndEvent },
-        { &onwebkitanimationendAttr, &eventNames().webkitAnimationEndEvent },
-        { &onwebkitanimationiterationAttr, &eventNames().webkitAnimationIterationEvent },
-        { &onwebkitanimationstartAttr, &eventNames().webkitAnimationStartEvent },
-        { &onwebkittransitionendAttr, &eventNames().webkitTransitionEndEvent },
+        { ontransitionendAttr, eventNames().webkitTransitionEndEvent },
+        { onwebkitanimationendAttr, eventNames().webkitAnimationEndEvent },
+        { onwebkitanimationiterationAttr, eventNames().webkitAnimationIterationEvent },
+        { onwebkitanimationstartAttr, eventNames().webkitAnimationStartEvent },
+        { onwebkittransitionendAttr, eventNames().webkitTransitionEndEvent },
     };
 
     for (unsigned i = 0, size = WTF_ARRAY_LENGTH(customTable); i < size; ++i)
-        map.add(customTable[i].attributeName->localName(), *customTable[i].eventName);
+        map.add(customTable[i].attributeName.localName().impl(), customTable[i].eventName);
 }
 
 void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -334,11 +334,11 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& 
         }
     } else if (name.namespaceURI().isNull()) {
         // FIXME: Can we do this even faster by checking the local name "on" prefix before we do anything with the map?
-        static NeverDestroyed<HashMap<AtomicString, AtomicString>> eventNamesGlobal;
+        static NeverDestroyed<HashMap<AtomicStringImpl*, AtomicString>> eventNamesGlobal;
         auto& eventNames = eventNamesGlobal.get();
         if (eventNames.isEmpty())
             populateEventNameForAttributeLocalNameMap(eventNames);
-        const AtomicString& eventName = eventNames.get(name.localName());
+        const AtomicString& eventName = eventNames.get(name.localName().impl());
         if (!eventName.isNull())
             setAttributeEventListener(eventName, createAttributeEventListener(this, name, value));
     }

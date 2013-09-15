@@ -684,6 +684,7 @@ all : \
     HTMLElementFactory.cpp \
     HTMLEntityTable.cpp \
     HTMLNames.cpp \
+    JSHTMLElementWrapperFactory.cpp \
     JSSVGElementWrapperFactory.cpp \
     PlugInsResources.h \
     SVGElementFactory.cpp \
@@ -901,17 +902,15 @@ endif
 
 ifdef HTML_FLAGS
 
-HTMLElementFactory.cpp HTMLNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in
+HTMLElementFactory.cpp HTMLNames.cpp JSHTMLElementWrapperFactory.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in
 	perl -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory --extraDefines "$(HTML_FLAGS)"
 
 else
 
-HTMLElementFactory.cpp HTMLNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in
+HTMLElementFactory.cpp HTMLNames.cpp JSHTMLElementWrapperFactory.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in
 	perl -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory
 
 endif
-
-JSHTMLElementWrapperFactory.cpp : HTMLNames.cpp
 
 XMLNSNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm xml/xmlnsattrs.in
 	perl -I $(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlnsattrs.in
@@ -935,16 +934,14 @@ endif
 
 ifdef SVG_FLAGS
 
-SVGElementFactory.cpp SVGNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in
+JSSVGElementWrapperFactory.cpp SVGElementFactory.cpp SVGNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in
 	perl -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FLAGS)" --factory --wrapperFactory
 else
 
-SVGElementFactory.cpp SVGNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in
+JSSVGElementWrapperFactory.cpp SVGElementFactory.cpp SVGNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in
 	perl -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory
 
 endif
-
-JSSVGElementWrapperFactory.cpp : SVGNames.cpp
 
 XLinkNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/xlinkattrs.in
 	perl -I $(WebCore)/bindings/scripts $< --attrs $(WebCore)/svg/xlinkattrs.in

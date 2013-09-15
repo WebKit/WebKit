@@ -68,57 +68,58 @@ static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
     }
 }
 
-WebVTTElement::WebVTTElement(WebVTTNodeType nodeType, Document* document)
-    : Element(nodeTypeToTagName(nodeType), document, CreateElement)
+WebVTTElement::WebVTTElement(WebVTTNodeType nodeType, Document& document)
+    : Element(nodeTypeToTagName(nodeType), &document, CreateElement)
     , m_isPastNode(0)
     , m_webVTTNodeType(nodeType)
 {
 }
 
-PassRefPtr<WebVTTElement> WebVTTElement::create(WebVTTNodeType nodeType, Document* document)
+PassRefPtr<WebVTTElement> WebVTTElement::create(WebVTTNodeType nodeType, Document& document)
 {
     return adoptRef(new WebVTTElement(nodeType, document));
 }
 
 PassRefPtr<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren()
 {
-    RefPtr<WebVTTElement> clone = create(static_cast<WebVTTNodeType>(m_webVTTNodeType), &document());
+    RefPtr<WebVTTElement> clone = create(static_cast<WebVTTNodeType>(m_webVTTNodeType), document());
     clone->setLanguage(m_language);
     return clone;
 }
 
-PassRefPtr<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document* document)
+PassRefPtr<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& document)
 {
     RefPtr<HTMLElement> htmlElement;
+
     switch (m_webVTTNodeType) {
     case WebVTTNodeTypeClass:
     case WebVTTNodeTypeLanguage:
     case WebVTTNodeTypeVoice:
-        htmlElement = HTMLElementFactory::createHTMLElement(HTMLNames::spanTag, document);
-        htmlElement.get()->setAttribute(HTMLNames::titleAttr, getAttribute(voiceAttributeName()));
-        htmlElement.get()->setAttribute(HTMLNames::langAttr, getAttribute(langAttributeName()));
+        htmlElement = HTMLElementFactory::createElement(HTMLNames::spanTag, document);
+        htmlElement->setAttribute(HTMLNames::titleAttr, getAttribute(voiceAttributeName()));
+        htmlElement->setAttribute(HTMLNames::langAttr, getAttribute(langAttributeName()));
         break;
     case WebVTTNodeTypeItalic:
-        htmlElement = HTMLElementFactory::createHTMLElement(HTMLNames::iTag, document);
+        htmlElement = HTMLElementFactory::createElement(HTMLNames::iTag, document);
         break;
     case WebVTTNodeTypeBold:
-        htmlElement = HTMLElementFactory::createHTMLElement(HTMLNames::bTag, document);
+        htmlElement = HTMLElementFactory::createElement(HTMLNames::bTag, document);
         break;
     case WebVTTNodeTypeUnderline:
-        htmlElement = HTMLElementFactory::createHTMLElement(HTMLNames::uTag, document);
+        htmlElement = HTMLElementFactory::createElement(HTMLNames::uTag, document);
         break;
     case WebVTTNodeTypeRuby:
-        htmlElement = HTMLElementFactory::createHTMLElement(HTMLNames::rubyTag, document);
+        htmlElement = HTMLElementFactory::createElement(HTMLNames::rubyTag, document);
         break;
     case WebVTTNodeTypeRubyText:
-        htmlElement = HTMLElementFactory::createHTMLElement(HTMLNames::rtTag, document);
+        htmlElement = HTMLElementFactory::createElement(HTMLNames::rtTag, document);
         break;
-    default:
-        ASSERT_NOT_REACHED();
     }
 
-    htmlElement.get()->setAttribute(HTMLNames::classAttr, getAttribute(HTMLNames::classAttr));
-    return htmlElement;
+    ASSERT(htmlElement);
+    if (htmlElement)
+        htmlElement->setAttribute(HTMLNames::classAttr, fastGetAttribute(HTMLNames::classAttr));
+    return htmlElement.release();
 }
 
 } // namespace WebCore

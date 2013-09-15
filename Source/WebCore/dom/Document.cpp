@@ -820,7 +820,7 @@ PassRefPtr<Element> Document::createElement(const AtomicString& name, ExceptionC
     }
 
     if (isXHTMLDocument())
-        return HTMLElementFactory::createHTMLElement(QualifiedName(nullAtom, name, xhtmlNamespaceURI), this, 0, false);
+        return HTMLElementFactory::createElement(QualifiedName(nullAtom, name, xhtmlNamespaceURI), *this);
 
     return createElement(QualifiedName(nullAtom, name, nullAtom), false);
 }
@@ -1112,32 +1112,32 @@ bool Document::hasValidNamespaceForAttributes(const QualifiedName& qName)
     return hasValidNamespaceForElements(qName);
 }
 
-// FIXME: This should really be in a possible ElementFactory class
-PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool createdByParser)
+// FIXME: This should really be in a possible ElementFactory class.
+PassRefPtr<Element> Document::createElement(const QualifiedName& name, bool createdByParser)
 {
-    RefPtr<Element> e;
+    RefPtr<Element> element;
 
     // FIXME: Use registered namespaces and look up in a hash to find the right factory.
-    if (qName.namespaceURI() == xhtmlNamespaceURI)
-        e = HTMLElementFactory::createHTMLElement(qName, this, 0, createdByParser);
+    if (name.namespaceURI() == xhtmlNamespaceURI)
+        element = HTMLElementFactory::createElement(name, *this, nullptr, createdByParser);
 #if ENABLE(SVG)
-    else if (qName.namespaceURI() == SVGNames::svgNamespaceURI)
-        e = SVGElementFactory::createSVGElement(qName, this, createdByParser);
+    else if (name.namespaceURI() == SVGNames::svgNamespaceURI)
+        element = SVGElementFactory::createElement(name, *this, createdByParser);
 #endif
 #if ENABLE(MATHML)
-    else if (qName.namespaceURI() == MathMLNames::mathmlNamespaceURI)
-        e = MathMLElementFactory::createMathMLElement(qName, this, createdByParser);
+    else if (name.namespaceURI() == MathMLNames::mathmlNamespaceURI)
+        element = MathMLElementFactory::createElement(name, *this, createdByParser);
 #endif
 
-    if (e)
+    if (element)
         m_sawElementsInKnownNamespaces = true;
     else
-        e = Element::create(qName, &document());
+        element = Element::create(name, &document());
 
     // <image> uses imgTag so we need a special rule.
-    ASSERT((qName.matches(imageTag) && e->tagQName().matches(imgTag) && e->tagQName().prefix() == qName.prefix()) || qName == e->tagQName());
+    ASSERT((name.matches(imageTag) && element->tagQName().matches(imgTag) && element->tagQName().prefix() == name.prefix()) || name == element->tagQName());
 
-    return e.release();
+    return element.release();
 }
 
 bool Document::regionBasedColumnsEnabled() const

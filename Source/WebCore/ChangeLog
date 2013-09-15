@@ -1,3 +1,104 @@
+2013-09-15  Darin Adler  <darin@apple.com>
+
+        Shrink factory functions
+        https://bugs.webkit.org/show_bug.cgi?id=121378
+
+        Reviewed by Andreas Kling.
+
+        This makes the functions that builds four different types of per-element tables
+        all have smaller code size.
+
+        * DerivedSources.make: Tweaked how HTML and SVG wrapper factories are made a bit.
+        It was OK, but a little sloppy.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createElement): Changed to call the createElement functions
+        in the factories. Also did some style improvement.
+
+        * dom/make_names.pl:
+        (printConstructorSignature): Make constructors take a Document& instead of
+        a Document*.
+        (printConstructorInterior): Updated for Document& instead of Document*.
+        (printFunctionTable): Renamed from printFunctionInits, because this now
+        creates table entries. The actual code to add each function is now done
+        in a loop instead.
+        (printNamesHeaderFile): Made the table const.
+        (printNamesCppFile): Made the table const.
+        (printDefinitions): Generate a table, table entries, and a loop that calls
+        createQualifiedName, rather than an "unrolled loop".
+        (printFactoryCppFile): Tweaked indentation. Updated to take Document& instead
+        of Document*. Generate a table, table entries, and a loop that builds a map,
+        rather than an "unrolled" loop.
+        (printFactoryHeaderFile): Eliminated the unused createElement member function
+        that was part of a dream of factory objects in a namespace registry, giving
+        the name createElement to the static member function so it would be less
+        redundant. Also made the function takes a Document& instead of Document*.
+        Also made the default "not created by parser", since the parser is the simpler
+        use case, outnumbered by the non-parser uses, at least at the moment. Also,
+        use nullptr instead of 0.
+        (printWrapperFactoryCppFile): Generate a table, table entries, and a loop
+        that builds a map rather than an "unrolled" loop.
+
+        * editing/htmlediting.cpp:
+        (WebCore::createHTMLElement): Put the null check here that used to be in
+        HTMLElementFactory::createElement, and call with a reference instead of a
+        pointer. Also don't need to pass "0, false" since "not created by the parser"
+        is now the default.
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::createElement): Ditto.
+
+        * html/HTMLElement.cpp:
+        (WebCore::populateEventNameForAttributeLocalNameMap): Changed to use an
+        AtomicStringImpl* as the key instead of AtomicString, since all the strings
+        come from the local names of tags, and so don't need to be ref'd. This saves
+        a bit of reference count churn when building the map and is the same pattern
+        used in some maps in the make_names.pl script above.
+        (WebCore::HTMLElement::parseAttribute): Updated for change above.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::isRecognizedTagName): More const.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createHTMLElement): Changed to call the
+        HTMLElementFactory::createElement function under its new name with a reference
+        rather than a pointer.
+
+        * html/parser/HTMLIdentifier.cpp:
+        (WebCore::nameForIndex): More const.
+        (WebCore::HTMLIdentifier::addNames): More const.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::mapLoweredLocalNameToName): More const.
+        (WebCore::adjustSVGTagNameCase): Eliminated local variable so we would not have
+        to utter type with more const.
+        (WebCore::adjustAttributes): Ditto.
+        (WebCore::addNamesWithPrefix): More const. Also tweaked to use a bit more reference,
+        and a bit less pointer. Also used array instead of pointer for argument since they
+        are synonyms and this use is more array-like and const array is slightly easier to
+        understand than the double const pointer.
+        (WebCore::adjustForeignAttributes): Eliminated local variable so we would not have
+        to utter type with more const.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::copyWebVTTNodeToDOMTree): Pass a reference to
+        WebVTTElement::createEquivalentHTMLElement.
+
+        * html/track/WebVTTElement.cpp:
+        (WebCore::WebVTTElement::WebVTTElement): Take a reference instead of a pointer.
+        (WebCore::WebVTTElement::create): Ditto.
+        (WebCore::WebVTTElement::cloneElementWithoutAttributesAndChildren): Pass a
+        reference instead of a pointer to create.
+        (WebCore::WebVTTElement::createEquivalentHTMLElement): Take a reference instead
+        of a pointer, and update uses of HTMLElementFactory::createElement. Also made
+        this return null when a bad node type is passed in, which should never happen.
+
+        * html/track/WebVTTElement.h: Use Document& instead of Document*. Removed unused
+        and undefined create/constructor overloads.
+
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::constructTreeFromToken): Pass document reference rather than
+        pointer to WebVTTElement::create.
+
 2013-09-15  Andreas Kling  <akling@apple.com>
 
         Get rid of ref-counting on RenderArena.
