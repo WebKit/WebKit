@@ -35,7 +35,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLLIElement::HTMLLIElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(liTag));
     setHasCustomStyleResolveCallbacks();

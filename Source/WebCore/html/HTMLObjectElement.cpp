@@ -60,7 +60,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLObjectElement::HTMLObjectElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
-    : HTMLPlugInImageElement(tagName, &document, createdByParser, ShouldNotPreferPlugInsForImages)
+    : HTMLPlugInImageElement(tagName, document, createdByParser, ShouldNotPreferPlugInsForImages)
     , m_docNamedItem(true)
     , m_useFallbackContent(false)
 {

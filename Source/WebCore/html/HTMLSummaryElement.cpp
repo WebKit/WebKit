@@ -43,7 +43,7 @@ public:
 
 private:
     SummaryContentElement(Document& document)
-        : InsertionPoint(HTMLNames::webkitShadowContentTag, &document)
+        : InsertionPoint(webkitShadowContentTag, document)
     {
     }
 };
@@ -61,7 +61,7 @@ PassRefPtr<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& t
 }
 
 HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(summaryTag));
 }

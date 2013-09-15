@@ -47,7 +47,7 @@ static LabelableElement* nodeAsSupportedLabelableElement(Node* node)
 }
 
 inline HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(labelTag));
 }

@@ -30,7 +30,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLDirectoryElement::HTMLDirectoryElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(dirTag));
 }

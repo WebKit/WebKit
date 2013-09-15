@@ -40,24 +40,24 @@ using HTMLNames::selectAttr;
 
 #if ENABLE(SHADOW_DOM)
 
-const QualifiedName& HTMLContentElement::contentTagName(Document*)
+const QualifiedName& HTMLContentElement::contentTagName(Document&)
 {
     if (!RuntimeEnabledFeatures::shadowDOMEnabled())
         return HTMLNames::webkitShadowContentTag;
     return HTMLNames::contentTag;
 }
 
-PassRefPtr<HTMLContentElement> HTMLContentElement::create(Document* document)
+PassRefPtr<HTMLContentElement> HTMLContentElement::create(Document& document)
 {
     return adoptRef(new HTMLContentElement(contentTagName(document), document));
 }
 
-PassRefPtr<HTMLContentElement> HTMLContentElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<HTMLContentElement> HTMLContentElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(new HTMLContentElement(tagName, document));
 }
 
-HTMLContentElement::HTMLContentElement(const QualifiedName& name, Document* document)
+HTMLContentElement::HTMLContentElement(const QualifiedName& name, Document& document)
     : InsertionPoint(name, document)
     , m_shouldParseSelectorList(false)
     , m_isValidSelector(true)

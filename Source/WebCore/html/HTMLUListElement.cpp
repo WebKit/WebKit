@@ -32,7 +32,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLUListElement::HTMLUListElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(ulTag));
 }

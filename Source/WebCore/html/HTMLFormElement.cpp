@@ -56,7 +56,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
     , m_associatedElementsBeforeIndex(0)
     , m_associatedElementsAfterIndex(0)
     , m_wasUserSubmitted(false)

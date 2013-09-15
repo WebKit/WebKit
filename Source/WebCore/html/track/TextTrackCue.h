@@ -51,7 +51,7 @@ class TextTrackCue;
 
 class TextTrackCueBox : public HTMLElement {
 public:
-    static PassRefPtr<TextTrackCueBox> create(Document* document, TextTrackCue* cue)
+    static PassRefPtr<TextTrackCueBox> create(Document& document, TextTrackCue* cue)
     {
         return adoptRef(new TextTrackCueBox(document, cue));
     }
@@ -62,7 +62,7 @@ public:
     static const AtomicString& textTrackCueBoxShadowPseudoId();
 
 protected:
-    TextTrackCueBox(Document*, TextTrackCue*);
+    TextTrackCueBox(Document&, TextTrackCue*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
 
@@ -208,7 +208,7 @@ protected:
 
     TextTrackCue(ScriptExecutionContext*, double start, double end, const String& content);
 
-    Document* ownerDocument() { return toDocument(m_scriptExecutionContext); }
+    Document& ownerDocument() { return *toDocument(m_scriptExecutionContext); }
 
     virtual PassRefPtr<TextTrackCueBox> createDisplayTree();
     TextTrackCueBox* displayTreeInternal();

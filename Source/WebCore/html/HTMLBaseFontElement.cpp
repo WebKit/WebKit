@@ -30,7 +30,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLBaseFontElement::HTMLBaseFontElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(basefontTag));
 }

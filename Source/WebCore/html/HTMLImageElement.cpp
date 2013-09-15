@@ -45,7 +45,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
     , m_imageLoader(this)
     , m_form(form)
     , m_compositeOperator(CompositeSourceOver)

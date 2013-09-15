@@ -47,7 +47,7 @@ public:
 
 private:
     DetailsContentElement(Document& document)
-        : InsertionPoint(HTMLNames::webkitShadowContentTag, &document)
+        : InsertionPoint(webkitShadowContentTag, document)
     {
     }
 
@@ -76,7 +76,7 @@ public:
 
 private:
     DetailsSummaryElement(Document& document)
-        : InsertionPoint(HTMLNames::webkitShadowContentTag, &document)
+        : InsertionPoint(webkitShadowContentTag, document)
     {
     }
 
@@ -106,7 +106,7 @@ PassRefPtr<HTMLDetailsElement> HTMLDetailsElement::create(const QualifiedName& t
 }
 
 HTMLDetailsElement::HTMLDetailsElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
     , m_isOpen(false)
 {
     ASSERT(hasTagName(detailsTag));

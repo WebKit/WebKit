@@ -81,7 +81,7 @@ public:
     virtual bool isPlugInImageElement() const { return false; }
 
 protected:
-    HTMLPlugInElement(const QualifiedName& tagName, Document*);
+    HTMLPlugInElement(const QualifiedName& tagName, Document&);
 
     virtual void willDetachRenderers() OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;

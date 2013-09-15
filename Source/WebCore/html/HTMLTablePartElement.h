@@ -35,7 +35,7 @@ class HTMLTableElement;
 class HTMLTablePartElement : public HTMLElement {
 protected:
     HTMLTablePartElement(const QualifiedName& tagName, Document& document)
-        : HTMLElement(tagName, &document)
+        : HTMLElement(tagName, document)
     {
     }
 

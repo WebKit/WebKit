@@ -51,7 +51,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLOptionElement::HTMLOptionElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
     , m_disabled(false)
     , m_isSelected(false)
 {

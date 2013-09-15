@@ -47,7 +47,7 @@ static StyleEventSender& styleLoadEventSender()
 }
 
 inline HTMLStyleElement::HTMLStyleElement(const QualifiedName& tagName, Document& document, bool createdByParser)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
     , m_styleSheetOwner(document, createdByParser)
     , m_firedLoad(false)
     , m_loadedSheet(false)

@@ -60,7 +60,7 @@ public:
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
 
 protected:
-    HTMLFrameOwnerElement(const QualifiedName& tagName, Document*);
+    HTMLFrameOwnerElement(const QualifiedName& tagName, Document&);
     void setSandboxFlags(SandboxFlags);
 
 private:

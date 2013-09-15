@@ -65,7 +65,7 @@ static LinkEventSender& linkLoadEventSender()
 }
 
 inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document& document, bool createdByParser)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
     , m_linkLoader(this)
     , m_sizes(DOMSettableTokenList::create())
     , m_disabledState(Unset)

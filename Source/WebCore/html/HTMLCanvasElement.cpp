@@ -70,7 +70,7 @@ static const int DefaultHeight = 150;
 static const float MaxCanvasArea = 32768 * 8192; // Maximum canvas area in CSS pixels
 
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
     , m_size(DefaultWidth, DefaultHeight)
     , m_rendererIsCanvas(false)
     , m_ignoreReset(false)

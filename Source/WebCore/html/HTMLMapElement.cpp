@@ -40,7 +40,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLMapElement::HTMLMapElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(mapTag));
 }

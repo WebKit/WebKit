@@ -181,7 +181,7 @@ sub defaultTagPropertyHash
     return (
         'constructorNeedsCreatedByParser' => 0,
         'constructorNeedsFormElement' => 0,
-        'constructorTakesDocumentReference' => 0,
+        'constructorTakesDocumentReference' => $parameters{constructorTakesDocumentReference},
         'noConstructor' => 0,
         'interfaceName' => defaultInterfaceName($_[0]),
         # By default, the JSInterfaceName is the same as the interfaceName.
@@ -205,7 +205,8 @@ sub defaultParametersHash
         'tagsNullNamespace' => 0,
         'attrsNullNamespace' => 0,
         'fallbackInterfaceName' => '',
-        'fallbackJSInterfaceName' => ''
+        'fallbackJSInterfaceName' => '',
+        'constructorTakesDocumentReference' => 0
     );
 }
 
@@ -992,23 +993,18 @@ print F <<END
 END
 ;
 
-if ($parameters{namespace} eq "HTML") {
-    print F "        if (PassRefPtr<$parameters{namespace}Element> element = function(qName, document, formElement, createdByParser))\n";
-    print F "            return element;\n";
-} else {
-    print F "        if (PassRefPtr<$parameters{namespace}Element> element = function(qName, document, createdByParser))\n";
-    print F "            return element;\n";
-}
-print F <<END
+    if ($parameters{namespace} eq "HTML") {
+        print F "        if (PassRefPtr<$parameters{namespace}Element> element = function(qName, document, formElement, createdByParser))\n";
+        print F "            return element;\n";
+    } else {
+        print F "        if (PassRefPtr<$parameters{namespace}Element> element = function(qName, document, createdByParser))\n";
+        print F "            return element;\n";
     }
+    print F "   }\n";
+    print F "   return $parameters{fallbackInterfaceName}::create(qName, " . ($parameters{constructorTakesDocumentReference} ? "*document" : "document") . ");\n";
 
-    return $parameters{fallbackInterfaceName}::create(qName, document);
-}
-
-} // namespace WebCore
-
-END
-;
+    print F "}\n\n";
+    print F "} // namespace WebCore\n\n";
 
     print F "#endif\n" if $parameters{guardFactoryWith};
 

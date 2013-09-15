@@ -30,7 +30,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLMenuElement::HTMLMenuElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(menuTag));
 }

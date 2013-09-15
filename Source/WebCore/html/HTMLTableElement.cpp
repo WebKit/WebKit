@@ -47,7 +47,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLTableElement::HTMLTableElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
     , m_borderAttr(false)
     , m_borderColorAttr(false)
     , m_frameAttr(false)

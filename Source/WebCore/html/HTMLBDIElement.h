@@ -34,7 +34,7 @@ public:
 
 private:
     HTMLBDIElement(const QualifiedName& name, Document& document)
-        : HTMLElement(name, &document)
+        : HTMLElement(name, document)
     {
         // FIXME: Rename setSelfOrAncestorHasDirAutoAttribute to reflect the fact bdi also uses this flag.
         setSelfOrAncestorHasDirAutoAttribute(true);

@@ -41,7 +41,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-InsertionPoint::InsertionPoint(const QualifiedName& tagName, Document* document)
+InsertionPoint::InsertionPoint(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document, CreateInsertionPoint)
     , m_hasDistribution(false)
 {

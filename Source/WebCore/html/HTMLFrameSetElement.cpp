@@ -45,7 +45,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
     , m_totalRows(1)
     , m_totalCols(1)
     , m_border(6)

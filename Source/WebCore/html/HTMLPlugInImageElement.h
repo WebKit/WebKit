@@ -99,7 +99,7 @@ public:
     SnapshotDecision snapshotDecision() const { return m_snapshotDecision; }
 
 protected:
-    HTMLPlugInImageElement(const QualifiedName& tagName, Document*, bool createdByParser, PreferPlugInsForImagesOption);
+    HTMLPlugInImageElement(const QualifiedName& tagName, Document&, bool createdByParser, PreferPlugInsForImagesOption);
 
     bool isImageType();
 

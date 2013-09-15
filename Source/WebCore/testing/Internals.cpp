@@ -354,7 +354,7 @@ PassRefPtr<Element> Internals::createContentElement(ExceptionCode& ec)
     }
 
 #if ENABLE(SHADOW_DOM)
-    return HTMLContentElement::create(document);
+    return HTMLContentElement::create(*document);
 #else
     return 0;
 #endif

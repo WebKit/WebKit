@@ -53,7 +53,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLAnchorElement::HTMLAnchorElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
     , m_hasRootEditableElementForSelectionOnMouseDown(false)
     , m_wasShiftKeyDownOnMouseDown(false)
     , m_linkRelations(0)

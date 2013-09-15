@@ -38,7 +38,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLIFrameElement::HTMLIFrameElement(const QualifiedName& tagName, Document& document)
-    : HTMLFrameElementBase(tagName, &document)
+    : HTMLFrameElementBase(tagName, document)
 {
     ASSERT(hasTagName(iframeTag));
     setHasCustomStyleResolveCallbacks();

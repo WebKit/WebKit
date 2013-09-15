@@ -181,7 +181,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addSpanWithClassName(const AtomicStr
         return m_current;
     }
 
-    RefPtr<HTMLElement> span = HTMLElement::create(spanTag, this);
+    RefPtr<HTMLElement> span = HTMLElement::create(spanTag, *this);
     span->setAttribute(classAttr, className);
     m_current->parserAppendChild(span);
     Style::attachRenderTree(*span);

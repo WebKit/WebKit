@@ -40,9 +40,9 @@ namespace WebCore {
 
 class HTMLContentElement FINAL : public InsertionPoint {
 public:
-    static const QualifiedName& contentTagName(Document*);
-    static PassRefPtr<HTMLContentElement> create(const QualifiedName&, Document*);
-    static PassRefPtr<HTMLContentElement> create(Document*);
+    static const QualifiedName& contentTagName(Document&);
+    static PassRefPtr<HTMLContentElement> create(const QualifiedName&, Document&);
+    static PassRefPtr<HTMLContentElement> create(Document&);
 
     virtual ~HTMLContentElement();
 
@@ -56,7 +56,7 @@ public:
     virtual bool isSelectValid();
 
 protected:
-    HTMLContentElement(const QualifiedName&, Document*);
+    HTMLContentElement(const QualifiedName&, Document&);
 
 private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

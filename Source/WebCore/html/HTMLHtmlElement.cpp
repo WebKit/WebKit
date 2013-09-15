@@ -37,7 +37,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLHtmlElement::HTMLHtmlElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(htmlTag));
 }

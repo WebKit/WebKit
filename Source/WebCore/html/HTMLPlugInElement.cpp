@@ -52,8 +52,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document* doc)
-    : HTMLFrameOwnerElement(tagName, doc)
+HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document& document)
+    : HTMLFrameOwnerElement(tagName, document)
     , m_inBeforeLoadEventHandler(false)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_NPObject(0)

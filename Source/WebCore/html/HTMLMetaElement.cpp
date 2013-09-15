@@ -32,7 +32,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLMetaElement::HTMLMetaElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(metaTag));
 }

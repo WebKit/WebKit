@@ -33,7 +33,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLDivElement::HTMLDivElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(divTag));
 }

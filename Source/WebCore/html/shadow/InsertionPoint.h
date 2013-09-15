@@ -72,7 +72,7 @@ public:
     Node* previousDistributedTo(const Node*) const;
 
 protected:
-    InsertionPoint(const QualifiedName&, Document*);
+    InsertionPoint(const QualifiedName&, Document&);
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
     virtual void childrenChanged(const ChildChange&) OVERRIDE;
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;

@@ -30,7 +30,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLModElement::HTMLModElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
 {
 }
 

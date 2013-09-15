@@ -38,7 +38,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLOptGroupElement::HTMLOptGroupElement(const QualifiedName& tagName, Document& document)
-    : HTMLElement(tagName, &document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(optgroupTag));
     setHasCustomStyleResolveCallbacks();
