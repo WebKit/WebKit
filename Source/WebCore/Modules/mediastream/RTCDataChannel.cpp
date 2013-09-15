@@ -76,9 +76,34 @@ String RTCDataChannel::label() const
     return m_handler->label();
 }
 
-bool RTCDataChannel::reliable() const
+bool RTCDataChannel::ordered() const
 {
-    return m_handler->isReliable();
+    return m_handler->ordered();
+}
+
+unsigned short RTCDataChannel::maxRetransmitTime() const
+{
+    return m_handler->maxRetransmitTime();
+}
+
+unsigned short RTCDataChannel::maxRetransmits() const
+{
+return m_handler->maxRetransmits();
+}
+
+String RTCDataChannel::protocol() const
+{
+    return m_handler->protocol();
+}
+
+bool RTCDataChannel::negotiated() const
+{
+    return m_handler->negotiated();
+}
+
+unsigned short RTCDataChannel::id() const
+{
+    return m_handler->id();
 }
 
 String RTCDataChannel::readyState() const

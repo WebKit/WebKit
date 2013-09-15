@@ -1,3 +1,37 @@
+2013-09-14  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        MediaStream API: Update RTCDataChannel to match the specification
+        https://bugs.webkit.org/show_bug.cgi?id=120889
+
+        Reviewed by Eric Carlson
+
+        Merged from https://chromium.googlesource.com/chromium/blink/+/c3862b0a83e20fc8b1f770c7e4a886a7cceb80d2
+        by Tommy Widenflycht.
+
+        According to WebRTC specification, RTCDataChannel must have the following new attributes:
+        boolean ordered
+        unsigned short maxRetransmitTime
+        unsigned short maxRetransmits
+        DOMString protocol
+        boolean negotiated
+        unsigned short id
+
+        and the following one was deprecated:
+        boolean reliable
+
+        Test updates will be landed with https://webkit.org/b/121102.
+
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::ordered):
+        (WebCore::RTCDataChannel::maxRetransmitTime):
+        (WebCore::RTCDataChannel::maxRetransmits):
+        (WebCore::RTCDataChannel::protocol):
+        (WebCore::RTCDataChannel::negotiated):
+        (WebCore::RTCDataChannel::id):
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * platform/mediastream/RTCDataChannelHandler.h:
+
 2013-09-14  Sam Weinig  <sam@webkit.org>
 
         [CTTE] Node subclasses should take a Document by reference in their constructor (Part 4)

@@ -40,7 +40,12 @@ public:
     virtual void setClient(RTCDataChannelHandlerClient*) = 0;
 
     virtual String label() = 0;
-    virtual bool isReliable() = 0;
+    virtual bool ordered() = 0;
+    virtual unsigned short maxRetransmitTime() = 0;
+    virtual unsigned short maxRetransmits() = 0;
+    virtual String protocol() = 0;
+    virtual bool negotiated() = 0;
+    virtual unsigned short id() = 0;
     virtual unsigned long bufferedAmount() = 0;
 
     virtual bool sendStringData(const String&) = 0;
