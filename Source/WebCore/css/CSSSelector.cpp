@@ -320,7 +320,6 @@ static void populatePseudoTypeByNameMap(HashMap<AtomicString, CSSSelector::Pseud
         TABLE_ENTRY("only-of-type", PseudoOnlyOfType)
         TABLE_ENTRY("optional", PseudoOptional)
         TABLE_ENTRY("out-of-range", PseudoOutOfRange)
-        TABLE_ENTRY("past", PseudoPastCue)
         TABLE_ENTRY("read-only", PseudoReadOnly)
         TABLE_ENTRY("read-write", PseudoReadWrite)
         TABLE_ENTRY("required", PseudoRequired)

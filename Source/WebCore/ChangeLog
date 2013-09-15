@@ -1,3 +1,11 @@
+2013-09-15  Darin Adler  <darin@apple.com>
+
+        Fix Qt build.
+
+        * css/CSSSelector.cpp:
+        (WebCore::populatePseudoTypeByNameMap): Removed stray line that was breaking
+        the build for any platform with !ENABLE(VIDEO_TRACK).
+
 2013-09-15  Andreas Kling  <akling@apple.com>
 
         Restore two-pass mechanism for FrameView::updateEmbeddedObjects().
