@@ -1,3 +1,44 @@
+2013-09-16  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Winding rule polygon issues
+        https://bugs.webkit.org/show_bug.cgi?id=120236
+
+        Reviewed by Dirk Schulze.
+
+        Verify that self-intersecting rectilinear shape-inside polygons work
+        correctly for the evenodd and nonzero fill rules.
+
+        The shape for tests 001 and 002 contains a loop (the vertices are
+        numbered in the figure):
+
+        0----4----1----5
+        |    |    |    |
+        |    3----2    |
+        7--------------6
+
+        When the fillRule is nonzero the entire rectangle is filled because
+        edges 7-0 and 3-4 wind in same direction. When fillRule is evenodd the
+        1-2-3-4 rectangle is not filled, leaving a U shape.
+
+        The shape for tests 003 and 004 is similar, but the adjacent vertical edges
+        wind in opposite directions. As a result both nonzero and evenodd fills
+        produce the same U shaped result.
+
+        0----2---1,5---6
+        |    |    |    |
+        |    3----4    |
+        8--------------7
+
+
+        * fast/shapes/shape-inside/shape-inside-complex-polygon-001-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-complex-polygon-001.html: Added.
+        * fast/shapes/shape-inside/shape-inside-complex-polygon-002-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-complex-polygon-002.html: Added.
+        * fast/shapes/shape-inside/shape-inside-complex-polygon-003-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-complex-polygon-003.html: Added.
+        * fast/shapes/shape-inside/shape-inside-complex-polygon-004-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-complex-polygon-004.html: Added.
+
 2013-09-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r155851.

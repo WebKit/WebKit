@@ -156,11 +156,25 @@ static inline float leftSide(const FloatPoint& vertex1, const FloatPoint& vertex
     return ((point.x() - vertex1.x()) * (vertex2.y() - vertex1.y())) - ((vertex2.x() - vertex1.x()) * (point.y() - vertex1.y()));
 }
 
-bool FloatPolygon::contains(const FloatPoint& point) const
+bool FloatPolygon::containsEvenOdd(const FloatPoint& point) const
 {
-    if (!m_boundingBox.contains(point))
-        return false;
+    unsigned crossingCount = 0;
+    for (unsigned i = 0; i < numberOfEdges(); ++i) {
+        const FloatPoint& vertex1 = edgeAt(i).vertex1();
+        const FloatPoint& vertex2 = edgeAt(i).vertex2();
+        if (isPointOnLineSegment(vertex1, vertex2, point))
+            return true;
+        if ((vertex1.y() <= point.y() && vertex2.y() > point.y()) || (vertex1.y() > point.y() && vertex2.y() <= point.y())) {
+            float vt = (point.y()  - vertex1.y()) / (vertex2.y() - vertex1.y());
+            if (point.x() < vertex1.x() + vt * (vertex2.x() - vertex1.x()))
+                ++crossingCount;
+        }
+    }
+    return crossingCount & 1;
+}
 
+bool FloatPolygon::containsNonZero(const FloatPoint& point) const
+{
     int windingNumber = 0;
     for (unsigned i = 0; i < numberOfEdges(); ++i) {
         const FloatPoint& vertex1 = edgeAt(i).vertex1();
@@ -175,8 +189,14 @@ bool FloatPolygon::contains(const FloatPoint& point) const
                 --windingNumber;
         }
     }
-
     return windingNumber;
+}
+
+bool FloatPolygon::contains(const FloatPoint& point) const
+{
+    if (!m_boundingBox.contains(point))
+        return false;
+    return fillRule() == RULE_NONZERO ? containsNonZero(point) : containsEvenOdd(point);
 }
 
 bool VertexPair::overlapsRect(const FloatRect& rect) const

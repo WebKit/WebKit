@@ -68,6 +68,9 @@ private:
     typedef PODInterval<float, FloatPolygonEdge*> EdgeInterval;
     typedef PODIntervalTree<float, FloatPolygonEdge*> EdgeIntervalTree;
 
+    bool containsNonZero(const FloatPoint&) const;
+    bool containsEvenOdd(const FloatPoint&) const;
+
     OwnPtr<Vector<FloatPoint> > m_vertices;
     WindRule m_fillRule;
     FloatRect m_boundingBox;

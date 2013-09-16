@@ -280,33 +280,29 @@ static void computeXIntersections(const FloatPolygon& polygon, float y, bool isM
             }
         }
 
-        const FloatPolygonEdge& thisEdge = *thisIntersection.edge;
-        bool evenOddCrossing = !windCount;
+        bool edgeCrossing = thisIntersection.type == Normal;
+        if (!edgeCrossing) {
+            FloatPoint prevVertex;
+            FloatPoint thisVertex;
+            FloatPoint nextVertex;
 
-        if (polygon.fillRule() == RULE_EVENODD) {
-            windCount += (thisEdge.vertex2().y() > thisEdge.vertex1().y()) ? 1 : -1;
-            evenOddCrossing = evenOddCrossing || !windCount;
-        }
-
-        if (evenOddCrossing) {
-            bool edgeCrossing = thisIntersection.type == Normal;
-            if (!edgeCrossing) {
-                FloatPoint prevVertex;
-                FloatPoint thisVertex;
-                FloatPoint nextVertex;
-
-                if (getVertexIntersectionVertices(thisIntersection, prevVertex, thisVertex, nextVertex)) {
-                    if (nextVertex.y() == y)
-                        edgeCrossing = (isMinY) ? prevVertex.y() > y : prevVertex.y() < y;
-                    else if (prevVertex.y() == y)
-                        edgeCrossing = (isMinY) ? nextVertex.y() > y : nextVertex.y() < y;
-                    else
-                        edgeCrossing = true;
-                }
+            if (getVertexIntersectionVertices(thisIntersection, prevVertex, thisVertex, nextVertex)) {
+                if (nextVertex.y() == y)
+                    edgeCrossing = (isMinY) ? prevVertex.y() > y : prevVertex.y() < y;
+                else if (prevVertex.y() == y)
+                    edgeCrossing = (isMinY) ? nextVertex.y() > y : nextVertex.y() < y;
+                else
+                    edgeCrossing = true;
             }
-            if (edgeCrossing)
-                inside = appendIntervalX(thisIntersection.point.x(), inside, result);
         }
+
+        if (edgeCrossing && polygon.fillRule() == RULE_NONZERO) {
+            const FloatPolygonEdge& thisEdge = *thisIntersection.edge;
+            windCount += (thisEdge.vertex2().y() > thisEdge.vertex1().y()) ? 1 : -1;
+        }
+
+        if (edgeCrossing && (!inside || !windCount))
+            inside = appendIntervalX(thisIntersection.point.x(), inside, result);
 
         ++index;
     }
