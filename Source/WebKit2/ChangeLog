@@ -1,3 +1,11 @@
+2013-09-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, fixing the GTK WK2 build after r155888.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        * UIProcess/API/gtk/PageClientImpl.h:
+
 2013-09-16  Anders Carlsson  <andersca@apple.com>
 
         Remove some uses of PassOwnPtr in WebKit2

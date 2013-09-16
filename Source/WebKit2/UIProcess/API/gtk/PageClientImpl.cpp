@@ -67,9 +67,9 @@ void PageClientImpl::getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent& 
 }
 
 // PageClient's pure virtual functions
-PassOwnPtr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
+OwnPtr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
-    return DrawingAreaProxyImpl::create(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget)));
+    return createOwned<DrawingAreaProxyImpl>(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget)));
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)

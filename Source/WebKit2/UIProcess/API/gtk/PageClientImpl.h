@@ -53,7 +53,7 @@ public:
 private:
     explicit PageClientImpl(GtkWidget*);
 
-    virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
+    virtual OwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
     virtual void displayView();
     virtual bool canScrollView() { return false; }
