@@ -78,7 +78,7 @@ public:
         return m_defaultMode;
     }
 
-    bool operator()(WorkerRunLoop::Task* task) const
+    bool operator()(const OwnPtr<WorkerRunLoop::Task>& task) const
     {
         return m_defaultMode || m_mode == task->mode();
     }

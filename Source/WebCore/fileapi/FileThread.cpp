@@ -72,7 +72,7 @@ void FileThread::postTask(PassOwnPtr<Task> task)
 class SameInstancePredicate {
 public:
     SameInstancePredicate(const void* instance) : m_instance(instance) { }
-    bool operator()(FileThread::Task* task) const { return task->instance() == m_instance; }
+    bool operator()(const OwnPtr<FileThread::Task>& task) const { return task->instance() == m_instance; }
 private:
     const void* m_instance;
 };

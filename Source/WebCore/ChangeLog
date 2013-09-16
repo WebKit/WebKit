@@ -1,3 +1,19 @@
+2013-09-16  Anders Carlsson  <andersca@apple.com>
+
+        MessageQueue should use a Deque of OwnPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=121450
+
+        Reviewed by Andreas Kling.
+
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::SameDatabasePredicate::operator()):
+        * dom/default/PlatformMessagePortChannel.h:
+        (WebCore::PlatformMessagePortChannel::MessagePortQueue::tryGetMessage):
+        * fileapi/FileThread.cpp:
+        (WebCore::SameInstancePredicate::operator()):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::ModePredicate::operator()):
+
 2013-09-16  Andreas Kling  <akling@apple.com>
 
         CTTE: FrameTree::top() should return a reference.

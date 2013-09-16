@@ -65,7 +65,7 @@ namespace WebCore {
         public:
             static PassRefPtr<MessagePortQueue> create() { return adoptRef(new MessagePortQueue()); }
 
-            PassOwnPtr<PlatformMessagePortChannel::EventData> tryGetMessage()
+            OwnPtr<PlatformMessagePortChannel::EventData> tryGetMessage()
             {
                 return m_queue.tryGetMessage();
             }

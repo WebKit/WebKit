@@ -171,7 +171,7 @@ void DatabaseThread::scheduleImmediateTask(PassOwnPtr<DatabaseTask> task)
 class SameDatabasePredicate {
 public:
     SameDatabasePredicate(const DatabaseBackend* database) : m_database(database) { }
-    bool operator()(DatabaseTask* task) const { return task->database() == m_database; }
+    bool operator()(const OwnPtr<DatabaseTask>& task) const { return task->database() == m_database; }
 private:
     const DatabaseBackend* m_database;
 };
