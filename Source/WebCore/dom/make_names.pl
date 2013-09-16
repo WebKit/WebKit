@@ -127,7 +127,10 @@ if (length($fontNamesIn)) {
     print F StaticString::GenerateStringAsserts(\%parameters);
 
     while ( my ($name, $identifier) = each %parameters ) {
-        print F "    new (NotNull, static_cast<void*>(&$name)) AtomicString(${name}Impl);\n";
+        # FIXME: Would like to use static_cast here, but there are differences in const
+        # depending on whether SKIP_STATIC_CONSTRUCTORS_ON_GCC is used, so stick with a
+        # C-style cast for now.
+        print F "    new (NotNull, (void*)&$name) AtomicString(${name}Impl);\n";
     }
 
     print F "}\n}\n}\n";
