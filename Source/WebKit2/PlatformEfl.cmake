@@ -106,6 +106,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/ContextHistoryClientEfl.cpp
     UIProcess/efl/ContextMenuClientEfl.cpp
     UIProcess/efl/DownloadManagerEfl.cpp
+    UIProcess/efl/EasingCurves.cpp
     UIProcess/efl/EwkTouchEvent.cpp
     UIProcess/efl/EwkTouchPoint.cpp
     UIProcess/efl/FindClientEfl.cpp

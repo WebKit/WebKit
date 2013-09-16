@@ -202,6 +202,7 @@ public:
     void informURLChange();
 
     PassRefPtr<cairo_surface_t> takeSnapshot();
+    bool scrollBy(const WebCore::IntSize&);
 
     void didFindZoomableArea(const WKPoint&, const WKRect&);
 

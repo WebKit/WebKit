@@ -27,6 +27,7 @@
 #include "config.h"
 #include "GestureRecognizer.h"
 
+#include "EasingCurves.h"
 #include "EwkView.h"
 #include "NotImplemented.h"
 #include "WKSharedAPICast.h"
@@ -43,26 +44,80 @@ public:
     {
         return adoptPtr(new GestureHandler(ewkView));
     }
+    ~GestureHandler();
 
-    void handleSingleTap(const WebCore::IntPoint&);
-    void handleDoubleTap(const WebCore::IntPoint&);
-    void handleTapAndHold(const WebCore::IntPoint&);
-    void handlePanStarted(const WebCore::IntPoint&);
-    void handlePan(const WebCore::IntPoint&);
+    EwkView* view() { return m_ewkView; }
+
+    void reset();
+    void handleSingleTap(const IntPoint&);
+    void handleDoubleTap(const IntPoint&);
+    void handleTapAndHold(const IntPoint&);
+    void handlePanStarted(const IntPoint&);
+    void handlePan(const IntPoint&);
     void handlePanFinished();
-    void handlePinchStarted(const Vector<WebCore::IntPoint>&);
-    void handlePinch(const Vector<WebCore::IntPoint>&);
+    void handleFlick(const IntSize&);
+    void handlePinchStarted(const Vector<IntPoint>&);
+    void handlePinch(const Vector<IntPoint>&);
     void handlePinchFinished();
 
 private:
     explicit GestureHandler(EwkView*);
 
+    static Eina_Bool panAnimatorCallback(void*);
+    static Eina_Bool flickAnimatorCallback(void*);
+
+    static const int s_historyCapacity = 5;
+
     EwkView* m_ewkView;
+    IntPoint m_lastPoint;
+    IntPoint m_currentPoint;
+    bool m_isCurrentPointUpdated;
+    Ecore_Animator* m_panAnimator;
+    Ecore_Animator* m_flickAnimator;
+    IntSize m_flickOffset;
+    unsigned m_flickDuration;
+    unsigned m_flickIndex;
+
+    struct HistoryItem {
+        IntPoint point;
+        double timestamp;
+    };
+    Vector<HistoryItem> m_history;
+    size_t m_oldestHistoryItemIndex;
 };
 
 GestureHandler::GestureHandler(EwkView* ewkView)
     : m_ewkView(ewkView)
+    , m_isCurrentPointUpdated(false)
+    , m_panAnimator(0)
+    , m_flickAnimator(0)
+    , m_flickDuration(0)
+    , m_flickIndex(0)
+    , m_oldestHistoryItemIndex(0)
 {
+    m_history.reserveInitialCapacity(s_historyCapacity);
+}
+
+GestureHandler::~GestureHandler()
+{
+    reset();
+}
+
+void GestureHandler::reset()
+{
+    if (m_panAnimator) {
+        ecore_animator_del(m_panAnimator);
+        m_panAnimator = 0;
+
+        m_oldestHistoryItemIndex = 0;
+        if (m_history.size())
+            m_history.resize(0);
+    }
+
+    if (m_flickAnimator) {
+        ecore_animator_del(m_flickAnimator);
+        m_flickAnimator = 0;
+    }
 }
 
 void GestureHandler::handleSingleTap(const IntPoint&)
@@ -80,19 +135,86 @@ void GestureHandler::handleTapAndHold(const IntPoint&)
     notImplemented();
 }
 
-void GestureHandler::handlePanStarted(const IntPoint&)
+Eina_Bool GestureHandler::panAnimatorCallback(void* data)
 {
-    notImplemented();
+    GestureHandler* gestureHandler = static_cast<GestureHandler*>(data);
+    if (!gestureHandler->m_isCurrentPointUpdated || gestureHandler->m_lastPoint == gestureHandler->m_currentPoint)
+        return ECORE_CALLBACK_RENEW;
+
+    gestureHandler->view()->scrollBy(gestureHandler->m_lastPoint - gestureHandler->m_currentPoint);
+    gestureHandler->m_lastPoint = gestureHandler->m_currentPoint;
+    gestureHandler->m_isCurrentPointUpdated = false;
+
+    return ECORE_CALLBACK_RENEW;
 }
 
-void GestureHandler::handlePan(const IntPoint&)
+void GestureHandler::handlePanStarted(const IntPoint& point)
 {
-    notImplemented();
+    ASSERT(!m_panAnimator);
+    m_panAnimator = ecore_animator_add(panAnimatorCallback, this);
+    m_lastPoint = m_currentPoint = point;
+}
+
+void GestureHandler::handlePan(const IntPoint& point)
+{
+    m_currentPoint = point;
+    m_isCurrentPointUpdated = true;
+
+    // Save current point to use to calculate offset of flick.
+    HistoryItem item = { m_currentPoint, ecore_time_get() };
+    if (m_history.size() < m_history.capacity())
+        m_history.uncheckedAppend(item);
+    else {
+        m_history[m_oldestHistoryItemIndex++] = item;
+        if (m_oldestHistoryItemIndex == m_history.capacity())
+            m_oldestHistoryItemIndex = 0;
+    }
 }
 
 void GestureHandler::handlePanFinished()
 {
-    notImplemented();
+    ASSERT(m_panAnimator);
+    ecore_animator_del(m_panAnimator);
+    m_panAnimator = 0;
+
+    if (!m_history.isEmpty()) {
+        // Calculate offset to move during one frame.
+        const HistoryItem& oldestHistoryItem = m_history[m_oldestHistoryItemIndex];
+        double frame = (ecore_time_get() - oldestHistoryItem.timestamp) / ecore_animator_frametime_get();
+        IntSize offset = oldestHistoryItem.point - m_currentPoint;
+        offset.scale(1 / frame);
+        handleFlick(offset);
+    }
+
+    m_oldestHistoryItemIndex = 0;
+    if (m_history.size())
+        m_history.resize(0);
+}
+
+Eina_Bool GestureHandler::flickAnimatorCallback(void* data)
+{
+    GestureHandler* gestureHandler = static_cast<GestureHandler*>(data);
+    float multiplier = easeInOutQuad(gestureHandler->m_flickIndex, 0, 1.0, gestureHandler->m_flickDuration);
+    float offsetWidth = gestureHandler->m_flickOffset.width() * multiplier;
+    float offsetHeight = gestureHandler->m_flickOffset.height() * multiplier;
+    offsetWidth = (offsetWidth > 0) ? ceilf(offsetWidth) : floorf(offsetWidth);
+    offsetHeight = (offsetHeight > 0) ? ceilf(offsetHeight) : floorf(offsetHeight);
+    IntSize offset(offsetWidth, offsetHeight);
+    gestureHandler->m_flickIndex--;
+
+    if (offset.isZero() || !gestureHandler->view()->scrollBy(offset) || !gestureHandler->m_flickIndex) {
+        gestureHandler->m_flickAnimator = 0;
+        return ECORE_CALLBACK_CANCEL;
+    }
+
+    return ECORE_CALLBACK_RENEW;
+}
+
+void GestureHandler::handleFlick(const IntSize& offset)
+{
+    m_flickOffset = offset;
+    m_flickIndex = m_flickDuration = 1 / ecore_animator_frametime_get();
+    m_flickAnimator = ecore_animator_add(flickAnimatorCallback, this);
 }
 
 void GestureHandler::handlePinchStarted(const Vector<IntPoint>&)
@@ -196,6 +318,8 @@ void GestureRecognizer::noGesture(WKEventType type, WKArrayRef touchPoints)
 {
     switch (type) {
     case kWKEventTypeTouchStart:
+        m_gestureHandler->reset();
+
         m_recognizerFunction = &GestureRecognizer::singleTapGesture;
         m_firstPressedPoint = toIntPoint(getPointAtIndex(touchPoints, 0));
         ASSERT(!m_tapAndHoldTimer);
@@ -340,6 +464,7 @@ void GestureRecognizer::pinchGesture(WKEventType type, WKArrayRef touchPoints)
 void GestureRecognizer::reset()
 {
     stopTapTimers();
+    m_gestureHandler->reset();
 
     m_recognizerFunction = &GestureRecognizer::noGesture;
 }

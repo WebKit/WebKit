@@ -1,3 +1,38 @@
+2013-09-16  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Implement pan and flick gesture.
+        https://bugs.webkit.org/show_bug.cgi?id=107101
+
+        Reviewed by Gyuyoung Kim.
+
+        Implement pan gesture to scroll page by movement of point and stop
+        scrolling smoothly using ease-in-out-quad algorithm after touched
+        point is removed from the screen.
+
+        Use Ecore_Animator in order to process movement once per each framing
+        time slot instead of processing all movement.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::scrollBy):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/GestureRecognizer.cpp:
+        (WebKit::GestureHandler::view):
+        (WebKit::GestureHandler::GestureHandler):
+        (WebKit::GestureHandler::~GestureHandler):
+        (WebKit::GestureHandler::reset):
+        (WebKit::GestureHandler::panAnimatorCallback):
+        (WebKit::GestureHandler::handlePanStarted):
+        (WebKit::GestureHandler::handlePan):
+        (WebKit::GestureHandler::handlePanFinished):
+        (WebKit::GestureHandler::flickAnimatorCallback):
+        (WebKit::GestureHandler::handleFlick):
+        (WebKit::GestureRecognizer::noGesture):
+        (WebKit::GestureRecognizer::reset):
+        * UIProcess/efl/EasingCurves.cpp: Added.
+        (WebKit::easeInOutQuad):
+        * UIProcess/efl/EasingCurves.h: Added.
+
 2013-09-16  Wojciech Bielawski  <w.bielawski@samsung.com>
 
         [WKTR] WebKitTestRunner's eventSender.contextClick() returns objects without implemented click() method.
