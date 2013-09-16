@@ -5,10 +5,10 @@
 
         Reviewed by Anders Carlsson.
 
-        * wtf/Platform.h: OS X defines a serie of platform macros for debugging.
+        * wtf/Platform.h: OS X defines a series of platform macros for debugging.
         Some of them are really annoying because they use common names (e.g. check()).
 
-        Disable those macros so that we are not limited how we name methods and functions.
+        Disable those macros so that we are not limited in how we name methods and functions.
 
 2013-09-16  Anders Carlsson  <andersca@apple.com>
 
