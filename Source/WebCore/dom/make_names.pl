@@ -725,7 +725,7 @@ sub printNamesCppFile
         print F "\n\nconst WebCore::QualifiedName* const * get$parameters{namespace}Tags()\n";
         print F "{\n    static const WebCore::QualifiedName* const $parameters{namespace}Tags[] = {\n";
         for my $name (sort keys %allTags) {
-            print F "        reinterpret_cast<WebCore::QualifiedName*>(&${name}Tag),\n";
+            print F "        reinterpret_cast<const WebCore::QualifiedName*>(&${name}Tag),\n";
         }
         print F "    };\n";
         print F "    return $parameters{namespace}Tags;\n";
@@ -740,7 +740,7 @@ sub printNamesCppFile
         print F "\n\nconst WebCore::QualifiedName* const * get$parameters{namespace}Attrs()\n";
         print F "{\n    static const WebCore::QualifiedName* const $parameters{namespace}Attrs[] = {\n";
         for my $name (sort keys %allAttrs) {
-            print F "        reinterpret_cast<WebCore::QualifiedName*>(&${name}Attr),\n";
+            print F "        reinterpret_cast<const WebCore::QualifiedName*>(&${name}Attr),\n";
         }
         print F "    };\n";
         print F "    return $parameters{namespace}Attrs;\n";
@@ -752,7 +752,7 @@ sub printNamesCppFile
     print(F "    AtomicString ${lowerNamespace}NS(\"$parameters{namespaceURI}\", AtomicString::ConstructFromLiteral);\n\n");
 
     print(F "    // Namespace\n");
-    print(F "    new (NotNull, static_cast<void*>(&${lowerNamespace}NamespaceURI)) AtomicString(${lowerNamespace}NS);\n");
+    print(F "    new (NotNull, (void*)&${lowerNamespace}NamespaceURI) AtomicString(${lowerNamespace}NS);\n");
     print(F "\n");
     print F StaticString::GenerateStringAsserts(\%allStrings);
 
@@ -863,7 +863,7 @@ print F <<END
 END
 ;
     for my $name (sort keys %$namesRef) {
-        print F "        { &$name$shortCamelType, *${name}Impl },\n";
+        print F "        { (void*)&$name$shortCamelType, *${name}Impl },\n";
     }
 
 print F <<END
