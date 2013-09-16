@@ -27,6 +27,7 @@
 #include "PODIntervalTree.h"
 #include "RootInlineBox.h"
 #include <wtf/ListHashSet.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -41,50 +42,11 @@ public:
     // Note that Type uses bits so you can use FloatLeftRight as a mask to query for both left and right.
     enum Type { FloatLeft = 1, FloatRight = 2, FloatLeftRight = 3 };
 
-    explicit FloatingObject(EFloat type)
-        : m_renderer(0)
-        , m_originatingLine(0)
-        , m_paginationStrut(0)
-        , m_shouldPaint(true)
-        , m_isDescendant(false)
-        , m_isPlaced(false)
-#ifndef NDEBUG
-        , m_isInPlacedTree(false)
-#endif
-    {
-        ASSERT(type != NoFloat);
-        if (type == LeftFloat)
-            m_type = FloatLeft;
-        else if (type == RightFloat)
-            m_type = FloatRight;
-    }
+    static PassOwnPtr<FloatingObject> create(RenderBox*);
 
-    FloatingObject(Type type, const LayoutRect& frameRect)
-        : m_renderer(0)
-        , m_originatingLine(0)
-        , m_frameRect(frameRect)
-        , m_paginationStrut(0)
-        , m_type(type)
-        , m_shouldPaint(true)
-        , m_isDescendant(false)
-        , m_isPlaced(true)
-#ifndef NDEBUG
-        , m_isInPlacedTree(false)
-#endif
-    {
-    }
+    PassOwnPtr<FloatingObject> copyToNewContainer(LayoutSize, bool shouldPaint = false, bool isDescendant = false) const;
 
-    FloatingObject* clone() const
-    {
-        FloatingObject* cloneObject = new FloatingObject(type(), m_frameRect);
-        cloneObject->m_renderer = m_renderer;
-        cloneObject->m_originatingLine = m_originatingLine;
-        cloneObject->m_paginationStrut = m_paginationStrut;
-        cloneObject->m_shouldPaint = m_shouldPaint;
-        cloneObject->m_isDescendant = m_isDescendant;
-        cloneObject->m_isPlaced = m_isPlaced;
-        return cloneObject;
-    }
+    PassOwnPtr<FloatingObject> unsafeClone() const;
 
     Type type() const { return static_cast<Type>(m_type); }
     RenderBox* renderer() const { return m_renderer; }
@@ -121,7 +83,6 @@ public:
     void setIsDescendant(bool isDescendant) { m_isDescendant = isDescendant; }
 
     // FIXME: Callers of these methods are dangerous and should be whitelisted explicitly or removed.
-    void setRenderer(RenderBox* renderer) { m_renderer = renderer; }
     RootInlineBox* originatingLine() const { return m_originatingLine; }
     void setOriginatingLine(RootInlineBox* line) { m_originatingLine = line; }
 
@@ -166,6 +127,9 @@ public:
     }
 
 private:
+    explicit FloatingObject(RenderBox*);
+    FloatingObject(RenderBox*, Type, const LayoutRect&, bool shouldPaint, bool isDescendant);
+
     RenderBox* m_renderer;
     RootInlineBox* m_originatingLine;
     LayoutRect m_frameRect;
@@ -194,7 +158,7 @@ typedef FloatingObjectSet::const_iterator FloatingObjectSetIterator;
 typedef PODInterval<int, FloatingObject*> FloatingObjectInterval;
 typedef PODIntervalTree<int, FloatingObject*> FloatingObjectTree;
 typedef PODFreeListArena<PODRedBlackTree<FloatingObjectInterval>::Node> IntervalArena;
-
+typedef HashMap<RenderBox*, FloatingObject*> RendererToFloatInfoMap;
 
 class FloatingObjects {
     WTF_MAKE_NONCOPYABLE(FloatingObjects); WTF_MAKE_FAST_ALLOCATED;
@@ -203,7 +167,8 @@ public:
     ~FloatingObjects();
 
     void clear();
-    void add(FloatingObject*);
+    void moveAllToFloatInfoMap(RendererToFloatInfoMap&);
+    FloatingObject* add(PassOwnPtr<FloatingObject>);
     void remove(FloatingObject*);
     void addPlacedObject(FloatingObject*);
     void removePlacedObject(FloatingObject*);

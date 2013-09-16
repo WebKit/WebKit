@@ -103,7 +103,6 @@ void RenderBlockFlow::clearFloats()
     // Inline blocks are covered by the isReplaced() check in the avoidFloats method.
     if (avoidsFloats() || isRoot() || isRenderView() || isFloatingOrOutOfFlowPositioned() || isTableCell()) {
         if (m_floatingObjects) {
-            deleteAllValues(m_floatingObjects->set());
             m_floatingObjects->clear();
         }
         if (!oldIntrudingFloatSet.isEmpty())
@@ -111,20 +110,13 @@ void RenderBlockFlow::clearFloats()
         return;
     }
 
-    typedef HashMap<RenderObject*, FloatingObject*> RendererToFloatInfoMap;
     RendererToFloatInfoMap floatMap;
 
     if (m_floatingObjects) {
-        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        if (childrenInline()) {
-            FloatingObjectSetIterator end = floatingObjectSet.end();
-            for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
-                FloatingObject* f = *it;
-                floatMap.add(f->renderer(), f);
-            }
-        } else
-            deleteAllValues(floatingObjectSet);
-        m_floatingObjects->clear();
+        if (childrenInline())
+            m_floatingObjects->moveAllToFloatInfoMap(floatMap);
+        else
+            m_floatingObjects->clear();
     }
 
     // We should not process floats if the parent node is not a RenderBlock. Otherwise, we will add 

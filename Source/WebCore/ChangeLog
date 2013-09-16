@@ -1,3 +1,55 @@
+2013-09-16  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Make FloatingObjects own it's FloatingObject instances
+        https://bugs.webkit.org/show_bug.cgi?id=121323
+
+        Reviewed by Alexandru Chiculita.
+
+        As part of decoupling FloatingObjects from RenderBlock, change
+        FloatingObjects to properly manage the FloatingObject instances it
+        contains.
+
+        No new tests, no behavior change.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObject::FloatingObject): Make the constructors
+        private so that FloatingObjects can only be created with an OwnPtr.
+        Also make a RenderBox required to create a FloatingObject.
+        (WebCore::FloatingObject::create): Factory method to create a vanilla
+        FloatingObject.
+        (WebCore::FloatingObject::copyToNewContainer): Factory method to copy
+        an existing FloatingObject in the case it is overhanging or intruding
+        and needs to be copied to the block that it overhangs or intrudes
+        into.
+        (WebCore::FloatingObject::unsafeClone): Rename this method so it is
+        more obvious that it really shouldn't be used, and to make it more
+        obvious that one should use the copyToNewContainer method for all
+        normal FloatingObject copies.
+        (WebCore::FloatingObjects::clear): Delete all the FloatingObjects in
+        the set before clearing it.
+        (WebCore::FloatingObjects::moveAllToFloatInfoMap): Move all of the
+        FloatingObjects in the set to a RendererToFloatInfoMap. This is used
+        in RenderBlockFlow::clearFloats to when it is readding floats after
+        clearing the set.
+        (WebCore::FloatingObjects::add): Take an OwnPtr.
+        (WebCore::FloatingObjects::remove): Delete the removed FloatingObject.
+        * rendering/FloatingObjects.h: Remove FloatingObject::setRenderer(),
+        since the RenderBox must be set in the constructor.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::moveAllChildrenIncludingFloatsTo): Rename clone
+        to unsafeClone.
+        (WebCore::RenderBlock::removeFloatingObjects): Don't delete anymore,
+        since clear does it.
+        (WebCore::RenderBlock::insertFloatingObject): Handle OwnPtr properly.
+        (WebCore::RenderBlock::removeFloatingObject): Don't delete anymore,
+        since remove does it.
+        (WebCore::RenderBlock::removeFloatingObjectsBelow): Ditto.
+        (WebCore::RenderBlock::addOverhangingFloats): Use copyToNewContainer
+        and OwnPtr.
+        (WebCore::RenderBlock::addIntrudingFloats): Ditto.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::clearFloats): Use exportToFloatInfoMap.
+
 2013-09-16  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         Fix creation of embedded JS and CSS files on cmake based ports.

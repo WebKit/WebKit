@@ -1148,7 +1148,7 @@ void RenderBlock::moveAllChildrenIncludingFloatsTo(RenderBlock* toBlock, bool fu
             if (toBlock->containsFloat(floatingObject->renderer()))
                 continue;
 
-            toBlock->m_floatingObjects->add(floatingObject->clone());
+            toBlock->m_floatingObjects->add(floatingObject->unsafeClone());
         }
     }
 }
@@ -3260,7 +3260,6 @@ void RenderBlock::removeFloatingObjects()
     if (!m_floatingObjects)
         return;
 
-    deleteAllValues(m_floatingObjects->set());
     m_floatingObjects->clear();
 }
 
@@ -3281,7 +3280,7 @@ FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
 
     // Create the special object entry & append it to the list
 
-    FloatingObject* newObj = new FloatingObject(o->style()->floating());
+    OwnPtr<FloatingObject> newObj = FloatingObject::create(o);
     
     // Our location is irrelevant if we're unsplittable or no pagination is in effect.
     // Just go ahead and lay out the float.
@@ -3304,13 +3303,7 @@ FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
         shapeOutside->setShapeSize(logicalWidthForChild(o), logicalHeightForChild(o));
 #endif
 
-    newObj->setShouldPaint(!o->hasSelfPaintingLayer()); // If a layer exists, the float will paint itself. Otherwise someone else will.
-    newObj->setIsDescendant(true);
-    newObj->setRenderer(o);
-
-    m_floatingObjects->add(newObj);
-    
-    return newObj;
+    return m_floatingObjects->add(newObj.release());
 }
 
 void RenderBlock::removeFloatingObject(RenderBox* o)
@@ -3345,8 +3338,6 @@ void RenderBlock::removeFloatingObject(RenderBox* o)
                 markLinesDirtyInBlockRange(0, logicalBottom);
             }
             m_floatingObjects->remove(r);
-            ASSERT(!r->originatingLine());
-            delete r;
         }
     }
 }
@@ -3360,8 +3351,6 @@ void RenderBlock::removeFloatingObjectsBelow(FloatingObject* lastFloat, int logi
     FloatingObject* curr = floatingObjectSet.last();
     while (curr != lastFloat && (!curr->isPlaced() || curr->logicalTop(isHorizontalWritingMode()) >= logicalOffset)) {
         m_floatingObjects->remove(curr);
-        ASSERT(!curr->originatingLine());
-        delete curr;
         if (floatingObjectSet.isEmpty())
             break;
         curr = floatingObjectSet.last();
@@ -3829,24 +3818,21 @@ LayoutUnit RenderBlock::addOverhangingFloats(RenderBlock* child, bool makeChildP
             // If the object is not in the list, we add it now.
             if (!containsFloat(r->renderer())) {
                 LayoutSize offset = isHorizontalWritingMode() ? LayoutSize(-childLogicalLeft, -childLogicalTop) : LayoutSize(-childLogicalTop, -childLogicalLeft);
-                FloatingObject* floatingObj = new FloatingObject(r->type(), LayoutRect(r->frameRect().location() - offset, r->frameRect().size()));
-                floatingObj->setRenderer(r->renderer());
+                bool shouldPaint = false;
 
                 // The nearest enclosing layer always paints the float (so that zindex and stacking
                 // behaves properly).  We always want to propagate the desire to paint the float as
                 // far out as we can, to the outermost block that overlaps the float, stopping only
                 // if we hit a self-painting layer boundary.
-                if (r->renderer()->enclosingFloatPaintingLayer() == enclosingFloatPaintingLayer())
+                if (r->renderer()->enclosingFloatPaintingLayer() == enclosingFloatPaintingLayer()) {
                     r->setShouldPaint(false);
-                else
-                    floatingObj->setShouldPaint(false);
-
-                floatingObj->setIsDescendant(true);
-
+                    shouldPaint = true;
+                }
                 // We create the floating object list lazily.
                 if (!m_floatingObjects)
                     createFloatingObjects();
-                m_floatingObjects->add(floatingObj);
+
+                m_floatingObjects->add(r->copyToNewContainer(offset, shouldPaint, true));
             }
         } else {
             if (makeChildPaintOtherFloats && !r->shouldPaint() && !r->renderer()->hasSelfPaintingLayer()
@@ -3897,28 +3883,20 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, LayoutUnit logicalLeftOf
         FloatingObject* r = *prevIt;
         if (r->logicalBottom(isHorizontalWritingMode()) > logicalTopOffset) {
             if (!m_floatingObjects || !m_floatingObjects->set().contains(r)) {
-                LayoutSize offset = isHorizontalWritingMode() ? LayoutSize(logicalLeftOffset, logicalTopOffset) : LayoutSize(logicalTopOffset, logicalLeftOffset);
-                FloatingObject* floatingObj = new FloatingObject(r->type(), LayoutRect(r->frameRect().location() - offset, r->frameRect().size()));
+                // We create the floating object list lazily.
+                if (!m_floatingObjects)
+                    createFloatingObjects();
 
                 // Applying the child's margin makes no sense in the case where the child was passed in.
                 // since this margin was added already through the modification of the |logicalLeftOffset| variable
                 // above.  |logicalLeftOffset| will equal the margin in this case, so it's already been taken
                 // into account.  Only apply this code if prev is the parent, since otherwise the left margin
                 // will get applied twice.
-                if (prev != parent()) {
-                    if (isHorizontalWritingMode())
-                        floatingObj->setX(floatingObj->x() + prev->marginLeft());
-                    else
-                        floatingObj->setY(floatingObj->y() + prev->marginTop());
-                }
-               
-                floatingObj->setShouldPaint(false); // We are not in the direct inheritance chain for this float. We will never paint it.
-                floatingObj->setRenderer(r->renderer());
-                
-                // We create the floating object list lazily.
-                if (!m_floatingObjects)
-                    createFloatingObjects();
-                m_floatingObjects->add(floatingObj);
+                LayoutSize offset = isHorizontalWritingMode()
+                    ? LayoutSize(logicalLeftOffset + (prev != parent() ? prev->marginLeft() : LayoutUnit()), logicalTopOffset)
+                    : LayoutSize(logicalTopOffset, logicalLeftOffset + (prev != parent() ? prev->marginTop() : LayoutUnit()));
+
+                m_floatingObjects->add(r->copyToNewContainer(offset));
             }
         }
     }
