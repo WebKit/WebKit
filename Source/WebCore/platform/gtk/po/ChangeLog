@@ -1,3 +1,12 @@
+2013-09-16  Fran Dieguez  <frandieguez@gnome.org>
+
+        Add new Galician translations
+        https://bugs.webkit.org/show_bug.cgi?id=105079
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gl.po: updated
+
 2013-09-16  Chris Leonard  <cjlhomeaddress@gmail.com>
 
         L10n - en_GB PO file for WebKitGTK+
