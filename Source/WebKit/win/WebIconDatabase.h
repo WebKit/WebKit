@@ -36,8 +36,6 @@
 
 #include <windows.h>
 
-typedef const struct __CFString * CFStringRef;
-
 namespace WebCore
 {
     class IconDatabase;
@@ -112,7 +110,7 @@ public:
 
     static BSTR iconDatabaseDidAddIconNotification();
     static BSTR iconDatabaseDidRemoveAllIconsNotification();
-    static CFStringRef iconDatabaseNotificationUserInfoURLKey();
+    static BSTR iconDatabaseNotificationUserInfoURLKey();
 protected:
     ULONG m_refCount;
     static WebIconDatabase* m_sharedWebIconDatabase;

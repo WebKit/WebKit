@@ -27,7 +27,7 @@
 #include "WebKitDLL.h"
 #include "WebIconDatabase.h"
 
-#include "CFDictionaryPropertyBag.h"
+#include "COMPropertyBag.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
 #include "shlobj.h"
@@ -372,9 +372,9 @@ BSTR WebIconDatabase::iconDatabaseDidAddIconNotification()
     return didAddIconName;
 }
 
-CFStringRef WebIconDatabase::iconDatabaseNotificationUserInfoURLKey()
+BSTR WebIconDatabase::iconDatabaseNotificationUserInfoURLKey()
 {
-    static CFStringRef iconUserInfoURLKey = String(WebIconNotificationUserInfoURLKey).createCFString().leakRef();
+    static BSTR iconUserInfoURLKey = SysAllocString(WebIconNotificationUserInfoURLKey);
     return iconUserInfoURLKey;
 }
 
@@ -392,13 +392,9 @@ static void postDidRemoveAllIconsNotification(WebIconDatabase* iconDB)
 
 static void postDidAddIconNotification(const String& pageURL, WebIconDatabase* iconDB)
 {
-    RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(
-    CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    CFDictionaryAddValue(dictionary.get(), WebIconDatabase::iconDatabaseNotificationUserInfoURLKey(), pageURL.createCFString().get());
-
-    COMPtr<CFDictionaryPropertyBag> userInfo = CFDictionaryPropertyBag::createInstance();
-    userInfo->setDictionary(dictionary.get());
+    HashMap<String, String> dictionary;
+    dictionary.set(WebIconDatabase::iconDatabaseNotificationUserInfoURLKey(), pageURL);
+    COMPtr<IPropertyBag> userInfo(AdoptCOM, COMPropertyBag<String>::adopt(dictionary));
 
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
     notifyCenter->postNotificationName(WebIconDatabase::iconDatabaseDidAddIconNotification(), static_cast<IWebIconDatabase*>(iconDB), userInfo.get());

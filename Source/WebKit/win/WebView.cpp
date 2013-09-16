@@ -28,7 +28,7 @@
 #include "config.h"
 #include "WebView.h"
 
-#include "CFDictionaryPropertyBag.h"
+#include "COMVariantSetter.h"
 #include "DOMCoreClasses.h"
 #include "FullscreenVideoController.h"
 #include "MarshallingHelpers.h"
@@ -2842,26 +2842,19 @@ HRESULT WebView::notifyDidAddIcon(IWebNotification* notification)
     if (!propertyBag)
         return E_FAIL;
 
-    COMPtr<CFDictionaryPropertyBag> dictionaryPropertyBag;
-    hr = propertyBag->QueryInterface(&dictionaryPropertyBag);
+    COMVariant iconUserInfoURL;
+    hr = propertyBag->Read(WebIconDatabase::iconDatabaseNotificationUserInfoURLKey(), &iconUserInfoURL, 0);
     if (FAILED(hr))
         return hr;
 
-    CFDictionaryRef dictionary = dictionaryPropertyBag->dictionary();
-    if (!dictionary)
-        return E_FAIL;
-
-    CFTypeRef value = CFDictionaryGetValue(dictionary, WebIconDatabase::iconDatabaseNotificationUserInfoURLKey());
-    if (!value)
-        return E_FAIL;
-    if (CFGetTypeID(value) != CFStringGetTypeID())
+    if (iconUserInfoURL.variantType() != VT_BSTR)
         return E_FAIL;
 
     String mainFrameURL;
     if (m_mainFrame)
         mainFrameURL = m_mainFrame->url().string();
 
-    if (!mainFrameURL.isEmpty() && mainFrameURL == String((CFStringRef)value))
+    if (!mainFrameURL.isEmpty() && mainFrameURL == toString(V_BSTR(&iconUserInfoURL)))
         dispatchDidReceiveIconFromWebFrame(m_mainFrame);
 
     return hr;

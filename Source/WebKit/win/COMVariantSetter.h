@@ -165,6 +165,16 @@ public:
         return *this;
     }
 
+    VARIANT* operator&()
+    {
+        return &m_variant;
+    }
+
+    VARIANT* operator->()
+    {
+        return &m_variant;
+    }
+
     void copyTo(VARIANT* dest) const
     {
         ::VariantCopy(dest, const_cast<VARIANT*>(&m_variant));
