@@ -657,6 +657,16 @@ public:
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         poke(arg3, 4);
     }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, FPRReg arg2, GPRReg arg3)
+    {
+        setupArgumentsWithExecState(arg2, arg3);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32 arg3, FPRReg arg4)
+    {
+        setupArgumentsWithExecState(arg1, arg2, arg4);
+    }
 #elif CPU(SH4)
     ALWAYS_INLINE void setupArguments(FPRReg arg1)
     {
