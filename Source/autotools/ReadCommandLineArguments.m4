@@ -54,7 +54,7 @@ AC_ARG_WITH(target,
             *) AC_MSG_ERROR([Invalid target: must be x11, wayland, both x11 and wayland (x11,wayland), quartz, win32, or directfb.]) ;;
         esac
     ],
-    [with_target="x11"])
+    [with_target="x11,wayland"; with_wayland_target="auto"])
 AC_MSG_RESULT([$with_target])
 
 # To support building for X11 and Wayland targets concurrently, the $with_target value is checked for this
@@ -62,7 +62,9 @@ AC_MSG_RESULT([$with_target])
 # the X11 target, the Wayland target, both of these or neither.
 if test "$with_target" = "x11,wayland"; then
     with_x11_target=yes
-    with_wayland_target=yes
+    if test "$with_wayland_target" != "auto"; then
+        with_wayland_target=yes
+    fi
 elif test "$with_target" = "x11"; then
     with_x11_target=yes
     with_wayland_target=no

@@ -1,3 +1,35 @@
+dnl AM_APPEND_TO_DESCRIPTION
+dnl Appends the given string to the description variable,
+dnl using a separator if the description variable is not empty.
+dnl
+dnl Usage:
+dnl AM_APPEND_TO_DESCRIPTION([DESCRIPTION], [STRING])
+AC_DEFUN([AM_APPEND_TO_DESCRIPTION], [
+  if test "$$1" != ""; then
+    $1="${$1}, "
+  fi
+
+  $1="${$1}$2"
+]) dnl AM_APPEND_TO_DESCRIPTION
+
+
+target_description=""
+if test "$with_x11_target" = "yes"; then
+    AM_APPEND_TO_DESCRIPTION(target_description, "x11")
+fi
+if test "$with_wayland_target" = "yes"; then
+    AM_APPEND_TO_DESCRIPTION(target_description, "wayland")
+fi
+if test "$with_target" = "win32"; then
+    AM_APPEND_TO_DESCRIPTION(target_description, "win32")
+fi
+if test "$with_target" = "quartz"; then
+    AM_APPEND_TO_DESCRIPTION(target_description, "quartz")
+fi
+if test "$with_target" = "directfb"; then
+    AM_APPEND_TO_DESCRIPTION(target_description, "directfb")
+fi
+
 AC_OUTPUT
 
 echo "
@@ -33,7 +65,7 @@ Features:
 
 GTK+ configuration:
  GTK+ version                                             : $with_gtk
- GDK targets                                              : $with_target
+ GDK targets                                              : $target_description
  Introspection support                                    : $enable_introspection
  Generate documentation                                   : $enable_gtk_doc
 "

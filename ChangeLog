@@ -1,3 +1,22 @@
+2013-09-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][2.2] Enable the Wayland target by default if the GTK+ Wayland dependency is available
+        https://bugs.webkit.org/show_bug.cgi?id=121414
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/FindDependencies.m4: If the Wayland target is not strictly disabled, also check that the GTK+ Wayland
+        package (gtk+-wayland-3.0) has a recent-enough version. If the dependency could not be satisfied, either a warning or an
+        error is printed out, depending if the Wayland target was required or just optional.
+        * Source/autotools/PrintBuildConfiguration.m4: Add a new macro, AM_APPEND_TO_DESRIPTION, that's helpful when producing
+        a description string that can contain multiple items that should be nicely formatted when listed in that string. This is
+        then used when creating the description for all the enabled targets, so for instance 'x11, wayland' string would be displayed
+        if both the X11 and Wayland targets are enabled.
+        * Source/autotools/ReadCommandLineArguments.m4: The --with-target configuration options should default to 'x11,wayland' if
+        not given, with the Wayland target in that case not being a hard requirement (i.e. it should be disabled if the dependencies
+        for the Wayland target could not be found).
+        * Source/autotools/Versions.m4: The GTK+ Wayland dependency should be of version 3.9.14 or greater (the 3.10 release series).
+
 2013-09-11  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Remove Gail dependency from build system for GTK3
