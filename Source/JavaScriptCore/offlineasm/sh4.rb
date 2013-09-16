@@ -571,7 +571,7 @@ class Instruction
             end
         when "subi", "subp"
             if operands.size == 3
-                if operands[1] != operands[2]
+                if operands[1] == operands[2]
                     $asm.puts "neg #{sh4Operands([operands[2], operands[2]])}"
                     $asm.puts "add #{sh4Operands([operands[0], operands[2]])}"
                 else

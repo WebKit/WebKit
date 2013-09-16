@@ -1,5 +1,14 @@
 2013-09-16  Julien Brianceau  <jbriance@cisco.com>
 
+        [sh4] Fix typo in subp implementation in LLINT.
+        https://bugs.webkit.org/show_bug.cgi?id=121438
+
+        Reviewed by Andreas Kling.
+
+        * offlineasm/sh4.rb:
+
+2013-09-16  Julien Brianceau  <jbriance@cisco.com>
+
         [sh4] Handle subp opcode with 3 operands and bpbeq opcode in LLINT.
         https://bugs.webkit.org/show_bug.cgi?id=121412
 
