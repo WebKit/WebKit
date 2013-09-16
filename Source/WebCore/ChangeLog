@@ -1,3 +1,13 @@
+2013-09-16  Daniel Bates  <dabates@apple.com>
+
+        Build fix following <https://trac.webkit.org/r154358>
+        (https://bugs.webkit.org/show_bug.cgi?id=120078)
+
+        Fix the build for ports that enable PLUGIN_PROXY_FOR_VIDEO, such as iOS WebKit.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::rendererIsNeeded): Substitute "style" for "context".
+
 2013-09-16  Timothy Hatcher  <timothy@apple.com>
 
         Make InspectorTypeBuilder generate better enums in C++.

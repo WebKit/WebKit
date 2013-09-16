@@ -549,7 +549,7 @@ void HTMLMediaElement::finishParsingChildren()
 bool HTMLMediaElement::rendererIsNeeded(const RenderStyle& style)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    UNUSED_PARAM(context);
+    UNUSED_PARAM(style);
     return true;
 #else
     return controls() && HTMLElement::rendererIsNeeded(style);
