@@ -889,6 +889,7 @@ public:
 
     bool transparent() const { return m_transparent; }
     bool usesLayeredWindow() const { return m_usesLayeredWindow; }
+    bool needsDisplay() const { return m_needsDisplay; }
 
     bool onIMEStartComposition();
     bool onIMEComposition(LPARAM);
@@ -1161,6 +1162,7 @@ protected:
 
     bool m_nextDisplayIsSynchronous;
     bool m_usesLayeredWindow;
+    bool m_needsDisplay;
 
     HCURSOR m_lastSetCursor;
 
