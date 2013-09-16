@@ -1313,3 +1313,8 @@ webkit.org/b/121053 fast/history/go-back-to-iframe-with-plugin.html [ Crash Time
 
 webkit.org/b/121343 http/tests/inspector/network/network-size-chunked.html [ Failure ]
 webkit.org/b/121343 http/tests/inspector/network/network-size-sync.html [ Failure ]
+
+webkit.org/b/114280 svg/animations/smil-leak-dynamically-added-element-instances.svg [ Pass Failure ]
+webkit.org/b/114280 svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Pass Failure ]
+webkit.org/b/114280 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
+webkit.org/b/114280 svg/animations/smil-leak-elements.svg [ Pass Failure ]
