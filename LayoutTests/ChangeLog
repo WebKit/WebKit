@@ -1,5 +1,11 @@
 2013-09-16  Alexey Proskuryakov  <ap@apple.com>
 
+        Marked a few tests that are too slow in debug builds, and frequently fail.
+
+        * platform/mac/TestExpectations:
+
+2013-09-16  Alexey Proskuryakov  <ap@apple.com>
+
         svg/animations/smil-leak-*.svg tests are flaky
         https://bugs.webkit.org/show_bug.cgi?id=114280
 
