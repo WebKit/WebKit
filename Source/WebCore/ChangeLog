@@ -1,5 +1,15 @@
 2013-09-15  Andreas Kling  <akling@apple.com>
 
+        CTTE: RenderCombineText always has a Text node.
+        <https://webkit.org/b/121411>
+
+        Reviewed by Antti Koivisto.
+
+        This renderer is never anonymous and always has a corresponding Text node.
+        Replaced node() with a textNode() reference getter.
+
+2013-09-15  Andreas Kling  <akling@apple.com>
+
         CTTE: RenderSVGInlineText always has a Text node.
         <https://webkit.org/b/121409>
 
