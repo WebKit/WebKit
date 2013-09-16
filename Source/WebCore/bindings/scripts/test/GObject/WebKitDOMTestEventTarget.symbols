@@ -1,0 +1,2 @@
+WebKitDOMNode* webkit_dom_test_event_target_item(WebKitDOMTestEventTarget*, gulong)
+gboolean webkit_dom_test_event_target_dispatch_event(WebKitDOMTestEventTarget*, WebKitDOMEvent*, GError**)

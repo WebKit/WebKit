@@ -1,3 +1,22 @@
+2013-09-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, fixing GObject bindings tests after r155850 by adding the *.symbols files that are now also generated.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestException.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructors.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.symbols: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestTypedefs.symbols: Added.
+
 2013-09-16  Daniel Bates  <dabates@apple.com>
 
         Fix the build following <http://trac.webkit.org/changeset/155591>

@@ -1,0 +1,1 @@
+void webkit_dom_test_custom_named_getter_another_function(WebKitDOMTestCustomNamedGetter*, const gchar*)

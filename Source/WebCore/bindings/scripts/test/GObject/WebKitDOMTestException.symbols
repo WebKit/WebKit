@@ -1,0 +1,1 @@
+gchar* webkit_dom_test_exception_get_name(WebKitDOMTestException*)
