@@ -1945,6 +1945,15 @@ webkit.org/b/119732 fast/media/media-query-list-07.html [ Skip ]
 # REGRESSION (r153145): fast/workers/worker-call.html fails
 webkit.org/b/119271 fast/workers/worker-call.html [ Skip ]
 
+# [Qt] New test fast/dom/HTMLInputElement/input-line-height.htm fails after r155324.
+webkit.org/b/121426 fast/dom/HTMLInputElement/input-line-height.html [ Skip ]
+
+# [Qt] New test fast/canvas/canvas-measureText-ideographicSpace.html fails after r155596.
+webkit.org/b/121427 fast/canvas/canvas-measureText-ideographicSpace.html [ Skip ]
+
+# [GTK][Qt] Layout Test fast/images/pdf-as-image-with-annotations.html is failing.
+webkit.org/b/120844 fast/images/pdf-as-image-with-annotations.html [ Skip ]
+
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #
@@ -2789,3 +2798,6 @@ fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
 # Failing tests after r155014
 webkit.org/b/120671 editing/selection/doubleclick-japanese-text.html [ Skip ]
 webkit.org/b/120671 editing/style/make-text-writing-direction-inline-win.html [ Skip ]
+
+# REGRESSION(r155771): js/stack-overflow-arrity-catch.html is crashing on non-Mac platforms
+webkit.org/b/121376 js/stack-overflow-arrity-catch.html [ Skip ]

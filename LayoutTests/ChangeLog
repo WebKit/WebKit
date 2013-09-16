@@ -1,3 +1,14 @@
+2013-09-16  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skipping and rebase failing tests on Qt bots.
+
+        * platform/qt-wk1/TestExpectations:
+        * platform/qt-wk1/fast/events/before-unload-returnValue-expected.txt: Added r155367.
+        * platform/qt-wk1/inspector/console/command-line-api-expected.txt:
+        * platform/qt/TestExpectations:
+        * platform/qt/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt: Added r155607.
+        * platform/qt/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt: Added r155607.
+
 2013-09-16  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Extends atk value interface to return proper checkbox states
