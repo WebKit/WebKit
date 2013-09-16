@@ -1,3 +1,15 @@
+2013-09-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Inlining should work in debug mode (i.e. Executable::newCodeBlock() should call recordParse())
+        https://bugs.webkit.org/show_bug.cgi?id=121444
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGArgumentPosition.h: Fix a bug discovered by reenabling inlining. ArgumentPosition may point to the non-canonical VariableAccessData but users of someVariable() want the canonical one.
+        (JSC::DFG::ArgumentPosition::someVariable):
+        * runtime/Executable.cpp: Call recordParse() so that the Executable knows things about itself (like if it has captured variables). Otherwise those fields are uninitialized.
+        (JSC::ScriptExecutable::newCodeBlockFor):
+
 2013-09-16  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         Aligned argument signatures of setupArgumentsWithExecState are missing on MIPS.

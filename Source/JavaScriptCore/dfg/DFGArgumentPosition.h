@@ -52,7 +52,7 @@ public:
     {
         if (m_variables.isEmpty())
             return 0;
-        return m_variables[0];
+        return m_variables[0]->find();
     }
     
     FlushFormat flushFormat() const

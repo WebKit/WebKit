@@ -209,6 +209,7 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
     UnlinkedFunctionCodeBlock* unlinkedCodeBlock =
         executable->m_unlinkedExecutable->codeBlockFor(
             *vm, executable->m_source, kind, debuggerMode, profilerMode, error);
+    recordParse(executable->m_unlinkedExecutable->features(), executable->m_unlinkedExecutable->hasCapturedVariables(), lineNo(), lastLine(), startColumn()); 
     if (!unlinkedCodeBlock) {
         exception = vm->throwException(
             globalObject->globalExec(),
