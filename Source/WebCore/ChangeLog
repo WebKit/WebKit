@@ -1,3 +1,12 @@
+2013-09-16  Andreas Kling  <akling@apple.com>
+
+        CTTE: FrameTree::top() should return a reference.
+        <https://webkit.org/b/121445>
+
+        Reviewed by Anders Carlsson.
+
+        There's always a top frame in the tree.
+
 2013-09-16  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, fixing GObject bindings tests after r155850 by adding the *.symbols files that are now also generated.

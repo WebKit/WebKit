@@ -272,7 +272,7 @@ Frame* FrameTree::find(const AtomicString& name) const
         return m_thisFrame;
     
     if (name == "_top")
-        return top();
+        return &top();
     
     if (name == "_parent")
         return parent() ? parent() : m_thisFrame;
@@ -398,12 +398,12 @@ Frame* FrameTree::deepLastChild() const
     return result;
 }
 
-Frame* FrameTree::top() const
+Frame& FrameTree::top() const
 {
     Frame* frame = m_thisFrame;
     for (Frame* parent = m_thisFrame; parent; parent = parent->tree().parent())
         frame = parent;
-    return frame;
+    return *frame;
 }
 
 } // namespace WebCore
@@ -416,27 +416,27 @@ static void printIndent(int indent)
         printf("    ");
 }
 
-static void printFrames(const WebCore::Frame* frame, const WebCore::Frame* targetFrame, int indent)
+static void printFrames(const WebCore::Frame& frame, const WebCore::Frame* targetFrame, int indent)
 {
-    if (frame == targetFrame) {
+    if (&frame == targetFrame) {
         printf("--> ");
         printIndent(indent - 1);
     } else
         printIndent(indent);
 
-    WebCore::FrameView* view = frame->view();
-    printf("Frame %p %dx%d\n", frame, view ? view->width() : 0, view ? view->height() : 0);
+    WebCore::FrameView* view = frame.view();
+    printf("Frame %p %dx%d\n", &frame, view ? view->width() : 0, view ? view->height() : 0);
     printIndent(indent);
-    printf("  ownerElement=%p\n", frame->ownerElement());
+    printf("  ownerElement=%p\n", frame.ownerElement());
     printIndent(indent);
     printf("  frameView=%p\n", view);
     printIndent(indent);
-    printf("  document=%p\n", frame->document());
+    printf("  document=%p\n", frame.document());
     printIndent(indent);
-    printf("  uri=%s\n\n", frame->document()->documentURI().utf8().data());
+    printf("  uri=%s\n\n", frame.document()->documentURI().utf8().data());
 
-    for (WebCore::Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling())
-        printFrames(child, targetFrame, indent + 1);
+    for (WebCore::Frame* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
+        printFrames(*child, targetFrame, indent + 1);
 }
 
 void showFrameTree(const WebCore::Frame* frame)

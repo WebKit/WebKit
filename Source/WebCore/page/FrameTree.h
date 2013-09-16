@@ -72,7 +72,7 @@ namespace WebCore {
 
         AtomicString uniqueChildName(const AtomicString& requestedName) const;
 
-        Frame* top() const;
+        Frame& top() const;
 
         Frame* scopedChild(unsigned index) const;
         Frame* scopedChild(const AtomicString& name) const;

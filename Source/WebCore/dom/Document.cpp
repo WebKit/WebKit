@@ -2745,7 +2745,7 @@ bool Document::canNavigate(Frame* targetFrame)
         return true;
 
     // Frame-busting is generally allowed, but blocked for sandboxed frames lacking the 'allow-top-navigation' flag.
-    if (!isSandboxed(SandboxTopNavigation) && targetFrame == m_frame->tree().top())
+    if (!isSandboxed(SandboxTopNavigation) && targetFrame == &m_frame->tree().top())
         return true;
 
     if (isSandboxed(SandboxNavigation)) {
@@ -2753,7 +2753,7 @@ bool Document::canNavigate(Frame* targetFrame)
             return true;
 
         const char* reason = "The frame attempting navigation is sandboxed, and is therefore disallowed from navigating its ancestors.";
-        if (isSandboxed(SandboxTopNavigation) && targetFrame == m_frame->tree().top())
+        if (isSandboxed(SandboxTopNavigation) && targetFrame == &m_frame->tree().top())
             reason = "The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.";
 
         printNavigationErrorMessage(targetFrame, url(), reason);

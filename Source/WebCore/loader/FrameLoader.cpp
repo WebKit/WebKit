@@ -1215,8 +1215,8 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
         addHTTPOriginIfNeeded(request, referrerOrigin->toString());
     }
 #if ENABLE(CACHE_PARTITIONING)
-    if (m_frame.tree().top() != &m_frame)
-        request.setCachePartition(m_frame.tree().top()->document()->securityOrigin()->cachePartition());
+    if (&m_frame.tree().top() != &m_frame)
+        request.setCachePartition(m_frame.tree().top().document()->securityOrigin()->cachePartition());
 #endif
     addExtraFieldsToRequest(request, newLoadType, true);
     if (newLoadType == FrameLoadTypeReload || newLoadType == FrameLoadTypeReloadFromOrigin)
@@ -2981,8 +2981,8 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
 {
     FeatureObserver::observe(m_frame.document(), FeatureObserver::XFrameOptions);
 
-    Frame* topFrame = m_frame.tree().top();
-    if (&m_frame == topFrame)
+    Frame& topFrame = m_frame.tree().top();
+    if (&m_frame == &topFrame)
         return false;
 
     XFrameOptionsDisposition disposition = parseXFrameOptionsHeader(content);
@@ -2991,7 +2991,7 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
     case XFrameOptionsSameOrigin: {
         FeatureObserver::observe(m_frame.document(), FeatureObserver::XFrameOptionsSameOrigin);
         RefPtr<SecurityOrigin> origin = SecurityOrigin::create(url);
-        if (!origin->isSameSchemeHostPort(topFrame->document()->securityOrigin()))
+        if (!origin->isSameSchemeHostPort(topFrame.document()->securityOrigin()))
             return true;
         for (Frame* frame = m_frame.tree().parent(); frame; frame = frame->tree().parent()) {
             if (!origin->isSameSchemeHostPort(frame->document()->securityOrigin())) {
