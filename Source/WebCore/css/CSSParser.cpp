@@ -9334,14 +9334,14 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParse
     return filterValue.release();
 }
 
-bool CSSParser::parseFilter(CSSParserValueList* valueList, RefPtr<CSSValue>& value)
+bool CSSParser::parseFilter(CSSParserValueList* valueList, RefPtr<CSSValue>& result)
 {
     if (!valueList)
         return false;
 
     // The filter is a list of functional primitives that specify individual operations.
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    for (CSSParserValue* value = valueList->current(); value; value = valueList->next()) {
+    for (auto value = valueList->current(); value; value = valueList->next()) {
         if (value->unit != CSSPrimitiveValue::CSS_URI && (value->unit != CSSParserValue::Function || !value->function))
             return false;
 
@@ -9388,7 +9388,7 @@ bool CSSParser::parseFilter(CSSParserValueList* valueList, RefPtr<CSSValue>& val
         }
     }
 
-    value = list;
+    result = list;
 
     return true;
 }

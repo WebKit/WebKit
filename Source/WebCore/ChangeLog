@@ -1,3 +1,11 @@
+2013-09-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed warning correction.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFilter): Don't use 'value' as the input argument
+        to the method, and the internal loop variable for the parser.
+
 2013-09-16  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] Compile errors in WebCore derived sources.
