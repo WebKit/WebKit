@@ -39,11 +39,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<TiledCoreAnimationDrawingAreaProxy> TiledCoreAnimationDrawingAreaProxy::create(WebPageProxy* webPageProxy)
-{
-    return adoptPtr(new TiledCoreAnimationDrawingAreaProxy(webPageProxy));
-}
-
 TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeTiledCoreAnimation, webPageProxy)
     , m_isWaitingForDidUpdateGeometry(false)

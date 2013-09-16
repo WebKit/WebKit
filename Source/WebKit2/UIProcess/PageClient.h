@@ -77,7 +77,7 @@ public:
     virtual ~PageClient() { }
 
     // Create a new drawing area proxy for the given page.
-    virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy() = 0;
+    virtual OwnPtr<DrawingAreaProxy> createDrawingAreaProxy() = 0;
 
     // Tell the view to invalidate the given rect. The rect is in view coordinates.
     virtual void setViewNeedsDisplay(const WebCore::IntRect&) = 0;

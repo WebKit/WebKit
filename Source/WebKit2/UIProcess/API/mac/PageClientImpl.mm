@@ -138,7 +138,7 @@ PageClientImpl::~PageClientImpl()
 {
 }
 
-PassOwnPtr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
+OwnPtr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
     return [m_wkView _createDrawingAreaProxy];
 }

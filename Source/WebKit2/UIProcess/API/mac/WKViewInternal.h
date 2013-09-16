@@ -50,7 +50,7 @@ namespace WebKit {
 @class WKFullScreenWindowController;
 
 @interface WKView (Internal)
-- (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
+- (OwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
 - (BOOL)_isFocused;
 - (void)_processDidCrash;
 - (void)_pageClosed;

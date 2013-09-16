@@ -43,7 +43,7 @@ class CoordinatedLayerTreeHostProxy;
 
 class DrawingAreaProxyImpl : public DrawingAreaProxy {
 public:
-    static PassOwnPtr<DrawingAreaProxyImpl> create(WebPageProxy*);
+    explicit DrawingAreaProxyImpl(WebPageProxy*);
     virtual ~DrawingAreaProxyImpl();
 
     void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
@@ -55,8 +55,6 @@ public:
     bool hasReceivedFirstUpdate() const { return m_hasReceivedFirstUpdate; }
 
 private:
-    explicit DrawingAreaProxyImpl(WebPageProxy*);
-
     // DrawingAreaProxy
     virtual void sizeDidChange();
     virtual void deviceScaleFactorDidChange();

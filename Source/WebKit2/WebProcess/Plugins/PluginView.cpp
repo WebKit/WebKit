@@ -816,7 +816,7 @@ String PluginView::getSelectionString() const
     return m_plugin->getSelectionString();
 }
 
-PassOwnPtr<WebEvent> PluginView::createWebEvent(MouseEvent* event) const
+OwnPtr<WebEvent> PluginView::createWebEvent(MouseEvent* event) const
 {
     WebEvent::Type type = WebEvent::NoType;
     unsigned clickCount = 1;

@@ -44,11 +44,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<DrawingAreaProxyImpl> DrawingAreaProxyImpl::create(WebPageProxy* webPageProxy)
-{
-    return adoptPtr(new DrawingAreaProxyImpl(webPageProxy));
-}
-
 DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeImpl, webPageProxy)
     , m_currentBackingStoreStateID(0)

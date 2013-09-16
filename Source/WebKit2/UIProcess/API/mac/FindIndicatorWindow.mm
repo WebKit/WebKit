@@ -112,11 +112,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<FindIndicatorWindow> FindIndicatorWindow::create(WKView *wkView)
-{
-    return adoptPtr(new FindIndicatorWindow(wkView));
-}
-
 FindIndicatorWindow::FindIndicatorWindow(WKView *wkView)
     : m_wkView(wkView)
     , m_bounceAnimationContext(0)

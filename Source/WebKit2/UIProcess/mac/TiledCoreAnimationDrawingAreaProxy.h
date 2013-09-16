@@ -35,12 +35,10 @@ namespace WebKit {
 
 class TiledCoreAnimationDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    static PassOwnPtr<TiledCoreAnimationDrawingAreaProxy> create(WebPageProxy*);
+    explicit TiledCoreAnimationDrawingAreaProxy(WebPageProxy*);
     virtual ~TiledCoreAnimationDrawingAreaProxy();
 
 private:
-    explicit TiledCoreAnimationDrawingAreaProxy(WebPageProxy*);
-
     // DrawingAreaProxy
     virtual void deviceScaleFactorDidChange() OVERRIDE;
     virtual void layerHostingModeDidChange() OVERRIDE;

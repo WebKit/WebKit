@@ -2365,18 +2365,18 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 @implementation WKView (Internal)
 
-- (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
+- (OwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
 {
 #if ENABLE(THREADED_SCROLLING)
     if ([self _shouldUseTiledDrawingArea]) {
         if (getenv("WK_USE_REMOTE_LAYER_TREE_DRAWING_AREA"))
             return RemoteLayerTreeDrawingAreaProxy::create(_data->_page.get());
 
-        return TiledCoreAnimationDrawingAreaProxy::create(_data->_page.get());
+        return createOwned<TiledCoreAnimationDrawingAreaProxy>(_data->_page.get());
     }
 #endif
 
-    return DrawingAreaProxyImpl::create(_data->_page.get());
+    return createOwned<DrawingAreaProxyImpl>(_data->_page.get());
 }
 
 - (BOOL)_isFocused
@@ -2659,7 +2659,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     }
 
     if (!_data->_findIndicatorWindow)
-        _data->_findIndicatorWindow = FindIndicatorWindow::create(self);
+        _data->_findIndicatorWindow = createOwned<FindIndicatorWindow>(self);
 
     _data->_findIndicatorWindow->setFindIndicator(findIndicator, fadeOut, animate);
 }
