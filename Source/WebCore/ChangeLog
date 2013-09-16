@@ -1,3 +1,36 @@
+2013-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Check DOM bindings API compatibility while building
+        https://bugs.webkit.org/show_bug.cgi?id=101224
+
+        Reviewed by Gustavo Noronha Silva.
+
+        A .symbols file is now generated for every DOM binding public API
+        object. It contains the signature of all public methods. We keep a
+        single file with the signature of all public methods in the source
+        tree. When DOM bindings are generated, a new symbols file is
+        created concatenating all .symbols files generated and it's
+        compared with the symbols file in the source tree using a script
+        that checks if the changes are API compatible or not. In case of
+        API break the build finishes showing the differences found in the
+        symbol files. If API compatible changes are found, the diff is
+        shown in stdout, suggesting to run the gobject-run-api-break-test
+        with the --reset-results option to update the symbols file, and
+        the build continues. If there aren't API changes the build
+        continues silently.
+
+        * GNUmakefile.am:
+        * bindings/gobject/GNUmakefile.am:
+        * bindings/gobject/WebKitDOMCustom.symbols: Added.
+        * bindings/gobject/WebKitDOMEventTarget.symbols: Added.
+        * bindings/gobject/WebKitDOMObject.symbols: Added.
+        * bindings/gobject/webkitdom.symbols: Added.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateFunction):
+        (WriteData):
+        * bindings/scripts/gobject-run-api-break-test: Added.
+        (check_api):
+
 2013-09-16  Andreas Kling  <akling@apple.com>
 
         Devirtualize Document::detach().

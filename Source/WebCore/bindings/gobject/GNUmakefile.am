@@ -471,6 +471,33 @@ DerivedSources/webkitdom/webkitdom.h: $(WebCore)/bindings/scripts/gobject-genera
 DerivedSources/webkitdom/webkitdomdefines.h: $(WebCore)/bindings/scripts/gobject-generate-headers.pl $(WebCore)/bindings/gobject/GNUmakefile.am
 	$(AM_V_GEN)echo $(gdom_class_list) | $(PERL) $< defines > $@
 
+noinst_DATA += DerivedSources/webkitdom/webkitdom.symbols
+gdom_symbol_files := $(patsubst %.h,%.symbols, $(filter DerivedSources/webkitdom/WebKitDOM%.h, $(webkitgtk_gdom_built_h_api)))
+
+$(top_builddir)/DerivedSources/webkitdom/WebKitDOMObject.symbols: $(WebCore)/bindings/gobject/WebKitDOMObject.symbols
+	$(AM_V_GEN)cp -f $< $@
+
+$(top_builddir)/DerivedSources/webkitdom/WebKitDOMEventTarget.symbols: $(WebCore)/bindings/gobject/WebKitDOMEventTarget.symbols
+	$(AM_V_GEN)cp -f $< $@
+
+$(top_builddir)/DerivedSources/webkitdom/WebKitDOMCustom.symbols: $(WebCore)/bindings/gobject/WebKitDOMCustom.symbols
+	$(AM_V_GEN)cp -f $< $@
+
+DerivedSources/webkitdom/webkitdom.symbols: $(gdom_symbol_files) $(WebCore)/bindings/gobject/webkitdom.symbols $(WebCore)/bindings/scripts/gobject-run-api-break-test
+	$(AM_V_GEN)cat $(gdom_symbol_files) > gdom-gen-symbols \
+	&& $(PYTHON) $(WebCore)/bindings/scripts/gobject-run-api-break-test $(WebCore)/bindings/gobject/webkitdom.symbols gdom-gen-symbols \
+	&& (cmp -s gdom-gen-symbols $@ || cp gdom-gen-symbols $@) \
+	&& rm -f gdom-gen-symbols
+
+EXTRA_DIST += \
+	$(WebCore)/bindings/gobject/WebKitDOMCustom.symbols \
+	$(WebCore)/bindings/gobject/WebKitDOMEventTarget.symbols \
+	$(WebCore)/bindings/gobject/WebKitDOMObject.symbols \
+	$(WebCore)/bindings/gobject/webkitdom.symbols
+
+CLEAN_FILES = \
+	$(gdom_symbol_files)
+
 # Because WebCore/bindings/gobject/WebKitDOMObject.h is static source but is also a distributed header
 # required by other distributed headers (both static and auto-generated), need to move this to the
 # DerivedSources/webkitdom directory.  The reason is that we want all header files distributed in the
