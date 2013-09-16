@@ -66,8 +66,8 @@ static PassRefPtr<StringImpl> applySVGWhitespaceRules(PassRefPtr<StringImpl> str
     return newString.release();
 }
 
-RenderSVGInlineText::RenderSVGInlineText(Node* n, PassRefPtr<StringImpl> string)
-    : RenderText(n, applySVGWhitespaceRules(string, false))
+RenderSVGInlineText::RenderSVGInlineText(Text& textNode, PassRefPtr<StringImpl> string)
+    : RenderText(&textNode, applySVGWhitespaceRules(string, false))
     , m_scalingFactor(1)
     , m_layoutAttributes(this)
 {

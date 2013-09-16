@@ -195,7 +195,7 @@ RenderText* Text::createTextRenderer(RenderArena* arena, RenderStyle* style)
 {
 #if ENABLE(SVG)
     if (isSVGText(this) || isSVGShadowText(this))
-        return new (arena) RenderSVGInlineText(this, dataImpl());
+        return new (arena) RenderSVGInlineText(*this, dataImpl());
 #endif
     if (style->hasTextCombine())
         return new (arena) RenderCombineText(this, dataImpl());

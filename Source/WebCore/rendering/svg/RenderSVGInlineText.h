@@ -26,6 +26,7 @@
 #include "Font.h"
 #include "RenderText.h"
 #include "SVGTextLayoutAttributes.h"
+#include "Text.h"
 
 namespace WebCore {
 
@@ -33,7 +34,9 @@ class SVGInlineTextBox;
 
 class RenderSVGInlineText FINAL : public RenderText {
 public:
-    RenderSVGInlineText(Node*, PassRefPtr<StringImpl>);
+    RenderSVGInlineText(Text&, PassRefPtr<StringImpl>);
+
+    Text& textNode() const { return *toText(RenderText::node()); }
 
     bool characterStartsNewTextChunk(int position) const;
     SVGTextLayoutAttributes* layoutAttributes() { return &m_layoutAttributes; }
@@ -47,6 +50,8 @@ public:
     FloatRect floatLinesBoundingBox() const;
 
 private:
+    void node() const WTF_DELETED_FUNCTION;
+
     virtual const char* renderName() const { return "RenderSVGInlineText"; }
 
     virtual void setTextInternal(PassRefPtr<StringImpl>);
