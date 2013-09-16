@@ -35,6 +35,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "AudioDestinationConsumer.h"
+#include "MediaConstraints.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -80,6 +81,9 @@ public:
     PassRefPtr<ExtraData> extraData() const { return m_extraData; }
     void setExtraData(PassRefPtr<ExtraData> extraData) { m_extraData = extraData; }
 
+    void setConstraints(PassRefPtr<MediaConstraints> constraints) { m_constraints = constraints; }
+    MediaConstraints* constraints() { return m_constraints.get(); }
+
     const String& deviceId() { return m_deviceId; }
     void setDeviceId(const String& deviceId) { m_deviceId = deviceId; }
 
@@ -104,6 +108,7 @@ private:
     Mutex m_audioConsumersLock;
     Vector<RefPtr<AudioDestinationConsumer> > m_audioConsumers;
     RefPtr<ExtraData> m_extraData;
+    RefPtr<MediaConstraints> m_constraints;
 };
 
 typedef Vector<RefPtr<MediaStreamSource> > MediaStreamSourceVector;

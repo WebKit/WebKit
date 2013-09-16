@@ -141,6 +141,15 @@ void UserMediaRequest::succeed(PassRefPtr<MediaStreamDescriptor> streamDescripto
         return;
 
     RefPtr<MediaStream> stream = MediaStream::create(m_scriptExecutionContext, streamDescriptor);
+
+    MediaStreamTrackVector tracks = stream->getAudioTracks();
+    for (MediaStreamTrackVector::iterator iter = tracks.begin(); iter != tracks.end(); ++iter)
+        (*iter)->component()->source()->setConstraints(m_audio);
+
+    tracks = stream->getVideoTracks();
+    for (MediaStreamTrackVector::iterator iter = tracks.begin(); iter != tracks.end(); ++iter)
+        (*iter)->component()->source()->setConstraints(m_video);
+
     m_successCallback->handleEvent(stream.get());
 }
 
