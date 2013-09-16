@@ -108,10 +108,10 @@ void AXComputedObjectAttributeCache::setIgnored(AXID id, AccessibilityObjectIncl
 bool AXObjectCache::gAccessibilityEnabled = false;
 bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
 
-AXObjectCache::AXObjectCache(const Document* doc)
-    : m_notificationPostTimer(this, &AXObjectCache::notificationPostTimerFired)
+AXObjectCache::AXObjectCache(Document& document)
+    : m_document(document)
+    , m_notificationPostTimer(this, &AXObjectCache::notificationPostTimerFired)
 {
-    m_document = const_cast<Document*>(doc);
 }
 
 AXObjectCache::~AXObjectCache()
@@ -422,10 +422,7 @@ AccessibilityObject* AXObjectCache::rootObject()
     if (!gAccessibilityEnabled)
         return 0;
 
-    if (!m_document)
-        return 0;
-    
-    return getOrCreate(m_document->view());
+    return getOrCreate(m_document.view());
 }
 
 AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame* frame)
@@ -643,7 +640,7 @@ void AXObjectCache::childrenChanged(AccessibilityObject* obj)
     
 void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
 {
-    RefPtr<Document> protectorForCacheOwner(m_document);
+    Ref<Document> protectorForCacheOwner(m_document);
 
     m_notificationPostTimer.stop();
 

@@ -35,6 +35,7 @@
 #if HAVE(ACCESSIBILITY)
 
 #include "AXObjectCache.h"
+#include "AccessibilityListBoxOption.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -91,15 +92,7 @@ struct _WebKitAccessiblePrivate {
 
 static AccessibilityObject* fallbackObject()
 {
-    // FIXME: An AXObjectCache with a Document is meaningless.
-    static AXObjectCache* fallbackCache = new AXObjectCache(0);
-    static AccessibilityObject* object = 0;
-    if (!object) {
-        // FIXME: using fallbackCache->getOrCreate(ListBoxOptionRole) is a hack
-        object = fallbackCache->getOrCreate(ListBoxOptionRole);
-        object->ref();
-    }
-
+    static AccessibilityObject* object = AccessibilityListBoxOption::create().leakRef();
     return object;
 }
 

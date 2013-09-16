@@ -76,7 +76,7 @@ enum PostType { PostSynchronously, PostAsynchronously };
 class AXObjectCache {
     WTF_MAKE_NONCOPYABLE(AXObjectCache); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit AXObjectCache(const Document*);
+    explicit AXObjectCache(Document&);
     ~AXObjectCache();
 
     static AccessibilityObject* focusedUIElementForPage(const Page*);
@@ -220,7 +220,7 @@ protected:
     bool isNodeInUse(Node* n) { return m_textMarkerNodes.contains(n); }
 
 private:
-    Document* m_document;
+    Document& m_document;
     HashMap<AXID, RefPtr<AccessibilityObject> > m_objects;
     HashMap<RenderObject*, AXID> m_renderObjectMapping;
     HashMap<Widget*, AXID> m_widgetObjectMapping;
@@ -258,7 +258,7 @@ bool isNodeAriaVisible(Node*);
 #if !HAVE(ACCESSIBILITY)
 inline AccessibilityObjectInclusion AXComputedObjectAttributeCache::getIgnored(AXID) const { return DefaultBehavior; }
 inline void AXComputedObjectAttributeCache::setIgnored(AXID, AccessibilityObjectInclusion) { }
-inline AXObjectCache::AXObjectCache(const Document* doc) : m_document(const_cast<Document*>(doc)), m_notificationPostTimer(this, 0) { }
+inline AXObjectCache::AXObjectCache(Document& document) : m_document(document), m_notificationPostTimer(this, 0) { }
 inline AXObjectCache::~AXObjectCache() { }
 inline AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page*) { return 0; }
 inline AccessibilityObject* AXObjectCache::get(RenderObject*) { return 0; }
