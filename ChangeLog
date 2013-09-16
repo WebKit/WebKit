@@ -1,3 +1,16 @@
+2013-09-11  Alberto Garcia  <berto@igalia.com>
+
+        Unquoted $ORIGDIR in autogen.sh
+        https://bugs.webkit.org/show_bug.cgi?id=19512
+
+        Reviewed by Carlos Garcia Campos.
+
+        Quote all directory names. This doesn't mean that all possible
+        directory names are safe for building webkit, but the configure
+        script already runs a sanity check.
+
+        * autogen.sh:
+
 2013-09-11  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Stop disabling deprecated symbols in debug builds
