@@ -1374,7 +1374,7 @@ bool InspectorStyleSheet::originalStyleSheetText(String* result) const
 
 bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
 {
-    if (m_origin == TypeBuilder::CSS::StyleSheetOrigin::User || m_origin == TypeBuilder::CSS::StyleSheetOrigin::User_agent)
+    if (m_origin == TypeBuilder::CSS::StyleSheetOrigin::User || m_origin == TypeBuilder::CSS::StyleSheetOrigin::UserAgent)
         return false;
 
     if (!m_pageStyleSheet || !ownerDocument() || !ownerDocument()->frame())

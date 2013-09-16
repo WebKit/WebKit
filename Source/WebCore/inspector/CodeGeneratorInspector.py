@@ -111,7 +111,7 @@ def dash_to_camelcase(word):
 def fix_camel_case(name):
     refined = re.sub(r'-(\w)', lambda pat: pat.group(1).upper(), name)
     refined = to_title_case(refined)
-    return re.sub(r'(?i)HTML|XML|WML|API', lambda pat: pat.group(0).upper(), refined)
+    return re.sub(r'(?i)HTML|XML|WML|API|GC|XHR|DOM|CSS', lambda pat: pat.group(0).upper(), refined)
 
 
 def to_title_case(name):
@@ -916,8 +916,7 @@ class TypeBindings:
                                 for enum_item in enum:
                                     enum_pos = EnumConstants.add_constant(enum_item)
 
-                                    item_c_name = enum_item.replace('-', '_')
-                                    item_c_name = Capitalizer.lower_camel_case_to_upper(item_c_name)
+                                    item_c_name = fix_camel_case(enum_item)
                                     if item_c_name in TYPE_NAME_FIX_MAP:
                                         item_c_name = TYPE_NAME_FIX_MAP[item_c_name]
                                     writer.newline("        ")

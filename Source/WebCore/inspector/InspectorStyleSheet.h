@@ -215,7 +215,7 @@ public:
 protected:
     InspectorStyleSheet(InspectorPageAgent*, const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, TypeBuilder::CSS::StyleSheetOrigin::Enum, const String& documentURL, Listener*);
 
-    bool canBind() const { return m_origin != TypeBuilder::CSS::StyleSheetOrigin::User_agent && m_origin != TypeBuilder::CSS::StyleSheetOrigin::User; }
+    bool canBind() const { return m_origin != TypeBuilder::CSS::StyleSheetOrigin::UserAgent && m_origin != TypeBuilder::CSS::StyleSheetOrigin::User; }
     InspectorCSSId ruleOrStyleId(CSSStyleDeclaration* style) const;
     virtual Document* ownerDocument() const;
     virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const;

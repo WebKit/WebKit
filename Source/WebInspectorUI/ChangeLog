@@ -1,3 +1,13 @@
+2013-09-16  Timothy Hatcher  <timothy@apple.com>
+
+        Make InspectorTypeBuilder generate better enums in C++.
+
+        https://bugs.webkit.org/show_bug.cgi?id=121440
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/InspectorBackendCommands.js: Updated to make Css be CSS.
+
 2013-09-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Move to the new web inspector

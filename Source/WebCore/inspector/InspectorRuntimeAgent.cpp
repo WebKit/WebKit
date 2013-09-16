@@ -106,7 +106,7 @@ void InspectorRuntimeAgent::parse(ErrorString*, const String& expression, TypeBu
         *result = TypeBuilder::Runtime::SyntaxErrorType::Irrecoverable;
         break;
     case ParserError::SyntaxErrorUnterminatedLiteral:
-        *result = TypeBuilder::Runtime::SyntaxErrorType::Unterminated_literal;
+        *result = TypeBuilder::Runtime::SyntaxErrorType::UnterminatedLiteral;
         break;
     case ParserError::SyntaxErrorRecoverable:
         *result = TypeBuilder::Runtime::SyntaxErrorType::Recoverable;

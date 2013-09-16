@@ -1257,7 +1257,7 @@ TypeBuilder::CSS::StyleSheetOrigin::Enum InspectorCSSAgent::detectOrigin(CSSStyl
 {
     TypeBuilder::CSS::StyleSheetOrigin::Enum origin = TypeBuilder::CSS::StyleSheetOrigin::Regular;
     if (pageStyleSheet && !pageStyleSheet->ownerNode() && pageStyleSheet->href().isEmpty())
-        origin = TypeBuilder::CSS::StyleSheetOrigin::User_agent;
+        origin = TypeBuilder::CSS::StyleSheetOrigin::UserAgent;
     else if (pageStyleSheet && pageStyleSheet->ownerNode() && pageStyleSheet->ownerNode()->nodeName() == "#document")
         origin = TypeBuilder::CSS::StyleSheetOrigin::User;
     else {

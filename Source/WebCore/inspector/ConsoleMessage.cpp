@@ -143,14 +143,14 @@ void ConsoleMessage::autogenerateMetadata(bool canGenerateCallStack, JSC::ExecSt
 static TypeBuilder::Console::ConsoleMessage::Source::Enum messageSourceValue(MessageSource source)
 {
     switch (source) {
-    case XMLMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Xml;
+    case XMLMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::XML;
     case JSMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Javascript;
     case NetworkMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Network;
-    case ConsoleAPIMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Console_api;
+    case ConsoleAPIMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::ConsoleAPI;
     case StorageMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Storage;
     case AppCacheMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Appcache;
     case RenderingMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Rendering;
-    case CSSMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Css;
+    case CSSMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::CSS;
     case SecurityMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Security;
     case OtherMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Other;
     }
@@ -163,7 +163,7 @@ static TypeBuilder::Console::ConsoleMessage::Type::Enum messageTypeValue(Message
     case LogMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Log;
     case ClearMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Clear;
     case DirMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Dir;
-    case DirXMLMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Dirxml;
+    case DirXMLMessageType: return TypeBuilder::Console::ConsoleMessage::Type::DirXML;
     case TableMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Table;
     case TraceMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Trace;
     case StartGroupMessageType: return TypeBuilder::Console::ConsoleMessage::Type::StartGroup;
