@@ -9,6 +9,7 @@ webkit2_h_api += \
 	$(WebKit2)/Shared/API/c/WKContextMenuItem.h \
 	$(WebKit2)/Shared/API/c/WKContextMenuItemTypes.h \
 	$(WebKit2)/Shared/API/c/WKData.h \
+	$(WebKit2)/Shared/API/c/WKDeclarationSpecifiers.h \
 	$(WebKit2)/Shared/API/c/WKDictionary.h \
 	$(WebKit2)/Shared/API/c/WKError.h \
 	$(WebKit2)/Shared/API/c/WKEvent.h \
@@ -34,7 +35,9 @@ webkit2_h_api += \
 	$(WebKit2)/Shared/API/c/WKURL.h \
 	$(WebKit2)/Shared/API/c/WKURLRequest.h \
 	$(WebKit2)/Shared/API/c/WKURLResponse.h \
+	$(WebKit2)/Shared/API/c/WKUserContentInjectedFrames.h \
 	$(WebKit2)/Shared/API/c/WKUserContentURLPattern.h \
+	$(WebKit2)/Shared/API/c/WKUserScriptInjectionTime.h \
 	$(WebKit2)/UIProcess/API/C/gtk/WKAPICastGtk.h \
 	$(WebKit2)/UIProcess/API/C/gtk/WKFullScreenClientGtk.h \
 	$(WebKit2)/UIProcess/API/C/gtk/WKInspectorClientGtk.h \
@@ -329,6 +332,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/API/c/WKContextMenuItemTypes.h \
 	Source/WebKit2/Shared/API/c/WKData.cpp \
 	Source/WebKit2/Shared/API/c/WKData.h \
+	Source/WebKit2/Shared/API/c/WKDeclarationSpecifiers.h \
 	Source/WebKit2/Shared/API/c/WKDictionary.cpp \
 	Source/WebKit2/Shared/API/c/WKDictionary.h \
 	Source/WebKit2/Shared/API/c/WKError.cpp \
@@ -375,6 +379,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/API/c/WKURLResponse.h \
 	Source/WebKit2/Shared/API/c/WKUserContentURLPattern.cpp \
 	Source/WebKit2/Shared/API/c/WKUserContentURLPattern.h \
+	Source/WebKit2/Shared/API/c/WKUserContentInjectedFrames.h \
+	Source/WebKit2/Shared/API/c/WKUserScriptInjectionTime.h \
 	Source/WebKit2/Shared/APIObject.cpp \
 	Source/WebKit2/Shared/APIObject.h \
 	Source/WebKit2/Shared/ActivityAssertion.cpp \

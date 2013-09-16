@@ -1,3 +1,9 @@
+2013-09-15  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed make distcheck fix.
+
+        * GNUmakefile.list.am:
+
 2013-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] The web inspector is not rendered when docked in WebKit2 when AC is used

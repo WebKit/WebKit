@@ -1,3 +1,9 @@
+2013-09-15  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed make distcheck fix.
+
+        * GNUmakefile.list.am:
+
 2013-09-15  Patrick Gansterer  <paroga@webkit.org>
 
         Fix build with Visual Studio 2012 after r153764.

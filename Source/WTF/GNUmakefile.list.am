@@ -80,6 +80,7 @@ wtf_sources += \
     Source/WTF/wtf/MD5.h \
     Source/WTF/wtf/MainThread.cpp \
     Source/WTF/wtf/MainThread.h \
+    Source/WTF/wtf/MallocPtr.h \
     Source/WTF/wtf/MathExtras.h \
     Source/WTF/wtf/MediaTime.h \
     Source/WTF/wtf/MediaTime.cpp \
@@ -94,6 +95,7 @@ wtf_sources += \
     Source/WTF/wtf/NumberOfCores.h \
     Source/WTF/wtf/RAMSize.cpp \
     Source/WTF/wtf/RAMSize.h \
+    Source/WTF/wtf/Ref.h \
     Source/WTF/wtf/ObjcRuntimeExtras.h \
     Source/WTF/wtf/OSAllocator.h \
     Source/WTF/wtf/OSAllocatorPosix.cpp \

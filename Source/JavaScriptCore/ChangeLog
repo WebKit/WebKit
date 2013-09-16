@@ -1,3 +1,9 @@
+2013-09-15  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed make distcheck fix.
+
+        * GNUmakefile.list.am:
+
 2013-09-15  Filip Pizlo  <fpizlo@apple.com>
 
         Deoptimize deoptimization: make DFGOSRExitCompiler64.cpp more hackable

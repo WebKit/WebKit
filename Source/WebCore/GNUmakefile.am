@@ -622,6 +622,9 @@ EXTRA_DIST += \
 	$(wildcard $(srcdir)/Source/WebCore/html/track/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/html/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/inspector/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/inspector/*.css) \
+	$(wildcard $(srcdir)/Source/WebCore/inspector/*.js) \
+	$(wildcard $(srcdir)/Source/WebCore/inspector/Scripts/*.py) \
 	$(wildcard $(srcdir)/Source/WebCore/loader/appcache/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/page/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/plugins/*.idl) \

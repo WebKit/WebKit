@@ -64,6 +64,7 @@ Programs_TestWebKitAPI_TestWTF_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WTF/MathExtras.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/MediaTime.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/MetaAllocator.cpp \
+	Tools/TestWebKitAPI/Tests/WTF/MoveOnly.h \
 	Tools/TestWebKitAPI/Tests/WTF/RedBlackTree.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/SHA1.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/SaturatedArithmeticOperations.cpp \
