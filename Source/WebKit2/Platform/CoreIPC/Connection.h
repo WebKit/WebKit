@@ -173,11 +173,11 @@ public:
     template<typename T> bool sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout = NoTimeout, unsigned syncSendFlags = 0);
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, double timeout);
 
-    PassOwnPtr<MessageEncoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
-    bool sendMessage(PassOwnPtr<MessageEncoder>, unsigned messageSendFlags = 0);
-    PassOwnPtr<MessageDecoder> sendSyncMessage(uint64_t syncRequestID, PassOwnPtr<MessageEncoder>, double timeout, unsigned syncSendFlags = 0);
-    PassOwnPtr<MessageDecoder> sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, PassOwnPtr<MessageEncoder>, double timeout);
-    bool sendSyncReply(PassOwnPtr<MessageEncoder>);
+    OwnPtr<MessageEncoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
+    bool sendMessage(OwnPtr<MessageEncoder>, unsigned messageSendFlags = 0);
+    OwnPtr<MessageDecoder> sendSyncMessage(uint64_t syncRequestID, OwnPtr<MessageEncoder>, double timeout, unsigned syncSendFlags = 0);
+    OwnPtr<MessageDecoder> sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, OwnPtr<MessageEncoder>, double timeout);
+    bool sendSyncReply(OwnPtr<MessageEncoder>);
 
     void wakeUpRunLoop();
 
@@ -193,13 +193,13 @@ private:
     
     bool isValid() const { return m_client; }
     
-    PassOwnPtr<MessageDecoder> waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, double timeout);
+    OwnPtr<MessageDecoder> waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, double timeout);
     
-    PassOwnPtr<MessageDecoder> waitForSyncReply(uint64_t syncRequestID, double timeout, unsigned syncSendFlags);
+    OwnPtr<MessageDecoder> waitForSyncReply(uint64_t syncRequestID, double timeout, unsigned syncSendFlags);
 
     // Called on the connection work queue.
-    void processIncomingMessage(PassOwnPtr<MessageDecoder>);
-    void processIncomingSyncReply(PassOwnPtr<MessageDecoder>);
+    void processIncomingMessage(OwnPtr<MessageDecoder>);
+    void processIncomingSyncReply(OwnPtr<MessageDecoder>);
 
     void addWorkQueueMessageReceiverOnConnectionWorkQueue(StringReference messageReceiverName, WorkQueue*, WorkQueueMessageReceiver*);
     void removeWorkQueueMessageReceiverOnConnectionWorkQueue(StringReference messageReceiverName);
@@ -208,20 +208,20 @@ private:
     bool canSendOutgoingMessages() const;
     bool platformCanSendOutgoingMessages() const;
     void sendOutgoingMessages();
-    bool sendOutgoingMessage(PassOwnPtr<MessageEncoder>);
+    bool sendOutgoingMessage(OwnPtr<MessageEncoder>);
     void connectionDidClose();
     
     // Called on the listener thread.
     void dispatchConnectionDidClose();
     void dispatchOneMessage();
-    void dispatchMessage(PassOwnPtr<MessageDecoder>);
+    void dispatchMessage(OwnPtr<MessageDecoder>);
     void dispatchMessage(MessageDecoder&);
     void dispatchSyncMessage(MessageDecoder&);
     void dispatchDidReceiveInvalidMessage(const CString& messageReceiverNameString, const CString& messageNameString);
     void didFailToSendSyncMessage();
 
     // Can be called on any thread.
-    void enqueueIncomingMessage(PassOwnPtr<MessageDecoder>);
+    void enqueueIncomingMessage(OwnPtr<MessageDecoder>);
 
     Client* m_client;
     bool m_isServer;
@@ -261,31 +261,21 @@ private:
 
         // The reply decoder, will be null if there was an error processing the sync
         // message on the other side.
-        MessageDecoder* replyDecoder;
+        OwnPtr<MessageDecoder> replyDecoder;
 
         // Will be set to true once a reply has been received.
         bool didReceiveReply;
     
         PendingSyncReply()
             : syncRequestID(0)
-            , replyDecoder(0)
             , didReceiveReply(false)
         {
         }
 
         explicit PendingSyncReply(uint64_t syncRequestID)
             : syncRequestID(syncRequestID)
-            , replyDecoder(0)
             , didReceiveReply(0)
         {
-        }
-
-        PassOwnPtr<MessageDecoder> releaseReplyDecoder()
-        {
-            OwnPtr<MessageDecoder> reply = adoptPtr(replyDecoder);
-            replyDecoder = 0;
-            
-            return reply.release();
         }
     };
 

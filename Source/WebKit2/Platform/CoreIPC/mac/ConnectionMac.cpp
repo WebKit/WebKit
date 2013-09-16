@@ -198,7 +198,7 @@ bool Connection::platformCanSendOutgoingMessages() const
     return true;
 }
 
-bool Connection::sendOutgoingMessage(PassOwnPtr<MessageEncoder> encoder)
+bool Connection::sendOutgoingMessage(OwnPtr<MessageEncoder> encoder)
 {
     Vector<Attachment> attachments = encoder->releaseAttachments();
     
