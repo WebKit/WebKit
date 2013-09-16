@@ -1,5 +1,13 @@
 2013-09-16  Alexey Proskuryakov  <ap@apple.com>
 
+        Flaky Test: svg/batik/filters/feTile.svg
+        https://bugs.webkit.org/show_bug.cgi?id=114375
+
+        * platform/mac/TestExpectations: Marking as flaky. We already have a lot of these
+        batik tests marked as flaky, with similar symptoms.
+
+2013-09-16  Alexey Proskuryakov  <ap@apple.com>
+
         svg/animations/smil-leak-*.svg tests are flaky
         https://bugs.webkit.org/show_bug.cgi?id=114280
 
