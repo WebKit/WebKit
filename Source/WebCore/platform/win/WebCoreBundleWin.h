@@ -28,6 +28,8 @@
 
 #if USE(CF)
 
+typedef struct __CFBundle* CFBundleRef;
+
 namespace WebCore {
 
 CFBundleRef webKitBundle();
