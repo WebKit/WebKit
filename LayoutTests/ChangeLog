@@ -1,3 +1,11 @@
+2013-09-16  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed gardening. Removed fail expectations for test in
+        the GTK & EFL ports, consistently passing after r155374.
+
+        * platform/efl/TestExpectations: Removed test.
+        * platform/gtk/TestExpectations: Ditto.
+
 2013-09-16  Wojciech Bielawski  <w.bielawski@samsung.com>
 
         [WKTR] Add implementation of click() method of objects returned by eventSender.contextClick().

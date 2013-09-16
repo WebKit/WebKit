@@ -1329,8 +1329,6 @@ webkit.org/b/118577 platform/gtk/accessibility/replaced-objects-in-anonymous-blo
 
 webkit.org/b/114625 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
 
-webkit.org/b/114626 accessibility/link-inside-button-accessible-text.html [ Failure ]
-
 webkit.org/b/114612 editing/style/block-style-005.html [ Failure ]
 
 webkit.org/b/115025 fast/events/constructors/mouse-event-constructor.html [ Failure ]
