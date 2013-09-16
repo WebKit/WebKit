@@ -1,3 +1,17 @@
+2013-09-16  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Extends atk value interface to return proper checkbox states
+        https://bugs.webkit.org/show_bug.cgi?id=121413
+
+        Reviewed by Mario Sanchez Prada.
+
+        Sharing mac tests with other ports (GTK/EFL).
+
+        * accessibility/mixed-checkbox-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/mixed-checkbox-expected.txt.
+        * accessibility/mixed-checkbox.html: Renamed from LayoutTests/platform/mac/accessibility/mixed-checkbox.html.
+        * accessibility/native-vs-nonnative-checkboxes-expected.txt: Renamed from LayoutTests/platform/mac/accessibility/native-vs-nonnative-checkboxes-expected.txt.
+        * accessibility/native-vs-nonnative-checkboxes.html: Renamed from LayoutTests/platform/mac/accessibility/native-vs-nonnative-checkboxes.html.
+
 2013-09-16  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed gardening. Removed fail expectations for test in

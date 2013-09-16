@@ -1,3 +1,19 @@
+2013-09-16  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Extends atk value interface to return proper checkbox states
+        https://bugs.webkit.org/show_bug.cgi?id=121413
+
+        Reviewed by Mario Sanchez Prada.
+
+        Tests: accessibility/mixed-checkbox.html
+               accessibility/native-vs-nonnative-checkboxes.html
+
+        * accessibility/atk/WebKitAccessibleInterfaceValue.cpp:
+        (webkitAccessibleValueValueForAccessibilityObject):
+        (webkitAccessibleValueGetCurrentValue):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (getInterfaceMaskFromObject):
+
 2013-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Check DOM bindings API compatibility while building
