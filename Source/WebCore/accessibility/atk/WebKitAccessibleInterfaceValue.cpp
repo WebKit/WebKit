@@ -36,33 +36,11 @@ static AccessibilityObject* core(AtkValue* value)
     return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(value));
 }
 
-static float webkitAccessibleValueValueForAccessibilityObject(AccessibilityObject* coreObject)
-{
-    if (!coreObject)
-        return 0;
-
-    if (coreObject->supportsRangeValue())
-        return coreObject->valueForRange();
-
-    if (coreObject->isCheckboxOrRadio()) {
-        switch (coreObject->checkboxOrRadioValue()) {
-        case ButtonStateOff:
-            return 0;
-        case ButtonStateOn:
-            return 1;
-        case ButtonStateMixed:
-            return 2;
-        }
-    }
-
-    return 0;
-}
-
 static void webkitAccessibleValueGetCurrentValue(AtkValue* value, GValue* gValue)
 {
     memset(gValue,  0, sizeof(GValue));
     g_value_init(gValue, G_TYPE_FLOAT);
-    g_value_set_float(gValue, webkitAccessibleValueValueForAccessibilityObject(core(value)));
+    g_value_set_float(gValue, core(value)->valueForRange());
 }
 
 static void webkitAccessibleValueGetMaximumValue(AtkValue* value, GValue* gValue)

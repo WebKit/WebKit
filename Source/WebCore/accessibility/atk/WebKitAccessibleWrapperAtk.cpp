@@ -1035,7 +1035,7 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
         interfaceMask |= 1 << WAI_DOCUMENT;
 
     // Value
-    if (coreObject->supportsRangeValue() || coreObject->isCheckboxOrRadio())
+    if (role == SliderRole || role == SpinButtonRole || role == ScrollBarRole || role == ProgressIndicatorRole)
         interfaceMask |= 1 << WAI_VALUE;
 
 #if ENABLE(INPUT_TYPE_COLOR)
