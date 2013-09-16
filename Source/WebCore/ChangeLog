@@ -1,3 +1,15 @@
+2013-09-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add RunLoop::isMain and use it in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=121459
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        * platform/RunLoop.cpp:
+        (WebCore::RunLoop::isMain):
+        * platform/RunLoop.h:
+
 2013-09-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: ARIA tablist is disabled, but VoiceOver does not speak the tabs as dimmed

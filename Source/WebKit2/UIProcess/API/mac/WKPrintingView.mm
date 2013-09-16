@@ -34,8 +34,8 @@
 #import "WebPageProxy.h"
 #import <PDFKit/PDFKit.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/RunLoop.h>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <wtf/MainThread.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -100,7 +100,7 @@ static BOOL isForcingPreviewUpdate;
 
 - (void)_delayedResumeAutodisplayTimerFired
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     
     _autodisplayResumeTimer = nil;
     [self _setAutodisplay:YES];
@@ -123,7 +123,7 @@ static BOOL isForcingPreviewUpdate;
 
 - (void)_adjustPrintingMarginsForHeaderAndFooter
 {
-    ASSERT(isMainThread()); // This funciton calls the client, which should only be done on main thread.
+    ASSERT(RunLoop::isMain()); // This function calls the client, which should only be done on main thread.
 
     NSPrintInfo *info = [_printOperation printInfo];
     NSMutableDictionary *infoDictionary = [info dictionary];
@@ -209,7 +209,7 @@ struct IPCCallbackContext {
 
 static void pageDidDrawToImage(const ShareableBitmap::Handle& imageHandle, WKErrorRef, void* untypedContext)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     OwnPtr<IPCCallbackContext> context = adoptPtr(static_cast<IPCCallbackContext*>(untypedContext));
     WKPrintingView *view = context->view.get();
@@ -238,7 +238,7 @@ static void pageDidDrawToImage(const ShareableBitmap::Handle& imageHandle, WKErr
 
 static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     OwnPtr<IPCCallbackContext> context = adoptPtr(static_cast<IPCCallbackContext*>(untypedContext));
     WKPrintingView *view = context->view.get();
@@ -257,7 +257,7 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
 
 - (void)_preparePDFDataForPrintingOnSecondaryThread
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!_webFrame->page()) {
         _printingCallbackCondition.signal();
@@ -294,14 +294,14 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
 
 static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, WKErrorRef, void* untypedContext)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     OwnPtr<IPCCallbackContext> context = adoptPtr(static_cast<IPCCallbackContext*>(untypedContext));
     WKPrintingView *view = context->view.get();
 
     // If the user has already changed print setup, then this response is obsolete.
     if (context->callbackID == view->_expectedComputedPagesCallback) {
-        ASSERT(isMainThread());
+        ASSERT(RunLoop::isMain());
         ASSERT(view->_expectedPreviewCallbacks.isEmpty());
         ASSERT(!view->_latestExpectedPreviewCallback);
         ASSERT(!view->_expectedPrintCallback);
@@ -336,7 +336,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
 
 - (BOOL)_askPageToComputePageRects
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!_webFrame->page())
         return NO;
@@ -355,7 +355,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
 
 static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     WKPrintingView *view = static_cast<WKPrintingView *>(untypedContext);
     MutexLocker lock(view->_printingCallbackMutex);
@@ -375,12 +375,12 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 
 - (BOOL)knowsPageRange:(NSRangePointer)range
 {
-    LOG(View, "-[WKPrintingView %p knowsPageRange:], %s, %s", self, [self _hasPageRects] ? "print data is available" : "print data is not available yet", isMainThread() ? "on main thread" : "on secondary thread");
+    LOG(View, "-[WKPrintingView %p knowsPageRange:], %s, %s", self, [self _hasPageRects] ? "print data is available" : "print data is not available yet", RunLoop::isMain() ? "on main thread" : "on secondary thread");
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
 
     // Assuming that once we switch to printing from a secondary thread, we don't go back.
-    ASSERT(!_isPrintingFromSecondaryThread || !isMainThread());
-    if (!isMainThread())
+    ASSERT(!_isPrintingFromSecondaryThread || !RunLoop::isMain());
+    if (!RunLoop::isMain())
         _isPrintingFromSecondaryThread = YES;
 
     if (!_webFrame->page()) {
@@ -394,7 +394,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 
     if ([self _hasPageRects])
         *range = NSMakeRange(1, _printingPageRects.size());
-    else if (!isMainThread()) {
+    else if (!RunLoop::isMain()) {
         ASSERT(![self _isPrintingPreview]);
         MutexLocker lock(_printingCallbackMutex);
         callOnMainThread(prepareDataForPrintingOnSecondaryThread, self);
@@ -470,7 +470,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 
 - (void)_drawPreview:(NSRect)nsRect
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     IntRect scaledPrintingRect(nsRect);
     scaledPrintingRect.scale(1 / _totalScaleFactorForPrinting);
@@ -532,7 +532,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
         return;
     }
 
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(!_printedPagesData.isEmpty()); // Prepared by knowsPageRange:
 
     if (!_printedPagesPDFDocument) {
@@ -546,7 +546,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 
 - (void)_drawPageBorderWithSizeOnMainThread:(NSSize)borderSize
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     // When printing from a secondary thread, the main thread doesn't have graphics context and printing operation set up.
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
@@ -566,7 +566,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     ASSERT(NSEqualSizes(borderSize, [[_printOperation printInfo] paperSize]));    
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
 
-    if (!isMainThread()) {
+    if (!RunLoop::isMain()) {
         // Don't call the client from a secondary thread.
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[WKPrintingView instanceMethodSignatureForSelector:@selector(_drawPageBorderWithSizeOnMainThread:)]];
         [invocation setSelector:@selector(_drawPageBorderWithSizeOnMainThread:)];

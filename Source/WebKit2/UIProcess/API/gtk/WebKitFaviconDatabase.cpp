@@ -27,8 +27,8 @@
 #include <WebCore/Image.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/RefPtrCairo.h>
+#include <WebCore/RunLoop.h>
 #include <glib/gi18n-lib.h>
-#include <wtf/MainThread.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -132,7 +132,7 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(GetFaviconSurfaceAsyncData)
 
 static PassRefPtr<cairo_surface_t> getIconSurfaceSynchronously(WebKitFaviconDatabase* database, const String& pageURL, GError** error)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     // The exact size we pass is irrelevant to the iconDatabase code.
     // We must pass something greater than 0x0 to get an icon.
@@ -204,7 +204,7 @@ static void didChangeIconForPageURLCallback(WKIconDatabaseRef wkIconDatabase, WK
 
 static void iconDataReadyForPageURLCallback(WKIconDatabaseRef wkIconDatabase, WKURLRef wkPageURL, const void* clientInfo)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     processPendingIconsForPageURL(WEBKIT_FAVICON_DATABASE(clientInfo), toImpl(wkPageURL)->string());
 }
 
@@ -357,7 +357,7 @@ gchar* webkit_favicon_database_get_favicon_uri(WebKitFaviconDatabase* database, 
 {
     g_return_val_if_fail(WEBKIT_IS_FAVICON_DATABASE(database), 0);
     g_return_val_if_fail(pageURL, 0);
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     String iconURLForPageURL;
     database->priv->iconDatabase->synchronousIconURLForPageURL(String::fromUTF8(pageURL), iconURLForPageURL);

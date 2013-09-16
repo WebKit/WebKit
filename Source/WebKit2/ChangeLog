@@ -1,3 +1,31 @@
+2013-09-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add RunLoop::isMain and use it in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=121459
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        (getIconSurfaceSynchronously):
+        (iconDataReadyForPageURLCallback):
+        (webkit_favicon_database_get_favicon_uri):
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (-[WKPrintingView _delayedResumeAutodisplayTimerFired]):
+        (-[WKPrintingView _adjustPrintingMarginsForHeaderAndFooter]):
+        (pageDidDrawToImage):
+        (pageDidDrawToPDF):
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]):
+        (pageDidComputePageRects):
+        (-[WKPrintingView _askPageToComputePageRects]):
+        (prepareDataForPrintingOnSecondaryThread):
+        (-[WKPrintingView knowsPageRange:]):
+        (-[WKPrintingView _drawPreview:]):
+        (-[WKPrintingView drawRect:]):
+        (-[WKPrintingView _drawPageBorderWithSizeOnMainThread:]):
+        (-[WKPrintingView drawPageBorderWithSize:]):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::globalPageMap):
+
 2013-09-16  Anders Carlsson  <andersca@apple.com>
 
         Replace more uses of PassOwnPtr with OwnPtr in WebKit2

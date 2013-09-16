@@ -57,6 +57,7 @@ public:
 
     static RunLoop* current();
     static RunLoop* main();
+    static bool isMain();
     ~RunLoop();
 
     virtual void dispatch(const Function<void()>&) OVERRIDE;

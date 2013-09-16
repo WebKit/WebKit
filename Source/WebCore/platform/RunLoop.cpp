@@ -72,6 +72,12 @@ RunLoop* RunLoop::main()
     return s_mainRunLoop;
 }
 
+bool RunLoop::isMain()
+{
+    ASSERT(s_mainRunLoop);
+    return s_mainRunLoop == RunLoop::current();
+}
+
 void RunLoop::performWork()
 {
     // It is important to handle the functions in the queue one at a time because while inside one of these

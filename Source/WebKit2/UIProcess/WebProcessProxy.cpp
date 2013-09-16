@@ -41,9 +41,9 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/KURL.h>
+#include <WebCore/RunLoop.h>
 #include <WebCore/SuddenTermination.h>
 #include <stdio.h>
-#include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -74,7 +74,7 @@ static uint64_t generatePageID()
 
 static WebProcessProxy::WebPageProxyMap& globalPageMap()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     DEFINE_STATIC_LOCAL(WebProcessProxy::WebPageProxyMap, pageMap, ());
     return pageMap;
 }
