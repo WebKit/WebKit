@@ -1708,7 +1708,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         return 0;
 
     RefPtr<RenderStyle> style;
-    RenderObject* renderer;
+    RenderObject* renderer = 0;
     bool forceFullLayout = false;
     if (updateLayout) {
         Document& document = styledNode->document();

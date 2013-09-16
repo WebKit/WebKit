@@ -1,5 +1,12 @@
 2013-09-16  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed warning correction. Avoid uninitialized renderer.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): Renderer can be uninitialized.
+
+2013-09-16  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed warning correction.
 
         * css/CSSParser.cpp:
