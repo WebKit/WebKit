@@ -196,7 +196,7 @@ RenderBlock::~RenderBlock()
 
 RenderBlock* RenderBlock::createAnonymous(Document& document)
 {
-    RenderBlock* renderer = new (document.renderArena()) RenderBlockFlow(0);
+    RenderBlock* renderer = new (*document.renderArena()) RenderBlockFlow(0);
     renderer->setDocumentForAnonymous(document);
     return renderer;
 }
@@ -529,9 +529,8 @@ RenderBlock* RenderBlock::clone() const
     if (isAnonymousBlock()) {
         cloneBlock = createAnonymousBlock();
         cloneBlock->setChildrenInline(childrenInline());
-    }
-    else {
-        RenderObject* cloneRenderer = element()->createRenderer(renderArena(), style());
+    } else {
+        RenderObject* cloneRenderer = element()->createRenderer(*renderArena(), *style());
         cloneBlock = toRenderBlock(cloneRenderer);
         cloneBlock->setStyle(style());
 
@@ -1761,9 +1760,9 @@ RenderBoxModelObject* RenderBlock::createReplacementRunIn(RenderBoxModelObject* 
 
     RenderBoxModelObject* newRunIn = 0;
     if (!runIn->isRenderBlockFlow())
-        newRunIn = new (renderArena()) RenderBlockFlow(runIn->element());
+        newRunIn = new (*renderArena()) RenderBlockFlow(runIn->element());
     else
-        newRunIn = new (renderArena()) RenderInline(runIn->element());
+        newRunIn = new (*renderArena()) RenderInline(runIn->element());
 
     runIn->element()->setRenderer(newRunIn);
     newRunIn->setStyle(runIn->style());
@@ -5901,7 +5900,7 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
         // Construct a text fragment for the text after the first letter.
         // This text fragment might be empty.
         RenderTextFragment* remainingText = 
-            new (renderArena()) RenderTextFragment(textObj->node() ? textObj->node() : &textObj->document(), oldText.get(), length, oldText->length() - length);
+            new (*renderArena()) RenderTextFragment(textObj->node() ? textObj->node() : &textObj->document(), oldText.get(), length, oldText->length() - length);
         remainingText->setStyle(textObj->style());
         if (remainingText->node())
             remainingText->node()->setRenderer(remainingText);
@@ -5913,7 +5912,7 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
         
         // construct text fragment for the first letter
         RenderTextFragment* letter = 
-            new (renderArena()) RenderTextFragment(remainingText->node() ? remainingText->node() : &remainingText->document(), oldText.get(), 0, length);
+            new (*renderArena()) RenderTextFragment(remainingText->node() ? remainingText->node() : &remainingText->document(), oldText.get(), 0, length);
         letter->setStyle(pseudoStyle);
         firstLetter->addChild(letter);
 

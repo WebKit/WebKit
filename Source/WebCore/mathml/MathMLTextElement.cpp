@@ -48,7 +48,7 @@ PassRefPtr<MathMLTextElement> MathMLTextElement::create(const QualifiedName& tag
     return adoptRef(new MathMLTextElement(tagName, document));
 }
 
-RenderObject* MathMLTextElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* MathMLTextElement::createRenderer(RenderArena& arena, RenderStyle& style)
 {
     if (hasLocalName(MathMLNames::moTag))
         return new (arena) RenderMathMLOperator(this);

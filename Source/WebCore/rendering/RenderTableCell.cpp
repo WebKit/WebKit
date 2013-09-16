@@ -1366,7 +1366,7 @@ void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool ve
 
 RenderTableCell* RenderTableCell::createAnonymous(Document& document)
 {
-    RenderTableCell* renderer = new (document.renderArena()) RenderTableCell(0);
+    RenderTableCell* renderer = new (*document.renderArena()) RenderTableCell(0);
     renderer->setDocumentForAnonymous(document);
     return renderer;
 }

@@ -69,7 +69,7 @@ void SearchInputType::addSearchResult()
         toRenderSearchField(renderer)->addSearchResult();
 }
 
-RenderObject* SearchInputType::createRenderer(RenderArena* arena, RenderStyle*) const
+RenderObject* SearchInputType::createRenderer(RenderArena& arena, RenderStyle&) const
 {
     ASSERT(element()); // FIXME: element() should return a reference.
     return new (arena) RenderSearchField(*element());

@@ -75,7 +75,7 @@ private:
 
     virtual void willAttachRenderers() OVERRIDE;
     virtual bool rendererIsNeeded(const RenderStyle&);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena&, RenderStyle&);
     
     virtual void defaultEventHandler(Event*);
 

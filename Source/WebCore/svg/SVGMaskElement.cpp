@@ -157,7 +157,7 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
         object->setNeedsLayout(true);
 }
 
-RenderObject* SVGMaskElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* SVGMaskElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderSVGResourceMasker(*this);
 }

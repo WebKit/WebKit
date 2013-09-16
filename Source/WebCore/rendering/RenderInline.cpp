@@ -58,7 +58,7 @@ RenderInline::RenderInline(Element* element)
 
 RenderInline* RenderInline::createAnonymous(Document& document)
 {
-    RenderInline* renderer = new (document.renderArena()) RenderInline(0);
+    RenderInline* renderer = new (*document.renderArena()) RenderInline(0);
     renderer->setDocumentForAnonymous(document);
     return renderer;
 }
@@ -334,7 +334,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
 
 RenderInline* RenderInline::clone() const
 {
-    RenderInline* cloneInline = new (renderArena()) RenderInline(element());
+    RenderInline* cloneInline = new (*renderArena()) RenderInline(element());
     cloneInline->setStyle(style());
     cloneInline->setFlowThreadState(flowThreadState());
     return cloneInline;

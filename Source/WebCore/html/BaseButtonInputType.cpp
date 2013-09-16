@@ -52,7 +52,7 @@ bool BaseButtonInputType::appendFormData(FormDataList&, bool) const
     return false;
 }
 
-RenderObject* BaseButtonInputType::createRenderer(RenderArena* arena, RenderStyle*) const
+RenderObject* BaseButtonInputType::createRenderer(RenderArena& arena, RenderStyle&) const
 {
     ASSERT(element()); // FIXME: element() should return a reference.
     return new (arena) RenderButton(*element());

@@ -205,7 +205,7 @@ void RenderMathMLOperator::updateFromElement()
     // Either stretch is disabled or we don't have a stretchable character over the minimum height
     if (stretchDisabled || !shouldStack) {
         m_isStacked = false;
-        RenderBlock* container = new (renderArena()) RenderMathMLBlock(element());
+        RenderBlock* container = new (*renderArena()) RenderMathMLBlock(element());
         // This container doesn't offer any useful information to accessibility.
         toRenderMathMLBlock(container)->setIgnoreInAccessibilityTree(true);
         
@@ -229,9 +229,9 @@ void RenderMathMLOperator::updateFromElement()
         // Build the text of the operator.
         RenderText* text = 0;
         if (m_operator) 
-            text = new (renderArena()) RenderText(element(), StringImpl::create(&m_operator, 1));
+            text = new (*renderArena()) RenderText(element(), StringImpl::create(&m_operator, 1));
         else
-            text = new (renderArena()) RenderText(element(), element()->textContent().replace(hyphenMinus, minusSign).impl());
+            text = new (*renderArena()) RenderText(element(), element()->textContent().replace(hyphenMinus, minusSign).impl());
         // If we can't figure out the text, leave it blank.
         if (text) {
             RefPtr<RenderStyle> textStyle = RenderStyle::create();
@@ -298,13 +298,13 @@ PassRefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int maxHeight
 
 RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int maxHeightForRenderer, int charRelative)
 {
-    RenderBlock* container = new (renderArena()) RenderMathMLBlock(element());
+    RenderBlock* container = new (*renderArena()) RenderMathMLBlock(element());
     toRenderMathMLBlock(container)->setIgnoreInAccessibilityTree(true);
     container->setStyle(createStackableStyle(maxHeightForRenderer));
     addChild(container);
     RenderBlock* parent = container;
     if (charRelative) {
-        RenderBlock* charBlock = new (renderArena()) RenderBlockFlow(element());
+        RenderBlock* charBlock = new (*renderArena()) RenderBlockFlow(element());
         RefPtr<RenderStyle> charStyle = RenderStyle::create();
         charStyle->inheritFrom(container->style());
         charStyle->setDisplay(INLINE_BLOCK);
@@ -315,7 +315,7 @@ RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int maxHeightForRend
         parent = charBlock;
     }
     
-    RenderText* text = new (renderArena()) RenderText(element(), StringImpl::create(&glyph, 1));
+    RenderText* text = new (*renderArena()) RenderText(element(), StringImpl::create(&glyph, 1));
     text->setStyle(container->style());
     parent->addChild(text);
     return container;

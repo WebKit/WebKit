@@ -47,7 +47,7 @@ namespace WebCore {
 RenderNamedFlowThread* RenderNamedFlowThread::createAnonymous(Document& document, PassRefPtr<WebKitNamedFlow> namedFlow)
 {
     ASSERT(document.cssRegionsEnabled());
-    RenderNamedFlowThread* renderer = new (document.renderArena()) RenderNamedFlowThread(namedFlow);
+    RenderNamedFlowThread* renderer = new (*document.renderArena()) RenderNamedFlowThread(namedFlow);
     renderer->setDocumentForAnonymous(document);
     return renderer;
 }

@@ -49,7 +49,7 @@ private:
     explicit SearchInputType(HTMLInputElement*);
     virtual void attach() OVERRIDE;
     virtual void addSearchResult() OVERRIDE;
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
+    virtual RenderObject* createRenderer(RenderArena&, RenderStyle&) const OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool shouldRespectSpeechAttribute() OVERRIDE;
     virtual bool isSearchField() const OVERRIDE;

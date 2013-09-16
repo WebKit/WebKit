@@ -58,7 +58,7 @@ void HTMLButtonElement::setType(const AtomicString& type)
     setAttribute(typeAttr, type);
 }
 
-RenderObject* HTMLButtonElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* HTMLButtonElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderButton(*this);
 }

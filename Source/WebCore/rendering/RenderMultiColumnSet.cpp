@@ -52,7 +52,7 @@ RenderMultiColumnSet::RenderMultiColumnSet(RenderFlowThread* flowThread)
 RenderMultiColumnSet* RenderMultiColumnSet::createAnonymous(RenderFlowThread& flowThread)
 {
     Document& document = flowThread.document();
-    RenderMultiColumnSet* renderer = new (document.renderArena()) RenderMultiColumnSet(&flowThread);
+    RenderMultiColumnSet* renderer = new (*document.renderArena()) RenderMultiColumnSet(&flowThread);
     renderer->setDocumentForAnonymous(document);
     return renderer;
 }

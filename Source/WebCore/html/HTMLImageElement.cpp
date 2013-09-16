@@ -163,10 +163,10 @@ String HTMLImageElement::altText() const
     return alt;
 }
 
-RenderObject* HTMLImageElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* HTMLImageElement::createRenderer(RenderArena& arena, RenderStyle& style)
 {
-    if (style->hasContent())
-        return RenderObject::createObject(this, style);
+    if (style.hasContent())
+        return RenderObject::createObject(*this, style);
 
     RenderImage* image = new (arena) RenderImage(this);
     image->setImageResource(RenderImageResource::create());

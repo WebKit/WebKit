@@ -212,7 +212,7 @@ void FileInputType::handleDOMActivateEvent(Event* event)
     event->setDefaultHandled();
 }
 
-RenderObject* FileInputType::createRenderer(RenderArena* arena, RenderStyle*) const
+RenderObject* FileInputType::createRenderer(RenderArena& arena, RenderStyle&) const
 {
     ASSERT(element()); // FIXME: element() should return a reference.
     return new (arena) RenderFileUploadControl(*element());

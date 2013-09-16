@@ -148,9 +148,9 @@ bool RenderObject::s_noLongerAffectsParentBlock = false;
 
 RenderObjectAncestorLineboxDirtySet* RenderObject::s_ancestorLineboxDirtySet = 0;
 
-void* RenderObject::operator new(size_t sz, RenderArena* renderArena)
+void* RenderObject::operator new(size_t sz, RenderArena& renderArena)
 {
-    return renderArena->allocate(sz);
+    return renderArena.allocate(sz);
 }
 
 void RenderObject::operator delete(void* ptr, size_t sz)
@@ -161,21 +161,21 @@ void RenderObject::operator delete(void* ptr, size_t sz)
     *(size_t *)ptr = sz;
 }
 
-RenderObject* RenderObject::createObject(Element* element, RenderStyle* style)
+RenderObject* RenderObject::createObject(Element& element, RenderStyle& style)
 {
-    Document& document = element->document();
-    RenderArena* arena = document.renderArena();
+    Document& document = element.document();
+    RenderArena& arena = *document.renderArena();
 
     // Minimal support for content properties replacing an entire element.
     // Works only if we have exactly one piece of content and it's a URL.
     // Otherwise acts as if we didn't support this feature.
-    const ContentData* contentData = style->contentData();
-    if (contentData && !contentData->next() && contentData->isImage() && !element->isPseudoElement()) {
-        RenderImage* image = new (arena) RenderImage(element);
+    const ContentData* contentData = style.contentData();
+    if (contentData && !contentData->next() && contentData->isImage() && !element.isPseudoElement()) {
+        RenderImage* image = new (arena) RenderImage(&element);
         // RenderImageResourceStyleImage requires a style being present on the image but we don't want to
         // trigger a style change now as the node is not fully attached. Moving this code to style change
         // doesn't make sense as it should be run once at renderer creation.
-        image->setStyleInternal(style);
+        image->setStyleInternal(&style);
         if (const StyleImage* styleImage = static_cast<const ImageContentData*>(contentData)->image()) {
             image->setImageResource(RenderImageResourceStyleImage::create(const_cast<StyleImage*>(styleImage)));
             image->setIsGeneratedContent();
@@ -185,56 +185,56 @@ RenderObject* RenderObject::createObject(Element* element, RenderStyle* style)
         return image;
     }
 
-    if (element->hasTagName(rubyTag)) {
-        if (style->display() == INLINE)
-            return new (arena) RenderRubyAsInline(*element);
-        else if (style->display() == BLOCK)
-            return new (arena) RenderRubyAsBlock(*element);
+    if (element.hasTagName(rubyTag)) {
+        if (style.display() == INLINE)
+            return new (arena) RenderRubyAsInline(element);
+        else if (style.display() == BLOCK)
+            return new (arena) RenderRubyAsBlock(element);
     }
     // treat <rt> as ruby text ONLY if it still has its default treatment of block
-    if (element->hasTagName(rtTag) && style->display() == BLOCK)
-        return new (arena) RenderRubyText(*element);
-    if (document.cssRegionsEnabled() && style->isDisplayRegionType() && !style->regionThread().isEmpty())
-        return new (arena) RenderRegion(element, 0);
-    switch (style->display()) {
+    if (element.hasTagName(rtTag) && style.display() == BLOCK)
+        return new (arena) RenderRubyText(element);
+    if (document.cssRegionsEnabled() && style.isDisplayRegionType() && !style.regionThread().isEmpty())
+        return new (arena) RenderRegion(&element, 0);
+    switch (style.display()) {
     case NONE:
         return 0;
     case INLINE:
-        return new (arena) RenderInline(element);
+        return new (arena) RenderInline(&element);
     case BLOCK:
     case INLINE_BLOCK:
     case RUN_IN:
     case COMPACT:
-        if ((!style->hasAutoColumnCount() || !style->hasAutoColumnWidth()) && document.regionBasedColumnsEnabled())
-            return new (arena) RenderMultiColumnBlock(*element);
-        return new (arena) RenderBlockFlow(element);
+        if ((!style.hasAutoColumnCount() || !style.hasAutoColumnWidth()) && document.regionBasedColumnsEnabled())
+            return new (arena) RenderMultiColumnBlock(element);
+        return new (arena) RenderBlockFlow(&element);
     case LIST_ITEM:
-        return new (arena) RenderListItem(*element);
+        return new (arena) RenderListItem(element);
     case TABLE:
     case INLINE_TABLE:
-        return new (arena) RenderTable(element);
+        return new (arena) RenderTable(&element);
     case TABLE_ROW_GROUP:
     case TABLE_HEADER_GROUP:
     case TABLE_FOOTER_GROUP:
-        return new (arena) RenderTableSection(element);
+        return new (arena) RenderTableSection(&element);
     case TABLE_ROW:
-        return new (arena) RenderTableRow(element);
+        return new (arena) RenderTableRow(&element);
     case TABLE_COLUMN_GROUP:
     case TABLE_COLUMN:
-        return new (arena) RenderTableCol(*element);
+        return new (arena) RenderTableCol(element);
     case TABLE_CELL:
-        return new (arena) RenderTableCell(element);
+        return new (arena) RenderTableCell(&element);
     case TABLE_CAPTION:
-        return new (arena) RenderTableCaption(*element);
+        return new (arena) RenderTableCaption(element);
     case BOX:
     case INLINE_BOX:
-        return new (arena) RenderDeprecatedFlexibleBox(*element);
+        return new (arena) RenderDeprecatedFlexibleBox(element);
     case FLEX:
     case INLINE_FLEX:
-        return new (arena) RenderFlexibleBox(element);
+        return new (arena) RenderFlexibleBox(&element);
     case GRID:
     case INLINE_GRID:
-        return new (arena) RenderGrid(*element);
+        return new (arena) RenderGrid(element);
     }
 
     return 0;

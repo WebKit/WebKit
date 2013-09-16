@@ -49,7 +49,7 @@ RenderScrollbarPart::~RenderScrollbarPart()
 
 RenderScrollbarPart* RenderScrollbarPart::createAnonymous(Document& document, RenderScrollbar* scrollbar, ScrollbarPart part)
 {
-    RenderScrollbarPart* renderer = new (document.renderArena()) RenderScrollbarPart(scrollbar, part);
+    RenderScrollbarPart* renderer = new (*document.renderArena()) RenderScrollbarPart(scrollbar, part);
     renderer->setDocumentForAnonymous(document);
     return renderer;
 }

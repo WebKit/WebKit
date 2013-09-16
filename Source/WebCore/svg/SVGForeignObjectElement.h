@@ -45,7 +45,7 @@ private:
 
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
     virtual bool childShouldCreateRenderer(const Node*) const;
-    virtual RenderObject* createRenderer(RenderArena* arena, RenderStyle* style);
+    virtual RenderObject* createRenderer(RenderArena&, RenderStyle&);
 
     virtual bool selfHasRelativeLengths() const;
 

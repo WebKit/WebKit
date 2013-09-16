@@ -230,7 +230,7 @@ static void createRendererIfNeeded(Element& element, RenderStyle* resolvedStyle)
         nextRenderer = nextSiblingRenderer(element, renderingParentNode);
     }
 
-    RenderObject* newRenderer = element.createRenderer(document.renderArena(), style.get());
+    RenderObject* newRenderer = element.createRenderer(*document.renderArena(), *style);
     if (!newRenderer)
         return;
     if (!parentRenderer->isChildAllowed(newRenderer, style.get())) {
@@ -374,7 +374,7 @@ static void createTextRendererIfNeeded(Text& textNode)
 
     if (!textRendererIsNeeded(textNode, *parentRenderer, *style))
         return;
-    RenderText* newRenderer = textNode.createTextRenderer(document.renderArena(), style.get());
+    RenderText* newRenderer = textNode.createTextRenderer(*document.renderArena(), *style);
     if (!newRenderer)
         return;
     if (!parentRenderer->isChildAllowed(newRenderer, style.get())) {

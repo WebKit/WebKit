@@ -788,11 +788,11 @@ bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
     return StyledElement::rendererIsNeeded(style);
 }
 
-RenderObject* HTMLElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* HTMLElement::createRenderer(RenderArena& arena, RenderStyle& style)
 {
     if (hasLocalName(wbrTag))
         return new (arena) RenderWordBreak(this);
-    return RenderObject::createObject(this, style);
+    return RenderObject::createObject(*this, style);
 }
 
 HTMLFormElement* HTMLElement::virtualForm() const

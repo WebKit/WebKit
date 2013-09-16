@@ -1259,9 +1259,9 @@ bool Element::rendererIsNeeded(const RenderStyle& style)
     return style.display() != NONE;
 }
 
-RenderObject* Element::createRenderer(RenderArena*, RenderStyle* style)
+RenderObject* Element::createRenderer(RenderArena&, RenderStyle& style)
 {
-    return RenderObject::createObject(this, style);
+    return RenderObject::createObject(*this, style);
 }
 
 Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertionPoint)

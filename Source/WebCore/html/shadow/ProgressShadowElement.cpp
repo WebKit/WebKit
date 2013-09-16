@@ -61,7 +61,7 @@ ProgressInnerElement::ProgressInnerElement(Document* document)
 {
 }
 
-RenderObject* ProgressInnerElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* ProgressInnerElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderProgress(this);
 }

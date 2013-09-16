@@ -220,7 +220,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
     ASSERT_NOT_REACHED();
 }
 
-RenderObject* SVGTRefElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* SVGTRefElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderSVGInline(*this);
 }

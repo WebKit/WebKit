@@ -89,13 +89,13 @@ void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
-RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* SVGGElement::createRenderer(RenderArena& arena, RenderStyle& style)
 {
     // SVG 1.1 testsuite explicitely uses constructs like <g display="none"><linearGradient>
     // We still have to create renderers for the <g> & <linearGradient> element, though the
     // subtree may be hidden - we only want the resource renderers to exist so they can be
     // referenced from somewhere else.
-    if (style->display() == NONE)
+    if (style.display() == NONE)
         return new (arena) RenderSVGHiddenContainer(*this);
 
     return new (arena) RenderSVGTransformableContainer(*this);

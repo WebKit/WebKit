@@ -480,7 +480,7 @@ bool SVGSVGElement::rendererIsNeeded(const RenderStyle& style)
     return StyledElement::rendererIsNeeded(style);
 }
 
-RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* SVGSVGElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     if (isOutermostSVGSVGElement())
         return new (arena) RenderSVGRoot(*this);

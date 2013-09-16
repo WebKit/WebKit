@@ -194,7 +194,7 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
     return false;
 }
 
-RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena& arena, RenderStyle& style)
 {
     // Once a PlugIn Element creates its renderer, it needs to be told when the Document goes
     // inactive or reactivates so it can clear the renderer before going into the page cache.
@@ -213,7 +213,7 @@ RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena* arena, RenderS
     // class and all superclasses because createObject won't necessarily
     // return a RenderEmbeddedObject or RenderWidget.
     if (useFallbackContent())
-        return RenderObject::createObject(this, style);
+        return RenderObject::createObject(*this, style);
 
     if (isImageType()) {
         RenderImage* image = new (arena) RenderImage(this);

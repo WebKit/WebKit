@@ -40,7 +40,7 @@ public:
     static PassRefPtr<TextControlInnerContainer> create(Document*);
 protected:
     TextControlInnerContainer(Document*);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena&, RenderStyle&);
 };
 
 class TextControlInnerElement FINAL : public HTMLDivElement {
@@ -63,7 +63,7 @@ public:
 
 private:
     TextControlInnerTextElement(Document*);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena&, RenderStyle&);
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE { return false; }
 };

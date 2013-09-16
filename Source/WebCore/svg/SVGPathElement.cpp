@@ -405,7 +405,7 @@ FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     return renderer->path().boundingRect();
 }
 
-RenderObject* SVGPathElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* SVGPathElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     // By default, any subclass is expected to do path-based drawing
     return new (arena) RenderSVGPath(*this);

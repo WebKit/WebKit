@@ -46,7 +46,7 @@ RenderReplica::RenderReplica()
 
 RenderReplica* RenderReplica::createAnonymous(Document& document)
 {
-    RenderReplica* renderer = new (document.renderArena()) RenderReplica();
+    RenderReplica* renderer = new (*document.renderArena()) RenderReplica();
     renderer->setDocumentForAnonymous(document);
     return renderer;
 }

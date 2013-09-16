@@ -89,7 +89,7 @@ RenderMathMLOperator* RenderMathMLFenced::createMathMLOperator(UChar uChar, Rend
     newStyle->setMarginEnd(Length((operatorType == RenderMathMLOperator::Fence ? gFenceMarginEms : gSeparatorMarginEndEms) * style()->fontSize(), Fixed));
     if (operatorType == RenderMathMLOperator::Fence)
         newStyle->setMarginStart(Length(gFenceMarginEms * style()->fontSize(), Fixed));
-    RenderMathMLOperator* newOperator = new (renderArena()) RenderMathMLOperator(element(), uChar);
+    RenderMathMLOperator* newOperator = new (*renderArena()) RenderMathMLOperator(element(), uChar);
     newOperator->setOperatorType(operatorType);
     newOperator->setStyle(newStyle.release());
     return newOperator;

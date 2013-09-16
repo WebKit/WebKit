@@ -162,7 +162,7 @@ FloatRect SVGGraphicsElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     return SVGTransformable::getBBox(this, styleUpdateStrategy);
 }
 
-RenderObject* SVGGraphicsElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* SVGGraphicsElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     // By default, any subclass is expected to do path-based drawing
     return new (arena) RenderSVGPath(*this);

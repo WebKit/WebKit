@@ -142,7 +142,7 @@ void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(FilterEffect* f
         filterEffect->setHasHeight(true);
 }
 
-RenderObject* SVGFilterPrimitiveStandardAttributes::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* SVGFilterPrimitiveStandardAttributes::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderSVGResourceFilterPrimitive(*this);
 }

@@ -71,12 +71,12 @@ void HTMLBRElement::collectStyleForPresentationAttribute(const QualifiedName& na
         HTMLElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-RenderObject* HTMLBRElement::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* HTMLBRElement::createRenderer(RenderArena& arena, RenderStyle& style)
 {
-     if (style->hasContent())
-        return RenderObject::createObject(this, style);
+    if (style.hasContent())
+        return RenderObject::createObject(*this, style);
 
-     return new (arena) RenderBR(this);
+    return new (arena) RenderBR(this);
 }
 
 }

@@ -265,7 +265,7 @@ void RangeInputType::createShadowSubtree()
     element()->userAgentShadowRoot()->appendChild(container.release(), IGNORE_EXCEPTION);
 }
 
-RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) const
+RenderObject* RangeInputType::createRenderer(RenderArena& arena, RenderStyle&) const
 {
     return new (arena) RenderSlider(element());
 }

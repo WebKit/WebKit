@@ -191,13 +191,13 @@ static bool isSVGText(Text* text)
 }
 #endif
 
-RenderText* Text::createTextRenderer(RenderArena* arena, RenderStyle* style)
+RenderText* Text::createTextRenderer(RenderArena& arena, RenderStyle& style)
 {
 #if ENABLE(SVG)
     if (isSVGText(this) || isSVGShadowText(this))
         return new (arena) RenderSVGInlineText(*this, dataImpl());
 #endif
-    if (style->hasTextCombine())
+    if (style.hasTextCombine())
         return new (arena) RenderCombineText(*this, dataImpl());
 
     return new (arena) RenderText(this, dataImpl());

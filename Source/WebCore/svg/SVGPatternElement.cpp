@@ -182,7 +182,7 @@ void SVGPatternElement::childrenChanged(const ChildChange& change)
         object->setNeedsLayout(true);
 }
 
-RenderObject* SVGPatternElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* SVGPatternElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderSVGResourcePattern(*this);
 }

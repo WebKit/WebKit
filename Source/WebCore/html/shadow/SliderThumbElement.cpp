@@ -222,7 +222,7 @@ void SliderThumbElement::setPositionFromValue()
         renderer()->setNeedsLayout(true);
 }
 
-RenderObject* SliderThumbElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* SliderThumbElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderSliderThumb(this);
 }
@@ -454,7 +454,7 @@ PassRefPtr<SliderContainerElement> SliderContainerElement::create(Document* docu
     return adoptRef(new SliderContainerElement(document));
 }
 
-RenderObject* SliderContainerElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* SliderContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderSliderContainer(this);
 }

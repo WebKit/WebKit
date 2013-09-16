@@ -50,7 +50,7 @@ RenderRubyBase::~RenderRubyBase()
 
 RenderRubyBase* RenderRubyBase::createAnonymous(Document& document)
 {
-    RenderRubyBase* renderer = new (document.renderArena()) RenderRubyBase();
+    RenderRubyBase* renderer = new (*document.renderArena()) RenderRubyBase();
     renderer->setDocumentForAnonymous(document);
     return renderer;
 }

@@ -119,7 +119,7 @@ RenderEmbeddedObject::~RenderEmbeddedObject()
 
 RenderEmbeddedObject* RenderEmbeddedObject::createForApplet(HTMLAppletElement& applet)
 {
-    RenderEmbeddedObject* renderer = new (applet.document().renderArena()) RenderEmbeddedObject(applet);
+    RenderEmbeddedObject* renderer = new (*applet.document().renderArena()) RenderEmbeddedObject(applet);
     renderer->setInline(true);
     return renderer;
 }
