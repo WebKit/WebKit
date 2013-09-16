@@ -2076,7 +2076,7 @@ bool RenderLayerCompositor::requiresCompositingForVideo(RenderObject* renderer) 
         return (video.requiresImmediateCompositing() || video.shouldDisplayVideo()) && canAccelerateVideoRendering(video);
     }
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    else if (renderer->isRenderWidget()) {
+    else if (renderer->isWidget()) {
         if (!m_hasAcceleratedCompositing)
             return false;
 

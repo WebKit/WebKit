@@ -1375,7 +1375,7 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
         videoBox = m_textTrackRepresentation->bounds();
     else {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        if (!mediaElement->renderer() || !mediaElement->renderer()->isRenderWidget())
+        if (!mediaElement->renderer() || !mediaElement->renderer()->isWidget())
             return;
         videoBox = pixelSnappedIntRect(toRenderWidget(mediaElement->renderer())->contentBoxRect());
 #else
