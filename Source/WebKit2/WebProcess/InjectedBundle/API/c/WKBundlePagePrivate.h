@@ -78,7 +78,9 @@ WK_EXPORT bool WKBundlePageCanShowMIMEType(WKBundlePageRef, WKStringRef mimeType
 WK_EXPORT void* WKAccessibilityRootObject(WKBundlePageRef);
 WK_EXPORT void* WKAccessibilityFocusedObject(WKBundlePageRef);
 
-WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuItemTitles(WKBundlePageRef);
+WK_EXPORT WKStringRef WKBundlePageCopyContextMenuItemTitle(WKContextMenuItemRef);
+WK_EXPORT void WKBundlePageClickMenuItem(WKBundlePageRef, WKContextMenuItemRef);
+WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuItems(WKBundlePageRef);
 WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef, WKPoint);
 
 // This only works if the SuppressesIncrementalRendering preference is set as well.

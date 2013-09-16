@@ -1,3 +1,18 @@
+2013-09-16  Wojciech Bielawski  <w.bielawski@samsung.com>
+
+        [WKTR] WebKitTestRunner's eventSender.contextClick() returns objects without implemented click() method.
+        https://bugs.webkit.org/show_bug.cgi?id=98410
+
+        Reviewed by Darin Adler.
+
+        Add API required to implement click() method for context menu entry, used by WebkitTestRunner::EventSender.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageClickMenuItem):
+        (WKBundlePageCopyContextMenuItemTitle):
+        (WKBundlePageGetContextMenuItems):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
 2013-09-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed make distcheck fix.

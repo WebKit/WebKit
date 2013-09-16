@@ -485,9 +485,6 @@ Bug(GTK) plugins/resize-from-plugin.html [ Failure ]
 Bug(GTK) editing/selection/context-menu-text-selection.html [ Failure Pass ]
 Bug(GTK) editing/spelling/context-menu-suggestions.html [ Failure ]
 
-# EventSender's contextClick should return objects that implements click() method
-webkit.org/b/98410 editing/pasteboard/copy-standalone-image-crash.html [ Timeout ]
-
 # An oncontextmenu attribute is not called.
 Bug(GTK) editing/spelling/spellcheck-input-search-crash.html [ Failure ]
 Bug(GTK) fast/events/contextmenu-scrolled-page-with-frame.html [ Failure ]

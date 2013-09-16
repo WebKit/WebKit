@@ -308,11 +308,8 @@ webkit.org/b/99562 http/tests/plugins/post-url-file.html [ Failure ]
 # Comparison of two javascript objects in C++ is failing.
 webkit.org/b/98739 plugins/npruntime/embed-property-equality.html [ Failure ]
 
-# EFL's EventSender contextClick should return objects that implements click() method
-webkit.org/b/98410 editing/pasteboard/can-read-in-copy-and-cut-events.html [ Failure ]
-webkit.org/b/98410 editing/pasteboard/can-read-in-dragstart-event.html [ Failure ]
-webkit.org/b/98410 editing/pasteboard/copy-standalone-image-crash.html [ Failure ]
-webkit.org/b/98410 media/context-menu-actions.html [ Failure ]
+webkit.org/b/113094 editing/pasteboard/can-read-in-copy-and-cut-events.html [ Failure ]
+webkit.org/b/113094 editing/pasteboard/can-read-in-dragstart-event.html [ Failure ]
 
 webkit.org/b/102201 fast/dom/Window/open-window-min-size.html [ Failure ]
 

@@ -148,17 +148,25 @@ WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
     return toAPI(toImpl(pageRef)->mainWebFrame());
 }
 
-WKArrayRef WKBundlePageCopyContextMenuItemTitles(WKBundlePageRef pageRef)
+void WKBundlePageClickMenuItem(WKBundlePageRef pageRef, WKContextMenuItemRef item)
+{
+#if ENABLE(CONTEXT_MENUS)
+    toImpl(pageRef)->contextMenu()->itemSelected(*toImpl(item)->data());
+#endif
+}
+
+WKArrayRef WKBundlePageCopyContextMenuItems(WKBundlePageRef pageRef)
 {
 #if ENABLE(CONTEXT_MENUS)
     WebContextMenu* contextMenu = toImpl(pageRef)->contextMenu();
     const Vector<WebContextMenuItemData> &items = contextMenu->items();
     size_t arrayLength = items.size();
-    OwnArrayPtr<WKTypeRef> itemNames = adoptArrayPtr(new WKTypeRef[arrayLength]);
-    for (size_t i = 0; i < arrayLength; ++i)
-        itemNames[i] = WKStringCreateWithUTF8CString(items[i].title().utf8().data());
 
-    return WKArrayCreateAdoptingValues(itemNames.get(), arrayLength);
+    OwnArrayPtr<WKTypeRef> wkItems = adoptArrayPtr(new WKTypeRef[arrayLength]);
+    for (size_t i = 0; i < arrayLength; ++i)
+        wkItems[i] = toAPI(WebContextMenuItem::create(items[i]).leakRef());
+
+    return WKArrayCreate(wkItems.get(), arrayLength);
 #else
     return 0;
 #endif
