@@ -275,7 +275,8 @@ void Frame::setDocument(PassRefPtr<Document> newDocument)
 
     if (m_doc && m_doc->attached() && !m_doc->inPageCache()) {
         // FIXME: We don't call willRemove here. Why is that OK?
-        m_doc->detach();
+        m_doc->destroyRenderTree();
+        m_doc->disconnectFromFrame();
     }
 
     m_doc = newDocument.get();

@@ -276,7 +276,8 @@ void CachedFrame::destroy()
 
     m_document->setInPageCache(false);
     // FIXME: We don't call willRemove here. Why is that OK?
-    m_document->detach();
+    m_document->destroyRenderTree();
+    m_document->disconnectFromFrame();
 
     clear();
 }

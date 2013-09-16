@@ -2059,7 +2059,12 @@ void Document::didBecomeCurrentDocumentInFrame()
     }
 }
 
-void Document::detach()
+void Document::disconnectFromFrame()
+{
+    m_frame = 0;
+}
+
+void Document::destroyRenderTree()
 {
     ASSERT(attached());
     ASSERT(!m_inPageCache);
@@ -2127,13 +2132,6 @@ void Document::detach()
         parentDocument()->didRemoveEventTargetNode(this);
 #endif
 
-    // This is required, as our Frame might delete itself as soon as it detaches
-    // us. However, this violates Node::detach() semantics, as it's never
-    // possible to re-attach. Eventually Document::detach() should be renamed,
-    // or this setting of the frame to 0 could be made explicit in each of the
-    // callers of Document::detach().
-    m_frame = 0;
-
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     // Do this before the arena is cleared, which is needed to deref the RenderStyle on TextAutoSizingKey.
     m_textAutoSizedNodes.clear();
@@ -2150,7 +2148,8 @@ void Document::prepareForDestruction()
     disconnectDescendantFrames();
     if (DOMWindow* window = this->domWindow())
         window->willDetachDocumentFromFrame();
-    detach();
+    destroyRenderTree();
+    disconnectFromFrame();
 }
 
 void Document::removeAllEventListeners()

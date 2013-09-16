@@ -1,3 +1,19 @@
+2013-09-16  Andreas Kling  <akling@apple.com>
+
+        Destroying a Document's render tree shouldn't make it impossible to recreate.
+        <https://webkit.org/b/121437>
+
+        Reviewed by Antti Koivisto.
+
+        Rename Document::detach() to destroyRenderTree() and stop automatically
+        disconnecting Document from its Frame after the deforestation.
+
+        Added Document::disconnectFromFrame() and do that after every call to
+        destroyRenderTree() that we currently have.
+
+        This change doesn't alter any behavior on its own, but is a step towards
+        being able to destroy and rebuild the render tree.
+
 2013-09-16  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed warning correction. Avoid uninitialized renderer.

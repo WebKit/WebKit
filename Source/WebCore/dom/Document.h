@@ -540,7 +540,8 @@ public:
     CachedResourceLoader* cachedResourceLoader() { return m_cachedResourceLoader.get(); }
 
     void didBecomeCurrentDocumentInFrame();
-    void detach();
+    void destroyRenderTree();
+    void disconnectFromFrame();
     void prepareForDestruction();
 
     // Override ScriptExecutionContext methods to do additional work
@@ -1200,7 +1201,6 @@ private:
     void setRenderer(RenderObject*) WTF_DELETED_FUNCTION;
     void setRenderView(RenderView*);
 
-    void destroyRenderTree();
     virtual void createRenderTree();
     virtual void dropChildren() OVERRIDE;
 
