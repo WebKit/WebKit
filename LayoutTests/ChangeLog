@@ -1,5 +1,18 @@
 2013-09-16  Alexey Proskuryakov  <ap@apple.com>
 
+        svg/animations/smil-leak-*.svg tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=114280
+
+        The tests were still flaky. Changed retry timeout from 0 to 100 ms as previously
+        suggested by Geoff.
+
+        * svg/animations/smil-leak-dynamically-added-element-instances.svg:
+        * svg/animations/smil-leak-element-instances-noBaseValRef.svg:
+        * svg/animations/smil-leak-element-instances.svg:
+        * svg/animations/smil-leak-elements.svg:
+
+2013-09-16  Alexey Proskuryakov  <ap@apple.com>
+
         Flaky Test: svg/batik/filters/feTile.svg
         https://bugs.webkit.org/show_bug.cgi?id=114375
 

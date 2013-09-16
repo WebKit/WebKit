@@ -57,7 +57,7 @@ function finishTest() {
     if (liveDelta == 0)
         log("PASS");
     else if (--attemptsToFinish) {
-        setTimeout(finishTest, 0);
+        setTimeout(finishTest, 100);
         return;
     } else
         log("FAIL: " + liveDelta + " extra live node(s)");
