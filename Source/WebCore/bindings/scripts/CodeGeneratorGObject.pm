@@ -939,7 +939,11 @@ sub GenerateFunction {
         # $paramType can have a trailing * in some cases
         $paramType =~ s/\*$//;
         my $paramName = $param->name;
-        push(@hBody, " * \@${paramName}: A #${paramType}\n");
+        my $paramAnnotations = "";
+        if (ParamCanBeNull($functionName, $paramName)) {
+            $paramAnnotations = " (allow-none):";
+        }
+        push(@hBody, " * \@${paramName}:${paramAnnotations} A #${paramType}\n");
     }
     push(@hBody, " * \@error: #GError\n") if $raisesException;
     push(@hBody, " *\n");
