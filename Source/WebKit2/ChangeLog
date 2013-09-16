@@ -1,3 +1,18 @@
+2013-09-16  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
+
+        Web Inspector: Do not try to parse incomplete HTTP requests
+        https://bugs.webkit.org/show_bug.cgi?id=121123
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update to incorporate additional review suggestions.
+
+        * UIProcess/API/gtk/tests/TestInspectorServer.cpp:
+        (sendIncompleteRequest):
+        Fix memory leaks, change test timeout from 2 seconds to 1 second,
+        use "0" instead of "NULL" and use g_assert_no_error when checking
+        for GError.
+
 2013-09-16  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Implement pan and flick gesture.
