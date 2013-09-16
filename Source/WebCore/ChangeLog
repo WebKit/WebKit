@@ -1,3 +1,17 @@
+2013-09-16  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: ARIA tablist is disabled, but VoiceOver does not speak the tabs as dimmed
+        https://bugs.webkit.org/show_bug.cgi?id=121408
+
+        Reviewed by Darin Adler.
+
+        ARIA says that aria-disabled should propagate to children nodes.
+
+        Test: accessibility/aria-disabled-propagated-to-children.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::isEnabled):
+
 2013-09-16  Sam Weinig  <sam@webkit.org>
 
         CTTE: Element::createRenderer() should take references

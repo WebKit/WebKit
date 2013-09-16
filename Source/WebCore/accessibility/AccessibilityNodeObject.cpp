@@ -604,8 +604,14 @@ bool AccessibilityNodeObject::isNativeCheckboxOrRadio() const
 
 bool AccessibilityNodeObject::isEnabled() const
 {
-    if (equalIgnoringCase(getAttribute(aria_disabledAttr), "true"))
-        return false;
+    // ARIA says that the disabled status applies to the current element and all descendant elements.
+    for (AccessibilityObject* object = const_cast<AccessibilityNodeObject*>(this); object; object = object->parentObject()) {
+        const AtomicString& disabledStatus = object->getAttribute(aria_disabledAttr);
+        if (equalIgnoringCase(disabledStatus, "true"))
+            return false;
+        if (equalIgnoringCase(disabledStatus, "false"))
+            break;
+    }
 
     Node* node = this->node();
     if (!node || !node->isElementNode())

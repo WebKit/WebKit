@@ -1,3 +1,13 @@
+2013-09-16  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: ARIA tablist is disabled, but VoiceOver does not speak the tabs as dimmed
+        https://bugs.webkit.org/show_bug.cgi?id=121408
+
+        Reviewed by Darin Adler.
+
+        * accessibility/aria-disabled-propagated-to-children-expected.txt: Added.
+        * accessibility/aria-disabled-propagated-to-children.html: Added.
+
 2013-09-16  Alexey Proskuryakov  <ap@apple.com>
 
         Flaky Test: svg/batik/masking/maskRegions.svg
