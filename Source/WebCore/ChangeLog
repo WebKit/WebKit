@@ -1,5 +1,9 @@
 2013-09-16  Andreas Kling  <akling@apple.com>
 
+        Rebaseline bindings tests after Sam's Document& changes.
+
+2013-09-16  Andreas Kling  <akling@apple.com>
+
         Destroying a Document's render tree shouldn't make it impossible to recreate.
         <https://webkit.org/b/121437>
 
