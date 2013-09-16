@@ -992,6 +992,7 @@ webkit.org/b/85408 svg/batik/text/textLength.svg [ Failure Pass ]
 webkit.org/b/85408 svg/batik/text/textEffect.svg [ Pass Failure ]
 webkit.org/b/85408 svg/batik/paints/patternRegions-positioned-objects.svg [ Pass Failure ]
 webkit.org/b/85408 svg/batik/text/textDecoration.svg [ Pass Failure ]
+webkit.org/b/114120 svg/batik/masking/maskRegions.svg [ Pass Failure ]
 webkit.org/b/114375 svg/batik/filters/feTile.svg [ Pass Failure ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
