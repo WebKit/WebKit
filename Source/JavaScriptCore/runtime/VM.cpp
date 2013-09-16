@@ -42,6 +42,7 @@
 #include "GCActivityCallback.h"
 #include "GetterSetter.h"
 #include "Heap.h"
+#include "HeapIterationScope.h"
 #include "HostCallReturnValue.h"
 #include "Identifier.h"
 #include "IncrementalSweeper.h"
@@ -521,8 +522,8 @@ void VM::releaseExecutableMemory()
     
     if (dynamicGlobalObject) {
         StackPreservingRecompiler recompiler;
+        HeapIterationScope iterationScope(heap);
         HashSet<JSCell*> roots;
-        heap.canonicalizeCellLivenessData();
         heap.getConservativeRegisterRoots(roots);
         HashSet<JSCell*>::iterator end = roots.end();
         for (HashSet<JSCell*>::iterator ptr = roots.begin(); ptr != end; ++ptr) {
@@ -543,7 +544,7 @@ void VM::releaseExecutableMemory()
                 recompiler.currentlyExecutingFunctions.add(static_cast<FunctionExecutable*>(executable));
                 
         }
-        heap.objectSpace().forEachLiveCell<StackPreservingRecompiler>(recompiler);
+        heap.objectSpace().forEachLiveCell<StackPreservingRecompiler>(iterationScope, recompiler);
     }
     m_regExpCache->invalidateCode();
     heap.collectAllGarbage();

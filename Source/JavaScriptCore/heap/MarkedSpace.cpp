@@ -80,6 +80,7 @@ struct ReapWeakSet : MarkedBlock::VoidFunctor {
 MarkedSpace::MarkedSpace(Heap* heap)
     : m_heap(heap)
     , m_capacity(0)
+    , m_isIterating(false)
 {
     for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep) {
         allocatorFor(cellSize).init(heap, this, cellSize, MarkedBlock::None);
@@ -110,7 +111,7 @@ struct LastChanceToFinalize : MarkedBlock::VoidFunctor {
 
 void MarkedSpace::lastChanceToFinalize()
 {
-    canonicalizeCellLivenessData();
+    stopAllocating();
     forEachBlock<LastChanceToFinalize>();
 }
 
@@ -150,23 +151,51 @@ void MarkedSpace::reapWeakSets()
     forEachBlock<ReapWeakSet>();
 }
 
-void MarkedSpace::canonicalizeCellLivenessData()
+template <typename Functor>
+void MarkedSpace::forEachAllocator()
+{
+    Functor functor;
+    forEachAllocator(functor);
+}
+
+template <typename Functor>
+void MarkedSpace::forEachAllocator(Functor& functor)
 {
     for (size_t cellSize = preciseStep; cellSize <= preciseCutoff; cellSize += preciseStep) {
-        allocatorFor(cellSize).canonicalizeCellLivenessData();
-        normalDestructorAllocatorFor(cellSize).canonicalizeCellLivenessData();
-        immortalStructureDestructorAllocatorFor(cellSize).canonicalizeCellLivenessData();
+        functor(allocatorFor(cellSize));
+        functor(normalDestructorAllocatorFor(cellSize));
+        functor(immortalStructureDestructorAllocatorFor(cellSize));
     }
 
     for (size_t cellSize = impreciseStep; cellSize <= impreciseCutoff; cellSize += impreciseStep) {
-        allocatorFor(cellSize).canonicalizeCellLivenessData();
-        normalDestructorAllocatorFor(cellSize).canonicalizeCellLivenessData();
-        immortalStructureDestructorAllocatorFor(cellSize).canonicalizeCellLivenessData();
+        functor(allocatorFor(cellSize));
+        functor(normalDestructorAllocatorFor(cellSize));
+        functor(immortalStructureDestructorAllocatorFor(cellSize));
     }
 
-    m_normalSpace.largeAllocator.canonicalizeCellLivenessData();
-    m_normalDestructorSpace.largeAllocator.canonicalizeCellLivenessData();
-    m_immortalStructureDestructorSpace.largeAllocator.canonicalizeCellLivenessData();
+    functor(m_normalSpace.largeAllocator);
+    functor(m_normalDestructorSpace.largeAllocator);
+    functor(m_immortalStructureDestructorSpace.largeAllocator);
+}
+
+struct StopAllocatingFunctor {
+    void operator()(MarkedAllocator& allocator) { allocator.stopAllocating(); }
+};
+
+void MarkedSpace::stopAllocating()
+{
+    ASSERT(!isIterating());
+    forEachAllocator<StopAllocatingFunctor>();
+}
+
+struct ResumeAllocatingFunctor {
+    void operator()(MarkedAllocator& allocator) { allocator.resumeAllocating(); }
+};
+
+void MarkedSpace::resumeAllocating()
+{
+    ASSERT(isIterating());
+    forEachAllocator<ResumeAllocatingFunctor>();
 }
 
 bool MarkedSpace::isPagedOut(double deadline)
@@ -245,15 +274,15 @@ struct VerifyNewlyAllocated : MarkedBlock::VoidFunctor {
 void MarkedSpace::clearNewlyAllocated()
 {
     for (size_t i = 0; i < preciseCount; ++i) {
-        clearNewlyAllocatedInBlock(m_normalSpace.preciseAllocators[i].takeCanonicalizedBlock());
-        clearNewlyAllocatedInBlock(m_normalDestructorSpace.preciseAllocators[i].takeCanonicalizedBlock());
-        clearNewlyAllocatedInBlock(m_immortalStructureDestructorSpace.preciseAllocators[i].takeCanonicalizedBlock());
+        clearNewlyAllocatedInBlock(m_normalSpace.preciseAllocators[i].takeLastActiveBlock());
+        clearNewlyAllocatedInBlock(m_normalDestructorSpace.preciseAllocators[i].takeLastActiveBlock());
+        clearNewlyAllocatedInBlock(m_immortalStructureDestructorSpace.preciseAllocators[i].takeLastActiveBlock());
     }
 
     for (size_t i = 0; i < impreciseCount; ++i) {
-        clearNewlyAllocatedInBlock(m_normalSpace.impreciseAllocators[i].takeCanonicalizedBlock());
-        clearNewlyAllocatedInBlock(m_normalDestructorSpace.impreciseAllocators[i].takeCanonicalizedBlock());
-        clearNewlyAllocatedInBlock(m_immortalStructureDestructorSpace.impreciseAllocators[i].takeCanonicalizedBlock());
+        clearNewlyAllocatedInBlock(m_normalSpace.impreciseAllocators[i].takeLastActiveBlock());
+        clearNewlyAllocatedInBlock(m_normalDestructorSpace.impreciseAllocators[i].takeLastActiveBlock());
+        clearNewlyAllocatedInBlock(m_immortalStructureDestructorSpace.impreciseAllocators[i].takeLastActiveBlock());
     }
 
     // We have to iterate all of the blocks in the large allocators because they are
@@ -268,6 +297,20 @@ void MarkedSpace::clearNewlyAllocated()
     VerifyNewlyAllocated verifyFunctor;
     forEachBlock(verifyFunctor);
 #endif
+}
+
+void MarkedSpace::willStartIterating()
+{
+    ASSERT(!isIterating());
+    stopAllocating();
+    m_isIterating = true;
+}
+
+void MarkedSpace::didFinishIterating()
+{
+    ASSERT(isIterating());
+    resumeAllocating();
+    m_isIterating = false;
 }
 
 } // namespace JSC

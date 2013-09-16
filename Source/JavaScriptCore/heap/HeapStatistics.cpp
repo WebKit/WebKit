@@ -27,6 +27,7 @@
 #include "HeapStatistics.h"
 
 #include "Heap.h"
+#include "HeapIterationScope.h"
 #include "JSObject.h"
 #include "Operations.h"
 #include "Options.h"
@@ -235,7 +236,10 @@ void HeapStatistics::showObjectStatistics(Heap* heap)
     dataLogF("pause time: %lfms\n\n", heap->m_lastGCLength);
 
     StorageStatistics storageStatistics;
-    heap->m_objectSpace.forEachLiveCell(storageStatistics);
+    {
+        HeapIterationScope iterationScope(*heap);
+        heap->m_objectSpace.forEachLiveCell(iterationScope, storageStatistics);
+    }
     dataLogF("wasted .property storage: %ldkB (%ld%%)\n",
         static_cast<long>(
             (storageStatistics.storageCapacity() - storageStatistics.storageSize()) / KB),

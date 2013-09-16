@@ -22,15 +22,16 @@ public:
 
     MarkedAllocator();
     void reset();
-    void canonicalizeCellLivenessData();
+    void stopAllocating();
+    void resumeAllocating();
     size_t cellSize() { return m_cellSize; }
     MarkedBlock::DestructorType destructorType() { return m_destructorType; }
     void* allocate(size_t);
     Heap* heap() { return m_heap; }
-    MarkedBlock* takeCanonicalizedBlock()
+    MarkedBlock* takeLastActiveBlock()
     {
-        MarkedBlock* block = m_canonicalizedBlock;
-        m_canonicalizedBlock = 0;
+        MarkedBlock* block = m_lastActiveBlock;
+        m_lastActiveBlock = 0;
         return block;
     }
     
@@ -50,7 +51,7 @@ private:
     
     MarkedBlock::FreeList m_freeList;
     MarkedBlock* m_currentBlock;
-    MarkedBlock* m_canonicalizedBlock;
+    MarkedBlock* m_lastActiveBlock;
     MarkedBlock* m_blocksToSweep;
     DoublyLinkedList<MarkedBlock> m_blockList;
     size_t m_cellSize;
@@ -66,7 +67,7 @@ inline ptrdiff_t MarkedAllocator::offsetOfFreeListHead()
 
 inline MarkedAllocator::MarkedAllocator()
     : m_currentBlock(0)
-    , m_canonicalizedBlock(0)
+    , m_lastActiveBlock(0)
     , m_blocksToSweep(0)
     , m_cellSize(0)
     , m_destructorType(MarkedBlock::None)
@@ -103,22 +104,34 @@ inline void* MarkedAllocator::allocate(size_t bytes)
 
 inline void MarkedAllocator::reset()
 {
+    m_lastActiveBlock = 0;
     m_currentBlock = 0;
     m_freeList = MarkedBlock::FreeList();
     m_blocksToSweep = m_blockList.head();
 }
 
-inline void MarkedAllocator::canonicalizeCellLivenessData()
+inline void MarkedAllocator::stopAllocating()
 {
+    ASSERT(!m_lastActiveBlock);
     if (!m_currentBlock) {
         ASSERT(!m_freeList.head);
         return;
     }
     
-    m_currentBlock->canonicalizeCellLivenessData(m_freeList);
-    m_canonicalizedBlock = m_currentBlock;
+    m_currentBlock->stopAllocating(m_freeList);
+    m_lastActiveBlock = m_currentBlock;
     m_currentBlock = 0;
     m_freeList = MarkedBlock::FreeList();
+}
+
+inline void MarkedAllocator::resumeAllocating()
+{
+    if (!m_lastActiveBlock)
+        return;
+
+    m_freeList = m_lastActiveBlock->resumeAllocating();
+    m_currentBlock = m_lastActiveBlock;
+    m_lastActiveBlock = 0;
 }
 
 template <typename Functor> inline void MarkedAllocator::forEachBlock(Functor& functor)

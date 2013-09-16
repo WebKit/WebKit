@@ -1,3 +1,95 @@
+2013-09-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        MarkedBlocks shouldn't be put in Allocated state if they didn't produce a FreeList
+        https://bugs.webkit.org/show_bug.cgi?id=121236
+
+        Reviewed by Geoffrey Garen.
+
+        Right now, after a collection all MarkedBlocks are in the Marked block state. When lazy sweeping 
+        happens, if a block returns an empty free list after being swept, we call didConsumeFreeList(), 
+        which moves the block into the Allocated block state. This happens to both the block that was 
+        just being allocated out of (i.e. m_currentBlock) as well as any blocks who are completely full. 
+        We should distinguish between these two cases: m_currentBlock should transition to 
+        Allocated (because we were just allocating out of it) and any subsequent block that returns an 
+        empty free list should transition back to the Marked state. This will make the block state more 
+        consistent with the actual state the block is in, and it will also allow us to speed up moving 
+        all blocks the the Marked state during generational collection.
+
+        Added new RAII-style HeapIterationScope class that notifies the Heap when it is about to be 
+        iterated and when iteration has finished. Any clients that need accurate liveness data when 
+        iterating over the Heap now need to use a HeapIterationScope so that the state of Heap can 
+        be properly restored after they are done iterating. No new GC-allocated objects can be created 
+        until this object goes out of scope.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/Debugger.cpp: 
+        (JSC::Debugger::recompileAllJSFunctions): Added HeapIterationScope for the Recompiler iteration.
+        * heap/Heap.cpp:
+        (JSC::Heap::willStartIterating): Callback used by HeapIterationScope to indicate that iteration of 
+        the Heap is about to begin. This will cause cell liveness data to be canonicalized by calling stopAllocating.
+        (JSC::Heap::didFinishIterating): Same, but indicates that iteration has finished.
+        (JSC::Heap::globalObjectCount): Used HeapIterationScope.
+        (JSC::Heap::objectTypeCounts): Ditto.
+        (JSC::Heap::markDeadObjects): Ditto.
+        (JSC::Heap::zombifyDeadObjects): Ditto.
+        * heap/Heap.h:
+        * heap/HeapIterationScope.h: Added. New RAII-style object for indicating to the Heap that it's about
+        to be iterated or that iteration has finished.
+        (JSC::HeapIterationScope::HeapIterationScope):
+        (JSC::HeapIterationScope::~HeapIterationScope):
+        * heap/HeapStatistics.cpp:
+        (JSC::HeapStatistics::showObjectStatistics): Used new HeapIterationScope.
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateHelper): We now treat the case where we have just finished 
+        allocating out of the current block differently from the case where we sweep a block and it 
+        returns an empty free list. This was the primary point of this patch.
+        (JSC::MarkedAllocator::allocateSlowCase): ASSERT that nobody is currently iterating the Heap 
+        when allocating.
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::reset): All allocators are reset after every collection. We need to make 
+        sure that the m_lastActiveBlock gets cleared, which it might not always because we don't call 
+        takeCanonicalizedBlock on blocks in the large allocators.
+        (JSC::MarkedAllocator::stopAllocating): We shouldn't already have a last active block,
+        so ASSERT as much.
+        (JSC::MarkedAllocator::resumeAllocating): Do the opposite of what stopAllocating
+        does. So, if we don't have a m_lastActiveBlock then we don't have to worry about undoing anything
+        done by stopAllocating. If we do, then we call resumeAllocating on the block, which returns the FreeList
+        as it was prior to stopping allocation. We then set the current block to the last active block and 
+        clear the last active block. 
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::resumeAllocating): Any block resuming allocation should be in 
+        the Marked state, so ASSERT as much. We always allocate a m_newlyAllocated Bitmap if we're
+        FreeListed, so if we didn't allocate one then we know we were Marked when allocation was stopped,
+        so just return early with an empty FreeList. If we do have a non-null m_newlyAllocated Bitmap
+        then we need to be swept in order to rebuild our FreeList.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::didConsumeEmptyFreeList): This is called if we ever sweep a block and get back
+        an empty free list. Instead of transitioning to the Allocated state, we now go straight back to the 
+        Marked state. This makes sense because we weren't actually allocated out of, so we shouldn't be in 
+        the allocated state. Also added some ASSERTs to make sure that we're in the state that we expect: all of
+        our mark bits should be set and we should not have a m_newlyAllocated Bitmap.
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::forEachAllocator): Added a new functor-style iteration method so that we can 
+        easily iterate over each allocator for, e.g., stopping and resuming allocators without
+        duplicating code. 
+        (JSC::StopAllocatingFunctor::operator()): New functors for use with forEachAllocator.
+        (JSC::MarkedSpace::stopAllocating): Ditto.
+        (JSC::ResumeAllocatingFunctor::operator()): Ditto.
+        (JSC::MarkedSpace::resumeAllocating): Ditto.
+        (JSC::MarkedSpace::willStartIterating): Callback that notifies MarkedSpace that it is being iterated.
+        Does some ASSERTs, sets a flag, canonicalizes cell liveness data by calling stopAllocating.
+        (JSC::MarkedSpace::didFinishIterating): Ditto, but to signal that iteration has completed.
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::iterationInProgress): Returns true if a HeapIterationScope is currently active.
+        (JSC::MarkedSpace::forEachLiveCell): Accepts a HeapIterationScope to enforce the rule that you have to 
+        create one prior to iterating over the Heap.
+        (JSC::MarkedSpace::forEachDeadCell): Ditto.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::haveABadTime): Changed to use new HeapIterationScope.
+        * runtime/VM.cpp:
+        (JSC::VM::releaseExecutableMemory): Ditto.
+
 2013-09-16  Filip Pizlo  <fpizlo@apple.com>
 
         Inlining should work in debug mode (i.e. Executable::newCodeBlock() should call recordParse())

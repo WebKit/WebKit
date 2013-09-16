@@ -46,6 +46,7 @@
 #include "FunctionConstructor.h"
 #include "FunctionPrototype.h"
 #include "GetterSetter.h"
+#include "HeapIterationScope.h"
 #include "Interpreter.h"
 #include "JSAPIWrapperObject.h"
 #include "JSActivation.h"
@@ -514,7 +515,10 @@ void JSGlobalObject::haveABadTime(VM& vm)
     // indexed storage.
     MarkedArgumentBuffer foundObjects; // Use MarkedArgumentBuffer because switchToSlowPutArrayStorage() may GC.
     ObjectsWithBrokenIndexingFinder finder(foundObjects, this);
-    vm.heap.objectSpace().forEachLiveCell(finder);
+    {
+        HeapIterationScope iterationScope(vm.heap);
+        vm.heap.objectSpace().forEachLiveCell(iterationScope, finder);
+    }
     while (!foundObjects.isEmpty()) {
         JSObject* object = asObject(foundObjects.last());
         foundObjects.removeLast();

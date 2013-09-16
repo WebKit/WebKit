@@ -37,6 +37,7 @@
 namespace JSC {
 
 class Heap;
+class HeapIterationScope;
 class JSCell;
 class LiveObjectIterator;
 class LLIntOffsetsExtractor;
@@ -80,15 +81,20 @@ public:
     void reapWeakSets();
 
     MarkedBlockSet& blocks() { return m_blocks; }
-    
-    void canonicalizeCellLivenessData();
+
+    void willStartIterating();
+    bool isIterating() { return m_isIterating; }
+    void didFinishIterating();
+
+    void stopAllocating();
+    void resumeAllocating(); // If we just stopped allocation but we didn't do a collection, we need to resume allocation.
 
     typedef HashSet<MarkedBlock*>::iterator BlockIterator;
     
-    template<typename Functor> typename Functor::ReturnType forEachLiveCell(Functor&);
-    template<typename Functor> typename Functor::ReturnType forEachLiveCell();
-    template<typename Functor> typename Functor::ReturnType forEachDeadCell(Functor&);
-    template<typename Functor> typename Functor::ReturnType forEachDeadCell();
+    template<typename Functor> typename Functor::ReturnType forEachLiveCell(HeapIterationScope&, Functor&);
+    template<typename Functor> typename Functor::ReturnType forEachLiveCell(HeapIterationScope&);
+    template<typename Functor> typename Functor::ReturnType forEachDeadCell(HeapIterationScope&, Functor&);
+    template<typename Functor> typename Functor::ReturnType forEachDeadCell(HeapIterationScope&);
     template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&);
     template<typename Functor> typename Functor::ReturnType forEachBlock();
     
@@ -110,6 +116,9 @@ public:
 
 private:
     friend class LLIntOffsetsExtractor;
+
+    template<typename Functor> void forEachAllocator(Functor&);
+    template<typename Functor> void forEachAllocator();
 
     // [ 32... 128 ]
     static const size_t preciseStep = MarkedBlock::atomSize;
@@ -133,39 +142,38 @@ private:
 
     Heap* m_heap;
     size_t m_capacity;
+    bool m_isIterating;
     MarkedBlockSet m_blocks;
 };
 
-template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachLiveCell(Functor& functor)
+template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachLiveCell(HeapIterationScope&, Functor& functor)
 {
-    canonicalizeCellLivenessData();
-
+    ASSERT(isIterating());
     BlockIterator end = m_blocks.set().end();
     for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
         (*it)->forEachLiveCell(functor);
     return functor.returnValue();
 }
 
-template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachLiveCell()
+template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachLiveCell(HeapIterationScope& scope)
 {
     Functor functor;
-    return forEachLiveCell(functor);
+    return forEachLiveCell(scope, functor);
 }
 
-template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachDeadCell(Functor& functor)
+template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachDeadCell(HeapIterationScope&, Functor& functor)
 {
-    canonicalizeCellLivenessData();
-
+    ASSERT(isIterating());
     BlockIterator end = m_blocks.set().end();
     for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
         (*it)->forEachDeadCell(functor);
     return functor.returnValue();
 }
 
-template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachDeadCell()
+template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachDeadCell(HeapIterationScope& scope)
 {
     Functor functor;
-    return forEachDeadCell(functor);
+    return forEachDeadCell(scope, functor);
 }
 
 inline MarkedAllocator& MarkedSpace::allocatorFor(size_t bytes)

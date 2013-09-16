@@ -23,6 +23,7 @@
 #include "Debugger.h"
 
 #include "Error.h"
+#include "HeapIterationScope.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
@@ -122,7 +123,8 @@ void Debugger::recompileAllJSFunctions(VM* vm)
     vm->prepareToDiscardCode();
 
     Recompiler recompiler(this);
-    vm->heap.objectSpace().forEachLiveCell(recompiler);
+    HeapIterationScope iterationScope(vm->heap);
+    vm->heap.objectSpace().forEachLiveCell(iterationScope, recompiler);
 }
 
 JSValue evaluateInGlobalCallFrame(const String& script, JSValue& exception, JSGlobalObject* globalObject)

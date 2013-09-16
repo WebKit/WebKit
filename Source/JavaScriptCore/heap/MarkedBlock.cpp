@@ -161,7 +161,7 @@ private:
     MarkedBlock* m_block;
 };
 
-void MarkedBlock::canonicalizeCellLivenessData(const FreeList& freeList)
+void MarkedBlock::stopAllocating(const FreeList& freeList)
 {
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
     FreeCell* head = freeList.head;
@@ -197,6 +197,22 @@ void MarkedBlock::canonicalizeCellLivenessData(const FreeList& freeList)
     }
     
     m_state = Marked;
+}
+
+MarkedBlock::FreeList MarkedBlock::resumeAllocating()
+{
+    HEAP_LOG_BLOCK_STATE_TRANSITION(this);
+
+    ASSERT(m_state == Marked);
+
+    if (!m_newlyAllocated) {
+        // We didn't have to create a "newly allocated" bitmap. That means we were already Marked
+        // when we last stopped allocation, so return an empty free list and stay in the Marked state.
+        return FreeList();
+    }
+
+    // Re-create our free list from before stopping allocation. 
+    return sweep(SweepToFreeList);
 }
 
 } // namespace JSC

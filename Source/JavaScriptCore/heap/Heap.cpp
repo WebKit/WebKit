@@ -29,6 +29,7 @@
 #include "DFGWorklist.h"
 #include "GCActivityCallback.h"
 #include "GCIncomingRefCountedSetInlines.h"
+#include "HeapIterationScope.h"
 #include "HeapRootVisitor.h"
 #include "HeapStatistics.h"
 #include "IncrementalSweeper.h"
@@ -415,9 +416,14 @@ inline JSStack& Heap::stack()
     return m_vm->interpreter->stack();
 }
 
-void Heap::canonicalizeCellLivenessData()
+void Heap::willStartIterating()
 {
-    m_objectSpace.canonicalizeCellLivenessData();
+    m_objectSpace.willStartIterating();
+}
+
+void Heap::didFinishIterating()
+{
+    m_objectSpace.didFinishIterating();
 }
 
 void Heap::getConservativeRegisterRoots(HashSet<JSCell*>& roots)
@@ -662,7 +668,8 @@ size_t Heap::protectedGlobalObjectCount()
 
 size_t Heap::globalObjectCount()
 {
-    return m_objectSpace.forEachLiveCell<CountIfGlobalObject>();
+    HeapIterationScope iterationScope(*this);
+    return m_objectSpace.forEachLiveCell<CountIfGlobalObject>(iterationScope);
 }
 
 size_t Heap::protectedObjectCount()
@@ -677,7 +684,8 @@ PassOwnPtr<TypeCountSet> Heap::protectedObjectTypeCounts()
 
 PassOwnPtr<TypeCountSet> Heap::objectTypeCounts()
 {
-    return m_objectSpace.forEachLiveCell<RecordType>();
+    HeapIterationScope iterationScope(*this);
+    return m_objectSpace.forEachLiveCell<RecordType>(iterationScope);
 }
 
 void Heap::deleteAllCompiledCode()
@@ -763,8 +771,8 @@ void Heap::collect(SweepToggle sweepToggle)
     }
 
     {
-        GCPHASE(Canonicalize);
-        m_objectSpace.canonicalizeCellLivenessData();
+        GCPHASE(StopAllocation);
+        m_objectSpace.stopAllocating();
     }
 
     markRoots();
@@ -875,7 +883,8 @@ bool Heap::collectIfNecessaryOrDefer()
 
 void Heap::markDeadObjects()
 {
-    m_objectSpace.forEachDeadCell<MarkObject>();
+    HeapIterationScope iterationScope(*this);
+    m_objectSpace.forEachDeadCell<MarkObject>(iterationScope);
 }
 
 void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
@@ -954,7 +963,8 @@ void Heap::zombifyDeadObjects()
 {
     // Sweep now because destructors will crash once we're zombified.
     m_objectSpace.sweep();
-    m_objectSpace.forEachDeadCell<Zombify>();
+    HeapIterationScope iterationScope(*this);
+    m_objectSpace.forEachDeadCell<Zombify>(iterationScope);
 }
 
 void Heap::incrementDeferralDepth()
