@@ -155,25 +155,6 @@ WebInspector.ResourceTreeElement.prototype = {
 
     // Private
 
-    _updateStatusWithMainFrameButtons: function()
-    {
-        if (this._reloadButton) {
-            this.status = this._reloadButton;
-            return;
-        }
-
-        if (!this._loadingMainFrameButtons) {
-            this._loadingMainFrameButtons = true;
-            var tooltip = WebInspector.UIString("Reload page (%s)\nReload ignoring cache (%s)").format(WebInspector._reloadPageKeyboardShortcut.displayName, WebInspector._reloadPageIgnoringCacheKeyboardShortcut.displayName);
-            wrappedSVGDocument("Images/Reload.svg", "reload-button", tooltip, function(svgDocument) {
-                this._reloadButton = svgDocument;
-                this._reloadButton.addEventListener("click", this._reloadPageClicked);
-                this.status = this._reloadButton;
-                delete this._loadingMainFrameButtons;
-            }.bind(this));
-        }
-    },
-
     _updateStatus: function()
     {
         if (this._resource.failed)
@@ -184,7 +165,7 @@ WebInspector.ResourceTreeElement.prototype = {
         if (this._resource.finished || this._resource.failed) {
             // Remove the spinner and replace with a reload button in case it's the main frame's main resource.
             var frame = this._resource.parentFrame;
-            if (this._resource.isMainResource() && frame && frame.isMainFrame())
+            if (this._resource.isMainResource() && frame && frame.isMainFrame() && this instanceof WebInspector.FrameTreeElement)
                 this.updateStatusForMainFrame();
             else
                 this.status = null;

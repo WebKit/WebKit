@@ -1,3 +1,15 @@
+2013-09-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: TypeError when updating ResourceTreeElement created in strange order
+        https://bugs.webkit.org/show_bug.cgi?id=121382
+
+        Reviewed by Timothy Hatcher.
+
+        Patch by Brian Burg. Fix an uncaught exception that can happen on navigations.
+
+        * UserInterface/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype._updateStatus):
+
 2013-09-16  Timothy Hatcher  <timothy@apple.com>
 
         Make InspectorTypeBuilder generate better enums in C++.
