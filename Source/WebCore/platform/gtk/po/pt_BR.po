@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: webkit HEAD\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
-"POT-Creation-Date: 2013-09-03 14:26+0000\n"
-"PO-Revision-Date: 2013-09-03 14:48-0300\n"
+"POT-Creation-Date: 2013-09-11 14:26+0000\n"
+"PO-Revision-Date: 2013-09-11 16:29-0300\n"
 "Last-Translator: Enrico Nicoletto <liverig@gmail.com>\n"
 "Language-Team: Brazilian Portuguese\n"
 "Language: \n"
@@ -580,30 +580,32 @@ msgid "Menu section heading for closed captions"
 msgstr "Seção de menu de cabeçalho para legendas codificadas"
 
 #: ../LocalizedStringsGtk.cpp:798
-msgctxt "Subtitles"
-msgid "Menu section heading for subtitles"
-msgstr "Seção de menu de cabeçalho para legendas"
+msgctxt "Menu section heading for subtitles"
+msgid "Subtitles"
+msgstr "Legendas"
 
 #: ../LocalizedStringsGtk.cpp:803
-msgctxt "Off"
-msgid "Menu item label for the track that represents disabling closed captions"
-msgstr ""
-"Rótulo de item de menu para a faixa que representa desabilitar legendas "
-"codificadas"
+msgctxt ""
+"Menu item label for the track that represents disabling closed captions"
+msgid "Off"
+msgstr "Desligado"
 
 #: ../LocalizedStringsGtk.cpp:808
-msgctxt "No label"
-msgid "Menu item label for a closed captions track that has no other name"
-msgstr ""
-"Rótulo de item de menu para uma faixa de legenda codificada que não possua "
-"outro nome"
+msgctxt "Menu item label for the automatically choosen track"
+msgid "Auto"
+msgstr "Automático"
 
-#: ../LocalizedStringsGtk.cpp:814
+#: ../LocalizedStringsGtk.cpp:813
+msgctxt "Menu item label for a closed captions track that has no other name"
+msgid "No label"
+msgstr "Sem rótulo"
+
+#: ../LocalizedStringsGtk.cpp:819
 msgctxt "Snapshotted Plug-In"
 msgid "Title of the label to show on a snapshotted plug-in"
 msgstr "Título do rótulo a mostrar em um plug-in capturado pela tela"
 
-#: ../LocalizedStringsGtk.cpp:819
+#: ../LocalizedStringsGtk.cpp:824
 msgctxt "Click to restart"
 msgid "Subtitle of the label to show on a snapshotted plug-in"
 msgstr "Legenda do rótulo a mostrar em um plug-in capturado pela tela"
@@ -854,7 +856,7 @@ msgstr "A coordenadaY do evento relacionado à janela da visão."
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:95
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:99
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:109
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:701
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:704
 msgid "URI"
 msgstr "URI"
 
@@ -1102,7 +1104,7 @@ msgstr "O nome do quadro"
 #: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:460
 #: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:144
 #: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3222
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:657
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:660
 msgid "Title"
 msgstr "Título"
 
@@ -1783,12 +1785,12 @@ msgstr ""
 "Se recursos que não são HTTPS podem ser executados, ou não, em páginas HTTPS."
 
 #: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1306
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:466
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:469
 msgid "Select Files"
 msgstr "Selecionar arquivos"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1306
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:466
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:469
 msgid "Select File"
 msgstr "Selecionar arquivo"
 
@@ -2414,64 +2416,64 @@ msgstr "A URI atualmente ativa do recurso"
 msgid "The response of the resource"
 msgstr "A resposta do recurso"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:629
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:632
 msgid "Web Context"
 msgstr "Contexto Web"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:630
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:633
 msgid "The web context for the view"
 msgstr "O contexto web para a visão"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:643
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:646
 msgid "WebView Group"
 msgstr "Grupo da visão web"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:644
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:647
 msgid "The WebKitWebViewGroup of the view"
 msgstr "O 'WebKitWebViewGroup' da visão"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:658
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:661
 msgid "Main frame document title"
 msgstr "Título do documento do quadro principal"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:676
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:679
 msgid "Estimated Load Progress"
 msgstr "Estimativa de progresso de carregamento"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:677
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:680
 msgid "An estimate of the percent completion for a document load"
 msgstr ""
 "Uma estimativa do percentual de conclusão para o carregamento de um documento"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:689
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:692
 msgid "Favicon"
 msgstr "Favicon"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:690
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:693
 msgid "The favicon associated to the view, if any"
 msgstr "O favicon associado à visão, caso exista"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:702
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:705
 msgid "The current active URI of the view"
 msgstr "A visão atualmente ativa do URI"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:716
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:719
 msgid "The zoom level of the view content"
 msgstr "O nível de ampliação da visão do conteúdo"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:734
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:737
 msgid "Whether the view is loading a page"
 msgstr "Se a visão está ou não carregarando uma página"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:748
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:751
 msgid "The view mode to display the web view contents"
 msgstr "O modo de visão para exibir os conteúdos da visão web"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2514
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2529
 msgid "An exception was raised in JavaScript"
 msgstr "Uma exceção foi levantada no JavaScript"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2992
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3007
 msgid "There was an error creating the snapshot"
 msgstr "Ocorreu um erro ao criar a captura instantânea"
 
@@ -2538,6 +2540,23 @@ msgstr "Tela cheia"
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
 msgid "Whether window will be displayed fullscreen."
 msgstr "Se a janela será ou não exibida em tela cheia."
+
+#~ msgctxt "Subtitles"
+#~ msgid "Menu section heading for subtitles"
+#~ msgstr "Seção de menu de cabeçalho para legendas"
+
+#~ msgctxt "Off"
+#~ msgid ""
+#~ "Menu item label for the track that represents disabling closed captions"
+#~ msgstr ""
+#~ "Rótulo de item de menu para a faixa que representa desabilitar legendas "
+#~ "codificadas"
+
+#~ msgctxt "No label"
+#~ msgid "Menu item label for a closed captions track that has no other name"
+#~ msgstr ""
+#~ "Rótulo de item de menu para uma faixa de legenda codificada que não "
+#~ "possua outro nome"
 
 #~ msgid "audio element controller"
 #~ msgstr "Elemento controlador de áudio"
