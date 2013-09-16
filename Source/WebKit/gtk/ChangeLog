@@ -1,3 +1,12 @@
+2013-09-11  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Remove Gail dependency from build system for GTK3
+        https://bugs.webkit.org/show_bug.cgi?id=119673
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Removed GAIL_CFLAGS and GAIL_LIBS.
+
 2013-09-10  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Reimplement atk_text_get_text_*_offset for LINE boundaries
