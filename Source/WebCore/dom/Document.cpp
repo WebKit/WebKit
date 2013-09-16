@@ -2066,6 +2066,9 @@ void Document::detach()
 
     TemporaryChange<bool> change(m_renderTreeBeingDestroyed, true);
 
+    if (isPluginDocument())
+        toPluginDocument(this)->detachFromPluginElement();
+
 #if ENABLE(POINTER_LOCK)
     if (page())
         page()->pointerLockController()->documentDetached(this);

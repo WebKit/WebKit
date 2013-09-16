@@ -1,3 +1,15 @@
+2013-09-16  Andreas Kling  <akling@apple.com>
+
+        Devirtualize Document::detach().
+        <https://webkit.org/b/121418>
+
+        Reviewed by Antti Koivisto.
+
+        The only override was in PluginDocument which needs to decouple itself
+        from the plugin element at the start of detach.
+
+        Added PluginDocument::detachFromPluginElement() and call it from detach().
+
 2013-09-15  Andreas Kling  <akling@apple.com>
 
         CTTE: RenderCombineText always has a Text node.
