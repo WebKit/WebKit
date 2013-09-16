@@ -570,11 +570,20 @@ class Instruction
                 $asm.puts "add #{sh4Operands(operands)}"
             end
         when "subi", "subp"
-            raise "#{opcode} with #{operands.size} operands is not handled yet" unless operands.size == 2
-            if operands[0].is_a? Immediate
-                $asm.puts "add #{sh4Operands([Immediate.new(codeOrigin, -1 * operands[0].value), operands[1]])}"
+            if operands.size == 3
+                if operands[1] != operands[2]
+                    $asm.puts "neg #{sh4Operands([operands[2], operands[2]])}"
+                    $asm.puts "add #{sh4Operands([operands[0], operands[2]])}"
+                else
+                    $asm.puts "mov #{sh4Operands([operands[0], operands[2]])}"
+                    $asm.puts "sub #{sh4Operands([operands[1], operands[2]])}"
+                end
             else
-                $asm.puts "sub #{sh4Operands(operands)}"
+                if operands[0].is_a? Immediate
+                    $asm.puts "add #{sh4Operands([Immediate.new(codeOrigin, -1 * operands[0].value), operands[1]])}"
+                else
+                    $asm.puts "sub #{sh4Operands(operands)}"
+                end
             end
         when "muli", "mulp"
             $asm.puts "mul.l #{sh4Operands(operands[0..1])}"
@@ -681,6 +690,8 @@ class Instruction
             emitSH4CondBranch("hs", true, operands)
         when "bia", "bpa", "bba"
             emitSH4CondBranch("hi", false, operands)
+        when "bibeq", "bpbeq"
+            emitSH4CondBranch("hi", true, operands)
         when "biaeq", "bpaeq"
             emitSH4CondBranch("hs", false, operands)
         when "bigteq", "bpgteq", "bbgteq"
