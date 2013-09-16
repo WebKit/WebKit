@@ -438,7 +438,7 @@ String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
 
 #endif
 
-#if !PLATFORM(MAC) && !PLATFORM(EFL)
+#if !(PLATFORM(MAC) && !PLATFORM(IOS)) && !PLATFORM(EFL)
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
 {
     RefPtr<Range> range = selectedRange();

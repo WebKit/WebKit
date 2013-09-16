@@ -1,3 +1,11 @@
+2013-09-16  Enrica Casucci  <enrica@apple.com>
+
+        iOS build fix after r155638.
+
+        Unreviewed.
+
+        * editing/Editor.cpp:
+
 2013-09-16  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Make FloatingObjects own it's FloatingObject instances
