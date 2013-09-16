@@ -245,27 +245,29 @@ static void sendIncompleteRequest(InspectorServerTest* test, gconstpointer)
     GOwnPtr<GError> error;
 
     // Connect to the inspector server.
-    GSocketClient* client = g_socket_client_new();
-    GSocketConnection* connection = g_socket_client_connect_to_host(client, "127.0.0.1", 2999, NULL, &error.outPtr());
-    g_assert(!error.get());
+    GRefPtr<GSocketClient> client = adoptGRef(g_socket_client_new());
+    GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host(client.get(), "127.0.0.1", 2999, 0, &error.outPtr()));
+    g_assert_no_error(error.get());
 
     // Send incomplete request (missing blank line after headers) and check if inspector server
     // replies. The server should not reply to an incomplete request and the test should timeout
     // on read.
-    GOutputStream* ostream = g_io_stream_get_output_stream(G_IO_STREAM(connection));
+    GOutputStream* ostream = g_io_stream_get_output_stream(G_IO_STREAM(connection.get()));
     // Request missing blank line after headers.
     const gchar* incompleteRequest = "GET /devtools/page/1 HTTP/1.1\r\nHost: Localhost\r\n";
-    g_output_stream_write(ostream, incompleteRequest, strlen(incompleteRequest), NULL, &error.outPtr());
-    g_assert(!error.get());
+    g_output_stream_write(ostream, incompleteRequest, strlen(incompleteRequest), 0, &error.outPtr());
+    g_assert_no_error(error.get());
 
-    GInputStream* istream = g_io_stream_get_input_stream(G_IO_STREAM(connection));
+    GInputStream* istream = g_io_stream_get_input_stream(G_IO_STREAM(connection.get()));
     char response[16];
     memset(response, 0, sizeof(response));
-    g_input_stream_read_async(istream, response, sizeof(response) - 1, G_PRIORITY_DEFAULT, NULL, NULL, NULL);
+    GRefPtr<GCancellable> cancel = adoptGRef(g_cancellable_new());
+    g_input_stream_read_async(istream, response, sizeof(response) - 1, G_PRIORITY_DEFAULT, cancel.get(), 0, 0);
     // Give a chance for the server to reply.
-    test->wait(2);
+    test->wait(1);
+    g_cancellable_cancel(cancel.get());
     // If we got any answer it means the server replied to an incomplete request, lets fail.
-    g_assert(String(response).isEmpty());
+    g_assert(response[0] == '\0');
 }
 
 void beforeAll()
