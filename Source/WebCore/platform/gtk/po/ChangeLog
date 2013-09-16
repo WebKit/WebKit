@@ -1,3 +1,12 @@
+2013-09-15  Piotr Drąg  <piotrdrag@gmail.com>
+
+        [l10n] Updated Polish translation of WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=121392
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * pl.po: updated.
+
 2013-08-27  Piotr Drąg  <piotrdrag@gmail.com>
 
         [l10n] Updated Polish translation of WebKitGTK+
