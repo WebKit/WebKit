@@ -40,7 +40,7 @@ public:
     {
     }
 
-    RenderSelectionInfoBase(RenderObject* o)
+    explicit RenderSelectionInfoBase(RenderObject* o)
         : m_object(o)
         , m_repaintContainer(o->containerForRepaint())
         , m_state(o->selectionState())
@@ -81,7 +81,7 @@ private:
 // This struct is used when the selection changes to cache the old and new state of the selection for each RenderBlock.
 class RenderBlockSelectionInfo : public RenderSelectionInfoBase {
 public:
-    RenderBlockSelectionInfo(RenderBlock* b)
+    explicit RenderBlockSelectionInfo(RenderBlock* b)
         : RenderSelectionInfoBase(b)
         , m_rects(b->canUpdateSelectionOnRootLineBoxes() ? block()->selectionGapRectsForRepaint(m_repaintContainer) : GapRects())
     { 

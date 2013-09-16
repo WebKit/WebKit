@@ -60,7 +60,7 @@ public:
     virtual WrappedImagePtr imagePtr() const { return m_styleImage->data(); }
 
 private:
-    RenderImageResourceStyleImage(StyleImage*);
+    explicit RenderImageResourceStyleImage(StyleImage*);
     RefPtr<StyleImage> m_styleImage;
 };
 

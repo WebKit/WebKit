@@ -35,7 +35,7 @@ class HTMLMapElement;
 
 class RenderImage : public RenderReplaced {
 public:
-    RenderImage(Element*);
+    explicit RenderImage(Element*);
     virtual ~RenderImage();
 
     static RenderImage* createAnonymous(Document&);

@@ -33,7 +33,7 @@ class RenderTableCell;
 
 class AutoTableLayout : public TableLayout {
 public:
-    AutoTableLayout(RenderTable*);
+    explicit AutoTableLayout(RenderTable*);
     ~AutoTableLayout();
 
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) OVERRIDE;

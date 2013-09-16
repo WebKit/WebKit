@@ -37,7 +37,7 @@ public:
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
 protected:
-    RenderTextControl(HTMLTextFormControlElement&);
+    explicit RenderTextControl(HTMLTextFormControlElement&);
 
     // This convenience function should not be made public because innerTextElement may outlive the render tree.
     HTMLElement* innerTextElement() const;

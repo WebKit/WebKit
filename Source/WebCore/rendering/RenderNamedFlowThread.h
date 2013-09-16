@@ -85,7 +85,7 @@ protected:
     void resetMarkForDestruction();
 
 private:
-    RenderNamedFlowThread(PassRefPtr<WebKitNamedFlow>);
+    explicit RenderNamedFlowThread(PassRefPtr<WebKitNamedFlow>);
 
     virtual const char* renderName() const OVERRIDE;
     virtual bool isRenderNamedFlowThread() const OVERRIDE { return true; }

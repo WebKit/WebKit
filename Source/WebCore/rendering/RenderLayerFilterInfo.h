@@ -74,7 +74,7 @@ public:
 #endif
 
 private:
-    FilterInfo(RenderLayer&);
+    explicit FilterInfo(RenderLayer&);
     ~FilterInfo();
 
     friend void WTF::deleteOwnedPtr<FilterInfo>(FilterInfo*);

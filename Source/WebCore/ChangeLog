@@ -1,3 +1,53 @@
+2013-09-15  Santosh Mahto  <santosh.ma@samsung.com>
+
+        Adding "explicit" keyword in rendering related constructors
+        https://bugs.webkit.org/show_bug.cgi?id=121398
+
+        Reviewed by Andreas Kling.
+
+        Adding explicit in below constructor.
+        All files belong to Source/WebCore/rendering/ path.
+
+        * rendering/AutoTableLayout.h:
+        * rendering/ClipPathOperation.h:
+        (WebCore::ClipPathOperation::ClipPathOperation):
+        (WebCore::ShapeClipPathOperation::ShapeClipPathOperation):
+        * rendering/FixedTableLayout.h:
+        * rendering/FloatingObjects.h:
+        (WebCore::FloatingObject::FloatingObject):
+        * rendering/FlowThreadController.h:
+        * rendering/HitTestResult.h:
+        * rendering/ImageQualityController.h:
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::InlineBoxBitfields::InlineBoxBitfields):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::InlineTextBox):
+        * rendering/LayoutState.h:
+        * rendering/LogicalSelectionOffsetCaches.h:
+        (WebCore::LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFrameSet.h:
+        (WebCore::FrameEdgeInfo::FrameEdgeInfo):
+        * rendering/RenderGeometryMap.h:
+        * rendering/RenderImage.h:
+        * rendering/RenderImageResourceStyleImage.h:
+        * rendering/RenderLayerFilterInfo.h:
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSearchField.h:
+        * rendering/RenderSelectionInfo.h:
+        (WebCore::RenderSelectionInfoBase::RenderSelectionInfoBase):
+        (WebCore::RenderBlockSelectionInfo::RenderBlockSelectionInfo):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/TrailingFloatsRootInlineBox.h:
+
 2013-09-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed make distcheck fix.

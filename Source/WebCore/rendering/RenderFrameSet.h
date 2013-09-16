@@ -34,7 +34,7 @@ class RenderFrame;
 enum FrameEdge { LeftFrameEdge, RightFrameEdge, TopFrameEdge, BottomFrameEdge };
 
 struct FrameEdgeInfo {
-    FrameEdgeInfo(bool preventResize = false, bool allowBorder = true)
+    explicit FrameEdgeInfo(bool preventResize = false, bool allowBorder = true)
         : m_preventResize(4)
         , m_allowBorder(4)
     {

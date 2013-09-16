@@ -55,7 +55,7 @@ public:
     virtual bool isSameType(const ClipPathOperation& o) const { return o.getOperationType() == m_type; }
 
 protected:
-    ClipPathOperation(OperationType type)
+    explicit ClipPathOperation(OperationType type)
         : m_type(type)
     {
     }
@@ -120,7 +120,7 @@ private:
         return m_shape == other->m_shape;
     }
 
-    ShapeClipPathOperation(PassRefPtr<BasicShape> shape)
+    explicit ShapeClipPathOperation(PassRefPtr<BasicShape> shape)
         : ClipPathOperation(SHAPE)
         , m_shape(shape)
     {

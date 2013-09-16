@@ -93,7 +93,7 @@ public:
 #endif
 
 protected:
-    FlowThreadController(RenderView*);
+    explicit FlowThreadController(RenderView*);
     void updateFlowThreadsChainIfNecessary();
     void resetFlowThreadsWithAutoHeightRegions();
 

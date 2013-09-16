@@ -51,7 +51,7 @@ private:
     typedef HashMap<const void*, LayoutSize> LayerSizeMap;
     typedef HashMap<RenderBoxModelObject*, LayerSizeMap> ObjectLayerSizeMap;
 
-    ImageQualityController(const RenderView&);
+    explicit ImageQualityController(const RenderView&);
 
     void removeLayer(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer);
     void set(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer, const LayoutSize&);

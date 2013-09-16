@@ -40,7 +40,7 @@ typedef HashMap<const InlineTextBox*, pair<Vector<const SimpleFontData*>, GlyphO
 
 class InlineFlowBox : public InlineBox {
 public:
-    InlineFlowBox(RenderObject& renderer)
+    explicit InlineFlowBox(RenderObject& renderer)
         : InlineBox(renderer)
         , m_firstChild(0)
         , m_lastChild(0)

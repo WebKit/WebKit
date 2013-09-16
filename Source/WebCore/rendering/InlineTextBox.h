@@ -47,7 +47,7 @@ Color correctedTextColor(Color textColor, Color backgroundColor);
 
 class InlineTextBox : public InlineBox {
 public:
-    InlineTextBox(RenderObject& renderer)
+    explicit InlineTextBox(RenderObject& renderer)
         : InlineBox(renderer)
         , m_prevTextBox(0)
         , m_nextTextBox(0)

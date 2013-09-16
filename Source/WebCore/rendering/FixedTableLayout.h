@@ -32,7 +32,7 @@ class RenderTable;
 
 class FixedTableLayout : public TableLayout {
 public:
-    FixedTableLayout(RenderTable*);
+    explicit FixedTableLayout(RenderTable*);
 
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) OVERRIDE;
     virtual void applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const OVERRIDE;

@@ -133,7 +133,7 @@ public:
         
     };
 
-    LogicalSelectionOffsetCaches(RenderBlock* rootBlock)
+    explicit LogicalSelectionOffsetCaches(RenderBlock* rootBlock)
     {
         ASSERT(rootBlock->isSelectionRoot());
         RenderObject* parent = rootBlock->parent();

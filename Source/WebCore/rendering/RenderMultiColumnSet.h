@@ -98,7 +98,7 @@ public:
     void prepareForLayout();
 
 private:
-    RenderMultiColumnSet(RenderFlowThread*);
+    explicit RenderMultiColumnSet(RenderFlowThread*);
 
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 

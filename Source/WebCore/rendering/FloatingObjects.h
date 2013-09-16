@@ -41,7 +41,7 @@ public:
     // Note that Type uses bits so you can use FloatLeftRight as a mask to query for both left and right.
     enum Type { FloatLeft = 1, FloatRight = 2, FloatLeftRight = 3 };
 
-    FloatingObject(EFloat type)
+    explicit FloatingObject(EFloat type)
         : m_renderer(0)
         , m_originatingLine(0)
         , m_paginationStrut(0)

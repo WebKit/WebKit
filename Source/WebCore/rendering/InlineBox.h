@@ -34,7 +34,7 @@ class RootInlineBox;
 // some RenderObject (i.e., it represents a portion of that RenderObject).
 class InlineBox {
 public:
-    InlineBox(RenderObject& renderer)
+    explicit InlineBox(RenderObject& renderer)
         : m_next(0)
         , m_prev(0)
         , m_parent(0)
@@ -323,7 +323,7 @@ public:
 
     class InlineBoxBitfields {
     public:
-        InlineBoxBitfields(bool firstLine = false, bool constructed = false, bool dirty = false, bool extracted = false, bool isHorizontal = true)
+        explicit InlineBoxBitfields(bool firstLine = false, bool constructed = false, bool dirty = false, bool extracted = false, bool isHorizontal = true)
             : m_firstLine(firstLine)
             , m_constructed(constructed)
             , m_bidiEmbeddingLevel(0)

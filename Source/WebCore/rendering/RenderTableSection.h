@@ -62,7 +62,7 @@ class RenderTableRow;
 
 class RenderTableSection FINAL : public RenderBox {
 public:
-    RenderTableSection(Element*);
+    explicit RenderTableSection(Element*);
     virtual ~RenderTableSection();
 
     RenderObject* firstChild() const { return m_children.firstChild(); }

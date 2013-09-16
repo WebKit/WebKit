@@ -32,7 +32,7 @@ namespace WebCore {
 
 class TrailingFloatsRootInlineBox FINAL : public RootInlineBox {
 public:
-    TrailingFloatsRootInlineBox(RenderBlock& block)
+    explicit TrailingFloatsRootInlineBox(RenderBlock& block)
         : RootInlineBox(block)
     {
         setHasVirtualLogicalHeight();
