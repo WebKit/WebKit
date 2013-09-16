@@ -36,6 +36,6 @@ typedef unsigned char LChar;
 #error "Unknown Unicode implementation"
 #endif
 
-COMPILE_ASSERT(sizeof(UChar) == 2, UCharIsTwoBytes);
+static_assert(sizeof(UChar) == 2, "UChar must be two bytes!");
 
 #endif // WTF_UNICODE_H

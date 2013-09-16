@@ -174,7 +174,7 @@ struct VectorFiller<true, T>
 {
     static void uninitializedFill(T* dst, T* dstEnd, const T& val) 
     {
-        COMPILE_ASSERT(sizeof(T) == sizeof(char), Size_of_type_should_be_equal_to_one);
+        static_assert(sizeof(T) == 1, "Size of type T should be equal to one!");
 #if COMPILER(GCC) && defined(_FORTIFY_SOURCE)
         if (!__builtin_constant_p(dstEnd - dst) || (!(dstEnd - dst)))
 #endif

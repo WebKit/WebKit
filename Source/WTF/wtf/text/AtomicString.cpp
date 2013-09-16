@@ -40,7 +40,7 @@ namespace WTF {
 
 using namespace Unicode;
 
-COMPILE_ASSERT(sizeof(AtomicString) == sizeof(String), atomic_string_and_string_must_be_same_size);
+static_assert(sizeof(AtomicString) == sizeof(String), "AtomicString and String must be same size!");
 
 #if USE(WEB_THREAD)
 class AtomicStringTableLocker : public SpinLockHolder {

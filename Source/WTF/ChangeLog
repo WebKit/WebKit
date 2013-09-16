@@ -1,3 +1,23 @@
+2013-09-16  Anders Carlsson  <andersca@apple.com>
+
+        Change a couple of COMPILE_ASSERTs to static_assert
+        https://bugs.webkit.org/show_bug.cgi?id=121441
+
+        Reviewed by Andreas Kling.
+
+        * wtf/BloomFilter.h:
+        * wtf/PackedIntVector.h:
+        (WTF::PackedIntVector::PackedIntVector):
+        * wtf/StdLibExtras.h:
+        (WTF::bitwise_cast):
+        (WTF::safeCast):
+        (WTF::roundUpToMultipleOf):
+        * wtf/StringHasher.h:
+        (WTF::StringHasher::hashMemory):
+        * wtf/Vector.h:
+        * wtf/text/AtomicString.cpp:
+        * wtf/unicode/Unicode.h:
+
 2013-09-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed make distcheck fix.

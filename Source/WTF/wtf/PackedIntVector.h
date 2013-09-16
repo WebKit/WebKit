@@ -40,10 +40,11 @@ namespace WTF {
 template<typename T, unsigned bitCount>
 class PackedIntVector {
 public:
+    static_assert(bitCount, "bitCount must not be zero!");
+    static_assert(bitCount < sizeof(void*) * 8, "bitCount must not exceed the address space limit!");
+
     PackedIntVector()
     {
-        COMPILE_ASSERT(bitCount, bitCount_shall_not_be_zero);
-        COMPILE_ASSERT(bitCount < sizeof(void*) * 8, bitCount_shall_not_exceed_address_space_limit);
     }
     
     PackedIntVector(const PackedIntVector& other)

@@ -129,23 +129,23 @@ inline bool is8ByteAligned(void* p)
 /*
  * C++'s idea of a reinterpret_cast lacks sufficient cojones.
  */
-template<typename TO, typename FROM>
-inline TO bitwise_cast(FROM from)
+template<typename ToType, typename FromType>
+inline ToType bitwise_cast(FromType from)
 {
-    COMPILE_ASSERT(sizeof(TO) == sizeof(FROM), WTF_bitwise_cast_sizeof_casted_types_is_equal);
+    static_assert(sizeof(FromType) == sizeof(ToType), "bitwise_cast size of FromType and ToType must be equal!");
     union {
-        FROM from;
-        TO to;
+        FromType from;
+        ToType to;
     } u;
     u.from = from;
     return u.to;
 }
 
-template<typename To, typename From>
-inline To safeCast(From value)
+template<typename ToType, typename FromType>
+inline ToType safeCast(FromType value)
 {
-    ASSERT(isInBounds<To>(value));
-    return static_cast<To>(value);
+    ASSERT(isInBounds<ToType>(value));
+    return static_cast<ToType>(value);
 }
 
 // Returns a count of the number of bits set in 'bits'.
@@ -171,9 +171,10 @@ inline size_t roundUpToMultipleOf(size_t divisor, size_t x)
     size_t remainderMask = divisor - 1;
     return (x + remainderMask) & ~remainderMask;
 }
+
 template<size_t divisor> inline size_t roundUpToMultipleOf(size_t x)
 {
-    COMPILE_ASSERT(divisor && !(divisor & (divisor - 1)), divisor_is_a_power_of_two);
+    static_assert(divisor && !(divisor & (divisor - 1)), "divisor must be a power of two!");
     return roundUpToMultipleOf(divisor, x);
 }
 
