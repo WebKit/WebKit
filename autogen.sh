@@ -8,8 +8,6 @@ test -z "$srcdir" && srcdir=.
 ORIGDIR=`pwd`
 cd "$srcdir" || exit 1
 
-rm -f $top_srcdir/autom4te.cache
-
 touch README INSTALL
 
 if test -z `which autoreconf`; then
@@ -17,6 +15,7 @@ if test -z `which autoreconf`; then
     exit 1
 fi
 autoreconf --verbose --install -I Source/autotools $ACLOCAL_FLAGS|| exit $?
+rm -rf autom4te.cache
 
 cd "$ORIGDIR" || exit 1
 
