@@ -528,6 +528,11 @@
 #endif
 #define WTF_USE_APPKIT 1
 #define WTF_USE_SECURITY_FRAMEWORK 1
+
+// OS X defines a serie of platform macros for debugging.
+// Some of them are really annoying because they use common names (e.g. check()).
+// Disable those macros so that we are not limited how we name methods and functions.
+#define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
 #endif /* PLATFORM(MAC) && !PLATFORM(IOS) */
 
 #if PLATFORM(IOS)
