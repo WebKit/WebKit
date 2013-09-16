@@ -1,3 +1,14 @@
+2013-09-16  Anders Carlsson  <andersca@apple.com>
+
+        WTF::Deque should work with move only types
+        https://bugs.webkit.org/show_bug.cgi?id=121446
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/Tests/WTF/Deque.cpp:
+        (TestWebKitAPI::TEST):
+        Add a test.
+
 2013-09-16  Wojciech Bielawski  <w.bielawski@samsung.com>
 
         [WKTR] WebKitTestRunner's eventSender.contextClick() returns objects without implemented click() method.

@@ -24,11 +24,13 @@
  */
 
 #include "config.h"
+
+#include "MoveOnly.h"
 #include <wtf/Deque.h>
 
 namespace TestWebKitAPI {
 
-TEST(WTF, DequeIterator)
+TEST(WTF_Deque, Iterator)
 {
     Deque<int> deque;
     deque.append(11);
@@ -76,7 +78,7 @@ TEST(WTF, DequeReverseIterator)
     EXPECT_TRUE(end == it);
 }
 
-TEST(WTF, DequeRemove)
+TEST(WTF_Deque, Remove)
 {
     Deque<int> deque;
     deque.append(11);
@@ -101,6 +103,23 @@ TEST(WTF, DequeRemove)
 
     deque.removeLast();
     EXPECT_TRUE(deque.isEmpty());
+}
+
+TEST(WTF_Deque, MoveOnly)
+{
+    Deque<MoveOnly> deque;
+
+    deque.append(MoveOnly(1));
+    deque.prepend(MoveOnly(0));
+
+    EXPECT_EQ(0U, deque.first().value());
+    EXPECT_EQ(1U, deque.last().value());
+
+    auto first = deque.takeFirst();
+    EXPECT_EQ(0U, first.value());
+
+    auto last = deque.takeLast();
+    EXPECT_EQ(1U, last.value());
 }
 
 } // namespace TestWebKitAPI
