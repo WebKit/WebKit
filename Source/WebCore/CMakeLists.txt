@@ -3024,7 +3024,7 @@ add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.h ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.min.js
     MAIN_DEPENDENCY inspector/InjectedScriptSource.js
     DEPENDS ${WEBCORE_DIR}/inspector/xxd.pl ${WEBCORE_DIR}/inspector/Scripts/jsmin.py
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/inspector/Scripts/jsmin.py <${WEBCORE_DIR}/inspector/InjectedScriptSource.js > ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.min.js
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/inspector/Scripts/jsmin.py < ${WEBCORE_DIR}/inspector/InjectedScriptSource.js > ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.min.js
     COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl InjectedScriptSource_js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.min.js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.h
     VERBATIM)
 list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptSource.h)
@@ -3035,7 +3035,7 @@ add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.h ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.min.js
     MAIN_DEPENDENCY inspector/InjectedScriptCanvasModuleSource.js
     DEPENDS ${WEBCORE_DIR}/inspector/xxd.pl ${WEBCORE_DIR}/inspector/Scripts/jsmin.py
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/inspector/Scripts/jsmin.py <${WEBCORE_DIR}/inspector/InjectedScriptCanvasModuleSource.js > ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.min.js
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/inspector/Scripts/jsmin.py < ${WEBCORE_DIR}/inspector/InjectedScriptCanvasModuleSource.js > ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.min.js
     COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl InjectedScriptCanvasModuleSource_js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.min.js ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.h
     VERBATIM)
 list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/InjectedScriptCanvasModuleSource.h)
@@ -3050,7 +3050,7 @@ add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewerCSS.h ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewer.min.css
     MAIN_DEPENDENCY xml/XMLViewer.css
     DEPENDS ${WEBCORE_DIR}/inspector/xxd.pl ${WEBCORE_DIR}/inspector/Scripts/cssmin.py
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/inspector/Scripts/cssmin.py <${WEBCORE_DIR}/xml/XMLViewer.css > ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewer.min.css
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/inspector/Scripts/cssmin.py < ${WEBCORE_DIR}/xml/XMLViewer.css > ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewer.min.css
     COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl XMLViewer_css ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewer.min.css ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewerCSS.h
     VERBATIM)
 list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewerCSS.h)
@@ -3061,7 +3061,7 @@ add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewerJS.h ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewer.min.js
     MAIN_DEPENDENCY xml/XMLViewer.js
     DEPENDS ${WEBCORE_DIR}/inspector/xxd.pl ${WEBCORE_DIR}/inspector/Scripts/jsmin.py
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/inspector/Scripts/cssmin.py <${WEBCORE_DIR}/xml/XMLViewer.js > ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewer.min.js
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/inspector/Scripts/jsmin.py < ${WEBCORE_DIR}/xml/XMLViewer.js > ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewer.min.js
     COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl XMLViewer_js ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewer.min.js ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewerJS.h
     VERBATIM)
 list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/XMLViewerJS.h)

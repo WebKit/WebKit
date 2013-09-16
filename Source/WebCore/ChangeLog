@@ -1,3 +1,14 @@
+2013-09-16  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        Fix creation of embedded JS and CSS files on cmake based ports.
+        https://bugs.webkit.org/show_bug.cgi?id=121448
+
+        Reviewed by Joseph Pecoraro.
+
+        Just a build fix, layout tests already test this issue.
+
+        * CMakeLists.txt:
+
 2013-09-16  Anders Carlsson  <andersca@apple.com>
 
         MessageQueue should use a Deque of OwnPtrs
