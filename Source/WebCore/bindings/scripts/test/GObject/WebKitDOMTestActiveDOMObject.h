@@ -54,7 +54,6 @@ webkit_dom_test_active_dom_object_get_type (void);
  * @self: A #WebKitDOMTestActiveDOMObject
  * @nextChild: A #WebKitDOMNode
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -65,7 +64,6 @@ webkit_dom_test_active_dom_object_exciting_function(WebKitDOMTestActiveDOMObject
  * @self: A #WebKitDOMTestActiveDOMObject
  * @message: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void

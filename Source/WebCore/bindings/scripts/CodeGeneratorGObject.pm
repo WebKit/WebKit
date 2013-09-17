@@ -954,7 +954,7 @@ sub GenerateFunction {
     push(@hBody, " *\n");
     if (IsGDOMClassType($function->signature->type)) {
         push(@hBody, " * Returns: (transfer none):\n");
-    } else {
+    } elsif ($returnType ne "void") {
         push(@hBody, " * Returns:\n");
     }
     push(@hBody, " *\n");

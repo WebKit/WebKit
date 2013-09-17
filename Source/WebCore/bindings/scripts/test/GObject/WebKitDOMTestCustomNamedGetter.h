@@ -54,7 +54,6 @@ webkit_dom_test_custom_named_getter_get_type (void);
  * @self: A #WebKitDOMTestCustomNamedGetter
  * @str: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void

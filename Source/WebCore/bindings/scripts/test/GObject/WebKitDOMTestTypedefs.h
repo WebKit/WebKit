@@ -54,7 +54,6 @@ webkit_dom_test_typedefs_get_type (void);
  * @self: A #WebKitDOMTestTypedefs
  * @x: A #WebKitDOMlong[]
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -69,7 +68,6 @@ webkit_dom_test_typedefs_func(WebKitDOMTestTypedefs* self, WebKitDOMlong[]* x);
  * @color: A #gchar
  * @alpha: A #gfloat
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -80,7 +78,6 @@ webkit_dom_test_typedefs_set_shadow(WebKitDOMTestTypedefs* self, gfloat width, g
  * @self: A #WebKitDOMTestTypedefs
  * @arrayArg: A #WebKitDOMDOMString[]
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -125,7 +122,6 @@ webkit_dom_test_typedefs_string_array_function2(WebKitDOMTestTypedefs* self, Web
  * @self: A #WebKitDOMTestTypedefs
  * @error: #GError
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -146,7 +142,6 @@ webkit_dom_test_typedefs_get_unsigned_long_long_attr(WebKitDOMTestTypedefs* self
  * @self: A #WebKitDOMTestTypedefs
  * @value: A #guint64
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -189,7 +184,6 @@ webkit_dom_test_typedefs_get_attr_with_getter_exception(WebKitDOMTestTypedefs* s
  * @self: A #WebKitDOMTestTypedefs
  * @value: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -211,7 +205,6 @@ webkit_dom_test_typedefs_get_attr_with_setter_exception(WebKitDOMTestTypedefs* s
  * @value: A #glong
  * @error: #GError
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -233,7 +226,6 @@ webkit_dom_test_typedefs_get_string_attr_with_getter_exception(WebKitDOMTestType
  * @self: A #WebKitDOMTestTypedefs
  * @value: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -255,7 +247,6 @@ webkit_dom_test_typedefs_get_string_attr_with_setter_exception(WebKitDOMTestType
  * @value: A #gchar
  * @error: #GError
  *
- * Returns:
  *
 **/
 WEBKIT_API void

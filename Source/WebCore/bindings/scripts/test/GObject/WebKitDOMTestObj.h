@@ -53,7 +53,6 @@ webkit_dom_test_obj_get_type (void);
  * webkit_dom_test_obj_void_method:
  * @self: A #WebKitDOMTestObj
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -66,7 +65,6 @@ webkit_dom_test_obj_void_method(WebKitDOMTestObj* self);
  * @strArg: A #gchar
  * @objArg: A #WebKitDOMTestObj
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -169,7 +167,6 @@ webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* self, glong longArg, 
  * @self: A #WebKitDOMTestObj
  * @enumArg: A #WebKitDOMTestEnumType
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -193,7 +190,6 @@ webkit_dom_test_obj_method_that_requires_all_args_and_throws(WebKitDOMTestObj* s
  * @self: A #WebKitDOMTestObj
  * @serializedArg: A #WebKitDOMSerializedScriptValue
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -205,7 +201,6 @@ webkit_dom_test_obj_serialized_value(WebKitDOMTestObj* self, WebKitDOMSerialized
  * @oo: A #WebKitDOMDictionary
  * @ooo: A #WebKitDOMDictionary
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -216,7 +211,6 @@ webkit_dom_test_obj_options_object(WebKitDOMTestObj* self, WebKitDOMDictionary* 
  * @self: A #WebKitDOMTestObj
  * @error: #GError
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -226,7 +220,6 @@ webkit_dom_test_obj_method_with_exception(WebKitDOMTestObj* self, GError** error
  * webkit_dom_test_obj_with_script_state_void:
  * @self: A #WebKitDOMTestObj
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -247,7 +240,6 @@ webkit_dom_test_obj_with_script_state_obj(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @error: #GError
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -268,7 +260,6 @@ webkit_dom_test_obj_with_script_state_obj_exception(WebKitDOMTestObj* self, GErr
  * webkit_dom_test_obj_with_script_execution_context:
  * @self: A #WebKitDOMTestObj
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -278,7 +269,6 @@ webkit_dom_test_obj_with_script_execution_context(WebKitDOMTestObj* self);
  * webkit_dom_test_obj_with_script_execution_context_and_script_state:
  * @self: A #WebKitDOMTestObj
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -310,7 +300,6 @@ webkit_dom_test_obj_with_script_execution_context_and_script_state_with_spaces(W
  * @self: A #WebKitDOMTestObj
  * @opt: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -322,7 +311,6 @@ webkit_dom_test_obj_method_with_optional_arg(WebKitDOMTestObj* self, glong opt);
  * @nonOpt: A #glong
  * @opt: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -335,7 +323,6 @@ webkit_dom_test_obj_method_with_non_optional_arg_and_optional_arg(WebKitDOMTestO
  * @opt1: A #glong
  * @opt2: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -346,7 +333,6 @@ webkit_dom_test_obj_method_with_non_optional_arg_and_two_optional_args(WebKitDOM
  * @self: A #WebKitDOMTestObj
  * @str: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -357,7 +343,6 @@ webkit_dom_test_obj_method_with_optional_string(WebKitDOMTestObj* self, const gc
  * @self: A #WebKitDOMTestObj
  * @str: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -368,7 +353,6 @@ webkit_dom_test_obj_method_with_optional_string_is_undefined(WebKitDOMTestObj* s
  * @self: A #WebKitDOMTestObj
  * @str: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -388,7 +372,6 @@ webkit_dom_test_obj_conditional_method1(WebKitDOMTestObj* self);
  * webkit_dom_test_obj_conditional_method2:
  * @self: A #WebKitDOMTestObj
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -398,7 +381,6 @@ webkit_dom_test_obj_conditional_method2(WebKitDOMTestObj* self);
  * webkit_dom_test_obj_conditional_method3:
  * @self: A #WebKitDOMTestObj
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -408,7 +390,6 @@ webkit_dom_test_obj_conditional_method3(WebKitDOMTestObj* self);
  * webkit_dom_test_obj_class_method:
  * @self: A #WebKitDOMTestObj
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -430,7 +411,6 @@ webkit_dom_test_obj_class_method_with_optional(WebKitDOMTestObj* self, glong arg
  * @self: A #WebKitDOMTestObj
  * @arg: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -441,7 +421,6 @@ webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, glong arg);
  * @self: A #WebKitDOMTestObj
  * @type: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -452,7 +431,6 @@ webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, const gchar* type
  * @self: A #WebKitDOMTestObj
  * @value: A #WebKitDOMTestNode
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -463,7 +441,6 @@ webkit_dom_test_obj_convert1(WebKitDOMTestObj* self, WebKitDOMTestNode* value);
  * @self: A #WebKitDOMTestObj
  * @value: A #WebKitDOMTestNode
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -474,7 +451,6 @@ webkit_dom_test_obj_convert2(WebKitDOMTestObj* self, WebKitDOMTestNode* value);
  * @self: A #WebKitDOMTestObj
  * @value: A #WebKitDOMTestNode
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -485,7 +461,6 @@ webkit_dom_test_obj_convert4(WebKitDOMTestObj* self, WebKitDOMTestNode* value);
  * @self: A #WebKitDOMTestObj
  * @value: A #WebKitDOMTestNode
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -515,7 +490,6 @@ webkit_dom_test_obj_immutable_point_function(WebKitDOMTestObj* self);
  * webkit_dom_test_obj_orange:
  * @self: A #WebKitDOMTestObj
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -541,7 +515,6 @@ webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gf
  * @head: A #gchar
  * @tail: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -553,7 +526,6 @@ webkit_dom_test_obj_variadic_string_method(WebKitDOMTestObj* self, const gchar* 
  * @head: A #gdouble
  * @tail: A #gdouble
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -565,7 +537,6 @@ webkit_dom_test_obj_variadic_double_method(WebKitDOMTestObj* self, gdouble head,
  * @head: A #WebKitDOMNode
  * @tail: A #WebKitDOMNode
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -616,7 +587,6 @@ webkit_dom_test_obj_get_byte_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #gint8
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -637,7 +607,6 @@ webkit_dom_test_obj_get_octet_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #guint8
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -658,7 +627,6 @@ webkit_dom_test_obj_get_short_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #gshort
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -679,7 +647,6 @@ webkit_dom_test_obj_get_unsigned_short_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #gushort
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -700,7 +667,6 @@ webkit_dom_test_obj_get_long_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -721,7 +687,6 @@ webkit_dom_test_obj_get_long_long_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #gint64
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -742,7 +707,6 @@ webkit_dom_test_obj_get_unsigned_long_long_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #guint64
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -763,7 +727,6 @@ webkit_dom_test_obj_get_string_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -826,7 +789,6 @@ webkit_dom_test_obj_get_create(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #gboolean
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -847,7 +809,6 @@ webkit_dom_test_obj_get_reflected_string_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -868,7 +829,6 @@ webkit_dom_test_obj_get_reflected_integral_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -889,7 +849,6 @@ webkit_dom_test_obj_get_reflected_unsigned_integral_attr(WebKitDOMTestObj* self)
  * @self: A #WebKitDOMTestObj
  * @value: A #gulong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -910,7 +869,6 @@ webkit_dom_test_obj_get_reflected_boolean_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #gboolean
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -931,7 +889,6 @@ webkit_dom_test_obj_get_reflected_url_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -952,7 +909,6 @@ webkit_dom_test_obj_get_reflected_string_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -973,7 +929,6 @@ webkit_dom_test_obj_get_reflected_custom_integral_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -994,7 +949,6 @@ webkit_dom_test_obj_get_reflected_custom_boolean_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #gboolean
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1015,7 +969,6 @@ webkit_dom_test_obj_get_reflected_custom_url_attr(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1037,7 +990,6 @@ webkit_dom_test_obj_get_attr_with_getter_exception(WebKitDOMTestObj* self, GErro
  * @self: A #WebKitDOMTestObj
  * @value: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1059,7 +1011,6 @@ webkit_dom_test_obj_get_attr_with_setter_exception(WebKitDOMTestObj* self);
  * @value: A #glong
  * @error: #GError
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1081,7 +1032,6 @@ webkit_dom_test_obj_get_string_attr_with_getter_exception(WebKitDOMTestObj* self
  * @self: A #WebKitDOMTestObj
  * @value: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1103,7 +1053,6 @@ webkit_dom_test_obj_get_string_attr_with_setter_exception(WebKitDOMTestObj* self
  * @value: A #gchar
  * @error: #GError
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1124,7 +1073,6 @@ webkit_dom_test_obj_get_with_script_state_attribute(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1274,7 +1222,6 @@ webkit_dom_test_obj_get_conditional_attr1(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1295,7 +1242,6 @@ webkit_dom_test_obj_get_conditional_attr2(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1316,7 +1262,6 @@ webkit_dom_test_obj_get_conditional_attr3(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1410,7 +1355,6 @@ webkit_dom_test_obj_get_strawberry(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1431,7 +1375,6 @@ webkit_dom_test_obj_get_strict_float(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #gfloat
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1462,7 +1405,6 @@ webkit_dom_test_obj_get_id(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @value: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1543,7 +1485,6 @@ webkit_dom_test_obj_get_nullable_long_settable_attribute(WebKitDOMTestObj* self)
  * @self: A #WebKitDOMTestObj
  * @value: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -1565,7 +1506,6 @@ webkit_dom_test_obj_get_nullable_string_value(WebKitDOMTestObj* self, GError** e
  * @self: A #WebKitDOMTestObj
  * @value: A #glong
  *
- * Returns:
  *
 **/
 WEBKIT_API void

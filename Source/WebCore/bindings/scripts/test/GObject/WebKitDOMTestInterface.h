@@ -53,7 +53,6 @@ webkit_dom_test_interface_get_type (void);
  * webkit_dom_test_interface_implements_method1:
  * @self: A #WebKitDOMTestInterface
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -76,7 +75,6 @@ webkit_dom_test_interface_implements_method2(WebKitDOMTestInterface* self, const
  * webkit_dom_test_interface_implements_method4:
  * @self: A #WebKitDOMTestInterface
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -86,7 +84,6 @@ webkit_dom_test_interface_implements_method4(WebKitDOMTestInterface* self);
  * webkit_dom_test_interface_supplemental_method1:
  * @self: A #WebKitDOMTestInterface
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -109,7 +106,6 @@ webkit_dom_test_interface_supplemental_method2(WebKitDOMTestInterface* self, con
  * webkit_dom_test_interface_supplemental_method4:
  * @self: A #WebKitDOMTestInterface
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -140,7 +136,6 @@ webkit_dom_test_interface_get_implements_str2(WebKitDOMTestInterface* self);
  * @self: A #WebKitDOMTestInterface
  * @value: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
@@ -192,7 +187,6 @@ webkit_dom_test_interface_get_supplemental_str2(WebKitDOMTestInterface* self);
  * @self: A #WebKitDOMTestInterface
  * @value: A #gchar
  *
- * Returns:
  *
 **/
 WEBKIT_API void
