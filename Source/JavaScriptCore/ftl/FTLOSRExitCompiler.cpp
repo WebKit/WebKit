@@ -176,6 +176,10 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
     
     VM* vm = &exec->vm();
     
+    // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
+    // really be profitable.
+    DeferGCForAWhile deferGC(vm->heap);
+
     OSRExit& exit = codeBlock->jitCode()->ftl()->osrExit[exitID];
     
     prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);

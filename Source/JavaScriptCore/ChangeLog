@@ -1,3 +1,17 @@
+2013-09-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't GC while OSR compiling
+        https://bugs.webkit.org/show_bug.cgi?id=121513
+
+        Reviewed by Mark Hahnenberg.
+        
+        Fixes some rare crashes that I see in ConservativeRoots, while in a GC from OSR exit
+        compilation.
+
+        * dfg/DFGOSRExitCompiler.cpp:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileFTLOSRExit):
+
 2013-09-17  Alberto Garcia  <berto@igalia.com>
 
         Unreviewed make distcheck fix.

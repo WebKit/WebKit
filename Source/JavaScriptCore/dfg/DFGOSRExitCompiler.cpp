@@ -61,6 +61,10 @@ void compileOSRExit(ExecState* exec)
     
     VM* vm = &exec->vm();
     
+    // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
+    // really be profitable.
+    DeferGCForAWhile deferGC(vm->heap);
+
     uint32_t exitIndex = vm->osrExitIndex;
     OSRExit& exit = codeBlock->jitCode()->dfg()->osrExit[exitIndex];
     
