@@ -1201,7 +1201,7 @@ inline bool RenderObject::isBeforeContent() const
     if (style()->styleType() != BEFORE)
         return false;
     // Text nodes don't have their own styles, so ignore the style on a text node.
-    if (isText() && !isBR())
+    if (isText())
         return false;
     return true;
 }
@@ -1211,7 +1211,7 @@ inline bool RenderObject::isAfterContent() const
     if (style()->styleType() != AFTER)
         return false;
     // Text nodes don't have their own styles, so ignore the style on a text node.
-    if (isText() && !isBR())
+    if (isText())
         return false;
     return true;
 }

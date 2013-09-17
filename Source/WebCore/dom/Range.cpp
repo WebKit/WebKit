@@ -1607,13 +1607,17 @@ void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFi
     Node* stopNode = pastLastNode();
     for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
         RenderObject* r = node->renderer();
-        if (!r || !r->isText())
+        if (!r)
             continue;
-        RenderText* renderText = toRenderText(r);
-        int startOffset = node == startContainer ? m_start.offset() : 0;
-        int endOffset = node == endContainer ? m_end.offset() : numeric_limits<int>::max();
         bool isFixed = false;
-        renderText->absoluteRectsForRange(rects, startOffset, endOffset, useSelectionHeight, &isFixed);
+        if (r->isBR())
+            r->absoluteRects(rects, flooredLayoutPoint(r->localToAbsolute()));
+        else if (r->isText()) {
+            int startOffset = node == startContainer ? m_start.offset() : 0;
+            int endOffset = node == endContainer ? m_end.offset() : numeric_limits<int>::max();
+            toRenderText(r)->absoluteRectsForRange(rects, startOffset, endOffset, useSelectionHeight, &isFixed);
+        } else
+            continue;
         allFixed &= isFixed;
         someFixed |= isFixed;
     }
@@ -1639,13 +1643,17 @@ void Range::textQuads(Vector<FloatQuad>& quads, bool useSelectionHeight, RangeIn
     Node* stopNode = pastLastNode();
     for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
         RenderObject* r = node->renderer();
-        if (!r || !r->isText())
+        if (!r)
             continue;
-        RenderText* renderText = toRenderText(r);
-        int startOffset = node == startContainer ? m_start.offset() : 0;
-        int endOffset = node == endContainer ? m_end.offset() : numeric_limits<int>::max();
         bool isFixed = false;
-        renderText->absoluteQuadsForRange(quads, startOffset, endOffset, useSelectionHeight, &isFixed);
+        if (r->isBR())
+            r->absoluteQuads(quads, &isFixed);
+        else if (r->isText()) {
+            int startOffset = node == startContainer ? m_start.offset() : 0;
+            int endOffset = node == endContainer ? m_end.offset() : numeric_limits<int>::max();
+            toRenderText(r)->absoluteQuadsForRange(quads, startOffset, endOffset, useSelectionHeight, &isFixed);
+        } else
+            continue;
         allFixed &= isFixed;
         someFixed |= isFixed;
     }

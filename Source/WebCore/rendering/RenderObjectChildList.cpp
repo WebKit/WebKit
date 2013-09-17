@@ -28,6 +28,7 @@
 #include "RenderObjectChildList.h"
 
 #include "AXObjectCache.h"
+#include "RenderBR.h"
 #include "RenderCounter.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
@@ -75,6 +76,8 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     // If we have a line box wrapper, delete it.
     if (oldChild->isBox())
         toRenderBox(oldChild)->deleteLineBoxWrapper();
+    else if (oldChild->isBR())
+        toRenderBR(oldChild)->deleteInlineBoxWrapper();
 
     // If oldChild is the start or end of the selection, then clear the selection to
     // avoid problems of invalid pointers.

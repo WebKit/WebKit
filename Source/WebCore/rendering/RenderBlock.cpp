@@ -5111,7 +5111,7 @@ RenderObject* InlineMinMaxIterator::next()
         if (!result)
             break;
 
-        if (!result->isOutOfFlowPositioned() && (result->isText() || result->isFloating() || result->isReplaced() || result->isRenderInline()))
+        if (!result->isOutOfFlowPositioned() && (result->isText() || result->isBR() || result->isFloating() || result->isReplaced() || result->isRenderInline()))
              break;
         
         current = result;
@@ -5967,7 +5967,7 @@ void RenderBlock::updateFirstLetter()
         return;
     }
 
-    if (!currChild->isText() || currChild->isBR())
+    if (!currChild->isText())
         return;
 
     // Our layout state is not valid for the repaints we are going to trigger by

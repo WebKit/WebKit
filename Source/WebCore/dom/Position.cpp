@@ -33,6 +33,7 @@
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "PositionIterator.h"
+#include "RenderBR.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"
 #include "RenderText.h"
@@ -50,6 +51,17 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static bool hasInlineBoxWrapper(RenderObject& renderer)
+{
+    if (renderer.isBox() && toRenderBox(renderer).inlineBoxWrapper())
+        return true;
+    if (renderer.isText() && toRenderText(renderer).firstTextBox())
+        return true;
+    if (renderer.isBR() && toRenderBR(renderer).inlineBoxWrapper())
+        return true;
+    return false;
+}
+
 static Node* nextRenderedEditable(Node* node)
 {
     while ((node = nextLeafNode(node))) {
@@ -58,7 +70,7 @@ static Node* nextRenderedEditable(Node* node)
         RenderObject* renderer = node->renderer();
         if (!renderer)
             continue;
-        if ((renderer->isBox() && toRenderBox(renderer)->inlineBoxWrapper()) || (renderer->isText() && toRenderText(renderer)->firstTextBox()))
+        if (hasInlineBoxWrapper(*renderer))
             return node;
     }
     return 0;
@@ -72,7 +84,7 @@ static Node* previousRenderedEditable(Node* node)
         RenderObject* renderer = node->renderer();
         if (!renderer)
             continue;
-        if ((renderer->isBox() && toRenderBox(renderer)->inlineBoxWrapper()) || (renderer->isText() && toRenderText(renderer)->firstTextBox()))
+        if (hasInlineBoxWrapper(*renderer))
             return node;
     }
     return 0;
@@ -845,6 +857,7 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(RenderObject* render
     for (RenderObject *o = renderer->firstChild(); o && o != stop; o = o->nextInPreOrder())
         if (o->nonPseudoNode()) {
             if ((o->isText() && boundingBoxLogicalHeight(o, toRenderText(o)->linesBoundingBox()))
+                || (o->isBR() && boundingBoxLogicalHeight(o, toRenderBR(o)->linesBoundingBox()))
                 || (o->isBox() && toRenderBox(o)->pixelSnappedLogicalHeight())
                 || (o->isRenderInline() && isEmptyInline(o) && boundingBoxLogicalHeight(o, toRenderInline(o)->linesBoundingBox())))
                 return true;
@@ -1181,28 +1194,9 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
     caretOffset = deprecatedEditingOffset();
     RenderObject* renderer = deprecatedNode()->renderer();
 
-    if (!renderer->isText()) {
-        inlineBox = 0;
-        if (canHaveChildrenForEditing(deprecatedNode()) && renderer->isRenderBlockFlow() && hasRenderedNonAnonymousDescendantsWithHeight(renderer)) {
-            // Try a visually equivalent position with possibly opposite editability. This helps in case |this| is in
-            // an editable block but surrounded by non-editable positions. It acts to negate the logic at the beginning
-            // of RenderObject::createVisiblePosition().
-            Position equivalent = downstreamIgnoringEditingBoundaries(*this);
-            if (equivalent == *this) {
-                equivalent = upstreamIgnoringEditingBoundaries(*this);
-                if (equivalent == *this || downstreamIgnoringEditingBoundaries(equivalent) == *this)
-                    return;
-            }
-
-            equivalent.getInlineBoxAndOffset(UPSTREAM, primaryDirection, inlineBox, caretOffset);
-            return;
-        }
-        if (renderer->isBox()) {
-            inlineBox = toRenderBox(renderer)->inlineBoxWrapper();
-            if (!inlineBox || (caretOffset > inlineBox->caretMinOffset() && caretOffset < inlineBox->caretMaxOffset()))
-                return;
-        }
-    } else {
+    if (renderer->isBR())
+        inlineBox = !caretOffset ? toRenderBR(renderer)->inlineBoxWrapper() : nullptr;
+    else if (renderer->isText()) {
         RenderText* textRenderer = toRenderText(renderer);
 
         InlineTextBox* box;
@@ -1233,6 +1227,27 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
                 caretOffset = box->caretMinOffset();
         }
         inlineBox = box ? box : candidate;
+    } else {
+        inlineBox = 0;
+        if (canHaveChildrenForEditing(deprecatedNode()) && renderer->isRenderBlockFlow() && hasRenderedNonAnonymousDescendantsWithHeight(renderer)) {
+            // Try a visually equivalent position with possibly opposite editability. This helps in case |this| is in
+            // an editable block but surrounded by non-editable positions. It acts to negate the logic at the beginning
+            // of RenderObject::createVisiblePosition().
+            Position equivalent = downstreamIgnoringEditingBoundaries(*this);
+            if (equivalent == *this) {
+                equivalent = upstreamIgnoringEditingBoundaries(*this);
+                if (equivalent == *this || downstreamIgnoringEditingBoundaries(equivalent) == *this)
+                    return;
+            }
+
+            equivalent.getInlineBoxAndOffset(UPSTREAM, primaryDirection, inlineBox, caretOffset);
+            return;
+        }
+        if (renderer->isBox()) {
+            inlineBox = toRenderBox(renderer)->inlineBoxWrapper();
+            if (!inlineBox || (caretOffset > inlineBox->caretMinOffset() && caretOffset < inlineBox->caretMaxOffset()))
+                return;
+        }
     }
 
     if (!inlineBox)

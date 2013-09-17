@@ -1,3 +1,129 @@
+2013-09-17  Antti Koivisto  <antti@apple.com>
+
+        RenderBR should not be RenderText
+        https://bugs.webkit.org/show_bug.cgi?id=121221
+
+        Reviewed by Darin Adler.
+
+        Stop inheriting RenderBR from RenderText and make it be a RenderBoxModelObject instead. RenderBR was one
+        of the few cases where Element renderer was a RenderText. This will enable future cleanups.
+        
+        RenderBR used little of RenderText mechanisms and was already heavily specialized everywhere. Layout code
+        didn't care about its text content at all. The new RenderText is also significatly more lightweight
+        than the old. As a line box it uses plain InlineBox instead of InlineTextBox.
+        
+        The patch tries to avoid changing test results though there are a few changed render tree dumps without
+        visual effect. There are also two rendering progressions.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner):
+        * dom/Document.cpp:
+        (WebCore::Document::updateHoverActiveState):
+        * dom/Position.cpp:
+        (WebCore::hasInlineBoxWrapper):
+        (WebCore::nextRenderedEditable):
+        (WebCore::previousRenderedEditable):
+        (WebCore::Position::hasRenderedNonAnonymousDescendantsWithHeight):
+        (WebCore::Position::getInlineBoxAndOffset):
+        * dom/Range.cpp:
+        (WebCore::Range::textRects):
+        (WebCore::Range::textQuads):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown):
+        * editing/Editor.cpp:
+        (WebCore::findFirstMarkable):
+        * editing/TextIterator.cpp:
+        (WebCore::ignoresContainerClip):
+        * editing/VisibleUnits.cpp:
+        (WebCore::CachedLogicallyOrderedLeafBoxes::previousTextOrLineBreakBox):
+        (WebCore::CachedLogicallyOrderedLeafBoxes::nextTextOrLineBreakBox):
+        (WebCore::logicallyPreviousBox):
+        (WebCore::logicallyNextBox):
+        (WebCore::wordBreakIteratorForMinOffsetBoundary):
+        (WebCore::wordBreakIteratorForMaxOffsetBoundary):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::logicalHeight):
+        (WebCore::InlineBox::baselinePosition):
+        (WebCore::InlineBox::lineHeight):
+        (WebCore::InlineBox::deleteLine):
+        (WebCore::InlineBox::extractLine):
+        (WebCore::InlineBox::attachLine):
+        (WebCore::InlineBox::paint):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::isLineBreak):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::computeOverflow):
+        * rendering/InlineIterator.h:
+        (WebCore::isIteratorTarget):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::lineHeight):
+        (WebCore::InlineTextBox::isLineBreak):
+        * rendering/RenderBR.cpp:
+        (WebCore::RenderBR::RenderBR):
+        (WebCore::RenderBR::~RenderBR):
+        (WebCore::RenderBR::createAnonymous):
+        (WebCore::RenderBR::lineHeight):
+        (WebCore::RenderBR::baselinePosition):
+        (WebCore::RenderBR::createInlineBox):
+        (WebCore::RenderBR::setInlineBoxWrapper):
+        (WebCore::RenderBR::replaceInlineBoxWrapper):
+        (WebCore::RenderBR::deleteInlineBoxWrapper):
+        (WebCore::RenderBR::dirtyLineBoxes):
+        (WebCore::RenderBR::caretMinOffset):
+        (WebCore::RenderBR::caretMaxOffset):
+        (WebCore::RenderBR::canBeSelectionLeaf):
+        (WebCore::RenderBR::setSelectionState):
+        (WebCore::RenderBR::localCaretRect):
+        (WebCore::RenderBR::linesBoundingBox):
+        (WebCore::RenderBR::absoluteRects):
+        (WebCore::RenderBR::absoluteQuads):
+        (WebCore::RenderBR::updateFromStyle):
+        (WebCore::RenderBR::borderBoundingBox):
+        * rendering/RenderBR.h:
+        (WebCore::toRenderBR):
+        * rendering/RenderBlock.cpp:
+        (WebCore::InlineMinMaxIterator::next):
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::createInlineBoxForRenderer):
+        (WebCore::dirtyLineBoxesForRenderer):
+        (WebCore::reachedEndOfTextRenderer):
+        (WebCore::RenderBlock::computeBlockDirectionPositionsForLine):
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        (WebCore::requiresLineBox):
+        (WebCore::shouldSkipWhitespaceAfterStartObject):
+        (WebCore::canBreakAtThisPosition):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::generateCulledLineBoxRects):
+        (WebCore::RenderInline::culledInlineFirstLineBox):
+        (WebCore::RenderInline::culledInlineLastLineBox):
+        (WebCore::RenderInline::dirtyLineBoxes):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::RenderMenuList):
+        (WebCore::RenderMenuList::styleDidChange):
+        (WebCore::RenderMenuList::setText):
+        (WebCore::RenderMenuList::text):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isBeforeContent):
+        (WebCore::RenderObject::isAfterContent):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::removeAndDestroyTextBoxes):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        (WebCore::RenderText::setTextInternal):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+        (WebCore::RootInlineBox::verticalPositionForBox):
+
 2013-09-17  Andreas Kling  <akling@apple.com>
 
         Dodge more work during render tree teardown.

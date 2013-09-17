@@ -32,6 +32,7 @@
 #include "LineLayoutState.h"
 #include "Logging.h"
 #include "RenderArena.h"
+#include "RenderBR.h"
 #include "RenderCombineText.h"
 #include "RenderCounter.h"
 #include "RenderFlowThread.h"
@@ -263,17 +264,19 @@ static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRo
     if (isRootLineBox)
         return toRenderBlock(obj)->createAndAppendRootInlineBox();
 
-    if (obj->isText()) {
-        InlineTextBox* textBox = toRenderText(obj)->createInlineTextBox();
-        // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
-        // (Note the use of strict mode.  In "almost strict" mode, we don't treat the box for <br> as text.)
-        if (obj->isBR())
-            textBox->setIsText(isOnlyRun || obj->document().inNoQuirksMode());
-        return textBox;
-    }
+    if (obj->isText())
+        return toRenderText(obj)->createInlineTextBox();
 
     if (obj->isBox())
         return toRenderBox(obj)->createInlineBox();
+
+    if (obj->isBR()) {
+        InlineBox* inlineBox = toRenderBR(obj)->createInlineBox();
+        // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
+        // (Note the use of strict mode. In "almost strict" mode, we don't treat the box for <br> as text.)
+        inlineBox->setIsText(isOnlyRun || obj->document().inNoQuirksMode());
+        return inlineBox;
+    }
 
     return toRenderInline(obj)->createAndAppendInlineFlowBox();
 }
@@ -293,7 +296,9 @@ static inline void dirtyLineBoxesForRenderer(RenderObject* o, bool fullLayout)
         RenderText* renderText = toRenderText(o);
         updateCounterIfNeeded(renderText);
         renderText->dirtyLineBoxes(fullLayout);
-    } else
+    } else if (o->isBR())
+        toRenderBR(o)->dirtyLineBoxes(fullLayout);
+    else
         toRenderInline(o)->dirtyLineBoxes(fullLayout);
 }
 
@@ -388,7 +393,7 @@ static bool reachedEndOfTextRenderer(const BidiRunList<BidiRun>& bidiRuns)
         return true;
     unsigned pos = run->stop();
     RenderObject* r = run->m_object;
-    if (!r->isText() || r->isBR())
+    if (!r->isText())
         return false;
     RenderText* renderText = toRenderText(r);
     unsigned length = renderText->textLength();
@@ -923,6 +928,8 @@ void RenderBlock::computeBlockDirectionPositionsForLine(RootInlineBox* lineBox, 
             toRenderText(r->m_object)->positionLineBox(r->m_box);
         else if (r->m_object->isBox())
             toRenderBox(r->m_object)->positionLineBox(r->m_box);
+        else if (r->m_object->isBR())
+            toRenderBR(r->m_object)->replaceInlineBoxWrapper(r->m_box);
     }
     // Positioned objects and zero-length text nodes destroy their boxes in
     // position(), which unnecessarily dirties the line.
@@ -1833,8 +1840,8 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
                     else
                         o->layoutIfNeeded();
                 }
-            } else if (o->isText() || (o->isRenderInline() && !walker.atEndOfInline())) {
-                if (!o->isText())
+            } else if (o->isText() || o->isBR() || (o->isRenderInline() && !walker.atEndOfInline())) {
+                if (o->isRenderInline())
                     toRenderInline(o)->updateAlwaysCreateLineBoxes(layoutState.isFullLayout());
                 if (layoutState.isFullLayout() || o->selfNeedsLayout())
                     dirtyLineBoxesForRenderer(o, layoutState.isFullLayout());
@@ -2199,10 +2206,13 @@ static bool requiresLineBox(const InlineIterator& it, const LineInfo& lineInfo =
     if (it.m_obj->isFloatingOrOutOfFlowPositioned())
         return false;
 
+    if (it.m_obj->isBR())
+        return true;
+
     if (it.m_obj->isRenderInline() && !alwaysRequiresLineBox(it.m_obj) && !requiresLineBoxForContent(toRenderInline(it.m_obj), lineInfo))
         return false;
 
-    if (!shouldCollapseWhiteSpace(it.m_obj->style(), lineInfo, whitespacePosition) || it.m_obj->isBR())
+    if (!shouldCollapseWhiteSpace(it.m_obj->style(), lineInfo, whitespacePosition))
         return true;
 
     UChar current = it.current();
@@ -2277,7 +2287,7 @@ static bool shouldSkipWhitespaceAfterStartObject(RenderBlock* block, RenderObjec
     while (next && next->isFloatingOrOutOfFlowPositioned())
         next = bidiNextSkippingEmptyInlines(block, next);
 
-    if (next && !next->isBR() && next->isText() && toRenderText(next)->textLength() > 0) {
+    if (next && next->isText() && toRenderText(next)->textLength() > 0) {
         RenderText* nextText = toRenderText(next);
         UChar nextChar = nextText->characterAt(0);
         if (nextText->style()->isCollapsibleWhiteSpace(nextChar)) {
@@ -2554,7 +2564,7 @@ static bool canBreakAtThisPosition(bool autoWrap, LineWidth& width, InlineIterat
     if (autoWrap && currentCharacterIsSpace)
         return true;
 
-    bool nextIsText = (next && (current.m_obj->isText() || isEmptyInline(current.m_obj)) && next->isText() && !next->isBR() && (autoWrap || next->style()->autoWrap()));
+    bool nextIsText = (next && (current.m_obj->isText() || isEmptyInline(current.m_obj)) && next->isText() && (autoWrap || next->style()->autoWrap()));
     if (!nextIsText)
         return autoWrap;
 

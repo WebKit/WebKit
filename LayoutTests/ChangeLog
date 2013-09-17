@@ -1,3 +1,29 @@
+2013-09-17  Antti Koivisto  <antti@apple.com>
+
+        RenderBR should not be RenderText
+        https://bugs.webkit.org/show_bug.cgi?id=121221
+
+        Reviewed by Darin Adler.
+
+        * editing/selection/move-by-word-visually-mac-expected.txt:
+        
+            This is a progression. A previously failing subtest passes.
+
+        * platform/mac/css3/selectors3/html/css3-modsel-179a-expected.txt:
+        * platform/mac/css3/selectors3/xhtml/css3-modsel-179a-expected.txt:
+        * platform/mac/css3/selectors3/xml/css3-modsel-179a-expected.txt:
+        
+            Changes in render tree dump that don't affect rendering.
+
+        * platform/mac/fast/css/pseudo-first-line-border-width-expected.txt:
+        
+            This is a progression. The new rendering matches Firefox.
+
+        * platform/mac/fast/css/word-space-extra-expected.txt:
+        * platform/mac/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt:
+        
+            Changes in render tree dump that don't affect rendering.
+
 2013-09-17  Eric Carlson  <eric.carlson@apple.com>
 
         MediaStream API: Adding an async RTCPeerConnection::addIceCandidate

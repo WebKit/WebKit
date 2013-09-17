@@ -33,6 +33,7 @@
 #include "InlineTextBox.h"
 #include "PaintInfo.h"
 #include "RenderArena.h"
+#include "RenderBR.h"
 #include "RenderInline.h"
 #include "RenderView.h"
 #include "RootInlineBox.h"
@@ -339,6 +340,10 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderObject* container, Rend
 
         if (curr->isReplaced()) {
             InlineBox* wrapper = toRenderBox(curr)->inlineBoxWrapper();
+            if (wrapper)
+                box = &wrapper->root();
+        } if (curr->isBR()) {
+            InlineBox* wrapper = toRenderBR(curr)->inlineBoxWrapper();
             if (wrapper)
                 box = &wrapper->root();
         } else if (curr->isText()) {

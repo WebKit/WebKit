@@ -231,11 +231,6 @@ void RenderText::removeAndDestroyTextBoxes()
 {
     if (!documentBeingDestroyed()) {
         if (firstTextBox()) {
-            if (isBR()) {
-                RootInlineBox* next = firstTextBox()->root().nextRootBox();
-                if (next)
-                    next->markDirty();
-            }
             for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
                 box->remove();
         } else if (parent())
@@ -888,9 +883,6 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
     m_endMinWidth = 0;
     m_maxWidth = 0;
 
-    if (isBR())
-        return;
-
     float currMinWidth = 0;
     float currMaxWidth = 0;
     m_hasBreakableChar = false;
@@ -1365,7 +1357,6 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
     }
 
     ASSERT(m_text);
-    ASSERT(!isBR() || (textLength() == 1 && m_text[0] == '\n'));
 
     m_isAllASCII = m_text.containsOnlyASCII();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();

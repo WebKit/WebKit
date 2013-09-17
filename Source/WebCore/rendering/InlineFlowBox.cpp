@@ -949,15 +949,15 @@ void InlineFlowBox::computeOverflow(LayoutUnit lineTop, LayoutUnit lineBottom, G
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
-        
+
+        if (curr->renderer().isBR())
+            continue;
         if (curr->renderer().isText()) {
             InlineTextBox* text = toInlineTextBox(curr);
-            if (text->renderer().isBR())
-                continue;
             LayoutRect textBoxOverflow(enclosingLayoutRect(text->logicalFrameRect()));
             addTextBoxVisualOverflow(text, textBoxDataMap, textBoxOverflow);
             logicalVisualOverflow.unite(textBoxOverflow);
-        } else  if (curr->renderer().isRenderInline()) {
+        } else if (curr->renderer().isRenderInline()) {
             InlineFlowBox* flow = toInlineFlowBox(curr);
             flow->computeOverflow(lineTop, lineBottom, textBoxDataMap);
             if (!flow->boxModelObject()->hasSelfPaintingLayer())

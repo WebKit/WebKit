@@ -27,6 +27,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderArena.h"
+#include "RenderBR.h"
 #include "RenderBlock.h"
 #include "RootInlineBox.h"
 
@@ -140,7 +141,7 @@ float InlineBox::logicalHeight() const
     if (hasVirtualLogicalHeight())
         return virtualLogicalHeight();
     
-    if (renderer().isText())
+    if (renderer().isText() || renderer().isBR())
         return m_bitfields.isText() ? renderer().style(isFirstLineStyle())->fontMetrics().height() : 0;
     if (renderer().isBox() && parent())
         return isHorizontal() ? toRenderBox(renderer()).height() : toRenderBox(renderer()).width();
@@ -156,11 +157,15 @@ float InlineBox::logicalHeight() const
 
 int InlineBox::baselinePosition(FontBaseline baselineType) const
 {
+    if (renderer().isBR() && !isText())
+        return 0;
     return boxModelObject()->baselinePosition(baselineType, m_bitfields.firstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
 LayoutUnit InlineBox::lineHeight() const
 {
+    if (renderer().isBR() && !isText())
+        return 0;
     return boxModelObject()->lineHeight(m_bitfields.firstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
@@ -183,8 +188,12 @@ void InlineBox::dirtyLineBoxes()
 
 void InlineBox::deleteLine(RenderArena& arena)
 {
-    if (!m_bitfields.extracted() && m_renderer.isBox())
-        toRenderBox(renderer()).setInlineBoxWrapper(0);
+    if (!m_bitfields.extracted()) {
+        if (m_renderer.isBox())
+            toRenderBox(renderer()).setInlineBoxWrapper(0);
+        else if (renderer().isBR())
+            toRenderBR(renderer()).setInlineBoxWrapper(0);
+    }
     destroy(arena);
 }
 
@@ -193,6 +202,8 @@ void InlineBox::extractLine()
     m_bitfields.setExtracted(true);
     if (m_renderer.isBox())
         toRenderBox(renderer()).setInlineBoxWrapper(0);
+    else if (renderer().isBR())
+        toRenderBR(renderer()).setInlineBoxWrapper(0);
 }
 
 void InlineBox::attachLine()
@@ -200,6 +211,8 @@ void InlineBox::attachLine()
     m_bitfields.setExtracted(false);
     if (m_renderer.isBox())
         toRenderBox(renderer()).setInlineBoxWrapper(this);
+    else if (renderer().isBR())
+        toRenderBR(renderer()).setInlineBoxWrapper(this);
 }
 
 void InlineBox::adjustPosition(float dx, float dy)
@@ -216,7 +229,7 @@ void InlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, Layo
         return;
 
     LayoutPoint childPoint = paintOffset;
-    if (parent()->renderer().style()->isFlippedBlocksWritingMode()) // Faster than calling containingBlock().
+    if (parent()->renderer().style()->isFlippedBlocksWritingMode() && renderer().isBox()) // Faster than calling containingBlock().
         childPoint = m_renderer.containingBlock()->flipForWritingModeForChild(&toRenderBox(renderer()), childPoint);
     
     // Paint all phases of replaced elements atomically, as though the replaced element established its

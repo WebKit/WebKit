@@ -846,7 +846,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
 
     Vector<const SimpleFontData*>* usedFonts = 0;
     GlyphOverflow* glyphOverflow = 0;
-    if (box->isText()) {
+    if (box->isInlineTextBox()) {
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(toInlineTextBox(box));
         usedFonts = it == textBoxDataMap.end() ? 0 : &it->value.first;
         glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->value.second;
@@ -915,7 +915,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
     if (includeMarginForBox(box)) {
         LayoutUnit ascentWithMargin = box->renderer().style(isFirstLineStyle())->fontMetrics().ascent(baselineType());
         LayoutUnit descentWithMargin = box->renderer().style(isFirstLineStyle())->fontMetrics().descent(baselineType());
-        if (box->parent() && !box->renderer().isText()) {
+        if (box->parent() && !box->renderer().isText() && !box->renderer().isBR()) {
             ascentWithMargin += box->boxModelObject()->borderAndPaddingBefore() + box->boxModelObject()->marginBefore();
             descentWithMargin += box->boxModelObject()->borderAndPaddingAfter() + box->boxModelObject()->marginAfter();
         }
@@ -929,7 +929,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
 
 LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositionCache& verticalPositionCache)
 {
-    if (box->renderer().isText())
+    if (box->renderer().isText() || box->renderer().isBR())
         return box->parent()->logicalTop();
     
     RenderBoxModelObject* renderer = box->boxModelObject();

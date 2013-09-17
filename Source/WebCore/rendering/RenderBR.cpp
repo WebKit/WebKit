@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,60 +23,172 @@
 #include "RenderBR.h"
 
 #include "Document.h"
-#include "InlineTextBox.h"
+#include "RenderBlock.h"
+#include "RootInlineBox.h"
 #include "VisiblePosition.h"
 
 namespace WebCore {
 
-static PassRefPtr<StringImpl> newlineString()
-{
-    DEFINE_STATIC_LOCAL(const String, string, (ASCIILiteral("\n")));
-    return string.impl();
-}
+static const int invalidLineHeight = -1;
 
-RenderBR::RenderBR(Node* node)
-    : RenderText(node, newlineString())
-    , m_lineHeight(-1)
+RenderBR::RenderBR(Element* element)
+    : RenderBoxModelObject(element)
+    , m_inlineBoxWrapper(nullptr)
+    , m_cachedLineHeight(invalidLineHeight)
 {
 }
 
 RenderBR::~RenderBR()
 {
+    if (m_inlineBoxWrapper)
+        m_inlineBoxWrapper->destroy(renderArena());
 }
 
-int RenderBR::lineHeight(bool firstLine) const
+RenderBR* RenderBR::createAnonymous(Document& document)
+{
+    RenderBR* renderer = new (*document.renderArena()) RenderBR(nullptr);
+    renderer->setDocumentForAnonymous(document);
+    return renderer;
+}
+
+LayoutUnit RenderBR::lineHeight(bool firstLine, LineDirectionMode /*direction*/, LinePositionMode /*linePositionMode*/) const
 {
     if (firstLine && document().styleSheetCollection()->usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         if (s != style())
             return s->computedLineHeight(&view());
     }
+
+    if (m_cachedLineHeight == invalidLineHeight)
+        m_cachedLineHeight = style()->computedLineHeight(&view());
     
-    if (m_lineHeight == -1)
-        m_lineHeight = style()->computedLineHeight(&view());
-    
-    return m_lineHeight;
+    return m_cachedLineHeight;
 }
 
-void RenderBR::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+int RenderBR::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
-    RenderText::styleDidChange(diff, oldStyle);
-    m_lineHeight = -1;
+    const FontMetrics& fontMetrics = style(firstLine)->fontMetrics();
+    return fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2;
 }
 
-int RenderBR::caretMinOffset() const 
-{ 
+InlineBox* RenderBR::createInlineBox()
+{
+    return new (renderArena()) InlineBox(*this);
+}
+
+void RenderBR::setInlineBoxWrapper(InlineBox* inlineBox)
+{
+    ASSERT(!inlineBox || !m_inlineBoxWrapper);
+    m_inlineBoxWrapper = inlineBox;
+}
+
+void RenderBR::replaceInlineBoxWrapper(InlineBox* inlineBox)
+{
+    deleteInlineBoxWrapper();
+    setInlineBoxWrapper(inlineBox);
+}
+
+void RenderBR::deleteInlineBoxWrapper()
+{
+    if (!m_inlineBoxWrapper)
+        return;
+    if (!documentBeingDestroyed())
+        m_inlineBoxWrapper->remove();
+    m_inlineBoxWrapper->destroy(renderArena());
+    m_inlineBoxWrapper = nullptr;
+}
+
+void RenderBR::dirtyLineBoxes(bool fullLayout)
+{
+    if (!m_inlineBoxWrapper)
+        return;
+    if (fullLayout) {
+        m_inlineBoxWrapper->destroy(renderArena());
+        m_inlineBoxWrapper = nullptr;
+        return;
+    }
+    m_inlineBoxWrapper->dirtyLineBoxes();
+}
+
+int RenderBR::caretMinOffset() const
+{
     return 0;
 }
 
-int RenderBR::caretMaxOffset() const 
+int RenderBR::caretMaxOffset() const
 { 
     return 1;
+}
+
+bool RenderBR::canBeSelectionLeaf() const
+{
+    return true;
 }
 
 VisiblePosition RenderBR::positionForPoint(const LayoutPoint&)
 {
     return createVisiblePosition(0, DOWNSTREAM);
+}
+
+void RenderBR::setSelectionState(SelectionState state)
+{
+    RenderBoxModelObject::setSelectionState(state);
+    if (!m_inlineBoxWrapper)
+        return;
+    m_inlineBoxWrapper->root().setHasSelectedChildren(state != SelectionNone);
+}
+
+LayoutRect RenderBR::localCaretRect(InlineBox* inlineBox, int caretOffset, LayoutUnit* extraWidthToEndOfLine)
+{
+    ASSERT_UNUSED(caretOffset, !caretOffset);
+    ASSERT_UNUSED(inlineBox, inlineBox == m_inlineBoxWrapper);
+    if (!inlineBox)
+        return LayoutRect();
+
+    static const unsigned caretWidth = 1;
+    const RootInlineBox& rootBox = inlineBox->root();
+    return rootBox.computeCaretRect(inlineBox->logicalLeft(), caretWidth, extraWidthToEndOfLine);
+}
+
+IntRect RenderBR::linesBoundingBox() const
+{
+    if (!m_inlineBoxWrapper)
+        return IntRect();
+
+    float logicalLeftSide = m_inlineBoxWrapper->logicalLeft();
+    float logicalRightSide = m_inlineBoxWrapper->logicalRight();
+
+    bool isHorizontal = style()->isHorizontalWritingMode();
+
+    float x = isHorizontal ? logicalLeftSide : m_inlineBoxWrapper->x();
+    float y = isHorizontal ? m_inlineBoxWrapper->y() : logicalLeftSide;
+    float width = isHorizontal ? logicalRightSide - logicalLeftSide : m_inlineBoxWrapper->logicalBottom() - x;
+    float height = isHorizontal ? m_inlineBoxWrapper->logicalBottom() - y : logicalRightSide - logicalLeftSide;
+    return enclosingIntRect(FloatRect(x, y, width, height));
+}
+
+void RenderBR::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
+{
+    if (!m_inlineBoxWrapper)
+        return;
+    rects.append(enclosingIntRect(FloatRect(accumulatedOffset + m_inlineBoxWrapper->topLeft(), m_inlineBoxWrapper->size())));
+}
+
+void RenderBR::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
+{
+    if (!m_inlineBoxWrapper)
+        return;
+    quads.append(localToAbsoluteQuad(FloatRect(m_inlineBoxWrapper->topLeft(), m_inlineBoxWrapper->size()), 0 /* mode */, wasFixed));
+}
+
+void RenderBR::updateFromStyle()
+{
+    m_cachedLineHeight = invalidLineHeight;
+}
+
+IntRect RenderBR::borderBoundingBox() const
+{
+    return IntRect(IntPoint(), linesBoundingBox().size());
 }
 
 } // namespace WebCore
