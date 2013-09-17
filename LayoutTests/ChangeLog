@@ -1,3 +1,28 @@
+2013-09-17  Romain Perier  <romain.perier@gmail.com>
+
+        Improve srcset parser
+        https://bugs.webkit.org/show_bug.cgi?id=119423
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/hidpi/image-srcset-data-srcset-invalid-inputs.html: Ensures that a various invalid
+          form of data uri schemes are supported by the srcset attribute.
+        * fast/hidpi/image-srcset-data-srcset-valid-inputs.html: Ensures that a various valid
+          form of data uri schemes are supported by the srcset attribute.
+        * fast/hidpi/image-srcset-data-srcset.html: Use comma instead of %.
+        * fast/hidpi/image-srcset-fraction-1.5x.html: Added.
+        * fast/hidpi/image-srcset-invalid-inputs-except-one.html: Missing srcset-helper.js. Adding more invalid cases.
+        * fast/hidpi/image-srcset-invalid-inputs.html: Adding more invalid cases.
+        * fast/hidpi/image-srcset-nomodifier.html: Updated output as behaviour changed for this case.
+        * fast/hidpi/image-srcset-space-suffix-nomodifier.html: Ensures that a single candidate with no scale modifier
+          is supported by the srcset attribute, even if a space is left at the end.
+        * fast/hidpi/image-srcset-space-prefix-nomodifier.html: Ensures that a single candidate with no scale modifier
+          is supported by the srcset attribute, even if a space is left at the beginning.
+        * fast/hidpi/image-srcset-space-surrounded-nomodifier.html: Ensures that a single candidate with no scale modifier
+          is supported by the srcset attribute, even if it is surrounded by spaces.
+        * fast/hidpi/image-srcset-data-escaped-srcset.html: Ensures that data uri schemes with escaped characters
+          are supported by the srcset attribute.
+
 2013-09-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Disable a number of crashing tests to help the EWS system run more rapidly.

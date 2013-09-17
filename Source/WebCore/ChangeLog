@@ -1,3 +1,24 @@
+2013-09-17  Romain Perier  <romain.perier@gmail.com>
+
+        Improve srcset parser
+        https://bugs.webkit.org/show_bug.cgi?id=119423
+
+        Reviewed by Benjamin Poulain.
+
+        Added new tests and covered by existing ones.
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::isHTMLSpaceOrComma): Add a new predicate function used by String::find()
+        to get the first space or comma character from the input string.
+        (WebCore::parseImagesWithScaleFromSrcSetAttribute): Add a new static function to parse
+        and extract images with scale from the srcset attribute. All valid candidates are
+        returned to the caller through a list. This parsing function also adds support
+        for data URI schemes as described by the specification.
+        (WebCore::bestFitSourceForImageAttributes): Remove intermediate arrays of string
+        when parsing. That is more efficient and avoids trashing the data cache
+        (varying between 20 and 65% faster depending of the amount of data)
+        The parser now walks along the attribute value and extracts the candidates directly.
+
 2013-09-17  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed build fix after 155963.
