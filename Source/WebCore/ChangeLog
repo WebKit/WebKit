@@ -1,3 +1,17 @@
+2013-09-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r155976.
+        http://trac.webkit.org/changeset/155976
+        https://bugs.webkit.org/show_bug.cgi?id=121512
+
+        Broke a test, needs cleanup (Requested by ap_ on #webkit).
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::handleAttributeChanged):
+        * accessibility/AXObjectCache.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2013-09-17  Romain Perier  <romain.perier@gmail.com>
 
         Improve srcset parser

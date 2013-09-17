@@ -830,8 +830,6 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
 
     if (attrName == aria_activedescendantAttr)
         handleActiveDescendantChanged(element);
-    else if (attrName == aria_busyAttr)
-        postNotification(element, AXObjectCache::AXElementBusyChanged, true);
     else if (attrName == aria_valuenowAttr || attrName == aria_valuetextAttr)
         postNotification(element, AXObjectCache::AXValueChanged, true);
     else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == aria_labelledbyAttr)
