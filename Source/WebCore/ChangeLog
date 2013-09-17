@@ -1,5 +1,31 @@
 2013-09-17  Darin Adler  <darin@apple.com>
 
+        Shrink SVGElement::cssPropertyIdForSVGAttributeName and cssPropertyToTypeMap
+        https://bugs.webkit.org/show_bug.cgi?id=121499
+
+        Reviewed by Andreas Kling.
+
+        * svg/SVGElement.cpp:
+        (WebCore::populateAttributeNameToCSSPropertyIDMap): Added. Code that used to
+        be in SVGElement::cssPropertyIdForSVGAttributeName to build a map that maps
+        attribute names to CSS property IDs, but without the multiple unrolled calls
+        to HashMap functions.
+        (WebCore::populateAttributeNameToAnimatedPropertyTypeMap): Added. Code that
+        used to be in cssPropertyToTypeMap, but without the multiple unrolled calls
+        to HashMap functions.
+        (WebCore::attributeNameToAnimatedPropertyTypeMap): Renamed from
+        cssPropertyToTypeMap, a confusingly inaccurate and imprecise name, and
+        reimplemented using the populate function.
+        (WebCore::SVGElement::animatedPropertyTypeForAttribute): Updated to call
+        attributeNameToAnimatedPropertyTypeMap, and also removed the double hashing
+        that was done by calling contains followed by get.
+        (WebCore::SVGElement::cssPropertyIdForSVGAttributeName): Rewrote to use
+        populateAttributeNameToCSSPropertyIDMap.
+        (WebCore::SVGElement::isAnimatableCSSProperty): Updated to call the new
+        attributeNameToAnimatedPropertyTypeMap.
+
+2013-09-17  Darin Adler  <darin@apple.com>
+
         Make SVGTransform::valueAsString use StringBuilder
         https://bugs.webkit.org/show_bug.cgi?id=121498
 

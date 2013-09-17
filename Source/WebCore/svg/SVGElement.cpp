@@ -59,6 +59,7 @@
 #include "XMLNames.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -75,81 +76,158 @@ END_REGISTER_ANIMATED_PROPERTIES
 using namespace HTMLNames;
 using namespace SVGNames;
 
-void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, CSSPropertyID>* propertyNameToIdMap, const QualifiedName& attrName)
+static NEVER_INLINE void populateAttributeNameToCSSPropertyIDMap(HashMap<AtomicStringImpl*, CSSPropertyID>& map)
 {
-    // FIXME: when CSS supports "transform-origin" the special case for transform_originAttr can be removed.
-    CSSPropertyID propertyId = cssPropertyID(attrName.localName());
-    if (!propertyId && attrName == transform_originAttr)
-        propertyId = CSSPropertyWebkitTransformOrigin; // cssPropertyID("-webkit-transform-origin")
-    ASSERT(propertyId > 0);
-    propertyNameToIdMap->set(attrName.localName().impl(), propertyId);
+    // This list should include all base CSS and SVG CSS properties which are exposed as SVG XML attributes.
+    static const QualifiedName* const attributeNames[] = {
+        &alignment_baselineAttr,
+        &baseline_shiftAttr,
+        &buffered_renderingAttr,
+        &clipAttr,
+        &clip_pathAttr,
+        &clip_ruleAttr,
+        &SVGNames::colorAttr,
+        &color_interpolationAttr,
+        &color_interpolation_filtersAttr,
+        &color_profileAttr,
+        &color_renderingAttr,
+        &cursorAttr,
+        &SVGNames::directionAttr,
+        &displayAttr,
+        &dominant_baselineAttr,
+        &enable_backgroundAttr,
+        &fillAttr,
+        &fill_opacityAttr,
+        &fill_ruleAttr,
+        &filterAttr,
+        &flood_colorAttr,
+        &flood_opacityAttr,
+        &font_familyAttr,
+        &font_sizeAttr,
+        &font_stretchAttr,
+        &font_styleAttr,
+        &font_variantAttr,
+        &font_weightAttr,
+        &glyph_orientation_horizontalAttr,
+        &glyph_orientation_verticalAttr,
+        &image_renderingAttr,
+        &kerningAttr,
+        &letter_spacingAttr,
+        &lighting_colorAttr,
+        &marker_endAttr,
+        &marker_midAttr,
+        &marker_startAttr,
+        &maskAttr,
+        &mask_typeAttr,
+        &opacityAttr,
+        &overflowAttr,
+        &pointer_eventsAttr,
+        &shape_renderingAttr,
+        &stop_colorAttr,
+        &stop_opacityAttr,
+        &strokeAttr,
+        &stroke_dasharrayAttr,
+        &stroke_dashoffsetAttr,
+        &stroke_linecapAttr,
+        &stroke_linejoinAttr,
+        &stroke_miterlimitAttr,
+        &stroke_opacityAttr,
+        &stroke_widthAttr,
+        &text_anchorAttr,
+        &text_decorationAttr,
+        &text_renderingAttr,
+        &unicode_bidiAttr,
+        &vector_effectAttr,
+        &visibilityAttr,
+        &word_spacingAttr,
+        &writing_modeAttr,
+    };
+
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(attributeNames); ++i) {
+        const AtomicString& localName = attributeNames[i]->localName();
+        map.add(localName.impl(), cssPropertyID(localName));
+    }
+
+    // FIXME: When CSS supports "transform-origin" this special case can be removed,
+    // and we can add transform_originAttr to the table above instead.
+    map.add(transform_originAttr.localName().impl(), CSSPropertyWebkitTransformOrigin);
 }
 
-typedef HashMap<QualifiedName, AnimatedPropertyType> AttributeToPropertyTypeMap;
-static inline AttributeToPropertyTypeMap& cssPropertyToTypeMap()
+static NEVER_INLINE void populateAttributeNameToAnimatedPropertyTypeMap(HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& map)
 {
-    DEFINE_STATIC_LOCAL(AttributeToPropertyTypeMap, s_cssPropertyMap, ());
+    struct TableEntry {
+        const QualifiedName& attributeName;
+        AnimatedPropertyType type;
+    };
 
-    if (!s_cssPropertyMap.isEmpty())
-        return s_cssPropertyMap;
+    static const TableEntry table[] = {
+        { alignment_baselineAttr, AnimatedString },
+        { baseline_shiftAttr, AnimatedString },
+        { buffered_renderingAttr, AnimatedString },
+        { clipAttr, AnimatedRect },
+        { clip_pathAttr, AnimatedString },
+        { clip_ruleAttr, AnimatedString },
+        { SVGNames::colorAttr, AnimatedColor },
+        { color_interpolationAttr, AnimatedString },
+        { color_interpolation_filtersAttr, AnimatedString },
+        { color_profileAttr, AnimatedString },
+        { color_renderingAttr, AnimatedString },
+        { cursorAttr, AnimatedString },
+        { displayAttr, AnimatedString },
+        { dominant_baselineAttr, AnimatedString },
+        { fillAttr, AnimatedColor },
+        { fill_opacityAttr, AnimatedNumber },
+        { fill_ruleAttr, AnimatedString },
+        { filterAttr, AnimatedString },
+        { flood_colorAttr, AnimatedColor },
+        { flood_opacityAttr, AnimatedNumber },
+        { font_familyAttr, AnimatedString },
+        { font_sizeAttr, AnimatedLength },
+        { font_stretchAttr, AnimatedString },
+        { font_styleAttr, AnimatedString },
+        { font_variantAttr, AnimatedString },
+        { font_weightAttr, AnimatedString },
+        { image_renderingAttr, AnimatedString },
+        { kerningAttr, AnimatedLength },
+        { letter_spacingAttr, AnimatedLength },
+        { lighting_colorAttr, AnimatedColor },
+        { marker_endAttr, AnimatedString },
+        { marker_midAttr, AnimatedString },
+        { marker_startAttr, AnimatedString },
+        { maskAttr, AnimatedString },
+        { mask_typeAttr, AnimatedString },
+        { opacityAttr, AnimatedNumber },
+        { overflowAttr, AnimatedString },
+        { pointer_eventsAttr, AnimatedString },
+        { shape_renderingAttr, AnimatedString },
+        { stop_colorAttr, AnimatedColor },
+        { stop_opacityAttr, AnimatedNumber },
+        { strokeAttr, AnimatedColor },
+        { stroke_dasharrayAttr, AnimatedLengthList },
+        { stroke_dashoffsetAttr, AnimatedLength },
+        { stroke_linecapAttr, AnimatedString },
+        { stroke_linejoinAttr, AnimatedString },
+        { stroke_miterlimitAttr, AnimatedNumber },
+        { stroke_opacityAttr, AnimatedNumber },
+        { stroke_widthAttr, AnimatedLength },
+        { text_anchorAttr, AnimatedString },
+        { text_decorationAttr, AnimatedString },
+        { text_renderingAttr, AnimatedString },
+        { vector_effectAttr, AnimatedString },
+        { visibilityAttr, AnimatedString },
+        { word_spacingAttr, AnimatedLength },
+    };
 
-    // Fill the map for the first use.
-    s_cssPropertyMap.set(alignment_baselineAttr, AnimatedString);
-    s_cssPropertyMap.set(baseline_shiftAttr, AnimatedString);
-    s_cssPropertyMap.set(buffered_renderingAttr, AnimatedString);
-    s_cssPropertyMap.set(clipAttr, AnimatedRect);
-    s_cssPropertyMap.set(clip_pathAttr, AnimatedString);
-    s_cssPropertyMap.set(clip_ruleAttr, AnimatedString);
-    s_cssPropertyMap.set(SVGNames::colorAttr, AnimatedColor);
-    s_cssPropertyMap.set(color_interpolationAttr, AnimatedString);
-    s_cssPropertyMap.set(color_interpolation_filtersAttr, AnimatedString);
-    s_cssPropertyMap.set(color_profileAttr, AnimatedString);
-    s_cssPropertyMap.set(color_renderingAttr, AnimatedString);
-    s_cssPropertyMap.set(cursorAttr, AnimatedString);
-    s_cssPropertyMap.set(displayAttr, AnimatedString);
-    s_cssPropertyMap.set(dominant_baselineAttr, AnimatedString);
-    s_cssPropertyMap.set(fillAttr, AnimatedColor);
-    s_cssPropertyMap.set(fill_opacityAttr, AnimatedNumber);
-    s_cssPropertyMap.set(fill_ruleAttr, AnimatedString);
-    s_cssPropertyMap.set(filterAttr, AnimatedString);
-    s_cssPropertyMap.set(flood_colorAttr, AnimatedColor);
-    s_cssPropertyMap.set(flood_opacityAttr, AnimatedNumber);
-    s_cssPropertyMap.set(font_familyAttr, AnimatedString);
-    s_cssPropertyMap.set(font_sizeAttr, AnimatedLength);
-    s_cssPropertyMap.set(font_stretchAttr, AnimatedString);
-    s_cssPropertyMap.set(font_styleAttr, AnimatedString);
-    s_cssPropertyMap.set(font_variantAttr, AnimatedString);
-    s_cssPropertyMap.set(font_weightAttr, AnimatedString);
-    s_cssPropertyMap.set(image_renderingAttr, AnimatedString);
-    s_cssPropertyMap.set(kerningAttr, AnimatedLength);
-    s_cssPropertyMap.set(letter_spacingAttr, AnimatedLength);
-    s_cssPropertyMap.set(lighting_colorAttr, AnimatedColor);
-    s_cssPropertyMap.set(marker_endAttr, AnimatedString);
-    s_cssPropertyMap.set(marker_midAttr, AnimatedString);
-    s_cssPropertyMap.set(marker_startAttr, AnimatedString);
-    s_cssPropertyMap.set(maskAttr, AnimatedString);
-    s_cssPropertyMap.set(mask_typeAttr, AnimatedString);
-    s_cssPropertyMap.set(opacityAttr, AnimatedNumber);
-    s_cssPropertyMap.set(overflowAttr, AnimatedString);
-    s_cssPropertyMap.set(pointer_eventsAttr, AnimatedString);
-    s_cssPropertyMap.set(shape_renderingAttr, AnimatedString);
-    s_cssPropertyMap.set(stop_colorAttr, AnimatedColor);
-    s_cssPropertyMap.set(stop_opacityAttr, AnimatedNumber);
-    s_cssPropertyMap.set(strokeAttr, AnimatedColor);
-    s_cssPropertyMap.set(stroke_dasharrayAttr, AnimatedLengthList);
-    s_cssPropertyMap.set(stroke_dashoffsetAttr, AnimatedLength);
-    s_cssPropertyMap.set(stroke_linecapAttr, AnimatedString);
-    s_cssPropertyMap.set(stroke_linejoinAttr, AnimatedString);
-    s_cssPropertyMap.set(stroke_miterlimitAttr, AnimatedNumber);
-    s_cssPropertyMap.set(stroke_opacityAttr, AnimatedNumber);
-    s_cssPropertyMap.set(stroke_widthAttr, AnimatedLength);
-    s_cssPropertyMap.set(text_anchorAttr, AnimatedString);
-    s_cssPropertyMap.set(text_decorationAttr, AnimatedString);
-    s_cssPropertyMap.set(text_renderingAttr, AnimatedString);
-    s_cssPropertyMap.set(vector_effectAttr, AnimatedString);
-    s_cssPropertyMap.set(visibilityAttr, AnimatedString);
-    s_cssPropertyMap.set(word_spacingAttr, AnimatedLength);
-    return s_cssPropertyMap;
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(table); ++i)
+        map.add(table[i].attributeName.impl(), table[i].type);
+}
+
+static inline HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& attributeNameToAnimatedPropertyTypeMap()
+{
+    static NeverDestroyed<HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>> map;
+    if (map.get().isEmpty())
+        populateAttributeNameToAnimatedPropertyTypeMap(map);
+    return map;
 }
 
 SVGElement::SVGElement(const QualifiedName& tagName, Document& document)
@@ -449,13 +527,13 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& v
 void SVGElement::animatedPropertyTypeForAttribute(const QualifiedName& attributeName, Vector<AnimatedPropertyType>& propertyTypes)
 {
     localAttributeToPropertyMap().animatedPropertyTypeForAttribute(attributeName, propertyTypes);
-
     if (!propertyTypes.isEmpty())
         return;
 
-    AttributeToPropertyTypeMap& cssPropertyTypeMap = cssPropertyToTypeMap();
-    if (cssPropertyTypeMap.contains(attributeName))
-        propertyTypes.append(cssPropertyTypeMap.get(attributeName));
+    auto& map = attributeNameToAnimatedPropertyTypeMap();
+    auto it = map.find(attributeName.impl());
+    if (it != map.end())
+        propertyTypes.append(it->value);
 }
 
 bool SVGElement::haveLoadedRequiredResources()
@@ -904,80 +982,16 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
     if (!attrName.namespaceURI().isNull())
         return CSSPropertyInvalid;
 
-    static HashMap<AtomicStringImpl*, CSSPropertyID>* propertyNameToIdMap = 0;
-    if (!propertyNameToIdMap) {
-        propertyNameToIdMap = new HashMap<AtomicStringImpl*, CSSPropertyID>;
-        // This is a list of all base CSS and SVG CSS properties which are exposed as SVG XML attributes
-        mapAttributeToCSSProperty(propertyNameToIdMap, alignment_baselineAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, baseline_shiftAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, buffered_renderingAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, clipAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, clip_pathAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, clip_ruleAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, SVGNames::colorAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, color_interpolationAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, color_interpolation_filtersAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, color_profileAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, color_renderingAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, cursorAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, SVGNames::directionAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, displayAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, dominant_baselineAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, enable_backgroundAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, fillAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, fill_opacityAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, fill_ruleAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, filterAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, flood_colorAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, flood_opacityAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, font_familyAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, font_sizeAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, font_stretchAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, font_styleAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, font_variantAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, font_weightAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, glyph_orientation_horizontalAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, glyph_orientation_verticalAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, image_renderingAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, kerningAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, letter_spacingAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, lighting_colorAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, marker_endAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, marker_midAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, marker_startAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, maskAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, mask_typeAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, opacityAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, overflowAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, pointer_eventsAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, shape_renderingAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, stop_colorAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, stop_opacityAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, strokeAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, stroke_dasharrayAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, stroke_dashoffsetAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, stroke_linecapAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, stroke_linejoinAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, stroke_miterlimitAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, stroke_opacityAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, stroke_widthAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, text_anchorAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, text_decorationAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, text_renderingAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, transform_originAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, unicode_bidiAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, vector_effectAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, visibilityAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, word_spacingAttr);
-        mapAttributeToCSSProperty(propertyNameToIdMap, writing_modeAttr);
-    }
+    static NeverDestroyed<HashMap<AtomicStringImpl*, CSSPropertyID>> properties;
+    if (properties.get().isEmpty())
+        populateAttributeNameToCSSPropertyIDMap(properties.get());
 
-    return propertyNameToIdMap->get(attrName.localName().impl());
+    return properties.get().get(attrName.localName().impl());
 }
 
-bool SVGElement::isAnimatableCSSProperty(const QualifiedName& attrName)
+bool SVGElement::isAnimatableCSSProperty(const QualifiedName& attributeName)
 {
-    return cssPropertyToTypeMap().contains(attrName);
+    return attributeNameToAnimatedPropertyTypeMap().contains(attributeName.impl());
 }
 
 bool SVGElement::isPresentationAttribute(const QualifiedName& name) const
