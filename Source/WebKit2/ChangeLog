@@ -1,3 +1,18 @@
+2013-09-16  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Fix EFL build after r155888
+        https://bugs.webkit.org/show_bug.cgi?id=121465
+
+        Reviewed by Gyuyoung Kim.
+
+        Update WebView to follow the changes in PageClient in r155888.
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::createDrawingAreaProxy): Use createOwned (addded in
+        r155407) to return the DrawingAreaProxy from DrawingAreaProxyImpl.
+        * UIProcess/CoordinatedGraphics/WebView.h: Update createDrawingAreaProxy()
+        signature to match PageClient.h.
+
 2013-09-16  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Make symbol export filter more strict, and disable for dev/test builds
