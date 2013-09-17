@@ -1,3 +1,55 @@
+2013-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Hardware accelerated CSS transitions appear pixelated when scaled up using transform
+        https://bugs.webkit.org/show_bug.cgi?id=27684
+        <rdar://problem/6134606>
+
+        Reviewed by Dean Jackson.
+        
+        New tests that dump contentsScale under various scaling scenarios:
+
+        * compositing/contents-scale/animating-expected.txt: Added.
+        * compositing/contents-scale/animating.html: Added.
+        * compositing/contents-scale/scaled-ancestor-expected.txt: Added.
+        * compositing/contents-scale/scaled-ancestor.html: Added.
+        * compositing/contents-scale/simple-scale-expected.txt: Added.
+        * compositing/contents-scale/simple-scale.html: Added.
+        * compositing/contents-scale/z-translate-expected.txt: Added.
+        * compositing/contents-scale/z-translate.html: Added.
+        
+        These tests had Mac-specific results (which include visible rects and now
+        contents scale) in the cross-platform directory, so cleaned up the cross-platform
+        results and moved the Mac results to platform-mac.
+
+        * compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt:
+        * compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt:
+        * compositing/visible-rect/2d-transformed-expected.txt:
+        * compositing/visible-rect/3d-transform-style-expected.txt:
+        * compositing/visible-rect/3d-transformed-expected.txt:
+        * compositing/visible-rect/animated-expected.txt:
+        * compositing/visible-rect/animated-from-none-expected.txt:
+        * compositing/visible-rect/clipped-by-viewport-expected.txt:
+        * compositing/visible-rect/clipped-visible-rect-expected.txt:
+        * compositing/visible-rect/flipped-preserve-3d-expected.txt:
+        * compositing/visible-rect/iframe-and-layers-expected.txt:
+        * compositing/visible-rect/nested-transform-expected.txt:
+        * compositing/visible-rect/scrolled-expected.txt:
+        * platform/mac/compositing/tiling/rotated-tiled-clamped-expected.txt:
+        * platform/mac/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+        * platform/mac/compositing/tiling/tile-cache-zoomed-expected.txt:
+        * platform/mac/compositing/visible-rect/2d-transformed-expected.txt: Copied from LayoutTests/compositing/visible-rect/2d-transformed-expected.txt.
+        * platform/mac/compositing/visible-rect/3d-transform-style-expected.txt: Copied from LayoutTests/compositing/visible-rect/3d-transform-style-expected.txt.
+        * platform/mac/compositing/visible-rect/3d-transformed-expected.txt: Copied from LayoutTests/compositing/visible-rect/3d-transformed-expected.txt.
+        * platform/mac/compositing/visible-rect/animated-expected.txt: Copied from LayoutTests/compositing/visible-rect/animated-expected.txt.
+        * platform/mac/compositing/visible-rect/animated-from-none-expected.txt: Copied from LayoutTests/compositing/visible-rect/animated-from-none-expected.txt.
+        * platform/mac/compositing/visible-rect/clipped-by-viewport-expected.txt: Copied from LayoutTests/compositing/visible-rect/clipped-by-viewport-expected.txt.
+        * platform/mac/compositing/visible-rect/clipped-visible-rect-expected.txt: Copied from LayoutTests/compositing/visible-rect/clipped-visible-rect-expected.txt.
+        * platform/mac/compositing/visible-rect/flipped-preserve-3d-expected.txt: Copied from LayoutTests/compositing/visible-rect/flipped-preserve-3d-expected.txt.
+        * platform/mac/compositing/visible-rect/iframe-and-layers-expected.txt: Copied from LayoutTests/compositing/visible-rect/iframe-and-layers-expected.txt.
+        * platform/mac/compositing/visible-rect/iframe-no-layers-expected.txt:
+        * platform/mac/compositing/visible-rect/nested-transform-expected.txt: Copied from LayoutTests/compositing/visible-rect/nested-transform-expected.txt.
+        * platform/mac/compositing/visible-rect/scrolled-expected.txt: Copied from LayoutTests/compositing/visible-rect/scrolled-expected.txt.
+
 2013-09-17  Samuel White  <samuel_white@apple.com>
 
         AX: Expose ARIA Busy Notifications

@@ -1,3 +1,69 @@
+2013-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Hardware accelerated CSS transitions appear pixelated when scaled up using transform
+        https://bugs.webkit.org/show_bug.cgi?id=27684
+        <rdar://problem/6134606>
+
+        Reviewed by Dean Jackson.
+        
+        Take transforms and animations into account when computing the contentsScale
+        for a layer, so that scaled-up layers remain sharp most of the time.
+        
+        In its recursiveCommitChanges() tree walk, GraphicsLayerCA now tracks
+        a root-relative transform, and extracts from that transform the X and Y
+        scales which it uses to scale the backing store.
+        
+        If the layer has transform animations on it, we keep around
+        a transformation matrix for the animation endpoints (or keyframes),
+        pick up the state that has the larger impact on the root-relative scale,
+        and use that as the layer's transform, and the transform when recursing
+        over descendants.
+
+        Tests: compositing/contents-scale/animating.html
+               compositing/contents-scale/scaled-ancestor.html
+               compositing/contents-scale/simple-scale.html
+               compositing/contents-scale/z-translate.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::maxScaleFromTransform): Decompose the transform if necesssary
+        to extract the X and Y scale components.
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA): Initialize m_rootRelativeScaleFactor.
+        (WebCore::GraphicsLayerCA::flushCompositingState): Supply a TransformationMatrix
+        for the root of the recursion.
+        (WebCore::GraphicsLayerCA::layerTransform): This code was factored out of
+        computeVisibleRect(), and optionally takes a custom transform.
+        (WebCore::GraphicsLayerCA::computeVisibleRect): Use the layerTransform() function.
+        (WebCore::GraphicsLayerCA::updateRootRelativeScale): Given a transform from the root,
+        find the max scale factor by multiplying the various animation endpoint matrices and picking
+        the one with the biggest impact on scale. Use this to set m_rootRelativeScaleFactor, and
+        set the flag to say that we need to update contentsScale.
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): After updating
+        animations, call updateRootRelativeScale() to update m_rootRelativeScaleFactor.
+        (WebCore::GraphicsLayerCA::updateAnimations): We have a side table of animation name to
+        TransformationMatrix, so figure out which entries can be removed from that side table,
+        and remove them.
+        (WebCore::GraphicsLayerCA::setAnimationOnLayer):
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations): Store the matrices for
+        animation endpoints/keyframes in the m_animationTransforms side table. We don't store
+        them directly in LayerPropertyAnimation because we just want the final matrix for
+        a transform list, and using a side table makes ownership easier to manage.
+        (WebCore::GraphicsLayerCA::getTransformFromAnimationsWithMaxScaleImpact):
+        goes through the matrices for the running animation endpoints/keyframes, and
+        multiplies each with the transform up to this layer to find the matrix with the
+        larger impact on scale.
+        (WebCore::GraphicsLayerCA::setTransformAnimationEndpoints): Returns a vector
+        of TransformationMatrix for the from and to states.
+        (WebCore::GraphicsLayerCA::setTransformAnimationKeyframes): Returns a vector
+        of TransformationMatrix for the keyframes.
+        (WebCore::GraphicsLayerCA::updateContentsScale): Include m_rootRelativeScaleFactor in the
+        scale factor computation.
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties): If we're dumping visible rects,
+        also dump the contentsScale. Convenient at these are useful to look at together, and I didn't
+        want to pollute Internals with yet more flags.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::LayerPropertyAnimation::LayerPropertyAnimation): Formatting.
+
 2013-09-17  Samuel White  <samuel_white@apple.com>
 
         AX: Expose ARIA Busy Notifications

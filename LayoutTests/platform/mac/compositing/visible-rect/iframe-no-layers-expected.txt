@@ -2,10 +2,12 @@
 (GraphicsLayer
   (bounds 1508.00 1516.00)
   (visible rect 0.00, 0.00 285.00 x 135.00)
+  (contentsScale 1.00)
   (children 1
     (GraphicsLayer
       (bounds 1508.00 1516.00)
       (visible rect 0.00, 0.00 285.00 x 135.00)
+      (contentsScale 1.00)
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
@@ -14,6 +16,7 @@
           (drawsContent 1)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
           (visible rect 0.00, 0.00 100.00 x 127.00)
+          (contentsScale 1.00)
         )
       )
     )
