@@ -185,7 +185,7 @@ String SVGTransform::valueAsString() const
         builder.append(' ');
         builder.appendNumber(m_matrix.e());
         builder.append(' ');
-        builder.appendNumber(m_matrix.e());
+        builder.appendNumber(m_matrix.f());
         builder.append(')');
         return builder.toString();
     }
@@ -194,7 +194,7 @@ String SVGTransform::valueAsString() const
         builder.append(prefix);
         builder.appendNumber(m_matrix.e());
         builder.append(' ');
-        builder.appendNumber(m_matrix.e());
+        builder.appendNumber(m_matrix.f());
         builder.append(')');
         return builder.toString();
     }
