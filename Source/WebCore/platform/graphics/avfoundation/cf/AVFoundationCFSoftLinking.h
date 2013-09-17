@@ -28,8 +28,7 @@
 // Soft-link against AVFoundationCF functions and variables required by MediaPlayerPrivateAVFoundationCF.cpp.
 
 #ifdef DEBUG_ALL
-// FIXME: <rdar://problem/9898937> AVFoundationCF doesn't currently deliver a debug library.
-SOFT_LINK_LIBRARY(AVFoundationCF)
+SOFT_LINK_DEBUG_LIBRARY(AVFoundationCF)
 #else
 SOFT_LINK_LIBRARY(AVFoundationCF)
 #endif
