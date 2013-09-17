@@ -1,3 +1,18 @@
+2013-09-16  Timothy Hatcher  <timothy@apple.com>
+
+        Make InspectorTimelineAgent use an enum for the record type instead of a string.
+
+        https://bugs.webkit.org/show_bug.cgi?id=121461
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/InspectorBackendCommands.js:
+        * UserInterface/Legacy/6.0/InspectorBackendCommands.js:
+        * UserInterface/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.eventRecorded.processRecord):
+        (WebInspector.TimelineManager.prototype.eventRecorded):
+        * Versions/Inspector-iOS-6.0.json:
+
 2013-09-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: TypeError when updating ResourceTreeElement created in strange order

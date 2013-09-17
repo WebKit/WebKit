@@ -133,7 +133,7 @@ WebInspector.TimelineManager.prototype = {
             var callFrames = this._callFramesFromPayload(record.stackTrace);
 
             switch (record.type) {
-            case "MarkLoad":
+            case TimelineAgent.EventType.MarkLoad:
                 var mainFrame = WebInspector.frameResourceManager.mainFrame;
                 console.assert(mainFrame);
 
@@ -147,7 +147,7 @@ WebInspector.TimelineManager.prototype = {
                 this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordedEventMarker, {eventMarker: eventMarker});
                 this._stopAutoRecordingSoon();
                 break;
-            case "MarkDOMContent":
+            case TimelineAgent.EventType.MarkDOMContent:
                 var mainFrame = WebInspector.frameResourceManager.mainFrame;
                 console.assert(mainFrame);
 
@@ -158,20 +158,20 @@ WebInspector.TimelineManager.prototype = {
                 this._eventMarkers.push(eventMarker);
                 this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordedEventMarker, {eventMarker: eventMarker});
                 break;
-            case "ScheduleStyleRecalculation":
+            case TimelineAgent.EventType.ScheduleStyleRecalculation:
                 console.assert(isNaN(endTime));
                 // Pass the startTime as the endTime since this record type has no duration.
                 this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.InvalidateStyles, startTime, startTime, callFrames));
                 break;
-            case "RecalculateStyles":
+            case TimelineAgent.EventType.RecalculateStyles:
                 this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.RecalculateStyles, startTime, endTime, callFrames));
                 break;
-            case "InvalidateLayout":
+            case TimelineAgent.EventType.InvalidateLayout:
                 console.assert(isNaN(endTime));
                 // Pass the startTime as the endTime since this record type has no duration.
                 this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.InvalidateLayout, startTime, startTime, callFrames));
                 break;
-            case "Layout":
+            case TimelineAgent.EventType.Layout:
                 // COMPATIBILITY (iOS 6): Layout records did not contain area properties. This is not exposed via a quad "root".
                 var quad = record.data.root ? new WebInspector.Quad(record.data.root) : null;
                 if (quad)
@@ -179,7 +179,7 @@ WebInspector.TimelineManager.prototype = {
                 else
                     this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Layout, startTime, endTime, callFrames));
                 break;
-            case "Paint":
+            case TimelineAgent.EventType.Paint:
                 // COMPATIBILITY (iOS 6): Paint records data contained x, y, width, height properties. This became a quad "clip".
                 var quad = record.data.clip ? new WebInspector.Quad(record.data.clip) : null;
                 if (quad)
@@ -187,14 +187,14 @@ WebInspector.TimelineManager.prototype = {
                 else
                     this._addRecord(new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, record.data.x, record.data.y, record.data.width, record.data.height));
                 break;
-            case "EvaluateScript":
+            case TimelineAgent.EventType.EvaluateScript:
                 var resource = WebInspector.frameResourceManager.resourceForURL(record.data.url);
 
                 // The lineNumber is 1-based, but we expect 0-based.
                 var lineNumber = record.data.lineNumber - 1;
 
                 switch (parent ? parent.type : null) {
-                case "TimerFire":
+                case TimelineAgent.EventType.TimerFire:
                     this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, parent.data.timerId, resource, lineNumber, callFrames));
                     break;
                 default:
@@ -203,12 +203,12 @@ WebInspector.TimelineManager.prototype = {
                 }
 
                 break;
-            case "TimeStamp":
+            case TimelineAgent.EventType.TimeStamp:
                 var eventMarker = new WebInspector.TimelineEventMarker(startTime, WebInspector.TimelineEventMarker.Type.TimeStamp);
                 this._eventMarkers.push(eventMarker);
                 this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordedEventMarker, {eventMarker: eventMarker});
                 break;
-            case "FunctionCall":
+            case TimelineAgent.EventType.FunctionCall:
                 // FunctionCall always happens as a child of another record, and since the FunctionCall record
                 // has useful info we just make the timeline record here (combining the data from both records).
                 if (!parent)
@@ -220,26 +220,26 @@ WebInspector.TimelineManager.prototype = {
                 var lineNumber = record.data.scriptLine - 1;
 
                 switch (parent.type) {
-                case "TimerFire":
+                case TimelineAgent.EventType.TimerFire:
                     this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, parent.data.timerId, resource, lineNumber, callFrames));
                     break;
-                case "EventDispatch":
+                case TimelineAgent.EventType.EventDispatch:
                     this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, parent.data.type, resource, lineNumber, callFrames));
                     break;
-                case "XHRLoad":
+                case TimelineAgent.EventType.XHRLoad:
                     this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, "load", resource, lineNumber, callFrames));
                     break;
-                case "XHRReadyStateChange":
+                case TimelineAgent.EventType.XHRReadyStateChange:
                     this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, "readystatechange", resource, lineNumber, callFrames));
                     break;
-                case "FireAnimationFrame":
+                case TimelineAgent.EventType.FireAnimationFrame:
                     this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, parent.data.id, resource, lineNumber, callFrames));
                     break;
                 }
 
                 break;
-            case "TimerInstall":
-            case "TimerRemove":
+            case TimelineAgent.EventType.TimerInstall:
+            case TimelineAgent.EventType.TimerRemove:
                 // COMPATIBILITY (iOS 6): TimerInstall and TimerRemove did not have a stack trace.
                 var callFrame = null;
                 if (callFrames) {
@@ -255,7 +255,7 @@ WebInspector.TimelineManager.prototype = {
                 var resource = sourceCodeLocation ? sourceCodeLocation.sourceCode : null;
                 var lineNumber = sourceCodeLocation ? sourceCodeLocation.lineNumber : null;
 
-                if (record.type === "TimerInstall")
+                if (record.type === TimelineAgent.EventType.TimerInstall)
                     this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerInstalled, startTime, endTime, record.data.timerId, resource, lineNumber, callFrames));
                 else
                     this._addRecord(new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerRemoved, startTime, endTime, record.data.timerId, resource, lineNumber, callFrames));

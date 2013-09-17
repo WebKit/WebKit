@@ -62,6 +62,55 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
+ENUM_CLASS(TimelineRecordType) {
+    EventDispatch,
+    BeginFrame,
+    ScheduleStyleRecalculation,
+    RecalculateStyles,
+    InvalidateLayout,
+    Layout,
+    Paint,
+    ScrollLayer,
+    ResizeImage,
+    CompositeLayers,
+
+    ParseHTML,
+
+    TimerInstall,
+    TimerRemove,
+    TimerFire,
+
+    EvaluateScript,
+
+    MarkLoad,
+    MarkDOMContent,
+
+    TimeStamp,
+    Time,
+    TimeEnd,
+
+    ScheduleResourceRequest,
+    ResourceSendRequest,
+    ResourceReceiveResponse,
+    ResourceReceivedData,
+    ResourceFinish,
+
+    XHRReadyStateChange,
+    XHRLoad,
+
+    FunctionCall,
+    GCEvent,
+
+    RequestAnimationFrame,
+    CancelAnimationFrame,
+    FireAnimationFrame,
+
+    WebSocketCreate,
+    WebSocketSendHandshakeRequest,
+    WebSocketReceiveHandshakeResponse,
+    WebSocketDestroy
+} ENUM_CLASS_END(TimelineRecordType);
+
 class TimelineTimeConverter {
 public:
     TimelineTimeConverter()
@@ -180,34 +229,34 @@ private:
     friend class TimelineRecordStack;
 
     struct TimelineRecordEntry {
-        TimelineRecordEntry(PassRefPtr<InspectorObject> record, PassRefPtr<InspectorObject> data, PassRefPtr<InspectorArray> children, const String& type, size_t usedHeapSizeAtStart)
+        TimelineRecordEntry(PassRefPtr<InspectorObject> record, PassRefPtr<InspectorObject> data, PassRefPtr<InspectorArray> children, TimelineRecordType type, size_t usedHeapSizeAtStart)
             : record(record), data(data), children(children), type(type), usedHeapSizeAtStart(usedHeapSizeAtStart)
         {
         }
         RefPtr<InspectorObject> record;
         RefPtr<InspectorObject> data;
         RefPtr<InspectorArray> children;
-        String type;
+        TimelineRecordType type;
         size_t usedHeapSizeAtStart;
     };
-        
+
     InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorMemoryAgent*, InspectorCompositeState*, InspectorType, InspectorClient*);
 
     void sendEvent(PassRefPtr<InspectorObject>);
-    void appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame*);
-    void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*);
+    void appendRecord(PassRefPtr<InspectorObject> data, TimelineRecordType, bool captureCallStack, Frame*);
+    void pushCurrentRecord(PassRefPtr<InspectorObject>, TimelineRecordType, bool captureCallStack, Frame*);
 
     void setDOMCounters(TypeBuilder::Timeline::TimelineEvent* record);
     void setFrameIdentifier(InspectorObject* record, Frame*);
     void pushGCEventRecords();
 
-    void didCompleteCurrentRecord(const String& type);
+    void didCompleteCurrentRecord(TimelineRecordType);
 
     void setHeapSizeStatistics(InspectorObject* record);
     void commitFrameRecord();
 
-    void addRecordToTimeline(PassRefPtr<InspectorObject>, const String& type);
-    void innerAddRecordToTimeline(PassRefPtr<InspectorObject>, const String& type);
+    void addRecordToTimeline(PassRefPtr<InspectorObject>, TimelineRecordType);
+    void innerAddRecordToTimeline(PassRefPtr<InspectorObject>, TimelineRecordType);
     void clearRecordStack();
 
     void localToPageQuad(const RenderObject& renderer, const LayoutRect&, FloatQuad*);

@@ -1,3 +1,22 @@
+2013-09-16  Timothy Hatcher  <timothy@apple.com>
+
+        Make InspectorTimelineAgent use an enum for the record type instead of a string.
+
+        https://bugs.webkit.org/show_bug.cgi?id=121461
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::toProtocol):
+        (WebCore::InspectorTimelineAgent::innerAddRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        (WebCore::InspectorTimelineAgent::appendRecord):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::TimelineRecordEntry::TimelineRecordEntry):
+
 2013-09-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add RunLoop::isMain and use it in WebKit2

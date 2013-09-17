@@ -911,8 +911,8 @@
                 "description": "WebSocket frame data.",
                 "properties": [
                     { "name": "opcode", "type": "number", "description": "WebSocket frame opcode." },
-                    { "name": "mask", "type": "boolean", "description": "WebSocke frame mask." },
-                    { "name": "payloadData", "type": "string", "description": "WebSocke frame payload data." }
+                    { "name": "mask", "type": "boolean", "description": "WebSocket frame mask." },
+                    { "name": "payloadData", "type": "string", "description": "WebSocket frame payload data." }
                 ]
             },
             {
@@ -2578,10 +2578,16 @@
                 "description": "Current values of DOM counters."
             },
             {
+                "id": "EventType",
+                "type": "string",
+                "enum": ["EventDispatch", "BeginFrame", "ScheduleStyleRecalculation", "RecalculateStyles", "InvalidateLayout", "Layout", "Paint", "ScrollLayer", "ResizeImage", "CompositeLayers", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "Time", "TimeEnd", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame", "WebSocketCreate", "WebSocketSendHandshakeRequest", "WebSocketReceiveHandshakeResponse", "WebSocketDestroy"],
+                "description": "Timeline record type."
+            },
+            {
                 "id": "TimelineEvent",
                 "type": "object",
                 "properties": [
-                    { "name": "type", "type": "string", "description": "Event type." },
+                    { "name": "type", "$ref": "EventType", "description": "Event type." },
                     { "name": "thread", "type": "string", "optional": true, "description": "If present, identifies the thread that produced the event." },
                     { "name": "data", "type": "object", "description": "Event data." },
                     { "name": "children", "type": "array", "optional": true, "items": { "$ref": "TimelineEvent" }, "description": "Nested records." },

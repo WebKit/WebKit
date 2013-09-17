@@ -215,6 +215,7 @@ InspectorBackend.registerCommand("CSS.stopSelectorProfiler", [], ["profile"]);
 
 // Timeline.
 InspectorBackend.registerTimelineDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Timeline");
+InspectorBackend.registerEnum("Timeline.EventType", {EventDispatch: "EventDispatch", Layout: "Layout", RecalculateStyles: "RecalculateStyles", Paint: "Paint", BeginFrame: "BeginFrame", ParseHTML: "ParseHTML", TimerInstall: "TimerInstall", TimerRemove: "TimerRemove", TimerFire: "TimerFire", EvaluateScript: "EvaluateScript", MarkLoad: "MarkLoad", MarkDOMContent: "MarkDOMContent", TimeStamp: "TimeStamp", ScheduleResourceRequest: "ScheduleResourceRequest", ResourceSendRequest: "ResourceSendRequest", ResourceReceiveResponse: "ResourceReceiveResponse", ResourceReceivedData: "ResourceReceivedData", ResourceFinish: "ResourceFinish", XHRReadyStateChange: "XHRReadyStateChange", XHRLoad: "XHRLoad", FunctionCall: "FunctionCall", GCEvent: "GCEvent", RequestAnimationFrame: "RequestAnimationFrame", CancelAnimationFrame: "CancelAnimationFrame", FireAnimationFrame: "FireAnimationFrame"});
 InspectorBackend.registerEvent("Timeline.eventRecorded", ["record"]);
 InspectorBackend.registerCommand("Timeline.start", [{"name": "maxCallStackDepth", "type": "number", "optional": true}], []);
 InspectorBackend.registerCommand("Timeline.stop", [], []);

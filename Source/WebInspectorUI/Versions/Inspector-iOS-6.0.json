@@ -697,8 +697,8 @@
                 "hidden": true,
                 "properties": [
                     { "name": "opcode", "type": "number", "description": "WebSocket frame opcode." },
-                    { "name": "mask", "type": "boolean", "description": "WebSocke frame mask." },
-                    { "name": "payloadData", "type": "string", "description": "WebSocke frame payload data." }
+                    { "name": "mask", "type": "boolean", "description": "WebSocket frame mask." },
+                    { "name": "payloadData", "type": "string", "description": "WebSocket frame payload data." }
                 ]
             },
             {
@@ -2126,10 +2126,16 @@
         "description": "Timeline provides its clients with instrumentation records that are generated during the page runtime. Timeline instrumentation can be started and stopped using corresponding commands. While timeline is started, it is generating timeline event records.",
         "types": [
             {
+                "id": "EventType",
+                "type": "string",
+                "enum": ["EventDispatch", "Layout", "RecalculateStyles", "Paint", "BeginFrame", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame"],
+                "description": "Timeline record type."
+            },
+            {
                 "id": "TimelineEvent",
                 "type": "object",
                 "properties": [
-                    { "name": "type", "type": "string", "description": "Event type." },
+                    { "name": "type", "$ref": "EventType", "description": "Event type." },
                     { "name": "data", "type": "object", "description": "Event data." },
                     { "name": "children", "type": "array", "optional": true, "items": { "$ref": "TimelineEvent" }, "description": "Nested records." }
                 ],
