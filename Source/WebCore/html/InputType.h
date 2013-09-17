@@ -82,8 +82,8 @@ class InputType {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement&, const AtomicString&);
-    static PassOwnPtr<InputType> createText(HTMLInputElement&);
+    static OwnPtr<InputType> create(HTMLInputElement&, const AtomicString&);
+    static OwnPtr<InputType> createText(HTMLInputElement&);
     virtual ~InputType();
 
     static bool themeSupportsDataListUI(InputType*);
@@ -186,7 +186,7 @@ public:
 
     virtual void handleClickEvent(MouseEvent*);
     virtual void handleMouseDownEvent(MouseEvent*);
-    virtual PassOwnPtr<ClickHandlingState> willDispatchClick();
+    virtual OwnPtr<ClickHandlingState> willDispatchClick();
     virtual void didDispatchClick(Event*, const ClickHandlingState&);
     virtual void handleDOMActivateEvent(Event*);
     virtual void handleKeydownEvent(KeyboardEvent*);

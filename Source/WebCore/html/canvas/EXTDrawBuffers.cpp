@@ -47,7 +47,7 @@ WebGLExtension::ExtensionName EXTDrawBuffers::getName() const
     return WebGLExtension::EXTDrawBuffersName;
 }
 
-PassOwnPtr<EXTDrawBuffers> EXTDrawBuffers::create(WebGLRenderingContext* context)
+OwnPtr<EXTDrawBuffers> EXTDrawBuffers::create(WebGLRenderingContext* context)
 {
     return adoptPtr(new EXTDrawBuffers(context));
 }

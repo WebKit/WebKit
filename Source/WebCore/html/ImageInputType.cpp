@@ -44,7 +44,7 @@ inline ImageInputType::ImageInputType(HTMLInputElement& element)
 {
 }
 
-PassOwnPtr<InputType> ImageInputType::create(HTMLInputElement& element)
+OwnPtr<InputType> ImageInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new ImageInputType(element));
 }

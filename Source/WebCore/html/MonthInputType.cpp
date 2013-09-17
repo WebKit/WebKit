@@ -49,7 +49,7 @@ static const int monthDefaultStep = 1;
 static const int monthDefaultStepBase = 0;
 static const int monthStepScaleFactor = 1;
 
-PassOwnPtr<InputType> MonthInputType::create(HTMLInputElement& element)
+OwnPtr<InputType> MonthInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new MonthInputType(element));
 }

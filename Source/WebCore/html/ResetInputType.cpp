@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<InputType> ResetInputType::create(HTMLInputElement& element)
+OwnPtr<InputType> ResetInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new ResetInputType(element));
 }

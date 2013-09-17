@@ -49,7 +49,7 @@ class ScriptExecutionContext;
 class PublicURLManager {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<PublicURLManager> create() { return adoptPtr(new PublicURLManager); }
+    static OwnPtr<PublicURLManager> create() { return adoptPtr(new PublicURLManager); }
     void contextDestroyed()
     {
         HashSet<String>::iterator blobURLsEnd = m_blobURLs.end();

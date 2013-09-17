@@ -78,7 +78,7 @@ static bool mediaAttributeMatches(Frame* frame, RenderStyle* renderStyle, const 
     return mediaQueryEvaluator.eval(mediaQueries.get());
 }
 
-void HTMLResourcePreloader::preload(PassOwnPtr<PreloadRequest> preload)
+void HTMLResourcePreloader::preload(OwnPtr<PreloadRequest> preload)
 {
     ASSERT(m_document->frame());
     ASSERT(m_document->renderView());

@@ -58,7 +58,7 @@ class WebVTTTokenizer {
     WTF_MAKE_NONCOPYABLE(WebVTTTokenizer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<WebVTTTokenizer> create() { return adoptPtr(new WebVTTTokenizer); }
+    static OwnPtr<WebVTTTokenizer> create() { return adoptPtr(new WebVTTTokenizer); }
 
     typedef WebVTTTokenizerState State;
 

@@ -52,7 +52,7 @@ inline SearchInputType::SearchInputType(HTMLInputElement& element)
 {
 }
 
-PassOwnPtr<InputType> SearchInputType::create(HTMLInputElement& element)
+OwnPtr<InputType> SearchInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new SearchInputType(element));
 }

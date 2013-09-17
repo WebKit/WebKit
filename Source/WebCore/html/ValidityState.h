@@ -33,7 +33,7 @@ namespace WebCore {
 class ValidityState : public ScriptWrappable {
     WTF_MAKE_NONCOPYABLE(ValidityState); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<ValidityState> create(FormAssociatedElement* control)
+    static OwnPtr<ValidityState> create(FormAssociatedElement* control)
     {
         return adoptPtr(new ValidityState(control));
     }

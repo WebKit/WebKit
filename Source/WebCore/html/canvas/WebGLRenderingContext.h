@@ -81,7 +81,7 @@ typedef int ExceptionCode;
 
 class WebGLRenderingContext : public CanvasRenderingContext, public ActiveDOMObject {
 public:
-    static PassOwnPtr<WebGLRenderingContext> create(HTMLCanvasElement*, WebGLContextAttributes*);
+    static OwnPtr<WebGLRenderingContext> create(HTMLCanvasElement*, WebGLContextAttributes*);
     virtual ~WebGLRenderingContext();
 
     virtual bool is3d() const { return true; }

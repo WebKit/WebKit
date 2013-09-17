@@ -404,7 +404,7 @@ private:
     WebGLRenderingContext* m_context;
 };
 
-PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElement* canvas, WebGLContextAttributes* attrs)
+OwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElement* canvas, WebGLContextAttributes* attrs)
 {
     Document& document = canvas->document();
     Frame* frame = document.frame();

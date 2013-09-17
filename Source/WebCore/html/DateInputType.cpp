@@ -51,7 +51,7 @@ inline DateInputType::DateInputType(HTMLInputElement& element)
 {
 }
 
-PassOwnPtr<InputType> DateInputType::create(HTMLInputElement& element)
+OwnPtr<InputType> DateInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new DateInputType(element));
 }

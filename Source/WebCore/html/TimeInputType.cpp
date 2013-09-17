@@ -54,7 +54,7 @@ TimeInputType::TimeInputType(HTMLInputElement& element)
 {
 }
 
-PassOwnPtr<InputType> TimeInputType::create(HTMLInputElement& element)
+OwnPtr<InputType> TimeInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new TimeInputType(element));
 }

@@ -39,7 +39,7 @@ namespace WebCore {
 
 class DateTimeInputType : public BaseChooserOnlyDateAndTimeInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement&);
+    static OwnPtr<InputType> create(HTMLInputElement&);
 
 private:
     explicit DateTimeInputType(HTMLInputElement& element) : BaseDateTimeInputType(element) { }

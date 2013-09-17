@@ -49,7 +49,7 @@ WebGLExtension::ExtensionName WebGLDebugShaders::getName() const
     return WebGLDebugShadersName;
 }
 
-PassOwnPtr<WebGLDebugShaders> WebGLDebugShaders::create(WebGLRenderingContext* context)
+OwnPtr<WebGLDebugShaders> WebGLDebugShaders::create(WebGLRenderingContext* context)
 {
     return adoptPtr(new WebGLDebugShaders(context));
 }

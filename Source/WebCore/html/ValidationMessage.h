@@ -49,7 +49,7 @@ class ValidationMessageClient;
 class ValidationMessage {
     WTF_MAKE_NONCOPYABLE(ValidationMessage); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<ValidationMessage> create(HTMLFormControlElement*);
+    static OwnPtr<ValidationMessage> create(HTMLFormControlElement*);
     ~ValidationMessage();
     void updateValidationMessage(const String&);
     void requestToHideMessage();

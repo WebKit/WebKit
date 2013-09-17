@@ -108,7 +108,7 @@ public:
         BadCue
     };
 
-    static PassOwnPtr<WebVTTParser> create(WebVTTParserClient* client, ScriptExecutionContext* context)
+    static OwnPtr<WebVTTParser> create(WebVTTParserClient* client, ScriptExecutionContext* context)
     {
         return adoptPtr(new WebVTTParser(client, context));
     }

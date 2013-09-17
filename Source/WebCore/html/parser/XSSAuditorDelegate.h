@@ -39,7 +39,7 @@ class FormData;
 
 class XSSInfo {
 public:
-    static PassOwnPtr<XSSInfo> create(bool didBlockEntirePage, bool didSendXSSProtectionHeader, bool didSendCSPHeader)
+    static OwnPtr<XSSInfo> create(bool didBlockEntirePage, bool didSendXSSProtectionHeader, bool didSendCSPHeader)
     {
         return adoptPtr(new XSSInfo(didBlockEntirePage, didSendXSSProtectionHeader, didSendCSPHeader));
     }

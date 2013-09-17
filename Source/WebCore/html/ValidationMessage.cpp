@@ -68,7 +68,7 @@ ValidationMessage::~ValidationMessage()
     deleteBubbleTree();
 }
 
-PassOwnPtr<ValidationMessage> ValidationMessage::create(HTMLFormControlElement* element)
+OwnPtr<ValidationMessage> ValidationMessage::create(HTMLFormControlElement* element)
 {
     return adoptPtr(new ValidationMessage(element));
 }

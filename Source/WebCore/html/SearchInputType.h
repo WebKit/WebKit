@@ -41,7 +41,7 @@ class SearchFieldResultsButtonElement;
 
 class SearchInputType : public BaseTextInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement&);
+    static OwnPtr<InputType> create(HTMLInputElement&);
 
     void stopSearchEventTimer();
 

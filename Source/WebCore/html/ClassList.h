@@ -35,7 +35,7 @@ class Element;
 
 class ClassList : public DOMTokenList {
 public:
-    static PassOwnPtr<ClassList> create(Element*);
+    static OwnPtr<ClassList> create(Element*);
 
     virtual void ref() OVERRIDE FINAL;
     virtual void deref() OVERRIDE FINAL;

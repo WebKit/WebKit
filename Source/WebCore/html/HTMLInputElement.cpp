@@ -92,7 +92,7 @@ using namespace HTMLNames;
 class ListAttributeTargetObserver : IdTargetObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<ListAttributeTargetObserver> create(const AtomicString& id, HTMLInputElement*);
+    static OwnPtr<ListAttributeTargetObserver> create(const AtomicString& id, HTMLInputElement*);
     virtual void idTargetChanged() OVERRIDE;
 
 private:
@@ -1904,7 +1904,7 @@ void HTMLInputElement::setWidth(unsigned width)
 }
 
 #if ENABLE(DATALIST_ELEMENT)
-PassOwnPtr<ListAttributeTargetObserver> ListAttributeTargetObserver::create(const AtomicString& id, HTMLInputElement* element)
+OwnPtr<ListAttributeTargetObserver> ListAttributeTargetObserver::create(const AtomicString& id, HTMLInputElement* element)
 {
     return adoptPtr(new ListAttributeTargetObserver(id, element));
 }

@@ -85,7 +85,7 @@ const AtomicString& UploadButtonElement::shadowPseudoId() const
     return pseudoId;
 }
 
-PassOwnPtr<InputType> FileInputType::create(HTMLInputElement& element)
+OwnPtr<InputType> FileInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new FileInputType(element));
 }

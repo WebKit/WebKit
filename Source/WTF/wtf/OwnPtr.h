@@ -149,7 +149,6 @@ namespace WTF {
         return *this;
     }
 
-#if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
     template<typename T> inline OwnPtr<T>::OwnPtr(OwnPtr<T>&& o)
         : m_ptr(o.leakPtr())
     {
@@ -160,22 +159,21 @@ namespace WTF {
     {
     }
 
-    template<typename T> inline OwnPtr<T>& OwnPtr<T>::operator=(OwnPtr<T>&& o)
+    template<typename T> inline auto OwnPtr<T>::operator=(OwnPtr&& o) -> OwnPtr&
     {
         ASSERT(!o || o != m_ptr);
-        auto ptr = std::move(o);
+        OwnPtr ptr = std::move(o);
         swap(ptr);
         return *this;
     }
 
-    template<typename T> template<typename U> inline OwnPtr<T>& OwnPtr<T>::operator=(OwnPtr<U>&& o)
+    template<typename T> template<typename U> inline auto OwnPtr<T>::operator=(OwnPtr<U>&& o) -> OwnPtr&
     {
         ASSERT(!o || o != m_ptr);
-        auto ptr = std::move(o);
+        OwnPtr ptr = std::move(o);
         swap(ptr);
         return *this;
     }
-#endif
 
     template<typename T> inline void swap(OwnPtr<T>& a, OwnPtr<T>& b)
     {

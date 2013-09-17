@@ -38,7 +38,7 @@ namespace WebCore {
 
 class MonthInputType : public BaseChooserOnlyDateAndTimeInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement&);
+    static OwnPtr<InputType> create(HTMLInputElement&);
 
 private:
     explicit MonthInputType(HTMLInputElement& element) : BaseMonthInputType(element) { }

@@ -84,7 +84,7 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace std;
 
-typedef PassOwnPtr<InputType> (*InputTypeFactoryFunction)(HTMLInputElement&);
+typedef OwnPtr<InputType> (*InputTypeFactoryFunction)(HTMLInputElement&);
 typedef HashMap<AtomicString, InputTypeFactoryFunction, CaseFoldingHash> InputTypeFactoryMap;
 
 static OwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
@@ -140,16 +140,16 @@ static OwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
     return map;
 }
 
-PassOwnPtr<InputType> InputType::create(HTMLInputElement& element, const AtomicString& typeName)
+OwnPtr<InputType> InputType::create(HTMLInputElement& element, const AtomicString& typeName)
 {
     static const InputTypeFactoryMap* factoryMap = createInputTypeFactoryMap().leakPtr();
-    PassOwnPtr<InputType> (*factory)(HTMLInputElement&) = typeName.isEmpty() ? 0 : factoryMap->get(typeName);
+    OwnPtr<InputType> (*factory)(HTMLInputElement&) = typeName.isEmpty() ? 0 : factoryMap->get(typeName);
     if (!factory)
         factory = TextInputType::create;
     return factory(element);
 }
 
-PassOwnPtr<InputType> InputType::createText(HTMLInputElement& element)
+OwnPtr<InputType> InputType::createText(HTMLInputElement& element)
 {
     return TextInputType::create(element);
 }
@@ -682,7 +682,7 @@ bool InputType::canSetValue(const String&)
     return true;
 }
 
-PassOwnPtr<ClickHandlingState> InputType::willDispatchClick()
+OwnPtr<ClickHandlingState> InputType::willDispatchClick()
 {
     return nullptr;
 }

@@ -175,8 +175,8 @@ class SavedFormState {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static PassOwnPtr<SavedFormState> create();
-    static PassOwnPtr<SavedFormState> deserialize(const Vector<String>&, size_t& index);
+    static OwnPtr<SavedFormState> create();
+    static OwnPtr<SavedFormState> deserialize(const Vector<String>&, size_t& index);
     void serializeTo(Vector<String>&) const;
     bool isEmpty() const { return m_stateForNewFormElements.isEmpty(); }
     void appendControlState(const AtomicString& name, const AtomicString& type, const FormControlState&);
@@ -192,7 +192,7 @@ private:
     size_t m_controlStateCount;
 };
 
-PassOwnPtr<SavedFormState> SavedFormState::create()
+OwnPtr<SavedFormState> SavedFormState::create()
 {
     return adoptPtr(new SavedFormState);
 }
@@ -202,7 +202,7 @@ static bool isNotFormControlTypeCharacter(UChar ch)
     return ch != '-' && (ch > 'z' || ch < 'a');
 }
 
-PassOwnPtr<SavedFormState> SavedFormState::deserialize(const Vector<String>& stateVector, size_t& index)
+OwnPtr<SavedFormState> SavedFormState::deserialize(const Vector<String>& stateVector, size_t& index)
 {
     if (index >= stateVector.size())
         return nullptr;
@@ -291,7 +291,7 @@ class FormKeyGenerator {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static PassOwnPtr<FormKeyGenerator> create() { return adoptPtr(new FormKeyGenerator); }
+    static OwnPtr<FormKeyGenerator> create() { return adoptPtr(new FormKeyGenerator); }
     AtomicString formKey(const HTMLFormControlElementWithState&);
     void willDeleteForm(HTMLFormElement*);
 
@@ -390,7 +390,7 @@ static String formStateSignature()
     return signature;
 }
 
-PassOwnPtr<FormController::SavedFormStateMap> FormController::createSavedFormStateMap(const FormElementListHashSet& controlList)
+OwnPtr<FormController::SavedFormStateMap> FormController::createSavedFormStateMap(const FormElementListHashSet& controlList)
 {
     OwnPtr<FormKeyGenerator> keyGenerator = FormKeyGenerator::create();
     OwnPtr<SavedFormStateMap> stateMap = adoptPtr(new SavedFormStateMap);

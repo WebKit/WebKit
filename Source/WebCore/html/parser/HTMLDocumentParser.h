@@ -95,7 +95,7 @@ public:
         HTMLInputCheckpoint inputCheckpoint;
         TokenPreloadScannerCheckpoint preloadScannerCheckpoint;
     };
-    void didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk>);
+    void didReceiveParsedChunkFromBackgroundParser(OwnPtr<ParsedChunk>);
 #endif
 
 protected:
@@ -142,9 +142,9 @@ private:
 #if ENABLE(THREADED_HTML_PARSER)
     void startBackgroundParser();
     void stopBackgroundParser();
-    void validateSpeculations(PassOwnPtr<ParsedChunk> lastChunk);
-    void discardSpeculationsAndResumeFrom(PassOwnPtr<ParsedChunk> lastChunk, PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>);
-    void processParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk>);
+    void validateSpeculations(OwnPtr<ParsedChunk> lastChunk);
+    void discardSpeculationsAndResumeFrom(OwnPtr<ParsedChunk> lastChunk, OwnPtr<HTMLToken>, OwnPtr<HTMLTokenizer>);
+    void processParsedChunkFromBackgroundParser(OwnPtr<ParsedChunk>);
     void pumpPendingSpeculations();
 #endif
 

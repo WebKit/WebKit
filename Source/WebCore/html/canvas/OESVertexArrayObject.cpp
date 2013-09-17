@@ -49,7 +49,7 @@ WebGLExtension::ExtensionName OESVertexArrayObject::getName() const
     return OESVertexArrayObjectName;
 }
 
-PassOwnPtr<OESVertexArrayObject> OESVertexArrayObject::create(WebGLRenderingContext* context)
+OwnPtr<OESVertexArrayObject> OESVertexArrayObject::create(WebGLRenderingContext* context)
 {
     return adoptPtr(new OESVertexArrayObject(context));
 }

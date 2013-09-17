@@ -42,7 +42,7 @@ using namespace HTMLNames;
 class FormAttributeTargetObserver : IdTargetObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<FormAttributeTargetObserver> create(const AtomicString& id, FormAssociatedElement*);
+    static OwnPtr<FormAttributeTargetObserver> create(const AtomicString& id, FormAssociatedElement*);
     virtual void idTargetChanged() OVERRIDE;
 
 private:
@@ -273,7 +273,7 @@ bool FormAssociatedElement::isFormControlElementWithState() const
     return false;
 }
 
-PassOwnPtr<FormAttributeTargetObserver> FormAttributeTargetObserver::create(const AtomicString& id, FormAssociatedElement* element)
+OwnPtr<FormAttributeTargetObserver> FormAttributeTargetObserver::create(const AtomicString& id, FormAssociatedElement* element)
 {
     return adoptPtr(new FormAttributeTargetObserver(id, element));
 }

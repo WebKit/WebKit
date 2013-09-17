@@ -61,7 +61,7 @@ typedef int ExceptionCode;
 
 class CanvasRenderingContext2D : public CanvasRenderingContext, public CanvasPathMethods {
 public:
-    static PassOwnPtr<CanvasRenderingContext2D> create(HTMLCanvasElement* canvas, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode)
+    static OwnPtr<CanvasRenderingContext2D> create(HTMLCanvasElement* canvas, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode)
     {
         return adoptPtr(new CanvasRenderingContext2D(canvas, usesCSSCompatibilityParseMode, usesDashboardCompatibilityMode));
     }
@@ -312,7 +312,7 @@ private:
     bool rectContainsCanvas(const FloatRect&) const;
 
     template<class T> IntRect calculateCompositingBufferRect(const T&, IntSize*);
-    PassOwnPtr<ImageBuffer> createCompositingBuffer(const IntRect&);
+    OwnPtr<ImageBuffer> createCompositingBuffer(const IntRect&);
     void compositeBuffer(ImageBuffer*, const IntRect&, CompositeOperator);
 
     void inflateStrokeRect(FloatRect&) const;

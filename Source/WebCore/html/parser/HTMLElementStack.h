@@ -66,10 +66,10 @@ public:
     private:
         friend class HTMLElementStack;
 
-        ElementRecord(PassRefPtr<HTMLStackItem>, PassOwnPtr<ElementRecord>);
+        ElementRecord(PassRefPtr<HTMLStackItem>, OwnPtr<ElementRecord>);
 
-        PassOwnPtr<ElementRecord> releaseNext() { return m_next.release(); }
-        void setNext(PassOwnPtr<ElementRecord> next) { m_next = next; }
+        OwnPtr<ElementRecord> releaseNext() { return m_next.release(); }
+        void setNext(OwnPtr<ElementRecord> next) { m_next = std::move(next); }
 
         RefPtr<HTMLStackItem> m_item;
         OwnPtr<ElementRecord> m_next;

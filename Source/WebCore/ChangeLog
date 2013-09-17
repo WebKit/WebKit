@@ -1,3 +1,204 @@
+2013-09-17  Anders Carlsson  <andersca@apple.com>
+
+        Stop explicitly using PassOwnPtr in WebCore/html
+        https://bugs.webkit.org/show_bug.cgi?id=121511
+
+        Reviewed by Andreas Kling.
+
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::setClassList):
+        * html/ButtonInputType.cpp:
+        (WebCore::ButtonInputType::create):
+        * html/ButtonInputType.h:
+        * html/CheckboxInputType.cpp:
+        (WebCore::CheckboxInputType::create):
+        (WebCore::CheckboxInputType::willDispatchClick):
+        * html/CheckboxInputType.h:
+        * html/ClassList.cpp:
+        (WebCore::ClassList::create):
+        * html/ClassList.h:
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::create):
+        * html/ColorInputType.h:
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::create):
+        * html/DateInputType.h:
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::create):
+        * html/DateTimeInputType.h:
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::create):
+        * html/DateTimeLocalInputType.h:
+        * html/EmailInputType.cpp:
+        (WebCore::EmailInputType::create):
+        * html/EmailInputType.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::create):
+        * html/FileInputType.h:
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAttributeTargetObserver::create):
+        * html/FormController.cpp:
+        (WebCore::SavedFormState::create):
+        (WebCore::SavedFormState::deserialize):
+        (WebCore::FormKeyGenerator::create):
+        (WebCore::FormController::createSavedFormStateMap):
+        * html/FormController.h:
+        (WebCore::FormController::create):
+        * html/HTMLInputElement.cpp:
+        (WebCore::ListAttributeTargetObserver::create):
+        * html/HiddenInputType.cpp:
+        (WebCore::HiddenInputType::create):
+        * html/HiddenInputType.h:
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::create):
+        * html/ImageInputType.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::create):
+        (WebCore::InputType::createText):
+        (WebCore::InputType::willDispatchClick):
+        * html/InputType.h:
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::create):
+        * html/MonthInputType.h:
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::create):
+        * html/NumberInputType.h:
+        * html/PasswordInputType.cpp:
+        (WebCore::PasswordInputType::create):
+        * html/PasswordInputType.h:
+        * html/PublicURLManager.h:
+        (WebCore::PublicURLManager::create):
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::create):
+        (WebCore::RadioInputType::willDispatchClick):
+        * html/RadioInputType.h:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::create):
+        * html/RangeInputType.h:
+        * html/ResetInputType.cpp:
+        (WebCore::ResetInputType::create):
+        * html/ResetInputType.h:
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::create):
+        * html/SearchInputType.h:
+        * html/SubmitInputType.cpp:
+        (WebCore::SubmitInputType::create):
+        * html/SubmitInputType.h:
+        * html/TelephoneInputType.cpp:
+        (WebCore::TelephoneInputType::create):
+        * html/TelephoneInputType.h:
+        * html/TextInputType.cpp:
+        (WebCore::TextInputType::create):
+        * html/TextInputType.h:
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::create):
+        * html/TimeInputType.h:
+        * html/URLInputType.cpp:
+        (WebCore::URLInputType::create):
+        * html/URLInputType.h:
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::create):
+        * html/ValidationMessage.h:
+        * html/ValidityState.h:
+        (WebCore::ValidityState::create):
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::create):
+        * html/WeekInputType.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createCompositingBuffer):
+        * html/canvas/CanvasRenderingContext2D.h:
+        (WebCore::CanvasRenderingContext2D::create):
+        * html/canvas/EXTDrawBuffers.cpp:
+        (WebCore::EXTDrawBuffers::create):
+        * html/canvas/EXTDrawBuffers.h:
+        * html/canvas/EXTTextureFilterAnisotropic.cpp:
+        (WebCore::EXTTextureFilterAnisotropic::create):
+        * html/canvas/EXTTextureFilterAnisotropic.h:
+        * html/canvas/OESElementIndexUint.cpp:
+        (WebCore::OESElementIndexUint::create):
+        * html/canvas/OESElementIndexUint.h:
+        * html/canvas/OESStandardDerivatives.cpp:
+        (WebCore::OESStandardDerivatives::create):
+        * html/canvas/OESStandardDerivatives.h:
+        * html/canvas/OESTextureFloat.cpp:
+        (WebCore::OESTextureFloat::create):
+        * html/canvas/OESTextureFloat.h:
+        * html/canvas/OESTextureHalfFloat.cpp:
+        (WebCore::OESTextureHalfFloat::create):
+        * html/canvas/OESTextureHalfFloat.h:
+        * html/canvas/OESVertexArrayObject.cpp:
+        (WebCore::OESVertexArrayObject::create):
+        * html/canvas/OESVertexArrayObject.h:
+        * html/canvas/WebGLCompressedTextureATC.cpp:
+        (WebCore::WebGLCompressedTextureATC::create):
+        * html/canvas/WebGLCompressedTextureATC.h:
+        * html/canvas/WebGLCompressedTexturePVRTC.cpp:
+        (WebCore::WebGLCompressedTexturePVRTC::create):
+        * html/canvas/WebGLCompressedTexturePVRTC.h:
+        * html/canvas/WebGLCompressedTextureS3TC.cpp:
+        (WebCore::WebGLCompressedTextureS3TC::create):
+        * html/canvas/WebGLCompressedTextureS3TC.h:
+        * html/canvas/WebGLDebugRendererInfo.cpp:
+        (WebCore::WebGLDebugRendererInfo::create):
+        * html/canvas/WebGLDebugRendererInfo.h:
+        * html/canvas/WebGLDebugShaders.cpp:
+        (WebCore::WebGLDebugShaders::create):
+        * html/canvas/WebGLDebugShaders.h:
+        * html/canvas/WebGLDepthTexture.cpp:
+        (WebCore::WebGLDepthTexture::create):
+        * html/canvas/WebGLDepthTexture.h:
+        * html/canvas/WebGLLoseContext.cpp:
+        (WebCore::WebGLLoseContext::create):
+        * html/canvas/WebGLLoseContext.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/parser/BackgroundHTMLParser.cpp:
+        (WebCore::BackgroundHTMLParser::BackgroundHTMLParser):
+        (WebCore::BackgroundHTMLParser::resumeFrom):
+        * html/parser/BackgroundHTMLParser.h:
+        (WebCore::BackgroundHTMLParser::create):
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser):
+        (WebCore::HTMLDocumentParser::validateSpeculations):
+        (WebCore::HTMLDocumentParser::discardSpeculationsAndResumeFrom):
+        (WebCore::HTMLDocumentParser::processParsedChunkFromBackgroundParser):
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::ElementRecord::ElementRecord):
+        * html/parser/HTMLElementStack.h:
+        (WebCore::HTMLElementStack::ElementRecord::releaseNext):
+        (WebCore::HTMLElementStack::ElementRecord::setNext):
+        * html/parser/HTMLMetaCharsetParser.h:
+        (WebCore::HTMLMetaCharsetParser::create):
+        * html/parser/HTMLParserScheduler.h:
+        (WebCore::HTMLParserScheduler::create):
+        * html/parser/HTMLParserThread.h:
+        (WebCore::HTMLParserThread::create):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::createPreloadRequest):
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::HTMLResourcePreloader::preload):
+        * html/parser/HTMLResourcePreloader.h:
+        (WebCore::PreloadRequest::create):
+        * html/parser/HTMLScriptRunner.h:
+        (WebCore::HTMLScriptRunner::create):
+        * html/parser/HTMLToken.h:
+        (WebCore::HTMLToken::releaseDoctypeData):
+        * html/parser/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::create):
+        * html/parser/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::create):
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::filterToken):
+        * html/parser/XSSAuditor.h:
+        * html/parser/XSSAuditorDelegate.h:
+        (WebCore::XSSInfo::create):
+        * html/track/WebVTTParser.h:
+        (WebCore::WebVTTParser::create):
+        * html/track/WebVTTTokenizer.h:
+        (WebCore::WebVTTTokenizer::create):
+
 2013-09-17  Enrica Casucci  <enrica@apple.com>
 
         Upstream changes to WebHTMLConverter to support HTML

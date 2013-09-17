@@ -130,9 +130,9 @@ inline bool isSelectScopeMarker(HTMLStackItem* item)
 
 }
 
-HTMLElementStack::ElementRecord::ElementRecord(PassRefPtr<HTMLStackItem> item, PassOwnPtr<ElementRecord> next)
+HTMLElementStack::ElementRecord::ElementRecord(PassRefPtr<HTMLStackItem> item, OwnPtr<ElementRecord> next)
     : m_item(item)
-    , m_next(next)
+    , m_next(std::move(next))
 {
     ASSERT(m_item);
 }

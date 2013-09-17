@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<InputType> SubmitInputType::create(HTMLInputElement& element)
+OwnPtr<InputType> SubmitInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new SubmitInputType(element));
 }

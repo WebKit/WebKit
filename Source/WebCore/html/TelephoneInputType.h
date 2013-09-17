@@ -37,7 +37,7 @@ namespace WebCore {
 
 class TelephoneInputType : public BaseTextInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement&);
+    static OwnPtr<InputType> create(HTMLInputElement&);
 
 private:
     explicit TelephoneInputType(HTMLInputElement& element) : BaseTextInputType(element) { }

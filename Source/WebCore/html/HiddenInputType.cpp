@@ -43,7 +43,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-PassOwnPtr<InputType> HiddenInputType::create(HTMLInputElement& element)
+OwnPtr<InputType> HiddenInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new HiddenInputType(element));
 }

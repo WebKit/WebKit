@@ -37,7 +37,7 @@ namespace WebCore {
 
 class URLInputType : public BaseTextInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement&);
+    static OwnPtr<InputType> create(HTMLInputElement&);
 
 private:
     explicit URLInputType(HTMLInputElement& element) : BaseTextInputType(element) { }

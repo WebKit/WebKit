@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<InputType> CheckboxInputType::create(HTMLInputElement& element)
+OwnPtr<InputType> CheckboxInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new CheckboxInputType(element));
 }
@@ -68,7 +68,7 @@ void CheckboxInputType::handleKeyupEvent(KeyboardEvent* event)
     dispatchSimulatedClickIfActive(event);
 }
 
-PassOwnPtr<ClickHandlingState> CheckboxInputType::willDispatchClick()
+OwnPtr<ClickHandlingState> CheckboxInputType::willDispatchClick()
 {
     // An event handler can use preventDefault or "return false" to reverse the checking we do here.
     // The ClickHandlingState object contains what we need to undo what we did here in didDispatchClick.

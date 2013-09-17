@@ -1549,7 +1549,7 @@ template<class T> IntRect CanvasRenderingContext2D::calculateCompositingBufferRe
     return bufferRect;
 }
 
-PassOwnPtr<ImageBuffer> CanvasRenderingContext2D::createCompositingBuffer(const IntRect& bufferRect)
+OwnPtr<ImageBuffer> CanvasRenderingContext2D::createCompositingBuffer(const IntRect& bufferRect)
 {
     RenderingMode renderMode = isAccelerated() ? Accelerated : Unaccelerated;
     return ImageBuffer::create(bufferRect.size(), 1, ColorSpaceDeviceRGB, renderMode);

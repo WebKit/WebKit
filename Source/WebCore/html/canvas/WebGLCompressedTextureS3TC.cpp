@@ -52,7 +52,7 @@ WebGLExtension::ExtensionName WebGLCompressedTextureS3TC::getName() const
     return WebGLCompressedTextureS3TCName;
 }
 
-PassOwnPtr<WebGLCompressedTextureS3TC> WebGLCompressedTextureS3TC::create(WebGLRenderingContext* context)
+OwnPtr<WebGLCompressedTextureS3TC> WebGLCompressedTextureS3TC::create(WebGLRenderingContext* context)
 {
     return adoptPtr(new WebGLCompressedTextureS3TC(context));
 }

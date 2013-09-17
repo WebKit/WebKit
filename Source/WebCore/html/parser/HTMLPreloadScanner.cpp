@@ -142,7 +142,7 @@ public:
     }
 #endif
 
-    PassOwnPtr<PreloadRequest> createPreloadRequest(const KURL& predictedBaseURL)
+    OwnPtr<PreloadRequest> createPreloadRequest(const KURL& predictedBaseURL)
     {
         if (!shouldPreload())
             return nullptr;

@@ -55,7 +55,7 @@ public:
         OwnPtr<TokenPreloadScanner> preloadScanner;
     };
 
-    static void create(PassRefPtr<WeakReference<BackgroundHTMLParser> > reference, PassOwnPtr<Configuration> config)
+    static void create(PassRefPtr<WeakReference<BackgroundHTMLParser> > reference, OwnPtr<Configuration> config)
     {
         new BackgroundHTMLParser(reference, config);
         // Caller must free by calling stop().
@@ -72,7 +72,7 @@ public:
     };
 
     void append(const String&);
-    void resumeFrom(PassOwnPtr<Checkpoint>);
+    void resumeFrom(OwnPtr<Checkpoint>);
     void startedChunkWithCheckpoint(HTMLInputCheckpoint);
     void finish();
     void stop();
@@ -80,7 +80,7 @@ public:
     void forcePlaintextForTextDocument();
 
 private:
-    BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> >, PassOwnPtr<Configuration>);
+    BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> >, OwnPtr<Configuration>);
 
     void markEndOfFile();
     void pumpTokenizer();

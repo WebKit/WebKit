@@ -37,7 +37,7 @@ namespace WebCore {
 
 class ButtonInputType : public BaseButtonInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement&);
+    static OwnPtr<InputType> create(HTMLInputElement&);
 
 private:
     ButtonInputType(HTMLInputElement& element) : BaseButtonInputType(element) { }

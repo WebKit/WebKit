@@ -33,7 +33,7 @@ namespace WebCore {
 
 class EXTDrawBuffers : public WebGLExtension {
 public:
-    static PassOwnPtr<EXTDrawBuffers> create(WebGLRenderingContext*);
+    static OwnPtr<EXTDrawBuffers> create(WebGLRenderingContext*);
 
     static bool supported(WebGLRenderingContext*);
 

@@ -44,7 +44,7 @@ class FileList;
 
 class FileInputType : public BaseClickableWithKeyInputType, private FileChooserClient, private FileIconLoaderClient {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement&);
+    static OwnPtr<InputType> create(HTMLInputElement&);
     virtual ~FileInputType();
 
     static Vector<FileChooserFileInfo> filesFromFormControlState(const FormControlState&);

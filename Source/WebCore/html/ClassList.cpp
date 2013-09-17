@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<ClassList> ClassList::create(Element* element)
+OwnPtr<ClassList> ClassList::create(Element* element)
 {
     return adoptPtr(new ClassList(element));
 }

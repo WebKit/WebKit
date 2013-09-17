@@ -37,7 +37,7 @@ typedef int ExceptionCode;
 
 class WebGLDebugShaders : public WebGLExtension {
 public:
-    static PassOwnPtr<WebGLDebugShaders> create(WebGLRenderingContext*);
+    static OwnPtr<WebGLDebugShaders> create(WebGLRenderingContext*);
 
     virtual ~WebGLDebugShaders();
     virtual ExtensionName getName() const;

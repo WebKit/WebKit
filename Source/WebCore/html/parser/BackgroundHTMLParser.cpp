@@ -74,7 +74,7 @@ static void checkThatPreloadsAreSafeToSendToAnotherThread(const PreloadRequestSt
 
 #endif
 
-BackgroundHTMLParser::BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> > reference, PassOwnPtr<Configuration> config)
+BackgroundHTMLParser::BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> > reference, OwnPtr<Configuration> config)
     : m_weakFactory(reference, this)
     , m_token(adoptPtr(new HTMLToken))
     , m_tokenizer(HTMLTokenizer::create(config->options))
@@ -94,7 +94,7 @@ void BackgroundHTMLParser::append(const String& input)
     pumpTokenizer();
 }
 
-void BackgroundHTMLParser::resumeFrom(PassOwnPtr<Checkpoint> checkpoint)
+void BackgroundHTMLParser::resumeFrom(OwnPtr<Checkpoint> checkpoint)
 {
     m_parser = checkpoint->parser;
     m_token = checkpoint->token.release();

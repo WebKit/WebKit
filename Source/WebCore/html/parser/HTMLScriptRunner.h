@@ -44,7 +44,7 @@ class ScriptSourceCode;
 class HTMLScriptRunner {
     WTF_MAKE_NONCOPYABLE(HTMLScriptRunner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<HTMLScriptRunner> create(Document* document, HTMLScriptRunnerHost* host)
+    static OwnPtr<HTMLScriptRunner> create(Document* document, HTMLScriptRunnerHost* host)
     {
         return adoptPtr(new HTMLScriptRunner(document, host));
     }

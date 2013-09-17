@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-PassOwnPtr<InputType> RadioInputType::create(HTMLInputElement& element)
+OwnPtr<InputType> RadioInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new RadioInputType(element));
 }
@@ -145,7 +145,7 @@ bool RadioInputType::shouldSendChangeEventAfterCheckedChanged()
     return element().checked();
 }
 
-PassOwnPtr<ClickHandlingState> RadioInputType::willDispatchClick()
+OwnPtr<ClickHandlingState> RadioInputType::willDispatchClick()
 {
     // An event handler can use preventDefault or "return false" to reverse the selection we do here.
     // The ClickHandlingState object contains what we need to undo what we did here in didDispatchClick.

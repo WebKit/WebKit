@@ -45,7 +45,7 @@ WebGLExtension::ExtensionName OESStandardDerivatives::getName() const
     return OESStandardDerivativesName;
 }
 
-PassOwnPtr<OESStandardDerivatives> OESStandardDerivatives::create(WebGLRenderingContext* context)
+OwnPtr<OESStandardDerivatives> OESStandardDerivatives::create(WebGLRenderingContext* context)
 {
     return adoptPtr(new OESStandardDerivatives(context));
 }

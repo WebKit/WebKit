@@ -47,7 +47,7 @@ static const int dateTimeDefaultStep = 60;
 static const int dateTimeDefaultStepBase = 0;
 static const int dateTimeStepScaleFactor = 1000;
 
-PassOwnPtr<InputType> DateTimeInputType::create(HTMLInputElement& element)
+OwnPtr<InputType> DateTimeInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new DateTimeInputType(element));
 }

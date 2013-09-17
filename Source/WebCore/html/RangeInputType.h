@@ -39,7 +39,7 @@ class SliderThumbElement;
 
 class RangeInputType : public InputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement&);
+    static OwnPtr<InputType> create(HTMLInputElement&);
 
 private:
     explicit RangeInputType(HTMLInputElement&);

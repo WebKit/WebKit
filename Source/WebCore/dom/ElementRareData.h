@@ -104,7 +104,7 @@ public:
     void setComputedStyle(PassRefPtr<RenderStyle> computedStyle) { m_computedStyle = computedStyle; }
 
     ClassList* classList() const { return m_classList.get(); }
-    void setClassList(PassOwnPtr<ClassList> classList) { m_classList = classList; }
+    void setClassList(OwnPtr<ClassList> classList) { m_classList = std::move(classList); }
     void clearClassListValueForQuirksMode()
     {
         if (!m_classList)

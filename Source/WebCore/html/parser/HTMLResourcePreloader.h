@@ -33,12 +33,12 @@ namespace WebCore {
 
 class PreloadRequest {
 public:
-    static PassOwnPtr<PreloadRequest> create(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
+    static OwnPtr<PreloadRequest> create(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
     {
         return adoptPtr(new PreloadRequest(initiator, resourceURL, baseURL, resourceType, mediaAttribute));
     }
 
-    static PassOwnPtr<PreloadRequest> create(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType)
+    static OwnPtr<PreloadRequest> create(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType)
     {
         return adoptPtr(new PreloadRequest(initiator, resourceURL, baseURL, resourceType, String()));
     }
@@ -87,7 +87,7 @@ public:
     }
 
     void takeAndPreload(PreloadRequestStream&);
-    void preload(PassOwnPtr<PreloadRequest>);
+    void preload(OwnPtr<PreloadRequest>);
 
     WeakPtr<HTMLResourcePreloader> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 

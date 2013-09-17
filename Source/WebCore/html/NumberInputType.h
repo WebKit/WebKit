@@ -37,7 +37,7 @@ namespace WebCore {
 
 class NumberInputType : public TextFieldInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement&);
+    static OwnPtr<InputType> create(HTMLInputElement&);
 
 private:
     NumberInputType(HTMLInputElement& element) : TextFieldInputType(element) { }

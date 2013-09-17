@@ -47,7 +47,7 @@ WebGLExtension::ExtensionName WebGLDebugRendererInfo::getName() const
     return WebGLDebugRendererInfoName;
 }
 
-PassOwnPtr<WebGLDebugRendererInfo> WebGLDebugRendererInfo::create(WebGLRenderingContext* context)
+OwnPtr<WebGLDebugRendererInfo> WebGLDebugRendererInfo::create(WebGLRenderingContext* context)
 {
     return adoptPtr(new WebGLDebugRendererInfo(context));
 }

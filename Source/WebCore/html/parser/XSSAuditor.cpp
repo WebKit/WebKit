@@ -320,7 +320,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
     }
 }
 
-PassOwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
+OwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
 {
     ASSERT(m_state == Initialized);
     if (!m_isEnabled || m_xssProtection == ContentSecurityPolicy::AllowReflectedXSS)

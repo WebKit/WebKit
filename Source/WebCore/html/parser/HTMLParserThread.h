@@ -46,7 +46,7 @@ typedef Function<void()> Closure;
 
 class HTMLParserThread {
 public:
-    static PassOwnPtr<HTMLParserThread> create()
+    static OwnPtr<HTMLParserThread> create()
     {
         return adoptPtr(new HTMLParserThread());
     }

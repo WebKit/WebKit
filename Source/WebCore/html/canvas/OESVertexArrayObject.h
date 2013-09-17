@@ -39,7 +39,7 @@ typedef int ExceptionCode;
 
 class OESVertexArrayObject : public WebGLExtension {
 public:
-    static PassOwnPtr<OESVertexArrayObject> create(WebGLRenderingContext*);
+    static OwnPtr<OESVertexArrayObject> create(WebGLRenderingContext*);
 
     virtual ~OESVertexArrayObject();
     virtual ExtensionName getName() const;

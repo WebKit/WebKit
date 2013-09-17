@@ -226,7 +226,7 @@ public:
         m_doctypeData->m_systemIdentifier.append(character);
     }
 
-    PassOwnPtr<DoctypeData> releaseDoctypeData()
+    OwnPtr<DoctypeData> releaseDoctypeData()
     {
         return m_doctypeData.release();
     }

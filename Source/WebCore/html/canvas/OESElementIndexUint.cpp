@@ -45,7 +45,7 @@ WebGLExtension::ExtensionName OESElementIndexUint::getName() const
     return OESElementIndexUintName;
 }
 
-PassOwnPtr<OESElementIndexUint> OESElementIndexUint::create(WebGLRenderingContext* context)
+OwnPtr<OESElementIndexUint> OESElementIndexUint::create(WebGLRenderingContext* context)
 {
     return adoptPtr(new OESElementIndexUint(context));
 }

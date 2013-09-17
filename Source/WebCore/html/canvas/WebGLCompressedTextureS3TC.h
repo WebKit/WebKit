@@ -35,7 +35,7 @@ class WebGLTexture;
 
 class WebGLCompressedTextureS3TC : public WebGLExtension {
 public:
-    static PassOwnPtr<WebGLCompressedTextureS3TC> create(WebGLRenderingContext*);
+    static OwnPtr<WebGLCompressedTextureS3TC> create(WebGLRenderingContext*);
 
     static bool supported(WebGLRenderingContext*);
 

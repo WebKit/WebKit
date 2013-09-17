@@ -311,7 +311,7 @@ bool HTMLDocumentParser::canTakeNextToken(SynchronousMode mode, PumpSession& ses
 
 #if ENABLE(THREADED_HTML_PARSER)
 
-void HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk> chunk)
+void HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser(OwnPtr<ParsedChunk> chunk)
 {
     if (isWaitingForScripts() || !m_speculations.isEmpty()) {
         m_preloader->takeAndPreload(chunk->preloads);
@@ -332,7 +332,7 @@ void HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<Pa
     InspectorInstrumentation::didWriteHTML(cookie, lineNumber().zeroBasedInt());
 }
 
-void HTMLDocumentParser::validateSpeculations(PassOwnPtr<ParsedChunk> chunk)
+void HTMLDocumentParser::validateSpeculations(OwnPtr<ParsedChunk> chunk)
 {
     ASSERT(chunk);
     if (isWaitingForScripts()) {
@@ -371,7 +371,7 @@ void HTMLDocumentParser::validateSpeculations(PassOwnPtr<ParsedChunk> chunk)
     discardSpeculationsAndResumeFrom(chunk, token.release(), tokenizer.release());
 }
 
-void HTMLDocumentParser::discardSpeculationsAndResumeFrom(PassOwnPtr<ParsedChunk> lastChunkBeforeScript, PassOwnPtr<HTMLToken> token, PassOwnPtr<HTMLTokenizer> tokenizer)
+void HTMLDocumentParser::discardSpeculationsAndResumeFrom(OwnPtr<ParsedChunk> lastChunkBeforeScript, OwnPtr<HTMLToken> token, OwnPtr<HTMLTokenizer> tokenizer)
 {
     m_weakFactory.revokeAll();
     m_speculations.clear();
@@ -390,7 +390,7 @@ void HTMLDocumentParser::discardSpeculationsAndResumeFrom(PassOwnPtr<ParsedChunk
     HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::resumeFrom, m_backgroundParser, checkpoint.release()));
 }
 
-void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk> popChunk)
+void HTMLDocumentParser::processParsedChunkFromBackgroundParser(OwnPtr<ParsedChunk> popChunk)
 {
     // ASSERT that this object is both attached to the Document and protected.
     ASSERT(refCount() >= 2);
