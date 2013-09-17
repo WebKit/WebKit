@@ -1,3 +1,21 @@
+2013-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] GObject DOM symbols file is not generated for video related classes
+        https://bugs.webkit.org/show_bug.cgi?id=121476
+
+        Reviewed by Philippe Normand.
+
+        The problem is that we are using a different path for video
+        related header files in the Makefile, it's the same path in
+        practice, because we are just prepending ./ to the path, but the
+        rules that parse those paths don't expect the ./ at the beginning.
+
+        * bindings/gobject/GNUmakefile.am: Use the same path for video
+        related header files as the other paths in
+        webkitgtk_gdom_built_h_api.
+        * bindings/gobject/webkitdom.symbols: Updated to include the
+        symbols of the video related clases.
+
 2013-09-17  Andreas Kling  <akling@apple.com>
 
         Remove ContextFeatures.

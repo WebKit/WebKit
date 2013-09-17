@@ -427,17 +427,17 @@ webkitgtk_gdom_built_h_api += \
 
 if ENABLE_VIDEO
 webkitgtk_gdom_built_h_api += \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMAudioTrack.h \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMAudioTrackList.h \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMHTMLAudioElement.h \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMHTMLVideoElement.h \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMTextTrack.h \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMTextTrackList.h \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMTextTrackCue.h \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMTextTrackCueList.h \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMTrackEvent.h \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMVideoTrack.h \
-	$(top_builddir)/DerivedSources/webkitdom/WebKitDOMVideoTrackList.h
+	DerivedSources/webkitdom/WebKitDOMAudioTrack.h \
+	DerivedSources/webkitdom/WebKitDOMAudioTrackList.h \
+	DerivedSources/webkitdom/WebKitDOMHTMLAudioElement.h \
+	DerivedSources/webkitdom/WebKitDOMHTMLVideoElement.h \
+	DerivedSources/webkitdom/WebKitDOMTextTrack.h \
+	DerivedSources/webkitdom/WebKitDOMTextTrackList.h \
+	DerivedSources/webkitdom/WebKitDOMTextTrackCue.h \
+	DerivedSources/webkitdom/WebKitDOMTextTrackCueList.h \
+	DerivedSources/webkitdom/WebKitDOMTrackEvent.h \
+	DerivedSources/webkitdom/WebKitDOMVideoTrack.h \
+	DerivedSources/webkitdom/WebKitDOMVideoTrackList.h
 webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMHTMLAudioElement.cpp \
 	DerivedSources/webkitdom/WebKitDOMHTMLAudioElementPrivate.h \
