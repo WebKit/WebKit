@@ -339,6 +339,8 @@ webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Pass ]
 webkit.org/b/120148 [ Lion Release ] webaudio/javascriptaudionode-upmix2-8channel-input.html [ Pass Failure ]
 webkit.org/b/120161 [ Lion ] webaudio/codec-tests/mp3/128kbps-44khz.html [ Failure ]
 
+webkit.org/b/120544 inspector/storage-panel-dom-storage-update.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

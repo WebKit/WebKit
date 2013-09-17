@@ -1,3 +1,12 @@
+2013-09-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Web Inspector: inspector/storage-panel-dom-storage-update.html is flakey on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=120544
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        Marking as such again.
+
 2013-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         Hardware accelerated CSS transitions appear pixelated when scaled up using transform
