@@ -1,3 +1,14 @@
+2013-09-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        REGRESSION(r155910): WebKit nightly builds don't load any page
+        https://bugs.webkit.org/show_bug.cgi?id=121482
+
+        Reviewed by Andreas Kling.
+
+        Replaced C++ style comments with C style comments.
+
+        * wtf/Platform.h:
+
 2013-09-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         USE(WEB_THREAD): More explicit WebThread initialization
