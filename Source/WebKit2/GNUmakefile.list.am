@@ -149,6 +149,8 @@ webkit2_web_extension_h_api += \
 webkit2_built_sources += \
 	DerivedSources/WebKit2/AuthenticationManagerMessageReceiver.cpp \
 	DerivedSources/WebKit2/AuthenticationManagerMessages.h \
+	DerivedSources/WebKit2/CustomProtocolManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/CustomProtocolManagerProxyMessages.h \
 	DerivedSources/WebKit2/DownloadProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/DownloadProxyMessages.h \
 	DerivedSources/WebKit2/DrawingAreaMessageReceiver.cpp \

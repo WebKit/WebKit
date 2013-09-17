@@ -364,6 +364,7 @@ vpath %.messages.in = \
 	$(WebKit2)/UIProcess/ApplicationCache \
 	$(WebKit2)/UIProcess/Downloads \
 	$(WebKit2)/UIProcess/Geolocation \
+	$(WebKit2)/UIProcess/Network/CustomProtocols \
 	$(WebKit2)/UIProcess/Plugins \
 	$(WebKit2)/UIProcess/ResourceCache \
 	$(WebKit2)/UIProcess/Storage \

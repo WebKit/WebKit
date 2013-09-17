@@ -558,6 +558,8 @@ set(WebKit2_MESSAGES_IN_FILES
 
     UIProcess/Plugins/PluginProcessProxy.messages.in
 
+    UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.messages.in
+
     WebProcess/WebProcess.messages.in
 
     WebProcess/ApplicationCache/WebApplicationCacheManager.messages.in

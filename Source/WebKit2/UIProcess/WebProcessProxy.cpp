@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProcessProxy.h"
 
+#include "CustomProtocolManagerProxyMessages.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
 #include "PluginInfoStore.h"
@@ -46,10 +47,6 @@
 #include <stdio.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
-
-#if ENABLE(CUSTOM_PROTOCOLS)
-#include "CustomProtocolManagerProxyMessages.h"
-#endif
 
 #if PLATFORM(MAC)
 #include "PDFPlugin.h"

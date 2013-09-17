@@ -1,3 +1,20 @@
+2013-09-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Buildfix for !ENABLE(CUSTOM_PROTOCOLS) platforms
+        https://bugs.webkit.org/show_bug.cgi?id=121417
+
+        Reviewed by Alexey Proskuryakov.
+
+        Original patch by Balazs Kelemen <kbalazs@webkit.org>.
+
+        * CMakeLists.txt: Add CustomProtocolManagerProxy.messages.in.
+        * DerivedSources.pri: Add CustomProtocolManagerProxy.messages.in.
+        * GNUmakefile.am: Add CustomProtocolManagerProxy.messages.in.
+        * GNUmakefile.list.am: Add CustomProtocolManagerProxyMessages.h and CustomProtocolManagerProxyMessageReceiver.cpp.
+        * NetworkProcess/NetworkProcess.cpp: Add the missing ENABLE(CUSTOM_PROTOCOLS) guard.
+        (WebKit::NetworkProcess::NetworkProcess):
+        * UIProcess/WebProcessProxy.cpp: Remove the unnecessary conditional include.
+
 2013-09-17  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Test /webkit2/WebKitWebInspectorServer/test-open-debugging-session times out after r155714
