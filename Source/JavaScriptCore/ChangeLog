@@ -1,3 +1,17 @@
+2013-09-17  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        DFG doesn't properly keep scope alive for op_put_to_scope
+        https://bugs.webkit.org/show_bug.cgi?id=121519
+
+        Reviewed by Michael Saboff.
+
+        This was a latent bug that can't actually occur in ToT. It was uncovered by causing slow 
+        path calls in the baseline JIT for op_put_to_scope in places where we couldn't before (but 
+        which were necessary for gen GC).
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2013-09-17  Filip Pizlo  <fpizlo@apple.com>
 
         Don't GC while OSR compiling
