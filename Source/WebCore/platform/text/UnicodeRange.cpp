@@ -40,7 +40,7 @@ namespace WebCore {
 // This table depends on unicode range definitions. 
 // Each item's index must correspond to a unicode range value
 // eg. x-cyrillic = LangGroupTable[cRangeCyrillic]
-static const char* gUnicodeRangeToLangGroupTable[] = 
+static const char* const gUnicodeRangeToLangGroupTable[] =
 {
   "x-cyrillic",
   "el",

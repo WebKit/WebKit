@@ -256,7 +256,7 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     return NOPSEUDO;
 }
 
-static void populatePseudoTypeByNameMap(HashMap<AtomicString, CSSSelector::PseudoType>& map)
+static NEVER_INLINE void populatePseudoTypeByNameMap(HashMap<AtomicString, CSSSelector::PseudoType>& map)
 {
     struct TableEntry {
         const char* name;
@@ -267,7 +267,7 @@ static void populatePseudoTypeByNameMap(HashMap<AtomicString, CSSSelector::Pseud
     // Could use strlen in this macro but not all compilers can constant-fold it.
 #define TABLE_ENTRY(name, type) { name, sizeof(name) - 1, CSSSelector::type },
 
-    const TableEntry table[] = {
+    static const TableEntry table[] = {
         TABLE_ENTRY("-khtml-drag", PseudoDrag)
         TABLE_ENTRY("-webkit-any(", PseudoAny)
         TABLE_ENTRY("-webkit-any-link", PseudoAnyLink)

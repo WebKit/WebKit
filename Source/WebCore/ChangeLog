@@ -1,5 +1,31 @@
 2013-09-17  Darin Adler  <darin@apple.com>
 
+        Further shrink table-populating code by making the tables read-only data and preventing inlining
+        https://bugs.webkit.org/show_bug.cgi?id=121468
+
+        Reviewed by Sam Weinig.
+
+        * bindings/scripts/StaticString.pm:
+        (GenerateStrings): Eliminated the xxxImpl globals. We definitely did not need
+        globals for these, much less read-write data. Instead, write the expression at
+        each site where we need them.
+        (GenerateStringAsserts): This is one such site (see above).
+        * css/CSSSelector.cpp:
+        (WebCore::populatePseudoTypeByNameMap): Mark this function NEVER_INLINE and
+        add static to make sure the table ends up in read-only data.
+        * dom/make_names.pl:
+        (printDefinitions): Write the xxxImpl expression (see above).
+        (printFactoryCppFile): Ditto. Also mark the populate function NEVER_INLINE and
+        add static to make sure the table ends up in read-only data.
+        (printWrapperFactoryCppFile): Ditto.
+        * html/HTMLElement.cpp:
+        (WebCore::populateEventNameForAttributeLocalNameMap): Mark this function
+        NEVER_INLINE and add static to makes sure the table ends up in read-only data.
+
+        * platform/text/UnicodeRange.cpp: Added a const to make this read-only data.
+
+2013-09-17  Darin Adler  <darin@apple.com>
+
         Shrink SVGElement::cssPropertyIdForSVGAttributeName and cssPropertyToTypeMap
         https://bugs.webkit.org/show_bug.cgi?id=121499
 

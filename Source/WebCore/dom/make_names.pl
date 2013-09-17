@@ -130,7 +130,7 @@ if (length($fontNamesIn)) {
         # FIXME: Would like to use static_cast here, but there are differences in const
         # depending on whether SKIP_STATIC_CONSTRUCTORS_ON_GCC is used, so stick with a
         # C-style cast for now.
-        print F "    new (NotNull, (void*)&$name) AtomicString(${name}Impl);\n";
+        print F "    new (NotNull, (void*)&$name) AtomicString(reinterpret_cast<StringImpl*>(&${name}Data));\n";
     }
 
     print F "}\n}\n}\n";
@@ -849,11 +849,11 @@ print F <<END
         StringImpl& name;
     };
 
-    const ${capitalizedType}TableEntry ${type}Table[] = {
+    static const ${capitalizedType}TableEntry ${type}Table[] = {
 END
 ;
     for my $name (sort keys %$namesRef) {
-        print F "        { (void*)&$name$shortCamelType, *${name}Impl },\n";
+        print F "        { (void*)&$name$shortCamelType, *reinterpret_cast<StringImpl*>(&${name}Data) },\n";
     }
 
 print F <<END
@@ -929,14 +929,14 @@ END
     printConstructors($F, \%tagConstructorMap);
 
     print F <<END
-static void populate$parameters{namespace}FactoryMap(HashMap<AtomicStringImpl*, $parameters{namespace}ConstructorFunction>& map)
+static NEVER_INLINE void populate$parameters{namespace}FactoryMap(HashMap<AtomicStringImpl*, $parameters{namespace}ConstructorFunction>& map)
 {
     struct TableEntry {
         const QualifiedName& name;
         $parameters{namespace}ConstructorFunction function;
     };
 
-    const TableEntry table[] = {
+    static const TableEntry table[] = {
 END
     ;
 
@@ -1169,14 +1169,14 @@ END
 
 print F <<END
 
-static void populate$parameters{namespace}WrapperMap(HashMap<AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction>& map)
+static NEVER_INLINE void populate$parameters{namespace}WrapperMap(HashMap<AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction>& map)
 {
     struct TableEntry {
         const QualifiedName& name;
         Create$parameters{namespace}ElementWrapperFunction function;
     };
 
-    const TableEntry table[] = {
+    static const TableEntry table[] = {
 END
 ;
 
