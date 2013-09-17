@@ -1,3 +1,14 @@
+2013-09-17  YuTeh Shen  <shenyute@hotmail.com>
+
+        BrowserMarshal.h build fail
+        https://bugs.webkit.org/show_bug.cgi?id=102938
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix variable name.
+
+        * MiniBrowser/gtk/GNUmakefile.am:
+
 2013-09-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Clean up WinLauncher by using smart pointers

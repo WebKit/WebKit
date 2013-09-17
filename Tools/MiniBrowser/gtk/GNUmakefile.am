@@ -65,7 +65,7 @@ stamp-mini-browser-marshal.c: $(minibrowser_marshal_list)
 	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=browser_marshal $(minibrowser_marshal_list) --body > $(GENSOURCES_WEBKIT2)/BrowserMarshal.c && \
 	echo timestamp > $(@F)
 
-stamp-mini-browser-marshal.h: $(MiniBrowser_marshal_list)
+stamp-mini-browser-marshal.h: $(minibrowser_marshal_list)
 	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=browser_marshal $(minibrowser_marshal_list) --header > $(GENSOURCES_WEBKIT2)/BrowserMarshal.h && \
 	echo timestamp > $(@F)
 
