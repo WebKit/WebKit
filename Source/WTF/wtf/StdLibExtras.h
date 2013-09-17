@@ -27,6 +27,7 @@
 #ifndef WTF_StdLibExtras_h
 #define WTF_StdLibExtras_h
 
+#include <memory>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
 
@@ -302,6 +303,65 @@ inline void* operator new(size_t, NotNullTag, void* location)
 {
     ASSERT(location);
     return location;
+}
+
+
+// For standard libraries that do not yet include it, this adds the std::make_unique
+// type. It is defined in the same namespaces as it would be in library that had the
+// support.
+
+namespace std {
+
+    template<class T> struct _Unique_if {
+        typedef unique_ptr<T> _Single_object;
+    };
+
+    template<class T> struct _Unique_if<T[]> {
+        typedef unique_ptr<T[]> _Unknown_bound;
+    };
+
+    template<class T, size_t N> struct _Unique_if<T[N]> {
+        typedef void _Known_bound;
+    };
+
+#if COMPILER_SUPPORTS(CXX_VARIADIC_TEMPLATES)
+    template<class T, class... Args> typename _Unique_if<T>::_Single_object
+    make_unique(Args&&... args)
+    {
+        return unique_ptr<T>(new T(std::forward<Args>(args)...));
+    }
+#else
+    template<class T> typename _Unique_if<T>::_Single_object
+    make_unique()
+    {
+        return unique_ptr<T>(new T);
+    }
+
+    template<class T, class A1> typename _Unique_if<T>::_Single_object
+    make_unique(A1&& a1)
+    {
+        return unique_ptr<T>(new T(std::forward<A1>(a1)));
+    }
+
+    template<class T, class A1, class A2> typename _Unique_if<T>::_Single_object
+    make_unique(A1&& a1, A1&& a2)
+    {
+        return unique_ptr<T>(new T(std::forward<A1>(a1), std::forward<A2>(a2)));
+    }
+#endif
+
+    template<class T> typename _Unique_if<T>::_Unknown_bound
+    make_unique(size_t n)
+    {
+        typedef typename remove_extent<T>::type U;
+        return unique_ptr<T>(new U[n]());
+    }
+    
+#if COMPILER_SUPPORTS(CXX_VARIADIC_TEMPLATES)
+    template<class T, class... Args> typename _Unique_if<T>::_Known_bound
+    make_unique(Args&&...) = delete;
+#endif
+
 }
 
 using WTF::KB;

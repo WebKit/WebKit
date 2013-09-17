@@ -24,6 +24,7 @@
 #define Length_h
 
 #include "AnimationUtilities.h"
+#include <memory>
 #include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
@@ -305,8 +306,8 @@ private:
     bool m_isFloat;
 };
 
-OwnArrayPtr<Length> newCoordsArray(const String&, int& len);
-OwnArrayPtr<Length> newLengthArray(const String&, int& len);
+std::unique_ptr<Length[]> newCoordsArray(const String&, int& len);
+std::unique_ptr<Length[]> newLengthArray(const String&, int& len);
 
 } // namespace WebCore
 

@@ -1,3 +1,18 @@
+2013-09-17  Sam Weinig  <sam@webkit.org>
+
+        Add make_unique and start using it
+        https://bugs.webkit.org/show_bug.cgi?id=121523
+
+        Reviewed by Anders Carlsson.
+
+        * html/HTMLAreaElement.h:
+        * html/HTMLFrameSetElement.h:
+        * platform/Length.cpp:
+        (WebCore::newCoordsArray):
+        (WebCore::newLengthArray):
+        * platform/Length.h:
+        Switch off OwnArrayPtr to std::unique_ptr<T[]> and make use of make_unique.
+
 2013-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         Hardware accelerated CSS transitions appear pixelated when scaled up using transform

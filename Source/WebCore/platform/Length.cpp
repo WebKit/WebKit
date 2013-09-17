@@ -28,7 +28,7 @@
 #include "CalculationValue.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/WTFString.h>
 
@@ -85,7 +85,7 @@ static int countCharacter(const UChar* data, unsigned length, UChar character)
     return count;
 }
 
-OwnArrayPtr<Length> newCoordsArray(const String& string, int& len)
+std::unique_ptr<Length[]> newCoordsArray(const String& string, int& len)
 {
     unsigned length = string.length();
     const UChar* data = string.characters();
@@ -102,7 +102,7 @@ OwnArrayPtr<Length> newCoordsArray(const String& string, int& len)
     str = str->simplifyWhiteSpace();
 
     len = countCharacter(str->characters(), str->length(), ' ') + 1;
-    OwnArrayPtr<Length> r = adoptArrayPtr(new Length[len]);
+    auto r = std::make_unique<Length[]>(len);
 
     int i = 0;
     unsigned pos = 0;
@@ -119,7 +119,7 @@ OwnArrayPtr<Length> newCoordsArray(const String& string, int& len)
     return r;
 }
 
-OwnArrayPtr<Length> newLengthArray(const String& string, int& len)
+std::unique_ptr<Length[]> newLengthArray(const String& string, int& len)
 {
     RefPtr<StringImpl> str = string.impl()->simplifyWhiteSpace();
     if (!str->length()) {
@@ -128,7 +128,7 @@ OwnArrayPtr<Length> newLengthArray(const String& string, int& len)
     }
 
     len = countCharacter(str->characters(), str->length(), ',') + 1;
-    OwnArrayPtr<Length> r = adoptArrayPtr(new Length[len]);
+    auto r = std::make_unique<Length[]>(len);
 
     int i = 0;
     unsigned pos = 0;

@@ -1,3 +1,15 @@
+2013-09-17  Sam Weinig  <sam@webkit.org>
+
+        Add make_unique and start using it
+        https://bugs.webkit.org/show_bug.cgi?id=121523
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/StdLibExtras.h:
+        (std::make_unique):
+        Add temporary implementation of std::make_unique that we can use until our standard
+        libraries have support for it.
+
 2013-09-17  Darin Adler  <darin@apple.com>
 
         Make SVGTransform::valueAsString use StringBuilder

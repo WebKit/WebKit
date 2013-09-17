@@ -64,7 +64,7 @@ private:
     void invalidateCachedRegion();
 
     OwnPtr<Path> m_region;
-    OwnArrayPtr<Length> m_coords;
+    std::unique_ptr<Length[]> m_coords;
     int m_coordsLen;
     LayoutSize m_lastSize;
     Shape m_shape;
