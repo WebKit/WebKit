@@ -1,3 +1,22 @@
+2013-09-17  Michael Brüning  <michael.bruning@digia.com>
+
+        Correct range used for Emoji checks.
+        https://bugs.webkit.org/show_bug.cgi?id=121486
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        Found and reported by David Binderman via Qt bug tracker.
+
+        The check if a character was in the Emoji range always evaluated to
+        false due to the upper range limit being lower than the lower limit.
+
+        Changed the upper limit to the highest assigned character from the
+        "Transport and Map Symbols" (0x1F6C5) as that seems to have been the
+        intended upper range limit of this check.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::isCJKIdeographOrSymbol):
+
 2013-09-17  Antti Koivisto  <antti@apple.com>
 
         Move text caret rect computation to root inline box
