@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #transformed { width: 100px; height: 100px; position: absolute; top: 100px; left: 50px; -webkit-transform: translateX(50px); background-color: red; }
+            #fixed { -webkit-flow-into: article; position: fixed; width: 100px; height: 100px; top: 100px; left: 100px; background-color: green; }
+            #region { -webkit-flow-from: article; position: absolute; top: 200px; left: 200px; }
+        </style>
+    </head>
+    <body>
+        <p>Test that a fixed positioned element, with a transformed parent, that is collected in a named flow is positioned relative to the viewport instead of the transformed parent.</p>
+        <p>On success you should see PASS below (and no red).</p>
+        <p id="result">FAIL</p>
+        <div id="transformed">
+            <div id="fixed"></div>
+        </div>
+        <!-- We need the region otherwise the fixed element is not displayed -->
+        <div id="region"></div>
+        <script>
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
+            var boundingRect = document.getElementById("fixed").getBoundingClientRect();
+            if (boundingRect.top == 100 && boundingRect.left == 100)
+                document.getElementById("result").innerText = "PASS";
+        </script>
+    </body>
+</html>

@@ -1,3 +1,15 @@
+2013-09-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Flowed fixed element without its transformed parent positioned relative to viewport
+        https://bugs.webkit.org/show_bug.cgi?id=121478
+
+        Reviewed by Antti Koivisto.
+
+        A fixed positioned element collected into a named flow without its transformed parent should be positioned relative to the viewport instead of the transformed parent. Add a test for this behavior.
+
+        * fast/regions/flow-fixed-element-transformed-parent-expected.txt: Added.
+        * fast/regions/flow-fixed-element-transformed-parent.html: Added.
+
 2013-09-17  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip failing tests.
