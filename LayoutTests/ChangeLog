@@ -1,3 +1,9 @@
+2013-09-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Disable a number of failing tests to help the EWS system run more rapidly.
+
+        * platform/win/TestExpectations:
+
 2013-09-16  Simon Fraser  <simon.fraser@apple.com>
 
         Hardware accelerated CSS transitions appear pixelated when scaled up using transform
