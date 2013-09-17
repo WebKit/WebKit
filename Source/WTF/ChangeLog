@@ -1,3 +1,15 @@
+2013-09-17  Darin Adler  <darin@apple.com>
+
+        Make SVGTransform::valueAsString use StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=121498
+
+        Reviewed by Andreas Kling.
+
+        * wtf/text/StringBuilder.cpp: Added appendNumber functions corresponding to all remaining
+        String::number functions. If we find we don't need all of these we can delete them later,
+        but I don't want to give clients a reason to prefer less-efficient API to StringBuilder.
+        * wtf/text/StringBuilder.h: Ditto.
+
 2013-09-16  Anders Carlsson  <andersca@apple.com>
 
         HashMap should work with move-only keys

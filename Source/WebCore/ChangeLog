@@ -1,5 +1,17 @@
 2013-09-17  Darin Adler  <darin@apple.com>
 
+        Make SVGTransform::valueAsString use StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=121498
+
+        Reviewed by Andreas Kling.
+
+        * svg/SVGTransform.cpp:
+        (WebCore::SVGTransform::valueAsString): Use StringBuilder constently to
+        avoid creating temporary String objects that cause additional, slow
+        memory allocation.
+
+2013-09-17  Darin Adler  <darin@apple.com>
+
         Get rid of a couple unneeded NeverDestroyed::get() calls
         https://bugs.webkit.org/show_bug.cgi?id=121500
 

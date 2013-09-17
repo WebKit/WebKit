@@ -29,6 +29,7 @@
 
 #include "IntegerToStringConversion.h"
 #include "WTFString.h"
+#include <wtf/dtoa.h>
 
 namespace WTF {
 
@@ -326,6 +327,24 @@ void StringBuilder::appendNumber(long long number)
 void StringBuilder::appendNumber(unsigned long long number)
 {
     numberToStringUnsigned<StringBuilder>(number, this);
+}
+
+void StringBuilder::appendNumber(double number, unsigned precision, TrailingZerosTruncatingPolicy trailingZerosTruncatingPolicy)
+{
+    NumberToStringBuffer buffer;
+    append(numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros));
+}
+
+void StringBuilder::appendECMAScriptNumber(double number)
+{
+    NumberToStringBuffer buffer;
+    append(numberToString(number, buffer));
+}
+
+void StringBuilder::appendFixedWidthNumber(double number, unsigned decimalPlaces)
+{
+    NumberToStringBuffer buffer;
+    append(numberToFixedWidthString(number, decimalPlaces, buffer));
 }
 
 bool StringBuilder::canShrink() const

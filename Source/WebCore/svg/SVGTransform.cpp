@@ -174,28 +174,65 @@ String SVGTransform::valueAsString() const
         return prefix;
     case SVG_TRANSFORM_MATRIX: {
         StringBuilder builder;
-        builder.append(prefix + String::number(m_matrix.a()) + ' ' + String::number(m_matrix.b()) + ' ' + String::number(m_matrix.c()) + ' ' +
-                       String::number(m_matrix.d()) + ' ' + String::number(m_matrix.e()) + ' ' + String::number(m_matrix.f()) + ')');
+        builder.append(prefix);
+        builder.appendNumber(m_matrix.a());
+        builder.append(' ');
+        builder.appendNumber(m_matrix.b());
+        builder.append(' ');
+        builder.appendNumber(m_matrix.c());
+        builder.append(' ');
+        builder.appendNumber(m_matrix.d());
+        builder.append(' ');
+        builder.appendNumber(m_matrix.e());
+        builder.append(' ');
+        builder.appendNumber(m_matrix.e());
+        builder.append(')');
         return builder.toString();
     }
-    case SVG_TRANSFORM_TRANSLATE:
-        return prefix + String::number(m_matrix.e()) + ' ' + String::number(m_matrix.f()) + ')';
-    case SVG_TRANSFORM_SCALE:
-        return prefix + String::number(m_matrix.xScale()) + ' ' + String::number(m_matrix.yScale()) + ')';
+    case SVG_TRANSFORM_TRANSLATE: {
+        StringBuilder builder;
+        builder.append(prefix);
+        builder.appendNumber(m_matrix.e());
+        builder.append(' ');
+        builder.appendNumber(m_matrix.e());
+        builder.append(')');
+        return builder.toString();
+    }
+    case SVG_TRANSFORM_SCALE: {
+        StringBuilder builder;
+        builder.append(prefix);
+        builder.appendNumber(m_matrix.xScale());
+        builder.append(' ');
+        builder.appendNumber(m_matrix.yScale());
+        builder.append(')');
+        return builder.toString();
+    }
     case SVG_TRANSFORM_ROTATE: {
         double angleInRad = deg2rad(m_angle);
         double cosAngle = cos(angleInRad);
         double sinAngle = sin(angleInRad);
         float cx = narrowPrecisionToFloat(cosAngle != 1 ? (m_matrix.e() * (1 - cosAngle) - m_matrix.f() * sinAngle) / (1 - cosAngle) / 2 : 0);
         float cy = narrowPrecisionToFloat(cosAngle != 1 ? (m_matrix.e() * sinAngle / (1 - cosAngle) + m_matrix.f()) / 2 : 0);
-        if (cx || cy)
-            return prefix + String::number(m_angle) + ' ' + String::number(cx) + ' ' + String::number(cy) + ')';
-        return prefix + String::number(m_angle) + ')';
+        StringBuilder builder;
+        builder.append(prefix);
+        builder.appendNumber(m_angle);
+        if (cx || cy) {
+            builder.append(' ');
+            builder.appendNumber(cx);
+            builder.append(' ');
+            builder.appendNumber(cy);
+        }
+        builder.append(')');
+        return builder.toString();
     }
     case SVG_TRANSFORM_SKEWX:
-        return prefix + String::number(m_angle) + ')';
-    case SVG_TRANSFORM_SKEWY:
-        return prefix + String::number(m_angle) + ')';
+    case SVG_TRANSFORM_SKEWY: {
+        StringBuilder builder;
+        builder.append(prefix);
+        builder.appendNumber(m_angle);
+        builder.append(')');
+        return builder.toString();
+    }
     }
 
     ASSERT_NOT_REACHED();

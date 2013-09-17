@@ -160,6 +160,9 @@ public:
     WTF_EXPORT_PRIVATE void appendNumber(unsigned long);
     WTF_EXPORT_PRIVATE void appendNumber(long long);
     WTF_EXPORT_PRIVATE void appendNumber(unsigned long long);
+    WTF_EXPORT_PRIVATE void appendNumber(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
+    WTF_EXPORT_PRIVATE void appendECMAScriptNumber(double);
+    WTF_EXPORT_PRIVATE void appendFixedWidthNumber(double, unsigned decimalPlaces);
 
     String toString()
     {
