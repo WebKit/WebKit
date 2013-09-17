@@ -1,3 +1,10 @@
+2013-09-16  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix after 155905.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::sendOutgoingMessage): use OwnPtr instead of PassOwnPtr.
+
 2013-09-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add RunLoop::isMain and use it in WebKit2

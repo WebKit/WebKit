@@ -445,7 +445,7 @@ bool Connection::platformCanSendOutgoingMessages() const
     return m_isConnected;
 }
 
-bool Connection::sendOutgoingMessage(PassOwnPtr<MessageEncoder> encoder)
+bool Connection::sendOutgoingMessage(OwnPtr<MessageEncoder> encoder)
 {
 #if PLATFORM(QT)
     ASSERT(m_socketNotifier);
