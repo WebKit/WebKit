@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009, 2013 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Brent Fulgham. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@
 #include "PrintWebUIDelegate.h"
 
 #include <WebKit/WebKitCOMAPI.h>
+#include <comip.h>
 #include <commctrl.h>
 #include <commdlg.h>
 #include <objbase.h>
@@ -64,20 +65,21 @@ ULONG PrintWebUIDelegate::Release(void)
     return newRef;
 }
 
+typedef _com_ptr_t<_com_IIID<IWebFrame, &__uuidof(IWebFrame)>> IWebFramePtr;
+typedef _com_ptr_t<_com_IIID<IWebFramePrivate, &__uuidof(IWebFramePrivate)>> IWebFramePrivatePtr;
+
 HRESULT PrintWebUIDelegate::webViewPrintingMarginRect(IWebView* view, RECT* rect)
 {
     if (!view || !rect)
         return E_POINTER;
 
-    IWebFrame* mainFrame = 0;
-    if (FAILED(view->mainFrame(&mainFrame)))
+    IWebFramePtr mainFrame;
+    if (FAILED(view->mainFrame(&mainFrame.GetInterfacePtr())))
         return E_FAIL;
 
-    IWebFramePrivate* privateFrame = 0;
-    if (FAILED(mainFrame->QueryInterface(&privateFrame))) {
-        mainFrame->Release();
+    IWebFramePrivatePtr privateFrame;
+    if (FAILED(mainFrame->QueryInterface(&privateFrame.GetInterfacePtr())))
         return E_FAIL;
-    }
 
     privateFrame->frameBounds(rect);
 
@@ -87,9 +89,6 @@ HRESULT PrintWebUIDelegate::webViewPrintingMarginRect(IWebView* view, RECT* rect
     rect->right = (::GetDeviceCaps(dc, LOGPIXELSX) * 6.5) - MARGIN;
     rect->bottom = (::GetDeviceCaps(dc, LOGPIXELSY) * 11) - MARGIN;
     ::ReleaseDC(0, dc);
-
-    privateFrame->Release();
-    mainFrame->Release();
 
     return S_OK;
 }
