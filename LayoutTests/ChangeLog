@@ -1,6 +1,14 @@
 2013-09-17  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Disable a number of crashing tests to help the EWS system run more rapidly.
+        https://bugs.webkit.org/show_bug.cgi?id=121509
+
+        * platform/win/TestExpectations:
+
+2013-09-17  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Disable a number of failing tests to help the EWS system run more rapidly.
+        https://bugs.webkit.org/show_bug.cgi?id=121509
 
         * platform/win/TestExpectations:
 
