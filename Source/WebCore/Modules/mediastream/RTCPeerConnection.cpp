@@ -284,20 +284,22 @@ void RTCPeerConnection::updateIce(const Dictionary& rtcConfiguration, const Dict
         ec = SYNTAX_ERR;
 }
 
-void RTCPeerConnection::addIceCandidate(RTCIceCandidate* iceCandidate, ExceptionCode& ec)
+void RTCPeerConnection::addIceCandidate(RTCIceCandidate* iceCandidate, PassRefPtr<VoidCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, ExceptionCode& ec)
 {
     if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
-    if (!iceCandidate) {
+    if (!iceCandidate || !successCallback || !errorCallback) {
         ec = TYPE_MISMATCH_ERR;
         return;
     }
 
-    bool valid = m_peerHandler->addIceCandidate(iceCandidate->descriptor());
-    if (!valid)
+    RefPtr<RTCVoidRequestImpl> request = RTCVoidRequestImpl::create(scriptExecutionContext(), successCallback, errorCallback);
+
+    bool implemented = m_peerHandler->addIceCandidate(request.release(), iceCandidate->descriptor());
+    if (!implemented)
         ec = SYNTAX_ERR;
 }
 

@@ -51,7 +51,7 @@
 
     [RaisesException] void updateIce(optional Dictionary configuration, optional Dictionary mediaConstraints);
 
-    [RaisesException] void addIceCandidate(RTCIceCandidate candidate);
+    [RaisesException] void addIceCandidate(RTCIceCandidate candidate, VoidCallback successCallback, RTCErrorCallback failureCallback);
 
     readonly attribute DOMString iceGatheringState;
     readonly attribute DOMString iceConnectionState;

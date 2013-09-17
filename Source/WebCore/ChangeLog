@@ -1,3 +1,23 @@
+2013-09-17  Eric Carlson  <eric.carlson@apple.com>
+
+        MediaStream API: Adding an async RTCPeerConnection::addIceCandidate
+        https://bugs.webkit.org/show_bug.cgi?id=121403
+
+        Merged from https://chromium.googlesource.com/chromium/blink/+/5bd81fda88d48dd2780832246e7d1ab973ee7a1d
+
+        Reviewed by Darin Adler.
+
+        No new tests, updated RTCPeerConnection-ice.html.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addIceCandidate): Add success and error callbacks.
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+
+        * platform/mediastream/RTCPeerConnectionHandler.h: Changed addIceCandidate signature.
+
+        * platform/mediastream/RTCVoidRequest.h: Removed ExtraData, it is unnecessary.
+
 2013-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not include Returns tag in api doc for methods returning void

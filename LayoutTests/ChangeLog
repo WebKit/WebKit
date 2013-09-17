@@ -1,3 +1,13 @@
+2013-09-17  Eric Carlson  <eric.carlson@apple.com>
+
+        MediaStream API: Adding an async RTCPeerConnection::addIceCandidate
+        https://bugs.webkit.org/show_bug.cgi?id=121403
+
+        Reviewed by Darin Adler.
+
+        * fast/mediastream/RTCPeerConnection-ice-expected.txt:
+        * fast/mediastream/RTCPeerConnection-ice.html:
+
 2013-09-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Flowed fixed element without its transformed parent positioned relative to viewport

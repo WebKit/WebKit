@@ -77,7 +77,7 @@ public:
 
     void updateIce(const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode&);
 
-    void addIceCandidate(RTCIceCandidate*, ExceptionCode&);
+    void addIceCandidate(RTCIceCandidate*, PassRefPtr<VoidCallback>, PassRefPtr<RTCErrorCallback>, ExceptionCode&);
 
     String iceGatheringState() const;
 

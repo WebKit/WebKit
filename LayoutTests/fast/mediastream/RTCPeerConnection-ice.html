@@ -8,6 +8,7 @@
 description("Tests the RTCPeerConnection Ice functionality.");
 
 var pc = null;
+var iceCandidate = null;
 
 function onIceChange2()
 {
@@ -17,21 +18,28 @@ function onIceChange2()
     }
 }
 
-function onIceCandidate(event)
+function addIceCandidateSuccess()
 {
-    testPassed("onIceCandidate was called.");
-    shouldBe('event.candidate.candidate', '"nano nano"');
-
+    testPassed("addIceCandidateSuccess was called.");
     pc.oniceconnectionstatechange = onIceChange2;
     pc.close();
+}
+
+function addIceCandidateFailure()
+{
+    testFailed("addIceCandidateFailue was called.");
+    finishJSTest();
 }
 
 function onIceChange1()
 {
     if (pc.iceConnectionState === "completed") {
         testPassed("iceConnectionState is completed");
-        pc.onicecandidate = onIceCandidate;
-        pc.addIceCandidate(new RTCIceCandidate({candidate:"nano nano"}));
+        iceCandidate = new RTCIceCandidate({candidate:"nano nano"});
+        shouldThrow('pc.addIceCandidate(null, null, null);');
+        shouldThrow('pc.addIceCandidate(iceCandidate, null, null);');
+        shouldThrow('pc.addIceCandidate(iceCandidate, addIceCandidateSuccess, null);');
+        shouldNotThrow('pc.addIceCandidate(iceCandidate, addIceCandidateSuccess, addIceCandidateFailure);');
     }
 }
 
