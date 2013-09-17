@@ -252,7 +252,9 @@ EXPORTS
         ?number@String@WTF@@SA?AV12@H@Z
         ?number@String@WTF@@SA?AV12@I@Z
         ?number@String@WTF@@SA?AV12@NIW4TrailingZerosTruncatingPolicy@2@@Z
+#if ENABLE(STYLE_SCOPED)
         symbolWithPointer(?numberOfScopedHTMLStyleChildren@Node@WebCore@@QBEIXZ, ?numberOfScopedHTMLStyleChildren@Node@WebCore@@QEBA_KXZ)
+#endif
         symbolWithPointer(?page@Document@WebCore@@QBEPAVPage@2@XZ, ?page@Document@WebCore@@QEBAPEAVPage@2@XZ)
         symbolWithPointer(?pageNumberForElement@PrintContext@WebCore@@SAHPAVElement@2@ABVFloatSize@2@@Z, ?pageNumberForElement@PrintContext@WebCore@@SAHPEAVElement@2@AEBVFloatSize@2@@Z)
         symbolWithPointer(?paintControlTints@FrameView@WebCore@@AAEXXZ, ?paintControlTints@FrameView@WebCore@@AEAAXXZ)
