@@ -86,8 +86,10 @@ public:
     public:
         RenderBlockFlowRareData(const RenderBlockFlow* block)
             : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
+            , m_lineBreakToAvoidWidow(-1)
             , m_discardMarginBefore(false)
             , m_discardMarginAfter(false)
+            , m_shouldBreakAtLineToAvoidWidow(false)
         { 
         }
 
@@ -109,8 +111,10 @@ public:
         }
         
         MarginValues m_margins;
+        int m_lineBreakToAvoidWidow;
         bool m_discardMarginBefore : 1;
         bool m_discardMarginAfter : 1;
+        bool m_shouldBreakAtLineToAvoidWidow : 1;
     };
 
     class MarginInfo {
@@ -203,6 +207,12 @@ public:
     void handleAfterSideOfBlock(LayoutUnit top, LayoutUnit bottom, MarginInfo&);
     void setCollapsedBottomMargin(const MarginInfo&);
 
+    bool shouldBreakAtLineToAvoidWidow() const { return m_rareData && m_rareData->m_shouldBreakAtLineToAvoidWidow; }
+    void clearShouldBreakAtLineToAvoidWidow() const;
+    int lineBreakToAvoidWidow() const { return m_rareData ? m_rareData->m_lineBreakToAvoidWidow : -1; }
+    void setBreakAtLineToAvoidWidow(int);
+    bool relayoutToAvoidWidows(LayoutStateMaintainer&);
+
 protected:
     LayoutUnit maxPositiveMarginBefore() const { return m_rareData ? m_rareData->m_margins.positiveMarginBefore() : RenderBlockFlowRareData::positiveMarginBeforeDefault(this); }
     LayoutUnit maxNegativeMarginBefore() const { return m_rareData ? m_rareData->m_margins.negativeMarginBefore() : RenderBlockFlowRareData::negativeMarginBeforeDefault(this); }
@@ -237,6 +247,10 @@ protected:
     LayoutUnit applyBeforeBreak(RenderBox* child, LayoutUnit logicalOffset); // If the child has a before break, then return a new yPos that shifts to the top of the next page/column.
     LayoutUnit applyAfterBreak(RenderBox* child, LayoutUnit logicalOffset, MarginInfo&); // If the child has an after break, then return a new offset that shifts to the top of the next page/column.
     LayoutUnit adjustBlockChildForPagination(LayoutUnit logicalTopAfterClear, LayoutUnit estimateWithoutPagination, RenderBox* child, bool atBeforeSideOfBlock);
+    
+public:
+    // FIXME-BLOCKFLOW: This can be made protected again once all callers have been moved here.
+    void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset, RenderFlowThread*); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
 
 protected:
     OwnPtr<RenderBlockFlowRareData> m_rareData;

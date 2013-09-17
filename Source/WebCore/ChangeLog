@@ -1,3 +1,31 @@
+2013-09-16  David Hyatt  <hyatt@apple.com>
+
+        Move the line widow functions out of RenderBlock and into RenderBlockFlow.
+        https://bugs.webkit.org/show_bug.cgi?id=121456
+
+        Reviewed by Dean Jackson.
+
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::RenderBlockRareData::RenderBlockRareData):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlockChild):
+        (WebCore::calculateMinimumPageHeight):
+        (WebCore::RenderBlockFlow::adjustLinePositionForPagination):
+        (WebCore::RenderBlockFlow::setBreakAtLineToAvoidWidow):
+        (WebCore::RenderBlockFlow::clearShouldBreakAtLineToAvoidWidow):
+        (WebCore::RenderBlockFlow::relayoutToAvoidWidows):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::RenderBlockFlowRareData):
+        (WebCore::RenderBlockFlow::shouldBreakAtLineToAvoidWidow):
+        (WebCore::RenderBlockFlow::lineBreakToAvoidWidow):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::linkToEndLineIfNeeded):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::checkPaginationAndFloatsAtEndLine):
+        * rendering/RenderObject.h:
+
 2013-09-16  Anders Carlsson  <andersca@apple.com>
 
         HashMap should work with move-only keys

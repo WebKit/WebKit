@@ -1567,7 +1567,8 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 
                 if (paginated) {
                     LayoutUnit adjustment = 0;
-                    adjustLinePositionForPagination(lineBox, adjustment, layoutState.flowThread());
+                    // FIXME-BLOCKFLOW: Remove this type conversion once the owning function moves.
+                    toRenderBlockFlow(this)->adjustLinePositionForPagination(lineBox, adjustment, layoutState.flowThread());
                     if (adjustment) {
                         LayoutUnit oldLineWidth = availableLogicalWidthForLine(oldLogicalHeight, layoutState.lineInfo().isFirstLine());
                         lineBox->adjustBlockDirectionPosition(adjustment);
@@ -1676,7 +1677,8 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
                 lineBox = lineBox->prevRootBox();
 
             // We now want to break at this line. Remember for next layout and trigger relayout.
-            setBreakAtLineToAvoidWidow(lineCount(lineBox));
+            // FIXME-BLOCKFLOW: Remove this type conversion once the owning function moves.
+            toRenderBlockFlow(this)->setBreakAtLineToAvoidWidow(lineCount(lineBox));
             markLinesDirtyInBlockRange(lastRootBox()->lineBottomWithLeading(), lineBox->lineBottomWithLeading(), lineBox);
         }
     }
@@ -1693,7 +1695,8 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
                 line->attachLine();
                 if (paginated) {
                     delta -= line->paginationStrut();
-                    adjustLinePositionForPagination(line, delta, layoutState.flowThread());
+                    // FIXME-BLOCKFLOW: Remove this type conversion once the owning function moves.
+                    toRenderBlockFlow(this)->adjustLinePositionForPagination(line, delta, layoutState.flowThread());
                 }
                 if (delta) {
                     layoutState.updateRepaintRangeFromBox(line, delta);
@@ -1927,7 +1930,8 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
                     break;
                 }
                 paginationDelta -= curr->paginationStrut();
-                adjustLinePositionForPagination(curr, paginationDelta, layoutState.flowThread());
+                // FIXME-BLOCKFLOW: Remove this type conversion once the owning function moves.
+                toRenderBlockFlow(this)->adjustLinePositionForPagination(curr, paginationDelta, layoutState.flowThread());
                 if (paginationDelta) {
                     if (containsFloats() || !layoutState.floats().isEmpty()) {
                         // FIXME: Do better eventually.  For now if we ever shift because of pagination and floats are present just go to a full layout.
@@ -2076,7 +2080,8 @@ bool RenderBlock::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutState
                 // strut yet.
                 LayoutUnit oldPaginationStrut = lineBox->paginationStrut();
                 lineDelta -= oldPaginationStrut;
-                adjustLinePositionForPagination(lineBox, lineDelta, layoutState.flowThread());
+                // FIXME-BLOCKFLOW: Remove this type conversion once the owning function moves.
+                toRenderBlockFlow(this)->adjustLinePositionForPagination(lineBox, lineDelta, layoutState.flowThread());
                 lineBox->setPaginationStrut(oldPaginationStrut);
             }
             if (lineWidthForPaginatedLineChanged(lineBox, lineDelta, layoutState.flowThread()))

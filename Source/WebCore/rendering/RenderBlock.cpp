@@ -1577,17 +1577,6 @@ void RenderBlock::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalH
     }
 }
 
-bool RenderBlock::relayoutToAvoidWidows(LayoutStateMaintainer& statePusher)
-{
-    if (!shouldBreakAtLineToAvoidWidow())
-        return false;
-
-    statePusher.pop();
-    setEverHadLayout(true);
-    layoutBlock(false);
-    return true;
-}
-
 void RenderBlock::layoutBlock(bool, LayoutUnit)
 {
     ASSERT_NOT_REACHED();
@@ -6177,23 +6166,6 @@ void RenderBlock::setPageLogicalOffset(LayoutUnit logicalOffset)
     m_rareData->m_pageLogicalOffset = logicalOffset;
 }
 
-void RenderBlock::setBreakAtLineToAvoidWidow(int lineToBreak)
-{
-    ASSERT(lineToBreak);
-    if (!m_rareData)
-        m_rareData = adoptPtr(new RenderBlockRareData());
-    m_rareData->m_shouldBreakAtLineToAvoidWidow = true;
-    m_rareData->m_lineBreakToAvoidWidow = lineToBreak;
-}
-
-void RenderBlock::clearShouldBreakAtLineToAvoidWidow() const
-{
-    if (!m_rareData)
-        return;
-    m_rareData->m_shouldBreakAtLineToAvoidWidow = false;
-    m_rareData->m_lineBreakToAvoidWidow = -1;
-}
-
 void RenderBlock::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
@@ -6477,88 +6449,6 @@ void RenderBlock::updateMinimumPageHeight(LayoutUnit offset, LayoutUnit minHeigh
         flowThread->updateMinimumPageHeight(this, offsetFromLogicalTopOfFirstPage() + offset, minHeight);
     else if (ColumnInfo* colInfo = view().layoutState()->m_columnInfo)
         colInfo->updateMinimumColumnHeight(minHeight);
-}
-
-static inline LayoutUnit calculateMinimumPageHeight(RenderStyle* renderStyle, RootInlineBox* lastLine, LayoutUnit lineTop, LayoutUnit lineBottom)
-{
-    // We may require a certain minimum number of lines per page in order to satisfy
-    // orphans and widows, and that may affect the minimum page height.
-    unsigned lineCount = max<unsigned>(renderStyle->hasAutoOrphans() ? 1 : renderStyle->orphans(), renderStyle->hasAutoWidows() ? 1 : renderStyle->widows());
-    if (lineCount > 1) {
-        RootInlineBox* line = lastLine;
-        for (unsigned i = 1; i < lineCount && line->prevRootBox(); i++)
-            line = line->prevRootBox();
-
-        // FIXME: Paginating using line overflow isn't all fine. See FIXME in
-        // adjustLinePositionForPagination() for more details.
-        LayoutRect overflow = line->logicalVisualOverflowRect(line->lineTop(), line->lineBottom());
-        lineTop = min(line->lineTopWithLeading(), overflow.y());
-    }
-    return lineBottom - lineTop;
-}
-
-void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, LayoutUnit& delta, RenderFlowThread* flowThread)
-{
-    // FIXME: For now we paginate using line overflow.  This ensures that lines don't overlap at all when we
-    // put a strut between them for pagination purposes.  However, this really isn't the desired rendering, since
-    // the line on the top of the next page will appear too far down relative to the same kind of line at the top
-    // of the first column.
-    //
-    // The rendering we would like to see is one where the lineTopWithLeading is at the top of the column, and any line overflow
-    // simply spills out above the top of the column.  This effect would match what happens at the top of the first column.
-    // We can't achieve this rendering, however, until we stop columns from clipping to the column bounds (thus allowing
-    // for overflow to occur), and then cache visible overflow for each column rect.
-    //
-    // Furthermore, the paint we have to do when a column has overflow has to be special.  We need to exclude
-    // content that paints in a previous column (and content that paints in the following column).
-    //
-    // For now we'll at least honor the lineTopWithLeading when paginating if it is above the logical top overflow. This will
-    // at least make positive leading work in typical cases.
-    //
-    // FIXME: Another problem with simply moving lines is that the available line width may change (because of floats).
-    // Technically if the location we move the line to has a different line width than our old position, then we need to dirty the
-    // line and all following lines.
-    LayoutRect logicalVisualOverflow = lineBox->logicalVisualOverflowRect(lineBox->lineTop(), lineBox->lineBottom());
-    LayoutUnit logicalOffset = min(lineBox->lineTopWithLeading(), logicalVisualOverflow.y());
-    LayoutUnit logicalBottom = max(lineBox->lineBottomWithLeading(), logicalVisualOverflow.maxY());
-    LayoutUnit lineHeight = logicalBottom - logicalOffset;
-    updateMinimumPageHeight(logicalOffset, calculateMinimumPageHeight(style(), lineBox, logicalOffset, logicalBottom));
-    logicalOffset += delta;
-    lineBox->setPaginationStrut(0);
-    lineBox->setIsFirstAfterPageBreak(false);
-    LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
-    bool hasUniformPageLogicalHeight = !flowThread || flowThread->regionsHaveUniformLogicalHeight();
-    // If lineHeight is greater than pageLogicalHeight, but logicalVisualOverflow.height() still fits, we are
-    // still going to add a strut, so that the visible overflow fits on a single page.
-    if (!pageLogicalHeight || (hasUniformPageLogicalHeight && logicalVisualOverflow.height() > pageLogicalHeight)
-        || !hasNextPage(logicalOffset))
-        return;
-    LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset, ExcludePageBoundary);
-
-    int lineIndex = lineCount(lineBox);
-    if (remainingLogicalHeight < lineHeight || (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineIndex)) {
-        if (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineIndex)
-            clearShouldBreakAtLineToAvoidWidow();
-        // If we have a non-uniform page height, then we have to shift further possibly.
-        if (!hasUniformPageLogicalHeight && !pushToNextPageWithMinimumLogicalHeight(remainingLogicalHeight, logicalOffset, lineHeight))
-            return;
-        if (lineHeight > pageLogicalHeight) {
-            // Split the top margin in order to avoid splitting the visible part of the line.
-            remainingLogicalHeight -= min(lineHeight - pageLogicalHeight, max<LayoutUnit>(0, logicalVisualOverflow.y() - lineBox->lineTopWithLeading()));
-        }
-        LayoutUnit totalLogicalHeight = lineHeight + max<LayoutUnit>(0, logicalOffset);
-        LayoutUnit pageLogicalHeightAtNewOffset = hasUniformPageLogicalHeight ? pageLogicalHeight : pageLogicalHeightForOffset(logicalOffset + remainingLogicalHeight);
-        setPageBreak(logicalOffset, lineHeight - remainingLogicalHeight);
-        if (((lineBox == firstRootBox() && totalLogicalHeight < pageLogicalHeightAtNewOffset) || (!style()->hasAutoOrphans() && style()->orphans() >= lineIndex))
-            && !isOutOfFlowPositioned() && !isTableCell())
-            setPaginationStrut(remainingLogicalHeight + max<LayoutUnit>(0, logicalOffset));
-        else {
-            delta += remainingLogicalHeight;
-            lineBox->setPaginationStrut(remainingLogicalHeight);
-            lineBox->setIsFirstAfterPageBreak(true);
-        }
-    } else if (remainingLogicalHeight == pageLogicalHeight && lineBox != firstRootBox())
-        lineBox->setIsFirstAfterPageBreak(true);
 }
 
 bool RenderBlock::lineWidthForPaginatedLineChanged(RootInlineBox* rootBox, LayoutUnit lineDelta, RenderFlowThread* flowThread) const
