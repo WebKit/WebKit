@@ -60,8 +60,10 @@ PASS new MessageEvent('eventType', { get lastEventId() { return 123; } }).lastEv
 PASS new MessageEvent('eventType', { get lastEventId() { throw 'MessageEvent Error'; } }) threw exception MessageEvent Error.
 PASS new MessageEvent('eventType', { source: window }).source is window
 PASS new MessageEvent('eventType', { source: this }).source is this
+PASS new MessageEvent('eventType', { ports: [channel.port1], source: channel.port1 }).source is channel.port1
 PASS new MessageEvent('eventType', { source: test_object }).source is null
 PASS new MessageEvent('eventType', { source: document }).source is null
+PASS new MessageEvent('eventType', { source: document.body }).source is null
 PASS new MessageEvent('eventType', { source: undefined }).source is null
 PASS new MessageEvent('eventType', { source: null }).source is null
 PASS new MessageEvent('eventType', { source: false }).source is null

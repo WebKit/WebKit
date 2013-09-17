@@ -1,3 +1,20 @@
+2013-09-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Set MessageEvent.source to the newly created port for shared workers' connect events
+        https://bugs.webkit.org/show_bug.cgi?id=121390
+
+        Reviewed by Darin Adler.
+
+        Add layout test to check that MessageEvent.source is set to the newly created port
+        for shared workers' connect events.
+
+        * fast/events/constructors/message-event-constructor-expected.txt:
+        * fast/events/constructors/message-event-constructor.html:
+        * fast/workers/resources/messageevent-source.js: Added.
+        (onconnect):
+        * fast/workers/shared-worker-messageevent-source-expected.txt: Added.
+        * fast/workers/shared-worker-messageevent-source.html: Added.
+
 2013-09-17  Antti Koivisto  <antti@apple.com>
 
         RenderBR should not be RenderText

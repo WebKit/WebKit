@@ -138,7 +138,7 @@ public:
     PassRefPtr<MessageEvent> event(ScriptExecutionContext* context)
     {
         OwnPtr<MessagePortArray> messagePorts = MessagePort::entanglePorts(*context, m_channels.release());
-        return MessageEvent::create(messagePorts.release(), m_message, m_origin, "", m_source);
+        return MessageEvent::create(messagePorts.release(), m_message, m_origin, String(), m_source);
     }
     SecurityOrigin* targetOrigin() const { return m_targetOrigin.get(); }
     ScriptCallStack* stackTrace() const { return m_stackTrace.get(); }

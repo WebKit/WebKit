@@ -111,6 +111,7 @@ namespace WebCore {
 
         virtual Node* toNode();
         virtual DOMWindow* toDOMWindow();
+        virtual bool isMessagePort() const;
 
         virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
         virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);

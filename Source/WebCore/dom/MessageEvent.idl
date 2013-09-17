@@ -32,7 +32,7 @@
 ] interface MessageEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMString origin;
     [InitializedByEventConstructor] readonly attribute DOMString lastEventId;
-    [InitializedByEventConstructor] readonly attribute DOMWindow source;
+    [InitializedByEventConstructor] readonly attribute EventTarget source; // May be a DOMWindow or a MessagePort.
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [InitializedByEventConstructor, CachedAttribute, CustomGetter] readonly attribute any data;
     [InitializedByEventConstructor] readonly attribute MessagePort[] ports;

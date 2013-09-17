@@ -71,9 +71,14 @@ shouldThrow("new MessageEvent('eventType', { get data() { throw 'MessageEvent Er
 shouldBe("new MessageEvent('eventType', { source: window }).source", "window");
 shouldBe("new MessageEvent('eventType', { source: this }).source", "this");
 
-// Non-window objects.
+// MessagePort objects.
+var channel = new MessageChannel();
+shouldBe("new MessageEvent('eventType', { ports: [channel.port1], source: channel.port1 }).source", "channel.port1");
+
+// Unacceptable source objects (not a Window or a MessagePort).
 shouldBe("new MessageEvent('eventType', { source: test_object }).source", "null");
 shouldBe("new MessageEvent('eventType', { source: document }).source", "null");
+shouldBe("new MessageEvent('eventType', { source: document.body }).source", "null");
 shouldBe("new MessageEvent('eventType', { source: undefined }).source", "null");
 shouldBe("new MessageEvent('eventType', { source: null }).source", "null");
 shouldBe("new MessageEvent('eventType', { source: false }).source", "null");
@@ -90,7 +95,6 @@ shouldThrow("new MessageEvent('eventType', { get source() { throw 'MessageEvent 
 
 // ports is passed.
 // Valid message ports.
-var channel = new MessageChannel();
 var channel2 = new MessageChannel();
 shouldBe("new MessageEvent('eventType', { ports: [channel.port1, channel.port2, channel2.port1] }).ports[0]", "channel.port1");
 shouldBe("new MessageEvent('eventType', { ports: [channel.port1, channel.port2, channel2.port1] }).ports[1]", "channel.port2");

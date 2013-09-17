@@ -68,6 +68,11 @@ DOMWindow* EventTarget::toDOMWindow()
     return 0;
 }
 
+bool EventTarget::isMessagePort() const
+{
+    return false;
+}
+
 bool EventTarget::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     return ensureEventTargetData().eventListenerMap.add(eventType, listener, useCapture);

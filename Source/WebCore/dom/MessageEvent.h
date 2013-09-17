@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class DOMWindow;
+class EventTarget;
 
 struct MessageEventInit : public EventInit {
     MessageEventInit();
@@ -46,7 +46,7 @@ struct MessageEventInit : public EventInit {
     ScriptValue data;
     String origin;
     String lastEventId;
-    RefPtr<DOMWindow> source;
+    RefPtr<EventTarget> source;
     MessagePortArray ports;
 };
 
@@ -56,23 +56,23 @@ public:
     {
         return adoptRef(new MessageEvent);
     }
-    static PassRefPtr<MessageEvent> create(PassOwnPtr<MessagePortArray> ports, const ScriptValue& data = ScriptValue(), const String& origin = "", const String& lastEventId = "", PassRefPtr<DOMWindow> source = 0)
+    static PassRefPtr<MessageEvent> create(PassOwnPtr<MessagePortArray> ports, const ScriptValue& data = ScriptValue(), const String& origin = String(), const String& lastEventId = String(), PassRefPtr<EventTarget> source = 0)
     {
         return adoptRef(new MessageEvent(data, origin, lastEventId, source, ports));
     }
-    static PassRefPtr<MessageEvent> create(PassOwnPtr<MessagePortArray> ports, PassRefPtr<SerializedScriptValue> data, const String& origin = "", const String& lastEventId = "", PassRefPtr<DOMWindow> source = 0)
+    static PassRefPtr<MessageEvent> create(PassOwnPtr<MessagePortArray> ports, PassRefPtr<SerializedScriptValue> data, const String& origin = String(), const String& lastEventId = String(), PassRefPtr<EventTarget> source = 0)
     {
         return adoptRef(new MessageEvent(data, origin, lastEventId, source, ports));
     }
-    static PassRefPtr<MessageEvent> create(const String& data, const String& origin = "")
+    static PassRefPtr<MessageEvent> create(const String& data, const String& origin = String())
     {
         return adoptRef(new MessageEvent(data, origin));
     }
-    static PassRefPtr<MessageEvent> create(PassRefPtr<Blob> data, const String& origin = "")
+    static PassRefPtr<MessageEvent> create(PassRefPtr<Blob> data, const String& origin = String())
     {
         return adoptRef(new MessageEvent(data, origin));
     }
-    static PassRefPtr<MessageEvent> create(PassRefPtr<ArrayBuffer> data, const String& origin = "")
+    static PassRefPtr<MessageEvent> create(PassRefPtr<ArrayBuffer> data, const String& origin = String())
     {
         return adoptRef(new MessageEvent(data, origin));
     }
@@ -87,7 +87,7 @@ public:
 
     const String& origin() const { return m_origin; }
     const String& lastEventId() const { return m_lastEventId; }
-    DOMWindow* source() const { return m_source.get(); }
+    EventTarget* source() const { return m_source.get(); }
     MessagePortArray ports() const { return m_ports ? *m_ports : MessagePortArray(); }
 
     // FIXME: Remove this when we have custom ObjC binding support.
@@ -116,8 +116,8 @@ public:
 private:
     MessageEvent();
     MessageEvent(const AtomicString&, const MessageEventInit&);
-    MessageEvent(const ScriptValue& data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortArray>);
-    MessageEvent(PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortArray>);
+    MessageEvent(const ScriptValue& data, const String& origin, const String& lastEventId, PassRefPtr<EventTarget> source, PassOwnPtr<MessagePortArray>);
+    MessageEvent(PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, PassRefPtr<EventTarget> source, PassOwnPtr<MessagePortArray>);
 
     explicit MessageEvent(const String& data, const String& origin);
     explicit MessageEvent(PassRefPtr<Blob> data, const String& origin);
@@ -131,7 +131,7 @@ private:
     RefPtr<ArrayBuffer> m_dataAsArrayBuffer;
     String m_origin;
     String m_lastEventId;
-    RefPtr<DOMWindow> m_source;
+    RefPtr<EventTarget> m_source;
     OwnPtr<MessagePortArray> m_ports;
 };
 

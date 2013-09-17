@@ -1,0 +1,12 @@
+Make sure that MessageEvent.source is properly set in connect event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/messageevent-source.js
+PASS [Worker]  event.__proto__ is MessageEvent.prototype
+PASS [Worker]  event.source is event.ports[0]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

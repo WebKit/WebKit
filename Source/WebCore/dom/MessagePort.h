@@ -75,6 +75,7 @@ namespace WebCore {
 
         virtual const AtomicString& interfaceName() const OVERRIDE;
         virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+        virtual bool isMessagePort() const OVERRIDE FINAL { return true; }
 
         void dispatchMessages();
 
