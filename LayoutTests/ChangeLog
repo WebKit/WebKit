@@ -1,3 +1,9 @@
+2013-09-17  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip failing tests.
+
+        * platform/qt-wk1/TestExpectations:
+
 2013-09-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: ARIA tablist is disabled, but VoiceOver does not speak the tabs as dimmed

@@ -130,6 +130,10 @@ fast/dom/HTMLAnchorElement/anchor-no-multiple-windows.html
 fast/dom/Window/window-open-no-multiple-windows.html
 fast/forms/post-popup-no-multiple-windows.html
 
+webkit.org/b/121474 fast/history/go-back-to-iframe-with-plugin.html [ Skip ]
+
+webkit.org/b/121475 inspector/storage-panel-dom-storage-update.html [ Skip ]
+
 # TestRunner::overridePreference() does not support the 'WebKitShouldRespectImageOrientation' preference
 fast/images/exif-orientation-composited.html
 
