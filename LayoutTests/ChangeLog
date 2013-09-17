@@ -1,3 +1,15 @@
+2013-09-17  Hans Muller  <hmuller@adobe.com>
+
+        Bad ASSERT() in RasterShapeIntervals::firstIncludedIntervalY()
+        https://bugs.webkit.org/show_bug.cgi?id=121455
+
+        Reviewed by Darin Adler.
+
+        Simple regression test, it crashes in the bad ASSERT().
+
+        * fast/shapes/shape-inside/shape-inside-first-fit-crash-expected.txt: Added.
+        * fast/shapes/shape-inside/shape-inside-first-fit-crash.html: Added.
+
 2013-09-17  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip and rebase tests.

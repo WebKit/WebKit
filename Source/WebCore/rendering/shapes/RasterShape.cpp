@@ -97,7 +97,7 @@ bool RasterShapeIntervals::firstIncludedIntervalY(int minY, const IntSize& minSi
 {
     minY = std::max<int>(bounds().y(), minY);
 
-    ASSERT(minY >= 0 && minY + minSize.height() < size());
+    ASSERT(minY >= 0 && minY < size());
 
     if (minSize.isEmpty() || minSize.width() > bounds().width())
         return false;
