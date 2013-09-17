@@ -6800,6 +6800,10 @@
     <ClCompile Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateLegacyAVCF.cpp">
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\RenderBlockFlow.cpp" /> 
+    <ClCompile Include="..\platform\win\StructuredExceptionHandlerSuppressor.cpp"> 
+      <Filter>platform\win</Filter> 
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -14277,6 +14281,8 @@
     <ClInclude Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateLegacyAVCF.h">
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLElementTypeHelpers.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementTypeHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">
@@ -15220,5 +15226,10 @@
     <CustomBuildStep Include="..\rendering\RenderThemeWin.h">
       <Filter>rendering</Filter>
     </CustomBuildStep>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\platform\win\makesafeseh.asm">
+      <Filter>platform\win</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
