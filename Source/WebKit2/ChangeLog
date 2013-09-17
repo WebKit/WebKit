@@ -1,3 +1,20 @@
+2013-09-17  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        Fix Qt WK2 build after r155888
+        https://bugs.webkit.org/show_bug.cgi?id=121471
+
+        Reviewed by Csaba Osztrogonác.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::createDrawingAreaProxy):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        (QRawWebViewPrivate::createDrawingAreaProxy):
+        * UIProcess/API/qt/raw/qrawwebview_p_p.h:
+        * UIProcess/qt/QtPageClient.cpp:
+        (WebKit::QtPageClient::createDrawingAreaProxy):
+        * UIProcess/qt/QtPageClient.h:
+
 2013-09-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK][EFL] Add NetworkProcess support for ProcessLauncher

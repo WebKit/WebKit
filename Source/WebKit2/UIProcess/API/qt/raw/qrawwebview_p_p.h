@@ -94,7 +94,7 @@ public:
 
     // PageClient
 
-    virtual PassOwnPtr<WebKit::DrawingAreaProxy> createDrawingAreaProxy();
+    virtual OwnPtr<WebKit::DrawingAreaProxy> createDrawingAreaProxy();
 
     virtual void pageDidRequestScroll(const WebCore::IntPoint& pos);
     virtual void processDidCrash();
