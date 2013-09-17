@@ -532,6 +532,7 @@
 // OS X defines a series of platform macros for debugging.
 // Some of them are really annoying because they use common names (e.g. check()).
 // Disable those macros so that we are not limited in how we name methods and functions.
+#undef __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES
 #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
 #endif /* PLATFORM(MAC) && !PLATFORM(IOS) */
 

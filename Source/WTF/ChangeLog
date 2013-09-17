@@ -1,5 +1,15 @@
 2013-09-16  Benjamin Poulain  <benjamin@webkit.org>
 
+        Fix WebKit1 build after r155910
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Platform.h: Some files in WebKit include system headers before
+        WTF headers, causing the macro to be defined twice. #undef the macro
+        to support that case.
+
+2013-09-16  Benjamin Poulain  <benjamin@webkit.org>
+
         Disable OS X's unprefixed debug macro
         https://bugs.webkit.org/show_bug.cgi?id=121460
 
