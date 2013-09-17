@@ -36,6 +36,12 @@
 
 2013-09-17  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] More bot cleanup.
+
+        * platform/win/TestExpectations: Turn off a few more tests to get bots green.
+
+2013-09-17  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Disable a number of crashing tests to help the EWS system run more rapidly.
         https://bugs.webkit.org/show_bug.cgi?id=121509
 
