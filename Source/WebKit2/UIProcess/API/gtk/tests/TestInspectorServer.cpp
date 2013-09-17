@@ -215,8 +215,8 @@ static void testRemoteDebuggingMessage(InspectorServerTest* test, gconstpointer)
 
 static void openRemoteDebuggingSession(InspectorServerTest* test, gconstpointer)
 {
-    // To test the whole pipeline this exploits a behavior of the inspector front-end which won't provide any title unless the
-    // debugging session was established correctly through web socket. It should be something like "Web Inspector - <Page URL>".
+    // To test the whole pipeline this exploits a behavior of the inspector front-end which won't provide the page address as title unless the
+    // debugging session was established correctly through web socket.
     // In our case page URL should be http://127.0.0.1:2999/
     // So this test case will fail if:
     // - The page list didn't return a valid inspector URL
@@ -235,9 +235,14 @@ static void openRemoteDebuggingSession(InspectorServerTest* test, gconstpointer)
 
     String resolvedURL = String("http://127.0.0.1:2999/") + String::fromUTF8(WebViewTest::javascriptResultToCString(javascriptResult));
     test->loadURI(resolvedURL.utf8().data());
-    test->waitUntilTitleChanged();
+    test->waitUntilLoadFinished();
 
-    g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, "Web Inspector - http://127.0.0.1:2999/");
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.getElementsByTagName('li')[0].title", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+
+    GOwnPtr<char> title(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(title.get(), ==, "http://127.0.0.1:2999/");
 }
 
 static void sendIncompleteRequest(InspectorServerTest* test, gconstpointer)
