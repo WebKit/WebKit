@@ -25,5 +25,5 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
-AXARIABusy: 0
+AXElementBusy: 0
 

@@ -1,3 +1,17 @@
+2013-09-17  Samuel White  <samuel_white@apple.com>
+
+        AX: Mac AXARIABusy should be AXElementBusy (not ARIA specific)
+        https://bugs.webkit.org/show_bug.cgi?id=121442
+
+        Reviewed by Chris Fleizach.
+
+        No new tests, changed AXARIABusy attribute to AXElementBusy to uncouple the concept of busy with
+        the aria-busy attribute. This will allow us to expand on the definition of busy moving forward.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2013-09-17  Andreas Kling  <akling@apple.com>
 
         Pack create_hash_table tables better.

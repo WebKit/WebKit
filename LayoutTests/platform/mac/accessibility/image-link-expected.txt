@@ -29,7 +29,7 @@ AXDOMIdentifier: test
 AXDOMClassList: <array of size 0>
 AXURL: http://www.wowhead.com/?item=33924
 AXAccessKey: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 Child 0:
@@ -59,7 +59,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXURL: LayoutTests/accessibility/resources/cake.png
 AXAccessKey: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 

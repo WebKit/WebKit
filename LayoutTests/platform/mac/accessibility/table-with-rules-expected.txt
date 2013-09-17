@@ -37,7 +37,7 @@ AXVisibleCells: <array of size 2>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 AXRole: AXTable
@@ -72,7 +72,7 @@ AXVisibleCells: <array of size 2>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 AXRole: AXTable
@@ -107,7 +107,7 @@ AXVisibleCells: <array of size 2>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 AXRole: AXGroup
@@ -135,7 +135,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 AXRole: AXGroup
@@ -163,7 +163,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 

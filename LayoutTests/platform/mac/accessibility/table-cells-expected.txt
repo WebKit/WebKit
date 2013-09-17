@@ -36,7 +36,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------------------
@@ -67,7 +67,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {3, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------------------
@@ -98,7 +98,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 1>
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------------------
@@ -129,7 +129,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------------------
@@ -160,7 +160,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {5, 1}
 AXColumnIndexRange: NSRange: {3, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------------------

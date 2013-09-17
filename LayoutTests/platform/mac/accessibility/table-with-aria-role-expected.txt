@@ -27,7 +27,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
 AXAccessKey: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXMenu
@@ -39,7 +39,7 @@ AXSize: NSSize: {85, 52}
 AXSelectedChildren: (null)
 AXVisibleChildren: (null)
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 

@@ -33,7 +33,7 @@ AXVisibleCells: <array of size 4>
 AXColumnHeaderUIElements: <array of size 2>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -73,7 +73,7 @@ AXVisibleCells: <array of size 2>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -105,7 +105,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -144,7 +144,7 @@ AXVisibleCells: <array of size 2>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -183,7 +183,7 @@ AXVisibleCells: <array of size 2>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -222,7 +222,7 @@ AXVisibleCells: <array of size 4>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -262,7 +262,7 @@ AXVisibleCells: <array of size 2>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -294,7 +294,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -326,7 +326,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -365,7 +365,7 @@ AXVisibleCells: <array of size 2>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -397,7 +397,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 1>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 Contributions
@@ -429,7 +429,7 @@ AXLanguage:
 AXDOMIdentifier: nmb
 AXDOMClassList: <array of size 1>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 Politics
@@ -474,7 +474,7 @@ AXVisibleCells: <array of size 2>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -513,7 +513,7 @@ AXVisibleCells: <array of size 4>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -546,7 +546,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -586,7 +586,7 @@ AXVisibleCells: <array of size 6>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -627,7 +627,7 @@ AXVisibleCells: <array of size 6>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -668,7 +668,7 @@ AXVisibleCells: <array of size 4>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf	asdf
@@ -708,7 +708,7 @@ AXVisibleCells: <array of size 24>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
-AXARIABusy: 0
+AXElementBusy: 0
 
 
 asdf

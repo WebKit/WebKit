@@ -24,7 +24,7 @@ AXTopLevelUIElement: <AXHeading: '[ edit ] Tourette syndrome'>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 
@@ -53,7 +53,7 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: bottom2
 AXDOMClassList: <array of size 0>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 
@@ -82,7 +82,7 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: bottom2
 AXDOMClassList: <array of size 0>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 

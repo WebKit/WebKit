@@ -23,7 +23,7 @@ AXTopLevelUIElement: <AXStaticText>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ----------------------
 AXUIElementForTextMarker

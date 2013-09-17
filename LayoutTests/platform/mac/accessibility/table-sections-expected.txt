@@ -43,7 +43,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -73,7 +73,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -103,7 +103,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -137,7 +137,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -167,7 +167,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -197,7 +197,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -233,7 +233,7 @@ AXIndex: 0
 AXHeader: <AXColumn>
 AXRows: <array of size 4>
 AXVisibleRows: <array of size 4>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXColumn
@@ -264,7 +264,7 @@ AXIndex: 1
 AXHeader: <AXColumn>
 AXRows: <array of size 4>
 AXVisibleRows: <array of size 4>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXColumn
@@ -295,7 +295,7 @@ AXIndex: 2
 AXHeader: <AXColumn>
 AXRows: <array of size 4>
 AXVisibleRows: <array of size 4>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 
@@ -327,7 +327,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXIndex: 0
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXRow
@@ -355,7 +355,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXIndex: 1
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXRow
@@ -383,7 +383,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXIndex: 2
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXRow
@@ -411,7 +411,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXIndex: 3
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 
@@ -444,7 +444,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -474,7 +474,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -504,7 +504,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -534,7 +534,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -564,7 +564,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -594,7 +594,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -624,7 +624,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -654,7 +654,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -684,7 +684,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -714,7 +714,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -744,7 +744,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -774,7 +774,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -806,7 +806,7 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 
@@ -843,7 +843,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -873,7 +873,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -903,7 +903,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -937,7 +937,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -967,7 +967,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -997,7 +997,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -1033,7 +1033,7 @@ AXIndex: 0
 AXHeader: <AXColumn>
 AXRows: <array of size 4>
 AXVisibleRows: <array of size 4>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXColumn
@@ -1064,7 +1064,7 @@ AXIndex: 1
 AXHeader: <AXColumn>
 AXRows: <array of size 4>
 AXVisibleRows: <array of size 4>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXColumn
@@ -1095,7 +1095,7 @@ AXIndex: 2
 AXHeader: <AXColumn>
 AXRows: <array of size 4>
 AXVisibleRows: <array of size 4>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 
@@ -1127,7 +1127,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXIndex: 0
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXRow
@@ -1155,7 +1155,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXIndex: 1
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXRow
@@ -1183,7 +1183,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXIndex: 2
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXRow
@@ -1211,7 +1211,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXIndex: 3
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 
@@ -1244,7 +1244,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -1274,7 +1274,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -1304,7 +1304,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -1334,7 +1334,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -1364,7 +1364,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -1394,7 +1394,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -1424,7 +1424,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -1454,7 +1454,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -1484,7 +1484,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -1514,7 +1514,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -1544,7 +1544,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -1574,7 +1574,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXRowIndexRange: NSRange: {3, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -1606,7 +1606,7 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 

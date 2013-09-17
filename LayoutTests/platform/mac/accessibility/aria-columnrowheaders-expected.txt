@@ -32,7 +32,7 @@ AXDOMIdentifier: test
 AXDOMClassList: 
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -62,7 +62,7 @@ AXDOMIdentifier:
 AXDOMClassList: 
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {1, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -92,7 +92,7 @@ AXDOMIdentifier:
 AXDOMClassList: 
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -125,7 +125,7 @@ AXDOMIdentifier: obj1
 AXDOMClassList: 
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------
@@ -155,7 +155,7 @@ AXDOMIdentifier:
 AXDOMClassList: 
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {0, 1}
-AXARIABusy: 0
+AXElementBusy: 0
 AXRequired: 0
 
 ------------

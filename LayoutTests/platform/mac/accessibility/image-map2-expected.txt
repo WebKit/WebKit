@@ -24,7 +24,7 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: result
 AXDOMClassList: <array of size 0>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXLink
@@ -53,7 +53,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 AXPath: <AXLink>
 
 ------------
@@ -83,7 +83,7 @@ AXDOMIdentifier:
 AXDOMClassList: <array of size 0>
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 AXPath: <AXLink>
 
 ------------

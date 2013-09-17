@@ -39,7 +39,7 @@ AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXList
@@ -70,7 +70,7 @@ AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXList
@@ -101,7 +101,7 @@ AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 5>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXGroup
@@ -129,7 +129,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXGroup
@@ -157,7 +157,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 
@@ -187,7 +187,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXGroup
@@ -215,7 +215,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 
@@ -245,7 +245,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXGroup
@@ -273,7 +273,7 @@ AXLanguage:
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
 AXTitleUIElement: (null)
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 
@@ -302,7 +302,7 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXGroup
@@ -329,7 +329,7 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXGroup
@@ -356,7 +356,7 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXGroup
@@ -383,7 +383,7 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 AXRole: AXGroup
@@ -410,7 +410,7 @@ AXTopLevelUIElement: <AXGroup>
 AXLanguage: 
 AXDOMIdentifier: 
 AXDOMClassList: <array of size 0>
-AXARIABusy: 0
+AXElementBusy: 0
 
 ------------
 
