@@ -1,3 +1,51 @@
+2013-09-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r155977.
+        http://trac.webkit.org/changeset/155977
+        https://bugs.webkit.org/show_bug.cgi?id=121515
+
+        Broke over a dozen tests on Mac WK2 (Requested by ap on
+        #webkit).
+
+        * compositing/contents-scale/animating-expected.txt: Removed.
+        * compositing/contents-scale/animating.html: Removed.
+        * compositing/contents-scale/scaled-ancestor-expected.txt: Removed.
+        * compositing/contents-scale/scaled-ancestor.html: Removed.
+        * compositing/contents-scale/simple-scale-expected.txt: Removed.
+        * compositing/contents-scale/simple-scale.html: Removed.
+        * compositing/contents-scale/z-translate-expected.txt: Removed.
+        * compositing/contents-scale/z-translate.html: Removed.
+        * compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt:
+        * compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt:
+        * compositing/visible-rect/2d-transformed-expected.txt:
+        * compositing/visible-rect/3d-transform-style-expected.txt:
+        * compositing/visible-rect/3d-transformed-expected.txt:
+        * compositing/visible-rect/animated-expected.txt:
+        * compositing/visible-rect/animated-from-none-expected.txt:
+        * compositing/visible-rect/clipped-by-viewport-expected.txt:
+        * compositing/visible-rect/clipped-visible-rect-expected.txt:
+        * compositing/visible-rect/flipped-preserve-3d-expected.txt:
+        * compositing/visible-rect/iframe-and-layers-expected.txt:
+        * compositing/visible-rect/nested-transform-expected.txt:
+        * compositing/visible-rect/scrolled-expected.txt:
+        * platform/mac/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt: Removed.
+        * platform/mac/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt: Removed.
+        * platform/mac/compositing/tiling/rotated-tiled-clamped-expected.txt:
+        * platform/mac/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt:
+        * platform/mac/compositing/tiling/tile-cache-zoomed-expected.txt:
+        * platform/mac/compositing/visible-rect/2d-transformed-expected.txt: Removed.
+        * platform/mac/compositing/visible-rect/3d-transform-style-expected.txt: Removed.
+        * platform/mac/compositing/visible-rect/3d-transformed-expected.txt: Removed.
+        * platform/mac/compositing/visible-rect/animated-expected.txt: Removed.
+        * platform/mac/compositing/visible-rect/animated-from-none-expected.txt: Removed.
+        * platform/mac/compositing/visible-rect/clipped-by-viewport-expected.txt: Removed.
+        * platform/mac/compositing/visible-rect/clipped-visible-rect-expected.txt: Removed.
+        * platform/mac/compositing/visible-rect/flipped-preserve-3d-expected.txt: Removed.
+        * platform/mac/compositing/visible-rect/iframe-and-layers-expected.txt: Removed.
+        * platform/mac/compositing/visible-rect/iframe-no-layers-expected.txt:
+        * platform/mac/compositing/visible-rect/nested-transform-expected.txt: Removed.
+        * platform/mac/compositing/visible-rect/scrolled-expected.txt: Removed.
+
 2013-09-17  Eric Carlson  <eric.carlson@apple.com>
 
         MediaStream API: Changing the device enumeration to be async
