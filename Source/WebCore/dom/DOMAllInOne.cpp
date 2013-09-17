@@ -44,7 +44,6 @@
 #include "ContainerNode.cpp"
 #include "ContainerNodeAlgorithms.cpp"
 #include "ContextDestructionObserver.cpp"
-#include "ContextFeatures.cpp"
 #include "CustomEvent.cpp"
 #include "DOMCoreException.cpp"
 #include "DOMImplementation.cpp"

@@ -373,7 +373,6 @@ SOURCES += \
     dom/ContainerNode.cpp \
     dom/ContainerNodeAlgorithms.cpp \
     dom/ContextDestructionObserver.cpp \
-    dom/ContextFeatures.cpp \
     dom/CustomEvent.cpp \
     dom/DecodedDataDocumentParser.cpp \
     dom/DeviceMotionController.cpp \
@@ -1580,7 +1579,6 @@ HEADERS += \
     dom/Comment.h \
     dom/ContainerNode.h \
     dom/ContainerNodeAlgorithms.h \
-    dom/ContextFeatures.h \
     dom/CustomEvent.h \
     dom/default/PlatformMessagePortChannel.h \
     dom/DeviceMotionClient.h \

@@ -41,7 +41,6 @@
 #include "ChromeClient.h"
 #include "Comment.h"
 #include "ContentSecurityPolicy.h"
-#include "ContextFeatures.h"
 #include "CookieJar.h"
 #include "CustomElementConstructor.h"
 #include "CustomElementRegistry.h"
@@ -412,7 +411,6 @@ Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
     , m_pendingSheetLayout(NoLayoutWithPendingSheets)
     , m_frame(frame)
     , m_activeParserCount(0)
-    , m_contextFeatures(ContextFeatures::defaultSwitch())
     , m_wellFormed(false)
     , m_printing(false)
     , m_paginatedForScreen(false)
@@ -500,9 +498,6 @@ Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
     , m_hasInjectedPlugInsScript(false)
     , m_renderTreeBeingDestroyed(false)
 {
-    if (m_frame)
-        provideContextFeaturesToDocumentFrom(this, m_frame->page());
-
     // We depend on the url getting immediately set in subframes, but we
     // also depend on the url NOT getting immediately set in opened windows.
     // See fast/dom/early-frame-url.html
@@ -645,7 +640,6 @@ void Document::dropChildren()
     m_activeElement = 0;
     m_titleElement = 0;
     m_documentElement = 0;
-    m_contextFeatures = ContextFeatures::defaultSwitch();
     m_userActionElements.documentDidRemoveLastRef();
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenElement = 0;
@@ -2636,7 +2630,6 @@ void Document::setURL(const KURL& url)
     m_url = newURL;
     m_documentURI = m_url.string();
     updateBaseURL();
-    contextFeatures()->urlDidChange(this);
 }
 
 void Document::updateBaseURL()
@@ -3675,26 +3668,20 @@ PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& 
     return 0;
 }
 
-void Document::addMutationEventListenerTypeIfEnabled(ListenerType listenerType)
-{
-    if (ContextFeatures::mutationEventsEnabled(this))
-        addListenerType(listenerType);
-}
-
 void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
 {
     if (eventType == eventNames().DOMSubtreeModifiedEvent)
-        addMutationEventListenerTypeIfEnabled(DOMSUBTREEMODIFIED_LISTENER);
+        addListenerType(DOMSUBTREEMODIFIED_LISTENER);
     else if (eventType == eventNames().DOMNodeInsertedEvent)
-        addMutationEventListenerTypeIfEnabled(DOMNODEINSERTED_LISTENER);
+        addListenerType(DOMNODEINSERTED_LISTENER);
     else if (eventType == eventNames().DOMNodeRemovedEvent)
-        addMutationEventListenerTypeIfEnabled(DOMNODEREMOVED_LISTENER);
+        addListenerType(DOMNODEREMOVED_LISTENER);
     else if (eventType == eventNames().DOMNodeRemovedFromDocumentEvent)
-        addMutationEventListenerTypeIfEnabled(DOMNODEREMOVEDFROMDOCUMENT_LISTENER);
+        addListenerType(DOMNODEREMOVEDFROMDOCUMENT_LISTENER);
     else if (eventType == eventNames().DOMNodeInsertedIntoDocumentEvent)
-        addMutationEventListenerTypeIfEnabled(DOMNODEINSERTEDINTODOCUMENT_LISTENER);
+        addListenerType(DOMNODEINSERTEDINTODOCUMENT_LISTENER);
     else if (eventType == eventNames().DOMCharacterDataModifiedEvent)
-        addMutationEventListenerTypeIfEnabled(DOMCHARACTERDATAMODIFIED_LISTENER);
+        addListenerType(DOMCHARACTERDATAMODIFIED_LISTENER);
     else if (eventType == eventNames().overflowchangedEvent)
         addListenerType(OVERFLOWCHANGED_LISTENER);
     else if (eventType == eventNames().webkitAnimationStartEvent)
@@ -4998,9 +4985,6 @@ void Document::enqueueHashchangeEvent(const String& oldURL, const String& newURL
 
 void Document::enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject)
 {
-    if (!ContextFeatures::pushStateEnabled(this))
-        return;
-
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=36202 Popstate event needs to fire asynchronously
     dispatchWindowEvent(PopStateEvent::create(stateObject, domWindow() ? domWindow()->history() : 0));
 }
@@ -5798,11 +5782,6 @@ void Document::decrementActiveParserCount()
     loader()->checkLoadComplete();
 #endif
     frame()->loader().checkLoadComplete();
-}
-
-void Document::setContextFeatures(PassRefPtr<ContextFeatures> features)
-{
-    m_contextFeatures = features;
 }
 
 static RenderObject* nearestCommonHoverAncestor(RenderObject* obj1, RenderObject* obj2)

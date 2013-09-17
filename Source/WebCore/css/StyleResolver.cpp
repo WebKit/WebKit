@@ -52,7 +52,6 @@
 #include "CachedImage.h"
 #include "CalculationValue.h"
 #include "ContentData.h"
-#include "ContextFeatures.h"
 #include "Counter.h"
 #include "CounterContent.h"
 #include "CursorList.h"

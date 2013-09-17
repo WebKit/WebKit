@@ -26,7 +26,6 @@
 #include "Blob.h"
 #include "BlobData.h"
 #include "ContentSecurityPolicy.h"
-#include "ContextFeatures.h"
 #include "CrossOriginAccessControl.h"
 #include "DOMFormData.h"
 #include "DOMImplementation.h"
@@ -276,7 +275,6 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
             // FIXME: Set Last-Modified.
             m_responseDocument->setContent(m_responseBuilder.toStringPreserveCapacity());
             m_responseDocument->setSecurityOrigin(securityOrigin());
-            m_responseDocument->setContextFeatures(document()->contextFeatures());
             if (!m_responseDocument->wellFormed())
                 m_responseDocument = 0;
         }

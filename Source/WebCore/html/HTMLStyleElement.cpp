@@ -25,12 +25,12 @@
 #include "HTMLStyleElement.h"
 
 #include "Attribute.h"
-#include "ContextFeatures.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventSender.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptEventListener.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
@@ -77,7 +77,7 @@ void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicStr
     if (name == titleAttr && sheet())
         sheet()->setTitle(value);
 #if ENABLE(STYLE_SCOPED)
-    else if (name == scopedAttr && ContextFeatures::styleScopedEnabled(&document()))
+    else if (name == scopedAttr && RuntimeEnabledFeatures::styleScopedEnabled())
         scopedAttributeChanged(!value.isNull());
 #endif
     else if (name == mediaAttr) {
@@ -102,7 +102,7 @@ void HTMLStyleElement::finishParsingChildren()
 #if ENABLE(STYLE_SCOPED)
 void HTMLStyleElement::scopedAttributeChanged(bool scoped)
 {
-    ASSERT(ContextFeatures::styleScopedEnabled(&document()));
+    ASSERT(RuntimeEnabledFeatures::styleScopedEnabled());
 
     if (!inDocument())
         return;
@@ -160,7 +160,7 @@ void HTMLStyleElement::registerWithScopingNode(bool scoped)
 
 void HTMLStyleElement::unregisterWithScopingNode(ContainerNode* scope)
 {
-    ASSERT(m_scopedStyleRegistrationState != NotRegistered || !ContextFeatures::styleScopedEnabled(&document()));
+    ASSERT(m_scopedStyleRegistrationState != NotRegistered || !RuntimeEnabledFeatures::styleScopedEnabled());
     if (!isRegisteredAsScoped())
         return;
 
@@ -178,7 +178,7 @@ void HTMLStyleElement::unregisterWithScopingNode(ContainerNode* scope)
 
 bool HTMLStyleElement::scoped() const
 {
-    return fastHasAttribute(scopedAttr) && ContextFeatures::styleScopedEnabled(&document());
+    return RuntimeEnabledFeatures::styleScopedEnabled() && fastHasAttribute(scopedAttr);
 }
 
 void HTMLStyleElement::setScoped(bool scopedValue)

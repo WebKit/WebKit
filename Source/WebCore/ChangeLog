@@ -1,5 +1,14 @@
 2013-09-17  Andreas Kling  <akling@apple.com>
 
+        Remove ContextFeatures.
+        <https://webkit.org/b/121473>
+
+        Reviewed by Antti Koivisto.
+
+        This was only used by the chromium port, nobody implements ContextFeaturesClient.
+
+2013-09-17  Andreas Kling  <akling@apple.com>
+
         Un-dork the build. :|
 
 2013-09-17  Andreas Kling  <akling@apple.com>

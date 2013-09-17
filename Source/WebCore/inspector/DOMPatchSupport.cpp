@@ -35,7 +35,6 @@
 #include "DOMPatchSupport.h"
 
 #include "Attribute.h"
-#include "ContextFeatures.h"
 #include "DOMEditor.h"
 #include "Document.h"
 #include "DocumentFragment.h"
@@ -101,7 +100,6 @@ void DOMPatchSupport::patchDocument(const String& markup)
 #endif
 
     ASSERT(newDocument);
-    newDocument->setContextFeatures(m_document->contextFeatures());
     RefPtr<DocumentParser> parser;
     if (m_document->isHTMLDocument())
         parser = HTMLDocumentParser::create(static_cast<HTMLDocument*>(newDocument.get()), false);

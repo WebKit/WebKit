@@ -191,7 +191,6 @@ sub defaultTagPropertyHash
         'mapToTagName' => '',
         'wrapperOnlyIfMediaIsAvailable' => 0,
         'conditional' => 0,
-        'contextConditional' => 0,
         'runtimeConditional' => 0,
         'generateTypeHelpers' => 0
     );
@@ -404,15 +403,6 @@ sub printConstructorInterior
     if (!MediaPlayer::isAvailable() || (settings && !settings->mediaEnabled()))
         return 0;
     
-END
-;
-    }
-
-    my $contextConditional = $enabledTags{$tagName}{contextConditional};
-    if ($contextConditional) {
-        print F <<END
-    if (!ContextFeatures::${contextConditional}Enabled(document))
-        return 0;
 END
 ;
     }
@@ -914,7 +904,6 @@ END
 
     print F <<END
 
-#include "ContextFeatures.h"
 #include "Document.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
@@ -1102,20 +1091,6 @@ static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGloba
 
 END
     ;
-        } elsif ($enabledTags{$tagName}{contextConditional}) {
-            my $contextConditional = $enabledTags{$tagName}{contextConditional};
-            print F <<END
-static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
-{
-    if (!ContextFeatures::${contextConditional}Enabled(&element->document())) {
-        ASSERT(!element || element->is$parameters{fallbackInterfaceName}());
-        return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackJSInterfaceName}, element.get());
-    }
-
-    return CREATE_DOM_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
-}
-END
-    ;
         } elsif ($enabledTags{$tagName}{runtimeConditional}) {
             my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
             print F <<END
@@ -1167,7 +1142,6 @@ sub printWrapperFactoryCppFile
     print F "\n#include \"$parameters{namespace}Names.h\"\n";
     print F <<END
 
-#include "ContextFeatures.h"
 #include "Document.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"

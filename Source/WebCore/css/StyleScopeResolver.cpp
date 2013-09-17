@@ -32,7 +32,6 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "ContentDistributor.h"
-#include "ContextFeatures.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "RuleFeature.h"

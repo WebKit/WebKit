@@ -69,7 +69,6 @@ class CachedScript;
 class CanvasRenderingContext;
 class CharacterData;
 class Comment;
-class ContextFeatures;
 class CustomElementConstructor;
 class CustomElementRegistry;
 class DOMImplementation;
@@ -1152,9 +1151,6 @@ public:
     void incrementActiveParserCount() { ++m_activeParserCount; }
     void decrementActiveParserCount();
 
-    void setContextFeatures(PassRefPtr<ContextFeatures>);
-    ContextFeatures* contextFeatures() { return m_contextFeatures.get(); }
-
     DocumentSharedObjectPool* sharedObjectPool() { return m_sharedObjectPool.get(); }
 
     void didRemoveAllPendingStylesheet();
@@ -1264,7 +1260,6 @@ private:
     void visualUpdatesSuppressionTimerFired(Timer<Document>*);
 
     void addListenerType(ListenerType listenerType) { m_listenerTypes |= listenerType; }
-    void addMutationEventListenerTypeIfEnabled(ListenerType);
 
     void didAssociateFormControlsTimerFired(Timer<Document>*);
 
@@ -1290,7 +1285,6 @@ private:
     RefPtr<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
     unsigned m_activeParserCount;
-    RefPtr<ContextFeatures> m_contextFeatures;
 
     bool m_wellFormed;
 
