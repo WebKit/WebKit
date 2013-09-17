@@ -1,5 +1,25 @@
 2013-09-17  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [GTK][EFL] Add NetworkProcess support for ProcessLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=121434
+
+        Reviewed by Sam Weinig.
+
+        Original patch by Balazs Kelemen <kbalazs@webkit.org>
+        and Kwang Yul Seo <skyul@company100.net>
+
+        * Shared/ProcessExecutablePath.h:
+        * Shared/efl/ProcessExecutablePathEfl.cpp:
+        (WebKit::executablePathOfNetworkProcess):
+        * Shared/gtk/ProcessExecutablePathGtk.cpp:
+        (WebKit::executablePathOfNetworkProcess):
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
+2013-09-17  Csaba Osztrogonác  <ossy@webkit.org>
+
         Buildfix for !USE(PROTECTION_SPACE_AUTH_CALLBACK) platforms
         https://bugs.webkit.org/show_bug.cgi?id=121431
 

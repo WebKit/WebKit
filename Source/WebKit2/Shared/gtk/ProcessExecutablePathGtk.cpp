@@ -37,6 +37,7 @@ namespace WebKit {
 
 const char* gWebKitWebProcessName = "WebKitWebProcess";
 const char* gWebKitPluginProcessName = "WebKitPluginProcess";
+const char* gWebKitNetworkProcessName = "WebKitNetworkProcess";
 
 static String findWebKitProcess(const char* processName)
 {
@@ -75,5 +76,12 @@ String executablePathOfPluginProcess()
 {
     return findWebKitProcess(gWebKitPluginProcessName);
 }
+
+#if ENABLE(NETWORK_PROCESS)
+String executablePathOfNetworkProcess()
+{
+    return findWebKitProcess(gWebKitNetworkProcessName);
+}
+#endif
 
 } // namespace WebKit

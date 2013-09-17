@@ -76,12 +76,23 @@ void ProcessLauncher::launchProcess()
 
     String executablePath, pluginPath;
     CString realExecutablePath, realPluginPath;
-    if (m_launchOptions.processType == WebProcess)
+    switch (m_launchOptions.processType) {
+    case WebProcess:
         executablePath = executablePathOfWebProcess();
-    else {
+        break;
+    case PluginProcess:
         executablePath = executablePathOfPluginProcess();
         pluginPath = m_launchOptions.extraInitializationData.get("plugin-path");
         realPluginPath = fileSystemRepresentation(pluginPath);
+        break;
+#if ENABLE(NETWORK_PROCESS)
+    case NetworkProcess:
+        executablePath = executablePathOfNetworkProcess();
+        break;
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+        return;
     }
 
     realExecutablePath = fileSystemRepresentation(executablePath);

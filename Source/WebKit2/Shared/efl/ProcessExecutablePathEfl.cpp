@@ -74,4 +74,13 @@ String executablePathOfPluginProcess()
     return webKitPluginProcessName;
 }
 
+#if ENABLE(NETWORK_PROCESS)
+String executablePathOfNetworkProcess()
+{
+    DEFINE_STATIC_LOCAL(const String, webKitNetworkProcessName, (findProcessPath(NETWORKPROCESSNAME)));
+
+    return webKitNetworkProcessName;
+}
+#endif
+
 } // namespace WebKit

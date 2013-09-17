@@ -32,6 +32,9 @@ namespace WebKit {
 
 String executablePathOfWebProcess();
 String executablePathOfPluginProcess();
+#if ENABLE(NETWORK_PROCESS)
+String executablePathOfNetworkProcess();
+#endif
 
 }
 
