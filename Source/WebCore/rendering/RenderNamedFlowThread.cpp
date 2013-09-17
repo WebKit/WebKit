@@ -193,12 +193,12 @@ static bool compareRenderRegions(const RenderRegion* firstRegion, const RenderRe
     ASSERT(firstRegion);
     ASSERT(secondRegion);
 
-    ASSERT(firstRegion->generatingNode());
-    ASSERT(secondRegion->generatingNode());
+    ASSERT(firstRegion->generatingElement());
+    ASSERT(secondRegion->generatingElement());
 
     // If the regions belong to different nodes, compare their position in the DOM.
-    if (firstRegion->generatingNode() != secondRegion->generatingNode()) {
-        unsigned short position = firstRegion->generatingNode()->compareDocumentPosition(secondRegion->generatingNode());
+    if (firstRegion->generatingElement() != secondRegion->generatingElement()) {
+        unsigned short position = firstRegion->generatingElement()->compareDocumentPosition(secondRegion->generatingElement());
 
         // If the second region is contained in the first one, the first region is "less" if it's :before.
         if (position & Node::DOCUMENT_POSITION_CONTAINED_BY) {

@@ -1,3 +1,17 @@
+2013-09-17  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Replace generatingNode() with generatingElement() for RenderRegion
+        https://bugs.webkit.org/show_bug.cgi?id=121469
+
+        Reviewed by Antti Koivisto.
+
+        The fix for https://bugs.webkit.org/show_bug.cgi?id=120397 replaced node() with generatingElement() for regions, but i forgot about replacing generatingNode() with generatingElement() in RenderNamedFlowThread::compareRenderRegions. This is needed in preparation for regions as anonymous blocks refactoring in https://bugs.webkit.org/show_bug.cgi?id=119135.
+
+        No new functionality introduced, therefore no new tests.
+
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::compareRenderRegions):
+
 2013-09-17  Andreas Kling  <akling@apple.com>
 
         CTTE: Pass RenderArena around by reference.
