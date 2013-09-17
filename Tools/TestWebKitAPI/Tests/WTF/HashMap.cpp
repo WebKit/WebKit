@@ -100,7 +100,7 @@ TEST(WTF_HashMap, MoveOnlyValues)
     for (size_t i = 0; i < 50; ++i)
         ASSERT_EQ(moveOnlyValues.take(i + 1).value(), i + 1);
 
-    for (size_t i = 0; 50 < 100; ++i)
+    for (size_t i = 50; i < 100; ++i)
         ASSERT_TRUE(moveOnlyValues.remove(i + 1));
 
     ASSERT_TRUE(moveOnlyValues.isEmpty());
