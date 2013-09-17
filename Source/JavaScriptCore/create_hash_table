@@ -281,10 +281,10 @@ sub output() {
             $intrinsic = "RegExpTestIntrinsic" if ($key eq "test");
         }
 
-        print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue, $intrinsic },\n";
+        print "   { \"$key\", $attrs[$i], $intrinsic, (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue },\n";
         $i++;
     }
-    print "   { 0, 0, 0, 0, NoIntrinsic }\n";
+    print "   { 0, 0, NoIntrinsic, 0, 0 }\n";
     print "};\n\n";
     print "extern const struct HashTable $name =\n";
     print "    \{ $compactSize, $compactHashSizeMask, $nameEntries, 0 \};\n";

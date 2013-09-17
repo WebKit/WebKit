@@ -35,8 +35,8 @@ namespace WebCore {
 
 static const HashTableValue JSTestNodeTableValues[] =
 {
-    { "constructor", DontEnum | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNodeConstructor), (intptr_t)0, NoIntrinsic },
-    { 0, 0, 0, 0, NoIntrinsic }
+    { "constructor", DontEnum | ReadOnly, NoIntrinsic, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNodeConstructor), (intptr_t)0 },
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
 static const HashTable JSTestNodeTable = { 2, 1, JSTestNodeTableValues, 0 };
@@ -44,7 +44,7 @@ static const HashTable JSTestNodeTable = { 2, 1, JSTestNodeTableValues, 0 };
 
 static const HashTableValue JSTestNodeConstructorTableValues[] =
 {
-    { 0, 0, 0, 0, NoIntrinsic }
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
 static const HashTable JSTestNodeConstructorTable = { 1, 0, JSTestNodeConstructorTableValues, 0 };
@@ -85,7 +85,7 @@ ConstructType JSTestNodeConstructor::getConstructData(JSCell*, ConstructData& co
 
 static const HashTableValue JSTestNodePrototypeTableValues[] =
 {
-    { 0, 0, 0, 0, NoIntrinsic }
+    { 0, 0, NoIntrinsic, 0, 0 }
 };
 
 static const HashTable JSTestNodePrototypeTable = { 1, 0, JSTestNodePrototypeTableValues, 0 };

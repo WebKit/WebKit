@@ -3638,11 +3638,11 @@ sub GenerateHashTable
         } else {
             $targetType = "static_cast<PropertySlot::GetValueFunc>";
         }
-        push(@implContent, "    { \"$key\", @$specials[$i], (intptr_t)" . $targetType . "(@$value1[$i]), (intptr_t)@$value2[$i], NoIntrinsic },\n");
+        push(@implContent, "    { \"$key\", @$specials[$i], NoIntrinsic, (intptr_t)" . $targetType . "(@$value1[$i]), (intptr_t)@$value2[$i] },\n");
         push(@implContent, "#endif\n") if $conditional;
         ++$i;
     }
-    push(@implContent, "    { 0, 0, 0, 0, NoIntrinsic }\n");
+    push(@implContent, "    { 0, 0, NoIntrinsic, 0, 0 }\n");
     push(@implContent, "};\n\n");
     my $compactSizeMask = $numEntries - 1;
     push(@implContent, "static const HashTable $name = { $compactSize, $compactSizeMask, $nameEntries, 0 };\n");

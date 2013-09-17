@@ -1,3 +1,17 @@
+2013-09-17  Andreas Kling  <akling@apple.com>
+
+        Pack create_hash_table tables better.
+        <https://webkit.org/b/121517>
+
+        Reviewed by Sam Weinig.
+
+        Reduces JavaScriptCore binary size by 4648 bytes.
+
+        * create_hash_table:
+        * runtime/Lookup.h:
+
+            Reorder HashTableValue members to avoid unnecessary padding.
+
 2013-09-17  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         DFG doesn't properly keep scope alive for op_put_to_scope

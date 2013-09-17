@@ -34,9 +34,9 @@ namespace JSC {
     struct HashTableValue {
         const char* key; // property name
         unsigned char attributes; // JSObject attributes
+        Intrinsic intrinsic;
         intptr_t value1;
         intptr_t value2;
-        Intrinsic intrinsic;
     };
 
     // FIXME: There is no reason this get function can't be simpler.
