@@ -1,3 +1,10 @@
+2013-09-17  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] Unreviewed make distcheck fix.
+
+        * GNUmakefile.am: include WebProcess/Network/*.in in the tarball,
+        it's needed for generating WebResourceLoaderMessage*.{cpp,h}.
+
 2013-09-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK][EFL] Add ResourceError::internalError() after r138387

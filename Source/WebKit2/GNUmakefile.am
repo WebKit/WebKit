@@ -739,6 +739,7 @@ EXTRA_DIST += \
 	$(shell ls $(WebKit2)/WebProcess/Geolocation/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/IconDatabase/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/MediaCache/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/Network/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/NetworkInfo/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/Notifications/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/Plugins/*.in) \
