@@ -54,9 +54,11 @@ WTF_EXPORT_PRIVATE bool isMainThread();
 #if USE(WEB_THREAD)
 WTF_EXPORT_PRIVATE bool isWebThread();
 WTF_EXPORT_PRIVATE bool isUIThread();
+WTF_EXPORT_PRIVATE bool initializeWebThread();
 WTF_EXPORT_PRIVATE void initializeApplicationUIThreadIdentifier();
 WTF_EXPORT_PRIVATE void initializeWebThreadIdentifier();
 WTF_EXPORT_PRIVATE bool canAccessThreadLocalDataForThread(ThreadIdentifier);
+void initializeWebThreadPlatform();
 #else
 inline bool isWebThread() { return isMainThread(); }
 inline bool isUIThread() { return isMainThread(); }
@@ -97,6 +99,7 @@ using WTF::setMainThreadCallbacksPaused;
 using WTF::isMainThread;
 using WTF::isMainThreadOrGCThread;
 #if USE(WEB_THREAD)
+using WTF::initializeWebThread;
 using WTF::initializeApplicationUIThreadIdentifier;
 using WTF::initializeWebThreadIdentifier;
 using WTF::canAccessThreadLocalDataForThread;

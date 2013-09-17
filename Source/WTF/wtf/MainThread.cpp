@@ -127,6 +127,18 @@ void initializeMainThreadToProcessMainThread()
 {
     pthread_once(&initializeMainThreadKeyOnce, initializeMainThreadToProcessMainThreadOnce);
 }
+#else
+static pthread_once_t initializeWebThreadKeyOnce = PTHREAD_ONCE_INIT;
+
+static void initializeWebThreadOnce()
+{
+    initializeWebThreadPlatform();
+}
+
+void initializeWebThread()
+{
+    pthread_once(&initializeWebThreadKeyOnce, initializeWebThreadOnce);
+}
 #endif // !USE(WEB_THREAD)
 
 #endif

@@ -73,9 +73,15 @@ void initializeMainThreadPlatform()
     staticMainThreadCaller = [[JSWTFMainThreadCaller alloc] init];
 
     mainThreadEstablishedAsPthreadMain = false;
+
+#if !USE(WEB_THREAD)
     mainThreadPthread = pthread_self();
     mainThreadNSThread = [[NSThread currentThread] retain];
-    
+#else
+    ASSERT(!mainThreadPthread);
+    ASSERT(!mainThreadNSThread);
+#endif
+
     initializeGCThreads();
 }
 
@@ -136,7 +142,6 @@ void scheduleDispatchFunctionsOnMainThread()
 #if USE(WEB_THREAD)
 bool isMainThread()
 {
-    ASSERT(!mainThreadEstablishedAsPthreadMain);
     return (isWebThread() || pthread_main_np()) && WebCoreWebThreadIsLockedOrDisabled();
 }
 
@@ -160,6 +165,15 @@ void initializeWebThreadIdentifier()
 {
     ASSERT(!pthread_main_np());
     sWebThreadIdentifier = currentThread();
+}
+
+void initializeWebThreadPlatform()
+{
+    ASSERT(!pthread_main_np());
+
+    mainThreadEstablishedAsPthreadMain = false;
+    mainThreadPthread = pthread_self();
+    mainThreadNSThread = [[NSThread currentThread] retain];
 }
 
 bool canAccessThreadLocalDataForThread(ThreadIdentifier threadId)
