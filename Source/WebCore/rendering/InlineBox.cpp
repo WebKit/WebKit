@@ -257,7 +257,7 @@ bool InlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
     // own stacking context.  (See Appendix E.2, section 6.4 on inline block/table elements in the CSS2.1
     // specification.)
     LayoutPoint childPoint = accumulatedOffset;
-    if (parent()->renderer().style()->isFlippedBlocksWritingMode()) // Faster than calling containingBlock().
+    if (parent()->renderer().style()->isFlippedBlocksWritingMode() && !renderer().isBR()) // Faster than calling containingBlock().
         childPoint = m_renderer.containingBlock()->flipForWritingModeForChild(&toRenderBox(renderer()), childPoint);
     
     return m_renderer.hitTest(request, result, locationInContainer, childPoint);

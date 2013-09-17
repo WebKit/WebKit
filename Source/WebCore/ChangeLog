@@ -1,3 +1,19 @@
+2013-09-17  Antti Koivisto  <antti@apple.com>
+
+        RenderBR should not be RenderText
+        https://bugs.webkit.org/show_bug.cgi?id=121221
+
+        Rubber-stamped by Andreas Kling.
+        
+        Fix assertion in these tests:
+
+        fast/repaint/selection-rl.html
+        fast/writing-mode/horizontal-bt-replaced-selection.html
+        fast/writing-mode/vertical-rl-replaced-selection.html
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nodeAtPoint):
+
 2013-09-16  Enrica Casucci  <enrica@apple.com>
 
         Remove unused function didSetSelectionTypesForPasteboard from EditorClient.
