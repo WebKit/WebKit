@@ -17,9 +17,9 @@
         (GraphicsLayer
           (bounds 785.00 1700.00)
           (drawsContent 1)
-          (tile cache coverage 0, 0 445 x 667)
+          (tile cache coverage 0, 193 387 x 290)
           (tile size 512 x 512)
-          (top left tile 0, 0 tiles grid 2 x 3)
+          (top left tile 0, 2 tiles grid 4 x 3)
           (children 1
             (GraphicsLayer
             )
