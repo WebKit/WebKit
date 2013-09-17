@@ -416,9 +416,7 @@ transitions/change-values-during-transition.html
 # Sometimes times out http://webkit.org/b/48457
 fast/workers/storage/use-same-database-in-page-and-workers.html
 
-webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
-webkit.org/b/117326 fast/workers/worker-document-leak.html [ Crash ]
-webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
+#webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]  # Currently crashing
 
 # Times out on apple-windows-3 http://webkit.org/b/48750
 fast/frames/sandboxed-iframe-storage.html
@@ -617,7 +615,6 @@ accessibility/image-map2.html
 accessibility/img-aria-button-alt-tag.html
 accessibility/input-image-alt.html
 accessibility/internal-link-anchors2.html
-accessibility/label-for-control-hittest.html
 accessibility/language-attribute.html
 accessibility/legend.html
 accessibility/lists.html
@@ -882,9 +879,6 @@ http/tests/local/blob/send-sliced-data-blob.html
 http/tests/local/blob/send-data-blob.html
 
 webkit.org/b/112659 media/video-playing-and-pause.html [ Failure Pass ]
-
-# This test requires generation of progress events during loading
-webkit.org/b/97026 media/progress-events-generated-correctly.html [ Failure ]
 
 # CSS Device Adaptation is not enabled.
 webkit.org/b/95959 css3/device-adapt
@@ -1519,7 +1513,7 @@ inspector/profiler/webgl
 fast/images/webgl-teximage2d.html
 webgl
 
-webkit.org/b/62024 http/tests/media/video-cross-site.html [ Failure ]
+#webkit.org/b/62024 http/tests/media/video-cross-site.html [ Failure ] # Currently crashing
 
 
 # CSS Grid Layout is not yet enabled. http://webkit.org/b/60731
@@ -2469,11 +2463,12 @@ editing/execCommand/switch-list-type-with-orphaned-li.html
 js/kde/Array.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=97026
-fast/events/keydown-leftright-keys.html
-fast/loader/javascript-url-in-embed.html
-media/progress-events-generated-correctly.html
-http/tests/cookies/third-party-cookie-relaxing.html
-accessibility/file-upload-button-with-axpress.html
+webkit.org/b/97026 fast/events/keydown-leftright-keys.html
+webkit.org/b/97026 fast/loader/javascript-url-in-embed.html
+# This test requires generation of progress events during loading
+webkit.org/b/97026 media/progress-events-generated-correctly.html
+webkit.org/b/97026 http/tests/cookies/third-party-cookie-relaxing.html
+webkit.org/b/97026 accessibility/file-upload-button-with-axpress.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=102603
 fast/text/international/combining-marks-position.html
@@ -2632,15 +2627,12 @@ fast/repaint/border-fit-lines.html
 
 webkit.org/b/112867 compositing/geometry/limit-layer-bounds-fixed.html [ Pass Failure ]
 
-webkit.org/b/112868 fast/dom/MutationObserver/database-callback-delivery.html [ Pass Failure ]
-
 webkit.org/b/112764 fast/frames/xss-auditor-handles-file-urls.html [ Failure ]
 
 webkit.org/b/112881 fast/text/custom-font-data-crash2.html [ Crash Pass ]
 
 webkit.org/b/113012 compositing/overflow/composited-scrolling-paint-phases.html [ Pass Failure ]
 
-webkit.org/b/113075 media/video-seek-by-small-increment.html [ Pass Crash ]
 webkit.org/b/113076 media/video-volume.html [ Pass Crash ]
 
 
@@ -2869,8 +2861,10 @@ webkit.org/b/121509 fast/dom/Window/window-early-properties.html	[ Skip ]
 webkit.org/b/121509 fast/dom/MutationObserver/database-callback-delivery.html	[ Skip ]
 webkit.org/b/121509 fast/dom/object-plugin-hides-properties.html	[ Skip ]
 webkit.org/b/121509 fast/workers/worker-document-leak.html	[ Skip ]
+#Also webkit.org/b/117326 fast/workers/worker-document-leak.html [ Skip ]
 webkit.org/b/121509 fast/workers/worker-lifecycle.html	[ Skip ]
-webkit.org/b/121509 fast/workers/worker-close-more.html	[ Skip ]
+#Also webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
+#webkit.org/b/121509 fast/workers/worker-close-more.html	[ Skip ] Crashing on some bots
 webkit.org/b/121509 fast/parser/document-write-partial-entity-before-load.html	[ Skip ]
 webkit.org/b/121509 fast/parser/document-write-fighting-eof.html	[ Skip ]
 webkit.org/b/121509 fast/loader/image-in-page-cache.html	[ Skip ]
@@ -2884,17 +2878,19 @@ webkit.org/b/121509 fast/events/page-visibility-transition-test.html	[ Skip ]
 webkit.org/b/121509 fast/events/page-visibility-iframe-move-test.html	[ Skip ]
 webkit.org/b/121509 fast/history/go-back-to-iframe-with-plugin.html	[ Skip ]
 webkit.org/b/121509 loader/go-back-to-different-window-size.html	[ Skip ]
-webkit.org/b/121509 editing/spelling/grammar-paste.html	[ Skip ]
 
 # The following test cases are crashing:
-webkit.org/b/121510 media/video-buffered-too-few-arguments.html	[ Skip ]
-webkit.org/b/121510 media/audio-mpeg-supported.html	[ Skip ]
-webkit.org/b/121510 media/audio-data-url.html	[ Skip ]
-webkit.org/b/121510 media/track/track-cue-inline-assertion-crash.html	[ Skip ]
-webkit.org/b/121510 media/track/track-cue-rendering-with-padding.html	[ Skip ]
-webkit.org/b/121510 media/track/track-remove-by-setting-innerHTML.html	[ Skip ]
-webkit.org/b/121510 media/track/track-disabled.html	[ Skip ]
-webkit.org/b/121510 media/audio-constructor-preload.html	[ Skip ]
+webkit.org/b/121510 fast/parser/residual-style-hang.html	[ Skip ]
+webkit.org/b/121510 fast/forms/textfield-lastchange-was-useredit.html	[ Skip ]
+webkit.org/b/121510 fast/frames/frame-dead-region.html	[ Skip ]
+webkit.org/b/121510 fast/events/message-port-deleted-document.html	[ Skip ]
+webkit.org/b/121510 fast/frames/frame-deep-nested-resize.html [ Skip ]
+webkit.org/b/121510 fast/gradients/crash-on-zero-radius.html	[ Skip ]
+webkit.org/b/121510 fast/workers/worker-close-more.html [ Skip ]
+webkit.org/b/121510 fast/frames/frame-display-none-focus.html [ Skip ]
+webkit.org/b/62024 http/tests/media/video-cross-site.html [ Skip ]
+webkit.org/b/121510 js/Promise-catch-in-workers.html [ Skip ]
+webkit.org/b/121510 js/stack-overflow-arrity-catch.html	[ Skip ]
 webkit.org/b/121510 media/audio-constructor-src.html	[ Skip ]
 webkit.org/b/121510 media/audio-delete-while-slider-thumb-clicked.html	[ Skip ]
 webkit.org/b/121510 media/audio-no-installed-engines.html	[ Skip ]
@@ -2904,42 +2900,11 @@ webkit.org/b/121510 media/media-controller-time-constant.html	[ Skip ]
 webkit.org/b/121510 media/media-controller-unpause.html	[ Skip ]
 webkit.org/b/121510 media/video-buffered.html	[ Skip ]
 webkit.org/b/121510 media/video-controls.html	[ Skip ]
-webkit.org/b/121510 media/video-controls-with-mutation-event-handler.html	[ Skip ]
-webkit.org/b/121510 media/video-currentTime-set.html	[ Skip ]
-webkit.org/b/121510 media/video-dom-preload.html	[ Skip ]
 webkit.org/b/121510 media/video-dom-src.html	[ Skip ]
-webkit.org/b/121510 media/video-default-poster.html	[ Skip ]
 webkit.org/b/121510 media/video-reverse-play-duration.html	[ Skip ]
 webkit.org/b/121510 media/track/track-remove-crash.html	[ Skip ]
 webkit.org/b/121510 media/track/track-cue-nothing-to-render.html	[ Skip ]
 webkit.org/b/121510 media/track/track-delete-during-setup.html	[ Skip ]
-webkit.org/b/121510 fast/parser/residual-style-hang.html	[ Skip ]
-webkit.org/b/121510 fast/forms/textfield-lastchange-was-useredit.html	[ Skip ]
-webkit.org/b/121510 fast/frames/frame-dead-region.html	[ Skip ]
-webkit.org/b/121510 fast/events/message-port-deleted-document.html	[ Skip ]
-webkit.org/b/121510 js/stack-overflow-arrity-catch.html	[ Skip ]
-webkit.org/b/121510 svg/W3C-SVG-1.1/animate-elem-02-t.svg	[ Skip ] 
-webkit.org/b/121510 media/before-load-member-access.html	[ Skip ]
-webkit.org/b/121510 media/media-controller.html	[ Skip ]
-webkit.org/b/121510 media/video-remove-insert-repaints.html	[ Skip ]
-webkit.org/b/121510 media/media-controller-time-clamp.html	[ Skip ]
-webkit.org/b/121510 media/csp-blocks-video.html	[ Skip ]
-webkit.org/b/121510 media/media-controller-timeupdate.html	[ Skip ]
-webkit.org/b/121510 fast/repaint/selection-rl.html	[ Skip ]
-webkit.org/b/121510 fast/writing-mode/horizontal-bt-replaced-selection.html	[ Skip ]
-webkit.org/b/121510 fast/writing-mode/vertical-rl-replaced-selection.html	[ Skip ]
-webkit.org/b/121510 fast/dom/object-plugin-hides-properties.html	[ Skip ]
-webkit.org/b/121510 fast/parser/document-write-partial-entity-before-load.html	[ Skip ]
-webkit.org/b/121510 fast/parser/residual-style-hang.html	[ Skip ]
-webkit.org/b/121510 fast/parser/document-write-fighting-eof.html	[ Skip ]
-webkit.org/b/121510 fast/forms/textfield-lastchange-was-useredit.html	[ Skip ]
-webkit.org/b/121510 fast/frames/frame-dead-region.html	[ Skip ]
-webkit.org/b/121510 fast/frames/frame-deep-nested-resize.html [ Skip ]
-webkit.org/b/121510 fast/gradients/crash-on-zero-radius.html	[ Skip ]
-webkit.org/b/121510 fast/events/message-port-context-destroyed.html	[ Skip ]
-webkit.org/b/121510 fast/workers/worker-close-more.html [ Skip ]
-webkit.org/b/121510 http/tests/media/video-cross-site.html [ Skip ]
-webkit.org/b/121510 js/stack-overflow-arrity-catch.html	[ Skip ]
 webkit.org/b/121510 svg/W3C-SVG-1.1/animate-elem-02-t.svg	[ Skip ] 
 
 # More skipped tests
@@ -2954,7 +2919,6 @@ fast/events/wheelevent-basic.html [ Skip ]
 fast/events/wheelevent-constructor.html [ Skip ]
 fast/forms/select/listbox-click-on-scrollbar.html [ Skip ]
 fast/loader/file-protocol-fragment.html [ Skip ]
-fast/workers/worker-document-leak.html	[ Skip ]
 js/exception-sequencing-binops2.html [ Skip ]
 js/exception-sequencing.html [ Skip ]
 media/track/track-css-all-cues.html [ Skip ]
@@ -2964,4 +2928,30 @@ media/track/track-in-band.html [ Skip ]
 platform/win/accessibility/single-select-children-changed.html	[ Skip ]
 security/block-test-no-port.html [ Skip ]
 svg/dom/SVGViewSpec.html [ Skip ]
+editing/selection/caret-rtl-2-left.html [ Skip ]
+editing/selection/caret-rtl-right.html [ Skip ]
+editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html [ Skip ]
+editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html [ Skip ]
+editing/spelling/grammar-markers.html [ Skip ]
+fast/images/exif-orientation-composited.html [ Skip ]
+animations/resume-after-page-cache.html [ Skip ]
 
+# We now show a layer tree where we didn't previously
+css3/filters/composited-during-animation-layertree.html [ Failure Pass ]
+css3/filters/composited-during-transition-layertree.html [ Failure Pass ]
+css3/filters/should-not-have-compositing-layer.html [ Failure Pass ]
+
+# Image-only failures
+animations/cross-fade-background-image.html [ ImageOnlyFailure ]
+css3/filters/css-opacity-with-drop-shadow.html [ ImageOnlyFailure ]
+css3/filters/effect-reference-delete.html [ ImageOnlyFailure ]
+css3/filters/filter-mask-clip-order.html [ ImageOnlyFailure ]
+fast/filter-image/filter-image.html [ ImageOnlyFailure ]
+fast/images/pdf-as-image-with-annotations.html [ ImageOnlyFailure ]
+fast/media/mq-transform-02.html [ ImageOnlyFailure ]
+fast/media/mq-transform-03.html [ ImageOnlyFailure ]
+svg/custom/masking-clipping-hidpi.svg [ ImageOnlyFailure ]
+
+# Don't run these time-outs for now
+css3/filters/huge-region-composited.html [ Skip ]
+js/random-array-gc-stress.html [ Skip ]
