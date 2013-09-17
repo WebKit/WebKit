@@ -2840,7 +2840,7 @@ void RenderObject::removeShapeImageClient(ShapeValue* shapeValue)
 }
 #endif
 
-void RenderObject::arenaDelete(RenderArena* arena, void* base)
+void RenderObject::arenaDelete(RenderArena& arena, void* base)
 {
     if (m_style) {
         for (const FillLayer* bgLayer = m_style->backgroundLayers(); bgLayer; bgLayer = bgLayer->next()) {
@@ -2874,7 +2874,7 @@ void RenderObject::arenaDelete(RenderArena* arena, void* base)
 #endif
 
     // Recover the size left there for us by operator delete and free the memory.
-    arena->free(*(size_t*)base, base);
+    arena.free(*(size_t*)base, base);
 }
 
 VisiblePosition RenderObject::positionForPoint(const LayoutPoint&)

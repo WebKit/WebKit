@@ -43,22 +43,22 @@ void BidiRun::destroy()
 #ifndef NDEBUG
     inBidiRunDestroy = true;
 #endif
-    RenderArena* renderArena = m_object->renderArena();
+    RenderArena& renderArena = m_object->renderArena();
     delete this;
 #ifndef NDEBUG
     inBidiRunDestroy = false;
 #endif
 
     // Recover the size left there for us by operator delete and free the memory.
-    renderArena->free(*reinterpret_cast<size_t*>(this), this);
+    renderArena.free(*reinterpret_cast<size_t*>(this), this);
 }
 
-void* BidiRun::operator new(size_t sz, RenderArena* renderArena)
+void* BidiRun::operator new(size_t sz, RenderArena& renderArena)
 {
 #ifndef NDEBUG
     bidiRunCounter.increment();
 #endif
-    return renderArena->allocate(sz);
+    return renderArena.allocate(sz);
 }
 
 void BidiRun::operator delete(void* ptr, size_t sz)

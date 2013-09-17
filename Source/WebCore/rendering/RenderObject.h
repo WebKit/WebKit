@@ -339,7 +339,7 @@ private:
     void* operator new(size_t) throw();
 
 public:
-    RenderArena* renderArena() const { return document().renderArena(); }
+    RenderArena& renderArena() const { return *document().renderArena(); }
 
     bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
 
@@ -1023,7 +1023,7 @@ protected:
 
     void clearLayoutRootIfNeeded() const;
     virtual void willBeDestroyed();
-    void arenaDelete(RenderArena*, void* objectBase);
+    void arenaDelete(RenderArena&, void* objectBase);
 
     virtual bool canBeReplacedWithInlineRunIn() const;
 

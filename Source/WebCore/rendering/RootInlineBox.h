@@ -38,11 +38,11 @@ class RootInlineBox : public InlineFlowBox {
 public:
     explicit RootInlineBox(RenderBlock&);
 
-    virtual void destroy(RenderArena*) OVERRIDE FINAL;
+    virtual void destroy(RenderArena&) OVERRIDE FINAL;
 
     virtual bool isRootInlineBox() const OVERRIDE FINAL { return true; }
 
-    void detachEllipsisBox(RenderArena*);
+    void detachEllipsisBox(RenderArena&);
 
     RootInlineBox* nextRootBox() const { return static_cast<RootInlineBox*>(m_nextLineBox); }
     RootInlineBox* prevRootBox() const { return static_cast<RootInlineBox*>(m_prevLineBox); }

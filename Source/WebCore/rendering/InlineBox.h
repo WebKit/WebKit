@@ -63,9 +63,9 @@ public:
 
     virtual ~InlineBox();
 
-    virtual void destroy(RenderArena*);
+    virtual void destroy(RenderArena&);
 
-    virtual void deleteLine(RenderArena*);
+    virtual void deleteLine(RenderArena&);
     virtual void extractLine();
     virtual void attachLine();
 
@@ -98,7 +98,7 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom);
 
     // Overloaded new operator.
-    void* operator new(size_t, RenderArena*);
+    void* operator new(size_t, RenderArena&);
 
     // Overridden to prevent the normal delete from being called.
     void operator delete(void*, size_t);

@@ -307,7 +307,7 @@ void RenderText::removeTextBox(InlineTextBox* box)
 void RenderText::deleteTextBoxes()
 {
     if (firstTextBox()) {
-        RenderArena* arena = renderArena();
+        RenderArena& arena = renderArena();
         InlineTextBox* next;
         for (InlineTextBox* curr = firstTextBox(); curr; curr = next) {
             next = curr->nextTextBox();

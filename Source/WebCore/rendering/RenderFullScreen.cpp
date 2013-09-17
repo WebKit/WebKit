@@ -182,7 +182,7 @@ void RenderFullScreen::createPlaceholder(PassRefPtr<RenderStyle> style, const La
         style->setHeight(Length(frameRect.height(), Fixed));
 
     if (!m_placeholder) {
-        m_placeholder = new (*renderArena()) RenderFullScreenPlaceholder(this);
+        m_placeholder = new (renderArena()) RenderFullScreenPlaceholder(this);
         m_placeholder->setStyle(style);
         if (parent()) {
             parent()->addChild(m_placeholder, this);

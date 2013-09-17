@@ -66,13 +66,13 @@ RootInlineBox::RootInlineBox(RenderBlock& block)
 }
 
 
-void RootInlineBox::destroy(RenderArena* arena)
+void RootInlineBox::destroy(RenderArena& arena)
 {
     detachEllipsisBox(arena);
     InlineFlowBox::destroy(arena);
 }
 
-void RootInlineBox::detachEllipsisBox(RenderArena* arena)
+void RootInlineBox::detachEllipsisBox(RenderArena& arena)
 {
     if (hasEllipsisBox()) {
         EllipsisBox* box = gEllipsisBoxMap->take(this);

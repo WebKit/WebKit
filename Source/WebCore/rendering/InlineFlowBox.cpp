@@ -201,7 +201,7 @@ void InlineFlowBox::removeChild(InlineBox* child)
     checkConsistency();
 }
 
-void InlineFlowBox::deleteLine(RenderArena* arena)
+void InlineFlowBox::deleteLine(RenderArena& arena)
 {
     InlineBox* child = firstChild();
     InlineBox* next = 0;

@@ -55,8 +55,8 @@ public:
 
     void appendLineBox(InlineFlowBox*);
 
-    void deleteLineBoxTree(RenderArena*);
-    void deleteLineBoxes(RenderArena*);
+    void deleteLineBoxTree(RenderArena&);
+    void deleteLineBoxes(RenderArena&);
 
     void extractLineBox(InlineFlowBox*);
     void attachLineBox(InlineFlowBox*);

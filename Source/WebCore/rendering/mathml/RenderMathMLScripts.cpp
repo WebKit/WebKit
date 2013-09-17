@@ -363,7 +363,7 @@ int RenderMathMLScripts::firstLineBoxBaseline() const
 RenderMathMLScriptsWrapper* RenderMathMLScriptsWrapper::createAnonymousWrapper(RenderMathMLScripts* renderObject, WrapperType type)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(renderObject->style(), FLEX);
-    RenderMathMLScriptsWrapper* newBlock = new (*renderObject->renderArena()) RenderMathMLScriptsWrapper(0, type);
+    RenderMathMLScriptsWrapper* newBlock = new (renderObject->renderArena()) RenderMathMLScriptsWrapper(0, type);
     newBlock->setDocumentForAnonymous(renderObject->document());
     newBlock->setStyle(newStyle.release());
     return newBlock;

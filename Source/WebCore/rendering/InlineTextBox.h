@@ -57,7 +57,7 @@ public:
     {
     }
 
-    virtual void destroy(RenderArena*) OVERRIDE FINAL;
+    virtual void destroy(RenderArena&) OVERRIDE FINAL;
 
     InlineTextBox* prevTextBox() const { return m_prevTextBox; }
     InlineTextBox* nextTextBox() const { return m_nextTextBox; }
@@ -125,7 +125,7 @@ public:
     RenderText& textRenderer() const;
 
 private:
-    virtual void deleteLine(RenderArena*) OVERRIDE FINAL;
+    virtual void deleteLine(RenderArena&) OVERRIDE FINAL;
     virtual void extractLine() OVERRIDE FINAL;
     virtual void attachLine() OVERRIDE FINAL;
 

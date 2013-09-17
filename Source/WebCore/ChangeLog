@@ -1,3 +1,13 @@
+2013-09-17  Andreas Kling  <akling@apple.com>
+
+        CTTE: Pass RenderArena around by reference.
+        <https://webkit.org/b/121470>
+
+        Reviewed by Antti Koivisto.
+
+        Pass the RenderArena around by reference in all render tree code.
+        This code will never be running without an arena.
+
 2013-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] GObject DOM symbols file is not generated for video related classes

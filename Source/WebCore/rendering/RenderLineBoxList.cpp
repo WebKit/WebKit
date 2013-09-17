@@ -64,7 +64,7 @@ void RenderLineBoxList::appendLineBox(InlineFlowBox* box)
     checkConsistency();
 }
 
-void RenderLineBoxList::deleteLineBoxTree(RenderArena* arena)
+void RenderLineBoxList::deleteLineBoxTree(RenderArena& arena)
 {
     InlineFlowBox* line = m_firstLineBox;
     InlineFlowBox* nextLine;
@@ -127,7 +127,7 @@ void RenderLineBoxList::removeLineBox(InlineFlowBox* box)
     checkConsistency();
 }
 
-void RenderLineBoxList::deleteLineBoxes(RenderArena* arena)
+void RenderLineBoxList::deleteLineBoxes(RenderArena& arena)
 {
     if (m_firstLineBox) {
         InlineFlowBox* next;

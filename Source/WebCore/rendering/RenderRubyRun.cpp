@@ -210,7 +210,7 @@ RenderRubyBase* RenderRubyRun::createRubyBase() const
 RenderRubyRun* RenderRubyRun::staticCreateRubyRun(const RenderObject* parentRuby)
 {
     ASSERT(parentRuby && parentRuby->isRuby());
-    RenderRubyRun* rr = new (*parentRuby->renderArena()) RenderRubyRun();
+    RenderRubyRun* rr = new (parentRuby->renderArena()) RenderRubyRun();
     rr->setDocumentForAnonymous(parentRuby->document());
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parentRuby->style(), INLINE_BLOCK);
     rr->setStyle(newStyle.release());
