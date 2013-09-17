@@ -1,3 +1,16 @@
+2013-09-17  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r154390
+
+    2013-08-21  Brent Fulgham  <bfulgham@apple.com>
+
+            <https://webkit.org/b/120113> [Windows] Enable CSS_IMAGE_SET
+
+            Reviewed by Anders Carlsson.
+
+            * win/tools/vsprops/FeatureDefines.props: Enable CSS_IMAGE_SET feature.
+            * win/tools/vsprops/FeatureDefinesCairo.props: Ditto.
+
 2013-07-22  Lucas Forschler  <lforschler@apple.com>
 
         Merge r152874
