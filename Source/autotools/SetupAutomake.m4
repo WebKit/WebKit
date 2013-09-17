@@ -48,6 +48,7 @@ AM_CONDITIONAL([USE_OPENGL], [test "$found_opengl" = "yes"])
 AM_CONDITIONAL([USE_GLES2], [test "$enable_gles2" = "yes"])
 
 # WebKit feature conditionals.
+AM_CONDITIONAL([ENABLE_DEVELOPER_MODE], [test "$enable_developer_mode" = "yes"])
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])

@@ -1,0 +1,209 @@
+# Build unit tests
+webkit_tests_cflags = \
+	-fno-strict-aliasing \
+	-I$(srcdir)/Source/JavaScriptCore/ForwardingHeaders \
+	-I$(WebKit) \
+	-I$(GENSOURCES) \
+	-I$(top_builddir)/Source/WebKit/gtk \
+	-I$(top_srcdir)/Source/WebCore/bindings \
+	-I$(top_srcdir)/Source/WebCore/bindings/gobject \
+	$(global_cppflags) \
+	$(global_cflags) \
+	$(javascriptcore_cppflags) \
+	$(FREETYPE_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS) \
+	$(XRENDER_CFLAGS) \
+	$(XT_CFLAGS)
+
+webkit_tests_ldadd = \
+	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(FREETYPE_LIBS) \
+	$(GTK_LIBS) \
+	$(GLIB_LIBS) \
+	$(LIBSOUP_LIBS) \
+	$(XRENDER_LIBS)
+
+webkit_tests_ldflags = \
+	-no-install \
+	-no-fast-install
+
+if ENABLE_WEBKIT1
+noinst_PROGRAMS += \
+	Programs/unittests/testapplicationcache \
+	Programs/unittests/testcontextmenu \
+	Programs/unittests/testdomdocument \
+	Programs/unittests/testdomdomwindow \
+	Programs/unittests/testdomnode \
+	Programs/unittests/testhttpbackend \
+	Programs/unittests/testfavicondatabase \
+	Programs/unittests/testloading \
+	Programs/unittests/testglobals \
+	Programs/unittests/testmimehandling \
+	Programs/unittests/testnetworkrequest \
+	Programs/unittests/testnetworkresponse \
+	Programs/unittests/testwebframe \
+	Programs/unittests/testwebbackforwardlist \
+	Programs/unittests/testwebhistoryitem \
+	Programs/unittests/testwindow \
+	Programs/unittests/testdownload \
+	Programs/unittests/testatk \
+	Programs/unittests/testatkroles \
+	Programs/unittests/testhittestresult \
+	Programs/unittests/testwebinspector \
+	Programs/unittests/testwebsettings \
+	Programs/unittests/testwebresource \
+	Programs/unittests/testwebdatasource \
+	Programs/unittests/testwebplugindatabase \
+	Programs/unittests/testwebview \
+	Programs/unittests/testkeyevents \
+	Programs/unittests/testcopyandpaste
+endif
+
+# Add additional tests here
+Programs_unittests_testapplicationcache_SOURCES = Source/WebKit/gtk/tests/testapplicationcache.c
+Programs_unittests_testapplicationcache_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testapplicationcache_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testapplicationcache_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testcontextmenu_SOURCES = Source/WebKit/gtk/tests/testcontextmenu.c
+Programs_unittests_testcontextmenu_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testcontextmenu_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testcontextmenu_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testdomdocument_SOURCES = Source/WebKit/gtk/tests/testdomdocument.c
+Programs_unittests_testdomdocument_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testdomdocument_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testdomdocument_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testdomdomwindow_SOURCES = Source/WebKit/gtk/tests/testdomdomwindow.c
+Programs_unittests_testdomdomwindow_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testdomdomwindow_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testdomdomwindow_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testdomnode_SOURCES = Source/WebKit/gtk/tests/testdomnode.c
+Programs_unittests_testdomnode_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testdomnode_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testdomnode_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testhttpbackend_SOURCES = Source/WebKit/gtk/tests/testhttpbackend.c
+Programs_unittests_testhttpbackend_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testhttpbackend_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testhttpbackend_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testfavicondatabase_SOURCES = Source/WebKit/gtk/tests/testfavicondatabase.c Source/WebKit/gtk/tests/test_utils.c
+Programs_unittests_testfavicondatabase_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testfavicondatabase_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testfavicondatabase_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testglobals_SOURCES = Source/WebKit/gtk/tests/testglobals.c
+Programs_unittests_testglobals_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testglobals_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testglobals_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testloading_SOURCES = Source/WebKit/gtk/tests/testloading.c
+Programs_unittests_testloading_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testloading_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testloading_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testmimehandling_SOURCES = Source/WebKit/gtk/tests/testmimehandling.c Source/WebKit/gtk/tests/test_utils.c
+Programs_unittests_testmimehandling_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testmimehandling_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testmimehandling_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testnetworkrequest_SOURCES = Source/WebKit/gtk/tests/testnetworkrequest.c
+Programs_unittests_testnetworkrequest_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testnetworkrequest_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testnetworkrequest_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testnetworkresponse_SOURCES = Source/WebKit/gtk/tests/testnetworkresponse.c
+Programs_unittests_testnetworkresponse_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testnetworkresponse_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testnetworkresponse_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testwebframe_SOURCES = Source/WebKit/gtk/tests/testwebframe.c
+Programs_unittests_testwebframe_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testwebframe_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testwebframe_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testwebplugindatabase_SOURCES = Source/WebKit/gtk/tests/testwebplugindatabase.c
+Programs_unittests_testwebplugindatabase_CFLAGS = -DTEST_PLUGIN_DIR=\"${shell pwd}/${top_builddir}/TestNetscapePlugin/.libs\" $(webkit_tests_cflags)
+Programs_unittests_testwebplugindatabase_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testwebplugindatabase_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testwebbackforwardlist_SOURCES = Source/WebKit/gtk/tests/testwebbackforwardlist.c
+Programs_unittests_testwebbackforwardlist_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testwebbackforwardlist_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testwebbackforwardlist_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testwebhistoryitem_SOURCES = Source/WebKit/gtk/tests/testwebhistoryitem.c
+Programs_unittests_testwebhistoryitem_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testwebhistoryitem_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testwebhistoryitem_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testwindow_SOURCES = Source/WebKit/gtk/tests/testwindow.c
+Programs_unittests_testwindow_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testwindow_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testwindow_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testdownload_SOURCES = Source/WebKit/gtk/tests/testdownload.c
+Programs_unittests_testdownload_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testdownload_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testdownload_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testatk_SOURCES = Source/WebKit/gtk/tests/testatk.c
+Programs_unittests_testatk_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testatk_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testatk_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testatkroles_SOURCES = Source/WebKit/gtk/tests/testatkroles.c
+Programs_unittests_testatkroles_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testatkroles_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testatkroles_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testwebinspector_SOURCES = Source/WebKit/gtk/tests/testwebinspector.c Source/WebKit/gtk/tests/test_utils.c
+Programs_unittests_testwebinspector_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testwebinspector_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testwebinspector_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testwebsettings_SOURCES = Source/WebKit/gtk/tests/testwebsettings.c
+Programs_unittests_testwebsettings_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testwebsettings_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testwebsettings_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testwebresource_SOURCES = Source/WebKit/gtk/tests/testwebresource.c
+Programs_unittests_testwebresource_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testwebresource_LDADD = $(webkit_tests_ldadd)
+
+Programs_unittests_testwebdatasource_SOURCES = Source/WebKit/gtk/tests/testwebdatasource.c
+Programs_unittests_testwebdatasource_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testwebdatasource_LDADD = $(webkit_tests_ldadd)
+
+Programs_unittests_testwebview_SOURCES = Source/WebKit/gtk/tests/testwebview.c Source/WebKit/gtk/tests/test_utils.c
+Programs_unittests_testwebview_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testwebview_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testwebview_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testhittestresult_SOURCES = Source/WebKit/gtk/tests/testhittestresult.c
+Programs_unittests_testhittestresult_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testhittestresult_LDADD = $(webkit_tests_ldadd)
+
+Programs_unittests_testkeyevents_SOURCES = Source/WebKit/gtk/tests/testkeyevents.c
+Programs_unittests_testkeyevents_CFLAGS = $(webkit_tests_cflags)
+Programs_unittests_testkeyevents_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testkeyevents_LDFLAGS = $(webkit_tests_ldflags)
+
+Programs_unittests_testcopyandpaste_SOURCES = Source/WebKit/gtk/tests/testcopyandpaste.c \
+	Source/WebCore/platform/gtk/GtkVersioning.c
+Programs_unittests_testcopyandpaste_CFLAGS = $(webkit_tests_cflags) \
+	-I$(srcdir)/Source/WebCore/platform/gtk \
+	-I$(srcdir)/Source/WebCore
+Programs_unittests_testcopyandpaste_LDADD = $(webkit_tests_ldadd)
+Programs_unittests_testcopyandpaste_LDFLAGS = $(webkit_tests_ldflags)
+
+EXTRA_DIST +=  \
+	$(WebKit)/tests/resources/* \
+	$(WebKit)/tests/test_utils.h
+

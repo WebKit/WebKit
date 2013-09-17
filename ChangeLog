@@ -1,3 +1,18 @@
+2013-09-16  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Make symbol export filter more strict, and disable for dev/test builds
+        https://bugs.webkit.org/show_bug.cgi?id=120586
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: only include test-related automake files when developer
+        mode is on.
+        * Source/autotools/ReadCommandLineArguments.m4: add --enable-developer-mode,
+        defaults to no, and to yes for debug builds.
+        * Source/autotools/SetupAutomake.m4: add ENABLE_DEVELOPER_MODE conditional.
+        * Source/autotools/symbols.filter: make the exported symbols list much shorter,
+        covering only the public ABI and a few symbols required by WebKit2 processes.
+
 2013-09-13  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Move to the new web inspector

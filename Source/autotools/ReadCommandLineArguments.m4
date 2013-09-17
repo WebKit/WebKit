@@ -20,6 +20,19 @@ AC_ARG_ENABLE(debug,
     [],[enable_debug="no"])
 AC_MSG_RESULT([$enable_debug])
 
+AC_MSG_CHECKING([whether to enable developer mode])
+AC_ARG_ENABLE(developer-mode,
+    AC_HELP_STRING([--enable-developer-mode], [development-oriented build (no symbols filter and builds testing harness) [default=no (yes for debug builds)]]),
+    [enable_developer_mode=$enableval],
+    [
+        if test "$enable_debug" = "yes"; then
+            enable_developer_mode="yes"
+        else
+            enable_developer_mode="no"
+        fi
+    ])
+AC_MSG_RESULT([$enable_developer_mode])
+
 AC_MSG_CHECKING([whether to enable optimized builds])
 AC_ARG_ENABLE(optimizations, 
     AC_HELP_STRING([--enable-optimizations], [turn on build-time optimizations [default=yes]]),

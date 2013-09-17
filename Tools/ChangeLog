@@ -1,3 +1,22 @@
+2013-09-16  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Make symbol export filter more strict, and disable for dev/test builds
+        https://bugs.webkit.org/show_bug.cgi?id=120586
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: moved GtkLauncher and documentation builds to their own
+        makefiles, so they can be included unconditionally.
+        * GtkLauncher/GNUmakefile.am: added.
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProjectIfNecessary): always pass --enable-developer-mode
+        to configure, since we consider builds done through build-webkit to be development
+        and test builds.
+        * gtk/GNUmakefile.am: added.
+        * gtk/common.py: do not use the Scripts directory as a reference to the top path;
+        it's not necessary and it will not work now that the Scripts directory is not
+        shipped in the tarball.
+
 2013-09-16  Anders Carlsson  <andersca@apple.com>
 
         WTF::Deque should work with move only types

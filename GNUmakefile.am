@@ -200,17 +200,25 @@ include Source/WebCore/GNUmakefile.am
 include Source/WebCore/bindings/gobject/GNUmakefile.am
 include Source/WebCore/platform/gtk/po/GNUmakefile.am
 include Source/WebInspectorUI/GNUmakefile.am
+include Tools/gtk/GNUmakefile.am
+
 include Source/WebKit/gtk/GNUmakefile.am
-include Tools/GNUmakefile.am
+include Tools/GtkLauncher/GNUmakefile.am
 
 include Source/WebKit2/GNUmakefile.am
-include Source/WebKit2/UIProcess/API/gtk/tests/GNUmakefile.am
 include Tools/MiniBrowser/gtk/GNUmakefile.am
-include Tools/WebKitTestRunner/GNUmakefile.am
 include Source/ThirdParty/ANGLE/GNUmakefile.am
-include Source/ThirdParty/gtest/GNUmakefile.am
 include Source/ThirdParty/leveldb/GNUmakefile.am
+
+if ENABLE_DEVELOPER_MODE
+include Source/WebKit2/UIProcess/API/gtk/tests/GNUmakefile.am
+include Source/WebKit/gtk/tests/GNUmakefile.am
+include Source/ThirdParty/gtest/GNUmakefile.am
+include Tools/GNUmakefile.am
 include Tools/TestWebKitAPI/GNUmakefile.am
+include Tools/WebKitTestRunner/GNUmakefile.am
+endif
+
 # [GTK] Refactor the translations now that we have webkit2
 # https://bugs.webkit.org/show_bug.cgi?id=55153
 

@@ -1868,6 +1868,9 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
     # Always enable introspection when building WebKitGTK+.
     unshift(@buildArgs, "--enable-introspection");
 
+    # Also, always enable developer mode for developer/test builds.
+    unshift(@buildArgs, "--enable-developer-mode");
+
     my $joinedBuildArgs = join(" ", @buildArgs);
 
     if (-e "GNUmakefile") {

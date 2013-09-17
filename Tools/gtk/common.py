@@ -33,7 +33,7 @@ def script_path(*args):
 
 
 def top_level_path(*args):
-    return os.path.join(*((script_path('..', '..'),) + args))
+    return os.path.join(*((os.path.join(os.path.dirname(__file__), '..', '..'),) + args))
 
 
 def get_build_path(build_types=('Release', 'Debug')):
