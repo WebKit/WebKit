@@ -36,6 +36,7 @@
 
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamSourcesQueryClient.h"
+#include "MediaStreamTrackSourcesRequestClient.h"
 #include "NotImplemented.h"
 #include <wtf/MainThread.h>
 
@@ -59,6 +60,12 @@ MediaStreamCenterMac::~MediaStreamCenterMac()
 void MediaStreamCenterMac::queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient>)
 {
     notImplemented();
+}
+
+bool MediaStreamCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>)
+{
+    notImplemented();
+    return false;
 }
 
 void MediaStreamCenterMac::didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*)

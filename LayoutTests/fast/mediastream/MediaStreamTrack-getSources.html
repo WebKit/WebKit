@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            description("Tests MediaStreamTrack::getSources.");
+
+            var sources = null;
+            var previousId;
+            var timer = null;
+
+            function finishTest()
+            {
+                clearTimeout(timer);
+                finishJSTest();
+            }
+
+            function error()
+            {
+                testFailed('Stream generation failed.');
+                finishTest();
+            }
+
+            function getUserMedia(constraints, callback)
+            {
+                try {
+                    primeTimeout("Timeout waiting for webkitGetUserMedia()");
+                    navigator.webkitGetUserMedia(constraints, callback, error);
+                } catch (e) {
+                    testFailed('webkitGetUserMedia threw exception :' + e);
+                    finishTest();
+                }
+            }
+
+            function gotSources2(s)
+            {
+                testPassed('gotSources2 was called.');
+                sources = s;
+                shouldBeTrue('sources.length > 0');
+                shouldBeTrue('sources[0].id === previousId');
+                shouldBeTrue('sources[0].label.length > 0');
+
+                finishTest();
+            }
+
+            function gotStream(s)
+            {
+                testPassed('gotStream was called.');
+
+                primeTimeout("Timeout waiting for MediaStreamTrack.getSources()");
+                shouldNotThrow('MediaStreamTrack.getSources(gotSources2);');
+            }
+
+            function gotSources1(s)
+            {
+                testPassed('gotSources1 was called.');
+                sources = s;
+                shouldBeTrue('sources.length > 0');
+                previousId = sources[0].id;
+
+                getUserMedia({audio:true, video:true}, gotStream);
+            }
+
+            function primeTimeout(msg)
+            {
+                clearTimeout(timer);
+                timer = setTimeout(function() { testFailed(msg); finishJSTest() }, 4000);
+            }
+
+            primeTimeout("Timeout waiting for MediaStreamTrack.getSources()");
+            shouldNotThrow('MediaStreamTrack.getSources(gotSources1);');
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

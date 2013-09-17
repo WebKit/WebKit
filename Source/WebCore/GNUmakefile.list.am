@@ -512,6 +512,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMediaStreamTrack.h \
 	DerivedSources/WebCore/JSMediaStreamTrackEvent.cpp \
 	DerivedSources/WebCore/JSMediaStreamTrackEvent.h \
+	DerivedSources/WebCore/JSMediaStreamTrackSourcesCallback.cpp \
+	DerivedSources/WebCore/JSMediaStreamTrackSourcesCallback.h \
 	DerivedSources/WebCore/JSMediaQueryList.cpp \
 	DerivedSources/WebCore/JSMediaQueryList.h \
 	DerivedSources/WebCore/JSMediaQueryListListener.cpp \
@@ -666,6 +668,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSourceBuffer.h \
 	DerivedSources/WebCore/JSSourceBufferList.cpp \
 	DerivedSources/WebCore/JSSourceBufferList.h \
+	DerivedSources/WebCore/JSSourceInfo.cpp \
+	DerivedSources/WebCore/JSSourceInfo.h \
 	DerivedSources/WebCore/JSSpeechInputEvent.cpp \
 	DerivedSources/WebCore/JSSpeechInputEvent.h \
 	DerivedSources/WebCore/JSSpeechInputResult.cpp \
@@ -1242,6 +1246,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/MediaStreamEvent.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamTrack.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamTrackEvent.idl \
+	$(WebCore)/Modules/mediastream/MediaStreamTrackSourcesCallback.idl \
 	$(WebCore)/Modules/mediastream/NavigatorMediaStream.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaError.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaErrorCallback.idl \
@@ -1259,6 +1264,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/RTCStatsCallback.idl \
 	$(WebCore)/Modules/mediastream/RTCStatsReport.idl \
 	$(WebCore)/Modules/mediastream/RTCStatsResponse.idl \
+	$(WebCore)/Modules/mediastream/SourceInfo.idl \
 	$(WebCore)/Modules/navigatorcontentutils/NavigatorContentUtils.idl \
 	$(WebCore)/Modules/notifications/DOMWindowNotifications.idl \
 	$(WebCore)/Modules/notifications/Notification.idl \
@@ -1954,6 +1960,9 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/MediaStreamTrack.h \
 	Source/WebCore/Modules/mediastream/MediaStreamTrackEvent.cpp \
 	Source/WebCore/Modules/mediastream/MediaStreamTrackEvent.h \
+	Source/WebCore/Modules/mediastream/MediaStreamTrackSourcesCallback.h \
+	Source/WebCore/Modules/mediastream/MediaStreamTrackSourcesRequest.cpp \
+	Source/WebCore/Modules/mediastream/MediaStreamTrackSourcesRequest.h \
 	Source/WebCore/Modules/mediastream/NavigatorMediaStream.cpp \
 	Source/WebCore/Modules/mediastream/NavigatorMediaStream.h \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaError.h \
@@ -1988,6 +1997,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/RTCStatsResponse.h \
 	Source/WebCore/Modules/mediastream/RTCVoidRequestImpl.cpp \
 	Source/WebCore/Modules/mediastream/RTCVoidRequestImpl.h \
+	Source/WebCore/Modules/mediastream/SourceInfo.cpp \
+	Source/WebCore/Modules/mediastream/SourceInfo.h \
 	Source/WebCore/Modules/mediastream/UserMediaClient.h \
 	Source/WebCore/Modules/mediastream/UserMediaController.h \
 	Source/WebCore/Modules/mediastream/UserMediaController.cpp \
@@ -5452,6 +5463,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/mediastream/MediaStreamSource.cpp \
 	Source/WebCore/platform/mediastream/MediaStreamSource.h \
 	Source/WebCore/platform/mediastream/MediaStreamSourcesQueryClient.h \
+	Source/WebCore/platform/mediastream/MediaStreamTrackSourcesRequestClient.h \
 	Source/WebCore/platform/mediastream/RTCConfiguration.h \
 	Source/WebCore/platform/mediastream/RTCDTMFSenderHandler.h \
 	Source/WebCore/platform/mediastream/RTCDTMFSenderHandlerClient.h \

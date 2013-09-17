@@ -365,6 +365,28 @@ class DOMStringList;
         return toJS(exec, globalObject, ptr.get());
     }
 
+    template <typename T>
+    inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Vector<T> vector)
+    {
+        JSC::JSArray* array = constructEmptyArray(exec, 0, vector.size());
+        
+        for (size_t i = 0; i < vector.size(); ++i)
+            array->putDirectIndex(exec, i, toJS(exec, globalObject, vector[i]));
+        
+        return array;
+    }
+
+    template <typename T>
+    inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Vector<RefPtr<T>> vector)
+    {
+        JSC::JSArray* array = constructEmptyArray(exec, 0, vector.size());
+        
+        for (size_t i = 0; i < vector.size(); ++i)
+            array->putDirectIndex(exec, i, toJS(exec, globalObject, vector[i].get()));
+        
+        return array;
+    }
+    
     template <class T>
     struct JSValueTraits {
         static inline JSC::JSValue arrayJSValue(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const T& value)

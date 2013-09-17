@@ -29,8 +29,12 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "Event.h"
+#include "ExceptionCode.h"
 #include "MediaStreamCenter.h"
 #include "MediaStreamComponent.h"
+#include "MediaStreamTrackSourcesCallback.h"
+#include "MediaStreamTrackSourcesRequest.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -43,8 +47,8 @@ PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext* co
 
 MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext* context, MediaStreamComponent* component)
     : ActiveDOMObject(context)
-    , m_stopped(false)
     , m_component(component)
+    , m_stopped(false)
 {
     m_component->source()->addObserver(this);
 }
@@ -54,10 +58,10 @@ MediaStreamTrack::~MediaStreamTrack()
     m_component->source()->removeObserver(this);
 }
 
-String MediaStreamTrack::kind() const
+AtomicString MediaStreamTrack::kind() const
 {
-    DEFINE_STATIC_LOCAL(String, audioKind, (ASCIILiteral("audio")));
-    DEFINE_STATIC_LOCAL(String, videoKind, (ASCIILiteral("video")));
+    static NeverDestroyed<AtomicString> audioKind("audio", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> videoKind("video", AtomicString::ConstructFromLiteral);
 
     switch (m_component->source()->type()) {
     case MediaStreamSource::TypeAudio:
@@ -67,7 +71,7 @@ String MediaStreamTrack::kind() const
     }
 
     ASSERT_NOT_REACHED();
-    return audioKind;
+    return emptyAtom;
 }
 
 String MediaStreamTrack::id() const
@@ -98,22 +102,33 @@ void MediaStreamTrack::setEnabled(bool enabled)
     MediaStreamCenter::instance().didSetMediaStreamTrackEnabled(m_component->stream(), m_component.get());
 }
 
-String MediaStreamTrack::readyState() const
+AtomicString MediaStreamTrack::readyState() const
 {
+    static NeverDestroyed<AtomicString> ended("ended", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> live("live", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> muted("muted", AtomicString::ConstructFromLiteral);
+
     if (m_stopped)
-        return ASCIILiteral("ended");
+        return ended;
 
     switch (m_component->source()->readyState()) {
     case MediaStreamSource::ReadyStateLive:
-        return ASCIILiteral("live");
+        return live;
     case MediaStreamSource::ReadyStateMuted:
-        return ASCIILiteral("muted");
+        return muted;
     case MediaStreamSource::ReadyStateEnded:
-        return ASCIILiteral("ended");
+        return ended;
     }
 
     ASSERT_NOT_REACHED();
-    return String();
+    return emptyAtom;
+}
+
+void MediaStreamTrack::getSources(ScriptExecutionContext* context, PassRefPtr<MediaStreamTrackSourcesCallback> callback, ExceptionCode& ec)
+{
+    RefPtr<MediaStreamTrackSourcesRequest> request = MediaStreamTrackSourcesRequest::create(context, callback);
+    if (!MediaStreamCenter::instance().getMediaStreamTrackSources(request.release()))
+        ec = NOT_SUPPORTED_ERR;
 }
 
 bool MediaStreamTrack::ended() const

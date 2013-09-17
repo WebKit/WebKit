@@ -42,6 +42,7 @@ namespace WebCore {
 class MediaStreamComponent;
 class MediaStreamDescriptor;
 class MediaStreamSourcesQueryClient;
+class MediaStreamTrackSourcesRequestClient;
 
 class MediaStreamCenter {
 public:
@@ -52,6 +53,7 @@ public:
     virtual void queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient>) = 0;
 
     // Calls from the DOM objects to notify the platform
+    virtual bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) = 0;
     virtual void didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*) = 0;
     virtual bool didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) = 0;
     virtual bool didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) = 0;

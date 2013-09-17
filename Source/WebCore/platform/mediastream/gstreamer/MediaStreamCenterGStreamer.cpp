@@ -62,6 +62,11 @@ void MediaStreamCenterGStreamer::queryMediaStreamSources(PassRefPtr<MediaStreamS
     client->didCompleteQuery(audioSources, videoSources);
 }
 
+bool MediaStreamCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>)
+{
+    return false;
+}
+
 void MediaStreamCenterGStreamer::didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*)
 {
 }

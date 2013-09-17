@@ -215,6 +215,7 @@ set(WebCore_IDL_FILES
     Modules/mediastream/MediaStreamEvent.idl
     Modules/mediastream/MediaStreamTrack.idl
     Modules/mediastream/MediaStreamTrackEvent.idl
+    Modules/mediastream/MediaStreamTrackSourcesCallback.idl
     Modules/mediastream/NavigatorMediaStream.idl
     Modules/mediastream/NavigatorUserMediaError.idl
     Modules/mediastream/NavigatorUserMediaErrorCallback.idl
@@ -232,6 +233,7 @@ set(WebCore_IDL_FILES
     Modules/mediastream/RTCStatsCallback.idl
     Modules/mediastream/RTCStatsReport.idl
     Modules/mediastream/RTCStatsResponse.idl
+    Modules/mediastream/SourceInfo.idl
 
     Modules/navigatorcontentutils/NavigatorContentUtils.idl
 
@@ -838,6 +840,7 @@ set(WebCore_SOURCES
     Modules/mediastream/MediaStreamRegistry.cpp
     Modules/mediastream/MediaStreamTrack.cpp
     Modules/mediastream/MediaStreamTrackEvent.cpp
+    Modules/mediastream/MediaStreamTrackSourcesRequest.cpp
     Modules/mediastream/NavigatorMediaStream.cpp
     Modules/mediastream/RTCDTMFSender.cpp
     Modules/mediastream/RTCDTMFToneChangeEvent.cpp
@@ -852,6 +855,7 @@ set(WebCore_SOURCES
     Modules/mediastream/RTCStatsRequestImpl.cpp
     Modules/mediastream/RTCStatsResponse.cpp
     Modules/mediastream/RTCVoidRequestImpl.cpp
+    Modules/mediastream/SourceInfo.cpp
     Modules/mediastream/UserMediaController.cpp
     Modules/mediastream/UserMediaRequest.cpp
 

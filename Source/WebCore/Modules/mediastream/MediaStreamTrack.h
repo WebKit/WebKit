@@ -41,13 +41,14 @@
 namespace WebCore {
 
 class MediaStreamComponent;
+class MediaStreamTrackSourcesCallback;
 
 class MediaStreamTrack : public RefCounted<MediaStreamTrack>, public ScriptWrappable, public ActiveDOMObject, public EventTarget, public MediaStreamSource::Observer {
 public:
     static PassRefPtr<MediaStreamTrack> create(ScriptExecutionContext*, MediaStreamComponent*);
     virtual ~MediaStreamTrack();
 
-    String kind() const;
+    AtomicString kind() const;
     String id() const;
     String label() const;
 
@@ -56,7 +57,9 @@ public:
 
     void didEndTrack();
     
-    String readyState() const;
+    AtomicString readyState() const;
+
+    static void getSources(ScriptExecutionContext*, PassRefPtr<MediaStreamTrackSourcesCallback>, ExceptionCode&);
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(mute);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(unmute);
@@ -88,8 +91,8 @@ private:
     // MediaStreamSourceObserver
     virtual void sourceChangedState() OVERRIDE;
 
-    bool m_stopped;
     RefPtr<MediaStreamComponent> m_component;
+    bool m_stopped;
 };
 
 typedef Vector<RefPtr<MediaStreamTrack> > MediaStreamTrackVector;

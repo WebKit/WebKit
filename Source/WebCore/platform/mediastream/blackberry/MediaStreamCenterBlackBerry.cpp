@@ -62,6 +62,11 @@ void MediaStreamCenterBlackBerry::queryMediaStreamSources(PassRefPtr<MediaStream
     client->didCompleteQuery(audioSources, videoSources);
 }
 
+bool MediaStreamCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>)
+{
+    return false;
+}
+
 void MediaStreamCenterBlackBerry::didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*)
 {
 }
