@@ -56,7 +56,7 @@ static COMPtr<IClassFactory> classFactory(const CLSID& clsid)
     typedef HashMap<CLSID, COMPtr<IClassFactory>, CLSIDHash, CLSIDHashTraits> FactoryMap;
     static FactoryMap& factories = *new FactoryMap;
 
-    FactoryMap::AddResult result = factories.add(clsid, 0);
+    FactoryMap::AddResult result = factories.add(clsid, nullptr);
     COMPtr<IClassFactory>& factory = result.iterator->value;
     if (result.isNewEntry && FAILED(DllGetClassObject(clsid, __uuidof(factory), reinterpret_cast<void**>(&factory))))
         factory = 0;

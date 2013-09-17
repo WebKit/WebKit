@@ -1,3 +1,10 @@
+2013-09-17  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Speculative build fix after r155963
+
+        * WebKitCOMAPI.cpp:
+        (classFactory): Use nullptr rather than 0 for HashMap.
+
 2013-09-16  Enrica Casucci  <enrica@apple.com>
 
         Remove unused function didSetSelectionTypesForPasteboard from EditorClient.
