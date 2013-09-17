@@ -49,6 +49,17 @@ BEGIN
     BEGIN
         MENUITEM "Back",                        IDM_HISTORY_BACKWARD
         MENUITEM "Forward",                     IDM_HISTORY_FORWARD
+        MENUITEM SEPARATOR
+        MENUITEM "Unused History 0",            IDM_HISTORY_LINK0
+        MENUITEM "Unused History 1",            IDM_HISTORY_LINK1
+        MENUITEM "Unused History 2",            IDM_HISTORY_LINK2
+        MENUITEM "Unused History 3",            IDM_HISTORY_LINK3
+        MENUITEM "Unused History 4",            IDM_HISTORY_LINK4
+        MENUITEM "Unused History 5",            IDM_HISTORY_LINK5
+        MENUITEM "Unused History 6",            IDM_HISTORY_LINK6
+        MENUITEM "Unused History 7",            IDM_HISTORY_LINK7
+        MENUITEM "Unused History 8",            IDM_HISTORY_LINK8
+        MENUITEM "Unused History 9",            IDM_HISTORY_LINK9
     END
     POPUP "D&evelop"
     BEGIN

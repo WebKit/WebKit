@@ -49,14 +49,27 @@
 #endif
 
 #define WIN32_LEAN_AND_MEAN        // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
-#include <windows.h>
 
-// C RunTime Header Files
-#include <stdlib.h>
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
+#include <assert.h>
+#include <comip.h>
+#include <commctrl.h>
+#include <commdlg.h>
+#include <comutil.h>
 #include <malloc.h>
 #include <memory.h>
+#include <objbase.h>
+#include <shellapi.h>
+#include <shlwapi.h>
+#include <stdlib.h>
+#include <string>
 #include <tchar.h>
+#include <windows.h>
+#include <wininet.h>
+#include <wtf/ExportMacros.h>
 
 #if 0
 // Visual Studio Leak Detection

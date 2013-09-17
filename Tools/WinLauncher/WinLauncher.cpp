@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008, 2013 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2009, 2011 Brent Fulgham.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  *
@@ -33,6 +33,7 @@
 #include "PrintWebUIDelegate.h"
 #include "WinLauncherLibResource.h"
 #include <WebKit/WebKitCOMAPI.h>
+#include <wtf/ExportMacros.h>
 #include <wtf/Platform.h>
 
 #if USE(CF)
@@ -40,8 +41,10 @@
 #endif
 
 #include <assert.h>
+#include <comip.h>
 #include <commctrl.h>
 #include <commdlg.h>
+#include <comutil.h>
 #include <objbase.h>
 #include <shellapi.h>
 #include <shlwapi.h>
@@ -50,6 +53,8 @@
 
 #define MAX_LOADSTRING 100
 #define URLBAR_HEIGHT  24
+
+static const int maxHistorySize = 10;
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
@@ -66,6 +71,9 @@ HWND gViewWindow = 0;
 WinLauncherWebHost* gWebHost = 0;
 PrintWebUIDelegate* gPrintDelegate = 0;
 AccessibilityDelegate* gAccessibilityDelegate = 0;
+IWebHistory* gWebHistory = 0;
+IWebHistoryItem** gHistoryItems = 0;
+int gHistoryMenuItems = 0;
 TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
@@ -196,6 +204,104 @@ ULONG STDMETHODCALLTYPE WinLauncherWebHost::Release(void)
     return newRef;
 }
 
+static void updateMenuItemForHistoryItem(HMENU menu, IWebHistoryItem& historyItem, int currentHistoryItem)
+{
+    UINT menuID = IDM_HISTORY_LINK0 + currentHistoryItem;
+
+    MENUITEMINFO menuItemInfo = {0};
+    menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+    menuItemInfo.fMask = MIIM_TYPE;
+    menuItemInfo.fType = MFT_STRING;
+
+    _bstr_t title;
+    historyItem.title(title.GetAddress());
+    menuItemInfo.dwTypeData = static_cast<LPWSTR>(title);
+
+    ::SetMenuItemInfo(menu, menuID, FALSE, &menuItemInfo);
+    ::EnableMenuItem(menu, menuID, MF_BYCOMMAND | MF_ENABLED);
+}
+
+static void showLastVisitedSites(IWebView& webView, IWebFrame& webFrame)
+{
+    HMENU menu = ::GetMenu(hMainWnd);
+
+    _com_ptr_t<_com_IIID<IWebBackForwardList, &__uuidof(IWebBackForwardList)>> backForwardList;
+    HRESULT hr = webView.backForwardList(&backForwardList.GetInterfacePtr());
+    if (FAILED(hr))
+        return;
+
+    int capacity = 0;
+    hr = backForwardList->capacity(&capacity);
+    if (FAILED(hr))
+        return;
+
+    int backCount = 0;
+    hr = backForwardList->backListCount(&backCount);
+    if (FAILED(hr))
+        return;
+
+    UINT backSetting = MF_BYCOMMAND | (backCount) ? MF_ENABLED : MF_DISABLED;
+    ::EnableMenuItem(menu, IDM_HISTORY_BACKWARD, backSetting);
+
+    int forwardCount = 0;
+    hr = backForwardList->forwardListCount(&forwardCount);
+    if (FAILED(hr))
+        return;
+
+    UINT forwardSetting = MF_BYCOMMAND | (forwardCount) ? MF_ENABLED : MF_DISABLED;
+    ::EnableMenuItem(menu, IDM_HISTORY_FORWARD, forwardSetting);
+
+    _com_ptr_t<_com_IIID<IWebHistoryItem, &__uuidof(IWebHistoryItem)>> currentItem;
+    hr = backForwardList->currentItem(&currentItem.GetInterfacePtr());
+    if (FAILED(hr))
+        return;
+
+    hr = gWebHistory->addItems(1, &currentItem.GetInterfacePtr());
+    if (FAILED(hr))
+        return;
+
+    _com_ptr_t<_com_IIID<IWebHistoryPrivate, &__uuidof(IWebHistoryPrivate)>> webHistory;
+    hr = gWebHistory->QueryInterface(IID_IWebHistoryPrivate, reinterpret_cast<void**>(&webHistory.GetInterfacePtr()));
+    if (FAILED(hr))
+        return;
+
+    int totalListCount = 0;
+    hr = webHistory->allItems(&totalListCount, 0);
+    if (FAILED(hr))
+        return;
+
+    if (gHistoryItems) {
+        for (int i = 0; i < gHistoryMenuItems; ++i)
+            gHistoryItems[i]->Release();
+
+        delete[] gHistoryItems;
+    }
+
+    gHistoryItems = new IWebHistoryItem*[totalListCount];
+    if (!gHistoryItems)
+        return;
+
+    gHistoryMenuItems = totalListCount;
+
+    hr = webHistory->allItems(&totalListCount, gHistoryItems);
+    if (FAILED(hr))
+        return;
+
+    int allItemsOffset = 0;
+    if (totalListCount > maxHistorySize)
+        allItemsOffset = totalListCount - maxHistorySize;
+
+    int currentHistoryItem = 0;
+    for (int i = 0; i < totalListCount; ++i) {
+        updateMenuItemForHistoryItem(menu, *(gHistoryItems[allItemsOffset + currentHistoryItem]), currentHistoryItem);
+        ++currentHistoryItem;
+    }
+
+    // Hide any history we aren't using yet.
+    for (int i = currentHistoryItem; i < maxHistorySize; ++i)
+        ::EnableMenuItem(menu, IDM_HISTORY_LINK0 + i, MF_BYCOMMAND | MF_DISABLED);
+}
+
 HRESULT WinLauncherWebHost::didFinishLoadForFrame(IWebView* webView, IWebFrame* frame)
 {
     IDOMDocument* doc = 0;
@@ -203,6 +309,10 @@ HRESULT WinLauncherWebHost::didFinishLoadForFrame(IWebView* webView, IWebFrame* 
 
     IDOMElement* element = 0;
     IDOMEventTarget* target = 0;
+
+    showLastVisitedSites(*webView, *frame);
+
+    // The following is for the test page:
     HRESULT hr = doc->getElementById(L"webkit logo", &element);
     if (!SUCCEEDED(hr))
         goto exit;
@@ -395,6 +505,10 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE, HIN
     if (FAILED(hr))
         goto exit;
 
+    hr = WebKitCreateInstance(CLSID_WebHistory, 0, __uuidof(gWebHistory), reinterpret_cast<void**>(&gWebHistory));
+    if (FAILED(hr))
+        goto exit;
+
     gWebHost = new WinLauncherWebHost();
     gWebHost->AddRef();
     hr = gWebView->setFrameLoadDelegate(gWebHost);
@@ -474,6 +588,8 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE, HIN
 #endif
 
 exit:
+    if (gHistoryItems)
+        delete[] gHistoryItems;
     gPrintDelegate->Release();
     if (gWebViewPrivate)
         gWebViewPrivate->Release();
@@ -683,6 +799,28 @@ static void NavigateForwardOrBackward(HWND hWnd, UINT menuID)
         gWebView->goBack(&wentBackOrForward);
 }
 
+static void NavigateToHistory(HWND hWnd, UINT menuID)
+{
+    if (!gWebView)
+        return;
+
+    int historyEntry = menuID - IDM_HISTORY_LINK0;
+    if (historyEntry > gHistoryMenuItems)
+        return;
+
+    IWebHistoryItem* desiredHistoryItem = gHistoryItems[historyEntry];
+    if (!desiredHistoryItem)
+        return;
+
+    BOOL succeeded = FALSE;
+    gWebView->goToBackForwardItem(desiredHistoryItem, &succeeded);
+
+    _bstr_t frameURL;
+    desiredHistoryItem->URLString(frameURL.GetAddress());
+
+    ::SendMessage(hURLBarWnd, (UINT)WM_SETTEXT, 0, (LPARAM)frameURL.GetBSTR());
+}
+
 static const int dragBarHeight = 30;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -710,6 +848,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND: {
         int wmId = LOWORD(wParam);
         int wmEvent = HIWORD(wParam);
+        if (wmId >= IDM_HISTORY_LINK0 && wmId <= IDM_HISTORY_LINK9) {
+            NavigateToHistory(hWnd, wmId);
+            break;
+        }
         // Parse the menu selections:
         switch (wmId) {
         case IDM_ABOUT:

@@ -23,6 +23,16 @@
 #define IDM_DISABLE_LOCAL_FILE_RESTRICTIONS 124
 #define IDM_HISTORY_BACKWARD            130
 #define IDM_HISTORY_FORWARD             131
+#define IDM_HISTORY_LINK0               150
+#define IDM_HISTORY_LINK1               151
+#define IDM_HISTORY_LINK2               152
+#define IDM_HISTORY_LINK3               153
+#define IDM_HISTORY_LINK4               154
+#define IDM_HISTORY_LINK5               155
+#define IDM_HISTORY_LINK6               156
+#define IDM_HISTORY_LINK7               157
+#define IDM_HISTORY_LINK8               158
+#define IDM_HISTORY_LINK9               159
 
 #define IDR_MAINFRAME                   128
 #define IDC_STATIC                      -1
