@@ -1,3 +1,10 @@
+2013-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline a test.
+
+        * platform/mac-wk2/compositing/visible-rect/iframe-no-layers-expected.txt: Copied from LayoutTests/platform/mac/compositing/visible-rect/iframe-no-layers-expected.txt.
+        * platform/mac/compositing/visible-rect/iframe-no-layers-expected.txt:
+
 2013-09-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Adjust test list further to make the bots green.
