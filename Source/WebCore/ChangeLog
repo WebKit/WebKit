@@ -1,3 +1,7 @@
+2013-09-17  Andreas Kling  <akling@apple.com>
+
+        Unreviewed, fix clang warning when building without ENABLE(STYLE_SCOPED).
+
 2013-09-08  Andreas Kling  <akling@apple.com>
 
         Move <style scoped> code behind ENABLE(STYLE_SCOPED)
