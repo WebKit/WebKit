@@ -1,3 +1,12 @@
+2013-09-17  Sergio Martins  <sergio.martins@kdab.com>
+
+        Fix Windows CE build on ARM.
+        https://bugs.webkit.org/show_bug.cgi?id=121490
+
+        Reviewed by Darin Adler.
+
+        * wtf/dtoa/utils.h:
+
 2013-09-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
         REGRESSION(r155910): WebKit nightly builds don't load any page
