@@ -83,7 +83,7 @@ HarfBuzzFace::HarfBuzzFace(FontPlatformData* platformData, uint64_t uniqueID)
     , m_uniqueID(uniqueID)
     , m_scriptForVerticalText(HB_SCRIPT_INVALID)
 {
-    HarfBuzzFaceCache::AddResult result = harfBuzzFaceCache()->add(m_uniqueID, 0);
+    HarfBuzzFaceCache::AddResult result = harfBuzzFaceCache()->add(m_uniqueID, nullptr);
     if (result.isNewEntry)
         result.iterator->value = FaceCacheEntry::create(createFace());
     result.iterator->value->ref();

@@ -90,7 +90,7 @@ public:
 
         PassRefPtr<TextureMapperShaderProgram> getShaderProgram(TextureMapperShaderProgram::Options options)
         {
-            HashMap<TextureMapperShaderProgram::Options, RefPtr<TextureMapperShaderProgram> >::AddResult result = m_programs.add(options, 0);
+            HashMap<TextureMapperShaderProgram::Options, RefPtr<TextureMapperShaderProgram> >::AddResult result = m_programs.add(options, nullptr);
             if (result.isNewEntry)
                 result.iterator->value = TextureMapperShaderProgram::create(m_context, options);
 
@@ -936,7 +936,7 @@ bool TextureMapperGL::drawUsingCustomFilter(BitmapTexture& target, const BitmapT
         RefPtr<CustomFilterProgram> program = customFilter->program();
         renderer = CustomFilterRenderer::create(m_context3D, program->programType(), customFilter->parameters(), 
             customFilter->meshRows(), customFilter->meshColumns(), customFilter->meshType());
-        CustomFilterProgramMap::AddResult result = m_customFilterPrograms.add(program->programInfo(), 0);
+        CustomFilterProgramMap::AddResult result = m_customFilterPrograms.add(program->programInfo(), nullptr);
         if (result.isNewEntry)
             result.iterator->value = CustomFilterCompiledProgram::create(m_context3D, program->vertexShaderString(), program->fragmentShaderString(), program->programType());
         renderer->setCompiledProgram(result.iterator->value);
@@ -949,7 +949,7 @@ bool TextureMapperGL::drawUsingCustomFilter(BitmapTexture& target, const BitmapT
         renderer = CustomFilterRenderer::create(m_context3D, program->programInfo().programType(), customFilter->parameters(),
             customFilter->meshRows(), customFilter->meshColumns(), customFilter->meshType());
         RefPtr<CustomFilterCompiledProgram> compiledProgram;
-        CustomFilterProgramMap::AddResult result = m_customFilterPrograms.add(program->programInfo(), 0);
+        CustomFilterProgramMap::AddResult result = m_customFilterPrograms.add(program->programInfo(), nullptr);
         if (result.isNewEntry)
             result.iterator->value = CustomFilterCompiledProgram::create(m_context3D, program->validatedVertexShader(), program->validatedFragmentShader(), program->programInfo().programType());
         renderer->setCompiledProgram(result.iterator->value);

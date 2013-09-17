@@ -1,3 +1,14 @@
+2013-09-16  Anders Carlsson  <andersca@apple.com>
+
+        HashMap should work with move-only keys
+        https://bugs.webkit.org/show_bug.cgi?id=121310
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+        Add test.
+
 2013-09-17  YuTeh Shen  <shenyute@hotmail.com>
 
         BrowserMarshal.h build fail

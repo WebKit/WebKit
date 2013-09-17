@@ -179,7 +179,7 @@ void RenderSVGResourceContainer::registerResource()
         return;
     }
 
-    OwnPtr<SVGDocumentExtensions::SVGPendingElements> clients(extensions.removePendingResource(m_id));
+    OwnPtr<SVGDocumentExtensions::SVGPendingElements> clients = extensions.removePendingResource(m_id);
 
     // Cache us with the new id.
     extensions.addResource(m_id, this);

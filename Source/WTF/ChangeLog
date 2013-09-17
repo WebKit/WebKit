@@ -1,3 +1,20 @@
+2013-09-16  Anders Carlsson  <andersca@apple.com>
+
+        HashMap should work with move-only keys
+        https://bugs.webkit.org/show_bug.cgi?id=121310
+
+        Reviewed by Darin Adler.
+
+        Add extra overloads for add and set where the key is an rvalue reference, but not a
+        template parameter rvalue reference. This way we'll coerce the key parameter to have the expected
+        type instead of the passed in type, causing map.add(StringImpl::create("Hello"), 123) work when the
+        type of map is HashMap<String, unsigned>.
+
+        Also, sprinkle && and std::forward where appropriate.
+
+        * wtf/HashMap.h:
+        * wtf/HashTable.h:
+
 2013-09-17  Sergio Martins  <sergio.martins@kdab.com>
 
         Fix Windows CE build on ARM.

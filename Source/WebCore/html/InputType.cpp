@@ -87,53 +87,57 @@ using namespace std;
 typedef PassOwnPtr<InputType> (*InputTypeFactoryFunction)(HTMLInputElement&);
 typedef HashMap<AtomicString, InputTypeFactoryFunction, CaseFoldingHash> InputTypeFactoryMap;
 
-static PassOwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
+static OwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
 {
     OwnPtr<InputTypeFactoryMap> map = adoptPtr(new InputTypeFactoryMap);
-    map->add(InputTypeNames::button(), ButtonInputType::create);
-    map->add(InputTypeNames::checkbox(), CheckboxInputType::create);
+
+    // FIXME: Remove unnecessary '&'s from the following map.add operations
+    // once we switch to a non-broken Visual Studio compiler.  https://bugs.webkit.org/show_bug.cgi?id=121235
+    map->add(InputTypeNames::button(), &ButtonInputType::create);
+    map->add(InputTypeNames::checkbox(), &CheckboxInputType::create);
 #if ENABLE(INPUT_TYPE_COLOR)
-    map->add(InputTypeNames::color(), ColorInputType::create);
+    map->add(InputTypeNames::color(), &ColorInputType::create);
 #endif
 #if ENABLE(INPUT_TYPE_DATE)
     if (RuntimeEnabledFeatures::inputTypeDateEnabled())
-        map->add(InputTypeNames::date(), DateInputType::create);
+        map->add(InputTypeNames::date(), &DateInputType::create);
 #endif
 #if ENABLE(INPUT_TYPE_DATETIME_INCOMPLETE)
     if (RuntimeEnabledFeatures::inputTypeDateTimeEnabled())
-        map->add(InputTypeNames::datetime(), DateTimeInputType::create);
+        map->add(InputTypeNames::datetime(), &DateTimeInputType::create);
 #endif
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
     if (RuntimeEnabledFeatures::inputTypeDateTimeLocalEnabled())
-        map->add(InputTypeNames::datetimelocal(), DateTimeLocalInputType::create);
+        map->add(InputTypeNames::datetimelocal(), &DateTimeLocalInputType::create);
 #endif
-    map->add(InputTypeNames::email(), EmailInputType::create);
-    map->add(InputTypeNames::file(), FileInputType::create);
-    map->add(InputTypeNames::hidden(), HiddenInputType::create);
-    map->add(InputTypeNames::image(), ImageInputType::create);
+    map->add(InputTypeNames::email(), &EmailInputType::create);
+    map->add(InputTypeNames::file(), &FileInputType::create);
+    map->add(InputTypeNames::hidden(), &HiddenInputType::create);
+    map->add(InputTypeNames::image(), &ImageInputType::create);
 #if ENABLE(INPUT_TYPE_MONTH)
     if (RuntimeEnabledFeatures::inputTypeMonthEnabled())
-        map->add(InputTypeNames::month(), MonthInputType::create);
+        map->add(InputTypeNames::month(), &MonthInputType::create);
 #endif
-    map->add(InputTypeNames::number(), NumberInputType::create);
-    map->add(InputTypeNames::password(), PasswordInputType::create);
-    map->add(InputTypeNames::radio(), RadioInputType::create);
-    map->add(InputTypeNames::range(), RangeInputType::create);
-    map->add(InputTypeNames::reset(), ResetInputType::create);
-    map->add(InputTypeNames::search(), SearchInputType::create);
-    map->add(InputTypeNames::submit(), SubmitInputType::create);
-    map->add(InputTypeNames::telephone(), TelephoneInputType::create);
+    map->add(InputTypeNames::number(), &NumberInputType::create);
+    map->add(InputTypeNames::password(), &PasswordInputType::create);
+    map->add(InputTypeNames::radio(), &RadioInputType::create);
+    map->add(InputTypeNames::range(), &RangeInputType::create);
+    map->add(InputTypeNames::reset(), &ResetInputType::create);
+    map->add(InputTypeNames::search(), &SearchInputType::create);
+    map->add(InputTypeNames::submit(), &SubmitInputType::create);
+    map->add(InputTypeNames::telephone(), &TelephoneInputType::create);
 #if ENABLE(INPUT_TYPE_TIME)
     if (RuntimeEnabledFeatures::inputTypeTimeEnabled())
-        map->add(InputTypeNames::time(), TimeInputType::create);
+        map->add(InputTypeNames::time(), &TimeInputType::create);
 #endif
-    map->add(InputTypeNames::url(), URLInputType::create);
+    map->add(InputTypeNames::url(), &URLInputType::create);
 #if ENABLE(INPUT_TYPE_WEEK)
     if (RuntimeEnabledFeatures::inputTypeWeekEnabled())
-        map->add(InputTypeNames::week(), WeekInputType::create);
+        map->add(InputTypeNames::week(), &WeekInputType::create);
 #endif
     // No need to register "text" because it is the default type.
-    return map.release();
+
+    return map;
 }
 
 PassOwnPtr<InputType> InputType::create(HTMLInputElement& element, const AtomicString& typeName)

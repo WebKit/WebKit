@@ -1,3 +1,22 @@
+2013-09-16  Anders Carlsson  <andersca@apple.com>
+
+        HashMap should work with move-only keys
+        https://bugs.webkit.org/show_bug.cgi?id=121310
+
+        Reviewed by Darin Adler.
+
+        Update the call sites now that HashMap::take doesn't return a PassOwnPtr.
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::takeRenderBoxRegionInfo):
+        * rendering/RenderRegion.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::registerResource):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::removePendingResource):
+        (WebCore::SVGDocumentExtensions::removePendingResourceForRemoval):
+        * svg/SVGDocumentExtensions.h:
+
 2013-09-17  Antti Koivisto  <antti@apple.com>
 
         Add RenderObject bit for isBR().

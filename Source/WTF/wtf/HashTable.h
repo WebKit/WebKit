@@ -402,7 +402,7 @@ namespace WTF {
         // with some other type, to avoid the cost of type conversion if the object is already
         // in the table.
         template<typename HashTranslator, typename T, typename Extra> AddResult add(T&& key, Extra&&);
-        template<typename HashTranslator, typename T, typename Extra> AddResult addPassingHashCode(const T& key, const Extra&);
+        template<typename HashTranslator, typename T, typename Extra> AddResult addPassingHashCode(T&& key, Extra&&);
 
         iterator find(const KeyType& key) { return find<IdentityTranslatorType>(key); }
         const_iterator find(const KeyType& key) const { return find<IdentityTranslatorType>(key); }
@@ -886,7 +886,7 @@ namespace WTF {
             --m_deletedCount; 
         }
 
-        HashTranslator::translate(*entry, key, std::forward<Extra>(extra));
+        HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra));
         ++m_keyCount;
         
         if (shouldExpand())
@@ -899,7 +899,7 @@ namespace WTF {
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     template<typename HashTranslator, typename T, typename Extra>
-    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::addPassingHashCode(const T& key, const Extra& extra) -> AddResult
+    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::addPassingHashCode(T&& key, Extra&& extra) -> AddResult
     {
         checkKey<HashTranslator>(key);
 
@@ -923,8 +923,8 @@ namespace WTF {
             initializeBucket(*entry);
             --m_deletedCount;
         }
-        
-        HashTranslator::translate(*entry, key, extra, h);
+
+        HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra), h);
         ++m_keyCount;
 
         if (shouldExpand())
