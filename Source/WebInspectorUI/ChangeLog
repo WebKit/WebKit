@@ -1,3 +1,20 @@
+2013-09-17  Timothy Hatcher  <timothy@apple.com>
+
+        Clean up the Inspector's WebSocket code and prevent it from dropping messages.
+
+        https://bugs.webkit.org/show_bug.cgi?id=121391
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.initializeWebSocket): Added. Create the socket
+        and call _sendPendingMessagesToBackendIfNeeded.
+        (.WebInspector.InspectorFrontendHostStub.prototype.sendMessageToBackend): Store messages as pending
+        if the socket isn't ready yet. Call _sendPendingMessagesToBackendIfNeeded.
+        (.WebInspector.InspectorFrontendHostStub.prototype._sendPendingMessagesToBackendIfNeeded): Added.
+        * UserInterface/Main.js:
+        (WebInspector._initializeWebSocketIfNeeded): Move socket creation to initializeWebSocket.
+
 2013-09-16  Timothy Hatcher  <timothy@apple.com>
 
         Make InspectorTimelineAgent use an enum for the record type instead of a string.

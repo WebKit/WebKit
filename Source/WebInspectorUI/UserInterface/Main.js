@@ -1094,29 +1094,23 @@ WebInspector._contentBrowserRepresentedObjectsDidChange = function(event)
 
 WebInspector._initializeWebSocketIfNeeded = function()
 {
-    var ws;
+    if (!InspectorFrontendHost.initializeWebSocket)
+        return;
+
     var queryParams = parseLocationQueryParameters();
 
     if ("ws" in queryParams)
-        ws = "ws://" + queryParams.ws;
+        var url = "ws://" + queryParams.ws;
     else if ("page" in queryParams) {
         var page = queryParams.page;
         var host = "host" in queryParams ? queryParams.host : window.location.host;
-        ws = "ws://" + host + "/devtools/page/" + page;
+        var url = "ws://" + host + "/devtools/page/" + page;
     }
 
-    if (!ws)
+    if (!url)
         return;
 
-    var socket = new WebSocket(ws);
-    socket.addEventListener("open", createSocket);
-
-    function createSocket()
-    {
-        WebInspector.socket = socket;
-        WebInspector.socket.addEventListener("message", function(message) { InspectorBackend.dispatch(message.data); });
-        WebInspector.socket.addEventListener("error", function(error) { console.error(error); });
-    }
+    InspectorFrontendHost.initializeWebSocket(url);
 }
 
 WebInspector._updateSplitConsoleHeight = function(height)
