@@ -978,7 +978,7 @@ END
 
     static NeverDestroyed<HashMap<AtomicStringImpl*, $parameters{namespace}ConstructorFunction>> functions;
     if (functions.get().isEmpty())
-        populate$parameters{namespace}FactoryMap(functions.get());
+        populate$parameters{namespace}FactoryMap(functions);
     if ($parameters{namespace}ConstructorFunction function = functions.get().get(name.localName().impl())) {
 END
     ;
@@ -1212,7 +1212,7 @@ JSDOMWrapper* createJS$parameters{namespace}Wrapper(ExecState* exec, JSDOMGlobal
 {
     static NeverDestroyed<HashMap<AtomicStringImpl*, Create$parameters{namespace}ElementWrapperFunction>> functions;
     if (functions.get().isEmpty())
-        populate$parameters{namespace}WrapperMap(functions.get());
+        populate$parameters{namespace}WrapperMap(functions);
     if (auto function = functions.get().get(element->localName().impl()))
         return function(exec, globalObject, element);
     return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackJSInterfaceName}, element.get());

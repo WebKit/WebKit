@@ -366,7 +366,7 @@ CSSSelector::PseudoType CSSSelector::parsePseudoType(const AtomicString& name)
 
     static NeverDestroyed<HashMap<AtomicString, CSSSelector::PseudoType>> types;
     if (types.get().isEmpty())
-        populatePseudoTypeByNameMap(types.get());
+        populatePseudoTypeByNameMap(types);
     if (PseudoType type = types.get().get(name))
         return type;
 
