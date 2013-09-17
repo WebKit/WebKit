@@ -1,3 +1,22 @@
+2013-09-16  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r155212
+
+    2013-09-05  Roger Fong  <roger_fong@apple.com>
+
+            [Windows] Implement text offset methods of IAccessibleText interface.
+            https://bugs.webkit.org/show_bug.cgi?id=120820.
+            <rdar://problem/14925242>
+
+            Reviewed by Brenet Fulgham.
+
+            * AccessibleTextImpl.cpp:
+            (AccessibleText::get_textBeforeOffset):
+            (AccessibleText::get_textAfterOffset):
+            (AccessibleText::get_textAtOffset):
+            (AccessibleText::isInRange):
+            * AccessibleTextImpl.h:
+
 2013-09-03  Lucas Forschler  <lforschler@apple.com>
 
         Merge r154764

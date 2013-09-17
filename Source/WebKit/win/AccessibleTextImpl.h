@@ -27,6 +27,7 @@
 #define AccessibleTextImpl_h
 
 #include "AccessibleBase.h"
+#include <WebCore/VisiblePosition.h>
 
 class AccessibleText : public AccessibleBase, public IAccessibleText2, public IAccessibleEditableText {
 public:
@@ -77,6 +78,7 @@ public:
 private:
     int convertSpecialOffset(int specialOffset);
     HRESULT initialCheck();
+    bool isInRange(WebCore::VisiblePosition& current, WebCore::VisiblePositionRange& wordRange);
 };
 
 #endif // AccessibleText_h
