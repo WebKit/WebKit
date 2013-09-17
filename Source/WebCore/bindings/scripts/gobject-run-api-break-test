@@ -43,7 +43,11 @@ def check_api(options, from_file, to_file):
         if failed:
             sys.stderr.write("API incompatibility detected in GObject DOM bindings\n")
             sys.stderr.write(diff_out)
-            return 1
+            # This test can give false positives because the GObject
+            # DOM bindings API varies depending on the compilation options.
+            # So this shouldn't be made fatal until we figure out a way to handle it.
+            # See https://bugs.webkit.org/show_bug.cgi?id=121481
+            return 0
 
         if options.reset_results:
             sys.stdout.write("Reset results: %s\n" % from_file)

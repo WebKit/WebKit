@@ -1,3 +1,19 @@
+2013-09-17  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] Don't make the GObject DOM bindings API break test fatal
+        https://bugs.webkit.org/show_bug.cgi?id=121484
+
+        Reviewed by Carlos Garcia Campos.
+
+        The API varies depending on the compilation options, so this can
+        easily produce false positives.
+
+        Until we figure out a way to handle this situation we shouldn't
+        make this test fatal.
+
+        * bindings/scripts/gobject-run-api-break-test:
+        (check_api):
+
 2013-09-17  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Replace generatingNode() with generatingElement() for RenderRegion
