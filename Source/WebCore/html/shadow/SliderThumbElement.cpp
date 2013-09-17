@@ -72,20 +72,18 @@ inline static bool hasVerticalAppearance(HTMLInputElement* input)
     return sliderStyle->appearance() == SliderVerticalPart;
 }
 
-SliderThumbElement* sliderThumbElementOf(Node* node)
+SliderThumbElement* sliderThumbElementOf(HTMLInputElement& inputElement)
 {
-    ASSERT(node);
-    ShadowRoot* shadow = node->toInputElement()->userAgentShadowRoot();
+    ShadowRoot* shadow = inputElement.userAgentShadowRoot();
     ASSERT(shadow);
     Node* thumb = shadow->firstChild()->firstChild()->firstChild();
     ASSERT(thumb);
     return toSliderThumbElement(thumb);
 }
 
-HTMLElement* sliderTrackElementOf(Node* node)
+HTMLElement* sliderTrackElementOf(HTMLInputElement& inputElement)
 {
-    ASSERT(node);
-    ShadowRoot* shadow = node->toInputElement()->userAgentShadowRoot();
+    ShadowRoot* shadow = inputElement.userAgentShadowRoot();
     ASSERT(shadow);
     Node* track = shadow->firstChild()->firstChild();
     ASSERT(track);
@@ -206,8 +204,8 @@ void RenderSliderContainer::layout()
 
 // --------------------------------
 
-SliderThumbElement::SliderThumbElement(Document* document)
-    : HTMLDivElement(HTMLNames::divTag, *document)
+SliderThumbElement::SliderThumbElement(Document& document)
+    : HTMLDivElement(HTMLNames::divTag, document)
     , m_inDragMode(false)
 {
     setHasCustomStyleResolveCallbacks();
@@ -258,10 +256,12 @@ void SliderThumbElement::dragFrom(const LayoutPoint& point)
 
 void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
 {
-    RefPtr<HTMLInputElement> input(hostInput());
-    HTMLElement* trackElement = sliderTrackElementOf(input.get());
+    RefPtr<HTMLInputElement> input = hostInput();
+    if (!input || !input->renderer() || !renderBox())
+        return;
 
-    if (!input->renderer() || !renderBox() || !trackElement->renderBox())
+    HTMLElement* trackElement = sliderTrackElementOf(*input);
+    if (!trackElement->renderBox())
         return;
 
     input->setTextAsOfLastFormControlChangeEvent(input->value());
@@ -444,12 +444,12 @@ const AtomicString& SliderThumbElement::shadowPseudoId() const
 
 // --------------------------------
 
-inline SliderContainerElement::SliderContainerElement(Document* document)
-    : HTMLDivElement(HTMLNames::divTag, *document)
+inline SliderContainerElement::SliderContainerElement(Document& document)
+    : HTMLDivElement(HTMLNames::divTag, document)
 {
 }
 
-PassRefPtr<SliderContainerElement> SliderContainerElement::create(Document* document)
+PassRefPtr<SliderContainerElement> SliderContainerElement::create(Document& document)
 {
     return adoptRef(new SliderContainerElement(document));
 }

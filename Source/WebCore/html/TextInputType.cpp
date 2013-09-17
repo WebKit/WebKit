@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-PassOwnPtr<InputType> TextInputType::create(HTMLInputElement* element)
+PassOwnPtr<InputType> TextInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new TextInputType(element));
 }
@@ -47,7 +47,7 @@ PassOwnPtr<InputType> TextInputType::create(HTMLInputElement* element)
 void TextInputType::attach()
 {
     TextFieldInputType::attach();
-    const AtomicString& type = element()->fastGetAttribute(typeAttr);
+    const AtomicString& type = element().fastGetAttribute(typeAttr);
     if (equalIgnoringCase(type, InputTypeNames::datetime()))
         observeFeatureIfVisible(FeatureObserver::InputTypeDateTimeFallback);
     else if (equalIgnoringCase(type, InputTypeNames::week()))

@@ -39,21 +39,21 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void BaseClickableWithKeyInputType::handleKeydownEvent(HTMLInputElement* element, KeyboardEvent* event)
+void BaseClickableWithKeyInputType::handleKeydownEvent(HTMLInputElement& element, KeyboardEvent* event)
 {
     const String& key = event->keyIdentifier();
     if (key == "U+0020") {
-        element->setActive(true, true);
+        element.setActive(true, true);
         // No setDefaultHandled(), because IE dispatches a keypress in this case
         // and the caller will only dispatch a keypress if we don't call setDefaultHandled().
     }
 }
 
-void BaseClickableWithKeyInputType::handleKeypressEvent(HTMLInputElement* element, KeyboardEvent* event)
+void BaseClickableWithKeyInputType::handleKeypressEvent(HTMLInputElement& element, KeyboardEvent* event)
 {
     int charCode = event->charCode();
     if (charCode == '\r') {
-        element->dispatchSimulatedClick(event);
+        element.dispatchSimulatedClick(event);
         event->setDefaultHandled();
         return;
     }
@@ -73,9 +73,9 @@ void BaseClickableWithKeyInputType::handleKeyupEvent(InputType& inputType, Keybo
 }
 
 // FIXME: Could share this with BaseCheckableInputType and RangeInputType if we had a common base class.
-void BaseClickableWithKeyInputType::accessKeyAction(HTMLInputElement* element, bool sendMouseEvents)
+void BaseClickableWithKeyInputType::accessKeyAction(HTMLInputElement& element, bool sendMouseEvents)
 {
-    element->dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
+    element.dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 void BaseClickableWithKeyInputType::handleKeydownEvent(KeyboardEvent* event)

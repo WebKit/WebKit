@@ -39,7 +39,7 @@ bool BaseTextInputType::isTextType() const
 
 bool BaseTextInputType::patternMismatch(const String& value) const
 {
-    const AtomicString& rawPattern = element()->fastGetAttribute(patternAttr);
+    const AtomicString& rawPattern = element().fastGetAttribute(patternAttr);
     if (rawPattern.isNull() || value.isEmpty() || !RegularExpression(rawPattern, TextCaseSensitive).isValid())
         return false;
     String pattern = "^(?:" + rawPattern + ")$";

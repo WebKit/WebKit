@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<InputType> PasswordInputType::create(HTMLInputElement* element)
+PassOwnPtr<InputType> PasswordInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new PasswordInputType(element));
 }

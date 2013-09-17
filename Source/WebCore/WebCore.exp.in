@@ -2522,7 +2522,6 @@ __ZNK7WebCore12IconDatabase9isEnabledEv
 #if ENABLE(INPUT_TYPE_COLOR)
 __ZN7WebCore5ColorC1EP7CGColor
 __ZN7WebCore5ColorC1ERKN3WTF6StringE
-__ZN7WebCore14ColorInputType6createEPNS_16HTMLInputElementE
 __ZN7WebCore16HTMLInputElement25selectColorInColorChooserERKNS_5ColorE
 #endif
 

@@ -37,10 +37,10 @@ namespace WebCore {
 
 class ResetInputType : public BaseButtonInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*);
+    static PassOwnPtr<InputType> create(HTMLInputElement&);
 
 private:
-    explicit ResetInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
+    explicit ResetInputType(HTMLInputElement& element) : BaseButtonInputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool supportsValidation() const OVERRIDE;
     virtual void handleDOMActivateEvent(Event*) OVERRIDE;

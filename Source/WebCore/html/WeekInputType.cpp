@@ -46,7 +46,7 @@ static const int weekDefaultStepBase = -259200000; // The first day of 1970-W01.
 static const int weekDefaultStep = 1;
 static const int weekStepScaleFactor = 604800000;
 
-PassOwnPtr<InputType> WeekInputType::create(HTMLInputElement* element)
+PassOwnPtr<InputType> WeekInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new WeekInputType(element));
 }
@@ -70,10 +70,10 @@ StepRange WeekInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (weekDefaultStep, weekDefaultStepBase, weekStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
 
-    const Decimal stepBase = parseToNumber(element()->fastGetAttribute(minAttr), weekDefaultStepBase);
-    const Decimal minimum = parseToNumber(element()->fastGetAttribute(minAttr), Decimal::fromDouble(DateComponents::minimumWeek()));
-    const Decimal maximum = parseToNumber(element()->fastGetAttribute(maxAttr), Decimal::fromDouble(DateComponents::maximumWeek()));
-    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    const Decimal stepBase = parseToNumber(element().fastGetAttribute(minAttr), weekDefaultStepBase);
+    const Decimal minimum = parseToNumber(element().fastGetAttribute(minAttr), Decimal::fromDouble(DateComponents::minimumWeek()));
+    const Decimal maximum = parseToNumber(element().fastGetAttribute(maxAttr), Decimal::fromDouble(DateComponents::maximumWeek()));
+    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element().fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 

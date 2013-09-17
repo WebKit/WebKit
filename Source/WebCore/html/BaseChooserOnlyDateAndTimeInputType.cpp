@@ -43,32 +43,32 @@ BaseChooserOnlyDateAndTimeInputType::~BaseChooserOnlyDateAndTimeInputType()
 
 void BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent(Event*)
 {
-    if (element()->isDisabledOrReadOnly() || !element()->renderer() || !ScriptController::processingUserGesture())
+    if (element().isDisabledOrReadOnly() || !element().renderer() || !ScriptController::processingUserGesture())
         return;
 
     if (m_dateTimeChooser)
         return;
-    if (!element()->document().page())
+    if (!element().document().page())
         return;
     DateTimeChooserParameters parameters;
-    if (!element()->setupDateTimeChooserParameters(parameters))
+    if (!element().setupDateTimeChooserParameters(parameters))
         return;
-    m_dateTimeChooser = element()->document().page()->chrome().openDateTimeChooser(this, parameters);
+    m_dateTimeChooser = element().document().page()->chrome().openDateTimeChooser(this, parameters);
 }
 
 void BaseChooserOnlyDateAndTimeInputType::createShadowSubtree()
 {
     DEFINE_STATIC_LOCAL(AtomicString, valueContainerPseudo, ("-webkit-date-and-time-value", AtomicString::ConstructFromLiteral));
 
-    RefPtr<HTMLDivElement> valueContainer = HTMLDivElement::create(element()->document());
+    RefPtr<HTMLDivElement> valueContainer = HTMLDivElement::create(element().document());
     valueContainer->setPseudo(valueContainerPseudo);
-    element()->userAgentShadowRoot()->appendChild(valueContainer.get());
+    element().userAgentShadowRoot()->appendChild(valueContainer.get());
     updateAppearance();
 }
 
 void BaseChooserOnlyDateAndTimeInputType::updateAppearance()
 {
-    Node* node = element()->userAgentShadowRoot()->firstChild();
+    Node* node = element().userAgentShadowRoot()->firstChild();
     if (!node || !node->isHTMLElement())
         return;
     String displayValue = visibleValue();
@@ -93,7 +93,7 @@ void BaseChooserOnlyDateAndTimeInputType::detach()
 
 void BaseChooserOnlyDateAndTimeInputType::didChooseValue(const String& value)
 {
-    element()->setValue(value, DispatchInputAndChangeEvent);
+    element().setValue(value, DispatchInputAndChangeEvent);
 }
 
 void BaseChooserOnlyDateAndTimeInputType::didEndChooser()
@@ -130,7 +130,7 @@ void BaseChooserOnlyDateAndTimeInputType::accessKeyAction(bool sendMouseEvents)
 
 bool BaseChooserOnlyDateAndTimeInputType::isMouseFocusable() const
 {
-    return element()->isTextFormControlFocusable();
+    return element().isTextFormControlFocusable();
 }
 
 }

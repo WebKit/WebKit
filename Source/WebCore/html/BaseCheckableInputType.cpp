@@ -45,19 +45,19 @@ using namespace HTMLNames;
 
 FormControlState BaseCheckableInputType::saveFormControlState() const
 {
-    return FormControlState(element()->checked() ? ASCIILiteral("on") : ASCIILiteral("off"));
+    return FormControlState(element().checked() ? ASCIILiteral("on") : ASCIILiteral("off"));
 }
 
 void BaseCheckableInputType::restoreFormControlState(const FormControlState& state)
 {
-    element()->setChecked(state[0] == "on");
+    element().setChecked(state[0] == "on");
 }
 
 bool BaseCheckableInputType::appendFormData(FormDataList& encoding, bool) const
 {
-    if (!element()->checked())
+    if (!element().checked())
         return false;
-    encoding.appendData(element()->name(), element()->value());
+    encoding.appendData(element().name(), element().value());
     return true;
 }
 
@@ -65,7 +65,7 @@ void BaseCheckableInputType::handleKeydownEvent(KeyboardEvent* event)
 {
     const String& key = event->keyIdentifier();
     if (key == "U+0020") {
-        element()->setActive(true, true);
+        element().setActive(true, true);
         // No setDefaultHandled(), because IE dispatches a keypress in this case
         // and the caller will only dispatch a keypress if we don't call setDefaultHandled().
     }
@@ -89,7 +89,7 @@ void BaseCheckableInputType::accessKeyAction(bool sendMouseEvents)
 {
     InputType::accessKeyAction(sendMouseEvents);
 
-    element()->dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
+    element().dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 String BaseCheckableInputType::fallbackValue() const
@@ -104,7 +104,7 @@ bool BaseCheckableInputType::storesValueSeparateFromAttribute()
 
 void BaseCheckableInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior)
 {
-    element()->setAttribute(valueAttr, sanitizedValue);
+    element().setAttribute(valueAttr, sanitizedValue);
 }
 
 bool BaseCheckableInputType::isCheckable()

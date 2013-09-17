@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<InputType> URLInputType::create(HTMLInputElement* element)
+PassOwnPtr<InputType> URLInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new URLInputType(element));
 }
@@ -62,7 +62,7 @@ bool URLInputType::typeMismatchFor(const String& value) const
 
 bool URLInputType::typeMismatch() const
 {
-    return typeMismatchFor(element()->value());
+    return typeMismatchFor(element().value());
 }
 
 String URLInputType::typeMismatchText() const

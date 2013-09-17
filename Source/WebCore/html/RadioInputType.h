@@ -37,10 +37,10 @@ namespace WebCore {
 
 class RadioInputType : public BaseCheckableInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*);
+    static PassOwnPtr<InputType> create(HTMLInputElement&);
 
 private:
-    explicit RadioInputType(HTMLInputElement* element) : BaseCheckableInputType(element) { }
+    explicit RadioInputType(HTMLInputElement& element) : BaseCheckableInputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool valueMissing(const String&) const OVERRIDE;
     virtual String valueMissingText() const OVERRIDE;

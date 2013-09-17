@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<InputType> ResetInputType::create(HTMLInputElement* element)
+PassOwnPtr<InputType> ResetInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new ResetInputType(element));
 }
@@ -58,9 +58,9 @@ bool ResetInputType::supportsValidation() const
 
 void ResetInputType::handleDOMActivateEvent(Event* event)
 {
-    if (element()->isDisabledFormControl() || !element()->form())
+    if (element().isDisabledFormControl() || !element().form())
         return;
-    element()->form()->reset();
+    element().form()->reset();
     event->setDefaultHandled();
 }
 

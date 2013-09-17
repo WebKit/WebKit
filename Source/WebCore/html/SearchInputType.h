@@ -41,12 +41,12 @@ class SearchFieldResultsButtonElement;
 
 class SearchInputType : public BaseTextInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*);
+    static PassOwnPtr<InputType> create(HTMLInputElement&);
 
     void stopSearchEventTimer();
 
 private:
-    explicit SearchInputType(HTMLInputElement*);
+    explicit SearchInputType(HTMLInputElement&);
     virtual void attach() OVERRIDE;
     virtual void addSearchResult() OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena&, RenderStyle&) const OVERRIDE;

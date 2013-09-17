@@ -46,7 +46,7 @@ class FloatPoint;
 
 class SliderThumbElement FINAL : public HTMLDivElement {
 public:
-    static PassRefPtr<SliderThumbElement> create(Document*);
+    static PassRefPtr<SliderThumbElement> create(Document&);
 
     void setPositionFromValue();
 
@@ -60,7 +60,7 @@ public:
     void setPositionFromPoint(const LayoutPoint&);
 
 private:
-    SliderThumbElement(Document*);
+    SliderThumbElement(Document&);
     virtual RenderObject* createRenderer(RenderArena&, RenderStyle&);
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
     virtual bool isDisabledFormControl() const OVERRIDE;
@@ -73,14 +73,14 @@ private:
     bool m_inDragMode;
 };
 
-inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document* document)
+inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document& document)
 {
     return adoptRef(new SliderThumbElement(document));
 }
 
 inline PassRefPtr<Element> SliderThumbElement::cloneElementWithoutAttributesAndChildren()
 {
-    return create(&document());
+    return create(document());
 }
 
 inline SliderThumbElement* toSliderThumbElement(Node* node)
@@ -91,8 +91,8 @@ inline SliderThumbElement* toSliderThumbElement(Node* node)
 
 // This always return a valid pointer.
 // An assertion fails if the specified node is not a range input.
-SliderThumbElement* sliderThumbElementOf(Node*);
-HTMLElement* sliderTrackElementOf(Node*);
+SliderThumbElement* sliderThumbElementOf(HTMLInputElement&);
+HTMLElement* sliderTrackElementOf(HTMLInputElement&);
 
 // --------------------------------
 
@@ -109,10 +109,10 @@ private:
 
 class SliderContainerElement FINAL : public HTMLDivElement {
 public:
-    static PassRefPtr<SliderContainerElement> create(Document*);
+    static PassRefPtr<SliderContainerElement> create(Document&);
 
 private:
-    SliderContainerElement(Document*);
+    SliderContainerElement(Document&);
     virtual RenderObject* createRenderer(RenderArena&, RenderStyle&);
     virtual const AtomicString& shadowPseudoId() const;
 };

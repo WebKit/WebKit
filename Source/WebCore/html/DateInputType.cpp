@@ -46,12 +46,12 @@ static const int dateDefaultStep = 1;
 static const int dateDefaultStepBase = 0;
 static const int dateStepScaleFactor = 86400000;
 
-inline DateInputType::DateInputType(HTMLInputElement* element)
+inline DateInputType::DateInputType(HTMLInputElement& element)
     : BaseChooserOnlyDateAndTimeInputType(element)
 {
 }
 
-PassOwnPtr<InputType> DateInputType::create(HTMLInputElement* element)
+PassOwnPtr<InputType> DateInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new DateInputType(element));
 }
@@ -75,10 +75,10 @@ StepRange DateInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     DEFINE_STATIC_LOCAL(const StepRange::StepDescription, stepDescription, (dateDefaultStep, dateDefaultStepBase, dateStepScaleFactor, StepRange::ParsedStepValueShouldBeInteger));
 
-    const Decimal stepBase = parseToNumber(element()->fastGetAttribute(minAttr), 0);
-    const Decimal minimum = parseToNumber(element()->fastGetAttribute(minAttr), Decimal::fromDouble(DateComponents::minimumDate()));
-    const Decimal maximum = parseToNumber(element()->fastGetAttribute(maxAttr), Decimal::fromDouble(DateComponents::maximumDate()));
-    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element()->fastGetAttribute(stepAttr));
+    const Decimal stepBase = parseToNumber(element().fastGetAttribute(minAttr), 0);
+    const Decimal minimum = parseToNumber(element().fastGetAttribute(minAttr), Decimal::fromDouble(DateComponents::minimumDate()));
+    const Decimal maximum = parseToNumber(element().fastGetAttribute(maxAttr), Decimal::fromDouble(DateComponents::maximumDate()));
+    const Decimal step = StepRange::parseStep(anyStepHandling, stepDescription, element().fastGetAttribute(stepAttr));
     return StepRange(stepBase, minimum, maximum, step, stepDescription);
 }
 

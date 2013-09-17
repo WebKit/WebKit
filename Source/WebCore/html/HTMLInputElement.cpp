@@ -133,7 +133,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
 #if ENABLE(TOUCH_EVENTS)
     , m_hasTouchEventHandler(false)
 #endif
-    , m_inputType(InputType::createText(this))
+    , m_inputType(InputType::createText(*this))
 {
     ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));
     setHasCustomStyleResolveCallbacks();
@@ -457,7 +457,7 @@ void HTMLInputElement::setType(const String& type)
 
 void HTMLInputElement::updateType()
 {
-    OwnPtr<InputType> newType = InputType::create(this, fastGetAttribute(typeAttr));
+    OwnPtr<InputType> newType = InputType::create(*this, fastGetAttribute(typeAttr));
     bool hadType = m_hasType;
     m_hasType = true;
     if (m_inputType->formControlType() == newType->formControlType())

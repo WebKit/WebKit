@@ -164,7 +164,7 @@ LayoutRect AccessibilitySliderThumb::elementRect() const
     RenderObject* sliderRenderer = m_parent->renderer();
     if (!sliderRenderer || !sliderRenderer->isSlider())
         return LayoutRect();
-    return sliderThumbElementOf(sliderRenderer->node())->boundingBox();
+    return sliderThumbElementOf(*toHTMLInputElement(sliderRenderer->node()))->boundingBox();
 }
 
 bool AccessibilitySliderThumb::computeAccessibilityIsIgnored() const

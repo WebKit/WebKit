@@ -82,8 +82,8 @@ class InputType {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*, const AtomicString&);
-    static PassOwnPtr<InputType> createText(HTMLInputElement*);
+    static PassOwnPtr<InputType> create(HTMLInputElement&, const AtomicString&);
+    static PassOwnPtr<InputType> createText(HTMLInputElement&);
     virtual ~InputType();
 
     static bool themeSupportsDataListUI(InputType*);
@@ -312,8 +312,8 @@ public:
     void dispatchSimulatedClickIfActive(KeyboardEvent*) const;
 
 protected:
-    explicit InputType(HTMLInputElement* element) : m_element(element) { }
-    HTMLInputElement* element() const { return m_element; }
+    explicit InputType(HTMLInputElement& element) : m_element(element) { }
+    HTMLInputElement& element() const { return m_element; }
     Chrome* chrome() const;
     Decimal parseToNumberOrNaN(const String&) const;
     void observeFeatureIfVisible(FeatureObserver::Feature) const;
@@ -323,7 +323,7 @@ private:
     void applyStep(int count, AnyStepHandling, TextFieldEventBehavior, ExceptionCode&);
 
     // Raw pointer because the HTMLInputElement object owns this InputType object.
-    HTMLInputElement* m_element;
+    HTMLInputElement& m_element;
 };
 
 } // namespace WebCore

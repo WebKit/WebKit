@@ -40,10 +40,10 @@ namespace WebCore {
 
 class ImageInputType : public BaseButtonInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*);
+    static PassOwnPtr<InputType> create(HTMLInputElement&);
 
 private:
-    explicit ImageInputType(HTMLInputElement*);
+    explicit ImageInputType(HTMLInputElement&);
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool isFormDataAppendable() const OVERRIDE;
     virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;

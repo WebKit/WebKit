@@ -84,7 +84,7 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace std;
 
-typedef PassOwnPtr<InputType> (*InputTypeFactoryFunction)(HTMLInputElement*);
+typedef PassOwnPtr<InputType> (*InputTypeFactoryFunction)(HTMLInputElement&);
 typedef HashMap<AtomicString, InputTypeFactoryFunction, CaseFoldingHash> InputTypeFactoryMap;
 
 static PassOwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
@@ -136,16 +136,16 @@ static PassOwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
     return map.release();
 }
 
-PassOwnPtr<InputType> InputType::create(HTMLInputElement* element, const AtomicString& typeName)
+PassOwnPtr<InputType> InputType::create(HTMLInputElement& element, const AtomicString& typeName)
 {
     static const InputTypeFactoryMap* factoryMap = createInputTypeFactoryMap().leakPtr();
-    PassOwnPtr<InputType> (*factory)(HTMLInputElement*) = typeName.isEmpty() ? 0 : factoryMap->get(typeName);
+    PassOwnPtr<InputType> (*factory)(HTMLInputElement&) = typeName.isEmpty() ? 0 : factoryMap->get(typeName);
     if (!factory)
         factory = TextInputType::create;
     return factory(element);
 }
 
-PassOwnPtr<InputType> InputType::createText(HTMLInputElement* element)
+PassOwnPtr<InputType> InputType::createText(HTMLInputElement& element)
 {
     return TextInputType::create(element);
 }
@@ -156,7 +156,7 @@ InputType::~InputType()
 
 bool InputType::themeSupportsDataListUI(InputType* type)
 {
-    Document& document = type->element()->document();
+    Document& document = type->element().document();
     RefPtr<RenderTheme> theme = document.page() ? document.page()->theme() : RenderTheme::defaultTheme();
     return theme->supportsDataListUI(type->formControlType());
 }
@@ -183,27 +183,27 @@ bool InputType::shouldSaveAndRestoreFormControlState() const
 
 FormControlState InputType::saveFormControlState() const
 {
-    String currentValue = element()->value();
-    if (currentValue == element()->defaultValue())
+    String currentValue = element().value();
+    if (currentValue == element().defaultValue())
         return FormControlState();
     return FormControlState(currentValue);
 }
 
 void InputType::restoreFormControlState(const FormControlState& state)
 {
-    element()->setValue(state[0]);
+    element().setValue(state[0]);
 }
 
 bool InputType::isFormDataAppendable() const
 {
     // There is no form data unless there's a name for non-image types.
-    return !element()->name().isEmpty();
+    return !element().name().isEmpty();
 }
 
 bool InputType::appendFormData(FormDataList& encoding, bool) const
 {
     // Always successful.
-    encoding.appendData(element()->name(), element()->value());
+    encoding.appendData(element().name(), element().value());
     return true;
 }
 
@@ -309,7 +309,7 @@ double InputType::maximum() const
 
 bool InputType::sizeShouldIncludeDecoration(int, int& preferredSize) const
 {
-    preferredSize = element()->size();
+    preferredSize = element().size();
     return false;
 }
 
@@ -374,7 +374,7 @@ String InputType::valueMissingText() const
 
 String InputType::validationMessage() const
 {
-    const String value = element()->value();
+    String value = element().value();
 
     // The order of the following checks is meaningful. e.g. We'd like to show the
     // badInput message even if the control has other validation errors.
@@ -390,8 +390,8 @@ String InputType::validationMessage() const
     if (patternMismatch(value))
         return validationMessagePatternMismatchText();
 
-    if (element()->tooLong())
-        return validationMessageTooLongText(numGraphemeClusters(value), element()->maxLength());
+    if (element().tooLong())
+        return validationMessageTooLongText(numGraphemeClusters(value), element().maxLength());
 
     if (!isSteppable())
         return emptyString();
@@ -461,17 +461,17 @@ bool InputType::shouldSubmitImplicitly(Event* event)
 
 PassRefPtr<HTMLFormElement> InputType::formForSubmission() const
 {
-    return element()->form();
+    return element().form();
 }
 
 RenderObject* InputType::createRenderer(RenderArena&, RenderStyle& style) const
 {
-    return RenderObject::createObject(*element(), style);
+    return RenderObject::createObject(element(), style);
 }
 
 void InputType::blur()
 {
-    element()->defaultBlur();
+    element().defaultBlur();
 }
 
 void InputType::createShadowSubtree()
@@ -480,7 +480,7 @@ void InputType::createShadowSubtree()
 
 void InputType::destroyShadowSubtree()
 {
-    ShadowRoot* root = element()->userAgentShadowRoot();
+    ShadowRoot* root = element().userAgentShadowRoot();
     if (!root)
         return;
 
@@ -512,14 +512,14 @@ String InputType::serialize(const Decimal&) const
 
 void InputType::dispatchSimulatedClickIfActive(KeyboardEvent* event) const
 {
-    if (element()->active())
-        element()->dispatchSimulatedClick(event);
+    if (element().active())
+        element().dispatchSimulatedClick(event);
     event->setDefaultHandled();
 }
 
 Chrome* InputType::chrome() const
 {
-    if (Page* page = element()->document().page())
+    if (Page* page = element().document().page())
         return &page->chrome();
     return 0;
 }
@@ -536,12 +536,12 @@ bool InputType::hasCustomFocusLogic() const
 
 bool InputType::isKeyboardFocusable(KeyboardEvent* event) const
 {
-    return element()->isTextFormControlKeyboardFocusable(event);
+    return element().isTextFormControlKeyboardFocusable(event);
 }
 
 bool InputType::isMouseFocusable() const
 {
-    return element()->isTextFormControlMouseFocusable();
+    return element().isTextFormControlMouseFocusable();
 }
 
 bool InputType::shouldUseInputMethod() const
@@ -559,7 +559,7 @@ void InputType::handleBlurEvent()
 
 void InputType::accessKeyAction(bool)
 {
-    element()->focus(false);
+    element().focus(false);
 }
 
 void InputType::addSearchResult()
@@ -656,17 +656,17 @@ bool InputType::storesValueSeparateFromAttribute()
 
 void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
-    element()->setValueInternal(sanitizedValue, eventBehavior);
-    element()->setNeedsStyleRecalc();
+    element().setValueInternal(sanitizedValue, eventBehavior);
+    element().setNeedsStyleRecalc();
     if (!valueChanged)
         return;
     switch (eventBehavior) {
     case DispatchChangeEvent:
-        element()->dispatchFormControlChangeEvent();
+        element().dispatchFormControlChangeEvent();
         break;
     case DispatchInputAndChangeEvent:
-        element()->dispatchFormControlInputEvent();
-        element()->dispatchFormControlChangeEvent();
+        element().dispatchFormControlInputEvent();
+        element().dispatchFormControlChangeEvent();
         break;
     case DispatchNoEvent:
         break;
@@ -694,7 +694,7 @@ String InputType::localizeValue(const String& proposedValue) const
 
 String InputType::visibleValue() const
 {
-    return element()->value();
+    return element().value();
 }
 
 String InputType::sanitizeValue(const String& proposedValue) const
@@ -967,7 +967,7 @@ void InputType::applyStep(int count, AnyStepHandling anyStepHandling, TextFieldE
         return;
     }
 
-    const Decimal current = parseToNumberOrNaN(element()->value());
+    const Decimal current = parseToNumberOrNaN(element().value());
     if (!current.isFinite()) {
         ec = INVALID_STATE_ERR;
         return;
@@ -986,7 +986,7 @@ void InputType::applyStep(int count, AnyStepHandling anyStepHandling, TextFieldE
     if (newValue < stepRange.minimum())
         newValue = stepRange.minimum();
 
-    const AtomicString& stepString = element()->fastGetAttribute(stepAttr);
+    const AtomicString& stepString = element().fastGetAttribute(stepAttr);
     if (!equalIgnoringCase(stepString, "any"))
         newValue = stepRange.alignValueForStep(current, newValue);
 
@@ -999,8 +999,8 @@ void InputType::applyStep(int count, AnyStepHandling anyStepHandling, TextFieldE
 
     setValueAsDecimal(newValue, eventBehavior, ec);
 
-    if (AXObjectCache* cache = element()->document().existingAXObjectCache())
-        cache->postNotification(element(), AXObjectCache::AXValueChanged, true);
+    if (AXObjectCache* cache = element().document().existingAXObjectCache())
+        cache->postNotification(&element(), AXObjectCache::AXValueChanged, true);
 }
 
 bool InputType::getAllowedValueStep(Decimal* step) const
@@ -1086,7 +1086,7 @@ void InputType::stepUpFromRenderer(int n)
     else
         sign = 0;
 
-    String currentStringValue = element()->value();
+    String currentStringValue = element().value();
     Decimal current = parseToNumberOrNaN(currentStringValue);
     if (!current.isFinite()) {
         current = defaultValueForStepUp();
@@ -1100,7 +1100,7 @@ void InputType::stepUpFromRenderer(int n)
     if ((sign > 0 && current < stepRange.minimum()) || (sign < 0 && current > stepRange.maximum()))
         setValueAsDecimal(sign > 0 ? stepRange.minimum() : stepRange.maximum(), DispatchInputAndChangeEvent, IGNORE_EXCEPTION);
     else {
-        if (stepMismatch(element()->value())) {
+        if (stepMismatch(element().value())) {
             ASSERT(!step.isZero());
             const Decimal base = stepRange.stepBase();
             Decimal newValue;
@@ -1128,9 +1128,9 @@ void InputType::stepUpFromRenderer(int n)
 
 void InputType::observeFeatureIfVisible(FeatureObserver::Feature feature) const
 {
-    if (RenderStyle* style = element()->renderStyle()) {
+    if (RenderStyle* style = element().renderStyle()) {
         if (style->visibility() != HIDDEN)
-            FeatureObserver::observe(&element()->document(), feature);
+            FeatureObserver::observe(&element().document(), feature);
     }
 }
 

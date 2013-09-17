@@ -37,10 +37,10 @@ namespace WebCore {
 
 class TextInputType : public BaseTextInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*);
+    static PassOwnPtr<InputType> create(HTMLInputElement&);
 
 private:
-    explicit TextInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
+    explicit TextInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
     virtual void attach() OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool shouldRespectSpeechAttribute() OVERRIDE;

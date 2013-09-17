@@ -37,10 +37,10 @@ namespace WebCore {
 
 class PasswordInputType : public BaseTextInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*);
+    static PassOwnPtr<InputType> create(HTMLInputElement&);
 
 private:
-    PasswordInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
+    PasswordInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool shouldSaveAndRestoreFormControlState() const OVERRIDE;
     virtual FormControlState saveFormControlState() const OVERRIDE;

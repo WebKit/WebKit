@@ -37,10 +37,10 @@ namespace WebCore {
 
 class ButtonInputType : public BaseButtonInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*);
+    static PassOwnPtr<InputType> create(HTMLInputElement&);
 
 private:
-    ButtonInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
+    ButtonInputType(HTMLInputElement& element) : BaseButtonInputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool supportsValidation() const OVERRIDE;
     virtual bool isTextButton() const OVERRIDE;

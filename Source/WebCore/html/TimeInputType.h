@@ -38,10 +38,10 @@ namespace WebCore {
 
 class TimeInputType : public BaseChooserOnlyDateAndTimeInputType {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*);
+    static PassOwnPtr<InputType> create(HTMLInputElement&);
 
 private:
-    explicit TimeInputType(HTMLInputElement*);
+    explicit TimeInputType(HTMLInputElement&);
     virtual void attach() OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual DateComponents::Type dateType() const OVERRIDE;

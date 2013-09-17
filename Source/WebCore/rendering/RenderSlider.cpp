@@ -110,7 +110,7 @@ void RenderSlider::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     // FIXME: Find a way to cascade appearance.
     // http://webkit.org/b/62535
-    RenderBox* thumbBox = sliderThumbElementOf(element())->renderBox();
+    RenderBox* thumbBox = sliderThumbElementOf(*toHTMLInputElement(element()))->renderBox();
     if (thumbBox && thumbBox->isSliderThumb())
         static_cast<RenderSliderThumb*>(thumbBox)->updateAppearance(style());
 
@@ -119,7 +119,7 @@ void RenderSlider::layout()
 
 bool RenderSlider::inDragMode() const
 {
-    return sliderThumbElementOf(element())->active();
+    return sliderThumbElementOf(*toHTMLInputElement(element()))->active();
 }
 
 } // namespace WebCore

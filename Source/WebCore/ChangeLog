@@ -1,3 +1,14 @@
+2013-09-16  Sam Weinig  <sam@webkit.org>
+
+        CTTE: InputType should store its HTMLInputElement back pointer as a reference
+        https://bugs.webkit.org/show_bug.cgi?id=121466
+
+        Reviewed by Anders Carlsson.
+
+        - Converts InputType::create() and InputType::createText() to take a HTMLInputElement&
+          (as well as all the subclasses).
+        - Change InputType::element() to return an HTMLInputElement& and update all the callers.
+
 2013-09-16  Timothy Hatcher  <timothy@apple.com>
 
         Make InspectorTimelineAgent use an enum for the record type instead of a string.

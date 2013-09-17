@@ -43,7 +43,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-PassOwnPtr<InputType> HiddenInputType::create(HTMLInputElement* element)
+PassOwnPtr<InputType> HiddenInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new HiddenInputType(element));
 }
@@ -59,12 +59,12 @@ FormControlState HiddenInputType::saveFormControlState() const
     // controls create by createElement() or cloneNode(). It's ok for
     // now because we restore values only to form controls created by
     // parsing.
-    return element()->valueAttributeWasUpdatedAfterParsing() ? FormControlState(element()->value()) : FormControlState();
+    return element().valueAttributeWasUpdatedAfterParsing() ? FormControlState(element().value()) : FormControlState();
 }
 
 void HiddenInputType::restoreFormControlState(const FormControlState& state)
 {
-    element()->setAttribute(valueAttr, state[0]);
+    element().setAttribute(valueAttr, state[0]);
 }
 
 bool HiddenInputType::supportsValidation() const
@@ -94,7 +94,7 @@ bool HiddenInputType::storesValueSeparateFromAttribute()
 
 void HiddenInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior)
 {
-    element()->setAttribute(valueAttr, sanitizedValue);
+    element().setAttribute(valueAttr, sanitizedValue);
 }
 
 bool HiddenInputType::isHiddenType() const
@@ -104,8 +104,8 @@ bool HiddenInputType::isHiddenType() const
 
 bool HiddenInputType::appendFormData(FormDataList& encoding, bool isMultipartForm) const
 {
-    if (equalIgnoringCase(element()->name(), "_charset_")) {
-        encoding.appendData(element()->name(), String(encoding.encoding().name()));
+    if (equalIgnoringCase(element().name(), "_charset_")) {
+        encoding.appendData(element().name(), String(encoding.encoding().name()));
         return true;
     }
     return InputType::appendFormData(encoding, isMultipartForm);

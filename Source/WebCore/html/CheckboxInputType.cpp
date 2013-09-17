@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-PassOwnPtr<InputType> CheckboxInputType::create(HTMLInputElement* element)
+PassOwnPtr<InputType> CheckboxInputType::create(HTMLInputElement& element)
 {
     return adoptPtr(new CheckboxInputType(element));
 }
@@ -52,7 +52,7 @@ const AtomicString& CheckboxInputType::formControlType() const
 
 bool CheckboxInputType::valueMissing(const String&) const
 {
-    return element()->isRequired() && !element()->checked();
+    return element().isRequired() && !element().checked();
 }
 
 String CheckboxInputType::valueMissingText() const
@@ -75,13 +75,13 @@ PassOwnPtr<ClickHandlingState> CheckboxInputType::willDispatchClick()
 
     OwnPtr<ClickHandlingState> state = adoptPtr(new ClickHandlingState);
 
-    state->checked = element()->checked();
-    state->indeterminate = element()->indeterminate();
+    state->checked = element().checked();
+    state->indeterminate = element().indeterminate();
 
     if (state->indeterminate)
-        element()->setIndeterminate(false);
+        element().setIndeterminate(false);
 
-    element()->setChecked(!state->checked, DispatchChangeEvent);
+    element().setChecked(!state->checked, DispatchChangeEvent);
 
     return state.release();
 }
@@ -89,8 +89,8 @@ PassOwnPtr<ClickHandlingState> CheckboxInputType::willDispatchClick()
 void CheckboxInputType::didDispatchClick(Event* event, const ClickHandlingState& state)
 {
     if (event->defaultPrevented() || event->defaultHandled()) {
-        element()->setIndeterminate(state.indeterminate);
-        element()->setChecked(state.checked);
+        element().setIndeterminate(state.indeterminate);
+        element().setChecked(state.checked);
     }
 
     // The work we did in willDispatchClick was default handling.
