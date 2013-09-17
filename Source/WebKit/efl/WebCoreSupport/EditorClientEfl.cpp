@@ -169,11 +169,6 @@ void EditorClientEfl::getClientPasteboardDataForRange(WebCore::Range*, Vector<St
 {
 }
 
-void EditorClientEfl::didSetSelectionTypesForPasteboard()
-{
-    notImplemented();
-}
-
 void EditorClientEfl::registerUndoStep(WTF::PassRefPtr<UndoStep> step)
 {
     if (!m_isInRedo)

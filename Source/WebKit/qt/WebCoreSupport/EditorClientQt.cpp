@@ -230,10 +230,6 @@ void EditorClientQt::getClientPasteboardDataForRange(Range*, Vector<String>&, Ve
 {
 }
 
-void EditorClientQt::didSetSelectionTypesForPasteboard()
-{
-}
-
 bool EditorClientQt::selectWordBeforeMenuEvent()
 {
     notImplemented();

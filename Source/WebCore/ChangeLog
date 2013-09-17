@@ -1,3 +1,27 @@
+2013-09-16  Enrica Casucci  <enrica@apple.com>
+
+        Remove unused function didSetSelectionTypesForPasteboard from EditorClient.
+        https://bugs.webkit.org/show_bug.cgi?id=121464
+
+        Reviewed by Darin Adler.
+
+        This method was only implemented in WebEditorClient.mm for Mac where it was
+        calling a private delegate that is no longer in use.
+        This patch removes it for all the platforms.
+        I've also removed setTypes and writeAfterSettingTypes from the implementation
+        of the Pasteboard class for Mac.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::writeSelectionToPasteboard): Now calls write instead of
+        setTypes and writeAfterSettingTypes.
+        * loader/EmptyClients.h: Removed didSetSelectionTypesForPasteboard.
+        * page/EditorClient.h: Ditto.
+        * platform/Pasteboard.h: Removed setTypes and writeAfterSettingTypes.
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::writeSelection): Removed call to didSetSelectionTypesForPasteboard.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::write): Added to replace setTypes and writeAfterSettingTypes.
+
 2013-09-17  Darin Adler  <darin@apple.com>
 
         Further shrink table-populating code by making the tables read-only data and preventing inlining

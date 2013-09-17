@@ -426,7 +426,6 @@ public:
     virtual void willWriteSelectionToPasteboard(Range*) { }
     virtual void didWriteSelectionToPasteboard() { }
     virtual void getClientPasteboardDataForRange(Range*, Vector<String>&, Vector<RefPtr<SharedBuffer> >&) { }
-    virtual void didSetSelectionTypesForPasteboard() { }
 
     virtual void registerUndoStep(PassRefPtr<UndoStep>) OVERRIDE;
     virtual void registerRedoStep(PassRefPtr<UndoStep>) OVERRIDE;

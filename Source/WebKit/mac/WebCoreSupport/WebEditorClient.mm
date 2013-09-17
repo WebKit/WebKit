@@ -331,11 +331,6 @@ void WebEditorClient::getClientPasteboardDataForRange(WebCore::Range*, Vector<St
     // Not implemented WebKit, only WebKit2.
 }
 
-void WebEditorClient::didSetSelectionTypesForPasteboard()
-{
-    [[m_webView _editingDelegateForwarder] webView:m_webView didSetSelectionTypesForPasteboard:[NSPasteboard generalPasteboard]];
-}
-
 NSString *WebEditorClient::userVisibleString(NSURL *URL)
 {
     return [URL _web_userVisibleString];

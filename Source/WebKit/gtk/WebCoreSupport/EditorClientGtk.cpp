@@ -276,11 +276,6 @@ void EditorClient::getClientPasteboardDataForRange(WebCore::Range*, Vector<Strin
 {
 }
 
-void EditorClient::didSetSelectionTypesForPasteboard()
-{
-    notImplemented();
-}
-
 void EditorClient::registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep> step)
 {
     if (undoStack.size() == maximumUndoStackDepth)

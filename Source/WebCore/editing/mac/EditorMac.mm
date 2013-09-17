@@ -354,9 +354,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     content.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
     client()->getClientPasteboardDataForRange(selectedRange().get(), content.clientTypes, content.clientData);
 
-    pasteboard.setTypes(content);
-    client()->didSetSelectionTypesForPasteboard();
-    pasteboard.writeAfterSettingTypes(content);
+    pasteboard.write(content);
 }
 
 static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)

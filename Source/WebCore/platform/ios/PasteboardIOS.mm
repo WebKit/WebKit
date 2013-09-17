@@ -136,8 +136,6 @@ void Pasteboard::writeSelection(Range* selectedRange, bool /*canSmartCopyOrDelet
     if (enclosingAnchor && comparePositions(firstPositionInOrBeforeNode(selectedRange->startPosition().anchorNode()), selectedRange->startPosition()) >= 0)
         selectedRange->setStart(enclosingAnchor, 0, ec);
 
-    frame->editor().client()->didSetSelectionTypesForPasteboard();
-
     RetainPtr<NSDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
 
     // Put WebArchive on the pasteboard.

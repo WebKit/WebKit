@@ -145,11 +145,6 @@ public:
     void write(const PasteboardImage&);
     void write(const PasteboardWebContent&);
 
-    // FIXME: These two functions called one after the other are the same as calling write. It would be nice if these two separate functions
-    // could be eliminated, however Mac supports an editor client call that happens after setting the types but before writing to the pasteboard.
-    void setTypes(const PasteboardWebContent&);
-    void writeAfterSettingTypes(const PasteboardWebContent&);
-
     Vector<String> readFilenames();
     bool canSmartReplace();
 

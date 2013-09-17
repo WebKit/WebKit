@@ -235,11 +235,6 @@ void WebEditorClient::getClientPasteboardDataForRange(Range* range, Vector<Strin
     m_page->injectedBundleEditorClient().getPasteboardDataForRange(m_page, range, pasteboardTypes, pasteboardData);
 }
 
-void WebEditorClient::didSetSelectionTypesForPasteboard()
-{
-    notImplemented();
-}
-
 void WebEditorClient::registerUndoStep(PassRefPtr<UndoStep> step)
 {
     // FIXME: Add assertion that the command being reapplied is the same command that is

@@ -106,10 +106,6 @@ static WebDefaultEditingDelegate *sharedDelegate = nil;
 {
 }
 
-- (void)webView:(WebView *)webView didSetSelectionTypesForPasteboard:(NSPasteboard *)pasteboard
-{
-}
-
 - (void)webViewDidBeginEditing:(NSNotification *)notification
 {
 }

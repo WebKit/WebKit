@@ -68,7 +68,6 @@ public:
     virtual void willWriteSelectionToPasteboard(WebCore::Range*) OVERRIDE;
     virtual void didWriteSelectionToPasteboard() OVERRIDE;
     virtual void getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer> >& pasteboardData) OVERRIDE;
-    virtual void didSetSelectionTypesForPasteboard() OVERRIDE;
 
     virtual NSString* userVisibleString(NSURL *) OVERRIDE;
     virtual WebCore::DocumentFragment* documentFragmentFromAttributedString(NSAttributedString *, Vector< RefPtr<WebCore::ArchiveResource> >&) OVERRIDE;

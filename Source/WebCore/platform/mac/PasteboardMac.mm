@@ -138,7 +138,7 @@ void Pasteboard::clear()
     m_changeCount = platformStrategies()->pasteboardStrategy()->setTypes(Vector<String>(), m_pasteboardName);
 }
 
-void Pasteboard::setTypes(const PasteboardWebContent& content)
+void Pasteboard::write(const PasteboardWebContent& content)
 {
     Vector<String> types;
 
@@ -155,10 +155,7 @@ void Pasteboard::setTypes(const PasteboardWebContent& content)
     types.appendVector(content.clientTypes);
 
     m_changeCount = platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
-}
 
-void Pasteboard::writeAfterSettingTypes(const PasteboardWebContent& content)
-{
     ASSERT(content.clientTypes.size() == content.clientData.size());
     for (size_t i = 0, size = content.clientTypes.size(); i < size; ++i)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.clientData[i], content.clientTypes[i], m_pasteboardName);

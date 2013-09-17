@@ -239,11 +239,6 @@ void WebEditorClient::getClientPasteboardDataForRange(WebCore::Range*, Vector<St
     notImplemented();
 }
 
-void WebEditorClient::didSetSelectionTypesForPasteboard()
-{
-    notImplemented();
-}
-
 bool WebEditorClient::shouldDeleteRange(Range* /*range*/)
 {
     notImplemented(); 

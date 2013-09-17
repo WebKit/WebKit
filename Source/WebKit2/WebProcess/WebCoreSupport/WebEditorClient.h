@@ -68,7 +68,6 @@ private:
     virtual void willWriteSelectionToPasteboard(WebCore::Range*) OVERRIDE;
     virtual void didWriteSelectionToPasteboard() OVERRIDE;
     virtual void getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) OVERRIDE;
-    virtual void didSetSelectionTypesForPasteboard() OVERRIDE;
     
     virtual void registerUndoStep(PassRefPtr<WebCore::UndoStep>) OVERRIDE;
     virtual void registerRedoStep(PassRefPtr<WebCore::UndoStep>) OVERRIDE;

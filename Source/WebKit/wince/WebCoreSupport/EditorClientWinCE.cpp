@@ -148,11 +148,6 @@ void EditorClientWinCE::getClientPasteboardDataForRange(WebCore::Range*, Vector<
     notImplemented();
 }
 
-void EditorClientWinCE::didSetSelectionTypesForPasteboard()
-{
-    notImplemented();
-}
-
 void EditorClientWinCE::registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep>)
 {
     notImplemented();
