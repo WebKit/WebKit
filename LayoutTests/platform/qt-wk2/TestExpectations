@@ -476,6 +476,9 @@ fast/inline/inline-box-background.html
 fast/text/international/bidi-ignored-for-first-child-inline.html
 fast/text/international/unicode-bidi-plaintext-in-textarea.html
 
+# [GTK][Qt] Layout Test fast/sub-pixel/sub-pixel-composited-layers.html is failing
+webkit.org/b/119841 fast/sub-pixel/sub-pixel-composited-layers.html [ Skip ]
+
 # =========================================================================== #
 # Fullscreen tests.                                                          #
 # =========================================================================== #
@@ -947,7 +950,6 @@ fast/frames/frame-set-scaling-hit.html [ ImageOnlyFailure ]
 fast/multicol/vertical-rl/rule-style.html [ ImageOnlyFailure ]
 fast/overflow/paged-x-with-column-gap.html [ ImageOnlyFailure ]
 fast/regions/hover-in-second-region.html [ ImageOnlyFailure ]
-fast/replaced/border-radius-clip.html [ ImageOnlyFailure ]
 transitions/opacity-transition-zindex.html [ ImageOnlyFailure ]
 svg/as-background-image/tiled-background-image.html [ Skip ]
 svg/filters/feImage-reference-svg-primitive.svg [ ImageOnlyFailure ] # Reni said this is actually a know svg issue with feImage.

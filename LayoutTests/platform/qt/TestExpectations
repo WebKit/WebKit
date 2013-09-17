@@ -1954,6 +1954,9 @@ webkit.org/b/121427 fast/canvas/canvas-measureText-ideographicSpace.html [ Skip 
 # [GTK][Qt] Layout Test fast/images/pdf-as-image-with-annotations.html is failing.
 webkit.org/b/120844 fast/images/pdf-as-image-with-annotations.html [ Skip ]
 
+# [GTK][Qt] Two fast/workers/ test are flaky after the FTL merge
+webkit.org/b/119255 [ Debug ] fast/workers/stress-js-execution.html [ Skip ]
+
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #

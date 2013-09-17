@@ -1,3 +1,15 @@
+2013-09-17  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip and rebase tests.
+
+        * platform/qt-wk2/TestExpectations:
+        * platform/qt-wk2/compositing/geometry/negative-text-indent-with-overflow-hidden-layer-expected.txt: Added r155546.
+        * platform/qt-wk2/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants-expected.txt: Added r155607.
+        * platform/qt-wk2/compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2-expected.txt: Added r155607.
+        * platform/qt-wk2/fast/repaint/negative-text-indent-with-overflow-hidden-expected.txt: Added r155546.
+        * platform/qt-wk2/fast/replaced/border-radius-clip-expected.txt: Removed.
+        * platform/qt/TestExpectations:
+
 2013-09-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Set MessageEvent.source to the newly created port for shared workers' connect events
