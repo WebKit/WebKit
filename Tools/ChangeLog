@@ -1,5 +1,13 @@
 2013-09-17  Michael Saboff  <msaboff@apple.com>
 
+        Unreviewed typo fix after r155999
+
+        Changed en_US.UTB-8 to en_US.UTF-8
+
+        * Scripts/run-javascriptcore-tests:
+
+2013-09-17  Michael Saboff  <msaboff@apple.com>
+
         run-jsc-stress-tests fails with ruby version 2
         https://bugs.webkit.org/show_bug.cgi?id=121521
 
