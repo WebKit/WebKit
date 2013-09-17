@@ -26,10 +26,12 @@
 #include "config.h"
 #include "WebErrors.h"
 
+#include "WebError.h"
 #include <WebCore/ErrorsEfl.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebKit2/WKError.h>
 
 using namespace WebCore;
 
@@ -68,6 +70,11 @@ ResourceError fileDoesNotExistError(const ResourceResponse& response)
 ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
 {
     return WebCore::pluginWillHandleLoadError(response);
+}
+
+WebCore::ResourceError internalError(const WebCore::KURL& url)
+{
+    return ResourceError(WebError::webKitErrorDomain(), kWKErrorInternal, url.string(), ASCIILiteral("Internal error"));
 }
 
 } // namespace WebKit
