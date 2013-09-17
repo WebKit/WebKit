@@ -1,3 +1,10 @@
+2013-09-17  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix after 155963.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::getStyleContext): use nullptr instead of 0.
+
 2013-09-17  Alexey Proskuryakov  <ap@apple.com>
 
         Make SVGTransform::valueAsString use StringBuilder

@@ -77,7 +77,7 @@ static StyleContextMap& styleContextMap()
 
 static GtkStyleContext* getStyleContext(GType widgetType)
 {
-    StyleContextMap::AddResult result = styleContextMap().add(widgetType, 0);
+    StyleContextMap::AddResult result = styleContextMap().add(widgetType, nullptr);
     if (!result.isNewEntry)
         return result.iterator->value.get();
 
