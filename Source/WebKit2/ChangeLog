@@ -1,3 +1,15 @@
+2013-09-17  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Test /webkit2/WebKitWebInspectorServer/test-open-debugging-session times out after r155714
+        https://bugs.webkit.org/show_bug.cgi?id=121383
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/tests/TestInspectorServer.cpp:
+        (openRemoteDebuggingSession): use the page contents' to check the remote debugging of the page
+        has been successfuly opened, as the title is no longer the same after the switch to the new
+        frontend.
+
 2013-09-16  Enrica Casucci  <enrica@apple.com>
 
         Remove unused function didSetSelectionTypesForPasteboard from EditorClient.
