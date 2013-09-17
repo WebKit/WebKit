@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE(NETWORK_PROCESS)
+
 messages -> WebResourceLoader LegacyReceiver {
 
     CancelResourceLoader()
@@ -37,3 +39,5 @@ messages -> WebResourceLoader LegacyReceiver {
     // DidReceiveResource is for when we have the entire resource data available at once, such as when the resource is cached in memory
     DidReceiveResource(WebKit::ShareableResource::Handle resource, double finishTime)
 }
+
+#endif // ENABLE(NETWORK_PROCESS)

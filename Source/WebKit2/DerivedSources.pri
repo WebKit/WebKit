@@ -45,6 +45,7 @@ VPATH = \
     WebProcess/Geolocation \
     WebProcess/IconDatabase \
     WebProcess/MediaCache \
+    WebProcess/Network \
     WebProcess/NetworkInfo \
     WebProcess/Notifications \
     WebProcess/Plugins \

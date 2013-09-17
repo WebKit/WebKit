@@ -576,6 +576,8 @@ set(WebKit2_MESSAGES_IN_FILES
 
     WebProcess/MediaCache/WebMediaCacheManager.messages.in
 
+    WebProcess/Network/WebResourceLoader.messages.in
+
     WebProcess/NetworkInfo/WebNetworkInfoManager.messages.in
 
     WebProcess/Notifications/WebNotificationManager.messages.in

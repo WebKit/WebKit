@@ -237,6 +237,8 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebProcessMessages.h \
 	DerivedSources/WebKit2/WebProcessProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebProcessProxyMessages.h \
+	DerivedSources/WebKit2/WebResourceLoaderMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebResourceLoaderMessages.h \
 	DerivedSources/WebKit2/WebSoupRequestManagerMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebSoupRequestManagerMessages.h \
 	DerivedSources/WebKit2/WebSoupRequestManagerProxyMessageReceiver.cpp \

@@ -1,3 +1,18 @@
+2013-09-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        WebResourceLoader.messages.in should be ENABLE(NETWORK_PROCESS) guarded
+        https://bugs.webkit.org/show_bug.cgi?id=121424
+
+        Reviewed by Alexey Proskuryakov.
+
+        Original patch by Balazs Kelemen <kbalazs@webkit.org>.
+
+        * CMakeLists.txt:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebProcess/Network/WebResourceLoader.messages.in: ENABLE(NETWORK_PROCESS) guard added.
+
 2013-09-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Unreviewed, fixing the GTK WK2 debug build after r155911.
