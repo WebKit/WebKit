@@ -659,71 +659,9 @@ LayoutRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, Lay
     if (!inlineBox)
         return LayoutRect();
 
-    ASSERT(inlineBox->isInlineTextBox());
-    if (!inlineBox->isInlineTextBox())
-        return LayoutRect();
-
     InlineTextBox* box = toInlineTextBox(inlineBox);
-
-    const RootInlineBox& rootBox = box->root();
-    int height = rootBox.selectionHeight();
-    int top = rootBox.selectionTop();
-
-    // Go ahead and round left to snap it to the nearest pixel.
     float left = box->positionForOffset(caretOffset);
-
-    // Distribute the caret's width to either side of the offset.
-    int caretWidthLeftOfOffset = caretWidth / 2;
-    left -= caretWidthLeftOfOffset;
-    int caretWidthRightOfOffset = caretWidth - caretWidthLeftOfOffset;
-
-    left = roundf(left);
-
-    float rootLeft = rootBox.logicalLeft();
-    float rootRight = rootBox.logicalRight();
-
-    // FIXME: should we use the width of the root inline box or the
-    // width of the containing block for this?
-    if (extraWidthToEndOfLine)
-        *extraWidthToEndOfLine = (rootBox.logicalWidth() + rootLeft) - (left + 1);
-
-    RenderBlock* cb = containingBlock();
-    RenderStyle* cbStyle = cb->style();
-
-    float leftEdge;
-    float rightEdge;
-    leftEdge = min<float>(0, rootLeft);
-    rightEdge = max<float>(cb->logicalWidth(), rootRight);
-
-    bool rightAligned = false;
-    switch (cbStyle->textAlign()) {
-    case RIGHT:
-    case WEBKIT_RIGHT:
-        rightAligned = true;
-        break;
-    case LEFT:
-    case WEBKIT_LEFT:
-    case CENTER:
-    case WEBKIT_CENTER:
-        break;
-    case JUSTIFY:
-    case TASTART:
-        rightAligned = !cbStyle->isLeftToRightDirection();
-        break;
-    case TAEND:
-        rightAligned = cbStyle->isLeftToRightDirection();
-        break;
-    }
-
-    if (rightAligned) {
-        left = max(left, leftEdge);
-        left = min(left, rootRight - caretWidth);
-    } else {
-        left = min(left, rightEdge - caretWidthRightOfOffset);
-        left = max(left, rootLeft);
-    }
-
-    return style()->isHorizontalWritingMode() ? IntRect(left, top, caretWidth, height) : IntRect(top, left, height, caretWidth);
+    return box->root().computeCaretRect(left, caretWidth, extraWidthToEndOfLine);
 }
 
 ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const

@@ -1,3 +1,18 @@
+2013-09-17  Antti Koivisto  <antti@apple.com>
+
+        Move text caret rect computation to root inline box
+        https://bugs.webkit.org/show_bug.cgi?id=121479
+
+        Reviewed by Andreas Kling.
+
+        For future code sharing.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::computeCaretRect):
+        * rendering/RootInlineBox.h:
+
 2013-09-17  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Don't make the GObject DOM bindings API break test fatal

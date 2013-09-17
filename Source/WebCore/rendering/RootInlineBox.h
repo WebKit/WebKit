@@ -135,6 +135,8 @@ public:
     GapRects lineSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit selTop, LayoutUnit selHeight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
 
+    IntRect computeCaretRect(float logicalLeftPosition, unsigned caretWidth, LayoutUnit* extraWidthToEndOfLine) const;
+
     RenderBlock& block() const;
 
     InlineBox* closestLeafChildForPoint(const IntPoint&, bool onlyEditableLeaves);

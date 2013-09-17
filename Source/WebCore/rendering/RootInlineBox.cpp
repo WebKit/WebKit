@@ -521,6 +521,59 @@ GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const LayoutPoi
     return result;
 }
 
+IntRect RootInlineBox::computeCaretRect(float logicalLeftPosition, unsigned caretWidth, LayoutUnit* extraWidthToEndOfLine) const
+{
+    int height = selectionHeight();
+    int top = selectionTop();
+
+    // Distribute the caret's width to either side of the offset.
+    float left = logicalLeftPosition;
+    int caretWidthLeftOfOffset = caretWidth / 2;
+    left -= caretWidthLeftOfOffset;
+    int caretWidthRightOfOffset = caretWidth - caretWidthLeftOfOffset;
+    left = roundf(left);
+
+    float rootLeft = logicalLeft();
+    float rootRight = logicalRight();
+
+    if (extraWidthToEndOfLine)
+        *extraWidthToEndOfLine = (logicalWidth() + rootLeft) - (left + caretWidth);
+
+    RenderStyle* blockStyle = block().style();
+
+    bool rightAligned = false;
+    switch (blockStyle->textAlign()) {
+    case RIGHT:
+    case WEBKIT_RIGHT:
+        rightAligned = true;
+        break;
+    case LEFT:
+    case WEBKIT_LEFT:
+    case CENTER:
+    case WEBKIT_CENTER:
+        break;
+    case JUSTIFY:
+    case TASTART:
+        rightAligned = !blockStyle->isLeftToRightDirection();
+        break;
+    case TAEND:
+        rightAligned = blockStyle->isLeftToRightDirection();
+        break;
+    }
+
+    float leftEdge = std::min<float>(0, rootLeft);
+    float rightEdge = std::max<float>(block().logicalWidth(), rootRight);
+
+    if (rightAligned) {
+        left = std::max(left, leftEdge);
+        left = std::min(left, rootRight - caretWidth);
+    } else {
+        left = std::min(left, rightEdge - caretWidthRightOfOffset);
+        left = std::max(left, rootLeft);
+    }
+    return blockStyle->isHorizontalWritingMode() ? IntRect(left, top, caretWidth, height) : IntRect(top, left, height, caretWidth);
+}
+
 RenderObject::SelectionState RootInlineBox::selectionState()
 {
     // Walk over all of the selected boxes.
