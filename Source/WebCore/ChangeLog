@@ -1,5 +1,38 @@
 2013-09-17  Antti Koivisto  <antti@apple.com>
 
+        Add isTextOrBR() and use it
+        https://bugs.webkit.org/show_bug.cgi?id=121506
+
+        Reviewed by Darin Adler.
+
+        It is a popular test.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateHoverActiveState):
+        * editing/Editor.cpp:
+        (WebCore::findFirstMarkable):
+        * editing/TextIterator.cpp:
+        (WebCore::ignoresContainerClip):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::logicalHeight):
+        * rendering/InlineIterator.h:
+        (WebCore::isIteratorTarget):
+        * rendering/RenderBlock.cpp:
+        (WebCore::InlineMinMaxIterator::next):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        * rendering/RenderCounter.cpp:
+        (WebCore::planCounter):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isTextOrBR):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+        (WebCore::RootInlineBox::verticalPositionForBox):
+
+2013-09-17  Antti Koivisto  <antti@apple.com>
+
         RenderBR should not be RenderText
         https://bugs.webkit.org/show_bug.cgi?id=121221
 

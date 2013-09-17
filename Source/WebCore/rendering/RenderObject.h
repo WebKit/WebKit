@@ -569,6 +569,7 @@ public:
 
     bool isText() const  { return !m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isBR() const { return m_bitfields.isBR(); }
+    bool isTextOrBR() const { return isText() || isBR(); }
     bool isBox() const { return m_bitfields.isBox(); }
     bool isRenderView() const  { return m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isInline() const { return m_bitfields.isInline(); } // inline object

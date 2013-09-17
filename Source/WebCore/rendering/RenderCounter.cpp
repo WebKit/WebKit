@@ -108,7 +108,7 @@ static bool planCounter(RenderObject* object, const AtomicString& identifier, bo
 
     // Real text nodes don't have their own style so they can't have counters.
     // We can't even look at their styles or we'll see extra resets and increments!
-    if (object->isText() && !object->isBR())
+    if (object->isText())
         return false;
     Node* generatingNode = object->generatingNode();
     // We must have a generating node or else we cannot have a counter.

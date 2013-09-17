@@ -215,7 +215,7 @@ static inline bool fullyClipsContents(Node* node)
 static inline bool ignoresContainerClip(Node* node)
 {
     RenderObject* renderer = node->renderer();
-    if (!renderer || renderer->isText() || renderer->isBR())
+    if (!renderer || renderer->isTextOrBR())
         return false;
     return renderer->style()->hasOutOfFlowPosition();
 }

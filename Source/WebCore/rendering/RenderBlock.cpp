@@ -5100,7 +5100,7 @@ RenderObject* InlineMinMaxIterator::next()
         if (!result)
             break;
 
-        if (!result->isOutOfFlowPositioned() && (result->isText() || result->isBR() || result->isFloating() || result->isReplaced() || result->isRenderInline()))
+        if (!result->isOutOfFlowPositioned() && (result->isTextOrBR() || result->isFloating() || result->isReplaced() || result->isRenderInline()))
              break;
         
         current = result;

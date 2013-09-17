@@ -589,7 +589,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
     RenderTreeAsText::writeRenderObject(ts, o, behavior);
     ts << "\n";
 
-    if (o.isText() && !o.isBR()) {
+    if (o.isText()) {
         const RenderText& text = toRenderText(o);
         for (InlineTextBox* box = text.firstTextBox(); box; box = box->nextTextBox()) {
             writeIndent(ts, indent + 1);

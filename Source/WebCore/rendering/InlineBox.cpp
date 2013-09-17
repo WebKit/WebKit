@@ -141,7 +141,7 @@ float InlineBox::logicalHeight() const
     if (hasVirtualLogicalHeight())
         return virtualLogicalHeight();
     
-    if (renderer().isText() || renderer().isBR())
+    if (renderer().isTextOrBR())
         return m_bitfields.isText() ? renderer().style(isFirstLineStyle())->fontMetrics().height() : 0;
     if (renderer().isBox() && parent())
         return isHorizontal() ? toRenderBox(renderer()).height() : toRenderBox(renderer()).width();

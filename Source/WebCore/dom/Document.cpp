@@ -5824,7 +5824,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             // We are setting the :active chain and freezing it. If future moves happen, they
             // will need to reference this chain.
             for (RenderObject* curr = newActiveElement->renderer(); curr; curr = curr->parent()) {
-                if (!curr->node() || !curr->node()->isElementNode() || curr->isText() || curr->isBR())
+                if (!curr->node() || !curr->node()->isElementNode() || curr->isTextOrBR())
                     continue;
                 m_userActionElements.setInActiveChain(toElement(curr->node()), true);
             }

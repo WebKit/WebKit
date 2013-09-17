@@ -915,7 +915,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
     if (includeMarginForBox(box)) {
         LayoutUnit ascentWithMargin = box->renderer().style(isFirstLineStyle())->fontMetrics().ascent(baselineType());
         LayoutUnit descentWithMargin = box->renderer().style(isFirstLineStyle())->fontMetrics().descent(baselineType());
-        if (box->parent() && !box->renderer().isText() && !box->renderer().isBR()) {
+        if (box->parent() && !box->renderer().isTextOrBR()) {
             ascentWithMargin += box->boxModelObject()->borderAndPaddingBefore() + box->boxModelObject()->marginBefore();
             descentWithMargin += box->boxModelObject()->borderAndPaddingAfter() + box->boxModelObject()->marginAfter();
         }
@@ -929,7 +929,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
 
 LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositionCache& verticalPositionCache)
 {
-    if (box->renderer().isText() || box->renderer().isBR())
+    if (box->renderer().isTextOrBR())
         return box->parent()->logicalTop();
     
     RenderBoxModelObject* renderer = box->boxModelObject();

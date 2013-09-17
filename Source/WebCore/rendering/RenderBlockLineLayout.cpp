@@ -1843,7 +1843,7 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
                     else
                         o->layoutIfNeeded();
                 }
-            } else if (o->isText() || o->isBR() || (o->isRenderInline() && !walker.atEndOfInline())) {
+            } else if (o->isTextOrBR() || (o->isRenderInline() && !walker.atEndOfInline())) {
                 if (o->isRenderInline())
                     toRenderInline(o)->updateAlwaysCreateLineBoxes(layoutState.isFullLayout());
                 if (layoutState.isFullLayout() || o->selfNeedsLayout())
