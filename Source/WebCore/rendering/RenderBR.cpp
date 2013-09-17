@@ -36,6 +36,7 @@ RenderBR::RenderBR(Element* element)
     , m_inlineBoxWrapper(nullptr)
     , m_cachedLineHeight(invalidLineHeight)
 {
+    setIsBR();
 }
 
 RenderBR::~RenderBR()

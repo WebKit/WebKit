@@ -1,3 +1,20 @@
+2013-09-17  Antti Koivisto  <antti@apple.com>
+
+        Add RenderObject bit for isBR().
+        https://bugs.webkit.org/show_bug.cgi?id=121494
+
+        Reviewed by Andreas Kling.
+
+        It is no longer piggybacking on isText() flag and is now hot in inline layout.
+
+        * rendering/RenderBR.cpp:
+        (WebCore::RenderBR::RenderBR):
+        * rendering/RenderBR.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isBR):
+        (WebCore::RenderObject::setIsBR):
+        (WebCore::RenderObject::RenderObjectBitfields::RenderObjectBitfields):
+
 2013-09-17  Andreas Kling  <akling@apple.com>
 
         Export some missing symbols for Internals after RenderArena& change.

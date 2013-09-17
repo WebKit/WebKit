@@ -343,7 +343,6 @@ public:
 
     bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
 
-    virtual bool isBR() const { return false; }
     virtual bool isBoxModelObject() const { return false; }
     virtual bool isCounter() const { return false; }
     virtual bool isQuote() const { return false; }
@@ -568,6 +567,7 @@ public:
     bool isPositioned() const { return m_bitfields.isPositioned(); }
 
     bool isText() const  { return !m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
+    bool isBR() const { return m_bitfields.isBR(); }
     bool isBox() const { return m_bitfields.isBox(); }
     bool isRenderView() const  { return m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isInline() const { return m_bitfields.isInline(); } // inline object
@@ -700,6 +700,7 @@ public:
     virtual bool computeBackgroundIsKnownToBeObscured() { return false; }
 
     void setIsText() { ASSERT(!isBox()); m_bitfields.setIsTextOrRenderView(true); }
+    void setIsBR() { m_bitfields.setIsBR(true); }
     void setIsBox() { m_bitfields.setIsBox(true); }
     void setIsRenderView() { ASSERT(isBox()); m_bitfields.setIsTextOrRenderView(true); }
     void setReplaced(bool b = true) { m_bitfields.setIsReplaced(b); }
@@ -1099,6 +1100,7 @@ private:
             , m_isBox(false)
             , m_isInline(true)
             , m_isReplaced(false)
+            , m_isBR(false)
             , m_horizontalWritingMode(true)
             , m_isDragging(false)
             , m_hasLayer(false)
@@ -1116,7 +1118,7 @@ private:
         {
         }
         
-        // 31 bits have been used here. There is one bit available.
+        // 32 bits have been used here. There are no bits available.
         ADD_BOOLEAN_BITFIELD(needsLayout, NeedsLayout);
         ADD_BOOLEAN_BITFIELD(needsPositionedMovementLayout, NeedsPositionedMovementLayout);
         ADD_BOOLEAN_BITFIELD(normalChildNeedsLayout, NormalChildNeedsLayout);
@@ -1130,6 +1132,7 @@ private:
         ADD_BOOLEAN_BITFIELD(isBox, IsBox);
         ADD_BOOLEAN_BITFIELD(isInline, IsInline);
         ADD_BOOLEAN_BITFIELD(isReplaced, IsReplaced);
+        ADD_BOOLEAN_BITFIELD(isBR, IsBR);
         ADD_BOOLEAN_BITFIELD(horizontalWritingMode, HorizontalWritingMode);
         ADD_BOOLEAN_BITFIELD(isDragging, IsDragging);
 

@@ -50,8 +50,6 @@ public:
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const OVERRIDE;
 
 private:
-    virtual bool isBR() const OVERRIDE { return true; }
-
     virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
     virtual int caretMinOffset() const OVERRIDE;
     virtual int caretMaxOffset() const OVERRIDE;
