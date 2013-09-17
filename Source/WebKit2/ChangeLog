@@ -1,3 +1,10 @@
+2013-09-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Unreviewed, fixing the GTK WK2 debug build after r155911.
+
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp: Add missing using
+        namespace WebCore.
+
 2013-09-16  Sergio Correia  <sergio.correia@openbossa.org>
 
         Fix EFL build after r155888
