@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,7 @@
 #include "CSSGroupingRule.cpp"
 #include "CSSHostRule.cpp"
 #include "CSSImageGeneratorValue.cpp"
+#include "CSSImageSetValue.cpp"
 #include "CSSImageValue.cpp"
 #include "CSSImportRule.cpp"
 #include "CSSInheritedValue.cpp"
