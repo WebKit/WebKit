@@ -1,3 +1,9 @@
+2013-09-17  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed make distcheck fix.
+
+        * GNUmakefile.list.am:
+
 2013-09-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         MarkedBlocks shouldn't be put in Allocated state if they didn't produce a FreeList
