@@ -2390,6 +2390,7 @@ HEADERS += \
     rendering/FilterEffectRenderer.h \
     rendering/FixedTableLayout.h \
     rendering/FloatingObjects.h \
+    rendering/FlowThreadController.h \
     rendering/HitTestingTransformState.h \
     rendering/HitTestLocation.h \
     rendering/HitTestResult.h \

@@ -1,3 +1,14 @@
+2013-09-17  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Add FlowThreadController.h to Target.pri
+        https://bugs.webkit.org/show_bug.cgi?id=121516
+
+        Reviewed by Dirk Schulze.
+
+        No new tests, no behavior change.
+
+        * Target.pri:
+
 2013-09-17  Anders Carlsson  <andersca@apple.com>
 
         Stop explicitly using PassOwnPtr in WebCore/html
