@@ -238,6 +238,8 @@ if ($runLayout) {
 my $jscStressResultsDir = $productDir . "/jsc-stress-results";
 
 if ($runJSCStress) {
+    # Set LANG environment variable so the stress tests will work with newer ruby (<rdar://problem/15010705>)
+    $ENV{LANG}="en_US.UTB-8";
     my @jscStressDriverCmd = (
         "/usr/bin/env", "ruby", "Tools/Scripts/run-jsc-stress-tests",
         "-j", jscPath($productDir), "-o", $jscStressResultsDir,
