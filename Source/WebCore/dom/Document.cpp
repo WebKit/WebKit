@@ -1428,7 +1428,7 @@ String Document::suggestedMIMEType() const
 
 Element* Document::elementFromPoint(int x, int y) const
 {
-    if (!renderView())
+    if (!hasLivingRenderTree())
         return 0;
 
     return TreeScope::elementFromPoint(x, y);
@@ -1436,7 +1436,7 @@ Element* Document::elementFromPoint(int x, int y) const
 
 PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
 {
-    if (!renderView())
+    if (!hasLivingRenderTree())
         return 0;
     LayoutPoint localPoint;
     Node* node = nodeFromPoint(this, x, y, &localPoint);
@@ -2179,9 +2179,7 @@ AXObjectCache* Document::existingAXObjectCache() const
     if (!AXObjectCache::accessibilityEnabled())
         return 0;
 
-    // If the renderer is gone then we are in the process of destruction.
-    // This method will be called before m_frame = 0.
-    if (!topDocument()->renderView())
+    if (!topDocument()->hasLivingRenderTree())
         return 0;
 
     return topDocument()->m_axObjectCache.get();
@@ -2199,7 +2197,7 @@ AXObjectCache* Document::axObjectCache() const
     Document* topDocument = this->topDocument();
 
     // If the document has already been detached, do not make a new axObjectCache.
-    if (!topDocument->renderView())
+    if (!topDocument->hasLivingRenderTree())
         return 0;
 
     ASSERT(topDocument == this || !m_axObjectCache);
@@ -2481,7 +2479,7 @@ void Document::implicitClose()
     m_processingLoadEvent = false;
 
 #if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK)
-    if (f && renderView() && AXObjectCache::accessibilityEnabled()) {
+    if (f && hasLivingRenderTree() && AXObjectCache::accessibilityEnabled()) {
         // The AX cache may have been cleared at this point, but we need to make sure it contains an
         // AX object to send the notification to. getOrCreate will make sure that an valid AX object
         // exists in the cache (we ignore the return value because we don't need it here). This is 
@@ -2987,7 +2985,7 @@ void Document::processReferrerPolicy(const String& policy)
 
 MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const LayoutPoint& documentPoint, const PlatformMouseEvent& event)
 {
-    if (!renderView())
+    if (!hasLivingRenderTree())
         return MouseEventWithHitTestResults(event, HitTestResult(LayoutPoint()));
 
     HitTestResult result(documentPoint);

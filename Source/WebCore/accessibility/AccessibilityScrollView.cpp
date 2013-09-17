@@ -188,7 +188,7 @@ AccessibilityObject* AccessibilityScrollView::webAreaObject() const
         return 0;
     
     Document* doc = toFrameView(m_scrollView)->frame().document();
-    if (!doc || !doc->renderView())
+    if (!doc || !doc->hasLivingRenderTree())
         return 0;
 
     return axObjectCache()->getOrCreate(doc);

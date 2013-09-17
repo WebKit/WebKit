@@ -399,7 +399,7 @@ static void appendAccessibilityObject(AccessibilityObject* object, Accessibility
             return;
         
         Document* doc = toFrameView(widget)->frame().document();
-        if (!doc || !doc->renderView())
+        if (!doc || !doc->hasLivingRenderTree())
             return;
         
         object = object->axObjectCache()->getOrCreate(doc);

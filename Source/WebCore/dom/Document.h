@@ -548,12 +548,10 @@ public:
     virtual void resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) OVERRIDE;
 
     RenderArena* renderArena() { return m_renderArena.get(); }
-
-    // Implemented in RenderView.h to avoid a cyclic header dependency this just
-    // returns renderer so callers can avoid verbose casts.
     RenderView* renderView() const { return m_renderView; }
 
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
+    bool hasLivingRenderTree() const { return renderView() && !renderTreeBeingDestroyed(); }
 
     AXObjectCache* existingAXObjectCache() const;
     AXObjectCache* axObjectCache() const;

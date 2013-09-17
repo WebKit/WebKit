@@ -49,7 +49,7 @@ namespace Style {
 
 PassRefPtr<RenderStyle> resolveForDocument(const Document& document)
 {
-    if (!document.renderView())
+    if (!document.hasLivingRenderTree())
         return 0;
 
     RenderView& renderView = *document.renderView();

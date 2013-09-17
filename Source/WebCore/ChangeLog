@@ -1,3 +1,17 @@
+2013-09-17  Andreas Kling  <akling@apple.com>
+
+        Dodge more work during render tree teardown.
+        <https://webkit.org/b/121487>
+
+        Reviewed by Antti Koivisto.
+
+        Add a Document::hasLivingRenderTree() method that returns true if
+        there's a render tree attached to the document and it's not in the
+        process of being torn down.
+
+        Deploy this check in a number of places that were only checking
+        for the presence of a RenderView.
+
 2013-09-17  Eric Carlson  <eric.carlson@apple.com>
 
         MediaStream API: Adding an async RTCPeerConnection::addIceCandidate

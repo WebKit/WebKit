@@ -282,7 +282,7 @@ void HTMLLinkElement::removedFrom(ContainerNode* insertionPoint)
     if (styleSheetIsLoading())
         removePendingSheet(RemovePendingSheetNotifyLater);
 
-    if (document().renderView())
+    if (document().hasLivingRenderTree())
         document().styleResolverChanged(DeferRecalcStyleIfNeeded);
 }
 
