@@ -1,3 +1,21 @@
+2013-09-17  Samuel White  <samuel_white@apple.com>
+
+        AX: Expose ARIA Busy Notifications
+        https://bugs.webkit.org/show_bug.cgi?id=121451
+
+        Reviewed by Darin Adler.
+
+        Added AXElementBusyChanged notification that posts when aria-busy is toggled. This
+        enables screen readers to detect busy states without polling the focused element.
+
+        Test: platform/mac/accessibility/element-busy-changed.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::handleAttributeChanged):
+        * accessibility/AXObjectCache.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2013-09-17  Antti Koivisto  <antti@apple.com>
 
         Add isTextOrBR() and use it

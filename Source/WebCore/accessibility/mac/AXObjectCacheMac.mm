@@ -115,8 +115,11 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXRowCollapsed:
             macNotification = NSAccessibilityRowCollapsedNotification;
             break;
-            // Does not exist on Mac.
+        case AXElementBusyChanged:
+            macNotification = @"AXElementBusyChanged";
+            break;
         case AXCheckedStateChanged:
+            // Does not exist on Mac.
         default:
             return;
     }
