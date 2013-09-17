@@ -33,8 +33,10 @@ messages -> WebResourceLoader LegacyReceiver {
     DidReceiveData(CoreIPC::DataReference data, int64_t encodedDataLength)
     DidFinishResourceLoad(double finishTime)
     DidFailResourceLoad(WebCore::ResourceError error)
-    
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     CanAuthenticateAgainstProtectionSpace(WebCore::ProtectionSpace protectionSpace)
+#endif
 
     // DidReceiveResource is for when we have the entire resource data available at once, such as when the resource is cached in memory
     DidReceiveResource(WebKit::ShareableResource::Handle resource, double finishTime)

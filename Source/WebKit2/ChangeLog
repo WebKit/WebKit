@@ -1,5 +1,22 @@
 2013-09-17  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Buildfix for !USE(PROTECTION_SPACE_AUTH_CALLBACK) platforms
+        https://bugs.webkit.org/show_bug.cgi?id=121431
+
+        Reviewed by Alexey Proskuryakov.
+
+        Mising guards added.
+
+        Original patch by Balazs Kelemen <kbalazs@webkit.org>
+        and Kwang Yul Seo <skyul@company100.net>
+
+        * NetworkProcess/NetworkResourceLoader.messages.in:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+
+2013-09-17  Csaba Osztrogonác  <ossy@webkit.org>
+
         WebResourceLoader.messages.in should be ENABLE(NETWORK_PROCESS) guarded
         https://bugs.webkit.org/show_bug.cgi?id=121424
 

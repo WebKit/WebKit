@@ -159,6 +159,7 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
     m_coreLoader->didFinishLoading(finishTime);
 }
 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
     Ref<WebResourceLoader> protect(*this);
@@ -170,6 +171,7 @@ void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSp
 
     send(Messages::NetworkResourceLoader::ContinueCanAuthenticateAgainstProtectionSpace(result));
 }
+#endif
 
 } // namespace WebKit
 
