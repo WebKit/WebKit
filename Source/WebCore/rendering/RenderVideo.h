@@ -49,6 +49,8 @@ public:
     void acceleratedRenderingStateChanged();
 #endif
 
+    bool requiresImmediateCompositing() const;
+
     virtual bool shouldDisplayVideo() const;
 
 private:

@@ -62,6 +62,7 @@ public:
     virtual bool supportsFullscreen() const { return false; }
     virtual bool supportsSave() const { return false; }
     virtual bool supportsScanning() const { return false; }
+    virtual bool requiresImmediateCompositing() const { return false; }
 
     virtual IntSize naturalSize() const = 0;
 

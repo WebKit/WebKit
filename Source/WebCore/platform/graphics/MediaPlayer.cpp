@@ -562,6 +562,11 @@ bool MediaPlayer::supportsScanning() const
     return m_private->supportsScanning();
 }
 
+bool MediaPlayer::requiresImmediateCompositing() const
+{
+    return m_private->requiresImmediateCompositing();
+}
+
 IntSize MediaPlayer::naturalSize()
 {
     return m_private->naturalSize();

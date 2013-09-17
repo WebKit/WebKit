@@ -85,6 +85,7 @@ private:
     virtual float platformMaxTimeLoaded() const;
     virtual void beginLoadingMetadata();
     virtual void sizeChanged();
+    virtual bool requiresImmediateCompositing() const { return true; }
 
     virtual bool hasAvailableVideoFrame() const;
 
