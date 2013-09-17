@@ -1,3 +1,19 @@
+2013-09-17  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Regions] Layout Test for selection direction
+        https://bugs.webkit.org/show_bug.cgi?id=121501
+
+        Reviewed by Darin Adler.
+
+        Selection follows DOM tree, so the highlighted text in this test case is
+        the opposite to what the user is actually selecting. This was not
+        working properly from r139197 to r155058, so adding a Layout Test to
+        prevent future breaks. It is a reftest comparing regions and absolute
+        positions behavior.
+
+        * fast/regions/selection-direction-expected.html: Added.
+        * fast/regions/selection-direction.html: Added.
+
 2013-09-17  Hans Muller  <hmuller@adobe.com>
 
         Bad ASSERT() in RasterShapeIntervals::firstIncludedIntervalY()

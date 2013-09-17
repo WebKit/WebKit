@@ -1,0 +1,48 @@
+<html>
+<head>
+    <style>
+        #source {
+            -webkit-flow-into: content;
+        }
+
+        #region {
+            -webkit-flow-from: content;
+            height: 100px;
+            width: 200px;
+        }
+
+        #outside {
+            height: 100px;
+            width: 200px;
+        }
+
+        body {
+            margin-top: 0;
+        }
+
+        #description {
+            width: 600px;
+        }
+    </style>
+    <script>
+        function selectText() {
+            if (window.testRunner) {
+                eventSender.mouseMoveTo(100, 10);
+                eventSender.mouseDown();
+
+                eventSender.mouseMoveTo(100, 110);
+                eventSender.mouseUp();
+            }
+        }
+    </script>
+</head>
+<body onload="selectText();">
+    <div id="source">inside region inside region inside region inside region</div>
+    <div id="outside">outside region outside region outside region outside region</div>
+    <div id="region"></div>
+    <div id="description">
+        <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=121501">Bug #121501 - [CSS Regions] Layout Test for selection direction</a></h1>
+        <p>Selection is based in DOM tree, so if you select text from "outise region" to "inside region" the highlighted area is exactly the opposite to what the user is actually selecting.</p>
+    </div>
+</body>
+</html>
