@@ -39,6 +39,7 @@ public:
     static PassRefPtr<HTMLStyleElement> create(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLStyleElement();
 
+#if ENABLE(STYLE_SCOPED)
     bool scoped() const;
     void setScoped(bool);
     Element* scopingElement() const;
@@ -50,6 +51,7 @@ public:
             return false;
         return true;
     }
+#endif
 
     CSSStyleSheet* sheet() const { return m_styleSheetOwner.sheet(); }
 
@@ -77,20 +79,24 @@ private:
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
+#if ENABLE(STYLE_SCOPED)
     void scopedAttributeChanged(bool);
     void registerWithScopingNode(bool);
     void unregisterWithScopingNode(ContainerNode*);
+#endif
 
     InlineStyleSheetOwner m_styleSheetOwner;
     bool m_firedLoad;
     bool m_loadedSheet;
 
+#if ENABLE(STYLE_SCOPED)
     enum ScopedStyleRegistrationState {
         NotRegistered,
         RegisteredAsScoped,
         RegisteredInShadowRoot
     };
     ScopedStyleRegistrationState m_scopedStyleRegistrationState;
+#endif
 };
 
 ELEMENT_TYPE_CASTS(HTMLStyleElement)

@@ -69,8 +69,10 @@ public:
 
     Element* activeElement() const;
 
+#if ENABLE(STYLE_SCOPED)
     virtual void registerScopedHTMLStyleChild() OVERRIDE;
     virtual void unregisterScopedHTMLStyleChild() OVERRIDE;
+#endif
 
     ShadowRootType type() const { return static_cast<ShadowRootType>(m_type); }
 

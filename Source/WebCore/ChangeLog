@@ -1,3 +1,14 @@
+2013-09-08  Andreas Kling  <akling@apple.com>
+
+        Move <style scoped> code behind ENABLE(STYLE_SCOPED)
+        <https://webkit.org/b/121018>
+
+        Reviewed by Darin Adler.
+
+        Move all the code for <style scoped> behind ENABLE(STYLE_SCOPED) guards.
+        It's not nice to clutter common codepaths with code that always executes
+        even though the feature is disabled at compile-time.
+
 2013-09-16  Sam Weinig  <sam@webkit.org>
 
         CTTE: InputType should store its HTMLInputElement back pointer as a reference

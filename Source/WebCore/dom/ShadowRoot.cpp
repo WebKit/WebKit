@@ -156,6 +156,7 @@ void ShadowRoot::childrenChanged(const ChildChange& change)
     invalidateDistribution();
 }
 
+#if ENABLE(STYLE_SCOPED)
 void ShadowRoot::registerScopedHTMLStyleChild()
 {
     ++m_numberOfStyles;
@@ -168,6 +169,7 @@ void ShadowRoot::unregisterScopedHTMLStyleChild()
     --m_numberOfStyles;
     setHasScopedHTMLStyleChild(m_numberOfStyles > 0);
 }
+#endif
 
 void ShadowRoot::removeAllEventListeners()
 {

@@ -2347,6 +2347,8 @@ void Node::updateAncestorConnectedSubframeCountForInsertion() const
         node->incrementConnectedSubframeCount(count);
 }
 
+#if ENABLE(STYLE_SCOPED)
+// FIXME: What is this code doing in Node, srsly?
 void Node::registerScopedHTMLStyleChild()
 {
     setHasScopedHTMLStyleChild(true);
@@ -2371,6 +2373,7 @@ size_t Node::numberOfScopedHTMLStyleChildren() const
 
     return count;
 }
+#endif
 
 } // namespace WebCore
 

@@ -346,8 +346,10 @@ public:
     void setInNamedFlow() { setFlag(InNamedFlowFlag); }
     void clearInNamedFlow() { clearFlag(InNamedFlowFlag); }
 
+#if ENABLE(STYLE_SCOPED)
     bool hasScopedHTMLStyleChild() const { return getFlag(HasScopedHTMLStyleChildFlag); }
     void setHasScopedHTMLStyleChild(bool flag) { setFlag(flag, HasScopedHTMLStyleChildFlag); }
+#endif
 
     bool hasEventTargetData() const { return getFlag(HasEventTargetDataFlag); }
     void setHasEventTargetData(bool flag) { setFlag(flag, HasEventTargetDataFlag); }
@@ -582,9 +584,11 @@ public:
     void unregisterTransientMutationObserver(MutationObserverRegistration*);
     void notifyMutationObserversNodeWillDetach();
 
+#if ENABLE(STYLE_SCOPED)
     virtual void registerScopedHTMLStyleChild();
     virtual void unregisterScopedHTMLStyleChild();
     size_t numberOfScopedHTMLStyleChildren() const;
+#endif
 
     void textRects(Vector<IntRect>&) const;
 
@@ -628,7 +632,9 @@ private:
         InNamedFlowFlag = 1 << 19,
         HasSyntheticAttrChildNodesFlag = 1 << 20,
         HasCustomStyleResolveCallbacksFlag = 1 << 21,
+#if ENABLE(STYLE_SCOPED)
         HasScopedHTMLStyleChildFlag = 1 << 22,
+#endif
         HasEventTargetDataFlag = 1 << 23,
         NeedsNodeRenderingTraversalSlowPathFlag = 1 << 25,
         IsInShadowTreeFlag = 1 << 26,
