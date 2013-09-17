@@ -1,3 +1,11 @@
+2013-09-17  Alexey Proskuryakov  <ap@apple.com>
+
+        compositing/images/positioned-image-content-rect.html is failing on some bots
+        https://bugs.webkit.org/show_bug.cgi?id=121526
+
+        * platform/mac/TestExpectations: Marked as failing or passing for now, should
+        be fixed with upcoming color management improvements.
+
 2013-09-17  Samuel White  <samuel_white@apple.com>
 
         AX: Mac AXARIABusy should be AXElementBusy (not ARIA specific)
