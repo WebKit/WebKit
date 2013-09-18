@@ -1,3 +1,9 @@
+2013-09-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix: Expose PlatformArchitecture macro to build system.
+
+        * win/tools/vsprops/common.props:
+
 2013-09-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Enable Page Visibility API
