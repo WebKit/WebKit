@@ -17,7 +17,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: aria-sort:AXUnknownSortDirection, html-id:result, toolkit:WebKitEfl
+AXPlatformAttributes: html-id:result, toolkit:WebKitEfl
 ------------
 AXRole: AXLink
 AXParent: AXWebArea
@@ -35,7 +35,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+AXPlatformAttributes: toolkit:WebKitEfl
 ------------
 AXRole: AXLink
 AXParent: AXWebArea
@@ -53,7 +53,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+AXPlatformAttributes: toolkit:WebKitEfl
 ------------
 
 

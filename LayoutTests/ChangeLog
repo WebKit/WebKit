@@ -1,3 +1,38 @@
+2013-09-18  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Expose aria-haspopup and aria-sort without the 'aria-' prefix
+        https://bugs.webkit.org/show_bug.cgi?id=121495
+
+        Reviewed by Chris Fleizach.
+
+        Rebaseline test expectations that were displaying the 'aria-sort'
+        attributes incorrectly, when they shouldn't due to that ARIA
+        attribute not being explicitly used in the HTML.
+
+        * platform/efl-wk1/accessibility/lists-expected.txt: Removed output for 'aria-sort'.
+        * platform/efl-wk1/accessibility/plugin-expected.txt: Ditto.
+        * platform/efl-wk1/accessibility/table-with-aria-role-expected.txt: Ditto.
+        * platform/efl-wk1/accessibility/transformed-element-expected.txt: Ditto.
+        * platform/efl-wk2/accessibility/image-link-expected.txt: Ditto.
+        * platform/efl-wk2/accessibility/image-map2-expected.txt: Ditto.
+        * platform/efl-wk2/accessibility/lists-expected.txt: Ditto.
+        * platform/efl-wk2/accessibility/plugin-expected.txt: Ditto.
+        * platform/efl-wk2/accessibility/table-cell-spans-expected.txt: Ditto.
+        * platform/efl-wk2/accessibility/table-cells-expected.txt: Ditto.
+        * platform/efl-wk2/accessibility/table-with-aria-role-expected.txt: Ditto.
+        * platform/efl-wk2/accessibility/transformed-element-expected.txt: Ditto.
+        * platform/gtk/accessibility/image-link-expected.txt: Ditto.
+        * platform/gtk/accessibility/image-map2-expected.txt: Ditto.
+        * platform/gtk/accessibility/lists-expected.txt: Ditto.
+        * platform/gtk/accessibility/plugin-expected.txt: Ditto.
+        * platform/gtk/accessibility/table-cell-spans-expected.txt: Ditto.
+        * platform/gtk/accessibility/table-cells-expected.txt: Ditto.
+        * platform/gtk/accessibility/table-detection-expected.txt: Ditto.
+        * platform/gtk/accessibility/table-one-cell-expected.txt: Ditto.
+        * platform/gtk/accessibility/table-with-aria-role-expected.txt: Ditto.
+        * platform/gtk/accessibility/table-with-rules-expected.txt: Ditto.
+        * platform/gtk/accessibility/transformed-element-expected.txt: Ditto.
+
 2013-09-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r156019 and r156020.

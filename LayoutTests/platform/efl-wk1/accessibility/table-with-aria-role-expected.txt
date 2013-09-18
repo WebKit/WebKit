@@ -18,7 +18,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+AXPlatformAttributes: toolkit:WebKitEfl
 ------------
 AXRole: AXMenu
 AXParent: AXWebArea
@@ -36,6 +36,6 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: aria-sort:AXUnknownSortDirection, toolkit:WebKitEfl
+AXPlatformAttributes: toolkit:WebKitEfl
 ------------
 
