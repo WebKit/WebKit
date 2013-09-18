@@ -1,3 +1,16 @@
+2013-09-17  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Cannot find WebInspectorUI/UserInterface/Main.html referenced in GResourceBundle.xml
+        https://bugs.webkit.org/show_bug.cgi?id=121405
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: if srcdir == builddir the WebInspectorUI variable that is used both to list
+        the dependencies of the GResourceBundle and to normalize the paths added to the XML through sed
+        replacement will end up starting with ./, which would be fine if automake did not remove that
+        from the paths in the target's dependency. We deal with that by normalizing the path we use to
+        take that quirk into account.
+
 2013-09-17  Timothy Hatcher  <timothy@apple.com>
 
         Clean up the Inspector's WebSocket code and prevent it from dropping messages.
