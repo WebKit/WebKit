@@ -165,7 +165,7 @@ class Plan
             | outp |
             outp.puts "echo Running #{Shellwords.shellescape(@name)}"
             cmd  = "(" + shellCommand + " || (touch test_fail_#{index})) 2>&1"
-            cmd += " | tee " + Shellwords.shellescape($outputDir + (name + ".out"))
+            cmd += " | tee " + Shellwords.shellescape(($outputDir + (name + ".out")).to_s)
             cmd += " | awk " + Shellwords.shellescape("{ printf #{(name + ': ').inspect}; print }")
             if $verbosity >= 2
                 outp.puts "echo #{Shellwords.shellescape(cmd)}"

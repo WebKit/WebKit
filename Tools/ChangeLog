@@ -1,3 +1,9 @@
+2013-09-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix for Ruby 1.8.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-09-17  Filip Pizlo  <fpizlo@apple.com>
 
         run-jsc-stress-tests should make it easier to look at error spew from tests
