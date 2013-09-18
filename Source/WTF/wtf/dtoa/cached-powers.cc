@@ -47,7 +47,7 @@ namespace double_conversion {
     static int kCachedPowersLength = 1;
     static int kCachedPowersOffset = 1;
     static const double kD_1_LOG2_10 = 0.30102999566398114;  //  1 / lg(10)
-    static CachedPower* kCachedPowers = 0;
+    static const CachedPower* kCachedPowers = 0;
     
     int PowersOfTenCache::kDecimalExponentDistance = 1;
     int PowersOfTenCache::kMinDecimalExponent = 1;
@@ -56,7 +56,7 @@ namespace double_conversion {
     void initialize() {
         if (kCachedPowers)
             return;
-        static CachedPower cachedPowers[] = {
+        static const CachedPower cachedPowers[] = {
             {UINT64_2PART_C(0xfa8fd5a0, 081c0288), -1220, -348},
             {UINT64_2PART_C(0xbaaee17f, a23ebf76), -1193, -340},
             {UINT64_2PART_C(0x8b16fb20, 3055ac76), -1166, -332},
