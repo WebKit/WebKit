@@ -901,6 +901,16 @@
             "grzegorz"
          ]
       },
+      "Gwang Yoon Hwang" : {
+         "emails" : [
+            "ryumiel@company100.net",
+            "ryumiel@company100.com"
+         ],
+         "expertise" : "Accelerated Compositing",
+         "nicks" : [
+            "ryumiel"
+         ]
+      },
       "Hans Muller" : {
          "emails" : [
             "giles_joplin@yahoo.com",
@@ -2763,15 +2773,6 @@
          ],
          "nicks" : [
             "gregsimon"
-         ]
-      },
-      "Gwang Yoon Hwang" : {
-         "emails" : [
-            "ryumiel@company100.net",
-            "ryumiel@company100.com"
-         ],
-         "nicks" : [
-            "ryumiel"
          ]
       },
       "Hao Zheng" : {
