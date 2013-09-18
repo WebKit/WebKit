@@ -81,9 +81,19 @@ private:
     bool m_viewSource;
 };
 
+inline bool isHTMLFrameElementBase(const Node* node)
+{
+    return isHTMLFrameElement(node) || isHTMLIFrameElement(node);
+}
+
+inline bool isHTMLFrameElementBase(const Element* element)
+{
+    return isHTMLFrameElement(element) || isHTMLIFrameElement(element);
+}
+
 inline HTMLFrameElementBase* toHTMLFrameElementBase(Node* node)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFrameElement(node) || isHTMLIFrameElement(node));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFrameElementBase(node));
     return static_cast<HTMLFrameElementBase*>(node);
 }
 

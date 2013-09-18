@@ -1,3 +1,31 @@
+2013-09-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge HTMLBodyElement::didNotifySubtreeInsertions into HTMLBodyElement::insertedInto
+        https://bugs.webkit.org/show_bug.cgi?id=121576
+
+        Reviewed by Andreas Kling.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/2a9cac908f4eceadfcf9d21bdf5b3e598075aa1f
+
+        The logic in didNotifySubtreeInsertions to set the marginwidth and marginheight attributes
+        on the <body> of elements inside <iframe> and <frame> doesn't need to run after inserting
+        all the children of the frame. In fact this means that when you have those attributes
+        and then the script in the iframe touches offsetLeft or any layout dependent property
+        we'll layout with the wrong values and then have to do another layout after these margin
+        attributes are set.
+
+        I also remove the scheduleRelayout() call that was inside didNotifySubtreeInsertions. This
+        call doesn't make any sense, inserting a <body> will always trigger a style recalc and
+        a subsequent layout. The code is 9 years old: https://trac.webkit.org/changeset/8122
+        and all tests run fine without it.
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::insertedInto):
+        * html/HTMLBodyElement.h:
+        * html/HTMLFrameElementBase.h:
+        (WebCore::isHTMLFrameElementBase):
+        (WebCore::toHTMLFrameElementBase):
+
 2013-09-18  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Throw exception when setting timestampOffset while 'updating' state is set.

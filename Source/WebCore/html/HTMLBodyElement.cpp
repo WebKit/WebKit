@@ -159,18 +159,14 @@ void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomicStri
 Node::InsertionNotificationRequest HTMLBodyElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint->inDocument())
-        return InsertionShouldCallDidNotifySubtreeInsertions;
-    return InsertionDone;
-}
+    if (!insertionPoint->inDocument())
+        return InsertionDone;
 
-void HTMLBodyElement::didNotifySubtreeInsertions(ContainerNode* insertionPoint)
-{
-    ASSERT_UNUSED(insertionPoint, insertionPoint->inDocument());
-
+    // FIXME: It's surprising this is web compatible since it means a marginwidth and marginheight attribute can
+    // magically appear on the <body> of all documents embedded through <iframe> or <frame>.
     // FIXME: Perhaps this code should be in attach() instead of here.
     Element* ownerElement = document().ownerElement();
-    if (ownerElement && (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag))) {
+    if (ownerElement && isHTMLFrameElementBase(ownerElement)) {
         HTMLFrameElementBase* ownerFrameElement = toHTMLFrameElementBase(ownerElement);
         int marginWidth = ownerFrameElement->marginWidth();
         if (marginWidth != -1)
@@ -180,10 +176,7 @@ void HTMLBodyElement::didNotifySubtreeInsertions(ContainerNode* insertionPoint)
             setAttribute(marginheightAttr, String::number(marginHeight));
     }
 
-    // FIXME: This call to scheduleRelayout should not be needed here.
-    // But without it we hang during WebKit tests; need to fix that and remove this.
-    if (FrameView* view = document().view())
-        view->scheduleRelayout();
+    return InsertionDone;
 }
 
 bool HTMLBodyElement::isURLAttribute(const Attribute& attribute) const
