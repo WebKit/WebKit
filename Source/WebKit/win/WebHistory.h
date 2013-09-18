@@ -118,6 +118,7 @@ public:
 
     typedef int64_t DateKey;
     typedef HashMap<DateKey, RetainPtr<CFMutableArrayRef> > DateToEntriesMap;
+    typedef HashMap<WTF::String, COMPtr<IWebHistoryItem> > URLToEntriesMap;
 
 private:
 
@@ -134,7 +135,7 @@ private:
     HRESULT postNotification(NotificationType notifyType, IPropertyBag* userInfo = 0);
     HRESULT removeItem(IWebHistoryItem* entry);
     HRESULT addItem(IWebHistoryItem* entry, bool discardDuplicate, bool* added);
-    HRESULT removeItemForURLString(CFStringRef urlString);
+    HRESULT removeItemForURLString(const WTF::String& urlString);
     HRESULT addItemToDateCaches(IWebHistoryItem* entry);
     HRESULT removeItemFromDateCaches(IWebHistoryItem* entry);
     HRESULT insertItem(IWebHistoryItem* entry, DateKey);
@@ -142,10 +143,9 @@ private:
     bool findKey(DateKey*, CFAbsoluteTime forDay);
     static CFAbsoluteTime timeToDate(CFAbsoluteTime time);
     BSTR getNotificationString(NotificationType notifyType);
-    HRESULT itemForURLString(CFStringRef urlString, IWebHistoryItem** item) const;
 
     ULONG m_refCount;
-    RetainPtr<CFMutableDictionaryRef> m_entriesByURL;
+    URLToEntriesMap m_entriesByURL;
     DateToEntriesMap m_entriesByDate;
     OwnArrayPtr<DATE> m_orderedLastVisitedDays;
     COMPtr<WebPreferences> m_preferences;

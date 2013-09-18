@@ -1,3 +1,27 @@
+2013-09-18  Patrick Gansterer  <paroga@webkit.org>
+
+        Make WebHistory more type safe
+        https://bugs.webkit.org/show_bug.cgi?id=119389
+
+        Reviewed by Brent Fulgham.
+
+        Use a WTF::HashMap instead of a CFMutableDictionary to avoid
+        casting from void* all the time when accessing the entries.
+        This reduces the dependencies on CoreFoundation too.
+
+        * WebHistory.cpp:
+        (WebHistory::WebHistory):
+        (WebHistory::removeAllItems):
+        (WebHistory::allItems):
+        (WebHistory::removeItem):
+        (WebHistory::addItem):
+        (WebHistory::visitedURL):
+        (WebHistory::itemForURL):
+        (WebHistory::removeItemForURLString):
+        (WebHistory::itemForURLString):
+        (WebHistory::addVisitedLinksToPageGroup):
+        * WebHistory.h:
+
 2013-09-17  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Speculative build fix after r155963

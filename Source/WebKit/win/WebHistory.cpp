@@ -84,8 +84,6 @@ WebHistory::WebHistory()
     gClassCount++;
     gClassNameCount.add("WebHistory");
 
-    m_entriesByURL = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &MarshallingHelpers::kIUnknownDictionaryValueCallBacks));
-
     m_preferences = WebPreferences::sharedStandardPreferences();
 }
 
@@ -244,12 +242,12 @@ HRESULT STDMETHODCALLTYPE WebHistory::removeAllItems( void)
     m_entriesByDate.clear();
     m_orderedLastVisitedDays.clear();
 
-    CFIndex itemCount = CFDictionaryGetCount(m_entriesByURL.get());
-    Vector<IWebHistoryItem*> itemsVector(itemCount);
-    CFDictionaryGetKeysAndValues(m_entriesByURL.get(), 0, (const void**)itemsVector.data());
-    RetainPtr<CFArrayRef> allItems = adoptCF(CFArrayCreate(kCFAllocatorDefault, (const void**)itemsVector.data(), itemCount, &MarshallingHelpers::kIUnknownArrayCallBacks));
+    Vector<IWebHistoryItem*> itemsVector(m_entriesByURL.size());
+    for (auto it = m_entriesByURL.begin(); it != m_entriesByURL.end(); ++it)
+        itemsVector.append(it->value.get());
+    RetainPtr<CFArrayRef> allItems = adoptCF(CFArrayCreate(kCFAllocatorDefault, (const void**)itemsVector.data(), itemsVector.size(), &MarshallingHelpers::kIUnknownArrayCallBacks));
 
-    CFDictionaryRemoveAllValues(m_entriesByURL.get());
+    m_entriesByURL.clear();
 
     PageGroup::removeAllVisitedLinks();
 
@@ -330,7 +328,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::allItems(
     /* [out][in] */ int* count,
     /* [out][retval] */ IWebHistoryItem** items)
 {
-    int entriesByURLCount = CFDictionaryGetCount(m_entriesByURL.get());
+    int entriesByURLCount = m_entriesByURL.size();
 
     if (!items) {
         *count = entriesByURLCount;
@@ -343,9 +341,11 @@ HRESULT STDMETHODCALLTYPE WebHistory::allItems(
     }
 
     *count = entriesByURLCount;
-    CFDictionaryGetKeysAndValues(m_entriesByURL.get(), 0, (const void**)items);
-    for (int i = 0; i < entriesByURLCount; i++)
+    int i = 0;
+    for (auto it = m_entriesByURL.begin(); it != m_entriesByURL.end(); ++i, ++it) {
+        items[i] = it->value.get();
         items[i]->AddRef();
+    }
 
     return S_OK;
 }
@@ -403,16 +403,19 @@ HRESULT WebHistory::removeItem(IWebHistoryItem* entry)
     if (FAILED(hr))
         return hr;
 
-    RetainPtr<CFStringRef> urlString = adoptCF(MarshallingHelpers::BSTRToCFStringRef(urlBStr));
+    String urlString(urlBStr, SysStringLen(urlBStr));
+
+    auto it = m_entriesByURL.find(urlString);
+    if (it == m_entriesByURL.end())
+        return E_FAIL;
 
     // If this exact object isn't stored, then make no change.
     // FIXME: Is this the right behavior if this entry isn't present, but another entry for the same URL is?
     // Maybe need to change the API to make something like removeEntryForURLString public instead.
-    IWebHistoryItem *matchingEntry = (IWebHistoryItem*)CFDictionaryGetValue(m_entriesByURL.get(), urlString.get());
-    if (matchingEntry != entry)
+    if (it->value.get() != entry)
         return E_FAIL;
 
-    hr = removeItemForURLString(urlString.get());
+    hr = removeItemForURLString(urlString);
     if (FAILED(hr))
         return hr;
 
@@ -435,19 +438,18 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool*
     if (FAILED(hr))
         return hr;
 
-    RetainPtr<CFStringRef> urlString = adoptCF(MarshallingHelpers::BSTRToCFStringRef(urlBStr));
+    String urlString(urlBStr, SysStringLen(urlBStr));
 
-    COMPtr<IWebHistoryItem> oldEntry((IWebHistoryItem*) CFDictionaryGetValue(
-        m_entriesByURL.get(), urlString.get()));
-    
+    COMPtr<IWebHistoryItem> oldEntry(m_entriesByURL.get(urlString));
+
     if (oldEntry) {
         if (discardDuplicate) {
             if (added)
                 *added = false;
             return S_OK;
         }
-        
-        removeItemForURLString(urlString.get());
+
+        removeItemForURLString(urlString);
 
         // If we already have an item with this URL, we need to merge info that drives the
         // URL autocomplete heuristics from that item into the new one.
@@ -463,7 +465,7 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool*
     if (FAILED(hr))
         return hr;
 
-    CFDictionarySetValue(m_entriesByURL.get(), urlString.get(), entry);
+    m_entriesByURL.set(urlString, entry);
 
     COMPtr<CFDictionaryPropertyBag> userInfo = createUserInfoFromHistoryItem(
         getNotificationString(kWebHistoryItemsAddedNotification), entry);
@@ -477,9 +479,7 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool*
 
 void WebHistory::visitedURL(const KURL& url, const String& title, const String& httpMethod, bool wasFailure, bool increaseVisitCount)
 {
-    RetainPtr<CFStringRef> urlString = url.string().createCFString();
-
-    IWebHistoryItem* entry = (IWebHistoryItem*)CFDictionaryGetValue(m_entriesByURL.get(), urlString.get());
+    IWebHistoryItem* entry = m_entriesByURL.get(url.string()).get();
     if (entry) {
         COMPtr<IWebHistoryItemPrivate> entryPrivate(Query, entry);
         if (!entryPrivate)
@@ -507,7 +507,7 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
         
         item->recordInitialVisit();
 
-        CFDictionarySetValue(m_entriesByURL.get(), urlString.get(), entry);
+        m_entriesByURL.set(url.string(), entry);
     }
 
     addItemToDateCaches(entry);
@@ -528,41 +528,30 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
     postNotification(kWebHistoryItemsAddedNotification, userInfo.get());
 }
 
-HRESULT WebHistory::itemForURLString(
-    /* [in] */ CFStringRef urlString,
-    /* [retval][out] */ IWebHistoryItem** item) const
+HRESULT WebHistory::itemForURL(BSTR url, IWebHistoryItem** item)
 {
     if (!item)
         return E_FAIL;
     *item = 0;
 
-    IWebHistoryItem* foundItem = (IWebHistoryItem*) CFDictionaryGetValue(m_entriesByURL.get(), urlString);
-    if (!foundItem)
+    auto it = m_entriesByURL.find(url);
+    if (it == m_entriesByURL.end())
         return E_FAIL;
 
-    foundItem->AddRef();
-    *item = foundItem;
+    it->value.copyRefTo(item);
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebHistory::itemForURL( 
-    /* [in] */ BSTR url,
-    /* [retval][out] */ IWebHistoryItem** item)
+HRESULT WebHistory::removeItemForURLString(const WTF::String& urlString)
 {
-    RetainPtr<CFStringRef> urlString = adoptCF(MarshallingHelpers::BSTRToCFStringRef(url));
-    return itemForURLString(urlString.get(), item);
-}
-
-HRESULT WebHistory::removeItemForURLString(CFStringRef urlString)
-{
-    IWebHistoryItem* entry = (IWebHistoryItem*) CFDictionaryGetValue(m_entriesByURL.get(), urlString);
-    if (!entry) 
+    auto it = m_entriesByURL.find(urlString);
+    if (it == m_entriesByURL.end())
         return E_FAIL;
 
-    HRESULT hr = removeItemFromDateCaches(entry);
-    CFDictionaryRemoveValue(m_entriesByURL.get(), urlString);
+    HRESULT hr = removeItemFromDateCaches(it->value.get());
+    m_entriesByURL.remove(it);
 
-    if (!CFDictionaryGetCount(m_entriesByURL.get()))
+    if (!m_entriesByURL.size())
         PageGroup::removeAllVisitedLinks();
 
     return hr;
@@ -572,10 +561,7 @@ COMPtr<IWebHistoryItem> WebHistory::itemForURLString(const String& urlString) co
 {
     if (!urlString)
         return 0;
-    COMPtr<IWebHistoryItem> item;
-    if (FAILED(itemForURLString(urlString.createCFString().get(), &item)))
-        return 0;
-    return item;
+    return m_entriesByURL.get(urlString);
 }
 
 HRESULT WebHistory::addItemToDateCaches(IWebHistoryItem* entry)
@@ -764,23 +750,10 @@ HRESULT WebHistory::ageLimitDate(CFAbsoluteTime* time)
     return S_OK;
 }
 
-static void addVisitedLinkToPageGroup(const void* key, const void*, void* context)
-{
-    CFStringRef url = static_cast<CFStringRef>(key);
-    PageGroup* group = static_cast<PageGroup*>(context);
-
-    CFIndex length = CFStringGetLength(url);
-    const UChar* characters = reinterpret_cast<const UChar*>(CFStringGetCharactersPtr(url));
-    if (characters)
-        group->addVisitedLink(characters, length);
-    else {
-        Vector<UChar, 512> buffer(length);
-        CFStringGetCharacters(url, CFRangeMake(0, length), reinterpret_cast<UniChar*>(buffer.data()));
-        group->addVisitedLink(buffer.data(), length);
-    }
-}
-
 void WebHistory::addVisitedLinksToPageGroup(PageGroup& group)
 {
-    CFDictionaryApplyFunction(m_entriesByURL.get(), addVisitedLinkToPageGroup, &group);
+    for (auto it = m_entriesByURL.begin(); it != m_entriesByURL.end(); ++it) {
+        const String& url = it->key;
+        group.addVisitedLink(url.characters(), url.length());
+    }
 }
