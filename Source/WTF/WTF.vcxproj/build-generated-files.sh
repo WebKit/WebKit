@@ -6,6 +6,7 @@ ICUVERSION_H_PATH=$(cygpath -u "${CONFIGURATIONBUILDDIR}/include/private/ICUVers
 if test \( ! -f "${ICUVERSION_H_PATH}" \) -o \( -f "${UNVERSIONED_ICU_LIB_PATH}" -a \( "${UNVERSIONED_ICU_LIB_PATH}" -nt "${ICUVERSION_H_PATH}" \) \)
 then
     mkdir -p "$(dirname "${ICUVERSION_H_PATH}")"
+    echo "Checking ${UNVERSIONED_ICU_LIB_PATH}"
     test ! -f "${UNVERSIONED_ICU_LIB_PATH}"
     echo "#define U_DISABLE_RENAMING $?" > "${ICUVERSION_H_PATH}"
 fi

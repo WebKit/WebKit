@@ -1,3 +1,12 @@
+2013-09-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build correction.
+
+        * WTF.vcxproj/WTFGeneratedCommon.props: Export PLATFORMARCHITECTURE macro for use in
+        Makefiles and shell scripts.
+        * WTF.vcxproj/build-generated-files.sh: Output header search path to identify when the build
+        is confused about build architecture.
+
 2013-09-18  Anders Carlsson  <andersca@apple.com>
 
         RefPtrHashMap should work with move only types
