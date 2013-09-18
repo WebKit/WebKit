@@ -791,7 +791,7 @@ bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
 RenderObject* HTMLElement::createRenderer(RenderArena& arena, RenderStyle& style)
 {
     if (hasLocalName(wbrTag))
-        return new (arena) RenderBR(this);
+        return new (arena) RenderBR(*this);
     return RenderObject::createObject(*this, style);
 }
 

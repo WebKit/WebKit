@@ -32,11 +32,11 @@ namespace WebCore {
 
 static const int invalidLineHeight = -1;
 
-RenderBR::RenderBR(HTMLElement* element)
-    : RenderBoxModelObject(element)
+RenderBR::RenderBR(HTMLElement& element)
+    : RenderBoxModelObject(&element)
     , m_inlineBoxWrapper(nullptr)
     , m_cachedLineHeight(invalidLineHeight)
-    , m_isWBR(element && element->hasTagName(HTMLNames::wbrTag))
+    , m_isWBR(element.hasTagName(HTMLNames::wbrTag))
 {
     setIsLineBreak();
 }
@@ -45,13 +45,6 @@ RenderBR::~RenderBR()
 {
     if (m_inlineBoxWrapper)
         m_inlineBoxWrapper->destroy(renderArena());
-}
-
-RenderBR* RenderBR::createAnonymous(Document& document)
-{
-    RenderBR* renderer = new (*document.renderArena()) RenderBR(nullptr);
-    renderer->setDocumentForAnonymous(document);
-    return renderer;
 }
 
 LayoutUnit RenderBR::lineHeight(bool firstLine, LineDirectionMode /*direction*/, LinePositionMode /*linePositionMode*/) const

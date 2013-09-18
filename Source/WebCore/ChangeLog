@@ -1,5 +1,16 @@
 2013-09-18  Andreas Kling  <akling@apple.com>
 
+        CTTE: RenderBR always has an HTMLElement.
+        <https://webkit.org/b/121557>
+
+        Reviewed by Antti Koivisto.
+
+        This renderer is never anonymous and always has a corresponding HTMLElement.
+        Tighten this up by making the constructor take a HTMLElement& and remove
+        RenderBR::createAnonymous().
+
+2013-09-18  Andreas Kling  <akling@apple.com>
+
         Avoid using RenderBR internally in RenderMenuList.
         <https://webkit.org/b/121550>
 

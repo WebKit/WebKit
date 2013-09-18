@@ -32,10 +32,8 @@ class Position;
 // FIXME: Rename this to RenderLineBreak.
 class RenderBR FINAL : public RenderBoxModelObject {
 public:
-    explicit RenderBR(HTMLElement*);
+    explicit RenderBR(HTMLElement&);
     virtual ~RenderBR();
-
-    static RenderBR* createAnonymous(Document&);
 
     virtual const char* renderName() const { return m_isWBR ? "RenderWordBreak" : "RenderBR"; }
 

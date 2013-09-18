@@ -76,7 +76,7 @@ RenderObject* HTMLBRElement::createRenderer(RenderArena& arena, RenderStyle& sty
     if (style.hasContent())
         return RenderObject::createObject(*this, style);
 
-    return new (arena) RenderBR(this);
+    return new (arena) RenderBR(*this);
 }
 
 }
