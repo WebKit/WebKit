@@ -1,4 +1,32 @@
 =================
+WebKitGTK+ 2.1.92
+=================
+
+What's new in WebKitGTK+ 2.1.92?
+
+  - Switch to the new Web Inspector.
+  - Reimplement several accessibility methods to not require Gail and
+    Pango.
+  - Allow to run in a Wayland environment even when WebKitGTK+ has
+    been built with accelerated compositing support enabled, falling
+    back to software rendering in such case since accelerated
+    compositing is not supported yet under Wayland.
+  - Enable the Wayland target by default if the GTK+ Wayland
+    dependency is available.
+  - Fix web inspector rendering when docked in a page that uses
+    accelerated compositing.
+  - Do not try to parse incomplete HTTP requests in the web inspector.
+  - Use WEBKIT_TYPE_DOWNLOAD instead of G_TYPE_OBJECT for the argument
+    of the WebKitWebView::download-requested signal in WebKit1.
+  - Add allow-none introspection annotation to parameters that can
+    be NULL in GObject DOM bindings.
+  - Honor the --disable-gtk-doc configure option.
+  - Fix the build on directories containing spaces.
+  - Allow to build when the build directory is in a different
+    partition.
+  - Translation updates: Polish, Brazilian Portuguese, Spanish, Galician
+
+=================
 WebKitGTK+ 2.1.91
 =================
 
