@@ -1,5 +1,14 @@
 2013-09-18  Antti Koivisto  <antti@apple.com>
 
+        Change one accidental "object->isText() || object->isLineBreak()" from previous patch back to "object->isTextOrLineBreak()"
+        
+        Not reviewed.
+
+        * rendering/InlineIterator.h:
+        (WebCore::isIteratorTarget):
+
+2013-09-18  Antti Koivisto  <antti@apple.com>
+
         Remove RenderWordBreak
         https://bugs.webkit.org/show_bug.cgi?id=121549
 
