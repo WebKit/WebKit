@@ -1001,7 +1001,7 @@ LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositio
 
 bool RootInlineBox::includeLeadingForBox(InlineBox* box) const
 {
-    if (box->renderer().isReplaced() || (box->renderer().isText() && !box->isText()))
+    if (box->renderer().isReplaced() || (box->renderer().isTextOrBR() && !box->behavesLikeText()))
         return false;
 
     LineBoxContain lineBoxContain = renderer().style()->lineBoxContain();
@@ -1010,10 +1010,10 @@ bool RootInlineBox::includeLeadingForBox(InlineBox* box) const
 
 bool RootInlineBox::includeFontForBox(InlineBox* box) const
 {
-    if (box->renderer().isReplaced() || (box->renderer().isText() && !box->isText()))
+    if (box->renderer().isReplaced() || (box->renderer().isTextOrBR() && !box->behavesLikeText()))
         return false;
     
-    if (!box->isText() && box->isInlineFlowBox() && !toInlineFlowBox(box)->hasTextChildren())
+    if (!box->behavesLikeText() && box->isInlineFlowBox() && !toInlineFlowBox(box)->hasTextChildren())
         return false;
 
     // For now map "glyphs" to "font" in vertical text mode until the bounds returned by glyphs aren't garbage.
@@ -1023,10 +1023,10 @@ bool RootInlineBox::includeFontForBox(InlineBox* box) const
 
 bool RootInlineBox::includeGlyphsForBox(InlineBox* box) const
 {
-    if (box->renderer().isReplaced() || (box->renderer().isText() && !box->isText()))
+    if (box->renderer().isReplaced() || (box->renderer().isTextOrBR() && !box->behavesLikeText()))
         return false;
     
-    if (!box->isText() && box->isInlineFlowBox() && !toInlineFlowBox(box)->hasTextChildren())
+    if (!box->behavesLikeText() && box->isInlineFlowBox() && !toInlineFlowBox(box)->hasTextChildren())
         return false;
 
     // FIXME: We can't fit to glyphs yet for vertical text, since the bounds returned are garbage.
@@ -1036,7 +1036,7 @@ bool RootInlineBox::includeGlyphsForBox(InlineBox* box) const
 
 bool RootInlineBox::includeMarginForBox(InlineBox* box) const
 {
-    if (box->renderer().isReplaced() || (box->renderer().isText() && !box->isText()))
+    if (box->renderer().isReplaced() || (box->renderer().isTextOrBR() && !box->behavesLikeText()))
         return false;
 
     LineBoxContain lineBoxContain = renderer().style()->lineBoxContain();

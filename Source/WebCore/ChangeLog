@@ -1,3 +1,45 @@
+2013-09-17  Antti Koivisto  <antti@apple.com>
+
+        Rename InlineBox::isText()
+        <https://webkit.org/b/121525>
+
+        Reviewed by Andreas Kling.
+
+        The flag sounds like RenderObject::isText() yet it can be set for some inline boxes generated
+        for non-text renderers too (br, list markers). This is pretty confusing.
+        
+        Rename to InlineBox::behavesLikeText().
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::logicalHeight):
+        (WebCore::InlineBox::baselinePosition):
+        (WebCore::InlineBox::lineHeight):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::behavesLikeText):
+        (WebCore::InlineBox::setBehavesLikeText):
+        (WebCore::InlineBox::InlineBoxBitfields::InlineBoxBitfields):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::baselinePosition):
+        (WebCore::InlineTextBox::lineHeight):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::createInlineBoxForRenderer):
+        (WebCore::setLogicalWidthForTextRun):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::createInlineBox):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::createInlineTextBox):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::includeLeadingForBox):
+        (WebCore::RootInlineBox::includeFontForBox):
+        (WebCore::RootInlineBox::includeGlyphsForBox):
+        (WebCore::RootInlineBox::includeMarginForBox):
+        
+            Switch tests from isText() to isTextOrBR(). This matches the behavior before r155957.
+            I don't know if there is a case where this actually makes any difference in behavior.
+
 2013-09-17  Sam Weinig  <sam@webkit.org>
 
         Shrink SVGPathStringBuilder

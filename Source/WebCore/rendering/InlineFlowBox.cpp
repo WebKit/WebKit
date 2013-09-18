@@ -111,7 +111,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
     }
     child->setFirstLineStyleBit(isFirstLineStyle());
     child->setIsHorizontal(isHorizontal());
-    if (child->isText()) {
+    if (child->behavesLikeText()) {
         if (child->renderer().parent() == &renderer())
             m_hasTextChildren = true;
         setHasTextDescendantsOnAncestors(this);
@@ -126,7 +126,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
         bool shouldClearDescendantsHaveSameLineHeightAndBaseline = false;
         if (child->renderer().isReplaced())
             shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
-        else if (child->isText()) {
+        else if (child->behavesLikeText()) {
             if (child->renderer().isBR() || child->renderer().parent() != &renderer()) {
                 if (!parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle->font().fontMetrics())
                     || parentStyle->lineHeight() != childStyle->lineHeight()
@@ -158,7 +158,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
     }
 
     if (!child->renderer().isOutOfFlowPositioned()) {
-        if (child->isText()) {
+        if (child->behavesLikeText()) {
             RenderStyle* childStyle = child->renderer().style(isFirstLineStyle());
             if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMarkNone || childStyle->textStrokeWidth())
                 child->clearKnownToHaveNoOverflow();
@@ -659,7 +659,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
         LayoutUnit boxHeight = curr->logicalHeight();
         LayoutUnit boxHeightIncludingMargins = boxHeight;
             
-        if (curr->isText() || curr->isInlineFlowBox()) {
+        if (curr->behavesLikeText() || curr->isInlineFlowBox()) {
             const FontMetrics& fontMetrics = curr->renderer().style(isFirstLineStyle())->fontMetrics();
             newLogicalTop += curr->baselinePosition(baselineType) - fontMetrics.ascent(baselineType);
             if (curr->isInlineFlowBox()) {

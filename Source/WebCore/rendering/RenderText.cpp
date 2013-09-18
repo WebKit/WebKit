@@ -1438,7 +1438,7 @@ InlineTextBox* RenderText::createInlineTextBox()
         textBox->setPreviousTextBox(m_lastTextBox);
         m_lastTextBox = textBox;
     }
-    textBox->setIsText(true);
+    textBox->setBehavesLikeText(true);
     return textBox;
 }
 

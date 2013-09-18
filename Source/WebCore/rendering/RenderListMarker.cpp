@@ -1164,7 +1164,7 @@ void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* o
 InlineBox* RenderListMarker::createInlineBox()
 {
     InlineBox* result = RenderBox::createInlineBox();
-    result->setIsText(isText());
+    result->setBehavesLikeText(isText());
     return result;
 }
 

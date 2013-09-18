@@ -117,8 +117,8 @@ public:
     virtual const char* boxName() const;
 #endif
 
-    bool isText() const { return m_bitfields.isText(); }
-    void setIsText(bool isText) { m_bitfields.setIsText(isText); }
+    bool behavesLikeText() const { return m_bitfields.behavesLikeText(); }
+    void setBehavesLikeText(bool behavesLikeText) { m_bitfields.setBehavesLikeText(behavesLikeText); }
  
     virtual bool isInlineFlowBox() const { return false; }
     virtual bool isInlineTextBox() const { return false; }
@@ -336,7 +336,7 @@ public:
             , m_knownToHaveNoOverflow(true)  
             , m_hasEllipsisBoxOrHyphen(false)
             , m_dirOverride(false)
-            , m_isText(false)
+            , m_behavesLikeText(false)
             , m_determinedIfNextOnLineExists(false)
             , m_nextOnLineExists(false)
             , m_expansion(0)
@@ -367,7 +367,7 @@ public:
         ADD_BOOLEAN_BITFIELD(hasEllipsisBoxOrHyphen, HasEllipsisBoxOrHyphen);
         // for InlineTextBox
         ADD_BOOLEAN_BITFIELD(dirOverride, DirOverride);
-        ADD_BOOLEAN_BITFIELD(isText, IsText); // Whether or not this object represents text with a non-zero height. Includes non-image list markers, text boxes.
+        ADD_BOOLEAN_BITFIELD(behavesLikeText, BehavesLikeText); // Whether or not this object represents text with a non-zero height. Includes non-image list markers, text boxes, br.
 
     private:
         mutable unsigned m_determinedIfNextOnLineExists : 1;

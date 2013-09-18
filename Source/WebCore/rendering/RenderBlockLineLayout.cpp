@@ -274,7 +274,7 @@ static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRo
         InlineBox* inlineBox = toRenderBR(obj)->createInlineBox();
         // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
         // (Note the use of strict mode. In "almost strict" mode, we don't treat the box for <br> as text.)
-        inlineBox->setIsText(isOnlyRun || obj->document().inNoQuirksMode());
+        inlineBox->setBehavesLikeText(isOnlyRun || obj->document().inNoQuirksMode());
         return inlineBox;
     }
 
@@ -656,14 +656,14 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
 
     run->m_box->setLogicalWidth(measuredWidth + hyphenWidth);
     if (!fallbackFonts.isEmpty()) {
-        ASSERT(run->m_box->isText());
+        ASSERT(run->m_box->behavesLikeText());
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).iterator;
         ASSERT(it->value.first.isEmpty());
         copyToVector(fallbackFonts, it->value.first);
         run->m_box->parent()->clearDescendantsHaveSameLineHeightAndBaseline();
     }
     if ((glyphOverflow.top || glyphOverflow.bottom || glyphOverflow.left || glyphOverflow.right)) {
-        ASSERT(run->m_box->isText());
+        ASSERT(run->m_box->behavesLikeText());
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).iterator;
         it->value.second = glyphOverflow;
         run->m_box->clearKnownToHaveNoOverflow();
