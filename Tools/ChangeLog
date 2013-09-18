@@ -1,3 +1,9 @@
+2013-09-17  Jae Hyun Park  <jae.park@company100.net>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-09-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should support Int52 for local variables

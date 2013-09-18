@@ -1022,6 +1022,14 @@
             "jaehun"
          ]
       },
+      "Jae Hyun Park" : {
+         "emails" : [
+            "jae.park@company100.net"
+         ],
+         "nicks" : [
+            "jaepark"
+         ]
+      },
       "Jakob Petsovits" : {
          "emails" : [
             "jpetsovits@blackberry.com",
@@ -2785,14 +2793,6 @@
          ],
          "nicks" : [
             "hixie"
-         ]
-      },
-      "Jae Hyun Park" : {
-         "emails" : [
-            "jae.park@company100.net"
-         ],
-         "nicks" : [
-            "jaepark"
          ]
       },
       "James Craig" : {
