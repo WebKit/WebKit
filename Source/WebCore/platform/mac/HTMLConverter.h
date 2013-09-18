@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,6 @@ namespace WebCore {
 
 @interface WebHTMLConverter : NSObject {
     NSMutableAttributedString *_attrStr;
-    NSMutableDictionary *_documentAttrs;
     NSURL *_baseURL;
     DOMDocument *_document;
     DOMRange *_domRange;
@@ -84,8 +83,7 @@ namespace WebCore {
 - (id)initWithDOMRange:(DOMRange *)domRange;
 
 - (NSAttributedString *)attributedString;
-#if !PLATFORM(IOS)
+
 + (NSAttributedString *)editingAttributedStringFromRange:(WebCore::Range*)range;
-#endif
 @end
 
