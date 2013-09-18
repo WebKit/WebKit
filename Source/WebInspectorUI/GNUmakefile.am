@@ -12,9 +12,10 @@ ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml: GNUmakefile \
 	$(AM_V_at)echo '<gresources>' >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
 	$(AM_V_at)echo '  <gresource prefix="/org/webkitgtk/inspector">' >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
 	$(AM_V_at)\
+		basepath=`echo $(WebInspectorUI)/ | sed 's,^./,,g'`; \
 		for file in $^; do \
 			if [ "$$file" = "GNUmakefile" ]; then continue; fi; \
-			file=`echo $$file | sed s,$(WebInspectorUI)/,,g`; \
+			file=`echo $$file | sed "s,$$basepath,,g"`; \
 			echo "    <file>$$file</file>" >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml; \
 		done
 	$(AM_V_at)echo '  </gresource>' >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
