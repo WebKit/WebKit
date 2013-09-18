@@ -36,11 +36,11 @@
 #include "InlineTextBox.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
-#include "RenderBR.h"
 #include "RenderDetailsMarker.h"
 #include "RenderFileUploadControl.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderNamedFlowThread.h"
@@ -252,7 +252,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         if (adjustForTableCells && !text.firstTextBox())
             adjustForTableCells = false;
     } else if (o.isBR()) {
-        const RenderBR& br = toRenderBR(o);
+        const RenderLineBreak& br = toRenderLineBreak(o);
         IntRect linesBox = br.linesBoundingBox();
         r = IntRect(linesBox.x(), linesBox.y(), linesBox.width(), linesBox.height());
         if (!br.inlineBoxWrapper())

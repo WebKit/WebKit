@@ -1155,7 +1155,6 @@ SOURCES += \
     rendering/RenderBlockLineLayout.cpp \
     rendering/RenderBox.cpp \
     rendering/RenderBoxModelObject.cpp \
-    rendering/RenderBR.cpp \
     rendering/RenderButton.cpp \
     rendering/RenderCombineText.cpp \
     rendering/RenderCounter.cpp \
@@ -1183,6 +1182,7 @@ SOURCES += \
     rendering/RenderLayerFilterInfo.cpp \
     rendering/RenderLayerModelObject.cpp \
     rendering/RenderLineBoxList.cpp \
+    rendering/RenderLineBreak.cpp \
     rendering/RenderListBox.cpp \
     rendering/RenderListItem.cpp \
     rendering/RenderListMarker.cpp \
@@ -2424,7 +2424,6 @@ HEADERS += \
     rendering/RenderBlock.h \
     rendering/RenderBox.h \
     rendering/RenderBoxModelObject.h \
-    rendering/RenderBR.h \
     rendering/RenderButton.h \
     rendering/RenderCombineText.h \
     rendering/RenderCounter.h \
@@ -2451,6 +2450,7 @@ HEADERS += \
     rendering/RenderLayerCompositor.h \
     rendering/RenderLayerModelObject.h \
     rendering/RenderLineBoxList.h \
+    rendering/RenderLineBreak.h \
     rendering/RenderListBox.h \
     rendering/RenderListItem.h \
     rendering/RenderListMarker.h \

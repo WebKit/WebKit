@@ -33,9 +33,9 @@
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "PositionIterator.h"
-#include "RenderBR.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"
+#include "RenderLineBreak.h"
 #include "RenderText.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Text.h"
@@ -57,7 +57,7 @@ static bool hasInlineBoxWrapper(RenderObject& renderer)
         return true;
     if (renderer.isText() && toRenderText(renderer).firstTextBox())
         return true;
-    if (renderer.isLineBreak() && toRenderBR(renderer).inlineBoxWrapper())
+    if (renderer.isLineBreak() && toRenderLineBreak(renderer).inlineBoxWrapper())
         return true;
     return false;
 }
@@ -857,7 +857,7 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(RenderObject* render
     for (RenderObject *o = renderer->firstChild(); o && o != stop; o = o->nextInPreOrder())
         if (o->nonPseudoNode()) {
             if ((o->isText() && boundingBoxLogicalHeight(o, toRenderText(o)->linesBoundingBox()))
-                || (o->isLineBreak() && boundingBoxLogicalHeight(o, toRenderBR(o)->linesBoundingBox()))
+                || (o->isLineBreak() && boundingBoxLogicalHeight(o, toRenderLineBreak(o)->linesBoundingBox()))
                 || (o->isBox() && toRenderBox(o)->pixelSnappedLogicalHeight())
                 || (o->isRenderInline() && isEmptyInline(o) && boundingBoxLogicalHeight(o, toRenderInline(o)->linesBoundingBox())))
                 return true;
@@ -1195,7 +1195,7 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, TextDirection primaryDi
     RenderObject* renderer = deprecatedNode()->renderer();
 
     if (renderer->isBR())
-        inlineBox = !caretOffset ? toRenderBR(renderer)->inlineBoxWrapper() : nullptr;
+        inlineBox = !caretOffset ? toRenderLineBreak(renderer)->inlineBoxWrapper() : nullptr;
     else if (renderer->isText()) {
         RenderText* textRenderer = toRenderText(renderer);
 

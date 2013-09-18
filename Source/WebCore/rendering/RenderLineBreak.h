@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef RenderBR_h
-#define RenderBR_h
+#ifndef RenderLineBreak_h
+#define RenderLineBreak_h
 
 #include "RenderBoxModelObject.h"
 
@@ -29,13 +29,15 @@ namespace WebCore {
 class HTMLElement;
 class Position;
 
-// FIXME: Rename this to RenderLineBreak.
-class RenderBR FINAL : public RenderBoxModelObject {
+class RenderLineBreak FINAL : public RenderBoxModelObject {
 public:
-    explicit RenderBR(HTMLElement&);
-    virtual ~RenderBR();
+    explicit RenderLineBreak(HTMLElement&);
+    virtual ~RenderLineBreak();
 
+    // FIXME: The lies here keep render tree dump based test results unchanged.
     virtual const char* renderName() const { return m_isWBR ? "RenderWordBreak" : "RenderBR"; }
+
+    virtual bool isWBR() const OVERRIDE { return m_isWBR; }
 
     InlineBox* createInlineBox();
     InlineBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
@@ -51,8 +53,6 @@ public:
 
 private:
     void node() const WTF_DELETED_FUNCTION;
-
-    virtual bool isWBR() const OVERRIDE { return m_isWBR; }
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
     virtual int caretMinOffset() const OVERRIDE;
@@ -86,33 +86,33 @@ private:
     bool m_isWBR;
 };
 
-inline RenderBR& toRenderBR(RenderObject& object)
+inline RenderLineBreak& toRenderLineBreak(RenderObject& object)
 { 
     ASSERT_WITH_SECURITY_IMPLICATION(object.isLineBreak());
-    return static_cast<RenderBR&>(object);
+    return static_cast<RenderLineBreak&>(object);
 }
 
-inline const RenderBR& toRenderBR(const RenderObject& object)
+inline const RenderLineBreak& toRenderLineBreak(const RenderObject& object)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(object.isLineBreak());
-    return static_cast<const RenderBR&>(object);
+    return static_cast<const RenderLineBreak&>(object);
 }
 
-inline RenderBR* toRenderBR(RenderObject* object)
+inline RenderLineBreak* toRenderLineBreak(RenderObject* object)
 { 
     ASSERT_WITH_SECURITY_IMPLICATION(object->isLineBreak());
-    return static_cast<RenderBR*>(object);
+    return static_cast<RenderLineBreak*>(object);
 }
 
-inline const RenderBR* toRenderBR(const RenderObject* object)
+inline const RenderLineBreak* toRenderLineBreak(const RenderObject* object)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(object->isLineBreak());
-    return static_cast<const RenderBR*>(object);
+    return static_cast<const RenderLineBreak*>(object);
 }
 
 // This will catch anyone doing an unnecessary cast.
-void toRenderBR(const RenderBR&);
+void toRenderLineBreak(const RenderLineBreak&);
 
 } // namespace WebCore
 
-#endif // RenderBR_h
+#endif // RenderLineBreak_h

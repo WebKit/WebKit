@@ -27,8 +27,8 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderArena.h"
-#include "RenderBR.h"
 #include "RenderBlock.h"
+#include "RenderLineBreak.h"
 #include "RootInlineBox.h"
 
 #ifndef NDEBUG
@@ -192,7 +192,7 @@ void InlineBox::deleteLine(RenderArena& arena)
         if (m_renderer.isBox())
             toRenderBox(renderer()).setInlineBoxWrapper(0);
         else if (renderer().isLineBreak())
-            toRenderBR(renderer()).setInlineBoxWrapper(0);
+            toRenderLineBreak(renderer()).setInlineBoxWrapper(0);
     }
     destroy(arena);
 }
@@ -203,7 +203,7 @@ void InlineBox::extractLine()
     if (m_renderer.isBox())
         toRenderBox(renderer()).setInlineBoxWrapper(0);
     else if (renderer().isLineBreak())
-        toRenderBR(renderer()).setInlineBoxWrapper(0);
+        toRenderLineBreak(renderer()).setInlineBoxWrapper(0);
 }
 
 void InlineBox::attachLine()
@@ -212,7 +212,7 @@ void InlineBox::attachLine()
     if (m_renderer.isBox())
         toRenderBox(renderer()).setInlineBoxWrapper(this);
     else if (renderer().isLineBreak())
-        toRenderBR(renderer()).setInlineBoxWrapper(this);
+        toRenderLineBreak(renderer()).setInlineBoxWrapper(this);
 }
 
 void InlineBox::adjustPosition(float dx, float dy)

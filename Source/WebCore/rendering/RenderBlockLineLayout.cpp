@@ -32,12 +32,12 @@
 #include "LineLayoutState.h"
 #include "Logging.h"
 #include "RenderArena.h"
-#include "RenderBR.h"
 #include "RenderCombineText.h"
 #include "RenderCounter.h"
 #include "RenderFlowThread.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderLineBreak.h"
 #include "RenderListMarker.h"
 #include "RenderRegion.h"
 #include "RenderRubyRun.h"
@@ -271,7 +271,7 @@ static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRo
         return toRenderBox(obj)->createInlineBox();
 
     if (obj->isLineBreak()) {
-        InlineBox* inlineBox = toRenderBR(obj)->createInlineBox();
+        InlineBox* inlineBox = toRenderLineBreak(obj)->createInlineBox();
         // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
         // (Note the use of strict mode. In "almost strict" mode, we don't treat the box for <br> as text.)
         inlineBox->setBehavesLikeText(isOnlyRun || obj->document().inNoQuirksMode() || obj->isLineBreakOpportunity());
@@ -297,7 +297,7 @@ static inline void dirtyLineBoxesForRenderer(RenderObject* o, bool fullLayout)
         updateCounterIfNeeded(renderText);
         renderText->dirtyLineBoxes(fullLayout);
     } else if (o->isLineBreak())
-        toRenderBR(o)->dirtyLineBoxes(fullLayout);
+        toRenderLineBreak(o)->dirtyLineBoxes(fullLayout);
     else
         toRenderInline(o)->dirtyLineBoxes(fullLayout);
 }
@@ -929,7 +929,7 @@ void RenderBlock::computeBlockDirectionPositionsForLine(RootInlineBox* lineBox, 
         else if (r->m_object->isBox())
             toRenderBox(r->m_object)->positionLineBox(r->m_box);
         else if (r->m_object->isLineBreak())
-            toRenderBR(r->m_object)->replaceInlineBoxWrapper(r->m_box);
+            toRenderLineBreak(r->m_object)->replaceInlineBoxWrapper(r->m_box);
     }
     // Positioned objects and zero-length text nodes destroy their boxes in
     // position(), which unnecessarily dirties the line.

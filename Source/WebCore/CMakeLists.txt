@@ -2121,7 +2121,6 @@ set(WebCore_SOURCES
     rendering/LineWidth.cpp
     rendering/PointerEventsHitRules.cpp
     rendering/RenderArena.cpp
-    rendering/RenderBR.cpp
     rendering/RenderBlock.cpp
     rendering/RenderBlockFlow.cpp
     rendering/RenderBlockLineLayout.cpp
@@ -2156,6 +2155,7 @@ set(WebCore_SOURCES
     rendering/RenderLayerFilterInfo.cpp
     rendering/RenderLayerModelObject.cpp
     rendering/RenderLineBoxList.cpp
+    rendering/RenderLineBreak.cpp
     rendering/RenderListBox.cpp
     rendering/RenderListItem.cpp
     rendering/RenderListMarker.cpp

@@ -30,12 +30,12 @@
 #include "InlineTextBox.h"
 #include "Page.h"
 #include "RenderArena.h"
-#include "RenderBR.h"
 #include "RenderBlock.h"
 #include "RenderFlowThread.h"
 #include "RenderFullScreen.h"
 #include "RenderGeometryMap.h"
 #include "RenderLayer.h"
+#include "RenderLineBreak.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
@@ -607,7 +607,7 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& yield, const Ren
                     yield(FloatRect(logicalTop, childText->y(), logicalHeight, childText->logicalWidth()));
             }
         } else if (curr->isLineBreak()) {
-            if (InlineBox* inlineBox = toRenderBR(curr)->inlineBoxWrapper()) {
+            if (InlineBox* inlineBox = toRenderLineBreak(curr)->inlineBoxWrapper()) {
                 // FIXME: This could use a helper to share these with text path.
                 const RootInlineBox& rootBox = inlineBox->root();
                 int logicalTop = rootBox.logicalTop() + (rootBox.renderer().style(rootBox.isFirstLineStyle())->font().fontMetrics().ascent() - container->style(rootBox.isFirstLineStyle())->font().fontMetrics().ascent());
@@ -908,7 +908,7 @@ InlineBox* RenderInline::culledInlineFirstLineBox() const
         if (curr->isBox())
             return toRenderBox(curr)->inlineBoxWrapper();
         if (curr->isLineBreak()) {
-            RenderBR* renderBR = toRenderBR(curr);
+            RenderLineBreak* renderBR = toRenderLineBreak(curr);
             if (renderBR->inlineBoxWrapper())
                 return renderBR->inlineBoxWrapper();
         } else if (curr->isRenderInline()) {
@@ -936,7 +936,7 @@ InlineBox* RenderInline::culledInlineLastLineBox() const
         if (curr->isBox())
             return toRenderBox(curr)->inlineBoxWrapper();
         if (curr->isLineBreak()) {
-            RenderBR* renderBR = toRenderBR(curr);
+            RenderLineBreak* renderBR = toRenderLineBreak(curr);
             if (renderBR->inlineBoxWrapper())
                 return renderBR->inlineBoxWrapper();
         } else if (curr->isRenderInline()) {
@@ -1315,7 +1315,7 @@ void RenderInline::dirtyLineBoxes(bool fullLayout)
                     for (InlineTextBox* childText = currText->firstTextBox(); childText; childText = childText->nextTextBox())
                         childText->root().markDirty();
                 } else if (curr->isLineBreak()) {
-                    RenderBR* currBR = toRenderBR(curr);
+                    RenderLineBreak* currBR = toRenderLineBreak(curr);
                     if (currBR->inlineBoxWrapper())
                         currBR->inlineBoxWrapper()->root().markDirty();
                 }

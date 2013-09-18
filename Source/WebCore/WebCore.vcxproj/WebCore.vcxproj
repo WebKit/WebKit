@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugSuffix|Win32">
@@ -9738,7 +9738,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\rendering\RenderBR.cpp">
+    <ClCompile Include="..\rendering\RenderLineBreak.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -19957,7 +19957,6 @@
     <ClInclude Include="..\rendering\RenderBlock.h" />
     <ClInclude Include="..\rendering\RenderBox.h" />
     <ClInclude Include="..\rendering\RenderBoxModelObject.h" />
-    <ClInclude Include="..\rendering\RenderBR.h" />
     <ClInclude Include="..\rendering\RenderButton.h" />
     <ClInclude Include="..\rendering\RenderCombineText.h" />
     <ClInclude Include="..\rendering\RenderCounter.h" />
@@ -19987,6 +19986,7 @@
     <ClInclude Include="..\rendering\RenderLayerModelObject.h" />
     <ClInclude Include="..\rendering\RenderLineBoxList.h" />
     <ClInclude Include="..\rendering\RenderListBox.h" />
+    <ClInclude Include="..\rendering\RenderLineBreak.h" />
     <ClInclude Include="..\rendering\RenderListItem.h" />
     <ClInclude Include="..\rendering\RenderListMarker.h" />
     <ClInclude Include="..\rendering\RenderMarquee.h" />

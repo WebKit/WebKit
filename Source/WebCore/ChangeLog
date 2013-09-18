@@ -1,3 +1,12 @@
+2013-09-18  Antti Koivisto  <antti@apple.com>
+
+        Rename RenderBR to RenderLineBreak
+        https://bugs.webkit.org/show_bug.cgi?id=121560
+
+        Reviewed by Sam Weinig.
+
+        It now represents both hard (br) and soft (wbr) line breaks.
+
 2013-09-18  Robert Hogan  <robert@webkit.org>
 
         Quirksmode: Break Tag Extra Space Bug

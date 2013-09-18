@@ -4416,8 +4416,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderBoxRegionInfo.h \
 	Source/WebCore/rendering/RenderBoxModelObject.cpp \
 	Source/WebCore/rendering/RenderBoxModelObject.h \
-	Source/WebCore/rendering/RenderBR.cpp \
-	Source/WebCore/rendering/RenderBR.h \
 	Source/WebCore/rendering/RenderButton.cpp \
 	Source/WebCore/rendering/RenderButton.h \
 	Source/WebCore/rendering/RenderCombineText.cpp \
@@ -4477,6 +4475,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderLayerModelObject.h \
 	Source/WebCore/rendering/RenderLineBoxList.cpp \
 	Source/WebCore/rendering/RenderLineBoxList.h \
+	Source/WebCore/rendering/RenderLineBreak.cpp \
+	Source/WebCore/rendering/RenderLineBreak.h \
 	Source/WebCore/rendering/RenderListBox.cpp \
 	Source/WebCore/rendering/RenderListBox.h \
 	Source/WebCore/rendering/RenderListItem.cpp \

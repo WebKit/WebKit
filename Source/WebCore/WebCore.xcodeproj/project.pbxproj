@@ -5120,8 +5120,8 @@
 		BCEA4860097D93020094C9E4 /* RenderBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4821097D93020094C9E4 /* RenderBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA4861097D93020094C9E4 /* RenderBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4822097D93020094C9E4 /* RenderBox.cpp */; };
 		BCEA4862097D93020094C9E4 /* RenderBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4823097D93020094C9E4 /* RenderBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCEA4863097D93020094C9E4 /* RenderBR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4824097D93020094C9E4 /* RenderBR.cpp */; };
-		BCEA4864097D93020094C9E4 /* RenderBR.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4825097D93020094C9E4 /* RenderBR.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCEA4863097D93020094C9E4 /* RenderLineBreak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4824097D93020094C9E4 /* RenderLineBreak.cpp */; };
+		BCEA4864097D93020094C9E4 /* RenderLineBreak.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4825097D93020094C9E4 /* RenderLineBreak.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA4865097D93020094C9E4 /* RenderButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4826097D93020094C9E4 /* RenderButton.cpp */; };
 		BCEA4866097D93020094C9E4 /* RenderButton.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4827097D93020094C9E4 /* RenderButton.h */; };
 		BCEA4867097D93020094C9E4 /* RenderView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4828097D93020094C9E4 /* RenderView.cpp */; };
@@ -11999,8 +11999,8 @@
 		BCEA4821097D93020094C9E4 /* RenderBlock.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderBlock.h; sourceTree = "<group>"; };
 		BCEA4822097D93020094C9E4 /* RenderBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderBox.cpp; sourceTree = "<group>"; };
 		BCEA4823097D93020094C9E4 /* RenderBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderBox.h; sourceTree = "<group>"; };
-		BCEA4824097D93020094C9E4 /* RenderBR.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderBR.cpp; sourceTree = "<group>"; };
-		BCEA4825097D93020094C9E4 /* RenderBR.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderBR.h; sourceTree = "<group>"; };
+		BCEA4824097D93020094C9E4 /* RenderLineBreak.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLineBreak.cpp; sourceTree = "<group>"; };
+		BCEA4825097D93020094C9E4 /* RenderLineBreak.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderLineBreak.h; sourceTree = "<group>"; };
 		BCEA4826097D93020094C9E4 /* RenderButton.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderButton.cpp; sourceTree = "<group>"; };
 		BCEA4827097D93020094C9E4 /* RenderButton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderButton.h; sourceTree = "<group>"; };
 		BCEA4828097D93020094C9E4 /* RenderView.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderView.cpp; sourceTree = "<group>"; };
@@ -20516,8 +20516,6 @@
 				BC96DB450F3A882200573CB3 /* RenderBoxModelObject.cpp */,
 				BC96DB420F3A880E00573CB3 /* RenderBoxModelObject.h */,
 				BCEB179B143379F50052EAE9 /* RenderBoxRegionInfo.h */,
-				BCEA4824097D93020094C9E4 /* RenderBR.cpp */,
-				BCEA4825097D93020094C9E4 /* RenderBR.h */,
 				BCEA4826097D93020094C9E4 /* RenderButton.cpp */,
 				BCEA4827097D93020094C9E4 /* RenderButton.h */,
 				BCE4413112F748E2009B84B8 /* RenderCombineText.cpp */,
@@ -20575,6 +20573,8 @@
 				3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */,
 				BC33FB1A0F30EE85002CDD7C /* RenderLineBoxList.cpp */,
 				0BE030A10F3112FB003C1A46 /* RenderLineBoxList.h */,
+				BCEA4824097D93020094C9E4 /* RenderLineBreak.cpp */,
+				BCEA4825097D93020094C9E4 /* RenderLineBreak.h */,
 				ABB5419C0ACDDFE4002820EB /* RenderListBox.cpp */,
 				ABB5419D0ACDDFE4002820EB /* RenderListBox.h */,
 				A8EA7A480A191A5200A8EF5F /* RenderListItem.cpp */,
@@ -23692,7 +23692,7 @@
 				BCEA4862097D93020094C9E4 /* RenderBox.h in Headers */,
 				BC96DB430F3A880E00573CB3 /* RenderBoxModelObject.h in Headers */,
 				BCEB179C143379F50052EAE9 /* RenderBoxRegionInfo.h in Headers */,
-				BCEA4864097D93020094C9E4 /* RenderBR.h in Headers */,
+				BCEA4864097D93020094C9E4 /* RenderLineBreak.h in Headers */,
 				BCEA4866097D93020094C9E4 /* RenderButton.h in Headers */,
 				BCE4413412F748E2009B84B8 /* RenderCombineText.h in Headers */,
 				9392F1420AD185F400691BD4 /* RenderCounter.h in Headers */,
@@ -26907,7 +26907,7 @@
 				BCEA4852097D93020094C9E4 /* RenderBlockLineLayout.cpp in Sources */,
 				BCEA4861097D93020094C9E4 /* RenderBox.cpp in Sources */,
 				BC96DB460F3A882200573CB3 /* RenderBoxModelObject.cpp in Sources */,
-				BCEA4863097D93020094C9E4 /* RenderBR.cpp in Sources */,
+				BCEA4863097D93020094C9E4 /* RenderLineBreak.cpp in Sources */,
 				BCEA4865097D93020094C9E4 /* RenderButton.cpp in Sources */,
 				07277E5417D018CC0015534D /* JSMediaStreamTrackEvent.cpp in Sources */,
 				BCE4413312F748E2009B84B8 /* RenderCombineText.cpp in Sources */,
