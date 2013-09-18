@@ -1,3 +1,17 @@
+2013-09-18  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] TestWebKitAPI does not compile.
+        https://bugs.webkit.org/show_bug.cgi?id=121485
+
+        Reviewed by Brent Fulgham.
+
+        It is no longer possible to inherit from WebCore::BitmapImage, which the test relies on.
+        Instead, load a bitmap, then destroy the decoded data, which will cause WebCore::frameAtIndex()
+        to return null, which is the case we want to test.
+
+        * TestWebKitAPI/Tests/WebCore/win/BitmapImage.cpp:
+        (TestWebKitAPI::TEST):
+
 2013-09-18  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Expose aria-haspopup and aria-sort without the 'aria-' prefix

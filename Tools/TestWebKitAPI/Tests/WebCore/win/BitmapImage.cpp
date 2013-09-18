@@ -26,6 +26,8 @@
 
 #include "config.h"
 #include <WebCore/BitmapImage.h>
+#include <WebCore/BitmapInfo.h>
+#include <wtf/win/GDIObject.h>
 
 using namespace WebCore;
 
@@ -34,26 +36,26 @@ namespace TestWebKitAPI {
 // Test that there is no crash when BitmapImage::getHBITMAPOfSize() is called
 // for an image with empty frames (BitmapImage::frameAtIndex(i) return null), WebKit Bug 102689.
 
-class BitmapImageTest : public WebCore::BitmapImage {
-public:
-    BitmapImageTest()
-    {
-        m_frames.grow(1);
-    }
-
-    virtual size_t frameCount()
-    {
-        return 1;
-    }
-};
-
 TEST(WebCore, BitmapImageEmptyFrameTest)
 {
     IntSize sz(16, 16);
-    RefPtr<BitmapImageTest> bitmapImageTest = adoptRef(new BitmapImageTest);
+
+    BitmapInfo bitmapInfo = BitmapInfo::create(sz);
+
+    auto bmp = adoptGDIObject(CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, 0, 0, 0));
+
+    RefPtr<Image> bitmapImageTest = BitmapImage::create(bmp.get());
+
+    if (!bitmapImageTest)
+        return;
+
+    // Destroying decoded data will cause frameAtIndex(i) to return null.
+    bitmapImageTest->destroyDecodedData();
+
     int bits[256];
-    HBITMAP hBitmap = CreateBitmap(sz.width(), sz.height(), 1, 32, bits);
-    bitmapImageTest->getHBITMAPOfSize(hBitmap, &sz);
+    auto bitmap = adoptGDIObject(CreateBitmap(sz.width(), sz.height(), 1, 32, bits));
+
+    bitmapImageTest->getHBITMAPOfSize(bitmap.get(), &sz);
 }
 
 } // namespace TestWebKitAPI
