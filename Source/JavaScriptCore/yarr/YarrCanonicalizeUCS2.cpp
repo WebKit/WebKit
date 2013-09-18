@@ -32,24 +32,24 @@ namespace JSC { namespace Yarr {
 
 #include <stdint.h>
 
-uint16_t ucs2CharacterSet0[] = { 0x01c4u, 0x01c5u, 0x01c6u, 0 };
-uint16_t ucs2CharacterSet1[] = { 0x01c7u, 0x01c8u, 0x01c9u, 0 };
-uint16_t ucs2CharacterSet2[] = { 0x01cau, 0x01cbu, 0x01ccu, 0 };
-uint16_t ucs2CharacterSet3[] = { 0x01f1u, 0x01f2u, 0x01f3u, 0 };
-uint16_t ucs2CharacterSet4[] = { 0x0392u, 0x03b2u, 0x03d0u, 0 };
-uint16_t ucs2CharacterSet5[] = { 0x0395u, 0x03b5u, 0x03f5u, 0 };
-uint16_t ucs2CharacterSet6[] = { 0x0398u, 0x03b8u, 0x03d1u, 0 };
-uint16_t ucs2CharacterSet7[] = { 0x0345u, 0x0399u, 0x03b9u, 0x1fbeu, 0 };
-uint16_t ucs2CharacterSet8[] = { 0x039au, 0x03bau, 0x03f0u, 0 };
-uint16_t ucs2CharacterSet9[] = { 0x00b5u, 0x039cu, 0x03bcu, 0 };
-uint16_t ucs2CharacterSet10[] = { 0x03a0u, 0x03c0u, 0x03d6u, 0 };
-uint16_t ucs2CharacterSet11[] = { 0x03a1u, 0x03c1u, 0x03f1u, 0 };
-uint16_t ucs2CharacterSet12[] = { 0x03a3u, 0x03c2u, 0x03c3u, 0 };
-uint16_t ucs2CharacterSet13[] = { 0x03a6u, 0x03c6u, 0x03d5u, 0 };
-uint16_t ucs2CharacterSet14[] = { 0x1e60u, 0x1e61u, 0x1e9bu, 0 };
+const uint16_t ucs2CharacterSet0[] = { 0x01c4u, 0x01c5u, 0x01c6u, 0 };
+const uint16_t ucs2CharacterSet1[] = { 0x01c7u, 0x01c8u, 0x01c9u, 0 };
+const uint16_t ucs2CharacterSet2[] = { 0x01cau, 0x01cbu, 0x01ccu, 0 };
+const uint16_t ucs2CharacterSet3[] = { 0x01f1u, 0x01f2u, 0x01f3u, 0 };
+const uint16_t ucs2CharacterSet4[] = { 0x0392u, 0x03b2u, 0x03d0u, 0 };
+const uint16_t ucs2CharacterSet5[] = { 0x0395u, 0x03b5u, 0x03f5u, 0 };
+const uint16_t ucs2CharacterSet6[] = { 0x0398u, 0x03b8u, 0x03d1u, 0 };
+const uint16_t ucs2CharacterSet7[] = { 0x0345u, 0x0399u, 0x03b9u, 0x1fbeu, 0 };
+const uint16_t ucs2CharacterSet8[] = { 0x039au, 0x03bau, 0x03f0u, 0 };
+const uint16_t ucs2CharacterSet9[] = { 0x00b5u, 0x039cu, 0x03bcu, 0 };
+const uint16_t ucs2CharacterSet10[] = { 0x03a0u, 0x03c0u, 0x03d6u, 0 };
+const uint16_t ucs2CharacterSet11[] = { 0x03a1u, 0x03c1u, 0x03f1u, 0 };
+const uint16_t ucs2CharacterSet12[] = { 0x03a3u, 0x03c2u, 0x03c3u, 0 };
+const uint16_t ucs2CharacterSet13[] = { 0x03a6u, 0x03c6u, 0x03d5u, 0 };
+const uint16_t ucs2CharacterSet14[] = { 0x1e60u, 0x1e61u, 0x1e9bu, 0 };
 
 static const size_t UCS2_CANONICALIZATION_SETS = 15;
-uint16_t* characterSetInfo[UCS2_CANONICALIZATION_SETS] = {
+const uint16_t* characterSetInfo[UCS2_CANONICALIZATION_SETS] = {
     ucs2CharacterSet0,
     ucs2CharacterSet1,
     ucs2CharacterSet2,
@@ -68,7 +68,7 @@ uint16_t* characterSetInfo[UCS2_CANONICALIZATION_SETS] = {
 };
 
 const size_t UCS2_CANONICALIZATION_RANGES = 364;
-UCS2CanonicalizationRange rangeInfo[UCS2_CANONICALIZATION_RANGES] = {
+const UCS2CanonicalizationRange rangeInfo[UCS2_CANONICALIZATION_RANGES] = {
     { 0x0000u, 0x0040u, 0x0000u, CanonicalizeUnique },
     { 0x0041u, 0x005au, 0x0020u, CanonicalizeRangeLo },
     { 0x005bu, 0x0060u, 0x0000u, CanonicalizeUnique },

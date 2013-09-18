@@ -44,8 +44,8 @@ enum UCS2CanonicalizationType {
 };
 struct UCS2CanonicalizationRange { uint16_t begin, end, value, type; };
 extern const size_t UCS2_CANONICALIZATION_RANGES;
-extern uint16_t* characterSetInfo[];
-extern UCS2CanonicalizationRange rangeInfo[];
+extern const uint16_t* characterSetInfo[];
+extern const UCS2CanonicalizationRange rangeInfo[];
 
 // This table is similar to the full rangeInfo table, however this maps from UCS2 codepoints to
 // the set of Latin1 codepoints that could match.
@@ -60,14 +60,14 @@ extern const size_t LATIN_CANONICALIZATION_RANGES;
 extern LatinCanonicalizationRange latinRangeInfo[];
 
 // This searches in log2 time over ~364 entries, so should typically result in 8 compares.
-inline UCS2CanonicalizationRange* rangeInfoFor(UChar ch)
+inline const UCS2CanonicalizationRange* rangeInfoFor(UChar ch)
 {
-    UCS2CanonicalizationRange* info = rangeInfo;
+    const UCS2CanonicalizationRange* info = rangeInfo;
     size_t entries = UCS2_CANONICALIZATION_RANGES;
 
     while (true) {
         size_t candidate = entries >> 1;
-        UCS2CanonicalizationRange* candidateInfo = info + candidate;
+        const UCS2CanonicalizationRange* candidateInfo = info + candidate;
         if (ch < candidateInfo->begin)
             entries = candidate;
         else if (ch <= candidateInfo->end)
@@ -80,7 +80,7 @@ inline UCS2CanonicalizationRange* rangeInfoFor(UChar ch)
 }
 
 // Should only be called for characters that have one canonically matching value.
-inline UChar getCanonicalPair(UCS2CanonicalizationRange* info, UChar ch)
+inline UChar getCanonicalPair(const UCS2CanonicalizationRange* info, UChar ch)
 {
     ASSERT(ch >= info->begin && ch <= info->end);
     switch (info->type) {
@@ -108,12 +108,12 @@ inline bool isCanonicallyUnique(UChar ch)
 // Returns true if values are equal, under the canonicalization rules.
 inline bool areCanonicallyEquivalent(UChar a, UChar b)
 {
-    UCS2CanonicalizationRange* info = rangeInfoFor(a);
+    const UCS2CanonicalizationRange* info = rangeInfoFor(a);
     switch (info->type) {
     case CanonicalizeUnique:
         return a == b;
     case CanonicalizeSet: {
-        for (uint16_t* set = characterSetInfo[info->value]; (a = *set); ++set) {
+        for (const uint16_t* set = characterSetInfo[info->value]; (a = *set); ++set) {
             if (a == b)
                 return true;
         }
