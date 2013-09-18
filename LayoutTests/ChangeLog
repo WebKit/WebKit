@@ -1,3 +1,17 @@
+2013-09-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        ASSERT_NOT_REACHED is touched in WebCore::CSSPrimitiveValue::computeLengthDouble
+        https://bugs.webkit.org/show_bug.cgi?id=120469
+
+        Reviewed by Dirk Schulze.
+
+        * fast/css/outline-offset-parsing-assert-expected.txt: Added.
+        * fast/css/outline-offset-parsing-assert.html: Added.
+        * fast/css/outline-offset-parsing-expected.txt: Added.
+        * fast/css/outline-offset-parsing.html: Added.
+        * fast/css/script-tests/outline-offset-parsing.js: Added.
+        (test):
+
 2013-09-18  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         [MathML] Implement the subscriptshift and superscriptshift attributes
