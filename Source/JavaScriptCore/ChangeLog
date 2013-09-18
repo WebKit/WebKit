@@ -1,3 +1,9 @@
+2013-09-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix 32-bit build.
+
+        * runtime/JSCJSValue.h:
+
 2013-09-16  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should support Int52 for local variables

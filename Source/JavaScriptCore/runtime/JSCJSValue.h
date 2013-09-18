@@ -276,12 +276,10 @@ public:
 
     JS_EXPORT_PRIVATE JSObject* synthesizePrototype(ExecState*) const;
 
-#if USE(JSVALUE64)
     // Constants used for Int52. Int52 isn't part of JSValue right now, but JSValues may be
     // converted to Int52s and back again.
     static const unsigned numberOfInt52Bits = 52;
     static const unsigned int52ShiftAmount = 12;
-#endif
 
 private:
     template <class T> JSValue(WriteBarrierBase<T>);
