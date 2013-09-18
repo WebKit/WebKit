@@ -1,5 +1,11 @@
 2013-09-18  Andreas Kling  <akling@apple.com>
 
+        Missed one rebaseline for the RenderMenuList change.
+
+        * platform/mac/fast/forms/select-empty-option-height-expected.txt:
+
+2013-09-18  Andreas Kling  <akling@apple.com>
+
         Avoid using RenderBR internally in RenderMenuList.
         <https://webkit.org/b/121550>
 
