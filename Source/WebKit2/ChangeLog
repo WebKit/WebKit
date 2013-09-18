@@ -1,3 +1,16 @@
+2013-09-18  Anders Carlsson  <andersca@apple.com>
+
+        RefPtrHashMap should work with move only types
+        https://bugs.webkit.org/show_bug.cgi?id=121564
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::LocalStorageNamespace::getOrCreateStorageArea):
+        (WebKit::StorageManager::SessionStorageNamespace::getOrCreateStorageArea):
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::storageArea):
+
 2013-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitScriptWorld not in API documentation

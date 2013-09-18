@@ -492,7 +492,7 @@ void VM::dumpSampleData(ExecState* exec)
 
 SourceProviderCache* VM::addSourceProviderCache(SourceProvider* sourceProvider)
 {
-    SourceProviderCacheMap::AddResult addResult = sourceProviderCacheMap.add(sourceProvider, 0);
+    auto addResult = sourceProviderCacheMap.add(sourceProvider, nullptr);
     if (addResult.isNewEntry)
         addResult.iterator->value = adoptRef(new SourceProviderCache);
     return addResult.iterator->value.get();

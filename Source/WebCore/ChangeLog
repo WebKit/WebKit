@@ -1,3 +1,15 @@
+2013-09-18  Anders Carlsson  <andersca@apple.com>
+
+        RefPtrHashMap should work with move only types
+        https://bugs.webkit.org/show_bug.cgi?id=121564
+
+        Reviewed by Andreas Kling.
+
+        * bridge/IdentifierRep.cpp:
+        (WebCore::IdentifierRep::get):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::transientLocalStorage):
+
 2013-09-18  Enrica Casucci  <enrica@apple.com>
 
         Upstream changes to WebHTMLConverter to support HTML

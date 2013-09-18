@@ -268,7 +268,7 @@ StorageManager::LocalStorageNamespace::~LocalStorageNamespace()
 
 PassRefPtr<StorageManager::StorageArea> StorageManager::LocalStorageNamespace::getOrCreateStorageArea(PassRefPtr<SecurityOrigin> securityOrigin)
 {
-    HashMap<RefPtr<SecurityOrigin>, StorageArea*>::AddResult result = m_storageAreaMap.add(securityOrigin, 0);
+    auto result = m_storageAreaMap.add(securityOrigin, nullptr);
     if (!result.isNewEntry)
         return result.iterator->value;
 
@@ -351,7 +351,7 @@ void StorageManager::SessionStorageNamespace::setAllowedConnection(CoreIPC::Conn
 
 PassRefPtr<StorageManager::StorageArea> StorageManager::SessionStorageNamespace::getOrCreateStorageArea(PassRefPtr<SecurityOrigin> securityOrigin)
 {
-    HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>>::AddResult result = m_storageAreaMap.add(securityOrigin, 0);
+    auto result = m_storageAreaMap.add(securityOrigin, nullptr);
     if (result.isNewEntry)
         result.iterator->value = StorageArea::create(0, result.iterator->key, m_quotaInBytes);
 
