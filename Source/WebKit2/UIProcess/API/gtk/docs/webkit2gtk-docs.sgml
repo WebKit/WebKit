@@ -50,6 +50,7 @@
     <xi:include href="xml/WebKitWebExtension.xml"/>
     <xi:include href="xml/WebKitWebPage.xml"/>
     <xi:include href="xml/WebKitFrame.xml"/>
+    <xi:include href="xml/WebKitScriptWorld.xml"/>
   </chapter>
 
   <index id="index-all">
