@@ -3090,10 +3090,11 @@ void SpeculativeJIT::compileArithNegate(Node* node)
 
         if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
             m_jit.neg32(result.gpr());
-        else {
+        else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchNeg32(MacroAssembler::Overflow, result.gpr()));
-            if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
-                speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Zero, result.gpr()));
+        else {
+            speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(MacroAssembler::Zero, result.gpr(), TrustedImm32(0x7fffffff)));
+            m_jit.neg32(result.gpr());
         }
 
         int32Result(result.gpr(), node);

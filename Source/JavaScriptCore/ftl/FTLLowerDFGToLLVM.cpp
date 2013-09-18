@@ -1017,13 +1017,15 @@ private:
             LValue result;
             if (bytecodeCanTruncateInteger(m_node->arithNodeFlags()))
                 result = m_out.neg(value);
-            else {
+            else if (bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
                 // We don't have a negate-with-overflow intrinsic. Hopefully this
                 // does the trick, though.
                 LValue overflowResult = m_out.subWithOverflow32(m_out.int32Zero, value);
                 speculate(Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
                 result = m_out.extractValue(overflowResult, 0);
-                speculate(NegativeZero, noValue(), 0, m_out.isZero32(result));
+            } else {
+                speculate(Overflow, noValue(), 0, m_out.testIsZero32(value, m_out.constInt32(0x7fffffff)));
+                result = m_out.neg(value);
             }
             
             setInt32(result);
