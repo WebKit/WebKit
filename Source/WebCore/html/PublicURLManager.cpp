@@ -27,6 +27,8 @@
 #include "config.h"
 #include "PublicURLManager.h"
 
+#if ENABLE(BLOB)
+
 #include "KURL.h"
 #include "URLRegistry.h"
 #include <wtf/text/StringHash.h>
@@ -62,3 +64,5 @@ void PublicURLManager::contextDestroyed()
 }
 
 }
+
+#endif // ENABLE(BLOB)
