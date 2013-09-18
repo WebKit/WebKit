@@ -1,3 +1,27 @@
+2013-09-18  Sam Weinig  <sam@webkit.org>
+
+        Replace use of OwnArrayPtr<Foo> with std::unique_ptr<Foo[]> in WebKit and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=121568
+
+        Reviewed by Andreas Kling.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::processMessage):
+        (CoreIPC::readBytesFromSocket):
+        (CoreIPC::Connection::sendOutgoingMessage):
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::feedTouchEvent):
+        (EwkView::feedTouchEvents):
+        * UIProcess/API/efl/SnapshotImageGL.h:
+        * UIProcess/API/efl/ewk_file_chooser_request.cpp:
+        (ewk_file_chooser_request_files_choose):
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+        (WebKit::createArgsArray):
+        (WebKit::ProcessLauncher::launchProcess):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyContextMenuItems):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+
 2013-09-18  Anders Carlsson  <andersca@apple.com>
 
         RefPtrHashMap should work with move only types

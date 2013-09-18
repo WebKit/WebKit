@@ -28,7 +28,7 @@
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/RunLoop.h>
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,7 +36,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static Vector<OwnArrayPtr<char>> createArgsArray(const String& prefix, const String& executablePath, const String& socket, const String& pluginPath)
+static Vector<std::unique_ptr<char[]>> createArgsArray(const String& prefix, const String& executablePath, const String& socket, const String& pluginPath)
 {
     ASSERT(!executablePath.isEmpty());
     ASSERT(!socket.isEmpty());
@@ -49,13 +49,13 @@ static Vector<OwnArrayPtr<char>> createArgsArray(const String& prefix, const Str
     if (!pluginPath.isEmpty())
         splitArgs.append(pluginPath);
 
-    Vector<OwnArrayPtr<char>> args;
+    Vector<std::unique_ptr<char[]>> args;
     args.resize(splitArgs.size() + 1); // Extra room for null.
 
     size_t numArgs = splitArgs.size();
     for (size_t i = 0; i < numArgs; ++i) {
         CString param = splitArgs[i].utf8();
-        args[i] = adoptArrayPtr(new char[param.length() + 1]); // Room for the terminating null coming from the CString.
+        args[i] = std::make_unique<char[]>(param.length() + 1); // Room for the terminating null coming from the CString.
         strncpy(args[i].get(), param.data(), param.length() + 1); // +1 here so that strncpy copies the ending null.
     }
     // execvp() needs the pointers' array to be null-terminated.
@@ -97,7 +97,7 @@ void ProcessLauncher::launchProcess()
     if (!m_launchOptions.processCmdPrefix.isEmpty())
         processCmdPrefix = m_launchOptions.processCmdPrefix;
 #endif
-    Vector<OwnArrayPtr<char>> args = createArgsArray(processCmdPrefix, executablePath, String::number(sockets[0]), pluginPath);
+    auto args = createArgsArray(processCmdPrefix, executablePath, String::number(sockets[0]), pluginPath);
 
     // Do not perform memory allocation in the middle of the fork()
     // exec() below. FastMalloc can potentially deadlock because

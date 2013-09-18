@@ -240,7 +240,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::removeItems(
 HRESULT STDMETHODCALLTYPE WebHistory::removeAllItems( void)
 {
     m_entriesByDate.clear();
-    m_orderedLastVisitedDays.clear();
+    m_orderedLastVisitedDays = nullptr;
 
     Vector<IWebHistoryItem*> itemsVector(m_entriesByURL.size());
     for (auto it = m_entriesByURL.begin(); it != m_entriesByURL.end(); ++it)
@@ -272,7 +272,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::orderedLastVisitedDays(
 
     *count = dateCount;
     if (!m_orderedLastVisitedDays) {
-        m_orderedLastVisitedDays = adoptArrayPtr(new DATE[dateCount]);
+        m_orderedLastVisitedDays = std::make_unique<DATE[]>(dateCount);
         DateToEntriesMap::const_iterator::Keys end = m_entriesByDate.end().keys();
         int i = 0;
         for (DateToEntriesMap::const_iterator::Keys it = m_entriesByDate.begin().keys(); it != end; ++it, ++i)
@@ -583,7 +583,7 @@ HRESULT WebHistory::addItemToDateCaches(IWebHistoryItem* entry)
         CFArrayAppendValue(entryArray.get(), entry);
         m_entriesByDate.set(dateKey, entryArray);
         // Clear m_orderedLastVisitedDays so it will be regenerated when next requested.
-        m_orderedLastVisitedDays.clear();
+        m_orderedLastVisitedDays = nullptr;
     }
 
     return hr;
@@ -614,7 +614,7 @@ HRESULT WebHistory::removeItemFromDateCaches(IWebHistoryItem* entry)
     if (CFArrayGetCount(entriesForDate) == 0) {
         m_entriesByDate.remove(found);
         // Clear m_orderedLastVisitedDays so it will be regenerated when next requested.
-        m_orderedLastVisitedDays.clear();
+        m_orderedLastVisitedDays = nullptr;
     }
 
     return hr;

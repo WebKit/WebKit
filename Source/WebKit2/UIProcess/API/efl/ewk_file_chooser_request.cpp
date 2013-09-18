@@ -33,7 +33,7 @@
 #include "WKString.h"
 #include "WKURL.h"
 #include "ewk_file_chooser_request_private.h"
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
@@ -120,7 +120,7 @@ Eina_Bool ewk_file_chooser_request_files_choose(Ewk_File_Chooser_Request* reques
     const unsigned urlCount = eina_list_count(chosenFiles);
     EINA_SAFETY_ON_FALSE_RETURN_VAL(urlCount == 1 || (urlCount > 1 && impl->allowMultipleFiles()), false);
 
-    OwnArrayPtr<WKTypeRef> filesURLs = adoptArrayPtr(new WKTypeRef[urlCount]);
+    auto filesURLs = std::make_unique<WKTypeRef[]>(urlCount);
 
     for (unsigned i = 0; i < urlCount; ++i) {
         const char* url = static_cast<char*>(eina_list_nth(chosenFiles, i));

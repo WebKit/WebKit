@@ -41,7 +41,7 @@
 #include <shlobj.h>
 #include <wchar.h>
 #include <wtf/HashMap.h>
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -477,8 +477,8 @@ void WebPreferences::copyWebKitPreferencesToCFPreferences(CFDictionaryRef dict)
     CFStringRef didRemoveDefaultsKey = CFSTR(WebKitDidMigrateDefaultSettingsFromSafari3BetaPreferenceKey);
     bool omitDefaults = !booleanValueForPreferencesValue(CFDictionaryGetValue(dict, didRemoveDefaultsKey));
 
-    OwnArrayPtr<CFTypeRef> keys = adoptArrayPtr(new CFTypeRef[count]);
-    OwnArrayPtr<CFTypeRef> values = adoptArrayPtr(new CFTypeRef[count]);
+    auto keys = std::make_unique<CFTypeRef[]>(count);
+    auto values = std::make_unique<CFTypeRef[]>(count);
     CFDictionaryGetKeysAndValues(dict, keys.get(), values.get());
 
     for (int i = 0; i < count; ++i) {

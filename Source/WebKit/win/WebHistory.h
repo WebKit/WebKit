@@ -29,8 +29,8 @@
 #include "WebKit.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/COMPtr.h>
+#include <memory>
 #include <wtf/Forward.h>
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
@@ -147,7 +147,7 @@ private:
     ULONG m_refCount;
     URLToEntriesMap m_entriesByURL;
     DateToEntriesMap m_entriesByDate;
-    OwnArrayPtr<DATE> m_orderedLastVisitedDays;
+    std::unique<DATE[]> m_orderedLastVisitedDays;
     COMPtr<WebPreferences> m_preferences;
 };
 

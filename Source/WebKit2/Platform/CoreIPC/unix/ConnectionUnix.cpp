@@ -36,7 +36,7 @@
 #include <fcntl.h>
 #include <wtf/Assertions.h>
 #include <wtf/Functional.h>
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/UniStdExtras.h>
 
 #if PLATFORM(QT)
@@ -213,10 +213,10 @@ bool Connection::processMessage()
 
     size_t attachmentFileDescriptorCount = 0;
     size_t attachmentCount = messageInfo.attachmentCount();
-    OwnArrayPtr<AttachmentInfo> attachmentInfo;
+    std::unique_ptr<AttachmentInfo[]> attachmentInfo;
 
     if (attachmentCount) {
-        attachmentInfo = adoptArrayPtr(new AttachmentInfo[attachmentCount]);
+        attachmentInfo = std::make_unique<AttachmentInfo[]>(attachmentCount);
         memcpy(attachmentInfo.get(), messageData, sizeof(AttachmentInfo) * attachmentCount);
         messageData += sizeof(AttachmentInfo) * attachmentCount;
 
@@ -323,7 +323,7 @@ static ssize_t readBytesFromSocket(int socketDescriptor, uint8_t* buffer, int co
     memset(&iov, 0, sizeof(iov));
 
     message.msg_controllen = CMSG_SPACE(sizeof(int) * attachmentMaxAmount);
-    OwnArrayPtr<char> attachmentDescriptorBuffer = adoptArrayPtr(new char[message.msg_controllen]);
+    auto attachmentDescriptorBuffer = std::make_unique<char[]>(message.msg_controllen);
     memset(attachmentDescriptorBuffer.get(), 0, message.msg_controllen);
     message.msg_control = attachmentDescriptorBuffer.get();
 
@@ -491,7 +491,7 @@ bool Connection::sendOutgoingMessage(OwnPtr<MessageEncoder> encoder)
     iov[0].iov_base = reinterpret_cast<void*>(&messageInfo);
     iov[0].iov_len = sizeof(messageInfo);
 
-    OwnArrayPtr<AttachmentInfo> attachmentInfo = adoptArrayPtr(new AttachmentInfo[attachments.size()]);
+    auto attachmentInfo = std::make_unique<AttachmentInfo[]>(attachments.size());
 
     size_t attachmentFDBufferLength = 0;
     if (!attachments.isEmpty()) {
@@ -500,7 +500,7 @@ bool Connection::sendOutgoingMessage(OwnPtr<MessageEncoder> encoder)
                 attachmentFDBufferLength++;
         }
     }
-    OwnArrayPtr<char> attachmentFDBuffer = adoptArrayPtr(new char[CMSG_SPACE(sizeof(int) * attachmentFDBufferLength)]);
+    auto attachmentFDBuffer = std::make_unique<char[]>(CMSG_SPACE(sizeof(int) * attachmentFDBufferLength));
 
     if (!attachments.isEmpty()) {
         int* fdPtr = 0;
