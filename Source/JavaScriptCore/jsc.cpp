@@ -877,9 +877,10 @@ int jscmain(int argc, char** argv)
         }
     }
     
-    if (Options::neverDeleteVMInCommandLine())
-        UNUSED_PARAM(vm.release().leakRef());
-    else {
+    if (Options::neverDeleteVMInCommandLine()) {
+        JSC::VM* temp = vm.release().leakRef();
+        UNUSED_PARAM(temp);
+    } else {
         JSLockHolder lock(*vm);
         vm.clear();
     }
