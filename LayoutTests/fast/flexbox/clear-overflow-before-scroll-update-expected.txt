@@ -11,4 +11,5 @@ layer at (0,0) size 800x43
 layer at (10,10) size 15x23 clip at (15,15) size 5x13
   RenderMenuList {SELECT} at (2,2) size 15x23 [bgcolor=#FFFFFF] [border: (5px solid #000000)]
     RenderBlock (anonymous) at (5,5) size 5x13
-      RenderBR at (-9999,0) size 0x13 [bgcolor=#FFFFFF]
+      RenderText at (-9999,0) size 0x13
+        text run at (-9999,0) width 0: " "

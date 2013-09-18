@@ -38,7 +38,6 @@
 namespace WebCore {
 
 class HTMLSelectElement;
-class RenderBR;
 class RenderText;
 
 class RenderMenuList FINAL : public RenderFlexibleBox, private PopupMenuClient {
@@ -137,7 +136,6 @@ private:
     void didUpdateActiveOption(int optionIndex);
 
     RenderText* m_buttonText;
-    RenderBR* m_buttonBR;
     RenderBlock* m_innerBlock;
 
     bool m_needsOptionsWidthUpdate;

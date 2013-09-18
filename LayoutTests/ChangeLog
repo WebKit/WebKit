@@ -1,3 +1,13 @@
+2013-09-18  Andreas Kling  <akling@apple.com>
+
+        Avoid using RenderBR internally in RenderMenuList.
+        <https://webkit.org/b/121550>
+
+        Reviewed by Antti Koivisto.
+
+        Update expected results for RenderMenuLists with empty text.
+        They now have a RenderText inside them instead of a RenderBR.
+
 2013-09-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         ASSERT_NOT_REACHED is touched in WebCore::CSSPrimitiveValue::computeLengthDouble

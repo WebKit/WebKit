@@ -1,3 +1,17 @@
+2013-09-18  Andreas Kling  <akling@apple.com>
+
+        Avoid using RenderBR internally in RenderMenuList.
+        <https://webkit.org/b/121550>
+
+        Reviewed by Antti Koivisto.
+
+        RenderMenuLists with an empty caption text were previously using a
+        RenderBR as placeholder.
+
+        Switch to using a \n RenderText instead so we can tighten RenderBR.
+
+        This will change DRT dumps but actual metrics should not change.
+
 2013-09-18  Antti Koivisto  <antti@apple.com>
 
         Change one accidental "object->isText() || object->isLineBreak()" from previous patch back to "object->isTextOrLineBreak()"

@@ -39,7 +39,6 @@
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PopupMenu.h"
-#include "RenderBR.h"
 #include "RenderScrollbar.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
@@ -58,7 +57,6 @@ using namespace HTMLNames;
 RenderMenuList::RenderMenuList(HTMLSelectElement& element)
     : RenderFlexibleBox(&element)
     , m_buttonText(nullptr)
-    , m_buttonBR(nullptr)
     , m_innerBlock(nullptr)
     , m_needsOptionsWidthUpdate(true)
     , m_optionsWidth(0)
@@ -162,8 +160,6 @@ void RenderMenuList::styleDidChange(StyleDifference diff, const RenderStyle* old
 
     if (m_buttonText)
         m_buttonText->setStyle(style());
-    if (m_buttonBR)
-        m_buttonBR->setStyle(style());
     if (m_innerBlock) // RenderBlock handled updating the anonymous block's style.
         adjustInnerStyle();
 
@@ -243,36 +239,21 @@ void RenderMenuList::setTextFromOption(int optionIndex)
 
 void RenderMenuList::setText(const String& s)
 {
-    if (s.isEmpty()) {
-        if (!m_buttonBR) {
-            if (m_buttonText) {
-                m_buttonText->destroy();
-                m_buttonText = nullptr;
-            }
-            // FIXME: This could probably just be a text node.
-            m_buttonBR = RenderBR::createAnonymous(document());
-            m_buttonBR->setStyle(style());
-            addChild(m_buttonBR);
-        }
-    } else {
-        if (m_buttonText)
-            m_buttonText->setText(s.impl(), true);
-        else {
-            if (m_buttonBR) {
-                m_buttonBR->destroy();
-                m_buttonBR = nullptr;
-            }
-            m_buttonText = new (renderArena()) RenderText(&document(), s.impl());
-            m_buttonText->setStyle(style());
-            addChild(m_buttonText);
-        }
-        adjustInnerStyle();
+    String textToUse = s.isEmpty() ? String(ASCIILiteral("\n")) : s;
+
+    if (m_buttonText)
+        m_buttonText->setText(textToUse.impl(), true);
+    else {
+        m_buttonText = new (renderArena()) RenderText(&document(), textToUse.impl());
+        m_buttonText->setStyle(style());
+        addChild(m_buttonText);
     }
+    adjustInnerStyle();
 }
 
 String RenderMenuList::text() const
 {
-    return m_buttonText ? m_buttonText->text() : m_buttonBR ? String(ASCIILiteral("\n")) : String();
+    return m_buttonText ? m_buttonText->text() : String();
 }
 
 LayoutRect RenderMenuList::controlClipRect(const LayoutPoint& additionalOffset) const
