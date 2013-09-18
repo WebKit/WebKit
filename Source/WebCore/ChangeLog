@@ -1,3 +1,21 @@
+2013-09-18  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Throw exception when setting timestampOffset while 'updating' state is set.
+        https://bugs.webkit.org/show_bug.cgi?id=121561
+
+        Reviewed by Eric Carlson.
+
+        Tests: Updated http/tests/media/media-source/mediasource-append-buffer.html.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/25285998be3d0edcd951d12d445a7375e50e512c
+        by Changbin Shao.
+
+        The Media Source Extensions spec requires that an exception be thrown if the 'updating' attribute
+        equals true while setting the timestampOffset of a SourceBuffer. 
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::setTimestampOffset):
+
 2013-09-18  Anders Carlsson  <andersca@apple.com>
 
         RefPtrHashMap should work with move only types

@@ -157,6 +157,27 @@
               });
           }, "Test MediaSource.removeSourceBuffer() call during a pending appendBuffer().");
 
+          mediasource_loaddata_test(function(test, mediaElement, mediaSource, sourceBuffer, mediaData)
+          {
+              test.failOnEvent(mediaElement, 'error');
+
+              test.expectEvent(sourceBuffer, "updatestart", "Append started.");
+              test.expectEvent(sourceBuffer, "updateend", "Append ended.");
+              sourceBuffer.appendBuffer(mediaData);
+
+              assert_true(sourceBuffer.updating, "updating attribute is true");
+
+              assert_throws("InvalidStateError",
+                  function() { sourceBuffer.timestampOffset = 10.0; },
+                  "set timestampOffset throws an exception when updating attribute is true.");
+
+              test.waitForExpectedEvents(function()
+              {
+                  assert_false(sourceBuffer.updating, "updating attribute is false");
+                  test.done();
+              });
+          }, "Test set SourceBuffer.timestampOffset during a pending appendBuffer().");
+
           mediasource_test(function(test, mediaElement, mediaSource)
           {
               var sourceBuffer = mediaSource.addSourceBuffer(MediaSourceUtil.VIDEO_ONLY_TYPE);

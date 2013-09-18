@@ -4,6 +4,7 @@ PASS Test SourceBuffer.appendBuffer() call during a pending appendBuffer().
 PASS Test SourceBuffer.abort() call during a pending appendBuffer(). 
 PASS Test SourceBuffer.appendBuffer() triggering an 'ended' to 'open' transition. 
 PASS Test MediaSource.removeSourceBuffer() call during a pending appendBuffer(). 
+PASS Test set SourceBuffer.timestampOffset during a pending appendBuffer(). 
 PASS Test appending an empty ArrayBufferView. 
 PASS Test appending an empty ArrayBuffer. 
 
