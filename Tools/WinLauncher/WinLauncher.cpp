@@ -2,6 +2,7 @@
  * Copyright (C) 2006, 2008, 2013 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2009, 2011 Brent Fulgham.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
+ * Copyright (C) 2013 Alex Christensen. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +57,7 @@
 
 #define MAX_LOADSTRING 100
 #define URLBAR_HEIGHT  24
+#define CONTROLBUTTON_WIDTH 24
 
 static const int maxHistorySize = 10;
 
@@ -73,7 +75,10 @@ typedef _com_ptr_t<_com_IIID<IWebViewPrivate, &__uuidof(IWebViewPrivate)>> IWebV
 HINSTANCE hInst;                                // current instance
 HWND hMainWnd;
 HWND hURLBarWnd;
+HWND hBackButtonWnd;
+HWND hForwardButtonWnd;
 WNDPROC DefEditProc = 0;
+WNDPROC DefButtonProc = 0;
 WNDPROC DefWebKitProc = 0;
 IWebInspectorPtr gInspector;
 IWebViewPtr gWebView;
@@ -99,7 +104,10 @@ bool s_fullDesktop = false;
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK    MyEditProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK    EditProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK    BackButtonProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK    ForwardButtonProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK    ReloadButtonProc(HWND, UINT, WPARAM, LPARAM);
 
 static void loadURL(BSTR urlBStr);
 
@@ -336,7 +344,9 @@ static void resizeSubViews()
 
     RECT rcClient;
     GetClientRect(hMainWnd, &rcClient);
-    MoveWindow(hURLBarWnd, 0, 0, rcClient.right, URLBAR_HEIGHT, TRUE);
+    MoveWindow(hBackButtonWnd, 0, 0, CONTROLBUTTON_WIDTH, URLBAR_HEIGHT, TRUE);
+    MoveWindow(hForwardButtonWnd, CONTROLBUTTON_WIDTH, 0, CONTROLBUTTON_WIDTH, URLBAR_HEIGHT, TRUE);
+    MoveWindow(hURLBarWnd, CONTROLBUTTON_WIDTH * 2, 0, rcClient.right, URLBAR_HEIGHT, TRUE);
     MoveWindow(gViewWindow, 0, URLBAR_HEIGHT, rcClient.right, rcClient.bottom - URLBAR_HEIGHT, TRUE);
 }
 
@@ -457,24 +467,19 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE, HIN
         if (!hMainWnd)
             return FALSE;
 
-        hURLBarWnd = CreateWindow(L"EDIT", 0,
-                    WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, 
-                    0, 0, 0, 0,
-                    hMainWnd,
-                    0,
-                    hInst, 0);
+        hBackButtonWnd = CreateWindow(L"BUTTON", L"<", WS_CHILD | WS_VISIBLE  | BS_TEXT, 0, 0, 0, 0, hMainWnd, 0, hInst, 0);
+        hForwardButtonWnd = CreateWindow(L"BUTTON", L">", WS_CHILD | WS_VISIBLE  | BS_TEXT, CONTROLBUTTON_WIDTH, 0, 0, 0, hMainWnd, 0, hInst, 0);
+        hURLBarWnd = CreateWindow(L"EDIT", 0, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOVSCROLL, CONTROLBUTTON_WIDTH * 2, 0, 0, 0, hMainWnd, 0, hInst, 0);
 
         ShowWindow(hMainWnd, nCmdShow);
         UpdateWindow(hMainWnd);
     }
 
-#if defined _M_AMD64 || defined _WIN64
     DefEditProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(hURLBarWnd, GWLP_WNDPROC));
-    SetWindowLongPtr(hURLBarWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(MyEditProc));
-#else
-    DefEditProc = reinterpret_cast<WNDPROC>(GetWindowLong(hURLBarWnd, GWL_WNDPROC));
-    SetWindowLong(hURLBarWnd, GWL_WNDPROC, reinterpret_cast<LONG_PTR>(MyEditProc));
-#endif
+    DefButtonProc = reinterpret_cast<WNDPROC>(GetWindowLongPtr(hBackButtonWnd, GWLP_WNDPROC));
+    SetWindowLongPtr(hURLBarWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(EditProc));
+    SetWindowLongPtr(hBackButtonWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(BackButtonProc));
+    SetWindowLongPtr(hForwardButtonWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(ForwardButtonProc));
 
     SetFocus(hURLBarWnd);
 
@@ -868,29 +873,47 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 #define MAX_URL_LENGTH  1024
 
-LRESULT CALLBACK MyEditProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK EditProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message) {
-        case WM_CHAR:
-            if (wParam == 13) { // Enter Key
-                wchar_t strPtr[MAX_URL_LENGTH];
-                *((LPWORD)strPtr) = MAX_URL_LENGTH; 
-                int strLen = SendMessage(hDlg, EM_GETLINE, 0, (LPARAM)strPtr);
+    case WM_CHAR:
+        if (wParam == 13) { // Enter Key
+            wchar_t strPtr[MAX_URL_LENGTH];
+            *((LPWORD)strPtr) = MAX_URL_LENGTH; 
+            int strLen = SendMessage(hDlg, EM_GETLINE, 0, (LPARAM)strPtr);
 
-                strPtr[strLen] = 0;
-                _bstr_t bstr(strPtr);
-                loadURL(bstr);
+            strPtr[strLen] = 0;
+            _bstr_t bstr(strPtr);
+            loadURL(bstr);
 
-                return 0;
-            } else
-                return (LRESULT)CallWindowProc((WNDPROC)DefEditProc,hDlg,message,wParam,lParam);
-            break;
-        default:
-             return (LRESULT)CallWindowProc((WNDPROC)DefEditProc,hDlg,message,wParam,lParam);
-        break;
+            return 0;
+        } 
+    default:
+        return CallWindowProc(DefEditProc, hDlg, message, wParam, lParam);
     }
 }
 
+LRESULT CALLBACK BackButtonProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    BOOL wentBack = FALSE;
+    switch (message) {
+    case WM_LBUTTONUP:
+        gWebView->goBack(&wentBack);
+    default:
+        return CallWindowProc(DefButtonProc, hDlg, message, wParam, lParam);
+    }
+}
+
+LRESULT CALLBACK ForwardButtonProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    BOOL wentForward = FALSE;
+    switch (message) {
+    case WM_LBUTTONUP:
+        gWebView->goForward(&wentForward);
+    default:
+        return CallWindowProc(DefButtonProc, hDlg, message, wParam, lParam);
+    }
+}
 
 // Message handler for about box.
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)

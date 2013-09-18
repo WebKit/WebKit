@@ -1,3 +1,19 @@
+2013-09-17  Alex Christensen  <alex.christensen@flexsim.com>
+
+        Added back and forward buttons to WinLauncher.
+        https://bugs.webkit.org/show_bug.cgi?id=121212
+
+        Reviewed by Brent Fulgham.
+
+        * WinLauncher/WinLauncher.cpp:
+        (resizeSubViews):
+        Move new back and forward buttons to correct positions before URL bar.
+        (dllLauncherEntryPoint): 
+        Store the default button window procedure and replace with my button procedures.
+        (EditProc): Updated style and renamed from MyEditProc.
+        (BackButtonProc): Added.
+        (ForwardButtonProc): Added.
+
 2013-09-17  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed typo fix after r155999
