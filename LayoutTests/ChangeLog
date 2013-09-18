@@ -1,3 +1,13 @@
+2013-09-18  Robert Hogan  <robert@webkit.org>
+
+        Quirksmode: Break Tag Extra Space Bug
+        https://bugs.webkit.org/show_bug.cgi?id=11943
+
+        Reviewed by David Hyatt.
+
+        * fast/text/whitespace/trailing-space-before-br-in-right-aligned-text-expected.html: Added.
+        * fast/text/whitespace/trailing-space-before-br-in-right-aligned-text.html: Added.
+
 2013-09-18  Jer Noble  <jer.noble@apple.com>
 
         Merge blink MediaSource changes since fork.

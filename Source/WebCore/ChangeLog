@@ -1,3 +1,18 @@
+2013-09-18  Robert Hogan  <robert@webkit.org>
+
+        Quirksmode: Break Tag Extra Space Bug
+        https://bugs.webkit.org/show_bug.cgi?id=11943
+
+        Reviewed by David Hyatt.
+
+        Collapse away all space between text and a hard line-break when in a right-aligned
+        container so that the trailing space doesn't push the text away from the container edge.
+
+        Test: fast/text/whitespace/trailing-space-before-br-in-right-aligned-text.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextSegmentBreak):
+
 2013-09-18  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix for Qt (and other) ports after 156049.

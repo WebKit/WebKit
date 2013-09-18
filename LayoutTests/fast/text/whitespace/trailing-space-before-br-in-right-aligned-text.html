@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<head>
+<style>
+#testblock {
+	width:30%;
+	background-color:#FFA500;
+	text-align:right;
+}
+</style>
+<p>webkit.org/b/11943: trailing space after right-aligned text before a hard line-break should not push the text away from the right-edge of the container.
+   There should be no spaces between the text and right-hand edge of the container below.</p>
+<div id="testblock">
+<br>multiple trailing spaces    
+<br>no trailing space
+<br>single trailing space 
+<br>last line
+</div>
+</body>
+</html>

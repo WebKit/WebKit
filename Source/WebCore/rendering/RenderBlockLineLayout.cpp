@@ -2708,6 +2708,11 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                 // run for this object.
                 if (ignoringSpaces && currentStyle->clear() != CNONE)
                     ensureLineBoxInsideIgnoredSpaces(lineMidpointState, current.m_obj);
+                // If we were preceded by collapsing space and are in a right-aligned container we need to ensure the space gets
+                // collapsed away so that it doesn't push the text out from the container's right-hand edge.
+                // FIXME: Do this regardless of the container's alignment - will require rebaselining a lot of test results.
+                else if (ignoringSpaces && (blockStyle->textAlign() == RIGHT || blockStyle->textAlign() == WEBKIT_RIGHT))
+                    stopIgnoringSpaces(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos));
 
                 if (!lineInfo.isEmpty())
                     m_clear = currentStyle->clear();
@@ -3099,6 +3104,15 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                 if (currentCharacterIsSpace && !previousCharacterIsSpace) {
                     ignoreStart.m_obj = current.m_obj;
                     ignoreStart.m_pos = current.m_pos;
+                    // Spaces after right-aligned text and before a line-break get collapsed away completely so that the trailing
+                    // space doesn't seem to push the text out from the right-hand edge.
+                    // FIXME: Do this regardless of the container's alignment - will require rebaselining a lot of test results.
+                    if (next && next->isBR() && (blockStyle->textAlign() == RIGHT || blockStyle->textAlign() == WEBKIT_RIGHT)) {
+                        ignoreStart.m_pos--;
+                        // If there's just a single trailing space start ignoring it now so it collapses away.
+                        if (current.m_pos == t->textLength() - 1)
+                            startIgnoringSpaces(lineMidpointState, ignoreStart);
+                    }
                 }
 
                 if (!currentCharacterIsWS && previousCharacterIsWS) {
