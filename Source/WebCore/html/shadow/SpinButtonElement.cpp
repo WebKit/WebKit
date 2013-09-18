@@ -43,8 +43,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline SpinButtonElement::SpinButtonElement(Document* document, SpinButtonOwner& spinButtonOwner)
-    : HTMLDivElement(divTag, *document)
+inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner& spinButtonOwner)
+    : HTMLDivElement(divTag, document)
     , m_spinButtonOwner(&spinButtonOwner)
     , m_capturing(false)
     , m_upDownState(Indeterminate)
@@ -54,7 +54,7 @@ inline SpinButtonElement::SpinButtonElement(Document* document, SpinButtonOwner&
     setHasCustomStyleResolveCallbacks();
 }
 
-PassRefPtr<SpinButtonElement> SpinButtonElement::create(Document* document, SpinButtonOwner& spinButtonOwner)
+PassRefPtr<SpinButtonElement> SpinButtonElement::create(Document& document, SpinButtonOwner& spinButtonOwner)
 {
     return adoptRef(new SpinButtonElement(document, spinButtonOwner));
 }

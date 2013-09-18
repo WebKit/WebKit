@@ -1,3 +1,55 @@
+2013-09-17  Sam Weinig  <sam@webkit.org>
+
+        CTTE: Convert some straggling Element subclasses constructors to take a Document&
+        https://bugs.webkit.org/show_bug.cgi?id=121533
+
+        Reviewed by Anders Carlsson.
+
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::didAddUserAgentShadowRoot):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::didAddUserAgentShadowRoot):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::didAddUserAgentShadowRoot):
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::createShadowSubtree):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        * html/shadow/MeterShadowElement.cpp:
+        (WebCore::MeterShadowElement::MeterShadowElement):
+        (WebCore::MeterInnerElement::MeterInnerElement):
+        * html/shadow/MeterShadowElement.h:
+        (WebCore::MeterInnerElement::create):
+        (WebCore::MeterBarElement::create):
+        (WebCore::MeterValueElement::create):
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressShadowElement::ProgressShadowElement):
+        (WebCore::ProgressInnerElement::ProgressInnerElement):
+        (WebCore::ProgressBarElement::ProgressBarElement):
+        (WebCore::ProgressValueElement::ProgressValueElement):
+        * html/shadow/ProgressShadowElement.h:
+        (WebCore::ProgressInnerElement::create):
+        (WebCore::ProgressBarElement::create):
+        (WebCore::ProgressValueElement::create):
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::SpinButtonElement):
+        (WebCore::SpinButtonElement::create):
+        * html/shadow/SpinButtonElement.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerContainer::TextControlInnerContainer):
+        (WebCore::TextControlInnerContainer::create):
+        (WebCore::TextControlInnerElement::TextControlInnerElement):
+        (WebCore::TextControlInnerElement::create):
+        (WebCore::TextControlInnerTextElement::TextControlInnerTextElement):
+        (WebCore::TextControlInnerTextElement::create):
+        (WebCore::SearchFieldResultsButtonElement::SearchFieldResultsButtonElement):
+        (WebCore::SearchFieldResultsButtonElement::create):
+        (WebCore::SearchFieldCancelButtonElement::SearchFieldCancelButtonElement):
+        (WebCore::SearchFieldCancelButtonElement::create):
+        (WebCore::InputFieldSpeechButtonElement::InputFieldSpeechButtonElement):
+        (WebCore::InputFieldSpeechButtonElement::create):
+        * html/shadow/TextControlInnerElements.h:
+
 2013-09-17  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Use the float height to determine position in shape-inside

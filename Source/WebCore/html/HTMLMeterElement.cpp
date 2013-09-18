@@ -231,11 +231,11 @@ void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
     ASSERT(!m_value);
 
-    RefPtr<MeterInnerElement> inner = MeterInnerElement::create(&document());
+    RefPtr<MeterInnerElement> inner = MeterInnerElement::create(document());
     root->appendChild(inner);
 
-    RefPtr<MeterBarElement> bar = MeterBarElement::create(&document());
-    m_value = MeterValueElement::create(&document());
+    RefPtr<MeterBarElement> bar = MeterBarElement::create(document());
+    m_value = MeterValueElement::create(document());
     m_value->setWidthPercentage(0);
     m_value->updatePseudo();
     bar->appendChild(m_value, ASSERT_NO_EXCEPTION);

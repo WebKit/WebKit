@@ -234,31 +234,31 @@ void TextFieldInputType::createShadowSubtree()
     bool shouldHaveSpinButton = this->shouldHaveSpinButton();
     bool createsContainer = shouldHaveSpinButton || needsContainer();
 
-    m_innerText = TextControlInnerTextElement::create(&document);
+    m_innerText = TextControlInnerTextElement::create(document);
     if (!createsContainer) {
         element().userAgentShadowRoot()->appendChild(m_innerText, IGNORE_EXCEPTION);
         return;
     }
 
     ShadowRoot* shadowRoot = element().userAgentShadowRoot();
-    m_container = TextControlInnerContainer::create(&document);
+    m_container = TextControlInnerContainer::create(document);
     m_container->setPseudo(AtomicString("-webkit-textfield-decoration-container", AtomicString::ConstructFromLiteral));
     shadowRoot->appendChild(m_container, IGNORE_EXCEPTION);
 
-    m_innerBlock = TextControlInnerElement::create(&document);
+    m_innerBlock = TextControlInnerElement::create(document);
     m_innerBlock->appendChild(m_innerText, IGNORE_EXCEPTION);
     m_container->appendChild(m_innerBlock, IGNORE_EXCEPTION);
 
 #if ENABLE(INPUT_SPEECH)
     ASSERT(!m_speechButton);
     if (element().isSpeechEnabled()) {
-        m_speechButton = InputFieldSpeechButtonElement::create(&document);
+        m_speechButton = InputFieldSpeechButtonElement::create(document);
         m_container->appendChild(m_speechButton, IGNORE_EXCEPTION);
     }
 #endif
 
     if (shouldHaveSpinButton) {
-        m_innerSpinButton = SpinButtonElement::create(&document, *this);
+        m_innerSpinButton = SpinButtonElement::create(document, *this);
         m_container->appendChild(m_innerSpinButton, IGNORE_EXCEPTION);
     }
 }
