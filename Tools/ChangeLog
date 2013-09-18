@@ -1,3 +1,14 @@
+2013-09-18  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r129451): run-safari --no-saved-state is broken
+        https://bugs.webkit.org/show_bug.cgi?id=121566
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/webkitdirs.pm: (argumentsForRunAndDebugMacWebKitApp):
+        Check arguments, not the newly created empty array. Pass a value that silences warnings.
+        While at it, removed a check for Snow Leopard.
+
 2013-09-18  Alex Christensen  <achristensen@webkit.org>
 
         Improved WinLauncher's URL handling.
