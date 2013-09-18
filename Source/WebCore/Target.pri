@@ -1225,7 +1225,6 @@ SOURCES += \
     rendering/RenderTreeAsText.cpp \
     rendering/RenderView.cpp \
     rendering/RenderWidget.cpp \
-    rendering/RenderWordBreak.cpp \
     rendering/RootInlineBox.cpp \
     rendering/ScrollBehavior.cpp \
     rendering/shapes/PolygonShape.cpp \
@@ -2493,7 +2492,6 @@ HEADERS += \
     rendering/RenderVideo.h \
     rendering/RenderView.h \
     rendering/RenderWidget.h \
-    rendering/RenderWordBreak.h \
     rendering/RootInlineBox.h \
     rendering/ScrollBehavior.h \
     rendering/shapes/PolygonShape.h \

@@ -76,7 +76,7 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     // If we have a line box wrapper, delete it.
     if (oldChild->isBox())
         toRenderBox(oldChild)->deleteLineBoxWrapper();
-    else if (oldChild->isBR())
+    else if (oldChild->isLineBreak())
         toRenderBR(oldChild)->deleteInlineBoxWrapper();
 
     // If oldChild is the start or end of the selection, then clear the selection to

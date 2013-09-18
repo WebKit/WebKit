@@ -118,7 +118,6 @@
 #include "RenderVideo.cpp"
 #include "RenderView.cpp"
 #include "RenderWidget.cpp"
-#include "RenderWordBreak.cpp"
 #include "RootInlineBox.cpp"
 #include "ScrollBehavior.cpp"
 #include "break_lines.cpp"

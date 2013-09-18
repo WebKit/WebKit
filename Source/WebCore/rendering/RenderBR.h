@@ -26,16 +26,18 @@
 
 namespace WebCore {
 
+class HTMLElement;
 class Position;
 
+// FIXME: Rename this to RenderLineBreak.
 class RenderBR FINAL : public RenderBoxModelObject {
 public:
-    explicit RenderBR(Element*);
+    explicit RenderBR(HTMLElement*);
     virtual ~RenderBR();
 
     static RenderBR* createAnonymous(Document&);
 
-    virtual const char* renderName() const { return "RenderBR"; }
+    virtual const char* renderName() const { return m_isWBR ? "RenderWordBreak" : "RenderBR"; }
 
     InlineBox* createInlineBox();
     InlineBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
@@ -50,6 +52,10 @@ public:
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const OVERRIDE;
 
 private:
+    void node() const WTF_DELETED_FUNCTION;
+
+    virtual bool isWBR() const OVERRIDE { return m_isWBR; }
+
     virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
     virtual int caretMinOffset() const OVERRIDE;
     virtual int caretMaxOffset() const OVERRIDE;
@@ -79,29 +85,30 @@ private:
 
     InlineBox* m_inlineBoxWrapper;
     mutable int m_cachedLineHeight;
+    bool m_isWBR;
 };
 
 inline RenderBR& toRenderBR(RenderObject& object)
 { 
-    ASSERT_WITH_SECURITY_IMPLICATION(object.isBR());
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isLineBreak());
     return static_cast<RenderBR&>(object);
 }
 
 inline const RenderBR& toRenderBR(const RenderObject& object)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(object.isBR());
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isLineBreak());
     return static_cast<const RenderBR&>(object);
 }
 
 inline RenderBR* toRenderBR(RenderObject* object)
 { 
-    ASSERT_WITH_SECURITY_IMPLICATION(object->isBR());
+    ASSERT_WITH_SECURITY_IMPLICATION(object->isLineBreak());
     return static_cast<RenderBR*>(object);
 }
 
 inline const RenderBR* toRenderBR(const RenderObject* object)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(object->isBR());
+    ASSERT_WITH_SECURITY_IMPLICATION(object->isLineBreak());
     return static_cast<const RenderBR*>(object);
 }
 

@@ -606,7 +606,7 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& yield, const Ren
                 else
                     yield(FloatRect(logicalTop, childText->y(), logicalHeight, childText->logicalWidth()));
             }
-        } else if (curr->isBR()) {
+        } else if (curr->isLineBreak()) {
             if (InlineBox* inlineBox = toRenderBR(curr)->inlineBoxWrapper()) {
                 // FIXME: This could use a helper to share these with text path.
                 const RootInlineBox& rootBox = inlineBox->root();
@@ -907,7 +907,7 @@ InlineBox* RenderInline::culledInlineFirstLineBox() const
         // direction (aligned to the root box's baseline).
         if (curr->isBox())
             return toRenderBox(curr)->inlineBoxWrapper();
-        if (curr->isBR()) {
+        if (curr->isLineBreak()) {
             RenderBR* renderBR = toRenderBR(curr);
             if (renderBR->inlineBoxWrapper())
                 return renderBR->inlineBoxWrapper();
@@ -935,7 +935,7 @@ InlineBox* RenderInline::culledInlineLastLineBox() const
         // direction (aligned to the root box's baseline).
         if (curr->isBox())
             return toRenderBox(curr)->inlineBoxWrapper();
-        if (curr->isBR()) {
+        if (curr->isLineBreak()) {
             RenderBR* renderBR = toRenderBR(curr);
             if (renderBR->inlineBoxWrapper())
                 return renderBR->inlineBoxWrapper();
@@ -1314,7 +1314,7 @@ void RenderInline::dirtyLineBoxes(bool fullLayout)
                     RenderText* currText = toRenderText(curr);
                     for (InlineTextBox* childText = currText->firstTextBox(); childText; childText = childText->nextTextBox())
                         childText->root().markDirty();
-                } else if (curr->isBR()) {
+                } else if (curr->isLineBreak()) {
                     RenderBR* currBR = toRenderBR(curr);
                     if (currBR->inlineBoxWrapper())
                         currBR->inlineBoxWrapper()->root().markDirty();

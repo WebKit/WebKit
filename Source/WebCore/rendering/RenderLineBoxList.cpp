@@ -342,7 +342,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderObject* container, Rend
             InlineBox* wrapper = toRenderBox(curr)->inlineBoxWrapper();
             if (wrapper)
                 box = &wrapper->root();
-        } if (curr->isBR()) {
+        } if (curr->isLineBreak()) {
             InlineBox* wrapper = toRenderBR(curr)->inlineBoxWrapper();
             if (wrapper)
                 box = &wrapper->root();

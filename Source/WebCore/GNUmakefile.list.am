@@ -4554,8 +4554,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderView.h \
 	Source/WebCore/rendering/RenderWidget.cpp \
 	Source/WebCore/rendering/RenderWidget.h \
-	Source/WebCore/rendering/RenderWordBreak.cpp \
-	Source/WebCore/rendering/RenderWordBreak.h \
 	Source/WebCore/rendering/RootInlineBox.cpp \
 	Source/WebCore/rendering/RootInlineBox.h \
 	Source/WebCore/rendering/ScrollBehavior.cpp \

@@ -2199,7 +2199,6 @@ set(WebCore_SOURCES
     rendering/RenderVideo.cpp
     rendering/RenderView.cpp
     rendering/RenderWidget.cpp
-    rendering/RenderWordBreak.cpp
     rendering/RootInlineBox.cpp
     rendering/ScrollBehavior.cpp
     rendering/TextAutosizer.cpp

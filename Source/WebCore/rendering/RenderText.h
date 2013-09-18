@@ -40,7 +40,6 @@ public:
     virtual const char* renderName() const OVERRIDE;
 
     virtual bool isTextFragment() const;
-    virtual bool isWordBreak() const;
 
     virtual PassRefPtr<StringImpl> originalText() const;
 

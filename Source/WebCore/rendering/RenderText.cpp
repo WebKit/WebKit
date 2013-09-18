@@ -189,11 +189,6 @@ bool RenderText::isTextFragment() const
     return false;
 }
 
-bool RenderText::isWordBreak() const
-{
-    return false;
-}
-
 void RenderText::updateNeedsTranscoding()
 {
     const TextEncoding* encoding = document().decoder() ? &document().decoder()->encoding() : 0;

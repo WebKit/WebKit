@@ -1,3 +1,103 @@
+2013-09-18  Antti Koivisto  <antti@apple.com>
+
+        Remove RenderWordBreak
+        https://bugs.webkit.org/show_bug.cgi?id=121549
+
+        Reviewed by Andreas Kling.
+
+        Remove RenderWordBreak and make it a bit in RenderBR instead.
+        
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::updateHoverActiveState):
+        * dom/Position.cpp:
+        (WebCore::hasInlineBoxWrapper):
+        (WebCore::Position::hasRenderedNonAnonymousDescendantsWithHeight):
+        * editing/Editor.cpp:
+        (WebCore::findFirstMarkable):
+        * editing/TextIterator.cpp:
+        (WebCore::ignoresContainerClip):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createRenderer):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::logicalHeight):
+        (WebCore::InlineBox::baselinePosition):
+        (WebCore::InlineBox::lineHeight):
+        (WebCore::InlineBox::deleteLine):
+        (WebCore::InlineBox::extractLine):
+        (WebCore::InlineBox::attachLine):
+        (WebCore::InlineBox::nodeAtPoint):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::isLineBreak):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::computeOverflow):
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::atTextParagraphSeparator):
+        (WebCore::isIteratorTarget):
+        * rendering/RenderBR.cpp:
+        (WebCore::RenderBR::RenderBR):
+        * rendering/RenderBR.h:
+        (WebCore::toRenderBR):
+    
+            RenderBR now represents both hard and soft line breaks. It will be renamed to RenderLineBreak later.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::InlineMinMaxIterator::next):
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::createInlineBoxForRenderer):
+        (WebCore::dirtyLineBoxesForRenderer):
+        (WebCore::RenderBlock::computeBlockDirectionPositionsForLine):
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        (WebCore::textBeginsWithBreakablePosition):
+        (WebCore::canBreakAtThisPosition):
+        (WebCore::RenderBlock::LineBreaker::nextSegmentBreak):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::generateCulledLineBoxRects):
+        (WebCore::RenderInline::culledInlineFirstLineBox):
+        (WebCore::RenderInline::culledInlineLastLineBox):
+        (WebCore::RenderInline::dirtyLineBoxes):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isLineBreak):
+        
+            This bit covers both BR and WBR.
+
+        (WebCore::RenderObject::isBR):
+        (WebCore::RenderObject::isLineBreakOpportunity):
+        
+            Rename isWordBreak to isLineBreakOpportunity. This matches HTML5 spec terminology.
+
+        (WebCore::RenderObject::isTextOrLineBreak):
+        
+            Since WBR used to be Text we want this check to still cover it too. Renamed from isTextOrBR.
+
+        (WebCore::RenderObject::setIsLineBreak):
+        (WebCore::RenderObject::isWBR):
+        (WebCore::RenderObject::RenderObjectBitfields::RenderObjectBitfields):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        * rendering/RenderText.cpp:
+        * rendering/RenderText.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/RenderWordBreak.cpp: Removed.
+        * rendering/RenderWordBreak.h: Removed.
+        * rendering/RenderingAllInOne.cpp:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+        (WebCore::RootInlineBox::verticalPositionForBox):
+        (WebCore::RootInlineBox::includeLeadingForBox):
+        (WebCore::RootInlineBox::includeFontForBox):
+        (WebCore::RootInlineBox::includeGlyphsForBox):
+        (WebCore::RootInlineBox::includeMarginForBox):
+
 2013-09-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         ASSERT_NOT_REACHED is touched in WebCore::CSSPrimitiveValue::computeLengthDouble

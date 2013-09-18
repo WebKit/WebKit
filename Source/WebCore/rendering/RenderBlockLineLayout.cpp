@@ -270,11 +270,11 @@ static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRo
     if (obj->isBox())
         return toRenderBox(obj)->createInlineBox();
 
-    if (obj->isBR()) {
+    if (obj->isLineBreak()) {
         InlineBox* inlineBox = toRenderBR(obj)->createInlineBox();
         // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
         // (Note the use of strict mode. In "almost strict" mode, we don't treat the box for <br> as text.)
-        inlineBox->setBehavesLikeText(isOnlyRun || obj->document().inNoQuirksMode());
+        inlineBox->setBehavesLikeText(isOnlyRun || obj->document().inNoQuirksMode() || obj->isLineBreakOpportunity());
         return inlineBox;
     }
 
@@ -296,7 +296,7 @@ static inline void dirtyLineBoxesForRenderer(RenderObject* o, bool fullLayout)
         RenderText* renderText = toRenderText(o);
         updateCounterIfNeeded(renderText);
         renderText->dirtyLineBoxes(fullLayout);
-    } else if (o->isBR())
+    } else if (o->isLineBreak())
         toRenderBR(o)->dirtyLineBoxes(fullLayout);
     else
         toRenderInline(o)->dirtyLineBoxes(fullLayout);
@@ -928,7 +928,7 @@ void RenderBlock::computeBlockDirectionPositionsForLine(RootInlineBox* lineBox, 
             toRenderText(r->m_object)->positionLineBox(r->m_box);
         else if (r->m_object->isBox())
             toRenderBox(r->m_object)->positionLineBox(r->m_box);
-        else if (r->m_object->isBR())
+        else if (r->m_object->isLineBreak())
             toRenderBR(r->m_object)->replaceInlineBoxWrapper(r->m_box);
     }
     // Positioned objects and zero-length text nodes destroy their boxes in
@@ -1842,7 +1842,7 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
                     else
                         o->layoutIfNeeded();
                 }
-            } else if (o->isTextOrBR() || (o->isRenderInline() && !walker.atEndOfInline())) {
+            } else if (o->isTextOrLineBreak() || (o->isRenderInline() && !walker.atEndOfInline())) {
                 if (o->isRenderInline())
                     toRenderInline(o)->updateAlwaysCreateLineBoxes(layoutState.isFullLayout());
                 if (layoutState.isFullLayout() || o->selfNeedsLayout())
@@ -2546,8 +2546,6 @@ static bool textBeginsWithBreakablePosition(RenderObject* next)
 {
     ASSERT(next->isText());
     RenderText* nextText = toRenderText(next);
-    if (nextText->isWordBreak())
-        return true;
     if (!nextText->textLength())
         return false;
     UChar c = nextText->characterAt(0);
@@ -2567,6 +2565,9 @@ static bool canBreakAtThisPosition(bool autoWrap, LineWidth& width, InlineIterat
     // Return early if we autowrap and the current character is a space as we will always want to break at such a position.
     if (autoWrap && currentCharacterIsSpace)
         return true;
+
+    if (next && next->isLineBreakOpportunity())
+        return autoWrap;
 
     bool nextIsText = (next && (current.m_obj->isText() || isEmptyInline(current.m_obj)) && next->isText() && (autoWrap || next->style()->autoWrap()));
     if (!nextIsText)
@@ -2877,11 +2878,6 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             }
 #endif
 
-            if (t->isWordBreak()) {
-                commitLineBreakAtCurrentWidth(width, lBreak, current.m_obj);
-                ASSERT(current.m_pos == t->textLength());
-            }
-
             if (renderTextInfo.m_text != t) {
                 updateCounterIfNeeded(t);
                 renderTextInfo.m_text = t;
@@ -3156,7 +3152,9 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                 if (m_hyphenated)
                     goto end;
             }
-        } else
+        } else if (current.m_obj->isLineBreakOpportunity())
+            commitLineBreakAtCurrentWidth(width, lBreak, current.m_obj);
+        else
             ASSERT_NOT_REACHED();
 
         bool canBreakHere = canBreakAtThisPosition(autoWrap, width, lBreak, next, current, currWS, currentCharacterIsSpace, autoWrapWasEverTrueOnLine);

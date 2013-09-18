@@ -23,6 +23,7 @@
 #include "RenderBR.h"
 
 #include "Document.h"
+#include "HTMLElement.h"
 #include "RenderBlock.h"
 #include "RootInlineBox.h"
 #include "VisiblePosition.h"
@@ -31,12 +32,13 @@ namespace WebCore {
 
 static const int invalidLineHeight = -1;
 
-RenderBR::RenderBR(Element* element)
+RenderBR::RenderBR(HTMLElement* element)
     : RenderBoxModelObject(element)
     , m_inlineBoxWrapper(nullptr)
     , m_cachedLineHeight(invalidLineHeight)
+    , m_isWBR(element && element->hasTagName(HTMLNames::wbrTag))
 {
-    setIsBR();
+    setIsLineBreak();
 }
 
 RenderBR::~RenderBR()

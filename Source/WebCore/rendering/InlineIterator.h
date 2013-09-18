@@ -76,7 +76,7 @@ public:
     inline bool atTextParagraphSeparator()
     {
         return m_obj && m_obj->preservesNewline() && m_obj->isText() && toRenderText(m_obj)->textLength()
-            && !toRenderText(m_obj)->isWordBreak() && toRenderText(m_obj)->characterAt(m_pos) == '\n';
+            && toRenderText(m_obj)->characterAt(m_pos) == '\n';
     }
     
     inline bool atParagraphSeparator()
@@ -166,7 +166,7 @@ static inline void notifyObserverWillExitObject(Observer* observer, RenderObject
 static inline bool isIteratorTarget(RenderObject* object)
 {
     ASSERT(object); // The iterator will of course return 0, but its not an expected argument to this function.
-    return object->isTextOrBR() || object->isFloating() || object->isOutOfFlowPositioned() || object->isReplaced();
+    return object->isText() || object->isLineBreak() || object->isFloating() || object->isOutOfFlowPositioned() || object->isReplaced();
 }
 
 // This enum is only used for bidiNextShared()

@@ -127,7 +127,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
         if (child->renderer().isReplaced())
             shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         else if (child->behavesLikeText()) {
-            if (child->renderer().isBR() || child->renderer().parent() != &renderer()) {
+            if (child->renderer().isLineBreak() || child->renderer().parent() != &renderer()) {
                 if (!parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle->font().fontMetrics())
                     || parentStyle->lineHeight() != childStyle->lineHeight()
                     || (parentStyle->verticalAlign() != BASELINE && !isRootInlineBox()) || childStyle->verticalAlign() != BASELINE)
@@ -136,10 +136,10 @@ void InlineFlowBox::addToLine(InlineBox* child)
             if (childStyle->hasTextCombine() || childStyle->textEmphasisMark() != TextEmphasisMarkNone)
                 shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         } else {
-            if (child->renderer().isBR()) {
+            if (child->renderer().isLineBreak()) {
                 // FIXME: This is dumb. We only turn off because current layout test results expect the <br> to be 0-height on the baseline.
                 // Other than making a zillion tests have to regenerate results, there's no reason to ditch the optimization here.
-                shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
+                shouldClearDescendantsHaveSameLineHeightAndBaseline = child->renderer().isBR();
             } else {
                 ASSERT(isInlineFlowBox());
                 InlineFlowBox* childFlowBox = toInlineFlowBox(child);
@@ -166,7 +166,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
             const RenderBox& box = toRenderBox(child->renderer());
             if (box.hasRenderOverflow() || box.hasSelfPaintingLayer())
                 child->clearKnownToHaveNoOverflow();
-        } else if (!child->renderer().isBR() && (child->renderer().style(isFirstLineStyle())->boxShadow() || child->boxModelObject()->hasSelfPaintingLayer()
+        } else if (!child->renderer().isLineBreak() && (child->renderer().style(isFirstLineStyle())->boxShadow() || child->boxModelObject()->hasSelfPaintingLayer()
                    || (child->renderer().isListMarker() && !toRenderListMarker(child->renderer()).isInside())
                    || child->renderer().style(isFirstLineStyle())->hasBorderImageOutsets()))
             child->clearKnownToHaveNoOverflow();
@@ -950,7 +950,7 @@ void InlineFlowBox::computeOverflow(LayoutUnit lineTop, LayoutUnit lineBottom, G
         if (curr->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
-        if (curr->renderer().isBR())
+        if (curr->renderer().isLineBreak())
             continue;
         if (curr->renderer().isText()) {
             InlineTextBox* text = toInlineTextBox(curr);

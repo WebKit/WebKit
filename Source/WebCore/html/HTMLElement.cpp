@@ -49,7 +49,7 @@
 #include "HTMLTemplateElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "NodeTraversal.h"
-#include "RenderWordBreak.h"
+#include "RenderBR.h"
 #include "ScriptController.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
@@ -791,7 +791,7 @@ bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
 RenderObject* HTMLElement::createRenderer(RenderArena& arena, RenderStyle& style)
 {
     if (hasLocalName(wbrTag))
-        return new (arena) RenderWordBreak(this);
+        return new (arena) RenderBR(this);
     return RenderObject::createObject(*this, style);
 }
 

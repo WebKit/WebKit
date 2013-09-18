@@ -69,7 +69,7 @@ public:
     virtual void extractLine();
     virtual void attachLine();
 
-    virtual bool isLineBreak() const { return renderer().isBR(); }
+    virtual bool isLineBreak() const { return renderer().isLineBreak(); }
 
     virtual void adjustPosition(float dx, float dy);
     void adjustLogicalPosition(float deltaLogicalLeft, float deltaLogicalTop)

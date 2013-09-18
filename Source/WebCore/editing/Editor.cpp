@@ -3085,7 +3085,7 @@ static Node* findFirstMarkable(Node* node)
     while (node) {
         if (!node->renderer())
             return 0;
-        if (node->renderer()->isTextOrBR())
+        if (node->renderer()->isTextOrLineBreak())
             return node;
         if (isHTMLTextFormControlElement(node))
             node = toHTMLTextFormControlElement(node)->visiblePositionForIndex(1).deepEquivalent().deprecatedNode();

@@ -308,7 +308,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 ts << " [textStrokeWidth=" << o.style()->textStrokeWidth() << "]";
         }
 
-        if (!o.isBoxModelObject() || o.isBR())
+        if (!o.isBoxModelObject() || o.isLineBreak())
             return;
 
         const RenderBoxModelObject& box = toRenderBoxModelObject(o);

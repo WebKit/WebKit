@@ -57,7 +57,7 @@ static bool hasInlineBoxWrapper(RenderObject& renderer)
         return true;
     if (renderer.isText() && toRenderText(renderer).firstTextBox())
         return true;
-    if (renderer.isBR() && toRenderBR(renderer).inlineBoxWrapper())
+    if (renderer.isLineBreak() && toRenderBR(renderer).inlineBoxWrapper())
         return true;
     return false;
 }
@@ -857,7 +857,7 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(RenderObject* render
     for (RenderObject *o = renderer->firstChild(); o && o != stop; o = o->nextInPreOrder())
         if (o->nonPseudoNode()) {
             if ((o->isText() && boundingBoxLogicalHeight(o, toRenderText(o)->linesBoundingBox()))
-                || (o->isBR() && boundingBoxLogicalHeight(o, toRenderBR(o)->linesBoundingBox()))
+                || (o->isLineBreak() && boundingBoxLogicalHeight(o, toRenderBR(o)->linesBoundingBox()))
                 || (o->isBox() && toRenderBox(o)->pixelSnappedLogicalHeight())
                 || (o->isRenderInline() && isEmptyInline(o) && boundingBoxLogicalHeight(o, toRenderInline(o)->linesBoundingBox())))
                 return true;

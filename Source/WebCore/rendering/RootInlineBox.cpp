@@ -915,7 +915,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
     if (includeMarginForBox(box)) {
         LayoutUnit ascentWithMargin = box->renderer().style(isFirstLineStyle())->fontMetrics().ascent(baselineType());
         LayoutUnit descentWithMargin = box->renderer().style(isFirstLineStyle())->fontMetrics().descent(baselineType());
-        if (box->parent() && !box->renderer().isTextOrBR()) {
+        if (box->parent() && !box->renderer().isTextOrLineBreak()) {
             ascentWithMargin += box->boxModelObject()->borderAndPaddingBefore() + box->boxModelObject()->marginBefore();
             descentWithMargin += box->boxModelObject()->borderAndPaddingAfter() + box->boxModelObject()->marginAfter();
         }
@@ -929,7 +929,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox* box, GlyphOverflowAndFallb
 
 LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositionCache& verticalPositionCache)
 {
-    if (box->renderer().isTextOrBR())
+    if (box->renderer().isTextOrLineBreak())
         return box->parent()->logicalTop();
     
     RenderBoxModelObject* renderer = box->boxModelObject();
@@ -1001,7 +1001,7 @@ LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositio
 
 bool RootInlineBox::includeLeadingForBox(InlineBox* box) const
 {
-    if (box->renderer().isReplaced() || (box->renderer().isTextOrBR() && !box->behavesLikeText()))
+    if (box->renderer().isReplaced() || (box->renderer().isTextOrLineBreak() && !box->behavesLikeText()))
         return false;
 
     LineBoxContain lineBoxContain = renderer().style()->lineBoxContain();
@@ -1010,7 +1010,7 @@ bool RootInlineBox::includeLeadingForBox(InlineBox* box) const
 
 bool RootInlineBox::includeFontForBox(InlineBox* box) const
 {
-    if (box->renderer().isReplaced() || (box->renderer().isTextOrBR() && !box->behavesLikeText()))
+    if (box->renderer().isReplaced() || (box->renderer().isTextOrLineBreak() && !box->behavesLikeText()))
         return false;
     
     if (!box->behavesLikeText() && box->isInlineFlowBox() && !toInlineFlowBox(box)->hasTextChildren())
@@ -1023,7 +1023,7 @@ bool RootInlineBox::includeFontForBox(InlineBox* box) const
 
 bool RootInlineBox::includeGlyphsForBox(InlineBox* box) const
 {
-    if (box->renderer().isReplaced() || (box->renderer().isTextOrBR() && !box->behavesLikeText()))
+    if (box->renderer().isReplaced() || (box->renderer().isTextOrLineBreak() && !box->behavesLikeText()))
         return false;
     
     if (!box->behavesLikeText() && box->isInlineFlowBox() && !toInlineFlowBox(box)->hasTextChildren())
@@ -1036,7 +1036,7 @@ bool RootInlineBox::includeGlyphsForBox(InlineBox* box) const
 
 bool RootInlineBox::includeMarginForBox(InlineBox* box) const
 {
-    if (box->renderer().isReplaced() || (box->renderer().isTextOrBR() && !box->behavesLikeText()))
+    if (box->renderer().isReplaced() || (box->renderer().isTextOrLineBreak() && !box->behavesLikeText()))
         return false;
 
     LineBoxContain lineBoxContain = renderer().style()->lineBoxContain();
