@@ -1,3 +1,13 @@
+2013-09-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Give 'jsc' commandline an option to disable deleting the VM.
+
+        Reviewed by Mark Hahnenberg.
+
+        * jsc.cpp:
+        (jscmain):
+        * runtime/Options.h:
+
 2013-09-18  Anders Carlsson  <andersca@apple.com>
 
         RefPtrHashMap should work with move only types
