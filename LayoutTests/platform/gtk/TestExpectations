@@ -445,7 +445,7 @@ webkit.org/b/86176 [ Debug ] ietestcenter/css3/valuesandunits/units-000.htm [ Cr
 
 webkit.org/b/93812 [ Debug ] svg/custom/use-instanceRoot-as-event-target.xhtml [ Crash Pass ]
 
-webkit.org/b/90957 [ Release ] js/random-array-gc-stress.html [ Crash Pass ]
+webkit.org/b/90957 [ Release ] js/dom/random-array-gc-stress.html [ Crash Pass ]
 
 webkit.org/b/94458 [ Debug ] fast/events/message-port-context-destroyed.html [ Crash Pass ]
 
@@ -721,7 +721,7 @@ Bug(GTK) css3/flexbox/position-absolute-child.html [ Pass Slow ]
 Bug(GTK) css3/flexbox/multiline-justify-content.html [ Pass Slow ]
 Bug(GTK) [ Debug ] editing/selection/move-by-word-visually-crash-test-5.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/css/visited-link-hang.html [ Pass Slow ]
-Bug(GTK) js/create-lots-of-workers.html [ Pass Slow ]
+Bug(GTK) js/dom/create-lots-of-workers.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-double-vote-fuzz.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-float32array.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-float64array.html [ Pass Slow ]
@@ -734,7 +734,7 @@ Bug(GTK) [ Debug ] js/dfg-uint32array.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-uint32array-overflow-values.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-uint8array.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/dfg-uint8clampedarray.html [ Pass Slow ]
-Bug(GTK) [ Debug ] js/random-array-gc-stress.html [ Pass Slow ]
+Bug(GTK) [ Debug ] js/dom/random-array-gc-stress.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/regress/method-on-number.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/string-replacement-outofmemory.html [ Pass Slow ]
 Bug(GTK) [ Debug ] js/toString-and-valueOf-override.html [ Pass Slow ]

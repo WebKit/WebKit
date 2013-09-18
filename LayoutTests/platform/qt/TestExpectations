@@ -2762,8 +2762,8 @@ webkit.org/b/113513 inspector/styles/paste-property.html [ Skip ]
 # New test crashes after r147388
 webkit.org/b/113770 editing/execCommand/format-block-at-root.html [ Skip ]
 
-#[Qt] New test js/dom-static-property-for-in-iteration.html fails on Qt after r147570
-webkit.org/b/114157 js/dom-static-property-for-in-iteration.html [ Failure ]
+#[Qt] New test js/dom/dom-static-property-for-in-iteration.html fails on Qt after r147570
+webkit.org/b/114157 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 
 # Nested opacity with overflow may display wrong results when composited
 webkit.org/b/114338 compositing/overlap-blending/nested-overlap-overflow.html [ Skip ]
@@ -2790,7 +2790,7 @@ webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cac
 webkit.org/b/117036 http/tests/uri/curly-braces-escaping.html [ Skip ]
 
 # [Qt] REGRESSION(r151020): js/custom-constructors.html makes next test crashing
-webkit.org/b/117141 js/custom-constructors.html [ Skip ]
+webkit.org/b/117141 js/dom/custom-constructors.html [ Skip ]
 
 # REGRESSION(r151146) fast/forms/control-clip-overflow.html fails
 webkit.org/b/117185 fast/forms/control-clip-overflow.html [ Skip ]

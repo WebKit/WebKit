@@ -1075,7 +1075,7 @@ compositing/patterns/direct-pattern-compositing-size.html [ Pass ImageOnlyFailur
 compositing/patterns/direct-pattern-compositing.html [ Pass ImageOnlyFailure ]
 
 # Timing out on Mountain Lion WK1 release sometimes
-webkit.org/b/99221 js/random-array-gc-stress.html [ Pass Timeout ]
+webkit.org/b/99221 js/dom/random-array-gc-stress.html [ Pass Timeout ]
 
 # User Timing is not enable yet. so skip it.
 webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
@@ -1275,8 +1275,6 @@ webkit.org/b/116238 css3/filters/custom/filter-fallback-to-software.html [ Pass 
 webkit.org/b/116244 fast/events/mouse-cursor-image-set.html [ Failure Pass ]
 
 webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
-
-webkit.org/b/116388 js/post-message-numeric-property.html
 
 webkit.org/b/116582 [ Debug ] inspector/styles/import-pseudoclass-crash.html [ Pass Crash ]
 

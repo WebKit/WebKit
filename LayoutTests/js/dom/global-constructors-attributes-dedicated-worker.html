@@ -1,0 +1,13 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test to ensure that global constructors have the right attributes in the dedicated worker context");
+
+worker = startWorker("script-tests/global-constructors-attributes.js", false /* shared */);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

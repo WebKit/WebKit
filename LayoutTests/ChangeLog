@@ -1,3 +1,1885 @@
+2013-09-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of the jsc-test-list by moving all not-jsc-capable tests into js/dom
+        https://bugs.webkit.org/show_bug.cgi?id=121578
+
+        Rubber stamped by Geoffrey Garen.
+
+        * fast/regex/cross-frame-callable-expected.txt: Removed.
+        * fast/regex/cross-frame-callable.html: Removed.
+        * fast/regex/dom: Added.
+        * fast/regex/dom/cross-frame-callable-expected.txt: Added.
+        * fast/regex/dom/cross-frame-callable.html: Added.
+        * fast/regex/dom/lastIndex-expected.txt: Added.
+        * fast/regex/dom/lastIndex.html: Added.
+        * fast/regex/dom/non-pattern-characters-expected.txt: Added.
+        * fast/regex/dom/non-pattern-characters.html: Added.
+        * fast/regex/dom/script-tests: Added.
+        * fast/regex/dom/script-tests/cross-frame-callable.js: Added.
+        (doTest):
+        * fast/regex/dom/script-tests/lastIndex.js: Added.
+        * fast/regex/dom/script-tests/non-pattern-characters.js: Added.
+        * fast/regex/dom/script-tests/unicodeCaseInsensitive.js: Added.
+        (shouldBeTrue.ucs2CodePoint):
+        * fast/regex/dom/syntax-errors-expected.txt: Added.
+        * fast/regex/dom/syntax-errors.html: Added.
+        * fast/regex/dom/unicodeCaseInsensitive-expected.txt: Added.
+        * fast/regex/dom/unicodeCaseInsensitive.html: Added.
+        * fast/regex/lastIndex-expected.txt: Removed.
+        * fast/regex/lastIndex.html: Removed.
+        * fast/regex/non-pattern-characters-expected.txt: Removed.
+        * fast/regex/non-pattern-characters.html: Removed.
+        * fast/regex/script-tests/cross-frame-callable.js: Removed.
+        * fast/regex/script-tests/lastIndex.js: Removed.
+        * fast/regex/script-tests/non-pattern-characters.js: Removed.
+        * fast/regex/script-tests/unicodeCaseInsensitive.js: Removed.
+        * fast/regex/syntax-errors-expected.txt: Removed.
+        * fast/regex/syntax-errors.html: Removed.
+        * fast/regex/unicodeCaseInsensitive-expected.txt: Removed.
+        * fast/regex/unicodeCaseInsensitive.html: Removed.
+        * js/JSON-parse-expected.txt: Removed.
+        * js/JSON-parse.html: Removed.
+        * js/JSON-stringify-expected.txt: Removed.
+        * js/JSON-stringify.html: Removed.
+        * js/Object-defineProperty-expected.txt: Removed.
+        * js/Object-defineProperty.html: Removed.
+        * js/Promise-already-fulfilled-expected.txt: Removed.
+        * js/Promise-already-fulfilled.html: Removed.
+        * js/Promise-already-rejected-expected.txt: Removed.
+        * js/Promise-already-rejected.html: Removed.
+        * js/Promise-already-resolved-expected.txt: Removed.
+        * js/Promise-already-resolved.html: Removed.
+        * js/Promise-catch-expected.txt: Removed.
+        * js/Promise-catch-in-workers-expected.txt: Removed.
+        * js/Promise-catch-in-workers.html: Removed.
+        * js/Promise-catch.html: Removed.
+        * js/Promise-chain-expected.txt: Removed.
+        * js/Promise-chain.html: Removed.
+        * js/Promise-exception-expected.txt: Removed.
+        * js/Promise-exception.html: Removed.
+        * js/Promise-expected.txt: Removed.
+        * js/Promise-fulfill-expected.txt: Removed.
+        * js/Promise-fulfill-in-workers-expected.txt: Removed.
+        * js/Promise-fulfill-in-workers.html: Removed.
+        * js/Promise-fulfill.html: Removed.
+        * js/Promise-init-expected.txt: Removed.
+        * js/Promise-init-in-workers-expected.txt: Removed.
+        * js/Promise-init-in-workers.html: Removed.
+        * js/Promise-init.html: Removed.
+        * js/Promise-reject-expected.txt: Removed.
+        * js/Promise-reject-in-workers-expected.txt: Removed.
+        * js/Promise-reject-in-workers.html: Removed.
+        * js/Promise-reject.html: Removed.
+        * js/Promise-resolve-chain-expected.txt: Removed.
+        * js/Promise-resolve-chain.html: Removed.
+        * js/Promise-resolve-expected.txt: Removed.
+        * js/Promise-resolve-in-workers-expected.txt: Removed.
+        * js/Promise-resolve-in-workers.html: Removed.
+        * js/Promise-resolve-with-then-exception-expected.txt: Removed.
+        * js/Promise-resolve-with-then-exception.html: Removed.
+        * js/Promise-resolve-with-then-fulfill-expected.txt: Removed.
+        * js/Promise-resolve-with-then-fulfill.html: Removed.
+        * js/Promise-resolve-with-then-reject-expected.txt: Removed.
+        * js/Promise-resolve-with-then-reject.html: Removed.
+        * js/Promise-resolve.html: Removed.
+        * js/Promise-simple-expected.txt: Removed.
+        * js/Promise-simple-fulfill-expected.txt: Removed.
+        * js/Promise-simple-fulfill-inside-callback-expected.txt: Removed.
+        * js/Promise-simple-fulfill-inside-callback.html: Removed.
+        * js/Promise-simple-fulfill.html: Removed.
+        * js/Promise-simple-in-workers-expected.txt: Removed.
+        * js/Promise-simple-in-workers.html: Removed.
+        * js/Promise-simple.html: Removed.
+        * js/Promise-static-fulfill-expected.txt: Removed.
+        * js/Promise-static-fulfill.html: Removed.
+        * js/Promise-static-reject-expected.txt: Removed.
+        * js/Promise-static-reject.html: Removed.
+        * js/Promise-static-resolve-expected.txt: Removed.
+        * js/Promise-static-resolve.html: Removed.
+        * js/Promise-then-expected.txt: Removed.
+        * js/Promise-then-in-workers-expected.txt: Removed.
+        * js/Promise-then-in-workers.html: Removed.
+        * js/Promise-then-without-callbacks-expected.txt: Removed.
+        * js/Promise-then-without-callbacks-in-workers-expected.txt: Removed.
+        * js/Promise-then-without-callbacks-in-workers.html: Removed.
+        * js/Promise-then-without-callbacks.html: Removed.
+        * js/Promise-then.html: Removed.
+        * js/Promise-types-expected.txt: Removed.
+        * js/Promise-types.html: Removed.
+        * js/Promise.html: Removed.
+        * js/activation-object-function-lifetime-expected.txt: Removed.
+        * js/activation-object-function-lifetime.html: Removed.
+        * js/activation-proto-expected.txt: Removed.
+        * js/activation-proto.html: Removed.
+        * js/add-to-primitive-expected.txt: Removed.
+        * js/add-to-primitive.html: Removed.
+        * js/array-float-delete-expected.txt: Removed.
+        * js/array-float-delete.html: Removed.
+        * js/array-foreach-expected.txt: Removed.
+        * js/array-foreach.html: Removed.
+        * js/array-indexof-expected.txt: Removed.
+        * js/array-indexof.html: Removed.
+        * js/array-join-bug-11524-expected.txt: Removed.
+        * js/array-join-bug-11524.html: Removed.
+        * js/array-map-expected.txt: Removed.
+        * js/array-map.html: Removed.
+        * js/array-prototype-properties-expected.txt: Removed.
+        * js/array-prototype-properties.html: Removed.
+        * js/array-some-expected.txt: Removed.
+        * js/array-some.html: Removed.
+        * js/array-sort-exception-expected.txt: Removed.
+        * js/array-sort-exception.html: Removed.
+        * js/array-tostring-ignore-separator-expected.txt: Removed.
+        * js/array-tostring-ignore-separator.html: Removed.
+        * js/array-with-double-assign-expected.txt: Removed.
+        * js/array-with-double-assign.html: Removed.
+        * js/array-with-double-push-expected.txt: Removed.
+        * js/array-with-double-push.html: Removed.
+        * js/assign-expected.txt: Removed.
+        * js/assign.html: Removed.
+        * js/basic-map-expected.txt: Removed.
+        * js/basic-map.html: Removed.
+        * js/basic-set-expected.txt: Removed.
+        * js/basic-set.html: Removed.
+        * js/basic-weakmap-expected.txt: Removed.
+        * js/basic-weakmap.html: Removed.
+        * js/bitwise-and-on-undefined-expected.txt: Removed.
+        * js/bitwise-and-on-undefined.html: Removed.
+        * js/bom-in-file-retains-correct-offset-expected.txt: Removed.
+        * js/bom-in-file-retains-correct-offset.html: Removed.
+        * js/branch-fold-correctness-expected.txt: Removed.
+        * js/branch-fold-correctness.html: Removed.
+        * js/cached-eval-gc-expected.txt: Removed.
+        * js/cached-eval-gc.html: Removed.
+        * js/call-base-resolution-expected.txt: Removed.
+        * js/call-base-resolution.html: Removed.
+        * js/callback-function-with-handle-event-expected.txt: Removed.
+        * js/callback-function-with-handle-event.html: Removed.
+        * js/codegen-temporaries-multiple-global-blocks-expected.txt: Removed.
+        * js/codegen-temporaries-multiple-global-blocks.html: Removed.
+        * js/concat-large-strings-crash-expected.txt: Removed.
+        * js/concat-large-strings-crash.html: Removed.
+        * js/concat-large-strings-crash2-expected.txt: Removed.
+        * js/concat-large-strings-crash2.html: Removed.
+        * js/console-non-string-values-expected.txt: Removed.
+        * js/console-non-string-values.html: Removed.
+        * js/const-expected.txt: Removed.
+        * js/const.html: Removed.
+        * js/construct-global-object-expected.txt: Removed.
+        * js/construct-global-object.html: Removed.
+        * js/constructor-attributes-expected.txt: Removed.
+        * js/constructor-attributes.html: Removed.
+        * js/constructor-expected.txt: Removed.
+        * js/constructor-length.html: Removed.
+        * js/constructor.html: Removed.
+        * js/create-lots-of-workers-expected.txt: Removed.
+        * js/create-lots-of-workers.html: Removed.
+        * js/cross-frame-bad-time-expected.txt: Removed.
+        * js/cross-frame-bad-time.html: Removed.
+        * js/cross-frame-prototype-expected.txt: Removed.
+        * js/cross-frame-prototype.html: Removed.
+        * js/cross-frame-really-bad-time-expected.txt: Removed.
+        * js/cross-frame-really-bad-time-with-__proto__-expected.txt: Removed.
+        * js/cross-frame-really-bad-time-with-__proto__.html: Removed.
+        * js/cross-frame-really-bad-time.html: Removed.
+        * js/cross-global-object-inline-global-var-expected.txt: Removed.
+        * js/cross-global-object-inline-global-var.html: Removed.
+        * js/custom-constructors-expected.txt: Removed.
+        * js/custom-constructors.html: Removed.
+        * js/cyclic-proto-expected.txt: Removed.
+        * js/cyclic-proto.html: Removed.
+        * js/cyclic-ref-toString-expected.txt: Removed.
+        * js/cyclic-ref-toString.html: Removed.
+        * js/date-DST-time-cusps-expected.txt: Removed.
+        * js/date-DST-time-cusps.html: Removed.
+        * js/date-big-constructor-expected.txt: Removed.
+        * js/date-big-constructor.html: Removed.
+        * js/date-big-setdate-expected.txt: Removed.
+        * js/date-big-setdate.html: Removed.
+        * js/date-big-setmonth-expected.txt: Removed.
+        * js/date-big-setmonth.html: Removed.
+        * js/date-negative-setmonth-expected.txt: Removed.
+        * js/date-negative-setmonth.html: Removed.
+        * js/date-preserve-milliseconds-expected.txt: Removed.
+        * js/date-preserve-milliseconds.html: Removed.
+        * js/deep-recursion-test-expected.txt: Removed.
+        * js/deep-recursion-test.html: Removed.
+        * js/delete-function-parameter-expected.txt: Removed.
+        * js/delete-function-parameter.html: Removed.
+        * js/delete-multiple-global-blocks-expected.txt: Removed.
+        * js/delete-multiple-global-blocks.html: Removed.
+        * js/delete-syntax-expected.txt: Removed.
+        * js/delete-syntax.html: Removed.
+        * js/dfg-arguments-alias-activation-expected.txt: Removed.
+        * js/dfg-arguments-alias-activation.html: Removed.
+        * js/dfg-byte-array-put-expected.txt: Removed.
+        * js/dfg-byte-array-put.html: Removed.
+        * js/dfg-byteOffset-neuter-expected.txt: Removed.
+        * js/dfg-byteOffset-neuter.html: Removed.
+        * js/dfg-compare-final-object-to-final-object-or-other-expected.txt: Removed.
+        * js/dfg-compare-final-object-to-final-object-or-other.html: Removed.
+        * js/dfg-cross-global-object-inline-new-array-expected.txt: Removed.
+        * js/dfg-cross-global-object-inline-new-array-literal-expected.txt: Removed.
+        * js/dfg-cross-global-object-inline-new-array-literal-with-variables-expected.txt: Removed.
+        * js/dfg-cross-global-object-inline-new-array-literal-with-variables.html: Removed.
+        * js/dfg-cross-global-object-inline-new-array-literal.html: Removed.
+        * js/dfg-cross-global-object-inline-new-array-with-elements-expected.txt: Removed.
+        * js/dfg-cross-global-object-inline-new-array-with-elements.html: Removed.
+        * js/dfg-cross-global-object-inline-new-array-with-size-expected.txt: Removed.
+        * js/dfg-cross-global-object-inline-new-array-with-size.html: Removed.
+        * js/dfg-cross-global-object-inline-new-array.html: Removed.
+        * js/dfg-cross-global-object-new-array-expected.txt: Removed.
+        * js/dfg-cross-global-object-new-array.html: Removed.
+        * js/dfg-custom-getter-expected.txt: Removed.
+        * js/dfg-custom-getter-throw-expected.txt: Removed.
+        * js/dfg-custom-getter-throw-inlined-expected.txt: Removed.
+        * js/dfg-custom-getter-throw-inlined.html: Removed.
+        * js/dfg-custom-getter-throw.html: Removed.
+        * js/dfg-custom-getter.html: Removed.
+        * js/dfg-ensure-array-storage-on-window-expected.txt: Removed.
+        * js/dfg-ensure-array-storage-on-window.html: Removed.
+        * js/dfg-ensure-non-array-array-storage-on-window-expected.txt: Removed.
+        * js/dfg-ensure-non-array-array-storage-on-window.html: Removed.
+        * js/dfg-inline-resolve-expected.txt: Removed.
+        * js/dfg-inline-resolve.html: Removed.
+        * js/dfg-inline-switch-imm-expected.txt: Removed.
+        * js/dfg-inline-switch-imm.html: Removed.
+        * js/dfg-int32-to-double-on-set-local-and-exit-expected.txt: Removed.
+        * js/dfg-int32-to-double-on-set-local-and-exit.html: Removed.
+        * js/dfg-int32-to-double-on-set-local-and-sometimes-exit-expected.txt: Removed.
+        * js/dfg-int32-to-double-on-set-local-and-sometimes-exit.html: Removed.
+        * js/dfg-logical-not-final-object-or-other-expected.txt: Removed.
+        * js/dfg-logical-not-final-object-or-other.html: Removed.
+        * js/dfg-make-rope-side-effects-expected.txt: Removed.
+        * js/dfg-make-rope-side-effects.html: Removed.
+        * js/dfg-negative-array-size-expected.txt: Removed.
+        * js/dfg-negative-array-size.html: Removed.
+        * js/dfg-patchable-get-by-id-after-watchpoint-expected.txt: Removed.
+        * js/dfg-patchable-get-by-id-after-watchpoint.html: Removed.
+        * js/dfg-peephole-compare-final-object-to-final-object-or-other-expected.txt: Removed.
+        * js/dfg-peephole-compare-final-object-to-final-object-or-other-when-both-proven-final-object-expected.txt: Removed.
+        * js/dfg-peephole-compare-final-object-to-final-object-or-other-when-both-proven-final-object.html: Removed.
+        * js/dfg-peephole-compare-final-object-to-final-object-or-other-when-proven-final-object-expected.txt: Removed.
+        * js/dfg-peephole-compare-final-object-to-final-object-or-other-when-proven-final-object.html: Removed.
+        * js/dfg-peephole-compare-final-object-to-final-object-or-other.html: Removed.
+        * js/dfg-proto-stub-watchpoint-fire-expected.txt: Removed.
+        * js/dfg-proto-stub-watchpoint-fire.html: Removed.
+        * js/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps-expected.txt: Removed.
+        * js/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps.html: Removed.
+        * js/dfg-put-by-id-allocate-storage-expected.txt: Removed.
+        * js/dfg-put-by-id-allocate-storage-polymorphic-expected.txt: Removed.
+        * js/dfg-put-by-id-allocate-storage-polymorphic.html: Removed.
+        * js/dfg-put-by-id-allocate-storage.html: Removed.
+        * js/dfg-put-by-id-reallocate-storage-expected.txt: Removed.
+        * js/dfg-put-by-id-reallocate-storage-polymorphic-expected.txt: Removed.
+        * js/dfg-put-by-id-reallocate-storage-polymorphic.html: Removed.
+        * js/dfg-put-by-id-reallocate-storage.html: Removed.
+        * js/dfg-put-by-val-setter-then-get-by-val-expected.txt: Removed.
+        * js/dfg-put-by-val-setter-then-get-by-val.html: Removed.
+        * js/dfg-put-to-readonly-property-expected.txt: Removed.
+        * js/dfg-put-to-readonly-property.html: Removed.
+        * js/dfg-rshift-by-zero-eliminate-valuetoint32-expected.txt: Removed.
+        * js/dfg-rshift-by-zero-eliminate-valuetoint32.html: Removed.
+        * js/dfg-store-unexpected-value-into-argument-and-osr-exit-expected.txt: Removed.
+        * js/dfg-store-unexpected-value-into-argument-and-osr-exit.html: Removed.
+        * js/dfg-strcat-over-objects-then-exit-on-it-expected.txt: Removed.
+        * js/dfg-strcat-over-objects-then-exit-on-it.html: Removed.
+        * js/dfg-strict-mode-arguments-get-beyond-length-expected.txt: Removed.
+        * js/dfg-strict-mode-arguments-get-beyond-length.html: Removed.
+        * js/dfg-typed-array-neuter-expected.txt: Removed.
+        * js/dfg-typed-array-neuter.html: Removed.
+        * js/direct-entry-to-function-code-expected.txt: Removed.
+        * js/direct-entry-to-function-code.html: Removed.
+        * js/do-while-expression-value-expected.txt: Removed.
+        * js/do-while-expression-value.html: Removed.
+        * js/do-while-without-semicolon-expected.txt: Removed.
+        * js/do-while-without-semicolon.html: Removed.
+        * js/document-all-between-frames-expected.txt: Removed.
+        * js/document-all-between-frames.html: Removed.
+        * js/document-all-triggers-masquerades-watchpoint-expected.txt: Removed.
+        * js/document-all-triggers-masquerades-watchpoint.html: Removed.
+        * js/dom: Added.
+        * js/dom-static-property-for-in-iteration-expected.txt: Removed.
+        * js/dom-static-property-for-in-iteration.html: Removed.
+        * js/dom/JSON-parse-expected.txt: Added.
+        * js/dom/JSON-parse.html: Added.
+        * js/dom/JSON-stringify-expected.txt: Added.
+        * js/dom/JSON-stringify.html: Added.
+        * js/dom/Object-defineProperty-expected.txt: Added.
+        * js/dom/Object-defineProperty.html: Added.
+        * js/dom/Promise-already-fulfilled-expected.txt: Added.
+        * js/dom/Promise-already-fulfilled.html: Added.
+        * js/dom/Promise-already-rejected-expected.txt: Added.
+        * js/dom/Promise-already-rejected.html: Added.
+        * js/dom/Promise-already-resolved-expected.txt: Added.
+        * js/dom/Promise-already-resolved.html: Added.
+        * js/dom/Promise-catch-expected.txt: Added.
+        * js/dom/Promise-catch-in-workers-expected.txt: Added.
+        * js/dom/Promise-catch-in-workers.html: Added.
+        * js/dom/Promise-catch.html: Added.
+        * js/dom/Promise-chain-expected.txt: Added.
+        * js/dom/Promise-chain.html: Added.
+        * js/dom/Promise-exception-expected.txt: Added.
+        * js/dom/Promise-exception.html: Added.
+        * js/dom/Promise-expected.txt: Added.
+        * js/dom/Promise-fulfill-expected.txt: Added.
+        * js/dom/Promise-fulfill-in-workers-expected.txt: Added.
+        * js/dom/Promise-fulfill-in-workers.html: Added.
+        * js/dom/Promise-fulfill.html: Added.
+        * js/dom/Promise-init-expected.txt: Added.
+        * js/dom/Promise-init-in-workers-expected.txt: Added.
+        * js/dom/Promise-init-in-workers.html: Added.
+        * js/dom/Promise-init.html: Added.
+        * js/dom/Promise-reject-expected.txt: Added.
+        * js/dom/Promise-reject-in-workers-expected.txt: Added.
+        * js/dom/Promise-reject-in-workers.html: Added.
+        * js/dom/Promise-reject.html: Added.
+        * js/dom/Promise-resolve-chain-expected.txt: Added.
+        * js/dom/Promise-resolve-chain.html: Added.
+        * js/dom/Promise-resolve-expected.txt: Added.
+        * js/dom/Promise-resolve-in-workers-expected.txt: Added.
+        * js/dom/Promise-resolve-in-workers.html: Added.
+        * js/dom/Promise-resolve-with-then-exception-expected.txt: Added.
+        * js/dom/Promise-resolve-with-then-exception.html: Added.
+        * js/dom/Promise-resolve-with-then-fulfill-expected.txt: Added.
+        * js/dom/Promise-resolve-with-then-fulfill.html: Added.
+        * js/dom/Promise-resolve-with-then-reject-expected.txt: Added.
+        * js/dom/Promise-resolve-with-then-reject.html: Added.
+        * js/dom/Promise-resolve.html: Added.
+        * js/dom/Promise-simple-expected.txt: Added.
+        * js/dom/Promise-simple-fulfill-expected.txt: Added.
+        * js/dom/Promise-simple-fulfill-inside-callback-expected.txt: Added.
+        * js/dom/Promise-simple-fulfill-inside-callback.html: Added.
+        * js/dom/Promise-simple-fulfill.html: Added.
+        * js/dom/Promise-simple-in-workers-expected.txt: Added.
+        * js/dom/Promise-simple-in-workers.html: Added.
+        * js/dom/Promise-simple.html: Added.
+        * js/dom/Promise-static-fulfill-expected.txt: Added.
+        * js/dom/Promise-static-fulfill.html: Added.
+        * js/dom/Promise-static-reject-expected.txt: Added.
+        * js/dom/Promise-static-reject.html: Added.
+        * js/dom/Promise-static-resolve-expected.txt: Added.
+        * js/dom/Promise-static-resolve.html: Added.
+        * js/dom/Promise-then-expected.txt: Added.
+        * js/dom/Promise-then-in-workers-expected.txt: Added.
+        * js/dom/Promise-then-in-workers.html: Added.
+        * js/dom/Promise-then-without-callbacks-expected.txt: Added.
+        * js/dom/Promise-then-without-callbacks-in-workers-expected.txt: Added.
+        * js/dom/Promise-then-without-callbacks-in-workers.html: Added.
+        * js/dom/Promise-then-without-callbacks.html: Added.
+        * js/dom/Promise-then.html: Added.
+        * js/dom/Promise-types-expected.txt: Added.
+        * js/dom/Promise-types.html: Added.
+        * js/dom/Promise.html: Added.
+        * js/dom/activation-object-function-lifetime-expected.txt: Added.
+        * js/dom/activation-object-function-lifetime.html: Added.
+        * js/dom/activation-proto-expected.txt: Added.
+        * js/dom/activation-proto.html: Added.
+        * js/dom/add-to-primitive-expected.txt: Added.
+        * js/dom/add-to-primitive.html: Added.
+        * js/dom/array-float-delete-expected.txt: Added.
+        * js/dom/array-float-delete.html: Added.
+        * js/dom/array-foreach-expected.txt: Added.
+        * js/dom/array-foreach.html: Added.
+        * js/dom/array-indexof-expected.txt: Added.
+        * js/dom/array-indexof.html: Added.
+        * js/dom/array-join-bug-11524-expected.txt: Added.
+        * js/dom/array-join-bug-11524.html: Added.
+        * js/dom/array-map-expected.txt: Added.
+        * js/dom/array-map.html: Added.
+        * js/dom/array-prototype-properties-expected.txt: Added.
+        * js/dom/array-prototype-properties.html: Added.
+        * js/dom/array-some-expected.txt: Added.
+        * js/dom/array-some.html: Added.
+        * js/dom/array-sort-exception-expected.txt: Added.
+        * js/dom/array-sort-exception.html: Added.
+        * js/dom/array-tostring-ignore-separator-expected.txt: Added.
+        * js/dom/array-tostring-ignore-separator.html: Added.
+        * js/dom/array-with-double-assign-expected.txt: Added.
+        * js/dom/array-with-double-assign.html: Added.
+        * js/dom/array-with-double-push-expected.txt: Added.
+        * js/dom/array-with-double-push.html: Added.
+        * js/dom/assign-expected.txt: Added.
+        * js/dom/assign.html: Added.
+        * js/dom/basic-map-expected.txt: Added.
+        * js/dom/basic-map.html: Added.
+        * js/dom/basic-set-expected.txt: Added.
+        * js/dom/basic-set.html: Added.
+        * js/dom/basic-weakmap-expected.txt: Added.
+        * js/dom/basic-weakmap.html: Added.
+        * js/dom/bitwise-and-on-undefined-expected.txt: Added.
+        * js/dom/bitwise-and-on-undefined.html: Added.
+        * js/dom/bom-in-file-retains-correct-offset-expected.txt: Added.
+        * js/dom/bom-in-file-retains-correct-offset.html: Added.
+        * js/dom/branch-fold-correctness-expected.txt: Added.
+        * js/dom/branch-fold-correctness.html: Added.
+        * js/dom/cached-eval-gc-expected.txt: Added.
+        * js/dom/cached-eval-gc.html: Added.
+        * js/dom/call-base-resolution-expected.txt: Added.
+        * js/dom/call-base-resolution.html: Added.
+        * js/dom/callback-function-with-handle-event-expected.txt: Added.
+        * js/dom/callback-function-with-handle-event.html: Added.
+        * js/dom/codegen-temporaries-multiple-global-blocks-expected.txt: Added.
+        * js/dom/codegen-temporaries-multiple-global-blocks.html: Added.
+        * js/dom/concat-large-strings-crash-expected.txt: Added.
+        * js/dom/concat-large-strings-crash.html: Added.
+        * js/dom/concat-large-strings-crash2-expected.txt: Added.
+        * js/dom/concat-large-strings-crash2.html: Added.
+        * js/dom/console-non-string-values-expected.txt: Added.
+        * js/dom/console-non-string-values.html: Added.
+        * js/dom/const-expected.txt: Added.
+        * js/dom/const.html: Added.
+        * js/dom/construct-global-object-expected.txt: Added.
+        * js/dom/construct-global-object.html: Added.
+        * js/dom/constructor-attributes-expected.txt: Added.
+        * js/dom/constructor-attributes.html: Added.
+        * js/dom/constructor-expected.txt: Added.
+        * js/dom/constructor-length.html: Added.
+        * js/dom/constructor.html: Added.
+        * js/dom/create-lots-of-workers-expected.txt: Added.
+        * js/dom/create-lots-of-workers.html: Added.
+        * js/dom/cross-frame-bad-time-expected.txt: Added.
+        * js/dom/cross-frame-bad-time.html: Added.
+        * js/dom/cross-frame-prototype-expected.txt: Added.
+        * js/dom/cross-frame-prototype.html: Added.
+        * js/dom/cross-frame-really-bad-time-expected.txt: Added.
+        * js/dom/cross-frame-really-bad-time-with-__proto__-expected.txt: Added.
+        * js/dom/cross-frame-really-bad-time-with-__proto__.html: Added.
+        * js/dom/cross-frame-really-bad-time.html: Added.
+        * js/dom/cross-global-object-inline-global-var-expected.txt: Added.
+        * js/dom/cross-global-object-inline-global-var.html: Added.
+        * js/dom/custom-constructors-expected.txt: Added.
+        * js/dom/custom-constructors.html: Added.
+        * js/dom/cyclic-proto-expected.txt: Added.
+        * js/dom/cyclic-proto.html: Added.
+        * js/dom/cyclic-ref-toString-expected.txt: Added.
+        * js/dom/cyclic-ref-toString.html: Added.
+        * js/dom/date-DST-time-cusps-expected.txt: Added.
+        * js/dom/date-DST-time-cusps.html: Added.
+        * js/dom/date-big-constructor-expected.txt: Added.
+        * js/dom/date-big-constructor.html: Added.
+        * js/dom/date-big-setdate-expected.txt: Added.
+        * js/dom/date-big-setdate.html: Added.
+        * js/dom/date-big-setmonth-expected.txt: Added.
+        * js/dom/date-big-setmonth.html: Added.
+        * js/dom/date-negative-setmonth-expected.txt: Added.
+        * js/dom/date-negative-setmonth.html: Added.
+        * js/dom/date-preserve-milliseconds-expected.txt: Added.
+        * js/dom/date-preserve-milliseconds.html: Added.
+        * js/dom/deep-recursion-test-expected.txt: Added.
+        * js/dom/deep-recursion-test.html: Added.
+        * js/dom/delete-function-parameter-expected.txt: Added.
+        * js/dom/delete-function-parameter.html: Added.
+        * js/dom/delete-multiple-global-blocks-expected.txt: Added.
+        * js/dom/delete-multiple-global-blocks.html: Added.
+        * js/dom/delete-syntax-expected.txt: Added.
+        * js/dom/delete-syntax.html: Added.
+        * js/dom/dfg-arguments-alias-activation-expected.txt: Added.
+        * js/dom/dfg-arguments-alias-activation.html: Added.
+        * js/dom/dfg-byte-array-put-expected.txt: Added.
+        * js/dom/dfg-byte-array-put.html: Added.
+        * js/dom/dfg-byteOffset-neuter-expected.txt: Added.
+        * js/dom/dfg-byteOffset-neuter.html: Added.
+        * js/dom/dfg-compare-final-object-to-final-object-or-other-expected.txt: Added.
+        * js/dom/dfg-compare-final-object-to-final-object-or-other.html: Added.
+        * js/dom/dfg-cross-global-object-inline-new-array-expected.txt: Added.
+        * js/dom/dfg-cross-global-object-inline-new-array-literal-expected.txt: Added.
+        * js/dom/dfg-cross-global-object-inline-new-array-literal-with-variables-expected.txt: Added.
+        * js/dom/dfg-cross-global-object-inline-new-array-literal-with-variables.html: Added.
+        * js/dom/dfg-cross-global-object-inline-new-array-literal.html: Added.
+        * js/dom/dfg-cross-global-object-inline-new-array-with-elements-expected.txt: Added.
+        * js/dom/dfg-cross-global-object-inline-new-array-with-elements.html: Added.
+        * js/dom/dfg-cross-global-object-inline-new-array-with-size-expected.txt: Added.
+        * js/dom/dfg-cross-global-object-inline-new-array-with-size.html: Added.
+        * js/dom/dfg-cross-global-object-inline-new-array.html: Added.
+        * js/dom/dfg-cross-global-object-new-array-expected.txt: Added.
+        * js/dom/dfg-cross-global-object-new-array.html: Added.
+        * js/dom/dfg-custom-getter-expected.txt: Added.
+        * js/dom/dfg-custom-getter-throw-expected.txt: Added.
+        * js/dom/dfg-custom-getter-throw-inlined-expected.txt: Added.
+        * js/dom/dfg-custom-getter-throw-inlined.html: Added.
+        * js/dom/dfg-custom-getter-throw.html: Added.
+        * js/dom/dfg-custom-getter.html: Added.
+        * js/dom/dfg-ensure-array-storage-on-window-expected.txt: Added.
+        * js/dom/dfg-ensure-array-storage-on-window.html: Added.
+        * js/dom/dfg-ensure-non-array-array-storage-on-window-expected.txt: Added.
+        * js/dom/dfg-ensure-non-array-array-storage-on-window.html: Added.
+        * js/dom/dfg-inline-resolve-expected.txt: Added.
+        * js/dom/dfg-inline-resolve.html: Added.
+        * js/dom/dfg-inline-switch-imm-expected.txt: Added.
+        * js/dom/dfg-inline-switch-imm.html: Added.
+        * js/dom/dfg-int32-to-double-on-set-local-and-exit-expected.txt: Added.
+        * js/dom/dfg-int32-to-double-on-set-local-and-exit.html: Added.
+        * js/dom/dfg-int32-to-double-on-set-local-and-sometimes-exit-expected.txt: Added.
+        * js/dom/dfg-int32-to-double-on-set-local-and-sometimes-exit.html: Added.
+        * js/dom/dfg-logical-not-final-object-or-other-expected.txt: Added.
+        * js/dom/dfg-logical-not-final-object-or-other.html: Added.
+        * js/dom/dfg-make-rope-side-effects-expected.txt: Added.
+        * js/dom/dfg-make-rope-side-effects.html: Added.
+        * js/dom/dfg-negative-array-size-expected.txt: Added.
+        * js/dom/dfg-negative-array-size.html: Added.
+        * js/dom/dfg-patchable-get-by-id-after-watchpoint-expected.txt: Added.
+        * js/dom/dfg-patchable-get-by-id-after-watchpoint.html: Added.
+        * js/dom/dfg-peephole-compare-final-object-to-final-object-or-other-expected.txt: Added.
+        * js/dom/dfg-peephole-compare-final-object-to-final-object-or-other-when-both-proven-final-object-expected.txt: Added.
+        * js/dom/dfg-peephole-compare-final-object-to-final-object-or-other-when-both-proven-final-object.html: Added.
+        * js/dom/dfg-peephole-compare-final-object-to-final-object-or-other-when-proven-final-object-expected.txt: Added.
+        * js/dom/dfg-peephole-compare-final-object-to-final-object-or-other-when-proven-final-object.html: Added.
+        * js/dom/dfg-peephole-compare-final-object-to-final-object-or-other.html: Added.
+        * js/dom/dfg-proto-stub-watchpoint-fire-expected.txt: Added.
+        * js/dom/dfg-proto-stub-watchpoint-fire.html: Added.
+        * js/dom/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps-expected.txt: Added.
+        * js/dom/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps.html: Added.
+        * js/dom/dfg-put-by-id-allocate-storage-expected.txt: Added.
+        * js/dom/dfg-put-by-id-allocate-storage-polymorphic-expected.txt: Added.
+        * js/dom/dfg-put-by-id-allocate-storage-polymorphic.html: Added.
+        * js/dom/dfg-put-by-id-allocate-storage.html: Added.
+        * js/dom/dfg-put-by-id-reallocate-storage-expected.txt: Added.
+        * js/dom/dfg-put-by-id-reallocate-storage-polymorphic-expected.txt: Added.
+        * js/dom/dfg-put-by-id-reallocate-storage-polymorphic.html: Added.
+        * js/dom/dfg-put-by-id-reallocate-storage.html: Added.
+        * js/dom/dfg-put-by-val-setter-then-get-by-val-expected.txt: Added.
+        * js/dom/dfg-put-by-val-setter-then-get-by-val.html: Added.
+        * js/dom/dfg-put-to-readonly-property-expected.txt: Added.
+        * js/dom/dfg-put-to-readonly-property.html: Added.
+        * js/dom/dfg-rshift-by-zero-eliminate-valuetoint32-expected.txt: Added.
+        * js/dom/dfg-rshift-by-zero-eliminate-valuetoint32.html: Added.
+        * js/dom/dfg-store-unexpected-value-into-argument-and-osr-exit-expected.txt: Added.
+        * js/dom/dfg-store-unexpected-value-into-argument-and-osr-exit.html: Added.
+        * js/dom/dfg-strcat-over-objects-then-exit-on-it-expected.txt: Added.
+        * js/dom/dfg-strcat-over-objects-then-exit-on-it.html: Added.
+        * js/dom/dfg-strict-mode-arguments-get-beyond-length-expected.txt: Added.
+        * js/dom/dfg-strict-mode-arguments-get-beyond-length.html: Added.
+        * js/dom/dfg-typed-array-neuter-expected.txt: Added.
+        * js/dom/dfg-typed-array-neuter.html: Added.
+        * js/dom/direct-entry-to-function-code-expected.txt: Added.
+        * js/dom/direct-entry-to-function-code.html: Added.
+        * js/dom/do-while-expression-value-expected.txt: Added.
+        * js/dom/do-while-expression-value.html: Added.
+        * js/dom/do-while-without-semicolon-expected.txt: Added.
+        * js/dom/do-while-without-semicolon.html: Added.
+        * js/dom/document-all-between-frames-expected.txt: Added.
+        * js/dom/document-all-between-frames.html: Added.
+        * js/dom/document-all-triggers-masquerades-watchpoint-expected.txt: Added.
+        * js/dom/document-all-triggers-masquerades-watchpoint.html: Added.
+        * js/dom/dom-static-property-for-in-iteration-expected.txt: Added.
+        * js/dom/dom-static-property-for-in-iteration.html: Added.
+        * js/dom/dot-node-base-exception-expected.txt: Added.
+        * js/dom/dot-node-base-exception.html: Added.
+        * js/dom/encode-URI-test-expected.txt: Added.
+        * js/dom/encode-URI-test.html: Added.
+        * js/dom/end-in-string-escape-expected.txt: Added.
+        * js/dom/end-in-string-escape.html: Added.
+        * js/dom/enter-dictionary-indexing-mode-with-blank-indexing-type-expected.txt: Added.
+        * js/dom/enter-dictionary-indexing-mode-with-blank-indexing-type.html: Added.
+        * js/dom/error-object-write-and-detele-for-stack-property-expected.txt: Added.
+        * js/dom/error-object-write-and-detele-for-stack-property.html: Added.
+        * js/dom/eval-cache-scoped-lookup-expected.txt: Added.
+        * js/dom/eval-cache-scoped-lookup.html: Added.
+        * js/dom/eval-contained-syntax-error-expected.txt: Added.
+        * js/dom/eval-contained-syntax-error.html: Added.
+        * js/dom/eval-cross-window-expected.txt: Added.
+        * js/dom/eval-cross-window.html: Added.
+        * js/dom/eval-keyword-vs-function-expected.txt: Added.
+        * js/dom/eval-keyword-vs-function.html: Added.
+        * js/dom/eval-overriding-expected.txt: Added.
+        * js/dom/eval-overriding.html: Added.
+        * js/dom/exception-codegen-crash-expected.txt: Added.
+        * js/dom/exception-codegen-crash.html: Added.
+        * js/dom/exception-line-number-expected.txt: Added.
+        * js/dom/exception-line-number.html: Added.
+        * js/dom/exception-linenums-in-html-1-expected.txt: Added.
+        * js/dom/exception-linenums-in-html-1.html: Added.
+        * js/dom/exception-linenums-in-html-2-expected.txt: Added.
+        * js/dom/exception-linenums-in-html-2.html: Added.
+        * js/dom/exception-linenums-in-html-3-expected.txt: Added.
+        * js/dom/exception-linenums-in-html-3.html: Added.
+        * js/dom/exception-registerfile-shrink-expected.txt: Added.
+        * js/dom/exception-registerfile-shrink.html: Added.
+        * js/dom/exception-sequencing-binops-expected.txt: Added.
+        * js/dom/exception-sequencing-binops.html: Added.
+        * js/dom/exception-sequencing-binops2-expected.txt: Added.
+        * js/dom/exception-sequencing-binops2.html: Added.
+        * js/dom/exception-sequencing-expected.txt: Added.
+        * js/dom/exception-sequencing.html: Added.
+        * js/dom/exception-thrown-from-equal-expected.txt: Added.
+        * js/dom/exception-thrown-from-equal.html: Added.
+        * js/dom/exception-thrown-from-eval-inside-closure-expected.txt: Added.
+        * js/dom/exception-thrown-from-eval-inside-closure.html: Added.
+        * js/dom/exception-thrown-from-function-with-lazy-activation-expected.txt: Added.
+        * js/dom/exception-thrown-from-function-with-lazy-activation.html: Added.
+        * js/dom/exception-thrown-from-new-expected.txt: Added.
+        * js/dom/exception-thrown-from-new.html: Added.
+        * js/dom/exceptions-thrown-in-callbacks-expected.txt: Added.
+        * js/dom/exceptions-thrown-in-callbacks.html: Added.
+        * js/dom/exec-state-marking-expected.txt: Added.
+        * js/dom/exec-state-marking.html: Added.
+        * js/dom/find-ignoring-case-regress-99753-expected.txt: Added.
+        * js/dom/find-ignoring-case-regress-99753.html: Added.
+        * js/dom/floating-point-truncate-rshift-expected.txt: Added.
+        * js/dom/floating-point-truncate-rshift.html: Added.
+        * js/dom/function-argument-evaluation-before-exception-expected.txt: Added.
+        * js/dom/function-argument-evaluation-before-exception.html: Added.
+        * js/dom/function-argument-evaluation-expected.txt: Added.
+        * js/dom/function-argument-evaluation.html: Added.
+        * js/dom/function-bind-expected.txt: Added.
+        * js/dom/function-bind.html: Added.
+        * js/dom/function-constructor-this-value-expected.txt: Added.
+        * js/dom/function-constructor-this-value.html: Added.
+        * js/dom/function-declarations-expected.txt: Added.
+        * js/dom/function-declarations.html: Added.
+        * js/dom/function-decompilation-operators-expected.txt: Added.
+        * js/dom/function-decompilation-operators.html: Added.
+        * js/dom/function-dot-arguments-and-caller-expected.txt: Added.
+        * js/dom/function-dot-arguments-and-caller.html: Added.
+        * js/dom/function-dot-arguments-identity-expected.txt: Added.
+        * js/dom/function-dot-arguments-identity.html: Added.
+        * js/dom/function-dot-arguments2-expected.txt: Added.
+        * js/dom/function-dot-arguments2.html: Added.
+        * js/dom/function-length-expected.txt: Added.
+        * js/dom/function-length.html: Added.
+        * js/dom/function-name-expected.txt: Added.
+        * js/dom/function-name-is-in-scope-expected.txt: Added.
+        * js/dom/function-name-is-in-scope.html: Added.
+        * js/dom/function-name.html: Added.
+        * js/dom/function-names-expected.txt: Added.
+        * js/dom/function-names.html: Added.
+        * js/dom/function-prototype-expected.txt: Added.
+        * js/dom/function-prototype.html: Added.
+        * js/dom/function-redefinition-expected.txt: Added.
+        * js/dom/function-redefinition.html: Added.
+        * js/dom/garbage-collect-after-string-appends-expected.txt: Added.
+        * js/dom/get-by-pname-only-prototype-properties-expected.txt: Added.
+        * js/dom/get-by-pname-only-prototype-properties.html: Added.
+        * js/dom/getOwnPropertyDescriptor-expected.txt: Added.
+        * js/dom/getOwnPropertyDescriptor.html: Added.
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt: Added.
+        * js/dom/global-constructors-attributes-dedicated-worker.html: Added.
+        * js/dom/global-constructors-attributes-expected.txt: Added.
+        * js/dom/global-constructors-attributes-shared-worker-expected.txt: Added.
+        * js/dom/global-constructors-attributes-shared-worker.html: Added.
+        * js/dom/global-constructors-attributes.html: Added.
+        * js/dom/global-constructors-deletable-expected.txt: Added.
+        * js/dom/global-constructors-deletable.html: Added.
+        * js/dom/global-function-resolve-expected.txt: Added.
+        * js/dom/global-function-resolve.html: Added.
+        * js/dom/global-recursion-on-full-stack-expected.txt: Added.
+        * js/dom/global-recursion-on-full-stack.html: Added.
+        * js/dom/global-var-limit-expected.txt: Added.
+        * js/dom/global-var-limit.html: Added.
+        * js/dom/immediate-constant-instead-of-cell-expected.txt: Added.
+        * js/dom/immediate-constant-instead-of-cell.html: Added.
+        * js/dom/implicit-call-with-global-reentry-expected.txt: Added.
+        * js/dom/implicit-call-with-global-reentry.html: Added.
+        * js/dom/implicit-global-to-global-reentry-expected.txt: Added.
+        * js/dom/implicit-global-to-global-reentry.html: Added.
+        * js/dom/imul-expected.txt: Added.
+        * js/dom/imul.html: Added.
+        * js/dom/inc-bracket-assign-subscript-expected.txt: Added.
+        * js/dom/inc-bracket-assign-subscript.html: Added.
+        * js/dom/inc-const-valueOf-expected.txt: Added.
+        * js/dom/inc-const-valueOf.html: Added.
+        * js/dom/indexed-setter-on-global-object-expected.txt: Added.
+        * js/dom/indexed-setter-on-global-object.html: Added.
+        * js/dom/inline-arguments-tear-off-expected.txt: Added.
+        * js/dom/inline-arguments-tear-off.html: Added.
+        * js/dom/instanceof-XMLHttpRequest-expected.txt: Added.
+        * js/dom/instanceof-XMLHttpRequest.html: Added.
+        * js/dom/invalid-syntax-for-function-expected.txt: Added.
+        * js/dom/invalid-syntax-for-function.html: Added.
+        * js/dom/jit-set-profiling-access-type-only-for-get-by-id-self-expected.txt: Added.
+        * js/dom/jit-set-profiling-access-type-only-for-get-by-id-self.html: Added.
+        * js/dom/js-constructors-use-correct-global-expected.txt: Added.
+        * js/dom/js-constructors-use-correct-global.html: Added.
+        * js/dom/js-correct-exception-handler-expected.txt: Added.
+        * js/dom/js-correct-exception-handler.html: Added.
+        * js/dom/lastModified-expected.txt: Added.
+        * js/dom/lastModified.html: Added.
+        * js/dom/lazy-create-arguments-from-get-by-val-expected.txt: Added.
+        * js/dom/lazy-create-arguments-from-get-by-val.html: Added.
+        * js/dom/lexical-lookup-in-function-constructor-expected.txt: Added.
+        * js/dom/lexical-lookup-in-function-constructor.html: Added.
+        * js/dom/line-column-numbers-expected.txt: Added.
+        * js/dom/line-column-numbers.html: Added.
+        * js/dom/method-check-expected.txt: Added.
+        * js/dom/method-check.html: Added.
+        * js/dom/missing-style-end-tag-js-expected.txt: Added.
+        * js/dom/missing-style-end-tag-js.html: Added.
+        * js/dom/missing-title-end-tag-js-expected.txt: Added.
+        * js/dom/missing-title-end-tag-js.html: Added.
+        * js/dom/native-error-prototype-expected.txt: Added.
+        * js/dom/native-error-prototype.html: Added.
+        * js/dom/navigator-language-expected.txt: Added.
+        * js/dom/navigator-language.html: Added.
+        * js/dom/navigator-plugins-crash-expected.txt: Added.
+        * js/dom/navigator-plugins-crash.html: Added.
+        * js/dom/negate-overflow-expected.txt: Added.
+        * js/dom/negate-overflow.html: Added.
+        * js/dom/neq-null-crash-expected.txt: Added.
+        * js/dom/neq-null-crash.html: Added.
+        * js/dom/nested-function-scope-expected.txt: Added.
+        * js/dom/nested-function-scope.html: Added.
+        * js/dom/nested-object-gc-expected.txt: Added.
+        * js/dom/nested-object-gc.html: Added.
+        * js/dom/non-object-proto-expected.txt: Added.
+        * js/dom/non-object-proto.html: Added.
+        * js/dom/normal-character-escapes-in-string-literals-expected.txt: Added.
+        * js/dom/normal-character-escapes-in-string-literals.html: Added.
+        * js/dom/not-a-constructor-to-string-expected.txt: Added.
+        * js/dom/not-a-constructor-to-string.html: Added.
+        * js/dom/not-a-function-to-string-expected.txt: Added.
+        * js/dom/not-a-function-to-string.html: Added.
+        * js/dom/null-char-in-string-expected.txt: Added.
+        * js/dom/null-char-in-string.html: Added.
+        * js/dom/number-tofixed-expected.txt: Added.
+        * js/dom/number-tofixed.html: Added.
+        * js/dom/number-toprecision-expected.txt: Added.
+        * js/dom/number-toprecision.html: Added.
+        * js/dom/object-extra-comma-expected.txt: Added.
+        * js/dom/object-extra-comma.html: Added.
+        * js/dom/object-prototype-constructor-expected.txt: Added.
+        * js/dom/object-prototype-constructor.html: Added.
+        * js/dom/object-prototype-properties-expected.txt: Added.
+        * js/dom/object-prototype-properties.html: Added.
+        * js/dom/object-prototype-toLocaleString-expected.txt: Added.
+        * js/dom/object-prototype-toLocaleString.html: Added.
+        * js/dom/parse-error-external-script-in-eval-expected.txt: Added.
+        * js/dom/parse-error-external-script-in-eval.html: Added.
+        * js/dom/parse-error-external-script-in-new-Function-expected.txt: Added.
+        * js/dom/parse-error-external-script-in-new-Function.html: Added.
+        * js/dom/post-inc-assign-overwrites-expected.txt: Added.
+        * js/dom/post-inc-assign-overwrites.html: Added.
+        * js/dom/post-message-numeric-property-expected.txt: Added.
+        * js/dom/post-message-numeric-property.html: Added.
+        * js/dom/postfix-syntax-expected.txt: Added.
+        * js/dom/postfix-syntax.html: Added.
+        * js/dom/prefix-syntax-expected.txt: Added.
+        * js/dom/prefix-syntax.html: Added.
+        * js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps-expected.txt: Added.
+        * js/dom/prototype-chain-caching-with-impure-get-own-property-slot-traps.html: Added.
+        * js/dom/put-direct-index-beyond-vector-length-resize-expected.txt: Added.
+        * js/dom/put-direct-index-beyond-vector-length-resize.html: Added.
+        * js/dom/put-to-base-global-checked-expected.txt: Added.
+        * js/dom/put-to-base-global-checked.html: Added.
+        * js/dom/random-array-gc-stress-expected.txt: Added.
+        * js/dom/random-array-gc-stress.html: Added.
+        * js/dom/recursion-limit-equal-expected.txt: Added.
+        * js/dom/recursion-limit-equal.html: Added.
+        * js/dom/regexp-bol-expected.txt: Added.
+        * js/dom/regexp-bol-with-multiline-expected.txt: Added.
+        * js/dom/regexp-bol-with-multiline.html: Added.
+        * js/dom/regexp-bol.html: Added.
+        * js/dom/regexp-caching-expected.txt: Added.
+        * js/dom/regexp-caching.html: Added.
+        * js/dom/regexp-charclass-crash-expected.txt: Added.
+        * js/dom/regexp-charclass-crash.html: Added.
+        * js/dom/regexp-extended-characters-crash-expected.txt: Added.
+        * js/dom/regexp-extended-characters-crash.html: Added.
+        * js/dom/regexp-lastindex-expected.txt: Added.
+        * js/dom/regexp-lastindex.html: Added.
+        * js/dom/regexp-look-ahead-empty-expected.txt: Added.
+        * js/dom/regexp-look-ahead-empty.html: Added.
+        * js/dom/regexp-look-ahead-expected.txt: Added.
+        * js/dom/regexp-look-ahead.html: Added.
+        * js/dom/regexp-match-reify-before-putbyval-expected.txt: Added.
+        * js/dom/regexp-match-reify-before-putbyval.html: Added.
+        * js/dom/regexp-non-capturing-groups-expected.txt: Added.
+        * js/dom/regexp-non-capturing-groups.html: Added.
+        * js/dom/regexp-non-greedy-parentheses-expected.txt: Added.
+        * js/dom/regexp-non-greedy-parentheses.html: Added.
+        * js/dom/regexp-overflow-expected.txt: Added.
+        * js/dom/regexp-overflow.html: Added.
+        * js/dom/regexp-range-out-of-order-expected.txt: Added.
+        * js/dom/regexp-range-out-of-order.html: Added.
+        * js/dom/regexp-ranges-and-escaped-hyphens-expected.txt: Added.
+        * js/dom/regexp-ranges-and-escaped-hyphens.html: Added.
+        * js/dom/regexp-stack-overflow-expected.txt: Added.
+        * js/dom/regexp-stack-overflow.html: Added.
+        * js/dom/regexp-test-null-string-expected.txt: Added.
+        * js/dom/regexp-test-null-string.html: Added.
+        * js/dom/regexp-unicode-handling-expected.txt: Added.
+        * js/dom/regexp-unicode-handling.html: Added.
+        * js/dom/regexp-unicode-overflow-expected.txt: Added.
+        * js/dom/regexp-unicode-overflow.html: Added.
+        * js/dom/removing-Cf-characters-expected.txt: Added.
+        * js/dom/removing-Cf-characters.html: Added.
+        * js/dom/reserved-words-as-property-expected.txt: Added.
+        * js/dom/reserved-words-as-property.html: Added.
+        * js/dom/same-origin-subframe-about-blank-expected.txt: Added.
+        * js/dom/same-origin-subframe-about-blank.html: Added.
+        * js/dom/script-line-number-expected.txt: Added.
+        * js/dom/script-line-number.html: Added.
+        * js/dom/script-tests: Added.
+        * js/dom/script-tests/Object-defineProperty.js: Added.
+        (createUnconfigurableProperty):
+        (getter):
+        (getter1):
+        (setter):
+        (setter1):
+        (get shouldBeTrue):
+        (testObject.):
+        (testObject.set get anObj):
+        (testObject):
+        * js/dom/script-tests/activation-proto.js: Added.
+        * js/dom/script-tests/array-float-delete.js: Added.
+        * js/dom/script-tests/array-join-bug-11524.js: Added.
+        (customObject.valueOf):
+        * js/dom/script-tests/array-prototype-properties.js: Added.
+        * js/dom/script-tests/array-sort-exception.js: Copied from LayoutTests/js/script-tests/array-sort-exception.js.
+        * js/dom/script-tests/array-tostring-ignore-separator.js: Added.
+        * js/dom/script-tests/array-with-double-assign.js: Added.
+        (foo):
+        * js/dom/script-tests/array-with-double-push.js: Added.
+        (foo):
+        * js/dom/script-tests/assign.js: Added.
+        * js/dom/script-tests/basic-map.js: Added.
+        (set shouldBe):
+        (set var):
+        * js/dom/script-tests/basic-set.js: Added.
+        (set new):
+        (otherString.string_appeared_here.set add):
+        (try.set forEach):
+        (set forEach):
+        (set gc):
+        * js/dom/script-tests/basic-weakmap.js: Added.
+        * js/dom/script-tests/cached-eval-gc.js: Added.
+        (gc):
+        (doTest):
+        * js/dom/script-tests/constructor-attributes.js: Added.
+        (canEnum):
+        (checkConstructor):
+        (declaredFunction):
+        * js/dom/script-tests/constructor.js: Added.
+        * js/dom/script-tests/cross-frame-bad-time.js: Added.
+        (foo):
+        * js/dom/script-tests/cross-frame-really-bad-time-with-__proto__.js: Added.
+        (foo):
+        (evil):
+        (bar):
+        (done):
+        * js/dom/script-tests/cross-frame-really-bad-time.js: Added.
+        (Cons):
+        (foo):
+        (evil):
+        (bar):
+        (done):
+        * js/dom/script-tests/cross-global-object-inline-global-var.js: Added.
+        (foo):
+        (done):
+        (doit):
+        * js/dom/script-tests/custom-constructors.js: Added.
+        * js/dom/script-tests/cyclic-proto.js: Added.
+        * js/dom/script-tests/cyclic-ref-toString.js: Added.
+        * js/dom/script-tests/date-DST-time-cusps.js: Added.
+        * js/dom/script-tests/date-big-constructor.js: Added.
+        * js/dom/script-tests/date-big-setdate.js: Added.
+        * js/dom/script-tests/date-big-setmonth.js: Added.
+        * js/dom/script-tests/date-negative-setmonth.js: Added.
+        * js/dom/script-tests/date-preserve-milliseconds.js: Added.
+        * js/dom/script-tests/delete-syntax.js: Added.
+        * js/dom/script-tests/dfg-byte-array-put.js: Added.
+        (doPut):
+        (doGet):
+        * js/dom/script-tests/dfg-byteOffset-neuter.js: Added.
+        (foo):
+        * js/dom/script-tests/dfg-compare-final-object-to-final-object-or-other.js: Added.
+        (foo):
+        * js/dom/script-tests/dfg-cross-global-object-inline-new-array-literal-with-variables.js: Added.
+        (foo):
+        (done):
+        (doit):
+        * js/dom/script-tests/dfg-cross-global-object-inline-new-array-literal.js: Added.
+        (foo):
+        (done):
+        (doit):
+        * js/dom/script-tests/dfg-cross-global-object-inline-new-array-with-elements.js: Added.
+        (foo):
+        (done):
+        (doit):
+        * js/dom/script-tests/dfg-cross-global-object-inline-new-array-with-size.js: Added.
+        (foo):
+        (done):
+        (doit):
+        * js/dom/script-tests/dfg-cross-global-object-inline-new-array.js: Added.
+        (foo):
+        (done):
+        (doit):
+        * js/dom/script-tests/dfg-cross-global-object-new-array.js: Added.
+        (foo):
+        (runTest):
+        (doit):
+        * js/dom/script-tests/dfg-custom-getter-throw-inlined.js: Added.
+        (foo):
+        (baz):
+        (bar):
+        * js/dom/script-tests/dfg-custom-getter-throw.js: Added.
+        (foo):
+        (bar):
+        * js/dom/script-tests/dfg-custom-getter.js: Added.
+        (foo):
+        * js/dom/script-tests/dfg-ensure-array-storage-on-window.js: Added.
+        (foo):
+        (while):
+        * js/dom/script-tests/dfg-ensure-non-array-array-storage-on-window.js: Added.
+        (foo):
+        (bar):
+        (.shouldBe):
+        * js/dom/script-tests/dfg-inline-switch-imm.js: Added.
+        (foo):
+        (bar):
+        * js/dom/script-tests/dfg-int32-to-double-on-set-local-and-exit.js: Added.
+        (checkpoint):
+        (func1):
+        (func2):
+        (func3):
+        (test):
+        * js/dom/script-tests/dfg-int32-to-double-on-set-local-and-sometimes-exit.js: Added.
+        (checkpoint):
+        (func1):
+        (func2):
+        (func3):
+        (test):
+        * js/dom/script-tests/dfg-logical-not-final-object-or-other.js: Added.
+        (foo):
+        * js/dom/script-tests/dfg-make-rope-side-effects.js: Added.
+        (f):
+        (k.valueOf):
+        (k.toString):
+        * js/dom/script-tests/dfg-negative-array-size.js: Added.
+        (foo):
+        * js/dom/script-tests/dfg-patchable-get-by-id-after-watchpoint.js: Added.
+        (foo):
+        (O):
+        (O.prototype.f):
+        (P1):
+        (P2):
+        * js/dom/script-tests/dfg-peephole-compare-final-object-to-final-object-or-other-when-both-proven-final-object.js: Added.
+        (foo):
+        * js/dom/script-tests/dfg-peephole-compare-final-object-to-final-object-or-other-when-proven-final-object.js: Added.
+        (foo):
+        * js/dom/script-tests/dfg-peephole-compare-final-object-to-final-object-or-other.js: Added.
+        (foo):
+        * js/dom/script-tests/dfg-proto-stub-watchpoint-fire.js: Added.
+        (A):
+        (B):
+        (foo):
+        * js/dom/script-tests/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps.js: Added.
+        (f):
+        * js/dom/script-tests/dfg-put-by-id-allocate-storage-polymorphic.js: Added.
+        (foo):
+        * js/dom/script-tests/dfg-put-by-id-allocate-storage.js: Added.
+        (foo):
+        * js/dom/script-tests/dfg-put-by-id-reallocate-storage-polymorphic.js: Added.
+        (foo):
+        * js/dom/script-tests/dfg-put-by-id-reallocate-storage.js: Added.
+        (foo):
+        * js/dom/script-tests/dfg-put-by-val-setter-then-get-by-val.js: Added.
+        (foo):
+        (for):
+        * js/dom/script-tests/dfg-put-to-readonly-property.js: Added.
+        (foo):
+        (bar):
+        * js/dom/script-tests/dfg-rshift-by-zero-eliminate-valuetoint32.js: Added.
+        (f):
+        * js/dom/script-tests/dfg-store-unexpected-value-into-argument-and-osr-exit.js: Added.
+        (foo):
+        * js/dom/script-tests/dfg-strcat-over-objects-then-exit-on-it.js: Added.
+        (foo):
+        (bar):
+        (x):
+        * js/dom/script-tests/dfg-strict-mode-arguments-get-beyond-length.js: Added.
+        (foo):
+        (bar):
+        * js/dom/script-tests/dfg-typed-array-neuter.js: Added.
+        (foo):
+        (bar):
+        * js/dom/script-tests/document-all-triggers-masquerades-watchpoint.js: Added.
+        (f):
+        * js/dom/script-tests/dot-node-base-exception.js: Added.
+        * js/dom/script-tests/end-in-string-escape.js: Added.
+        * js/dom/script-tests/enter-dictionary-indexing-mode-with-blank-indexing-type.js: Added.
+        * js/dom/script-tests/eval-cache-scoped-lookup.js: Added.
+        (first):
+        (a.string_appeared_here.second):
+        (third):
+        (fifth):
+        (sixth):
+        (seventh):
+        (eighth):
+        (nineth):
+        (tenth):
+        (eleventh):
+        * js/dom/script-tests/eval-contained-syntax-error.js: Added.
+        * js/dom/script-tests/exception-line-number.js: Added.
+        (foo):
+        (window.onerror):
+        * js/dom/script-tests/exception-registerfile-shrink.js: Added.
+        * js/dom/script-tests/exception-sequencing-binops.js: Copied from LayoutTests/js/exception-sequencing-binops.js.
+        * js/dom/script-tests/function-bind.js: Added.
+        (F):
+        * js/dom/script-tests/function-name.js: Added.
+        * js/dom/script-tests/function-names.js: Added.
+        (checkConstructorName):
+        * js/dom/script-tests/get-by-pname-only-prototype-properties.js: Added.
+        (foo):
+        * js/dom/script-tests/global-constructors-attributes.js: Added.
+        (.self.postMessage):
+        (.self.onconnect.self.postMessage):
+        (.self.onconnect):
+        (classNameForObject):
+        (constructorPropertiesOnGlobalObject):
+        * js/dom/script-tests/global-constructors-deletable.js: Added.
+        * js/dom/script-tests/global-function-resolve.js: Added.
+        * js/dom/script-tests/immediate-constant-instead-of-cell.js: Added.
+        * js/dom/script-tests/implicit-call-with-global-reentry.js: Added.
+        (testGlobalCode):
+        (testObject.get getterTest):
+        (testObject.set setterTest):
+        (testObject.toString):
+        (testObject.valueOf):
+        (testObject.toStringTest):
+        (testObject.valueOfTest):
+        * js/dom/script-tests/imul.js: Added.
+        (testIMul):
+        * js/dom/script-tests/inc-bracket-assign-subscript.js: Added.
+        (testPreIncBracketAccessWithAssignSubscript):
+        (testPostIncBracketAccessWithAssignSubscript):
+        * js/dom/script-tests/inc-const-valueOf.js: Added.
+        (testPostIncConstVarWithIgnoredResult.const.a.valueOf):
+        (testPostIncConstVarWithIgnoredResult):
+        (testPreIncConstVarWithIgnoredResult.const.a.valueOf):
+        (testPreIncConstVarWithIgnoredResult):
+        (testPreIncConstVarWithAssign.const.a.valueOf):
+        (testPreIncConstVarWithAssign):
+        * js/dom/script-tests/indexed-setter-on-global-object.js: Added.
+        * js/dom/script-tests/inline-arguments-tear-off.js: Added.
+        (g):
+        (f):
+        (doStuff):
+        * js/dom/script-tests/instanceof-XMLHttpRequest.js: Added.
+        * js/dom/script-tests/jit-set-profiling-access-type-only-for-get-by-id-self.js: Added.
+        (L_):
+        (Q2):
+        (f):
+        * js/dom/script-tests/js-correct-exception-handler.js: Added.
+        (throwEventually):
+        (f.g):
+        (f):
+        (test):
+        * js/dom/script-tests/lastModified.js: Added.
+        * js/dom/script-tests/lazy-create-arguments-from-get-by-val.js: Added.
+        (foo):
+        * js/dom/script-tests/line-column-numbers.js: Added.
+        (try.doThrow4b):
+        (doThrow5b.try.innerFunc):
+        (doThrow5b):
+        (doThrow6b.try.innerFunc):
+        (doThrow6b):
+        (catch):
+        (try.doThrow11b):
+        (try.doThrow14b):
+        (try.testObj19b.toString):
+        (try.testObj19b.run):
+        (try.test20b.f):
+        (try.test20b):
+        (try.toFuzz21b):
+        (try.toFuzz22b):
+        * js/dom/script-tests/method-check.js: Added.
+        (func2):
+        (func.String.prototype.a):
+        (func.String.prototype.b):
+        (func):
+        (addOne):
+        (addOneHundred):
+        (totalizer.makeCall):
+        * js/dom/script-tests/native-error-prototype.js: Added.
+        * js/dom/script-tests/neq-null-crash.js: Added.
+        (crush):
+        * js/dom/script-tests/nested-object-gc.js: Added.
+        * js/dom/script-tests/non-object-proto.js: Added.
+        * js/dom/script-tests/normal-character-escapes-in-string-literals.js: Added.
+        (test):
+        (testOther):
+        * js/dom/script-tests/null-char-in-string.js: Added.
+        * js/dom/script-tests/number-tofixed.js: Added.
+        * js/dom/script-tests/number-toprecision.js: Added.
+        * js/dom/script-tests/object-extra-comma.js: Added.
+        * js/dom/script-tests/object-prototype-constructor.js: Added.
+        (Foo.Bar):
+        (F):
+        * js/dom/script-tests/object-prototype-properties.js: Added.
+        * js/dom/script-tests/object-prototype-toLocaleString.js: Added.
+        (o.toLocaleString):
+        (String.prototype.toString):
+        * js/dom/script-tests/post-inc-assign-overwrites.js: Added.
+        (postIncDotAssignToBase):
+        (postIncBracketAssignToBase):
+        (postIncBracketAssignToSubscript):
+        * js/dom/script-tests/post-message-numeric-property.js: Added.
+        (window.onmessage):
+        * js/dom/script-tests/postfix-syntax.js: Added.
+        * js/dom/script-tests/prefix-syntax.js: Added.
+        * js/dom/script-tests/prototype-chain-caching-with-impure-get-own-property-slot-traps.js: Added.
+        (f):
+        * js/dom/script-tests/put-direct-index-beyond-vector-length-resize.js: Added.
+        * js/dom/script-tests/put-to-base-global-checked.js: Added.
+        (globalF):
+        (warmup):
+        (foo):
+        * js/dom/script-tests/random-array-gc-stress.js: Added.
+        (getRandomIndex):
+        (test):
+        * js/dom/script-tests/recursion-limit-equal.js: Added.
+        (test):
+        * js/dom/script-tests/regexp-bol-with-multiline.js: Added.
+        * js/dom/script-tests/regexp-bol.js: Added.
+        * js/dom/script-tests/regexp-extended-characters-crash.js: Added.
+        * js/dom/script-tests/regexp-lastindex.js: Added.
+        * js/dom/script-tests/regexp-look-ahead-empty.js: Added.
+        * js/dom/script-tests/regexp-look-ahead.js: Added.
+        * js/dom/script-tests/regexp-match-reify-before-putbyval.js: Added.
+        * js/dom/script-tests/regexp-non-capturing-groups.js: Added.
+        * js/dom/script-tests/regexp-non-greedy-parentheses.js: Added.
+        * js/dom/script-tests/regexp-overflow.js: Added.
+        * js/dom/script-tests/regexp-range-out-of-order.js: Added.
+        * js/dom/script-tests/regexp-ranges-and-escaped-hyphens.js: Added.
+        * js/dom/script-tests/regexp-stack-overflow.js: Added.
+        * js/dom/script-tests/regexp-unicode-handling.js: Added.
+        (Gn):
+        * js/dom/script-tests/regexp-unicode-overflow.js: Added.
+        (createRegExs):
+        * js/dom/script-tests/removing-Cf-characters.js: Added.
+        * js/dom/script-tests/reserved-words-as-property.js: Added.
+        (testWordEvalAndFunction):
+        (testWord):
+        (testWordStrictAndNonStrict):
+        * js/dom/script-tests/select-options-add.js: Added.
+        * js/dom/script-tests/stack-at-creation-for-error-objects.js: Added.
+        (checkStack):
+        * js/dom/script-tests/stack-trace.js: Added.
+        (printStack):
+        (hostThrower):
+        (callbacker):
+        (outer):
+        (inner):
+        (evaler):
+        (normalOuter):
+        (normalInner):
+        (scripterInner):
+        (scripterOuter):
+        (selfRecursive1):
+        (selfRecursive2):
+        (selfRecursive3):
+        (throwError):
+        (object.get getter1.o.valueOf):
+        (object.get getter1):
+        (object.get getter2):
+        (object.get getter3.o2.valueOf):
+        (object.get getter3):
+        (object.nonInlineable.callCount):
+        (object.nonInlineable):
+        (object.inlineable):
+        (yetAnotherInlinedCall):
+        (makeInlinableCall):
+        (.try.g):
+        (h):
+        (mapTest):
+        (mapTestDriver):
+        (dfgFunction):
+        (try.f):
+        (callNonCallable):
+        (dfgTest):
+        (inlineableThrow):
+        (dfgThing.get willThrow):
+        (dfgThing.get willThrowEventually):
+        (dfgThing.willThrowFunc):
+        (dfgThing.willThrowEventuallyFunc):
+        (dfg1):
+        (dfg2):
+        (dfg3):
+        (dfg4):
+        (dfg5):
+        (dfg6):
+        (dfg7):
+        (dfg8):
+        (dfg9):
+        (dfga):
+        (dfgb):
+        (dfgc):
+        * js/dom/script-tests/strict-readonly-statics.js: Added.
+        (testWindowUndefined):
+        (testNumberMAX_VALUE):
+        * js/dom/script-tests/string-match.js: Added.
+        (testMatch):
+        * js/dom/script-tests/string-prototype-properties.js: Added.
+        (Number.prototype.toString):
+        * js/dom/script-tests/string-replace-2.js: Added.
+        (testReplace):
+        (replacer):
+        * js/dom/script-tests/string-replace-3.js: Added.
+        * js/dom/script-tests/string-replacement-outofmemory.js: Added.
+        (createStringWithRepeatedChar):
+        * js/dom/script-tests/string-split-conformance.js: Added.
+        * js/dom/script-tests/string-split-double-empty.js: Added.
+        * js/dom/script-tests/string-split-ignore-case.js: Added.
+        * js/dom/script-tests/switch-behaviour.js: Added.
+        (characterSwitch):
+        (sparseCharacterSwitch):
+        * js/dom/script-tests/throw-exception-in-global-setter.js: Added.
+        (callSetter):
+        * js/dom/script-tests/toInt32UInt32.js: Added.
+        * js/dom/script-tests/toString-exception.js: Added.
+        * js/dom/script-tests/toString-overrides.js: Added.
+        (Number.prototype.toString):
+        (Number.prototype.toLocaleString):
+        (RegExp.prototype.toString):
+        (RegExp.prototype.toLocaleString):
+        * js/dom/script-tests/toString-stack-overflow.js: Added.
+        * js/dom/script-tests/transition-cache-dictionary-crash.js: Added.
+        (f):
+        * js/dom/script-tests/typed-array-access.js: Added.
+        (bitsToString):
+        (bitsToValue):
+        (valueToBits):
+        (roundTrip):
+        * js/dom/script-tests/typed-array-set-different-types.js: Added.
+        (MyRandom):
+        (.reference):
+        (.usingConstruct):
+        * js/dom/script-tests/typeof-syntax.js: Added.
+        * js/dom/script-tests/unshift-multi.js: Added.
+        (unshift1):
+        (unshift2):
+        (unshift5):
+        * js/dom/script-tests/vardecl-preserve-arguments.js: Added.
+        (argumentsLength):
+        (argumentsLengthInnerBlock):
+        (argumentsLengthInnerBlock2):
+        (argumentsLengthTryCatch):
+        (argumentsLengthWith):
+        (argumentsLengthOverride):
+        (argumentsLengthOverrideInnerBlock):
+        (argumentsLengthOverrideInnerBlock2):
+        (argumentsLengthOverrideInnerBlock3):
+        (argumentsTearOff1):
+        (argumentsTearOff2):
+        (argumentsTearOff3):
+        * js/dom/script-tests/webcore-string-comparison.js: Added.
+        * js/dom/script-tests/with-scope-gc.js: Added.
+        (gc):
+        * js/dom/select-options-add-expected.txt: Added.
+        * js/dom/select-options-add.html: Added.
+        * js/dom/select-options-remove-expected.txt: Added.
+        * js/dom/select-options-remove-gc-expected.txt: Added.
+        * js/dom/select-options-remove-gc.html: Added.
+        * js/dom/select-options-remove.html: Added.
+        * js/dom/stack-at-creation-for-error-objects-expected.txt: Added.
+        * js/dom/stack-at-creation-for-error-objects.html: Added.
+        * js/dom/stack-trace-expected.txt: Added.
+        * js/dom/stack-trace.html: Added.
+        * js/dom/strict-readonly-statics-expected.txt: Added.
+        * js/dom/strict-readonly-statics.html: Added.
+        * js/dom/string-anchor-expected.txt: Added.
+        * js/dom/string-anchor.html: Added.
+        * js/dom/string-concatenate-outofmemory-expected.txt: Added.
+        * js/dom/string-fontcolor-expected.txt: Added.
+        * js/dom/string-fontcolor.html: Added.
+        * js/dom/string-fontsize-expected.txt: Added.
+        * js/dom/string-fontsize.html: Added.
+        * js/dom/string-link-expected.txt: Added.
+        * js/dom/string-link.html: Added.
+        * js/dom/string-match-expected.txt: Added.
+        * js/dom/string-match.html: Added.
+        * js/dom/string-prototype-properties-expected.txt: Added.
+        * js/dom/string-prototype-properties.html: Added.
+        * js/dom/string-replace-2-expected.txt: Added.
+        * js/dom/string-replace-2.html: Added.
+        * js/dom/string-replace-3-expected.txt: Added.
+        * js/dom/string-replace-3.html: Added.
+        * js/dom/string-replace-exception-crash-expected.txt: Added.
+        * js/dom/string-replace-exception-crash.html: Added.
+        * js/dom/string-replacement-outofmemory-expected.txt: Added.
+        * js/dom/string-replacement-outofmemory.html: Added.
+        * js/dom/string-split-conformance-expected.txt: Added.
+        * js/dom/string-split-conformance.html: Added.
+        * js/dom/string-split-double-empty-expected.txt: Added.
+        * js/dom/string-split-double-empty.html: Added.
+        * js/dom/string-split-ignore-case-expected.txt: Added.
+        * js/dom/string-split-ignore-case.html: Added.
+        * js/dom/switch-behaviour-expected.txt: Added.
+        * js/dom/switch-behaviour.html: Added.
+        * js/dom/text-field-resize-expected.txt: Added.
+        * js/dom/text-field-resize.html: Added.
+        * js/dom/throw-exception-in-global-setter-expected.txt: Added.
+        * js/dom/throw-exception-in-global-setter.html: Added.
+        * js/dom/throw-from-array-sort-expected.txt: Added.
+        * js/dom/throw-from-array-sort.html: Added.
+        * js/dom/toInt32UInt32-expected.txt: Added.
+        * js/dom/toInt32UInt32.html: Added.
+        * js/dom/toString-and-valueOf-override-expected.txt: Added.
+        * js/dom/toString-and-valueOf-override.html: Added.
+        * js/dom/toString-dontEnum-expected.txt: Added.
+        * js/dom/toString-dontEnum.html: Added.
+        * js/dom/toString-exception-expected.txt: Added.
+        * js/dom/toString-exception.html: Added.
+        * js/dom/toString-number-expected.txt: Added.
+        * js/dom/toString-number.html: Added.
+        * js/dom/toString-overrides-expected.txt: Added.
+        * js/dom/toString-overrides.html: Added.
+        * js/dom/toString-stack-overflow-expected.txt: Added.
+        * js/dom/toString-stack-overflow.html: Added.
+        * js/dom/toString-try-else-expected.txt: Added.
+        * js/dom/toString-try-else.html: Added.
+        * js/dom/transition-cache-dictionary-crash-expected.txt: Added.
+        * js/dom/transition-cache-dictionary-crash.html: Added.
+        * js/dom/trivial-functions-expected.txt: Added.
+        * js/dom/trivial-functions.html: Added.
+        * js/dom/try-catch-crash-expected.txt: Added.
+        * js/dom/try-catch-crash.html: Added.
+        * js/dom/typed-array-access-expected.txt: Added.
+        * js/dom/typed-array-access.html: Added.
+        * js/dom/typed-array-set-different-types-expected.txt: Added.
+        * js/dom/typed-array-set-different-types.html: Added.
+        * js/dom/typeof-syntax-expected.txt: Added.
+        * js/dom/typeof-syntax.html: Added.
+        * js/dom/uncaught-exception-line-number-expected.txt: Added.
+        * js/dom/uncaught-exception-line-number.html: Added.
+        * js/dom/unshift-multi-expected.txt: Added.
+        * js/dom/unshift-multi.html: Added.
+        * js/dom/var-declarations-expected.txt: Added.
+        * js/dom/var-declarations-shadowing-expected.txt: Added.
+        * js/dom/var-declarations-shadowing.html: Added.
+        * js/dom/var-declarations.html: Added.
+        * js/dom/vardecl-preserve-arguments-expected.txt: Added.
+        * js/dom/vardecl-preserve-arguments.html: Added.
+        * js/dom/vardecl-preserve-parameters-expected.txt: Added.
+        * js/dom/vardecl-preserve-parameters.html: Added.
+        * js/dom/vardecl-preserve-vardecl-expected.txt: Added.
+        * js/dom/vardecl-preserve-vardecl.html: Added.
+        * js/dom/webcore-string-comparison-expected.txt: Added.
+        * js/dom/webcore-string-comparison.html: Added.
+        * js/dom/webidl-type-mapping-expected.txt: Added.
+        * js/dom/webidl-type-mapping.html: Added.
+        * js/dom/while-expression-value-expected.txt: Added.
+        * js/dom/while-expression-value.html: Added.
+        * js/dom/window-location-href-file-urls-expected.txt: Added.
+        * js/dom/window-location-href-file-urls.html: Added.
+        * js/dom/with-scope-gc-expected.txt: Added.
+        * js/dom/with-scope-gc.html: Added.
+        * js/dot-node-base-exception-expected.txt: Removed.
+        * js/dot-node-base-exception.html: Removed.
+        * js/encode-URI-test-expected.txt: Removed.
+        * js/encode-URI-test.html: Removed.
+        * js/end-in-string-escape-expected.txt: Removed.
+        * js/end-in-string-escape.html: Removed.
+        * js/enter-dictionary-indexing-mode-with-blank-indexing-type-expected.txt: Removed.
+        * js/enter-dictionary-indexing-mode-with-blank-indexing-type.html: Removed.
+        * js/error-object-write-and-detele-for-stack-property-expected.txt: Removed.
+        * js/error-object-write-and-detele-for-stack-property.html: Removed.
+        * js/eval-cache-scoped-lookup-expected.txt: Removed.
+        * js/eval-cache-scoped-lookup.html: Removed.
+        * js/eval-contained-syntax-error-expected.txt: Removed.
+        * js/eval-contained-syntax-error.html: Removed.
+        * js/eval-cross-window-expected.txt: Removed.
+        * js/eval-cross-window.html: Removed.
+        * js/eval-keyword-vs-function-expected.txt: Removed.
+        * js/eval-keyword-vs-function.html: Removed.
+        * js/eval-overriding-expected.txt: Removed.
+        * js/eval-overriding.html: Removed.
+        * js/exception-codegen-crash-expected.txt: Removed.
+        * js/exception-codegen-crash.html: Removed.
+        * js/exception-line-number-expected.txt: Removed.
+        * js/exception-line-number.html: Removed.
+        * js/exception-linenums-in-html-1-expected.txt: Removed.
+        * js/exception-linenums-in-html-1.html: Removed.
+        * js/exception-linenums-in-html-2-expected.txt: Removed.
+        * js/exception-linenums-in-html-2.html: Removed.
+        * js/exception-linenums-in-html-3-expected.txt: Removed.
+        * js/exception-linenums-in-html-3.html: Removed.
+        * js/exception-registerfile-shrink-expected.txt: Removed.
+        * js/exception-registerfile-shrink.html: Removed.
+        * js/exception-sequencing-binops-expected.txt: Removed.
+        * js/exception-sequencing-binops.html: Removed.
+        * js/exception-sequencing-binops.js: Removed.
+        * js/exception-sequencing-binops2-expected.txt: Removed.
+        * js/exception-sequencing-binops2.html: Removed.
+        * js/exception-sequencing-expected.txt: Removed.
+        * js/exception-sequencing.html: Removed.
+        * js/exception-thrown-from-equal-expected.txt: Removed.
+        * js/exception-thrown-from-equal.html: Removed.
+        * js/exception-thrown-from-eval-inside-closure-expected.txt: Removed.
+        * js/exception-thrown-from-eval-inside-closure.html: Removed.
+        * js/exception-thrown-from-function-with-lazy-activation-expected.txt: Removed.
+        * js/exception-thrown-from-function-with-lazy-activation.html: Removed.
+        * js/exception-thrown-from-new-expected.txt: Removed.
+        * js/exception-thrown-from-new.html: Removed.
+        * js/exceptions-thrown-in-callbacks-expected.txt: Removed.
+        * js/exceptions-thrown-in-callbacks.html: Removed.
+        * js/exec-state-marking-expected.txt: Removed.
+        * js/exec-state-marking.html: Removed.
+        * js/find-ignoring-case-regress-99753-expected.txt: Removed.
+        * js/find-ignoring-case-regress-99753.html: Removed.
+        * js/floating-point-truncate-rshift-expected.txt: Removed.
+        * js/floating-point-truncate-rshift.html: Removed.
+        * js/function-argument-evaluation-before-exception-expected.txt: Removed.
+        * js/function-argument-evaluation-before-exception.html: Removed.
+        * js/function-argument-evaluation-expected.txt: Removed.
+        * js/function-argument-evaluation.html: Removed.
+        * js/function-bind-expected.txt: Removed.
+        * js/function-bind.html: Removed.
+        * js/function-constructor-this-value-expected.txt: Removed.
+        * js/function-constructor-this-value.html: Removed.
+        * js/function-declarations-expected.txt: Removed.
+        * js/function-declarations.html: Removed.
+        * js/function-decompilation-operators-expected.txt: Removed.
+        * js/function-decompilation-operators.html: Removed.
+        * js/function-dot-arguments-and-caller-expected.txt: Removed.
+        * js/function-dot-arguments-and-caller.html: Removed.
+        * js/function-dot-arguments-identity-expected.txt: Removed.
+        * js/function-dot-arguments-identity.html: Removed.
+        * js/function-dot-arguments2-expected.txt: Removed.
+        * js/function-dot-arguments2.html: Removed.
+        * js/function-length-expected.txt: Removed.
+        * js/function-length.html: Removed.
+        * js/function-name-expected.txt: Removed.
+        * js/function-name-is-in-scope-expected.txt: Removed.
+        * js/function-name-is-in-scope.html: Removed.
+        * js/function-name.html: Removed.
+        * js/function-names-expected.txt: Removed.
+        * js/function-names.html: Removed.
+        * js/function-prototype-expected.txt: Removed.
+        * js/function-prototype.html: Removed.
+        * js/function-redefinition-expected.txt: Removed.
+        * js/function-redefinition.html: Removed.
+        * js/garbage-collect-after-string-appends-expected.txt: Removed.
+        * js/get-by-pname-only-prototype-properties-expected.txt: Removed.
+        * js/get-by-pname-only-prototype-properties.html: Removed.
+        * js/getOwnPropertyDescriptor-expected.txt: Removed.
+        * js/getOwnPropertyDescriptor.html: Removed.
+        * js/global-constructors-attributes-dedicated-worker-expected.txt: Removed.
+        * js/global-constructors-attributes-dedicated-worker.html: Removed.
+        * js/global-constructors-attributes-expected.txt: Removed.
+        * js/global-constructors-attributes-shared-worker-expected.txt: Removed.
+        * js/global-constructors-attributes-shared-worker.html: Removed.
+        * js/global-constructors-attributes.html: Removed.
+        * js/global-constructors-deletable-expected.txt: Removed.
+        * js/global-constructors-deletable.html: Removed.
+        * js/global-function-resolve-expected.txt: Removed.
+        * js/global-function-resolve.html: Removed.
+        * js/global-recursion-on-full-stack-expected.txt: Removed.
+        * js/global-recursion-on-full-stack.html: Removed.
+        * js/global-var-limit-expected.txt: Removed.
+        * js/global-var-limit.html: Removed.
+        * js/immediate-constant-instead-of-cell-expected.txt: Removed.
+        * js/immediate-constant-instead-of-cell.html: Removed.
+        * js/implicit-call-with-global-reentry-expected.txt: Removed.
+        * js/implicit-call-with-global-reentry.html: Removed.
+        * js/implicit-global-to-global-reentry-expected.txt: Removed.
+        * js/implicit-global-to-global-reentry.html: Removed.
+        * js/imul-expected.txt: Removed.
+        * js/imul.html: Removed.
+        * js/inc-bracket-assign-subscript-expected.txt: Removed.
+        * js/inc-bracket-assign-subscript.html: Removed.
+        * js/inc-const-valueOf-expected.txt: Removed.
+        * js/inc-const-valueOf.html: Removed.
+        * js/indexed-setter-on-global-object-expected.txt: Removed.
+        * js/indexed-setter-on-global-object.html: Removed.
+        * js/inline-arguments-tear-off-expected.txt: Removed.
+        * js/inline-arguments-tear-off.html: Removed.
+        * js/instanceof-XMLHttpRequest-expected.txt: Removed.
+        * js/instanceof-XMLHttpRequest.html: Removed.
+        * js/invalid-syntax-for-function-expected.txt: Removed.
+        * js/invalid-syntax-for-function.html: Removed.
+        * js/jit-set-profiling-access-type-only-for-get-by-id-self-expected.txt: Removed.
+        * js/jit-set-profiling-access-type-only-for-get-by-id-self.html: Removed.
+        * js/js-constructors-use-correct-global-expected.txt: Removed.
+        * js/js-constructors-use-correct-global.html: Removed.
+        * js/js-correct-exception-handler-expected.txt: Removed.
+        * js/js-correct-exception-handler.html: Removed.
+        * js/jsc-test-list: Removed.
+        * js/lastModified-expected.txt: Removed.
+        * js/lastModified.html: Removed.
+        * js/lazy-create-arguments-from-get-by-val-expected.txt: Removed.
+        * js/lazy-create-arguments-from-get-by-val.html: Removed.
+        * js/lexical-lookup-in-function-constructor-expected.txt: Removed.
+        * js/lexical-lookup-in-function-constructor.html: Removed.
+        * js/line-column-numbers-expected.txt: Removed.
+        * js/line-column-numbers.html: Removed.
+        * js/method-check-expected.txt: Removed.
+        * js/method-check.html: Removed.
+        * js/missing-style-end-tag-js-expected.txt: Removed.
+        * js/missing-style-end-tag-js.html: Removed.
+        * js/missing-title-end-tag-js-expected.txt: Removed.
+        * js/missing-title-end-tag-js.html: Removed.
+        * js/native-error-prototype-expected.txt: Removed.
+        * js/native-error-prototype.html: Removed.
+        * js/navigator-language-expected.txt: Removed.
+        * js/navigator-language.html: Removed.
+        * js/navigator-plugins-crash-expected.txt: Removed.
+        * js/navigator-plugins-crash.html: Removed.
+        * js/negate-overflow-expected.txt: Removed.
+        * js/negate-overflow.html: Removed.
+        * js/neq-null-crash-expected.txt: Removed.
+        * js/neq-null-crash.html: Removed.
+        * js/nested-function-scope-expected.txt: Removed.
+        * js/nested-function-scope.html: Removed.
+        * js/nested-object-gc-expected.txt: Removed.
+        * js/nested-object-gc.html: Removed.
+        * js/non-object-proto-expected.txt: Removed.
+        * js/non-object-proto.html: Removed.
+        * js/normal-character-escapes-in-string-literals-expected.txt: Removed.
+        * js/normal-character-escapes-in-string-literals.html: Removed.
+        * js/not-a-constructor-to-string-expected.txt: Removed.
+        * js/not-a-constructor-to-string.html: Removed.
+        * js/not-a-function-to-string-expected.txt: Removed.
+        * js/not-a-function-to-string.html: Removed.
+        * js/null-char-in-string-expected.txt: Removed.
+        * js/null-char-in-string.html: Removed.
+        * js/number-tofixed-expected.txt: Removed.
+        * js/number-tofixed.html: Removed.
+        * js/number-toprecision-expected.txt: Removed.
+        * js/number-toprecision.html: Removed.
+        * js/object-extra-comma-expected.txt: Removed.
+        * js/object-extra-comma.html: Removed.
+        * js/object-prototype-constructor-expected.txt: Removed.
+        * js/object-prototype-constructor.html: Removed.
+        * js/object-prototype-properties-expected.txt: Removed.
+        * js/object-prototype-properties.html: Removed.
+        * js/object-prototype-toLocaleString-expected.txt: Removed.
+        * js/object-prototype-toLocaleString.html: Removed.
+        * js/parse-error-external-script-in-eval-expected.txt: Removed.
+        * js/parse-error-external-script-in-eval.html: Removed.
+        * js/parse-error-external-script-in-new-Function-expected.txt: Removed.
+        * js/parse-error-external-script-in-new-Function.html: Removed.
+        * js/post-inc-assign-overwrites-expected.txt: Removed.
+        * js/post-inc-assign-overwrites.html: Removed.
+        * js/post-message-numeric-property-expected.txt: Removed.
+        * js/post-message-numeric-property.html: Removed.
+        * js/postfix-syntax-expected.txt: Removed.
+        * js/postfix-syntax.html: Removed.
+        * js/prefix-syntax-expected.txt: Removed.
+        * js/prefix-syntax.html: Removed.
+        * js/prototype-chain-caching-with-impure-get-own-property-slot-traps-expected.txt: Removed.
+        * js/prototype-chain-caching-with-impure-get-own-property-slot-traps.html: Removed.
+        * js/put-direct-index-beyond-vector-length-resize-expected.txt: Removed.
+        * js/put-direct-index-beyond-vector-length-resize.html: Removed.
+        * js/put-to-base-global-checked-expected.txt: Removed.
+        * js/put-to-base-global-checked.html: Removed.
+        * js/random-array-gc-stress-expected.txt: Removed.
+        * js/random-array-gc-stress.html: Removed.
+        * js/recursion-limit-equal-expected.txt: Removed.
+        * js/recursion-limit-equal.html: Removed.
+        * js/regexp-bol-expected.txt: Removed.
+        * js/regexp-bol-with-multiline-expected.txt: Removed.
+        * js/regexp-bol-with-multiline.html: Removed.
+        * js/regexp-bol.html: Removed.
+        * js/regexp-caching-expected.txt: Removed.
+        * js/regexp-caching.html: Removed.
+        * js/regexp-charclass-crash-expected.txt: Removed.
+        * js/regexp-charclass-crash.html: Removed.
+        * js/regexp-extended-characters-crash-expected.txt: Removed.
+        * js/regexp-extended-characters-crash.html: Removed.
+        * js/regexp-lastindex-expected.txt: Removed.
+        * js/regexp-lastindex.html: Removed.
+        * js/regexp-look-ahead-empty-expected.txt: Removed.
+        * js/regexp-look-ahead-empty.html: Removed.
+        * js/regexp-look-ahead-expected.txt: Removed.
+        * js/regexp-look-ahead.html: Removed.
+        * js/regexp-match-reify-before-putbyval-expected.txt: Removed.
+        * js/regexp-match-reify-before-putbyval.html: Removed.
+        * js/regexp-non-capturing-groups-expected.txt: Removed.
+        * js/regexp-non-capturing-groups.html: Removed.
+        * js/regexp-non-greedy-parentheses-expected.txt: Removed.
+        * js/regexp-non-greedy-parentheses.html: Removed.
+        * js/regexp-overflow-expected.txt: Removed.
+        * js/regexp-overflow.html: Removed.
+        * js/regexp-range-out-of-order-expected.txt: Removed.
+        * js/regexp-range-out-of-order.html: Removed.
+        * js/regexp-ranges-and-escaped-hyphens-expected.txt: Removed.
+        * js/regexp-ranges-and-escaped-hyphens.html: Removed.
+        * js/regexp-stack-overflow-expected.txt: Removed.
+        * js/regexp-stack-overflow.html: Removed.
+        * js/regexp-test-null-string-expected.txt: Removed.
+        * js/regexp-test-null-string.html: Removed.
+        * js/regexp-unicode-handling-expected.txt: Removed.
+        * js/regexp-unicode-handling.html: Removed.
+        * js/regexp-unicode-overflow-expected.txt: Removed.
+        * js/regexp-unicode-overflow.html: Removed.
+        * js/removing-Cf-characters-expected.txt: Removed.
+        * js/removing-Cf-characters.html: Removed.
+        * js/reserved-words-as-property-expected.txt: Removed.
+        * js/reserved-words-as-property.html: Removed.
+        * js/same-origin-subframe-about-blank-expected.txt: Removed.
+        * js/same-origin-subframe-about-blank.html: Removed.
+        * js/script-line-number-expected.txt: Removed.
+        * js/script-line-number.html: Removed.
+        * js/script-tests/Object-defineProperty.js: Removed.
+        * js/script-tests/activation-proto.js: Removed.
+        * js/script-tests/array-float-delete.js: Removed.
+        * js/script-tests/array-join-bug-11524.js: Removed.
+        * js/script-tests/array-prototype-properties.js: Removed.
+        * js/script-tests/array-sort-exception.js: Removed.
+        * js/script-tests/array-tostring-ignore-separator.js: Removed.
+        * js/script-tests/array-with-double-assign.js: Removed.
+        * js/script-tests/array-with-double-push.js: Removed.
+        * js/script-tests/assign.js: Removed.
+        * js/script-tests/basic-map.js: Removed.
+        * js/script-tests/basic-set.js: Removed.
+        * js/script-tests/basic-weakmap.js: Removed.
+        * js/script-tests/cached-eval-gc.js: Removed.
+        * js/script-tests/constructor-attributes.js: Removed.
+        * js/script-tests/constructor.js: Removed.
+        * js/script-tests/cross-frame-bad-time.js: Removed.
+        * js/script-tests/cross-frame-really-bad-time-with-__proto__.js: Removed.
+        * js/script-tests/cross-frame-really-bad-time.js: Removed.
+        * js/script-tests/cross-global-object-inline-global-var.js: Removed.
+        * js/script-tests/custom-constructors.js: Removed.
+        * js/script-tests/cyclic-proto.js: Removed.
+        * js/script-tests/cyclic-ref-toString.js: Removed.
+        * js/script-tests/date-DST-time-cusps.js: Removed.
+        * js/script-tests/date-big-constructor.js: Removed.
+        * js/script-tests/date-big-setdate.js: Removed.
+        * js/script-tests/date-big-setmonth.js: Removed.
+        * js/script-tests/date-negative-setmonth.js: Removed.
+        * js/script-tests/date-preserve-milliseconds.js: Removed.
+        * js/script-tests/delete-syntax.js: Removed.
+        * js/script-tests/dfg-byte-array-put.js: Removed.
+        * js/script-tests/dfg-byteOffset-neuter.js: Removed.
+        * js/script-tests/dfg-compare-final-object-to-final-object-or-other.js: Removed.
+        * js/script-tests/dfg-cross-global-object-inline-new-array-literal-with-variables.js: Removed.
+        * js/script-tests/dfg-cross-global-object-inline-new-array-literal.js: Removed.
+        * js/script-tests/dfg-cross-global-object-inline-new-array-with-elements.js: Removed.
+        * js/script-tests/dfg-cross-global-object-inline-new-array-with-size.js: Removed.
+        * js/script-tests/dfg-cross-global-object-inline-new-array.js: Removed.
+        * js/script-tests/dfg-cross-global-object-new-array.js: Removed.
+        * js/script-tests/dfg-custom-getter-throw-inlined.js: Removed.
+        * js/script-tests/dfg-custom-getter-throw.js: Removed.
+        * js/script-tests/dfg-custom-getter.js: Removed.
+        * js/script-tests/dfg-ensure-array-storage-on-window.js: Removed.
+        * js/script-tests/dfg-ensure-non-array-array-storage-on-window.js: Removed.
+        * js/script-tests/dfg-inline-switch-imm.js: Removed.
+        * js/script-tests/dfg-int32-to-double-on-set-local-and-exit.js: Removed.
+        * js/script-tests/dfg-int32-to-double-on-set-local-and-sometimes-exit.js: Removed.
+        * js/script-tests/dfg-logical-not-final-object-or-other.js: Removed.
+        * js/script-tests/dfg-make-rope-side-effects.js: Removed.
+        * js/script-tests/dfg-negative-array-size.js: Removed.
+        * js/script-tests/dfg-patchable-get-by-id-after-watchpoint.js: Removed.
+        * js/script-tests/dfg-peephole-compare-final-object-to-final-object-or-other-when-both-proven-final-object.js: Removed.
+        * js/script-tests/dfg-peephole-compare-final-object-to-final-object-or-other-when-proven-final-object.js: Removed.
+        * js/script-tests/dfg-peephole-compare-final-object-to-final-object-or-other.js: Removed.
+        * js/script-tests/dfg-proto-stub-watchpoint-fire.js: Removed.
+        * js/script-tests/dfg-prototype-chain-caching-with-impure-get-own-property-slot-traps.js: Removed.
+        * js/script-tests/dfg-put-by-id-allocate-storage-polymorphic.js: Removed.
+        * js/script-tests/dfg-put-by-id-allocate-storage.js: Removed.
+        * js/script-tests/dfg-put-by-id-reallocate-storage-polymorphic.js: Removed.
+        * js/script-tests/dfg-put-by-id-reallocate-storage.js: Removed.
+        * js/script-tests/dfg-put-by-val-setter-then-get-by-val.js: Removed.
+        * js/script-tests/dfg-put-to-readonly-property.js: Removed.
+        * js/script-tests/dfg-rshift-by-zero-eliminate-valuetoint32.js: Removed.
+        * js/script-tests/dfg-store-unexpected-value-into-argument-and-osr-exit.js: Removed.
+        * js/script-tests/dfg-strcat-over-objects-then-exit-on-it.js: Removed.
+        * js/script-tests/dfg-strict-mode-arguments-get-beyond-length.js: Removed.
+        * js/script-tests/dfg-typed-array-neuter.js: Removed.
+        * js/script-tests/document-all-triggers-masquerades-watchpoint.js: Removed.
+        * js/script-tests/dot-node-base-exception.js: Removed.
+        * js/script-tests/end-in-string-escape.js: Removed.
+        * js/script-tests/enter-dictionary-indexing-mode-with-blank-indexing-type.js: Removed.
+        * js/script-tests/eval-cache-scoped-lookup.js: Removed.
+        * js/script-tests/eval-contained-syntax-error.js: Removed.
+        * js/script-tests/exception-line-number.js: Removed.
+        * js/script-tests/exception-registerfile-shrink.js: Removed.
+        * js/script-tests/function-bind.js: Removed.
+        * js/script-tests/function-name.js: Removed.
+        * js/script-tests/function-names.js: Removed.
+        * js/script-tests/get-by-pname-only-prototype-properties.js: Removed.
+        * js/script-tests/global-constructors-attributes.js: Removed.
+        * js/script-tests/global-constructors-deletable.js: Removed.
+        * js/script-tests/global-function-resolve.js: Removed.
+        * js/script-tests/immediate-constant-instead-of-cell.js: Removed.
+        * js/script-tests/implicit-call-with-global-reentry.js: Removed.
+        * js/script-tests/imul.js: Removed.
+        * js/script-tests/inc-bracket-assign-subscript.js: Removed.
+        * js/script-tests/inc-const-valueOf.js: Removed.
+        * js/script-tests/indexed-setter-on-global-object.js: Removed.
+        * js/script-tests/inline-arguments-tear-off.js: Removed.
+        * js/script-tests/instanceof-XMLHttpRequest.js: Removed.
+        * js/script-tests/jit-set-profiling-access-type-only-for-get-by-id-self.js: Removed.
+        * js/script-tests/js-correct-exception-handler.js: Removed.
+        * js/script-tests/lastModified.js: Removed.
+        * js/script-tests/lazy-create-arguments-from-get-by-val.js: Removed.
+        * js/script-tests/line-column-numbers.js: Removed.
+        * js/script-tests/method-check.js: Removed.
+        * js/script-tests/native-error-prototype.js: Removed.
+        * js/script-tests/neq-null-crash.js: Removed.
+        * js/script-tests/nested-object-gc.js: Removed.
+        * js/script-tests/non-object-proto.js: Removed.
+        * js/script-tests/normal-character-escapes-in-string-literals.js: Removed.
+        * js/script-tests/null-char-in-string.js: Removed.
+        * js/script-tests/number-tofixed.js: Removed.
+        * js/script-tests/number-toprecision.js: Removed.
+        * js/script-tests/object-extra-comma.js: Removed.
+        * js/script-tests/object-prototype-constructor.js: Removed.
+        * js/script-tests/object-prototype-properties.js: Removed.
+        * js/script-tests/object-prototype-toLocaleString.js: Removed.
+        * js/script-tests/post-inc-assign-overwrites.js: Removed.
+        * js/script-tests/post-message-numeric-property.js: Removed.
+        * js/script-tests/postfix-syntax.js: Removed.
+        * js/script-tests/prefix-syntax.js: Removed.
+        * js/script-tests/prototype-chain-caching-with-impure-get-own-property-slot-traps.js: Removed.
+        * js/script-tests/put-direct-index-beyond-vector-length-resize.js: Removed.
+        * js/script-tests/put-to-base-global-checked.js: Removed.
+        * js/script-tests/random-array-gc-stress.js: Removed.
+        * js/script-tests/recursion-limit-equal.js: Removed.
+        * js/script-tests/regexp-bol-with-multiline.js: Removed.
+        * js/script-tests/regexp-bol.js: Removed.
+        * js/script-tests/regexp-extended-characters-crash.js: Removed.
+        * js/script-tests/regexp-lastindex.js: Removed.
+        * js/script-tests/regexp-look-ahead-empty.js: Removed.
+        * js/script-tests/regexp-look-ahead.js: Removed.
+        * js/script-tests/regexp-match-reify-before-putbyval.js: Removed.
+        * js/script-tests/regexp-non-capturing-groups.js: Removed.
+        * js/script-tests/regexp-non-greedy-parentheses.js: Removed.
+        * js/script-tests/regexp-overflow.js: Removed.
+        * js/script-tests/regexp-range-out-of-order.js: Removed.
+        * js/script-tests/regexp-ranges-and-escaped-hyphens.js: Removed.
+        * js/script-tests/regexp-stack-overflow.js: Removed.
+        * js/script-tests/regexp-unicode-handling.js: Removed.
+        * js/script-tests/regexp-unicode-overflow.js: Removed.
+        * js/script-tests/removing-Cf-characters.js: Removed.
+        * js/script-tests/reserved-words-as-property.js: Removed.
+        * js/script-tests/select-options-add.js: Removed.
+        * js/script-tests/stack-at-creation-for-error-objects.js: Removed.
+        * js/script-tests/stack-trace.js: Removed.
+        * js/script-tests/strict-readonly-statics.js: Removed.
+        * js/script-tests/string-match.js: Removed.
+        * js/script-tests/string-prototype-properties.js: Removed.
+        * js/script-tests/string-replace-2.js: Removed.
+        * js/script-tests/string-replace-3.js: Removed.
+        * js/script-tests/string-replacement-outofmemory.js: Removed.
+        * js/script-tests/string-split-conformance.js: Removed.
+        * js/script-tests/string-split-double-empty.js: Removed.
+        * js/script-tests/string-split-ignore-case.js: Removed.
+        * js/script-tests/switch-behaviour.js: Removed.
+        * js/script-tests/throw-exception-in-global-setter.js: Removed.
+        * js/script-tests/toInt32UInt32.js: Removed.
+        * js/script-tests/toString-exception.js: Removed.
+        * js/script-tests/toString-overrides.js: Removed.
+        * js/script-tests/toString-stack-overflow.js: Removed.
+        * js/script-tests/transition-cache-dictionary-crash.js: Removed.
+        * js/script-tests/typed-array-access.js: Removed.
+        * js/script-tests/typed-array-set-different-types.js: Removed.
+        * js/script-tests/typeof-syntax.js: Removed.
+        * js/script-tests/unshift-multi.js: Removed.
+        * js/script-tests/vardecl-preserve-arguments.js: Removed.
+        * js/script-tests/webcore-string-comparison.js: Removed.
+        * js/script-tests/with-scope-gc.js: Removed.
+        * js/select-options-add-expected.txt: Removed.
+        * js/select-options-add.html: Removed.
+        * js/select-options-remove-expected.txt: Removed.
+        * js/select-options-remove-gc-expected.txt: Removed.
+        * js/select-options-remove-gc.html: Removed.
+        * js/select-options-remove.html: Removed.
+        * js/stack-at-creation-for-error-objects-expected.txt: Removed.
+        * js/stack-at-creation-for-error-objects.html: Removed.
+        * js/stack-trace-expected.txt: Removed.
+        * js/stack-trace.html: Removed.
+        * js/strict-readonly-statics-expected.txt: Removed.
+        * js/strict-readonly-statics.html: Removed.
+        * js/string-anchor-expected.txt: Removed.
+        * js/string-anchor.html: Removed.
+        * js/string-concatenate-outofmemory-expected.txt: Removed.
+        * js/string-fontcolor-expected.txt: Removed.
+        * js/string-fontcolor.html: Removed.
+        * js/string-fontsize-expected.txt: Removed.
+        * js/string-fontsize.html: Removed.
+        * js/string-link-expected.txt: Removed.
+        * js/string-link.html: Removed.
+        * js/string-match-expected.txt: Removed.
+        * js/string-match.html: Removed.
+        * js/string-prototype-properties-expected.txt: Removed.
+        * js/string-prototype-properties.html: Removed.
+        * js/string-replace-2-expected.txt: Removed.
+        * js/string-replace-2.html: Removed.
+        * js/string-replace-3-expected.txt: Removed.
+        * js/string-replace-3.html: Removed.
+        * js/string-replace-exception-crash-expected.txt: Removed.
+        * js/string-replace-exception-crash.html: Removed.
+        * js/string-replacement-outofmemory-expected.txt: Removed.
+        * js/string-replacement-outofmemory.html: Removed.
+        * js/string-split-conformance-expected.txt: Removed.
+        * js/string-split-conformance.html: Removed.
+        * js/string-split-double-empty-expected.txt: Removed.
+        * js/string-split-double-empty.html: Removed.
+        * js/string-split-ignore-case-expected.txt: Removed.
+        * js/string-split-ignore-case.html: Removed.
+        * js/switch-behaviour-expected.txt: Removed.
+        * js/switch-behaviour.html: Removed.
+        * js/text-field-resize-expected.txt: Removed.
+        * js/text-field-resize.html: Removed.
+        * js/throw-exception-in-global-setter-expected.txt: Removed.
+        * js/throw-exception-in-global-setter.html: Removed.
+        * js/throw-from-array-sort-expected.txt: Removed.
+        * js/throw-from-array-sort.html: Removed.
+        * js/toInt32UInt32-expected.txt: Removed.
+        * js/toInt32UInt32.html: Removed.
+        * js/toString-and-valueOf-override-expected.txt: Removed.
+        * js/toString-and-valueOf-override.html: Removed.
+        * js/toString-dontEnum-expected.txt: Removed.
+        * js/toString-dontEnum.html: Removed.
+        * js/toString-exception-expected.txt: Removed.
+        * js/toString-exception.html: Removed.
+        * js/toString-number-expected.txt: Removed.
+        * js/toString-number.html: Removed.
+        * js/toString-overrides-expected.txt: Removed.
+        * js/toString-overrides.html: Removed.
+        * js/toString-stack-overflow-expected.txt: Removed.
+        * js/toString-stack-overflow.html: Removed.
+        * js/toString-try-else-expected.txt: Removed.
+        * js/toString-try-else.html: Removed.
+        * js/transition-cache-dictionary-crash-expected.txt: Removed.
+        * js/transition-cache-dictionary-crash.html: Removed.
+        * js/trivial-functions-expected.txt: Removed.
+        * js/trivial-functions.html: Removed.
+        * js/try-catch-crash-expected.txt: Removed.
+        * js/try-catch-crash.html: Removed.
+        * js/typed-array-access-expected.txt: Removed.
+        * js/typed-array-access.html: Removed.
+        * js/typed-array-set-different-types-expected.txt: Removed.
+        * js/typed-array-set-different-types.html: Removed.
+        * js/typeof-syntax-expected.txt: Removed.
+        * js/typeof-syntax.html: Removed.
+        * js/uncaught-exception-line-number-expected.txt: Removed.
+        * js/uncaught-exception-line-number.html: Removed.
+        * js/unshift-multi-expected.txt: Removed.
+        * js/unshift-multi.html: Removed.
+        * js/var-declarations-expected.txt: Removed.
+        * js/var-declarations-shadowing-expected.txt: Removed.
+        * js/var-declarations-shadowing.html: Removed.
+        * js/var-declarations.html: Removed.
+        * js/vardecl-preserve-arguments-expected.txt: Removed.
+        * js/vardecl-preserve-arguments.html: Removed.
+        * js/vardecl-preserve-parameters-expected.txt: Removed.
+        * js/vardecl-preserve-parameters.html: Removed.
+        * js/vardecl-preserve-vardecl-expected.txt: Removed.
+        * js/vardecl-preserve-vardecl.html: Removed.
+        * js/webcore-string-comparison-expected.txt: Removed.
+        * js/webcore-string-comparison.html: Removed.
+        * js/webidl-type-mapping-expected.txt: Removed.
+        * js/webidl-type-mapping.html: Removed.
+        * js/while-expression-value-expected.txt: Removed.
+        * js/while-expression-value.html: Removed.
+        * js/window-location-href-file-urls-expected.txt: Removed.
+        * js/window-location-href-file-urls.html: Removed.
+        * js/with-scope-gc-expected.txt: Removed.
+        * js/with-scope-gc.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/js/constructor-length-expected.txt: Removed.
+        * platform/mac/js/dom: Added.
+        * platform/mac/js/dom/constructor-length-expected.txt: Copied from LayoutTests/platform/mac/js/constructor-length-expected.txt.
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+
 2013-09-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix svg/masking/* tests

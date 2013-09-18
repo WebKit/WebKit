@@ -422,7 +422,7 @@ fast/workers/storage/use-same-database-in-page-and-workers.html
 fast/frames/sandboxed-iframe-storage.html
 
 # Times out on apple-windows-3 http://webkit.org/b/48999
-js/exceptions-thrown-in-callbacks.html
+js/dom/exceptions-thrown-in-callbacks.html
 
 # Sometimes times out http://webkit.org/b/48753
 http/tests/security/window-events-clear-port.html
@@ -767,7 +767,7 @@ plugins/npruntime/npruntime.html
 fast/cookies/local-file-can-set-cookies.html
 
 # Bug 12216: Stack overflow crash in JavaScript garbage collector mark pass <https://bugs.webkit.org/show_bug.cgi?id=12216>
-js/toString-stack-overflow.html
+js/dom/toString-stack-overflow.html
 
 # Failures following r42379
 fast/text/international/001.html
@@ -903,7 +903,7 @@ platform/win/editing/selection/doubleclick-should-not-expand-across-lines.html
 fast/multicol/single-line.html
 
 # Needs rebaseline
-js/constructor-length.html
+js/dom/constructor-length.html
 
 # Need to add functionality to DumpRenderTree to handle error pages
 fast/history/back-forward-reset-after-error-handling.html
@@ -1123,7 +1123,7 @@ fast/harness/show-modal-dialog.html
 fast/events/scroll-event-during-modal-dialog.html
 inspector/console/console-long-eval-crash.html
 fast/dom/Window/open-window-min-size.html
-js/function-length.html
+js/dom/function-length.html
 
 # These tests fail when showModalDialog is unsupported, even though they don't
 # rely on it directly http://webkit.org/b/53676
@@ -1942,7 +1942,7 @@ fast/events/dropzone-005.html
 fast/harness/results.html
 fast/images/exif-orientation.html
 fast/images/support-broken-image-delegate.html
-js/stack-trace.html
+js/dom/stack-trace.html
 fast/layers/video-layer.html
 fast/loader/javascript-url-iframe-remove-on-navigate.html
 fast/dom/MutationObserver/inline-event-listener.html
@@ -2661,15 +2661,15 @@ compositing/filters/sw-shadow-overlaps-hw-shadow.html
 editing/secure-input [ Failure ]
 
 # Worker-specific crashes
-webkit.org/b/116560 js/create-lots-of-workers.html
+webkit.org/b/116560 js/dom/create-lots-of-workers.html
 webkit.org/b/116560 fast/workers
 
 # Disable crashing tests, being investigated under https://bugs.webkit.org/show_bug.cgi?id=116562
 webkit.org/b/116562 fast/css/font-face-data-uri-invalid.html
 webkit.org/b/116562 fast/dom/Window/window-postmessage-clone-deep-array.html
-webkit.org/b/116562 js/callback-function-with-handle-event.html
+webkit.org/b/116562 js/dom/callback-function-with-handle-event.html
 webkit.org/b/116562 js/large-expressions.html
-webkit.org/b/116562 js/string-replace-exception-crash.html
+webkit.org/b/116562 js/dom/string-replace-exception-crash.html
 webkit.org/b/116562 fast/text/custom-font-data-crash.html
 webkit.org/b/116562 loader/go-back-cached-main-resource.html
 webkit.org/b/116562 media/video-beforeload-remove-source.html
@@ -2788,7 +2788,7 @@ fast/shapes
 fast/dom/call-a-constructor-as-a-function.html [ Failure ]
 fast/forms/search-event-delay.html [ Failure ]
 fast/lists/inlineBoxWrapperNullCheck.html [ Failure ]
-js/global-constructors-attributes-dedicated-worker.html [ Failure ]
+js/dom/global-constructors-attributes-dedicated-worker.html [ Failure ]
 
 # These test fail due to 'notifyDone' not being executed.
 webkit.org/b/121509 editing/spelling/grammar-paste.html [ Skip ]
@@ -2889,7 +2889,7 @@ webkit.org/b/121510 fast/gradients/crash-on-zero-radius.html	[ Skip ]
 webkit.org/b/121510 fast/workers/worker-close-more.html [ Skip ]
 webkit.org/b/121510 fast/frames/frame-display-none-focus.html [ Skip ]
 webkit.org/b/62024 http/tests/media/video-cross-site.html [ Skip ]
-webkit.org/b/121510 js/Promise-catch-in-workers.html [ Skip ]
+webkit.org/b/121510 js/dom/Promise-catch-in-workers.html [ Skip ]
 webkit.org/b/121510 js/stack-overflow-arrity-catch.html	[ Skip ]
 webkit.org/b/121510 media/audio-constructor-src.html	[ Skip ]
 webkit.org/b/121510 media/audio-delete-while-slider-thumb-clicked.html	[ Skip ]
@@ -2919,8 +2919,8 @@ fast/events/wheelevent-basic.html [ Skip ]
 fast/events/wheelevent-constructor.html [ Skip ]
 fast/forms/select/listbox-click-on-scrollbar.html [ Skip ]
 fast/loader/file-protocol-fragment.html [ Skip ]
-js/exception-sequencing-binops2.html [ Skip ]
-js/exception-sequencing.html [ Skip ]
+js/dom/exception-sequencing-binops2.html [ Skip ]
+js/dom/exception-sequencing.html [ Skip ]
 media/track/track-css-all-cues.html [ Skip ]
 media/track/track-in-band-legacy-api.html [ Skip ]
 media/track/track-in-band-mode.html [ Skip ]
@@ -2954,4 +2954,4 @@ svg/custom/masking-clipping-hidpi.svg [ ImageOnlyFailure ]
 
 # Don't run these time-outs for now
 css3/filters/huge-region-composited.html [ Skip ]
-js/random-array-gc-stress.html [ Skip ]
+js/dom/random-array-gc-stress.html [ Skip ]

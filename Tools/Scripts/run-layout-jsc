@@ -28,14 +28,13 @@
 jscCmd="/System/Library/Frameworks/JavaScriptCore.framework/Resources/jsc"
 testRoot=/tmp/LayoutTests
 resultsRoot=`date \+/tmp/results-%Y-%m-%d-%H-%M-%S`
-testList="unset"
 
 cmdName=`basename $0`
 
 usage()
 {
     echo "usage: $cmdName [[--jsc | -j] <path-to-jsc>] [[--results-dir | -r] <results-path>]"
-    echo "                    [[--test-root | -t] <test-root-path>] [[--test-list | -l] <test-list-file>]"
+    echo "                    [[--test-root | -t] <test-root-path>]"
     exit 1
 }
 
@@ -50,9 +49,6 @@ do
         ;;
     --test-root|-t)
         testRoot=$2
-        ;;
-    --test-list|-l)
-        testList=$2
         ;;
     *)
         echo "Unrecognized option \"$1\""
@@ -69,11 +65,6 @@ then
     usage
 fi
 
-if [ $testList = "unset" ]
-then
-    testList=$testRoot/js/jsc-test-list
-fi
-
 preScript=$testRoot/resources/standalone-pre.js
 postScript=$testRoot/resources/standalone-post.js
 passList=$resultsRoot/passed
@@ -88,12 +79,13 @@ numCrashed=0
 rm -rf $resultsRoot
 rm -f jsc-tests-passed jsc-tests-failed
 
-for test in `cat $testList`
+for testHTMLFile in `(cd $testRoot && ls -1 js/*.html fast/regex/*.html)`
 do
     testPassed=0
     testCrashed=0
-    testName=`basename $test`
-    dirName=`dirname $test`
+    testName=`basename $testHTMLFile .html`
+    dirName=`dirname $testHTMLFile`
+    test=$dirName/$testName
      
     expectedOut="$testRoot/$dirName/${testName}-expected.txt"
     actualOut="$resultsRoot/$dirName/${testName}-out.txt"
