@@ -1,3 +1,64 @@
+2013-09-18  Enrica Casucci  <enrica@apple.com>
+
+        Upstream changes to WebHTMLConverter to support HTML
+        to NSAttributedString conversion on both iOS and OS X.
+
+        Reviewed by Benjamin Poulain.
+
+        This is a new submission of r156001 with the fix for the
+        failing TestWebKitAPI test. The additional change has been
+        reviewed by Tim Horton.
+        
+        * platform/mac/HTMLConverter.h:
+        * platform/mac/HTMLConverter.mm:
+        (WebDefaultFont):
+        (_fontForNameAndSize):
+        (+[WebHTMLConverter defaultParagraphStyle]):
+        (-[WebHTMLConverter _computedStyleForElement:]):
+        (-[WebHTMLConverter _specifiedStyleForElement:]):
+        (-[WebHTMLConverter _computedStringForNode:property:]):
+        (-[WebHTMLConverter _stringForNode:property:]):
+        (-[WebHTMLConverter _getComputedFloat:forNode:property:]):
+        (-[WebHTMLConverter _getFloat:forNode:property:]):
+        (_NSFirstPathForDirectoriesInDomains):
+        (_NSSystemLibraryPath):
+        (-[WebHTMLConverter _webKitBundle]):
+        (_colorForRGBColor):
+        (_shadowForShadowStyle):
+        (-[WebHTMLConverter _elementIsBlockLevel:]):
+        (-[WebHTMLConverter _elementHasOwnBackgroundColor:]):
+        (-[WebHTMLConverter _computedColorForNode:property:]):
+        (-[WebHTMLConverter _colorForNode:property:]):
+        (-[WebHTMLConverter _computedAttributesForElement:]):
+        (-[WebHTMLConverter _attributesForElement:]):
+        (-[WebHTMLConverter _newParagraphForElement:tag:allowEmpty:suppressTrailingSpace:]):
+        (-[WebHTMLConverter _newLineForElement:]):
+        (-[WebHTMLConverter _newTabForElement:]):
+        (-[WebHTMLConverter _WebMessageDocumentClass]):
+        (-[WebHTMLConverter _addAttachmentForElement:URL:needsParagraph:usePlaceholder:]):
+        (-[WebHTMLConverter _addQuoteForElement:opening:level:]):
+        (-[WebHTMLConverter _addValue:forElement:]):
+        (-[WebHTMLConverter _fillInBlock:forElement:backgroundColor:extraMargin:extraPadding:isTable:]):
+        (_dateForString):
+        (_colCompare):
+        (-[WebHTMLConverter _processMetaElementWithName:content:]):
+        (-[WebHTMLConverter _processHeadElement:]):
+        (-[WebHTMLConverter _enterElement:tag:display:embedded:]):
+        (-[WebHTMLConverter _addTableForElement:]):
+        (-[WebHTMLConverter _addTableCellForElement:]):
+        (-[WebHTMLConverter _processElement:tag:display:depth:]):
+        (-[WebHTMLConverter _addMarkersToList:range:]):
+        (-[WebHTMLConverter _exitElement:tag:display:depth:startIndex:]):
+        (-[WebHTMLConverter _processText:]):
+        (-[WebHTMLConverter _traverseNode:depth:embedded:]):
+        (-[WebHTMLConverter _traverseFooterNode:depth:]):
+        (-[WebHTMLConverter _loadFromDOMRange]):
+        (-[WebHTMLConverter dealloc]):
+        (-[WebHTMLConverter init]):
+        (-[WebHTMLConverter initWithDOMRange:]):
+        (-[WebHTMLConverter attributedString]):
+        (+[WebHTMLConverter editingAttributedStringFromRange:]):
+
 2013-09-18  Antti Koivisto  <antti@apple.com>
 
         Rename RenderBR to RenderLineBreak
