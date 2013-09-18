@@ -147,7 +147,7 @@ private:
     ULONG m_refCount;
     URLToEntriesMap m_entriesByURL;
     DateToEntriesMap m_entriesByDate;
-    std::unique<DATE[]> m_orderedLastVisitedDays;
+    std::unique_ptr<DATE[]> m_orderedLastVisitedDays;
     COMPtr<WebPreferences> m_preferences;
 };
 

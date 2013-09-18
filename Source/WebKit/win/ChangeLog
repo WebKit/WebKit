@@ -1,3 +1,9 @@
+2013-09-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Build fix after r156063.
+
+        * WebHistory.h: std::unique is an algorithm; std::unique_ptr is what we want here!
+
 2013-09-18  Sam Weinig  <sam@webkit.org>
 
         Replace use of OwnArrayPtr<Foo> with std::unique_ptr<Foo[]> in WebKit and WebKit2
