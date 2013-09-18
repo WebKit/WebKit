@@ -1,3 +1,23 @@
+2013-09-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix svg/masking/* tests
+        https://bugs.webkit.org/show_bug.cgi?id=121570
+
+        Reviewed by Rob Buis.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/975b3219677968706cbddb9295ceada05c092dd6
+
+        "rx" is not a valid <circle> attribute - these tests were not drawing anything.
+        Also switching to rects to avoid reftest antialiasing issues.
+        For non-alpha variants, using a 50% luminance to capture the effect on the output color.
+
+        * svg/masking/mask-type-alpha-expected.svg:
+        * svg/masking/mask-type-alpha.svg:
+        * svg/masking/mask-type-luminance-expected.svg:
+        * svg/masking/mask-type-luminance.svg:
+        * svg/masking/mask-type-not-set-expected.svg:
+        * svg/masking/mask-type-not-set.svg:
+
 2013-09-18  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Throw exception when setting timestampOffset while 'updating' state is set.
