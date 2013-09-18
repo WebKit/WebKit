@@ -1,3 +1,16 @@
+2013-09-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move expected results after r156066.
+
+        * platform/efl/js/dom: Added.
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt: Copied from LayoutTests/platform/efl/js/global-constructors-attributes-expected.txt.
+        * platform/efl/js/global-constructors-attributes-expected.txt: Removed.
+        * platform/mac-lion/js/global-constructors-attributes-expected.txt: Removed.
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt: Copied from LayoutTests/platform/mac-lion/js/global-constructors-attributes-expected.txt.
+        * platform/qt/js/dom: Added.
+        * platform/qt/js/dom/global-constructors-attributes-expected.txt: Copied from LayoutTests/platform/qt/js/global-constructors-attributes-expected.txt.
+        * platform/qt/js/global-constructors-attributes-expected.txt: Removed.
+
 2013-09-18  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of the jsc-test-list by moving all not-jsc-capable tests into js/dom
