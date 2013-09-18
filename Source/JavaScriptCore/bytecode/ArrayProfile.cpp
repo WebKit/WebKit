@@ -89,7 +89,9 @@ void ArrayProfile::computeUpdatedPrediction(const ConcurrentJITLocker&, CodeBloc
     
     m_mayInterceptIndexedAccesses |=
         m_lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero();
-    if (!codeBlock->globalObject()->isOriginalArrayStructure(m_lastSeenStructure))
+    JSGlobalObject* globalObject = codeBlock->globalObject();
+    if (!globalObject->isOriginalArrayStructure(m_lastSeenStructure)
+        && !globalObject->isOriginalTypedArrayStructure(m_lastSeenStructure))
         m_usesOriginalArrayStructures = false;
     m_lastSeenStructure = 0;
 }

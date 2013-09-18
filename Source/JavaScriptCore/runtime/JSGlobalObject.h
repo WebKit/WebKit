@@ -423,6 +423,13 @@ public:
     {
         return m_typedArrays[toIndex(type)].structure.get();
     }
+    bool isOriginalTypedArrayStructure(Structure* structure)
+    {
+        TypedArrayType type = structure->classInfo()->typedArrayStorageType;
+        if (type == NotTypedArray)
+            return false;
+        return typedArrayStructure(type) == structure;
+    }
 
     void* actualPointerFor(Special::Pointer pointer)
     {

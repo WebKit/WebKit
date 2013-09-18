@@ -36,14 +36,20 @@ namespace JSC { namespace DFG {
 
 ArrayMode ArrayMode::fromObserved(const ConcurrentJITLocker& locker, ArrayProfile* profile, Array::Action action, bool makeSafe)
 {
+    Array::Class nonArray;
+    if (profile->usesOriginalArrayStructures(locker))
+        nonArray = Array::OriginalNonArray;
+    else
+        nonArray = Array::NonArray;
+    
     ArrayModes observed = profile->observedArrayModes(locker);
     switch (observed) {
     case 0:
         return ArrayMode(Array::Unprofiled);
     case asArrayModes(NonArray):
         if (action == Array::Write && !profile->mayInterceptIndexedAccesses(locker))
-            return ArrayMode(Array::Undecided, Array::NonArray, Array::OutOfBounds, Array::Convert);
-        return ArrayMode(Array::SelectUsingPredictions);
+            return ArrayMode(Array::Undecided, nonArray, Array::OutOfBounds, Array::Convert);
+        return ArrayMode(Array::SelectUsingPredictions, nonArray);
 
     case asArrayModes(ArrayWithUndecided):
         if (action == Array::Write)
@@ -56,31 +62,31 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJITLocker& locker, ArrayProfil
         return ArrayMode(Array::SelectUsingPredictions);
 
     case asArrayModes(NonArrayWithInt32):
-        return ArrayMode(Array::Int32, Array::NonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+        return ArrayMode(Array::Int32, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(ArrayWithInt32):
         return ArrayMode(Array::Int32, Array::Array, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(NonArrayWithInt32) | asArrayModes(ArrayWithInt32):
         return ArrayMode(Array::Int32, Array::PossiblyArray, Array::AsIs).withProfile(locker, profile, makeSafe);
 
     case asArrayModes(NonArrayWithDouble):
-        return ArrayMode(Array::Double, Array::NonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+        return ArrayMode(Array::Double, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(ArrayWithDouble):
         return ArrayMode(Array::Double, Array::Array, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(NonArrayWithDouble) | asArrayModes(ArrayWithDouble):
         return ArrayMode(Array::Double, Array::PossiblyArray, Array::AsIs).withProfile(locker, profile, makeSafe);
 
     case asArrayModes(NonArrayWithContiguous):
-        return ArrayMode(Array::Contiguous, Array::NonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+        return ArrayMode(Array::Contiguous, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(ArrayWithContiguous):
         return ArrayMode(Array::Contiguous, Array::Array, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(NonArrayWithContiguous) | asArrayModes(ArrayWithContiguous):
         return ArrayMode(Array::Contiguous, Array::PossiblyArray, Array::AsIs).withProfile(locker, profile, makeSafe);
 
     case asArrayModes(NonArrayWithArrayStorage):
-        return ArrayMode(Array::ArrayStorage, Array::NonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+        return ArrayMode(Array::ArrayStorage, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(NonArrayWithSlowPutArrayStorage):
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage):
-        return ArrayMode(Array::SlowPutArrayStorage, Array::NonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
+        return ArrayMode(Array::SlowPutArrayStorage, nonArray, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(ArrayWithArrayStorage):
         return ArrayMode(Array::ArrayStorage, Array::Array, Array::AsIs).withProfile(locker, profile, makeSafe);
     case asArrayModes(ArrayWithSlowPutArrayStorage):
@@ -117,7 +123,7 @@ ArrayMode ArrayMode::fromObserved(const ConcurrentJITLocker& locker, ArrayProfil
         else if (hasSeenArray(observed))
             arrayClass = Array::Array;
         else if (hasSeenNonArray(observed))
-            arrayClass = Array::NonArray;
+            arrayClass = nonArray;
         else
             arrayClass = Array::PossiblyArray;
         
@@ -184,37 +190,37 @@ ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index, Speculate
         base &= ~SpecOther;
         
         if (isStringSpeculation(base))
-            return ArrayMode(Array::String);
+            return withType(Array::String);
         
         if (isArgumentsSpeculation(base))
-            return ArrayMode(Array::Arguments);
+            return withType(Array::Arguments);
         
         if (isInt8ArraySpeculation(base))
-            return ArrayMode(Array::Int8Array);
+            return withType(Array::Int8Array);
         
         if (isInt16ArraySpeculation(base))
-            return ArrayMode(Array::Int16Array);
+            return withType(Array::Int16Array);
         
         if (isInt32ArraySpeculation(base))
-            return ArrayMode(Array::Int32Array);
+            return withType(Array::Int32Array);
         
         if (isUint8ArraySpeculation(base))
-            return ArrayMode(Array::Uint8Array);
+            return withType(Array::Uint8Array);
         
         if (isUint8ClampedArraySpeculation(base))
-            return ArrayMode(Array::Uint8ClampedArray);
+            return withType(Array::Uint8ClampedArray);
         
         if (isUint16ArraySpeculation(base))
-            return ArrayMode(Array::Uint16Array);
+            return withType(Array::Uint16Array);
         
         if (isUint32ArraySpeculation(base))
-            return ArrayMode(Array::Uint32Array);
+            return withType(Array::Uint32Array);
         
         if (isFloat32ArraySpeculation(base))
-            return ArrayMode(Array::Float32Array);
+            return withType(Array::Float32Array);
         
         if (isFloat64ArraySpeculation(base))
-            return ArrayMode(Array::Float64Array);
+            return withType(Array::Float64Array);
 
         return ArrayMode(Array::Generic);
 
@@ -225,22 +231,34 @@ ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index, Speculate
 
 Structure* ArrayMode::originalArrayStructure(Graph& graph, const CodeOrigin& codeOrigin) const
 {
-    if (!isJSArrayWithOriginalStructure())
-        return 0;
-    
     JSGlobalObject* globalObject = graph.globalObjectFor(codeOrigin);
     
-    switch (type()) {
-    case Array::Int32:
-        return globalObject->originalArrayStructureForIndexingType(ArrayWithInt32);
-    case Array::Double:
-        return globalObject->originalArrayStructureForIndexingType(ArrayWithDouble);
-    case Array::Contiguous:
-        return globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous);
-    case Array::ArrayStorage:
-        return globalObject->originalArrayStructureForIndexingType(ArrayWithArrayStorage);
+    switch (arrayClass()) {
+    case Array::OriginalArray: {
+        switch (type()) {
+        case Array::Int32:
+            return globalObject->originalArrayStructureForIndexingType(ArrayWithInt32);
+        case Array::Double:
+            return globalObject->originalArrayStructureForIndexingType(ArrayWithDouble);
+        case Array::Contiguous:
+            return globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous);
+        case Array::ArrayStorage:
+            return globalObject->originalArrayStructureForIndexingType(ArrayWithArrayStorage);
+        default:
+            CRASH();
+            return 0;
+        }
+    }
+        
+    case Array::OriginalNonArray: {
+        TypedArrayType type = typedArrayType();
+        if (type == NotTypedArray)
+            return 0;
+        
+        return globalObject->typedArrayStructure(type);
+    }
+        
     default:
-        CRASH();
         return 0;
     }
 }
@@ -421,6 +439,8 @@ const char* arrayClassToString(Array::Class arrayClass)
         return "OriginalArray";
     case Array::NonArray:
         return "NonArray";
+    case Array::OriginalNonArray:
+        return "OriginalNonArray";
     case Array::PossiblyArray:
         return "PossiblyArray";
     default:

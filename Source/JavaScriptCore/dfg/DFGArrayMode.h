@@ -81,6 +81,7 @@ enum Type {
 
 enum Class {
     NonArray, // Definitely some object that is not a JSArray.
+    OriginalNonArray, // Definitely some object that is not a JSArray, but that object has the original structure.
     Array, // Definitely a JSArray, and may or may not have custom properties or have undergone some other bizarre transitions.
     OriginalArray, // Definitely a JSArray, and still has one of the primordial JSArray structures for the global object that this code block (possibly inlined code block) belongs to.
     PossiblyArray // Some object that may or may not be a JSArray.
@@ -123,6 +124,14 @@ public:
     {
         u.asBytes.type = type;
         u.asBytes.arrayClass = Array::NonArray;
+        u.asBytes.speculation = Array::InBounds;
+        u.asBytes.conversion = Array::AsIs;
+    }
+    
+    ArrayMode(Array::Type type, Array::Class arrayClass)
+    {
+        u.asBytes.type = type;
+        u.asBytes.arrayClass = arrayClass;
         u.asBytes.speculation = Array::InBounds;
         u.asBytes.conversion = Array::AsIs;
     }
@@ -417,6 +426,7 @@ private:
     {
         switch (arrayClass()) {
         case Array::NonArray:
+        case Array::OriginalNonArray:
             return asArrayModes(shape);
         case Array::Array:
         case Array::OriginalArray:

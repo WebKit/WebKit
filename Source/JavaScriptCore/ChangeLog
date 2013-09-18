@@ -1,5 +1,25 @@
 2013-09-17  Filip Pizlo  <fpizlo@apple.com>
 
+        Use CheckStructure for checking the types of typed arrays whenever possible
+        https://bugs.webkit.org/show_bug.cgi?id=121514
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        (JSC::DFG::ArrayMode::refine):
+        (JSC::DFG::ArrayMode::originalArrayStructure):
+        (JSC::DFG::arrayClassToString):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::ArrayMode):
+        (JSC::DFG::ArrayMode::arrayModesWithIndexingShape):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::isOriginalTypedArrayStructure):
+
+2013-09-17  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should use the (x & 0x7fffffff) trick for doing overflow and neg-zero checks on negation in one go
         https://bugs.webkit.org/show_bug.cgi?id=121520
 
