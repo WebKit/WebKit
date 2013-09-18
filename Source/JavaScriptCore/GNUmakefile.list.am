@@ -500,6 +500,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/Heap.cpp \
 	Source/JavaScriptCore/heap/Heap.h \
 	Source/JavaScriptCore/heap/HeapIterationScope.h \
+	Source/JavaScriptCore/heap/HeapOperation.h \
 	Source/JavaScriptCore/heap/HeapStatistics.cpp \
 	Source/JavaScriptCore/heap/HeapStatistics.h \
 	Source/JavaScriptCore/heap/JITStubRoutineSet.cpp \

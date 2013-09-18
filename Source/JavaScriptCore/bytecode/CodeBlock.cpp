@@ -3195,7 +3195,7 @@ ArrayProfile* CodeBlock::getOrAddArrayProfile(unsigned bytecodeOffset)
 }
 
 void CodeBlock::updateAllPredictionsAndCountLiveness(
-    OperationInProgress operation, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
+    HeapOperation operation, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
 {
     ConcurrentJITLocker locker(m_lock);
     
@@ -3221,7 +3221,7 @@ void CodeBlock::updateAllPredictionsAndCountLiveness(
 #endif
 }
 
-void CodeBlock::updateAllValueProfilePredictions(OperationInProgress operation)
+void CodeBlock::updateAllValueProfilePredictions(HeapOperation operation)
 {
     unsigned ignoredValue1, ignoredValue2;
     updateAllPredictionsAndCountLiveness(operation, ignoredValue1, ignoredValue2);
@@ -3239,7 +3239,7 @@ void CodeBlock::updateAllArrayPredictions()
         m_arrayAllocationProfiles[i].updateIndexingType();
 }
 
-void CodeBlock::updateAllPredictions(OperationInProgress operation)
+void CodeBlock::updateAllPredictions(HeapOperation operation)
 {
     updateAllValueProfilePredictions(operation);
     updateAllArrayPredictions();

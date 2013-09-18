@@ -35,7 +35,7 @@ namespace JSC {
 CompressedLazyOperandValueProfileHolder::CompressedLazyOperandValueProfileHolder() { }
 CompressedLazyOperandValueProfileHolder::~CompressedLazyOperandValueProfileHolder() { }
 
-void CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions(const ConcurrentJITLocker& locker, OperationInProgress operation)
+void CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions(const ConcurrentJITLocker& locker, HeapOperation operation)
 {
     if (!m_data)
         return;

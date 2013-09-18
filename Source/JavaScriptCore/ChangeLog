@@ -1,3 +1,33 @@
+2013-09-17  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Rename OperationInProgress to HeapOperation and move it out of Heap.h into its own header
+        https://bugs.webkit.org/show_bug.cgi?id=121534
+
+        Reviewed by Geoffrey Garen.
+
+        OperationInProgress is a silly name. 
+
+        Many parts of the Heap would like to know what HeapOperation is currently underway, but 
+        since they are included in Heap.h they can't directly reference HeapOperation if it also 
+        lives in Heap.h. The simplest thing to do is to give HeapOperation its own header. While 
+        a bit overkill, it simplifies including it wherever its needed.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC::CodeBlock::updateAllValueProfilePredictions):
+        (JSC::CodeBlock::updateAllPredictions):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::updateAllValueProfilePredictions):
+        (JSC::CodeBlock::updateAllPredictions):
+        * bytecode/LazyOperandValueProfile.cpp:
+        (JSC::CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions):
+        * bytecode/LazyOperandValueProfile.h:
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::computeUpdatedPrediction):
+        * heap/Heap.h:
+        * heap/HeapOperation.h: Added.
+
 2013-09-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should support Int52 for local variables

@@ -1230,6 +1230,9 @@
     <ClInclude Include="..\heap\HeapBlock.h">
       <Filter>heap</Filter>
     </ClInclude>
+    <ClInclude Include="..\heap\HeapOperation.h">
+      <Filter>heap</Filter>
+    </ClInclude>
     <ClInclude Include="..\heap\HeapRootVisitor.h">
       <Filter>heap</Filter>
     </ClInclude>

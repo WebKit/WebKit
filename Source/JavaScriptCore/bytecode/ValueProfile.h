@@ -150,7 +150,7 @@ struct ValueProfileBase {
     
     // Updates the prediction and returns the new one. Never call this from any thread
     // that isn't executing the code.
-    SpeculatedType computeUpdatedPrediction(const ConcurrentJITLocker&, OperationInProgress operation = NoOperation)
+    SpeculatedType computeUpdatedPrediction(const ConcurrentJITLocker&, HeapOperation operation = NoOperation)
     {
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             JSValue value = JSValue::decode(m_buckets[i]);
