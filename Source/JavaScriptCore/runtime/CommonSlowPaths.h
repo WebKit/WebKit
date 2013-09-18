@@ -53,7 +53,7 @@ ALWAYS_INLINE int arityCheckFor(ExecState* exec, JSStack* stack, CodeSpecializat
     int argumentCountIncludingThis = exec->argumentCountIncludingThis();
     
     // This ensures enough space for the worst case scenario of zero arguments passed by the caller.
-    if (!stack->grow(exec->registers() + newCodeBlock->numParameters() + newCodeBlock->m_numCalleeRegisters))
+    if (!stack->grow(exec->registers() - newCodeBlock->numParameters() - newCodeBlock->m_numCalleeRegisters))
         return -1;
     
     ASSERT(argumentCountIncludingThis < newCodeBlock->numParameters());

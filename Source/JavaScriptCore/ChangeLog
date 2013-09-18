@@ -1,3 +1,16 @@
+2013-09-17  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r155771): js/stack-overflow-arrity-catch.html is crashing on non-Mac platforms
+        https://bugs.webkit.org/show_bug.cgi?id=121376
+
+        Reviewed by Oliver Hunt.
+
+        Fix stack grow() call for stack growing down.  This should catch running out of stack space before
+        we try to move the frame down due to arity mismatch.
+
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+
 2013-09-18  Andreas Kling  <akling@apple.com>
 
         YARR: Put UCS2 canonicalization tables in read-only memory.
