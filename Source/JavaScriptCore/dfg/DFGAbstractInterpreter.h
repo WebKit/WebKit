@@ -60,7 +60,7 @@ public:
     
     bool needsTypeCheck(Node* node, SpeculatedType typesPassedThrough)
     {
-        return forNode(node).m_type & ~typesPassedThrough;
+        return !forNode(node).isType(typesPassedThrough);
     }
     
     bool needsTypeCheck(Edge edge, SpeculatedType typesPassedThrough)
@@ -168,7 +168,7 @@ private:
     ALWAYS_INLINE void filterByType(Node* node, Edge& edge, SpeculatedType type)
     {
         AbstractValue& value = forNode(edge);
-        if (value.m_type & ~type) {
+        if (!value.isType(type)) {
             node->setCanExit(true);
             edge.setProofStatus(NeedsCheck);
         } else

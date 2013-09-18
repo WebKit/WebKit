@@ -1,3 +1,12 @@
+2013-09-17  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should support Int52 for local variables
+        https://bugs.webkit.org/show_bug.cgi?id=121064
+
+        Reviewed by Oliver Hunt.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-09-17  Alex Christensen  <alex.christensen@flexsim.com>
 
         Added back and forward buttons to WinLauncher.

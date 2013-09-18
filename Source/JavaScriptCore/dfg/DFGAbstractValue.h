@@ -185,6 +185,16 @@ struct AbstractValue {
         checkConsistency();
     }
     
+    bool couldBeType(SpeculatedType desiredType)
+    {
+        return !!(m_type & desiredType);
+    }
+    
+    bool isType(SpeculatedType desiredType)
+    {
+        return !(m_type & ~desiredType);
+    }
+    
     FiltrationResult filter(Graph&, const StructureSet&);
     
     FiltrationResult filterArrayModes(ArrayModes arrayModes);
@@ -192,22 +202,6 @@ struct AbstractValue {
     FiltrationResult filter(SpeculatedType type);
     
     FiltrationResult filterByValue(JSValue value);
-    
-    bool validateType(JSValue value) const
-    {
-        if (isHeapTop())
-            return true;
-        
-        if (mergeSpeculations(m_type, speculationFromValue(value)) != m_type)
-            return false;
-        
-        if (value.isEmpty()) {
-            ASSERT(m_type & SpecEmpty);
-            return true;
-        }
-        
-        return true;
-    }
     
     bool validate(JSValue value) const
     {
@@ -251,7 +245,11 @@ struct AbstractValue {
             || !arrayModesAreClearOrTop(m_arrayModes);
     }
     
+#if ASSERT_DISABLED
+    void checkConsistency() const { }
+#else
     void checkConsistency() const;
+#endif
     
     void dumpInContext(PrintStream&, DumpContext*) const;
     void dump(PrintStream&) const;
@@ -361,6 +359,29 @@ private:
         // FIXME: We could make this try to predict the set of array modes that this object
         // could have in the future. For now, just do the simple thing.
         m_arrayModes = ALL_ARRAY_MODES;
+    }
+    
+    bool validateType(JSValue value) const
+    {
+        if (isHeapTop())
+            return true;
+        
+        // Constant folding always represents Int52's in a double (i.e. Int52AsDouble).
+        // So speculationFromValue(value) for an Int52 value will return Int52AsDouble,
+        // and that's fine - the type validates just fine.
+        SpeculatedType type = m_type;
+        if (type & SpecInt52)
+            type |= SpecInt52AsDouble;
+        
+        if (mergeSpeculations(type, speculationFromValue(value)) != type)
+            return false;
+        
+        if (value.isEmpty()) {
+            ASSERT(m_type & SpecEmpty);
+            return true;
+        }
+        
+        return true;
     }
     
     void makeTop(SpeculatedType top)

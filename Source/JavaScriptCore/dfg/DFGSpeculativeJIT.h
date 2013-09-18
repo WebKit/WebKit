@@ -159,9 +159,7 @@ public:
     // and its machine registers may be reused.
     bool canReuse(Node* node)
     {
-        VirtualRegister virtualRegister = node->virtualRegister();
-        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
-        return info.canReuse();
+        return generationInfo(node).canReuse();
     }
     bool canReuse(Edge nodeUse)
     {
@@ -237,15 +235,11 @@ public:
     // avoid spilling values we will need immediately).
     bool isFilled(Node* node)
     {
-        VirtualRegister virtualRegister = node->virtualRegister();
-        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
-        return info.registerFormat() != DataFormatNone;
+        return generationInfo(node).registerFormat() != DataFormatNone;
     }
     bool isFilledDouble(Node* node)
     {
-        VirtualRegister virtualRegister = node->virtualRegister();
-        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
-        return info.registerFormat() == DataFormatDouble;
+        return generationInfo(node).registerFormat() == DataFormatDouble;
     }
 
     // Called on an operand once it has been consumed by a parent node.
@@ -253,8 +247,7 @@ public:
     {
         if (!node->hasResult())
             return;
-        VirtualRegister virtualRegister = node->virtualRegister();
-        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
+        GenerationInfo& info = generationInfo(node);
 
         // use() returns true when the value becomes dead, and any
         // associated resources may be freed.
@@ -333,6 +326,7 @@ public:
     // machine registers, implicitly generating speculation checks as needed.
     GPRReg fillSpeculateInt32(Edge, DataFormat& returnFormat);
     GPRReg fillSpeculateInt32Strict(Edge);
+    GPRReg fillSpeculateInt52(Edge, DataFormat desiredFormat);
     FPRReg fillSpeculateDouble(Edge);
     GPRReg fillSpeculateCell(Edge);
     GPRReg fillSpeculateBoolean(Edge);
@@ -468,6 +462,8 @@ public:
     {
         return boxDouble(fpr, allocate());
     }
+    
+    void boxInt52(GPRReg sourceGPR, GPRReg targetGPR, DataFormat);
 #elif USE(JSVALUE32_64)
     void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR)
     {
@@ -559,11 +555,11 @@ public:
         }
     }
     
-    bool isKnownInteger(Node* node) { return !(m_state.forNode(node).m_type & ~SpecInt32); }
-    bool isKnownCell(Node* node) { return !(m_state.forNode(node).m_type & ~SpecCell); }
+    bool isKnownInteger(Node* node) { return m_state.forNode(node).isType(SpecInt32); }
+    bool isKnownCell(Node* node) { return m_state.forNode(node).isType(SpecCell); }
     
     bool isKnownNotInteger(Node* node) { return !(m_state.forNode(node).m_type & SpecInt32); }
-    bool isKnownNotNumber(Node* node) { return !(m_state.forNode(node).m_type & SpecNumber); }
+    bool isKnownNotNumber(Node* node) { return !(m_state.forNode(node).m_type & SpecFullNumber); }
     bool isKnownNotCell(Node* node) { return !(m_state.forNode(node).m_type & SpecCell); }
     
     // Checks/accessors for constant values.
@@ -816,6 +812,25 @@ public:
     {
         int32Result(reg, node, DataFormatInt32, mode);
     }
+    void int52Result(GPRReg reg, Node* node, DataFormat format, UseChildrenMode mode = CallUseChildren)
+    {
+        if (mode == CallUseChildren)
+            useChildren(node);
+
+        VirtualRegister virtualRegister = node->virtualRegister();
+        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
+
+        m_gprs.retain(reg, virtualRegister, SpillOrderJS);
+        info.initInt52(node, node->refCount(), reg, format);
+    }
+    void int52Result(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
+    {
+        int52Result(reg, node, DataFormatInt52, mode);
+    }
+    void strictInt52Result(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
+    {
+        int52Result(reg, node, DataFormatStrictInt52, mode);
+    }
     void noResult(Node* node, UseChildrenMode mode = CallUseChildren)
     {
         if (mode == UseChildrenCalledExplicitly)
@@ -900,7 +915,7 @@ public:
     void initConstantInfo(Node* node)
     {
         ASSERT(isInt32Constant(node) || isNumberConstant(node) || isJSConstant(node));
-        generationInfoFromVirtualRegister(node->virtualRegister()).initConstant(node, node->refCount());
+        generationInfo(node).initConstant(node, node->refCount());
     }
     
     // These methods add calls to C++ helper functions.
@@ -1889,15 +1904,22 @@ public:
         if (isInt32Constant(node))
             return true;
 
-        VirtualRegister virtualRegister = node->virtualRegister();
-        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
-        
-        return info.isJSInt32();
+        return generationInfo(node).isJSInt32();
+    }
+    
+    bool betterUseStrictInt52(Node* node)
+    {
+        return !generationInfo(node).isInt52();
+    }
+    bool betterUseStrictInt52(Edge edge)
+    {
+        return betterUseStrictInt52(edge.node());
     }
     
     bool compare(Node*, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
     bool compilePeepHoleBranch(Node*, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
     void compilePeepHoleInt32Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
+    void compilePeepHoleInt52Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
     void compilePeepHoleBooleanBranch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
     void compilePeepHoleDoubleBranch(Node*, Node* branchNode, JITCompiler::DoubleCondition);
     void compilePeepHoleObjectEquality(Node*, Node* branchNode);
@@ -1945,6 +1967,7 @@ public:
     void compileNewTypedArray(Node*);
     
     void compileInt32Compare(Node*, MacroAssembler::RelationalCondition);
+    void compileInt52Compare(Node*, MacroAssembler::RelationalCondition);
     void compileBooleanCompare(Node*, MacroAssembler::RelationalCondition);
     void compileDoubleCompare(Node*, MacroAssembler::DoubleCondition);
     
@@ -2118,6 +2141,7 @@ public:
     void forwardTypeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail, const ValueRecovery&);
 
     void speculateInt32(Edge);
+    void speculateMachineInt(Edge);
     void speculateNumber(Edge);
     void speculateRealNumber(Edge);
     void speculateBoolean(Edge);
@@ -2194,6 +2218,16 @@ public:
     GenerationInfo& generationInfoFromVirtualRegister(VirtualRegister virtualRegister)
     {
         return m_generationInfo[operandToLocal(virtualRegister)];
+    }
+    
+    GenerationInfo& generationInfo(Node* node)
+    {
+        return generationInfoFromVirtualRegister(node->virtualRegister());
+    }
+    
+    GenerationInfo& generationInfo(Edge edge)
+    {
+        return generationInfo(edge.node());
     }
 
     // The JIT, while also provides MacroAssembler functionality.
@@ -2674,6 +2708,179 @@ private:
     SpeculativeJIT* m_jit;
     Edge m_edge;
     GPRReg m_gprOrInvalid;
+};
+
+// Gives you a canonical Int52 (i.e. it's left-shifted by 16, low bits zero).
+class SpeculateInt52Operand {
+public:
+    explicit SpeculateInt52Operand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+        : m_jit(jit)
+        , m_edge(edge)
+        , m_gprOrInvalid(InvalidGPRReg)
+    {
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == MachineIntUse);
+        if (jit->isFilled(node()))
+            gpr();
+    }
+    
+    ~SpeculateInt52Operand()
+    {
+        ASSERT(m_gprOrInvalid != InvalidGPRReg);
+        m_jit->unlock(m_gprOrInvalid);
+    }
+    
+    Edge edge() const
+    {
+        return m_edge;
+    }
+    
+    Node* node() const
+    {
+        return edge().node();
+    }
+    
+    GPRReg gpr()
+    {
+        if (m_gprOrInvalid == InvalidGPRReg)
+            m_gprOrInvalid = m_jit->fillSpeculateInt52(edge(), DataFormatInt52);
+        return m_gprOrInvalid;
+    }
+    
+    void use()
+    {
+        m_jit->use(node());
+    }
+    
+private:
+    SpeculativeJIT* m_jit;
+    Edge m_edge;
+    GPRReg m_gprOrInvalid;
+};
+
+// Gives you a strict Int52 (i.e. the payload is in the low 48 bits, high 16 bits are sign-extended).
+class SpeculateStrictInt52Operand {
+public:
+    explicit SpeculateStrictInt52Operand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+        : m_jit(jit)
+        , m_edge(edge)
+        , m_gprOrInvalid(InvalidGPRReg)
+    {
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == MachineIntUse);
+        if (jit->isFilled(node()))
+            gpr();
+    }
+    
+    ~SpeculateStrictInt52Operand()
+    {
+        ASSERT(m_gprOrInvalid != InvalidGPRReg);
+        m_jit->unlock(m_gprOrInvalid);
+    }
+    
+    Edge edge() const
+    {
+        return m_edge;
+    }
+    
+    Node* node() const
+    {
+        return edge().node();
+    }
+    
+    GPRReg gpr()
+    {
+        if (m_gprOrInvalid == InvalidGPRReg)
+            m_gprOrInvalid = m_jit->fillSpeculateInt52(edge(), DataFormatStrictInt52);
+        return m_gprOrInvalid;
+    }
+    
+    void use()
+    {
+        m_jit->use(node());
+    }
+    
+private:
+    SpeculativeJIT* m_jit;
+    Edge m_edge;
+    GPRReg m_gprOrInvalid;
+};
+
+enum OppositeShiftTag { OppositeShift };
+
+class SpeculateWhicheverInt52Operand {
+public:
+    explicit SpeculateWhicheverInt52Operand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+        : m_jit(jit)
+        , m_edge(edge)
+        , m_gprOrInvalid(InvalidGPRReg)
+        , m_strict(jit->betterUseStrictInt52(edge))
+    {
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == MachineIntUse);
+        if (jit->isFilled(node()))
+            gpr();
+    }
+    
+    explicit SpeculateWhicheverInt52Operand(SpeculativeJIT* jit, Edge edge, const SpeculateWhicheverInt52Operand& other, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+        : m_jit(jit)
+        , m_edge(edge)
+        , m_gprOrInvalid(InvalidGPRReg)
+        , m_strict(other.m_strict)
+    {
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == MachineIntUse);
+        if (jit->isFilled(node()))
+            gpr();
+    }
+    
+    explicit SpeculateWhicheverInt52Operand(SpeculativeJIT* jit, Edge edge, OppositeShiftTag, const SpeculateWhicheverInt52Operand& other, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+        : m_jit(jit)
+        , m_edge(edge)
+        , m_gprOrInvalid(InvalidGPRReg)
+        , m_strict(!other.m_strict)
+    {
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == MachineIntUse);
+        if (jit->isFilled(node()))
+            gpr();
+    }
+    
+    ~SpeculateWhicheverInt52Operand()
+    {
+        ASSERT(m_gprOrInvalid != InvalidGPRReg);
+        m_jit->unlock(m_gprOrInvalid);
+    }
+    
+    Edge edge() const
+    {
+        return m_edge;
+    }
+    
+    Node* node() const
+    {
+        return edge().node();
+    }
+    
+    GPRReg gpr()
+    {
+        if (m_gprOrInvalid == InvalidGPRReg) {
+            m_gprOrInvalid = m_jit->fillSpeculateInt52(
+                edge(), m_strict ? DataFormatStrictInt52 : DataFormatInt52);
+        }
+        return m_gprOrInvalid;
+    }
+    
+    void use()
+    {
+        m_jit->use(node());
+    }
+    
+    DataFormat format() const
+    {
+        return m_strict ? DataFormatStrictInt52 : DataFormatInt52;
+    }
+
+private:
+    SpeculativeJIT* m_jit;
+    Edge m_edge;
+    GPRReg m_gprOrInvalid;
+    bool m_strict;
 };
 
 class SpeculateDoubleOperand {

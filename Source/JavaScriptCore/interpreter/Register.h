@@ -73,6 +73,7 @@ namespace JSC {
         Instruction* vPC() const;
         InlineCallFrame* asInlineCallFrame() const;
         int32_t unboxedInt32() const;
+        int64_t unboxedInt52() const;
         bool unboxedBoolean() const;
         double unboxedDouble() const;
         JSCell* unboxedCell() const;
@@ -98,6 +99,7 @@ namespace JSC {
             InlineCallFrame* inlineCallFrame;
             EncodedValueDescriptor encodedValue;
             double number;
+            int64_t integer;
         } u;
     };
 
@@ -183,6 +185,11 @@ namespace JSC {
     ALWAYS_INLINE int32_t Register::unboxedInt32() const
     {
         return payload();
+    }
+
+    ALWAYS_INLINE int64_t Register::unboxedInt52() const
+    {
+        return u.integer >> JSValue::int52ShiftAmount;
     }
 
     ALWAYS_INLINE bool Register::unboxedBoolean() const

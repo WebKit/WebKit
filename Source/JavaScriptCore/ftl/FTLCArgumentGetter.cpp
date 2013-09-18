@@ -32,13 +32,23 @@ namespace JSC { namespace FTL {
 
 using namespace DFG;
 
-void CArgumentGetter::loadNextAndBox(ValueFormat format, GPRReg destination, GPRReg scratch)
+void CArgumentGetter::loadNextAndBox(
+    ValueFormat format, GPRReg destination, GPRReg scratch1, GPRReg scratch2)
 {
-    if (scratch == InvalidGPRReg) {
+    if (scratch1 == InvalidGPRReg) {
+        ASSERT(scratch2 == InvalidGPRReg);
         if (destination == GPRInfo::nonArgGPR0)
-            scratch = GPRInfo::nonArgGPR1;
+            scratch1 = GPRInfo::nonArgGPR1;
         else
-            scratch = GPRInfo::nonArgGPR0;
+            scratch1 = GPRInfo::nonArgGPR0;
+    }
+    if (scratch2 == InvalidGPRReg) {
+        if (destination != GPRInfo::nonArgGPR0 && scratch1 != GPRInfo::nonArgGPR0)
+            scratch2 = GPRInfo::nonArgGPR0;
+        else if (destination != GPRInfo::nonArgGPR1 && scratch1 != GPRInfo::nonArgGPR1)
+            scratch2 = GPRInfo::nonArgGPR1;
+        else
+            scratch2 = GPRInfo::nonArgGPR2;
     }
     
     switch (format) {
@@ -50,21 +60,26 @@ void CArgumentGetter::loadNextAndBox(ValueFormat format, GPRReg destination, GPR
             
     case ValueFormatUInt32: {
         loadNext32(destination);
-        MacroAssembler::Jump isInt = m_jit.branch32(
-            MacroAssembler::GreaterThanOrEqual,
-            destination, MacroAssembler::TrustedImm32(0));
+        m_jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
+        m_jit.boxInt52(destination, destination, scratch1, FPRInfo::fpRegT0);
+        m_jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
+        break;
+    }
+        
+    case ValueFormatInt52: {
+        loadNext64(destination);
+        m_jit.rshift64(AssemblyHelpers::TrustedImm32(JSValue::int52ShiftAmount), destination);
+        m_jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
+        m_jit.boxInt52(destination, destination, scratch1, FPRInfo::fpRegT0);
+        m_jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
+        break;
+    }
             
-        m_jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch);
-        m_jit.convertInt32ToDouble(destination, FPRInfo::fpRegT0);
-        m_jit.boxDouble(FPRInfo::fpRegT0, destination);
-        m_jit.move64ToDouble(scratch, FPRInfo::fpRegT0);
-            
-        MacroAssembler::Jump done = m_jit.jump();
-            
-        isInt.link(&m_jit);
-        m_jit.or64(GPRInfo::tagTypeNumberRegister, destination);
-            
-        done.link(&m_jit);
+    case ValueFormatStrictInt52: {
+        loadNext64(destination);
+        m_jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch2);
+        m_jit.boxInt52(destination, destination, scratch1, FPRInfo::fpRegT0);
+        m_jit.move64ToDouble(scratch2, FPRInfo::fpRegT0);
         break;
     }
             
@@ -80,10 +95,10 @@ void CArgumentGetter::loadNextAndBox(ValueFormat format, GPRReg destination, GPR
     }
             
     case ValueFormatDouble: {
-        m_jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch);
+        m_jit.moveDoubleTo64(FPRInfo::fpRegT0, scratch1);
         loadNextDouble(FPRInfo::fpRegT0);
         m_jit.boxDouble(FPRInfo::fpRegT0, destination);
-        m_jit.move64ToDouble(scratch, FPRInfo::fpRegT0);
+        m_jit.move64ToDouble(scratch1, FPRInfo::fpRegT0);
         break;
     }
             

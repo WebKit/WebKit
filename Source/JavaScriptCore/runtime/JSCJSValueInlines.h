@@ -494,6 +494,35 @@ ALWAYS_INLINE JSCell* JSValue::asCell() const
 
 #endif // USE(JSVALUE64)
 
+inline bool JSValue::isMachineInt() const
+{
+    if (isInt32())
+        return true;
+    if (!isNumber())
+        return false;
+    double number = asDouble();
+    if (number != number)
+        return false;
+    int64_t asInt64 = static_cast<int64_t>(number);
+    if (asInt64 != number)
+        return false;
+    if (!asInt64 && std::signbit(number))
+        return false;
+    if (asInt64 >= (static_cast<int64_t>(1) << (numberOfInt52Bits - 1)))
+        return false;
+    if (asInt64 < -(static_cast<int64_t>(1) << (numberOfInt52Bits - 1)))
+        return false;
+    return true;
+}
+
+inline int64_t JSValue::asMachineInt() const
+{
+    ASSERT(isMachineInt());
+    if (isInt32())
+        return asInt32();
+    return static_cast<int64_t>(asDouble());
+}
+
 inline bool JSValue::isString() const
 {
     return isCell() && asCell()->isString();

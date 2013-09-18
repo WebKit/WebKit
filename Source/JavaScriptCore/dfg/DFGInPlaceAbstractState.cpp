@@ -313,10 +313,10 @@ bool InPlaceAbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
             // before and after setting it.
             source = forNode(node->child1());
             if (node->variableAccessData()->flushFormat() == FlushedDouble) {
-                ASSERT(!(source.m_type & ~SpecNumber));
-                ASSERT(!!(source.m_type & ~SpecDouble) == !!(source.m_type & SpecInt32));
+                ASSERT(!(source.m_type & ~SpecFullNumber));
+                ASSERT(!!(source.m_type & ~SpecDouble) == !!(source.m_type & SpecMachineInt));
                 if (!(source.m_type & ~SpecDouble)) {
-                    source.merge(SpecInt48AsDouble);
+                    source.merge(SpecInt52AsDouble);
                     source.filter(SpecDouble);
                 }
             }

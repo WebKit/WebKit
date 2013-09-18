@@ -38,7 +38,7 @@ enum ExitKind {
     BadIndexingType, // We exited because an indexing type was wrong.
     Overflow, // We exited because of overflow.
     NegativeZero, // We exited because we encountered negative zero.
-    Int48Overflow, // We exited because of an Int48 overflow.
+    Int52Overflow, // We exited because of an Int52 overflow.
     StoreToHole, // We had a store to a hole.
     LoadFromHole, // We had a load from a hole.
     OutOfBounds, // We had an out-of-bounds access to an array.

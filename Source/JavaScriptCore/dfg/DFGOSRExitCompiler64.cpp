@@ -195,6 +195,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         case InGPR:
         case UnboxedInt32InGPR:
         case UInt32InGPR:
+        case UnboxedInt52InGPR:
+        case UnboxedStrictInt52InGPR:
             m_jit.store64(recovery.gpr(), scratch + index);
             break;
             
@@ -235,12 +237,15 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         case DisplacedInJSStack:
         case Int32DisplacedInJSStack:
         case DoubleDisplacedInJSStack:
+        case Int52DisplacedInJSStack:
+        case StrictInt52DisplacedInJSStack:
             m_jit.load64(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
             m_jit.store64(GPRInfo::regT0, scratch + index);
             break;
             
         case AlreadyInJSStackAsUnboxedInt32:
         case AlreadyInJSStackAsUnboxedDouble:
+        case AlreadyInJSStackAsUnboxedInt52:
             m_jit.load64(AssemblyHelpers::addressFor(operand), GPRInfo::regT0);
             m_jit.store64(GPRInfo::regT0, scratch + index);
             break;
@@ -274,6 +279,30 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
             break;
             
+        case AlreadyInJSStackAsUnboxedInt52:
+        case UnboxedInt52InGPR:
+        case Int52DisplacedInJSStack:
+            m_jit.load64(scratch + index, GPRInfo::regT0);
+            m_jit.rshift64(
+                AssemblyHelpers::TrustedImm32(JSValue::int52ShiftAmount), GPRInfo::regT0);
+            m_jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
+            m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
+            break;
+            
+        case UnboxedStrictInt52InGPR:
+        case StrictInt52DisplacedInJSStack:
+            m_jit.load64(scratch + index, GPRInfo::regT0);
+            m_jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
+            m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
+            break;
+            
+        case UInt32InGPR:
+            m_jit.load64(scratch + index, GPRInfo::regT0);
+            m_jit.zeroExtend32ToPtr(GPRInfo::regT0, GPRInfo::regT0);
+            m_jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
+            m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
+            break;
+            
         case AlreadyInJSStackAsUnboxedDouble:
         case InFPR:
         case DoubleDisplacedInJSStack:
@@ -282,25 +311,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             m_jit.boxDouble(FPRInfo::fpRegT0, GPRInfo::regT0);
             m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
             break;
-            
-        case UInt32InGPR: {
-            m_jit.load64(scratch + index, GPRInfo::regT0);
-            m_jit.zeroExtend32ToPtr(GPRInfo::regT0, GPRInfo::regT0);
-            AssemblyHelpers::Jump positive = m_jit.branch32(
-                AssemblyHelpers::GreaterThanOrEqual,
-                GPRInfo::regT0, AssemblyHelpers::TrustedImm32(0));
-            m_jit.convertInt32ToDouble(GPRInfo::regT0, FPRInfo::fpRegT0);
-            m_jit.addDouble(
-                AssemblyHelpers::AbsoluteAddress(&AssemblyHelpers::twoToThe32),
-                FPRInfo::fpRegT0);
-            m_jit.boxDouble(FPRInfo::fpRegT0, GPRInfo::regT0);
-            AssemblyHelpers::Jump done = m_jit.jump();
-            positive.link(&m_jit);
-            m_jit.or64(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
-            done.link(&m_jit);
-            m_jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
-            break;
-        }
             
         case Constant:
             m_jit.store64(

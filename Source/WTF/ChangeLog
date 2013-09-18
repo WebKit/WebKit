@@ -1,3 +1,15 @@
+2013-09-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should support Int52 for local variables
+        https://bugs.webkit.org/show_bug.cgi?id=121064
+
+        Reviewed by Oliver Hunt.
+
+        * wtf/PrintStream.h:
+        (WTF::ValueIgnoringContext::ValueIgnoringContext):
+        (WTF::ValueIgnoringContext::dump):
+        (WTF::ignoringContext):
+
 2013-09-17  Anders Carlsson  <andersca@apple.com>
 
         Stop explicitly using PassOwnPtr in WebCore/html

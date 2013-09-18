@@ -41,6 +41,9 @@ void printInternal(PrintStream& out, FlushFormat format)
     case FlushedInt32:
         out.print("FlushedInt32");
         return;
+    case FlushedInt52:
+        out.print("FlushedInt52");
+        return;
     case FlushedDouble:
         out.print("FlushedDouble");
         return;

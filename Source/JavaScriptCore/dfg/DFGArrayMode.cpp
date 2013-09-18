@@ -163,21 +163,21 @@ ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index, Speculate
             return withType(Array::ForceExit);
         if (isInt32Speculation(value))
             return withTypeAndConversion(Array::Int32, Array::Convert);
-        if (isNumberSpeculation(value))
+        if (isFullNumberSpeculation(value))
             return withTypeAndConversion(Array::Double, Array::Convert);
         return withTypeAndConversion(Array::Contiguous, Array::Convert);
         
     case Array::Int32:
         if (!value || isInt32Speculation(value))
             return *this;
-        if (isNumberSpeculation(value))
+        if (isFullNumberSpeculation(value))
             return withTypeAndConversion(Array::Double, Array::Convert);
         return withTypeAndConversion(Array::Contiguous, Array::Convert);
         
     case Array::Double:
         if (flags & NodeBytecodeUsesAsInt)
             return withTypeAndConversion(Array::Contiguous, Array::RageConvert);
-        if (!value || isNumberSpeculation(value))
+        if (!value || isFullNumberSpeculation(value))
             return *this;
         return withTypeAndConversion(Array::Contiguous, Array::Convert);
         

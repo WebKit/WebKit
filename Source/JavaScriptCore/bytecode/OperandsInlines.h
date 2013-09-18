@@ -43,7 +43,7 @@ void Operands<T, Traits>::dumpInContext(PrintStream& out, DumpContext* context) 
     for (size_t localIndex = 0; localIndex < numberOfLocals(); ++localIndex) {
         if (Traits::isEmptyForDump(local(localIndex)))
             continue;
-        out.print(comma, "r", localIndex, ":", inContext(local(localIndex), context));
+        out.print(comma, "loc", localIndex, ":", inContext(local(localIndex), context));
     }
 }
 
