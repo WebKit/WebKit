@@ -1,3 +1,92 @@
+2013-09-18  Anders Carlsson  <andersca@apple.com>
+
+        Remove the ENABLE_PLUGIN_PROCESS #define
+        https://bugs.webkit.org/show_bug.cgi?id=121569
+
+        Reviewed by Andreas Kling.
+
+        Fold the ENABLE_PLUGIN_PROCESS #define into the NETSCAPE_PLUGIN_API #define since 
+        building plug-ins without the plug-in process is not supported.
+
+        * PluginProcess/EntryPoint/mac/LegacyProcess/PluginProcessMain.mm:
+        * PluginProcess/PluginControllerProxy.cpp:
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginControllerProxy.messages.in:
+        * PluginProcess/PluginCreationParameters.cpp:
+        * PluginProcess/PluginCreationParameters.h:
+        * PluginProcess/PluginProcess.cpp:
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/PluginProcess.messages.in:
+        * PluginProcess/WebProcessConnection.cpp:
+        * PluginProcess/WebProcessConnection.h:
+        * PluginProcess/WebProcessConnection.messages.in:
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        * PluginProcess/mac/PluginProcessMac.mm:
+        * Shared/Plugins/NPIdentifierData.cpp:
+        * Shared/Plugins/NPIdentifierData.h:
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        * Shared/Plugins/NPObjectMessageReceiver.h:
+        * Shared/Plugins/NPObjectMessageReceiver.messages.in:
+        * Shared/Plugins/NPObjectProxy.cpp:
+        * Shared/Plugins/NPObjectProxy.h:
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        * Shared/Plugins/NPRemoteObjectMap.h:
+        * Shared/Plugins/NPVariantData.cpp:
+        * Shared/Plugins/NPVariantData.h:
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::getMIMETypesFromPluginBundle):
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::processTypeAsString):
+        (WebKit::ProcessLauncher::getProcessTypeFromString):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::addDYLDEnvironmentAdditions):
+        (WebKit::serviceName):
+        (WebKit::createProcess):
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::~WebPluginSiteDataManager):
+        (WebKit::WebPluginSiteDataManager::invalidate):
+        (WebKit::WebPluginSiteDataManager::getSitesWithData):
+        (WebKit::WebPluginSiteDataManager::clearSiteData):
+        * UIProcess/Plugins/WebPluginSiteDataManager.h:
+        * UIProcess/Plugins/mac/PluginProcessManagerMac.mm:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setProcessModel):
+        (WebKit::WebContext::shouldTerminate):
+        (WebKit::WebContext::disconnectProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPluginProcessConnection):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::updateProcessSuppressionStateOfGlobalChildProcesses):
+        * WebKit2Prefix.h:
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm:
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        * WebProcess/Plugins/PluginProcessConnection.messages.in:
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        * WebProcess/Plugins/PluginProcessConnectionManager.h:
+        * WebProcess/Plugins/PluginProcessConnectionManager.messages.in:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2013-09-18  Sam Weinig  <sam@webkit.org>
 
         Replace use of OwnArrayPtr<Foo> with std::unique_ptr<Foo[]> in WebKit and WebKit2

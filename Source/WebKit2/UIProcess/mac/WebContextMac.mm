@@ -103,10 +103,10 @@ static void updateProcessSuppressionStateOfGlobalChildProcesses()
 {
     // The plan is to have all child processes become context specific.  This function
     // can be removed once that is complete.
-#if ENABLE(PLUGIN_PROCESS) || ENABLE(SHARED_WORKER_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API) || ENABLE(SHARED_WORKER_PROCESS)
     bool canEnable = WebContext::canEnableProcessSuppressionForGlobalChildProcesses();
 #endif
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     PluginProcessManager::shared().setProcessSuppressionEnabled(canEnable);
 #endif
 #if ENABLE(SHARED_WORKER_PROCESS)

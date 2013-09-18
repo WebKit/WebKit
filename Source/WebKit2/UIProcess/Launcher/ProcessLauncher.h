@@ -47,7 +47,7 @@ public:
     
     enum ProcessType {
         WebProcess,
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
         PluginProcess,
 #endif
 #if ENABLE(NETWORK_PROCESS)

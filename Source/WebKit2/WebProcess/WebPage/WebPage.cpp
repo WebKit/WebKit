@@ -144,10 +144,8 @@
 #include <WebCore/MHTMLArchive.h>
 #endif
 
-#if ENABLE(PLUGIN_PROCESS)
 #if PLATFORM(MAC)
 #include "MachPort.h"
-#endif
 #endif
 
 #if ENABLE(BATTERY_STATUS)

@@ -26,7 +26,7 @@
 #ifndef NPIdentifierData_h
 #define NPIdentifierData_h
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include <WebCore/npruntime_internal.h>
 #include <wtf/text/CString.h>
@@ -58,6 +58,6 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
     
 #endif // NPIdentifierData_h

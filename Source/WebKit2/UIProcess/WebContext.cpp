@@ -279,12 +279,6 @@ void WebContext::setProcessModel(ProcessModel processModel)
     if (processModel != ProcessModelSharedSecondaryProcess && !m_messagesToInjectedBundlePostedToEmptyContext.isEmpty())
         CRASH();
 
-#if !ENABLE(PLUGIN_PROCESS)
-    // Plugin process is required for multiple web process mode.
-    if (processModel != ProcessModelSharedSecondaryProcess)
-        CRASH();
-#endif
-
     m_processModel = processModel;
 }
 
@@ -608,17 +602,10 @@ bool WebContext::shouldTerminate(WebProcessProxy* process)
     if (!m_processTerminationEnabled)
         return false;
 
-    WebContextSupplementMap::const_iterator it = m_supplements.begin();
-    WebContextSupplementMap::const_iterator end = m_supplements.end();
-    for (; it != end; ++it) {
-        if (!it->value->shouldTerminate(process))
+    for (const auto& supplement : m_supplements.values()) {
+        if (!supplement->shouldTerminate(process))
             return false;
     }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (!m_pluginSiteDataManager->shouldTerminate(process))
-        return false;
-#endif
 
     return true;
 }
@@ -676,12 +663,6 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     WebContextSupplementMap::const_iterator end = m_supplements.end();
     for (; it != end; ++it)
         it->value->processDidClose(process);
-
-    // When out of process plug-ins are enabled, we don't want to invalidate the plug-in site data
-    // manager just because the web process crashes since it's not involved.
-#if ENABLE(NETSCAPE_PLUGIN_API) && !ENABLE(PLUGIN_PROCESS)
-    m_pluginSiteDataManager->invalidate();
-#endif
 
     // The vector may have the last reference to process proxy, which in turn may have the last reference to the context.
     // Since vector elements are destroyed in place, we would recurse into WebProcessProxy destructor

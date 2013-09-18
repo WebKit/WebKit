@@ -26,7 +26,7 @@
 #ifndef PluginProcessProxy_h
 #define PluginProcessProxy_h
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "ChildProcessProxy.h"
 #include "Connection.h"
@@ -181,6 +181,6 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // PluginProcessProxy_h

@@ -26,7 +26,7 @@
 #ifndef PluginProcess_h
 #define PluginProcess_h
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "ChildProcess.h"
 #include <wtf/Forward.h>
@@ -117,6 +117,6 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // PluginProcess_h

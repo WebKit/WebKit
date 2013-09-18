@@ -26,7 +26,7 @@
 #ifndef NPVariantData_h
 #define NPVariantData_h
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include <wtf/text/CString.h>
 
@@ -115,6 +115,6 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
     
 #endif // NPVariantData_h

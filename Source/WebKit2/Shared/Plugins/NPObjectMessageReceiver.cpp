@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NPObjectMessageReceiver.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "NPIdentifierData.h"
 #include "NPRemoteObjectMap.h"
@@ -234,5 +234,5 @@ void NPObjectMessageReceiver::construct(const Vector<NPVariantData>& argumentsDa
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 

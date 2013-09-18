@@ -26,7 +26,7 @@
 #ifndef PluginProcessCreationParameters_h
 #define PluginProcessCreationParameters_h
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "PluginProcessAttributes.h"
 
@@ -60,6 +60,6 @@ struct PluginProcessCreationParameters {
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // PluginProcessCreationParameters_h

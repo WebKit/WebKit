@@ -26,7 +26,7 @@
 #ifndef NPRemoteObjectMap_h
 #define NPRemoteObjectMap_h
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "Connection.h"
 #include <WebCore/npruntime.h>
@@ -80,6 +80,6 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // NPRemoteObjectMap_h

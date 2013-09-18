@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PluginProcessCreationParameters.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "ArgumentCoders.h"
 
@@ -69,4 +69,4 @@ bool PluginProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, 
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

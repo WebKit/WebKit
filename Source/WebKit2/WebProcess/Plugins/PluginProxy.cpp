@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PluginProxy.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "DataReference.h"
 #include "NPRemoteObjectMap.h"
@@ -715,4 +715,4 @@ PassRefPtr<WebCore::SharedBuffer> PluginProxy::liveResourceData() const
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

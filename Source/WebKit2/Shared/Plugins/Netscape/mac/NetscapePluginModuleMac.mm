@@ -116,10 +116,8 @@ static RetainPtr<CFDictionaryRef> getMIMETypesFromPluginBundle(CFBundleRef bundl
 
         RetainPtr<CFDictionaryRef> propertyList = contentsOfPropertyListAtURL(propertyListURL.get());
 
-#if ENABLE(PLUGIN_PROCESS)
         if (!propertyList && PluginProcessProxy::createPropertyListFile(plugin))
             propertyList = contentsOfPropertyListAtURL(propertyListURL.get());
-#endif
 
         if (!propertyList)
             return 0;

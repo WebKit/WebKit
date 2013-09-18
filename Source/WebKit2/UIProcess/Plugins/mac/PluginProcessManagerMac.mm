@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PluginProcessManager.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #import "PluginProcessProxy.h"
 
@@ -41,4 +41,4 @@ void PluginProcessManager::setProcessSuppressionEnabled(bool processSuppressionE
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

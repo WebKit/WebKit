@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PluginProcessConnection.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "NPObjectMessageReceiverMessages.h"
 #include "NPRemoteObjectMap.h"
@@ -141,4 +141,4 @@ void PluginProcessConnection::setException(const String& exceptionString)
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

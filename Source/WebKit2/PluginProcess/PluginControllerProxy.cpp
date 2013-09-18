@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PluginControllerProxy.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "DataReference.h"
 #include "NPObjectProxy.h"
@@ -620,4 +620,4 @@ void PluginControllerProxy::windowedPluginGeometryDidChange(const IntRect& frame
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

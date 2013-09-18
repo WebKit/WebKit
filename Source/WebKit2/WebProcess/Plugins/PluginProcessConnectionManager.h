@@ -26,7 +26,7 @@
 #ifndef PluginProcessConnectionManager_h
 #define PluginProcessConnectionManager_h
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "PluginProcess.h"
 #include <wtf/Forward.h>
@@ -72,6 +72,6 @@ private:
 
 }
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // PluginProcessConnectionManager_h

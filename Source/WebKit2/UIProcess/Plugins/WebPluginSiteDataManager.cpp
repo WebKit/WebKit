@@ -37,7 +37,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if ENABLE(PLUGIN_PROCESS)
 class WebPluginSiteDataManager::GetSitesWithDataState {
 public:
     explicit GetSitesWithDataState(WebPluginSiteDataManager* webPluginSiteDataManager, uint64_t callbackID)
@@ -112,7 +111,6 @@ private:
     uint64_t m_callbackID;
     Vector<PluginModuleInfo> m_plugins;
 };
-#endif // ENABLE(PLUGIN_PROCESS)
 
 PassRefPtr<WebPluginSiteDataManager> WebPluginSiteDataManager::create(WebContext* webContext)
 {
@@ -128,20 +126,16 @@ WebPluginSiteDataManager::~WebPluginSiteDataManager()
 {
     ASSERT(m_arrayCallbacks.isEmpty());
     ASSERT(m_voidCallbacks.isEmpty());
-#if ENABLE(PLUGIN_PROCESS)
     ASSERT(m_pendingGetSitesWithData.isEmpty());
     ASSERT(m_pendingClearSiteData.isEmpty());
-#endif
 }
 
 void WebPluginSiteDataManager::invalidate()
 {
     invalidateCallbackMap(m_arrayCallbacks);
 
-#if ENABLE(PLUGIN_PROCESS)
     m_pendingGetSitesWithData.clear();
     m_pendingClearSiteData.clear();
-#endif
 }
 
 void WebPluginSiteDataManager::getSitesWithData(PassRefPtr<ArrayCallback> prpCallback)
@@ -156,21 +150,11 @@ void WebPluginSiteDataManager::getSitesWithData(PassRefPtr<ArrayCallback> prpCal
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 
-#if ENABLE(PLUGIN_PROCESS)
     ASSERT(!m_pendingGetSitesWithData.contains(callbackID));
 
     GetSitesWithDataState* state = new GetSitesWithDataState(this, callbackID);
     m_pendingGetSitesWithData.set(callbackID, adoptPtr(state));
     state->getSitesWithDataForNextPlugin();
-#else
-    Vector<PluginModuleInfo> plugins = m_webContext->pluginInfoStore().plugins();
-    Vector<String> pluginPaths;
-    for (size_t i = 0; i < plugins.size(); ++i)
-        pluginPaths.append(plugins[i].path);
-
-    ASSERT(m_webContext->processModel() == ProcessModelSharedSecondaryProcess); // Plugin process is required for multiple WebProcess mode.
-    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebProcess::GetSitesWithPluginData(pluginPaths, callbackID));
-#endif
 }
 
 void WebPluginSiteDataManager::didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID)
@@ -216,21 +200,11 @@ void WebPluginSiteDataManager::clearSiteData(ImmutableArray* sites, uint64_t fla
     uint64_t callbackID = callback->callbackID();
     m_voidCallbacks.set(callbackID, callback.release());
 
-#if ENABLE(PLUGIN_PROCESS)
     ASSERT(!m_pendingClearSiteData.contains(callbackID));
 
     ClearSiteDataState* state = new ClearSiteDataState(this, sitesVector, flags, maxAgeInSeconds, callbackID);
     m_pendingClearSiteData.set(callbackID, adoptPtr(state));
     state->clearSiteDataForNextPlugin();
-#else
-    Vector<PluginModuleInfo> plugins = m_webContext->pluginInfoStore().plugins();
-    Vector<String> pluginPaths;
-    for (size_t i = 0; i < plugins.size(); ++i)
-        pluginPaths.append(plugins[i].path);
-
-    ASSERT(m_webContext->processModel() == ProcessModelSharedSecondaryProcess); // Plugin process is required for multiple WebProcess mode.
-    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebProcess::ClearPluginSiteData(pluginPaths, sitesVector, flags, maxAgeInSeconds, callbackID));
-#endif
 }
 
 void WebPluginSiteDataManager::didClearSiteData(uint64_t callbackID)
@@ -244,17 +218,6 @@ void WebPluginSiteDataManager::didClearSiteData(uint64_t callbackID)
     callback->performCallback();
 }
 
-bool WebPluginSiteDataManager::shouldTerminate(WebProcessProxy*) const
-{
-#if ENABLE(PLUGIN_PROCESS)
-    // When out of process plug-ins are enabled, the web process is not involved in fetching site data.
-    return true;
-#else
-    return m_arrayCallbacks.isEmpty() && m_voidCallbacks.isEmpty();
-#endif
-}
-
-#if ENABLE(PLUGIN_PROCESS)
 void WebPluginSiteDataManager::didGetSitesWithDataForSinglePlugin(const Vector<String>& sites, uint64_t callbackID)
 {
     GetSitesWithDataState* state = m_pendingGetSitesWithData.get(callbackID);
@@ -286,8 +249,6 @@ void WebPluginSiteDataManager::didClearSiteDataForAllPlugins(uint64_t callbackID
 
     didClearSiteData(callbackID);
 }
-
-#endif
 
 } // namespace WebKit
 

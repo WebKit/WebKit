@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NPRemoteObjectMap.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "NPObjectMessageReceiver.h"
 #include "NPObjectProxy.h"
@@ -238,4 +238,4 @@ void NPRemoteObjectMap::didReceiveSyncMessage(CoreIPC::Connection* connection, C
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

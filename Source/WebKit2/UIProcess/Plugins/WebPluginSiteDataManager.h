@@ -55,12 +55,8 @@ public:
     void clearSiteData(ImmutableArray* sites, uint64_t flags, uint64_t maxAgeInSeconds, PassRefPtr<VoidCallback>);
     void didClearSiteData(uint64_t callbackID);
 
-#if ENABLE(PLUGIN_PROCESS)
     void didGetSitesWithDataForSinglePlugin(const Vector<String>& sites, uint64_t callbackID);
     void didClearSiteDataForSinglePlugin(uint64_t callbackID);    
-#endif
-
-    bool shouldTerminate(WebProcessProxy*) const;
 
 private:
     explicit WebPluginSiteDataManager(WebContext*);
@@ -69,7 +65,6 @@ private:
     HashMap<uint64_t, RefPtr<ArrayCallback>> m_arrayCallbacks;
     HashMap<uint64_t, RefPtr<VoidCallback>> m_voidCallbacks;
 
-#if ENABLE(PLUGIN_PROCESS)
     void didGetSitesWithDataForAllPlugins(const Vector<String>& sites, uint64_t callbackID);
     void didClearSiteDataForAllPlugins(uint64_t callbackID);
 
@@ -78,7 +73,6 @@ private:
 
     class ClearSiteDataState;
     HashMap<uint64_t, OwnPtr<ClearSiteDataState>> m_pendingClearSiteData;
-#endif
 };
 
 } // namespace WebKit

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PluginProcess.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "ArgumentCoders.h"
 #include "Attachment.h"
@@ -280,5 +280,5 @@ void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 

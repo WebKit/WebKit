@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PluginProxy.h"
 
-#if ENABLE(PLUGIN_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #import "PluginController.h"
 #import "PluginControllerProxyMessages.h"
@@ -99,4 +99,4 @@ void PluginProxy::setLayerHostingContextID(uint32_t layerHostingContextID)
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

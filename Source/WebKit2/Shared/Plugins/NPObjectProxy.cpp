@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NPObjectProxy.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "ArgumentCoders.h"
 #include "Connection.h"
@@ -360,4 +360,4 @@ bool NPObjectProxy::NP_Construct(NPObject* npObject, const NPVariant* arguments,
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

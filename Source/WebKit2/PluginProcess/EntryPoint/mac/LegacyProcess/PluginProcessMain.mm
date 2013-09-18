@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #import "ChildProcessEntryPoint.h"
 #import "EnvironmentUtilities.h"
@@ -120,4 +120,4 @@ int PluginProcessMain(int argc, char** argv)
     return ChildProcessMain<PluginProcess, PluginProcessMainDelegate>(argc, argv);
 }
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

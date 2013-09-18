@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NPIdentifierData.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
@@ -89,4 +89,4 @@ bool NPIdentifierData::decode(CoreIPC::ArgumentDecoder& decoder, NPIdentifierDat
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

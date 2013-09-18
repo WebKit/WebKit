@@ -109,14 +109,14 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
         environmentVariables.appendValue("DYLD_FRAMEWORK_PATH", [frameworksPath fileSystemRepresentation], ':');
 
     NSString *processShimPathNSString = nil;
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     if (launchOptions.processType == ProcessLauncher::PluginProcess) {
         NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
         NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
 
         processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"PluginProcessShim.dylib"];
     } else
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
     if (launchOptions.processType == ProcessLauncher::WebProcess) {
         NSString *processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
         NSString *processAppExecutablePath = [[NSBundle bundleWithPath:processPath] executablePath];
@@ -156,7 +156,7 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
             return "com.apple.WebKit.Networking.Development";
         return "com.apple.WebKit.Networking";
 #endif
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     case ProcessLauncher::PluginProcess:
         if (forDevelopment)
             return "com.apple.WebKit.Plugin.Development";
@@ -390,7 +390,7 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
     case ProcessLauncher::WebProcess:
         processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
         break;
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     case ProcessLauncher::PluginProcess:
         processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"PluginProcess.app"];
         break;

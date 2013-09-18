@@ -82,7 +82,7 @@ const char* ProcessLauncher::processTypeAsString(ProcessType processType)
     switch (processType) {
     case WebProcess:
         return "webprocess";
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     case PluginProcess:
         return "pluginprocess";
 #endif
@@ -107,7 +107,7 @@ bool ProcessLauncher::getProcessTypeFromString(const char* string, ProcessType& 
         return true;
     }
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     if (!strcmp(string, "pluginprocess")) {
         processType = PluginProcess;
         return true;

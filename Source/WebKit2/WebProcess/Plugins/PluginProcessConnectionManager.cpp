@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PluginProcessConnectionManager.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
@@ -127,4 +127,4 @@ void PluginProcessConnectionManager::pluginProcessCrashed(uint64_t pluginProcess
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

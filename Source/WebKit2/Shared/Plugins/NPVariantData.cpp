@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NPVariantData.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
@@ -187,4 +187,4 @@ bool NPVariantData::decode(CoreIPC::ArgumentDecoder& decoder, NPVariantData& res
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

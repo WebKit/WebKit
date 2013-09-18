@@ -145,7 +145,7 @@ public:
 
     void clearResourceCaches(ResourceCachesToClear = AllResourceCaches);
     
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     PluginProcessConnectionManager& pluginProcessConnectionManager();
 #endif
 
@@ -210,11 +210,6 @@ private:
 
     void setEnhancedAccessibility(bool);
     
-#if !ENABLE(PLUGIN_PROCESS)
-    void getSitesWithPluginData(const Vector<String>& pluginPaths, uint64_t callbackID);
-    void clearPluginSiteData(const Vector<String>& pluginPaths, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
-#endif
-
     void startMemorySampler(const SandboxExtension::Handle&, const String&, const double);
     void stopMemorySampler();
 
@@ -309,7 +304,7 @@ private:
     WebResourceLoadScheduler* m_webResourceLoadScheduler;
 #endif
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     RefPtr<PluginProcessConnectionManager> m_pluginProcessConnectionManager;
 #endif
 

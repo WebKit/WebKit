@@ -98,10 +98,6 @@
 #include <unistd.h>
 #endif
 
-#if !ENABLE(PLUGIN_PROCESS)
-#include "NetscapePluginModule.h"
-#endif
-
 #if ENABLE(CUSTOM_PROTOCOLS)
 #include "CustomProtocolManager.h"
 #endif
@@ -120,10 +116,6 @@
 
 #if ENABLE(NETWORK_PROCESS)
 #include "WebResourceLoadScheduler.h"
-#endif
-
-#if ENABLE(PLUGIN_PROCESS)
-#include "PluginProcessConnectionManager.h"
 #endif
 
 #if USE(SECURITY_FRAMEWORK)
@@ -173,7 +165,7 @@ WebProcess::WebProcess()
     , m_usesNetworkProcess(false)
     , m_webResourceLoadScheduler(new WebResourceLoadScheduler)
 #endif
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
 #endif
     , m_nonVisibleProcessCleanupTimer(this, &WebProcess::nonVisibleProcessCleanupTimerFired)
@@ -224,7 +216,7 @@ void WebProcess::initializeConnection(CoreIPC::Connection* connection)
 
     m_eventDispatcher->initializeConnection(connection);
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginProcessConnectionManager->initializeConnection(connection);
 #endif
 
@@ -478,7 +470,7 @@ DownloadManager& WebProcess::downloadManager()
     return downloadManager;
 }
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 PluginProcessConnectionManager& WebProcess::pluginProcessConnectionManager()
 {
     return *m_pluginProcessConnectionManager;
@@ -756,59 +748,6 @@ void WebProcess::clearApplicationCache()
     // Empty the application cache.
     cacheStorage().empty();
 }
-
-#if ENABLE(NETSCAPE_PLUGIN_API) && !ENABLE(PLUGIN_PROCESS)
-void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint64_t callbackID)
-{
-    HashSet<String> sitesSet;
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    for (size_t i = 0; i < pluginPaths.size(); ++i) {
-        RefPtr<NetscapePluginModule> netscapePluginModule = NetscapePluginModule::getOrCreate(pluginPaths[i]);
-        if (!netscapePluginModule)
-            continue;
-
-        Vector<String> sites = netscapePluginModule->sitesWithData();
-        for (size_t i = 0; i < sites.size(); ++i)
-            sitesSet.add(sites[i]);
-    }
-#else
-    UNUSED_PARAM(pluginPaths);
-#endif
-
-    Vector<String> sites;
-    copyToVector(sitesSet, sites);
-
-    parentProcessConnection()->send(Messages::WebProcessProxy::DidGetSitesWithPluginData(sites, callbackID), 0);
-}
-
-void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
-{
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    for (size_t i = 0; i < pluginPaths.size(); ++i) {
-        RefPtr<NetscapePluginModule> netscapePluginModule = NetscapePluginModule::getOrCreate(pluginPaths[i]);
-        if (!netscapePluginModule)
-            continue;
-
-        if (sites.isEmpty()) {
-            // Clear everything.
-            netscapePluginModule->clearSiteData(String(), flags, maxAgeInSeconds);
-            continue;
-        }
-
-        for (size_t i = 0; i < sites.size(); ++i)
-            netscapePluginModule->clearSiteData(sites[i], flags, maxAgeInSeconds);
-    }
-#else
-    UNUSED_PARAM(pluginPaths);
-    UNUSED_PARAM(sites);
-    UNUSED_PARAM(flags);
-    UNUSED_PARAM(maxAgeInSeconds);
-#endif
-
-    parentProcessConnection()->send(Messages::WebProcessProxy::DidClearPluginSiteData(callbackID), 0);
-}
-#endif
 
 static inline void addCaseFoldedCharacters(StringHasher& hasher, const String& string)
 {

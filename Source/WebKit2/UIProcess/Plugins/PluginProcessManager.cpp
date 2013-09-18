@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PluginProcessManager.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "PluginProcessProxy.h"
 #include "WebContext.h"
@@ -128,4 +128,4 @@ PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(uint64_t plug
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
