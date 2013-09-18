@@ -68,10 +68,10 @@ public:
 
     static bool isEnabledFor(const RenderBlock* renderer);
 
-    bool computeSegmentsForLine(LayoutSize lineOffset, LayoutUnit lineHeight)
+    bool updateSegmentsForLine(LayoutSize lineOffset, LayoutUnit lineHeight)
     {
         m_segmentRanges.clear();
-        bool result = ShapeInfo<RenderBlock>::computeSegmentsForLine(lineOffset.height(), lineHeight);
+        bool result = ShapeInfo<RenderBlock>::updateSegmentsForLine(lineOffset.height(), lineHeight);
         for (size_t i = 0; i < m_segments.size(); i++) {
             m_segments[i].logicalLeft -= lineOffset.width();
             m_segments[i].logicalRight -= lineOffset.width();
@@ -79,10 +79,10 @@ public:
         return result;
     }
 
-    virtual bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) OVERRIDE
+    virtual bool updateSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) OVERRIDE
     {
         m_segmentRanges.clear();
-        return ShapeInfo<RenderBlock>::computeSegmentsForLine(lineTop, lineHeight);
+        return ShapeInfo<RenderBlock>::updateSegmentsForLine(lineTop, lineHeight);
     }
 
     bool hasSegments() const
@@ -104,6 +104,7 @@ public:
         return &m_segments[m_segmentRanges.size()];
     }
     bool adjustLogicalLineTop(float minSegmentWidth);
+    LayoutUnit computeFirstFitPositionForFloat(const LayoutSize) const;
 
     void setNeedsLayout(bool value) { m_needsLayout = value; }
     bool needsLayout() { return m_needsLayout; }

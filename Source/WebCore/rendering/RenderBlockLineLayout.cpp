@@ -1354,7 +1354,7 @@ void RenderBlock::updateShapeAndSegmentsForCurrentLine(ShapeInsideInfo*& shapeIn
     LayoutUnit lineHeight = this->lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
 
     // FIXME: Bug 95361: It is possible for a line to grow beyond lineHeight, in which case these segments may be incorrect.
-    shapeInsideInfo->computeSegmentsForLine(LayoutSize(lineLeft, lineTop), lineHeight);
+    shapeInsideInfo->updateSegmentsForLine(LayoutSize(lineLeft, lineTop), lineHeight);
 
     pushShapeContentOverflowBelowTheContentBox(this, shapeInsideInfo, lineTop, lineHeight);
 }
@@ -1427,7 +1427,7 @@ void RenderBlock::updateShapeAndSegmentsForCurrentLineInFlowThread(ShapeInsideIn
     LayoutUnit lineTop = logicalLineTopInFlowThread - currentRegion->logicalTopForFlowThreadContent() + currentRegion->borderAndPaddingBefore();
 
     // FIXME: 118571 - Shape inside on a region does not yet take into account its padding for nested flow blocks
-    shapeInsideInfo->computeSegmentsForLine(LayoutSize(0, lineTop), lineHeight);
+    shapeInsideInfo->updateSegmentsForLine(LayoutSize(0, lineTop), lineHeight);
 
     if (currentRegion->isLastRegion())
         pushShapeContentOverflowBelowTheContentBox(this, shapeInsideInfo, lineTop, lineHeight);
@@ -1445,7 +1445,6 @@ bool RenderBlock::adjustLogicalLineTopAndLogicalHeightIfNeeded(ShapeInsideInfo* 
         layoutState.setAdjustedLogicalLineTop(adjustedLogicalLineTop);
         newLogicalHeight = logicalHeight();
     }
-
 
     end = restartLayoutRunsAndFloatsInRange(logicalHeight(), newLogicalHeight, lastFloatFromPreviousLine, resolver, end);
     return true;
@@ -2587,6 +2586,36 @@ static bool canBreakAtThisPosition(bool autoWrap, LineWidth& width, InlineIterat
     return canBreakHere;
 }
 
+#if ENABLE(CSS_SHAPES)
+static void updateSegmentsForShapes(RenderBlock* block, const FloatingObject* lastFloatFromPreviousLine, const WordMeasurements& wordMeasurements, LineWidth& width, bool isFirstLine)
+{
+    ASSERT(lastFloatFromPreviousLine);
+
+    ShapeInsideInfo* shapeInsideInfo = block->layoutShapeInsideInfo();
+    LayoutUnit lineLogicalHeight = logicalHeightForLine(block, isFirstLine);
+    LayoutUnit lineLogicalBottom = block->logicalHeight() + lineLogicalHeight;
+    bool lineOverlapsWithFloat = (lastFloatFromPreviousLine->y() < lineLogicalBottom) && (block->logicalHeight() < lastFloatFromPreviousLine->maxY());
+
+    if (!shapeInsideInfo || !lineOverlapsWithFloat)
+        return;
+
+    float minWidth = firstPositiveWidth(wordMeasurements);
+
+    LayoutUnit availableWidth = block->width() - lastFloatFromPreviousLine->maxX();
+    if (availableWidth < minWidth)
+        block->setLogicalHeight(lastFloatFromPreviousLine->maxY());
+
+    if (block->logicalHeight() < lastFloatFromPreviousLine->y()) {
+        shapeInsideInfo->adjustLogicalLineTop(minWidth + lastFloatFromPreviousLine->width());
+        block->setLogicalHeight(shapeInsideInfo->logicalLineTop());
+    }
+
+    shapeInsideInfo->updateSegmentsForLine(block->logicalHeight(), lineLogicalHeight);
+    width.updateCurrentShapeSegment();
+    width.updateAvailableWidth();
+}
+#endif
+
 InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
 {
     reset();
@@ -2925,7 +2954,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                     wordMeasurement.renderer = t;
                     wordMeasurement.endOffset = current.m_pos;
                     wordMeasurement.startOffset = lastSpace;
-                    
+
                     float additionalTempWidth;
                     if (wordTrailingSpaceWidth && c == ' ')
                         additionalTempWidth = textWidth(t, lastSpace, current.m_pos + 1 - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, wordMeasurement.fallbackFonts, textLayout) - wordTrailingSpaceWidth;
@@ -2948,6 +2977,10 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                         appliedStartWidth = true;
                     }
 
+#if ENABLE(CSS_SHAPES)
+                    if (lastFloatFromPreviousLine)
+                        updateSegmentsForShapes(m_block, lastFloatFromPreviousLine, wordMeasurements, width, lineInfo.isFirstLine());
+#endif
                     applyWordSpacing = wordSpacing && currentCharacterIsSpace;
 
                     if (!width.committedWidth() && autoWrap && !width.fitsOnLine())

@@ -3353,14 +3353,20 @@ LayoutPoint RenderBlock::computeLogicalLocationForFloat(const FloatingObject* fl
 #if ENABLE(CSS_SHAPES)
     // FIXME Bug 102948: This only works for shape outside directly set on this block.
     ShapeInsideInfo* shapeInsideInfo = this->shapeInsideInfo();
-    // FIXME Bug 102846: Take into account the height of the content. The offset should be
-    // equal to the maximum segment length.
-    if (shapeInsideInfo && shapeInsideInfo->hasSegments() && shapeInsideInfo->segments().size() == 1) {
-        // FIXME Bug 102949: Add support for shapes with multipe segments.
+    // FIXME: Implement behavior for right floats.
+    if (shapeInsideInfo) {
+        // FIXME: If the float doesn't fit in the shape we should push it under the content box
+        logicalTopOffset = shapeInsideInfo->computeFirstFitPositionForFloat(LayoutSize(floatingObject->width(), floatingObject->height()));
+        if (logicalHeight() > logicalTopOffset)
+            logicalTopOffset = logicalHeight();
 
-        // The segment offsets are relative to the content box.
-        logicalRightOffset = logicalLeftOffset + shapeInsideInfo->segments()[0].logicalRight;
-        logicalLeftOffset += shapeInsideInfo->segments()[0].logicalLeft;
+        SegmentList segments = shapeInsideInfo->computeSegmentsForLine(logicalTopOffset, childBox->logicalHeight());
+        // FIXME Bug 102949: Add support for shapes with multiple segments.
+        if (segments.size() == 1) {
+            // The segment offsets are relative to the content box.
+            logicalRightOffset = logicalLeftOffset + segments[0].logicalRight;
+            logicalLeftOffset += segments[0].logicalLeft;
+        }
     } else
 #endif
         logicalRightOffset = logicalRightOffsetForContent(logicalTopOffset);

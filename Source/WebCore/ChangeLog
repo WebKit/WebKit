@@ -1,3 +1,47 @@
+2013-09-17  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Use the float height to determine position in shape-inside
+        https://bugs.webkit.org/show_bug.cgi?id=102846
+
+        Reviewed by Darin Adler.
+
+        Float positioning inside shape-inside has been working only for simple cases when the float boundaries didn't overlap with the shape.
+        This patch fixes the behavior for left floats and shapes with inline content. I want to add this work step by step, therefore the next
+        step would be to add support for block content with inline content (e.g. paragraphs) then cover cases with right floats.
+
+        Tests: fast/shapes/shape-inside/shape-inside-left-float-in-lower-left-triangle-inline-content.html
+               fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-inline-content.html
+               fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-inline-content.html
+               fast/shapes/shape-inside/shape-inside-left-float-in-upper-right-triangle-inline-content.html
+
+        * rendering/LineWidth.cpp:
+        (WebCore::LineWidth::LineWidth): Use the new updateCurrentShapeSegment member function.
+        (WebCore::LineWidth::updateCurrentShapeSegment): We need a function to update the current line segment's reference, since we use it multiple places.
+        * rendering/LineWidth.h: Add new member function.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeLogicalLocationForFloat): Fix positioning of a floating element.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::updateShapeAndSegmentsForCurrentLine): Use updateSegmentsForLine instead of computeSegmentsForLine.
+        (WebCore::RenderBlock::updateShapeAndSegmentsForCurrentLineInFlowThread): Use updateSegmentsForLine instead of computeSegmentsForLine.
+        (WebCore::RenderBlock::adjustLogicalLineTopAndLogicalHeightIfNeeded):
+        (WebCore::updateSegmentsForShapes): After our float is positioned, we need to adjust the current lineTop and update the logical height to be able to wrap around the float.
+        (WebCore::RenderBlock::LineBreaker::nextSegmentBreak): If we have a float in our line we might need to adjust our lineTop and logicalHeight.
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::::computeSegmentsForLine): Add new const function to compute the segments. I'd like make this function static later if possible.
+        (WebCore::::updateSegmentsForLine): Old computeSegmentsForLine, change name to indicate that it is actually changing things.
+        * rendering/shapes/ShapeInfo.h: Update function names, add declaration.
+        (WebCore::ShapeInfo::clearSegments):
+        (WebCore::ShapeInfo::logicalLineBottom):
+        (WebCore::ShapeInfo::lineOverlapsShapeBounds):
+        * rendering/shapes/ShapeInsideInfo.cpp:
+        (WebCore::ShapeInsideInfo::computeFirstFitPositionForFloat): Compute the first fit position below the current line position inside shapes. I called this function
+        this way, because currently we use it only for shapes.
+        * rendering/shapes/ShapeInsideInfo.h: Update function names.
+        * rendering/shapes/ShapeOutsideInfo.cpp: Update function names.
+        (WebCore::ShapeOutsideInfo::computeSegmentsForContainingBlockLine):
+        (WebCore::ShapeOutsideInfo::updateSegmentsForLine):
+        * rendering/shapes/ShapeOutsideInfo.h: Update function names.
+
 2013-09-17  Sam Weinig  <sam@webkit.org>
 
         Replace use of OwnArrayPtr<Foo> with std::unique_ptr<Foo[]> in WebCore

@@ -49,8 +49,7 @@ LineWidth::LineWidth(RenderBlock& block, bool isFirstLine, IndentTextOrNot shoul
     , m_shouldIndentText(shouldIndentText)
 {
 #if ENABLE(CSS_SHAPES)
-    if (ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo())
-        m_segment = shapeInsideInfo->currentSegment();
+    updateCurrentShapeSegment();
 #endif
     updateAvailableWidth();
 }
@@ -203,6 +202,14 @@ void LineWidth::setTrailingWhitespaceWidth(float collapsedWhitespace, float bord
     m_trailingCollapsedWhitespaceWidth = collapsedWhitespace;
     m_trailingWhitespaceWidth = collapsedWhitespace + borderPaddingMargin;
 }
+
+#if ENABLE(CSS_SHAPES)
+void LineWidth::updateCurrentShapeSegment()
+{
+    if (ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo())
+        m_segment = shapeInsideInfo->currentSegment();
+}
+#endif
 
 void LineWidth::computeAvailableWidthFromLeftAndRight()
 {

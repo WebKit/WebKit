@@ -69,7 +69,23 @@ const Shape* ShapeInfo<RenderType>::computedShape() const
 }
 
 template<class RenderType>
-bool ShapeInfo<RenderType>::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
+SegmentList ShapeInfo<RenderType>::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) const
+{
+    ASSERT(lineHeight >= 0);
+    SegmentList segments;
+
+    getIntervals((lineTop - logicalTopOffset()), std::min(lineHeight, shapeLogicalBottom() - lineTop), segments);
+
+    for (size_t i = 0; i < segments.size(); i++) {
+        segments[i].logicalLeft += logicalLeftOffset();
+        segments[i].logicalRight += logicalLeftOffset();
+    }
+
+    return segments;
+}
+
+template<class RenderType>
+bool ShapeInfo<RenderType>::updateSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
 {
     ASSERT(lineHeight >= 0);
     m_shapeLineTop = lineTop - logicalTopOffset();
@@ -77,13 +93,7 @@ bool ShapeInfo<RenderType>::computeSegmentsForLine(LayoutUnit lineTop, LayoutUni
     m_segments.clear();
 
     if (lineOverlapsShapeBounds())
-        getIntervals(m_shapeLineTop, std::min(m_lineHeight, shapeLogicalBottom() - lineTop), m_segments);
-
-    LayoutUnit logicalLeftOffset = this->logicalLeftOffset();
-    for (size_t i = 0; i < m_segments.size(); i++) {
-        m_segments[i].logicalLeft += logicalLeftOffset;
-        m_segments[i].logicalRight += logicalLeftOffset;
-    }
+        m_segments = computeSegmentsForLine(lineTop, lineHeight);
 
     return m_segments.size();
 }

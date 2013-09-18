@@ -1,3 +1,23 @@
+2013-09-17  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Use the float height to determine position in shape-inside
+        https://bugs.webkit.org/show_bug.cgi?id=102846
+
+        Reviewed by Darin Adler.
+
+        Float positioning inside shape-inside has been working only for simple cases when the float boundaries didn't overlap with the shape.
+        This patch fixes the behavior for left floats and shapes with inline content. I want to add this work step by step, therefore the next
+        step would be to add support for block content with inline content (e.g. paragraphs) then cover cases with right floats.
+
+        * fast/shapes/shape-inside/shape-inside-left-float-in-lower-left-triangle-inline-content-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-lower-left-triangle-inline-content.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-inline-content-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-inline-content.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-inline-content-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-inline-content.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-upper-right-triangle-inline-content-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-left-float-in-upper-right-triangle-inline-content.html: Added.
+
 2013-09-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should support Int52 for local variables

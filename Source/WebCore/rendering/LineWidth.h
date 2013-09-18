@@ -70,6 +70,10 @@ public:
     void fitBelowFloats();
     void setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin = 0);
 
+#if ENABLE(CSS_SHAPES)
+    void updateCurrentShapeSegment();
+#endif
+
     bool shouldIndentText() const { return m_shouldIndentText == IndentText; }
 
 private:
