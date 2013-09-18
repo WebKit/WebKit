@@ -27,4 +27,6 @@ open
 rowspan
 separators
 stretchy
+subscriptshift
+superscriptshift
 width

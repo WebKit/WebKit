@@ -1,3 +1,31 @@
+2013-09-18  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        [MathML] Implement the subscriptshift and superscriptshift attributes
+        https://bugs.webkit.org/show_bug.cgi?id=120069
+
+        Reviewed by Darin Adler.
+
+        Added support for subscriptshift and superscriptshift attributes. The
+        subscriptshift attribute is for msup element and superscriptshift for
+        msup. msubsup can have both subscriptshift and superscriptshift. The
+        subscriptshift attribute specifies the minimum amount to shift the
+        baseline of subscript down. The superscriptshift attribute specifies
+        the minimum amount to shift the baseline of superscript up.
+
+        Tests: mathml/presentation/msub-subscriptshift.html
+               mathml/presentation/msubsup-subscriptshift.html
+               mathml/presentation/msubsup-superscriptshift.html
+               mathml/presentation/msup-superscriptshift.html
+               mathml/presentation/multiscript-subscriptshift.html
+               mathml/presentation/multiscript-superscriptshift.html
+
+        * mathml/mathattrs.in:
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::layout):
+        For aligning the subscript and superscript padding is added to the base.
+        So subscriptshift and superscriptshift attributes is set as padding bottom
+        and padding top of base respectively.
+
 2013-09-18  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Expose aria-haspopup and aria-sort without the 'aria-' prefix

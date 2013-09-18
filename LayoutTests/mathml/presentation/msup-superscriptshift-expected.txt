@@ -1,0 +1,10 @@
+Tests that superscriptshift works on msup. After adding superscriptshift the height of msup element should increase
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS height > 100 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

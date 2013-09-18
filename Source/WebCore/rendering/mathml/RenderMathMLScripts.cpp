@@ -277,9 +277,6 @@ void RenderMathMLScripts::layout()
     // Our layout rules include: Don't let the superscript go below the "axis" (half x-height above the
     // baseline), or the subscript above the axis. Also, don't let the superscript's top edge be
     // below the base's top edge, or the subscript's bottom edge above the base's bottom edge.
-    //
-    // FIXME: Check any subscriptshift or superscriptshift attributes, and maybe use more sophisticated
-    // heuristics from TeX or elsewhere. See https://bugs.webkit.org/show_bug.cgi?id=79274#c5.
 
     LayoutUnit baseHeight = base->logicalHeight();
     LayoutUnit baseBaseline = base->firstLineBoxBaseline();
@@ -293,6 +290,14 @@ void RenderMathMLScripts::layout()
 
     LayoutUnit topPadding = 0;
     LayoutUnit bottomPadding = 0;
+
+    Element* scriptElement = element();
+    LayoutUnit superscriptShiftValue = 0;
+    LayoutUnit subscriptShiftValue = 0;
+    if (m_kind == Sub || m_kind == SubSup || m_kind == Multiscripts)
+        parseMathMLLength(scriptElement->fastGetAttribute(MathMLNames::subscriptshiftAttr), subscriptShiftValue, style(), false);
+    if (m_kind == Super || m_kind == SubSup || m_kind == Multiscripts)
+        parseMathMLLength(scriptElement->fastGetAttribute(MathMLNames::superscriptshiftAttr), superscriptShiftValue, style(), false);
 
     bool isPostScript = true;
     RenderMathMLBlock* subSupPair = toRenderMathMLBlock(m_baseWrapper->nextSibling());
@@ -311,7 +316,7 @@ void RenderMathMLScripts::layout()
             LayoutUnit superscriptBaseline = superscript->firstLineBoxBaseline();
             if (superscriptBaseline == -1)
                 superscriptBaseline = superscriptHeight;
-            LayoutUnit minBaseline = max<LayoutUnit>(fontSize / 3 + 1 + superscriptBaseline, superscriptHeight + axis);
+            LayoutUnit minBaseline = max<LayoutUnit>(fontSize / 3 + 1 + superscriptBaseline, superscriptHeight + axis + superscriptShiftValue);
 
             topPadding = max<LayoutUnit>(topPadding, minBaseline - baseBaseline);
         }
@@ -323,7 +328,7 @@ void RenderMathMLScripts::layout()
                 subscriptBaseline = subscriptHeight;
             LayoutUnit baseExtendUnderBaseline = baseHeight - baseBaseline;
             LayoutUnit subscriptUnderItsBaseline = subscriptHeight - subscriptBaseline;
-            LayoutUnit minExtendUnderBaseline = max<LayoutUnit>(fontSize / 5 + 1 + subscriptUnderItsBaseline, subscriptHeight - axis);
+            LayoutUnit minExtendUnderBaseline = max<LayoutUnit>(fontSize / 5 + 1 + subscriptUnderItsBaseline, subscriptHeight + subscriptShiftValue - axis);
 
             bottomPadding = max<LayoutUnit>(bottomPadding, minExtendUnderBaseline - baseExtendUnderBaseline);
         }

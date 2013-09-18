@@ -1,3 +1,25 @@
+2013-09-18  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        [MathML] Implement the subscriptshift and superscriptshift attributes
+        https://bugs.webkit.org/show_bug.cgi?id=120069
+
+        Reviewed by Darin Adler.
+
+        * mathml/presentation/msub-subscriptshift-expected.txt: Added.
+        * mathml/presentation/msub-subscriptshift.html: Added.
+        * mathml/presentation/msubsup-subscriptshift-expected.txt: Added.
+        * mathml/presentation/msubsup-subscriptshift.html: Added.
+        * mathml/presentation/msubsup-superscriptshift-expected.txt: Added.
+        * mathml/presentation/msubsup-superscriptshift.html: Added.
+        * mathml/presentation/msup-superscriptshift-expected.txt: Added.
+        * mathml/presentation/msup-superscriptshift.html: Added.
+        * mathml/presentation/multiscript-subscriptshift-expected.txt: Added.
+        * mathml/presentation/multiscript-subscriptshift.html: Added.
+        * mathml/presentation/multiscript-superscriptshift-expected.txt: Added.
+        * mathml/presentation/multiscript-superscriptshift.html: Added.
+        Added new tests for verifying that subscriptshift and superscriptshift are
+        being applied properly to the script base.
+
 2013-09-18  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Expose aria-haspopup and aria-sort without the 'aria-' prefix
