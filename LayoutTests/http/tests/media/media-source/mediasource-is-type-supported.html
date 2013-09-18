@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <link rel='stylesheet' href='/w3c/resources/testharness.css'>
+    </head>
+    <body>
+        <div id="log"></div>
+        <script>
+          test(function ()
+          {
+              var invalidTypes = [
+                  // Invalid MIME format.
+                  'video',
+                  'video/',
+                  'video/webm',
+                  'video/webm;',
+                  'video/webm;codecs',
+                  'video/webm;codecs=',
+                  'video/webm;codecs="',
+                  'video/webm;codecs=""',
+                  'video/webm;codecs=","',
+
+                  // Mismatch between major type and codec ID
+                  'audio/webm;codecs="vp8"',
+                  'audio/mp4;codecs="avc1.4d001e"',
+
+                  // Mismatch between minor type and codec ID.
+                  'audio/mp4;codecs="vorbis"',
+                  'audio/webm;codecs="mp4a.40.2"',
+                  'video/mp4;codecs="vp8"',
+                  'video/webm;codecs="mp4a.40.2"',
+
+                  // Invalid codec IDs.
+                  'audio/webm;codecs="mp4a"',
+                  'audio/webm;codecs="mp4a.40"',
+                  'audio/webm;codecs="mp4a.40."',
+                  'audio/mp4;codecs="mp4a.67.3"'
+              ];
+
+              for (var i = 0; i < invalidTypes.length; ++i) {
+                assert_false(MediaSource.isTypeSupported(invalidTypes[i]), "Type \"" + invalidTypes[i] + "\" not supported");
+              }
+          }, "Test invalid types");
+
+          test(function ()
+          {
+              var validTypes = [
+                    'video/webm;codecs="vp8"',
+                    'video/webm;codecs="vorbis"',
+                    'video/webm;codecs="vp8,vorbis"',
+                    'video/webm;codecs="vorbis, vp8"',
+                    'audio/webm;codecs="vorbis"',
+              ];
+
+              for (var i = 0; i < validTypes.length; ++i) {
+                assert_true(MediaSource.isTypeSupported(validTypes[i]), "Type \"" + validTypes[i] + "\" supported");
+              }
+          }, "Test valid WebM types");
+
+          test(function ()
+          {
+              var validTypes = [
+                    'video/mp4;codecs="avc1.4d001e"', // H.264 Main Profile level 3.0
+                    'video/mp4;codecs="avc1.42001e"', // H.264 Baseline Profile level 3.0
+                    'audio/mp4;codecs="mp4a.40.2"',   // MPEG4 AAC-LC
+                    'audio/mp4;codecs="mp4a.40.5"',   // MPEG4 HE-AAC
+                    'audio/mp4;codecs="mp4a.67"',     // MPEG2 AAC-LC
+                    'video/mp4;codecs="mp4a.40.2"',
+                    'video/mp4;codecs="avc1.4d001e,mp4a.40.2"',
+                    'video/mp4;codecs="mp4a.40.2 , avc1.4d001e "',
+                    'video/mp4;codecs="avc1.4d001e,mp4a.40.5"',
+                    'video/mp4;codecs="avc1.4d001e,mp4a.40.5"',
+              ];
+
+              for (var i = 0; i < validTypes.length; ++i) {
+                assert_true(MediaSource.isTypeSupported(validTypes[i]), "Type \"" + validTypes[i] + "\" supported");
+              }
+          }, "Test valid MP4 types");
+        </script>
+    </body>
+</html>

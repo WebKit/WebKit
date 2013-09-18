@@ -662,7 +662,11 @@ enable?(MEDIA_SOURCE) {
   IDL_BINDINGS += \
     $$PWD/Modules/mediasource/MediaSource.idl \
     $$PWD/Modules/mediasource/SourceBuffer.idl \
-    $$PWD/Modules/mediasource/SourceBufferList.idl
+    $$PWD/Modules/mediasource/SourceBufferList.idl \
+    $$PWD/Modules/mediasource/URLMediaSource.idl \
+    $$PWD/Modules/mediasource/WebKitMediaSource.idl \
+    $$PWD/Modules/mediasource/WebKitSourceBuffer.idl \
+    $$PWD/Modules/mediasource/WebKitSourceBufferList.idl
 }
 
 qtPrepareTool(QMAKE_MOC, moc)

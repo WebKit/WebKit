@@ -34,6 +34,7 @@
 #include "BlobData.h"
 #include "KURL.h"
 #include "ScriptWrappable.h"
+#include "URLRegistry.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -43,7 +44,7 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-class Blob : public ScriptWrappable, public RefCounted<Blob> {
+class Blob : public ScriptWrappable, public URLRegistrable, public RefCounted<Blob> {
 public:
     static PassRefPtr<Blob> create()
     {
@@ -77,6 +78,9 @@ public:
     // Intended for use in ASSERT statements.
     static bool isNormalizedContentType(const String&);
     static bool isNormalizedContentType(const CString&);
+
+    // URLRegistrable
+    virtual URLRegistry& registry() const OVERRIDE;
 
 #if ENABLE(BLOB)
     PassRefPtr<Blob> slice(long long start = 0, long long end = std::numeric_limits<long long>::max(), const String& contentType = String()) const;

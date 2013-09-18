@@ -268,7 +268,7 @@
 #include "JSMediaQueryList.cpp"
 #include "JSMediaQueryListListener.cpp"
 #if ENABLE(MEDIA_SOURCE)
-#include "JSMediaSource.cpp"
+#include "JSWebKitMediaSource.cpp"
 #endif
 #include "JSMessageChannel.cpp"
 #include "JSMessageEvent.cpp"
@@ -312,8 +312,8 @@
 #include "JSSharedWorker.cpp"
 #include "JSSharedWorkerGlobalScope.cpp"
 #if ENABLE(MEDIA_SOURCE)
-#include "JSSourceBuffer.cpp"
-#include "JSSourceBufferList.cpp"
+#include "JSWebKitSourceBuffer.cpp"
+#include "JSWebKitSourceBufferList.cpp"
 #endif
 #include "JSSQLError.cpp"
 #include "JSSQLException.cpp"

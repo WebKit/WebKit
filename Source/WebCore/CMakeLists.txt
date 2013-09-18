@@ -210,6 +210,10 @@ set(WebCore_IDL_FILES
     Modules/mediasource/MediaSource.idl
     Modules/mediasource/SourceBuffer.idl
     Modules/mediasource/SourceBufferList.idl
+    Modules/mediasource/URLMediaSource.idl
+    Modules/mediasource/WebKitMediaSource.idl
+    Modules/mediasource/WebKitSourceBuffer.idl
+    Modules/mediasource/WebKitSourceBufferList.idl
 
     Modules/mediastream/MediaStream.idl
     Modules/mediastream/MediaStreamEvent.idl
@@ -1462,6 +1466,7 @@ set(WebCore_SOURCES
     html/NumberInputType.cpp
     html/PasswordInputType.cpp
     html/PluginDocument.cpp
+    html/PublicURLManager.cpp
     html/RadioInputType.cpp
     html/RadioNodeList.cpp
     html/RangeInputType.cpp

@@ -31,6 +31,7 @@
 #include "Event.h"
 #include "ExceptionCode.h"
 #include "MediaStreamCenter.h"
+#include "MediaStreamRegistry.h"
 #include "MediaStreamSource.h"
 #include "MediaStreamTrackEvent.h"
 
@@ -351,6 +352,11 @@ void MediaStream::scheduledEventTimerFired(Timer<MediaStream>*)
         dispatchEvent((*it).release());
 
     events.clear();
+}
+
+URLRegistry& MediaStream::registry() const
+{
+    return MediaStreamRegistry::registry();
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,68 +33,39 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "ActiveDOMObject.h"
-#include "GenericEventQueue.h"
-#include "MediaSourcePrivate.h"
+#include "MediaSourceBase.h"
+#include "ScriptWrappable.h"
 #include "SourceBuffer.h"
 #include "SourceBufferList.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class MediaSource : public RefCounted<MediaSource>, public EventTarget, public ActiveDOMObject {
+class MediaSource : public MediaSourceBase, public ScriptWrappable {
 public:
-    static const String& openKeyword();
-    static const String& closedKeyword();
-    static const String& endedKeyword();
-
     static PassRefPtr<MediaSource> create(ScriptExecutionContext*);
-    virtual ~MediaSource() { }
+    virtual ~MediaSource();
 
     // MediaSource.idl methods
-    SourceBufferList* sourceBuffers();
-    SourceBufferList* activeSourceBuffers();
-    double duration() const;
-    void setDuration(double, ExceptionCode&);
+    SourceBufferList* sourceBuffers() { return m_sourceBuffers.get(); }
+    SourceBufferList* activeSourceBuffers() { return m_activeSourceBuffers.get(); }
     SourceBuffer* addSourceBuffer(const String& type, ExceptionCode&);
     void removeSourceBuffer(SourceBuffer*, ExceptionCode&);
-    const String& readyState() const;
-    void setReadyState(const String&);
-    void endOfStream(const String& error, ExceptionCode&);
     static bool isTypeSupported(const String& type);
-
-    void setPrivateAndOpen(PassOwnPtr<MediaSourcePrivate>);
 
     // EventTarget interface
     virtual const AtomicString& interfaceName() const OVERRIDE;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
-    // ActiveDOMObject interface
-    virtual bool hasPendingActivity() const OVERRIDE;
-
-    using RefCounted<MediaSource>::ref;
-    using RefCounted<MediaSource>::deref;
+    using RefCounted<MediaSourceBase>::ref;
+    using RefCounted<MediaSourceBase>::deref;
 
 private:
     explicit MediaSource(ScriptExecutionContext*);
 
-    // ActiveDOMObject interface
-    virtual void stop() OVERRIDE;
+    // MediaSourceBase interface
+    virtual void onReadyStateChange(const AtomicString&, const AtomicString&) OVERRIDE;
+    virtual Vector<RefPtr<TimeRanges> > activeRanges() const OVERRIDE;
 
-    virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
-
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
-
-    void scheduleEvent(const AtomicString& eventName);
-
-    EventTargetData m_eventTargetData;
-
-    String m_readyState;
-    OwnPtr<MediaSourcePrivate> m_private;
-
-    GenericEventQueue m_asyncEventQueue;
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
 };
@@ -102,4 +73,5 @@ private:
 } // namespace WebCore
 
 #endif
+
 #endif

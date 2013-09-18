@@ -1,0 +1,8 @@
+ 
+PASS Test addSourceBuffer() with empty type 
+PASS Test addSourceBuffer() with unsupported type 
+PASS Test addSourceBuffer() with Vorbis and VP8 
+PASS Test addSourceBuffer() with Vorbis and VP8 in separate SourceBuffers 
+FAIL Test addSourceBuffer() with AAC and H.264 assert_true: video/mp4;codecs="avc1.4D4001,mp4a.40.2" is supported expected true got false
+FAIL Test addSourceBuffer() with AAC and H.264 in separate SourceBuffers assert_true: video/mp4;codecs="avc1.4D4001" is supported expected true got false
+

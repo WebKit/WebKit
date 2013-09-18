@@ -41,13 +41,14 @@ MediaStreamRegistry& MediaStreamRegistry::registry()
     return instance;
 }
 
-void MediaStreamRegistry::registerMediaStreamURL(const KURL& url, PassRefPtr<MediaStream> stream)
+void MediaStreamRegistry::registerURL(SecurityOrigin*, const KURL& url, URLRegistrable* stream)
 {
+    ASSERT(&stream->registry() == this);
     ASSERT(isMainThread());
-    m_streamDescriptors.set(url.string(), stream->descriptor());
+    m_streamDescriptors.set(url.string(), static_cast<MediaStream*>(stream)->descriptor());
 }
 
-void MediaStreamRegistry::unregisterMediaStreamURL(const KURL& url)
+void MediaStreamRegistry::unregisterURL(const KURL& url)
 {
     ASSERT(isMainThread());
     m_streamDescriptors.remove(url.string());

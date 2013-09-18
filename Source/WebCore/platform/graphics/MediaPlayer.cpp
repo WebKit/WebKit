@@ -45,7 +45,7 @@
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-#include "MediaSource.h"
+#include "HTMLMediaSource.h"
 #endif
 
 #if PLATFORM(QT)
@@ -93,7 +93,7 @@ public:
 
     virtual void load(const String&) { }
 #if ENABLE(MEDIA_SOURCE)
-    virtual void load(const String&, PassRefPtr<MediaSource>) { }
+    virtual void load(const String&, PassRefPtr<HTMLMediaSource>) { }
 #endif
     virtual void cancelLoad() { }
 
@@ -394,7 +394,7 @@ bool MediaPlayer::load(const KURL& url, const ContentType& contentType, const St
 }
 
 #if ENABLE(MEDIA_SOURCE)
-bool MediaPlayer::load(const KURL& url, PassRefPtr<MediaSource> mediaSource)
+bool MediaPlayer::load(const KURL& url, PassRefPtr<HTMLMediaSource> mediaSource)
 {
     m_mediaSource = mediaSource;
     m_contentMIMEType = "";

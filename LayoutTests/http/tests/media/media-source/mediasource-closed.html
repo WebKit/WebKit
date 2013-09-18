@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="mediasource-util.js"></script>
+        <link rel='stylesheet' href='/w3c/resources/testharness.css'>
+    </head>
+    <body>
+        <div id="log"></div>
+        <script>
+          test(function ()
+          {
+              var mediaSource = new MediaSource();
+              assert_equals(mediaSource.sourceBuffers.length, 0, "sourceBuffers is empty");
+              assert_equals(mediaSource.activeSourceBuffers.length, 0, "activeSourceBuffers is empty");
+              assert_equals(mediaSource.readyState, "closed", "readyState is 'closed'");
+              assert_true(Number.isNaN(mediaSource.duration), "duration is NaN");
+          }, "Test attribute values on a closed MediaSource object.");
+
+          test(function ()
+          {
+              var mediaSource = new MediaSource();
+              assert_throws("InvalidStateError",
+                  function() { mediaSource.addSourceBuffer('video/webm;codecs="vp8"'); },
+                  "addSourceBuffer() throws an exception when closed.");
+          }, "Test addSourceBuffer() while closed.");
+
+          mediasource_test(function(test, mediaElement, mediaSource)
+          {
+              var VORBIS_TYPE = 'video/webm;codecs="vorbis"';
+              var AAC_TYPE = 'video/mp4;codecs="mp4a.40.2"';
+              var mediaType = MediaSource.isTypeSupported(VORBIS_TYPE) ? VORBIS_TYPE : AAC_TYPE;
+              var sourceBuffer = mediaSource.addSourceBuffer(mediaType);
+
+              // Setup a handler to run when the MediaSource closes.
+              mediaSource.addEventListener('sourceclose', test.step_func(function (event)
+              {
+                  assert_equals(mediaSource.sourceBuffers.length, 0, "sourceBuffers is empty");
+                  assert_equals(mediaSource.activeSourceBuffers.length, 0, "activeSourceBuffers is empty");
+                  assert_equals(mediaSource.readyState, "closed", "readyState is 'closed'");
+                  assert_throws("NotFoundError",
+                      function() { mediaSource.removeSourceBuffer(sourceBuffer); },
+                      "removeSourceBuffer() throws an exception when closed.");
+                  test.done();
+              }));
+
+              // Trigger the MediaSource to close.
+              mediaElement.src = "";
+          }, "Test removeSourceBuffer() while closed.");
+
+          test(function ()
+          {
+              var mediaSource = new MediaSource();
+              assert_throws("InvalidStateError",
+                  function() { mediaSource.endOfStream(); },
+                  "endOfStream() throws an exception when closed.");
+          }, "Test endOfStream() while closed.");
+
+
+          test(function ()
+          {
+              var mediaSource = new MediaSource();
+              assert_throws("InvalidStateError",
+                  function() { mediaSource.duration = 10; },
+                  "Setting duration throws an exception when closed.");
+          }, "Test setting duration while closed.");
+
+        </script>
+    </body>
+</html>

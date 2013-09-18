@@ -500,6 +500,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMediaList.h \
 	DerivedSources/WebCore/JSMediaSource.cpp \
 	DerivedSources/WebCore/JSMediaSource.h \
+	DerivedSources/WebCore/JSWebKitMediaSource.cpp \
+	DerivedSources/WebCore/JSWebKitMediaSource.h \
 	DerivedSources/WebCore/JSMediaStream.cpp \
 	DerivedSources/WebCore/JSMediaStream.h \
 	DerivedSources/WebCore/JSMediaStreamAudioSourceNode.cpp \
@@ -670,6 +672,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSourceBufferList.h \
 	DerivedSources/WebCore/JSSourceInfo.cpp \
 	DerivedSources/WebCore/JSSourceInfo.h \
+	DerivedSources/WebCore/JSWebKitSourceBuffer.cpp \
+	DerivedSources/WebCore/JSWebKitSourceBuffer.h \
+	DerivedSources/WebCore/JSWebKitSourceBufferList.cpp \
+	DerivedSources/WebCore/JSWebKitSourceBufferList.h \
 	DerivedSources/WebCore/JSSpeechInputEvent.cpp \
 	DerivedSources/WebCore/JSSpeechInputEvent.h \
 	DerivedSources/WebCore/JSSpeechInputResult.cpp \
@@ -1242,6 +1248,10 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediasource/MediaSource.idl \
 	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
 	$(WebCore)/Modules/mediasource/SourceBufferList.idl \
+	$(WebCore)/Modules/mediasource/URLMediaSource.idl \
+	$(WebCore)/Modules/mediasource/WebKitMediaSource.idl \
+	$(WebCore)/Modules/mediasource/WebKitSourceBuffer.idl \
+	$(WebCore)/Modules/mediasource/WebKitSourceBufferList.idl \
 	$(WebCore)/Modules/mediastream/MediaStream.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamEvent.idl \
 	$(WebCore)/Modules/mediastream/MediaStreamTrack.idl \
@@ -1942,12 +1952,22 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.h \
 	Source/WebCore/Modules/mediasource/MediaSource.cpp \
 	Source/WebCore/Modules/mediasource/MediaSource.h \
+	Source/WebCore/Modules/mediasource/MediaSourceBase.cpp \
+	Source/WebCore/Modules/mediasource/MediaSourceBase.h \
 	Source/WebCore/Modules/mediasource/MediaSourceRegistry.cpp \
 	Source/WebCore/Modules/mediasource/MediaSourceRegistry.h \
 	Source/WebCore/Modules/mediasource/SourceBuffer.cpp \
 	Source/WebCore/Modules/mediasource/SourceBuffer.h \
 	Source/WebCore/Modules/mediasource/SourceBufferList.cpp \
 	Source/WebCore/Modules/mediasource/SourceBufferList.h \
+	Source/WebCore/Modules/mediasource/URLMediaSource.cpp \
+	Source/WebCore/Modules/mediasource/URLMediaSource.h \
+	Source/WebCore/Modules/mediasource/WebKitMediaSource.cpp \
+	Source/WebCore/Modules/mediasource/WebKitMediaSource.h \
+	Source/WebCore/Modules/mediasource/WebKitSourceBuffer.cpp \
+	Source/WebCore/Modules/mediasource/WebKitSourceBuffer.h \
+	Source/WebCore/Modules/mediasource/WebKitSourceBufferList.cpp \
+	Source/WebCore/Modules/mediasource/WebKitSourceBufferList.h \
 	Source/WebCore/Modules/mediastream/MediaConstraintsImpl.cpp \
 	Source/WebCore/Modules/mediastream/MediaConstraintsImpl.h \
 	Source/WebCore/Modules/mediastream/MediaStream.cpp \
@@ -3707,6 +3727,7 @@ webcore_sources += \
 	Source/WebCore/html/PasswordInputType.h \
 	Source/WebCore/html/PluginDocument.cpp \
 	Source/WebCore/html/PluginDocument.h \
+	Source/WebCore/html/PublicURLManager.cpp \
 	Source/WebCore/html/PublicURLManager.h \
 	Source/WebCore/html/RadioInputType.cpp \
 	Source/WebCore/html/RadioInputType.h \

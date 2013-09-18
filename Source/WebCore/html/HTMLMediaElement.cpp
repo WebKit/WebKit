@@ -120,8 +120,7 @@
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-#include "MediaSource.h"
-#include "MediaSourceRegistry.h"
+#include "HTMLMediaSource.h"
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -383,7 +382,7 @@ HTMLMediaElement::~HTMLMediaElement()
         m_mediaController->removeMediaElement(this);
 
 #if ENABLE(MEDIA_SOURCE)
-    setSourceState(MediaSource::closedKeyword());
+    closeMediaSource();
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
@@ -811,7 +810,7 @@ void HTMLMediaElement::prepareForLoad()
         scheduleEvent(eventNames().abortEvent);
 
 #if ENABLE(MEDIA_SOURCE)
-    setSourceState(MediaSource::closedKeyword());
+    closeMediaSource();
 #endif
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -1093,11 +1092,17 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     ASSERT(!m_mediaSource);
 
     if (url.protocolIs(mediaSourceBlobProtocol))
-        m_mediaSource = MediaSourceRegistry::registry().lookupMediaSource(url.string());
+        m_mediaSource = HTMLMediaSource::lookup(url.string());
 
     if (m_mediaSource) {
-        if (!m_player->load(url, m_mediaSource))
+        if (m_mediaSource->attachToElement())
+            m_player->load(url, m_mediaSource);
+        else {
+            // Forget our reference to the MediaSource, so we leave it alone
+            // while processing remainder of load failure.
+            m_mediaSource = 0;
             mediaLoadingFailed(MediaPlayer::FormatError);
+        }
     } else
 #endif
     if (!m_player->load(url, contentType, keySystem))
@@ -1600,7 +1605,7 @@ void HTMLMediaElement::noneSupported()
     scheduleEvent(eventNames().errorEvent);
 
 #if ENABLE(MEDIA_SOURCE)
-    setSourceState(MediaSource::closedKeyword());
+    closeMediaSource();
 #endif
 
     // 8 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
@@ -1631,7 +1636,7 @@ void HTMLMediaElement::mediaEngineError(PassRefPtr<MediaError> err)
     scheduleEvent(eventNames().errorEvent);
 
 #if ENABLE(MEDIA_SOURCE)
-    setSourceState(MediaSource::closedKeyword());
+    closeMediaSource();
 #endif
 
     // 4 - Set the element's networkState attribute to the NETWORK_EMPTY value and queue a
@@ -2176,7 +2181,7 @@ void HTMLMediaElement::seek(double time, ExceptionCode& ec)
 #if ENABLE(MEDIA_SOURCE)
     // Always notify the media engine of a seek if the source is not closed. This ensures that the source is
     // always in a flushed state when the 'seeking' event fires.
-    if (m_mediaSource && m_mediaSource->readyState() != MediaSource::closedKeyword())
+    if (m_mediaSource && m_mediaSource->isClosed())
         noSeekRequired = false;
 #endif
 
@@ -2540,14 +2545,13 @@ void HTMLMediaElement::pauseInternal()
 }
 
 #if ENABLE(MEDIA_SOURCE)
-void HTMLMediaElement::setSourceState(const String& state)
+void HTMLMediaElement::closeMediaSource()
 {
     if (!m_mediaSource)
-         return;
+        return;
 
-    m_mediaSource->setReadyState(state);
-    if (state == MediaSource::closedKeyword())
-        m_mediaSource = 0;
+    m_mediaSource->close();
+    m_mediaSource = 0;
 }
 #endif
 
@@ -3867,6 +3871,12 @@ PassRefPtr<TimeRanges> HTMLMediaElement::buffered() const
 {
     if (!m_player)
         return TimeRanges::create();
+
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSource)
+        return m_mediaSource->buffered();
+#endif
+
     return m_player->buffered();
 }
 
@@ -4085,7 +4095,7 @@ void HTMLMediaElement::userCancelledLoad()
     scheduleEvent(eventNames().abortEvent);
 
 #if ENABLE(MEDIA_SOURCE)
-    setSourceState(MediaSource::closedKeyword());
+    closeMediaSource();
 #endif
 
     // 4 - If the media element's readyState attribute has a value equal to HAVE_NOTHING, set the 
@@ -4130,7 +4140,7 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
 #if ENABLE(MEDIA_SOURCE)
-    setSourceState(MediaSource::closedKeyword());
+    closeMediaSource();
 #endif
 
     m_player.clear();
@@ -4792,7 +4802,7 @@ void HTMLMediaElement::createMediaPlayer()
 
 #if ENABLE(MEDIA_SOURCE)
     if (m_mediaSource)
-        m_mediaSource->setReadyState(MediaSource::closedKeyword());
+        m_mediaSource->close();
 #endif
 
 #if ENABLE(VIDEO_TRACK)

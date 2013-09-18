@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="mediasource-util.js"></script>
+        <link rel='stylesheet' href='/w3c/resources/testharness.css'>
+    </head>
+    <body>
+        <div id="log"></div>
+        <script>
+          mediasource_test(function(test, mediaElement, mediaSource)
+          {
+              test.failOnEvent(mediaElement, 'error');
+              test.endOnEvent(mediaElement, 'ended');
+
+              var mediaType = 'video/webm;codecs="vp8,vorbis"';
+              var mediaURL = '/media/resources/media-source/webm/test.webm';
+              var sourceBuffer = mediaSource.addSourceBuffer(mediaType);
+
+              MediaSourceUtil.loadBinaryData(test, mediaURL, function(data)
+              {
+                  sourceBuffer.addEventListener('updateend', test.step_func(function()
+                  {
+                      mediaSource.duration = 1;
+                      mediaSource.endOfStream();
+                      mediaElement.play();
+                  }));
+                  sourceBuffer.appendBuffer(data);
+              });
+          }, "Test normal playback case with MediaSource API");
+        </script>
+    </body>
+</html>

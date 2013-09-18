@@ -113,7 +113,13 @@ BINDING_IDLS = \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
     $(WebCore)/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl \
     $(WebCore)/Modules/indieui/UIRequestEvent.idl \
-    $(WebCore)/Modules/mediasource/MediaSource.idl \
+	$(WebCore)/Modules/mediasource/MediaSource.idl \
+	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
+	$(WebCore)/Modules/mediasource/SourceBufferList.idl \
+	$(WebCore)/Modules/mediasource/URLMediaSource.idl \
+    $(WebCore)/Modules/mediasource/WebKitMediaSource.idl \
+    $(WebCore)/Modules/mediasource/WebKitSourceBuffer.idl \
+    $(WebCore)/Modules/mediasource/WebKitSourceBufferList.idl \
     $(WebCore)/Modules/mediasource/SourceBuffer.idl \
     $(WebCore)/Modules/mediasource/SourceBufferList.idl \
     $(WebCore)/Modules/mediastream/MediaStream.idl \

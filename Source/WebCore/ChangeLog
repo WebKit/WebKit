@@ -1,3 +1,64 @@
+2013-09-18  Jer Noble  <jer.noble@apple.com>
+
+        Merge blink MediaSource changes since fork.
+        https://bugs.webkit.org/show_bug.cgi?id=118752
+
+        Rubber-stamped by Eric Carlson.
+
+        Tests: http/tests/media/media-source/mediasource-addsourcebuffer.html
+               http/tests/media/media-source/mediasource-append-buffer.html
+               http/tests/media/media-source/mediasource-buffered.html
+               http/tests/media/media-source/mediasource-closed.html
+               http/tests/media/media-source/mediasource-config-change-mp4-a-bitrate.html
+               http/tests/media/media-source/mediasource-config-change-mp4-av-audio-bitrate.html
+               http/tests/media/media-source/mediasource-config-change-mp4-av-framesize.html
+               http/tests/media/media-source/mediasource-config-change-mp4-av-video-bitrate.html
+               http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate.html
+               http/tests/media/media-source/mediasource-config-change-mp4-v-framerate.html
+               http/tests/media/media-source/mediasource-config-change-mp4-v-framesize.html
+               http/tests/media/media-source/mediasource-config-change-webm-a-bitrate.html
+               http/tests/media/media-source/mediasource-config-change-webm-av-audio-bitrate.html
+               http/tests/media/media-source/mediasource-config-change-webm-av-framesize.html
+               http/tests/media/media-source/mediasource-config-change-webm-av-video-bitrate.html
+               http/tests/media/media-source/mediasource-config-change-webm-v-bitrate.html
+               http/tests/media/media-source/mediasource-config-change-webm-v-framerate.html
+               http/tests/media/media-source/mediasource-config-change-webm-v-framesize.html
+               http/tests/media/media-source/mediasource-is-type-supported.html
+               http/tests/media/media-source/mediasource-multiple-attach.html
+               http/tests/media/media-source/mediasource-play.html
+               http/tests/media/media-source/mediasource-sourcebufferlist.html
+
+        Add files to project. Fix compile errors exposed by enabling.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * Modules/mediasource/MediaSourceRegistry.cpp:
+        (WebCore::MediaSourceRegistry::lookupMediaSource):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::load):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        (WebCore::MediaPlayerPrivateQTKit::load):
+        * platform/mac/MIMETypeRegistryMac.mm:
+        (WebCore::MIMETypeRegistry::isSupportedMediaSourceMIMEType):
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+
+        Merge
+        https://chromium.googlesource.com/chromium/blink/+/c38e2955db98a300a535b692869fea0e41501497
+        https://chromium.googlesource.com/chromium/blink/+/8568015e9bee1de7fccee28163f9e4a4b51f9baf
+        https://chromium.googlesource.com/chromium/blink/+/14417e8fa6294f4e7dbc1e0fac549398522b2f97
+        https://chromium.googlesource.com/chromium/blink/+/f43a5496f233102f8861a067a9cf8053c010d401
+        https://chromium.googlesource.com/chromium/blink/+/57771439806f7c6e6a272efb1ea72900f5f6a015
+        https://chromium.googlesource.com/chromium/blink/+/8c77a790a9d225194db0a8832399d0f9e1fa54ec
+        https://chromium.googlesource.com/chromium/blink/+/d33ae3fa7a8592e946503ed17f862a27c6d9dde1
+        https://chromium.googlesource.com/chromium/blink/+/1caaa9c51f06e1b9341d58c994f77fd59fcd236d
+        https://chromium.googlesource.com/chromium/blink/+/e95720393b0ebe67f19de39bb77cdf2926165512
+        https://chromium.googlesource.com/chromium/blink/+/bad2c1b4b70faec731b2ad3cc8a4ccf28de6cc38
+        https://chromium.googlesource.com/chromium/blink/+/a7873430c3d5c9373336c6f3993db3cb4228e9cd
+        https://chromium.googlesource.com/chromium/blink/+/508966d5e32360b3cec058f9fbae0014542fbc52
+        https://chromium.googlesource.com/chromium/blink/+/371dfe72f61ce6f73e6c242324da73c415d38be3
+
 2013-09-18  Andreas Kling  <akling@apple.com>
 
         CTTE: RenderBR always has an HTMLElement.

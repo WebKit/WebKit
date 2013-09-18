@@ -693,6 +693,7 @@ SOURCES += \
     html/NumberInputType.cpp \
     html/PasswordInputType.cpp \
     html/PluginDocument.cpp \
+    html/PublicURLManager.cpp \
     html/RadioInputType.cpp \
     html/RadioNodeList.cpp \
     html/RangeInputType.cpp \

@@ -30,6 +30,7 @@ RTCDTMFSender conditional=MEDIA_STREAM
 RTCPeerConnection conditional=MEDIA_STREAM
 SharedWorker conditional=SHARED_WORKERS
 SharedWorkerGlobalScope conditional=SHARED_WORKERS
+SourceBuffer conditional=MEDIA_SOURCE
 SourceBufferList conditional=MEDIA_SOURCE
 SpeechRecognition conditional=SCRIPTED_SPEECH
 SpeechSynthesisUtterance conditional=SPEECH_SYNTHESIS
@@ -38,7 +39,9 @@ TextTrack conditional=VIDEO_TRACK
 TextTrackCue conditional=VIDEO_TRACK
 TextTrackList conditional=VIDEO_TRACK
 VideoTrackList conditional=VIDEO_TRACK
+WebKitMediaSource conditional=MEDIA_SOURCE
 WebKitNamedFlow
+WebKitSourceBufferList conditional=MEDIA_SOURCE
 WebSocket conditional=WEB_SOCKETS
 Worker conditional=WORKERS
 XMLHttpRequest

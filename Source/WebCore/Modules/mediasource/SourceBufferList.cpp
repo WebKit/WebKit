@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,59 +34,47 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "Event.h"
-#include "GenericEventQueue.h"
 #include "SourceBuffer.h"
 
 namespace WebCore {
 
-SourceBufferList::SourceBufferList(ScriptExecutionContext& context, GenericEventQueue& asyncEventQueue)
+SourceBufferList::SourceBufferList(ScriptExecutionContext* context)
     : m_scriptExecutionContext(context)
-    , m_asyncEventQueue(asyncEventQueue)
+    , m_asyncEventQueue(*this)
 {
 }
 
-unsigned SourceBufferList::length() const
+SourceBufferList::~SourceBufferList()
 {
-    return m_list.size();
-}
-
-SourceBuffer* SourceBufferList::item(unsigned index) const
-{
-    if (index >= m_list.size())
-        return 0;
-    return m_list[index].get();
+    ASSERT(m_list.isEmpty());
 }
 
 void SourceBufferList::add(PassRefPtr<SourceBuffer> buffer)
 {
     m_list.append(buffer);
-    createAndFireEvent(eventNames().webkitaddsourcebufferEvent);
+    scheduleEvent(eventNames().addsourcebufferEvent);
 }
 
-bool SourceBufferList::remove(SourceBuffer* buffer)
+void SourceBufferList::remove(SourceBuffer* buffer)
 {
     size_t index = m_list.find(buffer);
     if (index == notFound)
-        return false;
-
-    buffer->removedFromMediaSource();
+        return;
     m_list.remove(index);
-    createAndFireEvent(eventNames().webkitremovesourcebufferEvent);
-    return true;
+    scheduleEvent(eventNames().removesourcebufferEvent);
 }
 
 void SourceBufferList::clear()
 {
-    for (size_t i = 0; i < m_list.size(); ++i)
-        m_list[i]->removedFromMediaSource();
     m_list.clear();
-    createAndFireEvent(eventNames().webkitremovesourcebufferEvent);
+    scheduleEvent(eventNames().removesourcebufferEvent);
 }
 
-void SourceBufferList::createAndFireEvent(const AtomicString& eventName)
+void SourceBufferList::scheduleEvent(const AtomicString& eventName)
 {
     RefPtr<Event> event = Event::create(eventName, false, false);
     event->setTarget(this);
+
     m_asyncEventQueue.enqueueEvent(event.release());
 }
 
@@ -97,7 +85,7 @@ const AtomicString& SourceBufferList::interfaceName() const
 
 ScriptExecutionContext* SourceBufferList::scriptExecutionContext() const
 {
-    return &m_scriptExecutionContext;
+    return m_scriptExecutionContext;
 }
 
 EventTargetData* SourceBufferList::eventTargetData()

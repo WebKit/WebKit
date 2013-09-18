@@ -191,7 +191,7 @@ public:
 
 #if ENABLE(MEDIA_SOURCE)
 //  Media Source.
-    void setSourceState(const String&);
+    void closeMediaSource();
 #endif 
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -673,7 +673,7 @@ private:
     int m_processingMediaPlayerCallback;
 
 #if ENABLE(MEDIA_SOURCE)
-    RefPtr<MediaSource> m_mediaSource;
+    RefPtr<HTMLMediaSource> m_mediaSource;
 #endif
 
     mutable double m_cachedTime;

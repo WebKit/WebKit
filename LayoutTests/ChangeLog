@@ -1,3 +1,79 @@
+2013-09-18  Jer Noble  <jer.noble@apple.com>
+
+        Merge blink MediaSource changes since fork.
+        https://bugs.webkit.org/show_bug.cgi?id=118752
+
+        Rubber-stamped by Eric Carlson.
+
+        * http/tests/media/media-source/mediasource-addsourcebuffer-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-addsourcebuffer.html: Added.
+        * http/tests/media/media-source/mediasource-append-buffer-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-append-buffer.html: Added.
+        * http/tests/media/media-source/mediasource-buffered-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-buffered.html: Added.
+        * http/tests/media/media-source/mediasource-closed-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-closed.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-a-bitrate-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-a-bitrate.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-audio-bitrate-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-audio-bitrate.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-framesize-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-framesize.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-video-bitrate-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-av-video-bitrate.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-framerate-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-framerate.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-framesize-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-mp4-v-framesize.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-a-bitrate-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-a-bitrate.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-av-audio-bitrate-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-av-audio-bitrate.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-av-framesize-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-av-framesize.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-av-video-bitrate-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-av-video-bitrate.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-v-bitrate-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-v-bitrate.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-v-framerate-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-v-framerate.html: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-v-framesize-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-config-change-webm-v-framesize.html: Added.
+        * http/tests/media/media-source/mediasource-config-changes.js: Added.
+        * http/tests/media/media-source/mediasource-is-type-supported-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-is-type-supported.html: Added.
+        * http/tests/media/media-source/mediasource-multiple-attach-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-multiple-attach.html: Added.
+        * http/tests/media/media-source/mediasource-play-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-play.html: Added.
+        * http/tests/media/media-source/mediasource-sourcebufferlist-expected.txt: Added.
+        * http/tests/media/media-source/mediasource-sourcebufferlist.html: Added.
+        * http/tests/media/media-source/mediasource-util.js: Added.
+        * http/tests/media/media-source/video-media-source-objects-expected.txt:
+        * http/tests/media/resources/media-source/generate-config-change-tests.py: Added.
+        * http/tests/media/resources/media-source/mp4/test-a-128k-44100Hz-1ch-manifest.json: Added.
+        * http/tests/media/resources/media-source/mp4/test-a-192k-44100Hz-1ch-manifest.json: Added.
+        * http/tests/media/resources/media-source/mp4/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/mp4/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/mp4/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/mp4/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/mp4/test-v-128k-320x240-24fps-8kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/mp4/test-v-128k-320x240-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/mp4/test-v-128k-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/mp4/test-v-256k-320x240-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/webm/test-a-128k-44100Hz-1ch-manifest.json: Added.
+        * http/tests/media/resources/media-source/webm/test-a-192k-44100Hz-1ch-manifest.json: Added.
+        * http/tests/media/resources/media-source/webm/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/webm/test-av-384k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/webm/test-av-448k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/webm/test-av-640k-44100Hz-1ch-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/webm/test-v-128k-320x240-24fps-8kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/webm/test-v-128k-320x240-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/webm/test-v-128k-640x480-30fps-10kfr-manifest.json: Added.
+        * http/tests/media/resources/media-source/webm/test-v-256k-320x240-30fps-10kfr-manifest.json: Added.
+
 2013-09-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should support Int52 for local variables

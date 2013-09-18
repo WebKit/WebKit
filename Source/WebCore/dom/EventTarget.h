@@ -56,7 +56,6 @@ namespace WebCore {
     class IDBTransaction;
     class ScriptProcessorNode;
     class MediaController;
-    class MediaSource;
     class MediaStream;
     class MessagePort;
     class Node;
@@ -65,7 +64,6 @@ namespace WebCore {
     class ScriptExecutionContext;
     class SharedWorker;
     class SharedWorkerGlobalScope;
-    class SourceBufferList;
     class TextTrack;
     class TextTrackCue;
     class VideoTrackList;

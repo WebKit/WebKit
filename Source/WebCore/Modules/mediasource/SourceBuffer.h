@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,7 +33,13 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "ActiveDOMObject.h"
+#include "EventTarget.h"
 #include "ExceptionCode.h"
+#include "GenericEventQueue.h"
+#include "ScriptWrappable.h"
+#include "Timer.h"
+#include <runtime/ArrayBufferView.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -43,35 +49,65 @@ class MediaSource;
 class SourceBufferPrivate;
 class TimeRanges;
 
-class SourceBuffer : public RefCounted<SourceBuffer> {
+class SourceBuffer : public RefCounted<SourceBuffer>, public ActiveDOMObject, public EventTarget, public ScriptWrappable {
 public:
-    static PassRefPtr<SourceBuffer> create(PassOwnPtr<SourceBufferPrivate>, PassRefPtr<MediaSource>);
+    static PassRefPtr<SourceBuffer> create(PassOwnPtr<SourceBufferPrivate>, MediaSource*);
 
     virtual ~SourceBuffer();
 
     // SourceBuffer.idl methods
+    bool updating() const { return m_updating; }
     PassRefPtr<TimeRanges> buffered(ExceptionCode&) const;
     double timestampOffset() const;
     void setTimestampOffset(double, ExceptionCode&);
-    void append(PassRefPtr<Uint8Array> data, ExceptionCode&);
+    void appendBuffer(PassRefPtr<ArrayBuffer> data, ExceptionCode&);
+    void appendBuffer(PassRefPtr<ArrayBufferView> data, ExceptionCode&);
     void abort(ExceptionCode&);
 
+    void abortIfUpdating();
     void removedFromMediaSource();
 
+    // ActiveDOMObject interface
+    virtual bool hasPendingActivity() const OVERRIDE;
+    virtual void stop() OVERRIDE;
+
+    // EventTarget interface
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+    virtual const AtomicString& interfaceName() const OVERRIDE;
+
+    using RefCounted<SourceBuffer>::ref;
+    using RefCounted<SourceBuffer>::deref;
+
+protected:
+    // EventTarget interface
+    virtual EventTargetData* eventTargetData() OVERRIDE;
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
+
 private:
-    SourceBuffer(PassOwnPtr<SourceBufferPrivate>, PassRefPtr<MediaSource>);
+    SourceBuffer(PassOwnPtr<SourceBufferPrivate>, MediaSource*);
 
     bool isRemoved() const;
-    bool isOpen() const;
-    bool isEnded() const;
+    void scheduleEvent(const AtomicString& eventName);
+
+    void appendBufferInternal(unsigned char*, unsigned, ExceptionCode&);
+    void appendBufferTimerFired(Timer<SourceBuffer>*);
 
     OwnPtr<SourceBufferPrivate> m_private;
-    RefPtr<MediaSource> m_source;
+    MediaSource* m_source;
+    GenericEventQueue m_asyncEventQueue;
+    EventTargetData m_eventTargetData;
 
+    bool m_updating;
     double m_timestampOffset;
+
+    Vector<unsigned char> m_pendingAppendData;
+    Timer<SourceBuffer> m_appendBufferTimer;
 };
 
 } // namespace WebCore
 
 #endif
+
 #endif

@@ -46,7 +46,7 @@ public:
 
     virtual void load(const String& url) = 0;
 #if ENABLE(MEDIA_SOURCE)
-    virtual void load(const String& url, PassRefPtr<MediaSource>) = 0;
+    virtual void load(const String& url, PassRefPtr<HTMLMediaSource>) = 0;
 #endif
     virtual void cancelLoad() = 0;
     

@@ -97,6 +97,9 @@ private:
     virtual bool supportsScanning() const { return true; }
     
     void load(const String& url);
+#if ENABLE(MEDIA_SOURCE)
+    virtual void load(const String&, PassRefPtr<HTMLMediaSource>) { };
+#endif
     void cancelLoad();
     void loadInternal(const String& url);
     void resumeLoad();

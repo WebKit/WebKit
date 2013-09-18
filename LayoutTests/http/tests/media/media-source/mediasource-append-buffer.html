@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="mediasource-util.js"></script>
+        <link rel='stylesheet' href='/w3c/resources/testharness.css'>
+    </head>
+    <body>
+        <div id="log"></div>
+        <script>
+          mediasource_loaddata_test = function(callback, description)
+          {
+              mediasource_test(function(test, mediaElement, mediaSource)
+              {
+                  var mediaType = 'video/webm;codecs="vp8,vorbis"';
+                  var mediaURL = '/media/resources/media-source/webm/test.webm';
+                  var sourceBuffer = mediaSource.addSourceBuffer(mediaType);
+                  MediaSourceUtil.loadBinaryData(test, mediaURL, function(mediaData)
+                  {
+                      callback(test, mediaElement, mediaSource, sourceBuffer, mediaData);
+
+                  });
+              }, description);
+          };
+
+          mediasource_loaddata_test(function(test, mediaElement, mediaSource, sourceBuffer, mediaData)
+          {
+              test.failOnEvent(mediaElement, 'error');
+
+              test.expectEvent(sourceBuffer, "updatestart", "Append started.");
+              test.expectEvent(sourceBuffer, "update", "Append success.");
+              test.expectEvent(sourceBuffer, "updateend", "Append ended.");
+              sourceBuffer.appendBuffer(mediaData);
+
+              assert_true(sourceBuffer.updating, "updating attribute is true");
+
+              test.waitForExpectedEvents(function()
+              {
+                 assert_false(sourceBuffer.updating, "updating attribute is false");
+                 test.done();
+              });
+          }, "Test SourceBuffer.appendBuffer() event dispatching.");
+
+          mediasource_loaddata_test(function(test, mediaElement, mediaSource, sourceBuffer, mediaData)
+          {
+              test.failOnEvent(mediaElement, 'error');
+
+              test.expectEvent(sourceBuffer, "updatestart", "Append started.");
+              test.expectEvent(sourceBuffer, "update", "Append success.");
+              test.expectEvent(sourceBuffer, "updateend", "Append ended.");
+              sourceBuffer.appendBuffer(mediaData);
+
+              assert_true(sourceBuffer.updating, "updating attribute is true");
+
+              assert_throws("InvalidStateError",
+                  function() { sourceBuffer.appendBuffer(mediaData); },
+                  "appendBuffer() throws an exception there is a pending append.");
+
+              assert_true(sourceBuffer.updating, "updating attribute is true");
+
+              test.waitForExpectedEvents(function()
+              {
+                  assert_false(sourceBuffer.updating, "updating attribute is false");
+                  test.done();
+              });
+          }, "Test SourceBuffer.appendBuffer() call during a pending appendBuffer().");
+
+          mediasource_loaddata_test(function(test, mediaElement, mediaSource, sourceBuffer, mediaData)
+          {
+              test.failOnEvent(mediaElement, 'error');
+
+              test.expectEvent(sourceBuffer, "updatestart", "Append started.");
+              test.expectEvent(sourceBuffer, "abort", "Append aborted.");
+              test.expectEvent(sourceBuffer, "updateend", "Append ended.");
+              sourceBuffer.appendBuffer(mediaData);
+
+              assert_true(sourceBuffer.updating, "updating attribute is true");
+
+              sourceBuffer.abort();
+
+              assert_false(sourceBuffer.updating, "updating attribute is false");
+
+              test.waitForExpectedEvents(function()
+              {
+                  assert_false(sourceBuffer.updating, "updating attribute is false");
+                  test.done();
+              });
+          }, "Test SourceBuffer.abort() call during a pending appendBuffer().");
+
+          mediasource_loaddata_test(function(test, mediaElement, mediaSource, sourceBuffer, mediaData)
+          {
+              test.failOnEvent(mediaElement, 'error');
+
+              test.expectEvent(sourceBuffer, "updatestart", "Append started.");
+              test.expectEvent(sourceBuffer, "update", "Append success.");
+              test.expectEvent(sourceBuffer, "updateend", "Append ended.");
+              sourceBuffer.appendBuffer(mediaData);
+              assert_true(sourceBuffer.updating, "updating attribute is true");
+
+              test.waitForExpectedEvents(function()
+              {
+                  assert_false(sourceBuffer.updating, "updating attribute is false");
+
+                  test.expectEvent(mediaSource, "sourceended", "MediaSource sourceended event");
+                  mediaSource.endOfStream();
+                  assert_equals(mediaSource.readyState, "ended", "MediaSource readyState is 'ended'");
+              });
+
+              test.waitForExpectedEvents(function()
+              {
+                  assert_equals(mediaSource.readyState, "ended", "MediaSource readyState is 'ended'");
+
+                  test.expectEvent(mediaSource, "sourceopen", "MediaSource sourceopen event");
+                  test.expectEvent(sourceBuffer, "updatestart", "Append started.");
+                  test.expectEvent(sourceBuffer, "update", "Append success.");
+                  test.expectEvent(sourceBuffer, "updateend", "Append ended.");
+                  sourceBuffer.appendBuffer(mediaData);
+
+                  assert_equals(mediaSource.readyState, "open", "MediaSource readyState is 'open'");
+                  assert_true(sourceBuffer.updating, "updating attribute is true");
+              });
+
+              test.waitForExpectedEvents(function()
+              {
+                  assert_equals(mediaSource.readyState, "open", "MediaSource readyState is 'open'");
+                  assert_false(sourceBuffer.updating, "updating attribute is false");
+                  test.done();
+              });
+          }, "Test SourceBuffer.appendBuffer() triggering an 'ended' to 'open' transition.");
+
+          mediasource_loaddata_test(function(test, mediaElement, mediaSource, sourceBuffer, mediaData)
+          {
+              test.failOnEvent(mediaElement, 'error');
+
+              test.expectEvent(sourceBuffer, "updatestart", "Append started.");
+              test.expectEvent(sourceBuffer, "abort", "Append aborted.");
+              test.expectEvent(sourceBuffer, "updateend", "Append ended.");
+              sourceBuffer.appendBuffer(mediaData);
+
+              assert_true(sourceBuffer.updating, "updating attribute is true");
+
+              test.expectEvent(mediaSource.activeSourceBuffers, "removesourcebuffer", "activeSourceBuffers");
+              test.expectEvent(mediaSource.sourceBuffers, "removesourcebuffer", "sourceBuffers");
+              mediaSource.removeSourceBuffer(sourceBuffer);
+
+              assert_false(sourceBuffer.updating, "updating attribute is false");
+
+              assert_throws("InvalidStateError",
+                  function() { sourceBuffer.appendBuffer(mediaData); },
+                  "appendBuffer() throws an exception because it isn't attached to the mediaSource anymore.");
+
+              test.waitForExpectedEvents(function()
+              {
+                  assert_false(sourceBuffer.updating, "updating attribute is false");
+                  test.done();
+              });
+          }, "Test MediaSource.removeSourceBuffer() call during a pending appendBuffer().");
+
+          mediasource_test(function(test, mediaElement, mediaSource)
+          {
+              var sourceBuffer = mediaSource.addSourceBuffer(MediaSourceUtil.VIDEO_ONLY_TYPE);
+
+              test.expectEvent(sourceBuffer, "updatestart", "Append started.");
+              test.expectEvent(sourceBuffer, "update", "Append success.");
+              test.expectEvent(sourceBuffer, "updateend", "Append ended.");
+              sourceBuffer.appendBuffer(new Uint8Array(0));
+
+              assert_true(sourceBuffer.updating, "updating attribute is true");
+
+              test.waitForExpectedEvents(function()
+              {
+                  assert_false(sourceBuffer.updating, "updating attribute is false");
+                  test.done();
+              });
+          }, "Test appending an empty ArrayBufferView.");
+
+
+          mediasource_test(function(test, mediaElement, mediaSource)
+          {
+              var sourceBuffer = mediaSource.addSourceBuffer(MediaSourceUtil.VIDEO_ONLY_TYPE);
+
+              test.expectEvent(sourceBuffer, "updatestart", "Append started.");
+              test.expectEvent(sourceBuffer, "update", "Append success.");
+              test.expectEvent(sourceBuffer, "updateend", "Append ended.");
+              sourceBuffer.appendBuffer(new ArrayBuffer(0));
+
+              assert_true(sourceBuffer.updating, "updating attribute is true");
+
+              test.waitForExpectedEvents(function()
+              {
+                  assert_false(sourceBuffer.updating, "updating attribute is false");
+                  test.done();
+              });
+          }, "Test appending an empty ArrayBuffer.");
+
+        </script>
+    </body>
+</html>

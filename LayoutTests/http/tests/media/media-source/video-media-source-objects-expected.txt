@@ -2,7 +2,7 @@ Tests MediaSource, SourceBuffer, and SourceBufferList objects.
 
 EVENT(webkitsourceopen)
 Test MediaSource object type
-EXPECTED (mediaSource == '[object MediaSource]') OK
+EXPECTED (mediaSource == '[object WebKitMediaSource]') OK
 EXPECTED (mediaSource instanceof window.WebKitMediaSource == 'true') OK
 
 Add a SourceBuffer
@@ -11,7 +11,7 @@ RUN(segmentHelper.addSourceBuffer())
 EXPECTED (mediaSource.sourceBuffers.length == '1') OK
 
 Test SourceBufferList object type:
-EXPECTED (mediaSource.sourceBuffers == '[object SourceBufferList]') OK
+EXPECTED (mediaSource.sourceBuffers == '[object WebKitSourceBufferList]') OK
 EXPECTED (mediaSource.sourceBuffers instanceof window.WebKitSourceBufferList == 'true') OK
 
 Test SourceBuffer object type
@@ -39,7 +39,7 @@ EXPECTED (mediaSource.sourceBuffers[0].buffered.end(1) > '5') OK
 Remove SourceBuffer
 RUN(mediaSource.removeSourceBuffer(segmentHelper.sourceBuffer))
 EXPECTED (mediaSource.sourceBuffers.length == '0') OK
-EXPECTED (mediaSource.sourceBuffers == '[object SourceBufferList]') OK
+EXPECTED (mediaSource.sourceBuffers == '[object WebKitSourceBufferList]') OK
 
 Test that append() throws an error after SourceBuffer has been removed.
 Got expected exception Error: InvalidStateError: DOM Exception 11

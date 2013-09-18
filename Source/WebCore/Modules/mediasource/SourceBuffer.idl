@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,9 +30,14 @@
  
 [
     Conditional=MEDIA_SOURCE,
-    InterfaceName=WebKitSourceBuffer
-] interface SourceBuffer {
+    NoInterfaceObject,
+    ActiveDOMObject,
+    EventTarget,
+    JSGenerateToNativeObject
+] interface SourceBuffer : EventTarget {
 
+    readonly attribute boolean updating;
+  
     // Returns the time ranges buffered.
     [GetterRaisesException] readonly attribute TimeRanges buffered;
 
@@ -40,7 +45,8 @@
     [SetterRaisesException] attribute double timestampOffset;
 
     // Append segment data.
-    [RaisesException] void append(Uint8Array data);
+    [RaisesException] void appendBuffer(ArrayBuffer data);
+    [RaisesException] void appendBuffer(ArrayBufferView data);
 
     // Abort the current segment append sequence.
     [RaisesException] void abort();

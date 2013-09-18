@@ -67,10 +67,10 @@ namespace WebCore {
 class AudioSourceProvider;
 class Document;
 class GStreamerGWorld;
-class MediaPlayerPrivateInterface;
 #if ENABLE(MEDIA_SOURCE)
-class MediaSource;
+class HTMLMediaSource;
 #endif
+class MediaPlayerPrivateInterface;
 class TextTrackRepresentation;
 
 // Structure that will hold every native
@@ -282,7 +282,7 @@ public:
 
     bool load(const KURL&, const ContentType&, const String& keySystem);
 #if ENABLE(MEDIA_SOURCE)
-    bool load(const KURL&, PassRefPtr<MediaSource>);
+    bool load(const KURL&, PassRefPtr<HTMLMediaSource>);
 #endif
     void cancelLoad();
 
@@ -291,7 +291,7 @@ public:
 
     void prepareToPlay();
     void play();
-    void pause();    
+    void pause();
 
 #if ENABLE(ENCRYPTED_MEDIA)
     // Represents synchronous exceptions that can be thrown from the Encrypted Media methods.
@@ -318,7 +318,7 @@ public:
     double rate() const;
     void setRate(double);
 
-    bool preservesPitch() const;    
+    bool preservesPitch() const;
     void setPreservesPitch(bool);
 
     PassRefPtr<TimeRanges> buffered();
@@ -338,7 +338,7 @@ public:
     bool hasClosedCaptions() const;
     void setClosedCaptionsVisible(bool closedCaptionsVisible);
 
-    bool autoplay() const;    
+    bool autoplay() const;
     void setAutoplay(bool);
 
     void paint(GraphicsContext*, const IntRect&);
@@ -519,7 +519,7 @@ private:
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-    RefPtr<MediaSource> m_mediaSource;
+    RefPtr<HTMLMediaSource> m_mediaSource;
 #endif
 };
 
