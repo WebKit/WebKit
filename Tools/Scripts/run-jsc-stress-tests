@@ -80,16 +80,18 @@ $collections = []
 $outputDir = Pathname.new("results")
 $parallel = ($haveShellwords and numProcessors > 1)
 $verbosity = 0
+$errorOnFailure = false
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
     puts
-    puts "--jsc            (-j)   Path to JavaScriptCore. This option is required."
-    puts "--ftl-jit               Indicate that we have the FTL JIT."
-    puts "--[no-]parallel         Run in parallel, or not. Default is #{$parallel}."
-    puts "--output-dir     (-o)   Path where to put results. Default is #{$outputDir}."
-    puts "--verbose        (-v)   Print more things while running."
-    puts "--help           (-h)   Print this message."
+    puts "--jsc                (-j)   Path to JavaScriptCore. This option is required."
+    puts "--ftl-jit                   Indicate that we have the FTL JIT."
+    puts "--[no-]parallel             Run in parallel, or not. Default is #{$parallel}."
+    puts "--output-dir         (-o)   Path where to put results. Default is #{$outputDir}."
+    puts "--[no-]error-on-failure     Exit with exit code 1 if any tests fail. Default is #{$errorOnFailure}."
+    puts "--verbose            (-v)   Print more things while running."
+    puts "--help               (-h)   Print this message."
     exit 1
 end
 
@@ -99,7 +101,9 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--parallel', GetoptLong::NO_ARGUMENT],
                ['--no-parallel', GetoptLong::NO_ARGUMENT],
                ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
-               ['--verbose', '-v', GetoptLong::NO_ARGUMENT]).each {
+               ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
+               ['--error-on-failure', GetoptLong::NO_ARGUMENT],
+               ['--no-error-on-failure', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
     when '--help'
@@ -114,6 +118,10 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $parallel = true
     when '--no-parallel'
         $parallel = false
+    when '--error-on-failure'
+        $errorOnFailure = true
+    when '--no-error-on-failure'
+        $errorOnFailure = false
     when '--verbose'
         $verbosity += 1
     end
@@ -126,7 +134,7 @@ end
 
 $numFailures = 0
 
-EAGER_OPTIONS = ["--enableConcurrentJIT=false", "--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20"]
+EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20"]
 
 $runlist = []
 
@@ -140,17 +148,37 @@ class Plan
         @name = name
     end
     
-    def writeTestScript(filename, failCommand)
+    def shellCommand
+        "(cd #{Shellwords.shellescape(@directory.to_s)} && " +
+            @arguments.map{|v| Shellwords.shellescape(v)}.join(' ') + ")"
+    end
+    
+    def writeReproScript(filename)
+        File.open(filename, "w") {
+            | outp |
+            outp.puts "#{shellCommand} || exit 1"
+        }
+    end
+    
+    def writeRunScript(filename)
         File.open(filename, "w") {
             | outp |
             outp.puts "echo Running #{Shellwords.shellescape(@name)}"
-            cmd = ("(cd #{Shellwords.shellescape(@directory.to_s)} && " +
-                   @arguments.map{|v| Shellwords.shellescape(v)}.join(' ') +
-                   ") || #{failCommand}")
-            if $verbosity >= 1
+            cmd  = "(" + shellCommand + " || (touch test_fail_#{index})) 2>&1"
+            cmd += " | tee " + Shellwords.shellescape($outputDir + (name + ".out"))
+            cmd += " | awk " + Shellwords.shellescape("{ printf #{(name + ': ').inspect}; print }")
+            if $verbosity >= 2
                 outp.puts "echo #{Shellwords.shellescape(cmd)}"
             end
             outp.puts cmd
+            outp.puts "if test -e test_fail_#{index}"
+            outp.puts "then"
+            outp.puts "    echo FAIL: #{Shellwords.shellescape(name)}"
+            if $verbosity >= 1
+                outp.puts "else"
+                outp.puts "    echo PASS: #{Shellwords.shellescape(name)}"
+            end
+            outp.puts "fi"
         }
     end
 end
@@ -192,8 +220,16 @@ def runDFGEager
     run("dfg-eager", *EAGER_OPTIONS)
 end
 
+def runDFGEagerNoCJIT
+    run("dfg-eager-no-cjit", "--enableConcurrentJIT=false", *EAGER_OPTIONS)
+end
+
 def runFTLEager
     run("ftl-eager", "--useExperimentalFTL=true", *EAGER_OPTIONS)
+end
+
+def runFTLEagerNoCJIT
+    run("ftl-eager-no-cjit", "--useExperimentalFTL=true", "--enableConcurrentJIT=false", *EAGER_OPTIONS)
 end
 
 def runProfiler
@@ -215,10 +251,12 @@ def defaultRun
     runAlwaysTriggerCopyPhase
     runNoCJIT
     runDFGEager
+    runDFGEagerNoCJIT
     if $enableFTL
         runDefaultFTL
         runFTLNoCJIT
         runFTLEager
+        runFTLEagerNoCJIT
     end
 end
 
@@ -344,7 +382,7 @@ def appendFailure(plan)
     }
     filename = $outputDir + plan.name
     begin
-        plan.writeTestScript(filename, "exit 1")
+        plan.writeReproScript(filename)
     rescue => e
         $stderr.puts "Warning: failed to create repro file at #{filename}: #{e.inspect}"
     end
@@ -423,11 +461,7 @@ if $parallel
     
     $runlist.each {
         | plan |
-        failCommand  = "{\n"
-        failCommand += "    echo FAIL: #{Shellwords.shellescape(plan.name)}\n"
-        failCommand += "    touch test_fail_#{plan.index}\n"
-        failCommand += "}"
-        plan.writeTestScript(parallelDir + "test_script_#{plan.index}", failCommand)
+        plan.writeRunScript(parallelDir + "test_script_#{plan.index}")
     }
     
     File.open(parallelDir + "Makefile", "w") {
@@ -446,6 +480,13 @@ if $parallel
         mysys("make", "-j", numProcessors.to_s, "-s", "-f", "Makefile")
     }
     
+    # Delete empty .out files to make life less confusing.
+    $runlist.each {
+        | plan |
+        outputFilename = $outputDir + (plan.name + ".out")
+        File.unlink outputFilename if FileTest.size(outputFilename) == 0
+    }
+    
     Dir.foreach(parallelDir) {
         | filename |
         next unless filename =~ /test_fail_/
@@ -457,7 +498,7 @@ else
         print "#{plan.name}: "
         
         Dir.chdir(plan.directory) {
-            if $verbosity >= 1
+            if $verbosity >= 2
                 printCommandArray(*plan.arguments)
             end
             if system(*plan.arguments)
@@ -471,3 +512,7 @@ else
 end
 
 puts "Failed #{$numFailures} tests."
+
+if $errorOnFailure and $numFailures > 0
+    exit 1
+end

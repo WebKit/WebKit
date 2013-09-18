@@ -1,3 +1,23 @@
+2013-09-17  Filip Pizlo  <fpizlo@apple.com>
+
+        run-jsc-stress-tests should make it easier to look at error spew from tests
+        https://bugs.webkit.org/show_bug.cgi?id=121531
+
+        Reviewed by Mark Hahnenberg.
+        
+        This makes two changes:
+        
+        - The out/err spew from each test is now saved to a .out file in jsc-stress-results.
+        
+        - The same spew also goes to the console but is prefixed by the test's name.
+        
+        This required some tee and awk hacks, and then some sh hacks to work around the fact
+        that if you do "(foo | bar) || baz", and foo fails, then baz won't run - the ||
+        operator will only see a failure of bar failed. So to pass output to tee and awk, I
+        needed to do weird things.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-09-18  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r129451): run-safari --no-saved-state is broken
