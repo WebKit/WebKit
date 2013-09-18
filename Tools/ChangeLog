@@ -1,3 +1,16 @@
+2013-09-18  Alex Christensen  <achristensen@webkit.org>
+
+        Improved WinLauncher's URL handling.
+        https://bugs.webkit.org/show_bug.cgi?id=121535
+
+        Reviewed by Brent Fulgham.
+
+        * WinLauncher/WinLauncher.cpp:
+        (EditProc):
+        Use INTERNET_MAX_URL_LENGTH instead of our MAX_URL_LENGTH.
+        (loadURL):
+        Prepend "http://" to URLs with no scheme.
+
 2013-09-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should support Int52 for local variables

@@ -871,15 +871,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-#define MAX_URL_LENGTH  1024
-
 LRESULT CALLBACK EditProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message) {
     case WM_CHAR:
         if (wParam == 13) { // Enter Key
-            wchar_t strPtr[MAX_URL_LENGTH];
-            *((LPWORD)strPtr) = MAX_URL_LENGTH; 
+            wchar_t strPtr[INTERNET_MAX_URL_LENGTH];
+            *((LPWORD)strPtr) = INTERNET_MAX_URL_LENGTH; 
             int strLen = SendMessage(hDlg, EM_GETLINE, 0, (LPARAM)strPtr);
 
             strPtr[strLen] = 0;
@@ -953,7 +951,7 @@ static void loadURL(BSTR urlBStr)
     if (FAILED(hr))
         return;
 
-    hr = request->initWithURL(urlBStr, WebURLRequestUseProtocolCachePolicy, 60);
+    hr = request->initWithURL(wcsstr(urlBStr, L"://") ? urlBStr : _bstr_t(L"http://") + urlBStr, WebURLRequestUseProtocolCachePolicy, 60);
     if (FAILED(hr))
         return;
 
