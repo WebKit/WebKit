@@ -562,6 +562,8 @@ void webkitInit()
 
     WebCore::ResourceHandle::setIgnoreSSLErrors(true);
 
+    WebCore::SchemeRegistry::registerURLSchemeAsLocal("resource");
+
     atexit(webkitExit);
 }
 

@@ -36,6 +36,7 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebKit {
 
@@ -48,11 +49,11 @@ bool WebInspectorServer::platformResourceForPath(const String& path, Vector<char
     }
 
     // Point the default path to a formatted page that queries the page list and display them.
-    CString localPath = WebCore::fileSystemRepresentation(inspectorServerFilesPath() + ((path == "/") ? "/inspectorPageIndex.html" : path));
-    if (localPath.isNull())
+    CString resourceURI = makeString("resource:///org/webkitgtk/inspector/UserInterface", ((path == "/") ? "/inspectorPageIndex.html" : path)).utf8();
+    if (resourceURI.isNull())
         return false;
 
-    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(localPath.data()));
+    GRefPtr<GFile> file = adoptGRef(g_file_new_for_uri(resourceURI.data()));
     GOwnPtr<GError> error;
     GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(file.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE, G_FILE_QUERY_INFO_NONE, 0, &error.outPtr()));
     if (!fileInfo) {
@@ -61,7 +62,7 @@ bool WebInspectorServer::platformResourceForPath(const String& path, Vector<char
         builder.appendNumber(error->code);
         builder.appendLiteral(", ");
         builder.append(error->message);
-        builder.appendLiteral(" occurred during fetching webinspector resource files.<br>Make sure you ran make install or have set WEBKIT_INSPECTOR_SERVER_PATH in your environment to point to webinspector folder.</body></html>");
+        builder.appendLiteral(" occurred during fetching inspector resource files.</body></html>");
         CString cstr = builder.toString().utf8();
         data.append(cstr.data(), cstr.length());
         contentType = "text/html; charset=utf-8";
@@ -97,7 +98,7 @@ void WebInspectorServer::buildPageList(Vector<char>& data, String& contentType)
         builder.appendLiteral("\", \"url\": \"");
         builder.append(webPage->activeURL());
         builder.appendLiteral("\", \"inspectorUrl\": \"");
-        builder.appendLiteral("/inspector.html?page=");
+        builder.appendLiteral("/Main.html?page=");
         builder.appendNumber(it->key);
         builder.appendLiteral("\" }");
     }
@@ -105,20 +106,6 @@ void WebInspectorServer::buildPageList(Vector<char>& data, String& contentType)
     CString cstr = builder.toString().utf8();
     data.append(cstr.data(), cstr.length());
     contentType = "application/json; charset=utf-8";
-}
-
-String WebInspectorServer::inspectorServerFilesPath()
-{
-    if (!m_inspectorServerFilesPath.isNull())
-        return m_inspectorServerFilesPath;
-
-    const char* environmentPath = g_getenv("WEBKIT_INSPECTOR_SERVER_PATH");
-    if (environmentPath && g_file_test(environmentPath, G_FILE_TEST_IS_DIR))
-        m_inspectorServerFilesPath = String(environmentPath);
-    else
-        m_inspectorServerFilesPath = String(WebCore::sharedResourcesPath().data()) + "/webinspector";
-
-    return m_inspectorServerFilesPath;
 }
 
 }

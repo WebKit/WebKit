@@ -1505,7 +1505,6 @@ sub openDumpTool()
     if (isGtk()) {
         $CLEAN_ENV{LIBOVERLAY_SCROLLBAR} = "0";
         $CLEAN_ENV{GTK_MODULES} = "gail";
-        $CLEAN_ENV{WEBKIT_INSPECTOR_PATH} = "$productDir/resources/inspector";
 
         if ($useWebKitTestRunner) {
             my $injectedBundlePath = productDir() . "/Libraries/.libs/libTestRunnerInjectedBundle";

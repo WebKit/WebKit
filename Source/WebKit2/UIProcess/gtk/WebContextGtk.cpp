@@ -36,6 +36,7 @@
 #include "WebSoupRequestManagerProxy.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SchemeRegistry.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
@@ -87,6 +88,11 @@ WTF::String WebContext::platformDefaultApplicationCacheDirectory() const
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     initInspectorServer();
+
+    if (!parameters.urlSchemesRegisteredAsLocal.contains("resource")) {
+        WebCore::SchemeRegistry::registerURLSchemeAsLocal("resource");
+        parameters.urlSchemesRegisteredAsLocal.append("resource");
+    }
 
     parameters.urlSchemesRegistered = supplement<WebSoupRequestManagerProxy>()->registeredURISchemes();
     supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);

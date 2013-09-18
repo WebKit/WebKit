@@ -39,7 +39,8 @@ static gboolean quitLoop(gpointer data)
  */
 static gboolean consoleMessageCallback(WebKitWebView* webView, const char* message, unsigned int line, const char* sourceId)
 {
-    if (strstr(message, "Localized string") || strstr(message, "Protocol Error: the message is for non-existing domain 'Profiler'"))
+    if (strstr(message, "Localized string") || strstr(message, "Protocol Error: the message is for non-existing domain 'Profiler'") ||
+        strstr(message, "Didn't find a TreeElement for a representedObject"))
         return TRUE;
 
     g_warning("Console: %s @%d: %s\n", sourceId, line, message);

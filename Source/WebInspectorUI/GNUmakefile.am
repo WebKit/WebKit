@@ -1,0 +1,42 @@
+${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml: GNUmakefile \
+	$(WebInspectorUI)/UserInterface/*.html \
+	$(WebInspectorUI)/UserInterface/*.js \
+	$(WebInspectorUI)/UserInterface/*.css \
+	$(WebInspectorUI)/UserInterface/Images/*.png \
+	$(WebInspectorUI)/UserInterface/Images/*.svg \
+	$(WebInspectorUI)/UserInterface/External/CodeMirror/* \
+	$(WebInspectorUI)/Localizations/en.lproj/localizedStrings.js
+	$(AM_V_GEN)
+	$(AM_V_at)mkdir -p ${GENSOURCES_WEBINSPECTOR_UI}
+	$(AM_V_at)echo '<?xml version="1.0" encoding="UTF-8"?>' > ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
+	$(AM_V_at)echo '<gresources>' >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
+	$(AM_V_at)echo '  <gresource prefix="/org/webkitgtk/inspector">' >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
+	$(AM_V_at)\
+		for file in $^; do \
+			if [ "$$file" = "GNUmakefile" ]; then continue; fi; \
+			file=`echo $$file | sed s,$(WebInspectorUI)/,,g`; \
+			echo "    <file>$$file</file>" >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml; \
+		done
+	$(AM_V_at)echo '  </gresource>' >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
+	$(AM_V_at)echo '</gresources>' >> ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
+
+${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.c: DerivedSources/WebInspectorUI/GResourceBundle.xml
+	$(AM_V_GEN)
+	$(AM_V_at)glib-compile-resources --generate --sourcedir=$(WebInspectorUI) \
+		--target=${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.c ${GENSOURCES_WEBINSPECTOR_UI}/GResourceBundle.xml
+
+BUILT_SOURCES += \
+	DerivedSources/WebInspectorUI/GResourceBundle.xml
+
+webcore_built_sources += \
+	DerivedSources/WebInspectorUI/GResourceBundle.c
+
+EXTRA_DIST += \
+	$(WebInspectorUI)/Localizations/en.lproj/localizedStrings.js \
+	$(shell ls $(WebInspectorUI)/UserInterface/*.html) \
+	$(shell ls $(WebInspectorUI)/UserInterface/*.js) \
+	$(shell ls $(WebInspectorUI)/UserInterface/*.css) \
+	$(shell ls $(WebInspectorUI)/UserInterface/Images/*.png) \
+	$(shell ls $(WebInspectorUI)/UserInterface/Images/*.svg) \
+	$(shell ls $(WebInspectorUI)/UserInterface/External/CodeMirror/*)
+
