@@ -45,9 +45,6 @@ void ValueSource::dump(PrintStream& out) const
     case Int32InJSStack:
         out.print("Int32");
         break;
-    case Int52InJSStack:
-        out.print("Int52");
-        break;
     case CellInJSStack:
         out.print("Cell");
         break;

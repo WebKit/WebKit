@@ -44,9 +44,6 @@ void printInternal(PrintStream& out, UseKind useKind)
     case KnownInt32Use:
         out.print("KnownInt32");
         break;
-    case MachineIntUse:
-        out.print("MachineInt");
-        break;
     case RealNumberUse:
         out.print("RealNumber");
         break;

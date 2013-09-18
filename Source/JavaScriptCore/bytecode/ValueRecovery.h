@@ -44,15 +44,12 @@ enum ValueRecoveryTechnique {
     AlreadyInJSStack,
     // It's already in the stack but unboxed.
     AlreadyInJSStackAsUnboxedInt32,
-    AlreadyInJSStackAsUnboxedInt52,
     AlreadyInJSStackAsUnboxedCell,
     AlreadyInJSStackAsUnboxedBoolean,
     AlreadyInJSStackAsUnboxedDouble,
     // It's in a register.
     InGPR,
     UnboxedInt32InGPR,
-    UnboxedInt52InGPR,
-    UnboxedStrictInt52InGPR,
     UnboxedBooleanInGPR,
 #if USE(JSVALUE32_64)
     InPair,
@@ -63,8 +60,6 @@ enum ValueRecoveryTechnique {
     DisplacedInJSStack,
     // It's in the stack, at a different location, and it's unboxed.
     Int32DisplacedInJSStack,
-    Int52DisplacedInJSStack,
-    StrictInt52DisplacedInJSStack,
     DoubleDisplacedInJSStack,
     CellDisplacedInJSStack,
     BooleanDisplacedInJSStack,
@@ -100,13 +95,6 @@ public:
         return result;
     }
     
-    static ValueRecovery alreadyInJSStackAsUnboxedInt52()
-    {
-        ValueRecovery result;
-        result.m_technique = AlreadyInJSStackAsUnboxedInt52;
-        return result;
-    }
-    
     static ValueRecovery alreadyInJSStackAsUnboxedCell()
     {
         ValueRecovery result;
@@ -137,10 +125,6 @@ public:
         ValueRecovery result;
         if (dataFormat == DataFormatInt32)
             result.m_technique = UnboxedInt32InGPR;
-        else if (dataFormat == DataFormatInt52)
-            result.m_technique = UnboxedInt52InGPR;
-        else if (dataFormat == DataFormatStrictInt52)
-            result.m_technique = UnboxedStrictInt52InGPR;
         else if (dataFormat == DataFormatBoolean)
             result.m_technique = UnboxedBooleanInGPR;
         else
@@ -182,14 +166,6 @@ public:
         switch (dataFormat) {
         case DataFormatInt32:
             result.m_technique = Int32DisplacedInJSStack;
-            break;
-            
-        case DataFormatInt52:
-            result.m_technique = Int52DisplacedInJSStack;
-            break;
-            
-        case DataFormatStrictInt52:
-            result.m_technique = StrictInt52DisplacedInJSStack;
             break;
             
         case DataFormatDouble:
@@ -253,7 +229,6 @@ public:
         switch (technique()) {
         case AlreadyInJSStack:
         case AlreadyInJSStackAsUnboxedInt32:
-        case AlreadyInJSStackAsUnboxedInt52:
         case AlreadyInJSStackAsUnboxedCell:
         case AlreadyInJSStackAsUnboxedBoolean:
         case AlreadyInJSStackAsUnboxedDouble:
@@ -265,7 +240,7 @@ public:
     
     MacroAssembler::RegisterID gpr() const
     {
-        ASSERT(m_technique == InGPR || m_technique == UnboxedInt32InGPR || m_technique == UnboxedBooleanInGPR || m_technique == UInt32InGPR || m_technique == UnboxedInt52InGPR || m_technique == UnboxedStrictInt52InGPR);
+        ASSERT(m_technique == InGPR || m_technique == UnboxedInt32InGPR || m_technique == UnboxedBooleanInGPR || m_technique == UInt32InGPR);
         return m_source.gpr;
     }
     
@@ -291,7 +266,7 @@ public:
     
     VirtualRegister virtualRegister() const
     {
-        ASSERT(m_technique == DisplacedInJSStack || m_technique == Int32DisplacedInJSStack || m_technique == DoubleDisplacedInJSStack || m_technique == CellDisplacedInJSStack || m_technique == BooleanDisplacedInJSStack || m_technique == Int52DisplacedInJSStack || m_technique == StrictInt52DisplacedInJSStack);
+        ASSERT(m_technique == DisplacedInJSStack || m_technique == Int32DisplacedInJSStack || m_technique == DoubleDisplacedInJSStack || m_technique == CellDisplacedInJSStack || m_technique == BooleanDisplacedInJSStack);
         return m_source.virtualReg;
     }
     
@@ -310,9 +285,6 @@ public:
         case AlreadyInJSStackAsUnboxedInt32:
             out.printf("(int32)");
             return;
-        case AlreadyInJSStackAsUnboxedInt52:
-            out.printf("(int52)");
-            return;
         case AlreadyInJSStackAsUnboxedCell:
             out.printf("(cell)");
             return;
@@ -327,12 +299,6 @@ public:
             return;
         case UnboxedInt32InGPR:
             out.printf("int32(%%r%d)", gpr());
-            return;
-        case UnboxedInt52InGPR:
-            out.printf("int52(%%r%d)", gpr());
-            return;
-        case UnboxedStrictInt52InGPR:
-            out.printf("strictInt52(%%r%d)", gpr());
             return;
         case UnboxedBooleanInGPR:
             out.printf("bool(%%r%d)", gpr());
@@ -353,12 +319,6 @@ public:
             return;
         case Int32DisplacedInJSStack:
             out.printf("*int32(%d)", virtualRegister());
-            return;
-        case Int52DisplacedInJSStack:
-            out.printf("*int52(%d)", virtualRegister());
-            return;
-        case StrictInt52DisplacedInJSStack:
-            out.printf("*strictInt52(%d)", virtualRegister());
             return;
         case DoubleDisplacedInJSStack:
             out.printf("*double(%d)", virtualRegister());

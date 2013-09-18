@@ -64,9 +64,6 @@ public:
                 fixupSetLocalsInBlock(m_graph.block(blockIndex));
         }
         
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
-            fixupUntypedSetLocalsInBlock(m_graph.block(blockIndex));
-        
         return true;
     }
 
@@ -95,7 +92,7 @@ private:
         switch (op) {
         case SetLocal: {
             // This gets handled by fixupSetLocalsInBlock().
-            return;
+            break;
         }
             
         case BitAnd:
@@ -124,11 +121,6 @@ private:
             if (node->child1()->shouldSpeculateInt32()) {
                 fixEdge<Int32Use>(node->child1());
                 node->setOpAndDefaultFlags(Identity);
-                break;
-            }
-            
-            if (node->child1()->shouldSpeculateMachineInt()) {
-                fixEdge<MachineIntUse>(node->child1());
                 break;
             }
             
@@ -205,10 +197,6 @@ private:
                 fixEdge<Int32Use>(node->child1());
                 break;
             }
-            if (m_graph.negateShouldSpeculateMachineInt(node)) {
-                fixEdge<MachineIntUse>(node->child1());
-                break;
-            }
             fixEdge<NumberUse>(node->child1());
             break;
         }
@@ -217,11 +205,6 @@ private:
             if (m_graph.mulShouldSpeculateInt32(node)) {
                 fixEdge<Int32Use>(node->child1());
                 fixEdge<Int32Use>(node->child2());
-                break;
-            }
-            if (m_graph.mulShouldSpeculateMachineInt(node)) {
-                fixEdge<MachineIntUse>(node->child1());
-                fixEdge<MachineIntUse>(node->child2());
                 break;
             }
             fixEdge<NumberUse>(node->child1());
@@ -317,12 +300,6 @@ private:
                 fixEdge<Int32Use>(node->child2());
                 break;
             }
-            if (enableInt52()
-                && Node::shouldSpeculateMachineInt(node->child1().node(), node->child2().node())) {
-                fixEdge<MachineIntUse>(node->child1());
-                fixEdge<MachineIntUse>(node->child2());
-                break;
-            }
             if (Node::shouldSpeculateNumber(node->child1().node(), node->child2().node())) {
                 fixEdge<NumberUse>(node->child1());
                 fixEdge<NumberUse>(node->child2());
@@ -376,12 +353,6 @@ private:
             if (Node::shouldSpeculateInt32(node->child1().node(), node->child2().node())) {
                 fixEdge<Int32Use>(node->child1());
                 fixEdge<Int32Use>(node->child2());
-                break;
-            }
-            if (enableInt52()
-                && Node::shouldSpeculateMachineInt(node->child1().node(), node->child2().node())) {
-                fixEdge<MachineIntUse>(node->child1());
-                fixEdge<MachineIntUse>(node->child2());
                 break;
             }
             if (Node::shouldSpeculateNumber(node->child1().node(), node->child2().node())) {
@@ -505,10 +476,6 @@ private:
                 fixEdge<KnownCellUse>(child1);
                 fixEdge<Int32Use>(child2);
                 fixEdge<Int32Use>(child3);
-                if (child3->prediction() & SpecInt52)
-                    fixEdge<MachineIntUse>(child3);
-                else
-                    fixEdge<Int32Use>(child3);
                 break;
             case Array::Double:
                 fixEdge<KnownCellUse>(child1);
@@ -526,8 +493,6 @@ private:
                 fixEdge<Int32Use>(child2);
                 if (child3->shouldSpeculateInt32())
                     fixEdge<Int32Use>(child3);
-                else if (child3->shouldSpeculateMachineInt())
-                    fixEdge<MachineIntUse>(child3);
                 else
                     fixEdge<NumberUse>(child3);
                 break;
@@ -882,8 +847,6 @@ private:
         case CheckTierUpInLoop:
         case CheckTierUpAtReturn:
         case CheckTierUpAndOSREnter:
-        case Int52ToDouble:
-        case Int52ToValue:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         
@@ -1226,9 +1189,6 @@ private:
             case FlushedInt32:
                 fixEdge<Int32Use>(node->child1());
                 break;
-            case FlushedInt52:
-                fixEdge<MachineIntUse>(node->child1());
-                break;
             case FlushedCell:
                 fixEdge<CellUse>(node->child1());
                 break;
@@ -1239,23 +1199,6 @@ private:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
-        }
-        m_insertionSet.execute(block);
-    }
-    
-    void fixupUntypedSetLocalsInBlock(BasicBlock* block)
-    {
-        if (!block)
-            return;
-        ASSERT(block->isReachable);
-        m_block = block;
-        for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
-            Node* node = m_currentNode = block->at(m_indexInBlock);
-            if (node->op() != SetLocal)
-                continue;
-            
-            if (node->child1().useKind() == UntypedUse)
-                fixEdge<UntypedUse>(node->child1());
         }
         m_insertionSet.execute(block);
     }
@@ -1361,9 +1304,6 @@ private:
         if (node->op() != GetLocal)
             return;
         
-        // FIXME: The way this uses alwaysUnboxSimplePrimitives() is suspicious.
-        // https://bugs.webkit.org/show_bug.cgi?id=121518
-        
         VariableAccessData* variable = node->variableAccessData();
         switch (useKind) {
         case Int32Use:
@@ -1379,10 +1319,6 @@ private:
         case BooleanUse:
             if (alwaysUnboxSimplePrimitives()
                 || isBooleanSpeculation(variable->prediction()))
-                m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
-            break;
-        case MachineIntUse:
-            if (isMachineIntSpeculation(variable->prediction()))
                 m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
             break;
         case CellUse:
@@ -1411,80 +1347,12 @@ private:
     template<UseKind useKind>
     void fixEdge(Edge& edge, SpeculationDirection direction = BackwardSpeculation)
     {
-        if (isDouble(useKind)) {
-            if (edge->shouldSpeculateInt32ForArithmetic()) {
-                injectInt32ToDoubleNode(edge, useKind, direction);
-                return;
-            }
-            
-            if (enableInt52() && edge->shouldSpeculateMachineInt()) {
-                // Make all double uses of int52 values have an intermediate Int52ToDouble.
-                // This is for the same reason as Int52ToValue (see below) except that
-                // Int8ToDouble will convert int52's that fit in an int32 into a double
-                // rather than trying to create a boxed int32 like Int52ToValue does.
-                
-                Node* result = m_insertionSet.insertNode(
-                    m_indexInBlock, SpecInt52AsDouble, Int52ToDouble,
-                    m_currentNode->codeOrigin, Edge(edge.node(), NumberUse));
-                edge = Edge(result, useKind);
-                return;
-            }
-        }
-        
-        if (enableInt52() && useKind != MachineIntUse
-            && edge->shouldSpeculateMachineInt() && !edge->shouldSpeculateInt32()) {
-            // We make all non-int52 uses of int52 values have an intermediate Int52ToValue
-            // node to ensure that we handle this properly:
-            //
-            // a: SomeInt52
-            // b: ArithAdd(@a, ...)
-            // c: Call(..., @a)
-            // d: ArithAdd(@a, ...)
-            //
-            // Without an intermediate node and just labeling the uses, we will get:
-            //
-            // a: SomeInt52
-            // b: ArithAdd(Int52:@a, ...)
-            // c: Call(..., Untyped:@a)
-            // d: ArithAdd(Int52:@a, ...)
-            //
-            // And now the c->Untyped:@a edge will box the value of @a into a double. This
-            // is bad, because now the d->Int52:@a edge will either have to do double-to-int
-            // conversions, or will have to OSR exit unconditionally. Alternatively we could
-            // have the c->Untyped:@a edge box the value by copying rather than in-place.
-            // But these boxings are also costly so this wouldn't be great.
-            //
-            // The solution we use is to always have non-Int52 uses of predicted Int52's use
-            // an intervening Int52ToValue node:
-            //
-            // a: SomeInt52
-            // b: ArithAdd(Int52:@a, ...)
-            // x: Int52ToValue(Int52:@a)
-            // c: Call(..., Untyped:@x)
-            // d: ArithAdd(Int52:@a, ...)
-            //
-            // Note that even if we had multiple non-int52 uses of @a, the multiple
-            // Int52ToValue's would get CSE'd together. So the boxing would only happen once.
-            // At the same time, @a would continue to be represented as a native int52.
-            //
-            // An alternative would have been to insert ToNativeInt52 nodes on int52 uses of
-            // int52's. This would have handled the above example but would fall over for:
-            //
-            // a: SomeInt52
-            // b: Call(..., @a)
-            // c: ArithAdd(@a, ...)
-            //
-            // But the solution we use handles the above gracefully.
-            
-            Node* result = m_insertionSet.insertNode(
-                m_indexInBlock, SpecInt52, Int52ToValue,
-                m_currentNode->codeOrigin, Edge(edge.node(), UntypedUse));
-            edge = Edge(result, useKind);
+        if (isDouble(useKind) && edge->shouldSpeculateInt32ForArithmetic()) {
+            injectInt32ToDoubleNode(edge, useKind, direction);
             return;
         }
         
         observeUseKindOnNode<useKind>(edge.node());
-        
         edge.setUseKind(useKind);
     }
     
@@ -1510,7 +1378,7 @@ private:
     void injectInt32ToDoubleNode(Edge& edge, UseKind useKind = NumberUse, SpeculationDirection direction = BackwardSpeculation)
     {
         Node* result = m_insertionSet.insertNode(
-            m_indexInBlock, SpecInt52AsDouble, Int32ToDouble,
+            m_indexInBlock, SpecInt48, Int32ToDouble,
             m_currentNode->codeOrigin, Edge(edge.node(), NumberUse));
         if (direction == ForwardSpeculation)
             result->mergeFlags(NodeExitsForward);
@@ -1566,20 +1434,13 @@ private:
     bool attemptToMakeIntegerAdd(Node* node)
     {
         AddSpeculationMode mode = m_graph.addSpeculationMode(node);
-        if (mode != DontSpeculateInt32) {
-            truncateConstantsIfNecessary(node, mode);
-            fixEdge<Int32Use>(node->child1());
-            fixEdge<Int32Use>(node->child2());
-            return true;
-        }
+        if (mode == DontSpeculateInt32)
+            return false;
         
-        if (m_graph.addShouldSpeculateMachineInt(node)) {
-            fixEdge<MachineIntUse>(node->child1());
-            fixEdge<MachineIntUse>(node->child2());
-            return true;
-        }
-        
-        return false;
+        truncateConstantsIfNecessary(node, mode);
+        fixEdge<Int32Use>(node->child1());
+        fixEdge<Int32Use>(node->child2());
+        return true;
     }
     
     bool attemptToMakeGetArrayLength(Node* node)

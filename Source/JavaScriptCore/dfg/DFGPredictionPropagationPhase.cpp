@@ -116,7 +116,7 @@ private:
     
     SpeculatedType speculatedDoubleTypeForPrediction(SpeculatedType value)
     {
-        if (!isFullNumberSpeculation(value))
+        if (!isNumberSpeculation(value))
             return SpecDouble;
         if (value & SpecDoubleNaN)
             return SpecDouble;
@@ -142,17 +142,15 @@ private:
         case JSConstant:
         case WeakJSConstant: {
             SpeculatedType type = speculationFromValue(m_graph.valueOfJSConstant(node));
-            if (type == SpecInt52AsDouble)
-                type = SpecInt52;
+            if (type == SpecInt48AsDouble)
+                type = SpecInt48;
             changed |= setPrediction(type);
             break;
         }
             
         case GetLocal: {
-            VariableAccessData* variable = node->variableAccessData();
-            SpeculatedType prediction = variable->prediction();
-            if (variable->shouldNeverUnbox() && (prediction & SpecInt52))
-                prediction = (prediction | SpecInt52AsDouble) & ~SpecInt52;
+            VariableAccessData* variableAccessData = node->variableAccessData();
+            SpeculatedType prediction = variableAccessData->prediction();
             if (prediction)
                 changed |= mergePrediction(prediction);
             break;
@@ -205,7 +203,7 @@ private:
             if (nodeCanSpeculateInt32(node->arithNodeFlags()))
                 changed |= mergePrediction(SpecInt32);
             else
-                changed |= mergePrediction(SpecBytecodeNumber);
+                changed |= mergePrediction(SpecNumber);
             break;
         }
 
@@ -214,14 +212,14 @@ private:
             SpeculatedType right = node->child2()->prediction();
             
             if (left && right) {
-                if (isFullNumberSpeculationExpectingDefined(left) && isFullNumberSpeculationExpectingDefined(right)) {
+                if (isNumberSpeculationExpectingDefined(left) && isNumberSpeculationExpectingDefined(right)) {
                     if (m_graph.addSpeculationMode(node) != DontSpeculateInt32)
                         changed |= mergePrediction(SpecInt32);
                     else if (m_graph.addShouldSpeculateMachineInt(node))
-                        changed |= mergePrediction(SpecInt52);
+                        changed |= mergePrediction(SpecInt48);
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
-                } else if (!(left & SpecFullNumber) || !(right & SpecFullNumber)) {
+                } else if (!(left & SpecNumber) || !(right & SpecNumber)) {
                     // left or right is definitely something other than a number.
                     changed |= mergePrediction(SpecString);
                 } else
@@ -238,7 +236,7 @@ private:
                 if (m_graph.addSpeculationMode(node) != DontSpeculateInt32)
                     changed |= mergePrediction(SpecInt32);
                 else if (m_graph.addShouldSpeculateMachineInt(node))
-                    changed |= mergePrediction(SpecInt52);
+                    changed |= mergePrediction(SpecInt48);
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }
@@ -253,7 +251,7 @@ private:
                 if (m_graph.addSpeculationMode(node) != DontSpeculateInt32)
                     changed |= mergePrediction(SpecInt32);
                 else if (m_graph.addShouldSpeculateMachineInt(node))
-                    changed |= mergePrediction(SpecInt52);
+                    changed |= mergePrediction(SpecInt48);
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }
@@ -265,7 +263,7 @@ private:
                 if (m_graph.negateShouldSpeculateInt32(node))
                     changed |= mergePrediction(SpecInt32);
                 else if (m_graph.negateShouldSpeculateMachineInt(node))
-                    changed |= mergePrediction(SpecInt52);
+                    changed |= mergePrediction(SpecInt48);
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPrediction(node->child1()->prediction()));
             }
@@ -294,7 +292,7 @@ private:
                 if (m_graph.mulShouldSpeculateInt32(node))
                     changed |= mergePrediction(SpecInt32);
                 else if (m_graph.mulShouldSpeculateMachineInt(node))
-                    changed |= mergePrediction(SpecInt52);
+                    changed |= mergePrediction(SpecInt48);
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }
@@ -370,20 +368,10 @@ private:
         }
 
         case GetByVal: {
-            if (!node->child1()->prediction())
-                break;
-            if (!node->getHeapPrediction())
-                break;
-            
             if (node->child1()->shouldSpeculateFloat32Array()
                 || node->child1()->shouldSpeculateFloat64Array())
                 changed |= mergePrediction(SpecDouble);
-            else if (node->child1()->shouldSpeculateUint32Array()) {
-                if (isInt32Speculation(node->getHeapPrediction()))
-                    changed |= mergePrediction(SpecInt32);
-                else
-                    changed |= mergePrediction(SpecInt52);
-            } else
+            else
                 changed |= mergePrediction(node->getHeapPrediction());
             break;
         }
@@ -578,8 +566,6 @@ private:
         case CheckWatchdogTimer:
         case Unreachable:
         case LoopHint:
-        case Int52ToValue:
-        case Int52ToDouble:
             break;
             
         // This gets ignored because it already has a prediction.
@@ -654,9 +640,8 @@ private:
                 
             DoubleBallot ballot;
                 
-            if (isFullNumberSpeculationExpectingDefined(left) && isFullNumberSpeculationExpectingDefined(right)
-                && !m_graph.addShouldSpeculateInt32(node)
-                && !m_graph.addShouldSpeculateMachineInt(node))
+            if (isNumberSpeculationExpectingDefined(left) && isNumberSpeculationExpectingDefined(right)
+                && !m_graph.addShouldSpeculateInt32(node))
                 ballot = VoteDouble;
             else
                 ballot = VoteValue;
@@ -672,9 +657,8 @@ private:
                 
             DoubleBallot ballot;
                 
-            if (isFullNumberSpeculation(left) && isFullNumberSpeculation(right)
-                && !m_graph.mulShouldSpeculateInt32(node)
-                && !m_graph.mulShouldSpeculateMachineInt(node))
+            if (isNumberSpeculation(left) && isNumberSpeculation(right)
+                && !m_graph.mulShouldSpeculateInt32(node))
                 ballot = VoteDouble;
             else
                 ballot = VoteValue;
@@ -693,7 +677,7 @@ private:
                 
             DoubleBallot ballot;
                 
-            if (isFullNumberSpeculation(left) && isFullNumberSpeculation(right)
+            if (isNumberSpeculation(left) && isNumberSpeculation(right)
                 && !(Node::shouldSpeculateInt32ForArithmetic(node->child1().node(), node->child2().node()) && node->canSpeculateInt32()))
                 ballot = VoteDouble;
             else
@@ -722,9 +706,7 @@ private:
             SpeculatedType prediction = node->child1()->prediction();
             if (isDoubleSpeculation(prediction))
                 node->variableAccessData()->vote(VoteDouble);
-            else if (
-                !isFullNumberSpeculation(prediction)
-                || isInt32Speculation(prediction) || isMachineIntSpeculation(prediction))
+            else if (!isNumberSpeculation(prediction) || isInt32Speculation(prediction))
                 node->variableAccessData()->vote(VoteValue);
             break;
         }

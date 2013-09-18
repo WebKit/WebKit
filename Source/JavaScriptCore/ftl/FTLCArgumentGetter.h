@@ -115,8 +115,7 @@ public:
     }
     
     void loadNextAndBox(
-        ValueFormat, DFG::GPRReg destination,
-        DFG::GPRReg scratch1 = InvalidGPRReg, DFG::GPRReg scratch2 = InvalidGPRReg);
+        ValueFormat format, DFG::GPRReg destination, DFG::GPRReg scratch = InvalidGPRReg);
 
 private:
     MacroAssembler::Address nextAddress()

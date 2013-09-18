@@ -86,19 +86,6 @@ public:
     {
         initGPR(node, useCount, gpr, DataFormatInt32);
     }
-    void initInt52(Node* node, uint32_t useCount, GPRReg reg, DataFormat format)
-    {
-        ASSERT(format == DataFormatInt52 || format == DataFormatStrictInt52);
-        initGPR(node, useCount, reg, format);
-    }
-    void initInt52(Node* node, uint32_t useCount, GPRReg reg)
-    {
-        initGPR(node, useCount, reg, DataFormatInt52);
-    }
-    void initStrictInt52(Node* node, uint32_t useCount, GPRReg reg)
-    {
-        initGPR(node, useCount, reg, DataFormatStrictInt52);
-    }
 #if USE(JSVALUE64)
     void initJSValue(Node* node, uint32_t useCount, GPRReg gpr, DataFormat format = DataFormatJS)
     {
@@ -200,11 +187,6 @@ public:
     // Get the format of the value as it is spilled in the JSStack (or 'none').
     DataFormat spillFormat() { return m_spillFormat; }
     
-    bool isFormat(DataFormat expectedFormat)
-    {
-        return registerFormat() == expectedFormat || spillFormat() == expectedFormat;
-    }
-    
     bool isJSFormat(DataFormat expectedFormat)
     {
         return JSC::isJSFormat(registerFormat(), expectedFormat) || JSC::isJSFormat(spillFormat(), expectedFormat);
@@ -213,16 +195,6 @@ public:
     bool isJSInt32()
     {
         return isJSFormat(DataFormatJSInt32);
-    }
-    
-    bool isInt52()
-    {
-        return isFormat(DataFormatInt52);
-    }
-    
-    bool isStrictInt52()
-    {
-        return isFormat(DataFormatStrictInt52);
     }
     
     bool isJSDouble()
@@ -341,19 +313,6 @@ public:
     void fillInt32(VariableEventStream& stream, GPRReg gpr)
     {
         fillGPR(stream, gpr, DataFormatInt32);
-    }
-    void fillInt52(VariableEventStream& stream, GPRReg gpr, DataFormat format)
-    {
-        ASSERT(format == DataFormatInt52 || format == DataFormatStrictInt52);
-        fillGPR(stream, gpr, format);
-    }
-    void fillInt52(VariableEventStream& stream, GPRReg gpr)
-    {
-        fillGPR(stream, gpr, DataFormatInt52);
-    }
-    void fillStrictInt52(VariableEventStream& stream, GPRReg gpr)
-    {
-        fillGPR(stream, gpr, DataFormatStrictInt52);
     }
     void fillBoolean(VariableEventStream& stream, GPRReg gpr)
     {

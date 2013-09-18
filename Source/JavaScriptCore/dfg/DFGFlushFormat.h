@@ -40,7 +40,6 @@ namespace JSC { namespace DFG {
 enum FlushFormat {
     DeadFlush,
     FlushedInt32,
-    FlushedInt52,
     FlushedDouble,
     FlushedCell,
     FlushedBoolean,
@@ -56,8 +55,6 @@ inline NodeFlags resultFor(FlushFormat format)
         return NodeResultJS;
     case FlushedInt32:
         return NodeResultInt32;
-    case FlushedInt52:
-        return NodeResultInt52;
     case FlushedDouble:
         return NodeResultNumber;
     case FlushedBoolean:
@@ -77,8 +74,6 @@ inline UseKind useKindFor(FlushFormat format)
         return CellUse;
     case FlushedInt32:
         return Int32Use;
-    case FlushedInt52:
-        return MachineIntUse;
     case FlushedDouble:
         return NumberUse;
     case FlushedBoolean:

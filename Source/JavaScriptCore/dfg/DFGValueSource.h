@@ -43,7 +43,6 @@ enum ValueSourceKind {
     SourceNotSet,
     ValueInJSStack,
     Int32InJSStack,
-    Int52InJSStack,
     CellInJSStack,
     BooleanInJSStack,
     DoubleInJSStack,
@@ -57,8 +56,6 @@ static inline ValueSourceKind dataFormatToValueSourceKind(DataFormat dataFormat)
     switch (dataFormat) {
     case DataFormatInt32:
         return Int32InJSStack;
-    case DataFormatInt52:
-        return Int52InJSStack;
     case DataFormatDouble:
         return DoubleInJSStack;
     case DataFormatBoolean:
@@ -82,8 +79,6 @@ static inline DataFormat valueSourceKindToDataFormat(ValueSourceKind kind)
         return DataFormatJS;
     case Int32InJSStack:
         return DataFormatInt32;
-    case Int52InJSStack:
-        return DataFormatInt52;
     case CellInJSStack:
         return DataFormatCell;
     case BooleanInJSStack:
@@ -144,8 +139,6 @@ public:
             return ValueSource(DoubleInJSStack);
         case FlushedInt32:
             return ValueSource(Int32InJSStack);
-        case FlushedInt52:
-            return ValueSource(Int52InJSStack);
         case FlushedCell:
             return ValueSource(CellInJSStack);
         case FlushedBoolean:
@@ -187,9 +180,6 @@ public:
             
         case Int32InJSStack:
             return ValueRecovery::alreadyInJSStackAsUnboxedInt32();
-            
-        case Int52InJSStack:
-            return ValueRecovery::alreadyInJSStackAsUnboxedInt52();
             
         case CellInJSStack:
             return ValueRecovery::alreadyInJSStackAsUnboxedCell();

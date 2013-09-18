@@ -143,15 +143,6 @@ inline bool enableConcurrentJIT()
 #endif
 }
 
-inline bool enableInt52()
-{
-#if USE(JSVALUE64)
-    return true;
-#else
-    return false;
-#endif
-}
-
 enum SpillRegistersMode { NeedToSpill, DontSpill };
 
 enum NoResultTag { NoResult };

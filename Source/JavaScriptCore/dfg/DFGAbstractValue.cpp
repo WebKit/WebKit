@@ -67,8 +67,6 @@ void AbstractValue::set(Graph& graph, JSValue value)
     }
         
     m_type = speculationFromValue(value);
-    if (m_type == SpecInt52AsDouble)
-        m_type = SpecInt52;
     m_value = value;
         
     checkConsistency();
@@ -229,7 +227,6 @@ FiltrationResult AbstractValue::normalizeClarity()
     return result;
 }
 
-#if !ASSERT_DISABLED
 void AbstractValue::checkConsistency() const
 {
     if (!(m_type & SpecCell)) {
@@ -241,19 +238,14 @@ void AbstractValue::checkConsistency() const
     if (isClear())
         ASSERT(!m_value);
     
-    if (!!m_value) {
-        SpeculatedType type = m_type;
-        if (type & SpecInt52)
-            type |= SpecInt52AsDouble;
-        ASSERT(mergeSpeculations(type, speculationFromValue(m_value)) == type);
-    }
+    if (!!m_value)
+        ASSERT(mergeSpeculations(m_type, speculationFromValue(m_value)) == m_type);
     
     // Note that it's possible for a prediction like (Final, []). This really means that
     // the value is bottom and that any code that uses the value is unreachable. But
     // we don't want to get pedantic about this as it would only increase the computational
     // complexity of the code.
 }
-#endif
 
 void AbstractValue::dump(PrintStream& out) const
 {

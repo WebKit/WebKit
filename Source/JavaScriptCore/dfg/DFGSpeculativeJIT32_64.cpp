@@ -888,8 +888,8 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
 #endif
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
-    ASSERT(edge.useKind() != KnownNumberUse || !(value.m_type & ~SpecFullNumber));
-    m_interpreter.filter(value, SpecFullNumber);
+    ASSERT(edge.useKind() != KnownNumberUse || !(value.m_type & ~SpecNumber));
+    m_interpreter.filter(value, SpecNumber);
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
 
@@ -928,7 +928,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
 
             if (spillFormat != DataFormatJSInt32 && spillFormat != DataFormatInt32) {
                 JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, JITCompiler::tagFor(virtualRegister), TrustedImm32(JSValue::Int32Tag));
-                if (type & ~SpecFullNumber)
+                if (type & ~SpecNumber)
                     speculationCheck(BadType, JSValueSource(JITCompiler::addressFor(virtualRegister)), edge, m_jit.branch32(MacroAssembler::AboveOrEqual, JITCompiler::tagFor(virtualRegister), TrustedImm32(JSValue::LowestTag)));
                 m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
                 hasUnboxedDouble = m_jit.jump();
@@ -963,7 +963,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
         if (info.registerFormat() != DataFormatJSInt32) {
             FPRTemporary scratch(this);
             JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, tagGPR, TrustedImm32(JSValue::Int32Tag));
-            if (type & ~SpecFullNumber)
+            if (type & ~SpecNumber)
                 speculationCheck(BadType, JSValueRegs(tagGPR, payloadGPR), edge, m_jit.branch32(MacroAssembler::AboveOrEqual, tagGPR, TrustedImm32(JSValue::LowestTag)));
             unboxDouble(tagGPR, payloadGPR, fpr, scratch.fpr());
             hasUnboxedDouble = m_jit.jump();
@@ -2923,7 +2923,7 @@ void SpeculativeJIT::compile(Node* node)
             FPRReg valueFPR = value.fpr();
 
             DFG_TYPE_CHECK(
-                JSValueRegs(), node->child2(), SpecFullRealNumber,
+                JSValueRegs(), node->child2(), SpecRealNumber,
                 m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, valueFPR, valueFPR));
             
             m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
@@ -3187,7 +3187,7 @@ void SpeculativeJIT::compile(Node* node)
         
         op1.use();
         
-        if (!(m_state.forNode(node->child1()).m_type & ~(SpecFullNumber | SpecBoolean))) {
+        if (!(m_state.forNode(node->child1()).m_type & ~(SpecNumber | SpecBoolean))) {
             m_jit.move(op1TagGPR, resultTagGPR);
             m_jit.move(op1PayloadGPR, resultPayloadGPR);
         } else {
@@ -3289,7 +3289,7 @@ void SpeculativeJIT::compile(Node* node)
                     SpeculateDoubleOperand operand(this, use);
                     FPRReg opFPR = operand.fpr();
                     DFG_TYPE_CHECK(
-                        JSValueRegs(), use, SpecFullRealNumber,
+                        JSValueRegs(), use, SpecRealNumber,
                         m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, opFPR, opFPR));
         
                     m_jit.storeDouble(opFPR, MacroAssembler::Address(storageGPR, sizeof(double) * operandIdx));
@@ -3354,7 +3354,7 @@ void SpeculativeJIT::compile(Node* node)
                 SpeculateDoubleOperand operand(this, use);
                 FPRReg opFPR = operand.fpr();
                 DFG_TYPE_CHECK(
-                    JSValueRegs(), use, SpecFullRealNumber,
+                    JSValueRegs(), use, SpecRealNumber,
                     m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, opFPR, opFPR));
                 
                 m_jit.storeDouble(opFPR, reinterpret_cast<char*>(buffer + operandIdx));
@@ -4797,8 +4797,6 @@ void SpeculativeJIT::compile(Node* node)
     case CheckTierUpInLoop:
     case CheckTierUpAtReturn:
     case CheckTierUpAndOSREnter:
-    case Int52ToDouble:
-    case Int52ToValue:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }

@@ -39,12 +39,10 @@ namespace JSC {
 enum DataFormat {
     DataFormatNone = 0,
     DataFormatInt32 = 1,
-    DataFormatInt52 = 2, // Int52's are left-shifted by 16 by default.
-    DataFormatStrictInt52 = 3, // "Strict" Int52 means it's not shifted.
-    DataFormatDouble = 4,
-    DataFormatBoolean = 5,
-    DataFormatCell = 6,
-    DataFormatStorage = 7,
+    DataFormatDouble = 2,
+    DataFormatBoolean = 3,
+    DataFormatCell = 4,
+    DataFormatStorage = 5,
     DataFormatJS = 8,
     DataFormatJSInt32 = DataFormatJS | DataFormatInt32,
     DataFormatJSDouble = DataFormatJS | DataFormatDouble,
@@ -66,10 +64,6 @@ inline const char* dataFormatToString(DataFormat dataFormat)
         return "None";
     case DataFormatInt32:
         return "Int32";
-    case DataFormatInt52:
-        return "Int52";
-    case DataFormatStrictInt52:
-        return "StrictInt52";
     case DataFormatDouble:
         return "Double";
     case DataFormatCell:

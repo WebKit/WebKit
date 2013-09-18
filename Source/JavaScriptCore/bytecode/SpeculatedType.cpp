@@ -154,18 +154,20 @@ void dumpSpeculation(PrintStream& out, SpeculatedType value)
     }
     
     if (value & SpecInt32)
-        myOut.print("Int32");
+        myOut.print("Int");
     else
         isTop = false;
     
-    if (value & SpecInt52)
-        myOut.print("Int52");
-        
     if ((value & SpecDouble) == SpecDouble)
         myOut.print("Double");
     else {
-        if (value & SpecInt52AsDouble)
-            myOut.print("Int52asdouble");
+        if (value & SpecInt48AsDouble)
+            myOut.print("Int48asdouble");
+        else
+            isTop = false;
+        
+        if (value & SpecInt48)
+            myOut.print("Int48");
         else
             isTop = false;
         
@@ -241,15 +243,13 @@ static const char* speculationToAbbreviatedString(SpeculatedType prediction)
         return "<Cell>";
     if (isInt32Speculation(prediction))
         return "<Int32>";
-    if (isInt52AsDoubleSpeculation(prediction))
-        return "<Int52AsDouble>";
-    if (isInt52Speculation(prediction))
-        return "<Int52>";
-    if (isMachineIntSpeculation(prediction))
-        return "<MachineInt>";
+    if (isInt48AsDoubleSpeculation(prediction))
+        return "<Int48AsDouble>";
+    if (isInt48Speculation(prediction))
+        return "<Int48>";
     if (isDoubleSpeculation(prediction))
         return "<Double>";
-    if (isFullNumberSpeculation(prediction))
+    if (isNumberSpeculation(prediction))
         return "<Number>";
     if (isBooleanSpeculation(prediction))
         return "<Boolean>";
@@ -345,11 +345,16 @@ SpeculatedType speculationFromValue(JSValue value)
         return SpecInt32;
     if (value.isDouble()) {
         double number = value.asNumber();
-        if (number != number)
-            return SpecDoubleNaN;
-        if (value.isMachineInt())
-            return SpecInt52AsDouble;
-        return SpecNonIntAsDouble;
+        if (number == number) {
+            int64_t asInt64 = static_cast<int64_t>(number);
+            if (asInt64 == number && (asInt64 || !std::signbit(number))
+                && asInt64 < (static_cast<int64_t>(1) << 47)
+                && asInt64 >= -(static_cast<int64_t>(1) << 47)) {
+                return SpecInt48AsDouble;
+            }
+            return SpecNonIntAsDouble;
+        }
+        return SpecDoubleNaN;
     }
     if (value.isCell())
         return speculationFromCell(value.asCell());

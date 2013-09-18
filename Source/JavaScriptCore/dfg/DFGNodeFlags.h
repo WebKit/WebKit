@@ -41,9 +41,8 @@ namespace JSC { namespace DFG {
 #define NodeResultJS                     0x0001
 #define NodeResultNumber                 0x0002
 #define NodeResultInt32                  0x0003
-#define NodeResultInt52                  0x0004
-#define NodeResultBoolean                0x0005
-#define NodeResultStorage                0x0006
+#define NodeResultBoolean                0x0004
+#define NodeResultStorage                0x0005
                                 
 #define NodeMustGenerate                 0x0008 // set on nodes that have side effects, and may not trivially be removed by DCE.
 #define NodeHasVarArgs                   0x0010
@@ -108,7 +107,7 @@ static inline bool nodeCanSpeculateInt32(NodeFlags flags)
     return true;
 }
 
-static inline bool nodeCanSpeculateInt52(NodeFlags flags)
+static inline bool nodeCanSpeculateInt48(NodeFlags flags)
 {
     if (nodeMayNegZero(flags))
         return bytecodeCanIgnoreNegativeZero(flags);

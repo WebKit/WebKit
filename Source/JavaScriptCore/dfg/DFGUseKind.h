@@ -39,7 +39,6 @@ enum UseKind {
     UntypedUse,
     Int32Use,
     KnownInt32Use,
-    MachineIntUse,
     RealNumberUse,
     NumberUse,
     KnownNumberUse,
@@ -67,13 +66,11 @@ ALWAYS_INLINE SpeculatedType typeFilterFor(UseKind useKind)
     case Int32Use:
     case KnownInt32Use:
         return SpecInt32;
-    case MachineIntUse:
-        return SpecMachineInt;
     case RealNumberUse:
-        return SpecFullRealNumber;
+        return SpecRealNumber;
     case NumberUse:
     case KnownNumberUse:
-        return SpecFullNumber;
+        return SpecNumber;
     case BooleanUse:
         return SpecBoolean;
     case CellUse:
@@ -128,7 +125,6 @@ ALWAYS_INLINE bool isNumerical(UseKind kind)
     switch (kind) {
     case Int32Use:
     case KnownInt32Use:
-    case MachineIntUse:
     case RealNumberUse:
     case NumberUse:
     case KnownNumberUse:

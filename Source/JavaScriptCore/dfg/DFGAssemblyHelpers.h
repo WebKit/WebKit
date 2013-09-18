@@ -293,24 +293,6 @@ public:
         move64ToDouble(gpr, fpr);
         return fpr;
     }
-    
-    void boxInt52(GPRReg source, GPRReg target, GPRReg scratch, FPRReg fpScratch)
-    {
-        // Is it an int32?
-        signExtend32ToPtr(source, scratch);
-        Jump isInt32 = branch64(Equal, source, scratch);
-        
-        // Nope, it's not, but regT0 contains the int64 value.
-        convertInt64ToDouble(source, fpScratch);
-        boxDouble(fpScratch, target);
-        Jump done = jump();
-        
-        isInt32.link(this);
-        zeroExtend32ToPtr(source, target);
-        or64(GPRInfo::tagTypeNumberRegister, target);
-        
-        done.link(this);
-    }
 #endif
 
 #if USE(JSVALUE32_64)

@@ -61,7 +61,6 @@ public:
         case StringOrStringObjectUse:
         case NotCellUse:
         case OtherUse:
-        case MachineIntUse:
             return;
             
         case KnownInt32Use:
@@ -70,7 +69,7 @@ public:
             return;
             
         case KnownNumberUse:
-            if (m_state.forNode(edge).m_type & ~SpecFullNumber)
+            if (m_state.forNode(edge).m_type & ~SpecNumber)
                 m_result = false;
             return;
             
@@ -240,8 +239,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CheckTierUpAtReturn:
     case CheckTierUpAndOSREnter:
     case LoopHint:
-    case Int52ToDouble:
-    case Int52ToValue:
         return true;
         
     case GetByVal:

@@ -40,7 +40,6 @@ enum ValueSourceKind {
     SourceNotSet,
     ValueInJSStack,
     Int32InJSStack,
-    Int52InJSStack,
     DoubleInJSStack,
     SourceIsDead,
     HaveNode

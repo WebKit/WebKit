@@ -48,8 +48,6 @@ inline bool belongsInMinifiedGraph(NodeType type)
     case UInt32ToNumber:
     case DoubleAsInt32:
     case PhantomArguments:
-    case Int52ToValue:
-    case Int52ToDouble:
         return true;
     default:
         ASSERT(!permitsOSRBackwardRewiring(type) && !permitsOSRForwardRewiring(type));
@@ -106,8 +104,6 @@ private:
         case Int32ToDouble:
         case UInt32ToNumber:
         case DoubleAsInt32:
-        case Int52ToDouble:
-        case Int52ToValue:
             return true;
         default:
             return false;

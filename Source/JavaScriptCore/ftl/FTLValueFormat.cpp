@@ -44,12 +44,6 @@ void printInternal(PrintStream& out, ValueFormat format)
     case ValueFormatUInt32:
         out.print("UInt32");
         return;
-    case ValueFormatInt52:
-        out.print("Int52");
-        return;
-    case ValueFormatStrictInt52:
-        out.print("StrictInt52");
-        return;
     case ValueFormatBoolean:
         out.print("Boolean");
         return;

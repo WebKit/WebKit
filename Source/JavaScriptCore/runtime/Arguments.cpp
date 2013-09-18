@@ -383,9 +383,6 @@ void Arguments::tearOffForInlineCallFrame(VM& vm, Register* registers, InlineCal
         case AlreadyInJSStackAsUnboxedInt32:
             value = jsNumber(location->unboxedInt32());
             break;
-        case AlreadyInJSStackAsUnboxedInt52:
-            value = jsNumber(location->unboxedInt52());
-            break;
         case AlreadyInJSStackAsUnboxedCell:
             value = location->unboxedCell();
             break;
