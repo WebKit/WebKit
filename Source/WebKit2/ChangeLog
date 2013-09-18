@@ -1,3 +1,12 @@
+2013-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitScriptWorld not in API documentation
+        https://bugs.webkit.org/show_bug.cgi?id=121539
+
+        Reviewed by Philippe Normand.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add WebKitScriptWorld.
+
 2013-09-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         Buildfix for !ENABLE(CUSTOM_PROTOCOLS) platforms
