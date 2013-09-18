@@ -41,6 +41,8 @@ enum ValueFormat {
     InvalidValueFormat,
     ValueFormatInt32,
     ValueFormatUInt32,
+    ValueFormatInt52,
+    ValueFormatStrictInt52,
     ValueFormatBoolean,
     ValueFormatJSValue,
     ValueFormatDouble

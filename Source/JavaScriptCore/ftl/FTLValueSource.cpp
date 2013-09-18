@@ -42,6 +42,9 @@ void ValueSource::dump(PrintStream& out) const
     case Int32InJSStack:
         out.print("Int32InJSStack");
         return;
+    case Int52InJSStack:
+        out.print("Int52InJSStack");
+        return;
     case DoubleInJSStack:
         out.print("DoubleInJSStack");
         return;

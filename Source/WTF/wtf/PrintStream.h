@@ -360,11 +360,36 @@ ValueInContext<T, U> inContext(const T& value, U* context)
     return ValueInContext<T, U>(value, context);
 }
 
+template<typename T, typename U>
+class ValueIgnoringContext {
+public:
+    ValueIgnoringContext(const U& value)
+        : m_value(&value)
+    {
+    }
+    
+    void dump(PrintStream& out) const
+    {
+        T context;
+        m_value->dumpInContext(out, &context);
+    }
+
+private:
+    const U* m_value;
+};
+
+template<typename T, typename U>
+ValueIgnoringContext<T, U> ignoringContext(const U& value)
+{
+    return ValueIgnoringContext<T, U>(value);
+}
+
 } // namespace WTF
 
 using WTF::CharacterDump;
 using WTF::PointerDump;
 using WTF::PrintStream;
+using WTF::ignoringContext;
 using WTF::inContext;
 using WTF::pointerDump;
 

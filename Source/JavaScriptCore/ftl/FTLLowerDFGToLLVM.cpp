@@ -151,6 +151,9 @@ private:
                 case NodeResultInt32:
                     type = m_out.int32;
                     break;
+                case NodeResultInt52:
+                    type = m_out.int64;
+                    break;
                 case NodeResultBoolean:
                     type = m_out.boolean;
                     break;
@@ -239,7 +242,6 @@ private:
             compilePhi();
             break;
         case JSConstant:
-            compileJSConstant();
             break;
         case WeakJSConstant:
             compileWeakJSConstant();
@@ -461,6 +463,9 @@ private:
         case Int32Use:
             m_out.set(lowInt32(m_node->child1()), destination);
             break;
+        case MachineIntUse:
+            m_out.set(lowInt52(m_node->child1()), destination);
+            break;
         case BooleanUse:
             m_out.set(lowBoolean(m_node->child1()), destination);
             break;
@@ -486,6 +491,9 @@ private:
             break;
         case NodeResultInt32:
             setInt32(m_out.get(source));
+            break;
+        case NodeResultInt52:
+            setInt52(m_out.get(source));
             break;
         case NodeResultBoolean:
             setBoolean(m_out.get(source));
@@ -591,6 +599,13 @@ private:
             return;
         }
             
+        case FlushedInt52: {
+            LValue value = lowInt52(m_node->child1());
+            m_out.store64(value, addressFor(variable->local()));
+            m_valueSources.operand(variable->local()) = ValueSource(Int52InJSStack);
+            return;
+        }
+            
         case FlushedCell: {
             LValue value = lowCell(m_node->child1());
             m_out.store64(value, addressFor(variable->local()));
@@ -655,6 +670,24 @@ private:
             break;
         }
             
+        case MachineIntUse: {
+            if (!m_state.forNode(m_node->child1()).couldBeType(SpecInt52)
+                && !m_state.forNode(m_node->child2()).couldBeType(SpecInt52)) {
+                Int52Kind kind;
+                LValue left = lowWhicheverInt52(m_node->child1(), kind);
+                LValue right = lowInt52(m_node->child2(), kind);
+                setInt52(m_out.add(left, right), kind);
+                break;
+            }
+            
+            LValue left = lowInt52(m_node->child1());
+            LValue right = lowInt52(m_node->child2());
+            LValue result = m_out.addWithOverflow64(left, right);
+            speculate(Int52Overflow, noValue(), 0, m_out.extractValue(result, 1));
+            setInt52(m_out.extractValue(result, 0));
+            break;
+        }
+            
         case NumberUse: {
             setDouble(
                 m_out.doubleAdd(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
@@ -682,6 +715,24 @@ private:
             LValue result = m_out.subWithOverflow32(left, right);
             speculate(Overflow, noValue(), 0, m_out.extractValue(result, 1));
             setInt32(m_out.extractValue(result, 0));
+            break;
+        }
+            
+        case MachineIntUse: {
+            if (!m_state.forNode(m_node->child1()).couldBeType(SpecInt52)
+                && !m_state.forNode(m_node->child2()).couldBeType(SpecInt52)) {
+                Int52Kind kind;
+                LValue left = lowWhicheverInt52(m_node->child1(), kind);
+                LValue right = lowInt52(m_node->child2(), kind);
+                setInt52(m_out.sub(left, right), kind);
+                break;
+            }
+            
+            LValue left = lowInt52(m_node->child1());
+            LValue right = lowInt52(m_node->child2());
+            LValue result = m_out.subWithOverflow64(left, right);
+            speculate(Int52Overflow, noValue(), 0, m_out.extractValue(result, 1));
+            setInt52(m_out.extractValue(result, 0));
             break;
         }
             
@@ -727,6 +778,32 @@ private:
             }
             
             setInt32(result);
+            break;
+        }
+            
+        case MachineIntUse: {
+            Int52Kind kind;
+            LValue left = lowWhicheverInt52(m_node->child1(), kind);
+            LValue right = lowInt52(m_node->child2(), opposite(kind));
+            
+            LValue overflowResult = m_out.mulWithOverflow64(left, right);
+            speculate(Int52Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
+            LValue result = m_out.extractValue(overflowResult, 0);
+            
+            if (!bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags())) {
+                LBasicBlock slowCase = FTL_NEW_BLOCK(m_out, ("ArithMul slow case"));
+                LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithMul continuation"));
+                
+                m_out.branch(m_out.notZero64(result), continuation, slowCase);
+                
+                LBasicBlock lastNext = m_out.appendTo(slowCase, continuation);
+                speculate(NegativeZero, noValue(), 0, m_out.lessThan(left, m_out.int64Zero));
+                speculate(NegativeZero, noValue(), 0, m_out.lessThan(right, m_out.int64Zero));
+                m_out.jump(continuation);
+                m_out.appendTo(continuation, lastNext);
+            }
+            
+            setInt52(result);
             break;
         }
             
@@ -1029,6 +1106,26 @@ private:
             }
             
             setInt32(result);
+            break;
+        }
+            
+        case MachineIntUse: {
+            if (!m_state.forNode(m_node->child1()).couldBeType(SpecInt52)) {
+                Int52Kind kind;
+                LValue value = lowWhicheverInt52(m_node->child1(), kind);
+                LValue result = m_out.neg(value);
+                if (!bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags()))
+                    speculate(NegativeZero, noValue(), 0, m_out.isZero64(result));
+                setInt52(result, kind);
+                break;
+            }
+            
+            LValue value = lowInt52(m_node->child1());
+            LValue overflowResult = m_out.subWithOverflow64(m_out.int64Zero, value);
+            speculate(Int52Overflow, noValue(), 0, m_out.extractValue(overflowResult, 1));
+            LValue result = m_out.extractValue(overflowResult, 0);
+            speculate(NegativeZero, noValue(), 0, m_out.isZero64(result));
+            setInt52(result);
             break;
         }
             
@@ -1473,7 +1570,7 @@ private:
                 LValue value = lowDouble(child3);
                 
                 FTL_TYPE_CHECK(
-                    doubleValue(value), child3, SpecRealNumber,
+                    doubleValue(value), child3, SpecFullRealNumber,
                     m_out.doubleNotEqualOrUnordered(value, value));
                 
                 TypedPointer elementPointer = m_out.baseIndex(
@@ -1708,6 +1805,7 @@ private:
     void compileCompareEq()
     {
         if (m_node->isBinaryUseKind(Int32Use)
+            || m_node->isBinaryUseKind(MachineIntUse)
             || m_node->isBinaryUseKind(NumberUse)
             || m_node->isBinaryUseKind(ObjectUse)) {
             compileCompareStrictEq();
@@ -1731,6 +1829,14 @@ private:
         if (m_node->isBinaryUseKind(Int32Use)) {
             setBoolean(
                 m_out.equal(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+            return;
+        }
+        
+        if (m_node->isBinaryUseKind(MachineIntUse)) {
+            Int52Kind kind;
+            LValue left = lowWhicheverInt52(m_node->child1(), kind);
+            LValue right = lowInt52(m_node->child2(), kind);
+            setBoolean(m_out.equal(left, right));
             return;
         }
         
@@ -1782,6 +1888,14 @@ private:
             return;
         }
         
+        if (m_node->isBinaryUseKind(MachineIntUse)) {
+            Int52Kind kind;
+            LValue left = lowWhicheverInt52(m_node->child1(), kind);
+            LValue right = lowInt52(m_node->child2(), kind);
+            setBoolean(m_out.lessThan(left, right));
+            return;
+        }
+        
         if (m_node->isBinaryUseKind(NumberUse)) {
             setBoolean(
                 m_out.doubleLessThan(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
@@ -1796,6 +1910,14 @@ private:
         if (m_node->isBinaryUseKind(Int32Use)) {
             setBoolean(
                 m_out.lessThanOrEqual(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+            return;
+        }
+        
+        if (m_node->isBinaryUseKind(MachineIntUse)) {
+            Int52Kind kind;
+            LValue left = lowWhicheverInt52(m_node->child1(), kind);
+            LValue right = lowInt52(m_node->child2(), kind);
+            setBoolean(m_out.lessThanOrEqual(left, right));
             return;
         }
         
@@ -1817,6 +1939,14 @@ private:
             return;
         }
         
+        if (m_node->isBinaryUseKind(MachineIntUse)) {
+            Int52Kind kind;
+            LValue left = lowWhicheverInt52(m_node->child1(), kind);
+            LValue right = lowInt52(m_node->child2(), kind);
+            setBoolean(m_out.greaterThan(left, right));
+            return;
+        }
+        
         if (m_node->isBinaryUseKind(NumberUse)) {
             setBoolean(
                 m_out.doubleGreaterThan(
@@ -1833,6 +1963,14 @@ private:
             setBoolean(
                 m_out.greaterThanOrEqual(
                     lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+            return;
+        }
+        
+        if (m_node->isBinaryUseKind(MachineIntUse)) {
+            Int52Kind kind;
+            LValue left = lowWhicheverInt52(m_node->child1(), kind);
+            LValue right = lowInt52(m_node->child2(), kind);
+            setBoolean(m_out.greaterThanOrEqual(left, right));
             return;
         }
         
@@ -2352,9 +2490,26 @@ private:
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || (edge.useKind() == Int32Use || edge.useKind() == KnownInt32Use));
         
+        if (edge->hasConstant()) {
+            JSValue value = m_graph.valueOfJSConstant(edge.node());
+            if (!value.isInt32()) {
+                terminate(Uncountable);
+                return m_out.int32Zero;
+            }
+            return m_out.constInt32(value.asInt32());
+        }
+        
         LoweredNodeValue value = m_int32Values.get(edge.node());
         if (isValid(value))
             return value.value();
+        
+        value = m_strictInt52Values.get(edge.node());
+        if (isValid(value))
+            return strictInt52ToInt32(edge, value.value());
+        
+        value = m_int52Values.get(edge.node());
+        if (isValid(value))
+            return strictInt52ToInt32(edge, int52ToStrictInt52(value.value()));
         
         value = m_jsValueValues.get(edge.node());
         if (isValid(value)) {
@@ -2371,9 +2526,121 @@ private:
         return m_out.int32Zero;
     }
     
+    enum Int52Kind { StrictInt52, Int52 };
+    LValue lowInt52(Edge edge, Int52Kind kind, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    {
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == MachineIntUse);
+        
+        if (edge->hasConstant()) {
+            JSValue value = m_graph.valueOfJSConstant(edge.node());
+            if (!value.isMachineInt()) {
+                terminate(Uncountable);
+                return m_out.int64Zero;
+            }
+            int64_t result = value.asMachineInt();
+            if (kind == Int52)
+                result <<= JSValue::int52ShiftAmount;
+            return m_out.constInt64(result);
+        }
+        
+        LoweredNodeValue value;
+        
+        switch (kind) {
+        case Int52:
+            value = m_int52Values.get(edge.node());
+            if (isValid(value))
+                return value.value();
+            
+            value = m_strictInt52Values.get(edge.node());
+            if (isValid(value))
+                return strictInt52ToInt52(value.value());
+            break;
+            
+        case StrictInt52:
+            value = m_strictInt52Values.get(edge.node());
+            if (isValid(value))
+                return value.value();
+            
+            value = m_int52Values.get(edge.node());
+            if (isValid(value))
+                return int52ToStrictInt52(value.value());
+            break;
+        }
+        
+        value = m_int32Values.get(edge.node());
+        if (isValid(value)) {
+            return setInt52WithStrictValue(
+                edge.node(), m_out.signExt(value.value(), m_out.int64), kind);
+        }
+        
+        RELEASE_ASSERT(!(m_state.forNode(edge).m_type & SpecInt52));
+        
+        value = m_jsValueValues.get(edge.node());
+        if (isValid(value)) {
+            LValue boxedResult = value.value();
+            FTL_TYPE_CHECK(
+                jsValueValue(boxedResult), edge, SpecMachineInt, isNotInt32(boxedResult));
+            return setInt52WithStrictValue(
+                edge.node(), m_out.signExt(unboxInt32(boxedResult), m_out.int64), kind);
+        }
+        
+        RELEASE_ASSERT(!(m_state.forNode(edge).m_type & SpecMachineInt));
+        terminate(Uncountable);
+        return m_out.int64Zero;
+    }
+    
+    LValue lowInt52(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    {
+        return lowInt52(edge, Int52, mode);
+    }
+    
+    LValue lowStrictInt52(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    {
+        return lowInt52(edge, StrictInt52, mode);
+    }
+    
+    bool betterUseStrictInt52(Node* node)
+    {
+        return !isValid(m_int52Values.get(node));
+    }
+    bool betterUseStrictInt52(Edge edge)
+    {
+        return betterUseStrictInt52(edge.node());
+    }
+    template<typename T>
+    Int52Kind bestInt52Kind(T node)
+    {
+        return betterUseStrictInt52(node) ? StrictInt52 : Int52;
+    }
+    Int52Kind opposite(Int52Kind kind)
+    {
+        switch (kind) {
+        case Int52:
+            return StrictInt52;
+        case StrictInt52:
+            return Int52;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    LValue lowWhicheverInt52(Edge edge, Int52Kind& kind, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    {
+        kind = bestInt52Kind(edge);
+        return lowInt52(edge, kind, mode);
+    }
+    
     LValue lowCell(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || isCell(edge.useKind()));
+        
+        if (edge->op() == JSConstant) {
+            JSValue value = m_graph.valueOfJSConstant(edge.node());
+            if (!value.isCell()) {
+                terminate(Uncountable);
+                return m_out.intPtrZero;
+            }
+            return m_out.constIntPtr(value.asCell());
+        }
         
         LoweredNodeValue value = m_jsValueValues.get(edge.node());
         if (isValid(value)) {
@@ -2419,6 +2686,15 @@ private:
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == BooleanUse);
         
+        if (edge->hasConstant()) {
+            JSValue value = m_graph.valueOfJSConstant(edge.node());
+            if (!value.isBoolean()) {
+                terminate(Uncountable);
+                return m_out.booleanFalse;
+            }
+            return m_out.constBool(value.asBoolean());
+        }
+        
         LoweredNodeValue value = m_booleanValues.get(edge.node());
         if (isValid(value))
             return value.value();
@@ -2442,6 +2718,15 @@ private:
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || isDouble(edge.useKind()));
         
+        if (edge->hasConstant()) {
+            JSValue value = m_graph.valueOfJSConstant(edge.node());
+            if (!value.isNumber()) {
+                terminate(Uncountable);
+                return m_out.doubleZero;
+            }
+            return m_out.constDouble(value.asNumber());
+        }
+        
         LoweredNodeValue value = m_doubleValues.get(edge.node());
         if (isValid(value))
             return value.value();
@@ -2452,6 +2737,14 @@ private:
             setDouble(edge.node(), result);
             return result;
         }
+        
+        value = m_strictInt52Values.get(edge.node());
+        if (isValid(value))
+            return strictInt52ToDouble(edge, value.value());
+        
+        value = m_int52Values.get(edge.node());
+        if (isValid(value))
+            return strictInt52ToDouble(edge, int52ToStrictInt52(value.value()));
         
         value = m_jsValueValues.get(edge.node());
         if (isValid(value)) {
@@ -2472,7 +2765,7 @@ private:
             m_out.appendTo(doubleCase, continuation);
             
             FTL_TYPE_CHECK(
-                jsValueValue(boxedResult), edge, SpecNumber, isCellOrMisc(boxedResult));
+                jsValueValue(boxedResult), edge, SpecFullNumber, isCellOrMisc(boxedResult));
             
             ValueFromBlock unboxedDouble = m_out.anchor(unboxDouble(boxedResult));
             m_out.jump(continuation);
@@ -2485,7 +2778,7 @@ private:
             return result;
         }
         
-        RELEASE_ASSERT(!(m_state.forNode(edge).m_type & SpecNumber));
+        RELEASE_ASSERT(!(m_state.forNode(edge).m_type & SpecFullNumber));
         terminate(Uncountable);
         return m_out.doubleZero;
     }
@@ -2493,6 +2786,9 @@ private:
     LValue lowJSValue(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == UntypedUse);
+        
+        if (edge->hasConstant())
+            return m_out.constInt64(JSValue::encode(m_graph.valueOfJSConstant(edge.node())));
         
         LoweredNodeValue value = m_jsValueValues.get(edge.node());
         if (isValid(value))
@@ -2504,6 +2800,14 @@ private:
             setJSValue(edge.node(), result);
             return result;
         }
+        
+        value = m_strictInt52Values.get(edge.node());
+        if (isValid(value))
+            return strictInt52ToJSValue(value.value());
+        
+        value = m_int52Values.get(edge.node());
+        if (isValid(value))
+            return strictInt52ToJSValue(int52ToStrictInt52(value.value()));
         
         value = m_booleanValues.get(edge.node());
         if (isValid(value)) {
@@ -2532,6 +2836,77 @@ private:
         LValue result = lowCell(edge);
         setStorage(edge.node(), result);
         return result;
+    }
+    
+    LValue strictInt52ToInt32(Edge edge, LValue value)
+    {
+        LValue result = m_out.castToInt32(value);
+        FTL_TYPE_CHECK(
+            noValue(), edge, SpecInt32,
+            m_out.notEqual(m_out.signExt(result, m_out.int64), value));
+        setInt32(edge.node(), result);
+        return result;
+    }
+    
+    LValue strictInt52ToDouble(Edge edge, LValue value)
+    {
+        LValue result = m_out.intToDouble(value);
+        setDouble(edge.node(), result);
+        return result;
+    }
+    
+    LValue strictInt52ToJSValue(LValue value)
+    {
+        LBasicBlock isInt32 = FTL_NEW_BLOCK(m_out, ("strictInt52ToJSValue isInt32 case"));
+        LBasicBlock isDouble = FTL_NEW_BLOCK(m_out, ("strictInt52ToJSValue isDouble case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("strictInt52ToJSValue continuation"));
+        
+        Vector<ValueFromBlock, 2> results;
+            
+        LValue int32Value = m_out.castToInt32(value);
+        m_out.branch(
+            m_out.equal(m_out.signExt(int32Value, m_out.int64), value),
+            isInt32, isDouble);
+        
+        LBasicBlock lastNext = m_out.appendTo(isInt32, isDouble);
+        
+        results.append(m_out.anchor(boxInt32(int32Value)));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(isDouble, continuation);
+        
+        results.append(m_out.anchor(boxDouble(m_out.intToDouble(value))));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        return m_out.phi(m_out.int64, results);
+    }
+    
+    LValue setInt52WithStrictValue(Node* node, LValue value, Int52Kind kind)
+    {
+        switch (kind) {
+        case StrictInt52:
+            setStrictInt52(node, value);
+            return value;
+            
+        case Int52:
+            value = strictInt52ToInt52(value);
+            setInt52(node, value);
+            return value;
+        }
+        
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    LValue strictInt52ToInt52(LValue value)
+    {
+        return m_out.shl(value, m_out.constInt64(JSValue::int52ShiftAmount));
+    }
+    
+    LValue int52ToStrictInt52(LValue value)
+    {
+        return m_out.aShr(value, m_out.constInt64(JSValue::int52ShiftAmount));
     }
     
     LValue isNotInt32(LValue jsValue)
@@ -2794,7 +3169,7 @@ private:
         
         LValue value = lowDouble(edge);
         FTL_TYPE_CHECK(
-            doubleValue(value), edge, SpecRealNumber,
+            doubleValue(value), edge, SpecFullRealNumber,
             m_out.doubleNotEqualOrUnordered(value, value));
     }
     
@@ -2802,7 +3177,7 @@ private:
     {
         lowBoolean(edge);
     }
-
+    
     bool masqueradesAsUndefinedWatchpointIsStillValid()
     {
         return m_graph.masqueradesAsUndefinedWatchpointIsStillValid(m_node->codeOrigin);
@@ -2933,6 +3308,10 @@ private:
                 m_valueSources[i] = ValueSource(Int32InJSStack);
                 break;
                 
+            case FlushedInt52:
+                m_valueSources[i] = ValueSource(Int52InJSStack);
+                break;
+                
             case FlushedDouble:
                 m_valueSources[i] = ValueSource(DoubleInJSStack);
                 break;
@@ -3036,6 +3415,9 @@ private:
             case Int32InJSStack:
                 exit.m_values[i] = ExitValue::inJSStackAsInt32();
                 break;
+            case Int52InJSStack:
+                exit.m_values[i] = ExitValue::inJSStackAsInt52();
+                break;
             case DoubleInJSStack:
                 exit.m_values[i] = ExitValue::inJSStackAsDouble();
                 break;
@@ -3136,6 +3518,18 @@ private:
         LoweredNodeValue value = m_int32Values.get(node);
         if (isValid(value)) {
             addExitArgument(exit, arguments, index, ValueFormatInt32, value.value());
+            return;
+        }
+        
+        value = m_int52Values.get(node);
+        if (isValid(value)) {
+            addExitArgument(exit, arguments, index, ValueFormatInt52, value.value());
+            return;
+        }
+        
+        value = m_strictInt52Values.get(node);
+        if (isValid(value)) {
+            addExitArgument(exit, arguments, index, ValueFormatStrictInt52, value.value());
             return;
         }
         
@@ -3242,6 +3636,28 @@ private:
     {
         m_int32Values.set(node, LoweredNodeValue(value, m_highBlock));
     }
+    void setInt52(Node* node, LValue value)
+    {
+        m_int52Values.set(node, LoweredNodeValue(value, m_highBlock));
+    }
+    void setStrictInt52(Node* node, LValue value)
+    {
+        m_strictInt52Values.set(node, LoweredNodeValue(value, m_highBlock));
+    }
+    void setInt52(Node* node, LValue value, Int52Kind kind)
+    {
+        switch (kind) {
+        case Int52:
+            setInt52(node, value);
+            return;
+            
+        case StrictInt52:
+            setStrictInt52(node, value);
+            return;
+        }
+        
+        RELEASE_ASSERT_NOT_REACHED();
+    }
     void setJSValue(Node* node, LValue value)
     {
         m_jsValueValues.set(node, LoweredNodeValue(value, m_highBlock));
@@ -3262,6 +3678,18 @@ private:
     void setInt32(LValue value)
     {
         setInt32(m_node, value);
+    }
+    void setInt52(LValue value)
+    {
+        setInt52(m_node, value);
+    }
+    void setStrictInt52(LValue value)
+    {
+        setStrictInt52(m_node, value);
+    }
+    void setInt52(LValue value, Int52Kind kind)
+    {
+        setInt52(m_node, value, kind);
     }
     void setJSValue(LValue value)
     {
@@ -3342,6 +3770,8 @@ private:
     LValue m_tagMask;
     
     HashMap<Node*, LoweredNodeValue> m_int32Values;
+    HashMap<Node*, LoweredNodeValue> m_strictInt52Values;
+    HashMap<Node*, LoweredNodeValue> m_int52Values;
     HashMap<Node*, LoweredNodeValue> m_jsValueValues;
     HashMap<Node*, LoweredNodeValue> m_booleanValues;
     HashMap<Node*, LoweredNodeValue> m_storageValues;

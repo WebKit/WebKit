@@ -1,3 +1,31 @@
+2013-09-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should support Int52 for local variables
+        https://bugs.webkit.org/show_bug.cgi?id=121064
+
+        Reviewed by Oliver Hunt.
+
+        * js/dfg-int-overflow-large-constants-in-a-line-expected.txt:
+        * js/regress/large-int-captured-expected.txt: Added.
+        * js/regress/large-int-captured.html: Added.
+        * js/regress/large-int-expected.txt: Added.
+        * js/regress/large-int-neg-expected.txt: Added.
+        * js/regress/large-int-neg.html: Added.
+        * js/regress/large-int.html: Added.
+        * js/regress/marsaglia-larger-ints-expected.txt: Added.
+        * js/regress/marsaglia-larger-ints.html: Added.
+        * js/regress/script-tests/large-int-captured.js: Added.
+        (.bar):
+        (foo):
+        * js/regress/script-tests/large-int-neg.js: Added.
+        (foo):
+        * js/regress/script-tests/large-int.js: Added.
+        (foo):
+        * js/regress/script-tests/marsaglia-larger-ints.js: Added.
+        (uint):
+        (marsaglia):
+        * js/script-tests/dfg-int-overflow-large-constants-in-a-line.js:
+
 2013-09-18  Andreas Kling  <akling@apple.com>
 
         Missed one rebaseline for the RenderMenuList change.

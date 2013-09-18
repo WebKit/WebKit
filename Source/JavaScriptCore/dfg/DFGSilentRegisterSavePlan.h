@@ -48,6 +48,8 @@ enum SilentSpillAction {
 enum SilentFillAction {
     DoNothingForFill,
     SetInt32Constant,
+    SetInt52Constant,
+    SetStrictInt52Constant,
     SetBooleanConstant,
     SetCellConstant,
     SetTrustedJSConstant,
@@ -61,8 +63,12 @@ enum SilentFillAction {
     Load32Tag,
     Load32Payload,
     Load32PayloadBoxInt,
+    Load32PayloadConvertToInt52,
+    Load32PayloadSignExtend,
     LoadPtr,
     Load64,
+    Load64ShiftInt52Right,
+    Load64ShiftInt52Left,
     LoadDouble,
     LoadDoubleBoxDouble,
     LoadJSUnboxDouble

@@ -191,6 +191,7 @@ public:
 
     int32_t asInt32() const;
     uint32_t asUInt32() const;
+    int64_t asMachineInt() const;
     double asDouble() const;
     bool asBoolean() const;
     double asNumber() const;
@@ -202,6 +203,7 @@ public:
     bool isNull() const;
     bool isUndefinedOrNull() const;
     bool isBoolean() const;
+    bool isMachineInt() const;
     bool isNumber() const;
     bool isString() const;
     bool isPrimitive() const;
@@ -273,6 +275,11 @@ public:
     void dumpInContext(PrintStream&, DumpContext*) const;
 
     JS_EXPORT_PRIVATE JSObject* synthesizePrototype(ExecState*) const;
+
+    // Constants used for Int52. Int52 isn't part of JSValue right now, but JSValues may be
+    // converted to Int52s and back again.
+    static const unsigned numberOfInt52Bits = 52;
+    static const unsigned int52ShiftAmount = 12;
 
 private:
     template <class T> JSValue(WriteBarrierBase<T>);

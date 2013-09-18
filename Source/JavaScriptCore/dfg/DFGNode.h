@@ -1241,12 +1241,12 @@ struct Node {
     
     bool shouldSpeculateNumber()
     {
-        return isNumberSpeculation(prediction());
+        return isFullNumberSpeculation(prediction());
     }
     
     bool shouldSpeculateNumberExpectingDefined()
     {
-        return isNumberSpeculationExpectingDefined(prediction());
+        return isFullNumberSpeculationExpectingDefined(prediction());
     }
     
     bool shouldSpeculateBoolean()
@@ -1424,9 +1424,9 @@ struct Node {
         return nodeCanSpeculateInt32(arithNodeFlags());
     }
     
-    bool canSpeculateInt48()
+    bool canSpeculateInt52()
     {
-        return nodeCanSpeculateInt48(arithNodeFlags());
+        return nodeCanSpeculateInt52(arithNodeFlags());
     }
     
     void dumpChildren(PrintStream& out)

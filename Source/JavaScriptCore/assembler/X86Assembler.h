@@ -829,12 +829,19 @@ public:
             m_formatter.immediate8(imm);
         }
     }
-#endif
+#endif // CPU(X86_64)
 
     void imull_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.twoByteOp(OP2_IMUL_GvEv, dst, src);
     }
+
+#if CPU(X86_64)
+    void imulq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.twoByteOp64(OP2_IMUL_GvEv, dst, src);
+    }
+#endif // CPU(X86_64)
 
     void imull_mr(int offset, RegisterID base, RegisterID dst)
     {
@@ -1610,6 +1617,14 @@ public:
         m_formatter.prefix(PRE_SSE_F2);
         m_formatter.twoByteOp(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, src);
     }
+
+#if CPU(X86_64)
+    void cvtsi2sdq_rr(RegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp64(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, src);
+    }
+#endif
 
     void cvtsi2sd_mr(int offset, RegisterID base, XMMRegisterID dst)
     {

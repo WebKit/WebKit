@@ -214,12 +214,11 @@ def defaultRun
     runDefault
     runAlwaysTriggerCopyPhase
     runNoCJIT
+    runDFGEager
     if $enableFTL
         runDefaultFTL
         runFTLNoCJIT
         runFTLEager
-    else
-        runDFGEager
     end
 end
 

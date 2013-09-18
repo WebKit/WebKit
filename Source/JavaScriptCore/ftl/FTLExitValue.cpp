@@ -53,6 +53,9 @@ void ExitValue::dumpInContext(PrintStream& out, DumpContext* context) const
     case ExitValueInJSStackAsInt32:
         out.print("InJSStackAsInt32");
         return;
+    case ExitValueInJSStackAsInt52:
+        out.print("InJSStackAsInt52");
+        return;
     case ExitValueInJSStackAsDouble:
         out.print("InJSStackAsDouble");
         return;

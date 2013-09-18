@@ -104,6 +104,8 @@ static void compileStub(
         jit.store64(GPRInfo::nonArgGPR0, AssemblyHelpers::addressFor(argument.operand()));
     }
     
+    // All temp registers are free at this point.
+    
     // Box anything that is already on the stack, or that is a constant.
     
     for (unsigned i = exit.m_values.size(); i--;) {
@@ -126,6 +128,13 @@ static void compileStub(
                 address.withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)),
                 GPRInfo::regT0);
             jit.or64(GPRInfo::tagTypeNumberRegister, GPRInfo::regT0);
+            jit.store64(GPRInfo::regT0, address);
+            break;
+        case ExitValueInJSStackAsInt52:
+            jit.load64(address, GPRInfo::regT0);
+            jit.rshift64(
+                AssemblyHelpers::TrustedImm32(JSValue::int52ShiftAmount), GPRInfo::regT0);
+            jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
             jit.store64(GPRInfo::regT0, address);
             break;
         case ExitValueInJSStackAsDouble:
@@ -160,9 +169,10 @@ static void compileStub(
     exit.m_code = FINALIZE_CODE_IF(
         shouldShowDisassembly(),
         patchBuffer,
-        ("FTL OSR exit #%u (bc#%u, %s) from %s",
+        ("FTL OSR exit #%u (bc#%u, %s) from %s, with operands = %s",
             exitID, exit.m_codeOrigin.bytecodeIndex,
-            exitKindToString(exit.m_kind), toCString(*codeBlock).data()));
+            exitKindToString(exit.m_kind), toCString(*codeBlock).data(),
+            toCString(ignoringContext<DumpContext>(exit.m_values)).data()));
 }
 
 extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)

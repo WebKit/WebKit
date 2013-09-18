@@ -112,6 +112,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case LogicalNot:
     case Int32ToDouble:
     case ExtractOSREntryLocal:
+    case Int52ToDouble:
+    case Int52ToValue:
         return;
         
     case MovHintAndCheck:
@@ -180,6 +182,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         switch (node->binaryUseKind()) {
         case Int32Use:
         case NumberUse:
+        case MachineIntUse:
             return;
         case UntypedUse:
             read(World);

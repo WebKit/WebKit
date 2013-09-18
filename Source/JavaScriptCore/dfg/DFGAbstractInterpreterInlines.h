@@ -310,6 +310,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
+    case Int52ToDouble: {
+        JSValue child = forNode(node->child1()).value();
+        if (child && child.isNumber()) {
+            setConstant(node, child);
+            break;
+        }
+        forNode(node).setType(SpecDouble);
+        break;
+    }
+        
+    case Int52ToValue: {
+        JSValue child = forNode(node->child1()).value();
+        if (child && child.isNumber()) {
+            setConstant(node, child);
+            break;
+        }
+        SpeculatedType type = forNode(node->child1()).m_type;
+        if (type & SpecInt52)
+            type = (type | SpecInt32 | SpecInt52AsDouble) & ~SpecInt52;
+        forNode(node).setType(type);
+        break;
+    }
+        
     case ValueAdd:
     case ArithAdd: {
         JSValue left = forNode(node->child1()).value();
@@ -324,9 +347,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (!bytecodeCanTruncateInteger(node->arithNodeFlags()))
                 node->setCanExit(true);
             break;
+        case MachineIntUse:
+            forNode(node).setType(SpecInt52);
+            if (!forNode(node->child1()).isType(SpecInt32)
+                || !forNode(node->child2()).isType(SpecInt32))
+                node->setCanExit(true);
+            break;
         case NumberUse:
-            if (isRealNumberSpeculation(forNode(node->child1()).m_type)
-                && isRealNumberSpeculation(forNode(node->child2()).m_type))
+            if (isFullRealNumberSpeculation(forNode(node->child1()).m_type)
+                && isFullRealNumberSpeculation(forNode(node->child2()).m_type))
                 forNode(node).setType(SpecDoubleReal);
             else
                 forNode(node).setType(SpecDouble);
@@ -334,7 +363,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         default:
             RELEASE_ASSERT(node->op() == ValueAdd);
             clobberWorld(node->codeOrigin, clobberLimit);
-            forNode(node).setType(SpecString | SpecInt32 | SpecNumber);
+            forNode(node).setType(SpecString | SpecBytecodeNumber);
             break;
         }
         break;
@@ -358,6 +387,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (!bytecodeCanTruncateInteger(node->arithNodeFlags()))
                 node->setCanExit(true);
             break;
+        case MachineIntUse:
+            forNode(node).setType(SpecInt52);
+            if (!forNode(node->child1()).isType(SpecInt32)
+                || !forNode(node->child2()).isType(SpecInt32))
+                node->setCanExit(true);
+            break;
         case NumberUse:
             forNode(node).setType(SpecDouble);
             break;
@@ -378,6 +413,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Int32Use:
             forNode(node).setType(SpecInt32);
             if (!bytecodeCanTruncateInteger(node->arithNodeFlags()))
+                node->setCanExit(true);
+            break;
+        case MachineIntUse:
+            forNode(node).setType(SpecInt52);
+            if (m_state.forNode(node->child1()).couldBeType(SpecInt52))
+                node->setCanExit(true);
+            if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                 node->setCanExit(true);
             break;
         case NumberUse:
@@ -404,9 +446,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 || !bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                 node->setCanExit(true);
             break;
+        case MachineIntUse:
+            forNode(node).setType(SpecInt52);
+            node->setCanExit(true);
+            break;
         case NumberUse:
-            if (isRealNumberSpeculation(forNode(node->child1()).m_type)
-                || isRealNumberSpeculation(forNode(node->child2()).m_type))
+            if (isFullRealNumberSpeculation(forNode(node->child1()).m_type)
+                || isFullRealNumberSpeculation(forNode(node->child2()).m_type))
                 forNode(node).setType(SpecDoubleReal);
             else
                 forNode(node).setType(SpecDouble);
@@ -586,7 +632,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
         
-        if (isNumberSpeculation(abstractChild.m_type)) {
+        if (isFullNumberSpeculation(abstractChild.m_type)) {
             setConstant(node, vm->smallStrings.numberString());
             break;
         }
@@ -811,6 +857,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Array::Uint32Array:
             if (node->shouldSpeculateInt32())
                 forNode(node).setType(SpecInt32);
+            else if (enableInt52() && node->shouldSpeculateMachineInt())
+                forNode(node).setType(SpecInt52);
             else
                 forNode(node).setType(SpecDouble);
             break;
@@ -863,7 +911,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArrayPush:
         node->setCanExit(true);
         clobberWorld(node->codeOrigin, clobberLimit);
-        forNode(node).setType(SpecNumber);
+        forNode(node).setType(SpecBytecodeNumber);
         break;
             
     case ArrayPop:
@@ -934,8 +982,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // NB. The more canonical way of writing this would have been:
         //
         // destination = source;
-        // if (destination.m_type & !(SpecNumber | SpecString | SpecBoolean)) {
-        //     destination.filter(SpecNumber | SpecString | SpecBoolean);
+        // if (destination.m_type & !(SpecFullNumber | SpecString | SpecBoolean)) {
+        //     destination.filter(SpecFullNumber | SpecString | SpecBoolean);
         //     AbstractValue string;
         //     string.set(vm->stringStructure);
         //     destination.merge(string);
@@ -955,7 +1003,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld(node->codeOrigin, clobberLimit);
         
         SpeculatedType type = source.m_type;
-        if (type & ~(SpecNumber | SpecString | SpecBoolean))
+        if (type & ~(SpecFullNumber | SpecString | SpecBoolean))
             type = (SpecHeapTop & ~SpecCell) | SpecString;
 
         destination.setType(type);

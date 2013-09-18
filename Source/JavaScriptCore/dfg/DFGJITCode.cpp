@@ -103,6 +103,9 @@ void JITCode::reconstruct(
         case AlreadyInJSStackAsUnboxedInt32:
             value = jsNumber(exec->r(operand).unboxedInt32());
             break;
+        case AlreadyInJSStackAsUnboxedInt52:
+            value = jsNumber(exec->r(operand).unboxedInt52());
+            break;
         case AlreadyInJSStackAsUnboxedDouble:
             value = jsDoubleNumber(exec->r(operand).unboxedDouble());
             break;

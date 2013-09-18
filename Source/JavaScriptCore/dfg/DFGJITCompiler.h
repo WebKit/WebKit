@@ -451,8 +451,18 @@ public:
             Node* node = basicBlock.variablesAtHead.local(local);
             if (!node || !node->shouldGenerate())
                 entry->m_expectedValues.local(local).makeHeapTop();
-            else if (node->variableAccessData()->flushFormat() == FlushedDouble)
-                entry->m_localsForcedDouble.set(local);
+            else {
+                switch (node->variableAccessData()->flushFormat()) {
+                case FlushedDouble:
+                    entry->m_localsForcedDouble.set(local);
+                    break;
+                case FlushedInt52:
+                    entry->m_localsForcedMachineInt.set(local);
+                    break;
+                default:
+                    break;
+                }
+            }
         }
 #else
         UNUSED_PARAM(basicBlock);

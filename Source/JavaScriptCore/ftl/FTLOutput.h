@@ -166,6 +166,18 @@ public:
     {
         return call(mulWithOverflow32Intrinsic(), left, right);
     }
+    LValue addWithOverflow64(LValue left, LValue right)
+    {
+        return call(addWithOverflow64Intrinsic(), left, right);
+    }
+    LValue subWithOverflow64(LValue left, LValue right)
+    {
+        return call(subWithOverflow64Intrinsic(), left, right);
+    }
+    LValue mulWithOverflow64(LValue left, LValue right)
+    {
+        return call(mulWithOverflow64Intrinsic(), left, right);
+    }
     LValue doubleAbs(LValue value)
     {
         return call(doubleAbsIntrinsic(), value);

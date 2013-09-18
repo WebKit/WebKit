@@ -49,6 +49,7 @@ enum ExitValueKind {
     ExitValueConstant,
     ExitValueInJSStack,
     ExitValueInJSStackAsInt32,
+    ExitValueInJSStackAsInt52,
     ExitValueInJSStackAsDouble
 };
 
@@ -79,6 +80,13 @@ public:
     {
         ExitValue result;
         result.m_kind = ExitValueInJSStackAsInt32;
+        return result;
+    }
+    
+    static ExitValue inJSStackAsInt52()
+    {
+        ExitValue result;
+        result.m_kind = ExitValueInJSStackAsInt52;
         return result;
     }
     

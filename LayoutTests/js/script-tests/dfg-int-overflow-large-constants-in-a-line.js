@@ -47,7 +47,4 @@ function foo(a) {
     return x | 0
 }
 
-for (var i = 0; i < 200; ++i)
-    shouldBe("foo(2147483647)", "2147483552");
-
-
+dfgShouldBe(foo, "foo(2147483647)", "2147483552");

@@ -230,16 +230,19 @@ public:
     
     bool addShouldSpeculateMachineInt(Node* add)
     {
+        if (!enableInt52())
+            return false;
+        
         Node* left = add->child1().node();
         Node* right = add->child2().node();
 
         bool speculation;
         if (add->op() == ValueAdd)
-            speculation = Node::shouldSpeculateMachineIntExpectingDefined(left, right);
+            speculation = Node::shouldSpeculateMachineInt(left, right);
         else
-            speculation = Node::shouldSpeculateMachineIntForArithmetic(left, right);
+            speculation = Node::shouldSpeculateMachineInt(left, right);
 
-        return speculation && !hasExitSite(add, Int48Overflow);
+        return speculation && !hasExitSite(add, Int52Overflow);
     }
     
     bool mulShouldSpeculateInt32(Node* mul)
@@ -257,12 +260,15 @@ public:
     {
         ASSERT(mul->op() == ArithMul);
         
+        if (!enableInt52())
+            return false;
+        
         Node* left = mul->child1().node();
         Node* right = mul->child2().node();
 
-        return Node::shouldSpeculateMachineIntForArithmetic(left, right)
-            && mul->canSpeculateInt48()
-            && !hasExitSite(mul, Int48Overflow);
+        return Node::shouldSpeculateMachineInt(left, right)
+            && mul->canSpeculateInt52()
+            && !hasExitSite(mul, Int52Overflow);
     }
     
     bool negateShouldSpeculateInt32(Node* negate)
@@ -274,9 +280,11 @@ public:
     bool negateShouldSpeculateMachineInt(Node* negate)
     {
         ASSERT(negate->op() == ArithNegate);
-        return negate->child1()->shouldSpeculateMachineIntForArithmetic()
-            && !hasExitSite(negate, Int48Overflow)
-            && negate->canSpeculateInt48();
+        if (!enableInt52())
+            return false;
+        return negate->child1()->shouldSpeculateMachineInt()
+            && !hasExitSite(negate, Int52Overflow)
+            && negate->canSpeculateInt52();
     }
     
     // Helper methods to check nodes for constants.

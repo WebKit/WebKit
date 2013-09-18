@@ -114,6 +114,10 @@ namespace JSC { namespace DFG {
     macro(Int32ToDouble, NodeResultNumber) \
     /* Used to speculate that a double value is actually an integer. */\
     macro(DoubleAsInt32, NodeResultInt32 | NodeExitsForward) \
+    /* Used to separate representation and register allocation of Int52's represented */\
+    /* as values. */\
+    macro(Int52ToValue, NodeResultJS) \
+    macro(Int52ToDouble, NodeResultNumber) \
     \
     /* Nodes for arithmetic operations. */\
     macro(ArithAdd, NodeResultNumber | NodeMustGenerate) \
@@ -312,7 +316,9 @@ inline bool permitsOSRBackwardRewiring(NodeType op)
         RELEASE_ASSERT_NOT_REACHED();
         return true;
     case UInt32ToNumber:
-        // This is the only node where we do:
+    case Int52ToValue:
+    case Int52ToDouble:
+        // These are the only node where we do:
         //
         //     b: UInt32ToNumber(@a)
         //     c: SetLocal(@b)
@@ -355,6 +361,17 @@ inline unsigned forwardRewiringSelectionScore(NodeType op)
     case ValueToInt32:
         // This loses information. Only use it if there are no better alternatives.
         return 25;
+        
+    case Int52ToValue:
+        // Loses no information. It just boxes the value, which is what OSR wants
+        // to do anyway.
+        return 100;
+        
+    case Int52ToDouble:
+        // This is like Int32ToDouble; we can use it because it gives a semantically
+        // equivalent value but that value may be an int32 in a double, so we'd
+        // rather not if we can avoid it.
+        return 75;
         
     default:
         return 0;

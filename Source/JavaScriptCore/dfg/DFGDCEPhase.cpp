@@ -166,7 +166,7 @@ private:
                     // Consider the possibility that UInt32ToNumber is dead but its
                     // child isn't; if so then we should MovHint the child.
                     if (!node->child1()->shouldGenerate()
-                        && node->child1()->op() == UInt32ToNumber)
+                        && permitsOSRBackwardRewiring(node->child1()->op()))
                         node->child1() = node->child1()->child1();
 
                     if (!node->child1()->shouldGenerate()) {
