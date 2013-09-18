@@ -28,7 +28,7 @@
 #if USE(3D_GRAPHICS)
 
 #include "ANGLEWebKitBridge.h"
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -193,7 +193,7 @@ bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShade
     if (!validateSuccess) {
         int logSize = getValidationResultValue(compiler, SH_INFO_LOG_LENGTH);
         if (logSize > 1) {
-            OwnArrayPtr<char> logBuffer = adoptArrayPtr(new char[logSize]);
+            auto logBuffer = std::make_unique<char[]>(logSize);
             if (logBuffer) {
                 ShGetInfoLog(compiler, logBuffer.get());
                 shaderValidationLog = logBuffer.get();
@@ -204,7 +204,7 @@ bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShade
 
     int translationLength = getValidationResultValue(compiler, SH_OBJECT_CODE_LENGTH);
     if (translationLength > 1) {
-        OwnArrayPtr<char> translationBuffer = adoptArrayPtr(new char[translationLength]);
+        auto translationBuffer = std::make_unique<char[]>(translationLength);
         if (!translationBuffer)
             return false;
         ShGetObjectCode(compiler, translationBuffer.get());

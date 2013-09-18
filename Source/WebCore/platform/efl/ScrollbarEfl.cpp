@@ -38,7 +38,7 @@
 #include <Evas.h>
 #include <new>
 #include <string>
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
 using namespace std;
@@ -171,7 +171,7 @@ void ScrollbarEfl::updateThumbPositionAndProportion()
     m_lastTotalSize = tSize;
     m_lastVisibleSize = vSize;
 
-    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[sizeof(Edje_Message_Float_Set) + sizeof(double)]);
+    auto buffer = std::make_unique<char[]>(sizeof(Edje_Message_Float_Set) + sizeof(double));
     Edje_Message_Float_Set* message = new(buffer.get()) Edje_Message_Float_Set;
     message->count = 2;
 

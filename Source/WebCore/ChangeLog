@@ -1,3 +1,81 @@
+2013-09-17  Sam Weinig  <sam@webkit.org>
+
+        Replace use of OwnArrayPtr<Foo> with std::unique_ptr<Foo[]> in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=121527
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::setBuffer):
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/OscillatorNode.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::setupParser):
+        (WebCore::CSSParser::currentCharacter16):
+        * css/CSSParser.h:
+        * html/HTMLAreaElement.h:
+        * html/HTMLFrameSetElement.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContext::simulateVertexAttrib0):
+        (WebCore::WebGLRenderingContext::LRUImageBufferCache::LRUImageBufferCache):
+        * html/canvas/WebGLRenderingContext.h:
+        * platform/ScrollAnimatorNone.cpp:
+        * platform/audio/DynamicsCompressor.cpp:
+        (WebCore::DynamicsCompressor::setNumberOfChannels):
+        * platform/audio/DynamicsCompressor.h:
+        * platform/audio/FFTFrame.h:
+        * platform/audio/gstreamer/FFTFrameGStreamer.cpp:
+        (WebCore::FFTFrame::FFTFrame):
+        * platform/efl/ScrollbarEfl.cpp:
+        (ScrollbarEfl::updateThumbPositionAndProportion):
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::ANGLEWebKitBridge::compileShaderSource):
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::texImage2DResourceSafe):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+        * platform/graphics/blackberry/LayerTexture.cpp:
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::getDirtyRects):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::Texture::updateSubRect):
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::HarfBuzzShaper):
+        (WebCore::HarfBuzzShaper::setNormalizedBuffer):
+        * platform/graphics/harfbuzz/HarfBuzzShaper.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::getActiveAttrib):
+        (WebCore::GraphicsContext3D::getActiveUniform):
+        (WebCore::GraphicsContext3D::getProgramInfoLog):
+        (WebCore::GraphicsContext3D::getShaderInfoLog):
+        * platform/graphics/opentype/OpenTypeSanitizer.cpp:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        * platform/graphics/wince/SharedBitmap.cpp:
+        (WebCore::SharedBitmap::SharedBitmap):
+        (WebCore::SharedBitmap::to16bit):
+        * platform/graphics/wince/SharedBitmap.h:
+        * platform/image-decoders/blackberry/JPEGImageDecoder.cpp:
+        (WebCore::ImageReader::decode):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::createRowBuffer):
+        * platform/win/ContextMenuWin.cpp:
+        (WebCore::ContextMenu::getContextMenuItems):
+        * platform/win/LoggingWin.cpp:
+        (WebCore::logLevelString):
+        * plugins/PluginPackage.cpp:
+        * plugins/blackberry/PluginViewBlackBerry.cpp:
+        (WebCore::PluginView::handleTouchEvent):
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+
 2013-09-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r156001.

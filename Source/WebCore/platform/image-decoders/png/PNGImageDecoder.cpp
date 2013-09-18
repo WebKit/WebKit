@@ -42,8 +42,8 @@
 
 #include "Color.h"
 #include "png.h"
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/StdLibExtras.h>
 
 #if USE(QCMSLIB)
 #include "qcms.h"
@@ -179,7 +179,7 @@ public:
     void createInterlaceBuffer(int size) { m_interlaceBuffer = new png_byte[size]; }
 #if USE(QCMSLIB)
     png_bytep rowBuffer() const { return m_rowBuffer.get(); }
-    void createRowBuffer(int size) { m_rowBuffer = adoptArrayPtr(new png_byte[size]); }
+    void createRowBuffer(int size) { m_rowBuffer = std::make_unique<png_byte[]>(size); }
     qcms_transform* colorTransform() const { return m_transform; }
 
     void createColorTransform(const ColorProfile& colorProfile, bool hasAlpha)
@@ -215,7 +215,7 @@ private:
     png_bytep m_interlaceBuffer;
 #if USE(QCMSLIB)
     qcms_transform* m_transform;
-    OwnArrayPtr<png_byte> m_rowBuffer;
+    std::unique_ptr<png_byte[]> m_rowBuffer;
 #endif
 };
 

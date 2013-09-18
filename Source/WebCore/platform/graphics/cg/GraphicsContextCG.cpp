@@ -41,7 +41,6 @@
 #include "Timer.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/MathExtras.h>
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)

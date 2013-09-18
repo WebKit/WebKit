@@ -39,6 +39,7 @@
 #include <unicode/normlzr.h>
 #include <unicode/uchar.h>
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
 
@@ -195,7 +196,7 @@ HarfBuzzShaper::HarfBuzzShaper(const Font* font, const TextRun& run)
     , m_fromIndex(0)
     , m_toIndex(m_run.length())
 {
-    m_normalizedBuffer = adoptArrayPtr(new UChar[m_run.length() + 1]);
+    m_normalizedBuffer = std::make_unique<UChar[]>(m_run.length() + 1);
     m_normalizedBufferLength = m_run.length();
     normalizeCharacters(m_run, m_normalizedBuffer.get(), m_normalizedBufferLength);
     setPadding(m_run.expansion());
@@ -277,7 +278,7 @@ void HarfBuzzShaper::setNormalizedBuffer(NormalizeMode normalizeMode)
         sourceText = normalizedString.getBuffer();
     }
 
-    m_normalizedBuffer = adoptArrayPtr(new UChar[m_normalizedBufferLength + 1]);
+    m_normalizedBuffer = std::make_unique<UChar[]>(m_normalizedBufferLength + 1);
     normalizeSpacesAndMirrorChars(sourceText, m_normalizedBuffer.get(), m_normalizedBufferLength, normalizeMode);
 }
 

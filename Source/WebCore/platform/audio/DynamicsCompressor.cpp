@@ -35,6 +35,7 @@
 #include "AudioBus.h"
 #include "AudioUtilities.h"
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -274,8 +275,8 @@ void DynamicsCompressor::setNumberOfChannels(unsigned numberOfChannels)
         m_postFilterPacks.append(adoptPtr(new ZeroPoleFilterPack4()));
     }
 
-    m_sourceChannels = adoptArrayPtr(new const float* [numberOfChannels]);
-    m_destinationChannels = adoptArrayPtr(new float* [numberOfChannels]);
+    m_sourceChannels = std::make_unique<const float*[]>(numberOfChannels);
+    m_destinationChannels = std::make_unique<float*[]>(numberOfChannels);
 
     m_compressor.setNumberOfChannels(numberOfChannels);
     m_numberOfChannels = numberOfChannels;

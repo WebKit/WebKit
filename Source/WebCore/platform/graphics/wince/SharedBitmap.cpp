@@ -27,8 +27,9 @@
 #include "TransformationMatrix.h"
 #include "WinCEGraphicsExtras.h"
 #include <wtf/HashSet.h>
-#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/RefCountedLeakCounter.h>
+#include <wtf/StdLibExtras.h>
 
 #include <windows.h>
 
@@ -74,7 +75,7 @@ SharedBitmap::SharedBitmap(const IntSize& size, BitmapInfo::BitCount bitCount, b
     if (bitCount == BitmapInfo::BitCount16)
         bufferSize /= 2;
 
-    m_pixelData = adoptArrayPtr(new unsigned[bufferSize]);
+    m_pixelData = std::make_unique<unsigned[]>(bufferSize);
     m_pixels = m_pixelData.get();
 
     if (initPixels)
@@ -133,7 +134,7 @@ bool SharedBitmap::to16bit()
     int width = newBmpInfo.width();
     int paddedWidth = newBmpInfo.paddedWidth();
     int bufferSize = paddedWidth * newBmpInfo.height();
-    OwnArrayPtr<unsigned> newPixelData = adoptArrayPtr(new unsigned[bufferSize / 2]);
+    auto newPixelData = std::make_unique<unsigned[]>(bufferSize / 2);
     void* newPixels = newPixelData.get();
 
     if (!newPixels)

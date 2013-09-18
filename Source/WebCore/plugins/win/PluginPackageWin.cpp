@@ -35,7 +35,7 @@
 #include "Timer.h"
 #include "npruntime_impl.h"
 #include <string.h>
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <shlwapi.h>
 
@@ -171,7 +171,7 @@ bool PluginPackage::fetchInfo()
     if (versionInfoSize == 0)
         return false;
 
-    OwnArrayPtr<char> versionInfoData = adoptArrayPtr(new char[versionInfoSize]);
+    auto versionInfoData = std::make_unique<char[]>(versionInfoSize);
 
     if (!GetFileVersionInfoW(const_cast<UChar*>(m_path.charactersWithNullTermination().data()),
             0, versionInfoSize, versionInfoData.get()))

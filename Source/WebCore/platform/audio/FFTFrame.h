@@ -49,6 +49,7 @@
 
 #if USE(WEBAUDIO_GSTREAMER)
 #include <glib.h>
+#include <memory>
 G_BEGIN_DECLS
 #include <gst/fft/gstfftf32.h>
 G_END_DECLS
@@ -167,7 +168,7 @@ private:
 #if USE(WEBAUDIO_GSTREAMER)
     GstFFTF32* m_fft;
     GstFFTF32* m_inverseFft;
-    OwnArrayPtr<GstFFTF32Complex> m_complexData;
+    std::unique_ptr<GstFFTF32Complex[]> m_complexData;
     AudioFloatArray m_realData;
     AudioFloatArray m_imagData;
 #endif // USE(WEBAUDIO_GSTREAMER)

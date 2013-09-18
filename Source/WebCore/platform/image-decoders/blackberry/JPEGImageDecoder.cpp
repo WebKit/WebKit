@@ -26,8 +26,8 @@
 #include <errno.h>
 #include <img/img.h>
 #include <string.h>
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -135,7 +135,7 @@ int ImageReader::decode(size_t width, size_t height, ImageFrame* aFrame)
     const int ColorComponents = 3;
     // Use a multiple of 2 bytes to improve performance
     int stride = (ColorComponents * width + 3) & ~3;
-    OwnArrayPtr<_uint8> buffer = adoptArrayPtr(new _uint8[stride * height]);
+    auto buffer = std::make_unique<_uint8[]>(stride * height);
     if (!buffer)
         return -1;
     img.access.direct.data = buffer.get();

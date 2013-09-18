@@ -38,6 +38,7 @@
 #include <algorithm>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 
 using namespace std;
 
@@ -355,8 +356,8 @@ bool AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
 
         output(0)->setNumberOfChannels(numberOfChannels);
 
-        m_sourceChannels = adoptArrayPtr(new const float* [numberOfChannels]);
-        m_destinationChannels = adoptArrayPtr(new float* [numberOfChannels]);
+        m_sourceChannels = std::make_unique<const float*[]>(numberOfChannels);
+        m_destinationChannels = std::make_unique<float*[]>(numberOfChannels);
 
         for (unsigned i = 0; i < numberOfChannels; ++i) 
             m_sourceChannels[i] = buffer->getChannelData(i)->data();

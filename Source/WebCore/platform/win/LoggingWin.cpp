@@ -29,7 +29,7 @@
 #if !LOG_DISABLED
 
 #include <windows.h>
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -42,7 +42,7 @@ String logLevelString()
     if (!length)
         return emptyString();
 
-    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[length]);
+    auto buffer = std::make_unique<char[]>(length);
 
     if (!GetEnvironmentVariableA(loggingEnvironmentVariable, buffer.get(), length))
         return emptyString();

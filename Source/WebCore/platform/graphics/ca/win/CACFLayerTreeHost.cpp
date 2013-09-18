@@ -38,7 +38,7 @@
 #include <limits.h>
 #include <QuartzCore/CABase.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/win/GDIObject.h>
 
 #ifdef DEBUG_ALL
@@ -250,7 +250,7 @@ static void getDirtyRects(HWND window, Vector<CGRect>& outRects)
     }
 
     DWORD dataSize = ::GetRegionData(region.get(), 0, 0);
-    OwnArrayPtr<unsigned char> regionDataBuffer = adoptArrayPtr(new unsigned char[dataSize]);
+    auto regionDataBuffer = std::make_unique<unsigned char[]>(dataSize);
     RGNDATA* regionData = reinterpret_cast<RGNDATA*>(regionDataBuffer.get());
     if (!::GetRegionData(region.get(), dataSize, regionData))
         return;

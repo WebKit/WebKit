@@ -25,7 +25,7 @@
 
 #include "HTMLAnchorElement.h"
 #include "LayoutRect.h"
-#include <wtf/OwnArrayPtr.h>
+#include <memory>
 
 namespace WebCore {
 

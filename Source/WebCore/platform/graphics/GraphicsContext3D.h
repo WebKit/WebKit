@@ -30,10 +30,10 @@
 #include "Image.h"
 #include "IntRect.h"
 #include "PlatformLayer.h"
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -900,7 +900,7 @@ public:
         CGImageRef m_cgImage;
         RetainPtr<CGImageRef> m_decodedImage;
         RetainPtr<CFDataRef> m_pixelData;
-        OwnArrayPtr<uint8_t> m_formalizedRGBA8Data;
+        std::unique_ptr<uint8_t[]> m_formalizedRGBA8Data;
 #elif PLATFORM(QT)
         QImage m_qtImage;
 #elif PLATFORM(BLACKBERRY)

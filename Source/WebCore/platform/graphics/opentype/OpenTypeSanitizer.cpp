@@ -35,7 +35,6 @@
 #include "SharedBuffer.h"
 #include "opentype-sanitiser.h"
 #include "ots-memory-stream.h"
-#include <wtf/OwnArrayPtr.h>
 
 namespace WebCore {
 

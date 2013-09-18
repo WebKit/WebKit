@@ -32,7 +32,7 @@
 #include "Node.h"
 #include "NotImplemented.h"
 #include <windows.h>
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
@@ -73,7 +73,7 @@ void ContextMenu::getContextMenuItems(HMENU menu, Vector<ContextMenuItem>& items
         }
 
         int menuStringLength = info.cch + 1;
-        OwnArrayPtr<WCHAR> menuString = adoptArrayPtr(new WCHAR[menuStringLength]);
+        auto menuString = std::make_unique<WCHAR[]>(menuStringLength);
         info.dwTypeData = menuString.get();
         info.cch = menuStringLength;
 

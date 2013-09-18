@@ -41,7 +41,7 @@
 #endif
 
 #include <runtime/ArrayBufferView.h>
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -113,7 +113,7 @@ GraphicsContext3D::DataFormat getDataFormat(GC3Denum destinationFormat, GC3Denum
 bool GraphicsContext3D::texImage2DResourceSafe(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, GC3Dint unpackAlignment)
 {
     ASSERT(unpackAlignment == 1 || unpackAlignment == 2 || unpackAlignment == 4 || unpackAlignment == 8);
-    OwnArrayPtr<unsigned char> zero;
+    std::unique_ptr<unsigned char[]> zero;
     if (!isResourceSafe() && width > 0 && height > 0) {
         unsigned int size;
         GC3Denum error = computeImageSizeInBytes(format, type, width, height, unpackAlignment, &size, 0);
@@ -121,7 +121,7 @@ bool GraphicsContext3D::texImage2DResourceSafe(GC3Denum target, GC3Dint level, G
             synthesizeGLError(error);
             return false;
         }
-        zero = adoptArrayPtr(new unsigned char[size]);
+        zero = std::make_unique<unsigned char[]>(size);
         if (!zero) {
             synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return false;
@@ -1184,7 +1184,8 @@ public:
     {
         const unsigned MaxNumberOfComponents = 4;
         const unsigned MaxBytesPerComponent  = 4;
-        m_unpackedIntermediateSrcData = adoptArrayPtr(new uint8_t[m_width * MaxNumberOfComponents *MaxBytesPerComponent]);
+        m_unpackedIntermediateSrcData = std::make_unique<uint8_t[]>(m_width * MaxNumberOfComponents * MaxBytesPerComponent);
+
         ASSERT(m_unpackedIntermediateSrcData.get());
     }
 
@@ -1206,7 +1207,7 @@ private:
     void* const m_dstStart;
     const int m_srcStride, m_dstStride;
     bool m_success;
-    OwnArrayPtr<uint8_t> m_unpackedIntermediateSrcData;
+    std::unique_ptr<uint8_t[]> m_unpackedIntermediateSrcData;
 };
 
 void FormatConverter::convert(GraphicsContext3D::DataFormat srcFormat, GraphicsContext3D::DataFormat dstFormat, GraphicsContext3D::AlphaOp alphaOp)

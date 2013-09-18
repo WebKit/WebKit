@@ -29,7 +29,6 @@
 #include <BlackBerryPlatformGraphicsContext.h>
 #include <GLES2/gl2.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/OwnArrayPtr.h>
 
 namespace WebCore {
 

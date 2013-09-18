@@ -36,7 +36,6 @@
 
 #include "FloatPoint.h"
 #include "NotImplemented.h"
-#include <wtf/OwnArrayPtr.h>
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
 #include <algorithm>

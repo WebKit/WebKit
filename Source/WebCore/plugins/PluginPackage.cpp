@@ -34,7 +34,6 @@
 #include "Timer.h"
 #include "npruntime_impl.h"
 #include <string.h>
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

@@ -70,6 +70,7 @@
 #include <runtime/JSLock.h>
 #include <sys/keycodes.h>
 #include <vector>
+#include <wtf/StdLibExtras.h>
 
 const unsigned UninitializedCoordinate = 0xffffffff;
 
@@ -368,9 +369,9 @@ void PluginView::handleTouchEvent(TouchEvent* event)
     npTouchEvent.points = 0;
     npTouchEvent.size = touchList->length();
 
-    OwnArrayPtr<NPTouchPoint> touchPoints;
+    std::unique_ptr<NPTouchPoint[]> touchPoints;
     if (touchList->length()) {
-        touchPoints = adoptArrayPtr(new NPTouchPoint[touchList->length()]);
+        touchPoints = std::make_unique<NPTouchPoint[]>(touchList->length());
         npTouchEvent.points = touchPoints.get();
         for (unsigned i = 0; i < touchList->length(); i++) {
             Touch* touchItem = touchList->item(i);

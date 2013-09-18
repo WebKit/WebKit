@@ -24,8 +24,8 @@
 #ifndef HTMLFrameSetElement_h
 #define HTMLFrameSetElement_h
 
-#include <wtf/OwnArrayPtr.h>
 #include "HTMLElement.h"
+#include <memory>
 
 namespace WebCore {
 

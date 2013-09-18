@@ -34,9 +34,9 @@
 #include "Timer.h"
 #include "WebGLGetInfo.h"
 
+#include <memory>
 #include <runtime/Float32Array.h>
 #include <runtime/Int32Array.h>
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -468,7 +468,7 @@ private:
         ImageBuffer* imageBuffer(const IntSize& size);
     private:
         void bubbleToFront(int idx);
-        OwnArrayPtr<OwnPtr<ImageBuffer> > m_buffers;
+        std::unique_ptr<OwnPtr<ImageBuffer>[]> m_buffers;
         int m_capacity;
     };
     LRUImageBufferCache m_videoCache;

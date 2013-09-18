@@ -50,7 +50,6 @@
 #include <runtime/Int32Array.h>
 #include <runtime/Uint8Array.h>
 #include <wtf/MainThread.h>
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/text/CString.h>
 
 #if USE(OPENGL_ES_2)
@@ -102,7 +101,7 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(ImageBuffer* imageBuffer, 
     int rowBytes = m_currentWidth * 4;
     int totalBytes = rowBytes * m_currentHeight;
 
-    OwnArrayPtr<unsigned char> pixels = adoptArrayPtr(new unsigned char[totalBytes]);
+    auto pixels = std::make_unique<unsigned char[]>(totalBytes);
     if (!pixels)
         return;
 
@@ -466,7 +465,7 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
         GraphicsContext3D::ShaderSourceEntry& entry = result->value;
 
         GLsizei size = 0;
-        OwnArrayPtr<GLchar> info = adoptArrayPtr(new GLchar[length]);
+        auto info = std::make_unique<GLchar[]>(length);
         ::glGetShaderInfoLog(shader, length, &size, info.get());
 
         entry.log = info.get();
@@ -619,7 +618,7 @@ bool GraphicsContext3D::getActiveAttrib(Platform3DObject program, GC3Duint index
     makeContextCurrent();
     GLint maxAttributeSize = 0;
     ::glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttributeSize);
-    OwnArrayPtr<GLchar> name = adoptArrayPtr(new GLchar[maxAttributeSize]); // GL_ACTIVE_ATTRIBUTE_MAX_LENGTH includes null termination.
+    auto name = std::make_unique<GLchar[]>(maxAttributeSize); // GL_ACTIVE_ATTRIBUTE_MAX_LENGTH includes null termination.
     GLsizei nameLength = 0;
     GLint size = 0;
     GLenum type = 0;
@@ -646,7 +645,7 @@ bool GraphicsContext3D::getActiveUniform(Platform3DObject program, GC3Duint inde
     GLint maxUniformSize = 0;
     ::glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformSize);
 
-    OwnArrayPtr<GLchar> name = adoptArrayPtr(new GLchar[maxUniformSize]); // GL_ACTIVE_UNIFORM_MAX_LENGTH includes null termination.
+    auto name = std::make_unique<GLchar[]>(maxUniformSize); // GL_ACTIVE_UNIFORM_MAX_LENGTH includes null termination.
     GLsizei nameLength = 0;
     GLint size = 0;
     GLenum type = 0;
@@ -1155,7 +1154,7 @@ String GraphicsContext3D::getProgramInfoLog(Platform3DObject program)
         return String(); 
 
     GLsizei size = 0;
-    OwnArrayPtr<GLchar> info = adoptArrayPtr(new GLchar[length]);
+    auto info = std::make_unique<GLchar[]>(length);
     ::glGetProgramInfoLog(program, length, &size, info.get());
 
     return String(info.get());
@@ -1222,7 +1221,7 @@ String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
         return String(); 
 
     GLsizei size = 0;
-    OwnArrayPtr<GLchar> info = adoptArrayPtr(new GLchar[length]);
+    auto info = std::make_unique<GLchar[]>(length);
     ::glGetShaderInfoLog(shader, length, &size, info.get());
 
     return String(info.get());

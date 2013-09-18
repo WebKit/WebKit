@@ -25,9 +25,9 @@
 #include "BitmapInfo.h"
 #include "ColorSpace.h"
 #include "GraphicsTypes.h"
+#include <memory>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wingdi.h>
@@ -132,7 +132,7 @@ private:
     BitmapInfo m_bmpInfo;
     OwnPtr<HBITMAP> m_hbitmap;
     void* m_pixels;
-    OwnArrayPtr<unsigned> m_pixelData;
+    std::unique_ptr<unsigned[]> m_pixelData;
     COLORREF m_transparentColor;
     int m_validHeight;
     bool m_locked;
