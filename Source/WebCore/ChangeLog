@@ -1,5 +1,48 @@
 2013-09-17  Sam Weinig  <sam@webkit.org>
 
+        Shrink SVGPathStringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=121536
+
+        Reviewed by Anders Carlsson.
+
+        - Use StringBuilder everywhere to avoid unnecessary temporary
+          String objects and code size bloat.
+        - Also did a drive by FINAL / OVERRIDE pass.
+
+        As an example of the win, the function SVGPathStringBuilder::arcTo
+        went from being 6120 bytes down to just 378 bytes.
+
+        * svg/SVGPathStringBuilder.cpp:
+        (WebCore::SVGPathStringBuilder::SVGPathStringBuilder):
+        (WebCore::SVGPathStringBuilder::~SVGPathStringBuilder):
+        (WebCore::SVGPathStringBuilder::cleanup):
+        (WebCore::SVGPathStringBuilder::incrementPathSegmentCount):
+        (WebCore::SVGPathStringBuilder::continueConsuming):
+        It wasn't helpful for these to be inlined, so move them to
+        the implementation file.
+
+        (WebCore::appendFlag):
+        (WebCore::appendNumber):
+        (WebCore::appendPoint):
+        Added helpers.
+
+        (WebCore::SVGPathStringBuilder::moveTo):
+        (WebCore::SVGPathStringBuilder::lineTo):
+        (WebCore::SVGPathStringBuilder::lineToHorizontal):
+        (WebCore::SVGPathStringBuilder::lineToVertical):
+        (WebCore::SVGPathStringBuilder::curveToCubic):
+        (WebCore::SVGPathStringBuilder::curveToCubicSmooth):
+        (WebCore::SVGPathStringBuilder::curveToQuadratic):
+        (WebCore::SVGPathStringBuilder::curveToQuadraticSmooth):
+        (WebCore::SVGPathStringBuilder::arcTo):
+        (WebCore::SVGPathStringBuilder::closePath):
+        * svg/SVGPathStringBuilder.h:
+        Stopped using operator+ and removed duplicate string building logic in each build
+        type (e.g. both sides of the PathCoordinateMode condition were doing almost identical
+        work).
+
+2013-09-17  Sam Weinig  <sam@webkit.org>
+
         CTTE: Convert some straggling Element subclasses constructors to take a Document&
         https://bugs.webkit.org/show_bug.cgi?id=121533
 

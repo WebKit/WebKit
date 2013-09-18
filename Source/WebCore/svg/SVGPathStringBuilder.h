@@ -21,34 +21,36 @@
 #define SVGPathStringBuilder_h
 
 #if ENABLE(SVG)
-#include "FloatPoint.h"
 #include "SVGPathConsumer.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-class SVGPathStringBuilder : public SVGPathConsumer {
+class SVGPathStringBuilder FINAL : public SVGPathConsumer {
 public:
+    SVGPathStringBuilder();
+    ~SVGPathStringBuilder();
+
     String result();
 
 private:
-    virtual void cleanup() { m_stringBuilder.clear(); }
-    virtual void incrementPathSegmentCount() { }
-    virtual bool continueConsuming() { return true; }
+    virtual void cleanup() OVERRIDE;
+    virtual void incrementPathSegmentCount() OVERRIDE;
+    virtual bool continueConsuming() OVERRIDE;
 
     // Used in UnalteredParsing/NormalizedParsing modes.
-    virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode);
-    virtual void lineTo(const FloatPoint&, PathCoordinateMode);
-    virtual void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode);
-    virtual void closePath();
+    virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) OVERRIDE;
+    virtual void lineTo(const FloatPoint&, PathCoordinateMode) OVERRIDE;
+    virtual void curveToCubic(const FloatPoint&, const FloatPoint&, const FloatPoint&, PathCoordinateMode) OVERRIDE;
+    virtual void closePath() OVERRIDE;
 
     // Only used in UnalteredParsing mode.
-    virtual void lineToHorizontal(float, PathCoordinateMode);
-    virtual void lineToVertical(float, PathCoordinateMode);
-    virtual void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode);
-    virtual void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode);
-    virtual void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode);
-    virtual void arcTo(float, float, float, bool largeArcFlag, bool sweepFlag, const FloatPoint&, PathCoordinateMode);
+    virtual void lineToHorizontal(float, PathCoordinateMode) OVERRIDE;
+    virtual void lineToVertical(float, PathCoordinateMode) OVERRIDE;
+    virtual void curveToCubicSmooth(const FloatPoint&, const FloatPoint&, PathCoordinateMode) OVERRIDE;
+    virtual void curveToQuadratic(const FloatPoint&, const FloatPoint&, PathCoordinateMode) OVERRIDE;
+    virtual void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) OVERRIDE;
+    virtual void arcTo(float, float, float, bool largeArcFlag, bool sweepFlag, const FloatPoint&, PathCoordinateMode) OVERRIDE;
 
     StringBuilder m_stringBuilder;
 };

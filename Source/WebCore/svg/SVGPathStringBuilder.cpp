@@ -25,6 +25,14 @@
 
 namespace WebCore {
 
+SVGPathStringBuilder::SVGPathStringBuilder()
+{
+}
+
+SVGPathStringBuilder::~SVGPathStringBuilder()
+{
+}
+
 String SVGPathStringBuilder::result()
 {
     unsigned size = m_stringBuilder.length();
@@ -36,101 +44,142 @@ String SVGPathStringBuilder::result()
     return m_stringBuilder.toString();
 }
 
+void SVGPathStringBuilder::cleanup()
+{
+    m_stringBuilder.clear();
+}
+
+void SVGPathStringBuilder::incrementPathSegmentCount()
+{
+}
+
+bool SVGPathStringBuilder::continueConsuming()
+{
+    return true;
+}
+
+static void appendFlag(StringBuilder& stringBuilder, bool flag)
+{
+    stringBuilder.append(flag ? '1' : '0');
+    stringBuilder.append(' ');
+}
+
+static void appendNumber(StringBuilder& stringBuilder, float number)
+{
+    stringBuilder.appendNumber(number);
+    stringBuilder.append(' ');
+}
+
+static void appendPoint(StringBuilder& stringBuilder, const FloatPoint& point)
+{
+    stringBuilder.appendNumber(point.x());
+    stringBuilder.append(' ');
+    stringBuilder.appendNumber(point.y());
+    stringBuilder.append(' ');
+}
+
 void SVGPathStringBuilder::moveTo(const FloatPoint& targetPoint, bool, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_stringBuilder.append("M " + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
+        m_stringBuilder.appendLiteral("M ");
     else
-        m_stringBuilder.append("m " + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
+        m_stringBuilder.appendLiteral("m ");
+
+    appendPoint(m_stringBuilder, targetPoint);
 }
 
 void SVGPathStringBuilder::lineTo(const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_stringBuilder.append("L " + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
+        m_stringBuilder.appendLiteral("L ");
     else
-        m_stringBuilder.append("l " + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
+        m_stringBuilder.appendLiteral("l ");
+
+    appendPoint(m_stringBuilder, targetPoint);
 }
 
 void SVGPathStringBuilder::lineToHorizontal(float x, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_stringBuilder.append("H " + String::number(x) + ' ');
+        m_stringBuilder.appendLiteral("H ");
     else
-        m_stringBuilder.append("h " + String::number(x) + ' ');
+        m_stringBuilder.appendLiteral("h ");
+
+    appendNumber(m_stringBuilder, x);
 }
 
 void SVGPathStringBuilder::lineToVertical(float y, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_stringBuilder.append("V " + String::number(y) + ' ');
+        m_stringBuilder.appendLiteral("V ");
     else
-        m_stringBuilder.append("v " + String::number(y) + ' ');
+        m_stringBuilder.appendLiteral("v ");
+
+    appendNumber(m_stringBuilder, y);
 }
 
 void SVGPathStringBuilder::curveToCubic(const FloatPoint& point1, const FloatPoint& point2, const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
-    if (mode == AbsoluteCoordinates) {
-        m_stringBuilder.append("C " + String::number(point1.x()) + ' ' + String::number(point1.y())
-                              + ' ' + String::number(point2.x()) + ' ' + String::number(point2.y())
-                              + ' ' + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
-        return;
-    }
+    if (mode == AbsoluteCoordinates)
+        m_stringBuilder.appendLiteral("C ");
+    else
+        m_stringBuilder.appendLiteral("c ");
 
-    m_stringBuilder.append("c " + String::number(point1.x()) + ' ' + String::number(point1.y())
-                          + ' ' + String::number(point2.x()) + ' ' + String::number(point2.y())
-                          + ' ' + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
+    appendPoint(m_stringBuilder, point1);
+    appendPoint(m_stringBuilder, point2);
+    appendPoint(m_stringBuilder, targetPoint);
 }
 
 void SVGPathStringBuilder::curveToCubicSmooth(const FloatPoint& point2, const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
-    if (mode == AbsoluteCoordinates) {
-        m_stringBuilder.append("S " + String::number(point2.x()) + ' ' + String::number(point2.y())
-                              + ' ' + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
-        return;
-    }
+    if (mode == AbsoluteCoordinates)
+        m_stringBuilder.appendLiteral("S ");
+    else
+        m_stringBuilder.appendLiteral("s ");
 
-    m_stringBuilder.append("s " + String::number(point2.x()) + ' ' + String::number(point2.y())
-                          + ' ' + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
+    appendPoint(m_stringBuilder, point2);
+    appendPoint(m_stringBuilder, targetPoint);
 }
 
 void SVGPathStringBuilder::curveToQuadratic(const FloatPoint& point1, const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
-    if (mode == AbsoluteCoordinates) {
-        m_stringBuilder.append("Q " + String::number(point1.x()) + ' ' + String::number(point1.y())
-                              + ' ' + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
-        return;
-    }
+    if (mode == AbsoluteCoordinates)
+        m_stringBuilder.appendLiteral("Q ");
+    else
+        m_stringBuilder.appendLiteral("q ");
 
-    m_stringBuilder.append("q " + String::number(point1.x()) + ' ' + String::number(point1.y())
-                          + ' ' + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
+    appendPoint(m_stringBuilder, point1);
+    appendPoint(m_stringBuilder, targetPoint);
 }
 
 void SVGPathStringBuilder::curveToQuadraticSmooth(const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_stringBuilder.append("T " + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
+        m_stringBuilder.appendLiteral("T ");
     else
-        m_stringBuilder.append("t " + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
+        m_stringBuilder.appendLiteral("t ");
+
+    appendPoint(m_stringBuilder, targetPoint);
 }
 
 void SVGPathStringBuilder::arcTo(float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag, const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
-    if (mode == AbsoluteCoordinates) {
-        m_stringBuilder.append("A " + String::number(r1) + ' ' + String::number(r2)
-                              + ' ' + String::number(angle) + ' ' + String::number(largeArcFlag) + ' ' + String::number(sweepFlag)
-                              + ' ' + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
-        return;
-    }
+    if (mode == AbsoluteCoordinates)
+        m_stringBuilder.appendLiteral("A ");
+    else
+        m_stringBuilder.appendLiteral("a ");
 
-    m_stringBuilder.append("a " + String::number(r1) + ' ' + String::number(r2)
-                          + ' ' + String::number(angle) + ' ' + String::number(largeArcFlag) + ' ' + String::number(sweepFlag)
-                          + ' ' + String::number(targetPoint.x()) + ' ' + String::number(targetPoint.y()) + ' ');
+    appendNumber(m_stringBuilder, r1);
+    appendNumber(m_stringBuilder, r2);
+    appendNumber(m_stringBuilder, angle);
+    appendFlag(m_stringBuilder, largeArcFlag);
+    appendFlag(m_stringBuilder, sweepFlag);
+    appendPoint(m_stringBuilder, targetPoint);
 }
 
 void SVGPathStringBuilder::closePath()
 {
-    m_stringBuilder.append("Z ");
+    m_stringBuilder.appendLiteral("Z ");
 }
 
 } // namespace WebCore
