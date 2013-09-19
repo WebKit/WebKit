@@ -1,3 +1,16 @@
+2013-09-19  Michael Saboff  <msaboff@apple.com>
+
+        JSC: X86 disassembler shows 16, 32 and 64 bit displacements as unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=121625
+
+        Rubber-stamped by Filip Pizlo.
+
+        Chenged 16, 32 and 64 bit offsets to be signed.  Kept the original tab indented
+        spacing to match the rest of the file.
+
+        * disassembler/udis86/udis86_syn-att.c:
+        (gen_operand):
+
 2013-09-19  Daniel Bates  <dabates@apple.com>
 
         Remove names of unused arguments from the x86/x86-64 function prototype
