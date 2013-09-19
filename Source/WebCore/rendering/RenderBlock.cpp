@@ -3887,8 +3887,8 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, LayoutUnit logicalLeftOf
                 // into account.  Only apply this code if prev is the parent, since otherwise the left margin
                 // will get applied twice.
                 LayoutSize offset = isHorizontalWritingMode()
-                    ? LayoutSize(logicalLeftOffset + (prev != parent() ? prev->marginLeft() : LayoutUnit()), logicalTopOffset)
-                    : LayoutSize(logicalTopOffset, logicalLeftOffset + (prev != parent() ? prev->marginTop() : LayoutUnit()));
+                    ? LayoutSize(logicalLeftOffset - (prev != parent() ? prev->marginLeft() : LayoutUnit()), logicalTopOffset)
+                    : LayoutSize(logicalTopOffset, logicalLeftOffset - (prev != parent() ? prev->marginTop() : LayoutUnit()));
 
                 m_floatingObjects->add(r->copyToNewContainer(offset));
             }

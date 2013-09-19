@@ -1,3 +1,13 @@
+2013-09-18  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        REGRESSION (r155854 - r155967) block with margin-left adjacent to floated block causes text of subsequent blocks to overlap the floated block.
+        https://bugs.webkit.org/show_bug.cgi?id=121532
+
+        Reviewed by Andreas Kling.
+
+        * fast/block/float/intruding-float-sibling-with-margin-expected.html: Added.
+        * fast/block/float/intruding-float-sibling-with-margin.html: Added.
+
 2013-09-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merge HTMLBodyElement::didNotifySubtreeInsertions into HTMLBodyElement::insertedInto
