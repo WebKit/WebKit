@@ -1,3 +1,10 @@
+2013-09-19  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Unreviewed. Fix typo in layout test description introduced in r155974.
+
+        * fast/regions/selection-direction-expected.html:
+        * fast/regions/selection-direction.html:
+
 2013-09-19  Andrei Parvu  <parvu@adobe.com>
 
         [CSS Masking/Background] Position property should be ignored when using repeat: space
