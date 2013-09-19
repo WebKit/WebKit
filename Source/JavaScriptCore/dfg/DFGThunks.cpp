@@ -28,10 +28,10 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGCCallHelpers.h"
-#include "DFGFPRInfo.h"
-#include "DFGGPRInfo.h"
+#include "CCallHelpers.h"
 #include "DFGOSRExitCompiler.h"
+#include "FPRInfo.h"
+#include "GPRInfo.h"
 #include "MacroAssembler.h"
 
 namespace JSC { namespace DFG {

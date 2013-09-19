@@ -28,9 +28,9 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "CCallHelpers.h"
 #include "CallFrameInlines.h"
 #include "CodeBlockWithJITType.h"
-#include "DFGCCallHelpers.h"
 #include "DFGCommon.h"
 #include "FTLJITCode.h"
 #include "JITStubs.h"

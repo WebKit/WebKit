@@ -34,6 +34,7 @@
 #include "CodeBlockWithJITType.h"
 #include "DFGArrayMode.h"
 #include "DFGCapabilities.h"
+#include "DFGJITCode.h"
 #include "GetByIdStatus.h"
 #include "Operations.h"
 #include "PreciseJumpTargets.h"

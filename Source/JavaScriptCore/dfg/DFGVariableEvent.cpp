@@ -28,8 +28,8 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGFPRInfo.h"
-#include "DFGGPRInfo.h"
+#include "FPRInfo.h"
+#include "GPRInfo.h"
 
 namespace JSC { namespace DFG {
 

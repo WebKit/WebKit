@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGFPRInfo_h
-#define DFGFPRInfo_h
+#ifndef FPRInfo_h
+#define FPRInfo_h
 
-#if ENABLE(DFG_JIT)
-
-#include "DFGRegisterBank.h"
 #include "MacroAssembler.h"
+#include <wtf/PrintStream.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
 typedef MacroAssembler::FPRegisterID FPRReg;
-#define InvalidFPRReg ((FPRReg)-1)
+#define InvalidFPRReg ((::JSC::FPRReg)-1)
 
 #if CPU(X86) || CPU(X86_64)
 
@@ -301,9 +299,19 @@ private:
 
 #endif
 
-typedef RegisterBank<FPRInfo>::iterator fpr_iterator;
+} // namespace JSC
 
-} } // namespace JSC::DFG
+namespace WTF {
 
+inline void printInternal(PrintStream& out, JSC::FPRReg reg)
+{
+#if ENABLE(JIT)
+    out.print("%", JSC::FPRInfo::debugName(reg));
+#else
+    out.printf("%%fr%d", reg);
 #endif
+}
+
+} // namespace WTF
+
 #endif

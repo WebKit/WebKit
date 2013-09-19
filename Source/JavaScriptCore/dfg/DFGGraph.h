@@ -30,9 +30,9 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "AssemblyHelpers.h"
 #include "CodeBlock.h"
 #include "DFGArgumentPosition.h"
-#include "DFGAssemblyHelpers.h"
 #include "DFGBasicBlock.h"
 #include "DFGDominators.h"
 #include "DFGLongLivedState.h"

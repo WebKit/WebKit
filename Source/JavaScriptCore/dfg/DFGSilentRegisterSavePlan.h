@@ -31,8 +31,8 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"
-#include "DFGFPRInfo.h"
-#include "DFGGPRInfo.h"
+#include "FPRInfo.h"
+#include "GPRInfo.h"
 
 namespace JSC { namespace DFG {
 

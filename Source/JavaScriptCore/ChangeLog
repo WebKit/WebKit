@@ -1,3 +1,94 @@
+2013-09-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Move CCallHelpers and AssemblyHelpers into jit/ and have JSInterfaceJIT use them
+        https://bugs.webkit.org/show_bug.cgi?id=121637
+
+        Rubber stamped by Michael Saboff.
+        
+        Also moved GPRInfo/FPRInfo into jit/.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::dumpInContext):
+        * dfg/DFGAssemblyHelpers.cpp: Removed.
+        * dfg/DFGAssemblyHelpers.h: Removed.
+        * dfg/DFGBinarySwitch.h:
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGCCallHelpers.h: Removed.
+        * dfg/DFGDisassembler.cpp:
+        * dfg/DFGFPRInfo.h: Removed.
+        * dfg/DFGGPRInfo.h: Removed.
+        * dfg/DFGGraph.cpp:
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGOSRExit.cpp:
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOSRExitCompiler.h:
+        * dfg/DFGOSRExitCompilerCommon.h:
+        * dfg/DFGRegisterBank.h:
+        * dfg/DFGRegisterSet.h:
+        * dfg/DFGRepatch.cpp:
+        * dfg/DFGSilentRegisterSavePlan.h:
+        * dfg/DFGThunks.cpp:
+        * dfg/DFGVariableEvent.cpp:
+        * ftl/FTLCArgumentGetter.h:
+        (JSC::FTL::CArgumentGetter::CArgumentGetter):
+        (JSC::FTL::CArgumentGetter::loadNext8):
+        (JSC::FTL::CArgumentGetter::loadNext32):
+        (JSC::FTL::CArgumentGetter::loadNext64):
+        (JSC::FTL::CArgumentGetter::loadNextPtr):
+        (JSC::FTL::CArgumentGetter::loadNextDouble):
+        * ftl/FTLCompile.cpp:
+        * ftl/FTLExitThunkGenerator.h:
+        * ftl/FTLLink.cpp:
+        * ftl/FTLThunks.cpp:
+        * jit/AssemblyHelpers.cpp: Copied from Source/JavaScriptCore/dfg/DFGAssemblyHelpers.cpp.
+        * jit/AssemblyHelpers.h: Copied from Source/JavaScriptCore/dfg/DFGAssemblyHelpers.h.
+        (JSC::AssemblyHelpers::AssemblyHelpers):
+        (JSC::AssemblyHelpers::debugCall):
+        * jit/CCallHelpers.h: Copied from Source/JavaScriptCore/dfg/DFGCCallHelpers.h.
+        * jit/FPRInfo.h: Copied from Source/JavaScriptCore/dfg/DFGFPRInfo.h.
+        (WTF::printInternal):
+        * jit/GPRInfo.h: Copied from Source/JavaScriptCore/dfg/DFGGPRInfo.h.
+        (WTF::printInternal):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::JSInterfaceJIT):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::SpecializedThunkJIT):
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerators.cpp:
+        (JSC::linkForGenerator):
+        (JSC::virtualForGenerator):
+        (JSC::stringLengthTrampolineGenerator):
+        (JSC::nativeForGenerator):
+        (JSC::arityFixup):
+        (JSC::charCodeAtThunkGenerator):
+        (JSC::charAtThunkGenerator):
+        (JSC::fromCharCodeThunkGenerator):
+        (JSC::sqrtThunkGenerator):
+        (JSC::floorThunkGenerator):
+        (JSC::ceilThunkGenerator):
+        (JSC::roundThunkGenerator):
+        (JSC::expThunkGenerator):
+        (JSC::logThunkGenerator):
+        (JSC::absThunkGenerator):
+        (JSC::powThunkGenerator):
+        (JSC::imulThunkGenerator):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        * runtime/JSCJSValue.h:
+
 2013-09-19  Daniel Bates  <dabates@apple.com>
 
         [iOS] Substitute UNREACHABLE_FOR_PLATFORM() for RELEASE_ASSERT_NOT_REACHED()

@@ -80,7 +80,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGAbstractValue.cpp
     dfg/DFGArgumentsSimplificationPhase.cpp
     dfg/DFGArrayMode.cpp
-    dfg/DFGAssemblyHelpers.cpp
     dfg/DFGAtTailAbstractState.cpp
     dfg/DFGBackwardsPropagationPhase.cpp
     dfg/DFGBasicBlock.cpp
@@ -209,6 +208,7 @@ set(JavaScriptCore_SOURCES
     interpreter/StackVisitor.cpp
     interpreter/VMInspector.cpp
 
+    jit/AssemblyHelpers.cpp
     jit/ClosureCallStubRoutine.cpp
     jit/ExecutableAllocator.cpp
     jit/ExecutableAllocatorFixedVMPool.cpp

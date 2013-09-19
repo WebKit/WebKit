@@ -29,7 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "CodeBlockWithJITType.h"
-#include "DFGCCallHelpers.h"
+#include "CCallHelpers.h"
 #include "DFGCommon.h"
 #include "Disassembler.h"
 #include "FTLJITCode.h"

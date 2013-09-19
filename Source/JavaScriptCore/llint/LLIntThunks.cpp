@@ -40,7 +40,7 @@ namespace JSC { namespace LLInt {
 
 static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, void (*target)(), const char *thunkKind)
 {
-    JSInterfaceJIT jit;
+    JSInterfaceJIT jit(vm);
     
     // FIXME: there's probably a better way to do it on X86, but I'm not sure I care.
     jit.move(JSInterfaceJIT::TrustedImmPtr(bitwise_cast<void*>(target)), JSInterfaceJIT::regT0);

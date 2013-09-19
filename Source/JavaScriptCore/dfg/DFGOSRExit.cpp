@@ -28,7 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAssemblyHelpers.h"
+#include "AssemblyHelpers.h"
 #include "DFGGraph.h"
 #include "DFGSpeculativeJIT.h"
 #include "JSCellInlines.h"

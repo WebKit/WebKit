@@ -29,6 +29,8 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"
+#include "FPRInfo.h"
+#include "GPRInfo.h"
 
 namespace JSC { namespace DFG {
 
@@ -357,6 +359,9 @@ private:
     // Holds the current status of all registers.
     MapEntry m_data[NUM_REGS];
 };
+
+typedef RegisterBank<GPRInfo>::iterator gpr_iterator;
+typedef RegisterBank<FPRInfo>::iterator fpr_iterator;
 
 } } // namespace JSC::DFG
 

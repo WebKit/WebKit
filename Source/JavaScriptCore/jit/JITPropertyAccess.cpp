@@ -55,7 +55,7 @@ namespace JSC {
 
 JIT::CodeRef JIT::stringGetByValStubGenerator(VM* vm)
 {
-    JSInterfaceJIT jit;
+    JSInterfaceJIT jit(vm);
     JumpList failures;
     failures.append(jit.branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), TrustedImmPtr(vm->stringStructure.get())));
 

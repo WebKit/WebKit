@@ -28,8 +28,8 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CCallHelpers.h"
 #include "CallFrameInlines.h"
-#include "DFGCCallHelpers.h"
 #include "DFGScratchRegisterAllocator.h"
 #include "DFGSpeculativeJIT.h"
 #include "DFGThunks.h"

@@ -40,8 +40,10 @@ namespace JSC {
 // values as being missing, so it is useful to have it abbreviated.
 #define QNaN (std::numeric_limits<double>::quiet_NaN())
 
+class AssemblyHelpers;
 class ExecState;
 class JSCell;
+class JSValueSource;
 class VM;
 class JSGlobalObject;
 class JSObject;
@@ -51,10 +53,7 @@ class PropertySlot;
 class PutPropertySlot;
 #if ENABLE(DFG_JIT)
 namespace DFG {
-class AssemblyHelpers;
 class JITCompiler;
-class JITCodeGenerator;
-class JSValueSource;
 class OSRExitCompiler;
 class SpeculativeJIT;
 }
@@ -116,17 +115,16 @@ inline uint32_t toUInt32(double number)
 
 class JSValue {
     friend struct EncodedJSValueHashTraits;
+    friend class AssemblyHelpers;
     friend class JIT;
     friend class JITSlowPathCall;
     friend class JITStubs;
     friend class JITStubCall;
     friend class JSInterfaceJIT;
+    friend class JSValueSource;
     friend class SpecializedThunkJIT;
 #if ENABLE(DFG_JIT)
-    friend class DFG::AssemblyHelpers;
     friend class DFG::JITCompiler;
-    friend class DFG::JITCodeGenerator;
-    friend class DFG::JSValueSource;
     friend class DFG::OSRExitCompiler;
     friend class DFG::SpeculativeJIT;
 #endif

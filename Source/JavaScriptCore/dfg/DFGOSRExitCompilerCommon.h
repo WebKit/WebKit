@@ -30,7 +30,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGCCallHelpers.h"
+#include "CCallHelpers.h"
 #include "DFGOSRExit.h"
 
 namespace JSC { namespace DFG {
