@@ -1,3 +1,18 @@
+2013-09-19  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add more iOS logic to the JavaScriptCore build configuration files
+        https://bugs.webkit.org/show_bug.cgi?id=121635
+
+        Reviewed by Geoffrey Garen.
+
+        Towards building JavaScriptCore for both OS X and iOS using the same
+        set of configuration files, add more iOS logic.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/JSC.xcconfig:
+        * Configurations/JavaScriptCore.xcconfig:
+        * Configurations/ToolExecutable.xcconfig:
+
 2013-09-19  Filip Pizlo  <fpizlo@apple.com>
 
         Move CCallHelpers and AssemblyHelpers into jit/ and have JSInterfaceJIT use them

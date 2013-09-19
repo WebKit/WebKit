@@ -24,11 +24,12 @@
 #include "FeatureDefines.xcconfig"
 #include "Version.xcconfig"
 
-INSTALL_PATH = $(INSTALL_PATH_$(PLATFORM_NAME));
-INSTALL_PATH_iphoneos = $(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/Resources;
-INSTALL_PATH_iphonesimulator = $(INSTALL_PATH_iphoneos);
-INSTALL_PATH_macosx = $(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/Versions/A/Resources;
+INSTALL_PATH_ACTUAL = $(JAVASCRIPTCORE_RESOURCES_DIR);
 PRODUCT_NAME = $(TARGET_NAME);
+CODE_SIGN_ENTITLEMENTS = $(CODE_SIGN_ENTITLEMENTS_$(PLATFORM_NAME)_$(TARGET_NAME));
+CODE_SIGN_ENTITLEMENTS_iphoneos_minidom = entitlements.plist;
+CODE_SIGN_ENTITLEMENTS_iphoneos_testapi = entitlements.plist;
+CODE_SIGN_ENTITLEMENTS_iphoneos_testRegExp = entitlements.plist;
 
 SKIP_INSTALL = $(SKIP_INSTALL_$(FORCE_TOOL_INSTALL));
 SKIP_INSTALL_ = YES;
