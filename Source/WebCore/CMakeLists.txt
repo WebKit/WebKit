@@ -2502,6 +2502,7 @@ set(WebCore_SOURCES
     svg/properties/SVGAnimatedProperty.cpp
     svg/properties/SVGAttributeToPropertyMap.cpp
     svg/properties/SVGPathSegListPropertyTearOff.cpp
+    svg/properties/SVGPropertyInfo.cpp
 
     workers/AbstractWorker.cpp
     workers/DedicatedWorkerGlobalScope.cpp

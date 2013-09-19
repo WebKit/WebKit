@@ -63,15 +63,7 @@ public:
 
     SVGPropertyInfo(AnimatedPropertyType newType, AnimatedPropertyState newState, const QualifiedName& newAttributeName,
                     const AtomicString& newPropertyIdentifier, SynchronizeProperty newSynchronizeProperty,
-                    LookupOrCreateWrapperForAnimatedProperty newLookupOrCreateWrapperForAnimatedProperty)
-        : animatedPropertyType(newType)
-        , animatedPropertyState(newState)
-        , attributeName(newAttributeName)
-        , propertyIdentifier(newPropertyIdentifier)
-        , synchronizeProperty(newSynchronizeProperty)
-        , lookupOrCreateWrapperForAnimatedProperty(newLookupOrCreateWrapperForAnimatedProperty)
-    {
-    }
+                    LookupOrCreateWrapperForAnimatedProperty newLookupOrCreateWrapperForAnimatedProperty);
 
     AnimatedPropertyType animatedPropertyType;
     AnimatedPropertyState animatedPropertyState;

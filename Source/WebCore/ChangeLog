@@ -1,3 +1,22 @@
+2013-09-19  Andreas Kling  <akling@apple.com>
+
+        Add SVGPropertyInfo.cpp
+        <https://webkit.org/b/121622>
+
+        Reviewed by Anders Carlsson.
+
+        Add a cpp file for this class to make it more hackable.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/properties/SVGPropertyInfo.cpp: Added.
+        (WebCore::SVGPropertyInfo::SVGPropertyInfo):
+        * svg/properties/SVGPropertyInfo.h:
+
 2013-09-19  Eric Carlson  <eric.carlson@apple.com>
 
         MediaStream API: update NavigatorUserMediaError object to match spec

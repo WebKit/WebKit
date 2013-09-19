@@ -3735,6 +3735,7 @@ enable?(SVG) {
         svg/properties/SVGAnimatedProperty.cpp \
         svg/properties/SVGAttributeToPropertyMap.cpp \
         svg/properties/SVGPathSegListPropertyTearOff.cpp \
+        svg/properties/SVGPropertyInfo.cpp \
         svg/SVGDocumentExtensions.cpp \
         svg/ColorDistance.cpp \
         svg/SVGAElement.cpp \

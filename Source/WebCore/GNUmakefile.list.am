@@ -5010,6 +5010,7 @@ webcore_svg_sources += \
 	Source/WebCore/svg/properties/SVGPathSegListPropertyTearOff.cpp \
 	Source/WebCore/svg/properties/SVGPathSegListPropertyTearOff.h \
 	Source/WebCore/svg/properties/SVGProperty.h \
+	Source/WebCore/svg/properties/SVGPropertyInfo.cpp \
 	Source/WebCore/svg/properties/SVGPropertyInfo.h \
 	Source/WebCore/svg/properties/SVGPropertyTearOff.h \
 	Source/WebCore/svg/properties/SVGPropertyTraits.h \

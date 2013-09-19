@@ -4830,6 +4830,9 @@
     <ClCompile Include="..\svg\properties\SVGPathSegListPropertyTearOff.cpp">
       <Filter>rendering\svg\properties</Filter>
     </ClCompile>
+    <ClCompile Include="..\svg\properties\SVGPropertyInfo.cpp">
+      <Filter>rendering\svg\properties</Filter>
+    </ClCompile>
     <ClCompile Include="..\history\BackForwardController.cpp">
       <Filter>history</Filter>
     </ClCompile>

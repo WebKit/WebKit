@@ -17645,6 +17645,7 @@
     <ClCompile Include="..\svg\properties\SVGAnimatedProperty.cpp" />
     <ClCompile Include="..\svg\properties\SVGAttributeToPropertyMap.cpp" />
     <ClCompile Include="..\svg\properties\SVGPathSegListPropertyTearOff.cpp" />
+    <ClCompile Include="..\svg\properties\SVGPropertyInfo.cpp" />
     <ClCompile Include="..\history\BackForwardController.cpp" />
     <ClCompile Include="..\history\BackForwardList.cpp" />
     <ClCompile Include="..\history\CachedFrame.cpp" />

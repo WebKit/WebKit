@@ -4632,6 +4632,7 @@
 		B525A96611CA2340003A23A8 /* JSSQLException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B525A96411CA2340003A23A8 /* JSSQLException.cpp */; };
 		B5320D6B122A24E9002D1440 /* FontPlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = B5320D69122A24E9002D1440 /* FontPlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B5320D6C122A24E9002D1440 /* FontPlatformDataCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5320D6A122A24E9002D1440 /* FontPlatformDataCocoa.mm */; };
+		B543B85717EB758F003BE93A /* SVGPropertyInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B543B85617EB758F003BE93A /* SVGPropertyInfo.cpp */; };
 		B55D5AA4119131FC00BCC315 /* JSSQLTransactionSyncCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B55D5AA2119131FC00BCC315 /* JSSQLTransactionSyncCallback.h */; };
 		B55D5AA5119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55D5AA3119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp */; };
 		B55D5AA91191325000BCC315 /* JSSQLTransactionSyncCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55D5AA71191325000BCC315 /* JSSQLTransactionSyncCustom.cpp */; };
@@ -11480,6 +11481,7 @@
 		B525A96411CA2340003A23A8 /* JSSQLException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLException.cpp; sourceTree = "<group>"; };
 		B5320D69122A24E9002D1440 /* FontPlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontPlatformData.h; sourceTree = "<group>"; };
 		B5320D6A122A24E9002D1440 /* FontPlatformDataCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontPlatformDataCocoa.mm; sourceTree = "<group>"; };
+		B543B85617EB758F003BE93A /* SVGPropertyInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPropertyInfo.cpp; sourceTree = "<group>"; };
 		B55D5AA2119131FC00BCC315 /* JSSQLTransactionSyncCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLTransactionSyncCallback.h; sourceTree = "<group>"; };
 		B55D5AA3119131FC00BCC315 /* JSSQLTransactionSyncCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransactionSyncCallback.cpp; sourceTree = "<group>"; };
 		B55D5AA71191325000BCC315 /* JSSQLTransactionSyncCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransactionSyncCustom.cpp; sourceTree = "<group>"; };
@@ -13521,6 +13523,7 @@
 				08FF101F12950F5900F00276 /* SVGPathSegListPropertyTearOff.cpp */,
 				084A0828128D7867002DB1F1 /* SVGPathSegListPropertyTearOff.h */,
 				088A0E01126EF1DB00978F7A /* SVGProperty.h */,
+				B543B85617EB758F003BE93A /* SVGPropertyInfo.cpp */,
 				081DD49B13BA1A6000DC7627 /* SVGPropertyInfo.h */,
 				088A0E02126EF1DB00978F7A /* SVGPropertyTearOff.h */,
 				088A0E03126EF1DB00978F7A /* SVGPropertyTraits.h */,
@@ -27415,6 +27418,7 @@
 				B2227A8E0D00BF220071B782 /* SVGPolyElement.cpp in Sources */,
 				B2227A900D00BF220071B782 /* SVGPolygonElement.cpp in Sources */,
 				B2227A930D00BF220071B782 /* SVGPolylineElement.cpp in Sources */,
+				B543B85717EB758F003BE93A /* SVGPropertyInfo.cpp in Sources */,
 				B2227A960D00BF220071B782 /* SVGPreserveAspectRatio.cpp in Sources */,
 				B2227A990D00BF220071B782 /* SVGRadialGradientElement.cpp in Sources */,
 				B2227A9D0D00BF220071B782 /* SVGRectElement.cpp in Sources */,
