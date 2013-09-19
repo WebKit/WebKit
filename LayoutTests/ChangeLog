@@ -1,3 +1,13 @@
+2013-09-18  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Failed to retrieve named flow ranges for content with inline svg
+        https://bugs.webkit.org/show_bug.cgi?id=121489
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/get-region-flow-ranges-inline-svg-expected.txt: Added.
+        * fast/regions/get-region-flow-ranges-inline-svg.html: Added.
+
 2013-09-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening. Moving GTK-specific baselines for some js/dom/* tests into the proper directory.
