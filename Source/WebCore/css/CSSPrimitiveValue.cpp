@@ -602,6 +602,8 @@ double CSSPrimitiveValue::computeLengthDouble(const RenderStyle* style, const Re
             return -1.0;
         case CSS_VH:
         case CSS_VW:
+        case CSS_VMAX:
+        case CSS_VMIN:
             factor = 1.0;
             break;
         default:

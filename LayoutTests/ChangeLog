@@ -1,3 +1,17 @@
+2013-09-19  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        CSS Unit vmax and vmin in border-width not handled.
+        https://bugs.webkit.org/show_bug.cgi?id=121421
+
+        Reviewed by Darin Adler.
+
+        * fast/css/viewport-vmax-border-expected.txt: Added.
+        * fast/css/viewport-vmax-border.html: Added.
+        * fast/css/viewport-vmin-border-expected.txt: Added.
+        * fast/css/viewport-vmin-border.html: Added.
+        Added new tests for verifying that border properties are
+        applied when its values are given in vmax/vmin units.
+
 2013-09-19  Antti Koivisto  <antti@apple.com>
 
         [CTTE] RenderText is always anonymous or associated with Text node

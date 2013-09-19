@@ -204,6 +204,8 @@ public:
     bool isViewportPercentageLength() const { return m_primitiveUnitType >= CSS_VW && m_primitiveUnitType <= CSS_VMAX; }
     bool isViewportPercentageWidth() const { return m_primitiveUnitType == CSS_VW; }
     bool isViewportPercentageHeight() const { return m_primitiveUnitType == CSS_VH; }
+    bool isViewportPercentageMax() const { return m_primitiveUnitType == CSS_VMAX; }
+    bool isViewportPercentageMin() const { return m_primitiveUnitType == CSS_VMIN; }
     bool isValueID() const { return m_primitiveUnitType == CSS_VALUE_ID; }
     
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(CSSValueID valueID) { return adoptRef(new CSSPrimitiveValue(valueID)); }

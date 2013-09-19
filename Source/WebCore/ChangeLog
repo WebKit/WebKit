@@ -1,3 +1,28 @@
+2013-09-19  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        CSS Unit vmax and vmin in border-width not handled.
+        https://bugs.webkit.org/show_bug.cgi?id=121421
+
+        Reviewed by Darin Adler.
+
+        Border properties were not applied incase its values 
+        were given in vmax/vmin units.
+
+        Tests: fast/css/viewport-vmax-border.html
+               fast/css/viewport-vmin-border.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isViewportPercentageMax):
+        (WebCore::CSSPrimitiveValue::isViewportPercentageMin):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyComputeLength::applyValue):
+        Calculating the border values which has been specified in
+        vmax/vmin units. 1vmax: 1vw or 1vh, whatever is largest.
+        1vmin: 1vw or 1vh, whatever is smallest. The vh/vw units are 
+        calcultated as percent of viewport height and viewport width respectively.
+
 2013-09-19  Antti Koivisto  <antti@apple.com>
 
         [CTTE] RenderText is always anonymous or associated with Text node

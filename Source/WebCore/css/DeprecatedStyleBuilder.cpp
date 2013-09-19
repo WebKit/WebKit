@@ -615,10 +615,18 @@ public:
                 if (originalLength >= 1.0)
                     length = 1.0;
             }
-            if (primitiveValue->isViewportPercentageHeight())
-                length = styleResolver->document().renderView()->viewportSize().height() * length / 100.0f;
-            else if (primitiveValue->isViewportPercentageWidth())
-                length = styleResolver->document().renderView()->viewportSize().width() * length / 100.0f;
+            if (primitiveValue->isViewportPercentageLength()) { 
+                int viewPortHeight = styleResolver->document().renderView()->viewportSize().height() * length / 100.0f;
+                int viewPortWidth = styleResolver->document().renderView()->viewportSize().width() * length / 100.0f;
+                if (primitiveValue->isViewportPercentageHeight())
+                    length = viewPortHeight;
+                else if (primitiveValue->isViewportPercentageWidth())
+                    length = viewPortWidth;
+                else if (primitiveValue->isViewportPercentageMax())
+                    length = max(viewPortWidth, viewPortHeight);
+                else if (primitiveValue->isViewportPercentageMin())
+                    length = min(viewPortWidth, viewPortHeight);
+            }
         } else {
             ASSERT_NOT_REACHED();
             length = 0;
