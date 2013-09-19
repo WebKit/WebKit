@@ -31,24 +31,6 @@
 
 namespace WebCore {
 
-class CSSLinearTimingFunctionValue : public CSSValue {
-public:
-    static PassRefPtr<CSSLinearTimingFunctionValue> create()
-    {
-        return adoptRef(new CSSLinearTimingFunctionValue);
-    }
-
-    String customCSSText() const;
-
-    bool equals(const CSSLinearTimingFunctionValue&) const { return true; }
-
-private:
-    CSSLinearTimingFunctionValue()
-        : CSSValue(LinearTimingFunctionClass)
-    {
-    }
-};
-
 class CSSCubicBezierTimingFunctionValue : public CSSValue {
 public:
     static PassRefPtr<CSSCubicBezierTimingFunctionValue> create(double x1, double y1, double x2, double y2)

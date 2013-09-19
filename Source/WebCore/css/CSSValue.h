@@ -87,7 +87,6 @@ public:
     bool isReflectValue() const { return m_classType == ReflectClass; }
     bool isShadowValue() const { return m_classType == ShadowClass; }
     bool isCubicBezierTimingFunctionValue() const { return m_classType == CubicBezierTimingFunctionClass; }
-    bool isLinearTimingFunctionValue() const { return m_classType == LinearTimingFunctionClass; }
     bool isStepsTimingFunctionValue() const { return m_classType == StepsTimingFunctionClass; }
     bool isWebKitCSSTransformValue() const { return m_classType == WebKitCSSTransformClass; }
     bool isCSSLineBoxContainValue() const { return m_classType == LineBoxContainClass; }
@@ -150,7 +149,6 @@ protected:
 
         // Timing function classes.
         CubicBezierTimingFunctionClass,
-        LinearTimingFunctionClass,
         StepsTimingFunctionClass,
 
         // Other class types.

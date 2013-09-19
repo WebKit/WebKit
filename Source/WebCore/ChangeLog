@@ -1,3 +1,31 @@
+2013-09-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove superfluous CSSLinearTimingFunctionValue and use switch on TimingFunction::type() in more places
+        https://bugs.webkit.org/show_bug.cgi?id=121589
+
+        Reviewed by Dean Jackson.
+ 
+        Replaced CSSLinearTimingFunctionValue by the identifier "linear" and used switch statements on
+        TimingFunction::type() in more places where we were branching on every type.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/5454f20c71090c35bdd1053e5cc572d5c0bdede7
+        Merge https://chromium.googlesource.com/chromium/blink/+/104ad42c523d32b67d108c6e59f4f27488fe38a5
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createTimingFunctionValue):
+        * css/CSSTimingFunctionValue.cpp:
+        * css/CSSTimingFunctionValue.h:
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationTimingFunction):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isCubicBezierTimingFunctionValue):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::progress):
+
 2013-09-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r156119.

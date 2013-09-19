@@ -1219,7 +1219,8 @@ static PassRefPtr<CSSValue> getDurationValue(const AnimationList* animList)
 
 static PassRefPtr<CSSValue> createTimingFunctionValue(const TimingFunction* timingFunction)
 {
-    if (timingFunction->isCubicBezierTimingFunction()) {
+    switch (timingFunction->type()) {
+    case TimingFunction::CubicBezierFunction: {
         const CubicBezierTimingFunction* bezierTimingFunction = static_cast<const CubicBezierTimingFunction*>(timingFunction);
         if (bezierTimingFunction->timingFunctionPreset() != CubicBezierTimingFunction::Custom) {
             CSSValueID valueId = CSSValueInvalid;
@@ -1244,13 +1245,15 @@ static PassRefPtr<CSSValue> createTimingFunctionValue(const TimingFunction* timi
         }
         return CSSCubicBezierTimingFunctionValue::create(bezierTimingFunction->x1(), bezierTimingFunction->y1(), bezierTimingFunction->x2(), bezierTimingFunction->y2());
     }
-
-    if (timingFunction->isStepsTimingFunction()) {
+    case TimingFunction::StepsFunction: {
         const StepsTimingFunction* stepsTimingFunction = static_cast<const StepsTimingFunction*>(timingFunction);
         return CSSStepsTimingFunctionValue::create(stepsTimingFunction->numberOfSteps(), stepsTimingFunction->stepAtStart());
     }
-
-    return CSSLinearTimingFunctionValue::create();
+    case TimingFunction::LinearFunction:
+        return cssValuePool().createIdentifierValue(CSSValueLinear);
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 static PassRefPtr<CSSValue> getTimingFunctionValue(const AnimationList* animList)

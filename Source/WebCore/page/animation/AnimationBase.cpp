@@ -592,21 +592,21 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
     if (!tf)
         tf = m_animation->timingFunction().get();
 
-    if (tf->isCubicBezierTimingFunction()) {
-        const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(tf);
-        return solveCubicBezierFunction(ctf->x1(),
-                                        ctf->y1(),
-                                        ctf->x2(),
-                                        ctf->y2(),
-                                        fractionalTime, m_animation->duration());
+    switch (tf->type()) {
+    case TimingFunction::CubicBezierFunction: {
+        const CubicBezierTimingFunction* function = static_cast<const CubicBezierTimingFunction*>(tf);
+        return solveCubicBezierFunction(function->x1(), function->y1(), function->x2(), function->y2(), fractionalTime, m_animation->duration());
     }
-    
-    if (tf->isStepsTimingFunction()) {
-        const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(tf);
-        return solveStepsFunction(stf->numberOfSteps(), stf->stepAtStart(), fractionalTime);
+    case TimingFunction::StepsFunction: {
+        const StepsTimingFunction* stepsTimingFunction = static_cast<const StepsTimingFunction*>(tf);
+        return solveStepsFunction(stepsTimingFunction->numberOfSteps(), stepsTimingFunction->stepAtStart(), fractionalTime);
+    }
+    case TimingFunction::LinearFunction:
+        return fractionalTime;
     }
 
-    return fractionalTime;
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 void AnimationBase::getTimeToNextEvent(double& time, bool& isLooping) const
