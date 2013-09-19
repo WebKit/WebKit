@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Not Completely Unrealistic DOM Benchmark</title>
+<script src="benchmark.js"></script>
+<script>
+
+var numberOfItemsToAdd = 100;
+
+BenchmarkRunner.suite({
+    name: 'VanillaJS/TodoMVC',
+    url: 'todomvc/vanilla-examples/vanillajs/index.html',
+    prepare: function (contentWindow, contentDocument) {
+        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
+            element.focus();
+            return element;
+        });
+    },
+    tests: [
+        ['Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
+            var todoController = contentWindow.todo.controller;
+    for (var i = 0; i < numberOfItemsToAdd; i++) {
+        newTodo.value = 'Something to do ' + i;
+        todoController.addItem({keyCode: todoController.ENTER_KEY, target: newTodo});
+        }
+    }],
+    ['CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
+    var checkboxes = contentDocument.querySelectorAll('.toggle');
+    for (var i = 0; i < checkboxes.length; i++)
+        checkboxes[i].click();
+    }],
+        ['DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
+    var deleteButtons = contentDocument.querySelectorAll('.destroy');
+    for (var i = 0; i < deleteButtons.length; i++)
+        deleteButtons[i].click();
+    }],
+    ]
+});
+
+BenchmarkRunner.suite({
+    name: 'EmberJS/TodoMVC',
+    url: 'todomvc/architecture-examples/emberjs/index.html',
+    prepare: function (contentWindow, contentDocument) {
+    contentWindow.Todos.Store = contentWindow.DS.Store.extend({
+    revision: 12,
+    adapter: 'Todos.LSAdapter',
+    commit: function () { }
+    });
+
+        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
+            element.focus();
+            return {
+                views: contentWindow.Ember.View.views,
+                emberRun: contentWindow.Ember.run,
+            }
+        });
+    },
+    tests: [
+    ['Adding' + numberOfItemsToAdd + 'Items', function (params) {
+    for (var i = 0; i < numberOfItemsToAdd; i++) {
+    params.emberRun(function () { params.views["new-todo"].set('value', 'Something to do' + i); });
+    params.emberRun(function () { params.views["new-todo"].insertNewline(document.createEvent('Event')); });
+    }
+    }],
+    ['CompletingAllItems', function (params, contentWindow, contentDocument) {
+    var checkboxes = contentDocument.querySelectorAll('.ember-checkbox');
+    for (var i = 0; i < checkboxes.length; i++) {
+    var view = params.views[checkboxes[i].id];
+    params.emberRun(function () { view.set('checked', true); });
+    }
+    }],
+    ['DeletingItems', function (params, contentWindow, contentDocument) {
+    var deleteButtons = contentDocument.querySelectorAll('.destroy');
+    for (var i = 0; i < deleteButtons.length; i++)
+    params.emberRun(function () { deleteButtons[i].click(); });
+    }],
+    ]
+});
+
+BenchmarkRunner.suite({
+    name: 'BackboneJS/TodoMVC',
+    url: 'todomvc/architecture-examples/backbone/index.html',
+    prepare: function (contentWindow, contentDocument) {
+    contentWindow.Backbone.sync = function () {}
+        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
+            element.focus();
+            return element;
+        });
+    },
+    tests: [
+        ['Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
+    var appView = contentWindow.appView;
+    var fakeEvent = {which: contentWindow.ENTER_KEY};
+    for (var i = 0; i < numberOfItemsToAdd; i++) {
+        newTodo.value = 'Something to do ' + i;
+    appView.createOnEnter(fakeEvent);
+        }
+    }],
+    ['CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
+    var checkboxes = contentDocument.querySelectorAll('.toggle');
+    for (var i = 0; i < checkboxes.length; i++)
+        checkboxes[i].click();
+    }],
+        ['DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
+    var deleteButtons = contentDocument.querySelectorAll('.destroy');
+    for (var i = 0; i < deleteButtons.length; i++)
+        deleteButtons[i].click();
+    }],
+    ]
+});
+
+BenchmarkRunner.suite({
+    name: 'jQuery/TodoMVC',
+    url: 'todomvc/architecture-examples/jquery/index.html',
+    prepare: function (contentWindow, contentDocument) {
+    var storage = [];
+        return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
+            element.focus();
+            return element;
+        });
+    },
+    tests: [
+        ['Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
+    var app = contentWindow.app;
+    var fakeEvent = {which: app.ENTER_KEY};
+    for (var i = 0; i < numberOfItemsToAdd; i++) {
+        newTodo.value = 'Something to do ' + i;
+    app.create.call(newTodo, fakeEvent);
+        }
+    }],
+    ['CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
+    var app = contentWindow.app;
+    var checkboxes = contentDocument.querySelectorAll('.toggle');
+    for (var i = 0; i < checkboxes.length; i++)
+    app.toggle.call(checkboxes[i]);
+    }],
+        ['DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
+    var app = contentWindow.app;
+    var deleteButtons = contentDocument.querySelectorAll('.destroy');
+    for (var i = 0; i < deleteButtons.length; i++)
+    app.destroy.call(deleteButtons[i]);
+    }],
+    ]
+});
+
+</script>
+</head>
+<body>
+<p></p>
+</body>
+</html>

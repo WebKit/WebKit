@@ -1,3 +1,138 @@
+2013-09-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a not completely unrealistic DOM Benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=121361
+
+        Reviewed by Filip Pizlo.
+
+        Add a DOM benchmark based on TodoMVC for vanilla JS, Ember.js, Backbone.js, and jQuery.
+        We'll add more frameworks and demo apps as we go.
+
+        * DoYouEvenBench: Added.
+        * DoYouEvenBench/benchmark.html: Added.
+        * DoYouEvenBench/benchmark.js: Added.
+        (SimplePromise): 
+        (SimplePromise.prototype.then):
+        (SimplePromise.prototype.resolve.else):
+        (SimplePromise.prototype.resolve):
+        (BenchmarkRunner.suite):
+        (BenchmarkRunner.waitForElement.resolveIfReady):
+        (BenchmarkRunner.waitForElement):
+        (BenchmarkRunner._removeFrame):
+        (BenchmarkRunner._appendFrame):
+        (BenchmarkRunner._waitAndWarmUp.Fibonacci):
+        (BenchmarkRunner._testName):
+        (BenchmarkRunner._testItemId):
+        (BenchmarkRunner.listSuites.button.onclick):
+        (BenchmarkRunner.listSuites.callNextStep):
+        (BenchmarkRunner.listSuites):
+        (BenchmarkState):
+        (BenchmarkState.prototype.currentSuite):
+        (BenchmarkState.prototype.currentTest):
+        (BenchmarkState.prototype.next):
+        (BenchmarkState.prototype.isFirstTest):
+        (BenchmarkState.prototype.prepareCurrentSuite.frame.onload):
+        (BenchmarkRunner.step):
+        (BenchmarkRunner._runTestAndRecordResults):
+        (BenchmarkRunner._finalize):
+        * DoYouEvenBench/todomvc: Added.
+        * DoYouEvenBench/todomvc/architecture-examples: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower.json: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower_components: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower_components/backbone: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower_components/backbone.localStorage: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower_components/backbone.localStorage/backbone.localStorage.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower_components/backbone/backbone.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower_components/jquery: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower_components/jquery/jquery.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower_components/todomvc-common: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower_components/todomvc-common/base.css: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower_components/todomvc-common/base.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower_components/todomvc-common/bg.png: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower_components/underscore: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/bower_components/underscore/underscore.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/index.html: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/js/app.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/js/collections: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/js/collections/todos.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/js/models: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/js/models/todo.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/js/routers: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/js/routers/router.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/js/views: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/js/views/app-view.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/js/views/todo-view.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/backbone/readme.md: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower.json: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower_components: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower_components/ember: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower_components/ember-localstorage-adapter: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower_components/ember-localstorage-adapter/localstorage_adapter.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower_components/ember/ember.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower_components/handlebars: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower_components/handlebars/handlebars.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower_components/jquery: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower_components/jquery/jquery.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower_components/todomvc-common: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower_components/todomvc-common/base.css: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower_components/todomvc-common/base.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/bower_components/todomvc-common/bg.png: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/index.html: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/js/app.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/js/controllers: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/js/controllers/todo_controller.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/js/controllers/todos_controller.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/js/libs: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/js/libs/ember-data.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/js/models: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/js/models/store.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/js/models/todo.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/js/views: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/js/views/edit_todo_view.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/readme.md: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/emberjs/test.html: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/bower.json: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/bower_components: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/bower_components/handlebars: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/bower_components/handlebars/handlebars.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/bower_components/jquery: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/bower_components/jquery/jquery.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/bower_components/todomvc-common: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/bower_components/todomvc-common/base.css: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/bower_components/todomvc-common/base.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/bower_components/todomvc-common/bg.png: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/css: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/css/app.css: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/index.html: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/js/app.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/jquery/readme.md: Added.
+        * DoYouEvenBench/todomvc/license.md: Added.
+        * DoYouEvenBench/todomvc/readme.md: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/bower.json: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/bower_components: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/bower_components/todomvc-common: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/bower_components/todomvc-common/base.css: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/bower_components/todomvc-common/base.js: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/bower_components/todomvc-common/bg.png: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/index.html: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/js: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/js/app.js: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/js/controller.js: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/js/helpers.js: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/js/model.js: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/js/store.js: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/js/view.js: Added.
+        * DoYouEvenBench/todomvc/vanilla-examples/vanillajs/readme.md: Added.
+        * Skipped:
+
 2013-09-04  Filip Pizlo  <fpizlo@apple.com>
 
         Introduce a version of SunSpider that runs for a really long time (about 1 sec on my machine)
