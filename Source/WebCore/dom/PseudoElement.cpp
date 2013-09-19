@@ -29,7 +29,7 @@
 
 #include "ContentData.h"
 #include "InspectorInstrumentation.h"
-#include "RenderElement.h"
+#include "RenderObject.h"
 #include "RenderQuote.h"
 
 namespace WebCore {
@@ -78,7 +78,7 @@ PassRefPtr<RenderStyle> PseudoElement::customStyleForRenderer()
 
 void PseudoElement::didAttachRenderers()
 {
-    RenderElement* renderer = this->renderer();
+    RenderObject* renderer = this->renderer();
     if (!renderer || !renderer->style()->regionThread().isEmpty())
         return;
 

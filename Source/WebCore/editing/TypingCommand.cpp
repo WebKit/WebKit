@@ -37,7 +37,7 @@
 #include "InsertLineBreakCommand.h"
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
-#include "RenderElement.h"
+#include "RenderObject.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"

@@ -44,7 +44,6 @@ class HTMLDocument;
 class IntSize;
 class Locale;
 class PseudoElement;
-class RenderElement;
 class RenderRegion;
 class ShadowRoot;
 
@@ -127,8 +126,6 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitfullscreenchange);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitfullscreenerror);
 #endif
-
-    RenderElement* renderer() const;
 
     bool hasAttribute(const QualifiedName&) const;
     const AtomicString& getAttribute(const QualifiedName&) const;

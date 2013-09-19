@@ -23,7 +23,7 @@
 #include "SVGAnimatedColor.h"
 
 #include "ColorDistance.h"
-#include "RenderElement.h"
+#include "RenderObject.h"
 #include "SVGAnimateElement.h"
 #include "SVGColor.h"
 
@@ -52,7 +52,7 @@ static inline void adjustForCurrentColor(SVGElement* targetElement, Color& color
 {
     ASSERT(targetElement);
 
-    if (RenderElement* targetRenderer = targetElement->renderer())
+    if (RenderObject* targetRenderer = targetElement->renderer())
         color = targetRenderer->style()->visitedDependentColor(CSSPropertyColor);
     else
         color = Color();

@@ -1289,7 +1289,7 @@ sub GenerateImplementation
                     unless ($interfaceName eq "HTMLImageElement") {
                         push(@customGetterContent, "    if (!IMPL->renderer() || !IMPL->renderer()->isImage())\n");
                         push(@customGetterContent, "        return nil;\n");
-                        $implIncludes{"RenderElement.h"} = 1;
+                        $implIncludes{"RenderObject.h"} = 1;
                     }
                 }
                 $implIncludes{"DOMPrivate.h"} = 1;

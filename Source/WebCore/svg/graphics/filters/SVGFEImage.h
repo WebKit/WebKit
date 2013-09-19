@@ -31,7 +31,7 @@ namespace WebCore {
 
 class Document;
 class Image;
-class RenderElement;
+class RenderObject;
 
 class FEImage : public FilterEffect {
 public:
@@ -54,7 +54,7 @@ private:
     virtual ~FEImage() { }
     FEImage(Filter*, PassRefPtr<Image>, const SVGPreserveAspectRatio&);
     FEImage(Filter*, Document*, const String&, const SVGPreserveAspectRatio&);
-    RenderElement* referencedRenderer() const;
+    RenderObject* referencedRenderer() const;
 
     RefPtr<Image> m_image;
 
