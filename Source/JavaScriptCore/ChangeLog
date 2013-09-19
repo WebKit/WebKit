@@ -26,7 +26,7 @@
 
 2013-09-19  Daniel Bates  <dabates@apple.com>
 
-        Remove names of unused arguments from the x86/x86-64 function prototype
+        Remove names of unused arguments from the non-x86/x86-64 function prototype
         for JIT::emitSlow_op_mod()
 
         Rubber-stamped by Ryosuke Niwa.
