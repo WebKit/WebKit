@@ -1,3 +1,25 @@
+2013-09-19  Antti Koivisto  <antti@apple.com>
+
+        Add RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=121608
+
+        Reviewed by Dave Hyatt.
+
+        Add a common base class for all Element renderers. The class hierarchy will now look like this
+        
+        RenderObject
+            RenderText
+            RenderElement
+                RenderLayerModelObject
+                    ...
+                RenderSVGModelObject
+                    ...
+                RenderSVGGradientStop
+                
+        This will allow tighter typing in both render and DOM trees.
+        
+        The patch also moves renderer factory function to RenderElement::createFor().
+
 2013-09-19  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r149928): CanvasStyle::operator= leaks everything

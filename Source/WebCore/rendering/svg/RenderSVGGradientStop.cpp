@@ -34,7 +34,7 @@ namespace WebCore {
 using namespace SVGNames;
 
 RenderSVGGradientStop::RenderSVGGradientStop(SVGStopElement* element)
-    : RenderObject(element)
+    : RenderElement(element)
 {
 }
 
@@ -71,7 +71,7 @@ void RenderSVGGradientStop::layout()
 
 SVGGradientElement* RenderSVGGradientStop::gradientElement() const
 {
-    ContainerNode* parentNode = node()->parentNode();
+    ContainerNode* parentNode = element()->parentNode();
     if (parentNode->hasTagName(linearGradientTag) || parentNode->hasTagName(radialGradientTag))
         return toSVGGradientElement(parentNode);
     return 0;

@@ -22,7 +22,7 @@
 #define RenderSVGGradientStop_h
 
 #if ENABLE(SVG)
-#include "RenderObject.h"
+#include "RenderElement.h"
 
 namespace WebCore {
     
@@ -30,7 +30,7 @@ class SVGGradientElement;
 class SVGStopElement;
 
 // This class exists mostly so we can hear about gradient stop style changes
-class RenderSVGGradientStop FINAL : public RenderObject {
+class RenderSVGGradientStop FINAL : public RenderElement {
 public:
     RenderSVGGradientStop(SVGStopElement*);
     virtual ~RenderSVGGradientStop();

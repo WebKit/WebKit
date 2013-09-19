@@ -166,7 +166,7 @@ String HTMLImageElement::altText() const
 RenderObject* HTMLImageElement::createRenderer(RenderArena& arena, RenderStyle& style)
 {
     if (style.hasContent())
-        return RenderObject::createObject(*this, style);
+        return RenderElement::createFor(*this, style);
 
     RenderImage* image = new (arena) RenderImage(this);
     image->setImageResource(RenderImageResource::create());

@@ -23,13 +23,13 @@
 #ifndef RenderLayerModelObject_h
 #define RenderLayerModelObject_h
 
-#include "RenderObject.h"
+#include "RenderElement.h"
 
 namespace WebCore {
 
 class RenderLayer;
 
-class RenderLayerModelObject : public RenderObject {
+class RenderLayerModelObject : public RenderElement {
 public:
     explicit RenderLayerModelObject(Element*);
     virtual ~RenderLayerModelObject();
@@ -50,11 +50,6 @@ public:
     // The query rect is given in local coordinate system.
     virtual bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect&) const { return false; }
 
-    // This is null for anonymous renderers.
-    Element* element() const { return toElement(RenderObject::node()); }
-    Element* nonPseudoElement() const { return toElement(RenderObject::nonPseudoNode()); }
-    Element* generatingElement() const { return toElement(RenderObject::generatingNode()); }
-
 protected:
     void ensureLayer();
     virtual bool updateLayerIfNeeded();
@@ -63,10 +58,6 @@ protected:
 
 private:
     virtual bool isLayerModelObject() const OVERRIDE FINAL { return true; }
-
-    void node() const WTF_DELETED_FUNCTION;
-    void nonPseudoNode() const WTF_DELETED_FUNCTION;
-    void generatingNode() const WTF_DELETED_FUNCTION;
 
     RenderLayer* m_layer;
 

@@ -78,7 +78,7 @@ bool HTMLAppletElement::rendererIsNeeded(const RenderStyle& style)
 RenderObject* HTMLAppletElement::createRenderer(RenderArena&, RenderStyle& style)
 {
     if (!canEmbedJava())
-        return RenderObject::createObject(*this, style);
+        return RenderElement::createFor(*this, style);
 
     return RenderEmbeddedObject::createForApplet(*this);
 }

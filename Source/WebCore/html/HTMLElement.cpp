@@ -792,7 +792,7 @@ RenderObject* HTMLElement::createRenderer(RenderArena& arena, RenderStyle& style
 {
     if (hasLocalName(wbrTag))
         return new (arena) RenderLineBreak(*this);
-    return RenderObject::createObject(*this, style);
+    return RenderElement::createFor(*this, style);
 }
 
 HTMLFormElement* HTMLElement::virtualForm() const

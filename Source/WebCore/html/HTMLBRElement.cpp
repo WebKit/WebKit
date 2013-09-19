@@ -74,7 +74,7 @@ void HTMLBRElement::collectStyleForPresentationAttribute(const QualifiedName& na
 RenderObject* HTMLBRElement::createRenderer(RenderArena& arena, RenderStyle& style)
 {
     if (style.hasContent())
-        return RenderObject::createObject(*this, style);
+        return RenderElement::createFor(*this, style);
 
     return new (arena) RenderLineBreak(*this);
 }

@@ -624,7 +624,7 @@ void writeSVGGradientStop(TextStream& ts, const RenderSVGGradientStop& stop, int
 {
     writeStandardPrefix(ts, stop, indent);
 
-    SVGStopElement* stopElement = toSVGStopElement(toSVGElement(stop.node()));
+    SVGStopElement* stopElement = toSVGStopElement(toSVGElement(stop.element()));
     ASSERT(stopElement);
 
     RenderStyle* style = stop.style();

@@ -1259,7 +1259,7 @@
 		436708C512D9CA4B00044234 /* RenderSVGGradientStop.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088612D9CA4A00044234 /* RenderSVGGradientStop.h */; };
 		436708C712D9CA4B00044234 /* RenderSVGHiddenContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088812D9CA4A00044234 /* RenderSVGHiddenContainer.h */; };
 		436708C912D9CA4B00044234 /* RenderSVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088A12D9CA4A00044234 /* RenderSVGImage.h */; };
-		436708CB12D9CA4B00044234 /* RenderSVGModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088C12D9CA4A00044234 /* RenderSVGModelObject.h */; };
+		436708CB12D9CA4B00044234 /* RenderSVGModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088C12D9CA4A00044234 /* RenderSVGModelObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		436708CD12D9CA4B00044234 /* RenderSVGResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088E12D9CA4A00044234 /* RenderSVGResource.h */; };
 		436708CF12D9CA4B00044234 /* RenderSVGResourceClipper.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367089012D9CA4A00044234 /* RenderSVGResourceClipper.h */; };
 		436708D112D9CA4B00044234 /* RenderSVGResourceContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367089212D9CA4A00044234 /* RenderSVGResourceContainer.h */; };
@@ -5617,6 +5617,8 @@
 		E4295FA412B0614E00D1ACE0 /* ResourceLoadPriority.h in Headers */ = {isa = PBXBuildFile; fileRef = E4295FA312B0614E00D1ACE0 /* ResourceLoadPriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E43105B816750F0C00DB2FB8 /* NodeTraversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E43105B716750F0C00DB2FB8 /* NodeTraversal.cpp */; };
 		E43105BB16750F1600DB2FB8 /* NodeTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = E43105BA16750F1600DB2FB8 /* NodeTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E43A023B17EB370A004CDD25 /* RenderElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E43A023A17EB370A004CDD25 /* RenderElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E43A023D17EB3713004CDD25 /* RenderElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E43A023C17EB3713004CDD25 /* RenderElement.cpp */; };
 		E44613A10CD6331000FADA75 /* HTMLAudioElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E446138F0CD6331000FADA75 /* HTMLAudioElement.cpp */; };
 		E44613A20CD6331000FADA75 /* HTMLAudioElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E44613900CD6331000FADA75 /* HTMLAudioElement.h */; };
 		E44613A40CD6331000FADA75 /* HTMLMediaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44613920CD6331000FADA75 /* HTMLMediaElement.cpp */; };
@@ -12593,6 +12595,8 @@
 		E4295FA312B0614E00D1ACE0 /* ResourceLoadPriority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadPriority.h; sourceTree = "<group>"; };
 		E43105B716750F0C00DB2FB8 /* NodeTraversal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeTraversal.cpp; sourceTree = "<group>"; };
 		E43105BA16750F1600DB2FB8 /* NodeTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeTraversal.h; sourceTree = "<group>"; };
+		E43A023A17EB370A004CDD25 /* RenderElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderElement.h; sourceTree = "<group>"; };
+		E43A023C17EB3713004CDD25 /* RenderElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderElement.cpp; sourceTree = "<group>"; };
 		E446138F0CD6331000FADA75 /* HTMLAudioElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLAudioElement.cpp; sourceTree = "<group>"; };
 		E44613900CD6331000FADA75 /* HTMLAudioElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLAudioElement.h; sourceTree = "<group>"; };
 		E44613910CD6331000FADA75 /* HTMLAudioElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLAudioElement.idl; sourceTree = "<group>"; };
@@ -20526,6 +20530,8 @@
 				BCEA482F097D93020094C9E4 /* RenderDeprecatedFlexibleBox.h */,
 				D302754512A5FE84004BD828 /* RenderDetailsMarker.cpp */,
 				D302754612A5FE84004BD828 /* RenderDetailsMarker.h */,
+				E43A023A17EB370A004CDD25 /* RenderElement.h */,
+				E43A023C17EB3713004CDD25 /* RenderElement.cpp */,
 				0F5B7A5210F65D7A00376302 /* RenderEmbeddedObject.cpp */,
 				0F5B7A5310F65D7A00376302 /* RenderEmbeddedObject.h */,
 				A8EA73AF0A1900E300A8EF5F /* RenderFieldset.cpp */,
@@ -24280,6 +24286,7 @@
 				088A0E0B126EF1DB00978F7A /* SVGPropertyTearOff.h in Headers */,
 				088A0E0C126EF1DB00978F7A /* SVGPropertyTraits.h in Headers */,
 				B2227A9A0D00BF220071B782 /* SVGRadialGradientElement.h in Headers */,
+				E43A023B17EB370A004CDD25 /* RenderElement.h in Headers */,
 				08EDE19F12A50B8E00B95797 /* SVGRect.h in Headers */,
 				B2227A9E0D00BF220071B782 /* SVGRectElement.h in Headers */,
 				197B180C1506353200E4ADA8 /* SVGRenderingContext.h in Headers */,
@@ -25534,6 +25541,7 @@
 				BC53DA62114314BD000D817E /* DOMObjectHashTableMap.cpp in Sources */,
 				85C7F5D10AAFB8D9004014DD /* DOMOverflowEvent.mm in Sources */,
 				E1284BD51044A01E00EAEB52 /* DOMPageTransitionEvent.mm in Sources */,
+				E43A023D17EB3713004CDD25 /* RenderElement.cpp in Sources */,
 				1ACE53E70A8D18E70022947D /* DOMParser.cpp in Sources */,
 				7A54881814E432A1006AE05A /* DOMPatchSupport.cpp in Sources */,
 				A9C6E4EB0D745E2B006442E9 /* DOMPlugin.cpp in Sources */,

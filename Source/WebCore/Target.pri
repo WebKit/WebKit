@@ -1160,6 +1160,7 @@ SOURCES += \
     rendering/RenderCounter.cpp \
     rendering/RenderDeprecatedFlexibleBox.cpp \
     rendering/RenderDetailsMarker.cpp \
+    rendering/RenderElement.cpp \
     rendering/RenderEmbeddedObject.cpp \
     rendering/RenderFieldset.cpp \
     rendering/RenderFileUploadControl.cpp \
@@ -2429,6 +2430,7 @@ HEADERS += \
     rendering/RenderCounter.h \
     rendering/RenderDeprecatedFlexibleBox.h \
     rendering/RenderDetailsMarker.h \
+    rendering/RenderElement.h \
     rendering/RenderEmbeddedObject.h \
     rendering/RenderFieldset.h \
     rendering/RenderFileUploadControl.h \

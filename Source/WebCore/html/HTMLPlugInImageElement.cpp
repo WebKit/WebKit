@@ -213,7 +213,7 @@ RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena& arena, RenderS
     // class and all superclasses because createObject won't necessarily
     // return a RenderEmbeddedObject or RenderWidget.
     if (useFallbackContent())
-        return RenderObject::createObject(*this, style);
+        return RenderElement::createFor(*this, style);
 
     if (isImageType()) {
         RenderImage* image = new (arena) RenderImage(this);

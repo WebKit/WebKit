@@ -4426,6 +4426,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderDeprecatedFlexibleBox.h \
 	Source/WebCore/rendering/RenderDetailsMarker.cpp \
 	Source/WebCore/rendering/RenderDetailsMarker.h \
+	Source/WebCore/rendering/RenderElement.cpp \
+	Source/WebCore/rendering/RenderElement.h \
 	Source/WebCore/rendering/RenderEmbeddedObject.cpp \
 	Source/WebCore/rendering/RenderEmbeddedObject.h \
 	Source/WebCore/rendering/RenderFieldset.cpp \
