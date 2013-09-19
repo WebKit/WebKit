@@ -1,3 +1,36 @@
+2013-09-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Layout Test http/tests/security/canvas-remote-read-remote-image-redirect.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=121458
+
+        Reviewed by Sam Weinig.
+
+        * fast/frames/sandboxed-iframe-attribute-parsing-06-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-07-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-08-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-09-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-10-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-11-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-12-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-13-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-14-expected.txt:
+        * fast/frames/sandboxed-iframe-parsing-space-characters-expected.txt:
+        * fast/frames/sandboxed-iframe-scripting-04-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-subframe-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-in-http-header-control-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-in-http-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-invalid-header-expected.txt:
+        * http/tests/security/isolatedWorld/sandboxed-iframe-expected.txt:
+        * media/video-controls-no-scripting-expected.txt:
+        We now get a line number for blocked inline scripts, which is a progression.
+        It is the line number for the closing </script>, which is not ideal, but better
+        than nothing.
+
+        * http/tests/security/mixedContent/insecure-script-in-iframe-expected.txt:
+        * http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe-expected.txt:
+        Also a progression - we now get a line number for offending <script>.
+
 2013-09-19  Bear Travis  <betravis@adobe.com>
 
         CSS_SHAPES not supported on AppleWin port

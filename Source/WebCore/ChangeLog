@@ -1,3 +1,17 @@
+2013-09-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Layout Test http/tests/security/canvas-remote-read-remote-image-redirect.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=121458
+
+        Reviewed by Sam Weinig.
+
+        The code to automagically produce line numbers is quite fragile. Added some FIXMEs,
+        and added an issue that was making reporting flaky for code is JS event handlers
+        executed while parsing was paused.
+
+        * page/PageConsole.cpp: (WebCore::PageConsole::addMessage): Use actual "script is
+        running" check instead of "parsing a script element" one.
+
 2013-09-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove superfluous CSSLinearTimingFunctionValue and use switch on TimingFunction::type() in more places

@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "InspectorConsoleInstrumentation.h"
 #include "InspectorController.h"
+#include "JSMainThreadExecState.h"
 #include "Page.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
@@ -136,11 +137,15 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     String url;
     if (document)
         url = document->url().string();
-    // FIXME: <http://webkit.org/b/114319> PageConsole::addMessage should automatically determine column number alongside line number
+    // FIXME: <http://webkit.org/b/114319> PageConsole::addMessage should automatically determine column number alongside line number.
+    // FIXME: The below code attempts to determine line numbers for parser generated errors, but this is not the only reason why we can get here.
+    // For example, if we are still parsing and get a WebSocket network error, it will be erroneously attributed to a line where parsing was paused.
+    // Also, we should determine line numbers for script generated messages (e.g. calling getImageData on a canvas).
+    // We probably need to split this function into multiple ones, as appropriate for different call sites. Or maybe decide based on MessageSource.
     unsigned line = 0;
     if (document && document->parsing() && !document->isInDocumentWrite() && document->scriptableDocumentParser()) {
         ScriptableDocumentParser* parser = document->scriptableDocumentParser();
-        if (!parser->isWaitingForScripts() && !parser->isExecutingScript())
+        if (!parser->isWaitingForScripts() && !JSMainThreadExecState::currentState())
             line = parser->lineNumber().oneBasedInt();
     }
     addMessage(source, level, message, url, line, 0, 0, 0, requestIdentifier);
