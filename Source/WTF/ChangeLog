@@ -1,3 +1,14 @@
+2013-09-19  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Define mainThreadEstablishedAsPthreadMain to be true in WTF::initializeMainThreadPlatform()
+
+        Reviewed by Joseph Pecoraro.
+
+        This change was inadvertently left out of <http://trac.webkit.org/changeset/155926>.
+
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::initializeMainThreadPlatform):
+
 2013-09-19  Sam Weinig  <sam@webkit.org>
 
         Remove OwnArrayPtr

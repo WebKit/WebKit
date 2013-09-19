@@ -72,7 +72,7 @@ void initializeMainThreadPlatform()
     ASSERT(!staticMainThreadCaller);
     staticMainThreadCaller = [[JSWTFMainThreadCaller alloc] init];
 
-    mainThreadEstablishedAsPthreadMain = false;
+    mainThreadEstablishedAsPthreadMain = true;
 
 #if !USE(WEB_THREAD)
     mainThreadPthread = pthread_self();
