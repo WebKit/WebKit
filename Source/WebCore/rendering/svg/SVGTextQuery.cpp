@@ -115,7 +115,7 @@ bool SVGTextQuery::executeQuery(Data* queryData, ProcessTextFragmentCallback fra
     // Loop over all text boxes
     for (unsigned textBoxPosition = 0; textBoxPosition < textBoxCount; ++textBoxPosition) {
         queryData->textBox = m_textBoxes.at(textBoxPosition);
-        queryData->textRenderer = &toRenderSVGInlineText(queryData->textBox->textRenderer());
+        queryData->textRenderer = &queryData->textBox->renderer();
         ASSERT(queryData->textRenderer->style());
         ASSERT(queryData->textRenderer->style()->svgStyle());
 

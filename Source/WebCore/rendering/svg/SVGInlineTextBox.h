@@ -25,6 +25,7 @@
 #if ENABLE(SVG)
 #include "InlineTextBox.h"
 #include "SVGTextLayoutEngine.h"
+#include "RenderSVGInlineText.h"
 
 namespace WebCore {
 
@@ -33,7 +34,9 @@ class SVGRootInlineBox;
 
 class SVGInlineTextBox FINAL : public InlineTextBox {
 public:
-    SVGInlineTextBox(RenderObject&);
+    explicit SVGInlineTextBox(RenderSVGInlineText&);
+
+    RenderSVGInlineText& renderer() const { return toRenderSVGInlineText(InlineTextBox::renderer()); }
 
     virtual bool isSVGInlineTextBox() const { return true; }
 

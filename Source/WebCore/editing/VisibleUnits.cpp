@@ -296,10 +296,10 @@ static TextBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePos
     if (previousBox && previousBox->isInlineTextBox()) {
         const InlineTextBox* previousTextBox = toInlineTextBox(previousBox);
         previousBoxLength = previousTextBox->len();
-        string.append(previousTextBox->textRenderer().text()->characters() + previousTextBox->start(), previousBoxLength);
+        string.append(previousTextBox->renderer().text()->characters() + previousTextBox->start(), previousBoxLength);
         len += previousBoxLength;
     }
-    string.append(textBox->textRenderer().text()->characters() + textBox->start(), textBox->len());
+    string.append(textBox->renderer().text()->characters() + textBox->start(), textBox->len());
     len += textBox->len();
 
     return wordBreakIterator(string.data(), len);
@@ -315,11 +315,11 @@ static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePos
 
     int len = 0;
     string.clear();
-    string.append(textBox->textRenderer().text()->characters() + textBox->start(), textBox->len());
+    string.append(textBox->renderer().text()->characters() + textBox->start(), textBox->len());
     len += textBox->len();
     if (nextBox && nextBox->isInlineTextBox()) {
         const InlineTextBox* nextTextBox = toInlineTextBox(nextBox);
-        string.append(nextTextBox->textRenderer().text()->characters() + nextTextBox->start(), nextTextBox->len());
+        string.append(nextTextBox->renderer().text()->characters() + nextTextBox->start(), nextTextBox->len());
         len += nextTextBox->len();
     }
 
@@ -386,7 +386,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
         else if (offsetInBox == box->caretMaxOffset())
             iter = wordBreakIteratorForMaxOffsetBoundary(visiblePosition, textBox, nextBoxInDifferentBlock, string, leafBoxes);
         else if (movingIntoNewBox) {
-            iter = wordBreakIterator(textBox->textRenderer().text()->characters() + textBox->start(), textBox->len());
+            iter = wordBreakIterator(textBox->renderer().text()->characters() + textBox->start(), textBox->len());
             previouslyVisitedBox = box;
         }
 

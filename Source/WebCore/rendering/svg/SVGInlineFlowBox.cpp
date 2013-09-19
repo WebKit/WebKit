@@ -58,7 +58,7 @@ void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
     if (renderingContext.isRenderingPrepared()) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
             if (child->isSVGInlineTextBox())
-                computeTextMatchMarkerRectForRenderer(&toRenderSVGInlineText(toSVGInlineTextBox(child)->textRenderer()));
+                computeTextMatchMarkerRectForRenderer(&toRenderSVGInlineText(toSVGInlineTextBox(child)->renderer()));
 
             child->paint(paintInfo, LayoutPoint(), 0, 0);
         }

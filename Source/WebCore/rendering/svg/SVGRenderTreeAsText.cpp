@@ -397,8 +397,8 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
     if (fragments.isEmpty())
         return;
 
-    const SVGRenderStyle* svgStyle = textBox->textRenderer().style()->svgStyle();
-    String text = textBox->textRenderer().text();
+    const SVGRenderStyle* svgStyle = textBox->renderer().style()->svgStyle();
+    String text = textBox->renderer().text();
 
     unsigned fragmentsSize = fragments.size();
     for (unsigned i = 0; i < fragmentsSize; ++i) {

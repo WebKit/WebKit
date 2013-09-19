@@ -388,7 +388,7 @@ float InlineFlowBox::placeBoxRangeInInlineDirection(InlineBox* firstChild, Inlin
     for (InlineBox* curr = firstChild; curr && curr != lastChild; curr = curr->nextOnLine()) {
         if (curr->renderer().isText()) {
             InlineTextBox* text = toInlineTextBox(curr);
-            RenderText& rt = text->textRenderer();
+            RenderText& rt = text->renderer();
             if (rt.textLength()) {
                 if (needsWordSpacing && isSpaceOrNewline(rt.characterAt(text->start())))
                     logicalLeft += rt.style(isFirstLineStyle())->font().wordSpacing();

@@ -93,9 +93,7 @@ void SVGTextChunkBuilder::addTextChunk(Vector<SVGInlineTextBox*>& lineLayoutBoxe
     SVGInlineTextBox* textBox = lineLayoutBoxes[boxStart];
     ASSERT(textBox);
 
-    RenderSVGInlineText& textRenderer = toRenderSVGInlineText(textBox->textRenderer());
-
-    const RenderStyle* style = textRenderer.style();
+    const RenderStyle* style = textBox->renderer().style();
     ASSERT(style);
 
     const SVGRenderStyle* svgStyle = style->svgStyle();
@@ -126,7 +124,7 @@ void SVGTextChunkBuilder::addTextChunk(Vector<SVGInlineTextBox*>& lineLayoutBoxe
 
     // Handle 'lengthAdjust' property.
     float desiredTextLength = 0;
-    if (SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(textRenderer.parent())) {
+    if (SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(textBox->renderer().parent())) {
         SVGLengthContext lengthContext(textContentElement);
         desiredTextLength = textContentElement->specifiedTextLength().value(lengthContext);
 

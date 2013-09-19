@@ -1,3 +1,21 @@
+2013-09-19  Andreas Kling  <akling@apple.com>
+
+        CTTE: Tighten renderer types for InlineTextBox and SVGInlineTextBox.
+        <https://webkit.org/b/121605>
+
+        Reviewed by Antti Koivisto.
+
+        Codify the following:
+
+        - InlineTextBox always has a RenderText.
+        - SVGInlineTextBox always has a RenderSVGInlineText.
+
+        Removed InlineTextBox::textRenderer() and make renderer() simply
+        return a RenderText&/RenderSVGInlineText& instead.
+
+        This turns some node() accessors into textNode() and removes a host
+        of casts and assertions.
+
 2013-09-19  Antti Koivisto  <antti@apple.com>
 
         [CTTE] Hide nonPseudoNode and generatingNode, replace with Element versions

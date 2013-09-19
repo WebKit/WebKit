@@ -235,7 +235,7 @@ void SVGTextLayoutEngine::layoutInlineTextBox(SVGInlineTextBox* textBox)
 {
     ASSERT(textBox);
 
-    RenderSVGInlineText& text = toRenderSVGInlineText(textBox->textRenderer());
+    RenderSVGInlineText& text = textBox->renderer();
     ASSERT(text.parent());
     ASSERT(text.parent()->node());
     ASSERT(text.parent()->node()->isSVGElement());
@@ -264,11 +264,11 @@ static inline void dumpTextBoxes(Vector<SVGInlineTextBox*>& boxes)
     for (unsigned boxPosition = 0; boxPosition < boxCount; ++boxPosition) {
         SVGInlineTextBox* textBox = boxes.at(boxPosition);
         Vector<SVGTextFragment>& fragments = textBox->textFragments();
-        fprintf(stderr, "-> Box %i: Dumping text fragments for SVGInlineTextBox, textBox=%p, textRenderer=%p\n", boxPosition, textBox, textBox->textRenderer());
+        fprintf(stderr, "-> Box %i: Dumping text fragments for SVGInlineTextBox, textBox=%p, textRenderer=%p\n", boxPosition, textBox, textBox->renderer());
         fprintf(stderr, "        textBox properties, start=%i, len=%i, box direction=%i\n", textBox->start(), textBox->len(), textBox->direction());
-        fprintf(stderr, "   textRenderer properties, textLength=%i\n", textBox->textRenderer()->textLength());
+        fprintf(stderr, "   textRenderer properties, textLength=%i\n", textBox->renderer()->textLength());
 
-        const UChar* characters = textBox->textRenderer()->characters();
+        const UChar* characters = textBox->renderer()->characters();
 
         unsigned fragmentCount = fragments.size();
         for (unsigned i = 0; i < fragmentCount; ++i) {

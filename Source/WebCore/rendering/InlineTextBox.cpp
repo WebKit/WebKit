@@ -201,7 +201,7 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos)
 
     LayoutUnit selTop = selectionTop();
     LayoutUnit selHeight = selectionHeight();
-    RenderStyle* styleToUse = textRenderer().style(isFirstLineStyle());
+    RenderStyle* styleToUse = renderer().style(isFirstLineStyle());
     const Font& font = styleToUse->font();
 
     BufferForAppendingHyphen charactersWithHyphen;
@@ -232,7 +232,7 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos)
 
 void InlineTextBox::deleteLine(RenderArena& arena)
 {
-    textRenderer().removeTextBox(this);
+    renderer().removeTextBox(this);
     destroy(arena);
 }
 
@@ -241,7 +241,7 @@ void InlineTextBox::extractLine()
     if (extracted())
         return;
 
-    textRenderer().extractTextBox(this);
+    renderer().extractTextBox(this);
 }
 
 void InlineTextBox::attachLine()
@@ -249,7 +249,7 @@ void InlineTextBox::attachLine()
     if (!extracted())
         return;
     
-    textRenderer().attachTextBox(this);
+    renderer().attachTextBox(this);
 }
 
 float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox)
@@ -303,7 +303,7 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
 
         // If we got here that means that we were only partially truncated and we need to return the pixel offset at which
         // to place the ellipsis.
-        float widthOfVisibleText = textRenderer().width(m_start, offset, textPos(), isFirstLineStyle());
+        float widthOfVisibleText = renderer().width(m_start, offset, textPos(), isFirstLineStyle());
 
         // The ellipsis needs to be placed just after the last visible character.
         // Where "after" is defined by the flow directionality, not the inline
@@ -365,7 +365,7 @@ void updateGraphicsContext(GraphicsContext* context, const Color& fillColor, con
 
 bool InlineTextBox::isLineBreak() const
 {
-    return renderer().style()->preserveNewline() && len() == 1 && (*textRenderer().text())[start()] == '\n';
+    return renderer().style()->preserveNewline() && len() == 1 && (*renderer().text())[start()] == '\n';
 }
 
 bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/)
@@ -382,7 +382,7 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     FloatRect rect(locationIncludingFlipping(), size());
     // Make sure truncated text is ignored while hittesting.
     if (m_truncation != cNoTruncation) {
-        LayoutUnit widthOfVisibleText = textRenderer().width(m_start, m_truncation, textPos(), isFirstLineStyle());
+        LayoutUnit widthOfVisibleText = renderer().width(m_start, m_truncation, textPos(), isFirstLineStyle());
 
         if (isHorizontal())
             renderer().style()->isLeftToRightDirection() ? rect.setWidth(widthOfVisibleText) : rect.shiftXEdgeTo(right() - widthOfVisibleText);
@@ -394,7 +394,7 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
     if (locationInContainer.intersects(rect)) {
         renderer().updateHitTestResult(result, flipForWritingMode(locationInContainer.point() - toLayoutSize(accumulatedOffset)));
-        if (!result.addNodeToRectBasedTestResult(renderer().node(), request, locationInContainer, rect))
+        if (!result.addNodeToRectBasedTestResult(renderer().textNode(), request, locationInContainer, rect))
             return true;
     }
     return false;
@@ -545,7 +545,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
             // farther to the right.
             // NOTE: WebKit's behavior differs from that of IE which appears to just overlay the ellipsis on top of the
             // truncated string i.e.  |Hello|CBA| -> |...lo|CBA|
-            LayoutUnit widthOfVisibleText = textRenderer().width(m_start, m_truncation, textPos(), isFirstLineStyle());
+            LayoutUnit widthOfVisibleText = renderer().width(m_start, m_truncation, textPos(), isFirstLineStyle());
             LayoutUnit widthOfHiddenText = m_logicalWidth - widthOfVisibleText;
             LayoutSize truncationOffset(isLeftToRightDirection() ? widthOfHiddenText : -widthOfHiddenText, 0);
             adjustedPaintOffset.move(isHorizontal() ? truncationOffset : truncationOffset.transposedSize());
@@ -562,14 +562,14 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     boxOrigin.move(adjustedPaintOffset.x(), adjustedPaintOffset.y());
     FloatRect boxRect(boxOrigin, LayoutSize(logicalWidth(), logicalHeight()));
 
-    RenderCombineText* combinedText = styleToUse->hasTextCombine() && textRenderer().isCombineText() && toRenderCombineText(textRenderer()).isCombined() ? &toRenderCombineText(textRenderer()) : 0;
+    RenderCombineText* combinedText = styleToUse->hasTextCombine() && renderer().isCombineText() && toRenderCombineText(renderer()).isCombined() ? &toRenderCombineText(renderer()) : 0;
 
     bool shouldRotate = !isHorizontal() && !combinedText;
     if (shouldRotate)
         context->concatCTM(rotation(boxRect, Clockwise));
 
     // Determine whether or not we have composition underlines to draw.
-    bool containsComposition = renderer().node() && renderer().frame().editor().compositionNode() == renderer().node();
+    bool containsComposition = renderer().textNode() && renderer().frame().editor().compositionNode() == renderer().textNode();
     bool useCustomUnderlines = containsComposition && renderer().frame().editor().compositionUsesCustomUnderlines();
 
     // Determine the text colors and selection colors.
@@ -701,12 +701,12 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     int maximumLength;
     String string;
     if (!combinedText) {
-        string = textRenderer().text();
+        string = renderer().text();
         if (static_cast<unsigned>(length) != string.length() || m_start) {
             ASSERT_WITH_SECURITY_IMPLICATION(static_cast<unsigned>(m_start + length) <= string.length());
             string = string.substringSharingImpl(m_start, length);
         }
-        maximumLength = textRenderer().textLength() - m_start;
+        maximumLength = renderer().textLength() - m_start;
     } else {
         combinedText->getStringToRender(m_start, string, length);
         maximumLength = length;
@@ -835,17 +835,15 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
 void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
 {
-    RenderText& textRenderer = this->textRenderer();
-
     int startPos, endPos;
-    if (textRenderer.selectionState() == RenderObject::SelectionInside) {
+    if (renderer().selectionState() == RenderObject::SelectionInside) {
         startPos = 0;
-        endPos = textRenderer.textLength();
+        endPos = renderer().textLength();
     } else {
-        textRenderer.selectionStartEnd(startPos, endPos);
-        if (textRenderer.selectionState() == RenderObject::SelectionStart)
-            endPos = textRenderer.textLength();
-        else if (textRenderer.selectionState() == RenderObject::SelectionEnd)
+        renderer().selectionStartEnd(startPos, endPos);
+        if (renderer().selectionState() == RenderObject::SelectionStart)
+            endPos = renderer().textLength();
+        else if (renderer().selectionState() == RenderObject::SelectionEnd)
             startPos = 0;
     }
 
@@ -880,15 +878,13 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     if (textColor == c)
         c = Color(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
 
-    RenderText& textRenderer = this->textRenderer();
-
     GraphicsContextStateSaver stateSaver(*context);
     updateGraphicsContext(context, c, c, 0, style->colorSpace());  // Don't draw text at all!
     
     // If the text is truncated, let the thing being painted in the truncation
     // draw its own highlight.
     int length = m_truncation != cNoTruncation ? m_truncation : m_len;
-    String string = textRenderer.text();
+    String string = renderer().text();
 
     if (string.length() != static_cast<unsigned>(length) || m_start) {
         ASSERT_WITH_SECURITY_IMPLICATION(static_cast<unsigned>(m_start + length) <= string.length());
@@ -897,7 +893,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
 
     BufferForAppendingHyphen charactersWithHyphen;
     bool respectHyphen = ePos == length && hasHyphen();
-    TextRun textRun = constructTextRun(style, font, string, textRenderer.textLength() - m_start, respectHyphen ? &charactersWithHyphen : 0);
+    TextRun textRun = constructTextRun(style, font, string, renderer().textLength() - m_start, respectHyphen ? &charactersWithHyphen : 0);
     if (respectHyphen)
         ePos = textRun.length();
 
@@ -905,7 +901,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     LayoutUnit selectionBottom = rootBox.selectionBottom();
     LayoutUnit selectionTop = rootBox.selectionTopAdjustedForPrecedingBlock();
 
-    int deltaY = roundToInt(textRenderer.style()->isFlippedLinesWritingMode() ? selectionBottom - logicalBottom() : logicalTop() - selectionTop);
+    int deltaY = roundToInt(renderer().style()->isFlippedLinesWritingMode() ? selectionBottom - logicalBottom() : logicalTop() - selectionTop);
     int selHeight = max(0, roundToInt(selectionBottom - selectionTop));
 
     FloatPoint localOrigin(boxOrigin.x(), boxOrigin.y() - deltaY);
@@ -950,7 +946,7 @@ void InlineTextBox::paintCustomHighlight(const LayoutPoint& paintOffset, const A
     FloatRect rootRect(paintOffset.x() + rootBox.x(), paintOffset.y() + selectionTop(), rootBox.logicalWidth(), selectionHeight());
     FloatRect textRect(paintOffset.x() + x(), rootRect.y(), logicalWidth(), rootRect.height());
 
-    page->chrome().client().paintCustomHighlight(renderer().node(), type, textRect, rootRect, true, false);
+    page->chrome().client().paintCustomHighlight(renderer().textNode(), type, textRect, rootRect, true, false);
 }
 
 #endif
@@ -1140,29 +1136,28 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
     if (m_truncation == cFullTruncation)
         return;
 
-    RenderText& textRenderer = this->textRenderer();
     FloatPoint localOrigin = boxOrigin;
 
     float width = m_logicalWidth;
     if (m_truncation != cNoTruncation) {
-        width = textRenderer.width(m_start, m_truncation, textPos(), isFirstLineStyle());
+        width = renderer().width(m_start, m_truncation, textPos(), isFirstLineStyle());
         if (!isLeftToRightDirection())
             localOrigin.move(m_logicalWidth - width, 0);
     }
     
     // Get the text decoration colors.
     Color underline, overline, linethrough;
-    textRenderer.getTextDecorationColors(deco, underline, overline, linethrough, true);
+    renderer().getTextDecorationColors(deco, underline, overline, linethrough, true);
     if (isFirstLineStyle())
-        textRenderer.getTextDecorationColors(deco, underline, overline, linethrough, true, true);
+        renderer().getTextDecorationColors(deco, underline, overline, linethrough, true, true);
     
     // Use a special function for underlines to get the positioning exactly right.
-    bool isPrinting = textRenderer.document().printing();
+    bool isPrinting = renderer().document().printing();
     context->setStrokeThickness(textDecorationThickness);
 
     bool linesAreOpaque = !isPrinting && (!(deco & TextDecorationUnderline) || underline.alpha() == 255) && (!(deco & TextDecorationOverline) || overline.alpha() == 255) && (!(deco & TextDecorationLineThrough) || linethrough.alpha() == 255);
 
-    RenderStyle* styleToUse = textRenderer.style(isFirstLineStyle());
+    RenderStyle* styleToUse = renderer().style(isFirstLineStyle());
     int baseline = styleToUse->fontMetrics().ascent();
 
     bool setClip = false;
@@ -1186,7 +1181,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
         setClip = true;
     }
 
-    ColorSpace colorSpace = textRenderer.style()->colorSpace();
+    ColorSpace colorSpace = renderer().style()->colorSpace();
     bool setShadow = false;
 
     do {
@@ -1298,7 +1293,7 @@ static GraphicsContext::DocumentMarkerLineStyle lineStyleForMarkerType(DocumentM
 void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& boxOrigin, DocumentMarker* marker, RenderStyle* style, const Font& font, bool grammar)
 {
     // Never print spelling/grammar markers (5327887)
-    if (textRenderer().document().printing())
+    if (renderer().document().printing())
         return;
 
     if (m_truncation == cFullTruncation)
@@ -1411,10 +1406,10 @@ void InlineTextBox::computeRectForReplacementMarker(DocumentMarker* marker, Rend
     
 void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& boxOrigin, RenderStyle* style, const Font& font, bool background)
 {
-    if (!renderer().node())
+    if (!renderer().textNode())
         return;
 
-    Vector<DocumentMarker*> markers = renderer().document().markers().markersFor(renderer().node());
+    Vector<DocumentMarker*> markers = renderer().document().markers().markersFor(renderer().textNode());
     Vector<DocumentMarker*>::const_iterator markerIt = markers.begin();
 
     // Give any document markers that touch this run a chance to draw before the text has been drawn.
@@ -1485,7 +1480,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, const FloatP
     if (paintStart <= underline.startOffset) {
         paintStart = underline.startOffset;
         useWholeWidth = false;
-        start = textRenderer().width(m_start, paintStart - m_start, textPos(), isFirstLineStyle());
+        start = renderer().width(m_start, paintStart - m_start, textPos(), isFirstLineStyle());
     }
     if (paintEnd != underline.endOffset) {      // end points at the last char, not past it
         paintEnd = min(paintEnd, (unsigned)underline.endOffset);
@@ -1496,7 +1491,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, const FloatP
         useWholeWidth = false;
     }
     if (!useWholeWidth) {
-        width = textRenderer().width(paintStart, paintEnd - paintStart, textPos() + start, isFirstLineStyle());
+        width = renderer().width(paintStart, paintEnd - paintStart, textPos() + start, isFirstLineStyle());
     }
 
     // Thick marked text underlines are 2px thick as long as there is room for the 2px line under the baseline.
@@ -1514,7 +1509,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, const FloatP
 
     ctx->setStrokeColor(underline.color, renderer().style()->colorSpace());
     ctx->setStrokeThickness(lineThickness);
-    ctx->drawLineForText(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + logicalHeight() - lineThickness), width, textRenderer().document().printing());
+    ctx->drawLineForText(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + logicalHeight() - lineThickness), width, renderer().document().printing());
 }
 
 int InlineTextBox::caretMinOffset() const
@@ -1548,7 +1543,7 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
 
     FontCachePurgePreventer fontCachePurgePreventer;
 
-    RenderStyle* style = textRenderer().style(isFirstLineStyle());
+    RenderStyle* style = renderer().style(isFirstLineStyle());
     const Font& font = style->font();
     return font.offsetForPosition(constructTextRun(style, font), lineOffset - logicalLeft(), includePartialGlyphs);
 }
@@ -1563,7 +1558,7 @@ float InlineTextBox::positionForOffset(int offset) const
 
     FontCachePurgePreventer fontCachePurgePreventer;
 
-    RenderStyle* styleToUse = textRenderer().style(isFirstLineStyle());
+    RenderStyle* styleToUse = renderer().style(isFirstLineStyle());
     ASSERT(styleToUse);
     const Font& font = styleToUse->font();
     int from = !isLeftToRightDirection() ? offset - m_start : 0;
@@ -1599,25 +1594,21 @@ bool InlineTextBox::containsCaretOffset(int offset) const
 TextRun InlineTextBox::constructTextRun(RenderStyle* style, const Font& font, BufferForAppendingHyphen* charactersWithHyphen) const
 {
     ASSERT(style);
+    ASSERT(renderer().text());
 
-    RenderText& textRenderer = this->textRenderer();
-    ASSERT(textRenderer.text());
-
-    String string = textRenderer.text();
+    String string = renderer().text();
     unsigned startPos = start();
     unsigned length = len();
 
     if (string.length() != length || startPos)
         string = string.substringSharingImpl(startPos, length);
 
-    return constructTextRun(style, font, string, textRenderer.textLength() - startPos, charactersWithHyphen);
+    return constructTextRun(style, font, string, renderer().textLength() - startPos, charactersWithHyphen);
 }
 
 TextRun InlineTextBox::constructTextRun(RenderStyle* style, const Font& font, String string, int maximumLength, BufferForAppendingHyphen* charactersWithHyphen) const
 {
     ASSERT(style);
-
-    RenderText& textRenderer = this->textRenderer();
 
     int length = string.length();
 
@@ -1628,10 +1619,10 @@ TextRun InlineTextBox::constructTextRun(RenderStyle* style, const Font& font, St
 
     ASSERT(maximumLength >= length);
 
-    TextRun run(string, textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style->rtlOrdering() == VisualOrder, !textRenderer.canUseSimpleFontCodePath());
+    TextRun run(string, textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style->rtlOrdering() == VisualOrder, !renderer().canUseSimpleFontCodePath());
     run.setTabSize(!style->collapseWhiteSpace(), style->tabSize());
     if (textRunNeedsRenderingContext(font))
-        run.setRenderingContext(SVGTextRunRenderingContext::create(&textRenderer));
+        run.setRenderingContext(SVGTextRunRenderingContext::create(&renderer()));
 
     // Propagate the maximum length of the characters buffer to the TextRun, even when we're only processing a substring.
     run.setCharactersLength(maximumLength);
@@ -1648,15 +1639,14 @@ const char* InlineTextBox::boxName() const
 
 void InlineTextBox::showBox(int printedCharacters) const
 {
-    const RenderText& textRenderer = this->textRenderer();
-    String value = textRenderer.text();
+    String value = renderer().text();
     value = value.substring(start(), len());
     value.replaceWithLiteral('\\', "\\\\");
     value.replaceWithLiteral('\n', "\\n");
     printedCharacters += fprintf(stderr, "%s\t%p", boxName(), this);
     for (; printedCharacters < showTreeCharacterOffset; printedCharacters++)
         fputc(' ', stderr);
-    printedCharacters = fprintf(stderr, "\t%s %p", textRenderer.renderName(), &textRenderer);
+    printedCharacters = fprintf(stderr, "\t%s %p", renderer().renderName(), &renderer());
     const int rendererCharacterOffset = 24;
     for (; printedCharacters < rendererCharacterOffset; printedCharacters++)
         fputc(' ', stderr);

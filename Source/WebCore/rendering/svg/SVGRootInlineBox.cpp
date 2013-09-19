@@ -58,7 +58,7 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
     if (renderingContext.isRenderingPrepared()) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
             if (child->isSVGInlineTextBox())
-                SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(toRenderSVGInlineText(&toSVGInlineTextBox(child)->textRenderer()));
+                SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(&toSVGInlineTextBox(child)->renderer());
 
             child->paint(paintInfo, LayoutPoint(), 0, 0);
         }
@@ -277,8 +277,8 @@ static inline void reverseInlineBoxRangeAndValueListsIfNeeded(void* userData, Ve
 
         // Reordering is only necessary for BiDi text that is _absolutely_ positioned.
         if (firstTextBox->len() == 1 && firstTextBox->len() == lastTextBox->len()) {
-            RenderSVGInlineText& firstContext = toRenderSVGInlineText(firstTextBox->textRenderer());
-            RenderSVGInlineText& lastContext = toRenderSVGInlineText(lastTextBox->textRenderer());
+            RenderSVGInlineText& firstContext = firstTextBox->renderer();
+            RenderSVGInlineText& lastContext = lastTextBox->renderer();
 
             SVGTextLayoutAttributes* firstAttributes = 0;
             SVGTextLayoutAttributes* lastAttributes = 0;
