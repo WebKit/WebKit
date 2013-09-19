@@ -1,5 +1,12 @@
 2013-09-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add test expectations for bugs 121581 and 121582.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2013-09-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix the expected result again after r156070.
 
         * platform/mac-lion/js/dom: Added.

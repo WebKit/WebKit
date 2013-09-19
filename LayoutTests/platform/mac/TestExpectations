@@ -1327,3 +1327,5 @@ webkit.org/b/121452 [ Debug ] fast/frames/lots-of-objects.html [ Failure Pass Ti
 
 # Frequently times out in DumpRenderTree (which is reported as a text failure).
 webkit.org/b/120544 inspector/storage-panel-dom-storage-update.html [ Pass Failure ]
+
+webkit.org/b/121582 [ Lion ] media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Failure ]
