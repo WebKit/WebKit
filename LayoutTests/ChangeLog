@@ -1,3 +1,19 @@
+2013-09-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Moving GTK-specific baselines for some js/dom/* tests into the proper directory.
+
+        * platform/gtk/js/dom: Added.
+        * platform/gtk/js/dom-static-property-for-in-iteration-expected.txt: Removed.
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt: Copied from LayoutTests/platform/gtk/js/dom-static-property-for-in-iteration-expected.txt.
+        * platform/gtk/js/dom/function-length-expected.txt: Copied from LayoutTests/platform/gtk/js/function-length-expected.txt.
+        * platform/gtk/js/dom/global-constructors-attributes-dedicated-worker-expected.txt: Copied from LayoutTests/platform/gtk/js/global-constructors-attributes-dedicated-worker-expected.txt.
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt: Copied from LayoutTests/platform/gtk/js/global-constructors-attributes-expected.txt.
+        * platform/gtk/js/dom/global-constructors-attributes-shared-worker-expected.txt: Copied from LayoutTests/platform/gtk/js/global-constructors-attributes-shared-worker-expected.txt.
+        * platform/gtk/js/function-length-expected.txt: Removed.
+        * platform/gtk/js/global-constructors-attributes-dedicated-worker-expected.txt: Removed.
+        * platform/gtk/js/global-constructors-attributes-expected.txt: Removed.
+        * platform/gtk/js/global-constructors-attributes-shared-worker-expected.txt: Removed.
+
 2013-09-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Redo r156078.
