@@ -42,6 +42,7 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "RawDataDocumentParser.h"
+#include "RenderElement.h"
 #include "ResourceBuffer.h"
 #include "Settings.h"
 

@@ -28,7 +28,7 @@
 #include "AffineTransform.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "RenderTreeAsText.h"
 #include "SVGElement.h"
 #include "SVGFilter.h"
@@ -74,7 +74,7 @@ void FEImage::determineAbsolutePaintRect()
     if (m_image) {
         srcRect.setSize(m_image->size());
         m_preserveAspectRatio.transformRect(paintRect, srcRect);
-    } else if (RenderObject* renderer = referencedRenderer())
+    } else if (RenderElement* renderer = referencedRenderer())
         srcRect = svgFilter->absoluteTransform().mapRect(renderer->repaintRectInLocalCoordinates());
 
     if (clipsToBounds())
@@ -84,7 +84,7 @@ void FEImage::determineAbsolutePaintRect()
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
-RenderObject* FEImage::referencedRenderer() const
+RenderElement* FEImage::referencedRenderer() const
 {
     if (!m_document)
         return 0;

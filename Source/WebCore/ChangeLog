@@ -1,3 +1,12 @@
+2013-09-19  Antti Koivisto  <antti@apple.com>
+
+        Add covariant RenderElement* Element::renderer()
+        https://bugs.webkit.org/show_bug.cgi?id=121638
+
+        Reviewed by Andreas Kling.
+
+        Also add isRenderElement() test and casting functions.
+
 2013-09-19  Andreas Kling  <akling@apple.com>
 
         Streamline JSMainThreadNullState.

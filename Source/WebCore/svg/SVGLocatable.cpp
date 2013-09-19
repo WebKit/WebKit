@@ -25,7 +25,7 @@
 #if ENABLE(SVG)
 #include "SVGLocatable.h"
 
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "SVGException.h"
 #include "SVGGraphicsElement.h"
 #include "SVGImageElement.h"

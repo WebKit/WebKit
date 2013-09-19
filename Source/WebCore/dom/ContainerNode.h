@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class FloatPoint;
-    
+
 typedef void (*NodeCallback)(Node*, unsigned);
 
 namespace Private { 

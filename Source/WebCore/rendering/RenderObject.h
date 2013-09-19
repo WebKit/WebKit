@@ -342,6 +342,7 @@ public:
 
     bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
 
+    bool isRenderElement() const { return !isText(); }
     virtual bool isBoxModelObject() const { return false; }
     virtual bool isCounter() const { return false; }
     virtual bool isQuote() const { return false; }

@@ -47,6 +47,39 @@ private:
     void generatingNode() const WTF_DELETED_FUNCTION;
 };
 
+inline RenderElement& toRenderElement(RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isRenderElement());
+    return static_cast<RenderElement&>(object);
+}
+
+inline const RenderElement& toRenderElement(const RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isRenderElement());
+    return static_cast<const RenderElement&>(object);
+}
+
+inline RenderElement* toRenderElement(RenderObject* object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderElement());
+    return static_cast<RenderElement*>(object);
+}
+
+inline const RenderElement* toRenderElement(const RenderObject* object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderElement());
+    return static_cast<const RenderElement*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderElement(const RenderElement*);
+void toRenderElement(const RenderElement&);
+
+inline RenderElement* Element::renderer() const
+{
+    return toRenderElement(Node::renderer());
+}
+
 } // namespace WebCore
 
 #endif // RenderElement_h
