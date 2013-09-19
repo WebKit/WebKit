@@ -1,3 +1,15 @@
+2013-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add XHR tests checking readyState transition when abort() is invoked in various states
+        https://bugs.webkit.org/show_bug.cgi?id=121585
+
+        Reviewed by Alexey Proskuryakov.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/2d854757576db590745cfb78e11ca428a1aac342
+
+        * http/tests/xmlhttprequest/readystatechange-and-abort-expected.txt: Added.
+        * http/tests/xmlhttprequest/readystatechange-and-abort.html: Added.
+
 2013-09-19  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Unreviewed. Fix typo in layout test description introduced in r155974.
