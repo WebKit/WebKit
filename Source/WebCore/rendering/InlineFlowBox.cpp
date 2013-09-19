@@ -1095,7 +1095,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
     if (locationInContainer.intersects(rect)) {
         renderer().updateHitTestResult(result, flipForWritingMode(locationInContainer.point() - toLayoutSize(accumulatedOffset))); // Don't add in m_x or m_y here, we want coords in the containing block's space.
-        if (!result.addNodeToRectBasedTestResult(renderer().node(), request, locationInContainer, rect))
+        if (!result.addNodeToRectBasedTestResult(renderer().element(), request, locationInContainer, rect))
             return true;
     }
 
@@ -1142,7 +1142,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
                 if (containingBlockPaintsContinuationOutline) {
                     // Add ourselves to the containing block of the entire continuation so that it can
                     // paint us atomically.
-                    cb->addContinuationWithOutline(toRenderInline(renderer().node()->renderer()));
+                    cb->addContinuationWithOutline(toRenderInline(renderer().element()->renderer()));
                 } else if (!inlineFlow.isInlineElementContinuation())
                     paintInfo.outlineObjects->add(&inlineFlow);
             }

@@ -1,3 +1,17 @@
+2013-09-19  Andreas Kling  <akling@apple.com>
+
+        CTTE: Tighten renderer types for InlineFlowBox and SVGInlineFlowBox.
+        <https://webkit.org/b/121603>
+
+        Reviewed by Antti Koivisto.
+
+        Codify the following:
+
+        - InlineFlowBox always has a RenderBoxModelObject.
+        - SVGInlineFlowBox always has a RenderSVGInline.
+
+        This turns some node() accessors into element(). Neato!
+
 2013-09-19  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         CSS Unit vmax and vmin in border-width not handled.

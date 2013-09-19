@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG)
 #include "InlineFlowBox.h"
+#include "RenderSVGInline.h"
 
 namespace WebCore {
 
@@ -30,24 +31,25 @@ class RenderSVGInlineText;
 
 class SVGInlineFlowBox FINAL : public InlineFlowBox {
 public:
-    SVGInlineFlowBox(RenderObject& renderer)
+    SVGInlineFlowBox(RenderSVGInline& renderer)
         : InlineFlowBox(renderer)
         , m_logicalHeight(0)
     {
     }
 
-    virtual bool isSVGInlineFlowBox() const { return true; }
-    virtual float virtualLogicalHeight() const { return m_logicalHeight; }
+    RenderSVGInline& renderer() { return static_cast<RenderSVGInline&>(InlineFlowBox::renderer()); }
+
+    virtual FloatRect calculateBoundaries() const OVERRIDE;
+
     void setLogicalHeight(float h) { m_logicalHeight = h; }
-
     void paintSelectionBackground(PaintInfo&);
-    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);
-
-    virtual FloatRect calculateBoundaries() const;
-
     static void computeTextMatchMarkerRectForRenderer(RenderSVGInlineText*);
 
 private:
+    virtual bool isSVGInlineFlowBox() const OVERRIDE { return true; }
+    virtual float virtualLogicalHeight() const OVERRIDE { return m_logicalHeight; }
+    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
+
     float m_logicalHeight;
 };
 

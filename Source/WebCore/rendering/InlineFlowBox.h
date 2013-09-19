@@ -40,7 +40,7 @@ typedef HashMap<const InlineTextBox*, pair<Vector<const SimpleFontData*>, GlyphO
 
 class InlineFlowBox : public InlineBox {
 public:
-    explicit InlineFlowBox(RenderObject& renderer)
+    explicit InlineFlowBox(RenderBoxModelObject& renderer)
         : InlineBox(renderer)
         , m_firstChild(0)
         , m_lastChild(0)
@@ -71,6 +71,8 @@ public:
     virtual void showLineTreeAndMark(const InlineBox* = 0, const char* = 0, const InlineBox* = 0, const char* = 0, const RenderObject* = 0, int = 0) const;
     virtual const char* boxName() const;
 #endif
+
+    RenderBoxModelObject& renderer() const { return toRenderBoxModelObject(InlineBox::renderer()); }
 
     InlineFlowBox* prevLineBox() const { return m_prevLineBox; }
     InlineFlowBox* nextLineBox() const { return m_nextLineBox; }
