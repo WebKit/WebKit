@@ -1,3 +1,16 @@
+2013-09-19  Andreas Kling  <akling@apple.com>
+
+        Assume allocator success in Vector unless using try* functions.
+        <https://webkit.org/b/121629>
+
+        Reviewed by Anders Carlsson.
+
+        Turn some Vector::begin() null checking into assertions instead.
+
+        We have try* style functions for when an allocation request is so
+        large that it might actually fail. fastMalloc() will never return
+        null (it will just CRASH() instead.)
+
 2013-09-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build correction.

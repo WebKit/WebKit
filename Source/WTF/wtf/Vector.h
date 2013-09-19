@@ -725,8 +725,7 @@ Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHa
     else if (other.size() > capacity()) {
         clear();
         reserveCapacity(other.size());
-        if (!begin())
-            return *this;
+        ASSERT(begin());
     }
     
 // Works around an assert in VS2010. See https://connect.microsoft.com/VisualStudio/feedback/details/558044/std-copy-should-not-check-dest-when-first-last
@@ -758,8 +757,7 @@ Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHa
     else if (other.size() > capacity()) {
         clear();
         reserveCapacity(other.size());
-        if (!begin())
-            return *this;
+        ASSERT(begin());
     }
     
 // Works around an assert in VS2010. See https://connect.microsoft.com/VisualStudio/feedback/details/558044/std-copy-should-not-check-dest-when-first-last
@@ -830,8 +828,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::fill(const T& val, size_t newSi
     else if (newSize > capacity()) {
         clear();
         reserveCapacity(newSize);
-        if (!begin())
-            return;
+        ASSERT(begin());
     }
     
     std::fill(begin(), end(), val);
@@ -941,8 +938,8 @@ void Vector<T, inlineCapacity, OverflowHandler>::reserveCapacity(size_t newCapac
     T* oldBuffer = begin();
     T* oldEnd = end();
     Base::allocateBuffer(newCapacity);
-    if (begin())
-        TypeOperations::move(oldBuffer, oldEnd, begin());
+    ASSERT(begin());
+    TypeOperations::move(oldBuffer, oldEnd, begin());
     Base::deallocateBuffer(oldBuffer);
 }
 
@@ -1006,8 +1003,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::append(const U* data, size_t da
     size_t newSize = m_size + dataSize;
     if (newSize > capacity()) {
         data = expandCapacity(newSize, data);
-        if (!begin())
-            return;
+        ASSERT(begin());
     }
     if (newSize < m_size)
         CRASH();
@@ -1055,8 +1051,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::appendSlowCase(U&& value)
 
     auto ptr = const_cast<typename std::remove_const<typename std::remove_reference<U>::type>::type*>(std::addressof(value));
     ptr = expandCapacity(size() + 1, ptr);
-    if (!begin())
-        return;
+    ASSERT(begin());
 
     new (NotNull, end()) T(std::forward<U>(*ptr));
     ++m_size;
@@ -1088,8 +1083,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, const U
     size_t newSize = m_size + dataSize;
     if (newSize > capacity()) {
         data = expandCapacity(newSize, data);
-        if (!begin())
-            return;
+        ASSERT(begin());
     }
     if (newSize < m_size)
         CRASH();
@@ -1107,8 +1101,7 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, 
     const U* data = &val;
     if (size() == capacity()) {
         data = expandCapacity(size() + 1, data);
-        if (!begin())
-            return;
+        ASSERT(begin());
     }
     T* spot = begin() + position;
     TypeOperations::moveOverlapping(spot, end(), spot + 1);
