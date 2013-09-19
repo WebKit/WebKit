@@ -711,7 +711,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     emitGetVirtualRegister(result, regT0);
 }
 
-void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
