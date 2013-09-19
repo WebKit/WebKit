@@ -1,3 +1,19 @@
+2013-09-19  Andrei Parvu  <parvu@adobe.com>
+
+        [CSS Masking/Background] Position property should be ignored when using repeat: space
+        https://bugs.webkit.org/show_bug.cgi?id=120623
+
+        The background/mask-position should be ignored when using repeat: space,
+        unless there is not enough space for two copies of the image. In that case,
+        only one image is placed and background/mask-position determines its position.
+
+        Reviewed by Dirk Schulze.
+
+        Test: css3/masking/mask-repeat-one-copy.html
+
+        * rendering/RenderBoxModelObject.cpp: Ignored position property if space value is positive, set no-repeat otherwise.
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+
 2013-09-19  Andreas Kling  <akling@apple.com>
 
         CTTE: EllipsisBox::renderer() should return RenderBlock&.

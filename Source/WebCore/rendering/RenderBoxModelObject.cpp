@@ -1037,7 +1037,7 @@ bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
 static inline int getSpace(int areaSize, int tileSize)
 {
     int numberOfTiles = areaSize / tileSize;
-    int space = 0;
+    int space = -1;
 
     if (numberOfTiles > 1)
         space = roundedLayoutUnit((float)(areaSize - numberOfTiles * tileSize) / (numberOfTiles - 1));
@@ -1157,9 +1157,14 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
         int space = getSpace(positioningAreaSize.width(), geometry.tileSize().width());
         int actualWidth = geometry.tileSize().width() + space;
 
-        geometry.setSpaceSize(FloatSize(space, 0));
-        geometry.setPhaseX(actualWidth ? actualWidth - roundToInt(computedXPosition + left) % actualWidth : 0);
-    } else if (backgroundRepeatX == NoRepeatFill) {
+        if (space >= 0) {
+            computedXPosition = minimumValueForLength(Length(), availableWidth, &view(), true);
+            geometry.setSpaceSize(FloatSize(space, 0));
+            geometry.setPhaseX(actualWidth ? actualWidth - roundToInt(computedXPosition + left) % actualWidth : 0);
+        } else
+            backgroundRepeatX = NoRepeatFill;
+    }
+    if (backgroundRepeatX == NoRepeatFill) {
         int xOffset = fillLayer->backgroundXOrigin() == RightEdge ? availableWidth - computedXPosition : computedXPosition;
         geometry.setNoRepeatX(left + xOffset);
         geometry.setSpaceSize(FloatSize(0, geometry.spaceSize().height()));
@@ -1172,9 +1177,14 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
         int space = getSpace(positioningAreaSize.height(), geometry.tileSize().height());
         int actualHeight = geometry.tileSize().height() + space;
 
-        geometry.setSpaceSize(FloatSize(geometry.spaceSize().width(), space));
-        geometry.setPhaseY(actualHeight ? actualHeight - roundToInt(computedYPosition + top) % actualHeight : 0);
-    } else if (backgroundRepeatY == NoRepeatFill) {
+        if (space >= 0) {
+            computedYPosition = minimumValueForLength(Length(), availableHeight, &view(), true);
+            geometry.setSpaceSize(FloatSize(geometry.spaceSize().width(), space));
+            geometry.setPhaseY(actualHeight ? actualHeight - roundToInt(computedYPosition + top) % actualHeight : 0);
+        } else
+            backgroundRepeatY = NoRepeatFill;
+    }
+    if (backgroundRepeatY == NoRepeatFill) {
         int yOffset = fillLayer->backgroundYOrigin() == BottomEdge ? availableHeight - computedYPosition : computedYPosition;
         geometry.setNoRepeatY(top + yOffset);
         geometry.setSpaceSize(FloatSize(geometry.spaceSize().width(), 0));

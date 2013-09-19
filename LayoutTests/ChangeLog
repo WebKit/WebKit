@@ -1,3 +1,14 @@
+2013-09-19  Andrei Parvu  <parvu@adobe.com>
+
+        [CSS Masking/Background] Position property should be ignored when using repeat: space
+        https://bugs.webkit.org/show_bug.cgi?id=120623
+
+        Reviewed by Dirk Schulze.
+
+        * css3/masking/mask-repeat-one-copy-expected.html:
+        * css3/masking/mask-repeat-one-copy.html: Only one copy of the mask should be drawn, and background position should determine its position.
+        * css3/masking/mask-repeat-space-padding.html: Added a mask-position which should be ignored.
+
 2013-09-19  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening.
