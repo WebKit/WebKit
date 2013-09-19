@@ -1,3 +1,10 @@
+2013-09-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix Windows build. ScratchBuffer should always be available regardless of
+        ENABLE_DFG_JIT.
+
+        * runtime/VM.h:
+
 2013-09-19  Daniel Bates  <dabates@apple.com>
 
         [iOS] Add more iOS logic to the JavaScriptCore build configuration files
