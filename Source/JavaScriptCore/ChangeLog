@@ -1,5 +1,37 @@
 2013-09-19  Filip Pizlo  <fpizlo@apple.com>
 
+        Remove some of the tautologies in DFGRepatch function naming.
+
+        Rubber stamped by Mark Hahnenberg.
+        
+        For example change DFG::dfgLinkFor() to be DFG::linkFor().
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resetStubInternal):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::repatchCall):
+        (JSC::DFG::repatchByIdSelfAccess):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::repatchGetByID):
+        (JSC::DFG::buildGetByIDList):
+        (JSC::DFG::tryCachePutByID):
+        (JSC::DFG::repatchPutByID):
+        (JSC::DFG::buildPutByIdList):
+        (JSC::DFG::repatchIn):
+        (JSC::DFG::linkFor):
+        (JSC::DFG::linkSlowFor):
+        (JSC::DFG::linkClosureCall):
+        (JSC::DFG::resetGetByID):
+        (JSC::DFG::resetPutByID):
+        (JSC::DFG::resetIn):
+        * dfg/DFGRepatch.h:
+        (JSC::DFG::resetGetByID):
+        (JSC::DFG::resetPutByID):
+        (JSC::DFG::resetIn):
+
+2013-09-19  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix Windows build. ScratchBuffer should always be available regardless of
         ENABLE_DFG_JIT.
 

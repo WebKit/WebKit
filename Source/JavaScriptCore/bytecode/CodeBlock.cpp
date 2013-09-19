@@ -2382,12 +2382,12 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
         break;
     case JITCode::DFGJIT:
         if (isGetByIdAccess(accessType))
-            DFG::dfgResetGetByID(repatchBuffer, stubInfo);
+            DFG::resetGetByID(repatchBuffer, stubInfo);
         else if (isPutByIdAccess(accessType))
-            DFG::dfgResetPutByID(repatchBuffer, stubInfo);
+            DFG::resetPutByID(repatchBuffer, stubInfo);
         else {
             RELEASE_ASSERT(isInAccess(accessType));
-            DFG::dfgResetIn(repatchBuffer, stubInfo);
+            DFG::resetIn(repatchBuffer, stubInfo);
         }
         break;
     default:

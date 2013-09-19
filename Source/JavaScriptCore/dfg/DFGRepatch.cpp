@@ -43,13 +43,13 @@
 
 namespace JSC { namespace DFG {
 
-static void dfgRepatchCall(CodeBlock* codeblock, CodeLocationCall call, FunctionPtr newCalleeFunction)
+static void repatchCall(CodeBlock* codeblock, CodeLocationCall call, FunctionPtr newCalleeFunction)
 {
     RepatchBuffer repatchBuffer(codeblock);
     repatchBuffer.relink(call, newCalleeFunction);
 }
 
-static void dfgRepatchByIdSelfAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset, const FunctionPtr &slowPathFunction, bool compact)
+static void repatchByIdSelfAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset, const FunctionPtr &slowPathFunction, bool compact)
 {
     RepatchBuffer repatchBuffer(codeBlock);
 
@@ -326,11 +326,11 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     if (slot.slotBase() == baseValue) {
         if (!slot.isCacheableValue()
             || !MacroAssembler::isCompactPtrAlignedAddressOffset(maxOffsetRelativeToPatchedStorage(slot.cachedOffset()))) {
-            dfgRepatchCall(codeBlock, stubInfo.callReturnLocation, operationGetByIdBuildList);
+            repatchCall(codeBlock, stubInfo.callReturnLocation, operationGetByIdBuildList);
             return true;
         }
 
-        dfgRepatchByIdSelfAccess(codeBlock, stubInfo, structure, slot.cachedOffset(), operationGetByIdBuildList, true);
+        repatchByIdSelfAccess(codeBlock, stubInfo, structure, slot.cachedOffset(), operationGetByIdBuildList, true);
         stubInfo.initGetByIdSelf(*vm, codeBlock->ownerExecutable(), structure);
         return true;
     }
@@ -359,11 +359,11 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     return true;
 }
 
-void dfgRepatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
+void repatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     bool cached = tryCacheGetByID(exec, baseValue, propertyName, slot, stubInfo);
     if (!cached)
-        dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
+        repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
 }
 
 static bool getPolymorphicStructureList(
@@ -599,11 +599,11 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
     return listIndex < (POLYMORPHIC_LIST_CACHE_SIZE - 1);
 }
 
-void dfgBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
+void buildGetByIDList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     bool dontChangeCall = tryBuildGetByIDList(exec, baseValue, propertyName, slot, stubInfo);
     if (!dontChangeCall)
-        dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
+        repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
 }
 
 static V_DFGOperation_EJCI appropriateGenericPutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
@@ -991,7 +991,7 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             return true;
         }
 
-        dfgRepatchByIdSelfAccess(codeBlock, stubInfo, structure, slot.cachedOffset(), appropriateListBuildingPutByIdFunction(slot, putKind), false);
+        repatchByIdSelfAccess(codeBlock, stubInfo, structure, slot.cachedOffset(), appropriateListBuildingPutByIdFunction(slot, putKind), false);
         stubInfo.initPutByIdReplace(*vm, codeBlock->ownerExecutable(), structure);
         return true;
     }
@@ -999,11 +999,11 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
     return false;
 }
 
-void dfgRepatchPutByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
+void repatchPutByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
     bool cached = tryCachePutByID(exec, baseValue, propertyName, slot, stubInfo, putKind);
     if (!cached)
-        dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
+        repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
 }
 
 static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
@@ -1092,11 +1092,11 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
     return false;
 }
 
-void dfgBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
+void buildPutByIdList(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
 {
     bool cached = tryBuildPutByIdList(exec, baseValue, propertyName, slot, stubInfo, putKind);
     if (!cached)
-        dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
+        repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
 }
 
 static bool tryRepatchIn(
@@ -1206,13 +1206,13 @@ static bool tryRepatchIn(
     return listIndex < (POLYMORPHIC_LIST_CACHE_SIZE - 1);
 }
 
-void dfgRepatchIn(
+void repatchIn(
     ExecState* exec, JSCell* base, const Identifier& ident, bool wasFound,
     const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     if (tryRepatchIn(exec, base, ident, wasFound, slot, stubInfo))
         return;
-    dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationIn);
+    repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationIn);
 }
 
 static void linkSlowFor(RepatchBuffer& repatchBuffer, VM* vm, CallLinkInfo& callLinkInfo, CodeSpecializationKind kind)
@@ -1225,7 +1225,7 @@ static void linkSlowFor(RepatchBuffer& repatchBuffer, VM* vm, CallLinkInfo& call
     repatchBuffer.relink(callLinkInfo.callReturnLocation, vm->getCTIStub(virtualConstructThunkGenerator).code());
 }
 
-void dfgLinkFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, JSFunction* callee, MacroAssemblerCodePtr codePtr, CodeSpecializationKind kind)
+void linkFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, JSFunction* callee, MacroAssemblerCodePtr codePtr, CodeSpecializationKind kind)
 {
     ASSERT(!callLinkInfo.stub);
     
@@ -1255,7 +1255,7 @@ void dfgLinkFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCo
     linkSlowFor(repatchBuffer, vm, callLinkInfo, CodeForConstruct);
 }
 
-void dfgLinkSlowFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeSpecializationKind kind)
+void linkSlowFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeSpecializationKind kind)
 {
     CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
     VM* vm = callerCodeBlock->vm();
@@ -1265,7 +1265,7 @@ void dfgLinkSlowFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeSpecializat
     linkSlowFor(repatchBuffer, vm, callLinkInfo, kind);
 }
 
-void dfgLinkClosureCall(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, Structure* structure, ExecutableBase* executable, MacroAssemblerCodePtr codePtr)
+void linkClosureCall(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, Structure* structure, ExecutableBase* executable, MacroAssemblerCodePtr codePtr)
 {
     ASSERT(!callLinkInfo.stub);
     
@@ -1353,7 +1353,7 @@ void dfgLinkClosureCall(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* 
     ASSERT(!calleeCodeBlock || calleeCodeBlock->isIncomingCallAlreadyLinked(&callLinkInfo));
 }
 
-void dfgResetGetByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
+void resetGetByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
 {
     repatchBuffer.relink(stubInfo.callReturnLocation, operationGetByIdOptimize);
     CodeLocationDataLabelPtr structureLabel = stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.patch.dfg.deltaCheckImmToCall);
@@ -1375,7 +1375,7 @@ void dfgResetGetByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
     repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase));
 }
 
-void dfgResetPutByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
+void resetPutByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
 {
     V_DFGOperation_EJCI unoptimizedFunction = bitwise_cast<V_DFGOperation_EJCI>(MacroAssembler::readCallTarget(stubInfo.callReturnLocation).executableAddress());
     V_DFGOperation_EJCI optimizedFunction;
@@ -1409,7 +1409,7 @@ void dfgResetPutByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
     repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase));
 }
 
-void dfgResetIn(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
+void resetIn(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
 {
     repatchBuffer.relink(stubInfo.hotPathBegin.jumpAtOffset(0), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase));
 }

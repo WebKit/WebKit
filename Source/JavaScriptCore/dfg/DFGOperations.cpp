@@ -654,7 +654,7 @@ EncodedJSValue DFG_OPERATION operationGetByIdBuildListWithReturnAddress(ExecStat
     JSValue result = baseValue.get(exec, ident, slot);
 
     if (accessType == static_cast<AccessType>(stubInfo.accessType))
-        dfgBuildGetByIDList(exec, baseValue, ident, slot, stubInfo);
+        buildGetByIDList(exec, baseValue, ident, slot, stubInfo);
 
     return JSValue::encode(result);
 }
@@ -675,7 +675,7 @@ EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ExecState
     
     if (accessType == static_cast<AccessType>(stubInfo.accessType)) {
         if (stubInfo.seen)
-            dfgRepatchGetByID(exec, baseValue, ident, slot, stubInfo);
+            repatchGetByID(exec, baseValue, ident, slot, stubInfo);
         else
             stubInfo.seen = true;
     }
@@ -704,7 +704,7 @@ EncodedJSValue DFG_OPERATION operationInOptimizeWithReturnAddress(ExecState* exe
     RELEASE_ASSERT(accessType == stubInfo.accessType);
     
     if (stubInfo.seen)
-        dfgRepatchIn(exec, base, ident, result, slot, stubInfo);
+        repatchIn(exec, base, ident, result, slot, stubInfo);
     else
         stubInfo.seen = true;
     
@@ -973,7 +973,7 @@ void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ExecState* ex
         return;
     
     if (stubInfo.seen)
-        dfgRepatchPutByID(exec, baseValue, ident, slot, stubInfo, NotDirect);
+        repatchPutByID(exec, baseValue, ident, slot, stubInfo, NotDirect);
     else
         stubInfo.seen = true;
 }
@@ -998,7 +998,7 @@ void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState*
         return;
     
     if (stubInfo.seen)
-        dfgRepatchPutByID(exec, baseValue, ident, slot, stubInfo, NotDirect);
+        repatchPutByID(exec, baseValue, ident, slot, stubInfo, NotDirect);
     else
         stubInfo.seen = true;
 }
@@ -1023,7 +1023,7 @@ void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecSta
         return;
     
     if (stubInfo.seen)
-        dfgRepatchPutByID(exec, base, ident, slot, stubInfo, Direct);
+        repatchPutByID(exec, base, ident, slot, stubInfo, Direct);
     else
         stubInfo.seen = true;
 }
@@ -1048,7 +1048,7 @@ void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(Exec
         return;
     
     if (stubInfo.seen)
-        dfgRepatchPutByID(exec, base, ident, slot, stubInfo, Direct);
+        repatchPutByID(exec, base, ident, slot, stubInfo, Direct);
     else
         stubInfo.seen = true;
 }
@@ -1072,7 +1072,7 @@ void DFG_OPERATION operationPutByIdStrictBuildListWithReturnAddress(ExecState* e
     if (accessType != static_cast<AccessType>(stubInfo.accessType))
         return;
     
-    dfgBuildPutByIdList(exec, baseValue, ident, slot, stubInfo, NotDirect);
+    buildPutByIdList(exec, baseValue, ident, slot, stubInfo, NotDirect);
 }
 
 V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdNonStrictBuildList);
@@ -1094,7 +1094,7 @@ void DFG_OPERATION operationPutByIdNonStrictBuildListWithReturnAddress(ExecState
     if (accessType != static_cast<AccessType>(stubInfo.accessType))
         return;
     
-    dfgBuildPutByIdList(exec, baseValue, ident, slot, stubInfo, NotDirect);
+    buildPutByIdList(exec, baseValue, ident, slot, stubInfo, NotDirect);
 }
 
 V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdDirectStrictBuildList);
@@ -1116,7 +1116,7 @@ void DFG_OPERATION operationPutByIdDirectStrictBuildListWithReturnAddress(ExecSt
     if (accessType != static_cast<AccessType>(stubInfo.accessType))
         return;
     
-    dfgBuildPutByIdList(exec, base, ident, slot, stubInfo, Direct);
+    buildPutByIdList(exec, base, ident, slot, stubInfo, Direct);
 }
 
 V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(operationPutByIdDirectNonStrictBuildList);
@@ -1138,7 +1138,7 @@ void DFG_OPERATION operationPutByIdDirectNonStrictBuildListWithReturnAddress(Exe
     if (accessType != static_cast<AccessType>(stubInfo.accessType))
         return;
     
-    dfgBuildPutByIdList(exec, base, ident, slot, stubInfo, Direct);
+    buildPutByIdList(exec, base, ident, slot, stubInfo, Direct);
 }
 
 size_t DFG_OPERATION operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -1310,7 +1310,7 @@ inline char* linkFor(ExecState* execCallee, CodeSpecializationKind kind)
     if (!callLinkInfo.seenOnce())
         callLinkInfo.setSeen();
     else
-        dfgLinkFor(execCallee, callLinkInfo, codeBlock, callee, codePtr, kind);
+        linkFor(execCallee, callLinkInfo, codeBlock, callee, codePtr, kind);
     return reinterpret_cast<char*>(codePtr.executableAddress());
 }
 
@@ -1380,7 +1380,7 @@ static bool attemptToOptimizeClosureCall(ExecState* execCallee, JSCell* calleeAs
             return false;
     }
     
-    dfgLinkClosureCall(
+    linkClosureCall(
         execCallee, callLinkInfo, codeBlock,
         callee->structure(), callee->executable(), codePtr);
     
@@ -1394,7 +1394,7 @@ char* DFG_OPERATION operationLinkClosureCall(ExecState* execCallee)
     CallLinkInfo& callLinkInfo = execCallee->callerFrame()->codeBlock()->getCallLinkInfo(execCallee->returnPC());
 
     if (!attemptToOptimizeClosureCall(execCallee, calleeAsFunctionCell, callLinkInfo))
-        dfgLinkSlowFor(execCallee, callLinkInfo, CodeForCall);
+        linkSlowFor(execCallee, callLinkInfo, CodeForCall);
     
     return result;
 }
