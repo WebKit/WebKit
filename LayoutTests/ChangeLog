@@ -1,5 +1,14 @@
 2013-09-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Lion rebaseline after r155253.
+
+        * platform/mac-wk2/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt: Added.
+        * platform/mac-wk2/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt: Added.
+        * platform/qt-wk2/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png: Removed.
+        * platform/qt-wk2/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png: Removed.
+
+2013-09-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add test expectations for bugs 121581 and 121582.
 
         * platform/mac-wk2/TestExpectations:
