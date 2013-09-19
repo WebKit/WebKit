@@ -117,10 +117,6 @@ editing/selection/extend-selection-after-double-click.html
 fast/forms/listbox-onchange.html
 fast/forms/onselect-textfield.html
 fast/forms/option-mouseevents.html
-fast/forms/search-abs-pos-cancel-button.html
-fast/forms/search-cancel-button-events.html
-fast/forms/search-transformed.html
-fast/forms/search-zoomed.html
 fast/forms/range/slider-delete-while-dragging-thumb.html
 fast/harness/results.html
 fast/repaint/selection-clear.html
@@ -228,10 +224,7 @@ fast/events/platform-wheelevent-paging-y-in-non-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
-fast/forms/number/number-spinbutton-in-multi-column.html
-fast/forms/select/listbox-in-multi-column.html
 fast/inline/continuation-outlines-with-layers.html
-fast/invalid/residual-style.html
 
 # The black text is not overlapping with the red one
 fast/text/line-initial-and-final-swashes.html
@@ -249,7 +242,6 @@ svg/zoom/text/zoom-hixie-mixed-009.xml
 svg/batik/paints/gradientLimit.svg
 
 # EFL DRT doesn't fully support http tests yet. These tests make timeout error.
-fast/overflow/overflow-height-float-not-removed-crash3.html
 http/tests/misc/copy-resolves-urls.html
 http/tests/misc/iframe-invalid-source-crash.html
 http/tests/misc/submit-post-keygen.html

@@ -1,3 +1,11 @@
+2013-09-19  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Unskip tests added to platform/efl/Skipped, which now are passing.
+
+        * platform/efl/TestExpectations:
+
 2013-09-19  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         CSS Unit vmax and vmin in border-width not handled.
