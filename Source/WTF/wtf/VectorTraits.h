@@ -21,7 +21,6 @@
 #ifndef WTF_VectorTraits_h
 #define WTF_VectorTraits_h
 
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -71,16 +70,13 @@ namespace WTF {
         static const bool canCompareWithMemcmp = true;
     };
 
-    // we know OwnPtr and RefPtr are simple enough that initializing to 0 and moving with memcpy
+    // We know OwnPtr and RefPtr are simple enough that initializing to 0 and moving with memcpy
     // (and then not destructing the original) will totally work
     template<typename P>
     struct VectorTraits<RefPtr<P> > : SimpleClassVectorTraits { };
 
     template<typename P>
     struct VectorTraits<OwnPtr<P> > : SimpleClassVectorTraits { };
-
-    template<typename P>
-    struct VectorTraits<OwnArrayPtr<P> > : SimpleClassVectorTraits { };
 
     template<typename P>
     struct VectorTraits<Ref<P> > : SimpleClassVectorTraits { };

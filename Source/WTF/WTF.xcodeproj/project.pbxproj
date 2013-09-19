@@ -162,7 +162,6 @@
 		A8A473F7151A825B004123FF /* OSAllocatorPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472D8151A825B004123FF /* OSAllocatorPosix.cpp */; };
 		A8A473F9151A825B004123FF /* OSRandomSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A472DA151A825B004123FF /* OSRandomSource.cpp */; };
 		A8A473FA151A825B004123FF /* OSRandomSource.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472DB151A825B004123FF /* OSRandomSource.h */; };
-		A8A473FB151A825B004123FF /* OwnArrayPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472DC151A825B004123FF /* OwnArrayPtr.h */; };
 		A8A473FC151A825B004123FF /* OwnPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472DD151A825B004123FF /* OwnPtr.h */; };
 		A8A473FD151A825B004123FF /* OwnPtrCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472DE151A825B004123FF /* OwnPtrCommon.h */; };
 		A8A473FE151A825B004123FF /* PackedIntVector.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472DF151A825B004123FF /* PackedIntVector.h */; };
@@ -430,7 +429,6 @@
 		A8A472D8151A825B004123FF /* OSAllocatorPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSAllocatorPosix.cpp; sourceTree = "<group>"; };
 		A8A472DA151A825B004123FF /* OSRandomSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSRandomSource.cpp; sourceTree = "<group>"; };
 		A8A472DB151A825B004123FF /* OSRandomSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSRandomSource.h; sourceTree = "<group>"; };
-		A8A472DC151A825B004123FF /* OwnArrayPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnArrayPtr.h; sourceTree = "<group>"; };
 		A8A472DD151A825B004123FF /* OwnPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtr.h; sourceTree = "<group>"; };
 		A8A472DE151A825B004123FF /* OwnPtrCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtrCommon.h; sourceTree = "<group>"; };
 		A8A472DF151A825B004123FF /* PackedIntVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PackedIntVector.h; sourceTree = "<group>"; };
@@ -701,7 +699,6 @@
 				A8A472D8151A825B004123FF /* OSAllocatorPosix.cpp */,
 				A8A472DA151A825B004123FF /* OSRandomSource.cpp */,
 				A8A472DB151A825B004123FF /* OSRandomSource.h */,
-				A8A472DC151A825B004123FF /* OwnArrayPtr.h */,
 				A8A472DD151A825B004123FF /* OwnPtr.h */,
 				A8A472DE151A825B004123FF /* OwnPtrCommon.h */,
 				A8A472DF151A825B004123FF /* PackedIntVector.h */,
@@ -995,7 +992,6 @@
 				7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */,
 				A8A473F6151A825B004123FF /* OSAllocator.h in Headers */,
 				A8A473FA151A825B004123FF /* OSRandomSource.h in Headers */,
-				A8A473FB151A825B004123FF /* OwnArrayPtr.h in Headers */,
 				A8A473FC151A825B004123FF /* OwnPtr.h in Headers */,
 				A8A473FD151A825B004123FF /* OwnPtrCommon.h in Headers */,
 				A8A473FE151A825B004123FF /* PackedIntVector.h in Headers */,

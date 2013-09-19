@@ -102,7 +102,6 @@ wtf_sources += \
     Source/WTF/wtf/OSAllocatorWin.cpp \
     Source/WTF/wtf/OSRandomSource.cpp \
     Source/WTF/wtf/OSRandomSource.h \
-    Source/WTF/wtf/OwnArrayPtr.h \
     Source/WTF/wtf/OwnPtr.h \
     Source/WTF/wtf/OwnPtrCommon.h \
     Source/WTF/wtf/PackedIntVector.h \

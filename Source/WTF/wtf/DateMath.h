@@ -49,7 +49,6 @@
 #include <time.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {

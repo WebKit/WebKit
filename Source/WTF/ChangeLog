@@ -1,3 +1,23 @@
+2013-09-19  Sam Weinig  <sam@webkit.org>
+
+        Remove OwnArrayPtr
+        https://bugs.webkit.org/show_bug.cgi?id=121612
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.list.am:
+        * WTF.pro:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Assertions.cpp:
+        * wtf/CMakeLists.txt:
+        * wtf/DateMath.h:
+        * wtf/FastBitVector.h:
+        * wtf/Forward.h:
+        * wtf/OwnArrayPtr.h: Removed.
+        * wtf/VectorTraits.h:
+
 2013-09-19  Daniel Bates  <dabates@apple.com>
 
         Substitute return type void for bool in function declaration for WTF::initializeWebThread()

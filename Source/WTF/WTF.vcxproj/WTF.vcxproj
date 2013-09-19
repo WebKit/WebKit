@@ -190,7 +190,6 @@
     <ClInclude Include="..\wtf\Noncopyable.h" />
     <ClInclude Include="..\wtf\NumberOfCores.h" />
     <ClInclude Include="..\wtf\OSRandomSource.h" />
-    <ClInclude Include="..\wtf\OwnArrayPtr.h" />
     <ClInclude Include="..\wtf\OwnPtr.h" />
     <ClInclude Include="..\wtf\OwnPtrCommon.h" />
     <ClInclude Include="..\wtf\PackedIntVector.h" />

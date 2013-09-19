@@ -27,7 +27,6 @@
 #define FastBitVector_h
 
 #include <wtf/FastMalloc.h>
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -171,7 +170,7 @@ public:
 private:
     size_t arrayLength() const { return (m_numBits + 31) >> 5; }
     
-    uint32_t* m_array; // No, this can't be an OwnArrayPtr.
+    uint32_t* m_array; // No, this can't be an std::unique_ptr<uint32_t[]>.
     size_t m_numBits;
 };
 

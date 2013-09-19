@@ -35,7 +35,7 @@
 #include "Assertions.h"
 
 #include "Compiler.h"
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -166,7 +166,7 @@ static void vprintf_stderr_with_prefix(const char* prefix, const char* format, v
 {
     size_t prefixLength = strlen(prefix);
     size_t formatLength = strlen(format);
-    OwnArrayPtr<char> formatWithPrefix = adoptArrayPtr(new char[prefixLength + formatLength + 1]);
+    auto formatWithPrefix = std::make_unique<char[]>(prefixLength + formatLength + 1);
     memcpy(formatWithPrefix.get(), prefix, prefixLength);
     memcpy(formatWithPrefix.get() + prefixLength, format, formatLength);
     formatWithPrefix[prefixLength + formatLength] = 0;
@@ -182,7 +182,7 @@ static void vprintf_stderr_with_trailing_newline(const char* format, va_list arg
         return;
     }
 
-    OwnArrayPtr<char> formatWithNewline = adoptArrayPtr(new char[formatLength + 2]);
+    auto formatWithNewline = std::make_unique<char[]>(formatLength + 2);
     memcpy(formatWithNewline.get(), format, formatLength);
     formatWithNewline[formatLength] = '\n';
     formatWithNewline[formatLength + 1] = 0;

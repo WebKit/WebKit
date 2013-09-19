@@ -26,7 +26,6 @@
 namespace WTF {
 
     template<typename T> class Function;
-    template<typename T> class OwnArrayPtr;
     template<typename T> class OwnPtr;
     template<typename T> class PassOwnPtr;
     template<typename T> class PassRefPtr;
@@ -49,7 +48,6 @@ namespace WTF {
 }
 
 using WTF::Function;
-using WTF::OwnArrayPtr;
 using WTF::OwnPtr;
 using WTF::PassOwnPtr;
 using WTF::PassRefPtr;

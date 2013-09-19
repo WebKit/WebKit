@@ -90,7 +90,6 @@ HEADERS += \
     RAMSize.h \
     OSAllocator.h \
     OSRandomSource.h \
-    OwnArrayPtr.h \
     OwnPtr.h \
     OwnPtrCommon.h \
     PackedIntVector.h \
