@@ -1423,8 +1423,11 @@ webkit.org/b/84045 accessibility/image-map1.html [ Failure ]
 
 webkit.org/b/120836 fast/regions/text-region-split-vertical-rl.html [ Failure ]
 
-webkit.org/b/120776 fast/hidpi/image-srcset-fraction.html [ Failure ]
 webkit.org/b/120776 fast/hidpi/image-srcset-change-dynamically-from-js-2x.html [ Failure ]
+webkit.org/b/120776 fast/hidpi/image-srcset-fraction.html [ Failure ]
+webkit.org/b/120776 fast/hidpi/image-srcset-fraction-1.5x.html [ Failure ]
+webkit.org/b/120776 fast/hidpi/image-srcset-invalid-inputs-correct-src.html [ Failure ]
+webkit.org/b/120776 fast/hidpi/image-srcset-invalid-inputs-except-one.html [ Failure ]
 webkit.org/b/120776 fast/hidpi/image-srcset-simple-2x.html [ Failure ]
 webkit.org/b/120776 fast/hidpi/image-srcset-src-selection-2x.html [ Failure ]
 
@@ -1434,6 +1437,10 @@ webkit.org/b/120842 fast/regions/overflow-in-uniform-regions-dynamic.html [ Imag
 webkit.org/b/120842 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure ]
 
 webkit.org/b/120846 svg/custom/masking-clipping-hidpi.svg [ ImageOnlyFailure ]
+
+webkit.org/b/121593 accessibility/radio-button-title-label.html  [ Failure ]
+
+webkit.org/b/121594 accessibility/self-referencing-aria-labelledby.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

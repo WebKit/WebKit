@@ -1,3 +1,9 @@
+2013-09-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Adding failure expectations for failing HiDPI and a11y tests.
+
 2013-09-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening. Rebaselining after r155957.
