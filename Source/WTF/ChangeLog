@@ -1,3 +1,14 @@
+2013-09-19  Daniel Bates  <dabates@apple.com>
+
+        Substitute return type void for bool in function declaration for WTF::initializeWebThread()
+
+        Reviewed by Joseph Pecoraro.
+
+        Make the declaration of WTF::initializeWebThread() match the function prototype
+        of its definition.
+
+        * wtf/MainThread.h:
+
 2013-09-19  Andreas Kling  <akling@apple.com>
 
         Assume allocator success in Vector unless using try* functions.

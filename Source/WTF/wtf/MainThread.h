@@ -54,7 +54,7 @@ WTF_EXPORT_PRIVATE bool isMainThread();
 #if USE(WEB_THREAD)
 WTF_EXPORT_PRIVATE bool isWebThread();
 WTF_EXPORT_PRIVATE bool isUIThread();
-WTF_EXPORT_PRIVATE bool initializeWebThread();
+WTF_EXPORT_PRIVATE void initializeWebThread();
 WTF_EXPORT_PRIVATE void initializeApplicationUIThreadIdentifier();
 WTF_EXPORT_PRIVATE void initializeWebThreadIdentifier();
 WTF_EXPORT_PRIVATE bool canAccessThreadLocalDataForThread(ThreadIdentifier);
