@@ -1,5 +1,15 @@
 2013-09-19  Andreas Kling  <akling@apple.com>
 
+        CTTE: EllipsisBox::renderer() should return RenderBlock&.
+        <https://webkit.org/b/121604>
+
+        Reviewed by Antti Koivisto.
+
+        I missed adding a renderer() overload when fixing up EllipsisBox.
+        Flushed out one unnecessary type check.
+
+2013-09-19  Andreas Kling  <akling@apple.com>
+
         CTTE: Tighten renderer types for InlineTextBox and SVGInlineTextBox.
         <https://webkit.org/b/121605>
 

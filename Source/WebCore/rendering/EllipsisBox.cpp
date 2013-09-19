@@ -80,11 +80,10 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
 
 InlineBox* EllipsisBox::markupBox() const
 {
-    if (!m_shouldPaintMarkupBox || !renderer().isRenderBlock())
+    if (!m_shouldPaintMarkupBox)
         return 0;
 
-    RenderBlock& block = toRenderBlock(renderer());
-    RootInlineBox* lastLine = block.lineAtIndex(block.lineCount() - 1);
+    RootInlineBox* lastLine = renderer().lineAtIndex(renderer().lineCount() - 1);
     if (!lastLine)
         return 0;
 
@@ -160,7 +159,7 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     LayoutRect boundsRect(adjustedLocation, LayoutSize(m_logicalWidth, m_height));
     if (visibleToHitTesting() && boundsRect.intersects(HitTestLocation::rectForPoint(locationInContainer.point(), 0, 0, 0, 0))) {
         renderer().updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
-        if (!result.addNodeToRectBasedTestResult(renderer().node(), request, locationInContainer, boundsRect))
+        if (!result.addNodeToRectBasedTestResult(renderer().element(), request, locationInContainer, boundsRect))
             return true;
     }
 

@@ -21,6 +21,7 @@
 #define EllipsisBox_h
 
 #include "InlineBox.h"
+#include "RenderBlock.h"
 
 namespace WebCore {
 
@@ -34,6 +35,8 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
     void setSelectionState(RenderObject::SelectionState s) { m_selectionState = s; }
     IntRect selectionRect();
+
+    RenderBlock& renderer() const { return toRenderBlock(InlineBox::renderer()); }
 
 private:
     void paintMarkupBox(PaintInfo&, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, RenderStyle*);

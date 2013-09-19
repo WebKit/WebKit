@@ -462,6 +462,8 @@ public:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) OVERRIDE;
 #endif
 
+    virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&) OVERRIDE;
+
 protected:
     virtual void willBeDestroyed();
 
@@ -504,8 +506,6 @@ protected:
     virtual int firstLineBoxBaseline() const;
     virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
     int lastLineBoxBaseline(LineDirectionMode) const;
-
-    virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&);
 
     // Delay update scrollbar until finishDelayRepaint() will be
     // called. This function is used when a flexbox is laying out its
