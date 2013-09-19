@@ -36,7 +36,6 @@ chdirWebKit();
 my @librariesToCopy = (
     "libWebKitSystemInterfaceLion.a",
     "libWebKitSystemInterfaceMountainLion.a",
-    "libWebCoreSQLite3.a",
 );
 
 my $ranlib = `xcrun -find ranlib`;
@@ -81,8 +80,6 @@ sub dittoHeaders
 }
 
 dittoHeaders("WebKitLibraries/WebKitSystemInterface.h", "$productDir/usr/local/include/WebKitSystemInterface.h");
-dittoHeaders("WebKitLibraries/WebCoreSQLite3", "$productDir/WebCoreSQLite3");
-
 
 if ($ENV{ENABLE_FTL_JIT}) {
     # Determine where to get LLVM binaries and headers.

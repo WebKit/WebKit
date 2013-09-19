@@ -1,3 +1,9 @@
+2013-09-19  Dan Bernstein  <mitz@apple.com>
+
+        Attempted build fix after r156114.
+
+        * Scripts/copy-webkitlibraries-to-product-directory: Removed references to WebCoreSQLite3.
+
 2013-09-19  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r129451): run-safari --no-saved-state is broken
