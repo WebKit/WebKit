@@ -32,27 +32,55 @@ import re
 
 from webkitpy.common.host import Host
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, Tag
-
+from HTMLParser import HTMLParser
 
 _log = logging.getLogger(__name__)
 
 
-class W3CTestConverter(object):
+def convert_for_webkit(new_path, filename, host=Host()):
+    """ Converts a file's |contents| so it will function correctly in its |new_path| in Webkit.
 
-    def __init__(self):
-        self._host = Host()
+    Returns the list of modified properties and the modified text if the file was modifed, None otherwise."""
+    contents = host.filesystem.read_binary_file(filename)
+    converter = _W3CTestConverter(new_path, filename, host)
+    if filename.endswith('.css'):
+        return converter.add_webkit_prefix_to_unprefixed_properties(contents)
+    else:
+        converter.feed(contents)
+        converter.close()
+        return converter.output()
+
+
+class _W3CTestConverter(HTMLParser):
+    def __init__(self, new_path, filename, host=Host()):
+        HTMLParser.__init__(self)
+
+        self._host = host
         self._filesystem = self._host.filesystem
         self._webkit_root = WebKitFinder(self._filesystem).webkit_base()
+
+        self.converted_data = []
+        self.converted_properties = []
+        self.in_style_tag = False
+        self.style_data = []
+        self.filename = filename
+
+        resources_path = self.path_from_webkit_root('LayoutTests', 'resources')
+        resources_relpath = self._filesystem.relpath(resources_path, new_path)
+        self.new_test_harness_path = resources_relpath
 
         # These settings might vary between WebKit and Blink
         self._css_property_file = self.path_from_webkit_root('Source', 'WebCore', 'css', 'CSSPropertyNames.in')
         self._css_property_split_string = '='
 
-        self.prefixed_properties = self.read_webkit_prefixed_css_property_list()
+        self.test_harness_re = re.compile('/resources/testharness')
 
+        self.prefixed_properties = self.read_webkit_prefixed_css_property_list()
         prop_regex = '([\s{]|^)(' + "|".join(prop.replace('-webkit-', '') for prop in self.prefixed_properties) + ')(\s+:|:)'
         self.prop_re = re.compile(prop_regex)
+
+    def output(self):
+        return (self.converted_properties, ''.join(self.converted_data))
 
     def path_from_webkit_root(self, *comps):
         return self._filesystem.abspath(self._filesystem.join(self._webkit_root, *comps))
@@ -78,104 +106,7 @@ class W3CTestConverter(object):
         # Ignore any prefixed properties for which an unprefixed version is supported
         return [prop for prop in prefixed_properties if prop not in unprefixed_properties]
 
-    def convert_for_webkit(self, new_path, filename):
-        """ Converts a file's |contents| so it will function correctly in its |new_path| in Webkit.
-
-        Returns the list of modified properties and the modified text if the file was modifed, None otherwise."""
-        contents = self._filesystem.read_binary_file(filename)
-        if filename.endswith('.css'):
-            return self.convert_css(contents, filename)
-        return self.convert_html(new_path, contents, filename)
-
-    def convert_css(self, contents, filename):
-        return self.add_webkit_prefix_to_unprefixed_properties(contents, filename)
-
-    def convert_html(self, new_path, contents, filename):
-        doc = BeautifulSoup(contents)
-        did_modify_paths = self.convert_testharness_paths(doc, new_path, filename)
-        converted_properties_and_content = self.convert_prefixed_properties(doc, filename)
-        return converted_properties_and_content if (did_modify_paths or converted_properties_and_content[0]) else None
-
-    def convert_testharness_paths(self, doc, new_path, filename):
-        """ Update links to testharness.js in the BeautifulSoup |doc| to point to the copy in |new_path|.
-
-        Returns whether the document was modified."""
-
-        # Look for the W3C-style path to any testharness files - scripts (.js) or links (.css)
-        pattern = re.compile('/resources/testharness')
-        script_tags = doc.findAll(src=pattern)
-        link_tags = doc.findAll(href=pattern)
-        testharness_tags = script_tags + link_tags
-
-        if not testharness_tags:
-            return False
-
-        resources_path = self.path_from_webkit_root('LayoutTests', 'resources')
-        resources_relpath = self._filesystem.relpath(resources_path, new_path)
-
-        for tag in testharness_tags:
-            # FIXME: We need to handle img, audio, video tags also.
-            attr = 'src'
-            if tag.name != 'script':
-                attr = 'href'
-
-            if not attr in tag.attrMap:
-                # FIXME: Figure out what to do w/ invalid tags. For now, we return False
-                # and leave the document unmodified, which means that it'll probably fail to run.
-                _log.error("Missing an attr in %s" % filename)
-                return False
-
-            old_path = tag[attr]
-            new_tag = Tag(doc, tag.name, tag.attrs)
-            new_tag[attr] = re.sub(pattern, resources_relpath + '/testharness', old_path)
-
-            self.replace_tag(tag, new_tag)
-
-        return True
-
-    def convert_prefixed_properties(self, doc, filename):
-        """ Searches a BeautifulSoup |doc| for any CSS properties requiring the -webkit- prefix and converts them.
-
-        Returns the list of converted properties and the modified document as a string """
-
-        converted_properties = []
-
-        # Look for inline and document styles.
-        inline_styles = doc.findAll(style=re.compile('.*'))
-        style_tags = doc.findAll('style')
-        all_styles = inline_styles + style_tags
-
-        for tag in all_styles:
-
-            # Get the text whether in a style tag or style attribute.
-            style_text = ''
-            if tag.name == 'style':
-                if not tag.contents:
-                    continue
-                style_text = tag.contents[0]
-            else:
-                style_text = tag['style']
-
-            updated_style_text = self.add_webkit_prefix_to_unprefixed_properties(style_text, filename)
-
-            # Rewrite tag only if changes were made.
-            if updated_style_text[0]:
-                converted_properties.extend(list(updated_style_text[0]))
-
-                new_tag = Tag(doc, tag.name, tag.attrs)
-                new_tag.insert(0, updated_style_text[1])
-
-                self.replace_tag(tag, new_tag)
-
-        # FIXME: Doing the replace in the parsed document and then writing it back out
-        # is normalizing the HTML, which may in fact alter the intent of some tests.
-        # We should probably either just do basic string-replaces, or have some other
-        # way of flagging tests that are sensitive to being rewritten.
-        # https://bugs.webkit.org/show_bug.cgi?id=119159
-
-        return (converted_properties, doc.prettify())
-
-    def add_webkit_prefix_to_unprefixed_properties(self, text, filename):
+    def add_webkit_prefix_to_unprefixed_properties(self, text):
         """ Searches |text| for instances of properties requiring the -webkit- prefix and adds the prefix to them.
 
         Returns the list of converted properties and the modified text."""
@@ -193,9 +124,65 @@ class W3CTestConverter(object):
             _log.info('  converting %s', prop)
 
         # FIXME: Handle the JS versions of these properties and GetComputedStyle, too.
-        return (converted_properties, text)
+        return (converted_properties, ''.join(text_chunks))
 
-    def replace_tag(self, old_tag, new_tag):
-        index = old_tag.parent.contents.index(old_tag)
-        old_tag.parent.insert(index, new_tag)
-        old_tag.extract()
+    def convert_style_data(self, data):
+        converted = self.add_webkit_prefix_to_unprefixed_properties(data)
+        if converted[0]:
+            self.converted_properties.extend(list(converted[0]))
+        return converted[1]
+
+    def convert_attributes_if_needed(self, tag, attrs):
+        converted = self.get_starttag_text()
+        if tag in ('script', 'link'):
+            attr_name = 'src'
+            if tag != 'script':
+                attr_name = 'href'
+            for attr in attrs:
+                if attr[0] == attr_name:
+                    new_path = re.sub(self.test_harness_re, self.new_test_harness_path + '/testharness', attr[1])
+                    converted = re.sub(attr[1], new_path, converted)
+
+        for attr in attrs:
+            if attr[0] == 'style':
+                new_style = self.convert_style_data(attr[1])
+                converted = re.sub(attr[1], new_style, converted)
+
+        self.converted_data.append(converted)
+
+    def handle_starttag(self, tag, attrs):
+        if tag == 'style':
+            self.in_style_tag = True
+        self.convert_attributes_if_needed(tag, attrs)
+
+    def handle_endtag(self, tag):
+        if tag == 'style':
+            self.converted_data.append(self.convert_style_data(''.join(self.style_data)))
+            self.in_style_tag = False
+            self.style_data = []
+        self.converted_data.extend(['</', tag, '>'])
+
+    def handle_startendtag(self, tag, attrs):
+        self.convert_attributes_if_needed(tag, attrs)
+
+    def handle_data(self, data):
+        if self.in_style_tag:
+            self.style_data.append(data)
+        else:
+            self.converted_data.append(data)
+
+    def handle_entityref(self, name):
+        self.converted_data.extend(['&', name, ';'])
+
+    def handle_charref(self, name):
+        self.converted_data.extend(['&#', name, ';'])
+
+    def handle_comment(self, data):
+        self.converted_data.extend(['<!-- ', data, ' -->'])
+
+    def handle_decl(self, decl):
+        self.converted_data.extend(['<!', decl, '>'])
+
+    def handle_pi(self, data):
+        self.converted_data.extend(['<?', data, '>'])
+

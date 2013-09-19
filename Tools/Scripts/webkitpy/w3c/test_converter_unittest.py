@@ -31,23 +31,29 @@ import os
 import re
 import unittest2 as unittest
 
+from webkitpy.common.host import Host
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
-from webkitpy.w3c.test_converter import W3CTestConverter
-
+from webkitpy.w3c.test_converter import _W3CTestConverter
 
 DUMMY_FILENAME = 'dummy.html'
+DUMMY_PATH = 'dummy/testharness/path'
 
 class W3CTestConverterTest(unittest.TestCase):
 
-    def fake_dir_path(self, converter, dirname):
-        return converter.path_from_webkit_root("LayoutTests", "css", dirname)
+    # FIXME: When we move to using a MockHost, this method should be removed, since
+    #        then we can just pass in a dummy dir path
+    def fake_dir_path(self, dirname):
+        filesystem = Host().filesystem
+        webkit_root = WebKitFinder(filesystem).webkit_base()
+        return filesystem.abspath(filesystem.join(webkit_root, "LayoutTests", "css", dirname))
 
     def test_read_prefixed_property_list(self):
         """ Tests that the current list of properties requiring the -webkit- prefix load correctly """
 
         # FIXME: We should be passing in a MockHost here ...
-        converter = W3CTestConverter()
+        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME)
         prop_list = converter.prefixed_properties
         self.assertTrue(prop_list, 'No prefixed properties found')
 
@@ -72,16 +78,18 @@ CONTENT OF TEST
 </body>
 </html>
 """
-        converter = W3CTestConverter()
+        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME)
 
         oc = OutputCapture()
         oc.capture_output()
         try:
-            converted = converter.convert_html('/nothing/to/convert', test_html, DUMMY_FILENAME)
+            converter.feed(test_html)
+            converter.close()
+            converted = converter.output()
         finally:
             oc.restore_output()
 
-        self.verify_no_conversion_happened(converted)
+        self.verify_no_conversion_happened(converted, test_html)
 
     def test_convert_for_webkit_harness_only(self):
         """ Tests convert_for_webkit() using a basic JS test that uses testharness.js only and has no prefixed properties """
@@ -91,10 +99,11 @@ CONTENT OF TEST
 <script src="/resources/testharness.js"></script>
 </head>
 """
-        converter = W3CTestConverter()
-        fake_dir_path = self.fake_dir_path(converter, "harnessonly")
-
-        converted = converter.convert_html(fake_dir_path, test_html, DUMMY_FILENAME)
+        fake_dir_path = self.fake_dir_path("harnessonly")
+        converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME)
+        converter.feed(test_html)
+        converter.close()
+        converted = converter.output()
 
         self.verify_conversion_happened(converted)
         self.verify_test_harness_paths(converter, converted[1], fake_dir_path, 1, 1)
@@ -118,14 +127,16 @@ CONTENT OF TEST
 </body>
 </html>
 """
-        converter = W3CTestConverter()
-        fake_dir_path = self.fake_dir_path(converter, 'harnessandprops')
+        fake_dir_path = self.fake_dir_path('harnessandprops')
+        converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME)
         test_content = self.generate_test_content(converter.prefixed_properties, 1, test_html)
 
         oc = OutputCapture()
         oc.capture_output()
         try:
-            converted = converter.convert_html(fake_dir_path, test_content[1], DUMMY_FILENAME)
+            converter.feed(test_content[1])
+            converter.close()
+            converted = converter.output()
         finally:
             oc.restore_output()
 
@@ -153,14 +164,16 @@ CONTENT OF TEST
 </body>
 </html>
 """
-        converter = W3CTestConverter()
-        fake_dir_path = self.fake_dir_path(converter, 'harnessandprops')
+        fake_dir_path = self.fake_dir_path('harnessandprops')
+        converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME)
 
         oc = OutputCapture()
         oc.capture_output()
         try:
             test_content = self.generate_test_content(converter.prefixed_properties, 2, test_html)
-            converted = converter.convert_html(fake_dir_path, test_content[1], DUMMY_FILENAME)
+            converter.feed(test_content[1])
+            converter.close()
+            converted = converter.output()
         finally:
             oc.restore_output()
 
@@ -177,20 +190,20 @@ CONTENT OF TEST
 <script src="/resources/testharnessreport.js"></script>
 </head>
 """
-        converter = W3CTestConverter()
+        fake_dir_path = self.fake_dir_path('testharnesspaths')
+        converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME)
 
-        fake_dir_path = self.fake_dir_path(converter, 'testharnesspaths')
-
-        doc = BeautifulSoup(test_html)
         oc = OutputCapture()
         oc.capture_output()
         try:
-            converted = converter.convert_testharness_paths(doc, fake_dir_path, DUMMY_FILENAME)
+            converter.feed(test_html)
+            converter.close()
+            converted = converter.output()
         finally:
             oc.restore_output()
 
         self.verify_conversion_happened(converted)
-        self.verify_test_harness_paths(converter, doc, fake_dir_path, 2, 1)
+        self.verify_test_harness_paths(converter, converted[1], fake_dir_path, 2, 1)
 
     def test_convert_prefixed_properties(self):
         """ Tests convert_prefixed_properties() file that has 20 properties requiring the -webkit- prefix:
@@ -255,14 +268,15 @@ CONTENT OF TEST
 ]]></style>
 </html>
 """
-        converter = W3CTestConverter()
-
+        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME)
         test_content = self.generate_test_content(converter.prefixed_properties, 20, test_html)
 
         oc = OutputCapture()
         oc.capture_output()
         try:
-            converted = converter.convert_prefixed_properties(BeautifulSoup(test_content[1]), DUMMY_FILENAME)
+            converter.feed(test_content[1])
+            converter.close()
+            converted = converter.output()
         finally:
             oc.restore_output()
 
@@ -272,8 +286,8 @@ CONTENT OF TEST
     def verify_conversion_happened(self, converted):
         self.assertTrue(converted, "conversion didn't happen")
 
-    def verify_no_conversion_happened(self, converted):
-        self.assertEqual(converted, None, 'test should not have been converted')
+    def verify_no_conversion_happened(self, converted, original):
+        self.assertEqual(converted[1], original, 'test should not have been converted')
 
     def verify_test_harness_paths(self, converter, converted, test_path, num_src_paths, num_href_paths):
         if isinstance(converted, basestring):

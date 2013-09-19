@@ -1,3 +1,47 @@
+2013-09-18  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        W3C Test Import script reformats test HTML
+        https://bugs.webkit.org/show_bug.cgi?id=119159
+
+        Reviewed by Dirk Pranke.
+
+        Completely rewrite the test conversion process to minimize
+        reformatting when adding prefixes, etc. This isn't 100% perfect, there
+        are still places where it will end up changing the formatting, but it
+        is much better than before. Most notably, the public interface to the
+        test converter has changed: now one calls a method instead of creating
+        an instance of the test converter class. This is because the test
+        converter class now has state, so one really needs a new instance for
+        each test.
+
+        Note that this also lays some simple groundwork for being able to use
+        a MockHost in the tests.
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (convert_for_webkit):
+        (_W3CTestConverter):
+        (_W3CTestConverter.__init__):
+        (_W3CTestConverter.output):
+        (_W3CTestConverter.add_webkit_prefix_to_unprefixed_properties):
+        (_W3CTestConverter.convert_style_data):
+        (_W3CTestConverter.convert_attributes_if_needed):
+        (_W3CTestConverter.handle_starttag):
+        (_W3CTestConverter.handle_endtag):
+        (_W3CTestConverter.handle_startendtag):
+        (_W3CTestConverter.handle_data):
+        (_W3CTestConverter.handle_entityref):
+        (_W3CTestConverter.handle_charref):
+        (_W3CTestConverter.handle_comment):
+        (_W3CTestConverter.handle_decl):
+        (_W3CTestConverter.handle_pi):
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        (W3CTestConverterTest):
+        (W3CTestConverterTest.fake_dir_path):
+        (W3CTestConverterTest.test_read_prefixed_property_list):
+        (verify_no_conversion_happened):
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.import_tests):
+
 2013-09-18  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of the jsc-test-list by moving all not-jsc-capable tests into js/dom

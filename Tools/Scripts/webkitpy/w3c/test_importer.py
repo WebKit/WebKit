@@ -96,7 +96,7 @@ from webkitpy.common.host import Host
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.w3c.test_parser import TestParser
-from webkitpy.w3c.test_converter import W3CTestConverter
+from webkitpy.w3c.test_converter import convert_for_webkit
 
 
 TEST_STATUS_UNKNOWN = 'unknown'
@@ -286,7 +286,6 @@ class TestImporter(object):
                     'reftests': reftests, 'jstests': jstests, 'total_tests': total_tests})
 
     def import_tests(self):
-        converter = W3CTestConverter()
         total_imported_tests = 0
         total_imported_reftests = 0
         total_imported_jstests = 0
@@ -343,7 +342,7 @@ class TestImporter(object):
                 # FIXME: Eventually, so should js when support is added for this type of conversion
                 mimetype = mimetypes.guess_type(orig_filepath)
                 if 'html' in str(mimetype[0]) or 'xml' in str(mimetype[0])  or 'css' in str(mimetype[0]):
-                    converted_file = converter.convert_for_webkit(new_path, filename=orig_filepath)
+                    converted_file = convert_for_webkit(new_path, filename=orig_filepath)
 
                     if not converted_file:
                         shutil.copyfile(orig_filepath, new_filepath)  # The file was unmodified.
