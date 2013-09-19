@@ -1,3 +1,19 @@
+2013-09-19  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebase after r155957 and 155998.
+
+        * platform/qt-wk1/compositing/contents-scale/animating-expected.txt: Added r155998.
+        * platform/qt-wk1/compositing/contents-scale/scaled-ancestor-expected.txt: Added r155998.
+        * platform/qt-wk1/compositing/contents-scale/simple-scale-expected.txt: Added r155998.
+        * platform/qt-wk1/compositing/contents-scale/z-translate-expected.txt: Added r155998.
+        * platform/qt-wk2/compositing/contents-scale/animating-expected.txt: Added r155998.
+        * platform/qt-wk2/compositing/contents-scale/scaled-ancestor-expected.txt: Added r155998.
+        * platform/qt-wk2/compositing/contents-scale/simple-scale-expected.txt: Added r155998.
+        * platform/qt-wk2/compositing/contents-scale/z-translate-expected.txt: Added r155998.
+        * platform/qt/css3/selectors3/html/css3-modsel-179a-expected.txt: Rebase after r155957.
+        * platform/qt/css3/selectors3/xhtml/css3-modsel-179a-expected.txt: Rebase after r155957.
+        * platform/qt/css3/selectors3/xml/css3-modsel-179a-expected.txt: Rebase after r155957.
+
 2013-09-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
