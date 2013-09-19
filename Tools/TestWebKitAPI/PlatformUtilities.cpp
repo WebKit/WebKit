@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformUtilities.h"
 
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 
 namespace TestWebKitAPI {
 namespace Util {
@@ -66,7 +66,7 @@ WKContextRef createContextForInjectedBundleTest(const std::string& testName, WKT
 std::string toSTD(WKStringRef string)
 {
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(string);
-    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[bufferSize]);
+    auto buffer = std::make_unique<char[]>(bufferSize);
     size_t stringLength = WKStringGetUTF8CString(string, buffer.get(), bufferSize);
     return std::string(buffer.get(), stringLength - 1);
 }

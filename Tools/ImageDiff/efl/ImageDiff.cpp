@@ -42,10 +42,10 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/efl/RefPtrEfl.h>
 
 enum PixelComponent {
@@ -119,7 +119,7 @@ static float calculateDifference(Evas_Object* baselineImage, Evas_Object* actual
         return 100; // Completely different.
     }
 
-    OwnArrayPtr<unsigned char> diffBuffer = adoptArrayPtr(new unsigned char[width * height]);
+    auto diffBuffer = std::make_unique<unsigned char[]>(width * height);
     if (!diffBuffer)
         abortWithErrorMessage("could not create difference buffer");
 
@@ -258,7 +258,7 @@ static void resizeEcoreEvasIfNeeded(Evas_Object* image)
 
 static PassRefPtr<Evas_Object> readImageFromStdin(Evas* evas, long imageSize)
 {
-    OwnArrayPtr<unsigned char> imageBuffer = adoptArrayPtr(new unsigned char[imageSize]);
+    auto imageBuffer = std::make_unique<unsigned char[]>(imageSize);
     if (!imageBuffer)
         abortWithErrorMessage("cannot allocate image");
 

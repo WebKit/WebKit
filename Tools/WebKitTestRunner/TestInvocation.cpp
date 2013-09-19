@@ -37,8 +37,8 @@
 #include <WebKit2/WKDictionary.h>
 #include <WebKit2/WKInspector.h>
 #include <WebKit2/WKRetainPtr.h>
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(MAC)
@@ -81,13 +81,13 @@ static WKURLRef createWKURL(const char* pathOrURL)
 #endif
     static const size_t prefixLength = strlen(filePrefix);
 
-    OwnArrayPtr<char> buffer;
+    std::unique_ptr<char[]> buffer;
     if (isAbsolutePath) {
-        buffer = adoptArrayPtr(new char[prefixLength + length + 1]);
+        buffer = std::make_unique<char[]>(prefixLength + length + 1);
         strcpy(buffer.get(), filePrefix);
         strcpy(buffer.get() + prefixLength, pathOrURL);
     } else {
-        buffer = adoptArrayPtr(new char[prefixLength + PATH_MAX + length + 2]); // 1 for the separator
+        buffer = std::make_unique<char[]>(prefixLength + PATH_MAX + length + 2); // 1 for the separator
         strcpy(buffer.get(), filePrefix);
         if (!getcwd(buffer.get() + prefixLength, PATH_MAX))
             return 0;

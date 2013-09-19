@@ -38,7 +38,7 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <unistd.h>
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -191,7 +191,7 @@ static const PassRefPtr<KeyEventInfo> keyPadName(WKStringRef keyRef)
         return adoptRef(new KeyEventInfo("KP_Delete", ""));
 
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(keyRef);
-    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[bufferSize]);
+    auto buffer = std::make_unique<char[]>(bufferSize);
     WKStringGetUTF8CString(keyRef, buffer.get(), bufferSize);
     return adoptRef(new KeyEventInfo(buffer.get(), buffer.get()));
 }
@@ -260,7 +260,7 @@ static const PassRefPtr<KeyEventInfo> keyName(WKStringRef keyRef)
         return adoptRef(new KeyEventInfo("F12", ""));
 
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(keyRef);
-    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[bufferSize]);
+    auto buffer = std::make_unique<char[]>(bufferSize);
     WKStringGetUTF8CString(keyRef, buffer.get(), bufferSize);
     char charCode = buffer.get()[0];
 

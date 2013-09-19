@@ -49,7 +49,7 @@
 #include <WebKit2/WebKit2_C.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
-#include <wtf/OwnArrayPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -279,7 +279,7 @@ static inline JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef string
 {
     const size_t count = WKArrayGetSize(strings);
 
-    OwnArrayPtr<JSValueRef> jsStringsArray = adoptArrayPtr(new JSValueRef[count]);
+    auto jsStringsArray = std::make_unique<JSValueRef[]>(count);
     for (size_t i = 0; i < count; ++i) {
         WKStringRef stringRef = static_cast<WKStringRef>(WKArrayGetItemAtIndex(strings, i));
         JSRetainPtr<JSStringRef> stringJS = toJS(stringRef);

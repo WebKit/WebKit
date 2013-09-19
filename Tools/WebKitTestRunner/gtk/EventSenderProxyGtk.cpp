@@ -35,9 +35,9 @@
 
 #include "PlatformWebView.h"
 #include "TestController.h"
-#include <wtf/OwnArrayPtr.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -266,7 +266,7 @@ int getGDKKeySymForKeyRef(WKStringRef keyRef, unsigned location, guint* modifier
         return GDK_KEY_F12;
 
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(keyRef);
-    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[bufferSize]);
+    auto buffer = std::make_unique<char[]>(bufferSize);
     WKStringGetUTF8CString(keyRef, buffer.get(), bufferSize);
     char charCode = buffer.get()[0];
 

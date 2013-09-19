@@ -37,6 +37,7 @@
 #include <WebKit2/WKContextMenuItem.h>
 #include <WebKit2/WKMutableDictionary.h>
 #include <WebKit2/WKNumber.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WTR {
 
@@ -381,7 +382,7 @@ JSValueRef EventSendingController::contextClick()
 
     WKRetainPtr<WKArrayRef> menuEntries = adoptWK(WKBundlePageCopyContextMenuItems(page));
     size_t entriesSize = WKArrayGetSize(menuEntries.get());
-    OwnArrayPtr<JSValueRef> jsValuesArray = adoptArrayPtr(new JSValueRef[entriesSize]);
+    auto jsValuesArray = std::make_unique<JSValueRef[]>(entriesSize);
     for (size_t i = 0; i < entriesSize; ++i) {
         ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(menuEntries.get(), i)) == WKContextMenuItemGetTypeID());
 
