@@ -1,3 +1,43 @@
+2013-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an AngularJS test to DoYouEvenBench
+        https://bugs.webkit.org/show_bug.cgi?id=121595
+
+        Reviewed by Antti Koivisto.
+
+        * DoYouEvenBench/benchmark.html:
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/bower.json: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/bower_components: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/bower_components/angular: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/bower_components/angular-mocks: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/bower_components/angular-mocks/angular-mocks.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/bower_components/angular/angular.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/bower_components/todomvc-common: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/bower_components/todomvc-common/base.css: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/bower_components/todomvc-common/base.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/bower_components/todomvc-common/bg.png: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/index.html: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/js/app.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/js/controllers: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/js/controllers/todoCtrl.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/js/directives: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/js/directives/todoBlur.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/js/directives/todoEscape.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/js/directives/todoFocus.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/js/services: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/js/services/todoStorage.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/readme.md: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/test: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/test/config: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/test/config/testacular.conf.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/test/package.json: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/test/readme.md: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/test/unit: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/test/unit/directivesSpec.js: Added.
+        * DoYouEvenBench/todomvc/architecture-examples/angularjs/test/unit/todoCtrlSpec.js: Added.
+
 2013-09-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a not completely unrealistic DOM Benchmark
