@@ -713,7 +713,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    UNREACHABLE_FOR_PLATFORM();
 }
 
 #endif // CPU(X86) || CPU(X86_64)

@@ -1,3 +1,16 @@
+2013-09-19  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Substitute UNREACHABLE_FOR_PLATFORM() for RELEASE_ASSERT_NOT_REACHED()
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        Use UNREACHABLE_FOR_PLATFORM() instead of RELEASE_ASSERT_NOT_REACHED() in
+        the non-x86/x86-64 variant of JIT::emitSlow_op_mod() so as to avoid a missing
+        noreturn warning in Clang while simultaneously asserting unreachable code.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_mod):
+
 2013-09-19  Michael Saboff  <msaboff@apple.com>
 
         JSC: X86 disassembler shows 16, 32 and 64 bit displacements as unsigned
