@@ -1,3 +1,17 @@
+2013-09-19  Andreas Kling  <akling@apple.com>
+
+        Streamline JSMainThreadNullState.
+        <https://webkit.org/b/121636>
+
+        Reviewed by Anders Carlsson.
+
+        JSMainThreadNullState is only used by non-JavaScript bindings and
+        thus won't ever call didLeaveScriptContext() on destruction.
+        Specialize the class for its use-case instead of sharing code
+        with JSMainThreadExecState.
+
+        Shrinks the WebCore binary by 82848 bytes.
+
 2013-09-19  Bear Travis  <betravis@adobe.com>
 
         CSS_SHAPES not supported on AppleWin port

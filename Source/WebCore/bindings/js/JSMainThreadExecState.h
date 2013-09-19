@@ -39,6 +39,7 @@ class ScriptExecutionContext;
 
 class JSMainThreadExecState {
     WTF_MAKE_NONCOPYABLE(JSMainThreadExecState);
+    friend class JSMainThreadNullState;
 public:
     static JSC::ExecState* currentState()
     { 
@@ -89,9 +90,23 @@ private:
 
 // Null state prevents origin security checks.
 // Used by non-JavaScript bindings (ObjC, GObject).
-class JSMainThreadNullState : private JSMainThreadExecState {
+class JSMainThreadNullState {
 public:
-    explicit JSMainThreadNullState() : JSMainThreadExecState(0) {};
+    explicit JSMainThreadNullState()
+        : m_previousState(JSMainThreadExecState::s_mainThreadState)
+    {
+        ASSERT(isMainThread());
+        JSMainThreadExecState::s_mainThreadState = nullptr;
+    }
+
+    ~JSMainThreadNullState()
+    {
+        ASSERT(isMainThread());
+        JSMainThreadExecState::s_mainThreadState = m_previousState;
+    }
+
+private:
+    JSC::ExecState* m_previousState;
 };
 
 } // namespace WebCore
