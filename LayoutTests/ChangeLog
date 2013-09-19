@@ -1,3 +1,17 @@
+2013-09-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Rebaselining after r156040.
+
+        * platform/gtk/fast/forms/HTMLOptionElement_label06-expected.txt:
+        * platform/gtk/fast/forms/HTMLOptionElement_label07-expected.txt:
+        * platform/gtk/fast/forms/form-element-geometry-expected.txt:
+        * platform/gtk/fast/forms/menulist-separator-painting-expected.txt:
+        * platform/gtk/fast/forms/select-baseline-expected.txt:
+        * platform/gtk/fast/forms/select-empty-option-height-expected.txt:
+        * platform/gtk/fast/forms/selectlist-minsize-expected.txt:
+        * platform/gtk/fast/html/keygen-expected.txt:
+        * platform/gtk/fast/replaced/three-selects-break-expected.txt:
+
 2013-09-18  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Failed to retrieve named flow ranges for content with inline svg

@@ -6,5 +6,6 @@ layer at (0,0) size 800x600
       RenderBlock {KEYGEN} at (2,2) size 27x27
         RenderMenuList {SELECT} at (0,0) size 27x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 25x25
-            RenderBR at (4,4) size 0x17 [bgcolor=#FFFFFF]
+            RenderText at (4,4) size 0x17
+              text run at (4,4) width 0: " "
       RenderText {#text} at (0,0) size 0x0

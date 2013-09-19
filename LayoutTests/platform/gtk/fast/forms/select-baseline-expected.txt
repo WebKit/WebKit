@@ -8,7 +8,8 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (462,14) size 0x0
       RenderMenuList {SELECT} at (2,19) size 27x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,1) size 25x25
-          RenderBR at (4,4) size 0x17 [bgcolor=#FFFFFF]
+          RenderText at (4,4) size 0x17
+            text run at (4,4) width 0: " "
       RenderText {#text} at (31,24) size 29x17
         text run at (31,24) width 29: " test "
       RenderMenuList {SELECT} at (62,19) size 52x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
@@ -19,7 +20,8 @@ layer at (0,0) size 800x600
         text run at (116,24) width 4: " "
       RenderMenuList {SELECT} at (122,19) size 27x27 [color=#00008B] [bgcolor=#ADD8E6] [border: (1px solid #00008B)]
         RenderBlock (anonymous) at (1,1) size 25x25
-          RenderBR at (4,4) size 0x17 [bgcolor=#ADD8E6]
+          RenderText at (4,4) size 0x17
+            text run at (4,4) width 0: " "
       RenderText {#text} at (151,24) size 29x17
         text run at (151,24) width 29: " test "
       RenderMenuList {SELECT} at (182,19) size 52x27 [color=#00008B] [bgcolor=#ADD8E6] [border: (1px solid #00008B)]
