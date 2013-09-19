@@ -1,3 +1,18 @@
+2013-09-19  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Fix starting html tag and doctype for shape-inside floats tests
+        https://bugs.webkit.org/show_bug.cgi?id=121621
+
+        Reviewed by Andreas Kling.
+
+        * fast/shapes/shape-inside/shape-inside-left-float-in-lower-left-triangle-inline-content-expected.html:
+        * fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-inline-content-expected.html:
+        * fast/shapes/shape-inside/shape-inside-left-float-in-lower-right-triangle-inline-content.html:
+        * fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-inline-content-expected.html:
+        * fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-inline-content.html:
+        * fast/shapes/shape-inside/shape-inside-left-float-in-upper-right-triangle-inline-content-expected.html:
+        * fast/shapes/shape-inside/shape-inside-left-float-in-upper-right-triangle-inline-content.html:
+
 2013-09-19  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Fix handling of top margin on float with shape-outside
