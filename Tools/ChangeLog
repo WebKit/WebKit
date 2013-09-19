@@ -1,3 +1,13 @@
+2013-09-19  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r129451): run-safari --no-saved-state is broken
+        https://bugs.webkit.org/show_bug.cgi?id=121566
+
+        Undo a last minute change that doesn't actually work.
+
+        * Scripts/webkitdirs.pm: (argumentsForRunAndDebugMacWebKitApp): "-1" cannot be passed
+        via command line, <rdar://problem/15032886>.
+
 2013-09-19  Dan Bernstein  <mitz@apple.com>
 
         Add a style guideline regarding spacing in range-based for loops
