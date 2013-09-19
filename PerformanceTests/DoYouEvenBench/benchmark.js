@@ -22,15 +22,15 @@ SimplePromise.prototype.resolve = function (value) {
     if (!this._callback) {
         this._resolved = true;
         this._resolvedValue = value;
-    return;
+        return;
     }
 
     var result = this._callback(value);
     if (result instanceof SimplePromise) {
-    var chainedPromise = this._chainedPromise;
-    result.then(function (result) { chainedPromise.resolve(result); });
+        var chainedPromise = this._chainedPromise;
+        result.then(function (result) { chainedPromise.resolve(result); });
     } else
-    this._chainedPromise.resolve(result);
+        this._chainedPromise.resolve(result);
 }
 
 var BenchmarkRunner = {_suites: [], _prepareReturnValue: null, _measuredValues: {}};
@@ -47,8 +47,8 @@ BenchmarkRunner.waitForElement = function (selector) {
 
     function resolveIfReady() {
         var element = contentDocument.querySelector(selector);
-    if (element)
-        return promise.resolve(element);
+        if (element)
+            return promise.resolve(element);
         setTimeout(resolveIfReady, 50);
     }
 
@@ -76,19 +76,19 @@ BenchmarkRunner._waitAndWarmUp = function () {
     var startTime = Date.now();
 
     function Fibonacci(n) {
-    if (Date.now() - startTime > 100)
-    return;
-    if (n <= 0)
-    return 0;
-    else if (n == 1)
-    return 1;
-    return Fibonacci(n - 2) + Fibonacci(n - 1);
+        if (Date.now() - startTime > 100)
+            return;
+        if (n <= 0)
+            return 0;
+        else if (n == 1)
+            return 1;
+        return Fibonacci(n - 2) + Fibonacci(n - 1);
     }
 
     var promise = new SimplePromise;
     setTimeout(function () {
-    Fibonacci(100);
-    promise.resolve();
+        Fibonacci(100);
+        promise.resolve();
     }, 200);
     return promise;
 }
@@ -109,8 +109,8 @@ BenchmarkRunner._runTest = function(suite, testFunction, prepareReturnValue, cal
 
     var startTime = now();
     setTimeout(function () {
-    var endTime = now();
-    callback(syncTime, endTime - startTime);
+        var endTime = now();
+        callback(syncTime, endTime - startTime);
     }, 0);
 }
 
@@ -299,8 +299,8 @@ BenchmarkRunner._finalize = function () {
     var results = '';
     var total = 0; // FIXME: Compute the total properly.
     for (var title in self._measuredValues) {
-    results += title + ' : ' + self._measuredValues[title] + ' ms\n';
-    total += self._measuredValues[title];
+        results += title + ' : ' + self._measuredValues[title] + ' ms\n';
+        total += self._measuredValues[title];
     }
     results += 'Total : ' + (total / 2) + ' ms\n';
     self._measuredValues = {};

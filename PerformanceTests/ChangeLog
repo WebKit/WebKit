@@ -1,5 +1,23 @@
 2013-09-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        DoYouEvenBench: Indentations in benchmark.js and benchmark.html are all messed up
+        https://bugs.webkit.org/show_bug.cgi?id=121597
+
+        Reviewed by Anders Carlsson.
+
+        Fixed indentations.
+
+        * DoYouEvenBench/benchmark.html:
+        * DoYouEvenBench/benchmark.js:
+        (SimplePromise.prototype.resolve.else):
+        (SimplePromise.prototype.resolve):
+        (BenchmarkRunner.waitForElement.resolveIfReady):
+        (BenchmarkRunner.waitForElement):
+        (BenchmarkRunner._waitAndWarmUp.Fibonacci):
+        (BenchmarkRunner._finalize):
+
+2013-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add an AngularJS test to DoYouEvenBench
         https://bugs.webkit.org/show_bug.cgi?id=121595
 
