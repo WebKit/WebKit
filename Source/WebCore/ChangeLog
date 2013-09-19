@@ -1,3 +1,43 @@
+2013-09-19  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Fix handling of top margin on float with shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=121614
+
+        Reviewed by Alexandru Chiculita.
+
+        When a float has shape outside, the top margin should be treated as if
+        there is no shape there, so inline content should be allowed to flow
+        into that space. This patch fixes two issues:
+        
+        1) If the top margin is the same as the line height, a line should be
+        able to fit into the margin. Before this patch, that line was being
+        treated as if it intersected with the shape.
+        
+        2) The shape should be positioned (x, y) relative to the box sizing
+        box of the float. While the x coordinate was being treated properly,
+        the y coordinate was relative to the top of the margin box. This patch
+        fixes this behavior.
+        
+        This patch also includes a simple test for right and left margins, as
+        I wrote that test and then discovered the problems listed above.
+        
+        This patch also removes an unused override of the
+        lineOverlapsShapeBounds method.
+
+        Tests: csswg/submitted/shapes/shape-outside/shape-outside-floats-margin-000.html
+               csswg/submitted/shapes/shape-outside/shape-outside-floats-margin-001.html
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObjects::logicalLeftOffset): 
+        (WebCore::FloatingObjects::logicalRightOffset):
+        * rendering/LineWidth.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        * rendering/shapes/ShapeInfo.h:
+        * rendering/shapes/ShapeInsideInfo.h:
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::computeSegmentsForContainingBlockLine):
+        * rendering/shapes/ShapeOutsideInfo.h:
+
 2013-09-19  Antti Koivisto  <antti@apple.com>
 
         Add RenderElement

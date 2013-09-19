@@ -109,6 +109,12 @@ public:
     void setNeedsLayout(bool value) { m_needsLayout = value; }
     bool needsLayout() { return m_needsLayout; }
 
+    virtual bool lineOverlapsShapeBounds() const OVERRIDE
+    {
+        // The <= test is to handle the case of a zero height line or a zero height shape.
+        return logicalLineTop() < shapeLogicalBottom() && shapeLogicalTop() <= logicalLineBottom();
+    }
+
 protected:
     virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape()->shapePaddingLogicalBoundingBox(); }
     virtual ShapeValue* shapeValue() const OVERRIDE;

@@ -37,18 +37,26 @@
 
 namespace WebCore {
 
+class RenderBlock;
 class RenderBox;
+class FloatingObject;
 
 class ShapeOutsideInfo FINAL : public ShapeInfo<RenderBox>, public MappedInfo<RenderBox, ShapeOutsideInfo> {
 public:
     LayoutUnit leftSegmentMarginBoxDelta() const { return m_leftSegmentMarginBoxDelta; }
     LayoutUnit rightSegmentMarginBoxDelta() const { return m_rightSegmentMarginBoxDelta; }
 
-    bool computeSegmentsForContainingBlockLine(LayoutUnit lineTop, LayoutUnit floatTop, LayoutUnit lineHeight);
+    bool computeSegmentsForContainingBlockLine(const RenderBlock*, const FloatingObject*, LayoutUnit lineTop, LayoutUnit lineHeight);
     virtual bool updateSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) OVERRIDE;
 
     static PassOwnPtr<ShapeOutsideInfo> createInfo(const RenderBox* renderer) { return adoptPtr(new ShapeOutsideInfo(renderer)); }
     static bool isEnabledFor(const RenderBox*);
+
+    virtual bool lineOverlapsShapeBounds() const OVERRIDE
+    {
+        return (logicalLineTop() < shapeLogicalBottom() && shapeLogicalTop() < logicalLineBottom())
+            || logicalLineTop() == shapeLogicalTop(); // case of zero height line or zero height shape
+    }
 
 protected:
     virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape()->shapeMarginLogicalBoundingBox(); }

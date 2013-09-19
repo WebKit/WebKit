@@ -33,6 +33,8 @@
 
 #include "ShapeOutsideInfo.h"
 
+#include "FloatingObjects.h"
+#include "RenderBlock.h"
 #include "RenderBox.h"
 
 namespace WebCore {
@@ -52,9 +54,10 @@ bool ShapeOutsideInfo::isEnabledFor(const RenderBox* box)
     }
 }
 
-bool ShapeOutsideInfo::computeSegmentsForContainingBlockLine(LayoutUnit lineTop, LayoutUnit floatTop, LayoutUnit lineHeight)
+bool ShapeOutsideInfo::computeSegmentsForContainingBlockLine(const RenderBlock* containingBlock, const FloatingObject* floatingObject, LayoutUnit lineTop, LayoutUnit lineHeight)
 {
-    LayoutUnit lineTopInShapeCoordinates = lineTop - floatTop + logicalTopOffset();
+    LayoutUnit shapeTop = floatingObject->logicalTop(containingBlock->isHorizontalWritingMode()) + std::max(LayoutUnit(), containingBlock->marginBeforeForChild(m_renderer));
+    LayoutUnit lineTopInShapeCoordinates = lineTop - shapeTop + logicalTopOffset();
     return updateSegmentsForLine(lineTopInShapeCoordinates, lineHeight);
 }
 

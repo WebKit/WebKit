@@ -107,14 +107,14 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
         if (previousFloat != newFloat && previousFloat->type() == newFloat->type()) {
             previousShapeOutsideInfo = previousFloat->renderer()->shapeOutsideInfo();
             if (previousShapeOutsideInfo)
-                previousShapeOutsideInfo->computeSegmentsForContainingBlockLine(m_block.logicalHeight(), previousFloat->logicalTop(m_block.isHorizontalWritingMode()), logicalHeightForLine(&m_block, m_isFirstLine));
+                previousShapeOutsideInfo->computeSegmentsForContainingBlockLine(&m_block, previousFloat, m_block.logicalHeight(), logicalHeightForLine(&m_block, m_isFirstLine));
             break;
         }
     }
 
     ShapeOutsideInfo* shapeOutsideInfo = newFloat->renderer()->shapeOutsideInfo();
     if (shapeOutsideInfo)
-        shapeOutsideInfo->computeSegmentsForContainingBlockLine(m_block.logicalHeight(), newFloat->logicalTop(m_block.isHorizontalWritingMode()), logicalHeightForLine(&m_block, m_isFirstLine));
+        shapeOutsideInfo->computeSegmentsForContainingBlockLine(&m_block, newFloat, m_block.logicalHeight(), logicalHeightForLine(&m_block, m_isFirstLine));
 #endif
 
     if (newFloat->type() == FloatingObject::FloatLeft) {

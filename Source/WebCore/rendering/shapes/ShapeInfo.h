@@ -100,8 +100,7 @@ public:
 
     LayoutUnit shapeContainingBlockLogicalHeight() const { return (m_renderer->style()->boxSizing() == CONTENT_BOX) ? (m_shapeLogicalSize.height() + m_renderer->borderAndPaddingLogicalHeight()) : m_shapeLogicalSize.height(); }
 
-    bool lineOverlapsShapeBounds() const { return logicalLineTop() < shapeLogicalBottom() && shapeLogicalTop() <= logicalLineBottom(); }
-    bool lineOverlapsShapeBounds(LayoutUnit lineHeight) const { return logicalLineTop() < shapeLogicalBottom() && shapeLogicalTop() <= logicalLineBottom(lineHeight); }
+    virtual bool lineOverlapsShapeBounds() const = 0;
 
     void dirtyShapeSize() { m_shape.clear(); }
     bool shapeSizeDirty() { return !m_shape.get(); }
