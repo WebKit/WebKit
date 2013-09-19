@@ -1,3 +1,12 @@
+2013-09-19  Bear Travis  <betravis@adobe.com>
+
+        CSS_SHAPES not supported on AppleWin port
+        https://bugs.webkit.org/show_bug.cgi?id=118810
+
+        Reviewed by Brent Fulgham.
+
+        * platform/win/TestExpectations: Enable shapes tests.
+
 2013-09-19  Eric Carlson  <eric.carlson@apple.com>
 
         MediaStream API: update NavigatorUserMediaError object to match spec

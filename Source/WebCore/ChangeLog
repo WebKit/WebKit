@@ -1,3 +1,17 @@
+2013-09-19  Bear Travis  <betravis@adobe.com>
+
+        CSS_SHAPES not supported on AppleWin port
+        https://bugs.webkit.org/show_bug.cgi?id=118810
+
+        Reviewed by Brent Fulgham.
+
+        Enabling fast/shapes on windows.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Add missing shape includes.
+        * WebCore.vcxproj/WebCoreCommon.props: Include shapes source folder.
+        * WebCore.vcxproj/copyForwardingHeaders.cmd: Copy shapes headers.
+        * css/CSSPropertyNames.in: Tweak to ensure shapes properties are regenerated.
+
 2013-09-19  Andreas Kling  <akling@apple.com>
 
         Add SVGPropertyInfo.cpp
