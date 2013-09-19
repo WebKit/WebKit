@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +26,7 @@
 #ifndef NavigatorUserMediaError_h
 #define NavigatorUserMediaError_h
 
+#include "DOMError.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -32,29 +34,27 @@
 
 namespace WebCore {
 
-class NavigatorUserMediaError : public RefCounted<NavigatorUserMediaError> {
+class NavigatorUserMediaError : public DOMError {
 public:
-    static PassRefPtr<NavigatorUserMediaError> create(const String& name, const String& message, const String& constraintName)
+    static PassRefPtr<NavigatorUserMediaError> create(const String& name, const String& constraintName)
     {
-        return adoptRef(new NavigatorUserMediaError(name, message, constraintName));
+        return adoptRef(new NavigatorUserMediaError(name, constraintName));
     }
 
     virtual ~NavigatorUserMediaError() { }
 
-    const String& name() const { return m_name; }
-    const String& message() const { return m_message; }
     const String& constraintName() const { return m_constraintName; }
 
+    static const AtomicString& permissionDeniedErrorName();
+    static const AtomicString& constraintNotSatisfiedErrorName();
+
 private:
-    NavigatorUserMediaError(const String& name, const String& message, const String& constraintName)
-        : m_name(name)
-        , m_message(message)
+    NavigatorUserMediaError(const String& name, const String& constraintName)
+        : DOMError(name)
         , m_constraintName(constraintName)
     {
     }
 
-    String m_name;
-    String m_message;
     String m_constraintName;
 };
 

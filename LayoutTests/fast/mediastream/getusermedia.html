@@ -10,6 +10,7 @@
 description("Tests webkitGetUserMedia.");
 
 var stream;
+var errorArg;
 
 function error() {
     testFailed('Error callback called.');
@@ -29,8 +30,11 @@ function gotStream5(s) {
     finishJSTest();
 }
 
-function error1() {
+function error1(e) {
+    errorArg = e;
     testPassed('Error callback called.');
+    shouldBeEqualToString('errorArg.name', 'ConstraintNotSatisfiedError');
+    shouldBeEqualToString('errorArg.constraintName', 'valid_but_unsupported_1');
 
     shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_and_supported_1':1}, optional:[{'valid_but_unsupported_1':0}]}, video:true}, gotStream5, error);");
 }

@@ -79,6 +79,7 @@
 		066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */; };
 		06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */; };
 		06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */; };
+		070327F817EA4AAF00CE1318 /* NavigatorUserMediaError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070327F717EA4AAF00CE1318 /* NavigatorUserMediaError.cpp */; };
 		070334D31459FFAD008D8D45 /* TrackEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070334D01459FFAC008D8D45 /* TrackEvent.cpp */; };
 		070334D71459FFD5008D8D45 /* TrackBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 070334D61459FFD5008D8D45 /* TrackBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		070334D9145A006F008D8D45 /* TrackBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070334D8145A006F008D8D45 /* TrackBase.cpp */; };
@@ -6442,6 +6443,7 @@
 		066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFileUploadControl.h; sourceTree = "<group>"; };
 		06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalCurrentGraphicsContext.h; sourceTree = "<group>"; };
 		06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalCurrentGraphicsContext.mm; sourceTree = "<group>"; };
+		070327F717EA4AAF00CE1318 /* NavigatorUserMediaError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorUserMediaError.cpp; sourceTree = "<group>"; };
 		070334D01459FFAC008D8D45 /* TrackEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackEvent.cpp; sourceTree = "<group>"; };
 		070334D11459FFAC008D8D45 /* TrackEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackEvent.h; sourceTree = "<group>"; };
 		070334D21459FFAC008D8D45 /* TrackEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TrackEvent.idl; sourceTree = "<group>"; };
@@ -13327,6 +13329,7 @@
 				07221B5B17CEC32700848E51 /* NavigatorMediaStream.h */,
 				07221B5C17CEC32700848E51 /* NavigatorMediaStream.idl */,
 				07221B5D17CEC32700848E51 /* NavigatorUserMediaError.h */,
+				070327F717EA4AAF00CE1318 /* NavigatorUserMediaError.cpp */,
 				07221B5E17CEC32700848E51 /* NavigatorUserMediaError.idl */,
 				07221B5F17CEC32700848E51 /* NavigatorUserMediaErrorCallback.h */,
 				07221B6017CEC32700848E51 /* NavigatorUserMediaErrorCallback.idl */,
@@ -26666,6 +26669,7 @@
 				450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */,
 				A456FA2611AD4A830020B420 /* LabelsNodeList.cpp in Sources */,
 				E18772F1126E2629003DD586 /* Language.cpp in Sources */,
+				070327F817EA4AAF00CE1318 /* NavigatorUserMediaError.cpp in Sources */,
 				9352084509BD43B900F2038D /* Language.mm in Sources */,
 				2917B5611473496C0052C9D0 /* LayerFlushScheduler.cpp in Sources */,
 				2917B566147349950052C9D0 /* LayerFlushSchedulerMac.cpp in Sources */,

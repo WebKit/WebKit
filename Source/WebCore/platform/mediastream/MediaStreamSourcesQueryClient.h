@@ -35,15 +35,19 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamSource.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class MediaConstraints;
 
 class MediaStreamSourcesQueryClient : public RefCounted<MediaStreamSourcesQueryClient> {
 public:
     virtual ~MediaStreamSourcesQueryClient() { }
 
-    virtual bool audio() const = 0;
-    virtual bool video() const = 0;
+    virtual PassRefPtr<MediaConstraints> audioConstraints() const = 0;
+    virtual PassRefPtr<MediaConstraints> videoConstraints() const = 0;
 
     virtual void didCompleteQuery(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources) = 0;
 };

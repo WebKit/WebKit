@@ -25,9 +25,7 @@
 [
     NoInterfaceObject,
     Conditional=MEDIA_STREAM
-] interface NavigatorUserMediaError {
-    readonly attribute DOMString name;
-    readonly attribute DOMString message;
+] interface NavigatorUserMediaError : DOMError {
     readonly attribute DOMString constraintName;
 };
 

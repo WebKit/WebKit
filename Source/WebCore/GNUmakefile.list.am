@@ -1985,6 +1985,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/MediaStreamTrackSourcesRequest.h \
 	Source/WebCore/Modules/mediastream/NavigatorMediaStream.cpp \
 	Source/WebCore/Modules/mediastream/NavigatorMediaStream.h \
+	Source/WebCore/Modules/mediastream/NavigatorUserMediaError.cpp \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaError.h \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaErrorCallback.h \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaSuccessCallback.h \

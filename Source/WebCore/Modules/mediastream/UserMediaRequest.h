@@ -40,7 +40,6 @@
 #include "NavigatorUserMediaErrorCallback.h"
 #include "NavigatorUserMediaSuccessCallback.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -57,32 +56,29 @@ public:
     static PassRefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaController*, const Dictionary& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&);
     ~UserMediaRequest();
 
-    NavigatorUserMediaSuccessCallback* successCallback() const { return m_successCallback.get(); }
-    NavigatorUserMediaErrorCallback* errorCallback() const { return m_errorCallback.get(); }
     Document* ownerDocument();
 
     void start();
-
     void succeed(PassRefPtr<MediaStreamDescriptor>);
-    void fail(const String& description);
-    void failConstraint(const String& constraintName, const String& description);
-
-    MediaConstraints* audioConstraints() const;
-    MediaConstraints* videoConstraints() const;
+    void permissionFailure();
+    void constraintFailure(const String& constraintName);
 
     // MediaStreamSourcesQueryClient
-    virtual bool audio() const;
-    virtual bool video() const;
-    virtual void didCompleteQuery(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
+    virtual PassRefPtr<MediaConstraints> audioConstraints() const OVERRIDE;
+    virtual PassRefPtr<MediaConstraints> videoConstraints() const OVERRIDE;
+    virtual void didCompleteQuery(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources) OVERRIDE;
 
     // ContextDestructionObserver
     virtual void contextDestroyed();
 
 private:
-    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraintsImpl> audio, PassRefPtr<MediaConstraintsImpl> video, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
+    UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraintsImpl> audioConstraints, PassRefPtr<MediaConstraintsImpl> videoConstraints, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>);
 
-    RefPtr<MediaConstraintsImpl> m_audio;
-    RefPtr<MediaConstraintsImpl> m_video;
+    void callSuccessHandler(PassRefPtr<MediaStream>);
+    void callErrorHandler(PassRefPtr<NavigatorUserMediaError>);
+
+    RefPtr<MediaConstraintsImpl> m_audioConstraints;
+    RefPtr<MediaConstraintsImpl> m_videoConstraints;
 
     UserMediaController* m_controller;
 

@@ -846,6 +846,7 @@ set(WebCore_SOURCES
     Modules/mediastream/MediaStreamTrackEvent.cpp
     Modules/mediastream/MediaStreamTrackSourcesRequest.cpp
     Modules/mediastream/NavigatorMediaStream.cpp
+    Modules/mediastream/NavigatorUserMediaError.cpp
     Modules/mediastream/RTCDTMFSender.cpp
     Modules/mediastream/RTCDTMFToneChangeEvent.cpp
     Modules/mediastream/RTCDataChannel.cpp

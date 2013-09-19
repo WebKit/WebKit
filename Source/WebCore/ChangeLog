@@ -1,3 +1,38 @@
+2013-09-19  Eric Carlson  <eric.carlson@apple.com>
+
+        MediaStream API: update NavigatorUserMediaError object to match spec
+        https://bugs.webkit.org/show_bug.cgi?id=121584
+
+        Reviewed by Dean Jackson.
+
+        No new tests, updated getusermedia.html.
+
+        * CMakeLists.txt: Add NavigatorUserMediaError.cpp.
+        * GNUmakefile.list.am: Ditto.
+
+        * Modules/mediastream/NavigatorUserMediaError.cpp: Added.
+        * Modules/mediastream/NavigatorUserMediaError.h: Derive from DOMError, get rid of "message" attribute.
+        * Modules/mediastream/NavigatorUserMediaError.idl: Ditto.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::create): ASCIILiteral -> AtomicString. Rename constraint parameters.
+        (WebCore::UserMediaRequest::UserMediaRequest): Rename constraint parameters.
+        (WebCore::UserMediaRequest::audioConstraints): Return PassRefPtr<> instead of raw ptr.
+        (WebCore::UserMediaRequest::videoConstraints): Ditto.
+        (WebCore::UserMediaRequest::ownerDocument): Clean up style.
+        (WebCore::UserMediaRequest::succeed): 
+        (WebCore::UserMediaRequest::permissionFailure): Renamed from fail.
+        (WebCore::UserMediaRequest::constraintFailure):  Renamed from failConstraint.
+        (WebCore::UserMediaRequest::callSuccessHandler): New.
+        (WebCore::UserMediaRequest::callErrorHandler): New.
+        * Modules/mediastream/UserMediaRequest.h:
+
+        * WebCore.xcodeproj/project.pbxproj: Add NavigatorUserMediaError.cpp
+
+        * dom/DOMError.h: Make constructor protected.
+
+        * platform/mediastream/MediaStreamSourcesQueryClient.h: Make constraints available.
+
 2013-09-19  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Fix handling of top margin on float with shape-outside
