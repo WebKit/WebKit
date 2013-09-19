@@ -1,3 +1,10 @@
+2013-09-19  Antti Koivisto  <antti@apple.com>
+
+        [CTTE] Hide nonPseudoNode and generatingNode, replace with Element versions
+        https://bugs.webkit.org/show_bug.cgi?id=121606
+
+        Reviewed by Andreas Kling.
+
 2013-09-19  Andreas Kling  <akling@apple.com>
 
         CTTE: Tighten renderer types for InlineFlowBox and SVGInlineFlowBox.

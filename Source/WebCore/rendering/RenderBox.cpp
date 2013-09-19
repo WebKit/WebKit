@@ -4071,16 +4071,16 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point)
 {
     // no children...return this render object's element, if there is one, and offset 0
     if (!firstChild())
-        return createVisiblePosition(nonPseudoNode() ? firstPositionInOrBeforeNode(nonPseudoNode()) : Position());
+        return createVisiblePosition(nonPseudoElement() ? firstPositionInOrBeforeNode(nonPseudoElement()) : Position());
 
-    if (isTable() && nonPseudoNode()) {
+    if (isTable() && nonPseudoElement()) {
         LayoutUnit right = contentWidth() + borderAndPaddingWidth();
         LayoutUnit bottom = contentHeight() + borderAndPaddingHeight();
         
         if (point.x() < 0 || point.x() > right || point.y() < 0 || point.y() > bottom) {
             if (point.x() <= right / 2)
-                return createVisiblePosition(firstPositionInOrBeforeNode(nonPseudoNode()));
-            return createVisiblePosition(lastPositionInOrAfterNode(nonPseudoNode()));
+                return createVisiblePosition(firstPositionInOrBeforeNode(nonPseudoElement()));
+            return createVisiblePosition(lastPositionInOrAfterNode(nonPseudoElement()));
         }
     }
 
@@ -4148,7 +4148,7 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point)
     if (closestRenderer)
         return closestRenderer->positionForPoint(adjustedPoint - closestRenderer->locationOffset());
     
-    return createVisiblePosition(firstPositionInOrBeforeNode(nonPseudoNode()));
+    return createVisiblePosition(firstPositionInOrBeforeNode(nonPseudoElement()));
 }
 
 bool RenderBox::shrinkToAvoidFloats() const

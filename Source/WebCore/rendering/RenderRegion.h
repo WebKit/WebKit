@@ -153,8 +153,6 @@ public:
 
     LayoutRect rectFlowPortionForBox(const RenderBox*, const LayoutRect&) const;
 
-    Element* generatingElement() const { return toElement(RenderObject::generatingNode()); }
-
 protected:
     RenderOverflow* ensureOverflowForBox(const RenderBox*);
 

@@ -4315,7 +4315,7 @@ Position RenderBlock::positionForBox(InlineBox *box, bool start) const
         return Position();
 
     if (!box->renderer().nonPseudoNode())
-        return createLegacyEditingPosition(nonPseudoNode(), start ? caretMinOffset() : caretMaxOffset());
+        return createLegacyEditingPosition(nonPseudoElement(), start ? caretMinOffset() : caretMaxOffset());
 
     if (!box->isInlineTextBox())
         return createLegacyEditingPosition(box->renderer().nonPseudoNode(), start ? box->renderer().caretMinOffset() : box->renderer().caretMaxOffset());
@@ -4345,8 +4345,8 @@ static VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock* 
     LayoutPoint pointInChildCoordinates(toLayoutPoint(pointInParentCoordinates - childLocation));
 
     // If this is an anonymous renderer, we just recur normally
-    Node* childNode = child->nonPseudoNode();
-    if (!childNode)
+    Element* childElement= child->nonPseudoElement();
+    if (!childElement)
         return child->positionForPoint(pointInChildCoordinates);
 
     // Otherwise, first make sure that the editability of the parent and child agree.
@@ -4363,8 +4363,8 @@ static VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock* 
     LayoutUnit childMiddle = parent->logicalWidthForChild(child) / 2;
     LayoutUnit logicalLeft = parent->isHorizontalWritingMode() ? pointInChildCoordinates.x() : pointInChildCoordinates.y();
     if (logicalLeft < childMiddle)
-        return ancestor->createVisiblePosition(childNode->nodeIndex(), DOWNSTREAM);
-    return ancestor->createVisiblePosition(childNode->nodeIndex() + 1, UPSTREAM);
+        return ancestor->createVisiblePosition(childElement->nodeIndex(), DOWNSTREAM);
+    return ancestor->createVisiblePosition(childElement->nodeIndex() + 1, UPSTREAM);
 }
 
 VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoint& pointInLogicalContents)

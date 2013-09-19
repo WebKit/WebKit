@@ -52,6 +52,8 @@ public:
 
     // This is null for anonymous renderers.
     Element* element() const { return toElement(RenderObject::node()); }
+    Element* nonPseudoElement() const { return toElement(RenderObject::nonPseudoNode()); }
+    Element* generatingElement() const { return toElement(RenderObject::generatingNode()); }
 
 protected:
     void ensureLayer();
@@ -63,6 +65,8 @@ private:
     virtual bool isLayerModelObject() const OVERRIDE FINAL { return true; }
 
     void node() const WTF_DELETED_FUNCTION;
+    void nonPseudoNode() const WTF_DELETED_FUNCTION;
+    void generatingNode() const WTF_DELETED_FUNCTION;
 
     RenderLayer* m_layer;
 
