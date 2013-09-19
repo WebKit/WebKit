@@ -1,3 +1,14 @@
+2013-09-19  Dan Bernstein  <mitz@apple.com>
+
+        Removed WebCoreSQLite3. It has been unused for years.
+
+        Rubber-stamped by Mark Rowe.
+
+        * WebCoreSQLite3: Removed.
+        * WebCoreSQLite3/sqlite3.h: Removed.
+        * WebCoreSQLite3/sqlite3ext.h: Removed.
+        * libWebCoreSQLite3.a: Removed.
+
 2013-09-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix: Expose PlatformArchitecture macro to build system.
