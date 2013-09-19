@@ -3849,7 +3849,18 @@ class WebKitStyleTest(CppStyleTestBase):
         #     'return condition ? 1:0;',
         #     '')
 
-        # 3. Place spaces between control statements and their parentheses.
+        # 3. Place spaces around the colon in a range-based for loop.
+        self.assert_multi_line_lint(
+            '    for (const WTF::Vector& vector : vectors)\n'
+            '        process(vector);\n',
+            '')
+
+        self.assert_multi_line_lint(
+            '    for (const Vector& vector: vectors)\n'
+            '        process(vector);\n',
+            'Missing space around : in range-based for statement  [whitespace/colon] [4]')
+
+        # 5. Place spaces between control statements and their parentheses.
         self.assert_multi_line_lint(
             '    if (condition)\n'
             '        doIt();\n',
@@ -3859,7 +3870,7 @@ class WebKitStyleTest(CppStyleTestBase):
             '        doIt();\n',
             'Missing space before ( in if(  [whitespace/parens] [5]')
 
-        # 4. Do not place spaces between a function and its parentheses,
+        # 6. Do not place spaces between a function and its parentheses,
         #    or between a parenthesis and its content.
         self.assert_multi_line_lint(
             'f(a, b);',

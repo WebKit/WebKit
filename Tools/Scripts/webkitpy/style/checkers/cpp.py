@@ -1907,6 +1907,8 @@ def check_spacing(file_extension, clean_lines, line_number, error):
         statement = matched.group('statement')
         condition, rest = up_to_unmatched_closing_paren(matched.group('remainder'))
         if condition is not None:
+            if statement == 'for' and search(r'(?:[^ :]:[^:]|[^:]:[^ :])', condition):
+                error(line_number, 'whitespace/colon', 4, 'Missing space around : in range-based for statement')
             condition_match = search(r'(?P<leading>[ ]*)(?P<separator>.).*[^ ]+(?P<trailing>[ ]*)', condition)
             if condition_match:
                 n_leading = len(condition_match.group('leading'))
@@ -3699,6 +3701,7 @@ class CppChecker(object):
         'runtime/virtual',
         'whitespace/blank_line',
         'whitespace/braces',
+        'whitespace/colon',
         'whitespace/comma',
         'whitespace/comments',
         'whitespace/declaration',

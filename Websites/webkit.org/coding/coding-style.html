@@ -188,6 +188,22 @@ return condition ? 1:0;
 </pre>
 </li>
 
+<li id="spacing-for-colon">Place spaces around the colon in a range-based for loop.
+<h4 class="right">Right:</h4>
+<pre class="code">
+Vector&lt;PluginModuleInfo> plugins;
+for (const auto&amp; plugin : plugins)
+    registerPlugin(plugin);
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+Vector&lt;PluginModuleInfo> plugins;
+for (const auto&amp; plugin: plugins)
+    registerPlugin(plugin);
+</pre>
+</li>
+
 <li id="spacing-comma-semicolon">Do not place spaces before comma and semicolon.
 <h4 class="right">Right:</h4>
 <pre class="code">
