@@ -1,5 +1,12 @@
 2013-09-18  Mihnea Ovidenie  <mihnea@adobe.com>
 
+        Unreviewed build fix after 156082. Guard SVG code with defines.
+
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::nextNodeInsideContentNode):
+
+2013-09-18  Mihnea Ovidenie  <mihnea@adobe.com>
+
         [CSSRegions] Failed to retrieve named flow ranges for content with inline svg
         https://bugs.webkit.org/show_bug.cgi?id=121489
 
