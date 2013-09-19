@@ -28,19 +28,19 @@
 
 namespace WebCore {
 
-RenderTextFragment::RenderTextFragment(Node* node, StringImpl* str, int startOffset, int length)
-    : RenderText(node, str ? str->substring(startOffset, length) : PassRefPtr<StringImpl>(0))
+RenderTextFragment::RenderTextFragment(Text* textNode, const String& text, int startOffset, int length)
+    : RenderText(textNode, text.substring(startOffset, length))
     , m_start(startOffset)
     , m_end(length)
     , m_firstLetter(0)
 {
 }
 
-RenderTextFragment::RenderTextFragment(Node* node, StringImpl* str)
-    : RenderText(node, str)
+RenderTextFragment::RenderTextFragment(Text* textNode, const String& text)
+    : RenderText(textNode, text)
     , m_start(0)
-    , m_end(str ? str->length() : 0)
-    , m_contentString(str)
+    , m_end(text.length())
+    , m_contentString(text)
     , m_firstLetter(0)
 {
 }
@@ -49,13 +49,29 @@ RenderTextFragment::~RenderTextFragment()
 {
 }
 
-PassRefPtr<StringImpl> RenderTextFragment::originalText() const
+RenderTextFragment* RenderTextFragment::createAnonymous(Document& document, const String& text, int startOffset, int length)
 {
-    Node* e = node();
-    RefPtr<StringImpl> result = ((e && e->isTextNode()) ? toText(e)->dataImpl() : contentString());
-    if (!result)
-        return 0;
-    return result->substring(start(), end());
+    RenderTextFragment* fragment = new (*document.renderArena()) RenderTextFragment(nullptr, text, startOffset, length);
+    fragment->setDocumentForAnonymous(document);
+    return fragment;
+}
+
+RenderTextFragment* RenderTextFragment::createAnonymous(Document& document, const String& text)
+{
+    RenderTextFragment* fragment = new (*document.renderArena()) RenderTextFragment(nullptr, text);
+    fragment->setDocumentForAnonymous(document);
+    return fragment;
+}
+
+String RenderTextFragment::originalText() const
+{
+    String result = textNode() ? textNode()->data() : contentString();
+    return result.substring(start(), end());
+}
+
+bool RenderTextFragment::canBeSelectionLeaf() const
+{
+    return textNode() && textNode()->rendererIsEditable();
 }
 
 void RenderTextFragment::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -75,37 +91,37 @@ void RenderTextFragment::willBeDestroyed()
     RenderText::willBeDestroyed();
 }
 
-void RenderTextFragment::setText(PassRefPtr<StringImpl> text, bool force)
+void RenderTextFragment::setText(const String& text, bool force)
 {
     RenderText::setText(text, force);
 
     m_start = 0;
     m_end = textLength();
-    if (m_firstLetter) {
-        ASSERT(!m_contentString);
-        m_firstLetter->destroy();
-        m_firstLetter = 0;
-        if (Node* t = node()) {
-            ASSERT(!t->renderer());
-            t->setRenderer(this);
-        }
-    }
+    if (!m_firstLetter)
+        return;
+    ASSERT(!m_contentString);
+    m_firstLetter->destroy();
+    m_firstLetter = 0;
+    if (!textNode())
+        return;
+    ASSERT(!textNode()->renderer());
+    textNode()->setRenderer(this);
 }
 
 void RenderTextFragment::transformText()
 {
     // Don't reset first-letter here because we are only transforming the truncated fragment.
-    if (RefPtr<StringImpl> textToTransform = originalText())
-        RenderText::setText(textToTransform.release(), true);
+    String textToTransform = originalText();
+    if (!textToTransform.isNull())
+        RenderText::setText(textToTransform, true);
 }
 
 UChar RenderTextFragment::previousCharacter() const
 {
     if (start()) {
-        Node* e = node();
-        StringImpl* original = ((e && e->isTextNode()) ? toText(e)->dataImpl() : contentString());
-        if (original && start() <= original->length())
-            return (*original)[start() - 1];
+        String original = textNode() ? textNode()->data() : contentString();
+        if (!original.isNull() && start() <= original.length())
+            return original[start() - 1];
     }
 
     return RenderText::previousCharacter();

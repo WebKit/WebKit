@@ -244,7 +244,7 @@ void RenderMenuList::setText(const String& s)
     if (m_buttonText)
         m_buttonText->setText(textToUse.impl(), true);
     else {
-        m_buttonText = new (renderArena()) RenderText(&document(), textToUse.impl());
+        m_buttonText = RenderText::createAnonymous(document(), textToUse);
         m_buttonText->setStyle(style());
         addChild(m_buttonText);
     }

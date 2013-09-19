@@ -34,9 +34,9 @@ class SVGInlineTextBox;
 
 class RenderSVGInlineText FINAL : public RenderText {
 public:
-    RenderSVGInlineText(Text&, PassRefPtr<StringImpl>);
+    RenderSVGInlineText(Text&, const String&);
 
-    Text& textNode() const { return *toText(RenderText::node()); }
+    Text& textNode() const { return *toText(RenderText::textNode()); }
 
     bool characterStartsNewTextChunk(int position) const;
     SVGTextLayoutAttributes* layoutAttributes() { return &m_layoutAttributes; }
@@ -50,22 +50,19 @@ public:
     FloatRect floatLinesBoundingBox() const;
 
 private:
-    void node() const WTF_DELETED_FUNCTION;
+    virtual const char* renderName() const OVERRIDE { return "RenderSVGInlineText"; }
 
-    virtual const char* renderName() const { return "RenderSVGInlineText"; }
+    virtual void setTextInternal(const String&) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle*) OVERRIDE;
 
-    virtual void setTextInternal(PassRefPtr<StringImpl>);
-    virtual void styleDidChange(StyleDifference, const RenderStyle*);
+    virtual FloatRect objectBoundingBox() const OVERRIDE { return floatLinesBoundingBox(); }
 
-    virtual FloatRect objectBoundingBox() const { return floatLinesBoundingBox(); }
+    virtual bool isSVGInlineText() const OVERRIDE { return true; }
 
-    virtual bool requiresLayer() const { return false; }
-    virtual bool isSVGInlineText() const { return true; }
-
-    virtual VisiblePosition positionForPoint(const LayoutPoint&);
-    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0);
-    virtual IntRect linesBoundingBox() const;
-    virtual InlineTextBox* createTextBox();
+    virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
+    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) OVERRIDE;
+    virtual IntRect linesBoundingBox() const OVERRIDE;
+    virtual InlineTextBox* createTextBox() OVERRIDE;
 
     float m_scalingFactor;
     Font m_scaledFont;

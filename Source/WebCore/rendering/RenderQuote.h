@@ -29,18 +29,21 @@ namespace WebCore {
 
 class RenderQuote FINAL : public RenderText {
 public:
-    RenderQuote(Document*, QuoteType);
     virtual ~RenderQuote();
+
+    static RenderQuote* createAnonymous(Document&, QuoteType);
 
     void attachQuote();
 
 private:
+    explicit RenderQuote(QuoteType);
+
     void detachQuote();
 
     virtual void willBeDestroyed() OVERRIDE;
     virtual const char* renderName() const OVERRIDE { return "RenderQuote"; }
     virtual bool isQuote() const OVERRIDE { return true; };
-    virtual PassRefPtr<StringImpl> originalText() const OVERRIDE;
+    virtual String originalText() const OVERRIDE;
     virtual void styleDidChange(StyleDifference, const RenderStyle*) OVERRIDE;
     virtual void willBeRemovedFromTree() OVERRIDE;
 

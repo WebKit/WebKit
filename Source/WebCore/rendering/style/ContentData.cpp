@@ -80,21 +80,21 @@ RenderObject* ImageContentData::createRenderer(Document& document, RenderStyle& 
 
 RenderObject* TextContentData::createRenderer(Document& document, RenderStyle& pseudoStyle) const
 {
-    RenderObject* renderer = new (*document.renderArena()) RenderTextFragment(&document, m_text.impl());
+    RenderObject* renderer = RenderTextFragment::createAnonymous(document, m_text);
     renderer->setPseudoStyle(&pseudoStyle);
     return renderer;
 }
 
 RenderObject* CounterContentData::createRenderer(Document& document, RenderStyle& pseudoStyle) const
 {
-    RenderObject* renderer = new (*document.renderArena()) RenderCounter(&document, *m_counter);
+    RenderObject* renderer = RenderCounter::createAnonymous(document, *m_counter);
     renderer->setPseudoStyle(&pseudoStyle);
     return renderer;
 }
 
 RenderObject* QuoteContentData::createRenderer(Document& document, RenderStyle& pseudoStyle) const
 {
-    RenderObject* renderer = new (*document.renderArena()) RenderQuote(&document, m_quote);
+    RenderObject* renderer = RenderQuote::createAnonymous(document, m_quote);
     renderer->setPseudoStyle(&pseudoStyle);
     return renderer;
 }

@@ -42,17 +42,18 @@
 
 namespace WebCore {
 
-static PassRefPtr<StringImpl> applySVGWhitespaceRules(PassRefPtr<StringImpl> string, bool preserveWhiteSpace)
+static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSpace)
 {
+    String newString = string;
     if (preserveWhiteSpace) {
         // Spec: When xml:space="preserve", the SVG user agent will do the following using a
         // copy of the original character data content. It will convert all newline and tab
         // characters into space characters. Then, it will draw all space characters, including
         // leading, trailing and multiple contiguous space characters.
-        RefPtr<StringImpl> newString = string->replace('\t', ' ');
-        newString = newString->replace('\n', ' ');
-        newString = newString->replace('\r', ' ');
-        return newString.release();
+        newString.replace('\t', ' ');
+        newString.replace('\n', ' ');
+        newString.replace('\r', ' ');
+        return newString;
     }
 
     // Spec: When xml:space="default", the SVG user agent will do the following using a
@@ -60,20 +61,20 @@ static PassRefPtr<StringImpl> applySVGWhitespaceRules(PassRefPtr<StringImpl> str
     // characters. Then it will convert all tab characters into space characters.
     // Then, it will strip off all leading and trailing space characters.
     // Then, all contiguous space characters will be consolidated.
-    RefPtr<StringImpl> newString = string->replace('\n', StringImpl::empty());
-    newString = newString->replace('\r', StringImpl::empty());
-    newString = newString->replace('\t', ' ');
-    return newString.release();
+    newString.replace('\n', emptyString());
+    newString.replace('\r', emptyString());
+    newString.replace('\t', ' ');
+    return newString;
 }
 
-RenderSVGInlineText::RenderSVGInlineText(Text& textNode, PassRefPtr<StringImpl> string)
+RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
     : RenderText(&textNode, applySVGWhitespaceRules(string, false))
     , m_scalingFactor(1)
     , m_layoutAttributes(this)
 {
 }
 
-void RenderSVGInlineText::setTextInternal(PassRefPtr<StringImpl> text)
+void RenderSVGInlineText::setTextInternal(const String& text)
 {
     RenderText::setTextInternal(text);
     if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))

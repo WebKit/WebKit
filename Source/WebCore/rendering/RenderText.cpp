@@ -138,11 +138,12 @@ static void makeCapitalized(String* string, UChar previous)
     *string = result.toString();
 }
 
-RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
-    : RenderObject(!node || node->isDocumentNode() ? 0 : node)
+RenderText::RenderText(Text* textNode, const String& text)
+    : RenderObject(textNode)
     , m_hasTab(false)
     , m_linesDirty(false)
     , m_containsReversedText(false)
+    , m_isAllASCII(text.containsOnlyASCII())
     , m_knownToHaveNoOverflowAndNoFallbackFonts(false)
     , m_needsTranscoding(false)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
@@ -152,21 +153,18 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
     , m_maxWidth(-1)
     , m_beginMinWidth(0)
     , m_endMinWidth(0)
-    , m_text(str)
+    , m_text(text)
     , m_firstTextBox(0)
     , m_lastTextBox(0)
 {
-    ASSERT(m_text);
-    // FIXME: Some clients of RenderText (and subclasses) pass Document as node to create anonymous renderer.
-    // They should be switched to passing null and using setDocumentForAnonymous.
-    if (node && node->isDocumentNode())
-        setDocumentForAnonymous(*toDocument(node));
+    ASSERT(!m_text.isNull());
 
-    m_isAllASCII = m_text.containsOnlyASCII();
-    m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
     setIsText();
 
-    view().frameView().incrementVisuallyNonEmptyCharacterCount(m_text.length());
+    m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
+
+    if (textNode)
+        view().frameView().incrementVisuallyNonEmptyCharacterCount(m_text.length());
 }
 
 #ifndef NDEBUG
@@ -179,9 +177,22 @@ RenderText::~RenderText()
 
 #endif
 
+RenderText* RenderText::createAnonymous(Document& document, const String& text)
+{
+    RenderText* renderText = new (*document.renderArena()) RenderText(nullptr, text);
+    renderText->setDocumentForAnonymous(document);
+    renderText->view().frameView().incrementVisuallyNonEmptyCharacterCount(text.length());
+    return renderText;
+}
+
 const char* RenderText::renderName() const
 {
     return "RenderText";
+}
+
+Text* RenderText::textNode() const
+{
+    return toText(RenderObject::node());
 }
 
 bool RenderText::isTextFragment() const
@@ -307,10 +318,9 @@ void RenderText::deleteTextBoxes()
     }
 }
 
-PassRefPtr<StringImpl> RenderText::originalText() const
+String RenderText::originalText() const
 {
-    Node* e = node();
-    return (e && e->isTextNode()) ? toText(e)->dataImpl() : 0;
+    return textNode() ? textNode()->data() : String();
 }
 
 void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -1190,13 +1200,13 @@ void RenderText::setSelectionState(SelectionState state)
         containingBlock->setSelectionState(state);
 }
 
-void RenderText::setTextWithOffset(PassRefPtr<StringImpl> text, unsigned offset, unsigned len, bool force)
+void RenderText::setTextWithOffset(const String& text, unsigned offset, unsigned len, bool force)
 {
-    if (!force && equal(m_text.impl(), text.get()))
+    if (!force && m_text == text)
         return;
 
     unsigned oldLen = textLength();
-    unsigned newLen = text->length();
+    unsigned newLen = text.length();
     int delta = newLen - oldLen;
     unsigned end = len ? offset + len - 1 : offset;
 
@@ -1272,8 +1282,9 @@ void RenderText::setTextWithOffset(PassRefPtr<StringImpl> text, unsigned offset,
 
 void RenderText::transformText()
 {
-    if (RefPtr<StringImpl> textToTransform = originalText())
-        setText(textToTransform.release(), true);
+    String textToTransform = originalText();
+    if (!textToTransform.isNull())
+        setText(textToTransform, true);
 }
 
 static inline bool isInlineFlowOrEmptyText(const RenderObject* o)
@@ -1322,9 +1333,9 @@ void applyTextTransform(const RenderStyle* style, String& text, UChar previousCh
     }
 }
 
-void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
+void RenderText::setTextInternal(const String& text)
 {
-    ASSERT(text);
+    ASSERT(!text.isNull());
     m_text = text;
     if (m_needsTranscoding) {
         const TextEncoding* encoding = document().decoder() ? &document().decoder()->encoding() : 0;
@@ -1351,7 +1362,7 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
         }
     }
 
-    ASSERT(m_text);
+    ASSERT(!m_text.isNull());
 
     m_isAllASCII = m_text.containsOnlyASCII();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
@@ -1379,11 +1390,11 @@ void RenderText::secureText(UChar mask)
     }
 }
 
-void RenderText::setText(PassRefPtr<StringImpl> text, bool force)
+void RenderText::setText(const String& text, bool force)
 {
-    ASSERT(text);
+    ASSERT(!text.isNull());
 
-    if (!force && equal(m_text.impl(), text.get()))
+    if (!force && m_text == text)
         return;
 
     setTextInternal(text);

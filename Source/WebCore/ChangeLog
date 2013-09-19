@@ -1,3 +1,14 @@
+2013-09-19  Antti Koivisto  <antti@apple.com>
+
+        [CTTE] RenderText is always anonymous or associated with Text node
+        https://bugs.webkit.org/show_bug.cgi?id=121596
+
+        Reviewed by Andreas Kling.
+
+        Tighten the node type of RenderText and its subclasses to Text.
+        Switch to createAnonymous pattern.
+        Switch a bunch of unnecessary StringImpl* use to Strings.
+
 2013-09-18  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Unreviewed build fix after 156082. Guard SVG code with defines.

@@ -49,7 +49,7 @@ void RenderCombineText::styleDidChange(StyleDifference diff, const RenderStyle* 
     m_needsFontUpdate = true;
 }
 
-void RenderCombineText::setTextInternal(PassRefPtr<StringImpl> text)
+void RenderCombineText::setTextInternal(const String& text)
 {
     RenderText::setTextInternal(text);
 

@@ -1,3 +1,15 @@
+2013-09-19  Antti Koivisto  <antti@apple.com>
+
+        [CTTE] RenderText is always anonymous or associated with Text node
+        https://bugs.webkit.org/show_bug.cgi?id=121596
+
+        Reviewed by Andreas Kling.
+        
+        Update some MathML render tree dumps. RenderTexts for these are now anonymous.
+
+        * platform/mac/mathml/presentation/mo-expected.txt:
+        * platform/mac/mathml/presentation/row-expected.txt:
+
 2013-09-19  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebase after r155957 and 155998.

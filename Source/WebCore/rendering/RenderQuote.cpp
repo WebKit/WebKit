@@ -30,8 +30,8 @@ using namespace WTF::Unicode;
 
 namespace WebCore {
 
-RenderQuote::RenderQuote(Document* node, QuoteType quote)
-    : RenderText(node, StringImpl::empty())
+RenderQuote::RenderQuote(QuoteType quote)
+    : RenderText(nullptr, emptyString())
     , m_type(quote)
     , m_depth(-1)
     , m_next(0)
@@ -45,6 +45,13 @@ RenderQuote::~RenderQuote()
     ASSERT(!m_isAttached);
     ASSERT(!m_next);
     ASSERT(!m_previous);
+}
+
+RenderQuote* RenderQuote::createAnonymous(Document& document, QuoteType quote)
+{
+    RenderQuote* renderQuote = new (*document.renderArena()) RenderQuote(quote);
+    renderQuote->setDocumentForAnonymous(document);
+    return renderQuote;
 }
 
 void RenderQuote::willBeDestroyed()
@@ -336,15 +343,15 @@ static inline StringImpl* apostropheString()
     return apostropheString;
 }
 
-PassRefPtr<StringImpl> RenderQuote::originalText() const
+String RenderQuote::originalText() const
 {
     if (m_depth < 0)
-        return StringImpl::empty();
+        return emptyString();
     bool isOpenQuote = false;
     switch (m_type) {
     case NO_OPEN_QUOTE:
     case NO_CLOSE_QUOTE:
-        return StringImpl::empty();
+        return emptyString();
     case OPEN_QUOTE:
         isOpenQuote = true;
         // fall through
@@ -357,7 +364,7 @@ PassRefPtr<StringImpl> RenderQuote::originalText() const
         return m_depth ? apostropheString() : quotationMarkString();
     }
     ASSERT_NOT_REACHED();
-    return StringImpl::empty();
+    return emptyString();
 }
 
 void RenderQuote::attachQuote()

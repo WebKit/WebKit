@@ -5829,7 +5829,7 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
 
         RenderObject* nextSibling = firstLetter->nextSibling();
         if (RenderTextFragment* remainingText = toRenderBoxModelObject(firstLetter)->firstLetterRemainingText()) {
-            ASSERT(remainingText->isAnonymous() || remainingText->node()->renderer() == remainingText);
+            ASSERT(remainingText->isAnonymous() || remainingText->textNode()->renderer() == remainingText);
             // Replace the old renderer with the new one.
             remainingText->setFirstLetter(newFirstLetter);
             newFirstLetter->setFirstLetterRemainingText(remainingText);
@@ -5849,9 +5849,9 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
     }
 }
 
-void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, RenderObject* currentChild)
+void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, RenderText* currentTextChild)
 {
-    RenderObject* firstLetterContainer = currentChild->parent();
+    RenderObject* firstLetterContainer = currentTextChild->parent();
     RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     RenderObject* firstLetter = 0;
     if (pseudoStyle->display() == INLINE)
@@ -5859,21 +5859,19 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
     else
         firstLetter = RenderBlock::createAnonymous(document());
     firstLetter->setStyle(pseudoStyle);
-    firstLetterContainer->addChild(firstLetter, currentChild);
-
-    RenderText* textObj = toRenderText(currentChild);
+    firstLetterContainer->addChild(firstLetter, currentTextChild);
 
     // The original string is going to be either a generated content string or a DOM node's
     // string.  We want the original string before it got transformed in case first-letter has
     // no text-transform or a different text-transform applied to it.
-    RefPtr<StringImpl> oldText = textObj->originalText();
-    ASSERT(oldText);
+    String oldText = currentTextChild->originalText();
+    ASSERT(!oldText.isNull());
 
-    if (oldText && oldText->length() > 0) {
+    if (!oldText.isEmpty()) {
         unsigned length = 0;
 
         // Account for leading spaces and punctuation.
-        while (length < oldText->length() && shouldSkipForFirstLetter((*oldText)[length]))
+        while (length < oldText.length() && shouldSkipForFirstLetter(oldText[length]))
             length++;
 
         // Account for first letter.
@@ -5881,8 +5879,8 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
         
         // Keep looking for whitespace and allowed punctuation, but avoid
         // accumulating just whitespace into the :first-letter.
-        for (unsigned scanLength = length; scanLength < oldText->length(); ++scanLength) {
-            UChar c = (*oldText)[scanLength]; 
+        for (unsigned scanLength = length; scanLength < oldText.length(); ++scanLength) {
+            UChar c = oldText[scanLength];
             
             if (!shouldSkipForFirstLetter(c))
                 break;
@@ -5893,24 +5891,32 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
          
         // Construct a text fragment for the text after the first letter.
         // This text fragment might be empty.
-        RenderTextFragment* remainingText = 
-            new (renderArena()) RenderTextFragment(textObj->node() ? textObj->node() : &textObj->document(), oldText.get(), length, oldText->length() - length);
-        remainingText->setStyle(textObj->style());
-        if (remainingText->node())
-            remainingText->node()->setRenderer(remainingText);
+        RenderTextFragment* remainingText;
+        if (currentTextChild->textNode())
+            remainingText = new (renderArena()) RenderTextFragment(currentTextChild->textNode(), oldText, length, oldText.length() - length);
+        else
+            remainingText = RenderTextFragment::createAnonymous(document(), oldText, length, oldText.length() - length);
 
-        firstLetterContainer->addChild(remainingText, textObj);
-        firstLetterContainer->removeChild(textObj);
+        remainingText->setStyle(currentTextChild->style());
+        if (remainingText->textNode())
+            remainingText->textNode()->setRenderer(remainingText);
+
+        firstLetterContainer->addChild(remainingText, currentTextChild);
+        firstLetterContainer->removeChild(currentTextChild);
         remainingText->setFirstLetter(firstLetter);
         toRenderBoxModelObject(firstLetter)->setFirstLetterRemainingText(remainingText);
         
         // construct text fragment for the first letter
-        RenderTextFragment* letter = 
-            new (renderArena()) RenderTextFragment(remainingText->node() ? remainingText->node() : &remainingText->document(), oldText.get(), 0, length);
+        RenderTextFragment* letter;
+        if (remainingText->textNode())
+            letter = new (renderArena()) RenderTextFragment(remainingText->textNode(), oldText, 0, length);
+        else
+            letter = RenderTextFragment::createAnonymous(document(), oldText, 0, length);
+
         letter->setStyle(pseudoStyle);
         firstLetter->addChild(letter);
 
-        textObj->destroy();
+        currentTextChild->destroy();
     }
 }
 
@@ -5968,7 +5974,7 @@ void RenderBlock::updateFirstLetter()
     // adding and removing children of firstLetterContainer.
     LayoutStateDisabler layoutStateDisabler(&view());
 
-    createFirstLetterRenderer(firstLetterBlock, currChild);
+    createFirstLetterRenderer(firstLetterBlock, toRenderText(currChild));
 }
 
 // Helper methods for obtaining the last line, computing line counts and heights for line counts
