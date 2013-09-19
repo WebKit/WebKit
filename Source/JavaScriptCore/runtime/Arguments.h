@@ -31,6 +31,7 @@
 #include "JSGlobalObject.h"
 #include "Interpreter.h"
 #include "ObjectConstructor.h"
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
@@ -81,7 +82,7 @@ public:
     void copyToArguments(ExecState*, CallFrame*, uint32_t length);
     void tearOff(CallFrame*);
     void tearOff(CallFrame*, InlineCallFrame*);
-    bool isTornOff() const { return m_registerArray; }
+    bool isTornOff() const { return m_registerArray.get(); }
     void didTearOffActivation(ExecState*, JSActivation*);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
@@ -131,9 +132,9 @@ private:
     bool m_isStrictMode;
 
     WriteBarrierBase<Unknown>* m_registers;
-    OwnArrayPtr<WriteBarrier<Unknown> > m_registerArray;
+    std::unique_ptr<WriteBarrier<Unknown>[]> m_registerArray;
 
-    OwnArrayPtr<SlowArgument> m_slowArguments;
+    std::unique_ptr<SlowArgument[]> m_slowArguments;
 
     WriteBarrier<JSFunction> m_callee;
 };
@@ -160,7 +161,7 @@ inline void Arguments::allocateSlowArguments()
 {
     if (m_slowArguments)
         return;
-    m_slowArguments = adoptArrayPtr(new SlowArgument[m_numArguments]);
+    m_slowArguments = std::make_unique<SlowArgument[]>(m_numArguments);
     for (size_t i = 0; i < m_numArguments; ++i) {
         ASSERT(m_slowArguments[i].status == SlowArgument::Normal);
         m_slowArguments[i].index = CallFrame::argumentOffset(i);

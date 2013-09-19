@@ -311,7 +311,7 @@ void Arguments::tearOff(CallFrame* callFrame)
     // Must be called for the same call frame from which it was created.
     ASSERT(bitwise_cast<WriteBarrier<Unknown>*>(callFrame) == m_registers);
     
-    m_registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[m_numArguments]);
+    m_registerArray = std::make_unique<WriteBarrier<Unknown>[]>(m_numArguments);
     m_registers = m_registerArray.get() - CallFrame::offsetFor(1) - 1;
 
     // If we have a captured argument that logically aliases activation storage,
@@ -357,7 +357,7 @@ void Arguments::tearOff(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
     if (!m_numArguments)
         return;
     
-    m_registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[m_numArguments]);
+    m_registerArray = std::make_unique<WriteBarrier<Unknown>[]>(m_numArguments);
     m_registers = m_registerArray.get() - CallFrame::offsetFor(1) - 1;
 
     tearOffForInlineCallFrame(

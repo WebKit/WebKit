@@ -32,7 +32,6 @@
 #include "JSStringRef.h"
 #include "OpaqueJSString.h"
 #include <runtime/JSCJSValue.h>
-#include <wtf/OwnArrayPtr.h>
 
 QString JSStringCopyQString(JSStringRef string)
 {

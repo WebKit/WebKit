@@ -34,7 +34,6 @@
 #include "JSSymbolTableObject.h"
 #include "Register.h"
 #include "SymbolTable.h"
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/SegmentedVector.h>
 
 namespace JSC {

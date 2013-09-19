@@ -30,6 +30,7 @@
 
 #include "CodeBlockWithJITType.h"
 #include "DFGGraph.h"
+#include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace DFG {
 
@@ -154,7 +155,7 @@ void Disassembler::dumpDisassembly(PrintStream& out, const char* prefix, LinkBuf
         amountOfNodeWhiteSpace = 0;
     else
         amountOfNodeWhiteSpace = Graph::amountOfNodeWhiteSpace(context);
-    OwnArrayPtr<char> prefixBuffer = adoptArrayPtr(new char[prefixLength + amountOfNodeWhiteSpace + 1]);
+    auto prefixBuffer = std::make_unique<char[]>(prefixLength + amountOfNodeWhiteSpace + 1);
     strcpy(prefixBuffer.get(), prefix);
     for (int i = 0; i < amountOfNodeWhiteSpace; ++i)
         prefixBuffer[i + prefixLength] = ' ';

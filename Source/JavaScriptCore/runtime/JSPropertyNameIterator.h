@@ -33,6 +33,7 @@
 #include "JSString.h"
 #include "Operations.h"
 #include "PropertyNameArray.h"
+#include <memory>
 
 namespace JSC {
 
@@ -95,7 +96,7 @@ namespace JSC {
         uint32_t m_numCacheableSlots;
         uint32_t m_jsStringsSize;
         unsigned m_cachedStructureInlineCapacity;
-        OwnArrayPtr<WriteBarrier<Unknown> > m_jsStrings;
+        std::unique_ptr<WriteBarrier<Unknown>[]> m_jsStrings;
     };
 
     ALWAYS_INLINE JSPropertyNameIterator* Register::propertyNameIterator() const

@@ -24,7 +24,6 @@
 #include "CallFrame.h"
 #include "Identifier.h"
 #include <wtf/HashSet.h>
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

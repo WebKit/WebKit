@@ -1,3 +1,36 @@
+2013-09-18  Sam Weinig  <sam@webkit.org>
+
+        Replace use of OwnArrayPtr<Foo> with std::unique_ptr<Foo[]> in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=121583
+
+        Reviewed by Anders Carlsson.
+
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString):
+        * API/JSStringRefQt.cpp:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dumpDisassembly):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOff):
+        * runtime/Arguments.h:
+        (JSC::Arguments::isTornOff):
+        (JSC::Arguments::allocateSlowArguments):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::JSPropertyNameIterator):
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSSegmentedVariableObject.h:
+        * runtime/JSVariableObject.h:
+        * runtime/PropertyNameArray.h:
+        * runtime/RegExp.cpp:
+        * runtime/StructureChain.h:
+        (JSC::StructureChain::finishCreation):
+        * runtime/SymbolTable.h:
+        (JSC::SharedSymbolTable::setSlowArguments):
+
 2013-09-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix after r156064.

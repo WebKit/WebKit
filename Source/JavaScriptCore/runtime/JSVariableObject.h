@@ -33,7 +33,6 @@
 #include "JSSymbolTableObject.h"
 #include "Register.h"
 #include "SymbolTable.h"
-#include <wtf/OwnArrayPtr.h>
 
 namespace JSC {
 

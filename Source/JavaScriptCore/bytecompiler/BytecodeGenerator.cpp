@@ -40,6 +40,7 @@
 #include "Options.h"
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlock.h"
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
 using namespace std;
@@ -262,7 +263,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
 
     if (capturesAnyArgumentByName && !shouldTearOffArgumentsEagerly()) {
         size_t parameterCount = m_symbolTable->parameterCount();
-        OwnArrayPtr<SlowArgument> slowArguments = adoptArrayPtr(new SlowArgument[parameterCount]);
+        auto slowArguments = std::make_unique<SlowArgument[]>(parameterCount);
         for (size_t i = 0; i < parameterCount; ++i) {
             if (!capturedArguments[i]) {
                 ASSERT(slowArguments[i].status == SlowArgument::Normal);

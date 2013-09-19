@@ -30,10 +30,10 @@
 #include "JSObject.h"
 #include "Structure.h"
 
-#include <wtf/OwnArrayPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
@@ -71,7 +71,7 @@ namespace JSC {
             for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
                 ++size;
     
-            m_vector = adoptArrayPtr(new WriteBarrier<Structure>[size + 1]);
+            m_vector = std::make_unique<WriteBarrier<Structure>[]>(size + 1);
 
             size_t i = 0;
             for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
@@ -82,7 +82,7 @@ namespace JSC {
         friend class LLIntOffsetsExtractor;
         
         StructureChain(VM&, Structure*);
-        OwnArrayPtr<WriteBarrier<Structure> > m_vector;
+        std::unique_ptr<WriteBarrier<Structure>[]> m_vector;
     };
 
 } // namespace JSC

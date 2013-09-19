@@ -32,6 +32,7 @@
 #include "ConcurrentJITLock.h"
 #include "JSObject.h"
 #include "Watchpoint.h"
+#include <memory>
 #include <wtf/HashTraits.h>
 #include <wtf/text/StringImpl.h>
 
@@ -472,7 +473,7 @@ public:
 
     // 0 if we don't capture any arguments; parameterCount() in length if we do.
     const SlowArgument* slowArguments() { return m_slowArguments.get(); }
-    void setSlowArguments(OwnArrayPtr<SlowArgument> slowArguments) { m_slowArguments = std::move(slowArguments); }
+    void setSlowArguments(std::unique_ptr<SlowArgument[]> slowArguments) { m_slowArguments = std::move(slowArguments); }
 
     DECLARE_EXPORT_INFO;
 
@@ -492,7 +493,7 @@ private:
     int m_captureStart;
     int m_captureEnd;
 
-    OwnArrayPtr<SlowArgument> m_slowArguments;
+    std::unique_ptr<SlowArgument[]> m_slowArguments;
 };
 
 } // namespace JSC

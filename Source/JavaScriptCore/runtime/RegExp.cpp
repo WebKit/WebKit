@@ -32,7 +32,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/Assertions.h>
-#include <wtf/OwnArrayPtr.h>
 
 #define REGEXP_FUNC_TEST_DATA_GEN 0
 
