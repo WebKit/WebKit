@@ -1,5 +1,16 @@
 2013-09-18  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK gardening. Rebaselining after r155957.
+
+        * platform/gtk/css3/selectors3/html/css3-modsel-179a-expected.txt:
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-179a-expected.txt:
+        * platform/gtk/css3/selectors3/xml/css3-modsel-179a-expected.txt:
+        * platform/gtk/fast/css/pseudo-first-line-border-width-expected.txt:
+        * platform/gtk/fast/css/word-space-extra-expected.txt:
+        * platform/gtk/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt:
+
+2013-09-18  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK gardening. Rebaselining after r156040.
 
         * platform/gtk/fast/forms/HTMLOptionElement_label06-expected.txt:
