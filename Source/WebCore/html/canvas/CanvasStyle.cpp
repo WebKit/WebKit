@@ -238,13 +238,8 @@ CanvasStyle::CanvasStyle(const CanvasStyle& other)
 CanvasStyle& CanvasStyle::operator=(const CanvasStyle& other)
 {
     if (this != &other) {
-        memcpy(this, &other, sizeof(CanvasStyle));
-        if (m_type == Gradient)
-            m_gradient->ref();
-        else if (m_type == ImagePattern)
-            m_pattern->ref();
-        else if (m_type == CMYKA)
-            m_cmyka = new CMYKAValues(other.m_cmyka->rgba, other.m_cmyka->c, other.m_cmyka->m, other.m_cmyka->y, other.m_cmyka->k, other.m_cmyka->a);
+        this->~CanvasStyle();
+        new (this) CanvasStyle(other);
     }
     return *this;
 }
