@@ -1,5 +1,12 @@
 2013-09-19  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix Windows build part 2. m_jitCodeMap should always be there.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::jitCodeMap):
+
+2013-09-19  Filip Pizlo  <fpizlo@apple.com>
+
         Remove some of the tautologies in DFGRepatch function naming.
 
         Rubber stamped by Mark Hahnenberg.
