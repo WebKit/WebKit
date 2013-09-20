@@ -410,6 +410,12 @@ void ElementRuleCollector::doCollectMatchingRulesForList(const Vector<RuleData>*
             cookie = InspectorInstrumentation::willMatchRule(&document(), rule, m_inspectorCSSOMWrappers, document().styleSheetCollection());
         PseudoId dynamicPseudo = NOPSEUDO;
         if (ruleMatches(ruleData, matchRequest.scope, dynamicPseudo)) {
+            // For SharingRules testing, any match is good enough, we don't care what is matched.
+            if (m_mode == SelectorChecker::SharingRules) {
+                addMatchedRule(&ruleData);
+                break;
+            }
+
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
             const StylePropertySet& properties = rule->properties();
             if (properties.isEmpty() && !matchRequest.includeEmptyRules) {

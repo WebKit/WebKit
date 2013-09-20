@@ -150,7 +150,7 @@ SelectorChecker::SelectorChecker(Document& document, Mode mode)
 // * SelectorFailsCompletely  - the selector fails for e and any sibling or ancestor of e
 SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& context, PseudoId& dynamicPseudo) const
 {
-    // first selector has to match
+    // The first selector has to match.
     if (!checkOne(context))
         return SelectorFailsLocally;
 
@@ -171,7 +171,7 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
             PseudoId pseudoId = CSSSelector::pseudoId(context.selector->pseudoType());
             if (pseudoId == FIRST_LETTER)
                 context.element->document().styleSheetCollection()->setUsesFirstLetterRules(true);
-            if (pseudoId != NOPSEUDO && m_mode != SharingRules)
+            if (pseudoId != NOPSEUDO)
                 dynamicPseudo = pseudoId;
         }
     }
