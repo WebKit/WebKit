@@ -1,3 +1,35 @@
+2013-09-20  Marcelo Morais  <m.morais@samsung.com>
+
+        Web Inspector: Fix keyboard shortcuts for other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=120657
+
+        Reviewed by Timothy Hatcher.
+
+        Handling keyboard shortcuts according to the current platform.
+
+        * UserInterface/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.loadResourceSynchronously):
+        (.WebInspector.InspectorFrontendHostStub.prototype.platform): Added. Return the
+        current platform.
+        * UserInterface/KeyboardShortcut.js:
+        (WebInspector.KeyboardShortcut.Modifier.get CommandOrControl): Added. Created keyboard
+        modifier to return Control or Command key according to current platform.
+        * UserInterface/ContentBrowser.js:
+        (WebInspector.ContentBrowser): Returning Control or Command key for keyboard
+        shortcuts according to current platform.
+        * UserInterface/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel): Ditto.
+        * UserInterface/FindBanner.js:
+        (WebInspector.FindBanner): Ditto.
+        * UserInterface/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController): Ditto.
+        * UserInterface/LogContentView.js:
+        (WebInspector.LogContentView): Ditto.
+        * UserInterface/Main.js:
+        (WebInspector.contentLoaded): Ditto.
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel): Ditto.
+
 2013-09-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed gardening. Teach WebInspectorUI.vcxproj folder to

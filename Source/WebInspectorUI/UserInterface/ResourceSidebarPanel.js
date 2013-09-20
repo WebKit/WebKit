@@ -48,7 +48,7 @@ WebInspector.ResourceSidebarPanel = function() {
     this._searchQuerySetting = new WebInspector.Setting("search-sidebar-query", "");
     this._inputElement.value = this._searchQuerySetting.value;
 
-    this._searchKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Command | WebInspector.KeyboardShortcut.Modifier.Shift, "F", this._focusSearchField.bind(this));
+    this._searchKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Shift, "F", this._focusSearchField.bind(this));
 
     this._localStorageRootTreeElement = null;
     this._sessionStorageRootTreeElement = null;

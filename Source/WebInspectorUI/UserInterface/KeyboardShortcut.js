@@ -89,7 +89,12 @@ WebInspector.KeyboardShortcut.Modifier = {
     Shift: 1,
     Control: 2,
     Option: 4,
-    Command: 8
+    Command: 8,
+
+    get CommandOrControl()
+    {
+        return InspectorFrontendHost.platform() === "mac" ? this.Command : this.Control;
+    }
 };
 
 WebInspector.Key = function(keyCode, displayName)

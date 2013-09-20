@@ -78,10 +78,10 @@ WebInspector.FindBanner = function(delegate, element) {
     this._previousSearchValue = "";
 
     this._hideKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape, this.hide.bind(this), this._element);
-    this._populateFindKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Command, "E", this._populateSearchQueryFromSelection.bind(this));
+    this._populateFindKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "E", this._populateSearchQueryFromSelection.bind(this));
     this._populateFindKeyboardShortcut.implicitlyPreventsDefault = false;
-    this._findNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Command, "G", this._nextResultButtonClicked.bind(this));
-    this._findPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.Command, "G", this._previousResultButtonClicked.bind(this));
+    this._findNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._nextResultButtonClicked.bind(this));
+    this._findPreviousKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Shift | WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._previousResultButtonClicked.bind(this));
 
     this._generateButtonsGlyphsIfNeeded();
 };

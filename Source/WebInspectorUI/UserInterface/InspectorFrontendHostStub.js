@@ -141,6 +141,11 @@ if (!window.InspectorFrontendHost) {
             return null;
         },
 
+        platform: function()
+        {
+            return (navigator.platform.match(/mac|win|linux/i) || ["other"])[0].toLowerCase();
+        },
+
         // Private
 
         _sendPendingMessagesToBackendIfNeeded: function()
