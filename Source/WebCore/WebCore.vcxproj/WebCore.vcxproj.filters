@@ -6787,7 +6787,6 @@
     <ClCompile Include="..\page\CaptionUserPreferencesMediaAF.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSSVGGraphicsElement.cpp" />
     <ClCompile Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateAVCF.cpp">
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClCompile>
@@ -6797,19 +6796,16 @@
     <ClCompile Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateLegacyAVCF.cpp">
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\RenderBlockFlow.cpp" /> 
-    <ClCompile Include="..\platform\win\StructuredExceptionHandlerSuppressor.cpp"> 
-      <Filter>platform\win</Filter> 
+    <ClCompile Include="..\platform\win\StructuredExceptionHandlerSuppressor.cpp">
+      <Filter>platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\ElementData.cpp" />
-    <ClCompile Include="..\dom\InlineStyleSheetOwner.cpp" />
-    <ClCompile Include="..\dom\TextNodeTraversal.cpp" />
     <ClCompile Include="..\css\CSSImageSetValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\style\StyleCachedImageSet.cpp">
       <Filter>rendering\style</Filter>
     </ClCompile>
+    <ClCompile Include="..\dom\StyleElement.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -14284,17 +14280,13 @@
     <ClInclude Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateLegacyAVCF.h">
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLElementTypeHelpers.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementTypeHelpers.h" />
-    <ClInclude Include="..\dom\ElementData.h" />
-    <ClInclude Include="..\dom\InlineStyleSheetOwner.h" />
-    <ClInclude Include="..\dom\TextNodeTraversal.h" />
     <ClInclude Include="..\css\CSSImageSetValue.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\style\StyleCachedImageSet.h">
       <Filter>rendering\style</Filter>
     </ClInclude>
+    <ClInclude Include="..\dom\StyleElement.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">

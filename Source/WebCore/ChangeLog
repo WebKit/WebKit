@@ -1,3 +1,12 @@
+2013-09-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Correct build by activating Microsoft Assembler support in
+        project file. I have no idea why this would be missing in
+        the branch.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Activate MASM support.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+
 2013-09-17  Lucas Forschler  <lforschler@apple.com>
 
         Merge r154391
