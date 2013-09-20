@@ -405,10 +405,9 @@ String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& sr
 
     parseImagesWithScaleFromSrcsetAttribute(srcsetAttribute, imageCandidates);
 
-    const String src =  srcAttribute.simplifyWhiteSpace(isHTMLSpace);
-    if (!src.isEmpty()) {
+    if (!srcAttribute.isEmpty()) {
         ImageWithScale image;
-        image.imageURL = src;
+        image.imageURL = srcAttribute;
         image.scaleFactor = 1.0;
 
         imageCandidates.append(image);

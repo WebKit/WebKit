@@ -1,3 +1,18 @@
+2013-09-20  Yoav Weiss  <yoav@yoav.ws>
+
+        Fixed img src URLS with multiple spaces
+        https://bugs.webkit.org/show_bug.cgi?id=121592
+
+        Reviewed by Darin Adler.
+
+        Test: fast/loader/image-src-multiple-space.html
+
+        I've removed the simplifyWhiteSpace step from HTMLImageElement's src attribute during the srcset selection algorithm.
+        That step prevented URLs with multiple spaces from being loaded as images, minimizing the multiple spaces into a single one.
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::bestFitSourceForImageAttributes):
+
 2013-09-20  Arunprasad Rajkumar  <ararunprasad@gmail.com>
 
         Hiding a focused element should unfocus it and fire a blur event

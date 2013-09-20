@@ -1,3 +1,15 @@
+2013-09-20  Yoav Weiss  <yoav@yoav.ws>
+
+        Fixed img src URLS with multiple spaces
+        https://bugs.webkit.org/show_bug.cgi?id=121592
+
+        Reviewed by Darin Adler.
+
+        This test verifies that URLs with multiple spaces can be loaded as an image resource.
+
+        * fast/loader/image-src-multiple-space-expected.txt: Added.
+        * fast/loader/image-src-multiple-space.html: Added.
+
 2013-09-20  Arunprasad Rajkumar  <ararunprasad@gmail.com>
 
         Hiding a focused element should unfocus it and fire a blur event
