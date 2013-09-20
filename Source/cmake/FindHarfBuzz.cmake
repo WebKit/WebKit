@@ -42,5 +42,14 @@ find_library(HARFBUZZ_LIBRARIES NAMES harfbuzz
     HINTS ${PC_HARFBUZZ_LIBRARY_DIRS} ${PC_HARFBUZZ_LIBDIR}
 )
 
+# HarfBuzz 0.9.18 split ICU support into a separate harfbuzz-icu library.
+if ("${PC_HARFBUZZ_VERSION}" VERSION_GREATER "0.9.17")
+    pkg_check_modules(PC_HARFBUZZ_ICU harfbuzz-icu>=0.9.18 REQUIRED)
+    find_library(HARFBUZZ_ICU_LIBRARIES NAMES harfbuzz-icu
+        HINTS ${PC_HARFBUZZ_ICU_LIBRARY_DIRS} ${PC_HARFBUZZ_ICU_LIBDIR}
+    )
+    list(APPEND HARFBUZZ_LIBRARIES "${HARFBUZZ_ICU_LIBRARIES}")
+endif ()
+
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(HarfBuzz DEFAULT_MSG HARFBUZZ_INCLUDE_DIRS HARFBUZZ_LIBRARIES)

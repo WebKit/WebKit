@@ -1,3 +1,17 @@
+2013-09-20  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [CMAKE] FindHarfBuzz: Handle harfbuzz / harfbuzz-icu split
+        https://bugs.webkit.org/show_bug.cgi?id=121688
+
+        Reviewed by Martin Robinson.
+
+        HarfBuzz 0.9.18 split ICU support into a separate harfbuzz-icu library.
+        To be able to build with earlier and newer versions of HarfBuzz, we should
+        check for harfbuzz-icu as well, if version >= 0.9.18.
+
+        * Source/cmake/FindHarfBuzz.cmake: Check for harfbuzz-icu, if version
+        >= 0.9.18.
+
 2013-09-16  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Make symbol export filter more strict, and disable for dev/test builds
