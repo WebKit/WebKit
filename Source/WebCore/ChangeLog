@@ -1,5 +1,42 @@
 2013-09-20  Simon Fraser  <simon.fraser@apple.com>
 
+        Scrollbars don't appear on long pages after r155660
+        https://bugs.webkit.org/show_bug.cgi?id=121714
+        <rdar://problem/15042478>
+
+        Reviewed by Beth Dakin.
+        
+        After r155660, we don't do any additional layouts when scrollbars are 
+        added or removed. That caused us to not enter the code that creates or
+        destroys composting layers for scrollbars in RenderLayerCompositor, resulting
+        in missing scrollbars.
+        
+        Fix by having ScrollView::updateScrollbars() call addedOrRemovedScrollbar()
+        when a scrollbar was added or removed, which is overridden in FrameView
+        to call through to RenderLayerCompositor::frameViewDidAddOrRemoveScrollbars().
+
+        Not testable since scrollbar layers aren't contained in layer tree dumps
+        (to reduce diffs between platforms).
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addedOrRemovedScrollbar): New function to tell the compositor
+        that scrollbars changed.
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setHasHorizontalScrollbar): Change the meaning of the return
+        value to say if the scrollbar was added or removed. Add an out param that indicates
+        whether the scrollbar change affects content size (not true for overlay scrollbars).
+        (WebCore::ScrollView::setHasVerticalScrollbar): Ditto.
+        (WebCore::ScrollView::updateScrollbars): Keep track of whether scrollbars were
+        added or removed, and call addedOrRemovedScrollbar() if true.
+        * platform/ScrollView.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidAddOrRemoveScrollbars): Call updateOverflowControlsLayers().
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        * rendering/RenderLayerCompositor.h:
+
+2013-09-20  Simon Fraser  <simon.fraser@apple.com>
+
         Ensure that TileController tile coverage is updated on scrolling even when we don't have scrollbars
         https://bugs.webkit.org/show_bug.cgi?id=121700
         <rdar://problem/15030589>

@@ -1340,6 +1340,11 @@ void RenderLayerCompositor::frameViewDidScroll()
         fixedBackgroundLayer->setPosition(IntPoint(frameView.scrollOffsetForFixedPosition()));
 }
 
+void RenderLayerCompositor::frameViewDidAddOrRemoveScrollbars()
+{
+    updateOverflowControlsLayers();
+}
+
 void RenderLayerCompositor::frameViewDidLayout()
 {
     RenderLayerBacking* renderViewBacking = m_renderView.layer()->backing();
@@ -2740,7 +2745,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForVerticalScrollbar->setName("vertical scrollbar");
 #endif
 #if PLATFORM(MAC) && USE(CA)
-        m_layerForVerticalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());
+            m_layerForVerticalScrollbar->setAcceleratesDrawing(acceleratedDrawingEnabled());
 #endif
             m_overflowControlsHostLayer->addChild(m_layerForVerticalScrollbar.get());
 

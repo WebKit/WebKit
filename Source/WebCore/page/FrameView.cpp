@@ -2181,6 +2181,16 @@ void FrameView::visibleContentsResized()
 #endif
 }
 
+void FrameView::addedOrRemovedScrollbar()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (RenderView* renderView = this->renderView()) {
+        if (renderView->usesCompositing())
+            renderView->compositor().frameViewDidAddOrRemoveScrollbars();
+    }
+#endif
+}
+
 void FrameView::beginDeferredRepaints()
 {
     Page* page = frame().page();

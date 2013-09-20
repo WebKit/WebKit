@@ -311,13 +311,14 @@ protected:
     virtual void paintOverhangAreas(GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
 
     virtual void visibleContentsResized() = 0;
+    virtual void addedOrRemovedScrollbar() = 0;
     virtual void delegatesScrollingDidChange() { }
     virtual void fixedLayoutSizeChanged();
 
     // These functions are used to create/destroy scrollbars.
-    // They return true if the space taken up by the scrollbar changed.
-    bool setHasHorizontalScrollbar(bool);
-    bool setHasVerticalScrollbar(bool);
+    // They return true if the scrollbar was added or removed.
+    bool setHasHorizontalScrollbar(bool, bool* contentSizeAffected = 0);
+    bool setHasVerticalScrollbar(bool, bool* contentSizeAffected = 0);
 
     virtual void updateScrollCorner();
     virtual void invalidateScrollCornerRect(const IntRect&) OVERRIDE;
