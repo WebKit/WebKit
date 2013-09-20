@@ -1,3 +1,16 @@
+2013-09-20  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [ATK][WTR] accessibility/aria-invalid.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=121668
+
+        Reviewed by Mario Sanchez Prada.
+
+        Updated the expectation of aria-invalid.html test, which was timing out
+        before bug 120421 and this fix.
+
+        * platform/gtk-wk2/TestExpectations: Removed aria-invalid.html because
+        it now passes with this fix and the patch from bug 120421.
+
 2013-09-20  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebase after Qt 5.1.1 and skip failing tests.

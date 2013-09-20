@@ -1,5 +1,19 @@
 2013-09-20  Denis Nomiyama  <d.nomiyama@samsung.com>
 
+        [ATK][WTR] accessibility/aria-invalid.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=121668
+
+        Reviewed by Mario Sanchez Prada.
+
+        Fixed WTR::AccessibilityUIElement::stringAttributeValue() to return
+        false in case of aria-invalid event with empty value.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::stringAttributeValue): Returns false in
+        case of aria-invalid event with empty value.
+
+2013-09-20  Denis Nomiyama  <d.nomiyama@samsung.com>
+
         [ATK] Missing WTR AccessibilityUIElement::addNotificationListener implementation
         https://bugs.webkit.org/show_bug.cgi?id=120421
 

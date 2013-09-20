@@ -569,6 +569,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 
     String attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), atkAttributeName.utf8().data());
 
+    // In case of 'aria-invalid' when the attribute empty or has "false" for ATK
+    // according to http://www.w3.org/WAI/PF/aria-implementation/#mapping attribute
+    // is not mapped but layout tests will expect 'false'.
+    if (attributeValue.isEmpty() && atkAttributeName == "aria-invalid")
+        return JSStringCreateWithUTF8CString("false");
+
     // We need to translate ATK values exposed for 'aria-sort' (e.g. 'ascending')
     // into those expected by the layout tests (e.g. 'AXAscendingSortDirection').
     if (atkAttributeName == "sort") {
