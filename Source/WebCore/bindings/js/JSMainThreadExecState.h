@@ -91,6 +91,7 @@ private:
 // Null state prevents origin security checks.
 // Used by non-JavaScript bindings (ObjC, GObject).
 class JSMainThreadNullState {
+    WTF_MAKE_NONCOPYABLE(JSMainThreadNullState);
 public:
     explicit JSMainThreadNullState()
         : m_previousState(JSMainThreadExecState::s_mainThreadState)

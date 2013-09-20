@@ -1,3 +1,11 @@
+2013-09-20  Andreas Kling  <akling@apple.com>
+
+        Make JSMainThreadNullState noncopyable.
+
+        Blindly rubber-stamped by Antti Koivisto.
+
+        * bindings/js/JSMainThreadExecState.h:
+
 2013-09-20  Dan Bernstein  <mitz@apple.com>
 
         Make extract-localizable-strings available to WebCore clients
