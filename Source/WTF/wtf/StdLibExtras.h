@@ -306,12 +306,8 @@ inline void* operator new(size_t, NotNullTag, void* location)
 }
 
 
-// For standard libraries that do not yet include it, this adds the std::make_unique
-// type. It is defined in the same namespaces as it would be in library that had the
-// support.
-
+// This adds various C++14 features for versions of the STL that may not yet have them.
 namespace std {
-
     template<class T> struct _Unique_if {
         typedef unique_ptr<T> _Single_object;
     };
@@ -362,6 +358,26 @@ namespace std {
     make_unique(Args&&...) = delete;
 #endif
 
+#if COMPILER_SUPPORTS(CXX_VARIADIC_TEMPLATES)
+    // Compile-time integer sequences
+    // http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3658.html
+    // (Note that we only implement index_sequence, and not the more generic integer_sequence).
+    template<size_t... indexes> struct index_sequence {
+        static size_t size() { return sizeof...(indexes); }
+    };
+
+    template<size_t currentIndex, size_t...indexes> struct make_index_sequence_helper;
+
+    template<size_t...indexes> struct make_index_sequence_helper<0, indexes...> {
+        typedef std::index_sequence<indexes...> type;
+    };
+
+    template<size_t currentIndex, size_t...indexes> struct make_index_sequence_helper {
+        typedef typename make_index_sequence_helper<currentIndex - 1, currentIndex - 1, indexes...>::type type;
+    };
+
+    template<size_t length> struct make_index_sequence : public make_index_sequence_helper<length>::type { };
+#endif
 }
 
 using WTF::KB;
