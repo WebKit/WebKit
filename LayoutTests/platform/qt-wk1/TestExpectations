@@ -192,3 +192,6 @@ webkit.org/b/119729 fast/dom/Window/open-zero-size-as-default.html [ Skip ]
 
 # [Qt][WK1] New js/basic-weakmap.html test fails after r155473.
 webkit.org/b/121428 js/basic-weakmap.html [ Skip ]
+
+# [Qt][WK1] New js/dom/basic-weakmap.html fails after r156066.
+webkit.org/b/121680 js/dom/basic-weakmap.html [ Skip ]

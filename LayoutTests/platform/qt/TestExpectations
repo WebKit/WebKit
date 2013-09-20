@@ -2118,6 +2118,12 @@ http/tests/security/xss-DENIED-xsl-document.xml
 # See also http://bugreports.qt.nokia.com/browse/QTBUG-13601
 platform/qt/http/tests/cookies/strict-third-party-cookie-blocking.html
 
+# [Qt] Tests fails after using Qt5.1.1.
+webkit.org/b/121678 svg/batik/text/textLayout.svg [ Skip ]
+webkit.org/b/121678 svg/batik/text/textOnPathSpaces.svg [ Skip ]
+webkit.org/b/121678 svg/batik/text/textPosition.svg [ Skip ]
+webkit.org/b/121678 fast/text/letter-spacing-negative-opacity.html [ Skip ]
+
 # ============================================================================= #
 # new skipped tests yet to be sorted
 # ============================================================================= #

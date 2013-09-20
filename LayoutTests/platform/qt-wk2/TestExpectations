@@ -72,6 +72,7 @@ fast/url/anchor.html
 # - CSS tests.
 # - Unidentified failures.
 # - Unsorted tests.
+# - Regressions occured after Qt version update
 
 # =========================================================================== #
 # Compositing tests.                                                          #
@@ -1005,3 +1006,13 @@ webkit.org/b/76986 scrollbars/scroll-rtl-or-bt-layer.html
 
 # [Qt] Images scale differently in WK1 and WK2
 webkit.org/b/92015 tables/mozilla_expected_failures/bugs/bug85016.html
+
+# =========================================================================== #
+# - Regressions occured after Qt version update
+# =========================================================================== #
+
+# [Qt][WK2] New fast/regions/selection-direction.html ref tests fails after r155974.
+webkit.org/b/121679 fast/regions/selection-direction.html [ Skip ]
+
+#[Qt] Tests fails after using Qt5.1.1.
+webkit.org/b/121678 fast/dom/DeviceMotion/no-page-cache.html [ Skip ]
