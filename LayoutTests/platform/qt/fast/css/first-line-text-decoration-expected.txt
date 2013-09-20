@@ -10,9 +10,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 496x19
           text run at (0,0) width 496: "Text-decoration UNDERLINE : Only the first line must have an underline."
       RenderBlock {DIV} at (0,82) size 784x87 [color=#008000]
-        RenderText {#text} at (0,10) size 632x28
-          text run at (0,10) width 632: "Underline Underline Underline Underline"
-        RenderBR {BR} at (632,32) size 0x0
+        RenderText {#text} at (0,10) size 617x28
+          text run at (0,10) width 617: "Underline Underline Underline Underline"
+        RenderBR {BR} at (617,32) size 0x0
         RenderText {#text} at (0,48) size 244x19
           text run at (0,48) width 244: "Underline Underline Underline Underline"
         RenderBR {BR} at (244,63) size 0x0
@@ -25,9 +25,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 476x19
           text run at (0,0) width 476: "Text-decoration OVERLINE : Only the first line must have an overline."
       RenderBlock {DIV} at (0,238) size 784x87 [color=#008000]
-        RenderText {#text} at (0,10) size 552x28
-          text run at (0,10) width 552: "Overline Overline Overline Overline"
-        RenderBR {BR} at (552,32) size 0x0
+        RenderText {#text} at (0,10) size 537x28
+          text run at (0,10) width 537: "Overline Overline Overline Overline"
+        RenderBR {BR} at (537,32) size 0x0
         RenderText {#text} at (0,48) size 216x19
           text run at (0,48) width 216: "Overline Overline Overline Overline"
         RenderBR {BR} at (216,63) size 0x0
@@ -40,9 +40,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 547x19
           text run at (0,0) width 547: "Text-decoration LINE-THROUGH : Only the first line must have a line through it."
       RenderBlock {DIV} at (0,394) size 784x87 [color=#008000]
-        RenderText {#text} at (0,10) size 725x28
-          text run at (0,10) width 725: "Line-Through Line-Through Line-Through Line "
-        RenderBR {BR} at (725,32) size 0x0
+        RenderText {#text} at (0,10) size 710x28
+          text run at (0,10) width 710: "Line-Through Line-Through Line-Through Line "
+        RenderBR {BR} at (710,32) size 0x0
         RenderText {#text} at (0,48) size 340x19
           text run at (0,48) width 340: "Line-Through Line-Through Line-Through Line-Through"
         RenderBR {BR} at (340,63) size 0x0

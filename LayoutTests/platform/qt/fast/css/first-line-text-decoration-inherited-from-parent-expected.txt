@@ -11,9 +11,9 @@ layer at (0,0) size 800x600
           text run at (0,0) width 450: "The First line text and its text-decoration must be of the same color."
       RenderBlock {DIV} at (0,75) size 784x103 [color=#FF0000]
         RenderBlock {P} at (0,0) size 784x67 [color=#008000]
-          RenderText {#text} at (0,10) size 632x28
-            text run at (0,10) width 632: "Underline Underline Underline Underline"
-          RenderBR {BR} at (632,32) size 0x0
+          RenderText {#text} at (0,10) size 617x28
+            text run at (0,10) width 617: "Underline Underline Underline Underline"
+          RenderBR {BR} at (617,32) size 0x0
           RenderText {#text} at (0,48) size 272x19
             text run at (0,48) width 272: "Underline Underline Underline Underline"
           RenderBR {BR} at (272,63) size 0x0
@@ -24,9 +24,9 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {DIV} at (0,212) size 784x103 [color=#FF0000]
         RenderBlock {P} at (0,0) size 784x67 [color=#008000]
-          RenderText {#text} at (0,10) size 552x28
-            text run at (0,10) width 552: "Overline Overline Overline Overline"
-          RenderBR {BR} at (552,32) size 0x0
+          RenderText {#text} at (0,10) size 537x28
+            text run at (0,10) width 537: "Overline Overline Overline Overline"
+          RenderBR {BR} at (537,32) size 0x0
           RenderText {#text} at (0,48) size 244x19
             text run at (0,48) width 244: "Overline Overline Overline Overline"
           RenderBR {BR} at (244,63) size 0x0
@@ -37,9 +37,9 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {DIV} at (0,349) size 784x103 [color=#FF0000]
         RenderBlock {P} at (0,0) size 784x67 [color=#008000]
-          RenderText {#text} at (0,10) size 725x28
-            text run at (0,10) width 725: "Line-Through Line-Through Line-Through Line "
-          RenderBR {BR} at (725,32) size 0x0
+          RenderText {#text} at (0,10) size 710x28
+            text run at (0,10) width 710: "Line-Through Line-Through Line-Through Line "
+          RenderBR {BR} at (710,32) size 0x0
           RenderText {#text} at (0,48) size 376x19
             text run at (0,48) width 376: "Line-Through Line-Through Line-Through Line-Through"
           RenderBR {BR} at (376,63) size 0x0

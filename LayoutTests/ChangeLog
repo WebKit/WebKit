@@ -1,3 +1,24 @@
+2013-09-20  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Update tests after change to Qt 5.1.1
+
+        * platform/qt/css1/text_properties/letter_spacing-expected.png:
+        * platform/qt/css1/text_properties/letter_spacing-expected.txt:
+        * platform/qt/fast/css/first-line-text-decoration-expected.png:
+        * platform/qt/fast/css/first-line-text-decoration-expected.txt:
+        * platform/qt/fast/css/first-line-text-decoration-inherited-from-parent-expected.png:
+        * platform/qt/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt:
+        * platform/qt/fast/css/word-space-extra-expected.png:
+        * platform/qt/fast/css/word-space-extra-expected.txt:
+        * platform/qt/fast/inline/absolute-positioned-inline-in-centred-block-expected.png:
+        * platform/qt/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt:
+        * platform/qt/fast/text/basic/003-expected.png:
+        * platform/qt/fast/text/basic/003-expected.txt:
+        * platform/qt/fast/text/basic/013-expected.png:
+        * platform/qt/fast/text/basic/013-expected.txt:
+        * platform/qt/fast/text/text-letter-spacing-expected.png:
+        * platform/qt/fast/text/text-letter-spacing-expected.txt:
+
 2013-09-20  Krzysztof Czech  <k.czech@samsung.com>
 
         [GTK][WK2] accessibility/selection-states.html is failing
