@@ -50,10 +50,7 @@ public:
     InspectorValue() : m_type(TypeNull) { }
     virtual ~InspectorValue() { }
 
-    static PassRefPtr<InspectorValue> null()
-    {
-        return adoptRef(new InspectorValue());
-    }
+    static PassRefPtr<InspectorValue> null();
 
     typedef enum {
         TypeNull = 0,
@@ -96,20 +93,9 @@ private:
 class InspectorBasicValue : public InspectorValue {
 public:
 
-    static PassRefPtr<InspectorBasicValue> create(bool value)
-    {
-        return adoptRef(new InspectorBasicValue(value));
-    }
-
-    static PassRefPtr<InspectorBasicValue> create(int value)
-    {
-        return adoptRef(new InspectorBasicValue(value));
-    }
-
-    static PassRefPtr<InspectorBasicValue> create(double value)
-    {
-        return adoptRef(new InspectorBasicValue(value));
-    }
+    static PassRefPtr<InspectorBasicValue> create(bool);
+    static PassRefPtr<InspectorBasicValue> create(int);
+    static PassRefPtr<InspectorBasicValue> create(double);
 
     virtual bool asBoolean(bool* output) const;
     virtual bool asNumber(double* output) const;
@@ -133,15 +119,8 @@ private:
 
 class InspectorString : public InspectorValue {
 public:
-    static PassRefPtr<InspectorString> create(const String& value)
-    {
-        return adoptRef(new InspectorString(value));
-    }
-
-    static PassRefPtr<InspectorString> create(const char* value)
-    {
-        return adoptRef(new InspectorString(value));
-    }
+    static PassRefPtr<InspectorString> create(const String&);
+    static PassRefPtr<InspectorString> create(const char*);
 
     virtual bool asString(String* output) const;    
 
@@ -213,10 +192,7 @@ private:
 
 class InspectorObject : public InspectorObjectBase {
 public:
-    static PassRefPtr<InspectorObject> create()
-    {
-        return adoptRef(new InspectorObject());
-    }
+    static PassRefPtr<InspectorObject> create();
 
     using InspectorObjectBase::asObject;
 
@@ -284,10 +260,7 @@ private:
 
 class InspectorArray : public InspectorArrayBase {
 public:
-    static PassRefPtr<InspectorArray> create()
-    {
-        return adoptRef(new InspectorArray());
-    }
+    static PassRefPtr<InspectorArray> create();
 
     using InspectorArrayBase::asArray;
 

@@ -793,4 +793,44 @@ PassRefPtr<InspectorValue> InspectorArrayBase::get(size_t index)
     return m_data[index];
 }
 
+PassRefPtr<InspectorObject> InspectorObject::create()
+{
+    return adoptRef(new InspectorObject);
+}
+
+PassRefPtr<InspectorArray> InspectorArray::create()
+{
+    return adoptRef(new InspectorArray);
+}
+
+PassRefPtr<InspectorValue> InspectorValue::null()
+{
+    return adoptRef(new InspectorValue);
+}
+
+PassRefPtr<InspectorString> InspectorString::create(const String& value)
+{
+    return adoptRef(new InspectorString(value));
+}
+
+PassRefPtr<InspectorString> InspectorString::create(const char* value)
+{
+    return adoptRef(new InspectorString(value));
+}
+
+PassRefPtr<InspectorBasicValue> InspectorBasicValue::create(bool value)
+{
+    return adoptRef(new InspectorBasicValue(value));
+}
+
+PassRefPtr<InspectorBasicValue> InspectorBasicValue::create(int value)
+{
+    return adoptRef(new InspectorBasicValue(value));
+}
+
+PassRefPtr<InspectorBasicValue> InspectorBasicValue::create(double value)
+{
+    return adoptRef(new InspectorBasicValue(value));
+}
+
 } // namespace WebCore

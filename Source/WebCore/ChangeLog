@@ -1,3 +1,15 @@
+2013-09-19  Andreas Kling  <akling@apple.com>
+
+        Out-of-line InspectorValues create() methods.
+        <https://webkit.org/b/121639>
+
+        Reviewed by Joseph Pecoraro.
+
+        These functions are hardly performance-critical and are taking up
+        quite a lot of space.
+
+        Shrinks the WebCore binary by 70500 bytes.
+
 2013-09-19  Alexey Proskuryakov  <ap@apple.com>
 
         Layout Test http/tests/security/canvas-remote-read-remote-image-redirect.html is flaky
