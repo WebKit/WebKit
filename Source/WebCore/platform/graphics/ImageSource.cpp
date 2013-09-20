@@ -136,8 +136,10 @@ size_t ImageSource::frameCount() const
     return m_decoder ? m_decoder->frameCount() : 0;
 }
 
-PassNativeImagePtr ImageSource::createFrameAtIndex(size_t index)
+PassNativeImagePtr ImageSource::createFrameAtIndex(size_t index, float* scale)
 {
+    UNUSED_PARAM(scale);
+
     if (!m_decoder)
         return 0;
 

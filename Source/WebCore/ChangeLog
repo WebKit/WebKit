@@ -1,3 +1,21 @@
+2013-09-20  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Add an argument to ImageSource::createFrameAtIndex to hint a decoder that we expect a scaled image.
+        https://bugs.webkit.org/show_bug.cgi?id=121696
+
+        Reviewed by Antti Koivisto.
+
+        Add an argument to ImageSource::createFrameAtIndex.  A platform image decoder can decide the optimal
+        scale based on the hint and pass the real scale it used for decoding.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+
 2013-09-20  Andreas Kling  <akling@apple.com>
 
         Make JSMainThreadNullState noncopyable.

@@ -291,8 +291,10 @@ size_t ImageSource::frameCount() const
     return m_decoder ? CGImageSourceGetCount(m_decoder) : 0;
 }
 
-CGImageRef ImageSource::createFrameAtIndex(size_t index)
+CGImageRef ImageSource::createFrameAtIndex(size_t index, float* scale)
 {
+    UNUSED_PARAM(scale);
+
     if (!initialized())
         return 0;
 
