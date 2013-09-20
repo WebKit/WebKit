@@ -47,7 +47,7 @@
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/NodeList.h>
-#include <WebCore/RenderObject.h>
+#include <WebCore/RenderElement.h>
 #include <WebCore/RenderTreeAsText.h>
 
 #include <initguid.h>
@@ -990,7 +990,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::boundingBox(
     if (!m_element)
         return E_FAIL;
 
-    WebCore::RenderObject *renderer = m_element->renderer();
+    WebCore::RenderElement *renderer = m_element->renderer();
     if (renderer) {
         IntRect boundsIntRect = renderer->absoluteBoundingBoxRect();
         rect->left = boundsIntRect.x();
@@ -1250,7 +1250,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::font(WebFontDescription* webFontDescriptio
 
     ASSERT(m_element);
 
-    WebCore::RenderObject* renderer = m_element->renderer();
+    WebCore::RenderElement* renderer = m_element->renderer();
     if (!renderer)
         return E_FAIL;
 
