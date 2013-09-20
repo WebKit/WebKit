@@ -178,6 +178,16 @@ public:
 
     LayerType layerType() const { return m_layerType; }
 
+    bool isCanvasLayer() const
+    {
+        return m_layerType == CanvasLayer;
+    }
+
+    bool isVisible() const
+    {
+        return m_isVisible;
+    }
+
     bool includeVisibility() const
     {
         if (pluginView())
@@ -187,6 +197,9 @@ public:
         if (mediaPlayer())
             return true;
 #endif
+
+        if (isCanvasLayer())
+            return true;
 
         return false;
     }

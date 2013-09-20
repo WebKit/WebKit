@@ -1,3 +1,23 @@
+2013-09-20  Jacky Jiang  <zhajiang@blackberry.com>
+
+        [BlackBerry] Poor rendering opening a Google map short link
+        https://bugs.webkit.org/show_bug.cgi?id=121687
+
+        Reviewed by Yong Li.
+        Internally reviewed by Arvid Nilsson.
+
+        JIRA 495023
+        Route lines on google map were shown even they were on a hidden canvas.
+        Include visibility on LayerWebKitThread if it's a canvas layer and respect
+        the visibility when compositing layers in LayerRenderer.
+
+        * platform/graphics/blackberry/LayerData.h:
+        (WebCore::LayerData::isCanvasLayer):
+        (WebCore::LayerData::isVisible):
+        (WebCore::LayerData::includeVisibility):
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::compositeLayersRecursive):
+
 2013-09-20  Sam White  <samuel_white@apple.com>
 
         AX: WebArea claims to have a subrole, but always returns nil.

@@ -890,6 +890,9 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
     bool layerVisible = clipRect.intersects(rect);
 #endif
 
+    if (layer->isCanvasLayer())
+        layerVisible = layerVisible && layer->isVisible();
+
     layer->setVisible(layerVisible);
 
     // Note that there are two types of layers:
