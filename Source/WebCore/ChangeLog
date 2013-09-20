@@ -1,3 +1,17 @@
+2013-09-20  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Fix some small style issues in the bindings
+        https://bugs.webkit.org/show_bug.cgi?id=121613
+
+        Reviewed by Carlos Garcia Campos.
+
+        * bindings/scripts/CodeGeneratorGObject.pm: When printing the license
+        header use the more common comment style within the WebKit project.
+        (GenerateProperty): Indent property definitions according to WebKit style, improve
+        the nick and blurb properties, and improve the various parameter spec argument layout.
+        (GenerateFunction): Remove the newline from function signatures to match WebKit style.
+        * bindings/scripts/test/GObject: Update bindings test results.
+
 2013-09-20  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Use COMPILE_DEFINITIONS target property for setting BUILDING_* defines
