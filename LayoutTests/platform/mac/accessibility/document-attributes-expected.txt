@@ -1,5 +1,4 @@
 AXRole: AXWebArea
-AXSubrole: (null)
 AXRoleDescription: HTML content
 AXChildren: <array of size 0>
 AXHelp: 

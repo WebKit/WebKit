@@ -1,3 +1,14 @@
+2013-09-20  Sam White  <samuel_white@apple.com>
+
+        AX: WebArea claims to have a subrole, but always returns nil.
+        https://bugs.webkit.org/show_bug.cgi?id=121658
+
+        Reviewed by Chris Fleizach.
+
+        Updated test output to reflect removal of unused NSAccessibilitySubroleAttribute in AXWebArea.
+
+        * platform/mac/accessibility/document-attributes-expected.txt:
+
 2013-09-20  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [ATK][WTR] accessibility/aria-invalid.html times out
