@@ -43,8 +43,9 @@ class RenderStyle;
 
 class SelectorChecker {
     WTF_MAKE_NONCOPYABLE(SelectorChecker);
-public:
     enum Match { SelectorMatches, SelectorFailsLocally, SelectorFailsAllSiblings, SelectorFailsCompletely };
+
+public:
     enum VisitedMatchType { VisitedMatchDisabled, VisitedMatchEnabled };
     enum Mode { ResolvingStyle = 0, CollectingRules, QueryingRules, SharingRules };
     enum BehaviorAtBoundary { DoesNotCrossBoundary, StaysWithinTreeScope };
@@ -82,12 +83,10 @@ public:
         BehaviorAtBoundary behaviorAtBoundary;
     };
 
-    Match match(const SelectorCheckingContext&, PseudoId&) const;
-    bool checkOne(const SelectorCheckingContext&) const;
-
-    bool strictParsing() const { return m_strictParsing; }
-
-    Mode mode() const { return m_mode; }
+    bool match(const SelectorCheckingContext& context, PseudoId& pseudoId) const
+    {
+        return matchRecursively(context, pseudoId) == SelectorMatches;
+    }
 
     static bool tagMatches(const Element*, const QualifiedName&);
     static bool isCommonPseudoClassSelector(const CSSSelector*);
@@ -98,9 +97,10 @@ public:
     static unsigned determineLinkMatchType(const CSSSelector*);
 
 private:
-    bool checkScrollbarPseudoClass(const SelectorCheckingContext&, Document*, const CSSSelector*) const;
+    Match matchRecursively(const SelectorCheckingContext&, PseudoId&) const;
+    bool checkOne(const SelectorCheckingContext&) const;
 
-    static bool isFrameFocused(const Element*);
+    bool checkScrollbarPseudoClass(const SelectorCheckingContext&, Document*, const CSSSelector*) const;
 
     bool m_strictParsing;
     bool m_documentIsHTML;

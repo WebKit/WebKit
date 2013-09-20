@@ -1,5 +1,29 @@
 2013-09-20  Benjamin Poulain  <benjamin@webkit.org>
 
+        Start cleaning the API of SelectorChecker
+        https://bugs.webkit.org/show_bug.cgi?id=121654
+
+        Reviewed by Antti Koivisto.
+
+        Make the matching mode internal.
+        Remove unused accessors.
+        Make isFrameFocused() internal.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        (WebCore::SelectorChecker::checkOne):
+        (WebCore::isFrameFocused):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::match):
+        * css/StyleResolver.h:
+        (WebCore::checkRegionSelector):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::selectorMatches):
+
+2013-09-20  Benjamin Poulain  <benjamin@webkit.org>
+
         Remove SelectorChecker's CrossesBoundary boundary mode
         https://bugs.webkit.org/show_bug.cgi?id=121653
 

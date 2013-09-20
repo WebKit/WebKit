@@ -64,7 +64,7 @@ inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, 
     selectorCheckingContext.behaviorAtBoundary = SelectorChecker::StaysWithinTreeScope;
     selectorCheckingContext.scope = !rootNode->isDocumentNode() && rootNode->isContainerNode() ? toContainerNode(rootNode) : 0;
     PseudoId ignoreDynamicPseudo = NOPSEUDO;
-    return selectorChecker.match(selectorCheckingContext, ignoreDynamicPseudo) == SelectorChecker::SelectorMatches;
+    return selectorChecker.match(selectorCheckingContext, ignoreDynamicPseudo);
 }
 
 bool SelectorDataList::matches(Element* targetElement) const
