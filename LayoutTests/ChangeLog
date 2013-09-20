@@ -1,3 +1,19 @@
+2013-09-20  Yoav Weiss  <yoav@yoav.ws>
+
+        Modified img src and srcset encoded URL tests
+        https://bugs.webkit.org/show_bug.cgi?id=121677
+
+        Previous tests have broken the Windows builds, since '?' is not a valid char.
+        Moved to using '@'
+
+        Reviewed by Anders Carlsson.
+
+        * fast/hidpi/image-srcset-encoded-expected.txt: Renamed from LayoutTests/fast/hidpi/image-srcset-question-mark-expected.txt.
+        * fast/hidpi/image-srcset-encoded.html: Renamed from LayoutTests/fast/hidpi/image-srcset-question-mark.html.
+        * fast/hidpi/resources/image@test.png: Renamed from LayoutTests/fast/hidpi/resources/image?test.png.
+        * fast/loader/image-src-encoded-expected.txt: Renamed from LayoutTests/fast/loader/image-src-question-mark-expected.txt.
+        * fast/loader/resources/image@test.png: Renamed from LayoutTests/fast/loader/resources/image?test.png.
+
 2013-09-20  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Update tests after r156066 and r156083.
