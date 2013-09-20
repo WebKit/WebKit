@@ -1,3 +1,14 @@
+2013-09-19  Darin Adler  <darin@apple.com>
+
+        Fix a couple mistakes in my recent CSS grammar leak patch
+        https://bugs.webkit.org/show_bug.cgi?id=121659
+
+        Reviewed by Alexey Proskuryakov.
+
+        * css/CSSGrammar.y.in: Added initialization to nullptr for some error cases
+        that were otherwise leaving a bad value for the result of the production.
+        Also fixed a reversed logical expression.
+
 2013-09-19  Yoav Weiss  <yoav@yoav.ws>
 
         Remove URL decoding in srcset handling

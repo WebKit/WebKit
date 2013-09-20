@@ -1231,17 +1231,18 @@ ident_or_string: IDENT | STRING ;
 
 pseudo_page:
     ':' IDENT {
+        $$ = nullptr;
         auto selector = std::make_unique<CSSParserSelector>();
         selector->setMatch(CSSSelector::PagePseudoClass);
         $2.lower();
         selector->setValue($2);
-        CSSSelector::PseudoType type = selector->pseudoType();
-        if (type != CSSSelector::PseudoUnknown)
+        if (selector->pseudoType() != CSSSelector::PseudoUnknown)
             $$ = selector.release();
     }
 
 pseudo:
     ':' IDENT {
+        $$ = nullptr;
         auto selector = std::make_unique<CSSParserSelector>();
         selector->setMatch(CSSSelector::PseudoClass);
         $2.lower();
@@ -1250,6 +1251,7 @@ pseudo:
             $$ = selector.release();
     }
     | ':' ':' IDENT {
+        $$ = nullptr;
         auto selector = std::make_unique<CSSParserSelector>();
         selector->setMatch(CSSSelector::PseudoElement);
         $3.lower();
@@ -1266,7 +1268,7 @@ pseudo:
             selector->setMatch(CSSSelector::PseudoClass);
             selector->adoptSelectorVector(*adoptPtr($5));
             selector->setValue($3);
-            if (selector->pseudoType() != CSSSelector::PseudoCue)
+            if (selector->pseudoType() == CSSSelector::PseudoCue)
                 $$ = selector.release();
         }
     }
@@ -1290,6 +1292,7 @@ pseudo:
     }
     // used by :nth-*(ax+b)
     | ':' FUNCTION maybe_space NTH maybe_space ')' {
+        $$ = nullptr;
         auto selector = std::make_unique<CSSParserSelector>();
         selector->setMatch(CSSSelector::PseudoClass);
         selector->setArgument($4);
@@ -1299,6 +1302,7 @@ pseudo:
     }
     // used by :nth-*
     | ':' FUNCTION maybe_space maybe_unary_operator INTEGER maybe_space ')' {
+        $$ = nullptr;
         auto selector = std::make_unique<CSSParserSelector>();
         selector->setMatch(CSSSelector::PseudoClass);
         selector->setArgument(String::number($4 * $5));
