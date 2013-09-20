@@ -148,8 +148,9 @@ void CSSDefaultStyleSheets::loadSimpleDefaultStyle()
 RuleSet* CSSDefaultStyleSheets::viewSourceStyle()
 {
     if (!defaultViewSourceStyle) {
+        static StyleSheetContents* viewSourceStyleSheet = parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet));
         defaultViewSourceStyle = RuleSet::create().leakPtr();
-        defaultViewSourceStyle->addRulesFromSheet(parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet)), screenEval());
+        defaultViewSourceStyle->addRulesFromSheet(viewSourceStyleSheet, screenEval());
     }
     return defaultViewSourceStyle;
 }

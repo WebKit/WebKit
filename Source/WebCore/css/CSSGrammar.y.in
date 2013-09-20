@@ -328,7 +328,7 @@ stylesheet:
 #endif
   ;
 
-webkit_rule: WEBKIT_RULE_SYM '{' maybe_space valid_rule maybe_space '}' { parser->m_rule = $4; } ;
+webkit_rule: WEBKIT_RULE_SYM '{' maybe_space valid_rule maybe_space '}' { parser->m_rule = adoptRef($4); } ;
 
 webkit_keyframe_rule: WEBKIT_KEYFRAME_RULE_SYM '{' maybe_space keyframe_rule maybe_space '}' { parser->m_keyframe = adoptRef($4); } ;
 

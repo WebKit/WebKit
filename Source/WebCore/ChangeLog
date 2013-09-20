@@ -1,3 +1,17 @@
+2013-09-20  Darin Adler  <darin@apple.com>
+
+        Fix a couple more CSS leaks
+        https://bugs.webkit.org/show_bug.cgi?id=121683
+
+        Reviewed by Alexey Proskuryakov.
+
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::viewSourceStyle): Put the result of the
+        parseUASheet into a global variable so it doesn't show up as a storage leak.
+
+        * css/CSSGrammar.y.in: Added a missing adoptRef. This was leaking any rule
+        we parsed individually.
+
 2013-09-20  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Simplify the ShapeOutsideInfo and ShapeInfo interfaces
