@@ -1,3 +1,16 @@
+2013-09-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Clobberize phase forgets to indicate that it writes GCState for several node types
+        https://bugs.webkit.org/show_bug.cgi?id=121702
+
+        Reviewed by Oliver Hunt.
+
+        Added read and write for GCState to the nodes that could end up allocating (and thereby
+        cause a garbage collection).
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2013-09-19  Filip Pizlo  <fpizlo@apple.com>
 
         Move CCallHelpers and AssemblyHelpers into jit/ and have JSInterfaceJIT use them
