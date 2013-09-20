@@ -342,7 +342,6 @@ webkit.org/b/106343 accessibility/loading-iframe-sends-notification.html [ Failu
 webkit.org/b/106345 platform/gtk/accessibility/input-slider.html [ Failure ]
 webkit.org/b/116970 accessibility/multiselect-list-reports-active-option.html [ Failure ]
 webkit.org/b/116971 accessibility/poorly-formed-aria-table.html [ Failure ]
-webkit.org/b/116972 accessibility/selection-states.html [ Failure ]
 webkit.org/b/106346 accessibility/svg-remote-element.html [ Failure ]
 webkit.org/b/116973 platform/gtk/accessibility/caret-browsing-select-focus.html [ Failure ]
 

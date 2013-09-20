@@ -1,3 +1,14 @@
+2013-09-20  Krzysztof Czech  <k.czech@samsung.com>
+
+        [GTK][WK2] accessibility/selection-states.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=116972
+
+        Reviewed by Mario Sanchez Prada.
+
+        isSelectable() was not exposed in Accessibility.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+
 2013-09-19  Dan Bernstein  <mitz@apple.com>
 
         Attempted build fix after r156114.

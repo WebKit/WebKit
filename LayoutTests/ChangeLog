@@ -1,3 +1,14 @@
+2013-09-20  Krzysztof Czech  <k.czech@samsung.com>
+
+        [GTK][WK2] accessibility/selection-states.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=116972
+
+        Reviewed by Mario Sanchez Prada.
+
+        Unskipping accessibility/selection-states.html test.
+
+        * platform/gtk-wk2/TestExpectations:
+
 2013-09-20  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebase tests.
