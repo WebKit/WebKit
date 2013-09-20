@@ -51,6 +51,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
+#include "RenderElement.h"
 #include "SecurityOrigin.h"
 #include "StrokeStyleApplier.h"
 #include "StylePropertySet.h"

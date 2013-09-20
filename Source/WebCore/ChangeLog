@@ -1,3 +1,9 @@
+2013-09-20  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix the build after r156144
+
+        * html/canvas/CanvasRenderingContext2D.cpp: Added missing include.
+
 2013-09-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         renderStyleOfEnclosingTextNode should update style before using a renderer
