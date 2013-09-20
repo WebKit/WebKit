@@ -1,3 +1,20 @@
+2013-09-20  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Update tests after r156066 and r156083.
+
+        * platform/qt-wk1/fast/forms/HTMLOptionElement_label06-expected.png: Added r156083.
+        * platform/qt-wk1/fast/forms/HTMLOptionElement_label06-expected.txt: Added r156083.
+        * platform/qt-wk1/fast/forms/HTMLOptionElement_label07-expected.png: Added r156083.
+        * platform/qt-wk1/fast/forms/HTMLOptionElement_label07-expected.txt: Added r156083.
+        * platform/qt-wk1/fast/forms/form-element-geometry-expected.png: Added r156083.
+        * platform/qt-wk1/fast/forms/form-element-geometry-expected.txt: Added r156083.
+        * platform/qt-wk1/fast/forms/menulist-separator-painting-expected.txt: Added r156083.
+        * platform/qt-wk1/fast/forms/select-baseline-expected.png: Added r156083.
+        * platform/qt-wk1/fast/forms/select-baseline-expected.txt: Added r156083.
+        * platform/qt-wk1/fast/forms/selectlist-minsize-expected.txt: Added r156083.
+        * platform/qt-wk1/fast/replaced/three-selects-break-expected.txt: Added r156083.
+        * platform/qt-wk1/js/dom/switch-behaviour-expected.txt: Added r156066.
+
 2013-09-18  Antonio Gomes  <a1.gomes@sisa.samsung.com>
 
         Make "autoscroll" for drag'n drop a setting
