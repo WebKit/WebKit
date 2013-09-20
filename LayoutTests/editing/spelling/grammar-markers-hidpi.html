@@ -15,26 +15,19 @@ jsTestIsAsync = true;
 if (window.internals)
     internals.settings.setAsynchronousSpellCheckingEnabled(true);
 
-var retryCount = 10;
-var sleepPeriod = 1;
-var ungrammaticalPhrase = 'has';
-var hasMarker;
-function verifyMarker() {
-    hasMarker = internals.hasGrammarMarker(document, target.innerHTML.indexOf(ungrammaticalPhrase), ungrammaticalPhrase.length);
-    if (!hasMarker && --retryCount > 0) {
-        sleepPeriod *= 2;
-        window.setTimeout(verifyMarker, sleepPeriod);
-        return;
-    }
-
-    shouldBeTrue('hasMarker');
-    finishJSTest();
-};
+function verifyGrammarMarker(destination, ungrammaticalPhrase)
+{
+    if (internals.hasGrammarMarker(document, destination.innerHTML.indexOf(ungrammaticalPhrase), ungrammaticalPhrase.length)) {
+        testPassed("ungrammatical phrase '" + ungrammaticalPhrase + "' on '" + destination.innerHTML + "'");
+        return true;
+    } else
+       return false;
+}
 
 if (window.testRunner) {
     testRunner.dumpAsText(true);
     testRunner.setBackingScaleFactor(2, function () {
-        verifyMarker();
+        shouldBecomeEqual('verifyGrammarMarker(target, "has")', 'true', finishJSTest);
     });
 }
 

@@ -3,7 +3,8 @@ This tests whether WebKit can render grammar markers when pasting text if it has
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS hasMarker is true
+PASS ungrammatical phrase 'has' on 'You has the right.'
+PASS verifyGrammarMarker(target, "has") became true
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -53,9 +53,17 @@ function verifyMarker(node, expectedMarked)
     var ok = true;
     for (var i = 0; ok && i < expectedMarked.length; ++i)
         ok = internals.hasSpellingMarker(document, expectedMarked[i][0], expectedMarked[i][1]);
+
+    if (ok) {
+        var nodeContent = node instanceof HTMLInputElement || node instanceof HTMLTextAreaElement ? node.value : node.innerHTML;
+        testPassed(node.tagName + " has a marker on '" + nodeContent + "'");
+    }
+
     return ok;
 }
 
+var destination = null;
+var misspelledLocations = null;
 function pasteAndVerify(source, dest, expectedMarked)
 {
     sel.selectAllChildren(source);
@@ -69,27 +77,11 @@ function pasteAndVerify(source, dest, expectedMarked)
     }
     document.execCommand("Paste");
 
-    var nretry = 10;
-    var nsleep = 1;
-    function trial() { 
-        var verified = verifyMarker(dest, expectedMarked);
-        if (verified) {
-            testPassed(dest.tagName + " has a marker on '" + source.innerHTML + "'");
-            done();
-            return;
-        }
-
-        nretry--;
-        if (0 == nretry) {
-            testFailed(dest.tagName + " should have a marker on '" + source.innerHTML + "'");
-            done();
-            return;
-        }
-        
-        nsleep *= 2;
-        window.setTimeout(trial, nsleep);
-    };
-    trial();
+    if (window.internals) {
+        destination = dest;
+        misspelledLocations = expectedMarked;
+        shouldBecomeEqual('verifyMarker(destination, misspelledLocations)', 'true', done);
+    }
 };
 
 if (window.internals)

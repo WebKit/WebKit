@@ -10,33 +10,6 @@
 
 <script>
 
-function verify(nretry)
-{
-    if (!nretry) {
-       finishJSTest()
-       return;
-    }
-
-    var texts = destination.childNodes;
-    markedText = null;
-    for (var i = 0; i < texts.length; ++i) {
-        if (internals.markerCountForNode(texts[i], "spelling")) { 
-            markedText = internals.markerRangeForNode(texts[i], "spelling", 0).toString();
-            markerDescription = internals.markerDescriptionForNode(texts[i], "spelling", 0);
-            break;
-        }
-    }
-
-    if (markedText != null) {
-        shouldBeEqualToString("markedText", "wellcome");
-        shouldBeEqualToString("markerDescription", "welcome");
-        finishJSTest();
-    }
-
-    // Wait until the async spellchecking is done.
-    window.setTimeout(function() { verify(nretry - 1); }, 0);
-}
-
 function test()
 {
     jsTestIsAsync = true;
@@ -49,7 +22,7 @@ function test()
     document.execCommand("InsertHTML", false, "wellcome");
     document.execCommand("InsertText", false, ".");
 
-    window.setTimeout(function() { verify(10); }, 0);
+    shouldBecomeEqualToString('internals.markerDescriptionForNode(destination.firstChild, "spelling", 0)', 'welcome', finishJSTest);
 }
 
 description("The spellchecker should store replacement text in each marker.");

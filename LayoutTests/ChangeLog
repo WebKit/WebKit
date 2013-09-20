@@ -1,3 +1,50 @@
+2013-09-19  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Use shouldBecomeEqual in asynchronous spellchecking tests.
+        https://bugs.webkit.org/show_bug.cgi?id=121483
+
+        Reviewed by Darin Adler.
+
+        Every asynchronous spellchecking layout test waits for spelling or grammar
+        markers using setTimeout. It duplicates the code, moreover the implementation
+        differs in every test.
+
+        Use shouldBecomeEqual helper (introduced in r143860) to test spellchecking
+        asynchronously.
+
+        * editing/spelling/grammar-markers-expected.txt:
+        * editing/spelling/grammar-markers-hidpi-expected.txt:
+        * editing/spelling/grammar-markers-hidpi.html:
+        * editing/spelling/grammar-markers.html:
+
+        * editing/spelling/grammar-paste-expected.txt:
+        * editing/spelling/grammar-paste.html:
+        Dump text of destination element instead of source one to show what is
+        really tested. It stops outputting that the input and textarea elements
+        can store html tags, for example,
+        PASS INPUT has a marker on 'I have a<b>n ki</b>wi'.
+
+        * editing/spelling/script-tests/spellcheck-paste.js:
+        (verifyMarker):
+        (pasteAndVerify):
+
+        * editing/spelling/spellcheck-paste-continuous-disabled-expected.txt:
+        * editing/spelling/spellcheck-paste-continuous-disabled.html:
+        * editing/spelling/spellcheck-paste-disabled-expected.txt:
+        * editing/spelling/spellcheck-paste-disabled.html:
+        At the beginning, those tests check whether spelling marker appears
+        synchronously. Then, spell checking is disabled to check whether
+        the markers have disappeared properly.
+        There is no need to check spelling asynchronously in the second part
+        of the tests. Use synchronous spellchecking path instead.
+
+        * editing/spelling/spellcheck-paste-expected.txt:
+        * editing/spelling/spelling-marker-description-expected.txt:
+        * editing/spelling/spelling-marker-description.html:
+        * platform/efl-wk2/editing/spelling/spellcheck-paste-continuous-disabled-expected.txt:
+        * platform/mac/editing/spelling/grammar-markers-expected.png:
+        * platform/mac/editing/spelling/grammar-markers-hidpi-expected.png:
+
 2013-09-19  Eric Carlson  <eric.carlson@apple.com>
 
         MediaStream API: update MediaStreamTrackEvent object to match spec

@@ -92,9 +92,14 @@ function verifyMarker(node, expectedMarked)
             return false;
     }
 
+    var nodeContent = node instanceof HTMLInputElement || node instanceof HTMLTextAreaElement ? node.value : node.innerHTML;
+    testPassed(node.tagName + " ungrammatical phrase '" + expectedMarked + "' on '" + nodeContent + "'");
+
     return true;
 }
 
+var destination = null;
+var expectedMarked = null;
 function pasteAndVerify(source, dest, expectedMarked)
 {
     sel.selectAllChildren(source);
@@ -108,27 +113,11 @@ function pasteAndVerify(source, dest, expectedMarked)
     }
     document.execCommand("Paste");
 
-    var nretry = 10;
-    var nsleep = 4;
-    function trial() { 
-        var verified = verifyMarker(dest, expectedMarked);
-        if (verified) {
-            testPassed(dest.tagName + " has a marker on '" + source.innerHTML + "'");
-            done();
-            return;
-        }
-
-        nretry--;
-        if (0 == nretry) {
-            testFailed(dest.tagName + " should have a marker on for '" + source.innerHTML + "'");
-            done();
-            return;
-        }
-        
-        nsleep *= 2;
-        window.setTimeout(trial, nsleep);
-    };
-    trial();
+    if (window.internals) {
+        destination = dest;
+        ungrammaticalPhrase = expectedMarked;
+        shouldBecomeEqual('verifyMarker(destination, ungrammaticalPhrase)', 'true', done);
+    }
 };
 
 if (window.internals)

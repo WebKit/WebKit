@@ -18,6 +18,15 @@ if (window.internals)
 if (window.testRunner)
     testRunner.dumpAsText(true);
 
+function verifyGrammarMarker(destination, ungrammaticalPhrase)
+{
+    if (window.internals && internals.hasGrammarMarker(document, destination.innerHTML.indexOf(ungrammaticalPhrase), ungrammaticalPhrase.length)) {
+        testPassed("ungrammatical phrase '" + ungrammaticalPhrase + "' on '" + destination.innerHTML + "'");
+        return true;
+    } else
+       return false;
+}
+
 var source = document.getElementById('source');
 window.getSelection().selectAllChildren(source);
 document.execCommand('Copy');
@@ -25,23 +34,7 @@ var target = document.getElementById('target');
 window.getSelection().selectAllChildren(target);
 document.execCommand('Paste');
 
-var retryCount = 10;
-var sleepPeriod = 1;
-var ungrammaticalPhrase = 'has';
-var hasMarker;
-function verifyMarker() {
-    hasMarker = internals.hasGrammarMarker(document, target.innerHTML.indexOf(ungrammaticalPhrase), ungrammaticalPhrase.length);
-    if (!hasMarker && --retryCount > 0) {
-        sleepPeriod *= 2;
-        window.setTimeout(verifyMarker, sleepPeriod);
-        return;
-    }
-
-    shouldBeTrue('hasMarker');
-    finishJSTest();
-};
-
-window.setTimeout(verifyMarker, sleepPeriod);
+shouldBecomeEqual('verifyGrammarMarker(target, "has")', 'true', finishJSTest);
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

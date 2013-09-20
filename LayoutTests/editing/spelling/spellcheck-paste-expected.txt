@@ -4,14 +4,23 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS INPUT has a marker on 'zz apple'
-PASS INPUT has a marker on 'z<b>z appl</b>e'
+PASS verifyMarker(destination, misspelledLocations) became true
+PASS INPUT has a marker on 'zz apple'
+PASS verifyMarker(destination, misspelledLocations) became true
 PASS INPUT has a marker on 'zz zz zz'
+PASS verifyMarker(destination, misspelledLocations) became true
 PASS TEXTAREA has a marker on 'zz apple'
-PASS TEXTAREA has a marker on 'z<b>z appl</b>e'
+PASS verifyMarker(destination, misspelledLocations) became true
+PASS TEXTAREA has a marker on 'zz apple'
+PASS verifyMarker(destination, misspelledLocations) became true
 PASS TEXTAREA has a marker on 'zz zz zz'
+PASS verifyMarker(destination, misspelledLocations) became true
 PASS DIV has a marker on 'zz apple'
+PASS verifyMarker(destination, misspelledLocations) became true
 PASS DIV has a marker on 'z<b>z appl</b>e'
+PASS verifyMarker(destination, misspelledLocations) became true
 PASS DIV has a marker on 'zz zz zz'
+PASS verifyMarker(destination, misspelledLocations) became true
 PASS successfullyParsed is true
 
 TEST COMPLETE
