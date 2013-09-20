@@ -1,3 +1,13 @@
+2013-09-20  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebase tests.
+
+        * platform/qt-wk2/fast/css/word-space-extra-expected.png: Added r155957.
+        * platform/qt/fast/css/pseudo-first-line-border-width-expected.png: Rebase after r155957.
+        * platform/qt/fast/css/pseudo-first-line-border-width-expected.txt: Rebase after r155957.
+        * platform/qt/fast/css/word-space-extra-expected.txt: Rebase after r155957.
+        * platform/qt/fast/forms/select-empty-option-height-expected.txt: Rebase after rr156040.
+
 2013-09-19  Yoav Weiss  <yoav@yoav.ws>
 
         Remove URL decoding in srcset handling
