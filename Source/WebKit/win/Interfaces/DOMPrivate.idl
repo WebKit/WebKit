@@ -31,8 +31,6 @@ import "DOMCore.idl";
 
 interface IDOMElement;
 
-typedef struct WebFontDescription WebFontDescription;
-
 [
     object,
     oleautomation,
@@ -45,7 +43,7 @@ interface IDOMElementPrivate : IUnknown
     HRESULT isEqual([in] IDOMElement* other, [out, retval] BOOL* result);
     HRESULT isFocused([out, retval] BOOL* result);
     HRESULT innerText([out, retval] BSTR* result);
-    [local] HRESULT font(WebFontDescription* webFontDescription);
+    [local] HRESULT font(struct WebFontDescription* webFontDescription);
     HRESULT renderedImage([out, retval] HBITMAP* image);
     [local] HRESULT markerTextForListItem([out, retval] BSTR* markerText);
     [local] HRESULT shadowPseudoId([out, retval] BSTR* result);

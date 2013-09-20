@@ -1,5 +1,17 @@
 2013-09-20  Patrick Gansterer  <paroga@webkit.org>
 
+        Fix MIDL files for Visual Studio 2012
+        https://bugs.webkit.org/show_bug.cgi?id=121552
+
+        Reviewed by Brent Fulgham.
+
+        The MIDL compiler shipped with Visual Studio 2012 does not accept forward declarations
+        with typedefs. Use the struct keyword in the function signature to fix this problem.
+
+        * Interfaces/DOMPrivate.idl:
+
+2013-09-20  Patrick Gansterer  <paroga@webkit.org>
+
         Remove duplicated secondsPerDay variables
         https://bugs.webkit.org/show_bug.cgi?id=121601
 
