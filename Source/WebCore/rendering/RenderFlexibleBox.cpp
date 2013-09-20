@@ -904,17 +904,16 @@ LayoutUnit RenderFlexibleBox::marginBoxAscentForChild(RenderBox* child)
     return ascent + flowAwareMarginBeforeForChild(child);
 }
 
-LayoutUnit RenderFlexibleBox::computeChildMarginValue(Length margin, RenderView* view)
+LayoutUnit RenderFlexibleBox::computeChildMarginValue(const Length& margin)
 {
     // When resolving the margins, we use the content size for resolving percent and calc (for percents in calc expressions) margins.
     // Fortunately, percent margins are always computed with respect to the block's width, even for margin-top and margin-bottom.
     LayoutUnit availableSize = contentLogicalWidth();
-    return minimumValueForLength(margin, availableSize, view);
+    return minimumValueForLength(margin, availableSize);
 }
 
 void RenderFlexibleBox::computeMainAxisPreferredSizes(OrderHashSet& orderValues)
 {
-    RenderView* renderView = &view();
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         orderValues.add(child->style()->order());
 
@@ -924,11 +923,11 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(OrderHashSet& orderValues)
         // Before running the flex algorithm, 'auto' has a margin of 0.
         // Also, if we're not auto sizing, we don't do a layout that computes the start/end margins.
         if (isHorizontalFlow()) {
-            child->setMarginLeft(computeChildMarginValue(child->style()->marginLeft(), renderView));
-            child->setMarginRight(computeChildMarginValue(child->style()->marginRight(), renderView));
+            child->setMarginLeft(computeChildMarginValue(child->style()->marginLeft()));
+            child->setMarginRight(computeChildMarginValue(child->style()->marginRight()));
         } else {
-            child->setMarginTop(computeChildMarginValue(child->style()->marginTop(), renderView));
-            child->setMarginBottom(computeChildMarginValue(child->style()->marginBottom(), renderView));
+            child->setMarginTop(computeChildMarginValue(child->style()->marginTop()));
+            child->setMarginBottom(computeChildMarginValue(child->style()->marginBottom()));
         }
     }
 }

@@ -46,6 +46,16 @@ public:
 protected:
     explicit RenderElement(Element*);
 
+    LayoutUnit valueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages = false) const
+    {
+        return WebCore::valueForLength(length, maximumValue, &view(), roundPercentages);
+    }
+
+    LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages = false) const
+    {
+        return WebCore::minimumValueForLength(length, maximumValue, &view(), roundPercentages);
+    }
+
 private:
     void node() const WTF_DELETED_FUNCTION;
     void nonPseudoNode() const WTF_DELETED_FUNCTION;

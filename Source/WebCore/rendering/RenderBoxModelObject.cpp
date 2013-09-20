@@ -256,11 +256,11 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     // call availableWidth on our containing block.
     if (!style()->left().isAuto()) {
         if (!style()->right().isAuto() && !containingBlock->style()->isLeftToRightDirection())
-            offset.setWidth(-valueForLength(style()->right(), containingBlock->availableWidth(), &view()));
+            offset.setWidth(-valueForLength(style()->right(), containingBlock->availableWidth()));
         else
-            offset.expand(valueForLength(style()->left(), containingBlock->availableWidth(), &view()), 0);
+            offset.expand(valueForLength(style()->left(), containingBlock->availableWidth()), 0);
     } else if (!style()->right().isAuto()) {
-        offset.expand(-valueForLength(style()->right(), containingBlock->availableWidth(), &view()), 0);
+        offset.expand(-valueForLength(style()->right(), containingBlock->availableWidth()), 0);
     }
 
     // If the containing block of a relatively positioned element does not
@@ -273,13 +273,13 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
         && (!containingBlock->hasAutoHeightOrContainingBlockWithAutoHeight()
             || !style()->top().isPercent()
             || containingBlock->stretchesToViewport()))
-        offset.expand(0, valueForLength(style()->top(), containingBlock->availableHeight(), &view()));
+        offset.expand(0, valueForLength(style()->top(), containingBlock->availableHeight()));
 
     else if (!style()->bottom().isAuto()
         && (!containingBlock->hasAutoHeightOrContainingBlockWithAutoHeight()
             || !style()->bottom().isPercent()
             || containingBlock->stretchesToViewport()))
-        offset.expand(0, -valueForLength(style()->bottom(), containingBlock->availableHeight(), &view()));
+        offset.expand(0, -valueForLength(style()->bottom(), containingBlock->availableHeight()));
 
     return offset;
 }
@@ -354,10 +354,10 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
 
     // Sticky positioned element ignore any override logical width on the containing block (as they don't call
     // containingBlockLogicalWidthForContent). It's unclear whether this is totally fine.
-    LayoutBoxExtent minMargin(minimumValueForLength(style()->marginTop(), maxWidth, &view()),
-        minimumValueForLength(style()->marginRight(), maxWidth, &view()),
-        minimumValueForLength(style()->marginBottom(), maxWidth, &view()),
-        minimumValueForLength(style()->marginLeft(), maxWidth, &view()));
+    LayoutBoxExtent minMargin(minimumValueForLength(style()->marginTop(), maxWidth),
+        minimumValueForLength(style()->marginRight(), maxWidth),
+        minimumValueForLength(style()->marginBottom(), maxWidth),
+        minimumValueForLength(style()->marginLeft(), maxWidth));
 
     // Compute the container-relative area within which the sticky element is allowed to move.
     containerContentRect.contract(minMargin);
@@ -394,22 +394,22 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     constraints.setStickyBoxRect(stickyBoxRelativeToScrollingAnecstor);
 
     if (!style()->left().isAuto()) {
-        constraints.setLeftOffset(valueForLength(style()->left(), constrainingRect.width(), &view()));
+        constraints.setLeftOffset(valueForLength(style()->left(), constrainingRect.width()));
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeLeft);
     }
 
     if (!style()->right().isAuto()) {
-        constraints.setRightOffset(valueForLength(style()->right(), constrainingRect.width(), &view()));
+        constraints.setRightOffset(valueForLength(style()->right(), constrainingRect.width()));
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeRight);
     }
 
     if (!style()->top().isAuto()) {
-        constraints.setTopOffset(valueForLength(style()->top(), constrainingRect.height(), &view()));
+        constraints.setTopOffset(valueForLength(style()->top(), constrainingRect.height()));
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeTop);
     }
 
     if (!style()->bottom().isAuto()) {
-        constraints.setBottomOffset(valueForLength(style()->bottom(), constrainingRect.height(), &view()));
+        constraints.setBottomOffset(valueForLength(style()->bottom(), constrainingRect.height()));
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeBottom);
     }
 }
@@ -479,12 +479,9 @@ int RenderBoxModelObject::pixelSnappedOffsetHeight() const
 LayoutUnit RenderBoxModelObject::computedCSSPadding(Length padding) const
 {
     LayoutUnit w = 0;
-    RenderView* renderView = 0;
     if (padding.isPercent())
         w = containingBlockLogicalWidthForContent();
-    else if (padding.isViewportPercentage())
-        renderView = &view();
-    return minimumValueForLength(padding, w, renderView);
+    return minimumValueForLength(padding, w);
 }
 
 RoundedRect RenderBoxModelObject::getBackgroundRoundedRect(const LayoutRect& borderRect, InlineFlowBox* box, LayoutUnit inlineBoxWidth, LayoutUnit inlineBoxHeight,
@@ -925,7 +922,6 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
 
     IntSize imageIntrinsicSize = calculateImageIntrinsicDimensions(image, positioningAreaSize, ScaleByEffectiveZoom);
     imageIntrinsicSize.scale(1 / image->imageScaleFactor(), 1 / image->imageScaleFactor());
-    RenderView* renderView = &view();
     switch (type) {
         case SizeLength: {
             LayoutSize tileSize = positioningAreaSize;
@@ -936,12 +932,12 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
             if (layerWidth.isFixed())
                 tileSize.setWidth(layerWidth.value());
             else if (layerWidth.isPercent() || layerWidth.isViewportPercentage())
-                tileSize.setWidth(valueForLength(layerWidth, positioningAreaSize.width(), renderView));
+                tileSize.setWidth(valueForLength(layerWidth, positioningAreaSize.width()));
             
             if (layerHeight.isFixed())
                 tileSize.setHeight(layerHeight.value());
             else if (layerHeight.isPercent() || layerHeight.isViewportPercentage())
-                tileSize.setHeight(valueForLength(layerHeight, positioningAreaSize.height(), renderView));
+                tileSize.setHeight(valueForLength(layerHeight, positioningAreaSize.height()));
 
             applySubPixelHeuristicForTileSize(tileSize, positioningAreaSize);
 
@@ -1124,7 +1120,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
     int availableWidth = positioningAreaSize.width() - geometry.tileSize().width();
     int availableHeight = positioningAreaSize.height() - geometry.tileSize().height();
 
-    LayoutUnit computedXPosition = minimumValueForLength(fillLayer->xPosition(), availableWidth, &view(), true);
+    LayoutUnit computedXPosition = minimumValueForLength(fillLayer->xPosition(), availableWidth, true);
     if (backgroundRepeatX == RoundFill && positioningAreaSize.width() > 0 && fillTileSize.width() > 0) {
         int nrTiles = ceil((double)positioningAreaSize.width() / fillTileSize.width());
 
@@ -1137,7 +1133,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
         geometry.setSpaceSize(FloatSize());
     }
 
-    LayoutUnit computedYPosition = minimumValueForLength(fillLayer->yPosition(), availableHeight, &view(), true);
+    LayoutUnit computedYPosition = minimumValueForLength(fillLayer->yPosition(), availableHeight, true);
     if (backgroundRepeatY == RoundFill && positioningAreaSize.height() > 0 && fillTileSize.height() > 0) {
         int nrTiles = ceil((double)positioningAreaSize.height() / fillTileSize.height());
 
@@ -1158,7 +1154,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
         int actualWidth = geometry.tileSize().width() + space;
 
         if (space >= 0) {
-            computedXPosition = minimumValueForLength(Length(), availableWidth, &view(), true);
+            computedXPosition = minimumValueForLength(Length(), availableWidth, true);
             geometry.setSpaceSize(FloatSize(space, 0));
             geometry.setPhaseX(actualWidth ? actualWidth - roundToInt(computedXPosition + left) % actualWidth : 0);
         } else
@@ -1178,7 +1174,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
         int actualHeight = geometry.tileSize().height() + space;
 
         if (space >= 0) {
-            computedYPosition = minimumValueForLength(Length(), availableHeight, &view(), true);
+            computedYPosition = minimumValueForLength(Length(), availableHeight, true);
             geometry.setSpaceSize(FloatSize(geometry.spaceSize().width(), space));
             geometry.setPhaseY(actualHeight ? actualHeight - roundToInt(computedYPosition + top) % actualHeight : 0);
         } else
@@ -1245,10 +1241,10 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     RenderView* renderView = &view();
 
     float imageScaleFactor = styleImage->imageScaleFactor();
-    int topSlice = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().top(), imageHeight, renderView)) * imageScaleFactor;
-    int rightSlice = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().right(), imageWidth, renderView)) * imageScaleFactor;
-    int bottomSlice = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().bottom(), imageHeight, renderView)) * imageScaleFactor;
-    int leftSlice = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().left(), imageWidth, renderView)) * imageScaleFactor;
+    int topSlice = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().top(), imageHeight)) * imageScaleFactor;
+    int rightSlice = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().right(), imageWidth)) * imageScaleFactor;
+    int bottomSlice = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().bottom(), imageHeight)) * imageScaleFactor;
+    int leftSlice = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().left(), imageWidth)) * imageScaleFactor;
 
     ENinePieceImageRule hRule = ninePieceImage.horizontalRule();
     ENinePieceImageRule vRule = ninePieceImage.verticalRule();

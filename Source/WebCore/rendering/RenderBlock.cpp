@@ -3616,12 +3616,9 @@ void RenderBlock::clearPercentHeightDescendantsFrom(RenderBox* parent)
 LayoutUnit RenderBlock::textIndentOffset() const
 {
     LayoutUnit cw = 0;
-    RenderView* renderView = 0;
     if (style()->textIndent().isPercent())
         cw = containingBlock()->availableLogicalWidth();
-    else if (style()->textIndent().isViewportPercentage())
-        renderView = &view();
-    return minimumValueForLength(style()->textIndent(), cw, renderView);
+    return minimumValueForLength(style()->textIndent(), cw);
 }
 
 LayoutUnit RenderBlock::logicalLeftOffsetForContent(RenderRegion* region) const
@@ -5207,7 +5204,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidt
     // Signals the text indent was more negative than the min preferred width
     bool hasRemainingNegativeTextIndent = false;
 
-    LayoutUnit textIndent = minimumValueForLength(styleToUse->textIndent(), cw, &view());
+    LayoutUnit textIndent = minimumValueForLength(styleToUse->textIndent(), cw);
     RenderObject* prevFloat = 0;
     bool isPrevChildInlineFlow = false;
     bool shouldBreakLineAfterText = false;

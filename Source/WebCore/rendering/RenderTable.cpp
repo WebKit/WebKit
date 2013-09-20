@@ -248,7 +248,6 @@ void RenderTable::updateLogicalWidth()
     }
 
     RenderBlock* cb = containingBlock();
-    RenderView* renderView = &view();
 
     LayoutUnit availableLogicalWidth = containingBlockLogicalWidthForContent();
     bool hasPerpendicularContainingBlock = cb->style()->isHorizontalWritingMode() != style()->isHorizontalWritingMode();
@@ -259,8 +258,8 @@ void RenderTable::updateLogicalWidth()
         setLogicalWidth(convertStyleLogicalWidthToComputedWidth(styleLogicalWidth, containerWidthInInlineDirection));
     else {
         // Subtract out any fixed margins from our available width for auto width tables.
-        LayoutUnit marginStart = minimumValueForLength(style()->marginStart(), availableLogicalWidth, renderView);
-        LayoutUnit marginEnd = minimumValueForLength(style()->marginEnd(), availableLogicalWidth, renderView);
+        LayoutUnit marginStart = minimumValueForLength(style()->marginStart(), availableLogicalWidth);
+        LayoutUnit marginEnd = minimumValueForLength(style()->marginEnd(), availableLogicalWidth);
         LayoutUnit marginTotal = marginStart + marginEnd;
 
         // Subtract out our margins to get the available content width.
@@ -307,8 +306,8 @@ void RenderTable::updateLogicalWidth()
         setMarginStart(marginValues.m_start);
         setMarginEnd(marginValues.m_end);
     } else {
-        setMarginStart(minimumValueForLength(style()->marginStart(), availableLogicalWidth, renderView));
-        setMarginEnd(minimumValueForLength(style()->marginEnd(), availableLogicalWidth, renderView));
+        setMarginStart(minimumValueForLength(style()->marginStart(), availableLogicalWidth));
+        setMarginEnd(minimumValueForLength(style()->marginEnd(), availableLogicalWidth));
     }
 }
 
@@ -324,7 +323,7 @@ LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const Length& st
     if (isCSSTable && styleLogicalWidth.isSpecified() && styleLogicalWidth.isPositive() && style()->boxSizing() == CONTENT_BOX)
         borders = borderStart() + borderEnd() + (collapseBorders() ? LayoutUnit() : paddingStart() + paddingEnd());
 
-    return minimumValueForLength(styleLogicalWidth, availableWidth, &view()) + borders;
+    return minimumValueForLength(styleLogicalWidth, availableWidth) + borders;
 }
 
 LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& styleLogicalHeight)
@@ -343,7 +342,7 @@ LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& 
     } else if (styleLogicalHeight.isPercent())
         computedLogicalHeight = computePercentageLogicalHeight(styleLogicalHeight);
     else if (styleLogicalHeight.isViewportPercentage())
-        computedLogicalHeight = minimumValueForLength(styleLogicalHeight, 0, &view());
+        computedLogicalHeight = minimumValueForLength(styleLogicalHeight, 0);
     else
         ASSERT_NOT_REACHED();
     return max<LayoutUnit>(0, computedLogicalHeight);
