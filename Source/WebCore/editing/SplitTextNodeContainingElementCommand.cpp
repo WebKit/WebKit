@@ -27,8 +27,8 @@
 #include "SplitTextNodeContainingElementCommand.h"
 
 #include "Element.h"
+#include "RenderElement.h"
 #include "Text.h"
-#include "RenderObject.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -53,7 +53,7 @@ void SplitTextNodeContainingElementCommand::doApply()
     if (!parent || !parent->parentElement() || !parent->parentElement()->rendererIsEditable())
         return;
 
-    RenderObject* parentRenderer = parent->renderer();
+    RenderElement* parentRenderer = parent->renderer();
     if (!parentRenderer || !parentRenderer->isInline()) {
         wrapContentsInDummySpan(parent);
         Node* firstChild = parent->firstChild();

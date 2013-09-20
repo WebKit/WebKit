@@ -40,7 +40,7 @@
 #include "HTMLSelectElement.h"
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableElement.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "WebKitAccessibleInterfaceText.h"
 #include "WebKitAccessibleWrapperAtk.h"
 
@@ -215,7 +215,7 @@ static AtkObject* webkitAccessibleTableGetCaption(AtkTable* table)
         if (node && isHTMLTableElement(node)) {
             HTMLTableCaptionElement* caption = toHTMLTableElement(node)->caption();
             if (caption)
-                return AccessibilityObject::firstAccessibleObjectFromNode(caption->renderer()->node())->wrapper();
+                return AccessibilityObject::firstAccessibleObjectFromNode(caption->renderer()->element())->wrapper();
         }
     }
     return 0;

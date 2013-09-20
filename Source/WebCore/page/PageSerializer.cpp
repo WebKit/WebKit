@@ -50,6 +50,7 @@
 #include "MIMETypeRegistry.h"
 #include "MarkupAccumulator.h"
 #include "Page.h"
+#include "RenderElement.h"
 #include "StyleCachedImage.h"
 #include "StyleImage.h"
 #include "StylePropertySet.h"

@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
+#include "RenderElement.h"
 #include "ScrollView.h"
 #include "Widget.h"
 

@@ -50,6 +50,7 @@
 #include "MemoryCache.h"
 #include "PingLoader.h"
 #include "PlatformStrategies.h"
+#include "RenderElement.h"
 #include "ResourceLoadScheduler.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"

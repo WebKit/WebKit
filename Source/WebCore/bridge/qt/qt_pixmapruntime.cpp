@@ -30,6 +30,7 @@
 #include "JSImageData.h"
 #include "JSRetainPtr.h"
 #include "JavaScript.h"
+#include "RenderElement.h"
 #include "StillImageQt.h"
 #include <QBuffer>
 #include <QByteArray>

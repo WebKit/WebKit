@@ -58,7 +58,7 @@
 #include "PluginDebug.h"
 #include "PluginMainThreadScheduler.h"
 #include "PluginPackage.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
 #include "npruntime_impl.h"
