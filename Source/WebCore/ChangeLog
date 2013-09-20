@@ -1,3 +1,31 @@
+2013-09-20  Zoltan Horvath  <zoltan@webkit.org>
+
+        Move logicalHeightForLine out of LineWidth.h
+        https://bugs.webkit.org/show_bug.cgi?id=121575
+
+        Reviewed by David Hyatt.
+
+        In bug #121107 (r155565), I moved logicalHeightForLine into LineWidth.h as part of LineWidth
+        refactoring. LogicalHeightForLine without passing the second parameter uses RenderBlock::lineHeight
+        anyway, except it doesn't take -line-box-contain CSS property into account. For Shapes we don't
+        have implementation for variable-height lines (https://bugs.webkit.org/show_bug.cgi?id=95361) yet, so
+        so I modified the affected functions to call lineHeight directly. I renamed logicalHeightForLine
+        to minLineHeightForReplacedRenderer, and I made the second parameter a mandatory for that function.
+
+        No new tests, no behavior change.
+
+        * rendering/LineWidth.cpp:
+        (WebCore::LineWidth::updateAvailableWidth):
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        * rendering/LineWidth.h:
+        * rendering/RenderBlock.cpp: Move the definition here.
+        (WebCore::RenderBlock::minLineHeightForReplacedRenderer):
+        * rendering/RenderBlock.h: Move the function here and rename it.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutShapeInsideInfo):
+        (WebCore::updateLogicalInlinePositions):
+        (WebCore::updateSegmentsForShapes):
+
 2013-09-20  Alexey Proskuryakov  <ap@apple.com>
 
         -[WebHTMLConveter _getFloat:forNode:property:] leaks

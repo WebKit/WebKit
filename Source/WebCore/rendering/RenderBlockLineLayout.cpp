@@ -75,8 +75,9 @@ ShapeInsideInfo* RenderBlock::layoutShapeInsideInfo() const
     ShapeInsideInfo* shapeInsideInfo = view().layoutState()->shapeInsideInfo();
 
     if (!shapeInsideInfo && flowThreadContainingBlock() && allowsShapeInsideInfoSharing()) {
+        LayoutUnit lineHeight = this->lineHeight(false, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
         // regionAtBlockOffset returns regions like an array first={0,N-1}, second={N,M-1}, ...
-        LayoutUnit offset = logicalHeight() + logicalHeightForLine(this, false) - LayoutUnit(1);
+        LayoutUnit offset = logicalHeight() + lineHeight - LayoutUnit(1);
         RenderRegion* region = regionAtBlockOffset(offset);
         if (region)
             shapeInsideInfo = region->shapeInsideInfo();
@@ -768,7 +769,7 @@ static IndentTextOrNot requiresIndent(bool isFirstLine, bool isAfterHardLineBrea
 
 static void updateLogicalInlinePositions(RenderBlock* block, float& lineLogicalLeft, float& lineLogicalRight, float& availableLogicalWidth, bool firstLine, IndentTextOrNot shouldIndentText, LayoutUnit boxLogicalHeight)
 {
-    LayoutUnit lineLogicalHeight = logicalHeightForLine(block, firstLine, boxLogicalHeight);
+    LayoutUnit lineLogicalHeight = block->minLineHeightForReplacedRenderer(firstLine, boxLogicalHeight);
     lineLogicalLeft = block->pixelSnappedLogicalLeftOffsetForLine(block->logicalHeight(), shouldIndentText == IndentText, lineLogicalHeight);
     lineLogicalRight = block->pixelSnappedLogicalRightOffsetForLine(block->logicalHeight(), shouldIndentText == IndentText, lineLogicalHeight);
     availableLogicalWidth = lineLogicalRight - lineLogicalLeft;
@@ -2593,7 +2594,7 @@ static void updateSegmentsForShapes(RenderBlock* block, const FloatingObject* la
     ASSERT(lastFloatFromPreviousLine);
 
     ShapeInsideInfo* shapeInsideInfo = block->layoutShapeInsideInfo();
-    LayoutUnit lineLogicalHeight = logicalHeightForLine(block, isFirstLine);
+    LayoutUnit lineLogicalHeight = block->lineHeight(isFirstLine, block->isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
     LayoutUnit lineLogicalBottom = block->logicalHeight() + lineLogicalHeight;
     bool lineOverlapsWithFloat = (lastFloatFromPreviousLine->y() < lineLogicalBottom) && (block->logicalHeight() < lastFloatFromPreviousLine->maxY());
 
