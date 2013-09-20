@@ -89,13 +89,25 @@ public:
     {
         initFromLength(length);
     }
-    
+
+    Length(Length&& other)
+    {
+        moveFromLength(std::move(other));
+    }
+
     Length& operator=(const Length& length)
     {
         initFromLength(length);
         return *this;
     }
-    
+
+    Length& operator=(Length&& other)
+    {
+        if (this != &other)
+            moveFromLength(std::move(other));
+        return *this;
+    }
+
     ~Length()
     {
         if (isCalculated())
@@ -285,6 +297,13 @@ private:
         memcpy(this, &length, sizeof(Length));
         if (isCalculated())
             incrementCalculatedRef();
+    }
+
+    void moveFromLength(Length&& length)
+    {
+        ASSERT(this != &length);
+        memcpy(this, &length, sizeof(Length));
+        length.m_type = Auto;
     }
 
     Length blendMixedTypes(const Length& from, double progress) const;

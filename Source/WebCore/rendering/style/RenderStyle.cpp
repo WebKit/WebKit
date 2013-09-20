@@ -1423,10 +1423,10 @@ bool RenderStyle::setFontDescription(const FontDescription& v)
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-Length RenderStyle::specifiedLineHeight() const { return inherited->specifiedLineHeight; }
+const Length& RenderStyle::specifiedLineHeight() const { return inherited->specifiedLineHeight; }
 void RenderStyle::setSpecifiedLineHeight(Length v) { SET_VAR(inherited, specifiedLineHeight, v); }
 #else
-Length RenderStyle::specifiedLineHeight() const { return inherited->line_height; }
+const Length& RenderStyle::specifiedLineHeight() const { return inherited->line_height; }
 #endif
 
 Length RenderStyle::lineHeight() const

@@ -43,9 +43,9 @@ NinePieceImage::NinePieceImage(PassRefPtr<StyleImage> image, LengthBox imageSlic
 {
     m_data.init();
     m_data.access()->image = image;
-    m_data.access()->imageSlices = imageSlices;
-    m_data.access()->borderSlices = borderSlices;
-    m_data.access()->outset = outset;
+    m_data.access()->imageSlices = std::move(imageSlices);
+    m_data.access()->borderSlices = std::move(borderSlices);
+    m_data.access()->outset = std::move(outset);
     m_data.access()->fill = fill;
     m_data.access()->horizontalRule = horizontalRule;
     m_data.access()->verticalRule = verticalRule;

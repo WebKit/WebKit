@@ -446,16 +446,16 @@ public:
     EDisplay display() const { return static_cast<EDisplay>(noninherited_flags._effectiveDisplay); }
     EDisplay originalDisplay() const { return static_cast<EDisplay>(noninherited_flags._originalDisplay); }
 
-    Length left() const { return surround->offset.left(); }
-    Length right() const { return surround->offset.right(); }
-    Length top() const { return surround->offset.top(); }
-    Length bottom() const { return surround->offset.bottom(); }
+    const Length& left() const { return surround->offset.left(); }
+    const Length& right() const { return surround->offset.right(); }
+    const Length& top() const { return surround->offset.top(); }
+    const Length& bottom() const { return surround->offset.bottom(); }
 
     // Accessors for positioned object edges that take into account writing mode.
-    Length logicalLeft() const { return surround->offset.logicalLeft(writingMode()); }
-    Length logicalRight() const { return surround->offset.logicalRight(writingMode()); }
-    Length logicalTop() const { return surround->offset.before(writingMode()); }
-    Length logicalBottom() const { return surround->offset.after(writingMode()); }
+    const Length& logicalLeft() const { return surround->offset.logicalLeft(writingMode()); }
+    const Length& logicalRight() const { return surround->offset.logicalRight(writingMode()); }
+    const Length& logicalTop() const { return surround->offset.before(writingMode()); }
+    const Length& logicalBottom() const { return surround->offset.after(writingMode()); }
 
     // Whether or not a positioned element requires normal flow x/y to be computed
     // to determine its position.
@@ -470,19 +470,19 @@ public:
     bool hasViewportConstrainedPosition() const { return position() == FixedPosition || position() == StickyPosition; }
     EFloat floating() const { return static_cast<EFloat>(noninherited_flags._floating); }
 
-    Length width() const { return m_box->width(); }
-    Length height() const { return m_box->height(); }
-    Length minWidth() const { return m_box->minWidth(); }
-    Length maxWidth() const { return m_box->maxWidth(); }
-    Length minHeight() const { return m_box->minHeight(); }
-    Length maxHeight() const { return m_box->maxHeight(); }
+    const Length& width() const { return m_box->width(); }
+    const Length& height() const { return m_box->height(); }
+    const Length& minWidth() const { return m_box->minWidth(); }
+    const Length& maxWidth() const { return m_box->maxWidth(); }
+    const Length& minHeight() const { return m_box->minHeight(); }
+    const Length& maxHeight() const { return m_box->maxHeight(); }
     
-    Length logicalWidth() const { return isHorizontalWritingMode() ? width() : height(); }
-    Length logicalHeight() const { return isHorizontalWritingMode() ? height() : width(); }
-    Length logicalMinWidth() const { return isHorizontalWritingMode() ? minWidth() : minHeight(); }
-    Length logicalMaxWidth() const { return isHorizontalWritingMode() ? maxWidth() : maxHeight(); }
-    Length logicalMinHeight() const { return isHorizontalWritingMode() ? minHeight() : minWidth(); }
-    Length logicalMaxHeight() const { return isHorizontalWritingMode() ? maxHeight() : maxWidth(); }
+    const Length& logicalWidth() const { return isHorizontalWritingMode() ? width() : height(); }
+    const Length& logicalHeight() const { return isHorizontalWritingMode() ? height() : width(); }
+    const Length& logicalMinWidth() const { return isHorizontalWritingMode() ? minWidth() : minHeight(); }
+    const Length& logicalMaxWidth() const { return isHorizontalWritingMode() ? maxWidth() : maxHeight(); }
+    const Length& logicalMinHeight() const { return isHorizontalWritingMode() ? minHeight() : minWidth(); }
+    const Length& logicalMaxHeight() const { return isHorizontalWritingMode() ? maxHeight() : maxWidth(); }
 
     const BorderData& border() const { return surround->border; }
     const BorderValue& borderLeft() const { return surround->border.left(); }
@@ -497,14 +497,14 @@ public:
 
     const NinePieceImage& borderImage() const { return surround->border.image(); }
     StyleImage* borderImageSource() const { return surround->border.image().image(); }
-    LengthBox borderImageSlices() const { return surround->border.image().imageSlices(); }
-    LengthBox borderImageWidth() const { return surround->border.image().borderSlices(); }
-    LengthBox borderImageOutset() const { return surround->border.image().outset(); }
+    const LengthBox& borderImageSlices() const { return surround->border.image().imageSlices(); }
+    const LengthBox& borderImageWidth() const { return surround->border.image().borderSlices(); }
+    const LengthBox& borderImageOutset() const { return surround->border.image().outset(); }
 
-    LengthSize borderTopLeftRadius() const { return surround->border.topLeft(); }
-    LengthSize borderTopRightRadius() const { return surround->border.topRight(); }
-    LengthSize borderBottomLeftRadius() const { return surround->border.bottomLeft(); }
-    LengthSize borderBottomRightRadius() const { return surround->border.bottomRight(); }
+    const LengthSize& borderTopLeftRadius() const { return surround->border.topLeft(); }
+    const LengthSize& borderTopRightRadius() const { return surround->border.topRight(); }
+    const LengthSize& borderBottomLeftRadius() const { return surround->border.bottomLeft(); }
+    const LengthSize& borderBottomRightRadius() const { return surround->border.bottomRight(); }
     bool hasBorderRadius() const { return surround->border.hasBorderRadius(); }
 
     unsigned borderLeftWidth() const { return surround->border.borderLeftWidth(); }
@@ -541,13 +541,13 @@ public:
 
     EVisibility visibility() const { return static_cast<EVisibility>(inherited_flags._visibility); }
     EVerticalAlign verticalAlign() const { return static_cast<EVerticalAlign>(noninherited_flags._vertical_align); }
-    Length verticalAlignLength() const { return m_box->verticalAlign(); }
+    const Length& verticalAlignLength() const { return m_box->verticalAlign(); }
 
-    Length clipLeft() const { return visual->clip.left(); }
-    Length clipRight() const { return visual->clip.right(); }
-    Length clipTop() const { return visual->clip.top(); }
-    Length clipBottom() const { return visual->clip.bottom(); }
-    LengthBox clip() const { return visual->clip; }
+    const Length& clipLeft() const { return visual->clip.left(); }
+    const Length& clipRight() const { return visual->clip.right(); }
+    const Length& clipTop() const { return visual->clip.top(); }
+    const Length& clipBottom() const { return visual->clip.bottom(); }
+    const LengthBox& clip() const { return visual->clip; }
     bool hasClip() const { return visual->hasClip; }
 
     EUnicodeBidi unicodeBidi() const { return static_cast<EUnicodeBidi>(noninherited_flags._unicodeBidi); }
@@ -567,7 +567,7 @@ public:
     float textAutosizingMultiplier() const { return visual->m_textAutosizingMultiplier; }
 #endif
 
-    Length textIndent() const { return rareInheritedData->indent; }
+    const Length& textIndent() const { return rareInheritedData->indent; }
 #if ENABLE(CSS3_TEXT)
     TextIndentLine textIndentLine() const { return static_cast<TextIndentLine>(rareInheritedData->m_textIndentLine); }
     TextIndentType textIndentType() const { return static_cast<TextIndentType>(rareInheritedData->m_textIndentType); }
@@ -593,7 +593,7 @@ public:
     TextDirection direction() const { return static_cast<TextDirection>(inherited_flags._direction); }
     bool isLeftToRightDirection() const { return direction() == LTR; }
 
-    Length specifiedLineHeight() const;
+    const Length& specifiedLineHeight() const;
     Length lineHeight() const;
     int computedLineHeight(RenderView* = 0) const;
 
@@ -659,10 +659,10 @@ public:
     EFillAttachment backgroundAttachment() const { return static_cast<EFillAttachment>(m_background->background().attachment()); }
     EFillBox backgroundClip() const { return static_cast<EFillBox>(m_background->background().clip()); }
     EFillBox backgroundOrigin() const { return static_cast<EFillBox>(m_background->background().origin()); }
-    Length backgroundXPosition() const { return m_background->background().xPosition(); }
-    Length backgroundYPosition() const { return m_background->background().yPosition(); }
+    const Length& backgroundXPosition() const { return m_background->background().xPosition(); }
+    const Length& backgroundYPosition() const { return m_background->background().yPosition(); }
     EFillSizeType backgroundSizeType() const { return m_background->background().sizeType(); }
-    LengthSize backgroundSizeLength() const { return m_background->background().sizeLength(); }
+    const LengthSize& backgroundSizeLength() const { return m_background->background().sizeLength(); }
     FillLayer* accessBackgroundLayers() { return &(m_background.access()->m_background); }
     const FillLayer* backgroundLayers() const { return &(m_background->background()); }
 
@@ -672,10 +672,10 @@ public:
     CompositeOperator maskComposite() const { return static_cast<CompositeOperator>(rareNonInheritedData->m_mask.composite()); }
     EFillBox maskClip() const { return static_cast<EFillBox>(rareNonInheritedData->m_mask.clip()); }
     EFillBox maskOrigin() const { return static_cast<EFillBox>(rareNonInheritedData->m_mask.origin()); }
-    Length maskXPosition() const { return rareNonInheritedData->m_mask.xPosition(); }
-    Length maskYPosition() const { return rareNonInheritedData->m_mask.yPosition(); }
+    const Length& maskXPosition() const { return rareNonInheritedData->m_mask.xPosition(); }
+    const Length& maskYPosition() const { return rareNonInheritedData->m_mask.yPosition(); }
     EFillSizeType maskSizeType() const { return rareNonInheritedData->m_mask.sizeType(); }
-    LengthSize maskSizeLength() const { return rareNonInheritedData->m_mask.sizeLength(); }
+    const LengthSize& maskSizeLength() const { return rareNonInheritedData->m_mask.sizeLength(); }
     FillLayer* accessMaskLayers() { return &(rareNonInheritedData.access()->m_mask); }
     const FillLayer* maskLayers() const { return &(rareNonInheritedData->m_mask); }
     const NinePieceImage& maskBoxImage() const { return rareNonInheritedData->m_maskBoxImage; }
@@ -691,28 +691,28 @@ public:
     StyleImage* listStyleImage() const;
     EListStylePosition listStylePosition() const { return static_cast<EListStylePosition>(inherited_flags._list_style_position); }
 
-    Length marginTop() const { return surround->margin.top(); }
-    Length marginBottom() const { return surround->margin.bottom(); }
-    Length marginLeft() const { return surround->margin.left(); }
-    Length marginRight() const { return surround->margin.right(); }
-    Length marginBefore() const { return surround->margin.before(writingMode()); }
-    Length marginAfter() const { return surround->margin.after(writingMode()); }
-    Length marginStart() const { return surround->margin.start(writingMode(), direction()); }
-    Length marginEnd() const { return surround->margin.end(writingMode(), direction()); }
-    Length marginStartUsing(const RenderStyle* otherStyle) const { return surround->margin.start(otherStyle->writingMode(), otherStyle->direction()); }
-    Length marginEndUsing(const RenderStyle* otherStyle) const { return surround->margin.end(otherStyle->writingMode(), otherStyle->direction()); }
-    Length marginBeforeUsing(const RenderStyle* otherStyle) const { return surround->margin.before(otherStyle->writingMode()); }
-    Length marginAfterUsing(const RenderStyle* otherStyle) const { return surround->margin.after(otherStyle->writingMode()); }
+    const Length& marginTop() const { return surround->margin.top(); }
+    const Length& marginBottom() const { return surround->margin.bottom(); }
+    const Length& marginLeft() const { return surround->margin.left(); }
+    const Length& marginRight() const { return surround->margin.right(); }
+    const Length& marginBefore() const { return surround->margin.before(writingMode()); }
+    const Length& marginAfter() const { return surround->margin.after(writingMode()); }
+    const Length& marginStart() const { return surround->margin.start(writingMode(), direction()); }
+    const Length& marginEnd() const { return surround->margin.end(writingMode(), direction()); }
+    const Length& marginStartUsing(const RenderStyle* otherStyle) const { return surround->margin.start(otherStyle->writingMode(), otherStyle->direction()); }
+    const Length& marginEndUsing(const RenderStyle* otherStyle) const { return surround->margin.end(otherStyle->writingMode(), otherStyle->direction()); }
+    const Length& marginBeforeUsing(const RenderStyle* otherStyle) const { return surround->margin.before(otherStyle->writingMode()); }
+    const Length& marginAfterUsing(const RenderStyle* otherStyle) const { return surround->margin.after(otherStyle->writingMode()); }
 
-    LengthBox paddingBox() const { return surround->padding; }
-    Length paddingTop() const { return surround->padding.top(); }
-    Length paddingBottom() const { return surround->padding.bottom(); }
-    Length paddingLeft() const { return surround->padding.left(); }
-    Length paddingRight() const { return surround->padding.right(); }
-    Length paddingBefore() const { return surround->padding.before(writingMode()); }
-    Length paddingAfter() const { return surround->padding.after(writingMode()); }
-    Length paddingStart() const { return surround->padding.start(writingMode(), direction()); }
-    Length paddingEnd() const { return surround->padding.end(writingMode(), direction()); }
+    const LengthBox& paddingBox() const { return surround->padding; }
+    const Length& paddingTop() const { return surround->padding.top(); }
+    const Length& paddingBottom() const { return surround->padding.bottom(); }
+    const Length& paddingLeft() const { return surround->padding.left(); }
+    const Length& paddingRight() const { return surround->padding.right(); }
+    const Length& paddingBefore() const { return surround->padding.before(writingMode()); }
+    const Length& paddingAfter() const { return surround->padding.after(writingMode()); }
+    const Length& paddingStart() const { return surround->padding.start(writingMode(), direction()); }
+    const Length& paddingEnd() const { return surround->padding.end(writingMode(), direction()); }
 
     ECursor cursor() const { return static_cast<ECursor>(inherited_flags._cursor_style); }
 #if ENABLE(CURSOR_VISIBILITY)
@@ -769,7 +769,7 @@ public:
     int order() const { return rareNonInheritedData->m_order; }
     float flexGrow() const { return rareNonInheritedData->m_flexibleBox->m_flexGrow; }
     float flexShrink() const { return rareNonInheritedData->m_flexibleBox->m_flexShrink; }
-    Length flexBasis() const { return rareNonInheritedData->m_flexibleBox->m_flexBasis; }
+    const Length& flexBasis() const { return rareNonInheritedData->m_flexibleBox->m_flexBasis; }
     EAlignContent alignContent() const { return static_cast<EAlignContent>(rareNonInheritedData->m_alignContent); }
     EAlignItems alignItems() const { return static_cast<EAlignItems>(rareNonInheritedData->m_alignItems); }
     EAlignItems alignSelf() const { return static_cast<EAlignItems>(rareNonInheritedData->m_alignSelf); }
@@ -805,7 +805,7 @@ public:
 #endif
     StyleReflection* boxReflect() const { return rareNonInheritedData->m_boxReflect.get(); }
     EBoxSizing boxSizing() const { return m_box->boxSizing(); }
-    Length marqueeIncrement() const { return rareNonInheritedData->m_marquee->increment; }
+    const Length& marqueeIncrement() const { return rareNonInheritedData->m_marquee->increment; }
     int marqueeSpeed() const { return rareNonInheritedData->m_marquee->speed; }
     int marqueeLoopCount() const { return rareNonInheritedData->m_marquee->loops; }
     EMarqueeBehavior marqueeBehavior() const { return static_cast<EMarqueeBehavior>(rareNonInheritedData->m_marquee->behavior); }
@@ -853,8 +853,8 @@ public:
     EPageBreak regionBreakInside() const { return static_cast<EPageBreak>(rareNonInheritedData->m_regionBreakInside); }
     EPageBreak regionBreakAfter() const { return static_cast<EPageBreak>(rareNonInheritedData->m_regionBreakAfter); }
     const TransformOperations& transform() const { return rareNonInheritedData->m_transform->m_operations; }
-    Length transformOriginX() const { return rareNonInheritedData->m_transform->m_x; }
-    Length transformOriginY() const { return rareNonInheritedData->m_transform->m_y; }
+    const Length& transformOriginX() const { return rareNonInheritedData->m_transform->m_x; }
+    const Length& transformOriginY() const { return rareNonInheritedData->m_transform->m_y; }
     float transformOriginZ() const { return rareNonInheritedData->m_transform->m_z; }
     bool hasTransform() const { return !rareNonInheritedData->m_transform->m_operations.operations().isEmpty(); }
 
@@ -919,9 +919,9 @@ public:
     EBackfaceVisibility backfaceVisibility() const { return static_cast<EBackfaceVisibility>(rareNonInheritedData->m_backfaceVisibility); }
     float perspective() const { return rareNonInheritedData->m_perspective; }
     bool hasPerspective() const { return rareNonInheritedData->m_perspective > 0; }
-    Length perspectiveOriginX() const { return rareNonInheritedData->m_perspectiveOriginX; }
-    Length perspectiveOriginY() const { return rareNonInheritedData->m_perspectiveOriginY; }
-    LengthSize pageSize() const { return rareNonInheritedData->m_pageSize; }
+    const Length& perspectiveOriginX() const { return rareNonInheritedData->m_perspectiveOriginX; }
+    const Length& perspectiveOriginY() const { return rareNonInheritedData->m_perspectiveOriginY; }
+    const LengthSize& pageSize() const { return rareNonInheritedData->m_pageSize; }
     PageSizeType pageSizeType() const { return static_cast<PageSizeType>(rareNonInheritedData->m_pageSizeType); }
     
 #if USE(ACCELERATED_COMPOSITING)
@@ -990,36 +990,36 @@ public:
     void setPosition(EPosition v) { noninherited_flags._position = v; }
     void setFloating(EFloat v) { noninherited_flags._floating = v; }
 
-    void setLeft(Length v) { SET_VAR(surround, offset.m_left, v); }
-    void setRight(Length v) { SET_VAR(surround, offset.m_right, v); }
-    void setTop(Length v) { SET_VAR(surround, offset.m_top, v); }
-    void setBottom(Length v) { SET_VAR(surround, offset.m_bottom, v); }
+    void setLeft(Length v) { SET_VAR(surround, offset.m_left, std::move(v)); }
+    void setRight(Length v) { SET_VAR(surround, offset.m_right, std::move(v)); }
+    void setTop(Length v) { SET_VAR(surround, offset.m_top, std::move(v)); }
+    void setBottom(Length v) { SET_VAR(surround, offset.m_bottom, std::move(v)); }
 
-    void setWidth(Length v) { SET_VAR(m_box, m_width, v); }
-    void setHeight(Length v) { SET_VAR(m_box, m_height, v); }
+    void setWidth(Length v) { SET_VAR(m_box, m_width, std::move(v)); }
+    void setHeight(Length v) { SET_VAR(m_box, m_height, std::move(v)); }
 
     void setLogicalWidth(Length v)
     {
         if (isHorizontalWritingMode()) {
-            SET_VAR(m_box, m_width, v);
+            SET_VAR(m_box, m_width, std::move(v));
         } else {
-            SET_VAR(m_box, m_height, v);
+            SET_VAR(m_box, m_height, std::move(v));
         }
     }
 
     void setLogicalHeight(Length v)
     {
         if (isHorizontalWritingMode()) {
-            SET_VAR(m_box, m_height, v);
+            SET_VAR(m_box, m_height, std::move(v));
         } else {
-            SET_VAR(m_box, m_width, v);
+            SET_VAR(m_box, m_width, std::move(v));
         }
     }
 
-    void setMinWidth(Length v) { SET_VAR(m_box, m_minWidth, v); }
-    void setMaxWidth(Length v) { SET_VAR(m_box, m_maxWidth, v); }
-    void setMinHeight(Length v) { SET_VAR(m_box, m_minHeight, v); }
-    void setMaxHeight(Length v) { SET_VAR(m_box, m_maxHeight, v); }
+    void setMinWidth(Length v) { SET_VAR(m_box, m_minWidth, std::move(v)); }
+    void setMaxWidth(Length v) { SET_VAR(m_box, m_maxWidth, std::move(v)); }
+    void setMinHeight(Length v) { SET_VAR(m_box, m_minHeight, std::move(v)); }
+    void setMaxHeight(Length v) { SET_VAR(m_box, m_maxHeight, std::move(v)); }
 
 #if ENABLE(DASHBOARD_SUPPORT)
     Vector<StyleDashboardRegion> dashboardRegions() const { return rareNonInheritedData->m_dashboardRegions; }
@@ -1029,10 +1029,10 @@ public:
     {
         StyleDashboardRegion region;
         region.label = label;
-        region.offset.m_top = t;
-        region.offset.m_right = r;
-        region.offset.m_bottom = b;
-        region.offset.m_left = l;
+        region.offset.m_top = std::move(t);
+        region.offset.m_right = std::move(r);
+        region.offset.m_bottom = std::move(b);
+        region.offset.m_left = std::move(l);
         region.type = type;
         if (!append)
             rareNonInheritedData.access()->m_dashboardRegions.clear();
@@ -1059,10 +1059,10 @@ public:
 
     void setBackgroundColor(const Color& v) { SET_VAR(m_background, m_color, v); }
 
-    void setBackgroundXPosition(Length length) { SET_VAR(m_background, m_background.m_xPosition, length); }
-    void setBackgroundYPosition(Length length) { SET_VAR(m_background, m_background.m_yPosition, length); }
+    void setBackgroundXPosition(Length length) { SET_VAR(m_background, m_background.m_xPosition, std::move(length)); }
+    void setBackgroundYPosition(Length length) { SET_VAR(m_background, m_background.m_yPosition, std::move(length)); }
     void setBackgroundSize(EFillSizeType b) { SET_VAR(m_background, m_background.m_sizeType, b); }
-    void setBackgroundSizeLength(LengthSize s) { SET_VAR(m_background, m_background.m_sizeLength, s); }
+    void setBackgroundSizeLength(LengthSize size) { SET_VAR(m_background, m_background.m_sizeLength, std::move(size)); }
     
     void setBorderImage(const NinePieceImage& b) { SET_VAR(surround, border.m_image, b); }
     void setBorderImageSource(PassRefPtr<StyleImage>);
@@ -1070,10 +1070,10 @@ public:
     void setBorderImageWidth(LengthBox);
     void setBorderImageOutset(LengthBox);
 
-    void setBorderTopLeftRadius(LengthSize s) { SET_VAR(surround, border.m_topLeft, s); }
-    void setBorderTopRightRadius(LengthSize s) { SET_VAR(surround, border.m_topRight, s); }
-    void setBorderBottomLeftRadius(LengthSize s) { SET_VAR(surround, border.m_bottomLeft, s); }
-    void setBorderBottomRightRadius(LengthSize s) { SET_VAR(surround, border.m_bottomRight, s); }
+    void setBorderTopLeftRadius(LengthSize size) { SET_VAR(surround, border.m_topLeft, std::move(size)); }
+    void setBorderTopRightRadius(LengthSize size) { SET_VAR(surround, border.m_topRight, std::move(size)); }
+    void setBorderBottomLeftRadius(LengthSize size) { SET_VAR(surround, border.m_bottomLeft, std::move(size)); }
+    void setBorderBottomRightRadius(LengthSize size) { SET_VAR(surround, border.m_bottomRight, std::move(size)); }
 
     void setBorderRadius(LengthSize s)
     {
@@ -1115,15 +1115,15 @@ public:
     void setOverflowY(EOverflow v) { noninherited_flags._overflowY = v; }
     void setVisibility(EVisibility v) { inherited_flags._visibility = v; }
     void setVerticalAlign(EVerticalAlign v) { noninherited_flags._vertical_align = v; }
-    void setVerticalAlignLength(Length length) { setVerticalAlign(LENGTH); SET_VAR(m_box, m_verticalAlign, length); }
+    void setVerticalAlignLength(Length length) { setVerticalAlign(LENGTH); SET_VAR(m_box, m_verticalAlign, std::move(length)); }
 
     void setHasClip(bool b = true) { SET_VAR(visual, hasClip, b); }
-    void setClipLeft(Length v) { SET_VAR(visual, clip.m_left, v); }
-    void setClipRight(Length v) { SET_VAR(visual, clip.m_right, v); }
-    void setClipTop(Length v) { SET_VAR(visual, clip.m_top, v); }
-    void setClipBottom(Length v) { SET_VAR(visual, clip.m_bottom, v); }
+    void setClipLeft(Length length) { SET_VAR(visual, clip.m_left, std::move(length)); }
+    void setClipRight(Length length) { SET_VAR(visual, clip.m_right, std::move(length)); }
+    void setClipTop(Length length) { SET_VAR(visual, clip.m_top, std::move(length)); }
+    void setClipBottom(Length length) { SET_VAR(visual, clip.m_bottom, std::move(length)); }
     void setClip(Length top, Length right, Length bottom, Length left);
-    void setClip(LengthBox box) { SET_VAR(visual, clip, box); }
+    void setClip(LengthBox box) { SET_VAR(visual, clip, std::move(box)); }
 
     void setUnicodeBidi(EUnicodeBidi b) { noninherited_flags._unicodeBidi = b; }
 
@@ -1143,7 +1143,7 @@ public:
 #endif
 
     void setColor(const Color&);
-    void setTextIndent(Length v) { SET_VAR(rareInheritedData, indent, v); }
+    void setTextIndent(Length length) { SET_VAR(rareInheritedData, indent, std::move(length)); }
 #if ENABLE(CSS3_TEXT)
     void setTextIndentLine(TextIndentLine v) { SET_VAR(rareInheritedData, m_textIndentLine, v); }
     void setTextIndentType(TextIndentType v) { SET_VAR(rareInheritedData, m_textIndentType, v); }
@@ -1211,9 +1211,9 @@ public:
 
     void setMaskBoxImage(const NinePieceImage& b) { SET_VAR(rareNonInheritedData, m_maskBoxImage, b); }
     void setMaskBoxImageSource(PassRefPtr<StyleImage> v) { rareNonInheritedData.access()->m_maskBoxImage.setImage(v); }
-    void setMaskXPosition(Length length) { SET_VAR(rareNonInheritedData, m_mask.m_xPosition, length); }
-    void setMaskYPosition(Length length) { SET_VAR(rareNonInheritedData, m_mask.m_yPosition, length); }
-    void setMaskSize(LengthSize s) { SET_VAR(rareNonInheritedData, m_mask.m_sizeLength, s); }
+    void setMaskXPosition(Length length) { SET_VAR(rareNonInheritedData, m_mask.m_xPosition, std::move(length)); }
+    void setMaskYPosition(Length length) { SET_VAR(rareNonInheritedData, m_mask.m_yPosition, std::move(length)); }
+    void setMaskSize(LengthSize size) { SET_VAR(rareNonInheritedData, m_mask.m_sizeLength, std::move(size)); }
 
     void setBorderCollapse(EBorderCollapse collapse) { inherited_flags._border_collapse = collapse; }
     void setHorizontalBorderSpacing(short);
@@ -1230,19 +1230,19 @@ public:
     void setListStylePosition(EListStylePosition v) { inherited_flags._list_style_position = v; }
 
     void resetMargin() { SET_VAR(surround, margin, LengthBox(Fixed)); }
-    void setMarginTop(Length v) { SET_VAR(surround, margin.m_top, v); }
-    void setMarginBottom(Length v) { SET_VAR(surround, margin.m_bottom, v); }
-    void setMarginLeft(Length v) { SET_VAR(surround, margin.m_left, v); }
-    void setMarginRight(Length v) { SET_VAR(surround, margin.m_right, v); }
+    void setMarginTop(Length length) { SET_VAR(surround, margin.m_top, std::move(length)); }
+    void setMarginBottom(Length length) { SET_VAR(surround, margin.m_bottom, std::move(length)); }
+    void setMarginLeft(Length length) { SET_VAR(surround, margin.m_left, std::move(length)); }
+    void setMarginRight(Length length) { SET_VAR(surround, margin.m_right, std::move(length)); }
     void setMarginStart(Length);
     void setMarginEnd(Length);
 
     void resetPadding() { SET_VAR(surround, padding, LengthBox(Auto)); }
-    void setPaddingBox(const LengthBox& b) { SET_VAR(surround, padding, b); }
-    void setPaddingTop(Length v) { SET_VAR(surround, padding.m_top, v); }
-    void setPaddingBottom(Length v) { SET_VAR(surround, padding.m_bottom, v); }
-    void setPaddingLeft(Length v) { SET_VAR(surround, padding.m_left, v); }
-    void setPaddingRight(Length v) { SET_VAR(surround, padding.m_right, v); }
+    void setPaddingBox(LengthBox box) { SET_VAR(surround, padding, std::move(box)); }
+    void setPaddingTop(Length length) { SET_VAR(surround, padding.m_top, std::move(length)); }
+    void setPaddingBottom(Length length) { SET_VAR(surround, padding.m_bottom, std::move(length)); }
+    void setPaddingLeft(Length length) { SET_VAR(surround, padding.m_left, std::move(length)); }
+    void setPaddingRight(Length length) { SET_VAR(surround, padding.m_right, std::move(length)); }
 
     void setCursor(ECursor c) { inherited_flags._cursor_style = c; }
     void addCursor(PassRefPtr<StyleImage>, const IntPoint& hotSpot = IntPoint());
@@ -1301,7 +1301,7 @@ public:
     void setBoxSizing(EBoxSizing s) { SET_VAR(m_box, m_boxSizing, s); }
     void setFlexGrow(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexGrow, f); }
     void setFlexShrink(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexShrink, f); }
-    void setFlexBasis(Length length) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexBasis, length); }
+    void setFlexBasis(Length length) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexBasis, std::move(length)); }
     void setOrder(int o) { SET_VAR(rareNonInheritedData, m_order, o); }
     void setAlignContent(EAlignContent p) { SET_VAR(rareNonInheritedData, m_alignContent, p); }
     void setAlignItems(EAlignItems a) { SET_VAR(rareNonInheritedData, m_alignItems, a); }
@@ -1321,7 +1321,7 @@ public:
     void setGridItemRowStart(const GridPosition& rowStartPosition) { SET_VAR(rareNonInheritedData.access()->m_gridItem, m_gridRowStart, rowStartPosition); }
     void setGridItemRowEnd(const GridPosition& rowEndPosition) { SET_VAR(rareNonInheritedData.access()->m_gridItem, m_gridRowEnd, rowEndPosition); }
 
-    void setMarqueeIncrement(Length f) { SET_VAR(rareNonInheritedData.access()->m_marquee, increment, f); }
+    void setMarqueeIncrement(Length length) { SET_VAR(rareNonInheritedData.access()->m_marquee, increment, std::move(length)); }
     void setMarqueeSpeed(int f) { SET_VAR(rareNonInheritedData.access()->m_marquee, speed, f); }
     void setMarqueeDirection(EMarqueeDirection d) { SET_VAR(rareNonInheritedData.access()->m_marquee, direction, d); }
     void setMarqueeBehavior(EMarqueeBehavior b) { SET_VAR(rareNonInheritedData.access()->m_marquee, behavior, b); }
@@ -1367,8 +1367,8 @@ public:
     void setRegionBreakAfter(EPageBreak p) { SET_VAR(rareNonInheritedData, m_regionBreakAfter, p); }
     void inheritColumnPropertiesFrom(RenderStyle* parent) { rareNonInheritedData.access()->m_multiCol = parent->rareNonInheritedData->m_multiCol; }
     void setTransform(const TransformOperations& ops) { SET_VAR(rareNonInheritedData.access()->m_transform, m_operations, ops); }
-    void setTransformOriginX(Length l) { SET_VAR(rareNonInheritedData.access()->m_transform, m_x, l); }
-    void setTransformOriginY(Length l) { SET_VAR(rareNonInheritedData.access()->m_transform, m_y, l); }
+    void setTransformOriginX(Length length) { SET_VAR(rareNonInheritedData.access()->m_transform, m_x, std::move(length)); }
+    void setTransformOriginY(Length length) { SET_VAR(rareNonInheritedData.access()->m_transform, m_y, std::move(length)); }
     void setTransformOriginZ(float f) { SET_VAR(rareNonInheritedData.access()->m_transform, m_z, f); }
     void setSpeak(ESpeak s) { SET_VAR(rareInheritedData, speak, s); }
     void setTextCombine(TextCombine v) { SET_VAR(rareNonInheritedData, m_textCombine, v); }
@@ -1426,9 +1426,9 @@ public:
     void setTransformStyle3D(ETransformStyle3D b) { SET_VAR(rareNonInheritedData, m_transformStyle3D, b); }
     void setBackfaceVisibility(EBackfaceVisibility b) { SET_VAR(rareNonInheritedData, m_backfaceVisibility, b); }
     void setPerspective(float p) { SET_VAR(rareNonInheritedData, m_perspective, p); }
-    void setPerspectiveOriginX(Length l) { SET_VAR(rareNonInheritedData, m_perspectiveOriginX, l); }
-    void setPerspectiveOriginY(Length l) { SET_VAR(rareNonInheritedData, m_perspectiveOriginY, l); }
-    void setPageSize(LengthSize s) { SET_VAR(rareNonInheritedData, m_pageSize, s); }
+    void setPerspectiveOriginX(Length length) { SET_VAR(rareNonInheritedData, m_perspectiveOriginX, std::move(length)); }
+    void setPerspectiveOriginY(Length length) { SET_VAR(rareNonInheritedData, m_perspectiveOriginY, std::move(length)); }
+    void setPageSize(LengthSize size) { SET_VAR(rareNonInheritedData, m_pageSize, std::move(size)); }
     void setPageSizeType(PageSizeType t) { SET_VAR(rareNonInheritedData, m_pageSizeType, t); }
     void resetPageSizeType() { SET_VAR(rareNonInheritedData, m_pageSizeType, PAGE_SIZE_AUTO); }
 
@@ -1516,12 +1516,12 @@ public:
     static ShapeValue* initialShapeInside();
     static ShapeValue* initialShapeOutside() { return 0; }
 
-    Length shapePadding() const { return rareNonInheritedData->m_shapePadding; }
-    void setShapePadding(Length shapePadding) { SET_VAR(rareNonInheritedData, m_shapePadding, shapePadding); }
+    const Length& shapePadding() const { return rareNonInheritedData->m_shapePadding; }
+    void setShapePadding(Length shapePadding) { SET_VAR(rareNonInheritedData, m_shapePadding, std::move(shapePadding)); }
     static Length initialShapePadding() { return Length(0, Fixed); }
 
-    Length shapeMargin() const { return rareNonInheritedData->m_shapeMargin; }
-    void setShapeMargin(Length shapeMargin) { SET_VAR(rareNonInheritedData, m_shapeMargin, shapeMargin); }
+    const Length& shapeMargin() const { return rareNonInheritedData->m_shapeMargin; }
+    void setShapeMargin(Length shapeMargin) { SET_VAR(rareNonInheritedData, m_shapeMargin, std::move(shapeMargin)); }
     static Length initialShapeMargin() { return Length(0, Fixed); }
 #endif
 

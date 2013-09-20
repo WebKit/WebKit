@@ -46,11 +46,11 @@ public:
     bool operator!=(const StyleReflection& o) const { return !(*this == o); }
 
     CSSReflectionDirection direction() const { return m_direction; }
-    Length offset() const { return m_offset; }
+    const Length& offset() const { return m_offset; }
     const NinePieceImage& mask() const { return m_mask; }
 
     void setDirection(CSSReflectionDirection dir) { m_direction = dir; }
-    void setOffset(const Length& l) { m_offset = l; }
+    void setOffset(Length offset) { m_offset = std::move(offset); }
     void setMask(const NinePieceImage& image) { m_mask = image; }
 
 private:

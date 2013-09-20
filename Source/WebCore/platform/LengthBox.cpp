@@ -33,17 +33,17 @@
 
 namespace WebCore {
 
-Length LengthBox::logicalLeft(WritingMode writingMode) const
+const Length& LengthBox::logicalLeft(WritingMode writingMode) const
 {
     return isHorizontalWritingMode(writingMode) ? m_left : m_top;
 }
 
-Length LengthBox::logicalRight(WritingMode writingMode) const
+const Length& LengthBox::logicalRight(WritingMode writingMode) const
 {
     return isHorizontalWritingMode(writingMode) ? m_right : m_bottom;
 }
 
-Length LengthBox::before(WritingMode writingMode) const
+const Length& LengthBox::before(WritingMode writingMode) const
 {
     switch (writingMode) {
     case TopToBottomWritingMode:
@@ -59,7 +59,7 @@ Length LengthBox::before(WritingMode writingMode) const
     return m_top;
 }
 
-Length LengthBox::after(WritingMode writingMode) const
+const Length& LengthBox::after(WritingMode writingMode) const
 {
     switch (writingMode) {
     case TopToBottomWritingMode:
@@ -75,14 +75,14 @@ Length LengthBox::after(WritingMode writingMode) const
     return m_bottom;
 }
 
-Length LengthBox::start(WritingMode writingMode, TextDirection direction) const
+const Length& LengthBox::start(WritingMode writingMode, TextDirection direction) const
 {
     if (isHorizontalWritingMode(writingMode))
         return isLeftToRightDirection(direction) ? m_left : m_right;
     return isLeftToRightDirection(direction) ? m_top : m_bottom;
 }
 
-Length LengthBox::end(WritingMode writingMode, TextDirection direction) const
+const Length& LengthBox::end(WritingMode writingMode, TextDirection direction) const
 {
     if (isHorizontalWritingMode(writingMode))
         return isLeftToRightDirection(direction) ? m_right : m_left;

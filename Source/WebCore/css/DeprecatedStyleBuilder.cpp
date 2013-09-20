@@ -346,7 +346,7 @@ enum LengthLegacyIntrinsic { LegacyIntrinsicDisabled = 0, LegacyIntrinsicEnabled
 enum LengthIntrinsic { IntrinsicDisabled = 0, IntrinsicEnabled };
 enum LengthNone { NoneDisabled = 0, NoneEnabled };
 enum LengthUndefined { UndefinedDisabled = 0, UndefinedEnabled };
-template <Length (RenderStyle::*getterFunction)() const,
+template <const Length& (RenderStyle::*getterFunction)() const,
           void (RenderStyle::*setterFunction)(Length),
           Length (*initialFunction)(),
           LengthAuto autoEnabled = AutoDisabled,
@@ -356,7 +356,7 @@ template <Length (RenderStyle::*getterFunction)() const,
           LengthUndefined noneUndefined = UndefinedDisabled>
 class ApplyPropertyLength {
 public:
-    static void setValue(RenderStyle* style, Length value) { (style->*setterFunction)(value); }
+    static void setValue(RenderStyle* style, Length value) { (style->*setterFunction)(std::move(value)); }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
         if (!value->isPrimitiveValue())
@@ -402,7 +402,7 @@ public:
 
     static PropertyHandler createHandler()
     {
-        PropertyHandler handler = ApplyPropertyDefaultBase<Length, getterFunction, Length, setterFunction, Length, initialFunction>::createHandler();
+        PropertyHandler handler = ApplyPropertyDefaultBase<const Length&, getterFunction, Length, setterFunction, Length, initialFunction>::createHandler();
         return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
     }
 };
@@ -430,10 +430,10 @@ public:
     }
 };
 
-template <LengthSize (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(LengthSize), LengthSize (*initialFunction)()>
+template <const LengthSize& (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(LengthSize), LengthSize (*initialFunction)()>
 class ApplyPropertyBorderRadius {
 public:
-    static void setValue(RenderStyle* style, LengthSize value) { (style->*setterFunction)(value); }
+    static void setValue(RenderStyle* style, LengthSize value) { (style->*setterFunction)(std::move(value)); }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
         if (!value->isPrimitiveValue())
@@ -476,7 +476,7 @@ public:
     }
     static PropertyHandler createHandler()
     {
-        PropertyHandler handler = ApplyPropertyDefaultBase<LengthSize, getterFunction, LengthSize, setterFunction, LengthSize, initialFunction>::createHandler();
+        PropertyHandler handler = ApplyPropertyDefaultBase<const LengthSize&, getterFunction, LengthSize, setterFunction, LengthSize, initialFunction>::createHandler();
         return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
     }
 };
@@ -485,12 +485,22 @@ template <typename T>
 struct FillLayerAccessorTypes {
     typedef T Setter;
     typedef T Getter;
+    typedef T InitialGetter;
 };
 
 template <>
 struct FillLayerAccessorTypes<StyleImage*> {
     typedef PassRefPtr<StyleImage> Setter;
     typedef StyleImage* Getter;
+    typedef StyleImage* InitialGetter;
+};
+
+template<>
+struct FillLayerAccessorTypes<Length>
+{
+    typedef Length Setter;
+    typedef const Length& Getter;
+    typedef Length InitialGetter;
 };
 
 template <typename T,
@@ -502,7 +512,7 @@ template <typename T,
           typename FillLayerAccessorTypes<T>::Getter (FillLayer::*getFunction)() const,
           void (FillLayer::*setFunction)(typename FillLayerAccessorTypes<T>::Setter),
           void (FillLayer::*clearFunction)(),
-          typename FillLayerAccessorTypes<T>::Getter (*initialFunction)(EFillLayerType),
+          typename FillLayerAccessorTypes<T>::InitialGetter (*initialFunction)(EFillLayerType),
           void (CSSToStyleMap::*mapFillFunction)(CSSPropertyID, FillLayer*, CSSValue*)>
 class ApplyPropertyFillLayer {
 public:
@@ -1420,7 +1430,7 @@ public:
     }
     static PropertyHandler createHandler()
     {
-        PropertyHandler handler = ApplyPropertyDefaultBase<Length, &RenderStyle::specifiedLineHeight, Length, &RenderStyle::setLineHeight, Length, &RenderStyle::initialLineHeight>::createHandler();
+        PropertyHandler handler = ApplyPropertyDefaultBase<const Length&, &RenderStyle::specifiedLineHeight, Length, &RenderStyle::setLineHeight, Length, &RenderStyle::initialLineHeight>::createHandler();
         return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
     }
 };

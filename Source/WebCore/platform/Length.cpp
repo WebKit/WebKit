@@ -177,16 +177,28 @@ public:
         ASSERT(m_map.contains(index));
         m_map.remove(index);
     }
-    
+
+    void remove(HashMap<int, RefPtr<CalculationValue>>::iterator it)
+    {
+        ASSERT(it != m_map.end());
+        m_map.remove(it);
+    }
+
     PassRefPtr<CalculationValue> get(int index)
     {
         ASSERT(m_map.contains(index));
         return m_map.get(index);
     }
-    
+
+    HashMap<int, RefPtr<CalculationValue>>::iterator find(int index)
+    {
+        ASSERT(m_map.contains(index));
+        return m_map.find(index);
+    }
+
 private:        
     int m_index;
-    HashMap<int, RefPtr<CalculationValue> > m_map;
+    HashMap<int, RefPtr<CalculationValue>> m_map;
 };
     
 static CalculationValueHandleMap& calcHandles()
@@ -230,11 +242,10 @@ void Length::incrementCalculatedRef() const
 void Length::decrementCalculatedRef() const
 {
     ASSERT(isCalculated());
-    RefPtr<CalculationValue> calcLength = calculationValue();
-    if (calcLength->hasOneRef())
-        calcHandles().remove(calculationHandle());
-    calcLength->deref();
-}    
+    auto it = calcHandles().find(calculationHandle());
+    if (it->value->hasOneRef())
+        calcHandles().remove(it);
+}
 
 float Length::nonNanCalculatedValue(int maxValue) const
 {

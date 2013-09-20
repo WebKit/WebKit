@@ -703,7 +703,7 @@ PassRefPtr<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(R
     return cssValuePool().createColorValue(color.rgb());
 }
 
-static PassRefPtr<CSSValueList> getBorderRadiusCornerValues(LengthSize radius, const RenderStyle* style, RenderView* renderView)
+static PassRefPtr<CSSValueList> getBorderRadiusCornerValues(const LengthSize& radius, const RenderStyle* style, RenderView* renderView)
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     if (radius.width().type() == Percent)
@@ -717,7 +717,7 @@ static PassRefPtr<CSSValueList> getBorderRadiusCornerValues(LengthSize radius, c
     return list.release();
 }
 
-static PassRefPtr<CSSValue> getBorderRadiusCornerValue(LengthSize radius, const RenderStyle* style, RenderView* renderView)
+static PassRefPtr<CSSValue> getBorderRadiusCornerValue(const LengthSize& radius, const RenderStyle* style, RenderView* renderView)
 {
     if (radius.width() == radius.height()) {
         if (radius.width().type() == Percent)
@@ -1586,7 +1586,7 @@ static PassRefPtr<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style)
     return cssValuePool().createIdentifierValue(CSSValueNormal);
 }
 
-typedef Length (RenderStyle::*RenderStyleLengthGetter)() const;
+typedef const Length& (RenderStyle::*RenderStyleLengthGetter)() const;
 typedef LayoutUnit (RenderBoxModelObject::*RenderBoxComputedCSSValueGetter)() const;
 
 template<RenderStyleLengthGetter lengthGetter, RenderBoxComputedCSSValueGetter computedCSSValueGetter>

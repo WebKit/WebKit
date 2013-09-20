@@ -1,3 +1,132 @@
+2013-09-19  Anders Carlsson  <andersca@apple.com>
+
+        Modernize Length setters/getters
+        https://bugs.webkit.org/show_bug.cgi?id=121647
+
+        Reviewed by Andreas Kling.
+
+        Add a move constructor and move assignment operator to Length and fixup some of the getters and setters.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::getBorderRadiusCornerValues):
+        (WebCore::getBorderRadiusCornerValue):
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyLength::setValue):
+        (WebCore::ApplyPropertyLength::createHandler):
+        (WebCore::ApplyPropertyBorderRadius::setValue):
+        (WebCore::ApplyPropertyBorderRadius::createHandler):
+        (WebCore::ApplyPropertyLineHeight::createHandler):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::LengthPropertyWrapper::LengthPropertyWrapper):
+        (WebCore::LengthPropertyWrapper::blend):
+        (WebCore::FillLayerPropertyWrapper::FillLayerPropertyWrapper):
+        (WebCore::FillLayerPropertyWrapper::blend):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * platform/CalculationValue.h:
+        (WebCore::CalcExpressionLength::CalcExpressionLength):
+        (WebCore::CalcExpressionBlendLength::CalcExpressionBlendLength):
+        * platform/Length.cpp:
+        (WebCore::CalculationValueHandleMap::remove):
+        (WebCore::CalculationValueHandleMap::find):
+        (WebCore::Length::decrementCalculatedRef):
+        * platform/Length.h:
+        (WebCore::Length::Length):
+        (WebCore::Length::operator=):
+        (WebCore::Length::moveFromLength):
+        * platform/LengthBox.cpp:
+        (WebCore::LengthBox::logicalLeft):
+        (WebCore::LengthBox::logicalRight):
+        (WebCore::LengthBox::before):
+        (WebCore::LengthBox::after):
+        (WebCore::LengthBox::start):
+        (WebCore::LengthBox::end):
+        * platform/LengthBox.h:
+        (WebCore::LengthBox::LengthBox):
+        (WebCore::LengthBox::left):
+        (WebCore::LengthBox::right):
+        (WebCore::LengthBox::top):
+        (WebCore::LengthBox::bottom):
+        * platform/LengthSize.h:
+        (WebCore::LengthSize::LengthSize):
+        (WebCore::LengthSize::setWidth):
+        (WebCore::LengthSize::width):
+        (WebCore::LengthSize::setHeight):
+        (WebCore::LengthSize::height):
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::FilterOperation::BlurFilterOperation::create):
+        (WebCore::FilterOperation::BlurFilterOperation::stdDeviation):
+        (WebCore::FilterOperation::BlurFilterOperation::BlurFilterOperation):
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShapeRectangle::x):
+        (WebCore::BasicShapeRectangle::y):
+        (WebCore::BasicShapeRectangle::width):
+        (WebCore::BasicShapeRectangle::height):
+        (WebCore::BasicShapeRectangle::cornerRadiusX):
+        (WebCore::BasicShapeRectangle::cornerRadiusY):
+        (WebCore::BasicShapeRectangle::setX):
+        (WebCore::BasicShapeRectangle::setY):
+        (WebCore::BasicShapeRectangle::setWidth):
+        (WebCore::BasicShapeRectangle::setHeight):
+        (WebCore::BasicShapeRectangle::setCornerRadiusX):
+        (WebCore::BasicShapeRectangle::setCornerRadiusY):
+        (WebCore::BasicShapeCircle::centerX):
+        (WebCore::BasicShapeCircle::centerY):
+        (WebCore::BasicShapeCircle::radius):
+        (WebCore::BasicShapeCircle::setCenterX):
+        (WebCore::BasicShapeCircle::setCenterY):
+        (WebCore::BasicShapeCircle::setRadius):
+        (WebCore::BasicShapeEllipse::centerX):
+        (WebCore::BasicShapeEllipse::centerY):
+        (WebCore::BasicShapeEllipse::radiusX):
+        (WebCore::BasicShapeEllipse::radiusY):
+        (WebCore::BasicShapeEllipse::setCenterX):
+        (WebCore::BasicShapeEllipse::setCenterY):
+        (WebCore::BasicShapeEllipse::setRadiusX):
+        (WebCore::BasicShapeEllipse::setRadiusY):
+        (WebCore::BasicShapePolygon::getXAt):
+        (WebCore::BasicShapePolygon::getYAt):
+        (WebCore::BasicShapePolygon::appendPoint):
+        (WebCore::BasicShapeInsetRectangle::top):
+        (WebCore::BasicShapeInsetRectangle::right):
+        (WebCore::BasicShapeInsetRectangle::bottom):
+        (WebCore::BasicShapeInsetRectangle::left):
+        (WebCore::BasicShapeInsetRectangle::cornerRadiusX):
+        (WebCore::BasicShapeInsetRectangle::cornerRadiusY):
+        (WebCore::BasicShapeInsetRectangle::setTop):
+        (WebCore::BasicShapeInsetRectangle::setRight):
+        (WebCore::BasicShapeInsetRectangle::setBottom):
+        (WebCore::BasicShapeInsetRectangle::setLeft):
+        (WebCore::BasicShapeInsetRectangle::setCornerRadiusX):
+        (WebCore::BasicShapeInsetRectangle::setCornerRadiusY):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillSize::FillSize):
+        (WebCore::FillLayer::xPosition):
+        (WebCore::FillLayer::yPosition):
+        (WebCore::FillLayer::sizeLength):
+        (WebCore::FillLayer::setXPosition):
+        (WebCore::FillLayer::setYPosition):
+        * rendering/style/NinePieceImage.cpp:
+        (WebCore::NinePieceImage::NinePieceImage):
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImage::setImageSlices):
+        (WebCore::NinePieceImage::setBorderSlices):
+        (WebCore::NinePieceImage::setOutset):
+        (WebCore::NinePieceImage::computeOutset):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::specifiedLineHeight):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleBoxData.h:
+        (WebCore::StyleBoxData::width):
+        (WebCore::StyleBoxData::height):
+        (WebCore::StyleBoxData::minWidth):
+        (WebCore::StyleBoxData::minHeight):
+        (WebCore::StyleBoxData::maxWidth):
+        (WebCore::StyleBoxData::maxHeight):
+        (WebCore::StyleBoxData::verticalAlign):
+        * rendering/style/StyleReflection.h:
+        (WebCore::StyleReflection::offset):
+        (WebCore::StyleReflection::setOffset):
+
 2013-09-19  Andreas Kling  <akling@apple.com>
 
         Out-of-line InspectorValues create() methods.

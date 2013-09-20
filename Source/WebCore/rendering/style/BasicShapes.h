@@ -68,26 +68,26 @@ class BasicShapeRectangle : public BasicShape {
 public:
     static PassRefPtr<BasicShapeRectangle> create() { return adoptRef(new BasicShapeRectangle); }
 
-    Length x() const { return m_x; }
-    Length y() const { return m_y; }
-    Length width() const { return m_width; }
-    Length height() const { return m_height; }
-    Length cornerRadiusX() const { return m_cornerRadiusX; }
-    Length cornerRadiusY() const { return m_cornerRadiusY; }
+    const Length& x() const { return m_x; }
+    const Length& y() const { return m_y; }
+    const Length& width() const { return m_width; }
+    const Length& height() const { return m_height; }
+    const Length& cornerRadiusX() const { return m_cornerRadiusX; }
+    const Length& cornerRadiusY() const { return m_cornerRadiusY; }
 
-    void setX(Length x) { m_x = x; }
-    void setY(Length y) { m_y = y; }
-    void setWidth(Length width) { m_width = width; }
-    void setHeight(Length height) { m_height = height; }
+    void setX(Length x) { m_x = std::move(x); }
+    void setY(Length y) { m_y = std::move(y); }
+    void setWidth(Length width) { m_width = std::move(width); }
+    void setHeight(Length height) { m_height = std::move(height); }
     void setCornerRadiusX(Length radiusX)
     {
         ASSERT(!radiusX.isUndefined());
-        m_cornerRadiusX = radiusX;
+        m_cornerRadiusX = std::move(radiusX);
     }
     void setCornerRadiusY(Length radiusY)
     {
         ASSERT(!radiusY.isUndefined());
-        m_cornerRadiusY = radiusY;
+        m_cornerRadiusY = std::move(radiusY);
     }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
@@ -109,13 +109,13 @@ class BasicShapeCircle : public BasicShape {
 public:
     static PassRefPtr<BasicShapeCircle> create() { return adoptRef(new BasicShapeCircle); }
 
-    Length centerX() const { return m_centerX; }
-    Length centerY() const { return m_centerY; }
-    Length radius() const { return m_radius; }
+    const Length& centerX() const { return m_centerX; }
+    const Length& centerY() const { return m_centerY; }
+    const Length& radius() const { return m_radius; }
 
-    void setCenterX(Length centerX) { m_centerX = centerX; }
-    void setCenterY(Length centerY) { m_centerY = centerY; }
-    void setRadius(Length radius) { m_radius = radius; }
+    void setCenterX(Length centerX) { m_centerX = std::move(centerX); }
+    void setCenterY(Length centerY) { m_centerY = std::move(centerY); }
+    void setRadius(Length radius) { m_radius = std::move(radius); }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
@@ -133,15 +133,15 @@ class BasicShapeEllipse : public BasicShape {
 public:
     static PassRefPtr<BasicShapeEllipse> create() { return adoptRef(new BasicShapeEllipse); }
 
-    Length centerX() const { return m_centerX; }
-    Length centerY() const { return m_centerY; }
-    Length radiusX() const { return m_radiusX; }
-    Length radiusY() const { return m_radiusY; }
+    const Length& centerX() const { return m_centerX; }
+    const Length& centerY() const { return m_centerY; }
+    const Length& radiusX() const { return m_radiusX; }
+    const Length& radiusY() const { return m_radiusY; }
 
-    void setCenterX(Length centerX) { m_centerX = centerX; }
-    void setCenterY(Length centerY) { m_centerY = centerY; }
-    void setRadiusX(Length radiusX) { m_radiusX = radiusX; }
-    void setRadiusY(Length radiusY) { m_radiusY = radiusY; }
+    void setCenterX(Length centerX) { m_centerX = std::move(centerX); }
+    void setCenterY(Length centerY) { m_centerY = std::move(centerY); }
+    void setRadiusX(Length radiusX) { m_radiusX = std::move(radiusX); }
+    void setRadiusY(Length radiusY) { m_radiusY = std::move(radiusY); }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
@@ -161,11 +161,11 @@ public:
     static PassRefPtr<BasicShapePolygon> create() { return adoptRef(new BasicShapePolygon); }
 
     const Vector<Length>& values() const { return m_values; }
-    Length getXAt(unsigned i) const { return m_values.at(2 * i); }
-    Length getYAt(unsigned i) const { return m_values.at(2 * i + 1); }
+    const Length& getXAt(unsigned i) const { return m_values[2 * i]; }
+    const Length& getYAt(unsigned i) const { return m_values[2 * i + 1]; }
 
     void setWindRule(WindRule windRule) { m_windRule = windRule; }
-    void appendPoint(Length x, Length y) { m_values.append(x); m_values.append(y); }
+    void appendPoint(Length x, Length y) { m_values.append(std::move(x)); m_values.append(std::move(y)); }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
@@ -186,26 +186,26 @@ class BasicShapeInsetRectangle : public BasicShape {
 public:
     static PassRefPtr<BasicShapeInsetRectangle> create() { return adoptRef(new BasicShapeInsetRectangle); }
 
-    Length top() const { return m_top; }
-    Length right() const { return m_right; }
-    Length bottom() const { return m_bottom; }
-    Length left() const { return m_left; }
-    Length cornerRadiusX() const { return m_cornerRadiusX; }
-    Length cornerRadiusY() const { return m_cornerRadiusY; }
+    const Length& top() const { return m_top; }
+    const Length& right() const { return m_right; }
+    const Length& bottom() const { return m_bottom; }
+    const Length& left() const { return m_left; }
+    const Length& cornerRadiusX() const { return m_cornerRadiusX; }
+    const Length& cornerRadiusY() const { return m_cornerRadiusY; }
 
-    void setTop(Length top) { m_top = top; }
-    void setRight(Length right) { m_right = right; }
-    void setBottom(Length bottom) { m_bottom = bottom; }
-    void setLeft(Length left) { m_left = left; }
+    void setTop(Length top) { m_top = std::move(top); }
+    void setRight(Length right) { m_right = std::move(right); }
+    void setBottom(Length bottom) { m_bottom = std::move(bottom); }
+    void setLeft(Length left) { m_left = std::move(left); }
     void setCornerRadiusX(Length radiusX)
     {
         ASSERT(!radiusX.isUndefined());
-        m_cornerRadiusX = radiusX;
+        m_cornerRadiusX = std::move(radiusX);
     }
     void setCornerRadiusY(Length radiusY)
     {
         ASSERT(!radiusY.isUndefined());
-        m_cornerRadiusY = radiusY;
+        m_cornerRadiusY = std::move(radiusY);
     }
 
     virtual void path(Path&, const FloatRect&) OVERRIDE;

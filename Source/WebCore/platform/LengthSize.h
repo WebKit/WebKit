@@ -32,8 +32,8 @@ public:
     }
     
     LengthSize(Length width, Length height)
-        : m_width(width)
-        , m_height(height)
+        : m_width(std::move(width))
+        , m_height(std::move(height))
     {
     }
 
@@ -42,11 +42,11 @@ public:
         return m_width == o.m_width && m_height == o.m_height;
     }
 
-    void setWidth(Length width) { m_width = width; }
-    Length width() const { return m_width; }
+    void setWidth(Length width) { m_width = std::move(width); }
+    const Length& width() const { return m_width; }
 
-    void setHeight(Length height) { m_height = height; }
-    Length height() const { return m_height; }
+    void setHeight(Length height) { m_height = std::move(height); }
+    const Length& height() const { return m_height; }
 
 private:
     Length m_width;

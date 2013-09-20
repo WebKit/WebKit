@@ -40,9 +40,9 @@ struct FillSize {
     {
     }
 
-    FillSize(EFillSizeType t, LengthSize l)
+    FillSize(EFillSizeType t, LengthSize size)
         : type(t)
-        , size(l)
+        , size(std::move(size))
     {
     }
 
@@ -66,8 +66,8 @@ public:
     ~FillLayer();
 
     StyleImage* image() const { return m_image.get(); }
-    Length xPosition() const { return m_xPosition; }
-    Length yPosition() const { return m_yPosition; }
+    const Length& xPosition() const { return m_xPosition; }
+    const Length& yPosition() const { return m_yPosition; }
     BackgroundEdgeOrigin backgroundXOrigin() const { return static_cast<BackgroundEdgeOrigin>(m_backgroundXOrigin); }
     BackgroundEdgeOrigin backgroundYOrigin() const { return static_cast<BackgroundEdgeOrigin>(m_backgroundYOrigin); }
     EFillAttachment attachment() const { return static_cast<EFillAttachment>(m_attachment); }
@@ -77,7 +77,7 @@ public:
     EFillRepeat repeatY() const { return static_cast<EFillRepeat>(m_repeatY); }
     CompositeOperator composite() const { return static_cast<CompositeOperator>(m_composite); }
     BlendMode blendMode() const { return static_cast<BlendMode>(m_blendMode); }
-    LengthSize sizeLength() const { return m_sizeLength; }
+    const LengthSize& sizeLength() const { return m_sizeLength; }
     EFillSizeType sizeType() const { return static_cast<EFillSizeType>(m_sizeType); }
     FillSize size() const { return FillSize(static_cast<EFillSizeType>(m_sizeType), m_sizeLength); }
     EMaskSourceType maskSourceType() const { return static_cast<EMaskSourceType>(m_maskSourceType); }
@@ -100,8 +100,8 @@ public:
     bool isMaskSourceTypeSet() const { return m_maskSourceTypeSet; }
 
     void setImage(PassRefPtr<StyleImage> i) { m_image = i; m_imageSet = true; }
-    void setXPosition(Length l) { m_xPosition = l; m_xPosSet = true; }
-    void setYPosition(Length l) { m_yPosition = l; m_yPosSet = true; }
+    void setXPosition(Length length) { m_xPosition = std::move(length); m_xPosSet = true; }
+    void setYPosition(Length length) { m_yPosition = std::move(length); m_yPosSet = true; }
     void setBackgroundXOrigin(BackgroundEdgeOrigin o) { m_backgroundXOrigin = o; m_backgroundOriginSet = true; }
     void setBackgroundYOrigin(BackgroundEdgeOrigin o) { m_backgroundYOrigin = o; m_backgroundOriginSet = true; }
     void setAttachment(EFillAttachment attachment) { m_attachment = attachment; m_attachmentSet = true; }

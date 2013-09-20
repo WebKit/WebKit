@@ -307,10 +307,10 @@ class BlurFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<BlurFilterOperation> create(Length stdDeviation, OperationType type)
     {
-        return adoptRef(new BlurFilterOperation(stdDeviation, type));
+        return adoptRef(new BlurFilterOperation(std::move(stdDeviation), type));
     }
 
-    Length stdDeviation() const { return m_stdDeviation; }
+    const Length& stdDeviation() const { return m_stdDeviation; }
 
     virtual bool affectsOpacity() const { return true; }
     virtual bool movesPixels() const { return true; }
@@ -328,7 +328,7 @@ private:
 
     BlurFilterOperation(Length stdDeviation, OperationType type)
         : FilterOperation(type)
-        , m_stdDeviation(stdDeviation)
+        , m_stdDeviation(std::move(stdDeviation))
     {
     }
 

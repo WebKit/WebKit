@@ -132,7 +132,7 @@ private:
 class CalcExpressionLength : public CalcExpressionNode {
 public:
     explicit CalcExpressionLength(Length length)
-        : m_length(length)
+        : m_length(std::move(length))
     {
         m_type = CalcExpressionNodeLength;
     }
@@ -188,8 +188,8 @@ private:
 class CalcExpressionBlendLength : public CalcExpressionNode {
 public:
     CalcExpressionBlendLength(Length from, Length to, float progress)
-        : m_from(from)
-        , m_to(to)
+        : m_from(std::move(from))
+        , m_to(std::move(to))
         , m_progress(progress)
     {
         m_type = CalcExpressionNodeBlendLength;
