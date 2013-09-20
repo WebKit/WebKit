@@ -1,3 +1,14 @@
+2013-09-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Update features.pri
+        https://bugs.webkit.org/show_bug.cgi?id=121670
+
+        Reviewed by Jocelyn Turcotte.
+
+        Remove feature flags that no longer exists and new ones added to FeatureList.pm
+
+        * qmake/mkspecs/features/features.pri:
+
 2013-09-20  Krzysztof Czech  <k.czech@samsung.com>
 
         [GTK][WK2] accessibility/selection-states.html is failing
