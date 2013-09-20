@@ -1,3 +1,22 @@
+2013-09-20  Dean Jackson  <dino@apple.com>
+
+        Shaders that fail to compile should be marked as such
+        https://bugs.webkit.org/show_bug.cgi?id=121721
+
+        Reviewed by Simon Fraser.
+
+        1. Add a new logging channel for WebGL.
+
+        2. If a translated shader fails to compile (technically
+        this should never happen), mark it as invalid.
+
+        Test: https://www.khronos.org/registry/webgl/sdk/tests/conformance/glsl/misc/shader-with-non-reserved-words.html
+
+        * platform/Logging.h: New WebGL channel.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::compileShader): Log the raw and translated
+        input to glCompileShader, but mark the entry as invalid.
+
 2013-09-20  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Do not expose aria-help in ATK based platforms

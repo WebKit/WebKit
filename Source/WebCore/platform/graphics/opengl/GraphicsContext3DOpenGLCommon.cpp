@@ -42,6 +42,7 @@
 #include "ImageData.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "Logging.h"
 #include "NotImplemented.h"
 #include <cstring>
 #include <runtime/ArrayBuffer.h>
@@ -469,10 +470,15 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
         ::glGetShaderInfoLog(shader, length, &size, info.get());
 
         entry.log = info.get();
+
+        if (GLCompileSuccess != GL_TRUE) {
+            entry.isValid = false;
+            LOG(WebGL, "Error: shader translator produced a shader that OpenGL would not compile.");
+            LOG(WebGL, "--- begin original shader source ---\n%s\n--- end original shader source ---\n", getShaderSource(shader).utf8().data());
+            LOG(WebGL, "--- begin translated shader source ---\n%s\n--- end translated shader source ---", translatedShaderPtr);
+        }
     }
     
-    // ASSERT that ANGLE generated GLSL will be accepted by OpenGL.
-    ASSERT(GLCompileSuccess == GL_TRUE);
 #if PLATFORM(BLACKBERRY) && !defined(NDEBUG)
     if (GLCompileSuccess != GL_TRUE)
         BBLOG(BlackBerry::Platform::LogLevelWarn, "The shader validated, but didn't compile.\n");
