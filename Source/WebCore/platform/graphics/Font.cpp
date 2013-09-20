@@ -163,10 +163,14 @@ static bool operator==(const FontGlyphsCacheKey& a, const FontGlyphsCacheKey& b)
 {
     if (a.fontDescriptionCacheKey != b.fontDescriptionCacheKey)
         return false;
-    if (a.families != b.families)
-        return false;
     if (a.fontSelectorId != b.fontSelectorId || a.fontSelectorVersion != b.fontSelectorVersion || a.fontSelectorFlags != b.fontSelectorFlags)
         return false;
+    if (a.families.size() != b.families.size())
+        return false;
+    for (unsigned i = 0; i < a.families.size(); ++i) {
+        if (!equalIgnoringCase(a.families[i].impl(), b.families[i].impl()))
+            return false;
+    }
     return true;
 }
 
@@ -190,7 +194,7 @@ static void makeFontGlyphsCacheKey(FontGlyphsCacheKey& key, const FontDescriptio
 {
     key.fontDescriptionCacheKey = FontDescriptionFontDataCacheKey(description);
     for (unsigned i = 0; i < description.familyCount(); ++i)
-        key.families.append(description.familyAt(i).lower());
+        key.families.append(description.familyAt(i));
     key.fontSelectorId = fontSelector ? fontSelector->uniqueId() : 0;
     key.fontSelectorVersion = fontSelector ? fontSelector->version() : 0;
     key.fontSelectorFlags = fontSelector && fontSelector->resolvesFamilyFor(description) ? makeFontSelectorFlags(description) : 0;
@@ -198,14 +202,17 @@ static void makeFontGlyphsCacheKey(FontGlyphsCacheKey& key, const FontDescriptio
 
 static unsigned computeFontGlyphsCacheHash(const FontGlyphsCacheKey& key)
 {
-    unsigned hashCodes[5] = {
-        StringHasher::hashMemory(key.families.data(), key.families.size() * sizeof(key.families[0])),
-        key.fontDescriptionCacheKey.computeHash(),
-        key.fontSelectorId,
-        key.fontSelectorVersion,
-        key.fontSelectorFlags
-    };
-    return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
+    Vector<unsigned, 7> hashCodes;
+    hashCodes.reserveInitialCapacity(4 + key.families.size());
+
+    hashCodes.uncheckedAppend(key.fontDescriptionCacheKey.computeHash());
+    hashCodes.uncheckedAppend(key.fontSelectorId);
+    hashCodes.uncheckedAppend(key.fontSelectorVersion);
+    hashCodes.uncheckedAppend(key.fontSelectorFlags);
+    for (unsigned i = 0; i < key.families.size(); ++i)
+        hashCodes.uncheckedAppend(CaseFoldingHash::hash(key.families[i]));
+
+    return StringHasher::hashMemory(hashCodes.data(), hashCodes.size() * sizeof(unsigned));
 }
 
 void pruneUnreferencedEntriesFromFontGlyphsCache()

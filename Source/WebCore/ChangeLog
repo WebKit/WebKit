@@ -1,3 +1,18 @@
+2013-09-19  Anders Carlsson  <andersca@apple.com>
+
+        Avoid calling AtomicString::lower() in makeFontGlyphsCacheKey
+        https://bugs.webkit.org/show_bug.cgi?id=121656
+
+        Reviewed by Darin Adler.
+
+        Instead of lower casing AtomicStrings, store the strings as is and use the case folding
+        hash and case insensitive compare to determine equality.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::operator==):
+        (WebCore::makeFontGlyphsCacheKey):
+        (WebCore::computeFontGlyphsCacheHash):
+
 2013-09-19  Darin Adler  <darin@apple.com>
 
         Fix leaks in CSS parser caused by overwriting owned raw pointers with 0
