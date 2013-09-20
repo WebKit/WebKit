@@ -192,6 +192,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGArrayMode.cpp \
 	Source/JavaScriptCore/dfg/DFGArrayMode.h \
 	Source/JavaScriptCore/dfg/DFGArrayifySlowPathGenerator.h \
+	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.cpp \
+	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.h \
 	Source/JavaScriptCore/dfg/DFGAtTailAbstractState.cpp \
 	Source/JavaScriptCore/dfg/DFGAtTailAbstractState.h \
 	Source/JavaScriptCore/dfg/DFGBackwardsPropagationPhase.cpp \
@@ -206,6 +208,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGBranchDirection.h \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.cpp \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.h \
+	Source/JavaScriptCore/dfg/DFGCCallHelpers.h \
 	Source/JavaScriptCore/dfg/DFGCFGSimplificationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGCFGSimplificationPhase.h \
 	Source/JavaScriptCore/dfg/DFGCallArrayAllocatorSlowPathGenerator.h \
@@ -258,6 +261,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGEdge.h \
 	Source/JavaScriptCore/dfg/DFGEdgeDominates.h \
 	Source/JavaScriptCore/dfg/DFGEdgeUsesStructure.h \
+	Source/JavaScriptCore/dfg/DFGFPRInfo.h \
 	Source/JavaScriptCore/dfg/DFGFailedFinalizer.cpp \
 	Source/JavaScriptCore/dfg/DFGFailedFinalizer.h \
 	Source/JavaScriptCore/dfg/DFGFiltrationResult.h \
@@ -270,6 +274,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGFlushLivenessAnalysisPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGFlushLivenessAnalysisPhase.h \
 	Source/JavaScriptCore/dfg/DFGGenerationInfo.h \
+	Source/JavaScriptCore/dfg/DFGGPRInfo.h \
 	Source/JavaScriptCore/dfg/DFGGenerationInfo.h \
 	Source/JavaScriptCore/dfg/DFGGraph.cpp \
 	Source/JavaScriptCore/dfg/DFGGraph.h \
@@ -599,19 +604,14 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/interpreter/VMInspector.cpp \
 	Source/JavaScriptCore/interpreter/VMInspector.h \
 	Source/JavaScriptCore/JavaScriptCorePrefix.h \
-	Source/JavaScriptCore/jit/AssemblyHelpers.cpp \
-	Source/JavaScriptCore/jit/AssemblyHelpers.h \
-	Source/JavaScriptCore/jit/CCallHelpers.h \
 	Source/JavaScriptCore/jit/CompactJITCodeMap.h \
 	Source/JavaScriptCore/jit/ClosureCallStubRoutine.cpp \
 	Source/JavaScriptCore/jit/ClosureCallStubRoutine.h \
 	Source/JavaScriptCore/jit/ExecutableAllocator.cpp \
 	Source/JavaScriptCore/jit/ExecutableAllocator.h \
 	Source/JavaScriptCore/jit/ExecutableAllocatorFixedVMPool.cpp \
-	Source/JavaScriptCore/jit/FPRInfo.h \
 	Source/JavaScriptCore/jit/GCAwareJITStubRoutine.cpp \
 	Source/JavaScriptCore/jit/GCAwareJITStubRoutine.h \
-	Source/JavaScriptCore/jit/GPRInfo.h \
 	Source/JavaScriptCore/jit/HostCallReturnValue.cpp \
 	Source/JavaScriptCore/jit/HostCallReturnValue.h \
 	Source/JavaScriptCore/jit/JITArithmetic32_64.cpp \

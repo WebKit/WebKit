@@ -30,14 +30,14 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "CCallHelpers.h"
+#include "DFGCCallHelpers.h"
 
 namespace JSC { namespace FTL {
 
 class State;
 struct OSRExitCompilationInfo;
 
-class ExitThunkGenerator : public CCallHelpers {
+class ExitThunkGenerator : public DFG::CCallHelpers {
 public:
     ExitThunkGenerator(State& state);
     ~ExitThunkGenerator();

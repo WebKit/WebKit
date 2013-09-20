@@ -28,9 +28,9 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "FPRInfo.h"
+#include "DFGGPRInfo.h"
+#include "DFGFPRInfo.h"
 #include "FTLOSRExitCompiler.h"
-#include "GPRInfo.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 

@@ -23,23 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AssemblyHelpers_h
-#define AssemblyHelpers_h
+#ifndef DFGAssemblyHelpers_h
+#define DFGAssemblyHelpers_h
 
 #include <wtf/Platform.h>
 
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
-#include "FPRInfo.h"
-#include "GPRInfo.h"
-#include "JITCode.h"
-#include "MacroAssembler.h"
+#include "DFGFPRInfo.h"
+#include "DFGGPRInfo.h"
+#include "DFGJITCode.h"
+#include "DFGNode.h"
 #include "VM.h"
+#include "MacroAssembler.h"
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-typedef void (*V_DebugOperation_EPP)(ExecState*, void*, void*);
+typedef void (*V_DFGDebugOperation_EPP)(ExecState*, void*, void*);
 
 class AssemblyHelpers : public MacroAssembler {
 public:
@@ -51,7 +52,7 @@ public:
         if (m_codeBlock) {
             ASSERT(m_baselineCodeBlock);
             ASSERT(!m_baselineCodeBlock->alternative());
-            ASSERT(JITCode::isBaselineCode(m_baselineCodeBlock->jitType()));
+            ASSERT(m_baselineCodeBlock->jitType() == JITCode::BaselineJIT);
         }
     }
     
@@ -204,7 +205,7 @@ public:
     }
 
     // Add a debug call. This call has no effect on JIT code execution state.
-    void debugCall(V_DebugOperation_EPP function, void* argument)
+    void debugCall(V_DFGDebugOperation_EPP function, void* argument)
     {
         size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
         ScratchBuffer* scratchBuffer = m_vm->scratchBufferForSize(scratchSize);
@@ -238,7 +239,7 @@ public:
         poke(TrustedImmPtr(buffer), 2);
         GPRReg scratch = GPRInfo::regT0;
 #else
-#error "JIT not supported on this platform."
+#error "DFG JIT not supported on this platform."
 #endif
         move(TrustedImmPtr(reinterpret_cast<void*>(function)), scratch);
         call(scratch);
@@ -260,7 +261,7 @@ public:
     }
 
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
-#if !ASSERT_DISABLED
+#if DFG_ENABLE(JIT_ASSERT)
     void jitAssertIsInt32(GPRReg);
     void jitAssertIsJSInt32(GPRReg);
     void jitAssertIsJSNumber(GPRReg);
@@ -423,9 +424,9 @@ protected:
     HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset> > m_decodedCodeMaps;
 };
 
-} // namespace JSC
+} } // namespace JSC::DFG
 
-#endif // ENABLE(JIT)
+#endif // ENABLE(DFG_JIT)
 
-#endif // AssemblyHelpers_h
+#endif // DFGAssemblyHelpers_h
 

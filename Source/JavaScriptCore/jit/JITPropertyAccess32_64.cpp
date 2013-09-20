@@ -94,7 +94,7 @@ void JIT::emit_op_del_by_id(Instruction* currentInstruction)
 
 JIT::CodeRef JIT::stringGetByValStubGenerator(VM* vm)
 {
-    JSInterfaceJIT jit(vm);
+    JSInterfaceJIT jit;
     JumpList failures;
     failures.append(jit.branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), TrustedImmPtr(vm->stringStructure.get())));
     

@@ -72,8 +72,9 @@ void ctiPatchCallByReturnAddress(CodeBlock* codeblock, ReturnAddressPtr returnAd
 }
 
 JIT::JIT(VM* vm, CodeBlock* codeBlock)
-    : JSInterfaceJIT(vm, codeBlock)
-    , m_interpreter(vm->interpreter)
+    : m_interpreter(vm->interpreter)
+    , m_vm(vm)
+    , m_codeBlock(codeBlock)
     , m_labels(codeBlock ? codeBlock->numberOfInstructions() : 0)
     , m_bytecodeOffset((unsigned)-1)
     , m_propertyAccessInstructionIndex(UINT_MAX)

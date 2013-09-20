@@ -27,8 +27,6 @@
 #define ValueRecovery_h
 
 #include "DataFormat.h"
-#include "GPRInfo.h"
-#include "FPRInfo.h"
 #include "JSCJSValue.h"
 #include "MacroAssembler.h"
 #include "VirtualRegister.h"
@@ -325,29 +323,29 @@ public:
             out.printf("(double)");
             return;
         case InGPR:
-            out.print(gpr());
+            out.printf("%%r%d", gpr());
             return;
         case UnboxedInt32InGPR:
-            out.print("int32(", gpr(), ")");
+            out.printf("int32(%%r%d)", gpr());
             return;
         case UnboxedInt52InGPR:
-            out.print("int53(", gpr(), ")");
+            out.printf("int52(%%r%d)", gpr());
             return;
         case UnboxedStrictInt52InGPR:
-            out.print("strictInt52(", gpr(), ")");
+            out.printf("strictInt52(%%r%d)", gpr());
             return;
         case UnboxedBooleanInGPR:
-            out.print("bool(", gpr(), ")");
+            out.printf("bool(%%r%d)", gpr());
             return;
         case UInt32InGPR:
-            out.print("uint32(", gpr(), ")");
+            out.printf("uint32(%%r%d)", gpr());
             return;
         case InFPR:
-            out.print(fpr());
+            out.printf("%%fr%d", fpr());
             return;
 #if USE(JSVALUE32_64)
         case InPair:
-            out.print("pair(", tagGPR(), ", ", payloadGPR(), ")");
+            out.printf("pair(%%r%d, %%r%d)", tagGPR(), payloadGPR());
             return;
 #endif
         case DisplacedInJSStack:

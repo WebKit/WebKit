@@ -28,17 +28,17 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "CCallHelpers.h"
 #include "CallFrameInlines.h"
 #include "CodeBlock.h"
+#include "DFGCCallHelpers.h"
 #include "DFGDisassembler.h"
+#include "DFGFPRInfo.h"
+#include "DFGGPRInfo.h"
 #include "DFGGraph.h"
 #include "DFGJITCode.h"
 #include "DFGOSRExitCompilationInfo.h"
 #include "DFGRegisterBank.h"
 #include "DFGRegisterSet.h"
-#include "FPRInfo.h"
-#include "GPRInfo.h"
 #include "JITCode.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"

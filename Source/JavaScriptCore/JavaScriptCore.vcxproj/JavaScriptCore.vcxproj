@@ -362,7 +362,6 @@
     <ClCompile Include="..\interpreter\JSStack.cpp" />
     <ClCompile Include="..\interpreter\StackVisitor.cpp" />
     <ClCompile Include="..\interpreter\VMInspector.cpp" />
-    <ClCompile Include="..\jit\AssemblyHelpers.cpp" />
     <ClCompile Include="..\jit\ClosureCallStubRoutine.cpp" />
     <ClCompile Include="..\jit\ExecutableAllocator.cpp" />
     <ClCompile Include="..\jit\GCAwareJITStubRoutine.cpp" />
@@ -752,14 +751,10 @@
     <ClInclude Include="..\interpreter\Register.h" />
     <ClInclude Include="..\interpreter\StackVisitor.h" />
     <ClInclude Include="..\interpreter\VMInspector.h" />
-    <ClInclude Include="..\jit\AssemblyHelpers.h" />
-    <ClInclude Include="..\jit\CCallHelpers.h" />
     <ClInclude Include="..\jit\ClosureCallStubRoutine.h" />
     <ClInclude Include="..\jit\CompactJITCodeMap.h" />
     <ClInclude Include="..\jit\ExecutableAllocator.h" />
-    <ClInclude Include="..\jit\FPRInfo.h" />
     <ClInclude Include="..\jit\GCAwareJITStubRoutine.h" />
-    <ClInclude Include="..\jit\GPRInfo.h" />
     <ClInclude Include="..\jit\HostCallReturnValue.h" />
     <ClInclude Include="..\jit\JIT.h" />
     <ClInclude Include="..\jit\JITCode.h" />
