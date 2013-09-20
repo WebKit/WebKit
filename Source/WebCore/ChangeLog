@@ -1,3 +1,26 @@
+2013-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Ensure that TileController tile coverage is updated on scrolling even when we don't have scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=121700
+        <rdar://problem/15030589>
+
+        Reviewed by Dean Jackson.
+
+        r155660 introduced a bug where we wouldn't make scrollbars on long pages. However,
+        that revealed a fundamental flaw in the TiledBacking update logic; it relied on the
+        GraphicsLayer flushes triggered by scrollbars updates in order to update the main
+        TileController's tile coverage. No scrollbars meant no tile coverage updates.
+        
+        Fix by explicitly triggering a flush when the FrameView is scrolled (we get
+        notified about this on the main thread after the scrolling thread has moved
+        layers around).
+        
+        No test since this will only be exposed for a short time while scrollbars are
+        broken.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidScroll):
+
 2013-09-20  Zoltan Horvath  <zoltan@webkit.org>
 
         Refactoring LineBreaker and RenderTextInfo out of RenderBlock.h
