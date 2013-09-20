@@ -664,9 +664,10 @@ add_subdirectory(shell)
 
 WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
 include_directories(${JavaScriptCore_INCLUDE_DIRECTORIES})
-add_definitions(-DBUILDING_JavaScriptCore -DSTATICALLY_LINKED_WITH_WTF)
+add_definitions(-DSTATICALLY_LINKED_WITH_WTF)
 add_library(JavaScriptCore ${JavaScriptCore_LIBRARY_TYPE} ${JavaScriptCore_HEADERS} ${JavaScriptCore_SOURCES})
 target_link_libraries(JavaScriptCore ${JavaScriptCore_LIBRARIES})
+set_target_properties(JavaScriptCore PROPERTIES COMPILE_DEFINITIONS "BUILDING_JavaScriptCore")
 set_target_properties(JavaScriptCore PROPERTIES FOLDER "JavaScriptCore")
 set_target_properties(JavaScriptCore PROPERTIES LINK_INTERFACE_LIBRARIES "")
 

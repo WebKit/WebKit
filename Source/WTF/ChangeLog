@@ -1,5 +1,17 @@
 2013-09-20  Patrick Gansterer  <paroga@webkit.org>
 
+        [CMake] Use COMPILE_DEFINITIONS target property for setting BUILDING_* defines
+        https://bugs.webkit.org/show_bug.cgi?id=121672
+
+        Reviewed by Gyuyoung Kim.
+
+        Since the scope of add_definitions() is always a whole file, we need to use
+        target properties instead to set definitions only for specific targets.
+
+        * wtf/CMakeLists.txt:
+
+2013-09-20  Patrick Gansterer  <paroga@webkit.org>
+
         Remove duplicated secondsPerDay variables
         https://bugs.webkit.org/show_bug.cgi?id=121601
 
