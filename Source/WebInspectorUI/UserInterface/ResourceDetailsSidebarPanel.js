@@ -427,23 +427,11 @@ WebInspector.ResourceDetailsSidebarPanel.prototype = {
         // Not simple form data, so we can really only show the size and type here.
         // FIXME: Add a go-to arrow here to show the data in the content browser.
 
-        var typeParts = requestDataContentType.split(/\s*;\s*/);
-        console.assert(typeParts.length >= 1);
+        var mimeTypeComponents = parseMIMEType(requestDataContentType);
 
-        var mimeType = typeParts[0];
-        var boundary = null;
-        var encoding = null;
-
-        for (var i = 1; i < typeParts.length; ++i) {
-            var subparts = typeParts[i].split(/\s*=\s*/);
-            if (subparts.length !== 2)
-                continue;
-
-            if (subparts[0].toLowerCase() === "boundary")
-                boundary = subparts[1];
-            else if (subparts[0].toLowerCase() === "charset")
-                encoding = subparts[1].replace("^\"|\"$", ""); // Trim quotes.
-        }
+        var mimeType = mimeTypeComponents.type;
+        var boundary = mimeTypeComponents.boundary;
+        var encoding = mimeTypeComponents.encoding;
 
         var rows = [];
 

@@ -81,8 +81,12 @@ WebInspector.SourceMapResource.prototype = {
             this._mimeType = mimeType;
             this._type = WebInspector.Resource.Type.fromMIMEType(this._mimeType);
 
-            if (oldMIMEType !== mimeType)
+            if (oldMIMEType !== mimeType) {
+                // Delete the MIME-type components so the MIME-type is re-parsed the next time it is requested.
+                delete this._mimeTypeComponents;
+
                 this.dispatchEventToListeners(WebInspector.Resource.Event.MIMETypeDidChange, {oldMIMEType: oldMIMEType});
+            }
 
             if (oldType !== this._type)
                 this.dispatchEventToListeners(WebInspector.Resource.Event.TypeDidChange, {oldType: oldType});

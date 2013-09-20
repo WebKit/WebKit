@@ -27,6 +27,8 @@ WebInspector.ConsolePrompt = function(delegate, mimeType, element)
 {
     WebInspector.Object.call(this);
 
+    mimeType = parseMIMEType(mimeType).type;
+
     this._element = element || document.createElement("div");
     this._element.classList.add(WebInspector.ConsolePrompt.StyleClassName);
     this._element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);

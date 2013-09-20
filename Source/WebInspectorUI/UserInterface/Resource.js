@@ -126,6 +126,8 @@ WebInspector.Resource.Type.fromMIMEType = function(mimeType)
     if (!mimeType)
         return WebInspector.Resource.Type.Other;
 
+    mimeType = parseMIMEType(mimeType).type;
+
     if (mimeType in WebInspector.Resource.Type._mimeTypeMap)
         return WebInspector.Resource.Type._mimeTypeMap[mimeType];
 
@@ -209,6 +211,13 @@ WebInspector.Resource.prototype = {
         return this._mimeType;
     },
 
+    get mimeTypeComponents()
+    {
+        if (!this._mimeTypeComponents)
+            this._mimeTypeComponents = parseMIMEType(this._mimeType);
+        return this._mimeTypeComponents;
+    },
+
     get syntheticMIMEType()
     {
         // Resources are often transferred with a MIME-type that doesn't match the purpose the
@@ -243,7 +252,7 @@ WebInspector.Resource.prototype = {
         if (content === null || content.length > maximumDataURLSize)
             return this._url;
 
-        return "data:" + this._mimeType + (this.contentIsBase64Encoded ? ";base64," + content : "," + encodeURIComponent(content));
+        return "data:" + this.mimeTypeComponents.type + (this.contentIsBase64Encoded ? ";base64," + content : "," + encodeURIComponent(content));
     },
 
     isMainResource: function()
@@ -498,8 +507,12 @@ WebInspector.Resource.prototype = {
             this.dispatchEventToListeners(WebInspector.Resource.Event.URLDidChange, {oldURL: oldURL});
         }
 
-        if (oldMIMEType !== mimeType)
+        if (oldMIMEType !== mimeType) {
+            // Delete the MIME-type components so the MIME-type is re-parsed the next time it is requested.
+            delete this._mimeTypeComponents;
+
             this.dispatchEventToListeners(WebInspector.Resource.Event.MIMETypeDidChange, {oldMIMEType: oldMIMEType});
+        }
 
         if (oldType !== type)
             this.dispatchEventToListeners(WebInspector.Resource.Event.TypeDidChange, {oldType: oldType});

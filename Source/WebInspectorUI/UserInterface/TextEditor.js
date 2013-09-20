@@ -218,6 +218,8 @@ WebInspector.TextEditor.prototype = {
 
     set mimeType(newMIMEType)
     {
+        newMIMEType = parseMIMEType(newMIMEType).type;
+
         this._mimeType = newMIMEType;
         this._codeMirror.setOption("mode", newMIMEType);
     },

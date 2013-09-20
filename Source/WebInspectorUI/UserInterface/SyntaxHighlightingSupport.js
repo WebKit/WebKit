@@ -43,6 +43,8 @@ WebInspector.syntaxHighlightStringAsDocumentFragment = function(string, mimeType
         resultFragment.appendChild(span);
     }
 
+    mimeType = parseMIMEType(mimeType).type;
+
     CodeMirror.runMode(string, mimeType, appendText);
 
     return resultFragment;

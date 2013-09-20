@@ -80,7 +80,7 @@ WebInspector.FontResourceContentView.prototype = {
         var format = "";
 
         // We need to specify a format when loading SVG fonts to make them work.
-        if (this.resource.mimeType === "image/svg+xml")
+        if (this.resource.mimeTypeComponents.type === "image/svg+xml")
             format = " format(\"svg\")";
 
         if (this._styleElement && this._styleElement.parentNode)

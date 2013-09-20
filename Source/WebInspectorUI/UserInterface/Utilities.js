@@ -1124,6 +1124,32 @@ function absoluteURL(partialURL, baseURL)
     return baseURLPrefix + resolveDotsInPath(basePath + partialURL);
 }
 
+function parseMIMEType(fullMimeType)
+{
+    if (!fullMimeType)
+        return {type: fullMimeType, boundary: null, encoding: null};
+
+    var typeParts = fullMimeType.split(/\s*;\s*/);
+    console.assert(typeParts.length >= 1);
+
+    var type = typeParts[0];
+    var boundary = null;
+    var encoding = null;
+
+    for (var i = 1; i < typeParts.length; ++i) {
+        var subparts = typeParts[i].split(/\s*=\s*/);
+        if (subparts.length !== 2)
+            continue;
+
+        if (subparts[0].toLowerCase() === "boundary")
+            boundary = subparts[1];
+        else if (subparts[0].toLowerCase() === "charset")
+            encoding = subparts[1].replace("^\"|\"$", ""); // Trim quotes.
+    }
+
+    return {type: type, boundary: boundary || null, encoding: encoding || null};
+}
+
 function simpleGlobStringToRegExp(globString, regExpFlags)
 {
     // Only supports "*" globs.
