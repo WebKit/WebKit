@@ -918,7 +918,9 @@ public:
 
     void updateFocusAppearanceSoon(bool restorePreviousSelection);
     void cancelFocusAppearanceUpdate();
-        
+
+    void resetHiddenFocusElementSoon();
+
     // Extension for manipulating canvas drawing contexts for use in CSS
     CanvasRenderingContext* getCSSCanvasContext(const String& type, const String& name, int width, int height);
     HTMLCanvasElement* getCSSCanvasElement(const String& name);
@@ -1225,6 +1227,8 @@ private:
     void updateFocusAppearanceTimerFired(Timer<Document>*);
     void updateBaseURL();
 
+    void resetHiddenFocusElementTimer(Timer<Document>*);
+
     void buildAccessKeyMap(TreeScope* root);
 
     void createStyleResolver();
@@ -1376,6 +1380,7 @@ private:
     const OwnPtr<DocumentMarkerController> m_markers;
     
     Timer<Document> m_updateFocusAppearanceTimer;
+    Timer<Document> m_resetHiddenFocusElementTimer;
 
     Element* m_cssTarget;
 
