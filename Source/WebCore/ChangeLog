@@ -1,3 +1,15 @@
+2013-09-20  Antti Koivisto  <antti@apple.com>
+
+        Make RenderObject::parent() return RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=121671
+
+        Reviewed by Andreas Kling.
+
+        Make RenderObject::parent() return RenderElement and adopt everywhere.
+        Moved addChild/removeChild from RenderObject to RenderElement.
+        Uninlined a few big RenderObject functions.
+        Renamed RenderObject::remove() -> RenderObject::removeFromParent()
+
 2013-09-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Buildfix after r156133 for !ENABLE(WORKERS) platforms

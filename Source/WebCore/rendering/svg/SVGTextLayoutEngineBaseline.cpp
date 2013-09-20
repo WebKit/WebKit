@@ -23,7 +23,7 @@
 #include "SVGTextLayoutEngineBaseline.h"
 
 #include "Font.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
 #include "SVGTextMetrics.h"

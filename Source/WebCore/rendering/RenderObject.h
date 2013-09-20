@@ -54,6 +54,7 @@ class PseudoStyleRequest;
 class RenderBoxModelObject;
 class RenderInline;
 class RenderBlock;
+class RenderElement;
 class RenderFlowThread;
 class RenderGeometryMap;
 class RenderLayer;
@@ -158,7 +159,7 @@ public:
 
     virtual const char* renderName() const = 0;
 
-    RenderObject* parent() const { return m_parent; }
+    RenderElement* parent() const { return m_parent; }
     bool isDescendantOf(const RenderObject*) const;
 
     RenderObject* previousSibling() const { return m_previous; }
@@ -278,10 +279,6 @@ public:
     //////////////////////////////////////////
     virtual bool canHaveChildren() const { return children(); }
     virtual bool canHaveGeneratedChildren() const;
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const { return true; }
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
-    virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = 0) { return addChild(newChild, beforeChild); }
-    virtual void removeChild(RenderObject*);
     virtual bool createsAnonymousWrapper() const { return false; }
     //////////////////////////////////////////
 
@@ -290,18 +287,7 @@ protected:
     // Helper functions. Dangerous to use!
     void setPreviousSibling(RenderObject* previous) { m_previous = previous; }
     void setNextSibling(RenderObject* next) { m_next = next; }
-    void setParent(RenderObject* parent)
-    {
-        m_parent = parent;
-        
-        // Only update if our flow thread state is different from our new parent and if we're not a RenderFlowThread.
-        // A RenderFlowThread is always considered to be inside itself, so it never has to change its state
-        // in response to parent changes.
-        FlowThreadState newState = parent ? parent->flowThreadState() : NotInsideFlowThread;
-        if (newState != flowThreadState() && !isRenderFlowThread())
-            setFlowThreadStateIncludingDescendants(newState);
-    }
-
+    void setParent(RenderElement*);
     //////////////////////////////////////////
 private:
 #ifndef NDEBUG
@@ -972,7 +958,7 @@ public:
 
     void selectionStartEnd(int& spos, int& epos) const;
     
-    void remove() { if (parent()) parent()->removeChild(this); }
+    void removeFromParent();
 
     AnimationController& animation() const;
 
@@ -1006,7 +992,7 @@ public:
     RespectImageOrientationEnum shouldRespectImageOrientation() const;
 
 protected:
-    inline bool layerCreationAllowedForSubtree() const;
+    bool layerCreationAllowedForSubtree() const;
 
     // Overrides should call the superclass at the end
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
@@ -1065,7 +1051,7 @@ private:
 
     Node* m_node;
 
-    RenderObject* m_parent;
+    RenderElement* m_parent;
     RenderObject* m_previous;
     RenderObject* m_next;
 
@@ -1306,20 +1292,6 @@ inline bool RenderObject::preservesNewline() const
 #endif
         
     return style()->preserveNewline();
-}
-
-inline bool RenderObject::layerCreationAllowedForSubtree() const
-{
-#if ENABLE(SVG)
-    RenderObject* parentRenderer = parent();
-    while (parentRenderer) {
-        if (parentRenderer->isSVGHiddenContainer())
-            return false;
-        parentRenderer = parentRenderer->parent();
-    }
-#endif
-
-    return true;
 }
 
 inline void RenderObject::setSelectionStateIfNeeded(SelectionState state)

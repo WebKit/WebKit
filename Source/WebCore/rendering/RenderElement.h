@@ -38,6 +38,11 @@ public:
     Element* nonPseudoElement() const { return toElement(RenderObject::nonPseudoNode()); }
     Element* generatingElement() const { return toElement(RenderObject::generatingNode()); }
 
+    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const { return true; }
+    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
+    virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = 0) { return addChild(newChild, beforeChild); }
+    virtual void removeChild(RenderObject*);
+
 protected:
     explicit RenderElement(Element*);
 
@@ -45,6 +50,7 @@ private:
     void node() const WTF_DELETED_FUNCTION;
     void nonPseudoNode() const WTF_DELETED_FUNCTION;
     void generatingNode() const WTF_DELETED_FUNCTION;
+    void isText() const WTF_DELETED_FUNCTION;
 };
 
 inline RenderElement& toRenderElement(RenderObject& object)

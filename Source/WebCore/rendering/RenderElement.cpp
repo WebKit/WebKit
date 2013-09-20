@@ -31,6 +31,7 @@
 #include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
+#include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderMultiColumnBlock.h"
 #include "RenderRegion.h"
@@ -40,6 +41,8 @@
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
+#include "RenderText.h"
+#include "SVGRenderSupport.h"
 
 namespace WebCore {
 
@@ -127,8 +130,67 @@ RenderElement* RenderElement::createFor(Element& element, RenderStyle& style)
     case INLINE_GRID:
         return new (arena) RenderGrid(element);
     }
-
+    ASSERT_NOT_REACHED();
     return nullptr;
 }
+
+void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
+{
+    ASSERT(children());
+    RenderObjectChildList& children = *this->children();
+
+    bool needsTable = false;
+
+    if (newChild->isRenderTableCol()) {
+        RenderTableCol* newTableColumn = toRenderTableCol(newChild);
+        bool isColumnInColumnGroup = newTableColumn->isTableColumn() && isRenderTableCol();
+        needsTable = !isTable() && !isColumnInColumnGroup;
+    } else if (newChild->isTableCaption())
+        needsTable = !isTable();
+    else if (newChild->isTableSection())
+        needsTable = !isTable();
+    else if (newChild->isTableRow())
+        needsTable = !isTableSection();
+    else if (newChild->isTableCell())
+        needsTable = !isTableRow();
+
+    if (needsTable) {
+        RenderTable* table;
+        RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : children.lastChild();
+        if (afterChild && afterChild->isAnonymous() && afterChild->isTable() && !afterChild->isBeforeContent())
+            table = toRenderTable(afterChild);
+        else {
+            table = RenderTable::createAnonymousWithParentRenderer(this);
+            addChild(table, beforeChild);
+        }
+        table->addChild(newChild);
+    } else
+        children.insertChildNode(this, newChild, beforeChild);
+
+    if (newChild->isText() && newChild->style()->textTransform() == CAPITALIZE)
+        toRenderText(newChild)->transformText();
+
+    // SVG creates renderers for <g display="none">, as SVG requires children of hidden
+    // <g>s to have renderers - at least that's how our implementation works. Consider:
+    // <g display="none"><foreignObject><body style="position: relative">FOO...
+    // - requiresLayer() would return true for the <body>, creating a new RenderLayer
+    // - when the document is painted, both layers are painted. The <body> layer doesn't
+    //   know that it's inside a "hidden SVG subtree", and thus paints, even if it shouldn't.
+    // To avoid the problem alltogether, detect early if we're inside a hidden SVG subtree
+    // and stop creating layers at all for these cases - they're not used anyways.
+    if (newChild->hasLayer() && !layerCreationAllowedForSubtree())
+        toRenderLayerModelObject(newChild)->layer()->removeOnlyThisLayer();
+
+#if ENABLE(SVG)
+    SVGRenderSupport::childAdded(this, newChild);
+#endif
+}
+
+void RenderElement::removeChild(RenderObject* oldChild)
+{
+    ASSERT(children());
+    children()->removeChildNode(this, oldChild);
+}
+
 
 }

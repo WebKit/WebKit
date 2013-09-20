@@ -237,8 +237,8 @@ void SVGTextLayoutEngine::layoutInlineTextBox(SVGInlineTextBox* textBox)
 
     RenderSVGInlineText& text = textBox->renderer();
     ASSERT(text.parent());
-    ASSERT(text.parent()->node());
-    ASSERT(text.parent()->node()->isSVGElement());
+    ASSERT(text.parent()->element());
+    ASSERT(text.parent()->element()->isSVGElement());
 
     const RenderStyle* style = text.style();
     ASSERT(style);
@@ -427,7 +427,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
     if (m_inPathLayout && m_textPath.isEmpty())
         return;
 
-    SVGElement* lengthContext = toSVGElement(text->parent()->node());
+    SVGElement* lengthContext = toSVGElement(text->parent()->element());
     
     RenderObject* textParent = text->parent();
     bool definesTextLength = textParent ? parentDefinesTextLength(textParent) : false;

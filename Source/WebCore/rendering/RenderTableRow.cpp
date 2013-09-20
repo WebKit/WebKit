@@ -113,14 +113,14 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
         if (last && last->isAnonymous() && last->isTableCell() && !last->isBeforeOrAfterContent()) {
             if (beforeChild == last)
                 beforeChild = last->firstChild();
-            last->addChild(child, beforeChild);
+            toRenderTableCell(last)->addChild(child, beforeChild);
             return;
         }
 
         if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
             RenderObject* cell = beforeChild->previousSibling();
             if (cell && cell->isTableCell() && cell->isAnonymous()) {
-                cell->addChild(child);
+                toRenderTableCell(cell)->addChild(child);
                 return;
             }
         }

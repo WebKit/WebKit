@@ -756,7 +756,7 @@ RenderBlock* RenderBlock::columnsBlockForSpanningElement(RenderObject* newChild)
 void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() != this) {
-        RenderObject* beforeChildContainer = beforeChild->parent();
+        RenderElement* beforeChildContainer = beforeChild->parent();
         while (beforeChildContainer->parent() != this)
             beforeChildContainer = beforeChildContainer->parent();
         ASSERT(beforeChildContainer);
@@ -764,7 +764,7 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
         if (beforeChildContainer->isAnonymous()) {
             // If the requested beforeChild is not one of our children, then this is because
             // there is an anonymous container within this object that contains the beforeChild.
-            RenderObject* beforeChildAnonymousContainer = beforeChildContainer;
+            RenderElement* beforeChildAnonymousContainer = beforeChildContainer;
             if (beforeChildAnonymousContainer->isAnonymousBlock()
 #if ENABLE(FULLSCREEN_API)
                 // Full screen renderers and full screen placeholders act as anonymous blocks, not tables:
@@ -861,7 +861,7 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
         RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : lastChild();
 
         if (afterChild && afterChild->isAnonymousBlock()) {
-            afterChild->addChild(newChild);
+            toRenderBlock(afterChild)->addChild(newChild);
             return;
         }
 
@@ -1788,15 +1788,16 @@ void RenderBlock::moveRunInUnderSiblingBlockIfNeeded(RenderObject* runIn)
     if (!curr || !curr->isRenderBlock() || !curr->childrenInline())
         return;
 
-    if (toRenderBlock(curr)->beingDestroyed())
+    RenderBlock& nextSiblingBlock = toRenderBlock(*curr);
+    if (nextSiblingBlock.beingDestroyed())
         return;
 
     // Per CSS3, "A run-in cannot run in to a block that already starts with a
     // run-in or that itself is a run-in".
-    if (curr->isRunIn() || (curr->firstChild() && curr->firstChild()->isRunIn()))
+    if (nextSiblingBlock.isRunIn() || (nextSiblingBlock.firstChild() && nextSiblingBlock.firstChild()->isRunIn()))
         return;
 
-    if (curr->isAnonymous() || curr->isFloatingOrOutOfFlowPositioned())
+    if (nextSiblingBlock.isAnonymous() || nextSiblingBlock.isFloatingOrOutOfFlowPositioned())
         return;
 
     RenderBoxModelObject* oldRunIn = toRenderBoxModelObject(runIn);
@@ -1806,10 +1807,10 @@ void RenderBlock::moveRunInUnderSiblingBlockIfNeeded(RenderObject* runIn)
     // Now insert the new child under |curr| block. Use addChild instead of insertChildNode
     // since it handles correct placement of the children, especially where we cannot insert
     // anything before the first child. e.g. details tag. See https://bugs.webkit.org/show_bug.cgi?id=58228.
-    curr->addChild(newRunIn, curr->firstChild());
+    nextSiblingBlock.addChild(newRunIn, nextSiblingBlock.firstChild());
 
     // Make sure that |this| get a layout since its run-in child moved.
-    curr->setNeedsLayoutAndPrefWidthsRecalc();
+    nextSiblingBlock.setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 bool RenderBlock::runInIsPlacedIntoSiblingBlock(RenderObject* runIn)
@@ -5804,8 +5805,8 @@ static inline RenderObject* findFirstLetterBlock(RenderBlock* start)
 
 void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderObject* currentChild)
 {
-    RenderObject* firstLetter = currentChild->parent();
-    RenderObject* firstLetterContainer = firstLetter->parent();
+    RenderElement* firstLetter = currentChild->parent();
+    RenderElement* firstLetterContainer = firstLetter->parent();
     RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     ASSERT(firstLetter->isFloating() || firstLetter->isInline());
 
@@ -5851,9 +5852,9 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
 
 void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, RenderText* currentTextChild)
 {
-    RenderObject* firstLetterContainer = currentTextChild->parent();
+    RenderElement* firstLetterContainer = currentTextChild->parent();
     RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
-    RenderObject* firstLetter = 0;
+    RenderBoxModelObject* firstLetter = 0;
     if (pseudoStyle->display() == INLINE)
         firstLetter = RenderInline::createAnonymous(document());
     else
@@ -5904,7 +5905,7 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
         firstLetterContainer->addChild(remainingText, currentTextChild);
         firstLetterContainer->removeChild(currentTextChild);
         remainingText->setFirstLetter(firstLetter);
-        toRenderBoxModelObject(firstLetter)->setFirstLetterRemainingText(remainingText);
+        firstLetter->setFirstLetterRemainingText(remainingText);
         
         // construct text fragment for the first letter
         RenderTextFragment* letter;

@@ -132,14 +132,14 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
         if (last && last->isAnonymous() && !last->isBeforeOrAfterContent()) {
             if (beforeChild == last)
                 beforeChild = last->firstChild();
-            last->addChild(child, beforeChild);
+            toRenderTableRow(last)->addChild(child, beforeChild);
             return;
         }
 
         if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
             RenderObject* row = beforeChild->previousSibling();
             if (row && row->isTableRow() && row->isAnonymous()) {
-                row->addChild(child);
+                toRenderTableRow(row)->addChild(child);
                 return;
             }
         }
@@ -150,11 +150,11 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
         while (lastBox && lastBox->parent()->isAnonymous() && !lastBox->isTableRow())
             lastBox = lastBox->parent();
         if (lastBox && lastBox->isAnonymous() && !lastBox->isBeforeOrAfterContent()) {
-            lastBox->addChild(child, beforeChild);
+            toRenderTableRow(lastBox)->addChild(child, beforeChild);
             return;
         }
 
-        RenderObject* row = RenderTableRow::createAnonymousWithParentRenderer(this);
+        RenderTableRow* row = RenderTableRow::createAnonymousWithParentRenderer(this);
         addChild(row, beforeChild);
         row->addChild(child);
         return;

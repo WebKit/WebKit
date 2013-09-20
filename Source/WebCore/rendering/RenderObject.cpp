@@ -55,8 +55,6 @@
 #include "RenderLayerBacking.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderScrollbarPart.h"
-#include "RenderTable.h"
-#include "RenderTableCol.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -226,68 +224,22 @@ void RenderObject::setFlowThreadStateIncludingDescendants(FlowThreadState state)
     }
 }
 
-void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
+void RenderObject::setParent(RenderElement* parent)
 {
-    RenderObjectChildList* children = this->children();
-    ASSERT(children);
-    if (!children)
-        return;
+    m_parent = parent;
 
-    bool needsTable = false;
-
-    if (newChild->isRenderTableCol()) {
-        RenderTableCol* newTableColumn = toRenderTableCol(newChild);
-        bool isColumnInColumnGroup = newTableColumn->isTableColumn() && isRenderTableCol();
-        needsTable = !isTable() && !isColumnInColumnGroup;
-    } else if (newChild->isTableCaption())
-        needsTable = !isTable();
-    else if (newChild->isTableSection())
-        needsTable = !isTable();
-    else if (newChild->isTableRow())
-        needsTable = !isTableSection();
-    else if (newChild->isTableCell())
-        needsTable = !isTableRow();
-
-    if (needsTable) {
-        RenderTable* table;
-        RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : children->lastChild();
-        if (afterChild && afterChild->isAnonymous() && afterChild->isTable() && !afterChild->isBeforeContent())
-            table = toRenderTable(afterChild);
-        else {
-            table = RenderTable::createAnonymousWithParentRenderer(this);
-            addChild(table, beforeChild);
-        }
-        table->addChild(newChild);
-    } else
-        children->insertChildNode(this, newChild, beforeChild);
-
-    if (newChild->isText() && newChild->style()->textTransform() == CAPITALIZE)
-        toRenderText(newChild)->transformText();
-
-    // SVG creates renderers for <g display="none">, as SVG requires children of hidden
-    // <g>s to have renderers - at least that's how our implementation works. Consider:
-    // <g display="none"><foreignObject><body style="position: relative">FOO...
-    // - requiresLayer() would return true for the <body>, creating a new RenderLayer
-    // - when the document is painted, both layers are painted. The <body> layer doesn't
-    //   know that it's inside a "hidden SVG subtree", and thus paints, even if it shouldn't.
-    // To avoid the problem alltogether, detect early if we're inside a hidden SVG subtree
-    // and stop creating layers at all for these cases - they're not used anyways.
-    if (newChild->hasLayer() && !layerCreationAllowedForSubtree())
-        toRenderLayerModelObject(newChild)->layer()->removeOnlyThisLayer();
-
-#if ENABLE(SVG)
-    SVGRenderSupport::childAdded(this, newChild);
-#endif
+    // Only update if our flow thread state is different from our new parent and if we're not a RenderFlowThread.
+    // A RenderFlowThread is always considered to be inside itself, so it never has to change its state
+    // in response to parent changes.
+    FlowThreadState newState = parent ? parent->flowThreadState() : NotInsideFlowThread;
+    if (newState != flowThreadState() && !isRenderFlowThread())
+        setFlowThreadStateIncludingDescendants(newState);
 }
 
-void RenderObject::removeChild(RenderObject* oldChild)
+void RenderObject::removeFromParent()
 {
-    RenderObjectChildList* children = this->children();
-    ASSERT(children);
-    if (!children)
-        return;
-
-    children->removeChildNode(this, oldChild);
+    if (parent())
+        parent()->removeChild(this);
 }
 
 RenderObject* RenderObject::nextInPreOrder() const
@@ -681,6 +633,20 @@ RenderLayer* RenderObject::enclosingLayer() const
         curr = curr->parent();
     }
     return 0;
+}
+
+bool RenderObject::layerCreationAllowedForSubtree() const
+{
+#if ENABLE(SVG)
+    RenderElement* parentRenderer = parent();
+    while (parentRenderer) {
+        if (parentRenderer->isSVGHiddenContainer())
+            return false;
+        parentRenderer = parentRenderer->parent();
+    }
+#endif
+    
+    return true;
 }
 
 bool RenderObject::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
@@ -2575,7 +2541,7 @@ void RenderObject::willBeDestroyed()
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->childrenChanged(this->parent());
 
-    remove();
+    removeFromParent();
 
     ASSERT(documentBeingDestroyed() || !view().frameView().hasSlowRepaintObject(this));
 

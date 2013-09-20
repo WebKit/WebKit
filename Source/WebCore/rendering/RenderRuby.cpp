@@ -167,7 +167,7 @@ void RenderRubyAsInline::addChild(RenderObject* child, RenderObject* beforeChild
     if (beforeChild && !isAfterContent(beforeChild)) {
         // insert child into run
         ASSERT(!beforeChild->isRubyRun());
-        RenderObject* run = beforeChild;
+        RenderElement* run = beforeChild->parent();
         while (run && !run->isRubyRun())
             run = run->parent();
         if (run) {
@@ -273,7 +273,7 @@ void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)
     if (beforeChild && !isAfterContent(beforeChild)) {
         // insert child into run
         ASSERT(!beforeChild->isRubyRun());
-        RenderObject* run = beforeChild;
+        RenderElement* run = beforeChild->parent();
         while (run && !run->isRubyRun())
             run = run->parent();
         if (run) {

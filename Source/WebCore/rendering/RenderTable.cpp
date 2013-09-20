@@ -168,14 +168,14 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     }
 
     if (!beforeChild && lastChild() && lastChild()->isTableSection() && lastChild()->isAnonymous() && !lastChild()->isBeforeContent()) {
-        lastChild()->addChild(child);
+        toRenderTableSection(lastChild())->addChild(child);
         return;
     }
 
     if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
         RenderObject* section = beforeChild->previousSibling();
         if (section && section->isTableSection() && section->isAnonymous()) {
-            section->addChild(child);
+            toRenderTableSection(section)->addChild(child);
             return;
         }
     }
@@ -186,7 +186,7 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     if (lastBox && lastBox->isAnonymous() && !isAfterContent(lastBox)) {
         if (beforeChild == lastBox)
             beforeChild = lastBox->firstChild();
-        lastBox->addChild(child, beforeChild);
+        toRenderTableSection(lastBox)->addChild(child, beforeChild);
         return;
     }
 

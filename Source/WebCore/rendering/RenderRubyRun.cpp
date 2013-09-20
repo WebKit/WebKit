@@ -127,7 +127,7 @@ void RenderRubyRun::addChild(RenderObject* child, RenderObject* beforeChild)
             // In this case the new text takes the place of the old one, and
             // the old text goes into a new run that is inserted as next sibling.
             ASSERT(beforeChild->parent() == this);
-            RenderObject* ruby = parent();
+            RenderElement* ruby = parent();
             ASSERT(ruby->isRuby());
             RenderBlock* newRun = staticCreateRubyRun(ruby);
             ruby->addChild(newRun, nextSibling());
@@ -141,7 +141,7 @@ void RenderRubyRun::addChild(RenderObject* child, RenderObject* beforeChild)
         } else if (hasRubyBase()) {
             // Insertion before a ruby base object.
             // In this case we need insert a new run before the current one and split the base.
-            RenderObject* ruby = parent();
+            RenderElement* ruby = parent();
             RenderRubyRun* newRun = staticCreateRubyRun(ruby);
             ruby->addChild(newRun, this);
             newRun->addChild(child);

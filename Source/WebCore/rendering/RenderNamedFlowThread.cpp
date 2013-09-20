@@ -485,7 +485,7 @@ bool RenderNamedFlowThread::isChildAllowed(RenderObject* child, RenderStyle* sty
         return true;
 
     ASSERT(child->node()->isElementNode());
-    Node* originalParent = NodeRenderingTraversal::parent(child->node());
+    Element* originalParent = toElement(NodeRenderingTraversal::parent(child->node()));
 
     if (!originalParent || !originalParent->renderer())
         return true;

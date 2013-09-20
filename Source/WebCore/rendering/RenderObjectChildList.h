@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+class RenderElement;
 class RenderObject;
 
 class RenderObjectChildList {
@@ -50,9 +51,9 @@ public:
 
     void destroyLeftoverChildren();
 
-    RenderObject* removeChildNode(RenderObject* owner, RenderObject*, bool notifyRenderer = true);
-    void insertChildNode(RenderObject* owner, RenderObject* newChild, RenderObject* beforeChild, bool notifyRenderer = true);
-    void appendChildNode(RenderObject* owner, RenderObject* newChild, bool notifyRenderer = true)
+    RenderObject* removeChildNode(RenderElement* owner, RenderObject*, bool notifyRenderer = true);
+    void insertChildNode(RenderElement* owner, RenderObject* newChild, RenderObject* beforeChild, bool notifyRenderer = true);
+    void appendChildNode(RenderElement* owner, RenderObject* newChild, bool notifyRenderer = true)
     {
         insertChildNode(owner, newChild, 0, notifyRenderer);
     }

@@ -22,6 +22,7 @@
 #define RenderCombineText_h
 
 #include "Font.h"
+#include "RenderElement.h"
 #include "RenderText.h"
 #include "Text.h"
 

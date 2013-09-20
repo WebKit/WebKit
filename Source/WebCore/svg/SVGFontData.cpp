@@ -22,7 +22,7 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGFontData.h"
 
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "SVGAltGlyphElement.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
@@ -166,15 +166,15 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
     Vector<String> altGlyphNames;
 
     if (renderObject) {
-        RenderObject* parentRenderObject = renderObject->isText() ? renderObject->parent() : renderObject;
-        ASSERT(parentRenderObject);
+        RenderElement* parentRenderer = renderObject->isRenderElement() ? toRenderElement(renderObject) : renderObject->parent();
+        ASSERT(parentRenderer);
 
-        isVerticalText = parentRenderObject->style()->svgStyle()->isVerticalWritingMode();
-        if (Element* parentRenderObjectElement = toElement(parentRenderObject->node())) {
-            language = parentRenderObjectElement->getAttribute(XMLNames::langAttr);
+        isVerticalText = parentRenderer->style()->svgStyle()->isVerticalWritingMode();
+        if (Element* parentRendererElement = parentRenderer->element()) {
+            language = parentRendererElement->getAttribute(XMLNames::langAttr);
 
-            if (isSVGAltGlyphElement(parentRenderObjectElement)) {
-                SVGAltGlyphElement* altGlyph = toSVGAltGlyphElement(parentRenderObjectElement);
+            if (isSVGAltGlyphElement(parentRendererElement)) {
+                SVGAltGlyphElement* altGlyph = toSVGAltGlyphElement(parentRendererElement);
                 if (!altGlyph->hasValidGlyphElements(altGlyphNames))
                     altGlyphNames.clear();
             }

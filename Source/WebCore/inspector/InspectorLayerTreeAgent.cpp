@@ -170,11 +170,11 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
     if (renderer->isRenderView())
         node = &renderer->document();
     else if (isReflection && isGenerated)
-        node = renderer->parent()->generatingNode();
+        node = renderer->parent()->generatingElement();
     else if (isGenerated)
         node = renderer->generatingNode();
     else if (isReflection || isAnonymous)
-        node = renderer->parent()->node();
+        node = renderer->parent()->element();
 
     // Basic set of properties.
     RefPtr<TypeBuilder::LayerTree::Layer> layerObject = TypeBuilder::LayerTree::Layer::create()

@@ -29,8 +29,8 @@
 
 #include "AXObjectCache.h"
 #include "RenderCounter.h"
+#include "RenderElement.h"
 #include "RenderLineBreak.h"
-#include "RenderObject.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 
@@ -40,7 +40,7 @@ void RenderObjectChildList::destroyLeftoverChildren()
 {
     while (firstChild()) {
         if (firstChild()->isListMarker() || (firstChild()->style()->styleType() == FIRST_LETTER && !firstChild()->isText()))
-            firstChild()->remove();  // List markers are owned by their enclosing list and so don't get destroyed by this container. Similarly, first letters are destroyed by their remaining text fragment.
+            firstChild()->removeFromParent(); // List markers are owned by their enclosing list and so don't get destroyed by this container. Similarly, first letters are destroyed by their remaining text fragment.
         else if (firstChild()->isRunIn() && firstChild()->node()) {
             firstChild()->node()->setRenderer(0);
             firstChild()->node()->setNeedsStyleRecalc();
@@ -54,7 +54,7 @@ void RenderObjectChildList::destroyLeftoverChildren()
     }
 }
 
-RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, RenderObject* oldChild, bool notifyRenderer)
+RenderObject* RenderObjectChildList::removeChildNode(RenderElement* owner, RenderObject* oldChild, bool notifyRenderer)
 {
     ASSERT(oldChild->parent() == owner);
 
@@ -118,7 +118,7 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     return oldChild;
 }
 
-void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* newChild, RenderObject* beforeChild, bool notifyRenderer)
+void RenderObjectChildList::insertChildNode(RenderElement* owner, RenderObject* newChild, RenderObject* beforeChild, bool notifyRenderer)
 {
     ASSERT(!newChild->parent());
     ASSERT(!owner->isRenderBlockFlow() || (!newChild->isTableSection() && !newChild->isTableRow() && !newChild->isTableCell()));
