@@ -192,5 +192,159 @@ void RenderElement::removeChild(RenderObject* oldChild)
     children()->removeChildNode(this, oldChild);
 }
 
+static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderElement*& newObject, RenderLayer*& beforeChild)
+{
+    if (obj->hasLayer()) {
+        if (!beforeChild && newObject) {
+            // We need to figure out the layer that follows newObject. We only do
+            // this the first time we find a child layer, and then we update the
+            // pointer values for newObject and beforeChild used by everyone else.
+            beforeChild = newObject->parent()->findNextLayer(parentLayer, newObject);
+            newObject = nullptr;
+        }
+        parentLayer->addChild(toRenderLayerModelObject(obj)->layer(), beforeChild);
+        return;
+    }
+
+    for (RenderObject* curr = obj->firstChild(); curr; curr = curr->nextSibling())
+        addLayers(curr, parentLayer, newObject, beforeChild);
+}
+
+void RenderElement::addLayers(RenderLayer* parentLayer)
+{
+    if (!parentLayer)
+        return;
+
+    RenderElement* renderer = this;
+    RenderLayer* beforeChild = nullptr;
+    WebCore::addLayers(this, parentLayer, renderer, beforeChild);
+}
+
+void RenderElement::removeLayers(RenderLayer* parentLayer)
+{
+    if (!parentLayer)
+        return;
+
+    if (hasLayer()) {
+        parentLayer->removeChild(toRenderLayerModelObject(this)->layer());
+        return;
+    }
+
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->isRenderElement())
+            toRenderElement(child)->removeLayers(parentLayer);
+    }
+}
+
+void RenderElement::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
+{
+    if (!newParent)
+        return;
+
+    if (hasLayer()) {
+        RenderLayer* layer = toRenderLayerModelObject(this)->layer();
+        ASSERT(oldParent == layer->parent());
+        if (oldParent)
+            oldParent->removeChild(layer);
+        newParent->addChild(layer);
+        return;
+    }
+
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->isRenderElement())
+            toRenderElement(child)->moveLayers(oldParent, newParent);
+    }
+}
+
+RenderLayer* RenderElement::findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent)
+{
+    // Error check the parent layer passed in. If it's null, we can't find anything.
+    if (!parentLayer)
+        return 0;
+
+    // Step 1: If our layer is a child of the desired parent, then return our layer.
+    RenderLayer* ourLayer = hasLayer() ? toRenderLayerModelObject(this)->layer() : nullptr;
+    if (ourLayer && ourLayer->parent() == parentLayer)
+        return ourLayer;
+
+    // Step 2: If we don't have a layer, or our layer is the desired parent, then descend
+    // into our siblings trying to find the next layer whose parent is the desired parent.
+    if (!ourLayer || ourLayer == parentLayer) {
+        for (RenderObject* child = startPoint ? startPoint->nextSibling() : firstChild(); child; child = child->nextSibling()) {
+            if (!child->isRenderElement())
+                continue;
+            RenderLayer* nextLayer = toRenderElement(child)->findNextLayer(parentLayer, nullptr, false);
+            if (nextLayer)
+                return nextLayer;
+        }
+    }
+
+    // Step 3: If our layer is the desired parent layer, then we're finished. We didn't
+    // find anything.
+    if (parentLayer == ourLayer)
+        return nullptr;
+
+    // Step 4: If |checkParent| is set, climb up to our parent and check its siblings that
+    // follow us to see if we can locate a layer.
+    if (checkParent && parent())
+        return parent()->findNextLayer(parentLayer, this, true);
+
+    return nullptr;
+}
+
+bool RenderElement::layerCreationAllowedForSubtree() const
+{
+#if ENABLE(SVG)
+    RenderElement* parentRenderer = parent();
+    while (parentRenderer) {
+        if (parentRenderer->isSVGHiddenContainer())
+            return false;
+        parentRenderer = parentRenderer->parent();
+    }
+#endif
+    
+    return true;
+}
+
+void RenderElement::insertedIntoTree()
+{
+    RenderObject::insertedIntoTree();
+
+    // Keep our layer hierarchy updated. Optimize for the common case where we don't have any children
+    // and don't have a layer attached to ourselves.
+    RenderLayer* layer = nullptr;
+    if (firstChild() || hasLayer()) {
+        layer = parent()->enclosingLayer();
+        addLayers(layer);
+    }
+
+    // If |this| is visible but this object was not, tell the layer it has some visible content
+    // that needs to be drawn and layer visibility optimization can't be used
+    if (parent()->style()->visibility() != VISIBLE && style()->visibility() == VISIBLE && !hasLayer()) {
+        if (!layer)
+            layer = parent()->enclosingLayer();
+        if (layer)
+            layer->setHasVisibleContent();
+    }
+}
+
+void RenderElement::willBeRemovedFromTree()
+{
+    // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.
+    RenderLayer* layer = nullptr;
+    if (parent()->style()->visibility() != VISIBLE && style()->visibility() == VISIBLE && !hasLayer()) {
+        if ((layer = parent()->enclosingLayer()))
+            layer->dirtyVisibleContentStatus();
+    }
+    // Keep our layer hierarchy updated.
+    if (firstChild() || hasLayer()) {
+        if (!layer)
+            layer = parent()->enclosingLayer();
+        removeLayers(layer);
+    }
+
+    RenderObject::willBeRemovedFromTree();
+}
+
 
 }

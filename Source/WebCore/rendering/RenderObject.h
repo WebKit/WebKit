@@ -220,14 +220,7 @@ public:
     void resetTextAutosizing();
 #endif
 
-    // The following six functions are used when the render tree hierarchy changes to make sure layers get
-    // properly added and removed.  Since containership can be implemented by any subclass, and since a hierarchy
-    // can contain a mixture of boxes and other object types, these functions need to be in the base class.
     RenderLayer* enclosingLayer() const;
-    void addLayers(RenderLayer* parentLayer);
-    void removeLayers(RenderLayer* parentLayer);
-    void moveLayers(RenderLayer* oldParent, RenderLayer* newParent);
-    RenderLayer* findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent = true);
 
     // Scrolling is a RenderBox concept, however some code just cares about recursively scrolling our enclosing ScrollableArea(s).
     bool scrollRectToVisible(const LayoutRect&, const ScrollAlignment& alignX = ScrollAlignment::alignCenterIfNeeded, const ScrollAlignment& alignY = ScrollAlignment::alignCenterIfNeeded);
@@ -992,8 +985,6 @@ public:
     RespectImageOrientationEnum shouldRespectImageOrientation() const;
 
 protected:
-    bool layerCreationAllowedForSubtree() const;
-
     // Overrides should call the superclass at the end
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     // Overrides should call the superclass at the start

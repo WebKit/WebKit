@@ -526,103 +526,6 @@ void RenderObject::resetTextAutosizing()
 }
 #endif // ENABLE(IOS_TEXT_AUTOSIZING)
 
-static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderObject*& newObject,
-                      RenderLayer*& beforeChild)
-{
-    if (obj->hasLayer()) {
-        if (!beforeChild && newObject) {
-            // We need to figure out the layer that follows newObject. We only do
-            // this the first time we find a child layer, and then we update the
-            // pointer values for newObject and beforeChild used by everyone else.
-            beforeChild = newObject->parent()->findNextLayer(parentLayer, newObject);
-            newObject = 0;
-        }
-        parentLayer->addChild(toRenderLayerModelObject(obj)->layer(), beforeChild);
-        return;
-    }
-
-    for (RenderObject* curr = obj->firstChild(); curr; curr = curr->nextSibling())
-        addLayers(curr, parentLayer, newObject, beforeChild);
-}
-
-void RenderObject::addLayers(RenderLayer* parentLayer)
-{
-    if (!parentLayer)
-        return;
-
-    RenderObject* object = this;
-    RenderLayer* beforeChild = 0;
-    WebCore::addLayers(this, parentLayer, object, beforeChild);
-}
-
-void RenderObject::removeLayers(RenderLayer* parentLayer)
-{
-    if (!parentLayer)
-        return;
-
-    if (hasLayer()) {
-        parentLayer->removeChild(toRenderLayerModelObject(this)->layer());
-        return;
-    }
-
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
-        curr->removeLayers(parentLayer);
-}
-
-void RenderObject::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
-{
-    if (!newParent)
-        return;
-
-    if (hasLayer()) {
-        RenderLayer* layer = toRenderLayerModelObject(this)->layer();
-        ASSERT(oldParent == layer->parent());
-        if (oldParent)
-            oldParent->removeChild(layer);
-        newParent->addChild(layer);
-        return;
-    }
-
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
-        curr->moveLayers(oldParent, newParent);
-}
-
-RenderLayer* RenderObject::findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint,
-                                         bool checkParent)
-{
-    // Error check the parent layer passed in. If it's null, we can't find anything.
-    if (!parentLayer)
-        return 0;
-
-    // Step 1: If our layer is a child of the desired parent, then return our layer.
-    RenderLayer* ourLayer = hasLayer() ? toRenderLayerModelObject(this)->layer() : 0;
-    if (ourLayer && ourLayer->parent() == parentLayer)
-        return ourLayer;
-
-    // Step 2: If we don't have a layer, or our layer is the desired parent, then descend
-    // into our siblings trying to find the next layer whose parent is the desired parent.
-    if (!ourLayer || ourLayer == parentLayer) {
-        for (RenderObject* curr = startPoint ? startPoint->nextSibling() : firstChild();
-             curr; curr = curr->nextSibling()) {
-            RenderLayer* nextLayer = curr->findNextLayer(parentLayer, 0, false);
-            if (nextLayer)
-                return nextLayer;
-        }
-    }
-
-    // Step 3: If our layer is the desired parent layer, then we're finished. We didn't
-    // find anything.
-    if (parentLayer == ourLayer)
-        return 0;
-
-    // Step 4: If |checkParent| is set, climb up to our parent and check its siblings that
-    // follow us to see if we can locate a layer.
-    if (checkParent && parent())
-        return parent()->findNextLayer(parentLayer, this, true);
-
-    return 0;
-}
-
 RenderLayer* RenderObject::enclosingLayer() const
 {
     const RenderObject* curr = this;
@@ -633,20 +536,6 @@ RenderLayer* RenderObject::enclosingLayer() const
         curr = curr->parent();
     }
     return 0;
-}
-
-bool RenderObject::layerCreationAllowedForSubtree() const
-{
-#if ENABLE(SVG)
-    RenderElement* parentRenderer = parent();
-    while (parentRenderer) {
-        if (parentRenderer->isSVGHiddenContainer())
-            return false;
-        parentRenderer = parentRenderer->parent();
-    }
-#endif
-    
-    return true;
 }
 
 bool RenderObject::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
@@ -2586,23 +2475,6 @@ void RenderObject::insertedIntoTree()
 {
     // FIXME: We should ASSERT(isRooted()) here but generated content makes some out-of-order insertion.
 
-    // Keep our layer hierarchy updated. Optimize for the common case where we don't have any children
-    // and don't have a layer attached to ourselves.
-    RenderLayer* layer = 0;
-    if (firstChild() || hasLayer()) {
-        layer = parent()->enclosingLayer();
-        addLayers(layer);
-    }
-
-    // If |this| is visible but this object was not, tell the layer it has some visible content
-    // that needs to be drawn and layer visibility optimization can't be used
-    if (parent()->style()->visibility() != VISIBLE && style()->visibility() == VISIBLE && !hasLayer()) {
-        if (!layer)
-            layer = parent()->enclosingLayer();
-        if (layer)
-            layer->setHasVisibleContent();
-    }
-
     if (!isFloating() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(this);
 
@@ -2618,20 +2490,6 @@ void RenderObject::willBeRemovedFromTree()
         bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(&view().frameView());
         if (repaintFixedBackgroundsOnScroll && m_style && m_style->hasFixedBackgroundImage())
             view().frameView().removeSlowRepaintObject(this);
-    }
-
-    // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.
-    RenderLayer* layer = 0;
-    if (parent()->style()->visibility() != VISIBLE && style()->visibility() == VISIBLE && !hasLayer()) {
-        if ((layer = parent()->enclosingLayer()))
-            layer->dirtyVisibleContentStatus();
-    }
-
-    // Keep our layer hierarchy updated.
-    if (firstChild() || hasLayer()) {
-        if (!layer)
-            layer = parent()->enclosingLayer();
-        removeLayers(layer);
     }
 
     if (isOutOfFlowPositioned() && parent()->childrenInline())

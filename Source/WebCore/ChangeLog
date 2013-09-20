@@ -1,3 +1,24 @@
+2013-09-20  Antti Koivisto  <antti@apple.com>
+
+        Move layer hierarchy functions from RenderObject to RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=121692
+
+        Reviewed by Andreas Kling.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::addLayers):
+        (WebCore::RenderElement::removeLayers):
+        (WebCore::RenderElement::moveLayers):
+        (WebCore::RenderElement::findNextLayer):
+        (WebCore::RenderElement::layerCreationAllowedForSubtree):
+        
+            Move these from RenderObject.
+
+        (WebCore::RenderElement::insertedIntoTree):
+        (WebCore::RenderElement::willBeRemovedFromTree):
+        
+            Factor the layer related portion of these virtuals here.
+
 2013-09-20  Benjamin Poulain  <benjamin@webkit.org>
 
         Start cleaning the API of SelectorChecker

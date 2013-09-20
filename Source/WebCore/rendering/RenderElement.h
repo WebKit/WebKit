@@ -43,18 +43,24 @@ public:
     virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = 0) { return addChild(newChild, beforeChild); }
     virtual void removeChild(RenderObject*);
 
+    // The following functions are used when the render tree hierarchy changes to make sure layers get
+    // properly added and removed. Since containership can be implemented by any subclass, and since a hierarchy
+    // can contain a mixture of boxes and other object types, these functions need to be in the base class.
+    void addLayers(RenderLayer* parentLayer);
+    void removeLayers(RenderLayer* parentLayer);
+    void moveLayers(RenderLayer* oldParent, RenderLayer* newParent);
+    RenderLayer* findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent = true);
+
 protected:
     explicit RenderElement(Element*);
 
-    LayoutUnit valueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages = false) const
-    {
-        return WebCore::valueForLength(length, maximumValue, &view(), roundPercentages);
-    }
+    bool layerCreationAllowedForSubtree() const;
 
-    LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages = false) const
-    {
-        return WebCore::minimumValueForLength(length, maximumValue, &view(), roundPercentages);
-    }
+    LayoutUnit valueForLength(const Length&, LayoutUnit maximumValue, bool roundPercentages = false) const;
+    LayoutUnit minimumValueForLength(const Length&, LayoutUnit maximumValue, bool roundPercentages = false) const;
+
+    virtual void insertedIntoTree() OVERRIDE;
+    virtual void willBeRemovedFromTree() OVERRIDE;
 
 private:
     void node() const WTF_DELETED_FUNCTION;
@@ -62,6 +68,16 @@ private:
     void generatingNode() const WTF_DELETED_FUNCTION;
     void isText() const WTF_DELETED_FUNCTION;
 };
+
+inline LayoutUnit RenderElement::valueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages) const
+{
+    return WebCore::valueForLength(length, maximumValue, &view(), roundPercentages);
+}
+
+inline LayoutUnit RenderElement::minimumValueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages) const
+{
+    return WebCore::minimumValueForLength(length, maximumValue, &view(), roundPercentages);
+}
 
 inline RenderElement& toRenderElement(RenderObject& object)
 {
