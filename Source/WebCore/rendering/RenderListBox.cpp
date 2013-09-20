@@ -101,8 +101,7 @@ RenderListBox::~RenderListBox()
 
 HTMLSelectElement& RenderListBox::selectElement() const
 {
-    ASSERT(RenderObject::node());
-    return toHTMLSelectElement(*RenderObject::node());
+    return toHTMLSelectElement(nodeForNonAnonymous());
 }
 
 void RenderListBox::updateFromElement()

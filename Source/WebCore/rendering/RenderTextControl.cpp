@@ -47,8 +47,7 @@ RenderTextControl::~RenderTextControl()
 
 HTMLTextFormControlElement& RenderTextControl::textFormControlElement() const
 {
-    ASSERT(RenderObject::node());
-    return *toHTMLTextFormControlElement(RenderObject::node());
+    return toHTMLTextFormControlElement(nodeForNonAnonymous());
 }
 
 HTMLElement* RenderTextControl::innerTextElement() const

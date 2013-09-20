@@ -33,7 +33,7 @@ class RenderListMarker;
 class RenderListItem FINAL : public RenderBlockFlow {
 public:
     explicit RenderListItem(Element&);
-    Element& existingElement() const { return *RenderBlockFlow::element(); }
+    Element& element() const { return toElement(nodeForNonAnonymous()); }
 
     int value() const { if (!m_isValueUpToDate) updateValueNow(); return m_value; }
     void updateValue();
@@ -55,8 +55,6 @@ public:
     static unsigned itemCountForOrderedList(const HTMLOListElement*);
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
-
     virtual const char* renderName() const { return "RenderListItem"; }
 
     virtual bool isListItem() const { return true; }

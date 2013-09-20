@@ -473,8 +473,7 @@ bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction
 
 HTMLInputElement& RenderTextControlSingleLine::inputElement() const
 {
-    ASSERT(RenderObject::node());
-    return toHTMLInputElement(*RenderObject::node());
+    return toHTMLInputElement(RenderTextControl::textFormControlElement());
 }
 
 }

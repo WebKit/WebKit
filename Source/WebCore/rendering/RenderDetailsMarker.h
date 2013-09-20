@@ -30,14 +30,12 @@ namespace WebCore {
 class RenderDetailsMarker FINAL : public RenderBlockFlow {
 public:
     explicit RenderDetailsMarker(DetailsMarkerControl&);
-    DetailsMarkerControl& detailsMarkerControl() const { return static_cast<DetailsMarkerControl&>(*RenderBlockFlow::element()); }
+    DetailsMarkerControl& element() const { return static_cast<DetailsMarkerControl&>(nodeForNonAnonymous()); }
 
     enum Orientation { Up, Down, Left, Right };
     Orientation orientation() const;
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
-
     virtual const char* renderName() const OVERRIDE { return "RenderDetailsMarker"; }
     virtual bool isDetailsMarker() const OVERRIDE { return true; }
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;

@@ -71,6 +71,12 @@ private:
     SandboxFlags m_sandboxFlags;
 };
 
+inline HTMLFrameOwnerElement& toFrameOwnerElement(Node& node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(node.isFrameOwnerElement());
+    return static_cast<HTMLFrameOwnerElement&>(node);
+}
+
 inline HTMLFrameOwnerElement* toFrameOwnerElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isFrameOwnerElement());

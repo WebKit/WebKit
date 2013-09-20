@@ -1,3 +1,19 @@
+2013-09-20  Andreas Kling  <akling@apple.com>
+
+        Optimize fetching the Node for never-anonymous renderers.
+        <https://webkit.org/b/121627>
+
+        Reviewed by Antti Koivisto.
+
+        Add a RenderObject::nodeForNonAnonymous() that can be used instead
+        of node() when a renderer is guaranteed non-anonymous.
+
+        Use this to implement reference element getters for the various
+        renderers that are known at compile-time to correspond to a DOM node.
+
+        Also renamed existingElement() => element() since using an alternate
+        name for a reference overload isn't actually necessary.
+
 2013-09-20  Patrick Gansterer  <paroga@webkit.org>
 
         Remove duplicated secondsPerDay variables

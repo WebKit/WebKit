@@ -46,7 +46,7 @@ public:
     explicit RenderSVGResourceClipper(SVGClipPathElement&);
     virtual ~RenderSVGResourceClipper();
 
-    SVGClipPathElement& clipPathElement() const { return toSVGClipPathElement(RenderSVGResourceContainer::element()); }
+    SVGClipPathElement& clipPathElement() const { return toSVGClipPathElement(nodeForNonAnonymous()); }
 
     virtual void removeAllClientsFromCache(bool markForInvalidation = true);
     virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true);

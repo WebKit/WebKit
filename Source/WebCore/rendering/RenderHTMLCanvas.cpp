@@ -50,8 +50,7 @@ RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement& element)
 
 HTMLCanvasElement& RenderHTMLCanvas::canvasElement() const
 {
-    ASSERT(RenderObject::node());
-    return toHTMLCanvasElement(*RenderObject::node());
+    return toHTMLCanvasElement(nodeForNonAnonymous());
 }
 
 bool RenderHTMLCanvas::requiresLayer() const

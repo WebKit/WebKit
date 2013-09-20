@@ -31,7 +31,7 @@ class RenderSVGInline : public RenderInline {
 public:
     explicit RenderSVGInline(SVGGraphicsElement&);
 
-    SVGGraphicsElement& graphicsElement() const { return *toSVGGraphicsElement(RenderInline::element()); }
+    SVGGraphicsElement& graphicsElement() const { return toSVGGraphicsElement(nodeForNonAnonymous()); }
 
 private:
     void element() const WTF_DELETED_FUNCTION;

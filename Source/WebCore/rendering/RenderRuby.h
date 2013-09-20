@@ -74,7 +74,7 @@ public:
     explicit RenderRubyAsBlock(Element&);
     virtual ~RenderRubyAsBlock();
 
-    Element& existingElement() const { return *RenderBlockFlow::element(); }
+    Element& element() const { return toElement(nodeForNonAnonymous()); }
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
     virtual void removeChild(RenderObject* child) OVERRIDE;
@@ -83,8 +83,6 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
-
     virtual bool isRuby() const OVERRIDE { return true; }
     virtual const char* renderName() const OVERRIDE { return "RenderRuby (block)"; }
     virtual bool createsAnonymousWrapper() const OVERRIDE { return true; }

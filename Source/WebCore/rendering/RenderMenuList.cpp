@@ -131,8 +131,7 @@ void RenderMenuList::adjustInnerStyle()
 
 HTMLSelectElement& RenderMenuList::selectElement() const
 {
-    ASSERT(RenderObject::node());
-    return toHTMLSelectElement(*RenderObject::node());
+    return toHTMLSelectElement(nodeForNonAnonymous());
 }
 
 void RenderMenuList::addChild(RenderObject* newChild, RenderObject* beforeChild)

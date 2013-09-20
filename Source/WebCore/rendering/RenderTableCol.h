@@ -36,7 +36,7 @@ class RenderTableCell;
 class RenderTableCol FINAL : public RenderBox {
 public:
     explicit RenderTableCol(Element&);
-    Element& existingElement() const { return *RenderBox::element(); }
+    Element& element() const { return toElement(nodeForNonAnonymous()); }
 
     RenderObject* firstChild() const { return m_children.firstChild(); }
     RenderObject* lastChild() const { return m_children.lastChild(); }
@@ -78,8 +78,6 @@ public:
     const BorderValue& borderAdjoiningCellAfter(const RenderTableCell*) const;
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
-
     virtual const char* renderName() const OVERRIDE { return "RenderTableCol"; }
     virtual bool isRenderTableCol() const OVERRIDE { return true; }
     virtual void updateFromElement() OVERRIDE;

@@ -60,7 +60,7 @@ class RenderWidget : public RenderReplaced, private OverlapTestRequestClient {
 public:
     virtual ~RenderWidget();
 
-    HTMLFrameOwnerElement& frameOwnerElement() const { return *toFrameOwnerElement(RenderReplaced::element()); }
+    HTMLFrameOwnerElement& frameOwnerElement() const { return toFrameOwnerElement(nodeForNonAnonymous()); }
 
     Widget* widget() const { return m_widget.get(); }
     void setWidget(PassRefPtr<Widget>);

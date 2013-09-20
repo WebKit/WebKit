@@ -39,7 +39,7 @@ public:
     RenderMedia(HTMLMediaElement&, const IntSize& intrinsicSize);
     virtual ~RenderMedia();
 
-    HTMLMediaElement& mediaElement() const { return *toHTMLMediaElement(RenderImage::element()); }
+    HTMLMediaElement& mediaElement() const { return toHTMLMediaElement(nodeForNonAnonymous()); }
 
     RenderObject* firstChild() const { return m_children.firstChild(); }
     RenderObject* lastChild() const { return m_children.lastChild(); }

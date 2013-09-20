@@ -62,7 +62,7 @@ RenderFileUploadControl::~RenderFileUploadControl()
 
 HTMLInputElement& RenderFileUploadControl::inputElement() const
 {
-    return toHTMLInputElement(*RenderBlockFlow::element());
+    return toHTMLInputElement(nodeForNonAnonymous());
 }
 
 bool RenderFileUploadControl::canBeReplacedWithInlineRunIn() const

@@ -33,7 +33,7 @@ class RenderSVGBlock : public RenderBlockFlow {
 public:
     virtual LayoutRect visualOverflowRect() const OVERRIDE FINAL;
 
-    SVGGraphicsElement& graphicsElement() const { return *toSVGGraphicsElement(RenderBlockFlow::element()); }
+    SVGGraphicsElement& graphicsElement() const { return toSVGGraphicsElement(nodeForNonAnonymous()); }
 
 protected:
     explicit RenderSVGBlock(SVGGraphicsElement&);

@@ -101,7 +101,7 @@ static bool isList(const Element* element)
 // Returns the enclosing list with respect to the DOM order.
 static Element* enclosingList(const RenderListItem* listItem)
 {
-    Element& listItemElement = listItem->existingElement();
+    Element& listItemElement = listItem->element();
     Element* firstNode = 0;
     Element* parent = listItemElement.isPseudoElement() ? toPseudoElement(listItemElement).hostElement() : listItemElement.parentElement();
     // We use parentNode because the enclosing list could be a ShadowRoot that's not Element.
@@ -124,7 +124,7 @@ static RenderListItem* nextListItem(const Element* listNode, const RenderListIte
     if (!listNode)
         return 0;
 
-    const Element* current = item ? &item->existingElement() : listNode;
+    const Element* current = item ? &item->element() : listNode;
     current = ElementTraversal::nextIncludingPseudo(current, listNode);
 
     while (current) {
@@ -148,7 +148,7 @@ static RenderListItem* nextListItem(const Element* listNode, const RenderListIte
 // Returns the previous list item with respect to the DOM order.
 static RenderListItem* previousListItem(const Element* listNode, const RenderListItem* item)
 {
-    Element* current = &item->existingElement();
+    Element* current = &item->element();
     for (current = ElementTraversal::previousIncludingPseudo(current, listNode); current; current = ElementTraversal::previousIncludingPseudo(current, listNode)) {
         RenderObject* renderer = current->renderer();
         if (!renderer || (renderer && !renderer->isListItem()))

@@ -31,13 +31,11 @@ public:
     explicit RenderTableCaption(Element&);
     virtual ~RenderTableCaption();
 
-    Element& existingElement() const { return *RenderBlockFlow::element(); }
+    Element& element() const { return toElement(nodeForNonAnonymous()); }
 
     virtual LayoutUnit containingBlockLogicalWidthForContent() const OVERRIDE;
     
 private:
-    void element() const WTF_DELETED_FUNCTION;
-
     virtual bool isTableCaption() const OVERRIDE { return true; }
 
     virtual void insertedIntoTree() OVERRIDE;

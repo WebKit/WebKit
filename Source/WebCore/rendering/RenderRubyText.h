@@ -40,13 +40,11 @@ public:
     explicit RenderRubyText(Element&);
     virtual ~RenderRubyText();
 
-    Element& existingElement() const { return *RenderBlockFlow::element(); }
+    Element& element() const { return toElement(nodeForNonAnonymous()); }
 
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
-
     virtual const char* renderName() const OVERRIDE { return "RenderRubyText"; }
     virtual bool isRubyText() const OVERRIDE { return true; }
 

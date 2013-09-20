@@ -34,7 +34,7 @@ public:
     explicit RenderDeprecatedFlexibleBox(Element&);
     virtual ~RenderDeprecatedFlexibleBox();
 
-    Element& existingElement() const { return *RenderBlock::element(); }
+    Element& element() const { return toElement(nodeForNonAnonymous()); }
 
     virtual const char* renderName() const;
 
@@ -52,8 +52,6 @@ public:
     void placeChild(RenderBox* child, const LayoutPoint& location, LayoutSize* childLayoutDelta = 0);
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
-
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
     virtual void computePreferredLogicalWidths() OVERRIDE;
 

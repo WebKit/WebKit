@@ -37,7 +37,7 @@ public:
     explicit RenderGrid(Element&);
     virtual ~RenderGrid();
 
-    Element& existingElement() const { return *RenderBlock::element(); }
+    Element& element() const { return toElement(nodeForNonAnonymous()); }
 
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
 
@@ -52,8 +52,6 @@ public:
     };
 
 private:
-    void element() const WTF_DELETED_FUNCTION;
-
     virtual const char* renderName() const OVERRIDE;
     virtual bool isRenderGrid() const OVERRIDE { return true; }
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
