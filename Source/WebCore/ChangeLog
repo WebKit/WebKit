@@ -1,5 +1,12 @@
 2013-09-20  Patrick Gansterer  <paroga@webkit.org>
 
+        Buildfix for ENABLE(CSS_FILTERS) && !ENABLE(ACCELERATED_COMPOSITING) after r155131.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::enclosingFilterRepaintLayer):
+
+2013-09-20  Patrick Gansterer  <paroga@webkit.org>
+
         [WIN] Fix build without precompiled header after r154146.
 
         * platform/win/WebCoreBundleWin.cpp:

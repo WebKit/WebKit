@@ -1484,7 +1484,12 @@ RenderLayer* RenderLayer::enclosingFilterLayer(IncludeSelfOrNot includeSelf) con
 RenderLayer* RenderLayer::enclosingFilterRepaintLayer() const
 {
     for (const RenderLayer* curr = this; curr; curr = curr->parent()) {
-        if ((curr != this && curr->requiresFullLayerImageForFilters()) || compositedWithOwnBackingStore(curr) || curr->isRootLayer())
+        if ((curr != this && curr->requiresFullLayerImageForFilters())
+#if USE(ACCELERATED_COMPOSITING)
+            || compositedWithOwnBackingStore(curr)
+#endif
+            || curr->isRootLayer()
+        )
             return const_cast<RenderLayer*>(curr);
     }
     return 0;
