@@ -1,5 +1,19 @@
 2013-09-19  Anders Carlsson  <andersca@apple.com>
 
+        Remove #if !ENABLE(WORKERS) code in ThreadGlobalData
+        https://bugs.webkit.org/show_bug.cgi?id=121649
+
+        Reviewed by Sam Weinig.
+
+        This lets us remove a FIXME. Also, move threadGlobalData out of line; there's no need for it to be inline.
+
+        * WebCore.exp.in:
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::threadGlobalData):
+        * platform/ThreadGlobalData.h:
+
+2013-09-19  Anders Carlsson  <andersca@apple.com>
+
         Modernize Length setters/getters
         https://bugs.webkit.org/show_bug.cgi?id=121647
 

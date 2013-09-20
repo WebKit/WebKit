@@ -104,4 +104,11 @@ void ThreadGlobalData::destroy()
     m_threadTimers.clear();
 }
 
+ThreadGlobalData& threadGlobalData() 
+{
+    if (!ThreadGlobalData::staticData)
+        ThreadGlobalData::staticData = new ThreadSpecific<ThreadGlobalData>;
+    return **ThreadGlobalData::staticData;
+}
+
 } // namespace WebCore
