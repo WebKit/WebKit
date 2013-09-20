@@ -1,3 +1,13 @@
+2013-09-19  Anders Carlsson  <andersca@apple.com>
+
+        Handle null font families.
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::computeFontGlyphsCacheHash):
+        Don't crash when trying to hash null strings.
+
 2013-09-19  Darin Adler  <darin@apple.com>
 
         Fix a couple mistakes in my recent CSS grammar leak patch

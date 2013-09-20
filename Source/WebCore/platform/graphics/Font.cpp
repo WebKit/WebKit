@@ -210,7 +210,7 @@ static unsigned computeFontGlyphsCacheHash(const FontGlyphsCacheKey& key)
     hashCodes.uncheckedAppend(key.fontSelectorVersion);
     hashCodes.uncheckedAppend(key.fontSelectorFlags);
     for (unsigned i = 0; i < key.families.size(); ++i)
-        hashCodes.uncheckedAppend(CaseFoldingHash::hash(key.families[i]));
+        hashCodes.uncheckedAppend(key.families[i].impl() ? CaseFoldingHash::hash(key.families[i]) : 0);
 
     return StringHasher::hashMemory(hashCodes.data(), hashCodes.size() * sizeof(unsigned));
 }
