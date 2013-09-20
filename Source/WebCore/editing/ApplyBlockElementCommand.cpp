@@ -169,14 +169,20 @@ static bool isNewLineAtPosition(const Position& position)
     return textAtPosition[0] == '\n';
 }
 
-static RenderStyle* renderStyleOfEnclosingTextNode(const Position& position)
+RenderStyle* ApplyBlockElementCommand::renderStyleOfEnclosingTextNode(const Position& position)
 {
     if (position.anchorType() != Position::PositionIsOffsetInAnchor
         || !position.containerNode()
-        || !position.containerNode()->isTextNode()
-        || !position.containerNode()->renderer())
+        || !position.containerNode()->isTextNode())
         return 0;
-    return position.containerNode()->renderer()->style();
+
+    document().updateStyleIfNeeded();
+
+    RenderObject* renderer = position.containerNode()->renderer();
+    if (!renderer)
+        return 0;
+
+    return renderer->style();
 }
 
 void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const VisiblePosition& endOfCurrentParagraph, Position& start, Position& end)

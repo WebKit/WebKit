@@ -1,3 +1,21 @@
+2013-09-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        renderStyleOfEnclosingTextNode should update style before using a renderer
+        https://bugs.webkit.org/show_bug.cgi?id=121690
+
+        Reviewed by Enrica Casucci.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/65f089545e8c18cb268dfcbe56cba1cd8045527a
+
+        When accessing a renderer editing should always make sure that the style has been updated for the node.
+        Editing calls splitTextNode in a number of places and then accesses the renderer later. This patch is
+        the first of many to make sure editing always updates the style before attempting to access the renderer
+        (or style) of a node after calling a mutation method.
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::renderStyleOfEnclosingTextNode):
+        * editing/ApplyBlockElementCommand.h:
+
 2013-09-20  Darin Adler  <darin@apple.com>
 
         Fix a couple more CSS leaks
