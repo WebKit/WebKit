@@ -789,7 +789,7 @@ static inline BOOL _getFloat(DOMCSSPrimitiveValue *primitiveValue, CGFloat *val)
     NSNumber *floatNumber;
     RetainPtr<NSMutableDictionary> attributeDictionary = [_floatsForNodes objectForKey:node];
     if (!attributeDictionary) {
-        attributeDictionary = [[NSMutableDictionary alloc] init];
+        attributeDictionary = adoptNS([[NSMutableDictionary alloc] init]);
         [_floatsForNodes setObject:attributeDictionary.get() forKey:node];
     }
     floatNumber = [attributeDictionary objectForKey:key];
