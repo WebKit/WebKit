@@ -1,3 +1,13 @@
+2013-09-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ASSERTs in isMainThread after USE(WEB_THREAD) MainThread changes
+        https://bugs.webkit.org/show_bug.cgi?id=121650
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::initializeMainThreadPlatform):
+
 2013-09-19  Daniel Bates  <dabates@apple.com>
 
         [iOS] Define mainThreadEstablishedAsPthreadMain to be true in WTF::initializeMainThreadPlatform()

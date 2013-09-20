@@ -72,12 +72,12 @@ void initializeMainThreadPlatform()
     ASSERT(!staticMainThreadCaller);
     staticMainThreadCaller = [[JSWTFMainThreadCaller alloc] init];
 
-    mainThreadEstablishedAsPthreadMain = true;
-
 #if !USE(WEB_THREAD)
+    mainThreadEstablishedAsPthreadMain = false;
     mainThreadPthread = pthread_self();
     mainThreadNSThread = [[NSThread currentThread] retain];
 #else
+    mainThreadEstablishedAsPthreadMain = true;
     ASSERT(!mainThreadPthread);
     ASSERT(!mainThreadNSThread);
 #endif
