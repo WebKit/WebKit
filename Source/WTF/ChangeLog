@@ -1,3 +1,16 @@
+2013-09-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Atomics.h does not build on MinGW
+        https://bugs.webkit.org/show_bug.cgi?id=121663
+
+        Reviewed by Darin Adler.
+
+        MinGW does not have _ReadWriteBarrier() intrinsic, but does have GCC
+        inline assembler, so use the GCC definitions instead of MSVC ones.
+
+        * wtf/Atomics.h:
+        (WTF::compilerFence):
+
 2013-09-20  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Use COMPILE_DEFINITIONS target property for setting BUILDING_* defines

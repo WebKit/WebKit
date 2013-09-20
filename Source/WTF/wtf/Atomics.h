@@ -65,7 +65,7 @@
 #if OS(WINDOWS)
 #if OS(WINCE)
 #include <cmnintrin.h>
-#else
+#elif !COMPILER(GCC)
 extern "C" void _ReadWriteBarrier(void);
 #pragma intrinsic(_ReadWriteBarrier)
 #endif
@@ -213,7 +213,7 @@ inline bool weakCompareAndSwapSize(volatile size_t* location, size_t expected, s
 // to do things like register allocation and code motion over pure operations.
 inline void compilerFence()
 {
-#if OS(WINDOWS)
+#if OS(WINDOWS) && !COMPILER(GCC)
     _ReadWriteBarrier();
 #else
     asm volatile("" ::: "memory");
