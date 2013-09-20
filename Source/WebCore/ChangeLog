@@ -1,3 +1,13 @@
+2013-09-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Buildfix after r156133 for !ENABLE(WORKERS) platforms
+        https://bugs.webkit.org/show_bug.cgi?id=121669
+
+        Reviewed by Antti Koivisto.
+
+        * platform/ThreadGlobalData.cpp:
+        * platform/ThreadGlobalData.h:
+
 2013-09-20  Antti Koivisto  <antti@apple.com>
 
         Make createRenderer() return RenderElement

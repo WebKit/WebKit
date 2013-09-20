@@ -33,11 +33,9 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/text/StringHash.h>
 
-#if ENABLE(WORKERS)
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 using WTF::ThreadSpecific;
-#endif
 
 namespace WebCore {
 
@@ -93,11 +91,7 @@ namespace WebCore {
         OwnPtr<ThreadLocalInspectorCounters> m_inspectorCounters;
 #endif
 
-#if ENABLE(WORKERS)
         static ThreadSpecific<ThreadGlobalData>* staticData;
-#else
-        static ThreadGlobalData* staticData;
-#endif
         friend ThreadGlobalData& threadGlobalData();
     };
 

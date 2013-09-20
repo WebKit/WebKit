@@ -43,19 +43,13 @@
 #include "TextCodecMac.h"
 #endif
 
-#if ENABLE(WORKERS)
 #include <wtf/Threading.h>
 #include <wtf/ThreadSpecific.h>
 using namespace WTF;
-#endif
 
 namespace WebCore {
 
-#if ENABLE(WORKERS)
 ThreadSpecific<ThreadGlobalData>* ThreadGlobalData::staticData;
-#else
-ThreadGlobalData* ThreadGlobalData::staticData;
-#endif
 
 ThreadGlobalData::ThreadGlobalData()
     : m_cachedResourceRequestInitiators(adoptPtr(new CachedResourceRequestInitiators))
