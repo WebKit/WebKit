@@ -54,27 +54,28 @@ bool ShapeOutsideInfo::isEnabledFor(const RenderBox* box)
     }
 }
 
-bool ShapeOutsideInfo::computeSegmentsForContainingBlockLine(const RenderBlock* containingBlock, const FloatingObject* floatingObject, LayoutUnit lineTop, LayoutUnit lineHeight)
+void ShapeOutsideInfo::updateDeltasForContainingBlockLine(const RenderBlock* containingBlock, const FloatingObject* floatingObject, LayoutUnit lineTop, LayoutUnit lineHeight)
 {
     LayoutUnit shapeTop = floatingObject->logicalTop(containingBlock->isHorizontalWritingMode()) + std::max(LayoutUnit(), containingBlock->marginBeforeForChild(m_renderer));
     LayoutUnit lineTopInShapeCoordinates = lineTop - shapeTop + logicalTopOffset();
-    return updateSegmentsForLine(lineTopInShapeCoordinates, lineHeight);
-}
 
-bool ShapeOutsideInfo::updateSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
-{
-    if (shapeSizeDirty() || m_lineTop != lineTop || m_lineHeight != lineHeight) {
-        if (ShapeInfo<RenderBox>::updateSegmentsForLine(lineTop, lineHeight)) {
-            m_leftSegmentMarginBoxDelta = m_segments[0].logicalLeft + m_renderer->marginStart();
-            m_rightSegmentMarginBoxDelta = m_segments[m_segments.size()-1].logicalRight - m_renderer->logicalWidth() - m_renderer->marginEnd();
-        } else {
-            m_leftSegmentMarginBoxDelta = m_renderer->logicalWidth() + m_renderer->marginStart();
-            m_rightSegmentMarginBoxDelta = -m_renderer->logicalWidth() - m_renderer->marginEnd();
+    if (shapeSizeDirty() || m_lineTop != lineTopInShapeCoordinates || m_lineHeight != lineHeight) {
+        m_lineTop = lineTopInShapeCoordinates;
+        m_shapeLineTop = lineTopInShapeCoordinates - logicalTopOffset();
+        m_lineHeight = lineHeight;
+
+        if (lineOverlapsShapeBounds()) {
+            SegmentList segments = computeSegmentsForLine(lineTopInShapeCoordinates, lineHeight);
+            if (segments.size()) {
+                m_leftMarginBoxDelta = segments[0].logicalLeft + m_renderer->marginStart();
+                m_rightMarginBoxDelta = segments[segments.size()-1].logicalRight - m_renderer->logicalWidth() - m_renderer->marginEnd();
+                return;
+            }
         }
-        m_lineTop = lineTop;
-    }
 
-    return m_segments.size();
+        m_leftMarginBoxDelta = m_renderer->logicalWidth() + m_renderer->marginStart();
+        m_rightMarginBoxDelta = -m_renderer->logicalWidth() - m_renderer->marginEnd();
+    }
 }
 
 ShapeValue* ShapeOutsideInfo::shapeValue() const

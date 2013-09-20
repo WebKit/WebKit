@@ -84,20 +84,6 @@ SegmentList ShapeInfo<RenderType>::computeSegmentsForLine(LayoutUnit lineTop, La
     return segments;
 }
 
-template<class RenderType>
-bool ShapeInfo<RenderType>::updateSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
-{
-    ASSERT(lineHeight >= 0);
-    m_shapeLineTop = lineTop - logicalTopOffset();
-    m_lineHeight = lineHeight;
-    m_segments.clear();
-
-    if (lineOverlapsShapeBounds())
-        m_segments = computeSegmentsForLine(lineTop, lineHeight);
-
-    return m_segments.size();
-}
-
 template class ShapeInfo<RenderBlock>;
 template class ShapeInfo<RenderBox>;
 }

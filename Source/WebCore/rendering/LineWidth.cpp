@@ -107,23 +107,23 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
         if (previousFloat != newFloat && previousFloat->type() == newFloat->type()) {
             previousShapeOutsideInfo = previousFloat->renderer()->shapeOutsideInfo();
             if (previousShapeOutsideInfo)
-                previousShapeOutsideInfo->computeSegmentsForContainingBlockLine(&m_block, previousFloat, m_block.logicalHeight(), logicalHeightForLine(&m_block, m_isFirstLine));
+                previousShapeOutsideInfo->updateDeltasForContainingBlockLine(&m_block, previousFloat, m_block.logicalHeight(), logicalHeightForLine(&m_block, m_isFirstLine));
             break;
         }
     }
 
     ShapeOutsideInfo* shapeOutsideInfo = newFloat->renderer()->shapeOutsideInfo();
     if (shapeOutsideInfo)
-        shapeOutsideInfo->computeSegmentsForContainingBlockLine(&m_block, newFloat, m_block.logicalHeight(), logicalHeightForLine(&m_block, m_isFirstLine));
+        shapeOutsideInfo->updateDeltasForContainingBlockLine(&m_block, newFloat, m_block.logicalHeight(), logicalHeightForLine(&m_block, m_isFirstLine));
 #endif
 
     if (newFloat->type() == FloatingObject::FloatLeft) {
         float newLeft = newFloat->logicalRight(m_block.isHorizontalWritingMode());
 #if ENABLE(CSS_SHAPES)
         if (previousShapeOutsideInfo)
-            newLeft -= previousShapeOutsideInfo->rightSegmentMarginBoxDelta();
+            newLeft -= previousShapeOutsideInfo->rightMarginBoxDelta();
         if (shapeOutsideInfo)
-            newLeft += shapeOutsideInfo->rightSegmentMarginBoxDelta();
+            newLeft += shapeOutsideInfo->rightMarginBoxDelta();
 #endif
 
         if (shouldIndentText() && m_block.style()->isLeftToRightDirection())
@@ -133,9 +133,9 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
         float newRight = newFloat->logicalLeft(m_block.isHorizontalWritingMode());
 #if ENABLE(CSS_SHAPES)
         if (previousShapeOutsideInfo)
-            newRight -= previousShapeOutsideInfo->leftSegmentMarginBoxDelta();
+            newRight -= previousShapeOutsideInfo->leftMarginBoxDelta();
         if (shapeOutsideInfo)
-            newRight += shapeOutsideInfo->leftSegmentMarginBoxDelta();
+            newRight += shapeOutsideInfo->leftMarginBoxDelta();
 #endif
 
         if (shouldIndentText() && !m_block.style()->isLeftToRightDirection())

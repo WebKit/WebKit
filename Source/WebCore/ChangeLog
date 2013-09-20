@@ -1,3 +1,33 @@
+2013-09-20  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Simplify the ShapeOutsideInfo and ShapeInfo interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=121685
+
+        Reviewed by Darin Adler.
+
+        With the creation ShapeInfo::computeSegmentsForLine, it became possible to
+        simplify the ShapeInfo classes. ShapeOutsideInfo has no need to save the
+        segments, and now that segment creation is in its own method, it doesn't have
+        to save the segments anymore. This also simplifies the public interface of
+        ShapeOutsideInfo, as it only has one method to do the computation.
+
+        Also, the methods in ShapeOutsideInfo have been renamed to reflect the fact
+        that ShapeOutsideInfo isn't really interested in segments.
+
+        No new tests, no new behavior.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObjects::logicalLeftOffset):
+        (WebCore::FloatingObjects::logicalRightOffset):
+        * rendering/LineWidth.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        * rendering/shapes/ShapeInfo.cpp:
+        * rendering/shapes/ShapeInfo.h:
+        * rendering/shapes/ShapeInsideInfo.h:
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::updateDeltasForContainingBlockLine):
+        * rendering/shapes/ShapeOutsideInfo.h:
+
 2013-09-20  Antonio Gomes  <a1.gomes@sisa.samsung.com>
 
         Making tests added in r156157 JS-only, given that other
