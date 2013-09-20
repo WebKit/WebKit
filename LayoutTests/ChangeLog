@@ -1,3 +1,14 @@
+2013-09-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove URL decoding in srcset handling
+        https://bugs.webkit.org/show_bug.cgi?id=121609
+
+        Followup to <http://trac.webkit.org/changeset/156161> - that change renamed expected
+        results, but the new test wasn't landed.
+
+        * fast/loader/image-src-encoded.html: Copied from LayoutTests/fast/loader/image-src-question-mark.html.
+        * fast/loader/image-src-question-mark.html: Removed.
+
 2013-09-20  Sam White  <samuel_white@apple.com>
 
         AX: WebArea claims to have a subrole, but always returns nil.
