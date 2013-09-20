@@ -54,7 +54,7 @@ PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(co
     return adoptRef(new MathMLInlineContainerElement(tagName, document));
 }
 
-RenderObject* MathMLInlineContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* MathMLInlineContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     if (hasLocalName(mrowTag))
         return new (arena) RenderMathMLRow(this);

@@ -59,7 +59,7 @@ private:
     virtual bool valueMissing(const String&) const OVERRIDE;
     virtual String valueMissingText() const OVERRIDE;
     virtual void handleDOMActivateEvent(Event*) OVERRIDE;
-    virtual RenderObject* createRenderer(RenderArena&, RenderStyle&) const OVERRIDE;
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) const OVERRIDE;
     virtual bool canSetStringValue() const OVERRIDE;
     virtual bool canChangeFromAnotherType() const OVERRIDE;
     virtual FileList* files() OVERRIDE;

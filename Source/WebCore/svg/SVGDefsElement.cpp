@@ -53,7 +53,7 @@ bool SVGDefsElement::isValid() const
     return SVGTests::isValid();
 }
 
-RenderObject* SVGDefsElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* SVGDefsElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderSVGHiddenContainer(*this);
 }

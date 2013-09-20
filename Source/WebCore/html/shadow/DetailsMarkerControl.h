@@ -45,7 +45,7 @@ public:
 private:
     DetailsMarkerControl(Document&);
 
-    virtual RenderObject* createRenderer(RenderArena&, RenderStyle&);
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
     virtual bool rendererIsNeeded(const RenderStyle&);
     virtual const AtomicString& shadowPseudoId() const;
 

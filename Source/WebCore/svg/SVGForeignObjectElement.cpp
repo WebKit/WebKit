@@ -126,7 +126,7 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
-RenderObject* SVGForeignObjectElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* SVGForeignObjectElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderSVGForeignObject(*this);
 }

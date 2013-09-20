@@ -60,7 +60,7 @@ private:
 #endif
 #endif
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
-    virtual RenderObject* createRenderer(RenderArena&, RenderStyle&) const OVERRIDE;
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) const OVERRIDE;
     virtual void createShadowSubtree() OVERRIDE;
     virtual Decimal parseToNumber(const String&, const Decimal&) const OVERRIDE;
     virtual String serialize(const Decimal&) const OVERRIDE;

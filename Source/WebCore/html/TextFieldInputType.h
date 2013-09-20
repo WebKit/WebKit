@@ -84,7 +84,7 @@ private:
     virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) OVERRIDE;
     virtual void forwardEvent(Event*) OVERRIDE;
     virtual bool shouldSubmitImplicitly(Event*) OVERRIDE;
-    virtual RenderObject* createRenderer(RenderArena&, RenderStyle&) const OVERRIDE;
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) const OVERRIDE;
     virtual bool shouldUseInputMethod() const OVERRIDE;
     virtual String sanitizeValue(const String&) const OVERRIDE;
     virtual bool shouldRespectListAttribute() OVERRIDE;

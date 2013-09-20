@@ -337,7 +337,7 @@ void MediaControlTimelineContainerElement::setTimeDisplaysHidden(bool hidden)
     }
 }
 
-RenderObject* MediaControlTimelineContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* MediaControlTimelineContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderMediaControlTimelineContainer(this);
 }
@@ -356,7 +356,7 @@ PassRefPtr<MediaControlVolumeSliderContainerElement> MediaControlVolumeSliderCon
     return element.release();
 }
 
-RenderObject* MediaControlVolumeSliderContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* MediaControlVolumeSliderContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderMediaVolumeSliderContainer(this);
 }
@@ -1209,7 +1209,7 @@ PassRefPtr<MediaControlTextTrackContainerElement> MediaControlTextTrackContainer
     return element.release();
 }
 
-RenderObject* MediaControlTextTrackContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* MediaControlTextTrackContainerElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderTextTrackContainerElement(this);
 }

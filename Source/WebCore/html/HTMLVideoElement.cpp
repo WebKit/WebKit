@@ -69,7 +69,7 @@ bool HTMLVideoElement::rendererIsNeeded(const RenderStyle& style)
 }
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-RenderObject* HTMLVideoElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* HTMLVideoElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderVideo(*this);
 }

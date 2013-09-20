@@ -212,7 +212,7 @@ void FileInputType::handleDOMActivateEvent(Event* event)
     event->setDefaultHandled();
 }
 
-RenderObject* FileInputType::createRenderer(RenderArena& arena, RenderStyle&) const
+RenderElement* FileInputType::createRenderer(RenderArena& arena, RenderStyle&) const
 {
     return new (arena) RenderFileUploadControl(element());
 }

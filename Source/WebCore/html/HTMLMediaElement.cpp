@@ -555,7 +555,7 @@ bool HTMLMediaElement::rendererIsNeeded(const RenderStyle& style)
 #endif
 }
 
-RenderObject* HTMLMediaElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* HTMLMediaElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     // Setup the renderer if we already have a proxy widget.

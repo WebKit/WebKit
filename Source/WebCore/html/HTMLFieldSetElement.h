@@ -49,7 +49,7 @@ private:
 
     virtual bool isEnumeratable() const { return true; }
     virtual bool supportsFocus() const OVERRIDE;
-    virtual RenderObject* createRenderer(RenderArena&, RenderStyle&);
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&);
     virtual const AtomicString& formControlType() const;
     virtual bool recalcWillValidate() const { return false; }
     virtual void childrenChanged(const ChildChange&) OVERRIDE;

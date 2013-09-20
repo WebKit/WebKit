@@ -89,7 +89,7 @@ void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
-RenderObject* SVGGElement::createRenderer(RenderArena& arena, RenderStyle& style)
+RenderElement* SVGGElement::createRenderer(RenderArena& arena, RenderStyle& style)
 {
     // SVG 1.1 testsuite explicitely uses constructs like <g display="none"><linearGradient>
     // We still have to create renderers for the <g> & <linearGradient> element, though the

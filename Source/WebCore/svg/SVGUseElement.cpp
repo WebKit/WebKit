@@ -530,7 +530,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGElement* target)
 #endif
 }
 
-RenderObject* SVGUseElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* SVGUseElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderSVGTransformableContainer(*this);
 }

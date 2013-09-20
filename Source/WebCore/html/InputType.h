@@ -236,7 +236,7 @@ public:
     // Miscellaneous functions
 
     virtual bool rendererIsNeeded();
-    virtual RenderObject* createRenderer(RenderArena&, RenderStyle&) const;
+    virtual RenderElement* createRenderer(RenderArena&, RenderStyle&) const;
     virtual void addSearchResult();
     virtual void attach();
     virtual void detach();

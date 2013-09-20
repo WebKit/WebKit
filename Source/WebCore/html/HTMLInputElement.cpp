@@ -792,7 +792,7 @@ bool HTMLInputElement::rendererIsNeeded(const RenderStyle& style)
     return m_inputType->rendererIsNeeded() && HTMLTextFormControlElement::rendererIsNeeded(style);
 }
 
-RenderObject* HTMLInputElement::createRenderer(RenderArena& arena, RenderStyle& style)
+RenderElement* HTMLInputElement::createRenderer(RenderArena& arena, RenderStyle& style)
 {
     return m_inputType->createRenderer(arena, style);
 }

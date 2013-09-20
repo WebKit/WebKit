@@ -51,7 +51,7 @@ Node::InsertionNotificationRequest MathMLMathElement::insertedInto(ContainerNode
     return MathMLInlineContainerElement::insertedInto(insertionPoint);
 }
 
-RenderObject* MathMLMathElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* MathMLMathElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderMathMLMath(this);
 }

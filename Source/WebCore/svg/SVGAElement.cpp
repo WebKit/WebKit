@@ -139,7 +139,7 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 }
 
-RenderObject* SVGAElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* SVGAElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     if (parentNode() && parentNode()->isSVGElement() && toSVGElement(parentNode())->isTextContent())
         return new (arena) RenderSVGInline(*this);

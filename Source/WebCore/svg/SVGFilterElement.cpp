@@ -188,7 +188,7 @@ void SVGFilterElement::childrenChanged(const ChildChange& change)
         object->setNeedsLayout(true);
 }
 
-RenderObject* SVGFilterElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* SVGFilterElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderSVGResourceFilter(*this);
 }

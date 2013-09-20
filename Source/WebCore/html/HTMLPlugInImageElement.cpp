@@ -194,7 +194,7 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
     return false;
 }
 
-RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena& arena, RenderStyle& style)
+RenderElement* HTMLPlugInImageElement::createRenderer(RenderArena& arena, RenderStyle& style)
 {
     // Once a PlugIn Element creates its renderer, it needs to be told when the Document goes
     // inactive or reactivates so it can clear the renderer before going into the page cache.

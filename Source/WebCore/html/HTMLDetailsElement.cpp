@@ -112,7 +112,7 @@ HTMLDetailsElement::HTMLDetailsElement(const QualifiedName& tagName, Document& d
     ASSERT(hasTagName(detailsTag));
 }
 
-RenderObject* HTMLDetailsElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* HTMLDetailsElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderBlockFlow(this);
 }

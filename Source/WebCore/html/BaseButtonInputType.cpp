@@ -52,7 +52,7 @@ bool BaseButtonInputType::appendFormData(FormDataList&, bool) const
     return false;
 }
 
-RenderObject* BaseButtonInputType::createRenderer(RenderArena& arena, RenderStyle&) const
+RenderElement* BaseButtonInputType::createRenderer(RenderArena& arena, RenderStyle&) const
 {
     return new (arena) RenderButton(element());
 }

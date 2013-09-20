@@ -201,7 +201,7 @@ bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
     return (event->type() == eventNames().textInputEvent && event->hasInterface(eventNames().interfaceForTextEvent) && static_cast<TextEvent*>(event)->data() == "\n") || InputType::shouldSubmitImplicitly(event);
 }
 
-RenderObject* TextFieldInputType::createRenderer(RenderArena& arena, RenderStyle&) const
+RenderElement* TextFieldInputType::createRenderer(RenderArena& arena, RenderStyle&) const
 {
     return new (arena) RenderTextControlSingleLine(element());
 }

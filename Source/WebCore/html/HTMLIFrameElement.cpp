@@ -95,7 +95,7 @@ bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)
     return isURLAllowed() && style.display() != NONE;
 }
 
-RenderObject* HTMLIFrameElement::createRenderer(RenderArena& arena, RenderStyle&)
+RenderElement* HTMLIFrameElement::createRenderer(RenderArena& arena, RenderStyle&)
 {
     return new (arena) RenderIFrame(*this);
 }
