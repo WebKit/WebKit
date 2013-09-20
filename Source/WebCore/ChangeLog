@@ -1,3 +1,17 @@
+2013-09-19  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Clean up the Skip* functions in the GObject DOM bindings code generator
+        https://bugs.webkit.org/show_bug.cgi?id=121633
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipAttribute): Fold in some skipping checks that are used by all callers.
+        (SkipFunction): Ditto.
+        (GenerateProperties): Rely on SkipAttribute more thoroughly.
+        (GenerateFunction): Rely on SkipFunction more thoroughly.
+        (GenerateFunctions): Rely on SkipAttribute more thoroughly.
+
 2013-09-20  Patrick Gansterer  <paroga@webkit.org>
 
         Fix the build after r156144

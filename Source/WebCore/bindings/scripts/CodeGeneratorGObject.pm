@@ -226,6 +226,14 @@ sub SkipAttribute {
         return 1;
     }
 
+    if ($attribute->signature->type eq "EventListener") {
+        return 1;
+    }
+
+    if ($attribute->signature->type eq "MediaQueryListListener") {
+        return 1;
+    }
+
     # Skip indexed database attributes for now, they aren't yet supported for the GObject generator.
     if ($attribute->signature->name =~ /^(?:webkit)?[Ii]ndexedDB/ or $attribute->signature->name =~ /^(?:webkit)?IDB/) {
         return 1;
@@ -235,6 +243,7 @@ sub SkipAttribute {
 }
 
 sub SkipFunction {
+    my $object = shift;
     my $function = shift;
     my $decamelize = shift;
     my $prefix = shift;
@@ -255,6 +264,34 @@ sub SkipFunction {
         return 1;
     }
 
+    # Skip functions that have callback parameters, because this code generator doesn't know
+    # how to auto-generate callbacks.  Skip functions that have "MediaQueryListListener" or
+    # sequence<T> parameters, because this code generator doesn't know how to auto-generate
+    # MediaQueryListListener or sequence<T>. Skip EventListeners because they are handled elsewhere.
+    foreach my $param (@{$function->parameters}) {
+        if ($codeGenerator->IsCallbackInterface($param->type) ||
+            $param->extendedAttributes->{"Clamp"} ||
+            $param->type eq "MediaQueryListListener" ||
+            $param->type eq "EventListener" ||
+            $codeGenerator->GetSequenceType($param->type)) {
+            return 1;
+        }
+    }
+
+    # This is for DataTransferItemList.idl add(File) method
+    if ($functionName eq "webkit_dom_data_transfer_item_list_add" && @{$function->parameters} == 1) {
+        return 1;
+    }
+
+
+    if ($function->signature->name eq "set" and $parentNode->extendedAttributes->{"TypedArray"}) {
+        return 1;
+    }
+
+    if ($object eq "MediaQueryListListener") {
+        return 1;
+    }
+
     if ($function->signature->name eq "getSVGDocument") {
         return 1;
     }
@@ -264,12 +301,6 @@ sub SkipFunction {
     }
 
     if ($function->signature->name eq "setRangeText" && @{$function->parameters} == 1) {
-        return 1;
-    }
-
-    # This is for DataTransferItemList.idl add(File) method
-    if ($functionName eq "webkit_dom_data_transfer_item_list_add" &&
-        @{$function->parameters} == 1) {
         return 1;
     }
 
@@ -283,19 +314,6 @@ sub SkipFunction {
 
     if ($function->signature->name eq "supports" && @{$function->parameters} == 1) {
         return 1;
-    }
-
-    # Skip functions that have callback parameters, because this
-    # code generator doesn't know how to auto-generate callbacks.
-    # Skip functions that have "MediaQueryListListener" or sequence<T> parameters, because this
-    # code generator doesn't know how to auto-generate MediaQueryListListener or sequence<T>.
-    foreach my $param (@{$function->parameters}) {
-        if ($codeGenerator->IsCallbackInterface($param->type) ||
-            $param->extendedAttributes->{"Clamp"} ||
-            $param->type eq "MediaQueryListListener" ||
-            $codeGenerator->GetSequenceType($param->type)) {
-            return 1;
-        }
     }
 
     return 0;
@@ -644,10 +662,7 @@ EOF
         }
 
         foreach my $attribute (@readableProperties) {
-            if ($attribute->signature->type ne "EventListener" &&
-                $attribute->signature->type ne "MediaQueryListListener") {
-                GenerateProperty($attribute, $interfaceName, \@writeableProperties, $interface);
-            }
+            GenerateProperty($attribute, $interfaceName, \@writeableProperties, $interface);
         }
 
         push(@cBodyProperties, "};\n\n");
@@ -875,15 +890,9 @@ sub GenerateFunction {
 
     my $decamelize = decamelize($interfaceName);
 
-    if ($object eq "MediaQueryListListener") {
+    if (SkipFunction($object, $function, $decamelize, $prefix)) {
         return;
     }
-
-    if (SkipFunction($function, $decamelize, $prefix)) {
-        return;
-    }
-
-    return if ($function->signature->name eq "set" and $parentNode->extendedAttributes->{"TypedArray"});
 
     my $functionSigType = $prefix eq "set_" ? "void" : $function->signature->type;
     my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . decamelize($function->signature->name);
@@ -900,14 +909,8 @@ sub GenerateFunction {
     my $symbolSig = "${className}*";
 
     my @callImplParams;
-
     foreach my $param (@{$function->parameters}) {
         my $paramIDLType = $param->type;
-        if ($paramIDLType eq "EventListener" || $paramIDLType eq "MediaQueryListListener") {
-            # EventListeners are handled elsewhere.
-            return;
-        }
-
         my $paramType = GetGlibTypeName($paramIDLType);
         my $const = $paramType eq "gchar*" ? "const " : "";
         my $paramName = $param->name;
@@ -1204,12 +1207,10 @@ sub GenerateFunctions {
 
     TOP:
     foreach my $attribute (@{$interface->attributes}) {
-        if (SkipAttribute($attribute) ||
-            $attribute->signature->type eq "EventListener" ||
-            $attribute->signature->type eq "MediaQueryListListener") {
+        if (SkipAttribute($attribute)) {
             next TOP;
         }
-        
+
         if ($attribute->signature->name eq "type"
             # This will conflict with the get_type() function we define to return a GType
             # according to GObject conventions.  Skip this for now.
