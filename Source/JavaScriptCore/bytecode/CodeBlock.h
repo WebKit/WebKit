@@ -194,7 +194,7 @@ public:
 
     CallLinkInfo& getCallLinkInfo(unsigned bytecodeIndex)
     {
-        ASSERT(JITCode::isBaselineCode(jitType()));
+        ASSERT(!JITCode::isOptimizingJIT(jitType()));
         return *(binarySearch<CallLinkInfo, unsigned>(m_callLinkInfos, m_callLinkInfos.size(), bytecodeIndex, getCallLinkInfoBytecodeIndex));
     }
 #endif // ENABLE(JIT)

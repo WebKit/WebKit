@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
-#include "DFGAssemblyHelpers.h"
+#include "AssemblyHelpers.h"
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
 ExecutableBase* AssemblyHelpers::executableFor(const CodeOrigin& codeOrigin)
 {
@@ -68,7 +68,7 @@ void AssemblyHelpers::clearSamplingFlag(int32_t flag)
 }
 #endif
 
-#if DFG_ENABLE(JIT_ASSERT)
+#if !ASSERT_DISABLED
 #if USE(JSVALUE64)
 void AssemblyHelpers::jitAssertIsInt32(GPRReg gpr)
 {
@@ -153,9 +153,9 @@ void AssemblyHelpers::jitAssertHasValidCallFrame()
     breakpoint();
     checkCFR.link(this);
 }
-#endif // DFG_ENABLE(JIT_ASSERT)
+#endif // !ASSERT_DISABLED
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
-#endif // ENABLE(DFG_JIT)
+#endif // ENABLE(JIT)
 

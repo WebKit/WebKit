@@ -23,17 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGCCallHelpers_h
-#define DFGCCallHelpers_h
+#ifndef CCallHelpers_h
+#define CCallHelpers_h
 
 #include <wtf/Platform.h>
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
-#include "DFGAssemblyHelpers.h"
-#include "DFGGPRInfo.h"
+#include "AssemblyHelpers.h"
+#include "GPRInfo.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
 class CCallHelpers : public AssemblyHelpers {
 public:
@@ -699,7 +699,7 @@ public:
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
 #else
-#error "DFG JIT not supported on this platform."
+#error "JIT not supported on this platform."
 #endif
 
     ALWAYS_INLINE void setupArguments(GPRReg arg1)
@@ -1090,9 +1090,9 @@ public:
     }
 };
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
-#endif // ENABLE(DFG_JIT)
+#endif // ENABLE(JIT)
 
-#endif // DFGCCallHelpers_h
+#endif // CCallHelpers_h
 

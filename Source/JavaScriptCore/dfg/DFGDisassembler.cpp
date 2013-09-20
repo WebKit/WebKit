@@ -30,6 +30,7 @@
 
 #include "CodeBlockWithJITType.h"
 #include "DFGGraph.h"
+#include "DFGJITCode.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace DFG {

@@ -30,8 +30,8 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAssemblyHelpers.h"
-#include "DFGCCallHelpers.h"
+#include "AssemblyHelpers.h"
+#include "CCallHelpers.h"
 #include "DFGOSRExit.h"
 #include "DFGOperations.h"
 

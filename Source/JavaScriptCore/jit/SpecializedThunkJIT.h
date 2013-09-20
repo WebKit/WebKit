@@ -37,7 +37,8 @@ namespace JSC {
     class SpecializedThunkJIT : public JSInterfaceJIT {
     public:
         static const int ThisArgument = -1;
-        SpecializedThunkJIT(int expectedArgCount)
+        SpecializedThunkJIT(VM* vm, int expectedArgCount)
+            : JSInterfaceJIT(vm)
         {
             // Check that we have the expected number of arguments
             m_failures.append(branch32(NotEqual, payloadFor(JSStack::ArgumentCount), TrustedImm32(expectedArgCount + 1)));
@@ -130,9 +131,9 @@ namespace JSC {
             ret();
         }
         
-        MacroAssemblerCodeRef finalize(VM& vm, MacroAssemblerCodePtr fallback, const char* thunkKind)
+        MacroAssemblerCodeRef finalize(MacroAssemblerCodePtr fallback, const char* thunkKind)
         {
-            LinkBuffer patchBuffer(vm, this, GLOBAL_THUNK_ID);
+            LinkBuffer patchBuffer(*m_vm, this, GLOBAL_THUNK_ID);
             patchBuffer.link(m_failures, CodeLocationLabel(fallback));
             for (unsigned i = 0; i < m_calls.size(); i++)
                 patchBuffer.link(m_calls[i].first, m_calls[i].second);

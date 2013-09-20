@@ -30,7 +30,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGGPRInfo.h"
+#include "GPRInfo.h"
 #include "MacroAssembler.h"
 
 namespace JSC { namespace DFG {

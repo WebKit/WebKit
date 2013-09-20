@@ -27,6 +27,7 @@
 #define JSInterfaceJIT_h
 
 #include "BytecodeConventions.h"
+#include "CCallHelpers.h"
 #include "JITCode.h"
 #include "JITStubs.h"
 #include "JSCJSValue.h"
@@ -38,8 +39,13 @@
 #if ENABLE(JIT)
 
 namespace JSC {
-    class JSInterfaceJIT : public MacroAssembler {
+    class JSInterfaceJIT : public CCallHelpers {
     public:
+        JSInterfaceJIT(VM* vm, CodeBlock* codeBlock = 0)
+            : CCallHelpers(vm, codeBlock)
+        {
+        }
+        
         // NOTES:
         //
         // regT0 has two special meanings.  The return value from a stub
@@ -206,9 +212,6 @@ namespace JSC {
         void emitPutImmediateToCallFrameHeader(void* value, JSStack::CallFrameHeaderEntry);
         void emitPutCellToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
 
-        void preserveReturnAddressAfterCall(RegisterID);
-        void restoreReturnAddressBeforeReturn(RegisterID);
-        void restoreReturnAddressBeforeReturn(Address);
         void restoreArgumentReference();
 
         inline Address payloadFor(int index, RegisterID base = callFrameRegister);
@@ -395,75 +398,6 @@ namespace JSC {
         ASSERT(virtualRegisterIndex < FirstConstantRegisterIndex);
         return Address(base, (static_cast<unsigned>(virtualRegisterIndex) * sizeof(Register)));
     }
-
-#if CPU(ARM)
-
-    ALWAYS_INLINE void JSInterfaceJIT::preserveReturnAddressAfterCall(RegisterID reg)
-    {
-        move(linkRegister, reg);
-    }
-    
-    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(RegisterID reg)
-    {
-        move(reg, linkRegister);
-    }
-    
-    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(Address address)
-    {
-        loadPtr(address, linkRegister);
-    }
-#elif CPU(SH4)
-
-    ALWAYS_INLINE void JSInterfaceJIT::preserveReturnAddressAfterCall(RegisterID reg)
-    {
-        m_assembler.stspr(reg);
-    }
-    
-    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(RegisterID reg)
-    {
-        m_assembler.ldspr(reg);
-    }
-    
-    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(Address address)
-    {
-        loadPtrLinkReg(address);
-    }
-    
-#elif CPU(MIPS)
-
-    ALWAYS_INLINE void JSInterfaceJIT::preserveReturnAddressAfterCall(RegisterID reg)
-    {
-        move(returnAddressRegister, reg);
-    }
-    
-    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(RegisterID reg)
-    {
-        move(reg, returnAddressRegister);
-    }
-    
-    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(Address address)
-    {
-        loadPtr(address, returnAddressRegister);
-    }
-    
-#else // CPU(X86) || CPU(X86_64)
-
-    ALWAYS_INLINE void JSInterfaceJIT::preserveReturnAddressAfterCall(RegisterID reg)
-    {
-        pop(reg);
-    }
-    
-    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(RegisterID reg)
-    {
-        push(reg);
-    }
-    
-    ALWAYS_INLINE void JSInterfaceJIT::restoreReturnAddressBeforeReturn(Address address)
-    {
-        push(address);
-    }
-    
-#endif
 
     ALWAYS_INLINE void JSInterfaceJIT::restoreArgumentReference()
     {

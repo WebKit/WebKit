@@ -30,7 +30,7 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "DFGAssemblyHelpers.h"
+#include "AssemblyHelpers.h"
 #include "FTLValueFormat.h"
 
 namespace JSC { namespace FTL {
@@ -53,7 +53,7 @@ public:
     // Peek offset is the number of things on the stack below the first argument.
     // It will be 1 if you haven't pushed or popped after the call; i.e. the only
     // thing is the return address.
-    CArgumentGetter(DFG::AssemblyHelpers& jit, int peekOffset = 1)
+    CArgumentGetter(AssemblyHelpers& jit, int peekOffset = 1)
         : m_jit(jit)
         , m_peekOffset(peekOffset)
         , m_gprArgumentIndex(0)
@@ -62,52 +62,52 @@ public:
     {
     }
     
-    void loadNext8(DFG::GPRReg destination)
+    void loadNext8(GPRReg destination)
     {
-        ASSERT(!isArgumentRegister<DFG::GPRInfo>(destination));
-        if (m_gprArgumentIndex < DFG::GPRInfo::numberOfArgumentRegisters) {
-            m_jit.move(DFG::GPRInfo::toArgumentRegister(m_gprArgumentIndex++), destination);
+        ASSERT(!isArgumentRegister<GPRInfo>(destination));
+        if (m_gprArgumentIndex < GPRInfo::numberOfArgumentRegisters) {
+            m_jit.move(GPRInfo::toArgumentRegister(m_gprArgumentIndex++), destination);
             return;
         }
         
         m_jit.load8(nextAddress(), destination);
     }
     
-    void loadNext32(DFG::GPRReg destination)
+    void loadNext32(GPRReg destination)
     {
-        ASSERT(!isArgumentRegister<DFG::GPRInfo>(destination));
-        if (m_gprArgumentIndex < DFG::GPRInfo::numberOfArgumentRegisters) {
-            m_jit.move(DFG::GPRInfo::toArgumentRegister(m_gprArgumentIndex++), destination);
+        ASSERT(!isArgumentRegister<GPRInfo>(destination));
+        if (m_gprArgumentIndex < GPRInfo::numberOfArgumentRegisters) {
+            m_jit.move(GPRInfo::toArgumentRegister(m_gprArgumentIndex++), destination);
             return;
         }
         
         m_jit.load32(nextAddress(), destination);
     }
     
-    void loadNext64(DFG::GPRReg destination)
+    void loadNext64(GPRReg destination)
     {
-        ASSERT(!isArgumentRegister<DFG::GPRInfo>(destination));
-        if (m_gprArgumentIndex < DFG::GPRInfo::numberOfArgumentRegisters) {
-            m_jit.move(DFG::GPRInfo::toArgumentRegister(m_gprArgumentIndex++), destination);
+        ASSERT(!isArgumentRegister<GPRInfo>(destination));
+        if (m_gprArgumentIndex < GPRInfo::numberOfArgumentRegisters) {
+            m_jit.move(GPRInfo::toArgumentRegister(m_gprArgumentIndex++), destination);
             return;
         }
         
         m_jit.load64(nextAddress(), destination);
     }
     
-    void loadNextPtr(DFG::GPRReg destination)
+    void loadNextPtr(GPRReg destination)
     {
         loadNext64(destination);
     }
     
-    void loadNextDouble(DFG::FPRReg destination)
+    void loadNextDouble(FPRReg destination)
     {
         ASSERT(
-            !isArgumentRegister<DFG::FPRInfo>(destination)
-            || destination == DFG::FPRInfo::argumentFPR0);
+            !isArgumentRegister<FPRInfo>(destination)
+            || destination == FPRInfo::argumentFPR0);
         
-        if (m_fprArgumentIndex < DFG::FPRInfo::numberOfArgumentRegisters) {
-            m_jit.moveDouble(DFG::FPRInfo::toArgumentRegister(m_fprArgumentIndex++), destination);
+        if (m_fprArgumentIndex < FPRInfo::numberOfArgumentRegisters) {
+            m_jit.moveDouble(FPRInfo::toArgumentRegister(m_fprArgumentIndex++), destination);
             return;
         }
         
@@ -115,8 +115,8 @@ public:
     }
     
     void loadNextAndBox(
-        ValueFormat, DFG::GPRReg destination,
-        DFG::GPRReg scratch1 = InvalidGPRReg, DFG::GPRReg scratch2 = InvalidGPRReg);
+        ValueFormat, GPRReg destination,
+        GPRReg scratch1 = InvalidGPRReg, GPRReg scratch2 = InvalidGPRReg);
 
 private:
     MacroAssembler::Address nextAddress()
@@ -126,7 +126,7 @@ private:
             (m_peekOffset + m_stackArgumentIndex++) * sizeof(void*));
     }
             
-    DFG::AssemblyHelpers& m_jit;
+    AssemblyHelpers& m_jit;
     unsigned m_peekOffset;
     unsigned m_gprArgumentIndex;
     unsigned m_fprArgumentIndex;

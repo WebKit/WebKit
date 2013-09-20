@@ -117,7 +117,6 @@ SOURCES += \
     dfg/DFGAbstractValue.cpp \
     dfg/DFGArgumentsSimplificationPhase.cpp \
     dfg/DFGArrayMode.cpp \
-    dfg/DFGAssemblyHelpers.cpp \
     dfg/DFGAtTailAbstractState.cpp \
     dfg/DFGBackwardsPropagationPhase.cpp \
     dfg/DFGBasicBlock.cpp \
@@ -206,6 +205,7 @@ SOURCES += \
     interpreter/Interpreter.cpp \
     interpreter/JSStack.cpp \
     interpreter/StackVisitor.cpp \
+    jit/AssemblyHelpers.cpp \
     jit/ClosureCallStubRoutine.cpp \
     jit/ExecutableAllocatorFixedVMPool.cpp \
     jit/ExecutableAllocator.cpp \

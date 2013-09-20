@@ -886,8 +886,6 @@ namespace JSC {
 #endif
 
         Interpreter* m_interpreter;
-        VM* m_vm;
-        CodeBlock* m_codeBlock;
 
         Vector<CallRecord> m_calls;
         Vector<Label> m_labels;

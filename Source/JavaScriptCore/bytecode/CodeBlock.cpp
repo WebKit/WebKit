@@ -2209,7 +2209,6 @@ void CodeBlock::visitWeakReferences(SlotVisitor& visitor)
 
 void CodeBlock::finalizeUnconditionally()
 {
-#if ENABLE(LLINT)
     Interpreter* interpreter = m_vm->interpreter;
     if (JITCode::couldBeInterpreted(jitType())) {
         const Vector<unsigned>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
@@ -2263,6 +2262,7 @@ void CodeBlock::finalizeUnconditionally()
             }
         }
 
+#if ENABLE(LLINT)
         for (unsigned i = 0; i < m_llintCallLinkInfos.size(); ++i) {
             if (m_llintCallLinkInfos[i].isLinked() && !Heap::isMarked(m_llintCallLinkInfos[i].callee.get())) {
                 if (Options::verboseOSR())
@@ -2272,8 +2272,8 @@ void CodeBlock::finalizeUnconditionally()
             if (!!m_llintCallLinkInfos[i].lastSeenCallee && !Heap::isMarked(m_llintCallLinkInfos[i].lastSeenCallee.get()))
                 m_llintCallLinkInfos[i].lastSeenCallee.clear();
         }
-    }
 #endif // ENABLE(LLINT)
+    }
 
 #if ENABLE(DFG_JIT)
     // Check if we're not live. If we are, then jettison.
@@ -2451,14 +2451,19 @@ CodeBlock* CodeBlock::baselineVersion()
         return this;
 #if ENABLE(JIT)
     CodeBlock* result = replacement();
+    if (!result) {
+        // This can happen if we're creating the original CodeBlock for an executable.
+        // Assume that we're the baseline CodeBlock.
+        ASSERT(jitType() == JITCode::None);
+        return this;
+    }
     while (result->alternative())
         result = result->alternative();
     RELEASE_ASSERT(result);
     RELEASE_ASSERT(JITCode::isBaselineCode(result->jitType()));
     return result;
 #else
-    RELEASE_ASSERT_NOT_REACHED();
-    return 0;
+    return this;
 #endif
 }
 

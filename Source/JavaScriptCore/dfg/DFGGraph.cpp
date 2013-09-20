@@ -29,6 +29,7 @@
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
 #include "DFGClobberSet.h"
+#include "DFGJITCode.h"
 #include "DFGVariableAccessDataDump.h"
 #include "FunctionExecutableDump.h"
 #include "OperandsInlines.h"
