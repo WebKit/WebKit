@@ -93,6 +93,8 @@ Libraries_libTestRunnerInjectedBundle_la_SOURCES = \
 	Tools/WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h \
 	Tools/WebKitTestRunner/InjectedBundle/ActivateFonts.h \
 	Tools/WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.h \
 	Tools/WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrappable.h \
 	Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.cpp \
@@ -132,6 +134,7 @@ Libraries_libTestRunnerInjectedBundle_la_CPPFLAGS = \
 	-I$(srcdir)/Tools/WebKitTestRunner \
 	-I$(srcdir)/Tools/WebKitTestRunner/InjectedBundle \
 	-I$(srcdir)/Tools/WebKitTestRunner/InjectedBundle/Bindings \
+	-I$(srcdir)/Tools/WebKitTestRunner/InjectedBundle/atk \
 	-I$(srcdir)/Source/WebCore/testing/js \
 	-I$(top_builddir)/DerivedSources/InjectedBundle \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \

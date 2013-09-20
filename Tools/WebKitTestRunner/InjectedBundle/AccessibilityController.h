@@ -33,6 +33,9 @@
 #if PLATFORM(WIN)
 #include <windows.h>
 #endif
+#if PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
+#include "AccessibilityNotificationHandlerAtk.h"
+#endif
 
 namespace WTR {
     
@@ -68,13 +71,8 @@ private:
     RetainPtr<NotificationHandler> m_globalNotificationHandler;
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
-    unsigned m_stateChangeListenerId;
-    unsigned m_focusEventListenerId;
-    unsigned m_activeDescendantChangedListenerId;
-    unsigned m_childrenChangedListenerId;
-    unsigned m_propertyChangedListenerId;
-    unsigned m_visibleDataChangedListenerId;
+#if PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
+    RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
 };
 

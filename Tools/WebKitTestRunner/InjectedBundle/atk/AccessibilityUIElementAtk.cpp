@@ -1119,13 +1119,26 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::url()
 
 bool AccessibilityUIElement::addNotificationListener(JSValueRef functionCallback)
 {
-    // FIXME: implement
+    if (!functionCallback)
+        return false;
+
+    // Only one notification listener per element.
+    if (m_notificationHandler)
+        return false;
+
+    m_notificationHandler = AccessibilityNotificationHandler::create();
+    m_notificationHandler->setPlatformElement(platformUIElement());
+    m_notificationHandler->setNotificationFunctionCallback(functionCallback);
+
     return true;
 }
 
 bool AccessibilityUIElement::removeNotificationListener()
 {
-    // FIXME: implement
+    // Programmers should not be trying to remove a listener that's already removed.
+    ASSERT(m_notificationHandler);
+    m_notificationHandler = 0;
+
     return true;
 }
 

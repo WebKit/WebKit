@@ -44,14 +44,6 @@ PassRefPtr<AccessibilityController> AccessibilityController::create()
 }
 
 AccessibilityController::AccessibilityController()
-#if PLATFORM(GTK) || PLATFORM(EFL)
-    : m_stateChangeListenerId(0)
-    , m_focusEventListenerId(0)
-    , m_activeDescendantChangedListenerId(0)
-    , m_childrenChangedListenerId(0)
-    , m_propertyChangedListenerId(0)
-    , m_visibleDataChangedListenerId(0)
-#endif
 {
 }
 

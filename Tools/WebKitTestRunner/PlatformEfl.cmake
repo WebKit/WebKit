@@ -70,6 +70,7 @@ add_definitions(-DFONTS_CONF_DIR="${TOOLS_DIR}/DumpRenderTree/gtk/fonts"
 if (ENABLE_ACCESSIBILITY)
     list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
         ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/atk/AccessibilityControllerAtk.cpp
+        ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/atk/AccessibilityNotificationHandlerAtk.cpp
         ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/atk/AccessibilityUIElementAtk.cpp
     )
     list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES

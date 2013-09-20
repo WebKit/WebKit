@@ -50,6 +50,7 @@ typedef struct objc_object* PlatformUIElement;
 
 typedef COMPtr<IAccessible> PlatformUIElement;
 #elif PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
+#include "AccessibilityNotificationHandlerAtk.h"
 #include <atk/atk.h>
 #include <wtf/gobject/GRefPtr.h>
 typedef GRefPtr<AtkObject> PlatformUIElement;
@@ -261,6 +262,10 @@ private:
 #if PLATFORM(MAC) || PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
     void getChildren(Vector<RefPtr<AccessibilityUIElement> >&);
     void getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >&, unsigned location, unsigned length);
+#endif
+
+#if PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
+    RefPtr<AccessibilityNotificationHandler> m_notificationHandler;
 #endif
 };
     

@@ -24,6 +24,7 @@ set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WEBKIT_TESTRUNNER_DIR}
     ${WEBKIT_TESTRUNNER_DIR}/InjectedBundle
     ${WEBKIT_TESTRUNNER_DIR}/InjectedBundle/Bindings
+    ${WEBKIT_TESTRUNNER_DIR}/InjectedBundle/atk
     ${JAVASCRIPTCORE_DIR}
     ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
     ${WEBCORE_DIR}/editing
