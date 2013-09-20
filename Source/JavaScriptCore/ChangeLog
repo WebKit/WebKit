@@ -1,3 +1,17 @@
+2013-09-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Inline method exported
+        https://bugs.webkit.org/show_bug.cgi?id=121664
+
+        Reviewed by Darin Adler.
+
+        WatchDog::didFire() is marked as an exported symbol eventhough it is
+        defined inline. This breaks the build on MinGW since it results in dllimport
+        being declared on a definition.
+
+        * runtime/Watchdog.h:
+        (JSC::Watchdog::didFire):
+
 2013-09-20  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Use COMPILE_DEFINITIONS target property for setting BUILDING_* defines
