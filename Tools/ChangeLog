@@ -1,3 +1,20 @@
+2013-09-20  Patrick Gansterer  <paroga@webkit.org>
+
+        Nuke remaining VS2005 tools from the tree.
+        https://bugs.webkit.org/show_bug.cgi?id=121691
+
+        Reviewed by Brent Fulgham.
+
+        * CLWrapper/CLWrapper.cpp: Removed.
+        * CLWrapper/CLWrapper.sln: Removed.
+        * CLWrapper/CLWrapper.vcproj: Removed.
+        * MIDLWrapper/MIDLWrapper.cpp: Removed.
+        * MIDLWrapper/MIDLWrapper.sln: Removed.
+        * MIDLWrapper/MIDLWrapper.vcproj: Removed.
+        * Scripts/parallelcl: Removed.
+        * vcbin/cl.exe: Removed.
+        * vcbin/midl.exe: Removed.
+
 2013-09-20  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] socket_embed_hook hitting NULL-check assertion running TestWebKit2
