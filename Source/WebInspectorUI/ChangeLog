@@ -1,3 +1,10 @@
+2013-09-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed gardening. Teach WebInspectorUI.vcxproj folder to
+        ignore Visual Studio's local user settings file.
+
+        * WebInspectorUI.vcxproj: Added property svn:ignore.
+
 2013-09-17  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Cannot find WebInspectorUI/UserInterface/Main.html referenced in GResourceBundle.xml
