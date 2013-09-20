@@ -78,9 +78,6 @@ public:
     static void setDefersLoading(WebKitWebView*, bool);
     static void forceWebViewPaint(WebKitWebView*);
 
-    // Accessibility
-    static WTF::CString accessibilityHelpText(AtkObject*);
-
     // TextInputController
     static void setComposition(WebKitWebView*, const char*, int start, int length);
     static bool hasComposition(WebKitWebView*);

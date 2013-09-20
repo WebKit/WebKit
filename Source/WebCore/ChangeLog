@@ -1,3 +1,16 @@
+2013-09-20  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Do not expose aria-help in ATK based platforms
+        https://bugs.webkit.org/show_bug.cgi?id=121675
+
+        Reviewed by Chris Fleizach.
+
+        Stop exposing the value for the 'aria-help' attribute as an
+        AtkObject attribute, based in AccessibilityObject::helpText().
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes): Remove the mapping.
+
 2013-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         Scrollbars don't appear on long pages after r155660

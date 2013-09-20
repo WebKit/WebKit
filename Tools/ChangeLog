@@ -1,3 +1,29 @@
+2013-09-20  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Do not expose aria-help in ATK based platforms
+        https://bugs.webkit.org/show_bug.cgi?id=121675
+
+        Reviewed by Chris Fleizach.
+
+        Remove the implementations for AccessibilityUIElement::helpText()
+        from DRT and WKTR for GTK and EFL, since they are based on the
+        AccessibilityObject::helpText() method and the 'aria-help'
+        attributes, which is wrong since they should not depend on that
+        but in ATK specific API (see also http://webkit.org/b/121684).
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::helpText): Added a new and empty
+        implementation, now that we are no longer using this in ATK.
+        * DumpRenderTree/efl/AccessibilityUIElementEfl.cpp: Removed file
+        as the only function provided here was helpText().
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp: Ditto.
+        * DumpRenderTree/efl/CMakeLists.txt: AccessibilityUIElementEfl.cpp
+        removed from the list of sources to compile.
+        * GNUmakefile.am: Likewise, but for AccessibilityUIElementGtk.cpp.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::helpText): Replaced old implementation
+        based in DumpRenderTreeSupportGtk with an empty one.
+
 2013-09-20  Dan Bernstein  <mitz@apple.com>
 
         Make extract-localizable-strings available to WebCore clients

@@ -477,18 +477,6 @@ bool DumpRenderTreeSupportGtk::findString(WebKitWebView* webView, const gchar* t
     return core(webView)->findString(String::fromUTF8(targetString), findOptions);
 }
 
-CString DumpRenderTreeSupportGtk::accessibilityHelpText(AtkObject* axObject)
-{
-    if (!axObject || !WEBKIT_IS_ACCESSIBLE(axObject))
-        return CString();
-
-    AccessibilityObject* coreObject = webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(axObject));
-    if (!coreObject)
-        return CString();
-
-    return coreObject->helpText().utf8();
-}
-
 void DumpRenderTreeSupportGtk::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
 {
     JSC::ExecState* exec = toJS(context);

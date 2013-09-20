@@ -536,6 +536,14 @@ JSStringRef AccessibilityUIElement::language()
     return JSStringCreateWithUTF8CString(axValue.get());
 }
 
+JSStringRef AccessibilityUIElement::helpText() const
+{
+    // FIXME: We need to provide a proper implementation for this that does
+    // not depend on Mac specific concepts such as ATK_RELATION_DESCRIBED_BY,
+    // once it's implemented (see http://webkit.org/b/121684).
+    return JSStringCreateWithCharacters(0, 0);
+}
+
 double AccessibilityUIElement::x()
 {
     int x, y;

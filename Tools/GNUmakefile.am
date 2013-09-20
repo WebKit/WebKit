@@ -122,7 +122,6 @@ Programs_DumpRenderTree_SOURCES = \
 	Tools/DumpRenderTree/cairo/PixelDumpSupportCairo.cpp \
 	Tools/DumpRenderTree/cairo/PixelDumpSupportCairo.h \
 	Tools/DumpRenderTree/gtk/AccessibilityControllerGtk.cpp \
-	Tools/DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp \
 	Tools/DumpRenderTree/gtk/DumpRenderTree.cpp \
 	Tools/DumpRenderTree/gtk/DumpRenderTreeGtk.h \
 	Tools/DumpRenderTree/gtk/EditingCallbacks.h \

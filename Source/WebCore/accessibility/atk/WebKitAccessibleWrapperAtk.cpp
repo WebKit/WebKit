@@ -495,10 +495,6 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (!invalidStatus.isEmpty() && invalidStatus != "false")
         attributeSet = addToAtkAttributeSet(attributeSet, "aria-invalid", coreObject->invalidStatus().string().utf8().data());
 
-    String helpText = coreObject->helpText();
-    if (!helpText.isEmpty())
-        attributeSet = addToAtkAttributeSet(attributeSet, "aria-help", helpText.utf8().data());
-
     AccessibilitySortDirection sortDirection = coreObject->sortDirection();
     if (sortDirection != SortDirectionNone) {
         attributeSet = addToAtkAttributeSet(attributeSet, "sort",

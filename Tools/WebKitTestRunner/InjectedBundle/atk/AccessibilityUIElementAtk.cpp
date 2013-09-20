@@ -719,12 +719,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::language()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
-        return JSStringCreateWithCharacters(0, 0);
-
-    String attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), "aria-help");
-    GOwnPtr<char> axValue(g_strdup_printf("AXHelp: %s", attributeValue.utf8().data()));
-    return JSStringCreateWithUTF8CString(axValue.get());
+    // FIXME: We need to provide a proper implementation for this that does
+    // not depend on Mac specific concepts such as ATK_RELATION_DESCRIBED_BY,
+    // once it's implemented (see http://webkit.org/b/121684).
+    return JSStringCreateWithCharacters(0, 0);
 }
 
 double AccessibilityUIElement::x()

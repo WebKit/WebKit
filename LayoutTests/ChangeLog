@@ -1,3 +1,24 @@
+2013-09-20  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Do not expose aria-help in ATK based platforms
+        https://bugs.webkit.org/show_bug.cgi?id=121675
+
+        Reviewed by Chris Fleizach.
+
+        Moved test based in helpText() into the Mac directory, and update
+        expectations for platforms as needed.
+
+        * platform/mac/accessibility/aria-help-expected.txt: Renamed from LayoutTests/accessibility/aria-help-expected.txt.
+        * platform/mac/accessibility/aria-help.html: Renamed from LayoutTests/accessibility/aria-help.html.
+        * platform/gtk-wk2/TestExpectations: Removed failure expectation
+        for aria-help, now moved to Mac, and for aria-describedby-on-input,
+        which is now moved to the generic TestExpectations file for GTK.
+        * platform/gtk/TestExpectations: Added aria-describedby-on-input,
+        linking it to the newly filed bug 121684.
+        * platform/gtk-wk2/TestExpectations: Removed failure expectation.
+        * platform/win/TestExpectations: Removed failure expectation.
+        * platform/wincairo/TestExpectations: Ditto.
+
 2013-09-20  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Move tests to new import location

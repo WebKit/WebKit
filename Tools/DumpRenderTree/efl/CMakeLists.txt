@@ -14,7 +14,6 @@ set(DumpRenderTree_SOURCES
     ${TOOLS_DIR}/DumpRenderTree/atk/AccessibilityUIElementAtk.cpp
     ${TOOLS_DIR}/DumpRenderTree/cairo/PixelDumpSupportCairo.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/AccessibilityControllerEfl.cpp
-    ${TOOLS_DIR}/DumpRenderTree/efl/AccessibilityUIElementEfl.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/DumpHistoryItem.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/DumpRenderTree.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/DumpRenderTreeChrome.cpp
