@@ -1,5 +1,35 @@
 2013-09-20  Zoltan Horvath  <zoltan@webkit.org>
 
+        Refactoring LineBreaker and RenderTextInfo out of RenderBlock.h
+        https://bugs.webkit.org/show_bug.cgi?id=121707
+
+        Reviewed by David Hyatt.
+
+        LineBreaker and RenderTextInfo are defined in RenderBlock.h, but only used in RenderBlockLineLayout.cpp.
+        Moving them there (LineBreaker needs to be a friend class of RenderBlock) in the first step in the process
+        of refactoring LineBreaker::NextSegmentBreak into more manageable chunks.
+
+        This change was reviewed and landed in Blink:
+        https://src.chromium.org/viewvc/blink?revision=157402&view=revision
+
+        No new tests.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineBreaker::LineBreaker):
+        (WebCore::LineBreaker::lineWasHyphenated):
+        (WebCore::LineBreaker::positionedObjects):
+        (WebCore::LineBreaker::clear):
+        (WebCore::RenderTextInfo::RenderTextInfo):
+        (WebCore::RenderTextInfo::~RenderTextInfo):
+        (WebCore::LineBreaker::skipTrailingWhitespace):
+        (WebCore::LineBreaker::skipLeadingWhitespace):
+        (WebCore::LineBreaker::reset):
+        (WebCore::LineBreaker::nextLineBreak):
+        (WebCore::LineBreaker::nextSegmentBreak):
+
+2013-09-20  Zoltan Horvath  <zoltan@webkit.org>
+
         Move logicalHeightForLine out of LineWidth.h
         https://bugs.webkit.org/show_bug.cgi?id=121575
 

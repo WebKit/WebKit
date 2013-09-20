@@ -53,6 +53,7 @@ class RenderText;
 
 struct BidiRun;
 struct PaintInfo;
+class LineBreaker;
 class LineInfo;
 class RenderRubyRun;
 #if ENABLE(CSS_SHAPES)
@@ -636,44 +637,6 @@ private:
 
     LayoutPoint computeLogicalLocationForFloat(const FloatingObject*, LayoutUnit logicalTopOffset) const;
 
-    // The following functions' implementations are in RenderBlockLineLayout.cpp.
-    struct RenderTextInfo {
-        // Destruction of m_layout requires TextLayout to be a complete type, so the constructor and destructor are made non-inline to avoid compilation errors.
-        RenderTextInfo();
-        ~RenderTextInfo();
-
-        RenderText* m_text;
-        OwnPtr<TextLayout> m_layout;
-        LazyLineBreakIterator m_lineBreakIterator;
-        const Font* m_font;
-    };
-
-    class LineBreaker {
-    public:
-        LineBreaker(RenderBlock* block)
-            : m_block(block)
-        {
-            reset();
-        }
-
-        InlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements&);
-
-        bool lineWasHyphenated() { return m_hyphenated; }
-        const Vector<RenderBox*>& positionedObjects() { return m_positionedObjects; }
-        EClear clear() { return m_clear; }
-    private:
-        void reset();
-        
-        InlineIterator nextSegmentBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements&);
-        void skipTrailingWhitespace(InlineIterator&, const LineInfo&);
-        void skipLeadingWhitespace(InlineBidiResolver&, LineInfo&, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
-        
-        RenderBlock* m_block;
-        bool m_hyphenated;
-        EClear m_clear;
-        Vector<RenderBox*> m_positionedObjects;
-    };
-
     void checkFloatsInCleanLine(RootInlineBox*, Vector<FloatWithRect>&, size_t& floatIndex, bool& encounteredNewFloat, bool& dirtiedByFloat);
     RootInlineBox* determineStartPosition(LineLayoutState&, InlineBidiResolver&);
     void determineEndPosition(LineLayoutState&, RootInlineBox* startBox, InlineIterator& cleanLineStart, BidiStatus& cleanLineBidiStatus);
@@ -933,6 +896,7 @@ protected:
     // RenderRubyBase objects need to be able to split and merge, moving their children around
     // (calling moveChildTo, moveAllChildrenTo, and makeChildrenNonInline).
     friend class RenderRubyBase;
+    friend class LineBreaker;
     friend class LineWidth; // Needs to know FloatingObject
 
 private:

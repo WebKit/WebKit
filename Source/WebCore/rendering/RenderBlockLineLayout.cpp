@@ -69,6 +69,43 @@ namespace WebCore {
 // We don't let our line box tree for a single line get any deeper than this.
 const unsigned cMaxLineDepth = 200;
 
+struct RenderTextInfo {
+    // Destruction of m_layout requires TextLayout to be a complete type, so the constructor and destructor are made non-inline to avoid compilation errors.
+    RenderTextInfo();
+    ~RenderTextInfo();
+
+    RenderText* m_text;
+    OwnPtr<TextLayout> m_layout;
+    LazyLineBreakIterator m_lineBreakIterator;
+    const Font* m_font;
+};
+
+class LineBreaker {
+public:
+    LineBreaker(RenderBlock* block)
+        : m_block(block)
+    {
+        reset();
+    }
+
+    InlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements&);
+
+    bool lineWasHyphenated() { return m_hyphenated; }
+    const Vector<RenderBox*>& positionedObjects() { return m_positionedObjects; }
+    EClear clear() { return m_clear; }
+private:
+    void reset();
+
+    InlineIterator nextSegmentBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements&);
+    void skipTrailingWhitespace(InlineIterator&, const LineInfo&);
+    void skipLeadingWhitespace(InlineBidiResolver&, LineInfo&, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
+
+    RenderBlock* m_block;
+    bool m_hyphenated;
+    EClear m_clear;
+    Vector<RenderBox*> m_positionedObjects;
+};
+
 #if ENABLE(CSS_SHAPES)
 ShapeInsideInfo* RenderBlock::layoutShapeInsideInfo() const
 {
@@ -1279,13 +1316,13 @@ void RenderBlock::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInli
     repaintDirtyFloats(layoutState.floats());
 }
 
-RenderBlock::RenderTextInfo::RenderTextInfo()
+RenderTextInfo::RenderTextInfo()
     : m_text(0)
     , m_font(0)
 {
 }
 
-RenderBlock::RenderTextInfo::~RenderTextInfo()
+RenderTextInfo::~RenderTextInfo()
 {
 }
 
@@ -2243,7 +2280,7 @@ bool RenderBlock::generatesLineBoxesForInlineChild(RenderObject* inlineObj)
 // object iteration process.
 // NB. this function will insert any floating elements that would otherwise
 // be skipped but it will not position them.
-void RenderBlock::LineBreaker::skipTrailingWhitespace(InlineIterator& iterator, const LineInfo& lineInfo)
+void LineBreaker::skipTrailingWhitespace(InlineIterator& iterator, const LineInfo& lineInfo)
 {
     while (!iterator.atEnd() && !requiresLineBox(iterator, lineInfo, TrailingWhitespace)) {
         RenderObject* object = iterator.m_obj;
@@ -2255,7 +2292,7 @@ void RenderBlock::LineBreaker::skipTrailingWhitespace(InlineIterator& iterator, 
     }
 }
 
-void RenderBlock::LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& lineInfo,
+void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& lineInfo,
                                                      FloatingObject* lastFloatFromPreviousLine, LineWidth& width)
 {
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo, LeadingWhitespace)) {
@@ -2471,14 +2508,14 @@ void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMid
     }
 }
 
-void RenderBlock::LineBreaker::reset()
+void LineBreaker::reset()
 {
     m_positionedObjects.clear();
     m_hyphenated = false;
     m_clear = CNONE;
 }
 
-InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
+InlineIterator LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
 {
 #if !ENABLE(CSS_SHAPES)
     return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
@@ -2618,7 +2655,7 @@ static void updateSegmentsForShapes(RenderBlock* block, const FloatingObject* la
 }
 #endif
 
-InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
+InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
 {
     reset();
 
@@ -2900,7 +2937,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             // Non-zero only when kerning is enabled and TextLayout isn't used, in which case we measure
             // words with their trailing space, then subtract its width.
             HashSet<const SimpleFontData*> fallbackFonts;
-            float wordTrailingSpaceWidth = (f.typesettingFeatures() & Kerning) && !textLayout ? f.width(constructTextRun(t, f, &space, 1, style), &fallbackFonts) + wordSpacing : 0;
+            float wordTrailingSpaceWidth = (f.typesettingFeatures() & Kerning) && !textLayout ? f.width(RenderBlock::constructTextRun(t, f, &space, 1, style), &fallbackFonts) + wordSpacing : 0;
 
             UChar lastCharacter = renderTextInfo.m_lineBreakIterator.lastCharacter();
             UChar secondToLastCharacter = renderTextInfo.m_lineBreakIterator.secondToLastCharacter();
