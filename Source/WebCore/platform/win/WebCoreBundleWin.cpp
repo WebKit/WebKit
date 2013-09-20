@@ -30,6 +30,7 @@
 
 #include "WebCoreInstanceHandle.h"
 #include <CoreFoundation/CFBundle.h>
+#include <windows.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {

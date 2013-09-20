@@ -1,3 +1,9 @@
+2013-09-20  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Fix build without precompiled header after r154146.
+
+        * platform/win/WebCoreBundleWin.cpp:
+
 2013-09-20  Antti Koivisto  <antti@apple.com>
 
         Add covariant RenderElement* Element::renderer()
