@@ -1352,8 +1352,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         Vector<AnimationPropertyWrapperBase*> longhandWrappers;
         longhandWrappers.reserveInitialCapacity(shorthand.length());
         const CSSPropertyID* properties = shorthand.properties();
-        for (unsigned i = 0; i < shorthand.length(); ++i) {
-            unsigned wrapperIndex = indexFromPropertyID(properties[i]);
+        for (unsigned j = 0; j < shorthand.length(); ++j) {
+            unsigned wrapperIndex = indexFromPropertyID(properties[j]);
             if (wrapperIndex == cInvalidPropertyWrapperIndex)
                 continue;
             ASSERT(m_propertyWrappers[wrapperIndex]);
