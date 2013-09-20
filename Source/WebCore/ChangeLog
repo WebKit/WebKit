@@ -1,3 +1,35 @@
+2013-09-16  Antonio Gomes  <a1.gomes@sisa.samsung.com>
+
+        StrictTypeChecking extended attribute fails for methods with sequence<T>
+        https://bugs.webkit.org/show_bug.cgi?id=121305
+
+        Reviewed by Darin Adler.
+
+        The extended attribute StrictTypeChecking can not be set to methods if
+        one of the parameters is a "sequence".
+        Basically, since "sequence" is not considered a native type
+        (see function IsNativeType) the Perl code generator tries to
+        include its supposedly associated header, in this case "JSsequence.h"
+        Compilation then fails.
+
+        It is a problem for bindings including WebGL, where all methods
+        are supposed to be set as StrictTypeChecking (see bug 44202 [1]). Due to this restriction,
+        it relaxed, but I would like to bring it back.
+
+        Patch fixes the issue by hardening the way includes are auto-added
+        for methods where StrictTypeChecking extended attribute is present.
+        Now, only wrapper types (see IsWrapperType) trigger header inclusion,
+        excluding arrays, sequences, basic types, etc.
+
+        [1] https://bugs.webkit.org/show_bug.cgi?id=44202
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionStrictFunctionWithSequence):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/TestObj.idl:
+
 2013-09-20  Andreas Kling  <akling@apple.com>
 
         Optimize fetching the Node for never-anonymous renderers.

@@ -2193,7 +2193,7 @@ sub GenerateImplementation
                                     $implIncludes{"<runtime/Error.h>"} = 1;
 
                                     my $argType = $attribute->signature->type;
-                                    if (!IsNativeType($argType)) {
+                                    if ($codeGenerator->IsWrapperType($argType)) {
                                         push(@implContent, "    if (!value.isUndefinedOrNull() && !value.inherits(JS${argType}::info())) {\n");
                                         push(@implContent, "        throwVMTypeError(exec);\n");
                                         push(@implContent, "        return;\n");
@@ -2922,7 +2922,7 @@ sub GenerateParametersCheck
                 $implIncludes{"<runtime/Error.h>"} = 1;
 
                 my $argValue = "exec->argument($argsIndex)";
-                if (!IsNativeType($argType)) {
+                if ($codeGenerator->IsWrapperType($argType)) {
                     push(@$outputArray, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.inherits(JS${argType}::info()))\n");
                     push(@$outputArray, "        return throwVMTypeError(exec);\n");
                 }

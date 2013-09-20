@@ -224,6 +224,8 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
     [StrictTypeChecking] attribute float strictFloat;
     [StrictTypeChecking, RaisesException] bool strictFunction(DOMString str, float a, long b);
+    [StrictTypeChecking, RaisesException] bool strictFunctionWithSequence(TestObj objArg, sequence<unsigned long> a);
+    [StrictTypeChecking, RaisesException] bool strictFunctionWithArray(TestObj objArg, long[] array);
 
     // ObjectiveC reserved words.
     readonly attribute long      description;
