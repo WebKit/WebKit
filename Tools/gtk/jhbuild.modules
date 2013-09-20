@@ -151,7 +151,9 @@
     </dependencies>
     <branch module="/pub/GNOME/sources/gtk+/3.6/gtk+-3.6.0.tar.xz" version="3.6.0"
             repo="ftp.gnome.org"
-            hash="sha256:e13f45225a795ebe9e4047486fa57b3232e6a21539983775db6cd4ae9046b049"/>
+            hash="sha256:e13f45225a795ebe9e4047486fa57b3232e6a21539983775db6cd4ae9046b049">
+      <patch file="gtk-3.6-do-not-shutdown-accessibility.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="glib"

@@ -1,3 +1,17 @@
+2013-09-20  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] socket_embed_hook hitting NULL-check assertion running TestWebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=121294
+
+        Reviewed by Martin Robinson.
+
+        Provide a new patch to deal with the issue in the GTK+ module from
+        the internal jhbuild environment. This issue has been reported
+        upstream (see https://bugzilla.gnome.org/show_bug.cgi?id=708024).
+
+        * gtk/jhbuild.modules: Apply the new patch to the GTK+ module.
+        * gtk/patches/gtk-3.6-do-not-shutdown-accessibility.patch: Added.
+
 2013-09-20  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [ATK][WTR] accessibility/aria-invalid.html times out

@@ -1,0 +1,39 @@
+--- gtk+-3.6.0/gtk/gtkmain.c	2012-09-18 16:34:42.000000000 +0100
++++ gtk+-3.6.0/gtk/gtkmain.c	2013-09-16 17:36:58.046546545 +0100
+@@ -671,7 +671,6 @@
+ 
+ /* XXX: Remove me after getting rid of gail */
+ extern void _gtk_accessibility_init (void);
+-extern void _gtk_accessibility_shutdown (void);
+ 
+ static void
+ do_post_parse_initialization (int    *argc,
+@@ -1180,8 +1179,6 @@
+ 
+       /* Synchronize the recent manager singleton */
+       _gtk_recent_manager_sync ();
+-
+-      _gtk_accessibility_shutdown ();
+     }
+ }
+ 
+--- gtk+-3.6.0/gtk/gtkapplication.c	2012-09-24 00:57:30.000000000 +0100
++++ gtk+-3.6.0/gtk/gtkapplication.c	2013-09-16 17:37:23.154671051 +0100
+@@ -47,8 +47,6 @@
+ #include <gdk/x11/gdkx.h>
+ #endif
+ 
+-extern void _gtk_accessibility_shutdown (void);
+-
+ /**
+  * SECTION:gtkapplication
+  * @title: GtkApplication
+@@ -433,8 +431,6 @@
+   /* Synchronize the recent manager singleton */
+   _gtk_recent_manager_sync ();
+ 
+-  _gtk_accessibility_shutdown ();
+-
+   G_APPLICATION_CLASS (gtk_application_parent_class)
+     ->shutdown (application);
+ }
