@@ -47,7 +47,7 @@ public:
     enum Match { SelectorMatches, SelectorFailsLocally, SelectorFailsAllSiblings, SelectorFailsCompletely };
     enum VisitedMatchType { VisitedMatchDisabled, VisitedMatchEnabled };
     enum Mode { ResolvingStyle = 0, CollectingRules, QueryingRules, SharingRules };
-    enum BehaviorAtBoundary { DoesNotCrossBoundary, CrossesBoundary, StaysWithinTreeScope };
+    enum BehaviorAtBoundary { DoesNotCrossBoundary, StaysWithinTreeScope };
 
     SelectorChecker(Document&, Mode);
 

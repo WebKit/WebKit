@@ -181,13 +181,8 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
 
     // Prepare next selector
     const CSSSelector* historySelector = context.selector->tagHistory();
-    if (!historySelector) {
-        if (context.behaviorAtBoundary == CrossesBoundary) {
-            ASSERT(context.scope);
-            return context.scope->contains(context.element) ? SelectorMatches : SelectorFailsLocally;
-        }
+    if (!historySelector)
         return SelectorMatches;
-    }
 
     SelectorCheckingContext nextContext(context);
     nextContext.selector = historySelector;
@@ -760,7 +755,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
 
         case CSSSelector::PseudoScope:
             {
-                const Node* contextualReferenceNode = !context.scope || context.behaviorAtBoundary == CrossesBoundary ? element->document().documentElement() : context.scope;
+                const Node* contextualReferenceNode = !context.scope ? element->document().documentElement() : context.scope;
                 if (element == contextualReferenceNode)
                     return true;
                 break;
