@@ -1,3 +1,15 @@
+2013-09-20  Dan Bernstein  <mitz@apple.com>
+
+        Make extract-localizable-strings available to WebCore clients
+        https://bugs.webkit.org/show_bug.cgi?id=121699
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj: Added a Scripts group with a reference to
+        extract-localizable-strings.pl. Added a Copy Scripts build phase to the WebCore target that
+        copies the script into PrivateHeaders/Scripts in the framework.
+        * extract-localizable-strings.pl: Copied from Tools/Scripts/extract-localizable-strings.
+
 2013-09-20  Antti Koivisto  <antti@apple.com>
 
         Move layer hierarchy functions from RenderObject to RenderElement

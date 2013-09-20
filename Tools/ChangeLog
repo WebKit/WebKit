@@ -1,3 +1,17 @@
+2013-09-20  Dan Bernstein  <mitz@apple.com>
+
+        Make extract-localizable-strings available to WebCore clients
+        https://bugs.webkit.org/show_bug.cgi?id=121699
+
+        Reviewed by Darin Adler.
+
+        * Scripts/extract-localizable-strings: Copied to
+        Soure/WebCore/extract-localizaebl-strings.pl, and changed this into a shell script that
+        executes the script from its new location. This is a temporary measure until certain code
+        that is external to WebKit is adapted to the new location.
+        * Scripts/update-webkit-localizable-strings: Changed to call extract-localizable-strings.pl
+        from its new location.
+
 2013-09-20  Patrick Gansterer  <paroga@webkit.org>
 
         Nuke remaining VS2005 tools from the tree.

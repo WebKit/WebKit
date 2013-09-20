@@ -1082,6 +1082,7 @@
 		3390CA560FFC157B00921962 /* NotificationCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3390CA520FFC157B00921962 /* NotificationCenter.h */; };
 		339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 339B5B62131DAA3200F48D02 /* CookiesStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E13F01EA1270E10D00DFBA71 /* CookieStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3717D7E817ECC591003C276D /* extract-localizable-strings.pl in Copy Scripts */ = {isa = PBXBuildFile; fileRef = 3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */; };
 		371941961566B37200A276D8 /* WebCoreNSCellExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 371941941566B37200A276D8 /* WebCoreNSCellExtras.m */; };
 		371941971566B37200A276D8 /* WebCoreNSCellExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 371941951566B37200A276D8 /* WebCoreNSCellExtras.h */; };
 		371A67CB11C6C7DB00047B8B /* HyphenationCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */; };
@@ -6397,6 +6398,17 @@
 			name = "Copy Generated Headers";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3717D7E717ECC573003C276D /* Copy Scripts */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = PrivateHeaders/Scripts;
+			dstSubfolderSpec = 1;
+			files = (
+				3717D7E817ECC591003C276D /* extract-localizable-strings.pl in Copy Scripts */,
+			);
+			name = "Copy Scripts";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CD0DBF001422765700280263 /* Copy Audio Resources */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7577,6 +7589,7 @@
 		3390CA520FFC157B00921962 /* NotificationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationCenter.h; path = Modules/notifications/NotificationCenter.h; sourceTree = "<group>"; };
 		3390CA530FFC157B00921962 /* NotificationCenter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NotificationCenter.idl; path = Modules/notifications/NotificationCenter.idl; sourceTree = "<group>"; };
 		339B5B62131DAA3200F48D02 /* CookiesStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookiesStrategy.h; sourceTree = "<group>"; };
+		3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "extract-localizable-strings.pl"; sourceTree = "<group>"; };
 		371941941566B37200A276D8 /* WebCoreNSCellExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreNSCellExtras.m; sourceTree = "<group>"; };
 		371941951566B37200A276D8 /* WebCoreNSCellExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreNSCellExtras.h; sourceTree = "<group>"; };
 		371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HyphenationCF.cpp; sourceTree = "<group>"; };
@@ -13567,6 +13580,7 @@
 				E1F0424309839389006694EA /* xml */,
 				656580EC09D12B20000E61D7 /* Derived Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
+				3717D7E417ECC36C003C276D /* Scripts */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				1CDD44660BA9C80000F90147 /* Configurations */,
@@ -14398,6 +14412,14 @@
 				31EC1E2714FF60EE00C94662 /* JSNotificationPermissionCallback.h */,
 			);
 			name = Notifications;
+			sourceTree = "<group>";
+		};
+		3717D7E417ECC36C003C276D /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */,
+			);
+			name = Scripts;
 			sourceTree = "<group>";
 		};
 		37DDCD9F1384501C0008B793 /* mhtml */ = {
@@ -24742,6 +24764,7 @@
 				93F198A608245E59001E9ABC /* Headers */,
 				1C11CCB40AA6093700DADB20 /* Copy Generated Headers */,
 				5D87BC0711E43BDE00702B6F /* Copy Forwarding and ICU Headers */,
+				3717D7E717ECC573003C276D /* Copy Scripts */,
 				93F199FD08245E59001E9ABC /* Resources */,
 				CD0DBF001422765700280263 /* Copy Audio Resources */,
 				1C81BA330E97357C00266E07 /* Copy Inspector Resources */,
