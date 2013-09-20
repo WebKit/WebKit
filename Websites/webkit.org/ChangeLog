@@ -1,3 +1,14 @@
+2013-09-20  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/90090> build-webkit should verify that your tools are up-to-date
+
+        Update references on webkit.org to mention Xcode 4.6 as the minimum version.
+
+        Reviewed by David Kilzer.
+
+        * building/debug-mac-uiprocess.html:
+        * building/tools.html:
+
 2013-09-19  Dan Bernstein  <mitz@apple.com>
 
         Add a style guideline regarding spacing in range-based for loops

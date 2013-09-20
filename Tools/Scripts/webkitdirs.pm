@@ -1505,23 +1505,19 @@ sub checkRequiredSystemConfig
 {
     if (isDarwin()) {
         chomp(my $productVersion = `sw_vers -productVersion`);
-        if (eval "v$productVersion" lt v10.4) {
+        if (eval "v$productVersion" lt v10.7.5) {
             print "*************************************************************\n";
-            print "Mac OS X Version 10.4.0 or later is required to build WebKit.\n";
+            print "Mac OS X Version 10.7.5 or later is required to build WebKit.\n";
             print "You have " . $productVersion . ", thus the build will most likely fail.\n";
             print "*************************************************************\n";
         }
         my $xcodebuildVersionOutput = `xcodebuild -version`;
-        my $devToolsCoreVersion = ($xcodebuildVersionOutput =~ /DevToolsCore-(\d+)/) ? $1 : undef;
         my $xcodeVersion = ($xcodebuildVersionOutput =~ /Xcode ([0-9](\.[0-9]+)*)/) ? $1 : undef;
-        if (!$devToolsCoreVersion && !$xcodeVersion
-            || $devToolsCoreVersion && $devToolsCoreVersion < 747
-            || $xcodeVersion && eval "v$xcodeVersion" lt v2.3) {
+        if (!$xcodeVersion || $xcodeVersion && eval "v$xcodeVersion" lt v4.6) {
             print "*************************************************************\n";
-            print "Xcode Version 2.3 or later is required to build WebKit.\n";
+            print "Xcode Version 4.6 or later is required to build WebKit.\n";
             print "You have an earlier version of Xcode, thus the build will\n";
-            print "most likely fail.  The latest Xcode is available from the web:\n";
-            print "http://developer.apple.com/tools/xcode\n";
+            print "most likely fail. The latest Xcode is available from the App Store.\n";
             print "*************************************************************\n";
         }
     } elsif (isGtk() or isQt() or isEfl()) {

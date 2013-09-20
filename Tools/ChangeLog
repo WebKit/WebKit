@@ -1,3 +1,14 @@
+2013-09-20  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/90090> build-webkit should verify that your tools are up-to-date
+
+        Enforce a minimum OS version of 10.7.5 and Xcode version of 4.6.
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitdirs.pm:
+        (checkRequiredSystemConfig):
+
 2013-09-20  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Do not expose aria-help in ATK based platforms
