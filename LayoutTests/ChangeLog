@@ -1,3 +1,15 @@
+2013-09-18  Antonio Gomes  <a1.gomes@sisa.samsung.com>
+
+        Make "autoscroll" for drag'n drop a setting
+        https://bugs.webkit.org/show_bug.cgi?id=121559
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/events/drag-and-drop-autoscroll.html:
+
+        Adapts the test so that is toggles the feature on
+        via InternalSettings interface.
+
 2013-09-20  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Update tests after change to Qt 5.1.1

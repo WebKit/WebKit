@@ -1,3 +1,30 @@
+2013-09-18  Antonio Gomes  <a1.gomes@sisa.samsung.com>
+
+        Make "autoscroll for drag'n drop" a setting
+        https://bugs.webkit.org/show_bug.cgi?id=121559
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, there is a ChromeClient hook to make the
+        feature opt'ed-in or out. That makes it harder to test the
+        feature on ports that do not enable it, e.g. Mac/WebKit2 port.
+        However, Mac/WebKit2 is the port that has the best drag'n drop
+        WTR implementation.
+
+        Patch changes the toggle on/off mechanism to be a setting,
+        and exposes it through InternalSetting interface for testing.
+
+        * page/AutoscrollController.cpp:
+        (WebCore::AutoscrollController::updateDragAndDrop):
+        * page/ChromeClient.h:
+        * page/Settings.in:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setAutoscrollForDragAndDropEnabled):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2013-09-16  Antonio Gomes  <a1.gomes@sisa.samsung.com>
 
         StrictTypeChecking extended attribute fails for methods with sequence<T>

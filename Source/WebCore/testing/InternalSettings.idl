@@ -59,4 +59,5 @@
     [RaisesException] void setDefaultVideoPosterURL(DOMString poster);
     [RaisesException] void setTimeWithoutMouseMovementBeforeHidingControls(double time);
     [RaisesException] void setUseLegacyBackgroundSizeShorthandBehavior(boolean enabled);
+    [RaisesException] void setAutoscrollForDragAndDropEnabled(boolean enabled);
 };

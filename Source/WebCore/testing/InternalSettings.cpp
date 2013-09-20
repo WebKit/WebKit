@@ -96,6 +96,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_defaultVideoPosterURL(settings.defaultVideoPosterURL())
     , m_originalTimeWithoutMouseMovementBeforeHidingControls(settings.timeWithoutMouseMovementBeforeHidingControls())
     , m_useLegacyBackgroundSizeShorthandBehavior(settings.useLegacyBackgroundSizeShorthandBehavior())
+    , m_autoscrollForDragAndDropEnabled(settings.autoscrollForDragAndDropEnabled())
 {
 }
 
@@ -131,6 +132,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setDefaultVideoPosterURL(m_defaultVideoPosterURL);
     settings.setTimeWithoutMouseMovementBeforeHidingControls(m_originalTimeWithoutMouseMovementBeforeHidingControls);
     settings.setUseLegacyBackgroundSizeShorthandBehavior(m_useLegacyBackgroundSizeShorthandBehavior);
+    settings.setAutoscrollForDragAndDropEnabled(m_autoscrollForDragAndDropEnabled);
 }
 
 // We can't use RefCountedSupplement because that would try to make InternalSettings RefCounted
@@ -478,6 +480,12 @@ void InternalSettings::setUseLegacyBackgroundSizeShorthandBehavior(bool enabled,
 {
     InternalSettingsGuardForSettings();
     settings()->setUseLegacyBackgroundSizeShorthandBehavior(enabled);
+}
+
+void InternalSettings::setAutoscrollForDragAndDropEnabled(bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setAutoscrollForDragAndDropEnabled(enabled);
 }
 
 }

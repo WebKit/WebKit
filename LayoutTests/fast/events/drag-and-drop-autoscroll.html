@@ -103,6 +103,7 @@ function setUpTest()
         return;
     }
 
+    window.internals.settings.setAutoscrollForDragAndDropEnabled(true);
     window.jsTestIsAsync = true;
     window.setTimeout(testIt, 0);
 }

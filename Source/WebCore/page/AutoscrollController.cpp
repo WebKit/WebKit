@@ -28,8 +28,6 @@
 #include "config.h"
 #include "AutoscrollController.h"
 
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "EventHandler.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -38,6 +36,7 @@
 #include "RenderBox.h"
 #include "RenderView.h"
 #include "ScrollView.h"
+#include "Settings.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -159,7 +158,7 @@ void AutoscrollController::updateDragAndDrop(Node* dropTargetNode, const IntPoin
     Frame& frame = scrollable->frame();
 
     Page* page = frame.page();
-    if (!page || !page->chrome().client().shouldAutoscrollForDragAndDrop(scrollable)) {
+    if (!page || !page->settings().autoscrollForDragAndDropEnabled()) {
         stopAutoscrollTimer();
         return;
     }

@@ -81,6 +81,7 @@ public:
         String m_defaultVideoPosterURL;
         bool m_originalTimeWithoutMouseMovementBeforeHidingControls;
         bool m_useLegacyBackgroundSizeShorthandBehavior;
+        bool m_autoscrollForDragAndDropEnabled;
     };
 
     static PassRefPtr<InternalSettings> create(Page* page)
@@ -125,6 +126,7 @@ public:
     void setDefaultVideoPosterURL(const String& url, ExceptionCode&);
     void setTimeWithoutMouseMovementBeforeHidingControls(double time, ExceptionCode&);
     void setUseLegacyBackgroundSizeShorthandBehavior(bool enabled, ExceptionCode&);
+    void setAutoscrollForDragAndDropEnabled(bool enabled, ExceptionCode&);
 
 private:
     explicit InternalSettings(Page*);

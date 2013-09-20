@@ -187,6 +187,8 @@ spatialNavigationEnabled initial=false
 # enabled, the user can initiate drag using long press.
 touchDragDropEnabled initial=false
 
+autoscrollForDragAndDropEnabled initial=false
+
 unifiedTextCheckerEnabled initial=defaultUnifiedTextCheckerEnabled
 
 logsPageMessagesToSystemConsoleEnabled initial=false

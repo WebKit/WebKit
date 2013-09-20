@@ -359,9 +359,6 @@ public:
     virtual String plugInExtraStyleSheet() const { return String(); }
     virtual String plugInExtraScript() const { return String(); }
 
-    // FIXME: Port should return true using heuristic based on scrollable(RenderBox).
-    virtual bool shouldAutoscrollForDragAndDrop(RenderBox*) const { return false; }
-
     virtual void didAssociateFormControls(const Vector<RefPtr<Element> >&) { };
     virtual bool shouldNotifyOnFormChanges() { return false; };
 
