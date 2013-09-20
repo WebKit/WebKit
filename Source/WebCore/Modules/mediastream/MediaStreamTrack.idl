@@ -23,7 +23,6 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=MEDIA_STREAM,
     EventTarget,
     ActiveDOMObject

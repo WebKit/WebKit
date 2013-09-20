@@ -23,9 +23,9 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=MEDIA_STREAM,
+    ConstructorTemplate=Event
 ] interface MediaStreamTrackEvent : Event {
-   readonly attribute MediaStreamTrack track;
+   [InitializedByEventConstructor] readonly attribute MediaStreamTrack track;
 };
 

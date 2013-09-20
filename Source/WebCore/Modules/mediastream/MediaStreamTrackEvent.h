@@ -34,12 +34,19 @@ namespace WebCore {
 
 class MediaStreamTrack;
 
+struct MediaStreamTrackEventInit : public EventInit {
+    MediaStreamTrackEventInit();
+    
+    RefPtr<MediaStreamTrack> track;
+};
+
 class MediaStreamTrackEvent : public Event {
 public:
     virtual ~MediaStreamTrackEvent();
 
     static PassRefPtr<MediaStreamTrackEvent> create();
     static PassRefPtr<MediaStreamTrackEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStreamTrack>);
+    static PassRefPtr<MediaStreamTrackEvent> create(const AtomicString& type, const MediaStreamTrackEventInit& initializer);
 
     MediaStreamTrack* track() const;
 
@@ -49,6 +56,7 @@ public:
 private:
     MediaStreamTrackEvent();
     MediaStreamTrackEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStreamTrack>);
+    MediaStreamTrackEvent(const AtomicString& type, const MediaStreamTrackEventInit&);
 
     RefPtr<MediaStreamTrack> m_track;
 };

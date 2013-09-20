@@ -32,6 +32,11 @@
 
 namespace WebCore {
 
+MediaStreamTrackEventInit::MediaStreamTrackEventInit()
+    : track(0)
+{
+}
+
 PassRefPtr<MediaStreamTrackEvent> MediaStreamTrackEvent::create()
 {
     return adoptRef(new MediaStreamTrackEvent);
@@ -42,6 +47,10 @@ PassRefPtr<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomicStri
     return adoptRef(new MediaStreamTrackEvent(type, canBubble, cancelable, track));
 }
 
+PassRefPtr<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomicString& type, const MediaStreamTrackEventInit& initializer)
+{
+    return adoptRef(new MediaStreamTrackEvent(type, initializer));
+}
 
 MediaStreamTrackEvent::MediaStreamTrackEvent()
 {
@@ -50,6 +59,12 @@ MediaStreamTrackEvent::MediaStreamTrackEvent()
 MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStreamTrack> track)
     : Event(type, canBubble, cancelable)
     , m_track(track)
+{
+}
+
+MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomicString& type, const MediaStreamTrackEventInit& initializer)
+    : Event(type, initializer)
+    , m_track(initializer.track)
 {
 }
 

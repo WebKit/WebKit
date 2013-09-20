@@ -1,3 +1,25 @@
+2013-09-19  Eric Carlson  <eric.carlson@apple.com>
+
+        MediaStream API: update MediaStreamTrackEvent object to match spec
+        https://bugs.webkit.org/show_bug.cgi?id=121624
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/mediastream/MediaStreamTrackEvent-constructor.html
+
+        * Modules/mediastream/MediaStreamTrack.idl: Remove NoInterfaceObject.
+
+        * Modules/mediastream/MediaStreamTrackEvent.cpp: 
+        (WebCore::MediaStreamTrackEventInit::MediaStreamTrackEventInit): New.
+        (WebCore::MediaStreamTrackEvent::create): New form that takes an initialize.
+        (WebCore::MediaStreamTrackEvent::MediaStreamTrackEvent): Ditto.
+        * Modules/mediastream/MediaStreamTrackEvent.h:
+        * Modules/mediastream/MediaStreamTrackEvent.idl:
+
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue): New.
+        * bindings/js/JSDictionary.h:
+
 2013-09-19  Anders Carlsson  <andersca@apple.com>
 
         Remove #if !ENABLE(WORKERS) code in ThreadGlobalData

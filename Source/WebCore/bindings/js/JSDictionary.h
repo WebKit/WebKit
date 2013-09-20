@@ -44,6 +44,7 @@ class DOMWindow;
 class EventTarget;
 class MediaKeyError;
 class MediaStream;
+class MediaStreamTrack;
 class Node;
 class ScriptValue;
 class SerializedScriptValue;
@@ -126,6 +127,7 @@ private:
 #endif
 #if ENABLE(MEDIA_STREAM)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaStream>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaStreamTrack>& result);
 #endif
 #if ENABLE(FONT_LOAD_EVENTS)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<CSSFontFaceRule>& result);

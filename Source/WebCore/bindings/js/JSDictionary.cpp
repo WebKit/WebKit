@@ -50,6 +50,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include "JSMediaStream.h"
+#include "JSMediaStreamTrack.h"
 #endif
 
 #if ENABLE(SCRIPTED_SPEECH)
@@ -230,6 +231,11 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Medi
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaStream>& result)
 {
     result = toMediaStream(value);
+}
+
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaStreamTrack>& result)
+{
+    result = toMediaStreamTrack(value);
 }
 #endif
 
