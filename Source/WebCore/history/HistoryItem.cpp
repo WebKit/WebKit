@@ -35,6 +35,7 @@
 #include "SharedBuffer.h"
 #include <stdio.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/DateMath.h>
 #include <wtf/Decoder.h>
 #include <wtf/Encoder.h>
 #include <wtf/text/CString.h>
@@ -319,7 +320,6 @@ void HistoryItem::setParent(const String& parent)
 
 static inline int timeToDay(double time)
 {
-    static const double secondsPerDay = 60 * 60 * 24;
     return static_cast<int>(ceil(time / secondsPerDay));
 }
 

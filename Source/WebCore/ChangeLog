@@ -1,5 +1,17 @@
 2013-09-20  Patrick Gansterer  <paroga@webkit.org>
 
+        Remove duplicated secondsPerDay variables
+        https://bugs.webkit.org/show_bug.cgi?id=121601
+
+        Reviewed by Andreas Kling.
+
+        Use secondsPerDay from DateMath.h instead of defining it again.
+
+        * history/HistoryItem.cpp:
+        (WebCore::timeToDay):
+
+2013-09-20  Patrick Gansterer  <paroga@webkit.org>
+
         Fix duplicated loop variable names after r155743
         https://bugs.webkit.org/show_bug.cgi?id=121667
 

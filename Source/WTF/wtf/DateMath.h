@@ -103,13 +103,14 @@ const char* const monthFullName[12] = { "January", "February", "March", "April",
 
 const double hoursPerDay = 24.0;
 const double minutesPerHour = 60.0;
-const double secondsPerHour = 60.0 * 60.0;
 const double secondsPerMinute = 60.0;
 const double msPerSecond = 1000.0;
-const double msPerMinute = 60.0 * 1000.0;
-const double msPerHour = 60.0 * 60.0 * 1000.0;
-const double msPerDay = 24.0 * 60.0 * 60.0 * 1000.0;
 const double msPerMonth = 2592000000.0;
+const double secondsPerHour = secondsPerMinute * minutesPerHour;
+const double secondsPerDay = secondsPerHour * hoursPerDay;
+const double msPerMinute = msPerSecond * secondsPerMinute;
+const double msPerHour = msPerSecond * secondsPerHour;
+const double msPerDay = msPerSecond * secondsPerDay;
 
 WTF_EXPORT_PRIVATE bool isLeapYear(int year);
 
@@ -143,6 +144,7 @@ using WTF::msToYear;
 using WTF::msToDays;
 using WTF::msToMinutes;
 using WTF::msToHours;
+using WTF::secondsPerDay;
 using WTF::secondsPerMinute;
 using WTF::parseDateFromNullTerminatedCharacters;
 using WTF::makeRFC2822DateString;

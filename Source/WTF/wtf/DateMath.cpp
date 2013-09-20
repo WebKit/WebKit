@@ -114,7 +114,6 @@ namespace WTF {
 /* Constants */
 
 static const double minutesPerDay = 24.0 * 60.0;
-static const double secondsPerDay = 24.0 * 60.0 * 60.0;
 static const double secondsPerYear = 24.0 * 60.0 * 60.0 * 365.0;
 
 static const double usecPerSec = 1000000.0;
