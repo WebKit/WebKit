@@ -1,3 +1,17 @@
+2013-09-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r156185.
+        http://trac.webkit.org/changeset/156185
+        https://bugs.webkit.org/show_bug.cgi?id=121727
+
+        Caused a lot of crashes in tests (Requested by ap on #webkit).
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateLayout):
+        * dom/Document.h:
+
 2013-09-20  Dean Jackson  <dino@apple.com>
 
         Shaders that fail to compile should be marked as such

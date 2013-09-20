@@ -439,7 +439,6 @@ Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
     , m_titleSetExplicitly(false)
     , m_markers(adoptPtr(new DocumentMarkerController))
     , m_updateFocusAppearanceTimer(this, &Document::updateFocusAppearanceTimerFired)
-    , m_resetHiddenFocusElementTimer(this, &Document::resetHiddenFocusElementTimer)
     , m_cssTarget(0)
     , m_processingLoadEvent(false)
     , m_loadEventFinished(false)
@@ -1828,9 +1827,6 @@ void Document::recalcStyle(Style::Change change)
     // to check if any other elements ended up under the mouse pointer due to re-layout.
     if (m_hoveredElement && !m_hoveredElement->renderer())
         frameView.frame().eventHandler().dispatchFakeMouseMoveEventSoon();
-
-    // Style change may reset the focus, e.g. display: none, visibility: hidden.
-    resetHiddenFocusElementSoon();
 }
 
 void Document::updateStyleIfNeeded()
@@ -1869,9 +1865,6 @@ void Document::updateLayout()
     // Only do a layout if changes have occurred that make it necessary.      
     if (frameView && renderView() && (frameView->layoutPending() || renderView()->needsLayout()))
         frameView->layout();
-
-    // Active focus element's isFocusable() state may change after Layout. e.g. width: 0px or height: 0px.
-    resetHiddenFocusElementSoon();
 }
 
 // FIXME: This is a bad idea and needs to be removed eventually.
@@ -4693,12 +4686,6 @@ void Document::cancelFocusAppearanceUpdate()
     m_updateFocusAppearanceTimer.stop();
 }
 
-void Document::resetHiddenFocusElementSoon()
-{
-    if (!m_resetHiddenFocusElementTimer.isActive() && m_focusedElement && !m_focusedElement->isFocusable())
-        m_resetHiddenFocusElementTimer.startOneShot(0);
-}
-
 void Document::updateFocusAppearanceTimerFired(Timer<Document>*)
 {
     Element* element = focusedElement();
@@ -4708,12 +4695,6 @@ void Document::updateFocusAppearanceTimerFired(Timer<Document>*)
     updateLayout();
     if (element->isFocusable())
         element->updateFocusAppearance(m_updateFocusAppearanceRestoresSelection);
-}
-
-void Document::resetHiddenFocusElementTimer(Timer<Document>*)
-{
-    if (m_focusedElement && !m_focusedElement->isFocusable())
-        setFocusedElement(0);
 }
 
 void Document::attachRange(Range* range)
