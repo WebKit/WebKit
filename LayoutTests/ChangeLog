@@ -1,3 +1,20 @@
+2013-09-19  Yoav Weiss  <yoav@yoav.ws>
+
+        Remove URL decoding in srcset handling
+        https://bugs.webkit.org/show_bug.cgi?id=121609
+
+        Reviewed by Benjamin Poulain.
+
+        These tests make sure that encoded URLs are properly handled, and especially URLs 
+        with a question mark in them.
+        
+        * fast/hidpi/image-srcset-question-mark-expected.txt: Added.
+        * fast/hidpi/image-srcset-question-mark.html: Added.
+        * fast/hidpi/resources/image?test.png: Added.
+        * fast/loader/image-src-question-mark-expected.txt: Added.
+        * fast/loader/image-src-question-mark.html: Added.
+        * fast/loader/resources/image?test.png: Added.
+
 2013-09-19  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Use shouldBecomeEqual in asynchronous spellchecking tests.

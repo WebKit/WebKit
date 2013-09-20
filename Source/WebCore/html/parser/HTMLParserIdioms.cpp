@@ -388,7 +388,7 @@ static void parseImagesWithScaleFromSrcSetAttribute(const String& srcSetAttribut
             }
         }
         ImageWithScale image;
-        image.imageURL = decodeURLEscapeSequences(StringImpl::createWithoutCopying(srcSetAttribute.characters() + imageUrlStart, imageUrlEnd - imageUrlStart));
+        image.imageURL = StringImpl::createWithoutCopying(srcSetAttribute.characters() + imageUrlStart, imageUrlEnd - imageUrlStart);
         image.scaleFactor = imgScaleFactor;
 
         imageCandidates.append(image);
@@ -406,7 +406,7 @@ String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& sr
     const String src =  srcAttribute.simplifyWhiteSpace(isHTMLSpace);
     if (!src.isEmpty()) {
         ImageWithScale image;
-        image.imageURL = decodeURLEscapeSequences(src);
+        image.imageURL = src;
         image.scaleFactor = 1.0;
 
         imageCandidates.append(image);
@@ -419,9 +419,9 @@ String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& sr
 
     for (size_t i = 0; i < imageCandidates.size() - 1; ++i) {
         if (imageCandidates[i].scaleFactor >= deviceScaleFactor)
-            return imageCandidates[i].imageURL;
+            return String(imageCandidates[i].imageURL);
     }
-    return imageCandidates.last().imageURL;
+    return String(imageCandidates.last().imageURL);
 }
 
 }
