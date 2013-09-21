@@ -1,3 +1,17 @@
+2013-09-21  Anders Carlsson  <andersca@apple.com>
+
+        Don't store the "processing-instruction" string for PI tokens in the XPath parser
+        https://bugs.webkit.org/show_bug.cgi?id=121746
+
+        Reviewed by Antti Koivisto.
+
+        For PI tokens, the string is always going to be "processing-instruction", and it's never used so we don't need to save it.
+
+        * xml/XPathGrammar.y:
+        * xml/XPathParser.cpp:
+        (Parser::nextTokenInternal):
+        (Parser::lex):
+
 2013-09-21  Patrick Gansterer  <paroga@webkit.org>
 
         Handle windows lineendings in makeprop.pl after r155511

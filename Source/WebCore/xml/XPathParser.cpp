@@ -109,14 +109,7 @@ static bool isAxisName(const String& name, Step::Axis& type)
 
 static bool isNodeTypeName(const String& name)
 {
-    DEFINE_STATIC_LOCAL(HashSet<String>, nodeTypeNames, ());
-    if (nodeTypeNames.isEmpty()) {
-        nodeTypeNames.add("comment");
-        nodeTypeNames.add("text");
-        nodeTypeNames.add("processing-instruction");
-        nodeTypeNames.add("node");
-    }
-    return nodeTypeNames.contains(name);
+    return name == "comment" || name == "text" || name == "processing-instruction" || name == "node";
 }
 
 // Returns whether the current token can possibly be a binary operator, given
@@ -373,17 +366,18 @@ Token Parser::nextTokenInternal()
     }
 
     skipWS();
+
     if (peekCurHelper() == '(') {
-        //note: we don't swallow the (here!
-        
-        //either node type of function name
+        // note: we don't swallow the '(' here!
+
+        // either node type of function name
         if (isNodeTypeName(name)) {
             if (name == "processing-instruction")
-                return Token(PI, name);
+                return Token(PI);
 
             return Token(NODETYPE, name);
         }
-        //must be a function name.
+
         return Token(FUNCTIONNAME, name);
     }
 
@@ -434,7 +428,6 @@ int Parser::lex(void* data)
         yylval->eqop = tok.eqop;
         break;
     case NODETYPE:
-    case PI:
     case FUNCTIONNAME:
     case LITERAL:
     case VARIABLEREFERENCE:

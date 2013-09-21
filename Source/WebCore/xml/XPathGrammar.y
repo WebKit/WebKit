@@ -266,14 +266,12 @@ NodeTest:
     PI '(' ')'
     {
         $$ = new Step::NodeTest(Step::NodeTest::ProcessingInstructionNodeTest);
-        parser->deleteString($1);
         parser->registerNodeTest($$);
     }
     |
     PI '(' LITERAL ')'
     {
         $$ = new Step::NodeTest(Step::NodeTest::ProcessingInstructionNodeTest, $3->stripWhiteSpace());
-        parser->deleteString($1);
         parser->deleteString($3);
         parser->registerNodeTest($$);
     }
