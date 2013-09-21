@@ -289,11 +289,12 @@ void StackVisitor::Frame::computeLineAndColumn(unsigned& line, unsigned& column)
 
 Register& StackVisitor::Frame::r(int index)
 {
-    int offset;
+    int offset = 0;
+
+#if ENABLE(DFG_JIT)
     if (isInlinedFrame())
         offset = inlineCallFrame()->stackOffset;
-    else
-        offset = 0;
+#endif
     return callFrame()->r(offset + index);
 }
 

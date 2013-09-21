@@ -407,7 +407,9 @@ static bool unwindCallFrame(StackVisitor& visitor, JSValue exceptionValue)
 
     JSValue activation;
     if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->needsActivation()) {
+#if ENABLE(DFG_JIT)
         RELEASE_ASSERT(!visitor->isInlinedFrame());
+#endif
         activation = callFrame->uncheckedR(oldCodeBlock->activationRegister()).jsValue();
         if (activation)
             jsCast<JSActivation*>(activation)->tearOff(*scope->vm());
@@ -417,8 +419,10 @@ static bool unwindCallFrame(StackVisitor& visitor, JSValue exceptionValue)
         if (JSValue arguments = visitor->r(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue()) {
             if (activation)
                 jsCast<Arguments*>(arguments)->didTearOffActivation(callFrame, jsCast<JSActivation*>(activation));
+#if ENABLE(DFG_JIT)
             else if (visitor->isInlinedFrame())
                 jsCast<Arguments*>(arguments)->tearOff(callFrame, visitor->inlineCallFrame());
+#endif
             else
                 jsCast<Arguments*>(arguments)->tearOff(callFrame);
         }
