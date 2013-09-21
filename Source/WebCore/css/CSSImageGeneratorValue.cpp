@@ -64,7 +64,7 @@ void CSSImageGeneratorValue::removeClient(RenderObject* renderer)
     deref();
 }
 
-GeneratorGeneratedImage* CSSImageGeneratorValue::cachedImageForSize(IntSize size)
+GeneratedImage* CSSImageGeneratorValue::cachedImageForSize(IntSize size)
 {
     if (size.isEmpty())
         return 0;
@@ -77,7 +77,7 @@ GeneratorGeneratedImage* CSSImageGeneratorValue::cachedImageForSize(IntSize size
     return cachedGeneratedImage->image();
 }
 
-void CSSImageGeneratorValue::saveCachedImageForSize(IntSize size, PassRefPtr<GeneratorGeneratedImage> image)
+void CSSImageGeneratorValue::saveCachedImageForSize(IntSize size, PassRefPtr<GeneratedImage> image)
 {
     ASSERT(!m_images.contains(size));
     m_images.add(size, adoptPtr(new CachedGeneratedImage(*this, size, image)));
@@ -89,7 +89,7 @@ void CSSImageGeneratorValue::evictCachedGeneratedImage(IntSize size)
     m_images.remove(size);
 }
 
-CSSImageGeneratorValue::CachedGeneratedImage::CachedGeneratedImage(CSSImageGeneratorValue& owner, IntSize size, PassRefPtr<GeneratorGeneratedImage> image)
+CSSImageGeneratorValue::CachedGeneratedImage::CachedGeneratedImage(CSSImageGeneratorValue& owner, IntSize size, PassRefPtr<GeneratedImage> image)
     : m_owner(owner)
     , m_size(size)
     , m_image(image)

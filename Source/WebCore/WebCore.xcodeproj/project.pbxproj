@@ -906,8 +906,8 @@
 		2D46F05017B96FD2005647F0 /* IntSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D46F04F17B96FD2005647F0 /* IntSize.cpp */; };
 		2D481F00146B5C4C00AA7834 /* CrossfadeGeneratedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2FC0541460CD6F00263633 /* CrossfadeGeneratedImage.cpp */; };
 		2D481F02146B5C5500AA7834 /* CrossfadeGeneratedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */; };
-		2D481F03146B5C6500AA7834 /* GeneratorGeneratedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2FC0561460CD6F00263633 /* GeneratorGeneratedImage.cpp */; };
-		2D481F04146B5C6B00AA7834 /* GeneratorGeneratedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2FC0571460CD6F00263633 /* GeneratorGeneratedImage.h */; };
+		2D481F03146B5C6500AA7834 /* GradientImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2FC0561460CD6F00263633 /* GradientImage.cpp */; };
+		2D481F04146B5C6B00AA7834 /* GradientImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2FC0571460CD6F00263633 /* GradientImage.h */; };
 		2D5A592F152525230036EE51 /* ImageOrientation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8748D7412CC3F89001FBA41 /* ImageOrientation.cpp */; };
 		2D5A5931152525D00036EE51 /* ImageOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = A8748D6612CC3763001FBA41 /* ImageOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D5BC42716F882EE007048D0 /* SecurityPolicyViolationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5BC42516F882BE007048D0 /* SecurityPolicyViolationEvent.h */; };
@@ -7396,8 +7396,8 @@
 		2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLMetaCharsetParser.cpp; path = parser/HTMLMetaCharsetParser.cpp; sourceTree = "<group>"; };
 		2D2FC0541460CD6F00263633 /* CrossfadeGeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossfadeGeneratedImage.cpp; sourceTree = "<group>"; };
 		2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossfadeGeneratedImage.h; sourceTree = "<group>"; };
-		2D2FC0561460CD6F00263633 /* GeneratorGeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratorGeneratedImage.cpp; sourceTree = "<group>"; };
-		2D2FC0571460CD6F00263633 /* GeneratorGeneratedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratorGeneratedImage.h; sourceTree = "<group>"; };
+		2D2FC0561460CD6F00263633 /* GradientImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GradientImage.cpp; sourceTree = "<group>"; };
+		2D2FC0571460CD6F00263633 /* GradientImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GradientImage.h; sourceTree = "<group>"; };
 		2D3A0E3513A7D76100E85AF0 /* SVGParsingError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGParsingError.h; sourceTree = "<group>"; };
 		2D46F04D17B96FBD005647F0 /* IntPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntPoint.cpp; sourceTree = "<group>"; };
 		2D46F04F17B96FD2005647F0 /* IntSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntSize.cpp; sourceTree = "<group>"; };
@@ -18928,8 +18928,8 @@
 				BCE4413512F7490B009B84B8 /* FontWidthVariant.h */,
 				4FB390AC15EF61F3007AD51F /* GeneratedImage.cpp */,
 				BC23F0DA0DAFF4A4009FDC91 /* GeneratedImage.h */,
-				2D2FC0561460CD6F00263633 /* GeneratorGeneratedImage.cpp */,
-				2D2FC0571460CD6F00263633 /* GeneratorGeneratedImage.h */,
+				2D2FC0561460CD6F00263633 /* GradientImage.cpp */,
+				2D2FC0571460CD6F00263633 /* GradientImage.h */,
 				086BBD0E136039C2008B15D8 /* Glyph.h */,
 				B2C3DA5B0D006CD600EF6F26 /* GlyphBuffer.h */,
 				C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */,
@@ -22507,7 +22507,7 @@
 				1432E8470C51493800B1500F /* GCController.h in Headers */,
 				C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */,
 				BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */,
-				2D481F04146B5C6B00AA7834 /* GeneratorGeneratedImage.h in Headers */,
+				2D481F04146B5C6B00AA7834 /* GradientImage.h in Headers */,
 				0720B0A114D3323500642955 /* GenericEventQueue.h in Headers */,
 				9746AF2414F4DDE6003E7A70 /* Geolocation.h in Headers */,
 				9746AF2514F4DDE6003E7A71 /* GeolocationClient.h in Headers */,
@@ -25782,7 +25782,7 @@
 				FD31600C12B0267600C1A359 /* GainNode.cpp in Sources */,
 				1432E8490C51493F00B1500F /* GCController.cpp in Sources */,
 				4FB390AD15EF61F3007AD51F /* GeneratedImage.cpp in Sources */,
-				2D481F03146B5C6500AA7834 /* GeneratorGeneratedImage.cpp in Sources */,
+				2D481F03146B5C6500AA7834 /* GradientImage.cpp in Sources */,
 				0720B0A014D3323500642955 /* GenericEventQueue.cpp in Sources */,
 				9746AF2314F4DDE6003E7A70 /* Geolocation.cpp in Sources */,
 				9746AF2614F4DDE6003E7A70 /* GeolocationController.cpp in Sources */,

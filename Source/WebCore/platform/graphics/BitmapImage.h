@@ -100,7 +100,7 @@ public:
 class BitmapImage FINAL : public Image {
     friend class GeneratedImage;
     friend class CrossfadeGeneratedImage;
-    friend class GeneratorGeneratedImage;
+    friend class GradientImage;
     friend class GraphicsContext;
 public:
     static PassRefPtr<BitmapImage> create(PassNativeImagePtr nativeImage, ImageObserver* observer = 0)

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "GeneratorGeneratedImage.h"
+#include "GradientImage.h"
 
 #include "FloatRect.h"
 #include "GraphicsContext.h"
@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-void GeneratorGeneratedImage::draw(GraphicsContext* destContext, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode blendMode)
+void GradientImage::draw(GraphicsContext* destContext, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode blendMode)
 {
     GraphicsContextStateSaver stateSaver(*destContext);
     destContext->setCompositeOperation(compositeOp, blendMode);
@@ -44,7 +44,7 @@ void GeneratorGeneratedImage::draw(GraphicsContext* destContext, const FloatRect
     destContext->fillRect(FloatRect(FloatPoint(), size()), *m_gradient.get());
 }
 
-void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform,
+void GradientImage::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform,
     const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& destRect, BlendMode)
 {
     // Allow the generator to provide visually-equivalent tiling parameters for better performance.

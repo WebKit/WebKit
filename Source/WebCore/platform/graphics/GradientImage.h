@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeneratorGeneratedImage_h
-#define GeneratorGeneratedImage_h
+#ifndef GradientImage_h
+#define GradientImage_h
 
 #include "GeneratedImage.h"
 #include "Gradient.h"
@@ -35,21 +35,21 @@
 
 namespace WebCore {
 
-class GeneratorGeneratedImage FINAL : public GeneratedImage {
+class GradientImage FINAL : public GeneratedImage {
 public:
-    static PassRefPtr<GeneratorGeneratedImage> create(PassRefPtr<Gradient> generator, const IntSize& size)
+    static PassRefPtr<GradientImage> create(PassRefPtr<Gradient> generator, const IntSize& size)
     {
-        return adoptRef(new GeneratorGeneratedImage(generator, size));
+        return adoptRef(new GradientImage(generator, size));
     }
 
-    virtual ~GeneratorGeneratedImage() { }
+    virtual ~GradientImage() { }
 
 protected:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode) OVERRIDE;
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
         const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode) OVERRIDE;
 
-    GeneratorGeneratedImage(PassRefPtr<Gradient> generator, const IntSize& size)
+    GradientImage(PassRefPtr<Gradient> generator, const IntSize& size)
         : m_gradient(generator)
     {
         setContainerSize(size);

@@ -1903,9 +1903,9 @@ set(WebCore_SOURCES
     platform/graphics/LayoutBoxExtent.cpp
     platform/graphics/LayoutRect.cpp
     platform/graphics/GeneratedImage.cpp
-    platform/graphics/GeneratorGeneratedImage.cpp
     platform/graphics/GlyphPageTreeNode.cpp
     platform/graphics/Gradient.cpp
+    platform/graphics/GradientImage.cpp
     platform/graphics/GraphicsContext.cpp
     platform/graphics/GraphicsLayer.cpp
     platform/graphics/GraphicsLayerAnimation.cpp

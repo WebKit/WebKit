@@ -1,3 +1,43 @@
+2013-09-21  Tim Horton  <timothy_horton@apple.com>
+
+        GeneratorGeneratedImage should be called GradientImage
+        https://bugs.webkit.org/show_bug.cgi?id=121085
+
+        Reviewed by Simon Fraser.
+
+        No new tests, just a refactor.
+
+        r150053 removed the concept of a Generator, making GeneratorGeneratedImage
+        take a Gradient. This leaves GeneratorGeneratedImage's name not making a
+        whole lot of sense, so let's rename it to GradientImage.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::image):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/GradientImage.cpp: Renamed from Source/WebCore/platform/graphics/GeneratorGeneratedImage.cpp.
+        (WebCore::GradientImage::draw):
+        (WebCore::GradientImage::drawPattern):
+        * platform/graphics/GradientImage.h: Renamed from Source/WebCore/platform/graphics/GeneratorGeneratedImage.h.
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageBuffer.h:
+        Rename.
+
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::cachedImageForSize):
+        (WebCore::CSSImageGeneratorValue::saveCachedImageForSize):
+        (WebCore::CSSImageGeneratorValue::CachedGeneratedImage::CachedGeneratedImage):
+        * css/CSSImageGeneratorValue.h:
+        (WebCore::CSSImageGeneratorValue::CachedGeneratedImage::image):
+        Drive-by, the CSSImageGeneratorValue generated image cache should be
+        in terms of GeneratedImage, not a random subclass, regardless
+        of the fact that it's only used for GradientImage as of yet.
+
 2013-09-21  Darin Adler  <darin@apple.com>
 
         Shrink valueForBasicShape by removing repeated calls to cssValuePool()

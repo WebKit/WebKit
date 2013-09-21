@@ -28,7 +28,7 @@
 
 #include "CSSValue.h"
 #include "CachedImage.h"
-#include "GeneratorGeneratedImage.h"
+#include "GeneratedImage.h"
 #include "IntSizeHash.h"
 #include "Timer.h"
 #include <wtf/HashCountedSet.h>
@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class CachedResourceLoader;
-class GeneratorGeneratedImage;
+class GeneratedImage;
 class RenderObject;
 class StyleResolver;
 
@@ -61,8 +61,8 @@ public:
 protected:
     CSSImageGeneratorValue(ClassType);
 
-    GeneratorGeneratedImage* cachedImageForSize(IntSize);
-    void saveCachedImageForSize(IntSize, PassRefPtr<GeneratorGeneratedImage>);
+    GeneratedImage* cachedImageForSize(IntSize);
+    void saveCachedImageForSize(IntSize, PassRefPtr<GeneratedImage>);
     const HashCountedSet<RenderObject*>& clients() const { return m_clients; }
 
     // Helper functions for Crossfade and Filter.
@@ -72,8 +72,8 @@ protected:
 private:
     class CachedGeneratedImage {
     public:
-        CachedGeneratedImage(CSSImageGeneratorValue&, IntSize, PassRefPtr<GeneratorGeneratedImage>);
-        GeneratorGeneratedImage* image() { return m_image.get(); }
+        CachedGeneratedImage(CSSImageGeneratorValue&, IntSize, PassRefPtr<GeneratedImage>);
+        GeneratedImage* image() { return m_image.get(); }
         void puntEvictionTimer() { m_evictionTimer.restart(); }
 
     private:
@@ -81,7 +81,7 @@ private:
 
         CSSImageGeneratorValue& m_owner;
         IntSize m_size;
-        RefPtr<GeneratorGeneratedImage> m_image;
+        RefPtr<GeneratedImage> m_image;
         DeferrableOneShotTimer<CachedGeneratedImage> m_evictionTimer;
     };
 

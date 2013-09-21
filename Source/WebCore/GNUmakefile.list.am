@@ -5835,8 +5835,6 @@ platform_sources += \
 	Source/WebCore/platform/graphics/FontWidthVariant.h \
 	Source/WebCore/platform/graphics/GeneratedImage.cpp \
 	Source/WebCore/platform/graphics/GeneratedImage.h \
-	Source/WebCore/platform/graphics/GeneratorGeneratedImage.cpp \
-	Source/WebCore/platform/graphics/GeneratorGeneratedImage.h \
 	Source/WebCore/platform/graphics/Glyph.h \
 	Source/WebCore/platform/graphics/GlyphBuffer.h \
 	Source/WebCore/platform/graphics/GlyphMetricsMap.h \
@@ -5845,6 +5843,8 @@ platform_sources += \
 	Source/WebCore/platform/graphics/GlyphPageTreeNode.h \
 	Source/WebCore/platform/graphics/Gradient.cpp \
 	Source/WebCore/platform/graphics/Gradient.h \
+	Source/WebCore/platform/graphics/GradientImage.cpp \
+	Source/WebCore/platform/graphics/GradientImage.h \
 	Source/WebCore/platform/graphics/GraphicsContext.cpp \
 	Source/WebCore/platform/graphics/GraphicsContext.h \
 	Source/WebCore/platform/graphics/GraphicsTypes.cpp \

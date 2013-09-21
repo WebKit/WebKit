@@ -993,9 +993,9 @@ SOURCES += \
     platform/graphics/LayoutBoxExtent.cpp \
     platform/graphics/LayoutRect.cpp \
     platform/graphics/GeneratedImage.cpp \
-    platform/graphics/GeneratorGeneratedImage.cpp \
     platform/graphics/GlyphPageTreeNode.cpp \
     platform/graphics/Gradient.cpp \
+    platform/graphics/GradientImage.cpp \
     platform/graphics/GraphicsContext.cpp \
     platform/graphics/GraphicsLayer.cpp \
     platform/graphics/GraphicsLayerAnimation.cpp \
@@ -2194,10 +2194,10 @@ HEADERS += \
     platform/graphics/FontFeatureSettings.h \
     platform/graphics/FontMetrics.h \
     platform/graphics/Font.h \
-    platform/graphics/GeneratorGeneratedImage.h \
     platform/graphics/GeneratedImage.h \
     platform/graphics/GlyphPageTreeNode.h \
     platform/graphics/Gradient.h \
+    platform/graphics/GradientImage.h \
     platform/graphics/GraphicsContext.h \
     platform/graphics/GraphicsLayer.h \
     platform/graphics/GraphicsLayerAnimation.h \

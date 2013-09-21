@@ -7633,9 +7633,9 @@
     <ClCompile Include="..\platform\graphics\FontFeatureSettings.cpp" />
     <ClCompile Include="..\platform\graphics\FontPlatformData.cpp" />
     <ClCompile Include="..\platform\graphics\GeneratedImage.cpp" />
-    <ClCompile Include="..\platform\graphics\GeneratorGeneratedImage.cpp" />
     <ClCompile Include="..\platform\graphics\GlyphPageTreeNode.cpp" />
     <ClCompile Include="..\platform\graphics\Gradient.cpp" />
+    <ClCompile Include="..\platform\graphics\GradientImage.cpp" />
     <ClCompile Include="..\platform\graphics\GraphicsContext.cpp" />
     <ClCompile Include="..\platform\graphics\GraphicsLayer.cpp" />
     <ClCompile Include="..\platform\graphics\GraphicsLayerUpdater.cpp" />

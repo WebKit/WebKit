@@ -1359,13 +1359,13 @@
     <ClCompile Include="..\platform\graphics\FloatQuad.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\GeneratorGeneratedImage.cpp">
-      <Filter>platform\graphics</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\GlyphPageTreeNode.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\Gradient.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\GradientImage.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\GraphicsContext.cpp">
