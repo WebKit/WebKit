@@ -1,3 +1,16 @@
+2013-09-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Bad cast from CSSInitialValue to CSSValueList
+        https://bugs.webkit.org/show_bug.cgi?id=121729
+
+        Reviewed by Beth Dakin.
+        
+        Add a regression test. This is not a merge since the test in the Blink change involves
+        superfluous execCommand calls.
+
+        * fast/css/crash-inherit-value-font-family-expected.txt: Added.
+        * fast/css/crash-inherit-value-font-family.html: Added.
+
 2013-09-20  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: [CSS Regions] Display CSS Regions chain when highlighting a CSS Region node

@@ -1,0 +1,3 @@
+WebKit shouldn't crash on font face values "initial" and "inherit". You should see PASS below.
+
+PASS

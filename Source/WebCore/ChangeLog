@@ -1,3 +1,21 @@
+2013-09-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Bad cast from CSSInitialValue to CSSValueList
+        https://bugs.webkit.org/show_bug.cgi?id=121729
+
+        Reviewed by Beth Dakin.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/fcfaa51f9207b32cffe751c1a1380a921e464cbb
+
+        The issue was that we would cast to CSSValueList without checking
+        the type of the CSSValue. After this change, we use the ASSERT'ing
+        cast and explicitly check the type of the CSSValue before the cast.
+
+        Test: fast/css/crash-inherit-value-font-family.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFaceValue):
+
 2013-09-20  Zoltan Horvath  <zoltan@webkit.org>
 
         Remove includes from LineWidth.h
