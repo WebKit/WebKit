@@ -1,3 +1,21 @@
+2013-09-21  Andreas Kling  <akling@apple.com>
+
+        Re-inline some hot ElementData functions.
+        <https://webkit.org/b/121743>
+
+        Reviewed by Antti Koivisto.
+
+        Make the following functions inline again:
+
+            - deref()
+            - addAttribute()
+            - removeAttribute()
+            - attributeAt()
+
+        They were out-of-lined in r154249 and perf.webkit.org reports a 1.4%
+        regression on the html5 spec for that revision. This'll hopefully steer
+        the graph back in the right direction.
+
 2013-09-21  Tim Horton  <timothy_horton@apple.com>
 
         GeneratorGeneratedImage should be called GradientImage

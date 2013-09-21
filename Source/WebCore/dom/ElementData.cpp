@@ -31,11 +31,8 @@
 
 namespace WebCore {
 
-void ElementData::deref()
+void ElementData::destroy()
 {
-    if (!derefBase())
-        return;
-
     if (m_isUnique)
         delete static_cast<UniqueElementData*>(this);
     else
@@ -168,17 +165,6 @@ PassRefPtr<ShareableElementData> UniqueElementData::makeShareableCopy() const
     return adoptRef(new (NotNull, slot) ShareableElementData(*this));
 }
 
-void UniqueElementData::addAttribute(const QualifiedName& attributeName, const AtomicString& value)
-{
-    m_attributeVector.append(Attribute(attributeName, value));
-}
-
-void UniqueElementData::removeAttribute(unsigned index)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(index < length());
-    m_attributeVector.remove(index);
-}
-
 bool ElementData::isEquivalent(const ElementData* other) const
 {
     if (!other)
@@ -231,18 +217,11 @@ unsigned ElementData::findAttributeIndexByNameForAttributeNode(const Attr* attr,
 
 Attribute* UniqueElementData::findAttributeByName(const QualifiedName& name)
 {
-    unsigned count = length();
-    for (unsigned i = 0; i < count; ++i) {
+    for (unsigned i = 0, count = m_attributeVector.size(); i < count; ++i) {
         if (m_attributeVector.at(i).name().matches(name))
             return &m_attributeVector.at(i);
     }
-    return 0;
-}
-
-Attribute& UniqueElementData::attributeAt(unsigned index)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(index < length());
-    return m_attributeVector.at(index);
+    return nullptr;
 }
 
 }
