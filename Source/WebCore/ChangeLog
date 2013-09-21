@@ -1,3 +1,15 @@
+2013-09-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Handle panning gestures messages properly on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=121711
+
+        Follow-up fix: five regression tests started to crash on Mac.
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderLayer.cpp: (WebCore::RenderLayer::scrollByRecursively):
+        Added null checks, not all callers are interested in scrolled view pointer.
+
 2013-09-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Bad cast from CSSInitialValue to CSSValueList
