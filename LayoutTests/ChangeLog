@@ -1,3 +1,9 @@
+2013-09-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix test after <http://trac.webkit.org/changeset/156203>
+
+        * platform/mac/accessibility/aria-help.html: Correct paths to JS tests.
+
 2013-09-20  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r156047): WebCore hangs inside JSC::toInt32(double)
