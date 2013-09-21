@@ -1232,6 +1232,12 @@ sub GenerateImplementation
             my $getterSig = "- ($attributeType)$attributeInterfaceName\n";
 
             my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
+
+            # To avoid bloating Obj-C bindings, we use getAttribute() instead of fastGetAttribute().
+            if ($functionName eq "fastGetAttribute") {
+                $functionName = "getAttribute";
+            }
+
             my $getterExpressionPrefix = "$functionName(" . join(", ", @arguments);
 
             # FIXME: Special case attribute ownerDocument to call document. This makes it return the

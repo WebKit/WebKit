@@ -1,3 +1,13 @@
+2013-09-21  Andreas Kling  <akling@apple.com>
+
+        Don't bloat Obj-C bindings with inlined attribute retrieval.
+        <https://webkit.org/b/121745>
+
+        Reviewed by Anders Carlsson.
+
+        Hack bindings generator to always use getAttribute() for Objective-C.
+        Reduces WebCore binary size by 25120 bytes.
+
 2013-09-20  Darin Adler  <darin@apple.com>
 
         Shink attribute event listener code
