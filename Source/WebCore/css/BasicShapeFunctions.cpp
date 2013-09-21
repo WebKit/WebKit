@@ -40,18 +40,20 @@ namespace WebCore {
 
 PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
 {
+    CSSValuePool& pool = cssValuePool();
+
     RefPtr<CSSBasicShape> basicShapeValue;
     switch (basicShape->type()) {
     case BasicShape::BasicShapeRectangleType: {
         const BasicShapeRectangle* rectangle = static_cast<const BasicShapeRectangle*>(basicShape);
         RefPtr<CSSBasicShapeRectangle> rectangleValue = CSSBasicShapeRectangle::create();
 
-        rectangleValue->setX(cssValuePool().createValue(rectangle->x()));
-        rectangleValue->setY(cssValuePool().createValue(rectangle->y()));
-        rectangleValue->setWidth(cssValuePool().createValue(rectangle->width()));
-        rectangleValue->setHeight(cssValuePool().createValue(rectangle->height()));
-        rectangleValue->setRadiusX(cssValuePool().createValue(rectangle->cornerRadiusX()));
-        rectangleValue->setRadiusY(cssValuePool().createValue(rectangle->cornerRadiusY()));
+        rectangleValue->setX(pool.createValue(rectangle->x()));
+        rectangleValue->setY(pool.createValue(rectangle->y()));
+        rectangleValue->setWidth(pool.createValue(rectangle->width()));
+        rectangleValue->setHeight(pool.createValue(rectangle->height()));
+        rectangleValue->setRadiusX(pool.createValue(rectangle->cornerRadiusX()));
+        rectangleValue->setRadiusY(pool.createValue(rectangle->cornerRadiusY()));
 
         basicShapeValue = rectangleValue.release();
         break;
@@ -60,9 +62,9 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
         const BasicShapeCircle* circle = static_cast<const BasicShapeCircle*>(basicShape);
         RefPtr<CSSBasicShapeCircle> circleValue = CSSBasicShapeCircle::create();
 
-        circleValue->setCenterX(cssValuePool().createValue(circle->centerX()));
-        circleValue->setCenterY(cssValuePool().createValue(circle->centerY()));
-        circleValue->setRadius(cssValuePool().createValue(circle->radius()));
+        circleValue->setCenterX(pool.createValue(circle->centerX()));
+        circleValue->setCenterY(pool.createValue(circle->centerY()));
+        circleValue->setRadius(pool.createValue(circle->radius()));
 
         basicShapeValue = circleValue.release();
         break;
@@ -71,10 +73,10 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
         const BasicShapeEllipse* ellipse = static_cast<const BasicShapeEllipse*>(basicShape);
         RefPtr<CSSBasicShapeEllipse> ellipseValue = CSSBasicShapeEllipse::create();
 
-        ellipseValue->setCenterX(cssValuePool().createValue(ellipse->centerX()));
-        ellipseValue->setCenterY(cssValuePool().createValue(ellipse->centerY()));
-        ellipseValue->setRadiusX(cssValuePool().createValue(ellipse->radiusX()));
-        ellipseValue->setRadiusY(cssValuePool().createValue(ellipse->radiusY()));
+        ellipseValue->setCenterX(pool.createValue(ellipse->centerX()));
+        ellipseValue->setCenterY(pool.createValue(ellipse->centerY()));
+        ellipseValue->setRadiusX(pool.createValue(ellipse->radiusX()));
+        ellipseValue->setRadiusY(pool.createValue(ellipse->radiusY()));
 
         basicShapeValue = ellipseValue.release();
         break;
@@ -86,7 +88,7 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
         polygonValue->setWindRule(polygon->windRule());
         const Vector<Length>& values = polygon->values();
         for (unsigned i = 0; i < values.size(); i += 2)
-            polygonValue->appendPoint(cssValuePool().createValue(values.at(i)), cssValuePool().createValue(values.at(i + 1)));
+            polygonValue->appendPoint(pool.createValue(values.at(i)), pool.createValue(values.at(i + 1)));
 
         basicShapeValue = polygonValue.release();
         break;
@@ -95,12 +97,12 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
         const BasicShapeInsetRectangle* rectangle = static_cast<const BasicShapeInsetRectangle*>(basicShape);
         RefPtr<CSSBasicShapeInsetRectangle> rectangleValue = CSSBasicShapeInsetRectangle::create();
 
-        rectangleValue->setTop(cssValuePool().createValue(rectangle->top()));
-        rectangleValue->setRight(cssValuePool().createValue(rectangle->right()));
-        rectangleValue->setBottom(cssValuePool().createValue(rectangle->bottom()));
-        rectangleValue->setLeft(cssValuePool().createValue(rectangle->left()));
-        rectangleValue->setRadiusX(cssValuePool().createValue(rectangle->cornerRadiusX()));
-        rectangleValue->setRadiusY(cssValuePool().createValue(rectangle->cornerRadiusY()));
+        rectangleValue->setTop(pool.createValue(rectangle->top()));
+        rectangleValue->setRight(pool.createValue(rectangle->right()));
+        rectangleValue->setBottom(pool.createValue(rectangle->bottom()));
+        rectangleValue->setLeft(pool.createValue(rectangle->left()));
+        rectangleValue->setRadiusX(pool.createValue(rectangle->cornerRadiusX()));
+        rectangleValue->setRadiusY(pool.createValue(rectangle->cornerRadiusY()));
 
         basicShapeValue = rectangleValue.release();
         break;
@@ -108,7 +110,7 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
     default:
         break;
     }
-    return cssValuePool().createValue<PassRefPtr<CSSBasicShape> >(basicShapeValue.release());
+    return pool.createValue(basicShapeValue.release());
 }
 
 static Length convertToLength(const RenderStyle* style, const RenderStyle* rootStyle, CSSPrimitiveValue* value)

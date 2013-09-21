@@ -1,3 +1,13 @@
+2013-09-21  Darin Adler  <darin@apple.com>
+
+        Shrink valueForBasicShape by removing repeated calls to cssValuePool()
+        https://bugs.webkit.org/show_bug.cgi?id=121736
+
+        Reviewed by Sam Weinig.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape): Put the pool into a local variable and use that.
+
 2013-09-20  Darin Adler  <darin@apple.com>
 
         Another CSS parser leak fix
