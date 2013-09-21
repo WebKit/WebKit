@@ -1111,7 +1111,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
             unlock(gpr);
             gpr = result;
         } else
-            info.fillStrictInt52(*m_stream, gpr);
+            info.fillInt52(*m_stream, gpr);
         m_jit.lshift64(TrustedImm32(JSValue::int52ShiftAmount), gpr);
         return gpr;
     }
@@ -1128,7 +1128,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
             unlock(gpr);
             gpr = result;
         } else
-            info.fillInt52(*m_stream, gpr);
+            info.fillStrictInt52(*m_stream, gpr);
         m_jit.rshift64(TrustedImm32(JSValue::int52ShiftAmount), gpr);
         return gpr;
     }

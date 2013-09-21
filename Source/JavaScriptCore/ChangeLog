@@ -1,3 +1,17 @@
+2013-09-20  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r156047): WebCore hangs inside JSC::toInt32(double)
+        https://bugs.webkit.org/show_bug.cgi?id=121648
+
+        Reviewed by Mark Hahnenberg.
+        
+        The Int52<->StrictInt52 conversion did the opposite fill() than what it was
+        supposed to. For example when converting a Int52 to a StrictInt52 it would fill
+        as Int52, and vice-versa.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt52):
+
 2013-09-20  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION(r153215): New iCloud site crashes
