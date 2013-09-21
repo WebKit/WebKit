@@ -1,3 +1,12 @@
+2013-09-20  Mark Rowe  <mrowe@apple.com>
+
+        Fix link errors for external users when building WebKit with Xcode 5.
+
+        Reviewed by Oliver Hunt.
+
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2013-09-19  Bear Travis  <betravis@adobe.com>
 
         CSS_SHAPES not supported on AppleWin port
