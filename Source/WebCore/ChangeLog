@@ -1,3 +1,18 @@
+2013-09-20  Zoltan Horvath  <zoltan@webkit.org>
+
+        Remove includes from LineWidth.h
+        https://bugs.webkit.org/show_bug.cgi?id=121716
+
+        Reviewed by Darin Adler.
+
+        In r156197 I removed logicalLineHeight from LineWidth.h, so we don't need to include RenderBlock.h
+        and RenderRubyRun.h anymore in LineWidth.h.
+
+        No new tests, no behavior change.
+
+        * rendering/LineWidth.cpp:
+        * rendering/LineWidth.h:
+
 2013-09-20  Roger Fong  <roger_fong@apple.com>
 
         Handle panning gestures messages properly on Windows.

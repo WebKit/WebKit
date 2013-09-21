@@ -30,10 +30,15 @@
 #ifndef LineWidth_h
 #define LineWidth_h
 
-#include "RenderBlock.h"
-#include "RenderRubyRun.h"
+#include "LayoutUnit.h"
 
 namespace WebCore {
+
+class FloatingObject;
+struct LineSegment;
+class RenderBlock;
+class RenderObject;
+class RenderRubyRun;
 
 enum IndentTextOrNot { DoNotIndentText, IndentText };
 

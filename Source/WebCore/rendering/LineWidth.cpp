@@ -30,6 +30,9 @@
 #include "config.h"
 #include "LineWidth.h"
 
+#include "RenderBlock.h"
+#include "RenderRubyRun.h"
+
 namespace WebCore {
 
 LineWidth::LineWidth(RenderBlock& block, bool isFirstLine, IndentTextOrNot shouldIndentText)
