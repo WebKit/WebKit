@@ -1,3 +1,18 @@
+2013-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of IsInlinedCodeTag and its associated methods since it's unused
+        https://bugs.webkit.org/show_bug.cgi?id=121737
+
+        Reviewed by Sam Weinig.
+
+        * js/dfg-inline-arguments-capture-throw-exception-expected.txt: Added.
+        * js/dfg-inline-arguments-capture-throw-exception.html: Added.
+        * js/script-tests/dfg-inline-arguments-capture-throw-exception.js: Added.
+        (foo):
+        (bar):
+        (makeF):
+        (recurse):
+
 2013-09-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Bad cast from CSSInitialValue to CSSValueList

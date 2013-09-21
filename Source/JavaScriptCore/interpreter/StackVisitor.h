@@ -39,6 +39,7 @@ class ExecState;
 class JSFunction;
 class JSObject;
 class JSScope;
+class Register;
 
 typedef ExecState CallFrame;
 
@@ -78,6 +79,8 @@ public:
 
         Arguments* arguments();
         CallFrame* callFrame() const { return m_callFrame; }
+        
+        Register& r(int index);
     
 #ifndef NDEBUG
         JS_EXPORT_PRIVATE void print(int indentLevel);

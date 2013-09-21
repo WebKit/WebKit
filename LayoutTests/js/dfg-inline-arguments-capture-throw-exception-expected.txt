@@ -1,0 +1,14 @@
+Tests what happens when you have an inlined function that captures arguments and then throws an exception.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS theException is "The exception 100"
+PASS capturedArgs.length is 4
+PASS capturedArgs[1] is 1
+PASS capturedArgs[2] is 2
+PASS capturedArgs[3] is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

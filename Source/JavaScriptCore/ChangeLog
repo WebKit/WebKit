@@ -1,3 +1,30 @@
+2013-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of IsInlinedCodeTag and its associated methods since it's unused
+        https://bugs.webkit.org/show_bug.cgi?id=121737
+
+        Reviewed by Sam Weinig.
+        
+        This was meant to be easy, but I kept wondering if it was safe to remove the
+        inline call frame check in Arguments::tearOff(). The check was clearly dead
+        since the bit wasn't being set anywhere.
+        
+        It turns out that the unwindCallFrame() function was relying on tearOff()
+        doing the right thing for inlined code, but it wasn't even passing it an
+        inline call frame. I fixed this by having unwindCallFrame() inlining check,
+        while also making sure that the code uses the right operand index for the
+        arguments register.
+
+        * interpreter/CallFrame.h:
+        * interpreter/CallFrameInlines.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::r):
+        * interpreter/StackVisitor.h:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOff):
+
 2013-09-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         (un)shiftCountWithAnyIndexingType will start over in the middle of copying if it sees a hole

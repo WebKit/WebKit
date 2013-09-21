@@ -134,29 +134,22 @@ namespace JSC  {
             static inline bool isCodeOriginIndex(uint32_t bits);
             static inline uint32_t encodeAsCodeOriginIndex(uint32_t bits);
 
-            static inline bool isInlinedCode(uint32_t bits);
-            static inline uint32_t encodeAsInlinedCode(uint32_t bits);
-
         private:
             enum TypeTag {
                 BytecodeLocationTag = 0,
                 CodeOriginIndexTag = 1,
-                IsInlinedCodeTag = 2,
             };
 
             static inline uint32_t encode(TypeTag, uint32_t bits);
 
-            static const uint32_t s_mask = 0x3;
+            static const uint32_t s_mask = 0x1;
 #if USE(JSVALUE64)
-            static const uint32_t s_shift = 30;
+            static const uint32_t s_shift = 31;
             static const uint32_t s_shiftedMask = s_mask << s_shift;
 #else
-            static const uint32_t s_shift = 2;
+            static const uint32_t s_shift = 1;
 #endif
         };
-
-        bool isInlinedFrame() const;
-        void setIsInlinedFrame();
 
         bool hasLocationAsBytecodeOffset() const;
         bool hasLocationAsCodeOriginIndex() const;

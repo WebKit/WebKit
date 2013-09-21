@@ -326,14 +326,8 @@ void Arguments::tearOff(CallFrame* callFrame)
         }
     }
 
-    if (!callFrame->isInlinedFrame()) {
-        for (size_t i = 0; i < m_numArguments; ++i)
-            trySetArgument(callFrame->vm(), i, callFrame->argumentAfterCapture(i));
-        return;
-    }
-
-    tearOffForInlineCallFrame(
-        callFrame->vm(), callFrame->registers(), callFrame->inlineCallFrame());
+    for (size_t i = 0; i < m_numArguments; ++i)
+        trySetArgument(callFrame->vm(), i, callFrame->argumentAfterCapture(i));
 }
 
 void Arguments::didTearOffActivation(ExecState* exec, JSActivation* activation)
