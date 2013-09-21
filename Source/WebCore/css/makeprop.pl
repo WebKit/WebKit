@@ -47,7 +47,7 @@ foreach (@NAMES) {
   next if (/^#/);
 
   # Input may use a different EOL sequence than $/, so avoid chomp.
-  $_ =~ s/\s*\[(.+?)\]$//;
+  $_ =~ s/\s*\[(.+?)\]\r?$//;
   my @options = ();
   if ($1) {
     @options = split(/\s*,\s*/, $1);

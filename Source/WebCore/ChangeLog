@@ -1,3 +1,15 @@
+2013-09-21  Patrick Gansterer  <paroga@webkit.org>
+
+        Handle windows lineendings in makeprop.pl after r155511
+        https://bugs.webkit.org/show_bug.cgi?id=121740
+
+        Reviewed by Ryosuke Niwa.
+
+        Check for an optinal \r at the end of a line in regular expressions
+        to make it work again on native windows machines which use CRLF.
+
+        * css/makeprop.pl:
+
 2013-09-21  Andreas Kling  <akling@apple.com>
 
         Re-inline some hot ElementData functions.
