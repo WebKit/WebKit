@@ -1607,7 +1607,8 @@ bool WebView::gestureNotify(WPARAM wParam, LPARAM lParam)
         // The hit testing above won't detect if we've hit the main frame's vertical scrollbar. Check that manually now.
         RECT webViewRect;
         GetWindowRect(m_viewWindow, &webViewRect);
-        hitScrollbar = view->verticalScrollbar() && (gestureBeginPoint.x > (webViewRect.right - view->verticalScrollbar()->theme()->scrollbarThickness()));  
+        hitScrollbar = (view->verticalScrollbar() && (gestureBeginPoint.x > (webViewRect.right - view->verticalScrollbar()->theme()->scrollbarThickness()))) 
+            || (view->horizontalScrollbar() && (gestureBeginPoint.y > (webViewRect.bottom - view->horizontalScrollbar()->theme()->scrollbarThickness())));  
     }
 
     bool canBeScrolled = false;
@@ -1623,20 +1624,24 @@ bool WebView::gestureNotify(WPARAM wParam, LPARAM lParam)
     // We always allow two-fingered panning with inertia and a gutter (which limits movement to one
     // direction in most cases).
     DWORD dwPanWant = GC_PAN | GC_PAN_WITH_INERTIA | GC_PAN_WITH_GUTTER;
-    // We never allow single-fingered horizontal panning. That gesture is reserved for creating text
-    // selections. This matches IE.
-    DWORD dwPanBlock = GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY;
+    DWORD dwPanBlock = 0;
 
     if (hitScrollbar || !canBeScrolled) {
         // The part of the page under the gesture can't be scrolled, or the gesture is on a scrollbar.
-        // Disallow single-fingered vertical panning in this case, too, so we'll fall back to the default
+        // Disallow single-fingered panning in this case so we'll fall back to the default
         // behavior (which allows the scrollbar thumb to be dragged, text selections to be made, etc.).
-        dwPanBlock |= GC_PAN_WITH_SINGLE_FINGER_VERTICALLY;
+        dwPanBlock = GC_PAN_WITH_SINGLE_FINGER_VERTICALLY | GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY;
     } else {
         // The part of the page the gesture is under can be scrolled, and we're not under a scrollbar.
         // Allow single-fingered vertical panning in this case, so the user will be able to pan the page
         // with one or two fingers.
         dwPanWant |= GC_PAN_WITH_SINGLE_FINGER_VERTICALLY;
+
+        // Disable single-fingered horizontal panning only if the target node is text.
+        if (m_gestureTargetNode && m_gestureTargetNode->isTextNode())
+            dwPanBlock = GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY;
+        else
+            dwPanWant |= GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY;
     }
 
     GESTURECONFIG gc = { GID_PAN, dwPanWant, dwPanBlock };
@@ -1667,6 +1672,10 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
         m_gestureTargetNode = 0;
         break;
     case GID_PAN: {
+        if (gi.dwFlags & GF_BEGIN) {
+            m_lastPanX = gi.ptsLocation.x;
+            m_lastPanY = gi.ptsLocation.y;
+        }
         // Where are the fingers currently?
         long currentX = gi.ptsLocation.x;
         long currentY = gi.ptsLocation.y;
@@ -1686,43 +1695,50 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
             return false;
         }
 
-        if (!m_gestureTargetNode || !m_gestureTargetNode->renderer())
-            return false;
+        ScrollView* scrolledView = 0;
 
-        // We negate here since panning up moves the content up, but moves the scrollbar down.
-        m_gestureTargetNode->renderer()->enclosingLayer()->scrollByRecursively(IntSize(-deltaX, -deltaY));
-           
+        if (!m_gestureTargetNode || !m_gestureTargetNode->renderer()) {
+            // We might directly hit the document without hitting any nodes
+            coreFrame->view()->scrollBy(IntSize(-deltaX, -deltaY));
+            scrolledView = coreFrame->view();
+        } else
+            m_gestureTargetNode->renderer()->enclosingLayer()->scrollByRecursively(IntSize(-deltaX, -deltaY), WebCore::RenderLayer::ScrollOffsetClamped, &scrolledView);
+
         if (!(UpdatePanningFeedbackPtr() && BeginPanningFeedbackPtr() && EndPanningFeedbackPtr())) {
             CloseGestureInfoHandlePtr()(gestureHandle);
             return true;
         }
 
+        // Handle overpanning
         if (gi.dwFlags & GF_BEGIN) {
             BeginPanningFeedbackPtr()(m_viewWindow);
             m_yOverpan = 0;
+            m_xOverpan = 0;
         } else if (gi.dwFlags & GF_END) {
             EndPanningFeedbackPtr()(m_viewWindow, true);
             m_yOverpan = 0;
+            m_xOverpan = 0;
         }
 
-        ScrollView* view = coreFrame->view();
-        if (!view) {
-            CloseGestureInfoHandlePtr()(gestureHandle);
-            return true;
-        }
-        Scrollbar* vertScrollbar = view->verticalScrollbar();
-        if (!vertScrollbar) {
+        if (!scrolledView) {
             CloseGestureInfoHandlePtr()(gestureHandle);
             return true;
         }
 
-        // FIXME: Support Horizontal Window Bounce. <https://webkit.org/b/28500>.
-        // FIXME: If the user starts panning down after a window bounce has started, the window doesn't bounce back 
-        // until they release their finger. <https://webkit.org/b/28501>.
-        if (vertScrollbar->currentPos() == 0)
-            UpdatePanningFeedbackPtr()(m_viewWindow, 0, m_yOverpan, gi.dwFlags & GF_INERTIA);
-        else if (vertScrollbar->currentPos() >= vertScrollbar->maximum())
-            UpdatePanningFeedbackPtr()(m_viewWindow, 0, m_yOverpan, gi.dwFlags & GF_INERTIA);
+        Scrollbar* vertScrollbar = scrolledView->verticalScrollbar();
+
+        int ypan = 0;
+        int xpan = 0;
+
+        if (vertScrollbar && (!vertScrollbar->currentPos() || vertScrollbar->currentPos() >= vertScrollbar->maximum()))
+            ypan = m_yOverpan;
+
+        Scrollbar* horiScrollbar = scrolledView->horizontalScrollbar();
+
+        if (horiScrollbar && (!horiScrollbar->currentPos() || horiScrollbar->currentPos() >= horiScrollbar->maximum()))
+            xpan = m_xOverpan;
+
+        UpdatePanningFeedbackPtr()(m_viewWindow, xpan, ypan, gi.dwFlags & GF_INERTIA);
 
         CloseGestureInfoHandlePtr()(gestureHandle);
         return true;
