@@ -57,6 +57,7 @@ class InspectorFrontend;
 class InspectorFrontendChannel;
 class InspectorFrontendClient;
 class InspectorMemoryAgent;
+class InspectorObject;
 class InspectorOverlay;
 class InspectorPageAgent;
 class InspectorProfilerAgent;
@@ -104,6 +105,8 @@ public:
     void getHighlight(Highlight*) const;
     void hideHighlight();
     Node* highlightedNode() const;
+
+    PassRefPtr<InspectorObject> buildObjectForHighlightedNode() const;
 
     bool isUnderTest();
     void evaluateForTestInFrontend(long callId, const String& script);

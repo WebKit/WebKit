@@ -327,6 +327,11 @@ void InspectorController::getHighlight(Highlight* highlight) const
     m_overlay->getHighlight(highlight);
 }
 
+PassRefPtr<InspectorObject> InspectorController::buildObjectForHighlightedNode() const
+{
+    return m_overlay->buildObjectForHighlightedNode();
+}
+
 void InspectorController::inspect(Node* node)
 {
     if (!enabled())

@@ -64,6 +64,7 @@
 #include "InspectorFrontendClientLocal.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorOverlay.h"
+#include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "InternalSettings.h"
 #include "IntRect.h"
@@ -731,6 +732,22 @@ PassRefPtr<ClientRectList> Internals::inspectorHighlightRects(Document* document
     UNUSED_PARAM(document);
     UNUSED_PARAM(ec);
     return ClientRectList::create();
+#endif
+}
+
+String Internals::inspectorHighlightObject(Document* document, ExceptionCode& ec)
+{
+#if ENABLE(INSPECTOR)
+    if (!document || !document->page() || !document->page()->inspectorController()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+    RefPtr<InspectorObject> object = document->page()->inspectorController()->buildObjectForHighlightedNode();
+    return object ? object->toJSONString() : String();
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(ec);
+    return String();
 #endif
 }
 

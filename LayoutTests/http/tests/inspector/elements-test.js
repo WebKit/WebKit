@@ -610,3 +610,19 @@ function dumpInspectorHighlightRects()
         output(rectName + " rect is " + rect.width + " x " + rect.height + " at (" + rect.left + ", " + rect.top + ")");
     }
 }
+
+function dumpInspectorHighlightedRegions()
+{
+    var highlight = window.internals.inspectorHighlightObject(document);
+    if (!highlight.length) {
+        output("No highlighted node.");
+        return;
+    }
+    // Reformat the string using JSON.stringify.
+    var json = JSON.parse(highlight);
+    if (!json.regions) {
+        output("No highlighted regions.");
+        return;
+    }
+    output(JSON.stringify(json.regions, null, 4));
+}

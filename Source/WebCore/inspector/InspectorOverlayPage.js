@@ -3,6 +3,21 @@ const darkGridColor = "rgba(0,0,0,0.5)";
 const transparentColor = "rgba(0, 0, 0, 0)";
 const gridBackgroundColor = "rgba(255, 255, 255, 0.6)";
 
+// CSS Regions highlight colors.
+const highlightedRegionBackgroundColor = "rgba(127, 211, 248, 0.1)";
+const regionBackgroundColor = "rgba(127, 211, 248, 0.45)";
+const regionStrokeColor = "rgba(98, 207, 255, 0.85)";
+
+// CSS Regions chain highlight colors.
+const regionLinkBoxBackgroundColor = "rgba(255, 255, 255, 0.71)";
+const regionLinkBoxStrokeColor = "rgba(98, 207, 255, 0.85)";
+const regionChainStrokeColor = "rgba(98, 207, 255, 0.85)";
+
+// CSS Region number style.
+const regionNumberFont = "bold 40pt sans-serif";
+const regionNumberFillColor = "rgba(255, 255, 255, 0.9)";
+const regionNumberStrokeColor = "rgb(61, 127, 204)";
+
 function drawPausedInDebuggerMessage(message)
 {
     var pausedInDebugger = document.getElementById("paused-in-debugger");
@@ -126,6 +141,21 @@ function _drawGrid(highlight, rulerAtRight, rulerAtBottom)
         context.restore();
     }
 
+    context.restore();
+}
+
+function _drawRegionNumber(quad, number)
+{
+    context.save();
+    var midPoint = _quadMidPoint(quad);
+    context.font = regionNumberFont;
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillStyle = regionNumberFillColor;
+    context.fillText(number, midPoint.x, midPoint.y);
+    context.strokeWidth = 4;
+    context.strokeStyle = regionNumberStrokeColor;
+    context.strokeText(number, midPoint.x, midPoint.y);
     context.restore();
 }
 
@@ -357,6 +387,61 @@ function _drawRulers(highlight, rulerAtRight, rulerAtBottom)
     context.restore();
 }
 
+function _quadMidPoint(quad)
+{
+    return {
+        x: (quad[0].x + quad[1].x + quad[2].x + quad[3].x) / 4,
+        y: (quad[0].y + quad[1].y + quad[2].y + quad[3].y) / 4,
+    };
+}
+
+function _drawRegionLink(pointA, pointB)
+{
+    context.save();
+    context.lineWidth = 2;
+    context.strokeStyle = regionChainStrokeColor;
+    context.beginPath();
+    context.moveTo(pointA.x, pointA.y);
+    context.lineTo(pointB.x, pointB.y);
+    context.stroke();
+    context.restore();
+}
+
+function _fixQuadScrollPosition(quad, scrollX, scrollY)
+{
+    for (var j = 0; j < quad.length; ++j) {
+        quad[j].x -= scrollX;
+        quad[j].y -= scrollY;
+    }
+}
+
+function _drawRegionsHighlight(regions, scrollX, scrollY)
+{
+    for (var i = 0; i < regions.length; ++i) {
+        var region = regions[i];
+        _fixQuadScrollPosition(region.borderQuad, scrollX, scrollY);
+        _fixQuadScrollPosition(region.incomingQuad, scrollX, scrollY);
+        _fixQuadScrollPosition(region.outgoingQuad, scrollX, scrollY);
+    
+        drawOutlinedQuad(region.borderQuad, region.isHighlighted ? highlightedRegionBackgroundColor : regionBackgroundColor, regionStrokeColor);
+        _drawRegionNumber(region.borderQuad, i + 1);
+    }
+
+    for (var i = 1; i < regions.length; ++i) {
+        var regionA = regions[i - 1],
+            regionB = regions[i];
+        _drawRegionLink(_quadMidPoint(regionA.outgoingQuad), _quadMidPoint(regionB.incomingQuad));
+    }
+
+    for (var i = 0; i < regions.length; ++i) {
+        var region = regions[i];
+        if (i > 0)
+            drawOutlinedQuad(region.incomingQuad, regionLinkBoxBackgroundColor, regionLinkBoxStrokeColor);
+        if (i !== regions.length - 1)
+            drawOutlinedQuad(region.outgoingQuad, regionLinkBoxBackgroundColor, regionLinkBoxStrokeColor);
+    }
+}
+
 function drawNodeHighlight(highlight)
 {
     if (!highlight.quads.length) {
@@ -366,13 +451,8 @@ function drawNodeHighlight(highlight)
 
     context.save();
 
-    for (var i = 0; i < highlight.quads.length; ++i) {
-        var quad = highlight.quads[i];
-        for (var j = 0; j < quad.length; ++j) {
-            quad[j].x -= highlight.scrollX;
-            quad[j].y -= highlight.scrollY;
-        }
-    }
+    for (var i = 0; i < highlight.quads.length; ++i)
+        _fixQuadScrollPosition(highlight.quads[i], highlight.scrollX, highlight.scrollY);
 
     var quads = highlight.quads.slice();
     var contentQuad = quads.pop();
@@ -419,6 +499,10 @@ function drawNodeHighlight(highlight)
 
     _drawGrid(highlight, rulerAtRight, rulerAtBottom);
     _drawRulers(highlight, rulerAtRight, rulerAtBottom);
+
+    if (highlight.regions)
+        _drawRegionsHighlight(highlight.regions, highlight.scrollX, highlight.scrollY);
+
     _drawElementTitle(highlight);
     context.restore();
 }

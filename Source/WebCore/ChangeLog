@@ -1,3 +1,40 @@
+2013-09-20  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: [CSS Regions] Display CSS Regions chain when highlighting a CSS Region node
+        https://bugs.webkit.org/show_bug.cgi?id=121719
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/elements/highlight-node-regions.html
+
+        When a CSS Region node is highlighted through the WebInspector, it will also lookup all the regions
+        that are part of the same flow and inject enough information into InspectorOverlayPage.js to get the other
+        CSS Regions highlighted as well. A chain will also link the regions and a number will display the ordering
+        of the content.
+
+        * WebCore.exp.in:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::buildObjectForHighlightedNode):
+        * inspector/InspectorController.h:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForRegionHighlight):
+        (WebCore::buildObjectForCSSRegionsHighlight):
+        (WebCore::InspectorOverlay::buildObjectForHighlightedNode):
+        (WebCore::InspectorOverlay::drawNodeHighlight): Separated the InspectorObject building part out of this function,
+        so that we can call buildObjectForHighlightedNode from the Internals APIs for testing.
+        * inspector/InspectorOverlay.h:
+        * inspector/InspectorOverlayPage.js:
+        (_drawRegionNumber):
+        (_quadMidPoint):
+        (_drawRegionLink):
+        (_fixQuadScrollPosition):
+        (_drawRegionsHighlight):
+        (drawNodeHighlight):
+        * testing/Internals.cpp: Exposed the generated InspectorObject to the layout test.
+        (WebCore::Internals::inspectorHighlightObject):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2013-09-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r156185.

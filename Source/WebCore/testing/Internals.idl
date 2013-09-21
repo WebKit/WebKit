@@ -83,6 +83,7 @@
     [RaisesException] ClientRect boundingBox(Element element);
 
     [RaisesException] ClientRectList inspectorHighlightRects(Document document);
+    [RaisesException] DOMString inspectorHighlightObject(Document document);
 
     [RaisesException] unsigned long markerCountForNode(Node node, DOMString markerType);
     [RaisesException] Range markerRangeForNode(Node node, DOMString markerType, unsigned long index);

@@ -45,6 +45,7 @@ class Color;
 class GraphicsContext;
 class InspectorClient;
 class InspectorValue;
+class InspectorObject;
 class IntRect;
 class Node;
 class Page;
@@ -121,6 +122,8 @@ public:
     void highlightQuad(PassOwnPtr<FloatQuad>, const HighlightConfig&);
 
     Node* highlightedNode() const;
+
+    PassRefPtr<InspectorObject> buildObjectForHighlightedNode() const;
 
     void freePage();
 private:

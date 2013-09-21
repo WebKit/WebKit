@@ -1,3 +1,17 @@
+2013-09-20  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: [CSS Regions] Display CSS Regions chain when highlighting a CSS Region node
+        https://bugs.webkit.org/show_bug.cgi?id=121719
+
+        Reviewed by Joseph Pecoraro.
+
+        Added test to check the position of the CSS Regions part of the same flow thread with
+        the highlighted CSS Region node.
+
+        * http/tests/inspector/elements-test.js:
+        * inspector/elements/highlight-node-regions-expected.txt: Added.
+        * inspector/elements/highlight-node-regions.html: Added.
+
 2013-09-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         (un)shiftCountWithAnyIndexingType will start over in the middle of copying if it sees a hole
