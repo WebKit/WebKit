@@ -1120,11 +1120,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_graph, m_codeBlock->globalObjectFor(node->codeOrigin)->activationStructure());
         m_state.setHaveStructures(true);
         break;
-        
+    
     case CreateArguments:
-        forNode(node).set(
-            m_graph, m_codeBlock->globalObjectFor(node->codeOrigin)->argumentsStructure());
-        m_state.setHaveStructures(true);
+        forNode(node).setType(SpecArguments);
         break;
         
     case TearOffActivation:

@@ -1,3 +1,16 @@
+2013-09-20  Oliver Hunt  <oliver@apple.com>
+
+        REGRESSION(r153215): New iCloud site crashes
+        https://bugs.webkit.org/show_bug.cgi?id=121710
+
+        Reviewed by Filip Pizlo.
+
+        Don't claim to be able to rely on the arguments structure, use the Arguments
+        speculation type
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+
 2013-09-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Clobberize phase forgets to indicate that it writes GCState for several node types
