@@ -330,7 +330,7 @@ public:
     // causes an ambiguity error at compile time. This class's constructor
     // ensures that both implementations return document, so return the result
     // of one of them here.
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return HTMLElement::scriptExecutionContext(); }
+    using HTMLElement::scriptExecutionContext;
 
     bool hasSingleSecurityOrigin() const { return !m_player || m_player->hasSingleSecurityOrigin(); }
     

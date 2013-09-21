@@ -1632,6 +1632,11 @@ inline Node::Node(Document* document, ConstructionType type)
     InspectorCounters::incrementCounter(InspectorCounters::NodeCounter);
 }
 
+inline ScriptExecutionContext* Node::scriptExecutionContext() const
+{
+    return &document();
+}
+
 Node* eventTargetNodeForDocument(Document*);
 
 } // namespace WebCore

@@ -1828,11 +1828,6 @@ const AtomicString& Node::interfaceName() const
     return eventNames().interfaceForNode;
 }
 
-ScriptExecutionContext* Node::scriptExecutionContext() const
-{
-    return &document();
-}
-
 void Node::didMoveToNewDocument(Document* oldDocument)
 {
     TreeScopeAdopter::ensureDidMoveToNewDocumentWasCalled(oldDocument);

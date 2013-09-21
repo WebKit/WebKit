@@ -1,5 +1,20 @@
 2013-09-21  Andreas Kling  <akling@apple.com>
 
+        Node: FINAL-ize EventTarget overrides.
+        <https://webkit.org/b/121748>
+
+        Reviewed by Darin Adler.
+
+        Mark the following Node functions FINAL:
+
+            - scriptExecutionContext()
+            - eventTargetData()
+            - ensureEventTargetData()
+
+        This devirtualizes a myriad of generated calls in the JSC bindings.
+
+2013-09-21  Andreas Kling  <akling@apple.com>
+
         Don't bloat Obj-C bindings with inlined attribute retrieval.
         <https://webkit.org/b/121745>
 
