@@ -1,3 +1,10 @@
+2013-09-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix after r156215.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Expose
+        missing symbols needed by DRT.
+
 2013-09-20  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Use COMPILE_DEFINITIONS target property for setting BUILDING_* defines

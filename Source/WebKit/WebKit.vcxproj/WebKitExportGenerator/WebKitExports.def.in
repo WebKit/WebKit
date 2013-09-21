@@ -453,3 +453,5 @@ EXPORTS
         symbolWithPointer(?nearest@TimeRanges@WebCore@@QBENN@Z, ?nearest@TimeRanges@WebCore@@QEBANN@Z)
         symbolWithPointer(?add@TimeRanges@WebCore@@QAEXNN@Z, ?add@TimeRanges@WebCore@@QEAAXNN@Z)
 #endif
+        symbolWithPointer(?inspectorHighlightObject@Internals@WebCore@@QAE?AVString@WTF@@PAVDocument@2@AAH@Z, ?inspectorHighlightObject@Internals@WebCore@@QAE?AVString@WTF@@PAVDocument@2@AAH@Z)
+        symbolWithPointer(?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@WebCore@@@WTF@@XZ, ?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@WebCore@@@WTF@@XZ)
