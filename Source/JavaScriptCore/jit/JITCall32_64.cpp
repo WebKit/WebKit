@@ -217,7 +217,7 @@ void JIT::compileCallEvalSlowCase(Instruction* instruction, Vector<SlowCaseEntry
     linkSlowCase(iter);
 
     emitLoad(JSStack::Callee, regT1, regT0);
-    emitNakedCall(m_vm->getCTIStub(virtualCallGenerator).code());
+    emitNakedCall(m_vm->getCTIStub(oldStyleVirtualCallGenerator).code());
 
     sampleCodeBlock(m_codeBlock);
     
@@ -306,7 +306,7 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction* instruction, Vec
     linkSlowCase(iter);
     linkSlowCase(iter);
     
-    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_vm->getCTIStub(linkConstructGenerator).code() : m_vm->getCTIStub(linkCallGenerator).code());
+    m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_vm->getCTIStub(oldStyleLinkConstructGenerator).code() : m_vm->getCTIStub(oldStyleLinkCallGenerator).code());
 
     sampleCodeBlock(m_codeBlock);
     emitPutCallResult(instruction);
@@ -335,7 +335,7 @@ void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calle
     
     patchBuffer.link(call, FunctionPtr(codePtr.executableAddress()));
     patchBuffer.link(done, callLinkInfo->hotPathOther.labelAtOffset(0));
-    patchBuffer.link(slow, CodeLocationLabel(m_vm->getCTIStub(virtualCallGenerator).code()));
+    patchBuffer.link(slow, CodeLocationLabel(m_vm->getCTIStub(oldStyleVirtualCallGenerator).code()));
     
     RefPtr<ClosureCallStubRoutine> stubRoutine = adoptRef(new ClosureCallStubRoutine(
         FINALIZE_CODE(
@@ -353,7 +353,7 @@ void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calle
     repatchBuffer.replaceWithJump(
         RepatchBuffer::startOfBranchPtrWithPatchOnRegister(callLinkInfo->hotPathBegin),
         CodeLocationLabel(stubRoutine->code().code()));
-    repatchBuffer.relink(callLinkInfo->callReturnLocation, m_vm->getCTIStub(virtualCallGenerator).code());
+    repatchBuffer.relink(callLinkInfo->callReturnLocation, m_vm->getCTIStub(oldStyleVirtualCallGenerator).code());
     
     callLinkInfo->stub = stubRoutine.release();
 }

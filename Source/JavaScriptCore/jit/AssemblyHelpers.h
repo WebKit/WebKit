@@ -413,6 +413,21 @@ public:
         return (codeOrigin.inlineCallFrame->stackOffset + CallFrame::argumentOffsetIncludingThis(0)) * sizeof(Register);
     }
 
+    void writeBarrier(GPRReg owner, GPRReg scratch1, GPRReg scratch2, WriteBarrierUseKind useKind)
+    {
+        UNUSED_PARAM(owner);
+        UNUSED_PARAM(scratch1);
+        UNUSED_PARAM(scratch2);
+        UNUSED_PARAM(useKind);
+        ASSERT(owner != scratch1);
+        ASSERT(owner != scratch2);
+        ASSERT(scratch1 != scratch2);
+        
+#if ENABLE(WRITE_BARRIER_PROFILING)
+        emitCount(WriteBarrierCounters::jitCounterFor(useKind));
+#endif
+    }
+
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
     
 protected:

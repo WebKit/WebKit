@@ -182,7 +182,6 @@ SOURCES += \
     dfg/DFGPlan.cpp \
     dfg/DFGPredictionPropagationPhase.cpp \
     dfg/DFGPredictionInjectionPhase.cpp \
-    dfg/DFGRepatch.cpp \
     dfg/DFGSSAConversionPhase.cpp \
     dfg/DFGSpeculativeJIT.cpp \
     dfg/DFGSpeculativeJIT32_64.cpp \
@@ -221,6 +220,7 @@ SOURCES += \
     jit/JITExceptions.cpp \
     jit/JITOpcodes.cpp \
     jit/JITOpcodes32_64.cpp \
+    jit/JITOperations.cpp \
     jit/JITPropertyAccess.cpp \
     jit/JITPropertyAccess32_64.cpp \
     jit/JITStubRoutine.cpp \
@@ -228,6 +228,7 @@ SOURCES += \
     jit/JITThunks.cpp \
     jit/JITToDFGDeferredCompilationCallback.cpp \
     jit/JumpReplacementWatchpoint.cpp \
+    jit/Repatch.cpp \
     jit/ThunkGenerators.cpp \
     llint/LLIntCLoop.cpp \
     llint/LLIntData.cpp \

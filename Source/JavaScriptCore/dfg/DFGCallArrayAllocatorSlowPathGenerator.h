@@ -40,7 +40,7 @@ namespace JSC { namespace DFG {
 class CallArrayAllocatorSlowPathGenerator : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
 public:
     CallArrayAllocatorSlowPathGenerator(
-        MacroAssembler::JumpList from, SpeculativeJIT* jit, P_DFGOperation_EStZ function,
+        MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_EStZ function,
         GPRReg resultGPR, GPRReg storageGPR, Structure* structure, size_t size)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_function(function)
@@ -68,7 +68,7 @@ protected:
     }
     
 private:
-    P_DFGOperation_EStZ m_function;
+    P_JITOperation_EStZ m_function;
     GPRReg m_resultGPR;
     GPRReg m_storageGPR;
     Structure* m_structure;
@@ -79,7 +79,7 @@ private:
 class CallArrayAllocatorWithVariableSizeSlowPathGenerator : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
 public:
     CallArrayAllocatorWithVariableSizeSlowPathGenerator(
-        MacroAssembler::JumpList from, SpeculativeJIT* jit, P_DFGOperation_EStZ function,
+        MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_EStZ function,
         GPRReg resultGPR, Structure* contiguousStructure, Structure* arrayStorageStructure, GPRReg sizeGPR)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_function(function)
@@ -112,7 +112,7 @@ protected:
     }
     
 private:
-    P_DFGOperation_EStZ m_function;
+    P_JITOperation_EStZ m_function;
     GPRReg m_resultGPR;
     Structure* m_contiguousStructure;
     Structure* m_arrayStorageStructure;

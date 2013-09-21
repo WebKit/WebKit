@@ -1,3 +1,180 @@
+2013-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Move DFG inline caching logic into jit/
+        https://bugs.webkit.org/show_bug.cgi?id=121749
+
+        Rubber stamped by Sam Weinig.
+        
+        We want to get rid of the baseline JIT's inline caching machinery and have it use the
+        DFG's instead. But before we do that we need to move the DFG's inline caching machine
+        out from behind its ENABLE(DFG_JIT) guards and make it available to the whole system.
+        This patch does that:
+        
+        - dfg/DFGRepatch becomes jit/Repatch.
+        
+        - The thunks used by the DFG IC go into jit/ThunkGenerators, instead of dfg/DFGThunks.
+        
+        - The operations used by the DFG IC go into jit/JITOperations, instead of
+          dfg/DFGOperations.
+        
+        - The old JIT's thunk generators for calls are renamed to reduce confusion. Previously
+          it was easy to know which generators belong to which JIT because the old JIT used
+          JSC::virtualCallBlah and the DFG used JSC::DFG::virtualCallBlah, but that's not the
+          case anymore. Note that the old JIT's thunk generators will die in a future patch.
+        
+        No functional changes beyond those moves.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::unlink):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resetStubInternal):
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        (JSC::DFG::CallArrayAllocatorSlowPathGenerator::CallArrayAllocatorSlowPathGenerator):
+        (JSC::DFG::CallArrayAllocatorWithVariableSizeSlowPathGenerator::CallArrayAllocatorWithVariableSizeSlowPathGenerator):
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGOSRExitCompiler.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationPutByValInternal):
+        * dfg/DFGOperations.h:
+        (JSC::DFG::operationNewTypedArrayWithSizeForType):
+        (JSC::DFG::operationNewTypedArrayWithOneArgumentForType):
+        * dfg/DFGRegisterSet.h: Removed.
+        * dfg/DFGRepatch.cpp: Removed.
+        * dfg/DFGRepatch.h: Removed.
+        * dfg/DFGScratchRegisterAllocator.h: Removed.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompare):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compare):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::CompareAndBoxBooleanSlowPathGenerator):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::CompareAndBoxBooleanSlowPathGenerator):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGThunks.cpp:
+        * dfg/DFGThunks.h:
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCallOrConstruct):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::writeBarrier):
+        * jit/JIT.cpp:
+        (JSC::JIT::linkFor):
+        (JSC::JIT::linkSlowCall):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::privateCompileClosureCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::privateCompileClosureCall):
+        * jit/JITOperationWrappers.h: Added.
+        * jit/JITOperations.cpp: Added.
+        * jit/JITOperations.h: Added.
+        * jit/RegisterSet.h: Added.
+        (JSC::RegisterSet::RegisterSet):
+        (JSC::RegisterSet::asPOD):
+        (JSC::RegisterSet::copyInfo):
+        (JSC::RegisterSet::set):
+        (JSC::RegisterSet::setGPRByIndex):
+        (JSC::RegisterSet::clear):
+        (JSC::RegisterSet::get):
+        (JSC::RegisterSet::getGPRByIndex):
+        (JSC::RegisterSet::getFreeGPR):
+        (JSC::RegisterSet::setFPRByIndex):
+        (JSC::RegisterSet::getFPRByIndex):
+        (JSC::RegisterSet::setByIndex):
+        (JSC::RegisterSet::getByIndex):
+        (JSC::RegisterSet::numberOfSetGPRs):
+        (JSC::RegisterSet::numberOfSetFPRs):
+        (JSC::RegisterSet::numberOfSetRegisters):
+        (JSC::RegisterSet::setBit):
+        (JSC::RegisterSet::clearBit):
+        (JSC::RegisterSet::getBit):
+        * jit/Repatch.cpp: Added.
+        (JSC::repatchCall):
+        (JSC::repatchByIdSelfAccess):
+        (JSC::addStructureTransitionCheck):
+        (JSC::replaceWithJump):
+        (JSC::emitRestoreScratch):
+        (JSC::linkRestoreScratch):
+        (JSC::generateProtoChainAccessStub):
+        (JSC::tryCacheGetByID):
+        (JSC::repatchGetByID):
+        (JSC::getPolymorphicStructureList):
+        (JSC::patchJumpToGetByIdStub):
+        (JSC::tryBuildGetByIDList):
+        (JSC::buildGetByIDList):
+        (JSC::appropriateGenericPutByIdFunction):
+        (JSC::appropriateListBuildingPutByIdFunction):
+        (JSC::emitPutReplaceStub):
+        (JSC::emitPutTransitionStub):
+        (JSC::tryCachePutByID):
+        (JSC::repatchPutByID):
+        (JSC::tryBuildPutByIdList):
+        (JSC::buildPutByIdList):
+        (JSC::tryRepatchIn):
+        (JSC::repatchIn):
+        (JSC::linkSlowFor):
+        (JSC::linkFor):
+        (JSC::linkClosureCall):
+        (JSC::resetGetByID):
+        (JSC::resetPutByID):
+        (JSC::resetIn):
+        * jit/Repatch.h: Added.
+        (JSC::resetGetByID):
+        (JSC::resetPutByID):
+        (JSC::resetIn):
+        * jit/ScratchRegisterAllocator.h: Added.
+        (JSC::ScratchRegisterAllocator::ScratchRegisterAllocator):
+        (JSC::ScratchRegisterAllocator::lock):
+        (JSC::ScratchRegisterAllocator::allocateScratch):
+        (JSC::ScratchRegisterAllocator::allocateScratchGPR):
+        (JSC::ScratchRegisterAllocator::allocateScratchFPR):
+        (JSC::ScratchRegisterAllocator::didReuseRegisters):
+        (JSC::ScratchRegisterAllocator::preserveReusedRegistersByPushing):
+        (JSC::ScratchRegisterAllocator::restoreReusedRegistersByPopping):
+        (JSC::ScratchRegisterAllocator::desiredScratchBufferSize):
+        (JSC::ScratchRegisterAllocator::preserveUsedRegistersToScratchBuffer):
+        (JSC::ScratchRegisterAllocator::restoreUsedRegistersFromScratchBuffer):
+        * jit/ThunkGenerators.cpp:
+        (JSC::oldStyleGenerateSlowCaseFor):
+        (JSC::oldStyleLinkForGenerator):
+        (JSC::oldStyleLinkCallGenerator):
+        (JSC::oldStyleLinkConstructGenerator):
+        (JSC::oldStyleLinkClosureCallGenerator):
+        (JSC::oldStyleVirtualForGenerator):
+        (JSC::oldStyleVirtualCallGenerator):
+        (JSC::oldStyleVirtualConstructGenerator):
+        (JSC::emitPointerValidation):
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::slowPathFor):
+        (JSC::linkForThunkGenerator):
+        (JSC::linkCallThunkGenerator):
+        (JSC::linkConstructThunkGenerator):
+        (JSC::linkClosureCallThunkGenerator):
+        (JSC::virtualForThunkGenerator):
+        (JSC::virtualCallThunkGenerator):
+        (JSC::virtualConstructThunkGenerator):
+        * jit/ThunkGenerators.h:
+
 2013-09-21  Anders Carlsson  <andersca@apple.com>
 
         Fix the non-DFG build.

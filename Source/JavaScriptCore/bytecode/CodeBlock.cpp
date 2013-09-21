@@ -36,7 +36,6 @@
 #include "DFGCommon.h"
 #include "DFGDriver.h"
 #include "DFGNode.h"
-#include "DFGRepatch.h"
 #include "DFGWorklist.h"
 #include "Debugger.h"
 #include "Interpreter.h"
@@ -51,6 +50,7 @@
 #include "PolymorphicPutByIdList.h"
 #include "ReduceWhitespace.h"
 #include "RepatchBuffer.h"
+#include "Repatch.h"
 #include "SlotVisitorInlines.h"
 #include <stdio.h>
 #include <wtf/CommaPrinter.h>
@@ -2382,12 +2382,12 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
         break;
     case JITCode::DFGJIT:
         if (isGetByIdAccess(accessType))
-            DFG::resetGetByID(repatchBuffer, stubInfo);
+            resetGetByID(repatchBuffer, stubInfo);
         else if (isPutByIdAccess(accessType))
-            DFG::resetPutByID(repatchBuffer, stubInfo);
+            resetPutByID(repatchBuffer, stubInfo);
         else {
             RELEASE_ASSERT(isInAccess(accessType));
-            DFG::resetIn(repatchBuffer, stubInfo);
+            resetIn(repatchBuffer, stubInfo);
         }
         break;
     default:

@@ -118,6 +118,13 @@
 		0F24E54217EA9F5900ABB217 /* CCallHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53D17EA9F5900ABB217 /* CCallHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53E17EA9F5900ABB217 /* FPRInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54417EA9F5900ABB217 /* GPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53F17EA9F5900ABB217 /* GPRInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F24E54C17EE274900ABB217 /* JITOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E54517EE274900ABB217 /* JITOperations.cpp */; };
+		0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54617EE274900ABB217 /* JITOperations.h */; };
+		0F24E54E17EE274900ABB217 /* JITOperationWrappers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54717EE274900ABB217 /* JITOperationWrappers.h */; };
+		0F24E54F17EE274900ABB217 /* RegisterSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54817EE274900ABB217 /* RegisterSet.h */; };
+		0F24E55017EE274900ABB217 /* Repatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E54917EE274900ABB217 /* Repatch.cpp */; };
+		0F24E55117EE274900ABB217 /* Repatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54A17EE274900ABB217 /* Repatch.h */; };
+		0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */; };
 		0F256C361627B0AD007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F256C341627B0AA007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2B66AC17B6B53F00A7AE3F /* GCIncomingRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66A817B6B53D00A7AE3F /* GCIncomingRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2B66AD17B6B54500A7AE3F /* GCIncomingRefCountedInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66A917B6B53D00A7AE3F /* GCIncomingRefCountedInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -264,8 +271,6 @@
 		0F766D3515AE253B008F363E /* JumpReplacementWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D3315AE2535008F363E /* JumpReplacementWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F766D3815AE4A1C008F363E /* StructureStubClearingWatchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F766D3615AE4A1A008F363E /* StructureStubClearingWatchpoint.cpp */; };
 		0F766D3915AE4A1F008F363E /* StructureStubClearingWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D3715AE4A1A008F363E /* StructureStubClearingWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F766D4415B2A3C0008F363E /* DFGRegisterSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D4215B2A3BD008F363E /* DFGRegisterSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F766D4615B3701F008F363E /* DFGScratchRegisterAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D4515B3701D008F363E /* DFGScratchRegisterAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7700911402FF280078EB39 /* SamplingCounter.cpp */; };
 		0F7B294B14C3CD2F007C3DB1 /* DFGCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7B294D14C3CD4C007C3DB1 /* DFGCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC0977E1469EBC400CF2442 /* DFGCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -729,8 +734,6 @@
 		86AE64AA135E5E1C00963012 /* SH4Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AE64A7135E5E1C00963012 /* SH4Assembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86B5826714D2796C00A9C306 /* CodeProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86B5822E14D2373B00A9C306 /* CodeProfile.cpp */; };
 		86B5826914D2797000A9C306 /* CodeProfiling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8603CEF214C7546400AE59E3 /* CodeProfiling.cpp */; };
-		86BB09C0138E381B0056702F /* DFGRepatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86BB09BE138E381B0056702F /* DFGRepatch.cpp */; };
-		86BB09C1138E381B0056702F /* DFGRepatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 86BB09BF138E381B0056702F /* DFGRepatch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86C36EEA0EE1289D00B3DF59 /* MacroAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86C568E011A213EE0007F7F0 /* MacroAssemblerARM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86C568DD11A213EE0007F7F0 /* MacroAssemblerARM.cpp */; };
 		86C568E111A213EE0007F7F0 /* MacroAssemblerMIPS.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C568DE11A213EE0007F7F0 /* MacroAssemblerMIPS.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1318,6 +1321,13 @@
 		0F24E53D17EA9F5900ABB217 /* CCallHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCallHelpers.h; sourceTree = "<group>"; };
 		0F24E53E17EA9F5900ABB217 /* FPRInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPRInfo.h; sourceTree = "<group>"; };
 		0F24E53F17EA9F5900ABB217 /* GPRInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPRInfo.h; sourceTree = "<group>"; };
+		0F24E54517EE274900ABB217 /* JITOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITOperations.cpp; sourceTree = "<group>"; };
+		0F24E54617EE274900ABB217 /* JITOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITOperations.h; sourceTree = "<group>"; };
+		0F24E54717EE274900ABB217 /* JITOperationWrappers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITOperationWrappers.h; sourceTree = "<group>"; };
+		0F24E54817EE274900ABB217 /* RegisterSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterSet.h; sourceTree = "<group>"; };
+		0F24E54917EE274900ABB217 /* Repatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Repatch.cpp; sourceTree = "<group>"; };
+		0F24E54A17EE274900ABB217 /* Repatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Repatch.h; sourceTree = "<group>"; };
+		0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScratchRegisterAllocator.h; sourceTree = "<group>"; };
 		0F256C341627B0AA007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCallArrayAllocatorSlowPathGenerator.h; path = dfg/DFGCallArrayAllocatorSlowPathGenerator.h; sourceTree = "<group>"; };
 		0F2B66A817B6B53D00A7AE3F /* GCIncomingRefCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCIncomingRefCounted.h; sourceTree = "<group>"; };
 		0F2B66A917B6B53D00A7AE3F /* GCIncomingRefCountedInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCIncomingRefCountedInlines.h; sourceTree = "<group>"; };
@@ -1463,8 +1473,6 @@
 		0F766D3315AE2535008F363E /* JumpReplacementWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JumpReplacementWatchpoint.h; sourceTree = "<group>"; };
 		0F766D3615AE4A1A008F363E /* StructureStubClearingWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureStubClearingWatchpoint.cpp; sourceTree = "<group>"; };
 		0F766D3715AE4A1A008F363E /* StructureStubClearingWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureStubClearingWatchpoint.h; sourceTree = "<group>"; };
-		0F766D4215B2A3BD008F363E /* DFGRegisterSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGRegisterSet.h; path = dfg/DFGRegisterSet.h; sourceTree = "<group>"; };
-		0F766D4515B3701D008F363E /* DFGScratchRegisterAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGScratchRegisterAllocator.h; path = dfg/DFGScratchRegisterAllocator.h; sourceTree = "<group>"; };
 		0F77008E1402FDD60078EB39 /* SamplingCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingCounter.h; sourceTree = "<group>"; };
 		0F7700911402FF280078EB39 /* SamplingCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingCounter.cpp; sourceTree = "<group>"; };
 		0F8023E91613832300A0BA45 /* ByValInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByValInfo.h; sourceTree = "<group>"; };
@@ -1923,8 +1931,6 @@
 		86B5822E14D2373B00A9C306 /* CodeProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeProfile.cpp; sourceTree = "<group>"; };
 		86B5822F14D2373B00A9C306 /* CodeProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeProfile.h; sourceTree = "<group>"; };
 		86B5826A14D35D5100A9C306 /* TieredMMapArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TieredMMapArray.h; sourceTree = "<group>"; };
-		86BB09BE138E381B0056702F /* DFGRepatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGRepatch.cpp; path = dfg/DFGRepatch.cpp; sourceTree = "<group>"; };
-		86BB09BF138E381B0056702F /* DFGRepatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGRepatch.h; path = dfg/DFGRepatch.h; sourceTree = "<group>"; };
 		86BF642A148DB2B5004DE36A /* Intrinsic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Intrinsic.h; sourceTree = "<group>"; };
 		86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssembler.h; sourceTree = "<group>"; };
 		86C568DD11A213EE0007F7F0 /* MacroAssemblerARM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerARM.cpp; sourceTree = "<group>"; };
@@ -2707,16 +2713,16 @@
 				0F24E53B17EA9F5900ABB217 /* AssemblyHelpers.cpp */,
 				0F24E53C17EA9F5900ABB217 /* AssemblyHelpers.h */,
 				0F24E53D17EA9F5900ABB217 /* CCallHelpers.h */,
-				0F24E53E17EA9F5900ABB217 /* FPRInfo.h */,
-				0F24E53F17EA9F5900ABB217 /* GPRInfo.h */,
 				0F73D7AB165A142A00ACAB71 /* ClosureCallStubRoutine.cpp */,
 				0F73D7AC165A142A00ACAB71 /* ClosureCallStubRoutine.h */,
 				0FD82E37141AB14200179C94 /* CompactJITCodeMap.h */,
 				A7B48DB60EE74CFC00DCBDB6 /* ExecutableAllocator.cpp */,
 				A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */,
 				86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */,
+				0F24E53E17EA9F5900ABB217 /* FPRInfo.h */,
 				0F766D2D15A8DCDD008F363E /* GCAwareJITStubRoutine.cpp */,
 				0F766D2E15A8DCDD008F363E /* GCAwareJITStubRoutine.h */,
+				0F24E53F17EA9F5900ABB217 /* GPRInfo.h */,
 				0F4680D014BBC5F800BFE272 /* HostCallReturnValue.cpp */,
 				0F4680D114BBC5F800BFE272 /* HostCallReturnValue.h */,
 				1429D92D0ED22D7000B89619 /* JIT.cpp */,
@@ -2735,6 +2741,9 @@
 				86CC85A00EE79A4700288682 /* JITInlines.h */,
 				BCDD51E90FB8DF74004A8BDC /* JITOpcodes.cpp */,
 				A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */,
+				0F24E54517EE274900ABB217 /* JITOperations.cpp */,
+				0F24E54617EE274900ABB217 /* JITOperations.h */,
+				0F24E54717EE274900ABB217 /* JITOperationWrappers.h */,
 				86CC85C30EE7A89400288682 /* JITPropertyAccess.cpp */,
 				A7C1E8C8112E701C00A37F98 /* JITPropertyAccess32_64.cpp */,
 				960626950FB8EC02009798AB /* JITStubCall.h */,
@@ -2757,6 +2766,10 @@
 				A76C51741182748D00715B05 /* JSInterfaceJIT.h */,
 				0F766D3215AE2535008F363E /* JumpReplacementWatchpoint.cpp */,
 				0F766D3315AE2535008F363E /* JumpReplacementWatchpoint.h */,
+				0F24E54817EE274900ABB217 /* RegisterSet.h */,
+				0F24E54917EE274900ABB217 /* Repatch.cpp */,
+				0F24E54A17EE274900ABB217 /* Repatch.h */,
+				0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */,
 				A709F2EF17A0AC0400512E98 /* SlowPathCall.h */,
 				A7386551118697B400540279 /* SpecializedThunkJIT.h */,
 				0F572D4D16879FDB00E57FBD /* ThunkGenerator.h */,
@@ -3614,13 +3627,9 @@
 				0FFFC95114EF909500C72532 /* DFGPredictionPropagationPhase.cpp */,
 				0FFFC95214EF909500C72532 /* DFGPredictionPropagationPhase.h */,
 				86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */,
-				0F766D4215B2A3BD008F363E /* DFGRegisterSet.h */,
-				86BB09BE138E381B0056702F /* DFGRepatch.cpp */,
-				86BB09BF138E381B0056702F /* DFGRepatch.h */,
 				A77A423C17A0BBFD00A8DB81 /* DFGSafeToExecute.h */,
 				A741017E179DAF80002EB8BA /* DFGSaneStringGetByValSlowPathGenerator.h */,
 				86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */,
-				0F766D4515B3701D008F363E /* DFGScratchRegisterAllocator.h */,
 				0F1E3A65153A21DF000F9456 /* DFGSilentRegisterSavePlan.h */,
 				0F1E3A501537C2CB000F9456 /* DFGSlowPathGenerator.h */,
 				86EC9DC21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp */,
@@ -3946,6 +3955,7 @@
 				0F66E16B14DF3F1600B7B2E4 /* DFGAdjacencyList.h in Headers */,
 				0FFB921816D02EB20055A5DB /* DFGAllocator.h in Headers */,
 				A737810C1799EA2E00817533 /* DFGAnalysis.h in Headers */,
+				0F24E54E17EE274900ABB217 /* JITOperationWrappers.h in Headers */,
 				0F1E3A461534CBAF000F9456 /* DFGArgumentPosition.h in Headers */,
 				0F16015E156198C900C2587C /* DFGArgumentsSimplificationPhase.h in Headers */,
 				0F05C3B41683CF9200BAF45B /* DFGArrayifySlowPathGenerator.h in Headers */,
@@ -3956,6 +3966,7 @@
 				0FFB921A16D02EC50055A5DB /* DFGBasicBlockInlines.h in Headers */,
 				A70B083317A0B79B00DAF14B /* DFGBinarySwitch.h in Headers */,
 				A7D89CF417A0B8CC00773AD8 /* DFGBlockInsertionSet.h in Headers */,
+				0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */,
 				0F8364B7164B0C110053329A /* DFGBranchDirection.h in Headers */,
 				86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */,
 				0F256C361627B0AD007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h in Headers */,
@@ -4030,14 +4041,11 @@
 				0FBE0F7516C1DB0B0082C5E8 /* DFGPredictionInjectionPhase.h in Headers */,
 				0FFFC95E14EF90B700C72532 /* DFGPredictionPropagationPhase.h in Headers */,
 				86EC9DD11328DF82002B2AD7 /* DFGRegisterBank.h in Headers */,
-				0F766D4415B2A3C0008F363E /* DFGRegisterSet.h in Headers */,
-				86BB09C1138E381B0056702F /* DFGRepatch.h in Headers */,
 				2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */,
 				A77A424317A0BBFD00A8DB81 /* DFGSafeToExecute.h in Headers */,
 				A741017F179DAF80002EB8BA /* DFGSaneStringGetByValSlowPathGenerator.h in Headers */,
 				86ECA3FA132DF25A002B2AD7 /* DFGScoreBoard.h in Headers */,
 				0FD8A31417D4326C00CA2C40 /* CodeBlockSet.h in Headers */,
-				0F766D4615B3701F008F363E /* DFGScratchRegisterAllocator.h in Headers */,
 				0F1E3A67153A21E2000F9456 /* DFGSilentRegisterSavePlan.h in Headers */,
 				0FFB921D16D02F300055A5DB /* DFGSlowPathGenerator.h in Headers */,
 				86EC9DD31328DF82002B2AD7 /* DFGSpeculativeJIT.h in Headers */,
@@ -4172,6 +4180,7 @@
 				A7A4AE1017973B4D005612B1 /* JITStubsX86Common.h in Headers */,
 				0F5EF91F16878F7D003E5C25 /* JITThunks.h in Headers */,
 				0FC712E317CD8793008CC93C /* JITToDFGDeferredCompilationCallback.h in Headers */,
+				0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */,
 				A76F54A313B28AAB00EF2BCE /* JITWriteBarrier.h in Headers */,
 				BC18C4160E16F5CD00B34460 /* JSActivation.h in Headers */,
 				840480131021A1D9008E7F01 /* JSAPIValueWrapper.h in Headers */,
@@ -4466,6 +4475,8 @@
 				0FF42742158EBE91004CB9FF /* udis86_extern.h in Headers */,
 				0FF42744158EBE91004CB9FF /* udis86_input.h in Headers */,
 				0FF42748158EBE91004CB9FF /* udis86_syn.h in Headers */,
+				0F24E55117EE274900ABB217 /* Repatch.h in Headers */,
+				0F24E54F17EE274900ABB217 /* RegisterSet.h in Headers */,
 				0FF42749158EBE91004CB9FF /* udis86_types.h in Headers */,
 				A7E5AB391799E4B200D2833D /* UDis86Disassembler.h in Headers */,
 				A7A8AF4117ADB5F3005AB174 /* Uint16Array.h in Headers */,
@@ -4935,6 +4946,7 @@
 				0F2BDC15151C5D4D00CD8910 /* DFGFixupPhase.cpp in Sources */,
 				A7D89CF717A0B8CC00773AD8 /* DFGFlushFormat.cpp in Sources */,
 				A7D89CF917A0B8CC00773AD8 /* DFGFlushLivenessAnalysisPhase.cpp in Sources */,
+				0F24E54C17EE274900ABB217 /* JITOperations.cpp in Sources */,
 				86EC9DC71328DF82002B2AD7 /* DFGGraph.cpp in Sources */,
 				A704D90517A0BAA8006BA554 /* DFGInPlaceAbstractState.cpp in Sources */,
 				0FEA0A33170D40BF00BB722C /* DFGJITCode.cpp in Sources */,
@@ -4965,7 +4977,6 @@
 				A78A977A179738B8009DF744 /* DFGPlan.cpp in Sources */,
 				0FBE0F7416C1DB090082C5E8 /* DFGPredictionInjectionPhase.cpp in Sources */,
 				0FFFC95D14EF90B300C72532 /* DFGPredictionPropagationPhase.cpp in Sources */,
-				86BB09C0138E381B0056702F /* DFGRepatch.cpp in Sources */,
 				86EC9DD21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp in Sources */,
 				86880F1F14328BB900B08D42 /* DFGSpeculativeJIT32_64.cpp in Sources */,
 				86880F4D14353B2100B08D42 /* DFGSpeculativeJIT64.cpp in Sources */,
@@ -5230,6 +5241,7 @@
 				9335F24D12E6765B002B5553 /* StringRecursionChecker.cpp in Sources */,
 				BCDE3B430E6C832D001453A7 /* Structure.cpp in Sources */,
 				7E4EE70F0EBB7A5B005934AA /* StructureChain.cpp in Sources */,
+				0F24E55017EE274900ABB217 /* Repatch.cpp in Sources */,
 				C2F0F2D116BAEEE900187C19 /* StructureRareData.cpp in Sources */,
 				0F766D3815AE4A1C008F363E /* StructureStubClearingWatchpoint.cpp in Sources */,
 				BCCF0D0C0EF0B8A500413C8F /* StructureStubInfo.cpp in Sources */,

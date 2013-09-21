@@ -37,7 +37,7 @@ namespace JSC { namespace FTL {
 // Takes the call frame and the index of the exit, and returns the address to
 // jump to.
 extern "C" {
-void* DFG_OPERATION compileFTLOSRExit(ExecState*, unsigned exitID) WTF_INTERNAL;
+void* JIT_OPERATION compileFTLOSRExit(ExecState*, unsigned exitID) WTF_INTERNAL;
 }
 
 } } // namespace JSC::FTL

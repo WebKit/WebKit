@@ -24,24 +24,23 @@
  */
 
 #include "config.h"
-#include "DFGRepatch.h"
+#include "Repatch.h"
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
 #include "CCallHelpers.h"
 #include "CallFrameInlines.h"
-#include "DFGScratchRegisterAllocator.h"
-#include "DFGSpeculativeJIT.h"
-#include "DFGThunks.h"
 #include "GCAwareJITStubRoutine.h"
 #include "LinkBuffer.h"
 #include "Operations.h"
 #include "PolymorphicPutByIdList.h"
 #include "RepatchBuffer.h"
+#include "ScratchRegisterAllocator.h"
 #include "StructureRareDataInlines.h"
+#include "ThunkGenerators.h"
 #include <wtf/StringPrintStream.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
 static void repatchCall(CodeBlock* codeblock, CodeLocationCall call, FunctionPtr newCalleeFunction)
 {
@@ -81,7 +80,7 @@ static void addStructureTransitionCheck(
 {
     if (object->structure() == structure && structure->transitionWatchpointSetIsStillValid()) {
         structure->addTransitionWatchpoint(stubInfo.addWatchpoint(codeBlock));
-#if DFG_ENABLE(JIT_ASSERT)
+#if !ASSERT_DISABLED
         // If we execute this code, the object must have the structure we expect. Assert
         // this in debug modes.
         jit.move(MacroAssembler::TrustedImmPtr(object), scratchGPR);
@@ -187,9 +186,9 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
     
     if (scratchGPR == InvalidGPRReg) {
 #if USE(JSVALUE64)
-        scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, resultGPR);
+        scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, resultGPR);
 #else
-        scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, resultGPR, resultTagGPR);
+        scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, resultGPR, resultTagGPR);
 #endif
         stubJit.push(scratchGPR);
         needToRestoreScratch = true;
@@ -263,9 +262,9 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         
         if (scratchGPR == InvalidGPRReg) {
 #if USE(JSVALUE64)
-            scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, resultGPR);
+            scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, resultGPR);
 #else
-            scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, resultGPR, resultTagGPR);
+            scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, resultGPR, resultTagGPR);
 #endif
             stubJit.push(scratchGPR);
             needToRestoreScratch = true;
@@ -286,7 +285,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         stubJit.or64(GPRInfo::tagTypeNumberRegister, scratchGPR, resultGPR);
 #elif USE(JSVALUE32_64)
         stubJit.move(scratchGPR, resultGPR);
-        stubJit.move(JITCompiler::TrustedImm32(0xffffffff), resultTagGPR); // JSValue::Int32Tag
+        stubJit.move(AssemblyHelpers::TrustedImm32(0xffffffff), resultTagGPR); // JSValue::Int32Tag
 #endif
 
         MacroAssembler::Jump success, fail;
@@ -606,7 +605,7 @@ void buildGetByIDList(ExecState* exec, JSValue baseValue, const Identifier& prop
         repatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationGetById);
 }
 
-static V_DFGOperation_EJCI appropriateGenericPutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
+static V_JITOperation_EJCI appropriateGenericPutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
 {
     if (slot.isStrictMode()) {
         if (putKind == Direct)
@@ -618,7 +617,7 @@ static V_DFGOperation_EJCI appropriateGenericPutByIdFunction(const PutPropertySl
     return operationPutByIdNonStrict;
 }
 
-static V_DFGOperation_EJCI appropriateListBuildingPutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
+static V_JITOperation_EJCI appropriateListBuildingPutByIdFunction(const PutPropertySlot &slot, PutKind putKind)
 {
     if (slot.isStrictMode()) {
         if (putKind == Direct)
@@ -660,9 +659,9 @@ static void emitPutReplaceStub(
     
     if (scratchGPR == InvalidGPRReg && (writeBarrierNeeded || isOutOfLineOffset(slot.cachedOffset()))) {
 #if USE(JSVALUE64)
-        scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR);
+        scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, valueGPR);
 #else
-        scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR, valueTagGPR);
+        scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, valueGPR, valueTagGPR);
 #endif
         needToRestoreScratch = true;
         stubJit.push(scratchGPR);
@@ -675,12 +674,12 @@ static void emitPutReplaceStub(
     
 #if ENABLE(WRITE_BARRIER_PROFILING)
 #if USE(JSVALUE64)
-    scratchGPR2 = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR, scratchGPR);
+    scratchGPR2 = AssemblyHelpers::selectScratchGPR(baseGPR, valueGPR, scratchGPR);
 #else
-    scratchGPR2 = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR, valueTagGPR, scratchGPR);
+    scratchGPR2 = AssemblyHelpers::selectScratchGPR(baseGPR, valueGPR, valueTagGPR, scratchGPR);
 #endif
     stubJit.push(scratchGPR2);
-    SpeculativeJIT::writeBarrier(stubJit, baseGPR, scratchGPR, scratchGPR2, WriteBarrierForPropertyAccess);
+    AssemblyHelpers::writeBarrier(stubJit, baseGPR, scratchGPR, scratchGPR2, WriteBarrierForPropertyAccess);
     stubJit.pop(scratchGPR2);
 #endif
     
@@ -815,7 +814,7 @@ static void emitPutTransitionStub(
     ASSERT(needSecondScratch);
     ASSERT(scratchGPR2 != InvalidGPRReg);
     // Must always emit this write barrier as the structure transition itself requires it
-    SpeculativeJIT::writeBarrier(stubJit, baseGPR, scratchGPR1, scratchGPR2, WriteBarrierForPropertyAccess);
+    AssemblyHelpers::writeBarrier(stubJit, baseGPR, scratchGPR1, scratchGPR2, WriteBarrierForPropertyAccess);
 #endif
     
     MacroAssembler::JumpList slowPath;
@@ -1154,7 +1153,7 @@ static bool tryRepatchIn(
         
         bool needToRestoreScratch;
         if (scratchGPR == InvalidGPRReg) {
-            scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, resultGPR);
+            scratchGPR = AssemblyHelpers::selectScratchGPR(baseGPR, resultGPR);
             stubJit.push(scratchGPR);
             needToRestoreScratch = true;
         } else
@@ -1315,8 +1314,8 @@ void linkClosureCall(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* cal
         CCallHelpers::Address(GPRInfo::callFrameRegister, static_cast<ptrdiff_t>(sizeof(Register) * JSStack::ScopeChain) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
 #endif
     
-    JITCompiler::Call call = stubJit.nearCall();
-    JITCompiler::Jump done = stubJit.jump();
+    AssemblyHelpers::Call call = stubJit.nearCall();
+    AssemblyHelpers::Jump done = stubJit.jump();
     
     slowPath.link(&stubJit);
     stubJit.move(calleeGPR, GPRInfo::nonArgGPR0);
@@ -1325,7 +1324,7 @@ void linkClosureCall(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* cal
 #endif
     stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.callReturnLocation.executableAddress()), GPRInfo::nonArgGPR2);
     stubJit.restoreReturnAddressBeforeReturn(GPRInfo::nonArgGPR2);
-    JITCompiler::Jump slow = stubJit.jump();
+    AssemblyHelpers::Jump slow = stubJit.jump();
     
     LinkBuffer patchBuffer(*vm, &stubJit, callerCodeBlock);
     
@@ -1377,8 +1376,8 @@ void resetGetByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
 
 void resetPutByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
 {
-    V_DFGOperation_EJCI unoptimizedFunction = bitwise_cast<V_DFGOperation_EJCI>(MacroAssembler::readCallTarget(stubInfo.callReturnLocation).executableAddress());
-    V_DFGOperation_EJCI optimizedFunction;
+    V_JITOperation_EJCI unoptimizedFunction = bitwise_cast<V_JITOperation_EJCI>(MacroAssembler::readCallTarget(stubInfo.callReturnLocation).executableAddress());
+    V_JITOperation_EJCI optimizedFunction;
     if (unoptimizedFunction == operationPutByIdStrict || unoptimizedFunction == operationPutByIdStrictBuildList)
         optimizedFunction = operationPutByIdStrictOptimize;
     else if (unoptimizedFunction == operationPutByIdNonStrict || unoptimizedFunction == operationPutByIdNonStrictBuildList)
@@ -1414,6 +1413,6 @@ void resetIn(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
     repatchBuffer.relink(stubInfo.hotPathBegin.jumpAtOffset(0), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase));
 }
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
 #endif

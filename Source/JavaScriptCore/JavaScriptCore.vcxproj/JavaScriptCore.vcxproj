@@ -377,6 +377,7 @@
     <ClCompile Include="..\jit\JITExceptions.cpp" />
     <ClCompile Include="..\jit\JITOpcodes.cpp" />
     <ClCompile Include="..\jit\JITOpcodes32_64.cpp" />
+    <ClCompile Include="..\jit\JITOperations.cpp" />
     <ClCompile Include="..\jit\JITPropertyAccess.cpp" />
     <ClCompile Include="..\jit\JITPropertyAccess32_64.cpp" />
     <ClCompile Include="..\jit\JITStubRoutine.cpp" />
@@ -384,6 +385,7 @@
     <ClCompile Include="..\jit\JITThunks.cpp" />
     <ClCompile Include="..\jit\JITToDFGDeferredCompilationCallback.cpp" />
     <ClCompile Include="..\jit\JumpReplacementWatchpoint.cpp" />
+    <ClCompile Include="..\jit\Repatch.cpp" />
     <ClCompile Include="..\jit\ThunkGenerators.cpp" />
     <ClCompile Include="..\llint\LLIntCLoop.cpp" />
     <ClCompile Include="..\llint\LLIntData.cpp" />
@@ -767,6 +769,8 @@
     <ClInclude Include="..\jit\JITDisassembler.h" />
     <ClInclude Include="..\jit\JITExceptions.h" />
     <ClInclude Include="..\jit\JITInlines.h" />
+    <ClInclude Include="..\jit\JITOperationWrappers.h" />
+    <ClInclude Include="..\jit\JITOperations.h" />
     <ClInclude Include="..\jit\JITStubCall.h" />
     <ClInclude Include="..\jit\JITStubRoutine.h" />
     <ClInclude Include="..\jit\JITStubs.h" />
@@ -778,6 +782,9 @@
     <ClInclude Include="..\jit\JITWriteBarrier.h" />
     <ClInclude Include="..\jit\JSInterfaceJIT.h" />
     <ClInclude Include="..\jit\JumpReplacementWatchpoint.h" />
+    <ClInclude Include="..\jit\RegisterSet.h" />
+    <ClInclude Include="..\jit\Repatch.h" />
+    <ClInclude Include="..\jit\ScratchRegisterAllocator.h" />
     <ClInclude Include="..\jit\SpecializedThunkJIT.h" />
     <ClInclude Include="..\jit\ThunkGenerator.h" />
     <ClInclude Include="..\jit\ThunkGenerators.h" />

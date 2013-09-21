@@ -36,12 +36,12 @@
 #include "DFGJITCode.h"
 #include "DFGOSRExitCompilationInfo.h"
 #include "DFGRegisterBank.h"
-#include "DFGRegisterSet.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "JITCode.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
+#include "RegisterSet.h"
 
 namespace JSC {
 
