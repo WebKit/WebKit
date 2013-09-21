@@ -1,5 +1,13 @@
 2013-09-20  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Unreviewed build fix after r156216.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: I
+        accidentally exposed the symbol of the calling function, not
+        the missing symbol!
+
+2013-09-20  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Unreviewed build fix after r156215.
 
         * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Expose
