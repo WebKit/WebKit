@@ -30,7 +30,6 @@
 #include "HTMLNames.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGElementInstance.h"
-#include "ScriptEventListener.h"
 #include "XLinkNames.h"
 
 namespace WebCore {
@@ -83,7 +82,7 @@ void SVGScriptElement::parseAttribute(const QualifiedName& name, const AtomicStr
     }
 
     if (name == HTMLNames::onerrorAttr) {
-        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().errorEvent, name, value);
         return;
     }
 

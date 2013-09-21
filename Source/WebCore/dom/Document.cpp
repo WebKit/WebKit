@@ -101,6 +101,7 @@
 #include "ImageLoader.h"
 #include "InspectorCounters.h"
 #include "InspectorInstrumentation.h"
+#include "JSLazyEventListener.h"
 #include "Language.h"
 #include "Logging.h"
 #include "MediaCanStartListener.h"
@@ -2140,8 +2141,8 @@ void Document::destroyRenderTree()
 void Document::prepareForDestruction()
 {
     disconnectDescendantFrames();
-    if (DOMWindow* window = this->domWindow())
-        window->willDetachDocumentFromFrame();
+    if (m_domWindow)
+        m_domWindow->willDetachDocumentFromFrame();
     destroyRenderTree();
     disconnectFromFrame();
 }
@@ -2150,8 +2151,8 @@ void Document::removeAllEventListeners()
 {
     EventTarget::removeAllEventListeners();
 
-    if (DOMWindow* domWindow = this->domWindow())
-        domWindow->removeAllEventListeners();
+    if (m_domWindow)
+        m_domWindow->removeAllEventListeners();
     for (Node* node = firstChild(); node; node = NodeTraversal::next(node))
         node->removeAllEventListeners();
 }
@@ -2611,7 +2612,7 @@ double Document::timerAlignmentInterval() const
 
 EventTarget* Document::errorEventTarget()
 {
-    return domWindow();
+    return m_domWindow.get();
 }
 
 void Document::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<ScriptCallStack> callStack)
@@ -3598,7 +3599,7 @@ void Document::takeDOMWindowFrom(Document* document)
 {
     ASSERT(m_frame);
     ASSERT(!m_domWindow);
-    ASSERT(document->domWindow());
+    ASSERT(document->m_domWindow);
     // A valid DOMWindow is needed by CachedFrame for its documents.
     ASSERT(!document->inPageCache());
 
@@ -3611,42 +3612,45 @@ void Document::takeDOMWindowFrom(Document* document)
 
 void Document::setWindowAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener)
 {
-    DOMWindow* domWindow = this->domWindow();
-    if (!domWindow)
+    if (!m_domWindow)
         return;
-    domWindow->setAttributeEventListener(eventType, listener);
+    m_domWindow->setAttributeEventListener(eventType, listener);
+}
+
+void Document::setWindowAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue)
+{
+    if (!m_frame)
+        return;
+    setWindowAttributeEventListener(eventType, JSLazyEventListener::createForDOMWindow(*m_frame, attributeName, attributeValue));
 }
 
 EventListener* Document::getWindowAttributeEventListener(const AtomicString& eventType)
 {
-    DOMWindow* domWindow = this->domWindow();
-    if (!domWindow)
+    if (!m_domWindow)
         return 0;
-    return domWindow->getAttributeEventListener(eventType);
+    return m_domWindow->getAttributeEventListener(eventType);
 }
 
 void Document::dispatchWindowEvent(PassRefPtr<Event> event,  PassRefPtr<EventTarget> target)
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    DOMWindow* domWindow = this->domWindow();
-    if (!domWindow)
+    if (!m_domWindow)
         return;
-    domWindow->dispatchEvent(event, target);
+    m_domWindow->dispatchEvent(event, target);
 }
 
 void Document::dispatchWindowLoadEvent()
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    DOMWindow* domWindow = this->domWindow();
-    if (!domWindow)
+    if (!m_domWindow)
         return;
-    domWindow->dispatchLoadEvent();
+    m_domWindow->dispatchLoadEvent();
     m_loadEventFinished = true;
 }
 
 void Document::enqueueWindowEvent(PassRefPtr<Event> event)
 {
-    event->setTarget(domWindow());
+    event->setTarget(m_domWindow.get());
     m_eventQueue.enqueueEvent(event);
 }
 
@@ -4984,7 +4988,7 @@ void Document::enqueueHashchangeEvent(const String& oldURL, const String& newURL
 void Document::enqueuePopstateEvent(PassRefPtr<SerializedScriptValue> stateObject)
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=36202 Popstate event needs to fire asynchronously
-    dispatchWindowEvent(PopStateEvent::create(stateObject, domWindow() ? domWindow()->history() : 0));
+    dispatchWindowEvent(PopStateEvent::create(stateObject, m_domWindow ? m_domWindow->history() : 0));
 }
 
 void Document::addMediaCanStartListener(MediaCanStartListener* listener)

@@ -2515,8 +2515,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/ScriptController.h \
 	Source/WebCore/bindings/js/ScriptDebugServer.cpp \
 	Source/WebCore/bindings/js/ScriptDebugServer.h \
-	Source/WebCore/bindings/js/ScriptEventListener.cpp \
-	Source/WebCore/bindings/js/ScriptEventListener.h \
 	Source/WebCore/bindings/js/ScriptFunctionCall.cpp \
 	Source/WebCore/bindings/js/ScriptFunctionCall.h \
 	Source/WebCore/bindings/js/ScriptGCEvent.cpp \

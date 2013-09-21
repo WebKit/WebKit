@@ -1163,8 +1163,6 @@
 		41002CCD0F66EDEF009E660D /* ScriptFunctionCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */; };
 		41002CCE0F66EDEF009E660D /* ScriptFunctionCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */; };
 		410B7E721045FAB000D8224F /* JSMessageEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */; };
-		411046410FA222A600BA436A /* ScriptEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 4110463F0FA222A600BA436A /* ScriptEventListener.h */; };
-		411046420FA222A600BA436A /* ScriptEventListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 411046400FA222A600BA436A /* ScriptEventListener.cpp */; };
 		4123081B138C429700BCCFCA /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F19B1A08245E5A001E9ABC /* WebCore.framework */; };
 		41230913138C42FF00BCCFCA /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		4123E569127B3041000FEEA7 /* WindowEventContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4123E567127B3041000FEEA7 /* WindowEventContext.h */; };
@@ -7676,8 +7674,6 @@
 		41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFunctionCall.h; sourceTree = "<group>"; };
 		41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptFunctionCall.cpp; sourceTree = "<group>"; };
 		410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageEventCustom.cpp; sourceTree = "<group>"; };
-		4110463F0FA222A600BA436A /* ScriptEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptEventListener.h; sourceTree = "<group>"; };
-		411046400FA222A600BA436A /* ScriptEventListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptEventListener.cpp; sourceTree = "<group>"; };
 		4123E567127B3041000FEEA7 /* WindowEventContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowEventContext.h; sourceTree = "<group>"; };
 		4123E568127B3041000FEEA7 /* WindowEventContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WindowEventContext.cpp; sourceTree = "<group>"; };
 		4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptState.cpp; sourceTree = "<group>"; };
@@ -19279,8 +19275,6 @@
 				A83E1C720E49042B00140B9C /* ScriptControllerMac.mm */,
 				9F6FC1941122E82A00E80196 /* ScriptDebugServer.cpp */,
 				9F6FC1951122E82A00E80196 /* ScriptDebugServer.h */,
-				411046400FA222A600BA436A /* ScriptEventListener.cpp */,
-				4110463F0FA222A600BA436A /* ScriptEventListener.h */,
 				41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */,
 				41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */,
 				4FD8D0F0119C718B002FA825 /* ScriptGCEvent.cpp */,
@@ -23916,7 +23910,6 @@
 				9F6FC1971122E82A00E80196 /* ScriptDebugServer.h in Headers */,
 				4998AED213FB224D0090B1AA /* ScriptedAnimationController.h in Headers */,
 				08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */,
-				411046410FA222A600BA436A /* ScriptEventListener.h in Headers */,
 				E11C9D9B0EB3681200E409DB /* ScriptExecutionContext.h in Headers */,
 				41002CCD0F66EDEF009E660D /* ScriptFunctionCall.h in Headers */,
 				4FD8D0F3119C718B002FA825 /* ScriptGCEvent.h in Headers */,
@@ -27105,7 +27098,6 @@
 				9F6FC1961122E82A00E80196 /* ScriptDebugServer.cpp in Sources */,
 				4998AED113FB224D0090B1AA /* ScriptedAnimationController.cpp in Sources */,
 				08A484770E5272C500C3FE76 /* ScriptElement.cpp in Sources */,
-				411046420FA222A600BA436A /* ScriptEventListener.cpp in Sources */,
 				E11C9DB00EB3699500E409DB /* ScriptExecutionContext.cpp in Sources */,
 				41002CCE0F66EDEF009E660D /* ScriptFunctionCall.cpp in Sources */,
 				4FD8D0F2119C718B002FA825 /* ScriptGCEvent.cpp in Sources */,

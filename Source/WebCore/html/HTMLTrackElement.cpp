@@ -33,7 +33,6 @@
 #include "HTMLNames.h"
 #include "Logging.h"
 #include "RuntimeEnabledFeatures.h"
-#include "ScriptEventListener.h"
 
 using namespace std;
 

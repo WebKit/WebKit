@@ -191,7 +191,6 @@ SOURCES += \
      bindings/js/ScriptController.cpp \
      bindings/js/ScriptControllerQt.cpp \
      bindings/js/ScriptDebugServer.cpp \
-     bindings/js/ScriptEventListener.cpp \
      bindings/js/ScriptFunctionCall.cpp \
      bindings/js/ScriptGCEvent.cpp \
      bindings/js/ScriptObject.cpp \
@@ -1370,7 +1369,6 @@ HEADERS += \
     bindings/js/ScriptCachedFrameData.h \
     bindings/js/ScriptController.h \
     bindings/js/ScriptDebugServer.h \
-    bindings/js/ScriptEventListener.h \
     bindings/js/ScriptFunctionCall.h \
     bindings/js/ScriptGCEvent.h \
     bindings/js/ScriptHeapSnapshot.h \

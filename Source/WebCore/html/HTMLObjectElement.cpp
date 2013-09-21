@@ -48,7 +48,6 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
 #include "RenderWidget.h"
-#include "ScriptEventListener.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
 #include "Text.h"
@@ -124,7 +123,7 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicSt
         if (renderer())
             setNeedsWidgetUpdate(true);
     } else if (name == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().beforeloadEvent, name, value);
     else
         HTMLPlugInImageElement::parseAttribute(name, value);
 }

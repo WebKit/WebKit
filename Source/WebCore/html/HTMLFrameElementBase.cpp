@@ -37,7 +37,6 @@
 #include "Page.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"
-#include "ScriptEventListener.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
 
@@ -127,10 +126,10 @@ void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const Atomi
             contentFrame()->setInViewSourceMode(viewSourceMode());
 #endif
     } else if (name == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().beforeloadEvent, name, value);
     else if (name == onbeforeunloadAttr) {
         // FIXME: should <frame> elements have beforeunload handlers?
-        setAttributeEventListener(eventNames().beforeunloadEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().beforeunloadEvent, name, value);
     } else
         HTMLFrameOwnerElement::parseAttribute(name, value);
 }

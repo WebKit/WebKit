@@ -51,7 +51,6 @@
 #include "NodeTraversal.h"
 #include "RenderLineBreak.h"
 #include "ScriptController.h"
-#include "ScriptEventListener.h"
 #include "Settings.h"
 #include "StylePropertySet.h"
 #include "SubframeLoader.h"
@@ -340,7 +339,7 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& 
             populateEventNameForAttributeLocalNameMap(eventNames);
         const AtomicString& eventName = eventNames.get(name.localName().impl());
         if (!eventName.isNull())
-            setAttributeEventListener(eventName, createAttributeEventListener(this, name, value));
+            setAttributeEventListener(eventName, name, value);
     }
 }
 

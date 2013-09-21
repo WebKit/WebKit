@@ -36,8 +36,6 @@ namespace WebCore {
     class Document;
     class Event;
     class DOMWrapperWorld;
-    class JSLazyEventListener;
-    class JSEventListener;
     class ScriptExecutionContext;
 
     typedef HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::Structure> > JSDOMStructureMap;

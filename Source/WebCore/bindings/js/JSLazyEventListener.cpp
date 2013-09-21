@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2013 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,11 +25,9 @@
 #include "JSNode.h"
 #include "ScriptController.h"
 #include <runtime/FunctionConstructor.h>
-#include <runtime/JSFunction.h>
-#include <runtime/JSLock.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/TextPosition.h>
 
 using namespace JSC;
 
@@ -37,7 +35,7 @@ namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, eventListenerCounter, ("JSLazyEventListener"));
 
-JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, Node* node, const String& sourceURL, const TextPosition& position, JSObject* wrapper, DOMWrapperWorld* isolatedWorld)
+JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, ContainerNode* node, const String& sourceURL, const TextPosition& position, JSObject* wrapper, DOMWrapperWorld* isolatedWorld)
     : JSEventListener(0, wrapper, true, isolatedWorld)
     , m_functionName(functionName)
     , m_eventParameterName(eventParameterName)
@@ -126,6 +124,49 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
         listenerAsFunction->setScope(exec->vm(), jsCast<JSNode*>(wrapper())->pushEventHandlerScope(exec, listenerAsFunction->scope()));
     }
     return jsFunction;
+}
+
+static const String& eventParameterName(bool isSVGEvent)
+{
+    static NeverDestroyed<const String> eventString(ASCIILiteral("event"));
+    static NeverDestroyed<const String> evtString(ASCIILiteral("evt"));
+    return isSVGEvent ? evtString : eventString;
+}
+
+PassRefPtr<JSLazyEventListener> JSLazyEventListener::createForNode(ContainerNode& node, const QualifiedName& attributeName, const AtomicString& attributeValue)
+{
+    if (attributeValue.isNull())
+        return nullptr;
+
+    TextPosition position = TextPosition::minimumPosition();
+    String sourceURL;
+
+    // FIXME: We should be able to provide source information for frameless documents too (e.g. for importing nodes from XMLHttpRequest.responseXML).
+    if (Frame* frame = node.document().frame()) {
+        if (!frame->script().canExecuteScripts(AboutToExecuteScript))
+            return nullptr;
+
+        position = frame->script().eventHandlerPosition();
+        sourceURL = node.document().url().string();
+    }
+
+    return adoptRef(new JSLazyEventListener(attributeName.localName().string(),
+        eventParameterName(node.isSVGElement()), attributeValue,
+        &node, sourceURL, position, nullptr, mainThreadNormalWorld()));
+}
+
+PassRefPtr<JSLazyEventListener> JSLazyEventListener::createForDOMWindow(Frame& frame, const QualifiedName& attributeName, const AtomicString& attributeValue)
+{
+    if (attributeValue.isNull())
+        return nullptr;
+
+    if (!frame.script().canExecuteScripts(AboutToExecuteScript))
+        return nullptr;
+
+    return adoptRef(new JSLazyEventListener(attributeName.localName().string(),
+        eventParameterName(frame.document()->isSVGDocument()), attributeValue,
+        nullptr, frame.document()->url().string(), frame.script().eventHandlerPosition(),
+        toJSDOMWindow(&frame, mainThreadNormalWorld()), mainThreadNormalWorld()));
 }
 
 } // namespace WebCore

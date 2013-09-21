@@ -28,7 +28,6 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
-#include "ScriptEventListener.h"
 #include "Text.h"
 #include <wtf/Ref.h>
 
@@ -66,7 +65,7 @@ void HTMLScriptElement::parseAttribute(const QualifiedName& name, const AtomicSt
     else if (name == asyncAttr)
         handleAsyncAttribute();
     else if (name == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().beforeloadEvent, name, value);
     else
         HTMLElement::parseAttribute(name, value);
 }

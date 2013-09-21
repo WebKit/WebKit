@@ -36,7 +36,6 @@
 #include "HTMLParserIdioms.h"
 #include "Page.h"
 #include "RenderImage.h"
-#include "ScriptEventListener.h"
 
 using namespace std;
 
@@ -127,7 +126,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
     } else if (name == usemapAttr)
         setIsLink(!value.isNull() && !shouldProhibitLinks(this));
     else if (name == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().beforeloadEvent, name, value);
     else if (name == compositeAttr) {
         // FIXME: images don't support blend modes in their compositing attribute.
         BlendMode blendOp = BlendModeNormal;

@@ -53,7 +53,6 @@
 #include "SVGSVGElement.h"
 #include "SVGTitleElement.h"
 #include "SVGUseElement.h"
-#include "ScriptEventListener.h"
 #include "ShadowRoot.h"
 #include "XLinkNames.h"
 #include "XMLNames.h"
@@ -494,29 +493,29 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& v
 {
     // standard events
     if (name == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().loadEvent, name, value);
     else if (name == onclickAttr)
-        setAttributeEventListener(eventNames().clickEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().clickEvent, name, value);
     else if (name == onmousedownAttr)
-        setAttributeEventListener(eventNames().mousedownEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().mousedownEvent, name, value);
     else if (name == onmouseenterAttr)
-        setAttributeEventListener(eventNames().mouseenterEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().mouseenterEvent, name, value);
     else if (name == onmouseleaveAttr)
-        setAttributeEventListener(eventNames().mouseleaveEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().mouseleaveEvent, name, value);
     else if (name == onmousemoveAttr)
-        setAttributeEventListener(eventNames().mousemoveEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().mousemoveEvent, name, value);
     else if (name == onmouseoutAttr)
-        setAttributeEventListener(eventNames().mouseoutEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().mouseoutEvent, name, value);
     else if (name == onmouseoverAttr)
-        setAttributeEventListener(eventNames().mouseoverEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().mouseoverEvent, name, value);
     else if (name == onmouseupAttr)
-        setAttributeEventListener(eventNames().mouseupEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().mouseupEvent, name, value);
     else if (name == SVGNames::onfocusinAttr)
-        setAttributeEventListener(eventNames().focusinEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().focusinEvent, name, value);
     else if (name == SVGNames::onfocusoutAttr)
-        setAttributeEventListener(eventNames().focusoutEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().focusoutEvent, name, value);
     else if (name == SVGNames::onactivateAttr)
-        setAttributeEventListener(eventNames().DOMActivateEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().DOMActivateEvent, name, value);
     else if (name == HTMLNames::classAttr)
         setClassNameBaseValue(value);
     else if (SVGLangSpace::parseAttribute(name, value)) {

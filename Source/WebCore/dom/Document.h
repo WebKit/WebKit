@@ -729,6 +729,7 @@ public:
     DOMWindow* defaultView() const { return domWindow(); } 
 
     // Helper functions for forwarding DOMWindow event related tasks to the DOMWindow if it exists.
+    void setWindowAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
     void setWindowAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
     EventListener* getWindowAttributeEventListener(const AtomicString& eventType);
     void dispatchWindowEvent(PassRefPtr<Event>, PassRefPtr<EventTarget> = 0);

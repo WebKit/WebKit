@@ -1,3 +1,109 @@
+2013-09-20  Darin Adler  <darin@apple.com>
+
+        Shink attribute event listener code
+        https://bugs.webkit.org/show_bug.cgi?id=121735
+
+        Reviewed by Antti Koivisto.
+
+        * GNUmakefile.list.am: Eliminate ScriptEventListener source files.
+        * Target.pri: Ditto.
+        * UseJSC.cmake: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+
+        * bindings/js/JSDOMGlobalObject.h: Removed unneeded forward declarations
+        of JSEventListener and JSLazyEventListener.
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::JSLazyEventListener): Changed type to
+        ContainerNode because the node pointer is only ever used for elements
+        and documents.
+        (WebCore::eventParameterName): Moved this function here from
+        ScriptEventListener.cpp, but also rewrote to use NeverDestroyed.
+        (WebCore::JSLazyEventListener::createForNode): Moved this function
+        here from ScriptEventListener.cpp, cleaned up a bit.
+        (WebCore::JSLazyEventListener::createForDOMWindow): Ditto.
+
+        * bindings/js/JSLazyEventListener.h: Replaced the old create function
+        with two new create functions we can use directly. Also used some
+        OVERRIDE, some FINAL, and a bit of WTF_DELETED_FUNCTION so we don't
+        accidentally call create and create a non-lazy listener.
+
+        * bindings/js/ScriptEventListener.cpp: Removed.
+        * bindings/js/ScriptEventListener.h: Removed.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::setAttributeEventListener): Added.
+        Calls JSLazyEventListener::createForNode and then calls the other
+        overload of setAttributeEventListener, to obviate having more code
+        at the call site.
+        * dom/ContainerNode.h: Added overload of setAttributeEventListener
+        for convenient use in Document and Element implementations.
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction): Use m_domWindow instead
+        of the domWindow() function.
+        (WebCore::Document::removeAllEventListeners): Ditto.
+        (WebCore::Document::errorEventTarget): Ditto.
+        (WebCore::Document::takeDOMWindowFrom): Ditto.
+        (WebCore::Document::setWindowAttributeEventListener): Ditto. Also
+        added an overload that calls JSLazyEventListener::createForDOMWindow.
+        (WebCore::Document::getWindowAttributeEventListener): Use m_domWindow.
+        (WebCore::Document::dispatchWindowEvent): Ditto.
+        (WebCore::Document::dispatchWindowLoadEvent): Ditto.
+        (WebCore::Document::enqueueWindowEvent): Ditto.
+        (WebCore::Document::enqueuePopstateEvent): Ditto.
+        * dom/Document.h: Added overload of setWindowAttributeEventListener.
+
+        * html/HTMLBodyElement.cpp: Removed unnneded include.
+        (WebCore::HTMLBodyElement::parseAttribute): Removed all the calls to
+        createAttributeEventListener, and use the setAttributeEventListener
+        overloads instead.
+        * html/HTMLButtonElement.cpp: Ditto.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseAttribute): Ditto.
+        * html/HTMLFormControlElement.cpp: Ditto.
+        * html/HTMLFormElement.cpp: Ditto.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseAttribute): Ditto.
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseAttribute): Ditto.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute): Ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute): Ditto.
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseAttribute): Ditto.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute): Ditto.
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseAttribute): Ditto.
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseAttribute): Ditto.
+        * html/HTMLSelectElement.cpp: Ditto.
+        * html/HTMLStyleElement.cpp: Ditto.
+        * html/HTMLTextFormControlElement.cpp: Ditto.
+        * html/HTMLTrackElement.cpp: Ditto.
+        * html/track/LoadableTextTrack.cpp: Ditto.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::parseAttribute): Ditto.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseAttribute): Ditto.
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::parseAttribute): Ditto.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        Moved the code here to dig inside a JSEventListener for things like
+        the source location. This used to be spread across multiple function
+        calls in ScriptEventListener.h, which were doing and redoing the same
+        things, so better to just get it all at once.
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::init): Fixed "minium" typo.
+
 2013-09-21  Anders Carlsson  <andersca@apple.com>
 
         Don't store the "processing-instruction" string for PI tokens in the XPath parser

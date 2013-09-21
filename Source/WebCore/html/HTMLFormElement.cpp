@@ -44,7 +44,6 @@
 #include "Page.h"
 #include "RenderTextControl.h"
 #include "ScriptController.h"
-#include "ScriptEventListener.h"
 #include "Settings.h"
 #include <limits>
 #include <wtf/Ref.h>

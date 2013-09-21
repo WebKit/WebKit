@@ -31,7 +31,6 @@
 #include "HTMLNames.h"
 #include "MediaList.h"
 #include "RuntimeEnabledFeatures.h"
-#include "ScriptEventListener.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
 #include "StyleSheetContents.h"

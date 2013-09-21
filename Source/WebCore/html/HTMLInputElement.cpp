@@ -65,7 +65,6 @@
 #include "ScopedEventQueue.h"
 #include "SearchInputType.h"
 #include "ShadowRoot.h"
-#include "ScriptEventListener.h"
 #include "StyleResolver.h"
 #include <wtf/MathExtras.h>
 #include <wtf/Ref.h>
@@ -689,7 +688,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         // FIXME: ignore for the moment
     } else if (name == onsearchAttr) {
         // Search field and slider attributes all just cause updateFromElement to be called through style recalcing.
-        setAttributeEventListener(eventNames().searchEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().searchEvent, name, value);
     } else if (name == resultsAttr) {
         int oldResults = m_maxResults;
         m_maxResults = !value.isNull() ? std::min(value.toInt(), maxSavedResults) : -1;
@@ -762,7 +761,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         setNeedsStyleRecalc();
         FeatureObserver::observe(&document(), FeatureObserver::PrefixedSpeechAttribute);
     } else if (name == onwebkitspeechchangeAttr)
-        setAttributeEventListener(eventNames().webkitspeechchangeEvent, createAttributeEventListener(this, name, value));
+        setAttributeEventListener(eventNames().webkitspeechchangeEvent, name, value);
 #endif
 #if ENABLE(DIRECTORY_UPLOAD)
     else if (name == webkitdirectoryAttr) {

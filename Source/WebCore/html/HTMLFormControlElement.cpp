@@ -38,7 +38,6 @@
 #include "HTMLTextAreaElement.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
-#include "ScriptEventListener.h"
 #include "ValidationMessage.h"
 #include "ValidityState.h"
 #include <wtf/Ref.h>

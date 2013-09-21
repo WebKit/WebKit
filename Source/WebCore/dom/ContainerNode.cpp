@@ -39,6 +39,7 @@
 #include "InlineTextBox.h"
 #include "InsertionPoint.h"
 #include "InspectorInstrumentation.h"
+#include "JSLazyEventListener.h"
 #include "JSNode.h"
 #include "LoaderStrategy.h"
 #include "MemoryCache.h"
@@ -1092,6 +1093,11 @@ void ContainerNode::updateTreeAfterInsertion(Node* child, AttachBehavior attachB
     }
 
     dispatchChildInsertionEvents(child);
+}
+
+void ContainerNode::setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue)
+{
+    setAttributeEventListener(eventType, JSLazyEventListener::createForNode(*this, attributeName, attributeValue));
 }
 
 } // namespace WebCore

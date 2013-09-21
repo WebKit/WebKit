@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2008, 2009, 2013 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -26,30 +26,33 @@
 
 namespace WebCore {
 
-    class Node;
+    class ContainerNode;
+    class Frame;
+    class QualifiedName;
 
-    class JSLazyEventListener : public JSEventListener {
+    class JSLazyEventListener FINAL : public JSEventListener {
     public:
-        static PassRefPtr<JSLazyEventListener> create(const String& functionName, const String& eventParameterName, const String& code, Node* node, const String& sourceURL, const TextPosition& position, JSC::JSObject* wrapper, DOMWrapperWorld* isolatedWorld)
-        {
-            return adoptRef(new JSLazyEventListener(functionName, eventParameterName, code, node, sourceURL, position, wrapper, isolatedWorld));
-        }
+        static PassRefPtr<JSLazyEventListener> createForNode(ContainerNode&, const QualifiedName& attributeName, const AtomicString& attributeValue);
+        static PassRefPtr<JSLazyEventListener> createForDOMWindow(Frame&, const QualifiedName& attributeName, const AtomicString& attributeValue);
+
         virtual ~JSLazyEventListener();
 
     private:
-        JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, Node*, const String& sourceURL, const TextPosition&, JSC::JSObject* wrapper, DOMWrapperWorld* isolatedWorld);
+        JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, ContainerNode*, const String& sourceURL, const TextPosition&, JSC::JSObject* wrapper, DOMWrapperWorld* isolatedWorld);
 
-        virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const;
-        virtual bool wasCreatedFromMarkup() const { return true; }
+        virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const OVERRIDE;
+        virtual bool wasCreatedFromMarkup() const OVERRIDE { return true; }
+
+        static void create() WTF_DELETED_FUNCTION;
 
         mutable String m_functionName;
         mutable String m_eventParameterName;
         mutable String m_code;
         mutable String m_sourceURL;
         TextPosition m_position;
-        Node* m_originalNode;
+        ContainerNode* m_originalNode;
     };
 
 } // namespace WebCore
 
-#endif // JSEventListener_h
+#endif // JSLazyEventListener_h

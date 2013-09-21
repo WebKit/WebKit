@@ -123,6 +123,9 @@ public:
 
     virtual bool childShouldCreateRenderer(const Node*) const { return true; }
 
+    using Node::setAttributeEventListener;
+    void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
+
 protected:
     explicit ContainerNode(Document*, ConstructionType = CreateContainer);
 

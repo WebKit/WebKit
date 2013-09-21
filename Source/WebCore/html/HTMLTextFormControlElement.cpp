@@ -41,7 +41,6 @@
 #include "NodeTraversal.h"
 #include "RenderBlock.h"
 #include "RenderTheme.h"
-#include "ScriptEventListener.h"
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "htmlediting.h"
