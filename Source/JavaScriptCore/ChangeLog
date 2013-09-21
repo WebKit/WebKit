@@ -1,3 +1,17 @@
+2013-09-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        (un)shiftCountWithAnyIndexingType will start over in the middle of copying if it sees a hole
+        https://bugs.webkit.org/show_bug.cgi?id=121717
+
+        Reviewed by Oliver Hunt.
+
+        This bug caused the array to become corrupted. We now check for holes before we start moving things, 
+        and start moving things only once we've determined that there are none.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+
 2013-09-20  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r156047): WebCore hangs inside JSC::toInt32(double)
