@@ -952,7 +952,7 @@ region:
     before_region_rule WEBKIT_REGION_RULE_SYM WHITESPACE selector_list at_rule_header_end '{' at_rule_body_start maybe_space block_valid_rule_list save_block {
         OwnPtr<Vector<RefPtr<StyleRuleBase>>> ruleList = adoptPtr($9);
         if ($4)
-            $$ = parser->createRegionRule($4, ruleList.get()).leakRef();
+            $$ = parser->createRegionRule(adoptPtr($4).get(), ruleList.get()).leakRef();
         else {
             $$ = nullptr;
             parser->popRuleData();
