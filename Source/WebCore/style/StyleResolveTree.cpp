@@ -190,7 +190,7 @@ static RenderNamedFlowThread* moveToFlowThreadIfNeeded(Element& element, const R
         return 0;
     FlowThreadController& flowThreadController = element.document().renderView()->flowThreadController();
     RenderNamedFlowThread& parentFlowRenderer = flowThreadController.ensureRenderFlowThreadWithName(style.flowThread());
-    flowThreadController.registerNamedFlowContentNode(&element, &parentFlowRenderer);
+    flowThreadController.registerNamedFlowContentElement(element, parentFlowRenderer);
     return &parentFlowRenderer;
 }
 #endif

@@ -106,25 +106,22 @@ void FlowThreadController::layoutRenderNamedFlowThreads()
     }
 }
 
-void FlowThreadController::registerNamedFlowContentNode(Node* contentNode, RenderNamedFlowThread* namedFlow)
+void FlowThreadController::registerNamedFlowContentElement(Element& contentElement, RenderNamedFlowThread& namedFlow)
 {
-    ASSERT(contentNode && contentNode->isElementNode());
-    ASSERT(namedFlow);
-    ASSERT(!m_mapNamedFlowContentNodes.contains(contentNode));
-    ASSERT(!namedFlow->hasContentNode(contentNode));
-    m_mapNamedFlowContentNodes.add(contentNode, namedFlow);
-    namedFlow->registerNamedFlowContentNode(contentNode);
+    ASSERT(!m_mapNamedFlowContentElement.contains(&contentElement));
+    ASSERT(!namedFlow.hasContentElement(contentElement));
+    m_mapNamedFlowContentElement.add(&contentElement, &namedFlow);
+    namedFlow.registerNamedFlowContentElement(contentElement);
 }
 
-void FlowThreadController::unregisterNamedFlowContentNode(Node* contentNode)
+void FlowThreadController::unregisterNamedFlowContentElement(Element& contentElement)
 {
-    ASSERT(contentNode && contentNode->isElementNode());
-    HashMap<const Node*, RenderNamedFlowThread*>::iterator it = m_mapNamedFlowContentNodes.find(contentNode);
-    ASSERT(it != m_mapNamedFlowContentNodes.end());
+    auto it = m_mapNamedFlowContentElement.find(&contentElement);
+    ASSERT(it != m_mapNamedFlowContentElement.end());
     ASSERT(it->value);
-    ASSERT(it->value->hasContentNode(contentNode));
-    it->value->unregisterNamedFlowContentNode(contentNode);
-    m_mapNamedFlowContentNodes.remove(contentNode);
+    ASSERT(it->value->hasContentElement(contentElement));
+    it->value->unregisterNamedFlowContentElement(contentElement);
+    m_mapNamedFlowContentElement.remove(&contentElement);
 }
 
 void FlowThreadController::updateFlowThreadsChainIfNecessary()
@@ -278,9 +275,9 @@ void FlowThreadController::updateRenderFlowThreadLayersIfNeeded()
 }
 #endif
 
-bool FlowThreadController::isContentNodeRegisteredWithAnyNamedFlow(const Node* contentNode) const
+bool FlowThreadController::isContentElementRegisteredWithAnyNamedFlow(const Element& contentElement) const
 {
-    return m_mapNamedFlowContentNodes.contains(contentNode);
+    return m_mapNamedFlowContentElement.contains(&contentElement);
 }
 
 // Collect the fixed positioned layers that have the named flows as containing block

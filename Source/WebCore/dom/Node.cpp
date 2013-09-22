@@ -95,7 +95,6 @@
 #include "SelectorQuery.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "StaticNodeList.h"
 #include "StorageEvent.h"
 #include "StyleResolver.h"
 #include "TagNodeList.h"
@@ -957,11 +956,6 @@ bool Node::canStartSelection() const
             return false;
     }
     return parentOrShadowHostNode() ? parentOrShadowHostNode()->canStartSelection() : true;
-}
-
-bool Node::isRegisteredWithNamedFlow() const
-{
-    return document().renderView()->flowThreadController().isContentNodeRegisteredWithAnyNamedFlow(this);
 }
 
 Element* Node::shadowHost() const

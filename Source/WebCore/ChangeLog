@@ -1,3 +1,57 @@
+2013-09-22  Sam Weinig  <sam@webkit.org>
+
+        CTTE: RenderNamedFlowThread and FlowThreadController should operate on Elements, not Nodes
+        https://bugs.webkit.org/show_bug.cgi?id=121768
+
+        Reviewed by Andreas Kling.
+
+        * dom/Element.cpp:
+        (WebCore::Element::unregisterNamedFlowContentElement):
+        (WebCore::Element::shouldMoveToFlowThread):
+        (WebCore::Element::clearStyleDerivedDataBeforeDetachingRenderer):
+        * dom/Element.h:
+        Update to new names and to pass this as a reference to the FlowThreadController.
+
+        * dom/Node.cpp:
+        * dom/Node.h:
+        Move isRegisteredWithNamedFlow() to Element.
+
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::getRegionsByContent):
+        (WebCore::WebKitNamedFlow::getRegions):
+        (WebCore::WebKitNamedFlow::getContent):
+        Update for contentNodes() -> contentElements() name change. Modernize the code a bit
+        as well.
+
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::registerNamedFlowContentElement):
+        (WebCore::FlowThreadController::unregisterNamedFlowContentElement):
+        (WebCore::FlowThreadController::isContentElementRegisteredWithAnyNamedFlow):
+        * rendering/FlowThreadController.h:
+        Change the Node* -> RenderNamedFlowThread* map to a Element* -> RenderNamedFlowThread*. Update
+        functions taking Node*s to take Element&s.
+
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::~RenderNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::clearContentElements):
+        (WebCore::RenderNamedFlowThread::registerNamedFlowContentElement):
+        (WebCore::RenderNamedFlowThread::unregisterNamedFlowContentElement):
+        (WebCore::RenderNamedFlowThread::hasContentElement):
+        (WebCore::isContainedInElements):
+        (WebCore::nextNodeInsideContentElement):
+        (WebCore::RenderNamedFlowThread::getRanges):
+        * rendering/RenderNamedFlowThread.h:
+        Change the NamedFlowContent set to store Elements rather than Nodes. Like with FlowThreadController,
+        update registration functions to take Element&s instead of Node*s, removing asserts.
+        
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::setRegionObjectsRegionStyle):
+        Update for new names.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::moveToFlowThreadIfNeeded):
+        Pass the Element and RenderNamedFlowThread as references.
+
 2013-09-22  Andreas Kling  <akling@apple.com>
 
         Give purity hints to compiler to avoid penalizing repeated calls to some functions.

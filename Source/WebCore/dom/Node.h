@@ -264,8 +264,6 @@ public:
     bool inNamedFlow() const { return getFlag(InNamedFlowFlag); }
     bool hasCustomStyleResolveCallbacks() const { return getFlag(HasCustomStyleResolveCallbacksFlag); }
 
-    bool isRegisteredWithNamedFlow() const;
-
     bool hasSyntheticAttrChildNodes() const { return getFlag(HasSyntheticAttrChildNodesFlag); }
     void setHasSyntheticAttrChildNodes(bool flag) { setFlag(flag, HasSyntheticAttrChildNodesFlag); }
 

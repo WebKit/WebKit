@@ -661,7 +661,7 @@ private:
 
     SpellcheckAttributeState spellcheckAttributeState() const;
 
-    void unregisterNamedFlowContentNode();
+    void unregisterNamedFlowContentElement();
 
     void createUniqueElementData();
 

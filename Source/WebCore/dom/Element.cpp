@@ -1363,10 +1363,10 @@ void Element::removedFrom(ContainerNode* insertionPoint)
 #endif
 }
 
-void Element::unregisterNamedFlowContentNode()
+void Element::unregisterNamedFlowContentElement()
 {
     if (document().cssRegionsEnabled() && inNamedFlow() && document().renderView())
-        document().renderView()->flowThreadController().unregisterNamedFlowContentNode(this);
+        document().renderView()->flowThreadController().unregisterNamedFlowContentElement(*this);
 }
 
 void Element::lazyReattach(ShouldSetAttached shouldSetAttached)
@@ -2645,7 +2645,7 @@ bool Element::shouldMoveToFlowThread(const RenderStyle& styleToUse) const
     if (styleToUse.flowThread().isEmpty())
         return false;
 
-    return !isRegisteredWithNamedFlow();
+    return !document().renderView()->flowThreadController().isContentElementRegisteredWithAnyNamedFlow(*this);
 }
 
 const AtomicString& Element::webkitRegionOverset() const
@@ -2972,7 +2972,7 @@ void Element::resetComputedStyle()
 
 void Element::clearStyleDerivedDataBeforeDetachingRenderer()
 {
-    unregisterNamedFlowContentNode();
+    unregisterNamedFlowContentElement();
     cancelFocusAppearanceUpdate();
     clearBeforePseudoElement();
     clearAfterPseudoElement();

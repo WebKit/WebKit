@@ -64,7 +64,7 @@ RenderNamedFlowThread::~RenderNamedFlowThread()
 {
     // The flow thread can be destroyed without unregistering the content nodes if the document is destroyed.
     // This can lead to problems because the nodes are still marked as belonging to a flow thread.
-    clearContentNodes();
+    clearContentElements();
 
     // Also leave the NamedFlow object in a consistent state by calling mark for destruction.
     setMarkForDestruction();
@@ -75,19 +75,19 @@ const char* RenderNamedFlowThread::renderName() const
     return "RenderNamedFlowThread";
 }
     
-void RenderNamedFlowThread::clearContentNodes()
+void RenderNamedFlowThread::clearContentElements()
 {
-    for (NamedFlowContentNodes::iterator it = m_contentNodes.begin(); it != m_contentNodes.end(); ++it) {
-        Node* contentNode = *it;
+    for (auto it = m_contentElements.begin(), end = m_contentElements.end(); it != end; ++it) {
+        Element* contentElement = *it;
         
-        ASSERT(contentNode && contentNode->isElementNode());
-        ASSERT(contentNode->inNamedFlow());
-        ASSERT(&contentNode->document() == &document());
+        ASSERT(contentElement);
+        ASSERT(contentElement->inNamedFlow());
+        ASSERT(&contentElement->document() == &document());
         
-        contentNode->clearInNamedFlow();
+        contentElement->clearInNamedFlow();
     }
     
-    m_contentNodes.clear();
+    m_contentElements.clear();
 }
 
 void RenderNamedFlowThread::updateWritingMode()
@@ -439,41 +439,45 @@ void RenderNamedFlowThread::pushDependencies(RenderNamedFlowThreadList& list)
 // The content nodes list contains those nodes with -webkit-flow-into: flow.
 // An element with display:none should also be listed among those nodes.
 // The list of nodes is ordered.
-void RenderNamedFlowThread::registerNamedFlowContentNode(Node* contentNode)
+void RenderNamedFlowThread::registerNamedFlowContentElement(Element& contentElement)
 {
-    ASSERT(contentNode && contentNode->isElementNode());
-    ASSERT(&contentNode->document() == &document());
+    ASSERT(&contentElement.document() == &document());
 
-    contentNode->setInNamedFlow();
+    contentElement.setInNamedFlow();
 
     resetMarkForDestruction();
 
     // Find the first content node following the new content node.
-    for (NamedFlowContentNodes::iterator it = m_contentNodes.begin(); it != m_contentNodes.end(); ++it) {
-        Node* node = *it;
-        unsigned short position = contentNode->compareDocumentPosition(node);
+    for (auto it = m_contentElements.begin(), end = m_contentElements.end(); it != end; ++it) {
+        Element* element = *it;
+        unsigned short position = contentElement.compareDocumentPosition(element);
         if (position & Node::DOCUMENT_POSITION_FOLLOWING) {
-            m_contentNodes.insertBefore(node, contentNode);
+            m_contentElements.insertBefore(element, &contentElement);
             return;
         }
     }
-    m_contentNodes.add(contentNode);
+
+    m_contentElements.add(&contentElement);
 }
 
-void RenderNamedFlowThread::unregisterNamedFlowContentNode(Node* contentNode)
+void RenderNamedFlowThread::unregisterNamedFlowContentElement(Element& contentElement)
 {
-    ASSERT(contentNode && contentNode->isElementNode());
-    ASSERT(m_contentNodes.contains(contentNode));
-    ASSERT(contentNode->inNamedFlow());
-    ASSERT(&contentNode->document() == &document());
+    ASSERT(m_contentElements.contains(&contentElement));
+    ASSERT(contentElement.inNamedFlow());
+    ASSERT(&contentElement.document() == &document());
 
-    contentNode->clearInNamedFlow();
-    m_contentNodes.remove(contentNode);
+    contentElement.clearInNamedFlow();
+    m_contentElements.remove(&contentElement);
 
     if (canBeDestroyed())
         setMarkForDestruction();
 }
 
+bool RenderNamedFlowThread::hasContentElement(Element& contentElement) const
+{
+    return m_contentElements.contains(&contentElement);
+}
+    
 const AtomicString& RenderNamedFlowThread::flowThreadName() const
 {
     return m_namedFlow->name();
@@ -549,11 +553,11 @@ bool RenderNamedFlowThread::isMarkedForDestruction() const
     return m_namedFlow->flowState() == WebKitNamedFlow::FlowStateNull;
 }
 
-static bool isContainedInNodes(Vector<Node*> others, Node* node)
+static bool isContainedInElements(const Vector<Element*>& others, Element* element)
 {
     for (size_t i = 0; i < others.size(); i++) {
-        Node* other = others.at(i);
-        if (other->contains(node))
+        Element* other = others.at(i);
+        if (other->contains(element))
             return true;
     }
     return false;
@@ -569,16 +573,16 @@ static bool boxIntersectsRegion(LayoutUnit logicalTopForBox, LayoutUnit logicalB
 }
 
 // Retrieve the next node to be visited while computing the ranges inside a region.
-static Node* nextNodeInsideContentNode(const Node* currNode, const Node* contentNode)
+static Node* nextNodeInsideContentElement(const Node* currNode, const Element* contentElement)
 {
     ASSERT(currNode);
-    ASSERT(contentNode && contentNode->inNamedFlow());
+    ASSERT(contentElement && contentElement->inNamedFlow());
 
 #if ENABLE(SVG)
     if (currNode->renderer() && currNode->renderer()->isSVGRoot())
-        return NodeTraversal::nextSkippingChildren(currNode, contentNode);
+        return NodeTraversal::nextSkippingChildren(currNode, contentElement);
 #endif
-    return NodeTraversal::next(currNode, contentNode);
+    return NodeTraversal::next(currNode, contentElement);
 }
 
 void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range> >& rangeObjects, const RenderRegion* region) const
@@ -598,27 +602,27 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range> >& rangeObjects, cons
     else
         logicalBottomForRegion = region->logicalBottomForFlowThreadContent();
 
-    Vector<Node*> nodes;
-    // eliminate the contentNodes that are descendants of other contentNodes
-    for (NamedFlowContentNodes::const_iterator it = contentNodes().begin(); it != contentNodes().end(); ++it) {
-        Node* node = *it;
-        if (!isContainedInNodes(nodes, node))
-            nodes.append(node);
+    Vector<Element*> elements;
+    // eliminate the contentElements that are descendants of other contentElements
+    for (auto it = contentElements().begin(), end = contentElements().end(); it != end; ++it) {
+        Element* element = *it;
+        if (!isContainedInElements(elements, element))
+            elements.append(element);
     }
 
-    for (size_t i = 0; i < nodes.size(); i++) {
-        Node* contentNode = nodes.at(i);
-        if (!contentNode->renderer())
+    for (size_t i = 0; i < elements.size(); i++) {
+        Element* contentElement = elements.at(i);
+        if (!contentElement->renderer())
             continue;
 
-        RefPtr<Range> range = Range::create(&contentNode->document());
+        RefPtr<Range> range = Range::create(&contentElement->document());
         bool foundStartPosition = false;
         bool startsAboveRegion = true;
         bool endsBelowRegion = true;
         bool skipOverOutsideNodes = false;
         Node* lastEndNode = 0;
 
-        for (Node* node = contentNode; node; node = nextNodeInsideContentNode(node, contentNode)) {
+        for (Node* node = contentElement; node; node = nextNodeInsideContentElement(node, contentElement)) {
             RenderObject* renderer = node->renderer();
             if (!renderer)
                 continue;
@@ -652,7 +656,7 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range> >& rangeObjects, cons
                         if (range->intersectsNode(node, IGNORE_EXCEPTION))
                             range->setEndBefore(node, IGNORE_EXCEPTION);
                         rangeObjects.append(range->cloneRange(IGNORE_EXCEPTION));
-                        range = Range::create(&contentNode->document());
+                        range = Range::create(&contentElement->document());
                         startsAboveRegion = true;
                     } else
                         skipOverOutsideNodes = true;

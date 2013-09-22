@@ -41,7 +41,7 @@ class WebKitNamedFlow;
 
 typedef ListHashSet<RenderNamedFlowThread*> RenderNamedFlowThreadList;
 typedef HashCountedSet<RenderNamedFlowThread*> RenderNamedFlowThreadCountedSet;
-typedef ListHashSet<Node*> NamedFlowContentNodes;
+typedef ListHashSet<Element*> NamedFlowContentElements;
 
 class RenderNamedFlowThread FINAL : public RenderFlowThread {
 public:
@@ -73,10 +73,11 @@ public:
     bool overset() const { return m_overset; }
     void computeOversetStateForRegions(LayoutUnit oldClientAfterEdge);
 
-    void registerNamedFlowContentNode(Node*);
-    void unregisterNamedFlowContentNode(Node*);
-    const NamedFlowContentNodes& contentNodes() const { return m_contentNodes; }
-    bool hasContentNode(Node* contentNode) const { ASSERT(contentNode); return m_contentNodes.contains(contentNode); }
+    void registerNamedFlowContentElement(Element&);
+    void unregisterNamedFlowContentElement(Element&);
+    const NamedFlowContentElements& contentElements() const { return m_contentElements; }
+    bool hasContentElement(Element&) const;
+
     bool isMarkedForDestruction() const;
     void getRanges(Vector<RefPtr<Range> >&, const RenderRegion*) const;
 
@@ -102,10 +103,10 @@ private:
 
     void checkInvalidRegions();
 
-    bool canBeDestroyed() const { return m_invalidRegionList.isEmpty() && m_regionList.isEmpty() && m_contentNodes.isEmpty(); }
+    bool canBeDestroyed() const { return m_invalidRegionList.isEmpty() && m_regionList.isEmpty() && m_contentElements.isEmpty(); }
     void regionLayoutUpdateEventTimerFired(Timer<RenderNamedFlowThread>*);
     void regionOversetChangeEventTimerFired(Timer<RenderNamedFlowThread>*);
-    void clearContentNodes();
+    void clearContentElements();
     void updateWritingMode();
 
 private:
@@ -123,7 +124,7 @@ private:
     typedef ListHashSet<RenderObject*> FlowThreadChildList;
     FlowThreadChildList m_flowThreadChildList;
 
-    NamedFlowContentNodes m_contentNodes;
+    NamedFlowContentElements m_contentElements;
 
     RenderRegionList m_invalidRegionList;
 
