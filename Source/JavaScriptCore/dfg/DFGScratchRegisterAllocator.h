@@ -23,17 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScratchRegisterAllocator_h
-#define ScratchRegisterAllocator_h
+#ifndef DFGScratchRegisterAllocator_h
+#define DFGScratchRegisterAllocator_h
 
 #include <wtf/Platform.h>
 
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
 
+#include "DFGRegisterSet.h"
 #include "MacroAssembler.h"
-#include "RegisterSet.h"
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
 // This class provides a low-level register allocator for use in stubs.
 
@@ -194,9 +194,9 @@ private:
     bool m_didReuseRegisters;
 };
 
-} // namespace JSC
+} } // namespace JSC::DFG
 
-#endif // ENABLE(JIT)
+#endif // ENABLE(DFG_JIT)
 
-#endif // ScratchRegisterAllocator_h
+#endif // DFGScratchRegisterAllocator_h
 

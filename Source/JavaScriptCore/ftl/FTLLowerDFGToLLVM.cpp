@@ -1994,7 +1994,7 @@ private:
         // FIXME: This is unacceptably slow.
         // https://bugs.webkit.org/show_bug.cgi?id=113621
         
-        J_JITOperation_E function =
+        J_DFGOperation_E function =
             m_node->op() == Call ? operationFTLCall : operationFTLConstruct;
         
         int dummyThisArgument = m_node->op() == Call ? 0 : 1;

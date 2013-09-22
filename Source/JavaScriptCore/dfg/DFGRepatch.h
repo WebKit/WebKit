@@ -23,17 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Repatch_h
-#define Repatch_h
+#ifndef DFGRepatch_h
+#define DFGRepatch_h
 
 #include <wtf/Platform.h>
 
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
 
-#include "CCallHelpers.h"
-#include "JITOperations.h"
+#include "DFGJITCompiler.h"
+#include "DFGOperations.h"
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
 void repatchGetByID(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
 void buildGetByIDList(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
@@ -48,9 +48,9 @@ void resetGetByID(RepatchBuffer&, StructureStubInfo&);
 void resetPutByID(RepatchBuffer&, StructureStubInfo&);
 void resetIn(RepatchBuffer&, StructureStubInfo&);
 
-} // namespace JSC
+} } // namespace JSC::DFG
 
-#else // ENABLE(JIT)
+#else // ENABLE(DFG_JIT)
 
 #include <wtf/Assertions.h>
 
@@ -59,11 +59,13 @@ namespace JSC {
 class RepatchBuffer;
 struct StructureStubInfo;
 
+namespace DFG {
+
 inline NO_RETURN_DUE_TO_CRASH void resetGetByID(RepatchBuffer&, StructureStubInfo&) { RELEASE_ASSERT_NOT_REACHED(); }
 inline NO_RETURN_DUE_TO_CRASH void resetPutByID(RepatchBuffer&, StructureStubInfo&) { RELEASE_ASSERT_NOT_REACHED(); }
 inline NO_RETURN void resetIn(RepatchBuffer&, StructureStubInfo&) { RELEASE_ASSERT_NOT_REACHED(); }
 
-} // namespace JSC
+} } // namespace JSC::DFG
 
-#endif // ENABLE(JIT)
-#endif // Repatch_h
+#endif // ENABLE(DFG_JIT)
+#endif // DFGRepatch_h
