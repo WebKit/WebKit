@@ -1,3 +1,20 @@
+2013-09-22  Andreas Kling  <akling@apple.com>
+
+        Give purity hints to compiler to avoid penalizing repeated calls to some functions.
+        <https://webkit.org/b/121744>
+
+        Reviewed by Darin Adler.
+
+        Mark the following functions pure:
+
+            - gcController()
+            - cssValuePool()
+            - threadGlobalData()
+
+        I had this idea when I saw Darin's patch to cache cssValuePool() in a local.
+        We know that this function will always return the same value, so we should just
+        share this knowledge with the compiler and let it do the cleverness instead.
+
 2013-09-21  Darin Adler  <darin@apple.com>
 
         Fix too-strict type error exceptions introduced in WebGL bindings

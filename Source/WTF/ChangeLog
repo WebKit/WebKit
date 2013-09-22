@@ -1,3 +1,15 @@
+2013-09-22  Andreas Kling  <akling@apple.com>
+
+        Give purity hints to compiler to avoid penalizing repeated calls to some functions.
+        <https://webkit.org/b/121744>
+
+        Reviewed by Darin Adler.
+
+        Added a PURE_FUNCTION macro. This is supported on GCC and Clang for now.
+        Marking a function pure means that the compiler's CSE pass is free to coalesce
+        multiple calls to this function because it has no globally observable side
+        effects beyond the first call.
+
 2013-09-20  Anders Carlsson  <andersca@apple.com>
 
         Add an implementation of std::index_sequence from C++14

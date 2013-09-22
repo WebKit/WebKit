@@ -192,6 +192,14 @@
 #endif
 #endif
 
+/* PURE_FUNCTION */
+
+#if COMPILER(GCC)
+#define PURE_FUNCTION __attribute__ ((__pure__))
+#else
+#define PURE_FUNCTION
+#endif
+
 /* ALWAYS_INLINE */
 
 #ifndef ALWAYS_INLINE

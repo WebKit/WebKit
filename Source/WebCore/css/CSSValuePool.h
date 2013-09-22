@@ -86,7 +86,7 @@ private:
     friend CSSValuePool& cssValuePool();
 };
 
-CSSValuePool& cssValuePool();
+CSSValuePool& cssValuePool() PURE_FUNCTION;
 
 }
 
