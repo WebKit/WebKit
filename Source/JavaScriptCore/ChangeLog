@@ -1,5 +1,11 @@
 2013-09-21  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix the revert.
+
+        * dfg/DFGRepatch.cpp:
+
+2013-09-21  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, revert http://trac.webkit.org/changeset/156235. It won't work on Windows.
 
         * CMakeLists.txt:
