@@ -2547,9 +2547,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 
     if (m_rareData) {
         m_rareData->m_exceptionHandlers.shrinkToFit();
-#if ENABLE(JIT)
-        m_rareData->m_callReturnIndexVector.shrinkToFit();
-#endif
 #if ENABLE(DFG_JIT)
         m_rareData->m_inlineCallFrames.shrinkToFit();
         m_rareData->m_codeOrigins.shrinkToFit();
@@ -2640,102 +2637,6 @@ void CodeBlock::linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo* inco
     m_incomingLLIntCalls.push(incoming);
 }
 #endif // ENABLE(LLINT)
-
-#if ENABLE(JIT)
-ClosureCallStubRoutine* CodeBlock::findClosureCallForReturnPC(ReturnAddressPtr returnAddress)
-{
-    for (unsigned i = m_callLinkInfos.size(); i--;) {
-        CallLinkInfo& info = m_callLinkInfos[i];
-        if (!info.stub)
-            continue;
-        if (!info.stub->code().executableMemory()->contains(returnAddress.value()))
-            continue;
-
-        RELEASE_ASSERT(info.stub->codeOrigin().bytecodeIndex != CodeOrigin::invalidBytecodeIndex);
-        return info.stub.get();
-    }
-    
-    // The stub routine may have been jettisoned. This is rare, but we have to handle it.
-    const JITStubRoutineSet& set = m_vm->heap.jitStubRoutines();
-    for (unsigned i = set.size(); i--;) {
-        GCAwareJITStubRoutine* genericStub = set.at(i);
-        if (!genericStub->isClosureCall())
-            continue;
-        ClosureCallStubRoutine* stub = static_cast<ClosureCallStubRoutine*>(genericStub);
-        if (!stub->code().executableMemory()->contains(returnAddress.value()))
-            continue;
-        RELEASE_ASSERT(stub->codeOrigin().bytecodeIndex != CodeOrigin::invalidBytecodeIndex);
-        return stub;
-    }
-    
-    return 0;
-}
-#endif
-
-unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddress)
-{
-    UNUSED_PARAM(exec);
-    UNUSED_PARAM(returnAddress);
-#if ENABLE(LLINT)
-#if !ENABLE(LLINT_C_LOOP)
-    // When using the JIT, we could have addresses that are not bytecode
-    // addresses. We check if the return address is in the LLint glue and
-    // opcode handlers range here to ensure that we are looking at bytecode
-    // before attempting to convert the return address into a bytecode offset.
-    //
-    // In the case of the C Loop LLInt, the JIT is disabled, and the only
-    // valid return addresses should be bytecode PCs. So, we can and need to
-    // forego this check because when we do not ENABLE(COMPUTED_GOTO_OPCODES),
-    // then the bytecode "PC"s are actually the opcodeIDs and are not bounded
-    // by llint_begin and llint_end.
-    if (returnAddress.value() >= LLInt::getCodePtr(llint_begin)
-        && returnAddress.value() <= LLInt::getCodePtr(llint_end))
-#endif
-    {
-        RELEASE_ASSERT(exec->codeBlock());
-        RELEASE_ASSERT(exec->codeBlock() == this);
-        RELEASE_ASSERT(JITCode::isBaselineCode(jitType()));
-        Instruction* instruction = exec->currentVPC();
-        RELEASE_ASSERT(instruction);
-
-        return bytecodeOffset(instruction);
-    }
-#endif // !ENABLE(LLINT)
-
-#if ENABLE(JIT)
-    if (!m_rareData)
-        return 1;
-    Vector<CallReturnOffsetToBytecodeOffset, 0, UnsafeVectorOverflow>& callIndices = m_rareData->m_callReturnIndexVector;
-    if (!callIndices.size())
-        return 1;
-    
-    if (jitCode()->contains(returnAddress.value())) {
-        unsigned callReturnOffset = jitCode()->offsetOf(returnAddress.value());
-        CallReturnOffsetToBytecodeOffset* result =
-            binarySearch<CallReturnOffsetToBytecodeOffset, unsigned>(
-                callIndices, callIndices.size(), callReturnOffset, getCallReturnOffset);
-        RELEASE_ASSERT(result->callReturnOffset == callReturnOffset);
-        RELEASE_ASSERT(result->bytecodeOffset < instructionCount());
-        return result->bytecodeOffset;
-    }
-    ClosureCallStubRoutine* closureInfo = findClosureCallForReturnPC(returnAddress);
-    CodeOrigin origin = closureInfo->codeOrigin();
-    while (InlineCallFrame* inlineCallFrame = origin.inlineCallFrame) {
-        if (inlineCallFrame->baselineCodeBlock() == this)
-            break;
-        origin = inlineCallFrame->caller;
-        RELEASE_ASSERT(origin.bytecodeIndex != CodeOrigin::invalidBytecodeIndex);
-    }
-    RELEASE_ASSERT(origin.bytecodeIndex != CodeOrigin::invalidBytecodeIndex);
-    unsigned bytecodeIndex = origin.bytecodeIndex;
-    RELEASE_ASSERT(bytecodeIndex < instructionCount());
-    return bytecodeIndex;
-#endif // ENABLE(JIT)
-
-#if !ENABLE(LLINT) && !ENABLE(JIT)
-    return 1;
-#endif
-}
 
 void CodeBlock::clearEvalCache()
 {

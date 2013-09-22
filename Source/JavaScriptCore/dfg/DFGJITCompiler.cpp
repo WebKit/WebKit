@@ -133,9 +133,8 @@ void JITCompiler::compileExceptionHandlers()
     // If any exception checks were linked, generate code to lookup a handler.
     if (didLinkExceptionCheck) {
         // lookupExceptionHandler is passed two arguments, exec (the CallFrame*), and
-        // the index into the CodeBlock's callReturnIndexVector corresponding to the
-        // call that threw the exception (this was set in nonPreservedNonReturnGPR, when
-        // the exception check was planted).
+        // the index of the CodeOrigin. The latter is unused, see
+        // https://bugs.webkit.org/show_bug.cgi?id=121734.
         move(GPRInfo::nonPreservedNonReturnGPR, GPRInfo::argumentGPR1);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 #if CPU(X86)
@@ -216,16 +215,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     // Link all calls out from the JIT code to their respective functions.
     for (unsigned i = 0; i < m_calls.size(); ++i)
         linkBuffer.link(m_calls[i].m_call, m_calls[i].m_function);
-
-    m_codeBlock->callReturnIndexVector().reserveCapacity(m_exceptionChecks.size());
-    for (unsigned i = 0; i < m_exceptionChecks.size(); ++i) {
-        unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_exceptionChecks[i].m_call);
-        CodeOrigin codeOrigin = m_exceptionChecks[i].m_codeOrigin;
-        while (codeOrigin.inlineCallFrame)
-            codeOrigin = codeOrigin.inlineCallFrame->caller;
-        unsigned exceptionInfo = codeOrigin.bytecodeIndex;
-        m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(returnAddressOffset, exceptionInfo));
-    }
 
     Vector<CodeOrigin, 0, UnsafeVectorOverflow>& codeOrigins = m_codeBlock->codeOrigins();
     codeOrigins.resize(m_exceptionChecks.size());

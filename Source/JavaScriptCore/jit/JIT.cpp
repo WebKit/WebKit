@@ -707,10 +707,6 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
             patchBuffer.link(iter->from, FunctionPtr(iter->to));
     }
 
-    m_codeBlock->callReturnIndexVector().reserveCapacity(m_calls.size());
-    for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter)
-        m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(patchBuffer.returnAddressOffset(iter->from), iter->bytecodeOffset));
-
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccessCompilationInfo.size());
     for (unsigned i = 0; i < m_propertyAccessCompilationInfo.size(); ++i)
         m_propertyAccessCompilationInfo[i].copyToStubInfo(m_codeBlock->structureStubInfo(i), patchBuffer);
