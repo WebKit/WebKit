@@ -1,3 +1,19 @@
+2013-09-21  Darin Adler  <darin@apple.com>
+
+        Fix too-strict type error exceptions introduced in WebGL bindings
+        https://bugs.webkit.org/show_bug.cgi?id=121759
+
+        Reviewed by Alexey Proskuryakov.
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::getAttachedShaders): Allow undefined
+        or null without throwing type error.
+        (WebCore::JSWebGLRenderingContext::getProgramParameter): Ditto.
+        (WebCore::JSWebGLRenderingContext::getUniform): Ditto.
+        (WebCore::dataFunctionf): Ditto.
+        (WebCore::dataFunctioni): Ditto.
+        (WebCore::dataFunctionMatrix): Ditto.
+
 2013-09-21  Sam Weinig  <sam@webkit.org>
 
         Event and EventTarget interfaces don't need to be store as AtomicStrings

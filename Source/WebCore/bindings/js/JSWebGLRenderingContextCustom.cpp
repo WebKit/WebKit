@@ -247,7 +247,7 @@ JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
     WebGLProgram* program = toWebGLProgram(exec->uncheckedArgument(0));
-    if (!program)
+    if (!program && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
     Vector<RefPtr<WebGLShader> > shaders;
     bool succeed = context->getAttachedShaders(program, shaders, ec);
@@ -331,7 +331,7 @@ JSValue JSWebGLRenderingContext::getProgramParameter(ExecState* exec)
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
     WebGLProgram* program = toWebGLProgram(exec->uncheckedArgument(0));
-    if (!program)
+    if (!program && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
     unsigned pname = exec->uncheckedArgument(1).toInt32(exec);
     if (exec->hadException())
@@ -395,10 +395,10 @@ JSValue JSWebGLRenderingContext::getUniform(ExecState* exec)
     ExceptionCode ec = 0;
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
     WebGLProgram* program = toWebGLProgram(exec->uncheckedArgument(0));
-    if (!program)
+    if (!program && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
     WebGLUniformLocation* location = toWebGLUniformLocation(exec->uncheckedArgument(1));
-    if (!location)
+    if (!location && !exec->uncheckedArgument(1).isUndefinedOrNull())
         return throwTypeError(exec);
     WebGLGetInfo info = context->getUniform(program, location, ec);
     if (ec) {
@@ -469,7 +469,7 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, We
     
     if (functionForUniform(f)) {
         location = toWebGLUniformLocation(exec->uncheckedArgument(0));
-        if (!location)
+        if (!location && !exec->uncheckedArgument(0).isUndefinedOrNull())
             return throwTypeError(exec);
     } else
         index = exec->uncheckedArgument(0).toInt32(exec);
@@ -555,7 +555,7 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, We
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
 
     WebGLUniformLocation* location = toWebGLUniformLocation(exec->uncheckedArgument(0));
-    if (!location)
+    if (!location && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
   
     RefPtr<Int32Array> webGLArray = toInt32Array(exec->uncheckedArgument(1));
@@ -615,7 +615,7 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
 
     WebGLUniformLocation* location = toWebGLUniformLocation(exec->uncheckedArgument(0));
-    if (!location)
+    if (!location && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
 
     bool transpose = exec->uncheckedArgument(1).toBoolean(exec);
