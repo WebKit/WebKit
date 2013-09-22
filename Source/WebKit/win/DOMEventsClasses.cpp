@@ -112,13 +112,13 @@ IDOMEvent* DOMEvent::createInstance(PassRefPtr<WebCore::Event> e)
     } else if (e->isMouseEvent()) {
         DOMMouseEvent* newEvent = new DOMMouseEvent(e);
         hr = newEvent->QueryInterface(IID_IDOMMouseEvent, (void**)&domEvent);
-    } else if (e->eventInterface() == WebCore::MutationEventInterfaceType)) {
+    } else if (e->eventInterface() == WebCore::MutationEventInterfaceType) {
         DOMMutationEvent* newEvent = new DOMMutationEvent(e);
         hr = newEvent->QueryInterface(IID_IDOMMutationEvent, (void**)&domEvent);
-    } else if (e->eventInterface() == WebCore::OverflowEventInterfaceType)) {
+    } else if (e->eventInterface() == WebCore::OverflowEventInterfaceType) {
         DOMOverflowEvent* newEvent = new DOMOverflowEvent(e);
         hr = newEvent->QueryInterface(IID_IDOMOverflowEvent, (void**)&domEvent);
-    } else if (e->eventInterface() == WebCore::WheelEventInterfaceType)) {
+    } else if (e->eventInterface() == WebCore::WheelEventInterfaceType) {
         DOMWheelEvent* newEvent = new DOMWheelEvent(e);
         hr = newEvent->QueryInterface(IID_IDOMWheelEvent, (void**)&domEvent);
     } else if (e->isUIEvent()) {

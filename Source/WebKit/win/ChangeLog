@@ -1,5 +1,12 @@
 2013-09-22  Sam Weinig  <sam@webkit.org>
 
+        Try to fix the windows build (take 2).
+
+        * DOMEventsClasses.cpp:
+        (DOMEvent::createInstance):
+
+2013-09-22  Sam Weinig  <sam@webkit.org>
+
         Try to fix the windows build.
 
         * DOMEventsClasses.cpp:
