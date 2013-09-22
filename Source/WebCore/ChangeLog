@@ -1,3 +1,13 @@
+2013-09-21  Jon Lee  <jonlee@apple.com>
+
+        Fix Obj-C bindings test expectations.
+        Unreviewed.
+
+        Bindings tests failed with r156232, from https://bugs.webkit.org/show_bug.cgi?id=121745.
+
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj reflectedStringAttr]): Update test expectations.
+
 2013-09-21  Andreas Kling  <akling@apple.com>
 
         Node: FINAL-ize EventTarget overrides.
