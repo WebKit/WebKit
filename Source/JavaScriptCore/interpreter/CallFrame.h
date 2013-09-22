@@ -164,6 +164,17 @@ namespace JSC  {
 #if ENABLE(DFG_JIT)
         unsigned bytecodeOffsetFromCodeOriginIndex();
 #endif
+        
+        // This will try to get you the bytecode offset, but you should be aware that
+        // this bytecode offset may be bogus in the presence of inlining. This will
+        // also return 0 if the call frame has no notion of bytecode offsets (for
+        // example if it's native code).
+        // https://bugs.webkit.org/show_bug.cgi?id=121754
+        unsigned bytecodeOffset();
+        
+        // This will get you a CodeOrigin. It will always succeed. May return
+        // CodeOrigin(0) if we're in native code.
+        CodeOrigin codeOrigin();
 
         Register* frameExtent()
         {

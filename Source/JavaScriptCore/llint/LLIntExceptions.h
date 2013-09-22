@@ -44,17 +44,13 @@ namespace LLInt {
 // set up all information needed to throw the exception.
 Instruction* returnToThrowForThrownException(ExecState*);
 
-// Saves the current PC in the global data for safe-keeping, and gives you a PC
-// that you can tell the interpreter to go to, which when advanced between 1
-// and 9 slots will give you an "instruction" that threads to the interpreter's
-// exception handler. Note that if you give it the PC for exception handling,
-// it's smart enough to just return that PC without doing anything else; this
-// lets you thread exception handling through common helper functions used by
-// other helpers.
-Instruction* returnToThrow(ExecState*, Instruction*);
+// Gives you a PC that you can tell the interpreter to go to, which when advanced
+// between 1 and 9 slots will give you an "instruction" that threads to the
+// interpreter's exception handler.
+Instruction* returnToThrow(ExecState*);
 
 // Use this when you're throwing to a call thunk.
-void* callToThrow(ExecState*, Instruction*);
+void* callToThrow(ExecState*);
 
 } } // namespace JSC::LLInt
 

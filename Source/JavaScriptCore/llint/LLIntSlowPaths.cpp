@@ -83,14 +83,14 @@ namespace JSC { namespace LLInt {
 #define LLINT_END_IMPL() LLINT_RETURN_TWO(pc, exec)
 
 #define LLINT_THROW(exceptionToThrow) do {                        \
-        vm.throwException(exec, exceptionToThrow);             \
-        pc = returnToThrow(exec, pc);                             \
+        vm.throwException(exec, exceptionToThrow);                \
+        pc = returnToThrow(exec);                                 \
         LLINT_END_IMPL();                                         \
     } while (false)
 
 #define LLINT_CHECK_EXCEPTION() do {                    \
-        if (UNLIKELY(vm.exception())) {           \
-            pc = returnToThrow(exec, pc);               \
+        if (UNLIKELY(vm.exception())) {                 \
+            pc = returnToThrow(exec);                   \
             LLINT_END_IMPL();                           \
         }                                               \
     } while (false)
@@ -142,23 +142,20 @@ namespace JSC { namespace LLInt {
 
 #define LLINT_CALL_THROW(exec, pc, exceptionToThrow) do {               \
         ExecState* __ct_exec = (exec);                                  \
-        Instruction* __ct_pc = (pc);                                    \
-        vm.throwException(__ct_exec, exceptionToThrow);                     \
-        LLINT_CALL_END_IMPL(__ct_exec, callToThrow(__ct_exec, __ct_pc)); \
+        vm.throwException(__ct_exec, exceptionToThrow);                 \
+        LLINT_CALL_END_IMPL(__ct_exec, callToThrow(__ct_exec));         \
     } while (false)
 
-#define LLINT_CALL_CHECK_EXCEPTION(exec, pc) do {                       \
+#define LLINT_CALL_CHECK_EXCEPTION(exec) do {                           \
         ExecState* __cce_exec = (exec);                                 \
-        Instruction* __cce_pc = (pc);                                   \
-        if (UNLIKELY(vm.exception()))                                     \
-            LLINT_CALL_END_IMPL(__cce_exec, callToThrow(__cce_exec, __cce_pc)); \
+        if (UNLIKELY(vm.exception()))                                   \
+            LLINT_CALL_END_IMPL(__cce_exec, callToThrow(__cce_exec));   \
     } while (false)
 
 #define LLINT_CALL_RETURN(exec, pc, callTarget) do {                    \
         ExecState* __cr_exec = (exec);                                  \
-        Instruction* __cr_pc = (pc);                                    \
         void* __cr_callTarget = (callTarget);                           \
-        LLINT_CALL_CHECK_EXCEPTION(__cr_exec->callerFrame(), __cr_pc);  \
+        LLINT_CALL_CHECK_EXCEPTION(__cr_exec->callerFrame());           \
         LLINT_CALL_END_IMPL(__cr_exec, __cr_callTarget);                \
     } while (false)
 
@@ -431,9 +428,8 @@ LLINT_SLOW_PATH_DECL(stack_check)
 #endif
     ASSERT(!exec->vm().interpreter->stack().containsAddress(&exec->registers()[-exec->codeBlock()->m_numCalleeRegisters]));
     if (UNLIKELY(!vm.interpreter->stack().grow(&exec->registers()[-exec->codeBlock()->m_numCalleeRegisters]))) {
-        ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
-        CommonSlowPaths::interpreterThrowInCaller(exec, returnPC, createStackOverflowError(exec));
+        CommonSlowPaths::interpreterThrowInCaller(exec, createStackOverflowError(exec));
         pc = returnToThrowForThrownException(exec);
     }
     LLINT_END_IMPL();
@@ -1089,7 +1085,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
     ExecState* execCallee = loadVarargs(
         exec, &vm.interpreter->stack(),
         LLINT_OP_C(3).jsValue(), LLINT_OP_C(4).jsValue(), pc[5].u.operand);
-    LLINT_CALL_CHECK_EXCEPTION(exec, pc);
+    LLINT_CALL_CHECK_EXCEPTION(exec);
     
     execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
     execCallee->setCallerFrame(exec);

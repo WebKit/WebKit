@@ -58,10 +58,7 @@ EncodedExceptionHandler encode(ExceptionHandler);
 #endif
 
 ExceptionHandler uncaughtExceptionHandler();
-ExceptionHandler genericUnwind(VM*, ExecState*, JSValue exceptionValue, unsigned vPCIndex);
-
-ExceptionHandler jitThrowNew(VM*, ExecState*, JSValue exceptionValue);
-ExceptionHandler jitThrow(VM*, ExecState*, JSValue exceptionValue, ReturnAddressPtr faultLocation);
+ExceptionHandler genericUnwind(VM*, ExecState*, JSValue exceptionValue);
 
 } // namespace JSC
 

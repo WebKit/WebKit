@@ -44,30 +44,30 @@ Instruction* returnToThrowForThrownException(ExecState* exec)
     return LLInt::exceptionInstructions();
 }
 
-static void doThrow(ExecState* exec, Instruction* pc)
+static void doThrow(ExecState* exec)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    genericUnwind(vm, exec, vm->exception(), pc - exec->codeBlock()->instructions().begin());
+    genericUnwind(vm, exec, vm->exception());
 }
 
-Instruction* returnToThrow(ExecState* exec, Instruction* pc)
+Instruction* returnToThrow(ExecState* exec)
 {
 #if LLINT_SLOW_PATH_TRACING
     VM* vm = &exec->vm();
     dataLog("Throwing exception ", vm->exception(), " (returnToThrow).\n");
 #endif
-    doThrow(exec, pc);
+    doThrow(exec);
     return LLInt::exceptionInstructions();
 }
 
-void* callToThrow(ExecState* exec, Instruction* pc)
+void* callToThrow(ExecState* exec)
 {
 #if LLINT_SLOW_PATH_TRACING
     VM* vm = &exec->vm();
     dataLog("Throwing exception ", vm->exception(), " (callToThrow).\n");
 #endif
-    doThrow(exec, pc);
+    doThrow(exec);
     return LLInt::getCodePtr(llint_throw_during_call_trampoline);
 }
 

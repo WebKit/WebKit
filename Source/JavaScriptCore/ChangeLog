@@ -1,3 +1,46 @@
+2013-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Interpreter::unwind() has no need for the bytecodeOffset
+        https://bugs.webkit.org/show_bug.cgi?id=121755
+
+        Reviewed by Oliver Hunt.
+        
+        It was only using the bytecodeOffset for some debugger stuff, but the debugger could
+        just get the bytecodeOffset the same way the rest of the machinery does: by using the
+        CallFrame's location.
+        
+        It turns out that a lot of really ugly code was in place just to supply this
+        bytecodeOffset. This patch kills most of that code, and allows us to kill even more
+        code in a future patch - though most likely that killage will involve further
+        refactorings as well, see https://bugs.webkit.org/show_bug.cgi?id=121734.
+
+        * dfg/DFGOperations.cpp:
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::bytecodeOffset):
+        (JSC::CallFrame::codeOrigin):
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwind):
+        * interpreter/Interpreter.h:
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITExceptions.h:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::cti_vm_handle_exception):
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::doThrow):
+        (JSC::LLInt::returnToThrow):
+        (JSC::LLInt::callToThrow):
+        * llint/LLIntExceptions.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPathsExceptions.cpp:
+        (JSC::CommonSlowPaths::interpreterThrowInCaller):
+        * runtime/CommonSlowPathsExceptions.h:
+
 2013-09-21  Darin Adler  <darin@apple.com>
 
         Add ExecState::uncheckedArgument and use where possible to shrink a bit

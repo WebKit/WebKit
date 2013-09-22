@@ -639,7 +639,7 @@ private:
     HandlerInfo*& m_handler;
 };
 
-NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& exceptionValue, unsigned bytecodeOffset)
+NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& exceptionValue)
 {
     CodeBlock* codeBlock = callFrame->codeBlock();
     bool isTermination = false;
@@ -662,6 +662,11 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& ex
         // We need to clear the exception and the exception stack here in order to see if a new exception happens.
         // Afterwards, the values are put back to continue processing this error.
         ClearExceptionScope scope(&callFrame->vm());
+        // This code assumes that if the debugger is enabled then there is no inlining.
+        // If that assumption turns out to be false then we'll ignore the inlined call
+        // frames.
+        // https://bugs.webkit.org/show_bug.cgi?id=121754
+        unsigned bytecodeOffset = callFrame->bytecodeOffset();
         int line = codeBlock->lineNumberForBytecodeOffset(bytecodeOffset);
         int column = codeBlock->columnNumberForBytecodeOffset(bytecodeOffset);
         DebuggerCallFrame debuggerCallFrame(callFrame, line, column, exceptionValue);

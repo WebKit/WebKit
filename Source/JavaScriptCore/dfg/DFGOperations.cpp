@@ -1906,31 +1906,34 @@ JSCell* DFG_OPERATION operationStringFromCharCode(ExecState* exec, int32_t op1)
 
 DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState* exec, uint32_t callIndex)
 {
+    // FIXME: This isn't needed anymore.
+    // https://bugs.webkit.org/show_bug.cgi?id=121734
+    UNUSED_PARAM(callIndex);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
     JSValue exceptionValue = exec->exception();
     ASSERT(exceptionValue);
     
-    unsigned vPCIndex = exec->codeBlock()->bytecodeOffsetForCallAtIndex(callIndex);
-    ExceptionHandler handler = genericUnwind(vm, exec, exceptionValue, vPCIndex);
+    ExceptionHandler handler = genericUnwind(vm, exec, exceptionValue);
     ASSERT(handler.catchRoutine);
     return dfgHandlerEncoded(handler.callFrame, handler.catchRoutine);
 }
 
 DFGHandlerEncoded DFG_OPERATION lookupExceptionHandlerInStub(ExecState* exec, StructureStubInfo* stubInfo)
 {
+    // FIXME: This isn't needed anymore.
+    // https://bugs.webkit.org/show_bug.cgi?id=121734
+    UNUSED_PARAM(stubInfo);
+    
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
     JSValue exceptionValue = exec->exception();
     ASSERT(exceptionValue);
     
-    CodeOrigin codeOrigin = stubInfo->codeOrigin;
-    while (codeOrigin.inlineCallFrame)
-        codeOrigin = codeOrigin.inlineCallFrame->caller;
-    
-    ExceptionHandler handler = genericUnwind(vm, exec, exceptionValue, codeOrigin.bytecodeIndex);
+    ExceptionHandler handler = genericUnwind(vm, exec, exceptionValue);
     ASSERT(handler.catchRoutine);
     return dfgHandlerEncoded(handler.callFrame, handler.catchRoutine);
 }
