@@ -174,18 +174,6 @@ namespace JSC  {
     
         Register* frameExtentInternal();
     
-#if ENABLE(DFG_JIT)
-        InlineCallFrame* inlineCallFrame() const { return this[JSStack::ReturnPC].asInlineCallFrame(); }
-#else
-        // This will never be called if !ENABLE(DFG_JIT) since all calls should be guarded by
-        // isInlinedFrame(). But to make it easier to write code without having a bunch of
-        // #if's, we make a dummy implementation available anyway.
-        InlineCallFrame* inlineCallFrame() const
-        {
-            RELEASE_ASSERT_NOT_REACHED();
-            return 0;
-        }
-#endif
 #if USE(JSVALUE32_64)
         Instruction* currentVPC() const
         {
@@ -271,9 +259,6 @@ namespace JSC  {
         void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[JSStack::CodeBlock] = codeBlock; }
         void setReturnPC(void* value) { static_cast<Register*>(this)[JSStack::ReturnPC] = (Instruction*)value; }
         
-#if ENABLE(DFG_JIT)
-        void setInlineCallFrame(InlineCallFrame* inlineCallFrame) { static_cast<Register*>(this)[JSStack::ReturnPC] = inlineCallFrame; }
-#endif
         CallFrame* callerFrameNoFlags() { return callerFrame()->removeHostCallFrameFlag(); }
 
         // CallFrame::iterate() expects a Functor that implements the following method:

@@ -1,5 +1,17 @@
 2013-09-21  Filip Pizlo  <fpizlo@apple.com>
 
+        Remove the notion that a CallFrame can have a pointer to an InlineCallFrame, since that doesn't happen anymore
+        https://bugs.webkit.org/show_bug.cgi?id=121753
+
+        Reviewed by Darin Adler.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::bytecodeOffsetFromCodeOriginIndex):
+        * interpreter/CallFrame.h:
+        * interpreter/Register.h:
+
+2013-09-21  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix the revert.
 
         * dfg/DFGRepatch.cpp:
