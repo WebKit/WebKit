@@ -931,13 +931,13 @@ void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildren
     HTMLInputElement* input = toHTMLInputElement(node);
     // if there's a form, then this is easy
     if (input->form()) {
-        Vector<RefPtr<Node> > formElements;
+        Vector<Ref<Element>> formElements;
         input->form()->getNamedElements(input->name(), formElements);
         
         unsigned len = formElements.size();
         for (unsigned i = 0; i < len; ++i) {
-            Node* associateElement = formElements[i].get();
-            if (AccessibilityObject* object = axObjectCache()->getOrCreate(associateElement))
+            Element& associateElement = formElements[i].get();
+            if (AccessibilityObject* object = axObjectCache()->getOrCreate(&associateElement))
                 linkedUIElements.append(object);        
         } 
     } else {

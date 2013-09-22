@@ -673,16 +673,16 @@ bool HTMLFormElement::hasNamedElement(const AtomicString& name)
 }
 
 // FIXME: Use RefPtr<HTMLElement> for namedItems. elements()->namedItems never return non-HTMLElement nodes.
-void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<RefPtr<Node> >& namedItems)
+void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<Ref<Element>>& namedItems)
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#dom-form-nameditem
     elements()->namedItems(name, namedItems);
 
     HTMLElement* elementFromPast = elementFromPastNamesMap(name);
-    if (namedItems.size() == 1 && namedItems.first() != elementFromPast)
-        addToPastNamesMap(toHTMLElement(namedItems.first().get())->asFormNamedItem(), name);
+    if (namedItems.size() == 1 && &namedItems.first().get() != elementFromPast)
+        addToPastNamesMap(toHTMLElement(&namedItems.first().get())->asFormNamedItem(), name);
     else if (elementFromPast && namedItems.isEmpty())
-        namedItems.append(elementFromPast);
+        namedItems.append(*elementFromPast);
 }
 
 void HTMLFormElement::documentDidResumeFromPageCache()

@@ -48,7 +48,7 @@ public:
 
     PassRefPtr<HTMLCollection> elements();
     bool hasNamedElement(const AtomicString&);
-    void getNamedElements(const AtomicString&, Vector<RefPtr<Node> >&);
+    void getNamedElements(const AtomicString&, Vector<Ref<Element>>&);
 
     unsigned length() const;
     Node* item(unsigned index);

@@ -1,5 +1,46 @@
 2013-09-22  Sam Weinig  <sam@webkit.org>
 
+        CTTE: StaticNodeLists often contain only Elements, we shouldn't store them as Vector<RefPtr<Node>> in those cases
+        https://bugs.webkit.org/show_bug.cgi?id=121769
+
+        Reviewed by Andreas Kling.
+
+        Introduces StaticElementList and uses it.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupMembers):
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        * bindings/js/JSHTMLFormControlsCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter):
+        * dom/SelectorQuery.cpp:
+        (WebCore::AllElementExtractorSelectorQueryTrait::appendOutputForElement):
+        (WebCore::SelectorDataList::queryAll):
+        * dom/StaticNodeList.cpp:
+        (WebCore::StaticElementList::length):
+        (WebCore::StaticElementList::item):
+        (WebCore::StaticElementList::namedItem):
+        * dom/StaticNodeList.h:
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::getRegionsByContent):
+        (WebCore::WebKitNamedFlow::getRegions):
+        (WebCore::WebKitNamedFlow::getContent):
+        (WebCore::WebKitNamedFlow::dispatchRegionLayoutUpdateEvent):
+        (WebCore::WebKitNamedFlow::dispatchRegionOversetChangeEvent):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::namedItems):
+        * html/HTMLCollection.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::getNamedElements):
+        * html/HTMLFormElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::collectIntersectionOrEnclosureList):
+
+2013-09-22  Sam Weinig  <sam@webkit.org>
+
         CTTE: RenderNamedFlowThread and FlowThreadController should operate on Elements, not Nodes
         https://bugs.webkit.org/show_bug.cgi?id=121768
 

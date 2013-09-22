@@ -47,16 +47,16 @@ JSValue JSHTMLFormElement::nameGetter(ExecState* exec, JSValue slotBase, Propert
     JSHTMLElement* jsForm = jsCast<JSHTMLFormElement*>(asObject(slotBase));
     HTMLFormElement* form = toHTMLFormElement(jsForm->impl());
 
-    Vector<RefPtr<Node> > namedItems;
+    Vector<Ref<Element>> namedItems;
     form->getNamedElements(propertyNameToAtomicString(propertyName), namedItems);
     
     if (namedItems.isEmpty())
         return jsUndefined();
     if (namedItems.size() == 1)
-        return toJS(exec, jsForm->globalObject(), namedItems[0].get());
+        return toJS(exec, jsForm->globalObject(), &namedItems[0].get());
 
     // FIXME: HTML5 specifies that this should be a RadioNodeList.
-    return toJS(exec, jsForm->globalObject(), StaticNodeList::adopt(namedItems).get());
+    return toJS(exec, jsForm->globalObject(), StaticElementList::adopt(namedItems).get());
 }
 
 }

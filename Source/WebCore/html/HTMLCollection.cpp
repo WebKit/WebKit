@@ -646,7 +646,7 @@ bool HTMLCollection::hasNamedItem(const AtomicString& name) const
     return namedItem(name);
 }
 
-void HTMLCollection::namedItems(const AtomicString& name, Vector<RefPtr<Node> >& result) const
+void HTMLCollection::namedItems(const AtomicString& name, Vector<Ref<Element>>& result) const
 {
     ASSERT(result.isEmpty());
     if (name.isEmpty())
@@ -658,10 +658,10 @@ void HTMLCollection::namedItems(const AtomicString& name, Vector<RefPtr<Node> >&
     Vector<Element*>* nameResults = nameCache(name);
 
     for (unsigned i = 0; idResults && i < idResults->size(); ++i)
-        result.append(idResults->at(i));
+        result.append(*idResults->at(i));
 
     for (unsigned i = 0; nameResults && i < nameResults->size(); ++i)
-        result.append(nameResults->at(i));
+        result.append(*nameResults->at(i));
 }
 
 PassRefPtr<NodeList> HTMLCollection::tags(const String& name)

@@ -118,7 +118,7 @@ int WebKitNamedFlow::firstEmptyRegionIndex() const
 PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
 {
     if (!contentNode)
-        return StaticNodeList::createEmpty();
+        return StaticElementList::createEmpty();
 
     if (m_flowManager->document())
         m_flowManager->document()->updateLayoutIgnorePendingStylesheets();
@@ -126,9 +126,9 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
     // The renderer may be destroyed or created after the style update.
     // Because this is called from JS, where the wrapper keeps a reference to the NamedFlow, no guard is necessary.
     if (!m_parentFlowThread)
-        return StaticNodeList::createEmpty();
+        return StaticElementList::createEmpty();
 
-    Vector<RefPtr<Node>> regionElements;
+    Vector<Ref<Element>> regionElements;
 
     if (inFlowThread(contentNode->renderer(), m_parentFlowThread)) {
         const RenderRegionList& regionList = m_parentFlowThread->renderRegionList();
@@ -141,12 +141,12 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
                 continue;
             if (m_parentFlowThread->objectInFlowRegion(contentNode->renderer(), renderRegion)) {
                 ASSERT(renderRegion->generatingElement());
-                regionElements.append(renderRegion->generatingElement());
+                regionElements.append(*renderRegion->generatingElement());
             }
         }
     }
 
-    return StaticNodeList::adopt(regionElements);
+    return StaticElementList::adopt(regionElements);
 }
 
 PassRefPtr<NodeList> WebKitNamedFlow::getRegions()
@@ -157,9 +157,9 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegions()
     // The renderer may be destroyed or created after the style update.
     // Because this is called from JS, where the wrapper keeps a reference to the NamedFlow, no guard is necessary.
     if (!m_parentFlowThread)
-        return StaticNodeList::createEmpty();
+        return StaticElementList::createEmpty();
 
-    Vector<RefPtr<Node>> regionElements;
+    Vector<Ref<Element>> regionElements;
 
     const RenderRegionList& regionList = m_parentFlowThread->renderRegionList();
     for (auto iter = regionList.begin(), end = regionList.end(); iter != end; ++iter) {
@@ -170,10 +170,10 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegions()
         if (renderRegion->isPseudoElement())
             continue;
         ASSERT(renderRegion->generatingElement());
-        regionElements.append(renderRegion->generatingElement());
+        regionElements.append(*renderRegion->generatingElement());
     }
 
-    return StaticNodeList::adopt(regionElements);
+    return StaticElementList::adopt(regionElements);
 }
 
 PassRefPtr<NodeList> WebKitNamedFlow::getContent()
@@ -184,18 +184,18 @@ PassRefPtr<NodeList> WebKitNamedFlow::getContent()
     // The renderer may be destroyed or created after the style update.
     // Because this is called from JS, where the wrapper keeps a reference to the NamedFlow, no guard is necessary.
     if (!m_parentFlowThread)
-        return StaticNodeList::createEmpty();
+        return StaticElementList::createEmpty();
 
-    Vector<RefPtr<Node>> contentElements;
+    Vector<Ref<Element>> contentElements;
 
     const NamedFlowContentElements& contentElementsList = m_parentFlowThread->contentElements();
     for (auto it = contentElementsList.begin(), end = contentElementsList.end(); it != end; ++it) {
         Element* element = *it;
         ASSERT(element->computedStyle()->flowThread() == m_parentFlowThread->flowThreadName());
-        contentElements.append(element);
+        contentElements.append(*element);
     }
 
-    return StaticNodeList::adopt(contentElements);
+    return StaticElementList::adopt(contentElements);
 }
 
 void WebKitNamedFlow::setRenderer(RenderNamedFlowThread* parentFlowThread)
@@ -225,9 +225,7 @@ void WebKitNamedFlow::dispatchRegionLayoutUpdateEvent()
     if (flowState() == FlowStateNull)
         return;
 
-    RefPtr<Event> event = UIEvent::create(eventNames().webkitregionlayoutupdateEvent, false, false, m_flowManager->document()->defaultView(), 0);
-
-    dispatchEvent(event);
+    dispatchEvent(UIEvent::create(eventNames().webkitregionlayoutupdateEvent, false, false, m_flowManager->document()->defaultView(), 0));
 }
     
 void WebKitNamedFlow::dispatchRegionOversetChangeEvent()
@@ -237,10 +235,8 @@ void WebKitNamedFlow::dispatchRegionOversetChangeEvent()
     // If the flow is in the "NULL" state the event should not be dispatched any more.
     if (flowState() == FlowStateNull)
         return;
-    
-    RefPtr<Event> event = UIEvent::create(eventNames().webkitregionoversetchangeEvent, false, false, m_flowManager->document()->defaultView(), 0);
-    
-    dispatchEvent(event);
+
+    dispatchEvent(UIEvent::create(eventNames().webkitregionoversetchangeEvent, false, false, m_flowManager->document()->defaultView(), 0));
 }
 
 EventTargetInterface WebKitNamedFlow::eventTargetInterface() const

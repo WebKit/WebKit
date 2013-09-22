@@ -57,4 +57,28 @@ Node* StaticNodeList::namedItem(const AtomicString& elementId) const
     return 0;
 }
 
+unsigned StaticElementList::length() const
+{
+    return m_elements.size();
+}
+
+Node* StaticElementList::item(unsigned index) const
+{
+    if (index < m_elements.size())
+        return &const_cast<Element&>(m_elements[index].get());
+    return 0;
+}
+
+Node* StaticElementList::namedItem(const AtomicString& elementId) const
+{
+    size_t length = m_elements.size();
+    for (size_t i = 0; i < length; ++i) {
+        Element& element = const_cast<Element&>(m_elements[i].get());
+        if (element.getIdAttribute() == elementId)
+            return &element;
+    }
+
+    return 0;
+}
+
 } // namespace WebCore

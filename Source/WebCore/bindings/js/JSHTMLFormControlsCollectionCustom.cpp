@@ -39,14 +39,14 @@ namespace WebCore {
 
 static JSValue getNamedItems(ExecState* exec, JSHTMLFormControlsCollection* collection, PropertyName propertyName)
 {
-    Vector<RefPtr<Node> > namedItems;
+    Vector<Ref<Element>> namedItems;
     const AtomicString& name = propertyNameToAtomicString(propertyName);
     collection->impl()->namedItems(name, namedItems);
 
     if (namedItems.isEmpty())
         return jsUndefined();
     if (namedItems.size() == 1)
-        return toJS(exec, collection->globalObject(), namedItems[0].get());
+        return toJS(exec, collection->globalObject(), &namedItems[0].get());
 
     ASSERT(collection->impl()->type() == FormControls);
     return toJS(exec, collection->globalObject(), collection->impl()->ownerNode()->radioNodeList(name).get());

@@ -33,7 +33,6 @@
 #include "JSRadioNodeList.h"
 #include "Node.h"
 #include "RadioNodeList.h"
-#include "StaticNodeList.h"
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 

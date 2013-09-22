@@ -335,20 +335,21 @@ void SVGSVGElement::forceRedraw()
 
 PassRefPtr<NodeList> SVGSVGElement::collectIntersectionOrEnclosureList(const FloatRect& rect, SVGElement* referenceElement, CollectIntersectionOrEnclosure collect) const
 {
-    Vector<RefPtr<Node> > nodes;
+    Vector<Ref<Element>> elements;
 
     auto svgDescendants = descendantsOfType<SVGElement>(referenceElement ? referenceElement : this);
     for (auto it = svgDescendants.begin(), end = svgDescendants.end(); it != end; ++it) {
         const SVGElement* svgElement = &*it;
         if (collect == CollectIntersectionList) {
-            if (checkIntersection(svgElement, rect))
-                nodes.append(const_cast<SVGElement*>(svgElement));
+            if (RenderSVGModelObject::checkIntersection(svgElement->renderer(), rect))
+                elements.append(*const_cast<SVGElement*>(svgElement));
         } else {
-            if (checkEnclosure(svgElement, rect))
-                nodes.append(const_cast<SVGElement*>(svgElement));
+            if (RenderSVGModelObject::checkEnclosure(svgElement->renderer(), rect))
+                elements.append(*const_cast<SVGElement*>(svgElement));
         }
     }
-    return StaticNodeList::adopt(nodes);
+
+    return StaticElementList::adopt(elements);
 }
 
 PassRefPtr<NodeList> SVGSVGElement::getIntersectionList(const FloatRect& rect, SVGElement* referenceElement) const

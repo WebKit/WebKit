@@ -43,7 +43,7 @@ public:
 
     // Non-DOM API
     virtual bool hasNamedItem(const AtomicString& name) const;
-    void namedItems(const AtomicString& name, Vector<RefPtr<Node> >&) const;
+    void namedItems(const AtomicString& name, Vector<Ref<Element>>&) const;
     bool isEmpty() const
     {
         if (isLengthCacheValid())
