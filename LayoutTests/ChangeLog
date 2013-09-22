@@ -1,3 +1,16 @@
+2013-09-22  Arunprasad Rajkumar  <ararunprasad@gmail.com>
+
+        Hiding a focused element should unfocus it and fire a blur event
+        https://bugs.webkit.org/show_bug.cgi?id=29241
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/HTMLDocument/active-element-gets-unfocusable-expected.txt: Added.
+        * fast/dom/HTMLDocument/active-element-gets-unfocusable.html: Added.
+
+        LayoutTest reused from https://chromium.googlesource.com/chromium/blink/+/c58f636fd18fc27944c42e27d6a92a36867c57e1
+        with little modification.
+
 2013-09-22  Darin Adler  <darin@apple.com>
 
         Fix accessibility-node-memory-management.html to use normal style for
