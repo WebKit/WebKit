@@ -371,9 +371,9 @@ EncodedJSValue JSC_HOST_CALL objectConstructorDefineProperties(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)
 {
-    if (!exec->argument(0).isObject() && !exec->argument(0).isNull())
-        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Object prototype may only be an Object or null.")));
     JSValue proto = exec->argument(0);
+    if (!proto.isObject() && !proto.isNull())
+        return throwVMError(exec, createTypeError(exec, ASCIILiteral("Object prototype may only be an Object or null.")));
     JSObject* newObject = proto.isObject()
         ? constructEmptyObject(exec, asObject(proto))
         : constructEmptyObject(exec, exec->lexicalGlobalObject()->nullPrototypeObjectStructure());

@@ -77,7 +77,7 @@ static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(ExecState* exec)
     
     unsigned length;
     if (exec->argumentCount()) {
-        length = exec->argument(0).toUInt32(exec);
+        length = exec->uncheckedArgument(0).toUInt32(exec);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
     } else {

@@ -51,7 +51,7 @@ void NativeErrorConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 EncodedJSValue JSC_HOST_CALL Interpreter::constructWithNativeErrorConstructor(ExecState* exec)
 {
-    JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
+    JSValue message = exec->argument(0);
     Structure* errorStructure = static_cast<NativeErrorConstructor*>(exec->callee())->errorStructure();
     ASSERT(errorStructure);
     Vector<StackFrame> stackTrace;
@@ -68,7 +68,7 @@ ConstructType NativeErrorConstructor::getConstructData(JSCell*, ConstructData& c
     
 EncodedJSValue JSC_HOST_CALL Interpreter::callNativeErrorConstructor(ExecState* exec)
 {
-    JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
+    JSValue message = exec->argument(0);
     Structure* errorStructure = static_cast<NativeErrorConstructor*>(exec->callee())->errorStructure();
     Vector<StackFrame> stackTrace;
     exec->vm().interpreter->getStackTrace(stackTrace, std::numeric_limits<size_t>::max());

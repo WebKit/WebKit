@@ -144,7 +144,7 @@ static inline void documentWrite(ExecState* exec, HTMLDocument* document, Newlin
             segmentedString.clear();
         else {
             for (size_t i = 1; i < size; ++i) {
-                String subsequentString = exec->argument(i).toString(exec)->value(exec);
+                String subsequentString = exec->uncheckedArgument(i).toString(exec)->value(exec);
                 segmentedString.append(SegmentedString(subsequentString));
             }
         }

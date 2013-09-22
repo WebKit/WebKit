@@ -300,7 +300,7 @@ EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
         if (i)
             putchar(' ');
 
-        printf("%s", exec->argument(i).toString(exec)->value(exec).utf8().data());
+        printf("%s", exec->uncheckedArgument(i).toString(exec)->value(exec).utf8().data());
     }
 
     putchar('\n');
@@ -391,7 +391,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 
     JSArray* array = constructEmptyArray(globalObject->globalExec(), 0);
     for (unsigned i = 1; i < exec->argumentCount(); ++i)
-        array->putDirectIndex(globalObject->globalExec(), i - 1, exec->argument(i));
+        array->putDirectIndex(globalObject->globalExec(), i - 1, exec->uncheckedArgument(i));
     globalObject->putDirect(
         exec->vm(), Identifier(globalObject->globalExec(), "arguments"), array);
 
@@ -450,7 +450,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState* exec)
 {
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
-        unsigned flag = static_cast<unsigned>(exec->argument(i).toNumber(exec));
+        unsigned flag = static_cast<unsigned>(exec->uncheckedArgument(i).toNumber(exec));
         if ((flag >= 1) && (flag <= 32))
             SamplingFlags::setFlag(flag);
     }
@@ -460,7 +460,7 @@ EncodedJSValue JSC_HOST_CALL functionSetSamplingFlags(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL functionClearSamplingFlags(ExecState* exec)
 {
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
-        unsigned flag = static_cast<unsigned>(exec->argument(i).toNumber(exec));
+        unsigned flag = static_cast<unsigned>(exec->uncheckedArgument(i).toNumber(exec));
         if ((flag >= 1) && (flag <= 32))
             SamplingFlags::clearFlag(flag);
     }

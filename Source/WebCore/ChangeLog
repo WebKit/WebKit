@@ -1,3 +1,84 @@
+2013-09-21  Darin Adler  <darin@apple.com>
+
+        Add ExecState::uncheckedArgument and use where possible to shrink a bit
+        https://bugs.webkit.org/show_bug.cgi?id=121750
+
+        Reviewed by Andreas Kling.
+
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::probablySupportsContext): Already checked count.
+        (WebCore::JSHTMLCanvasElement::toDataURL): Ditto.
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::documentWrite): In a loop.
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::inspectedObject): Already checked count.
+        (WebCore::JSInjectedScriptHost::internalConstructorName): Ditto.
+        (WebCore::JSInjectedScriptHost::isHTMLAllCollection): Ditto.
+        (WebCore::JSInjectedScriptHost::type): Ditto.
+        (WebCore::JSInjectedScriptHost::functionDetails): Ditto.
+        (WebCore::JSInjectedScriptHost::getEventListeners): Ditto.
+        (WebCore::JSInjectedScriptHost::inspect): Ditto.
+        (WebCore::JSInjectedScriptHost::databaseId): Ditto.
+        (WebCore::JSInjectedScriptHost::storageId): Ditto.
+        * bindings/js/JSSQLTransactionSyncCustom.cpp:
+        (WebCore::JSSQLTransactionSync::executeSql): Ditto.
+        * bindings/js/JSSVGLengthCustom.cpp:
+        (WebCore::JSSVGLength::convertToSpecifiedUnits): Ditto.
+        * bindings/js/JSSharedWorkerCustom.cpp:
+        (WebCore::JSSharedWorkerConstructor::constructJSSharedWorker): Ditto.
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::getObjectParameter): Already checked count.
+        (WebCore::JSWebGLRenderingContext::getAttachedShaders): Removed tortured code
+        to triply do the checking that the toWebGLProgram function already does, including
+        spurious exception checking in code that can't create an exception. Also count is
+        already checked.
+        (WebCore::JSWebGLRenderingContext::getExtension): More of the same.
+        (WebCore::JSWebGLRenderingContext::getFramebufferAttachmentParameter): Ditto.
+        (WebCore::JSWebGLRenderingContext::getParameter): Ditto.
+        (WebCore::JSWebGLRenderingContext::getProgramParameter): Ditto.
+        (WebCore::JSWebGLRenderingContext::getShaderParameter): Ditto.
+        (WebCore::JSWebGLRenderingContext::getUniform): Ditto.
+        (WebCore::dataFunctionf): Ditto.
+        (WebCore::dataFunctioni): Ditto.
+        (WebCore::dataFunctionMatrix): Ditto.
+
+        * bindings/js/JSWorkerGlobalScopeCustom.cpp:
+        (WebCore::JSWorkerGlobalScope::importScripts): In a loop.
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::open): Already checked. Also removed some unneeded
+        argument count checks.
+        (WebCore::JSXMLHttpRequest::send): Removed unneeded special case for 0 argument
+        count that does the same thing as the undefined case, since asking for an
+        argument past the count yields undefined.
+
+        * bindings/js/JSXSLTProcessorCustom.cpp:
+        (WebCore::JSXSLTProcessor::setParameter): Already checked.
+        (WebCore::JSXSLTProcessor::getParameter): Already checked.
+        (WebCore::JSXSLTProcessor::removeParameter): Already checked.
+
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction): In a loop.
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::createScriptArguments): Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck): Removed some excess argumentCount checks.
+        Used uncheckedArgument in a few places. More needs to be done, especially for
+        overloaded functions.
+
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::invokeMethod): In a loop.
+        (JSC::Bindings::CInstance::invokeDefaultMethod): Ditto.
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::invokeObjcMethod): Ditto.
+        (ObjcInstance::invokeDefaultMethod): Ditto.
+
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Updated.
+
 2013-09-21  Jon Lee  <jonlee@apple.com>
 
         Fix Obj-C bindings test expectations.

@@ -45,7 +45,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
     for (unsigned i = 0; i < boundArgs->length(); ++i)
         args.append(boundArgs->getIndexQuickly(i));
     for (unsigned i = 0; i < exec->argumentCount(); ++i)
-        args.append(exec->argument(i));
+        args.append(exec->uncheckedArgument(i));
 
     JSObject* targetFunction = boundFunction->targetFunction();
     CallData callData;
@@ -65,7 +65,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
     for (unsigned i = 0; i < boundArgs->length(); ++i)
         args.append(boundArgs->getIndexQuickly(i));
     for (unsigned i = 0; i < exec->argumentCount(); ++i)
-        args.append(exec->argument(i));
+        args.append(exec->uncheckedArgument(i));
 
     JSObject* targetFunction = boundFunction->targetFunction();
     ConstructData constructData;

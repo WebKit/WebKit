@@ -50,9 +50,9 @@ JSValue JSXSLTProcessor::setParameter(ExecState* exec)
 {
     if (exec->argument(1).isUndefinedOrNull() || exec->argument(2).isUndefinedOrNull())
         return jsUndefined(); // Throw exception?
-    String namespaceURI = exec->argument(0).toString(exec)->value(exec);
-    String localName = exec->argument(1).toString(exec)->value(exec);
-    String value = exec->argument(2).toString(exec)->value(exec);
+    String namespaceURI = exec->uncheckedArgument(0).toString(exec)->value(exec);
+    String localName = exec->uncheckedArgument(1).toString(exec)->value(exec);
+    String value = exec->uncheckedArgument(2).toString(exec)->value(exec);
     impl()->setParameter(namespaceURI, localName, value);
     return jsUndefined();
 }
@@ -61,8 +61,8 @@ JSValue JSXSLTProcessor::getParameter(ExecState* exec)
 {
     if (exec->argument(1).isUndefinedOrNull())
         return jsUndefined();
-    String namespaceURI = exec->argument(0).toString(exec)->value(exec);
-    String localName = exec->argument(1).toString(exec)->value(exec);
+    String namespaceURI = exec->uncheckedArgument(0).toString(exec)->value(exec);
+    String localName = exec->uncheckedArgument(1).toString(exec)->value(exec);
     String value = impl()->getParameter(namespaceURI, localName);
     return jsStringOrUndefined(exec, value);
 }
@@ -71,8 +71,8 @@ JSValue JSXSLTProcessor::removeParameter(ExecState* exec)
 {
     if (exec->argument(1).isUndefinedOrNull())
         return jsUndefined();
-    String namespaceURI = exec->argument(0).toString(exec)->value(exec);
-    String localName = exec->argument(1).toString(exec)->value(exec);
+    String namespaceURI = exec->uncheckedArgument(0).toString(exec)->value(exec);
+    String localName = exec->uncheckedArgument(1).toString(exec)->value(exec);
     impl()->removeParameter(namespaceURI, localName);
     return jsUndefined();
 }

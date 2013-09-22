@@ -777,7 +777,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
 {
     if (!exec->argumentCount())
         return throwVMError(exec, createError(exec, ASCIILiteral("JSON.parse requires at least one parameter")));
-    String source = exec->argument(0).toString(exec)->value(exec);
+    String source = exec->uncheckedArgument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return JSValue::encode(jsNull());
 
@@ -798,7 +798,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
     if (exec->argumentCount() < 2)
         return JSValue::encode(unfiltered);
     
-    JSValue function = exec->argument(1);
+    JSValue function = exec->uncheckedArgument(1);
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone)
@@ -812,7 +812,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec)
     if (!exec->argumentCount())
         return throwVMError(exec, createError(exec, ASCIILiteral("No input to stringify")));
     LocalScope scope(exec->vm());
-    Local<Unknown> value(exec->vm(), exec->argument(0));
+    Local<Unknown> value(exec->vm(), exec->uncheckedArgument(0));
     Local<Unknown> replacer(exec->vm(), exec->argument(1));
     Local<Unknown> space(exec->vm(), exec->argument(2));
     JSValue result = Stringifier(exec, replacer, space).stringify(value).get();

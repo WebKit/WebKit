@@ -67,7 +67,7 @@ static EncodedJSValue JSC_HOST_CALL constructSet(CallFrame* callFrame)
     MapData* mapData = set->mapData();
     size_t count = callFrame->argumentCount();
     for (size_t i = 0; i < count; i++) {
-        JSValue item = callFrame->argument(i);
+        JSValue item = callFrame->uncheckedArgument(i);
         mapData->set(callFrame, item, item);
     }
     return JSValue::encode(set);

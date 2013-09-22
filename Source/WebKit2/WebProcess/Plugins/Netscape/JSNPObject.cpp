@@ -115,7 +115,7 @@ JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
 
     // Convert all arguments to NPVariants.
     for (size_t i = 0; i < argumentCount; ++i)
-        m_objectMap->convertJSValueToNPVariant(exec, exec->argument(i), arguments[i]);
+        m_objectMap->convertJSValueToNPVariant(exec, exec->uncheckedArgument(i), arguments[i]);
 
     // Calling NPClass::invoke will call into plug-in code, and there's no telling what the plug-in can do.
     // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
@@ -155,7 +155,7 @@ JSC::JSValue JSNPObject::callObject(JSC::ExecState* exec)
     
     // Convert all arguments to NPVariants.
     for (size_t i = 0; i < argumentCount; ++i)
-        m_objectMap->convertJSValueToNPVariant(exec, exec->argument(i), arguments[i]);
+        m_objectMap->convertJSValueToNPVariant(exec, exec->uncheckedArgument(i), arguments[i]);
 
     // Calling NPClass::invokeDefault will call into plug-in code, and there's no telling what the plug-in can do.
     // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
@@ -195,7 +195,7 @@ JSValue JSNPObject::callConstructor(ExecState* exec)
 
     // Convert all arguments to NPVariants.
     for (size_t i = 0; i < argumentCount; ++i)
-        m_objectMap->convertJSValueToNPVariant(exec, exec->argument(i), arguments[i]);
+        m_objectMap->convertJSValueToNPVariant(exec, exec->uncheckedArgument(i), arguments[i]);
 
     // Calling NPClass::construct will call into plug-in code, and there's no telling what the plug-in can do.
     // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 

@@ -44,13 +44,13 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSet(ExecState* exec)
     if (!exec->argumentCount())
         return throwVMError(exec, createTypeError(exec, "Expected at least one argument"));
     
-    JSObject* sourceArray = jsDynamicCast<JSObject*>(exec->argument(0));
+    JSObject* sourceArray = jsDynamicCast<JSObject*>(exec->uncheckedArgument(0));
     if (!sourceArray)
         return throwVMError(exec, createTypeError(exec, "First argument should be an object"));
     
     unsigned offset;
     if (exec->argumentCount() >= 2) {
-        offset = exec->argument(1).toUInt32(exec);
+        offset = exec->uncheckedArgument(1).toUInt32(exec);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
     } else
@@ -76,13 +76,13 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSubarray(ExecState* e
     if (!exec->argumentCount())
         return throwVMError(exec, createTypeError(exec, "Expected at least one argument"));
     
-    int32_t begin = exec->argument(0).toInt32(exec);
+    int32_t begin = exec->uncheckedArgument(0).toInt32(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     
     int32_t end;
     if (exec->argumentCount() >= 2) {
-        end = exec->argument(1).toInt32(exec);
+        end = exec->uncheckedArgument(1).toInt32(exec);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
     } else

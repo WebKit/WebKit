@@ -111,7 +111,7 @@ static JSValue numberConstructorMinValue(ExecState*, JSValue, PropertyName)
 static EncodedJSValue JSC_HOST_CALL constructWithNumberConstructor(ExecState* exec)
 {
     NumberObject* object = NumberObject::create(exec->vm(), asInternalFunction(exec->callee())->globalObject()->numberObjectStructure());
-    double n = exec->argumentCount() ? exec->argument(0).toNumber(exec) : 0;
+    double n = exec->argumentCount() ? exec->uncheckedArgument(0).toNumber(exec) : 0;
     object->setInternalValue(exec->vm(), jsNumber(n));
     return JSValue::encode(object);
 }
@@ -125,7 +125,7 @@ ConstructType NumberConstructor::getConstructData(JSCell*, ConstructData& constr
 // ECMA 15.7.2
 static EncodedJSValue JSC_HOST_CALL callNumberConstructor(ExecState* exec)
 {
-    return JSValue::encode(jsNumber(!exec->argumentCount() ? 0 : exec->argument(0).toNumber(exec)));
+    return JSValue::encode(jsNumber(!exec->argumentCount() ? 0 : exec->uncheckedArgument(0).toNumber(exec)));
 }
 
 CallType NumberConstructor::getCallData(JSCell*, CallData& callData)

@@ -373,7 +373,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
     // hours
     if (maxArgs >= 4 && idx < numArgs) {
         t->setHour(0);
-        double hours = exec->argument(idx++).toIntegerPreserveNaN(exec);
+        double hours = exec->uncheckedArgument(idx++).toIntegerPreserveNaN(exec);
         ok = std::isfinite(hours);
         milliseconds += hours * msPerHour;
     }
@@ -381,7 +381,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
     // minutes
     if (maxArgs >= 3 && idx < numArgs && ok) {
         t->setMinute(0);
-        double minutes = exec->argument(idx++).toIntegerPreserveNaN(exec);
+        double minutes = exec->uncheckedArgument(idx++).toIntegerPreserveNaN(exec);
         ok = std::isfinite(minutes);
         milliseconds += minutes * msPerMinute;
     }
@@ -389,7 +389,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
     // seconds
     if (maxArgs >= 2 && idx < numArgs && ok) {
         t->setSecond(0);
-        double seconds = exec->argument(idx++).toIntegerPreserveNaN(exec);
+        double seconds = exec->uncheckedArgument(idx++).toIntegerPreserveNaN(exec);
         ok = std::isfinite(seconds);
         milliseconds += seconds * msPerSecond;
     }
@@ -399,7 +399,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
         
     // milliseconds
     if (idx < numArgs) {
-        double millis = exec->argument(idx).toIntegerPreserveNaN(exec);
+        double millis = exec->uncheckedArgument(idx).toIntegerPreserveNaN(exec);
         ok = std::isfinite(millis);
         milliseconds += millis;
     } else
@@ -425,19 +425,19 @@ static bool fillStructuresUsingDateArgs(ExecState *exec, int maxArgs, double *ms
   
     // years
     if (maxArgs >= 3 && idx < numArgs) {
-        double years = exec->argument(idx++).toIntegerPreserveNaN(exec);
+        double years = exec->uncheckedArgument(idx++).toIntegerPreserveNaN(exec);
         ok = std::isfinite(years);
         t->setYear(toInt32(years));
     }
     // months
     if (maxArgs >= 2 && idx < numArgs && ok) {
-        double months = exec->argument(idx++).toIntegerPreserveNaN(exec);
+        double months = exec->uncheckedArgument(idx++).toIntegerPreserveNaN(exec);
         ok = std::isfinite(months);
         t->setMonth(toInt32(months));
     }
     // days
     if (idx < numArgs && ok) {
-        double days = exec->argument(idx++).toIntegerPreserveNaN(exec);
+        double days = exec->uncheckedArgument(idx++).toIntegerPreserveNaN(exec);
         ok = std::isfinite(days);
         t->setMonthDay(0);
         *ms += days * msPerDay;

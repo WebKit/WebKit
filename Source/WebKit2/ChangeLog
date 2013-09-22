@@ -1,3 +1,15 @@
+2013-09-21  Darin Adler  <darin@apple.com>
+
+        Add ExecState::uncheckedArgument and use where possible to shrink a bit
+        https://bugs.webkit.org/show_bug.cgi?id=121750
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::callMethod): In a loop.
+        (WebKit::JSNPObject::callObject): Ditto.
+        (WebKit::JSNPObject::callConstructor): Ditto.
+
 2013-09-18  Anders Carlsson  <andersca@apple.com>
 
         Remove the ENABLE_PLUGIN_PROCESS #define

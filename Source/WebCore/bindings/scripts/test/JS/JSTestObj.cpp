@@ -213,9 +213,9 @@ EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::constructJSTestObj(ExecState*
     JSTestObjConstructor* castedThis = jsCast<JSTestObjConstructor*>(exec->callee());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    if (exec->argumentCount() <= 0 || !exec->argument(0).isFunction())
+    if (!exec->argument(0).isFunction())
         return throwVMTypeError(exec);
-    RefPtr<TestCallback> testCallback = JSTestCallback::create(asObject(exec->argument(0)), castedThis->globalObject());
+    RefPtr<TestCallback> testCallback = JSTestCallback::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
     RefPtr<TestObj> object = TestObj::create(testCallback);
     return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
 }
@@ -2375,9 +2375,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(Exe
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    if (exec->argumentCount() <= 0 || !exec->argument(0).isFunction())
+    if (!exec->argument(0).isFunction())
         return throwVMTypeError(exec);
-    RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->argument(0)), castedThis->globalObject());
+    RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
     impl->methodWithCallbackArg(callback);
     return JSValue::encode(jsUndefined());
 }
@@ -2395,9 +2395,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
     int nonCallback(toInt32(exec, exec->argument(0), NormalConversion));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    if (exec->argumentCount() <= 1 || !exec->argument(1).isFunction())
+    if (!exec->argument(1).isFunction())
         return throwVMTypeError(exec);
-    RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->argument(1)), castedThis->globalObject());
+    RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->uncheckedArgument(1)), castedThis->globalObject());
     impl->methodWithNonCallbackArgAndCallbackArg(nonCallback, callback);
     return JSValue::encode(jsUndefined());
 }
@@ -2411,10 +2411,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOpti
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     RefPtr<TestCallback> callback;
-    if (exec->argumentCount() > 0 && !exec->argument(0).isUndefinedOrNull()) {
-        if (!exec->argument(0).isFunction())
+    if (!exec->argument(0).isUndefinedOrNull()) {
+        if (!exec->uncheckedArgument(0).isFunction())
             return throwVMTypeError(exec);
-        callback = JSTestCallback::create(asObject(exec->argument(0)), castedThis->globalObject());
+        callback = JSTestCallback::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
     }
     impl->methodWithCallbackAndOptionalArg(callback);
     return JSValue::encode(jsUndefined());
@@ -2423,10 +2423,10 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOpti
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbackAndOptionalArg(ExecState* exec)
 {
     RefPtr<TestCallback> callback;
-    if (exec->argumentCount() > 0 && !exec->argument(0).isUndefinedOrNull()) {
-        if (!exec->argument(0).isFunction())
+    if (!exec->argument(0).isUndefinedOrNull()) {
+        if (!exec->uncheckedArgument(0).isFunction())
             return throwVMTypeError(exec);
-        callback = createFunctionOnlyCallback<JSTestCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(0));
+        callback = createFunctionOnlyCallback<JSTestCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument(0));
     }
     TestObj::staticMethodWithCallbackAndOptionalArg(callback);
     return JSValue::encode(jsUndefined());
@@ -2436,9 +2436,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
 {
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    if (exec->argumentCount() <= 0 || !exec->argument(0).isFunction())
+    if (!exec->argument(0).isFunction())
         return throwVMTypeError(exec);
-    RefPtr<TestCallback> callback = createFunctionOnlyCallback<JSTestCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(0));
+    RefPtr<TestCallback> callback = createFunctionOnlyCallback<JSTestCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument(0));
     TestObj::staticMethodWithCallbackArg(callback);
     return JSValue::encode(jsUndefined());
 }
@@ -2580,9 +2580,9 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod5(
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    if (exec->argumentCount() <= 0 || !exec->argument(0).isFunction())
+    if (!exec->argument(0).isFunction())
         return throwVMTypeError(exec);
-    RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->argument(0)), castedThis->globalObject());
+    RefPtr<TestCallback> callback = JSTestCallback::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
     impl->overloadedMethod(callback);
     return JSValue::encode(jsUndefined());
 }
@@ -3134,9 +3134,9 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecSt
         return JSValue::encode(jsUndefined());
     Vector<Node*> tail;
     for (unsigned i = 1; i < exec->argumentCount(); ++i) {
-        if (!exec->argument(i).inherits(JSNode::info()))
+        if (!exec->uncheckedArgument(i).inherits(JSNode::info()))
             return throwVMTypeError(exec);
-        tail.append(toNode(exec->argument(i)));
+        tail.append(toNode(exec->uncheckedArgument(i)));
     }
     impl->variadicNodeMethod(head, tail);
     return JSValue::encode(jsUndefined());

@@ -83,7 +83,7 @@ JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec)
     if (exec->argumentCount() < 1)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
 
-    unsigned short unitType = exec->argument(0).toUInt32(exec);
+    unsigned short unitType = exec->uncheckedArgument(0).toUInt32(exec);
     if (exec->hadException())
         return jsUndefined();
 

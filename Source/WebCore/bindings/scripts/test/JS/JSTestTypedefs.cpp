@@ -75,9 +75,9 @@ EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::constructJSTestTypedefs(
     const String& hello(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    if (exec->argumentCount() <= 1 || !exec->argument(1).isFunction())
+    if (!exec->argument(1).isFunction())
         return throwVMTypeError(exec);
-    RefPtr<TestCallback> testCallback = JSTestCallback::create(asObject(exec->argument(1)), castedThis->globalObject());
+    RefPtr<TestCallback> testCallback = JSTestCallback::create(asObject(exec->uncheckedArgument(1)), castedThis->globalObject());
     RefPtr<TestTypedefs> object = TestTypedefs::create(hello, testCallback);
     return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
 }

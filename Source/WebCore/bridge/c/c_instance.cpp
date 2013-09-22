@@ -167,7 +167,7 @@ JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
 
     unsigned i;
     for (i = 0; i < count; i++)
-        convertValueToNPVariant(exec, exec->argument(i), &cArgs[i]);
+        convertValueToNPVariant(exec, exec->uncheckedArgument(i), &cArgs[i]);
 
     // Invoke the 'C' method.
     bool retval = true;
@@ -203,7 +203,7 @@ JSValue CInstance::invokeDefaultMethod(ExecState* exec)
 
     unsigned i;
     for (i = 0; i < count; i++)
-        convertValueToNPVariant(exec, exec->argument(i), &cArgs[i]);
+        convertValueToNPVariant(exec, exec->uncheckedArgument(i), &cArgs[i]);
 
     // Invoke the 'C' method.
     bool retval = true;

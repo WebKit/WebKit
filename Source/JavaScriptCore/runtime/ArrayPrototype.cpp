@@ -439,7 +439,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
         }
         if (i == argCount)
             break;
-        curArg = (exec->argument(i));
+        curArg = exec->uncheckedArgument(i);
         ++i;
     }
     arr->setLength(exec, n);
@@ -481,7 +481,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
 
     if (isJSArray(thisValue) && exec->argumentCount() == 1) {
         JSArray* array = asArray(thisValue);
-        array->push(exec, exec->argument(0));
+        array->push(exec, exec->uncheckedArgument(0));
         return JSValue::encode(jsNumber(array->length()));
     }
     
@@ -493,11 +493,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
     for (unsigned n = 0; n < exec->argumentCount(); n++) {
         // Check for integer overflow; where safe we can do a fast put by index.
         if (length + n >= length)
-            thisObj->methodTable()->putByIndex(thisObj, exec, length + n, exec->argument(n), true);
+            thisObj->methodTable()->putByIndex(thisObj, exec, length + n, exec->uncheckedArgument(n), true);
         else {
             PutPropertySlot slot;
             Identifier propertyName(exec, JSValue(static_cast<int64_t>(length) + static_cast<int64_t>(n)).toWTFString(exec));
-            thisObj->methodTable()->put(thisObj, exec, propertyName, exec->argument(n), slot);
+            thisObj->methodTable()->put(thisObj, exec, propertyName, exec->uncheckedArgument(n), slot);
         }
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
@@ -767,7 +767,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
 
     unsigned deleteCount = length - begin;
     if (exec->argumentCount() > 1) {
-        double deleteDouble = exec->argument(1).toInteger(exec);
+        double deleteDouble = exec->uncheckedArgument(1).toInteger(exec);
         if (deleteDouble < 0)
             deleteCount = 0;
         else if (deleteDouble > length - begin)
@@ -800,7 +800,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             return JSValue::encode(jsUndefined());
     }
     for (unsigned k = 0; k < additionalArgs; ++k) {
-        thisObj->methodTable()->putByIndex(thisObj, exec, k + begin, exec->argument(k + 2), true);
+        thisObj->methodTable()->putByIndex(thisObj, exec, k + begin, exec->uncheckedArgument(k + 2), true);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
     }
@@ -825,7 +825,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec)
             return JSValue::encode(jsUndefined());
     }
     for (unsigned k = 0; k < nrArgs; ++k) {
-        thisObj->methodTable()->putByIndex(thisObj, exec, k, exec->argument(k), true);
+        thisObj->methodTable()->putByIndex(thisObj, exec, k, exec->uncheckedArgument(k), true);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
     }
@@ -1143,7 +1143,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState* exec)
         array = asArray(thisObj);
 
     if (exec->argumentCount() >= 2)
-        rv = exec->argument(1);
+        rv = exec->uncheckedArgument(1);
     else if (array && array->canGetIndexQuickly(0)) {
         rv = array->getIndexQuickly(0);
         i = 1;
@@ -1220,7 +1220,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduceRight(ExecState* exec)
         array = asArray(thisObj);
     
     if (exec->argumentCount() >= 2)
-        rv = exec->argument(1);
+        rv = exec->uncheckedArgument(1);
     else if (array && array->canGetIndexQuickly(length - 1)) {
         rv = array->getIndexQuickly(length - 1);
         i = 1;
@@ -1306,7 +1306,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState* exec)
 
     unsigned index = length - 1;
     if (exec->argumentCount() >= 2) {
-        JSValue fromValue = exec->argument(1);
+        JSValue fromValue = exec->uncheckedArgument(1);
         double fromDouble = fromValue.toInteger(exec);
         if (fromDouble < 0) {
             fromDouble += length;

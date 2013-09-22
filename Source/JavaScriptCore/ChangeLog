@@ -1,3 +1,97 @@
+2013-09-21  Darin Adler  <darin@apple.com>
+
+        Add ExecState::uncheckedArgument and use where possible to shrink a bit
+        https://bugs.webkit.org/show_bug.cgi?id=121750
+
+        Reviewed by Andreas Kling.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::uncheckedArgument): Added. Like argument, but with an
+        assertion rather than a runtime check.
+
+        * API/APICallbackFunction.h:
+        (JSC::APICallbackFunction::call): Use uncheckedArgument because we are
+        already in a loop over arguments, so don't need a range check.
+        * API/JSCallbackConstructor.cpp:
+        (JSC::constructJSCallback): Ditto.
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject::construct): Ditto.
+        (JSC::JSCallbackObject::call): Ditto.
+        * jsc.cpp:
+        (functionPrint): Ditto.
+        (functionRun): Ditto.
+        (functionSetSamplingFlags): Ditto.
+        (functionClearSamplingFlags): Ditto.
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncConcat): Ditto.
+        (JSC::arrayProtoFuncPush): Use uncheckedArgument because there is already
+        code that explicitly checks argumentCount.
+        (JSC::arrayProtoFuncSplice): Ditto.
+        (JSC::arrayProtoFuncUnShift): Ditto.
+        (JSC::arrayProtoFuncReduce): Ditto.
+        (JSC::arrayProtoFuncReduceRight): Ditto.
+        (JSC::arrayProtoFuncLastIndexOf): Ditto.
+        * runtime/DatePrototype.cpp:
+        (JSC::fillStructuresUsingTimeArgs): Ditto.
+        (JSC::fillStructuresUsingDateArgs): Ditto.
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::constructArrayBuffer): Ditto.
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::arrayBufferProtoFuncSlice): Ditto.
+        * runtime/JSBoundFunction.cpp:
+        (JSC::boundFunctionCall): Ditto.
+        (JSC::boundFunctionConstruct): Ditto.
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData): Ditto.
+        (JSC::setData): Ditto.
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayView): Ditto.
+        * runtime/JSGenericTypedArrayViewPrototypeInlines.h:
+        (JSC::genericTypedArrayViewProtoFuncSet): Ditto.
+        (JSC::genericTypedArrayViewProtoFuncSubarray): Ditto.
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse): Ditto.
+        (JSC::JSONProtoFuncStringify): Ditto.
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::constructPromise): Ditto.
+        (JSC::JSPromiseConstructorFuncFulfill): Ditto.
+        (JSC::JSPromiseConstructorFuncResolve): Ditto.
+        (JSC::JSPromiseConstructorFuncReject): Ditto.
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncMax): Ditto.
+        (JSC::mathProtoFuncMin): Ditto.
+
+        * runtime/NameConstructor.cpp:
+        (JSC::constructPrivateName): Removed unneeded check of argumentCout
+        that simply repeats what argument already does.
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::Interpreter::constructWithNativeErrorConstructor): Ditto.
+        (JSC::Interpreter::callNativeErrorConstructor): Ditto.
+
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructWithNumberConstructor): Use uncheckedArgument since
+        there is already code that explicitly checks argument count.
+        (JSC::callNumberConstructor): Ditto.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorCreate): Small refactoring to not call argument(0)
+        three times.
+
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet): Use uncheckedArgument since we are already in a loop
+        over arguments.
+
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCodeSlowCase): In a loop.
+        (JSC::stringFromCharCode): Already checked count.
+        (JSC::constructWithStringConstructor): Ditto.
+        (JSC::callStringConstructor): Ditto.
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncConcat): Already checked count.
+        * runtime/TestRunnerUtils.cpp:
+        (JSC::numberOfDFGCompiles): Ditto.
+        (JSC::setNeverInline): Ditto.
+
 2013-09-21  Filip Pizlo  <fpizlo@apple.com>
 
         Remove the notion that a CallFrame can have a pointer to an InlineCallFrame, since that doesn't happen anymore

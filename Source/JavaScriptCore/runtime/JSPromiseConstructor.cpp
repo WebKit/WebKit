@@ -94,7 +94,7 @@ static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
     if (!exec->argumentCount())
         return throwVMError(exec, createTypeError(exec, "Expected at least one argument"));
 
-    JSValue function = exec->argument(0);
+    JSValue function = exec->uncheckedArgument(0);
 
     CallData callData;
     CallType callType = getCallData(function, callData);
@@ -151,7 +151,7 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncFulfill(ExecState* exec)
     JSGlobalObject* globalObject = exec->callee()->globalObject();
 
     JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject);
-    promise->resolver()->fulfill(exec, exec->argument(0));
+    promise->resolver()->fulfill(exec, exec->uncheckedArgument(0));
 
     return JSValue::encode(promise);
 }
@@ -164,7 +164,7 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncResolve(ExecState* exec)
     JSGlobalObject* globalObject = exec->callee()->globalObject();
 
     JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject);
-    promise->resolver()->resolve(exec, exec->argument(0));
+    promise->resolver()->resolve(exec, exec->uncheckedArgument(0));
 
     return JSValue::encode(promise);
 }
@@ -177,7 +177,7 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncReject(ExecState* exec)
     JSGlobalObject* globalObject = exec->callee()->globalObject();
 
     JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject);
-    promise->resolver()->reject(exec, exec->argument(0));
+    promise->resolver()->reject(exec, exec->uncheckedArgument(0));
 
     return JSValue::encode(promise);
 }

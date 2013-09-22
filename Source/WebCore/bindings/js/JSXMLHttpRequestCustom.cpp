@@ -88,18 +88,17 @@ JSValue JSXMLHttpRequest::open(ExecState* exec)
     if (exec->argumentCount() < 2)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
 
-    const KURL& url = impl()->scriptExecutionContext()->completeURL(exec->argument(1).toString(exec)->value(exec));
-    String method = exec->argument(0).toString(exec)->value(exec);
+    const KURL& url = impl()->scriptExecutionContext()->completeURL(exec->uncheckedArgument(1).toString(exec)->value(exec));
+    String method = exec->uncheckedArgument(0).toString(exec)->value(exec);
 
     ExceptionCode ec = 0;
     if (exec->argumentCount() >= 3) {
-        bool async = exec->argument(2).toBoolean(exec);
+        bool async = exec->uncheckedArgument(2).toBoolean(exec);
+        if (!exec->argument(3).isUndefined()) {
+            String user = valueToStringWithNullCheck(exec, exec->uncheckedArgument(3));
 
-        if (exec->argumentCount() >= 4 && !exec->argument(3).isUndefined()) {
-            String user = valueToStringWithNullCheck(exec, exec->argument(3));
-
-            if (exec->argumentCount() >= 5 && !exec->argument(4).isUndefined()) {
-                String password = valueToStringWithNullCheck(exec, exec->argument(4));
+            if (!exec->argument(4).isUndefined()) {
+                String password = valueToStringWithNullCheck(exec, exec->uncheckedArgument(4));
                 impl()->open(method, url, async, user, password, ec);
             } else
                 impl()->open(method, url, async, user, ec);
@@ -149,26 +148,22 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
     InspectorInstrumentation::willSendXMLHttpRequest(impl()->scriptExecutionContext(), impl()->url());
 
     ExceptionCode ec = 0;
-    if (!exec->argumentCount())
+    JSValue val = exec->argument(0);
+    if (val.isUndefinedOrNull())
         impl()->send(ec);
-    else {
-        JSValue val = exec->argument(0);
-        if (val.isUndefinedOrNull())
-            impl()->send(ec);
-        else if (val.inherits(JSDocument::info()))
-            impl()->send(toDocument(val), ec);
-        else if (val.inherits(JSBlob::info()))
-            impl()->send(toBlob(val), ec);
-        else if (val.inherits(JSDOMFormData::info()))
-            impl()->send(toDOMFormData(val), ec);
-        else if (val.inherits(JSArrayBuffer::info()))
-            impl()->send(toArrayBuffer(val), ec);
-        else if (val.inherits(JSArrayBufferView::info())) {
-            RefPtr<ArrayBufferView> view = toArrayBufferView(val);
-            impl()->send(view.get(), ec);
-        } else
-            impl()->send(val.toString(exec)->value(exec), ec);
-    }
+    else if (val.inherits(JSDocument::info()))
+        impl()->send(toDocument(val), ec);
+    else if (val.inherits(JSBlob::info()))
+        impl()->send(toBlob(val), ec);
+    else if (val.inherits(JSDOMFormData::info()))
+        impl()->send(toDOMFormData(val), ec);
+    else if (val.inherits(JSArrayBuffer::info()))
+        impl()->send(toArrayBuffer(val), ec);
+    else if (val.inherits(JSArrayBufferView::info())) {
+        RefPtr<ArrayBufferView> view = toArrayBufferView(val);
+        impl()->send(view.get(), ec);
+    } else
+        impl()->send(val.toString(exec)->value(exec), ec);
 
     SendFunctor functor;
     exec->iterate(functor);

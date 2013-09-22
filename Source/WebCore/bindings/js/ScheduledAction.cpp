@@ -72,7 +72,7 @@ ScheduledAction::ScheduledAction(ExecState* exec, JSValue function, DOMWrapperWo
     // setTimeout(function, interval, arg0, arg1...).
     // Start at 2 to skip function and interval.
     for (size_t i = 2; i < exec->argumentCount(); ++i)
-        m_args.append(Strong<JSC::Unknown>(exec->vm(), exec->argument(i)));
+        m_args.append(Strong<JSC::Unknown>(exec->vm(), exec->uncheckedArgument(i)));
 }
 
 void ScheduledAction::execute(ScriptExecutionContext* context)

@@ -73,14 +73,14 @@ static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec)
     UChar* buf;
     PassRefPtr<StringImpl> impl = StringImpl::createUninitialized(length, buf);
     for (unsigned i = 0; i < length; ++i)
-        buf[i] = static_cast<UChar>(exec->argument(i).toUInt32(exec));
+        buf[i] = static_cast<UChar>(exec->uncheckedArgument(i).toUInt32(exec));
     return jsString(exec, impl);
 }
 
 static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
 {
     if (LIKELY(exec->argumentCount() == 1))
-        return JSValue::encode(jsSingleCharacterString(exec, exec->argument(0).toUInt32(exec)));
+        return JSValue::encode(jsSingleCharacterString(exec, exec->uncheckedArgument(0).toUInt32(exec)));
     return JSValue::encode(stringFromCharCodeSlowCase(exec));
 }
 
@@ -95,7 +95,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* ex
     if (!exec->argumentCount())
         return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure()));
     
-    return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure(), exec->argument(0).toString(exec)));
+    return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure(), exec->uncheckedArgument(0).toString(exec)));
 }
 
 ConstructType StringConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -108,7 +108,7 @@ static EncodedJSValue JSC_HOST_CALL callStringConstructor(ExecState* exec)
 {
     if (!exec->argumentCount())
         return JSValue::encode(jsEmptyString(exec));
-    return JSValue::encode(exec->argument(0).toString(exec));
+    return JSValue::encode(exec->uncheckedArgument(0).toString(exec));
 }
 
 CallType StringConstructor::getCallData(JSCell*, CallData& callData)

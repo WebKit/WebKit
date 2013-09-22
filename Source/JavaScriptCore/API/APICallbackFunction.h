@@ -50,7 +50,7 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::call(ExecState* exec)
     Vector<JSValueRef, 16> arguments;
     arguments.reserveInitialCapacity(argumentCount);
     for (int i = 0; i < argumentCount; i++)
-        arguments.uncheckedAppend(toRef(exec, exec->argument(i)));
+        arguments.uncheckedAppend(toRef(exec, exec->uncheckedArgument(i)));
 
     JSValueRef exception = 0;
     JSValueRef result;

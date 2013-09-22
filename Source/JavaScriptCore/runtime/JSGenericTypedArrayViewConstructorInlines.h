@@ -90,12 +90,12 @@ static EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* ex
     if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(exec->argument(0))) {
         RefPtr<ArrayBuffer> buffer = jsBuffer->impl();
         
-        unsigned offset = (exec->argumentCount() > 1) ? exec->argument(1).toUInt32(exec) : 0;
+        unsigned offset = (exec->argumentCount() > 1) ? exec->uncheckedArgument(1).toUInt32(exec) : 0;
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
         unsigned length = 0;
         if (exec->argumentCount() > 2) {
-            length = exec->argument(2).toUInt32(exec);
+            length = exec->uncheckedArgument(2).toUInt32(exec);
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
         } else {
@@ -113,7 +113,7 @@ static EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* ex
     // - Another array. This creates a copy of the of that array.
     // - An integer. This creates a new typed array of that length and zero-initializes it.
     
-    if (JSObject* object = jsDynamicCast<JSObject*>(exec->argument(0))) {
+    if (JSObject* object = jsDynamicCast<JSObject*>(exec->uncheckedArgument(0))) {
         unsigned length =
             object->get(exec, exec->vm().propertyNames->length).toUInt32(exec);
         if (exec->hadException())
@@ -132,13 +132,13 @@ static EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* ex
     }
     
     int length;
-    if (exec->argument(0).isInt32())
-        length = exec->argument(0).asInt32();
-    else if (!exec->argument(0).isNumber())
+    if (exec->uncheckedArgument(0).isInt32())
+        length = exec->uncheckedArgument(0).asInt32();
+    else if (!exec->uncheckedArgument(0).isNumber())
         return throwVMError(exec, createTypeError(exec, "Invalid array length argument"));
     else {
-        length = static_cast<int>(exec->argument(0).asNumber());
-        if (length != exec->argument(0).asNumber())
+        length = static_cast<int>(exec->uncheckedArgument(0).asNumber());
+        if (length != exec->uncheckedArgument(0).asNumber())
             return throwVMError(exec, createTypeError(exec, "Invalid array length argument (fractional lengths not allowed)"));
     }
 

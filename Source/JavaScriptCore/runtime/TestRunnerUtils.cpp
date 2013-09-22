@@ -81,14 +81,14 @@ JSValue numberOfDFGCompiles(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
-    return numberOfDFGCompiles(exec->argument(0));
+    return numberOfDFGCompiles(exec->uncheckedArgument(0));
 }
 
 JSValue setNeverInline(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
-    return setNeverInline(exec->argument(0));
+    return setNeverInline(exec->uncheckedArgument(0));
 }
 
 } // namespace JSC

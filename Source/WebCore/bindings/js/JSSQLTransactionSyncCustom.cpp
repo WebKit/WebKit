@@ -49,7 +49,7 @@ JSValue JSSQLTransactionSync::executeSql(ExecState* exec)
         return jsUndefined();
     }
 
-    String sqlStatement = exec->argument(0).toString(exec)->value(exec);
+    String sqlStatement = exec->uncheckedArgument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return jsUndefined();
 

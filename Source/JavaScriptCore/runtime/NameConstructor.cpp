@@ -50,7 +50,7 @@ void NameConstructor::finishCreation(ExecState* exec, NamePrototype* prototype)
 
 static EncodedJSValue JSC_HOST_CALL constructPrivateName(ExecState* exec)
 {
-    JSValue publicName = exec->argumentCount() ? exec->argument(0) : jsUndefined();
+    JSValue publicName = exec->argument(0);
     return JSValue::encode(NameInstance::create(exec->vm(), exec->lexicalGlobalObject()->privateNameStructure(), publicName.toString(exec)));
 }
 

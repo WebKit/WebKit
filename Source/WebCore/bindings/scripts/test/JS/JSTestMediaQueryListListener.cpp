@@ -149,9 +149,9 @@ EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod
     TestMediaQueryListListener* impl = static_cast<TestMediaQueryListListener*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    if (exec->argumentCount() <= 0 || !exec->argument(0).isFunction())
+    if (!exec->argument(0).isFunction())
         return throwVMTypeError(exec);
-    RefPtr<MediaQueryListListener> listener = JSMediaQueryListListener::create(asObject(exec->argument(0)), castedThis->globalObject());
+    RefPtr<MediaQueryListListener> listener = JSMediaQueryListListener::create(asObject(exec->uncheckedArgument(0)), castedThis->globalObject());
     impl->method(listener);
     return JSValue::encode(jsUndefined());
 }

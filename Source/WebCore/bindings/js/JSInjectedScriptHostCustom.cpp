@@ -90,7 +90,7 @@ JSValue JSInjectedScriptHost::inspectedObject(ExecState* exec)
     if (exec->argumentCount() < 1)
         return jsUndefined();
 
-    InjectedScriptHost::InspectableObject* object = impl()->inspectedObject(exec->argument(0).toInt32(exec));
+    InjectedScriptHost::InspectableObject* object = impl()->inspectedObject(exec->uncheckedArgument(0).toInt32(exec));
     if (!object)
         return jsUndefined();
 
@@ -107,7 +107,7 @@ JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)
     if (exec->argumentCount() < 1)
         return jsUndefined();
 
-    JSObject* thisObject = jsCast<JSObject*>(exec->argument(0).toThis(exec, NotStrictMode));
+    JSObject* thisObject = jsCast<JSObject*>(exec->uncheckedArgument(0).toThis(exec, NotStrictMode));
     String result = thisObject->methodTable()->className(thisObject);
     return jsStringWithCache(exec, result);
 }
@@ -117,7 +117,7 @@ JSValue JSInjectedScriptHost::isHTMLAllCollection(ExecState* exec)
     if (exec->argumentCount() < 1)
         return jsUndefined();
 
-    JSValue value = exec->argument(0);
+    JSValue value = exec->uncheckedArgument(0);
     return jsBoolean(value.inherits(JSHTMLAllCollection::info()));
 }
 
@@ -126,7 +126,7 @@ JSValue JSInjectedScriptHost::type(ExecState* exec)
     if (exec->argumentCount() < 1)
         return jsUndefined();
 
-    JSValue value = exec->argument(0);
+    JSValue value = exec->uncheckedArgument(0);
     if (value.isString())
         return jsString(exec, String("string"));
     if (value.inherits(JSArray::info()))
@@ -158,7 +158,7 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
-    JSValue value = exec->argument(0);
+    JSValue value = exec->uncheckedArgument(0);
     if (!value.asCell()->inherits(JSFunction::info()))
         return jsUndefined();
     JSFunction* function = jsCast<JSFunction*>(value);
@@ -222,7 +222,7 @@ JSValue JSInjectedScriptHost::getEventListeners(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
-    JSValue value = exec->argument(0);
+    JSValue value = exec->uncheckedArgument(0);
     if (!value.isObject() || value.isNull())
         return jsUndefined();
     Node* node = toNode(value);
@@ -247,8 +247,8 @@ JSValue JSInjectedScriptHost::getEventListeners(ExecState* exec)
 JSValue JSInjectedScriptHost::inspect(ExecState* exec)
 {
     if (exec->argumentCount() >= 2) {
-        ScriptValue object(exec->vm(), exec->argument(0));
-        ScriptValue hints(exec->vm(), exec->argument(1));
+        ScriptValue object(exec->vm(), exec->uncheckedArgument(0));
+        ScriptValue hints(exec->vm(), exec->uncheckedArgument(1));
         impl()->inspectImpl(object.toInspectorValue(exec), hints.toInspectorValue(exec));
     }
     return jsUndefined();
@@ -259,7 +259,7 @@ JSValue JSInjectedScriptHost::databaseId(ExecState* exec)
     if (exec->argumentCount() < 1)
         return jsUndefined();
 #if ENABLE(SQL_DATABASE)
-    Database* database = toDatabase(exec->argument(0));
+    Database* database = toDatabase(exec->uncheckedArgument(0));
     if (database)
         return jsStringWithCache(exec, impl()->databaseIdImpl(database));
 #endif
@@ -270,7 +270,7 @@ JSValue JSInjectedScriptHost::storageId(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
-    Storage* storage = toStorage(exec->argument(0));
+    Storage* storage = toStorage(exec->uncheckedArgument(0));
     if (storage)
         return jsStringWithCache(exec, impl()->storageIdImpl(storage));
     return jsUndefined();

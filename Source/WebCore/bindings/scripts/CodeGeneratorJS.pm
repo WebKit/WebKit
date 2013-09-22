@@ -2844,24 +2844,24 @@ sub GenerateParametersCheck
             $implIncludes{"$callbackClassName.h"} = 1;
             if ($optional) {
                 push(@$outputArray, "    RefPtr<$argType> $name;\n");
-                push(@$outputArray, "    if (exec->argumentCount() > $argsIndex && !exec->argument($argsIndex).isUndefinedOrNull()) {\n");
-                push(@$outputArray, "        if (!exec->argument($argsIndex).isFunction())\n");
+                push(@$outputArray, "    if (!exec->argument($argsIndex).isUndefinedOrNull()) {\n");
+                push(@$outputArray, "        if (!exec->uncheckedArgument($argsIndex).isFunction())\n");
                 push(@$outputArray, "            return throwVMTypeError(exec);\n");
                 if ($function->isStatic) {
                     AddToImplIncludes("CallbackFunction.h");
-                    push(@$outputArray, "        $name = createFunctionOnlyCallback<${callbackClassName}>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument($argsIndex));\n");
+                    push(@$outputArray, "        $name = createFunctionOnlyCallback<${callbackClassName}>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument($argsIndex));\n");
                 } else {
-                    push(@$outputArray, "        $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
+                    push(@$outputArray, "        $name = ${callbackClassName}::create(asObject(exec->uncheckedArgument($argsIndex)), castedThis->globalObject());\n");
                 }
                 push(@$outputArray, "    }\n");
             } else {
-                push(@$outputArray, "    if (exec->argumentCount() <= $argsIndex || !exec->argument($argsIndex).isFunction())\n");
+                push(@$outputArray, "    if (!exec->argument($argsIndex).isFunction())\n");
                 push(@$outputArray, "        return throwVMTypeError(exec);\n");
                 if ($function->isStatic) {
                     AddToImplIncludes("CallbackFunction.h");
-                    push(@$outputArray, "    RefPtr<$argType> $name = createFunctionOnlyCallback<${callbackClassName}>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument($argsIndex));\n");
+                    push(@$outputArray, "    RefPtr<$argType> $name = createFunctionOnlyCallback<${callbackClassName}>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->uncheckedArgument($argsIndex));\n");
                 } else {
-                    push(@$outputArray, "    RefPtr<$argType> $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
+                    push(@$outputArray, "    RefPtr<$argType> $name = ${callbackClassName}::create(asObject(exec->uncheckedArgument($argsIndex)), castedThis->globalObject());\n");
                 }
             }
         } elsif ($parameter->extendedAttributes->{"Clamp"}) {
@@ -2886,9 +2886,9 @@ sub GenerateParametersCheck
             if (!IsNativeType($argType)) {
                 push(@$outputArray, "    Vector<$nativeElementType> $name;\n");
                 push(@$outputArray, "    for (unsigned i = $argsIndex; i < exec->argumentCount(); ++i) {\n");
-                push(@$outputArray, "        if (!exec->argument(i).inherits(JS${argType}::info()))\n");
+                push(@$outputArray, "        if (!exec->uncheckedArgument(i).inherits(JS${argType}::info()))\n");
                 push(@$outputArray, "            return throwVMTypeError(exec);\n");
-                push(@$outputArray, "        $name.append(to$argType(exec->argument(i)));\n");
+                push(@$outputArray, "        $name.append(to$argType(exec->uncheckedArgument(i)));\n");
                 push(@$outputArray, "    }\n")
             } else {
                 push(@$outputArray, "    Vector<$nativeElementType> $name = toNativeArguments<$nativeElementType>(exec, $argsIndex);\n");

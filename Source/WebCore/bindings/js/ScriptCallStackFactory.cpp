@@ -202,7 +202,7 @@ PassRefPtr<ScriptArguments> createScriptArguments(JSC::ExecState* exec, unsigned
     Vector<ScriptValue> arguments;
     size_t argumentCount = exec->argumentCount();
     for (size_t i = skipArgumentCount; i < argumentCount; ++i)
-        arguments.append(ScriptValue(exec->vm(), exec->argument(i)));
+        arguments.append(ScriptValue(exec->vm(), exec->uncheckedArgument(i)));
     return ScriptArguments::create(exec, arguments);
 }
 

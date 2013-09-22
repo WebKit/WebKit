@@ -52,7 +52,7 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
     
     int32_t end;
     if (exec->argumentCount() >= 2) {
-        end = exec->argument(1).toInt32(exec);
+        end = exec->uncheckedArgument(1).toInt32(exec);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
     } else

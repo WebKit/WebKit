@@ -407,7 +407,7 @@ EncodedJSValue JSCallbackObject<Parent>::construct(ExecState* exec)
             Vector<JSValueRef, 16> arguments;
             arguments.reserveInitialCapacity(argumentCount);
             for (size_t i = 0; i < argumentCount; ++i)
-                arguments.uncheckedAppend(toRef(exec, exec->argument(i)));
+                arguments.uncheckedAppend(toRef(exec, exec->uncheckedArgument(i)));
             JSValueRef exception = 0;
             JSObject* result;
             {
@@ -474,7 +474,7 @@ EncodedJSValue JSCallbackObject<Parent>::call(ExecState* exec)
             Vector<JSValueRef, 16> arguments;
             arguments.reserveInitialCapacity(argumentCount);
             for (size_t i = 0; i < argumentCount; ++i)
-                arguments.uncheckedAppend(toRef(exec, exec->argument(i)));
+                arguments.uncheckedAppend(toRef(exec, exec->uncheckedArgument(i)));
             JSValueRef exception = 0;
             JSValue result;
             {
