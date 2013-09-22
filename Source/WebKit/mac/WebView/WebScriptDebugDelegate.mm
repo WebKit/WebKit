@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005-2013 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,16 +62,13 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 @interface WebScriptCallFramePrivate : NSObject {
 @public
     WebScriptObject        *globalObject;   // the global object's proxy (not retained)
-    WebScriptCallFrame     *caller;         // previous stack frame
     DebuggerCallFrame* debuggerCallFrame;
-    WebScriptDebugger* debugger;
 }
 @end
 
 @implementation WebScriptCallFramePrivate
 - (void)dealloc
 {
-    [caller release];
     delete debuggerCallFrame;
     [super dealloc];
 }
@@ -88,29 +85,14 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 @implementation WebScriptCallFrame (WebScriptDebugDelegateInternal)
 
-- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj debugger:(WebScriptDebugger *)debugger caller:(WebScriptCallFrame *)caller debuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame
+- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj debuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame
 {
     if ((self = [super init])) {
         _private = [[WebScriptCallFramePrivate alloc] init];
         _private->globalObject = globalObj;
-        _private->caller = [caller retain];
-        _private->debugger = debugger;
+        _private->debuggerCallFrame = new DebuggerCallFrame(debuggerCallFrame);
     }
     return self;
-}
-
-- (void)_setDebuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame
-{
-    if (!_private->debuggerCallFrame)
-        _private->debuggerCallFrame = new DebuggerCallFrame(debuggerCallFrame);
-    else
-        *_private->debuggerCallFrame = debuggerCallFrame;
-}
-
-- (void)_clearDebuggerCallFrame
-{
-    delete _private->debuggerCallFrame;
-    _private->debuggerCallFrame = 0;
 }
 
 - (id)_convertValueToObjcValue:(JSC::JSValue)value
@@ -159,42 +141,6 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     return _userInfo;
 }
 
-- (WebScriptCallFrame *)caller
-{
-    return _private->caller;
-}
-
-// Returns an array of scope objects (most local first).
-// The properties of each scope object are the variables for that scope.
-// Note that the last entry in the array will _always_ be the global object (windowScriptObject),
-// whose properties are the global variables.
-
-- (NSArray *)scopeChain
-{
-    if (!_private->debuggerCallFrame)
-        return [NSArray array];
-
-
-    JSScope* scope = _private->debuggerCallFrame->scope();
-    JSLockHolder lock(scope->vm());
-    if (!scope->next())  // global frame
-        return [NSArray arrayWithObject:_private->globalObject];
-
-    NSMutableArray *scopes = [[NSMutableArray alloc] init];
-
-    ScopeChainIterator end = scope->end();
-    for (ScopeChainIterator it = scope->begin(); it != end; ++it) {
-        JSObject* object = it.get();
-        if (object->isActivationObject())
-            object = DebuggerActivation::create(*scope->vm(), object);
-        [scopes addObject:[self _convertValueToObjcValue:object]];
-    }
-
-    NSArray *result = [NSArray arrayWithArray:scopes];
-    [scopes release];
-    return result;
-}
-
 // Returns the name of the function for this frame, if available.
 // Returns nil for anonymous functions and for the global frame.
 
@@ -216,43 +162,6 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
     JSC::JSValue exception = _private->debuggerCallFrame->exception();
     return exception ? [self _convertValueToObjcValue:exception] : nil;
-}
-
-// Evaluate some JavaScript code in the context of this frame.
-// The code is evaluated as if by "eval", and the result is returned.
-// If there is an (uncaught) exception, it is returned as though _it_ were the result.
-// Calling this method on the global frame is not quite the same as calling the WebScriptObject
-// method of the same name, due to the treatment of exceptions.
-
-- (id)evaluateWebScript:(NSString *)script
-{
-    if (!_private->debuggerCallFrame)
-        return nil;
-
-    // If this is the global call frame and there is no dynamic global object,
-    // Dashcode is attempting to execute JS in the evaluator using a stale
-    // WebScriptCallFrame. Instead, we need to set the dynamic global object
-    // and evaluate the JS in the global object's global call frame.
-    JSGlobalObject* globalObject = _private->debugger->globalObject();
-    JSLockHolder lock(globalObject->vm());
-
-    if (self == _private->debugger->globalCallFrame() && !globalObject->vm().dynamicGlobalObject) {
-        JSGlobalObject* globalObject = _private->debugger->globalObject();
-
-        DynamicGlobalObjectScope globalObjectScope(globalObject->vm(), globalObject);
-
-        JSC::JSValue exception;
-        JSC::JSValue result = evaluateInGlobalCallFrame(script, exception, globalObject);
-        if (exception)
-            return [self _convertValueToObjcValue:exception];
-        return result ? [self _convertValueToObjcValue:result] : nil;        
-    }
-
-    JSC::JSValue exception;
-    JSC::JSValue result = _private->debuggerCallFrame->evaluate(script, exception);
-    if (exception)
-        return [self _convertValueToObjcValue:exception];
-    return result ? [self _convertValueToObjcValue:result] : nil;
 }
 
 @end

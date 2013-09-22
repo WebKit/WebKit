@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,9 +46,7 @@ using namespace JSC;
 using namespace WebCore;
 
 @interface WebScriptCallFrame (WebScriptDebugDelegateInternal)
-- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj debugger:(WebScriptDebugger *)debugger caller:(WebScriptCallFrame *)caller debuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame;
-- (void)_setDebuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame;
-- (void)_clearDebuggerCallFrame;
+- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj debuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame;
 @end
 
 static NSString *toNSString(SourceProvider* sourceProvider)
@@ -78,24 +76,6 @@ WebScriptDebugger::WebScriptDebugger(JSGlobalObject* globalObject)
     , m_globalObject(globalObject->vm(), globalObject)
 {
     attach(globalObject);
-    initGlobalCallFrame(DebuggerCallFrame(globalObject->globalExec(), 0, 0));
-}
-
-void WebScriptDebugger::initGlobalCallFrame(const DebuggerCallFrame& debuggerCallFrame)
-{
-    m_callingDelegate = true;
-
-    WebFrame *webFrame = toWebFrame(debuggerCallFrame.dynamicGlobalObject());
-
-    m_topCallFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script().windowScriptObject() debugger:this caller:m_topCallFrame.get() debuggerCallFrame:debuggerCallFrame]);
-    m_globalCallFrame = m_topCallFrame;
-
-    WebView *webView = [webFrame webView];
-    WebScriptDebugDelegateImplementationCache* implementations = WebViewGetScriptDebugDelegateImplementations(webView);
-    if (implementations->didEnterCallFrameFunc)
-        CallScriptDebugDelegate(implementations->didEnterCallFrameFunc, webView, @selector(webView:didEnterCallFrame:sourceId:line:forWebFrame:), m_topCallFrame.get(), static_cast<NSInteger>(0), -1, webFrame);
-
-    m_callingDelegate = false;
 }
 
 // callbacks - relay to delegate
@@ -136,66 +116,6 @@ void WebScriptDebugger::sourceParsed(ExecState* exec, SourceProvider* sourceProv
     m_callingDelegate = false;
 }
 
-void WebScriptDebugger::callEvent(const DebuggerCallFrame& debuggerCallFrame)
-{
-    if (m_callingDelegate)
-        return;
-
-    m_callingDelegate = true;
-
-    WebFrame *webFrame = toWebFrame(debuggerCallFrame.dynamicGlobalObject());
-
-    m_topCallFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script().windowScriptObject() debugger:this caller:m_topCallFrame.get() debuggerCallFrame:debuggerCallFrame]);
-
-    WebView *webView = [webFrame webView];
-    WebScriptDebugDelegateImplementationCache* implementations = WebViewGetScriptDebugDelegateImplementations(webView);
-    if (implementations->didEnterCallFrameFunc)
-        CallScriptDebugDelegate(implementations->didEnterCallFrameFunc, webView, @selector(webView:didEnterCallFrame:sourceId:line:forWebFrame:), m_topCallFrame.get(), debuggerCallFrame.sourceId(), debuggerCallFrame.line(), webFrame);
-
-    m_callingDelegate = false;
-}
-
-void WebScriptDebugger::atStatement(const DebuggerCallFrame& debuggerCallFrame)
-{
-    if (m_callingDelegate)
-        return;
-
-    m_callingDelegate = true;
-
-    WebFrame *webFrame = toWebFrame(debuggerCallFrame.dynamicGlobalObject());
-    WebView *webView = [webFrame webView];
-
-    [m_topCallFrame.get() _setDebuggerCallFrame:debuggerCallFrame];
-
-    WebScriptDebugDelegateImplementationCache* implementations = WebViewGetScriptDebugDelegateImplementations(webView);
-    if (implementations->willExecuteStatementFunc)
-        CallScriptDebugDelegate(implementations->willExecuteStatementFunc, webView, @selector(webView:willExecuteStatement:sourceId:line:forWebFrame:), m_topCallFrame.get(), debuggerCallFrame.sourceId(), debuggerCallFrame.line(), webFrame);
-
-    m_callingDelegate = false;
-}
-
-void WebScriptDebugger::returnEvent(const DebuggerCallFrame& debuggerCallFrame)
-{
-    if (m_callingDelegate)
-        return;
-
-    m_callingDelegate = true;
-
-    WebFrame *webFrame = toWebFrame(debuggerCallFrame.dynamicGlobalObject());
-    WebView *webView = [webFrame webView];
-
-    [m_topCallFrame.get() _setDebuggerCallFrame:debuggerCallFrame];
-
-    WebScriptDebugDelegateImplementationCache* implementations = WebViewGetScriptDebugDelegateImplementations(webView);
-    if (implementations->willLeaveCallFrameFunc)
-        CallScriptDebugDelegate(implementations->willLeaveCallFrameFunc, webView, @selector(webView:willLeaveCallFrame:sourceId:line:forWebFrame:), m_topCallFrame.get(), debuggerCallFrame.sourceId(), debuggerCallFrame.line(), webFrame);
-
-    [m_topCallFrame.get() _clearDebuggerCallFrame];
-    m_topCallFrame = [m_topCallFrame.get() caller];
-
-    m_callingDelegate = false;
-}
-
 void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, bool hasHandler)
 {
     if (m_callingDelegate)
@@ -205,30 +125,15 @@ void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, bo
 
     WebFrame *webFrame = toWebFrame(debuggerCallFrame.dynamicGlobalObject());
     WebView *webView = [webFrame webView];
-    [m_topCallFrame.get() _setDebuggerCallFrame:debuggerCallFrame];
+    RetainPtr<WebScriptCallFrame> callFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script().windowScriptObject() debuggerCallFrame:debuggerCallFrame]);
 
     WebScriptDebugDelegateImplementationCache* cache = WebViewGetScriptDebugDelegateImplementations(webView);
     if (cache->exceptionWasRaisedFunc) {
         if (cache->exceptionWasRaisedExpectsHasHandlerFlag)
-            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:hasHandler:sourceId:line:forWebFrame:), m_topCallFrame.get(), hasHandler, debuggerCallFrame.sourceId(), debuggerCallFrame.line(), webFrame);
+            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:hasHandler:sourceId:line:forWebFrame:), callFrame.get(), hasHandler, debuggerCallFrame.sourceId(), debuggerCallFrame.line(), webFrame);
         else
-            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:sourceId:line:forWebFrame:), m_topCallFrame.get(), debuggerCallFrame.sourceId(), debuggerCallFrame.line(), webFrame);
+            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:sourceId:line:forWebFrame:), callFrame.get(), debuggerCallFrame.sourceId(), debuggerCallFrame.line(), webFrame);
     }
 
     m_callingDelegate = false;
-}
-
-void WebScriptDebugger::willExecuteProgram(const DebuggerCallFrame& debuggerCallFrame)
-{
-    callEvent(debuggerCallFrame);
-}
-
-void WebScriptDebugger::didExecuteProgram(const DebuggerCallFrame& debuggerCallFrame)
-{
-    returnEvent(debuggerCallFrame);
-}
-
-void WebScriptDebugger::didReachBreakpoint(const DebuggerCallFrame&)
-{
-    return;
 }

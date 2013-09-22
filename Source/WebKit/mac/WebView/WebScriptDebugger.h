@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,26 +52,21 @@ class WebScriptDebugger : public JSC::Debugger {
 public:
     WebScriptDebugger(JSC::JSGlobalObject*);
 
-    void initGlobalCallFrame(const JSC::DebuggerCallFrame&);
-
-    virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const WTF::String& errorMsg);
-    virtual void callEvent(const JSC::DebuggerCallFrame&);
-    virtual void atStatement(const JSC::DebuggerCallFrame&);
-    virtual void returnEvent(const JSC::DebuggerCallFrame&);
-    virtual void exception(const JSC::DebuggerCallFrame&, bool hasHandler);
-    virtual void willExecuteProgram(const JSC::DebuggerCallFrame&);
-    virtual void didExecuteProgram(const JSC::DebuggerCallFrame&);
-    virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&);
-
     JSC::JSGlobalObject* globalObject() const { return m_globalObject.get(); }
-    WebScriptCallFrame *globalCallFrame() const { return m_globalCallFrame.get(); }
 
 private:
+    virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const WTF::String& errorMsg);
+    virtual void callEvent(const JSC::DebuggerCallFrame&) { }
+    virtual void atStatement(const JSC::DebuggerCallFrame&) { }
+    virtual void returnEvent(const JSC::DebuggerCallFrame&) { }
+    virtual void exception(const JSC::DebuggerCallFrame&, bool hasHandler);
+    virtual void willExecuteProgram(const JSC::DebuggerCallFrame&) { }
+    virtual void didExecuteProgram(const JSC::DebuggerCallFrame&) { }
+    virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&) { }
+
     bool m_callingDelegate;
-    RetainPtr<WebScriptCallFrame> m_topCallFrame;
 
     JSC::Strong<JSC::JSGlobalObject> m_globalObject;
-    RetainPtr<WebScriptCallFrame> m_globalCallFrame;
 };
 
 #endif // WebScriptDebugger_h

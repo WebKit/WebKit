@@ -1,3 +1,33 @@
+2013-09-21  Mark Lam  <mark.lam@apple.com>
+
+        Remove unused code in WebKit/mac's WebScriptDebugDelegate.
+        https://bugs.webkit.org/show_bug.cgi?id=121706.
+
+        Reviewed by Timothy Hatcher.
+
+        WebScriptDebugDelegate's didEnterCallFrame, willExecuteStatement,
+        and willLeaveCallFrame are not in use. Removed them and all methods
+        and fields used for supporting them.
+
+        * WebView/WebDelegateImplementationCaching.h:
+        * WebView/WebScriptDebugDelegate.h:
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFramePrivate dealloc]):
+        (-[WebScriptCallFrame _initWithGlobalObject:debuggerCallFrame:]):
+        * WebView/WebScriptDebugger.h:
+        (WebScriptDebugger::globalObject):
+        (WebScriptDebugger::callEvent):
+        (WebScriptDebugger::atStatement):
+        (WebScriptDebugger::returnEvent):
+        (WebScriptDebugger::willExecuteProgram):
+        (WebScriptDebugger::didExecuteProgram):
+        (WebScriptDebugger::didReachBreakpoint):
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::WebScriptDebugger):
+        (WebScriptDebugger::exception):
+        * WebView/WebView.mm:
+        (-[WebView _cacheScriptDebugDelegateImplementations]):
+
 2013-09-18  Anders Carlsson  <andersca@apple.com>
 
         RefPtrHashMap should work with move only types

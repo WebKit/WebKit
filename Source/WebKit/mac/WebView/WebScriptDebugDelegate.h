@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005-2013 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,24 +69,6 @@ enum {
                                               withError:(NSError *)error
                                             forWebFrame:(WebFrame *)webFrame;
 
-// just entered a stack frame (i.e. called a function, or started global scope)
-- (void)webView:(WebView *)webView    didEnterCallFrame:(WebScriptCallFrame *)frame
-                                               sourceId:(WebSourceId)sid
-                                                   line:(int)lineno
-                                            forWebFrame:(WebFrame *)webFrame;
-
-// about to execute some code
-- (void)webView:(WebView *)webView willExecuteStatement:(WebScriptCallFrame *)frame
-                                               sourceId:(WebSourceId)sid
-                                                   line:(int)lineno
-                                            forWebFrame:(WebFrame *)webFrame;
-
-// about to leave a stack frame (i.e. return from a function)
-- (void)webView:(WebView *)webView   willLeaveCallFrame:(WebScriptCallFrame *)frame
-                                               sourceId:(WebSourceId)sid
-                                                   line:(int)lineno
-                                            forWebFrame:(WebFrame *)webFrame;
-
 // exception is being thrown
 - (void)webView:(WebView *)webView   exceptionWasRaised:(WebScriptCallFrame *)frame
                                              hasHandler:(BOOL)hasHandler
@@ -121,19 +103,10 @@ enum {
 // retrieve user info
 - (id)userInfo;
 
-// get next frame on call stack (or nil if this is already the "global" frame)
-- (WebScriptCallFrame *)caller;
-
-// get array of WebScriptObjects for each scope (innermost first, last is always global object)
-- (NSArray *)scopeChain;
-
 // get name of function (if available) or nil
 - (NSString *)functionName;
 
 // get pending exception (if any) or nil
 - (id)exception;
-
-// evaluate a script (as if by "eval") in the context of this frame
-- (id)evaluateWebScript:(NSString *)script;
 
 @end
