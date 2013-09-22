@@ -62,7 +62,7 @@ public:
     using RefCounted<WebKitNamedFlow>::ref;
     using RefCounted<WebKitNamedFlow>::deref;
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     // This function is called from the JS binding code to determine if the NamedFlow object is reachable or not.

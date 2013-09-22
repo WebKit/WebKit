@@ -56,9 +56,9 @@ WebGLContextEvent::~WebGLContextEvent()
 {
 }
 
-const AtomicString& WebGLContextEvent::interfaceName() const
+EventInterface WebGLContextEvent::eventInterface() const
 {
-    return eventNames().interfaceForWebGLContextEvent;
+    return WebGLContextEventInterfaceType;
 }
 
 } // namespace WebCore

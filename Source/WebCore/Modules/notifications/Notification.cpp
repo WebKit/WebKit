@@ -130,9 +130,9 @@ PassRefPtr<Notification> Notification::create(ScriptExecutionContext* context, c
 }
 #endif
 
-const AtomicString& Notification::interfaceName() const
+EventTargetInterface Notification::eventTargetInterface() const
 {
-    return eventNames().interfaceForNotification;
+    return NotificationEventTargetInterfaceType;
 }
 
 void Notification::show() 

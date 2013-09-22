@@ -75,9 +75,9 @@ AudioTrack* AudioTrackList::getTrackById(const AtomicString& id) const
     return 0;
 }
 
-const AtomicString& AudioTrackList::interfaceName() const
+EventTargetInterface AudioTrackList::eventTargetInterface() const
 {
-    return eventNames().interfaceForAudioTrackList;
+    return AudioTrackListEventTargetInterfaceType;
 }
 
 #endif

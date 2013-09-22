@@ -54,7 +54,7 @@ public:
 
     const String& statusMessage() const { return m_statusMessage; }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     WebGLContextEvent();

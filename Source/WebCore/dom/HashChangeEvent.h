@@ -66,7 +66,7 @@ public:
     const String& oldURL() const { return m_oldURL; }
     const String& newURL() const { return m_newURL; }
 
-    virtual const AtomicString& interfaceName() const { return eventNames().interfaceForHashChangeEvent; }
+    virtual EventInterface eventInterface() const { return HashChangeEventInterfaceType; }
 
 private:
     HashChangeEvent()

@@ -79,7 +79,7 @@ public:
     void stop();
 
     // EventTarget
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
     using RefCounted<RTCDataChannel>::ref;

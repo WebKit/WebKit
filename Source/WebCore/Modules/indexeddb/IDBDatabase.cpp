@@ -362,9 +362,9 @@ void IDBDatabase::stop()
     m_contextStopped = true;
 }
 
-const AtomicString& IDBDatabase::interfaceName() const
+EventTargetInterface IDBDatabase::eventTargetInterface() const
 {
-    return eventNames().interfaceForIDBDatabase;
+    return IDBDatabaseEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* IDBDatabase::scriptExecutionContext() const

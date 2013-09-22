@@ -97,7 +97,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
 
     // EventTarget functions.
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
     using RefCounted<WebSocket>::ref;

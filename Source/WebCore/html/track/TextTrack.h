@@ -73,7 +73,7 @@ public:
     }
     virtual ~TextTrack();
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     static TextTrack* captionMenuOffItem();

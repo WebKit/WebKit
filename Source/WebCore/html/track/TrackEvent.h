@@ -53,7 +53,7 @@ public:
         return adoptRef(new TrackEvent(type, initializer));
     }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
     TrackBase* track() const { return m_track.get(); }
 

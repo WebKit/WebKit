@@ -131,7 +131,7 @@ private:
     // EventTarget
     virtual void refEventTarget() OVERRIDE { ref(); }
     virtual void derefEventTarget() OVERRIDE { deref(); }
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; };
     virtual EventTargetData* eventTargetData() OVERRIDE { return &m_eventTargetData; }
     virtual EventTargetData& ensureEventTargetData() OVERRIDE { return m_eventTargetData; }

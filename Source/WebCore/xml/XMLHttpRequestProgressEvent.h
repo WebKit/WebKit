@@ -47,7 +47,7 @@ public:
     unsigned long long position() const { return loaded(); }
     unsigned long long totalSize() const { return total(); }
 
-    virtual const AtomicString& interfaceName() const { return eventNames().interfaceForXMLHttpRequestProgressEvent; }
+    virtual EventInterface eventInterface() const { return XMLHttpRequestProgressEventInterfaceType; }
 
 private:
     XMLHttpRequestProgressEvent() { }

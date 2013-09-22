@@ -75,9 +75,9 @@ FileWriter::~FileWriter()
         stop();
 }
 
-const AtomicString& FileWriter::interfaceName() const
+EventTargetInterface FileWriter::eventTargetInterface() const
 {
-    return eventNames().interfaceForFileWriter;
+    return FileWriterEventTargetInterfaceType;
 }
 
 bool FileWriter::canSuspend() const

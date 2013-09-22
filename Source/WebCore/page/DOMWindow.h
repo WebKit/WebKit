@@ -103,7 +103,7 @@ namespace WebCore {
         // the network load. See also SecurityContext::isSecureTransitionTo.
         void didSecureTransitionTo(Document*);
 
-        virtual const AtomicString& interfaceName() const;
+        virtual EventTargetInterface eventTargetInterface() const;
         virtual ScriptExecutionContext* scriptExecutionContext() const;
 
         virtual DOMWindow* toDOMWindow();

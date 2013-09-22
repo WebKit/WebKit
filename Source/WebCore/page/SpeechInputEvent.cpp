@@ -62,9 +62,9 @@ SpeechInputEvent::~SpeechInputEvent()
 {
 }
 
-const AtomicString& SpeechInputEvent::interfaceName() const
+EventInterface SpeechInputEvent::eventInterface() const
 {
-    return eventNames().interfaceForSpeechInputEvent;
+    return SpeechInputEventInterfaceType;
 }
 
 } // namespace WebCore

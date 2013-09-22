@@ -39,10 +39,10 @@ BeforeTextInsertedEvent::~BeforeTextInsertedEvent()
 {
 }
 
-const AtomicString& BeforeTextInsertedEvent::interfaceName() const
+EventInterface BeforeTextInsertedEvent::eventInterface() const
 {
     // Notice that there is no BeforeTextInsertedEvent.idl.
-    return eventNames().interfaceForEvent;
+    return EventInterfaceType;
 }
 
 }

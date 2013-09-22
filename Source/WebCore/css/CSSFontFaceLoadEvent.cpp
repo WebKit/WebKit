@@ -57,9 +57,9 @@ CSSFontFaceLoadEvent::~CSSFontFaceLoadEvent()
 {
 }
 
-const AtomicString& CSSFontFaceLoadEvent::interfaceName() const
+EventInterface CSSFontFaceLoadEvent::eventInterface() const
 {
-    return eventNames().interfaceForCSSFontFaceLoadEvent;
+    return CSSFontFaceLoadEventInterfaceType;
 }
 
 } // namespace WebCore

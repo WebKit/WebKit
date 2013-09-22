@@ -59,7 +59,7 @@ public:
     double elapsedTime() const;
     const String& pseudoElement() const;
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     WebKitTransitionEvent();

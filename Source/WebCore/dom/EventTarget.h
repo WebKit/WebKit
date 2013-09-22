@@ -34,6 +34,7 @@
 
 #include "EventListenerMap.h"
 #include "EventNames.h"
+#include "EventTargetInterfaces.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -99,12 +100,20 @@ namespace WebCore {
         OwnPtr<FiringEventIteratorVector> firingEventIterators;
     };
 
+    enum EventTargetInterface {
+
+    #define DOM_EVENT_INTERFACE_DECLARE(name) name##EventTargetInterfaceType,
+    DOM_EVENT_TARGET_INTERFACES_FOR_EACH(DOM_EVENT_INTERFACE_DECLARE)
+    #undef DOM_EVENT_INTERFACE_DECLARE
+
+    };
+
     class EventTarget {
     public:
         void ref() { refEventTarget(); }
         void deref() { derefEventTarget(); }
 
-        virtual const AtomicString& interfaceName() const = 0;
+        virtual EventTargetInterface eventTargetInterface() const = 0;
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
         virtual Node* toNode();

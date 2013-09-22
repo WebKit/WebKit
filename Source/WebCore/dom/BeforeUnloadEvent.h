@@ -41,7 +41,7 @@ public:
     String returnValue() const { return m_returnValue; }
     void setReturnValue(const String& returnValue) { m_returnValue = returnValue; }
 
-    virtual const AtomicString& interfaceName() const OVERRIDE { return eventNames().interfaceForBeforeUnloadEvent; }
+    virtual EventInterface eventInterface() const OVERRIDE { return BeforeUnloadEventInterfaceType; }
 
 private:
     BeforeUnloadEvent();

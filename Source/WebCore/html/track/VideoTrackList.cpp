@@ -90,9 +90,9 @@ long VideoTrackList::selectedIndex() const
     return -1;
 }
 
-const AtomicString& VideoTrackList::interfaceName() const
+EventTargetInterface VideoTrackList::eventTargetInterface() const
 {
-    return eventNames().interfaceForVideoTrackList;
+    return VideoTrackListEventTargetInterfaceType;
 }
 
 #endif

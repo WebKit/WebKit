@@ -92,9 +92,9 @@ void StorageEvent::initStorageEvent(const AtomicString& type, bool canBubble, bo
     m_storageArea = storageArea;
 }
 
-const AtomicString& StorageEvent::interfaceName() const
+EventInterface StorageEvent::eventInterface() const
 {
-    return eventNames().interfaceForStorageEvent;
+    return StorageEventInterfaceType;
 }
 
 } // namespace WebCore

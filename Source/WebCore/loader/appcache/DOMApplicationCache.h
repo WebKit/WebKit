@@ -73,7 +73,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(cached);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(obsolete);
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     static const AtomicString& toEventType(ApplicationCacheHost::EventID id);

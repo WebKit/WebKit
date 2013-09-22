@@ -235,7 +235,7 @@ public:
     void removeMarkedSummingJunction(AudioSummingJunction*);
 
     // EventTarget
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
     virtual EventTargetData* eventTargetData() { return &m_eventTargetData; }
     virtual EventTargetData& ensureEventTargetData() { return m_eventTargetData; }

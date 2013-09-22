@@ -53,7 +53,7 @@ namespace WebCore {
         virtual void importScripts(const Vector<String>& urls, ExceptionCode&) OVERRIDE;
 
         // EventTarget
-        virtual const AtomicString& interfaceName() const OVERRIDE;
+        virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
 
         void postMessage(PassRefPtr<SerializedScriptValue>, const MessagePortArray*, ExceptionCode&);
         // Needed for Objective-C bindings (see bug 28774).

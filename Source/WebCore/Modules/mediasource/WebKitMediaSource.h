@@ -54,7 +54,7 @@ public:
     static bool isTypeSupported(const String& type);
 
     // EventTarget interface
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
 
     using RefCounted<MediaSourceBase>::ref;
     using RefCounted<MediaSourceBase>::deref;

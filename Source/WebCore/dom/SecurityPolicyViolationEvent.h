@@ -68,7 +68,7 @@ public:
     const String& sourceFile() const { return m_sourceFile; }
     int lineNumber() const { return m_lineNumber; }
 
-    virtual const AtomicString& interfaceName() const { return eventNames().interfaceForSecurityPolicyViolationEvent; }
+    virtual EventInterface eventInterface() const { return SecurityPolicyViolationEventInterfaceType; }
 
 private:
     SecurityPolicyViolationEvent()

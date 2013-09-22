@@ -56,9 +56,9 @@ DedicatedWorkerGlobalScope::~DedicatedWorkerGlobalScope()
 {
 }
 
-const AtomicString& DedicatedWorkerGlobalScope::interfaceName() const
+EventTargetInterface DedicatedWorkerGlobalScope::eventTargetInterface() const
 {
-    return eventNames().interfaceForDedicatedWorkerGlobalScope;
+    return DedicatedWorkerGlobalScopeEventTargetInterfaceType;
 }
 
 void DedicatedWorkerGlobalScope::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, ExceptionCode& ec)

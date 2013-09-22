@@ -41,10 +41,10 @@ ClipboardEvent::~ClipboardEvent()
 {
 }
 
-const AtomicString& ClipboardEvent::interfaceName() const
+EventInterface ClipboardEvent::eventInterface() const
 {
     // Notice that there is no ClipboardEvent.idl.
-    return eventNames().interfaceForEvent;
+    return EventInterfaceType;
 }
 
 bool ClipboardEvent::isClipboardEvent() const

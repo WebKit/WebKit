@@ -122,7 +122,7 @@ public:
     using RefCounted<Notification>::deref;
 
     // EventTarget interface
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ActiveDOMObject::scriptExecutionContext(); }
 
     void stopLoadingIcon();

@@ -214,9 +214,9 @@ ScriptExecutionContext* SourceBuffer::scriptExecutionContext() const
     return ActiveDOMObject::scriptExecutionContext();
 }
 
-const AtomicString& SourceBuffer::interfaceName() const
+EventTargetInterface SourceBuffer::eventTargetInterface() const
 {
-    return eventNames().interfaceForSourceBuffer;
+    return SourceBufferEventTargetInterfaceType;
 }
 
 EventTargetData* SourceBuffer::eventTargetData()

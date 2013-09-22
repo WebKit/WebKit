@@ -59,7 +59,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(tonechange);
 
     // EventTarget
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
     // ActiveDOMObject

@@ -106,7 +106,7 @@ public:
     virtual void onComplete();
 
     // EventTarget
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     using EventTarget::dispatchEvent;

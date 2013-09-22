@@ -108,9 +108,9 @@ Worker::~Worker()
     m_contextProxy->workerObjectDestroyed();
 }
 
-const AtomicString& Worker::interfaceName() const
+EventTargetInterface Worker::eventTargetInterface() const
 {
-    return eventNames().interfaceForWorker;
+    return WorkerEventTargetInterfaceType;
 }
 
 void Worker::postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort* port, ExceptionCode& ec)

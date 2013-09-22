@@ -151,9 +151,9 @@ void MessagePort::contextDestroyed()
     m_scriptExecutionContext = 0;
 }
 
-const AtomicString& MessagePort::interfaceName() const
+EventTargetInterface MessagePort::eventTargetInterface() const
 {
-    return eventNames().interfaceForMessagePort;
+    return MessagePortEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* MessagePort::scriptExecutionContext() const

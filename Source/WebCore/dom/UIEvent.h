@@ -61,7 +61,7 @@ public:
     AbstractView* view() const { return m_view.get(); }
     int detail() const { return m_detail; }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
     virtual bool isUIEvent() const;
 
     virtual int keyCode() const;

@@ -47,7 +47,7 @@ public:
 
     const String& tone() const;
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     RTCDTMFToneChangeEvent();

@@ -104,9 +104,9 @@ void DOMApplicationCache::abort()
         cacheHost->abort();
 }
 
-const AtomicString& DOMApplicationCache::interfaceName() const
+EventTargetInterface DOMApplicationCache::eventTargetInterface() const
 {
-    return eventNames().interfaceForDOMApplicationCache;
+    return DOMApplicationCacheEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* DOMApplicationCache::scriptExecutionContext() const

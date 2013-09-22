@@ -48,7 +48,7 @@ public:
 
     DeviceOrientationData* orientation() const { return m_orientation.get(); }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     DeviceOrientationEvent();

@@ -73,7 +73,7 @@ public:
 
     // EventTarget interface
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
 
     using RefCounted<SourceBuffer>::ref;
     using RefCounted<SourceBuffer>::deref;

@@ -649,9 +649,9 @@ void MediaController::returnToRealtime()
         m_mediaElements[index]->returnToRealtime();
 }
 
-const AtomicString& MediaController::interfaceName() const
+EventTargetInterface MediaController::eventTargetInterface() const
 {
-    return eventNames().interfaceForMediaController;
+    return MediaControllerEventTargetInterfaceType;
 }
 
 // The spec says to fire periodic timeupdate events (those sent while playing) every

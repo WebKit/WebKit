@@ -57,7 +57,7 @@ public:
     const String& animationName() const;
     double elapsedTime() const;
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     WebKitAnimationEvent();

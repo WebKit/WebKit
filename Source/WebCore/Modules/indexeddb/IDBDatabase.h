@@ -84,7 +84,7 @@ public:
     virtual bool hasPendingActivity() const OVERRIDE;
 
     // EventTarget
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     bool isClosePending() const { return m_closePending; }

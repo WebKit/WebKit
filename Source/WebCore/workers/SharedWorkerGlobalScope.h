@@ -50,7 +50,7 @@ namespace WebCore {
         virtual bool isSharedWorkerGlobalScope() const OVERRIDE { return true; }
 
         // EventTarget
-        virtual const AtomicString& interfaceName() const OVERRIDE;
+        virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
 
         // Setters/Getters for attributes in SharedWorkerGlobalScope.idl
         DEFINE_ATTRIBUTE_EVENT_LISTENER(connect);

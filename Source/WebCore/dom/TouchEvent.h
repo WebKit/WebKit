@@ -76,7 +76,7 @@ public:
 #endif
     virtual bool isTouchEvent() const OVERRIDE;
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     TouchEvent();

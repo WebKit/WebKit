@@ -73,7 +73,7 @@ namespace WebCore {
 
         void contextDestroyed();
 
-        virtual const AtomicString& interfaceName() const OVERRIDE;
+        virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
         virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
         virtual bool isMessagePort() const OVERRIDE FINAL { return true; }
 

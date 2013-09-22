@@ -73,9 +73,9 @@ const String& RTCDTMFToneChangeEvent::tone() const
     return m_tone;
 }
 
-const AtomicString& RTCDTMFToneChangeEvent::interfaceName() const
+EventInterface RTCDTMFToneChangeEvent::eventInterface() const
 {
-    return eventNames().interfaceForRTCDTMFToneChangeEvent;
+    return RTCDTMFToneChangeEventInterfaceType;
 }
 
 } // namespace WebCore

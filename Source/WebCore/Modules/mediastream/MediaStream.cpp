@@ -257,9 +257,9 @@ void MediaStream::contextDestroyed()
     m_stopped = true;
 }
 
-const AtomicString& MediaStream::interfaceName() const
+EventTargetInterface MediaStream::eventTargetInterface() const
 {
-    return eventNames().interfaceForMediaStream;
+    return MediaStreamEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* MediaStream::scriptExecutionContext() const

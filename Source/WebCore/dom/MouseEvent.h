@@ -96,7 +96,7 @@ public:
 
     Clipboard* dataTransfer() const { return isDragEvent() ? m_clipboard.get() : 0; }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
     virtual bool isMouseEvent() const;
     virtual bool isDragEvent() const;

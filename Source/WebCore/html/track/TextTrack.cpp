@@ -147,9 +147,9 @@ TextTrack::~TextTrack()
     clearClient();
 }
 
-const AtomicString& TextTrack::interfaceName() const
+EventTargetInterface TextTrack::eventTargetInterface() const
 {
-    return eventNames().interfaceForTextTrack;
+    return TextTrackEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* TextTrack::scriptExecutionContext() const

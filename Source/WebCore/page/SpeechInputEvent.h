@@ -45,7 +45,7 @@ public:
 
     SpeechInputResultList* results() const { return m_results.get(); }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     SpeechInputEvent();

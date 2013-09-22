@@ -58,7 +58,7 @@ public:
     void networkInfoControllerDestroyed() { m_controller = 0; }
 
     // EventTarget implementation.
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ActiveDOMObject::scriptExecutionContext(); }
 
     using RefCounted<NetworkInfoConnection>::ref;

@@ -57,7 +57,7 @@ public:
     static PassRefPtr<Performance> create(Frame* frame) { return adoptRef(new Performance(frame)); }
     ~Performance();
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     PerformanceNavigation* navigation() const;

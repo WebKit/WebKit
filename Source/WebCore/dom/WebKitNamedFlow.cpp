@@ -240,9 +240,9 @@ void WebKitNamedFlow::dispatchRegionOversetChangeEvent()
     dispatchEvent(event);
 }
 
-const AtomicString& WebKitNamedFlow::interfaceName() const
+EventTargetInterface WebKitNamedFlow::eventTargetInterface() const
 {
-    return eventNames().interfaceForWebKitNamedFlow;
+    return WebKitNamedFlowEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* WebKitNamedFlow::scriptExecutionContext() const

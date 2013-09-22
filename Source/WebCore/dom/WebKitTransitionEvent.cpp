@@ -75,9 +75,9 @@ const String& WebKitTransitionEvent::pseudoElement() const
     return m_pseudoElement;
 }
 
-const AtomicString& WebKitTransitionEvent::interfaceName() const
+EventInterface WebKitTransitionEvent::eventInterface() const
 {
-    return eventNames().interfaceForWebKitTransitionEvent;
+    return WebKitTransitionEventInterfaceType;
 }
 
 } // namespace WebCore

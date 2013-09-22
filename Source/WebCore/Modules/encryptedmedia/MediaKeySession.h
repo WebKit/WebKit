@@ -72,7 +72,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyerror);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeymessage);
 
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
 protected:

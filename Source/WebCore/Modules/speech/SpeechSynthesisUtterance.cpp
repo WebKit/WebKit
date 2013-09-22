@@ -52,9 +52,9 @@ ScriptExecutionContext* SpeechSynthesisUtterance::scriptExecutionContext() const
     return ContextDestructionObserver::scriptExecutionContext();
 }    
     
-const AtomicString& SpeechSynthesisUtterance::interfaceName() const
+EventTargetInterface SpeechSynthesisUtterance::eventTargetInterface() const
 {
-    return eventNames().interfaceForSpeechSynthesisUtterance;
+    return SpeechSynthesisUtteranceEventTargetInterfaceType;
 }
 
 SpeechSynthesisVoice* SpeechSynthesisUtterance::voice() const

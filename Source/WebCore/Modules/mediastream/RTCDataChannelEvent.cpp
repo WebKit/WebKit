@@ -62,9 +62,9 @@ RTCDataChannel* RTCDataChannelEvent::channel() const
     return m_channel.get();
 }
 
-const AtomicString& RTCDataChannelEvent::interfaceName() const
+EventInterface RTCDataChannelEvent::eventInterface() const
 {
-    return eventNames().interfaceForRTCDataChannelEvent;
+    return RTCDataChannelEventInterfaceType;
 }
 
 } // namespace WebCore

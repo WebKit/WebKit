@@ -1823,9 +1823,9 @@ Node* Node::enclosingLinkEventParentOrSelf()
     return 0;
 }
 
-const AtomicString& Node::interfaceName() const
+EventTargetInterface Node::eventTargetInterface() const
 {
-    return eventNames().interfaceForNode;
+    return NodeEventTargetInterfaceType;
 }
 
 void Node::didMoveToNewDocument(Document* oldDocument)
@@ -2192,7 +2192,7 @@ void Node::defaultEventHandler(Event* event)
                 page->contextMenuController().handleContextMenuEvent(event);
 #endif
     } else if (eventType == eventNames().textInputEvent) {
-        if (event->hasInterface(eventNames().interfaceForTextEvent))
+        if (event->eventInterface() == TextEventInterfaceType)
             if (Frame* frame = document().frame())
                 frame->eventHandler().defaultTextInputEventHandler(static_cast<TextEvent*>(event));
 #if ENABLE(PAN_SCROLLING)
@@ -2212,7 +2212,7 @@ void Node::defaultEventHandler(Event* event)
             }
         }
 #endif
-    } else if ((eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent) && event->hasInterface(eventNames().interfaceForWheelEvent)) {
+    } else if ((eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent) && event->eventInterface() == WheelEventInterfaceType) {
         WheelEvent* wheelEvent = static_cast<WheelEvent*>(event);
         
         // If we don't have a renderer, send the wheel event to the first node we find with a renderer.

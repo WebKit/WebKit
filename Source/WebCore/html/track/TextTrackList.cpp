@@ -223,9 +223,9 @@ bool TextTrackList::contains(TrackBase* track) const
     return tracks->find(track) != notFound;
 }
 
-const AtomicString& TextTrackList::interfaceName() const
+EventTargetInterface TextTrackList::eventTargetInterface() const
 {
-    return eventNames().interfaceForTextTrackList;
+    return TextTrackListEventTargetInterfaceType;
 }
 
 #endif

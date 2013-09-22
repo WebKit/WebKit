@@ -151,7 +151,7 @@ void SpinButtonElement::forwardEvent(Event* event)
     if (!renderBox())
         return;
 
-    if (!event->hasInterface(eventNames().interfaceForWheelEvent))
+    if (event->eventInterface() != WheelEventInterfaceType)
         return;
 
     if (!m_spinButtonOwner)

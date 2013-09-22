@@ -49,7 +49,7 @@ public:
 
     MediaStream* stream() const;
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     MediaStreamEvent();

@@ -81,7 +81,7 @@ public:
     String stringResult();
 
     // EventTarget
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ActiveDOMObject::scriptExecutionContext(); }
 
     // FileReaderLoaderClient

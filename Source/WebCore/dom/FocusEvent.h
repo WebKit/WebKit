@@ -59,7 +59,7 @@ public:
     EventTarget* relatedTarget() const { return m_relatedTarget.get(); }
     void setRelatedTarget(PassRefPtr<EventTarget> relatedTarget) { m_relatedTarget = relatedTarget; }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
     virtual bool isFocusEvent() const;
 
 private:

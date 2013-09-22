@@ -42,7 +42,7 @@ public:
     float elapsedTime() const { return m_elapsedTime; }
     const String& name() const { return m_name; }
     
-    virtual const AtomicString& interfaceName() const { return eventNames().interfaceForSpeechSynthesisEvent; }
+    virtual EventInterface eventInterface() const { return SpeechSynthesisEventInterfaceType; }
     
 private:
     SpeechSynthesisEvent();

@@ -68,9 +68,9 @@ OverflowEvent::OverflowEvent(const AtomicString& type, const OverflowEventInit& 
 {
 }
 
-const AtomicString& OverflowEvent::interfaceName() const
+EventInterface OverflowEvent::eventInterface() const
 {
-    return eventNames().interfaceForOverflowEvent;
+    return OverflowEventInterfaceType;
 }
 
 void OverflowEvent::initOverflowEvent(unsigned short orient, bool horizontalOverflow, bool verticalOverflow)

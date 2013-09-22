@@ -39,7 +39,7 @@ public:
         return adoptRef(new BeforeTextInsertedEvent(text));
     }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
     virtual bool isBeforeTextInsertedEvent() const { return true; }
 
     const String& text() const { return m_text; }

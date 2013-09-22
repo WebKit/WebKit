@@ -424,9 +424,9 @@ DOMWindow::~DOMWindow()
     removeAllBeforeUnloadEventListeners(this);
 }
 
-const AtomicString& DOMWindow::interfaceName() const
+EventTargetInterface DOMWindow::eventTargetInterface() const
 {
-    return eventNames().interfaceForDOMWindow;
+    return DOMWindowEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* DOMWindow::scriptExecutionContext() const

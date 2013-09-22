@@ -52,9 +52,9 @@ TrackEvent::~TrackEvent()
 {
 }
 
-const AtomicString& TrackEvent::interfaceName() const
+EventInterface TrackEvent::eventInterface() const
 {
-    return eventNames().interfaceForTrackEvent;
+    return TrackEventInterfaceType;
 }
 
 } // namespace WebCore

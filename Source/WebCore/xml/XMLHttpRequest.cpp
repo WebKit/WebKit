@@ -1305,9 +1305,9 @@ void XMLHttpRequest::contextDestroyed()
     ActiveDOMObject::contextDestroyed();
 }
 
-const AtomicString& XMLHttpRequest::interfaceName() const
+EventTargetInterface XMLHttpRequest::eventTargetInterface() const
 {
-    return eventNames().interfaceForXMLHttpRequest;
+    return XMLHttpRequestEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* XMLHttpRequest::scriptExecutionContext() const

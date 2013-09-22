@@ -174,9 +174,9 @@ void MediaStreamTrack::stop()
     m_stopped = true;
 }
 
-const AtomicString& MediaStreamTrack::interfaceName() const
+EventTargetInterface MediaStreamTrack::eventTargetInterface() const
 {
-    return eventNames().interfaceForMediaStreamTrack;
+    return MediaStreamTrackEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* MediaStreamTrack::scriptExecutionContext() const

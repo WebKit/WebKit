@@ -55,7 +55,7 @@ public:
         return adoptRef(new MediaKeyMessageEvent(type, initializer));
     }
 
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventInterface eventInterface() const OVERRIDE;
 
     Uint8Array* message() const { return m_message.get(); }
     String destinationURL() const { return m_destinationURL; }

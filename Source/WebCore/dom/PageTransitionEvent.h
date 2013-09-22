@@ -53,7 +53,7 @@ public:
 
     virtual ~PageTransitionEvent();
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
     bool persisted() const { return m_persisted; }
 

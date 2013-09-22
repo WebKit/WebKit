@@ -950,9 +950,9 @@ void AudioContext::processAutomaticPullNodes(size_t framesToProcess)
         m_renderingAutomaticPullNodes[i]->processIfNecessary(framesToProcess);
 }
 
-const AtomicString& AudioContext::interfaceName() const
+EventTargetInterface AudioContext::eventTargetInterface() const
 {
-    return eventNames().interfaceForAudioContext;
+    return AudioContextEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* AudioContext::scriptExecutionContext() const

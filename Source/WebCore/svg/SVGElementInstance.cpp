@@ -211,9 +211,9 @@ void SVGElementInstance::invalidateAllInstancesOfElement(SVGElement* element)
     element->document().updateStyleIfNeeded();
 }
 
-const AtomicString& SVGElementInstance::interfaceName() const
+EventTargetInterface SVGElementInstance::eventTargetInterface() const
 {
-    return eventNames().interfaceForSVGElementInstance;
+    return SVGElementInstanceEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* SVGElementInstance::scriptExecutionContext() const

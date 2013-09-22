@@ -58,7 +58,7 @@ public:
     Document* emma() { return 0; }
 
     // Event
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventInterface eventInterface() const OVERRIDE;
 
 private:
     SpeechRecognitionEvent();

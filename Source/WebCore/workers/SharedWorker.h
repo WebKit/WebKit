@@ -45,7 +45,7 @@ namespace WebCore {
 
         MessagePort* port() const { return m_port.get(); }
 
-        virtual const AtomicString& interfaceName() const OVERRIDE;
+        virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
 
     private:
         explicit SharedWorker(ScriptExecutionContext*);

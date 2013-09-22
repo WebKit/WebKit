@@ -70,9 +70,9 @@ SharedWorkerGlobalScope::~SharedWorkerGlobalScope()
 {
 }
 
-const AtomicString& SharedWorkerGlobalScope::interfaceName() const
+EventTargetInterface SharedWorkerGlobalScope::eventTargetInterface() const
 {
-    return eventNames().interfaceForSharedWorkerGlobalScope;
+    return SharedWorkerGlobalScopeEventTargetInterfaceType;
 }
 
 SharedWorkerThread* SharedWorkerGlobalScope::thread()

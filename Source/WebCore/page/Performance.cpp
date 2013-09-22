@@ -67,9 +67,9 @@ Performance::~Performance()
 {
 }
 
-const AtomicString& Performance::interfaceName() const
+EventTargetInterface Performance::eventTargetInterface() const
 {
-    return eventNames().interfaceForPerformance;
+    return PerformanceEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* Performance::scriptExecutionContext() const

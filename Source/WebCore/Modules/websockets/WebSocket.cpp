@@ -448,9 +448,9 @@ void WebSocket::setBinaryType(const String& binaryType)
     scriptExecutionContext()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "'" + binaryType + "' is not a valid value for binaryType; binaryType remains unchanged.");
 }
 
-const AtomicString& WebSocket::interfaceName() const
+EventTargetInterface WebSocket::eventTargetInterface() const
 {
-    return eventNames().interfaceForWebSocket;
+    return WebSocketEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* WebSocket::scriptExecutionContext() const

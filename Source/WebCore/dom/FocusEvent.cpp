@@ -39,9 +39,9 @@ FocusEventInit::FocusEventInit()
 {
 }
 
-const AtomicString& FocusEvent::interfaceName() const
+EventInterface FocusEvent::eventInterface() const
 {
-    return eventNames().interfaceForFocusEvent;
+    return FocusEventInterfaceType;
 }
 
 bool FocusEvent::isFocusEvent() const

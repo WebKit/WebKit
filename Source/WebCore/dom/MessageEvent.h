@@ -97,7 +97,7 @@ public:
     MessagePort* messagePort();
     void initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, DOMWindow* source, MessagePort*);
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
     enum DataType {
         DataTypeScriptValue,

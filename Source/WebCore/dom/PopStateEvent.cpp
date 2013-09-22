@@ -78,9 +78,9 @@ PassRefPtr<PopStateEvent> PopStateEvent::create(const AtomicString& type, const 
     return adoptRef(new PopStateEvent(type, initializer));
 }
 
-const AtomicString& PopStateEvent::interfaceName() const
+EventInterface PopStateEvent::eventInterface() const
 {
-    return eventNames().interfaceForPopStateEvent;
+    return PopStateEventInterfaceType;
 }
 
 } // namespace WebCore

@@ -60,7 +60,7 @@ public:
     void clear();
 
     // EventTarget interface
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
     using RefCounted<WebKitSourceBufferList>::ref;

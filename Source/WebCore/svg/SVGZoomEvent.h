@@ -46,7 +46,7 @@ public:
 
     SVGPoint newTranslate() const;
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     SVGZoomEvent();

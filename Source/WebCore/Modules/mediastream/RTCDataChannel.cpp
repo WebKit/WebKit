@@ -285,9 +285,9 @@ void RTCDataChannel::didDetectError()
     scheduleDispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 
-const AtomicString& RTCDataChannel::interfaceName() const
+EventTargetInterface RTCDataChannel::eventTargetInterface() const
 {
-    return eventNames().interfaceForRTCDataChannel;
+    return RTCDataChannelEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* RTCDataChannel::scriptExecutionContext() const

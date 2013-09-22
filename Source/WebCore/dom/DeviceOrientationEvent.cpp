@@ -55,15 +55,15 @@ void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomicString& type
     m_orientation = orientation;
 }
 
-const AtomicString& DeviceOrientationEvent::interfaceName() const
+EventInterface DeviceOrientationEvent::eventInterface() const
 {
 #if ENABLE(DEVICE_ORIENTATION)
-    return eventNames().interfaceForDeviceOrientationEvent;
+    return DeviceOrientationEventInterfaceType;
 #else
     // FIXME: ENABLE(DEVICE_ORIENTATION) seems to be in a strange state where
     // it is half-guarded by #ifdefs. DeviceOrientationEvent.idl is guarded
     // but DeviceOrientationEvent.cpp itself is required by ungarded code.
-    return eventNames().interfaceForEvent;
+    return EventInterfaceType;
 #endif
 }
 

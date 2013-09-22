@@ -93,7 +93,7 @@ public:
     // Needed for Objective-C legacy support
     bool isHorizontal() const { return m_wheelDelta.x(); }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
     virtual bool isMouseEvent() const;
 
 private:

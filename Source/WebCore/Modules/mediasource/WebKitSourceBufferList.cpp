@@ -93,9 +93,9 @@ void WebKitSourceBufferList::createAndFireEvent(const AtomicString& eventName)
     m_asyncEventQueue.enqueueEvent(event.release());
 }
 
-const AtomicString& WebKitSourceBufferList::interfaceName() const
+EventTargetInterface WebKitSourceBufferList::eventTargetInterface() const
 {
-    return eventNames().interfaceForWebKitSourceBufferList;
+    return WebKitSourceBufferListEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* WebKitSourceBufferList::scriptExecutionContext() const

@@ -124,9 +124,9 @@ EventTargetData& FontLoader::ensureEventTargetData()
     return m_eventTargetData;
 }
 
-const AtomicString& FontLoader::interfaceName() const
+EventTargetInterface FontLoader::eventTargetInterface() const
 {
-    return eventNames().interfaceForFontLoader;
+    return FontLoaderEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* FontLoader::scriptExecutionContext() const

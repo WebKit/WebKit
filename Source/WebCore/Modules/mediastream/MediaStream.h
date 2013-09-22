@@ -72,7 +72,7 @@ public:
     MediaStreamDescriptor* descriptor() const { return m_descriptor.get(); }
 
     // EventTarget
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
     using RefCounted<MediaStream>::ref;

@@ -82,7 +82,7 @@ public:
     virtual void didTimeout();
 #endif
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     const KURL& url() const { return m_url; }

@@ -1,3 +1,15 @@
+2013-09-21  Sam Weinig  <sam@webkit.org>
+
+        Event and EventTarget interfaces don't need to be store as AtomicStrings
+        https://bugs.webkit.org/show_bug.cgi?id=121751
+
+        Reviewed by Andreas Kling.
+
+        Convert the Event and EventTarget interface identifiers from AtomicStrings to enums. They
+        are not extensible and not exposed as Strings anywhere.
+
+        * Files elided *
+
 2013-09-21  Darin Adler  <darin@apple.com>
 
         Add ExecState::uncheckedArgument and use where possible to shrink a bit

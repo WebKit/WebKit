@@ -87,7 +87,7 @@ private:
     // EventTarget
     EventTargetData m_eventTargetData;
 
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
     virtual void refEventTarget() OVERRIDE { ref(); }
     virtual void derefEventTarget() OVERRIDE { deref(); }
     virtual EventTargetData* eventTargetData() OVERRIDE { return &m_eventTargetData; }

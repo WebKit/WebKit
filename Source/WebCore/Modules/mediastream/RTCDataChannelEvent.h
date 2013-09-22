@@ -42,7 +42,7 @@ public:
 
     RTCDataChannel* channel() const;
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     RTCDataChannelEvent();

@@ -69,7 +69,7 @@ public:
     bool loading() const { return m_loadingCount > 0; }
 
     virtual ScriptExecutionContext* scriptExecutionContext() const;
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
 
     using RefCounted<FontLoader>::ref;
     using RefCounted<FontLoader>::deref;

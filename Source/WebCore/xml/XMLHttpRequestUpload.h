@@ -54,7 +54,7 @@ namespace WebCore {
         void deref() { m_xmlHttpRequest->deref(); }
         XMLHttpRequest* xmlHttpRequest() const { return m_xmlHttpRequest; }
 
-        virtual const AtomicString& interfaceName() const;
+        virtual EventTargetInterface eventTargetInterface() const;
         ScriptExecutionContext* scriptExecutionContext() const;
 
         DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);

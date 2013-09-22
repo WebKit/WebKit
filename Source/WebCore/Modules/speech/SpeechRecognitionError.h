@@ -64,7 +64,7 @@ public:
     const String& error() { return m_error; }
     const String& message() { return m_message; }
 
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventInterface eventInterface() const OVERRIDE;
 
 private:
     SpeechRecognitionError(const String&, const String&);

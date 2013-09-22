@@ -47,7 +47,7 @@ public:
 
     void setParentNode(SVGElementInstance* instance) { m_parentInstance = instance; }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);

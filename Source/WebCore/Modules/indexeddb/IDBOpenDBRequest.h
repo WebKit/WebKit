@@ -46,7 +46,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>, const IDBDatabaseMetadata&) OVERRIDE;
 
     // EventTarget
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(blocked);

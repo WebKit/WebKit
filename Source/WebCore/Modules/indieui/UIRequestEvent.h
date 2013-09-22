@@ -57,7 +57,7 @@ protected:
     
     UIRequestEvent();
     
-    const AtomicString& interfaceName() const OVERRIDE;
+    EventInterface eventInterface() const OVERRIDE;
     
 private:
     RefPtr<EventTarget> m_receiver;

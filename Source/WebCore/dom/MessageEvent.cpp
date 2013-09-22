@@ -166,9 +166,9 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
     initMessageEvent(type, canBubble, cancelable, data, origin, lastEventId, source, ports.release());
 }
 
-const AtomicString& MessageEvent::interfaceName() const
+EventInterface MessageEvent::eventInterface() const
 {
-    return eventNames().interfaceForMessageEvent;
+    return MessageEventInterfaceType;
 }
 
 } // namespace WebCore

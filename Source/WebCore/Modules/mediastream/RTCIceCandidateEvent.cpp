@@ -62,9 +62,9 @@ RTCIceCandidate* RTCIceCandidateEvent::candidate() const
     return m_candidate.get();
 }
 
-const AtomicString& RTCIceCandidateEvent::interfaceName() const
+EventInterface RTCIceCandidateEvent::eventInterface() const
 {
-    return eventNames().interfaceForRTCIceCandidateEvent;
+    return RTCIceCandidateEventInterfaceType;
 }
 
 } // namespace WebCore

@@ -43,7 +43,7 @@ public:
 
     AudioBuffer* renderedBuffer() { return m_renderedBuffer.get(); }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     OfflineAudioCompletionEvent();

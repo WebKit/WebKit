@@ -153,7 +153,7 @@ public:
     int calculateComputedLinePosition();
     std::pair<double, double> getPositionCoordinates() const;
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
     std::pair<double, double> getCSSPosition() const;

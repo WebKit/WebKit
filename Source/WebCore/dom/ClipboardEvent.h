@@ -49,7 +49,7 @@ namespace WebCore {
         ClipboardEvent();
         ClipboardEvent(const AtomicString& type, bool canBubbleArg, bool cancelableArg, PassRefPtr<Clipboard>);
 
-        virtual const AtomicString& interfaceName() const OVERRIDE;
+        virtual EventInterface eventInterface() const OVERRIDE;
         virtual bool isClipboardEvent() const OVERRIDE;
 
         RefPtr<Clipboard> m_clipboard;

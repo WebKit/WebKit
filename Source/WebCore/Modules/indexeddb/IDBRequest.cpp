@@ -434,9 +434,9 @@ void IDBRequest::stop()
         markEarlyDeath();
 }
 
-const AtomicString& IDBRequest::interfaceName() const
+EventTargetInterface IDBRequest::eventTargetInterface() const
 {
-    return eventNames().interfaceForIDBRequest;
+    return IDBRequestEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* IDBRequest::scriptExecutionContext() const

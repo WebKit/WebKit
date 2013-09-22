@@ -188,9 +188,9 @@ int KeyboardEvent::charCode() const
     return static_cast<int>(text.characterStartingAt(0));
 }
 
-const AtomicString& KeyboardEvent::interfaceName() const
+EventInterface KeyboardEvent::eventInterface() const
 {
-    return eventNames().interfaceForKeyboardEvent;
+    return KeyboardEventInterfaceType;
 }
 
 bool KeyboardEvent::isKeyboardEvent() const

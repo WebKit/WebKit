@@ -77,9 +77,9 @@ MediaStreamTrack* MediaStreamTrackEvent::track() const
     return m_track.get();
 }
 
-const AtomicString& MediaStreamTrackEvent::interfaceName() const
+EventInterface MediaStreamTrackEvent::eventInterface() const
 {
-    return eventNames().interfaceForMediaStreamTrackEvent;
+    return MediaStreamTrackEventInterfaceType;
 }
 
 } // namespace WebCore

@@ -280,9 +280,9 @@ void AudioNode::updateChannelsForInputs()
         input(i)->changedOutputs();
 }
 
-const AtomicString& AudioNode::interfaceName() const
+EventTargetInterface AudioNode::eventTargetInterface() const
 {
-    return eventNames().interfaceForAudioNode;
+    return AudioNodeEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* AudioNode::scriptExecutionContext() const

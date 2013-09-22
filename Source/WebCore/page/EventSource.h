@@ -75,7 +75,7 @@ public:
     using RefCounted<EventSource>::ref;
     using RefCounted<EventSource>::deref;
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventTargetInterface eventTargetInterface() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
 private:

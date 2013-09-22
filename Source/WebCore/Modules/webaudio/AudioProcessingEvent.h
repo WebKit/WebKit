@@ -44,7 +44,7 @@ public:
     AudioBuffer* inputBuffer() { return m_inputBuffer.get(); }
     AudioBuffer* outputBuffer() { return m_outputBuffer.get(); }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     AudioProcessingEvent();

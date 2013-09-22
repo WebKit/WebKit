@@ -51,7 +51,7 @@ public:
     MediaStreamTrack* track() const;
 
     // Event
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventInterface eventInterface() const OVERRIDE;
 
 private:
     MediaStreamTrackEvent();

@@ -44,7 +44,7 @@ public:
     virtual PassRefPtr<IDBAny> oldVersion() { return m_oldVersion; }
     virtual PassRefPtr<IDBAny> newVersion() { return m_newVersion; }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     IDBVersionChangeEvent(PassRefPtr<IDBAny> oldVersion, PassRefPtr<IDBAny> newVersion, const AtomicString& eventType);

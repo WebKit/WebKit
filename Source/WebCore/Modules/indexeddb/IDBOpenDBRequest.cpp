@@ -57,9 +57,9 @@ IDBOpenDBRequest::~IDBOpenDBRequest()
 {
 }
 
-const AtomicString& IDBOpenDBRequest::interfaceName() const
+EventTargetInterface IDBOpenDBRequest::eventTargetInterface() const
 {
-    return eventNames().interfaceForIDBOpenDBRequest;
+    return IDBOpenDBRequestEventTargetInterfaceType;
 }
 
 void IDBOpenDBRequest::onBlocked(int64_t oldVersion)

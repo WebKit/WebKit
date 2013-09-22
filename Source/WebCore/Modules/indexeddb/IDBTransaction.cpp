@@ -368,9 +368,9 @@ const AtomicString& IDBTransaction::modeToString(IndexedDB::TransactionMode mode
     return IDBTransaction::modeReadOnly();
 }
 
-const AtomicString& IDBTransaction::interfaceName() const
+EventTargetInterface IDBTransaction::eventTargetInterface() const
 {
-    return eventNames().interfaceForIDBTransaction;
+    return IDBTransactionEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* IDBTransaction::scriptExecutionContext() const

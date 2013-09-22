@@ -54,7 +54,7 @@ public:
 
     void initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, const ScriptValue& detail);
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
     const ScriptValue& detail() const { return m_detail; }
     PassRefPtr<SerializedScriptValue> serializedScriptValue() { return m_serializedScriptValue; }

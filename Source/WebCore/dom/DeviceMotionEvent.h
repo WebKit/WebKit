@@ -48,7 +48,7 @@ public:
 
     DeviceMotionData* deviceMotionData() const { return m_deviceMotionData.get(); }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     DeviceMotionEvent();

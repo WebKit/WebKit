@@ -207,9 +207,9 @@ bool MediaSource::isTypeSupported(const String& type)
     return MIMETypeRegistry::isSupportedMediaSourceMIMEType(contentType.type(), codecs);
 }
 
-const AtomicString& MediaSource::interfaceName() const
+EventTargetInterface MediaSource::eventTargetInterface() const
 {
-    return eventNames().interfaceForMediaSource;
+    return MediaSourceEventTargetInterfaceType;
 }
 
 } // namespace WebCore

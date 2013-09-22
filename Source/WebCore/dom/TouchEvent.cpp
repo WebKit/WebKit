@@ -92,9 +92,9 @@ void TouchEvent::initTouchEvent(TouchList* touches, TouchList* targetTouches,
 
 }
 
-const AtomicString& TouchEvent::interfaceName() const
+EventInterface TouchEvent::eventInterface() const
 {
-    return eventNames().interfaceForTouchEvent;
+    return TouchEventInterfaceType;
 }
 
 bool TouchEvent::isTouchEvent() const

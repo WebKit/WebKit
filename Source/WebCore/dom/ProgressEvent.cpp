@@ -60,9 +60,9 @@ ProgressEvent::ProgressEvent(const AtomicString& type, bool lengthComputable, un
 {
 }
 
-const AtomicString& ProgressEvent::interfaceName() const
+EventInterface ProgressEvent::eventInterface() const
 {
-    return eventNames().interfaceForProgressEvent;
+    return ProgressEventInterfaceType;
 }
 
 }

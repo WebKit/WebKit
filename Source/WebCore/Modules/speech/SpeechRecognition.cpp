@@ -146,9 +146,9 @@ void SpeechRecognition::didEnd()
     unsetPendingActivity(this);
 }
 
-const AtomicString& SpeechRecognition::interfaceName() const
+EventTargetInterface SpeechRecognition::eventTargetInterface() const
 {
-    return eventNames().interfaceForSpeechRecognition;
+    return SpeechRecognitionEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* SpeechRecognition::scriptExecutionContext() const

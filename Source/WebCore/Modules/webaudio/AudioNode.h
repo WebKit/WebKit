@@ -180,7 +180,7 @@ public:
     AudioBus::ChannelInterpretation internalChannelInterpretation() const { return m_channelInterpretation; }
 
     // EventTarget
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
     virtual EventTargetData* eventTargetData() OVERRIDE { return &m_eventTargetData; }
     virtual EventTargetData& ensureEventTargetData() OVERRIDE { return m_eventTargetData; }

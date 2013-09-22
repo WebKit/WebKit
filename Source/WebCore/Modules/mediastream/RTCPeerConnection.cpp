@@ -585,9 +585,9 @@ void RTCPeerConnection::didAddRemoteDataChannel(PassOwnPtr<RTCDataChannelHandler
     scheduleDispatchEvent(RTCDataChannelEvent::create(eventNames().datachannelEvent, false, false, channel.release()));
 }
 
-const AtomicString& RTCPeerConnection::interfaceName() const
+EventTargetInterface RTCPeerConnection::eventTargetInterface() const
 {
-    return eventNames().interfaceForRTCPeerConnection;
+    return RTCPeerConnectionEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* RTCPeerConnection::scriptExecutionContext() const

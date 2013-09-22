@@ -87,9 +87,9 @@ SharedWorker::~SharedWorker()
 {
 }
 
-const AtomicString& SharedWorker::interfaceName() const
+EventTargetInterface SharedWorker::eventTargetInterface() const
 {
-    return eventNames().interfaceForSharedWorker;
+    return SharedWorkerEventTargetInterfaceType;
 }
 
 } // namespace WebCore

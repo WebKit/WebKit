@@ -82,10 +82,10 @@ void GestureEvent::initGestureEvent(const AtomicString& type, PassRefPtr<Abstrac
     initCoordinates(IntPoint(clientX, clientY));
 }
 
-const AtomicString& GestureEvent::interfaceName() const
+EventInterface GestureEvent::eventInterface() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("TBDInterface"));
-    return name;
+    // FIXME: This makes it so we never wrap GestureEvents in the right bindings.
+    return EventInterfaceType;
 }
 
 GestureEvent::GestureEvent()

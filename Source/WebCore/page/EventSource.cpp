@@ -209,9 +209,9 @@ void EventSource::close()
     }
 }
 
-const AtomicString& EventSource::interfaceName() const
+EventTargetInterface EventSource::eventTargetInterface() const
 {
-    return eventNames().interfaceForEventSource;
+    return EventSourceEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* EventSource::scriptExecutionContext() const

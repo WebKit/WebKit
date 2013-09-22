@@ -22,8 +22,6 @@
 #ifndef EventNames_h
 #define EventNames_h
 
-#include "EventInterfaces.h"
-#include "EventTargetInterfaces.h"
 #include "ThreadGlobalData.h"
 #include <wtf/text/AtomicString.h>
 
@@ -268,56 +266,42 @@ namespace WebCore {
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 
-    class EventNames {
-        WTF_MAKE_NONCOPYABLE(EventNames); WTF_MAKE_FAST_ALLOCATED;
-        int dummy; // Needed to make initialization macro work.
-        // Private to prevent accidental call to EventNames() instead of eventNames()
-        EventNames();
-        friend class ThreadGlobalData;
+class EventNames {
+    WTF_MAKE_NONCOPYABLE(EventNames); WTF_MAKE_FAST_ALLOCATED;
+    int dummy; // Needed to make initialization macro work.
+    // Private to prevent accidental call to EventNames() instead of eventNames()
+    EventNames();
+    friend class ThreadGlobalData;
 
-    public:
-        #define DOM_EVENT_NAMES_DECLARE(name) AtomicString name##Event;
-        DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_DECLARE)
-        #undef DOM_EVENT_NAMES_DECLARE
+public:
+    #define DOM_EVENT_NAMES_DECLARE(name) AtomicString name##Event;
+    DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_DECLARE)
+    #undef DOM_EVENT_NAMES_DECLARE
 
-        #define DOM_EVENT_INTERFACE_DECLARE(name) AtomicString interfaceFor##name;
-        DOM_EVENT_INTERFACES_FOR_EACH(DOM_EVENT_INTERFACE_DECLARE)
-        DOM_EVENT_TARGET_INTERFACES_FOR_EACH(DOM_EVENT_INTERFACE_DECLARE)
-        #undef DOM_EVENT_INTERFACE_DECLARE
-
-        inline bool isTouchEventType(const AtomicString& eventType) const
-        {
-            return eventType == touchstartEvent
-                || eventType == touchmoveEvent
-                || eventType == touchendEvent
-                || eventType == touchcancelEvent;
-        }
-
-        inline bool isGestureEventType(const AtomicString& eventType) const
-        {
-            return eventType == gesturetapEvent
-                || eventType == gesturetapdownEvent
-                || eventType == gesturescrollstartEvent
-                || eventType == gesturescrollendEvent
-                || eventType == gesturescrollupdateEvent;
-        }
-
-        Vector<AtomicString> touchEventNames() const
-        {
-            Vector<AtomicString> names;
-            names.reserveCapacity(4);
-            names.append(touchstartEvent);
-            names.append(touchmoveEvent);
-            names.append(touchendEvent);
-            names.append(touchcancelEvent);
-            return names;
-        }
-    };
-
-    inline EventNames& eventNames()
+    inline bool isTouchEventType(const AtomicString& eventType) const
     {
-        return threadGlobalData().eventNames();
+        return eventType == touchstartEvent
+            || eventType == touchmoveEvent
+            || eventType == touchendEvent
+            || eventType == touchcancelEvent;
     }
+
+    Vector<AtomicString> touchEventNames() const
+    {
+        Vector<AtomicString> names;
+        names.reserveCapacity(4);
+        names.append(touchstartEvent);
+        names.append(touchmoveEvent);
+        names.append(touchendEvent);
+        names.append(touchcancelEvent);
+        return names;
+    }
+};
+
+inline EventNames& eventNames()
+{
+    return threadGlobalData().eventNames();
+}
 
 }
 

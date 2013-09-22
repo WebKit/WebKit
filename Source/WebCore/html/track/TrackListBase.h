@@ -50,7 +50,7 @@ public:
     virtual void remove(TrackBase*);
 
     // EventTarget
-    virtual const AtomicString& interfaceName() const = 0;
+    virtual EventTargetInterface eventTargetInterface() const = 0;
     using RefCounted<TrackListBase>::ref;
     using RefCounted<TrackListBase>::deref;
     virtual ScriptExecutionContext* scriptExecutionContext() const { return m_context; }

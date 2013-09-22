@@ -54,7 +54,7 @@ namespace WebCore {
         static PassRefPtr<Worker> create(ScriptExecutionContext*, const String& url, ExceptionCode&);
         virtual ~Worker();
 
-        virtual const AtomicString& interfaceName() const OVERRIDE;
+        virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
 
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, ExceptionCode&);
         // Needed for Objective-C bindings (see bug 28774).

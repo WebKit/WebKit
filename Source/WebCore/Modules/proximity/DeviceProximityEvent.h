@@ -65,7 +65,7 @@ public:
     double min() { return m_min; }
     double max() { return m_max; }
 
-    virtual const AtomicString& interfaceName() const { return eventNames().interfaceForDeviceProximityEvent; }
+    virtual EventInterface eventInterface() const { return DeviceProximityEventInterfaceType; }
 
 private:
     DeviceProximityEvent();

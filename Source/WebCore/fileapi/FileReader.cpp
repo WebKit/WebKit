@@ -69,9 +69,9 @@ FileReader::~FileReader()
     terminate();
 }
 
-const AtomicString& FileReader::interfaceName() const
+EventTargetInterface FileReader::eventTargetInterface() const
 {
-    return eventNames().interfaceForFileReader;
+    return FileReaderEventTargetInterfaceType;
 }
 
 bool FileReader::canSuspend() const

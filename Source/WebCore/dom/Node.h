@@ -529,7 +529,7 @@ public:
     virtual Node* toNode();
     virtual HTMLInputElement* toInputElement();
 
-    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL; // Implemented in Document.h
 
     virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);

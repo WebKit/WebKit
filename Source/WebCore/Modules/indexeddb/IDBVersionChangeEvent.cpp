@@ -49,9 +49,9 @@ IDBVersionChangeEvent::~IDBVersionChangeEvent()
 {
 }
 
-const AtomicString& IDBVersionChangeEvent::interfaceName() const
+EventInterface IDBVersionChangeEvent::eventInterface() const
 {
-    return eventNames().interfaceForIDBVersionChangeEvent;
+    return IDBVersionChangeEventInterfaceType;
 }
 
 } // namespace WebCore

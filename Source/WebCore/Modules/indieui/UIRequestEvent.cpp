@@ -74,9 +74,9 @@ UIRequestEvent::~UIRequestEvent()
 {
 }
     
-const AtomicString& UIRequestEvent::interfaceName() const
+EventInterface UIRequestEvent::eventInterface() const
 {
-    return eventNames().interfaceForUIRequestEvent;
+    return UIRequestEventInterfaceType;
 }
 
 UIRequestEventDispatchMediator::UIRequestEventDispatchMediator(PassRefPtr<UIRequestEvent> event)

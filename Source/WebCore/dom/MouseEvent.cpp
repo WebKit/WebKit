@@ -175,9 +175,9 @@ void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool c
     // FIXME: m_clipboard is not set to 0 here.
 }
 
-const AtomicString& MouseEvent::interfaceName() const
+EventInterface MouseEvent::eventInterface() const
 {
-    return eventNames().interfaceForMouseEvent;
+    return MouseEventInterfaceType;
 }
 
 bool MouseEvent::isMouseEvent() const

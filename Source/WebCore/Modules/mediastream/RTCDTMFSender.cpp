@@ -128,9 +128,9 @@ void RTCDTMFSender::didPlayTone(const String& tone)
     scheduleDispatchEvent(RTCDTMFToneChangeEvent::create(tone));
 }
 
-const AtomicString& RTCDTMFSender::interfaceName() const
+EventTargetInterface RTCDTMFSender::eventTargetInterface() const
 {
-    return eventNames().interfaceForRTCDTMFSender;
+    return RTCDTMFSenderEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* RTCDTMFSender::scriptExecutionContext() const

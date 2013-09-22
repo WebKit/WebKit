@@ -59,7 +59,7 @@ public:
         return adoptRef(new MediaKeyEvent(type, initializer));
     }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
     String keySystem() const { return m_keySystem; }
     String sessionId() const { return m_sessionId; }

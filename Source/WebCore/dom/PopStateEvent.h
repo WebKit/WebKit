@@ -52,7 +52,7 @@ public:
     const ScriptValue& state() const { return m_state; }
     History* history() const { return m_history.get(); }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     PopStateEvent();

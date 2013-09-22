@@ -66,7 +66,7 @@ public:
     unsigned lineno() const { return m_lineNumber; }
     unsigned colno() const { return m_columnNumber; }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     ErrorEvent();

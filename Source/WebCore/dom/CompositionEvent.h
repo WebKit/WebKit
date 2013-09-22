@@ -60,7 +60,7 @@ public:
 
     String data() const { return m_data; }
 
-    virtual const AtomicString& interfaceName() const;
+    virtual EventInterface eventInterface() const;
 
 private:
     CompositionEvent();
