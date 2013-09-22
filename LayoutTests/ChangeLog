@@ -1,3 +1,19 @@
+2013-09-22  Darin Adler  <darin@apple.com>
+
+        Fix accessibility-node-memory-management.html to use normal style for
+        GC-related tests, making it more robust
+        https://bugs.webkit.org/show_bug.cgi?id=121760
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        Change was accidentally landed in previous commit, this is the change log
+        that goes with it.
+
+        * accessibility/accessibility-node-memory-management.html:
+        Use jsTestIsAsync and setTimeout to do the garbage collection without the
+        rest of the script state on the stack. Also removed a lot of unneeded
+        "window." since the test works fine without them and tweaked comments.
+
 2013-09-21  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of IsInlinedCodeTag and its associated methods since it's unused
