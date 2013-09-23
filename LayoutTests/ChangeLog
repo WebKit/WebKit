@@ -1,3 +1,13 @@
+2013-09-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Audio object garbage collection is incorrect (media/audio-garbage-collect.html test is flaky)
+        https://bugs.webkit.org/show_bug.cgi?id=72698
+
+        Skipping the test. It frequently times out, and when it doesn't, that's only
+        because if fails to detect incorrect behavior.
+
+        * TestExpectations:
+
 2013-09-23  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] accessibility/aria-invalid is failing
