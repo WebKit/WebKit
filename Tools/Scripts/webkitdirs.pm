@@ -94,6 +94,7 @@ my $qmakebin = "qmake"; # Allow override of the qmake binary from $PATH
 my $isGtk;
 my $isWinCE;
 my $isWinCairo;
+my $isWin64;
 my $isEfl;
 my $isBlackBerry;
 my $isInspectorFrontend;
@@ -623,18 +624,21 @@ sub determinePassedConfiguration
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Debug";
             $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
+            $passedConfiguration .= "|x64" if isWin64();
             return;
         }
         if ($opt =~ /^--release$/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Release";
             $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
+            $passedConfiguration .= "|x64" if isWin64();
             return;
         }
         if ($opt =~ /^--profil(e|ing)$/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Profiling";
             $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
+            $passedConfiguration .= "|x64" if isWin64();
             return;
         }
     }
@@ -1195,6 +1199,18 @@ sub determineIsWinCairo()
 {
     return if defined($isWinCairo);
     $isWinCairo = checkForArgumentAndRemoveFromARGV("--wincairo");
+}
+
+sub isWin64()
+{
+    determineIsWin64();
+    return $isWin64;
+}
+
+sub determineIsWin64()
+{
+    return if defined($isWin64);
+    $isWin64 = checkForArgumentAndRemoveFromARGV("--64-bit");
 }
 
 sub isCygwin()

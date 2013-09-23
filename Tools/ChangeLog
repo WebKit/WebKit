@@ -1,3 +1,15 @@
+2013-09-23  Alex Christensen  <alex.christensen@flexsim.com>
+
+        Added --64-bit option for Windows build.
+        https://bugs.webkit.org/show_bug.cgi?id=121799
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitdirs.pm:
+        (determinePassedConfiguration): Add "|x64" for 64-bit configuration.
+        (isWin64): Added.
+        (determineIsWin64): Added.
+
 2013-09-23  Anders Carlsson  <andersca@apple.com>
 
         ListHashSet should use std::reverse_iterator for reverse iterators
