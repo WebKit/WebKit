@@ -58,34 +58,32 @@ AC_ARG_WITH([gtk],
     [with_gtk=3.0])
 AC_MSG_RESULT([$with_gtk])
 
-AC_MSG_CHECKING([the target windowing system])
-AC_ARG_WITH(target,
-    AC_HELP_STRING([--with-target=@<:@x11/wayland/x11,wayland/win32/quartz/directfb@:>@], [Select webkit target [default=x11]]),
-    [
-        case "$with_target" in
-            x11|wayland|x11,wayland|win32|quartz|directfb) ;;
-            *) AC_MSG_ERROR([Invalid target: must be x11, wayland, both x11 and wayland (x11,wayland), quartz, win32, or directfb.]) ;;
-        esac
-    ],
-    [with_target="x11"])
-AC_MSG_RESULT([$with_target])
+default_build_targets="x11=yes wayland=no win32=no quartz=no directfb=no"
+build_targets=""
 
-# To support building for X11 and Wayland targets concurrently, the $with_target value is checked for this
-# special case and two additional variables are introduced that denote specifically whether we're building
-# the X11 target, the Wayland target, both of these or neither.
-if test "$with_target" = "x11,wayland"; then
-    with_x11_target=yes
-    with_wayland_target=yes
-elif test "$with_target" = "x11"; then
-    with_x11_target=yes
-    with_wayland_target=no
-elif test "$with_target" = "wayland"; then
-    with_x11_target=no
-    with_wayland_target=yes
-else
-    with_x11_target=no
-    with_wayland_target=no
+AC_ARG_ENABLE([x11-target], [AC_HELP_STRING([--enable-x11-target], [enable building for the X11 target [default=yes]])],
+    [build_targets="$build_targets x11=$enable_x11_target"], [])
+AC_ARG_ENABLE([wayland-target], [AC_HELP_STRING([--enable-wayland-target], [enable building for the Wayland target [default=auto]])],
+    [build_targets="$build_targets wayland=$enable_wayland_target"], [])
+AC_ARG_ENABLE([win32-target], [AC_HELP_STRING([--enable-win32-target], [enable building for the Win32 target [default=no]])],
+    [build_targets="$build_targets win32=$enable_win32_target"], [])
+AC_ARG_ENABLE([quartz-target], [AC_HELP_STRING([--enable-quartz-target], [enable building for the Quartz target [default=no]])],
+    [build_targets="$build_targets quartz=$enable_quartz_target"], [])
+AC_ARG_ENABLE([directfb-target], [AC_HELP_STRING([--enable-directfb-target], [enable building for the DirectFB target [default=no]])],
+    [build_targets="$build_targets directfb=$enable_directfb_target"], [])
+
+if test "$build_targets" = ""; then
+    build_targets="$default_build_targets"
 fi
+
+AM_WEBKIT_DETERMINE_BUILD_TARGET_STATUS([x11], [enable_x11_target], [build_targets])
+AM_WEBKIT_DETERMINE_BUILD_TARGET_STATUS([wayland], [enable_wayland_target], [build_targets])
+AM_WEBKIT_DETERMINE_BUILD_TARGET_STATUS([win32], [enable_win32_target], [build_targets])
+AM_WEBKIT_DETERMINE_BUILD_TARGET_STATUS([quartz], [enable_quartz_target], [build_targets])
+AM_WEBKIT_DETERMINE_BUILD_TARGET_STATUS([directfb], [enable_directfb_target], [build_targets])
+
+AC_MSG_CHECKING([whether to build for the Win32 target])
+AC_MSG_RESULT([$enable_wayland_target])
 
 AC_MSG_CHECKING([whether to enable spellcheck support])
 AC_ARG_ENABLE([spellcheck],

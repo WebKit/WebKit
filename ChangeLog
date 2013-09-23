@@ -1,3 +1,36 @@
+2013-09-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Autotools] Rework the build target selection
+        https://bugs.webkit.org/show_bug.cgi?id=121703
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Replace the --with-target configuration flag with target-specific --enable-*-target flags:
+        - --enable-x11-target
+        - --enable-wayland-target
+        - --enable-win32-target
+        - --enable-quartz-target
+        - --enable-directfb-target
+
+        By default, the X11 target is enabled. This default is preserved only if no --enable-*-target flag
+        is passed on the command line. When that occurs, the newly-constructed list of build targets is
+        used to determine what build targets should actually be built. So for instance, executing just
+        `./configure` would only enable the X11 target as that's the default, and executing
+        `./configure --enable-wayland-target` would only enable the Wayland target, as the defaults are
+        completely ignored.
+
+        * Source/autotools/CheckSystemAndBasicDependencies.m4: Abort if grep was not found, just in case.
+        * Source/autotools/CustomMacros.m4: The new file that contains helpful custom macros.
+        * Source/autotools/FindDependencies.m4: Use the appropriate 'enable_*_target' references instead of 'with_*target'.
+        * Source/autotools/PrintBuildConfiguration.m4: Use the new AM_APPEND_TO_DESCRIPTION macro to construct a pretty-looking
+        description string of what targets will be built.
+        * Source/autotools/ReadCommandLineArguments.m4: Replace the --with-target configuration flag and the related
+        hacks with the set of --enable-*-target flags. The new AM_DETERMINE_BUILD_TARGET_STATUS macro is used to determine
+        whether to enable specific build targets, based indirectly on the passed-in --enable-*-target flags.
+        * Source/autotools/SetupAutoconfHeader.m4: Use the appropriate 'enable_*_target' references instead of 'with_*target'.
+        * Source/autotools/SetupAutomake.m4: Use the appropriate 'enable_*_target' references instead of 'with_*target'.
+        * configure.ac: Include the new CustomMacros.m4 file.
+
 2013-09-23  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Bump version

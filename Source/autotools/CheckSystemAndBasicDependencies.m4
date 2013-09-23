@@ -49,6 +49,11 @@ if test -z "$MV"; then
     AC_MSG_ERROR([You need 'mv' to compile WebKit])
 fi
 
+AC_PATH_PROG(GREP, grep)
+if test -z "$GREP"; then
+    AC_MSG_ERROR([You need 'grep' to compile WebKit])
+fi
+
 AC_PATH_PROG(GPERF, gperf)
 if test -z "$GPERF"; then
     AC_MSG_ERROR([You need the 'gperf' hash function generator to compile WebKit])

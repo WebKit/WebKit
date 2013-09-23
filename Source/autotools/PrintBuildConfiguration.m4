@@ -1,3 +1,10 @@
+target_description=""
+AS_IF([test "$enable_x11_target" = "yes"], [AM_APPEND_TO_DESCRIPTION(target_description, "x11")], [])
+AS_IF([test "$enable_wayland_target" = "yes"], [AM_APPEND_TO_DESCRIPTION(target_description, "wayland")], [])
+AS_IF([test "$enable_win32_target" = "yes"], [AM_APPEND_TO_DESCRIPTION(target_description, "win32")], [])
+AS_IF([test "$enable_quartz_target" = "yes"], [AM_APPEND_TO_DESCRIPTION(target_description, "quartz")], [])
+AS_IF([test "$enable_directfb_target" = "yes"], [AM_APPEND_TO_DESCRIPTION(target_description, "directfb")], [])
+
 AC_OUTPUT
 
 echo "
@@ -34,7 +41,7 @@ Features:
 
 GTK+ configuration:
  GTK+ version                                             : $with_gtk
- GDK targets                                              : $with_target
+ GDK targets                                              : $target_description
  Introspection support                                    : $enable_introspection
  Generate documentation                                   : $enable_gtk_doc
 "
