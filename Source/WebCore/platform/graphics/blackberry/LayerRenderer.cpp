@@ -891,7 +891,7 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
 #endif
 
     if (layer->isCanvasLayer())
-        layerVisible = layerVisible && layer->isVisible();
+        layerVisible = layerVisible && layer->isLayerVisible();
 
     layer->setVisible(layerVisible);
 

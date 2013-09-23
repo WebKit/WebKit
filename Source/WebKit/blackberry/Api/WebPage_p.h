@@ -575,7 +575,6 @@ public:
     OwnPtr<InRegionScroller> m_inRegionScroller;
 
 #if USE(ACCELERATED_COMPOSITING)
-    bool m_isAcceleratedCompositingActive;
     OwnPtr<FrameLayers> m_frameLayers; // WebKit thread only.
     OwnPtr<WebCore::GraphicsLayer> m_overlayLayer;
 
