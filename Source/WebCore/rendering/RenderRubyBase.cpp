@@ -98,7 +98,7 @@ void RenderRubyBase::moveInlineChildren(RenderRubyBase* toBase, RenderObject* be
             toBlock = toRenderBlock(lastChild);
         else {
             toBlock = toBase->createAnonymousBlock();
-            toBase->children()->appendChildNode(toBase, toBlock);
+            toBase->insertChildInternal(toBlock, nullptr, NotifyChildren);
         }
     }
     // Move our inline children into the target block we determined above.
@@ -123,7 +123,7 @@ void RenderRubyBase::moveBlockChildren(RenderRubyBase* toBase, RenderObject* bef
             && lastChildThere && lastChildThere->isAnonymousBlock() && lastChildThere->childrenInline()) {            
         RenderBlock* anonBlockHere = toRenderBlock(firstChildHere);
         RenderBlock* anonBlockThere = toRenderBlock(lastChildThere);
-        anonBlockHere->moveAllChildrenTo(anonBlockThere, anonBlockThere->children());
+        anonBlockHere->moveAllChildrenTo(anonBlockThere, true);
         anonBlockHere->deleteLineBoxTree();
         anonBlockHere->destroy();
     }

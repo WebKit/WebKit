@@ -1,3 +1,15 @@
+2013-09-23  Antti Koivisto  <antti@apple.com>
+
+        Remove RenderObjectChildList
+        https://bugs.webkit.org/show_bug.cgi?id=121771
+
+        Reviewed by Darin Adler.
+
+        Most RenderElement subclasses have m_children member (>90% of instances on typical page). It is not worth optimising
+        for memory for the few cases that don't (RenderImage, RenderLineBreak mostly) in expense of performance.
+        
+        This patch moves child handling to RenderElement. This gets rid of virtual children() calls and simplifies the code.
+
 2013-09-23  Andreas Kling  <akling@apple.com>
 
         Document::destroyRenderTree() shouldn't do anything but.

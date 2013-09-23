@@ -53,6 +53,8 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
 private:
+    virtual bool canHaveChildren() const OVERRIDE { return false; }
+
     SVGGradientElement* gradientElement() const;
 };
 

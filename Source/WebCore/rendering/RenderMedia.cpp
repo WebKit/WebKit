@@ -58,7 +58,7 @@ void RenderMedia::layout()
 
     RenderImage::layout();
 
-    RenderBox* controlsRenderer = toRenderBox(m_children.firstChild());
+    RenderBox* controlsRenderer = toRenderBox(firstChild());
     if (!controlsRenderer)
         return;
 

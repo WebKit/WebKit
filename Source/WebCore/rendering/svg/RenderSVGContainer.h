@@ -35,12 +35,6 @@ class RenderSVGContainer : public RenderSVGModelObject {
 public:
     virtual ~RenderSVGContainer();
 
-    RenderObject* firstChild() const { return m_children.firstChild(); }
-    RenderObject* lastChild() const { return m_children.lastChild(); }
-
-    virtual const RenderObjectChildList* children() const OVERRIDE FINAL { return &m_children; }
-    virtual RenderObjectChildList* children() OVERRIDE FINAL { return &m_children; }
-
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
     virtual void setNeedsBoundariesUpdate() OVERRIDE FINAL { m_needsBoundariesUpdate = true; }
     virtual bool needsBoundariesUpdate() OVERRIDE FINAL { return m_needsBoundariesUpdate; }
@@ -52,6 +46,8 @@ protected:
 
     virtual bool isSVGContainer() const OVERRIDE FINAL { return true; }
     virtual const char* renderName() const OVERRIDE { return "RenderSVGContainer"; }
+
+    virtual bool canHaveChildren() const OVERRIDE FINAL { return true; }
 
     virtual void layout() OVERRIDE;
 
@@ -79,7 +75,6 @@ protected:
     void updateCachedBoundaries();
 
 private:
-    RenderObjectChildList m_children;
     FloatRect m_objectBoundingBox;
     bool m_objectBoundingBoxValid;
     FloatRect m_strokeBoundingBox;

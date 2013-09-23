@@ -115,6 +115,7 @@ private:
     virtual AffineTransform localTransform() const OVERRIDE FINAL { return m_localTransform; }
 
     virtual bool isSVGShape() const OVERRIDE FINAL { return true; }
+    virtual bool canHaveChildren() const OVERRIDE FINAL { return false; }
     virtual const char* renderName() const { return "RenderSVGShape"; }
 
     virtual void layout() OVERRIDE FINAL;

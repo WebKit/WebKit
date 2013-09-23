@@ -46,12 +46,6 @@ public:
 
     virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const OVERRIDE;
 
-    RenderObject* firstChild() const { return m_children.firstChild(); }
-    RenderObject* lastChild() const { return m_children.lastChild(); }
-
-    virtual const RenderObjectChildList* children() const OVERRIDE { return &m_children; }
-    virtual RenderObjectChildList* children() OVERRIDE { return &m_children; }
-
     bool isLayoutSizeChanged() const { return m_isLayoutSizeChanged; }
     virtual void setNeedsBoundariesUpdate() OVERRIDE { m_needsBoundariesOrTransformUpdate = true; }
     virtual bool needsBoundariesUpdate() OVERRIDE { return m_needsBoundariesOrTransformUpdate; }
@@ -115,7 +109,6 @@ private:
     void updateCachedBoundaries();
     void buildLocalToBorderBoxTransform();
 
-    RenderObjectChildList m_children;
     IntSize m_containerSize;
     FloatRect m_objectBoundingBox;
     bool m_objectBoundingBoxValid;

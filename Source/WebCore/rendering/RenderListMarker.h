@@ -55,6 +55,7 @@ private:
     virtual void computePreferredLogicalWidths() OVERRIDE;
 
     virtual bool isListMarker() const { return true; }
+    virtual bool canHaveChildren() const OVERRIDE { return false; }
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
 

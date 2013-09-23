@@ -81,7 +81,7 @@ void RenderInline::willBeDestroyed()
 
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
     // properly dirty line boxes that they are removed from.  Effects that do :before/:after only on hover could crash otherwise.
-    children()->destroyLeftoverChildren();
+    destroyLeftoverChildren();
 
     // Destroy our continuation before anything other than anonymous children.
     // The reason we don't destroy it before anonymous children is that they may
@@ -366,7 +366,8 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     while (o) {
         RenderObject* tmp = o;
         o = tmp->nextSibling();
-        cloneInline->addChildIgnoringContinuation(children()->removeChildNode(this, tmp), 0);
+        removeChildInternal(tmp, NotifyChildren);
+        cloneInline->addChildIgnoringContinuation(tmp, 0);
         tmp->setNeedsLayoutAndPrefWidthsRecalc();
     }
 
@@ -407,7 +408,8 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
             while (o) {
                 RenderObject* tmp = o;
                 o = tmp->nextSibling();
-                cloneInline->addChildIgnoringContinuation(inlineCurr->children()->removeChildNode(curr, tmp), 0);
+                inlineCurr->removeChildInternal(tmp, NotifyChildren);
+                cloneInline->addChildIgnoringContinuation(tmp, 0);
                 tmp->setNeedsLayoutAndPrefWidthsRecalc();
             }
         }
@@ -419,7 +421,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     }
 
     // Now we are at the block level. We need to put the clone into the toBlock.
-    toBlock->children()->appendChildNode(toBlock, cloneInline);
+    toBlock->insertChildInternal(cloneInline, nullptr, NotifyChildren);
 
     // Now take all the children after currChild and remove them from the fromBlock
     // and put them in the toBlock.
@@ -427,7 +429,8 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
     while (o) {
         RenderObject* tmp = o;
         o = tmp->nextSibling();
-        toBlock->children()->appendChildNode(toBlock, fromBlock->children()->removeChildNode(fromBlock, tmp));
+        fromBlock->removeChildInternal(tmp, NotifyChildren);
+        toBlock->insertChildInternal(tmp, nullptr, NotifyChildren);
     }
 }
 
@@ -457,9 +460,9 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
 
     RenderObject* boxFirst = madeNewBeforeBlock ? block->firstChild() : pre->nextSibling();
     if (madeNewBeforeBlock)
-        block->children()->insertChildNode(block, pre, boxFirst);
-    block->children()->insertChildNode(block, newBlockBox, boxFirst);
-    block->children()->insertChildNode(block, post, boxFirst);
+        block->insertChildInternal(pre, boxFirst, NotifyChildren);
+    block->insertChildInternal(newBlockBox, boxFirst, NotifyChildren);
+    block->insertChildInternal(post, boxFirst, NotifyChildren);
     block->setChildrenInline(false);
     
     if (madeNewBeforeBlock) {
@@ -467,7 +470,8 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
         while (o) {
             RenderObject* no = o;
             o = no->nextSibling();
-            pre->children()->appendChildNode(pre, block->children()->removeChildNode(block, no));
+            block->removeChildInternal(no, NotifyChildren);
+            pre->insertChildInternal(no, nullptr, NotifyChildren);
             no->setNeedsLayoutAndPrefWidthsRecalc();
         }
     }
@@ -1261,7 +1265,7 @@ void RenderInline::childBecameNonInline(RenderObject* child)
     RenderBoxModelObject* oldContinuation = continuation();
     setContinuation(newBox);
     RenderObject* beforeChild = child->nextSibling();
-    children()->removeChildNode(this, child);
+    removeChildInternal(child, NotifyChildren);
     splitFlow(beforeChild, newBox, child, oldContinuation);
 }
 

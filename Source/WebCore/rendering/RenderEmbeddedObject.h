@@ -72,9 +72,6 @@ protected:
 
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const OVERRIDE;
 
-    virtual const RenderObjectChildList* children() const OVERRIDE FINAL { return &m_children; }
-    virtual RenderObjectChildList* children() OVERRIDE FINAL { return &m_children; }
-
 protected:
     virtual void layout() OVERRIDE;
 
@@ -103,7 +100,6 @@ private:
     LayoutRect unavailablePluginIndicatorBounds(const LayoutPoint&) const;
 
     virtual bool canHaveChildren() const OVERRIDE FINAL;
-    
     virtual bool canHaveWidget() const { return true; }
 
     bool m_hasFallbackContent; // FIXME: This belongs on HTMLObjectElement.
@@ -114,7 +110,6 @@ private:
     String m_unavailablePluginReplacementText;
     bool m_unavailablePluginIndicatorIsPressed;
     bool m_mouseDownWasInUnavailablePluginIndicator;
-    RenderObjectChildList m_children;
     String m_unavailabilityDescription;
 };
 

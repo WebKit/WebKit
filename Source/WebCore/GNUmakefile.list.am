@@ -4504,8 +4504,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderMultiColumnSet.h \
 	Source/WebCore/rendering/RenderNamedFlowThread.cpp \
 	Source/WebCore/rendering/RenderNamedFlowThread.h \
-	Source/WebCore/rendering/RenderObjectChildList.cpp \
-	Source/WebCore/rendering/RenderObjectChildList.h \
 	Source/WebCore/rendering/RenderObject.cpp \
 	Source/WebCore/rendering/RenderObject.h \
 	Source/WebCore/rendering/RenderOverflow.h \
