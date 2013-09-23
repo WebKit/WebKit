@@ -128,6 +128,8 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint, guint n
 
 #if PLATFORM(GTK)
     JSGlobalContextRef jsContext = webkit_web_frame_get_global_context(mainFrame);
+#elif PLATFORM(EFL)
+    JSGlobalContextRef jsContext = DumpRenderTreeSupportEfl::globalContextRefForFrame(browser->mainFrame());
 #else
     JSContextRef jsContext = 0;
 #endif
@@ -227,6 +229,8 @@ void addAccessibilityNotificationHandler(AccessibilityNotificationHandler* notif
 
 #if PLATFORM(GTK)
     JSGlobalContextRef jsContext = webkit_web_frame_get_global_context(mainFrame);
+#elif PLATFORM(EFL)
+    JSGlobalContextRef jsContext = DumpRenderTreeSupportEfl::globalContextRefForFrame(browser->mainFrame());
 #else
     JSContextRef jsContext = 0;
 #endif
@@ -259,6 +263,8 @@ void removeAccessibilityNotificationHandler(AccessibilityNotificationHandler* no
 
 #if PLATFORM(GTK)
     JSGlobalContextRef jsContext = webkit_web_frame_get_global_context(mainFrame);
+#elif PLATFORM(EFL)
+    JSGlobalContextRef jsContext = DumpRenderTreeSupportEfl::globalContextRefForFrame(browser->mainFrame());
 #else
     JSGlobalContextRef jsContext = 0;
 #endif

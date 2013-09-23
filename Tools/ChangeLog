@@ -1,3 +1,22 @@
+2013-09-23  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] accessibility/aria-invalid is failing
+        https://bugs.webkit.org/show_bug.cgi?id=111986
+
+        Reviewed by Mario Sanchez Prada.
+
+        Adds possibility to retrieve JS context.
+        This is part of the implementation of AccessibilityUIElement::addNotificationListener
+        from 119883 and 120421.
+
+        * DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp:
+        (axObjectEventListener):
+        (addAccessibilityNotificationHandler):
+        (removeAccessibilityNotificationHandler):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        (WTR::AccessibilityNotificationHandler::setNotificationFunctionCallback):
+        (WTR::AccessibilityNotificationHandler::removeAccessibilityNotificationHandler):
+
 2013-09-20  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/90090> build-webkit should verify that your tools are up-to-date
