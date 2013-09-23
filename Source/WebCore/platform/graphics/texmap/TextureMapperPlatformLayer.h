@@ -33,6 +33,7 @@ class TextureMapperPlatformLayer {
 public:
     class Client {
     public:
+        virtual void platformLayerWillBeDestroyed() = 0;
         virtual void setPlatformLayerNeedsDisplay() = 0;
     };
 

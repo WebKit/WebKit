@@ -1,3 +1,19 @@
+2013-09-23  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [Texmap] Reloading a webgl page doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=120593
+
+        Reviewed by Noam Rosenthal.
+
+        Let GraphicsLayerTextureMapper know it needs to detach the platform layer when a GraphicsContext3D is destroyed.
+
+        Test: fast/canvas/webgl/webgl-reload-crash.html
+
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayer.h:
+
 2013-09-23  Antti Koivisto  <antti@apple.com>
 
         Remove RenderObjectChildList

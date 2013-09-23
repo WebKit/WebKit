@@ -1,3 +1,15 @@
+2013-09-23  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [Texmap] Reloading a webgl page doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=120593
+
+        Reviewed by Noam Rosenthal.
+
+        Add a new test case to check if a crash occurs while reloading a page which contains webgl.
+
+        * fast/canvas/webgl/webgl-reload-crash-expected.txt: Added.
+        * fast/canvas/webgl/webgl-reload-crash.html: Added.
+
 2013-09-23  Alexey Proskuryakov  <ap@apple.com>
 
         Audio object garbage collection is incorrect (media/audio-garbage-collect.html test is flaky)

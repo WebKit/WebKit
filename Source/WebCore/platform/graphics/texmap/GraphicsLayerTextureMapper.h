@@ -112,6 +112,7 @@ private:
     void prepareBackingStoreIfNeeded();
     bool shouldHaveBackingStore() const;
 
+    virtual void platformLayerWillBeDestroyed() OVERRIDE { setContentsToMedia(0); }
     virtual void setPlatformLayerNeedsDisplay() OVERRIDE { setContentsNeedsDisplay(); }
 
     // This set of flags help us defer which properties of the layer have been
