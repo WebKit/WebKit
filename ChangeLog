@@ -1,3 +1,11 @@
+2013-09-23  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Bump version
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/autotools/Versions.m4: Bump to 2.3.0
+
 2013-09-20  Sergio Correia  <sergio.correia@openbossa.org>
 
         [CMAKE] FindHarfBuzz: Handle harfbuzz / harfbuzz-icu split
