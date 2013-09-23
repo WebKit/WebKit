@@ -127,6 +127,8 @@ private:
     const RefPtr<CSSCalcExpressionNode> m_expression;
     const bool m_nonNegative;
 };
+
+CSS_VALUE_TYPE_CASTS(CalcValue)
     
 } // namespace WebCore
 

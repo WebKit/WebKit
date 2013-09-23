@@ -57,6 +57,8 @@ private:
     CSSLineBoxContainValue(LineBoxContain);
 };
 
+CSS_VALUE_TYPE_CASTS(LineBoxContainValue)
+
 } // namespace
 
 #endif

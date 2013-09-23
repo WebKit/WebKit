@@ -110,7 +110,7 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
         if (haveNonPrimitiveValue)
             continue;
 
-        CSSPrimitiveValue* firstValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(0));
+        CSSPrimitiveValue* firstValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(0));
 
         switch (transformValue->operationType()) {
         case WebKitCSSTransformValue::ScaleTransformOperation:
@@ -124,7 +124,7 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
                 sx = firstValue->getDoubleValue();
                 if (transformValue->operationType() != WebKitCSSTransformValue::ScaleXTransformOperation) {
                     if (transformValue->length() > 1) {
-                        CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
+                        CSSPrimitiveValue* secondValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(1));
                         sy = secondValue->getDoubleValue();
                     } else
                         sy = sx;
@@ -146,11 +146,11 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
                 sx = firstValue->getDoubleValue();
                 if (transformValue->operationType() != WebKitCSSTransformValue::ScaleXTransformOperation) {
                     if (transformValue->length() > 2) {
-                        CSSPrimitiveValue* thirdValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2));
+                        CSSPrimitiveValue* thirdValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(2));
                         sz = thirdValue->getDoubleValue();
                     }
                     if (transformValue->length() > 1) {
-                        CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
+                        CSSPrimitiveValue* secondValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(1));
                         sy = secondValue->getDoubleValue();
                     } else
                         sy = sx;
@@ -170,7 +170,7 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
                 tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
                 if (transformValue->operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
                     if (transformValue->length() > 1) {
-                        CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
+                        CSSPrimitiveValue* secondValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(1));
                         ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor);
                     }
                 }
@@ -195,11 +195,11 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
                 tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
                 if (transformValue->operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
                     if (transformValue->length() > 2) {
-                        CSSPrimitiveValue* thirdValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2));
+                        CSSPrimitiveValue* thirdValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(2));
                         tz = convertToFloatLength(thirdValue, style, rootStyle, zoomFactor);
                     }
                     if (transformValue->length() > 1) {
-                        CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
+                        CSSPrimitiveValue* secondValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(1));
                         ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor);
                     }
                 }
@@ -236,9 +236,9 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
         case WebKitCSSTransformValue::Rotate3DTransformOperation: {
             if (transformValue->length() < 4)
                 break;
-            CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
-            CSSPrimitiveValue* thirdValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2));
-            CSSPrimitiveValue* fourthValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(3));
+            CSSPrimitiveValue* secondValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(1));
+            CSSPrimitiveValue* thirdValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(2));
+            CSSPrimitiveValue* fourthValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(3));
             double x = firstValue->getDoubleValue();
             double y = secondValue->getDoubleValue();
             double z = thirdValue->getDoubleValue();
@@ -258,7 +258,7 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
                 angleX = angle;
                 if (transformValue->operationType() == WebKitCSSTransformValue::SkewTransformOperation) {
                     if (transformValue->length() > 1) {
-                        CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
+                        CSSPrimitiveValue* secondValue = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(1));
                         angleY = secondValue->computeDegrees();
                     }
                 }
@@ -270,33 +270,33 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
             if (transformValue->length() < 6)
                 break;
             double a = firstValue->getDoubleValue();
-            double b = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1))->getDoubleValue();
-            double c = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2))->getDoubleValue();
-            double d = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(3))->getDoubleValue();
-            double e = zoomFactor * static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(4))->getDoubleValue();
-            double f = zoomFactor * static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(5))->getDoubleValue();
+            double b = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(1))->getDoubleValue();
+            double c = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(2))->getDoubleValue();
+            double d = toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(3))->getDoubleValue();
+            double e = zoomFactor * toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(4))->getDoubleValue();
+            double f = zoomFactor * toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(5))->getDoubleValue();
             operations.operations().append(MatrixTransformOperation::create(a, b, c, d, e, f));
             break;
         }
         case WebKitCSSTransformValue::Matrix3DTransformOperation: {
             if (transformValue->length() < 16)
                 break;
-            TransformationMatrix matrix(static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(0))->getDoubleValue(),
-                                static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1))->getDoubleValue(),
-                                static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2))->getDoubleValue(),
-                                static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(3))->getDoubleValue(),
-                                static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(4))->getDoubleValue(),
-                                static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(5))->getDoubleValue(),
-                                static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(6))->getDoubleValue(),
-                                static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(7))->getDoubleValue(),
-                                static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(8))->getDoubleValue(),
-                                static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(9))->getDoubleValue(),
-                                static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(10))->getDoubleValue(),
-                                static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(11))->getDoubleValue(),
-                                zoomFactor * static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(12))->getDoubleValue(),
-                                zoomFactor * static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(13))->getDoubleValue(),
-                                static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(14))->getDoubleValue(),
-                                static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(15))->getDoubleValue());
+            TransformationMatrix matrix(toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(0))->getDoubleValue(),
+                toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(1))->getDoubleValue(),
+                toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(2))->getDoubleValue(),
+                toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(3))->getDoubleValue(),
+                toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(4))->getDoubleValue(),
+                toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(5))->getDoubleValue(),
+                toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(6))->getDoubleValue(),
+                toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(7))->getDoubleValue(),
+                toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(8))->getDoubleValue(),
+                toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(9))->getDoubleValue(),
+                toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(10))->getDoubleValue(),
+                toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(11))->getDoubleValue(),
+                zoomFactor * toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(12))->getDoubleValue(),
+                zoomFactor * toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(13))->getDoubleValue(),
+                toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(14))->getDoubleValue(),
+                toCSSPrimitiveValue(transformValue->itemWithoutBoundsCheck(15))->getDoubleValue());
             operations.operations().append(Matrix3DTransformOperation::create(matrix));
             break;
         }

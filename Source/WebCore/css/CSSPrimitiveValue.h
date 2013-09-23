@@ -396,6 +396,8 @@ private:
     } m_value;
 };
 
+CSS_VALUE_TYPE_CASTS(PrimitiveValue)
+
 } // namespace WebCore
 
 #endif // CSSPrimitiveValue_h

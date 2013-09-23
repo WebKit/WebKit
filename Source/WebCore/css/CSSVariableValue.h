@@ -61,6 +61,8 @@ private:
     const String m_value;
 };
 
+CSS_VALUE_TYPE_CASTS(VariableValue)
+
 }
 
 #endif /* ENABLE(CSS_VARIABLES) */

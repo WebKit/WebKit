@@ -144,7 +144,7 @@ int identifierForStyleProperty(T* style, CSSPropertyID propertyID)
     RefPtr<CSSValue> value = extractPropertyValue(style, propertyID);
     if (!value || !value->isPrimitiveValue())
         return 0;
-    return static_cast<CSSPrimitiveValue*>(value.get())->getValueID();
+    return toCSSPrimitiveValue(value.get())->getValueID();
 }
 
 template<typename T> PassRefPtr<MutableStylePropertySet> getPropertiesNotIn(StylePropertySet* styleWithRedundantProperties, T* baseStyle);
@@ -201,7 +201,7 @@ HTMLElementEquivalent::HTMLElementEquivalent(CSSPropertyID id, CSSValueID primit
 bool HTMLElementEquivalent::valueIsPresentInStyle(Element* element, StylePropertySet* style) const
 {
     RefPtr<CSSValue> value = style->getPropertyCSSValue(m_propertyID);
-    return matches(element) && value && value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value.get())->getValueID() == m_primitiveValue->getValueID();
+    return matches(element) && value && value->isPrimitiveValue() && toCSSPrimitiveValue(value.get())->getValueID() == m_primitiveValue->getValueID();
 }
 
 void HTMLElementEquivalent::addToStyle(Element*, EditingStyle* style) const
@@ -378,7 +378,7 @@ static RGBA32 cssValueToRGBA(CSSValue* colorValue)
     if (!colorValue || !colorValue->isPrimitiveValue())
         return Color::transparent;
     
-    CSSPrimitiveValue* primitiveColor = static_cast<CSSPrimitiveValue*>(colorValue);
+    CSSPrimitiveValue* primitiveColor = toCSSPrimitiveValue(colorValue);
     if (primitiveColor->isRGBColor())
         return primitiveColor->getRGBA32Value();
     
@@ -498,7 +498,7 @@ void EditingStyle::extractFontSizeDelta()
     if (!value || !value->isPrimitiveValue())
         return;
 
-    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value.get());
+    CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value.get());
 
     // Only PX handled now. If we handle more types in the future, perhaps
     // a switch statement here would be more appropriate.
@@ -523,13 +523,13 @@ bool EditingStyle::textDirection(WritingDirection& writingDirection) const
     if (!unicodeBidi || !unicodeBidi->isPrimitiveValue())
         return false;
 
-    CSSValueID unicodeBidiValue = static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getValueID();
+    CSSValueID unicodeBidiValue = toCSSPrimitiveValue(unicodeBidi.get())->getValueID();
     if (unicodeBidiValue == CSSValueEmbed) {
         RefPtr<CSSValue> direction = m_mutableStyle->getPropertyCSSValue(CSSPropertyDirection);
         if (!direction || !direction->isPrimitiveValue())
             return false;
 
-        writingDirection = static_cast<CSSPrimitiveValue*>(direction.get())->getValueID() == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
+        writingDirection = toCSSPrimitiveValue(direction.get())->getValueID() == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
 
         return true;
     }
@@ -949,9 +949,9 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
         m_mutableStyle->removeProperty(CSSPropertyBackgroundColor);
 
     if (unicodeBidi && unicodeBidi->isPrimitiveValue()) {
-        m_mutableStyle->setProperty(CSSPropertyUnicodeBidi, static_cast<CSSValueID>(static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getValueID()));
+        m_mutableStyle->setProperty(CSSPropertyUnicodeBidi, static_cast<CSSValueID>(toCSSPrimitiveValue(unicodeBidi.get())->getValueID()));
         if (direction && direction->isPrimitiveValue())
-            m_mutableStyle->setProperty(CSSPropertyDirection, static_cast<CSSValueID>(static_cast<CSSPrimitiveValue*>(direction.get())->getValueID()));
+            m_mutableStyle->setProperty(CSSPropertyDirection, static_cast<CSSValueID>(toCSSPrimitiveValue(direction.get())->getValueID()));
     }
 }
 
@@ -1149,7 +1149,7 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
             CSSValue* value = property.value();
             if (!value->isPrimitiveValue())
                 continue;
-            if (static_cast<CSSPrimitiveValue*>(value)->isPercentage()) {
+            if (toCSSPrimitiveValue(value)->isPercentage()) {
                 if (RefPtr<CSSValue> computedPropertyValue = computedStyle.propertyValue(property.id()))
                     fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue.release()));
             }
@@ -1222,7 +1222,7 @@ int EditingStyle::legacyFontSize(Document* document) const
     RefPtr<CSSValue> cssValue = m_mutableStyle->getPropertyCSSValue(CSSPropertyFontSize);
     if (!cssValue || !cssValue->isPrimitiveValue())
         return 0;
-    return legacyFontSizeFromCSSValue(document, static_cast<CSSPrimitiveValue*>(cssValue.get()),
+    return legacyFontSizeFromCSSValue(document, toCSSPrimitiveValue(cssValue.get()),
         m_shouldUseFixedDefaultFontSize, AlwaysUseLegacyFontSize);
 }
 
@@ -1286,7 +1286,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
             if (!unicodeBidi || !unicodeBidi->isPrimitiveValue())
                 continue;
 
-            CSSValueID unicodeBidiValue = static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getValueID();
+            CSSValueID unicodeBidiValue = toCSSPrimitiveValue(unicodeBidi.get())->getValueID();
             if (unicodeBidiValue == CSSValueEmbed || unicodeBidiValue == CSSValueBidiOverride)
                 return NaturalWritingDirection;
         }
@@ -1315,7 +1315,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
         if (!unicodeBidi || !unicodeBidi->isPrimitiveValue())
             continue;
 
-        CSSValueID unicodeBidiValue = static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getValueID();
+        CSSValueID unicodeBidiValue = toCSSPrimitiveValue(unicodeBidi.get())->getValueID();
         if (unicodeBidiValue == CSSValueNormal)
             continue;
 
@@ -1327,7 +1327,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
         if (!direction || !direction->isPrimitiveValue())
             continue;
 
-        CSSValueID directionValue = static_cast<CSSPrimitiveValue*>(direction.get())->getValueID();
+        CSSValueID directionValue = toCSSPrimitiveValue(direction.get())->getValueID();
         if (directionValue != CSSValueLtr && directionValue != CSSValueRtl)
             continue;
 
@@ -1467,7 +1467,7 @@ void StyleChange::extractTextStyles(Document* document, MutableStylePropertySet*
     if (RefPtr<CSSValue> fontSize = style->getPropertyCSSValue(CSSPropertyFontSize)) {
         if (!fontSize->isPrimitiveValue())
             style->removeProperty(CSSPropertyFontSize); // Can't make sense of the number. Put no font size.
-        else if (int legacyFontSize = legacyFontSizeFromCSSValue(document, static_cast<CSSPrimitiveValue*>(fontSize.get()),
+        else if (int legacyFontSize = legacyFontSizeFromCSSValue(document, toCSSPrimitiveValue(fontSize.get()),
                 shouldUseFixedFontDefaultSize, UseLegacyFontSizeOnlyIfPixelValuesMatch)) {
             m_applyFontSize = String::number(legacyFontSize);
             style->removeProperty(CSSPropertyFontSize);
@@ -1499,7 +1499,7 @@ static bool fontWeightIsBold(CSSValue* fontWeight)
 
     // Because b tag can only bold text, there are only two states in plain html: bold and not bold.
     // Collapse all other values to either one of these two states for editing purposes.
-    switch (static_cast<CSSPrimitiveValue*>(fontWeight)->getValueID()) {
+    switch (toCSSPrimitiveValue(fontWeight)->getValueID()) {
         case CSSValue100:
         case CSSValue200:
         case CSSValue300:
@@ -1593,7 +1593,7 @@ bool isTransparentColorValue(CSSValue* cssValue)
         return true;
     if (!cssValue->isPrimitiveValue())
         return false;
-    CSSPrimitiveValue* value = static_cast<CSSPrimitiveValue*>(cssValue);    
+    CSSPrimitiveValue* value = toCSSPrimitiveValue(cssValue);    
     if (value->isRGBColor())
         return !alphaChannel(value->getRGBA32Value());    
     return value->getValueID() == CSSValueTransparent;

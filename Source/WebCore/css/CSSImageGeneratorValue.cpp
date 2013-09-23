@@ -110,10 +110,10 @@ PassRefPtr<Image> CSSImageGeneratorValue::image(RenderObject* renderer, const In
     case CanvasClass:
         return static_cast<CSSCanvasValue*>(this)->image(renderer, size);
     case CrossfadeClass:
-        return static_cast<CSSCrossfadeValue*>(this)->image(renderer, size);
+        return toCSSCrossfadeValue(this)->image(renderer, size);
 #if ENABLE(CSS_FILTERS)
     case FilterImageClass:
-        return static_cast<CSSFilterImageValue*>(this)->image(renderer, size);
+        return toCSSFilterImageValue(this)->image(renderer, size);
 #endif
     case LinearGradientClass:
         return static_cast<CSSLinearGradientValue*>(this)->image(renderer, size);
@@ -152,10 +152,10 @@ IntSize CSSImageGeneratorValue::fixedSize(const RenderObject* renderer)
     case CanvasClass:
         return static_cast<CSSCanvasValue*>(this)->fixedSize(renderer);
     case CrossfadeClass:
-        return static_cast<CSSCrossfadeValue*>(this)->fixedSize(renderer);
+        return toCSSCrossfadeValue(this)->fixedSize(renderer);
 #if ENABLE(CSS_FILTERS)
     case FilterImageClass:
-        return static_cast<CSSFilterImageValue*>(this)->fixedSize(renderer);
+        return toCSSFilterImageValue(this)->fixedSize(renderer);
 #endif
     case LinearGradientClass:
         return static_cast<CSSLinearGradientValue*>(this)->fixedSize(renderer);
@@ -213,14 +213,14 @@ void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader* cachedResourceL
 {
     switch (classType()) {
     case CrossfadeClass:
-        static_cast<CSSCrossfadeValue*>(this)->loadSubimages(cachedResourceLoader);
+        toCSSCrossfadeValue(this)->loadSubimages(cachedResourceLoader);
         break;
     case CanvasClass:
         static_cast<CSSCanvasValue*>(this)->loadSubimages(cachedResourceLoader);
         break;
 #if ENABLE(CSS_FILTERS)
     case FilterImageClass:
-        static_cast<CSSFilterImageValue*>(this)->loadSubimages(cachedResourceLoader);
+        toCSSFilterImageValue(this)->loadSubimages(cachedResourceLoader);
         break;
 #endif
     case LinearGradientClass:
@@ -237,12 +237,12 @@ void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader* cachedResourceL
 bool CSSImageGeneratorValue::subimageIsPending(CSSValue* value)
 {
     if (value->isImageValue())
-        return static_cast<CSSImageValue*>(value)->cachedOrPendingImage()->isPendingImage();
+        return toCSSImageValue(value)->cachedOrPendingImage()->isPendingImage();
     
     if (value->isImageGeneratorValue())
-        return static_cast<CSSImageGeneratorValue*>(value)->isPending();
+        return toCSSImageGeneratorValue(value)->isPending();
 
-    if (value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value)->getValueID() == CSSValueNone)
+    if (value->isPrimitiveValue() && toCSSPrimitiveValue(value)->getValueID() == CSSValueNone)
         return false;
 
     ASSERT_NOT_REACHED();
@@ -256,7 +256,7 @@ CachedImage* CSSImageGeneratorValue::cachedImageForCSSValue(CSSValue* value, Cac
         return 0;
 
     if (value->isImageValue()) {
-        StyleCachedImage* styleCachedImage = static_cast<CSSImageValue*>(value)->cachedImage(cachedResourceLoader);
+        StyleCachedImage* styleCachedImage = toCSSImageValue(value)->cachedImage(cachedResourceLoader);
         if (!styleCachedImage)
             return 0;
 
@@ -264,12 +264,13 @@ CachedImage* CSSImageGeneratorValue::cachedImageForCSSValue(CSSValue* value, Cac
     }
     
     if (value->isImageGeneratorValue()) {
-        static_cast<CSSImageGeneratorValue*>(value)->loadSubimages(cachedResourceLoader);
+        toCSSImageGeneratorValue(value)->loadSubimages(cachedResourceLoader);
         // FIXME: Handle CSSImageGeneratorValue (and thus cross-fades with gradients and canvas).
         return 0;
     }
 
-    if (value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value)->getValueID() == CSSValueNone)
+    if (value->isPrimitiveValue() && toCSSPrimitiveValue
+        (value)->getValueID() == CSSValueNone)
         return 0;
 
     ASSERT_NOT_REACHED();

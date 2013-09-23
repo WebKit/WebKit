@@ -332,7 +332,7 @@ void PageSerializer::retrieveResourcesForProperties(const StylePropertySet* styl
         if (!cssValue->isImageValue())
             continue;
 
-        CSSImageValue* imageValue = static_cast<CSSImageValue*>(cssValue.get());
+        CSSImageValue* imageValue = toCSSImageValue(cssValue.get());
         StyleImage* styleImage = imageValue->cachedOrPendingImage();
         // Non cached-images are just place-holders and do not contain data.
         if (!styleImage || !styleImage->isCachedImage())

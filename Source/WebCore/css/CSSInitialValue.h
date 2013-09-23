@@ -53,6 +53,8 @@ private:
     bool m_isImplicit;
 };
 
+CSS_VALUE_TYPE_CASTS(InitialValue)
+
 } // namespace WebCore
 
 #endif // CSSInitialValue_h

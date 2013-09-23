@@ -60,6 +60,8 @@ private:
     float m_denominatorValue;
 };
 
+CSS_VALUE_TYPE_CASTS(AspectRatioValue)
+
 }
 
 #endif

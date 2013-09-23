@@ -51,6 +51,12 @@ private:
     const int m_value;
 };
 
+inline FontFeatureValue* toFontFeatureValue(CSSValue* value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isFontFeatureValue());
+    return static_cast<FontFeatureValue*>(value);
+}
+
 } // namespace
 
 #endif

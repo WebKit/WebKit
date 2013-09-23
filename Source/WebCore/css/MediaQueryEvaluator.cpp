@@ -182,7 +182,7 @@ bool compareValue(T a, T b, MediaFeaturePrefix op)
 static bool compareAspectRatioValue(CSSValue* value, int width, int height, MediaFeaturePrefix op)
 {
     if (value->isAspectRatioValue()) {
-        CSSAspectRatioValue* aspectRatio = static_cast<CSSAspectRatioValue*>(value);
+        CSSAspectRatioValue* aspectRatio = toCSSAspectRatioValue(value);
         return compareValue(width * static_cast<int>(aspectRatio->denominatorValue()), height * static_cast<int>(aspectRatio->numeratorValue()), op);
     }
 
@@ -192,8 +192,8 @@ static bool compareAspectRatioValue(CSSValue* value, int width, int height, Medi
 static bool numberValue(CSSValue* value, float& result)
 {
     if (value->isPrimitiveValue()
-        && static_cast<CSSPrimitiveValue*>(value)->isNumber()) {
-        result = static_cast<CSSPrimitiveValue*>(value)->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
+        && toCSSPrimitiveValue(value)->isNumber()) {
+        result = toCSSPrimitiveValue(value)->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
         return true;
     }
     return false;
@@ -242,7 +242,7 @@ static bool orientationMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fr
     int width = view->layoutWidth();
     int height = view->layoutHeight();
     if (value && value->isPrimitiveValue()) {
-        const CSSValueID id = static_cast<CSSPrimitiveValue*>(value)->getValueID();
+        const CSSValueID id = toCSSPrimitiveValue(value)->getValueID();
         if (width > height) // Square viewport is portrait.
             return CSSValueLandscape == id;
         return CSSValuePortrait == id;
@@ -306,19 +306,19 @@ static bool evalResolution(CSSValue* value, Frame* frame, MediaFeaturePrefix op)
     if (!value->isPrimitiveValue())
         return false;
 
-    CSSPrimitiveValue* resolution = static_cast<CSSPrimitiveValue*>(value);
+    CSSPrimitiveValue* resolution = toCSSPrimitiveValue(value);
     return compareValue(deviceScaleFactor, resolution->isNumber() ? resolution->getFloatValue() : resolution->getFloatValue(CSSPrimitiveValue::CSS_DPPX), op);
 }
 
 static bool device_pixel_ratioMediaFeatureEval(CSSValue *value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
 {
-    return (!value || static_cast<CSSPrimitiveValue*>(value)->isNumber()) && evalResolution(value, frame, op);
+    return (!value || toCSSPrimitiveValue(value)->isNumber()) && evalResolution(value, frame, op);
 }
 
 static bool resolutionMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
 {
 #if ENABLE(RESOLUTION_MEDIA_QUERY)
-    return (!value || static_cast<CSSPrimitiveValue*>(value)->isResolution()) && evalResolution(value, frame, op);
+    return (!value || toCSSPrimitiveValue(value)->isResolution()) && evalResolution(value, frame, op);
 #else
     UNUSED_PARAM(value);
     UNUSED_PARAM(frame);
@@ -342,7 +342,7 @@ static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, Rend
     if (!value->isPrimitiveValue())
         return false;
 
-    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+    CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
 
     if (primitiveValue->isNumber()) {
         result = primitiveValue->getIntValue();
@@ -596,7 +596,7 @@ static bool view_modeMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fram
     if (!value)
         return true;
 
-    const int viewModeCSSKeywordID = static_cast<CSSPrimitiveValue*>(value)->getValueID();
+    const int viewModeCSSKeywordID = toCSSPrimitiveValue(value)->getValueID();
     const Page::ViewMode viewMode = frame->page()->viewMode();
     bool result = false;
     switch (viewMode) {
@@ -678,7 +678,7 @@ static bool pointerMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame,
     if (!value->isPrimitiveValue())
         return false;
 
-    const CSSValueID id = static_cast<CSSPrimitiveValue*>(value)->getValueID();
+    const CSSValueID id = toCSSPrimitiveValue(value)->getValueID();
     return (pointer == NoPointer && id == CSSValueNone)
         || (pointer == TouchPointer && id == CSSValueCoarse)
         || (pointer == MousePointer && id == CSSValueFine);

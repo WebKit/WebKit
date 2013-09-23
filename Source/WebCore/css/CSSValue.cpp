@@ -383,16 +383,16 @@ void CSSValue::destroy()
 
     switch (classType()) {
     case AspectRatioClass:
-        delete static_cast<CSSAspectRatioValue*>(this);
+        delete toCSSAspectRatioValue(this);
         return;
     case BorderImageSliceClass:
-        delete static_cast<CSSBorderImageSliceValue*>(this);
+        delete toCSSBorderImageSliceValue(this);
         return;
     case CanvasClass:
         delete static_cast<CSSCanvasValue*>(this);
         return;
     case CursorImageClass:
-        delete static_cast<CSSCursorImageValue*>(this);
+        delete toCSSCursorImageValue(this);
         return;
     case FontClass:
         delete static_cast<FontValue*>(this);
@@ -413,19 +413,19 @@ void CSSValue::destroy()
         delete static_cast<CSSRadialGradientValue*>(this);
         return;
     case CrossfadeClass:
-        delete static_cast<CSSCrossfadeValue*>(this);
+        delete toCSSCrossfadeValue(this);
         return;
     case ImageClass:
-        delete static_cast<CSSImageValue*>(this);
+        delete toCSSImageValue(this);
         return;
     case InheritedClass:
-        delete static_cast<CSSInheritedValue*>(this);
+        delete toCSSInheritedValue(this);
         return;
     case InitialClass:
-        delete static_cast<CSSInitialValue*>(this);
+        delete toCSSInitialValue(this);
         return;
     case PrimitiveClass:
-        delete static_cast<CSSPrimitiveValue*>(this);
+        delete toCSSPrimitiveValue(this);
         return;
     case ReflectClass:
         delete static_cast<CSSReflectValue*>(this);
@@ -449,19 +449,19 @@ void CSSValue::destroy()
         delete static_cast<WebKitCSSTransformValue*>(this);
         return;
     case LineBoxContainClass:
-        delete static_cast<CSSLineBoxContainValue*>(this);
+        delete toCSSLineBoxContainValue(this);
         return;
     case CalculationClass:
-        delete static_cast<CSSCalcValue*>(this);
+        delete toCSSCalcValue(this);
         return;
 #if ENABLE(CSS_IMAGE_SET)
     case ImageSetClass:
-        delete static_cast<CSSImageSetValue*>(this);
+        delete toCSSImageSetValue(this);
         return;
 #endif
 #if ENABLE(CSS_FILTERS)
     case FilterImageClass:
-        delete static_cast<CSSFilterImageValue*>(this);
+        delete toCSSFilterImageValue(this);
         return;
     case WebKitCSSFilterClass:
         delete static_cast<WebKitCSSFilterValue*>(this);
@@ -477,7 +477,7 @@ void CSSValue::destroy()
         delete static_cast<WebKitCSSMixFunctionValue*>(this);
         return;
     case WebKitCSSShaderClass:
-        delete static_cast<WebKitCSSShaderValue*>(this);
+        delete toWebKitCSSShaderValue(this);
         return;
 #endif
 #endif
