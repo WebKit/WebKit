@@ -1,3 +1,17 @@
+2013-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Cleanup CMake files in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=121762
+
+        Reviewed by Gyuyoung Kim.
+
+        Sort files and unify style.
+
+        * CMakeLists.txt:
+        * shell/CMakeLists.txt:
+        * shell/PlatformBlackBerry.cmake:
+        * shell/PlatformEfl.cmake:
+
 2013-09-22  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of CodeBlock::RareData::callReturnIndexVector and most of the evil that it introduced

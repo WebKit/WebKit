@@ -4,9 +4,9 @@ list(APPEND JSC_LIBRARIES
     ${ICUUC_LIBRARY}
     ${INTL_LIBRARY} # Required for x86 builds
     ${M_LIBRARY}
+    ${SLOG2_LIBRARY}
     ${Screen_LIBRARY}
     ${WebKitPlatform_LIBRARY}
-    ${SLOG2_LIBRARY}
 )
 
 if (PROFILING)
