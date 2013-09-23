@@ -105,8 +105,8 @@ list(APPEND WebKit_SOURCES
     efl/WebCoreSupport/ChromeClientEfl.cpp
     efl/WebCoreSupport/ColorChooserEfl.cpp
     efl/WebCoreSupport/ContextMenuClientEfl.cpp
-    efl/WebCoreSupport/DeviceOrientationClientEfl.cpp
     efl/WebCoreSupport/DeviceMotionClientEfl.cpp
+    efl/WebCoreSupport/DeviceOrientationClientEfl.cpp
     efl/WebCoreSupport/DragClientEfl.cpp
     efl/WebCoreSupport/DumpRenderTreeSupportEfl.cpp
     efl/WebCoreSupport/EditorClientEfl.cpp
@@ -147,31 +147,31 @@ list(APPEND WebKit_SOURCES
     efl/ewk/ewk_view.cpp
     efl/ewk/ewk_view_single.cpp
     efl/ewk/ewk_view_tiled.cpp
-    efl/ewk/ewk_window_features.cpp
     efl/ewk/ewk_web_database.cpp
+    efl/ewk/ewk_window_features.cpp
 )
 
 list(APPEND WebKit_LIBRARIES
     ${CAIRO_LIBRARIES}
-    ${ECORE_LIBRARIES}
-    ${EDJE_LIBRARIES}
-    ${EINA_LIBRARIES}
+    ${CMAKE_DL_LIBS}
     ${ECORE_EVAS_LIBRARIES}
     ${ECORE_INPUT_LIBRARIES}
+    ${ECORE_LIBRARIES}
+    ${EDJE_LIBRARIES}
     ${EFREET_LIBRARIES}
+    ${EINA_LIBRARIES}
     ${EO_LIBRARIES}
     ${EVAS_LIBRARIES}
-    ${FREETYPE_LIBRARIES}
-    ${HARFBUZZ_LIBRARIES}
-    ${LIBXML2_LIBRARIES}
-    ${SQLITE_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
-    ${PNG_LIBRARIES}
-    ${JPEG_LIBRARIES}
-    ${CMAKE_DL_LIBS}
-    ${GLIB_LIBRARIES}
+    ${FREETYPE_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
+    ${GLIB_LIBRARIES}
+    ${HARFBUZZ_LIBRARIES}
+    ${JPEG_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
+    ${LIBXML2_LIBRARIES}
+    ${PNG_LIBRARIES}
+    ${SQLITE_LIBRARIES}
 )
 
 if (ENABLE_ECORE_X)
@@ -210,8 +210,8 @@ set(EWebKit_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_security_policy.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_settings.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_view.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_window_features.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_web_database.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_window_features.h
 )
 
 install(FILES ${EWebKit_HEADERS}
@@ -220,14 +220,14 @@ install(FILES ${EWebKit_HEADERS}
 include_directories(${THIRDPARTY_DIR}/gtest/include)
 
 set(EWKUnitTests_LIBRARIES
-    WTF
+    ${ECORE_EVAS_LIBRARIES}
+    ${ECORE_LIBRARIES}
+    ${EDJE_LIBRARIES}
+    ${EVAS_LIBRARIES}
     JavaScriptCore
+    WTF
     WebCore
     WebKit
-    ${ECORE_LIBRARIES}
-    ${ECORE_EVAS_LIBRARIES}
-    ${EVAS_LIBRARIES}
-    ${EDJE_LIBRARIES}
     gtest
 )
 
@@ -245,8 +245,8 @@ set(EWKUnitTests_INCLUDE_DIRECTORIES
 
 list(APPEND EWKUnitTests_INCLUDE_DIRECTORIES "${WTF_DIR}/wtf/gobject")
 list(APPEND EWKUnitTests_LIBRARIES
-    ${GLIB_LIBRARIES}
     ${GLIB_GTHREAD_LIBRARIES}
+    ${GLIB_LIBRARIES}
 )
 
 set(DEFAULT_TEST_PAGE_DIR ${CMAKE_SOURCE_DIR}/Source/WebKit/efl/tests/resources)
@@ -268,8 +268,8 @@ set(WEBKIT_EFL_TEST_DIR "${WEBKIT_DIR}/efl/tests/")
 set(EWKUnitTests_BINARIES
     test_ewk_contextmenu
     test_ewk_frame
-    test_ewk_view
     test_ewk_setting
+    test_ewk_view
 )
 
 if (ENABLE_API_TESTS)

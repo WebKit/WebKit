@@ -11,8 +11,8 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKit_SOURCES
-    wince/WebView.h
     wince/WebView.cpp
+    wince/WebView.h
 
     wince/WebCoreSupport/ChromeClientWinCE.cpp
     wince/WebCoreSupport/ContextMenuClientWinCE.cpp

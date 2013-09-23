@@ -70,6 +70,7 @@ list(APPEND WebKit_SOURCES
     blackberry/Api/BackingStore.cpp
     blackberry/Api/BlackBerryGlobal.cpp
     blackberry/Api/InRegionScroller.cpp
+    blackberry/Api/JavaScriptVariant.cpp
     blackberry/Api/WebAnimation.cpp
     blackberry/Api/WebCookieJar.cpp
     blackberry/Api/WebKitMIMETypeConverter.cpp
@@ -81,7 +82,7 @@ list(APPEND WebKit_SOURCES
     blackberry/Api/WebPageGroupLoadDeferrer.cpp
     blackberry/Api/WebSettings.cpp
     blackberry/Api/WebViewportArguments.cpp
-    blackberry/Api/JavaScriptVariant.cpp
+
     blackberry/WebCoreSupport/AutofillManager.cpp
     blackberry/WebCoreSupport/BackForwardListBlackBerry.cpp
     blackberry/WebCoreSupport/CacheClientBlackBerry.cpp
@@ -97,25 +98,27 @@ list(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/GeolocationClientBlackBerry.cpp
     blackberry/WebCoreSupport/IconDatabaseClientBlackBerry.cpp
     blackberry/WebCoreSupport/InspectorClientBlackBerry.cpp
+    blackberry/WebCoreSupport/NavigatorContentUtilsClientBlackBerry.cpp
     blackberry/WebCoreSupport/NetworkInfoClientBlackBerry.cpp
     blackberry/WebCoreSupport/NotificationClientBlackBerry.cpp
     blackberry/WebCoreSupport/PlatformStrategiesBlackBerry.cpp
-    blackberry/WebCoreSupport/NavigatorContentUtilsClientBlackBerry.cpp
-    blackberry/WebCoreSupport/SuggestionBoxHandler.cpp
     blackberry/WebCoreSupport/SuggestionBoxElement.cpp
+    blackberry/WebCoreSupport/SuggestionBoxHandler.cpp
     blackberry/WebCoreSupport/VibrationClientBlackBerry.cpp
+
     blackberry/WebKitSupport/AboutData.cpp
-    blackberry/WebKitSupport/BackingStoreTile.cpp
     blackberry/WebKitSupport/BackingStoreClient.cpp
+    blackberry/WebKitSupport/BackingStoreTile.cpp
     blackberry/WebKitSupport/BackingStoreVisualizationViewportAccessor.cpp
     blackberry/WebKitSupport/ColorPickerClient.cpp
+    blackberry/WebKitSupport/DOMSupport.cpp
     blackberry/WebKitSupport/DatePickerClient.cpp
     blackberry/WebKitSupport/DefaultTapHighlight.cpp
-    blackberry/WebKitSupport/DOMSupport.cpp
+    blackberry/WebKitSupport/FatFingers.cpp
     blackberry/WebKitSupport/FrameLayers.cpp
     blackberry/WebKitSupport/InPageSearchManager.cpp
-    blackberry/WebKitSupport/InputHandler.cpp
     blackberry/WebKitSupport/InRegionScrollableArea.cpp
+    blackberry/WebKitSupport/InputHandler.cpp
     blackberry/WebKitSupport/InspectorOverlayBlackBerry.cpp
     blackberry/WebKitSupport/NotificationManager.cpp
     blackberry/WebKitSupport/PagePopup.cpp
@@ -128,7 +131,6 @@ list(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/SpellingHandler.cpp
     blackberry/WebKitSupport/SurfacePool.cpp
     blackberry/WebKitSupport/TouchEventHandler.cpp
-    blackberry/WebKitSupport/FatFingers.cpp
     blackberry/WebKitSupport/WebKitThreadViewportAccessor.cpp
 )
 
@@ -147,25 +149,28 @@ endif (ENABLE_WEBGL)
 if (NOT PUBLIC_BUILD)
     # DumpRenderTree sources
     list(APPEND WebKit_SOURCES
-        blackberry/WebKitSupport/DumpRenderTreeSupport.cpp
+        ${TOOLS_DIR}/DumpRenderTree/AccessibilityController.cpp
+        ${TOOLS_DIR}/DumpRenderTree/AccessibilityTextMarker.cpp
+        ${TOOLS_DIR}/DumpRenderTree/AccessibilityUIElement.cpp
+        ${TOOLS_DIR}/DumpRenderTree/CyclicRedundancyCheck.cpp
+        ${TOOLS_DIR}/DumpRenderTree/GCController.cpp
+        ${TOOLS_DIR}/DumpRenderTree/PixelDumpSupport.cpp
+        ${TOOLS_DIR}/DumpRenderTree/TestRunner.cpp
+        ${TOOLS_DIR}/DumpRenderTree/WorkQueue.cpp
+
         ${TOOLS_DIR}/DumpRenderTree/blackberry/AccessibilityControllerBlackBerry.cpp
         ${TOOLS_DIR}/DumpRenderTree/blackberry/AccessibilityUIElementBlackBerry.cpp
         ${TOOLS_DIR}/DumpRenderTree/blackberry/DumpRenderTree.cpp
         ${TOOLS_DIR}/DumpRenderTree/blackberry/EventSender.cpp
         ${TOOLS_DIR}/DumpRenderTree/blackberry/GCControllerBlackBerry.cpp
-        ${TOOLS_DIR}/DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp
-        ${TOOLS_DIR}/DumpRenderTree/blackberry/PixelDumpSupportBlackBerry.cpp
         ${TOOLS_DIR}/DumpRenderTree/blackberry/PNGImageEncoder.cpp
+        ${TOOLS_DIR}/DumpRenderTree/blackberry/PixelDumpSupportBlackBerry.cpp
+        ${TOOLS_DIR}/DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp
         ${TOOLS_DIR}/DumpRenderTree/blackberry/WorkQueueItemBlackBerry.cpp
-        ${TOOLS_DIR}/DumpRenderTree/AccessibilityController.cpp
-        ${TOOLS_DIR}/DumpRenderTree/AccessibilityUIElement.cpp
-        ${TOOLS_DIR}/DumpRenderTree/AccessibilityTextMarker.cpp
-        ${TOOLS_DIR}/DumpRenderTree/TestRunner.cpp
-        ${TOOLS_DIR}/DumpRenderTree/CyclicRedundancyCheck.cpp
-        ${TOOLS_DIR}/DumpRenderTree/PixelDumpSupport.cpp
-        ${TOOLS_DIR}/DumpRenderTree/WorkQueue.cpp
-        ${TOOLS_DIR}/DumpRenderTree/GCController.cpp
+
         ${WTF_DIR}/wtf/MD5.cpp
+
+        blackberry/WebKitSupport/DumpRenderTreeSupport.cpp
     )
 endif ()
 
@@ -180,7 +185,6 @@ list(APPEND WebKit_LIBRARIES
     ${INTL_LIBRARY}
     ${ITYPE_LIBRARY}
     ${JPEG_LIBRARY}
-    JavaScriptCore
     ${LEVELDB_LIBRARY}
     ${MMR_LIBRARY}
     ${M_LIBRARY}
@@ -192,6 +196,7 @@ list(APPEND WebKit_LIBRARIES
     ${XML2_LIBRARY}
     ${XSLT_LIBRARY}
     ${Z_LIBRARY}
+    JavaScriptCore
 )
 
 if (PROFILING)
@@ -208,8 +213,8 @@ if (WTF_USE_ACCELERATED_COMPOSITING)
         "${WEBCORE_DIR}/platform/graphics/gles2"
     )
     list(APPEND WebKit_LIBRARIES
-        ${GLESv2_LIBRARY}
         ${EGL_LIBRARY}
+        ${GLESv2_LIBRARY}
     )
 endif ()
 
