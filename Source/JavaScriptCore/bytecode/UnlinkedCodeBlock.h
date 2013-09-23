@@ -541,7 +541,7 @@ public:
 
 private:
     OwnPtr<RareData> m_rareData;
-    CompressibleVector<ExpressionRangeInfo> m_expressionInfo;
+    Vector<ExpressionRangeInfo> m_expressionInfo;
 
 protected:
 
