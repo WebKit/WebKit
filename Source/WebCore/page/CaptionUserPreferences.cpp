@@ -173,11 +173,6 @@ String CaptionUserPreferences::displayNameForTrack(TextTrack* track) const
     return trackDisplayName(track);
 }
     
-static bool textTrackCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>& b)
-{
-    return codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get())) < 0;
-}
-
 Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTrackList* trackList)
 {
     ASSERT(trackList);
@@ -187,7 +182,9 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTra
     for (unsigned i = 0, length = trackList->length(); i < length; ++i)
         tracksForMenu.append(trackList->item(i));
 
-    std::sort(tracksForMenu.begin(), tracksForMenu.end(), textTrackCompare);
+    std::sort(tracksForMenu.begin(), tracksForMenu.end(), [](const RefPtr<TextTrack>& a, const RefPtr<TextTrack>& b) {
+        return codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get())) < 0;
+    });
 
     tracksForMenu.insert(0, TextTrack::captionMenuOffItem());
     tracksForMenu.insert(1, TextTrack::captionMenuAutomaticItem());

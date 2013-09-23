@@ -1,5 +1,16 @@
 2013-09-23  Anders Carlsson  <andersca@apple.com>
 
+        Test the waters and begin using lambdas
+        https://bugs.webkit.org/show_bug.cgi?id=121809
+
+        Reviewed by Andreas Kling.
+
+        * wtf/ListDump.h:
+        (WTF::sortedListDump):
+        Use std::less instead of a custom lessThan function.
+
+2013-09-23  Anders Carlsson  <andersca@apple.com>
+
         ListHashSet::removeLast should only remove one element.
         
         * wtf/ListHashSet.h:
