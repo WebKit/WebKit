@@ -57,7 +57,7 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
         m_paintOffset = prev->m_paintOffset + offset;
 
     if (renderer->isOutOfFlowPositioned() && !fixed) {
-        if (RenderObject* container = renderer->container()) {
+        if (RenderElement* container = renderer->container()) {
             if (container->isInFlowPositioned() && container->isRenderInline())
                 m_paintOffset += toRenderInline(container)->offsetForInFlowPositionedInline(renderer);
         }
@@ -156,7 +156,7 @@ LayoutState::LayoutState(RenderObject* root)
     , m_renderer(root)
 #endif
 {
-    RenderObject* container = root->container();
+    RenderElement* container = root->container();
     FloatPoint absContentPoint = container->localToAbsolute(FloatPoint(), UseTransforms);
     m_paintOffset = LayoutSize(absContentPoint.x(), absContentPoint.y());
 

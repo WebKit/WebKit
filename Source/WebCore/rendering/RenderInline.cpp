@@ -1105,7 +1105,7 @@ void RenderInline::computeRectForRepaint(const RenderLayerModelObject* repaintCo
         return;
 
     bool containerSkipped;
-    RenderObject* o = container(repaintContainer, &containerSkipped);
+    RenderElement* o = container(repaintContainer, &containerSkipped);
     if (!o)
         return;
 
@@ -1185,7 +1185,7 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* repaintCont
     }
 
     bool containerSkipped;
-    RenderObject* o = container(repaintContainer, &containerSkipped);
+    RenderElement* o = container(repaintContainer, &containerSkipped);
     if (!o)
         return;
 
@@ -1223,7 +1223,7 @@ const RenderObject* RenderInline::pushMappingToContainer(const RenderLayerModelO
     ASSERT(ancestorToStopAt != this);
 
     bool ancestorSkipped;
-    RenderObject* container = this->container(ancestorToStopAt, &ancestorSkipped);
+    RenderElement* container = this->container(ancestorToStopAt, &ancestorSkipped);
     if (!container)
         return 0;
 

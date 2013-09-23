@@ -990,7 +990,7 @@ static void setStaticPositions(RenderBlock* block, RenderBox* child)
 {
     // FIXME: The math here is actually not really right. It's a best-guess approximation that
     // will work for the common cases
-    RenderObject* containerBlock = child->container();
+    RenderElement* containerBlock = child->container();
     LayoutUnit blockHeight = block->logicalHeight();
     if (containerBlock->isRenderInline()) {
         // A relative positioned inline encloses us. In this case, we also have to determine our

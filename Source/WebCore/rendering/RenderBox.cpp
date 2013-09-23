@@ -1816,7 +1816,7 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
     }
 
     bool containerSkipped;
-    RenderObject* o = container(repaintContainer, &containerSkipped);
+    RenderElement* o = container(repaintContainer, &containerSkipped);
     if (!o)
         return;
 
@@ -1865,7 +1865,7 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
     ASSERT(ancestorToStopAt != this);
 
     bool ancestorSkipped;
-    RenderObject* container = this->container(ancestorToStopAt, &ancestorSkipped);
+    RenderElement* container = this->container(ancestorToStopAt, &ancestorSkipped);
     if (!container)
         return 0;
 
@@ -2072,7 +2072,7 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
     }
 
     bool containerSkipped;
-    RenderObject* o = container(repaintContainer, &containerSkipped);
+    RenderElement* o = container(repaintContainer, &containerSkipped);
     if (!o)
         return;
 
@@ -3073,7 +3073,7 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
     // FIXME: The static distance computation has not been patched for mixed writing modes yet.
     if (child->parent()->style()->direction() == LTR) {
         LayoutUnit staticPosition = child->layer()->staticInlinePosition() - containerBlock->borderLogicalLeft();
-        for (RenderObject* curr = child->parent(); curr && curr != containerBlock; curr = curr->container()) {
+        for (RenderElement* curr = child->parent(); curr && curr != containerBlock; curr = curr->container()) {
             if (curr->isBox()) {
                 staticPosition += toRenderBox(curr)->logicalLeft();
                 if (region && curr->isRenderBlock()) {
@@ -3089,7 +3089,7 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
     } else {
         RenderBox* enclosingBox = child->parent()->enclosingBox();
         LayoutUnit staticPosition = child->layer()->staticInlinePosition() + containerLogicalWidth + containerBlock->borderLogicalLeft();
-        for (RenderObject* curr = enclosingBox; curr; curr = curr->container()) {
+        for (RenderElement* curr = enclosingBox; curr; curr = curr->container()) {
             if (curr->isBox()) {
                 if (curr != containerBlock)
                     staticPosition -= toRenderBox(curr)->logicalLeft();
@@ -3447,7 +3447,7 @@ static void computeBlockStaticDistance(Length& logicalTop, Length& logicalBottom
     
     // FIXME: The static distance computation has not been patched for mixed writing modes.
     LayoutUnit staticLogicalTop = child->layer()->staticBlockPosition() - containerBlock->borderBefore();
-    for (RenderObject* curr = child->parent(); curr && curr != containerBlock; curr = curr->container()) {
+    for (RenderElement* curr = child->parent(); curr && curr != containerBlock; curr = curr->container()) {
         if (curr->isBox() && !curr->isTableRow())
             staticLogicalTop += toRenderBox(curr)->logicalTop();
     }

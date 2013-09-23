@@ -2277,7 +2277,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
     if (isSticky)
         return hasCoordinatedScrolling() && isViewportConstrainedFixedOrStickyLayer(layer);
 
-    RenderObject* container = renderer->container();
+    RenderElement* container = renderer->container();
     // If the renderer is not hooked up yet then we have to wait until it is.
     if (!container) {
         m_reevaluateCompositingAfterLayout = true;

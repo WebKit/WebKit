@@ -630,7 +630,7 @@ public:
     // Returns the object containing this one. Can be different from parent for positioned elements.
     // If repaintContainer and repaintContainerSkipped are not null, on return *repaintContainerSkipped
     // is true if the renderer returned is an ancestor of repaintContainer.
-    RenderObject* container(const RenderLayerModelObject* repaintContainer = 0, bool* repaintContainerSkipped = 0) const;
+    RenderElement* container(const RenderLayerModelObject* repaintContainer = 0, bool* repaintContainerSkipped = 0) const;
 
     virtual RenderObject* hoverAncestor() const;
 

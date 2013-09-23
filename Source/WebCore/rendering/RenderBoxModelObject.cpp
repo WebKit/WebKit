@@ -2734,7 +2734,7 @@ bool RenderBoxModelObject::shouldAntialiasLines(GraphicsContext* context)
 
 void RenderBoxModelObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
 {
-    RenderObject* o = container();
+    RenderElement* o = container();
     if (!o)
         return;
 

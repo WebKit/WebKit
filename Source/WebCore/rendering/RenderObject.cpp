@@ -657,7 +657,7 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderOb
     ASSERT(!scheduleRelayout || !newRoot);
     ASSERT(!isSetNeedsLayoutForbidden());
 
-    RenderObject* object = container();
+    RenderElement* object = container();
     RenderObject* last = this;
 
     bool simplifiedNormalFlowLayout = needsSimplifiedNormalFlowLayout() && !selfNeedsLayout() && !normalChildNeedsLayout();
@@ -670,7 +670,7 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderOb
 #endif
         // Don't mark the outermost object of an unrooted subtree. That object will be
         // marked when the subtree is added to the document.
-        RenderObject* container = object->container();
+        RenderElement* container = object->container();
         if (!container && !object->isRenderView())
             return;
         if (!last->isText() && last->style()->hasOutOfFlowPosition()) {
@@ -2250,7 +2250,7 @@ LayoutSize RenderObject::offsetFromAncestorContainer(RenderObject* container) co
     LayoutPoint referencePoint;
     const RenderObject* currContainer = this;
     do {
-        RenderObject* nextContainer = currContainer->container();
+        RenderElement* nextContainer = currContainer->container();
         ASSERT(nextContainer);  // This means we reached the top without finding container.
         if (!nextContainer)
             break;
@@ -2326,7 +2326,7 @@ bool RenderObject::hasEntirelyFixedBackground() const
     return m_style->hasEntirelyFixedBackground();
 }
 
-RenderObject* RenderObject::container(const RenderLayerModelObject* repaintContainer, bool* repaintContainerSkipped) const
+RenderElement* RenderObject::container(const RenderLayerModelObject* repaintContainer, bool* repaintContainerSkipped) const
 {
     if (repaintContainerSkipped)
         *repaintContainerSkipped = false;
@@ -2340,7 +2340,7 @@ RenderObject* RenderObject::container(const RenderLayerModelObject* repaintConta
     // containingBlock() simply skips relpositioned inlines and lets an enclosing block handle
     // the layout of the positioned object.  This does mean that computePositionedLogicalWidth and
     // computePositionedLogicalHeight have to use container().
-    RenderObject* o = parent();
+    RenderElement* o = parent();
 
     if (isText())
         return o;
