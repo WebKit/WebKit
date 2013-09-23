@@ -1,3 +1,17 @@
+2013-09-22  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening. Rebaselining after r156040.
+
+        * platform/efl/fast/forms/HTMLOptionElement_label06-expected.txt:
+        * platform/efl/fast/forms/HTMLOptionElement_label07-expected.txt:
+        * platform/efl/fast/forms/form-element-geometry-expected.txt:
+        * platform/efl/fast/forms/menulist-separator-painting-expected.txt:
+        * platform/efl/fast/forms/select-baseline-expected.txt:
+        * platform/efl/fast/forms/select-empty-option-height-expected.txt:
+        * platform/efl/fast/forms/selectlist-minsize-expected.txt:
+        * platform/efl/fast/html/keygen-expected.txt:
+        * platform/efl/fast/replaced/three-selects-break-expected.txt:
+
 2013-09-22  Antonio Gomes  <a1.gomes@sisa.samsung.com>
 
         iframe and scrollbar with "overflow:auto" should support autoscroll with mousedrag
