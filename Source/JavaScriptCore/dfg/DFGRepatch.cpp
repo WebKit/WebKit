@@ -514,8 +514,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
 #endif
             success = stubJit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
             
-            stubJit.setupArgumentsWithExecState(
-                MacroAssembler::TrustedImmPtr(&stubInfo));
+            stubJit.setupArgumentsExecState();
             handlerCall = stubJit.call();
             stubJit.jump(GPRInfo::returnValueGPR2);
         } else {
@@ -550,7 +549,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone));
         if (!isDirect) {
             patchBuffer.link(operationCall, operationFunction);
-            patchBuffer.link(handlerCall, lookupExceptionHandlerInStub);
+            patchBuffer.link(handlerCall, lookupExceptionHandler);
         }
         
         RefPtr<JITStubRoutine> stubRoutine =

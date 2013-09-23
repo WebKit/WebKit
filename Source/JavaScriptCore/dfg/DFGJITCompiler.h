@@ -77,89 +77,6 @@ struct CallLinkRecord {
     FunctionPtr m_function;
 };
 
-class CallBeginToken {
-public:
-    CallBeginToken()
-#if !ASSERT_DISABLED
-        : m_registered(false)
-        , m_exceptionCheckIndex(std::numeric_limits<unsigned>::max())
-#endif
-    {
-    }
-    
-    ~CallBeginToken()
-    {
-        ASSERT(m_registered || !m_codeOrigin.isSet());
-        ASSERT(m_codeOrigin.isSet() == (m_exceptionCheckIndex != std::numeric_limits<unsigned>::max()));
-    }
-    
-    void set(CodeOrigin codeOrigin, unsigned index)
-    {
-#if !ASSERT_DISABLED
-        ASSERT(m_registered || !m_codeOrigin.isSet());
-        ASSERT(m_codeOrigin.isSet() == (m_exceptionCheckIndex != std::numeric_limits<unsigned>::max()));
-        m_codeOrigin = codeOrigin;
-        m_registered = false;
-        m_exceptionCheckIndex = index;
-#else
-        UNUSED_PARAM(codeOrigin);
-        UNUSED_PARAM(index);
-#endif
-    }
-    
-    void registerWithExceptionCheck(CodeOrigin codeOrigin, unsigned index)
-    {
-#if !ASSERT_DISABLED
-        ASSERT(m_codeOrigin == codeOrigin);
-        if (m_registered)
-            return;
-        ASSERT(m_exceptionCheckIndex == index);
-        m_registered = true;
-#else
-        UNUSED_PARAM(codeOrigin);
-        UNUSED_PARAM(index);
-#endif
-    }
-
-#if !ASSERT_DISABLED
-    const CodeOrigin& codeOrigin() const
-    {
-        return m_codeOrigin;
-    }
-#endif
-    
-private:
-#if !ASSERT_DISABLED
-    CodeOrigin m_codeOrigin;
-    bool m_registered;
-    unsigned m_exceptionCheckIndex;
-#endif
-};
-
-// === CallExceptionRecord ===
-//
-// A record of a call out from JIT code that might throw an exception.
-// Calls that might throw an exception also record the Jump taken on exception
-// (unset if not present) and code origin used to recover handler/source info.
-struct CallExceptionRecord {
-    CallExceptionRecord(MacroAssembler::Call call, CodeOrigin codeOrigin)
-        : m_call(call)
-        , m_codeOrigin(codeOrigin)
-    {
-    }
-
-    CallExceptionRecord(MacroAssembler::Call call, MacroAssembler::Jump exceptionCheck, CodeOrigin codeOrigin)
-        : m_call(call)
-        , m_exceptionCheck(exceptionCheck)
-        , m_codeOrigin(codeOrigin)
-    {
-    }
-
-    MacroAssembler::Call m_call;
-    MacroAssembler::Jump m_exceptionCheck;
-    CodeOrigin m_codeOrigin;
-};
-
 struct PropertyAccessRecord {
     enum RegisterMode { RegistersFlushed, RegistersInUse };
     
@@ -324,28 +241,11 @@ public:
         m_disassembler->setEndOfCode(labelIgnoringWatchpoints());
     }
     
-    unsigned currentCodeOriginIndex() const
+    void emitStoreCodeOrigin(CodeOrigin codeOrigin)
     {
-        return m_currentCodeOriginIndex;
-    }
-    
-    // Get a token for beginning a call, and set the current code origin index in
-    // the call frame. For each beginCall() there must be at least one exception
-    // check, and all of the exception checks must have the same CodeOrigin as the
-    // beginCall().
-    void beginCall(CodeOrigin codeOrigin, CallBeginToken& token)
-    {
-        unsigned index = m_exceptionChecks.size();
+        unsigned index = m_jitCode->common.addCodeOrigin(codeOrigin);
         unsigned locationBits = CallFrame::Location::encodeAsCodeOriginIndex(index);
         store32(TrustedImm32(locationBits), tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
-        token.set(codeOrigin, index);
-    }
-
-    // Notify the JIT of a call that does not require linking.
-    void notifyCall(Call functionCall, CodeOrigin codeOrigin, CallBeginToken& token)
-    {
-        token.registerWithExceptionCheck(codeOrigin, m_exceptionChecks.size());
-        m_exceptionChecks.append(CallExceptionRecord(functionCall, codeOrigin));
     }
 
     // Add a call out from JIT code, without an exception check.
@@ -356,26 +256,20 @@ public:
         return functionCall;
     }
     
-    void prepareForExceptionCheck()
+    void exceptionCheck(Jump jumpToHandler)
     {
-        move(TrustedImm32(m_exceptionChecks.size()), GPRInfo::nonPreservedNonReturnGPR);
+        m_exceptionChecks.append(jumpToHandler);
     }
-
-    // Add a call out from JIT code, with an exception check.
-    void addExceptionCheck(Call functionCall, CodeOrigin codeOrigin, CallBeginToken& token)
+    
+    void exceptionCheck()
     {
-        prepareForExceptionCheck();
-        token.registerWithExceptionCheck(codeOrigin, m_exceptionChecks.size());
-        m_exceptionChecks.append(CallExceptionRecord(functionCall, emitExceptionCheck(), codeOrigin));
+        m_exceptionChecks.append(emitExceptionCheck());
     }
     
     // Add a call out from JIT code, with a fast exception check that tests if the return value is zero.
-    void addFastExceptionCheck(Call functionCall, CodeOrigin codeOrigin, CallBeginToken& token)
+    void fastExceptionCheck()
     {
-        prepareForExceptionCheck();
-        Jump exceptionCheck = branchTestPtr(Zero, GPRInfo::returnValueGPR);
-        token.registerWithExceptionCheck(codeOrigin, m_exceptionChecks.size());
-        m_exceptionChecks.append(CallExceptionRecord(functionCall, exceptionCheck, codeOrigin));
+        m_exceptionChecks.append(branchTestPtr(Zero, GPRInfo::returnValueGPR));
     }
     
     void appendExitInfo(MacroAssembler::JumpList jumpsToFail = MacroAssembler::JumpList())
@@ -498,7 +392,7 @@ private:
     // Vector of calls out from JIT code, including exception handler information.
     // Count of the number of CallRecords with exception handlers.
     Vector<CallLinkRecord> m_calls;
-    Vector<CallExceptionRecord> m_exceptionChecks;
+    JumpList m_exceptionChecks;
     
     Vector<Label> m_blockHeads;
 
@@ -526,7 +420,6 @@ private:
     Vector<JSCallRecord, 4> m_jsCalls;
     Vector<OSRExitCompilationInfo> m_exitCompilationInfo;
     Vector<Vector<Label> > m_exitSiteLabels;
-    unsigned m_currentCodeOriginIndex;
     
     Call m_callStackCheck;
     Call m_callArityCheck;

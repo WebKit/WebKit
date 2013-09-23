@@ -3236,7 +3236,7 @@ private:
         m_out.store32(
             m_out.constInt32(
                 CallFrame::Location::encodeAsCodeOriginIndex(
-                    codeBlock()->addCodeOrigin(codeOrigin))), 
+                    m_ftlState.jitCode->common.addCodeOrigin(codeOrigin))),
             tagFor(JSStack::ArgumentCount));
     }
     void callPreflight()

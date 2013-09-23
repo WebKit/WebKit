@@ -118,6 +118,8 @@
 		0F24E54217EA9F5900ABB217 /* CCallHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53D17EA9F5900ABB217 /* CCallHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53E17EA9F5900ABB217 /* FPRInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54417EA9F5900ABB217 /* GPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53F17EA9F5900ABB217 /* GPRInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F24E55517F0B71C00ABB217 /* InlineCallFrameSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F24E55317F0B71C00ABB217 /* InlineCallFrameSet.cpp */; };
+		0F24E55617F0B71C00ABB217 /* InlineCallFrameSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E55417F0B71C00ABB217 /* InlineCallFrameSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F256C361627B0AD007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F256C341627B0AA007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2B66AC17B6B53F00A7AE3F /* GCIncomingRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66A817B6B53D00A7AE3F /* GCIncomingRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2B66AD17B6B54500A7AE3F /* GCIncomingRefCountedInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66A917B6B53D00A7AE3F /* GCIncomingRefCountedInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1318,6 +1320,8 @@
 		0F24E53D17EA9F5900ABB217 /* CCallHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCallHelpers.h; sourceTree = "<group>"; };
 		0F24E53E17EA9F5900ABB217 /* FPRInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPRInfo.h; sourceTree = "<group>"; };
 		0F24E53F17EA9F5900ABB217 /* GPRInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPRInfo.h; sourceTree = "<group>"; };
+		0F24E55317F0B71C00ABB217 /* InlineCallFrameSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineCallFrameSet.cpp; sourceTree = "<group>"; };
+		0F24E55417F0B71C00ABB217 /* InlineCallFrameSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineCallFrameSet.h; sourceTree = "<group>"; };
 		0F256C341627B0AA007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCallArrayAllocatorSlowPathGenerator.h; path = dfg/DFGCallArrayAllocatorSlowPathGenerator.h; sourceTree = "<group>"; };
 		0F2B66A817B6B53D00A7AE3F /* GCIncomingRefCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCIncomingRefCounted.h; sourceTree = "<group>"; };
 		0F2B66A917B6B53D00A7AE3F /* GCIncomingRefCountedInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCIncomingRefCountedInlines.h; sourceTree = "<group>"; };
@@ -3754,6 +3758,8 @@
 		969A078F0ED1D3AE00F1F681 /* bytecode */ = {
 			isa = PBXGroup;
 			children = (
+				0F24E55317F0B71C00ABB217 /* InlineCallFrameSet.cpp */,
+				0F24E55417F0B71C00ABB217 /* InlineCallFrameSet.h */,
 				0F8335B41639C1E3001443B5 /* ArrayAllocationProfile.cpp */,
 				0F8335B51639C1E3001443B5 /* ArrayAllocationProfile.h */,
 				0F63945115D07051006A597C /* ArrayProfile.cpp */,
@@ -4240,6 +4246,7 @@
 				7C3BA29717C039560072DDC9 /* JSPromiseResolverConstructor.h in Headers */,
 				7C3BA29917C039560072DDC9 /* JSPromiseResolverPrototype.h in Headers */,
 				862553D216136E1A009F17D0 /* JSProxy.h in Headers */,
+				0F24E55617F0B71C00ABB217 /* InlineCallFrameSet.h in Headers */,
 				BC18C4260E16F5CD00B34460 /* JSRetainPtr.h in Headers */,
 				14874AE615EBDE4A002E3587 /* JSScope.h in Headers */,
 				A7C0C4AC168103020017011D /* JSScriptRefPrivate.h in Headers */,
@@ -4984,6 +4991,7 @@
 				0FDB2CE7174830A2007B3C1B /* DFGWorklist.cpp in Sources */,
 				0F9D3370165DBB90005AD387 /* Disassembler.cpp in Sources */,
 				A70447ED17A0BD7000F5898E /* DumpContext.cpp in Sources */,
+				0F24E55517F0B71C00ABB217 /* InlineCallFrameSet.cpp in Sources */,
 				147F39C7107EC37600427A48 /* Error.cpp in Sources */,
 				147F39C8107EC37600427A48 /* ErrorConstructor.cpp in Sources */,
 				147F39C9107EC37600427A48 /* ErrorInstance.cpp in Sources */,

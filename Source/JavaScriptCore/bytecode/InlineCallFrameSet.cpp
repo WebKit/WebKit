@@ -24,45 +24,23 @@
  */
 
 #include "config.h"
-#include "DFGCommonData.h"
+#include "InlineCallFrameSet.h"
 
-#if ENABLE(DFG_JIT)
+namespace JSC {
 
-#include "CodeBlock.h"
-#include "DFGNode.h"
-#include "DFGPlan.h"
-#include "Operations.h"
-#include "VM.h"
+InlineCallFrameSet::InlineCallFrameSet() { }
+InlineCallFrameSet::~InlineCallFrameSet() { }
 
-namespace JSC { namespace DFG {
-
-void CommonData::notifyCompilingStructureTransition(Plan& plan, CodeBlock* codeBlock, Node* node)
+InlineCallFrame* InlineCallFrameSet::add()
 {
-    plan.transitions.addLazily(
-        codeBlock,
-        node->codeOrigin.codeOriginOwner(),
-        node->structureTransitionData().previousStructure,
-        node->structureTransitionData().newStructure);
+    m_frames.append(InlineCallFrame());
+    return &m_frames.last();
 }
 
-unsigned CommonData::addCodeOrigin(CodeOrigin codeOrigin)
+void InlineCallFrameSet::shrinkToFit()
 {
-    if (codeOrigins.isEmpty()
-        || codeOrigins.last() != codeOrigin)
-        codeOrigins.append(codeOrigin);
-    unsigned index = codeOrigins.size() - 1;
-    ASSERT(codeOrigins[index] == codeOrigin);
-    return index;
+    m_frames.shrinkToFit();
 }
 
-void CommonData::shrinkToFit()
-{
-    codeOrigins.shrinkToFit();
-    weakReferences.shrinkToFit();
-    transitions.shrinkToFit();
-}
-
-} } // namespace JSC::DFG
-
-#endif // ENABLE(DFG_JIT)
+} // namespace JSC
 

@@ -306,6 +306,7 @@
     <ClCompile Include="..\bytecode\ExecutionCounter.cpp" />
     <ClCompile Include="..\bytecode\ExitKind.cpp" />
     <ClCompile Include="..\bytecode\GetByIdStatus.cpp" />
+    <ClCompile Include="..\bytecode\InlineCallFrameSet.cpp" />
     <ClCompile Include="..\bytecode\JumpTable.cpp" />
     <ClCompile Include="..\bytecode\LazyOperandValueProfile.cpp" />
     <ClCompile Include="..\bytecode\MethodOfGettingAValueProfile.cpp" />
@@ -648,6 +649,7 @@
     <ClInclude Include="..\bytecode\ExpressionRangeInfo.h" />
     <ClInclude Include="..\bytecode\GetByIdStatus.h" />
     <ClInclude Include="..\bytecode\HandlerInfo.h" />
+    <ClInclude Include="..\bytecode\InlineCallFrameSet.h" />
     <ClInclude Include="..\bytecode\Instruction.h" />
     <ClInclude Include="..\bytecode\JumpTable.h" />
     <ClInclude Include="..\bytecode\LazyOperandValueProfile.h" />

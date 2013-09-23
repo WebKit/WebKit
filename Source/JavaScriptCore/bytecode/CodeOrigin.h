@@ -100,6 +100,15 @@ struct InlineCallFrame {
     signed stackOffset : 31;
     bool isCall : 1;
     
+    // There is really no good notion of a "default" set of values for
+    // InlineCallFrame's fields. This constructor is here just to reduce confusion if
+    // we forgot to initialize explicitly.
+    InlineCallFrame()
+        : stackOffset(0)
+        , isCall(false)
+    {
+    }
+    
     CodeSpecializationKind specializationKind() const { return specializationFromIsCall(isCall); }
     
     bool isClosureCall() const { return !callee; }

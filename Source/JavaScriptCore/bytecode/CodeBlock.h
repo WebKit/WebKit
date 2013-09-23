@@ -566,43 +566,27 @@ public:
     bool hasExpressionInfo() { return m_unlinkedCode->hasExpressionInfo(); }
 
 #if ENABLE(DFG_JIT)
-    SegmentedVector<InlineCallFrame, 4>& inlineCallFrames()
-    {
-        createRareDataIfNecessary();
-        return m_rareData->m_inlineCallFrames;
-    }
-        
     Vector<CodeOrigin, 0, UnsafeVectorOverflow>& codeOrigins()
     {
-        createRareDataIfNecessary();
-        return m_rareData->m_codeOrigins;
+        return m_jitCode->dfgCommon()->codeOrigins;
     }
     
-    unsigned addCodeOrigin(CodeOrigin codeOrigin)
-    {
-        createRareDataIfNecessary();
-        unsigned result = m_rareData->m_codeOrigins.size();
-        m_rareData->m_codeOrigins.append(codeOrigin);
-        return result;
-    }
-        
     // Having code origins implies that there has been some inlining.
     bool hasCodeOrigins()
     {
-        return m_rareData && !!m_rareData->m_codeOrigins.size();
+        return JITCode::isOptimizingJIT(jitType());
     }
         
     bool canGetCodeOrigin(unsigned index)
     {
-        if (!m_rareData)
+        if (!hasCodeOrigins())
             return false;
-        return m_rareData->m_codeOrigins.size() > index;
+        return index < codeOrigins().size();
     }
 
     CodeOrigin codeOrigin(unsigned index)
     {
-        RELEASE_ASSERT(m_rareData);
-        return m_rareData->m_codeOrigins[index];
+        return codeOrigins()[index];
     }
 
     bool addFrequentExitSite(const DFG::FrequentExitSite& site)
@@ -1120,11 +1104,6 @@ private:
         Vector<StringJumpTable> m_stringSwitchJumpTables;
 
         EvalCodeCache m_evalCodeCache;
-
-#if ENABLE(DFG_JIT)
-        SegmentedVector<InlineCallFrame, 4> m_inlineCallFrames;
-        Vector<CodeOrigin, 0, UnsafeVectorOverflow> m_codeOrigins;
-#endif
     };
 #if COMPILER(MSVC)
     friend void WTF::deleteOwnedPtr<RareData>(RareData*);

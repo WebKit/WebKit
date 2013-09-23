@@ -30,6 +30,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "InlineCallFrameSet.h"
 #include "JSCell.h"
 #include "ProfilerCompilation.h"
 #include <wtf/Noncopyable.h>
@@ -69,9 +70,13 @@ public:
     CommonData() { }
     
     void notifyCompilingStructureTransition(Plan&, CodeBlock*, Node*);
+    unsigned addCodeOrigin(CodeOrigin codeOrigin);
     
     void shrinkToFit();
 
+    OwnPtr<InlineCallFrameSet> inlineCallFrames;
+    Vector<CodeOrigin, 0, UnsafeVectorOverflow> codeOrigins;
+    
     Vector<Identifier> dfgIdentifiers;
     Vector<WeakReferenceTransition> transitions;
     Vector<WriteBarrier<JSCell> > weakReferences;

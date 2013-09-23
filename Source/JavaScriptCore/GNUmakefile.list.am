@@ -127,6 +127,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/GetByIdStatus.cpp \
 	Source/JavaScriptCore/bytecode/GetByIdStatus.h \
 	Source/JavaScriptCore/bytecode/HandlerInfo.h \
+	Source/JavaScriptCore/bytecode/InlineCallFrameSet.cpp \
+	Source/JavaScriptCore/bytecode/InlineCallFrameSet.h \
 	Source/JavaScriptCore/bytecode/Instruction.h \
 	Source/JavaScriptCore/bytecode/JumpTable.cpp \
 	Source/JavaScriptCore/bytecode/JumpTable.h \

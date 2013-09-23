@@ -49,7 +49,6 @@ JITCompiler::JITCompiler(Graph& dfg)
     , m_graph(dfg)
     , m_jitCode(adoptRef(new JITCode()))
     , m_blockHeads(dfg.numBlocks())
-    , m_currentCodeOriginIndex(0)
 {
     if (shouldShowDisassembly() || m_graph.m_vm.m_perBytecodeProfiler)
         m_disassembler = adoptPtr(new Disassembler(dfg));
@@ -120,33 +119,21 @@ void JITCompiler::compileBody()
 
 void JITCompiler::compileExceptionHandlers()
 {
-    // Iterate over the m_calls vector, checking for jumps to link.
-    bool didLinkExceptionCheck = false;
-    for (unsigned i = 0; i < m_exceptionChecks.size(); ++i) {
-        Jump& exceptionCheck = m_exceptionChecks[i].m_exceptionCheck;
-        if (exceptionCheck.isSet()) {
-            exceptionCheck.link(this);
-            didLinkExceptionCheck = true;
-        }
-    }
+    if (m_exceptionChecks.empty())
+        return;
+    
+    m_exceptionChecks.link(this);
 
-    // If any exception checks were linked, generate code to lookup a handler.
-    if (didLinkExceptionCheck) {
-        // lookupExceptionHandler is passed two arguments, exec (the CallFrame*), and
-        // the index of the CodeOrigin. The latter is unused, see
-        // https://bugs.webkit.org/show_bug.cgi?id=121734.
-        move(GPRInfo::nonPreservedNonReturnGPR, GPRInfo::argumentGPR1);
-        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    // lookupExceptionHandler is passed one argument, the exec (the CallFrame*).
+    move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 #if CPU(X86)
-        // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
-        poke(GPRInfo::argumentGPR0);
-        poke(GPRInfo::argumentGPR1, 1);
+    // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
+    poke(GPRInfo::argumentGPR0);
 #endif
-        m_calls.append(CallLinkRecord(call(), lookupExceptionHandler));
-        // lookupExceptionHandler leaves the handler CallFrame* in the returnValueGPR,
-        // and the address of the handler in returnValueGPR2.
-        jump(GPRInfo::returnValueGPR2);
-    }
+    m_calls.append(CallLinkRecord(call(), lookupExceptionHandler));
+    // lookupExceptionHandler leaves the handler CallFrame* in the returnValueGPR,
+    // and the address of the handler in returnValueGPR2.
+    jump(GPRInfo::returnValueGPR2);
 }
 
 void JITCompiler::link(LinkBuffer& linkBuffer)
@@ -155,6 +142,11 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLogF("JIT code for %p start at [%p, %p). Size = %zu.\n", m_codeBlock, linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize(), linkBuffer.debugSize());
 #endif
+    
+    if (!m_graph.m_inlineCallFrames->isEmpty()) {
+        m_graph.m_inlineCallFrames->shrinkToFit();
+        m_jitCode->common.inlineCallFrames = m_graph.m_inlineCallFrames.release();
+    }
 
     BitVector usedJumpTables;
     for (unsigned i = m_graph.m_switchData.size(); i--;) {
@@ -216,14 +208,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     for (unsigned i = 0; i < m_calls.size(); ++i)
         linkBuffer.link(m_calls[i].m_call, m_calls[i].m_function);
 
-    Vector<CodeOrigin, 0, UnsafeVectorOverflow>& codeOrigins = m_codeBlock->codeOrigins();
-    codeOrigins.resize(m_exceptionChecks.size());
-    
-    for (unsigned i = 0; i < m_exceptionChecks.size(); ++i) {
-        CallExceptionRecord& record = m_exceptionChecks[i];
-        codeOrigins[i] = record.m_codeOrigin;
-    }
-    
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccesses.size() + m_ins.size());
     for (unsigned i = 0; i < m_propertyAccesses.size(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
@@ -383,10 +367,8 @@ void JITCompiler::compileFunction()
     move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
 
-    CallBeginToken token;
-    beginCall(CodeOrigin(0), token);
+    emitStoreCodeOrigin(CodeOrigin(0));
     m_callStackCheck = call();
-    notifyCall(m_callStackCheck, CodeOrigin(0), token);
     jump(fromStackCheck);
     
     // The fast entry point into a function does not check the correct number of arguments
@@ -401,13 +383,11 @@ void JITCompiler::compileFunction()
     branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
     move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
-    beginCall(CodeOrigin(0), token);
+    emitStoreCodeOrigin(CodeOrigin(0));
     m_callArityCheck = call();
-    notifyCall(m_callArityCheck, CodeOrigin(0), token);
     branchTest32(Zero, GPRInfo::regT0).linkTo(fromArityCheck, this);
-    beginCall(CodeOrigin(0), token);
+    emitStoreCodeOrigin(CodeOrigin(0));
     m_callArityFixup = call();
-    notifyCall(m_callArityFixup, CodeOrigin(0), token);
     jump(fromArityCheck);
     
     // Generate slow path code.

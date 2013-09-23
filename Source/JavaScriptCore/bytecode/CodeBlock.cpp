@@ -2545,13 +2545,8 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
         }
     } // else don't shrink these, because we would have already pointed pointers into these tables.
 
-    if (m_rareData) {
+    if (m_rareData)
         m_rareData->m_exceptionHandlers.shrinkToFit();
-#if ENABLE(DFG_JIT)
-        m_rareData->m_inlineCallFrames.shrinkToFit();
-        m_rareData->m_codeOrigins.shrinkToFit();
-#endif
-    }
 }
 
 void CodeBlock::createActivation(CallFrame* callFrame)

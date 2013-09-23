@@ -122,11 +122,11 @@ public:
         // for the function (and checked for on entry). Since we perform a new and
         // different allocation of temporaries, more registers may now be required.
         unsigned calleeRegisters = scoreBoard.highWatermark() + m_graph.m_parameterSlots;
-        size_t inlineCallFrameCount = codeBlock()->inlineCallFrames().size();
+        size_t inlineCallFrameCount = m_graph.m_inlineCallFrames->size();
         for (size_t i = 0; i < inlineCallFrameCount; i++) {
-            InlineCallFrame& inlineCallFrame = codeBlock()->inlineCallFrames()[i];
-            CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(&inlineCallFrame);
-            unsigned requiredCalleeRegisters = operandToLocal(inlineCallFrame.stackOffset) + codeBlock->m_numCalleeRegisters;
+            InlineCallFrame* inlineCallFrame = m_graph.m_inlineCallFrames->at(i);
+            CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
+            unsigned requiredCalleeRegisters = operandToLocal(inlineCallFrame->stackOffset) + codeBlock->m_numCalleeRegisters;
             if (requiredCalleeRegisters > calleeRegisters)
                 calleeRegisters = requiredCalleeRegisters;
         }

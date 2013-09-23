@@ -747,8 +747,7 @@ void SpeculativeJIT::emitCall(Node* node)
     JITCompiler::DataLabelPtr targetToCheck;
     JITCompiler::JumpList slowPath;
 
-    CallBeginToken token;
-    m_jit.beginCall(node->codeOrigin, token);
+    m_jit.emitStoreCodeOrigin(node->codeOrigin);
     
     m_jit.addPtr(TrustedImm32(-(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register))), GPRInfo::callFrameRegister);
     
@@ -757,18 +756,14 @@ void SpeculativeJIT::emitCall(Node* node)
     m_jit.loadPtr(MacroAssembler::Address(calleeGPR, OBJECT_OFFSETOF(JSFunction, m_scope)), resultGPR);
     m_jit.store64(resultGPR, MacroAssembler::Address(GPRInfo::callFrameRegister, static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ScopeChain));
 
-    CodeOrigin codeOrigin = m_currentNode->codeOrigin;
     JITCompiler::Call fastCall = m_jit.nearCall();
-    m_jit.notifyCall(fastCall, codeOrigin, token);
     
     JITCompiler::Jump done = m_jit.jump();
     
     slowPath.link(&m_jit);
     
     m_jit.move(calleeGPR, GPRInfo::nonArgGPR0);
-    m_jit.prepareForExceptionCheck();
     JITCompiler::Call slowCall = m_jit.nearCall();
-    m_jit.notifyCall(slowCall, codeOrigin, token);
     
     done.link(&m_jit);
     

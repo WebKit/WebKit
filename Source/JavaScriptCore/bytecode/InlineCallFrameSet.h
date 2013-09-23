@@ -23,46 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGCommonData.h"
+#ifndef InlineCallFrameSet_h
+#define InlineCallFrameSet_h
 
-#if ENABLE(DFG_JIT)
+#include "CodeOrigin.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/SegmentedVector.h>
 
-#include "CodeBlock.h"
-#include "DFGNode.h"
-#include "DFGPlan.h"
-#include "Operations.h"
-#include "VM.h"
+namespace JSC {
 
-namespace JSC { namespace DFG {
+class InlineCallFrameSet {
+    WTF_MAKE_NONCOPYABLE(InlineCallFrameSet);
+public:
+    InlineCallFrameSet();
+    ~InlineCallFrameSet();
+    
+    bool isEmpty() const { return m_frames.isEmpty(); }
+    
+    InlineCallFrame* add();
+    
+    // The only users of these methods just want to iterate all inline call frames.
+    // There is no requirement for random access.
+    unsigned size() const { return m_frames.size(); }
+    InlineCallFrame* at(unsigned i) { return &m_frames[i]; }
+    
+    void shrinkToFit();
+    
+private:
+    SegmentedVector<InlineCallFrame, 4> m_frames;
+};
 
-void CommonData::notifyCompilingStructureTransition(Plan& plan, CodeBlock* codeBlock, Node* node)
-{
-    plan.transitions.addLazily(
-        codeBlock,
-        node->codeOrigin.codeOriginOwner(),
-        node->structureTransitionData().previousStructure,
-        node->structureTransitionData().newStructure);
-}
+} // namespace JSC
 
-unsigned CommonData::addCodeOrigin(CodeOrigin codeOrigin)
-{
-    if (codeOrigins.isEmpty()
-        || codeOrigins.last() != codeOrigin)
-        codeOrigins.append(codeOrigin);
-    unsigned index = codeOrigins.size() - 1;
-    ASSERT(codeOrigins[index] == codeOrigin);
-    return index;
-}
-
-void CommonData::shrinkToFit()
-{
-    codeOrigins.shrinkToFit();
-    weakReferences.shrinkToFit();
-    transitions.shrinkToFit();
-}
-
-} } // namespace JSC::DFG
-
-#endif // ENABLE(DFG_JIT)
+#endif // InlineCallFrameSet_h
 

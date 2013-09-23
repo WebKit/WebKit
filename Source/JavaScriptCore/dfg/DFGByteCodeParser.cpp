@@ -3374,55 +3374,52 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         ASSERT(inlineCallFrameStart != InvalidVirtualRegister);
         ASSERT(callsiteBlockHead);
         
-        InlineCallFrame inlineCallFrame;
+        m_inlineCallFrame = byteCodeParser->m_graph.m_inlineCallFrames->add();
         initializeLazyWriteBarrierForInlineCallFrameExecutable(
             byteCodeParser->m_graph.m_plan.writeBarriers,
-            inlineCallFrame.executable,
+            m_inlineCallFrame->executable,
             byteCodeParser->m_codeBlock,
-            byteCodeParser->m_codeBlock->inlineCallFrames().size(),
+            m_inlineCallFrame,
             byteCodeParser->m_codeBlock->ownerExecutable(), 
             codeBlock->ownerExecutable());
-        inlineCallFrame.stackOffset = inlineCallFrameStart - JSStack::CallFrameHeaderSize;
+        m_inlineCallFrame->stackOffset = inlineCallFrameStart - JSStack::CallFrameHeaderSize;
         if (callee) {
             initializeLazyWriteBarrierForInlineCallFrameCallee(
                 byteCodeParser->m_graph.m_plan.writeBarriers,
-                inlineCallFrame.callee,
+                m_inlineCallFrame->callee,
                 byteCodeParser->m_codeBlock,
-                byteCodeParser->m_codeBlock->inlineCallFrames().size(),
+                m_inlineCallFrame,
                 byteCodeParser->m_codeBlock->ownerExecutable(), 
                 callee);
         }
-        inlineCallFrame.caller = byteCodeParser->currentCodeOrigin();
-        inlineCallFrame.arguments.resize(argumentCountIncludingThis); // Set the number of arguments including this, but don't configure the value recoveries, yet.
-        inlineCallFrame.isCall = isCall(kind);
+        m_inlineCallFrame->caller = byteCodeParser->currentCodeOrigin();
+        m_inlineCallFrame->arguments.resize(argumentCountIncludingThis); // Set the number of arguments including this, but don't configure the value recoveries, yet.
+        m_inlineCallFrame->isCall = isCall(kind);
         
-        if (inlineCallFrame.caller.inlineCallFrame)
-            inlineCallFrame.capturedVars = inlineCallFrame.caller.inlineCallFrame->capturedVars;
+        if (m_inlineCallFrame->caller.inlineCallFrame)
+            m_inlineCallFrame->capturedVars = m_inlineCallFrame->caller.inlineCallFrame->capturedVars;
         else {
             for (int i = byteCodeParser->m_codeBlock->m_numVars; i--;) {
                 if (byteCodeParser->m_codeBlock->isCaptured(localToOperand(i)))
-                    inlineCallFrame.capturedVars.set(i);
+                    m_inlineCallFrame->capturedVars.set(i);
             }
         }
 
         for (int i = argumentCountIncludingThis; i--;) {
             if (codeBlock->isCaptured(argumentToOperand(i)))
-                inlineCallFrame.capturedVars.set(operandToLocal(argumentToOperand(i) + inlineCallFrame.stackOffset));
+                m_inlineCallFrame->capturedVars.set(operandToLocal(argumentToOperand(i) + m_inlineCallFrame->stackOffset));
         }
         for (size_t i = codeBlock->m_numVars; i--;) {
             int localOperand = localToOperand(i);
             if (codeBlock->isCaptured(localOperand))
-                inlineCallFrame.capturedVars.set(operandToLocal(localOperand + inlineCallFrame.stackOffset));
+                m_inlineCallFrame->capturedVars.set(operandToLocal(localOperand + m_inlineCallFrame->stackOffset));
         }
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
         dataLogF("Current captured variables: ");
-        inlineCallFrame.capturedVars.dump(WTF::dataFile());
+        m_inlineCallFrame->capturedVars.dump(WTF::dataFile());
         dataLogF("\n");
 #endif
-        
-        byteCodeParser->m_codeBlock->inlineCallFrames().append(inlineCallFrame);
-        m_inlineCallFrame = &byteCodeParser->m_codeBlock->inlineCallFrames().last();
         
         byteCodeParser->buildOperandMapsIfNecessary();
         

@@ -1,3 +1,87 @@
+2013-09-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Never use ReturnPC for exception handling and quit using exception check indices as a lame replica of the CodeOrigin index
+        https://bugs.webkit.org/show_bug.cgi?id=121734
+
+        Reviewed by Mark Hahnenberg.
+        
+        Exception handling can deduce where the exception was thrown from by looking at the
+        code origin that was stored into the call frame header. There is no need to pass any
+        additional meta-data into the exception throwing logic. But the DFG was still doing it
+        anyway.
+        
+        This removes all of the logic to pass extra meta-data into lookupExceptionHandler()
+        and friends. It simplifies a lot of code.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::codeOrigins):
+        (JSC::CodeBlock::hasCodeOrigins):
+        (JSC::CodeBlock::canGetCodeOrigin):
+        (JSC::CodeBlock::codeOrigin):
+        * bytecode/CodeOrigin.h:
+        (JSC::InlineCallFrame::InlineCallFrame):
+        * bytecode/InlineCallFrameSet.cpp: Added.
+        (JSC::InlineCallFrameSet::InlineCallFrameSet):
+        (JSC::InlineCallFrameSet::~InlineCallFrameSet):
+        (JSC::InlineCallFrameSet::add):
+        (JSC::InlineCallFrameSet::shrinkToFit):
+        * bytecode/InlineCallFrameSet.h: Added.
+        (JSC::InlineCallFrameSet::isEmpty):
+        (JSC::InlineCallFrameSet::size):
+        (JSC::InlineCallFrameSet::at):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::addCodeOrigin):
+        (JSC::DFG::CommonData::shrinkToFit):
+        * dfg/DFGCommonData.h:
+        * dfg/DFGDesiredWriteBarriers.cpp:
+        (JSC::DFG::DesiredWriteBarrier::DesiredWriteBarrier):
+        (JSC::DFG::DesiredWriteBarrier::trigger):
+        * dfg/DFGDesiredWriteBarriers.h:
+        (JSC::DFG::DesiredWriteBarriers::add):
+        (JSC::DFG::initializeLazyWriteBarrierForInlineCallFrameExecutable):
+        (JSC::DFG::initializeLazyWriteBarrierForInlineCallFrameCallee):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::emitStoreCodeOrigin):
+        (JSC::DFG::JITCompiler::exceptionCheck):
+        (JSC::DFG::JITCompiler::fastExceptionCheck):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryBuildGetByIDList):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheck):
+        (JSC::DFG::SpeculativeJIT::appendCallSetResult):
+        (JSC::DFG::SpeculativeJIT::appendCall):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::callPreflight):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitExceptionCheck):
+
 2013-09-23  Oliver Hunt  <oliver@apple.com>
 
         CodeLoad performance regression

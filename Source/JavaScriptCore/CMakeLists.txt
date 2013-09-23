@@ -57,6 +57,7 @@ set(JavaScriptCore_SOURCES
     bytecode/ExecutionCounter.cpp
     bytecode/ExitKind.cpp
     bytecode/GetByIdStatus.cpp
+    bytecode/InlineCallFrameSet.cpp
     bytecode/JumpTable.cpp
     bytecode/LazyOperandValueProfile.cpp
     bytecode/MethodOfGettingAValueProfile.cpp
