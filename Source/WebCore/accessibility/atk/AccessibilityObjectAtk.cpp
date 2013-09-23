@@ -86,13 +86,13 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (role == ParagraphRole || role == DivRole) {
         // Don't call textUnderElement() here, because it's slow and it can
         // crash when called while we're in the middle of a subtree being deleted.
-        if (!renderer()->firstChild())
+        if (!renderer()->firstChildSlow())
             return DefaultBehavior;
 
         if (!parent->renderer() || parent->renderer()->isAnonymousBlock())
             return DefaultBehavior;
 
-        for (RenderObject* r = renderer()->firstChild(); r; r = r->nextSibling()) {
+        for (RenderObject* r = renderer()->firstChildSlow(); r; r = r->nextSibling()) {
             if (r->isAnonymousBlock())
                 return IncludeObject;
         }

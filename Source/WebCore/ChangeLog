@@ -1,3 +1,14 @@
+2013-09-23  Antti Koivisto  <antti@apple.com>
+
+        Try to fix GTK build.
+        
+        Not reviewed.
+
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (textForRenderer):
+
 2013-09-23  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: [CSS Regions] Display CSS Regions flow name in the inspector overlay

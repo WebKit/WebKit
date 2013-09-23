@@ -72,7 +72,7 @@ static gchar* textForRenderer(RenderObject* renderer)
         return g_string_free(resultText, FALSE);
 
     // For RenderBlocks, piece together the text from the RenderText objects they contain.
-    for (RenderObject* object = renderer->firstChild(); object; object = object->nextSibling()) {
+    for (RenderObject* object = renderer->firstChildSlow(); object; object = object->nextSibling()) {
         if (object->isBR()) {
             g_string_append(resultText, "\n");
             continue;
@@ -91,7 +91,7 @@ static gchar* textForRenderer(RenderObject* renderer)
             // current object is not a text object but some of its
             // children are, in order not to miss those portions of
             // text by not properly handling those situations
-            if (object->firstChild()) {
+            if (object->firstChildSlow()) {
                 GOwnPtr<char> objectText(textForRenderer(object));
                 g_string_append(resultText, objectText.get());
             }
