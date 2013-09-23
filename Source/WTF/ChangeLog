@@ -1,5 +1,27 @@
 2013-09-23  Anders Carlsson  <andersca@apple.com>
 
+        ListHashSet should work with move-only types
+        https://bugs.webkit.org/show_bug.cgi?id=121802
+
+        Reviewed by Andreas Kling.
+
+        Add rvalue reference overloads and calls to std::forward and std::move where appropriate.
+
+        * wtf/ListHashSet.h:
+        (WTF::::removeFirst):
+        Implement this in terms of takeFirst.
+
+        (WTF::::takeFirst):
+        Look up the iterator before we move out the value so we won't break the hash invariant.
+        
+        (WTF::::removeLast):
+        Implement this in terms of takeLast.
+
+        (WTF::::takeLast):
+        Look up the iterator before we move out the value so we won't break the hash invariant.
+
+2013-09-23  Anders Carlsson  <andersca@apple.com>
+
         Clean up ListHashSet
         https://bugs.webkit.org/show_bug.cgi?id=121797
 

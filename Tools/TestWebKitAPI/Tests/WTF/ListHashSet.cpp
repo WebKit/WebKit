@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "MoveOnly.h"
 #include <wtf/ListHashSet.h>
 
 namespace TestWebKitAPI {
@@ -197,6 +198,53 @@ TEST(WTF_ListHashSet, ReverseIterator)
     ASSERT_EQ(1, *constIt);
     ++constIt;
     ASSERT_TRUE(constIt == listHashSet.rend());
+}
+
+TEST(WTF_ListHashSet, MoveOnly)
+{
+    ListHashSet<MoveOnly> list;
+    list.add(MoveOnly(2));
+    list.add(MoveOnly(4));
+
+    // { 2, 4 }
+    ASSERT_EQ(2U, list.first().value());
+    ASSERT_EQ(4U, list.last().value());
+
+    list.appendOrMoveToLast(MoveOnly(3));
+
+    // { 2, 4, 3 }
+    ASSERT_EQ(3U, list.last().value());
+
+    // { 4, 3, 2 }
+    list.appendOrMoveToLast(MoveOnly(2));
+    ASSERT_EQ(4U, list.first().value());
+    ASSERT_EQ(2U, list.last().value());
+
+    list.prependOrMoveToFirst(MoveOnly(5));
+
+    // { 5, 2, 4, 3 }
+    ASSERT_EQ(5U, list.first().value());
+
+    list.prependOrMoveToFirst(MoveOnly(3));
+
+    // { 3, 5, 4, 2 }
+    ASSERT_EQ(3U, list.first().value());
+    ASSERT_EQ(2U, list.last().value());
+
+    list.insertBefore(MoveOnly(4), MoveOnly(1));
+    list.insertBefore(list.end(), MoveOnly(6));
+
+    // { 3, 5, 1, 4, 2, 6 }
+    ASSERT_EQ(3U, list.takeFirst().value());
+    ASSERT_EQ(5U, list.takeFirst().value());
+    ASSERT_EQ(1U, list.takeFirst().value());
+
+    // { 4, 2, 6 }
+    ASSERT_EQ(6U, list.takeLast().value());
+    ASSERT_EQ(2U, list.takeLast().value());
+    ASSERT_EQ(4U, list.takeLast().value());
+
+    ASSERT_TRUE(list.isEmpty());
 }
 
 } // namespace TestWebKitAPI

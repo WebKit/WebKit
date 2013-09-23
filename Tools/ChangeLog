@@ -1,3 +1,14 @@
+2013-09-23  Anders Carlsson  <andersca@apple.com>
+
+        ListHashSet should work with move-only types
+        https://bugs.webkit.org/show_bug.cgi?id=121802
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/Tests/WTF/ListHashSet.cpp:
+        (TestWebKitAPI::TEST):
+        Add a test for move-only types.
+
 2013-09-23  Alex Christensen  <alex.christensen@flexsim.com>
 
         Added --64-bit option for Windows build.
