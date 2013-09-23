@@ -105,12 +105,12 @@ void RenderSVGModelObject::styleWillChange(StyleDifference diff, const RenderSty
         if (newStyle->hasTransform())
             setNeedsTransformUpdate();
     }
-    RenderObject::styleWillChange(diff, newStyle);
+    RenderElement::styleWillChange(diff, newStyle);
 }
 
 void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderObject::styleDidChange(diff, oldStyle);
+    RenderElement::styleDidChange(diff, oldStyle);
     SVGResourcesCache::clientStyleChanged(this, diff, style());
 }
 

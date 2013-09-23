@@ -78,9 +78,9 @@ void RenderBoxModelObject::setSelectionState(SelectionState state)
 
     if ((state == SelectionStart && selectionState() == SelectionEnd)
         || (state == SelectionEnd && selectionState() == SelectionStart))
-        RenderObject::setSelectionState(SelectionBoth);
+        RenderLayerModelObject::setSelectionState(SelectionBoth);
     else
-        RenderObject::setSelectionState(state);
+        RenderLayerModelObject::setSelectionState(state);
 
     // FIXME: We should consider whether it is OK propagating to ancestor RenderInlines.
     // This is a workaround for http://webkit.org/b/32123

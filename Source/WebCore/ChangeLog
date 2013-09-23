@@ -1,5 +1,26 @@
 2013-09-22  Antti Koivisto  <antti@apple.com>
 
+        Fix functions calling to RenderObject superclass to call RenderElement instead
+        https://bugs.webkit.org/show_bug.cgi?id=121773
+
+        Reviewed by Andreas Kling.
+
+        The class hierarchy has a new class. Superclass calls should be pointed there instead to
+        avoid future bugs.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::setSelectionState):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleWillChange):
+        (WebCore::RenderLayerModelObject::styleDidChange):
+        * rendering/svg/RenderSVGGradientStop.cpp:
+        (WebCore::RenderSVGGradientStop::styleDidChange):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::styleWillChange):
+        (WebCore::RenderSVGModelObject::styleDidChange):
+
+2013-09-22  Antti Koivisto  <antti@apple.com>
+
         Remove RenderObjectChildList
         https://bugs.webkit.org/show_bug.cgi?id=121771
 

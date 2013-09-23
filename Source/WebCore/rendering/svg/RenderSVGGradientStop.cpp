@@ -44,7 +44,7 @@ RenderSVGGradientStop::~RenderSVGGradientStop()
 
 void RenderSVGGradientStop::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderObject::styleDidChange(diff, oldStyle);
+    RenderElement::styleDidChange(diff, oldStyle);
     if (diff == StyleDifferenceEqual)
         return;
 

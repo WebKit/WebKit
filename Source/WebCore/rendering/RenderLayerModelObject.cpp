@@ -131,12 +131,12 @@ void RenderLayerModelObject::styleWillChange(StyleDifference diff, const RenderS
         }
     }
 
-    RenderObject::styleWillChange(diff, newStyle);
+    RenderElement::styleWillChange(diff, newStyle);
 }
 
 void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    RenderObject::styleDidChange(diff, oldStyle);
+    RenderElement::styleDidChange(diff, oldStyle);
     updateFromStyle();
 
     if (requiresLayer()) {
