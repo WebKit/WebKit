@@ -1,3 +1,15 @@
+2013-09-23  Andreas Kling  <akling@apple.com>
+
+        Document::destroyRenderTree() shouldn't do anything but.
+        <https://webkit.org/b/121786>
+
+        Reviewed by Anders Carlsson.
+
+        Move everything in destroyRenderTree() that doesn't actually destroy
+        render trees to prepareForDestruction() instead.
+
+        Destroying the render tree is now a reparable operation.
+
 2013-09-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Tiled backing-store causes wrong translation
