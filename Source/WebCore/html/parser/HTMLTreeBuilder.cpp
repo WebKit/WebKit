@@ -1581,7 +1581,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
                 bookmark.moveToAfter(nodeEntry);
             // 9.9
             if (ContainerNode* parent = lastNode->element()->parentNode())
-                parent->parserRemoveChild(lastNode->element());
+                parent->parserRemoveChild(*lastNode->element());
             node->element()->parserAppendChild(lastNode->element());
             if (lastNode->element()->parentElement()->attached() && !lastNode->element()->attached())
                 lastNode->element()->lazyAttach();
@@ -1590,7 +1590,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
         }
         // 10.
         if (ContainerNode* parent = lastNode->element()->parentNode())
-            parent->parserRemoveChild(lastNode->element());
+            parent->parserRemoveChild(*lastNode->element());
         if (commonAncestor->causesFosterParenting())
             m_tree.fosterParent(lastNode->element());
         else {

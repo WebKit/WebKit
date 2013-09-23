@@ -108,7 +108,7 @@ void ShadowRoot::setInnerHTML(const String& markup, ExceptionCode& ec)
     }
 
     if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, hostElement(), AllowScriptingContent, ec))
-        replaceChildrenWithFragment(this, fragment.release(), ec);
+        replaceChildrenWithFragment(*this, fragment.release(), ec);
 }
 
 bool ShadowRoot::childTypeAllowed(NodeType type) const

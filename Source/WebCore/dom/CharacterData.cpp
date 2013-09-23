@@ -215,8 +215,9 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
 
 void CharacterData::dispatchModifiedEvent(const String& oldData)
 {
-    if (OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForCharacterDataMutation(this))
-        mutationRecipients->enqueueMutationRecord(MutationRecord::createCharacterData(this, oldData));
+    if (OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForCharacterDataMutation(*this))
+        mutationRecipients->enqueueMutationRecord(MutationRecord::createCharacterData(*this, oldData));
+
     if (!isInShadowTree()) {
         if (parentNode()) {
             ContainerNode::ChildChange change = {

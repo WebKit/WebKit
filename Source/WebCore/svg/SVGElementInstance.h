@@ -29,7 +29,7 @@ namespace WebCore {
 
 namespace Private {
 template<class GenericNode, class GenericNodeContainer>
-void addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer* container);
+void addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer& container);
 };
 
 class Document;
@@ -159,13 +159,13 @@ private:
     void setShadowTreeElement(SVGElement*);
 
     template<class GenericNode, class GenericNodeContainer>
-    friend void appendChildToContainer(GenericNode* child, GenericNodeContainer* container);
+    friend void appendChildToContainer(GenericNode* child, GenericNodeContainer& container);
 
     template<class GenericNode, class GenericNodeContainer>
-    friend void removeDetachedChildrenInContainer(GenericNodeContainer*);
+    friend void removeDetachedChildrenInContainer(GenericNodeContainer&);
 
     template<class GenericNode, class GenericNodeContainer>
-    friend void Private::addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer* container);
+    friend void Private::addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, GenericNodeContainer& container);
 
     bool hasChildNodes() const { return m_firstChild; }
 

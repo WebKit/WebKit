@@ -3450,7 +3450,6 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* k
     }
 
     KURL mediaURL;
-    Node* node;
     HTMLSourceElement* source = 0;
     String type;
     String system;
@@ -3459,20 +3458,20 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* k
     bool okToLoadSourceURL;
 
     NodeVector potentialSourceNodes;
-    getChildNodes(this, potentialSourceNodes);
+    getChildNodes(*this, potentialSourceNodes);
 
     for (unsigned i = 0; !canUseSourceElement && i < potentialSourceNodes.size(); ++i) {
-        node = potentialSourceNodes[i].get();
-        if (lookingForStartNode && m_nextChildNodeToConsider != node)
+        Node& node = potentialSourceNodes[i].get();
+        if (lookingForStartNode && m_nextChildNodeToConsider != &node)
             continue;
         lookingForStartNode = false;
 
-        if (!node->hasTagName(sourceTag))
+        if (!node.hasTagName(sourceTag))
             continue;
-        if (node->parentNode() != this)
+        if (node.parentNode() != this)
             continue;
 
-        source = static_cast<HTMLSourceElement*>(node);
+        source = static_cast<HTMLSourceElement*>(&node);
 
         // If candidate does not have a src attribute, or if its src attribute's value is the empty string ... jump down to the failed step below
         mediaURL = source->getNonEmptyURLAttribute(srcAttr);
@@ -3511,7 +3510,7 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* k
         okToLoadSourceURL = isSafeToLoadURL(mediaURL, actionIfInvalid) && dispatchBeforeLoadEvent(mediaURL.string());
 
         // A 'beforeload' event handler can mutate the DOM, so check to see if the source element is still a child node.
-        if (node->parentNode() != this) {
+        if (node.parentNode() != this) {
             LOG(Media, "HTMLMediaElement::selectNextSourceChild : 'beforeload' removed current element");
             source = 0;
             goto check_again;

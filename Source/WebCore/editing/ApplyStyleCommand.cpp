@@ -1039,14 +1039,15 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
     RefPtr<Node> current = highestAncestor;
     // Along the way, styled elements that contain targetNode are removed and accumulated into elementsToPushDown.
     // Each child of the removed element, exclusing ancestors of targetNode, is then wrapped by clones of elements in elementsToPushDown.
-    Vector<RefPtr<Element> > elementsToPushDown;
+    Vector<Ref<Element>> elementsToPushDown;
     while (current && current != targetNode && current->contains(targetNode)) {
         NodeVector currentChildren;
-        getChildNodes(current.get(), currentChildren);
+        getChildNodes(*current.get(), currentChildren);
+
         RefPtr<StyledElement> styledElement;
         if (current->isStyledElement() && isStyledInlineElementToRemove(toElement(current.get()))) {
             styledElement = static_cast<StyledElement*>(current.get());
-            elementsToPushDown.append(styledElement);
+            elementsToPushDown.append(*styledElement);
         }
 
         RefPtr<EditingStyle> styleToPushDown = EditingStyle::create();
@@ -1056,26 +1057,26 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
         // The inner loop will go through children on each level
         // FIXME: we should aggregate inline child elements together so that we don't wrap each child separately.
         for (size_t i = 0; i < currentChildren.size(); ++i) {
-            Node* child = currentChildren[i].get();
-            if (!child->parentNode())
+            Node& child = currentChildren[i].get();
+            if (!child.parentNode())
                 continue;
-            if (!child->contains(targetNode) && elementsToPushDown.size()) {
+            if (!child.contains(targetNode) && elementsToPushDown.size()) {
                 for (size_t i = 0; i < elementsToPushDown.size(); i++) {
                     RefPtr<Element> wrapper = elementsToPushDown[i]->cloneElementWithoutChildren();
                     wrapper->removeAttribute(styleAttr);
-                    surroundNodeRangeWithElement(child, child, wrapper);
+                    surroundNodeRangeWithElement(&child, &child, wrapper);
                 }
             }
 
             // Apply style to all nodes containing targetNode and their siblings but NOT to targetNode
             // But if we've removed styledElement then go ahead and always apply the style.
-            if (child != targetNode || styledElement)
-                applyInlineStyleToPushDown(child, styleToPushDown.get());
+            if (&child != targetNode || styledElement)
+                applyInlineStyleToPushDown(&child, styleToPushDown.get());
 
             // We found the next node for the outer loop (contains targetNode)
             // When reached targetNode, stop the outer loop upon the completion of the current inner loop
-            if (child == targetNode || child->contains(targetNode))
-                current = child;
+            if (&child == targetNode || child.contains(targetNode))
+                current = &child;
         }
     }
 }

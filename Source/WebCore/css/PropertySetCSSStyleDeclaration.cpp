@@ -57,7 +57,7 @@ public:
 
         bool shouldReadOldValue = false;
 
-        m_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(s_currentDecl->parentElement(), HTMLNames::styleAttr);
+        m_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(*s_currentDecl->parentElement(), HTMLNames::styleAttr);
         if (m_mutationRecipients && m_mutationRecipients->isOldValueRequested())
             shouldReadOldValue = true;
 
@@ -67,7 +67,7 @@ public:
 
         if (m_mutationRecipients) {
             AtomicString requestedOldValue = m_mutationRecipients->isOldValueRequested() ? oldValue : nullAtom;
-            m_mutation = MutationRecord::createAttributes(s_currentDecl->parentElement(), HTMLNames::styleAttr, requestedOldValue);
+            m_mutation = MutationRecord::createAttributes(*s_currentDecl->parentElement(), HTMLNames::styleAttr, requestedOldValue);
         }
     }
 

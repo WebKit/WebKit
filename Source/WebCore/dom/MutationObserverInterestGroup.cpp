@@ -39,11 +39,11 @@
 
 namespace WebCore {
 
-PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createIfNeeded(Node* target, MutationObserver::MutationType type, MutationRecordDeliveryOptions oldValueFlag, const QualifiedName* attributeName)
+PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createIfNeeded(Node& target, MutationObserver::MutationType type, MutationRecordDeliveryOptions oldValueFlag, const QualifiedName* attributeName)
 {
     ASSERT((type == MutationObserver::Attributes && attributeName) || !attributeName);
     HashMap<MutationObserver*, MutationRecordDeliveryOptions> observers;
-    target->getRegisteredMutationObserversOfType(observers, type, attributeName);
+    target.getRegisteredMutationObserversOfType(observers, type, attributeName);
     if (observers.isEmpty())
         return nullptr;
 

@@ -126,9 +126,9 @@ SVGDocument* HTMLFrameOwnerElement::getSVGDocument(ExceptionCode& ec) const
 }
 #endif
 
-bool SubframeLoadingDisabler::canLoadFrame(HTMLFrameOwnerElement* owner)
+bool SubframeLoadingDisabler::canLoadFrame(HTMLFrameOwnerElement& owner)
 {
-    for (Node* node = owner; node; node = node->parentOrShadowHostNode()) {
+    for (ContainerNode* node = &owner; node; node = node->parentOrShadowHostNode()) {
         if (disabledSubtreeRoots().contains(node))
             return false;
     }

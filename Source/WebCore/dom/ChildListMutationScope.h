@@ -46,26 +46,26 @@ class MutationObserverInterestGroup;
 // ChildListMutationAccumulator is not meant to be used directly; ChildListMutationScope is the public interface.
 class ChildListMutationAccumulator : public RefCounted<ChildListMutationAccumulator> {
 public:
-    static PassRefPtr<ChildListMutationAccumulator> getOrCreate(Node*);
+    static PassRefPtr<ChildListMutationAccumulator> getOrCreate(ContainerNode&);
     ~ChildListMutationAccumulator();
 
-    void childAdded(PassRefPtr<Node>);
-    void willRemoveChild(PassRefPtr<Node>);
+    void childAdded(Node&);
+    void willRemoveChild(Node&);
 
     bool hasObservers() const { return m_observers; }
 
 private:
-    ChildListMutationAccumulator(PassRefPtr<Node>, PassOwnPtr<MutationObserverInterestGroup>);
+    ChildListMutationAccumulator(ContainerNode&, PassOwnPtr<MutationObserverInterestGroup>);
 
     void enqueueMutationRecord();
     bool isEmpty();
-    bool isAddedNodeInOrder(Node*);
-    bool isRemovedNodeInOrder(Node*);
+    bool isAddedNodeInOrder(Node&);
+    bool isRemovedNodeInOrder(Node&);
 
-    RefPtr<Node> m_target;
+    Ref<ContainerNode> m_target;
 
-    Vector<RefPtr<Node> > m_removedNodes;
-    Vector<RefPtr<Node> > m_addedNodes;
+    Vector<Ref<Node>> m_removedNodes;
+    Vector<Ref<Node>> m_addedNodes;
     RefPtr<Node> m_previousSibling;
     RefPtr<Node> m_nextSibling;
     Node* m_lastAdded;
@@ -76,19 +76,19 @@ private:
 class ChildListMutationScope {
     WTF_MAKE_NONCOPYABLE(ChildListMutationScope);
 public:
-    explicit ChildListMutationScope(Node* target)
+    explicit ChildListMutationScope(ContainerNode& target)
     {
-        if (target->document().hasMutationObserversOfType(MutationObserver::ChildList))
+        if (target.document().hasMutationObserversOfType(MutationObserver::ChildList))
             m_accumulator = ChildListMutationAccumulator::getOrCreate(target);
     }
 
-    void childAdded(Node* child)
+    void childAdded(Node& child)
     {
         if (m_accumulator && m_accumulator->hasObservers())
             m_accumulator->childAdded(child);
     }
 
-    void willRemoveChild(Node* child)
+    void willRemoveChild(Node& child)
     {
         if (m_accumulator && m_accumulator->hasObservers())
             m_accumulator->willRemoveChild(child);

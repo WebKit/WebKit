@@ -85,27 +85,27 @@ inline HTMLFrameOwnerElement* toFrameOwnerElement(Node* node)
 
 class SubframeLoadingDisabler {
 public:
-    explicit SubframeLoadingDisabler(Node* root)
+    explicit SubframeLoadingDisabler(ContainerNode& root)
         : m_root(root)
     {
-        disabledSubtreeRoots().add(m_root);
+        disabledSubtreeRoots().add(&m_root);
     }
 
     ~SubframeLoadingDisabler()
     {
-        disabledSubtreeRoots().remove(m_root);
+        disabledSubtreeRoots().remove(&m_root);
     }
 
-    static bool canLoadFrame(HTMLFrameOwnerElement*);
+    static bool canLoadFrame(HTMLFrameOwnerElement&);
 
 private:
-    static HashSet<Node*>& disabledSubtreeRoots()
+    static HashSet<ContainerNode*>& disabledSubtreeRoots()
     {
-        DEFINE_STATIC_LOCAL(HashSet<Node*>, nodes, ());
+        DEFINE_STATIC_LOCAL(HashSet<ContainerNode*>, nodes, ());
         return nodes;
     }
 
-    Node* m_root;
+    ContainerNode& m_root;
 };
 
 } // namespace WebCore

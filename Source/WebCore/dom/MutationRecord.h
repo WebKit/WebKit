@@ -38,15 +38,18 @@
 
 namespace WebCore {
 
+class CharacterData;
+class ContainerNode;
+class Element;
 class Node;
 class NodeList;
 class QualifiedName;
 
 class MutationRecord : public RefCounted<MutationRecord> {
 public:
-    static PassRefPtr<MutationRecord> createChildList(PassRefPtr<Node> target, PassRefPtr<NodeList> added, PassRefPtr<NodeList> removed, PassRefPtr<Node> previousSibling, PassRefPtr<Node> nextSibling);
-    static PassRefPtr<MutationRecord> createAttributes(PassRefPtr<Node> target, const QualifiedName&, const AtomicString& oldValue);
-    static PassRefPtr<MutationRecord> createCharacterData(PassRefPtr<Node> target, const String& oldValue);
+    static PassRefPtr<MutationRecord> createChildList(ContainerNode& target, PassRefPtr<NodeList> added, PassRefPtr<NodeList> removed, PassRefPtr<Node> previousSibling, PassRefPtr<Node> nextSibling);
+    static PassRefPtr<MutationRecord> createAttributes(Element& target, const QualifiedName&, const AtomicString& oldValue);
+    static PassRefPtr<MutationRecord> createCharacterData(CharacterData& target, const String& oldValue);
 
     static PassRefPtr<MutationRecord> createWithNullOldValue(PassRefPtr<MutationRecord>);
 

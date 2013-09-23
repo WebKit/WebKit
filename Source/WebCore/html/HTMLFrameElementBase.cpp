@@ -159,7 +159,7 @@ void HTMLFrameElementBase::didNotifySubtreeInsertions(ContainerNode*)
     if (!document().frame())
         return;
 
-    if (!SubframeLoadingDisabler::canLoadFrame(this))
+    if (!SubframeLoadingDisabler::canLoadFrame(*this))
         return;
 
     // JavaScript in src=javascript: and beforeonload can access the renderer

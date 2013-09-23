@@ -1602,7 +1602,7 @@ void QWebElementCollection::append(const QWebElementCollection &other)
     }
     if (!other.d)
         return;
-    Vector<RefPtr<Node> > nodes;
+    Vector<Ref<Node>> nodes;
     RefPtr<NodeList> results[] = { d->m_result, other.d->m_result };
     nodes.reserveInitialCapacity(results[0]->length() + results[1]->length());
 
@@ -1610,7 +1610,7 @@ void QWebElementCollection::append(const QWebElementCollection &other)
         int j = 0;
         Node* n = results[i]->item(j);
         while (n) {
-            nodes.append(n);
+            nodes.append(*n);
             n = results[i]->item(++j);
         }
     }

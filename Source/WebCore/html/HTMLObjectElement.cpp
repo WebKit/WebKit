@@ -284,7 +284,7 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
     // FIXME: I'm not sure it's ever possible to get into updateWidget during a
     // removal, but just in case we should avoid loading the frame to prevent
     // security bugs.
-    if (!SubframeLoadingDisabler::canLoadFrame(this))
+    if (!SubframeLoadingDisabler::canLoadFrame(*this))
         return;
 
     String url = this->url();

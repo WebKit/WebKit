@@ -137,7 +137,7 @@ void XMLErrors::insertErrorMessageBlock()
         RefPtr<Element> body = m_document->createElement(bodyTag, true);
         rootElement->parserAppendChild(body);
 
-        documentElement->parentNode()->parserRemoveChild(documentElement.get());
+        documentElement->parentNode()->parserRemoveChild(*documentElement);
         if (documentElement->attached())
             Style::detachRenderTree(*documentElement);
 

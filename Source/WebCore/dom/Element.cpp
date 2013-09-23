@@ -1436,7 +1436,7 @@ void Element::addShadowRoot(PassRefPtr<ShadowRoot> newShadowRoot)
     shadowRoot->setParentTreeScope(treeScope());
     shadowRoot->distributor().didShadowBoundaryChange(this);
 
-    ChildNodeInsertionNotifier(this).notify(shadowRoot);
+    ChildNodeInsertionNotifier(*this).notify(*shadowRoot);
 
     resetNeedsNodeRenderingTraversalSlowPath();
 
@@ -1464,7 +1464,7 @@ void Element::removeShadowRoot()
     oldRoot->setHostElement(0);
     oldRoot->setParentTreeScope(&document());
 
-    ChildNodeRemovalNotifier(this).notify(oldRoot.get());
+    ChildNodeRemovalNotifier(*this).notify(*oldRoot);
 
     oldRoot->distributor().invalidateDistribution(this);
 }
@@ -2848,8 +2848,8 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
             setNeedsStyleRecalc();
     }
 
-    if (OwnPtr<MutationObserverInterestGroup> recipients = MutationObserverInterestGroup::createForAttributesMutation(this, name))
-        recipients->enqueueMutationRecord(MutationRecord::createAttributes(this, name, oldValue));
+    if (OwnPtr<MutationObserverInterestGroup> recipients = MutationObserverInterestGroup::createForAttributesMutation(*this, name))
+        recipients->enqueueMutationRecord(MutationRecord::createAttributes(*this, name, oldValue));
 
 #if ENABLE(INSPECTOR)
     InspectorInstrumentation::willModifyDOMAttr(&document(), this, oldValue, newValue);

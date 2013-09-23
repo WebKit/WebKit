@@ -1,3 +1,14 @@
+2013-09-22  Sam Weinig  <sam@webkit.org>
+
+        CTTE: Use references more in ContainerNode, ContainerNodeAlgorithms and related classes
+        https://bugs.webkit.org/show_bug.cgi?id=121772
+
+        Reviewed by Andreas Kling.
+
+        * Api/qwebelement.cpp:
+        (QWebElementCollection::append):
+        Update to work with the new StaticNodeList adopt function.
+
 2013-09-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Keep chasing the definition of QAccessibleWidget
