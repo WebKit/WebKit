@@ -62,10 +62,6 @@ private:
     typedef ListHashSetNodeHashFunctions<HashArg> NodeHash;
     typedef ListHashSetTranslator<HashArg> BaseTranslator;
 
-    typedef HashTable<Node*, Node*, IdentityExtractor, NodeHash, NodeTraits, NodeTraits> ImplType;
-    typedef HashTableIterator<Node*, Node*, IdentityExtractor, NodeHash, NodeTraits, NodeTraits> ImplTypeIterator;
-    typedef HashTableConstIterator<Node*, Node*, IdentityExtractor, NodeHash, NodeTraits, NodeTraits> ImplTypeConstIterator;
-
     typedef HashArg HashFunctions;
 
 public:
@@ -91,10 +87,10 @@ public:
     int capacity() const;
     bool isEmpty() const;
 
-    iterator begin();
-    iterator end();
-    const_iterator begin() const;
-    const_iterator end() const;
+    iterator begin() { return makeIterator(m_head); }
+    iterator end() { return makeIterator(nullptr); }
+    const_iterator begin() const { return makeConstIterator(m_head); }
+    const_iterator end() const { return makeConstIterator(nullptr); }
 
     reverse_iterator rbegin() { return reverse_iterator(end()); }
     reverse_iterator rend() { return reverse_iterator(begin()); }
@@ -156,7 +152,7 @@ private:
 
     friend void deleteAllValues<>(const ListHashSet&);
 
-    ImplType m_impl;
+    HashTable<Node*, Node*, IdentityExtractor, NodeHash, NodeTraits, NodeTraits> m_impl;
     Node* m_head;
     Node* m_tail;
     OwnPtr<NodeAllocator> m_allocator;
@@ -413,8 +409,7 @@ inline ListHashSet<T, inlineCapacity, U>::ListHashSet(const ListHashSet& other)
     , m_tail(0)
     , m_allocator(createOwned<NodeAllocator>())
 {
-    const_iterator end = other.end();
-    for (const_iterator it = other.begin(); it != end; ++it)
+    for (auto it = other.begin(), end = other.end(); it != end; ++it)
         add(*it);
 }
 
@@ -457,30 +452,6 @@ template<typename T, size_t inlineCapacity, typename U>
 inline bool ListHashSet<T, inlineCapacity, U>::isEmpty() const
 {
     return m_impl.isEmpty(); 
-}
-
-template<typename T, size_t inlineCapacity, typename U>
-inline typename ListHashSet<T, inlineCapacity, U>::iterator ListHashSet<T, inlineCapacity, U>::begin()
-{
-    return makeIterator(m_head); 
-}
-
-template<typename T, size_t inlineCapacity, typename U>
-inline typename ListHashSet<T, inlineCapacity, U>::iterator ListHashSet<T, inlineCapacity, U>::end()
-{
-    return makeIterator(0);
-}
-
-template<typename T, size_t inlineCapacity, typename U>
-inline typename ListHashSet<T, inlineCapacity, U>::const_iterator ListHashSet<T, inlineCapacity, U>::begin() const
-{
-    return makeConstIterator(m_head); 
-}
-
-template<typename T, size_t inlineCapacity, typename U>
-inline typename ListHashSet<T, inlineCapacity, U>::const_iterator ListHashSet<T, inlineCapacity, U>::end() const
-{
-    return makeConstIterator(0); 
 }
 
 template<typename T, size_t inlineCapacity, typename U>
@@ -544,18 +515,18 @@ inline T ListHashSet<T, inlineCapacity, U>::takeLast()
 }
 
 template<typename T, size_t inlineCapacity, typename U>
-inline typename ListHashSet<T, inlineCapacity, U>::iterator ListHashSet<T, inlineCapacity, U>::find(const ValueType& value)
+inline auto ListHashSet<T, inlineCapacity, U>::find(const ValueType& value) -> iterator
 {
-    ImplTypeIterator it = m_impl.template find<BaseTranslator>(value);
+    auto it = m_impl.template find<BaseTranslator>(value);
     if (it == m_impl.end())
         return end();
     return makeIterator(*it); 
 }
 
 template<typename T, size_t inlineCapacity, typename U>
-inline typename ListHashSet<T, inlineCapacity, U>::const_iterator ListHashSet<T, inlineCapacity, U>::find(const ValueType& value) const
+inline auto ListHashSet<T, inlineCapacity, U>::find(const ValueType& value) const -> const_iterator
 {
-    ImplTypeConstIterator it = m_impl.template find<BaseTranslator>(value);
+    auto it = m_impl.template find<BaseTranslator>(value);
     if (it == m_impl.end())
         return end();
     return makeConstIterator(*it);
@@ -569,9 +540,9 @@ struct ListHashSetTranslatorAdapter {
 
 template<typename ValueType, size_t inlineCapacity, typename U>
 template<typename T, typename HashTranslator>
-inline typename ListHashSet<ValueType, inlineCapacity, U>::iterator ListHashSet<ValueType, inlineCapacity, U>::find(const T& value)
+inline auto ListHashSet<ValueType, inlineCapacity, U>::find(const T& value) -> iterator
 {
-    ImplTypeConstIterator it = m_impl.template find<ListHashSetTranslatorAdapter<HashTranslator> >(value);
+    auto it = m_impl.template find<ListHashSetTranslatorAdapter<HashTranslator>>(value);
     if (it == m_impl.end())
         return end();
     return makeIterator(*it);
@@ -579,9 +550,9 @@ inline typename ListHashSet<ValueType, inlineCapacity, U>::iterator ListHashSet<
 
 template<typename ValueType, size_t inlineCapacity, typename U>
 template<typename T, typename HashTranslator>
-inline typename ListHashSet<ValueType, inlineCapacity, U>::const_iterator ListHashSet<ValueType, inlineCapacity, U>::find(const T& value) const
+inline auto ListHashSet<ValueType, inlineCapacity, U>::find(const T& value) const -> const_iterator
 {
-    ImplTypeConstIterator it = m_impl.template find<ListHashSetTranslatorAdapter<HashTranslator> >(value);
+    auto it = m_impl.template find<ListHashSetTranslatorAdapter<HashTranslator>>(value);
     if (it == m_impl.end())
         return end();
     return makeConstIterator(*it);
@@ -601,47 +572,49 @@ inline bool ListHashSet<T, inlineCapacity, U>::contains(const ValueType& value) 
 }
 
 template<typename T, size_t inlineCapacity, typename U>
-typename ListHashSet<T, inlineCapacity, U>::AddResult ListHashSet<T, inlineCapacity, U>::add(const ValueType &value)
+auto ListHashSet<T, inlineCapacity, U>::add(const ValueType &value) -> AddResult
 {
-    typename ImplType::AddResult result = m_impl.template add<BaseTranslator>(value, m_allocator.get());
+    auto result = m_impl.template add<BaseTranslator>(value, m_allocator.get());
     if (result.isNewEntry)
         appendNode(*result.iterator);
     return AddResult(makeIterator(*result.iterator), result.isNewEntry);
 }
 
 template<typename T, size_t inlineCapacity, typename U>
-typename ListHashSet<T, inlineCapacity, U>::AddResult ListHashSet<T, inlineCapacity, U>::appendOrMoveToLast(const ValueType &value)
+auto ListHashSet<T, inlineCapacity, U>::appendOrMoveToLast(const ValueType &value) -> AddResult
 {
-    typename ImplType::AddResult result = m_impl.template add<BaseTranslator>(value, m_allocator.get());
+    auto result = m_impl.template add<BaseTranslator>(value, m_allocator.get());
     Node* node = *result.iterator;
     if (!result.isNewEntry)
         unlink(node);
     appendNode(node);
+
     return AddResult(makeIterator(*result.iterator), result.isNewEntry);
 }
 
 template<typename T, size_t inlineCapacity, typename U>
-typename ListHashSet<T, inlineCapacity, U>::AddResult ListHashSet<T, inlineCapacity, U>::prependOrMoveToFirst(const ValueType &value)
+auto ListHashSet<T, inlineCapacity, U>::prependOrMoveToFirst(const ValueType &value) -> AddResult
 {
-    typename ImplType::AddResult result = m_impl.template add<BaseTranslator>(value, m_allocator.get());
+    auto result = m_impl.template add<BaseTranslator>(value, m_allocator.get());
     Node* node = *result.iterator;
     if (!result.isNewEntry)
         unlink(node);
     prependNode(node);
+
     return AddResult(makeIterator(*result.iterator), result.isNewEntry);
 }
 
 template<typename T, size_t inlineCapacity, typename U>
-typename ListHashSet<T, inlineCapacity, U>::AddResult ListHashSet<T, inlineCapacity, U>::insertBefore(iterator it, const ValueType& newValue)
+auto ListHashSet<T, inlineCapacity, U>::insertBefore(iterator it, const ValueType& newValue) -> AddResult
 {
-    typename ImplType::AddResult result = m_impl.template add<BaseTranslator>(newValue, m_allocator.get());
+    auto result = m_impl.template add<BaseTranslator>(newValue, m_allocator.get());
     if (result.isNewEntry)
         insertNodeBefore(it.node(), *result.iterator);
     return AddResult(makeIterator(*result.iterator), result.isNewEntry);
 }
 
 template<typename T, size_t inlineCapacity, typename U>
-typename ListHashSet<T, inlineCapacity, U>::AddResult ListHashSet<T, inlineCapacity, U>::insertBefore(const ValueType& beforeValue, const ValueType& newValue)
+auto ListHashSet<T, inlineCapacity, U>::insertBefore(const ValueType& beforeValue, const ValueType& newValue) -> AddResult
 {
     return insertBefore(find(beforeValue), newValue); 
 }
@@ -756,22 +729,21 @@ void ListHashSet<T, inlineCapacity, U>::deleteAllNodes()
 }
 
 template<typename T, size_t inlineCapacity, typename U>
-inline ListHashSetIterator<T, inlineCapacity, U> ListHashSet<T, inlineCapacity, U>::makeIterator(Node* position) 
+inline auto ListHashSet<T, inlineCapacity, U>::makeIterator(Node* position) -> iterator
 {
-    return ListHashSetIterator<T, inlineCapacity, U>(this, position); 
+    return iterator(this, position);
 }
 
 template<typename T, size_t inlineCapacity, typename U>
-inline ListHashSetConstIterator<T, inlineCapacity, U> ListHashSet<T, inlineCapacity, U>::makeConstIterator(Node* position) const
+inline auto ListHashSet<T, inlineCapacity, U>::makeConstIterator(Node* position) const -> const_iterator
 { 
-    return ListHashSetConstIterator<T, inlineCapacity, U>(this, position); 
+    return const_iterator(this, position);
 }
+
 template<bool, typename ValueType, typename HashTableType>
 void deleteAllValues(HashTableType& collection)
 {
-    typedef typename HashTableType::const_iterator iterator;
-    iterator end = collection.end();
-    for (iterator it = collection.begin(); it != end; ++it)
+    for (auto it = collection.begin(), end = collection.end(); it != end; ++it)
         delete (*it)->m_value;
 }
 
