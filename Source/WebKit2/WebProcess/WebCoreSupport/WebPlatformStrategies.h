@@ -32,13 +32,12 @@
 #include <WebCore/PasteboardStrategy.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/PluginStrategy.h>
-#include <WebCore/SharedWorkerStrategy.h>
 #include <WebCore/StorageStrategy.h>
 #include <WebCore/VisitedLinkStrategy.h>
 
 namespace WebKit {
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::StorageStrategy, private WebCore::VisitedLinkStrategy {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::StorageStrategy, private WebCore::VisitedLinkStrategy {
 public:
     static void initialize();
     
@@ -80,9 +79,6 @@ private:
     // WebCore::PluginStrategy
     virtual void refreshPlugins() OVERRIDE;
     virtual void getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&) OVERRIDE;
-
-    // WebCore::SharedWorkerStrategy.
-    virtual bool isAvailable() const OVERRIDE;
 
     // WebCore::StorageStrategy.
     virtual PassRefPtr<WebCore::StorageNamespace> localStorageNamespace(WebCore::PageGroup*) OVERRIDE;

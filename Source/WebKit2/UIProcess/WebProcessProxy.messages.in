@@ -44,8 +44,4 @@ messages -> WebProcessProxy LegacyReceiver {
 #if ENABLE(NETWORK_PROCESS)
     GetNetworkProcessConnection() -> (CoreIPC::Attachment connectionHandle) Delayed
 #endif
-#if ENABLE(SHARED_WORKER_PROCESS)
-    GetSharedWorkerProcessConnection(WTF::String url, WTF::String name) -> (CoreIPC::Attachment connectionHandle) Delayed
-#endif
-
 }

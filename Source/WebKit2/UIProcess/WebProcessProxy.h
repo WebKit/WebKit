@@ -152,9 +152,6 @@ private:
 #if ENABLE(NETWORK_PROCESS)
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
 #endif
-#if ENABLE(SHARED_WORKER_PROCESS)
-    void getSharedWorkerProcessConnection(const String& url, const String& name, PassRefPtr<Messages::WebProcessProxy::GetSharedWorkerProcessConnection::DelayedReply>);
-#endif
 
     // CoreIPC::Connection::Client
     friend class WebConnectionToWebProcess;

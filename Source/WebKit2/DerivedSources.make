@@ -31,7 +31,6 @@ VPATH = \
     $(WebKit2)/Shared/mac \
     $(WebKit2)/Shared/Authentication \
     $(WebKit2)/Shared/Network/CustomProtocols \
-    $(WebKit2)/SharedWorkerProcess \
     $(WebKit2)/WebProcess/ApplicationCache \
     $(WebKit2)/WebProcess/Cookies \
     $(WebKit2)/WebProcess/FullScreen \
@@ -52,7 +51,6 @@ VPATH = \
     $(WebKit2)/UIProcess/Network/CustomProtocols \
     $(WebKit2)/UIProcess/Notifications \
     $(WebKit2)/UIProcess/Plugins \
-    $(WebKit2)/UIProcess/SharedWorkers \
     $(WebKit2)/UIProcess/Storage \
     $(WebKit2)/UIProcess/mac \
 #
@@ -76,8 +74,6 @@ MESSAGE_RECEIVERS = \
     PluginProcessConnectionManager \
     PluginProcessProxy \
     PluginProxy \
-    SharedWorkerProcess \
-    SharedWorkerProcessProxy \
     StorageManager \
     WebApplicationCacheManager \
     WebApplicationCacheManagerProxy \

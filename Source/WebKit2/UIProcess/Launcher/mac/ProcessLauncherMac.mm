@@ -170,11 +170,6 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
         ASSERT_NOT_REACHED();
         return 0;
 #endif
-#if ENABLE(SHARED_WORKER_PROCESS)
-    case ProcessLauncher::SharedWorkerProcess:
-        ASSERT_NOT_REACHED();
-        return 0;
-#endif
     }
 }
 
@@ -398,11 +393,6 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
 #if ENABLE(NETWORK_PROCESS)
     case ProcessLauncher::NetworkProcess:
         processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"NetworkProcess.app"];
-        break;
-#endif
-#if ENABLE(SHARED_WORKER_PROCESS)
-    case ProcessLauncher::SharedWorkerProcess:
-        processPath = [webKit2Bundle pathForAuxiliaryExecutable:@"SharedWorkerProcess.app"];
         break;
 #endif
     }

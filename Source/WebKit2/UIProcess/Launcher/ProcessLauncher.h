@@ -53,9 +53,6 @@ public:
 #if ENABLE(NETWORK_PROCESS)
         NetworkProcess,
 #endif
-#if ENABLE(SHARED_WORKER_PROCESS)
-        SharedWorkerProcess
-#endif
     };
 
     struct LaunchOptions {

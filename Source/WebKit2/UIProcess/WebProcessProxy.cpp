@@ -329,13 +329,6 @@ void WebProcessProxy::getPluginProcessConnection(uint64_t pluginProcessToken, Pa
 }
 #endif
 
-#if ENABLE(SHARED_WORKER_PROCESS)
-void WebProcessProxy::getSharedWorkerProcessConnection(const String& /* url */, const String& /* name */, PassRefPtr<Messages::WebProcessProxy::GetSharedWorkerProcessConnection::DelayedReply>)
-{
-    // FIXME: Implement
-}
-#endif // ENABLE(SHARED_WORKER_PROCESS)
-
 #if ENABLE(NETWORK_PROCESS)
 void WebProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
 {
