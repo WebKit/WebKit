@@ -13,17 +13,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 list(APPEND WebCore_SOURCES
     page/win/FrameGdiWin.cpp
 
-    rendering/RenderThemeWince.cpp
-
     platform/ScrollAnimatorNone.cpp
-
-    platform/network/NetworkStorageSessionStub.cpp
-
-    platform/network/win/CredentialStorageWin.cpp
-    platform/network/win/CookieJarWin.cpp
-    platform/network/win/ProxyServerWin.cpp
-    platform/network/win/ResourceHandleWin.cpp
-    platform/network/win/SocketStreamHandleWin.cpp
 
     platform/graphics/win/DIBPixelData.cpp
     platform/graphics/win/GDIExtras.cpp
@@ -47,18 +37,28 @@ list(APPEND WebCore_SOURCES
     platform/graphics/wince/SharedBitmap.cpp
     platform/graphics/wince/SimpleFontDataWince.cpp
 
+    platform/network/NetworkStorageSessionStub.cpp
+
+    platform/network/win/CookieJarWin.cpp
+    platform/network/win/CredentialStorageWin.cpp
+    platform/network/win/ProxyServerWin.cpp
+    platform/network/win/ResourceHandleWin.cpp
+    platform/network/win/SocketStreamHandleWin.cpp
+
     platform/text/LocaleNone.cpp
 
     platform/text/win/TextCodecWin.cpp
+
+    rendering/RenderThemeWince.cpp
 )
 
 list(APPEND WebCore_LIBRARIES
+    crypt32
+    iphlpapi
     libjpeg
     libpng
     libxml2
     libxslt
     sqlite
-    crypt32
-    iphlpapi
     wininet
 )

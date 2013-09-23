@@ -21,8 +21,8 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
-    accessibility/atk/AccessibilityObjectAtk.cpp
     accessibility/atk/AXObjectCacheAtk.cpp
+    accessibility/atk/AccessibilityObjectAtk.cpp
     accessibility/atk/WebKitAccessibleHyperlink.cpp
     accessibility/atk/WebKitAccessibleInterfaceAction.cpp
     accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
@@ -48,80 +48,30 @@ list(APPEND WebCore_SOURCES
     page/gtk/DragControllerGtk.cpp
     page/gtk/EventHandlerGtk.cpp
 
-    platform/cairo/WidgetBackingStoreCairo.cpp
-
     platform/Cursor.cpp
+    platform/PlatformStrategies.cpp
 
-    platform/audio/gtk/AudioBusGtk.cpp
     platform/audio/gstreamer/AudioDestinationGStreamer.cpp
     platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
     platform/audio/gstreamer/FFTFrameGStreamer.cpp
     platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
 
-    platform/gtk/AsyncFileSystemGtk.cpp
-    platform/gtk/ClipboardUtilitiesGtk.cpp
-    platform/gtk/ContextMenuGtk.cpp
-    platform/gtk/ContextMenuItemGtk.cpp
-    platform/gtk/CursorGtk.cpp
-    platform/gtk/DataObjectGtk.cpp
-    platform/gtk/DragDataGtk.cpp
-    platform/gtk/DragIcon.cpp
-    platform/gtk/DragImageGtk.cpp
-    platform/gtk/ErrorsGtk.cpp
-    platform/gtk/EventLoopGtk.cpp
-    platform/gtk/FileSystemGtk.cpp
-    platform/gtk/GamepadsGtk.cpp
-    platform/gtk/GOwnPtrGtk.cpp
-    platform/gtk/GRefPtrGtk.cpp
-    platform/gtk/GtkClickCounter.cpp
-    platform/gtk/GtkDragAndDropHelper.cpp
-    platform/gtk/GtkInputMethodFilter.cpp
-    platform/gtk/GtkPluginWidget.cpp
-    platform/gtk/GtkPopupMenu.cpp
-    platform/gtk/GtkUtilities.cpp
-    platform/gtk/GtkVersioning.c
-    platform/gtk/KeyBindingTranslator.cpp
-    platform/gtk/LanguageGtk.cpp
-    platform/gtk/LocalizedStringsGtk.cpp
-    platform/gtk/LoggingGtk.cpp
-    platform/gtk/MainFrameScrollbarGtk.cpp
-    platform/gtk/MIMETypeRegistryGtk.cpp
-    platform/gtk/PasteboardGtk.cpp
-    platform/gtk/PasteboardHelper.cpp
-    platform/gtk/PlatformKeyboardEventGtk.cpp
-    platform/gtk/PlatformMouseEventGtk.cpp
-    platform/gtk/PlatformScreenGtk.cpp
-    platform/gtk/PlatformWheelEventGtk.cpp
-    platform/gtk/PopupMenuGtk.cpp
-    platform/gtk/RedirectedXCompositeWindow.cpp
-    platform/gtk/RenderThemeGtk2.cpp
-    platform/gtk/RenderThemeGtk3.cpp
-    platform/gtk/RenderThemeGtk.cpp
-    platform/gtk/RunLoopGtk.cpp
-    platform/gtk/ScrollbarThemeGtk2.cpp
-    platform/gtk/ScrollbarThemeGtk3.cpp
-    platform/gtk/ScrollbarThemeGtk.cpp
-    platform/gtk/ScrollViewGtk.cpp
-    platform/gtk/SearchPopupMenuGtk.cpp
-    platform/gtk/SharedBufferGtk.cpp
-    platform/gtk/SharedTimerGtk.cpp
-    platform/gtk/SoundGtk.cpp
-    platform/gtk/TemporaryLinkStubs.cpp
-    platform/gtk/UserAgentGtk.cpp
-    platform/gtk/WebKitAuthenticationWidget.cpp
-    platform/gtk/WidgetBackingStoreGtkX11.cpp
-    platform/gtk/WidgetGtk.cpp
-    platform/gtk/WidgetRenderingContext.cpp
+    platform/audio/gtk/AudioBusGtk.cpp
+
+    platform/cairo/WidgetBackingStoreCairo.cpp
+
+    platform/graphics/GLContext.cpp
+    platform/graphics/GraphicsContext3DPrivate.cpp
+    platform/graphics/OpenGLShims.cpp
+    platform/graphics/WOFFFileFormat.cpp
 
     platform/graphics/cairo/BitmapImageCairo.cpp
     platform/graphics/cairo/CairoUtilities.cpp
     platform/graphics/cairo/DrawingBufferCairo.cpp
     platform/graphics/cairo/FontCairo.cpp
     platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
-    platform/graphics/GLContext.cpp
     platform/graphics/cairo/GradientCairo.cpp
     platform/graphics/cairo/GraphicsContext3DCairo.cpp
-    platform/graphics/GraphicsContext3DPrivate.cpp
     platform/graphics/cairo/GraphicsContextCairo.cpp
     platform/graphics/cairo/ImageBufferCairo.cpp
     platform/graphics/cairo/ImageCairo.cpp
@@ -138,7 +88,24 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/egl/GLContextEGL.cpp
 
+    platform/graphics/freetype/FontCacheFreeType.cpp
+    platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
+    platform/graphics/freetype/FontPlatformDataFreeType.cpp
+    platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
+    platform/graphics/freetype/SimpleFontDataFreeType.cpp
+
     platform/graphics/glx/GLContextGLX.cpp
+
+    platform/graphics/gstreamer/GRefPtrGStreamer.cpp
+    platform/graphics/gstreamer/GStreamerGWorld.cpp
+    platform/graphics/gstreamer/GStreamerUtilities.cpp
+    platform/graphics/gstreamer/GStreamerVersioning.cpp
+    platform/graphics/gstreamer/ImageGStreamerCairo.cpp
+    platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+    platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
+    platform/graphics/gstreamer/PlatformVideoWindowGtk.cpp
+    platform/graphics/gstreamer/VideoSinkGStreamer.cpp
+    platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
 
     platform/graphics/gtk/ColorGtk.cpp
     platform/graphics/gtk/FullscreenVideoControllerGtk.cpp
@@ -149,35 +116,70 @@ list(APPEND WebCore_SOURCES
     platform/graphics/gtk/IntPointGtk.cpp
     platform/graphics/gtk/IntRectGtk.cpp
 
-    platform/graphics/freetype/FontCacheFreeType.cpp
-    platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
-    platform/graphics/freetype/FontPlatformDataFreeType.cpp
-    platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
-    platform/graphics/freetype/SimpleFontDataFreeType.cpp
-
-    platform/graphics/gstreamer/GRefPtrGStreamer.cpp
-    platform/graphics/gstreamer/GStreamerGWorld.cpp
-    platform/graphics/gstreamer/GStreamerUtilities.cpp
-    platform/graphics/gstreamer/GStreamerVersioning.cpp
-    platform/graphics/gstreamer/ImageGStreamerCairo.cpp
-    platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
-    platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
-    platform/graphics/gstreamer/PlatformVideoWindowGtk.cpp
-    platform/graphics/gstreamer/VideoSinkGStreamer.cpp
-    platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
-
-    platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp
     platform/graphics/harfbuzz/HarfBuzzFace.cpp
+    platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp
     platform/graphics/harfbuzz/HarfBuzzShaper.cpp
 
-    platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
     platform/graphics/opengl/Extensions3DOpenGL.cpp
+    platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
     platform/graphics/opengl/Extensions3DOpenGLES.cpp
-    platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
     platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+    platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
 
-    platform/graphics/OpenGLShims.cpp
-    platform/graphics/WOFFFileFormat.cpp
+    platform/gtk/AsyncFileSystemGtk.cpp
+    platform/gtk/ClipboardUtilitiesGtk.cpp
+    platform/gtk/ContextMenuGtk.cpp
+    platform/gtk/ContextMenuItemGtk.cpp
+    platform/gtk/CursorGtk.cpp
+    platform/gtk/DataObjectGtk.cpp
+    platform/gtk/DragDataGtk.cpp
+    platform/gtk/DragIcon.cpp
+    platform/gtk/DragImageGtk.cpp
+    platform/gtk/ErrorsGtk.cpp
+    platform/gtk/EventLoopGtk.cpp
+    platform/gtk/FileSystemGtk.cpp
+    platform/gtk/GOwnPtrGtk.cpp
+    platform/gtk/GRefPtrGtk.cpp
+    platform/gtk/GamepadsGtk.cpp
+    platform/gtk/GtkClickCounter.cpp
+    platform/gtk/GtkDragAndDropHelper.cpp
+    platform/gtk/GtkInputMethodFilter.cpp
+    platform/gtk/GtkPluginWidget.cpp
+    platform/gtk/GtkPopupMenu.cpp
+    platform/gtk/GtkUtilities.cpp
+    platform/gtk/GtkVersioning.c
+    platform/gtk/KeyBindingTranslator.cpp
+    platform/gtk/LanguageGtk.cpp
+    platform/gtk/LocalizedStringsGtk.cpp
+    platform/gtk/LoggingGtk.cpp
+    platform/gtk/MIMETypeRegistryGtk.cpp
+    platform/gtk/MainFrameScrollbarGtk.cpp
+    platform/gtk/PasteboardGtk.cpp
+    platform/gtk/PasteboardHelper.cpp
+    platform/gtk/PlatformKeyboardEventGtk.cpp
+    platform/gtk/PlatformMouseEventGtk.cpp
+    platform/gtk/PlatformScreenGtk.cpp
+    platform/gtk/PlatformWheelEventGtk.cpp
+    platform/gtk/PopupMenuGtk.cpp
+    platform/gtk/RedirectedXCompositeWindow.cpp
+    platform/gtk/RenderThemeGtk.cpp
+    platform/gtk/RenderThemeGtk2.cpp
+    platform/gtk/RenderThemeGtk3.cpp
+    platform/gtk/RunLoopGtk.cpp
+    platform/gtk/ScrollViewGtk.cpp
+    platform/gtk/ScrollbarThemeGtk.cpp
+    platform/gtk/ScrollbarThemeGtk2.cpp
+    platform/gtk/ScrollbarThemeGtk3.cpp
+    platform/gtk/SearchPopupMenuGtk.cpp
+    platform/gtk/SharedBufferGtk.cpp
+    platform/gtk/SharedTimerGtk.cpp
+    platform/gtk/SoundGtk.cpp
+    platform/gtk/TemporaryLinkStubs.cpp
+    platform/gtk/UserAgentGtk.cpp
+    platform/gtk/WebKitAuthenticationWidget.cpp
+    platform/gtk/WidgetBackingStoreGtkX11.cpp
+    platform/gtk/WidgetGtk.cpp
+    platform/gtk/WidgetRenderingContext.cpp
 
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
 
@@ -204,21 +206,22 @@ list(APPEND WebCore_SOURCES
     platform/network/soup/SoupURIUtils.cpp
     platform/network/soup/SynchronousLoaderClientSoup.cpp
 
-    platform/PlatformStrategies.cpp
-
-    platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
-    platform/text/enchant/TextCheckerEnchant.cpp
     platform/text/LocaleICU.cpp
     platform/text/TextBreakIteratorICU.cpp
     platform/text/TextCodecICU.cpp
     platform/text/TextEncodingDetectorICU.cpp
+
+    platform/text/enchant/TextCheckerEnchant.cpp
+
+    platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
 )
 
 if (ENABLE_NETSCAPE_PLUGIN_API)
     list(APPEND WebCore_SOURCES
         plugins/PluginDatabase.cpp
         plugins/PluginDebug.cpp
-        plugins/PluginPackage.cpp plugins/PluginStream.cpp
+        plugins/PluginPackage.cpp
+        plugins/PluginStream.cpp
         plugins/PluginView.cpp
 
         plugins/gtk/PluginPackageGtk.cpp
@@ -238,30 +241,30 @@ list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
 
 list(APPEND WebCore_LIBRARIES
     ${ATK_LIBRARIES}
-    ${ENCHANT_LIBRARIES}
     ${CAIRO_LIBRARIES}
+    ${ENCHANT_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
     ${FREETYPE_LIBRARIES}
+    ${GLIB_GIO_LIBRARIES}
+    ${GLIB_GMODULE_LIBRARIES}
+    ${GLIB_GOBJECT_LIBRARIES}
+    ${GLIB_LIBRARIES}
+    ${GTK3_LIBRARIES}
+    ${HARFBUZZ_LIBRARIES}
     ${ICU_LIBRARIES}
     ${JPEG_LIBRARIES}
+    ${LIBSOUP_LIBRARIES}
     ${LIBXML2_LIBRARIES}
     ${LIBXSLT_LIBRARIES}
     ${PNG_LIBRARIES}
     ${SQLITE_LIBRARIES}
-    ${GLIB_LIBRARIES}
-    ${GLIB_GIO_LIBRARIES}
-    ${GLIB_GOBJECT_LIBRARIES}
-    ${GLIB_GMODULE_LIBRARIES}
-    ${GTK3_LIBRARIES}
-    ${LIBSOUP_LIBRARIES}
-    ${ZLIB_LIBRARIES}
-    ${HARFBUZZ_LIBRARIES}
     ${WEBP_LIBRARIES}
-    ${XT_LIBRARIES}
     ${X11_X11_LIB}
     ${X11_Xcomposite_LIB}
-    ${X11_Xrender_LIB}
     ${X11_Xdamage_LIB}
+    ${X11_Xrender_LIB}
+    ${XT_LIBRARIES}
+    ${ZLIB_LIBRARIES}
 )
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
@@ -292,9 +295,9 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     )
 
     list(APPEND WebCore_LIBRARIES
-        ${GSTREAMER_LIBRARIES}
-        ${GSTREAMER_BASE_LIBRARIES}
         ${GSTREAMER_APP_LIBRARIES}
+        ${GSTREAMER_BASE_LIBRARIES}
+        ${GSTREAMER_LIBRARIES}
         ${GSTREAMER_PBUTILS_LIBRARIES}
     )
     # Avoiding a GLib deprecation warning due to GStreamer API using deprecated classes.

@@ -48,9 +48,9 @@ list(APPEND WebCore_SOURCES
     platform/win/LocalizedStringsWin.cpp
     platform/win/MIMETypeRegistryWin.cpp
     platform/win/PasteboardWin.cpp
-    platform/win/PopupMenuWin.cpp
     platform/win/PlatformMouseEventWin.cpp
     platform/win/PlatformScreenWin.cpp
+    platform/win/PopupMenuWin.cpp
     platform/win/RunLoopWin.cpp
     platform/win/SSLKeyGeneratorWin.cpp
     platform/win/ScrollbarThemeWin.cpp
@@ -61,8 +61,8 @@ list(APPEND WebCore_SOURCES
     platform/win/SystemInfo.cpp
     platform/win/WCDataObject.cpp
     platform/win/WebCoreInstanceHandle.cpp
-    platform/win/WidgetWin.cpp
     platform/win/WheelEventWin.cpp
+    platform/win/WidgetWin.cpp
 
     plugins/PluginDatabase.cpp
     plugins/PluginPackage.cpp

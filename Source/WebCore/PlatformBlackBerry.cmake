@@ -16,19 +16,26 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 
 # Other sources
 list(APPEND WebCore_SOURCES
-    platform/blackberry/CookieDatabaseBackingStore/CookieDatabaseBackingStore.cpp
     platform/blackberry/AuthenticationChallengeManager.cpp
     platform/blackberry/CookieManager.cpp
     platform/blackberry/CookieMap.cpp
     platform/blackberry/CookieParser.cpp
     platform/blackberry/FileSystemBlackBerry.cpp
     platform/blackberry/ParsedCookie.cpp
+
+    platform/blackberry/CookieDatabaseBackingStore/CookieDatabaseBackingStore.cpp
+
     platform/graphics/WOFFFileFormat.cpp
+
     platform/graphics/opentype/OpenTypeSanitizer.cpp
+
     platform/image-encoders/JPEGImageEncoder.cpp
+
     platform/posix/FileSystemPOSIX.cpp
     platform/posix/SharedBufferPOSIX.cpp
+
     platform/text/LocaleNone.cpp
+
     platform/text/blackberry/TextBreakIteratorInternalICUBlackBerry.cpp
 )
 
@@ -37,6 +44,7 @@ list(APPEND WebCore_SOURCES
     platform/network/MIMESniffing.cpp
     platform/network/NetworkStorageSessionStub.cpp
     platform/network/ProxyServer.cpp
+
     platform/network/blackberry/AutofillBackingStore.cpp
     platform/network/blackberry/BlobStream.cpp
     platform/network/blackberry/CookieJarBlackBerry.cpp
@@ -51,9 +59,10 @@ list(APPEND WebCore_SOURCES
     platform/network/blackberry/ResourceRequestBlackBerry.cpp
     platform/network/blackberry/ResourceResponseBlackBerry.cpp
     platform/network/blackberry/SocketStreamHandleBlackBerry.cpp
-    platform/network/blackberry/rss/RSSAtomParser.cpp
+
     platform/network/blackberry/rss/RSS10Parser.cpp
     platform/network/blackberry/rss/RSS20Parser.cpp
+    platform/network/blackberry/rss/RSSAtomParser.cpp
     platform/network/blackberry/rss/RSSFilterStream.cpp
     platform/network/blackberry/rss/RSSGenerator.cpp
     platform/network/blackberry/rss/RSSParserBase.cpp
@@ -88,11 +97,14 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 # BlackBerry sources
 list(APPEND WebCore_SOURCES
     editing/blackberry/SmartReplaceBlackBerry.cpp
+
     html/shadow/MediaControlsBlackBerry.cpp
+
     page/blackberry/AccessibilityObjectBlackBerry.cpp
     page/blackberry/DragControllerBlackBerry.cpp
     page/blackberry/EventHandlerBlackBerry.cpp
     page/blackberry/SettingsBlackBerry.cpp
+
     platform/blackberry/CursorBlackBerry.cpp
     platform/blackberry/DragDataBlackBerry.cpp
     platform/blackberry/DragImageBlackBerry.cpp
@@ -116,6 +128,7 @@ list(APPEND WebCore_SOURCES
     platform/blackberry/SoundBlackBerry.cpp
     platform/blackberry/TemporaryLinkStubs.cpp
     platform/blackberry/WidgetBlackBerry.cpp
+
     platform/graphics/blackberry/FloatPointBlackBerry.cpp
     platform/graphics/blackberry/FloatRectBlackBerry.cpp
     platform/graphics/blackberry/FloatSizeBlackBerry.cpp
@@ -125,6 +138,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/blackberry/IntRectBlackBerry.cpp
     platform/graphics/blackberry/IntSizeBlackBerry.cpp
     platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp
+
     platform/text/blackberry/StringBlackBerry.cpp
 )
 
@@ -149,8 +163,9 @@ endif ()
 
 if (ENABLE_REQUEST_ANIMATION_FRAME)
     list(APPEND WebCore_SOURCES
-        platform/graphics/blackberry/DisplayRefreshMonitorBlackBerry.cpp
         platform/graphics/DisplayRefreshMonitor.cpp
+
+        platform/graphics/blackberry/DisplayRefreshMonitorBlackBerry.cpp
     )
 endif ()
 
@@ -163,11 +178,13 @@ if (ENABLE_WEBGL)
     list(APPEND WebCore_SOURCES
         platform/graphics/blackberry/DrawingBufferBlackBerry.cpp
         platform/graphics/blackberry/GraphicsContext3DBlackBerry.cpp
-        platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
-        platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
+
+        platform/graphics/gpu/SharedGraphicsContext3D.cpp
+
         platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
         platform/graphics/opengl/Extensions3DOpenGLES.cpp
-        platform/graphics/gpu/SharedGraphicsContext3D.cpp
+        platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+        platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
     )
 endif ()
 
@@ -192,7 +209,7 @@ endif ()
 
 if (ENABLE_TEXT_AUTOSIZING)
     list(APPEND WebCore_SOURCES
-        ${WEBCORE_DIR}/rendering/TextAutosizer.cpp
+        rendering/TextAutosizer.cpp
     )
 endif ()
 
@@ -201,26 +218,28 @@ endif ()
 # Append to WebKit_SOURCES instead of WebCore_SOURCES.
 if (WTF_USE_ACCELERATED_COMPOSITING)
     list(APPEND WebCore_SOURCES
-        ${WEBCORE_DIR}/platform/graphics/GraphicsLayer.cpp
-        ${WEBCORE_DIR}/platform/graphics/GraphicsLayerUpdater.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/CanvasLayerWebKitThread.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/EGLImageLayerWebKitThread.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/EGLImageLayerCompositingThreadClient.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/GraphicsLayerBlackBerry.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/LayerAnimation.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/LayerCompositingThread.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/LayerFilterRenderer.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/LayerRenderer.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/LayerRendererSurface.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/LayerTexture.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/LayerTile.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/LayerTiler.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/LayerWebKitThread.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/PluginLayerWebKitThread.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/TextureCacheCompositingThread.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/WebGLLayerWebKitThread.cpp
-        ${WEBCORE_DIR}/rendering/RenderLayerBacking.cpp
-        ${WEBCORE_DIR}/rendering/RenderLayerCompositor.cpp
+        platform/graphics/GraphicsLayer.cpp
+        platform/graphics/GraphicsLayerUpdater.cpp
+
+        platform/graphics/blackberry/CanvasLayerWebKitThread.cpp
+        platform/graphics/blackberry/EGLImageLayerCompositingThreadClient.cpp
+        platform/graphics/blackberry/EGLImageLayerWebKitThread.cpp
+        platform/graphics/blackberry/GraphicsLayerBlackBerry.cpp
+        platform/graphics/blackberry/LayerAnimation.cpp
+        platform/graphics/blackberry/LayerCompositingThread.cpp
+        platform/graphics/blackberry/LayerFilterRenderer.cpp
+        platform/graphics/blackberry/LayerRenderer.cpp
+        platform/graphics/blackberry/LayerRendererSurface.cpp
+        platform/graphics/blackberry/LayerTexture.cpp
+        platform/graphics/blackberry/LayerTile.cpp
+        platform/graphics/blackberry/LayerTiler.cpp
+        platform/graphics/blackberry/LayerWebKitThread.cpp
+        platform/graphics/blackberry/PluginLayerWebKitThread.cpp
+        platform/graphics/blackberry/TextureCacheCompositingThread.cpp
+        platform/graphics/blackberry/WebGLLayerWebKitThread.cpp
+
+        rendering/RenderLayerBacking.cpp
+        rendering/RenderLayerCompositor.cpp
     )
 endif ()
 

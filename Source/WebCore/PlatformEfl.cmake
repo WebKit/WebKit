@@ -16,8 +16,8 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
-    accessibility/atk/AccessibilityObjectAtk.cpp
     accessibility/atk/AXObjectCacheAtk.cpp
+    accessibility/atk/AccessibilityObjectAtk.cpp
     accessibility/atk/WebKitAccessibleHyperlink.cpp
     accessibility/atk/WebKitAccessibleInterfaceAction.cpp
     accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
@@ -45,20 +45,21 @@ list(APPEND WebCore_SOURCES
     page/efl/DragControllerEfl.cpp
     page/efl/EventHandlerEfl.cpp
 
-    platform/cairo/WidgetBackingStoreCairo.cpp
-
+    platform/ContextMenuItemNone.cpp
+    platform/ContextMenuNone.cpp
     platform/Cursor.cpp
 
     platform/audio/efl/AudioBusEfl.cpp
+
     platform/audio/gstreamer/AudioDestinationGStreamer.cpp
     platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
     platform/audio/gstreamer/FFTFrameGStreamer.cpp
     platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
 
+    platform/cairo/WidgetBackingStoreCairo.cpp
+
     platform/efl/AsyncFileSystemEfl.cpp
     platform/efl/BatteryProviderEfl.cpp
-    platform/ContextMenuNone.cpp
-    platform/ContextMenuItemNone.cpp
     platform/efl/CursorEfl.cpp
     platform/efl/DragDataEfl.cpp
     platform/efl/DragImageEfl.cpp
@@ -81,13 +82,15 @@ list(APPEND WebCore_SOURCES
     platform/efl/PlatformWheelEventEfl.cpp
     platform/efl/RenderThemeEfl.cpp
     platform/efl/RunLoopEfl.cpp
+    platform/efl/ScrollViewEfl.cpp
     platform/efl/ScrollbarEfl.cpp
     platform/efl/ScrollbarThemeEfl.cpp
-    platform/efl/ScrollViewEfl.cpp
     platform/efl/SharedTimerEfl.cpp
     platform/efl/SoundEfl.cpp
     platform/efl/TemporaryLinkStubs.cpp
     platform/efl/WidgetEfl.cpp
+
+    platform/graphics/WOFFFileFormat.cpp
 
     platform/graphics/cairo/BitmapImageCairo.cpp
     platform/graphics/cairo/CairoUtilities.cpp
@@ -126,19 +129,17 @@ list(APPEND WebCore_SOURCES
     platform/graphics/gstreamer/GStreamerVersioning.cpp
     platform/graphics/gstreamer/ImageGStreamerCairo.cpp
     platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp
-    platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
     platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+    platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
     platform/graphics/gstreamer/PlatformVideoWindowEfl.cpp
     platform/graphics/gstreamer/TextCombinerGStreamer.cpp
     platform/graphics/gstreamer/TextSinkGStreamer.cpp
     platform/graphics/gstreamer/VideoSinkGStreamer.cpp
     platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
 
-    platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp
     platform/graphics/harfbuzz/HarfBuzzFace.cpp
+    platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp
     platform/graphics/harfbuzz/HarfBuzzShaper.cpp
-
-    platform/graphics/WOFFFileFormat.cpp
 
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
 
@@ -168,9 +169,11 @@ list(APPEND WebCore_SOURCES
     platform/posix/FileSystemPOSIX.cpp
     platform/posix/SharedBufferPOSIX.cpp
 
-    platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
-    platform/text/enchant/TextCheckerEnchant.cpp
     platform/text/LocaleICU.cpp
+
+    platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
+
+    platform/text/enchant/TextCheckerEnchant.cpp
 )
 
 if (ENABLE_BATTERY_STATUS)
@@ -198,30 +201,30 @@ endif ()
 
 list(APPEND WebCore_LIBRARIES
     ${CAIRO_LIBRARIES}
-    ${ECORE_LIBRARIES}
     ${ECORE_EVAS_LIBRARIES}
     ${ECORE_FILE_LIBRARIES}
+    ${ECORE_LIBRARIES}
     ${ECORE_X_LIBRARIES}
-    ${EO_LIBRARIES}
-    ${E_DBUS_LIBRARIES}
-    ${E_DBUS_EUKIT_LIBRARIES}
     ${EDJE_LIBRARIES}
     ${EEZE_LIBRARIES}
     ${EINA_LIBRARIES}
+    ${EO_LIBRARIES}
     ${EVAS_LIBRARIES}
+    ${E_DBUS_EUKIT_LIBRARIES}
+    ${E_DBUS_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
     ${FREETYPE_LIBRARIES}
+    ${GLIB_GIO_LIBRARIES}
+    ${GLIB_GOBJECT_LIBRARIES}
+    ${GLIB_LIBRARIES}
+    ${HARFBUZZ_LIBRARIES}
     ${JPEG_LIBRARIES}
+    ${LIBSOUP_LIBRARIES}
     ${LIBXML2_LIBRARIES}
     ${LIBXSLT_LIBRARIES}
     ${PNG_LIBRARIES}
     ${SQLITE_LIBRARIES}
-    ${GLIB_LIBRARIES}
-    ${GLIB_GIO_LIBRARIES}
-    ${GLIB_GOBJECT_LIBRARIES}
-    ${LIBSOUP_LIBRARIES}
     ${ZLIB_LIBRARIES}
-    ${HARFBUZZ_LIBRARIES}
 )
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
@@ -258,9 +261,9 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     )
 
     list(APPEND WebCore_LIBRARIES
-        ${GSTREAMER_LIBRARIES}
-        ${GSTREAMER_BASE_LIBRARIES}
         ${GSTREAMER_APP_LIBRARIES}
+        ${GSTREAMER_BASE_LIBRARIES}
+        ${GSTREAMER_LIBRARIES}
         ${GSTREAMER_PBUTILS_LIBRARIES}
     )
     # Avoiding a GLib deprecation warning due to GStreamer API using deprecated classes.
@@ -297,16 +300,22 @@ if (WTF_USE_3D_GRAPHICS)
 
     list(APPEND WebCore_SOURCES
         platform/graphics/cairo/DrawingBufferCairo.cpp
+
         platform/graphics/efl/GraphicsContext3DEfl.cpp
         platform/graphics/efl/GraphicsContext3DPrivate.cpp
+
         platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
         platform/graphics/opengl/GLPlatformContext.cpp
         platform/graphics/opengl/GLPlatformSurface.cpp
         platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
-        platform/graphics/surfaces/GraphicsSurface.cpp
+
         platform/graphics/surfaces/GLTransportSurface.cpp
+        platform/graphics/surfaces/GraphicsSurface.cpp
+
         platform/graphics/surfaces/efl/GraphicsSurfaceCommon.cpp
+
         platform/graphics/surfaces/glx/X11Helper.cpp
+
         platform/graphics/texmap/TextureMapperGL.cpp
         platform/graphics/texmap/TextureMapperShaderProgram.cpp
     )
@@ -333,9 +342,10 @@ if (WTF_USE_3D_GRAPHICS)
         )
     else ()
         list(APPEND WebCore_SOURCES
+            platform/graphics/OpenGLShims.cpp
+
             platform/graphics/opengl/Extensions3DOpenGL.cpp
             platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
-            platform/graphics/OpenGLShims.cpp
         )
     endif ()
 
