@@ -25,13 +25,16 @@
 #include "config.h"
 #include "RenderElement.h"
 
+#include "AXObjectCache.h"
 #include "ContentData.h"
+#include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderLayer.h"
+#include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderMultiColumnBlock.h"
 #include "RenderRegion.h"
@@ -42,12 +45,15 @@
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
 #include "RenderText.h"
+#include "RenderView.h"
 #include "SVGRenderSupport.h"
 
 namespace WebCore {
 
 RenderElement::RenderElement(Element* element)
     : RenderObject(element)
+    , m_firstChild(nullptr)
+    , m_lastChild(nullptr)
 {
 }
 
@@ -136,9 +142,6 @@ RenderElement* RenderElement::createFor(Element& element, RenderStyle& style)
 
 void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
-    ASSERT(children());
-    RenderObjectChildList& children = *this->children();
-
     bool needsTable = false;
 
     if (newChild->isRenderTableCol()) {
@@ -156,7 +159,7 @@ void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
 
     if (needsTable) {
         RenderTable* table;
-        RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : children.lastChild();
+        RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : m_lastChild;
         if (afterChild && afterChild->isAnonymous() && afterChild->isTable() && !afterChild->isBeforeContent())
             table = toRenderTable(afterChild);
         else {
@@ -165,7 +168,7 @@ void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
         }
         table->addChild(newChild);
     } else
-        children.insertChildNode(this, newChild, beforeChild);
+        insertChildInternal(newChild, beforeChild, NotifyChildren);
 
     if (newChild->isText() && newChild->style()->textTransform() == CAPITALIZE)
         toRenderText(newChild)->transformText();
@@ -188,8 +191,139 @@ void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
 
 void RenderElement::removeChild(RenderObject* oldChild)
 {
-    ASSERT(children());
-    children()->removeChildNode(this, oldChild);
+    removeChildInternal(oldChild, NotifyChildren);
+}
+
+void RenderElement::destroyLeftoverChildren()
+{
+    while (firstChild()) {
+        if (firstChild()->isListMarker() || (firstChild()->style()->styleType() == FIRST_LETTER && !firstChild()->isText()))
+            firstChild()->removeFromParent(); // List markers are owned by their enclosing list and so don't get destroyed by this container. Similarly, first letters are destroyed by their remaining text fragment.
+        else if (firstChild()->isRunIn() && firstChild()->node()) {
+            firstChild()->node()->setRenderer(0);
+            firstChild()->node()->setNeedsStyleRecalc();
+            firstChild()->destroy();
+        } else {
+            // Destroy any anonymous children remaining in the render tree, as well as implicit (shadow) DOM elements like those used in the engine-based text fields.
+            if (firstChild()->node())
+                firstChild()->node()->setRenderer(0);
+            firstChild()->destroy();
+        }
+    }
+}
+
+void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* beforeChild, NotifyChildrenType notifyChildren)
+{
+    ASSERT(canHaveChildren());
+    ASSERT(!newChild->parent());
+    ASSERT(!isRenderBlockFlow() || (!newChild->isTableSection() && !newChild->isTableRow() && !newChild->isTableCell()));
+
+    while (beforeChild && beforeChild->parent() && beforeChild->parent() != this)
+        beforeChild = beforeChild->parent();
+
+    // This should never happen, but if it does prevent render tree corruption
+    // where child->parent() ends up being owner but child->nextSibling()->parent()
+    // is not owner.
+    if (beforeChild && beforeChild->parent() != this) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    newChild->setParent(this);
+
+    if (m_firstChild == beforeChild)
+        m_firstChild = newChild;
+
+    if (beforeChild) {
+        RenderObject* previousSibling = beforeChild->previousSibling();
+        if (previousSibling)
+            previousSibling->setNextSibling(newChild);
+        newChild->setPreviousSibling(previousSibling);
+        newChild->setNextSibling(beforeChild);
+        beforeChild->setPreviousSibling(newChild);
+    } else {
+        if (lastChild())
+            lastChild()->setNextSibling(newChild);
+        newChild->setPreviousSibling(lastChild());
+        m_lastChild = newChild;
+    }
+
+    if (!documentBeingDestroyed()) {
+        if (notifyChildren == NotifyChildren)
+            newChild->insertedIntoTree();
+        RenderCounter::rendererSubtreeAttached(newChild);
+    }
+
+    newChild->setNeedsLayoutAndPrefWidthsRecalc();
+    setPreferredLogicalWidthsDirty(true);
+    if (!normalChildNeedsLayout())
+        setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
+
+    if (AXObjectCache* cache = document().axObjectCache())
+        cache->childrenChanged(this);
+}
+
+void RenderElement::removeChildInternal(RenderObject* oldChild, NotifyChildrenType notifyChildren)
+{
+    ASSERT(canHaveChildren());
+    ASSERT(oldChild->parent() == this);
+
+    if (oldChild->isFloatingOrOutOfFlowPositioned())
+        toRenderBox(oldChild)->removeFloatingOrPositionedChildFromBlockLists();
+
+    // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
+    // that a positioned child got yanked). We also repaint, so that the area exposed when the child
+    // disappears gets repainted properly.
+    if (!documentBeingDestroyed() && notifyChildren == NotifyChildren && oldChild->everHadLayout()) {
+        oldChild->setNeedsLayoutAndPrefWidthsRecalc();
+        // We only repaint |oldChild| if we have a RenderLayer as its visual overflow may not be tracked by its parent.
+        if (oldChild->isBody())
+            view().repaintRootContents();
+        else
+            oldChild->repaint();
+    }
+
+    // If we have a line box wrapper, delete it.
+    if (oldChild->isBox())
+        toRenderBox(oldChild)->deleteLineBoxWrapper();
+    else if (oldChild->isLineBreak())
+        toRenderLineBreak(oldChild)->deleteInlineBoxWrapper();
+
+    // If oldChild is the start or end of the selection, then clear the selection to
+    // avoid problems of invalid pointers.
+    // FIXME: The FrameSelection should be responsible for this when it
+    // is notified of DOM mutations.
+    if (!documentBeingDestroyed() && oldChild->isSelectionBorder())
+        view().clearSelection();
+
+    if (!documentBeingDestroyed() && notifyChildren == NotifyChildren)
+        oldChild->willBeRemovedFromTree();
+
+    // WARNING: There should be no code running between willBeRemovedFromTree and the actual removal below.
+    // This is needed to avoid race conditions where willBeRemovedFromTree would dirty the tree's structure
+    // and the code running here would force an untimely rebuilding, leaving |oldChild| dangling.
+
+    if (oldChild->previousSibling())
+        oldChild->previousSibling()->setNextSibling(oldChild->nextSibling());
+    if (oldChild->nextSibling())
+        oldChild->nextSibling()->setPreviousSibling(oldChild->previousSibling());
+
+    if (m_firstChild == oldChild)
+        m_firstChild = oldChild->nextSibling();
+    if (m_lastChild == oldChild)
+        m_lastChild = oldChild->previousSibling();
+
+    oldChild->setPreviousSibling(0);
+    oldChild->setNextSibling(0);
+    oldChild->setParent(0);
+
+    // rendererRemovedFromTree walks the whole subtree. We can improve performance
+    // by skipping this step when destroying the entire tree.
+    if (!documentBeingDestroyed())
+        RenderCounter::rendererRemovedFromTree(oldChild);
+
+    if (AXObjectCache* cache = document().existingAXObjectCache())
+        cache->childrenChanged(this);
 }
 
 static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderElement*& newObject, RenderLayer*& beforeChild)
@@ -346,5 +480,11 @@ void RenderElement::willBeRemovedFromTree()
     RenderObject::willBeRemovedFromTree();
 }
 
+void RenderElement::willBeDestroyed()
+{
+    destroyLeftoverChildren();
+
+    RenderObject::willBeDestroyed();
+}
 
 }

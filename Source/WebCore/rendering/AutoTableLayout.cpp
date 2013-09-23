@@ -49,7 +49,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
     RenderTableCell* fixedContributor = 0;
     RenderTableCell* maxContributor = 0;
 
-    for (RenderObject* child = m_table->children()->firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = m_table->firstChild(); child; child = child->nextSibling()) {
         if (child->isRenderTableCol()){
             // RenderTableCols don't have the concept of preferred logical width, but we need to clear their dirty bits
             // so that if we call setPreferredWidthsDirty(true) on a col or one of its descendants, we'll mark it's
@@ -65,7 +65,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                 if (current.inColSpan || !cell)
                     continue;
 
-                bool cellHasContent = cell->children()->firstChild() || cell->style()->hasBorder() || cell->style()->hasPadding();
+                bool cellHasContent = cell->firstChild() || cell->style()->hasBorder() || cell->style()->hasPadding();
                 if (cellHasContent)
                     columnLayout.emptyCellsOnly = false;
 

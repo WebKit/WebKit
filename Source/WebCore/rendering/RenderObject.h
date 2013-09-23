@@ -32,7 +32,6 @@
 #include "FloatQuad.h"
 #include "LayoutRect.h"
 #include "PaintPhase.h"
-#include "RenderObjectChildList.h"
 #include "RenderStyle.h"
 #include "ScrollBehavior.h"
 #include "StyleInheritedData.h"
@@ -147,8 +146,8 @@ const int showTreeCharacterOffset = 39;
 class RenderObject : public CachedImageClient {
     friend class RenderBlock;
     friend class RenderBlockFlow;
+    friend class RenderElement;
     friend class RenderLayer;
-    friend class RenderObjectChildList;
 public:
     // Anonymous objects should pass the document as their node, and they will then automatically be
     // marked as anonymous in the constructor.
@@ -166,25 +165,9 @@ public:
     RenderObject* nextSibling() const { return m_next; }
 
     // FIXME: These should be renamed slowFirstChild, slowLastChild, etc.
-    // to discourage their use. The virtual call to children inside these
-    // can be slow for hot code paths.
-    // Derived classes like RenderBlock override these non-virtual
-    // functions to make them fast when we already have a more specific pointer type.
-    RenderObject* firstChild() const
-    {
-        if (const RenderObjectChildList* children = this->children())
-            return children->firstChild();
-        return 0;
-    }
-    RenderObject* lastChild() const
-    {
-        if (const RenderObjectChildList* children = this->children())
-            return children->lastChild();
-        return 0;
-    }
-
-    virtual RenderObjectChildList* children() { return 0; }
-    virtual const RenderObjectChildList* children() const { return 0; }
+    // to discourage their use.
+    virtual RenderObject* firstChild() const { return nullptr; }
+    virtual RenderObject* lastChild() const { return nullptr; }
 
     RenderObject* nextInPreOrder() const;
     RenderObject* nextInPreOrder(const RenderObject* stayWithin) const;
@@ -270,7 +253,7 @@ public:
     
     // RenderObject tree manipulation
     //////////////////////////////////////////
-    virtual bool canHaveChildren() const { return children(); }
+    virtual bool canHaveChildren() const = 0;
     virtual bool canHaveGeneratedChildren() const;
     virtual bool createsAnonymousWrapper() const { return false; }
     //////////////////////////////////////////
