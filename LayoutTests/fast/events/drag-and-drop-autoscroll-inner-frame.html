@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<head>
+<style type="text/css">
+#scrollable {
+    height: 200px;
+    overflow: auto;
+    border: solid 3px #cc0000;
+    font-size: 80px;
+}
+</style>
+<script>
+
+var x, y, middleTermScrollOffset;
+var iframe, iframeDocument, draggable;
+
+function setUpTest()
+{
+    if (!window.eventSender) {
+        log('Please run within DumpRenderTree');
+        return;
+    }
+
+    window.internals.settings.setAutoscrollForDragAndDropEnabled(true);
+    testRunner.waitUntilDone();
+    testIt();
+}
+
+function testIt()
+{
+    eventSender.dragMode = false;
+
+    iframe = document.getElementById('scrollable');
+    iframeDocument = iframe.contentDocument;
+    draggable = iframeDocument.getElementById('draggable');
+
+    iframeDocument.addEventListener("scroll", recordScroll);
+
+    // Grab draggable.
+    x = iframe.offsetLeft + draggable.offsetLeft + 7;
+    y = iframe.offsetTop + draggable.offsetTop + 7;
+
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+
+    // Move mouse to the bottom autoscroll border belt.
+    y = iframe.offsetTop + iframe.offsetHeight - 10;
+    eventSender.mouseMoveTo(x, y);
+}
+
+function recordScroll(e)
+{
+    iframeDocument.removeEventListener("scroll", recordScroll);
+    autoscrollTestPart1();
+}
+
+function recordScroll2(e)
+{
+    iframeDocument.removeEventListener("scroll", recordScroll2);
+    autoscrollTestPart2();
+}
+
+function autoscrollTestPart1()
+{
+    if (iframe.contentDocument.body.scrollTop == 0) {
+        testFailed("Autoscroll should have scrolled the iframe downwards, but did not");
+        finishTest();
+        return;
+    }
+
+    testPassed("Autoscroll should have scrolled the iframe downwards, and did.");
+    eventSender.mouseUp();
+    iframeDocument.addEventListener("scroll", recordScroll2);
+
+    middleTermScrollOffset = iframe.contentDocument.body.scrollTop;
+
+    // Grab draggable.
+    x = iframe.offsetLeft + draggable.offsetLeft + 7;
+    y = iframe.offsetTop + draggable.offsetTop + 7 - iframe.contentDocument.body.scrollTop ;
+
+    // Move mouse to the upper autoscroll border belt.
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+
+    y = iframe.offsetTop + 10;
+    eventSender.mouseMoveTo(x, y);
+}
+
+function autoscrollTestPart2()
+{
+    shouldBeTrue("iframe.contentDocument.body.scrollTop < middleTermScrollOffset")
+    finishTest();
+}
+
+function finishTest()
+{
+    eventSender.mouseUp();
+    testRunner.notifyDone();
+}
+
+</script>
+</head>
+<body>
+For manual testing, drag and drop "Drop Me" downwards and then upwards.
+<iframe id="scrollable" src="resources/iframe-drag-and-drop-autoscroll.html"></iframe><br>
+</div>
+<div id="console"></div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Check autoscroll within an inner frame by drag-and-drop');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
