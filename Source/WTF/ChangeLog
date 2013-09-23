@@ -1,3 +1,25 @@
+2013-09-23  Anders Carlsson  <andersca@apple.com>
+
+        Add hash traits for std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=121807
+
+        Reviewed by Antti Koivisto.
+
+        Also, convert the thread map over to using std::unique_ptr instead of OwnPtr.
+
+        * wtf/HashMap.h:
+        Remove unnecessary typedefs and add missing calls to std::forward.
+
+        * wtf/HashTraits.h:
+        Add hash trait for std::unique_ptr.
+        
+        * wtf/RefPtrHashMap.h:
+        Use std::add_lvalue_reference.
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::establishIdentifierForPthreadHandle):
+        Change ThreadMap to be a hash map from ThreadIdentifier to std::unique_ptr<PthreadState>.
+
 2013-09-23  Patrick Gansterer  <paroga@webkit.org>
 
         use NOMINMAX instead of #define min min

@@ -96,7 +96,7 @@ private:
     pthread_t m_pthreadHandle;
 };
 
-typedef HashMap<ThreadIdentifier, OwnPtr<PthreadState> > ThreadMap;
+typedef HashMap<ThreadIdentifier, std::unique_ptr<PthreadState>> ThreadMap;
 
 static Mutex* atomicallyInitializedStaticMutex;
 
@@ -179,7 +179,7 @@ static ThreadIdentifier establishIdentifierForPthreadHandle(const pthread_t& pth
     ASSERT(!identifierByPthreadHandle(pthreadHandle));
     MutexLocker locker(threadMapMutex());
     static ThreadIdentifier identifierCount = 1;
-    threadMap().add(identifierCount, createOwned<PthreadState>(pthreadHandle).release());
+    threadMap().add(identifierCount, std::make_unique<PthreadState>(pthreadHandle));
     return identifierCount++;
 }
 

@@ -121,24 +121,25 @@ namespace WTF {
         static bool isDeletedValue(const T& value) { return value.isHashTableDeletedValue(); }
     };
 
-    template<typename P> struct HashTraits<OwnPtr<P> > : SimpleClassHashTraits<OwnPtr<P> > {
+    template<typename T, typename Deleter> struct HashTraits<std::unique_ptr<T, Deleter>> : SimpleClassHashTraits<std::unique_ptr<T>> {
         typedef std::nullptr_t EmptyValueType;
-
         static EmptyValueType emptyValue() { return nullptr; }
 
-        typedef PassOwnPtr<P> PassInType;
-        static void store(PassOwnPtr<P> value, OwnPtr<P>& storage) { storage = value; }
-
-        typedef PassOwnPtr<P> PassOutType;
-        static PassOwnPtr<P> passOut(OwnPtr<P>& value) { return value.release(); }
-        static PassOwnPtr<P> passOut(std::nullptr_t) { return nullptr; }
-
-        typedef typename OwnPtr<P>::PtrType PeekType;
-        static PeekType peek(const OwnPtr<P>& value) { return value.get(); }
-        static PeekType peek(std::nullptr_t) { return 0; }
+        typedef T* PeekType;
+        static T* peek(const std::unique_ptr<T, Deleter>& value) { return value.get(); }
+        static T* peek(std::nullptr_t) { return nullptr; }
     };
 
-    template<typename P> struct HashTraits<RefPtr<P> > : SimpleClassHashTraits<RefPtr<P> > {
+    template<typename T> struct HashTraits<OwnPtr<T>> : SimpleClassHashTraits<OwnPtr<T>> {
+        typedef std::nullptr_t EmptyValueType;
+        static EmptyValueType emptyValue() { return nullptr; }
+
+        typedef T* PeekType;
+        static T* peek(const OwnPtr<T>& value) { return value.get(); }
+        static T* peek(std::nullptr_t) { return nullptr; }
+    };
+
+    template<typename P> struct HashTraits<RefPtr<P>> : SimpleClassHashTraits<RefPtr<P>> {
         static P* emptyValue() { return 0; }
 
         typedef PassRefPtr<P> PassInType;
@@ -173,7 +174,7 @@ namespace WTF {
     }
 
     template<typename FirstTraitsArg, typename SecondTraitsArg>
-    struct PairHashTraits : GenericHashTraits<std::pair<typename FirstTraitsArg::TraitType, typename SecondTraitsArg::TraitType> > {
+    struct PairHashTraits : GenericHashTraits<std::pair<typename FirstTraitsArg::TraitType, typename SecondTraitsArg::TraitType>> {
         typedef FirstTraitsArg FirstTraits;
         typedef SecondTraitsArg SecondTraits;
         typedef std::pair<typename FirstTraits::TraitType, typename SecondTraits::TraitType> TraitType;
@@ -191,7 +192,7 @@ namespace WTF {
     };
 
     template<typename First, typename Second>
-    struct HashTraits<std::pair<First, Second> > : public PairHashTraits<HashTraits<First>, HashTraits<Second> > { };
+    struct HashTraits<std::pair<First, Second>> : public PairHashTraits<HashTraits<First>, HashTraits<Second>> { };
 
     template<typename KeyTypeArg, typename ValueTypeArg>
     struct KeyValuePair {
@@ -220,7 +221,7 @@ namespace WTF {
     };
 
     template<typename KeyTraitsArg, typename ValueTraitsArg>
-    struct KeyValuePairHashTraits : GenericHashTraits<KeyValuePair<typename KeyTraitsArg::TraitType, typename ValueTraitsArg::TraitType> > {
+    struct KeyValuePairHashTraits : GenericHashTraits<KeyValuePair<typename KeyTraitsArg::TraitType, typename ValueTraitsArg::TraitType>> {
         typedef KeyTraitsArg KeyTraits;
         typedef ValueTraitsArg ValueTraits;
         typedef KeyValuePair<typename KeyTraits::TraitType, typename ValueTraits::TraitType> TraitType;
@@ -238,7 +239,7 @@ namespace WTF {
     };
 
     template<typename Key, typename Value>
-    struct HashTraits<KeyValuePair<Key, Value> > : public KeyValuePairHashTraits<HashTraits<Key>, HashTraits<Value> > { };
+    struct HashTraits<KeyValuePair<Key, Value>> : public KeyValuePairHashTraits<HashTraits<Key>, HashTraits<Value>> { };
 
     template<typename T>
     struct NullableHashTraits : public HashTraits<T> {

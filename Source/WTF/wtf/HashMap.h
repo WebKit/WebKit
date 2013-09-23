@@ -27,13 +27,6 @@ namespace WTF {
 
     template<typename KeyTraits, typename MappedTraits> struct HashMapValueTraits;
 
-    template<typename T> struct ReferenceTypeMaker {
-        typedef T& ReferenceType;
-    };
-    template<typename T> struct ReferenceTypeMaker<T&> {
-        typedef T& ReferenceType;
-    };
-
     template<typename T> struct KeyValuePairKeyExtractor {
         static const typename T::KeyType& extract(const T& p) { return p.key; }
     };
@@ -53,11 +46,7 @@ namespace WTF {
         typedef typename ValueTraits::TraitType ValueType;
 
     private:
-        typedef typename MappedTraits::PassInType MappedPassInType;
-        typedef typename MappedTraits::PassOutType MappedPassOutType;
         typedef typename MappedTraits::PeekType MappedPeekType;
-
-        typedef typename ReferenceTypeMaker<MappedPassInType>::ReferenceType MappedPassInReferenceType;
 
         typedef HashArg HashFunctions;
 
@@ -383,14 +372,14 @@ namespace WTF {
     template<typename T>
     auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::add(const KeyType& key, T&& mapped) -> AddResult
     {
-        return inlineAdd(key, mapped);
+        return inlineAdd(key, std::forward<T>(mapped));
     }
 
     template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
     template<typename T>
     auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::add(KeyType&& key, T&& mapped) -> AddResult
     {
-        return inlineAdd(std::move(key), mapped);
+        return inlineAdd(std::move(key), std::forward<T>(mapped));
     }
 
     template<typename T, typename U, typename V, typename W, typename MappedTraits>

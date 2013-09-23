@@ -47,7 +47,7 @@ namespace WTF {
         typedef typename MappedTraits::PassOutType MappedPassOutType;
         typedef typename MappedTraits::PeekType MappedPeekType;
 
-        typedef typename ReferenceTypeMaker<MappedPassInType>::ReferenceType MappedPassInReferenceType;
+        typedef typename std::add_lvalue_reference<MappedPassInType>::type MappedPassInReferenceType;
         
         typedef HashArg HashFunctions;
 
