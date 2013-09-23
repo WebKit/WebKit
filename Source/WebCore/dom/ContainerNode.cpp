@@ -894,8 +894,8 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
     // find the next text/image child, to get a position
     while (o) {
         p = o;
-        if (o->firstChild())
-            o = o->firstChild();
+        if (RenderObject* child = o->firstChildSlow())
+            o = child;
         else if (o->nextSibling())
             o = o->nextSibling();
         else {
@@ -954,8 +954,8 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
 
     // find the last text/image child, to get a position
     while (o) {
-        if (o->lastChild())
-            o = o->lastChild();
+        if (RenderObject* child = o->lastChildSlow())
+            o = child;
         else if (o->previousSibling())
             o = o->previousSibling();
         else {

@@ -642,7 +642,7 @@ static inline RenderText* firstRenderTextInFirstLetter(RenderObject* firstLetter
         return 0;
 
     // FIXME: Should this check descendent objects?
-    for (RenderObject* current = firstLetter->firstChild(); current; current = current->nextSibling()) {
+    for (RenderObject* current = firstLetter->firstChildSlow(); current; current = current->nextSibling()) {
         if (current->isText())
             return toRenderText(current);
     }

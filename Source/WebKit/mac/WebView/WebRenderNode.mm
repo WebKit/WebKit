@@ -86,7 +86,7 @@ static WebRenderNode *copyRenderNode(RenderObject*);
 static WebRenderNode *copyRenderNode(RenderObject* node)
 {
     NSMutableArray *children = [[NSMutableArray alloc] init];
-    for (RenderObject* child = node->firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = node->firstChildSlow(); child; child = child->nextSibling()) {
         WebRenderNode *childCopy = copyRenderNode(child);
         [children addObject:childCopy];
         [childCopy release];

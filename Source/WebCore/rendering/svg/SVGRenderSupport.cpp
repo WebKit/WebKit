@@ -145,7 +145,7 @@ static inline void updateObjectBoundingBox(FloatRect& objectBoundingBox, bool& o
     objectBoundingBox.uniteEvenIfEmpty(otherBoundingBox);
 }
 
-void SVGRenderSupport::computeContainerBoundingBoxes(const RenderObject* container, FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, FloatRect& strokeBoundingBox, FloatRect& repaintBoundingBox)
+void SVGRenderSupport::computeContainerBoundingBoxes(const RenderElement* container, FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, FloatRect& strokeBoundingBox, FloatRect& repaintBoundingBox)
 {
     objectBoundingBox = FloatRect();
     objectBoundingBoxValid = false;
@@ -195,7 +195,7 @@ static inline void invalidateResourcesOfChildren(RenderObject* start)
     if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(start))
         resources->removeClientFromCache(start, false);
 
-    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling())
+    for (RenderObject* child = start->firstChildSlow(); child; child = child->nextSibling())
         invalidateResourcesOfChildren(child);
 }
 
@@ -233,7 +233,7 @@ void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
     bool needsBoundariesUpdate = start->needsBoundariesUpdate();
     HashSet<RenderObject*> notlayoutedObjects;
 
-    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = start->firstChildSlow(); child; child = child->nextSibling()) {
         bool needsLayout = selfNeedsLayout;
         bool childEverHadLayout = child->everHadLayout();
 

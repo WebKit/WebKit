@@ -106,7 +106,7 @@ void SVGTextLayoutAttributesBuilder::collectTextPositioningElements(RenderObject
 {
     ASSERT(!start->isSVGText() || m_textPositions.isEmpty());
 
-    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) { 
+    for (RenderObject* child = start->firstChildSlow(); child; child = child->nextSibling()) {
         if (child->isSVGInlineText()) {
             processRenderSVGInlineText(toRenderSVGInlineText(child), m_textLength, lastCharacter);
             continue;

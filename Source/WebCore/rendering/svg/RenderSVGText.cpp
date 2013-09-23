@@ -140,7 +140,7 @@ static inline bool findPreviousAndNextAttributes(RenderObject* start, RenderSVGI
     ASSERT(start);
     ASSERT(locateElement);
     // FIXME: Make this iterative.
-    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = start->firstChildSlow(); child; child = child->nextSibling()) {
         if (child->isSVGInlineText()) {
             RenderSVGInlineText* text = toRenderSVGInlineText(child);
             if (locateElement != text) {

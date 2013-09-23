@@ -144,7 +144,7 @@ void InspectorLayerTreeAgent::gatherLayersUsingRenderObjectHierarchy(ErrorString
         return;
     }
 
-    for (renderer = renderer->firstChild(); renderer; renderer = renderer->nextSibling())
+    for (renderer = renderer->firstChildSlow(); renderer; renderer = renderer->nextSibling())
         gatherLayersUsingRenderObjectHierarchy(errorString, renderer, layers);
 }
 

@@ -215,7 +215,7 @@ void RenderObject::setFlowThreadStateIncludingDescendants(FlowThreadState state)
 {
     setFlowThreadState(state);
 
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling()) {
         // If the child is a fragmentation context it already updated the descendants flag accordingly.
         if (child->isRenderFlowThread())
             continue;
@@ -244,7 +244,7 @@ void RenderObject::removeFromParent()
 
 RenderObject* RenderObject::nextInPreOrder() const
 {
-    if (RenderObject* o = firstChild())
+    if (RenderObject* o = firstChildSlow())
         return o;
 
     return nextInPreOrderAfterChildren();
@@ -266,7 +266,7 @@ RenderObject* RenderObject::nextInPreOrderAfterChildren() const
 
 RenderObject* RenderObject::nextInPreOrder(const RenderObject* stayWithin) const
 {
-    if (RenderObject* o = firstChild())
+    if (RenderObject* o = firstChildSlow())
         return o;
 
     return nextInPreOrderAfterChildren(stayWithin);
@@ -290,8 +290,8 @@ RenderObject* RenderObject::nextInPreOrderAfterChildren(const RenderObject* stay
 RenderObject* RenderObject::previousInPreOrder() const
 {
     if (RenderObject* o = previousSibling()) {
-        while (o->lastChild())
-            o = o->lastChild();
+        while (RenderObject* last = o->lastChildSlow())
+            o = last;
         return o;
     }
 
@@ -308,7 +308,7 @@ RenderObject* RenderObject::previousInPreOrder(const RenderObject* stayWithin) c
 
 RenderObject* RenderObject::childAt(unsigned index) const
 {
-    RenderObject* child = firstChild();
+    RenderObject* child = firstChildSlow();
     for (unsigned i = 0; child && i < index; i++)
         child = child->nextSibling();
     return child;
@@ -316,10 +316,10 @@ RenderObject* RenderObject::childAt(unsigned index) const
 
 RenderObject* RenderObject::firstLeafChild() const
 {
-    RenderObject* r = firstChild();
+    RenderObject* r = firstChildSlow();
     while (r) {
         RenderObject* n = 0;
-        n = r->firstChild();
+        n = r->firstChildSlow();
         if (!n)
             break;
         r = n;
@@ -329,10 +329,10 @@ RenderObject* RenderObject::firstLeafChild() const
 
 RenderObject* RenderObject::lastLeafChild() const
 {
-    RenderObject* r = lastChild();
+    RenderObject* r = lastChildSlow();
     while (r) {
         RenderObject* n = 0;
-        n = r->lastChild();
+        n = r->lastChildSlow();
         if (!n)
             break;
         r = n;
@@ -1228,7 +1228,7 @@ void RenderObject::addAbsoluteRectForLayer(LayoutRect& result)
 {
     if (hasLayer())
         result.unite(absoluteBoundingBoxRectIgnoringTransforms());
-    for (RenderObject* current = firstChild(); current; current = current->nextSibling())
+    for (RenderObject* current = firstChildSlow(); current; current = current->nextSibling())
         current->addAbsoluteRectForLayer(result);
 }
 
@@ -1237,7 +1237,7 @@ LayoutRect RenderObject::paintingRootRect(LayoutRect& topLevelRect)
 {
     LayoutRect result = absoluteBoundingBoxRectIgnoringTransforms();
     topLevelRect = result;
-    for (RenderObject* current = firstChild(); current; current = current->nextSibling())
+    for (RenderObject* current = firstChildSlow(); current; current = current->nextSibling())
         current->addAbsoluteRectForLayer(result);
     return result;
 }
@@ -1591,7 +1591,7 @@ void RenderObject::showRenderTreeAndMark(const RenderObject* markedObject1, cons
     if (!this)
         return;
 
-    for (const RenderObject* child = firstChild(); child; child = child->nextSibling())
+    for (const RenderObject* child = firstChildSlow(); child; child = child->nextSibling())
         child->showRenderTreeAndMark(markedObject1, markedLabel1, markedObject2, markedLabel2, depth + 1);
 }
 
@@ -1779,7 +1779,9 @@ void RenderObject::setPseudoStyle(PassRefPtr<RenderStyle> pseudoStyle)
 
 inline bool RenderObject::hasImmediateNonWhitespaceTextChild() const
 {
-    for (const RenderObject* r = firstChild(); r; r = r->nextSibling()) {
+    if (isText())
+        return false;
+    for (const RenderObject* r = toRenderElement(this)->firstChild(); r; r = r->nextSibling()) {
         if (r->isText() && !toRenderText(r)->isAllCollapsibleWhitespace())
             return true;
     }
@@ -2015,7 +2017,7 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 void RenderObject::propagateStyleToAnonymousChildren(bool blockChildrenOnly)
 {
     // FIXME: We could save this call when the change only affected non-inherited properties.
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling()) {
         if (!child->isAnonymous() || child->style()->styleType() != NOPSEUDO)
             continue;
 
@@ -2515,7 +2517,7 @@ void RenderObject::removeFromRenderFlowThread()
 
 void RenderObject::removeFromRenderFlowThreadRecursive(RenderFlowThread* renderFlowThread)
 {
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling())
+    for (RenderObject* child = firstChildSlow(); child; child = child->nextSibling())
         child->removeFromRenderFlowThreadRecursive(renderFlowThread);
 
     RenderFlowThread* localFlowThread = renderFlowThread;
@@ -2535,7 +2537,7 @@ void RenderObject::destroyAndCleanupAnonymousWrappers()
     }
 
     RenderObject* destroyRoot = this;
-    for (RenderObject* destroyRootParent = destroyRoot->parent(); destroyRootParent && destroyRootParent->isAnonymous(); destroyRoot = destroyRootParent, destroyRootParent = destroyRootParent->parent()) {
+    for (RenderElement* destroyRootParent = destroyRoot->parent(); destroyRootParent && destroyRootParent->isAnonymous(); destroyRoot = destroyRootParent, destroyRootParent = destroyRootParent->parent()) {
         // Currently we only remove anonymous cells' and table sections' wrappers but we should remove all unneeded
         // wrappers. See http://webkit.org/b/52123 as an example where this is needed.
         if (!destroyRootParent->isTableCell() && !destroyRootParent->isTableSection())
@@ -2614,7 +2616,7 @@ void RenderObject::updateDragState(bool dragOn)
     setIsDragging(dragOn);
     if (valueChanged && node() && (style()->affectedByDrag() || (node()->isElementNode() && toElement(node())->childrenAffectedByDrag())))
         node()->setNeedsStyleRecalc();
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
+    for (RenderObject* curr = firstChildSlow(); curr; curr = curr->nextSibling())
         curr->updateDragState(dragOn);
 }
 
@@ -2687,7 +2689,7 @@ void RenderObject::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
-    RenderObject* child = firstChild();
+    RenderObject* child = firstChildSlow();
     while (child) {
         child->layoutIfNeeded();
         ASSERT(!child->needsLayout());
@@ -2912,7 +2914,7 @@ void RenderObject::collectAnnotatedRegions(Vector<AnnotatedRegionValue>& regions
         return;
 
     addAnnotatedRegions(regions);
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
+    for (RenderObject* curr = toRenderElement(this)->firstChild(); curr; curr = curr->nextSibling())
         curr->collectAnnotatedRegions(regions);
 }
 #endif

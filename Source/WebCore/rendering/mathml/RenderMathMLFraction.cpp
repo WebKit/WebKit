@@ -123,7 +123,7 @@ RenderMathMLOperator* RenderMathMLFraction::unembellishedOperator()
     RenderObject* numeratorWrapper = firstChild();
     if (!numeratorWrapper)
         return 0;
-    RenderObject* numerator = numeratorWrapper->firstChild();
+    RenderObject* numerator = numeratorWrapper->firstChildSlow();
     if (!numerator || !numerator->isRenderMathMLBlock())
         return 0;
     return toRenderMathMLBlock(numerator)->unembellishedOperator();

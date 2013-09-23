@@ -137,7 +137,7 @@ int FixedTableLayout::calcWidthArray()
     unsigned currentColumn = 0;
 
     RenderObject* firstRow = section->firstChild();
-    for (RenderObject* child = firstRow->firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = firstRow->firstChildSlow(); child; child = child->nextSibling()) {
         if (!child->isTableCell())
             continue;
 

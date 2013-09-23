@@ -90,7 +90,7 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
         return;
 
     m_children = MutableArray::create();
-    for (RenderObject* coreChild = renderer->firstChild(); coreChild; coreChild = coreChild->nextSibling()) {
+    for (RenderObject* coreChild = renderer->firstChildSlow(); coreChild; coreChild = coreChild->nextSibling()) {
         RefPtr<WebRenderObject> child = adoptRef(new WebRenderObject(coreChild, shouldIncludeDescendants));
         m_children->append(child.get());
     }

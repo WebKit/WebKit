@@ -4082,14 +4082,13 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point)
         adjustedPoint.moveBy(location());
 
     for (RenderObject* renderObject = firstChild(); renderObject; renderObject = renderObject->nextSibling()) {
-        if ((!renderObject->firstChild() && !renderObject->isInline() && !renderObject->isRenderBlockFlow() )
-            || renderObject->style()->visibility() != VISIBLE)
-            continue;
-        
         if (!renderObject->isBox())
             continue;
-        
         RenderBox* renderer = toRenderBox(renderObject);
+
+        if ((!renderer->firstChild() && !renderer->isInline() && !renderer->isRenderBlockFlow() )
+            || renderer->style()->visibility() != VISIBLE)
+            continue;
 
         LayoutUnit top = renderer->borderTop() + renderer->paddingTop() + (isTableRow() ? LayoutUnit() : renderer->y());
         LayoutUnit bottom = top + renderer->contentHeight();

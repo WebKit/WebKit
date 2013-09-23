@@ -176,7 +176,7 @@ static inline RenderObject* firstChildInContinuation(RenderObject* renderer)
     while (r) {
         if (r->isRenderBlock())
             return r;
-        if (RenderObject* child = r->firstChild())
+        if (RenderObject* child = r->firstChildSlow())
             return child;
         r = toRenderInline(r)->continuation(); 
     }
@@ -186,7 +186,7 @@ static inline RenderObject* firstChildInContinuation(RenderObject* renderer)
 
 static inline RenderObject* firstChildConsideringContinuation(RenderObject* renderer)
 {
-    RenderObject* firstChild = renderer->firstChild();
+    RenderObject* firstChild = renderer->firstChildSlow();
 
     if (!firstChild && isInlineWithContinuation(renderer))
         firstChild = firstChildInContinuation(renderer);
@@ -197,7 +197,7 @@ static inline RenderObject* firstChildConsideringContinuation(RenderObject* rend
 
 static inline RenderObject* lastChildConsideringContinuation(RenderObject* renderer)
 {
-    RenderObject* lastChild = renderer->lastChild();
+    RenderObject* lastChild = renderer->lastChildSlow();
     RenderObject* prev;
     RenderObject* cur = renderer;
 
@@ -207,7 +207,7 @@ static inline RenderObject* lastChildConsideringContinuation(RenderObject* rende
     while (cur) {
         prev = cur;
 
-        if (RenderObject* lc = cur->lastChild())
+        if (RenderObject* lc = cur->lastChildSlow())
             lastChild = lc;
 
         if (cur->isRenderInline()) {
@@ -325,7 +325,8 @@ static inline RenderObject* childBeforeConsideringContinuations(RenderInline* r,
 
 static inline bool firstChildIsInlineContinuation(RenderObject* renderer)
 {
-    return renderer->firstChild() && renderer->firstChild()->isInlineElementContinuation();
+    RenderObject* child = renderer->firstChildSlow();
+    return child && child->isInlineElementContinuation();
 }
 
 AccessibilityObject* AccessibilityRenderObject::previousSibling() const
@@ -344,9 +345,9 @@ AccessibilityObject* AccessibilityRenderObject::previousSibling() const
     // Case 2: Anonymous block parent of the end of a continuation - skip all the way to before
     // the parent of the start, since everything in between will be linked up via the continuation.
     else if (m_renderer->isAnonymousBlock() && firstChildIsInlineContinuation(m_renderer)) {
-        RenderObject* firstParent = startOfContinuations(m_renderer->firstChild())->parent();
+        RenderObject* firstParent = startOfContinuations(m_renderer->firstChildSlow())->parent();
         while (firstChildIsInlineContinuation(firstParent))
-            firstParent = startOfContinuations(firstParent->firstChild())->parent();
+            firstParent = startOfContinuations(firstParent->firstChildSlow())->parent();
         previousSibling = firstParent->previousSibling();
     }
 
@@ -367,7 +368,8 @@ AccessibilityObject* AccessibilityRenderObject::previousSibling() const
 
 static inline bool lastChildHasContinuation(RenderObject* renderer)
 {
-    return renderer->lastChild() && isInlineWithContinuation(renderer->lastChild());
+    RenderObject* child = renderer->lastChildSlow();
+    return child && isInlineWithContinuation(child);
 }
 
 AccessibilityObject* AccessibilityRenderObject::nextSibling() const
@@ -386,9 +388,9 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     // Case 2: Anonymous block parent of the start of a continuation - skip all the way to
     // after the parent of the end, since everything in between will be linked up via the continuation.
     else if (m_renderer->isAnonymousBlock() && lastChildHasContinuation(m_renderer)) {
-        RenderObject* lastParent = endOfContinuations(m_renderer->lastChild())->parent();
+        RenderObject* lastParent = endOfContinuations(m_renderer->lastChildSlow())->parent();
         while (lastChildHasContinuation(lastParent))
-            lastParent = endOfContinuations(lastParent->lastChild())->parent();
+            lastParent = endOfContinuations(lastParent->lastChildSlow())->parent();
         nextSibling = lastParent->nextSibling();
     }
 
@@ -449,7 +451,7 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
         parent = startOfConts;
     
     // Case 3: The first sibling is the beginning of a continuation chain. Find the origin of that continuation.
-    else if (parent && (firstChild = parent->firstChild()) && firstChild->node()) {
+    else if (parent && (firstChild = parent->firstChildSlow()) && firstChild->node()) {
         // Get the node's renderer and follow that continuation chain until the first child is found
         RenderObject* nodeRenderFirstChild = firstChild->node()->renderer();
         while (nodeRenderFirstChild != firstChild) {
@@ -459,9 +461,10 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
                     break;
                 }
             }
-            if (firstChild == parent->firstChild())
+            RenderObject* parentFirstChild = parent->firstChildSlow();
+            if (firstChild == parentFirstChild)
                 break;
-            firstChild = parent->firstChild();
+            firstChild = parentFirstChild;
             if (!firstChild->node())
                 break;
             nodeRenderFirstChild = firstChild->node()->renderer();
@@ -3363,7 +3366,7 @@ String AccessibilityRenderObject::passwordFieldValue() const
     // Look for the RenderText object in the RenderObject tree for this input field.
     RenderObject* renderer = node()->renderer();
     while (renderer && !renderer->isText())
-        renderer = renderer->firstChild();
+        renderer = toRenderElement(renderer)->firstChild();
 
     if (!renderer || !renderer->isText())
         return String();

@@ -854,7 +854,7 @@ static int boundingBoxLogicalHeight(RenderObject *o, const IntRect &rect)
 bool Position::hasRenderedNonAnonymousDescendantsWithHeight(RenderObject* renderer)
 {
     RenderObject* stop = renderer->nextInPreOrderAfterChildren();
-    for (RenderObject *o = renderer->firstChild(); o && o != stop; o = o->nextInPreOrder())
+    for (RenderObject *o = renderer->firstChildSlow(); o && o != stop; o = o->nextInPreOrder())
         if (o->nonPseudoNode()) {
             if ((o->isText() && boundingBoxLogicalHeight(o, toRenderText(o)->linesBoundingBox()))
                 || (o->isLineBreak() && boundingBoxLogicalHeight(o, toRenderLineBreak(o)->linesBoundingBox()))
@@ -1134,9 +1134,9 @@ void Position::getInlineBoxAndOffset(EAffinity affinity, InlineBox*& inlineBox, 
 
 static bool isNonTextLeafChild(RenderObject* object)
 {
-    if (object->firstChild())
-        return false;
     if (object->isText())
+        return false;
+    if (toRenderElement(object)->firstChild())
         return false;
     return true;
 }

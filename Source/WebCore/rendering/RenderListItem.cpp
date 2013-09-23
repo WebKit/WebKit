@@ -260,7 +260,7 @@ void RenderListItem::updateValue()
     }
 }
 
-static RenderObject* firstNonMarkerChild(RenderObject* parent)
+static RenderObject* firstNonMarkerChild(RenderBlock* parent)
 {
     RenderObject* result = parent->firstChild();
     while (result && result->isListMarker())

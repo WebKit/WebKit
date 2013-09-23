@@ -896,7 +896,7 @@ bool isEmptyTableCell(const Node* node)
         return false;
 
     // Check that the table cell contains no child renderers except for perhaps a single <br>.
-    RenderObject* childRenderer = renderer->firstChild();
+    RenderObject* childRenderer = toRenderElement(renderer)->firstChild();
     if (!childRenderer)
         return true;
     if (!childRenderer->isBR())

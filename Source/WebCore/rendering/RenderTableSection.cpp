@@ -130,9 +130,10 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
         if (!last)
             last = lastChild();
         if (last && last->isAnonymous() && !last->isBeforeOrAfterContent()) {
-            if (beforeChild == last)
-                beforeChild = last->firstChild();
-            toRenderTableRow(last)->addChild(child, beforeChild);
+            RenderTableRow* row = toRenderTableRow(last);
+            if (beforeChild == row)
+                beforeChild = row->firstChild();
+            row->addChild(child, beforeChild);
             return;
         }
 
@@ -1234,7 +1235,7 @@ void RenderTableSection::recalcCells()
             tableRow->setRowIndex(insertionRow);
             setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[insertionRow]);
 
-            for (RenderObject* cell = row->firstChild(); cell; cell = cell->nextSibling()) {
+            for (RenderObject* cell = tableRow->firstChild(); cell; cell = cell->nextSibling()) {
                 if (!cell->isTableCell())
                     continue;
 

@@ -1078,7 +1078,8 @@ static bool canMergeContiguousAnonymousBlocks(RenderObject* oldChild, RenderObje
         return false;
 
     // FIXME: This check isn't required when inline run-ins can't be split into continuations.
-    if (prev && prev->firstChild() && prev->firstChild()->isInline() && prev->firstChild()->isRunIn())
+    RenderObject* child = prev ? prev->firstChildSlow() : nullptr;
+    if (child && child->isInline() && child->isRunIn())
         return false;
 
     if ((prev && (prev->isRubyRun() || prev->isRubyBase()))
@@ -5080,7 +5081,7 @@ RenderObject* InlineMinMaxIterator::next()
         if (!oldEndOfInline &&
             (current == parent ||
              (!current->isFloating() && !current->isReplaced() && !current->isOutOfFlowPositioned())))
-            result = current->firstChild();
+            result = current->firstChildSlow();
         if (!result) {
             // We hit the end of our inline. (It was empty, e.g., <span></span>.)
             if (!oldEndOfInline && current->isRenderInline()) {
@@ -5745,7 +5746,7 @@ RenderBlock* RenderBlock::firstLineBlock() const
         // FIXME: Remove when buttons are implemented with align-items instead
         // of flexbox.
         if (firstLineBlock->isReplaced() || firstLineBlock->isFloating()
-            || !parentBlock || parentBlock->firstChild() != firstLineBlock || (!parentBlock->isRenderBlockFlow() && !parentBlock->isRenderButton()))
+            || !parentBlock || parentBlock->firstChildSlow() != firstLineBlock || (!parentBlock->isRenderBlockFlow() && !parentBlock->isRenderButton()))
             break;
         ASSERT_WITH_SECURITY_IMPLICATION(parentBlock->isRenderBlock());
         firstLineBlock = toRenderBlock(parentBlock);
@@ -5785,9 +5786,9 @@ static inline bool shouldSkipForFirstLetter(UChar c)
     return isSpaceOrNewline(c) || c == noBreakSpace || isPunctuationForFirstLetter(c);
 }
 
-static inline RenderObject* findFirstLetterBlock(RenderBlock* start)
+static inline RenderElement* findFirstLetterBlock(RenderBlock* start)
 {
-    RenderObject* firstLetterBlock = start;
+    RenderElement* firstLetterBlock = start;
     while (true) {
         // We include isRenderButton in these two checks because buttons are
         // implemented using flex box but should still support first-letter.
@@ -5801,9 +5802,9 @@ static inline RenderObject* findFirstLetterBlock(RenderBlock* start)
         if (canHaveFirstLetterRenderer)
             return firstLetterBlock;
 
-        RenderObject* parentBlock = firstLetterBlock->parent();
-        if (firstLetterBlock->isReplaced() || !parentBlock || parentBlock->firstChild() != firstLetterBlock || 
-            (!parentBlock->isRenderBlockFlow() && !parentBlock->isRenderButton()))
+        RenderElement* parentBlock = firstLetterBlock->parent();
+        if (firstLetterBlock->isReplaced() || !parentBlock || parentBlock->firstChild() != firstLetterBlock
+            || (!parentBlock->isRenderBlockFlow() && !parentBlock->isRenderButton()))
             return 0;
         firstLetterBlock = parentBlock;
     } 
@@ -5944,7 +5945,7 @@ void RenderBlock::updateFirstLetter()
         return;
 
     // Drill into inlines looking for our first text child.
-    RenderObject* currChild = firstLetterBlock->firstChild();
+    RenderObject* currChild = firstLetterBlock->firstChildSlow();
     while (currChild) {
         if (currChild->isText())
             break;
@@ -5952,7 +5953,7 @@ void RenderBlock::updateFirstLetter()
             currChild = currChild->nextSibling();
         else if (currChild->isFloatingOrOutOfFlowPositioned()) {
             if (currChild->style()->styleType() == FIRST_LETTER) {
-                currChild = currChild->firstChild();
+                currChild = currChild->firstChildSlow();
                 break;
             }
             currChild = currChild->nextSibling();
@@ -5961,9 +5962,9 @@ void RenderBlock::updateFirstLetter()
         else if (currChild->style()->hasPseudoStyle(FIRST_LETTER) && currChild->canHaveGeneratedChildren())  {
             // We found a lower-level node with first-letter, which supersedes the higher-level style
             firstLetterBlock = currChild;
-            currChild = currChild->firstChild();
+            currChild = currChild->firstChildSlow();
         } else
-            currChild = currChild->firstChild();
+            currChild = currChild->firstChildSlow();
     }
 
     if (!currChild)

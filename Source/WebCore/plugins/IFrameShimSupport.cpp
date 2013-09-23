@@ -102,7 +102,7 @@ static bool iframeIsAbovePlugin(const Vector<const RenderObject*>& iframeZstack,
                 return false;
             ASSERT(parent == ro2->parent());
 
-            for (const RenderObject* ro = parent->firstChild(); ro; ro = ro->nextSibling()) {
+            for (const RenderObject* ro = parent->firstChildSlow(); ro; ro = ro->nextSibling()) {
                 if (ro == ro1)
                     return false;
                 if (ro == ro2)

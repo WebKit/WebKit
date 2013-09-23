@@ -326,7 +326,7 @@ void RenderElement::removeChildInternal(RenderObject* oldChild, NotifyChildrenTy
         cache->childrenChanged(this);
 }
 
-static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderElement*& newObject, RenderLayer*& beforeChild)
+static void addLayers(RenderElement* obj, RenderLayer* parentLayer, RenderElement*& newObject, RenderLayer*& beforeChild)
 {
     if (obj->hasLayer()) {
         if (!beforeChild && newObject) {
@@ -340,8 +340,10 @@ static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderElement
         return;
     }
 
-    for (RenderObject* curr = obj->firstChild(); curr; curr = curr->nextSibling())
-        addLayers(curr, parentLayer, newObject, beforeChild);
+    for (RenderObject* current = obj->firstChild(); current; current = current->nextSibling()) {
+        if (current->isRenderElement())
+            addLayers(toRenderElement(current), parentLayer, newObject, beforeChild);
+    }
 }
 
 void RenderElement::addLayers(RenderLayer* parentLayer)

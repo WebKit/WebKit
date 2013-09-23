@@ -597,7 +597,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
         }
     }
 
-    for (RenderObject* child = o.firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = o.firstChildSlow(); child; child = child->nextSibling()) {
         if (child->hasLayer())
             continue;
         write(ts, *child, indent + 1, behavior);
@@ -918,7 +918,7 @@ static void writeCounterValuesFromChildren(TextStream& stream, RenderObject* par
 {
     if (!parent)
         return;
-    for (RenderObject* child = parent->firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = parent->firstChildSlow(); child; child = child->nextSibling()) {
         if (child->isCounter()) {
             if (!isFirstCounter)
                 stream << " ";

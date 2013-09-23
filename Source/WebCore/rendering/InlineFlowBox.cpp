@@ -268,7 +268,7 @@ RenderLineBoxList& InlineFlowBox::rendererLineBoxes() const
     return toRenderInline(renderer()).lineBoxes();
 }
 
-static inline bool isLastChildForRenderer(RenderObject* ancestor, RenderObject* child)
+static inline bool isLastChildForRenderer(RenderElement* ancestor, RenderObject* child)
 {
     if (!child)
         return false;
@@ -277,7 +277,7 @@ static inline bool isLastChildForRenderer(RenderObject* ancestor, RenderObject* 
         return true;
 
     RenderObject* curr = child;
-    RenderObject* parent = curr->parent();
+    RenderElement* parent = curr->parent();
     while (parent && (!parent->isRenderBlock() || parent->isInline())) {
         if (parent->lastChild() != curr)
             return false;

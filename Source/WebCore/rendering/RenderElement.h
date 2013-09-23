@@ -38,8 +38,8 @@ public:
     Element* nonPseudoElement() const { return toElement(RenderObject::nonPseudoNode()); }
     Element* generatingElement() const { return toElement(RenderObject::generatingNode()); }
 
-    virtual RenderObject* firstChild() const FINAL { return m_firstChild; }
-    virtual RenderObject* lastChild() const FINAL { return m_lastChild; }
+    RenderObject* firstChild() const { return m_firstChild; }
+    RenderObject* lastChild() const { return m_lastChild; }
 
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const { return true; }
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
@@ -79,6 +79,10 @@ private:
     void nonPseudoNode() const WTF_DELETED_FUNCTION;
     void generatingNode() const WTF_DELETED_FUNCTION;
     void isText() const WTF_DELETED_FUNCTION;
+    void isRenderElement() const WTF_DELETED_FUNCTION;
+
+    virtual RenderObject* firstChildSlow() const { return firstChild(); }
+    virtual RenderObject* lastChildSlow() const { return lastChild(); }
 
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;

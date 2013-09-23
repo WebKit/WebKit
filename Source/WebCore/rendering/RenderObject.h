@@ -164,10 +164,9 @@ public:
     RenderObject* previousSibling() const { return m_previous; }
     RenderObject* nextSibling() const { return m_next; }
 
-    // FIXME: These should be renamed slowFirstChild, slowLastChild, etc.
-    // to discourage their use.
-    virtual RenderObject* firstChild() const { return nullptr; }
-    virtual RenderObject* lastChild() const { return nullptr; }
+    // Use RenderElement versions instead.
+    virtual RenderObject* firstChildSlow() const { return nullptr; }
+    virtual RenderObject* lastChildSlow() const { return nullptr; }
 
     RenderObject* nextInPreOrder() const;
     RenderObject* nextInPreOrder(const RenderObject* stayWithin) const;
@@ -224,7 +223,8 @@ public:
 
     RenderNamedFlowThread* renderNamedFlowThreadWrapper() const;
 
-    virtual bool isEmpty() const { return firstChild() == 0; }
+    // FIXME: The meaning of this function is unclear.
+    virtual bool isEmpty() const { return !firstChildSlow(); }
 
 #ifndef NDEBUG
     void setHasAXObject(bool flag) { m_hasAXObject = flag; }

@@ -340,7 +340,7 @@ static bool textRendererIsNeeded(const Text& textNode, const RenderObject& paren
         if (parentRenderer.isRenderBlock() && !parentRenderer.childrenInline() && (!previousRenderer || !previousRenderer->isInline()))
             return false;
         
-        RenderObject* first = parentRenderer.firstChild();
+        RenderObject* first = parentRenderer.firstChildSlow();
         while (first && first->isFloatingOrOutOfFlowPositioned())
             first = first->nextSibling();
         RenderObject* nextRenderer = nextSiblingRenderer(textNode);

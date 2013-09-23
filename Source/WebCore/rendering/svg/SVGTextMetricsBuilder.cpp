@@ -179,7 +179,7 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text, Measu
 
 void SVGTextMetricsBuilder::walkTree(RenderObject* start, RenderSVGInlineText* stopAtLeaf, MeasureTextData* data)
 {
-    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = start->firstChildSlow(); child; child = child->nextSibling()) {
         if (child->isSVGInlineText()) {
             RenderSVGInlineText* text = toRenderSVGInlineText(child);
             if (stopAtLeaf && stopAtLeaf != text) {

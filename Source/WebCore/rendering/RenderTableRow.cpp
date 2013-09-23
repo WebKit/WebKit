@@ -111,9 +111,10 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
         if (!last)
             last = lastChild();
         if (last && last->isAnonymous() && last->isTableCell() && !last->isBeforeOrAfterContent()) {
-            if (beforeChild == last)
-                beforeChild = last->firstChild();
-            toRenderTableCell(last)->addChild(child, beforeChild);
+            RenderTableCell* cell = toRenderTableCell(last);
+            if (beforeChild == cell)
+                beforeChild = cell->firstChild();
+            cell->addChild(child, beforeChild);
             return;
         }
 

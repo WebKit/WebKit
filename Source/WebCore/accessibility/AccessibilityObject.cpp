@@ -758,7 +758,7 @@ static VisiblePosition startOfStyleRange(const VisiblePosition& visiblePos)
     // traverse backward by renderer to look for style change
     for (RenderObject* r = renderer->previousInPreOrder(); r; r = r->previousInPreOrder()) {
         // skip non-leaf nodes
-        if (r->firstChild())
+        if (r->firstChildSlow())
             continue;
 
         // stop at style change
@@ -781,7 +781,7 @@ static VisiblePosition endOfStyleRange(const VisiblePosition& visiblePos)
     // traverse forward by renderer to look for style change
     for (RenderObject* r = renderer->nextInPreOrder(); r; r = r->nextInPreOrder()) {
         // skip non-leaf nodes
-        if (r->firstChild())
+        if (r->firstChildSlow())
             continue;
 
         // stop at style change

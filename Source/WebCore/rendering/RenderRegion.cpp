@@ -580,7 +580,7 @@ PassRefPtr<RenderStyle> RenderRegion::computeStyleInRegion(const RenderObject* o
 
 void RenderRegion::computeChildrenStyleInRegion(const RenderObject* object)
 {
-    for (RenderObject* child = object->firstChild(); child; child = child->nextSibling()) {
+    for (RenderObject* child = object->firstChildSlow(); child; child = child->nextSibling()) {
 
         RenderObjectRegionStyleMap::iterator it = m_renderObjectRegionStyle.find(child);
 
@@ -632,7 +632,7 @@ void RenderRegion::clearObjectStyleInRegion(const RenderObject* object)
     m_renderObjectRegionStyle.remove(object);
 
     // Clear the style for the children of this object.
-    for (RenderObject* child = object->firstChild(); child; child = child->nextSibling())
+    for (RenderObject* child = object->firstChildSlow(); child; child = child->nextSibling())
         clearObjectStyleInRegion(child);
 }
 

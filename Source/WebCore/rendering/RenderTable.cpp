@@ -184,9 +184,10 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     while (lastBox && lastBox->parent()->isAnonymous() && !lastBox->isTableSection() && lastBox->style()->display() != TABLE_CAPTION && lastBox->style()->display() != TABLE_COLUMN_GROUP)
         lastBox = lastBox->parent();
     if (lastBox && lastBox->isAnonymous() && !isAfterContent(lastBox)) {
-        if (beforeChild == lastBox)
-            beforeChild = lastBox->firstChild();
-        toRenderTableSection(lastBox)->addChild(child, beforeChild);
+        RenderTableSection* section = toRenderTableSection(lastBox);
+        if (beforeChild == section)
+            beforeChild = section->firstChild();
+        section->addChild(child, beforeChild);
         return;
     }
 
@@ -568,10 +569,10 @@ void RenderTable::recalcCollapsedBorders()
     for (RenderObject* section = firstChild(); section; section = section->nextSibling()) {
         if (!section->isTableSection())
             continue;
-        for (RenderObject* row = section->firstChild(); row; row = row->nextSibling()) {
+        for (RenderObject* row = toRenderTableSection(section)->firstChild(); row; row = row->nextSibling()) {
             if (!row->isTableRow())
                 continue;
-            for (RenderObject* cell = row->firstChild(); cell; cell = cell->nextSibling()) {
+            for (RenderObject* cell = toRenderTableRow(row)->firstChild(); cell; cell = cell->nextSibling()) {
                 if (!cell->isTableCell())
                     continue;
                 ASSERT(toRenderTableCell(cell)->table() == this);
