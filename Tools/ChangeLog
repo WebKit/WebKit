@@ -1,3 +1,53 @@
+2013-09-23  Benjamin Poulain  <benjamin@webkit.org>
+
+        Delete TestWebKitAPI domain or some keys before running TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=121715 & <rdar://problem/14269434>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Previously, initalizing a WebPreference would change the cache model
+        to WebCacheModelDocumentBrowser. That behavior was due to a stale
+        preference file on disk.
+
+        This patch fixes the tests by resetting the default, and using the proper
+        default values after initializing WebPreference.
+
+        * TestWebKitAPI/Tests/mac/SetAndUpdateCacheModel.mm:
+        (TestWebKitAPI::TEST): Use the proper initial value, unrelated
+        to the previous runs.
+
+        * TestWebKitAPI/Tests/mac/SetAndUpdateCacheModel.mm:
+        (TestWebKitAPI::TEST): This test needs b/f cache to be enabled, so change
+        cache model to the one required.
+
+        * TestWebKitAPI/ios/mainIOS.mm:
+        (main): Reset the preferences before testing.
+        * TestWebKitAPI/mac/mainMac.mm:
+        (main): Ditto.
+
+2013-09-23  Benjamin Poulain  <benjamin@webkit.org>
+
+        Delete TestWebKitAPI domain or some keys before running TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=121715 & <rdar://problem/14269434>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Previously, initalizing a WebPreference would change the cache model
+        to WebCacheModelDocumentBrowser. That behavior was due to a stale
+        preference file on disk.
+
+        This patch fixes the tests by resetting the default, and using the proper
+        default values after initializing WebPreference.
+
+        * TestWebKitAPI/Tests/mac/SetAndUpdateCacheModel.mm:
+        (TestWebKitAPI::TEST): Use the proper initial value, unrelated
+        to the previous runs.
+
+        * TestWebKitAPI/ios/mainIOS.mm:
+        (main): Reset the preferences before testing.
+        * TestWebKitAPI/mac/mainMac.mm:
+        (main): Ditto.
+
 2013-09-23  Anders Carlsson  <andersca@apple.com>
 
         ListHashSet should work with move-only types

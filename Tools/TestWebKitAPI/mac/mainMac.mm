@@ -30,6 +30,7 @@ int main(int argc, char** argv)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
+    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"TestWebKitAPI"];
     [NSApplication sharedApplication];
 
     bool passed = TestWebKitAPI::TestsController::shared().run(argc, argv);
