@@ -355,6 +355,8 @@ void RenderLayerCompositor::scheduleLayerFlushNow()
 
 void RenderLayerCompositor::scheduleLayerFlush(bool canThrottle)
 {
+    ASSERT(!m_flushingLayers);
+
     if (canThrottle && isThrottlingLayerFlushes()) {
         m_hasPendingLayerFlush = true;
         return;

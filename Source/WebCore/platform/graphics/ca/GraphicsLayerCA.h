@@ -172,8 +172,9 @@ private:
     virtual bool platformCALayerContentsOpaque() const { return contentsOpaque(); }
     virtual bool platformCALayerDrawsContent() const { return drawsContent(); }
     virtual void platformCALayerLayerDidDisplay(PlatformLayer* layer) { return layerDidDisplay(layer); }
-    virtual void platformCALayerDidCreateTiles(const Vector<FloatRect>& dirtyRects) OVERRIDE;
+    virtual void platformCALayerSetNeedsToRevalidateTiles() OVERRIDE;
     virtual float platformCALayerDeviceScaleFactor() OVERRIDE;
+    virtual bool isCommittingChanges() const OVERRIDE { return m_isCommittingChanges; }
 
     virtual double backingStoreMemoryEstimate() const;
 
@@ -355,6 +356,7 @@ private:
     void updateAcceleratesDrawing();
     void updateDebugBorder();
     void updateVisibleRect(const FloatRect& oldVisibleRect);
+    void updateTiles();
     void updateContentsScale(float pageScaleFactor);
     
     enum StructuralLayerPurpose {
@@ -410,12 +412,14 @@ private:
         ContentsVisibilityChanged = 1 << 25,
         VisibleRectChanged = 1 << 26,
         FiltersChanged = 1 << 27,
-        TilesAdded = 1 < 28,
-        DebugIndicatorsChanged = 1 << 29
+        TilingAreaChanged = 1 << 28,
+        TilesAdded = 1 < 29,
+        DebugIndicatorsChanged = 1 << 30
     };
     typedef unsigned LayerChangeFlags;
-    void noteLayerPropertyChanged(LayerChangeFlags flags);
-    void noteSublayersChanged();
+    enum ScheduleFlushOrNot { ScheduleFlush, DontScheduleFlush };
+    void noteLayerPropertyChanged(LayerChangeFlags, ScheduleFlushOrNot = ScheduleFlush);
+    void noteSublayersChanged(ScheduleFlushOrNot = ScheduleFlush);
     void noteChangesForScaleSensitiveProperties();
 
     void repaintLayerDirtyRects();
@@ -505,6 +509,7 @@ private:
     FloatSize m_pixelAlignmentOffset;
     
     LayerChangeFlags m_uncommittedChanges;
+    bool m_isCommittingChanges;
 };
 
 } // namespace WebCore

@@ -44,6 +44,7 @@
 #include <QuartzCore/CATransform3D.h>
 #include <limits.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
@@ -287,6 +288,7 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     , m_isPageTiledBackingLayer(false)
     , m_rootRelativeScaleFactor(1)
     , m_uncommittedChanges(0)
+    , m_isCommittingChanges(false)
 {
     PlatformCALayer::LayerType layerType = PlatformCALayer::LayerTypeWebLayer;
     if (client && client->shouldUseTiledBacking(this)) {
@@ -1103,7 +1105,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         m_visibleTileWashLayer->setBorderColor(washBorderColor);
         m_visibleTileWashLayer->setBorderWidth(8);
         m_visibleTileWashLayer->setBackgroundColor(washFillColor);
-        noteSublayersChanged();
+        noteSublayersChanged(DontScheduleFlush);
     }
 
     if (m_visibleTileWashLayer)
@@ -1123,7 +1125,10 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         baseRelativePosition += m_position;
     
     TransformationMatrix transformFromRoot = rootRelativeTransformForScaling;
-    commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, oldVisibleRect, &transformFromRoot);
+    {
+        TemporaryChange<bool> committingChangesChange(m_isCommittingChanges, true);
+        commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition, oldVisibleRect, &transformFromRoot);
+    }
 
     if (isRunningTransformAnimation()) {
         childCommitState.ancestorHasTransformAnimation = true;
@@ -1149,7 +1154,10 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
     if (m_maskLayer)
         static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChangesAfterSublayers(childCommitState);
 
-    commitLayerChangesAfterSublayers(childCommitState);
+    {
+        TemporaryChange<bool> committingChangesChange(m_isCommittingChanges, true);
+        commitLayerChangesAfterSublayers(childCommitState);
+    }
 
     if (affectedByTransformAnimation && client() && m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
         client()->notifyFlushBeforeDisplayRefresh(this);
@@ -1173,14 +1181,9 @@ void GraphicsLayerCA::platformCALayerPaintContents(GraphicsContext& context, con
     paintGraphicsLayerContents(context, clip);
 }
 
-void GraphicsLayerCA::platformCALayerDidCreateTiles(const Vector<FloatRect>& dirtyRects)
+void GraphicsLayerCA::platformCALayerSetNeedsToRevalidateTiles()
 {
-    ASSERT(m_layer->usesTiledBackingLayer());
-
-    for (size_t i = 0; i < dirtyRects.size(); ++i)
-        setNeedsDisplayInRect(dirtyRects[i]);
-
-    noteLayerPropertyChanged(TilesAdded);
+    noteLayerPropertyChanged(TilingAreaChanged, m_isCommittingChanges ? DontScheduleFlush : ScheduleFlush);
 }
 
 float GraphicsLayerCA::platformCALayerDeviceScaleFactor()
@@ -1272,6 +1275,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
 
     if (m_uncommittedChanges & VisibleRectChanged)
         updateVisibleRect(oldVisibleRect);
+    
+    if (m_uncommittedChanges & TilingAreaChanged) // Needs to happen after VisibleRectChanged, ContentsScaleChanged
+        updateTiles();
 
     if (m_uncommittedChanges & DirtyRectsChanged)
         repaintLayerDirtyRects();
@@ -1620,7 +1626,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
 
     // We've changed the layer that our parent added to its sublayer list, so tell it to update
     // sublayers again in its commitLayerChangesAfterSublayers().
-    static_cast<GraphicsLayerCA*>(parent())->noteSublayersChanged();
+    static_cast<GraphicsLayerCA*>(parent())->noteSublayersChanged(DontScheduleFlush);
 
     // Set properties of m_layer to their default values, since these are expressed on on the structural layer.
     FloatPoint point(m_size.width() / 2.0f, m_size.height() / 2.0f);
@@ -1755,6 +1761,14 @@ void GraphicsLayerCA::updateVisibleRect(const FloatRect& oldVisibleRect)
     m_sizeAtLastVisibleRectUpdate = m_size;
 }
 
+void GraphicsLayerCA::updateTiles()
+{
+    if (!m_layer->usesTiledBackingLayer())
+        return;
+
+    tiledBacking()->revalidateTiles();
+}
+
 void GraphicsLayerCA::updateBackgroundColor()
 {
     m_layer->setBackgroundColor(m_backgroundColor);
@@ -1881,7 +1895,7 @@ void GraphicsLayerCA::updateContentsRects()
     }
     
     if (gainedOrLostClippingLayer)
-        noteSublayersChanged();
+        noteSublayersChanged(DontScheduleFlush);
 
     m_contentsLayer->setPosition(contentOrigin);
     m_contentsLayer->setBounds(contentBounds);
@@ -3264,9 +3278,9 @@ void GraphicsLayerCA::computePixelAlignment(float pageScaleFactor, const FloatPo
     anchorPoint = FloatPoint3D(anchorPointX, anchorPointY, m_anchorPoint.z() * pageScaleFactor);
 }
 
-void GraphicsLayerCA::noteSublayersChanged()
+void GraphicsLayerCA::noteSublayersChanged(ScheduleFlushOrNot scheduleFlush)
 {
-    noteLayerPropertyChanged(ChildrenChanged);
+    noteLayerPropertyChanged(ChildrenChanged, scheduleFlush);
     propagateLayerChangeToReplicas();
 }
 
@@ -3276,16 +3290,18 @@ bool GraphicsLayerCA::canThrottleLayerFlush() const
     return !(m_uncommittedChanges & TilesAdded);
 }
 
-void GraphicsLayerCA::noteLayerPropertyChanged(LayerChangeFlags flags)
+void GraphicsLayerCA::noteLayerPropertyChanged(LayerChangeFlags flags, ScheduleFlushOrNot scheduleFlush)
 {
     bool hadUncommittedChanges = !!m_uncommittedChanges;
     bool oldCanThrottleLayerFlush = canThrottleLayerFlush();
 
     m_uncommittedChanges |= flags;
 
-    bool needsFlush = !hadUncommittedChanges || oldCanThrottleLayerFlush != canThrottleLayerFlush();
-    if (needsFlush && m_client)
-        m_client->notifyFlushRequired(this);
+    if (scheduleFlush == ScheduleFlush) {
+        bool needsFlush = !hadUncommittedChanges || oldCanThrottleLayerFlush != canThrottleLayerFlush();
+        if (needsFlush && m_client)
+            m_client->notifyFlushRequired(this);
+    }
 }
 
 double GraphicsLayerCA::backingStoreMemoryEstimate() const

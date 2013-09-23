@@ -59,8 +59,10 @@ public:
     virtual bool platformCALayerDrawsContent() const = 0;
     virtual void platformCALayerLayerDidDisplay(PlatformLayer*) = 0;
 
-    virtual void platformCALayerDidCreateTiles(const Vector<FloatRect>& dirtyRects) = 0;
+    virtual void platformCALayerSetNeedsToRevalidateTiles() { }
     virtual float platformCALayerDeviceScaleFactor() = 0;
+
+    virtual bool isCommittingChanges() const { return false; }
 
 protected:
     virtual ~PlatformCALayerClient() {}

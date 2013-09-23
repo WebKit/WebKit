@@ -193,7 +193,6 @@ private:
     virtual bool platformCALayerContentsOpaque() const { return false; }
     virtual bool platformCALayerDrawsContent() const { return false; }
     virtual void platformCALayerLayerDidDisplay(PlatformLayer*) { }
-    virtual void platformCALayerDidCreateTiles(const Vector<FloatRect>&) { }
     virtual float platformCALayerDeviceScaleFactor() { return 1; }
 
     AVFWrapper* m_parent;

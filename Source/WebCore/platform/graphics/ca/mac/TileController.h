@@ -115,6 +115,7 @@ private:
     virtual void setIsInWindow(bool) OVERRIDE;
     virtual void setTileCoverage(TileCoverage) OVERRIDE;
     virtual TileCoverage tileCoverage() const OVERRIDE { return m_tileCoverage; }
+    virtual void revalidateTiles() OVERRIDE;
     virtual void forceRepaint() OVERRIDE;
     virtual IntSize tileSize() const OVERRIDE { return m_tileSize; }
     virtual IntRect tileGridExtent() const OVERRIDE;
@@ -145,7 +146,8 @@ private:
     
     typedef unsigned TileValidationPolicyFlags;
 
-    void revalidateTiles(TileValidationPolicyFlags foregroundValidationPolicy = 0, TileValidationPolicyFlags backgroundValidationPolicy = 0);
+    void setNeedsRevalidateTiles();
+    void revalidateTiles(TileValidationPolicyFlags foregroundValidationPolicy, TileValidationPolicyFlags backgroundValidationPolicy);
     enum class CoverageType { PrimaryTiles, SecondaryTiles };
 
     // Returns the bounds of the covered tiles.
@@ -179,6 +181,8 @@ private:
     FloatRect m_visibleRectAtLastRevalidate;
     FloatRect m_exposedRect; // The exposed area of containing platform views.
     IntRect m_boundsAtLastRevalidate;
+    
+    Vector<FloatRect> m_secondaryTileCoverageRects;
 
     typedef HashMap<TileIndex, TileInfo> TileMap;
     TileMap m_tiles;

@@ -135,14 +135,8 @@ TileController::~TileController()
 
 void TileController::tileCacheLayerBoundsChanged()
 {
-    if (m_tiles.isEmpty()) {
-        // We must revalidate immediately instead of using a timer when there are
-        // no tiles to avoid a flash when transitioning from one page to another.
-        revalidateTiles();
-        return;
-    }
-
-    scheduleTileRevalidation(0);
+    ASSERT(PlatformCALayer::platformCALayer(m_tileCacheLayer)->owner()->isCommittingChanges());
+    setNeedsRevalidateTiles();
 }
 
 void TileController::setNeedsDisplay()
@@ -232,6 +226,8 @@ void TileController::drawLayer(WebTileLayer *layer, CGContextRef context)
 void TileController::setScale(CGFloat scale)
 {
     PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
+    ASSERT(platformLayer->owner()->isCommittingChanges());
+
     float deviceScaleFactor = platformLayer->owner()->platformCALayerDeviceScaleFactor();
 
     // The scale we get is the produce of the page scale factor and device scale factor.
@@ -247,6 +243,7 @@ void TileController::setScale(CGFloat scale)
     m_scale = scale;
     [m_tileContainerLayer.get() setTransform:CATransform3DMakeScale(1 / m_scale, 1 / m_scale, 1)];
 
+    // FIXME: we may revalidateTiles twice in this commit.
     revalidateTiles(PruneSecondaryTiles, PruneSecondaryTiles);
 
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
@@ -259,8 +256,6 @@ void TileController::setScale(CGFloat scale)
         scaledTileRect.scale(1 / m_scale);
         dirtyRects.append(scaledTileRect);
     }
-
-    platformLayer->owner()->platformCALayerDidCreateTiles(dirtyRects);
 }
 
 void TileController::setAcceleratesDrawing(bool acceleratesDrawing)
@@ -291,11 +286,12 @@ void TileController::setTilesOpaque(bool opaque)
 
 void TileController::setVisibleRect(const FloatRect& visibleRect)
 {
+    ASSERT(PlatformCALayer::platformCALayer(m_tileCacheLayer)->owner()->isCommittingChanges());
     if (m_visibleRect == visibleRect)
         return;
 
     m_visibleRect = visibleRect;
-    revalidateTiles();
+    setNeedsRevalidateTiles();
 }
 
 bool TileController::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleRect) const
@@ -333,7 +329,7 @@ void TileController::setExposedRect(const FloatRect& exposedRect)
         return;
 
     m_exposedRect = exposedRect;
-    revalidateTiles();
+    setNeedsRevalidateTiles();
 }
 
 void TileController::setClipsToExposedRect(bool clipsToExposedRect)
@@ -345,7 +341,7 @@ void TileController::setClipsToExposedRect(bool clipsToExposedRect)
 
     // Going from not clipping to clipping, we don't need to revalidate right away.
     if (clipsToExposedRect)
-        revalidateTiles();
+        setNeedsRevalidateTiles();
 }
 
 void TileController::prepopulateRect(const FloatRect& rect)
@@ -356,11 +352,9 @@ void TileController::prepopulateRect(const FloatRect& rect)
 
     if (m_primaryTileCoverageRect.contains(rectInTileCoords))
         return;
-
-    ensureTilesForRect(rect, CoverageType::SecondaryTiles);
-
-    if (m_tiledScrollingIndicatorLayer)
-        updateTileCoverageMap();
+    
+    m_secondaryTileCoverageRects.append(rect);
+    setNeedsRevalidateTiles();
 }
 
 void TileController::setIsInWindow(bool isInWindow)
@@ -371,7 +365,7 @@ void TileController::setIsInWindow(bool isInWindow)
     m_isInWindow = isInWindow;
 
     if (m_isInWindow)
-        revalidateTiles();
+        setNeedsRevalidateTiles();
     else {
         const double tileRevalidationTimeout = 4;
         scheduleTileRevalidation(tileRevalidationTimeout);
@@ -384,7 +378,13 @@ void TileController::setTileCoverage(TileCoverage coverage)
         return;
 
     m_tileCoverage = coverage;
-    scheduleTileRevalidation(0);
+    setNeedsRevalidateTiles();
+}
+
+void TileController::revalidateTiles()
+{
+    ASSERT(PlatformCALayer::platformCALayer(m_tileCacheLayer)->owner()->isCommittingChanges());
+    revalidateTiles(0, 0);
 }
 
 void TileController::forceRepaint()
@@ -510,6 +510,11 @@ void TileController::scheduleTileRevalidation(double interval)
 
 void TileController::tileRevalidationTimerFired(Timer<TileController>*)
 {
+    if (m_isInWindow) {
+        setNeedsRevalidateTiles();
+        return;
+    }
+
     TileValidationPolicyFlags foregroundValidationPolicy = m_aggressivelyRetainsTiles ? 0 : PruneSecondaryTiles;
     TileValidationPolicyFlags backgroundValidationPolicy = foregroundValidationPolicy | UnparentAllTiles;
 
@@ -604,6 +609,12 @@ void TileController::removeTilesInCohort(TileCohort cohort)
     }
 }
 
+void TileController::setNeedsRevalidateTiles()
+{
+    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
+    platformLayer->owner()->platformCALayerSetNeedsToRevalidateTiles();
+}
+
 void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidationPolicy, TileValidationPolicyFlags backgroundValidationPolicy)
 {
     // If the underlying PlatformLayer has been destroyed, but the WebTiledBackingLayer hasn't
@@ -671,13 +682,17 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
         if (!m_aggressivelyRetainsTiles)
             scheduleCohortRemoval();
     }
-    
+
     // Ensure primary tile coverage tiles.
     m_primaryTileCoverageRect = ensureTilesForRect(tileCoverageRect, CoverageType::PrimaryTiles);
 
     if (validationPolicy & PruneSecondaryTiles) {
         removeAllSecondaryTiles();
         m_cohortList.clear();
+    } else {
+        for (size_t i = 0; i < m_secondaryTileCoverageRects.size(); ++i)
+            ensureTilesForRect(m_secondaryTileCoverageRects[i], CoverageType::SecondaryTiles);
+        m_secondaryTileCoverageRects.clear();
     }
 
     if (m_unparentsOffscreenTiles && (validationPolicy & UnparentAllTiles)) {
@@ -833,10 +848,6 @@ IntRect TileController::ensureTilesForRect(const FloatRect& rect, CoverageType n
     
     if (tilesInCohort)
         startedNewCohort(currCohort);
-
-    // This will ensure we flush compositing state and do layout in this run loop iteration.
-    if (!dirtyRects.isEmpty())
-        platformLayer->owner()->platformCALayerDidCreateTiles(dirtyRects);
 
     return coverageRect;
 }

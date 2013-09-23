@@ -1,3 +1,100 @@
+2013-09-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Rapidly loading pages can result in !needsLayout() assertions in FrameView::paintContents() and RenderView::paint()
+        https://bugs.webkit.org/show_bug.cgi?id=121725
+        <rdar://problem/13982161> ASSERT(!needsLayout()) in WebCore::RenderView::paint (121196)
+
+        Reviewed by Dean Jackson.
+        
+        Layout has to be up-to-date before we paint, and when composited we rely on a
+        CFRunLoopObserver owned by LayerFlushScheduler to enforce this. The contract is
+        that changes to GraphicsLayers accumulate in those layers, and are all pushed to
+        CALayers only inside of flushCompositingState(). CALayers must not be touched
+        directly outside of flushCompositingState(), since this may trigger a CA commit
+        and resultant painting without us having updated layout.
+        
+        In addition, we rely on the CA commits only happening after our runloop observer
+        has fired in order for LayerFlushScheduler's suspend/resume to work (these are used
+        for freezing the layer tree during page transitions).
+        
+        However, TileController was violating this contract. It called revalidateTiles()
+        at random times, and on a timer. This would result in CA commits happening when
+        layer flushing was suspended at the LayerFlushScheduler level, and thus before
+        we'd had a chance to do layout.
+        
+        Fix by only ever revalidatingTiles inside of flushCompositingState(). Calls
+        that used to result in revalidateTiles() at other times now just set a bit
+        on GraphicsLayerCA to indicate that revalidation is required, and this triggers
+        a later flush like any other GraphicsLayerCA change.
+        
+        There is one exception to the revalidate-inside-flush rule: when purging
+        files for background tabs on a timer, we are only dealing with an unparented
+        layer tree, so CALayer manipulation is safe at any time.
+
+        Very timing dependent, so hard to test.
+
+        * platform/graphics/TiledBacking.h: Expose revalidateTiles()
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp: Remove
+        platformCALayerDidCreateTiles() override.
+        * platform/graphics/ca/GraphicsLayerCA.h: Keep track of m_isCommittingChanges
+        so we can assert. Add TilingAreaChanged flag.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges): noteSublayersChanged() is
+        used inside of a commit in some cases to trigger a parent layer to update
+        children after the children have been processed. To avoid trying to pointlessly
+        schedule the flusher inside a flush, and for strong assertions, use a new flag
+        that indicates that flushing is not required in this situation.
+        Set the m_isCommittingChanges flag around committing state.
+        (WebCore::GraphicsLayerCA::platformCALayerSetNeedsToRevalidateTiles): We used
+        to use platformCALayerDidCreateTiles() to ensure that we would flush after adding
+        new tiles to avoid garbage flashes. Now that we only ever create tiles inside
+        a flush, this is no longer necessary.
+        The new platformCALayerSetNeedsToRevalidateTiles() function just sets the
+        TilingAreaChanged flag and triggers a flush.
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): After updating
+        visible rect, we look for the TilingAreaChanged flag to tell us whether to
+        revalidate TiledBacking tiles.
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer): Use DontScheduleFlush when 
+        telling a parent layer that it needs to reconsider sublayers.
+        (WebCore::GraphicsLayerCA::updateTiles): The caller of revalidateTiles().
+        (WebCore::GraphicsLayerCA::updateContentsRects): DontScheduleFlush again.
+        (WebCore::GraphicsLayerCA::noteSublayersChanged): Pass scheduleFlush along.
+        (WebCore::GraphicsLayerCA::noteLayerPropertyChanged): Handle scheduleFlush.
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        (WebCore::PlatformCALayerClient::platformCALayerSetNeedsToRevalidateTiles): Added
+        so that TileController can call back out to GraphicsLayerCA.
+        (WebCore::PlatformCALayerClient::isCommittingChanges):
+        * platform/graphics/ca/mac/TileController.h: Need to keep track of secondary
+        coverage rects in m_secondaryTileCoverageRects.
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::tileCacheLayerBoundsChanged): Just trigger a tile revalidate,
+        which will happen later in this same commit.
+        (WebCore::TileController::setScale): This is called inside the commit. Does an extra
+        revalidate, which is needed to prune tiles. This could be optimized in future.
+        (WebCore::TileController::setVisibleRect): Assert that we're inside a commit,
+        and trigger a revalidate.
+        (WebCore::TileController::setExposedRect): Trigger a revalidate.
+        (WebCore::TileController::setClipsToExposedRect): Ditto.
+        (WebCore::TileController::prepopulateRect): Save the rect and trigger a revalidate.
+        (WebCore::TileController::setIsInWindow): If we're in the window, trigger a revalidate
+        otherwise schedule the timer.
+        (WebCore::TileController::revalidateTiles): Wrapper for the real revalidateTiles().
+        (WebCore::TileController::tileRevalidationTimerFired): If we're in the window,
+        schedule a revalidate. Otherwise our layer tree is disconnected, and it's OK to call revalidateTiles().
+        (WebCore::TileController::setNeedsRevalidateTiles): Call through the client to GraphicsLayerCA
+        which will schedule a layer tree flush.
+        (WebCore::TileController::revalidateTiles):
+        (WebCore::TileController::ensureTilesForRect): Move code from prepopulateRect
+        into here; ensureTilesForRect() for each secondary rect, then clear the rects.
+        No need to call platformCALayerDidCreateTiles() at the end.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp: Remove
+        platformCALayerDidCreateTiles() override.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::scheduleLayerFlush): This should only be
+        called when we're not inside a flush, otherwise it will fail to schedule
+        another one.
+
 2013-09-23  Sam Weinig  <sam@webkit.org>
 
         CTTE: htmlediting.h Element creation function should take a Document&
