@@ -384,6 +384,19 @@ int writeToFile(PlatformFileHandle handle, const char* data, int length)
     return static_cast<int>(bytesWritten);
 }
 
+int readFromFile(PlatformFileHandle handle, char* data, int length)
+{
+    if (!isHandleValid(handle))
+        return -1;
+
+    DWORD bytesRead;
+    bool success = ::ReadFile(handle, data, length, &bytesRead, 0);
+
+    if (!success)
+        return -1;
+    return static_cast<int>(bytesRead);
+}
+
 bool unloadModule(PlatformModule module)
 {
     return ::FreeLibrary(module);
