@@ -235,9 +235,15 @@ set(WebKit2_SOURCES
     Shared/API/c/WKURLResponse.cpp
     Shared/API/c/WKUserContentURLPattern.cpp
 
+    Shared/Authentication/AuthenticationManager.cpp
+
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp
     Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp
     Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.cpp
+
+    Shared/Downloads/Download.cpp
+    Shared/Downloads/DownloadAuthenticationClient.cpp
+    Shared/Downloads/DownloadManager.cpp
 
     Shared/Plugins/NPIdentifierData.cpp
     Shared/Plugins/NPObjectMessageReceiver.cpp
@@ -257,7 +263,6 @@ set(WebKit2_SOURCES
     UIProcess/FindIndicator.cpp
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
-
     UIProcess/ResponsivenessTimer.cpp
     UIProcess/StatisticsRequest.cpp
     UIProcess/TextCheckerCompletion.cpp
@@ -295,7 +300,6 @@ set(WebKit2_SOURCES
     UIProcess/WebIconDatabaseClient.cpp
     UIProcess/WebInspectorProxy.cpp
     UIProcess/WebKeyValueStorageManager.cpp
-
     UIProcess/WebLoaderClient.cpp
     UIProcess/WebMediaCacheManagerProxy.cpp
     UIProcess/WebNavigationData.cpp
@@ -399,15 +403,9 @@ set(WebKit2_SOURCES
 
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp
 
-    Shared/Authentication/AuthenticationManager.cpp
-
     WebProcess/Battery/WebBatteryManager.cpp
 
     WebProcess/Cookies/WebCookieManager.cpp
-
-    Shared/Downloads/Download.cpp
-    Shared/Downloads/DownloadAuthenticationClient.cpp
-    Shared/Downloads/DownloadManager.cpp
 
     WebProcess/FullScreen/WebFullScreenManager.cpp
 
@@ -423,8 +421,8 @@ set(WebKit2_SOURCES
     WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp
     WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp
-    WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp
+    WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp
     WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp
     WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.cpp
@@ -531,10 +529,11 @@ set(WebKit2_MESSAGES_IN_FILES
 
     Shared/WebConnection.messages.in
 
+    Shared/Authentication/AuthenticationManager.messages.in
+
     Shared/Plugins/NPObjectMessageReceiver.messages.in
 
     UIProcess/DrawingAreaProxy.messages.in
-    UIProcess/Storage/StorageManager.messages.in
     UIProcess/WebApplicationCacheManagerProxy.messages.in
     UIProcess/WebBatteryManagerProxy.messages.in
     UIProcess/WebContext.messages.in
@@ -551,20 +550,19 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebResourceCacheManagerProxy.messages.in
     UIProcess/WebVibrationProxy.messages.in
 
-
     UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in
 
     UIProcess/Downloads/DownloadProxy.messages.in
 
+    UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.messages.in
+
     UIProcess/Plugins/PluginProcessProxy.messages.in
 
-    UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.messages.in
+    UIProcess/Storage/StorageManager.messages.in
 
     WebProcess/WebProcess.messages.in
 
     WebProcess/ApplicationCache/WebApplicationCacheManager.messages.in
-
-    Shared/Authentication/AuthenticationManager.messages.in
 
     WebProcess/Battery/WebBatteryManager.messages.in
 

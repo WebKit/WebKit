@@ -1,41 +1,46 @@
 list(APPEND WebKit2_SOURCES
+    Platform/CoreIPC/unix/AttachmentUnix.cpp
+    Platform/CoreIPC/unix/ConnectionUnix.cpp
+
     Platform/efl/LoggingEfl.cpp
     Platform/efl/ModuleEfl.cpp
     Platform/efl/WorkQueueEfl.cpp
-    Platform/unix/SharedMemoryUnix.cpp
 
-    Platform/CoreIPC/unix/ConnectionUnix.cpp
-    Platform/CoreIPC/unix/AttachmentUnix.cpp
+    Platform/unix/SharedMemoryUnix.cpp
 
     PluginProcess/unix/PluginControllerProxyUnix.cpp
     PluginProcess/unix/PluginProcessMainUnix.cpp
     PluginProcess/unix/PluginProcessUnix.cpp
 
     Shared/API/c/cairo/WKImageCairo.cpp
+
     Shared/API/c/efl/WKArrayEfl.cpp
 
     Shared/Downloads/efl/DownloadSoupErrorsEfl.cpp
+
     Shared/Downloads/soup/DownloadSoup.cpp
+
+    Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
 
     Shared/cairo/ShareableBitmapCairo.cpp
 
     Shared/efl/LayerTreeContextEfl.cpp
     Shared/efl/NativeWebKeyboardEventEfl.cpp
-    Shared/efl/NativeWebWheelEventEfl.cpp
     Shared/efl/NativeWebMouseEventEfl.cpp
     Shared/efl/NativeWebTouchEventEfl.cpp
+    Shared/efl/NativeWebWheelEventEfl.cpp
     Shared/efl/ProcessExecutablePathEfl.cpp
     Shared/efl/WebEventFactory.cpp
 
+    Shared/linux/WebMemorySamplerLinux.cpp
+
     Shared/linux/SeccompFilters/OpenSyscall.cpp
-    Shared/linux/SeccompFilters/SigactionSyscall.cpp
-    Shared/linux/SeccompFilters/SigprocmaskSyscall.cpp
     Shared/linux/SeccompFilters/SeccompBroker.cpp
     Shared/linux/SeccompFilters/SeccompFilters.cpp
+    Shared/linux/SeccompFilters/SigactionSyscall.cpp
+    Shared/linux/SeccompFilters/SigprocmaskSyscall.cpp
     Shared/linux/SeccompFilters/Syscall.cpp
     Shared/linux/SeccompFilters/SyscallPolicy.cpp
-
-    Shared/linux/WebMemorySamplerLinux.cpp
 
     Shared/soup/PlatformCertificateInfo.cpp
     Shared/soup/WebCoreArgumentCodersSoup.cpp
@@ -43,11 +48,9 @@ list(APPEND WebKit2_SOURCES
     UIProcess/DefaultUndoController.cpp
     UIProcess/PageViewportController.cpp
 
-    Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
+    UIProcess/API/C/CoordinatedGraphics/WKView.cpp
 
     UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
-
-    UIProcess/API/C/CoordinatedGraphics/WKView.cpp
 
     UIProcess/API/C/efl/WKEventEfl.cpp
     UIProcess/API/C/efl/WKPageEfl.cpp
@@ -55,15 +58,15 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/C/efl/WKPopupMenuListener.cpp
     UIProcess/API/C/efl/WKViewEfl.cpp
 
-    UIProcess/API/cpp/efl/WKEinaSharedString.cpp
-
     UIProcess/API/C/soup/WKContextSoup.cpp
     UIProcess/API/C/soup/WKCookieManagerSoup.cpp
     UIProcess/API/C/soup/WKSoupRequestManager.cpp
 
-    UIProcess/API/efl/EwkView.cpp
+    UIProcess/API/cpp/efl/WKEinaSharedString.cpp
+
     UIProcess/API/efl/EvasGLContext.cpp
     UIProcess/API/efl/EvasGLSurface.cpp
+    UIProcess/API/efl/EwkView.cpp
     UIProcess/API/efl/GestureRecognizer.cpp
     UIProcess/API/efl/SnapshotImageGL.cpp
     UIProcess/API/efl/ewk_auth_request.cpp
@@ -97,10 +100,21 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_view.cpp
     UIProcess/API/efl/ewk_window_features.cpp
 
-    UIProcess/cairo/BackingStoreCairo.cpp
-
     UIProcess/CoordinatedGraphics/WebView.cpp
     UIProcess/CoordinatedGraphics/WebViewClient.cpp
+
+    UIProcess/InspectorServer/efl/WebInspectorServerEfl.cpp
+
+    UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp
+
+    UIProcess/Launcher/efl/ProcessLauncherEfl.cpp
+
+    UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
+    UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
+
+    UIProcess/Storage/StorageManager.cpp
+
+    UIProcess/cairo/BackingStoreCairo.cpp
 
     UIProcess/efl/BatteryProvider.cpp
     UIProcess/efl/ContextHistoryClientEfl.cpp
@@ -122,7 +136,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/TextCheckerEfl.cpp
     UIProcess/efl/VibrationClientEfl.cpp
     UIProcess/efl/ViewClientEfl.cpp
-    UIProcess/efl/WebViewEfl.cpp
     UIProcess/efl/WebContextEfl.cpp
     UIProcess/efl/WebContextMenuProxyEfl.cpp
     UIProcess/efl/WebFullScreenManagerProxyEfl.cpp
@@ -133,20 +146,11 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/WebPreferencesEfl.cpp
     UIProcess/efl/WebProcessProxyEfl.cpp
     UIProcess/efl/WebUIPopupMenuClient.cpp
-
-    UIProcess/InspectorServer/efl/WebInspectorServerEfl.cpp
-    UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp
+    UIProcess/efl/WebViewEfl.cpp
 
     UIProcess/soup/WebCookieManagerProxySoup.cpp
     UIProcess/soup/WebSoupRequestManagerClient.cpp
     UIProcess/soup/WebSoupRequestManagerProxy.cpp
-
-    UIProcess/Launcher/efl/ProcessLauncherEfl.cpp
-
-    UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
-    UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
-
-    UIProcess/Storage/StorageManager.cpp
 
     WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
     WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
@@ -165,20 +169,22 @@ list(APPEND WebKit2_SOURCES
     WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
 
     WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp
+
     WebProcess/WebPage/efl/WebInspectorEfl.cpp
     WebProcess/WebPage/efl/WebPageEfl.cpp
 
     WebProcess/efl/SeccompFiltersWebProcessEfl.cpp
     WebProcess/efl/WebProcessMainEfl.cpp
 
-    WebProcess/soup/WebProcessSoup.cpp
-    WebProcess/soup/WebSoupRequestManager.cpp
     WebProcess/soup/WebKitSoupRequestGeneric.cpp
     WebProcess/soup/WebKitSoupRequestInputStream.cpp
+    WebProcess/soup/WebProcessSoup.cpp
+    WebProcess/soup/WebSoupRequestManager.cpp
 )
 
 list(APPEND WebKit2_MESSAGES_IN_FILES
     UIProcess/soup/WebSoupRequestManagerProxy.messages.in
+
     WebProcess/soup/WebSoupRequestManager.messages.in
 )
 
@@ -228,27 +234,27 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
 
 list(APPEND WebKit2_LIBRARIES
     ${CAIRO_LIBRARIES}
-    ${ECORE_LIBRARIES}
+    ${CMAKE_DL_LIBS}
     ${ECORE_EVAS_LIBRARIES}
     ${ECORE_IMF_EVAS_LIBRARIES}
+    ${ECORE_LIBRARIES}
     ${EDJE_LIBRARIES}
     ${EFREET_LIBRARIES}
     ${EINA_LIBRARIES}
     ${EO_LIBRARIES}
     ${EVAS_LIBRARIES}
-    ${Freetype_LIBRARIES}
-    ${HARFBUZZ_LIBRARIES}
-    ${LIBXML2_LIBRARIES}
-    ${OPENGL_LIBRARIES}
-    ${SQLITE_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
-    ${PNG_LIBRARIES}
-    ${JPEG_LIBRARIES}
-    ${CMAKE_DL_LIBS}
-    ${GLIB_LIBRARIES}
+    ${Freetype_LIBRARIES}
     ${GLIB_GIO_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
+    ${GLIB_LIBRARIES}
+    ${HARFBUZZ_LIBRARIES}
+    ${JPEG_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
+    ${LIBXML2_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    ${PNG_LIBRARIES}
+    ${SQLITE_LIBRARIES}
 )
 
 list(APPEND WebProcess_SOURCES
@@ -257,8 +263,8 @@ list(APPEND WebProcess_SOURCES
 
 list(APPEND WebProcess_LIBRARIES
     ${CAIRO_LIBRARIES}
-    ${ECORE_IMF_LIBRARIES}
     ${ECORE_IMF_EVAS_LIBRARIES}
+    ${ECORE_IMF_LIBRARIES}
     ${EDJE_LIBRARIES}
     ${EFLDEPS_LIBRARIES}
     ${EVAS_LIBRARIES}
@@ -325,11 +331,11 @@ set(EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_favicon_database.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_file_chooser_request.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_form_submission_request.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_page_group.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_main.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_navigation_data.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_navigation_policy_decision.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_object.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_page_group.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_popup_menu.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_popup_menu_item.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_security_origin.h"
@@ -378,19 +384,19 @@ endif () # ENABLE_PLUGIN_PROCESS
 include_directories(${THIRDPARTY_DIR}/gtest/include)
 
 set(EWK2UnitTests_LIBRARIES
-    WTF
-    JavaScriptCore
-    WebCore
-    WebKit2
     ${CAIRO_LIBRARIES}
-    ${ECORE_LIBRARIES}
     ${ECORE_EVAS_LIBRARIES}
+    ${ECORE_LIBRARIES}
     ${EVAS_LIBRARIES}
-    ${GLIB_LIBRARIES}
     ${GLIB_GIO_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
     ${GLIB_GTHREAD_LIBRARIES}
+    ${GLIB_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
+    JavaScriptCore
+    WTF
+    WebCore
+    WebKit2
     gtest
 )
 

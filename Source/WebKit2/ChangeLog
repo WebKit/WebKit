@@ -1,3 +1,16 @@
+2013-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Cleanup CMake files in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=121767
+
+        Reviewed by Gyuyoung Kim.
+
+        Sort files and unify style.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+
 2013-09-21  Darin Adler  <darin@apple.com>
 
         Add ExecState::uncheckedArgument and use where possible to shrink a bit

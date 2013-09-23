@@ -14,41 +14,34 @@ add_definitions(-DPACKAGE_LOCALE_DIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 add_definitions(-DLIBDIR="${CMAKE_INSTALL_FULL_LIBDIR}")
 
 list(APPEND WebKit2_SOURCES
-    ${WEBKIT2_BUILT_API_DIR}/WebKitMarshal.cpp
     ${WEBKIT2_BUILT_API_DIR}/WebKitEnumTypes.cpp
+    ${WEBKIT2_BUILT_API_DIR}/WebKitMarshal.cpp
+
+    Platform/CoreIPC/unix/AttachmentUnix.cpp
+    Platform/CoreIPC/unix/ConnectionUnix.cpp
+
     Platform/gtk/LoggingGtk.cpp
     Platform/gtk/ModuleGtk.cpp
     Platform/gtk/WorkQueueGtk.cpp
+
     Platform/unix/SharedMemoryUnix.cpp
-    WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
-    WebProcess/WebPage/gtk/WebPageGtk.cpp
-    WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp
-    WebProcess/WebPage/gtk/WebInspectorGtk.cpp
-    WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp
-    WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp
-    WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp
-    WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp
-    WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp
-    WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp
-    UIProcess/API/C/gtk/WKFullScreenClientGtk.cpp
-    UIProcess/API/C/gtk/WKInspectorClientGtk.cpp
-    UIProcess/gtk/ExperimentalFeatures.cpp
-    UIProcess/gtk/WebContextMenuProxyGtk.cpp
-    UIProcess/gtk/WebContextGtk.cpp
-    UIProcess/gtk/WebPageProxyGtk.cpp
-    UIProcess/gtk/WebPreferencesGtk.cpp
-    UIProcess/gtk/WebFullScreenClientGtk.cpp
-    UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp
-    UIProcess/gtk/WebInspectorProxyGtk.cpp
-    UIProcess/gtk/TextCheckerGtk.cpp
-    UIProcess/gtk/WebPopupMenuProxyGtk.cpp
-    UIProcess/gtk/WebInspectorClientGtk.cpp
-    UIProcess/gtk/WebProcessProxyGtk.cpp
-    UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp
-    UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp
+
+    PluginProcess/unix/PluginControllerProxyUnix.cpp
+    PluginProcess/unix/PluginProcessMainUnix.cpp
+    PluginProcess/unix/PluginProcessUnix.cpp
+
+    Shared/API/c/cairo/WKImageCairo.cpp
 
     Shared/API/c/gtk/WKGraphicsContextGtk.cpp
+
     Shared/Downloads/gtk/DownloadSoupErrorsGtk.cpp
+
+    Shared/Downloads/soup/DownloadSoup.cpp
+
+    Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
+
+    Shared/cairo/ShareableBitmapCairo.cpp
+
     Shared/gtk/ArgumentCodersGtk.cpp
     Shared/gtk/LayerTreeContextGtk.cpp
     Shared/gtk/NativeWebKeyboardEventGtk.cpp
@@ -58,55 +51,35 @@ list(APPEND WebKit2_SOURCES
     Shared/gtk/ProcessExecutablePathGtk.cpp
     Shared/gtk/WebEventFactory.cpp
 
-    Platform/CoreIPC/unix/ConnectionUnix.cpp
-    Platform/CoreIPC/unix/AttachmentUnix.cpp
-    PluginProcess/unix/PluginControllerProxyUnix.cpp
-    PluginProcess/unix/PluginProcessMainUnix.cpp
-    PluginProcess/unix/PluginProcessUnix.cpp
-    Shared/API/c/cairo/WKImageCairo.cpp
-    Shared/Downloads/soup/DownloadSoup.cpp
-    Shared/cairo/ShareableBitmapCairo.cpp
+    Shared/linux/WebMemorySamplerLinux.cpp
+
     Shared/linux/SeccompFilters/OpenSyscall.cpp
-    Shared/linux/SeccompFilters/SigactionSyscall.cpp
-    Shared/linux/SeccompFilters/SigprocmaskSyscall.cpp
     Shared/linux/SeccompFilters/SeccompBroker.cpp
     Shared/linux/SeccompFilters/SeccompFilters.cpp
+    Shared/linux/SeccompFilters/SigactionSyscall.cpp
+    Shared/linux/SeccompFilters/SigprocmaskSyscall.cpp
     Shared/linux/SeccompFilters/Syscall.cpp
     Shared/linux/SeccompFilters/SyscallPolicy.cpp
-    Shared/linux/WebMemorySamplerLinux.cpp
+
     Shared/soup/PlatformCertificateInfo.cpp
     Shared/soup/WebCoreArgumentCodersSoup.cpp
+
     UIProcess/DefaultUndoController.cpp
-    Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
-    UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
+
     UIProcess/API/C/CoordinatedGraphics/WKView.cpp
+
+    UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
+
+    UIProcess/API/C/gtk/WKFullScreenClientGtk.cpp
+    UIProcess/API/C/gtk/WKInspectorClientGtk.cpp
+    UIProcess/API/C/gtk/WKView.cpp
+
     UIProcess/API/C/soup/WKContextSoup.cpp
     UIProcess/API/C/soup/WKCookieManagerSoup.cpp
     UIProcess/API/C/soup/WKSoupRequestManager.cpp
-    UIProcess/cairo/BackingStoreCairo.cpp
-    UIProcess/CoordinatedGraphics/WebView.cpp
-    UIProcess/CoordinatedGraphics/WebViewClient.cpp
-    UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp
-    UIProcess/soup/WebCookieManagerProxySoup.cpp
-    UIProcess/soup/WebSoupRequestManagerClient.cpp
-    UIProcess/soup/WebSoupRequestManagerProxy.cpp
-    UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
-    UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
-    UIProcess/Storage/StorageManager.cpp
-    WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
-    WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
-    WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp
-    WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp
-    WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
-    WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp
-    WebProcess/soup/WebProcessSoup.cpp
-    WebProcess/soup/WebSoupRequestManager.cpp
-    WebProcess/soup/WebKitSoupRequestGeneric.cpp
-    WebProcess/soup/WebKitSoupRequestInputStream.cpp
 
     UIProcess/API/gtk/PageClientImpl.cpp
     UIProcess/API/gtk/PageClientImpl.h
-    UIProcess/API/gtk/webkit2.h
     UIProcess/API/gtk/WebKitAuthenticationDialog.cpp
     UIProcess/API/gtk/WebKitAuthenticationDialog.h
     UIProcess/API/gtk/WebKitBackForwardList.cpp
@@ -114,13 +87,13 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitBackForwardListItem.cpp
     UIProcess/API/gtk/WebKitBackForwardListItem.h
     UIProcess/API/gtk/WebKitBackForwardListPrivate.h
+    UIProcess/API/gtk/WebKitContextMenu.cpp
+    UIProcess/API/gtk/WebKitContextMenu.h
     UIProcess/API/gtk/WebKitContextMenuActions.cpp
     UIProcess/API/gtk/WebKitContextMenuActions.h
     UIProcess/API/gtk/WebKitContextMenuActionsPrivate.h
     UIProcess/API/gtk/WebKitContextMenuClient.cpp
     UIProcess/API/gtk/WebKitContextMenuClient.h
-    UIProcess/API/gtk/WebKitContextMenu.cpp
-    UIProcess/API/gtk/WebKitContextMenu.h
     UIProcess/API/gtk/WebKitContextMenuItem.cpp
     UIProcess/API/gtk/WebKitContextMenuItem.h
     UIProcess/API/gtk/WebKitContextMenuItemPrivate.h
@@ -129,10 +102,10 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitCookieManager.h
     UIProcess/API/gtk/WebKitCookieManagerPrivate.h
     UIProcess/API/gtk/WebKitDefines.h
-    UIProcess/API/gtk/WebKitDownloadClient.cpp
-    UIProcess/API/gtk/WebKitDownloadClient.h
     UIProcess/API/gtk/WebKitDownload.cpp
     UIProcess/API/gtk/WebKitDownload.h
+    UIProcess/API/gtk/WebKitDownloadClient.cpp
+    UIProcess/API/gtk/WebKitDownloadClient.h
     UIProcess/API/gtk/WebKitDownloadPrivate.h
     UIProcess/API/gtk/WebKitEditingCommands.h
     UIProcess/API/gtk/WebKitError.cpp
@@ -227,28 +200,87 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitWebResource.cpp
     UIProcess/API/gtk/WebKitWebResource.h
     UIProcess/API/gtk/WebKitWebResourcePrivate.h
-    UIProcess/API/gtk/WebKitWebViewBaseAccessible.cpp
-    UIProcess/API/gtk/WebKitWebViewBaseAccessible.h
+    UIProcess/API/gtk/WebKitWebView.cpp
+    UIProcess/API/gtk/WebKitWebView.h
     UIProcess/API/gtk/WebKitWebViewBase.cpp
     UIProcess/API/gtk/WebKitWebViewBase.h
+    UIProcess/API/gtk/WebKitWebViewBaseAccessible.cpp
+    UIProcess/API/gtk/WebKitWebViewBaseAccessible.h
     UIProcess/API/gtk/WebKitWebViewBasePrivate.h
-    UIProcess/API/gtk/WebKitWebView.cpp
     UIProcess/API/gtk/WebKitWebViewGroup.cpp
     UIProcess/API/gtk/WebKitWebViewGroup.h
     UIProcess/API/gtk/WebKitWebViewGroupPrivate.h
-    UIProcess/API/gtk/WebKitWebView.h
     UIProcess/API/gtk/WebKitWebViewPrivate.h
     UIProcess/API/gtk/WebKitWindowProperties.cpp
     UIProcess/API/gtk/WebKitWindowProperties.h
     UIProcess/API/gtk/WebKitWindowPropertiesPrivate.h
     UIProcess/API/gtk/WebViewBaseInputMethodFilter.cpp
     UIProcess/API/gtk/WebViewBaseInputMethodFilter.h
+    UIProcess/API/gtk/webkit2.h
 
-    UIProcess/API/C/gtk/WKFullScreenClientGtk.cpp
-    UIProcess/API/C/gtk/WKInspectorClientGtk.cpp
-    UIProcess/API/C/gtk/WKView.cpp
+    UIProcess/CoordinatedGraphics/WebView.cpp
+    UIProcess/CoordinatedGraphics/WebViewClient.cpp
+
+    UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp
+
+    UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp
+
+    UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp
+
+    UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
+    UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
+
+    UIProcess/Storage/StorageManager.cpp
+
+    UIProcess/cairo/BackingStoreCairo.cpp
+
+    UIProcess/gtk/ExperimentalFeatures.cpp
+    UIProcess/gtk/TextCheckerGtk.cpp
+    UIProcess/gtk/WebContextGtk.cpp
+    UIProcess/gtk/WebContextMenuProxyGtk.cpp
+    UIProcess/gtk/WebFullScreenClientGtk.cpp
+    UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp
+    UIProcess/gtk/WebInspectorClientGtk.cpp
+    UIProcess/gtk/WebInspectorProxyGtk.cpp
+    UIProcess/gtk/WebPageProxyGtk.cpp
+    UIProcess/gtk/WebPopupMenuProxyGtk.cpp
+    UIProcess/gtk/WebPreferencesGtk.cpp
+    UIProcess/gtk/WebProcessProxyGtk.cpp
+
+    UIProcess/soup/WebCookieManagerProxySoup.cpp
+    UIProcess/soup/WebSoupRequestManagerClient.cpp
+    UIProcess/soup/WebSoupRequestManagerProxy.cpp
+
+    WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
+    WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
+
+    WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp
+
+    WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp
+
+    WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp
+
+    WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp
+    WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp
+    WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp
+    WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp
+    WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp
+
+    WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
+
+    WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp
+
+    WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp
+    WebProcess/WebPage/gtk/WebInspectorGtk.cpp
+    WebProcess/WebPage/gtk/WebPageGtk.cpp
+    WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
 
     WebProcess/gtk/WebProcessMainGtk.cpp
+
+    WebProcess/soup/WebKitSoupRequestGeneric.cpp
+    WebProcess/soup/WebKitSoupRequestInputStream.cpp
+    WebProcess/soup/WebProcessSoup.cpp
+    WebProcess/soup/WebSoupRequestManager.cpp
 )
 
 set(WebKit2_INSTALLED_HEADERS
@@ -299,6 +331,7 @@ set(WebKit2_INSTALLED_HEADERS
 
 list(APPEND WebKit2_MESSAGES_IN_FILES
     UIProcess/soup/WebSoupRequestManagerProxy.messages.in
+
     WebProcess/soup/WebSoupRequestManager.messages.in
 )
 
@@ -383,9 +416,9 @@ add_custom_target(soup-forwarding-headers
 )
 
 set(WEBKIT2_EXTRA_DEPENDENCIES
+     fake-installed-headers
      gtk-forwarding-headers
      soup-forwarding-headers
-     fake-installed-headers
 )
 
 if (ENABLE_PLUGIN_PROCESS)
