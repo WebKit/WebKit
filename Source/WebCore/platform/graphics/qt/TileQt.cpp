@@ -112,12 +112,12 @@ Vector<IntRect> TileQt::updateBackBuffer()
     
     QPainter painter(m_backBuffer);
     GraphicsContext context(&painter);
-    context.translate(-m_rect.x(), -m_rect.y());
 
     Vector<IntRect> updatedRects;
     int size = dirtyRects.size();
     for (int n = 0; n < size; ++n)  {
         context.save();
+        context.translate(-m_rect.x(), -m_rect.y());
         IntRect rect = dirtyRects[n];
         updatedRects.append(rect);
         context.clip(FloatRect(rect));

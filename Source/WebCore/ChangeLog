@@ -1,3 +1,15 @@
+2013-09-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Tiled backing-store causes wrong translation
+        https://bugs.webkit.org/show_bug.cgi?id=121789
+
+        Reviewed by Noam Rosenthal.
+
+        Move the translation inside save/restore of the GraphicsContext.
+
+        * platform/graphics/qt/TileQt.cpp:
+        (WebCore::TileQt::updateBackBuffer):
+
 2013-09-23  Andreas Kling  <akling@apple.com>
 
         Unify code paths leading to render tree teardown.
