@@ -1,3 +1,22 @@
+2013-09-23  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r155998): when zooming in, tiles are too small
+        https://bugs.webkit.org/show_bug.cgi?id=121765
+
+        Reviewed by Dean Jackson.
+
+        In r155998 I made GraphicsLayerCA take root-relative transforms
+        into account when computing contentsScale, and landed a bunch of
+        new results which should actually have told me that I broke page
+        scaling.
+        
+        We don't want to take page scale into account when computing contentsScale,
+        because we already do so, so ignore the transform on the layer that
+        applies page scale (the only transform it should ever has is the page scale).
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateRootRelativeScale):
+
 2013-09-23  Antonio Gomes  <a1.gomes@sisa.samsung.com>
 
         iframe and scrollbar with "overflow:auto" should support autoscroll with mousedrag

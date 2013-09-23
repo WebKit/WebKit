@@ -1,3 +1,19 @@
+2013-09-23  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r155998): when zooming in, tiles are too small
+        https://bugs.webkit.org/show_bug.cgi?id=121765
+
+        Reviewed by Dean Jackson.
+        
+        Fix results of tests that showed that we had incorrect tiling
+        behavior on zooming.
+
+        * platform/mac-wk2/tiled-drawing/fixed-background/fixed-body-background-zoomed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/tile-size-slow-zoomed-expected.txt:
+        * platform/mac-wk2/tiled-drawing/tiled-drawing-zoom-expected.txt:
+        * platform/mac-wk2/tiled-drawing/tiled-drawing-zoom-scrolled-expected.txt:
+        * platform/mac/compositing/tiling/tile-cache-zoomed-expected.txt:
+
 2013-09-23  Antonio Gomes  <a1.gomes@sisa.samsung.com>
 
         iframe and scrollbar with "overflow:auto" should support autoscroll with mousedrag

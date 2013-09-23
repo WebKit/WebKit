@@ -9,7 +9,7 @@
       (contentsOpaque 1)
       (transform [1.60 0.00 0.00 0.00] [0.00 1.60 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
       (visible rect 0.00, 0.00 490.63 x 365.63)
-      (contentsScale 2.56)
+      (contentsScale 1.60)
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
@@ -17,7 +17,7 @@
           (contentsOpaque 1)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
           (visible rect 0.00, 0.00 482.63 x 357.63)
-          (contentsScale 2.56)
+          (contentsScale 1.60)
         )
       )
     )

@@ -1064,7 +1064,7 @@ void GraphicsLayerCA::updateRootRelativeScale(TransformationMatrix* transformFro
     bool haveTransformAnimation = getTransformFromAnimationsWithMaxScaleImpact(*transformFromRoot, maxScaleImpactTransform, rootRelativeScaleFactor);
     if (haveTransformAnimation)
         transformFromRoot->multiply(maxScaleImpactTransform);
-    else {
+    else if (!appliesPageScale()) {
         TransformationMatrix unanimatedTransform = this->layerTransform(m_position);
         transformFromRoot->multiply(unanimatedTransform);
         rootRelativeScaleFactor = maxScaleFromTransform(*transformFromRoot);
