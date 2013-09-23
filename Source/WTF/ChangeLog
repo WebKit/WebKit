@@ -1,5 +1,12 @@
 2013-09-23  Anders Carlsson  <andersca@apple.com>
 
+        ListHashSet::removeLast should only remove one element.
+        
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSet::removeLast):
+
+2013-09-23  Anders Carlsson  <andersca@apple.com>
+
         Add hash traits for std::unique_ptr
         https://bugs.webkit.org/show_bug.cgi?id=121807
 

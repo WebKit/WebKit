@@ -511,8 +511,6 @@ template<typename T, size_t inlineCapacity, typename U>
 inline void ListHashSet<T, inlineCapacity, U>::removeLast()
 {
     takeLast();
-    m_impl.remove(m_tail);
-    unlinkAndDelete(m_tail);
 }
 
 template<typename T, size_t inlineCapacity, typename U>
