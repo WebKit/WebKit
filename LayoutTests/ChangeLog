@@ -1,3 +1,14 @@
+2013-09-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r156257.
+        http://trac.webkit.org/changeset/156257
+        https://bugs.webkit.org/show_bug.cgi?id=121777
+
+        The test from this patch fails (Requested by ap on #webkit).
+
+        * fast/events/drag-and-drop-autoscroll-inner-frame-expected.txt: Removed.
+        * fast/events/drag-and-drop-autoscroll-inner-frame.html: Removed.
+
 2013-09-22  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed EFL gardening. Rebaselining after r156040.
