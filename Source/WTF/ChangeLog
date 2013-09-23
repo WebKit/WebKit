@@ -1,3 +1,16 @@
+2013-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Cleanup CMake files in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=121761
+
+        Reviewed by Gyuyoung Kim.
+
+        Sort files and unify the style.
+
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformEfl.cmake:
+        * wtf/PlatformGTK.cmake:
+
 2013-09-22  Andreas Kling  <akling@apple.com>
 
         Give purity hints to compiler to avoid penalizing repeated calls to some functions.

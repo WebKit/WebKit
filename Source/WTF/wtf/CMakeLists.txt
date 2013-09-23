@@ -14,8 +14,8 @@ set(WTF_HEADERS
     Compression.h
     CryptographicallyRandomNumber.h
     CurrentTime.h
-    DateMath.h
     DataLog.h
+    DateMath.h
     DecimalNumber.h
     Decoder.h
     DeferrableRefCounted.h
@@ -52,11 +52,8 @@ set(WTF_HEADERS
     MessageQueue.h
     MetaAllocator.h
     MetaAllocatorHandle.h
-    ThreadRestrictionVerifier.h
-    Ref.h
     Noncopyable.h
     NumberOfCores.h
-    RAMSize.h
     OSAllocator.h
     OSRandomSource.h
     OwnPtr.h
@@ -65,29 +62,31 @@ set(WTF_HEADERS
     PageAllocationAligned.h
     PageBlock.h
     PageReservation.h
-    PassOwnPtr.h
-    PassRefPtr.h
-    PassTraits.h
     ParallelJobs.h
     ParallelJobsGeneric.h
     ParallelJobsLibdispatch.h
     ParallelJobsOpenMP.h
+    PassOwnPtr.h
+    PassRefPtr.h
+    PassTraits.h
     Platform.h
     PossiblyNull.h
     PrintStream.h
     ProcessID.h
+    RAMSize.h
     RandomNumber.h
     RandomNumberSeed.h
     RawPointer.h
     RedBlackTree.h
+    Ref.h
     RefCounted.h
     RefCountedLeakCounter.h
     RefPtr.h
     RefPtrHashMap.h
     RetainPtr.h
+    SHA1.h
     SaturatedArithmetic.h
     SegmentedVector.h
-    SHA1.h
     StackBounds.h
     StaticConstructors.h
     StdLibExtras.h
@@ -99,6 +98,7 @@ set(WTF_HEADERS
     TCSpinLock.h
     TCSystemAlloc.h
     ThreadIdentifierDataPthreads.h
+    ThreadRestrictionVerifier.h
     ThreadSafeRefCounted.h
     ThreadSpecific.h
     Threading.h
@@ -149,8 +149,8 @@ set(WTF_SOURCES
     Compression.cpp
     CryptographicallyRandomNumber.cpp
     CurrentTime.cpp
-    DateMath.cpp
     DataLog.cpp
+    DateMath.cpp
     DecimalNumber.cpp
     DynamicAnnotations.cpp
     FastMalloc.cpp
@@ -162,13 +162,13 @@ set(WTF_SOURCES
     MainThread.cpp
     MediaTime.cpp
     MetaAllocator.cpp
-    OSRandomSource.cpp
     NumberOfCores.cpp
-    RAMSize.cpp
+    OSRandomSource.cpp
     PageAllocationAligned.cpp
     PageBlock.cpp
     ParallelJobsGeneric.cpp
     PrintStream.cpp
+    RAMSize.cpp
     RandomNumber.cpp
     RefCountedLeakCounter.cpp
     SHA1.cpp
@@ -237,6 +237,7 @@ elseif (WTF_USE_WCHAR_UNICODE)
     )
     list(APPEND WTF_SOURCES
         unicode/CollatorDefault.cpp
+
         unicode/wchar/UnicodeWchar.cpp
     )
 endif ()
