@@ -1,5 +1,14 @@
 2013-09-23  Sam Weinig  <sam@webkit.org>
 
+        Add back the SharedWorkerStrategy to prevent crashing.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createSharedWorkerStrategy):
+        (WebKit::WebPlatformStrategies::isAvailable):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
+2013-09-23  Sam Weinig  <sam@webkit.org>
+
         SharedWorkerProcess code is dead
         https://bugs.webkit.org/show_bug.cgi?id=121563
 

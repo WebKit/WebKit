@@ -111,7 +111,7 @@ PluginStrategy* WebPlatformStrategies::createPluginStrategy()
 
 SharedWorkerStrategy* WebPlatformStrategies::createSharedWorkerStrategy()
 {
-    return 0;
+    return this;
 }
 
 StorageStrategy* WebPlatformStrategies::createStorageStrategy()
@@ -307,6 +307,18 @@ void WebPlatformStrategies::getPluginInfo(const WebCore::Page* page, Vector<WebC
     UNUSED_PARAM(page);
     UNUSED_PARAM(plugins);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
+}
+
+// SharedWorkerStrategy
+
+bool WebPlatformStrategies::isAvailable() const
+{
+    // Shared workers do not work across multiple processes, and using network process is tied to multiple secondary process model. 
+#if ENABLE(NETWORK_PROCESS) 
+    return !WebProcess::shared().usesNetworkProcess(); 
+#else 
+    return true; 
+#endif
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
