@@ -1,3 +1,29 @@
+2013-09-23  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: [CSS Regions] Display CSS Regions flow name in the inspector overlay
+        https://bugs.webkit.org/show_bug.cgi?id=121794
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests, the previous test for CSS Regions highlighting covers the flow name.
+
+        This patch adds the "Flow" property in the inspector overlay. The region
+        chain is already displayed with numbers, so it makes sense to have the flow 
+        name around when a CSS region is highlighted.
+
+        I've consolidated the flow information into "elementInfo.flowInfo". 
+        Flow info has two properties: "name" and "regions".
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForCSSRegionsHighlight):
+        (WebCore::InspectorOverlay::buildObjectForHighlightedNode):
+        * inspector/InspectorOverlayPage.css:
+        (.css-property): Added the CSS property font color that the Inspector uses.
+        * inspector/InspectorOverlayPage.html: Added a new element to be used to display the flow-from property.
+        * inspector/InspectorOverlayPage.js:
+        (_drawElementTitle):
+        (drawNodeHighlight):
+
 2013-09-23  Simon Fraser  <simon.fraser@apple.com>
 
         Rapidly loading pages can result in !needsLayout() assertions in FrameView::paintContents() and RenderView::paint()

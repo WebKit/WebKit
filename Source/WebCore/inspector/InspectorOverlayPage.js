@@ -261,6 +261,12 @@ function _drawElementTitle(highlight)
     document.getElementById("class-name").textContent = className || "";
     document.getElementById("node-width").textContent = elementInfo.nodeWidth;
     document.getElementById("node-height").textContent = elementInfo.nodeHeight;
+    var flowNameElement = document.getElementById("flow-name");
+    if (elementInfo.flowInfo) {
+        flowNameElement.style.display = "";
+        document.getElementById("flow-name-value").textContent = elementInfo.flowInfo.name || "";
+    } else
+        flowNameElement.style.display = "none";
     var elementTitle = document.getElementById("element-title");
 
     var marginQuad = highlight.quads[0];
@@ -500,8 +506,8 @@ function drawNodeHighlight(highlight)
     _drawGrid(highlight, rulerAtRight, rulerAtBottom);
     _drawRulers(highlight, rulerAtRight, rulerAtBottom);
 
-    if (highlight.regions)
-        _drawRegionsHighlight(highlight.regions, highlight.scrollX, highlight.scrollY);
+    if (highlight.elementInfo && highlight.elementInfo.flowInfo)
+        _drawRegionsHighlight(highlight.elementInfo.flowInfo.regions, highlight.scrollX, highlight.scrollY);
 
     _drawElementTitle(highlight);
     context.restore();

@@ -620,9 +620,9 @@ function dumpInspectorHighlightedRegions()
     }
     // Reformat the string using JSON.stringify.
     var json = JSON.parse(highlight);
-    if (!json.regions) {
+    if (!json.elementInfo || !json.elementInfo.flowInfo) {
         output("No highlighted regions.");
         return;
     }
-    output(JSON.stringify(json.regions, null, 4));
+    output(JSON.stringify(json.elementInfo.flowInfo, null, 4));
 }

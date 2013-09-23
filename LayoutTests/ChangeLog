@@ -1,3 +1,16 @@
+2013-09-23  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: [CSS Regions] Display CSS Regions flow name in the inspector overlay
+        https://bugs.webkit.org/show_bug.cgi?id=121794
+
+        Reviewed by Joseph Pecoraro.
+
+        Updated the expected results after moving the regions to the elementInfo.flowInfo property.
+        Also, the test is now logging the name of the flow container in the output.
+
+        * http/tests/inspector/elements-test.js:
+        * inspector/elements/highlight-node-regions-expected.txt:
+
 2013-09-23  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [Texmap] Reloading a webgl page doesn't work

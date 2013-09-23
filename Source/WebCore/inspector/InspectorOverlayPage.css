@@ -66,6 +66,10 @@ body.platform-linux {
     color: rgb(153, 69, 0);
 }
 
+.css-property {
+    color: rgb(170, 13, 145);
+}
+
 #right-gutter {
     display: none;
     right: 0;

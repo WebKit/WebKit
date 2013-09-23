@@ -46,6 +46,7 @@
 #include "RenderBoxModelObject.h"
 #include "RenderFlowThread.h"
 #include "RenderInline.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderObject.h"
 #include "RenderRegion.h"
 #include "RenderView.h"
@@ -396,18 +397,9 @@ static PassRefPtr<InspectorObject> buildObjectForRegionHighlight(FrameView* main
     return regionObject.release();
 }
 
-static void buildObjectForCSSRegionsHighlight(Node* node, InspectorObject* highlightNodeObject)
+static PassRefPtr<InspectorArray> buildObjectForCSSRegionsHighlight(RenderRegion* region, RenderFlowThread* flowThread)
 {
-    RenderObject* renderer = node->renderer();
-    if (!renderer || !renderer->isRenderRegion())
-        return;
-    
-    RenderRegion* region = toRenderRegion(renderer);
-    RenderFlowThread* flowThread = region->flowThread();
-    if (!flowThread)
-        return;
-
-    FrameView* mainFrameView = node->document().page()->mainFrame().view();
+    FrameView* mainFrameView = region->document().page()->mainFrame().view();
 
     RefPtr<InspectorArray> array = InspectorArray::create();
 
@@ -426,7 +418,7 @@ static void buildObjectForCSSRegionsHighlight(Node* node, InspectorObject* highl
         array->pushObject(regionHighlightObject.release());
     }
 
-    highlightNodeObject->setArray("regions", array.release());
+    return array.release();
 }
 
 static PassRefPtr<InspectorObject> buildObjectForSize(const IntSize& size)
@@ -481,9 +473,20 @@ PassRefPtr<InspectorObject> InspectorOverlay::buildObjectForHighlightedNode() co
         RenderBoxModelObject* modelObject = renderer->isBoxModelObject() ? toRenderBoxModelObject(renderer) : 0;
         elementInfo->setString("nodeWidth", String::number(modelObject ? adjustForAbsoluteZoom(modelObject->pixelSnappedOffsetWidth(), modelObject) : boundingBox.width()));
         elementInfo->setString("nodeHeight", String::number(modelObject ? adjustForAbsoluteZoom(modelObject->pixelSnappedOffsetHeight(), modelObject) : boundingBox.height()));
+        
+        if (renderer->isRenderRegion()) {
+            RenderRegion* region = toRenderRegion(renderer);
+            RenderFlowThread* flowThread = region->flowThread();
+            if (flowThread && flowThread->isRenderNamedFlowThread()) {
+                RefPtr<InspectorObject> flowInfo = InspectorObject::create();
+                flowInfo->setString("name", toRenderNamedFlowThread(flowThread)->flowThreadName());
+                flowInfo->setArray("regions", buildObjectForCSSRegionsHighlight(region, flowThread));
+                elementInfo->setObject("flowInfo", flowInfo.release());
+            }
+        }
+        
         highlightObject->setObject("elementInfo", elementInfo.release());
     }
-    buildObjectForCSSRegionsHighlight(m_highlightNode.get(), highlightObject.get());
     
     return highlightObject.release();
 }
