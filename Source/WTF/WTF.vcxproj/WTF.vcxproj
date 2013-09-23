@@ -203,7 +203,6 @@
     <ClInclude Include="..\wtf\ParallelJobsOpenMP.h" />
     <ClInclude Include="..\wtf\PassOwnPtr.h" />
     <ClInclude Include="..\wtf\PassRefPtr.h" />
-    <ClInclude Include="..\wtf\PassTraits.h" />
     <ClInclude Include="..\wtf\Platform.h" />
     <ClInclude Include="..\wtf\PossiblyNull.h" />
     <ClInclude Include="..\wtf\PrintStream.h" />

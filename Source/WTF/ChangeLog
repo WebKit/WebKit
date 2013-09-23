@@ -1,5 +1,21 @@
 2013-09-23  Anders Carlsson  <andersca@apple.com>
 
+        Remove PassTraits.h
+        https://bugs.webkit.org/show_bug.cgi?id=121805
+
+        Reviewed by Andreas Kling.
+
+        We no longer need PassTraits.h, get rid of it.
+
+        * GNUmakefile.list.am:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PassTraits.h: Removed.
+
+2013-09-23  Anders Carlsson  <andersca@apple.com>
+
         ListHashSet should work with move-only types
         https://bugs.webkit.org/show_bug.cgi?id=121802
 

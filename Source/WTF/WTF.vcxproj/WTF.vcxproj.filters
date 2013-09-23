@@ -530,9 +530,6 @@
     <ClInclude Include="..\wtf\PassRefPtr.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\PassTraits.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\Platform.h">
       <Filter>wtf</Filter>
     </ClInclude>
