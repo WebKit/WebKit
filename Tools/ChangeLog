@@ -1,3 +1,15 @@
+2013-09-23  Anders Carlsson  <andersca@apple.com>
+
+        ListHashSet should use std::reverse_iterator for reverse iterators
+        https://bugs.webkit.org/show_bug.cgi?id=121795
+
+        Reviewed by Antti Koivisto.
+
+        Add test for reverse iterators.
+
+        * TestWebKitAPI/Tests/WTF/ListHashSet.cpp:
+        (TestWebKitAPI::TEST):
+
 2013-09-23  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] accessibility/aria-invalid is failing

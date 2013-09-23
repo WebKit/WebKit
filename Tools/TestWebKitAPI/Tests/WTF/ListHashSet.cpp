@@ -29,7 +29,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WTF, ListHashSetRemoveFirst)
+TEST(WTF_ListHashSet, RemoveFirst)
 {
     ListHashSet<int> list;
     list.add(1);
@@ -48,7 +48,7 @@ TEST(WTF, ListHashSetRemoveFirst)
     ASSERT_TRUE(list.isEmpty());
 }
 
-TEST(WTF, ListHashSetAppendOrMoveToLastNewItems)
+TEST(WTF_ListHashSet, AppendOrMoveToLastNewItems)
 {
     ListHashSet<int> list;
     ListHashSet<int>::AddResult result = list.appendOrMoveToLast(1);
@@ -70,7 +70,7 @@ TEST(WTF, ListHashSetAppendOrMoveToLastNewItems)
     ++iterator;
 }
 
-TEST(WTF, ListHashSetAppendOrMoveToLastWithDuplicates)
+TEST(WTF_ListHashSet, AppendOrMoveToLastWithDuplicates)
 {
     ListHashSet<int> list;
 
@@ -109,7 +109,7 @@ TEST(WTF, ListHashSetAppendOrMoveToLastWithDuplicates)
     ++iterator;
 }
 
-TEST(WTF, ListHashSetPrependOrMoveToLastNewItems)
+TEST(WTF_ListHashSet, PrependOrMoveToLastNewItems)
 {
     ListHashSet<int> list;
     ListHashSet<int>::AddResult result = list.prependOrMoveToFirst(1);
@@ -131,7 +131,7 @@ TEST(WTF, ListHashSetPrependOrMoveToLastNewItems)
     ++iterator;
 }
 
-TEST(WTF, ListHashSetPrependOrMoveToLastWithDuplicates)
+TEST(WTF_ListHashSet, PrependOrMoveToLastWithDuplicates)
 {
     ListHashSet<int> list;
 
@@ -168,6 +168,35 @@ TEST(WTF, ListHashSetPrependOrMoveToLastWithDuplicates)
     ++iterator;
     ASSERT_EQ(1, *iterator);
     ++iterator;
+}
+
+TEST(WTF_ListHashSet, ReverseIterator)
+{
+    ListHashSet<int> list;
+
+    list.add(1);
+    list.add(2);
+    list.add(3);
+
+    auto it = list.rbegin();
+    ASSERT_EQ(3, *it);
+    ++it;
+    ASSERT_EQ(2, *it);
+    ++it;
+    ASSERT_EQ(1, *it);
+    ++it;
+    ASSERT_TRUE(it == list.rend());
+
+    const auto& listHashSet = list;
+
+    auto constIt = listHashSet.rbegin();
+    ASSERT_EQ(3, *constIt);
+    ++constIt;
+    ASSERT_EQ(2, *constIt);
+    ++constIt;
+    ASSERT_EQ(1, *constIt);
+    ++constIt;
+    ASSERT_TRUE(constIt == listHashSet.rend());
 }
 
 } // namespace TestWebKitAPI
