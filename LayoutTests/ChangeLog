@@ -1,3 +1,17 @@
+2013-09-23  Alexey Proskuryakov  <ap@apple.com>
+
+        video-object-fit tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=121803
+
+        Rubber-stamped by Simon Fraser.
+
+        Removing an ad hoc 1.5 second timeout that these tests had. Loading video can take
+        longer.
+
+        * compositing/video/video-object-fit.html:
+        * media/video-object-fit-change.html:
+        * media/video-object-fit.html:
+
 2013-09-23  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: [CSS Regions] Display CSS Regions flow name in the inspector overlay

@@ -26,14 +26,6 @@
                 if (!--count)
                     setTimeout(function() { changeStyle(); }, 250);
             }, true);
-
-            if (window.testRunner) {
-                setTimeout(function() {
-                    document.body.appendChild(document.createTextNode('FAIL'));
-                    if (window.testRunner)
-                        testRunner.notifyDone();
-                }, 1500);
-            }
         }
 
 	function changeStyle()
