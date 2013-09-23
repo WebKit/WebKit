@@ -160,12 +160,7 @@ PassRefPtr<FormData> FormData::deepCopy() const
 
 void FormData::appendData(const void* data, size_t size)
 {
-    if (m_elements.isEmpty() || m_elements.last().m_type != FormDataElement::data)
-        m_elements.append(FormDataElement());
-    FormDataElement& e = m_elements.last();
-    size_t oldSize = e.m_data.size();
-    e.m_data.grow(oldSize + size);
-    memcpy(e.m_data.data() + oldSize, data, size);
+    memcpy(expandDataStore(size), data, size);
 }
 
 void FormData::appendFile(const String& filename, bool shouldGenerateFile)
@@ -299,6 +294,16 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
         FormDataBuilder::addBoundaryToMultiPartHeader(encodedData, m_boundary.data(), true);
 
     appendData(encodedData.data(), encodedData.size());
+}
+
+char* FormData::expandDataStore(size_t size)
+{
+    if (m_elements.isEmpty() || m_elements.last().m_type != FormDataElement::data)
+        m_elements.append(FormDataElement());
+    FormDataElement& e = m_elements.last();
+    size_t oldSize = e.m_data.size();
+    e.m_data.grow(oldSize + size);
+    return e.m_data.data() + oldSize;
 }
 
 void FormData::flatten(Vector<char>& data) const

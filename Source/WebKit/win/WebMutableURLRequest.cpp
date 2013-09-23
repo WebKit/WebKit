@@ -286,18 +286,32 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setCachePolicy(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setHTTPBody( 
-    /* [in] */ IStream* /*data*/)
+HRESULT WebMutableURLRequest::setHTTPBody(IStream* data)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!data)
+        return E_POINTER;
+
+    STATSTG stat;
+    if (FAILED(data->Stat(&stat, STATFLAG_NONAME)))
+        return E_FAIL;
+
+    if (stat.cbSize.HighPart || !stat.cbSize.LowPart)
+        return E_FAIL;
+
+    RefPtr<FormData> httpBody = FormData::create();
+    char* formData = httpBody->expandDataStore(stat.cbSize.LowPart);
+
+    ULONG bytesRead = 0;
+    if (FAILED(data->Read(formData, stat.cbSize.LowPart, &bytesRead)))
+        return E_FAIL;
+
+    m_request.setHTTPBody(httpBody);
+    return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setHTTPBodyStream( 
-    /* [in] */ IStream* /*data*/)
+HRESULT WebMutableURLRequest::setHTTPBodyStream(IStream* data)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    return setHTTPBody(data);
 }
 
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setHTTPMethod( 

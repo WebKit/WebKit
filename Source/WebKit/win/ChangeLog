@@ -1,5 +1,16 @@
 2013-09-23  Patrick Gansterer  <paroga@webkit.org>
 
+        [WIN] Implement WebMutableURLRequest::setHTTPBody()
+        https://bugs.webkit.org/show_bug.cgi?id=91920
+
+        Reviewed by Brent Fulgham.
+
+        * WebMutableURLRequest.cpp:
+        (WebMutableURLRequest::setHTTPBody):
+        (WebMutableURLRequest::setHTTPBodyStream):
+
+2013-09-23  Patrick Gansterer  <paroga@webkit.org>
+
         use NOMINMAX instead of #define min min
         https://bugs.webkit.org/show_bug.cgi?id=73563
 

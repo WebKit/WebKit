@@ -130,6 +130,7 @@ public:
     void appendURL(const KURL&);
     void appendURLRange(const KURL&, long long start, long long length, double expectedModificationTime);
 #endif
+    char* expandDataStore(size_t);
 
     void flatten(Vector<char>&) const; // omits files
     String flattenToString() const; // omits files
