@@ -1663,9 +1663,9 @@ void RenderObject::handleDynamicFloatPositionChange()
         else {
             // An anonymous block must be made to wrap this inline.
             RenderBlock* block = toRenderBlock(parent())->createAnonymousBlock();
-            parent()->insertChildInternal(block, this, RenderElement::NotifyChildren);
-            parent()->removeChildInternal(this, RenderElement::NotifyChildren);
-            block->insertChildInternal(this, nullptr, RenderElement::NotifyChildren);
+            RenderObjectChildList* childlist = parent()->children();
+            childlist->insertChildNode(parent(), block, this);
+            block->children()->appendChildNode(block, childlist->removeChildNode(parent(), this));
         }
     }
 }
@@ -2410,6 +2410,11 @@ inline void RenderObject::clearLayoutRootIfNeeded() const
 
 void RenderObject::willBeDestroyed()
 {
+    // Destroy any leftover anonymous children.
+    RenderObjectChildList* children = this->children();
+    if (children)
+        children->destroyLeftoverChildren();
+
     // If this renderer is being autoscrolled, stop the autoscroll timer
     
     // FIXME: RenderObject::destroy should not get called with a renderer whose document
@@ -2515,9 +2520,11 @@ void RenderObject::removeFromRenderFlowThread()
 
 void RenderObject::removeFromRenderFlowThreadRecursive(RenderFlowThread* renderFlowThread)
 {
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-        child->removeFromRenderFlowThreadRecursive(renderFlowThread);
-
+    if (const RenderObjectChildList* children = this->children()) {
+        for (RenderObject* child = children->firstChild(); child; child = child->nextSibling())
+            child->removeFromRenderFlowThreadRecursive(renderFlowThread);
+    }
+    
     RenderFlowThread* localFlowThread = renderFlowThread;
     if (flowThreadState() == InsideInFlowThread)
         localFlowThread = flowThreadContainingBlock(); // We have to ask. We can't just assume we are in the same flow thread.

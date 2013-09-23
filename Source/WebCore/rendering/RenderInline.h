@@ -37,6 +37,9 @@ public:
 
     static RenderInline* createAnonymous(Document&);
 
+    RenderObject* firstChild() const { return m_children.firstChild(); }
+    RenderObject* lastChild() const { return m_children.lastChild(); }
+
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) OVERRIDE;
 
     virtual LayoutUnit marginLeft() const OVERRIDE FINAL;
@@ -96,10 +99,12 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
 private:
+    virtual const RenderObjectChildList* children() const OVERRIDE FINAL { return &m_children; }
+    virtual RenderObjectChildList* children() OVERRIDE FINAL { return &m_children; }
+
     virtual const char* renderName() const OVERRIDE;
 
     virtual bool isRenderInline() const OVERRIDE FINAL { return true; }
-    virtual bool canHaveChildren() const OVERRIDE FINAL { return true; }
 
     LayoutRect culledInlineVisualOverflowBoundingBox() const;
     InlineBox* culledInlineFirstLineBox() const;
@@ -173,6 +178,7 @@ private:
                              const LayoutRect& nextLine, const Color);
     RenderBoxModelObject* continuationBefore(RenderObject* beforeChild);
 
+    RenderObjectChildList m_children;
     RenderLineBoxList m_lineBoxes;   // All of the line boxes created for this inline flow.  For example, <i>Hello<br>world.</i> will have two <i> line boxes.
 
     bool m_alwaysCreateLineBoxes : 1;

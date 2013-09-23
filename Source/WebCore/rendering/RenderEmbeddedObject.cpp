@@ -494,7 +494,7 @@ void RenderEmbeddedObject::layout()
         return;
 
     // This code copied from RenderMedia::layout().
-    RenderObject* child = firstChild();
+    RenderObject* child = m_children.firstChild();
 
     if (!child)
         return;

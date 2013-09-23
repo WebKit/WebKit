@@ -1,5 +1,108 @@
 2013-09-22  Commit Queue  <commit-queue@webkit.org>
 
+        Unreviewed, rolling out r156254.
+        http://trac.webkit.org/changeset/156254
+        https://bugs.webkit.org/show_bug.cgi?id=121779
+
+        Caused assertions in fast/regions tests (Requested by ap on
+        #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::willBeDestroyed):
+        (WebCore::RenderBlock::addChildToAnonymousColumnBlocks):
+        (WebCore::RenderBlock::splitBlocks):
+        (WebCore::RenderBlock::splitFlow):
+        (WebCore::RenderBlock::makeChildrenAnonymousColumnBlocks):
+        (WebCore::RenderBlock::makeChildrenNonInline):
+        (WebCore::RenderBlock::removeLeftoverAnonymousBlock):
+        (WebCore::RenderBlock::collapseAnonymousBoxChild):
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::updateFirstLetterStyle):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::firstChild):
+        (WebCore::RenderBlock::lastChild):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::splitAnonymousBoxesAroundChild):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::moveChildTo):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        (WebCore::RenderElement::addChild):
+        (WebCore::RenderElement::removeChild):
+        * rendering/RenderElement.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::layout):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::willBeDestroyed):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::splitFlow):
+        (WebCore::RenderInline::childBecameNonInline):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::firstChild):
+        (WebCore::RenderInline::lastChild):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::willBeDestroyed):
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::layout):
+        * rendering/RenderMedia.h:
+        (WebCore::RenderMedia::firstChild):
+        (WebCore::RenderMedia::lastChild):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::handleDynamicFloatPositionChange):
+        (WebCore::RenderObject::willBeDestroyed):
+        (WebCore::RenderObject::removeFromRenderFlowThreadRecursive):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::firstChild):
+        (WebCore::RenderObject::lastChild):
+        (WebCore::RenderObject::children):
+        (WebCore::RenderObject::canHaveChildren):
+        * rendering/RenderObjectChildList.cpp: Added.
+        (WebCore::RenderObjectChildList::destroyLeftoverChildren):
+        (WebCore::RenderObjectChildList::removeChildNode):
+        (WebCore::RenderObjectChildList::insertChildNode):
+        * rendering/RenderObjectChildList.h: Copied from Source/WebCore/rendering/RenderMedia.h.
+        (WebCore::RenderObjectChildList::RenderObjectChildList):
+        (WebCore::RenderObjectChildList::firstChild):
+        (WebCore::RenderObjectChildList::lastChild):
+        (WebCore::RenderObjectChildList::setFirstChild):
+        (WebCore::RenderObjectChildList::setLastChild):
+        (WebCore::RenderObjectChildList::appendChildNode):
+        * rendering/RenderReplaced.h:
+        (WebCore::RenderReplaced::canHaveChildren):
+        * rendering/RenderReplica.h:
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::moveInlineChildren):
+        (WebCore::RenderRubyBase::moveBlockChildren):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.h:
+        * rendering/RenderingAllInOne.cpp:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::updateFromElement):
+        * rendering/svg/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::firstChild):
+        (WebCore::RenderSVGContainer::lastChild):
+        * rendering/svg/RenderSVGGradientStop.h:
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::willBeDestroyed):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGShape.h:
+
+2013-09-22  Commit Queue  <commit-queue@webkit.org>
+
         Unreviewed, rolling out r156253.
         http://trac.webkit.org/changeset/156253
         https://bugs.webkit.org/show_bug.cgi?id=121778

@@ -54,8 +54,6 @@ public:
 private:
     void node() const WTF_DELETED_FUNCTION;
 
-    virtual bool canHaveChildren() const OVERRIDE { return false; }
-
     virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
     virtual int caretMinOffset() const OVERRIDE;
     virtual int caretMaxOffset() const OVERRIDE;

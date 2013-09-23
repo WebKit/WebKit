@@ -36,6 +36,12 @@ class RenderTableRow FINAL : public RenderBox {
 public:
     explicit RenderTableRow(Element*);
 
+    RenderObject* firstChild() const { return m_children.firstChild(); }
+    RenderObject* lastChild() const { return m_children.lastChild(); }
+
+    virtual const RenderObjectChildList* children() const OVERRIDE { return &m_children; }
+    virtual RenderObjectChildList* children() OVERRIDE { return &m_children; }
+
     RenderTableSection* section() const { return toRenderTableSection(parent()); }
     RenderTable* table() const { return toRenderTable(parent()->parent()); }
 
@@ -89,7 +95,6 @@ private:
 
     virtual bool isTableRow() const OVERRIDE { return true; }
 
-    virtual bool canHaveChildren() const OVERRIDE { return true; }
     virtual void willBeRemovedFromTree() OVERRIDE;
 
     virtual void layout() OVERRIDE;
@@ -104,6 +109,7 @@ private:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
+    RenderObjectChildList m_children;
     unsigned m_rowIndex : 31;
 };
 

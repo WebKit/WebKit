@@ -84,6 +84,7 @@
 #include "RenderMultiColumnFlowThread.cpp"
 #include "RenderMultiColumnSet.cpp"
 #include "RenderObject.cpp"
+#include "RenderObjectChildList.cpp"
 #include "RenderProgress.cpp"
 #include "RenderQuote.cpp"
 #include "RenderReplaced.cpp"

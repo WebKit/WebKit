@@ -81,7 +81,7 @@ void RenderLayerModelObject::willBeDestroyed()
     }
 
     // RenderObject::willBeDestroyed calls back to destroyLayer() for layer destruction
-    RenderElement::willBeDestroyed();
+    RenderObject::willBeDestroyed();
 }
 
 void RenderLayerModelObject::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)

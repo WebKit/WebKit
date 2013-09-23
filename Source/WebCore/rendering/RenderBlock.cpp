@@ -84,6 +84,7 @@ using namespace HTMLNames;
 
 struct SameSizeAsRenderBlock : public RenderBox {
     void* pointers[2];
+    RenderObjectChildList children;
     RenderLineBoxList lineBoxes;
     uint32_t bitfields;
 };
@@ -212,7 +213,7 @@ void RenderBlock::willBeDestroyed()
 
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
     // properly dirty line boxes that they are removed from. Effects that do :before/:after only on hover could crash otherwise.
-    destroyLeftoverChildren();
+    children()->destroyLeftoverChildren();
 
     // Destroy our continuation before anything other than anonymous children.
     // The reason we don't destroy it before anonymous children is that they may
@@ -467,7 +468,7 @@ void RenderBlock::addChildToAnonymousColumnBlocks(RenderObject* newChild, Render
     if (!beforeChild) {
         // Create a new block of the correct type.
         RenderBlock* newBox = newChildHasColumnSpan ? createAnonymousColumnSpanBlock() : createAnonymousColumnsBlock();
-        insertChildInternal(newBox, nullptr, NotifyChildren);
+        children()->appendChildNode(this, newBox);
         newBox->addChildIgnoringAnonymousColumnBlocks(newChild, 0);
         return;
     }
@@ -490,7 +491,7 @@ void RenderBlock::addChildToAnonymousColumnBlocks(RenderObject* newChild, Render
     
     // Create a new anonymous box of the appropriate type.
     RenderBlock* newBox = newChildHasColumnSpan ? createAnonymousColumnSpanBlock() : createAnonymousColumnsBlock();
-    insertChildInternal(newBox, newBeforeChild, NotifyChildren);
+    children()->insertChildNode(this, newBox, newBeforeChild);
     newBox->addChildIgnoringAnonymousColumnBlocks(newChild, 0);
     return;
 }
@@ -607,7 +608,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
     }
 
     // Now we are at the columns block level. We need to put the clone into the toBlock.
-    toBlock->insertChildInternal(cloneBlock, nullptr, NotifyChildren);
+    toBlock->children()->appendChildNode(toBlock, cloneBlock);
 
     // Now take all the children after currChild and remove them from the fromBlock
     // and put them in the toBlock.
@@ -642,9 +643,9 @@ void RenderBlock::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
 
     RenderObject* boxFirst = madeNewBeforeBlock ? block->firstChild() : pre->nextSibling();
     if (madeNewBeforeBlock)
-        block->insertChildInternal(pre, boxFirst, NotifyChildren);
-    block->insertChildInternal(newBlockBox, boxFirst, NotifyChildren);
-    block->insertChildInternal(post, boxFirst, NotifyChildren);
+        block->children()->insertChildNode(block, pre, boxFirst);
+    block->children()->insertChildNode(block, newBlockBox, boxFirst);
+    block->children()->insertChildNode(block, post, boxFirst);
     block->setChildrenInline(false);
     
     if (madeNewBeforeBlock)
@@ -694,10 +695,10 @@ void RenderBlock::makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, R
 
     RenderObject* boxFirst = block->firstChild();
     if (pre)
-        block->insertChildInternal(pre, boxFirst, NotifyChildren);
-    block->insertChildInternal(newBlockBox, boxFirst, NotifyChildren);
+        block->children()->insertChildNode(block, pre, boxFirst);
+    block->children()->insertChildNode(block, newBlockBox, boxFirst);
     if (post)
-        block->insertChildInternal(post, boxFirst, NotifyChildren);
+        block->children()->insertChildNode(block, post, boxFirst);
     block->setChildrenInline(false);
     
     // The pre/post blocks always have layers, so we know to always do a full insert/remove (so we pass true as the last argument).
@@ -1004,7 +1005,7 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
         child = inlineRunEnd->nextSibling();
 
         RenderBlock* block = createAnonymousBlock();
-        insertChildInternal(block, inlineRunStart, NotifyChildren);
+        children()->insertChildNode(this, block, inlineRunStart);
         moveChildrenTo(block, inlineRunStart, child);
     }
 
@@ -1024,8 +1025,8 @@ void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
     if (child->continuation() || (child->firstChild() && (child->isAnonymousColumnSpanBlock() || child->isAnonymousColumnsBlock())))
         return;
     
-    RenderObject* firstAnChild = child->firstChild();
-    RenderObject* lastAnChild = child->lastChild();
+    RenderObject* firstAnChild = child->m_children.firstChild();
+    RenderObject* lastAnChild = child->m_children.lastChild();
     if (firstAnChild) {
         RenderObject* o = firstAnChild;
         while (o) {
@@ -1039,15 +1040,15 @@ void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
         if (child->nextSibling())
             child->nextSibling()->setPreviousSibling(lastAnChild);
             
-        if (child == firstChild())
-            setFirstChild(firstAnChild);
-        if (child == lastChild())
-            setLastChild(lastAnChild);
+        if (child == m_children.firstChild())
+            m_children.setFirstChild(firstAnChild);
+        if (child == m_children.lastChild())
+            m_children.setLastChild(lastAnChild);
     } else {
-        if (child == firstChild())
-            setFirstChild(child->nextSibling());
-        if (child == lastChild())
-            setLastChild(child->previousSibling());
+        if (child == m_children.firstChild())
+            m_children.setFirstChild(child->nextSibling());
+        if (child == m_children.lastChild())
+            m_children.setLastChild(child->previousSibling());
 
         if (child->previousSibling())
             child->previousSibling()->setNextSibling(child->nextSibling());
@@ -1055,7 +1056,7 @@ void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
             child->nextSibling()->setPreviousSibling(child->previousSibling());
     }
 
-    child->setFirstChild(0);
+    child->children()->setFirstChild(0);
     child->m_next = 0;
 
     // Remove all the information in the flow thread associated with the leftover anonymous block.
@@ -1093,7 +1094,7 @@ static bool canMergeContiguousAnonymousBlocks(RenderObject* oldChild, RenderObje
            && prev->isAnonymousColumnSpanBlock() == next->isAnonymousColumnSpanBlock();
 }
 
-void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderBlock* child)
+void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderObject* child)
 {
     parent->setNeedsLayoutAndPrefWidthsRecalc();
     parent->setChildrenInline(child->childrenInline());
@@ -1101,14 +1102,14 @@ void RenderBlock::collapseAnonymousBoxChild(RenderBlock* parent, RenderBlock* ch
 
     RenderFlowThread* childFlowThread = child->flowThreadContainingBlock();
     CurrentRenderFlowThreadMaintainer flowThreadMaintainer(childFlowThread);
-
-    parent->removeChildInternal(child, child->hasLayer() ? NotifyChildren : DontNotifyChildren);
-    child->moveAllChildrenTo(parent, nextSibling, child->hasLayer());
+    
+    RenderBlock* anonBlock = toRenderBlock(parent->children()->removeChildNode(parent, child, child->hasLayer()));
+    anonBlock->moveAllChildrenTo(parent, nextSibling, child->hasLayer());
     // Delete the now-empty block's lines and nuke it.
-    child->deleteLineBoxTree();
+    anonBlock->deleteLineBoxTree();
     if (childFlowThread && childFlowThread->isRenderNamedFlowThread())
-        toRenderNamedFlowThread(childFlowThread)->removeFlowChildInfo(child);
-    child->destroy();
+        toRenderNamedFlowThread(childFlowThread)->removeFlowChildInfo(anonBlock);
+    anonBlock->destroy();
 }
 
 void RenderBlock::moveAllChildrenIncludingFloatsTo(RenderBlock* toBlock, bool fullRemoveInsert)
@@ -1187,12 +1188,11 @@ void RenderBlock::removeChild(RenderObject* oldChild)
             // Cache this value as it might get changed in setStyle() call.
             bool inlineChildrenBlockHasLayer = inlineChildrenBlock->hasLayer();
             inlineChildrenBlock->setStyle(newStyle);
-            removeChildInternal(inlineChildrenBlock, inlineChildrenBlockHasLayer ? NotifyChildren : DontNotifyChildren);
+            children()->removeChildNode(this, inlineChildrenBlock, inlineChildrenBlockHasLayer);
             
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
-            RenderObject* beforeChild = prev == inlineChildrenBlock ? blockChildrenBlock->firstChild() : nullptr;
-            blockChildrenBlock->insertChildInternal(inlineChildrenBlock, beforeChild,
-                (inlineChildrenBlockHasLayer || blockChildrenBlock->hasLayer()) ? NotifyChildren : DontNotifyChildren);
+            blockChildrenBlock->children()->insertChildNode(blockChildrenBlock, inlineChildrenBlock, prev == inlineChildrenBlock ? blockChildrenBlock->firstChild() : 0,
+                                                            inlineChildrenBlockHasLayer || blockChildrenBlock->hasLayer());
             next->setNeedsLayoutAndPrefWidthsRecalc();
             
             // inlineChildrenBlock got reparented to blockChildrenBlock, so it is no longer a child
@@ -1220,7 +1220,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         // The removal has knocked us down to containing only a single anonymous
         // box.  We can go ahead and pull the content right back up into our
         // box.
-        collapseAnonymousBoxChild(this, toRenderBlock(child));
+        collapseAnonymousBoxChild(this, child);
     } else if (((prev && prev->isAnonymousBlock()) || (next && next->isAnonymousBlock())) && canCollapseAnonymousBlockChild()) {
         // It's possible that the removal has knocked us down to a single anonymous
         // block with pseudo-style element siblings (e.g. first-letter). If these
@@ -5845,7 +5845,7 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
         }
         // To prevent removal of single anonymous block in RenderBlock::removeChild and causing
         // |nextSibling| to go stale, we remove the old first letter using removeChildNode first.
-        firstLetterContainer->removeChildInternal(firstLetter, NotifyChildren);
+        firstLetterContainer->children()->removeChildNode(firstLetterContainer, firstLetter);
         firstLetter->destroy();
         firstLetter = newFirstLetter;
         firstLetterContainer->addChild(firstLetter, nextSibling);

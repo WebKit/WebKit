@@ -60,6 +60,12 @@ public:
 
     HTMLFrameSetElement& frameSetElement() const;
 
+    RenderObject* firstChild() const { return m_children.firstChild(); }
+    RenderObject* lastChild() const { return m_children.lastChild(); }
+
+    virtual const RenderObjectChildList* children() const OVERRIDE { return &m_children; }
+    virtual RenderObjectChildList* children() OVERRIDE { return &m_children; }
+
     FrameEdgeInfo edgeInfo() const;
 
     bool userResize(MouseEvent*);
@@ -96,7 +102,6 @@ private:
 
     virtual void layout() OVERRIDE;
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
-    virtual bool canHaveChildren() const OVERRIDE { return true; }
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const OVERRIDE;
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const OVERRIDE;
 
@@ -118,6 +123,8 @@ private:
 
     void paintRowBorder(const PaintInfo&, const IntRect&);
     void paintColumnBorder(const PaintInfo&, const IntRect&);
+
+    RenderObjectChildList m_children;
 
     GridAxis m_rows;
     GridAxis m_cols;

@@ -38,9 +38,6 @@ public:
     Element* nonPseudoElement() const { return toElement(RenderObject::nonPseudoNode()); }
     Element* generatingElement() const { return toElement(RenderObject::generatingNode()); }
 
-    virtual RenderObject* firstChild() const FINAL { return m_firstChild; }
-    virtual RenderObject* lastChild() const FINAL { return m_lastChild; }
-
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const { return true; }
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = 0) { return addChild(newChild, beforeChild); }
@@ -54,10 +51,6 @@ public:
     void moveLayers(RenderLayer* oldParent, RenderLayer* newParent);
     RenderLayer* findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent = true);
 
-    enum NotifyChildrenType { NotifyChildren, DontNotifyChildren };
-    void insertChildInternal(RenderObject*, RenderObject* beforeChild, NotifyChildrenType);
-    void removeChildInternal(RenderObject*, NotifyChildrenType);
-
 protected:
     explicit RenderElement(Element*);
 
@@ -66,22 +59,14 @@ protected:
     LayoutUnit valueForLength(const Length&, LayoutUnit maximumValue, bool roundPercentages = false) const;
     LayoutUnit minimumValueForLength(const Length&, LayoutUnit maximumValue, bool roundPercentages = false) const;
 
-    void setFirstChild(RenderObject* child) { m_firstChild = child; }
-    void setLastChild(RenderObject* child) { m_lastChild = child; }
-    void destroyLeftoverChildren();
-
     virtual void insertedIntoTree() OVERRIDE;
     virtual void willBeRemovedFromTree() OVERRIDE;
-    virtual void willBeDestroyed() OVERRIDE;
 
 private:
     void node() const WTF_DELETED_FUNCTION;
     void nonPseudoNode() const WTF_DELETED_FUNCTION;
     void generatingNode() const WTF_DELETED_FUNCTION;
     void isText() const WTF_DELETED_FUNCTION;
-
-    RenderObject* m_firstChild;
-    RenderObject* m_lastChild;
 };
 
 inline LayoutUnit RenderElement::valueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages) const

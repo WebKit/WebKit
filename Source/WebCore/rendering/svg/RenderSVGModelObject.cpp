@@ -95,7 +95,7 @@ void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixe
 void RenderSVGModelObject::willBeDestroyed()
 {
     SVGResourcesCache::clientDestroyed(this);
-    RenderElement::willBeDestroyed();
+    RenderObject::willBeDestroyed();
 }
 
 void RenderSVGModelObject::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)

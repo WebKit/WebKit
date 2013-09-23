@@ -139,7 +139,7 @@ void RenderMathMLOperator::updateFromElement()
     RenderObject* savedRenderer = element()->renderer();
 
     // Destroy our current children
-    destroyLeftoverChildren();
+    children()->destroyLeftoverChildren();
 
     // Since we share a node with our children, destroying our children may set our node's
     // renderer to 0, so we need to restore it.

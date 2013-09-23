@@ -50,9 +50,8 @@ public:
 private:
     RenderReplica();
 
-    virtual bool isReplica() const OVERRIDE { return true; }
-    virtual bool canHaveChildren() const OVERRIDE { return false; }
-    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual bool isReplica() const { return true; }
+    virtual void computePreferredLogicalWidths();
 
 };
 

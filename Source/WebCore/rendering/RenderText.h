@@ -158,8 +158,6 @@ protected:
     virtual InlineTextBox* createTextBox(); // Subclassed by SVG.
 
 private:
-    virtual bool canHaveChildren() const OVERRIDE FINAL { return false; }
-
     void computePreferredLogicalWidths(float leadWidth, HashSet<const SimpleFontData*>& fallbackFonts, GlyphOverflow&);
 
     bool computeCanUseSimpleFontCodePath() const;

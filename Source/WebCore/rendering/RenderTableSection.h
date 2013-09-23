@@ -65,6 +65,12 @@ public:
     explicit RenderTableSection(Element*);
     virtual ~RenderTableSection();
 
+    RenderObject* firstChild() const { return m_children.firstChild(); }
+    RenderObject* lastChild() const { return m_children.lastChild(); }
+
+    virtual const RenderObjectChildList* children() const OVERRIDE { return &m_children; }
+    virtual RenderObjectChildList* children() OVERRIDE { return &m_children; }
+
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
 
     virtual int firstLineBoxBaseline() const OVERRIDE;
@@ -198,8 +204,6 @@ protected:
 private:
     virtual const char* renderName() const OVERRIDE { return (isAnonymous() || isPseudoElement()) ? "RenderTableSection (anonymous)" : "RenderTableSection"; }
 
-    virtual bool canHaveChildren() const OVERRIDE { return true; }
-
     virtual bool isTableSection() const OVERRIDE { return true; }
 
     virtual void willBeRemovedFromTree() OVERRIDE;
@@ -237,6 +241,8 @@ private:
     CellSpan spannedColumns(const LayoutRect& flippedRect) const;
 
     void setLogicalPositionForCell(RenderTableCell*, unsigned effectiveColumn) const;
+
+    RenderObjectChildList m_children;
 
     Vector<RowStruct> m_grid;
     Vector<int> m_rowPos;

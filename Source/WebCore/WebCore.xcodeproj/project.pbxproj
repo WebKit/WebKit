@@ -4768,6 +4768,7 @@
 		BC29935D17A1DD5800BCE880 /* ColorInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC29935C17A1DD5800BCE880 /* ColorInputType.cpp */; };
 		BC2CBF4E140F1ABD003879BE /* JSWebGLContextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2CBF4B140F1A65003879BE /* JSWebGLContextEvent.h */; };
 		BC2CBF7B140F1D58003879BE /* JSWebGLContextEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2CBF7A140F1D58003879BE /* JSWebGLContextEvent.cpp */; };
+		BC2CC8DF0F32881000A9DF26 /* RenderObjectChildList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2CC8DE0F32881000A9DF26 /* RenderObjectChildList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2ED5550C6B9BD300920BFF /* JSElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */; };
 		BC2ED6BC0C6BD2F000920BFF /* JSAttrCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */; };
 		BC2ED7A50C6C0F3600920BFF /* JSHTMLFrameElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC2ED7A40C6C0F3600920BFF /* JSHTMLFrameElementCustom.cpp */; };
@@ -4887,6 +4888,7 @@
 		BC60DA5B0D2A31F700B9918F /* XPathException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60DA590D2A31F700B9918F /* XPathException.h */; };
 		BC60DB490D2A3D1E00B9918F /* JSXPathException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60DB470D2A3D1E00B9918F /* JSXPathException.cpp */; };
 		BC60DB4A0D2A3D1E00B9918F /* JSXPathException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60DB480D2A3D1E00B9918F /* JSXPathException.h */; };
+		BC60EFB70F33A0E700812A93 /* RenderObjectChildList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60EFB60F33A0E700812A93 /* RenderObjectChildList.cpp */; };
 		BC64640911D7F304006455B0 /* DOMStringMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64640711D7F304006455B0 /* DOMStringMap.cpp */; };
 		BC64640A11D7F304006455B0 /* DOMStringMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64640811D7F304006455B0 /* DOMStringMap.h */; };
 		BC64641C11D7F416006455B0 /* DatasetDOMStringMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64641A11D7F416006455B0 /* DatasetDOMStringMap.h */; };
@@ -11629,6 +11631,7 @@
 		BC29935C17A1DD5800BCE880 /* ColorInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorInputType.cpp; sourceTree = "<group>"; };
 		BC2CBF4B140F1A65003879BE /* JSWebGLContextEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLContextEvent.h; sourceTree = "<group>"; };
 		BC2CBF7A140F1D58003879BE /* JSWebGLContextEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLContextEvent.cpp; sourceTree = "<group>"; };
+		BC2CC8DE0F32881000A9DF26 /* RenderObjectChildList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderObjectChildList.h; sourceTree = "<group>"; };
 		BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSElementCustom.cpp; sourceTree = "<group>"; };
 		BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAttrCustom.cpp; sourceTree = "<group>"; };
 		BC2ED7A40C6C0F3600920BFF /* JSHTMLFrameElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFrameElementCustom.cpp; sourceTree = "<group>"; };
@@ -11757,6 +11760,7 @@
 		BC60DA5A0D2A31F700B9918F /* XPathException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XPathException.idl; sourceTree = "<group>"; };
 		BC60DB470D2A3D1E00B9918F /* JSXPathException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathException.cpp; sourceTree = "<group>"; };
 		BC60DB480D2A3D1E00B9918F /* JSXPathException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXPathException.h; sourceTree = "<group>"; };
+		BC60EFB60F33A0E700812A93 /* RenderObjectChildList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderObjectChildList.cpp; sourceTree = "<group>"; };
 		BC64640711D7F304006455B0 /* DOMStringMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMStringMap.cpp; sourceTree = "<group>"; };
 		BC64640811D7F304006455B0 /* DOMStringMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMStringMap.h; sourceTree = "<group>"; };
 		BC64641A11D7F416006455B0 /* DatasetDOMStringMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetDOMStringMap.h; sourceTree = "<group>"; };
@@ -20627,6 +20631,8 @@
 				BC85F23C151915E000BC17BE /* RenderNamedFlowThread.h */,
 				BCEA4840097D93020094C9E4 /* RenderObject.cpp */,
 				BCEA4841097D93020094C9E4 /* RenderObject.h */,
+				BC60EFB60F33A0E700812A93 /* RenderObjectChildList.cpp */,
+				BC2CC8DE0F32881000A9DF26 /* RenderObjectChildList.h */,
 				BCFA930710333193007B25D1 /* RenderOverflow.h */,
 				A43BF59A1149292800C643CA /* RenderProgress.cpp */,
 				A43BF59B1149292800C643CA /* RenderProgress.h */,
@@ -23770,6 +23776,7 @@
 				BCE32B9C1517C0B200F542EC /* RenderMultiColumnSet.h in Headers */,
 				BC85F23D151915E000BC17BE /* RenderNamedFlowThread.h in Headers */,
 				BCEA4880097D93020094C9E4 /* RenderObject.h in Headers */,
+				BC2CC8DF0F32881000A9DF26 /* RenderObjectChildList.h in Headers */,
 				BCFA930810333193007B25D1 /* RenderOverflow.h in Headers */,
 				A43BF59D1149292800C643CA /* RenderProgress.h in Headers */,
 				5A574F25131DB93900471B88 /* RenderQuote.h in Headers */,
@@ -26989,6 +26996,7 @@
 				BCE32B9E1517C22700F542EC /* RenderMultiColumnSet.cpp in Sources */,
 				1A3FF9C315265359002288A1 /* RenderNamedFlowThread.cpp in Sources */,
 				BCEA487F097D93020094C9E4 /* RenderObject.cpp in Sources */,
+				BC60EFB70F33A0E700812A93 /* RenderObjectChildList.cpp in Sources */,
 				A43BF59C1149292800C643CA /* RenderProgress.cpp in Sources */,
 				5A574F24131DB93900471B88 /* RenderQuote.cpp in Sources */,
 				B5B7A17017C10AA800E4AA0A /* ElementData.cpp in Sources */,
