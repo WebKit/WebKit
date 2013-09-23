@@ -1,3 +1,16 @@
+2013-09-23  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK][WK2] A plugin dirtyRect within iframe remains after moving to a different page.
+        https://bugs.webkit.org/show_bug.cgi?id=121600
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Nowhere to destroy NetscapePlugin::m_platformPluginWidget even after destroying
+        an instance of NetscapePlugin. So the created GtkWidget remains visible.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::NetscapePlugin::platformDestroy):
+
 2013-09-23  Sam Weinig  <sam@webkit.org>
 
         Add back the SharedWorkerStrategy to prevent crashing.
