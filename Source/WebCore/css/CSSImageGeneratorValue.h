@@ -92,8 +92,6 @@ private:
     HashMap<IntSize, OwnPtr<CachedGeneratedImage> > m_images;
 };
 
-CSS_VALUE_TYPE_CASTS(ImageGeneratorValue)
-
 } // namespace WebCore
 
 #endif // CSSImageGeneratorValue_h

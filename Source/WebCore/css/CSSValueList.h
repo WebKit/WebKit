@@ -96,8 +96,6 @@ private:
     CSSValueList* m_list;
 };
 
-CSS_VALUE_TYPE_CASTS(ValueList)
-
 // Wrapper that can be used to iterate over any CSSValue. Non-list values and 0 behave as zero-length lists.
 // Objects of this class are intended to be stack-allocated and scoped to a single function.
 // Please take care not to pass these around as they do hold onto a raw pointer.
@@ -113,7 +111,6 @@ private:
     CSSValueListInspector m_inspector;
     size_t m_position;
 };
-
 } // namespace WebCore
 
 #endif // CSSValueList_h

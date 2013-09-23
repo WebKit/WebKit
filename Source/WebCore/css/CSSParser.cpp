@@ -1389,7 +1389,7 @@ bool CSSParser::parseColor(RGBA32& color, const String& string, bool strict)
     if (!value->isPrimitiveValue())
         return false;
 
-    CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     if (!primitiveValue->isRGBColor())
         return false;
 
@@ -1587,7 +1587,7 @@ void CSSParser::addProperty(CSSPropertyID propId, PassRefPtr<CSSValue> value, bo
     // This property doesn't belong to a shorthand or is a CSS variable (which will be resolved later).
     if (!m_currentShorthand
 #if ENABLE(CSS_VARIABLES)
-        || (value->isPrimitiveValue() && toCSSPrimitiveValue(value.get())->isVariableName())
+        || (value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value.get())->isVariableName())
 #endif
         ) {
         m_parsedProperties.append(CSSProperty(propId, value, important, false, CSSPropertyInvalid, m_implicitShorthand || implicit));
@@ -4118,8 +4118,8 @@ void CSSParser::parse3ValuesFillPosition(CSSParserValueList* valueList, RefPtr<C
         value1.swap(value2);
 
 #ifndef NDEBUG
-    CSSPrimitiveValue* first = toCSSPrimitiveValue(value1.get());
-    CSSPrimitiveValue* second = toCSSPrimitiveValue(value2.get());
+    CSSPrimitiveValue* first = static_cast<CSSPrimitiveValue*>(value1.get());
+    CSSPrimitiveValue* second = static_cast<CSSPrimitiveValue*>(value2.get());
     ident1 = first->getPairValue()->first()->getValueID();
     ident2 = second->getPairValue()->first()->getValueID();
     ASSERT(ident1 == CSSValueLeft || ident1 == CSSValueRight);
@@ -4179,8 +4179,8 @@ void CSSParser::parseFillPosition(CSSParserValueList* valueList, RefPtr<CSSValue
         return;
     }
 
-    RefPtr<CSSPrimitiveValue> parsedValue1 = toCSSPrimitiveValue(value1.get());
-    RefPtr<CSSPrimitiveValue> parsedValue2 = toCSSPrimitiveValue(value2.get());
+    RefPtr<CSSPrimitiveValue> parsedValue1 = static_cast<CSSPrimitiveValue*>(value1.get());
+    RefPtr<CSSPrimitiveValue> parsedValue2 = static_cast<CSSPrimitiveValue*>(value2.get());
 
     value1.clear();
     value2.clear();
@@ -4277,7 +4277,7 @@ void CSSParser::parseFillRepeat(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& valu
 
     // If only one value was specified, value2 is the same as value1.
     m_implicitShorthand = true;
-    value2 = cssValuePool().createIdentifierValue(toCSSPrimitiveValue(value1.get())->getValueID());
+    value2 = cssValuePool().createIdentifierValue(static_cast<CSSPrimitiveValue*>(value1.get())->getValueID());
 }
 
 PassRefPtr<CSSValue> CSSParser::parseFillSize(CSSPropertyID propId, bool& allowComma)
@@ -7702,11 +7702,11 @@ bool CSSParser::parseDeprecatedRadialGradient(CSSParserValueList* valueList, Ref
     ASSERT(!centerX || centerX->isPrimitiveValue());
     ASSERT(!centerY || centerY->isPrimitiveValue());
 
-    result->setFirstX(toCSSPrimitiveValue(centerX.get()));
-    result->setSecondX(toCSSPrimitiveValue(centerX.get()));
+    result->setFirstX(static_cast<CSSPrimitiveValue*>(centerX.get()));
+    result->setSecondX(static_cast<CSSPrimitiveValue*>(centerX.get()));
     // CSS3 radial gradients always share the same start and end point.
-    result->setFirstY(toCSSPrimitiveValue(centerY.get()));
-    result->setSecondY(toCSSPrimitiveValue(centerY.get()));
+    result->setFirstY(static_cast<CSSPrimitiveValue*>(centerY.get()));
+    result->setSecondY(static_cast<CSSPrimitiveValue*>(centerY.get()));
 
     RefPtr<CSSPrimitiveValue> shapeValue;
     RefPtr<CSSPrimitiveValue> sizeValue;
@@ -7966,11 +7966,11 @@ bool CSSParser::parseRadialGradient(CSSParserValueList* valueList, RefPtr<CSSVal
         a = args->current();
         if (!a)
             return false;
-        result->setFirstX(toCSSPrimitiveValue(centerX.get()));
-        result->setFirstY(toCSSPrimitiveValue(centerY.get()));
+        result->setFirstX(static_cast<CSSPrimitiveValue*>(centerX.get()));
+        result->setFirstY(static_cast<CSSPrimitiveValue*>(centerY.get()));
         // Right now, CSS radial gradients have the same start and end centers.
-        result->setSecondX(toCSSPrimitiveValue(centerX.get()));
-        result->setSecondY(toCSSPrimitiveValue(centerY.get()));
+        result->setSecondX(static_cast<CSSPrimitiveValue*>(centerX.get()));
+        result->setSecondY(static_cast<CSSPrimitiveValue*>(centerY.get()));
     }
 
     if (shapeValue || sizeValue || horizontalSize || centerX || centerY)

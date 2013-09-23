@@ -232,8 +232,6 @@ private:
     RefPtr<CSSPrimitiveValue> m_endVerticalSize;
 };
 
-CSS_VALUE_TYPE_CASTS(GradientValue)
-
 } // namespace WebCore
 
 #endif // CSSGradientValue_h

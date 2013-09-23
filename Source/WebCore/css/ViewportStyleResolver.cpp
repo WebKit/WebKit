@@ -110,7 +110,7 @@ float ViewportStyleResolver::getViewportArgumentValue(CSSPropertyID id) const
     if (!value || !value->isPrimitiveValue())
         return defaultValue;
 
-    CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value.get());
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value.get());
 
     if (primitiveValue->isNumber() || primitiveValue->isPx())
         return primitiveValue->getFloatValue();

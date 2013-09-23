@@ -55,12 +55,6 @@ private:
     }
 };
 
-inline FontValue* toFontValue(CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isFontValue());
-    return static_cast<FontValue*>(value);
-}
-
 } // namespace
 
 #endif

@@ -62,12 +62,6 @@ private:
         PassRefPtr<CSSPrimitiveValue> color);
 };
 
-inline ShadowValue* toShadowValue(CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isShadowValue());
-    return static_cast<ShadowValue*>(value);
-}
-
 } // namespace
 
 #endif

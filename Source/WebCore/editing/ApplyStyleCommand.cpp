@@ -1516,7 +1516,7 @@ float ApplyStyleCommand::computedFontSize(Node* node)
 
     RefPtr<CSSValue> value = ComputedStyleExtractor(node).propertyValue(CSSPropertyFontSize);
     ASSERT(value && value->isPrimitiveValue());
-    return toCSSPrimitiveValue(value.get())->getFloatValue(CSSPrimitiveValue::CSS_PX);
+    return static_cast<CSSPrimitiveValue*>(value.get())->getFloatValue(CSSPrimitiveValue::CSS_PX);
 }
 
 void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, const Position& end)

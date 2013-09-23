@@ -119,7 +119,11 @@ private:
     FilterSubimageObserverProxy m_filterSubimageObserver;
 };
 
-CSS_VALUE_TYPE_CASTS(FilterImageValue)
+inline CSSFilterImageValue* toCSSFilterImageValue(CSSImageGeneratorValue* value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isFilterImageValue());
+    return static_cast<CSSFilterImageValue*>(value);
+}
 
 } // namespace WebCore
 

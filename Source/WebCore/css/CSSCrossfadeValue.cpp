@@ -47,10 +47,10 @@ static inline double blendFunc(double from, double to, double progress)
 static bool subimageKnownToBeOpaque(CSSValue* value, const RenderObject* renderer)
 {
     if (value->isImageValue())
-        return toCSSImageValue(value)->knownToBeOpaque(renderer);
+        return static_cast<CSSImageValue*>(value)->knownToBeOpaque(renderer);
 
     if (value->isImageGeneratorValue())
-        return toCSSImageGeneratorValue(value)->knownToBeOpaque(renderer);
+        return static_cast<CSSImageGeneratorValue*>(value)->knownToBeOpaque(renderer);
 
     ASSERT_NOT_REACHED();
 

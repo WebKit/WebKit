@@ -449,7 +449,8 @@ private:
         if (!value || !value->isPrimitiveValue())
             return false;
 
-        result->value = CSSCalcPrimitiveValue::create(toCSSPrimitiveValue(value.get()), parserValue->isInt);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value.get());
+        result->value = CSSCalcPrimitiveValue::create(primitiveValue, parserValue->isInt);
 
         ++*index;
         return true;

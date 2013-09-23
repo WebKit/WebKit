@@ -68,8 +68,6 @@ private:
     AtomicString m_initiatorName;
 };
 
-CSS_VALUE_TYPE_CASTS(ImageValue)
-
 } // namespace WebCore
 
 #endif // CSSImageValue_h

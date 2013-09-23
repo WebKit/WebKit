@@ -150,7 +150,7 @@ public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
         if (value->isPrimitiveValue())
-            setValue(styleResolver->style(), *toCSSPrimitiveValue(value));
+            setValue(styleResolver->style(), *static_cast<CSSPrimitiveValue*>(value));
     }
     static PropertyHandler createHandler()
     {
@@ -168,7 +168,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if (primitiveValue->getValueID() == idMapsToMinusOne)
             setValue(styleResolver->style(), -1);
         else
@@ -216,7 +216,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if (primitiveValue->getValueID() == autoIdentity)
             setAuto(styleResolver->style());
         else if (valueType == Number)
@@ -255,7 +255,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
 
         if (Rect* rect = primitiveValue->getRectValue()) {
             Length top = convertToLength(styleResolver, rect->top());
@@ -301,7 +301,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if (inheritColorFromParent && primitiveValue->getValueID() == CSSValueCurrentcolor)
             applyInheritValue(propertyID, styleResolver);
         else {
@@ -362,7 +362,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if (noneEnabled && primitiveValue->getValueID() == CSSValueNone) {
             if (noneUndefined)
                 setValue(styleResolver->style(), Length(Undefined));
@@ -416,7 +416,7 @@ public:
     {
         if (!value->isPrimitiveValue())
             return;
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if ((identBehavior == MapNoneToNull && primitiveValue->getValueID() == CSSValueNone)
             || (identBehavior == MapAutoToNull && primitiveValue->getValueID() == CSSValueAuto))
             setValue(styleResolver->style(), nullAtom);
@@ -439,7 +439,8 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        Pair* pair = toCSSPrimitiveValue(value)->getPairValue();
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        Pair* pair = primitiveValue->getPairValue();
         if (!pair || !pair->first() || !pair->second())
             return;
 
@@ -601,7 +602,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
 
         CSSValueID ident = primitiveValue->getValueID();
         T length;
@@ -671,8 +672,9 @@ public:
     {
         if (!value->isPrimitiveValue())
             return;
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         FontDescription fontDescription = styleResolver->fontDescription();
-        (fontDescription.*setterFunction)(*toCSSPrimitiveValue(value));
+        (fontDescription.*setterFunction)(*primitiveValue);
         styleResolver->setFontDescription(fontDescription);
     }
 
@@ -724,7 +726,7 @@ public:
             CSSValue* item = i.value();
             if (!item->isPrimitiveValue())
                 continue;
-            CSSPrimitiveValue* contentValue = toCSSPrimitiveValue(item);
+            CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(item);
             AtomicString face;
             if (contentValue->isString())
                 face = contentValue->getStringValue();
@@ -834,7 +836,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
 
         FontDescription fontDescription = styleResolver->style()->fontDescription();
         fontDescription.setKeywordSize(0);
@@ -847,7 +849,7 @@ public:
             parentIsAbsoluteSize = styleResolver->parentStyle()->fontDescription().isAbsoluteSize();
         }
 
-        if (CSSValueID ident = toCSSPrimitiveValue(value)->getValueID()) {
+        if (CSSValueID ident = primitiveValue->getValueID()) {
             // Keywords are being used.
             switch (ident) {
             case CSSValueXxSmall:
@@ -908,7 +910,7 @@ public:
     {
         if (!value->isPrimitiveValue())
             return;
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         FontDescription fontDescription = styleResolver->fontDescription();
         switch (primitiveValue->getValueID()) {
         case CSSValueInvalid:
@@ -969,7 +971,8 @@ public:
                 CSSValue* item = valueList->itemWithoutBoundsCheck(i);
                 ASSERT(item->isPrimitiveValue());
                 if (item->isPrimitiveValue()) {
-                    switch (toCSSPrimitiveValue(item)->getValueID()) {
+                    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
+                    switch (primitiveValue->getValueID()) {
                     case CSSValueNoCommonLigatures:
                         commonLigaturesState = FontDescription::DisabledLigaturesState;
                         break;
@@ -998,7 +1001,7 @@ public:
 #if !ASSERT_DISABLED
         else {
             ASSERT_WITH_SECURITY_IMPLICATION(value->isPrimitiveValue());
-            ASSERT(toCSSPrimitiveValue(value)->getValueID() == CSSValueNormal);
+            ASSERT(static_cast<CSSPrimitiveValue*>(value)->getValueID() == CSSValueNormal);
         }
 #endif
 
@@ -1146,7 +1149,7 @@ public:
     }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        bool setCounterIncrementToNone = counterBehavior == Increment && value->isPrimitiveValue() && toCSSPrimitiveValue(value)->getValueID() == CSSValueNone;
+        bool setCounterIncrementToNone = counterBehavior == Increment && value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value)->getValueID() == CSSValueNone;
 
         if (!value->isValueList() && !setCounterIncrementToNone)
             return;
@@ -1171,7 +1174,7 @@ public:
             if (!currValue->isPrimitiveValue())
                 continue;
 
-            Pair* pair = toCSSPrimitiveValue(currValue)->getPairValue();
+            Pair* pair = static_cast<CSSPrimitiveValue*>(currValue)->getPairValue();
             if (!pair || !pair->first() || !pair->second())
                 continue;
 
@@ -1213,18 +1216,18 @@ public:
             for (int i = 0; i < len; i++) {
                 CSSValue* item = list->itemWithoutBoundsCheck(i);
                 if (item->isCursorImageValue()) {
-                    CSSCursorImageValue* image = toCSSCursorImageValue(item);
+                    CSSCursorImageValue* image = static_cast<CSSCursorImageValue*>(item);
                     if (image->updateIfSVGCursorIsUsed(styleResolver->element())) // Elements with SVG cursors are not allowed to share style.
                         styleResolver->style()->setUnique();
                     styleResolver->style()->addCursor(styleResolver->styleImage(CSSPropertyCursor, image), image->hotSpot());
                 } else if (item->isPrimitiveValue()) {
-                    CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(item);
+                    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
                     if (primitiveValue->isValueID())
                         styleResolver->style()->setCursor(*primitiveValue);
                 }
             }
         } else if (value->isPrimitiveValue()) {
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
             if (primitiveValue->isValueID() && styleResolver->style()->cursor() != ECursor(*primitiveValue))
                 styleResolver->style()->setCursor(*primitiveValue);
         }
@@ -1240,7 +1243,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         ASSERT(primitiveValue->isValueID());
 
         if (primitiveValue->getValueID() != CSSValueWebkitMatchParent)
@@ -1267,7 +1270,7 @@ public:
         for (CSSValueListIterator i(value); i.hasMore(); i.advance()) {
             CSSValue* item = i.value();
             ASSERT_WITH_SECURITY_IMPLICATION(item->isPrimitiveValue());
-            t |= *toCSSPrimitiveValue(item);
+            t |= *static_cast<CSSPrimitiveValue*>(item);
         }
         styleResolver->style()->setTextDecoration(t);
     }
@@ -1285,7 +1288,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if (primitiveValue->getValueID()) {
             switch (primitiveValue->getValueID()) {
             case CSSValueSmall:
@@ -1320,7 +1323,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if (primitiveValue->getValueID() == CSSValueInfinite)
             styleResolver->style()->setMarqueeLoopCount(-1); // -1 means repeat forever.
         else if (primitiveValue->isNumber())
@@ -1340,7 +1343,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if (CSSValueID ident = primitiveValue->getValueID()) {
             switch (ident) {
             case CSSValueSlow:
@@ -1374,7 +1377,7 @@ public:
     {
         // This is true if value is 'auto' or 'alphabetic'.
         if (value->isPrimitiveValue()) {
-            TextUnderlinePosition t = *toCSSPrimitiveValue(value);
+            TextUnderlinePosition t = *static_cast<CSSPrimitiveValue*>(value);
             styleResolver->style()->setTextUnderlinePosition(t);
             return;
         }
@@ -1403,7 +1406,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         Length lineHeight;
 
         if (primitiveValue->getValueID() == CSSValueNormal)
@@ -1441,7 +1444,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         Length lineHeight;
 
         if (primitiveValue->getIdent() == CSSValueNormal)
@@ -1583,8 +1586,8 @@ public:
             // <length>{2} | <page-size> <orientation>
             if (!inspector.first()->isPrimitiveValue() || !inspector.second()->isPrimitiveValue())
                 return;
-            CSSPrimitiveValue* first = toCSSPrimitiveValue(inspector.first());
-            CSSPrimitiveValue* second = toCSSPrimitiveValue(inspector.second());
+            CSSPrimitiveValue* first = static_cast<CSSPrimitiveValue*>(inspector.first());
+            CSSPrimitiveValue* second = static_cast<CSSPrimitiveValue*>(inspector.second());
             if (first->isLength()) {
                 // <length>{2}
                 if (!second->isLength())
@@ -1604,7 +1607,7 @@ public:
             // <length> | auto | <page-size> | [ portrait | landscape]
             if (!inspector.first()->isPrimitiveValue())
                 return;
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(inspector.first());
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(inspector.first());
             if (primitiveValue->isLength()) {
                 // <length>
                 pageSizeType = PAGE_SIZE_RESOLVED;
@@ -1668,7 +1671,7 @@ public:
                 if (!item->isPrimitiveValue())
                     continue;
 
-                CSSPrimitiveValue* value = toCSSPrimitiveValue(item);
+                CSSPrimitiveValue* value = static_cast<CSSPrimitiveValue*>(item);
                 if (value->getValueID() == CSSValueFilled || value->getValueID() == CSSValueOpen)
                     styleResolver->style()->setTextEmphasisFill(*value);
                 else
@@ -1680,7 +1683,7 @@ public:
 
         if (!value->isPrimitiveValue())
             return;
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
 
         if (primitiveValue->isString()) {
             styleResolver->style()->setTextEmphasisFill(TextEmphasisFillFilled);
@@ -1809,7 +1812,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
 
         EResize r = RESIZE_NONE;
         switch (primitiveValue->getValueID()) {
@@ -1839,7 +1842,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
 
         if (primitiveValue->getValueID())
             return styleResolver->style()->setVerticalAlign(*primitiveValue);
@@ -1878,7 +1881,7 @@ public:
             styleResolver->style()->setHasAspectRatio(false);
             return;
         }
-        CSSAspectRatioValue* aspectRatioValue = toCSSAspectRatioValue(value);
+        CSSAspectRatioValue* aspectRatioValue = static_cast<CSSAspectRatioValue*>(value);
         styleResolver->style()->setHasAspectRatio(true);
         styleResolver->style()->setAspectRatioDenominator(aspectRatioValue->denominatorValue());
         styleResolver->style()->setAspectRatioNumerator(aspectRatioValue->numeratorValue());
@@ -1914,7 +1917,7 @@ public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(value->isPrimitiveValue());
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
 
         if (primitiveValue->getValueID() == CSSValueNormal) {
             resetEffectiveZoom(styleResolver);
@@ -1975,7 +1978,7 @@ public:
         if (!value->isPrimitiveValue())
             return;
 
-        EDisplay display = *toCSSPrimitiveValue(value);
+        EDisplay display = *static_cast<CSSPrimitiveValue*>(value);
 
         if (!isValidDisplayValue(styleResolver, display))
             return;
@@ -1996,7 +1999,7 @@ public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
         if (value->isPrimitiveValue()) {
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
             if (primitiveValue->getValueID() == CSSValueNone)
                 setValue(styleResolver->style(), 0);
             else if (primitiveValue->isShape()) {
@@ -2027,7 +2030,7 @@ public:
     static void applyValue(CSSPropertyID property, StyleResolver* styleResolver, CSSValue* value)
     {
         if (value->isPrimitiveValue()) {
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
             if (primitiveValue->getValueID() == CSSValueAuto)
                 setValue(styleResolver->style(), 0);
             // FIXME Bug 102571: Layout for the value 'outside-shape' is not yet implemented
@@ -2080,7 +2083,7 @@ public:
             CSSValue* item = valueList->itemWithoutBoundsCheck(i);
             if (!item->isPrimitiveValue())
                 continue;
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(item);
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
             if (primitiveValue->getValueID() == CSSValueFromImage)
                 source = ImageResolutionFromImage;
             else if (primitiveValue->getValueID() == CSSValueSnap)
@@ -2136,7 +2139,7 @@ public:
             if (!item->isPrimitiveValue())
                 continue;
 
-            CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(item);
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
             if (!primitiveValue->getValueID())
                 lengthOrPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
 #if ENABLE(CSS3_TEXT)

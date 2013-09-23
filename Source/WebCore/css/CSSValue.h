@@ -89,8 +89,8 @@ public:
     bool isCubicBezierTimingFunctionValue() const { return m_classType == CubicBezierTimingFunctionClass; }
     bool isStepsTimingFunctionValue() const { return m_classType == StepsTimingFunctionClass; }
     bool isWebKitCSSTransformValue() const { return m_classType == WebKitCSSTransformClass; }
-    bool isLineBoxContainValue() const { return m_classType == LineBoxContainClass; }
-    bool isCalcValue() const {return m_classType == CalculationClass; }
+    bool isCSSLineBoxContainValue() const { return m_classType == LineBoxContainClass; }
+    bool isCalculationValue() const {return m_classType == CalculationClass; }
 #if ENABLE(CSS_FILTERS)
     bool isFilterImageValue() const { return m_classType == FilterImageClass; }
     bool isWebKitCSSFilterValue() const { return m_classType == WebKitCSSFilterClass; }
@@ -263,20 +263,6 @@ inline bool compareCSSValuePtr(const RefPtr<CSSValueType>& first, const RefPtr<C
 {
     return first ? second && first->equals(*second) : !second;
 }
-
-#define CSS_VALUE_TYPE_CASTS(ValueTypeName) \
-inline const CSS##ValueTypeName* toCSS##ValueTypeName(const CSSValue* value) \
-{ \
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->is##ValueTypeName()); \
-    return static_cast<const CSS##ValueTypeName*>(value); \
-} \
-inline CSS##ValueTypeName* toCSS##ValueTypeName(CSSValue* value) \
-{ \
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->is##ValueTypeName()); \
-    return static_cast<CSS##ValueTypeName*>(value); \
-} \
-void toCSS##ValueTypeName(const CSS##ValueTypeName*); \
-void toCSS##ValueTypeName(const CSS##ValueTypeName&);
 
 } // namespace WebCore
 
