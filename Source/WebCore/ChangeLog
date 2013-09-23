@@ -1,3 +1,21 @@
+2013-09-23  Andreas Kling  <akling@apple.com>
+
+        Unify code paths leading to render tree teardown.
+        <https://webkit.org/b/121785>
+
+        Reviewed by Antti Koivisto.
+
+        Make Document::prepareForDestruction() fit all the call sites that were
+        doing destroyRenderTree() + disconnectFromFrame().
+
+        - disconnectDescendantFrames() is already a no-op if there are no frames.
+        - willDetachDocumentFromFrame() will only run if there is a frame.
+
+        This is another step towards making tree rebuild possible.
+
+        Removed some age-old FIXMEs about why we aren't calling willRemove(),
+        a long-gone function.
+
 2013-09-23  Patrick Gansterer  <paroga@webkit.org>
 
         Cleanup CMake files in WebCore

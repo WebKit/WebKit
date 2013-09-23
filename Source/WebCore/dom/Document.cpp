@@ -2148,7 +2148,7 @@ void Document::destroyRenderTree()
 void Document::prepareForDestruction()
 {
     disconnectDescendantFrames();
-    if (m_domWindow)
+    if (m_domWindow && m_frame)
         m_domWindow->willDetachDocumentFromFrame();
     destroyRenderTree();
     disconnectFromFrame();
