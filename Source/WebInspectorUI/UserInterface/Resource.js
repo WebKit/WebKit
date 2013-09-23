@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Resource = function(url, mimeType, type, loaderIdentifier, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp)
+WebInspector.Resource = function(url, mimeType, type, loaderIdentifier, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, initiatorSourceCodeLocation)
 {
     WebInspector.SourceCode.call(this);
 
@@ -42,6 +42,7 @@ WebInspector.Resource = function(url, mimeType, type, loaderIdentifier, requestI
     this._requestHeaders = requestHeaders || {};
     this._responseHeaders = {};
     this._parentFrame = null;
+    this._initiatorSourceCodeLocation = initiatorSourceCodeLocation || null;
     this._requestSentTimestamp = requestSentTimestamp || NaN;
     this._responseReceivedTimestamp = NaN;
     this._lastRedirectReceivedTimestamp = NaN;
@@ -199,6 +200,11 @@ WebInspector.Resource.prototype = {
     get displayName()
     {
         return WebInspector.displayNameForURL(this._url, this.urlComponents);
+    },
+
+    get initiatorSourceCodeLocation()
+    {
+        return this._initiatorSourceCodeLocation;
     },
 
     get type()

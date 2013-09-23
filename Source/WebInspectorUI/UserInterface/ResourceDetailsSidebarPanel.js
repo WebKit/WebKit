@@ -44,15 +44,18 @@ WebInspector.ResourceDetailsSidebarPanel = function() {
     this._locationQueryStringRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Query String"));
     this._locationFragmentRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Fragment"));
     this._locationFilenameRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Filename"));
+    this._initiatorRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Initiator"));
 
     var firstGroup = [this._locationFullURLRow];
     var secondGroup = [this._locationSchemeRow, this._locationHostRow, this._locationPortRow, this._locationPathRow,
         this._locationQueryStringRow, this._locationFragmentRow, this._locationFilenameRow];
+    var thirdGroup = [this._initiatorRow];
 
     this._fullURLGroup = new WebInspector.DetailsSectionGroup(firstGroup);
     this._locationURLComponentsGroup = new WebInspector.DetailsSectionGroup(secondGroup);
+    this._initiatorGroup = new WebInspector.DetailsSectionGroup(thirdGroup);
 
-    this._locationSection = new WebInspector.DetailsSection("resource-location", WebInspector.UIString("Location"), [this._fullURLGroup, this._locationURLComponentsGroup]);
+    this._locationSection = new WebInspector.DetailsSection("resource-location", WebInspector.UIString("Location"), [this._fullURLGroup, this._locationURLComponentsGroup, this._initiatorGroup]);
 
     this._queryParametersRow = new WebInspector.DetailsSectionDataGridRow(null, WebInspector.UIString("No Query Parameters"));
     this._queryParametersSection = new WebInspector.DetailsSection("resource-query-parameters", WebInspector.UIString("Query Parameters"));
@@ -200,7 +203,10 @@ WebInspector.ResourceDetailsSidebarPanel.prototype = {
 
         var urlComponents = this._resource.urlComponents;
         if (urlComponents.scheme) {
-            this._locationSection.groups = [this._fullURLGroup, this._locationURLComponentsGroup];
+            if (this._resource.initiatorSourceCodeLocation)
+                this._locationSection.groups = [this._fullURLGroup, this._locationURLComponentsGroup, this._initiatorGroup];
+            else
+                this._locationSection.groups = [this._fullURLGroup, this._locationURLComponentsGroup];
 
             this._locationSchemeRow.value = urlComponents.scheme ? urlComponents.scheme : null;
             this._locationHostRow.value = urlComponents.host ? urlComponents.host : null;
@@ -209,8 +215,15 @@ WebInspector.ResourceDetailsSidebarPanel.prototype = {
             this._locationQueryStringRow.value = urlComponents.queryString ? urlComponents.queryString.insertWordBreakCharacters() : null;
             this._locationFragmentRow.value = urlComponents.fragment ? urlComponents.fragment.insertWordBreakCharacters() : null;
             this._locationFilenameRow.value = urlComponents.lastPathComponent ? urlComponents.lastPathComponent.insertWordBreakCharacters() : null;
-        } else
-            this._locationSection.groups = [this._fullURLGroup];
+        } else {
+            if (this._resource.initiatorSourceCodeLocation)
+                this._locationSection.groups = [this._fullURLGroup, this._initiatorGroup];
+            else
+                this._locationSection.groups = [this._fullURLGroup];
+        }
+
+        if (this._resource.initiatorSourceCodeLocation)
+            this._initiatorRow.value = WebInspector.createSourceCodeLocationLink(this._resource.initiatorSourceCodeLocation, true);
 
         if (urlComponents.queryString) {
             // Ensure the "Query Parameters" section is displayed, right after the "Request & Response" section.

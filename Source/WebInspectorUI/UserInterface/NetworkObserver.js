@@ -35,7 +35,7 @@ WebInspector.NetworkObserver.prototype = {
 
     requestWillBeSent: function(requestId, frameId, loaderId, documentURL, request, timestamp, initiator, redirectResponse, type)
     {
-        WebInspector.frameResourceManager.resourceRequestWillBeSent(requestId, frameId, loaderId, request, type, redirectResponse, timestamp);
+        WebInspector.frameResourceManager.resourceRequestWillBeSent(requestId, frameId, loaderId, request, type, redirectResponse, timestamp, initiator);
     },
 
     requestServedFromCache: function(requestId)
@@ -65,7 +65,7 @@ WebInspector.NetworkObserver.prototype = {
 
     requestServedFromMemoryCache: function(requestId, frameId, loaderId, documentURL, timestamp, initiator, resource)
     {
-        WebInspector.frameResourceManager.resourceRequestWasServedFromMemoryCache(requestId, frameId, loaderId, resource, timestamp);
+        WebInspector.frameResourceManager.resourceRequestWasServedFromMemoryCache(requestId, frameId, loaderId, resource, timestamp, initiator);
     },
 
     webSocketWillSendHandshakeRequest: function(requestId, timestamp, request)

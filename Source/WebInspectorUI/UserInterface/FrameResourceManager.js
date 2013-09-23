@@ -173,7 +173,7 @@ WebInspector.FrameResourceManager.prototype = {
             this._mainFrameDidChange(oldMainFrame);
     },
 
-    resourceRequestWillBeSent: function(requestIdentifier, frameIdentifier, loaderIdentifier, request, type, redirectResponse, timestamp)
+    resourceRequestWillBeSent: function(requestIdentifier, frameIdentifier, loaderIdentifier, request, type, redirectResponse, timestamp, initiator)
     {
         // Called from WebInspector.NetworkObserver.
 
@@ -189,8 +189,10 @@ WebInspector.FrameResourceManager.prototype = {
             return;
         }
 
+        var initiatorSourceCodeLocation = this._initiatorSourceCodeLocationFromPayload(initiator);
+
         // This is a new request, make a new resource and add it to the right frame.
-        resource = this._addNewResourceToFrame(requestIdentifier, frameIdentifier, loaderIdentifier, request.url, type, request.method, request.headers, request.postData, timestamp, null, null);
+        resource = this._addNewResourceToFrame(requestIdentifier, frameIdentifier, loaderIdentifier, request.url, type, request.method, request.headers, request.postData, timestamp, null, null, initiatorSourceCodeLocation);
 
         // Associate the resource with the requestIdentifier so it can be found in future loading events.
         this._resourceRequestIdentifierMap[requestIdentifier] = resource;
@@ -215,7 +217,7 @@ WebInspector.FrameResourceManager.prototype = {
         resource.markAsCached();
     },
 
-    resourceRequestWasServedFromMemoryCache: function(requestIdentifier, frameIdentifier, loaderIdentifier, cachedResourcePayload, timestamp)
+    resourceRequestWasServedFromMemoryCache: function(requestIdentifier, frameIdentifier, loaderIdentifier, cachedResourcePayload, timestamp, initiator)
     {
         // Called from WebInspector.NetworkObserver.
 
@@ -225,8 +227,10 @@ WebInspector.FrameResourceManager.prototype = {
 
         console.assert(!(requestIdentifier in this._resourceRequestIdentifierMap));
 
+        var initiatorSourceCodeLocation = this._initiatorSourceCodeLocationFromPayload(initiator);
+
         var response = cachedResourcePayload.response;
-        var resource = this._addNewResourceToFrame(requestIdentifier, frameIdentifier, loaderIdentifier, cachedResourcePayload.url, cachedResourcePayload.type, null, null, timestamp, null, null);
+        var resource = this._addNewResourceToFrame(requestIdentifier, frameIdentifier, loaderIdentifier, cachedResourcePayload.url, cachedResourcePayload.type, null, null, timestamp, null, null, initiatorSourceCodeLocation);
         resource.markAsCached();
         resource.updateForResponse(cachedResourcePayload.url, response.mimeType, cachedResourcePayload.type, response.headers, response.status, response.statusText, timestamp);
         resource.markAsFinished(timestamp);
@@ -375,7 +379,7 @@ WebInspector.FrameResourceManager.prototype = {
 
     // Private
 
-    _addNewResourceToFrame: function(requestIdentifier, frameIdentifier, loaderIdentifier, url, type, requestMethod, requestHeaders, requestData, timestamp, frameName, frameSecurityOrigin)
+    _addNewResourceToFrame: function(requestIdentifier, frameIdentifier, loaderIdentifier, url, type, requestMethod, requestHeaders, requestData, timestamp, frameName, frameSecurityOrigin, initiatorSourceCodeLocation)
     {
         console.assert(!this._waitingForMainFrameResourceTreePayload);
         if (this._waitingForMainFrameResourceTreePayload)
@@ -391,12 +395,12 @@ WebInspector.FrameResourceManager.prototype = {
             else if (frame.provisionalMainResource && frame.provisionalMainResource.url === url && frame.provisionalLoaderIdentifier === loaderIdentifier)
                 resource = frame.provisionalMainResource;
             else {
-                resource = new WebInspector.Resource(url, null, type, loaderIdentifier, requestIdentifier, requestMethod, requestHeaders, requestData, timestamp);
+                resource = new WebInspector.Resource(url, null, type, loaderIdentifier, requestIdentifier, requestMethod, requestHeaders, requestData, timestamp, initiatorSourceCodeLocation);
                 this._addResourceToFrame(frame, resource);
             }
         } else {
             // This is a new request for a new frame, which is always the main resource.
-            resource = new WebInspector.Resource(url, null, type, loaderIdentifier, requestIdentifier, requestMethod, requestHeaders, requestData, timestamp);
+            resource = new WebInspector.Resource(url, null, type, loaderIdentifier, requestIdentifier, requestMethod, requestHeaders, requestData, timestamp, initiatorSourceCodeLocation);
             frame = new WebInspector.Frame(frameIdentifier, frameName, frameSecurityOrigin, loaderIdentifier, resource);
             this._frameIdentifierMap[frame.id] = frame;
 
@@ -434,6 +438,51 @@ WebInspector.FrameResourceManager.prototype = {
         // This is just another resource, either for the main loader or the provisional loader.
         console.assert(resource.loaderIdentifier === frame.loaderIdentifier || resource.loaderIdentifier === frame.provisionalLoaderIdentifier);
         frame.addResource(resource);
+    },
+
+    _initiatorSourceCodeLocationFromPayload: function(initiatorPayload)
+    {
+        if (!initiatorPayload)
+            return null;
+
+        var url = null;
+        var lineNumber = NaN;
+        var columnNumber = 0;
+
+        if (initiatorPayload.stackTrace && initiatorPayload.stackTrace.length) {
+            var stackTracePayload = initiatorPayload.stackTrace;
+            for (var i = 0; i < stackTracePayload.length; ++i) {
+                var callFramePayload = stackTracePayload[i];
+                if (!callFramePayload.url || callFramePayload.url === "[native code]")
+                    continue;
+
+                url = callFramePayload.url;
+
+                // The lineNumber is 1-based, but we expect 0-based.
+                lineNumber = callFramePayload.lineNumber - 1;
+
+                columnNumber = callFramePayload.columnNumber;
+
+                break;
+            }
+        } else if (initiatorPayload.url) {
+            url = initiatorPayload.url;
+
+            // The lineNumber is 1-based, but we expect 0-based.
+            lineNumber = initiatorPayload.lineNumber - 1;
+        }
+
+        if (!url || isNaN(lineNumber) || lineNumber < 0)
+            return null;
+
+        var sourceCode = WebInspector.frameResourceManager.resourceForURL(url);
+        if (!sourceCode)
+            sourceCode = WebInspector.debuggerManager.scriptsForURL(url)[0];
+
+        if (!sourceCode)
+            return null;
+
+        return sourceCode.createSourceCodeLocation(lineNumber, columnNumber);
     },
 
     _processMainFrameResourceTreePayload: function(error, mainFramePayload)

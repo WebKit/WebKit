@@ -1,3 +1,26 @@
+2013-09-21  Timothy Hatcher  <timothy@apple.com>
+
+        Hook up the initiator info and show it in the Resource details sidebar.
+
+        https://bugs.webkit.org/show_bug.cgi?id=121741
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype.resourceRequestWillBeSent):
+        (WebInspector.FrameResourceManager.prototype.resourceRequestWasServedFromMemoryCache):
+        (WebInspector.FrameResourceManager.prototype._addNewResourceToFrame):
+        (WebInspector.FrameResourceManager.prototype._initiatorSourceCodeLocationFromPayload):
+        * UserInterface/NetworkObserver.js:
+        (WebInspector.NetworkObserver.prototype.requestWillBeSent):
+        (WebInspector.NetworkObserver.prototype.requestServedFromMemoryCache):
+        * UserInterface/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.get initiatorSourceCodeLocation):
+        * UserInterface/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel):
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshURL):
+
 2013-09-20  Timothy Hatcher  <timothy@apple.com>
 
         Parse MIME-types and strip them down to the base type when needed.
