@@ -1,3 +1,11 @@
+2013-09-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, GTK build fix when building with GTK+ 2.0.
+        Patch provided by Dominique Leuenberger <dimstar@opensuse.org>.
+
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp: Include GtkVersioning.h to set up
+        the mock GDK_IS_X11_DISPLAY macro if it's not provided by the GTK+ headers.
+
 2013-09-20  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Do not expose aria-help in ATK based platforms
