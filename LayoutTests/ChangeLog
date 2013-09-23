@@ -1,3 +1,16 @@
+2013-09-22  Antonio Gomes  <a1.gomes@sisa.samsung.com>
+
+        iframe and scrollbar with "overflow:auto" should support autoscroll with mousedrag
+        https://bugs.webkit.org/show_bug.cgi?id=40981
+
+        Reviewed by Darin Adler.
+
+        Test ensures that dragging an element close to the boundary of
+        scrollable Frames, scroll its content in that direction.
+
+        * fast/events/drag-and-drop-autoscroll-inner-frame-expected.txt: Added.
+        * fast/events/drag-and-drop-autoscroll-inner-frame.html: Added.
+
 2013-09-22  Arunprasad Rajkumar  <ararunprasad@gmail.com>
 
         Hiding a focused element should unfocus it and fire a blur event

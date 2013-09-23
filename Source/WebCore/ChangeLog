@@ -1,3 +1,25 @@
+2013-09-22  Antonio Gomes  <a1.gomes@sisa.samsung.com>
+
+        iframe and scrollbar with "overflow:auto" should support autoscroll with mousedrag
+        https://bugs.webkit.org/show_bug.cgi?id=40981
+
+        Reviewed by Darin Adler.
+
+        RenderBox::calculateAutoscrollDirection does not properly translate
+        inner frames' coordinates in order to determine its auto-scrollability.
+        By coincidence, if the inner frame box it placed near to page's 0, 0 position
+        (upper left corner), it might work.
+
+        Patch fixes it by changing ::calculateAutoscrollDirection algorithm to operate
+        with window coordinates, taking inner frames offset and scroll position into account.
+        The behavior of auto-scrollable non-frame overflow boxes, including divs, still works
+        as it is used to.
+
+        Test: fast/events/drag-and-drop-autoscroll-inner-frame.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calculateAutoscrollDirection):
+
 2013-09-22  Sam Weinig  <sam@webkit.org>
 
         CTTE: Use references more in ContainerNode, ContainerNodeAlgorithms and related classes
