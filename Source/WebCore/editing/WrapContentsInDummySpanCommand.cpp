@@ -54,7 +54,7 @@ void WrapContentsInDummySpanCommand::executeApply()
 
 void WrapContentsInDummySpanCommand::doApply()
 {
-    m_dummySpan = createStyleSpanElement(&document());
+    m_dummySpan = createStyleSpanElement(document());
     
     executeApply();
 }

@@ -190,10 +190,10 @@ void IncreaseSelectionListLevelCommand::doApply()
                     newParent = newParent->cloneElementWithoutChildren();
                 break;
             case OrderedList:
-                newParent = createOrderedListElement(&document());
+                newParent = createOrderedListElement(document());
                 break;
             case UnorderedList:
-                newParent = createUnorderedListElement(&document());
+                newParent = createUnorderedListElement(document());
                 break;
         }
         insertNodeBefore(newParent, startListChild);

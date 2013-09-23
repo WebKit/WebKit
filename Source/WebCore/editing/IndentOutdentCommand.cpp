@@ -166,9 +166,9 @@ void IndentOutdentCommand::outdentParagraph()
         visibleStartOfParagraph = VisiblePosition(visibleStartOfParagraph.deepEquivalent());
         visibleEndOfParagraph = VisiblePosition(visibleEndOfParagraph.deepEquivalent());
         if (visibleStartOfParagraph.isNotNull() && !isStartOfParagraph(visibleStartOfParagraph))
-            insertNodeAt(createBreakElement(&document()), visibleStartOfParagraph.deepEquivalent());
+            insertNodeAt(createBreakElement(document()), visibleStartOfParagraph.deepEquivalent());
         if (visibleEndOfParagraph.isNotNull() && !isEndOfParagraph(visibleEndOfParagraph))
-            insertNodeAt(createBreakElement(&document()), visibleEndOfParagraph.deepEquivalent());
+            insertNodeAt(createBreakElement(document()), visibleEndOfParagraph.deepEquivalent());
 
         return;
     }
@@ -181,7 +181,7 @@ void IndentOutdentCommand::outdentParagraph()
         Node* highestInlineNode = highestEnclosingNodeOfType(visibleStartOfParagraph.deepEquivalent(), isInline, CannotCrossEditingBoundary, enclosingBlockFlow);
         splitElement(toElement(enclosingNode), (highestInlineNode) ? highestInlineNode : visibleStartOfParagraph.deepEquivalent().deprecatedNode());
     }
-    RefPtr<Node> placeholder = createBreakElement(&document());
+    RefPtr<Node> placeholder = createBreakElement(document());
     insertNodeBefore(placeholder, splitBlockquoteNode);
     moveParagraph(startOfParagraph(visibleStartOfParagraph), endOfParagraph(visibleEndOfParagraph), positionBeforeNode(placeholder.get()), true);
 }

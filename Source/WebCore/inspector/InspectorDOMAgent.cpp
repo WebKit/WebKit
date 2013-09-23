@@ -669,7 +669,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
     if (!element)
         return;
 
-    RefPtr<HTMLElement> parsedElement = createHTMLElement(&element->document(), spanTag);
+    RefPtr<HTMLElement> parsedElement = createHTMLElement(element->document(), spanTag);
     ExceptionCode ec = 0;
     parsedElement.get()->setInnerHTML("<span " + text + "></span>", ec);
     if (ec) {

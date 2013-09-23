@@ -1,3 +1,12 @@
+2013-09-23  Sam Weinig  <sam@webkit.org>
+
+        CTTE: htmlediting.h Element creation function should take a Document&
+        https://bugs.webkit.org/show_bug.cgi?id=121800
+
+        Reviewed by Antti Koivisto.
+
+        Thread the Document&!
+
 2013-09-23  Jacky Jiang  <zhajiang@blackberry.com>
 
         [BlackBerry] Poor rendering opening a Google map short link

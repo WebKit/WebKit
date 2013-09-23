@@ -247,7 +247,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
     }
     
     // create new tab span
-    RefPtr<Element> spanNode = createTabSpanElement(&document());
+    RefPtr<Element> spanNode = createTabSpanElement(document());
     
     // place it
     if (!node->isTextNode()) {

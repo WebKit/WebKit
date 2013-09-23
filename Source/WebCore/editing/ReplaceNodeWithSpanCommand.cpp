@@ -69,7 +69,7 @@ void ReplaceNodeWithSpanCommand::doApply()
     if (!m_elementToReplace->inDocument())
         return;
     if (!m_spanElement)
-        m_spanElement = createHTMLElement(&m_elementToReplace->document(), spanTag);
+        m_spanElement = createHTMLElement(m_elementToReplace->document(), spanTag);
     swapInNodePreservingAttributesAndChildren(m_spanElement.get(), m_elementToReplace.get());
 }
 

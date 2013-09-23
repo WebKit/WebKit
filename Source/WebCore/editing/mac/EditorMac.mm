@@ -480,14 +480,18 @@ bool Editor::WebContentReader::readFilenames(const Vector<String>& paths)
     if (!size)
         return false;
 
-    fragment = frame.document()->createDocumentFragment();
+    if (!frame.document())
+        return false;
+    Document& document = *frame.document();
+
+    fragment = document.createDocumentFragment();
 
     for (size_t i = 0; i < size; i++) {
         String text = paths[i];
         text = frame.editor().client()->userVisibleString([NSURL fileURLWithPath:text]);
 
-        RefPtr<HTMLElement> paragraph = createDefaultParagraphElement(frame.document());
-        paragraph->appendChild(frame.document()->createTextNode(text));
+        RefPtr<HTMLElement> paragraph = createDefaultParagraphElement(document);
+        paragraph->appendChild(document.createTextNode(text));
         fragment->appendChild(paragraph.release());
     }
 

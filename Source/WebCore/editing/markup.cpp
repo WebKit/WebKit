@@ -771,7 +771,7 @@ String createMarkup(const Node* node, EChildrenOnly childrenOnly, Vector<Node*>*
 
 static void fillContainerFromString(ContainerNode* paragraph, const String& string)
 {
-    Document* document = &paragraph->document();
+    Document& document = paragraph->document();
 
     if (string.isEmpty()) {
         paragraph->appendChild(createBlockPlaceholderElement(document), ASSERT_NO_EXCEPTION);
@@ -794,7 +794,7 @@ static void fillContainerFromString(ContainerNode* paragraph, const String& stri
                 paragraph->appendChild(createTabSpanElement(document, tabText), ASSERT_NO_EXCEPTION);
                 tabText = emptyString();
             }
-            RefPtr<Node> textNode = document->createTextNode(stringWithRebalancedWhitespace(s, first, i + 1 == numEntries));
+            RefPtr<Node> textNode = document.createTextNode(stringWithRebalancedWhitespace(s, first, i + 1 == numEntries));
             paragraph->appendChild(textNode.release(), ASSERT_NO_EXCEPTION);
         }
 
@@ -848,7 +848,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
     if (contextPreservesNewline(*context)) {
         fragment->appendChild(document.createTextNode(string), ASSERT_NO_EXCEPTION);
         if (string.endsWith('\n')) {
-            RefPtr<Element> element = createBreakElement(&document);
+            RefPtr<Element> element = createBreakElement(document);
             element->setAttribute(classAttr, AppleInterchangeNewline);            
             fragment->appendChild(element.release(), ASSERT_NO_EXCEPTION);
         }
@@ -880,16 +880,16 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
         RefPtr<Element> element;
         if (s.isEmpty() && i + 1 == numLines) {
             // For last line, use the "magic BR" rather than a P.
-            element = createBreakElement(&document);
+            element = createBreakElement(document);
             element->setAttribute(classAttr, AppleInterchangeNewline);
         } else if (useLineBreak) {
-            element = createBreakElement(&document);
+            element = createBreakElement(document);
             fillContainerFromString(fragment.get(), s);
         } else {
             if (useClonesOfEnclosingBlock)
                 element = block->cloneElementWithoutChildren();
             else
-                element = createDefaultParagraphElement(&document);
+                element = createDefaultParagraphElement(document);
             fillContainerFromString(element.get(), s);
         }
         fragment->appendChild(element.release(), ASSERT_NO_EXCEPTION);
@@ -897,7 +897,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
     return fragment.release();
 }
 
-PassRefPtr<DocumentFragment> createFragmentFromNodes(Document *document, const Vector<Node*>& nodes)
+PassRefPtr<DocumentFragment> createFragmentFromNodes(Document* document, const Vector<Node*>& nodes)
 {
     if (!document)
         return 0;
@@ -911,7 +911,7 @@ PassRefPtr<DocumentFragment> createFragmentFromNodes(Document *document, const V
 
     size_t size = nodes.size();
     for (size_t i = 0; i < size; ++i) {
-        RefPtr<Element> element = createDefaultParagraphElement(document);
+        RefPtr<Element> element = createDefaultParagraphElement(*document);
         element->appendChild(nodes[i], ASSERT_NO_EXCEPTION);
         fragment->appendChild(element.release(), ASSERT_NO_EXCEPTION);
     }

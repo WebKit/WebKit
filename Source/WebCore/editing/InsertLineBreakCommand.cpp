@@ -109,7 +109,7 @@ void InsertLineBreakCommand::doApply()
 
     RefPtr<Node> nodeToInsert;
     if (shouldUseBreakElement(pos))
-        nodeToInsert = createBreakElement(&document());
+        nodeToInsert = createBreakElement(document());
     else
         nodeToInsert = document().createTextNode("\n");
     

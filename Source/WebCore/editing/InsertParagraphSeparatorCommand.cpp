@@ -203,10 +203,10 @@ void InsertParagraphSeparatorCommand::doApply()
     // Create block to be inserted.
     RefPtr<Element> blockToInsert;
     if (startBlock->isRootEditableElement()) {
-        blockToInsert = createDefaultParagraphElement(&document());
+        blockToInsert = createDefaultParagraphElement(document());
         nestNewBlock = true;
     } else if (shouldUseDefaultParagraphElement(startBlock.get())) 
-        blockToInsert = createDefaultParagraphElement(&document());
+        blockToInsert = createDefaultParagraphElement(document());
     else
         blockToInsert = startBlock->cloneElementWithoutChildren();
 
@@ -218,7 +218,7 @@ void InsertParagraphSeparatorCommand::doApply()
             if (isFirstInBlock && !lineBreakExistsAtVisiblePosition(visiblePos)) {
                 // The block is empty.  Create an empty block to
                 // represent the paragraph that we're leaving.
-                RefPtr<Element> extraBlock = createDefaultParagraphElement(&document());
+                RefPtr<Element> extraBlock = createDefaultParagraphElement(document());
                 appendNode(extraBlock, startBlock);
                 appendBlockPlaceholder(extraBlock);
             }
@@ -298,7 +298,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // it if visiblePos is at the start of a paragraph so that the 
     // content will move down a line.
     if (isStartOfParagraph(visiblePos)) {
-        RefPtr<Element> br = createBreakElement(&document());
+        RefPtr<Element> br = createBreakElement(document());
         insertNodeAt(br.get(), insertionPosition);
         insertionPosition = positionInParentAfterNode(br.get());
         // If the insertion point is a break element, there is nothing else
@@ -369,7 +369,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // created.  All of the nodes, starting at visiblePos, are about to be added to the new paragraph 
     // element.  If the first node to be inserted won't be one that will hold an empty line open, add a br.
     if (isEndOfParagraph(visiblePos) && !lineBreakExistsAtVisiblePosition(visiblePos))
-        appendNode(createBreakElement(&document()).get(), blockToInsert.get());
+        appendNode(createBreakElement(document()).get(), blockToInsert.get());
 
     // Move the start node and the siblings of the start node.
     if (VisiblePosition(insertionPosition) != VisiblePosition(positionBeforeNode(blockToInsert.get()))) {
