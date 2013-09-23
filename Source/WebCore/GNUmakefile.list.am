@@ -1885,7 +1885,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/DOMWindowIndexedDatabase.h \
 	Source/WebCore/Modules/indexeddb/IDBAny.cpp \
 	Source/WebCore/Modules/indexeddb/IDBAny.h \
-	Source/WebCore/Modules/indexeddb/IDBBackingStore.cpp \
+	Source/WebCore/Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp \
 	Source/WebCore/Modules/indexeddb/IDBBackingStore.h \
 	Source/WebCore/Modules/indexeddb/IDBCallbacks.h \
 	Source/WebCore/Modules/indexeddb/IDBCursorBackendImpl.cpp \
@@ -1923,8 +1923,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBKeyPath.h \
 	Source/WebCore/Modules/indexeddb/IDBKeyRange.cpp \
 	Source/WebCore/Modules/indexeddb/IDBKeyRange.h \
-	Source/WebCore/Modules/indexeddb/IDBLevelDBCoding.cpp \
-	Source/WebCore/Modules/indexeddb/IDBLevelDBCoding.h \
+	Source/WebCore/Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp \
+	Source/WebCore/Modules/indexeddb/leveldb/IDBLevelDBCoding.h \
 	Source/WebCore/Modules/indexeddb/IDBMetadata.h \
 	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendImpl.cpp \
 	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendImpl.h \

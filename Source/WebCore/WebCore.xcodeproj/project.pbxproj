@@ -3122,7 +3122,6 @@
 		9712A5DC15004EDA0048AF10 /* IDBKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58315004EDA0048AF10 /* IDBKey.h */; };
 		9712A5DF15004EDA0048AF10 /* IDBKeyPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58615004EDA0048AF10 /* IDBKeyPath.h */; };
 		9712A5E315004EDA0048AF10 /* IDBKeyRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58A15004EDA0048AF10 /* IDBKeyRange.h */; };
-		9712A5E815004EDA0048AF10 /* IDBLevelDBCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58F15004EDA0048AF10 /* IDBLevelDBCoding.h */; };
 		9712A5EA15004EDA0048AF10 /* IDBObjectStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A59115004EDA0048AF10 /* IDBObjectStore.h */; };
 		9712A5EC15004EDA0048AF10 /* IDBObjectStoreBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A59315004EDA0048AF10 /* IDBObjectStoreBackendImpl.cpp */; };
 		9712A5ED15004EDA0048AF10 /* IDBObjectStoreBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A59415004EDA0048AF10 /* IDBObjectStoreBackendImpl.h */; };
@@ -9715,7 +9714,6 @@
 		9712A58615004EDA0048AF10 /* IDBKeyPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBKeyPath.h; path = Modules/indexeddb/IDBKeyPath.h; sourceTree = "<group>"; };
 		9712A58A15004EDA0048AF10 /* IDBKeyRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBKeyRange.h; path = Modules/indexeddb/IDBKeyRange.h; sourceTree = "<group>"; };
 		9712A58B15004EDA0048AF10 /* IDBKeyRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBKeyRange.idl; path = Modules/indexeddb/IDBKeyRange.idl; sourceTree = "<group>"; };
-		9712A58F15004EDA0048AF10 /* IDBLevelDBCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBLevelDBCoding.h; path = Modules/indexeddb/IDBLevelDBCoding.h; sourceTree = "<group>"; };
 		9712A59115004EDA0048AF10 /* IDBObjectStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBObjectStore.h; path = Modules/indexeddb/IDBObjectStore.h; sourceTree = "<group>"; };
 		9712A59215004EDA0048AF10 /* IDBObjectStore.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBObjectStore.idl; path = Modules/indexeddb/IDBObjectStore.idl; sourceTree = "<group>"; };
 		9712A59315004EDA0048AF10 /* IDBObjectStoreBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBObjectStoreBackendImpl.cpp; path = Modules/indexeddb/IDBObjectStoreBackendImpl.cpp; sourceTree = "<group>"; };
@@ -16711,7 +16709,6 @@
 				9712A58615004EDA0048AF10 /* IDBKeyPath.h */,
 				9712A58A15004EDA0048AF10 /* IDBKeyRange.h */,
 				9712A58B15004EDA0048AF10 /* IDBKeyRange.idl */,
-				9712A58F15004EDA0048AF10 /* IDBLevelDBCoding.h */,
 				BCC65145159294C300ACC9E4 /* IDBMetadata.h */,
 				9712A59115004EDA0048AF10 /* IDBObjectStore.h */,
 				9712A59215004EDA0048AF10 /* IDBObjectStore.idl */,
@@ -22706,7 +22703,6 @@
 				07277E5117D018CC0015534D /* JSMediaStreamEvent.h in Headers */,
 				9712A5DF15004EDA0048AF10 /* IDBKeyPath.h in Headers */,
 				9712A5E315004EDA0048AF10 /* IDBKeyRange.h in Headers */,
-				9712A5E815004EDA0048AF10 /* IDBLevelDBCoding.h in Headers */,
 				9712A5EA15004EDA0048AF10 /* IDBObjectStore.h in Headers */,
 				9712A5ED15004EDA0048AF10 /* IDBObjectStoreBackendImpl.h in Headers */,
 				9712A5F015004EDA0048AF10 /* IDBPendingTransactionMonitor.h in Headers */,
