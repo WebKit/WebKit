@@ -50,9 +50,6 @@ static cairo_user_data_key_t s_imageDataKey;
 
 
 #if PLATFORM(WIN)
-#undef min
-#undef max
-
 static inline float strtof(const char* inputString, char** endptr)
 {
     return strtod(inputString, endptr);

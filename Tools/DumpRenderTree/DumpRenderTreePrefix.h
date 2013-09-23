@@ -31,12 +31,3 @@
 #import <Foundation/Foundation.h>
 
 #endif
-
-#if defined(WIN32) || defined(_WIN32)
-
-// If we don't define these, they get defined in windef.h. 
-// We want to use std::min and std::max
-#define max max
-#define min min
-
-#endif

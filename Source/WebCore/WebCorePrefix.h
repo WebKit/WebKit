@@ -53,13 +53,6 @@
 #endif
 #endif
 
-// If we don't define these, they get defined in windef.h. 
-// We want to use std::min and std::max
-#ifdef __cplusplus
-#define max max
-#define min min
-#endif
-
 #else
 
 #include <pthread.h>

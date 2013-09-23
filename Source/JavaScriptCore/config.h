@@ -43,11 +43,6 @@
 #define WINVER 0x0502
 #endif
 
-// If we don't define these, they get defined in windef.h. 
-// We want to use std::min and std::max
-#define max max
-#define min min
-
 #if !COMPILER(MSVC7_OR_LOWER) && !OS(WINCE)
 // We need to define this before the first #include of stdlib.h or it won't contain rand_s.
 #ifndef _CRT_RAND_S

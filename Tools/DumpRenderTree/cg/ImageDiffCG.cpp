@@ -24,11 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(WIN32) || defined(_WIN32)
-#define max max
-#define min min
-#endif
-
 // FIXME: We need to be able to include these defines from a config.h somewhere.
 #define JS_EXPORT_PRIVATE
 #define WTF_EXPORT_PRIVATE

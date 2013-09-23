@@ -56,15 +56,6 @@
 
 #endif // PLATFORM(MAC)
 
-#if OS(WINDOWS)
-// If we don't define these, they get defined in windef.h. 
-// We want to use std::min and std::max
-#undef max
-#define max max
-#undef min
-#define min min
-#endif
-
 #if PLATFORM(WIN)
 #define WTF_USE_CF 1 
 #if PLATFORM(WIN_CAIRO)

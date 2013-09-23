@@ -1,3 +1,16 @@
+2013-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        use NOMINMAX instead of #define min min
+        https://bugs.webkit.org/show_bug.cgi?id=73563
+
+        Reviewed by Brent Fulgham.
+
+        Use NOMINMAX instead of #define min/max as a cleaner
+        way of ensuring that Windows system header files don't
+        define min/max as macro in the first place.
+
+        * WebKitPrefix.h:
+
 2013-09-22  Sam Weinig  <sam@webkit.org>
 
         Try to fix the windows build (take 2).
