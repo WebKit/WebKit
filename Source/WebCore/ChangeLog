@@ -1,5 +1,36 @@
 2013-09-24  Dean Jackson  <dino@apple.com>
 
+        Implement symbol name hashing for WebGL shaders
+        https://bugs.webkit.org/show_bug.cgi?id=121849
+
+        Reviewed by Anders Carlsson.
+
+        Turn on ANGLE's symbol name mapping for shader programs.
+        This avoids compilation failures (or worse, crashers)
+        on some hardware that doesn't like it when shaders redefine
+        symbols like "sin", even though that is valid.
+
+        The way ANGLE exposes this is via setting a pointer
+        to a char* -> uint64_t hash function. Since we only have
+        a 32-bit hash in WebKit, I combine the 32-bit value with
+        a counter value that exists over the lifetime of a GC3D context.
+        Before calling ANGLE, I point the global hash map to the local
+        hash map, and then clean up after we're done. This introduces
+        a memory hit, in that the symbol table will build up until
+        the context is released.
+
+        Covered by Khronos WebGL tests, including
+        conformance/glsl/misc/shader-with-non-reserved-words.html
+
+        * platform/graphics/GraphicsContext3D.h: Define a ShaderNameHash type,
+        and add an OwnPtr to one as a member variable.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::nameHashForShader): Global function used for ANGLE hashing.
+        (WebCore::GraphicsContext3D::compileShader): Set up the ANGLE properties,
+        point to the local hash map, and call compile/translate.
+
+2013-09-24  Dean Jackson  <dino@apple.com>
+
         Use mapped name in attribute location binding
         https://bugs.webkit.org/show_bug.cgi?id=121847
         <rdar://problem/15067526>

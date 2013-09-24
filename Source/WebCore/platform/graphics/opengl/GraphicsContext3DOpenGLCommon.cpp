@@ -67,6 +67,42 @@
 
 namespace WebCore {
 
+static ShaderNameHash* currentNameHashMapForShader;
+
+// Hash function used by the ANGLE translator/compiler to do
+// symbol name mangling. Since this is a static method, before
+// calling compileShader we set currentNameHashMapForShader
+// to point to the map kept by the current instance of GraphicsContext3D.
+
+static uint64_t nameHashForShader(const char* name, size_t length)
+{
+    if (!length)
+        return 0;
+
+    CString nameAsCString = CString(name);
+
+    // Look up name in our local map.
+    if (currentNameHashMapForShader) {
+        ShaderNameHash::iterator result = currentNameHashMapForShader->find(nameAsCString);
+        if (result != currentNameHashMapForShader->end())
+            return result->value;
+    }
+
+    unsigned hashValue = nameAsCString.hash();
+
+    // Convert the 32-bit hash from CString::hash into a 64-bit result
+    // by shifting then adding the size of our table. Overflow would
+    // only be a problem if we're already hashing to the same value (and
+    // we're hoping that over the lifetime of the context we
+    // don't have that many symbols).
+
+    uint64_t result = hashValue;
+    result = (result << 32) + (currentNameHashMapForShader->size() + 1);
+
+    currentNameHashMapForShader->set(nameAsCString, result);
+    return result;
+}
+
 PassRefPtr<GraphicsContext3D> GraphicsContext3D::createForCurrentGLContext()
 {
     RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(Attributes(), 0, GraphicsContext3D::RenderToCurrentGLContext));
@@ -443,7 +479,22 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
     ASSERT(shader);
     makeContextCurrent();
 
+    // Turn on name mapping. Due to the way ANGLE name hashing works, we
+    // point a global hashmap to the map owned by this context.
+    ShBuiltInResources ANGLEResources = m_compiler.getResources();
+    ShHashFunction64 previousHashFunction = ANGLEResources.HashFunction;
+    ANGLEResources.HashFunction = nameHashForShader;
+
+    if (!nameHashMapForShaders)
+        nameHashMapForShaders = adoptPtr(new ShaderNameHash);
+    currentNameHashMapForShader = nameHashMapForShaders.get();
+    m_compiler.setResources(ANGLEResources);
+
     String translatedShaderSource = m_extensions->getTranslatedShaderSourceANGLE(shader);
+
+    ANGLEResources.HashFunction = previousHashFunction;
+    m_compiler.setResources(ANGLEResources);
+    currentNameHashMapForShader = nullptr;
 
     if (!translatedShaderSource.length())
         return;
@@ -451,7 +502,10 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
     const CString& translatedShaderCString = translatedShaderSource.utf8();
     const char* translatedShaderPtr = translatedShaderCString.data();
     int translatedShaderLength = translatedShaderCString.length();
-    
+
+    LOG(WebGL, "--- begin original shader source ---\n%s\n--- end original shader source ---\n", getShaderSource(shader).utf8().data());
+    LOG(WebGL, "--- begin translated shader source ---\n%s\n--- end translated shader source ---", translatedShaderPtr);
+
     ::glShaderSource(shader, 1, &translatedShaderPtr, &translatedShaderLength);
     
     ::glCompileShader(shader);
@@ -460,32 +514,28 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
     
     ::glGetShaderiv(shader, COMPILE_STATUS, &GLCompileSuccess);
 
+    ShaderSourceMap::iterator result = m_shaderSourceMap.find(shader);
+    GraphicsContext3D::ShaderSourceEntry& entry = result->value;
+
     // Populate the shader log
     GLint length = 0;
     ::glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
 
     if (length) {
-        ShaderSourceMap::iterator result = m_shaderSourceMap.find(shader);
-        GraphicsContext3D::ShaderSourceEntry& entry = result->value;
-
         GLsizei size = 0;
         auto info = std::make_unique<GLchar[]>(length);
         ::glGetShaderInfoLog(shader, length, &size, info.get());
 
         entry.log = info.get();
-
-        if (GLCompileSuccess != GL_TRUE) {
-            entry.isValid = false;
-            LOG(WebGL, "Error: shader translator produced a shader that OpenGL would not compile.");
-            LOG(WebGL, "--- begin original shader source ---\n%s\n--- end original shader source ---\n", getShaderSource(shader).utf8().data());
-            LOG(WebGL, "--- begin translated shader source ---\n%s\n--- end translated shader source ---", translatedShaderPtr);
-        }
     }
-    
+
+    if (GLCompileSuccess != GL_TRUE) {
+        entry.isValid = false;
+        LOG(WebGL, "Error: shader translator produced a shader that OpenGL would not compile.");
 #if PLATFORM(BLACKBERRY) && !defined(NDEBUG)
-    if (GLCompileSuccess != GL_TRUE)
         BBLOG(BlackBerry::Platform::LogLevelWarn, "The shader validated, but didn't compile.\n");
 #endif
+    }
 }
 
 void GraphicsContext3D::copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border)
