@@ -106,7 +106,7 @@ RenderTableSection::~RenderTableSection()
 void RenderTableSection::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBox::styleDidChange(diff, oldStyle);
-    propagateStyleToAnonymousChildren();
+    propagateStyleToAnonymousChildren(PropagateToAllChildren);
 
     // If border was changed, notify table.
     RenderTable* table = this->table();

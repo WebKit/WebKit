@@ -27,6 +27,9 @@
 
 #include "AXObjectCache.h"
 #include "ContentData.h"
+#include "CursorList.h"
+#include "EventHandler.h"
+#include "Frame.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "RenderCounter.h"
@@ -50,7 +53,14 @@
 #include "RenderView.h"
 #include "SVGRenderSupport.h"
 
+#if USE(ACCELERATED_COMPOSITING)
+#include "RenderLayerCompositor.h"
+#endif
+
 namespace WebCore {
+
+bool RenderElement::s_affectsParentBlock = false;
+bool RenderElement::s_noLongerAffectsParentBlock = false;
 
 RenderElement::RenderElement(Element* element)
     : RenderObject(element)
@@ -444,6 +454,209 @@ bool RenderElement::layerCreationAllowedForSubtree() const
     return true;
 }
 
+void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propagationType)
+{
+    // FIXME: We could save this call when the change only affected non-inherited properties.
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (!child->isAnonymous() || child->style()->styleType() != NOPSEUDO)
+            continue;
+
+        if (propagationType == PropagateToBlockChildrenOnly && !child->isRenderBlock())
+            continue;
+
+#if ENABLE(FULLSCREEN_API)
+        if (child->isRenderFullScreen() || child->isRenderFullScreenPlaceholder())
+            continue;
+#endif
+
+        RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), child->style()->display());
+        if (style()->specifiesColumns()) {
+            if (child->style()->specifiesColumns())
+                newStyle->inheritColumnPropertiesFrom(style());
+            if (child->style()->columnSpan())
+                newStyle->setColumnSpan(ColumnSpanAll);
+        }
+
+        // Preserve the position style of anonymous block continuations as they can have relative or sticky position when
+        // they contain block descendants of relative or sticky positioned inlines.
+        if (child->isInFlowPositioned() && toRenderBlock(child)->isAnonymousBlockContinuation())
+            newStyle->setPosition(child->style()->position());
+
+        child->setStyle(newStyle.release());
+    }
+}
+
+// On low-powered/mobile devices, preventing blitting on a scroll can cause noticeable delays
+// when scrolling a page with a fixed background image. As an optimization, assuming there are
+// no fixed positoned elements on the page, we can acclerate scrolling (via blitting) if we
+// ignore the CSS property "background-attachment: fixed".
+static bool shouldRepaintFixedBackgroundsOnScroll(FrameView* frameView)
+{
+#if !ENABLE(FAST_MOBILE_SCROLLING) || !PLATFORM(QT)
+    UNUSED_PARAM(frameView);
+#endif
+
+    bool repaintFixedBackgroundsOnScroll = true;
+#if ENABLE(FAST_MOBILE_SCROLLING)
+#if PLATFORM(QT)
+    if (frameView->delegatesScrolling())
+        repaintFixedBackgroundsOnScroll = false;
+#else
+    repaintFixedBackgroundsOnScroll = false;
+#endif
+#endif
+    return repaintFixedBackgroundsOnScroll;
+}
+
+static inline bool rendererHasBackground(const RenderObject* renderer)
+{
+    return renderer && renderer->hasBackground();
+}
+
+void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
+{
+    if (m_style) {
+        // If our z-index changes value or our visibility changes,
+        // we need to dirty our stacking context's z-order list.
+        if (newStyle) {
+            bool visibilityChanged = m_style->visibility() != newStyle->visibility() 
+                || m_style->zIndex() != newStyle->zIndex() 
+                || m_style->hasAutoZIndex() != newStyle->hasAutoZIndex();
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
+            if (visibilityChanged)
+                document().setAnnotatedRegionsDirty(true);
+#endif
+            if (visibilityChanged) {
+                if (AXObjectCache* cache = document().existingAXObjectCache())
+                    cache->childrenChanged(parent());
+            }
+
+            // Keep layer hierarchy visibility bits up to date if visibility changes.
+            if (m_style->visibility() != newStyle->visibility()) {
+                if (RenderLayer* layer = enclosingLayer()) {
+                    if (newStyle->visibility() == VISIBLE)
+                        layer->setHasVisibleContent();
+                    else if (layer->hasVisibleContent() && (this == &layer->renderer() || layer->renderer().style()->visibility() != VISIBLE)) {
+                        layer->dirtyVisibleContentStatus();
+                        if (diff > StyleDifferenceRepaintLayer)
+                            repaint();
+                    }
+                }
+            }
+        }
+
+        if (m_parent && (newStyle->outlineSize() < m_style->outlineSize() || shouldRepaintForStyleDifference(diff)))
+            repaint();
+        if (isFloating() && (m_style->floating() != newStyle->floating()))
+            // For changes in float styles, we need to conceivably remove ourselves
+            // from the floating objects list.
+            toRenderBox(this)->removeFloatingOrPositionedChildFromBlockLists();
+        else if (isOutOfFlowPositioned() && (m_style->position() != newStyle->position()))
+            // For changes in positioning styles, we need to conceivably remove ourselves
+            // from the positioned objects list.
+            toRenderBox(this)->removeFloatingOrPositionedChildFromBlockLists();
+
+        s_affectsParentBlock = isFloatingOrOutOfFlowPositioned()
+            && (!newStyle->isFloating() && !newStyle->hasOutOfFlowPosition())
+            && parent() && (parent()->isRenderBlockFlow() || parent()->isRenderInline());
+
+        s_noLongerAffectsParentBlock = ((!isFloating() && newStyle->isFloating()) || (!isOutOfFlowPositioned() && newStyle->hasOutOfFlowPosition()))
+            && parent() && parent()->isRenderBlock();
+
+        // reset style flags
+        if (diff == StyleDifferenceLayout || diff == StyleDifferenceLayoutPositionedMovementOnly) {
+            setFloating(false);
+            clearPositionedState();
+        }
+        setHorizontalWritingMode(true);
+        setHasBoxDecorations(false);
+        setHasOverflowClip(false);
+        setHasTransform(false);
+        setHasReflection(false);
+    } else {
+        s_affectsParentBlock = false;
+        s_noLongerAffectsParentBlock = false;
+    }
+
+    bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(&view().frameView());
+
+    bool newStyleSlowScroll = newStyle && repaintFixedBackgroundsOnScroll && newStyle->hasFixedBackgroundImage();
+    bool oldStyleSlowScroll = m_style && repaintFixedBackgroundsOnScroll && m_style->hasFixedBackgroundImage();
+
+#if USE(ACCELERATED_COMPOSITING)
+    bool drawsRootBackground = isRoot() || (isBody() && !rendererHasBackground(document().documentElement()->renderer()));
+    if (drawsRootBackground && repaintFixedBackgroundsOnScroll) {
+        if (view().compositor().supportsFixedRootBackgroundCompositing()) {
+            if (newStyleSlowScroll && newStyle->hasEntirelyFixedBackground())
+                newStyleSlowScroll = false;
+
+            if (oldStyleSlowScroll && m_style->hasEntirelyFixedBackground())
+                oldStyleSlowScroll = false;
+        }
+    }
+#endif
+    if (oldStyleSlowScroll != newStyleSlowScroll) {
+        if (oldStyleSlowScroll)
+            view().frameView().removeSlowRepaintObject(this);
+
+        if (newStyleSlowScroll)
+            view().frameView().addSlowRepaintObject(this);
+    }
+}
+
+static bool areNonIdenticalCursorListsEqual(const RenderStyle* a, const RenderStyle* b)
+{
+    ASSERT(a->cursors() != b->cursors());
+    return a->cursors() && b->cursors() && *a->cursors() == *b->cursors();
+}
+
+static inline bool areCursorsEqual(const RenderStyle* a, const RenderStyle* b)
+{
+    return a->cursor() == b->cursor() && (a->cursors() == b->cursors() || areNonIdenticalCursorListsEqual(a, b));
+}
+
+void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    if (s_affectsParentBlock)
+        handleDynamicFloatPositionChange();
+
+    if (s_noLongerAffectsParentBlock)
+        removeAnonymousWrappersForInlinesIfNecessary();
+#if ENABLE(SVG)
+    SVGRenderSupport::styleChanged(this);
+#endif
+
+    if (!m_parent)
+        return;
+    
+    if (diff == StyleDifferenceLayout || diff == StyleDifferenceSimplifiedLayout) {
+        RenderCounter::rendererStyleChanged(this, oldStyle, m_style.get());
+
+        // If the object already needs layout, then setNeedsLayout won't do
+        // any work. But if the containing block has changed, then we may need
+        // to mark the new containing blocks for layout. The change that can
+        // directly affect the containing block of this object is a change to
+        // the position style.
+        if (needsLayout() && oldStyle->position() != m_style->position())
+            markContainingBlocksForLayout();
+
+        if (diff == StyleDifferenceLayout)
+            setNeedsLayoutAndPrefWidthsRecalc();
+        else
+            setNeedsSimplifiedNormalFlowLayout();
+    } else if (diff == StyleDifferenceSimplifiedLayoutAndPositionedMovement) {
+        setNeedsPositionedMovementLayout(oldStyle);
+        setNeedsSimplifiedNormalFlowLayout();
+    } else if (diff == StyleDifferenceLayoutPositionedMovementOnly)
+        setNeedsPositionedMovementLayout(oldStyle);
+
+    // Don't check for repaint here; we need to wait until the layer has been
+    // updated by subclasses before we know if we have to repaint (in setStyle()).
+
+    if (oldStyle && !areCursorsEqual(oldStyle, style()))
+        frame().eventHandler().scheduleCursorUpdate();
+}
+
 void RenderElement::insertedIntoTree()
 {
     RenderObject::insertedIntoTree();
@@ -480,6 +693,13 @@ void RenderElement::willBeRemovedFromTree()
             layer = parent()->enclosingLayer();
         removeLayers(layer);
     }
+
+    bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(&view().frameView());
+    if (repaintFixedBackgroundsOnScroll && m_style && m_style->hasFixedBackgroundImage())
+        view().frameView().removeSlowRepaintObject(this);
+
+    if (isOutOfFlowPositioned() && parent()->childrenInline())
+        parent()->dirtyLinesFromChangedChild(this);
 
     RenderObject::willBeRemovedFromTree();
 }

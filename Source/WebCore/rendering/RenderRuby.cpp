@@ -121,7 +121,7 @@ RenderRubyAsInline::~RenderRubyAsInline()
 void RenderRubyAsInline::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderInline::styleDidChange(diff, oldStyle);
-    propagateStyleToAnonymousChildren();
+    propagateStyleToAnonymousChildren(PropagateToAllChildren);
 }
 
 void RenderRubyAsInline::addChild(RenderObject* child, RenderObject* beforeChild)
@@ -227,7 +227,7 @@ RenderRubyAsBlock::~RenderRubyAsBlock()
 void RenderRubyAsBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
-    propagateStyleToAnonymousChildren();
+    propagateStyleToAnonymousChildren(PropagateToAllChildren);
 }
 
 void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)

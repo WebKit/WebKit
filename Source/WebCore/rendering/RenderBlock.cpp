@@ -325,7 +325,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         }
     }
 
-    propagateStyleToAnonymousChildren(true);    
+    propagateStyleToAnonymousChildren(PropagateToBlockChildrenOnly);
     m_lineHeight = -1;
 
     // After our style changed, if we lose our ability to propagate floats into next sibling

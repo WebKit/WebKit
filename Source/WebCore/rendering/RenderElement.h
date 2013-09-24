@@ -66,6 +66,9 @@ protected:
 
     bool layerCreationAllowedForSubtree() const;
 
+    enum StylePropagationType { PropagateToAllChildren, PropagateToBlockChildrenOnly };
+    void propagateStyleToAnonymousChildren(StylePropagationType);
+
     LayoutUnit valueForLength(const Length&, LayoutUnit maximumValue, bool roundPercentages = false) const;
     LayoutUnit minimumValueForLength(const Length&, LayoutUnit maximumValue, bool roundPercentages = false) const;
 
@@ -73,6 +76,8 @@ protected:
     void setLastChild(RenderObject* child) { m_lastChild = child; }
     void destroyLeftoverChildren();
 
+    virtual void styleWillChange(StyleDifference, const RenderStyle*) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle*) OVERRIDE;
     virtual void insertedIntoTree() OVERRIDE;
     virtual void willBeRemovedFromTree() OVERRIDE;
     virtual void willBeDestroyed() OVERRIDE;
@@ -84,11 +89,16 @@ private:
     void isText() const WTF_DELETED_FUNCTION;
     void isRenderElement() const WTF_DELETED_FUNCTION;
 
-    virtual RenderObject* firstChildSlow() const { return firstChild(); }
-    virtual RenderObject* lastChildSlow() const { return lastChild(); }
+    virtual RenderObject* firstChildSlow() const OVERRIDE FINAL { return firstChild(); }
+    virtual RenderObject* lastChildSlow() const OVERRIDE FINAL { return lastChild(); }
 
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;
+
+    // FIXME: Get rid of this hack.
+    // Store state between styleWillChange and styleDidChange
+    static bool s_affectsParentBlock;
+    static bool s_noLongerAffectsParentBlock;
 };
 
 inline LayoutUnit RenderElement::valueForLength(const Length& length, LayoutUnit maximumValue, bool roundPercentages) const
