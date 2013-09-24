@@ -1,3 +1,18 @@
+2013-09-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Flaky Test: fast/history/history-subframe-with-name.html
+        https://bugs.webkit.org/show_bug.cgi?id=51039
+
+        Reviewed by Anders Carlsson.
+
+        Speculative fix, I could not reproduce locally.
+
+        * fast/history/resources/history-subframe-with-name-container.html: Added a check
+        that onunload trick worked. 
+
+        * fast/history/resources/history-subframe-with-name-2.html: Starting the navigation
+        used to race with loading another iframe in the parent. Wait until the parent loads.
+
 2013-09-24  Dean Jackson  <dino@apple.com>
 
         webgl/conformance/extensions/oes-element-index-uint.html failing after r156351 or 156352
