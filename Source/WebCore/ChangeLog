@@ -1,3 +1,16 @@
+2013-09-24  Andreas Kling  <akling@apple.com>
+
+        Make hoverAncestor() a RenderElement concept.
+        <https://webkit.org/b/121845>
+
+        Reviewed by Antti Koivisto.
+
+        The hover ancestor renderer is always a RenderElement, we only ever
+        ask RenderElements for their hover ancestors.
+
+        Updated Document::updateHoverActiveState() to take advantage of the
+        tighter typing, removing a few isElementNode() checks.
+
 2013-09-24  Daniel Bates  <dabates@apple.com>
 
         [iOS] Initialize settings mediaPlayback{AllowsInline, RequiresUserGesture} and

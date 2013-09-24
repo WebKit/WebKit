@@ -929,4 +929,30 @@ RenderElement* RenderElement::rendererForRootBackground()
     return this;
 }
 
+RenderElement* RenderElement::hoverAncestor() const
+{
+    // When searching for the hover ancestor and encountering a named flow thread,
+    // the search will continue with the DOM ancestor of the top-most element
+    // in the named flow thread.
+    // See https://bugs.webkit.org/show_bug.cgi?id=111749
+    RenderElement* hoverAncestor = parent();
+
+    // Skip anonymous blocks directly flowed into flow threads as it would
+    // prevent us from continuing the search on the DOM tree when reaching the named flow thread.
+    if (hoverAncestor && hoverAncestor->isAnonymousBlock() && hoverAncestor->parent() && hoverAncestor->parent()->isRenderNamedFlowThread())
+        hoverAncestor = hoverAncestor->parent();
+
+    if (hoverAncestor && hoverAncestor->isRenderNamedFlowThread()) {
+        hoverAncestor = nullptr;
+
+        if (Element* element = this->element()) {
+            ContainerNode* domAncestorNode = element->parentNode();
+            if (domAncestorNode)
+                hoverAncestor = toRenderElement(domAncestorNode->renderer());
+        }
+    }
+
+    return hoverAncestor;
+}
+
 }
