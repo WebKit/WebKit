@@ -71,3 +71,11 @@ EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));
 EXCLUDED_SOURCE_FILE_NAMES_macosx = *IOS.h *IOS.cpp *IOS.mm;
 EXCLUDED_SOURCE_FILE_NAMES_iphoneos = *Mac.h *Mac.cpp *Mac.mm *InjectedBundle* *PlatformUtilities* Tests/WebKit2/* Tests/WebKit2ObjC/* *_Bundle* JavaScriptTest.*;
 EXCLUDED_SOURCE_FILE_NAMES_iphonesimulator = $(EXCLUDED_SOURCE_FILE_NAMES_iphoneos);
+
+TOOLCHAINS = $(TOOLCHAINS_$(PLATFORM_NAME));
+TOOLCHAINS_iphoneos = $(TOOLCHAINS);
+TOOLCHAINS_iphonesimulator = $(TOOLCHAINS);
+TOOLCHAINS_macosx = $(TOOLCHAINS_macosx_$(MAC_OS_X_VERSION_MAJOR));
+TOOLCHAINS_macosx_1070 = $(TOOLCHAINS);
+TOOLCHAINS_macosx_1080 = default;
+TOOLCHAINS_macosx_1090 = $(TOOLCHAINS);

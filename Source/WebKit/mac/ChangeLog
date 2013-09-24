@@ -1,3 +1,11 @@
+2013-09-24  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/14971518> WebKit should build against the Xcode default toolchain when targeting OS X 10.8
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+
 2013-09-21  Mark Lam  <mark.lam@apple.com>
 
         Remove unused code in WebKit/mac's WebScriptDebugDelegate.
