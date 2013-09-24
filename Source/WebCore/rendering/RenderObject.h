@@ -677,12 +677,6 @@ public:
 
     void scheduleRelayout();
 
-    void updateFillImages(const FillLayer*, const FillLayer*);
-    void updateImage(StyleImage*, StyleImage*);
-#if ENABLE(CSS_SHAPES)
-    void updateShapeImage(const ShapeValue*, const ShapeValue*);
-#endif
-
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
     // Recursive function that computes the size and position of this object and all its descendants.
@@ -718,7 +712,7 @@ public:
     void setAnimatableStyle(PassRefPtr<RenderStyle>);
 
     // Set the style of the object and update the state of the object accordingly.
-    virtual void setStyle(PassRefPtr<RenderStyle>);
+    virtual void setStyle(PassRefPtr<RenderStyle>) = 0;
 
     // Set the style of the object if it's generated content.
     void setPseudoStyle(PassRefPtr<RenderStyle>);
@@ -965,11 +959,6 @@ public:
     RespectImageOrientationEnum shouldRespectImageOrientation() const;
 
 protected:
-    // Overrides should call the superclass at the end
-    virtual void styleWillChange(StyleDifference, const RenderStyle*) { }
-    // Overrides should call the superclass at the start
-    virtual void styleDidChange(StyleDifference, const RenderStyle*) { }
-
     void drawLineForBoxSide(GraphicsContext*, int x1, int y1, int x2, int y2, BoxSide,
                             Color, EBorderStyle, int adjbw1, int adjbw2, bool antialias = false);
 
@@ -999,11 +988,7 @@ private:
     void removeFromRenderFlowThread();
     void removeFromRenderFlowThreadRecursive(RenderFlowThread*);
 
-    bool shouldRepaintForStyleDifference(StyleDifference) const;
-    bool hasImmediateNonWhitespaceTextChild() const;
-
     RenderStyle* cachedFirstLineStyle() const;
-    StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;
 
     Color selectionColor(int colorProperty) const;
 

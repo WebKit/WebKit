@@ -200,6 +200,22 @@ bool RenderText::isTextFragment() const
     return false;
 }
 
+void RenderText::setStyle(PassRefPtr<RenderStyle> style)
+{
+    if (style == this->style())
+        return;
+
+    StyleDifference diff = StyleDifferenceEqual;
+    unsigned contextSensitiveProperties = ContextSensitivePropertyNone;
+    RefPtr<RenderStyle> oldStyle = this->style();
+    if (oldStyle.get())
+        diff = oldStyle->diff(style.get(), contextSensitiveProperties);
+
+    setStyleInternal(style);
+
+    styleDidChange(diff, oldStyle.get());
+}
+
 void RenderText::updateNeedsTranscoding()
 {
     const TextEncoding* encoding = document().decoder() ? &document().decoder()->encoding() : 0;

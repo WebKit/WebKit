@@ -46,6 +46,8 @@ public:
 
     virtual bool isTextFragment() const;
 
+    virtual void setStyle(PassRefPtr<RenderStyle>) OVERRIDE FINAL;
+
     virtual String originalText() const;
 
     void extractTextBox(InlineTextBox*);
@@ -149,8 +151,7 @@ protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
     virtual void willBeDestroyed() OVERRIDE;
 
-    virtual void styleWillChange(StyleDifference, const RenderStyle*) OVERRIDE FINAL { }
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual void setTextInternal(const String&);
     virtual UChar previousCharacter() const;

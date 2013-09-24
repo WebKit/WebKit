@@ -1,3 +1,40 @@
+2013-09-23  Antti Koivisto  <antti@apple.com>
+
+        Move more style change code from RenderObject to RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=121822
+
+        Reviewed by Darin Adler.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::~RenderElement):
+        
+            RenderTexts are no longer registered as image clients. They don't need be unregistered either.
+
+        (WebCore::RenderElement::adjustStyleDifference):
+        (WebCore::RenderElement::hasImmediateNonWhitespaceTextChild):
+        (WebCore::RenderElement::shouldRepaintForStyleDifference):
+        (WebCore::RenderElement::updateFillImages):
+        (WebCore::RenderElement::updateImage):
+        (WebCore::RenderElement::updateShapeImage):
+        (WebCore::RenderElement::setStyle):
+        
+            Move from RenderObject and remove the text specific bits.
+
+        * rendering/RenderElement.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+        (WebCore::RenderObject::arenaDelete):
+        * rendering/RenderObject.h:
+        
+            Remove styleWill/DidChange which move to subclasses.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setStyle):
+        
+            Add simple text specific setStyle.
+
+        * rendering/RenderText.h:
+
 2013-09-24  Andrei Parvu  <parvu@adobe.com>
 
         [CSS Background] repeat: round should round the number of tiles to the nearest natural number
