@@ -139,7 +139,7 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
 {
 #if ENABLE(CSS_IMAGE_SET)
     if (m_imageValue->isImageSetValue())
-        return static_cast<CSSImageSetValue*>(m_imageValue.get())->cachedImageSet(loader);
+        return toCSSImageSetValue(m_imageValue.get())->cachedImageSet(loader);
 #endif
 
     if (!m_accessedImage) {
@@ -176,7 +176,7 @@ StyleImage* CSSCursorImageValue::cachedOrPendingImage(Document* document)
 #if ENABLE(CSS_IMAGE_SET)
     // Need to delegate completely so that changes in device scale factor can be handled appropriately.
     if (m_imageValue->isImageSetValue())
-        return static_cast<CSSImageSetValue*>(m_imageValue.get())->cachedOrPendingImageSet(document);
+        return toCSSImageSetValue(m_imageValue.get())->cachedOrPendingImageSet(document);
 #endif
 
     if (!m_image)

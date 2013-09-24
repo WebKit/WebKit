@@ -2043,7 +2043,7 @@ static bool hasVariableReference(CSSValue* value)
         return static_cast<CSSCalcValue*>(value)->hasVariableReference();
 
     if (value->isReflectValue()) {
-        CSSReflectValue* reflectValue = static_cast<CSSReflectValue*>(value);
+        CSSReflectValue* reflectValue = toCSSReflectValue(value);
         CSSPrimitiveValue* direction = reflectValue->direction();
         CSSPrimitiveValue* offset = reflectValue->offset();
         CSSValue* mask = reflectValue->mask();
@@ -2166,7 +2166,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                     didSet = true;
 #if ENABLE(CSS_IMAGE_SET)
                 } else if (item->isImageSetValue()) {
-                    state.style()->setContent(setOrPendingFromValue(CSSPropertyContent, static_cast<CSSImageSetValue*>(item)), didSet);
+                    state.style()->setContent(setOrPendingFromValue(CSSPropertyContent, toCSSImageSetValue(item)), didSet);
                     didSet = true;
 #endif
                 }
@@ -2415,7 +2415,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         if (!value->isReflectValue())
             return;
 
-        CSSReflectValue* reflectValue = static_cast<CSSReflectValue*>(value);
+        CSSReflectValue* reflectValue = toCSSReflectValue(value);
         RefPtr<StyleReflection> reflection = StyleReflection::create();
         reflection->setDirection(*reflectValue->direction());
         if (reflectValue->offset())
@@ -3085,7 +3085,7 @@ PassRefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValu
 
 #if ENABLE(CSS_IMAGE_SET)
     if (value->isImageSetValue())
-        return setOrPendingFromValue(property, static_cast<CSSImageSetValue*>(value));
+        return setOrPendingFromValue(property, toCSSImageSetValue(value));
 #endif
 
     if (value->isCursorImageValue())

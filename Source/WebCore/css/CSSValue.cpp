@@ -428,7 +428,7 @@ void CSSValue::destroy()
         delete static_cast<CSSPrimitiveValue*>(this);
         return;
     case ReflectClass:
-        delete static_cast<CSSReflectValue*>(this);
+        delete toCSSReflectValue(this);
         return;
     case ShadowClass:
         delete static_cast<ShadowValue*>(this);
@@ -456,7 +456,7 @@ void CSSValue::destroy()
         return;
 #if ENABLE(CSS_IMAGE_SET)
     case ImageSetClass:
-        delete static_cast<CSSImageSetValue*>(this);
+        delete toCSSImageSetValue(this);
         return;
 #endif
 #if ENABLE(CSS_FILTERS)

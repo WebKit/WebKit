@@ -1,3 +1,41 @@
+2013-09-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce CSS_VALUE_TYPE_CASTS macro in order to cast CSSValue type
+        https://bugs.webkit.org/show_bug.cgi?id=121462
+
+        Reviewed by Darin Adler.
+
+        As r155429 introduced ELEMENT_TYPE_CASTS, CSS_VALUE_TYPE_CASTS can be used
+        by css value type casting as well. This type cast macros will help to detect
+        bad-cast bugs as well as improve a code readibility.
+
+        This patch adds the following methods,
+
+        - CSSFooValue* toCSSFooValue(CSSValue*)
+        - const CSSFooValue* toCSSFooValue(const CSSValue*)
+
+        This patch support CSSImageSetValue and CSSReflectValue first. Other CSS*Values
+        will use this macro step by step.
+
+        Besides this patch will remove unnecessary local variables.
+
+        No new tests, no behavior change.
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::cachedImage):
+        (WebCore::CSSCursorImageValue::cachedOrPendingImage):
+        * css/CSSImageSetValue.h:
+        * css/CSSReflectValue.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        * css/StyleResolver.cpp:
+        (WebCore::hasVariableReference):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::styleImage):
+        * rendering/style/StylePendingImage.h:
+        (WebCore::StylePendingImage::cssImageSetValue):
+
 2013-09-23  Antti Koivisto  <antti@apple.com>
 
         Move style change analysis code to RenderElement

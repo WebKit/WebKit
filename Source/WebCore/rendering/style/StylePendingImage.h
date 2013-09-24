@@ -52,7 +52,7 @@ public:
     CSSImageGeneratorValue* cssImageGeneratorValue() const { return m_value->isImageGeneratorValue() ? static_cast<CSSImageGeneratorValue*>(m_value) : 0; }
     CSSCursorImageValue* cssCursorImageValue() const { return m_value->isCursorImageValue() ? static_cast<CSSCursorImageValue*>(m_value) : 0; }
 #if ENABLE(CSS_IMAGE_SET)
-    CSSImageSetValue* cssImageSetValue() const { return m_value->isImageSetValue() ? static_cast<CSSImageSetValue*>(m_value) : 0; }
+    CSSImageSetValue* cssImageSetValue() const { return m_value->isImageSetValue() ? toCSSImageSetValue(m_value) : 0; }
 #endif
     
     virtual LayoutSize imageSize(const RenderObject*, float /*multiplier*/) const OVERRIDE { return LayoutSize(); }
