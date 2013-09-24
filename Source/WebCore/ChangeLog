@@ -1,3 +1,9 @@
+2013-09-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix for CMake ports with INDEXED_DATABASE after r156296
+
+        * CMakeLists.txt: Removed IDBBackingStore.cpp from source list.
+
 2013-09-23  Anders Carlsson  <andersca@apple.com>
 
         Remove WTF_USE_SCROLLBAR_PAINTER #define
