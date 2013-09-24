@@ -131,7 +131,7 @@ void AccessibilityNodeObject::childrenChanged()
     if (!node() && !renderer())
         return;
 
-    axObjectCache()->postNotification(this, document(), AXObjectCache::AXChildrenChanged, true);
+    axObjectCache()->postNotification(this, document(), AXObjectCache::AXChildrenChanged);
 
     // Go up the accessibility parent chain, but only if the element already exists. This method is
     // called during render layouts, minimal work should be done. 
@@ -145,11 +145,11 @@ void AccessibilityNodeObject::childrenChanged()
 
         // If this element supports ARIA live regions, then notify the AT of changes.
         if (parent->supportsARIALiveRegion())
-            axObjectCache()->postNotification(parent, parent->document(), AXObjectCache::AXLiveRegionChanged, true);
+            axObjectCache()->postNotification(parent, parent->document(), AXObjectCache::AXLiveRegionChanged);
         
         // If this element is an ARIA text control, notify the AT of changes.
         if (parent->isARIATextControl() && !parent->isNativeTextControl() && !parent->node()->rendererIsEditable())
-            axObjectCache()->postNotification(parent, parent->document(), AXObjectCache::AXValueChanged, true);
+            axObjectCache()->postNotification(parent, parent->document(), AXObjectCache::AXValueChanged);
     }
 }
 
@@ -1054,7 +1054,7 @@ void AccessibilityNodeObject::changeValueByStep(bool increase)
 
     setValue(String::number(value));
 
-    axObjectCache()->postNotification(node(), AXObjectCache::AXValueChanged, true);
+    axObjectCache()->postNotification(node(), AXObjectCache::AXValueChanged);
 }
 
 void AccessibilityNodeObject::changeValueByPercent(float percentChange)
@@ -1065,7 +1065,7 @@ void AccessibilityNodeObject::changeValueByPercent(float percentChange)
     value += range * (percentChange / 100);
     setValue(String::number(value));
 
-    axObjectCache()->postNotification(node(), AXObjectCache::AXValueChanged, true);
+    axObjectCache()->postNotification(node(), AXObjectCache::AXValueChanged);
 }
 
 bool AccessibilityNodeObject::isGenericFocusableElement() const

@@ -505,7 +505,7 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
     if (textIsChanged || !innerTextElement()->hasChildNodes()) {
         if (textIsChanged && renderer()) {
             if (AXObjectCache* cache = document().existingAXObjectCache())
-                cache->postNotification(this, AXObjectCache::AXValueChanged, false);
+                cache->postNotification(this, AXObjectCache::AXValueChanged, TargetObservableParent);
         }
         innerTextElement()->setInnerText(value, ASSERT_NO_EXCEPTION);
 

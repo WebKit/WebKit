@@ -557,7 +557,7 @@ void Editor::respondToChangedContents(const VisibleSelection& endingSelection)
     if (AXObjectCache::accessibilityEnabled()) {
         Node* node = endingSelection.start().deprecatedNode();
         if (AXObjectCache* cache = m_frame.document()->existingAXObjectCache())
-            cache->postNotification(node, AXObjectCache::AXValueChanged, false);
+            cache->postNotification(node, AXObjectCache::AXValueChanged, TargetObservableParent);
     }
 
     updateMarkersForWordsAffectedByEditing(true);
@@ -2343,7 +2343,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
 
                 if (AXObjectCache* cache = m_frame.document()->existingAXObjectCache()) {
                     if (Element* root = m_frame.selection().selection().rootEditableElement())
-                        cache->postNotification(root, AXObjectCache::AXAutocorrectionOccured, true);
+                        cache->postNotification(root, AXObjectCache::AXAutocorrectionOccured);
                 }
 
                 // Skip all other results for the replaced text.

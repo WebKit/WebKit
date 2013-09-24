@@ -252,7 +252,7 @@ bool FocusController::setInitialFocus(FocusDirection direction, KeyboardEvent* e
     // into the web area again, even if focus did not change within WebCore. PostNotification is called instead
     // of handleFocusedUIElementChanged, because this will send the notification even if the element is the same.
     if (AXObjectCache* cache = focusedOrMainFrame().document()->existingAXObjectCache())
-        cache->postNotification(focusedOrMainFrame().document(), AXObjectCache::AXFocusedUIElementChanged, true);
+        cache->postNotification(focusedOrMainFrame().document(), AXObjectCache::AXFocusedUIElementChanged);
 
     return didAdvanceFocus;
 }

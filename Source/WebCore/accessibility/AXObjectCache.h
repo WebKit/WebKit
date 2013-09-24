@@ -71,6 +71,8 @@ private:
     HashMap<AXID, CachedAXObjectAttributes> m_idMapping;
 };
 
+enum PostTarget { TargetElement, TargetObservableParent };
+
 enum PostType { PostSynchronously, PostAsynchronously };
 
 class AXObjectCache {
@@ -179,9 +181,9 @@ public:
         AXAriaAttributeChanged
     };
 
-    void postNotification(RenderObject*, AXNotification, bool postToElement, PostType = PostAsynchronously);
-    void postNotification(Node*, AXNotification, bool postToElement, PostType = PostAsynchronously);
-    void postNotification(AccessibilityObject*, Document*, AXNotification, bool postToElement, PostType = PostAsynchronously);
+    void postNotification(RenderObject*, AXNotification, PostTarget = TargetElement, PostType = PostAsynchronously);
+    void postNotification(Node*, AXNotification, PostTarget = TargetElement, PostType = PostAsynchronously);
+    void postNotification(AccessibilityObject*, Document*, AXNotification, PostTarget = TargetElement, PostType = PostAsynchronously);
 
     enum AXTextChange {
         AXTextInserted,
@@ -298,9 +300,9 @@ inline void AXObjectCache::recomputeIsIgnored(RenderObject*) { }
 inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
 inline void AXObjectCache::nodeTextChangeNotification(Node*, AXTextChange, unsigned, const String&) { }
 inline void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) { }
-inline void AXObjectCache::postNotification(AccessibilityObject*, Document*, AXNotification, bool, PostType) { }
-inline void AXObjectCache::postNotification(RenderObject*, AXNotification, bool, PostType) { }
-inline void AXObjectCache::postNotification(Node*, AXNotification, bool, PostType) { }
+inline void AXObjectCache::postNotification(AccessibilityObject*, Document*, AXNotification, PostTarget, PostType) { }
+inline void AXObjectCache::postNotification(RenderObject*, AXNotification, PostTarget, PostType) { }
+inline void AXObjectCache::postNotification(Node*, AXNotification, PostTarget, PostType) { }
 inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification) { }
 inline void AXObjectCache::remove(AXID) { }
 inline void AXObjectCache::remove(RenderObject*) { }

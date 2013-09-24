@@ -51,7 +51,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange()
 
     if (m_selection.start().isNotNull() && m_selection.end().isNotNull()) {
         if (AXObjectCache* cache = document->existingAXObjectCache())
-            cache->postNotification(m_selection.start().deprecatedNode()->renderer(), AXObjectCache::AXSelectedTextChanged, false);
+            cache->postNotification(m_selection.start().deprecatedNode()->renderer(), AXObjectCache::AXSelectedTextChanged, TargetObservableParent);
     }
 
     // if zoom feature is enabled, insertion point changes should update the zoom

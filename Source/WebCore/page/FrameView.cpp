@@ -1327,7 +1327,7 @@ void FrameView::layout(bool allowSubtree)
 
 #if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK)
     if (AXObjectCache* cache = root->document().existingAXObjectCache())
-        cache->postNotification(root, AXObjectCache::AXLayoutComplete, true);
+        cache->postNotification(root, AXObjectCache::AXLayoutComplete);
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)

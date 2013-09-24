@@ -2301,11 +2301,11 @@ void AccessibilityRenderObject::handleAriaExpandedChanged()
     
     // Post that the row count changed.
     if (containerParent)
-        axObjectCache()->postNotification(containerParent, document(), AXObjectCache::AXRowCountChanged, true);
+        axObjectCache()->postNotification(containerParent, document(), AXObjectCache::AXRowCountChanged);
 
     // Post that the specific row either collapsed or expanded.
     if (roleValue() == RowRole || roleValue() == TreeItemRole)
-        axObjectCache()->postNotification(this, document(), isExpanded() ? AXObjectCache::AXRowExpanded : AXObjectCache::AXRowCollapsed, true);
+        axObjectCache()->postNotification(this, document(), isExpanded() ? AXObjectCache::AXRowExpanded : AXObjectCache::AXRowCollapsed);
 }
 
 void AccessibilityRenderObject::handleActiveDescendantChanged()
@@ -2318,7 +2318,7 @@ void AccessibilityRenderObject::handleActiveDescendantChanged()
     AccessibilityRenderObject* activedescendant = static_cast<AccessibilityRenderObject*>(activeDescendant());
     
     if (activedescendant && shouldNotifyActiveDescendant())
-        renderer()->document().axObjectCache()->postNotification(m_renderer, AXObjectCache::AXActiveDescendantChanged, true);
+        renderer()->document().axObjectCache()->postNotification(m_renderer, AXObjectCache::AXActiveDescendantChanged);
 }
 
 AccessibilityObject* AccessibilityRenderObject::correspondingControlForLabelElement() const
@@ -2711,10 +2711,10 @@ void AccessibilityRenderObject::textChanged()
             continue;
         
         if (parent->supportsARIALiveRegion())
-            cache->postNotification(renderParent, AXObjectCache::AXLiveRegionChanged, true);
+            cache->postNotification(renderParent, AXObjectCache::AXLiveRegionChanged);
 
         if (parent->isARIATextControl() && !parent->isNativeTextControl() && !parent->node()->rendererIsEditable())
-            cache->postNotification(renderParent, AXObjectCache::AXValueChanged, true);
+            cache->postNotification(renderParent, AXObjectCache::AXValueChanged);
     }
 }
 

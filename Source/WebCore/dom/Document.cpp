@@ -2492,11 +2492,11 @@ void Document::implicitClose()
         // only safe to call when a layout is not in progress, so it can not be used in postNotification.    
         axObjectCache()->getOrCreate(renderView());
         if (this == topDocument())
-            axObjectCache()->postNotification(renderView(), AXObjectCache::AXLoadComplete, true);
+            axObjectCache()->postNotification(renderView(), AXObjectCache::AXLoadComplete);
         else {
             // AXLoadComplete can only be posted on the top document, so if it's a document
             // in an iframe that just finished loading, post AXLayoutComplete instead.
-            axObjectCache()->postNotification(renderView(), AXObjectCache::AXLayoutComplete, true);
+            axObjectCache()->postNotification(renderView(), AXObjectCache::AXLayoutComplete);
         }
     }
 #endif

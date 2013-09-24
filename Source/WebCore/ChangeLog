@@ -1,3 +1,51 @@
+2013-09-24  Samuel White  <samuel_white@apple.com>
+
+        AX: Replace AXObjectCache postNotification method boolean arguments with enum values.
+        https://bugs.webkit.org/show_bug.cgi?id=121504
+
+        Reviewed by Chris Fleizach.
+
+        No new tests, no functional changes. Changed argument type from bool
+        to enum per "Names" rule #10 in the WebKit coding style guidelines.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::textChanged):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::checkedStateChanged):
+        (WebCore::AXObjectCache::selectedChildrenChanged):
+        (WebCore::AXObjectCache::handleAttributeChanged):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::postNotification):
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::didUpdateActiveOption):
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::didUpdateActiveOption):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::childrenChanged):
+        (WebCore::AccessibilityNodeObject::changeValueByStep):
+        (WebCore::AccessibilityNodeObject::changeValueByPercent):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::handleAriaExpandedChanged):
+        (WebCore::AccessibilityRenderObject::handleActiveDescendantChanged):
+        (WebCore::AccessibilityRenderObject::textChanged):
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedContents):
+        (WebCore::Editor::markAndReplaceFor):
+        * editing/mac/FrameSelectionMac.mm:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setInnerTextValue):
+        * html/InputType.cpp:
+        (WebCore::InputType::applyStep):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleKeydownEvent):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setInitialFocus):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2013-09-24  Andreas Kling  <akling@apple.com>
 
         Make hoverAncestor() a RenderElement concept.

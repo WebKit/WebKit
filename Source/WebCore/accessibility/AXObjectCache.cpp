@@ -608,7 +608,7 @@ void AXObjectCache::textChanged(AccessibilityObject* obj)
 
     bool parentAlreadyExists = obj->parentObjectIfExists();
     obj->textChanged();
-    postNotification(obj, obj->document(), AXObjectCache::AXTextChanged, true);
+    postNotification(obj, obj->document(), AXObjectCache::AXTextChanged);
     if (parentAlreadyExists)
         obj->notifyIfIgnoredValueChanged();
 }
@@ -674,7 +674,7 @@ void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
     m_notificationsToPost.clear();
 }
     
-void AXObjectCache::postNotification(RenderObject* renderer, AXNotification notification, bool postToElement, PostType postType)
+void AXObjectCache::postNotification(RenderObject* renderer, AXNotification notification, PostTarget postTarget, PostType postType)
 {
     if (!renderer)
         return;
@@ -692,10 +692,10 @@ void AXObjectCache::postNotification(RenderObject* renderer, AXNotification noti
     if (!renderer)
         return;
     
-    postNotification(object.get(), &renderer->document(), notification, postToElement, postType);
+    postNotification(object.get(), &renderer->document(), notification, postTarget, postType);
 }
 
-void AXObjectCache::postNotification(Node* node, AXNotification notification, bool postToElement, PostType postType)
+void AXObjectCache::postNotification(Node* node, AXNotification notification, PostTarget postTarget, PostType postType)
 {
     if (!node)
         return;
@@ -713,14 +713,14 @@ void AXObjectCache::postNotification(Node* node, AXNotification notification, bo
     if (!node)
         return;
     
-    postNotification(object.get(), &node->document(), notification, postToElement, postType);
+    postNotification(object.get(), &node->document(), notification, postTarget, postType);
 }
 
-void AXObjectCache::postNotification(AccessibilityObject* object, Document* document, AXNotification notification, bool postToElement, PostType postType)
+void AXObjectCache::postNotification(AccessibilityObject* object, Document* document, AXNotification notification, PostTarget postTarget, PostType postType)
 {
     stopCachingComputedObjectAttributes();
 
-    if (object && !postToElement)
+    if (object && postTarget == TargetObservableParent)
         object = object->observableObject();
 
     if (!object && document)
@@ -739,21 +739,21 @@ void AXObjectCache::postNotification(AccessibilityObject* object, Document* docu
 
 void AXObjectCache::checkedStateChanged(Node* node)
 {
-    postNotification(node, AXObjectCache::AXCheckedStateChanged, true);
+    postNotification(node, AXObjectCache::AXCheckedStateChanged);
 }
 
 void AXObjectCache::selectedChildrenChanged(Node* node)
 {
-    // postToElement is false so that you can pass in any child of an element and it will go up the parent tree
+    // postTarget is TargetObservableParent so that you can pass in any child of an element and it will go up the parent tree
     // to find the container which should send out the notification.
-    postNotification(node, AXSelectedChildrenChanged, false);
+    postNotification(node, AXSelectedChildrenChanged, TargetObservableParent);
 }
 
 void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
 {
-    // postToElement is false so that you can pass in any child of an element and it will go up the parent tree
+    // postTarget is TargetObservableParent so that you can pass in any child of an element and it will go up the parent tree
     // to find the container which should send out the notification.
-    postNotification(renderer, AXSelectedChildrenChanged, false);
+    postNotification(renderer, AXSelectedChildrenChanged, TargetObservableParent);
 }
 
 void AXObjectCache::nodeTextChangeNotification(Node* node, AXTextChange textChange, unsigned offset, const String& text)
@@ -831,7 +831,7 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
     if (attrName == aria_activedescendantAttr)
         handleActiveDescendantChanged(element);
     else if (attrName == aria_valuenowAttr || attrName == aria_valuetextAttr)
-        postNotification(element, AXObjectCache::AXValueChanged, true);
+        postNotification(element, AXObjectCache::AXValueChanged);
     else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == aria_labelledbyAttr)
         textChanged(element);
     else if (attrName == aria_checkedAttr)
@@ -843,9 +843,9 @@ void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Elemen
     else if (attrName == aria_hiddenAttr)
         childrenChanged(element->parentNode());
     else if (attrName == aria_invalidAttr)
-        postNotification(element, AXObjectCache::AXInvalidStatusChanged, true);
+        postNotification(element, AXObjectCache::AXInvalidStatusChanged);
     else
-        postNotification(element, AXObjectCache::AXAriaAttributeChanged, true);
+        postNotification(element, AXObjectCache::AXAriaAttributeChanged);
 }
 
 void AXObjectCache::labelChanged(Element* element)
