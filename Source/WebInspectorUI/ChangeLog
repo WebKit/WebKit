@@ -1,5 +1,19 @@
 2013-09-24  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Using Breakpoint Actions Breaks iOS inspection
+        https://bugs.webkit.org/show_bug.cgi?id=121862
+
+        Reviewed by Timothy Hatcher.
+
+        Only use DebuggerAgent.BreakpointActionType if it is available.
+        Otherwise leave options undefined for breakpoints since the backend
+        does not support it.
+
+        * UserInterface/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype._setBreakpoint):
+
+2013-09-24  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Include iOS 7 Inspector.json Version
         https://bugs.webkit.org/show_bug.cgi?id=121852
 

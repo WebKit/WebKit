@@ -514,10 +514,13 @@ WebInspector.DebuggerManager.prototype = {
 
         // Convert BreakpointAction types to DebuggerAgent protocol types.
         // NOTE: Breakpoint.options returns new objects each time, so it is safe to modify.
-        var options = breakpoint.options;
-        if (options.actions.length) {
-            for (var i = 0; i < options.actions.length; ++i)
-                options.actions[i].type = this._debuggerBreakpointActionType(options.actions[i].type);
+        var options;
+        if (DebuggerAgent.BreakpointActionType) {
+            options = breakpoint.options;
+            if (options.actions.length) {
+                for (var i = 0; i < options.actions.length; ++i)
+                    options.actions[i].type = this._debuggerBreakpointActionType(options.actions[i].type);
+            }
         }
 
         // COMPATIBILITY (iOS 7): iOS 7 and earlier, DebuggerAgent.setBreakpoint* took a "condition" string argument.
