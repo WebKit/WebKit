@@ -1,3 +1,17 @@
+2013-09-24  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [ATK] Missing WTR AccessibilityController::addNotificationListener implementation
+        https://bugs.webkit.org/show_bug.cgi?id=121674
+
+        Reviewed by Mario Sanchez Prada.
+
+        Updated the expectation of loading-iframe-sends-notification.html test,
+        which was failing before this fix.
+
+        * platform/gtk-wk2/TestExpectations: Removed
+        loading-iframe-sends-notification.html because it now passes with this
+        fix.
+
 2013-09-24  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] fast/images/exif-orientation-composited.html is failing

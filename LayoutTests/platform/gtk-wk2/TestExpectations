@@ -336,7 +336,6 @@ webkit.org/b/106334 accessibility/accessibility-node-memory-management.html [ Fa
 webkit.org/b/106335 accessibility/accessibility-node-reparent.html [ Failure ]
 webkit.org/b/106338 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
 webkit.org/b/106340 accessibility/img-fallsback-to-title.html [ Failure ]
-webkit.org/b/106343 accessibility/loading-iframe-sends-notification.html [ Failure ]
 webkit.org/b/106345 platform/gtk/accessibility/input-slider.html [ Failure ]
 webkit.org/b/116970 accessibility/multiselect-list-reports-active-option.html [ Failure ]
 webkit.org/b/116971 accessibility/poorly-formed-aria-table.html [ Failure ]
