@@ -103,20 +103,20 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
     // the first previous float that is on the same side as our newFloat.
     ShapeOutsideInfo* previousShapeOutsideInfo = 0;
     const FloatingObjectSet& floatingObjectSet = m_block.m_floatingObjects->set();
-    FloatingObjectSetIterator it = floatingObjectSet.end();
-    FloatingObjectSetIterator begin = floatingObjectSet.begin();
+    auto it = floatingObjectSet.end();
+    auto begin = floatingObjectSet.begin();
     LayoutUnit lineHeight = m_block.lineHeight(m_isFirstLine, m_block.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
     for (--it; it != begin; --it) {
-        FloatingObject* previousFloat = *it;
+        FloatingObject* previousFloat = it->get();
         if (previousFloat != newFloat && previousFloat->type() == newFloat->type()) {
-            previousShapeOutsideInfo = previousFloat->renderer()->shapeOutsideInfo();
+            previousShapeOutsideInfo = previousFloat->renderer().shapeOutsideInfo();
             if (previousShapeOutsideInfo)
                 previousShapeOutsideInfo->updateDeltasForContainingBlockLine(&m_block, previousFloat, m_block.logicalHeight(), lineHeight);
             break;
         }
     }
 
-    ShapeOutsideInfo* shapeOutsideInfo = newFloat->renderer()->shapeOutsideInfo();
+    ShapeOutsideInfo* shapeOutsideInfo = newFloat->renderer().shapeOutsideInfo();
     if (shapeOutsideInfo)
         shapeOutsideInfo->updateDeltasForContainingBlockLine(&m_block, newFloat, m_block.logicalHeight(), lineHeight);
 #endif

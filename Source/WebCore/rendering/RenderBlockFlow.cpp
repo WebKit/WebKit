@@ -92,11 +92,11 @@ void RenderBlockFlow::clearFloats()
     HashSet<RenderBox*> oldIntrudingFloatSet;
     if (!childrenInline() && m_floatingObjects) {
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        FloatingObjectSetIterator end = floatingObjectSet.end();
-        for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
-            FloatingObject* floatingObject = *it;
+        auto end = floatingObjectSet.end();
+        for (auto it = floatingObjectSet.begin(); it != end; ++it) {
+            FloatingObject* floatingObject = it->get();
             if (!floatingObject->isDescendant())
-                oldIntrudingFloatSet.add(floatingObject->renderer());
+                oldIntrudingFloatSet.add(&floatingObject->renderer());
         }
     }
 
@@ -160,10 +160,10 @@ void RenderBlockFlow::clearFloats()
         LayoutUnit changeLogicalBottom = LayoutUnit::min();
         if (m_floatingObjects) {
             const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-            FloatingObjectSetIterator end = floatingObjectSet.end();
-            for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
-                FloatingObject* f = *it;
-                FloatingObject* oldFloatingObject = floatMap.get(f->renderer());
+            auto end = floatingObjectSet.end();
+            for (auto it = floatingObjectSet.begin(); it != end; ++it) {
+                FloatingObject* f = it->get();
+                std::unique_ptr<FloatingObject> oldFloatingObject = floatMap.take(&f->renderer());
                 LayoutUnit logicalBottom = f->logicalBottom(isHorizontalWritingMode());
                 if (oldFloatingObject) {
                     LayoutUnit oldLogicalBottom = oldFloatingObject->logicalBottom(isHorizontalWritingMode());
@@ -183,12 +183,10 @@ void RenderBlockFlow::clearFloats()
                         }
                     }
 
-                    floatMap.remove(f->renderer());
                     if (oldFloatingObject->originatingLine() && !selfNeedsLayout()) {
                         ASSERT(&oldFloatingObject->originatingLine()->renderer() == this);
                         oldFloatingObject->originatingLine()->markDirty();
                     }
-                    delete oldFloatingObject;
                 } else {
                     changeLogicalTop = 0;
                     changeLogicalBottom = max(changeLogicalBottom, logicalBottom);
@@ -196,15 +194,14 @@ void RenderBlockFlow::clearFloats()
             }
         }
 
-        RendererToFloatInfoMap::iterator end = floatMap.end();
-        for (RendererToFloatInfoMap::iterator it = floatMap.begin(); it != end; ++it) {
-            FloatingObject* floatingObject = (*it).value;
+        auto end = floatMap.end();
+        for (auto it = floatMap.begin(); it != end; ++it) {
+            FloatingObject* floatingObject = it->value.get();
             if (!floatingObject->isDescendant()) {
                 changeLogicalTop = 0;
                 changeLogicalBottom = max(changeLogicalBottom, floatingObject->logicalBottom(isHorizontalWritingMode()));
             }
         }
-        deleteAllValues(floatMap);
 
         markLinesDirtyInBlockRange(changeLogicalTop, changeLogicalBottom);
     } else if (!oldIntrudingFloatSet.isEmpty()) {
@@ -214,9 +211,9 @@ void RenderBlockFlow::clearFloats()
             markAllDescendantsWithFloatsForLayout();
         else {
             const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-            FloatingObjectSetIterator end = floatingObjectSet.end();
-            for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end && !oldIntrudingFloatSet.isEmpty(); ++it)
-                oldIntrudingFloatSet.remove((*it)->renderer());
+            auto end = floatingObjectSet.end();
+            for (auto it = floatingObjectSet.begin(); it != end && !oldIntrudingFloatSet.isEmpty(); ++it)
+                oldIntrudingFloatSet.remove(&(*it)->renderer());
             if (!oldIntrudingFloatSet.isEmpty())
                 markAllDescendantsWithFloatsForLayout();
         }

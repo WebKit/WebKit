@@ -1,3 +1,79 @@
+2013-09-23  Darin Adler  <darin@apple.com>
+
+        Use unique_ptr instead of deleteAllValues in FloatingObject code
+        https://bugs.webkit.org/show_bug.cgi?id=121823
+
+        Reviewed by Sam Weinig.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObject::create): Return a unique_ptr instead of PassOwnPtr.
+        Use auto and a word for the local variable instead of an abbreviation. Also
+        changed to take a reference instead of a pointer.
+        (WebCore::FloatingObject::copyToNewContainer): Ditto.
+        (WebCore::FloatingObject::unsafeClone): Ditto.
+        (WebCore::FloatingObjects::~FloatingObjects): Removed call to deleteAllValues.
+        (WebCore::FloatingObjects::clearLineBoxTreePointers): Use auto to make this
+        read clearly.
+        (WebCore::FloatingObjects::clear): Removed call to deleteAllValues.
+        (WebCore::FloatingObjects::moveAllToFloatInfoMap): Use std::move to move values
+        out of the set, into the map. Removed code to clear the set, since it was a
+        trick to prevent the values from being deleted when they were not moved.
+        (WebCore::FloatingObjects::add): Changed to take a unique_ptr and to move the
+        pointer into the set instead of using leakPtr.
+        (WebCore::FloatingObjects::remove): Rearranged code so that the remove is at
+        the end of the function rather than the beginning. Also had to use a hash
+        translator and a find/remove combo since we don't have hash translator version
+        of the remove function.
+        (WebCore::FloatingObjects::computePlacedFloatsTree): Updated for changes to
+        the types.
+        (WebCore::FloatingObjects::placedFloatsTree): Moved this function here instead
+        of having it in the header, since it's only used within the file.
+
+        * rendering/FloatingObjects.h: Changed functions to take references instead
+        of pointers and return unique_ptr instead of PassOwnPtr. Also made
+        constructors public so we can use them with make_unique. Changed types to
+        use unique_ptr instead of raw pointers, and made the FloatingObjectHashTranslator
+        work for both RenderBox& and FloatingObject&.
+
+        * rendering/LineWidth.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        Updated for changes to types.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::moveAllChildrenIncludingFloatsTo):
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObjectsBelow):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::nextFloatLogicalBottomBelow):
+        (WebCore::RenderBlock::lowestFloatLogicalBottom):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::hasOverhangingFloat):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        (WebCore::RenderBlock::containsFloat):
+        (WebCore::RenderBlock::markSiblingsWithFloatsForLayout):
+        (WebCore::RenderBlock::updateLocalFloatingObjectsForPaintingContainer):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        Updated for changes to types.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::clearFloats): Updated to use take instead of
+        a combination of remove and delete.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloats):
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::linkToEndLineIfNeeded):
+        (WebCore::RenderBlock::checkPaginationAndFloatsAtEndLine):
+        (WebCore::RenderBlock::positionNewFloatOnLine):
+        Updated for changes to types.
+
 2013-09-23  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         CSS Unit vh, vw, vmin and vmax in box-shadow are not applied.

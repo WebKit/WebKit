@@ -617,17 +617,17 @@ private:
     LayoutUnit xPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
         if (isHorizontalWritingMode())
-            return child->x() + child->renderer()->marginLeft();
+            return child->x() + child->renderer().marginLeft();
         else
-            return child->x() + marginBeforeForChild(child->renderer());
+            return child->x() + marginBeforeForChild(&child->renderer());
     }
         
     LayoutUnit yPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
         if (isHorizontalWritingMode())
-            return child->y() + marginBeforeForChild(child->renderer());
+            return child->y() + marginBeforeForChild(&child->renderer());
         else
-            return child->y() + child->renderer()->marginTop();
+            return child->y() + child->renderer().marginTop();
     }
 
     LayoutPoint computeLogicalLocationForFloat(const FloatingObject*, LayoutUnit logicalTopOffset) const;

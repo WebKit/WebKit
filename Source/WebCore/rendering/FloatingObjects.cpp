@@ -42,9 +42,9 @@ struct SameSizeAsFloatingObject {
 
 COMPILE_ASSERT(sizeof(FloatingObject) == sizeof(SameSizeAsFloatingObject), FloatingObject_should_stay_small);
 
-FloatingObject::FloatingObject(RenderBox* renderer)
+FloatingObject::FloatingObject(RenderBox& renderer)
     : m_renderer(renderer)
-    , m_originatingLine(0)
+    , m_originatingLine(nullptr)
     , m_paginationStrut(0)
     , m_shouldPaint(true)
     , m_isDescendant(false)
@@ -53,7 +53,7 @@ FloatingObject::FloatingObject(RenderBox* renderer)
     , m_isInPlacedTree(false)
 #endif
 {
-    EFloat type = renderer->style()->floating();
+    EFloat type = renderer.style()->floating();
     ASSERT(type != NoFloat);
     if (type == LeftFloat)
         m_type = FloatLeft;
@@ -61,9 +61,9 @@ FloatingObject::FloatingObject(RenderBox* renderer)
         m_type = FloatRight;
 }
 
-FloatingObject::FloatingObject(RenderBox* renderer, Type type, const LayoutRect& frameRect, bool shouldPaint, bool isDescendant)
+FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect& frameRect, bool shouldPaint, bool isDescendant)
     : m_renderer(renderer)
-    , m_originatingLine(0)
+    , m_originatingLine(nullptr)
     , m_frameRect(frameRect)
     , m_paginationStrut(0)
     , m_type(type)
@@ -76,27 +76,28 @@ FloatingObject::FloatingObject(RenderBox* renderer, Type type, const LayoutRect&
 {
 }
 
-PassOwnPtr<FloatingObject> FloatingObject::create(RenderBox* renderer)
+std::unique_ptr<FloatingObject> FloatingObject::create(RenderBox& renderer)
 {
-    OwnPtr<FloatingObject> newObj = adoptPtr(new FloatingObject(renderer));
-    newObj->setShouldPaint(!renderer->hasSelfPaintingLayer()); // If a layer exists, the float will paint itself. Otherwise someone else will.
-    newObj->setIsDescendant(true);
-
-    return newObj.release();
+    auto object = std::make_unique<FloatingObject>(renderer);
+    object->setShouldPaint(!renderer.hasSelfPaintingLayer()); // If a layer exists, the float will paint itself. Otherwise someone else will.
+    object->setIsDescendant(true);
+    return object;
 }
 
-PassOwnPtr<FloatingObject> FloatingObject::copyToNewContainer(LayoutSize offset, bool shouldPaint, bool isDescendant) const
+std::unique_ptr<FloatingObject> FloatingObject::copyToNewContainer(LayoutSize offset, bool shouldPaint, bool isDescendant) const
 {
-    return adoptPtr(new FloatingObject(renderer(), type(), LayoutRect(frameRect().location() - offset, frameRect().size()), shouldPaint, isDescendant));
+    // FIXME: Use make_unique here, once we can get it to compile on all platforms we support.
+    return std::unique_ptr<FloatingObject>(new FloatingObject(renderer(), type(), LayoutRect(frameRect().location() - offset, frameRect().size()), shouldPaint, isDescendant));
 }
 
-PassOwnPtr<FloatingObject> FloatingObject::unsafeClone() const
+std::unique_ptr<FloatingObject> FloatingObject::unsafeClone() const
 {
-    OwnPtr<FloatingObject> cloneObject = adoptPtr(new FloatingObject(renderer(), type(), m_frameRect, m_shouldPaint, m_isDescendant));
+    // FIXME: Use make_unique here, once we can get it to compile on all platforms we support.
+    std::unique_ptr<FloatingObject> cloneObject(new FloatingObject(renderer(), type(), m_frameRect, m_shouldPaint, m_isDescendant));
     cloneObject->m_originatingLine = m_originatingLine;
     cloneObject->m_paginationStrut = m_paginationStrut;
     cloneObject->m_isPlaced = m_isPlaced;
-    return cloneObject.release();
+    return cloneObject;
 }
 
 template <FloatingObject::Type FloatTypeValue>
@@ -148,15 +149,12 @@ FloatingObjects::FloatingObjects(const RenderBlock* renderer, bool horizontalWri
 
 FloatingObjects::~FloatingObjects()
 {
-    // FIXME: m_set should use OwnPtr instead.
-    deleteAllValues(m_set);
 }
 
 void FloatingObjects::clearLineBoxTreePointers()
 {
     // Clear references to originating lines, since the lines are being deleted
-    FloatingObjectSetIterator end = m_set.end();
-    for (FloatingObjectSetIterator it = m_set.begin(); it != end; ++it) {
+    for (auto it = m_set.begin(), end = m_set.end(); it != end; ++it) {
         ASSERT(!((*it)->originatingLine()) || &((*it)->originatingLine()->renderer()) == m_renderer);
         (*it)->setOriginatingLine(0);
     }
@@ -164,7 +162,6 @@ void FloatingObjects::clearLineBoxTreePointers()
 
 void FloatingObjects::clear()
 {
-    deleteAllValues(m_set);
     m_set.clear();
     m_placedFloatsTree.clear();
     m_leftObjectsCount = 0;
@@ -173,14 +170,13 @@ void FloatingObjects::clear()
 
 void FloatingObjects::moveAllToFloatInfoMap(RendererToFloatInfoMap& map)
 {
-    FloatingObjectSetIterator end = m_set.end();
-    for (FloatingObjectSetIterator it = m_set.begin(); it != end; ++it) {
-        FloatingObject* f = *it;
-        map.add(f->renderer(), f);
+    for (auto it = m_set.begin(), end = m_set.end(); it != end; ++it) {
+        auto& renderer = it->get()->renderer();
+        // FIXME: The only reason it is safe to move these out of the set is that
+        // we are about to clear it. Otherwise it would break the hash table invariant.
+        // A clean way to do this would be to add a takeAll function to HashSet.
+        map.add(&renderer, std::move(*it));
     }
-    // clear set before clearing this because we don't want to delete all of
-    // the objects we have just transferred.
-    m_set.clear();
     clear();
 }
 
@@ -235,25 +231,26 @@ void FloatingObjects::removePlacedObject(FloatingObject* floatingObject)
 #endif
 }
 
-FloatingObject* FloatingObjects::add(PassOwnPtr<FloatingObject> floatingObject)
+FloatingObject* FloatingObjects::add(std::unique_ptr<FloatingObject> floatingObject)
 {
-    FloatingObject* newObject = floatingObject.leakPtr();
-    increaseObjectsCount(newObject->type());
-    m_set.add(newObject);
-    if (newObject->isPlaced())
-        addPlacedObject(newObject);
-    return newObject;
+    increaseObjectsCount(floatingObject->type());
+    if (floatingObject->isPlaced())
+        addPlacedObject(floatingObject.get());
+    return m_set.add(std::move(floatingObject)).iterator->get();
 }
 
 void FloatingObjects::remove(FloatingObject* floatingObject)
 {
+    ASSERT((m_set.contains<FloatingObject&, FloatingObjectHashTranslator>(*floatingObject)));
     decreaseObjectsCount(floatingObject->type());
-    m_set.remove(floatingObject);
     ASSERT(floatingObject->isPlaced() || !floatingObject->isInPlacedTree());
     if (floatingObject->isPlaced())
         removePlacedObject(floatingObject);
     ASSERT(!floatingObject->originatingLine());
-    delete floatingObject;
+    auto it = m_set.find<FloatingObject&, FloatingObjectHashTranslator>(*floatingObject);
+    if (it == m_set.end())
+        return;
+    m_set.remove(it);
 }
 
 void FloatingObjects::computePlacedFloatsTree()
@@ -262,13 +259,18 @@ void FloatingObjects::computePlacedFloatsTree()
     if (m_set.isEmpty())
         return;
     m_placedFloatsTree.initIfNeeded(m_renderer->view().intervalArena());
-    FloatingObjectSetIterator it = m_set.begin();
-    FloatingObjectSetIterator end = m_set.end();
-    for (; it != end; ++it) {
-        FloatingObject* floatingObject = *it;
+    for (auto it = m_set.begin(), end = m_set.end(); it != end; ++it) {
+        FloatingObject* floatingObject = it->get();
         if (floatingObject->isPlaced())
             m_placedFloatsTree.add(intervalForFloatingObject(floatingObject));
     }
+}
+
+inline const FloatingObjectTree& FloatingObjects::placedFloatsTree()
+{
+    if (!m_placedFloatsTree.isInitialized())
+        computePlacedFloatsTree();
+    return m_placedFloatsTree;
 }
 
 LayoutUnit FloatingObjects::logicalLeftOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight, ShapeOutsideFloatOffsetMode offsetMode, LayoutUnit *heightRemaining)
@@ -287,7 +289,7 @@ LayoutUnit FloatingObjects::logicalLeftOffset(LayoutUnit fixedOffset, LayoutUnit
 #if ENABLE(CSS_SHAPES)
     const FloatingObject* outermostFloat = adapter.outermostFloat();
     if (offsetMode == ShapeOutsideFloatShapeOffset && outermostFloat) {
-        if (ShapeOutsideInfo* shapeOutside = outermostFloat->renderer()->shapeOutsideInfo()) {
+        if (ShapeOutsideInfo* shapeOutside = outermostFloat->renderer().shapeOutsideInfo()) {
             shapeOutside->updateDeltasForContainingBlockLine(m_renderer, outermostFloat, logicalTop, logicalHeight);
             offset += shapeOutside->rightMarginBoxDelta();
         }
@@ -313,7 +315,7 @@ LayoutUnit FloatingObjects::logicalRightOffset(LayoutUnit fixedOffset, LayoutUni
 #if ENABLE(CSS_SHAPES)
     const FloatingObject* outermostFloat = adapter.outermostFloat();
     if (offsetMode == ShapeOutsideFloatShapeOffset && outermostFloat) {
-        if (ShapeOutsideInfo* shapeOutside = outermostFloat->renderer()->shapeOutsideInfo()) {
+        if (ShapeOutsideInfo* shapeOutside = outermostFloat->renderer().shapeOutsideInfo()) {
             shapeOutside->updateDeltasForContainingBlockLine(m_renderer, outermostFloat, logicalTop, logicalHeight);
             offset += shapeOutside->leftMarginBoxDelta();
         }
