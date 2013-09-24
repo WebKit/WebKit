@@ -132,6 +132,7 @@ WebInspector.BreakpointActionView.prototype = {
             input.placeholder = WebInspector.UIString("Message");
             input.addEventListener("change", this._logInputChanged.bind(this));
             input.value = this._action.data || "";
+            input.spellcheck = false;
             if (!omitFocus)
                 setTimeout(function() { input.focus(); }, 0);
 
