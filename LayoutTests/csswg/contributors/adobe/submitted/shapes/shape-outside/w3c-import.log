@@ -8,7 +8,7 @@ Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
 Do NOT modify or remove this file
 
 ------------------------------------------------------------------------
-Last Import: 2013-09-20 11:30
+Last Import: 2013-09-24 10:40
 W3C Mercurial changeset: Not Available
 Test status at time of import: unknown
 ------------------------------------------------------------------------
@@ -42,6 +42,12 @@ List of files:
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-000.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-001-expected.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-001.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-002-expected.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-002.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-003-expected.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-003.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-004-expected.html
+/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-004.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-000-expected.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-000.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-001-expected.html

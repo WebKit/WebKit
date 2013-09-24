@@ -181,7 +181,7 @@ void LineWidth::fitBelowFloats()
     float newLineLeft = m_left;
     float newLineRight = m_right;
     while (true) {
-        floatLogicalBottom = m_block.nextFloatLogicalBottomBelow(lastFloatLogicalBottom);
+        floatLogicalBottom = m_block.nextFloatLogicalBottomBelow(lastFloatLogicalBottom, ShapeOutsideFloatShapeOffset);
         if (floatLogicalBottom <= lastFloatLogicalBottom)
             break;
 

@@ -1,3 +1,19 @@
+2013-09-24  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Properly handle bottom margin on float with shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=121808
+
+        Reviewed by David Hyatt.
+
+        Import new tests for floats wish shape-outside and bottom margins.
+
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/resources/w3c-import.log:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/resources/rounded-rectangle.js: Remove whitespace at ends of lines.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-002.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-003-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-003.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/w3c-import.log:
+
 2013-09-24  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [ATK] Missing WTR AccessibilityController::addNotificationListener implementation

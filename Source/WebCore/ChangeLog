@@ -1,3 +1,32 @@
+2013-09-24  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Properly handle bottom margin on float with shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=121808
+
+        Reviewed by David Hyatt.
+
+        When a float has a shape-outside, inline content must conform to the
+        shape, not to the margin box. Thus, if a float with shape-outside has
+        a bottom margin and the shape does not intrude into that margin, then
+        the inline content should ignore the margin. Before this patch, inline
+        content would drop below the margin box instead of obeying the shape.
+        
+        Note that content that should clear the float still clears the margin
+        box, not the shape's contour.
+
+        Tests: csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-002.html
+               csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-003.html
+               csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-004.html
+
+        * rendering/LineWidth.cpp:
+        (WebCore::LineWidth::fitBelowFloats): Compute the logical bottom based
+        on the shape.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nextFloatLogicalBottomBelow): Add option to
+        compute the logical bottom based on the shape instead of on the margin
+        box.
+        * rendering/RenderBlock.h:
+
 2013-09-24  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Fix compilation problems when setting ENABLE_DRAG_SUPPORT = FALSE

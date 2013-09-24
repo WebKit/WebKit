@@ -682,7 +682,7 @@ private:
     LayoutUnit addOverhangingFloats(RenderBlock* child, bool makeChildPaintOtherFloats);
 
     LayoutUnit lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatLeftRight) const; 
-    LayoutUnit nextFloatLogicalBottomBelow(LayoutUnit) const;
+    LayoutUnit nextFloatLogicalBottomBelow(LayoutUnit, ShapeOutsideFloatOffsetMode = ShapeOutsideFloatMarginBoxOffset) const;
 
     void updateLocalFloatingObjectsForPaintingContainer(RenderBox* floatToUpdate, bool& didFindPaintContainer);
     void updateFloatingObjectsPaintingContainer(RenderBox* floatToUpdate, bool& didFindPaintContainer);
