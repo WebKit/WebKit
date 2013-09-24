@@ -1,5 +1,11 @@
 2013-09-24  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed buildfix after r156350.
+
+        * UIProcess/WebContext.messages.in:
+
+2013-09-24  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed buildfix after r156354 and r156360.
 
         * Platform/CoreIPC/unix/ConnectionUnix.cpp:
