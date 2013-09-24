@@ -1,3 +1,10 @@
+2013-09-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r156349.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::processMessage):
+
 2013-09-24  Anders Carlsson  <andersca@apple.com>
 
         Use std::unique_ptr for decoders as well

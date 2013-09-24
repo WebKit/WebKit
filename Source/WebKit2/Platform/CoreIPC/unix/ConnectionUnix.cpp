@@ -287,11 +287,7 @@ bool Connection::processMessage()
     if (messageInfo.isMessageBodyIsOutOfLine())
         messageBody = reinterpret_cast<uint8_t*>(oolMessageBody->data());
 
-    OwnPtr<MessageDecoder> decoder;
-    if (attachments.isEmpty())
-        decoder = MessageDecoder::create(DataReference(messageBody, messageInfo.bodySize()));
-    else
-        decoder = MessageDecoder::create(DataReference(messageBody, messageInfo.bodySize()), attachments);
+    OwnPtr<MessageDecoder> decoder = createOwned<MessageDecoder>(DataReference(messageBody, messageInfo.bodySize()), std::move(attachments));
 
     processIncomingMessage(decoder.release());
 
