@@ -1,6 +1,14 @@
+2013-09-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix Mac build now.
+        
+        * UIProcess/WebContext.messages.in:
+
 2013-09-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after r156350.
+
+        It seems that nested ifdefs don't work in messages.in files, so don't use them.
 
         * UIProcess/WebContext.messages.in:
 

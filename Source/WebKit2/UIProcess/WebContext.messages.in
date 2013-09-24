@@ -27,13 +27,13 @@ messages -> WebContext LegacyReceiver {
 
     DidGetStatistics(WebKit::StatisticsData statisticsData, uint64_t callbackID)
 
-#if PLATFORM(MAC)
+#if PLATFORM(IOS)
     WriteWebContentToPasteboard(WebCore::PasteboardWebContent content)
     WriteImageToPasteboard(WebCore::PasteboardImage pasteboardImage)
     WriteStringToPasteboard(WTF::String text)
 #endif
 
-#if PLATFORM(MAC) && PLATFORM(IOS)
+#if PLATFORM(MAC)
     # Pasteboard messages.
     GetPasteboardTypes(WTF::String pasteboardName) -> (Vector<WTF::String> types)
     GetPasteboardPathnamesForType(WTF::String pasteboardName, WTF::String pasteboardType) -> (Vector<WTF::String> pathnames)
