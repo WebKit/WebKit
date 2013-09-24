@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsLayerTextureMapper.h"
+#include "GtkVersioning.h"
 #include "PlatformContextCairo.h"
 #include "Settings.h"
 #include "TextureMapperGL.h"
