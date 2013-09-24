@@ -117,8 +117,8 @@ public:
     COMPtr<IWebHistoryItem> itemForURLString(const WTF::String&) const;
 
     typedef int64_t DateKey;
-    typedef HashMap<DateKey, RetainPtr<CFMutableArrayRef> > DateToEntriesMap;
-    typedef HashMap<WTF::String, COMPtr<IWebHistoryItem> > URLToEntriesMap;
+    typedef HashMap<DateKey, Vector<COMPtr<IWebHistoryItem>>> DateToEntriesMap;
+    typedef HashMap<WTF::String, COMPtr<IWebHistoryItem>> URLToEntriesMap;
 
 private:
 
@@ -138,9 +138,7 @@ private:
     HRESULT removeItemForURLString(const WTF::String& urlString);
     HRESULT addItemToDateCaches(IWebHistoryItem* entry);
     HRESULT removeItemFromDateCaches(IWebHistoryItem* entry);
-    HRESULT insertItem(IWebHistoryItem* entry, DateKey);
     HRESULT ageLimitDate(CFAbsoluteTime* time);
-    bool findKey(DateKey*, CFAbsoluteTime forDay);
     static CFAbsoluteTime timeToDate(CFAbsoluteTime time);
     BSTR getNotificationString(NotificationType notifyType);
 

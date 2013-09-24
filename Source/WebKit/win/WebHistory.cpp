@@ -75,6 +75,35 @@ static COMPtr<CFDictionaryPropertyBag> createUserInfoFromHistoryItem(BSTR notifi
     return info;
 }
 
+static void getDayBoundaries(CFAbsoluteTime day, CFAbsoluteTime& beginningOfDay, CFAbsoluteTime& beginningOfNextDay)
+{
+    RetainPtr<CFTimeZoneRef> timeZone = adoptCF(CFTimeZoneCopyDefault());
+    CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(day, timeZone.get());
+    date.hour = 0;
+    date.minute = 0;
+    date.second = 0;
+    beginningOfDay = CFGregorianDateGetAbsoluteTime(date, timeZone.get());
+    date.day += 1;
+    beginningOfNextDay = CFGregorianDateGetAbsoluteTime(date, timeZone.get());
+}
+
+static inline CFAbsoluteTime beginningOfDay(CFAbsoluteTime date)
+{
+    static CFAbsoluteTime cachedBeginningOfDay = std::numeric_limits<CFAbsoluteTime>::quiet_NaN();
+    static CFAbsoluteTime cachedBeginningOfNextDay;
+    if (!(date >= cachedBeginningOfDay && date < cachedBeginningOfNextDay))
+        getDayBoundaries(date, cachedBeginningOfDay, cachedBeginningOfNextDay);
+    return cachedBeginningOfDay;
+}
+
+static inline WebHistory::DateKey dateKey(DATE date)
+{
+    // Converting from double (CFAbsoluteTime) to int64_t (WebHistoryDateKey) is
+    // safe here because all sensible dates are in the range -2**48 .. 2**47 which
+    // safely fits in an int64_t.
+    return beginningOfDay(MarshallingHelpers::DATEToCFAbsoluteTime(date));
+}
+
 // WebHistory -----------------------------------------------------------------
 
 WebHistory::WebHistory()
@@ -290,19 +319,14 @@ HRESULT STDMETHODCALLTYPE WebHistory::orderedItemsLastVisitedOnDay(
     /* [in] */ IWebHistoryItem** items,
     /* [in] */ DATE calendarDate)
 {
-    DateKey dateKey;
-    if (!findKey(&dateKey, MarshallingHelpers::DATEToCFAbsoluteTime(calendarDate))) {
+    auto found = m_entriesByDate.find(dateKey(calendarDate));
+    if (found == m_entriesByDate.end()) {
         *count = 0;
         return 0;
     }
 
-    CFArrayRef entries = m_entriesByDate.get(dateKey).get();
-    if (!entries) {
-        *count = 0;
-        return 0;
-    }
-
-    int newCount = CFArrayGetCount(entries);
+    auto& entriesForDate = found->value;
+    int newCount = entriesForDate.size();
 
     if (!items) {
         *count = newCount;
@@ -315,11 +339,8 @@ HRESULT STDMETHODCALLTYPE WebHistory::orderedItemsLastVisitedOnDay(
     }
 
     *count = newCount;
-    for (int i = 0; i < newCount; i++) {
-        IWebHistoryItem* item = (IWebHistoryItem*)CFArrayGetValueAtIndex(entries, i);
-        item->AddRef();
-        items[i] = item;
-    }
+    for (int i = 0; i < newCount; ++i)
+        entriesForDate[i].copyRefTo(&items[i]);
 
     return S_OK;
 }
@@ -564,138 +585,74 @@ COMPtr<IWebHistoryItem> WebHistory::itemForURLString(const String& urlString) co
     return m_entriesByURL.get(urlString);
 }
 
-HRESULT WebHistory::addItemToDateCaches(IWebHistoryItem* entry)
-{
-    HRESULT hr = S_OK;
-
-    DATE lastVisitedCOMTime;
-    entry->lastVisitedTimeInterval(&lastVisitedCOMTime);
-    
-    DateKey dateKey;
-    if (findKey(&dateKey, MarshallingHelpers::DATEToCFAbsoluteTime(lastVisitedCOMTime))) {
-        // other entries already exist for this date
-        hr = insertItem(entry, dateKey);
-    } else {
-        ASSERT(!m_entriesByDate.contains(dateKey));
-        // no other entries exist for this date
-        RetainPtr<CFMutableArrayRef> entryArray = adoptCF(
-            CFArrayCreateMutable(0, 0, &MarshallingHelpers::kIUnknownArrayCallBacks));
-        CFArrayAppendValue(entryArray.get(), entry);
-        m_entriesByDate.set(dateKey, entryArray);
-        // Clear m_orderedLastVisitedDays so it will be regenerated when next requested.
-        m_orderedLastVisitedDays = nullptr;
-    }
-
-    return hr;
-}
-
 HRESULT WebHistory::removeItemFromDateCaches(IWebHistoryItem* entry)
 {
-    HRESULT hr = S_OK;
+    DATE lastVisitedTime;
+    entry->lastVisitedTimeInterval(&lastVisitedTime);
 
-    DATE lastVisitedCOMTime;
-    entry->lastVisitedTimeInterval(&lastVisitedCOMTime);
+    auto found = m_entriesByDate.find(dateKey(lastVisitedTime));
+    if (found == m_entriesByDate.end())
+        return S_OK;
 
-    DateKey dateKey;
-    if (!findKey(&dateKey, MarshallingHelpers::DATEToCFAbsoluteTime(lastVisitedCOMTime)))
-        return E_FAIL;
+    auto& entriesForDate = found->value;
+    size_t count = entriesForDate.size();
 
-    DateToEntriesMap::iterator found = m_entriesByDate.find(dateKey);
-    ASSERT(found != m_entriesByDate.end());
-    CFMutableArrayRef entriesForDate = found->value.get();
-
-    CFIndex count = CFArrayGetCount(entriesForDate);
-    for (int i = count - 1; i >= 0; --i) {
-        if ((IWebHistoryItem*)CFArrayGetValueAtIndex(entriesForDate, i) == entry)
-            CFArrayRemoveValueAtIndex(entriesForDate, i);
+    for (size_t i = count - 1; i >= 0; --i) {
+        if (entriesForDate[i] == entry)
+            entriesForDate.remove(i);
     }
 
     // remove this date entirely if there are no other entries on it
-    if (CFArrayGetCount(entriesForDate) == 0) {
+    if (entriesForDate.isEmpty()) {
         m_entriesByDate.remove(found);
         // Clear m_orderedLastVisitedDays so it will be regenerated when next requested.
         m_orderedLastVisitedDays = nullptr;
     }
 
-    return hr;
+    return S_OK;
 }
 
-static void getDayBoundaries(CFAbsoluteTime day, CFAbsoluteTime& beginningOfDay, CFAbsoluteTime& beginningOfNextDay)
-{
-    RetainPtr<CFTimeZoneRef> timeZone = adoptCF(CFTimeZoneCopyDefault());
-    CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(day, timeZone.get());
-    date.hour = 0;
-    date.minute = 0;
-    date.second = 0;
-    beginningOfDay = CFGregorianDateGetAbsoluteTime(date, timeZone.get());
-    date.day += 1;
-    beginningOfNextDay = CFGregorianDateGetAbsoluteTime(date, timeZone.get());
-}
-
-static inline CFAbsoluteTime beginningOfDay(CFAbsoluteTime date)
-{
-    static CFAbsoluteTime cachedBeginningOfDay = numeric_limits<CFAbsoluteTime>::quiet_NaN();
-    static CFAbsoluteTime cachedBeginningOfNextDay;
-    if (!(date >= cachedBeginningOfDay && date < cachedBeginningOfNextDay))
-        getDayBoundaries(date, cachedBeginningOfDay, cachedBeginningOfNextDay);
-    return cachedBeginningOfDay;
-}
-
-static inline WebHistory::DateKey dateKey(CFAbsoluteTime date)
-{
-    // Converting from double (CFAbsoluteTime) to int64_t (WebHistoryDateKey) is
-    // safe here because all sensible dates are in the range -2**48 .. 2**47 which
-    // safely fits in an int64_t.
-    return beginningOfDay(date);
-}
-
-// Returns whether the day is already in the list of days,
-// and fills in *key with the found or proposed key.
-bool WebHistory::findKey(DateKey* key, CFAbsoluteTime forDay)
-{
-    ASSERT_ARG(key, key);
-
-    *key = dateKey(forDay);
-    return m_entriesByDate.contains(*key);
-}
-
-HRESULT WebHistory::insertItem(IWebHistoryItem* entry, DateKey dateKey)
+HRESULT WebHistory::addItemToDateCaches(IWebHistoryItem* entry)
 {
     ASSERT_ARG(entry, entry);
-    ASSERT_ARG(dateKey, m_entriesByDate.contains(dateKey));
 
-    HRESULT hr = S_OK;
+    DATE lastVisitedTime;
+    entry->lastVisitedTimeInterval(&lastVisitedTime);
 
-    if (!entry)
-        return E_FAIL;
+    DateKey key = dateKey(lastVisitedTime);
+    auto found = m_entriesByDate.find(key);
+    if (found == m_entriesByDate.end()) {
+        Vector<COMPtr<IWebHistoryItem>> entries(1);
+        entries.append(entry);
+        m_entriesByDate.set(key, entries);
+        // Clear m_orderedLastVisitedDays so it will be regenerated when next requested.
+        m_orderedLastVisitedDays = nullptr;
+        return S_OK;
+    }
 
-    DATE entryTime;
-    entry->lastVisitedTimeInterval(&entryTime);
-    CFMutableArrayRef entriesForDate = m_entriesByDate.get(dateKey).get();
-    unsigned count = CFArrayGetCount(entriesForDate);
+    auto& entriesForDate = found->value;
+    size_t count = entriesForDate.size();
 
     // The entries for each day are stored in a sorted array with the most recent entry first
     // Check for the common cases of the entry being newer than all existing entries or the first entry of the day
     bool isNewerThanAllEntries = false;
     if (count) {
-        IWebHistoryItem* item = const_cast<IWebHistoryItem*>(static_cast<const IWebHistoryItem*>(CFArrayGetValueAtIndex(entriesForDate, 0)));
         DATE itemTime;
-        isNewerThanAllEntries = SUCCEEDED(item->lastVisitedTimeInterval(&itemTime)) && itemTime < entryTime;
+        isNewerThanAllEntries = SUCCEEDED(entriesForDate.first()->lastVisitedTimeInterval(&itemTime)) && itemTime < lastVisitedTime;
     }
     if (!count || isNewerThanAllEntries) {
-        CFArrayInsertValueAtIndex(entriesForDate, 0, entry);
+        entriesForDate.insert(0, entry);
         return S_OK;
     }
 
     // .. or older than all existing entries
     bool isOlderThanAllEntries = false;
     if (count > 0) {
-        IWebHistoryItem* item = const_cast<IWebHistoryItem*>(static_cast<const IWebHistoryItem*>(CFArrayGetValueAtIndex(entriesForDate, count - 1)));
         DATE itemTime;
-        isOlderThanAllEntries = SUCCEEDED(item->lastVisitedTimeInterval(&itemTime)) && itemTime >= entryTime;
+        isOlderThanAllEntries = SUCCEEDED(entriesForDate.last()->lastVisitedTimeInterval(&itemTime)) && itemTime >= lastVisitedTime;
     }
     if (isOlderThanAllEntries) {
-        CFArrayInsertValueAtIndex(entriesForDate, count, entry);
+        entriesForDate.append(entry);
         return S_OK;
     }
 
@@ -703,19 +660,18 @@ HRESULT WebHistory::insertItem(IWebHistoryItem* entry, DateKey dateKey)
     unsigned high = count;
     while (low < high) {
         unsigned mid = low + (high - low) / 2;
-        IWebHistoryItem* item = const_cast<IWebHistoryItem*>(static_cast<const IWebHistoryItem*>(CFArrayGetValueAtIndex(entriesForDate, mid)));
         DATE itemTime;
-        if (FAILED(item->lastVisitedTimeInterval(&itemTime)))
+        if (FAILED(entriesForDate[mid]->lastVisitedTimeInterval(&itemTime)))
             return E_FAIL;
 
-        if (itemTime >= entryTime)
+        if (itemTime >= lastVisitedTime)
             low = mid + 1;
         else
             high = mid;
     }
 
     // low is now the index of the first entry that is older than entryDate
-    CFArrayInsertValueAtIndex(entriesForDate, low, entry);
+    entriesForDate.insert(low, entry);
     return S_OK;
 }
 
