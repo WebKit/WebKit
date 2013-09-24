@@ -1,3 +1,13 @@
+2013-09-23  Andreas Kling  <akling@apple.com>
+
+        RenderTextControlSingleLine::updateFromElement() override not needed.
+        <https://webkit.org/b/121815>
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        * rendering/RenderTextControlSingleLine.h:
+
 2013-09-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce CSS_VALUE_TYPE_CASTS macro in order to cast CSSValue type

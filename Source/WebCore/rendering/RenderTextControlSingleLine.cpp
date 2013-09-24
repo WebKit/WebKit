@@ -351,11 +351,6 @@ LayoutUnit RenderTextControlSingleLine::computeControlLogicalHeight(LayoutUnit l
     return lineHeight + nonContentHeight;
 }
 
-void RenderTextControlSingleLine::updateFromElement()
-{
-    RenderTextControl::updateFromElement();
-}
-
 PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerTextStyle(const RenderStyle* startStyle) const
 {
     RefPtr<RenderStyle> textBlockStyle = RenderStyle::create();   

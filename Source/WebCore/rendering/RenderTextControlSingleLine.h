@@ -45,7 +45,6 @@ protected:
     virtual LayoutUnit computeLogicalHeightLimit() const;
     HTMLElement* containerElement() const;
     HTMLElement* innerBlockElement() const;
-    virtual void updateFromElement() OVERRIDE;
     HTMLInputElement& inputElement() const;
 
 private:
