@@ -94,9 +94,15 @@ CString sortedListDump(const T& list, const Comparator& comparator, const char* 
 }
 
 template<typename T>
+inline bool lessThan(const T& a, const T& b)
+{
+    return a < b;
+}
+
+template<typename T>
 CString sortedListDump(const T& list, const char* comma = ", ")
 {
-    return sortedListDump(list, std::less<typename T::ValueType>(), comma);
+    return sortedListDump(list, lessThan<typename T::ValueType>, comma);
 }
 
 template<typename T>
