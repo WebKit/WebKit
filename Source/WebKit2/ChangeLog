@@ -1,3 +1,14 @@
+2013-09-24  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [EFL] Build failed at ProcessLauncherEfl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=121826
+
+        Reviewed by Gyuyoung Kim.
+
+        Fixed a build failure with adding socket.h.
+
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+
 2013-09-23  Patrick Gansterer  <paroga@webkit.org>
 
         use NOMINMAX instead of #define min min
