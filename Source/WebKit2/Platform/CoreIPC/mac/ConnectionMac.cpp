@@ -299,14 +299,14 @@ void Connection::initializeDeadNameSource()
     });
 }
 
-static OwnPtr<MessageDecoder> createMessageDecoder(mach_msg_header_t* header)
+static std::unique_ptr<MessageDecoder> createMessageDecoder(mach_msg_header_t* header)
 {
     if (!(header->msgh_bits & MACH_MSGH_BITS_COMPLEX)) {
         // We have a simple message.
         uint8_t* body = reinterpret_cast<uint8_t*>(header + 1);
         size_t bodySize = header->msgh_size - sizeof(mach_msg_header_t);
 
-        return createOwned<MessageDecoder>(DataReference(body, bodySize), Vector<Attachment>());
+        return std::make_unique<MessageDecoder>(DataReference(body, bodySize), Vector<Attachment>());
     }
 
     bool messageBodyIsOOL = header->msgh_id & MessageBodyIsOutOfLine;
@@ -351,7 +351,7 @@ static OwnPtr<MessageDecoder> createMessageDecoder(mach_msg_header_t* header)
         uint8_t* messageBody = static_cast<uint8_t*>(messageBodyAttachment.address());
         size_t messageBodySize = messageBodyAttachment.size();
 
-        OwnPtr<MessageDecoder> decoder = createOwned<MessageDecoder>(DataReference(messageBody, messageBodySize), std::move(attachments));
+        auto decoder = std::make_unique<MessageDecoder>(DataReference(messageBody, messageBodySize), std::move(attachments));
 
         vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(messageBodyAttachment.address()), messageBodyAttachment.size());
 
@@ -361,7 +361,7 @@ static OwnPtr<MessageDecoder> createMessageDecoder(mach_msg_header_t* header)
     uint8_t* messageBody = descriptorData;
     size_t messageBodySize = header->msgh_size - (descriptorData - reinterpret_cast<uint8_t*>(header));
 
-    return createOwned<MessageDecoder>(DataReference(messageBody, messageBodySize), attachments);
+    return std::make_unique<MessageDecoder>(DataReference(messageBody, messageBodySize), attachments);
 }
 
 // The receive buffer size should always include the maximum trailer size.
@@ -402,7 +402,7 @@ void Connection::receiveSourceEventHandler()
     if (!header)
         return;
 
-    OwnPtr<MessageDecoder> decoder = createMessageDecoder(header);
+    std::unique_ptr<MessageDecoder> decoder = createMessageDecoder(header);
     ASSERT(decoder);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
@@ -449,7 +449,7 @@ void Connection::receiveSourceEventHandler()
         return;
     }
 
-    processIncomingMessage(decoder.release());
+    processIncomingMessage(std::move(decoder));
 }    
 
 void Connection::exceptionSourceEventHandler()
