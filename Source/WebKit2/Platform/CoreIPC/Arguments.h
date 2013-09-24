@@ -30,9 +30,49 @@
 #include "ArgumentEncoder.h"
 
 namespace CoreIPC {
-    
+
+template<size_t index, typename... Elements>
+struct TupleCoder {
+    static void encode(ArgumentEncoder& encoder, const std::tuple<Elements...>& tuple)
+    {
+        encoder << std::get<sizeof...(Elements) - index>(tuple);
+        TupleCoder<index - 1, Elements...>::encode(encoder, tuple);
+    }
+
+    static bool decode(ArgumentDecoder& decoder, std::tuple<Elements...>& tuple)
+    {
+        if (!decoder.decode(std::get<sizeof...(Elements) - index>(tuple)))
+            return false;
+        return TupleCoder<index - 1, Elements...>::decode(decoder, tuple);
+    }
+};
+
+template<typename... Elements>
+struct TupleCoder<0, Elements...> {
+    static void encode(ArgumentEncoder& encoder, const std::tuple<Elements...>& tuple)
+    {
+    }
+
+    static bool decode(ArgumentDecoder& decoder, std::tuple<Elements...>& tuple)
+    {
+        return true;
+    }
+};
+
+template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
+    static void encode(ArgumentEncoder& encoder, const std::tuple<Elements...>& tuple)
+    {
+        TupleCoder<sizeof...(Elements), Elements...>::encode(encoder, tuple);
+    }
+
+    static bool decode(ArgumentDecoder& decoder, std::tuple<Elements...>& tuple)
+    {
+        return TupleCoder<sizeof...(Elements), Elements...>::decode(decoder, tuple);
+    }
+};
+
 struct Arguments0 {
-    typedef Arguments0 ValueType;
+    typedef std::tuple<> ValueType;
 
     void encode(ArgumentEncoder&) const 
     {
@@ -45,7 +85,7 @@ struct Arguments0 {
 };
 
 template<typename T1> struct Arguments1 {
-    typedef Arguments1<typename std::remove_const<typename std::remove_reference<T1>::type>::type> ValueType;
+    typedef std::tuple<typename std::remove_const<typename std::remove_reference<T1>::type>::type> ValueType;
 
     Arguments1()
     {
@@ -70,7 +110,7 @@ template<typename T1> struct Arguments1 {
 };
     
 template<typename T1, typename T2> struct Arguments2 : Arguments1<T1> {
-    typedef Arguments2<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
+    typedef std::tuple<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T2>::type>::type> ValueType;
 
     Arguments2() 
@@ -101,7 +141,7 @@ template<typename T1, typename T2> struct Arguments2 : Arguments1<T1> {
 };
 
 template<typename T1, typename T2, typename T3> struct Arguments3 : Arguments2<T1, T2> {
-    typedef Arguments3<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
+    typedef std::tuple<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T2>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T3>::type>::type> ValueType;
 
@@ -133,7 +173,7 @@ template<typename T1, typename T2, typename T3> struct Arguments3 : Arguments2<T
 };
 
 template<typename T1, typename T2, typename T3, typename T4> struct Arguments4 : Arguments3<T1, T2, T3> {
-    typedef Arguments4<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
+    typedef std::tuple<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T2>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T3>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T4>::type>::type> ValueType;
@@ -166,7 +206,7 @@ template<typename T1, typename T2, typename T3, typename T4> struct Arguments4 :
 };
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5> struct Arguments5 : Arguments4<T1, T2, T3, T4> {
-    typedef Arguments5<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
+    typedef std::tuple<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T2>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T3>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T4>::type>::type,
@@ -200,7 +240,7 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5> struct
 };
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6> struct Arguments6 : Arguments5<T1, T2, T3, T4, T5> {
-    typedef Arguments6<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
+    typedef std::tuple<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T2>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T3>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T4>::type>::type,
@@ -235,7 +275,7 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5, typena
 };
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7> struct Arguments7 : Arguments6<T1, T2, T3, T4, T5, T6> {
-    typedef Arguments7<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
+    typedef std::tuple<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T2>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T3>::type>::type,
                        typename std::remove_const<typename std::remove_reference<T4>::type>::type,
@@ -271,7 +311,7 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5, typena
 };
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8> struct Arguments8 : Arguments7<T1, T2, T3, T4, T5, T6, T7> {
-    typedef Arguments8<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
+    typedef std::tuple<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
     typename std::remove_const<typename std::remove_reference<T2>::type>::type,
     typename std::remove_const<typename std::remove_reference<T3>::type>::type,
     typename std::remove_const<typename std::remove_reference<T4>::type>::type,
@@ -306,7 +346,7 @@ template<typename T1, typename T2, typename T3, typename T4, typename T5, typena
 };
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10> struct Arguments10 : Arguments8<T1, T2, T3, T4, T5, T6, T7, T8> {
-    typedef Arguments10<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
+    typedef std::tuple<typename std::remove_const<typename std::remove_reference<T1>::type>::type,
     typename std::remove_const<typename std::remove_reference<T2>::type>::type,
     typename std::remove_const<typename std::remove_reference<T3>::type>::type,
     typename std::remove_const<typename std::remove_reference<T4>::type>::type,

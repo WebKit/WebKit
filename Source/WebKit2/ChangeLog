@@ -1,3 +1,21 @@
+2013-09-24  Anders Carlsson  <andersca@apple.com>
+
+        Begin adopting std::tuple for IPC decoding
+        https://bugs.webkit.org/show_bug.cgi?id=121848
+
+        Reviewed by Sam Weinig.
+
+        This is the first step towards getting rid of the horrible Arguments class hierarchy.
+
+        * Platform/CoreIPC/Arguments.h:
+        (CoreIPC::TupleCoder::encode):
+        (CoreIPC::TupleCoder::decode):
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        (CoreIPC::handleMessage):
+        (CoreIPC::handleMessageVariadic):
+        (CoreIPC::handleMessageDelayed):
+
 2013-09-24  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [EFL] Build failed at ProcessLauncherEfl.cpp
