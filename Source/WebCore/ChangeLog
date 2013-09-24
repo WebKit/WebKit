@@ -1,3 +1,10 @@
+2013-09-24  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Build fix for Windows following r156221.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollByRecursively):
+
 2013-09-23  Lucas Forschler  <lforschler@apple.com>
 
         Merge r156223
