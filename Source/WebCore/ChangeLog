@@ -1,3 +1,17 @@
+2013-09-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Moving back in history from a page with <video>, then moving forward causes crash.
+        https://bugs.webkit.org/show_bug.cgi?id=120475
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::AVFWrapper): Add assertion that creation is on main thread.
+        (WebCore::AVFWrapper::~AVFWrapper): Add assertion that destruction is on main thread.
+        (WebCore::destroyAVFWrapper): Helper function to dispatch on main queue.
+        (WebCore::AVFWrapper::disconnectAndDeleteAVFWrapper): Spawn AVFoundationCF destruction to
+        main queue.
+
 2013-09-23  Andreas Kling  <akling@apple.com>
 
         RenderTextControlSingleLine::updateFromElement() override not needed.
