@@ -2387,9 +2387,17 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                 continue;
             ShadowValue* item = static_cast<ShadowValue*>(currValue);
             int x = item->x->computeLength<int>(state.style(), state.rootElementStyle(), zoomFactor);
+            if (item->x->isViewportPercentageLength())
+                x = viewportPercentageValue(*item->x, x);
             int y = item->y->computeLength<int>(state.style(), state.rootElementStyle(), zoomFactor);
+            if (item->y->isViewportPercentageLength())
+                y = viewportPercentageValue(*item->y, y);
             int blur = item->blur ? item->blur->computeLength<int>(state.style(), state.rootElementStyle(), zoomFactor) : 0;
+            if (item->blur && item->blur->isViewportPercentageLength())
+                blur = viewportPercentageValue(*item->blur, blur);
             int spread = item->spread ? item->spread->computeLength<int>(state.style(), state.rootElementStyle(), zoomFactor) : 0;
+            if (item->spread && item->spread->isViewportPercentageLength())
+                spread = viewportPercentageValue(*item->spread, spread);
             ShadowStyle shadowStyle = item->style && item->style->getValueID() == CSSValueInset ? Inset : Normal;
             Color color;
             if (item->color)
@@ -4055,6 +4063,24 @@ inline StyleResolver::MatchedProperties::MatchedProperties()
 
 inline StyleResolver::MatchedProperties::~MatchedProperties()
 {
+}
+
+int StyleResolver::viewportPercentageValue(CSSPrimitiveValue& unit, int percentage)
+{
+    int viewPortHeight = document().renderView()->viewportSize().height() * percentage / 100.0f;
+    int viewPortWidth = document().renderView()->viewportSize().width() * percentage / 100.0f;
+
+    if (unit.isViewportPercentageHeight())
+        return viewPortHeight;
+    if (unit.isViewportPercentageWidth())
+        return viewPortWidth;
+    if (unit.isViewportPercentageMax())
+        return max(viewPortWidth, viewPortHeight);
+    if (unit.isViewportPercentageMin())
+        return min(viewPortWidth, viewPortHeight);
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 } // namespace WebCore

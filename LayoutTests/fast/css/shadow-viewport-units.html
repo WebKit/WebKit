@@ -1,5 +1,5 @@
 <style>
-#a { text-shadow: 0px 0px 0vh black; } /* Should be invalid - we don't yet support viewport units in shadow */
+#a { text-shadow: 0px 0px 0vh black; } /* Should be valid - we support viewport units in shadow */
 </style>
 <div id="a"></div>
 <script>
@@ -11,8 +11,8 @@ window.addEventListener("load", function () {
     var output = document.createElement("p");
     document.body.appendChild(output);
     if (window.getComputedStyle(a).textShadow == "none")
-        output.innerText = "PASS: No shadow style";
+        output.innerText = "FAIL: No shadow style";
     else
-        output.innerText = "FAIL: Shadow style: " + window.getComputedStyle(a).textShadow;
+        output.innerText = "PASS: Shadow style: " + window.getComputedStyle(a).textShadow;
 }, false);
 </script>

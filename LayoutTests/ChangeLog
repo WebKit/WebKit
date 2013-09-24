@@ -1,3 +1,27 @@
+2013-09-23  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        CSS Unit vh, vw, vmin and vmax in box-shadow are not applied.
+        https://bugs.webkit.org/show_bug.cgi?id=121422
+
+        Reviewed by Darin Adler.
+
+        * fast/css/box-shadow-negative-viewportlength-expected-mismatch.html: Added.
+        * fast/css/box-shadow-negative-viewportlength.html: Added.
+        * fast/css/box-shadow-viewport-height-expected-mismatch.html: Added.
+        * fast/css/box-shadow-viewport-height.html: Added.
+        * fast/css/box-shadow-viewport-vmax-expected-mismatch.html: Added.
+        * fast/css/box-shadow-viewport-vmax.html: Added.
+        * fast/css/box-shadow-viewport-vmin-expected-mismatch.html: Added.
+        * fast/css/box-shadow-viewport-vmin.html: Added.
+        * fast/css/box-shadow-viewport-width-expected-mismatch.html: Added.
+        * fast/css/box-shadow-viewport-width.html: Added.
+        Added new tests for verifying that box-shadow properties are
+        applied when its values are viewport units.
+        * fast/css/shadow-viewport-units-expected.txt:
+        * fast/css/shadow-viewport-units.html:
+        Rebaselining existing tests as per the new behavior. Support for shadow
+        properties with viewport units is added so modified the test case.
+
 2013-09-23  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r155998): when zooming in, tiles are too small
