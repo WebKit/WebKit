@@ -1,3 +1,14 @@
+2013-09-24  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac][WK2] Multiple font tests fail is there is a global setting for font antialiasing threshold
+        https://bugs.webkit.org/show_bug.cgi?id=121854
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize): Post a notification to update cached
+        settings in underlying frameworks.
+
 2013-09-24  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/14971518> WebKit should build against the Xcode default toolchain when targeting OS X 10.8
