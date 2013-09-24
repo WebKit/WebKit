@@ -1,3 +1,14 @@
+2013-09-24  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] fast/images/exif-orientation-composited.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=119731
+
+        Reviewed by Carlos Garcia Campos.
+
+        Unskip fast/images/exif-orientation-composited.html for GTK WK1 and WK2.
+
+        * platform/gtk/TestExpectations:
+
 2013-09-24  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Crash when trying to download blob url

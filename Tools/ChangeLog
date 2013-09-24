@@ -1,3 +1,15 @@
+2013-09-24  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] fast/images/exif-orientation-composited.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=119731
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add handling respect image orientation property in DRT.
+
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp:
+        (TestRunner::overridePreference):
+
 2013-09-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Bump the GTK+ dependency in the Wayland-specific Jhbuild moduleset
