@@ -1,3 +1,11 @@
+2013-09-24  Brady Eidson  <beidson@apple.com>
+
+        Remove IDBTransactionCallbacks.h from the .xcodeproj, as it's gone from the repository.
+
+        Rubberstamped by Anders Carlsson and Alexey Proskuryakov.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-09-24  Antti Koivisto  <antti@apple.com>
 
         Tighten table rendering code
