@@ -1,3 +1,17 @@
+2013-09-24  Dean Jackson  <dino@apple.com>
+
+        Use mapped name in attribute location binding
+        https://bugs.webkit.org/show_bug.cgi?id=121847
+        <rdar://problem/15067526>
+
+        Reviewed by Eric Carlson.
+
+        New test that has an attribute name long enough
+        to trigger symbol mapping in all cases.
+
+        * fast/canvas/webgl/gl-bind-attrib-mapped-names-expected.txt: Added.
+        * fast/canvas/webgl/gl-bind-attrib-mapped-names.html: Added.
+
 2013-09-24  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Properly handle bottom margin on float with shape-outside

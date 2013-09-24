@@ -1,3 +1,28 @@
+2013-09-24  Dean Jackson  <dino@apple.com>
+
+        Use mapped name in attribute location binding
+        https://bugs.webkit.org/show_bug.cgi?id=121847
+        <rdar://problem/15067526>
+
+        Reviewed by Eric Carlson.
+
+        The shader that we send down to OpenGL to compile
+        may have been translated by ANGLE, so we keep a
+        table around that maps input symbols to output symbols.
+        We used the table when binding to and looking up
+        uniforms, and when looking up attributes, but not
+        when actually binding to attribute locations.
+
+        Test: fast/canvas/webgl/gl-bind-attrib-mapped-names.html
+
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::getSymbolInfo): Add logging of symbol mapping.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::bindAttribLocation): Used the mapped name.
+        (WebCore::GraphicsContext3D::getAttribLocation): Remove comment since
+        we do the lookup everywhere.
+        (WebCore::GraphicsContext3D::getUniformLocation): Ditto.
+
 2013-09-24  Enrica Casucci  <enrica@apple.com>
 
         Upstream changes to Pasteboard implementation for iOS.

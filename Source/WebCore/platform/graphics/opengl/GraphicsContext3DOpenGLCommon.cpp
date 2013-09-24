@@ -314,7 +314,10 @@ void GraphicsContext3D::bindAttribLocation(Platform3DObject program, GC3Duint in
 {
     ASSERT(program);
     makeContextCurrent();
-    ::glBindAttribLocation(program, index, name.utf8().data());
+
+    String mappedName = mappedSymbolName(program, SHADER_SYMBOL_TYPE_ATTRIBUTE, name);
+    LOG(WebGL, "::bindAttribLocation is mapping %s to %s", name.utf8().data(), mappedName.utf8().data());
+    ::glBindAttribLocation(program, index, mappedName.utf8().data());
 }
 
 void GraphicsContext3D::bindBuffer(GC3Denum target, Platform3DObject buffer)
@@ -724,11 +727,8 @@ int GraphicsContext3D::getAttribLocation(Platform3DObject program, const String&
 
     makeContextCurrent();
 
-    // The attribute name may have been translated during ANGLE compilation.
-    // Look through the corresponding ShaderSourceMap to make sure we
-    // reference the mapped name rather than the external name.
     String mappedName = mappedSymbolName(program, SHADER_SYMBOL_TYPE_ATTRIBUTE, name);
-
+    LOG(WebGL, "::getAttribLocation is mapping %s to %s", name.utf8().data(), mappedName.utf8().data());
     return ::glGetAttribLocation(program, mappedName.utf8().data());
 }
 
@@ -1277,11 +1277,8 @@ GC3Dint GraphicsContext3D::getUniformLocation(Platform3DObject program, const St
 
     makeContextCurrent();
 
-    // The uniform name may have been translated during ANGLE compilation.
-    // Look through the corresponding ShaderSourceMap to make sure we
-    // reference the mapped name rather than the external name.
     String mappedName = mappedSymbolName(program, SHADER_SYMBOL_TYPE_UNIFORM, name);
-
+    LOG(WebGL, "::getUniformLocation is mapping %s to %s", name.utf8().data(), mappedName.utf8().data());
     return ::glGetUniformLocation(program, mappedName.utf8().data());
 }
 

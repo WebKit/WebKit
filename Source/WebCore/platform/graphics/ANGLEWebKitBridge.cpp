@@ -28,6 +28,7 @@
 #if USE(3D_GRAPHICS)
 
 #include "ANGLEWebKitBridge.h"
+#include "Logging.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -102,6 +103,7 @@ static bool getSymbolInfo(ShHandle compiler, ShShaderInfo symbolType, Vector<ANG
 
         String name = String(nameBuffer.data());
         String mappedName = String(mappedNameBuffer.data());
+        LOG(WebGL, "Map shader symbol %s -> %s\n", name.utf8().data(), mappedName.utf8().data());
         
         // ANGLE returns array names in the format "array[0]".
         // The only way to know if a symbol is an array is to check if it ends with "[0]".
