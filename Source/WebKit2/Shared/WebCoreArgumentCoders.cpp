@@ -312,6 +312,7 @@ static bool decodeImage(ArgumentDecoder& decoder, RefPtr<Image>& image)
     return true;
 }
 
+#if !PLATFORM(IOS)
 void ArgumentCoder<Cursor>::encode(ArgumentEncoder& encoder, const Cursor& cursor)
 {
     encoder.encodeEnum(cursor.type());
@@ -371,6 +372,7 @@ bool ArgumentCoder<Cursor>::decode(ArgumentDecoder& decoder, Cursor& cursor)
     cursor = Cursor(image.get(), hotSpot);
     return true;
 }
+#endif
 
 void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
 {
@@ -784,6 +786,104 @@ bool ArgumentCoder<DatabaseDetails>::decode(ArgumentDecoder& decoder, DatabaseDe
     details = DatabaseDetails(name, displayName, expectedUsage, currentUsage);
     return true;
 }
+
+#endif
+
+#if PLATFORM(IOS)
+static void encodeSharedBuffer(ArgumentEncoder& encoder, SharedBuffer* buffer)
+{
+    SharedMemory::Handle handle;
+    encoder << (buffer ? static_cast<uint64_t>(buffer->size()): 0);
+    if (buffer) {
+        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(buffer->size());
+        memcpy(sharedMemoryBuffer->data(), buffer->data(), buffer->size());
+        sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+        encoder << handle;
+    }
+}
+
+static bool decodeSharedBuffer(ArgumentDecoder& decoder, RefPtr<SharedBuffer>& buffer)
+{
+    uint64_t bufferSize = 0;
+    if (!decoder.decode(bufferSize))
+        return false;
+
+    if (bufferSize) {
+        SharedMemory::Handle handle;
+        if (!decoder.decode(handle))
+            return false;
+
+        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::ReadOnly);
+        buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), bufferSize);
+    }
+
+    return true;
+}
+
+void ArgumentCoder<PasteboardWebContent>::encode(ArgumentEncoder& encoder, const WebCore::PasteboardWebContent& content)
+{
+    encoder << content.canSmartCopyOrDelete;
+    encoder << content.dataInStringFormat;
+
+    encodeSharedBuffer(encoder, content.dataInWebArchiveFormat.get());
+    encodeSharedBuffer(encoder, content.dataInRTFDFormat.get());
+    encodeSharedBuffer(encoder, content.dataInRTFFormat.get());
+
+    encoder << content.clientTypes;
+    encoder << static_cast<uint64_t>(content.clientData.size());
+    for (size_t i = 0; i < content.clientData.size(); i++)
+        encodeSharedBuffer(encoder, content.clientData[i].get());
+}
+
+bool ArgumentCoder<PasteboardWebContent>::decode(ArgumentDecoder& decoder, WebCore::PasteboardWebContent& content)
+{
+    if (!decoder.decode(content.canSmartCopyOrDelete))
+        return false;
+    if (!decoder.decode(content.dataInStringFormat))
+        return false;
+    if (!decodeSharedBuffer(decoder, content.dataInWebArchiveFormat))
+        return false;
+    if (!decodeSharedBuffer(decoder, content.dataInRTFDFormat))
+        return false;
+    if (!decodeSharedBuffer(decoder, content.dataInRTFFormat))
+        return false;
+    if (!decoder.decode(content.clientTypes))
+        return false;
+    uint64_t clientDataSize;
+    if (!decoder.decode(clientDataSize))
+        return false;
+    if (clientDataSize)
+        content.clientData.resize(clientDataSize);
+    for (size_t i = 0; i < clientDataSize; i++)
+        decodeSharedBuffer(decoder, content.clientData[i]);
+    return true;
+}
+
+void ArgumentCoder<PasteboardImage>::encode(ArgumentEncoder& encoder, const WebCore::PasteboardImage& pasteboardImage)
+{
+    encodeImage(encoder, pasteboardImage.image.get());
+    encoder << pasteboardImage.url.url;
+    encoder << pasteboardImage.url.title;
+    encoder << pasteboardImage.resourceMIMEType;
+    if (pasteboardImage.resourceData)
+        encodeSharedBuffer(encoder, pasteboardImage.resourceData.get());
+}
+
+bool ArgumentCoder<PasteboardImage>::decode(ArgumentDecoder& decoder, WebCore::PasteboardImage& pasteboardImage)
+{
+    if (!decodeImage(decoder, pasteboardImage.image))
+        return false;
+    if (!decoder.decode(pasteboardImage.url.url))
+        return false;
+    if (!decoder.decode(pasteboardImage.url.title))
+        return false;
+    if (!decoder.decode(pasteboardImage.resourceMIMEType))
+        return false;
+    if (!decodeSharedBuffer(decoder, pasteboardImage.resourceData))
+        return false;
+    return true;
+}
+
 #endif
 
 void ArgumentCoder<DictationAlternative>::encode(ArgumentEncoder& encoder, const DictationAlternative& dictationAlternative)

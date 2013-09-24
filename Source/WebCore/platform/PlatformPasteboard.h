@@ -26,13 +26,18 @@
 #ifndef PlatformPasteboard_h
 #define PlatformPasteboard_h
 
+#include "Pasteboard.h"
 #include "SharedBuffer.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
 OBJC_CLASS NSPasteboard;
+#endif
+
+#if PLATFORM(IOS)
+OBJC_CLASS UIPasteboard;
 #endif
 
 namespace WebCore {
@@ -42,6 +47,10 @@ class KURL;
 
 class PlatformPasteboard {
 public:
+#if PLATFORM(IOS)
+    PlatformPasteboard();
+#endif
+    // FIXME: probably we don't need a constructor that takes a pasteboard name for iOS.
     explicit PlatformPasteboard(const String& pasteboardName);
     static String uniqueName();
     
@@ -62,10 +71,16 @@ public:
     long setBufferForType(PassRefPtr<SharedBuffer>, const String& pasteboardType);
     long setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType);
     long setStringForType(const String&, const String& pasteboardType);
+    void write(const PasteboardWebContent& content);
+    void write(const PasteboardImage& pasteboardImage);
+    void write(const String& text);
 
 private:
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     RetainPtr<NSPasteboard> m_pasteboard;
+#endif
+#if PLATFORM(IOS)
+    RetainPtr<UIPasteboard> m_pasteboard;
 #endif
 };
 

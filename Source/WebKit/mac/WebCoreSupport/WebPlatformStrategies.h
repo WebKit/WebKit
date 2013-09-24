@@ -29,6 +29,9 @@
 #include <WebCore/CookiesStrategy.h>
 #include <WebCore/DatabaseStrategy.h>
 #include <WebCore/LoaderStrategy.h>
+#if PLATFORM(IOS)
+#include <WebCore/Pasteboard.h>
+#endif
 #include <WebCore/PasteboardStrategy.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/PluginStrategy.h>
@@ -79,6 +82,11 @@ private:
     virtual void addVisitedLink(WebCore::Page*, WebCore::LinkHash) OVERRIDE;
     
     // WebCore::PasteboardStrategy
+#if PLATFORM(IOS)
+    virtual void writeToPasteboard(const WebCore::PasteboardWebContent& content) OVERRIDE;
+    virtual void writeToPasteboard(const WebCore::PasteboardImage& pasteboardImage) OVERRIDE;
+    virtual void writeToPasteboard(const String& text) OVERRIDE;
+#endif
     virtual void getTypes(Vector<String>& types, const String& pasteboardName) OVERRIDE;
     virtual PassRefPtr<WebCore::SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) OVERRIDE;
     virtual void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName) OVERRIDE;

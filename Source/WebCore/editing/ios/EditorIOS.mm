@@ -26,16 +26,25 @@
 #include "config.h"
 #include "Editor.h"
 
+#include "CachedImage.h"
 #include "Clipboard.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "DOMRangeInternal.h"
+#include "EditorClient.h"
 #include "Font.h"
 #include "Frame.h"
+#include "HTMLConverter.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLTextAreaElement.h"
+#include "LegacyWebArchive.h"
 #include "NodeTraversal.h"
+#include "Pasteboard.h"
 #include "RenderBlock.h"
+#include "RenderImage.h"
+#include "SharedBuffer.h"
 #include "StylePropertySet.h"
 #include "Text.h"
 #include "TypingCommand.h"
@@ -43,6 +52,14 @@
 #include "htmlediting.h"
 
 #if PLATFORM(IOS)
+
+@interface NSAttributedString (NSAttributedStringKitAdditions)
+- (id)initWithRTF:(NSData *)data documentAttributes:(NSDictionary **)dict;
+- (id)initWithRTFD:(NSData *)data documentAttributes:(NSDictionary **)dict;
+- (NSData *)RTFFromRange:(NSRange)range documentAttributes:(NSDictionary *)dict;
+- (NSData *)RTFDFromRange:(NSRange)range documentAttributes:(NSDictionary *)dict;
+- (BOOL)containsAttachments;
+@end
 
 namespace WebCore {
 
@@ -252,6 +269,88 @@ void Editor::removeUnchangeableStyles()
 
     // FIXME add EditActionMatchStlye <rdar://problem/9156507> Undo rich text's paste & match style should say "Undo Match Style"
     applyStyleToSelection(defaultStyle.get(), EditActionChangeAttributes);
+}
+
+// FIXME: the following fuctions should be shared between Mac and iOS.
+static NSAttributedString *attributedStringForRange(Range& range)
+{
+    return [adoptNS([[WebHTMLConverter alloc] initWithDOMRange:kit(&range)]) attributedString];
+}
+
+static PassRefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *string)
+{
+    NSUInteger length = [string length];
+    return length ? SharedBuffer::wrapNSData([string RTFDFromRange:NSMakeRange(0, length) documentAttributes:nil]) : nullptr;
+}
+
+static PassRefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *string)
+{
+    NSUInteger length = [string length];
+    return length ? SharedBuffer::wrapNSData([string RTFFromRange:NSMakeRange(0, length) documentAttributes:nil]) : nullptr;
+}    
+
+String Editor::stringSelectionForPasteboardWithImageAltText()
+{
+    String text = selectedTextForClipboard();
+    text.replace(noBreakSpace, ' ');
+    return text;
+}
+
+PassRefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
+{
+    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::createFromSelection(m_frame);
+    return archive ? SharedBuffer::wrapCFData(archive->rawDataRepresentation().get()) : nullptr;
+}
+
+void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
+{
+    NSAttributedString *attributedString = attributedStringForRange(*selectedRange());
+
+    PasteboardWebContent content;
+    content.canSmartCopyOrDelete = canSmartCopyOrDelete();
+    content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
+    content.dataInRTFDFormat = [attributedString containsAttachments] ? dataInRTFDFormat(attributedString) : 0;
+    content.dataInRTFFormat = dataInRTFFormat(attributedString);
+    content.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
+    client()->getClientPasteboardDataForRange(selectedRange().get(), content.clientTypes, content.clientData);
+
+    pasteboard.write(content);
+}
+
+static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)
+{
+    RenderObject* renderer = imageElement.renderer();
+    if (!renderer || !renderer->isImage())
+        return;
+
+    CachedImage* tentativeCachedImage = toRenderImage(renderer)->cachedImage();
+    if (!tentativeCachedImage || tentativeCachedImage->errorOccurred()) {
+        tentativeCachedImage = 0;
+        return;
+    }
+
+    image = tentativeCachedImage->imageForRenderer(renderer);
+    if (!image)
+        return;
+    
+    cachedImage = tentativeCachedImage;
+}
+
+void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const KURL&, const String& title)
+{
+    PasteboardImage pasteboardImage;
+
+    CachedImage* cachedImage;
+    getImage(imageElement, pasteboardImage.image, cachedImage);
+    if (!pasteboardImage.image)
+        return;
+    ASSERT(cachedImage);
+
+    pasteboardImage.url.url = imageElement.document()->completeURL(stripLeadingAndTrailingHTMLSpaces(imageElement.imageSourceURL()));
+    pasteboardImage.url.title = title;
+    pasteboardImage.resourceMIMEType = pasteboard.resourceMIMEType(cachedImage->response().mimeType());
+
+    pasteboard.write(pasteboardImage);
 }
 
 } // namespace WebCore

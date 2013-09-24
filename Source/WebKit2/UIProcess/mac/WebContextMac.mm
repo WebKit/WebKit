@@ -455,6 +455,23 @@ void WebContext::setPasteboardBufferForType(const String& pasteboardName, const 
     newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }
 
+#if PLATFORM(IOS)
+void WebContext::writeWebContentToPasteboard(const WebCore::PasteboardWebContent &content)
+{
+    PlatformPasteboard().write(content);
+}
+
+void WebContext::writeImageToPasteboard(const WebCore::PasteboardImage &pasteboardImage)
+{
+    PlatformPasteboard().write(pasteboardImage);
+}
+
+void WebContext::writeStringToPasteboard(const String& text)
+{
+    PlatformPasteboard().write(text);
+}
+#endif
+
 void WebContext::setProcessSuppressionEnabled(bool enabled)
 {
     if (m_processSuppressionEnabled == enabled)

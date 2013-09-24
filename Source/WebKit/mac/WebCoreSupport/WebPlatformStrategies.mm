@@ -224,3 +224,20 @@ long WebPlatformStrategies::setStringForType(const String& string, const String&
 {
     return PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);
 }
+
+#if PLATFORM(IOS)
+void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content)
+{
+    PlatformPasteboard().write(content);
+}
+
+void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardImage& pasteboardImage)
+{
+    PlatformPasteboard().write(pasteboardImage);
+}
+
+void WebPlatformStrategies::writeToPasteboard(const String& text)
+{
+    PlatformPasteboard().write(text);
+}
+#endif

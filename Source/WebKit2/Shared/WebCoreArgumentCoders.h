@@ -198,6 +198,18 @@ template<> struct ArgumentCoder<WebCore::KeypressCommand> {
 };
 #endif
 
+#if PLATFORM(IOS)
+template<> struct ArgumentCoder<WebCore::PasteboardWebContent> {
+    static void encode(ArgumentEncoder&, const WebCore::PasteboardWebContent&);
+    static bool decode(ArgumentDecoder&, WebCore::PasteboardWebContent&);
+};
+
+template<> struct ArgumentCoder<WebCore::PasteboardImage> {
+    static void encode(ArgumentEncoder&, const WebCore::PasteboardImage&);
+    static bool decode(ArgumentDecoder&, WebCore::PasteboardImage&);
+};
+#endif
+
 template<> struct ArgumentCoder<WebCore::CompositionUnderline> {
     static void encode(ArgumentEncoder&, const WebCore::CompositionUnderline&);
     static bool decode(ArgumentDecoder&, WebCore::CompositionUnderline&);

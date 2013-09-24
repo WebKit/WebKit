@@ -41,6 +41,8 @@
 #import "KURL.h"
 #import "LegacyWebArchive.h"
 #import "Page.h"
+#import "PasteboardStrategy.h"
+#import "PlatformStrategies.h"
 #import "RenderImage.h"
 #import "SoftLinking.h"
 #import "Text.h"
@@ -48,11 +50,6 @@
 #import "markup.h"
 #import "WebNSAttributedStringExtras.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-
-@interface NSHTMLReader
-- (id)initWithDOMRange:(DOMRange *)domRange;
-- (NSAttributedString *)attributedString;
-@end
 
 @interface NSAttributedString (NSAttributedStringKitAdditions)
 - (id)initWithRTF:(NSData *)data documentAttributes:(NSDictionary **)dict;
@@ -62,8 +59,8 @@
 - (BOOL)containsAttachments;
 @end
 
-SOFT_LINK_PRIVATE_FRAMEWORK(UIFoundation)
-SOFT_LINK_CLASS(UIFoundation, NSHTMLReader)
+// FIXME: the following soft linking and #define needs to be shared
+// with PlatformPasteboardIOS.mm
 
 SOFT_LINK_FRAMEWORK(MobileCoreServices)
 

@@ -501,6 +501,24 @@ long WebPlatformStrategies::setStringForType(const String& string, const String&
         Messages::WebContext::SetPasteboardStringForType::Reply(newChangeCount), 0);
     return newChangeCount;
 }
+
+#if PLATFORM(IOS)
+void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebContent& content)
+{
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::WriteWebContentToPasteboard(content), 0);
+}
+
+void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardImage& pasteboardImage)
+{
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::WriteImageToPasteboard(pasteboardImage), 0);
+}
+
+void WebPlatformStrategies::writeToPasteboard(const String& text)
+{
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::WriteStringToPasteboard(text), 0);
+}
+#endif
+
 #endif
 
 } // namespace WebKit
