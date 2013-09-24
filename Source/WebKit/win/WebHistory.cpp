@@ -271,7 +271,8 @@ HRESULT STDMETHODCALLTYPE WebHistory::removeAllItems( void)
     m_entriesByDate.clear();
     m_orderedLastVisitedDays = nullptr;
 
-    Vector<IWebHistoryItem*> itemsVector(m_entriesByURL.size());
+    Vector<IWebHistoryItem*> itemsVector;
+    itemsVector.reserveInitialCapacity(m_entriesByURL.size());
     for (auto it = m_entriesByURL.begin(); it != m_entriesByURL.end(); ++it)
         itemsVector.append(it->value.get());
     RetainPtr<CFArrayRef> allItems = adoptCF(CFArrayCreate(kCFAllocatorDefault, (const void**)itemsVector.data(), itemsVector.size(), &MarshallingHelpers::kIUnknownArrayCallBacks));
@@ -595,9 +596,9 @@ HRESULT WebHistory::removeItemFromDateCaches(IWebHistoryItem* entry)
         return S_OK;
 
     auto& entriesForDate = found->value;
-    size_t count = entriesForDate.size();
+    int count = entriesForDate.size();
 
-    for (size_t i = count - 1; i >= 0; --i) {
+    for (int i = count - 1; i >= 0; --i) {
         if (entriesForDate[i] == entry)
             entriesForDate.remove(i);
     }
@@ -622,7 +623,7 @@ HRESULT WebHistory::addItemToDateCaches(IWebHistoryItem* entry)
     DateKey key = dateKey(lastVisitedTime);
     auto found = m_entriesByDate.find(key);
     if (found == m_entriesByDate.end()) {
-        Vector<COMPtr<IWebHistoryItem>> entries(1);
+        Vector<COMPtr<IWebHistoryItem>> entries;
         entries.append(entry);
         m_entriesByDate.set(key, entries);
         // Clear m_orderedLastVisitedDays so it will be regenerated when next requested.

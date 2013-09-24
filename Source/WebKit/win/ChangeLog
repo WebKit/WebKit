@@ -1,3 +1,14 @@
+2013-09-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed crash fix after r156321.
+
+        Fix a few mistakes in the use of Vectors and counting that introduced test crashes.
+
+        * WebHistory.cpp:
+        (WebHistory::removeAllItems): Loop termination tried to test an unsigned for negative size.
+        (WebHistory::removeItemFromDateCaches): Vector was being created with empty entries.
+        (WebHistory::addItemToDateCaches): Ditto.
+
 2013-09-24  Patrick Gansterer  <paroga@webkit.org>
 
         Make WebHistory more type safe
