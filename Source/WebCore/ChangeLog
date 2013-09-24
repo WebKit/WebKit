@@ -1,3 +1,15 @@
+2013-09-24  Andrei Parvu  <parvu@adobe.com>
+
+        [CSS Background] repeat: round should round the number of tiles to the nearest natural number
+        https://bugs.webkit.org/show_bug.cgi?id=120668
+
+        Reviewed by Darin Adler.
+
+        Tests already available in css3/masking and css3/background
+
+        * rendering/RenderBoxModelObject.cpp: Rounded the number of tiles to the nearest natural number.
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+
 2013-09-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Remove ScrollView::platformInit() and ScrollView::platformDestroy()

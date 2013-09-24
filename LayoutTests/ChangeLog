@@ -1,3 +1,25 @@
+2013-09-24  Andrei Parvu  <parvu@adobe.com>
+
+        [CSS Background] repeat: round should round the number of tiles to the nearest natural number
+        https://bugs.webkit.org/show_bug.cgi?id=120668
+
+        Changed the sizes of the images/masks in the tests to be compliant with the new behaviour.
+
+        Reviewed by Darin Adler.
+
+        * css3/background/background-repeat-round-auto1-expected.html:
+        * css3/background/background-repeat-round-auto2-expected.html:
+        * css3/background/background-repeat-round-border-expected.html:
+        * css3/background/background-repeat-round-content-expected.html:
+        * css3/background/background-repeat-round-padding-expected.html:
+        * css3/background/background-repeat-round-padding.html:
+        * css3/masking/mask-repeat-round-auto1-expected.html:
+        * css3/masking/mask-repeat-round-auto2-expected.html:
+        * css3/masking/mask-repeat-round-border-expected.html:
+        * css3/masking/mask-repeat-round-content-expected.html:
+        * css3/masking/mask-repeat-round-padding-expected.html:
+        * css3/masking/mask-repeat-round-padding.html:
+
 2013-09-23  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         CSS Unit vh, vw, vmin and vmax in box-shadow are not applied.
