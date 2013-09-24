@@ -186,7 +186,7 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     if (lastBox && lastBox->isAnonymous() && !isAfterContent(lastBox)) {
         RenderTableSection* section = toRenderTableSection(lastBox);
         if (beforeChild == section)
-            beforeChild = section->firstChild();
+            beforeChild = section->firstRow();
         section->addChild(child, beforeChild);
         return;
     }
@@ -569,14 +569,10 @@ void RenderTable::recalcCollapsedBorders()
     for (RenderObject* section = firstChild(); section; section = section->nextSibling()) {
         if (!section->isTableSection())
             continue;
-        for (RenderObject* row = toRenderTableSection(section)->firstChild(); row; row = row->nextSibling()) {
-            if (!row->isTableRow())
-                continue;
-            for (RenderObject* cell = toRenderTableRow(row)->firstChild(); cell; cell = cell->nextSibling()) {
-                if (!cell->isTableCell())
-                    continue;
-                ASSERT(toRenderTableCell(cell)->table() == this);
-                toRenderTableCell(cell)->collectBorderValues(m_collapsedBorders);
+        for (RenderTableRow* row = toRenderTableSection(section)->firstRow(); row; row = row->nextRow()) {
+            for (RenderTableCell* cell = row->firstCell(); cell; cell = cell->nextCell()) {
+                ASSERT(cell->table() == this);
+                cell->collectBorderValues(m_collapsedBorders);
             }
         }
     }

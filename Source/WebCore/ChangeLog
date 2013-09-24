@@ -1,3 +1,13 @@
+2013-09-24  Antti Koivisto  <antti@apple.com>
+
+        Tighten table rendering code
+        https://bugs.webkit.org/show_bug.cgi?id=121860
+
+        Reviewed by Andreas Kling.
+
+        Hide firstChild/lastChild/nextSibling/previousSibling in table renderers, 
+        expose correctly typed firstRow/nextCell etc instead.
+
 2013-09-24  Dean Jackson  <dino@apple.com>
 
         Implement symbol name hashing for WebGL shaders

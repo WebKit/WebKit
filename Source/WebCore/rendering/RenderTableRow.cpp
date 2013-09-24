@@ -109,7 +109,7 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
     if (!child->isTableCell()) {
         RenderObject* last = beforeChild;
         if (!last)
-            last = lastChild();
+            last = lastCell();
         if (last && last->isAnonymous() && last->isTableCell() && !last->isBeforeOrAfterContent()) {
             RenderTableCell* cell = toRenderTableCell(last);
             if (beforeChild == cell)
@@ -150,7 +150,7 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
     ASSERT(!beforeChild || beforeChild->isTableCell());
     RenderBox::addChild(cell, beforeChild);
 
-    if (beforeChild || nextSibling())
+    if (beforeChild || nextRow())
         section()->setNeedsCellRecalc();
 }
 
@@ -164,16 +164,13 @@ void RenderTableRow::layout()
 
     bool paginated = view().layoutState()->isPaginated();
                 
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isTableCell()) {
-            RenderTableCell* cell = toRenderTableCell(child);
-            if (!cell->needsLayout() && paginated && view().layoutState()->pageLogicalHeight() && view().layoutState()->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())
-                cell->setChildNeedsLayout(true, MarkOnlyThis);
+    for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell()) {
+        if (!cell->needsLayout() && paginated && view().layoutState()->pageLogicalHeight() && view().layoutState()->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())
+            cell->setChildNeedsLayout(true, MarkOnlyThis);
 
-            if (child->needsLayout()) {
-                cell->computeAndSetBlockDirectionMargins(table());
-                cell->layout();
-            }
+        if (cell->needsLayout()) {
+            cell->computeAndSetBlockDirectionMargins(table());
+            cell->layout();
         }
     }
 
@@ -183,10 +180,8 @@ void RenderTableRow::layout()
     // We cannot call repaint() because our clippedOverflowRectForRepaint() is taken from the
     // parent table, and being mid-layout, that is invalid. Instead, we repaint our cells.
     if (selfNeedsLayout() && checkForRepaintDuringLayout()) {
-        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-            if (child->isTableCell())
-                child->repaint();
-        }
+        for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell())
+            cell->repaint();
     }
 
     statePusher.pop();
@@ -216,14 +211,14 @@ bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
 {
     // Table rows cannot ever be hit tested.  Effectively they do not exist.
     // Just forward to our children always.
-    for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
+    for (RenderTableCell* cell = lastCell(); cell; cell = cell->previousCell()) {
         // FIXME: We have to skip over inline flows, since they can show up inside table rows
         // at the moment (a demoted inline <form> for example). If we ever implement a
         // table-specific hit-test method (which we should do for performance reasons anyway),
         // then we can remove this check.
-        if (child->isTableCell() && !toRenderBox(child)->hasSelfPaintingLayer()) {
-            LayoutPoint cellPoint = flipForWritingModeForChild(toRenderTableCell(child), accumulatedOffset);
-            if (child->nodeAtPoint(request, result, locationInContainer, cellPoint, action)) {
+        if (cell->hasSelfPaintingLayer()) {
+            LayoutPoint cellPoint = flipForWritingModeForChild(cell, accumulatedOffset);
+            if (cell->nodeAtPoint(request, result, locationInContainer, cellPoint, action)) {
                 updateHitTestResult(result, locationInContainer.point() - toLayoutSize(cellPoint));
                 return true;
             }
@@ -246,16 +241,12 @@ void RenderTableRow::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     ASSERT(hasSelfPaintingLayer());
 
     paintOutlineForRowIfNeeded(paintInfo, paintOffset);
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isTableCell()) {
-            // Paint the row background behind the cell.
-            if (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseChildBlockBackground) {
-                RenderTableCell* cell = toRenderTableCell(child);
-                cell->paintBackgroundsBehindCell(paintInfo, paintOffset, this);
-            }
-            if (!toRenderBox(child)->hasSelfPaintingLayer())
-                child->paint(paintInfo, paintOffset);
-        }
+    for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell()) {
+        // Paint the row background behind the cell.
+        if (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseChildBlockBackground)
+            cell->paintBackgroundsBehindCell(paintInfo, paintOffset, this);
+        if (!cell->hasSelfPaintingLayer())
+            cell->paint(paintInfo, paintOffset);
     }
 }
 

@@ -136,13 +136,8 @@ int FixedTableLayout::calcWidthArray()
 
     unsigned currentColumn = 0;
 
-    RenderObject* firstRow = section->firstChild();
-    for (RenderObject* child = firstRow->firstChildSlow(); child; child = child->nextSibling()) {
-        if (!child->isTableCell())
-            continue;
-
-        RenderTableCell* cell = toRenderTableCell(child);
-
+    RenderTableRow* firstRow = section->firstRow();
+    for (RenderTableCell* cell = firstRow->firstCell(); cell; cell = cell->nextCell()) {
         Length logicalWidth = cell->styleOrColLogicalWidth();
         unsigned span = cell->colSpan();
         int fixedBorderBoxLogicalWidth = 0;

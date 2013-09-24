@@ -739,7 +739,7 @@ CollapsedBorderValue RenderTableCell::computeCollapsedBeforeBorder(IncludeBorder
         if (prevCell->section() == section())
             prevRow = parent()->previousSibling();
         else
-            prevRow = prevCell->section()->lastChild();
+            prevRow = prevCell->section()->lastRow();
     
         if (prevRow) {
             result = chooseBorder(CollapsedBorderValue(prevRow->style()->borderAfter(), includeColor ? prevRow->style()->visitedDependentColor(afterColorProperty) : Color(), BROW), result);

@@ -36,6 +36,12 @@ class RenderTableRow FINAL : public RenderBox {
 public:
     explicit RenderTableRow(Element*);
 
+    RenderTableRow* nextRow() const;
+    RenderTableRow* previousRow() const;
+
+    RenderTableCell* firstCell() const;
+    RenderTableCell* lastCell() const;
+
     RenderTableSection* section() const { return toRenderTableSection(parent()); }
     RenderTable* table() const { return toRenderTable(parent()->parent()); }
 
@@ -84,6 +90,8 @@ public:
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
 
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
+
 private:
     virtual const char* renderName() const OVERRIDE { return (isAnonymous() || isPseudoElement()) ? "RenderTableRow (anonymous)" : "RenderTableRow"; }
 
@@ -94,7 +102,6 @@ private:
 
     virtual void layout() OVERRIDE;
     virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     virtual bool requiresLayer() const OVERRIDE { return hasOverflowClip() || hasTransform() || hasHiddenBackface() || hasClipPath() || createsGroup(); }
 
@@ -103,6 +110,11 @@ private:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0) OVERRIDE;
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+
+    void firstChild() const WTF_DELETED_FUNCTION;
+    void lastChild() const WTF_DELETED_FUNCTION;
+    void nextSibling() const WTF_DELETED_FUNCTION;
+    void previousSibling() const WTF_DELETED_FUNCTION;
 
     unsigned m_rowIndex : 31;
 };
@@ -121,6 +133,26 @@ inline const RenderTableRow* toRenderTableRow(const RenderObject* object)
 
 // This will catch anyone doing an unnecessary cast.
 void toRenderTableRow(const RenderTableRow*);
+
+inline RenderTableRow* RenderTableSection::firstRow() const
+{
+    return toRenderTableRow(RenderBox::firstChild());
+}
+
+inline RenderTableRow* RenderTableSection::lastRow() const
+{
+    return toRenderTableRow(RenderBox::lastChild());
+}
+
+inline RenderTableRow* RenderTableRow::nextRow() const
+{
+    return toRenderTableRow(RenderBox::nextSibling());
+}
+
+inline RenderTableRow* RenderTableRow::previousRow() const
+{
+    return toRenderTableRow(RenderBox::previousSibling());
+}
 
 } // namespace WebCore
 

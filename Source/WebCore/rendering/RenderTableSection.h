@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class RenderTableRow;
+
 enum CollapsedBorderSide {
     CBSBefore,
     CBSAfter,
@@ -64,6 +66,9 @@ class RenderTableSection FINAL : public RenderBox {
 public:
     explicit RenderTableSection(Element*);
     virtual ~RenderTableSection();
+
+    RenderTableRow* firstRow() const;
+    RenderTableRow* lastRow() const;
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) OVERRIDE;
 
@@ -237,6 +242,9 @@ private:
     CellSpan spannedColumns(const LayoutRect& flippedRect) const;
 
     void setLogicalPositionForCell(RenderTableCell*, unsigned effectiveColumn) const;
+
+    void firstChild() const WTF_DELETED_FUNCTION;
+    void lastChild() const WTF_DELETED_FUNCTION;
 
     Vector<RowStruct> m_grid;
     Vector<int> m_rowPos;

@@ -128,11 +128,11 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
     if (!child->isTableRow()) {
         RenderObject* last = beforeChild;
         if (!last)
-            last = lastChild();
+            last = lastRow();
         if (last && last->isAnonymous() && !last->isBeforeOrAfterContent()) {
             RenderTableRow* row = toRenderTableRow(last);
             if (beforeChild == row)
-                beforeChild = row->firstChild();
+                beforeChild = row->firstCell();
             row->addChild(child, beforeChild);
             return;
         }
@@ -719,7 +719,7 @@ int RenderTableSection::calcOuterBorderBefore() const
     if (sb.style() > BHIDDEN)
         borderWidth = sb.width();
 
-    const BorderValue& rb = firstChild()->style()->borderBefore();
+    const BorderValue& rb = firstRow()->style()->borderBefore();
     if (rb.style() == BHIDDEN)
         return -1;
     if (rb.style() > BHIDDEN && rb.width() > borderWidth)
@@ -770,7 +770,7 @@ int RenderTableSection::calcOuterBorderAfter() const
     if (sb.style() > BHIDDEN)
         borderWidth = sb.width();
 
-    const BorderValue& rb = lastChild()->style()->borderAfter();
+    const BorderValue& rb = lastRow()->style()->borderAfter();
     if (rb.style() == BHIDDEN)
         return -1;
     if (rb.style() > BHIDDEN && rb.width() > borderWidth)
@@ -1223,26 +1223,18 @@ void RenderTableSection::recalcCells()
     m_cRow = 0;
     m_grid.clear();
 
-    for (RenderObject* row = firstChild(); row; row = row->nextSibling()) {
-        if (row->isTableRow()) {
-            unsigned insertionRow = m_cRow;
-            m_cRow++;
-            m_cCol = 0;
-            ensureRows(m_cRow);
+    for (RenderTableRow* row = firstRow(); row; row = row->nextRow()) {
+        unsigned insertionRow = m_cRow;
+        m_cRow++;
+        m_cCol = 0;
+        ensureRows(m_cRow);
 
-            RenderTableRow* tableRow = toRenderTableRow(row);
-            m_grid[insertionRow].rowRenderer = tableRow;
-            tableRow->setRowIndex(insertionRow);
-            setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[insertionRow]);
+        m_grid[insertionRow].rowRenderer = row;
+        row->setRowIndex(insertionRow);
+        setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[insertionRow]);
 
-            for (RenderObject* cell = tableRow->firstChild(); cell; cell = cell->nextSibling()) {
-                if (!cell->isTableCell())
-                    continue;
-
-                RenderTableCell* tableCell = toRenderTableCell(cell);
-                addCell(tableCell, tableRow);
-            }
-        }
+        for (RenderTableCell* cell = row->firstCell(); cell; cell = cell->nextCell())
+            addCell(cell, row);
     }
 
     m_grid.shrinkToFit();
@@ -1257,12 +1249,8 @@ void RenderTableSection::rowLogicalHeightChanged(unsigned rowIndex)
 
     setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[rowIndex]);
 
-    for (RenderObject* cell = m_grid[rowIndex].rowRenderer->firstChild(); cell; cell = cell->nextSibling()) {
-        if (!cell->isTableCell())
-            continue;
-
-        updateLogicalHeightForCell(m_grid[rowIndex], toRenderTableCell(cell));
-    }
+    for (RenderTableCell* cell = m_grid[rowIndex].rowRenderer->firstCell(); cell; cell = cell->nextCell())
+        updateLogicalHeightForCell(m_grid[rowIndex], cell);
 }
 
 void RenderTableSection::setNeedsCellRecalc()
@@ -1348,7 +1336,7 @@ void RenderTableSection::splitColumn(unsigned pos, unsigned first)
 bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     // If we have no children then we have nothing to do.
-    if (!firstChild())
+    if (!firstRow())
         return false;
 
     // Table sections cannot ever be hit tested.  Effectively they do not exist.
@@ -1359,14 +1347,14 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
         return false;
 
     if (hasOverflowingCell()) {
-        for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
+        for (RenderTableRow* row = lastRow(); row; row = row->previousRow()) {
             // FIXME: We have to skip over inline flows, since they can show up inside table rows
             // at the moment (a demoted inline <form> for example). If we ever implement a
             // table-specific hit-test method (which we should do for performance reasons anyway),
             // then we can remove this check.
-            if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer()) {
-                LayoutPoint childPoint = flipForWritingModeForChild(toRenderBox(child), adjustedLocation);
-                if (child->nodeAtPoint(request, result, locationInContainer, childPoint, action)) {
+            if (row->hasSelfPaintingLayer()) {
+                LayoutPoint childPoint = flipForWritingModeForChild(row, adjustedLocation);
+                if (row->nodeAtPoint(request, result, locationInContainer, childPoint, action)) {
                     updateHitTestResult(result, toLayoutPoint(locationInContainer.point() - childPoint));
                     return true;
                 }
