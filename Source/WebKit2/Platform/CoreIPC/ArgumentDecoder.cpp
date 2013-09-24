@@ -31,17 +31,16 @@
 
 namespace CoreIPC {
 
-PassOwnPtr<ArgumentDecoder> ArgumentDecoder::create(const uint8_t* buffer, size_t bufferSize)
+ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize)
 {
-    Vector<Attachment> attachments;
-    return adoptPtr(new ArgumentDecoder(buffer, bufferSize, attachments));
+    initialize(buffer, bufferSize);
 }
 
-ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Vector<Attachment>& attachments)
+ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Vector<Attachment> attachments)
 {
     initialize(buffer, bufferSize);
 
-    m_attachments.swap(attachments);
+    m_attachments = std::move(attachments);
 }
 
 ArgumentDecoder::~ArgumentDecoder()

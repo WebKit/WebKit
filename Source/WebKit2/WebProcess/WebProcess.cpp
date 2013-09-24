@@ -973,15 +973,15 @@ void WebProcess::postInjectedBundleMessage(const CoreIPC::DataReference& message
     if (!injectedBundle)
         return;
 
-    OwnPtr<CoreIPC::ArgumentDecoder> decoder = CoreIPC::ArgumentDecoder::create(messageData.data(), messageData.size());
+    CoreIPC::ArgumentDecoder decoder(messageData.data(), messageData.size());
 
     String messageName;
-    if (!decoder->decode(messageName))
+    if (!decoder.decode(messageName))
         return;
 
     RefPtr<APIObject> messageBody;
     InjectedBundleUserMessageDecoder messageBodyDecoder(messageBody);
-    if (!decoder->decode(messageBodyDecoder))
+    if (!decoder.decode(messageBodyDecoder))
         return;
 
     injectedBundle->didReceiveMessage(messageName, messageBody.get());

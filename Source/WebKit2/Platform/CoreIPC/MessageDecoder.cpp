@@ -37,22 +37,11 @@
 
 namespace CoreIPC {
 
-PassOwnPtr<MessageDecoder> MessageDecoder::create(const DataReference& buffer)
-{
-    Vector<Attachment> attachments;
-    return adoptPtr(new MessageDecoder(buffer, attachments));
-}
-
-PassOwnPtr<MessageDecoder> MessageDecoder::create(const DataReference& buffer, Vector<Attachment>& attachments)
-{
-    return adoptPtr(new MessageDecoder(buffer, attachments));
-}
-
 MessageDecoder::~MessageDecoder()
 {
 }
 
-MessageDecoder::MessageDecoder(const DataReference& buffer, Vector<Attachment>& attachments)
+MessageDecoder::MessageDecoder(const DataReference& buffer, Vector<Attachment> attachments)
     : ArgumentDecoder(buffer.data(), buffer.size(), attachments)
 {
     if (!decode(m_messageFlags))

@@ -36,8 +36,7 @@ class ImportanceAssertion;
 
 class MessageDecoder : public ArgumentDecoder {
 public:
-    static PassOwnPtr<MessageDecoder> create(const DataReference& buffer);
-    static PassOwnPtr<MessageDecoder> create(const DataReference& buffer, Vector<Attachment>&);
+    MessageDecoder(const DataReference& buffer, Vector<Attachment>);
     virtual ~MessageDecoder();
 
     StringReference messageReceiverName() const { return m_messageReceiverName; }
@@ -51,8 +50,6 @@ public:
 #endif
 
 private:
-    MessageDecoder(const DataReference& buffer, Vector<Attachment>&);
-
     uint8_t m_messageFlags;
     StringReference m_messageReceiverName;
     StringReference m_messageName;

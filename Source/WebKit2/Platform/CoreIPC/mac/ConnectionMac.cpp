@@ -299,14 +299,14 @@ void Connection::initializeDeadNameSource()
     });
 }
 
-static PassOwnPtr<MessageDecoder> createMessageDecoder(mach_msg_header_t* header)
+static OwnPtr<MessageDecoder> createMessageDecoder(mach_msg_header_t* header)
 {
     if (!(header->msgh_bits & MACH_MSGH_BITS_COMPLEX)) {
         // We have a simple message.
         uint8_t* body = reinterpret_cast<uint8_t*>(header + 1);
         size_t bodySize = header->msgh_size - sizeof(mach_msg_header_t);
 
-        return MessageDecoder::create(DataReference(body, bodySize));
+        return createOwned<MessageDecoder>(DataReference(body, bodySize), Vector<Attachment>());
     }
 
     bool messageBodyIsOOL = header->msgh_id & MessageBodyIsOutOfLine;
@@ -351,22 +351,17 @@ static PassOwnPtr<MessageDecoder> createMessageDecoder(mach_msg_header_t* header
         uint8_t* messageBody = static_cast<uint8_t*>(messageBodyAttachment.address());
         size_t messageBodySize = messageBodyAttachment.size();
 
-        OwnPtr<MessageDecoder> decoder;
-
-        if (attachments.isEmpty())
-            decoder = MessageDecoder::create(DataReference(messageBody, messageBodySize));
-        else
-            decoder = MessageDecoder::create(DataReference(messageBody, messageBodySize), attachments);
+        OwnPtr<MessageDecoder> decoder = createOwned<MessageDecoder>(DataReference(messageBody, messageBodySize), std::move(attachments));
 
         vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(messageBodyAttachment.address()), messageBodyAttachment.size());
 
-        return decoder.release();
+        return decoder;
     }
 
     uint8_t* messageBody = descriptorData;
     size_t messageBodySize = header->msgh_size - (descriptorData - reinterpret_cast<uint8_t*>(header));
 
-    return MessageDecoder::create(DataReference(messageBody, messageBodySize), attachments);
+    return createOwned<MessageDecoder>(DataReference(messageBody, messageBodySize), attachments);
 }
 
 // The receive buffer size should always include the maximum trailer size.

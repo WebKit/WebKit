@@ -37,7 +37,7 @@ class DataReference;
     
 class ArgumentDecoder {
 public:
-    static PassOwnPtr<ArgumentDecoder> create(const uint8_t* buffer, size_t bufferSize);
+    ArgumentDecoder(const uint8_t* buffer, size_t bufferSize);
     virtual ~ArgumentDecoder();
 
     uint64_t destinationID() const { return m_destinationID; }
@@ -93,7 +93,7 @@ public:
     bool removeAttachment(Attachment&);
 
 protected:
-    ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Vector<Attachment>&);
+    ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Vector<Attachment>);
 
     void initialize(const uint8_t* buffer, size_t bufferSize);
 
