@@ -82,7 +82,6 @@ list(APPEND WebCore_SOURCES
     platform/efl/PlatformWheelEventEfl.cpp
     platform/efl/RenderThemeEfl.cpp
     platform/efl/RunLoopEfl.cpp
-    platform/efl/ScrollViewEfl.cpp
     platform/efl/ScrollbarEfl.cpp
     platform/efl/ScrollbarThemeEfl.cpp
     platform/efl/SharedTimerEfl.cpp

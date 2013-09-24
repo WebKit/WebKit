@@ -383,8 +383,6 @@ private:
     virtual void repaintFixedElementsAfterScrolling() { }
     virtual void updateFixedElementsAfterScrolling() { }
 
-    void platformInit();
-    void platformDestroy();
     void platformAddChild(Widget*);
     void platformRemoveChild(Widget*);
     void platformSetScrollbarModes();

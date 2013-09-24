@@ -1,3 +1,20 @@
+2013-09-24  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Remove ScrollView::platformInit() and ScrollView::platformDestroy()
+        https://bugs.webkit.org/show_bug.cgi?id=121824
+
+        Reviewed by Darin Adler.
+
+        ScrollView::platformInit() and ScrollView::platformDestroy() are just
+        empty functions for all ports after removed WX port at r149186.
+
+        * PlatformEfl.cmake: Removed ScrollViewEfl.cpp from source list.
+        * platform/ScrollView.cpp: Removed platformInit and PlatformDestroy.
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::~ScrollView):
+        * platform/ScrollView.h: Ditto.
+        * platform/efl/ScrollViewEfl.cpp: Removed.
+
 2013-09-23  Darin Adler  <darin@apple.com>
 
         Use unique_ptr instead of deleteAllValues in FloatingObject code
