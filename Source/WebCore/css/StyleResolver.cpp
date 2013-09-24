@@ -2576,6 +2576,16 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             state.style()->setPerspective(perspectiveValue);
         return;
     }
+#if PLATFORM(IOS)
+    case CSSPropertyWebkitTouchCallout: {
+        HANDLE_INHERIT_AND_INITIAL(touchCalloutEnabled, TouchCalloutEnabled);
+        if (!primitiveValue)
+            break;
+
+        state.style()->setTouchCalloutEnabled(primitiveValue->getStringValue().lower() != "none");
+        return;
+    }
+#endif
 #if ENABLE(TOUCH_EVENTS)
     case CSSPropertyWebkitTapHighlightColor: {
         HANDLE_INHERIT_AND_INITIAL(tapHighlightColor, TapHighlightColor);

@@ -113,6 +113,9 @@ StyleRareInheritedData::StyleRareInheritedData()
     , m_textUnderlinePosition(RenderStyle::initialTextUnderlinePosition())
 #endif // CSS3_TEXT
     , m_rubyPosition(RenderStyle::initialRubyPosition())
+#if PLATFORM(IOS)
+    , touchCalloutEnabled(RenderStyle::initialTouchCalloutEnabled())
+#endif
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
     , hyphenationLimitLines(-1)
@@ -191,6 +194,9 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , m_textUnderlinePosition(o.m_textUnderlinePosition)
 #endif // CSS3_TEXT
     , m_rubyPosition(o.m_rubyPosition)
+#if PLATFORM(IOS)
+    , touchCalloutEnabled(o.touchCalloutEnabled)
+#endif
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
     , hyphenationLimitAfter(o.hyphenationLimitAfter)
@@ -286,6 +292,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && m_textIndentType == o.m_textIndentType
 #endif
         && m_lineBoxContain == o.m_lineBoxContain
+#if PLATFORM(IOS)
+        && touchCalloutEnabled == o.touchCalloutEnabled
+#endif
         && hyphenationString == o.hyphenationString
         && locale == o.locale
         && textEmphasisCustomMark == o.textEmphasisCustomMark

@@ -339,6 +339,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitPerspectiveOrigin,
     CSSPropertyWebkitPrintColorAdjust,
     CSSPropertyWebkitRtlOrdering,
+#if PLATFORM(IOS)
+    CSSPropertyWebkitTouchCallout,
+#endif
 #if ENABLE(CSS_SHAPES)
     CSSPropertyWebkitShapeInside,
     CSSPropertyWebkitShapeOutside,
@@ -2689,6 +2692,10 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 #if ENABLE(TOUCH_EVENTS)
         case CSSPropertyWebkitTapHighlightColor:
             return currentColorOrValidColor(style.get(), style->tapHighlightColor());
+#endif
+#if PLATFORM(IOS)
+        case CSSPropertyWebkitTouchCallout:
+            return cssValuePool().createIdentifierValue(style->touchCalloutEnabled() ? CSSValueDefault : CSSValueNone);
 #endif
         case CSSPropertyWebkitUserDrag:
             return cssValuePool().createValue(style->userDrag());

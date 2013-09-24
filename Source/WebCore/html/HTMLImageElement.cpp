@@ -380,4 +380,16 @@ bool HTMLImageElement::isServerMap() const
     return document().completeURL(stripLeadingAndTrailingHTMLSpaces(usemap)).isEmpty();
 }
 
+#if PLATFORM(IOS)
+// FIXME: This is a workaround for <rdar://problem/7725158>. We should find a better place for the touchCalloutEnabled() logic.
+bool HTMLImageElement::willRespondToMouseClickEvents()
+{
+    RenderObject* renderer = this->renderer();
+    RenderStyle* style = renderer ? renderer->style() : nullptr;
+    if (!style || style->touchCalloutEnabled())
+        return true;
+    return HTMLElement::willRespondToMouseClickEvents();
+}
+#endif
+
 }

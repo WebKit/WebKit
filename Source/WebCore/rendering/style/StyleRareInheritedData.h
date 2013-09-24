@@ -128,6 +128,10 @@ public:
 #endif // CSS3_TEXT
     unsigned m_rubyPosition : 1; // RubyPosition
 
+#if PLATFORM(IOS)
+    unsigned touchCalloutEnabled : 1;
+#endif
+
     AtomicString hyphenationString;
     short hyphenationLimitBefore;
     short hyphenationLimitAfter;

@@ -454,3 +454,6 @@ user-zoom
 #if defined(ENABLE_ACCELERATED_OVERFLOW_SCROLLING) && ENABLE_ACCELERATED_OVERFLOW_SCROLLING
 -webkit-overflow-scrolling [Inherited]
 #endif
+#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+-webkit-touch-callout [Inherited]
+#endif

@@ -73,6 +73,10 @@ public:
 
     bool complete() const;
 
+#if PLATFORM(IOS)
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+#endif
+
     bool hasPendingActivity() const { return m_imageLoader.hasPendingActivity(); }
 
     virtual bool canContainRangeEndPoint() const { return false; }

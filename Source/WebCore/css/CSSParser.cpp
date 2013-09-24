@@ -2835,6 +2835,13 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             return parseDashboardRegions(propId, important);
         break;
 #endif
+
+#if PLATFORM(IOS)
+    case CSSPropertyWebkitTouchCallout:
+        if (id == CSSValueDefault || id == CSSValueNone)
+            validPrimitive = true;
+        break;
+#endif
     // End Apple-specific properties
 
 #if ENABLE(DRAGGABLE_REGION)
