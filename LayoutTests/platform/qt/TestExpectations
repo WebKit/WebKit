@@ -417,10 +417,8 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
-fast/dom/HTMLAnchorElement/anchor-nodownload.html
 fast/dom/HTMLAnchorElement/anchor-download.html
 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
-fast/dom/HTMLAnchorElement/anchor-download-unset.html
 
 # Require ENABLE(CUSTOM_ELEMENTS) support
 webkit.org/b/110735 fast/dom/custom [ Skip ]

@@ -1,3 +1,17 @@
+2013-09-24  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Crash when trying to download blob url
+        https://bugs.webkit.org/show_bug.cgi?id=121681
+
+        Reviewed by Simon Hausmann.
+
+        Resolve any blob URLs before creating a QUrl.
+
+        * platform/network/qt/ResourceRequestQt.cpp:
+        (WebCore::appendBlobResolved):
+        (WebCore::resolveBlobUrl):
+        (WebCore::ResourceRequest::toNetworkRequest):
+
 2013-09-23  Antti Koivisto  <antti@apple.com>
 
         Move more style change code from RenderObject to RenderElement

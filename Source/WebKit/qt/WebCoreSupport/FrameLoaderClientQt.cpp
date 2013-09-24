@@ -982,12 +982,17 @@ WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoad
     return loader.release();
 }
 
-void FrameLoaderClientQt::convertMainResourceLoadToDownload(WebCore::DocumentLoader* documentLoader, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
+void FrameLoaderClientQt::convertMainResourceLoadToDownload(WebCore::DocumentLoader* documentLoader, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse&)
 {
     if (!m_webFrame)
         return;
 
     QNetworkReplyHandler* handler = documentLoader->mainResourceLoader()->handle()->getInternal()->m_job;
+    if (!handler) {
+        qWarning("Attempted to download unsupported URL %s", request.url().string().characters8());
+        return;
+    }
+
     QNetworkReply* reply = handler->release();
     if (reply) {
         if (m_webFrame->pageAdapter->forwardUnsupportedContent)
