@@ -1,3 +1,19 @@
+2013-09-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Crashing under JSC::DFG::SpeculativeJIT::spill visiting citicards.com
+        https://bugs.webkit.org/show_bug.cgi?id=121844
+
+        Reviewed by Mark Hahnenberg.
+
+        * js/dfg-int52-spill-expected.txt: Added.
+        * js/dfg-int52-spill-trickier-expected.txt: Added.
+        * js/dfg-int52-spill-trickier.html: Added.
+        * js/dfg-int52-spill.html: Added.
+        * js/script-tests/dfg-int52-spill-trickier.js: Added.
+        (foo):
+        * js/script-tests/dfg-int52-spill.js: Added.
+        (foo):
+
 2013-09-24  Alexey Proskuryakov  <ap@apple.com>
 
         Flaky Test: compositing/reflections/load-video-in-reflection.html

@@ -306,13 +306,13 @@ my $numJSFailures = @layoutJSFailList;
 my $numJSCrashes = @layoutJSCrashList;
 
 if ($numJSFailures) {
-    print "\n** The following js test failures have been introduced:\n";
+    print "\n** The following LayoutTests/js test failures have been introduced:\n";
     foreach my $testFailure (@layoutJSFailList) {
         print "\t$testFailure";
     }
 }
 if ($numJSCrashes) {
-    print "\n** The following js test crashes have been introduced:\n";
+    print "\n** The following LayoutTests/js test crashes have been introduced:\n";
     foreach my $testCrash (@layoutJSCrashList) {
         print "\t$testCrash";
     }

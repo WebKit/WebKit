@@ -1,3 +1,12 @@
+2013-09-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Crashing under JSC::DFG::SpeculativeJIT::spill visiting citicards.com
+        https://bugs.webkit.org/show_bug.cgi?id=121844
+
+        Reviewed by Mark Hahnenberg.
+
+        * Scripts/run-javascriptcore-tests: Be more clear about what test suite failed.
+
 2013-09-24  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac][WK2] Multiple font tests fail is there is a global setting for font antialiasing threshold

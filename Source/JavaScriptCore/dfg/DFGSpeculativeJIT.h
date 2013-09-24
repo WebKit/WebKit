@@ -513,6 +513,13 @@ public:
             info.spill(*m_stream, spillMe, DataFormatDouble);
             return;
         }
+
+        case DataFormatInt52:
+        case DataFormatStrictInt52: {
+            m_jit.store64(info.gpr(), JITCompiler::addressFor(spillMe));
+            info.spill(*m_stream, spillMe, spillFormat);
+            return;
+        }
             
         default:
             // The following code handles JSValues, int32s, and cells.

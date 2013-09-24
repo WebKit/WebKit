@@ -919,6 +919,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     case DataFormatInt52: {
         GPRReg gpr = info.gpr();
         GPRReg result;
+        DataFormat oldFormat = info.registerFormat();
         if (m_gprs.isLocked(gpr)) {
             result = allocate();
             m_jit.move(gpr, result);
@@ -928,7 +929,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
             result = gpr;
         }
         RELEASE_ASSERT(!(type & ~SpecMachineInt));
-        if (info.registerFormat() == DataFormatInt52)
+        if (oldFormat == DataFormatInt52)
             m_jit.rshift64(TrustedImm32(JSValue::int52ShiftAmount), result);
         if (type & SpecInt52) {
             GPRReg temp = allocate();

@@ -1,0 +1,10 @@
+Tests that spilling an int52 works for a program that is more tricky and wouldn't be subject to reassociation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo(2000000000, array) is 120000003788 on all iterations including after DFG tier-up.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

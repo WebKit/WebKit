@@ -1,3 +1,19 @@
+2013-09-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Crashing under JSC::DFG::SpeculativeJIT::spill visiting citicards.com
+        https://bugs.webkit.org/show_bug.cgi?id=121844
+
+        Reviewed by Mark Hahnenberg.
+        
+        Fix some int52 bugs that caused this.
+
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::dumpInContext): There's no such thing as int53.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::spill): Actually spill int52's, instead of hitting an assert and crashing.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal): Use the right format (from before when we clobber it).
+
 2013-09-24  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/14971518> WebKit should build against the Xcode default toolchain when targeting OS X 10.8

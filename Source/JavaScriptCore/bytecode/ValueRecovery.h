@@ -331,7 +331,7 @@ public:
             out.print("int32(", gpr(), ")");
             return;
         case UnboxedInt52InGPR:
-            out.print("int53(", gpr(), ")");
+            out.print("int52(", gpr(), ")");
             return;
         case UnboxedStrictInt52InGPR:
             out.print("strictInt52(", gpr(), ")");
