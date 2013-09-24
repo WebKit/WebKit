@@ -25,9 +25,9 @@
       <dep package="at-spi2-atk"/>
       <dep package="gdk-pixbuf"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/gtk+/3.9/gtk+-3.9.6.tar.xz" version="3.9.6"
+    <branch module="/pub/GNOME/sources/gtk+/3.10/gtk+-3.10.0.tar.xz" version="3.10.0"
             repo="ftp.gnome.org"
-            hash="sha256:4d34b7cd763ca4975b8a55e587923eeefe7b3c8e08d3d01c9111900fca30c817"/>
+            hash="sha256:6559feb360cd935d341cd7a0b69a72f8f4346ed6ee9b7c4040c02b73b75c53fe"/>
   </autotools>
 
   <autotools id="glib"

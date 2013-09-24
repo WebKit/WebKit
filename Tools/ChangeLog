@@ -1,3 +1,13 @@
+2013-09-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Bump the GTK+ dependency in the Wayland-specific Jhbuild moduleset
+        https://bugs.webkit.org/show_bug.cgi?id=121787
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtk/jhbuild-wayland.modules: Bump the GTK+ dependency that's intended for use when building
+        with the Wayland target enabled to version 3.10.0.
+
 2013-09-23  Patrick Gansterer  <paroga@webkit.org>
 
         use NOMINMAX instead of #define min min
