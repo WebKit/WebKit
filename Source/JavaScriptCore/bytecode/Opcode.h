@@ -180,7 +180,7 @@ namespace JSC {
     macro(op_throw, 2) \
     macro(op_throw_static_error, 3) \
     \
-    macro(op_debug, 5) \
+    macro(op_debug, 2) \
     macro(op_profile_will_call, 2) \
     macro(op_profile_did_call, 2) \
     \

@@ -37,25 +37,12 @@ class DebuggerCallFrame {
 public:
     enum Type { ProgramType, FunctionType };
 
-    DebuggerCallFrame(CallFrame* callFrame, int line, int column)
-        : m_callFrame(callFrame)
-        , m_line(line)
-        , m_column(column)
-    {
-    }
-
-    DebuggerCallFrame(CallFrame* callFrame, int line, int column, JSValue exception)
-        : m_callFrame(callFrame)
-        , m_line(line)
-        , m_column(column)
-        , m_exception(exception)
-    {
-    }
+    JS_EXPORT_PRIVATE explicit DebuggerCallFrame(CallFrame*);
 
     CallFrame* callFrame() const { return m_callFrame; }
     JS_EXPORT_PRIVATE intptr_t sourceId() const;
-    int line() const { return m_line; }
-    int column() const { return m_column; }
+    unsigned line() const { return m_line; }
+    unsigned column() const { return m_column; }
     JSGlobalObject* dynamicGlobalObject() const { return m_callFrame->dynamicGlobalObject(); }
     JSScope* scope() const { return m_callFrame->scope(); }
     JS_EXPORT_PRIVATE String functionName() const;
@@ -63,15 +50,13 @@ public:
     JS_EXPORT_PRIVATE Type type() const;
     JS_EXPORT_PRIVATE JSObject* thisObject() const;
     JS_EXPORT_PRIVATE JSValue evaluate(const String&, JSValue& exception) const;
-    JSValue exception() const { return m_exception; }
 
     void clear();
 
 private:
     CallFrame* m_callFrame;
-    int m_line;
-    int m_column;
-    JSValue m_exception;
+    unsigned m_line;
+    unsigned m_column;
 };
 
 } // namespace JSC

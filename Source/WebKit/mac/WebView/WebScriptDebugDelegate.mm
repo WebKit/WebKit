@@ -63,6 +63,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 @public
     WebScriptObject        *globalObject;   // the global object's proxy (not retained)
     DebuggerCallFrame* debuggerCallFrame;
+    JSC::JSValue exceptionValue;
 }
 @end
 
@@ -85,12 +86,13 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 @implementation WebScriptCallFrame (WebScriptDebugDelegateInternal)
 
-- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj debuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame
+- (WebScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj debuggerCallFrame:(const DebuggerCallFrame&)debuggerCallFrame exceptionValue:(JSC::JSValue)exceptionValue
 {
     if ((self = [super init])) {
         _private = [[WebScriptCallFramePrivate alloc] init];
         _private->globalObject = globalObj;
         _private->debuggerCallFrame = new DebuggerCallFrame(debuggerCallFrame);
+        _private->exceptionValue = exceptionValue;
     }
     return self;
 }
@@ -160,7 +162,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     if (!_private->debuggerCallFrame)
         return nil;
 
-    JSC::JSValue exception = _private->debuggerCallFrame->exception();
+    JSC::JSValue exception = _private->exceptionValue;
     return exception ? [self _convertValueToObjcValue:exception] : nil;
 }
 

@@ -1,3 +1,17 @@
+2013-09-24  Mark Lam  <mark.lam@apple.com>
+
+        Change JSC debug hooks to pass a CallFrame* instead of a DebuggerCallFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=121867.
+
+        Reviewed by Geoffrey Garen.
+
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame _initWithGlobalObject:debuggerCallFrame:exceptionValue:JSC::]):
+        (-[WebScriptCallFrame exception]):
+        * WebView/WebScriptDebugger.h:
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::exception):
+
 2013-09-24  Enrica Casucci  <enrica@apple.com>
 
         Upstream changes to Pasteboard implementation for iOS.

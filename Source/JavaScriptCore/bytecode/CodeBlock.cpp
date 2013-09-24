@@ -1325,11 +1325,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         }
         case op_debug: {
             int debugHookID = (++it)->u.operand;
-            int firstLine = (++it)->u.operand;
-            int lastLine = (++it)->u.operand;
-            int column = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "debug");
-            out.printf("%s, %d, %d, %d", debugHookName(debugHookID), firstLine, lastLine, column);
+            out.printf("%s", debugHookName(debugHookID));
             break;
         }
         case op_profile_will_call: {
@@ -1871,11 +1868,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             if (op.structure)
                 instructions[i + 5].u.structure.set(*vm(), ownerExecutable, op.structure);
             instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);
-            break;
-        }
-
-        case op_debug: {
-            instructions[i + 4] = columnNumberForBytecodeOffset(i);
             break;
         }
 

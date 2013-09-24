@@ -60,10 +60,10 @@ void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener)
     recompileAllJSFunctions(0);
 }
 
-void WorkerScriptDebugServer::willExecuteProgram(const JSC::DebuggerCallFrame& debuggerCallFrame)
+void WorkerScriptDebugServer::willExecuteProgram(JSC::CallFrame* callFrame)
 {
     if (!m_paused)
-        createCallFrame(debuggerCallFrame);
+        createCallFrame(callFrame);
 }
 
 void WorkerScriptDebugServer::recompileAllJSFunctions(Timer<ScriptDebugServer>*)

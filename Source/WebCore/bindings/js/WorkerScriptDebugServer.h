@@ -39,7 +39,7 @@ namespace WebCore {
 
 class WorkerGlobalScope;
 
-class WorkerScriptDebugServer : public ScriptDebugServer {
+class WorkerScriptDebugServer FINAL : public ScriptDebugServer {
     WTF_MAKE_NONCOPYABLE(WorkerScriptDebugServer);
 public:
     WorkerScriptDebugServer(WorkerGlobalScope*, const String&);
@@ -53,15 +53,15 @@ public:
     void recompileAllJSFunctions(Timer<ScriptDebugServer>*);
 
 private:
-    virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) { return &m_listeners; }
-    virtual void didPause(JSC::JSGlobalObject*) { }
-    virtual void didContinue(JSC::JSGlobalObject*) { }
+    virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) OVERRIDE { return &m_listeners; }
+    virtual void didPause(JSC::JSGlobalObject*) OVERRIDE { }
+    virtual void didContinue(JSC::JSGlobalObject*) OVERRIDE { }
 
-    virtual bool isContentScript(JSC::ExecState*) { return false; }
+    virtual bool isContentScript(JSC::ExecState*) OVERRIDE { return false; }
 
-    virtual void willExecuteProgram(const JSC::DebuggerCallFrame&);
+    virtual void willExecuteProgram(JSC::CallFrame*) OVERRIDE;
 
-    virtual void runEventLoopWhilePaused();
+    virtual void runEventLoopWhilePaused() OVERRIDE;
 
     WorkerGlobalScope* m_workerGlobalScope;
     ListenerSet m_listeners;

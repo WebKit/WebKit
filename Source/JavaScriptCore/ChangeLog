@@ -1,3 +1,83 @@
+2013-09-24  Mark Lam  <mark.lam@apple.com>
+
+        Change JSC debug hooks to pass a CallFrame* instead of a DebuggerCallFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=121867.
+
+        Reviewed by Geoffrey Garen.
+
+        1. Removed the need for passing the line and column info to the debug hook
+           callbacks. We now get the line and column info from the CallFrame.
+
+        2. Simplify BytecodeGenerator::emitDebugHook() to only take 1 line number
+           argument. The caller can determine whether to pass in the first or last
+           line number of the block of source code as appropriate.
+           Note: we still need to pass in the line and column info to emitDebugHook()
+           because it uses this info to emit expression info which is later used by
+           the StackVisitor to determine the line and column info for its "pc".
+
+        3. Pass the exceptionValue explicitly to the exception() debug hook
+           callback. It should not be embedded in the CallFrame / DebuggerCallFrame.
+
+        4. Change the op_debug opcode size to 2 (from 5) since we've removing 3 arg
+           values. Update the LLINT and JIT code to handle this.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDebugHook):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ConstStatementNode::emitBytecode):
+        (JSC::EmptyStatementNode::emitBytecode):
+        (JSC::DebuggerStatementNode::emitBytecode):
+        (JSC::ExprStatementNode::emitBytecode):
+        (JSC::VarStatementNode::emitBytecode):
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::DoWhileNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::LabelNode::emitBytecode):
+        (JSC::ThrowNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+        (JSC::ProgramNode::emitBytecode):
+        (JSC::EvalNode::emitBytecode):
+        (JSC::FunctionBodyNode::emitBytecode):
+        * debugger/Debugger.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::LineAndColumnFunctor::operator()):
+        (JSC::LineAndColumnFunctor::line):
+        (JSC::LineAndColumnFunctor::column):
+        (JSC::DebuggerCallFrame::DebuggerCallFrame):
+        (JSC::DebuggerCallFrame::clear):
+        * debugger/DebuggerCallFrame.h:
+        (JSC::DebuggerCallFrame::line):
+        (JSC::DebuggerCallFrame::column):
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        (JSC::UnwindFunctor::UnwindFunctor):
+        (JSC::UnwindFunctor::operator()):
+        (JSC::Interpreter::unwind):
+        (JSC::Interpreter::debug):
+        * interpreter/Interpreter.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_debug):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_debug):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+
 2013-09-24  Filip Pizlo  <fpizlo@apple.com>
 
         Crashing under JSC::DFG::SpeculativeJIT::spill visiting citicards.com

@@ -34,8 +34,34 @@
 #include "Interpreter.h"
 #include "Operations.h"
 #include "Parser.h"
+#include "StackVisitor.h"
 
 namespace JSC {
+
+class LineAndColumnFunctor {
+public:
+    StackVisitor::Status operator()(StackVisitor& visitor)
+    {
+        visitor->computeLineAndColumn(m_line, m_column);
+        return StackVisitor::Done;
+    }
+
+    unsigned line() const { return m_line; }
+    unsigned column() const { return m_column; }
+
+private:
+    unsigned m_line;
+    unsigned m_column;
+};
+
+DebuggerCallFrame::DebuggerCallFrame(CallFrame* callFrame)
+    : m_callFrame(callFrame)
+{
+    LineAndColumnFunctor functor;
+    m_callFrame->iterate(functor);
+    m_line = functor.line();
+    m_column = functor.column();
+}
 
 intptr_t DebuggerCallFrame::sourceId() const
 {
@@ -114,7 +140,6 @@ JSValue DebuggerCallFrame::evaluate(const String& script, JSValue& exception) co
 void DebuggerCallFrame::clear()
 {
     m_callFrame = 0;
-    m_exception = JSValue();
 }
 
 } // namespace JSC

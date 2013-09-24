@@ -33,6 +33,8 @@ class JSGlobalObject;
 class JSValue;
 class SourceProvider;
 
+typedef ExecState CallFrame;
+
 class JS_EXPORT_PRIVATE Debugger {
 public:
     virtual ~Debugger();
@@ -42,14 +44,14 @@ public:
 
     virtual void sourceParsed(ExecState*, SourceProvider*, int errorLineNumber, const WTF::String& errorMessage) = 0;
 
-    virtual void exception(const DebuggerCallFrame&, bool) = 0;
-    virtual void atStatement(const DebuggerCallFrame&) = 0;
-    virtual void callEvent(const DebuggerCallFrame&) = 0;
-    virtual void returnEvent(const DebuggerCallFrame&) = 0;
+    virtual void exception(CallFrame*, JSValue exceptionValue, bool hasHandler) = 0;
+    virtual void atStatement(CallFrame*) = 0;
+    virtual void callEvent(CallFrame*) = 0;
+    virtual void returnEvent(CallFrame*) = 0;
 
-    virtual void willExecuteProgram(const DebuggerCallFrame&) = 0;
-    virtual void didExecuteProgram(const DebuggerCallFrame&) = 0;
-    virtual void didReachBreakpoint(const DebuggerCallFrame&) = 0;
+    virtual void willExecuteProgram(CallFrame*) = 0;
+    virtual void didExecuteProgram(CallFrame*) = 0;
+    virtual void didReachBreakpoint(CallFrame*) = 0;
 
     void recompileAllJSFunctions(VM*);
 

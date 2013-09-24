@@ -757,9 +757,6 @@ void JIT::emit_op_debug(Instruction* currentInstruction)
 #else
     JITStubCall stubCall(this, cti_op_debug);
     stubCall.addArgument(TrustedImm32(currentInstruction[1].u.operand));
-    stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
-    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
-    stubCall.addArgument(TrustedImm32(currentInstruction[4].u.operand));
     stubCall.call();
 #endif
 }

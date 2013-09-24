@@ -405,7 +405,7 @@ namespace JSC {
         RegisterID* emitPushWithScope(RegisterID* scope);
         void emitPopScope();
 
-        void emitDebugHook(DebugHookID, unsigned firstLine, unsigned lastLine, unsigned charOffset, unsigned lineStart);
+        void emitDebugHook(DebugHookID, unsigned line, unsigned charOffset, unsigned lineStart);
 
         int scopeDepth() { return m_localScopeDepth + m_finallyDepth; }
         bool hasFinaliser() { return m_finallyDepth != 0; }

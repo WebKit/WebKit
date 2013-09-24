@@ -135,20 +135,20 @@ protected:
     void dispatchDidParseSource(const ListenerSet& listeners, JSC::SourceProvider*, bool isContentScript);
     void dispatchFailedToParseSource(const ListenerSet& listeners, JSC::SourceProvider*, int errorLine, const String& errorMessage);
 
-    void createCallFrame(const JSC::DebuggerCallFrame&);
-    void updateCallFrameAndPauseIfNeeded(const JSC::DebuggerCallFrame&);
+    void createCallFrame(JSC::CallFrame*);
+    void updateCallFrameAndPauseIfNeeded(JSC::CallFrame*);
     void pauseIfNeeded(JSC::JSGlobalObject* dynamicGlobalObject);
 
-    virtual void detach(JSC::JSGlobalObject*);
+    virtual void detach(JSC::JSGlobalObject*) OVERRIDE;
 
-    virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg);
-    virtual void callEvent(const JSC::DebuggerCallFrame&);
-    virtual void atStatement(const JSC::DebuggerCallFrame&);
-    virtual void returnEvent(const JSC::DebuggerCallFrame&);
-    virtual void exception(const JSC::DebuggerCallFrame&, bool hasHandler);
-    virtual void willExecuteProgram(const JSC::DebuggerCallFrame&);
-    virtual void didExecuteProgram(const JSC::DebuggerCallFrame&);
-    virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&);
+    virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const String& errorMsg) OVERRIDE;
+    virtual void callEvent(JSC::CallFrame*) OVERRIDE;
+    virtual void atStatement(JSC::CallFrame*) OVERRIDE;
+    virtual void returnEvent(JSC::CallFrame*) OVERRIDE;
+    virtual void exception(JSC::CallFrame*, JSC::JSValue exceptionValue, bool hasHandler) OVERRIDE;
+    virtual void willExecuteProgram(JSC::CallFrame*) OVERRIDE;
+    virtual void didExecuteProgram(JSC::CallFrame*) OVERRIDE;
+    virtual void didReachBreakpoint(JSC::CallFrame*) OVERRIDE;
 
     typedef Vector<ScriptBreakpoint> BreakpointsInLine;
     typedef HashMap<long, BreakpointsInLine> LineToBreakpointMap;
