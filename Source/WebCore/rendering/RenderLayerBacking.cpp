@@ -1389,7 +1389,7 @@ static bool hasPerspectiveOrPreserves3D(const RenderStyle* style)
 
 Color RenderLayerBacking::rendererBackgroundColor() const
 {
-    RenderObject* backgroundRenderer = &renderer();
+    RenderElement* backgroundRenderer = &renderer();
     if (backgroundRenderer->isRoot())
         backgroundRenderer = backgroundRenderer->rendererForRootBackground();
 

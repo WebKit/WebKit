@@ -1,3 +1,13 @@
+2013-09-23  Andreas Kling  <akling@apple.com>
+
+        Move rendererForRootBackground() to RenderElement.
+        <http://webkit.org/b/121813>
+
+        Reviewed by Antti Koivisto.
+
+        Move this to RenderElement (and make it return one, too) since the
+        document element renderer will always be a RenderElement.
+
 2013-09-23  Brady Eidson  <beidson@apple.com>
 
         Make the Mac build work with IndexedDB enabled.

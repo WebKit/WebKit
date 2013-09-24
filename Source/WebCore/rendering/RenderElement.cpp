@@ -27,6 +27,8 @@
 
 #include "AXObjectCache.h"
 #include "ContentData.h"
+#include "HTMLElement.h"
+#include "HTMLNames.h"
 #include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
@@ -487,6 +489,23 @@ void RenderElement::willBeDestroyed()
     destroyLeftoverChildren();
 
     RenderObject::willBeDestroyed();
+}
+
+RenderElement* RenderElement::rendererForRootBackground()
+{
+    ASSERT(isRoot());
+    if (!hasBackground() && element() && element()->hasTagName(HTMLNames::htmlTag)) {
+        // Locate the <body> element using the DOM. This is easier than trying
+        // to crawl around a render tree with potential :before/:after content and
+        // anonymous blocks created by inline <body> tags etc. We can locate the <body>
+        // render object very easily via the DOM.
+        HTMLElement* body = document().body();
+        RenderElement* bodyObject = (body && body->hasLocalName(HTMLNames::bodyTag)) ? body->renderer() : 0;
+        if (bodyObject)
+            return bodyObject;
+    }
+
+    return this;
 }
 
 }

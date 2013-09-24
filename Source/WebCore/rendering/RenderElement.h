@@ -58,6 +58,9 @@ public:
     void insertChildInternal(RenderObject*, RenderObject* beforeChild, NotifyChildrenType);
     void removeChildInternal(RenderObject*, NotifyChildrenType);
 
+    // Return the renderer whose background style is used to paint the root background. Should only be called on the renderer for which isRoot() is true.
+    RenderElement* rendererForRootBackground();
+
 protected:
     explicit RenderElement(Element*);
 
