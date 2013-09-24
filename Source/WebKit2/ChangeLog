@@ -1,5 +1,13 @@
 2013-09-24  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed buildfix after r156354 and r156360.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::processMessage):
+        (CoreIPC::Connection::sendOutgoingMessage):
+
+2013-09-24  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed buildfix after r156349.
 
         * Platform/CoreIPC/unix/ConnectionUnix.cpp:
