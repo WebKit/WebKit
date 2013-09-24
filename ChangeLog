@@ -1,3 +1,20 @@
+2013-09-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Enable the Wayland target if GTK+ dependency is found
+        https://bugs.webkit.org/show_bug.cgi?id=121704
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The Wayland target should be enabled by default if the GTK+ dependency is of version 3.9.14 or later.
+
+        * Source/autotools/FindDependencies.m4: If the Wayland target was not strictly disabled, the GTK+ dependency
+        is tested if it can provide the Wayland GDK backend, and that the version of that backend matches the version
+        of the master GTK+ dependency for which we already tested. If found, the target is enabled, otherwise we either
+        warn or error out, depending on whether the build target was set to auto or completely disabled through configuration.
+        * Source/autotools/ReadCommandLineArguments.m4: Switch the default Wayland target status to 'auto', meaning
+        it will be disabled if the GTK+ dependency is not found.
+        * Source/autotools/Versions.m4: Require GTK+ 3.9.14 for the Wayland target only.
+
 2013-09-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [Autotools] Rework the build target selection

@@ -58,7 +58,7 @@ AC_ARG_WITH([gtk],
     [with_gtk=3.0])
 AC_MSG_RESULT([$with_gtk])
 
-default_build_targets="x11=yes wayland=no win32=no quartz=no directfb=no"
+default_build_targets="x11=yes wayland=auto win32=no quartz=no directfb=no"
 build_targets=""
 
 AC_ARG_ENABLE([x11-target], [AC_HELP_STRING([--enable-x11-target], [enable building for the X11 target [default=yes]])],

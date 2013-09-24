@@ -201,9 +201,19 @@ elif test "enable_glx" != "no"; then
     enable_glx=no
 fi
 
-if test "$enable_wayland_target" = "yes"; then
-    # The GTK+ Wayland target dependency should match the version of the master GTK+ dependency.
-    PKG_CHECK_MODULES(GTK_WAYLAND, gtk+-wayland-$GTK_API_VERSION = $GTK_ACTUAL_VERSION)
+if test "$enable_wayland_target" != "no"; then
+     # The GTK+ Wayland target dependency should match the version of the master GTK+ dependency.
+    PKG_CHECK_MODULES([GTK_WAYLAND], [
+        gtk+-wayland-$GTK_API_VERSION = $GTK_ACTUAL_VERSION
+        gtk+-wayland-$GTK_API_VERSION >= gtk3_wayland_required_version
+    ], [enable_wayland_target=yes], [
+        if test "$enable_wayland_target" = "yes"; then
+            AC_MSG_ERROR([GTK+ Wayland dependency (gtk+-wayland-$GTK_API_VERSION >= gtk3_wayland_required_version) not found.])
+        else
+            AC_MSG_WARN([GTK+ Wayland dependency (gtk+-wayland-$GTK_API_VERSION >= gtk3_wayland_required_version) not found, disabling the Wayland target.])
+            enable_wayland_target=no
+        fi
+    ])
 fi
 
 AC_CHECK_HEADERS([GL/glx.h], [have_glx="yes"], [have_glx="no"])
