@@ -3502,7 +3502,7 @@ static void updateAcceleratedCompositingSetting(Settings& settings, bool value)
 #if PLATFORM(WAYLAND) && defined(GDK_WINDOWING_WAYLAND)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
     if (GDK_IS_WAYLAND_DISPLAY(display)) {
-        if (!value)
+        if (!settings.acceleratedCompositingEnabled() && !value)
             return;
 
         static bool unsupportedACWarningShown = false;
