@@ -1,5 +1,15 @@
 2013-09-24  Dean Jackson  <dino@apple.com>
 
+        webgl/conformance/extensions/oes-element-index-uint.html failing after r156351 or 156352
+        https://bugs.webkit.org/show_bug.cgi?id=121863
+        <rdar://problem/15069481>
+
+        Temporarily skipped while investigating.
+
+        * TestExpectations:
+
+2013-09-24  Dean Jackson  <dino@apple.com>
+
         Use mapped name in attribute location binding
         https://bugs.webkit.org/show_bug.cgi?id=121847
         <rdar://problem/15067526>
