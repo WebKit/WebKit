@@ -1,3 +1,23 @@
+2013-09-24  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Modify updateSegmentsForShapes function to use logical coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=121864
+
+        Reviewed by David Hyatt.
+
+        When I landed updateSegmentsForShapes in r156022, I didn't use logical coordinates. This change modifies the
+        code to use coordinates for positioning the float and the content around the float in a shape-inside. Now I
+        added only one writing mode tests, but I will add more later in bug #121866.
+
+        Test: fast/shapes/shape-inside/shape-inside-left-float-in-upper-left-triangle-vertical-lr-inline-content.html
+
+        * rendering/FloatingObjects.h:
+        (WebCore::FloatingObject::logicalHeight):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeLogicalLocationForFloat):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::updateSegmentsForShapes):
+
 2013-09-24  Brady Eidson  <beidson@apple.com>
 
         Remove IDBTransactionCallbacks.h from the .xcodeproj, as it's gone from the repository.

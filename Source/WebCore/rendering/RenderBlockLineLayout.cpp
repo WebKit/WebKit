@@ -2631,21 +2631,31 @@ static void updateSegmentsForShapes(RenderBlock* block, const FloatingObject* la
     ASSERT(lastFloatFromPreviousLine);
 
     ShapeInsideInfo* shapeInsideInfo = block->layoutShapeInsideInfo();
-    LayoutUnit lineLogicalHeight = block->lineHeight(isFirstLine, block->isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
-    LayoutUnit lineLogicalBottom = block->logicalHeight() + lineLogicalHeight;
-    bool lineOverlapsWithFloat = (lastFloatFromPreviousLine->y() < lineLogicalBottom) && (block->logicalHeight() < lastFloatFromPreviousLine->maxY());
-
-    if (!shapeInsideInfo || !lineOverlapsWithFloat)
+    if (!shapeInsideInfo)
         return;
 
-    float minWidth = firstPositiveWidth(wordMeasurements);
+    bool isHorizontalWritingMode = block->isHorizontalWritingMode();
 
-    LayoutUnit availableWidth = block->width() - lastFloatFromPreviousLine->maxX();
-    if (availableWidth < minWidth)
-        block->setLogicalHeight(lastFloatFromPreviousLine->maxY());
+    LayoutUnit lineLogicalTop = block->logicalHeight();
+    LayoutUnit lineLogicalHeight = block->lineHeight(isFirstLine, isHorizontalWritingMode ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+    LayoutUnit lineLogicalBottom = lineLogicalTop + lineLogicalHeight;
 
-    if (block->logicalHeight() < lastFloatFromPreviousLine->y()) {
-        shapeInsideInfo->adjustLogicalLineTop(minWidth + lastFloatFromPreviousLine->width());
+    LayoutUnit floatLogicalTop = lastFloatFromPreviousLine->logicalTop(isHorizontalWritingMode);
+    LayoutUnit floatLogicalBottom = lastFloatFromPreviousLine->logicalBottom(isHorizontalWritingMode);
+
+    bool lineOverlapsWithFloat = (floatLogicalTop < lineLogicalBottom) && (lineLogicalTop < floatLogicalBottom);
+    if (!lineOverlapsWithFloat)
+        return;
+
+    float minSegmentWidth = firstPositiveWidth(wordMeasurements);
+
+    LayoutUnit floatLogicalWidth = lastFloatFromPreviousLine->logicalWidth(isHorizontalWritingMode);
+    LayoutUnit availableLogicalWidth = block->logicalWidth() - lastFloatFromPreviousLine->logicalRight(isHorizontalWritingMode);
+    if (availableLogicalWidth < minSegmentWidth)
+        block->setLogicalHeight(floatLogicalBottom);
+
+    if (block->logicalHeight() < floatLogicalTop) {
+        shapeInsideInfo->adjustLogicalLineTop(minSegmentWidth + floatLogicalWidth);
         block->setLogicalHeight(shapeInsideInfo->logicalLineTop());
     }
 
