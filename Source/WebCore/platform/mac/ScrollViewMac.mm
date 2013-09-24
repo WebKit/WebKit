@@ -205,7 +205,6 @@ bool ScrollView::platformIsOffscreen() const
     return ![platformWidget() window] || ![[platformWidget() window] isVisible];
 }
 
-#if USE(SCROLLBAR_PAINTER)
 static inline NSScrollerKnobStyle toNSScrollerKnobStyle(ScrollbarOverlayStyle style)
 {
     switch (style) {
@@ -217,15 +216,10 @@ static inline NSScrollerKnobStyle toNSScrollerKnobStyle(ScrollbarOverlayStyle st
         return NSScrollerKnobStyleDefault;
     }
 }
-#endif
 
 void ScrollView::platformSetScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle)
 {
-#if USE(SCROLLBAR_PAINTER)
     [scrollView() setScrollerKnobStyle:toNSScrollerKnobStyle(overlayStyle)];
-#else
-    UNUSED_PARAM(overlayStyle);
-#endif
 }
 
 void ScrollView::platformSetScrollOrigin(const IntPoint& origin, bool updatePositionAtAll, bool updatePositionSynchronously)

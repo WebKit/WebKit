@@ -90,15 +90,6 @@
 
 namespace WebCore {
 
-static inline bool isScrollbarOverlayAPIAvailable()
-{
-#if USE(SCROLLBAR_PAINTER)
-    return true;
-#else
-    return false;
-#endif
-}
-
 NSScrollerStyle recommendedScrollerStyle();
 
 }
