@@ -112,6 +112,16 @@ static EditingBehaviorType editingBehaviorTypeForPlatform()
     ;
 }
 
+#if PLATFORM(IOS)
+static const bool defaultMediaPlaybackAllowsInline = false;
+static const bool defaultMediaPlaybackRequiresUserGesture = true;
+static const bool defaultShouldRespectImageOrientation = true;
+#else
+static const bool defaultMediaPlaybackAllowsInline = true;
+static const bool defaultMediaPlaybackRequiresUserGesture = false;
+static const bool defaultShouldRespectImageOrientation = false;
+#endif
+
 static const double defaultIncrementalRenderingSuppressionTimeoutInSeconds = 5;
 #if USE(UNIFIED_TEXT_CHECKING)
 static const bool defaultUnifiedTextCheckerEnabled = true;

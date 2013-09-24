@@ -1,3 +1,19 @@
+2013-09-24  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Initialize settings mediaPlayback{AllowsInline, RequiresUserGesture} and
+        shouldRespectImageOrientation as appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=121792
+
+        Reviewed by Darin Adler.
+
+        On iOS we explicitly want to disable mediaPlaybackAllowsInline, and enable
+        mediaPlaybackRequiresUserGesture and shouldRespectImageOrientation by default.
+        This differs from other platforms. We need to extract the initialization logic
+        for these settings into constants whose definition is conditioned on the platform.
+
+        * page/Settings.cpp:
+        * page/Settings.in:
+
 2013-09-24  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error.
