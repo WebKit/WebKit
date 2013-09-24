@@ -1,3 +1,16 @@
+2013-09-24  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Fix compilation problems when setting ENABLE_DRAG_SUPPORT = FALSE
+        https://bugs.webkit.org/show_bug.cgi?id=121782
+
+        Reviewed by Martin Robinson.
+
+        Disabled drag functions.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkit_web_view_base_class_init):
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+
 2013-09-24  Anders Carlsson  <andersca@apple.com>
 
         Begin adopting std::tuple for IPC decoding

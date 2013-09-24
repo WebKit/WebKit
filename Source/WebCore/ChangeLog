@@ -1,3 +1,15 @@
+2013-09-24  Lorenzo Tilve  <ltilve@igalia.com>
+
+        [GTK] Fix compilation problems when setting ENABLE_DRAG_SUPPORT = FALSE
+        https://bugs.webkit.org/show_bug.cgi?id=121782
+
+        Reviewed by Martin Robinson.
+
+        Disabled drag functions.
+
+        * page/gtk/EventHandlerGtk.cpp:
+        * platform/gtk/PasteboardGtk.cpp:
+
 2013-09-24  Samuel White  <samuel_white@apple.com>
 
         AX: Replace AXObjectCache postNotification method boolean arguments with enum values.

@@ -78,6 +78,7 @@ PassOwnPtr<Pasteboard> Pasteboard::createPrivate()
     return create(DataObjectGtk::create());
 }
 
+#if ENABLE(DRAG_SUPPORT)
 PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
     return create(DataObjectGtk::create());
@@ -87,6 +88,7 @@ PassOwnPtr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData
 {
     return create(dragData.platformData());
 }
+#endif
 
 Pasteboard::Pasteboard(PassRefPtr<DataObjectGtk> dataObject)
     : m_dataObject(dataObject)
@@ -294,9 +296,11 @@ bool Pasteboard::canSmartReplace()
     return m_gtkClipboard && PasteboardHelper::defaultPasteboardHelper()->clipboardContentSupportsSmartReplace(m_gtkClipboard);
 }
 
+#if ENABLE(DRAG_SUPPORT)
 void Pasteboard::setDragImage(DragImageRef, const IntPoint& hotSpot)
 {
 }
+#endif
 
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context,
                                                           bool allowPlainText, bool& chosePlainText)

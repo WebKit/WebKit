@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebDragClient.h"
 
+#if ENABLE(DRAG_SUPPORT)
+
 #include "ArgumentCodersGtk.h"
 #include "ShareableBitmap.h"
 #include "WebPage.h"
@@ -69,3 +71,5 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& clientPosi
 }
 
 }; // namespace WebKit.
+
+#endif // ENABLE(DRAG_SUPPORT)

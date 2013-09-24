@@ -27,6 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if ENABLE(DRAG_SUPPORT)
+
 #ifndef DragClientGtk_h
 #define DragClientGtk_h
 
@@ -61,3 +63,5 @@ namespace WebKit {
 }
 
 #endif
+
+#endif // ENABLE(DRAG_SUPPORT)

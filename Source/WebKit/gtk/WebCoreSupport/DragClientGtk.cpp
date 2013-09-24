@@ -19,6 +19,8 @@
 #include "config.h"
 #include "DragClientGtk.h"
 
+#if ENABLE(DRAG_SUPPORT)
+
 #include "Clipboard.h"
 #include "ClipboardUtilitiesGtk.h"
 #include "DataObjectGtk.h"
@@ -100,3 +102,5 @@ void DragClient::dragControllerDestroyed()
     delete this;
 }
 }
+
+#endif // ENABLE(DRAG_SUPPORT)
