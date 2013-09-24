@@ -123,7 +123,7 @@ IDBKeyPathLexer::TokenType IDBKeyPathLexer::lexIdentifier(String& element)
     return TokenIdentifier;
 }
 
-bool IDBIsValidKeyPath(const String& keyPath)
+static bool IDBIsValidKeyPath(const String& keyPath)
 {
     IDBKeyPathParseError error;
     Vector<String> keyPathElements;

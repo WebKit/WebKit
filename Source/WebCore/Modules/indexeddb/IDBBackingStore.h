@@ -31,6 +31,7 @@
 #include "IDBKey.h"
 #include "IDBMetadata.h"
 #include "IndexedDB.h"
+#include "LevelDBIterator.h"
 #include "LevelDBTransaction.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -48,6 +49,7 @@ class SharedBuffer;
 
 class LevelDBFactory {
 public:
+    virtual ~LevelDBFactory() { }
     virtual PassOwnPtr<LevelDBDatabase> openLevelDB(const String& fileName, const LevelDBComparator*) = 0;
     virtual bool destroyLevelDB(const String& fileName) = 0;
 };
@@ -149,7 +151,9 @@ public:
 
         LevelDBTransaction* m_transaction;
         const CursorOptions m_cursorOptions;
+#if USE(LEVELDB)
         OwnPtr<LevelDBIterator> m_iterator;
+#endif
         RefPtr<IDBKey> m_currentKey;
         IDBBackingStore::RecordIdentifier m_recordIdentifier;
     };
@@ -165,16 +169,29 @@ public:
         void begin();
         bool commit();
         void rollback();
-        void reset() { m_backingStore = 0; m_transaction = 0; }
+        void reset()
+        {
+            m_backingStore = 0;
+#if USE(LEVELDB)
+            m_transaction = 0;
+#endif
+        }
 
         static LevelDBTransaction* levelDBTransactionFrom(Transaction* transaction)
         {
+#if USE(LEVELDB)
             return static_cast<Transaction*>(transaction)->m_transaction.get();
+#else
+            ASSERT_UNUSED(transaction, transaction);
+            return nullptr;
+#endif
         }
 
     private:
         IDBBackingStore* m_backingStore;
+#if USE(LEVELDB)
         RefPtr<LevelDBTransaction> m_transaction;
+#endif
     };
 
 protected:

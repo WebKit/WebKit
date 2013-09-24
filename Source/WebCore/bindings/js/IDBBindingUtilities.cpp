@@ -147,7 +147,7 @@ static PassRefPtr<IDBKey> createIDBKeyFromValue(ExecState* exec, JSValue value, 
     return 0;
 }
 
-PassRefPtr<IDBKey> createIDBKeyFromValue(ExecState* exec, JSValue value)
+static PassRefPtr<IDBKey> createIDBKeyFromValue(ExecState* exec, JSValue value)
 {
     Vector<JSArray*> stack;
     RefPtr<IDBKey> key = createIDBKeyFromValue(exec, value, stack);
