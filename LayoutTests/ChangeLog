@@ -63,6 +63,33 @@
         https://bugs.webkit.org/show_bug.cgi?id=121863
         <rdar://problem/15069481>
 
+        Reviewed by Beth Dakin.
+
+        This test was not querying the vertex attribute locations
+        before binding data to them. When we enabled symbol mangling
+        we started seeing attributes appear in a different order
+        than the order defined in the shader source. Update this test
+        to ask getAttribLocation first.
+
+        Note that there are two important issues.
+
+        Firstly, this is updating our local copy of the Khronos test.
+        I've opened pull request #377 to get it addressed in the source.
+        https://github.com/KhronosGroup/WebGL/pull/377
+
+        Secondly, this indicates that we might have a lot of problems
+        with existing content that does not expect the order of
+        attributes to change.
+
+        * webgl/resources/webgl_test_files/conformance/extensions/oes-element-index-uint.html:
+        * TestExpectations: Unskip test.
+
+2013-09-24  Dean Jackson  <dino@apple.com>
+
+        webgl/conformance/extensions/oes-element-index-uint.html failing after r156351 or 156352
+        https://bugs.webkit.org/show_bug.cgi?id=121863
+        <rdar://problem/15069481>
+
         Temporarily skipped while investigating.
 
         * TestExpectations:

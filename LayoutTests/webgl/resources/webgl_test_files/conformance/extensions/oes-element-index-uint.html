@@ -1,7 +1,7 @@
 <!--
 
 /*
-** Copyright (c) 2012 The Khronos Group Inc.
+** Copyright (c) 2012, 2013 The Khronos Group Inc.
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a
 ** copy of this software and/or associated documentation files (the
@@ -315,13 +315,15 @@ function runCopiesIndicesTests() {
 
     var program = wtu.loadStandardProgram(gl);
 
+    var vertexLoc = gl.getAttribLocation(program, "a_vertex");
+
     gl.useProgram(program);
     var vertexObject = gl.createBuffer();
-    gl.enableVertexAttribArray(0);
+    gl.enableVertexAttribArray(vertexLoc);
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
     // 4 vertices -> 2 triangles
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0,0,0, 0,1,0, 1,0,0, 1,1,0 ]), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(vertexLoc, 3, gl.FLOAT, false, 0, 0);
 
     var indexObject = gl.createBuffer();
 
@@ -344,13 +346,16 @@ function runResizedBufferTests() {
     var program = wtu.setupProgram(gl, ["vs", "fs"], ["vPosition", "vColor"]);
     glErrorShouldBe(gl, gl.NO_ERROR, "after initialization");
 
+    var vertexLoc = gl.getAttribLocation(program, "vPosition");
+    var colorLoc = gl.getAttribLocation(program, "vColor");
+
     var vertexObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(
         [-1,1,0, 1,1,0, -1,-1,0,
          -1,-1,0, 1,1,0, 1,-1,0]), gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(0);
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(vertexLoc);
+    gl.vertexAttribPointer(vertexLoc, 3, gl.FLOAT, false, 0, 0);
     glErrorShouldBe(gl, gl.NO_ERROR, "after vertex setup");
 
     var texCoordObject = gl.createBuffer();
@@ -358,8 +363,8 @@ function runResizedBufferTests() {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(
         [0,0, 1,0, 0,1,
          0,1, 1,0, 1,1]), gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(1);
-    gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(colorLoc);
+    gl.vertexAttribPointer(colorLoc, 2, gl.FLOAT, false, 0, 0);
     glErrorShouldBe(gl, gl.NO_ERROR, "after texture coord setup");
 
     // Now resize these buffers because we want to change what we're drawing.
@@ -378,7 +383,7 @@ function runResizedBufferTests() {
         0, 255, 0, 255,
         0, 255, 0, 255,
         0, 255, 0, 255]), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, false, 0, 0);
+    gl.vertexAttribPointer(colorLoc, 4, gl.UNSIGNED_BYTE, false, 0, 0);
     glErrorShouldBe(gl, gl.NO_ERROR, "after texture coordinate / color redefinition");
 
     var numQuads = 2;
