@@ -1,3 +1,15 @@
+2013-09-24  Anders Carlsson  <andersca@apple.com>
+
+        Remove encoder create functions
+        https://bugs.webkit.org/show_bug.cgi?id=121853
+
+        Reviewed by Sam Weinig.
+
+        Add a variadic version of createOwned.
+
+        * wtf/OwnPtr.h:
+        (WTF::createOwned):
+
 2013-09-24  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/14971518> WebKit should build against the Xcode default toolchain when targeting OS X 10.8

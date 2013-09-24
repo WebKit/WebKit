@@ -349,7 +349,7 @@ template<typename T> bool Connection::send(const T& message, uint64_t destinatio
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-    OwnPtr<MessageEncoder> encoder = MessageEncoder::create(T::receiverName(), T::name(), destinationID);
+    auto encoder = createOwned<MessageEncoder>(T::receiverName(), T::name(), destinationID);
     encoder->encode(message);
     
     return sendMessage(encoder.release(), messageSendFlags);

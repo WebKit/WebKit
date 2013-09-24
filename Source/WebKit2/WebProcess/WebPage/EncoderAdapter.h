@@ -26,9 +26,9 @@
 #ifndef EncoderAdapter_h
 #define EncoderAdapter_h
 
+#include "ArgumentEncoder.h"
 #include <wtf/Encoder.h>
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
 
 namespace CoreIPC {
     class ArgumentEncoder;
@@ -55,7 +55,7 @@ private:
     virtual void encodeDouble(double);
     virtual void encodeString(const String&);
 
-    OwnPtr<CoreIPC::ArgumentEncoder> m_encoder;
+    CoreIPC::ArgumentEncoder m_encoder;
 };
 
 } // namespace WebKit

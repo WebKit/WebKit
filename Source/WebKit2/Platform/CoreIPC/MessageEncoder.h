@@ -35,15 +35,11 @@ class StringReference;
 
 class MessageEncoder : public ArgumentEncoder {
 public:
-    static PassOwnPtr<MessageEncoder> create(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);
+    MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);
     virtual ~MessageEncoder();
 
     void setIsSyncMessage(bool);
     void setShouldDispatchMessageWhenWaitingForSyncReply(bool);
-
-private:
-    MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);
-
 };
 
 } // namespace CoreIPC

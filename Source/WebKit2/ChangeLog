@@ -1,3 +1,49 @@
+2013-09-24  Anders Carlsson  <andersca@apple.com>
+
+        Remove encoder create functions
+        https://bugs.webkit.org/show_bug.cgi?id=121853
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        * Platform/CoreIPC/ArgumentEncoder.h:
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::dispatchWorkQueueMessageReceiverMessage):
+        (CoreIPC::Connection::createSyncMessageEncoder):
+        (CoreIPC::Connection::dispatchSyncMessage):
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::send):
+        * Platform/CoreIPC/MessageEncoder.cpp:
+        (CoreIPC::MessageEncoder::setIsSyncMessage):
+        * Platform/CoreIPC/MessageEncoder.h:
+        * Platform/CoreIPC/MessageSender.h:
+        (CoreIPC::MessageSender::send):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::open):
+        * Shared/ChildProcessProxy.h:
+        (WebKit::ChildProcessProxy::send):
+        * Shared/WebConnection.cpp:
+        (WebKit::WebConnection::postMessage):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::postMessageToInjectedBundle):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postMessage):
+        * WebProcess/WebPage/EncoderAdapter.cpp:
+        (WebKit::EncoderAdapter::EncoderAdapter):
+        (WebKit::EncoderAdapter::dataReference):
+        (WebKit::EncoderAdapter::encodeBytes):
+        (WebKit::EncoderAdapter::encodeBool):
+        (WebKit::EncoderAdapter::encodeUInt16):
+        (WebKit::EncoderAdapter::encodeUInt32):
+        (WebKit::EncoderAdapter::encodeUInt64):
+        (WebKit::EncoderAdapter::encodeInt32):
+        (WebKit::EncoderAdapter::encodeInt64):
+        (WebKit::EncoderAdapter::encodeFloat):
+        (WebKit::EncoderAdapter::encodeDouble):
+        (WebKit::EncoderAdapter::encodeString):
+        * WebProcess/WebPage/EncoderAdapter.h:
+
 2013-09-24  Enrica Casucci  <enrica@apple.com>
 
         Upstream changes to Pasteboard implementation for iOS.

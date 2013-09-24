@@ -55,11 +55,6 @@ static inline void freeBuffer(void* addr, size_t size)
 #endif
 }
 
-PassOwnPtr<ArgumentEncoder> ArgumentEncoder::create()
-{
-    return adoptPtr(new ArgumentEncoder);
-}
-
 ArgumentEncoder::ArgumentEncoder()
     : m_buffer(m_inlineBuffer)
     , m_bufferPointer(m_inlineBuffer)

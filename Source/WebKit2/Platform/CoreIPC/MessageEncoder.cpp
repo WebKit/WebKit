@@ -34,11 +34,6 @@ namespace CoreIPC {
 
 static uint8_t defaultMessageFlags = 0;
 
-PassOwnPtr<MessageEncoder> MessageEncoder::create(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID)
-{
-    return adoptPtr(new MessageEncoder(messageReceiverName, messageName, destinationID));
-}
-
 MessageEncoder::MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID)
 {
     ASSERT(!messageReceiverName.isEmpty());
@@ -59,7 +54,6 @@ void MessageEncoder::setIsSyncMessage(bool isSyncMessage)
         *buffer() |= SyncMessage;
     else
         *buffer() &= ~SyncMessage;
-
 }
 
 void MessageEncoder::setShouldDispatchMessageWhenWaitingForSyncReply(bool shouldDispatchMessageWhenWaitingForSyncReply)

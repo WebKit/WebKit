@@ -51,7 +51,7 @@ void WebConnection::postMessage(const String& messageName, APIObject* messageBod
     if (!hasValidConnection())
         return;
 
-    OwnPtr<CoreIPC::MessageEncoder> encoder = CoreIPC::MessageEncoder::create(Messages::WebConnection::HandleMessage::receiverName(), Messages::WebConnection::HandleMessage::name(), 0);
+    auto encoder = createOwned<CoreIPC::MessageEncoder>(Messages::WebConnection::HandleMessage::receiverName(), Messages::WebConnection::HandleMessage::name(), 0);
     encoder->encode(messageName);
     encodeMessageBody(*encoder, messageBody);
 

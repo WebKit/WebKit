@@ -38,7 +38,7 @@ class DataReference;
 
 class ArgumentEncoder {
 public:
-    static PassOwnPtr<ArgumentEncoder> create();
+    ArgumentEncoder();
     virtual ~ArgumentEncoder();
 
     void encodeFixedLengthData(const uint8_t*, size_t, unsigned alignment);
@@ -67,9 +67,6 @@ public:
 
     void addAttachment(const Attachment&);
     Vector<Attachment> releaseAttachments();
-
-protected:
-    ArgumentEncoder();
 
 private:
     void encode(bool);

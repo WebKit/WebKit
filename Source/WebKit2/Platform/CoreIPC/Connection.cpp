@@ -300,7 +300,7 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
         return;
     }
 
-    OwnPtr<MessageEncoder> replyEncoder = MessageEncoder::create("IPC", "SyncMessageReply", syncRequestID);
+    auto replyEncoder = createOwned<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
 
     // Hand off both the decoder and encoder to the work queue message receiver.
     workQueueMessageReceiver->didReceiveSyncMessage(this, *decoder, replyEncoder);
@@ -342,7 +342,7 @@ void Connection::markCurrentlyDispatchedMessageAsInvalid()
 
 OwnPtr<MessageEncoder> Connection::createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID)
 {
-    OwnPtr<MessageEncoder> encoder = MessageEncoder::create(messageReceiverName, messageName, destinationID);
+    auto encoder = createOwned<MessageEncoder>(messageReceiverName, messageName, destinationID);
     encoder->setIsSyncMessage(true);
 
     // Encode the sync request ID.
@@ -743,7 +743,7 @@ void Connection::dispatchSyncMessage(MessageDecoder& decoder)
         return;
     }
 
-    OwnPtr<MessageEncoder> replyEncoder = MessageEncoder::create("IPC", "SyncMessageReply", syncRequestID);
+    auto replyEncoder = createOwned<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
 
     // Hand off both the decoder and encoder to the client.
     m_client->didReceiveSyncMessage(this, decoder, replyEncoder);

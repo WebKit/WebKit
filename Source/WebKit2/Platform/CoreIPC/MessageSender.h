@@ -43,7 +43,7 @@ public:
     template<typename U> bool send(const U& message, uint64_t destinationID)
     {
         COMPILE_ASSERT(!U::isSync, AsyncMessageExpected);
-        OwnPtr<MessageEncoder> encoder = MessageEncoder::create(U::receiverName(), U::name(), destinationID);
+        auto encoder = createOwned<MessageEncoder>(U::receiverName(), U::name(), destinationID);
         encoder->encode(message);
         
         return sendMessage(encoder.release());
