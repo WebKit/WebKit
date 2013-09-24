@@ -33,6 +33,7 @@
 #include "EditCommand.h"
 #include "Editor.h"
 #include "EditorClient.h"
+#include "Element.h"
 #include "Event.h"
 #include "ExceptionCodePlaceholder.h"
 #include "FloatQuad.h"
@@ -691,7 +692,7 @@ bool AlternativeTextController::insertDictatedText(const String& text, const Vec
     if (triggeringEvent)
         target = triggeringEvent->target();
     else
-        target = eventTargetNodeForDocument(m_frame.document());
+        target = eventTargetElementForDocument(m_frame.document());
     if (!target)
         return false;
 

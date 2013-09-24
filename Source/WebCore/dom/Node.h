@@ -549,7 +549,6 @@ public:
     void dispatchSubtreeModifiedEvent();
     bool dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent);
 
-    bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     bool dispatchWheelEvent(const PlatformWheelEvent&);
     bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType, int clickCount = 0, Node* relatedTarget = 0);
 #if ENABLE(GESTURE_EVENTS)

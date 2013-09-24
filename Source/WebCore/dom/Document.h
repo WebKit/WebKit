@@ -1642,7 +1642,7 @@ inline ScriptExecutionContext* Node::scriptExecutionContext() const
     return &document();
 }
 
-Node* eventTargetNodeForDocument(Document*);
+Element* eventTargetElementForDocument(Document*);
 
 } // namespace WebCore
 

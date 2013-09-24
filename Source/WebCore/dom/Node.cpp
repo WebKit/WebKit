@@ -2110,11 +2110,6 @@ bool Node::dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEven
     return event->defaultHandled();
 }
 
-bool Node::dispatchKeyEvent(const PlatformKeyboardEvent& event)
-{
-    return EventDispatcher::dispatchEvent(this, KeyboardEventDispatchMediator::create(KeyboardEvent::create(event, document().defaultView())));
-}
-
 bool Node::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType,
     int detail, Node* relatedTarget)
 {

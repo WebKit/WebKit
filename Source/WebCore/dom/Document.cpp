@@ -5734,20 +5734,20 @@ IntSize Document::initialViewportSize() const
 }
 #endif
 
-Node* eventTargetNodeForDocument(Document* doc)
+Element* eventTargetElementForDocument(Document* doc)
 {
     if (!doc)
         return 0;
-    Node* node = doc->focusedElement();
-    if (!node && doc->isPluginDocument()) {
+    Element* element = doc->focusedElement();
+    if (!element && doc->isPluginDocument()) {
         PluginDocument* pluginDocument = toPluginDocument(doc);
-        node = pluginDocument->pluginElement();
+        element = pluginDocument->pluginElement();
     }
-    if (!node && doc->isHTMLDocument())
-        node = doc->body();
-    if (!node)
-        node = doc->documentElement();
-    return node;
+    if (!element && doc->isHTMLDocument())
+        element = doc->body();
+    if (!element)
+        element = doc->documentElement();
+    return element;
 }
 
 void Document::adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<FloatQuad>& quads, RenderObject* renderer)

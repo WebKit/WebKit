@@ -3279,8 +3279,8 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 
     // Check for cases where we are too early for events -- possible unmatched key up
     // from pressing return in the location bar.
-    RefPtr<Node> node = eventTargetNodeForDocument(m_frame.document());
-    if (!node)
+    RefPtr<Element> element = eventTargetElementForDocument(m_frame.document());
+    if (!element)
         return false;
 
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
@@ -3303,7 +3303,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 
     // FIXME: it would be fair to let an input method handle KeyUp events before DOM dispatch.
     if (initialKeyEvent.type() == PlatformEvent::KeyUp || initialKeyEvent.type() == PlatformEvent::Char)
-        return !node->dispatchKeyEvent(initialKeyEvent);
+        return !element->dispatchKeyEvent(initialKeyEvent);
 
     bool backwardCompatibilityMode = needsKeyboardEventDisambiguationQuirks();
 
@@ -3313,10 +3313,10 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     RefPtr<KeyboardEvent> keydown = KeyboardEvent::create(keyDownEvent, m_frame.document()->defaultView());
     if (matchedAnAccessKey)
         keydown->setDefaultPrevented(true);
-    keydown->setTarget(node);
+    keydown->setTarget(element);
 
     if (initialKeyEvent.type() == PlatformEvent::RawKeyDown) {
-        node->dispatchEvent(keydown, IGNORE_EXCEPTION);
+        element->dispatchEvent(keydown, IGNORE_EXCEPTION);
         // If frame changed as a result of keydown dispatch, then return true to avoid sending a subsequent keypress message to the new frame.
         bool changedFocusedFrame = m_frame.page() && &m_frame != &m_frame.page()->focusController().focusedOrMainFrame();
         return keydown->defaultHandled() || keydown->defaultPrevented() || changedFocusedFrame;
@@ -3334,22 +3334,22 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     if (handledByInputMethod) {
         keyDownEvent.setWindowsVirtualKeyCode(CompositionEventKeyCode);
         keydown = KeyboardEvent::create(keyDownEvent, m_frame.document()->defaultView());
-        keydown->setTarget(node);
+        keydown->setTarget(element);
         keydown->setDefaultHandled();
     }
 
-    node->dispatchEvent(keydown, IGNORE_EXCEPTION);
+    element->dispatchEvent(keydown, IGNORE_EXCEPTION);
     // If frame changed as a result of keydown dispatch, then return early to avoid sending a subsequent keypress message to the new frame.
     bool changedFocusedFrame = m_frame.page() && &m_frame != &m_frame.page()->focusController().focusedOrMainFrame();
     bool keydownResult = keydown->defaultHandled() || keydown->defaultPrevented() || changedFocusedFrame;
     if (handledByInputMethod || (keydownResult && !backwardCompatibilityMode))
         return keydownResult;
     
-    // Focus may have changed during keydown handling, so refetch node.
-    // But if we are dispatching a fake backward compatibility keypress, then we pretend that the keypress happened on the original node.
+    // Focus may have changed during keydown handling, so refetch element.
+    // But if we are dispatching a fake backward compatibility keypress, then we pretend that the keypress happened on the original element.
     if (!keydownResult) {
-        node = eventTargetNodeForDocument(m_frame.document());
-        if (!node)
+        element = eventTargetElementForDocument(m_frame.document());
+        if (!element)
             return false;
     }
 
@@ -3358,13 +3358,13 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     if (keyPressEvent.text().isEmpty())
         return keydownResult;
     RefPtr<KeyboardEvent> keypress = KeyboardEvent::create(keyPressEvent, m_frame.document()->defaultView());
-    keypress->setTarget(node);
+    keypress->setTarget(element);
     if (keydownResult)
         keypress->setDefaultPrevented(true);
 #if PLATFORM(MAC)
     keypress->keypressCommands() = keydown->keypressCommands();
 #endif
-    node->dispatchEvent(keypress, IGNORE_EXCEPTION);
+    element->dispatchEvent(keypress, IGNORE_EXCEPTION);
 
     return keydownResult || keypress->defaultPrevented() || keypress->defaultHandled();
 }
@@ -3704,7 +3704,7 @@ bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEve
     if (underlyingEvent)
         target = underlyingEvent->target();
     else
-        target = eventTargetNodeForDocument(m_frame.document());
+        target = eventTargetElementForDocument(m_frame.document());
     if (!target)
         return false;
     

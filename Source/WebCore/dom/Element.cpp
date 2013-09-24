@@ -65,6 +65,7 @@
 #include "HTMLTableRowsCollection.h"
 #include "InsertionPoint.h"
 #include "InspectorInstrumentation.h"
+#include "KeyboardEvent.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "NamedNodeMap.h"
@@ -236,6 +237,11 @@ bool Element::isMouseFocusable() const
 bool Element::shouldUseInputMethod()
 {
     return isContentEditable(UserSelectAllIsAlwaysNonEditable);
+}
+
+bool Element::dispatchKeyEvent(const PlatformKeyboardEvent& event)
+{
+    return EventDispatcher::dispatchEvent(this, KeyboardEventDispatchMediator::create(KeyboardEvent::create(event, document().defaultView())));
 }
 
 void Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions eventOptions, SimulatedClickVisualOptions visualOptions)
