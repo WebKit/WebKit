@@ -74,16 +74,16 @@ protected:
     virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier) OVERRIDE;
 
     bool dispatchMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-    bool dispatchSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
+    bool dispatchSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&);
 
 private:
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) = 0;
     virtual void connectionWillOpen(CoreIPC::Connection*);
     virtual void connectionWillClose(CoreIPC::Connection*);
 
-    bool sendMessage(PassOwnPtr<CoreIPC::MessageEncoder>, unsigned messageSendFlags);
+    bool sendMessage(std::unique_ptr<CoreIPC::MessageEncoder>, unsigned messageSendFlags);
 
-    Vector<std::pair<OwnPtr<CoreIPC::MessageEncoder>, unsigned>> m_pendingMessages;
+    Vector<std::pair<std::unique_ptr<CoreIPC::MessageEncoder>, unsigned>> m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;
     RefPtr<CoreIPC::Connection> m_connection;
     CoreIPC::MessageReceiverMap m_messageReceiverMap;
@@ -94,10 +94,10 @@ bool ChildProcessProxy::send(const T& message, uint64_t destinationID, unsigned 
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-    auto encoder = createOwned<CoreIPC::MessageEncoder>(T::receiverName(), T::name(), destinationID);
+    auto encoder = std::make_unique<CoreIPC::MessageEncoder>(T::receiverName(), T::name(), destinationID);
     encoder->encode(message);
 
-    return sendMessage(encoder.release(), messageSendFlags);
+    return sendMessage(std::move(encoder), messageSendFlags);
 }
 
 template<typename U> 

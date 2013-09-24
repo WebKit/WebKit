@@ -130,14 +130,14 @@ def message_to_struct_declaration(message):
         if message.has_attribute(DELAYED_ATTRIBUTE):
             send_parameters = [(function_parameter_type(x.type), x.name) for x in message.reply_parameters]
             result.append('    struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {\n')
-            result.append('        DelayedReply(PassRefPtr<CoreIPC::Connection>, OwnPtr<CoreIPC::MessageEncoder>);\n')
+            result.append('        DelayedReply(PassRefPtr<CoreIPC::Connection>, std::unique_ptr<CoreIPC::MessageEncoder>);\n')
             result.append('        ~DelayedReply();\n')
             result.append('\n')
             result.append('        bool send(%s);\n' % ', '.join([' '.join(x) for x in send_parameters]))
             result.append('\n')
             result.append('    private:\n')
             result.append('        RefPtr<CoreIPC::Connection> m_connection;\n')
-            result.append('        OwnPtr<CoreIPC::MessageEncoder> m_encoder;\n')
+            result.append('        std::unique_ptr<CoreIPC::MessageEncoder> m_encoder;\n')
             result.append('    };\n\n')
 
         result.append('    typedef %s Reply;\n' % reply_type(message))
@@ -524,7 +524,7 @@ def generate_message_handler(file):
             if message.condition:
                 result.append('#if %s\n\n' % message.condition)
             
-            result.append('%s::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, OwnPtr<CoreIPC::MessageEncoder> encoder)\n' % message.name)
+            result.append('%s::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, std::unique_ptr<CoreIPC::MessageEncoder> encoder)\n' % message.name)
             result.append('    : m_connection(connection)\n')
             result.append('    , m_encoder(std::move(encoder))\n')
             result.append('{\n')
@@ -539,7 +539,7 @@ def generate_message_handler(file):
             result.append('{\n')
             result.append('    ASSERT(m_encoder);\n')
             result += ['    *m_encoder << %s;\n' % x.name for x in message.reply_parameters]
-            result.append('    bool result = m_connection->sendSyncReply(m_encoder.release());\n')
+            result.append('    bool result = m_connection->sendSyncReply(std::move(m_encoder));\n')
             result.append('    m_connection = nullptr;\n')
             result.append('    return result;\n')
             result.append('}\n')
@@ -576,9 +576,9 @@ def generate_message_handler(file):
     if sync_messages:
         result.append('\n')
         if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
-            result.append('void %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
+            result.append('void %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageDecoder& decoder, std::unique_ptr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
         else:
-            result.append('void %s::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name))
+            result.append('void %s::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, std::unique_ptr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name))
         result.append('{\n')
         result += [sync_message_statement(receiver, message) for message in sync_messages]
         if not receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):

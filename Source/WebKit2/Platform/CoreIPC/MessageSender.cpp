@@ -32,11 +32,11 @@ MessageSender::~MessageSender()
 {
 }
 
-bool MessageSender::sendMessage(PassOwnPtr<MessageEncoder> encoder)
+bool MessageSender::sendMessage(std::unique_ptr<MessageEncoder> encoder)
 {
     ASSERT(messageSenderConnection());
 
-    return messageSenderConnection()->sendMessage(encoder);
+    return messageSenderConnection()->sendMessage(std::move(encoder));
 }
 
 } // namespace CoreIPC

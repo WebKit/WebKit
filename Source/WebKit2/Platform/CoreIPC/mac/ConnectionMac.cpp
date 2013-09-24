@@ -141,10 +141,10 @@ bool Connection::open()
         m_isConnected = true;
         
         // Send the initialize message, which contains a send right for the server to use.
-        auto encoder = createOwned<MessageEncoder>("IPC", "InitializeConnection", 0);
+        auto encoder = std::make_unique<MessageEncoder>("IPC", "InitializeConnection", 0);
         encoder->encode(MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND));
 
-        sendMessage(encoder.release());
+        sendMessage(std::move(encoder));
 
         initializeDeadNameSource();
     }
@@ -159,10 +159,10 @@ bool Connection::open()
     if (m_exceptionPort) {
         m_exceptionPortDataAvailableSource = createDataAvailableSource(m_exceptionPort, m_connectionQueue.get(), bind(&Connection::exceptionSourceEventHandler, this));
 
-        auto encoder = createOwned<MessageEncoder>("IPC", "SetExceptionPort", 0);
+        auto encoder = std::make_unique<MessageEncoder>("IPC", "SetExceptionPort", 0);
         encoder->encode(MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
 
-        sendMessage(encoder.release());
+        sendMessage(std::move(encoder));
     }
 
     ref();
@@ -198,7 +198,7 @@ bool Connection::platformCanSendOutgoingMessages() const
     return true;
 }
 
-bool Connection::sendOutgoingMessage(OwnPtr<MessageEncoder> encoder)
+bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
 {
     Vector<Attachment> attachments = encoder->releaseAttachments();
     

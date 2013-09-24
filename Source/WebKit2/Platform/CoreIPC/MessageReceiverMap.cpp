@@ -90,7 +90,7 @@ bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageDecoder&
     return false;
 }
 
-bool MessageReceiverMap::dispatchSyncMessage(Connection* connection, MessageDecoder& decoder, OwnPtr<MessageEncoder>& replyEncoder)
+bool MessageReceiverMap::dispatchSyncMessage(Connection* connection, MessageDecoder& decoder, std::unique_ptr<MessageEncoder>& replyEncoder)
 {
     if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
         ASSERT(!decoder.destinationID());

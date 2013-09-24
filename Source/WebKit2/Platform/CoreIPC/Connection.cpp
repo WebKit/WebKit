@@ -300,7 +300,7 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
         return;
     }
 
-    auto replyEncoder = createOwned<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
+    auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
 
     // Hand off both the decoder and encoder to the work queue message receiver.
     workQueueMessageReceiver->didReceiveSyncMessage(this, *decoder, replyEncoder);
@@ -309,7 +309,7 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
     ASSERT(!decoder->isInvalid());
 
     if (replyEncoder)
-        sendSyncReply(replyEncoder.release());
+        sendSyncReply(std::move(replyEncoder));
 }
 
 void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback)
@@ -340,9 +340,9 @@ void Connection::markCurrentlyDispatchedMessageAsInvalid()
     m_didReceiveInvalidMessage = true;
 }
 
-OwnPtr<MessageEncoder> Connection::createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID)
+std::unique_ptr<MessageEncoder> Connection::createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID)
 {
-    auto encoder = createOwned<MessageEncoder>(messageReceiverName, messageName, destinationID);
+    auto encoder = std::make_unique<MessageEncoder>(messageReceiverName, messageName, destinationID);
     encoder->setIsSyncMessage(true);
 
     // Encode the sync request ID.
@@ -353,7 +353,7 @@ OwnPtr<MessageEncoder> Connection::createSyncMessageEncoder(StringReference mess
     return encoder;
 }
 
-bool Connection::sendMessage(OwnPtr<MessageEncoder> encoder, unsigned messageSendFlags)
+bool Connection::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned messageSendFlags)
 {
     if (!isValid())
         return false;
@@ -373,7 +373,7 @@ bool Connection::sendMessage(OwnPtr<MessageEncoder> encoder, unsigned messageSen
     return true;
 }
 
-bool Connection::sendSyncReply(OwnPtr<MessageEncoder> encoder)
+bool Connection::sendSyncReply(std::unique_ptr<MessageEncoder> encoder)
 {
     return sendMessage(std::move(encoder));
 }
@@ -434,7 +434,7 @@ OwnPtr<MessageDecoder> Connection::waitForMessage(StringReference messageReceive
     return nullptr;
 }
 
-OwnPtr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequestID, OwnPtr<MessageEncoder> encoder, double timeout, unsigned syncSendFlags)
+OwnPtr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<MessageEncoder> encoder, double timeout, unsigned syncSendFlags)
 {
     if (RunLoop::current() != m_clientRunLoop) {
         // No flags are supported for synchronous messages sent from secondary threads.
@@ -483,7 +483,7 @@ OwnPtr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequestID, OwnPt
     return reply.release();
 }
 
-OwnPtr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, OwnPtr<MessageEncoder> encoder, double timeout)
+OwnPtr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, std::unique_ptr<MessageEncoder> encoder, double timeout)
 {
     ASSERT(RunLoop::current() != m_clientRunLoop);
 
@@ -719,7 +719,8 @@ void Connection::sendOutgoingMessages()
         return;
 
     while (true) {
-        OwnPtr<MessageEncoder> message;
+        std::unique_ptr<MessageEncoder> message;
+
         {
             MutexLocker locker(m_outgoingMessagesLock);
             if (m_outgoingMessages.isEmpty())
@@ -727,7 +728,7 @@ void Connection::sendOutgoingMessages()
             message = m_outgoingMessages.takeFirst();
         }
 
-        if (!sendOutgoingMessage(message.release()))
+        if (!sendOutgoingMessage(std::move(message)))
             break;
     }
 }
@@ -743,7 +744,7 @@ void Connection::dispatchSyncMessage(MessageDecoder& decoder)
         return;
     }
 
-    auto replyEncoder = createOwned<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
+    auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
 
     // Hand off both the decoder and encoder to the client.
     m_client->didReceiveSyncMessage(this, decoder, replyEncoder);
@@ -752,7 +753,7 @@ void Connection::dispatchSyncMessage(MessageDecoder& decoder)
     ASSERT(!decoder.isInvalid());
 
     if (replyEncoder)
-        sendSyncReply(adoptPtr(static_cast<MessageEncoder*>(replyEncoder.leakPtr())));
+        sendSyncReply(std::move(replyEncoder));
 }
 
 void Connection::dispatchDidReceiveInvalidMessage(const CString& messageReceiverNameString, const CString& messageNameString)

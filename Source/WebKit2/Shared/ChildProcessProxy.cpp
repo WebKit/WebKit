@@ -71,12 +71,12 @@ void ChildProcessProxy::terminate()
         m_processLauncher->terminateProcess();
 }
 
-bool ChildProcessProxy::sendMessage(PassOwnPtr<CoreIPC::MessageEncoder> encoder, unsigned messageSendFlags)
+bool ChildProcessProxy::sendMessage(std::unique_ptr<CoreIPC::MessageEncoder> encoder, unsigned messageSendFlags)
 {
     // If we're waiting for the web process to launch, we need to stash away the messages so we can send them once we have
     // a CoreIPC connection.
     if (isLaunching()) {
-        m_pendingMessages.append(std::make_pair(encoder, messageSendFlags));
+        m_pendingMessages.append(std::make_pair(std::move(encoder), messageSendFlags));
         return true;
     }
 
@@ -84,7 +84,7 @@ bool ChildProcessProxy::sendMessage(PassOwnPtr<CoreIPC::MessageEncoder> encoder,
     if (!m_connection)
         return false;
 
-    return connection()->sendMessage(encoder, messageSendFlags);
+    return connection()->sendMessage(std::move(encoder), messageSendFlags);
 }
 
 void ChildProcessProxy::addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver* messageReceiver)
@@ -107,7 +107,7 @@ bool ChildProcessProxy::dispatchMessage(CoreIPC::Connection* connection, CoreIPC
     return m_messageReceiverMap.dispatchMessage(connection, decoder);
 }
 
-bool ChildProcessProxy::dispatchSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+bool ChildProcessProxy::dispatchSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, std::unique_ptr<CoreIPC::MessageEncoder>& replyEncoder)
 {
     return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
 }
@@ -135,9 +135,9 @@ void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connection
     m_connection->open();
 
     for (size_t i = 0; i < m_pendingMessages.size(); ++i) {
-        OwnPtr<CoreIPC::MessageEncoder> message = m_pendingMessages[i].first.release();
+        std::unique_ptr<CoreIPC::MessageEncoder> message = std::move(m_pendingMessages[i].first);
         unsigned messageSendFlags = m_pendingMessages[i].second;
-        m_connection->sendMessage(message.release(), messageSendFlags);
+        m_connection->sendMessage(std::move(message), messageSendFlags);
     }
 
     m_pendingMessages.clear();

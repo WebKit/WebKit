@@ -476,14 +476,14 @@ struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
     static const bool isSync = true;
 
     struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
-        DelayedReply(PassRefPtr<CoreIPC::Connection>, OwnPtr<CoreIPC::MessageEncoder>);
+        DelayedReply(PassRefPtr<CoreIPC::Connection>, std::unique_ptr<CoreIPC::MessageEncoder>);
         ~DelayedReply();
 
         bool send(const CoreIPC::Connection::Handle& connectionHandle);
 
     private:
         RefPtr<CoreIPC::Connection> m_connection;
-        OwnPtr<CoreIPC::MessageEncoder> m_encoder;
+        std::unique_ptr<CoreIPC::MessageEncoder> m_encoder;
     };
 
     typedef CoreIPC::Arguments1<CoreIPC::Connection::Handle&> Reply;
@@ -500,14 +500,14 @@ struct TestMultipleAttributes : CoreIPC::Arguments0 {
     static const bool isSync = true;
 
     struct DelayedReply : public ThreadSafeRefCounted<DelayedReply> {
-        DelayedReply(PassRefPtr<CoreIPC::Connection>, OwnPtr<CoreIPC::MessageEncoder>);
+        DelayedReply(PassRefPtr<CoreIPC::Connection>, std::unique_ptr<CoreIPC::MessageEncoder>);
         ~DelayedReply();
 
         bool send();
 
     private:
         RefPtr<CoreIPC::Connection> m_connection;
-        OwnPtr<CoreIPC::MessageEncoder> m_encoder;
+        std::unique_ptr<CoreIPC::MessageEncoder> m_encoder;
     };
 
     typedef CoreIPC::Arguments0 Reply;
@@ -663,7 +663,7 @@ namespace Messages {
 
 namespace WebPage {
 
-GetPluginProcessConnection::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, OwnPtr<CoreIPC::MessageEncoder> encoder)
+GetPluginProcessConnection::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, std::unique_ptr<CoreIPC::MessageEncoder> encoder)
     : m_connection(connection)
     , m_encoder(std::move(encoder))
 {
@@ -678,12 +678,12 @@ bool GetPluginProcessConnection::DelayedReply::send(const CoreIPC::Connection::H
 {
     ASSERT(m_encoder);
     *m_encoder << connectionHandle;
-    bool result = m_connection->sendSyncReply(m_encoder.release());
+    bool result = m_connection->sendSyncReply(std::move(m_encoder));
     m_connection = nullptr;
     return result;
 }
 
-TestMultipleAttributes::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, OwnPtr<CoreIPC::MessageEncoder> encoder)
+TestMultipleAttributes::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, std::unique_ptr<CoreIPC::MessageEncoder> encoder)
     : m_connection(connection)
     , m_encoder(std::move(encoder))
 {
@@ -697,7 +697,7 @@ TestMultipleAttributes::DelayedReply::~DelayedReply()
 bool TestMultipleAttributes::DelayedReply::send()
 {
     ASSERT(m_encoder);
-    bool result = m_connection->sendSyncReply(m_encoder.release());
+    bool result = m_connection->sendSyncReply(std::move(m_encoder));
     m_connection = nullptr;
     return result;
 }
@@ -769,7 +769,7 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageDec
     ASSERT_NOT_REACHED();
 }
 
-void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, std::unique_ptr<CoreIPC::MessageEncoder>& replyEncoder)
 {
     if (decoder.messageName() == Messages::WebPage::CreatePlugin::name()) {
         CoreIPC::handleMessage<Messages::WebPage::CreatePlugin>(decoder, *replyEncoder, this, &WebPage::createPlugin);

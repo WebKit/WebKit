@@ -51,11 +51,11 @@ void WebConnection::postMessage(const String& messageName, APIObject* messageBod
     if (!hasValidConnection())
         return;
 
-    auto encoder = createOwned<CoreIPC::MessageEncoder>(Messages::WebConnection::HandleMessage::receiverName(), Messages::WebConnection::HandleMessage::name(), 0);
+    auto encoder = std::make_unique<CoreIPC::MessageEncoder>(Messages::WebConnection::HandleMessage::receiverName(), Messages::WebConnection::HandleMessage::name(), 0);
     encoder->encode(messageName);
     encodeMessageBody(*encoder, messageBody);
 
-    sendMessage(encoder.release());
+    sendMessage(std::move(encoder));
 }
 
 void WebConnection::didClose()

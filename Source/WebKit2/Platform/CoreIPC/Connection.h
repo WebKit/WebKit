@@ -173,11 +173,11 @@ public:
     template<typename T> bool sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout = NoTimeout, unsigned syncSendFlags = 0);
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, double timeout);
 
-    OwnPtr<MessageEncoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
-    bool sendMessage(OwnPtr<MessageEncoder>, unsigned messageSendFlags = 0);
-    OwnPtr<MessageDecoder> sendSyncMessage(uint64_t syncRequestID, OwnPtr<MessageEncoder>, double timeout, unsigned syncSendFlags = 0);
-    OwnPtr<MessageDecoder> sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, OwnPtr<MessageEncoder>, double timeout);
-    bool sendSyncReply(OwnPtr<MessageEncoder>);
+    std::unique_ptr<MessageEncoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
+    bool sendMessage(std::unique_ptr<MessageEncoder>, unsigned messageSendFlags = 0);
+    OwnPtr<MessageDecoder> sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<MessageEncoder>, double timeout, unsigned syncSendFlags = 0);
+    OwnPtr<MessageDecoder> sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, std::unique_ptr<MessageEncoder>, double timeout);
+    bool sendSyncReply(std::unique_ptr<MessageEncoder>);
 
     void wakeUpRunLoop();
 
@@ -208,7 +208,7 @@ private:
     bool canSendOutgoingMessages() const;
     bool platformCanSendOutgoingMessages() const;
     void sendOutgoingMessages();
-    bool sendOutgoingMessage(OwnPtr<MessageEncoder>);
+    bool sendOutgoingMessage(std::unique_ptr<MessageEncoder>);
     void connectionDidClose();
     
     // Called on the listener thread.
@@ -248,7 +248,7 @@ private:
 
     // Outgoing messages.
     Mutex m_outgoingMessagesLock;
-    Deque<OwnPtr<MessageEncoder>> m_outgoingMessages;
+    Deque<std::unique_ptr<MessageEncoder>> m_outgoingMessages;
     
     ThreadCondition m_waitForMessageCondition;
     Mutex m_waitForMessageMutex;
@@ -326,7 +326,7 @@ private:
 
     Vector<uint8_t> m_readBuffer;
     OVERLAPPED m_readState;
-    OwnPtr<MessageEncoder> m_pendingWriteEncoder;
+    std::unique_ptr<MessageEncoder> m_pendingWriteEncoder;
     OVERLAPPED m_writeState;
     HANDLE m_connectionPipe;
 #elif USE(UNIX_DOMAIN_SOCKETS)
@@ -349,10 +349,10 @@ template<typename T> bool Connection::send(const T& message, uint64_t destinatio
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-    auto encoder = createOwned<MessageEncoder>(T::receiverName(), T::name(), destinationID);
+    auto encoder = std::make_unique<MessageEncoder>(T::receiverName(), T::name(), destinationID);
     encoder->encode(message);
     
-    return sendMessage(encoder.release(), messageSendFlags);
+    return sendMessage(std::move(encoder), messageSendFlags);
 }
 
 template<typename T> bool Connection::sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout, unsigned syncSendFlags)
@@ -360,13 +360,13 @@ template<typename T> bool Connection::sendSync(const T& message, const typename 
     COMPILE_ASSERT(T::isSync, SyncMessageExpected);
 
     uint64_t syncRequestID = 0;
-    OwnPtr<MessageEncoder> encoder = createSyncMessageEncoder(T::receiverName(), T::name(), destinationID, syncRequestID);
+    std::unique_ptr<MessageEncoder> encoder = createSyncMessageEncoder(T::receiverName(), T::name(), destinationID, syncRequestID);
     
     // Encode the rest of the input arguments.
     encoder->encode(message);
 
     // Now send the message and wait for a reply.
-    OwnPtr<MessageDecoder> replyDecoder = sendSyncMessage(syncRequestID, encoder.release(), timeout, syncSendFlags);
+    OwnPtr<MessageDecoder> replyDecoder = sendSyncMessage(syncRequestID, std::move(encoder), timeout, syncSendFlags);
     if (!replyDecoder)
         return false;
 

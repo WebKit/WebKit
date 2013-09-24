@@ -43,10 +43,10 @@ public:
     template<typename U> bool send(const U& message, uint64_t destinationID)
     {
         COMPILE_ASSERT(!U::isSync, AsyncMessageExpected);
-        auto encoder = createOwned<MessageEncoder>(U::receiverName(), U::name(), destinationID);
+        auto encoder = std::make_unique<MessageEncoder>(U::receiverName(), U::name(), destinationID);
         encoder->encode(message);
         
-        return sendMessage(encoder.release());
+        return sendMessage(std::move(encoder));
     }
 
     template<typename U> bool sendSync(const U& message, const typename U::Reply& reply, double timeout = Connection::NoTimeout)
@@ -62,7 +62,7 @@ public:
         return messageSenderConnection()->sendSync(message, reply, destinationID, timeout);
     }
 
-    bool sendMessage(PassOwnPtr<MessageEncoder>);
+    bool sendMessage(std::unique_ptr<MessageEncoder>);
 
 private:
     virtual Connection* messageSenderConnection() = 0;
