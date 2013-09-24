@@ -1,3 +1,10 @@
+2013-09-24  Alexey Proskuryakov  <ap@apple.com>
+
+        SVG Animations are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=107018
+
+        * platform/mac-wk2/TestExpectations: Marked some frequently failing tests
+
 2013-09-24  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Modify updateSegmentsForShapes function to use logical coordinates
