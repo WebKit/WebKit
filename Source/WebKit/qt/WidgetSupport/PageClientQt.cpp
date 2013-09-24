@@ -64,6 +64,7 @@ void PageClientQWidget::update(const QRect & dirtyRect)
 void PageClientQWidget::repaintViewport()
 {
     update(view->rect());
+    QMetaObject::invokeMethod(page, "repaintRequested", Qt::QueuedConnection, Q_ARG(QRect, view->rect()));
 }
 
 void PageClientQWidget::setInputMethodEnabled(bool enable)
@@ -175,6 +176,7 @@ void PageClientQGraphicsWidget::update(const QRect& dirtyRect)
 void PageClientQGraphicsWidget::repaintViewport()
 {
     update(view->boundingRect().toAlignedRect());
+    QMetaObject::invokeMethod(page, "repaintRequested", Qt::QueuedConnection, Q_ARG(QRect, view->boundingRect().toAlignedRect()));
 }
 
 bool PageClientQGraphicsWidget::makeOpenGLContextCurrentIfAvailable()
