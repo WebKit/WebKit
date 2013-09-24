@@ -1,3 +1,29 @@
+2013-09-24  Andreas Kling  <akling@apple.com>
+
+        Cache continuation() in a local to avoid repeat hash lookups.
+        <https://webkit.org/b/121840>
+
+        Reviewed by Geoffrey Garen.
+
+        RenderBoxModelObject::continuation() does a hash lookup every time.
+        Cache the result in a local instead of calling it repeatedly.
+
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::isAnonymousBlockContinuation):
+
+            Reorder to check bitfield before hash map.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateDragState):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteRects):
+        (WebCore::RenderInline::absoluteQuads):
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        (WebCore::RenderInline::updateDragState):
+        (WebCore::RenderInline::addFocusRingRects):
+
+            Cache continuation() in locals where it's used more than once.
+
 2013-09-24  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Crash when trying to download blob url

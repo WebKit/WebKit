@@ -651,12 +651,12 @@ void RenderInline::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accu
     AbsoluteRectsGeneratorContext context(rects, accumulatedOffset);
     generateLineBoxRects(context);
 
-    if (continuation()) {
-        if (continuation()->isBox()) {
-            RenderBox* box = toRenderBox(continuation());
-            continuation()->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location() + box->locationOffset()));
+    if (RenderBoxModelObject* continuation = this->continuation()) {
+        if (continuation->isBox()) {
+            RenderBox* box = toRenderBox(continuation);
+            continuation->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location() + box->locationOffset()));
         } else
-            continuation()->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location()));
+            continuation->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location()));
     }
 }
 
@@ -688,8 +688,8 @@ void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
     AbsoluteQuadsGeneratorContext context(this, quads);
     generateLineBoxRects(context);
 
-    if (continuation())
-        continuation()->absoluteQuads(quads, wasFixed);
+    if (RenderBoxModelObject* continuation = this->continuation())
+        continuation->absoluteQuads(quads, wasFixed);
 }
 
 LayoutUnit RenderInline::offsetLeft() const
@@ -1071,8 +1071,10 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(const RenderLayerModelObj
                 repaintRect.unite(curr->rectWithOutlineForRepaint(repaintContainer, outlineSize));
         }
 
-        if (continuation() && !continuation()->isInline() && continuation()->parent())
-            repaintRect.unite(continuation()->rectWithOutlineForRepaint(repaintContainer, outlineSize));
+        if (RenderBoxModelObject* continuation = this->continuation()) {
+            if (!continuation->isInline() && continuation->parent())
+                repaintRect.unite(continuation->rectWithOutlineForRepaint(repaintContainer, outlineSize));
+        }
     }
 
     return repaintRect;
@@ -1254,8 +1256,8 @@ const RenderObject* RenderInline::pushMappingToContainer(const RenderLayerModelO
 void RenderInline::updateDragState(bool dragOn)
 {
     RenderBoxModelObject::updateDragState(dragOn);
-    if (continuation())
-        continuation()->updateDragState(dragOn);
+    if (RenderBoxModelObject* continuation = this->continuation())
+        continuation->updateDragState(dragOn);
 }
 
 void RenderInline::childBecameNonInline(RenderObject* child)
@@ -1430,11 +1432,11 @@ void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& 
         }
     }
 
-    if (continuation()) {
-        if (continuation()->isInline())
-            continuation()->addFocusRingRects(rects, flooredLayoutPoint(additionalOffset + continuation()->containingBlock()->location() - containingBlock()->location()), paintContainer);
+    if (RenderBoxModelObject* continuation = this->continuation()) {
+        if (continuation->isInline())
+            continuation->addFocusRingRects(rects, flooredLayoutPoint(additionalOffset + continuation->containingBlock()->location() - containingBlock()->location()), paintContainer);
         else
-            continuation()->addFocusRingRects(rects, flooredLayoutPoint(additionalOffset + toRenderBox(continuation())->location() - containingBlock()->location()), paintContainer);
+            continuation->addFocusRingRects(rects, flooredLayoutPoint(additionalOffset + toRenderBox(continuation)->location() - containingBlock()->location()), paintContainer);
     }
 }
 

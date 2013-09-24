@@ -273,7 +273,7 @@ public:
     bool paintsContinuationOutline(RenderInline*);
 
     virtual RenderBoxModelObject* virtualContinuation() const OVERRIDE FINAL { return continuation(); }
-    bool isAnonymousBlockContinuation() const { return continuation() && isAnonymousBlock(); }
+    bool isAnonymousBlockContinuation() const { return isAnonymousBlock() && continuation(); }
     RenderInline* inlineElementContinuation() const;
     RenderBlock* blockElementContinuation() const;
 
