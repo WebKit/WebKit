@@ -1,3 +1,13 @@
+2013-09-24  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile error.
+        https://bugs.webkit.org/show_bug.cgi?id=121839
+
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate): Added missing guard.
+
 2013-09-24  Andreas Kling  <akling@apple.com>
 
         Cache continuation() in a local to avoid repeat hash lookups.

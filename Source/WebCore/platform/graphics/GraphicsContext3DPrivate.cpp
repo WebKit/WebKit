@@ -75,8 +75,10 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, G
 
 GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 {
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
     if (client())
         client()->platformLayerWillBeDestroyed();
+#endif
 }
 
 bool GraphicsContext3DPrivate::makeContextCurrent()
