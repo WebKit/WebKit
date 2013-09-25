@@ -121,6 +121,7 @@ static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int&
     if (!ltr)
         glyphBuffer->reverse(lastGlyphCount, glyphBufferSize - lastGlyphCount);
 
+#if ENABLE(SVG_FONTS)
     // We need to handle transforms on SVG fonts internally, since they are rendered internally.
     if (fontData->isSVGFont()) {
         ASSERT(iterator.run().renderingContext());
@@ -128,6 +129,7 @@ static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int&
         if (typesettingFeatures & Kerning)
             iterator.run().renderingContext()->applySVGKerning(fontData, iterator, glyphBuffer, lastGlyphCount);
     } else
+#endif
         fontData->applyTransforms(glyphBuffer->glyphs(lastGlyphCount), advances + lastGlyphCount, glyphBufferSize - lastGlyphCount, typesettingFeatures);
 
     if (!ltr)

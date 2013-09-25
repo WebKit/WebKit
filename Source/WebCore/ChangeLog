@@ -1,3 +1,14 @@
+2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        REGRESSION(r156393): Build with !ENABLE(SVG_FONTS) broken
+
+        Unreviewed build-fix.
+
+        Protect SVG font code with #ifdef ENABLE(SVG_FONTS).
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::applyFontTransforms):
+
 2013-09-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r156272.
