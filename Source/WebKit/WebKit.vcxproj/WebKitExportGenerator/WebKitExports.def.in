@@ -392,7 +392,6 @@ EXPORTS
         symbolWithPointer(?frameOrientationAtIndex@BitmapImage@WebCore@@IAE?AVImageOrientation@2@I@Z, ?frameOrientationAtIndex@BitmapImage@WebCore@@IEAA?AVImageOrientation@2@_K@Z)
         symbolWithPointer(?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QAEXV?$PassRefPtr@VStyleSheetContents@WebCore@@@WTF@@@Z, ?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QEAAXV?$PassRefPtr@VStyleSheetContents@WebCore@@@WTF@@@Z)
         symbolWithPointer(?parseString@StyleSheetContents@WebCore@@QAE_NABVString@WTF@@@Z, ?parseString@StyleSheetContents@WebCore@@QEAA_NAEBVString@WTF@@@Z)
-        symbolWithPointer(??0CSSParserContext@WebCore@@QAE@PAVDocument@1@ABVKURL@1@ABVString@WTF@@@Z, ??0CSSParserContext@WebCore@@QEAA@PEAVDocument@1@AEBVKURL@1@AEBVString@WTF@@@Z)
         symbolWithPointer(?emptyString@WTF@@YAABVString@1@XZ, ?emptyString@WTF@@YAAEBVString@1@XZ)
         symbolWithPointer(?invalidate@KURL@WebCore@@AAEXXZ, ?invalidate@KURL@WebCore@@AEAAXXZ)
         symbolWithPointer(??0StyleSheetContents@WebCore@@AAE@PAVStyleRuleImport@1@ABVString@WTF@@ABUCSSParserContext@1@@Z, ??0StyleSheetContents@WebCore@@AEAA@PEAVStyleRuleImport@1@AEBVString@WTF@@AEBUCSSParserContext@1@@Z)

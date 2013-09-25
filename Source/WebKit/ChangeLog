@@ -1,3 +1,11 @@
+2013-09-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix after r156408.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Remove
+        symbol export declaration for WebCore::CSSParserContext::CSSParserContext,
+        which is no longer provided by the system.
+
 2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Fix build with Qt 5.2 QtPosition module
