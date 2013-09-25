@@ -1441,6 +1441,8 @@ webkit.org/b/121593 accessibility/radio-button-title-label.html  [ Failure ]
 
 webkit.org/b/121594 accessibility/self-referencing-aria-labelledby.html [ Failure ]
 
+webkit.org/b/121905 fast/images/exif-orientation.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

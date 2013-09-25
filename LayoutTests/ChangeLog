@@ -1,3 +1,13 @@
+2013-09-25  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] Update test expectations. Mark fast/images/exif-orientation.html as failing.
+        https://bugs.webkit.org/show_bug.cgi?id=121906
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Mark fast/images/exif-orientation.html as failing, 
+        as reported in webkit.org/b/121905.
+
 2013-09-25  Andrei Parvu  <parvu@adobe.com>
 
         <https://webkit.org/b/120476> [CSS Masking] Implement luminance masking
