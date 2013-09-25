@@ -319,7 +319,7 @@ window.addEventListener('load', function () { BenchmarkRunner.listSuites(); });
 
 (function () {
     var style = document.createElement('style');
-    style.appendChild(document.createTextNode('iframe { width: 700px; height: 500px; border: 2px solid black; }'
+    style.appendChild(document.createTextNode('iframe { width: 1000px; height: 500px; border: 2px solid black; }'
         + 'ol { list-style: none; margin: 0; padding: 0; }'
         + 'ol ol { margin-left: 2em; list-position: outside; }'
         + '.running { text-decoration: underline; }'

@@ -113,7 +113,6 @@ BenchmarkRunner.suite({
     name: 'jQuery/TodoMVC',
     url: 'todomvc/architecture-examples/jquery/index.html',
     prepare: function (contentWindow, contentDocument) {
-    var storage = [];
         return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
             element.focus();
             return element;
@@ -147,7 +146,6 @@ BenchmarkRunner.suite({
     name: 'AngularJS/TodoMVC',
     url: 'todomvc/architecture-examples/angularjs/index.html',
     prepare: function (contentWindow, contentDocument) {
-    var storage = [];
         return BenchmarkRunner.waitForElement('#new-todo').then(function (element) {
             element.focus();
             return element;
@@ -179,9 +177,62 @@ BenchmarkRunner.suite({
     ]
 });
 
+var actionCount = 50;
+BenchmarkRunner.suite({
+    name: 'FlightJS/MailClient',
+    url: 'flightjs-example-app/index.html',
+    prepare: function (contentWindow, contentDocument) {
+        return BenchmarkRunner.waitForElement('.span8').then(function (element) {
+            element.focus();
+            return element;
+        });
+    },
+    tests: [
+        ['OpeningTabs' + actionCount + 'Times', function (newTodo, contentWindow, contentDocument) {
+            contentDocument.getElementById('inbox').click();
+            for (var i = 0; i < actionCount; i++) {
+                contentDocument.getElementById('later').click();
+                contentDocument.getElementById('sent').click();
+                contentDocument.getElementById('trash').click();
+                contentDocument.getElementById('inbox').click();
+            }
+        }],
+        ['MovingEmails' + actionCount + 'Times', function (newTodo, contentWindow, contentDocument) {
+            contentDocument.getElementById('inbox').click();
+            for (var i = 0; i < actionCount; i++) {
+                contentDocument.getElementById('mail_2139').click();
+                contentDocument.getElementById('move_mail').click();
+                contentDocument.querySelector('#move_to_selector #later').click();
+                contentDocument.getElementById('later').click();
+                contentDocument.getElementById('mail_2139').click();
+                contentDocument.getElementById('move_mail').click();
+                contentDocument.querySelector('#move_to_selector #trash').click();
+                contentDocument.getElementById('trash').click();
+                contentDocument.getElementById('mail_2139').click();
+                contentDocument.getElementById('move_mail').click();
+                contentDocument.querySelector('#move_to_selector #inbox').click();
+                contentDocument.getElementById('inbox').click();
+            }
+        }],
+        ['Sending' + actionCount + 'NewEmails', function (newTodo, contentWindow, contentDocument) {
+            for (var i = 0; i < actionCount; i++) {
+                contentDocument.getElementById('new_mail').click();
+                var subject = contentDocument.getElementById('compose_subject');
+                var message = contentDocument.getElementById('compose_message');
+                subject.focus();
+                contentWindow.$(subject).trigger('keydown');
+                contentDocument.execCommand('InsertText', false, 'Hello');
+                message.focus();
+                contentWindow.$(message).trigger('keydown');
+                contentDocument.execCommand('InsertText', false, 'Hello,\n\nThis is a test message.\n\n- WebKitten');
+                contentDocument.getElementById('send_composed').click();
+            }
+        }],
+    ]
+});
+
 </script>
 </head>
 <body>
-<p></p>
 </body>
 </html>

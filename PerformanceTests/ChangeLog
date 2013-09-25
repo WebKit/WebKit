@@ -1,3 +1,114 @@
+2013-09-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DoYouEvenBench: Add a test case for FlightJS
+        https://bugs.webkit.org/show_bug.cgi?id=121926
+
+        Reviewed by Antti Koivisto.
+
+        Add a FlightJS test case.
+
+        * DoYouEvenBench/benchmark.html:
+        * DoYouEvenBench/benchmark.js:
+        * DoYouEvenBench/flightjs-example-app: Added.
+        * DoYouEvenBench/flightjs-example-app/LICENSE.md: Added.
+        * DoYouEvenBench/flightjs-example-app/README.md: Added.
+        * DoYouEvenBench/flightjs-example-app/app: Added.
+        * DoYouEvenBench/flightjs-example-app/app/boot: Added.
+        * DoYouEvenBench/flightjs-example-app/app/boot/page.js: Added.
+        * DoYouEvenBench/flightjs-example-app/app/component_data: Added.
+        * DoYouEvenBench/flightjs-example-app/app/component_data/compose_box.js: Added.
+        * DoYouEvenBench/flightjs-example-app/app/component_data/mail_items.js: Added.
+        * DoYouEvenBench/flightjs-example-app/app/component_data/move_to.js: Added.
+        * DoYouEvenBench/flightjs-example-app/app/component_ui: Added.
+        * DoYouEvenBench/flightjs-example-app/app/component_ui/compose_box.js: Added.
+        * DoYouEvenBench/flightjs-example-app/app/component_ui/folders.js: Added.
+        * DoYouEvenBench/flightjs-example-app/app/component_ui/mail_controls.js: Added.
+        * DoYouEvenBench/flightjs-example-app/app/component_ui/mail_items.js: Added.
+        * DoYouEvenBench/flightjs-example-app/app/component_ui/move_to_selector.js: Added.
+        * DoYouEvenBench/flightjs-example-app/app/component_ui/with_select.js: Added.
+        * DoYouEvenBench/flightjs-example-app/app/css: Added.
+        * DoYouEvenBench/flightjs-example-app/app/css/custom.css: Added.
+        * DoYouEvenBench/flightjs-example-app/app/data.js: Added.
+        * DoYouEvenBench/flightjs-example-app/app/templates.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components: Added.
+        * DoYouEvenBench/flightjs-example-app/components/bootstrap: Added.
+        * DoYouEvenBench/flightjs-example-app/components/bootstrap/css: Added.
+        * DoYouEvenBench/flightjs-example-app/components/bootstrap/css/bootstrap-responsive.css: Added.
+        * DoYouEvenBench/flightjs-example-app/components/bootstrap/css/bootstrap-responsive.min.css: Added.
+        * DoYouEvenBench/flightjs-example-app/components/bootstrap/css/bootstrap.css: Added.
+        * DoYouEvenBench/flightjs-example-app/components/bootstrap/css/bootstrap.min.css: Added.
+        * DoYouEvenBench/flightjs-example-app/components/bootstrap/img: Added.
+        * DoYouEvenBench/flightjs-example-app/components/bootstrap/img/glyphicons-halflings-white.png: Added.
+        * DoYouEvenBench/flightjs-example-app/components/bootstrap/img/glyphicons-halflings.png: Added.
+        * DoYouEvenBench/flightjs-example-app/components/bootstrap/js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/bootstrap/js/bootstrap.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/bootstrap/js/bootstrap.min.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/.gitignore: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/CHANGES: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/CONTRIBUTORS.md: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/LICENSE: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/README.md: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/component.json: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/es5-sham.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/es5-sham.min.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/es5-shim.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/es5-shim.min.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/package.json: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/helpers: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/helpers/h-kill.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/helpers/h-matchers.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/helpers/h.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/index.html: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/lib: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/lib/jasmine-html.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/lib/jasmine.css: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/lib/jasmine.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/lib/jasmine_favicon.png: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/lib/json2.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/spec: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/spec/s-array.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/spec/s-date.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/spec/s-function.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/spec/s-object.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/es5-shim/tests/spec/s-string.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/flight: Added.
+        * DoYouEvenBench/flightjs-example-app/components/flight/.travis.yml: Added.
+        * DoYouEvenBench/flightjs-example-app/components/flight/lib: Added.
+        * DoYouEvenBench/flightjs-example-app/components/flight/lib/advice.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/flight/lib/component.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/flight/lib/compose.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/flight/lib/index.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/flight/lib/logger.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/flight/lib/registry.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/flight/lib/utils.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/flight/tools: Added.
+        * DoYouEvenBench/flightjs-example-app/components/flight/tools/debug: Added.
+        * DoYouEvenBench/flightjs-example-app/components/flight/tools/debug/debug.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jasmine-flight: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jasmine-flight/LICENSE.md: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jasmine-flight/README.md: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jasmine-flight/bower.json: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jasmine-flight/lib: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jasmine-flight/lib/jasmine-flight.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jasmine-jquery: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jasmine-jquery/lib: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jasmine-jquery/lib/jasmine-jquery.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jquery: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jquery/component.json: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jquery/composer.json: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jquery/jquery.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/jquery/jquery.min.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/mustache: Added.
+        * DoYouEvenBench/flightjs-example-app/components/mustache/mustache.js: Added.
+        * DoYouEvenBench/flightjs-example-app/components/requirejs: Added.
+        * DoYouEvenBench/flightjs-example-app/components/requirejs/require.js: Added.
+        * DoYouEvenBench/flightjs-example-app/index.html: Added.
+        * DoYouEvenBench/flightjs-example-app/karma.conf.js: Added.
+        * DoYouEvenBench/flightjs-example-app/package.json: Added.
+        * DoYouEvenBench/flightjs-example-app/requireMain.js: Added.
+
 2013-09-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         DoYouEvenBench: Indentations in benchmark.js and benchmark.html are all messed up
