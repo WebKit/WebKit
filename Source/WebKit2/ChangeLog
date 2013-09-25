@@ -1,3 +1,16 @@
+2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Fix build with Qt 5.2 QtPosition module
+        https://bugs.webkit.org/show_bug.cgi?id=121089
+
+        Reviewed by Simon Hausmann.
+
+        QtLocation -> QtPositioning
+
+        * Target.pri:
+        * UIProcess/qt/WebGeolocationProviderQt.cpp:
+        * WebKit2.pri:
+
 2013-09-24  Sam Weinig  <sam@webkit.org>
 
         Remove erroneous reference to libWTF.a in the WebKit2 Xcode project file.

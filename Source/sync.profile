@@ -20,6 +20,7 @@
 %dependencies = (
     "qtbase" => "",
     "qtdeclarative" => "",
+    "qtlocation" => "",
     "qtmultimedia" => "",
     "qtsensors" => "",
 );

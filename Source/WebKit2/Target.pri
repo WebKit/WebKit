@@ -937,7 +937,7 @@ enable?(TOUCH_EVENTS) {
 }
 
 
-have?(qtlocation):enable?(GEOLOCATION): QT += location
+have?(qtpositioning):enable?(GEOLOCATION): QT += positioning
 
 use?(3D_GRAPHICS): WEBKIT += angle
 

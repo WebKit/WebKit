@@ -36,7 +36,7 @@
 #include "QWebFrameAdapter.h"
 #include "QWebPageAdapter.h"
 
-#include <QtLocation/QGeoPositionInfoSource>
+#include <QtPositioning/QGeoPositionInfoSource>
 
 namespace WebCore {
 

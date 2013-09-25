@@ -1,3 +1,14 @@
+2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Fix build with Qt 5.2 QtPosition module
+        https://bugs.webkit.org/show_bug.cgi?id=121089
+
+        Reviewed by Simon Hausmann.
+
+        QtLocation -> QtPositioning
+
+        * WebCoreSupport/GeolocationClientQt.cpp:
+
 2013-09-24  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Crash when trying to download blob url

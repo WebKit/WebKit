@@ -62,6 +62,14 @@ win32-msvc*: MAKEFILE_NOOP_COMMAND = @echo >NUL
 scratchbox: PYTHON = python2.6
 else: PYTHON = python
 
+# We use private_tests to detect developer build, since the destdir will
+# always be our webkit build dir. This might change as configure changes.
+contains(QT_CONFIG, private_tests): CONFIG += qt_developer_build
+
+# By default we enable "production build", and build-webkit, which is
+# used by bots and developers, will disable it, to enable warnings etc.
+CONFIG += production_build
+
 # Run configure before making decisions that depend on the result
 root_project_file {
     load(configure)
@@ -74,19 +82,11 @@ unix:config_gccdepends {
     CONFIG += GNUmake gcc_MD_depends
 }
 
-# We use private_tests to detect developer build, since the destdir will
-# always be our webkit build dir. This might change as configure changes.
-contains(QT_CONFIG, private_tests): CONFIG += qt_developer_build
-
 # Set some defaults for specific platforms
 CONFIG += include_webinspector
 
 # Make sure we process the PKGCONFIG variable if applicable
 !mac: CONFIG += link_pkgconfig
-
-# By default we enable "production build", and build-webkit, which is
-# used by bots and developers, will disable it, to enable warnings etc.
-CONFIG += production_build
 
 # Limit the creation of thin archives to Linux, since only GNU's ar supports it.
 !debug_and_release:linux-g++*: CONFIG += gnu_thin_archives

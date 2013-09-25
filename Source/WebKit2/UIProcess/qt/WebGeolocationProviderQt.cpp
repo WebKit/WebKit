@@ -21,8 +21,8 @@
 #include "config.h"
 #include "WebGeolocationProviderQt.h"
 
-#if ENABLE(GEOLOCATION) && HAVE(QTLOCATION)
-#include <QtLocation/QGeoPositionInfoSource>
+#if ENABLE(GEOLOCATION) && HAVE(QTPOSITIONING)
+#include <QtPositioning/QGeoPositionInfoSource>
 
 namespace WebKit {
 
