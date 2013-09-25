@@ -1627,6 +1627,8 @@ AccessibilitySortDirection AccessibilityObject::sortDirection() const
         return SortDirectionAscending;
     if (equalIgnoringCase(sortAttribute, "descending"))
         return SortDirectionDescending;
+    if (equalIgnoringCase(sortAttribute, "other"))
+        return SortDirectionOther;
     
     return SortDirectionNone;
 }

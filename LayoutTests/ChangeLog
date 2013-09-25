@@ -1,3 +1,16 @@
+2013-09-25  Sam White  <samuel_white@apple.com>
+
+        AX: WebKit doesn't map aria-sort=other on OS X
+        https://bugs.webkit.org/show_bug.cgi?id=118511
+
+        Reviewed by Chris Fleizach.
+
+        Updated test to check "other" aria-sort order. Also added additional checks to
+        determine which elements expose aria-sort so our "none" case is more clear.
+
+        * accessibility/aria-sort-expected.txt:
+        * accessibility/aria-sort.html:
+
 2013-09-25  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r156355) Links / interactive elements inside nested tables are unclickable

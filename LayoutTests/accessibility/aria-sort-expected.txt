@@ -1,14 +1,17 @@
-button
-column
+column column column
 row
-This tests that aria-sort will be exposed correctly to the Mac accessibility API.
+This tests that aria-sort is exposed correctly to the Mac accessibility API.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS accessibilityController.focusedElement.stringAttributeValue('AXSortDirection') is 'AXUnknownSortDirection'
-PASS accessibilityController.focusedElement.stringAttributeValue('AXSortDirection') is 'AXAscendingSortDirection'
-PASS accessibilityController.focusedElement.stringAttributeValue('AXSortDirection') is 'AXDescendingSortDirection'
+PASS col1.isAttributeSupported('AXSortDirection') is true
+PASS col1.stringAttributeValue('AXSortDirection') is 'AXAscendingSortDirection'
+PASS col2.isAttributeSupported('AXSortDirection') is true
+PASS col2.stringAttributeValue('AXSortDirection') is 'AXDescendingSortDirection'
+PASS col3.isAttributeSupported('AXSortDirection') is true
+PASS col3.stringAttributeValue('AXSortDirection') is 'AXUnknownSortDirection'
+PASS row1.isAttributeSupported('AXSortDirection') is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
