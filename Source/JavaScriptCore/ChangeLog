@@ -1,5 +1,14 @@
 2013-09-25  Brady Eidson  <beidson@apple.com>
 
+        Enable the IndexedDB build on Mac, but leave the feature non-functional
+        https://bugs.webkit.org/show_bug.cgi?id=121918
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2013-09-25  Brady Eidson  <beidson@apple.com>
+
         FeatureDefine.xcconfig cleanup (They should all be identical).
         https://bugs.webkit.org/show_bug.cgi?id=121921
 

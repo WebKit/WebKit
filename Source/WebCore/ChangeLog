@@ -1,3 +1,19 @@
+2013-09-25  Brady Eidson  <beidson@apple.com>
+
+        Enable the IndexedDB build on Mac, but leave the feature non-functional
+        https://bugs.webkit.org/show_bug.cgi?id=121918
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/FeatureDefines.xcconfig: Enable the feature.
+
+        * Modules/indexeddb/IDBFactory.h:
+        (WebCore::IDBFactory::create): If the IDBFactoryBackend is null (which it is for on-levelDB platforms),
+          don't create an IDBFactory. This hides the feature from javascript even though upport code is in the build.
+
+        * WebCore.xcodeproj/project.pbxproj: Remove the Modules/indexedDB/leveldb directory now that Mac has no
+          further use for it.
+
 2013-09-25  Andreas Kling  <akling@apple.com>
 
         Make EventTarget::hasEventListeners() a const method.
