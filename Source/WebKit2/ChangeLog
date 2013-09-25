@@ -1,3 +1,14 @@
+2013-09-24  Sam Weinig  <sam@webkit.org>
+
+        Remove the Windows-specific rules from WebKit2's DerivedSources.make, Windows is not supported anymore
+        https://bugs.webkit.org/show_bug.cgi?id=121895
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DerivedSources.make:
+        Remove Windows-specific rules, and, now that only the Mac is using this file, remove the
+        Mac checks.
+
 2013-09-24  Anders Carlsson  <andersca@apple.com>
 
         Only allow rvalues to be passed as synchronous message replies
