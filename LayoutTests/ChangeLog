@@ -1,3 +1,64 @@
+2013-09-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Moving around and updating the GTK baselines that are
+        either specific to WK1 or WK2 or can be shared by both.
+
+        * platform/gtk-wk1/http: Added.
+        * platform/gtk-wk1/http/tests: Added.
+        * platform/gtk-wk1/http/tests/cache: Added.
+        * platform/gtk-wk1/http/tests/cache/cancel-multiple-post-xhrs-expected.txt: Added.
+        * platform/gtk-wk1/http/tests/security: Added.
+        * platform/gtk-wk1/http/tests/security/contentSecurityPolicy: Added.
+        * platform/gtk-wk1/http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt: Added.
+        * platform/gtk-wk1/http/tests/security/contentSecurityPolicy/report-blocked-data-uri-expected.txt: Added.
+        * platform/gtk-wk1/http/tests/security/contentSecurityPolicy/report-blocked-file-uri-expected.txt: Added.
+        * platform/gtk-wk1/http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin-expected.txt: Added.
+        * platform/gtk-wk1/http/tests/security/contentSecurityPolicy/report-blocked-uri-expected.txt: Added.
+        * platform/gtk-wk1/http/tests/security/contentSecurityPolicy/report-only-expected.txt: Added.
+        * platform/gtk-wk1/http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt: Added.
+        * platform/gtk-wk1/http/tests/security/contentSecurityPolicy/report-uri-expected.txt: Added.
+        * platform/gtk-wk1/http/tests/security/contentSecurityPolicy/report-uri-from-child-frame-expected.txt: Added.
+        * platform/gtk-wk1/http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript-expected.txt: Added.
+        * platform/gtk-wk1/http/tests/security/contentSecurityPolicy/report-uri-from-javascript-expected.txt: Added.
+        * platform/gtk-wk2/http: Added.
+        * platform/gtk-wk2/http/tests: Added.
+        * platform/gtk-wk2/http/tests/loading: Added.
+        * platform/gtk-wk2/http/tests/loading/basic-auth-resend-wrong-credentials-expected.txt: Added.
+        * platform/gtk-wk2/http/tests/loading/basic-credentials-sent-automatically-expected.txt: Added.
+        * platform/gtk-wk2/http/tests/misc: Added.
+        * platform/gtk-wk2/http/tests/misc/401-alternative-content-expected.txt: Added.
+        * platform/gtk-wk2/http/tests/misc/authentication-redirect-1: Added.
+        * platform/gtk-wk2/http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin-expected.txt: Added.
+        * platform/gtk-wk2/http/tests/misc/authentication-redirect-2: Added.
+        * platform/gtk-wk2/http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin-expected.txt: Added.
+        * platform/gtk-wk2/http/tests/misc/authentication-redirect-4: Added.
+        * platform/gtk-wk2/http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url-expected.txt: Added.
+        * platform/gtk-wk2/http/tests/security: Added.
+        * platform/gtk-wk2/http/tests/security/401-logout: Added.
+        * platform/gtk-wk2/http/tests/security/401-logout/401-logout-expected.txt: Added.
+        * platform/gtk-wk2/http/tests/xmlhttprequest: Added.
+        * platform/gtk-wk2/http/tests/xmlhttprequest/failed-auth-expected.txt: Added.
+        * platform/gtk-wk2/http/tests/xmlhttprequest/remember-bad-password-expected.txt: Added.
+        * platform/gtk-wk2/js: Added.
+        * platform/gtk-wk2/js/dom: Added.
+        * platform/gtk-wk2/js/dom/constructor-length-expected.txt: Added.
+        * platform/gtk-wk2/js/dom/global-constructors-attributes-expected.txt: Added.
+        * platform/gtk/http/tests/cache: Removed.
+        * platform/gtk/http/tests/cache/cancel-multiple-post-xhrs-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/report-blocked-data-uri-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/report-blocked-file-uri-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/report-blocked-uri-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/report-only-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/report-uri-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/report-uri-from-child-frame-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/report-uri-from-javascript-expected.txt: Removed.
+        * platform/gtk/userscripts: Added.
+        * platform/gtk/userscripts/script-run-at-end-expected.txt: Added.
+
 2013-09-25  Alexey Proskuryakov  <ap@apple.com>
 
         loader/go-back-to-different-window-size.html is flaky
