@@ -28,9 +28,8 @@
 #include "ContentDistributor.h"
 
 #include "ElementTraversal.h"
-#include "HTMLContentElement.h"
+#include "InsertionPoint.h"
 #include "ShadowRoot.h"
-
 
 namespace WebCore {
 

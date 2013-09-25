@@ -31,7 +31,6 @@ code interfaceName=HTMLElement
 col interfaceName=HTMLTableColElement
 colgroup interfaceName=HTMLTableColElement
 command interfaceName=HTMLElement
-content interfaceName=HTMLContentElement, conditional=SHADOW_DOM, runtimeConditional=shadowDOM, generateTypeHelpers
 webkitShadowContent interfaceName=HTMLElement, noConstructor
 datalist interfaceName=HTMLDataListElement, conditional=DATALIST_ELEMENT
 dd interfaceName=HTMLElement

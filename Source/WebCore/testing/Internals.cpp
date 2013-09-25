@@ -49,7 +49,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
-#include "HTMLContentElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
@@ -346,34 +345,6 @@ bool Internals::isLoadingFromMemoryCache(const String& url)
     return resource && resource->status() == CachedResource::Cached;
 }
 
-PassRefPtr<Element> Internals::createContentElement(ExceptionCode& ec)
-{
-    Document* document = contextDocument();
-    if (!document) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-#if ENABLE(SHADOW_DOM)
-    return HTMLContentElement::create(*document);
-#else
-    return 0;
-#endif
-}
-
-bool Internals::isValidContentSelect(Element* insertionPoint, ExceptionCode& ec)
-{
-    if (!insertionPoint || !insertionPoint->isInsertionPoint()) {
-        ec = INVALID_ACCESS_ERR;
-        return false;
-    }
-
-#if ENABLE(SHADOW_DOM)
-    return isHTMLContentElement(insertionPoint) && toHTMLContentElement(insertionPoint)->isSelectValid();
-#else
-    return false;
-#endif
-}
 
 Node* Internals::treeScopeRootNode(Node* node, ExceptionCode& ec)
 {

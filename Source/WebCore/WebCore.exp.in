@@ -2764,10 +2764,6 @@ __ZN7WebCore4Page11setViewModeENS0_8ViewModeE
 __ZN7WebCore12WorkerThread17workerThreadCountEv
 #endif
 
-#if ENABLE(SHADOW_DOM)
-__ZN7WebCore18HTMLContentElement6createEPNS_8DocumentE
-#endif
-
 #if ENABLE(CSS_REGIONS)
 __ZN7WebCore22RuntimeEnabledFeatures19isCSSRegionsEnabledE
 #endif

@@ -325,8 +325,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLCanvasElement.h \
 	DerivedSources/WebCore/JSHTMLCollection.cpp \
 	DerivedSources/WebCore/JSHTMLCollection.h \
-	DerivedSources/WebCore/JSHTMLContentElement.cpp \
-	DerivedSources/WebCore/JSHTMLContentElement.h \
 	DerivedSources/WebCore/JSHTMLDataListElement.cpp \
 	DerivedSources/WebCore/JSHTMLDataListElement.h \
 	DerivedSources/WebCore/JSHTMLDetailsElement.cpp \
@@ -1570,7 +1568,6 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/WebGLTexture.idl \
 	$(WebCore)/html/canvas/WebGLUniformLocation.idl \
 	$(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
-	$(WebCore)/html/shadow/HTMLContentElement.idl \
 	$(WebCore)/html/track/AudioTrack.idl \
 	$(WebCore)/html/track/AudioTrackList.idl \
 	$(WebCore)/html/track/TextTrack.idl \
@@ -3700,8 +3697,6 @@ webcore_sources += \
 	Source/WebCore/html/shadow/ContentDistributor.h \
 	Source/WebCore/html/shadow/DetailsMarkerControl.cpp \
 	Source/WebCore/html/shadow/DetailsMarkerControl.h \
-	Source/WebCore/html/shadow/HTMLContentElement.cpp \
-	Source/WebCore/html/shadow/HTMLContentElement.h \
 	Source/WebCore/html/shadow/InsertionPoint.cpp \
 	Source/WebCore/html/shadow/InsertionPoint.h \
 	Source/WebCore/html/shadow/MediaControlElements.cpp \

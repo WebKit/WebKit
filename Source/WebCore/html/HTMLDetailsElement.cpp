@@ -22,9 +22,9 @@
 #include "HTMLDetailsElement.h"
 
 #if ENABLE(DETAILS_ELEMENT)
-#include "HTMLContentElement.h"
 #include "HTMLNames.h"
 #include "HTMLSummaryElement.h"
+#include "InsertionPoint.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "RenderBlockFlow.h"

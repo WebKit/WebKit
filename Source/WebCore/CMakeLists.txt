@@ -539,8 +539,6 @@ set(WebCore_IDL_FILES
     html/canvas/WebGLUniformLocation.idl
     html/canvas/WebGLVertexArrayObjectOES.idl
 
-    html/shadow/HTMLContentElement.idl
-
     inspector/InjectedScriptHost.idl
     inspector/InspectorFrontendHost.idl
     inspector/JavaScriptCallFrame.idl
@@ -1559,7 +1557,6 @@ set(WebCore_SOURCES
 
     html/shadow/ContentDistributor.cpp
     html/shadow/DetailsMarkerControl.cpp
-    html/shadow/HTMLContentElement.cpp
     html/shadow/InsertionPoint.cpp
     html/shadow/MediaControlElementTypes.cpp
     html/shadow/MediaControlElements.cpp

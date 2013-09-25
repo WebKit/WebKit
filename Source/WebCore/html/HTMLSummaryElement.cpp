@@ -23,9 +23,9 @@
 
 #if ENABLE(DETAILS_ELEMENT)
 #include "DetailsMarkerControl.h"
-#include "HTMLContentElement.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLNames.h"
+#include "InsertionPoint.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "NodeRenderingTraversal.h"
