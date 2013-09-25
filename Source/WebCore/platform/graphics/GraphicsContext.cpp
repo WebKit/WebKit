@@ -738,6 +738,16 @@ BlendMode GraphicsContext::blendModeOperation() const
     return m_state.blendMode;
 }
 
+void GraphicsContext::setDrawLuminanceMask(bool drawLuminanceMask)
+{
+    m_state.drawLuminanceMask = drawLuminanceMask;
+}
+
+bool GraphicsContext::drawLuminanceMask() const
+{
+    return m_state.drawLuminanceMask;
+}
+
 #if !USE(CG)
 // Implement this if you want to go ahead and push the drawing mode into your native context
 // immediately.

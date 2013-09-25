@@ -72,9 +72,14 @@ void GradientImage::drawPattern(GraphicsContext* destContext, const FloatRect& s
 
         m_cachedGeneratorHash = generatorHash;
         m_cachedAdjustedSize = adjustedSize;
+
+        if (destContext->drawLuminanceMask())
+            m_cachedImageBuffer->convertToLuminanceMask();
     }
 
     m_cachedImageBuffer->setSpaceSize(spaceSize());
+    destContext->setDrawLuminanceMask(false);
+
     // Tile the image buffer into the context.
     m_cachedImageBuffer->drawPattern(destContext, adjustedSrcRect, adjustedPatternCTM, phase, styleColorSpace, compositeOp, destRect);
 }

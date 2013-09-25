@@ -797,6 +797,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
             RenderObject* clientForBackgroundImage = backgroundObject ? backgroundObject : this;
             RefPtr<Image> image = bgImage->image(clientForBackgroundImage, geometry.tileSize());
+            context->setDrawLuminanceMask(bgLayer->maskSourceType() == MaskLuminance);
             bool useLowQualityScaling = shouldPaintAtLowQuality(context, image.get(), bgLayer, geometry.tileSize());
             if (image.get())
                 image->setSpaceSize(geometry.spaceSize());

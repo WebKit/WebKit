@@ -150,6 +150,7 @@ namespace WebCore {
             // but we need to preserve this buggy behavior for canvas and -webkit-box-shadow.
             , shadowsUseLegacyRadius(false)
 #endif
+            , drawLuminanceMask(false)
         {
         }
 
@@ -188,6 +189,7 @@ namespace WebCore {
 #if USE(CG)
         bool shadowsUseLegacyRadius : 1;
 #endif
+        bool drawLuminanceMask : 1;
     };
 
     class GraphicsContext {
@@ -381,6 +383,9 @@ namespace WebCore {
         void setCompositeOperation(CompositeOperator, BlendMode = BlendModeNormal);
         CompositeOperator compositeOperation() const;
         BlendMode blendModeOperation() const;
+
+        void setDrawLuminanceMask(bool);
+        bool drawLuminanceMask() const;
 
         void clip(const Path&, WindRule = RULE_EVENODD);
 

@@ -1,3 +1,35 @@
+2013-09-25  Andrei Parvu  <parvu@adobe.com>
+
+        <https://webkit.org/b/120476> [CSS Masking] Implement luminance masking
+
+        Added implementation for luminance masking. A luminance mask is applied by transforming its RGB values into
+        an alpha value, using luminance-to-alpha coefficients. Because this conversion is already implemented in
+        the ImageBuffer class, we used it in our implementation.
+
+        Reviewed by Dirk Schulze.
+
+        Tests: css3/masking/mask-luminance-gradient.html
+               css3/masking/mask-luminance-png.html
+               css3/masking/mask-luminance-svg.html
+
+        * platform/graphics/BitmapImage.cpp: Add a drawPattern method, in which an ImageBuffer is created and converted from alpha to luminance, if there is a luminance mask.
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::drawPattern):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/GeneratorGeneratedImage.cpp: Convert the ImageBuffer to luminance, if necessary.
+        (WebCore::GeneratorGeneratedImage::drawPattern):
+        * platform/graphics/GraphicsContext.cpp: Add methods which set and check if a luminance mask is drawn.
+        (WebCore::GraphicsContext::setDrawLuminanceMask):
+        (WebCore::GraphicsContext::drawLuminanceMask):
+        * platform/graphics/GraphicsContext.h: Add property to ContextState for luminance drawing.
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        * rendering/RenderBoxModelObject.cpp: Set the luminance property of the mask, if the layer has a mask source type of luminance.
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * svg/graphics/SVGImage.cpp: Convert the ImageBuffer to luminance, if necessary.
+        (WebCore::SVGImage::drawPatternForContainer):
+        * svg/graphics/SVGImageForContainer.cpp: Pass the luminance property to the SVG image.
+        (WebCore::SVGImageForContainer::drawPattern):
+
 2013-09-25  Andreas Kling  <akling@apple.com>
 
         Remove EventPathWalker.

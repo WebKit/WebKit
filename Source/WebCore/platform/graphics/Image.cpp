@@ -120,7 +120,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
     oneTileRect.setSize(scaledTileSize);
     
     // Check and see if a single draw of the image can cover the entire area we are supposed to tile.    
-    if (oneTileRect.contains(destRect)) {
+    if (oneTileRect.contains(destRect) && !ctxt->drawLuminanceMask()) {
         FloatRect visibleSrcRect;
         visibleSrcRect.setX((destRect.x() - oneTileRect.x()) / scale.width());
         visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());

@@ -1,3 +1,21 @@
+2013-09-25  Andrei Parvu  <parvu@adobe.com>
+
+        <https://webkit.org/b/120476> [CSS Masking] Implement luminance masking
+
+        Added tests to verify the implementation of luminance masking.
+
+        Reviewed by Dirk Schulze.
+
+        * css3/masking/mask-luminance-gradient-expected.html: Added.
+        * css3/masking/mask-luminance-gradient.html: Added.
+        * css3/masking/mask-luminance-png.html: Added.
+        * css3/masking/mask-luminance-svg-expected.html: Added.
+        * css3/masking/mask-luminance-svg.html: Added.
+        * css3/masking/resources/circle-alpha.svg: Added.
+        * css3/masking/resources/circle2.svg: Added.
+        * css3/masking/resources/dice.png: Added.
+        * platform/mac/css3/masking/mask-luminance-png-expected.txt: Added.
+
 2013-09-25  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Updated accessibility expectations after r154781 and r155599

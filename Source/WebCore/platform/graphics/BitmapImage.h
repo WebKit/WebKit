@@ -136,6 +136,9 @@ public:
 
     virtual unsigned decodedSize() const OVERRIDE;
 
+    virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
+        const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal) OVERRIDE;
+
 #if PLATFORM(MAC)
     // Accessors for native image formats.
     virtual NSImage* getNSImage() OVERRIDE;
@@ -296,6 +299,8 @@ private:
     bool m_sizeAvailable : 1; // Whether or not we can obtain the size of the first image frame yet from ImageIO.
     mutable bool m_hasUniformFrameSize : 1;
     mutable bool m_haveFrameCount : 1;
+
+    RefPtr<Image> m_cachedImage;
 };
 
 }

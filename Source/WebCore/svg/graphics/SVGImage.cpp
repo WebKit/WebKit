@@ -201,6 +201,9 @@ void SVGImage::drawPatternForContainer(GraphicsContext* context, const FloatSize
     if (!buffer) // Failed to allocate buffer.
         return;
     drawForContainer(buffer->context(), containerSize, zoom, imageBufferSize, zoomedContainerRect, ColorSpaceDeviceRGB, CompositeSourceOver, BlendModeNormal);
+    if (context->drawLuminanceMask())
+        buffer->convertToLuminanceMask();
+
     RefPtr<Image> image = buffer->copyImage(DontCopyBackingStore, Unscaled);
     image->setSpaceSize(spaceSize());
 
@@ -210,6 +213,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext* context, const FloatSize
     AffineTransform unscaledPatternTransform(patternTransform);
     unscaledPatternTransform.scale(1 / imageBufferScale.width(), 1 / imageBufferScale.height());
 
+    context->setDrawLuminanceMask(false);
     image->drawPattern(context, scaledSrcRect, unscaledPatternTransform, phase, colorSpace, compositeOp, dstRect);
 }
 
