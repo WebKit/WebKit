@@ -1,3 +1,18 @@
+2013-09-24  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove a contradiction from SelectorChecker
+        https://bugs.webkit.org/show_bug.cgi?id=121881
+
+        Reviewed by Andreas Kling.
+
+        The matching code for PseudoHover and PseudoActive is done on the current
+        selector pseudo type. The current selector match type must be CSSSelector::PseudoClass
+        in order to reach this code. Consequently, selector->m_match == CSSSelector::Tag can
+        never be true.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+
 2013-09-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add toWebKitCSS*Value functions to cast from CSSValue
