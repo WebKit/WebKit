@@ -2954,3 +2954,4 @@ js/dom/random-array-gc-stress.html [ Skip ]
 # CSS_SHAPES not supported on AppleWin port.
 # https://bugs.webkit.org/show_bug.cgi?id=118810
 fast/shapes
+csswg/contributors/adobe/submitted/shapes
