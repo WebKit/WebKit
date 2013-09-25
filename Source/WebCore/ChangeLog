@@ -1,3 +1,9 @@
+2013-09-25  Andreas Kling  <akling@apple.com>
+
+        Unreviewed build fix for IDBDatabase.
+
+        Turns out there was a much cleaner way to express this.
+
 2013-09-25  Benjamin Poulain  <benjamin@webkit.org>
 
         Tie the life of DocumentStyleSheetCollection and Document together
