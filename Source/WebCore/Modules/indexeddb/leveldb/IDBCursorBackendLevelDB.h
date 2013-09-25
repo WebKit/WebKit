@@ -24,14 +24,14 @@
  */
 
 
-#ifndef IDBCursorBackendImpl_h
-#define IDBCursorBackendImpl_h
+#ifndef IDBCursorBackendLevelDB_h
+#define IDBCursorBackendLevelDB_h
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#include "IDBBackingStore.h"
+#include "IDBBackingStoreLevelDB.h"
 #include "IDBCursorBackendInterface.h"
-#include "IDBTransactionBackendImpl.h"
+#include "IDBTransactionBackendLevelDB.h"
 #include "SharedBuffer.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -39,20 +39,20 @@
 
 namespace WebCore {
 
-class IDBDatabaseBackendImpl;
+class IDBDatabaseBackendLevelDB;
 class IDBKeyRange;
 
-class IDBCursorBackendImpl : public IDBCursorBackendInterface {
+class IDBCursorBackendLevelDB : public IDBCursorBackendInterface {
 public:
-    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, IndexedDB::CursorType cursorType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackendLevelDB> create(PassRefPtr<IDBBackingStore::Cursor> cursor, IndexedDB::CursorType cursorType, IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId)
     {
-        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, IDBDatabaseBackendInterface::NormalTask, transaction, objectStoreId));
+        return adoptRef(new IDBCursorBackendLevelDB(cursor, cursorType, IDBDatabaseBackendInterface::NormalTask, transaction, objectStoreId));
     }
-    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackendLevelDB> create(PassRefPtr<IDBBackingStore::Cursor> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId)
     {
-        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, taskType, transaction, objectStoreId));
+        return adoptRef(new IDBCursorBackendLevelDB(cursor, cursorType, taskType, transaction, objectStoreId));
     }
-    virtual ~IDBCursorBackendImpl();
+    virtual ~IDBCursorBackendLevelDB();
 
     // IDBCursorBackendInterface
     virtual void advance(unsigned long, PassRefPtr<IDBCallbacks>, ExceptionCode&);
@@ -68,7 +68,7 @@ public:
     void close();
 
 private:
-    IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor>, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackendImpl*, int64_t objectStoreId);
+    IDBCursorBackendLevelDB(PassRefPtr<IDBBackingStore::Cursor>, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackendLevelDB*, int64_t objectStoreId);
 
     class CursorIterationOperation;
     class CursorAdvanceOperation;
@@ -76,8 +76,8 @@ private:
 
     IDBDatabaseBackendInterface::TaskType m_taskType;
     IndexedDB::CursorType m_cursorType;
-    const RefPtr<IDBDatabaseBackendImpl> m_database;
-    const RefPtr<IDBTransactionBackendImpl> m_transaction;
+    const RefPtr<IDBDatabaseBackendLevelDB> m_database;
+    const RefPtr<IDBTransactionBackendLevelDB> m_transaction;
     const int64_t m_objectStoreId;
 
     RefPtr<IDBBackingStore::Cursor> m_cursor; // Must be destroyed before m_transaction.
@@ -88,6 +88,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#endif // IDBCursorBackendImpl_h
+#endif // IDBCursorBackendLevelDB_h

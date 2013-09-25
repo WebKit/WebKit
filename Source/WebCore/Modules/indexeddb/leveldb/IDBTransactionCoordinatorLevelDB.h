@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBTransactionCoordinator_h
-#define IDBTransactionCoordinator_h
+#ifndef IDBTransactionCoordinatorLevelDB_h
+#define IDBTransactionCoordinatorLevelDB_h
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -34,39 +34,38 @@
 
 namespace WebCore {
 
-class IDBTransactionBackendImpl;
-class IDBDatabaseBackendImpl;
+class IDBTransactionBackendLevelDB;
 
 // Transactions are executed in the order the were created.
-class IDBTransactionCoordinator {
+class IDBTransactionCoordinatorLevelDB {
 public:
-    static PassOwnPtr<IDBTransactionCoordinator> create();
-    virtual ~IDBTransactionCoordinator();
+    static PassOwnPtr<IDBTransactionCoordinatorLevelDB> create();
+    virtual ~IDBTransactionCoordinatorLevelDB();
 
     // Called by transactions as they start and finish.
-    void didCreateTransaction(IDBTransactionBackendImpl*);
-    void didStartTransaction(IDBTransactionBackendImpl*);
-    void didFinishTransaction(IDBTransactionBackendImpl*);
+    void didCreateTransaction(IDBTransactionBackendLevelDB*);
+    void didStartTransaction(IDBTransactionBackendLevelDB*);
+    void didFinishTransaction(IDBTransactionBackendLevelDB*);
 
 #ifndef NDEBUG
-    bool isActive(IDBTransactionBackendImpl*);
+    bool isActive(IDBTransactionBackendLevelDB*);
 #endif
 
 private:
-    IDBTransactionCoordinator();
+    IDBTransactionCoordinatorLevelDB();
 
     void processStartedTransactions();
-    bool canRunTransaction(IDBTransactionBackendImpl*);
+    bool canRunTransaction(IDBTransactionBackendLevelDB*);
 
     // This is just an efficient way to keep references to all transactions.
-    HashMap<IDBTransactionBackendImpl*, RefPtr<IDBTransactionBackendImpl> > m_transactions;
+    HashMap<IDBTransactionBackendLevelDB*, RefPtr<IDBTransactionBackendLevelDB> > m_transactions;
     // Transactions in different states are grouped below.
-    ListHashSet<IDBTransactionBackendImpl*> m_queuedTransactions;
-    HashSet<IDBTransactionBackendImpl*> m_startedTransactions;
+    ListHashSet<IDBTransactionBackendLevelDB*> m_queuedTransactions;
+    HashSet<IDBTransactionBackendLevelDB*> m_startedTransactions;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
 
-#endif // IDBTransactionCoordinator_h
+#endif // IDBTransactionCoordinatorLevelDB_h

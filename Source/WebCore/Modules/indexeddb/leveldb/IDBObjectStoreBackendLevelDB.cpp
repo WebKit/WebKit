@@ -24,26 +24,26 @@
  */
 
 #include "config.h"
-#include "IDBObjectStoreBackendImpl.h"
+#include "IDBObjectStoreBackendLevelDB.h"
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#include "IDBBackingStore.h"
+#include "IDBBackingStoreLevelDB.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCallbacks.h"
-#include "IDBCursorBackendImpl.h"
-#include "IDBDatabaseBackendImpl.h"
+#include "IDBCursorBackendLevelDB.h"
+#include "IDBDatabaseBackendLevelDB.h"
 #include "IDBDatabaseException.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBTracing.h"
-#include "IDBTransactionBackendImpl.h"
+#include "IDBTransactionBackendLevelDB.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
-bool IDBObjectStoreBackendImpl::IndexWriter::verifyIndexKeys(IDBBackingStore& backingStore, IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey, String* errorMessage) const
+bool IDBObjectStoreBackendLevelDB::IndexWriter::verifyIndexKeys(IDBBackingStore& backingStore, IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey, String* errorMessage) const
 {
     canAddKeys = false;
     for (size_t i = 0; i < m_indexKeys.size(); ++i) {
@@ -60,7 +60,7 @@ bool IDBObjectStoreBackendImpl::IndexWriter::verifyIndexKeys(IDBBackingStore& ba
     return true;
 }
 
-void IDBObjectStoreBackendImpl::IndexWriter::writeIndexKeys(const IDBBackingStore::RecordIdentifier& recordIdentifier, IDBBackingStore& backingStore, IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId) const
+void IDBObjectStoreBackendLevelDB::IndexWriter::writeIndexKeys(const IDBBackingStore::RecordIdentifier& recordIdentifier, IDBBackingStore& backingStore, IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId) const
 {
     int64_t indexId = m_indexMetadata.id;
     for (size_t i = 0; i < m_indexKeys.size(); ++i) {
@@ -70,7 +70,7 @@ void IDBObjectStoreBackendImpl::IndexWriter::writeIndexKeys(const IDBBackingStor
     }
 }
 
-bool IDBObjectStoreBackendImpl::IndexWriter::addingKeyAllowed(IDBBackingStore& backingStore, IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const
+bool IDBObjectStoreBackendLevelDB::IndexWriter::addingKeyAllowed(IDBBackingStore& backingStore, IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const
 {
     allowed = false;
     if (!m_indexMetadata.unique) {
@@ -88,7 +88,7 @@ bool IDBObjectStoreBackendImpl::IndexWriter::addingKeyAllowed(IDBBackingStore& b
     return true;
 }
 
-bool IDBObjectStoreBackendImpl::makeIndexWriters(PassRefPtr<IDBTransactionBackendImpl> transaction, IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>& indexKeys, Vector<OwnPtr<IndexWriter> >* indexWriters, String* errorMessage, bool& completed)
+bool IDBObjectStoreBackendLevelDB::makeIndexWriters(PassRefPtr<IDBTransactionBackendLevelDB> transaction, IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>& indexKeys, Vector<OwnPtr<IndexWriter> >* indexWriters, String* errorMessage, bool& completed)
 {
     ASSERT(indexIds.size() == indexKeys.size());
     completed = false;
@@ -121,7 +121,7 @@ bool IDBObjectStoreBackendImpl::makeIndexWriters(PassRefPtr<IDBTransactionBacken
     return true;
 }
 
-PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::generateKey(PassRefPtr<IDBBackingStore> backingStore, PassRefPtr<IDBTransactionBackendImpl> transaction, int64_t databaseId, int64_t objectStoreId)
+PassRefPtr<IDBKey> IDBObjectStoreBackendLevelDB::generateKey(PassRefPtr<IDBBackingStore> backingStore, PassRefPtr<IDBTransactionBackendLevelDB> transaction, int64_t databaseId, int64_t objectStoreId)
 {
     const int64_t maxGeneratorValue = 9007199254740992LL; // Maximum integer storable as ECMAScript number.
     int64_t currentNumber;
@@ -136,7 +136,7 @@ PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::generateKey(PassRefPtr<IDBBackingS
     return IDBKey::createNumber(currentNumber);
 }
 
-bool IDBObjectStoreBackendImpl::updateKeyGenerator(PassRefPtr<IDBBackingStore> backingStore, PassRefPtr<IDBTransactionBackendImpl> transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey* key, bool checkCurrent)
+bool IDBObjectStoreBackendLevelDB::updateKeyGenerator(PassRefPtr<IDBBackingStore> backingStore, PassRefPtr<IDBTransactionBackendLevelDB> transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey* key, bool checkCurrent)
 {
     ASSERT(key && key->type() == IDBKey::NumberType);
     return backingStore->maybeUpdateKeyGeneratorCurrentNumber(transaction->backingStoreTransaction(), databaseId, objectStoreId, static_cast<int64_t>(floor(key->number())) + 1, checkCurrent);
@@ -144,4 +144,4 @@ bool IDBObjectStoreBackendImpl::updateKeyGenerator(PassRefPtr<IDBBackingStore> b
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)

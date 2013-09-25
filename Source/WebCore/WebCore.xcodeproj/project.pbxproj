@@ -1643,7 +1643,13 @@
 		511EF2CF17F0FDF100E4FA16 /* JSIDBAnyCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2CC17F0FDF100E4FA16 /* JSIDBAnyCustom.cpp */; };
 		511EF2D017F0FDF100E4FA16 /* JSIDBDatabaseCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2CD17F0FDF100E4FA16 /* JSIDBDatabaseCustom.cpp */; };
 		511EF2D117F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */; };
-		511EF32917F0FF0300E4FA16 /* IDBBackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF32817F0FF0300E4FA16 /* IDBBackingStore.cpp */; };
+		511EF33917F23B7300E4FA16 /* IDBBackingStoreLevelDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF32B17F23B6900E4FA16 /* IDBBackingStoreLevelDB.cpp */; };
+		511EF33A17F23B7300E4FA16 /* IDBCursorBackendLevelDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF32D17F23B6900E4FA16 /* IDBCursorBackendLevelDB.cpp */; };
+		511EF33B17F23B7300E4FA16 /* IDBDatabaseBackendLevelDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF32F17F23B6900E4FA16 /* IDBDatabaseBackendLevelDB.cpp */; };
+		511EF33C17F23B7300E4FA16 /* IDBFactoryBackendLevelDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF33117F23B6900E4FA16 /* IDBFactoryBackendLevelDB.cpp */; };
+		511EF33D17F23B7300E4FA16 /* IDBLevelDBCoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF33317F23B6900E4FA16 /* IDBLevelDBCoding.cpp */; };
+		511EF33E17F23B7300E4FA16 /* IDBObjectStoreBackendLevelDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF33517F23B6900E4FA16 /* IDBObjectStoreBackendLevelDB.cpp */; };
+		511EF33F17F23B7300E4FA16 /* IDBTransactionBackendLevelDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EF33717F23B6900E4FA16 /* IDBTransactionBackendLevelDB.cpp */; };
 		511F23190DC160DA004F0032 /* StorageThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511F23150DC160DA004F0032 /* StorageThread.cpp */; };
 		511F231A0DC160DA004F0032 /* StorageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F23160DC160DA004F0032 /* StorageThread.h */; };
 		5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */; };
@@ -1727,6 +1733,7 @@
 		51C81B890C4422F70019ECE3 /* FTPDirectoryParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */; };
 		51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */; };
 		51CBFC990D10E483002DBF51 /* CachedFramePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51CEFB2B17F2492900ACAA18 /* IDBTransactionCoordinatorLevelDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51CEFB2917F2492100ACAA18 /* IDBTransactionCoordinatorLevelDB.cpp */; };
 		51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */; };
 		51DCE8020CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */; };
 		51DF6D7E0B92A16D00C2DC85 /* ThreadCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3118,16 +3125,11 @@
 		9712A5AD15004EDA0048AF10 /* DOMWindowIndexedDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A55415004EDA0048AF10 /* DOMWindowIndexedDatabase.cpp */; };
 		9712A5AE15004EDA0048AF10 /* DOMWindowIndexedDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A55515004EDA0048AF10 /* DOMWindowIndexedDatabase.h */; };
 		9712A5B115004EDA0048AF10 /* IDBAny.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A55815004EDA0048AF10 /* IDBAny.h */; };
-		9712A5B315004EDA0048AF10 /* IDBBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A55A15004EDA0048AF10 /* IDBBackingStore.h */; };
 		9712A5B415004EDA0048AF10 /* IDBCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A55B15004EDA0048AF10 /* IDBCallbacks.h */; };
 		9712A5B615004EDA0048AF10 /* IDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A55D15004EDA0048AF10 /* IDBCursor.h */; };
-		9712A5B815004EDA0048AF10 /* IDBCursorBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A55F15004EDA0048AF10 /* IDBCursorBackendImpl.cpp */; };
-		9712A5B915004EDA0048AF10 /* IDBCursorBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A56015004EDA0048AF10 /* IDBCursorBackendImpl.h */; };
 		9712A5BA15004EDA0048AF10 /* IDBCursorBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A56115004EDA0048AF10 /* IDBCursorBackendInterface.h */; };
 		9712A5BC15004EDA0048AF10 /* IDBCursorWithValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A56315004EDA0048AF10 /* IDBCursorWithValue.h */; };
 		9712A5BF15004EDA0048AF10 /* IDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A56615004EDA0048AF10 /* IDBDatabase.h */; };
-		9712A5C115004EDA0048AF10 /* IDBDatabaseBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A56815004EDA0048AF10 /* IDBDatabaseBackendImpl.cpp */; };
-		9712A5C215004EDA0048AF10 /* IDBDatabaseBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A56915004EDA0048AF10 /* IDBDatabaseBackendImpl.h */; };
 		9712A5C315004EDA0048AF10 /* IDBDatabaseBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A56A15004EDA0048AF10 /* IDBDatabaseBackendInterface.h */; };
 		9712A5C415004EDA0048AF10 /* IDBDatabaseCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A56B15004EDA0048AF10 /* IDBDatabaseCallbacks.h */; };
 		9712A5C515004EDA0048AF10 /* IDBDatabaseCallbacksImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A56C15004EDA0048AF10 /* IDBDatabaseCallbacksImpl.cpp */; };
@@ -3137,8 +3139,6 @@
 		9712A5CA15004EDA0048AF10 /* IDBDatabaseException.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A57115004EDA0048AF10 /* IDBDatabaseException.h */; };
 		9712A5CD15004EDA0048AF10 /* IDBEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A57415004EDA0048AF10 /* IDBEventDispatcher.h */; };
 		9712A5CF15004EDA0048AF10 /* IDBFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A57615004EDA0048AF10 /* IDBFactory.h */; };
-		9712A5D115004EDA0048AF10 /* IDBFactoryBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A57815004EDA0048AF10 /* IDBFactoryBackendImpl.cpp */; };
-		9712A5D215004EDA0048AF10 /* IDBFactoryBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A57915004EDA0048AF10 /* IDBFactoryBackendImpl.h */; };
 		9712A5D315004EDA0048AF10 /* IDBFactoryBackendInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A57A15004EDA0048AF10 /* IDBFactoryBackendInterface.cpp */; };
 		9712A5D415004EDA0048AF10 /* IDBFactoryBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A57B15004EDA0048AF10 /* IDBFactoryBackendInterface.h */; };
 		9712A5D615004EDA0048AF10 /* IDBIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A57D15004EDA0048AF10 /* IDBIndex.h */; };
@@ -3146,17 +3146,11 @@
 		9712A5DF15004EDA0048AF10 /* IDBKeyPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58615004EDA0048AF10 /* IDBKeyPath.h */; };
 		9712A5E315004EDA0048AF10 /* IDBKeyRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58A15004EDA0048AF10 /* IDBKeyRange.h */; };
 		9712A5EA15004EDA0048AF10 /* IDBObjectStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A59115004EDA0048AF10 /* IDBObjectStore.h */; };
-		9712A5EC15004EDA0048AF10 /* IDBObjectStoreBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A59315004EDA0048AF10 /* IDBObjectStoreBackendImpl.cpp */; };
-		9712A5ED15004EDA0048AF10 /* IDBObjectStoreBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A59415004EDA0048AF10 /* IDBObjectStoreBackendImpl.h */; };
 		9712A5EF15004EDA0048AF10 /* IDBPendingTransactionMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A59615004EDA0048AF10 /* IDBPendingTransactionMonitor.cpp */; };
 		9712A5F015004EDA0048AF10 /* IDBPendingTransactionMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A59715004EDA0048AF10 /* IDBPendingTransactionMonitor.h */; };
 		9712A5F215004EDA0048AF10 /* IDBRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A59915004EDA0048AF10 /* IDBRequest.h */; };
 		9712A5F415004EDA0048AF10 /* IDBTracing.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A59B15004EDA0048AF10 /* IDBTracing.h */; };
 		9712A5F615004EDA0048AF10 /* IDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A59D15004EDA0048AF10 /* IDBTransaction.h */; };
-		9712A5F815004EDA0048AF10 /* IDBTransactionBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A59F15004EDA0048AF10 /* IDBTransactionBackendImpl.cpp */; };
-		9712A5F915004EDA0048AF10 /* IDBTransactionBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A5A015004EDA0048AF10 /* IDBTransactionBackendImpl.h */; };
-		9712A5FC15004EDA0048AF10 /* IDBTransactionCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A5A315004EDA0048AF10 /* IDBTransactionCoordinator.cpp */; };
-		9712A5FD15004EDA0048AF10 /* IDBTransactionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A5A415004EDA0048AF10 /* IDBTransactionCoordinator.h */; };
 		9712A5FE15004EDA0048AF10 /* IDBVersionChangeEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A5A515004EDA0048AF10 /* IDBVersionChangeEvent.cpp */; };
 		9712A5FF15004EDA0048AF10 /* IDBVersionChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A5A615004EDA0048AF10 /* IDBVersionChangeEvent.h */; };
 		9712A60415004EDA0048AF10 /* PageGroupIndexedDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A5AB15004EDA0048AF10 /* PageGroupIndexedDatabase.cpp */; };
@@ -8235,7 +8229,20 @@
 		511EF2CC17F0FDF100E4FA16 /* JSIDBAnyCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBAnyCustom.cpp; sourceTree = "<group>"; };
 		511EF2CD17F0FDF100E4FA16 /* JSIDBDatabaseCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBDatabaseCustom.cpp; sourceTree = "<group>"; };
 		511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBObjectStoreCustom.cpp; sourceTree = "<group>"; };
-		511EF32817F0FF0300E4FA16 /* IDBBackingStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBBackingStore.cpp; path = Modules/indexeddb/IDBBackingStore.cpp; sourceTree = "<group>"; };
+		511EF32B17F23B6900E4FA16 /* IDBBackingStoreLevelDB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IDBBackingStoreLevelDB.cpp; path = Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp; sourceTree = "<group>"; };
+		511EF32C17F23B6900E4FA16 /* IDBBackingStoreLevelDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IDBBackingStoreLevelDB.h; path = Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h; sourceTree = "<group>"; };
+		511EF32D17F23B6900E4FA16 /* IDBCursorBackendLevelDB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IDBCursorBackendLevelDB.cpp; path = Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp; sourceTree = "<group>"; };
+		511EF32E17F23B6900E4FA16 /* IDBCursorBackendLevelDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IDBCursorBackendLevelDB.h; path = Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.h; sourceTree = "<group>"; };
+		511EF32F17F23B6900E4FA16 /* IDBDatabaseBackendLevelDB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IDBDatabaseBackendLevelDB.cpp; path = Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp; sourceTree = "<group>"; };
+		511EF33017F23B6900E4FA16 /* IDBDatabaseBackendLevelDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IDBDatabaseBackendLevelDB.h; path = Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.h; sourceTree = "<group>"; };
+		511EF33117F23B6900E4FA16 /* IDBFactoryBackendLevelDB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IDBFactoryBackendLevelDB.cpp; path = Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp; sourceTree = "<group>"; };
+		511EF33217F23B6900E4FA16 /* IDBFactoryBackendLevelDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IDBFactoryBackendLevelDB.h; path = Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.h; sourceTree = "<group>"; };
+		511EF33317F23B6900E4FA16 /* IDBLevelDBCoding.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IDBLevelDBCoding.cpp; path = Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp; sourceTree = "<group>"; };
+		511EF33417F23B6900E4FA16 /* IDBLevelDBCoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IDBLevelDBCoding.h; path = Modules/indexeddb/leveldb/IDBLevelDBCoding.h; sourceTree = "<group>"; };
+		511EF33517F23B6900E4FA16 /* IDBObjectStoreBackendLevelDB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IDBObjectStoreBackendLevelDB.cpp; path = Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.cpp; sourceTree = "<group>"; };
+		511EF33617F23B6900E4FA16 /* IDBObjectStoreBackendLevelDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IDBObjectStoreBackendLevelDB.h; path = Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.h; sourceTree = "<group>"; };
+		511EF33717F23B6900E4FA16 /* IDBTransactionBackendLevelDB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IDBTransactionBackendLevelDB.cpp; path = Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp; sourceTree = "<group>"; };
+		511EF33817F23B6900E4FA16 /* IDBTransactionBackendLevelDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IDBTransactionBackendLevelDB.h; path = Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.h; sourceTree = "<group>"; };
 		511F23150DC160DA004F0032 /* StorageThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageThread.cpp; sourceTree = "<group>"; };
 		511F23160DC160DA004F0032 /* StorageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageThread.h; sourceTree = "<group>"; };
 		5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabase.cpp; sourceTree = "<group>"; };
@@ -8323,6 +8330,8 @@
 		51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryParser.cpp; sourceTree = "<group>"; };
 		51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryParser.h; sourceTree = "<group>"; };
 		51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFramePlatformData.h; sourceTree = "<group>"; };
+		51CEFB2917F2492100ACAA18 /* IDBTransactionCoordinatorLevelDB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IDBTransactionCoordinatorLevelDB.cpp; path = Modules/indexeddb/leveldb/IDBTransactionCoordinatorLevelDB.cpp; sourceTree = "<group>"; };
+		51CEFB2A17F2492100ACAA18 /* IDBTransactionCoordinatorLevelDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IDBTransactionCoordinatorLevelDB.h; path = Modules/indexeddb/leveldb/IDBTransactionCoordinatorLevelDB.h; sourceTree = "<group>"; };
 		51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageCustom.cpp; sourceTree = "<group>"; };
 		51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLResultSetRowListCustom.cpp; sourceTree = "<group>"; };
 		51DF6D7D0B92A16D00C2DC85 /* ThreadCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadCheck.h; sourceTree = "<group>"; };
@@ -9733,19 +9742,14 @@
 		9712A55615004EDA0048AF10 /* DOMWindowIndexedDatabase.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DOMWindowIndexedDatabase.idl; path = Modules/indexeddb/DOMWindowIndexedDatabase.idl; sourceTree = "<group>"; };
 		9712A55815004EDA0048AF10 /* IDBAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBAny.h; path = Modules/indexeddb/IDBAny.h; sourceTree = "<group>"; };
 		9712A55915004EDA0048AF10 /* IDBAny.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBAny.idl; path = Modules/indexeddb/IDBAny.idl; sourceTree = "<group>"; };
-		9712A55A15004EDA0048AF10 /* IDBBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBBackingStore.h; path = Modules/indexeddb/IDBBackingStore.h; sourceTree = "<group>"; };
 		9712A55B15004EDA0048AF10 /* IDBCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBCallbacks.h; path = Modules/indexeddb/IDBCallbacks.h; sourceTree = "<group>"; };
 		9712A55D15004EDA0048AF10 /* IDBCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBCursor.h; path = Modules/indexeddb/IDBCursor.h; sourceTree = "<group>"; };
 		9712A55E15004EDA0048AF10 /* IDBCursor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBCursor.idl; path = Modules/indexeddb/IDBCursor.idl; sourceTree = "<group>"; };
-		9712A55F15004EDA0048AF10 /* IDBCursorBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBCursorBackendImpl.cpp; path = Modules/indexeddb/IDBCursorBackendImpl.cpp; sourceTree = "<group>"; };
-		9712A56015004EDA0048AF10 /* IDBCursorBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBCursorBackendImpl.h; path = Modules/indexeddb/IDBCursorBackendImpl.h; sourceTree = "<group>"; };
 		9712A56115004EDA0048AF10 /* IDBCursorBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBCursorBackendInterface.h; path = Modules/indexeddb/IDBCursorBackendInterface.h; sourceTree = "<group>"; };
 		9712A56315004EDA0048AF10 /* IDBCursorWithValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBCursorWithValue.h; path = Modules/indexeddb/IDBCursorWithValue.h; sourceTree = "<group>"; };
 		9712A56415004EDA0048AF10 /* IDBCursorWithValue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBCursorWithValue.idl; path = Modules/indexeddb/IDBCursorWithValue.idl; sourceTree = "<group>"; };
 		9712A56615004EDA0048AF10 /* IDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBDatabase.h; path = Modules/indexeddb/IDBDatabase.h; sourceTree = "<group>"; };
 		9712A56715004EDA0048AF10 /* IDBDatabase.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBDatabase.idl; path = Modules/indexeddb/IDBDatabase.idl; sourceTree = "<group>"; };
-		9712A56815004EDA0048AF10 /* IDBDatabaseBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBDatabaseBackendImpl.cpp; path = Modules/indexeddb/IDBDatabaseBackendImpl.cpp; sourceTree = "<group>"; };
-		9712A56915004EDA0048AF10 /* IDBDatabaseBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBDatabaseBackendImpl.h; path = Modules/indexeddb/IDBDatabaseBackendImpl.h; sourceTree = "<group>"; };
 		9712A56A15004EDA0048AF10 /* IDBDatabaseBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBDatabaseBackendInterface.h; path = Modules/indexeddb/IDBDatabaseBackendInterface.h; sourceTree = "<group>"; };
 		9712A56B15004EDA0048AF10 /* IDBDatabaseCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBDatabaseCallbacks.h; path = Modules/indexeddb/IDBDatabaseCallbacks.h; sourceTree = "<group>"; };
 		9712A56C15004EDA0048AF10 /* IDBDatabaseCallbacksImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBDatabaseCallbacksImpl.cpp; path = Modules/indexeddb/IDBDatabaseCallbacksImpl.cpp; sourceTree = "<group>"; };
@@ -9756,8 +9760,6 @@
 		9712A57415004EDA0048AF10 /* IDBEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBEventDispatcher.h; path = Modules/indexeddb/IDBEventDispatcher.h; sourceTree = "<group>"; };
 		9712A57615004EDA0048AF10 /* IDBFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBFactory.h; path = Modules/indexeddb/IDBFactory.h; sourceTree = "<group>"; };
 		9712A57715004EDA0048AF10 /* IDBFactory.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBFactory.idl; path = Modules/indexeddb/IDBFactory.idl; sourceTree = "<group>"; };
-		9712A57815004EDA0048AF10 /* IDBFactoryBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBFactoryBackendImpl.cpp; path = Modules/indexeddb/IDBFactoryBackendImpl.cpp; sourceTree = "<group>"; };
-		9712A57915004EDA0048AF10 /* IDBFactoryBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBFactoryBackendImpl.h; path = Modules/indexeddb/IDBFactoryBackendImpl.h; sourceTree = "<group>"; };
 		9712A57A15004EDA0048AF10 /* IDBFactoryBackendInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBFactoryBackendInterface.cpp; path = Modules/indexeddb/IDBFactoryBackendInterface.cpp; sourceTree = "<group>"; };
 		9712A57B15004EDA0048AF10 /* IDBFactoryBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBFactoryBackendInterface.h; path = Modules/indexeddb/IDBFactoryBackendInterface.h; sourceTree = "<group>"; };
 		9712A57D15004EDA0048AF10 /* IDBIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBIndex.h; path = Modules/indexeddb/IDBIndex.h; sourceTree = "<group>"; };
@@ -9768,8 +9770,6 @@
 		9712A58B15004EDA0048AF10 /* IDBKeyRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBKeyRange.idl; path = Modules/indexeddb/IDBKeyRange.idl; sourceTree = "<group>"; };
 		9712A59115004EDA0048AF10 /* IDBObjectStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBObjectStore.h; path = Modules/indexeddb/IDBObjectStore.h; sourceTree = "<group>"; };
 		9712A59215004EDA0048AF10 /* IDBObjectStore.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBObjectStore.idl; path = Modules/indexeddb/IDBObjectStore.idl; sourceTree = "<group>"; };
-		9712A59315004EDA0048AF10 /* IDBObjectStoreBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBObjectStoreBackendImpl.cpp; path = Modules/indexeddb/IDBObjectStoreBackendImpl.cpp; sourceTree = "<group>"; };
-		9712A59415004EDA0048AF10 /* IDBObjectStoreBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBObjectStoreBackendImpl.h; path = Modules/indexeddb/IDBObjectStoreBackendImpl.h; sourceTree = "<group>"; };
 		9712A59615004EDA0048AF10 /* IDBPendingTransactionMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBPendingTransactionMonitor.cpp; path = Modules/indexeddb/IDBPendingTransactionMonitor.cpp; sourceTree = "<group>"; };
 		9712A59715004EDA0048AF10 /* IDBPendingTransactionMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBPendingTransactionMonitor.h; path = Modules/indexeddb/IDBPendingTransactionMonitor.h; sourceTree = "<group>"; };
 		9712A59915004EDA0048AF10 /* IDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBRequest.h; path = Modules/indexeddb/IDBRequest.h; sourceTree = "<group>"; };
@@ -9777,10 +9777,6 @@
 		9712A59B15004EDA0048AF10 /* IDBTracing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBTracing.h; path = Modules/indexeddb/IDBTracing.h; sourceTree = "<group>"; };
 		9712A59D15004EDA0048AF10 /* IDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBTransaction.h; path = Modules/indexeddb/IDBTransaction.h; sourceTree = "<group>"; };
 		9712A59E15004EDA0048AF10 /* IDBTransaction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBTransaction.idl; path = Modules/indexeddb/IDBTransaction.idl; sourceTree = "<group>"; };
-		9712A59F15004EDA0048AF10 /* IDBTransactionBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBTransactionBackendImpl.cpp; path = Modules/indexeddb/IDBTransactionBackendImpl.cpp; sourceTree = "<group>"; };
-		9712A5A015004EDA0048AF10 /* IDBTransactionBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBTransactionBackendImpl.h; path = Modules/indexeddb/IDBTransactionBackendImpl.h; sourceTree = "<group>"; };
-		9712A5A315004EDA0048AF10 /* IDBTransactionCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBTransactionCoordinator.cpp; path = Modules/indexeddb/IDBTransactionCoordinator.cpp; sourceTree = "<group>"; };
-		9712A5A415004EDA0048AF10 /* IDBTransactionCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBTransactionCoordinator.h; path = Modules/indexeddb/IDBTransactionCoordinator.h; sourceTree = "<group>"; };
 		9712A5A515004EDA0048AF10 /* IDBVersionChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBVersionChangeEvent.cpp; path = Modules/indexeddb/IDBVersionChangeEvent.cpp; sourceTree = "<group>"; };
 		9712A5A615004EDA0048AF10 /* IDBVersionChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBVersionChangeEvent.h; path = Modules/indexeddb/IDBVersionChangeEvent.h; sourceTree = "<group>"; };
 		9712A5A715004EDA0048AF10 /* IDBVersionChangeEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBVersionChangeEvent.idl; path = Modules/indexeddb/IDBVersionChangeEvent.idl; sourceTree = "<group>"; };
@@ -14825,6 +14821,29 @@
 			name = animation;
 			sourceTree = "<group>";
 		};
+		511EF32A17F236E900E4FA16 /* leveldb */ = {
+			isa = PBXGroup;
+			children = (
+				511EF32B17F23B6900E4FA16 /* IDBBackingStoreLevelDB.cpp */,
+				511EF32C17F23B6900E4FA16 /* IDBBackingStoreLevelDB.h */,
+				511EF32D17F23B6900E4FA16 /* IDBCursorBackendLevelDB.cpp */,
+				511EF32E17F23B6900E4FA16 /* IDBCursorBackendLevelDB.h */,
+				511EF32F17F23B6900E4FA16 /* IDBDatabaseBackendLevelDB.cpp */,
+				511EF33017F23B6900E4FA16 /* IDBDatabaseBackendLevelDB.h */,
+				511EF33117F23B6900E4FA16 /* IDBFactoryBackendLevelDB.cpp */,
+				511EF33217F23B6900E4FA16 /* IDBFactoryBackendLevelDB.h */,
+				511EF33317F23B6900E4FA16 /* IDBLevelDBCoding.cpp */,
+				511EF33417F23B6900E4FA16 /* IDBLevelDBCoding.h */,
+				511EF33517F23B6900E4FA16 /* IDBObjectStoreBackendLevelDB.cpp */,
+				511EF33617F23B6900E4FA16 /* IDBObjectStoreBackendLevelDB.h */,
+				511EF33717F23B6900E4FA16 /* IDBTransactionBackendLevelDB.cpp */,
+				511EF33817F23B6900E4FA16 /* IDBTransactionBackendLevelDB.h */,
+				51CEFB2917F2492100ACAA18 /* IDBTransactionCoordinatorLevelDB.cpp */,
+				51CEFB2A17F2492100ACAA18 /* IDBTransactionCoordinatorLevelDB.h */,
+			);
+			name = leveldb;
+			sourceTree = "<group>";
+		};
 		5126E6B60A2E3AEF005C29FA /* icon */ = {
 			isa = PBXGroup;
 			children = (
@@ -16719,20 +16738,17 @@
 		9712A55315004E3C0048AF10 /* indexeddb */ = {
 			isa = PBXGroup;
 			children = (
+				511EF32A17F236E900E4FA16 /* leveldb */,
 				9712A55415004EDA0048AF10 /* DOMWindowIndexedDatabase.cpp */,
 				9712A55515004EDA0048AF10 /* DOMWindowIndexedDatabase.h */,
 				9712A55615004EDA0048AF10 /* DOMWindowIndexedDatabase.idl */,
 				511EF28817F0FA6E00E4FA16 /* IDBAny.cpp */,
 				9712A55815004EDA0048AF10 /* IDBAny.h */,
 				9712A55915004EDA0048AF10 /* IDBAny.idl */,
-				511EF32817F0FF0300E4FA16 /* IDBBackingStore.cpp */,
-				9712A55A15004EDA0048AF10 /* IDBBackingStore.h */,
 				9712A55B15004EDA0048AF10 /* IDBCallbacks.h */,
 				511EF28917F0FA6E00E4FA16 /* IDBCursor.cpp */,
 				9712A55D15004EDA0048AF10 /* IDBCursor.h */,
 				9712A55E15004EDA0048AF10 /* IDBCursor.idl */,
-				9712A55F15004EDA0048AF10 /* IDBCursorBackendImpl.cpp */,
-				9712A56015004EDA0048AF10 /* IDBCursorBackendImpl.h */,
 				9712A56115004EDA0048AF10 /* IDBCursorBackendInterface.h */,
 				511EF28A17F0FA6E00E4FA16 /* IDBCursorWithValue.cpp */,
 				9712A56315004EDA0048AF10 /* IDBCursorWithValue.h */,
@@ -16740,8 +16756,6 @@
 				511EF28B17F0FA6E00E4FA16 /* IDBDatabase.cpp */,
 				9712A56615004EDA0048AF10 /* IDBDatabase.h */,
 				9712A56715004EDA0048AF10 /* IDBDatabase.idl */,
-				9712A56815004EDA0048AF10 /* IDBDatabaseBackendImpl.cpp */,
-				9712A56915004EDA0048AF10 /* IDBDatabaseBackendImpl.h */,
 				9712A56A15004EDA0048AF10 /* IDBDatabaseBackendInterface.h */,
 				9712A56B15004EDA0048AF10 /* IDBDatabaseCallbacks.h */,
 				9712A56C15004EDA0048AF10 /* IDBDatabaseCallbacksImpl.cpp */,
@@ -16754,8 +16768,6 @@
 				511EF28D17F0FA6E00E4FA16 /* IDBFactory.cpp */,
 				9712A57615004EDA0048AF10 /* IDBFactory.h */,
 				9712A57715004EDA0048AF10 /* IDBFactory.idl */,
-				9712A57815004EDA0048AF10 /* IDBFactoryBackendImpl.cpp */,
-				9712A57915004EDA0048AF10 /* IDBFactoryBackendImpl.h */,
 				9712A57A15004EDA0048AF10 /* IDBFactoryBackendInterface.cpp */,
 				9712A57B15004EDA0048AF10 /* IDBFactoryBackendInterface.h */,
 				511EF28E17F0FA6F00E4FA16 /* IDBHistograms.h */,
@@ -16773,8 +16785,6 @@
 				511EF29317F0FA6F00E4FA16 /* IDBObjectStore.cpp */,
 				9712A59115004EDA0048AF10 /* IDBObjectStore.h */,
 				9712A59215004EDA0048AF10 /* IDBObjectStore.idl */,
-				9712A59315004EDA0048AF10 /* IDBObjectStoreBackendImpl.cpp */,
-				9712A59415004EDA0048AF10 /* IDBObjectStoreBackendImpl.h */,
 				511EF29417F0FA6F00E4FA16 /* IDBOpenDBRequest.cpp */,
 				511EF29517F0FA6F00E4FA16 /* IDBOpenDBRequest.h */,
 				511EF29617F0FA6F00E4FA16 /* IDBOpenDBRequest.idl */,
@@ -16787,10 +16797,6 @@
 				511EF29817F0FA6F00E4FA16 /* IDBTransaction.cpp */,
 				9712A59D15004EDA0048AF10 /* IDBTransaction.h */,
 				9712A59E15004EDA0048AF10 /* IDBTransaction.idl */,
-				9712A59F15004EDA0048AF10 /* IDBTransactionBackendImpl.cpp */,
-				9712A5A015004EDA0048AF10 /* IDBTransactionBackendImpl.h */,
-				9712A5A315004EDA0048AF10 /* IDBTransactionCoordinator.cpp */,
-				9712A5A415004EDA0048AF10 /* IDBTransactionCoordinator.h */,
 				9712A5A515004EDA0048AF10 /* IDBVersionChangeEvent.cpp */,
 				9712A5A615004EDA0048AF10 /* IDBVersionChangeEvent.h */,
 				9712A5A715004EDA0048AF10 /* IDBVersionChangeEvent.idl */,
@@ -22756,15 +22762,12 @@
 				51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */,
 				45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */,
 				9712A5B115004EDA0048AF10 /* IDBAny.h in Headers */,
-				9712A5B315004EDA0048AF10 /* IDBBackingStore.h in Headers */,
 				C585A66311D4FAC5004C3E4B /* IDBBindingUtilities.h in Headers */,
 				9712A5B415004EDA0048AF10 /* IDBCallbacks.h in Headers */,
 				9712A5B615004EDA0048AF10 /* IDBCursor.h in Headers */,
-				9712A5B915004EDA0048AF10 /* IDBCursorBackendImpl.h in Headers */,
 				9712A5BA15004EDA0048AF10 /* IDBCursorBackendInterface.h in Headers */,
 				9712A5BC15004EDA0048AF10 /* IDBCursorWithValue.h in Headers */,
 				9712A5BF15004EDA0048AF10 /* IDBDatabase.h in Headers */,
-				9712A5C215004EDA0048AF10 /* IDBDatabaseBackendImpl.h in Headers */,
 				9712A5C315004EDA0048AF10 /* IDBDatabaseBackendInterface.h in Headers */,
 				9712A5C415004EDA0048AF10 /* IDBDatabaseCallbacks.h in Headers */,
 				9712A5C615004EDA0048AF10 /* IDBDatabaseCallbacksImpl.h in Headers */,
@@ -22773,7 +22776,6 @@
 				9712A5CA15004EDA0048AF10 /* IDBDatabaseException.h in Headers */,
 				9712A5CD15004EDA0048AF10 /* IDBEventDispatcher.h in Headers */,
 				9712A5CF15004EDA0048AF10 /* IDBFactory.h in Headers */,
-				9712A5D215004EDA0048AF10 /* IDBFactoryBackendImpl.h in Headers */,
 				9712A5D415004EDA0048AF10 /* IDBFactoryBackendInterface.h in Headers */,
 				9712A5D615004EDA0048AF10 /* IDBIndex.h in Headers */,
 				9712A5DC15004EDA0048AF10 /* IDBKey.h in Headers */,
@@ -22781,13 +22783,10 @@
 				9712A5DF15004EDA0048AF10 /* IDBKeyPath.h in Headers */,
 				9712A5E315004EDA0048AF10 /* IDBKeyRange.h in Headers */,
 				9712A5EA15004EDA0048AF10 /* IDBObjectStore.h in Headers */,
-				9712A5ED15004EDA0048AF10 /* IDBObjectStoreBackendImpl.h in Headers */,
 				9712A5F015004EDA0048AF10 /* IDBPendingTransactionMonitor.h in Headers */,
 				9712A5F215004EDA0048AF10 /* IDBRequest.h in Headers */,
 				9712A5F415004EDA0048AF10 /* IDBTracing.h in Headers */,
 				9712A5F615004EDA0048AF10 /* IDBTransaction.h in Headers */,
-				9712A5F915004EDA0048AF10 /* IDBTransactionBackendImpl.h in Headers */,
-				9712A5FD15004EDA0048AF10 /* IDBTransactionCoordinator.h in Headers */,
 				9712A5FF15004EDA0048AF10 /* IDBVersionChangeEvent.h in Headers */,
 				1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */,
 				5913A24213D49EBA00F5B05C /* IdentifiersFactory.h in Headers */,
@@ -25388,6 +25387,7 @@
 				82E3D8DE122EA0D1003AE5BC /* CSSPropertySourceData.cpp in Sources */,
 				BC5A12DF0DC0414800C9AFAD /* CSSReflectValue.cpp in Sources */,
 				A80E6D060A1989CA007FB8C5 /* CSSRule.cpp in Sources */,
+				511EF33917F23B7300E4FA16 /* IDBBackingStoreLevelDB.cpp in Sources */,
 				A80E6D090A1989CA007FB8C5 /* CSSRuleList.cpp in Sources */,
 				371F51A20D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp in Sources */,
 				A80E734F0A199C77007FB8C5 /* CSSSelector.cpp in Sources */,
@@ -25447,7 +25447,6 @@
 				FD31602D12B0267600C1A359 /* DelayNode.cpp in Sources */,
 				FD31603012B0267600C1A359 /* DelayProcessor.cpp in Sources */,
 				1CE83AC40ADAFFD8009354F6 /* DeleteButton.cpp in Sources */,
-				511EF32917F0FF0300E4FA16 /* IDBBackingStore.cpp in Sources */,
 				1CE83AC30ADAFFD7009354F6 /* DeleteButtonController.cpp in Sources */,
 				93309DDE099E64920056E581 /* DeleteFromTextNodeCommand.cpp in Sources */,
 				93309DE0099E64920056E581 /* DeleteSelectionCommand.cpp in Sources */,
@@ -25894,6 +25893,7 @@
 				93F19AFD08245E59001E9ABC /* HTMLCanvasElement.cpp in Sources */,
 				A8DF3FD1097FA0FC0052981B /* HTMLCollection.cpp in Sources */,
 				977B3864122883E900B81FF8 /* HTMLConstructionSite.cpp in Sources */,
+				511EF33C17F23B7300E4FA16 /* IDBFactoryBackendLevelDB.cpp in Sources */,
 				5D4F51DF132725480016F541 /* HTMLConverter.mm in Sources */,
 				F5C041DA0FFCA7CE00839D4A /* HTMLDataListElement.cpp in Sources */,
 				D359D789129CA2710006E5D2 /* HTMLDetailsElement.cpp in Sources */,
@@ -26009,16 +26009,10 @@
 				51E1ECC00C91C90400DC255B /* IconRecord.cpp in Sources */,
 				45099C411370A7800058D513 /* IconURL.cpp in Sources */,
 				C585A66211D4FAC5004C3E4B /* IDBBindingUtilities.cpp in Sources */,
-				9712A5B815004EDA0048AF10 /* IDBCursorBackendImpl.cpp in Sources */,
-				9712A5C115004EDA0048AF10 /* IDBDatabaseBackendImpl.cpp in Sources */,
 				9712A5C515004EDA0048AF10 /* IDBDatabaseCallbacksImpl.cpp in Sources */,
 				9712A5C915004EDA0048AF10 /* IDBDatabaseException.cpp in Sources */,
-				9712A5D115004EDA0048AF10 /* IDBFactoryBackendImpl.cpp in Sources */,
 				9712A5D315004EDA0048AF10 /* IDBFactoryBackendInterface.cpp in Sources */,
-				9712A5EC15004EDA0048AF10 /* IDBObjectStoreBackendImpl.cpp in Sources */,
 				9712A5EF15004EDA0048AF10 /* IDBPendingTransactionMonitor.cpp in Sources */,
-				9712A5F815004EDA0048AF10 /* IDBTransactionBackendImpl.cpp in Sources */,
-				9712A5FC15004EDA0048AF10 /* IDBTransactionCoordinator.cpp in Sources */,
 				9712A5FE15004EDA0048AF10 /* IDBVersionChangeEvent.cpp in Sources */,
 				1A71D57B0F33819000F9CE4E /* IdentifierRep.cpp in Sources */,
 				5913A24113D49EBA00F5B05C /* IdentifiersFactory.cpp in Sources */,
@@ -26356,6 +26350,7 @@
 				4AD0173C127E82860015035F /* JSHTMLOutputElement.cpp in Sources */,
 				1AE2ABA60A1CE90500B42B25 /* JSHTMLParagraphElement.cpp in Sources */,
 				1AE2ABA80A1CE90500B42B25 /* JSHTMLParamElement.cpp in Sources */,
+				511EF33A17F23B7300E4FA16 /* IDBCursorBackendLevelDB.cpp in Sources */,
 				1AE2ABAA0A1CE90500B42B25 /* JSHTMLPreElement.cpp in Sources */,
 				A4226E5A1163D667008B8397 /* JSHTMLProgressElement.cpp in Sources */,
 				1AE2AEC70A1D297B00B42B25 /* JSHTMLQuoteElement.cpp in Sources */,
@@ -27166,6 +27161,7 @@
 				293EAE211356B32E0067ACF9 /* RuntimeApplicationChecks.cpp in Sources */,
 				8C6EA61911EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp in Sources */,
 				49E911CA0EF86D47009D0CAF /* ScaleTransformOperation.cpp in Sources */,
+				511EF33D17F23B7300E4FA16 /* IDBLevelDBCoding.cpp in Sources */,
 				5DFE8F560D16477B0076E937 /* ScheduledAction.cpp in Sources */,
 				5162C7F411F77EFB00612EFE /* SchemeRegistry.cpp in Sources */,
 				9BD0BF9412A42BF50072FD43 /* ScopedEventQueue.cpp in Sources */,
@@ -27292,6 +27288,7 @@
 				A1E1154813015C5D0054AC8C /* SpotLightSource.cpp in Sources */,
 				97BC6A3E1505F081001B74AC /* SQLException.cpp in Sources */,
 				1A2E6E7A0CC556D5004A2062 /* SQLiteAuthorizer.cpp in Sources */,
+				511EF33E17F23B7300E4FA16 /* IDBObjectStoreBackendLevelDB.cpp in Sources */,
 				1A2246490CC98DDB00C05240 /* SQLiteDatabase.cpp in Sources */,
 				B5A684240FFABEAA00D24689 /* SQLiteFileSystem.cpp in Sources */,
 				1A22464B0CC98DDB00C05240 /* SQLiteStatement.cpp in Sources */,
@@ -27396,6 +27393,7 @@
 				08B5F25513B5FFF2002959EC /* SVGAnimatedPath.cpp in Sources */,
 				43B9336A13B261B1004584BF /* SVGAnimatedPointList.cpp in Sources */,
 				431A302113B89DCC007791E4 /* SVGAnimatedPreserveAspectRatio.cpp in Sources */,
+				511EF33F17F23B7300E4FA16 /* IDBTransactionBackendLevelDB.cpp in Sources */,
 				836FBCEC178C117F00B21A15 /* SVGAnimatedProperty.cpp in Sources */,
 				43142E7A13B1E97700F1C871 /* SVGAnimatedRect.cpp in Sources */,
 				43A6266713B3D11000AC94B8 /* SVGAnimatedString.cpp in Sources */,
@@ -27518,6 +27516,7 @@
 				B2227A8B0D00BF220071B782 /* SVGPointList.cpp in Sources */,
 				B2227A8E0D00BF220071B782 /* SVGPolyElement.cpp in Sources */,
 				B2227A900D00BF220071B782 /* SVGPolygonElement.cpp in Sources */,
+				51CEFB2B17F2492900ACAA18 /* IDBTransactionCoordinatorLevelDB.cpp in Sources */,
 				B2227A930D00BF220071B782 /* SVGPolylineElement.cpp in Sources */,
 				B543B85717EB758F003BE93A /* SVGPropertyInfo.cpp in Sources */,
 				B2227A960D00BF220071B782 /* SVGPreserveAspectRatio.cpp in Sources */,
@@ -27579,6 +27578,7 @@
 				9343CB8112F25E510033C5EE /* TextCodecUTF8.cpp in Sources */,
 				142B97C913138943008BEF4B /* TextControlInnerElements.cpp in Sources */,
 				97BC84B312371180000C6161 /* TextDocument.cpp in Sources */,
+				511EF33B17F23B7300E4FA16 /* IDBDatabaseBackendLevelDB.cpp in Sources */,
 				97BC84831236FD93000C6161 /* TextDocumentParser.cpp in Sources */,
 				B2C3DA460D006C1D00EF6F26 /* TextEncoding.cpp in Sources */,
 				C105DA620F3AA68F001DD44F /* TextEncodingDetectorICU.cpp in Sources */,

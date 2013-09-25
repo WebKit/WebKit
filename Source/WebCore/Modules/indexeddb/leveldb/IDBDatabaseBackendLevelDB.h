@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBDatabaseBackendImpl_h
-#define IDBDatabaseBackendImpl_h
+#ifndef IDBDatabaseBackendLevelDB_h
+#define IDBDatabaseBackendLevelDB_h
 
 #include "IDBCallbacks.h"
 #include "IDBMetadata.h"
@@ -33,20 +33,20 @@
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
 namespace WebCore {
 
 class IDBBackingStore;
 class IDBDatabase;
-class IDBFactoryBackendImpl;
-class IDBTransactionBackendImpl;
-class IDBTransactionCoordinator;
+class IDBFactoryBackendLevelDB;
+class IDBTransactionBackendLevelDB;
+class IDBTransactionCoordinatorLevelDB;
 
-class IDBDatabaseBackendImpl : public IDBDatabaseBackendInterface {
+class IDBDatabaseBackendLevelDB : public IDBDatabaseBackendInterface {
 public:
-    static PassRefPtr<IDBDatabaseBackendImpl> create(const String& name, IDBBackingStore* database, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
-    virtual ~IDBDatabaseBackendImpl();
+    static PassRefPtr<IDBDatabaseBackendLevelDB> create(const String& name, IDBBackingStore* database, IDBFactoryBackendLevelDB*, const String& uniqueIdentifier);
+    virtual ~IDBDatabaseBackendLevelDB();
 
     PassRefPtr<IDBBackingStore> backingStore() const;
 
@@ -74,11 +74,11 @@ public:
     virtual void createIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
     virtual void deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId);
 
-    IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
-    void transactionStarted(PassRefPtr<IDBTransactionBackendImpl>);
-    void transactionFinished(PassRefPtr<IDBTransactionBackendImpl>);
-    void transactionFinishedAndCompleteFired(PassRefPtr<IDBTransactionBackendImpl>);
-    void transactionFinishedAndAbortFired(PassRefPtr<IDBTransactionBackendImpl>);
+    IDBTransactionCoordinatorLevelDB* transactionCoordinator() const { return m_transactionCoordinator.get(); }
+    void transactionStarted(PassRefPtr<IDBTransactionBackendLevelDB>);
+    void transactionFinished(PassRefPtr<IDBTransactionBackendLevelDB>);
+    void transactionFinishedAndCompleteFired(PassRefPtr<IDBTransactionBackendLevelDB>);
+    void transactionFinishedAndAbortFired(PassRefPtr<IDBTransactionBackendLevelDB>);
 
     virtual void get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, bool keyOnly, PassRefPtr<IDBCallbacks>) OVERRIDE;
     virtual void put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&) OVERRIDE;
@@ -90,7 +90,7 @@ public:
     virtual void clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks>) OVERRIDE;
 
 private:
-    IDBDatabaseBackendImpl(const String& name, IDBBackingStore* database, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
+    IDBDatabaseBackendLevelDB(const String& name, IDBBackingStore* database, IDBFactoryBackendLevelDB*, const String& uniqueIdentifier);
 
     bool openInternal();
     void runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, int64_t requestedVersion);
@@ -110,12 +110,12 @@ private:
 
     String m_identifier;
     // This might not need to be a RefPtr since the factory's lifetime is that of the page group, but it's better to be conservitive than sorry.
-    RefPtr<IDBFactoryBackendImpl> m_factory;
+    RefPtr<IDBFactoryBackendLevelDB> m_factory;
 
-    OwnPtr<IDBTransactionCoordinator> m_transactionCoordinator;
-    RefPtr<IDBTransactionBackendImpl> m_runningVersionChangeTransaction;
+    OwnPtr<IDBTransactionCoordinatorLevelDB> m_transactionCoordinator;
+    RefPtr<IDBTransactionBackendLevelDB> m_runningVersionChangeTransaction;
 
-    typedef HashMap<int64_t, IDBTransactionBackendImpl*> TransactionMap;
+    typedef HashMap<int64_t, IDBTransactionBackendLevelDB*> TransactionMap;
     TransactionMap m_transactions;
 
     class PendingOpenCall;
@@ -133,6 +133,6 @@ private:
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#endif // IDBDatabaseBackendImpl_h
+#endif // IDBDatabaseBackendLevelDB_h

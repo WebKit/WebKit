@@ -23,12 +23,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBTransactionBackendImpl_h
-#define IDBTransactionBackendImpl_h
+#ifndef IDBTransactionBackendLevelDB_h
+#define IDBTransactionBackendLevelDB_h
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#include "IDBBackingStore.h"
+#include "IDBBackingStoreLevelDB.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseError.h"
 #include "Timer.h"
@@ -42,10 +42,10 @@ class IDBDatabaseBackendImpl;
 class IDBCursorBackendImpl;
 class IDBDatabaseCallbacks;
 
-class IDBTransactionBackendImpl : public RefCounted<IDBTransactionBackendImpl> {
+class IDBTransactionBackendLevelDB : public RefCounted<IDBTransactionBackendLevelDB> {
 public:
-    static PassRefPtr<IDBTransactionBackendImpl> create(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode, IDBDatabaseBackendImpl*);
-    virtual ~IDBTransactionBackendImpl();
+    static PassRefPtr<IDBTransactionBackendLevelDB> create(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode, IDBDatabaseBackendImpl*);
+    virtual ~IDBTransactionBackendLevelDB();
 
     virtual void abort();
     void commit();
@@ -53,7 +53,7 @@ public:
     class Operation {
     public:
         virtual ~Operation() { }
-        virtual void perform(IDBTransactionBackendImpl*) = 0;
+        virtual void perform(IDBTransactionBackendLevelDB*) = 0;
     };
 
     void abort(PassRefPtr<IDBDatabaseError>);
@@ -72,7 +72,7 @@ public:
     IDBDatabaseBackendImpl* database() const { return m_database.get(); }
 
 private:
-    IDBTransactionBackendImpl(int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, IDBDatabaseBackendImpl*);
+    IDBTransactionBackendLevelDB(int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, IDBDatabaseBackendImpl*);
 
     enum State {
         Unused, // Created, but no tasks yet.
@@ -86,7 +86,7 @@ private:
     bool isTaskQueueEmpty() const;
     bool hasPendingTasks() const;
 
-    void taskTimerFired(Timer<IDBTransactionBackendImpl>*);
+    void taskTimerFired(Timer<IDBTransactionBackendLevelDB>*);
     void closeOpenCursors();
 
     const int64_t m_id;
@@ -106,7 +106,7 @@ private:
     IDBBackingStore::Transaction m_transaction;
 
     // FIXME: delete the timer once we have threads instead.
-    Timer<IDBTransactionBackendImpl> m_taskTimer;
+    Timer<IDBTransactionBackendLevelDB> m_taskTimer;
     int m_pendingPreemptiveEvents;
 
     HashSet<IDBCursorBackendImpl*> m_openCursors;
@@ -114,6 +114,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#endif // IDBTransactionBackendImpl_h
+#endif // IDBTransactionBackendLevelDB_h

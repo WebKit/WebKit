@@ -26,8 +26,7 @@
 #ifndef IDBLevelDBCoding_h
 #define IDBLevelDBCoding_h
 
-#if ENABLE(INDEXED_DATABASE)
-#if USE(LEVELDB)
+#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -282,7 +281,7 @@ private:
 class ObjectStoreNamesKey {
 public:
     // FIXME: We never use this to look up object store ids, because a mapping
-    // is kept in the IDBDatabaseBackendImpl. Can the mapping become unreliable?
+    // is kept in the IDBDatabaseBackendLevelDB. Can the mapping become unreliable?
     // Can we remove this?
     static const char* decode(const char* start, const char* limit, ObjectStoreNamesKey* result);
     static Vector<char> encode(int64_t databaseId, const String& objectStoreName);
@@ -363,7 +362,6 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(LEVELDB)
-#endif // ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
 #endif // IDBLevelDBCoding_h

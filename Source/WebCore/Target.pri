@@ -3059,23 +3059,23 @@ enable?(INDEXED_DATABASE) {
         Modules/indexeddb/IDBAny.h \
         Modules/indexeddb/IDBCallbacks.h \
         Modules/indexeddb/IDBCursor.h \
-        Modules/indexeddb/IDBCursorBackendImpl.h \
+        Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.h \
         Modules/indexeddb/IDBCursorBackendInterface.h \
         Modules/indexeddb/IDBDatabase.h \
-        Modules/indexeddb/IDBDatabaseBackendImpl.h \
+        Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.h \
         Modules/indexeddb/IDBDatabaseBackendInterface.h \
         Modules/indexeddb/IDBDatabaseError.h \
         Modules/indexeddb/IDBDatabaseException.h \
         Modules/indexeddb/IDBEventDispatcher.h \
         Modules/indexeddb/IDBFactory.h \
-        Modules/indexeddb/IDBFactoryBackendImpl.h \
+        Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.h \
         Modules/indexeddb/IDBFactoryBackendInterface.h \
         Modules/indexeddb/IDBHistograms.h \
         Modules/indexeddb/IDBIndex.h \
         Modules/indexeddb/IDBKey.h \
         Modules/indexeddb/IDBKeyRange.h \
         Modules/indexeddb/IDBObjectStore.h \
-        Modules/indexeddb/IDBObjectStoreBackendImpl.h \
+        Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.h \
         Modules/indexeddb/IDBRequest.h \
         Modules/indexeddb/IDBTransaction.h \
         Modules/indexeddb/IndexedDB.h
@@ -3088,19 +3088,19 @@ enable?(INDEXED_DATABASE) {
         Modules/indexeddb/DOMWindowIndexedDatabase.cpp \
         Modules/indexeddb/IDBAny.cpp \
         Modules/indexeddb/IDBCursor.cpp \
-        Modules/indexeddb/IDBCursorBackendImpl.cpp \
+        Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp \
         Modules/indexeddb/IDBDatabase.cpp \
-        Modules/indexeddb/IDBDatabaseBackendImpl.cpp \
+        Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp \
         Modules/indexeddb/IDBDatabaseException.cpp \
         Modules/indexeddb/IDBEventDispatcher.cpp \
         Modules/indexeddb/IDBFactory.cpp \
         Modules/indexeddb/IDBFactoryBackendInterface.cpp \
-        Modules/indexeddb/IDBFactoryBackendImpl.cpp \
+        Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp \
         Modules/indexeddb/IDBIndex.cpp \
         Modules/indexeddb/IDBKey.cpp \
         Modules/indexeddb/IDBKeyRange.cpp \
         Modules/indexeddb/IDBObjectStore.cpp \
-        Modules/indexeddb/IDBObjectStoreBackendImpl.cpp \
+        Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.cpp \
         Modules/indexeddb/IDBRequest.cpp \
         Modules/indexeddb/IDBTransaction.cpp \
         Modules/indexeddb/PageGroupIndexedDatabase.cpp \

@@ -28,15 +28,22 @@
 #include "config.h"
 #include "IDBFactoryBackendInterface.h"
 
-#include "IDBFactoryBackendImpl.h"
-
 #if ENABLE(INDEXED_DATABASE)
+
+#if USE(LEVELDB)
+#include "IDBFactoryBackendLevelDB.h"
+#endif
 
 namespace WebCore {
 
 PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendInterface::create()
 {
-    return IDBFactoryBackendImpl::create();
+    // FIXME: Need a better platform abstraction here, but this stop gap will work for now.
+#if USE(LEVELDB)
+    return IDBFactoryBackendLevelDB::create();
+#else
+    return 0;
+#endif
 }
 
 } // namespace WebCore

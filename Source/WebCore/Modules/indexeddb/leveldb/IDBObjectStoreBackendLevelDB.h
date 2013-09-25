@@ -23,26 +23,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBObjectStoreBackendImpl_h
-#define IDBObjectStoreBackendImpl_h
+#ifndef IDBObjectStoreBackendLevelDB_h
+#define IDBObjectStoreBackendLevelDB_h
 
-#include "IDBBackingStore.h"
-#include "IDBDatabaseBackendImpl.h"
+#include "IDBBackingStoreLevelDB.h"
+#include "IDBDatabaseBackendLevelDB.h"
 #include "IDBKeyPath.h"
 #include "IDBMetadata.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
 namespace WebCore {
 
-class IDBDatabaseBackendImpl;
-class IDBTransactionBackendImpl;
+class IDBDatabaseBackendLevelDB;
+class IDBTransactionBackendLevelDB;
 struct IDBObjectStoreMetadata;
 
 // FIXME: this namespace is temporary until we move its contents out to their own home.
-namespace IDBObjectStoreBackendImpl {
+namespace IDBObjectStoreBackendLevelDB {
 
     class IndexWriter {
     public:
@@ -66,14 +66,14 @@ namespace IDBObjectStoreBackendImpl {
         IDBDatabaseBackendInterface::IndexKeys m_indexKeys;
     };
 
-    bool makeIndexWriters(PassRefPtr<IDBTransactionBackendImpl>, IDBBackingStore*, int64_t databaseId, const IDBObjectStoreMetadata&, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>&, Vector<OwnPtr<IndexWriter> >* indexWriters, String* errorMessage, bool& completed) WARN_UNUSED_RETURN;
+    bool makeIndexWriters(PassRefPtr<IDBTransactionBackendLevelDB>, IDBBackingStore*, int64_t databaseId, const IDBObjectStoreMetadata&, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>&, Vector<OwnPtr<IndexWriter> >* indexWriters, String* errorMessage, bool& completed) WARN_UNUSED_RETURN;
 
-    PassRefPtr<IDBKey> generateKey(PassRefPtr<IDBBackingStore>, PassRefPtr<IDBTransactionBackendImpl>, int64_t databaseId, int64_t objectStoreId);
-    bool updateKeyGenerator(PassRefPtr<IDBBackingStore>, PassRefPtr<IDBTransactionBackendImpl>, int64_t databaseId, int64_t objectStoreId, const IDBKey*, bool checkCurrent);
+    PassRefPtr<IDBKey> generateKey(PassRefPtr<IDBBackingStore>, PassRefPtr<IDBTransactionBackendLevelDB>, int64_t databaseId, int64_t objectStoreId);
+    bool updateKeyGenerator(PassRefPtr<IDBBackingStore>, PassRefPtr<IDBTransactionBackendLevelDB>, int64_t databaseId, int64_t objectStoreId, const IDBKey*, bool checkCurrent);
 };
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#endif // IDBObjectStoreBackendImpl_h
+#endif // IDBObjectStoreBackendLevelDB_h

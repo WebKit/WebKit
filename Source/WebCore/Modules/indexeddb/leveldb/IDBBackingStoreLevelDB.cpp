@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "IDBBackingStore.h"
+#include "IDBBackingStoreLevelDB.h"
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
 #include "FileSystem.h"
 #include "HistogramSupport.h"
@@ -1993,4 +1993,4 @@ void IDBBackingStore::Transaction::rollback()
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)

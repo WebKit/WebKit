@@ -24,35 +24,35 @@
  */
 
 #include "config.h"
-#include "IDBTransactionCoordinator.h"
+#include "IDBTransactionCoordinatorLevelDB.h"
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#include "IDBDatabaseBackendImpl.h"
-#include "IDBTransactionBackendImpl.h"
+#include "IDBDatabaseBackendLevelDB.h"
+#include "IDBTransactionBackendLevelDB.h"
 
 namespace WebCore {
 
-PassOwnPtr<IDBTransactionCoordinator> IDBTransactionCoordinator::create()
+PassOwnPtr<IDBTransactionCoordinatorLevelDB> IDBTransactionCoordinatorLevelDB::create()
 {
-    return adoptPtr(new IDBTransactionCoordinator());
+    return adoptPtr(new IDBTransactionCoordinatorLevelDB());
 }
 
-IDBTransactionCoordinator::IDBTransactionCoordinator()
-{
-}
-
-IDBTransactionCoordinator::~IDBTransactionCoordinator()
+IDBTransactionCoordinatorLevelDB::IDBTransactionCoordinatorLevelDB()
 {
 }
 
-void IDBTransactionCoordinator::didCreateTransaction(IDBTransactionBackendImpl* transaction)
+IDBTransactionCoordinatorLevelDB::~IDBTransactionCoordinatorLevelDB()
+{
+}
+
+void IDBTransactionCoordinatorLevelDB::didCreateTransaction(IDBTransactionBackendLevelDB* transaction)
 {
     ASSERT(!m_transactions.contains(transaction));
     m_transactions.add(transaction, transaction);
 }
 
-void IDBTransactionCoordinator::didStartTransaction(IDBTransactionBackendImpl* transaction)
+void IDBTransactionCoordinatorLevelDB::didStartTransaction(IDBTransactionBackendLevelDB* transaction)
 {
     ASSERT(m_transactions.contains(transaction));
 
@@ -60,7 +60,7 @@ void IDBTransactionCoordinator::didStartTransaction(IDBTransactionBackendImpl* t
     processStartedTransactions();
 }
 
-void IDBTransactionCoordinator::didFinishTransaction(IDBTransactionBackendImpl* transaction)
+void IDBTransactionCoordinatorLevelDB::didFinishTransaction(IDBTransactionBackendLevelDB* transaction)
 {
     ASSERT(m_transactions.contains(transaction));
 
@@ -77,7 +77,7 @@ void IDBTransactionCoordinator::didFinishTransaction(IDBTransactionBackendImpl* 
 
 #ifndef NDEBUG
 // Verifies internal consistiency while returning whether anything is found.
-bool IDBTransactionCoordinator::isActive(IDBTransactionBackendImpl* transaction)
+bool IDBTransactionCoordinatorLevelDB::isActive(IDBTransactionBackendLevelDB* transaction)
 {
     bool found = false;
     if (m_queuedTransactions.contains(transaction))
@@ -91,16 +91,16 @@ bool IDBTransactionCoordinator::isActive(IDBTransactionBackendImpl* transaction)
 }
 #endif
 
-void IDBTransactionCoordinator::processStartedTransactions()
+void IDBTransactionCoordinatorLevelDB::processStartedTransactions()
 {
     if (m_queuedTransactions.isEmpty())
         return;
 
     ASSERT(m_startedTransactions.isEmpty() || (*m_startedTransactions.begin())->mode() != IndexedDB::TransactionVersionChange);
 
-    ListHashSet<IDBTransactionBackendImpl*>::const_iterator it = m_queuedTransactions.begin();
+    ListHashSet<IDBTransactionBackendLevelDB*>::const_iterator it = m_queuedTransactions.begin();
     while (it != m_queuedTransactions.end()) {
-        IDBTransactionBackendImpl* transaction = *it;
+        IDBTransactionBackendLevelDB* transaction = *it;
         ++it;
         if (canRunTransaction(transaction)) {
             m_queuedTransactions.remove(transaction);
@@ -119,7 +119,7 @@ static bool doScopesOverlap(const HashSet<int64_t>& scope1, const HashSet<int64_
     return false;
 }
 
-bool IDBTransactionCoordinator::canRunTransaction(IDBTransactionBackendImpl* transaction)
+bool IDBTransactionCoordinatorLevelDB::canRunTransaction(IDBTransactionBackendLevelDB* transaction)
 {
     ASSERT(m_queuedTransactions.contains(transaction));
     switch (transaction->mode()) {
@@ -132,11 +132,11 @@ bool IDBTransactionCoordinator::canRunTransaction(IDBTransactionBackendImpl* tra
         return true;
 
     case IndexedDB::TransactionReadWrite:
-        for (HashSet<IDBTransactionBackendImpl*>::const_iterator it = m_startedTransactions.begin(); it != m_startedTransactions.end(); ++it) {
+        for (HashSet<IDBTransactionBackendLevelDB*>::const_iterator it = m_startedTransactions.begin(); it != m_startedTransactions.end(); ++it) {
             if ((*it)->mode() == IndexedDB::TransactionReadWrite && doScopesOverlap(transaction->scope(), (*it)->scope()))
                 return false;
         }
-        for (ListHashSet<IDBTransactionBackendImpl*>::const_iterator it = m_queuedTransactions.begin(); *it != transaction; ++it) {
+        for (ListHashSet<IDBTransactionBackendLevelDB*>::const_iterator it = m_queuedTransactions.begin(); *it != transaction; ++it) {
             ASSERT(it != m_queuedTransactions.end());
             if ((*it)->mode() == IndexedDB::TransactionReadWrite && doScopesOverlap(transaction->scope(), (*it)->scope()))
                 return false;
@@ -149,4 +149,4 @@ bool IDBTransactionCoordinator::canRunTransaction(IDBTransactionBackendImpl* tra
 
 };
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)

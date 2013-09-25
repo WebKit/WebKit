@@ -25,10 +25,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef IDBFactoryBackendImpl_h
-#define IDBFactoryBackendImpl_h
+#ifndef IDBFactoryBackendLevelDB_h
+#define IDBFactoryBackendLevelDB_h
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
 #include "IDBCallbacks.h"
 #include "IDBDatabaseCallbacks.h"
@@ -45,15 +45,15 @@ namespace WebCore {
 class DOMStringList;
 
 class IDBBackingStore;
-class IDBDatabaseBackendImpl;
+class IDBDatabaseBackendLevelDB;
 
-class IDBFactoryBackendImpl : public IDBFactoryBackendInterface {
+class IDBFactoryBackendLevelDB : public IDBFactoryBackendInterface {
 public:
-    static PassRefPtr<IDBFactoryBackendImpl> create()
+    static PassRefPtr<IDBFactoryBackendLevelDB> create()
     {
-        return adoptRef(new IDBFactoryBackendImpl());
+        return adoptRef(new IDBFactoryBackendLevelDB());
     }
-    virtual ~IDBFactoryBackendImpl();
+    virtual ~IDBFactoryBackendLevelDB();
 
     // Notifications from weak pointers.
     virtual void removeIDBDatabaseBackend(const String& uniqueIdentifier);
@@ -64,11 +64,11 @@ public:
     virtual void deleteDatabase(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir);
 
 protected:
-    IDBFactoryBackendImpl();
+    IDBFactoryBackendLevelDB();
     virtual PassRefPtr<IDBBackingStore> openBackingStore(PassRefPtr<SecurityOrigin>, const String& dataDir);
 
 private:
-    typedef HashMap<String, RefPtr<IDBDatabaseBackendImpl> > IDBDatabaseBackendMap;
+    typedef HashMap<String, RefPtr<IDBDatabaseBackendLevelDB> > IDBDatabaseBackendMap;
     IDBDatabaseBackendMap m_databaseBackendMap;
 
     typedef HashMap<String, WeakPtr<IDBBackingStore> > IDBBackingStoreMap;
@@ -77,11 +77,11 @@ private:
     HashSet<RefPtr<IDBBackingStore> > m_sessionOnlyBackingStores;
 
     // Only one instance of the factory should exist at any given time.
-    static IDBFactoryBackendImpl* idbFactoryBackendImpl;
+    static IDBFactoryBackendLevelDB* idbFactoryBackendImpl;
 };
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#endif // IDBFactoryBackendImpl_h
+#endif // IDBFactoryBackendLevelDB_h

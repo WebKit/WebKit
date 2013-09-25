@@ -23,10 +23,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBBackingStore_h
-#define IDBBackingStore_h
+#ifndef IDBBackingStoreLevelDB_h
+#define IDBBackingStoreLevelDB_h
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
 #include "IDBKey.h"
 #include "IDBMetadata.h"
@@ -215,6 +215,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#endif // IDBBackingStore_h
+#endif // IDBBackingStoreLevelDB_h

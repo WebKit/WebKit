@@ -5,6 +5,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/gamepad"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
+    "${WEBCORE_DIR}/Modules/indexeddb/leveldb"
     "${WEBCORE_DIR}/Modules/indieui"
     "${WEBCORE_DIR}/Modules/mediasource"
     "${WEBCORE_DIR}/Modules/mediastream"
@@ -803,33 +804,33 @@ set(WebCore_SOURCES
     Modules/indexeddb/DOMWindowIndexedDatabase.cpp
     Modules/indexeddb/IDBAny.cpp
     Modules/indexeddb/IDBCursor.cpp
-    Modules/indexeddb/IDBCursorBackendImpl.cpp
     Modules/indexeddb/IDBCursorWithValue.cpp
     Modules/indexeddb/IDBDatabase.cpp
-    Modules/indexeddb/IDBDatabaseBackendImpl.cpp
     Modules/indexeddb/IDBDatabaseCallbacksImpl.cpp
     Modules/indexeddb/IDBDatabaseException.cpp
     Modules/indexeddb/IDBEventDispatcher.cpp
     Modules/indexeddb/IDBFactory.cpp
-    Modules/indexeddb/IDBFactoryBackendImpl.cpp
     Modules/indexeddb/IDBFactoryBackendInterface.cpp
     Modules/indexeddb/IDBIndex.cpp
     Modules/indexeddb/IDBKey.cpp
     Modules/indexeddb/IDBKeyPath.cpp
     Modules/indexeddb/IDBKeyRange.cpp
     Modules/indexeddb/IDBObjectStore.cpp
-    Modules/indexeddb/IDBObjectStoreBackendImpl.cpp
     Modules/indexeddb/IDBOpenDBRequest.cpp
     Modules/indexeddb/IDBPendingTransactionMonitor.cpp
     Modules/indexeddb/IDBRequest.cpp
     Modules/indexeddb/IDBTransaction.cpp
-    Modules/indexeddb/IDBTransactionBackendImpl.cpp
-    Modules/indexeddb/IDBTransactionCoordinator.cpp
     Modules/indexeddb/IDBVersionChangeEvent.cpp
     Modules/indexeddb/PageGroupIndexedDatabase.cpp
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
     Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp
+    Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp
+    Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp
+    Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp
     Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp
+    Modules/indexeddb/leveldb/IDBObjectStoreBackendLevelDB.cpp
+    Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp
+    Modules/indexeddb/leveldb/IDBTransactionCoordinatorLevelDB.cpp
 
     Modules/mediasource/MediaSource.cpp
     Modules/mediasource/MediaSourceRegistry.cpp

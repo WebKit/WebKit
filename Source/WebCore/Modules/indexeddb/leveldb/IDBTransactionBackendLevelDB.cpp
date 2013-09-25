@@ -24,30 +24,30 @@
  */
 
 #include "config.h"
-#include "IDBTransactionBackendImpl.h"
+#include "IDBTransactionBackendLevelDB.h"
 
-#if ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#include "IDBBackingStore.h"
+#include "IDBBackingStoreLevelDB.h"
 #include "IDBCursorBackendImpl.h"
-#include "IDBDatabaseBackendImpl.h"
+#include "IDBDatabaseBackendLevelDB.h"
 #include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseException.h"
 #include "IDBTracing.h"
-#include "IDBTransactionCoordinator.h"
+#include "IDBTransactionCoordinatorLevelDB.h"
 
 namespace WebCore {
 
-PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode, IDBDatabaseBackendImpl* database)
+PassRefPtr<IDBTransactionBackendLevelDB> IDBTransactionBackendLevelDB::create(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode, IDBDatabaseBackendImpl* database)
 {
     HashSet<int64_t> objectStoreHashSet;
     for (size_t i = 0; i < objectStoreIds.size(); ++i)
         objectStoreHashSet.add(objectStoreIds[i]);
 
-    return adoptRef(new IDBTransactionBackendImpl(id, callbacks, objectStoreHashSet, mode, database));
+    return adoptRef(new IDBTransactionBackendLevelDB(id, callbacks, objectStoreHashSet, mode, database));
 }
 
-IDBTransactionBackendImpl::IDBTransactionBackendImpl(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode, IDBDatabaseBackendImpl* database)
+IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode, IDBDatabaseBackendImpl* database)
     : m_id(id)
     , m_objectStoreIds(objectStoreIds)
     , m_mode(mode)
@@ -56,7 +56,7 @@ IDBTransactionBackendImpl::IDBTransactionBackendImpl(int64_t id, PassRefPtr<IDBD
     , m_callbacks(callbacks)
     , m_database(database)
     , m_transaction(database->backingStore().get())
-    , m_taskTimer(this, &IDBTransactionBackendImpl::taskTimerFired)
+    , m_taskTimer(this, &IDBTransactionBackendLevelDB::taskTimerFired)
     , m_pendingPreemptiveEvents(0)
 {
     // We pass a reference of this object before it can be adopted.
@@ -65,13 +65,13 @@ IDBTransactionBackendImpl::IDBTransactionBackendImpl(int64_t id, PassRefPtr<IDBD
     m_database->transactionCoordinator()->didCreateTransaction(this);
 }
 
-IDBTransactionBackendImpl::~IDBTransactionBackendImpl()
+IDBTransactionBackendLevelDB::~IDBTransactionBackendLevelDB()
 {
     // It shouldn't be possible for this object to get deleted until it's either complete or aborted.
     ASSERT(m_state == Finished);
 }
 
-void IDBTransactionBackendImpl::scheduleTask(IDBDatabaseBackendInterface::TaskType type, PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask)
+void IDBTransactionBackendLevelDB::scheduleTask(IDBDatabaseBackendInterface::TaskType type, PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask)
 {
     if (m_state == Finished)
         return;
@@ -90,14 +90,14 @@ void IDBTransactionBackendImpl::scheduleTask(IDBDatabaseBackendInterface::TaskTy
         m_taskTimer.startOneShot(0);
 }
 
-void IDBTransactionBackendImpl::abort()
+void IDBTransactionBackendLevelDB::abort()
 {
     abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error (unknown cause)"));
 }
 
-void IDBTransactionBackendImpl::abort(PassRefPtr<IDBDatabaseError> error)
+void IDBTransactionBackendLevelDB::abort(PassRefPtr<IDBDatabaseError> error)
 {
-    IDB_TRACE("IDBTransactionBackendImpl::abort");
+    IDB_TRACE("IDBTransactionBackendLevelDB::abort");
     if (m_state == Finished)
         return;
 
@@ -106,7 +106,7 @@ void IDBTransactionBackendImpl::abort(PassRefPtr<IDBDatabaseError> error)
     // The last reference to this object may be released while performing the
     // abort steps below. We therefore take a self reference to keep ourselves
     // alive while executing this method.
-    Ref<IDBTransactionBackendImpl> protect(*this);
+    Ref<IDBTransactionBackendLevelDB> protect(*this);
 
     m_state = Finished;
     m_taskTimer.stop();
@@ -140,27 +140,27 @@ void IDBTransactionBackendImpl::abort(PassRefPtr<IDBDatabaseError> error)
     m_database = 0;
 }
 
-bool IDBTransactionBackendImpl::isTaskQueueEmpty() const
+bool IDBTransactionBackendLevelDB::isTaskQueueEmpty() const
 {
     return m_preemptiveTaskQueue.isEmpty() && m_taskQueue.isEmpty();
 }
 
-bool IDBTransactionBackendImpl::hasPendingTasks() const
+bool IDBTransactionBackendLevelDB::hasPendingTasks() const
 {
     return m_pendingPreemptiveEvents || !isTaskQueueEmpty();
 }
 
-void IDBTransactionBackendImpl::registerOpenCursor(IDBCursorBackendImpl* cursor)
+void IDBTransactionBackendLevelDB::registerOpenCursor(IDBCursorBackendImpl* cursor)
 {
     m_openCursors.add(cursor);
 }
 
-void IDBTransactionBackendImpl::unregisterOpenCursor(IDBCursorBackendImpl* cursor)
+void IDBTransactionBackendLevelDB::unregisterOpenCursor(IDBCursorBackendImpl* cursor)
 {
     m_openCursors.remove(cursor);
 }
 
-void IDBTransactionBackendImpl::run()
+void IDBTransactionBackendLevelDB::run()
 {
     // TransactionCoordinator has started this transaction. Schedule a timer
     // to process the first task.
@@ -170,7 +170,7 @@ void IDBTransactionBackendImpl::run()
     m_taskTimer.startOneShot(0);
 }
 
-void IDBTransactionBackendImpl::start()
+void IDBTransactionBackendLevelDB::start()
 {
     ASSERT(m_state == Unused);
 
@@ -179,9 +179,9 @@ void IDBTransactionBackendImpl::start()
     m_database->transactionStarted(this);
 }
 
-void IDBTransactionBackendImpl::commit()
+void IDBTransactionBackendLevelDB::commit()
 {
-    IDB_TRACE("IDBTransactionBackendImpl::commit");
+    IDB_TRACE("IDBTransactionBackendLevelDB::commit");
 
     // In multiprocess ports, front-end may have requested a commit but an abort has already
     // been initiated asynchronously by the back-end.
@@ -199,7 +199,7 @@ void IDBTransactionBackendImpl::commit()
     // The last reference to this object may be released while performing the
     // commit steps below. We therefore take a self reference to keep ourselves
     // alive while executing this method.
-    Ref<IDBTransactionBackendImpl> protect(*this);
+    Ref<IDBTransactionBackendLevelDB> protect(*this);
 
     bool unused = m_state == Unused;
     m_state = Finished;
@@ -229,9 +229,9 @@ void IDBTransactionBackendImpl::commit()
     m_database = 0;
 }
 
-void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*)
+void IDBTransactionBackendLevelDB::taskTimerFired(Timer<IDBTransactionBackendLevelDB>*)
 {
-    IDB_TRACE("IDBTransactionBackendImpl::taskTimerFired");
+    IDB_TRACE("IDBTransactionBackendLevelDB::taskTimerFired");
     ASSERT(!isTaskQueueEmpty());
 
     if (m_state == StartPending) {
@@ -242,7 +242,7 @@ void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*
     // The last reference to this object may be released while performing the
     // tasks. Take take a self reference to keep this object alive so that
     // the loop termination conditions can be checked.
-    Ref<IDBTransactionBackendImpl> protect(*this);
+    Ref<IDBTransactionBackendLevelDB> protect(*this);
 
     TaskQueue* taskQueue = m_pendingPreemptiveEvents ? &m_preemptiveTaskQueue : &m_taskQueue;
     while (!taskQueue->isEmpty() && m_state != Finished) {
@@ -260,7 +260,7 @@ void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*
         commit();
 }
 
-void IDBTransactionBackendImpl::closeOpenCursors()
+void IDBTransactionBackendLevelDB::closeOpenCursors()
 {
     for (HashSet<IDBCursorBackendImpl*>::iterator i = m_openCursors.begin(); i != m_openCursors.end(); ++i)
         (*i)->close();
@@ -269,4 +269,4 @@ void IDBTransactionBackendImpl::closeOpenCursors()
 
 };
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)

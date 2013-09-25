@@ -26,8 +26,7 @@
 #include "config.h"
 #include "IDBLevelDBCoding.h"
 
-#if ENABLE(INDEXED_DATABASE)
-#if USE(LEVELDB)
+#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
@@ -1522,7 +1521,7 @@ int64_t IndexFreeListKey::indexId() const
 }
 
 // FIXME: We never use this to look up object store ids, because a mapping
-// is kept in the IDBDatabaseBackendImpl. Can the mapping become unreliable?
+// is kept in the IDBDatabaseBackendLevelDB. Can the mapping become unreliable?
 // Can we remove this?
 const char* ObjectStoreNamesKey::decode(const char* start, const char* limit, ObjectStoreNamesKey* result)
 {
@@ -1805,5 +1804,4 @@ PassRefPtr<IDBKey> IndexDataKey::primaryKey() const
 } // namespace IDBLevelDBCoding
 } // namespace WebCore
 
-#endif // USE(LEVELDB)
-#endif // ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
