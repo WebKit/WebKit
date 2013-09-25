@@ -1619,6 +1619,10 @@ bool WebView::gestureNotify(WPARAM wParam, LPARAM lParam)
                 break;
             }
         }
+    } else {
+        // We've hit the main document but not any of the document's content
+        if (core(m_mainFrame)->view()->isScrollable())
+            canBeScrolled = true;
     }
 
     // We always allow two-fingered panning with inertia and a gutter (which limits movement to one
@@ -1695,14 +1699,14 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
             return false;
         }
 
-        ScrollView* scrolledView = 0;
+        ScrollableArea* scrolledArea = 0;
 
         if (!m_gestureTargetNode || !m_gestureTargetNode->renderer()) {
             // We might directly hit the document without hitting any nodes
             coreFrame->view()->scrollBy(IntSize(-deltaX, -deltaY));
-            scrolledView = coreFrame->view();
+            scrolledArea = coreFrame->view();
         } else
-            m_gestureTargetNode->renderer()->enclosingLayer()->scrollByRecursively(IntSize(-deltaX, -deltaY), WebCore::RenderLayer::ScrollOffsetClamped, &scrolledView);
+            m_gestureTargetNode->renderer()->enclosingLayer()->scrollByRecursively(IntSize(-deltaX, -deltaY), WebCore::RenderLayer::ScrollOffsetClamped, &scrolledArea);
 
         if (!(UpdatePanningFeedbackPtr() && BeginPanningFeedbackPtr() && EndPanningFeedbackPtr())) {
             CloseGestureInfoHandlePtr()(gestureHandle);
@@ -1720,12 +1724,12 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
             m_xOverpan = 0;
         }
 
-        if (!scrolledView) {
+        if (!scrolledArea) {
             CloseGestureInfoHandlePtr()(gestureHandle);
             return true;
         }
 
-        Scrollbar* vertScrollbar = scrolledView->verticalScrollbar();
+        Scrollbar* vertScrollbar = scrolledArea->verticalScrollbar();
 
         int ypan = 0;
         int xpan = 0;
@@ -1733,7 +1737,7 @@ bool WebView::gesture(WPARAM wParam, LPARAM lParam)
         if (vertScrollbar && (!vertScrollbar->currentPos() || vertScrollbar->currentPos() >= vertScrollbar->maximum()))
             ypan = m_yOverpan;
 
-        Scrollbar* horiScrollbar = scrolledView->horizontalScrollbar();
+        Scrollbar* horiScrollbar = scrolledArea->horizontalScrollbar();
 
         if (horiScrollbar && (!horiScrollbar->currentPos() || horiScrollbar->currentPos() >= horiScrollbar->maximum()))
             xpan = m_xOverpan;

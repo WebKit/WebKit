@@ -1,3 +1,15 @@
+2013-09-24  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Overpanning occurs even when what is being panned isn't the main document.
+        https://bugs.webkit.org/show_bug.cgi?id=121885.
+        <rdar://problem/15072332>.
+
+        Reviewed by Brent Fulgham.
+
+        * WebView.cpp:
+        (WebView::gestureNotify):
+        (WebView::gesture):
+
 2013-09-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed crash fix after r156321.
