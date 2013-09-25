@@ -1,5 +1,14 @@
 2013-09-25  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK gardening. Moving WK1-specific failure expectations into the WK1-specific TestExpectations.
+        Also adding expectations for the currently failing tests on WK2.
+
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2013-09-25  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK gardening. Moving around and updating the GTK baselines that are
         either specific to WK1 or WK2 or can be shared by both.
 

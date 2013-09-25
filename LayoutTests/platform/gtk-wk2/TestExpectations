@@ -165,14 +165,7 @@ webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.htm
 
 # Implement testRunner.setStorageDatabaseIdleInterval
 # http://webkit.org/b/93982
-webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Failure ]
-
-# https://bugs.webkit.org/show_bug.cgi?id=94549
-webkit.org/b/94549 fast/forms/file/selected-files-from-history-state.html [ Failure ]
-
-# EventSender::dumpFilenameBeingDragged not implemented.
-# https://bugs.webkit.org/show_bug.cgi?id=61827
-webkit.org/b/61827 fast/events/drag-image-filename.html [ Failure ]
+webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Timeout ]
 
 # WebKitTestRunner needs a more-complete implementation of eventSender
 # https://bugs.webkit.org/show_bug.cgi?id=42194
@@ -219,6 +212,10 @@ http/tests/webarchive [ Skip ]
 # WTR needs an implementation of setAutomaticLinkDetectionEnabled.
 webkit.org/b/85463 editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Failure ]
 
+# Context menu problems.
+webkit.org/b/120401 fast/events [ Skip ]
+webkit.org/b/120401 editing/selection [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -231,8 +228,6 @@ Bug(GTK) plugins/document-open.html [ Crash ]
 
 webkit.org/b/116974 accessibility/title-ui-element-correctness.html [ Crash ]
 
-webkit.org/b/108363 fullscreen/full-screen-iframe-legacy.html [ Crash ]
-
 # EventSender's contextClick should return objects that implements click() method
 webkit.org/b/98410 media/context-menu-actions.html [ Crash ]
 
@@ -240,6 +235,14 @@ webkit.org/b/98410 media/context-menu-actions.html [ Crash ]
 webkit.org/b/102776 media/track/track-cue-container-rendering-position.html [ Crash ]
 
 webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Crash Pass ]
+
+Bug(GTK) storage/indexeddb/keypath-edges.html [ Crash Pass ]
+
+Bug(GTK) media/restore-from-page-cache.html [ Crash ]
+
+Bug(GTK) fast/parser/document-write-basic.html [ Crash ]
+
+Bug(GTK) fast/forms/select-live-pseudo-selectors.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -328,12 +331,37 @@ Bug(GTK) media/W3C/audio/networkState/networkState_during_loadstart.html [ Failu
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////
+# Tests timing out
+#////////////////////////////////////////////////////////////////////////////////////////
+
+Bug(GTK) plugins/evaluate-js-after-removing-plugin-element.html [ Timeout ]
+Bug(GTK) plugins/reloadplugins-and-pages.html [ Timeout ]
+
+Bug(GTK) http/tests/local/blob/send-hybrid-blob.html [ Timeout ]
+
+Bug(GTK) http/tests/security/inactive-document-with-empty-security-origin.html [ Timeout ]
+
+Bug(GTK) media/video-controls-captions.html [ Timeout ]
+
+Bug(GTK) media/media-document-audio-repaint.html [ Timeout ]
+
+Bug(GTK) fast/forms/file/selected-files-from-history-state.html [ Timeout ]
+
+Bug(GTK) fast/forms/select/menulist-popup-crash.html [ Timeout ]
+
+Bug(GTK) fast/forms/select/optgroup-clicking.html [ Timeout ]
+
+Bug(GTK) fast/media/media-query-list-04.html [ Timeout ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Tests timing out
+#////////////////////////////////////////////////////////////////////////////////////////
+
+#////////////////////////////////////////////////////////////////////////////////////////
 # Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # accessibility/ failures
-webkit.org/b/106334 accessibility/accessibility-node-memory-management.html [ Failure ]
-webkit.org/b/106335 accessibility/accessibility-node-reparent.html [ Failure ]
 webkit.org/b/106338 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
 webkit.org/b/106340 accessibility/img-fallsback-to-title.html [ Failure ]
 webkit.org/b/106345 platform/gtk/accessibility/input-slider.html [ Failure ]
@@ -341,6 +369,7 @@ webkit.org/b/116970 accessibility/multiselect-list-reports-active-option.html [ 
 webkit.org/b/116971 accessibility/poorly-formed-aria-table.html [ Failure ]
 webkit.org/b/106346 accessibility/svg-remote-element.html [ Failure ]
 webkit.org/b/116973 platform/gtk/accessibility/caret-browsing-select-focus.html [ Failure ]
+Bug(GTK) accessibility/notification-listeners.html [ Failure ]
 
 # svg/ failures
 webkit.org/b/42457 svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]
@@ -379,21 +408,10 @@ webkit.org/b/93981 media/video-volume-slider.html [ Failure ]
 # http://webkit.org/b/21796
 webkit.org/b/21796 fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html [ Failure ]
 
-# [Qt][GTK][WK2] New http/tests/cache/xhr-vary-header.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=89278
-webkit.org/b/89287 http/tests/cache/xhr-vary-header.html [ Failure ]
-
 # [Qt][WK2] New http/tests/security/cross-origin-plugin* tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=95935
 webkit.org/b/95935 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
 webkit.org/b/95935 http/tests/security/cross-origin-plugin.html [ Failure ]
-
-# REGRESSION (r127202): http/tests/security/inactive-document-with-empty-security-origin.html failing on JSC ports
-# https://bugs.webkit.org/show_bug.cgi?id=95530
-webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-origin.html [ Failure ]
-
-# https://bugs.webkit.org/show_bug.cgi?id=82672
-webkit.org/b/82672 http/tests/xmlhttprequest/range-test.html [ Failure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=39160
 webkit.org/b/39160 security/block-test-no-port.html [ Failure ]
@@ -425,7 +443,6 @@ Bug(GTK) fast/events/keydown-numpad-keys.html [ Failure ]
 Bug(GTK) fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
 Bug(GTK) fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
 Bug(GTK) fast/events/selectionchange-iframe.html [ Failure ]
-Bug(GTK) fast/forms/implicit-submission.html [ Failure ]
 Bug(GTK) fast/forms/input-paste-undo.html [ Failure ]
 Bug(GTK) fast/forms/listbox-deselect-scroll.html [ Failure ]
 Bug(GTK) fast/forms/listbox-selection.html [ Failure ]
@@ -456,7 +473,6 @@ Bug(GTK) fast/ruby/ruby-simple-rp.html [ Failure ]
 Bug(GTK) fast/ruby/ruby-trailing.html [ Failure ]
 Bug(GTK) fast/workers/shared-worker-load-error.html [ Failure ]
 Bug(GTK) fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
-Bug(GTK) http/tests/local/blob/send-hybrid-blob.html [ Failure ]
 Bug(GTK) http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure ]
 Bug(GTK) http/tests/security/cross-origin-xsl-BLOCKED.html [ Failure ]
 Bug(GTK) http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Failure ]
@@ -468,13 +484,11 @@ Bug(GTK) media/track/track-cue-rendering-vertical.html [ Failure ]
 Bug(GTK) media/video-zoom-controls.html [ Failure ]
 Bug(GTK) platform/gtk/fast/events/event-sender-metakey.html [ Failure ]
 Bug(GTK) platform/gtk/fast/forms/menulist-typeahead-find.html [ Failure ]
-Bug(GTK) plugins/evaluate-js-after-removing-plugin-element.html [ Failure ]
 Bug(GTK) plugins/keyboard-events.html [ Failure ]
 Bug(GTK) plugins/netscape-plugin-setwindow-size-2.html [ Failure ]
 Bug(GTK) plugins/npp-set-window-called-during-destruction.html [ Failure ]
 Bug(GTK) plugins/npruntime/browser-object-identity.html [ Failure ]
 Bug(GTK) plugins/npruntime/embed-property-equality.html [ Failure ]
-Bug(GTK) plugins/reloadplugins-and-pages.html [ Failure ]
 Bug(GTK) plugins/resize-from-plugin.html [ Failure ]
 
 # Selection doesn't work properly.
@@ -485,12 +499,54 @@ Bug(GTK) editing/spelling/context-menu-suggestions.html [ Failure ]
 Bug(GTK) editing/spelling/spellcheck-input-search-crash.html [ Failure ]
 Bug(GTK) fast/events/contextmenu-scrolled-page-with-frame.html [ Failure ]
 
-# An onmousedown attribute is not called.
-Bug(GTK) fast/events/context-onmousedown-event.html [ Failure ]
-
 Bug(GTK) animations/combo-transform-translate+scale.html [ Failure ]
 Bug(GTK) animations/play-state-suspend.html [ Failure ]
 Bug(GTK) animations/suspend-resume-animation.html [ Failure ]
+
+webkit.org/b/118416 [ Release ] storage/websql/sql-error-codes.html [ Failure ]
+
+Bug(GTK) editing/spelling/spellcheck-paste-continuous-disabled.html [ Failure ]
+
+Bug(GTK) http/tests/xmlhttprequest/access-control-allow-lists-starting-with-comma.html [ Failure ]
+
+Bug(GTK) http/tests/xmlhttprequest/post-blob-content-type-async.html [ Failure ]
+Bug(GTK) http/tests/xmlhttprequest/post-blob-content-type-sync.html [ Failure ]
+
+Bug(GTK) http/tests/misc/iframe-beforeunload-dialog-matching-ancestor-securityorigin.html [ Failure ]
+
+Bug(GTK) http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
+
+Bug(GTK) http/tests/security/xssAuditor/xss-filter-bypass-big5.html [ Failure ]
+Bug(GTK) http/tests/security/xssAuditor/xss-filter-bypass-sjis.html [ Failure ]
+
+Bug(GTK) http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
+
+Bug(GTK) media/video-object-fit.html [ ImageOnlyFailure ]
+
+Bug(GTK) fast/backgrounds/background-position-parsing.html [ Failure ]
+
+Bug(GTK) fast/css/image-rendering.html [ Failure ]
+
+Bug(GTK) fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
+
+Bug(GTK) fast/regions/selection-direction.html [ ImageOnlyFailure ]
+
+Bug(GTK) fast/text/descent-clip-in-scaled-page.html [ ImageOnlyFailure ]
+
+Bug(GTK) fast/frames/flattening/scrolling-in-object.html [ ImageOnlyFailure ]
+
+Bug(GTK) fast/forms/file/input-file-value.html [ Failure ]
+
+Bug(GTK) fast/forms/search-event-delay.html [ Failure ]
+
+Bug(GTK) fast/forms/select/popup-closes-on-blur.html [ Failure ]
+
+Bug(GTK) fast/media/media-query-list-02.html [ Failure ]
+Bug(GTK) fast/media/media-query-list-03.html [ Failure ]
+Bug(GTK) fast/media/media-query-list-05.html [ Failure ]
+Bug(GTK) fast/media/media-query-list-06.html [ Failure ]
+
+Bug(GTK) fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

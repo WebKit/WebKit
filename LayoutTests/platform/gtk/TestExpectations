@@ -150,9 +150,6 @@ webkit.org/b/98927 inspector/device-orientation-success.html [ Skip ]
 webkit.org/b/61140 fast/notifications [ Skip ]
 webkit.org/b/61140 http/tests/notifications [ Skip ]
 
-# We lack userscripts support.
-webkit.org/b/56132 userscripts [ Skip ]
-
 # These tests require touch support.
 webkit.org/b/98931 fast/events/touch [ Skip ]
 
@@ -812,7 +809,6 @@ webkit.org/b/116958 http/tests/navigation/scrollstate-after-http-equiv-refresh.h
 webkit.org/b/116958 http/tests/navigation/scrollstate-after-location-reload.html [ Timeout ]
 
 # These tests time out after the FTL merge
-webkit.org/b/119254 js/regress/marsaglia.html [ Timeout ]
 webkit.org/b/119254 fast/workers/worker-call.html [ Timeout ]
 
 webkit.org/b/120682 inspector-protocol/page/archive.html [ Timeout ]
@@ -899,18 +895,12 @@ webkit.org/b/44478 fast/text/hyphenate-first-word.html [ Skip ]
 webkit.org/b/44478 fast/text/hyphenate-locale.html [ Skip ]
 webkit.org/b/44478 fast/text/hyphen-min-preferred-width.html [ Skip ]
 
-# LayoutTestController::applicationCacheDiskUsageForOrigin isn't implemented.
-webkit.org/b/57127 http/tests/appcache/origin-usage.html [ Failure ]
-
 # GTK is moving from toggle button to a menu of tracks.
 webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Failure ]
 webkit.org/b/101670 media/track/track-user-preferences.html [ Failure ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Failure ]
 
 Bug(GTK) http/tests/loading/bad-scheme-subframe.html [ Failure ]
-
-# Needed to cover the fix for <rdar://problem/6727495>
-Bug(rdar6727495) http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
 
 Bug(GTK) http/tests/media/video-play-stall-seek.html [ Skip ]
 
@@ -1176,8 +1166,6 @@ webkit.org/b/80129 fast/frames/flattening/frameset-flattening-advanced.html [ Fa
 
 webkit.org/b/89663 editing/deleting/delete-3800834-fix.html [ Failure ]
 
-webkit.org/b/87355 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure ]
-
 # GTK is moving from the simple toggle button to a menu of tracks
 webkit.org/b/95428 media/video-controls-captions.html [ Failure ]
 
@@ -1257,7 +1245,6 @@ webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/pending-version-change-stuck.html [ Failure ]
-webkit.org/b/107194 storage/indexeddb/transaction-abort.html [ Failure ]
 
 webkit.org/b/106563 fast/css/image-orientation/image-orientation.html [ Failure ]
 
@@ -1306,8 +1293,6 @@ webkit.org/b/111606 fast/borders/border-fit.html [ Failure ]
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure ]
 webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure ]
 
-webkit.org/b/112109 fast/box-shadow/box-shadow-with-zero-radius.html [ ImageOnlyFailure ]
-
 webkit.org/b/112228 svg/custom/resources-css-scaled.html [ ImageOnlyFailure ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure Pass ]
@@ -1315,8 +1300,6 @@ webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg
 webkit.org/b/112705 fast/dom/icon-url-property.html [ Failure ]
 
 webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
-
-webkit.org/b/113747 svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/113772 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_iframe_self_navigation.html [ Failure ]
 webkit.org/b/113772 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_cached.html [ Failure ]
@@ -1327,8 +1310,6 @@ webkit.org/b/114259 platform/gtk/accessibility/aria-slider-required-attributes.h
 webkit.org/b/114259 platform/gtk/accessibility/combo-box-collapsed-selection-changed.html [ Failure ]
 
 webkit.org/b/118577 platform/gtk/accessibility/replaced-objects-in-anonymous-blocks.html [ Failure ]
-
-webkit.org/b/114625 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
 
 webkit.org/b/114612 editing/style/block-style-005.html [ Failure ]
 
@@ -1364,8 +1345,6 @@ webkit.org/b/115633 accessibility/meter-element.html [ Failure ]
 
 webkit.org/b/116153 fast/css/text-overflow-ellipsis-full-truncate-rtl.html [ ImageOnlyFailure ]
 
-webkit.org/b/90589 fast/css/user-drag-none.html [ Failure ]
-
 webkit.org/b/116806 fast/css/text-overflow-ellipsis-behind-floats.html [ ImageOnlyFailure ]
 
 webkit.org/b/117581 accessibility/text-role-with-aria-hidden-inside.html [ Failure ]
@@ -1396,12 +1375,6 @@ webkit.org/b/118904 mathml/presentation/bug95404.html [ ImageOnlyFailure ]
 webkit.org/b/119004 mathml/presentation/fenced-mi.html [ ImageOnlyFailure ]
 
 webkit.org/b/119730 fast/dom/Window/open-zero-size-as-default.html [ Failure ]
-
-webkit.org/b/119733 fast/regions/overflow-scrollable-2.html [ ImageOnlyFailure ]
-
-webkit.org/b/119734 plugins/navigator-plugins-disabled.html [ Failure ]
-
-webkit.org/b/119735 plugins/unavailable-plugin-indicator-obscurity.html [ Failure ]
 
 webkit.org/b/119840 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
 

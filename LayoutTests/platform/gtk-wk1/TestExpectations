@@ -88,6 +88,12 @@ Bug(GTK) plugins/clicking-missing-plugin-fires-delegate.html [ Failure ]
 # Support for Web Audio tests is missing in DumpRenderTree
 webkit.org/b/67187 webaudio [ Skip ]
 
+# We lack userscripts support.
+webkit.org/b/56132 userscripts [ Skip ]
+
+# LayoutTestController::applicationCacheDiskUsageForOrigin isn't implemented.
+webkit.org/b/57127 http/tests/appcache/origin-usage.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -214,6 +220,27 @@ Bug(GTK) http/tests/plugins/npapi-response-headers.html [ Failure ]
 Bug(GTK) plugins/form-value.html [ Failure ]
 
 webkit.org/b/116807 fast/dom/Window/window-focus-self.html [ Failure ]
+
+webkit.org/b/87355 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure ]
+
+webkit.org/b/113747 svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
+
+webkit.org/b/119734 plugins/navigator-plugins-disabled.html [ Failure ]
+
+webkit.org/b/119735 plugins/unavailable-plugin-indicator-obscurity.html [ Failure ]
+
+webkit.org/b/107194 storage/indexeddb/transaction-abort.html [ Failure ]
+
+webkit.org/b/114625 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
+
+# Needed to cover the fix for <rdar://problem/6727495>
+Bug(rdar6727495) http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
+
+webkit.org/b/112109 fast/box-shadow/box-shadow-with-zero-radius.html [ ImageOnlyFailure ]
+
+webkit.org/b/90589 fast/css/user-drag-none.html [ Failure ]
+
+webkit.org/b/119733 fast/regions/overflow-scrollable-2.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
