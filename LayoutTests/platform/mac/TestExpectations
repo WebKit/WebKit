@@ -1331,3 +1331,6 @@ webkit.org/b/120544 inspector/storage-panel-dom-storage-update.html [ Pass Failu
 webkit.org/b/121582 [ Lion ] media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Failure ]
 
 webkit.org/b/117427 compositing/reflections/load-video-in-reflection.html [ Pass Failure Crash Timeout ]
+
+# Resizing windows appears broken in both DRT and WTR, making the test fail or time out flakily.
+webkit.org/b/96642 loader/go-back-to-different-window-size.html [ Pass Failure Timeout ]

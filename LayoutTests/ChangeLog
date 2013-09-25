@@ -1,3 +1,11 @@
+2013-09-25  Alexey Proskuryakov  <ap@apple.com>
+
+        loader/go-back-to-different-window-size.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=96642
+
+        * platform/mac/TestExpectations: Marking it as flaky on Mac. I think that it's
+        a general issue with the tools that window resizing doesn't work well.
+
 2013-09-25  Sam White  <samuel_white@apple.com>
 
         AX: WebKit doesn't map aria-sort=other on OS X
