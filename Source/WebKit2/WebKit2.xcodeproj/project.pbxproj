@@ -2522,7 +2522,6 @@
 		C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClientMac.mm; sourceTree = "<group>"; };
 		C574A57F12E66681002DFE98 /* PasteboardTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardTypes.h; sourceTree = "<group>"; };
 		C574A58012E66681002DFE98 /* PasteboardTypes.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardTypes.mm; sourceTree = "<group>"; };
-		CD471F5C1721BC3E00D65CDA /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libWTF.a; path = ../../../../../../../../usr/local/lib/libWTF.a; sourceTree = "<group>"; };
 		CD5C669E134B9D36004FE2A8 /* InjectedBundlePageFullScreenClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageFullScreenClient.cpp; sourceTree = "<group>"; };
 		CD5C669F134B9D37004FE2A8 /* InjectedBundlePageFullScreenClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageFullScreenClient.h; sourceTree = "<group>"; };
 		CD67D30815C07BE000843ADF /* InjectedBundlePageDiagnosticLoggingClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageDiagnosticLoggingClient.cpp; sourceTree = "<group>"; };
@@ -2778,7 +2777,6 @@
 		0867D691FE84028FC02AAC07 /* WebKit2 */ = {
 			isa = PBXGroup;
 			children = (
-				CD471F5C1721BC3E00D65CDA /* libWTF.a */,
 				B396EA5512E0ED2D00F4FEB7 /* config.h */,
 				32DBCF5E0370ADEE00C91783 /* WebKit2Prefix.h */,
 				C0CE72DB1247E8F700BC0EC4 /* DerivedSources.make */,

@@ -1,5 +1,13 @@
 2013-09-24  Sam Weinig  <sam@webkit.org>
 
+        Remove erroneous reference to libWTF.a in the WebKit2 Xcode project file.
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-09-24  Sam Weinig  <sam@webkit.org>
+
         Remove the Windows-specific rules from WebKit2's DerivedSources.make, Windows is not supported anymore
         https://bugs.webkit.org/show_bug.cgi?id=121895
 
