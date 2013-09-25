@@ -617,22 +617,16 @@ class DOMStringList;
             char padding[8];
         };
 
-        struct BaseMixin {
-            size_t memoryCost();
-        };
-
-        struct Base : public T, public BaseMixin { };
-
-        template<typename U, U> struct
-        TypeChecker { };
+        template<typename U>
+        static decltype(static_cast<U*>(nullptr)->memoryCost(), YesType()) test(int);
 
         template<typename U>
-        static NoType dummy(U*, TypeChecker<size_t (BaseMixin::*)(), &U::memoryCost>* = 0);
-        static YesType dummy(...);
+        static NoType test(...);
 
     public:
-        static const bool value = sizeof(dummy(static_cast<Base*>(0))) == sizeof(YesType);
+        static const bool value = sizeof(test<T>(0)) == sizeof(YesType);
     };
+
     template <typename T, bool hasReportCostFunction = HasMemoryCostMemberFunction<T>::value > struct ReportMemoryCost;
     template <typename T> struct ReportMemoryCost<T, true> {
         static void reportMemoryCost(JSC::ExecState* exec, T* impl)
