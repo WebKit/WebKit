@@ -1,5 +1,25 @@
 2013-09-25  Patrick Gansterer  <paroga@webkit.org>
 
+        Add style checker for CMake lists
+        https://bugs.webkit.org/show_bug.cgi?id=121764
+
+        Reviewed by Ryosuke Niwa.
+
+        Add an additional check to make sure that list of files are sorted.
+        Exclude lists of include directories for now, since the order
+        can be importent for compilation of some files.
+
+        * Scripts/webkitpy/style/checkers/cmake.py:
+        (CMakeChecker.check):
+        (CMakeChecker._check_indent):
+        (CMakeChecker):
+        (CMakeChecker._check_list_order):
+        (CMakeChecker._list_item_path):
+        * Scripts/webkitpy/style/checkers/cmake_unittest.py:
+        (CMakeCheckerTest.test_check):
+
+2013-09-25  Patrick Gansterer  <paroga@webkit.org>
+
         CMakeChecker takes unusually long time to run
         https://bugs.webkit.org/show_bug.cgi?id=105662
 
