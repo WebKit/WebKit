@@ -97,7 +97,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(int x
 
 // Unsupported methods on various platforms.
 // As they're implemented on other platforms this list should be modified.
-#if !PLATFORM(GTK) && !PLATFORM(MAC)
+#if !PLATFORM(GTK) && !PLATFORM(MAC) && !PLATFORM(EFL)
 bool AccessibilityController::addNotificationListener(JSValueRef) { return false; }
 bool AccessibilityController::removeNotificationListener() { return false; }
 #endif

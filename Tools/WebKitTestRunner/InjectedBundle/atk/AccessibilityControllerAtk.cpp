@@ -128,7 +128,6 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
     return AccessibilityUIElement::create(static_cast<AtkObject*>(root));
 }
 
-#if PLATFORM(GTK)
 bool AccessibilityController::addNotificationListener(JSValueRef functionCallback)
 {
     if (!functionCallback)
@@ -150,6 +149,5 @@ bool AccessibilityController::removeNotificationListener()
     m_globalNotificationHandler = 0;
     return false;
 }
-#endif
 
 } // namespace WTR

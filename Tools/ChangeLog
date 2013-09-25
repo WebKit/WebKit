@@ -1,3 +1,16 @@
+2013-09-25  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] accessibility/loading-iframe-sends-notification.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=112003
+
+        Reviewed by Mario Sanchez Prada.
+
+        Enabled addNotificationListener and removeNotificationListener for EFL port.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp:
+        (WTR::AccessibilityController::removeNotificationListener):
+
 2013-09-24  Filip Pizlo  <fpizlo@apple.com>
 
         Crashing under JSC::DFG::SpeculativeJIT::spill visiting citicards.com
