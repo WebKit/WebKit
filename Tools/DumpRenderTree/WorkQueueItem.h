@@ -132,7 +132,7 @@ private:
 
 class BackItem : public BackForwardItem {
 public:
-    BackItem(unsigned howFar)
+    BackItem(int howFar)
         : BackForwardItem(-howFar)
     {
     }
@@ -140,7 +140,7 @@ public:
 
 class ForwardItem : public BackForwardItem {
 public:
-    ForwardItem(unsigned howFar)
+    ForwardItem(int howFar)
         : BackForwardItem(howFar)
     {
     }
