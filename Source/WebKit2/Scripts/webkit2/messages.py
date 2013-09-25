@@ -92,36 +92,43 @@ def reply_parameter_type(type):
     return '%s&' % type
 
 
-def arguments_type(parameters, parameter_type_function):
+def arguments_type_old(parameters, parameter_type_function):
     arguments_type = 'CoreIPC::Arguments%d' % len(parameters)
     if len(parameters):
         arguments_type = '%s<%s>' % (arguments_type, ', '.join(parameter_type_function(parameter.type) for parameter in parameters))
     return arguments_type
 
 
+def arguments_type(message):
+    return 'std::tuple<%s>' % ', '.join(function_parameter_type(parameter.type) for parameter in message.parameters)
+
 def base_class(message):
     return arguments_type(message.parameters, function_parameter_type)
 
 
 def reply_type(message):
-    return arguments_type(message.reply_parameters, reply_parameter_type)
+    return arguments_type_old(message.reply_parameters, reply_parameter_type)
 
 
 def decode_type(message):
-    if message.has_attribute(VARIADIC_ATTRIBUTE):
-        return arguments_type(message.parameters[:-1], reply_parameter_type)
-    return base_class(message)
+    parameters = message.parameters
 
+    if message.has_attribute(VARIADIC_ATTRIBUTE):
+        parameters = parameters[:-1]
+
+    return 'std::tuple<%s>' % ', '.join(parameter.type for parameter in parameters)
 
 def delayed_reply_type(message):
-    return arguments_type(message.reply_parameters, function_parameter_type)
+    return arguments_type_old(message.reply_parameters, function_parameter_type)
 
 
 def message_to_struct_declaration(message):
     result = []
     function_parameters = [(function_parameter_type(x.type), x.name) for x in message.parameters]
-    result.append('struct %s : %s' % (message.name, base_class(message)))
-    result.append(' {\n')
+    result.append('class %s {\n' % message.name)
+    result.append('public:\n')
+    result.append('    typedef %s DecodeType;\n' % decode_type(message))
+    result.append('\n')
     result.append('    static CoreIPC::StringReference receiverName() { return messageReceiverName(); }\n')
     result.append('    static CoreIPC::StringReference name() { return CoreIPC::StringReference("%s"); }\n' % message.name)
     result.append('    static const bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters != None])
@@ -142,12 +149,18 @@ def message_to_struct_declaration(message):
 
         result.append('    typedef %s Reply;\n' % reply_type(message))
 
-    result.append('    typedef %s DecodeType;\n' % decode_type(message))
     if len(function_parameters):
         result.append('    %s%s(%s)' % (len(function_parameters) == 1 and 'explicit ' or '', message.name, ', '.join([' '.join(x) for x in function_parameters])))
-        result.append('\n        : %s(%s)\n' % (base_class(message), ', '.join([x[1] for x in function_parameters])))
+        result.append('\n        : m_arguments(%s)\n' % ', '.join([x[1] for x in function_parameters]))
         result.append('    {\n')
-        result.append('    }\n')
+        result.append('    }\n\n')
+    result.append('    const %s arguments() const\n' % arguments_type(message))
+    result.append('    {\n')
+    result.append('        return m_arguments;\n')
+    result.append('    }\n')
+    result.append('\n')
+    result.append('private:\n')
+    result.append('    %s m_arguments;\n' % arguments_type(message))
     result.append('};\n')
     return surround_in_condition(''.join(result), message.condition)
 

@@ -45,7 +45,7 @@ public:
         static_assert(!U::isSync, "Message is sync!");
 
         auto encoder = std::make_unique<MessageEncoder>(U::receiverName(), U::name(), destinationID);
-        encoder->encode(message);
+        encoder->encode(message.arguments());
         
         return sendMessage(std::move(encoder));
     }

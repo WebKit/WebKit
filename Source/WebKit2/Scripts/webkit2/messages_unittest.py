@@ -349,128 +349,230 @@ static inline CoreIPC::StringReference messageReceiverName()
     return CoreIPC::StringReference("WebPage");
 }
 
-struct LoadURL : CoreIPC::Arguments1<const WTF::String&> {
+class LoadURL {
+public:
+    typedef std::tuple<WTF::String> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("LoadURL"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments1<const WTF::String&> DecodeType;
     explicit LoadURL(const WTF::String& url)
-        : CoreIPC::Arguments1<const WTF::String&>(url)
+        : m_arguments(url)
     {
     }
+
+    const std::tuple<const WTF::String&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<const WTF::String&> m_arguments;
 };
 
 #if ENABLE(TOUCH_EVENTS)
-struct TouchEvent : CoreIPC::Arguments1<const WebKit::WebTouchEvent&> {
+class TouchEvent {
+public:
+    typedef std::tuple<WebKit::WebTouchEvent> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("TouchEvent"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments1<const WebKit::WebTouchEvent&> DecodeType;
     explicit TouchEvent(const WebKit::WebTouchEvent& event)
-        : CoreIPC::Arguments1<const WebKit::WebTouchEvent&>(event)
+        : m_arguments(event)
     {
     }
+
+    const std::tuple<const WebKit::WebTouchEvent&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<const WebKit::WebTouchEvent&> m_arguments;
 };
 #endif
 
-struct DidReceivePolicyDecision : CoreIPC::Arguments3<uint64_t, uint64_t, uint32_t> {
+class DidReceivePolicyDecision {
+public:
+    typedef std::tuple<uint64_t, uint64_t, uint32_t> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("DidReceivePolicyDecision"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments3<uint64_t, uint64_t, uint32_t> DecodeType;
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
-        : CoreIPC::Arguments3<uint64_t, uint64_t, uint32_t>(frameID, listenerID, policyAction)
+        : m_arguments(frameID, listenerID, policyAction)
     {
     }
+
+    const std::tuple<uint64_t, uint64_t, uint32_t> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<uint64_t, uint64_t, uint32_t> m_arguments;
 };
 
-struct Close : CoreIPC::Arguments0 {
+class Close {
+public:
+    typedef std::tuple<> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("Close"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments0 DecodeType;
+    const std::tuple<> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<> m_arguments;
 };
 
-struct PreferencesDidChange : CoreIPC::Arguments1<const WebKit::WebPreferencesStore&> {
+class PreferencesDidChange {
+public:
+    typedef std::tuple<WebKit::WebPreferencesStore> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("PreferencesDidChange"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments1<const WebKit::WebPreferencesStore&> DecodeType;
     explicit PreferencesDidChange(const WebKit::WebPreferencesStore& store)
-        : CoreIPC::Arguments1<const WebKit::WebPreferencesStore&>(store)
+        : m_arguments(store)
     {
     }
+
+    const std::tuple<const WebKit::WebPreferencesStore&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<const WebKit::WebPreferencesStore&> m_arguments;
 };
 
-struct SendDoubleAndFloat : CoreIPC::Arguments2<double, float> {
+class SendDoubleAndFloat {
+public:
+    typedef std::tuple<double, float> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("SendDoubleAndFloat"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments2<double, float> DecodeType;
     SendDoubleAndFloat(double d, float f)
-        : CoreIPC::Arguments2<double, float>(d, f)
+        : m_arguments(d, f)
     {
     }
+
+    const std::tuple<double, float> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<double, float> m_arguments;
 };
 
-struct SendInts : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&> {
+class SendInts {
+public:
+    typedef std::tuple<Vector<uint64_t>, Vector<Vector<uint64_t>>> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("SendInts"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&> DecodeType;
     SendInts(const Vector<uint64_t>& ints, const Vector<Vector<uint64_t>>& intVectors)
-        : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&>(ints, intVectors)
+        : m_arguments(ints, intVectors)
     {
     }
+
+    const std::tuple<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<const Vector<uint64_t>&, const Vector<Vector<uint64_t>>&> m_arguments;
 };
 
-struct CreatePlugin : CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parameters&> {
+class CreatePlugin {
+public:
+    typedef std::tuple<uint64_t, WebKit::Plugin::Parameters> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("CreatePlugin"); }
     static const bool isSync = true;
 
     typedef CoreIPC::Arguments1<bool&> Reply;
-    typedef CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parameters&> DecodeType;
     CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
-        : CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parameters&>(pluginInstanceID, parameters)
+        : m_arguments(pluginInstanceID, parameters)
     {
     }
+
+    const std::tuple<uint64_t, const WebKit::Plugin::Parameters&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<uint64_t, const WebKit::Plugin::Parameters&> m_arguments;
 };
 
-struct RunJavaScriptAlert : CoreIPC::Arguments2<uint64_t, const WTF::String&> {
+class RunJavaScriptAlert {
+public:
+    typedef std::tuple<uint64_t, WTF::String> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("RunJavaScriptAlert"); }
     static const bool isSync = true;
 
     typedef CoreIPC::Arguments0 Reply;
-    typedef CoreIPC::Arguments2<uint64_t, const WTF::String&> DecodeType;
     RunJavaScriptAlert(uint64_t frameID, const WTF::String& message)
-        : CoreIPC::Arguments2<uint64_t, const WTF::String&>(frameID, message)
+        : m_arguments(frameID, message)
     {
     }
+
+    const std::tuple<uint64_t, const WTF::String&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<uint64_t, const WTF::String&> m_arguments;
 };
 
-struct GetPlugins : CoreIPC::Arguments1<bool> {
+class GetPlugins {
+public:
+    typedef std::tuple<bool> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("GetPlugins"); }
     static const bool isSync = true;
 
     typedef CoreIPC::Arguments1<Vector<WebCore::PluginInfo>&> Reply;
-    typedef CoreIPC::Arguments1<bool> DecodeType;
     explicit GetPlugins(bool refresh)
-        : CoreIPC::Arguments1<bool>(refresh)
+        : m_arguments(refresh)
     {
     }
+
+    const std::tuple<bool> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<bool> m_arguments;
 };
 
-struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
+class GetPluginProcessConnection {
+public:
+    typedef std::tuple<WTF::String> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("GetPluginProcessConnection"); }
     static const bool isSync = true;
@@ -487,14 +589,24 @@ struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
     };
 
     typedef CoreIPC::Arguments1<CoreIPC::Connection::Handle&> Reply;
-    typedef CoreIPC::Arguments1<const WTF::String&> DecodeType;
     explicit GetPluginProcessConnection(const WTF::String& pluginPath)
-        : CoreIPC::Arguments1<const WTF::String&>(pluginPath)
+        : m_arguments(pluginPath)
     {
     }
+
+    const std::tuple<const WTF::String&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<const WTF::String&> m_arguments;
 };
 
-struct TestMultipleAttributes : CoreIPC::Arguments0 {
+class TestMultipleAttributes {
+public:
+    typedef std::tuple<> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("TestMultipleAttributes"); }
     static const bool isSync = true;
@@ -511,87 +623,153 @@ struct TestMultipleAttributes : CoreIPC::Arguments0 {
     };
 
     typedef CoreIPC::Arguments0 Reply;
-    typedef CoreIPC::Arguments0 DecodeType;
+    const std::tuple<> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<> m_arguments;
 };
 
-struct TestParameterAttributes : CoreIPC::Arguments3<uint64_t, double, double> {
+class TestParameterAttributes {
+public:
+    typedef std::tuple<uint64_t, double, double> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("TestParameterAttributes"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments3<uint64_t, double, double> DecodeType;
     TestParameterAttributes(uint64_t foo, double bar, double baz)
-        : CoreIPC::Arguments3<uint64_t, double, double>(foo, bar, baz)
+        : m_arguments(foo, bar, baz)
     {
     }
+
+    const std::tuple<uint64_t, double, double> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<uint64_t, double, double> m_arguments;
 };
 
-struct TemplateTest : CoreIPC::Arguments1<const WTF::HashMap<String, std::pair<String, uint64_t>>&> {
+class TemplateTest {
+public:
+    typedef std::tuple<WTF::HashMap<String, std::pair<String, uint64_t>>> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("TemplateTest"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments1<const WTF::HashMap<String, std::pair<String, uint64_t>>&> DecodeType;
     explicit TemplateTest(const WTF::HashMap<String, std::pair<String, uint64_t>>& a)
-        : CoreIPC::Arguments1<const WTF::HashMap<String, std::pair<String, uint64_t>>&>(a)
+        : m_arguments(a)
     {
     }
+
+    const std::tuple<const WTF::HashMap<String, std::pair<String, uint64_t>>&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<const WTF::HashMap<String, std::pair<String, uint64_t>>&> m_arguments;
 };
 
 #if PLATFORM(MAC)
-struct DidCreateWebProcessConnection : CoreIPC::Arguments1<const CoreIPC::MachPort&> {
+class DidCreateWebProcessConnection {
+public:
+    typedef std::tuple<CoreIPC::MachPort> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("DidCreateWebProcessConnection"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments1<const CoreIPC::MachPort&> DecodeType;
     explicit DidCreateWebProcessConnection(const CoreIPC::MachPort& connectionIdentifier)
-        : CoreIPC::Arguments1<const CoreIPC::MachPort&>(connectionIdentifier)
+        : m_arguments(connectionIdentifier)
     {
     }
+
+    const std::tuple<const CoreIPC::MachPort&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<const CoreIPC::MachPort&> m_arguments;
 };
 #endif
 
 #if PLATFORM(MAC)
-struct InterpretKeyEvent : CoreIPC::Arguments1<uint32_t> {
+class InterpretKeyEvent {
+public:
+    typedef std::tuple<uint32_t> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("InterpretKeyEvent"); }
     static const bool isSync = true;
 
     typedef CoreIPC::Arguments1<Vector<WebCore::KeypressCommand>&> Reply;
-    typedef CoreIPC::Arguments1<uint32_t> DecodeType;
     explicit InterpretKeyEvent(uint32_t type)
-        : CoreIPC::Arguments1<uint32_t>(type)
+        : m_arguments(type)
     {
     }
+
+    const std::tuple<uint32_t> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<uint32_t> m_arguments;
 };
 #endif
 
 #if ENABLE(DEPRECATED_FEATURE)
-struct DeprecatedOperation : CoreIPC::Arguments1<const CoreIPC::DummyType&> {
+class DeprecatedOperation {
+public:
+    typedef std::tuple<CoreIPC::DummyType> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("DeprecatedOperation"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments1<const CoreIPC::DummyType&> DecodeType;
     explicit DeprecatedOperation(const CoreIPC::DummyType& dummy)
-        : CoreIPC::Arguments1<const CoreIPC::DummyType&>(dummy)
+        : m_arguments(dummy)
     {
     }
+
+    const std::tuple<const CoreIPC::DummyType&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<const CoreIPC::DummyType&> m_arguments;
 };
 #endif
 
 #if ENABLE(EXPERIMENTAL_FEATURE)
-struct ExperimentalOperation : CoreIPC::Arguments1<const CoreIPC::DummyType&> {
+class ExperimentalOperation {
+public:
+    typedef std::tuple<CoreIPC::DummyType> DecodeType;
+
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("ExperimentalOperation"); }
     static const bool isSync = false;
 
-    typedef CoreIPC::Arguments1<const CoreIPC::DummyType&> DecodeType;
     explicit ExperimentalOperation(const CoreIPC::DummyType& dummy)
-        : CoreIPC::Arguments1<const CoreIPC::DummyType&>(dummy)
+        : m_arguments(dummy)
     {
     }
+
+    const std::tuple<const CoreIPC::DummyType&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<const CoreIPC::DummyType&> m_arguments;
 };
 #endif
 

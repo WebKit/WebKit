@@ -95,7 +95,7 @@ bool ChildProcessProxy::send(const T& message, uint64_t destinationID, unsigned 
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
     auto encoder = std::make_unique<CoreIPC::MessageEncoder>(T::receiverName(), T::name(), destinationID);
-    encoder->encode(message);
+    encoder->encode(message.arguments());
 
     return sendMessage(std::move(encoder), messageSendFlags);
 }

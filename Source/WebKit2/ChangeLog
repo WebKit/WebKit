@@ -1,3 +1,51 @@
+2013-09-25  Anders Carlsson  <andersca@apple.com>
+
+        Use tuples for encoding IPC messages
+        https://bugs.webkit.org/show_bug.cgi?id=121924
+
+        Reviewed by Andreas Kling.
+
+        Yet another step towards getting rid of the Arguments hierarchy.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::send):
+        (CoreIPC::Connection::sendSync):
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessage):
+        (CoreIPC::handleMessageVariadic):
+        (CoreIPC::handleMessageDelayed):
+        * Platform/CoreIPC/MessageSender.h:
+        (CoreIPC::MessageSender::send):
+        * Scripts/webkit2/messages.py:
+        (arguments_type_old):
+        (arguments_type):
+        (reply_type):
+        (decode_type):
+        (delayed_reply_type):
+        (message_to_struct_declaration):
+        * Scripts/webkit2/messages_unittest.py:
+        (LoadURL):
+        (std):
+        (TouchEvent):
+        (DidReceivePolicyDecision):
+        (Close):
+        (PreferencesDidChange):
+        (SendDoubleAndFloat):
+        (SendInts):
+        (CreatePlugin):
+        (RunJavaScriptAlert):
+        (GetPlugins):
+        (GetPluginProcessConnection):
+        (TestMultipleAttributes):
+        (TestParameterAttributes):
+        (TemplateTest):
+        (DidCreateWebProcessConnection):
+        (InterpretKeyEvent):
+        (DeprecatedOperation):
+        (ExperimentalOperation):
+        * Shared/ChildProcessProxy.h:
+        (WebKit::ChildProcessProxy::send):
+
 2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Fix build with Qt 5.2 QtPosition module

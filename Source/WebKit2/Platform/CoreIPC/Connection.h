@@ -350,7 +350,7 @@ template<typename T> bool Connection::send(const T& message, uint64_t destinatio
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
     auto encoder = std::make_unique<MessageEncoder>(T::receiverName(), T::name(), destinationID);
-    encoder->encode(message);
+    encoder->encode(message.arguments());
     
     return sendMessage(std::move(encoder), messageSendFlags);
 }
@@ -363,7 +363,7 @@ template<typename T> bool Connection::sendSync(const T& message, typename T::Rep
     std::unique_ptr<MessageEncoder> encoder = createSyncMessageEncoder(T::receiverName(), T::name(), destinationID, syncRequestID);
     
     // Encode the rest of the input arguments.
-    encoder->encode(message);
+    encoder->encode(message.arguments());
 
     // Now send the message and wait for a reply.
     std::unique_ptr<MessageDecoder> replyDecoder = sendSyncMessage(syncRequestID, std::move(encoder), timeout, syncSendFlags);

@@ -365,11 +365,10 @@ void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6>&& args, MessageDecode
 }
 
 // Main dispatch functions
-
 template<typename T, typename C, typename MF>
 void handleMessage(MessageDecoder& decoder, C* object, MF function)
 {
-    typename T::DecodeType::ValueType arguments;
+    typename T::DecodeType arguments;
     if (!decoder.decode(arguments))
         return;
     callMemberFunction(std::move(arguments), object, function);
@@ -378,7 +377,7 @@ void handleMessage(MessageDecoder& decoder, C* object, MF function)
 template<typename T, typename C, typename MF>
 void handleMessage(MessageDecoder& decoder, MessageEncoder& replyEncoder, C* object, MF function)
 {
-    typename T::DecodeType::ValueType arguments;
+    typename T::DecodeType arguments;
     if (!decoder.decode(arguments))
         return;
 
@@ -390,7 +389,7 @@ void handleMessage(MessageDecoder& decoder, MessageEncoder& replyEncoder, C* obj
 template<typename T, typename C, typename MF>
 void handleMessage(Connection* connection, MessageDecoder& decoder, MessageEncoder& replyEncoder, C* object, MF function)
 {
-    typename T::DecodeType::ValueType arguments;
+    typename T::DecodeType arguments;
     if (!decoder.decode(arguments))
         return;
 
@@ -402,7 +401,7 @@ void handleMessage(Connection* connection, MessageDecoder& decoder, MessageEncod
 template<typename T, typename C, typename MF>
 void handleMessage(Connection* connection, MessageDecoder& decoder, C* object, MF function)
 {
-    typename T::DecodeType::ValueType arguments;
+    typename T::DecodeType arguments;
     if (!decoder.decode(arguments))
         return;
     callMemberFunction(connection, std::move(arguments), object, function);
@@ -411,7 +410,7 @@ void handleMessage(Connection* connection, MessageDecoder& decoder, C* object, M
 template<typename T, typename C, typename MF>
 void handleMessageVariadic(MessageDecoder& decoder, C* object, MF function)
 {
-    typename T::DecodeType::ValueType arguments;
+    typename T::DecodeType arguments;
     if (!decoder.decode(arguments))
         return;
     callMemberFunction(std::move(arguments), decoder, object, function);
@@ -420,7 +419,7 @@ void handleMessageVariadic(MessageDecoder& decoder, C* object, MF function)
 template<typename T, typename C, typename MF>
 void handleMessageVariadic(MessageDecoder& decoder, MessageEncoder& replyEncoder, C* object, MF function)
 {
-    typename T::DecodeType::ValueType arguments;
+    typename T::DecodeType arguments;
     if (!decoder.decode(arguments))
         return;
 
@@ -432,7 +431,7 @@ void handleMessageVariadic(MessageDecoder& decoder, MessageEncoder& replyEncoder
 template<typename T, typename C, typename MF>
 void handleMessageDelayed(Connection* connection, MessageDecoder& decoder, std::unique_ptr<MessageEncoder>& replyEncoder, C* object, MF function)
 {
-    typename T::DecodeType::ValueType arguments;
+    typename T::DecodeType arguments;
     if (!decoder.decode(arguments))
         return;
 
