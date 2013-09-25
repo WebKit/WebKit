@@ -351,7 +351,7 @@ bool IDBDatabase::hasPendingActivity() const
 {
     // The script wrapper must not be collected before the object is closed or
     // we can't fire a "versionchange" event to let script manually close the connection.
-    return !m_closePending && !m_eventTargetData.eventListenerMap.isEmpty() && !m_contextStopped;
+    return !m_closePending && !ensureEventTargetData().eventListenerMap.isEmpty() && !m_contextStopped;
 }
 
 void IDBDatabase::stop()
@@ -360,26 +360,6 @@ void IDBDatabase::stop()
     close();
 
     m_contextStopped = true;
-}
-
-EventTargetInterface IDBDatabase::eventTargetInterface() const
-{
-    return IDBDatabaseEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* IDBDatabase::scriptExecutionContext() const
-{
-    return ActiveDOMObject::scriptExecutionContext();
-}
-
-EventTargetData* IDBDatabase::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& IDBDatabase::ensureEventTargetData()
-{
-    return m_eventTargetData;
 }
 
 } // namespace WebCore

@@ -285,32 +285,12 @@ void RTCDataChannel::didDetectError()
     scheduleDispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 
-EventTargetInterface RTCDataChannel::eventTargetInterface() const
-{
-    return RTCDataChannelEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* RTCDataChannel::scriptExecutionContext() const
-{
-    return m_scriptExecutionContext;
-}
-
 void RTCDataChannel::stop()
 {
     m_stopped = true;
     m_readyState = ReadyStateClosed;
     m_handler->setClient(0);
     m_scriptExecutionContext = 0;
-}
-
-EventTargetData* RTCDataChannel::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& RTCDataChannel::ensureEventTargetData()
-{
-    return m_eventTargetData;
 }
 
 void RTCDataChannel::scheduleDispatchEvent(PassRefPtr<Event> event)

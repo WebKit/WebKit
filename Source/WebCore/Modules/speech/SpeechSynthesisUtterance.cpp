@@ -46,16 +46,6 @@ SpeechSynthesisUtterance::~SpeechSynthesisUtterance()
 {
     m_platformUtterance->setClient(0);
 }
-    
-ScriptExecutionContext* SpeechSynthesisUtterance::scriptExecutionContext() const
-{
-    return ContextDestructionObserver::scriptExecutionContext();
-}    
-    
-EventTargetInterface SpeechSynthesisUtterance::eventTargetInterface() const
-{
-    return SpeechSynthesisUtteranceEventTargetInterfaceType;
-}
 
 SpeechSynthesisVoice* SpeechSynthesisUtterance::voice() const
 {

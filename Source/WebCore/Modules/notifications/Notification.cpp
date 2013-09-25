@@ -130,11 +130,6 @@ PassRefPtr<Notification> Notification::create(ScriptExecutionContext* context, c
 }
 #endif
 
-EventTargetInterface Notification::eventTargetInterface() const
-{
-    return NotificationEventTargetInterfaceType;
-}
-
 void Notification::show() 
 {
     // prevent double-showing
@@ -166,16 +161,6 @@ void Notification::close()
     case Closed:
         break;
     }
-}
-
-EventTargetData* Notification::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& Notification::ensureEventTargetData()
-{
-    return m_eventTargetData;
 }
 
 void Notification::contextDestroyed()

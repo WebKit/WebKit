@@ -219,16 +219,6 @@ void MediaKeySession::addKeyTimerFired(Timer<MediaKeySession>*)
     }
 }
 
-EventTargetInterface MediaKeySession::eventTargetInterface() const
-{
-    return MediaKeySessionEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* MediaKeySession::scriptExecutionContext() const
-{
-    return ContextDestructionObserver::scriptExecutionContext();
-}
-
 }
 
 #endif

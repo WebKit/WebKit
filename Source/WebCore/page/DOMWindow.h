@@ -85,11 +85,12 @@ namespace WebCore {
     enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 
     // FIXME: DOMWindow shouldn't subclass FrameDestructionObserver and instead should get to Frame via its Document.
-    class DOMWindow : public RefCounted<DOMWindow>
-                    , public EventTarget
-                    , public ContextDestructionObserver
-                    , public FrameDestructionObserver
-                    , public Supplementable<DOMWindow> {
+    class DOMWindow FINAL
+        : public RefCounted<DOMWindow>
+        , public EventTargetWithInlineData
+        , public ContextDestructionObserver
+        , public FrameDestructionObserver
+        , public Supplementable<DOMWindow> {
     public:
         static PassRefPtr<DOMWindow> create(Document* document) { return adoptRef(new DOMWindow(document)); }
         virtual ~DOMWindow();
@@ -103,8 +104,8 @@ namespace WebCore {
         // the network load. See also SecurityContext::isSecureTransitionTo.
         void didSecureTransitionTo(Document*);
 
-        virtual EventTargetInterface eventTargetInterface() const;
-        virtual ScriptExecutionContext* scriptExecutionContext() const;
+        virtual EventTargetInterface eventTargetInterface() const OVERRIDE { return DOMWindowEventTargetInterfaceType; }
+        virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ContextDestructionObserver::scriptExecutionContext(); }
 
         virtual DOMWindow* toDOMWindow();
 
@@ -425,10 +426,8 @@ namespace WebCore {
         virtual void frameDestroyed() OVERRIDE;
         virtual void willDetachPage() OVERRIDE;
 
-        virtual void refEventTarget() { ref(); }
-        virtual void derefEventTarget() { deref(); }
-        virtual EventTargetData* eventTargetData() OVERRIDE;
-        virtual EventTargetData& ensureEventTargetData() OVERRIDE;
+        virtual void refEventTarget() OVERRIDE { ref(); }
+        virtual void derefEventTarget() OVERRIDE { deref(); }
 
         static PassRefPtr<Frame> createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&,
             DOMWindow* activeWindow, Frame* firstFrame, Frame* openerFrame,
@@ -458,8 +457,6 @@ namespace WebCore {
         mutable RefPtr<Navigator> m_navigator;
         mutable RefPtr<Location> m_location;
         mutable RefPtr<StyleMedia> m_media;
-
-        EventTargetData m_eventTargetData;
 
         String m_status;
         String m_defaultStatus;

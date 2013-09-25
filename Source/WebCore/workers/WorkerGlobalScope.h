@@ -54,13 +54,13 @@ namespace WebCore {
     class WorkerNavigator;
     class WorkerThread;
 
-    class WorkerGlobalScope : public RefCounted<WorkerGlobalScope>, public ScriptExecutionContext, public EventTarget {
+    class WorkerGlobalScope : public RefCounted<WorkerGlobalScope>, public ScriptExecutionContext, public EventTargetWithInlineData {
     public:
         virtual ~WorkerGlobalScope();
 
         virtual bool isWorkerGlobalScope() const OVERRIDE { return true; }
 
-        virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+        virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return const_cast<WorkerGlobalScope*>(this); }
 
         virtual bool isSharedWorkerGlobalScope() const { return false; }
         virtual bool isDedicatedWorkerGlobalScope() const { return false; }
@@ -149,10 +149,8 @@ namespace WebCore {
         virtual void refScriptExecutionContext() OVERRIDE { ref(); }
         virtual void derefScriptExecutionContext() OVERRIDE { deref(); }
 
-        virtual void refEventTarget() OVERRIDE { ref(); }
-        virtual void derefEventTarget() OVERRIDE { deref(); }
-        virtual EventTargetData* eventTargetData() OVERRIDE;
-        virtual EventTargetData& ensureEventTargetData() OVERRIDE;
+        virtual void refEventTarget() OVERRIDE FINAL { ref(); }
+        virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
         virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack>, JSC::ExecState* = 0, unsigned long requestIdentifier = 0) OVERRIDE;
         virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) OVERRIDE;
@@ -175,7 +173,6 @@ namespace WebCore {
         OwnPtr<WorkerInspectorController> m_workerInspectorController;
 #endif
         bool m_closing;
-        EventTargetData m_eventTargetData;
 
         HashSet<Observer*> m_workerObservers;
 

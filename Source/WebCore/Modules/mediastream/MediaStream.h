@@ -41,7 +41,8 @@
 
 namespace WebCore {
 
-class MediaStream : public RefCounted<MediaStream>, public URLRegistrable, public ScriptWrappable, public MediaStreamDescriptorClient, public EventTarget, public ContextDestructionObserver {
+// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
+class MediaStream : public RefCounted<MediaStream>, public URLRegistrable, public ScriptWrappable, public MediaStreamDescriptorClient, public EventTargetWithInlineData, public ContextDestructionObserver {
 public:
     static PassRefPtr<MediaStream> create(ScriptExecutionContext*);
     static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStream>);
@@ -72,8 +73,8 @@ public:
     MediaStreamDescriptor* descriptor() const { return m_descriptor.get(); }
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return MediaStreamEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ContextDestructionObserver::scriptExecutionContext(); }
 
     using RefCounted<MediaStream>::ref;
     using RefCounted<MediaStream>::deref;
@@ -84,17 +85,13 @@ public:
 protected:
     MediaStream(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>);
 
-    // EventTarget
-    virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
-
     // ContextDestructionObserver
     virtual void contextDestroyed();
 
 private:
     // EventTarget
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
+    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
     // MediaStreamDescriptorClient
     virtual void addRemoteTrack(MediaStreamComponent*) OVERRIDE;
@@ -104,8 +101,6 @@ private:
     void scheduledEventTimerFired(Timer<MediaStream>*);
 
     bool m_stopped;
-
-    EventTargetData m_eventTargetData;
 
     MediaStreamTrackVector m_audioTracks;
     MediaStreamTrackVector m_videoTracks;

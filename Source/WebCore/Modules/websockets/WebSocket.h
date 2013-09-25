@@ -50,7 +50,8 @@ namespace WebCore {
 class Blob;
 class ThreadableWebSocketChannel;
 
-class WebSocket : public RefCounted<WebSocket>, public EventTarget, public ActiveDOMObject, public WebSocketChannelClient {
+// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
+class WebSocket : public RefCounted<WebSocket>, public EventTargetWithInlineData, public ActiveDOMObject, public WebSocketChannelClient {
 public:
     static void setIsAvailable(bool);
     static bool isAvailable();
@@ -97,8 +98,8 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
 
     // EventTarget functions.
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL;
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL;
 
     using RefCounted<WebSocket>::ref;
     using RefCounted<WebSocket>::deref;
@@ -122,10 +123,8 @@ private:
     virtual void resume() OVERRIDE;
     virtual void stop() OVERRIDE;
 
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
-    virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
+    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
+    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
     size_t getFramingOverhead(size_t payloadSize);
 
@@ -138,7 +137,6 @@ private:
 
     State m_state;
     KURL m_url;
-    EventTargetData m_eventTargetData;
     unsigned long m_bufferedAmount;
     unsigned long m_bufferedAmountAfterClose;
     BinaryType m_binaryType;

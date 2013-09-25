@@ -43,7 +43,8 @@ namespace WebCore {
 class Frame;
 class KURL;
 
-class DOMApplicationCache : public ScriptWrappable, public RefCounted<DOMApplicationCache>, public EventTarget, public DOMWindowProperty {
+// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
+class DOMApplicationCache : public ScriptWrappable, public RefCounted<DOMApplicationCache>, public EventTargetWithInlineData, public DOMWindowProperty {
 public:
     static PassRefPtr<DOMApplicationCache> create(Frame* frame) { return adoptRef(new DOMApplicationCache(frame)); }
     ~DOMApplicationCache() { ASSERT(!m_frame); }
@@ -56,8 +57,6 @@ public:
     void update(ExceptionCode&);
     void swapCache(ExceptionCode&);
     void abort();
-
-    // EventTarget impl
 
     using RefCounted<DOMApplicationCache>::ref;
     using RefCounted<DOMApplicationCache>::deref;
@@ -73,22 +72,18 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(cached);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(obsolete);
 
-    virtual EventTargetInterface eventTargetInterface() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return DOMApplicationCacheEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL;
 
     static const AtomicString& toEventType(ApplicationCacheHost::EventID id);
 
 private:
     explicit DOMApplicationCache(Frame*);
 
-    virtual void refEventTarget() { ref(); }
-    virtual void derefEventTarget() { deref(); }
-    virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
+    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
+    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
     ApplicationCacheHost* applicationCacheHost() const;
-
-    EventTargetData m_eventTargetData;
 };
 
 } // namespace WebCore

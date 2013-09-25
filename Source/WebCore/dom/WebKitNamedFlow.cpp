@@ -207,16 +207,6 @@ void WebKitNamedFlow::setRenderer(RenderNamedFlowThread* parentFlowThread)
     m_parentFlowThread = parentFlowThread;
 }
 
-EventTargetData* WebKitNamedFlow::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& WebKitNamedFlow::ensureEventTargetData()
-{
-    return m_eventTargetData;
-}
-
 void WebKitNamedFlow::dispatchRegionLayoutUpdateEvent()
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
@@ -237,11 +227,6 @@ void WebKitNamedFlow::dispatchRegionOversetChangeEvent()
         return;
 
     dispatchEvent(UIEvent::create(eventNames().webkitregionoversetchangeEvent, false, false, m_flowManager->document()->defaultView(), 0));
-}
-
-EventTargetInterface WebKitNamedFlow::eventTargetInterface() const
-{
-    return WebKitNamedFlowEventTargetInterfaceType;
 }
 
 ScriptExecutionContext* WebKitNamedFlow::scriptExecutionContext() const

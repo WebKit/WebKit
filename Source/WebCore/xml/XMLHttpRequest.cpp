@@ -1305,24 +1305,4 @@ void XMLHttpRequest::contextDestroyed()
     ActiveDOMObject::contextDestroyed();
 }
 
-EventTargetInterface XMLHttpRequest::eventTargetInterface() const
-{
-    return XMLHttpRequestEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* XMLHttpRequest::scriptExecutionContext() const
-{
-    return ActiveDOMObject::scriptExecutionContext();
-}
-
-EventTargetData* XMLHttpRequest::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& XMLHttpRequest::ensureEventTargetData()
-{
-    return m_eventTargetData;
-}
-
 } // namespace WebCore

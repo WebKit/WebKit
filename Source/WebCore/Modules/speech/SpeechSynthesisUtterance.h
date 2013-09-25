@@ -36,8 +36,9 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-    
-class SpeechSynthesisUtterance : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public ContextDestructionObserver, public EventTarget {
+
+// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
+class SpeechSynthesisUtterance : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public ContextDestructionObserver, public EventTargetWithInlineData {
 public:
     static PassRefPtr<SpeechSynthesisUtterance> create(ScriptExecutionContext*, const String&);
     
@@ -75,7 +76,7 @@ public:
     using RefCounted<SpeechSynthesisUtterance>::ref;
     using RefCounted<SpeechSynthesisUtterance>::deref;
 
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ContextDestructionObserver::scriptExecutionContext(); }
 
     PlatformSpeechSynthesisUtterance* platformUtterance() const { return m_platformUtterance.get(); }
 
@@ -83,15 +84,10 @@ private:
     SpeechSynthesisUtterance(ScriptExecutionContext*, const String&);
     RefPtr<PlatformSpeechSynthesisUtterance> m_platformUtterance;
     RefPtr<SpeechSynthesisVoice> m_voice;
-    
-    // EventTarget
-    EventTargetData m_eventTargetData;
 
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
-    virtual EventTargetData* eventTargetData() OVERRIDE { return &m_eventTargetData; }
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE { return m_eventTargetData; }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return SpeechSynthesisUtteranceEventTargetInterfaceType; }
+    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
+    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 };
     
 } // namespace WebCore

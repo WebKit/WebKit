@@ -41,7 +41,8 @@ class MediaStreamTrack;
 class RTCPeerConnectionHandler;
 class RTCDTMFSenderHandler;
 
-class RTCDTMFSender : public RefCounted<RTCDTMFSender>, public ScriptWrappable, public EventTarget, public RTCDTMFSenderHandlerClient, public ActiveDOMObject {
+// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
+class RTCDTMFSender : public RefCounted<RTCDTMFSender>, public ScriptWrappable, public EventTargetWithInlineData, public RTCDTMFSenderHandlerClient, public ActiveDOMObject {
 public:
     static PassRefPtr<RTCDTMFSender> create(ScriptExecutionContext*, RTCPeerConnectionHandler*, PassRefPtr<MediaStreamTrack>, ExceptionCode&);
     ~RTCDTMFSender();
@@ -59,8 +60,8 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(tonechange);
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const OVERRIDE;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return RTCDTMFSenderEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
 
     // ActiveDOMObject
     virtual void stop() OVERRIDE;
@@ -75,11 +76,8 @@ private:
     void scheduledEventTimerFired(Timer<RTCDTMFSender>*);
 
     // EventTarget
-    virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
-    EventTargetData m_eventTargetData;
+    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
+    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
     // RTCDTMFSenderHandlerClient
     virtual void didPlayTone(const String&) OVERRIDE;

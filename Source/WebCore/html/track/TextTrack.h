@@ -61,7 +61,7 @@ public:
     virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>) = 0;
 };
 
-class TextTrack : public TrackBase, public EventTarget
+class TextTrack : public TrackBase, public EventTargetWithInlineData
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     , public PlatformTextTrackClient
 #endif
@@ -73,8 +73,8 @@ public:
     }
     virtual ~TextTrack();
 
-    virtual EventTargetInterface eventTargetInterface() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return TextTrackEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return m_scriptExecutionContext; }
 
     static TextTrack* captionMenuOffItem();
     static TextTrack* captionMenuAutomaticItem();
@@ -159,16 +159,13 @@ protected:
     TextTrackRegionList* regionList();
 #endif
 
-    virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
-
     RefPtr<TextTrackCueList> m_cues;
 
 private:
     virtual bool isValidKind(const AtomicString&) const OVERRIDE;
 
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
+    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
     TextTrackRegionList* ensureTextTrackRegionList();
@@ -184,7 +181,6 @@ private:
     TextTrackCueList* ensureTextTrackCueList();
 
     ScriptExecutionContext* m_scriptExecutionContext;
-    EventTargetData m_eventTargetData;
     AtomicString m_mode;
     TextTrackClient* m_client;
     TextTrackType m_trackType;

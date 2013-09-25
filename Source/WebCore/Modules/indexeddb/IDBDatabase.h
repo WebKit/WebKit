@@ -49,7 +49,8 @@ class ScriptExecutionContext;
 
 typedef int ExceptionCode;
 
-class IDBDatabase : public RefCounted<IDBDatabase>, public ScriptWrappable, public EventTarget, public ActiveDOMObject {
+// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
+class IDBDatabase : public RefCounted<IDBDatabase>, public ScriptWrappable, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     static PassRefPtr<IDBDatabase> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>, PassRefPtr<IDBDatabaseCallbacks>);
     ~IDBDatabase();
@@ -84,8 +85,8 @@ public:
     virtual bool hasPendingActivity() const OVERRIDE;
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return IDBDatabaseEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
 
     bool isClosePending() const { return m_closePending; }
     void forceClose();
@@ -115,10 +116,8 @@ private:
     virtual void stop() OVERRIDE;
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
-    virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
+    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
+    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
     void closeConnection();
 
@@ -130,8 +129,6 @@ private:
 
     bool m_closePending;
     bool m_contextStopped;
-
-    EventTargetData m_eventTargetData;
 
     // Keep track of the versionchange events waiting to be fired on this
     // database so that we can cancel them if the database closes.

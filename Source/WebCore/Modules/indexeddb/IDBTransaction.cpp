@@ -368,16 +368,6 @@ const AtomicString& IDBTransaction::modeToString(IndexedDB::TransactionMode mode
     return IDBTransaction::modeReadOnly();
 }
 
-EventTargetInterface IDBTransaction::eventTargetInterface() const
-{
-    return IDBTransactionEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* IDBTransaction::scriptExecutionContext() const
-{
-    return ActiveDOMObject::scriptExecutionContext();
-}
-
 bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
 {
     IDB_TRACE("IDBTransaction::dispatchEvent");
@@ -434,16 +424,6 @@ void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)
 
     event->setTarget(this);
     scriptExecutionContext()->eventQueue().enqueueEvent(event);
-}
-
-EventTargetData* IDBTransaction::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& IDBTransaction::ensureEventTargetData()
-{
-    return m_eventTargetData;
 }
 
 IDBDatabaseBackendInterface* IDBTransaction::backendDB() const

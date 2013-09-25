@@ -117,11 +117,6 @@ void WorkerGlobalScope::applyContentSecurityPolicyFromString(const String& polic
     contentSecurityPolicy()->didReceiveHeader(policy, contentSecurityPolicyType);
 }
 
-ScriptExecutionContext* WorkerGlobalScope::scriptExecutionContext() const
-{
-    return const_cast<WorkerGlobalScope*>(this);
-}
-
 KURL WorkerGlobalScope::completeURL(const String& url) const
 {
     // Always return a null URL when passed a null string.
@@ -306,16 +301,6 @@ bool WorkerGlobalScope::isContextThread() const
 bool WorkerGlobalScope::isJSExecutionForbidden() const
 {
     return m_script->isExecutionForbidden();
-}
-
-EventTargetData* WorkerGlobalScope::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& WorkerGlobalScope::ensureEventTargetData()
-{
-    return m_eventTargetData;
 }
 
 WorkerGlobalScope::Observer::Observer(WorkerGlobalScope* context)

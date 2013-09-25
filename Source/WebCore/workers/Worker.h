@@ -77,9 +77,6 @@ namespace WebCore {
         virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) OVERRIDE;
         virtual void notifyFinished() OVERRIDE;
 
-        virtual void refEventTarget() OVERRIDE { ref(); }
-        virtual void derefEventTarget() OVERRIDE { deref(); }
-
         friend void networkStateChanged(bool isOnLine);
 
         RefPtr<WorkerScriptLoader> m_scriptLoader;

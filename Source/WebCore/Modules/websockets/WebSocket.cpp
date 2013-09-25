@@ -579,16 +579,6 @@ void WebSocket::didClose(unsigned long unhandledBufferedAmount, ClosingHandshake
         ActiveDOMObject::unsetPendingActivity(this);
 }
 
-EventTargetData* WebSocket::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& WebSocket::ensureEventTargetData()
-{
-    return m_eventTargetData;
-}
-
 size_t WebSocket::getFramingOverhead(size_t payloadSize)
 {
     static const size_t hybiBaseFramingOverhead = 2; // Every frame has at least two-byte header.

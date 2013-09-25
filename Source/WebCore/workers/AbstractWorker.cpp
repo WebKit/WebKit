@@ -87,16 +87,6 @@ KURL AbstractWorker::resolveURL(const String& url, ExceptionCode& ec)
     return scriptURL;
 }
 
-EventTargetData* AbstractWorker::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& AbstractWorker::ensureEventTargetData()
-{
-    return m_eventTargetData;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)

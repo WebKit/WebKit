@@ -75,11 +75,6 @@ FileWriter::~FileWriter()
         stop();
 }
 
-EventTargetInterface FileWriter::eventTargetInterface() const
-{
-    return FileWriterEventTargetInterfaceType;
-}
-
 bool FileWriter::canSuspend() const
 {
     // FIXME: It is not currently possible to suspend a FileWriter, so pages with FileWriter can not go into page cache.

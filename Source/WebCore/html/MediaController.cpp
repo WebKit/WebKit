@@ -649,11 +649,6 @@ void MediaController::returnToRealtime()
         m_mediaElements[index]->returnToRealtime();
 }
 
-EventTargetInterface MediaController::eventTargetInterface() const
-{
-    return MediaControllerEventTargetInterfaceType;
-}
-
 // The spec says to fire periodic timeupdate events (those sent while playing) every
 // "15 to 250ms", we choose the slowest frequency
 static const double maxTimeupdateEventFrequency = 0.25;

@@ -439,11 +439,6 @@ EventTargetInterface IDBRequest::eventTargetInterface() const
     return IDBRequestEventTargetInterfaceType;
 }
 
-ScriptExecutionContext* IDBRequest::scriptExecutionContext() const
-{
-    return ActiveDOMObject::scriptExecutionContext();
-}
-
 bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 {
     IDB_TRACE("IDBRequest::dispatchEvent");
@@ -556,16 +551,6 @@ void IDBRequest::enqueueEvent(PassRefPtr<Event> event)
 
     if (scriptExecutionContext()->eventQueue().enqueueEvent(event.get()))
         m_enqueuedEvents.append(event);
-}
-
-EventTargetData* IDBRequest::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& IDBRequest::ensureEventTargetData()
-{
-    return m_eventTargetData;
 }
 
 } // namespace WebCore

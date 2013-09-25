@@ -209,26 +209,6 @@ void SourceBuffer::stop()
     m_appendBufferTimer.stop();
 }
 
-ScriptExecutionContext* SourceBuffer::scriptExecutionContext() const
-{
-    return ActiveDOMObject::scriptExecutionContext();
-}
-
-EventTargetInterface SourceBuffer::eventTargetInterface() const
-{
-    return SourceBufferEventTargetInterfaceType;
-}
-
-EventTargetData* SourceBuffer::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& SourceBuffer::ensureEventTargetData()
-{
-    return m_eventTargetData;
-}
-
 bool SourceBuffer::isRemoved() const
 {
     return !m_source;

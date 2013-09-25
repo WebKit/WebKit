@@ -104,11 +104,6 @@ void DOMApplicationCache::abort()
         cacheHost->abort();
 }
 
-EventTargetInterface DOMApplicationCache::eventTargetInterface() const
-{
-    return DOMApplicationCacheEventTargetInterfaceType;
-}
-
 ScriptExecutionContext* DOMApplicationCache::scriptExecutionContext() const
 {
     if (m_frame)
@@ -138,16 +133,6 @@ const AtomicString& DOMApplicationCache::toEventType(ApplicationCacheHost::Event
     }
     ASSERT_NOT_REACHED();
     return eventNames().errorEvent;
-}
-
-EventTargetData* DOMApplicationCache::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& DOMApplicationCache::ensureEventTargetData()
-{
-    return m_eventTargetData;
 }
 
 } // namespace WebCore

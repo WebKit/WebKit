@@ -67,11 +67,6 @@ Performance::~Performance()
 {
 }
 
-EventTargetInterface Performance::eventTargetInterface() const
-{
-    return PerformanceEventTargetInterfaceType;
-}
-
 ScriptExecutionContext* Performance::scriptExecutionContext() const
 {
     if (!frame())
@@ -197,16 +192,6 @@ bool Performance::isResourceTimingBufferFull()
 }
 
 #endif // ENABLE(RESOURCE_TIMING)
-
-EventTargetData* Performance::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& Performance::ensureEventTargetData()
-{
-    return m_eventTargetData;
-}
 
 #if ENABLE(USER_TIMING)
 void Performance::webkitMark(const String& markName, ExceptionCode& ec)

@@ -41,7 +41,7 @@ class HTMLMediaElement;
 class Element;
 class TrackBase;
 
-class TrackListBase : public RefCounted<TrackListBase>, public EventTarget {
+class TrackListBase : public RefCounted<TrackListBase>, public EventTargetWithInlineData {
 public:
     ~TrackListBase();
 
@@ -53,7 +53,7 @@ public:
     virtual EventTargetInterface eventTargetInterface() const = 0;
     using RefCounted<TrackListBase>::ref;
     using RefCounted<TrackListBase>::deref;
-    virtual ScriptExecutionContext* scriptExecutionContext() const { return m_context; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return m_context; }
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(addtrack);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(change);
@@ -79,10 +79,8 @@ protected:
 private:
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
-    virtual EventTargetData* eventTargetData() OVERRIDE { return &m_eventTargetData; }
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE { return m_eventTargetData; }
+    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
+    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
     void asyncEventTimerFired(Timer<TrackListBase>*);
 
@@ -91,8 +89,6 @@ private:
 
     Vector<RefPtr<Event> > m_pendingEvents;
     Timer<TrackListBase> m_pendingEventTimer;
-
-    EventTargetData m_eventTargetData;
 
     int m_dispatchingEvents;
 };

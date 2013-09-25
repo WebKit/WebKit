@@ -209,16 +209,6 @@ void EventSource::close()
     }
 }
 
-EventTargetInterface EventSource::eventTargetInterface() const
-{
-    return EventSourceEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* EventSource::scriptExecutionContext() const
-{
-    return ActiveDOMObject::scriptExecutionContext();
-}
-
 void EventSource::didReceiveResponse(unsigned long, const ResourceResponse& response)
 {
     ASSERT(m_state == CONNECTING);
@@ -429,16 +419,6 @@ PassRefPtr<MessageEvent> EventSource::createMessageEvent()
     RefPtr<MessageEvent> event = MessageEvent::create();
     event->initMessageEvent(m_eventName.isEmpty() ? eventNames().messageEvent : AtomicString(m_eventName), false, false, SerializedScriptValue::create(String::adopt(m_data)), m_eventStreamOrigin, m_lastEventId, 0, 0);
     return event.release();
-}
-
-EventTargetData* EventSource::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& EventSource::ensureEventTargetData()
-{
-    return m_eventTargetData;
 }
 
 } // namespace WebCore

@@ -174,26 +174,6 @@ void MediaStreamTrack::stop()
     m_stopped = true;
 }
 
-EventTargetInterface MediaStreamTrack::eventTargetInterface() const
-{
-    return MediaStreamTrackEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* MediaStreamTrack::scriptExecutionContext() const
-{
-    return ActiveDOMObject::scriptExecutionContext();
-}
-
-EventTargetData* MediaStreamTrack::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& MediaStreamTrack::ensureEventTargetData()
-{
-    return m_eventTargetData;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

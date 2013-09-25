@@ -46,7 +46,8 @@ namespace WebCore {
 class Blob;
 class ScriptExecutionContext;
 
-class FileWriter : public FileWriterBase, public ActiveDOMObject, public EventTarget, public AsyncFileWriterClient {
+// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
+class FileWriter : public FileWriterBase, public ActiveDOMObject, public EventTargetWithInlineData, public AsyncFileWriterClient {
 public:
     static PassRefPtr<FileWriter> create(ScriptExecutionContext*);
 
@@ -69,8 +70,8 @@ public:
     void didFail(FileError::ErrorCode);
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return FileWriterEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
 
     using RefCounted<FileWriterBase>::ref;
     using RefCounted<FileWriterBase>::deref;
@@ -99,10 +100,8 @@ private:
     virtual void stop() OVERRIDE;
 
     // EventTarget
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
-    virtual EventTargetData* eventTargetData() OVERRIDE { return &m_eventTargetData; }
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE { return m_eventTargetData; }
+    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
+    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
     void completeAbort();
 
@@ -115,7 +114,6 @@ private:
     void setError(FileError::ErrorCode, ExceptionCode&);
 
     RefPtr<FileError> m_error;
-    EventTargetData m_eventTargetData;
     ReadyState m_readyState;
     Operation m_operationInProgress;
     Operation m_queuedOperation;

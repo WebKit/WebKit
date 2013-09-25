@@ -950,11 +950,6 @@ void AudioContext::processAutomaticPullNodes(size_t framesToProcess)
         m_renderingAutomaticPullNodes[i]->processIfNecessary(framesToProcess);
 }
 
-EventTargetInterface AudioContext::eventTargetInterface() const
-{
-    return AudioContextEventTargetInterfaceType;
-}
-
 ScriptExecutionContext* AudioContext::scriptExecutionContext() const
 {
     return m_isStopScheduled ? 0 : ActiveDOMObject::scriptExecutionContext();

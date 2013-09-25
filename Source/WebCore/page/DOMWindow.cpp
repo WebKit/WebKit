@@ -424,16 +424,6 @@ DOMWindow::~DOMWindow()
     removeAllBeforeUnloadEventListeners(this);
 }
 
-EventTargetInterface DOMWindow::eventTargetInterface() const
-{
-    return DOMWindowEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* DOMWindow::scriptExecutionContext() const
-{
-    return ContextDestructionObserver::scriptExecutionContext();
-}
-
 DOMWindow* DOMWindow::toDOMWindow()
 {
     return this;
@@ -1761,16 +1751,6 @@ void DOMWindow::finishedLoading()
         m_shouldPrintWhenFinishedLoading = false;
         print();
     }
-}
-
-EventTargetData* DOMWindow::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& DOMWindow::ensureEventTargetData()
-{
-    return m_eventTargetData;
 }
 
 void DOMWindow::setLocation(const String& urlString, DOMWindow* activeWindow, DOMWindow* firstWindow, SetLocationLocking locking)

@@ -69,11 +69,6 @@ FileReader::~FileReader()
     terminate();
 }
 
-EventTargetInterface FileReader::eventTargetInterface() const
-{
-    return FileReaderEventTargetInterfaceType;
-}
-
 bool FileReader::canSuspend() const
 {
     // FIXME: It is not currently possible to suspend a FileReader, so pages with FileReader can not go into page cache.

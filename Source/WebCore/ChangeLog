@@ -1,3 +1,24 @@
+2013-09-25  Andreas Kling  <akling@apple.com>
+
+        Reduce repetitive EventTarget subclassing.
+        <https://webkit.org/b/121915>
+
+        Reviewed by Antti Koivisto.
+
+        Add a EventTargetWithInlineData helper class to EventTarget.h.
+        It's a simple subclass with an EventTargetData member and FINAL
+        eventTargetData()/ensureEventTargetData() overrides.
+
+        Turns out that this fits almost every use case except Node and
+        SVGElementInstance.
+
+        Inlined most of the FINAL EventTarget overrides since they will
+        be called on tight pointers by generated bindings code and this
+        removes the need for virtual dispatch.
+
+        Spammed OVERRIDE FINAL as appropriate, we can't make the whole
+        classes FINAL until bug 121747 is fixed, so added FIXMEs.
+
 2013-09-25  Sam White  <samuel_white@apple.com>
 
         AX: WebKit doesn't map aria-sort=other on OS X

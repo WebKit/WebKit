@@ -257,26 +257,6 @@ void MediaStream::contextDestroyed()
     m_stopped = true;
 }
 
-EventTargetInterface MediaStream::eventTargetInterface() const
-{
-    return MediaStreamEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* MediaStream::scriptExecutionContext() const
-{
-    return ContextDestructionObserver::scriptExecutionContext();
-}
-
-EventTargetData* MediaStream::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& MediaStream::ensureEventTargetData()
-{
-    return m_eventTargetData;
-}
-
 void MediaStream::addRemoteTrack(MediaStreamComponent* component)
 {
     ASSERT(component && !component->stream());

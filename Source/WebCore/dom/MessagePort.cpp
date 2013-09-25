@@ -151,16 +151,6 @@ void MessagePort::contextDestroyed()
     m_scriptExecutionContext = 0;
 }
 
-EventTargetInterface MessagePort::eventTargetInterface() const
-{
-    return MessagePortEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* MessagePort::scriptExecutionContext() const
-{
-    return m_scriptExecutionContext;
-}
-
 void MessagePort::dispatchMessages()
 {
     // Messages for contexts that are not fully active get dispatched too, but JSAbstractEventListener::handleEvent() doesn't call handlers for these.
@@ -239,16 +229,6 @@ PassOwnPtr<MessagePortArray> MessagePort::entanglePorts(ScriptExecutionContext& 
         (*portArray)[i] = port.release();
     }
     return portArray.release();
-}
-
-EventTargetData* MessagePort::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& MessagePort::ensureEventTargetData()
-{
-    return m_eventTargetData;
 }
 
 } // namespace WebCore

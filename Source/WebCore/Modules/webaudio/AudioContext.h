@@ -73,7 +73,7 @@ class PeriodicWave;
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
 // For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
 
-class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTarget, public MediaCanStartListener {
+class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTargetWithInlineData, public MediaCanStartListener {
 public:
     // Create an AudioContext for rendering to the audio hardware.
     static PassRefPtr<AudioContext> create(Document*, ExceptionCode&);
@@ -235,10 +235,8 @@ public:
     void removeMarkedSummingJunction(AudioSummingJunction*);
 
     // EventTarget
-    virtual EventTargetInterface eventTargetInterface() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const;
-    virtual EventTargetData* eventTargetData() { return &m_eventTargetData; }
-    virtual EventTargetData& ensureEventTargetData() { return m_eventTargetData; }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return AudioContextEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL;
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
 
@@ -354,7 +352,6 @@ private:
     // EventTarget
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
-    EventTargetData m_eventTargetData;
 
     RefPtr<AudioBuffer> m_renderTarget;
     

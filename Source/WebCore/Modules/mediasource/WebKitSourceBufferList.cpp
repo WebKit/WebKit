@@ -93,26 +93,6 @@ void WebKitSourceBufferList::createAndFireEvent(const AtomicString& eventName)
     m_asyncEventQueue.enqueueEvent(event.release());
 }
 
-EventTargetInterface WebKitSourceBufferList::eventTargetInterface() const
-{
-    return WebKitSourceBufferListEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* WebKitSourceBufferList::scriptExecutionContext() const
-{
-    return m_scriptExecutionContext;
-}
-
-EventTargetData* WebKitSourceBufferList::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& WebKitSourceBufferList::ensureEventTargetData()
-{
-    return m_eventTargetData;
-}
-
 } // namespace WebCore
 
 #endif

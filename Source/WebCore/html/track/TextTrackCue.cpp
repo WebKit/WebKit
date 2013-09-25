@@ -1154,26 +1154,6 @@ std::pair<double, double> TextTrackCue::getCSSPosition() const
     return m_displayPosition;
 }
 
-EventTargetInterface TextTrackCue::eventTargetInterface() const
-{
-    return TextTrackCueEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* TextTrackCue::scriptExecutionContext() const
-{
-    return m_scriptExecutionContext;
-}
-
-EventTargetData* TextTrackCue::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& TextTrackCue::ensureEventTargetData()
-{
-    return m_eventTargetData;
-}
-
 bool TextTrackCue::isEqual(const TextTrackCue& cue, CueMatchRules match) const
 {
     if (cueType() != cue.cueType())

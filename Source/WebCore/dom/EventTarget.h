@@ -159,6 +159,14 @@ namespace WebCore {
         friend class EventListenerIterator;
     };
 
+    class EventTargetWithInlineData : public EventTarget {
+    protected:
+        virtual EventTargetData* eventTargetData() OVERRIDE FINAL { return &m_eventTargetData; }
+        virtual EventTargetData& ensureEventTargetData() OVERRIDE FINAL { return m_eventTargetData; }
+    private:
+        EventTargetData m_eventTargetData;
+    };
+
     // FIXME: These macros should be split into separate DEFINE and DECLARE
     // macros to avoid causing so many header includes.
     #define DEFINE_ATTRIBUTE_EVENT_LISTENER(attribute) \

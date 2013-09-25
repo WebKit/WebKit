@@ -128,30 +128,10 @@ void RTCDTMFSender::didPlayTone(const String& tone)
     scheduleDispatchEvent(RTCDTMFToneChangeEvent::create(tone));
 }
 
-EventTargetInterface RTCDTMFSender::eventTargetInterface() const
-{
-    return RTCDTMFSenderEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* RTCDTMFSender::scriptExecutionContext() const
-{
-    return ActiveDOMObject::scriptExecutionContext();
-}
-
 void RTCDTMFSender::stop()
 {
     m_stopped = true;
     m_handler->setClient(0);
-}
-
-EventTargetData* RTCDTMFSender::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& RTCDTMFSender::ensureEventTargetData()
-{
-    return m_eventTargetData;
 }
 
 void RTCDTMFSender::scheduleDispatchEvent(PassRefPtr<Event> event)

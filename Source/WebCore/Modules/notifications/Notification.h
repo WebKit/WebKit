@@ -63,7 +63,8 @@ class ThreadableLoader;
 
 typedef int ExceptionCode;
 
-class Notification : public RefCounted<Notification>, public ActiveDOMObject, public EventTarget {
+// FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
+class Notification : public RefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Notification();
@@ -122,8 +123,8 @@ public:
     using RefCounted<Notification>::deref;
 
     // EventTarget interface
-    virtual EventTargetInterface eventTargetInterface() const;
-    virtual ScriptExecutionContext* scriptExecutionContext() const { return ActiveDOMObject::scriptExecutionContext(); }
+    virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return NotificationEventTargetInterfaceType; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
 
     void stopLoadingIcon();
 
@@ -152,10 +153,8 @@ private:
     virtual void contextDestroyed() OVERRIDE;
 
     // EventTarget interface
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
-    virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
+    virtual void refEventTarget() OVERRIDE FINAL { ref(); }
+    virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
     void startLoadingIcon();
     void finishLoadingIcon();
@@ -181,8 +180,6 @@ private:
     NotificationState m_state;
 
     RefPtr<NotificationCenter> m_notificationCenter;
-    
-    EventTargetData m_eventTargetData;
 
 #if ENABLE(NOTIFICATIONS)
     OwnPtr<Timer<Notification> > m_taskTimer;

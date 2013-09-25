@@ -585,16 +585,6 @@ void RTCPeerConnection::didAddRemoteDataChannel(PassOwnPtr<RTCDataChannelHandler
     scheduleDispatchEvent(RTCDataChannelEvent::create(eventNames().datachannelEvent, false, false, channel.release()));
 }
 
-EventTargetInterface RTCPeerConnection::eventTargetInterface() const
-{
-    return RTCPeerConnectionEventTargetInterfaceType;
-}
-
-ScriptExecutionContext* RTCPeerConnection::scriptExecutionContext() const
-{
-    return ActiveDOMObject::scriptExecutionContext();
-}
-
 void RTCPeerConnection::stop()
 {
     if (m_stopped)
@@ -607,16 +597,6 @@ void RTCPeerConnection::stop()
     Vector<RefPtr<RTCDataChannel> >::iterator i = m_dataChannels.begin();
     for (; i != m_dataChannels.end(); ++i)
         (*i)->stop();
-}
-
-EventTargetData* RTCPeerConnection::eventTargetData()
-{
-    return &m_eventTargetData;
-}
-
-EventTargetData& RTCPeerConnection::ensureEventTargetData()
-{
-    return m_eventTargetData;
 }
 
 void RTCPeerConnection::changeSignalingState(SignalingState signalingState)
