@@ -60,7 +60,7 @@ void SVGVKernElement::removedFrom(ContainerNode* rootParent)
     SVGElement::removedFrom(rootParent);
 }
 
-void SVGVKernElement::buildVerticalKerningPair(KerningPairVector& kerningPairs)
+void SVGVKernElement::buildVerticalKerningPair(SVGKerningMap& kerningMap)
 {
     String u1 = fastGetAttribute(SVGNames::u1Attr);
     String g1 = fastGetAttribute(SVGNames::g1Attr);
@@ -75,7 +75,7 @@ void SVGVKernElement::buildVerticalKerningPair(KerningPairVector& kerningPairs)
         && parseKerningUnicodeString(u1, kerningPair.unicodeRange1, kerningPair.unicodeName1)
         && parseKerningUnicodeString(u2, kerningPair.unicodeRange2, kerningPair.unicodeName2)) {
         kerningPair.kerning = fastGetAttribute(SVGNames::kAttr).string().toFloat();
-        kerningPairs.append(kerningPair);
+        kerningMap.insert(kerningPair);
     }
 }
 

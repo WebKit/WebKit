@@ -81,7 +81,47 @@ float SVGTextRunRenderingContext::floatWidthUsingSVGFont(const Font& font, const
     glyphName = it.lastGlyphName();
     return it.runWidthSoFar();
 }
- 
+
+bool SVGTextRunRenderingContext::applySVGKerning(const SimpleFontData* fontData, WidthIterator& iterator, GlyphBuffer* glyphBuffer, int from) const
+{
+    ASSERT(glyphBuffer);
+    ASSERT(glyphBuffer->size() > 1);
+    SVGFontElement* fontElement = 0;
+    SVGFontFaceElement* fontFaceElement = 0;
+
+    svgFontAndFontFaceElementForFontData(fontData, fontFaceElement, fontElement);
+    if (!fontElement || !fontFaceElement)
+        return false;
+
+    float scale = scaleEmToUnits(fontData->platformData().size(), fontFaceElement->unitsPerEm());
+
+    String lastGlyphName;
+    String lastUnicodeString;
+    int characterOffset = iterator.m_currentCharacter;
+    String text = iterator.run().string();
+    const int glyphCount = glyphBuffer->size() - from;
+    GlyphBufferAdvance* advances = glyphBuffer->advances(from);
+
+    for (int i = 0; i < glyphCount; ++i) {
+        Glyph glyph = glyphBuffer->glyphAt(from + i);
+        if (!glyph)
+            continue;
+        float kerning = 0;
+        SVGGlyph svgGlyph = fontElement->svgGlyphForGlyph(glyph);
+        String unicodeString = text.substring(characterOffset, svgGlyph.unicodeStringLength);
+        if (i >= 1) {
+            // FIXME: Support vertical text.
+            kerning = fontElement->horizontalKerningForPairOfStringsAndGlyphs(lastUnicodeString, lastGlyphName, unicodeString, svgGlyph.glyphName);
+            advances[i - 1].setWidth(advances[i - 1].width() - kerning * scale);
+        }
+        lastGlyphName = svgGlyph.glyphName;
+        lastUnicodeString = unicodeString;
+        characterOffset += svgGlyph.unicodeStringLength;
+    }
+
+    return true;
+}
+
 void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const TextRun& run, const SimpleFontData* fontData, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
 {
     SVGFontElement* fontElement = 0;

@@ -31,7 +31,7 @@ class SVGHKernElement FINAL : public SVGElement {
 public:
     static PassRefPtr<SVGHKernElement> create(const QualifiedName&, Document&);
 
-    void buildHorizontalKerningPair(KerningPairVector&);
+    void buildHorizontalKerningPair(SVGKerningMap&);
 
 private:
     SVGHKernElement(const QualifiedName&, Document&);

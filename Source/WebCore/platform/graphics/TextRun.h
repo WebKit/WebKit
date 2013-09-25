@@ -165,6 +165,12 @@ public:
     bool is8Bit() const { return m_is8Bit; }
     int length() const { return m_len; }
     int charactersLength() const { return m_charactersLength; }
+    String string() const
+    {
+        if (is8Bit())
+            return String(m_data.characters8, m_len);
+        return String(m_data.characters16, m_len);
+    }
 
 #if ENABLE(8BIT_TEXTRUN)
     void setText(const LChar* c, unsigned len) { m_data.characters8 = c; m_len = len; m_is8Bit = true;}
@@ -209,6 +215,7 @@ public:
         virtual GlyphData glyphDataForCharacter(const Font&, const TextRun&, WidthIterator&, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength) = 0;
         virtual void drawSVGGlyphs(GraphicsContext*, const TextRun&, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const = 0;
         virtual float floatWidthUsingSVGFont(const Font&, const TextRun&, int& charsConsumed, String& glyphName) const = 0;
+        virtual bool applySVGKerning(const SimpleFontData*, WidthIterator&, GlyphBuffer*, int from) const = 0;
 #endif
     };
 

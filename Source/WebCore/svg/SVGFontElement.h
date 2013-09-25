@@ -31,23 +31,36 @@
 
 namespace WebCore {
 
-// Describe an SVG <hkern>/<vkern> element
-struct SVGKerningPair {
+// Describe an SVG <hkern>/<vkern> element already matched on the first symbol.
+struct SVGKerning {
     float kerning;
-    UnicodeRanges unicodeRange1;
     UnicodeRanges unicodeRange2;
-    HashSet<String> unicodeName1;
     HashSet<String> unicodeName2;
-    HashSet<String> glyphName1;
     HashSet<String> glyphName2;
-    
-    SVGKerningPair()
+
+    SVGKerning()
         : kerning(0)
-    {
-    }
+    { }
 };
 
-typedef Vector<SVGKerningPair> KerningPairVector;
+// Describe an SVG <hkern>/<vkern> element
+struct SVGKerningPair : public SVGKerning {
+    UnicodeRanges unicodeRange1;
+    HashSet<String> unicodeName1;
+    HashSet<String> glyphName1;
+};
+
+typedef Vector<SVGKerning> SVGKerningVector;
+
+struct SVGKerningMap {
+    HashMap<String, OwnPtr<SVGKerningVector> > unicodeMap;
+    HashMap<String, OwnPtr<SVGKerningVector> > glyphMap;
+    Vector<SVGKerningPair> kerningUnicodeRangeMap;
+
+    bool isEmpty() const { return unicodeMap.isEmpty() && glyphMap.isEmpty() && kerningUnicodeRangeMap.isEmpty(); }
+    void clear();
+    void insert(const SVGKerningPair&);
+};
 
 class SVGMissingGlyphElement;    
 
@@ -81,8 +94,8 @@ private:
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 
-    KerningPairVector m_horizontalKerningPairs;
-    KerningPairVector m_verticalKerningPairs;
+    SVGKerningMap m_horizontalKerningMap;
+    SVGKerningMap m_verticalKerningMap;
     SVGGlyphMap m_glyphMap;
     Glyph m_missingGlyph;
     bool m_isGlyphCacheValid;

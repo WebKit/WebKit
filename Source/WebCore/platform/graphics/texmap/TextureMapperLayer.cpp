@@ -72,8 +72,10 @@ void TextureMapperLayer::computeTransformsRecursive()
         m_state.maskLayer->computeTransformsRecursive();
     if (m_state.replicaLayer)
         m_state.replicaLayer->computeTransformsRecursive();
-    for (size_t i = 0; i < m_children.size(); ++i)
+    for (size_t i = 0; i < m_children.size(); ++i) {
+        RELEASE_ASSERT(m_children[i]->m_parent == this);
         m_children[i]->computeTransformsRecursive();
+    }
 
     // Reorder children if needed on the way back up.
     if (m_state.preserves3D)

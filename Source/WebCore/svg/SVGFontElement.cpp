@@ -63,8 +63,8 @@ void SVGFontElement::invalidateGlyphCache()
 {
     if (m_isGlyphCacheValid) {
         m_glyphMap.clear();
-        m_horizontalKerningPairs.clear();
-        m_verticalKerningPairs.clear();
+        m_horizontalKerningMap.clear();
+        m_verticalKerningMap.clear();
     }
     m_isGlyphCacheValid = false;
 }
@@ -139,10 +139,10 @@ void SVGFontElement::ensureGlyphCache()
                 ligatures.append(unicode.string());
         } else if (isSVGHKernElement(element)) {
             SVGHKernElement* hkern = toSVGHKernElement(element);
-            hkern->buildHorizontalKerningPair(m_horizontalKerningPairs);
+            hkern->buildHorizontalKerningPair(m_horizontalKerningMap);
         } else if (isSVGVKernElement(element)) {
             SVGVKernElement* vkern = toSVGVKernElement(element);
-            vkern->buildVerticalKerningPair(m_verticalKerningPairs);
+            vkern->buildVerticalKerningPair(m_verticalKerningMap);
         } else if (isSVGMissingGlyphElement(element) && !firstMissingGlyphElement)
             firstMissingGlyphElement = toSVGMissingGlyphElement(element);
     }
@@ -162,7 +162,50 @@ void SVGFontElement::ensureGlyphCache()
     m_isGlyphCacheValid = true;
 }
 
-static bool stringMatchesUnicodeRange(const String& unicodeString, const UnicodeRanges& ranges, const HashSet<String>& unicodeValues)
+void SVGKerningMap::clear()
+{
+    unicodeMap.clear();
+    glyphMap.clear();
+    kerningUnicodeRangeMap.clear();
+}
+
+void SVGKerningMap::insert(const SVGKerningPair& kerningPair)
+{
+    SVGKerning svgKerning;
+    svgKerning.kerning = kerningPair.kerning;
+    svgKerning.unicodeRange2 = kerningPair.unicodeRange2;
+    svgKerning.unicodeName2 = kerningPair.unicodeName2;
+    svgKerning.glyphName2 = kerningPair.glyphName2;
+
+    HashSet<String>::const_iterator uIt = kerningPair.unicodeName1.begin();
+    const HashSet<String>::const_iterator uEnd = kerningPair.unicodeName1.end();
+    for (; uIt != uEnd; ++uIt) {
+        if (unicodeMap.contains(*uIt))
+            unicodeMap.get(*uIt)->append(svgKerning);
+        else {
+            OwnPtr<SVGKerningVector> newVector = adoptPtr(new SVGKerningVector);
+            newVector->append(svgKerning);
+            unicodeMap.add(*uIt, newVector.release());
+        }
+    }
+
+    HashSet<String>::const_iterator gIt = kerningPair.glyphName1.begin();
+    const HashSet<String>::const_iterator gEnd = kerningPair.glyphName1.end();
+    for (; gIt != gEnd; ++gIt) {
+        if (glyphMap.contains(*gIt))
+            glyphMap.get(*gIt)->append(svgKerning);
+        else {
+            OwnPtr<SVGKerningVector> newVector = adoptPtr(new SVGKerningVector);
+            newVector->append(svgKerning);
+            glyphMap.add(*gIt, newVector.release());
+        }
+    }
+
+    if (!kerningPair.unicodeRange1.isEmpty())
+        kerningUnicodeRangeMap.append(kerningPair);
+}
+
+static inline bool stringMatchesUnicodeRange(const String& unicodeString, const UnicodeRanges& ranges)
 {
     if (unicodeString.isEmpty())
         return false;
@@ -176,43 +219,68 @@ static bool stringMatchesUnicodeRange(const String& unicodeString, const Unicode
         }
     }
 
-    if (!unicodeValues.isEmpty())
-        return unicodeValues.contains(unicodeString);
-    
     return false;
 }
 
-static bool stringMatchesGlyphName(const String& glyphName, const HashSet<String>& glyphValues)
+static inline bool stringMatchesGlyphName(const String& glyphName, const HashSet<String>& glyphValues)
 {
     if (glyphName.isEmpty())
         return false;
 
-    if (!glyphValues.isEmpty())
-        return glyphValues.contains(glyphName);
-    
-    return false;
+    return glyphValues.contains(glyphName);
 }
 
-static bool matches(const String& u1, const String& g1, const String& u2, const String& g2, const SVGKerningPair& kerningPair)
+static inline bool stringMatchesUnicodeName(const String& unicodeName, const HashSet<String>& unicodeValues)
 {
-    if (!stringMatchesUnicodeRange(u1, kerningPair.unicodeRange1, kerningPair.unicodeName1)
-        && !stringMatchesGlyphName(g1, kerningPair.glyphName1))
+    if (unicodeName.isEmpty())
         return false;
 
-    if (!stringMatchesUnicodeRange(u2, kerningPair.unicodeRange2, kerningPair.unicodeName2)
-        && !stringMatchesGlyphName(g2, kerningPair.glyphName2))
-        return false;
-
-    return true;
+    return unicodeValues.contains(unicodeName);
 }
 
-static float kerningForPairOfStringsAndGlyphs(const KerningPairVector& kerningPairs, const String& u1, const String& g1, const String& u2, const String& g2)
+static inline bool matches(const String& u2, const String& g2, const SVGKerning& svgKerning)
 {
-    KerningPairVector::const_iterator it = kerningPairs.end() - 1;
-    const KerningPairVector::const_iterator begin = kerningPairs.begin() - 1;
-    for (; it != begin; --it) {
-        if (matches(u1, g1, u2, g2, *it))
-            return it->kerning;
+    return stringMatchesGlyphName(g2, svgKerning.glyphName2)
+        || stringMatchesUnicodeName(u2, svgKerning.unicodeName2)
+        || stringMatchesUnicodeRange(u2, svgKerning.unicodeRange2);
+}
+
+static inline bool matches(const String& u1, const String& u2, const String& g2, const SVGKerningPair& svgKerningPair)
+{
+    return stringMatchesUnicodeRange(u1, svgKerningPair.unicodeRange1) && matches(u2, g2, svgKerningPair);
+}
+
+static inline float kerningForPairOfStringsAndGlyphs(const SVGKerningMap& kerningMap, const String& u1, const String& g1, const String& u2, const String& g2)
+{
+    if (!g1.isEmpty() && kerningMap.glyphMap.contains(g1)) {
+        SVGKerningVector* kerningVector = kerningMap.glyphMap.get(g1);
+        SVGKerningVector::const_iterator it = kerningVector->end() - 1;
+        const SVGKerningVector::const_iterator begin = kerningVector->begin() - 1;
+        for (; it != begin; --it) {
+            if (matches(u2, g2, *it))
+                return it->kerning;
+        }
+    }
+
+    if (!u1.isEmpty()) {
+        if (kerningMap.unicodeMap.contains(u1)) {
+            SVGKerningVector* kerningVector = kerningMap.unicodeMap.get(u1);
+            SVGKerningVector::const_iterator it = kerningVector->end() - 1;
+            const SVGKerningVector::const_iterator begin = kerningVector->begin() - 1;
+            for (; it != begin; --it) {
+                if (matches(u2, g2, *it))
+                    return it->kerning;
+            }
+        }
+
+        if (!kerningMap.kerningUnicodeRangeMap.isEmpty()) {
+            Vector<SVGKerningPair>::const_iterator it = kerningMap.kerningUnicodeRangeMap.end() - 1;
+            const Vector<SVGKerningPair>::const_iterator begin = kerningMap.kerningUnicodeRangeMap.begin() - 1;
+            for (; it != begin; --it) {
+                if (matches(u1, u2, g2, *it))
+                    return it->kerning;
+            }
+        }
     }
 
     return 0;
@@ -220,18 +288,18 @@ static float kerningForPairOfStringsAndGlyphs(const KerningPairVector& kerningPa
     
 float SVGFontElement::horizontalKerningForPairOfStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const
 {
-    if (m_horizontalKerningPairs.isEmpty())
+    if (m_horizontalKerningMap.isEmpty())
         return 0;
 
-    return kerningForPairOfStringsAndGlyphs(m_horizontalKerningPairs, u1, g1, u2, g2);
+    return kerningForPairOfStringsAndGlyphs(m_horizontalKerningMap, u1, g1, u2, g2);
 }
 
 float SVGFontElement::verticalKerningForPairOfStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const
 {
-    if (m_verticalKerningPairs.isEmpty())
+    if (m_verticalKerningMap.isEmpty())
         return 0;
 
-    return kerningForPairOfStringsAndGlyphs(m_verticalKerningPairs, u1, g1, u2, g2);
+    return kerningForPairOfStringsAndGlyphs(m_verticalKerningMap, u1, g1, u2, g2);
 }
 
 void SVGFontElement::collectGlyphsForString(const String& string, Vector<SVGGlyph>& glyphs)

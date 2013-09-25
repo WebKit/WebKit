@@ -1,3 +1,16 @@
+2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Support kerning with SVG web fonts
+        https://bugs.webkit.org/show_bug.cgi?id=117540
+
+        Added test of SVG web font kerning.
+
+        Reviewed by Stephen Chenney.
+
+        * fast/text/svg-font-face-with-kerning-expected.png: Added.
+        * fast/text/svg-font-face-with-kerning-expected.txt: Added.
+        * fast/text/svg-font-face-with-kerning.html: Added.
+
 2013-09-25  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] Update test expectations. Mark fast/images/exif-orientation.html as failing.

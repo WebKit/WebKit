@@ -1,3 +1,51 @@
+2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Support kerning with SVG web fonts
+        https://bugs.webkit.org/show_bug.cgi?id=117540
+
+        Reviewed by Stephen Chenney.
+
+        Adds the glue to WidthIterator to take advantage of kerning in SVG web fonts.
+        To supply SVG font kerning with its required text input, the signature of
+        applyFontTransforms has been extended.
+
+        Since SVG font kerning was extremely slow, it has been sped up by replacing
+        the iteration over all possible kerning definitions with a hash-map based
+        lookup of the leading symbol to be kerned. The new algorithm provides a
+        roughly 100x speed-up in SVG font kerning.
+
+        Test: fast/text/svg-font-face-with-kerning.html
+
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::string):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::applyFontTransforms):
+        (WebCore::WidthIterator::advanceInternal):
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunRenderingContext::applySVGKerning):
+        * rendering/svg/SVGTextRunRenderingContext.h:
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::invalidateGlyphCache):
+        (WebCore::SVGFontElement::ensureGlyphCache):
+        (WebCore::SVGKerningMap::clear):
+        (WebCore::SVGKerningMap::insert):
+        (WebCore::stringMatchesUnicodeRange):
+        (WebCore::stringMatchesGlyphName):
+        (WebCore::stringMatchesUnicodeName):
+        (WebCore::matches):
+        (WebCore::kerningForPairOfStringsAndGlyphs):
+        (WebCore::SVGFontElement::horizontalKerningForPairOfStringsAndGlyphs):
+        (WebCore::SVGFontElement::verticalKerningForPairOfStringsAndGlyphs):
+        * svg/SVGFontElement.h:
+        (WebCore::SVGKerning::SVGKerning):
+        (WebCore::SVGKerningMap::isEmpty):
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::buildHorizontalKerningPair):
+        * svg/SVGHKernElement.h:
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::buildVerticalKerningPair):
+        * svg/SVGVKernElement.h:
+
 2013-09-25  Andrei Parvu  <parvu@adobe.com>
 
         <https://webkit.org/b/120476> [CSS Masking] Implement luminance masking
