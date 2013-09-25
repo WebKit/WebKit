@@ -1,3 +1,15 @@
+2013-09-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Switch the 64-bit Release builder to testing layout tests under WK2
+        https://bugs.webkit.org/show_bug.cgi?id=121256
+
+        Reviewed by Martin Robinson.
+
+        Switch the GTK 64-bit Release builder to testing the layout tests under WebKit2.
+        The GTK 64-bit Release WK2 testing builder is switched to now run layout tests under WebKit1.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-09-25  Patrick Gansterer  <paroga@webkit.org>
 
         Add style checker for CMake lists
