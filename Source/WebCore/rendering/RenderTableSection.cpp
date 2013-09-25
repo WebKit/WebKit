@@ -1352,7 +1352,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
             // at the moment (a demoted inline <form> for example). If we ever implement a
             // table-specific hit-test method (which we should do for performance reasons anyway),
             // then we can remove this check.
-            if (row->hasSelfPaintingLayer()) {
+            if (!row->hasSelfPaintingLayer()) {
                 LayoutPoint childPoint = flipForWritingModeForChild(row, adjustedLocation);
                 if (row->nodeAtPoint(request, result, locationInContainer, childPoint, action)) {
                     updateHitTestResult(result, toLayoutPoint(locationInContainer.point() - childPoint));

@@ -1,3 +1,25 @@
+2013-09-25  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r156355) Links / interactive elements inside nested tables are unclickable
+        https://bugs.webkit.org/show_bug.cgi?id=121904
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/table/hittest-self-painting.html
+        
+        Original reduction by Philippe Wittenbergh.
+
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleDidChange):
+        
+            Tighten a bit.
+
+        (WebCore::RenderTableRow::nodeAtPoint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+        
+            These flipped accidentally in r156355.
+
 2013-09-25  Alberto Garcia  <berto@igalia.com>
 
         Fix warning in makeprop.pl

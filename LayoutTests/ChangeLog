@@ -1,3 +1,13 @@
+2013-09-25  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r156355) Links / interactive elements inside nested tables are unclickable
+        https://bugs.webkit.org/show_bug.cgi?id=121904
+
+        Reviewed by Andreas Kling.
+
+        * fast/table/hittest-self-painting-expected.txt: Added.
+        * fast/table/hittest-self-painting.html: Added.
+
 2013-09-25  Sanghyup Lee  <sh53.lee@samsung.com>
 
         [EFL] Unreviewed gardening. Unskip passing fast/text/font-kerning.html 
