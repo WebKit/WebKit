@@ -1,3 +1,13 @@
+2013-09-25  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Updated accessibility expectations after r154781 and r155599
+        https://bugs.webkit.org/show_bug.cgi?id=121901
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/accessibility/menu-list-sends-change-notification-expected.txt:
+        * platform/efl/accessibility/notification-listeners-expected.txt:
+
 2013-09-25  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         :read-write pseudo-class should not be applied on <input type="text" disabled>
