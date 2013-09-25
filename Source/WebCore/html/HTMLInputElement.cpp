@@ -1463,7 +1463,7 @@ bool HTMLInputElement::matchesReadOnlyPseudoClass() const
 
 bool HTMLInputElement::matchesReadWritePseudoClass() const
 {
-    return m_inputType->supportsReadOnly() && !isReadOnly();
+    return m_inputType->supportsReadOnly() && !isDisabledOrReadOnly();
 }
 
 void HTMLInputElement::addSearchResult()

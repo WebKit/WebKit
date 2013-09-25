@@ -1,3 +1,15 @@
+2013-09-25  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        :read-write pseudo-class should not be applied on <input type="text" disabled>
+        https://bugs.webkit.org/show_bug.cgi?id=118236
+
+        Reviewed by Darin Adler.
+
+        * fast/css/readwrite-pseudoclass-input-expected.txt: Added.
+        * fast/css/readwrite-pseudoclass-input.html: Added.
+        Added test case to verify that :read-write pseudo-class properties are
+        are not applied to disabled input and textarea elements.
+
 2013-09-25  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] accessibility/loading-iframe-sends-notification.html is failing

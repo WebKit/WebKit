@@ -1,3 +1,26 @@
+2013-09-25  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        :read-write pseudo-class should not be applied on <input type="text" disabled>
+        https://bugs.webkit.org/show_bug.cgi?id=118236
+
+        Reviewed by Darin Adler.
+
+        The :read-write pseudo-class must match any element falling into one
+        of the following categories i.e
+        input elements to which the readonly attribute applies, and that are mutable
+        (i.e. that do not have the readonly attribute specified and that are not disabled)
+        textarea elements that do not have a readonly attribute, and that are not disabled
+        elements that are editing hosts or editable and are neither input elements nor
+        textarea elements.
+
+        Test: fast/css/readwrite-pseudoclass-input.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::matchesReadWritePseudoClass):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::matchesReadWritePseudoClass):
+        Checking for both readonly and disabled attribute on input ane textarea element.
+
 2013-09-25  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] accessibility/loading-iframe-sends-notification.html is failing

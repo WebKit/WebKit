@@ -523,7 +523,7 @@ bool HTMLTextAreaElement::matchesReadOnlyPseudoClass() const
 
 bool HTMLTextAreaElement::matchesReadWritePseudoClass() const
 {
-    return !isReadOnly();
+    return !isDisabledOrReadOnly();
 }
 
 void HTMLTextAreaElement::updatePlaceholderText()
