@@ -2329,7 +2329,7 @@ bool Element::updateExistingPseudoElement(PseudoElement* existingPseudoElement, 
 
 PassRefPtr<PseudoElement> Element::createPseudoElementIfNeeded(PseudoId pseudoId)
 {
-    if (!document().styleSheetCollection()->usesBeforeAfterRules())
+    if (!document().styleSheetCollection().usesBeforeAfterRules())
         return 0;
     if (!renderer() || !renderer()->canHaveGeneratedChildren())
         return 0;

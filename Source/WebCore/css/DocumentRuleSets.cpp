@@ -46,13 +46,13 @@ DocumentRuleSets::~DocumentRuleSets()
 {
 }
 
-void DocumentRuleSets::initUserStyle(DocumentStyleSheetCollection* styleSheetCollection, const MediaQueryEvaluator& medium, StyleResolver& resolver)
+void DocumentRuleSets::initUserStyle(DocumentStyleSheetCollection& styleSheetCollection, const MediaQueryEvaluator& medium, StyleResolver& resolver)
 {
     OwnPtr<RuleSet> tempUserStyle = RuleSet::create();
-    if (CSSStyleSheet* pageUserSheet = styleSheetCollection->pageUserSheet())
+    if (CSSStyleSheet* pageUserSheet = styleSheetCollection.pageUserSheet())
         tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), medium, &resolver);
-    collectRulesFromUserStyleSheets(styleSheetCollection->injectedUserStyleSheets(), *tempUserStyle, medium, resolver);
-    collectRulesFromUserStyleSheets(styleSheetCollection->documentUserStyleSheets(), *tempUserStyle, medium, resolver);
+    collectRulesFromUserStyleSheets(styleSheetCollection.injectedUserStyleSheets(), *tempUserStyle, medium, resolver);
+    collectRulesFromUserStyleSheets(styleSheetCollection.documentUserStyleSheets(), *tempUserStyle, medium, resolver);
     if (tempUserStyle->ruleCount() > 0 || tempUserStyle->pageRules().size() > 0)
         m_userStyle = tempUserStyle.release();
 }

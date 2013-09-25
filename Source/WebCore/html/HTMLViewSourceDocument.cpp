@@ -53,7 +53,7 @@ HTMLViewSourceDocument::HTMLViewSourceDocument(Frame* frame, const KURL& url, co
     : HTMLDocument(frame, url)
     , m_type(mimeType)
 {
-    styleSheetCollection()->setUsesBeforeAfterRulesOverride(true);
+    styleSheetCollection().setUsesBeforeAfterRulesOverride(true);
     setIsViewSource(true);
 
     setCompatibilityMode(QuirksMode);

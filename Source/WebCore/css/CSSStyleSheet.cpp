@@ -166,7 +166,7 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContent
     if (!owner)
         return;
 
-    if (mutationType == RuleInsertion && !contentsWereClonedForMutation && !owner->styleSheetCollection()->activeStyleSheetsContains(this)) {
+    if (mutationType == RuleInsertion && !contentsWereClonedForMutation && !owner->styleSheetCollection().activeStyleSheetsContains(this)) {
         owner->scheduleOptimizedStyleSheetUpdate();
         return;
     }

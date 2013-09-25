@@ -52,7 +52,7 @@ public:
     RuleSet* sibling() const { return m_siblingRuleSet.get(); }
     RuleSet* uncommonAttribute() const { return m_uncommonAttributeRuleSet.get(); }
 
-    void initUserStyle(DocumentStyleSheetCollection*, const MediaQueryEvaluator&, StyleResolver&);
+    void initUserStyle(DocumentStyleSheetCollection&, const MediaQueryEvaluator&, StyleResolver&);
     void resetAuthorStyle();
     void appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet> >&, MediaQueryEvaluator*, InspectorCSSOMWrappers&, bool isViewSource, StyleResolver*);
 

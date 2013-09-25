@@ -131,7 +131,7 @@ public:
     virtual void stopSelectorProfiler(ErrorString*, RefPtr<TypeBuilder::CSS::SelectorProfile>&);
 
     PassRefPtr<TypeBuilder::CSS::SelectorProfile> stopSelectorProfilerImpl(ErrorString*, bool needProfile);
-    void willMatchRule(StyleRule*, InspectorCSSOMWrappers&, DocumentStyleSheetCollection*);
+    void willMatchRule(StyleRule*, InspectorCSSOMWrappers&, DocumentStyleSheetCollection&);
     void didMatchRule(bool);
     void willProcessRule(StyleRule*, StyleResolver&);
     void didProcessRule();

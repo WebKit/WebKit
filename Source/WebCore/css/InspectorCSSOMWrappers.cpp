@@ -103,15 +103,15 @@ void InspectorCSSOMWrappers::collectFromStyleSheets(const Vector<RefPtr<CSSStyle
         collect(sheets[i].get());
 }
 
-void InspectorCSSOMWrappers::collectFromDocumentStyleSheetCollection(DocumentStyleSheetCollection* styleSheetCollection)
+void InspectorCSSOMWrappers::collectFromDocumentStyleSheetCollection(DocumentStyleSheetCollection& styleSheetCollection)
 {
-    collectFromStyleSheets(styleSheetCollection->activeAuthorStyleSheets());
-    collect(styleSheetCollection->pageUserSheet());
-    collectFromStyleSheets(styleSheetCollection->injectedUserStyleSheets());
-    collectFromStyleSheets(styleSheetCollection->documentUserStyleSheets());
+    collectFromStyleSheets(styleSheetCollection.activeAuthorStyleSheets());
+    collect(styleSheetCollection.pageUserSheet());
+    collectFromStyleSheets(styleSheetCollection.injectedUserStyleSheets());
+    collectFromStyleSheets(styleSheetCollection.documentUserStyleSheets());
 }
 
-CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(StyleRule* rule, DocumentStyleSheetCollection* styleSheetCollection)
+CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(StyleRule* rule, DocumentStyleSheetCollection& styleSheetCollection)
 {
     if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
         collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::simpleDefaultStyleSheet);

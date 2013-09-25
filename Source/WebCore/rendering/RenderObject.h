@@ -774,7 +774,7 @@ public:
     virtual LayoutUnit maxPreferredLogicalWidth() const { return 0; }
 
     RenderStyle* style() const { return m_style.get(); }
-    RenderStyle* firstLineStyle() const { return document().styleSheetCollection()->usesFirstLineRules() ? cachedFirstLineStyle() : style(); }
+    RenderStyle* firstLineStyle() const { return document().styleSheetCollection().usesFirstLineRules() ? cachedFirstLineStyle() : style(); }
     RenderStyle* style(bool firstLine) const { return firstLine ? firstLineStyle() : style(); }
 
     // Used only by Element::pseudoStyleCacheIsInvalid to get a first line style based off of a

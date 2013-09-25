@@ -92,7 +92,7 @@ HTMLLinkElement::~HTMLLinkElement()
         m_cachedSheet->removeClient(this);
 
     if (inDocument())
-        document().styleSheetCollection()->removeStyleSheetCandidateNode(*this);
+        document().styleSheetCollection().removeStyleSheetCandidateNode(*this);
 
     linkLoadEventSender().cancelEvent(this);
 }
@@ -255,7 +255,7 @@ Node::InsertionNotificationRequest HTMLLinkElement::insertedInto(ContainerNode* 
     if (m_isInShadowTree)
         return InsertionDone;
 
-    document().styleSheetCollection()->addStyleSheetCandidateNode(*this, m_createdByParser);
+    document().styleSheetCollection().addStyleSheetCandidateNode(*this, m_createdByParser);
 
     process();
     return InsertionDone;
@@ -273,7 +273,7 @@ void HTMLLinkElement::removedFrom(ContainerNode* insertionPoint)
         ASSERT(!m_sheet);
         return;
     }
-    document().styleSheetCollection()->removeStyleSheetCandidateNode(*this);
+    document().styleSheetCollection().removeStyleSheetCandidateNode(*this);
 
     if (m_sheet)
         clearSheet();
@@ -452,7 +452,7 @@ void HTMLLinkElement::addPendingSheet(PendingSheetType type)
 
     if (m_pendingSheetType == InactiveSheet)
         return;
-    document().styleSheetCollection()->addPendingSheet();
+    document().styleSheetCollection().addPendingSheet();
 }
 
 void HTMLLinkElement::removePendingSheet(RemovePendingSheetNotificationType notification)
@@ -465,11 +465,11 @@ void HTMLLinkElement::removePendingSheet(RemovePendingSheetNotificationType noti
 
     if (type == InactiveSheet) {
         // Document just needs to know about the sheet for exposure through document.styleSheets
-        document().styleSheetCollection()->updateActiveStyleSheets(DocumentStyleSheetCollection::OptimizedUpdate);
+        document().styleSheetCollection().updateActiveStyleSheets(DocumentStyleSheetCollection::OptimizedUpdate);
         return;
     }
 
-    document().styleSheetCollection()->removePendingSheet(
+    document().styleSheetCollection().removePendingSheet(
         notification == RemovePendingSheetNotifyImmediately
         ? DocumentStyleSheetCollection::RemovePendingSheetNotifyImmediately
         : DocumentStyleSheetCollection::RemovePendingSheetNotifyLater);

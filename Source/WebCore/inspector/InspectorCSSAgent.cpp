@@ -1097,7 +1097,7 @@ PassRefPtr<TypeBuilder::CSS::SelectorProfile> InspectorCSSAgent::stopSelectorPro
     return result.release();
 }
 
-void InspectorCSSAgent::willMatchRule(StyleRule* rule, InspectorCSSOMWrappers& inspectorCSSOMWrappers, DocumentStyleSheetCollection* styleSheetCollection)
+void InspectorCSSAgent::willMatchRule(StyleRule* rule, InspectorCSSOMWrappers& inspectorCSSOMWrappers, DocumentStyleSheetCollection& styleSheetCollection)
 {
 //    printf("InspectorCSSAgent::willMatchRule %s\n", rule->selectorList().selectorsText().utf8().data());
     if (m_currentSelectorProfile)

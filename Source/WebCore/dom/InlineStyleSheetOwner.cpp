@@ -51,7 +51,7 @@ InlineStyleSheetOwner::~InlineStyleSheetOwner()
 
 void InlineStyleSheetOwner::insertedIntoDocument(Document& document, Element& element)
 {
-    document.styleSheetCollection()->addStyleSheetCandidateNode(element, m_isParsingChildren);
+    document.styleSheetCollection().addStyleSheetCandidateNode(element, m_isParsingChildren);
 
     if (m_isParsingChildren)
         return;
@@ -60,7 +60,7 @@ void InlineStyleSheetOwner::insertedIntoDocument(Document& document, Element& el
 
 void InlineStyleSheetOwner::removedFromDocument(Document& document, Element& element)
 {
-    document.styleSheetCollection()->removeStyleSheetCandidateNode(element);
+    document.styleSheetCollection().removeStyleSheetCandidateNode(element);
 
     if (m_sheet)
         clearSheet();
@@ -77,7 +77,7 @@ void InlineStyleSheetOwner::clearDocumentData(Document& document, Element& eleme
 
     if (!element.inDocument())
         return;
-    document.styleSheetCollection()->removeStyleSheetCandidateNode(element);
+    document.styleSheetCollection().removeStyleSheetCandidateNode(element);
 }
 
 void InlineStyleSheetOwner::childrenChanged(Element& element)
@@ -121,7 +121,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     Document& document = element.document();
     if (m_sheet) {
         if (m_sheet->isLoading())
-            document.styleSheetCollection()->removePendingSheet();
+            document.styleSheetCollection().removePendingSheet();
         clearSheet();
     }
 
@@ -141,7 +141,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     if (!screenEval.eval(mediaQueries.get()) && !printEval.eval(mediaQueries.get()))
         return;
 
-    document.styleSheetCollection()->addPendingSheet();
+    document.styleSheetCollection().addPendingSheet();
 
     m_loading = true;
 
@@ -168,13 +168,13 @@ bool InlineStyleSheetOwner::sheetLoaded(Document& document)
     if (isLoading())
         return false;
 
-    document.styleSheetCollection()->removePendingSheet();
+    document.styleSheetCollection().removePendingSheet();
     return true;
 }
 
 void InlineStyleSheetOwner::startLoadingDynamicSheet(Document& document)
 {
-    document.styleSheetCollection()->addPendingSheet();
+    document.styleSheetCollection().addPendingSheet();
 }
 
 }

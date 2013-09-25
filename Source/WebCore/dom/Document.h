@@ -32,6 +32,7 @@
 #include "Color.h"
 #include "ContainerNode.h"
 #include "DocumentEventQueue.h"
+#include "DocumentStyleSheetCollection.h"
 #include "DocumentTiming.h"
 #include "FocusDirection.h"
 #include "HitTestRequest.h"
@@ -476,7 +477,7 @@ public:
     // This is a DOM function.
     StyleSheetList* styleSheets();
 
-    DocumentStyleSheetCollection* styleSheetCollection() { return m_styleSheetCollection.get(); }
+    DocumentStyleSheetCollection& styleSheetCollection() { return m_styleSheetCollection; }
 
     bool gotoAnchorNeededAfterStylesheetsLoad() { return m_gotoAnchorNeededAfterStylesheetsLoad; }
     void setGotoAnchorNeededAfterStylesheetsLoad(bool b) { m_gotoAnchorNeededAfterStylesheetsLoad = b; }
@@ -1340,7 +1341,7 @@ private:
 
     MutationObserverOptions m_mutationObserverTypes;
 
-    OwnPtr<DocumentStyleSheetCollection> m_styleSheetCollection;
+    DocumentStyleSheetCollection m_styleSheetCollection;
     RefPtr<StyleSheetList> m_styleSheetList;
 
     OwnPtr<FormController> m_formController;

@@ -170,7 +170,7 @@ SelectorChecker::Match SelectorChecker::matchRecursively(const SelectorCheckingC
 
             PseudoId pseudoId = CSSSelector::pseudoId(context.selector->pseudoType());
             if (pseudoId == FIRST_LETTER)
-                context.element->document().styleSheetCollection()->setUsesFirstLetterRules(true);
+                context.element->document().styleSheetCollection().setUsesFirstLetterRules(true);
             if (pseudoId != NOPSEUDO)
                 dynamicPseudo = pseudoId;
         }
@@ -447,7 +447,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
                     element->setStyleAffectedByEmpty();
                     if (context.elementStyle)
                         context.elementStyle->setEmptyState(result);
-                    else if (element->renderStyle() && (element->document().styleSheetCollection()->usesSiblingRules() || element->renderStyle()->unique()))
+                    else if (element->renderStyle() && (element->document().styleSheetCollection().usesSiblingRules() || element->renderStyle()->unique()))
                         element->renderStyle()->setEmptyState(result);
                 }
                 return result;

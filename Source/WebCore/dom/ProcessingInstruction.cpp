@@ -67,7 +67,7 @@ ProcessingInstruction::~ProcessingInstruction()
         m_cachedSheet->removeClient(this);
 
     if (inDocument())
-        document().styleSheetCollection()->removeStyleSheetCandidateNode(*this);
+        document().styleSheetCollection().removeStyleSheetCandidateNode(*this);
 }
 
 String ProcessingInstruction::nodeName() const
@@ -143,7 +143,7 @@ void ProcessingInstruction::checkStyleSheet()
                 return;
             
             m_loading = true;
-            document().styleSheetCollection()->addPendingSheet();
+            document().styleSheetCollection().addPendingSheet();
             
             CachedResourceRequest request(ResourceRequest(document().completeURL(href)));
 #if ENABLE(XSLT)
@@ -164,7 +164,7 @@ void ProcessingInstruction::checkStyleSheet()
             else {
                 // The request may have been denied if (for example) the stylesheet is local and the document is remote.
                 m_loading = false;
-                document().styleSheetCollection()->removePendingSheet();
+                document().styleSheetCollection().removePendingSheet();
             }
         }
     }
@@ -182,7 +182,7 @@ bool ProcessingInstruction::isLoading() const
 bool ProcessingInstruction::sheetLoaded()
 {
     if (!isLoading()) {
-        document().styleSheetCollection()->removePendingSheet();
+        document().styleSheetCollection().removePendingSheet();
         return true;
     }
     return false;
@@ -267,7 +267,7 @@ Node::InsertionNotificationRequest ProcessingInstruction::insertedInto(Container
     CharacterData::insertedInto(insertionPoint);
     if (!insertionPoint->inDocument())
         return InsertionDone;
-    document().styleSheetCollection()->addStyleSheetCandidateNode(*this, m_createdByParser);
+    document().styleSheetCollection().addStyleSheetCandidateNode(*this, m_createdByParser);
     checkStyleSheet();
     return InsertionDone;
 }
@@ -278,7 +278,7 @@ void ProcessingInstruction::removedFrom(ContainerNode* insertionPoint)
     if (!insertionPoint->inDocument())
         return;
     
-    document().styleSheetCollection()->removeStyleSheetCandidateNode(*this);
+    document().styleSheetCollection().removeStyleSheetCandidateNode(*this);
 
     if (m_sheet) {
         ASSERT(m_sheet->ownerNode() == this);

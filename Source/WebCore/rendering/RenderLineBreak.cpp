@@ -49,7 +49,7 @@ RenderLineBreak::~RenderLineBreak()
 
 LayoutUnit RenderLineBreak::lineHeight(bool firstLine, LineDirectionMode /*direction*/, LinePositionMode /*linePositionMode*/) const
 {
-    if (firstLine && document().styleSheetCollection()->usesFirstLineRules()) {
+    if (firstLine && document().styleSheetCollection().usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         if (s != style())
             return s->computedLineHeight(&view());

@@ -279,7 +279,7 @@ StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
 
     m_ruleSets.resetAuthorStyle();
 
-    DocumentStyleSheetCollection* styleSheetCollection = m_document.styleSheetCollection();
+    DocumentStyleSheetCollection& styleSheetCollection = m_document.styleSheetCollection();
     m_ruleSets.initUserStyle(styleSheetCollection, *m_medium, *this);
 
 #if ENABLE(SVG_FONTS)
@@ -291,7 +291,7 @@ StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
     }
 #endif
 
-    appendAuthorStyleSheets(0, styleSheetCollection->activeAuthorStyleSheets());
+    appendAuthorStyleSheets(0, styleSheetCollection.activeAuthorStyleSheets());
 }
 
 void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet> >& styleSheets)

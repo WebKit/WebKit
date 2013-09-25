@@ -5617,7 +5617,7 @@ LayoutUnit RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, 
     if (isReplaced() && linePositionMode == PositionOnContainingLine)
         return RenderBox::lineHeight(firstLine, direction, linePositionMode);
 
-    if (firstLine && document().styleSheetCollection()->usesFirstLineRules()) {
+    if (firstLine && document().styleSheetCollection().usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         if (s != style())
             return s->computedLineHeight(&view());
@@ -5953,7 +5953,7 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
 
 void RenderBlock::updateFirstLetter()
 {
-    if (!document().styleSheetCollection()->usesFirstLetterRules())
+    if (!document().styleSheetCollection().usesFirstLetterRules())
         return;
     // Don't recur
     if (style()->styleType() == FIRST_LETTER)

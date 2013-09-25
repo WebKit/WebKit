@@ -1,3 +1,124 @@
+2013-09-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        Tie the life of DocumentStyleSheetCollection and Document together
+        https://bugs.webkit.org/show_bug.cgi?id=121892
+
+        Reviewed by Andreas Kling.
+
+        DocumentStyleSheetCollection had an odd destruction pattern for no apparent reason.
+
+        The two objects strictly depend on eachother, this patch make that explicit by making
+        DocumentStyleSheetCollection a plain object in Document's memory space.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::didMutateRules):
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::initUserStyle):
+        * css/DocumentRuleSets.h:
+        * css/InspectorCSSOMWrappers.cpp:
+        (WebCore::InspectorCSSOMWrappers::collectFromDocumentStyleSheetCollection):
+        (WebCore::InspectorCSSOMWrappers::getWrapperForRuleInSheets):
+        * css/InspectorCSSOMWrappers.h:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        (WebCore::SelectorChecker::checkOne):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::styleSheets):
+        (WebCore::StyleSheetList::detachFromDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::setCompatibilityMode):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::createStyleResolver):
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::preferredStylesheetSet):
+        (WebCore::Document::selectedStylesheetSet):
+        (WebCore::Document::setSelectedStylesheetSet):
+        (WebCore::Document::scheduleOptimizedStyleSheetUpdate):
+        (WebCore::Document::styleResolverChanged):
+        (WebCore::Document::haveStylesheetsLoaded):
+        * dom/Document.h:
+        (WebCore::Document::styleSheetCollection):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::combineCSSFeatureFlags):
+        (WebCore::DocumentStyleSheetCollection::resetCSSFeatureFlags):
+        (WebCore::DocumentStyleSheetCollection::pageUserSheet):
+        (WebCore::DocumentStyleSheetCollection::clearPageUserSheet):
+        (WebCore::DocumentStyleSheetCollection::updatePageUserSheet):
+        (WebCore::DocumentStyleSheetCollection::updateInjectedStyleSheetCache):
+        (WebCore::DocumentStyleSheetCollection::invalidateInjectedStyleSheetCache):
+        (WebCore::DocumentStyleSheetCollection::addAuthorSheet):
+        (WebCore::DocumentStyleSheetCollection::addUserSheet):
+        (WebCore::DocumentStyleSheetCollection::removePendingSheet):
+        (WebCore::DocumentStyleSheetCollection::addStyleSheetCandidateNode):
+        (WebCore::DocumentStyleSheetCollection::collectActiveStyleSheets):
+        (WebCore::DocumentStyleSheetCollection::analyzeStyleSheetChange):
+        (WebCore::collectActiveCSSStyleSheetsFromSeamlessParents):
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+        * dom/DocumentStyleSheetCollection.h:
+        * dom/Element.cpp:
+        (WebCore::Element::createPseudoElementIfNeeded):
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::insertedIntoDocument):
+        (WebCore::InlineStyleSheetOwner::removedFromDocument):
+        (WebCore::InlineStyleSheetOwner::clearDocumentData):
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        (WebCore::InlineStyleSheetOwner::sheetLoaded):
+        (WebCore::InlineStyleSheetOwner::startLoadingDynamicSheet):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::~ProcessingInstruction):
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::sheetLoaded):
+        (WebCore::ProcessingInstruction::insertedInto):
+        (WebCore::ProcessingInstruction::removedFrom):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::~HTMLLinkElement):
+        (WebCore::HTMLLinkElement::insertedInto):
+        (WebCore::HTMLLinkElement::removedFrom):
+        (WebCore::HTMLLinkElement::addPendingSheet):
+        (WebCore::HTMLLinkElement::removePendingSheet):
+        * html/HTMLQuoteElement.cpp:
+        (WebCore::HTMLQuoteElement::insertedInto):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::HTMLViewSourceDocument):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::willMatchRule):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willMatchRuleImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willMatchRule):
+        * mathml/MathMLMathElement.cpp:
+        (WebCore::MathMLMathElement::insertedInto):
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::invalidateInjectedStyleSheetCacheInAllFrames):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lineHeight):
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::updateAlwaysCreateLineBoxes):
+        (WebCore::RenderInline::lineHeight):
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::lineHeight):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::uncachedFirstLineStyle):
+        (WebCore::RenderObject::cachedFirstLineStyle):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::firstLineStyle):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::verticalPositionForBox):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resolveLocal):
+        * testing/Internals.cpp:
+        (WebCore::Internals::insertAuthorCSS):
+        (WebCore::Internals::insertUserCSS):
+
 2013-09-25  Brady Eidson  <beidson@apple.com>
 
         FeatureDefine.xcconfig cleanup (They should all be identical).
