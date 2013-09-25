@@ -1,3 +1,17 @@
+2013-09-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Flaky Test: fast/history/history-subframe-with-name.html
+        https://bugs.webkit.org/show_bug.cgi?id=51039
+
+        Reviewed by Brady Eidson.
+
+        * fast/history/history-subframe-with-name.html: In state 3, there was a race between
+        history.forward() and navigating to a new URL. Not sure how this resulted in an
+        extra load, but let's get rid of that. Also, extended failure logging.
+
+        * fast/history/resources/history-subframe-with-name-2.html: No longer do the
+        navigation unconditionally. We need it in state 1, but not in state 3.
+
 2013-09-25  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Disable more CSS_SHAPES tests on AppleWin port.

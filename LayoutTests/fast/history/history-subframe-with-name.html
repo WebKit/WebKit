@@ -43,6 +43,8 @@ function onFrameLoaded(pageId)
     switch (currentState) {
       case 1:
           shouldBe('2', 'currentPageId');
+          // Make sure we generate a history entry.
+          setTimeout(function() { testWindow.frames[0].location.href = 'resources/history-subframe-with-name-3.html' }, 0);
           break;
       case 2:
           shouldBe('3', 'currentPageId');
@@ -56,7 +58,7 @@ function onFrameLoaded(pageId)
           shouldBe('3', 'currentPageId');
           break;
       default:
-          testFailed('Should not be in state ' + currentState);
+          testFailed('Should not be in state ' + currentState + ". currentPageId is " + currentPageId);
           break;
     }
     
