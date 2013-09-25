@@ -96,7 +96,7 @@ bool transformsForValue(const RenderStyle* style, const RenderStyle* rootStyle, 
         if (!currValue->isWebKitCSSTransformValue())
             continue;
 
-        WebKitCSSTransformValue* transformValue = toWebKitCSSTransformValue(i.value());
+        WebKitCSSTransformValue* transformValue = static_cast<WebKitCSSTransformValue*>(i.value());
         if (!transformValue->length())
             continue;
 

@@ -3631,7 +3631,7 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperationWith
     if (shadersListLength > 1) {
         CSSValue* fragmentShaderOrMixFunction = shadersList->itemWithoutBoundsCheck(1);
         if (fragmentShaderOrMixFunction->isWebKitCSSMixFunctionValue()) {
-            WebKitCSSMixFunctionValue* mixFunction = toWebKitCSSMixFunctionValue(fragmentShaderOrMixFunction);
+            WebKitCSSMixFunctionValue* mixFunction = static_cast<WebKitCSSMixFunctionValue*>(fragmentShaderOrMixFunction);
             CSSValueListIterator iterator(mixFunction);
 
             ASSERT(mixFunction->length());
@@ -3752,7 +3752,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
         if (!currValue->isWebKitCSSFilterValue())
             continue;
 
-        WebKitCSSFilterValue* filterValue = toWebKitCSSFilterValue(i.value());
+        WebKitCSSFilterValue* filterValue = static_cast<WebKitCSSFilterValue*>(i.value());
         FilterOperation::OperationType operationType = filterOperationForType(filterValue->operationType());
 
 #if ENABLE(CSS_SHADERS)
@@ -3779,7 +3779,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
             if (!argument->isWebKitCSSSVGDocumentValue())
                 continue;
 
-            WebKitCSSSVGDocumentValue* svgDocumentValue = toWebKitCSSSVGDocumentValue(argument);
+            WebKitCSSSVGDocumentValue* svgDocumentValue = static_cast<WebKitCSSSVGDocumentValue*>(argument);
             KURL url = m_state.document().completeURL(svgDocumentValue->url());
 
             RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(svgDocumentValue->url(), url.fragmentIdentifier(), operationType);
