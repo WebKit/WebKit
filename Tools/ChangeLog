@@ -1,3 +1,32 @@
+2013-09-25  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Fix style issues in AccessibilityUIElementAtk
+        https://bugs.webkit.org/show_bug.cgi?id=121898
+
+        Reviewed by Chris Fleizach.
+
+        Avoid the '.f' suffix for float literals and use G_VALUE_INIT
+        instead of { 0, { { 0 } } } to initialize a GValue.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::clickPointX): Remove suffix.
+        (AccessibilityUIElement::clickPointY): Ditto.
+        (AccessibilityUIElement::intValue): Use G_VALUE_INIT and remove suffix.
+        (AccessibilityUIElement::minValue): Ditto.
+        (AccessibilityUIElement::maxValue): Ditto.
+        (AccessibilityUIElement::numberAttributeValue): Remove suffix.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::numberAttributeValue): Remove suffix.
+        (WTR::AccessibilityUIElement::x): Ditto.
+        (WTR::AccessibilityUIElement::y): Ditto.
+        (WTR::AccessibilityUIElement::width): Ditto.
+        (WTR::AccessibilityUIElement::height): Ditto.
+        (WTR::AccessibilityUIElement::clickPointX): Ditto.
+        (WTR::AccessibilityUIElement::clickPointY): Ditto.
+        (WTR::AccessibilityUIElement::intValue): Ditto.
+        (WTR::AccessibilityUIElement::minValue): Ditto.
+        (WTR::AccessibilityUIElement::maxValue): Ditto.
+
 2013-09-25  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] accessibility/loading-iframe-sends-notification.html is failing

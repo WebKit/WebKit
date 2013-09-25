@@ -592,7 +592,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
 {
     // FIXME: implement
-    return 0.0f;
+    return 0;
 }
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
@@ -728,7 +728,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
 double AccessibilityUIElement::x()
 {
     if (!m_element || !ATK_IS_OBJECT(m_element.get()))
-        return 0.0f;
+        return 0;
 
     int x, y;
     atk_component_get_position(ATK_COMPONENT(m_element.get()), &x, &y, ATK_XY_SCREEN);
@@ -738,7 +738,7 @@ double AccessibilityUIElement::x()
 double AccessibilityUIElement::y()
 {
     if (!m_element || !ATK_IS_OBJECT(m_element.get()))
-        return 0.0f;
+        return 0;
 
     int x, y;
     atk_component_get_position(ATK_COMPONENT(m_element.get()), &x, &y, ATK_XY_SCREEN);
@@ -748,7 +748,7 @@ double AccessibilityUIElement::y()
 double AccessibilityUIElement::width()
 {
     if (!m_element || !ATK_IS_OBJECT(m_element.get()))
-        return 0.0f;
+        return 0;
 
     int width, height;
     atk_component_get_size(ATK_COMPONENT(m_element.get()), &width, &height);
@@ -758,7 +758,7 @@ double AccessibilityUIElement::width()
 double AccessibilityUIElement::height()
 {
     if (!m_element || !ATK_IS_OBJECT(m_element.get()))
-        return 0.0f;
+        return 0;
 
     int width, height;
     atk_component_get_size(ATK_COMPONENT(m_element.get()), &width, &height);
@@ -768,24 +768,24 @@ double AccessibilityUIElement::height()
 double AccessibilityUIElement::clickPointX()
 {
     // FIXME: implement
-    return 0.0f;
+    return 0;
 }
 
 double AccessibilityUIElement::clickPointY()
 {
     // FIXME: implement
-    return 0.0f;
+    return 0;
 }
 
 double AccessibilityUIElement::intValue() const
 {
     if (!m_element || !ATK_IS_OBJECT(m_element.get()))
-        return 0.0f;
+        return 0;
 
     GValue value = G_VALUE_INIT;
     atk_value_get_current_value(ATK_VALUE(m_element.get()), &value);
     if (!G_VALUE_HOLDS_FLOAT(&value))
-        return 0.0f;
+        return 0;
 
     return g_value_get_float(&value);
 }
@@ -793,12 +793,12 @@ double AccessibilityUIElement::intValue() const
 double AccessibilityUIElement::minValue()
 {
     if (!m_element || !ATK_IS_OBJECT(m_element.get()))
-        return 0.0f;
+        return 0;
 
     GValue value = G_VALUE_INIT;
     atk_value_get_minimum_value(ATK_VALUE(m_element.get()), &value);
     if (!G_VALUE_HOLDS_FLOAT(&value))
-        return 0.0f;
+        return 0;
 
     return g_value_get_float(&value);
 }
@@ -806,12 +806,12 @@ double AccessibilityUIElement::minValue()
 double AccessibilityUIElement::maxValue()
 {
     if (!m_element || !ATK_IS_OBJECT(m_element.get()))
-        return 0.0f;
+        return 0;
 
     GValue value = G_VALUE_INIT;
     atk_value_get_maximum_value(ATK_VALUE(m_element.get()), &value);
     if (!G_VALUE_HOLDS_FLOAT(&value))
-        return 0.0f;
+        return 0;
 
     return g_value_get_float(&value);
 }

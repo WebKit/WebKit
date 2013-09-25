@@ -583,13 +583,13 @@ double AccessibilityUIElement::height()
 double AccessibilityUIElement::clickPointX()
 {
     // Note: This is not something we have in ATK.
-    return 0.f;
+    return 0;
 }
 
 double AccessibilityUIElement::clickPointY()
 {
     // Note: This is not something we have in ATK.
-    return 0.f;
+    return 0;
 }
 
 JSStringRef AccessibilityUIElement::orientation() const
@@ -611,40 +611,40 @@ JSStringRef AccessibilityUIElement::orientation() const
 
 double AccessibilityUIElement::intValue() const
 {
-    GValue value = { 0, { { 0 } } };
+    GValue value = G_VALUE_INIT;
 
     if (!ATK_IS_VALUE(m_element))
-        return 0.0f;
+        return 0;
 
     atk_value_get_current_value(ATK_VALUE(m_element), &value);
     if (!G_VALUE_HOLDS_FLOAT(&value))
-        return 0.0f;
+        return 0;
     return g_value_get_float(&value);
 }
 
 double AccessibilityUIElement::minValue()
 {
-    GValue value = { 0, { { 0 } } };
+    GValue value = G_VALUE_INIT;
 
     if (!ATK_IS_VALUE(m_element))
-        return 0.0f;
+        return 0;
 
     atk_value_get_minimum_value(ATK_VALUE(m_element), &value);
     if (!G_VALUE_HOLDS_FLOAT(&value))
-        return 0.0f;
+        return 0;
     return g_value_get_float(&value);
 }
 
 double AccessibilityUIElement::maxValue()
 {
-    GValue value = { 0, { { 0 } } };
+    GValue value = G_VALUE_INIT;
 
     if (!ATK_IS_VALUE(m_element))
-        return 0.0f;
+        return 0;
 
     atk_value_get_maximum_value(ATK_VALUE(m_element), &value);
     if (!G_VALUE_HOLDS_FLOAT(&value))
-        return 0.0f;
+        return 0;
     return g_value_get_float(&value);
 }
 
@@ -931,7 +931,7 @@ JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
 double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
 {
     // FIXME: implement
-    return 0.0f;
+    return 0;
 }
 
 bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
