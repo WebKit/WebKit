@@ -76,7 +76,7 @@ void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicStr
     if (name == titleAttr && sheet())
         sheet()->setTitle(value);
 #if ENABLE(STYLE_SCOPED)
-    else if (name == scopedAttr && RuntimeEnabledFeatures::styleScopedEnabled())
+    else if (name == scopedAttr && RuntimeEnabledFeatures::sharedFeatures().styleScopedEnabled())
         scopedAttributeChanged(!value.isNull());
 #endif
     else if (name == mediaAttr) {
@@ -101,7 +101,7 @@ void HTMLStyleElement::finishParsingChildren()
 #if ENABLE(STYLE_SCOPED)
 void HTMLStyleElement::scopedAttributeChanged(bool scoped)
 {
-    ASSERT(RuntimeEnabledFeatures::styleScopedEnabled());
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().styleScopedEnabled());
 
     if (!inDocument())
         return;
@@ -159,7 +159,7 @@ void HTMLStyleElement::registerWithScopingNode(bool scoped)
 
 void HTMLStyleElement::unregisterWithScopingNode(ContainerNode* scope)
 {
-    ASSERT(m_scopedStyleRegistrationState != NotRegistered || !RuntimeEnabledFeatures::styleScopedEnabled());
+    ASSERT(m_scopedStyleRegistrationState != NotRegistered || !RuntimeEnabledFeatures::sharedFeatures().styleScopedEnabled());
     if (!isRegisteredAsScoped())
         return;
 
@@ -177,7 +177,7 @@ void HTMLStyleElement::unregisterWithScopingNode(ContainerNode* scope)
 
 bool HTMLStyleElement::scoped() const
 {
-    return RuntimeEnabledFeatures::styleScopedEnabled() && fastHasAttribute(scopedAttr);
+    return RuntimeEnabledFeatures::sharedFeatures().styleScopedEnabled() && fastHasAttribute(scopedAttr);
 }
 
 void HTMLStyleElement::setScoped(bool scopedValue)

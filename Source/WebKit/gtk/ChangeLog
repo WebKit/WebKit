@@ -1,3 +1,19 @@
+2013-09-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Refactor RuntimeEnabledFeatures as a Singleton.
+        https://bugs.webkit.org/show_bug.cgi?id=121883.
+
+        Reviewed by Jer Noble.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setCSSRegionsEnabled): Use singleton.
+        (DumpRenderTreeSupportGtk::setExperimentalContentSecurityPolicyFeaturesEnabled):
+        (DumpRenderTreeSupportGtk::setSeamlessIFramesEnabled):
+        (DumpRenderTreeSupportGtk::setShadowDOMEnabled):
+        (DumpRenderTreeSupportGtk::setStyleScopedEnabled):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings): Ditto.
+
 2013-09-24  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Fix compilation problems when setting ENABLE_DRAG_SUPPORT = FALSE

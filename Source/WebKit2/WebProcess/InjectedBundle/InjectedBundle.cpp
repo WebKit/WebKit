@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -191,12 +191,12 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 
 #if ENABLE(CSS_REGIONS)
     if (preference == "WebKitCSSRegionsEnabled")
-        RuntimeEnabledFeatures::setCSSRegionsEnabled(enabled);
+        RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(enabled);
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
     if (preference == "WebKitCSSCompositingEnabled")
-        RuntimeEnabledFeatures::setCSSCompositingEnabled(enabled);
+        RuntimeEnabledFeatures::sharedFeatures().setCSSCompositingEnabled(enabled);
 #endif
 
     // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.
@@ -646,7 +646,7 @@ void InjectedBundle::setSerialLoadingEnabled(bool enabled)
 void InjectedBundle::setShadowDOMEnabled(bool enabled)
 {
 #if ENABLE(SHADOW_DOM)
-    RuntimeEnabledFeatures::setShadowDOMEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif
@@ -655,7 +655,7 @@ void InjectedBundle::setShadowDOMEnabled(bool enabled)
 void InjectedBundle::setCSSRegionsEnabled(bool enabled)
 {
 #if ENABLE(CSS_REGIONS)
-    RuntimeEnabledFeatures::setCSSRegionsEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif
@@ -664,7 +664,7 @@ void InjectedBundle::setCSSRegionsEnabled(bool enabled)
 void InjectedBundle::setCSSCompositingEnabled(bool enabled)
 {
 #if ENABLE(CSS_COMPOSITING)
-    RuntimeEnabledFeatures::setCSSCompositingEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setCSSCompositingEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif
@@ -673,7 +673,7 @@ void InjectedBundle::setCSSCompositingEnabled(bool enabled)
 void InjectedBundle::setSeamlessIFramesEnabled(bool enabled)
 {
 #if ENABLE(IFRAME_SEAMLESS)
-    RuntimeEnabledFeatures::setSeamlessIFramesEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setSeamlessIFramesEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif

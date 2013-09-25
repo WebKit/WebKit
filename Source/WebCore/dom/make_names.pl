@@ -410,7 +410,7 @@ END
     my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
     if ($runtimeConditional) {
         print F <<END
-    if (!RuntimeEnabledFeatures::${runtimeConditional}Enabled())
+    if (!RuntimeEnabledFeatures::sharedFeatures().${runtimeConditional}Enabled())
         return 0;
 END
 ;
@@ -1096,7 +1096,7 @@ END
             print F <<END
 static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
-    if (!RuntimeEnabledFeatures::${runtimeConditional}Enabled()) {
+    if (!RuntimeEnabledFeatures::sharedFeatures().${runtimeConditional}Enabled()) {
         ASSERT(!element || element->is$parameters{fallbackInterfaceName}());
         return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackJSInterfaceName}, element.get());
     }

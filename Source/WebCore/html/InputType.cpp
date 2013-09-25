@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2009, 2010, 2011, 2012 Google Inc. All rights reserved.
@@ -99,15 +99,15 @@ static OwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
     map->add(InputTypeNames::color(), &ColorInputType::create);
 #endif
 #if ENABLE(INPUT_TYPE_DATE)
-    if (RuntimeEnabledFeatures::inputTypeDateEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().inputTypeDateEnabled())
         map->add(InputTypeNames::date(), &DateInputType::create);
 #endif
 #if ENABLE(INPUT_TYPE_DATETIME_INCOMPLETE)
-    if (RuntimeEnabledFeatures::inputTypeDateTimeEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().inputTypeDateTimeEnabled())
         map->add(InputTypeNames::datetime(), &DateTimeInputType::create);
 #endif
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
-    if (RuntimeEnabledFeatures::inputTypeDateTimeLocalEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().inputTypeDateTimeLocalEnabled())
         map->add(InputTypeNames::datetimelocal(), &DateTimeLocalInputType::create);
 #endif
     map->add(InputTypeNames::email(), &EmailInputType::create);
@@ -115,7 +115,7 @@ static OwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
     map->add(InputTypeNames::hidden(), &HiddenInputType::create);
     map->add(InputTypeNames::image(), &ImageInputType::create);
 #if ENABLE(INPUT_TYPE_MONTH)
-    if (RuntimeEnabledFeatures::inputTypeMonthEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().inputTypeMonthEnabled())
         map->add(InputTypeNames::month(), &MonthInputType::create);
 #endif
     map->add(InputTypeNames::number(), &NumberInputType::create);
@@ -127,12 +127,12 @@ static OwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
     map->add(InputTypeNames::submit(), &SubmitInputType::create);
     map->add(InputTypeNames::telephone(), &TelephoneInputType::create);
 #if ENABLE(INPUT_TYPE_TIME)
-    if (RuntimeEnabledFeatures::inputTypeTimeEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().inputTypeTimeEnabled())
         map->add(InputTypeNames::time(), &TimeInputType::create);
 #endif
     map->add(InputTypeNames::url(), &URLInputType::create);
 #if ENABLE(INPUT_TYPE_WEEK)
-    if (RuntimeEnabledFeatures::inputTypeWeekEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().inputTypeWeekEnabled())
         map->add(InputTypeNames::week(), &WeekInputType::create);
 #endif
     // No need to register "text" because it is the default type.

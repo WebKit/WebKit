@@ -3,7 +3,7 @@
  *  Copyright (C) 2010 Joone Hur <joone@kldp.org>
  *  Copyright (C) 2009 Google Inc. All rights reserved.
  *  Copyright (C) 2011 Igalia S.L.
- *  Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -575,7 +575,7 @@ void DumpRenderTreeSupportGtk::setCSSGridLayoutEnabled(WebKitWebView* webView, b
 
 void DumpRenderTreeSupportGtk::setCSSRegionsEnabled(WebKitWebView* webView, bool enabled)
 {
-    RuntimeEnabledFeatures::setCSSRegionsEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(enabled);
 }
 
 void DumpRenderTreeSupportGtk::setCSSCustomFilterEnabled(WebKitWebView* webView, bool enabled)
@@ -588,28 +588,28 @@ void DumpRenderTreeSupportGtk::setCSSCustomFilterEnabled(WebKitWebView* webView,
 void DumpRenderTreeSupportGtk::setExperimentalContentSecurityPolicyFeaturesEnabled(bool enabled)
 {
 #if ENABLE(CSP_NEXT)
-    RuntimeEnabledFeatures::setExperimentalContentSecurityPolicyFeaturesEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setExperimentalContentSecurityPolicyFeaturesEnabled(enabled);
 #endif
 }
 
 void DumpRenderTreeSupportGtk::setSeamlessIFramesEnabled(bool enabled)
 {
 #if ENABLE(IFRAME_SEAMLESS)
-    RuntimeEnabledFeatures::setSeamlessIFramesEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setSeamlessIFramesEnabled(enabled);
 #endif
 }
 
 void DumpRenderTreeSupportGtk::setShadowDOMEnabled(bool enabled)
 {
 #if ENABLE(SHADOW_DOM)
-    RuntimeEnabledFeatures::setShadowDOMEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enabled);
 #endif
 }
 
 void DumpRenderTreeSupportGtk::setStyleScopedEnabled(bool enabled)
 {
 #if ENABLE(STYLE_SCOPED)
-    RuntimeEnabledFeatures::setStyleScopedEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setStyleScopedEnabled(enabled);
 #endif
 }
 

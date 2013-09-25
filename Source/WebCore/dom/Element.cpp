@@ -1487,7 +1487,7 @@ PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
         ensureUserAgentShadowRoot();
 
 #if ENABLE(SHADOW_DOM)
-    if (RuntimeEnabledFeatures::authorShadowDOMForAnyElementEnabled()) {
+    if (RuntimeEnabledFeatures::sharedFeatures().authorShadowDOMForAnyElementEnabled()) {
         addShadowRoot(ShadowRoot::create(document(), ShadowRoot::AuthorShadowRoot));
         return shadowRoot();
     }

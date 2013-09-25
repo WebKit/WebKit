@@ -66,15 +66,15 @@
 namespace WebCore {
 
 InternalSettings::Backup::Backup(Settings& settings)
-    : m_originalCSSExclusionsEnabled(RuntimeEnabledFeatures::cssExclusionsEnabled())
-    , m_originalCSSShapesEnabled(RuntimeEnabledFeatures::cssShapesEnabled())
+    : m_originalCSSExclusionsEnabled(RuntimeEnabledFeatures::sharedFeatures().cssExclusionsEnabled())
+    , m_originalCSSShapesEnabled(RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled())
     , m_originalCSSVariablesEnabled(settings.cssVariablesEnabled())
 #if ENABLE(SHADOW_DOM)
-    , m_originalShadowDOMEnabled(RuntimeEnabledFeatures::shadowDOMEnabled())
-    , m_originalAuthorShadowDOMForAnyElementEnabled(RuntimeEnabledFeatures::authorShadowDOMForAnyElementEnabled())
+    , m_originalShadowDOMEnabled(RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled())
+    , m_originalAuthorShadowDOMForAnyElementEnabled(RuntimeEnabledFeatures::sharedFeatures().authorShadowDOMForAnyElementEnabled())
 #endif
 #if ENABLE(STYLE_SCOPED)
-    , m_originalStyleScoped(RuntimeEnabledFeatures::styleScopedEnabled())
+    , m_originalStyleScoped(RuntimeEnabledFeatures::sharedFeatures().styleScopedEnabled())
 #endif
     , m_originalEditingBehavior(settings.editingBehaviorType())
 #if ENABLE(TEXT_AUTOSIZING)
@@ -85,7 +85,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_originalMediaTypeOverride(settings.mediaTypeOverride())
     , m_originalCanvasUsesAcceleratedDrawing(settings.canvasUsesAcceleratedDrawing())
     , m_originalMockScrollbarsEnabled(settings.mockScrollbarsEnabled())
-    , m_langAttributeAwareFormControlUIEnabled(RuntimeEnabledFeatures::langAttributeAwareFormControlUIEnabled())
+    , m_langAttributeAwareFormControlUIEnabled(RuntimeEnabledFeatures::sharedFeatures().langAttributeAwareFormControlUIEnabled())
     , m_imagesEnabled(settings.areImagesEnabled())
     , m_minimumTimerInterval(settings.minDOMTimerInterval())
 #if ENABLE(VIDEO_TRACK)
@@ -102,15 +102,15 @@ InternalSettings::Backup::Backup(Settings& settings)
 
 void InternalSettings::Backup::restoreTo(Settings& settings)
 {
-    RuntimeEnabledFeatures::setCSSExclusionsEnabled(m_originalCSSExclusionsEnabled);
-    RuntimeEnabledFeatures::setCSSShapesEnabled(m_originalCSSShapesEnabled);
+    RuntimeEnabledFeatures::sharedFeatures().setCSSExclusionsEnabled(m_originalCSSExclusionsEnabled);
+    RuntimeEnabledFeatures::sharedFeatures().setCSSShapesEnabled(m_originalCSSShapesEnabled);
     settings.setCSSVariablesEnabled(m_originalCSSVariablesEnabled);
 #if ENABLE(SHADOW_DOM)
-    RuntimeEnabledFeatures::setShadowDOMEnabled(m_originalShadowDOMEnabled);
-    RuntimeEnabledFeatures::setAuthorShadowDOMForAnyElementEnabled(m_originalAuthorShadowDOMForAnyElementEnabled);
+    RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(m_originalShadowDOMEnabled);
+    RuntimeEnabledFeatures::sharedFeatures().setAuthorShadowDOMForAnyElementEnabled(m_originalAuthorShadowDOMForAnyElementEnabled);
 #endif
 #if ENABLE(STYLE_SCOPED)
-    RuntimeEnabledFeatures::setStyleScopedEnabled(m_originalStyleScoped);
+    RuntimeEnabledFeatures::sharedFeatures().setStyleScopedEnabled(m_originalStyleScoped);
 #endif
     settings.setEditingBehaviorType(m_originalEditingBehavior);
 #if ENABLE(TEXT_AUTOSIZING)
@@ -121,7 +121,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setMediaTypeOverride(m_originalMediaTypeOverride);
     settings.setCanvasUsesAcceleratedDrawing(m_originalCanvasUsesAcceleratedDrawing);
     settings.setMockScrollbarsEnabled(m_originalMockScrollbarsEnabled);
-    RuntimeEnabledFeatures::setLangAttributeAwareFormControlUIEnabled(m_langAttributeAwareFormControlUIEnabled);
+    RuntimeEnabledFeatures::sharedFeatures().setLangAttributeAwareFormControlUIEnabled(m_langAttributeAwareFormControlUIEnabled);
     settings.setImagesEnabled(m_imagesEnabled);
     settings.setMinDOMTimerInterval(m_minimumTimerInterval);
 #if ENABLE(VIDEO_TRACK)
@@ -215,7 +215,7 @@ void InternalSettings::setShadowDOMEnabled(bool enabled, ExceptionCode& ec)
     }
 
 #if ENABLE(SHADOW_DOM)
-    RuntimeEnabledFeatures::setShadowDOMEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enabled);
 #else
     // Even SHADOW_DOM is off, InternalSettings allows setShadowDOMEnabled(false) to
     // have broader test coverage. But it cannot be setShadowDOMEnabled(true).
@@ -227,7 +227,7 @@ void InternalSettings::setShadowDOMEnabled(bool enabled, ExceptionCode& ec)
 void InternalSettings::setAuthorShadowDOMForAnyElementEnabled(bool isEnabled)
 {
 #if ENABLE(SHADOW_DOM)
-    RuntimeEnabledFeatures::setAuthorShadowDOMForAnyElementEnabled(isEnabled);
+    RuntimeEnabledFeatures::sharedFeatures().setAuthorShadowDOMForAnyElementEnabled(isEnabled);
 #else
     UNUSED_PARAM(isEnabled);
 #endif
@@ -236,7 +236,7 @@ void InternalSettings::setAuthorShadowDOMForAnyElementEnabled(bool isEnabled)
 void InternalSettings::setStyleScopedEnabled(bool enabled)
 {
 #if ENABLE(STYLE_SCOPED)
-    RuntimeEnabledFeatures::setStyleScopedEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setStyleScopedEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif
@@ -346,13 +346,13 @@ void InternalSettings::setTextAutosizingFontScaleFactor(float fontScaleFactor, E
 void InternalSettings::setCSSExclusionsEnabled(bool enabled, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    RuntimeEnabledFeatures::setCSSExclusionsEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setCSSExclusionsEnabled(enabled);
 }
 
 void InternalSettings::setCSSShapesEnabled(bool enabled, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    RuntimeEnabledFeatures::setCSSShapesEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setCSSShapesEnabled(enabled);
 }
 
 void InternalSettings::setCSSVariablesEnabled(bool enabled, ExceptionCode& ec)
@@ -449,7 +449,7 @@ void InternalSettings::setStorageBlockingPolicy(const String& mode, ExceptionCod
 
 void InternalSettings::setLangAttributeAwareFormControlUIEnabled(bool enabled)
 {
-    RuntimeEnabledFeatures::setLangAttributeAwareFormControlUIEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setLangAttributeAwareFormControlUIEnabled(enabled);
 }
 
 void InternalSettings::setImagesEnabled(bool enabled, ExceptionCode& ec)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,7 +97,7 @@ Position::Position(PassRefPtr<Node> anchorNode, LegacyEditingOffset offset)
     , m_isLegacyEditingPosition(true)
 {
 #if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && RuntimeEnabledFeatures::shadowDOMEnabled()) || !m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
+    ASSERT((m_anchorNode && RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled()) || !m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
 #else
     ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
 #endif
@@ -111,7 +111,7 @@ Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
     , m_isLegacyEditingPosition(false)
 {
 #if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && RuntimeEnabledFeatures::shadowDOMEnabled()) || !m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
+    ASSERT((m_anchorNode && RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled()) || !m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
 #else
     ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot() || m_anchorNode == containerNode());
 #endif
@@ -130,7 +130,7 @@ Position::Position(PassRefPtr<Node> anchorNode, int offset, AnchorType anchorTyp
     , m_isLegacyEditingPosition(false)
 {
 #if ENABLE(SHADOW_DOM)
-    ASSERT((m_anchorNode && RuntimeEnabledFeatures::shadowDOMEnabled())
+    ASSERT((m_anchorNode && RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled())
            || !m_anchorNode || !editingIgnoresContent(m_anchorNode.get()) || !m_anchorNode->isShadowRoot());
 #else
     ASSERT(!m_anchorNode || !editingIgnoresContent(m_anchorNode.get()) || !m_anchorNode->isShadowRoot());
@@ -875,7 +875,7 @@ ContainerNode* Position::findParent(const Node* node)
     // FIXME: See http://web.ug/82697
 
 #if ENABLE(SHADOW_DOM)
-    if (RuntimeEnabledFeatures::shadowDOMEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled())
         return node->parentNode();
 #endif
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -125,7 +125,7 @@ void DumpRenderTreeSupport::scalePageBy(WebPage* webPage, float scaleFactor, flo
 #if ENABLE(STYLE_SCOPED)
 void DumpRenderTreeSupport::setStyleScopedEnabled(bool enabled)
 {
-    RuntimeEnabledFeatures::setStyleScopedEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setStyleScopedEnabled(enabled);
 }
 #endif
 

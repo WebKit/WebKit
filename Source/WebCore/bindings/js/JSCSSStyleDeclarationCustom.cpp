@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,7 +120,7 @@ static PropertyNamePrefix getCSSPropertyNamePrefix(const StringImpl& propertyNam
     switch (firstChar) {
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     case 'a':
-        if (RuntimeEnabledFeatures::legacyCSSVendorPrefixesEnabled() && matchesCSSPropertyNamePrefix(propertyName, "apple"))
+        if (RuntimeEnabledFeatures::sharedFeatures().legacyCSSVendorPrefixesEnabled() && matchesCSSPropertyNamePrefix(propertyName, "apple"))
             return PropertyNamePrefixApple;
         break;
 #endif
@@ -130,7 +130,7 @@ static PropertyNamePrefix getCSSPropertyNamePrefix(const StringImpl& propertyNam
         break;
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     case 'k':
-        if (RuntimeEnabledFeatures::legacyCSSVendorPrefixesEnabled() && matchesCSSPropertyNamePrefix(propertyName, "khtml"))
+        if (RuntimeEnabledFeatures::sharedFeatures().legacyCSSVendorPrefixesEnabled() && matchesCSSPropertyNamePrefix(propertyName, "khtml"))
             return PropertyNamePrefixKHTML;
         break;
 #endif
@@ -223,7 +223,7 @@ static CSSPropertyInfo cssPropertyIDForJSCSSPropertyName(PropertyName propertyNa
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     case PropertyNamePrefixApple:
     case PropertyNamePrefixKHTML:
-        ASSERT(RuntimeEnabledFeatures::legacyCSSVendorPrefixesEnabled());
+        ASSERT(RuntimeEnabledFeatures::sharedFeatures().legacyCSSVendorPrefixesEnabled());
         writeWebKitPrefix(bufferPtr);
         i += 5;
         break;

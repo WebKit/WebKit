@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -138,7 +138,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     }
 #endif
 
-    WebCore::RuntimeEnabledFeatures::setSpeechInputEnabled(false);
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().setSpeechInputEnabled(false);
 
     // We'll only install the Qt builtin bundle if we don't have one given by the UI process.
     // Currently only WTR provides its own bundle.

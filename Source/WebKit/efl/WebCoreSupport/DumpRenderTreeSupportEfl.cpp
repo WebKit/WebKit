@@ -2,6 +2,7 @@
     Copyright (C) 2011 ProFUSION embedded systems
     Copyright (C) 2011 Samsung Electronics
     Copyright (C) 2012 Intel Corporation. All rights reserved.
+    Copyright (C) 2013 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -320,13 +321,13 @@ void DumpRenderTreeSupportEfl::setCSSRegionsEnabled(const Evas_Object* ewkView, 
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    WebCore::RuntimeEnabledFeatures::setCSSRegionsEnabled(enabled);
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(enabled);
 }
 
 void DumpRenderTreeSupportEfl::setSeamlessIFramesEnabled(bool enabled)
 {
 #if ENABLE(IFRAME_SEAMLESS)
-    WebCore::RuntimeEnabledFeatures::setSeamlessIFramesEnabled(enabled);
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().setSeamlessIFramesEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif

@@ -209,12 +209,12 @@ public:
     {
 #if ENABLE(STYLE_SCOPED)
 #if ENABLE(SHADOW_DOM)
-        ASSERT(RuntimeEnabledFeatures::shadowDOMEnabled() || RuntimeEnabledFeatures::styleScopedEnabled());
+        ASSERT(RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled() || RuntimeEnabledFeatures::sharedFeatures().styleScopedEnabled());
 #else
-        ASSERT(RuntimeEnabledFeatures::styleScopedEnabled());
+        ASSERT(RuntimeEnabledFeatures::sharedFeatures().styleScopedEnabled());
 #endif
 #else
-        ASSERT(RuntimeEnabledFeatures::shadowDOMEnabled());
+        ASSERT(RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled());
 #endif
         if (!m_scopeResolver)
             m_scopeResolver = adoptPtr(new StyleScopeResolver());

@@ -1,3 +1,234 @@
+2013-09-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Refactor RuntimeEnabledFeatures as a Singleton
+        https://bugs.webkit.org/show_bug.cgi?id=121883
+
+        Windows is experiencing crashes when client programs (such as
+        DumpRenderTree) attemp to change settings on the RuntimeEnabledFeatures
+        object. The inlined static accessor methods are not accessing
+        memory safely (when compiled by Visual Studio) resulting in
+        crashes.
+
+        Reviewed by Jer Noble.
+
+        * WebCore.exp.in: Remove static accessors for RuntimeEnabledFeatures.
+        * bindings/generic/RuntimeEnabledFeatures.cpp: Switch methods to
+        conform to a singleton pattern.
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures):
+        (WebCore::RuntimeEnabledFeatures::sharedRuntimeEnabledFeatures):
+        (WebCore::RuntimeEnabledFeatures::fileSystemEnabled):
+        (WebCore::RuntimeEnabledFeatures::javaScriptI18NAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::audioEnabled):
+        (WebCore::RuntimeEnabledFeatures::htmlMediaElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::htmlAudioElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::htmlVideoElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::htmlSourceElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::mediaControllerEnabled):
+        (WebCore::RuntimeEnabledFeatures::mediaErrorEnabled):
+        (WebCore::RuntimeEnabledFeatures::timeRangesEnabled):
+        (WebCore::RuntimeEnabledFeatures::sharedWorkerEnabled):
+        (WebCore::RuntimeEnabledFeatures::webSocketEnabled):
+        (WebCore::RuntimeEnabledFeatures::openDatabaseEnabled):
+        (WebCore::RuntimeEnabledFeatures::openDatabaseSyncEnabled):
+        * bindings/generic/RuntimeEnabledFeatures.h: Ditto.
+        (WebCore::RuntimeEnabledFeatures::setLocalStorageEnabled):
+        (WebCore::RuntimeEnabledFeatures::localStorageEnabled):
+        (WebCore::RuntimeEnabledFeatures::setSessionStorageEnabled):
+        (WebCore::RuntimeEnabledFeatures::sessionStorageEnabled):
+        (WebCore::RuntimeEnabledFeatures::setWebkitNotificationsEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitNotificationsEnabled):
+        (WebCore::RuntimeEnabledFeatures::setApplicationCacheEnabled):
+        (WebCore::RuntimeEnabledFeatures::applicationCacheEnabled):
+        (WebCore::RuntimeEnabledFeatures::setDataTransferItemsEnabled):
+        (WebCore::RuntimeEnabledFeatures::dataTransferItemsEnabled):
+        (WebCore::RuntimeEnabledFeatures::setGeolocationEnabled):
+        (WebCore::RuntimeEnabledFeatures::geolocationEnabled):
+        (WebCore::RuntimeEnabledFeatures::setWebkitIndexedDBEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitIndexedDBEnabled):
+        (WebCore::RuntimeEnabledFeatures::indexedDBEnabled):
+        (WebCore::RuntimeEnabledFeatures::setCanvasPathEnabled):
+        (WebCore::RuntimeEnabledFeatures::canvasPathEnabled):
+        (WebCore::RuntimeEnabledFeatures::setCSSExclusionsEnabled):
+        (WebCore::RuntimeEnabledFeatures::cssExclusionsEnabled):
+        (WebCore::RuntimeEnabledFeatures::setCSSShapesEnabled):
+        (WebCore::RuntimeEnabledFeatures::cssShapesEnabled):
+        (WebCore::RuntimeEnabledFeatures::setCSSRegionsEnabled):
+        (WebCore::RuntimeEnabledFeatures::cssRegionsEnabled):
+        (WebCore::RuntimeEnabledFeatures::setCSSCompositingEnabled):
+        (WebCore::RuntimeEnabledFeatures::cssCompositingEnabled):
+        (WebCore::RuntimeEnabledFeatures::setFontLoadEventsEnabled):
+        (WebCore::RuntimeEnabledFeatures::fontLoadEventsEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitFullScreenAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::setWebkitFullScreenAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitRequestFullScreenEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitIsFullScreenEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitFullScreenKeyboardInputAllowedEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitCurrentFullScreenElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitCancelFullScreenEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitFullscreenEnabledEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitFullscreenElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitExitFullscreenEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitRequestFullscreenEnabled):
+        (WebCore::RuntimeEnabledFeatures::touchEnabled):
+        (WebCore::RuntimeEnabledFeatures::setTouchEnabled):
+        (WebCore::RuntimeEnabledFeatures::setDeviceMotionEnabled):
+        (WebCore::RuntimeEnabledFeatures::deviceMotionEnabled):
+        (WebCore::RuntimeEnabledFeatures::deviceMotionEventEnabled):
+        (WebCore::RuntimeEnabledFeatures::ondevicemotionEnabled):
+        (WebCore::RuntimeEnabledFeatures::setDeviceOrientationEnabled):
+        (WebCore::RuntimeEnabledFeatures::deviceOrientationEnabled):
+        (WebCore::RuntimeEnabledFeatures::deviceOrientationEventEnabled):
+        (WebCore::RuntimeEnabledFeatures::ondeviceorientationEnabled):
+        (WebCore::RuntimeEnabledFeatures::setSpeechInputEnabled):
+        (WebCore::RuntimeEnabledFeatures::speechInputEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitSpeechEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitGrammarEnabled):
+        (WebCore::RuntimeEnabledFeatures::setScriptedSpeechEnabled):
+        (WebCore::RuntimeEnabledFeatures::scriptedSpeechEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitSpeechRecognitionEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitSpeechRecognitionErrorEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitSpeechRecognitionEventEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitSpeechGrammarEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitSpeechGrammarListEnabled):
+        (WebCore::RuntimeEnabledFeatures::setFileSystemEnabled):
+        (WebCore::RuntimeEnabledFeatures::setJavaScriptI18NAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::mediaStreamEnabled):
+        (WebCore::RuntimeEnabledFeatures::setMediaStreamEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitGetUserMediaEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitMediaStreamEnabled):
+        (WebCore::RuntimeEnabledFeatures::peerConnectionEnabled):
+        (WebCore::RuntimeEnabledFeatures::setPeerConnectionEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitRTCPeerConnectionEnabled):
+        (WebCore::RuntimeEnabledFeatures::setLegacyCSSVendorPrefixesEnabled):
+        (WebCore::RuntimeEnabledFeatures::legacyCSSVendorPrefixesEnabled):
+        (WebCore::RuntimeEnabledFeatures::setWebkitGetGamepadsEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitGetGamepadsEnabled):
+        (WebCore::RuntimeEnabledFeatures::quotaEnabled):
+        (WebCore::RuntimeEnabledFeatures::setQuotaEnabled):
+        (WebCore::RuntimeEnabledFeatures::mediaSourceEnabled):
+        (WebCore::RuntimeEnabledFeatures::setMediaSourceEnabled):
+        (WebCore::RuntimeEnabledFeatures::encryptedMediaEnabled):
+        (WebCore::RuntimeEnabledFeatures::setEncryptedMediaEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitVideoTrackEnabled):
+        (WebCore::RuntimeEnabledFeatures::setWebkitVideoTrackEnabled):
+        (WebCore::RuntimeEnabledFeatures::shadowDOMEnabled):
+        (WebCore::RuntimeEnabledFeatures::setShadowDOMEnabled):
+        (WebCore::RuntimeEnabledFeatures::authorShadowDOMForAnyElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::setAuthorShadowDOMForAnyElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::customDOMElementsEnabled):
+        (WebCore::RuntimeEnabledFeatures::setCustomDOMElements):
+        (WebCore::RuntimeEnabledFeatures::styleScopedEnabled):
+        (WebCore::RuntimeEnabledFeatures::setStyleScopedEnabled):
+        (WebCore::RuntimeEnabledFeatures::inputTypeDateEnabled):
+        (WebCore::RuntimeEnabledFeatures::setInputTypeDateEnabled):
+        (WebCore::RuntimeEnabledFeatures::inputTypeDateTimeEnabled):
+        (WebCore::RuntimeEnabledFeatures::setInputTypeDateTimeEnabled):
+        (WebCore::RuntimeEnabledFeatures::inputTypeDateTimeLocalEnabled):
+        (WebCore::RuntimeEnabledFeatures::setInputTypeDateTimeLocalEnabled):
+        (WebCore::RuntimeEnabledFeatures::inputTypeMonthEnabled):
+        (WebCore::RuntimeEnabledFeatures::setInputTypeMonthEnabled):
+        (WebCore::RuntimeEnabledFeatures::inputTypeTimeEnabled):
+        (WebCore::RuntimeEnabledFeatures::setInputTypeTimeEnabled):
+        (WebCore::RuntimeEnabledFeatures::inputTypeWeekEnabled):
+        (WebCore::RuntimeEnabledFeatures::setInputTypeWeekEnabled):
+        (WebCore::RuntimeEnabledFeatures::experimentalContentSecurityPolicyFeaturesEnabled):
+        (WebCore::RuntimeEnabledFeatures::setExperimentalContentSecurityPolicyFeaturesEnabled):
+        (WebCore::RuntimeEnabledFeatures::seamlessIFramesEnabled):
+        (WebCore::RuntimeEnabledFeatures::setSeamlessIFramesEnabled):
+        (WebCore::RuntimeEnabledFeatures::langAttributeAwareFormControlUIEnabled):
+        (WebCore::RuntimeEnabledFeatures::setLangAttributeAwareFormControlUIEnabled):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::getCSSPropertyNamePrefix): Use singleton accessors.
+        (WebCore::cssPropertyIDForJSCSSPropertyName): Ditto.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetRuntimeEnableFunctionName): Generate singleton version of
+        accessors.
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::fontLoaded): Use singleton accessors.
+        (WebCore::CSSFontFace::getFontData): Ditto.
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Ditto.
+        * css/CSSParser.cpp:
+        (WebCore::isSimpleLengthPropertyID): Ditto.
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::rewriteSpecifiers):
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::fontLoaded): Ditto.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::ensureScopeResolver): Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::cssRegionsEnabled): Ditto.
+        (WebCore::Document::cssCompositingEnabled):
+        (WebCore::Document::shouldDisplaySeamlesslyWithParent):
+        (WebCore::Document::getCachedLocale):
+        * dom/Element.cpp:
+        (WebCore::Element::createShadowRoot): Ditto.
+        * dom/Position.cpp:
+        (WebCore::Position::Position): Ditto.
+        (WebCore::Position::findParent):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getSelection): Ditto.
+        * dom/make_names.pl:
+        (printConstructorInterior): Generate singleton version of accessors.
+        (printWrapperFunctions): Ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isSpeechEnabled): Use singleton accessors.
+        (WebCore::HTMLInputElement::setupDateTimeChooserParameters): Ditto.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::finishParsingChildren): Ditto.
+        (WebCore::HTMLMediaElement::scheduleDelayedAction):
+        (WebCore::HTMLMediaElement::loadTimerFired):
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::loadInternal):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::playbackProgressTimerFired):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddAudioTrack):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddTextTrack):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddVideoTrack):
+        (WebCore::HTMLMediaElement::addAudioTrack):
+        (WebCore::HTMLMediaElement::addTextTrack):
+        (WebCore::HTMLMediaElement::addVideoTrack):
+        (WebCore::HTMLMediaElement::removeAudioTrack):
+        (WebCore::HTMLMediaElement::removeTextTrack):
+        (WebCore::HTMLMediaElement::removeVideoTrack):
+        (WebCore::HTMLMediaElement::audioTracks):
+        (WebCore::HTMLMediaElement::textTracks):
+        (WebCore::HTMLMediaElement::videoTracks):
+        (WebCore::HTMLMediaElement::didAddTextTrack):
+        (WebCore::HTMLMediaElement::didRemoveTextTrack):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+        (WebCore::HTMLMediaElement::hasClosedCaptions):
+        (WebCore::HTMLMediaElement::setClosedCaptionsVisible):
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseAttribute): Ditto.
+        (WebCore::HTMLStyleElement::scopedAttributeChanged):
+        (WebCore::HTMLStyleElement::unregisterWithScopingNode):
+        (WebCore::HTMLStyleElement::scoped):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::parseAttribute): Ditto.
+        (WebCore::HTMLTrackElement::scheduleLoad):
+        (WebCore::HTMLTrackElement::canLoadUrl):
+        * html/InputType.cpp:
+        (WebCore::createInputTypeFactoryMap): Ditto.
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::experimentalFeaturesEnabled): Ditto.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener): Ditto.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks): Ditto.
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup): Ditto.
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setShadowDOMEnabled):
+        (WebCore::InternalSettings::setAuthorShadowDOMForAnyElementEnabled):
+        (WebCore::InternalSettings::setStyleScopedEnabled):
+        (WebCore::InternalSettings::setCSSExclusionsEnabled):
+        (WebCore::InternalSettings::setCSSShapesEnabled):
+        (WebCore::InternalSettings::setLangAttributeAwareFormControlUIEnabled):
+
 2013-09-25  Andreas Kling  <akling@apple.com>
 
         Unreviewed build fix for IDBDatabase.

@@ -2,6 +2,7 @@
     Copyright (C) 2009-2010 ProFUSION embedded systems
     Copyright (C) 2009-2012 Samsung Electronics
     Copyright (C) 2012 Intel Corporation
+    Copyright (C) 2013 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -736,9 +737,9 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->pageSettings->setSansSerifFontFamily("sans");
     priv->pageSettings->setStandardFontFamily("sans");
     priv->pageSettings->setHyperlinkAuditingEnabled(false);
-    WebCore::RuntimeEnabledFeatures::setCSSRegionsEnabled(true);
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(true);
 #if ENABLE(IFRAME_SEAMLESS)
-    WebCore::RuntimeEnabledFeatures::setSeamlessIFramesEnabled(true);
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().setSeamlessIFramesEnabled(true);
 #endif
     priv->pageSettings->setScriptEnabled(true);
     priv->pageSettings->setPluginsEnabled(true);

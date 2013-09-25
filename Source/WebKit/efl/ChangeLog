@@ -1,3 +1,19 @@
+2013-09-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Refactor RuntimeEnabledFeatures as a Singleton.
+        https://bugs.webkit.org/show_bug.cgi?id=121883.
+
+        Reviewed by Jer Noble.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::setCSSRegionsEnabled): Use singleton.
+        (DumpRenderTreeSupportEfl::setSeamlessIFramesEnabled): Ditto.
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_shadow_dom_enable_get): Ditto.
+        (ewk_settings_shadow_dom_enable_set):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new): Ditto.
+
 2013-09-20  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Do not expose aria-help in ATK based platforms

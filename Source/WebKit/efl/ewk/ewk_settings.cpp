@@ -2,6 +2,7 @@
     Copyright (C) 2009-2010 ProFUSION embedded systems
     Copyright (C) 2009-2010 Samsung Electronics
     Copyright (C) 2012 Intel Corporation
+    Copyright (C) 2013 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -255,7 +256,7 @@ void ewk_settings_object_cache_enable_set(Eina_Bool enable)
 Eina_Bool ewk_settings_shadow_dom_enable_get()
 {
 #if ENABLE(SHADOW_DOM)
-    return WebCore::RuntimeEnabledFeatures::shadowDOMEnabled();
+    return WebCore::RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled();
 #else
     return false;
 #endif
@@ -265,7 +266,7 @@ Eina_Bool ewk_settings_shadow_dom_enable_set(Eina_Bool enable)
 {
 #if ENABLE(SHADOW_DOM)
     enable = !!enable;
-    WebCore::RuntimeEnabledFeatures::setShadowDOMEnabled(enable);
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(enable);
     return true;
 #else
     UNUSED_PARAM(enable);

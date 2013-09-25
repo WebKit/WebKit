@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,7 +90,7 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource* source)
     fontSelector->fontLoaded();
 
 #if ENABLE(FONT_LOAD_EVENTS)
-    if (RuntimeEnabledFeatures::fontLoadEventsEnabled() && m_loadState == Loading) {
+    if (RuntimeEnabledFeatures::sharedFeatures().fontLoadEventsEnabled() && m_loadState == Loading) {
         if (source->ensureFontData())
             notifyFontLoader(Loaded);
         else if (!isValid())
@@ -103,7 +103,7 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource* source)
         (*it)->fontLoaded(this);
 
 #if ENABLE(FONT_LOAD_EVENTS)
-    if (RuntimeEnabledFeatures::fontLoadEventsEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().fontLoadEventsEnabled())
         notifyLoadingDone();
 #endif
 }
@@ -118,7 +118,7 @@ PassRefPtr<SimpleFontData> CSSFontFace::getFontData(const FontDescription& fontD
     CSSFontSelector* fontSelector = (*m_segmentedFontFaces.begin())->fontSelector();
 
 #if ENABLE(FONT_LOAD_EVENTS)
-    if (RuntimeEnabledFeatures::fontLoadEventsEnabled() && m_loadState == NotLoaded)
+    if (RuntimeEnabledFeatures::sharedFeatures().fontLoadEventsEnabled() && m_loadState == NotLoaded)
         notifyFontLoader(Loading);
 #endif
 
@@ -127,7 +127,7 @@ PassRefPtr<SimpleFontData> CSSFontFace::getFontData(const FontDescription& fontD
         if (RefPtr<SimpleFontData> result = m_sources[i]->getFontData(fontDescription, syntheticBold, syntheticItalic, fontSelector)) {
             m_activeSource = m_sources[i].get();
 #if ENABLE(FONT_LOAD_EVENTS)
-            if (RuntimeEnabledFeatures::fontLoadEventsEnabled() && m_loadState == Loading && m_sources[i]->isLoaded()) {
+            if (RuntimeEnabledFeatures::sharedFeatures().fontLoadEventsEnabled() && m_loadState == Loading && m_sources[i]->isLoaded()) {
                 notifyFontLoader(Loaded);
                 notifyLoadingDone();
             }
@@ -137,7 +137,7 @@ PassRefPtr<SimpleFontData> CSSFontFace::getFontData(const FontDescription& fontD
     }
 
 #if ENABLE(FONT_LOAD_EVENTS)
-    if (RuntimeEnabledFeatures::fontLoadEventsEnabled() && m_loadState == Loading) {
+    if (RuntimeEnabledFeatures::sharedFeatures().fontLoadEventsEnabled() && m_loadState == Loading) {
         notifyFontLoader(Error);
         notifyLoadingDone();
     }

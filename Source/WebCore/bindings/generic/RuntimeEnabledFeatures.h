@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved. 
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,6 +33,7 @@
 #define RuntimeEnabledFeatures_h
 
 #include "PlatformExportMacros.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -40,371 +42,381 @@ namespace WebCore {
 // generation to work properly.
 
 class RuntimeEnabledFeatures {
+    WTF_MAKE_NONCOPYABLE(RuntimeEnabledFeatures);
 public:
-    static void setLocalStorageEnabled(bool isEnabled) { isLocalStorageEnabled = isEnabled; }
-    static bool localStorageEnabled() { return isLocalStorageEnabled; }
+    void setLocalStorageEnabled(bool isEnabled) { m_isLocalStorageEnabled = isEnabled; }
+    bool localStorageEnabled() const { return m_isLocalStorageEnabled; }
 
-    static void setSessionStorageEnabled(bool isEnabled) { isSessionStorageEnabled = isEnabled; }
-    static bool sessionStorageEnabled() { return isSessionStorageEnabled; }
+    void setSessionStorageEnabled(bool isEnabled) { m_isSessionStorageEnabled = isEnabled; }
+    bool sessionStorageEnabled() const { return m_isSessionStorageEnabled; }
 
-    static void setWebkitNotificationsEnabled(bool isEnabled) { isWebkitNotificationsEnabled = isEnabled; }
-    static bool webkitNotificationsEnabled() { return isWebkitNotificationsEnabled; }
+    void setWebkitNotificationsEnabled(bool isEnabled) { m_isWebkitNotificationsEnabled = isEnabled; }
+    bool webkitNotificationsEnabled() const { return m_isWebkitNotificationsEnabled; }
 
-    static void setApplicationCacheEnabled(bool isEnabled) { isApplicationCacheEnabled = isEnabled; }
-    static bool applicationCacheEnabled() { return isApplicationCacheEnabled; }
+    void setApplicationCacheEnabled(bool isEnabled) { m_isApplicationCacheEnabled = isEnabled; }
+    bool applicationCacheEnabled() const { return m_isApplicationCacheEnabled; }
 
-    static void setDataTransferItemsEnabled(bool isEnabled) { isDataTransferItemsEnabled = isEnabled; }
-    static bool dataTransferItemsEnabled() { return isDataTransferItemsEnabled; }
+    void setDataTransferItemsEnabled(bool isEnabled) { m_isDataTransferItemsEnabled = isEnabled; }
+    bool dataTransferItemsEnabled() const { return m_isDataTransferItemsEnabled; }
 
-    static void setGeolocationEnabled(bool isEnabled) { isGeolocationEnabled = isEnabled; }
-    static bool geolocationEnabled() { return isGeolocationEnabled; }
+    void setGeolocationEnabled(bool isEnabled) { m_isGeolocationEnabled = isEnabled; }
+    bool geolocationEnabled() const { return m_isGeolocationEnabled; }
 
-    static void setWebkitIndexedDBEnabled(bool isEnabled) { isIndexedDBEnabled = isEnabled; }
-    static bool webkitIndexedDBEnabled() { return isIndexedDBEnabled; }
-    static bool indexedDBEnabled() { return isIndexedDBEnabled; }
+    void setWebkitIndexedDBEnabled(bool isEnabled) { m_isIndexedDBEnabled = isEnabled; }
+    bool webkitIndexedDBEnabled() const { return m_isIndexedDBEnabled; }
+    bool indexedDBEnabled() const { return m_isIndexedDBEnabled; }
 
 #if ENABLE(CANVAS_PATH)
-    static void setCanvasPathEnabled(bool isEnabled) { isCanvasPathEnabled = isEnabled; }
-    static bool canvasPathEnabled() { return isCanvasPathEnabled; }
+    void setCanvasPathEnabled(bool isEnabled) { m_isCanvasPathEnabled = isEnabled; }
+    bool canvasPathEnabled() const { return m_isCanvasPathEnabled; }
 #else
-    static void setCanvasPathEnabled(bool) { }
-    static bool canvasPathEnabled() { return false; }
+    void setCanvasPathEnabled(bool) { }
+    bool canvasPathEnabled() const { return false; }
 #endif
 
 #if ENABLE(CSS_EXCLUSIONS)
-    static void setCSSExclusionsEnabled(bool isEnabled) { isCSSExclusionsEnabled = isEnabled; }
-    static bool cssExclusionsEnabled() { return isCSSExclusionsEnabled; }
+    void setCSSExclusionsEnabled(bool isEnabled) { m_isCSSExclusionsEnabled = isEnabled; }
+    bool cssExclusionsEnabled() const { return m_isCSSExclusionsEnabled; }
 #else
-    static void setCSSExclusionsEnabled(bool) { }
-    static bool cssExclusionsEnabled() { return false; }
+    void setCSSExclusionsEnabled(bool) { }
+    bool cssExclusionsEnabled() const { return false; }
 #endif
 
 #if ENABLE(CSS_SHAPES)
-    static void setCSSShapesEnabled(bool isEnabled) { isCSSShapesEnabled = isEnabled; }
-    static bool cssShapesEnabled() { return isCSSShapesEnabled; }
+    void setCSSShapesEnabled(bool isEnabled) { m_isCSSShapesEnabled = isEnabled; }
+    bool cssShapesEnabled() const { return m_isCSSShapesEnabled; }
 #else
-    static void setCSSShapesEnabled(bool) { }
-    static bool cssShapesEnabled() { return false; }
+    void setCSSShapesEnabled(bool) { }
+    bool cssShapesEnabled() const { return false; }
 #endif
 
 #if ENABLE(CSS_REGIONS)
-    static void setCSSRegionsEnabled(bool isEnabled) { isCSSRegionsEnabled = isEnabled; }
-    static bool cssRegionsEnabled() { return isCSSRegionsEnabled; }
+    void setCSSRegionsEnabled(bool isEnabled) { m_isCSSRegionsEnabled = isEnabled; }
+    bool cssRegionsEnabled() const { return m_isCSSRegionsEnabled; }
 #else
-    static void setCSSRegionsEnabled(bool) { }
-    static bool cssRegionsEnabled() { return false; }
+    void setCSSRegionsEnabled(bool) { }
+    bool cssRegionsEnabled() const { return false; }
 #endif
 
-    static void setCSSCompositingEnabled(bool isEnabled) { isCSSCompositingEnabled = isEnabled; }
-    static bool cssCompositingEnabled() { return isCSSCompositingEnabled; }
+    void setCSSCompositingEnabled(bool isEnabled) { m_isCSSCompositingEnabled = isEnabled; }
+    bool cssCompositingEnabled() const { return m_isCSSCompositingEnabled; }
 
 #if ENABLE(FONT_LOAD_EVENTS)
-    static void setFontLoadEventsEnabled(bool isEnabled) { isFontLoadEventsEnabled = isEnabled; }
-    static bool fontLoadEventsEnabled() { return isFontLoadEventsEnabled; }
+    void setFontLoadEventsEnabled(bool isEnabled) { m_isFontLoadEventsEnabled = isEnabled; }
+    bool fontLoadEventsEnabled() const { return m_isFontLoadEventsEnabled; }
 #else
-    static void setFontLoadEventsEnabled(bool) { }
-    static bool fontLoadEventsEnabled() { return false; }
+    void setFontLoadEventsEnabled(bool) { }
+    bool fontLoadEventsEnabled() { return false; }
 #endif
 
 #if ENABLE(FULLSCREEN_API)
     // Mozilla version
-    static bool webkitFullScreenAPIEnabled() { return isFullScreenAPIEnabled; }
-    static void setWebkitFullScreenAPIEnabled(bool isEnabled) { isFullScreenAPIEnabled = isEnabled; }
-    static bool webkitRequestFullScreenEnabled() { return isFullScreenAPIEnabled; }
-    static bool webkitIsFullScreenEnabled() { return isFullScreenAPIEnabled; }
-    static bool webkitFullScreenKeyboardInputAllowedEnabled() { return isFullScreenAPIEnabled; }
-    static bool webkitCurrentFullScreenElementEnabled() { return isFullScreenAPIEnabled; }
-    static bool webkitCancelFullScreenEnabled() { return isFullScreenAPIEnabled; }
+    bool webkitFullScreenAPIEnabled() const { return m_isFullScreenAPIEnabled; }
+    void setWebkitFullScreenAPIEnabled(bool isEnabled) { m_isFullScreenAPIEnabled = isEnabled; }
+    bool webkitRequestFullScreenEnabled() const { return m_isFullScreenAPIEnabled; }
+    bool webkitIsFullScreenEnabled() const { return m_isFullScreenAPIEnabled; }
+    bool webkitFullScreenKeyboardInputAllowedEnabled() const { return m_isFullScreenAPIEnabled; }
+    bool webkitCurrentFullScreenElementEnabled() const { return m_isFullScreenAPIEnabled; }
+    bool webkitCancelFullScreenEnabled() const { return m_isFullScreenAPIEnabled; }
 
     // W3C version
-    static bool webkitFullscreenEnabledEnabled() { return isFullScreenAPIEnabled; }
-    static bool webkitFullscreenElementEnabled() { return isFullScreenAPIEnabled; }
-    static bool webkitExitFullscreenEnabled() { return isFullScreenAPIEnabled; }
-    static bool webkitRequestFullscreenEnabled() { return isFullScreenAPIEnabled; }
+    bool webkitFullscreenEnabledEnabled() const { return m_isFullScreenAPIEnabled; }
+    bool webkitFullscreenElementEnabled() const { return m_isFullScreenAPIEnabled; }
+    bool webkitExitFullscreenEnabled() const { return m_isFullScreenAPIEnabled; }
+    bool webkitRequestFullscreenEnabled() const { return m_isFullScreenAPIEnabled; }
 #endif
 
 #if ENABLE(VIDEO)
-    static bool audioEnabled();
-    static bool htmlMediaElementEnabled();
-    static bool htmlAudioElementEnabled();
-    static bool htmlVideoElementEnabled();
-    static bool htmlSourceElementEnabled();
-    static bool mediaControllerEnabled();
-    static bool mediaErrorEnabled();
-    static bool timeRangesEnabled();
+    bool audioEnabled() const;
+    bool htmlMediaElementEnabled() const;
+    bool htmlAudioElementEnabled() const;
+    bool htmlVideoElementEnabled() const;
+    bool htmlSourceElementEnabled() const;
+    bool mediaControllerEnabled() const;
+    bool mediaErrorEnabled() const;
+    bool timeRangesEnabled() const;
 #endif
 
 #if ENABLE(SHARED_WORKERS)
-    static bool sharedWorkerEnabled();
+    bool sharedWorkerEnabled() const;
 #endif
 
 #if ENABLE(WEB_SOCKETS)
-    static bool webSocketEnabled();
+    bool webSocketEnabled() const;
 #endif
 
 #if ENABLE(SQL_DATABASE)
-    static bool openDatabaseEnabled();
-    static bool openDatabaseSyncEnabled();
+    bool openDatabaseEnabled() const;
+    bool openDatabaseSyncEnabled() const;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    static bool touchEnabled() { return isTouchEnabled; }
-    static void setTouchEnabled(bool isEnabled) { isTouchEnabled = isEnabled; }
+    bool touchEnabled() const { return m_isTouchEnabled; }
+    void setTouchEnabled(bool isEnabled) { m_isTouchEnabled = isEnabled; }
 #endif
 
-    static void setDeviceMotionEnabled(bool isEnabled) { isDeviceMotionEnabled = isEnabled; }
-    static bool deviceMotionEnabled() { return isDeviceMotionEnabled; }
-    static bool deviceMotionEventEnabled() { return isDeviceMotionEnabled; }
-    static bool ondevicemotionEnabled() { return isDeviceMotionEnabled; }
+    void setDeviceMotionEnabled(bool isEnabled) { m_isDeviceMotionEnabled = isEnabled; }
+    bool deviceMotionEnabled() const { return m_isDeviceMotionEnabled; }
+    bool deviceMotionEventEnabled() const { return m_isDeviceMotionEnabled; }
+    bool ondevicemotionEnabled() const { return m_isDeviceMotionEnabled; }
 
-    static void setDeviceOrientationEnabled(bool isEnabled) { isDeviceOrientationEnabled = isEnabled; }
-    static bool deviceOrientationEnabled() { return isDeviceOrientationEnabled; }
-    static bool deviceOrientationEventEnabled() { return isDeviceOrientationEnabled; }
-    static bool ondeviceorientationEnabled() { return isDeviceOrientationEnabled; }
+    void setDeviceOrientationEnabled(bool isEnabled) { m_isDeviceOrientationEnabled = isEnabled; }
+    bool deviceOrientationEnabled() const { return m_isDeviceOrientationEnabled; }
+    bool deviceOrientationEventEnabled() const { return m_isDeviceOrientationEnabled; }
+    bool ondeviceorientationEnabled() const { return m_isDeviceOrientationEnabled; }
 
-    static void setSpeechInputEnabled(bool isEnabled) { isSpeechInputEnabled = isEnabled; }
-    static bool speechInputEnabled() { return isSpeechInputEnabled; }
-    static bool webkitSpeechEnabled() { return isSpeechInputEnabled; }
-    static bool webkitGrammarEnabled() { return isSpeechInputEnabled; }
+    void setSpeechInputEnabled(bool isEnabled) { m_isSpeechInputEnabled = isEnabled; }
+    bool speechInputEnabled() const { return m_isSpeechInputEnabled; }
+    bool webkitSpeechEnabled() const { return m_isSpeechInputEnabled; }
+    bool webkitGrammarEnabled() const { return m_isSpeechInputEnabled; }
 
 #if ENABLE(SCRIPTED_SPEECH)
-    static void setScriptedSpeechEnabled(bool isEnabled) { isScriptedSpeechEnabled = isEnabled; }
-    static bool scriptedSpeechEnabled() { return isScriptedSpeechEnabled; }
-    static bool webkitSpeechRecognitionEnabled() { return isScriptedSpeechEnabled; }
-    static bool webkitSpeechRecognitionErrorEnabled() { return isScriptedSpeechEnabled; }
-    static bool webkitSpeechRecognitionEventEnabled() { return isScriptedSpeechEnabled; }
-    static bool webkitSpeechGrammarEnabled() { return isScriptedSpeechEnabled; }
-    static bool webkitSpeechGrammarListEnabled() { return isScriptedSpeechEnabled; }
+    void setScriptedSpeechEnabled(bool isEnabled) { m_isScriptedSpeechEnabled = isEnabled; }
+    bool scriptedSpeechEnabled() const { return m_isScriptedSpeechEnabled; }
+    bool webkitSpeechRecognitionEnabled() const { return m_isScriptedSpeechEnabled; }
+    bool webkitSpeechRecognitionErrorEnabled() const { return m_isScriptedSpeechEnabled; }
+    bool webkitSpeechRecognitionEventEnabled() const { return m_isScriptedSpeechEnabled; }
+    bool webkitSpeechGrammarEnabled() const { return m_isScriptedSpeechEnabled; }
+    bool webkitSpeechGrammarListEnabled() const { return m_isScriptedSpeechEnabled; }
 #endif
 
 #if ENABLE(FILE_SYSTEM)
-    static bool fileSystemEnabled();
-    static void setFileSystemEnabled(bool isEnabled) { isFileSystemEnabled = isEnabled; }
+    bool fileSystemEnabled() const;
+    void setFileSystemEnabled(bool isEnabled) { m_isFileSystemEnabled = isEnabled; }
 #endif
 
 #if ENABLE(JAVASCRIPT_I18N_API)
-    static bool javaScriptI18NAPIEnabled();
-    static void setJavaScriptI18NAPIEnabled(bool isEnabled) { isJavaScriptI18NAPIEnabled = isEnabled; }
+    bool javaScriptI18NAPIEnabled() const;
+    void setJavaScriptI18NAPIEnabled(bool isEnabled) { m_isJavaScriptI18NAPIEnabled = isEnabled; }
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    static bool mediaStreamEnabled() { return isMediaStreamEnabled; }
-    static void setMediaStreamEnabled(bool isEnabled) { isMediaStreamEnabled = isEnabled; }
-    static bool webkitGetUserMediaEnabled() { return isMediaStreamEnabled; }
-    static bool webkitMediaStreamEnabled() { return isMediaStreamEnabled; }
+    bool mediaStreamEnabled() const { return m_isMediaStreamEnabled; }
+    void setMediaStreamEnabled(bool isEnabled) { m_isMediaStreamEnabled = isEnabled; }
+    bool webkitGetUserMediaEnabled() const { return m_isMediaStreamEnabled; }
+    bool webkitMediaStreamEnabled() const { return m_isMediaStreamEnabled; }
 
-    static bool peerConnectionEnabled() { return isMediaStreamEnabled && isPeerConnectionEnabled; }
-    static void setPeerConnectionEnabled(bool isEnabled) { isPeerConnectionEnabled = isEnabled; }
-    static bool webkitRTCPeerConnectionEnabled() { return peerConnectionEnabled(); }
+    bool peerConnectionEnabled() const { return m_isMediaStreamEnabled && m_isPeerConnectionEnabled; }
+    void setPeerConnectionEnabled(bool isEnabled) { m_isPeerConnectionEnabled = isEnabled; }
+    bool webkitRTCPeerConnectionEnabled() const { return peerConnectionEnabled(); }
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
-    static void setLegacyCSSVendorPrefixesEnabled(bool isEnabled) { isLegacyCSSVendorPrefixesEnabled = isEnabled; }
-    static bool legacyCSSVendorPrefixesEnabled() { return isLegacyCSSVendorPrefixesEnabled; }
+    void setLegacyCSSVendorPrefixesEnabled(bool isEnabled) { m_isLegacyCSSVendorPrefixesEnabled = isEnabled; }
+    bool legacyCSSVendorPrefixesEnabled() const { return m_isLegacyCSSVendorPrefixesEnabled; }
 #endif
 
 #if ENABLE(GAMEPAD)
-    static void setWebkitGetGamepadsEnabled(bool isEnabled) { isGamepadEnabled = isEnabled; }
-    static bool webkitGetGamepadsEnabled() { return isGamepadEnabled; }
+    void setWebkitGetGamepadsEnabled(bool isEnabled) { m_isGamepadEnabled = isEnabled; }
+    bool webkitGetGamepadsEnabled() const { return m_isGamepadEnabled; }
 #endif
 
 #if ENABLE(QUOTA)
-    static bool quotaEnabled() { return isQuotaEnabled; }
-    static void setQuotaEnabled(bool isEnabled) { isQuotaEnabled = isEnabled; }
+    bool quotaEnabled() const { return m_isQuotaEnabled; }
+    void setQuotaEnabled(bool isEnabled) { m_isQuotaEnabled = isEnabled; }
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-    static bool mediaSourceEnabled() { return isMediaSourceEnabled; }
-    static void setMediaSourceEnabled(bool isEnabled) { isMediaSourceEnabled = isEnabled; }
+    bool mediaSourceEnabled() const { return m_isMediaSourceEnabled; }
+    void setMediaSourceEnabled(bool isEnabled) { m_isMediaSourceEnabled = isEnabled; }
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    static bool encryptedMediaEnabled() { return isEncryptedMediaEnabled; }
-    static void setEncryptedMediaEnabled(bool isEnabled) { isEncryptedMediaEnabled = isEnabled; }
+    bool encryptedMediaEnabled() const { return m_isEncryptedMediaEnabled; }
+    void setEncryptedMediaEnabled(bool isEnabled) { m_isEncryptedMediaEnabled = isEnabled; }
 #endif
 
 #if ENABLE(VIDEO_TRACK)
-    static bool webkitVideoTrackEnabled() { return isVideoTrackEnabled; }
-    static void setWebkitVideoTrackEnabled(bool isEnabled) { isVideoTrackEnabled = isEnabled; }
+    bool webkitVideoTrackEnabled() const { return m_isVideoTrackEnabled; }
+    void setWebkitVideoTrackEnabled(bool isEnabled) { m_isVideoTrackEnabled = isEnabled; }
 #endif
 
 #if ENABLE(SHADOW_DOM)
-    static bool shadowDOMEnabled() { return isShadowDOMEnabled; }
-    static void setShadowDOMEnabled(bool isEnabled) { isShadowDOMEnabled = isEnabled; }
+    bool shadowDOMEnabled() const { return m_isShadowDOMEnabled; }
+    void setShadowDOMEnabled(bool isEnabled) { m_isShadowDOMEnabled = isEnabled; }
 
-    static bool authorShadowDOMForAnyElementEnabled() { return isAuthorShadowDOMForAnyElementEnabled; }
-    static void setAuthorShadowDOMForAnyElementEnabled(bool isEnabled) { isAuthorShadowDOMForAnyElementEnabled = isEnabled; }
+    bool authorShadowDOMForAnyElementEnabled() const { return m_isAuthorShadowDOMForAnyElementEnabled; }
+    void setAuthorShadowDOMForAnyElementEnabled(bool isEnabled) { m_isAuthorShadowDOMForAnyElementEnabled = isEnabled; }
 #endif
 
 #if ENABLE(CUSTOM_ELEMENTS)
-    static bool customDOMElementsEnabled() { return isCustomDOMElementsEnabled; }
-    static void setCustomDOMElements(bool isEnabled) { isCustomDOMElementsEnabled = isEnabled; }
+    bool customDOMElementsEnabled() const { return m_isCustomDOMElementsEnabled; }
+    void setCustomDOMElements(bool isEnabled) { m_isCustomDOMElementsEnabled = isEnabled; }
 #endif
 
 #if ENABLE(STYLE_SCOPED)
-    static bool styleScopedEnabled() { return isStyleScopedEnabled; }
-    static void setStyleScopedEnabled(bool isEnabled) { isStyleScopedEnabled = isEnabled; }
+    bool styleScopedEnabled() const { return m_isStyleScopedEnabled; }
+    void setStyleScopedEnabled(bool isEnabled) { m_isStyleScopedEnabled = isEnabled; }
 #endif
 
 #if ENABLE(INPUT_TYPE_DATE)
-    static bool inputTypeDateEnabled() { return isInputTypeDateEnabled; }
-    static void setInputTypeDateEnabled(bool isEnabled) { isInputTypeDateEnabled = isEnabled; }
+    bool inputTypeDateEnabled() const { return m_isInputTypeDateEnabled; }
+    void setInputTypeDateEnabled(bool isEnabled) { m_isInputTypeDateEnabled = isEnabled; }
 #endif
 
 #if ENABLE(INPUT_TYPE_DATETIME_INCOMPLETE)
-    static bool inputTypeDateTimeEnabled() { return isInputTypeDateTimeEnabled; }
-    static void setInputTypeDateTimeEnabled(bool isEnabled) { isInputTypeDateTimeEnabled = isEnabled; }
+    bool inputTypeDateTimeEnabled() const { return m_isInputTypeDateTimeEnabled; }
+    void setInputTypeDateTimeEnabled(bool isEnabled) { m_isInputTypeDateTimeEnabled = isEnabled; }
 #endif
 
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
-    static bool inputTypeDateTimeLocalEnabled() { return isInputTypeDateTimeLocalEnabled; }
-    static void setInputTypeDateTimeLocalEnabled(bool isEnabled) { isInputTypeDateTimeLocalEnabled = isEnabled; }
+    bool inputTypeDateTimeLocalEnabled() const { return m_isInputTypeDateTimeLocalEnabled; }
+    void setInputTypeDateTimeLocalEnabled(bool isEnabled) { m_isInputTypeDateTimeLocalEnabled = isEnabled; }
 #endif
 
 #if ENABLE(INPUT_TYPE_MONTH)
-    static bool inputTypeMonthEnabled() { return isInputTypeMonthEnabled; }
-    static void setInputTypeMonthEnabled(bool isEnabled) { isInputTypeMonthEnabled = isEnabled; }
+    bool inputTypeMonthEnabled() const { return m_isInputTypeMonthEnabled; }
+    void setInputTypeMonthEnabled(bool isEnabled) { m_isInputTypeMonthEnabled = isEnabled; }
 #endif
 
 #if ENABLE(INPUT_TYPE_TIME)
-    static bool inputTypeTimeEnabled() { return isInputTypeTimeEnabled; }
-    static void setInputTypeTimeEnabled(bool isEnabled) { isInputTypeTimeEnabled = isEnabled; }
+    bool inputTypeTimeEnabled() const { return m_isInputTypeTimeEnabled; }
+    void setInputTypeTimeEnabled(bool isEnabled) { m_isInputTypeTimeEnabled = isEnabled; }
 #endif
 
 #if ENABLE(INPUT_TYPE_WEEK)
-    static bool inputTypeWeekEnabled() { return isInputTypeWeekEnabled; }
-    static void setInputTypeWeekEnabled(bool isEnabled) { isInputTypeWeekEnabled = isEnabled; }
+    bool inputTypeWeekEnabled() const { return m_isInputTypeWeekEnabled; }
+    void setInputTypeWeekEnabled(bool isEnabled) { m_isInputTypeWeekEnabled = isEnabled; }
 #endif
 
 #if ENABLE(CSP_NEXT)
-    static bool experimentalContentSecurityPolicyFeaturesEnabled() { return areExperimentalContentSecurityPolicyFeaturesEnabled; }
-    static void setExperimentalContentSecurityPolicyFeaturesEnabled(bool isEnabled) { areExperimentalContentSecurityPolicyFeaturesEnabled = isEnabled; }
+    bool experimentalContentSecurityPolicyFeaturesEnabled() const { return m_areExperimentalContentSecurityPolicyFeaturesEnabled; }
+    void setExperimentalContentSecurityPolicyFeaturesEnabled(bool isEnabled) { m_areExperimentalContentSecurityPolicyFeaturesEnabled = isEnabled; }
 #endif
 
 #if ENABLE(IFRAME_SEAMLESS)
-    static bool seamlessIFramesEnabled() { return areSeamlessIFramesEnabled; }
-    static void setSeamlessIFramesEnabled(bool isEnabled) { areSeamlessIFramesEnabled = isEnabled; }
+    bool seamlessIFramesEnabled() const { return m_areSeamlessIFramesEnabled; }
+    void setSeamlessIFramesEnabled(bool isEnabled) { m_areSeamlessIFramesEnabled = isEnabled; }
 #endif
 
-    static bool langAttributeAwareFormControlUIEnabled() { return isLangAttributeAwareFormControlUIEnabled; }
+    bool langAttributeAwareFormControlUIEnabled() const { return m_isLangAttributeAwareFormControlUIEnabled; }
     // The lang attribute support is incomplete and should only be turned on for tests.
-    static void setLangAttributeAwareFormControlUIEnabled(bool isEnabled) { isLangAttributeAwareFormControlUIEnabled = isEnabled; }
+    void setLangAttributeAwareFormControlUIEnabled(bool isEnabled) { m_isLangAttributeAwareFormControlUIEnabled = isEnabled; }
+
+    static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
     // Never instantiate.
-    RuntimeEnabledFeatures() { }
+    RuntimeEnabledFeatures();
 
-    static bool isLocalStorageEnabled;
-    static bool isSessionStorageEnabled;
-    static bool isWebkitNotificationsEnabled;
-    static bool isApplicationCacheEnabled;
-    static bool isDataTransferItemsEnabled;
-    static bool isGeolocationEnabled;
-    static bool isIndexedDBEnabled;
-    static bool isTouchEnabled;
-    static bool isDeviceMotionEnabled;
-    static bool isDeviceOrientationEnabled;
-    static bool isSpeechInputEnabled;
-    static bool isCanvasPathEnabled;
-    static bool isCSSExclusionsEnabled;
-    static bool isCSSShapesEnabled;
-    static bool isCSSRegionsEnabled;
-    static bool isCSSCompositingEnabled;
-    WEBCORE_TESTING static bool isLangAttributeAwareFormControlUIEnabled;
+    bool m_isLocalStorageEnabled;
+    bool m_isSessionStorageEnabled;
+    bool m_isWebkitNotificationsEnabled;
+    bool m_isApplicationCacheEnabled;
+    bool m_isDataTransferItemsEnabled;
+    bool m_isGeolocationEnabled;
+    bool m_isIndexedDBEnabled;
+    bool m_isTouchEnabled;
+    bool m_isDeviceMotionEnabled;
+    bool m_isDeviceOrientationEnabled;
+    bool m_isSpeechInputEnabled;
+    bool m_isCanvasPathEnabled;
+    bool m_isCSSExclusionsEnabled;
+    bool m_isCSSShapesEnabled;
+    bool m_isCSSRegionsEnabled;
+    bool m_isCSSCompositingEnabled;
+    bool m_isLangAttributeAwareFormControlUIEnabled;
 #if ENABLE(SCRIPTED_SPEECH)
-    static bool isScriptedSpeechEnabled;
+    bool m_isScriptedSpeechEnabled;
 #endif
 #if ENABLE(FILE_SYSTEM)
-    static bool isFileSystemEnabled;
+    bool m_isFileSystemEnabled;
 #endif
 
 #if ENABLE(JAVASCRIPT_I18N_API)
-    static bool isJavaScriptI18NAPIEnabled;
+    bool m_isJavaScriptI18NAPIEnabled;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    static bool isMediaStreamEnabled;
-    static bool isPeerConnectionEnabled;
+    bool m_isMediaStreamEnabled;
+    bool m_isPeerConnectionEnabled;
 #endif
 
 #if ENABLE(GAMEPAD)
-    static bool isGamepadEnabled;
+    bool m_isGamepadEnabled;
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
-    static bool isLegacyCSSVendorPrefixesEnabled;
+    bool m_isLegacyCSSVendorPrefixesEnabled;
 #endif
 
 #if ENABLE(QUOTA)
-    static bool isQuotaEnabled;
+    bool m_isQuotaEnabled;
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    static bool isFullScreenAPIEnabled;
+    bool m_isFullScreenAPIEnabled;
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-    static bool isMediaSourceEnabled;
+    bool m_isMediaSourceEnabled;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    static bool isEncryptedMediaEnabled;
+    bool m_isEncryptedMediaEnabled;
 #endif
 
 #if ENABLE(VIDEO_TRACK)
-    static bool isVideoTrackEnabled;
+    bool m_isVideoTrackEnabled;
 #endif
 
 #if ENABLE(SHADOW_DOM)
-    static bool isShadowDOMEnabled;
-
-    static bool isAuthorShadowDOMForAnyElementEnabled;
+    bool m_isShadowDOMEnabled;
+    bool m_isAuthorShadowDOMForAnyElementEnabled;
 #endif
 
 #if ENABLE(CUSTOM_ELEMENTS)
-    static bool isCustomDOMElementsEnabled;
+    bool m_isCustomDOMElementsEnabled;
 #endif
 
 #if ENABLE(STYLE_SCOPED)
-    static bool isStyleScopedEnabled;
+    bool m_isStyleScopedEnabled;
 #endif
 
 #if ENABLE(INPUT_TYPE_DATE)
-    static bool isInputTypeDateEnabled;
+    bool m_isInputTypeDateEnabled;
 #endif
 
 #if ENABLE(INPUT_TYPE_DATETIME_INCOMPLETE)
-    static bool isInputTypeDateTimeEnabled;
+    bool m_isInputTypeDateTimeEnabled;
 #endif
 
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
-    static bool isInputTypeDateTimeLocalEnabled;
+    bool m_isInputTypeDateTimeLocalEnabled;
 #endif
 
 #if ENABLE(INPUT_TYPE_MONTH)
-    static bool isInputTypeMonthEnabled;
+    bool m_isInputTypeMonthEnabled;
 #endif
 
 #if ENABLE(INPUT_TYPE_TIME)
-    static bool isInputTypeTimeEnabled;
+    bool m_isInputTypeTimeEnabled;
 #endif
 
 #if ENABLE(INPUT_TYPE_WEEK)
-    static bool isInputTypeWeekEnabled;
+    bool m_isInputTypeWeekEnabled;
 #endif
 
 #if ENABLE(CSP_NEXT)
-    static bool areExperimentalContentSecurityPolicyFeaturesEnabled;
+    bool m_areExperimentalContentSecurityPolicyFeaturesEnabled;
 #endif
 
 #if ENABLE(IFRAME_SEAMLESS)
-    static bool areSeamlessIFramesEnabled;
+    bool m_areSeamlessIFramesEnabled;
 #endif
 
 #if ENABLE(FONT_LOAD_EVENTS)
-    static bool isFontLoadEventsEnabled;
+    bool m_isFontLoadEventsEnabled;
 #endif
 
+#ifndef CLASS_IF_GCC
+#if COMPILER(GCC)
+#define CLASS_IF_GCC class
+#else
+#define CLASS_IF_GCC
+#endif
+#endif
+    friend CLASS_IF_GCC NeverDestroyed<RuntimeEnabledFeatures>;
 };
 
 } // namespace WebCore

@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2013 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -173,10 +174,10 @@ void QWebSettingsPrivate::apply()
 
         value = attributes.value(QWebSettings::CSSRegionsEnabled,
                                  global->attributes.value(QWebSettings::CSSRegionsEnabled));
-        WebCore::RuntimeEnabledFeatures::setCSSRegionsEnabled(value);
+        WebCore::RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(value);
         value = attributes.value(QWebSettings::CSSCompositingEnabled,
                                  global->attributes.value(QWebSettings::CSSCompositingEnabled));
-        WebCore::RuntimeEnabledFeatures::setCSSCompositingEnabled(value);
+        WebCore::RuntimeEnabledFeatures::sharedFeatures().setCSSCompositingEnabled(value);
         value = attributes.value(QWebSettings::CSSGridLayoutEnabled,
                                  global->attributes.value(QWebSettings::CSSGridLayoutEnabled));
         settings->setCSSGridLayoutEnabled(value);

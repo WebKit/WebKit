@@ -238,8 +238,6 @@ EXPORTS
         symbolWithPointer(?disconnectFrontend@InspectorController@WebCore@@QAEXXZ, ?disconnectFrontend@InspectorController@WebCore@@QEAAXXZ)
 #endif
         symbolWithPointer(?isActiveInsertionPoint@WebCore@@YA_NPBVNode@1@@Z, ?isActiveInsertionPoint@WebCore@@YA_NPEBVNode@1@@Z)
-        ?isCSSExclusionsEnabled@RuntimeEnabledFeatures@WebCore@@0_NA
-        ?isCSSShapesEnabled@RuntimeEnabledFeatures@WebCore@@0_NA
         symbolWithPointer(?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z, ?isPreloaded@CachedResourceLoader@WebCore@@QEBA_NAEBVString@WTF@@@Z)
         symbolWithPointer(?jsArray@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z, ?jsArray@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z)
         symbolWithPointer(?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ, ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QEBA_NXZ)
@@ -300,6 +298,7 @@ EXPORTS
         symbolWithPointer(?setPseudo@Element@WebCore@@QAEXABVAtomicString@WTF@@@Z, ?setPseudo@Element@WebCore@@QEAAXAEBVAtomicString@WTF@@@Z)
         symbolWithPointer(?setMediaTypeOverride@Settings@WebCore@@QAEXABVString@WTF@@@Z, ?setMediaTypeOverride@Settings@WebCore@@QEAAXAEBVString@WTF@@@Z)
         symbolWithPointer(?settings@Document@WebCore@@QBEPAVSettings@2@XZ, ?settings@Document@WebCore@@QEBAPEAVSettings@2@XZ)
+        ?sharedFeatures@RuntimeEnabledFeatures@WebCore@@SAAAV12@XZ
         symbolWithPointer(?substring@String@WTF@@QBE?AV12@II@Z, ?substring@String@WTF@@QEBA?AV12@II@Z)
         symbolWithPointer(?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ, ?suggestedValue@HTMLInputElement@WebCore@@QEBAAEBVString@WTF@@XZ)
         symbolWithPointer(?target@HistoryItem@WebCore@@QBEABVString@WTF@@XZ, ?target@HistoryItem@WebCore@@QEBAAEBVString@WTF@@XZ)

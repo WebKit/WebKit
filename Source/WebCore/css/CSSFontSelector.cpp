@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2011, 2013 Apple Inc. All rights reserved.
  *           (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -235,7 +235,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
             RefPtr<CSSFontFaceRule> rule;
 #if ENABLE(FONT_LOAD_EVENTS)
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=112116 - This CSSFontFaceRule has no parent.
-            if (RuntimeEnabledFeatures::fontLoadEventsEnabled())
+            if (RuntimeEnabledFeatures::sharedFeatures().fontLoadEventsEnabled())
                 rule = static_pointer_cast<CSSFontFaceRule>(fontFaceRule->createCSSOMWrapper());
 #endif
             fontFace = CSSFontFace::create(static_cast<FontTraitsMask>(traitsMask), rule);

@@ -1,3 +1,15 @@
+2013-09-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Refactor RuntimeEnabledFeatures as a Singleton.
+        https://bugs.webkit.org/show_bug.cgi?id=121883.
+
+        Reviewed by Jer Noble.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply): Use singleton accessor.
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setSeamlessIFramesEnabled): Ditto.
+
 2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Fix build with Qt 5.2 QtPosition module

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,7 +75,7 @@ void CSSSegmentedFontFace::fontLoaded(CSSFontFace*)
     pruneTable();
 
 #if ENABLE(FONT_LOAD_EVENTS)
-    if (RuntimeEnabledFeatures::fontLoadEventsEnabled() && !isLoading()) {
+    if (RuntimeEnabledFeatures::sharedFeatures().fontLoadEventsEnabled() && !isLoading()) {
         Vector<RefPtr<LoadFontCallback> > callbacks;
         m_callbacks.swap(callbacks);
         for (size_t index = 0; index < callbacks.size(); ++index) {
