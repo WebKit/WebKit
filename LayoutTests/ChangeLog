@@ -1,3 +1,19 @@
+2013-09-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        op_get_callee shouldn't use value profiling
+        https://bugs.webkit.org/show_bug.cgi?id=121821
+
+        Reviewed by Filip Pizlo.
+
+        Added two tests to make sure we didn't regress the performance of op_get_callee.
+
+        * js/regress/get_callee_monomorphic-expected.txt: Added.
+        * js/regress/get_callee_monomorphic.html: Added.
+        * js/regress/get_callee_polymorphic-expected.txt: Added.
+        * js/regress/get_callee_polymorphic.html: Added.
+        * js/regress/script-tests/get_callee_monomorphic.js: Added.
+        * js/regress/script-tests/get_callee_polymorphic.js: Added.
+
 2013-09-24  Bear Travis  <betravis@adobe.com>
 
         Disable CSS_SHAPES on Windows

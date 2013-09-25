@@ -193,6 +193,14 @@ SLOW_PATH_DECL(slow_path_construct_arityCheck)
     RETURN_TWO(0, reinterpret_cast<ExecState*>(SlotsToAdd));
 }
 
+SLOW_PATH_DECL(slow_path_get_callee)
+{
+    BEGIN();
+    JSFunction* callee = jsCast<JSFunction*>(exec->callee());
+    pc[2].u.jsCell.set(exec->vm(), exec->codeBlock()->ownerExecutable(), callee);
+    RETURN(callee);
+}
+
 SLOW_PATH_DECL(slow_path_create_arguments)
 {
     BEGIN();

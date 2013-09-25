@@ -746,6 +746,7 @@ namespace JSC {
         void emitSlow_op_create_this(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_div(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_eq(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_callee(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_arguments_length(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);

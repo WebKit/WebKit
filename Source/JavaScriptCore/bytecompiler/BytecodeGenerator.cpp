@@ -1404,9 +1404,9 @@ RegisterID* BytecodeGenerator::emitCreateThis(RegisterID* dst)
 {
     RefPtr<RegisterID> func = newTemporary(); 
 
-    UnlinkedValueProfile profile = emitProfiledOpcode(op_get_callee);
+    emitOpcode(op_get_callee);
     instructions().append(func->index());
-    instructions().append(profile);
+    instructions().append(0);
 
     size_t begin = instructions().size();
     m_staticPropertyAnalyzer.createThis(m_thisRegister.index(), begin + 3);

@@ -2007,18 +2007,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_get_callee: {
-            ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-            ValueProfile* profile = currentInstruction[2].u.profile;
-            profile->computeUpdatedPrediction(locker);
-            if (profile->m_singletonValueIsTop
-                || !profile->m_singletonValue
-                || !profile->m_singletonValue.isCell())
+            JSCell* cachedFunction = currentInstruction[2].u.jsCell.get();
+            if (!cachedFunction 
+                || m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadFunction)) {
                 set(currentInstruction[1].u.operand, get(JSStack::Callee));
-            else {
-                ASSERT(profile->m_singletonValue.asCell()->inherits(JSFunction::info()));
+            } else {
+                ASSERT(cachedFunction->inherits(JSFunction::info()));
                 Node* actualCallee = get(JSStack::Callee);
-                addToGraph(CheckFunction, OpInfo(profile->m_singletonValue.asCell()), actualCallee);
-                set(currentInstruction[1].u.operand, addToGraph(WeakJSConstant, OpInfo(profile->m_singletonValue.asCell())));
+                addToGraph(CheckFunction, OpInfo(cachedFunction), actualCallee);
+                set(currentInstruction[1].u.operand, addToGraph(WeakJSConstant, OpInfo(cachedFunction)));
             }
             NEXT_OPCODE(op_get_callee);
         }

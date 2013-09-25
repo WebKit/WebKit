@@ -407,6 +407,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_create_this)
         DEFINE_SLOWCASE_OP(op_div)
         DEFINE_SLOWCASE_OP(op_eq)
+        DEFINE_SLOWCASE_OP(op_get_callee)
         case op_get_by_id_out_of_line:
         case op_get_array_length:
         DEFINE_SLOWCASE_OP(op_get_by_id)

@@ -1736,8 +1736,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
         case op_to_this:
         case op_get_by_id:
-        case op_call_varargs:
-        case op_get_callee: {
+        case op_call_varargs: {
             ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
@@ -2238,6 +2237,13 @@ void CodeBlock::finalizeUnconditionally()
                 curInstruction[0].u.opcode = interpreter->getOpcode(op_put_by_id);
                 break;
             case op_get_array_length:
+                break;
+            case op_get_callee:
+                if (!curInstruction[2].u.jsCell || Heap::isMarked(curInstruction[2].u.jsCell.get()))
+                    break;
+                if (Options::verboseOSR())
+                    dataLogF("Clearing LLInt get callee with function %p.\n", curInstruction[2].u.jsCell.get());
+                curInstruction[2].u.jsCell.clear();
                 break;
             case op_get_from_scope:
             case op_put_to_scope: {

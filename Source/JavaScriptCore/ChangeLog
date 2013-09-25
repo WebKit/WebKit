@@ -1,3 +1,39 @@
+2013-09-24  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        op_get_callee shouldn't use value profiling
+        https://bugs.webkit.org/show_bug.cgi?id=121821
+
+        Reviewed by Filip Pizlo.
+
+        Currently it's one of the two opcodes that uses m_singletonValue, which is unnecessary. 
+        Our current plan is to remove m_singletonValue so that GenGC can have a simpler story 
+        for handling CodeBlocks/FunctionExecutables during nursery collections.
+
+        Instead of using a ValueProfile op_get_callee now has a simple inline cache of the most 
+        recent JSFunction that we saw.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCreateThis):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_callee):
+        (JSC::JIT::emitSlow_op_get_callee):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_callee):
+        (JSC::JIT::emitSlow_op_get_callee):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+
 2013-09-24  Mark Lam  <mark.lam@apple.com>
 
         Change JSC debug hooks to pass a CallFrame* instead of a DebuggerCallFrame.
