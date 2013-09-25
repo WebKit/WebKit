@@ -113,6 +113,35 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     RuntimeEnabledFeatures::sharedFeatures().setStyleScopedEnabled(m_originalStyleScoped);
 #endif
     settings.setEditingBehaviorType(m_originalEditingBehavior);
+
+    for (auto iter = m_standardFontFamilies.begin(); iter != m_standardFontFamilies.end(); ++iter)
+        settings.setStandardFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    m_standardFontFamilies.clear();
+
+    for (auto iter = m_fixedFontFamilies.begin(); iter != m_fixedFontFamilies.end(); ++iter)
+        settings.setFixedFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    m_fixedFontFamilies.clear();
+
+    for (auto iter = m_serifFontFamilies.begin(); iter != m_serifFontFamilies.end(); ++iter)
+        settings.setSerifFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    m_serifFontFamilies.clear();
+
+    for (auto iter = m_sansSerifFontFamilies.begin(); iter != m_sansSerifFontFamilies.end(); ++iter)
+        settings.setSansSerifFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    m_sansSerifFontFamilies.clear();
+
+    for (auto iter = m_cursiveFontFamilies.begin(); iter != m_cursiveFontFamilies.end(); ++iter)
+        settings.setCursiveFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    m_cursiveFontFamilies.clear();
+
+    for (auto iter = m_fantasyFontFamilies.begin(); iter != m_fantasyFontFamilies.end(); ++iter)
+        settings.setFantasyFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    m_fantasyFontFamilies.clear();
+
+    for (auto iter = m_pictographFontFamilies.begin(); iter != m_pictographFontFamilies.end(); ++iter)
+        settings.setPictographFontFamily(iter->value, static_cast<UScriptCode>(iter->key));
+    m_pictographFontFamilies.clear();
+
 #if ENABLE(TEXT_AUTOSIZING)
     settings.setTextAutosizingEnabled(m_originalTextAutosizingEnabled);
     settings.setTextAutosizingWindowSizeOverride(m_originalTextAutosizingWindowSizeOverride);
@@ -253,54 +282,74 @@ void InternalSettings::setTouchEventEmulationEnabled(bool enabled, ExceptionCode
 #endif
 }
 
-typedef void (Settings::*SetFontFamilyFunction)(const AtomicString&, UScriptCode);
-static void setFontFamily(Settings* settings, const String& family, const String& script, SetFontFamilyFunction setter)
-{
-    UScriptCode code = scriptNameToCode(script);
-    if (code != USCRIPT_INVALID_CODE)
-        (settings->*setter)(family, code);
-}
-
 void InternalSettings::setStandardFontFamily(const String& family, const String& script, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    setFontFamily(settings(), family, script, &Settings::setStandardFontFamily);
+    UScriptCode code = scriptNameToCode(script);
+    if (code == USCRIPT_INVALID_CODE)
+        return;
+    m_backup.m_standardFontFamilies.add(code, settings()->standardFontFamily(code));
+    settings()->setStandardFontFamily(family, code);
 }
 
 void InternalSettings::setSerifFontFamily(const String& family, const String& script, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    setFontFamily(settings(), family, script, &Settings::setSerifFontFamily);
+    UScriptCode code = scriptNameToCode(script);
+    if (code == USCRIPT_INVALID_CODE)
+        return;
+    m_backup.m_serifFontFamilies.add(code, settings()->serifFontFamily(code));
+    settings()->setSerifFontFamily(family, code);
 }
 
 void InternalSettings::setSansSerifFontFamily(const String& family, const String& script, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    setFontFamily(settings(), family, script, &Settings::setSansSerifFontFamily);
+    UScriptCode code = scriptNameToCode(script);
+    if (code == USCRIPT_INVALID_CODE)
+        return;
+    m_backup.m_sansSerifFontFamilies.add(code, settings()->sansSerifFontFamily(code));
+    settings()->setSansSerifFontFamily(family, code);
 }
 
 void InternalSettings::setFixedFontFamily(const String& family, const String& script, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    setFontFamily(settings(), family, script, &Settings::setFixedFontFamily);
+    UScriptCode code = scriptNameToCode(script);
+    if (code == USCRIPT_INVALID_CODE)
+        return;
+    m_backup.m_fixedFontFamilies.add(code, settings()->fixedFontFamily(code));
+    settings()->setFixedFontFamily(family, code);
 }
 
 void InternalSettings::setCursiveFontFamily(const String& family, const String& script, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    setFontFamily(settings(), family, script, &Settings::setCursiveFontFamily);
+    UScriptCode code = scriptNameToCode(script);
+    if (code == USCRIPT_INVALID_CODE)
+        return;
+    m_backup.m_cursiveFontFamilies.add(code, settings()->cursiveFontFamily(code));
+    settings()->setCursiveFontFamily(family, code);
 }
 
 void InternalSettings::setFantasyFontFamily(const String& family, const String& script, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    setFontFamily(settings(), family, script, &Settings::setFantasyFontFamily);
+    UScriptCode code = scriptNameToCode(script);
+    if (code == USCRIPT_INVALID_CODE)
+        return;
+    m_backup.m_fantasyFontFamilies.add(code, settings()->fantasyFontFamily(code));
+    settings()->setFantasyFontFamily(family, code);
 }
 
 void InternalSettings::setPictographFontFamily(const String& family, const String& script, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    setFontFamily(settings(), family, script, &Settings::setPictographFontFamily);
+    UScriptCode code = scriptNameToCode(script);
+    if (code == USCRIPT_INVALID_CODE)
+        return;
+    m_backup.m_pictographFontFamilies.add(code, settings()->pictographFontFamily(code));
+    settings()->setPictographFontFamily(family, code);
 }
 
 void InternalSettings::setTextAutosizingEnabled(bool enabled, ExceptionCode& ec)
