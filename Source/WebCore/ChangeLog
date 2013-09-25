@@ -1,3 +1,37 @@
+2013-09-25  Andreas Kling  <akling@apple.com>
+
+        Remove EventPathWalker.
+        <https://webkit.org/b/121890>
+
+        Reviewed by Antti Koivisto.
+
+        Purge some more leftover Shadow DOM code.
+
+        * dom/EventPathWalker.cpp:
+        * dom/EventPathWalker.h:
+
+            Removed.
+
+        * dom/EventRetargeter.cpp:
+        (WebCore::nodeOrHostIfPseudoElement):
+        (WebCore::EventRetargeter::calculateEventPath):
+        (WebCore::EventRetargeter::buildRelatedNodeMap):
+
+            If starting at a pseudo element, e.g for events originating from
+            a transition on :before/:after, retarget to the pseudo element's
+            host as appropriate. This was the only real "feature" we were
+            using in EventPathWalker.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::updateDragAndDrop):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::handleTouchEvent):
+
+            Replace use of EventPathWalker with parentOrShadowHostElement()
+            parent chain climbing.
+
 2013-09-25  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         :read-write pseudo-class should not be applied on <input type="text" disabled>

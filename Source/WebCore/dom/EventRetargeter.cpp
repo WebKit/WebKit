@@ -22,7 +22,6 @@
 
 #include "ContainerNode.h"
 #include "EventContext.h"
-#include "EventPathWalker.h"
 #include "FocusEvent.h"
 #include "MouseEvent.h"
 #include "ShadowRoot.h"
@@ -75,21 +74,24 @@ static inline EventDispatchBehavior determineDispatchBehavior(Event* event, Shad
     return RetargetEvent;
 }
 
-void EventRetargeter::calculateEventPath(Node* node, Event* event, EventPath& eventPath)
+static Node* nodeOrHostIfPseudoElement(Node* node)
 {
-    bool inDocument = node->inDocument();
-    bool isSVGElement = node->isSVGElement();
+    return node->isPseudoElement() ? toPseudoElement(node)->hostElement() : node;
+}
+
+void EventRetargeter::calculateEventPath(Node* targetNode, Event* event, EventPath& eventPath)
+{
+    bool inDocument = targetNode->inDocument();
+    bool isSVGElement = targetNode->isSVGElement();
     bool isMouseOrFocusEvent = event->isMouseEvent() || event->isFocusEvent();
 #if ENABLE(TOUCH_EVENTS)
     bool isTouchEvent = event->isTouchEvent();
 #endif
     Vector<EventTarget*, 32> targetStack;
-    for (EventPathWalker walker(node); walker.node(); walker.moveToParent()) {
-        Node* node = walker.node();
+
+    for (Node* node = nodeOrHostIfPseudoElement(targetNode); node; node = node->parentOrShadowHostNode()) {
         if (targetStack.isEmpty())
             targetStack.append(eventTargetRespectingTargetRules(node));
-        else if (walker.isVisitingInsertionPointInReprojection())
-            targetStack.append(targetStack.last());
         if (isMouseOrFocusEvent)
             eventPath.append(adoptPtr(new MouseOrFocusEventContext(node, eventTargetRespectingTargetRules(node), targetStack.last())));
 #if ENABLE(TOUCH_EVENTS)
@@ -219,12 +221,9 @@ void EventRetargeter::buildRelatedNodeMap(const Node* relatedNode, RelatedNodeMa
 {
     Vector<Node*, 32> relatedNodeStack;
     TreeScope* lastTreeScope = 0;
-    for (EventPathWalker walker(relatedNode); walker.node(); walker.moveToParent()) {
-        Node* node = walker.node();
+    for (Node* node = nodeOrHostIfPseudoElement(const_cast<Node*>(relatedNode)); node; node = node->parentOrShadowHostNode()) {
         if (relatedNodeStack.isEmpty())
             relatedNodeStack.append(node);
-        else if (walker.isVisitingInsertionPointInReprojection())
-            relatedNodeStack.append(relatedNodeStack.last());
         TreeScope* scope = node->treeScope();
         // Skips adding a node to the map if treeScope does not change. Just for the performance optimization.
         if (scope != lastTreeScope)

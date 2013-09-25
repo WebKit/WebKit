@@ -42,7 +42,6 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "EventNames.h"
-#include "EventPathWalker.h"
 #include "ExceptionCodePlaceholder.h"
 #include "FileList.h"
 #include "FloatPoint.h"
@@ -733,7 +732,7 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
 
     RenderObject* renderer = targetNode->renderer();
     if (!renderer) {
-        Node* parent = EventPathWalker::parent(targetNode);
+        Element* parent = targetNode->parentOrShadowHostElement();
         if (!parent)
             return false;
 
@@ -2095,7 +2094,7 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
     // Drag events should never go to text nodes (following IE, and proper mouseover/out dispatch)
     RefPtr<Node> newTarget = mev.targetNode();
     if (newTarget && newTarget->isTextNode())
-        newTarget = EventPathWalker::parent(newTarget.get());
+        newTarget = newTarget->parentOrShadowHostElement();
 
     m_autoscrollController->updateDragAndDrop(newTarget.get(), event.position(), event.timestamp());
 
@@ -2232,7 +2231,7 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
     else {
         // If the target node is a text node, dispatch on the parent node - rdar://4196646
         if (result && result->isTextNode())
-            result = EventPathWalker::parent(result);
+            result = result->parentOrShadowHostElement();
     }
     m_nodeUnderMouse = result;
 #if ENABLE(SVG)
@@ -2479,11 +2478,8 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 
     bool useLatchedWheelEventNode = e.useLatchedEventNode();
 
-    // FIXME: Is the following code different from just calling innerElement?
-    Node* node = result.innerNode();
-    // Wheel events should not dispatch to text nodes.
-    if (node && node->isTextNode())
-        node = EventPathWalker::parent(node);
+    // FIXME: This code should use Element* instead of Node*.
+    Node* node = result.innerElement();
 
     bool isOverWidget;
     if (useLatchedWheelEventNode) {
@@ -4024,12 +4020,9 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             } else
                 continue;
 
-            // FIXME: Is the following code different from just calling innerElement?
-            Node* node = result.innerNode();
+            // FIXME: This code should use Element* instead of Node*.
+            Node* node = result.innerElement();
             ASSERT(node);
-            // Touch events should not go to text nodes
-            if (node->isTextNode())
-                node = EventPathWalker::parent(node);
 
             if (InspectorInstrumentation::handleTouchEvent(m_frame.page(), node))
                 return true;

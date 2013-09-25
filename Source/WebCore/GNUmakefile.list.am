@@ -2927,8 +2927,6 @@ webcore_sources += \
 	Source/WebCore/dom/EventListenerMap.h \
 	Source/WebCore/dom/EventNames.cpp \
 	Source/WebCore/dom/EventNames.h \
-	Source/WebCore/dom/EventPathWalker.cpp \
-	Source/WebCore/dom/EventPathWalker.h \
 	Source/WebCore/dom/EventRetargeter.cpp \
 	Source/WebCore/dom/EventRetargeter.h \
 	Source/WebCore/dom/EventTarget.cpp \

@@ -29,7 +29,6 @@
 #include "ContainerNode.h"
 #include "EventContext.h"
 #include "EventDispatchMediator.h"
-#include "EventPathWalker.h"
 #include "EventRetargeter.h"
 #include "FrameView.h"
 #include "HTMLMediaElement.h"
