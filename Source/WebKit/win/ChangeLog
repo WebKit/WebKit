@@ -1,3 +1,16 @@
+2013-09-25  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Attempting to scroll from a non-scrollable layer results the main document getting scrolled.
+        https://bugs.webkit.org/show_bug.cgi?id=121889.
+        <rdar://problem/15072441>
+
+        Reviewed by Timothy Horton.
+
+        * WebView.cpp:
+        (WebView::gesture): 
+        Call scrollByRecursively on the current RenderLayer's enclosingScrollableLayer to make sure that the method
+        doesn't bail early and end up just scrolling the main document instead of the next scrollable layer in the RenderLayer tree.
+
 2013-09-25  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Replace CF time functions with Windows API functions in WebHistory
