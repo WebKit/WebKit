@@ -272,7 +272,7 @@ static inline ScrollGranularity wheelGranularityToScrollGranularity(unsigned del
     }
 }
 
-static inline bool scrollNode(float delta, ScrollGranularity granularity, ScrollDirection positiveDirection, ScrollDirection negativeDirection, Node* node, Node** stopNode)
+static inline bool scrollNode(float delta, ScrollGranularity granularity, ScrollDirection positiveDirection, ScrollDirection negativeDirection, Node* node, Element** stopElement)
 {
     if (!delta)
         return false;
@@ -280,7 +280,7 @@ static inline bool scrollNode(float delta, ScrollGranularity granularity, Scroll
         return false;
     RenderBox* enclosingBox = node->renderer()->enclosingBox();
     float absDelta = delta > 0 ? delta : -delta;
-    return enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, stopNode);
+    return enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, stopElement);
 }
 
 static inline bool shouldGesturesTriggerActive()
@@ -405,8 +405,8 @@ void EventHandler::clear()
     m_mousePressed = false;
     m_capturesDragging = false;
     m_capturingMouseEventsNode = 0;
-    m_latchedWheelEventNode = 0;
-    m_previousWheelScrolledNode = 0;
+    m_latchedWheelEventElement = nullptr;
+    m_previousWheelScrolledElement = nullptr;
 #if ENABLE(TOUCH_EVENTS)
     m_originatingTouchPointTargets.clear();
     m_originatingTouchPointDocument.clear();
@@ -415,7 +415,7 @@ void EventHandler::clear()
 #if ENABLE(GESTURE_EVENTS)
     m_scrollGestureHandlingNode = 0;
     m_lastHitTestResultOverWidget = false;
-    m_previousGestureScrolledNode = 0;
+    m_previousGestureScrolledElement = nullptr;
     m_scrollbarHandlingScrollGesture = 0;
 #endif
     m_maxMouseMovedDuration = 0;
@@ -2476,25 +2476,24 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
     HitTestResult result(vPoint);
     doc->renderView()->hitTest(request, result);
 
-    bool useLatchedWheelEventNode = e.useLatchedEventNode();
+    bool useLatchedWheelEventElement = e.useLatchedEventElement();
 
-    // FIXME: This code should use Element* instead of Node*.
-    Node* node = result.innerElement();
+    Element* element = result.innerElement();
 
     bool isOverWidget;
-    if (useLatchedWheelEventNode) {
-        if (!m_latchedWheelEventNode) {
-            m_latchedWheelEventNode = node;
+    if (useLatchedWheelEventElement) {
+        if (!m_latchedWheelEventElement) {
+            m_latchedWheelEventElement = element;
             m_widgetIsLatched = result.isOverWidget();
         } else
-            node = m_latchedWheelEventNode.get();
+            element = m_latchedWheelEventElement.get();
 
         isOverWidget = m_widgetIsLatched;
     } else {
-        if (m_latchedWheelEventNode)
-            m_latchedWheelEventNode = 0;
-        if (m_previousWheelScrolledNode)
-            m_previousWheelScrolledNode = 0;
+        if (m_latchedWheelEventElement)
+            m_latchedWheelEventElement = nullptr;
+        if (m_previousWheelScrolledElement)
+            m_previousWheelScrolledElement = nullptr;
 
         isOverWidget = result.isOverWidget();
     }
@@ -2522,9 +2521,9 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 
     recordWheelEventDelta(event);
 
-    if (node) {
+    if (element) {
         // Figure out which view to send the event to.
-        RenderObject* target = node->renderer();
+        RenderElement* target = element->renderer();
         
         if (isOverWidget && target && target->isWidget()) {
             Widget* widget = toRenderWidget(target)->widget();
@@ -2534,7 +2533,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
             }
         }
 
-        if (node && !node->dispatchWheelEvent(event)) {
+        if (!element->dispatchWheelEvent(event)) {
             m_isHandlingWheelEvent = false;
             return true;
         }
@@ -2553,7 +2552,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
     if (!startNode || !wheelEvent)
         return;
     
-    Node* stopNode = m_previousWheelScrolledNode.get();
+    Element* stopElement = m_previousWheelScrolledElement.get();
     ScrollGranularity granularity = wheelGranularityToScrollGranularity(wheelEvent->deltaMode());
     
     DominantScrollGestureDirection dominantDirection = DominantScrollDirectionNone;
@@ -2563,14 +2562,14 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
     
     // Break up into two scrolls if we need to.  Diagonal movement on 
     // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
-    if (dominantDirection != DominantScrollDirectionVertical && scrollNode(wheelEvent->deltaX(), granularity, ScrollRight, ScrollLeft, startNode, &stopNode))
+    if (dominantDirection != DominantScrollDirectionVertical && scrollNode(wheelEvent->deltaX(), granularity, ScrollRight, ScrollLeft, startNode, &stopElement))
         wheelEvent->setDefaultHandled();
     
-    if (dominantDirection != DominantScrollDirectionHorizontal && scrollNode(wheelEvent->deltaY(), granularity, ScrollDown, ScrollUp, startNode, &stopNode))
+    if (dominantDirection != DominantScrollDirectionHorizontal && scrollNode(wheelEvent->deltaY(), granularity, ScrollDown, ScrollUp, startNode, &stopElement))
         wheelEvent->setDefaultHandled();
     
-    if (!m_latchedWheelEventNode)
-        m_previousWheelScrolledNode = stopNode;
+    if (!m_latchedWheelEventElement)
+        m_previousWheelScrolledElement = stopElement;
 }
 
 #if ENABLE(GESTURE_EVENTS)
@@ -2808,7 +2807,7 @@ bool EventHandler::handleGestureScrollBegin(const PlatformGestureEvent& gestureE
 
     m_lastHitTestResultOverWidget = result.isOverWidget(); 
     m_scrollGestureHandlingNode = result.innerNode();
-    m_previousGestureScrolledNode = 0;
+    m_previousGestureScrolledElement = nullptr;
 
     Node* node = m_scrollGestureHandlingNode.get();
     if (node)
@@ -2841,18 +2840,18 @@ bool EventHandler::handleGestureScrollUpdate(const PlatformGestureEvent& gesture
     if (passGestureEventToWidgetIfPossible(gestureEvent, renderer))
         return true;
 
-    Node* stopNode = 0;
+    Element* stopElement = 0;
     bool scrollShouldNotPropagate = gestureEvent.type() == PlatformEvent::GestureScrollUpdateWithoutPropagation;
     if (scrollShouldNotPropagate)
-        stopNode = m_previousGestureScrolledNode.get();
+        stopElement = m_previousGestureScrolledElement.get();
 
     // First try to scroll the closest scrollable RenderBox ancestor of |node|.
     ScrollGranularity granularity = ScrollByPixel; 
-    bool horizontalScroll = scrollNode(delta.width(), granularity, ScrollLeft, ScrollRight, node, &stopNode);
-    bool verticalScroll = scrollNode(delta.height(), granularity, ScrollUp, ScrollDown, node, &stopNode);
+    bool horizontalScroll = scrollNode(delta.width(), granularity, ScrollLeft, ScrollRight, node, &stopElement);
+    bool verticalScroll = scrollNode(delta.height(), granularity, ScrollUp, ScrollDown, node, &stopElement);
 
     if (scrollShouldNotPropagate)
-        m_previousGestureScrolledNode = stopNode;
+        m_previousGestureScrolledElement = stopElement;
 
     if (horizontalScroll || verticalScroll) {
         setFrameWasScrolledByUser();
@@ -2891,7 +2890,7 @@ bool EventHandler::sendScrollEventToView(const PlatformGestureEvent& gestureEven
 void EventHandler::clearGestureScrollNodes()
 {
     m_scrollGestureHandlingNode = 0;
-    m_previousGestureScrolledNode = 0;
+    m_previousGestureScrolledElement = nullptr;
 }
 
 bool EventHandler::isScrollbarHandlingGestures() const

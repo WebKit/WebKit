@@ -148,9 +148,9 @@ namespace WebCore {
         unsigned scrollCount() const { return m_scrollCount; }
         float unacceleratedScrollingDeltaX() const { return m_unacceleratedScrollingDeltaX; }
         float unacceleratedScrollingDeltaY() const { return m_unacceleratedScrollingDeltaY; }
-        bool useLatchedEventNode() const { return m_momentumPhase == PlatformWheelEventPhaseBegan || m_momentumPhase == PlatformWheelEventPhaseChanged; }
+        bool useLatchedEventElement() const { return m_momentumPhase == PlatformWheelEventPhaseBegan || m_momentumPhase == PlatformWheelEventPhaseChanged; }
 #else
-        bool useLatchedEventNode() const { return false; }
+        bool useLatchedEventElement() const { return false; }
 #endif
 
 #if PLATFORM(WIN)

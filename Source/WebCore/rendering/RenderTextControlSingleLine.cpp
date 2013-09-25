@@ -447,7 +447,7 @@ void RenderTextControlSingleLine::setScrollTop(int newTop)
         innerTextElement()->setScrollTop(newTop);
 }
 
-bool RenderTextControlSingleLine::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Node** stopNode)
+bool RenderTextControlSingleLine::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
 {
     RenderBox* renderer = innerTextElement()->renderBox();
     if (!renderer)
@@ -455,15 +455,15 @@ bool RenderTextControlSingleLine::scroll(ScrollDirection direction, ScrollGranul
     RenderLayer* layer = renderer->layer();
     if (layer && layer->scroll(direction, granularity, multiplier))
         return true;
-    return RenderBlock::scroll(direction, granularity, multiplier, stopNode);
+    return RenderBlock::scroll(direction, granularity, multiplier, stopElement);
 }
 
-bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Node** stopNode)
+bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
 {
     RenderLayer* layer = innerTextElement()->renderBox()->layer();
     if (layer && layer->scroll(logicalToPhysical(direction, style()->isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), granularity, multiplier))
         return true;
-    return RenderBlock::logicalScroll(direction, granularity, multiplier, stopNode);
+    return RenderBlock::logicalScroll(direction, granularity, multiplier, stopElement);
 }
 
 HTMLInputElement& RenderTextControlSingleLine::inputElement() const

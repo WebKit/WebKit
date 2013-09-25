@@ -43,6 +43,7 @@ class ElementRareData;
 class HTMLDocument;
 class IntSize;
 class Locale;
+class PlatformWheelEvent;
 class PseudoElement;
 class RenderElement;
 class RenderRegion;
@@ -534,6 +535,7 @@ public:
     IntSize savedLayerScrollOffset() const;
     void setSavedLayerScrollOffset(const IntSize&);
 
+    bool dispatchWheelEvent(const PlatformWheelEvent&);
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     void dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions = SendNoEvents, SimulatedClickVisualOptions = ShowPressedLook);
     void dispatchFocusInEvent(const AtomicString& eventType, PassRefPtr<Element> oldFocusedElement);

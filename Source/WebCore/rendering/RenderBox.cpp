@@ -746,25 +746,25 @@ int RenderBox::instrinsicScrollbarLogicalWidth() const
     return 0;
 }
 
-bool RenderBox::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Node** stopNode)
+bool RenderBox::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
 {
     RenderLayer* l = layer();
     if (l && l->scroll(direction, granularity, multiplier)) {
-        if (stopNode)
-            *stopNode = element();
+        if (stopElement)
+            *stopElement = element();
         return true;
     }
 
-    if (stopNode && *stopNode && *stopNode == element())
+    if (stopElement && *stopElement && *stopElement == element())
         return true;
 
     RenderBlock* b = containingBlock();
     if (b && !b->isRenderView())
-        return b->scroll(direction, granularity, multiplier, stopNode);
+        return b->scroll(direction, granularity, multiplier, stopElement);
     return false;
 }
 
-bool RenderBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Node** stopNode)
+bool RenderBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
 {
     bool scrolled = false;
     
@@ -779,18 +779,18 @@ bool RenderBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranularit
             scrolled = true;
         
         if (scrolled) {
-            if (stopNode)
-                *stopNode = element();
+            if (stopElement)
+                *stopElement = element();
             return true;
         }
     }
 
-    if (stopNode && *stopNode && *stopNode == element())
+    if (stopElement && *stopElement && *stopElement == element())
         return true;
 
     RenderBlock* b = containingBlock();
     if (b && !b->isRenderView())
-        return b->logicalScroll(direction, granularity, multiplier, stopNode);
+        return b->logicalScroll(direction, granularity, multiplier, stopElement);
     return false;
 }
 

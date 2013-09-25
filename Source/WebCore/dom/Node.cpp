@@ -2151,11 +2151,6 @@ bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
     return !beforeLoadEvent->defaultPrevented();
 }
 
-bool Node::dispatchWheelEvent(const PlatformWheelEvent& event)
-{
-    return EventDispatcher::dispatchEvent(this, WheelEventDispatchMediator::create(event, document().defaultView()));
-}
-
 void Node::dispatchInputEvent()
 {
     dispatchScopedEvent(Event::create(eventNames().inputEvent, true, false));

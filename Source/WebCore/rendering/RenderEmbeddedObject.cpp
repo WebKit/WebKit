@@ -569,7 +569,7 @@ bool RenderEmbeddedObject::nodeAtPoint(const HitTestRequest& request, HitTestRes
     return true;
 }
 
-bool RenderEmbeddedObject::scroll(ScrollDirection direction, ScrollGranularity granularity, float, Node**)
+bool RenderEmbeddedObject::scroll(ScrollDirection direction, ScrollGranularity granularity, float, Element**)
 {
     if (!widget() || !widget()->isPluginViewBase())
         return false;
@@ -577,10 +577,10 @@ bool RenderEmbeddedObject::scroll(ScrollDirection direction, ScrollGranularity g
     return toPluginViewBase(widget())->scroll(direction, granularity);
 }
 
-bool RenderEmbeddedObject::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Node** stopNode)
+bool RenderEmbeddedObject::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Element** stopElement)
 {
     // Plugins don't expose a writing direction, so assuming horizontal LTR.
-    return scroll(logicalToPhysical(direction, true, false), granularity, multiplier, stopNode);
+    return scroll(logicalToPhysical(direction, true, false), granularity, multiplier, stopElement);
 }
 
 

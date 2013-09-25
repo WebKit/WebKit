@@ -68,8 +68,8 @@ private:
     virtual int scrollHeight() const OVERRIDE;
     virtual void setScrollLeft(int) OVERRIDE;
     virtual void setScrollTop(int) OVERRIDE;
-    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0) OVERRIDE;
-    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0) OVERRIDE;
+    virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) OVERRIDE FINAL;
+    virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Element** stopElement = 0) OVERRIDE FINAL;
 
     int textBlockWidth() const;
     virtual float getAvgCharWidth(AtomicString family) OVERRIDE;

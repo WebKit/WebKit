@@ -476,11 +476,11 @@ private:
     PlatformMouseEvent m_mouseDown;
 
     Deque<FloatSize> m_recentWheelEventDeltas;
-    RefPtr<Node> m_latchedWheelEventNode;
+    RefPtr<Element> m_latchedWheelEventElement;
     bool m_inTrackingScrollGesturePhase;
     bool m_widgetIsLatched;
 
-    RefPtr<Node> m_previousWheelScrolledNode;
+    RefPtr<Element> m_previousWheelScrolledElement;
 
 #if PLATFORM(MAC)
     NSView *m_mouseDownView;
@@ -498,7 +498,7 @@ private:
 #if ENABLE(GESTURE_EVENTS)
     RefPtr<Node> m_scrollGestureHandlingNode;
     bool m_lastHitTestResultOverWidget;
-    RefPtr<Node> m_previousGestureScrolledNode;
+    RefPtr<Element> m_previousGestureScrolledElement;
     RefPtr<Scrollbar> m_scrollbarHandlingScrollGesture;
 #endif
 
