@@ -1,3 +1,13 @@
+2013-09-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in Document::setFocusedElement
+        https://bugs.webkit.org/show_bug.cgi?id=121888
+
+        Reviewed by Andreas Kling.
+
+        * fast/events/blur-remove-parent-crash-expected.txt: Added.
+        * fast/events/blur-remove-parent-crash.html: Added.
+
 2013-09-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         op_get_callee shouldn't use value profiling

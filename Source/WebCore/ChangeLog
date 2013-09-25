@@ -1,3 +1,21 @@
+2013-09-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in Document::setFocusedElement
+        https://bugs.webkit.org/show_bug.cgi?id=121888
+
+        Reviewed by Andreas Kling.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/4a594a3de7d9761462b55fb27a6850d767419af2
+
+        The crash was caused by attempting to call Chrome:focusedNodeChanged() after m_page had already
+        been cleared. This could happen when blur's event handler removes the iframe from which
+        the focus had been moved. Fixed the bug by adding a null pointer check.
+
+        Test: fast/events/blur-remove-parent-crash.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedElement):
+
 2013-09-24  Antti Koivisto  <antti@apple.com>
 
         Remove HTMLContentElement
