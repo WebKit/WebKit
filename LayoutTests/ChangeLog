@@ -1,3 +1,12 @@
+2013-09-25  Sanghyup Lee  <sh53.lee@samsung.com>
+
+        [EFL] Unreviewed gardening. Unskip passing fast/text/font-kerning.html 
+        https://bugs.webkit.org/show_bug.cgi?id=121907
+
+        Unreviewed EFL gardening. Passes after r152411.
+
+        * platform/efl/TestExpectations:
+
 2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Support kerning with SVG web fonts

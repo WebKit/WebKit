@@ -1179,9 +1179,6 @@ webkit.org/b/108507 printing/standards-percentage-heights.html [ ImageOnlyFailur
 
 webkit.org/b/79757 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
 
-# Font kerning issue, fails on GTK as well.
-webkit.org/b/76048 fast/text/font-kerning.html [ ImageOnlyFailure ]
-
 # Fails on GTK as well
 webkit.org/b/84678 fast/spatial-navigation/snav-container-white-space.html [ Failure ]
 webkit.org/b/84678 fast/spatial-navigation/snav-fully-aligned-horizontally.html [ Failure ]
