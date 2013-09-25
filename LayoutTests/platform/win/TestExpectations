@@ -2950,3 +2950,7 @@ svg/custom/masking-clipping-hidpi.svg [ ImageOnlyFailure ]
 # Don't run these time-outs for now
 css3/filters/huge-region-composited.html [ Skip ]
 js/dom/random-array-gc-stress.html [ Skip ]
+
+# CSS_SHAPES not supported on AppleWin port.
+# https://bugs.webkit.org/show_bug.cgi?id=118810
+fast/shapes

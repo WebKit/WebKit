@@ -1,3 +1,13 @@
+2013-09-24  Bear Travis  <betravis@adobe.com>
+
+        Disable CSS_SHAPES on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=121879
+
+        Reviewed by Brent Fulgham.
+
+        * platform/win/TestExpectations: Exclude shapes tests until the
+        feature is re-enabled.
+
 2013-09-24  Filip Pizlo  <fpizlo@apple.com>
 
         Crashing under JSC::DFG::SpeculativeJIT::spill visiting citicards.com

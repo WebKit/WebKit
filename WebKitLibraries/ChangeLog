@@ -1,3 +1,16 @@
+2013-09-24  Bear Travis  <betravis@adobe.com>
+
+        Disable CSS_SHAPES on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=121879
+
+        Reviewed by Brent Fulgham.
+
+        Enabling CSS_SHAPES on Windows is currently causing crashes in DRT.
+        Turn the feature off until it can be appropriately fixed.
+
+        * win/tools/vsprops/FeatureDefines.props: Disable on Win port
+        * win/tools/vsprops/FeatureDefinesCairo.props: Disable on WinCairo port
+
 2013-09-23  Patrick Gansterer  <paroga@webkit.org>
 
         use NOMINMAX instead of #define min min
