@@ -1,3 +1,42 @@
+2013-09-24  Antti Koivisto  <antti@apple.com>
+
+        Clean up some uses of first/lastChildSlow
+        https://bugs.webkit.org/show_bug.cgi?id=121882
+
+        Reviewed by Andreas Kling.
+
+        Tighten typing and use first/lastChild instead.
+
+        * dom/Position.cpp:
+        (WebCore::Position::hasRenderedNonAnonymousDescendantsWithHeight):
+        (WebCore::Position::isCandidate):
+        (WebCore::Position::getInlineBoxAndOffset):
+        * dom/Position.h:
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        * rendering/RenderBlock.cpp:
+        (WebCore::canMergeAnonymousBlock):
+        (WebCore::canMergeContiguousAnonymousBlocks):
+        (WebCore::RenderBlock::firstLineBlock):
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::setRegionObjectsRegionStyle):
+        (WebCore::RenderRegion::computeChildrenStyleInRegion):
+        * rendering/RenderRegion.h:
+        * rendering/RenderRuby.cpp:
+        (WebCore::rubyBeforeBlock):
+        (WebCore::rubyAfterBlock):
+        (WebCore::lastRubyRun):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        (WebCore::writeCounterValuesFromChildren):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::findPreviousAndNextAttributes):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::textRendererIsNeeded):
+
 2013-09-24  Mark Lam  <mark.lam@apple.com>
 
         Change JSC debug hooks to pass a CallFrame* instead of a DebuggerCallFrame.

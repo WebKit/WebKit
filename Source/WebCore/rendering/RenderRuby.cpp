@@ -71,15 +71,15 @@ static inline bool isRubyAfterBlock(const RenderObject* object)
         && object->firstChildSlow()->style()->styleType() == AFTER;
 }
 
-static inline RenderBlock* rubyBeforeBlock(const RenderObject* ruby)
+static inline RenderBlock* rubyBeforeBlock(const RenderElement* ruby)
 {
-    RenderObject* child = ruby->firstChildSlow();
+    RenderObject* child = ruby->firstChild();
     return isRubyBeforeBlock(child) ? toRenderBlock(child) : 0;
 }
 
-static inline RenderBlock* rubyAfterBlock(const RenderObject* ruby)
+static inline RenderBlock* rubyAfterBlock(const RenderElement* ruby)
 {
-    RenderObject* child = ruby->lastChildSlow();
+    RenderObject* child = ruby->lastChild();
     return isRubyAfterBlock(child) ? toRenderBlock(child) : 0;
 }
 
@@ -91,9 +91,9 @@ static RenderBlock* createAnonymousRubyInlineBlock(RenderObject& ruby)
     return newBlock;
 }
 
-static RenderRubyRun* lastRubyRun(const RenderObject* ruby)
+static RenderRubyRun* lastRubyRun(const RenderElement* ruby)
 {
-    RenderObject* child = ruby->lastChildSlow();
+    RenderObject* child = ruby->lastChild();
     if (child && !child->isRubyRun())
         child = child->previousSibling();
     ASSERT(!child || child->isRubyRun() || child->isBeforeContent() || child == rubyBeforeBlock(ruby));

@@ -41,6 +41,7 @@ class Element;
 class InlineBox;
 class Node;
 class Range;
+class RenderElement;
 class RenderObject;
 class Text;
 
@@ -186,7 +187,7 @@ public:
 
     TextDirection primaryDirection() const;
 
-    static bool hasRenderedNonAnonymousDescendantsWithHeight(RenderObject*);
+    static bool hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&);
     static bool nodeIsUserSelectNone(Node*);
 #if ENABLE(USERSELECT_ALL)
     static bool nodeIsUserSelectAll(const Node*);

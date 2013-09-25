@@ -135,12 +135,12 @@ static inline void collectLayoutAttributes(RenderObject* text, Vector<SVGTextLay
     }
 }
 
-static inline bool findPreviousAndNextAttributes(RenderObject* start, RenderSVGInlineText* locateElement, bool& stopAfterNext, SVGTextLayoutAttributes*& previous, SVGTextLayoutAttributes*& next)
+static inline bool findPreviousAndNextAttributes(RenderElement* start, RenderSVGInlineText* locateElement, bool& stopAfterNext, SVGTextLayoutAttributes*& previous, SVGTextLayoutAttributes*& next)
 {
     ASSERT(start);
     ASSERT(locateElement);
     // FIXME: Make this iterative.
-    for (RenderObject* child = start->firstChildSlow(); child; child = child->nextSibling()) {
+    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
         if (child->isSVGInlineText()) {
             RenderSVGInlineText* text = toRenderSVGInlineText(child);
             if (locateElement != text) {
@@ -160,7 +160,7 @@ static inline bool findPreviousAndNextAttributes(RenderObject* start, RenderSVGI
         if (!child->isSVGInline())
             continue;
 
-        if (findPreviousAndNextAttributes(child, locateElement, stopAfterNext, previous, next))
+        if (findPreviousAndNextAttributes(toRenderElement(child), locateElement, stopAfterNext, previous, next))
             return true;
     }
 
