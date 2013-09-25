@@ -90,15 +90,15 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
 #if ENABLE(MEDIA_SOURCE)
     , m_isMediaSourceEnabled(false)
 #endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    , m_isEncryptedMediaEnabled(false)
+#endif
 #if ENABLE(VIDEO_TRACK)
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(BLACKBERRY) || PLATFORM(WIN) || PLATFORM(QT)
     , m_isVideoTrackEnabled(true)
 #else
     , m_isVideoTrackEnabled(false)
 #endif
-#endif
-#if ENABLE(ENCRYPTED_MEDIA)
-    , m_isEncryptedMediaEnabled(false)
 #endif
 #if ENABLE(SHADOW_DOM)
     , m_isShadowDOMEnabled(false)
