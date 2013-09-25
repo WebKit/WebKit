@@ -1,3 +1,18 @@
+2013-09-25  Alberto Garcia  <berto@igalia.com>
+
+        Fix warning in makeprop.pl
+        https://bugs.webkit.org/show_bug.cgi?id=121900
+
+        Reviewed by Ryosuke Niwa.
+
+        %nameIsInherited and %nameToId were incorrectly initialized using
+        references instead of lists.
+
+        Anyway there's no need to initialize those variables explicitly,
+        they're already empty by default.
+
+        * css/makeprop.pl:
+
 2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         REGRESSION(r156393): Build with !ENABLE(SVG_FONTS) broken

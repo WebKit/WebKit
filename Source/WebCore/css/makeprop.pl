@@ -39,8 +39,8 @@ my @duplicates = ();
 
 my $numPredefinedProperties = 2;
 my @names = ();
-my %nameIsInherited = {};
-my %nameToId = {};
+my %nameIsInherited;
+my %nameToId;
 my @aliases = ();
 foreach (@NAMES) {
   next if (m/(^\s*$)/);
