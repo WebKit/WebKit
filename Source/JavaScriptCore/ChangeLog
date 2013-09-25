@@ -1,3 +1,12 @@
+2013-09-25  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r155098.
+
+        Windows CE does not support getenv().
+
+        * jsc.cpp:
+        (main):
+
 2013-09-24  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         op_get_callee shouldn't use value profiling

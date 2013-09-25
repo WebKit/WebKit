@@ -587,7 +587,8 @@ int main(int argc, char** argv)
     WTF::initializeMainThread();
 #endif
     JSC::initializeThreading();
-    
+
+#if !OS(WINCE)
     if (char* timeoutString = getenv("JSC_timeout")) {
         if (sscanf(timeoutString, "%lf", &s_desiredTimeout) != 1) {
             dataLog(
@@ -598,6 +599,7 @@ int main(int argc, char** argv)
             createThread(timeoutThreadMain, 0, "jsc Timeout Thread");
         }
     }
+#endif
 
     // We can't use destructors in the following code because it uses Windows
     // Structured Exception Handling
