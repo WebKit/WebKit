@@ -18,12 +18,15 @@
 */
 
 #include "config.h"
-#include "BlobData.h"
-#include "BlobRegistryImpl.h"
-#include "BlobStorageData.h"
 #include "NetworkingContext.h"
 #include "ResourceRequest.h"
 #include "ThirdPartyCookiesQt.h"
+
+#if ENABLE(BLOB)
+#include "BlobData.h"
+#include "BlobRegistryImpl.h"
+#include "BlobStorageData.h"
+#endif
 
 #include <qglobal.h>
 
@@ -43,6 +46,7 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     return 6 * (1 + 3 + 2);
 }
 
+#if ENABLE(BLOB)
 static void appendBlobResolved(QByteArray& data, const QUrl& url, QString* contentType = 0)
 {
     RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(url);
@@ -83,14 +87,17 @@ static void resolveBlobUrl(const QUrl& url, QUrl& resolvedUrl)
     dataUri.append(QString::fromLatin1(data.toBase64()));
     resolvedUrl = QUrl(dataUri);
 }
+#endif
 
 QNetworkRequest ResourceRequest::toNetworkRequest(NetworkingContext *context) const
 {
     QNetworkRequest request;
     QUrl newurl = url();
 
+#if ENABLE(BLOB)
     if (newurl.scheme() == QLatin1String("blob"))
         resolveBlobUrl(url(), newurl);
+#endif
 
     request.setUrl(newurl);
     request.setOriginatingObject(context ? context->originatingObject() : 0);

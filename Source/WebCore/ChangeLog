@@ -1,5 +1,14 @@
 2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] Fix build with !ENABLE(BLOB) after r156330
+
+        Unreviewed build-fix.
+
+        * platform/network/qt/ResourceRequestQt.cpp:
+        (WebCore::ResourceRequest::toNetworkRequest):
+
+2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         Support kerning with SVG web fonts
         https://bugs.webkit.org/show_bug.cgi?id=117540
 
