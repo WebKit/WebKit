@@ -295,7 +295,7 @@ static void fillMediaListChain(CSSRule* rule, Array<TypeBuilder::CSS::CSSMedia>*
 
 static PassOwnPtr<CSSParser> createCSSParser(Document* document)
 {
-    return adoptPtr(new CSSParser(document ? CSSParserContext(document) : strictCSSParserContext()));
+    return adoptPtr(new CSSParser(document ? CSSParserContext(*document) : strictCSSParserContext()));
 }
 
 PassRefPtr<InspectorStyle> InspectorStyle::create(const InspectorCSSId& styleId, PassRefPtr<CSSStyleDeclaration> style, InspectorStyleSheet* parentStyleSheet)

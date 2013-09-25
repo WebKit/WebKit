@@ -78,14 +78,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-PassRefPtr<EditCommandComposition> EditCommandComposition::create(Document* document,
+PassRefPtr<EditCommandComposition> EditCommandComposition::create(Document& document,
     const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction editAction)
 {
     return adoptRef(new EditCommandComposition(document, startingSelection, endingSelection, editAction));
 }
 
-EditCommandComposition::EditCommandComposition(Document* document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction editAction)
-    : m_document(document)
+EditCommandComposition::EditCommandComposition(Document& document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction editAction)
+    : m_document(&document)
     , m_startingSelection(startingSelection)
     , m_endingSelection(endingSelection)
     , m_startingRootEditableElement(startingSelection.rootEditableElement())
@@ -226,7 +226,7 @@ EditCommandComposition* CompositeEditCommand::ensureComposition()
     while (command && command->parent())
         command = command->parent();
     if (!command->m_composition)
-        command->m_composition = EditCommandComposition::create(&document(), startingSelection(), endingSelection(), editingAction());
+        command->m_composition = EditCommandComposition::create(document(), startingSelection(), endingSelection(), editingAction());
     return command->m_composition.get();
 }
 

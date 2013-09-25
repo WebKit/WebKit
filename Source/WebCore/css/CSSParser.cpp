@@ -272,22 +272,22 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const KURL& baseURL)
 {
 }
 
-CSSParserContext::CSSParserContext(Document* document, const KURL& baseURL, const String& charset)
-    : baseURL(baseURL.isNull() ? document->baseURL() : baseURL)
+CSSParserContext::CSSParserContext(Document& document, const KURL& baseURL, const String& charset)
+    : baseURL(baseURL.isNull() ? document.baseURL() : baseURL)
     , charset(charset)
-    , mode(document->inQuirksMode() ? CSSQuirksMode : CSSStrictMode)
-    , isHTMLDocument(document->isHTMLDocument())
-    , isCSSCustomFilterEnabled(document->settings() ? document->settings()->isCSSCustomFilterEnabled() : false)
-    , isCSSStickyPositionEnabled(document->cssStickyPositionEnabled())
-    , isCSSRegionsEnabled(document->cssRegionsEnabled())
-    , isCSSCompositingEnabled(document->cssCompositingEnabled())
-    , isCSSGridLayoutEnabled(document->cssGridLayoutEnabled())
+    , mode(document.inQuirksMode() ? CSSQuirksMode : CSSStrictMode)
+    , isHTMLDocument(document.isHTMLDocument())
+    , isCSSCustomFilterEnabled(document.settings() ? document.settings()->isCSSCustomFilterEnabled() : false)
+    , isCSSStickyPositionEnabled(document.cssStickyPositionEnabled())
+    , isCSSRegionsEnabled(document.cssRegionsEnabled())
+    , isCSSCompositingEnabled(document.cssCompositingEnabled())
+    , isCSSGridLayoutEnabled(document.cssGridLayoutEnabled())
 #if ENABLE(CSS_VARIABLES)
-    , isCSSVariablesEnabled(document->settings() ? document->settings()->cssVariablesEnabled() : false)
+    , isCSSVariablesEnabled(document.settings() ? document.settings()->cssVariablesEnabled() : false)
 #endif
-    , needsSiteSpecificQuirks(document->settings() ? document->settings()->needsSiteSpecificQuirks() : false)
-    , enforcesCSSMIMETypeInNoQuirksMode(!document->settings() || document->settings()->enforceCSSMIMETypeInNoQuirksMode())
-    , useLegacyBackgroundSizeShorthandBehavior(document->settings() ? document->settings()->useLegacyBackgroundSizeShorthandBehavior() : false)
+    , needsSiteSpecificQuirks(document.settings() ? document.settings()->needsSiteSpecificQuirks() : false)
+    , enforcesCSSMIMETypeInNoQuirksMode(!document.settings() || document.settings()->enforceCSSMIMETypeInNoQuirksMode())
+    , useLegacyBackgroundSizeShorthandBehavior(document.settings() ? document.settings()->useLegacyBackgroundSizeShorthandBehavior() : false)
 {
 }
 
@@ -1305,7 +1305,7 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& strin
 }
 
 #if ENABLE(CSS_VARIABLES)
-bool CSSParser::parseValue(MutableStylePropertySet* declaration, CSSPropertyID propertyID, const String& string, bool important, Document* document)
+bool CSSParser::parseValue(MutableStylePropertySet* declaration, CSSPropertyID propertyID, const String& string, bool important, Document& document)
 {
     ASSERT(!string.isEmpty());
 

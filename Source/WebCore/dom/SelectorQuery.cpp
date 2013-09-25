@@ -298,7 +298,7 @@ SelectorQuery::SelectorQuery(const CSSSelectorList& selectorList)
     m_selectors.initialize(m_selectorList);
 }
 
-SelectorQuery* SelectorQueryCache::add(const AtomicString& selectors, Document* document, ExceptionCode& ec)
+SelectorQuery* SelectorQueryCache::add(const AtomicString& selectors, Document& document, ExceptionCode& ec)
 {
     HashMap<AtomicString, OwnPtr<SelectorQuery> >::iterator it = m_entries.find(selectors);
     if (it != m_entries.end())

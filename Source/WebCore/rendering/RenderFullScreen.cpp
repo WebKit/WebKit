@@ -114,9 +114,9 @@ static PassRefPtr<RenderStyle> createFullScreenStyle()
     return fullscreenStyle.release();
 }
 
-RenderFullScreen* RenderFullScreen::wrapRenderer(RenderObject* object, RenderElement* parent, Document* document)
+RenderFullScreen* RenderFullScreen::wrapRenderer(RenderObject* object, RenderElement* parent, Document& document)
 {
-    RenderFullScreen* fullscreenRenderer = RenderFullScreen::createAnonymous(*document);
+    RenderFullScreen* fullscreenRenderer = RenderFullScreen::createAnonymous(document);
     fullscreenRenderer->setStyle(createFullScreenStyle());
     if (parent && !parent->isChildAllowed(fullscreenRenderer, fullscreenRenderer->style())) {
         fullscreenRenderer->destroy();
@@ -144,7 +144,7 @@ RenderFullScreen* RenderFullScreen::wrapRenderer(RenderObject* object, RenderEle
         fullscreenRenderer->addChild(object);
         fullscreenRenderer->setNeedsLayoutAndPrefWidthsRecalc();
     }
-    document->setFullScreenRenderer(fullscreenRenderer);
+    document.setFullScreenRenderer(fullscreenRenderer);
     return fullscreenRenderer;
 }
 

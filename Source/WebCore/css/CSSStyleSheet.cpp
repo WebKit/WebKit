@@ -84,11 +84,11 @@ PassRefPtr<CSSStyleSheet> CSSStyleSheet::create(PassRefPtr<StyleSheetContents> s
     return adoptRef(new CSSStyleSheet(sheet, ownerNode, false));
 }
 
-PassRefPtr<CSSStyleSheet> CSSStyleSheet::createInline(Node* ownerNode, const KURL& baseURL, const String& encoding)
+PassRefPtr<CSSStyleSheet> CSSStyleSheet::createInline(Node& ownerNode, const KURL& baseURL, const String& encoding)
 {
-    CSSParserContext parserContext(&ownerNode->document(), baseURL, encoding);
+    CSSParserContext parserContext(ownerNode.document(), baseURL, encoding);
     RefPtr<StyleSheetContents> sheet = StyleSheetContents::create(baseURL.string(), parserContext);
-    return adoptRef(new CSSStyleSheet(sheet.release(), ownerNode, true));
+    return adoptRef(new CSSStyleSheet(sheet.release(), &ownerNode, true));
 }
 
 CSSStyleSheet::CSSStyleSheet(PassRefPtr<StyleSheetContents> contents, CSSImportRule* ownerRule)

@@ -196,21 +196,21 @@ static DocumentElementSetMap& documentToElementSetMap()
     return map;
 }
 
-static void addElementToDocumentMap(HTMLMediaElement* element, Document* document)
+static void addElementToDocumentMap(HTMLMediaElement& element, Document& document)
 {
     DocumentElementSetMap& map = documentToElementSetMap();
-    HashSet<HTMLMediaElement*> set = map.take(document);
-    set.add(element);
-    map.add(document, set);
+    HashSet<HTMLMediaElement*> set = map.take(&document);
+    set.add(&element);
+    map.add(&document, set);
 }
 
-static void removeElementFromDocumentMap(HTMLMediaElement* element, Document* document)
+static void removeElementFromDocumentMap(HTMLMediaElement& element, Document& document)
 {
     DocumentElementSetMap& map = documentToElementSetMap();
-    HashSet<HTMLMediaElement*> set = map.take(document);
-    set.remove(element);
+    HashSet<HTMLMediaElement*> set = map.take(&document);
+    set.remove(&element);
     if (!set.isEmpty())
-        map.add(document, set);
+        map.add(&document, set);
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -337,7 +337,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
         addBehaviorRestriction(RequireUserGestureForLoadRestriction);
     }
 
-    addElementToDocumentMap(this, &document);
+    addElementToDocumentMap(*this, document);
 
 #if ENABLE(VIDEO_TRACK)
     document.registerForCaptionPreferencesChangedCallbacks(this);
@@ -388,7 +388,7 @@ HTMLMediaElement::~HTMLMediaElement()
     setMediaKeys(0);
 #endif
 
-    removeElementFromDocumentMap(this, &document());
+    removeElementFromDocumentMap(*this, document());
 
     m_completelyLoaded = true;
     if (m_player)
@@ -411,11 +411,11 @@ void HTMLMediaElement::didMoveToNewDocument(Document* oldDocument)
 
     if (oldDocument) {
         oldDocument->unregisterForMediaVolumeCallbacks(this);
-        removeElementFromDocumentMap(this, oldDocument);
+        removeElementFromDocumentMap(*this, *oldDocument);
     }
 
     document().registerForMediaVolumeCallbacks(this);
-    addElementToDocumentMap(this, &document());
+    addElementToDocumentMap(*this, document());
 
     HTMLElement::didMoveToNewDocument(oldDocument);
 }
@@ -3764,10 +3764,8 @@ void HTMLMediaElement::mediaPlayerSawUnsupportedTracks(MediaPlayer*)
     // The MediaPlayer came across content it cannot completely handle.
     // This is normally acceptable except when we are in a standalone
     // MediaDocument. If so, tell the document what has happened.
-    if (document().isMediaDocument()) {
-        MediaDocument* mediaDocument = toMediaDocument(&document());
-        mediaDocument->mediaElementSawUnsupportedTracks();
-    }
+    if (document().isMediaDocument())
+        toMediaDocument(document()).mediaElementSawUnsupportedTracks();
 }
 
 void HTMLMediaElement::mediaPlayerResourceNotSupported(MediaPlayer*)

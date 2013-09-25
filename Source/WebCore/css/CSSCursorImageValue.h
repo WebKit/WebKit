@@ -53,7 +53,7 @@ public:
 
     bool updateIfSVGCursorIsUsed(Element*);
     StyleImage* cachedImage(CachedResourceLoader*);
-    StyleImage* cachedOrPendingImage(Document*);
+    StyleImage* cachedOrPendingImage(Document&);
 
 #if ENABLE(SVG)
     void removeReferencedElement(SVGElement*);

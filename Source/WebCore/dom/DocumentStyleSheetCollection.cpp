@@ -52,7 +52,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-DocumentStyleSheetCollection::DocumentStyleSheetCollection(Document* document)
+DocumentStyleSheetCollection::DocumentStyleSheetCollection(Document& document)
     : m_document(document)
     , m_pendingStylesheets(0)
     , m_injectedStyleSheetCacheValid(false)
@@ -85,7 +85,7 @@ DocumentStyleSheetCollection::~DocumentStyleSheetCollection()
 void DocumentStyleSheetCollection::combineCSSFeatureFlags()
 {
     // Delay resetting the flags until after next style recalc since unapplying the style may not work without these set (this is true at least with before/after).
-    const StyleResolver& styleResolver = m_document->ensureStyleResolver();
+    const StyleResolver& styleResolver = m_document.ensureStyleResolver();
     m_usesSiblingRules = m_usesSiblingRules || styleResolver.usesSiblingRules();
     m_usesFirstLineRules = m_usesFirstLineRules || styleResolver.usesFirstLineRules();
     m_usesBeforeAfterRules = m_usesBeforeAfterRules || styleResolver.usesBeforeAfterRules();
@@ -93,7 +93,7 @@ void DocumentStyleSheetCollection::combineCSSFeatureFlags()
 
 void DocumentStyleSheetCollection::resetCSSFeatureFlags()
 {
-    const StyleResolver& styleResolver = m_document->ensureStyleResolver();
+    const StyleResolver& styleResolver = m_document.ensureStyleResolver();
     m_usesSiblingRules = styleResolver.usesSiblingRules();
     m_usesFirstLineRules = styleResolver.usesFirstLineRules();
     m_usesBeforeAfterRules = styleResolver.usesBeforeAfterRules();
@@ -104,7 +104,7 @@ CSSStyleSheet* DocumentStyleSheetCollection::pageUserSheet()
     if (m_pageUserSheet)
         return m_pageUserSheet.get();
     
-    Page* owningPage = m_document->page();
+    Page* owningPage = m_document.page();
     if (!owningPage)
         return 0;
     
@@ -113,7 +113,7 @@ CSSStyleSheet* DocumentStyleSheetCollection::pageUserSheet()
         return 0;
     
     // Parse the sheet and cache it.
-    m_pageUserSheet = CSSStyleSheet::createInline(m_document, m_document->settings()->userStyleSheetLocation());
+    m_pageUserSheet = CSSStyleSheet::createInline(m_document, m_document.settings()->userStyleSheetLocation());
     m_pageUserSheet->contents()->setIsUserStyleSheet(true);
     m_pageUserSheet->contents()->parseString(userSheetText);
     return m_pageUserSheet.get();
@@ -123,7 +123,7 @@ void DocumentStyleSheetCollection::clearPageUserSheet()
 {
     if (m_pageUserSheet) {
         m_pageUserSheet = 0;
-        m_document->styleResolverChanged(DeferRecalcStyle);
+        m_document.styleResolverChanged(DeferRecalcStyle);
     }
 }
 
@@ -131,7 +131,7 @@ void DocumentStyleSheetCollection::updatePageUserSheet()
 {
     clearPageUserSheet();
     if (pageUserSheet())
-        m_document->styleResolverChanged(RecalcStyleImmediately);
+        m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
 const Vector<RefPtr<CSSStyleSheet> >& DocumentStyleSheetCollection::injectedUserStyleSheets() const
@@ -154,7 +154,7 @@ void DocumentStyleSheetCollection::updateInjectedStyleSheetCache() const
     m_injectedUserStyleSheets.clear();
     m_injectedAuthorStyleSheets.clear();
 
-    Page* owningPage = m_document->page();
+    Page* owningPage = m_document.page();
     if (!owningPage)
         return;
         
@@ -168,11 +168,11 @@ void DocumentStyleSheetCollection::updateInjectedStyleSheetCache() const
         const UserStyleSheetVector* sheets = it->value.get();
         for (unsigned i = 0; i < sheets->size(); ++i) {
             const UserStyleSheet* sheet = sheets->at(i).get();
-            if (sheet->injectedFrames() == InjectInTopFrameOnly && m_document->ownerElement())
+            if (sheet->injectedFrames() == InjectInTopFrameOnly && m_document.ownerElement())
                 continue;
-            if (!UserContentURLPattern::matchesPatterns(m_document->url(), sheet->whitelist(), sheet->blacklist()))
+            if (!UserContentURLPattern::matchesPatterns(m_document.url(), sheet->whitelist(), sheet->blacklist()))
                 continue;
-            RefPtr<CSSStyleSheet> groupSheet = CSSStyleSheet::createInline(const_cast<Document*>(m_document), sheet->url());
+            RefPtr<CSSStyleSheet> groupSheet = CSSStyleSheet::createInline(const_cast<Document&>(m_document), sheet->url());
             bool isUserStyleSheet = sheet->level() == UserStyleUserLevel;
             if (isUserStyleSheet)
                 m_injectedUserStyleSheets.append(groupSheet);
@@ -191,21 +191,21 @@ void DocumentStyleSheetCollection::invalidateInjectedStyleSheetCache()
     m_injectedStyleSheetCacheValid = false;
     if (m_injectedUserStyleSheets.isEmpty() && m_injectedAuthorStyleSheets.isEmpty())
         return;
-    m_document->styleResolverChanged(DeferRecalcStyle);
+    m_document.styleResolverChanged(DeferRecalcStyle);
 }
 
 void DocumentStyleSheetCollection::addAuthorSheet(PassRefPtr<StyleSheetContents> authorSheet)
 {
     ASSERT(!authorSheet->isUserStyleSheet());
-    m_authorStyleSheets.append(CSSStyleSheet::create(authorSheet, m_document));
-    m_document->styleResolverChanged(RecalcStyleImmediately);
+    m_authorStyleSheets.append(CSSStyleSheet::create(authorSheet, &m_document));
+    m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
 void DocumentStyleSheetCollection::addUserSheet(PassRefPtr<StyleSheetContents> userSheet)
 {
     ASSERT(userSheet->isUserStyleSheet());
-    m_userStyleSheets.append(CSSStyleSheet::create(userSheet, m_document));
-    m_document->styleResolverChanged(RecalcStyleImmediately);
+    m_userStyleSheets.append(CSSStyleSheet::create(userSheet, &m_document));
+    m_document.styleResolverChanged(RecalcStyleImmediately);
 }
 
 // This method is called whenever a top-level stylesheet has finished loading.
@@ -225,24 +225,24 @@ void DocumentStyleSheetCollection::removePendingSheet(RemovePendingSheetNotifica
         return;
 
     if (notification == RemovePendingSheetNotifyLater) {
-        m_document->setNeedsNotifyRemoveAllPendingStylesheet();
+        m_document.setNeedsNotifyRemoveAllPendingStylesheet();
         return;
     }
     
-    m_document->didRemoveAllPendingStylesheet();
+    m_document.didRemoveAllPendingStylesheet();
 }
 
-void DocumentStyleSheetCollection::addStyleSheetCandidateNode(Node* node, bool createdByParser)
+void DocumentStyleSheetCollection::addStyleSheetCandidateNode(Node& node, bool createdByParser)
 {
-    if (!node->inDocument())
+    if (!node.inDocument())
         return;
     
     // Until the <body> exists, we have no choice but to compare document positions,
     // since styles outside of the body and head continue to be shunted into the head
     // (and thus can shift to end up before dynamically added DOM content that is also
     // outside the body).
-    if ((createdByParser && m_document->body()) || m_styleSheetCandidateNodes.isEmpty()) {
-        m_styleSheetCandidateNodes.add(node);
+    if ((createdByParser && m_document.body()) || m_styleSheetCandidateNodes.isEmpty()) {
+        m_styleSheetCandidateNodes.add(&node);
         return;
     }
 
@@ -254,25 +254,25 @@ void DocumentStyleSheetCollection::addStyleSheetCandidateNode(Node* node, bool c
     do {
         --it;
         Node* n = *it;
-        unsigned short position = n->compareDocumentPosition(node);
+        unsigned short position = n->compareDocumentPosition(&node);
         if (position == Node::DOCUMENT_POSITION_FOLLOWING) {
-            m_styleSheetCandidateNodes.insertBefore(followingNode, node);
+            m_styleSheetCandidateNodes.insertBefore(followingNode, &node);
             return;
         }
         followingNode = n;
     } while (it != begin);
     
-    m_styleSheetCandidateNodes.insertBefore(followingNode, node);
+    m_styleSheetCandidateNodes.insertBefore(followingNode, &node);
 }
 
-void DocumentStyleSheetCollection::removeStyleSheetCandidateNode(Node* node)
+void DocumentStyleSheetCollection::removeStyleSheetCandidateNode(Node& node)
 {
-    m_styleSheetCandidateNodes.remove(node);
+    m_styleSheetCandidateNodes.remove(&node);
 }
 
 void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleSheet> >& sheets)
 {
-    if (m_document->settings() && !m_document->settings()->authorAndUserStylesEnabled())
+    if (m_document.settings() && !m_document.settings()->authorAndUserStylesEnabled())
         return;
 
     StyleSheetCandidateListHashSet::iterator begin = m_styleSheetCandidateNodes.begin();
@@ -287,10 +287,10 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
             sheet = pi->sheet();
 #if ENABLE(XSLT)
             // Don't apply XSL transforms to already transformed documents -- <rdar://problem/4132806>
-            if (pi->isXSL() && !m_document->transformSourceDocument()) {
+            if (pi->isXSL() && !m_document.transformSourceDocument()) {
                 // Don't apply XSL transforms until loading is finished.
-                if (!m_document->parsing())
-                    m_document->applyXSLTransform(pi);
+                if (!m_document.parsing())
+                    m_document.applyXSLTransform(pi);
                 return;
             }
 #endif
@@ -382,7 +382,7 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
 
     if (updateFlag != OptimizedUpdate)
         return;
-    if (!m_document->styleResolverIfExists())
+    if (!m_document.styleResolverIfExists())
         return;
 
     // Find out which stylesheets are new.
@@ -412,12 +412,12 @@ void DocumentStyleSheetCollection::analyzeStyleSheetChange(UpdateFlag updateFlag
     styleResolverUpdateType = hasInsertions ? Reset : Additive;
 
     // If we are already parsing the body and so may have significant amount of elements, put some effort into trying to avoid style recalcs.
-    if (!m_document->body() || m_document->hasNodesWithPlaceholderStyle())
+    if (!m_document.body() || m_document.hasNodesWithPlaceholderStyle())
         return;
     StyleInvalidationAnalysis invalidationAnalysis(addedSheets);
     if (invalidationAnalysis.dirtiesAllStyle())
         return;
-    invalidationAnalysis.invalidateStyle(m_document);
+    invalidationAnalysis.invalidateStyle(&m_document);
     requiresFullStyleRecalc = false;
 }
 
@@ -444,9 +444,9 @@ static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet> >& 
     }
 }
 
-static void collectActiveCSSStyleSheetsFromSeamlessParents(Vector<RefPtr<CSSStyleSheet> >& sheets, Document* document)
+static void collectActiveCSSStyleSheetsFromSeamlessParents(Vector<RefPtr<CSSStyleSheet> >& sheets, Document& document)
 {
-    HTMLIFrameElement* seamlessParentIFrame = document->seamlessParentIFrame();
+    HTMLIFrameElement* seamlessParentIFrame = document.seamlessParentIFrame();
     if (!seamlessParentIFrame)
         return;
     sheets.appendVector(seamlessParentIFrame->document().styleSheetCollection()->activeAuthorStyleSheets());
@@ -454,16 +454,16 @@ static void collectActiveCSSStyleSheetsFromSeamlessParents(Vector<RefPtr<CSSStyl
 
 bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag)
 {
-    if (m_document->inStyleRecalc()) {
+    if (m_document.inStyleRecalc()) {
         // SVG <use> element may manage to invalidate style selector in the middle of a style recalc.
         // https://bugs.webkit.org/show_bug.cgi?id=54344
         // FIXME: This should be fixed in SVG and the call site replaced by ASSERT(!m_inStyleRecalc).
         m_pendingUpdateType = FullUpdate;
-        m_document->scheduleForcedStyleRecalc();
+        m_document.scheduleForcedStyleRecalc();
         return false;
 
     }
-    if (!m_document->renderView() || !m_document->attached())
+    if (!m_document.renderView() || !m_document.attached())
         return false;
 
     Vector<RefPtr<StyleSheet> > activeStyleSheets;
@@ -480,9 +480,9 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
     analyzeStyleSheetChange(updateFlag, activeCSSStyleSheets, styleResolverUpdateType, requiresFullStyleRecalc);
 
     if (styleResolverUpdateType == Reconstruct)
-        m_document->clearStyleResolver();
+        m_document.clearStyleResolver();
     else {
-        StyleResolver& styleResolver = m_document->ensureStyleResolver();
+        StyleResolver& styleResolver = m_document.ensureStyleResolver();
         if (styleResolverUpdateType == Reset) {
             styleResolver.ruleSets().resetAuthorStyle();
             styleResolver.appendAuthorStyleSheets(0, activeCSSStyleSheets);
@@ -500,7 +500,7 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
     m_usesRemUnits = styleSheetsUseRemUnits(m_activeAuthorStyleSheets);
     m_pendingUpdateType = NoUpdate;
 
-    m_document->notifySeamlessChildDocumentsOfStylesheetUpdate();
+    m_document.notifySeamlessChildDocumentsOfStylesheetUpdate();
 
     return requiresFullStyleRecalc;
 }

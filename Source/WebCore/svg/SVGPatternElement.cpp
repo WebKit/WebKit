@@ -229,7 +229,7 @@ void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) 
         processedPatterns.add(current);
 
         // Respect xlink:href, take attributes from referenced element
-        Element* refElement = SVGURIReference::targetElementFromIRIString(current->href(), &document());
+        Element* refElement = SVGURIReference::targetElementFromIRIString(current->href(), document());
         if (refElement && isSVGPatternElement(refElement)) {
             current = toSVGPatternElement(refElement);
 

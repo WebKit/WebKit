@@ -181,8 +181,8 @@
 
     void allowRoundingHacks();
 
-    void insertAuthorCSS(Document document, DOMString css);
-    void insertUserCSS(Document document, DOMString css);
+    [RaisesException] void insertAuthorCSS(Document document, DOMString css);
+    [RaisesException] void insertUserCSS(Document document, DOMString css);
 
 #if defined(ENABLE_BATTERY_STATUS) && ENABLE_BATTERY_STATUS
     [RaisesException] void setBatteryStatus(Document document, DOMString eventType, boolean charging, double chargingTime, double dischargingTime, double level);

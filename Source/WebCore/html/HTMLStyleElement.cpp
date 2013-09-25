@@ -61,7 +61,7 @@ HTMLStyleElement::~HTMLStyleElement()
 {
     // During tear-down, willRemove isn't called, so m_scopedStyleRegistrationState may still be RegisteredAsScoped or RegisteredInShadowRoot here.
     // Therefore we can't ASSERT(m_scopedStyleRegistrationState == NotRegistered).
-    m_styleSheetOwner.clearDocumentData(&document(), this);
+    m_styleSheetOwner.clearDocumentData(document(), *this);
 
     styleLoadEventSender().cancelEvent(this);
 }
@@ -94,7 +94,7 @@ void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
 void HTMLStyleElement::finishParsingChildren()
 {
-    m_styleSheetOwner.finishParsingChildren(this);
+    m_styleSheetOwner.finishParsingChildren(*this);
     HTMLElement::finishParsingChildren();
 }
 
@@ -205,7 +205,7 @@ Node::InsertionNotificationRequest HTMLStyleElement::insertedInto(ContainerNode*
 {
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument()) {
-        m_styleSheetOwner.insertedIntoDocument(&document(), this);
+        m_styleSheetOwner.insertedIntoDocument(document(), *this);
 #if ENABLE(STYLE_SCOPED)
         if (m_scopedStyleRegistrationState == NotRegistered && (scoped() || isInShadowTree()))
             registerWithScopingNode(scoped());
@@ -237,13 +237,13 @@ void HTMLStyleElement::removedFrom(ContainerNode* insertionPoint)
 #endif
 
     if (insertionPoint->inDocument())
-        m_styleSheetOwner.removedFromDocument(&document(), this);
+        m_styleSheetOwner.removedFromDocument(document(), *this);
 }
 
 void HTMLStyleElement::childrenChanged(const ChildChange& change)
 {
     HTMLElement::childrenChanged(change);
-    m_styleSheetOwner.childrenChanged(this);
+    m_styleSheetOwner.childrenChanged(*this);
 }
 
 void HTMLStyleElement::dispatchPendingLoadEvents()

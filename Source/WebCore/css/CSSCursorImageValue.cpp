@@ -48,7 +48,7 @@
 namespace WebCore {
 
 #if ENABLE(SVG)
-static inline SVGCursorElement* resourceReferencedByCursorElement(const String& url, Document* document)
+static inline SVGCursorElement* resourceReferencedByCursorElement(const String& url, Document& document)
 {
     Element* element = SVGURIReference::targetElementFromIRIString(url, document);
     if (element && isSVGCursorElement(element))
@@ -80,7 +80,7 @@ CSSCursorImageValue::~CSSCursorImageValue()
     for (; it != end; ++it) {
         SVGElement* referencedElement = *it;
         referencedElement->cursorImageValueRemoved();
-        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, &referencedElement->document()))
+        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, referencedElement->document()))
             cursorElement->removeClient(referencedElement);
     }
 #endif
@@ -111,7 +111,7 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
         return false;
 
     String url = static_cast<CSSImageValue*>(m_imageValue.get())->url();
-    if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, &element->document())) {
+    if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, element->document())) {
         // FIXME: This will override hot spot specified in CSS, which is probably incorrect.
         SVGLengthContext lengthContext(0);
         m_hasHotSpot = true;
@@ -152,7 +152,7 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
         if (isSVGCursor() && loader && loader->document()) {
             RefPtr<CSSImageValue> imageValue = static_cast<CSSImageValue*>(m_imageValue.get());
             // FIXME: This will fail if the <cursor> element is in a shadow DOM (bug 59827)
-            if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(imageValue->url(), loader->document())) {
+            if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(imageValue->url(), *loader->document())) {
                 RefPtr<CSSImageValue> svgImageValue = CSSImageValue::create(cursorElement->href());
                 StyleCachedImage* cachedImage = svgImageValue->cachedImage(loader);
                 m_image = cachedImage;
@@ -171,7 +171,7 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
     return 0;
 }
 
-StyleImage* CSSCursorImageValue::cachedOrPendingImage(Document* document)
+StyleImage* CSSCursorImageValue::cachedOrPendingImage(Document& document)
 {
 #if ENABLE(CSS_IMAGE_SET)
     // Need to delegate completely so that changes in device scale factor can be handled appropriately.

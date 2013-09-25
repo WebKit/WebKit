@@ -58,7 +58,7 @@ struct CSSParserContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CSSParserContext(CSSParserMode, const KURL& baseURL = KURL());
-    CSSParserContext(Document*, const KURL& baseURL = KURL(), const String& charset = emptyString());
+    CSSParserContext(Document&, const KURL& baseURL = KURL(), const String& charset = emptyString());
 
     KURL baseURL;
     String charset;

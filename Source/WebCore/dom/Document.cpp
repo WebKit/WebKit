@@ -422,7 +422,7 @@ Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
     , m_domTreeVersion(++s_globalTreeVersion)
     , m_listenerTypes(0)
     , m_mutationObserverTypes(0)
-    , m_styleSheetCollection(DocumentStyleSheetCollection::create(this))
+    , m_styleSheetCollection(DocumentStyleSheetCollection::create(*this))
     , m_visitedLinkState(VisitedLinkState::create(this))
     , m_visuallyOrdered(false)
     , m_readyState(Complete)
@@ -2663,7 +2663,7 @@ void Document::updateBaseURL()
         // Element sheet is silly. It never contains anything.
         ASSERT(!m_elementSheet->contents()->ruleCount());
         bool usesRemUnits = m_elementSheet->contents()->usesRemUnits();
-        m_elementSheet = CSSStyleSheet::createInline(this, m_baseURL);
+        m_elementSheet = CSSStyleSheet::createInline(*this, m_baseURL);
         // FIXME: So we are not really the parser. The right fix is to eliminate the element sheet completely.
         m_elementSheet->contents()->parserSetUsesRemUnits(usesRemUnits);
     }
@@ -2829,7 +2829,7 @@ void Document::didRemoveAllPendingStylesheet()
 CSSStyleSheet& Document::elementSheet()
 {
     if (!m_elementSheet)
-        m_elementSheet = CSSStyleSheet::createInline(this, m_baseURL);
+        m_elementSheet = CSSStyleSheet::createInline(*this, m_baseURL);
     return *m_elementSheet;
 }
 
@@ -5291,7 +5291,7 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     }
 
     if (m_fullScreenElement != documentElement())
-        RenderFullScreen::wrapRenderer(renderer, renderer ? renderer->parent() : 0, this);
+        RenderFullScreen::wrapRenderer(renderer, renderer ? renderer->parent() : 0, *this);
 
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
     

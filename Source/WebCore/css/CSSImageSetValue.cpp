@@ -122,13 +122,13 @@ StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* load
     return (m_imageSet && m_imageSet->isCachedImageSet()) ? static_cast<StyleCachedImageSet*>(m_imageSet.get()) : 0;
 }
 
-StyleImage* CSSImageSetValue::cachedOrPendingImageSet(Document* document)
+StyleImage* CSSImageSetValue::cachedOrPendingImageSet(Document& document)
 {
     if (!m_imageSet)
         m_imageSet = StylePendingImage::create(this);
-    else if (document && !m_imageSet->isPendingImage()) {
+    else if (!m_imageSet->isPendingImage()) {
         float deviceScaleFactor = 1;
-        if (Page* page = document->page())
+        if (Page* page = document.page())
             deviceScaleFactor = page->deviceScaleFactor();
 
         // If the deviceScaleFactor has changed, we may not have the best image loaded, so we have to re-assess.

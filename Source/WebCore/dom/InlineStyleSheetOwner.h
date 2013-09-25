@@ -41,18 +41,18 @@ public:
     CSSStyleSheet* sheet() const { return m_sheet.get(); }
 
     bool isLoading() const;
-    bool sheetLoaded(Document*);
-    void startLoadingDynamicSheet(Document*);
+    bool sheetLoaded(Document&);
+    void startLoadingDynamicSheet(Document&);
 
-    void insertedIntoDocument(Document*, Element*);
-    void removedFromDocument(Document*, Element*);
-    void clearDocumentData(Document*, Element*);
-    void childrenChanged(Element*);
-    void finishParsingChildren(Element*);
+    void insertedIntoDocument(Document&, Element&);
+    void removedFromDocument(Document&, Element&);
+    void clearDocumentData(Document&, Element&);
+    void childrenChanged(Element&);
+    void finishParsingChildren(Element&);
 
 private:
-    void createSheet(Element*, const String& text);
-    void createSheetFromTextContents(Element*);
+    void createSheet(Element&, const String& text);
+    void createSheetFromTextContents(Element&);
     void clearSheet();
 
     bool m_isParsingChildren;

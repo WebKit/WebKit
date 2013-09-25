@@ -1308,7 +1308,7 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertio
         if (newScope)
             updateIdForTreeScope(newScope, nullAtom, idValue);
         if (newDocument)
-            updateIdForDocument(newDocument, nullAtom, idValue, AlwaysUpdateHTMLDocumentNamedItemMaps);
+            updateIdForDocument(*newDocument, nullAtom, idValue, AlwaysUpdateHTMLDocumentNamedItemMaps);
     }
 
     const AtomicString& nameValue = getNameAttribute();
@@ -1316,7 +1316,7 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertio
         if (newScope)
             updateNameForTreeScope(newScope, nullAtom, nameValue);
         if (newDocument)
-            updateNameForDocument(newDocument, nullAtom, nameValue);
+            updateNameForDocument(*newDocument, nullAtom, nameValue);
     }
 
     if (newScope && hasTagName(labelTag)) {
@@ -1351,7 +1351,7 @@ void Element::removedFrom(ContainerNode* insertionPoint)
             if (oldScope)
                 updateIdForTreeScope(oldScope, idValue, nullAtom);
             if (oldDocument)
-                updateIdForDocument(oldDocument, idValue, nullAtom, AlwaysUpdateHTMLDocumentNamedItemMaps);
+                updateIdForDocument(*oldDocument, idValue, nullAtom, AlwaysUpdateHTMLDocumentNamedItemMaps);
         }
 
         const AtomicString& nameValue = getNameAttribute();
@@ -1359,7 +1359,7 @@ void Element::removedFrom(ContainerNode* insertionPoint)
             if (oldScope)
                 updateNameForTreeScope(oldScope, nameValue, nullAtom);
             if (oldDocument)
-                updateNameForDocument(oldDocument, nameValue, nullAtom);
+                updateNameForDocument(*oldDocument, nameValue, nullAtom);
         }
 
         if (oldScope && hasTagName(labelTag)) {
@@ -2463,7 +2463,7 @@ bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
         return false;
     }
 
-    SelectorQuery* selectorQuery = document().selectorQueryCache().add(selector, &document(), ec);
+    SelectorQuery* selectorQuery = document().selectorQueryCache().add(selector, document(), ec);
     if (!selectorQuery)
         return false;
     return selectorQuery->matches(this);
@@ -2741,7 +2741,7 @@ inline void Element::updateName(const AtomicString& oldName, const AtomicString&
         return;
     if (!document().isHTMLDocument())
         return;
-    updateNameForDocument(toHTMLDocument(&document()), oldName, newName);
+    updateNameForDocument(toHTMLDocument(document()), oldName, newName);
 }
 
 void Element::updateNameForTreeScope(TreeScope* scope, const AtomicString& oldName, const AtomicString& newName)
@@ -2755,7 +2755,7 @@ void Element::updateNameForTreeScope(TreeScope* scope, const AtomicString& oldNa
         scope->addElementByName(newName, this);
 }
 
-void Element::updateNameForDocument(HTMLDocument* document, const AtomicString& oldName, const AtomicString& newName)
+void Element::updateNameForDocument(HTMLDocument& document, const AtomicString& oldName, const AtomicString& newName)
 {
     ASSERT(inDocument());
     ASSERT(oldName != newName);
@@ -2763,17 +2763,17 @@ void Element::updateNameForDocument(HTMLDocument* document, const AtomicString& 
     if (WindowNameCollection::nodeMatchesIfNameAttributeMatch(this)) {
         const AtomicString& id = WindowNameCollection::nodeMatchesIfIdAttributeMatch(this) ? getIdAttribute() : nullAtom;
         if (!oldName.isEmpty() && oldName != id)
-            document->removeWindowNamedItem(oldName, this);
+            document.removeWindowNamedItem(oldName, this);
         if (!newName.isEmpty() && newName != id)
-            document->addWindowNamedItem(newName, this);
+            document.addWindowNamedItem(newName, this);
     }
 
     if (DocumentNameCollection::nodeMatchesIfNameAttributeMatch(this)) {
         const AtomicString& id = DocumentNameCollection::nodeMatchesIfIdAttributeMatch(this) ? getIdAttribute() : nullAtom;
         if (!oldName.isEmpty() && oldName != id)
-            document->removeDocumentNamedItem(oldName, this);
+            document.removeDocumentNamedItem(oldName, this);
         if (!newName.isEmpty() && newName != id)
-            document->addDocumentNamedItem(newName, this);
+            document.addDocumentNamedItem(newName, this);
     }
 }
 
@@ -2791,7 +2791,7 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
         return;
     if (!document().isHTMLDocument())
         return;
-    updateIdForDocument(toHTMLDocument(&document()), oldId, newId, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute);
+    updateIdForDocument(toHTMLDocument(document()), oldId, newId, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute);
 }
 
 void Element::updateIdForTreeScope(TreeScope* scope, const AtomicString& oldId, const AtomicString& newId)
@@ -2805,7 +2805,7 @@ void Element::updateIdForTreeScope(TreeScope* scope, const AtomicString& oldId, 
         scope->addElementById(newId, this);
 }
 
-void Element::updateIdForDocument(HTMLDocument* document, const AtomicString& oldId, const AtomicString& newId, HTMLDocumentNamedItemMapsUpdatingCondition condition)
+void Element::updateIdForDocument(HTMLDocument& document, const AtomicString& oldId, const AtomicString& newId, HTMLDocumentNamedItemMapsUpdatingCondition condition)
 {
     ASSERT(inDocument());
     ASSERT(oldId != newId);
@@ -2813,17 +2813,17 @@ void Element::updateIdForDocument(HTMLDocument* document, const AtomicString& ol
     if (WindowNameCollection::nodeMatchesIfIdAttributeMatch(this)) {
         const AtomicString& name = condition == UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute && WindowNameCollection::nodeMatchesIfNameAttributeMatch(this) ? getNameAttribute() : nullAtom;
         if (!oldId.isEmpty() && oldId != name)
-            document->removeWindowNamedItem(oldId, this);
+            document.removeWindowNamedItem(oldId, this);
         if (!newId.isEmpty() && newId != name)
-            document->addWindowNamedItem(newId, this);
+            document.addWindowNamedItem(newId, this);
     }
 
     if (DocumentNameCollection::nodeMatchesIfIdAttributeMatch(this)) {
         const AtomicString& name = condition == UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute && DocumentNameCollection::nodeMatchesIfNameAttributeMatch(this) ? getNameAttribute() : nullAtom;
         if (!oldId.isEmpty() && oldId != name)
-            document->removeDocumentNamedItem(oldId, this);
+            document.removeDocumentNamedItem(oldId, this);
         if (!newId.isEmpty() && newId != name)
-            document->addDocumentNamedItem(newId, this);
+            document.addDocumentNamedItem(newId, this);
     }
 }
 

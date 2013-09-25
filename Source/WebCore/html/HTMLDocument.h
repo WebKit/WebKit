@@ -104,8 +104,20 @@ inline const HTMLDocument* toHTMLDocument(const Document* document)
     return static_cast<const HTMLDocument*>(document);
 }
 
+inline HTMLDocument& toHTMLDocument(Document& document)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(document.isHTMLDocument());
+    return static_cast<HTMLDocument&>(document);
+}
+
+inline const HTMLDocument& toHTMLDocument(const Document& document)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(document.isHTMLDocument());
+    return static_cast<const HTMLDocument&>(document);
+}
 // This will catch anyone doing an unnecessary cast.
 void toHTMLDocument(const HTMLDocument*);
+void toHTMLDocument(const HTMLDocument&);
 
 } // namespace WebCore
 

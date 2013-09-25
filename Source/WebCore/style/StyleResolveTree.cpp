@@ -248,7 +248,7 @@ static void createRendererIfNeeded(Element& element, RenderStyle* resolvedStyle)
 
 #if ENABLE(FULLSCREEN_API)
     if (document.webkitIsFullScreen() && document.webkitCurrentFullScreenElement() == &element) {
-        newRenderer = RenderFullScreen::wrapRenderer(newRenderer, parentRenderer, &document);
+        newRenderer = RenderFullScreen::wrapRenderer(newRenderer, parentRenderer, document);
         if (!newRenderer)
             return;
     }

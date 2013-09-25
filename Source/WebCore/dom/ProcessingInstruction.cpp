@@ -67,7 +67,7 @@ ProcessingInstruction::~ProcessingInstruction()
         m_cachedSheet->removeClient(this);
 
     if (inDocument())
-        document().styleSheetCollection()->removeStyleSheetCandidateNode(this);
+        document().styleSheetCollection()->removeStyleSheetCandidateNode(*this);
 }
 
 String ProcessingInstruction::nodeName() const
@@ -196,7 +196,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const KURL& bas
     }
 
     ASSERT(m_isCSS);
-    CSSParserContext parserContext(&document(), baseURL, charset);
+    CSSParserContext parserContext(document(), baseURL, charset);
 
     RefPtr<StyleSheetContents> newSheet = StyleSheetContents::create(href, parserContext);
 
@@ -267,7 +267,7 @@ Node::InsertionNotificationRequest ProcessingInstruction::insertedInto(Container
     CharacterData::insertedInto(insertionPoint);
     if (!insertionPoint->inDocument())
         return InsertionDone;
-    document().styleSheetCollection()->addStyleSheetCandidateNode(this, m_createdByParser);
+    document().styleSheetCollection()->addStyleSheetCandidateNode(*this, m_createdByParser);
     checkStyleSheet();
     return InsertionDone;
 }
@@ -278,7 +278,7 @@ void ProcessingInstruction::removedFrom(ContainerNode* insertionPoint)
     if (!insertionPoint->inDocument())
         return;
     
-    document().styleSheetCollection()->removeStyleSheetCandidateNode(this);
+    document().styleSheetCollection()->removeStyleSheetCandidateNode(*this);
 
     if (m_sheet) {
         ASSERT(m_sheet->ownerNode() == this);

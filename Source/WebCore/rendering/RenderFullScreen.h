@@ -44,7 +44,7 @@ public:
     void createPlaceholder(PassRefPtr<RenderStyle>, const LayoutRect& frameRect);
 
 
-    static RenderFullScreen* wrapRenderer(RenderObject*, RenderElement*, Document*);
+    static RenderFullScreen* wrapRenderer(RenderObject*, RenderElement*, Document&);
     void unwrapRenderer();
 
 private:

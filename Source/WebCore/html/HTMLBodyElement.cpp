@@ -238,10 +238,9 @@ void HTMLBodyElement::setVLink(const String& value)
     setAttribute(vlinkAttr, value);
 }
 
-static int adjustForZoom(int value, Document* document)
+static int adjustForZoom(int value, Frame& frame)
 {
-    Frame* frame = document->frame();
-    float zoomFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
+    float zoomFactor = frame.pageZoomFactor() * frame.frameScaleFactor();
     if (zoomFactor == 1)
         return value;
     // Needed because of truncation (rather than rounding) when scaling up.
@@ -255,8 +254,13 @@ int HTMLBodyElement::scrollLeft()
     if (!document().inQuirksMode())
         return 0;
     document().updateLayoutIgnorePendingStylesheets();
-    FrameView* view = document().view();
-    return view ? adjustForZoom(view->scrollX(), &document()) : 0;
+    Frame* frame = document().frame();
+    if (!frame)
+        return 0;
+    FrameView* view = frame->view();
+    if (!view)
+        return 0;
+    return adjustForZoom(view->scrollX(), *frame);
 }
 
 void HTMLBodyElement::setScrollLeft(int scrollLeft)
@@ -276,8 +280,13 @@ int HTMLBodyElement::scrollTop()
     if (!document().inQuirksMode())
         return 0;
     document().updateLayoutIgnorePendingStylesheets();
-    FrameView* view = document().view();
-    return view ? adjustForZoom(view->scrollY(), &document()) : 0;
+    Frame* frame = document().frame();
+    if (!frame)
+        return 0;
+    FrameView* view = frame->view();
+    if (!view)
+        return 0;
+    return adjustForZoom(view->scrollY(), *frame);
 }
 
 void HTMLBodyElement::setScrollTop(int scrollTop)
@@ -296,16 +305,26 @@ int HTMLBodyElement::scrollHeight()
 {
     // Update the document's layout.
     document().updateLayoutIgnorePendingStylesheets();
-    FrameView* view = document().view();
-    return view ? adjustForZoom(view->contentsHeight(), &document()) : 0;
+    Frame* frame = document().frame();
+    if (!frame)
+        return 0;
+    FrameView* view = frame->view();
+    if (!view)
+        return 0;
+    return adjustForZoom(view->contentsHeight(), *frame);
 }
 
 int HTMLBodyElement::scrollWidth()
 {
     // Update the document's layout.
     document().updateLayoutIgnorePendingStylesheets();
-    FrameView* view = document().view();
-    return view ? adjustForZoom(view->contentsWidth(), &document()) : 0;
+    Frame* frame = document().frame();
+    if (!frame)
+        return 0;
+    FrameView* view = frame->view();
+    if (!view)
+        return 0;
+    return adjustForZoom(view->contentsWidth(), *frame);
 }
 
 void HTMLBodyElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

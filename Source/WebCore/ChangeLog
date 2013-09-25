@@ -1,3 +1,12 @@
+2013-09-24  Sam Weinig  <sam@webkit.org>
+
+        CTTE: More Document references please
+        https://bugs.webkit.org/show_bug.cgi?id=121893
+
+        Reviewed by Anders Carlsson.
+
+        * Thread even more Document&s around. *
+
 2013-09-25  Anders Carlsson  <andersca@apple.com>
 
         HasMemoryCostMemberFunction should work for final classes

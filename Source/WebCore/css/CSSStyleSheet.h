@@ -48,7 +48,7 @@ class CSSStyleSheet FINAL : public StyleSheet {
 public:
     static PassRefPtr<CSSStyleSheet> create(PassRefPtr<StyleSheetContents>, CSSImportRule* ownerRule = 0);
     static PassRefPtr<CSSStyleSheet> create(PassRefPtr<StyleSheetContents>, Node* ownerNode);
-    static PassRefPtr<CSSStyleSheet> createInline(Node*, const KURL&, const String& encoding = String());
+    static PassRefPtr<CSSStyleSheet> createInline(Node&, const KURL&, const String& encoding = String());
 
     virtual ~CSSStyleSheet();
 

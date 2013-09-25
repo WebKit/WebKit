@@ -231,8 +231,8 @@ public:
 
     void allowRoundingHacks() const;
 
-    void insertAuthorCSS(Document*, const String&) const;
-    void insertUserCSS(Document*, const String&) const;
+    void insertAuthorCSS(Document*, const String&, ExceptionCode&) const;
+    void insertUserCSS(Document*, const String&, ExceptionCode&) const;
 
 #if ENABLE(INSPECTOR)
     unsigned numberOfLiveNodes() const;

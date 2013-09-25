@@ -90,7 +90,7 @@ RenderElement* SVGAltGlyphElement::createRenderer(RenderArena& arena, RenderStyl
 bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const
 {
     String target;
-    Element* element = targetElementFromIRIString(getAttribute(XLinkNames::hrefAttr), &document(), &target);
+    Element* element = targetElementFromIRIString(getAttribute(XLinkNames::hrefAttr), document(), &target);
     if (!element)
         return false;
 

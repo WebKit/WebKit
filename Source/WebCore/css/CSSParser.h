@@ -115,7 +115,7 @@ public:
     bool parseQuotes(CSSPropertyID, bool important);
 
 #if ENABLE(CSS_VARIABLES)
-    static bool parseValue(MutableStylePropertySet*, CSSPropertyID, const String&, bool important, Document*);
+    static bool parseValue(MutableStylePropertySet*, CSSPropertyID, const String&, bool important, Document&);
     bool cssVariablesEnabled() const;
     void storeVariableDeclaration(const CSSParserString&, PassOwnPtr<CSSParserValueList>, bool important);
 #endif

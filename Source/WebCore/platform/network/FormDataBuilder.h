@@ -32,7 +32,7 @@ class TextEncoding;
 class FormDataBuilder {
     WTF_MAKE_NONCOPYABLE(FormDataBuilder);
 public:
-    static TextEncoding encodingFromAcceptCharset(const String& acceptCharset, Document* document);
+    static TextEncoding encodingFromAcceptCharset(const String& acceptCharset, Document&);
 
     // Helper functions used by HTMLFormElement for multi-part form data
     static Vector<char> generateUniqueBoundaryString();

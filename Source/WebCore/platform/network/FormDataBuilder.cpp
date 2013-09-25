@@ -78,7 +78,7 @@ static void appendQuotedString(Vector<char>& buffer, const CString& string)
     }
 }
 
-TextEncoding FormDataBuilder::encodingFromAcceptCharset(const String& acceptCharset, Document* document)
+TextEncoding FormDataBuilder::encodingFromAcceptCharset(const String& acceptCharset, Document& document)
 {
     String normalizedAcceptCharset = acceptCharset;
     normalizedAcceptCharset.replace(',', ' ');
@@ -94,7 +94,7 @@ TextEncoding FormDataBuilder::encodingFromAcceptCharset(const String& acceptChar
             return encoding;
     }
 
-    return document->inputEncoding();
+    return document.inputEncoding();
 }
 
 Vector<char> FormDataBuilder::generateUniqueBoundaryString()

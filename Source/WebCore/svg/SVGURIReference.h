@@ -37,19 +37,18 @@ public:
     bool isKnownAttribute(const QualifiedName&);
     void addSupportedAttributes(HashSet<QualifiedName>&);
 
-    static String fragmentIdentifierFromIRIString(const String&, Document*);
-    static Element* targetElementFromIRIString(const String&, Document*, String* = 0, Document* = 0);
+    static String fragmentIdentifierFromIRIString(const String&, Document&);
+    static Element* targetElementFromIRIString(const String&, Document&, String* = 0, Document* = 0);
 
-    static inline bool isExternalURIReference(const String& uri, Document* document)
+    static inline bool isExternalURIReference(const String& uri, Document& document)
     {
         // Fragment-only URIs are always internal
         if (uri.startsWith('#'))
             return false;
 
         // If the URI matches our documents URL, we're dealing with a local reference.
-        ASSERT(document);
-        KURL url = document->completeURL(uri);
-        return !equalIgnoringFragmentIdentifier(url, document->url());
+        KURL url = document.completeURL(uri);
+        return !equalIgnoringFragmentIdentifier(url, document.url());
     }
 
 protected:

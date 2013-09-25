@@ -2069,7 +2069,7 @@ void StyleResolver::resolveVariables(CSSPropertyID id, CSSValue* value, Vector<s
 
     // FIXME: It would be faster not to re-parse from strings, but for now CSS property validation lives inside the parser so we do it there.
     RefPtr<MutableStylePropertySet> resultSet = MutableStylePropertySet::create();
-    if (!CSSParser::parseValue(resultSet.get(), id, expression.second, false, &document()))
+    if (!CSSParser::parseValue(resultSet.get(), id, expression.second, false, document()))
         return; // expression failed to parse.
 
     for (unsigned i = 0; i < resultSet->propertyCount(); i++) {
@@ -3138,7 +3138,7 @@ PassRefPtr<StyleImage> StyleResolver::generatedOrPendingFromValue(CSSPropertyID 
 #if ENABLE(CSS_IMAGE_SET)
 PassRefPtr<StyleImage> StyleResolver::setOrPendingFromValue(CSSPropertyID property, CSSImageSetValue* value)
 {
-    RefPtr<StyleImage> image = value->cachedOrPendingImageSet(&document());
+    RefPtr<StyleImage> image = value->cachedOrPendingImageSet(document());
     if (image && image->isPendingImage())
         m_state.pendingImageProperties().set(property, value);
     return image.release();
@@ -3147,7 +3147,7 @@ PassRefPtr<StyleImage> StyleResolver::setOrPendingFromValue(CSSPropertyID proper
 
 PassRefPtr<StyleImage> StyleResolver::cursorOrPendingFromValue(CSSPropertyID property, CSSCursorImageValue* value)
 {
-    RefPtr<StyleImage> image = value->cachedOrPendingImage(&document());
+    RefPtr<StyleImage> image = value->cachedOrPendingImage(document());
     if (image && image->isPendingImage())
         m_state.pendingImageProperties().set(property, value);
     return image.release();
@@ -3783,7 +3783,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
             KURL url = m_state.document().completeURL(svgDocumentValue->url());
 
             RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(svgDocumentValue->url(), url.fragmentIdentifier(), operationType);
-            if (SVGURIReference::isExternalURIReference(svgDocumentValue->url(), &m_state.document())) {
+            if (SVGURIReference::isExternalURIReference(svgDocumentValue->url(), m_state.document())) {
                 if (!svgDocumentValue->loadRequested())
                     m_state.pendingSVGDocuments().set(operation.get(), svgDocumentValue);
                 else if (svgDocumentValue->cachedSVGDocument())

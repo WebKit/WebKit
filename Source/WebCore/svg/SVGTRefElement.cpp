@@ -175,7 +175,7 @@ void SVGTRefElement::detachTarget()
 
     // Mark the referenced ID as pending.
     String id;
-    SVGURIReference::targetElementFromIRIString(href(), &document(), &id);
+    SVGURIReference::targetElementFromIRIString(href(), document(), &id);
     if (!id.isEmpty())
         document().accessSVGExtensions()->addPendingResource(id, this);
 }
@@ -255,7 +255,7 @@ void SVGTRefElement::buildPendingResource()
         return;
 
     String id;
-    RefPtr<Element> target = SVGURIReference::targetElementFromIRIString(href(), &document(), &id);
+    RefPtr<Element> target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
     if (!target.get()) {
         if (id.isEmpty())
             return;

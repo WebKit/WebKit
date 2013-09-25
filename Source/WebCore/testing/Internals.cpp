@@ -1629,17 +1629,27 @@ void Internals::allowRoundingHacks() const
     TextRun::setAllowsRoundingHacks(true);
 }
 
-void Internals::insertAuthorCSS(Document* document, const String& css) const
+void Internals::insertAuthorCSS(Document* document, const String& css, ExceptionCode& ec) const
 {
-    RefPtr<StyleSheetContents> parsedSheet = StyleSheetContents::create(document);
+    if (!document) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    RefPtr<StyleSheetContents> parsedSheet = StyleSheetContents::create(*document);
     parsedSheet->setIsUserStyleSheet(false);
     parsedSheet->parseString(css);
     document->styleSheetCollection()->addAuthorSheet(parsedSheet);
 }
 
-void Internals::insertUserCSS(Document* document, const String& css) const
+void Internals::insertUserCSS(Document* document, const String& css, ExceptionCode& ec) const
 {
-    RefPtr<StyleSheetContents> parsedSheet = StyleSheetContents::create(document);
+    if (!document) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    RefPtr<StyleSheetContents> parsedSheet = StyleSheetContents::create(*document);
     parsedSheet->setIsUserStyleSheet(true);
     parsedSheet->parseString(css);
     document->styleSheetCollection()->addUserSheet(parsedSheet);

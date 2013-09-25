@@ -92,7 +92,7 @@ HTMLLinkElement::~HTMLLinkElement()
         m_cachedSheet->removeClient(this);
 
     if (inDocument())
-        document().styleSheetCollection()->removeStyleSheetCandidateNode(this);
+        document().styleSheetCollection()->removeStyleSheetCandidateNode(*this);
 
     linkLoadEventSender().cancelEvent(this);
 }
@@ -255,7 +255,7 @@ Node::InsertionNotificationRequest HTMLLinkElement::insertedInto(ContainerNode* 
     if (m_isInShadowTree)
         return InsertionDone;
 
-    document().styleSheetCollection()->addStyleSheetCandidateNode(this, m_createdByParser);
+    document().styleSheetCollection()->addStyleSheetCandidateNode(*this, m_createdByParser);
 
     process();
     return InsertionDone;
@@ -273,7 +273,7 @@ void HTMLLinkElement::removedFrom(ContainerNode* insertionPoint)
         ASSERT(!m_sheet);
         return;
     }
-    document().styleSheetCollection()->removeStyleSheetCandidateNode(this);
+    document().styleSheetCollection()->removeStyleSheetCandidateNode(*this);
 
     if (m_sheet)
         clearSheet();
@@ -300,7 +300,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
     // Completing the sheet load may cause scripts to execute.
     Ref<HTMLLinkElement> protect(*this);
 
-    CSSParserContext parserContext(&document(), baseURL, charset);
+    CSSParserContext parserContext(document(), baseURL, charset);
 
     if (RefPtr<StyleSheetContents> restoredSheet = const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->restoreParsedStyleSheet(parserContext)) {
         ASSERT(restoredSheet->isCacheable());

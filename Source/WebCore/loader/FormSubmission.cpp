@@ -179,7 +179,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
         }
     }
 
-    TextEncoding dataEncoding = isMailtoForm ? UTF8Encoding() : FormDataBuilder::encodingFromAcceptCharset(copiedAttributes.acceptCharset(), &document);
+    TextEncoding dataEncoding = isMailtoForm ? UTF8Encoding() : FormDataBuilder::encodingFromAcceptCharset(copiedAttributes.acceptCharset(), document);
     RefPtr<DOMFormData> domFormData = DOMFormData::create(dataEncoding.encodingForFormSubmission());
     Vector<pair<String, String> > formValues;
 
