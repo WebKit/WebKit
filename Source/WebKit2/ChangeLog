@@ -1,3 +1,20 @@
+2013-09-24  Anders Carlsson  <andersca@apple.com>
+
+        Only allow rvalues to be passed as synchronous message replies
+        https://bugs.webkit.org/show_bug.cgi?id=121870
+
+        Reviewed by Andreas Kling.
+
+        This lets us get rid of a nasty const cast and is more logical.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::sendSync):
+        * Platform/CoreIPC/MessageSender.h:
+        (CoreIPC::MessageSender::send):
+        (CoreIPC::MessageSender::sendSync):
+        * Shared/ChildProcessProxy.h:
+        (WebKit::ChildProcessProxy::sendSync):
+
 2013-09-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix.
