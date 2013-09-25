@@ -47,7 +47,7 @@ void Collator::setOrderLowerFirst(bool)
 
 OwnPtr<Collator> Collator::userDefault()
 {
-    return createOwned<Collator>(0);
+    return createOwned<Collator>(nullptr);
 }
 
 // A default implementation for platforms that lack Unicode-aware collation.
