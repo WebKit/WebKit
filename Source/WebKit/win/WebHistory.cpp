@@ -42,6 +42,7 @@
 #include <WebCore/PageGroup.h>
 #include <WebCore/SharedBuffer.h>
 #include <functional>
+#include <wtf/DateMath.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -75,22 +76,52 @@ static COMPtr<CFDictionaryPropertyBag> createUserInfoFromHistoryItem(BSTR notifi
     return info;
 }
 
-static void getDayBoundaries(CFAbsoluteTime day, CFAbsoluteTime& beginningOfDay, CFAbsoluteTime& beginningOfNextDay)
+static inline void addDayToSystemTime(SYSTEMTIME& systemTime)
 {
-    RetainPtr<CFTimeZoneRef> timeZone = adoptCF(CFTimeZoneCopyDefault());
-    CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(day, timeZone.get());
-    date.hour = 0;
-    date.minute = 0;
-    date.second = 0;
-    beginningOfDay = CFGregorianDateGetAbsoluteTime(date, timeZone.get());
-    date.day += 1;
-    beginningOfNextDay = CFGregorianDateGetAbsoluteTime(date, timeZone.get());
+    systemTime.wDay += 1;
+    if (systemTime.wDay > 31) {
+        systemTime.wDay = 1;
+        systemTime.wMonth += 1;
+    }
+    if (systemTime.wMonth > 12) {
+        systemTime.wMonth = 1;
+        systemTime.wYear += 1;
+    }
+
+    // Convert to and from VariantTime to fix invalid dates like 2001-04-31.
+    DATE date = 0.0;
+    ::SystemTimeToVariantTime(&systemTime, &date);
+    ::VariantTimeToSystemTime(date, &systemTime);
 }
 
-static inline CFAbsoluteTime beginningOfDay(CFAbsoluteTime date)
+static void getDayBoundaries(DATE day, DATE& beginningOfDay, DATE& beginningOfNextDay)
 {
-    static CFAbsoluteTime cachedBeginningOfDay = std::numeric_limits<CFAbsoluteTime>::quiet_NaN();
-    static CFAbsoluteTime cachedBeginningOfNextDay;
+    SYSTEMTIME systemTime;
+    ::VariantTimeToSystemTime(day, &systemTime);
+
+    SYSTEMTIME beginningLocalTime;
+    ::SystemTimeToTzSpecificLocalTime(0, &systemTime, &beginningLocalTime);
+    beginningLocalTime.wHour = 0;
+    beginningLocalTime.wMinute = 0;
+    beginningLocalTime.wSecond = 0;
+    beginningLocalTime.wMilliseconds = 0;
+
+    SYSTEMTIME beginningOfNextDayLocalTime = beginningLocalTime;
+    addDayToSystemTime(beginningOfNextDayLocalTime);
+
+    SYSTEMTIME beginningSystemTime;
+    ::TzSpecificLocalTimeToSystemTime(0, &beginningLocalTime, &beginningSystemTime);
+    ::SystemTimeToVariantTime(&beginningSystemTime, &beginningOfDay);
+
+    SYSTEMTIME beginningOfNextDaySystemTime;
+    ::TzSpecificLocalTimeToSystemTime(0, &beginningOfNextDayLocalTime, &beginningOfNextDaySystemTime);
+    ::SystemTimeToVariantTime(&beginningOfNextDaySystemTime, &beginningOfNextDay);
+}
+
+static inline DATE beginningOfDay(DATE date)
+{
+    static DATE cachedBeginningOfDay = std::numeric_limits<DATE>::quiet_NaN();
+    static DATE cachedBeginningOfNextDay;
     if (!(date >= cachedBeginningOfDay && date < cachedBeginningOfNextDay))
         getDayBoundaries(date, cachedBeginningOfDay, cachedBeginningOfNextDay);
     return cachedBeginningOfDay;
@@ -98,10 +129,10 @@ static inline CFAbsoluteTime beginningOfDay(CFAbsoluteTime date)
 
 static inline WebHistory::DateKey dateKey(DATE date)
 {
-    // Converting from double (CFAbsoluteTime) to int64_t (WebHistoryDateKey) is
-    // safe here because all sensible dates are in the range -2**48 .. 2**47 which
+    // Converting from double (DATE) to int64_t (WebHistoryDateKey) is safe
+    // here because all sensible dates are in the range -2**48 .. 2**47 which
     // safely fits in an int64_t.
-    return beginningOfDay(MarshallingHelpers::DATEToCFAbsoluteTime(date));
+    return beginningOfDay(date) * secondsPerDay;
 }
 
 // WebHistory -----------------------------------------------------------------
@@ -306,7 +337,7 @@ HRESULT STDMETHODCALLTYPE WebHistory::orderedLastVisitedDays(
         DateToEntriesMap::const_iterator::Keys end = m_entriesByDate.end().keys();
         int i = 0;
         for (DateToEntriesMap::const_iterator::Keys it = m_entriesByDate.begin().keys(); it != end; ++it, ++i)
-            m_orderedLastVisitedDays[i] = MarshallingHelpers::CFAbsoluteTimeToDATE(*it);
+            m_orderedLastVisitedDays[i] = *it / secondsPerDay;
         // Use std::greater to sort the days in descending order (i.e., most-recent first).
         sort(m_orderedLastVisitedDays.get(), m_orderedLastVisitedDays.get() + dateCount, greater<DATE>());
     }
@@ -673,37 +704,6 @@ HRESULT WebHistory::addItemToDateCaches(IWebHistoryItem* entry)
 
     // low is now the index of the first entry that is older than entryDate
     entriesForDate.insert(low, entry);
-    return S_OK;
-}
-
-CFAbsoluteTime WebHistory::timeToDate(CFAbsoluteTime time)
-{
-    // can't just divide/round since the day boundaries depend on our current time zone
-    const double secondsPerDay = 60 * 60 * 24;
-    CFTimeZoneRef timeZone = CFTimeZoneCopySystem();
-    CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(time, timeZone);
-    date.hour = date.minute = 0;
-    date.second = 0.0;
-    CFAbsoluteTime timeInDays = CFGregorianDateGetAbsoluteTime(date, timeZone);
-    if (areEqualOrClose(time - timeInDays, secondsPerDay))
-        timeInDays += secondsPerDay;
-    return timeInDays;
-}
-
-// Return a date that marks the age limit for history entries saved to or
-// loaded from disk. Any entry older than this item should be rejected.
-HRESULT WebHistory::ageLimitDate(CFAbsoluteTime* time)
-{
-    // get the current date as a CFAbsoluteTime
-    CFAbsoluteTime currentDate = timeToDate(CFAbsoluteTimeGetCurrent());
-
-    CFGregorianUnits ageLimit = {0};
-    int historyLimitDays;
-    HRESULT hr = historyAgeInDaysLimit(&historyLimitDays);
-    if (FAILED(hr))
-        return hr;
-    ageLimit.days = -historyLimitDays;
-    *time = CFAbsoluteTimeAddGregorianUnits(currentDate, CFTimeZoneCopySystem(), ageLimit);
     return S_OK;
 }
 

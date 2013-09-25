@@ -138,8 +138,6 @@ private:
     HRESULT removeItemForURLString(const WTF::String& urlString);
     HRESULT addItemToDateCaches(IWebHistoryItem* entry);
     HRESULT removeItemFromDateCaches(IWebHistoryItem* entry);
-    HRESULT ageLimitDate(CFAbsoluteTime* time);
-    static CFAbsoluteTime timeToDate(CFAbsoluteTime time);
     BSTR getNotificationString(NotificationType notifyType);
 
     ULONG m_refCount;

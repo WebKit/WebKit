@@ -1,3 +1,20 @@
+2013-09-25  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Replace CF time functions with Windows API functions in WebHistory
+        https://bugs.webkit.org/show_bug.cgi?id=121599
+
+        Reviewed by Brent Fulgham.
+
+        This reduces the dependencies on the CoreFoundation library.
+
+        * WebHistory.cpp:
+        (addDayToSystemTime):
+        (getDayBoundaries):
+        (beginningOfDay):
+        (dateKey):
+        (WebHistory::orderedLastVisitedDays):
+        * WebHistory.h:
+
 2013-09-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Refactor RuntimeEnabledFeatures as a Singleton.
