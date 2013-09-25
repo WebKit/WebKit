@@ -55,6 +55,12 @@ private:
     WebKitCSSMatFunctionValue(const WebKitCSSMatFunctionValue& cloneFrom);
 };
 
+inline WebKitCSSMatFunctionValue* toWebKitCSSMatFunctionValue(CSSValue* value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSMatFunctionValue());
+    return static_cast<WebKitCSSMatFunctionValue*>(value);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(CSS_SHADERS)

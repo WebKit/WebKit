@@ -1,3 +1,36 @@
+2013-09-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add toWebKitCSS*Value functions to cast from CSSValue
+        https://bugs.webkit.org/show_bug.cgi?id=121776
+
+        Reviewed by Darin Adler.
+
+        CSS_VALUE_TYPE_CASTS can't cover WebKitCSS*Value classes. So, this patch adds toWebKitCSS*Value manually.
+
+        No new tests, no behavior change.
+
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::destroy):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createCustomFilterOperationWithInlineSyntax):
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/TransformFunctions.cpp:
+        (WebCore::transformsForValue):
+        * css/WebKitCSSArrayFunctionValue.h:
+        (WebCore::toWebKitCSSArrayFunctionValue):
+        * css/WebKitCSSFilterValue.h:
+        (WebCore::toWebKitCSSFilterValue):
+        * css/WebKitCSSMatFunctionValue.h:
+        (WebCore::toWebKitCSSMatFunctionValue):
+        * css/WebKitCSSMixFunctionValue.h:
+        (WebCore::toWebKitCSSMixFunctionValue):
+        * css/WebKitCSSSVGDocumentValue.h:
+        (WebCore::toWebKitCSSSVGDocumentValue):
+        * css/WebKitCSSShaderValue.h:
+        (WebCore::toWebKitCSSShaderValue):
+        * css/WebKitCSSTransformValue.h:
+        (WebCore::toWebKitCSSTransformValue):
+
 2013-09-24  Antti Koivisto  <antti@apple.com>
 
         Clean up some uses of first/lastChildSlow

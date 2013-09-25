@@ -77,6 +77,12 @@ private:
     FilterOperationType m_type;
 };
 
+inline WebKitCSSFilterValue* toWebKitCSSFilterValue(CSSValue* value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSFilterValue());
+    return static_cast<WebKitCSSFilterValue*>(value);
+}
+
 }
 
 #endif // ENABLE(CSS_FILTERS)

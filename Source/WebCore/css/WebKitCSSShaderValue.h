@@ -71,6 +71,7 @@ WebKitCSSShaderValue* toWebKitCSSShaderValue(const WebKitCSSShaderValue*);
 
 inline WebKitCSSShaderValue* toWebKitCSSShaderValue(CSSValue* value)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSShaderValue());
     return value->isWebKitCSSShaderValue() ? static_cast<WebKitCSSShaderValue*>(value) : 0;
 }
 

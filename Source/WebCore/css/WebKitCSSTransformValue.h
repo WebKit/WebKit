@@ -82,6 +82,12 @@ private:
     TransformOperationType m_type;
 };
 
+inline WebKitCSSTransformValue* toWebKitCSSTransformValue(CSSValue* value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isWebKitCSSTransformValue());
+    return static_cast<WebKitCSSTransformValue*>(value);
+}
+
 }
 
 #endif
