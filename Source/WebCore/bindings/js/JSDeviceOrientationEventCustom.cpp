@@ -38,7 +38,7 @@ namespace WebCore {
 
 JSValue JSDeviceOrientationEvent::alpha(ExecState*) const
 {
-    DeviceOrientationEvent* imp = static_cast<DeviceOrientationEvent*>(impl());
+    DeviceOrientationEvent* imp = impl();
     if (!imp->orientation()->canProvideAlpha())
         return jsNull();
     return jsNumber(imp->orientation()->alpha());
@@ -46,7 +46,7 @@ JSValue JSDeviceOrientationEvent::alpha(ExecState*) const
 
 JSValue JSDeviceOrientationEvent::beta(ExecState*) const
 {
-    DeviceOrientationEvent* imp = static_cast<DeviceOrientationEvent*>(impl());
+    DeviceOrientationEvent* imp = impl();
     if (!imp->orientation()->canProvideBeta())
         return jsNull();
     return jsNumber(imp->orientation()->beta());
@@ -54,7 +54,7 @@ JSValue JSDeviceOrientationEvent::beta(ExecState*) const
 
 JSValue JSDeviceOrientationEvent::gamma(ExecState*) const
 {
-    DeviceOrientationEvent* imp = static_cast<DeviceOrientationEvent*>(impl());
+    DeviceOrientationEvent* imp = impl();
     if (!imp->orientation()->canProvideGamma())
         return jsNull();
     return jsNumber(imp->orientation()->gamma());
@@ -62,7 +62,7 @@ JSValue JSDeviceOrientationEvent::gamma(ExecState*) const
 
 JSValue JSDeviceOrientationEvent::absolute(ExecState*) const
 {
-    DeviceOrientationEvent* imp = static_cast<DeviceOrientationEvent*>(impl());
+    DeviceOrientationEvent* imp = impl();
     if (!imp->orientation()->canProvideAbsolute())
         return jsNull();
     return jsBoolean(imp->orientation()->absolute());
@@ -84,7 +84,7 @@ JSValue JSDeviceOrientationEvent::initDeviceOrientationEvent(ExecState* exec)
     bool absoluteProvided = !exec->argument(6).isUndefinedOrNull();
     bool absolute = exec->argument(6).toBoolean(exec);
     RefPtr<DeviceOrientationData> orientation = DeviceOrientationData::create(alphaProvided, alpha, betaProvided, beta, gammaProvided, gamma, absoluteProvided, absolute);
-    DeviceOrientationEvent* imp = static_cast<DeviceOrientationEvent*>(impl());
+    DeviceOrientationEvent* imp = impl();
     imp->initDeviceOrientationEvent(type, bubbles, cancelable, orientation.get());
     return jsUndefined();
 }

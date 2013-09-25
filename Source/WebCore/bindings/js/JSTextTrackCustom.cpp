@@ -42,7 +42,7 @@ void JSTextTrack::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(jsTextTrack->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsTextTrack, visitor);
 
-    TextTrack* textTrack = static_cast<TextTrack*>(jsTextTrack->impl());
+    TextTrack* textTrack = jsTextTrack->impl();
     visitor.addOpaqueRoot(root(textTrack));
 
     textTrack->visitJSEventListeners(visitor);

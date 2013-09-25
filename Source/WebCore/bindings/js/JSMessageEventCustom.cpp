@@ -49,7 +49,7 @@ JSValue JSMessageEvent::data(ExecState* exec) const
     if (JSValue cachedValue = m_data.get())
         return cachedValue;
 
-    MessageEvent* event = static_cast<MessageEvent*>(impl());
+    MessageEvent* event = impl();
     JSValue result;
     switch (event->dataType()) {
     case MessageEvent::DataTypeScriptValue: {
@@ -63,7 +63,7 @@ JSValue JSMessageEvent::data(ExecState* exec) const
 
     case MessageEvent::DataTypeSerializedScriptValue:
         if (RefPtr<SerializedScriptValue> serializedValue = event->dataAsSerializedScriptValue()) {
-            MessagePortArray ports = static_cast<MessageEvent*>(impl())->ports();
+            MessagePortArray ports = impl()->ports();
             result = serializedValue->deserialize(exec, globalObject(), &ports, NonThrowing);
         }
         else
@@ -109,7 +109,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
     if (exec->hadException())
         return jsUndefined();
 
-    MessageEvent* event = static_cast<MessageEvent*>(jsEvent->impl());
+    MessageEvent* event = jsEvent->impl();
     event->initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, messagePorts.release());
     jsEvent->m_data.set(exec->vm(), jsEvent, dataArg.jsValue());
     return jsUndefined();

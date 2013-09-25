@@ -1,3 +1,15 @@
+2013-09-25  Andreas Kling  <akling@apple.com>
+
+        JS wrappers should have strongly typed impl() functions.
+        <https://webkit.org/b/121919>
+
+        Reviewed by Geoffrey Garen.
+
+        Generate strongly typed JSFoo::impl() functions for all wrappers,
+        not just those marked with JSGenerateToNativeObject.
+
+        Removed 8.8 million static_casts that are no longer needed.
+
 2013-09-24  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Overpanning occurs even when what is being panned isn't the main document.

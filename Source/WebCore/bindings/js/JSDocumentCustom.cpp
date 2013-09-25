@@ -51,7 +51,7 @@ namespace WebCore {
 
 JSValue JSDocument::location(ExecState* exec) const
 {
-    Frame* frame = static_cast<Document*>(impl())->frame();
+    Frame* frame = impl()->frame();
     if (!frame)
         return jsNull();
 
@@ -66,7 +66,7 @@ JSValue JSDocument::location(ExecState* exec) const
 
 void JSDocument::setLocation(ExecState* exec, JSValue value)
 {
-    Frame* frame = static_cast<Document*>(impl())->frame();
+    Frame* frame = impl()->frame();
     if (!frame)
         return;
 

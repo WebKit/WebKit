@@ -51,7 +51,7 @@ JSValue JSPopStateEvent::state(ExecState* exec) const
     if (!cachedValue.isEmpty())
         return cachedValue;
 
-    PopStateEvent* event = static_cast<PopStateEvent*>(impl());
+    PopStateEvent* event = impl();
 
     if (!event->state().hasNoValue())
         return cacheState(exec, const_cast<JSPopStateEvent*>(this), event->state().jsValue());

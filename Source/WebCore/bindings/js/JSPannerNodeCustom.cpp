@@ -38,7 +38,7 @@ namespace WebCore {
 
 void JSPannerNode::setPanningModel(ExecState* exec, JSValue value)
 {
-    PannerNode* imp = static_cast<PannerNode*>(impl());
+    PannerNode* imp = impl();
 
 #if ENABLE(LEGACY_WEB_AUDIO)
     if (value.isNumber()) {
@@ -62,7 +62,7 @@ void JSPannerNode::setPanningModel(ExecState* exec, JSValue value)
 
 void JSPannerNode::setDistanceModel(ExecState* exec, JSValue value)
 {
-    PannerNode* imp = static_cast<PannerNode*>(impl());
+    PannerNode* imp = impl();
 
 #if ENABLE(LEGACY_WEB_AUDIO)
     if (value.isNumber()) {

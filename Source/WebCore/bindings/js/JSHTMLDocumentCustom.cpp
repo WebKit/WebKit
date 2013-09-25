@@ -60,7 +60,7 @@ bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* document, Prop
 JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSHTMLDocument* thisObj = jsCast<JSHTMLDocument*>(asObject(slotBase));
-    HTMLDocument* document = toHTMLDocument(thisObj->impl());
+    HTMLDocument* document = thisObj->impl();
 
     AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
     if (!atomicPropertyName || !document->hasDocumentNamedItem(atomicPropertyName))
@@ -90,7 +90,7 @@ JSValue JSHTMLDocument::all(ExecState* exec) const
     if (v)
         return v;
 
-    return toJS(exec, globalObject(), toHTMLDocument(impl())->all());
+    return toJS(exec, globalObject(), impl()->all());
 }
 
 void JSHTMLDocument::setAll(ExecState* exec, JSValue value)
@@ -105,7 +105,7 @@ JSValue JSHTMLDocument::open(ExecState* exec)
 {
     // For compatibility with other browsers, pass open calls with more than 2 parameters to the window.
     if (exec->argumentCount() > 2) {
-        Frame* frame = toHTMLDocument(impl())->frame();
+        Frame* frame = impl()->frame();
         if (frame) {
             JSDOMWindowShell* wrapper = toJSDOMWindowShell(frame, currentWorld(exec));
             if (wrapper) {
@@ -125,7 +125,7 @@ JSValue JSHTMLDocument::open(ExecState* exec)
     Document* activeDocument = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->document();
 
     // In the case of two parameters or fewer, do a normal document open.
-    toHTMLDocument(impl())->open(activeDocument);
+    impl()->open(activeDocument);
     return this;
 }
 
@@ -158,13 +158,13 @@ static inline void documentWrite(ExecState* exec, HTMLDocument* document, Newlin
 
 JSValue JSHTMLDocument::write(ExecState* exec)
 {
-    documentWrite(exec, toHTMLDocument(impl()), DoNotAddNewline);
+    documentWrite(exec, impl(), DoNotAddNewline);
     return jsUndefined();
 }
 
 JSValue JSHTMLDocument::writeln(ExecState* exec)
 {
-    documentWrite(exec, toHTMLDocument(impl()), DoAddNewline);
+    documentWrite(exec, impl(), DoAddNewline);
     return jsUndefined();
 }
 

@@ -61,13 +61,12 @@ static CanvasStyle toHTMLCanvasStyle(ExecState*, JSValue value)
 
 JSValue JSCanvasRenderingContext2D::strokeStyle(ExecState* exec) const
 {
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-    return toJS(exec, globalObject(), context->strokeStyle());        
+    return toJS(exec, globalObject(), impl()->strokeStyle());
 }
 
 void JSCanvasRenderingContext2D::setStrokeStyle(ExecState* exec, JSValue value)
 {
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
+    CanvasRenderingContext2D* context = impl();
     if (value.isString()) {
         context->setStrokeColor(asString(value)->value(exec));
         return;
@@ -77,13 +76,12 @@ void JSCanvasRenderingContext2D::setStrokeStyle(ExecState* exec, JSValue value)
 
 JSValue JSCanvasRenderingContext2D::fillStyle(ExecState* exec) const
 {
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-    return toJS(exec, globalObject(), context->fillStyle());
+    return toJS(exec, globalObject(), impl()->fillStyle());
 }
 
 void JSCanvasRenderingContext2D::setFillStyle(ExecState* exec, JSValue value)
 {
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
+    CanvasRenderingContext2D* context = impl();
     if (value.isString()) {
         context->setFillColor(asString(value)->value(exec));
         return;
@@ -93,7 +91,7 @@ void JSCanvasRenderingContext2D::setFillStyle(ExecState* exec, JSValue value)
 
 JSValue JSCanvasRenderingContext2D::webkitLineDash(ExecState* exec) const
 {
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
+    CanvasRenderingContext2D* context = impl();
     const Vector<float>& dash = context->getLineDash();
 
     MarkedArgumentBuffer list;
@@ -118,8 +116,7 @@ void JSCanvasRenderingContext2D::setWebkitLineDash(ExecState* exec, JSValue valu
         dash.append(elem);
     }
 
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-    context->setWebkitLineDash(dash);
+    impl()->setWebkitLineDash(dash);
 }
 
 } // namespace WebCore

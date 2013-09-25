@@ -43,7 +43,7 @@ void JSVideoTrack::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(jsVideoTrack->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsVideoTrack, visitor);
 
-    VideoTrack* videoTrack = static_cast<VideoTrack*>(jsVideoTrack->impl());
+    VideoTrack* videoTrack = jsVideoTrack->impl();
     visitor.addOpaqueRoot(root(videoTrack));
 }
 

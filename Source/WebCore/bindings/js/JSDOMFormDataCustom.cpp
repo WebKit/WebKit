@@ -43,7 +43,7 @@ namespace WebCore {
 
 static HTMLFormElement* toHTMLFormElement(JSC::JSValue value)
 {
-    return value.inherits(JSHTMLFormElement::info()) ? toHTMLFormElement(jsCast<JSHTMLFormElement*>(asObject(value))->impl()) : 0;
+    return value.inherits(JSHTMLFormElement::info()) ? jsCast<JSHTMLFormElement*>(asObject(value))->impl() : 0;
 }
 
 EncodedJSValue JSC_HOST_CALL JSDOMFormDataConstructor::constructJSDOMFormData(ExecState* exec)

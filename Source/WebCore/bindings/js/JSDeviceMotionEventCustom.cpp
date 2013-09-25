@@ -133,7 +133,7 @@ static JSObject* createRotationRateObject(const DeviceMotionData::RotationRate* 
 
 JSValue JSDeviceMotionEvent::acceleration(ExecState* exec) const
 {
-    DeviceMotionEvent* imp = static_cast<DeviceMotionEvent*>(impl());
+    DeviceMotionEvent* imp = impl();
     if (!imp->deviceMotionData()->acceleration())
         return jsNull();
     return createAccelerationObject(imp->deviceMotionData()->acceleration(), exec);
@@ -141,7 +141,7 @@ JSValue JSDeviceMotionEvent::acceleration(ExecState* exec) const
 
 JSValue JSDeviceMotionEvent::accelerationIncludingGravity(ExecState* exec) const
 {
-    DeviceMotionEvent* imp = static_cast<DeviceMotionEvent*>(impl());
+    DeviceMotionEvent* imp = impl();
     if (!imp->deviceMotionData()->accelerationIncludingGravity())
         return jsNull();
     return createAccelerationObject(imp->deviceMotionData()->accelerationIncludingGravity(), exec);
@@ -149,7 +149,7 @@ JSValue JSDeviceMotionEvent::accelerationIncludingGravity(ExecState* exec) const
 
 JSValue JSDeviceMotionEvent::rotationRate(ExecState* exec) const
 {
-    DeviceMotionEvent* imp = static_cast<DeviceMotionEvent*>(impl());
+    DeviceMotionEvent* imp = impl();
     if (!imp->deviceMotionData()->rotationRate())
         return jsNull();
     return createRotationRateObject(imp->deviceMotionData()->rotationRate(), exec);
@@ -157,7 +157,7 @@ JSValue JSDeviceMotionEvent::rotationRate(ExecState* exec) const
 
 JSValue JSDeviceMotionEvent::interval(ExecState*) const
 {
-    DeviceMotionEvent* imp = static_cast<DeviceMotionEvent*>(impl());
+    DeviceMotionEvent* imp = impl();
     if (!imp->deviceMotionData()->canProvideInterval())
         return jsNull();
     return jsNumber(imp->deviceMotionData()->interval());
@@ -186,7 +186,7 @@ JSValue JSDeviceMotionEvent::initDeviceMotionEvent(ExecState* exec)
     bool intervalProvided = !exec->argument(6).isUndefinedOrNull();
     double interval = exec->argument(6).toNumber(exec);
     RefPtr<DeviceMotionData> deviceMotionData = DeviceMotionData::create(acceleration, accelerationIncludingGravity, rotationRate, intervalProvided, interval);
-    DeviceMotionEvent* imp = static_cast<DeviceMotionEvent*>(impl());
+    DeviceMotionEvent* imp = impl();
     imp->initDeviceMotionEvent(type, bubbles, cancelable, deviceMotionData.get());
     return jsUndefined();
 }

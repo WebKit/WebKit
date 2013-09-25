@@ -40,7 +40,7 @@ namespace WebCore {
 
 void JSAudioBufferSourceNode::setBuffer(ExecState* exec, JSValue value)
 {
-    AudioBufferSourceNode* imp = static_cast<AudioBufferSourceNode*>(impl());
+    AudioBufferSourceNode* imp = impl();
     AudioBuffer* buffer = toAudioBuffer(value);
     if (!buffer) {
         exec->vm().throwException(exec, createTypeError(exec, "Value is not of type AudioBuffer"));

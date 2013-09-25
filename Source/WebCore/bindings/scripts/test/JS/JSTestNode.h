@@ -50,6 +50,10 @@ public:
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
+    TestNode* impl() const
+    {
+        return static_cast<TestNode*>(Base::impl());
+    }
 protected:
     JSTestNode(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestNode>);
     void finishCreation(JSC::VM&);

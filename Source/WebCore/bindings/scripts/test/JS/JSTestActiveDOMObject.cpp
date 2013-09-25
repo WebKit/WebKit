@@ -137,7 +137,7 @@ JSValue jsTestActiveDOMObjectExcitingAttr(ExecState* exec, JSValue slotBase, Pro
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))
         return jsUndefined();
     UNUSED_PARAM(exec);
-    TestActiveDOMObject* impl = static_cast<TestActiveDOMObject*>(castedThis->impl());
+    TestActiveDOMObject* impl = castedThis->impl();
     JSValue result = jsNumber(impl->excitingAttr());
     return result;
 }
@@ -165,7 +165,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestActiveDOMObject::info());
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))
         return JSValue::encode(jsUndefined());
-    TestActiveDOMObject* impl = static_cast<TestActiveDOMObject*>(castedThis->impl());
+    TestActiveDOMObject* impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     Node* nextChild(toNode(exec->argument(0)));
@@ -182,7 +182,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(E
         return throwVMTypeError(exec);
     JSTestActiveDOMObject* castedThis = jsCast<JSTestActiveDOMObject*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestActiveDOMObject::info());
-    TestActiveDOMObject* impl = static_cast<TestActiveDOMObject*>(castedThis->impl());
+    TestActiveDOMObject* impl = castedThis->impl();
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     const String& message(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));

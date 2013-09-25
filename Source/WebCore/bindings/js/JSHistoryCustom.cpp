@@ -131,7 +131,7 @@ void JSHistory::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
 
 JSValue JSHistory::state(ExecState *exec) const
 {
-    History* history = static_cast<History*>(impl());
+    History* history = impl();
 
     JSValue cachedValue = m_state.get();
     if (!cachedValue.isEmpty() && !history->stateChanged())

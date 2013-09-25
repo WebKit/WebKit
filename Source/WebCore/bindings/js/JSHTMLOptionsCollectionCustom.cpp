@@ -39,7 +39,7 @@ namespace WebCore {
 
 void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue value)
 {
-    HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
+    HTMLOptionsCollection* imp = impl();
     ExceptionCode ec = 0;
     unsigned newLength = 0;
     double lengthValue = value.toNumber(exec);
@@ -58,14 +58,14 @@ void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue value)
 
 void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSValue value)
 {
-    HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
+    HTMLOptionsCollection* imp = impl();
     HTMLSelectElement* base = toHTMLSelectElement(imp->ownerNode());
     selectIndexSetter(base, exec, index, value);
 }
 
 JSValue JSHTMLOptionsCollection::add(ExecState* exec)
 {
-    HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
+    HTMLOptionsCollection* imp = impl();
     HTMLOptionElement* option = toHTMLOptionElement(exec->argument(0));
     ExceptionCode ec = 0;
     if (exec->argumentCount() < 2)
@@ -82,7 +82,7 @@ JSValue JSHTMLOptionsCollection::add(ExecState* exec)
 
 JSValue JSHTMLOptionsCollection::remove(ExecState* exec)
 {
-    HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
+    HTMLOptionsCollection* imp = impl();
     JSHTMLSelectElement* base = jsCast<JSHTMLSelectElement*>(asObject(toJS(exec, globalObject(), imp->ownerNode())));
     return base->remove(exec);
 }

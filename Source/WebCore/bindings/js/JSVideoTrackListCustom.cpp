@@ -43,7 +43,7 @@ void JSVideoTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(jsVideoTrackList->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsVideoTrackList, visitor);
 
-    VideoTrackList* videoTrackList = static_cast<VideoTrackList*>(jsVideoTrackList->impl());
+    VideoTrackList* videoTrackList = jsVideoTrackList->impl();
     visitor.addOpaqueRoot(root(videoTrackList->element()));
     videoTrackList->visitJSEventListeners(visitor);
 }

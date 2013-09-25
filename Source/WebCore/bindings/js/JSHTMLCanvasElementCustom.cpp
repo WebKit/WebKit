@@ -68,7 +68,7 @@ static void get3DContextAttributes(ExecState* exec, RefPtr<CanvasContextAttribut
 
 JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
 {
-    HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(impl());
+    HTMLCanvasElement* canvas = impl();
     const String& contextId = exec->argument(0).toString(exec)->value(exec);
     
     RefPtr<CanvasContextAttributes> attrs;
@@ -101,7 +101,7 @@ JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
 
 JSValue JSHTMLCanvasElement::probablySupportsContext(ExecState* exec)
 {
-    HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(impl());
+    HTMLCanvasElement* canvas = impl();
     if (!exec->argumentCount())
         return jsBoolean(false);
     const String& contextId = exec->uncheckedArgument(0).toString(exec)->value(exec);
@@ -122,7 +122,7 @@ JSValue JSHTMLCanvasElement::probablySupportsContext(ExecState* exec)
 
 JSValue JSHTMLCanvasElement::toDataURL(ExecState* exec)
 {
-    HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(impl());
+    HTMLCanvasElement* canvas = impl();
     ExceptionCode ec = 0;
 
     const String& type = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));

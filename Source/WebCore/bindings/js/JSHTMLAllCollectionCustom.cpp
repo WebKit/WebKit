@@ -63,7 +63,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
 
     // Do not use thisObj here. It can be the JSHTMLDocument, in the document.forms(i) case.
     JSHTMLAllCollection* jsCollection = jsCast<JSHTMLAllCollection*>(exec->callee());
-    HTMLAllCollection* collection = static_cast<HTMLAllCollection*>(jsCollection->impl());
+    HTMLAllCollection* collection = jsCollection->impl();
 
     // Also, do we need the TypeError test here ?
 

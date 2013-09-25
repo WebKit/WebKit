@@ -38,15 +38,12 @@ namespace WebCore {
 
 JSValue JSHTMLLinkElement::sizes(ExecState* exec) const
 {
-    HTMLLinkElement* output = static_cast<HTMLLinkElement*>(impl());
-    JSValue result = toJS(exec, globalObject(), WTF::getPtr(output->sizes()));
-    return result;
+    return toJS(exec, globalObject(), impl()->sizes());
 }
 
 void JSHTMLLinkElement::setSizes(ExecState* exec, JSValue value)
 {
-    HTMLLinkElement* output = static_cast<HTMLLinkElement*>(impl());
-    output->setSizes(valueToStringWithNullCheck(exec, value));
+    impl()->setSizes(valueToStringWithNullCheck(exec, value));
 }
 
 } // namespace WebCore

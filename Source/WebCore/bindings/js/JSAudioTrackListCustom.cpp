@@ -43,7 +43,7 @@ void JSAudioTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT(jsAudioTrackList->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsAudioTrackList, visitor);
 
-    AudioTrackList* audioTrackList = static_cast<AudioTrackList*>(jsAudioTrackList->impl());
+    AudioTrackList* audioTrackList = jsAudioTrackList->impl();
     visitor.addOpaqueRoot(root(audioTrackList->element()));
     audioTrackList->visitJSEventListeners(visitor);
 }

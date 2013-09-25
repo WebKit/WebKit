@@ -38,7 +38,7 @@ namespace WebCore {
 
 JSValue JSTrackEvent::track(ExecState* exec) const
 {
-    TrackBase* track = static_cast<TrackEvent*>(impl())->track();
+    TrackBase* track = impl()->track();
     if (!track)
         return jsNull();
 

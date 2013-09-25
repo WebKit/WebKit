@@ -38,7 +38,7 @@ namespace WebCore {
 
 void JSBiquadFilterNode::setType(ExecState* exec, JSValue value)
 {
-    BiquadFilterNode* imp = static_cast<BiquadFilterNode*>(impl());
+    BiquadFilterNode* imp = impl();
 
 #if ENABLE(LEGACY_WEB_AUDIO)
     if (value.isNumber()) {
