@@ -22,6 +22,8 @@
 
 """Supports style checking not specific to any one file type."""
 
+import re
+import sre_compile
 
 # FIXME: Test this list in the same way that the list of CppChecker
 #        categories is tested, for example by checking that all of its
@@ -31,6 +33,43 @@
 categories = set([
     "whitespace/carriage_return",
     "whitespace/tab"])
+
+
+# The regexp compilation caching is inlined in all regexp functions for
+# performance reasons; factoring it out into a separate function turns out
+# to be noticeably expensive.
+_regexp_compile_cache = {}
+_regexp_compile_cache_ignorecase = {}
+
+
+def match(pattern, s):
+    if not pattern in _regexp_compile_cache:
+        _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
+    return _regexp_compile_cache[pattern].match(s)
+
+
+def search(pattern, string):
+    if not pattern in _regexp_compile_cache:
+        _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
+    return _regexp_compile_cache[pattern].search(string)
+
+
+def searchIgnorecase(pattern, string):
+    if not pattern in _regexp_compile_cache_ignorecase:
+        _regexp_compile_cache_ignorecase[pattern] = re.compile(pattern, flags=re.IGNORECASE)
+    return _regexp_compile_cache_ignorecase[pattern].search(string)
+
+
+def sub(pattern, replacement, s):
+    if not pattern in _regexp_compile_cache:
+        _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
+    return _regexp_compile_cache[pattern].sub(replacement, s)
+
+
+def subn(pattern, replacement, s):
+    if not pattern in _regexp_compile_cache:
+        _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
+    return _regexp_compile_cache[pattern].subn(replacement, s)
 
 
 class CarriageReturnChecker(object):

@@ -24,9 +24,7 @@
 
 """Supports checking WebKit style in cmake files.(.cmake, CMakeLists.txt)"""
 
-import re
-
-from common import TabChecker
+from common import TabChecker, match, search, searchIgnorecase
 
 
 class CMakeChecker(object):
@@ -97,16 +95,16 @@ class CMakeChecker(object):
             self._process_line(l + 1, lines[l])
 
     def _process_line(self, line_number, line_content):
-        if re.match('(^|\ +)#', line_content):
+        if match('(^|\ +)#', line_content):
             # ignore comment line
             return
         l = line_content.expandtabs(4)
         # check command like message( "testing")
-        if re.search('\(\ +', l):
+        if search('\(\ +', l):
             self._handle_style_error(line_number, 'whitespace/parentheses', 5,
                                      'No space after "("')
         # check command like message("testing" )
-        if re.search('\ +\)', l) and not re.search('^\ +\)$', l):
+        if search('\ +\)', l) and not search('^\ +\)$', l):
             self._handle_style_error(line_number, 'whitespace/parentheses', 5,
                                      'No space before ")"')
         self._check_trailing_whitespace(line_number, l)
@@ -127,7 +125,7 @@ class CMakeChecker(object):
         # check command like "SET    (" or "Set("
         for t in self.NO_SPACE_CMDS:
             self._check_non_lowercase_cmd(line_number, line_content, t)
-            if re.search('(^|\ +)' + t.lower() + '\ +\(', line_content):
+            if search('(^|\ +)' + t.lower() + '\ +\(', line_content):
                 msg = 'No space between command "' + t.lower() + '" and its parentheses, should be "' + t + '("'
                 self._handle_style_error(line_number, 'whitespace/parentheses', 5, msg)
 
@@ -135,13 +133,13 @@ class CMakeChecker(object):
         # check command like "IF (" or "if(" or "if   (" or "If ()"
         for t in self.ONE_SPACE_CMDS:
             self._check_non_lowercase_cmd(line_number, line_content, t)
-            if re.search('(^|\ +)' + t.lower() + '(\(|\ \ +\()', line_content):
+            if search('(^|\ +)' + t.lower() + '(\(|\ \ +\()', line_content):
                 msg = 'One space between command "' + t.lower() + '" and its parentheses, should be "' + t + ' ("'
                 self._handle_style_error(line_number, 'whitespace/parentheses', 5, msg)
 
     def _check_non_lowercase_cmd(self, line_number, line_content, cmd):
-        if re.search('(^|\ +)' + cmd + '\ *\(', line_content, flags=re.IGNORECASE) and \
-           (not re.search('(^|\ +)' + cmd.lower() + '\ *\(', line_content)):
+        if searchIgnorecase('(^|\ +)' + cmd + '\ *\(', line_content) and \
+           (not search('(^|\ +)' + cmd.lower() + '\ *\(', line_content)):
             msg = 'Use lowercase command "' + cmd.lower() + '"'
             self._handle_style_error(line_number, 'command/lowercase', 5, msg)
 

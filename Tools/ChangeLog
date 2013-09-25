@@ -1,3 +1,28 @@
+2013-09-25  Patrick Gansterer  <paroga@webkit.org>
+
+        CMakeChecker takes unusually long time to run
+        https://bugs.webkit.org/show_bug.cgi?id=105662
+
+        Reviewed by Ryosuke Niwa.
+
+        Move the caching mechanism for regular expression of the C++ checker into
+        a common file and use it for the CMake and ChangeLog checkers too.
+
+        * Scripts/webkitpy/style/checkers/changelog.py:
+        (ChangeLogChecker.check_entry):
+        * Scripts/webkitpy/style/checkers/cmake.py:
+        (CMakeChecker._process_line):
+        (CMakeChecker._check_no_space_cmds):
+        (CMakeChecker._check_one_space_cmds):
+        (CMakeChecker._check_non_lowercase_cmd):
+        * Scripts/webkitpy/style/checkers/common.py:
+        (match):
+        (search):
+        (searchIgnorecase):
+        (sub):
+        (subn):
+        * Scripts/webkitpy/style/checkers/cpp.py:
+
 2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Fix build with Qt 5.2 QtPosition module

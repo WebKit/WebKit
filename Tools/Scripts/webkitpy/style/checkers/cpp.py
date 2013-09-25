@@ -41,11 +41,11 @@ import math  # for log
 import os
 import os.path
 import re
-import sre_compile
 import string
 import sys
 import unicodedata
 
+from common import match, search, sub, subn
 from webkitpy.common.memoized import memoized
 
 # The key to use to provide a class to fake loading a header file.
@@ -125,40 +125,6 @@ _MOC_HEADER = 3
 # INCLUDE_IO_INJECTION_KEY allows providing a custom io class which allows
 # for faking a header file.
 _unit_test_config = {}
-
-
-# The regexp compilation caching is inlined in all regexp functions for
-# performance reasons; factoring it out into a separate function turns out
-# to be noticeably expensive.
-_regexp_compile_cache = {}
-
-
-def match(pattern, s):
-    """Matches the string with the pattern, caching the compiled regexp."""
-    if not pattern in _regexp_compile_cache:
-        _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
-    return _regexp_compile_cache[pattern].match(s)
-
-
-def search(pattern, s):
-    """Searches the string for the pattern, caching the compiled regexp."""
-    if not pattern in _regexp_compile_cache:
-        _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
-    return _regexp_compile_cache[pattern].search(s)
-
-
-def sub(pattern, replacement, s):
-    """Substitutes occurrences of a pattern, caching the compiled regexp."""
-    if not pattern in _regexp_compile_cache:
-        _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
-    return _regexp_compile_cache[pattern].sub(replacement, s)
-
-
-def subn(pattern, replacement, s):
-    """Substitutes occurrences of a pattern, caching the compiled regexp."""
-    if not pattern in _regexp_compile_cache:
-        _regexp_compile_cache[pattern] = sre_compile.compile(pattern)
-    return _regexp_compile_cache[pattern].subn(replacement, s)
 
 
 def iteratively_replace_matches_with_char(pattern, char_replacement, s):
