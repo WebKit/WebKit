@@ -1,5 +1,26 @@
 2013-09-26  Anders Carlsson  <andersca@apple.com>
 
+        Remove needsDestruction from vector and hash traits
+        https://bugs.webkit.org/show_bug.cgi?id=121983
+
+        Reviewed by Sam Weinig.
+
+        For Vector, use std::is_trivially_destructible to determine whether to call the destructor.
+        For HashTable, always call the destructor; if it is trivial then no code will be generated for it and the loops will be folded away. 
+
+        Removing this does break the ability to store objects with non-trivial destructors in vectors and hash maps
+        and have their destructors not be called when removed, but we've never used this feature in WebKit so the extra
+        code complexity is not worth it.
+
+        * wtf/HashTable.h:
+        (WTF::::deallocateTable):
+        * wtf/HashTraits.h:
+        * wtf/Vector.h:
+        (WTF::VectorTypeOperations::destruct):
+        * wtf/VectorTraits.h:
+
+2013-09-26  Anders Carlsson  <andersca@apple.com>
+
         Build fixes.
 
         Fix a paste-o.

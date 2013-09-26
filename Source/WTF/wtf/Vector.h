@@ -211,7 +211,7 @@ struct VectorTypeOperations
 {
     static void destruct(T* begin, T* end)
     {
-        VectorDestructor<VectorTraits<T>::needsDestruction, T>::destruct(begin, end);
+        VectorDestructor<!std::is_trivially_destructible<T>::value, T>::destruct(begin, end);
     }
 
     static void initialize(T* begin, T* end)

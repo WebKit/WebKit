@@ -39,7 +39,6 @@ namespace WTF {
     template<typename T>
     struct VectorTraitsBase<false, T>
     {
-        static const bool needsDestruction = true;
         static const bool needsInitialization = true;
         static const bool canInitializeWithMemset = false;
         static const bool canMoveWithMemcpy = false;
@@ -51,7 +50,6 @@ namespace WTF {
     template<typename T>
     struct VectorTraitsBase<true, T>
     {
-        static const bool needsDestruction = false;
         static const bool needsInitialization = false;
         static const bool canInitializeWithMemset = false;
         static const bool canMoveWithMemcpy = true;
@@ -90,7 +88,6 @@ namespace WTF {
         typedef VectorTraits<First> FirstTraits;
         typedef VectorTraits<Second> SecondTraits;
 
-        static const bool needsDestruction = FirstTraits::needsDestruction || SecondTraits::needsDestruction;
         static const bool needsInitialization = FirstTraits::needsInitialization || SecondTraits::needsInitialization;
         static const bool canInitializeWithMemset = FirstTraits::canInitializeWithMemset && SecondTraits::canInitializeWithMemset;
         static const bool canMoveWithMemcpy = FirstTraits::canMoveWithMemcpy && SecondTraits::canMoveWithMemcpy;

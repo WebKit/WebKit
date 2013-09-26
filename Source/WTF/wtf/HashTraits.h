@@ -46,9 +46,6 @@ template<typename T> struct GenericHashTraitsBase<false, T> {
     // for cases like String that need them.
     static const bool hasIsEmptyValueFunction = false;
 
-    // The needsDestruction flag is used to optimize destruction and rehashing.
-    static const bool needsDestruction = true;
-
     // The starting table size. Can be overridden when we know beforehand that
     // a hash table will have at least N entries.
     static const int minimumTableSize = 8;
@@ -57,7 +54,6 @@ template<typename T> struct GenericHashTraitsBase<false, T> {
 // Default integer traits disallow both 0 and -1 as keys (max value instead of -1 for unsigned).
 template<typename T> struct GenericHashTraitsBase<true, T> : GenericHashTraitsBase<false, T> {
     static const bool emptyValueIsZero = true;
-    static const bool needsDestruction = false;
     static void constructDeletedValue(T& slot) { slot = static_cast<T>(-1); }
     static bool isDeletedValue(T value) { return value == static_cast<T>(-1); }
 };
@@ -90,7 +86,6 @@ template<typename T> struct GenericHashTraits : GenericHashTraitsBase<std::is_in
 template<typename T> struct HashTraits : GenericHashTraits<T> { };
 
 template<typename T> struct FloatHashTraits : GenericHashTraits<T> {
-    static const bool needsDestruction = false;
     static T emptyValue() { return std::numeric_limits<T>::infinity(); }
     static void constructDeletedValue(T& slot) { slot = -std::numeric_limits<T>::infinity(); }
     static bool isDeletedValue(T value) { return value == -std::numeric_limits<T>::infinity(); }
@@ -102,7 +97,6 @@ template<> struct HashTraits<double> : FloatHashTraits<double> { };
 // Default unsigned traits disallow both 0 and max as keys -- use these traits to allow zero and disallow max - 1.
 template<typename T> struct UnsignedWithZeroKeyHashTraits : GenericHashTraits<T> {
     static const bool emptyValueIsZero = false;
-    static const bool needsDestruction = false;
     static T emptyValue() { return std::numeric_limits<T>::max(); }
     static void constructDeletedValue(T& slot) { slot = std::numeric_limits<T>::max() - 1; }
     static bool isDeletedValue(T value) { return value == std::numeric_limits<T>::max() - 1; }
@@ -110,7 +104,6 @@ template<typename T> struct UnsignedWithZeroKeyHashTraits : GenericHashTraits<T>
 
 template<typename P> struct HashTraits<P*> : GenericHashTraits<P*> {
     static const bool emptyValueIsZero = true;
-    static const bool needsDestruction = false;
     static void constructDeletedValue(P*& slot) { slot = reinterpret_cast<P*>(-1); }
     static bool isDeletedValue(P* value) { return value == reinterpret_cast<P*>(-1); }
 };
@@ -183,8 +176,6 @@ struct PairHashTraits : GenericHashTraits<std::pair<typename FirstTraitsArg::Tra
     static const bool emptyValueIsZero = FirstTraits::emptyValueIsZero && SecondTraits::emptyValueIsZero;
     static EmptyValueType emptyValue() { return std::make_pair(FirstTraits::emptyValue(), SecondTraits::emptyValue()); }
 
-    static const bool needsDestruction = FirstTraits::needsDestruction || SecondTraits::needsDestruction;
-
     static const int minimumTableSize = FirstTraits::minimumTableSize;
 
     static void constructDeletedValue(TraitType& slot) { FirstTraits::constructDeletedValue(slot.first); }
@@ -229,8 +220,6 @@ struct KeyValuePairHashTraits : GenericHashTraits<KeyValuePair<typename KeyTrait
 
     static const bool emptyValueIsZero = KeyTraits::emptyValueIsZero && ValueTraits::emptyValueIsZero;
     static EmptyValueType emptyValue() { return KeyValuePair<typename KeyTraits::EmptyValueType, typename ValueTraits::EmptyValueType>(KeyTraits::emptyValue(), ValueTraits::emptyValue()); }
-
-    static const bool needsDestruction = KeyTraits::needsDestruction || ValueTraits::needsDestruction;
 
     static const int minimumTableSize = KeyTraits::minimumTableSize;
 
