@@ -15,13 +15,6 @@ if test "$cxx_compiler" = "clang++"; then
     CXXFLAGS="$CXXFLAGS -stdlib=libstdc++ -Wno-c++11-extensions -Qunused-arguments"
 fi
 
-if test "$c_compiler" = "gcc"; then
-    CFLAGS="$CFLAGS -D_FORTIFY_SOURCE=2"
-fi
-if test "$cxx_compiler" = "g++"; then
-    CXXFLAGS="$CXXFLAGS -D_FORTIFY_SOURCE=2"
-fi
-
 if test "$host_cpu" = "sh4"; then
     CXXFLAGS="$CXXFLAGS -mieee -w"
     CFLAGS="$CFLAGS -mieee -w"
@@ -40,6 +33,13 @@ fi
 if test "$enable_optimizations" = "yes"; then
     CXXFLAGS="$CXXFLAGS -O2"
     CFLAGS="$CFLAGS -O2"
+
+    if test "$c_compiler" = "gcc"; then
+        CFLAGS="$CFLAGS -D_FORTIFY_SOURCE=2"
+    fi
+    if test "$cxx_compiler" = "g++"; then
+        CXXFLAGS="$CXXFLAGS -D_FORTIFY_SOURCE=2"
+    fi
 else
     CXXFLAGS="$CXXFLAGS -O0"
     CFLAGS="$CFLAGS -O0"

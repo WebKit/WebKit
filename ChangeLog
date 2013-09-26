@@ -1,3 +1,14 @@
+2013-09-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Tons of warnings caused by using FORTIFY_SOURCE in an unoptimized build
+        https://bugs.webkit.org/show_bug.cgi?id=121836
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/SetupCompilerFlags.m4: only consider enabling FORTIFY_SOURCE if optimizations have
+        been enabled, since they are required for FORTIFY_SOURCE to work, and enabling FORTIFY_SOURCE unconditionally
+        generates warnings in newer glibc.
+
 2013-09-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Fix build with Qt 5.2 QtPosition module
