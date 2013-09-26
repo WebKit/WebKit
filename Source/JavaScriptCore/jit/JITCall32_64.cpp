@@ -145,7 +145,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
     JumpList slowCase;
     JumpList end;
     bool canOptimize = m_codeBlock->usesArguments()
-        && arguments == m_codeBlock->argumentsRegister()
+        && VirtualRegister(arguments) == m_codeBlock->argumentsRegister()
         && !m_codeBlock->symbolTable()->slowArguments();
 
     if (canOptimize) {

@@ -4539,7 +4539,7 @@ void SpeculativeJIT::compile(Node* node)
             slowPathCall(
                 created, this, operationGetArgumentsLength,
                 JSValueRegs(resultTagGPR, resultPayloadGPR),
-                m_jit.argumentsRegisterFor(node->codeOrigin)));
+                m_jit.argumentsRegisterFor(node->codeOrigin).offset()));
         
         jsValueResult(resultTagGPR, resultPayloadGPR, node);
         break;
@@ -4702,14 +4702,14 @@ void SpeculativeJIT::compile(Node* node)
                 slowPathCall(
                     slowPath, this, operationGetInlinedArgumentByVal,
                     JSValueRegs(resultTagGPR, resultPayloadGPR),
-                    m_jit.argumentsRegisterFor(node->codeOrigin),
+                    m_jit.argumentsRegisterFor(node->codeOrigin).offset(),
                     node->codeOrigin.inlineCallFrame, indexGPR));
         } else {
             addSlowPathGenerator(
                 slowPathCall(
                     slowPath, this, operationGetArgumentByVal,
                     JSValueRegs(resultTagGPR, resultPayloadGPR),
-                    m_jit.argumentsRegisterFor(node->codeOrigin), indexGPR));
+                    m_jit.argumentsRegisterFor(node->codeOrigin).offset(), indexGPR));
         }
         
         slowArgument.link(&m_jit);

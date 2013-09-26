@@ -39,6 +39,7 @@
 #include "JSVariableObject.h"
 #include "LinkBuffer.h"
 #include "SlowPathCall.h"
+#include "VirtualRegister.h"
 
 namespace JSC {
 
@@ -397,12 +398,12 @@ void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
 
 void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
 {
-    int arguments = currentInstruction[1].u.operand;
+    VirtualRegister arguments = VirtualRegister(currentInstruction[1].u.operand);
     int activation = currentInstruction[2].u.operand;
 
-    Jump argsNotCreated = branch32(Equal, tagFor(unmodifiedArgumentsRegister(arguments)), TrustedImm32(JSValue::EmptyValueTag));
+    Jump argsNotCreated = branch32(Equal, tagFor(unmodifiedArgumentsRegister(arguments).offset()), TrustedImm32(JSValue::EmptyValueTag));
     JITStubCall stubCall(this, cti_op_tear_off_arguments);
-    stubCall.addArgument(unmodifiedArgumentsRegister(arguments));
+    stubCall.addArgument(unmodifiedArgumentsRegister(arguments).offset());
     stubCall.addArgument(activation);
     stubCall.call();
     argsNotCreated.link(this);
@@ -853,7 +854,7 @@ void JIT::emit_op_get_pnames(Instruction* currentInstruction)
     emitLoad(base, regT1, regT0);
     if (!m_codeBlock->isKnownNotImmediate(base))
         isNotObject.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
-    if (base != m_codeBlock->thisRegister() || m_codeBlock->isStrictMode()) {
+    if (VirtualRegister(base) != m_codeBlock->thisRegister() || m_codeBlock->isStrictMode()) {
         loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
         isNotObject.append(emitJumpIfNotObject(regT2));
     }
@@ -1096,7 +1097,7 @@ void JIT::emit_op_enter(Instruction*)
     // registers to zap stale pointers, to avoid unnecessarily prolonging
     // object lifetime and increasing GC pressure.
     for (int i = 0; i < m_codeBlock->m_numVars; ++i)
-        emitStore(localToOperand(i), jsUndefined());
+        emitStore(virtualRegisterForLocal(i).offset(), jsUndefined());
 }
 
 void JIT::emit_op_create_activation(Instruction* currentInstruction)
@@ -1273,7 +1274,7 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
 
     JITStubCall(this, cti_op_create_arguments).call();
     emitStore(arguments, regT1, regT0);
-    emitStore(unmodifiedArgumentsRegister(arguments), regT1, regT0);
+    emitStore(unmodifiedArgumentsRegister(VirtualRegister(arguments)).offset(), regT1, regT0);
     
     skipArgumentsCreation.link(this);
     JITStubCall stubCall(this, cti_op_get_by_val_generic);

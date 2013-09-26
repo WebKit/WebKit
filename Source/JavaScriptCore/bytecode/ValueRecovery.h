@@ -211,7 +211,7 @@ public:
             result.m_technique = DisplacedInJSStack;
             break;
         }
-        result.m_source.virtualReg = virtualReg;
+        result.m_source.virtualReg = virtualReg.offset();
         return result;
     }
     
@@ -294,7 +294,7 @@ public:
     VirtualRegister virtualRegister() const
     {
         ASSERT(m_technique == DisplacedInJSStack || m_technique == Int32DisplacedInJSStack || m_technique == DoubleDisplacedInJSStack || m_technique == CellDisplacedInJSStack || m_technique == BooleanDisplacedInJSStack || m_technique == Int52DisplacedInJSStack || m_technique == StrictInt52DisplacedInJSStack);
-        return m_source.virtualReg;
+        return VirtualRegister(m_source.virtualReg);
     }
     
     JSValue constant() const
@@ -351,25 +351,25 @@ public:
             return;
 #endif
         case DisplacedInJSStack:
-            out.printf("*%d", virtualRegister());
+            out.printf("*%d", virtualRegister().offset());
             return;
         case Int32DisplacedInJSStack:
-            out.printf("*int32(%d)", virtualRegister());
+            out.printf("*int32(%d)", virtualRegister().offset());
             return;
         case Int52DisplacedInJSStack:
-            out.printf("*int52(%d)", virtualRegister());
+            out.printf("*int52(%d)", virtualRegister().offset());
             return;
         case StrictInt52DisplacedInJSStack:
-            out.printf("*strictInt52(%d)", virtualRegister());
+            out.printf("*strictInt52(%d)", virtualRegister().offset());
             return;
         case DoubleDisplacedInJSStack:
-            out.printf("*double(%d)", virtualRegister());
+            out.printf("*double(%d)", virtualRegister().offset());
             return;
         case CellDisplacedInJSStack:
-            out.printf("*cell(%d)", virtualRegister());
+            out.printf("*cell(%d)", virtualRegister().offset());
             return;
         case BooleanDisplacedInJSStack:
-            out.printf("*bool(%d)", virtualRegister());
+            out.printf("*bool(%d)", virtualRegister().offset());
             return;
         case ArgumentsThatWereNotCreated:
             out.printf("arguments");
@@ -400,7 +400,7 @@ private:
             MacroAssembler::RegisterID payloadGPR;
         } pair;
 #endif
-        VirtualRegister virtualReg;
+        int virtualReg;
         EncodedJSValue constant;
     } m_source;
 };

@@ -1257,7 +1257,7 @@ void JIT::emitResolveClosure(int dst, bool needsVarInjectionChecks, unsigned dep
     move(TrustedImm32(JSValue::CellTag), regT1);
     emitLoadPayload(JSStack::ScopeChain, regT0);
     if (m_codeBlock->needsActivation()) {
-        emitLoadPayload(m_codeBlock->activationRegister(), regT2);
+        emitLoadPayload(m_codeBlock->activationRegister().offset(), regT2);
         Jump noActivation = branchTestPtr(Zero, regT2);
         loadPtr(Address(regT2, JSScope::offsetOfNext()), regT0);
         noActivation.link(this);

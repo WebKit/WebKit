@@ -78,23 +78,23 @@ void OSRExit::convertToForward(
     if (!value)
         return;
     
-    int overriddenOperand = lastMovHint->local();
+    VirtualRegister overriddenOperand = lastMovHint->local();
     m_lastSetOperand = overriddenOperand;
     
     // Is the value for this operand being passed as an argument to the exit, or is
     // it something else? If it's an argument already, then replace that argument;
     // otherwise add another argument.
-    if (m_values[overriddenOperand].isArgument()) {
-        ExitArgument exitArgument = m_values[overriddenOperand].exitArgument();
+    if (m_values[overriddenOperand.offset()].isArgument()) {
+        ExitArgument exitArgument = m_values[overriddenOperand.offset()].exitArgument();
         arguments[exitArgument.argument()] = value.value();
-        m_values[overriddenOperand] = ExitValue::exitArgument(
+        m_values[overriddenOperand.offset()] = ExitValue::exitArgument(
             exitArgument.withFormat(value.format()));
         return;
     }
     
     unsigned argument = arguments.size();
     arguments.append(value.value());
-    m_values[m_lastSetOperand] = ExitValue::exitArgument(
+    m_values[m_lastSetOperand.offset()] = ExitValue::exitArgument(
         ExitArgument(value.format(), argument));
 }
 

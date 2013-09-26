@@ -39,6 +39,7 @@
 #include "JSPropertyNameIterator.h"
 #include "LinkBuffer.h"
 #include "SlowPathCall.h"
+#include "VirtualRegister.h"
 
 namespace JSC {
 
@@ -257,9 +258,9 @@ void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
     int arguments = currentInstruction[1].u.operand;
     int activation = currentInstruction[2].u.operand;
 
-    Jump argsNotCreated = branchTest64(Zero, Address(callFrameRegister, sizeof(Register) * (unmodifiedArgumentsRegister(arguments))));
+    Jump argsNotCreated = branchTest64(Zero, Address(callFrameRegister, sizeof(Register) * (unmodifiedArgumentsRegister(VirtualRegister(arguments)).offset())));
     JITStubCall stubCall(this, cti_op_tear_off_arguments);
-    stubCall.addArgument(unmodifiedArgumentsRegister(arguments), regT2);
+    stubCall.addArgument(unmodifiedArgumentsRegister(VirtualRegister(arguments)).offset(), regT2);
     stubCall.addArgument(activation, regT2);
     stubCall.call();
     argsNotCreated.link(this);
@@ -507,7 +508,7 @@ void JIT::emit_op_get_pnames(Instruction* currentInstruction)
     emitGetVirtualRegister(base, regT0);
     if (!m_codeBlock->isKnownNotImmediate(base))
         isNotObject.append(emitJumpIfNotJSCell(regT0));
-    if (base != m_codeBlock->thisRegister() || m_codeBlock->isStrictMode()) {
+    if (base != m_codeBlock->thisRegister().offset() || m_codeBlock->isStrictMode()) {
         loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
         isNotObject.append(emitJumpIfNotObject(regT2));
     }
@@ -833,7 +834,7 @@ void JIT::emit_op_enter(Instruction*)
     // object lifetime and increasing GC pressure.
     size_t count = m_codeBlock->m_numVars;
     for (size_t j = 0; j < count; ++j)
-        emitInitRegister(localToOperand(j));
+        emitInitRegister(virtualRegisterForLocal(j).offset());
 }
 
 void JIT::emit_op_create_activation(Instruction* currentInstruction)
@@ -852,7 +853,7 @@ void JIT::emit_op_create_arguments(Instruction* currentInstruction)
     Jump argsCreated = branchTest64(NonZero, Address(callFrameRegister, sizeof(Register) * dst));
     JITStubCall(this, cti_op_create_arguments).call();
     emitPutVirtualRegister(dst);
-    emitPutVirtualRegister(unmodifiedArgumentsRegister(dst));
+    emitPutVirtualRegister(unmodifiedArgumentsRegister(VirtualRegister(dst)));
     argsCreated.link(this);
 }
 
@@ -1145,7 +1146,7 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     linkSlowCase(iter);
     JITStubCall(this, cti_op_create_arguments).call();
     emitPutVirtualRegister(arguments);
-    emitPutVirtualRegister(unmodifiedArgumentsRegister(arguments));
+    emitPutVirtualRegister(unmodifiedArgumentsRegister(VirtualRegister(arguments)));
     
     skipArgumentsCreation.link(this);
     JITStubCall stubCall(this, cti_op_get_by_val_generic);

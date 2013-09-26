@@ -190,7 +190,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     }
 
     case op_call_varargs:
-        if (codeBlock->usesArguments() && pc[4].u.operand == codeBlock->argumentsRegister())
+        if (codeBlock->usesArguments() && pc[4].u.operand == codeBlock->argumentsRegister().offset())
             return CanInline;
         return CannotCompile;
 

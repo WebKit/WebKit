@@ -164,7 +164,7 @@ struct Node {
         : codeOrigin(codeOrigin)
         , codeOriginForExitTarget(codeOrigin)
         , children(children)
-        , m_virtualRegister(InvalidVirtualRegister)
+        , m_virtualRegister(VirtualRegister())
         , m_refCount(1)
         , m_prediction(SpecNone)
     {
@@ -177,7 +177,7 @@ struct Node {
         : codeOrigin(codeOrigin)
         , codeOriginForExitTarget(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
-        , m_virtualRegister(InvalidVirtualRegister)
+        , m_virtualRegister(VirtualRegister())
         , m_refCount(1)
         , m_prediction(SpecNone)
     {
@@ -191,7 +191,7 @@ struct Node {
         : codeOrigin(codeOrigin)
         , codeOriginForExitTarget(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
-        , m_virtualRegister(InvalidVirtualRegister)
+        , m_virtualRegister(VirtualRegister())
         , m_refCount(1)
         , m_prediction(SpecNone)
         , m_opInfo(imm.m_value)
@@ -206,7 +206,7 @@ struct Node {
         : codeOrigin(codeOrigin)
         , codeOriginForExitTarget(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
-        , m_virtualRegister(InvalidVirtualRegister)
+        , m_virtualRegister(VirtualRegister())
         , m_refCount(1)
         , m_prediction(SpecNone)
         , m_opInfo(imm1.m_value)
@@ -222,7 +222,7 @@ struct Node {
         : codeOrigin(codeOrigin)
         , codeOriginForExitTarget(codeOrigin)
         , children(AdjacencyList::Variable, firstChild, numChildren)
-        , m_virtualRegister(InvalidVirtualRegister)
+        , m_virtualRegister(VirtualRegister())
         , m_refCount(1)
         , m_prediction(SpecNone)
         , m_opInfo(imm1.m_value)
@@ -390,7 +390,7 @@ struct Node {
     {
         m_op = GetLocalUnlinked;
         m_flags &= ~(NodeMustGenerate | NodeMightClobber | NodeClobbersWorld);
-        m_opInfo = local;
+        m_opInfo = local.offset();
         children.reset();
     }
     
@@ -1057,20 +1057,20 @@ struct Node {
     
     bool hasVirtualRegister()
     {
-        return m_virtualRegister != InvalidVirtualRegister;
+        return m_virtualRegister.isValid();
     }
     
     VirtualRegister virtualRegister()
     {
         ASSERT(hasResult());
-        ASSERT(m_virtualRegister != InvalidVirtualRegister);
+        ASSERT(m_virtualRegister.isValid());
         return m_virtualRegister;
     }
     
     void setVirtualRegister(VirtualRegister virtualRegister)
     {
         ASSERT(hasResult());
-        ASSERT(m_virtualRegister == InvalidVirtualRegister);
+        ASSERT(!m_virtualRegister.isValid());
         m_virtualRegister = virtualRegister;
     }
     

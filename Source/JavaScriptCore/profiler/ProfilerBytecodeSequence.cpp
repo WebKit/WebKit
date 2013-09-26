@@ -45,7 +45,7 @@ BytecodeSequence::BytecodeSequence(CodeBlock* codeBlock)
         if (!description.length())
             continue;
         out.reset();
-        out.print("arg", i, " (r", argumentToOperand(i), "): ", description);
+        out.print("arg", i, " (r", virtualRegisterForArgument(i).offset(), "): ", description);
         m_header.append(out.toCString());
     }
 #endif // ENABLE(VALUE_PROFILER)

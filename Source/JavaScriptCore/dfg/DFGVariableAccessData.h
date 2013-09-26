@@ -80,12 +80,7 @@ public:
         ASSERT(m_local == find()->m_local);
         return m_local;
     }
-    
-    int operand()
-    {
-        return static_cast<int>(local());
-    }
-    
+
     bool mergeIsCaptured(bool isCaptured)
     {
         return checkAndSet(m_shouldNeverUnbox, m_shouldNeverUnbox | isCaptured)
@@ -230,7 +225,7 @@ public:
     {
         // We don't support this facility for arguments, yet.
         // FIXME: make this work for arguments.
-        if (operandIsArgument(operand()))
+        if (local().isArgument())
             return false;
         
         // If the variable is not a number prediction, then this doesn't
@@ -278,7 +273,7 @@ public:
     {
         ASSERT(isRoot());
         
-        if (operandIsArgument(local()) || shouldNeverUnbox())
+        if (local().isArgument() || shouldNeverUnbox())
             return DFG::mergeDoubleFormatState(m_doubleFormatState, NotUsingDoubleFormat);
         
         if (m_doubleFormatState == CantUseDoubleFormat)
@@ -333,7 +328,7 @@ public:
         if (isInt32Speculation(prediction))
             return FlushedInt32;
         
-        if (enableInt52() && !operandIsArgument(m_local) && isMachineIntSpeculation(prediction))
+        if (enableInt52() && !m_local.isArgument() && isMachineIntSpeculation(prediction))
             return FlushedInt52;
         
         if (isCellSpeculation(prediction))

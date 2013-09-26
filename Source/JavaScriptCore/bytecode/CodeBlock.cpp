@@ -168,12 +168,12 @@ CString CodeBlock::registerName(int r) const
         return constantName(r, getConstant(r));
 
     if (operandIsArgument(r)) {
-        if (!operandToArgument(r))
+        if (!VirtualRegister(r).toArgument())
             return "this";
-        return toCString("arg", operandToArgument(r));
+        return toCString("arg", VirtualRegister(r).toArgument());
     }
 
-    return toCString("loc", operandToLocal(r));
+    return toCString("loc", VirtualRegister(r).toLocal());
 }
 
 static CString regexpToSourceString(RegExp* regExp)
@@ -514,11 +514,11 @@ void CodeBlock::dumpBytecode(PrintStream& out)
     if (usesArguments()) {
         out.printf(
             "; uses arguments, in r%d, r%d",
-            argumentsRegister(),
-            unmodifiedArgumentsRegister(argumentsRegister()));
+            argumentsRegister().offset(),
+            unmodifiedArgumentsRegister(argumentsRegister()).offset());
     }
     if (needsFullScopeChain() && codeType() == FunctionCode)
-        out.printf("; activation in r%d", activationRegister());
+        out.printf("; activation in r%d", activationRegister().offset());
     out.printf("\n");
     
     const Instruction* begin = instructions().begin();
@@ -1619,7 +1619,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
     setConstantRegisters(unlinkedCodeBlock->constantRegisters());
     if (unlinkedCodeBlock->usesGlobalObject())
-        m_constantRegisters[unlinkedCodeBlock->globalObjectRegister()].set(*m_vm, ownerExecutable, m_globalObject.get());
+        m_constantRegisters[unlinkedCodeBlock->globalObjectRegister().offset()].set(*m_vm, ownerExecutable, m_globalObject.get());
     m_functionDecls.grow(unlinkedCodeBlock->numberOfFunctionDecls());
     for (size_t count = unlinkedCodeBlock->numberOfFunctionDecls(), i = 0; i < count; ++i) {
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
@@ -2557,9 +2557,9 @@ void CodeBlock::createActivation(CallFrame* callFrame)
 {
     ASSERT(codeType() == FunctionCode);
     ASSERT(needsFullScopeChain());
-    ASSERT(!callFrame->uncheckedR(activationRegister()).jsValue());
+    ASSERT(!callFrame->uncheckedR(activationRegister().offset()).jsValue());
     JSActivation* activation = JSActivation::create(callFrame->vm(), callFrame, this);
-    callFrame->uncheckedR(activationRegister()) = JSValue(activation);
+    callFrame->uncheckedR(activationRegister().offset()) = JSValue(activation);
     callFrame->setScope(activation);
 }
 
@@ -3327,32 +3327,30 @@ bool CodeBlock::usesOpcode(OpcodeID opcodeID)
     return false;
 }
 
-String CodeBlock::nameForRegister(int registerNumber)
+String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
 {
     ConcurrentJITLocker locker(symbolTable()->m_lock);
     SymbolTable::Map::iterator end = symbolTable()->end(locker);
     for (SymbolTable::Map::iterator ptr = symbolTable()->begin(locker); ptr != end; ++ptr) {
-        if (ptr->value.getIndex() == registerNumber) {
+        if (ptr->value.getIndex() == virtualRegister.offset()) {
             // FIXME: This won't work from the compilation thread.
             // https://bugs.webkit.org/show_bug.cgi?id=115300
             return String(ptr->key);
         }
     }
-    if (needsActivation() && registerNumber == activationRegister())
+    if (needsActivation() && virtualRegister == activationRegister())
         return ASCIILiteral("activation");
-    if (registerNumber == thisRegister())
+    if (virtualRegister == thisRegister())
         return ASCIILiteral("this");
     if (usesArguments()) {
-        if (registerNumber == argumentsRegister())
+        if (virtualRegister == argumentsRegister())
             return ASCIILiteral("arguments");
-        if (unmodifiedArgumentsRegister(argumentsRegister()) == registerNumber)
+        if (unmodifiedArgumentsRegister(argumentsRegister()) == virtualRegister)
             return ASCIILiteral("real arguments");
     }
-    if (registerNumber < 0) {
-        int argumentPosition = -registerNumber;
-        argumentPosition -= JSStack::CallFrameHeaderSize + 1;
-        return String::format("arguments[%3d]", argumentPosition - 1).impl();
-    }
+    if (virtualRegister.isArgument())
+        return String::format("arguments[%3d]", virtualRegister.toArgument()).impl();
+
     return "";
 }
 

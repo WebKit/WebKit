@@ -138,34 +138,35 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     }
     
     for (size_t local = 0; local < entry->m_expectedValues.numberOfLocals(); ++local) {
+        int localOffset = virtualRegisterForLocal(local).offset();
         if (entry->m_localsForcedDouble.get(local)) {
-            if (!exec->registers()[localToOperand(local)].jsValue().isNumber()) {
+            if (!exec->registers()[localOffset].jsValue().isNumber()) {
                 if (Options::verboseOSR()) {
                     dataLog(
-                        "    OSR failed because variable ", localToOperand(local), " is ",
-                        exec->registers()[localToOperand(local)].jsValue(), ", expected number.\n");
+                        "    OSR failed because variable ", localOffset, " is ",
+                        exec->registers()[localOffset].jsValue(), ", expected number.\n");
                 }
                 return 0;
             }
             continue;
         }
         if (entry->m_localsForcedMachineInt.get(local)) {
-            if (!exec->registers()[localToOperand(local)].jsValue().isMachineInt()) {
+            if (!exec->registers()[localOffset].jsValue().isMachineInt()) {
                 if (Options::verboseOSR()) {
                     dataLog(
-                        "    OSR failed because variable ", localToOperand(local), " is ",
-                        exec->registers()[localToOperand(local)].jsValue(), ", expected ",
+                        "    OSR failed because variable ", localOffset, " is ",
+                        exec->registers()[localOffset].jsValue(), ", expected ",
                         "machine int.\n");
                 }
                 return 0;
             }
             continue;
         }
-        if (!entry->m_expectedValues.local(local).validate(exec->registers()[localToOperand(local)].jsValue())) {
+        if (!entry->m_expectedValues.local(local).validate(exec->registers()[localOffset].jsValue())) {
             if (Options::verboseOSR()) {
                 dataLog(
-                    "    OSR failed because variable ", localToOperand(local), " is ",
-                    exec->registers()[localToOperand(local)].jsValue(), ", expected ",
+                    "    OSR failed because variable ", localOffset, " is ",
+                    exec->registers()[localOffset].jsValue(), ", expected ",
                     entry->m_expectedValues.local(local), ".\n");
             }
             return 0;
@@ -179,7 +180,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     //    it seems silly: you'd be diverting the program to error handling when it
     //    would have otherwise just kept running albeit less quickly.
     
-    if (!vm->interpreter->stack().grow(&exec->registers()[localToOperand(codeBlock->m_numCalleeRegisters)])) {
+    if (!vm->interpreter->stack().grow(&exec->registers()[virtualRegisterForLocal(codeBlock->m_numCalleeRegisters).offset()])) {
         if (Options::verboseOSR())
             dataLogF("    OSR failed because stack growth failed.\n");
         return 0;
@@ -191,9 +192,9 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     // 3) Perform data format conversions.
     for (size_t local = 0; local < entry->m_expectedValues.numberOfLocals(); ++local) {
         if (entry->m_localsForcedDouble.get(local))
-            *bitwise_cast<double*>(exec->registers() + localToOperand(local)) = exec->registers()[localToOperand(local)].jsValue().asNumber();
+            *bitwise_cast<double*>(exec->registers() + virtualRegisterForLocal(local).offset()) = exec->registers()[virtualRegisterForLocal(local).offset()].jsValue().asNumber();
         if (entry->m_localsForcedMachineInt.get(local))
-            *bitwise_cast<int64_t*>(exec->registers() + localToOperand(local)) = exec->registers()[localToOperand(local)].jsValue().asMachineInt() << JSValue::int52ShiftAmount;
+            *bitwise_cast<int64_t*>(exec->registers() + virtualRegisterForLocal(local).offset()) = exec->registers()[virtualRegisterForLocal(local).offset()].jsValue().asMachineInt() << JSValue::int52ShiftAmount;
     }
     
     // 4) Fix the call frame.

@@ -39,13 +39,13 @@ class ValueRecoveryOverride : public RefCounted<ValueRecoveryOverride> {
 public:
     ValueRecoveryOverride() { }
     
-    ValueRecoveryOverride(int operand, const ValueRecovery& recovery)
+    ValueRecoveryOverride(VirtualRegister operand, const ValueRecovery& recovery)
         : operand(operand)
         , recovery(recovery)
     {
     }
     
-    int operand;
+    VirtualRegister operand;
     ValueRecovery recovery;
 };
 

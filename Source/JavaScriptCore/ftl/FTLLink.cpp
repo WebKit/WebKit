@@ -35,6 +35,7 @@
 #include "FTLJITCode.h"
 #include "JITStubs.h"
 #include "LinkBuffer.h"
+#include "VirtualRegister.h"
 #include <wtf/LLVMHeaders.h>
 
 namespace JSC { namespace FTL {
@@ -75,7 +76,7 @@ void link(State& state)
         // Plant a check that sufficient space is available in the JSStack.
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56291
         jit.addPtr(
-            CCallHelpers::TrustedImm32(localToOperand(codeBlock->m_numCalleeRegisters) * sizeof(Register)),
+            CCallHelpers::TrustedImm32(virtualRegisterForLocal(codeBlock->m_numCalleeRegisters).offset() * sizeof(Register)),
             GPRInfo::callFrameRegister, GPRInfo::regT1);
         CCallHelpers::Jump stackCheck = jit.branchPtr(
             CCallHelpers::Above,
