@@ -1180,22 +1180,22 @@ void JIT::emitSlow_op_create_this(Instruction* currentInstruction, Vector<SlowCa
 
 void JIT::emit_op_to_this(Instruction* currentInstruction)
 {
+    WriteBarrierBase<Structure>* cachedStructure = &currentInstruction[2].u.structure;
     int thisRegister = currentInstruction[1].u.operand;
 
     emitLoad(thisRegister, regT3, regT2);
 
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::CellTag)));
     loadPtr(Address(regT2, JSCell::structureOffset()), regT0);
-    if (shouldEmitProfiling()) {
-        move(regT3, regT1);
-        emitValueProfilingSite(regT4);
-    }
     addSlowCase(branch8(NotEqual, Address(regT0, Structure::typeInfoTypeOffset()), TrustedImm32(FinalObjectType)));
+    loadPtr(cachedStructure, regT2);
+    addSlowCase(branchPtr(NotEqual, regT0, regT2));
 }
 
 void JIT::emitSlow_op_to_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     int dst = currentInstruction[1].u.operand;
+    linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_to_this);

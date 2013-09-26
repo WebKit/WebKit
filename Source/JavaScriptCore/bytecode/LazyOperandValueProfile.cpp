@@ -35,13 +35,13 @@ namespace JSC {
 CompressedLazyOperandValueProfileHolder::CompressedLazyOperandValueProfileHolder() { }
 CompressedLazyOperandValueProfileHolder::~CompressedLazyOperandValueProfileHolder() { }
 
-void CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions(const ConcurrentJITLocker& locker, HeapOperation operation)
+void CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions(const ConcurrentJITLocker& locker)
 {
     if (!m_data)
         return;
     
     for (unsigned i = 0; i < m_data->size(); ++i)
-        m_data->at(i).computeUpdatedPrediction(locker, operation);
+        m_data->at(i).computeUpdatedPrediction(locker);
 }
 
 LazyOperandValueProfile* CompressedLazyOperandValueProfileHolder::add(

@@ -865,14 +865,15 @@ void JIT::emit_op_init_lazy_reg(Instruction* currentInstruction)
 
 void JIT::emit_op_to_this(Instruction* currentInstruction)
 {
+    WriteBarrierBase<Structure>* cachedStructure = &currentInstruction[2].u.structure;
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT1);
 
     emitJumpSlowCaseIfNotJSCell(regT1);
     loadPtr(Address(regT1, JSCell::structureOffset()), regT0);
-    if (shouldEmitProfiling())
-        emitValueProfilingSite(regT4);
 
     addSlowCase(branch8(NotEqual, Address(regT0, Structure::typeInfoTypeOffset()), TrustedImm32(FinalObjectType)));
+    loadPtr(cachedStructure, regT2);
+    addSlowCase(branchPtr(NotEqual, regT0, regT2));
 }
 
 void JIT::emit_op_get_callee(Instruction* currentInstruction)
@@ -943,6 +944,7 @@ void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_to_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
 

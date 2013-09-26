@@ -230,10 +230,10 @@ SLOW_PATH_DECL(slow_path_to_this)
 {
     BEGIN();
     JSValue v1 = OP(1).jsValue();
-#if ENABLE(VALUE_PROFILER)
-    pc[OPCODE_LENGTH(op_to_this) - 1].u.profile->m_buckets[0] =
-        JSValue::encode(v1.structureOrUndefined());
-#endif
+    if (v1.isCell())
+        pc[2].u.structure.set(exec->vm(), exec->codeBlock()->ownerExecutable(), v1.asCell()->structure());
+    else
+        pc[2].u.structure.clear();
     RETURN(v1.toThis(exec, exec->codeBlock()->isStrictMode() ? StrictMode : NotStrictMode));
 }
 

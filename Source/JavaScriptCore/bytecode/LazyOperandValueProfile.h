@@ -157,7 +157,7 @@ public:
     CompressedLazyOperandValueProfileHolder();
     ~CompressedLazyOperandValueProfileHolder();
     
-    void computeUpdatedPredictions(const ConcurrentJITLocker&, HeapOperation);
+    void computeUpdatedPredictions(const ConcurrentJITLocker&);
     
     LazyOperandValueProfile* add(
         const ConcurrentJITLocker&, const LazyOperandValueProfileKey& key);

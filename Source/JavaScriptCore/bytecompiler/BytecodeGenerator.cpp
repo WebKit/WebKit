@@ -387,9 +387,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     if (isConstructor()) {
         emitCreateThis(&m_thisRegister);
     } else if (functionBody->usesThis() || codeBlock->usesEval() || m_shouldEmitDebugHooks) {
-        UnlinkedValueProfile profile = emitProfiledOpcode(op_to_this);
+        emitOpcode(op_to_this);
         instructions().append(kill(&m_thisRegister));
-        instructions().append(profile);
+        instructions().append(0);
     }
     for (size_t i = 0; i < deconstructedParameters.size(); i++) {
         auto& entry = deconstructedParameters[i];

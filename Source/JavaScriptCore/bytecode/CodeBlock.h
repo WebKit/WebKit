@@ -870,14 +870,14 @@ public:
 
 #if ENABLE(VALUE_PROFILER)
     bool shouldOptimizeNow();
-    void updateAllValueProfilePredictions(HeapOperation = NoOperation);
+    void updateAllValueProfilePredictions();
     void updateAllArrayPredictions();
-    void updateAllPredictions(HeapOperation = NoOperation);
+    void updateAllPredictions();
 #else
     bool updateAllPredictionsAndCheckIfShouldOptimizeNow() { return false; }
-    void updateAllValueProfilePredictions(HeapOperation = NoOperation) { }
+    void updateAllValueProfilePredictions() { }
     void updateAllArrayPredictions() { }
-    void updateAllPredictions(HeapOperation = NoOperation) { }
+    void updateAllPredictions() { }
 #endif
 
 #if ENABLE(JIT)
@@ -941,7 +941,7 @@ private:
 #endif
         
 #if ENABLE(VALUE_PROFILER)
-    void updateAllPredictionsAndCountLiveness(HeapOperation, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
+    void updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 #endif
 
     void setConstantRegisters(const Vector<WriteBarrier<Unknown> >& constants)

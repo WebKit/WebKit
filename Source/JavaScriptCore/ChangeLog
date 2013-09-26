@@ -1,3 +1,52 @@
+2013-09-26  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        op_to_this shouldn't use value profiling
+        https://bugs.webkit.org/show_bug.cgi?id=121920
+
+        Reviewed by Geoffrey Garen.
+
+        Currently it's the only opcode that uses m_singletonValue, which is unnecessary. Our current plan is 
+        to remove m_singletonValue so that GenGC can have a simpler story for handling CodeBlocks/FunctionExecutables 
+        during nursery collections.
+
+        This patch adds an inline cache for the Structure of to_this so it no longer depends on the ValueProfile's
+        m_singletonValue. Since nobody uses m_singletonValue now, this patch also removes m_singletonValue from
+        ValueProfile.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC::CodeBlock::updateAllValueProfilePredictions):
+        (JSC::CodeBlock::updateAllPredictions):
+        (JSC::CodeBlock::shouldOptimizeNow):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::updateAllValueProfilePredictions):
+        (JSC::CodeBlock::updateAllPredictions):
+        * bytecode/LazyOperandValueProfile.cpp:
+        (JSC::CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions):
+        * bytecode/LazyOperandValueProfile.h:
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::ValueProfileBase):
+        (JSC::ValueProfileBase::briefDescription):
+        (JSC::ValueProfileBase::dump):
+        (JSC::ValueProfileBase::computeUpdatedPrediction):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_to_this):
+        (JSC::JIT::emitSlow_op_to_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_to_this):
+        (JSC::JIT::emitSlow_op_to_this):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2013-09-25  Oliver Hunt  <oliver@apple.com>
 
         Implement prefixed-destructuring assignment

@@ -1734,7 +1734,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + opLength - 2] = &m_arrayProfiles[arrayProfileIndex];
             // fallthrough
         }
-        case op_to_this:
         case op_get_by_id:
         case op_call_varargs: {
             ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
@@ -2238,6 +2237,13 @@ void CodeBlock::finalizeUnconditionally()
                 break;
             case op_get_array_length:
                 break;
+            case op_to_this:
+                if (!curInstruction[2].u.structure || Heap::isMarked(curInstruction[2].u.structure.get()))
+                    break;
+                if (Options::verboseOSR())
+                    dataLogF("Clearing LLInt to_this with structure %p.\n", curInstruction[2].u.structure.get());
+                curInstruction[2].u.structure.clear();
+                break;
             case op_get_callee:
                 if (!curInstruction[2].u.jsCell || Heap::isMarked(curInstruction[2].u.jsCell.get()))
                     break;
@@ -2418,7 +2424,7 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
     for (unsigned i = 0; i < m_objectAllocationProfiles.size(); ++i)
         m_objectAllocationProfiles[i].visitAggregate(visitor);
 
-    updateAllPredictions(Collection);
+    updateAllPredictions();
 }
 
 void CodeBlock::stronglyVisitWeakReferences(SlotVisitor& visitor)
@@ -3093,8 +3099,7 @@ ArrayProfile* CodeBlock::getOrAddArrayProfile(unsigned bytecodeOffset)
     return addArrayProfile(bytecodeOffset);
 }
 
-void CodeBlock::updateAllPredictionsAndCountLiveness(
-    HeapOperation operation, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
+void CodeBlock::updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
 {
     ConcurrentJITLocker locker(m_lock);
     
@@ -3107,23 +3112,23 @@ void CodeBlock::updateAllPredictionsAndCountLiveness(
             numSamples = ValueProfile::numberOfBuckets; // We don't want profiles that are extremely hot to be given more weight.
         numberOfSamplesInProfiles += numSamples;
         if (profile->m_bytecodeOffset < 0) {
-            profile->computeUpdatedPrediction(locker, operation);
+            profile->computeUpdatedPrediction(locker);
             continue;
         }
         if (profile->numberOfSamples() || profile->m_prediction != SpecNone)
             numberOfLiveNonArgumentValueProfiles++;
-        profile->computeUpdatedPrediction(locker, operation);
+        profile->computeUpdatedPrediction(locker);
     }
     
 #if ENABLE(DFG_JIT)
-    m_lazyOperandValueProfiles.computeUpdatedPredictions(locker, operation);
+    m_lazyOperandValueProfiles.computeUpdatedPredictions(locker);
 #endif
 }
 
-void CodeBlock::updateAllValueProfilePredictions(HeapOperation operation)
+void CodeBlock::updateAllValueProfilePredictions()
 {
     unsigned ignoredValue1, ignoredValue2;
-    updateAllPredictionsAndCountLiveness(operation, ignoredValue1, ignoredValue2);
+    updateAllPredictionsAndCountLiveness(ignoredValue1, ignoredValue2);
 }
 
 void CodeBlock::updateAllArrayPredictions()
@@ -3138,9 +3143,9 @@ void CodeBlock::updateAllArrayPredictions()
         m_arrayAllocationProfiles[i].updateIndexingType();
 }
 
-void CodeBlock::updateAllPredictions(HeapOperation operation)
+void CodeBlock::updateAllPredictions()
 {
-    updateAllValueProfilePredictions(operation);
+    updateAllValueProfilePredictions();
     updateAllArrayPredictions();
 }
 
@@ -3160,7 +3165,7 @@ bool CodeBlock::shouldOptimizeNow()
     
     unsigned numberOfLiveNonArgumentValueProfiles;
     unsigned numberOfSamplesInProfiles;
-    updateAllPredictionsAndCountLiveness(NoOperation, numberOfLiveNonArgumentValueProfiles, numberOfSamplesInProfiles);
+    updateAllPredictionsAndCountLiveness(numberOfLiveNonArgumentValueProfiles, numberOfSamplesInProfiles);
 
     if (Options::verboseOSR()) {
         dataLogF(

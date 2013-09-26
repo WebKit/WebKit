@@ -55,7 +55,6 @@ struct ValueProfileBase {
         : m_bytecodeOffset(-1)
         , m_prediction(SpecNone)
         , m_numberOfSamplesInPrediction(0)
-        , m_singletonValueIsTop(false)
     {
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i)
             m_buckets[i] = JSValue::encode(JSValue());
@@ -65,7 +64,6 @@ struct ValueProfileBase {
         : m_bytecodeOffset(bytecodeOffset)
         , m_prediction(SpecNone)
         , m_numberOfSamplesInPrediction(0)
-        , m_singletonValueIsTop(false)
     {
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i)
             m_buckets[i] = JSValue::encode(JSValue());
@@ -117,23 +115,13 @@ struct ValueProfileBase {
         computeUpdatedPrediction(locker);
         
         StringPrintStream out;
-        
-        if (m_singletonValueIsTop)
-            out.print("predicting ", SpeculationDump(m_prediction));
-        else if (m_singletonValue)
-            out.print("predicting ", m_singletonValue);
-        
+        out.print("predicting ", SpeculationDump(m_prediction));
         return out.toCString();
     }
     
     void dump(PrintStream& out)
     {
         out.print("samples = ", totalNumberOfSamples(), " prediction = ", SpeculationDump(m_prediction));
-        out.printf(", value = ");
-        if (m_singletonValueIsTop)
-            out.printf("TOP");
-        else
-            out.print(m_singletonValue);
         bool first = true;
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             JSValue value = JSValue::decode(m_buckets[i]);
@@ -150,7 +138,7 @@ struct ValueProfileBase {
     
     // Updates the prediction and returns the new one. Never call this from any thread
     // that isn't executing the code.
-    SpeculatedType computeUpdatedPrediction(const ConcurrentJITLocker&, HeapOperation operation = NoOperation)
+    SpeculatedType computeUpdatedPrediction(const ConcurrentJITLocker&)
     {
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             JSValue value = JSValue::decode(m_buckets[i]);
@@ -160,23 +148,9 @@ struct ValueProfileBase {
             m_numberOfSamplesInPrediction++;
             mergeSpeculation(m_prediction, speculationFromValue(value));
             
-            if (!m_singletonValueIsTop && !!value) {
-                if (!m_singletonValue)
-                    m_singletonValue = value;
-                else if (m_singletonValue != value)
-                    m_singletonValueIsTop = true;
-            }
-            
             m_buckets[i] = JSValue::encode(JSValue());
         }
         
-        if (operation == Collection
-            && !m_singletonValueIsTop
-            && !!m_singletonValue
-            && m_singletonValue.isCell()
-            && !Heap::isMarked(m_singletonValue.asCell()))
-            m_singletonValueIsTop = true;
-            
         return m_prediction;
     }
     
@@ -185,9 +159,6 @@ struct ValueProfileBase {
     SpeculatedType m_prediction;
     unsigned m_numberOfSamplesInPrediction;
     
-    bool m_singletonValueIsTop;
-    JSValue m_singletonValue;
-
     EncodedJSValue m_buckets[totalNumberOfBuckets];
 };
 

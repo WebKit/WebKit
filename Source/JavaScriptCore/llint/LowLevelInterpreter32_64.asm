@@ -431,7 +431,8 @@ _llint_op_to_this:
     loadi PayloadOffset[cfr, t0, 8], t0
     loadp JSCell::m_structure[t0], t0
     bbneq Structure::m_typeInfo + TypeInfo::m_type[t0], FinalObjectType, .opToThisSlow
-    valueProfile(CellTag, t0, 8, t1)
+    loadpFromInstruction(2, t2)
+    bpneq t0, t2, .opToThisSlow
     dispatch(3)
 
 .opToThisSlow:

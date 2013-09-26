@@ -11,7 +11,7 @@ x = 42;
 silentTestPass = true;
 noInline(foo);
 
-for (var i = 0; i < 1000; i = dfgIncrement({f:foo, i:dfgIncrement({f:foo, i:i + 1, n:100}), n:500, compiles:2})) {
+for (var i = 0; i < 1000; i = dfgIncrement({f:foo, i:i + 1, n:500})) {
     var me;
     if (i < 150)
         me = this;

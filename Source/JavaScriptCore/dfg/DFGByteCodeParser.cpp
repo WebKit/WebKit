@@ -1905,25 +1905,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_to_this: {
             Node* op1 = getThis();
             if (op1->op() != ToThis) {
-                ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                ValueProfile* profile =
-                    m_inlineStackTop->m_profiledBlock->valueProfileForBytecodeOffset(m_currentIndex);
-                profile->computeUpdatedPrediction(locker);
-#if DFG_ENABLE(DEBUG_VERBOSE)
-                dataLogF("[bc#%u]: profile %p: ", m_currentIndex, profile);
-                profile->dump(WTF::dataFile());
-                dataLogF("\n");
-#endif
-                if (profile->m_singletonValueIsTop
-                    || !profile->m_singletonValue
-                    || !profile->m_singletonValue.isCell()
-                    || profile->m_singletonValue.asCell()->classInfo() != Structure::info()
-                    || static_cast<Structure*>(profile->m_singletonValue.asCell())->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis)
+                Structure* cachedStructure = currentInstruction[2].u.structure.get();
+                if (!cachedStructure
+                    || cachedStructure->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis
+                    || m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
+                    || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
                     setThis(addToGraph(ToThis, op1));
-                else {
+                } else {
                     addToGraph(
                         CheckStructure,
-                        OpInfo(m_graph.addStructureSet(jsCast<Structure*>(profile->m_singletonValue.asCell()))),
+                        OpInfo(m_graph.addStructureSet(cachedStructure)),
                         op1);
                 }
             }
