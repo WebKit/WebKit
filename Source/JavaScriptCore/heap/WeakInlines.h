@@ -53,6 +53,11 @@ template<typename T> template<typename U>  inline Weak<T>::Weak(const PassWeak<U
 {
 }
 
+template<typename T> inline Weak<T>::Weak(Weak&& other)
+    : m_impl(other.leakImpl())
+{
+}
+
 template<class T> inline void swap(Weak<T>& a, Weak<T>& b)
 {
     a.swap(b);
@@ -67,6 +72,13 @@ template<typename T> inline Weak<T>& Weak<T>::operator=(const PassWeak<T>& o)
 {
     clear();
     m_impl = o.leakImpl();
+    return *this;
+}
+
+template<typename T> inline auto Weak<T>::operator=(Weak&& other) -> Weak&
+{
+    Weak weak = std::move(other);
+    swap(weak);
     return *this;
 }
 
@@ -109,6 +121,13 @@ template<typename T> inline PassWeak<T> Weak<T>::release()
     PassWeak<T> tmp = adoptWeak<T>(m_impl);
     m_impl = 0;
     return tmp;
+}
+
+template<typename T> inline WeakImpl* Weak<T>::leakImpl()
+{
+    WeakImpl* impl = m_impl;
+    m_impl = nullptr;
+    return impl;
 }
 
 template<typename T> inline WeakImpl* Weak<T>::hashTableDeletedValue()

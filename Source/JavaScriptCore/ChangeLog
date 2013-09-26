@@ -1,3 +1,21 @@
+2013-09-26  Anders Carlsson  <andersca@apple.com>
+
+        Weak should have a move constructor and move assignment operator
+        https://bugs.webkit.org/show_bug.cgi?id=121963
+
+        Reviewed by Oliver Hunt.
+
+        This is the first step towards getting rid of PassWeak.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype):
+        * heap/Weak.h:
+        * heap/WeakInlines.h:
+        (JSC::::Weak):
+        (JSC::::leakImpl):
+        * runtime/SimpleTypedArrayController.cpp:
+        (JSC::SimpleTypedArrayController::toJS):
+
 2013-09-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         op_to_this shouldn't use value profiling

@@ -57,6 +57,7 @@ public:
     bool isHashTableDeletedValue() const;
     Weak(HashTableDeletedValueTag);
 
+    Weak(Weak&&);
     template<typename U> Weak(const PassWeak<U>&);
 
     ~Weak()
@@ -65,6 +66,8 @@ public:
     }
 
     void swap(Weak&);
+
+    Weak& operator=(Weak&&);
     Weak& operator=(const PassWeak<T>&);
     
     bool operator!() const;
@@ -79,6 +82,7 @@ public:
     operator UnspecifiedBoolType*() const;
 
     PassWeak<T> release();
+    WeakImpl* leakImpl() WARN_UNUSED_RETURN;
     void clear()
     {
         if (!m_impl)

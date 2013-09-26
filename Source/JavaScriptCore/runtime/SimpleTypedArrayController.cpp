@@ -44,7 +44,7 @@ JSArrayBuffer* SimpleTypedArrayController::toJS(
     
     JSArrayBuffer* result = JSArrayBuffer::create(
         exec->vm(), globalObject->arrayBufferStructure(), native);
-    native->m_wrapper = PassWeak<JSArrayBuffer>(result);
+    native->m_wrapper = Weak<JSArrayBuffer>(result);
     return result;
 }
 

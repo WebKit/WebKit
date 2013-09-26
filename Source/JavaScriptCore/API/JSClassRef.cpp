@@ -207,6 +207,6 @@ JSObject* OpaqueJSClass::prototype(ExecState* exec)
             prototype->setPrototype(exec->vm(), parentPrototype);
     }
 
-    jsClassData.cachedPrototype = PassWeak<JSObject>(prototype);
+    jsClassData.cachedPrototype = Weak<JSObject>(prototype);
     return prototype;
 }
