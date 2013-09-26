@@ -278,10 +278,10 @@ struct JITStackFrame {
     // These arguments are passed in r5, r6 and r7.
     JSStack* stack;
     CallFrame* callFrame;
-    JSValue* exception;
+    void* unused1;
 
     // These arguments are passed on the stack.
-    void* unused1;
+    void* unused2;
     VM* vm;
 
     ReturnAddressPtr* returnAddressSlot() { return &thunkReturnAddress; }

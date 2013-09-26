@@ -1,3 +1,15 @@
+2013-09-26  Julien Brianceau  <jbriance@cisco.com>
+
+        [sh4] JSValue* exception is unused since r70703 in JITStackFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=121962
+
+        This is a cosmetic change, but it could avoid people reading sh4 part to
+        waste time to understand why there is a JSValue* here.
+
+        Reviewed by Darin Adler.
+
+        * jit/JITStubs.h:
+
 2013-09-26  Anders Carlsson  <andersca@apple.com>
 
         WeakGCMap should not inherit from HashMap
