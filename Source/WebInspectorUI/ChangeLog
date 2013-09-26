@@ -1,5 +1,21 @@
 2013-09-26  Antoine Quint  <graouts@apple.com>
 
+        Web Inspector: Activity viewer not properly reset when reloading
+        https://bugs.webkit.org/show_bug.cgi?id=121958
+
+        Reviewed by Darin Adler.
+
+        Reset the resources count and accumulated size when we detect the main frame
+        has changed, which will work with documents where there are no resources besides
+        frames in which case WebInspector.Frame.Event.AllResourcesRemoved was not fired
+        and our counts wouldn't be reset correctly.
+
+        * UserInterface/DashboardManager.js:
+        (WebInspector.DashboardManager):
+        (WebInspector.DashboardManager.prototype._mainResourceDidChange):
+
+2013-09-26  Antoine Quint  <graouts@apple.com>
+
         Web Inspector: Keep DOM tree expanded on page reload
         https://bugs.webkit.org/show_bug.cgi?id=121665
 

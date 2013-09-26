@@ -37,7 +37,6 @@ WebInspector.DashboardManager = function() {
 
     // Necessary events required to track load of resources.
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
-    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.AllResourcesRemoved, this._resourcesWereCleared, this);
     WebInspector.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.FrameWasAdded, this._frameWasAdded, this);
 
     // Necessary events required to track console messages.
@@ -57,6 +56,9 @@ WebInspector.DashboardManager.prototype = {
 
         if (!event.target.isMainFrame())
             return;
+
+        this._view.resourcesCount = 1;
+        this._view.resourcesSize = WebInspector.frameResourceManager.mainFrame.mainResource.size || 0;
 
         // Only update the time if we are recording the timeline.
         if (!WebInspector.timelineManager.recording) {
@@ -82,12 +84,6 @@ WebInspector.DashboardManager.prototype = {
     _resourceWasAdded: function(event)
     {
         ++this._view.resourcesCount;
-    },
-
-    _resourcesWereCleared: function(event)
-    {
-        this._view.resourcesCount = 1;
-        this._view.resourcesSize = WebInspector.frameResourceManager.mainFrame.mainResource.size || 0;
     },
 
     _frameWasAdded: function(event)
