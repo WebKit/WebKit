@@ -235,6 +235,8 @@ private:
     virtual void didAddHeaderLayer(WebCore::GraphicsLayer*) OVERRIDE;
     virtual void didAddFooterLayer(WebCore::GraphicsLayer*) OVERRIDE;
 
+    virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) const OVERRIDE;
+
     virtual void incrementActivePageCount() OVERRIDE;
     virtual void decrementActivePageCount() OVERRIDE;
 

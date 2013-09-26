@@ -1,3 +1,58 @@
+2013-09-26  Tim Horton  <timothy_horton@apple.com>
+
+        Tiled drawing should not imply threaded scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=121874
+        <rdar://problem/15071494>
+
+        Reviewed by Sam Weinig.
+
+        * Shared/DrawingAreaInfo.h:
+        We can have DrawingAreaTypeTiledCoreAnimation without threaded scrolling.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetThreadedScrollingEnabled):
+        (WKPreferencesGetThreadedScrollingEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        Add a preference for threaded scrolling.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView WebKit::]):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/DrawingArea.h:
+        Make it so we can use TiledCoreAnimationDrawingArea without ENABLE(THREADED_SCROLLING).
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::shouldUseTiledBackingForFrame):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Override shouldUseTiledBackingForFrame; ask the drawing area if we want a tiled backing for the given frame.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::~WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        Move attaching and detaching the scrolling tree into WebPage.
+        Store whether or not this page is going to use threaded scrolling once, as this
+        cannot change through the life of a page.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea):
+        Move attaching and detaching the scrolling tree into WebPage.
+
+        (WebKit::TiledCoreAnimationDrawingArea::didInstallPageOverlay):
+        (WebKit::TiledCoreAnimationDrawingArea::didUninstallPageOverlay):
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+        (WebKit::TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition):
+        Only do scrolling coordinator work if we have a scrolling coordinator.
+
+        (WebKit::TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrame):
+        TiledCoreAnimationDrawingArea always wants a tiled backing for the main frame.
+
 2013-09-25  Minju Kim  <pmuarteo@gmail.com>
 
         8 bytes memory leaks in WebProcessMainQt.cpp when proxy is initialized

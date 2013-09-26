@@ -120,32 +120,27 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     , m_backgroundLayerPaintsFixedRootBackground(false)
     , m_didSwitchToFullTileCoverageDuringLoading(false)
 {
-    if (layer->isRootLayer()) {
-        Page* page = renderer().frame().page();
-        if (page && page->frameIsMainFrame(&renderer().frame())) {
+    Page* page = renderer().frame().page();
+
+    if (layer->isRootLayer() && page) {
+        if (page->frameIsMainFrame(&renderer().frame()))
             m_isMainFrameRenderViewLayer = true;
 
-#if PLATFORM(MAC)
-            // FIXME: It's a little weird that we base this decision on whether there's a scrolling coordinator or not.
-            if (page->scrollingCoordinator())
-                m_usingTiledCacheLayer = true;
-#endif
-        }
+        m_usingTiledCacheLayer = page->chrome().client().shouldUseTiledBackingForFrameView(renderer().frame().view());
     }
     
     createPrimaryGraphicsLayer();
 
-    if (m_usingTiledCacheLayer) {
+    if (m_usingTiledCacheLayer && page) {
         TiledBacking* tiledBacking = this->tiledBacking();
-        if (Page* page = renderer().frame().page()) {
-            tiledBacking->setIsInWindow(page->isInWindow());
 
-            if (m_isMainFrameRenderViewLayer)
-                tiledBacking->setUnparentsOffscreenTiles(true);
+        tiledBacking->setIsInWindow(page->isInWindow());
 
-            tiledBacking->setScrollingPerformanceLoggingEnabled(page->settings().scrollingPerformanceLoggingEnabled());
-            adjustTiledBackingCoverage();
-        }
+        if (m_isMainFrameRenderViewLayer)
+            tiledBacking->setUnparentsOffscreenTiles(true);
+
+        tiledBacking->setScrollingPerformanceLoggingEnabled(page->settings().scrollingPerformanceLoggingEnabled());
+        adjustTiledBackingCoverage();
     }
 }
 

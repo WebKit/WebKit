@@ -1154,3 +1154,13 @@ double WKPreferencesGetIncrementalRenderingSuppressionTimeout(WKPreferencesRef p
 {
     return toAPI(toImpl(preferencesRef)->incrementalRenderingSuppressionTimeout());
 }
+
+void WKPreferencesSetThreadedScrollingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setThreadedScrollingEnabled(enabled);
+}
+
+bool WKPreferencesGetThreadedScrollingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->threadedScrollingEnabled();
+}

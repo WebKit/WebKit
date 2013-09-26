@@ -1029,6 +1029,8 @@ private:
     unsigned m_maximumRenderingSuppressionToken;
     
     WebCore::ScrollPinningBehavior m_scrollPinningBehavior;
+
+    bool m_useThreadedScrolling;
 };
 
 } // namespace WebKit

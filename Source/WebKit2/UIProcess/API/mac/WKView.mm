@@ -2367,14 +2367,12 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (OwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
 {
-#if ENABLE(THREADED_SCROLLING)
     if ([self _shouldUseTiledDrawingArea]) {
         if (getenv("WK_USE_REMOTE_LAYER_TREE_DRAWING_AREA"))
             return RemoteLayerTreeDrawingAreaProxy::create(_data->_page.get());
 
         return createOwned<TiledCoreAnimationDrawingAreaProxy>(_data->_page.get());
     }
-#endif
 
     return createOwned<DrawingAreaProxyImpl>(_data->_page.get());
 }

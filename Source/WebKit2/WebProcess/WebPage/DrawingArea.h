@@ -34,13 +34,14 @@
 #include <wtf/PassOwnPtr.h>
 
 namespace CoreIPC {
-    class Connection;
-    class MessageDecoder;
+class Connection;
+class MessageDecoder;
 }
 
 namespace WebCore {
-    class GraphicsLayer;
-    class GraphicsLayerFactory;
+class FrameView;
+class GraphicsLayer;
+class GraphicsLayerFactory;
 }
 
 namespace WebKit {
@@ -87,6 +88,8 @@ public:
     virtual void mainFrameScrollabilityChanged(bool) { }
 
     virtual void didChangeScrollOffsetForAnyFrame() { }
+
+    virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) { return false; }
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return 0; }

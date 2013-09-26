@@ -1,3 +1,39 @@
+2013-09-26  Tim Horton  <timothy_horton@apple.com>
+
+        Tiled drawing should not imply threaded scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=121874
+        <rdar://problem/15071494>
+
+        Reviewed by Sam Weinig.
+
+        No new tests; a near-future patch is going to put the majority of layout
+        tests into the tiled-drawing-without-threaded-scrolling mode.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::shouldUseTiledBackingForFrame):
+        Add a ChromeClient callback to determine whether a given frame wants a TiledBacking for its contents.
+
+        * page/FrameView.h:
+        * WebCore.exp.in:
+        Make isMainFrameView public and export it for use in WebKit2.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        Make use of shouldUseTiledBackingForFrame instead of predicating the
+        main frame using a tile cache on whether we have a scrolling coordinator.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::mainFrameBackingIsTiled): Added.
+
+        (WebCore::RenderLayerCompositor::shouldCompositeOverflowControls):
+        (WebCore::RenderLayerCompositor::requiresOverhangAreasLayer):
+        (WebCore::RenderLayerCompositor::requiresContentShadowLayer):
+        All of these checks for existence of a scrollingCoordinator should actually
+        key off whether we're using tiled drawing at the root; they have nothing
+        to do with threaded scrolling.
+
+        * rendering/RenderLayerCompositor.h:
+
 2013-09-26  Brady Eidson  <beidson@apple.com>
 
         Mark IDBDatabase "FINAL" now that http://webkit.org/b/121747 is fixed.

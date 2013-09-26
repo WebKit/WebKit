@@ -29,6 +29,7 @@
 #import "TestController.h"
 #import "WebKitTestRunnerDraggingInfo.h"
 #import <WebKit2/WKImageCG.h>
+#import <WebKit2/WKPreferencesPrivate.h>
 #import <WebKit2/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
@@ -132,6 +133,10 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     WKRetainPtr<WKStringRef> useTiledDrawingKey(AdoptWK, WKStringCreateWithUTF8CString("TiledDrawing"));
     WKTypeRef useTiledDrawingValue = options ? WKDictionaryGetItemForKey(options, useTiledDrawingKey.get()) : NULL;
     bool useTiledDrawing = useTiledDrawingValue && WKBooleanGetValue(static_cast<WKBooleanRef>(useTiledDrawingValue));
+
+    // The tiled drawing specific tests also depend on threaded scrolling.
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroupRef);
+    WKPreferencesSetThreadedScrollingEnabled(preferences, useTiledDrawing);
 
     NSRect rect = NSMakeRect(0, 0, TestController::viewWidth, TestController::viewHeight);
     m_view = [[TestRunnerWKView alloc] initWithFrame:rect contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage useTiledDrawing:useTiledDrawing];

@@ -26,11 +26,8 @@
 #import "config.h"
 #import "TiledCoreAnimationDrawingArea.h"
 
-#if ENABLE(THREADED_SCROLLING)
-
 #import "ColorSpaceData.h"
 #import "DrawingAreaProxyMessages.h"
-#import "EventDispatcher.h"
 #import "LayerHostingContext.h"
 #import "LayerTreeContext.h"
 #import "WebFrame.h"
@@ -45,12 +42,15 @@
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderView.h>
-#import <WebCore/ScrollingCoordinator.h>
-#import <WebCore/ScrollingThread.h>
-#import <WebCore/ScrollingTree.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
 #import <wtf/MainThread.h>
+
+#if ENABLE(THREADED_SCROLLING)
+#import <WebCore/ScrollingCoordinator.h>
+#import <WebCore/ScrollingThread.h>
+#import <WebCore/ScrollingTree.h>
+#endif
 
 @interface CATransaction (Details)
 + (void)synchronize;
@@ -73,12 +73,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     , m_clipsToExposedRect(false)
     , m_updateIntrinsicContentSizeTimer(this, &TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired)
 {
-    Page* page = m_webPage->corePage();
-
-    page->settings().setScrollingCoordinatorEnabled(true);
-    page->settings().setForceCompositingMode(true);
-
-    WebProcess::shared().eventDispatcher().addScrollingTreeForPage(webPage);
+    m_webPage->corePage()->settings().setForceCompositingMode(true);
 
     m_rootLayer = [CALayer layer];
 
@@ -97,8 +92,6 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
 
 TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
 {
-    WebProcess::shared().eventDispatcher().removeScrollingTreeForPage(m_webPage);
-
     m_layerFlushScheduler.invalidate();
 }
 
@@ -192,7 +185,10 @@ void TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlush()
 
 void TiledCoreAnimationDrawingArea::didInstallPageOverlay(PageOverlay* pageOverlay)
 {
-    m_webPage->corePage()->scrollingCoordinator()->setForceMainThreadScrollLayerPositionUpdates(true);
+#if ENABLE(THREADED_SCROLLING)
+    if (ScrollingCoordinator* scrollingCoordinator = m_webPage->corePage()->scrollingCoordinator())
+        scrollingCoordinator->setForceMainThreadScrollLayerPositionUpdates(true);
+#endif
 
     createPageOverlayLayer(pageOverlay);
 }
@@ -205,8 +201,12 @@ void TiledCoreAnimationDrawingArea::didUninstallPageOverlay(PageOverlay* pageOve
     if (m_pageOverlayLayers.size())
         return;
 
-    if (Page* page = m_webPage->corePage())
-        page->scrollingCoordinator()->setForceMainThreadScrollLayerPositionUpdates(false);
+#if ENABLE(THREADED_SCROLLING)
+    if (Page* page = m_webPage->corePage()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+            scrollingCoordinator->setForceMainThreadScrollLayerPositionUpdates(false);
+    }
+#endif
 }
 
 void TiledCoreAnimationDrawingArea::setPageOverlayNeedsDisplay(PageOverlay* pageOverlay, const IntRect& rect)
@@ -239,8 +239,13 @@ void TiledCoreAnimationDrawingArea::setPageOverlayOpacity(PageOverlay* pageOverl
 void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&)
 {
     Settings& settings = m_webPage->corePage()->settings();
-    bool scrollingPerformanceLoggingEnabled = m_webPage->scrollingPerformanceLoggingEnabled();
-    ScrollingThread::dispatch(bind(&ScrollingTree::setScrollingPerformanceLoggingEnabled, m_webPage->corePage()->scrollingCoordinator()->scrollingTree(), scrollingPerformanceLoggingEnabled));
+
+#if ENABLE(THREADED_SCROLLING)
+    if (ScrollingCoordinator* scrollingCoordinator = m_webPage->corePage()->scrollingCoordinator()) {
+        bool scrollingPerformanceLoggingEnabled = m_webPage->scrollingPerformanceLoggingEnabled();
+        ScrollingThread::dispatch(bind(&ScrollingTree::setScrollingPerformanceLoggingEnabled, scrollingCoordinator->scrollingTree(), scrollingPerformanceLoggingEnabled));
+    }
+#endif
 
     if (TiledBacking* tiledBacking = mainFrameTiledBacking())
         tiledBacking->setAggressivelyRetainsTiles(settings.aggressiveTileRetentionEnabled());
@@ -293,13 +298,19 @@ void TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired(Timer<T
 
 void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>& functionRef)
 {
+    Function<void ()> function = functionRef;
+
+#if ENABLE(THREADED_SCROLLING)
+    if (!m_webPage->corePage()->scrollingCoordinator()) {
+        function();
+        return;
+    }
+
     m_webPage->ref();
     m_webPage->corePage()->scrollingCoordinator()->commitTreeStateIfNeeded();
 
     if (!m_layerTreeStateIsFrozen)
         m_layerFlushScheduler.suspend();
-
-    Function<void ()> function = functionRef;
 
     // It is possible for the drawing area to be destroyed before the bound block
     // is invoked, so grab a reference to the web page here so we can access the drawing area through it.
@@ -318,6 +329,9 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(c
 
         webPage->deref();
     }));
+#else
+    function();
+#endif
 }
 
 void TiledCoreAnimationDrawingArea::notifyAnimationStarted(const GraphicsLayer*, double)
@@ -690,6 +704,9 @@ void TiledCoreAnimationDrawingArea::updateDebugInfoLayer(bool showLayer)
     }
 }
 
-} // namespace WebKit
+bool TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView(const FrameView* frameView)
+{
+    return frameView && frameView->isMainFrameView();
+}
 
-#endif // ENABLE(THREADED_SCROLLING)
+} // namespace WebKit

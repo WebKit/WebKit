@@ -904,6 +904,11 @@ void WebChromeClient::didAddFooterLayer(GraphicsLayer* footerParent)
         banner->didAddParentLayer(footerParent);
 }
 
+bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView* frameView) const
+{
+    return m_page->drawingArea()->shouldUseTiledBackingForFrameView(frameView);
+}
+
 void WebChromeClient::incrementActivePageCount()
 {
     WebProcess::shared().incrementActiveTaskCount();

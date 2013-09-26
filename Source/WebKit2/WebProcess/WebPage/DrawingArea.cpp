@@ -29,12 +29,9 @@
 // Subclasses
 #include "DrawingAreaImpl.h"
 
-#if PLATFORM(MAC) && ENABLE(THREADED_SCROLLING)
-#include "TiledCoreAnimationDrawingArea.h"
-#endif
-
 #if PLATFORM(MAC)
 #include "RemoteLayerTreeDrawingArea.h"
+#include "TiledCoreAnimationDrawingArea.h"
 #endif
 
 #include "WebPageCreationParameters.h"
@@ -46,11 +43,9 @@ PassOwnPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreat
     switch (parameters.drawingAreaType) {
     case DrawingAreaTypeImpl:
         return DrawingAreaImpl::create(webPage, parameters);
-#if PLATFORM(MAC) && ENABLE(THREADED_SCROLLING)
+#if PLATFORM(MAC)
     case DrawingAreaTypeTiledCoreAnimation:
         return TiledCoreAnimationDrawingArea::create(webPage, parameters);
-#endif
-#if PLATFORM(MAC)
     case DrawingAreaTypeRemoteLayerTree:
         return RemoteLayerTreeDrawingArea::create(webPage, parameters);
 #endif

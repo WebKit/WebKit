@@ -442,6 +442,8 @@ public:
     void didAddWidgetToRenderTree(Widget&);
     void willRemoveWidgetFromRenderTree(Widget&);
 
+    bool isMainFrameView() const;
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) OVERRIDE;
     virtual void scrollContentsSlowPath(const IntRect& updateRect) OVERRIDE;
@@ -458,8 +460,6 @@ private:
     void init();
 
     virtual bool isFrameView() const OVERRIDE { return true; }
-
-    bool isMainFrameView() const;
 
     friend class RenderWidget;
     bool useSlowRepaints(bool considerOverlap = true) const;

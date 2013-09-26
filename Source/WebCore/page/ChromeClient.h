@@ -365,6 +365,8 @@ public:
     virtual void didAddHeaderLayer(GraphicsLayer*) { }
     virtual void didAddFooterLayer(GraphicsLayer*) { }
 
+    virtual bool shouldUseTiledBackingForFrameView(const FrameView*) const { return false; }
+
     // These methods are used to report pages that are performing
     // some task that we consider to be "active", and so the user
     // would likely want the page to remain running uninterrupted.

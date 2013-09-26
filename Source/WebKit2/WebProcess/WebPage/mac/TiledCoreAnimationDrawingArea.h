@@ -26,8 +26,6 @@
 #ifndef TiledCoreAnimationDrawingArea_h
 #define TiledCoreAnimationDrawingArea_h
 
-#if ENABLE(THREADED_SCROLLING)
-
 #include "DrawingArea.h"
 #include "LayerTreeContext.h"
 #include <WebCore/FloatRect.h>
@@ -42,6 +40,7 @@ OBJC_CLASS CALayer;
 OBJC_CLASS WKContentLayer;
 
 namespace WebCore {
+class FrameView;
 class TiledBacking;
 }
 
@@ -82,6 +81,8 @@ private:
     virtual void didChangeScrollOffsetForAnyFrame() OVERRIDE;
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>&) OVERRIDE;
+
+    virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*);
 
     // WebCore::GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) OVERRIDE;
@@ -143,7 +144,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(THREADED_SCROLLING)
 
 #endif // TiledCoreAnimationDrawingArea_h

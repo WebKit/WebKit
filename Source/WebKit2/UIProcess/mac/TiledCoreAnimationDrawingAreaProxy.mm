@@ -26,8 +26,6 @@
 #import "config.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
 
-#if ENABLE(THREADED_SCROLLING)
-
 #import "ColorSpaceData.h"
 #import "DrawingAreaMessages.h"
 #import "DrawingAreaProxyMessages.h"
@@ -157,5 +155,3 @@ void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(THREADED_SCROLLING)
