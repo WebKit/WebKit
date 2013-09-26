@@ -279,6 +279,9 @@ public:
 
     virtual void execute(PassRefPtr<IDBDatabase> prpDatabase)
     {
+#if PLATFORM(MAC)
+        ASSERT_UNUSED(prpDatabase, prpDatabase);
+#else
         RefPtr<IDBDatabase> idbDatabase = prpDatabase;
         if (!requestCallback()->isActive())
             return;
@@ -317,6 +320,7 @@ public:
             .setObjectStores(objectStores);
 
         m_requestCallback->sendSuccess(result);
+#endif // PLATFORM(MAC)
     }
 
     virtual RequestCallback* requestCallback() { return m_requestCallback.get(); }
