@@ -1,3 +1,28 @@
+2013-09-26  Andreas Kling  <akling@apple.com>
+
+        Remove empty JSFooCustom.cpp files.
+        <https://webkit.org/b/121955>
+
+        Reviewed by Anders Carlsson.
+
+        There's no sense in slowing down build times with empty files that
+        still include a bunch of headers.
+
+        * bindings/js/JSAudioBufferCustom.cpp: Removed.
+        * bindings/js/JSCSSFontFaceRuleCustom.cpp: Removed.
+        * bindings/js/JSCSSImportRuleCustom.cpp: Removed.
+        * bindings/js/JSCSSMediaRuleCustom.cpp: Removed.
+        * bindings/js/JSCSSPageRuleCustom.cpp: Removed.
+        * bindings/js/JSCSSStyleRuleCustom.cpp: Removed.
+        * bindings/js/JSDOMImplementationCustom.cpp: Removed.
+        * bindings/js/JSDOMTokenListCustom.cpp: Removed.
+        * bindings/js/JSHTMLStyleElementCustom.cpp: Removed.
+        * bindings/js/JSMediaListCustom.cpp: Removed.
+        * bindings/js/JSProcessingInstructionCustom.cpp: Removed.
+        * bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp: Removed.
+        * bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp: Removed.
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp: Removed.
+
 2013-09-26  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] The layers from the flow thread should be collected under the regions' layers.

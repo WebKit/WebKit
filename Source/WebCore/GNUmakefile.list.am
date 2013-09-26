@@ -2330,7 +2330,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/GCController.h \
 	Source/WebCore/bindings/js/IDBBindingUtilities.cpp \
 	Source/WebCore/bindings/js/IDBBindingUtilities.h \
-	Source/WebCore/bindings/js/JSAudioBufferCustom.cpp \
 	Source/WebCore/bindings/js/JSAttrCustom.cpp \
 	Source/WebCore/bindings/js/JSAudioBufferSourceNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSAudioContextCustom.cpp \
@@ -2339,16 +2338,11 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSBiquadFilterNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSBlobCustom.cpp \
 	Source/WebCore/bindings/js/JSCDATASectionCustom.cpp \
-	Source/WebCore/bindings/js/JSCSSFontFaceRuleCustom.cpp \
-	Source/WebCore/bindings/js/JSCSSImportRuleCustom.cpp \
-	Source/WebCore/bindings/js/JSCSSMediaRuleCustom.cpp \
-	Source/WebCore/bindings/js/JSCSSPageRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSCSSRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSCSSRuleCustom.h \
 	Source/WebCore/bindings/js/JSCSSRuleListCustom.cpp \
 	Source/WebCore/bindings/js/JSCSSStyleDeclarationCustom.cpp \
 	Source/WebCore/bindings/js/JSCSSStyleDeclarationCustom.h \
-	Source/WebCore/bindings/js/JSCSSStyleRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSCSSValueCustom.cpp \
 	Source/WebCore/bindings/js/JSCallbackData.cpp \
 	Source/WebCore/bindings/js/JSCallbackData.h \
@@ -2368,13 +2362,11 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSDOMGlobalObject.h \
 	Source/WebCore/bindings/js/JSDOMGlobalObjectTask.cpp \
 	Source/WebCore/bindings/js/JSDOMGlobalObjectTask.h \
-	Source/WebCore/bindings/js/JSDOMImplementationCustom.cpp \
 	Source/WebCore/bindings/js/JSDOMMimeTypeArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSDOMPluginArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSDOMPluginCustom.cpp \
 	Source/WebCore/bindings/js/JSDOMStringListCustom.cpp \
 	Source/WebCore/bindings/js/JSDOMStringMapCustom.cpp \
-	Source/WebCore/bindings/js/JSDOMTokenListCustom.cpp \
 	Source/WebCore/bindings/js/JSDOMWindowBase.cpp \
 	Source/WebCore/bindings/js/JSDOMWindowBase.h \
 	Source/WebCore/bindings/js/JSDOMWindowCustom.cpp \
@@ -2420,7 +2412,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSHTMLOptionsCollectionCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLSelectElementCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLSelectElementCustom.h \
-	Source/WebCore/bindings/js/JSHTMLStyleElementCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLTemplateElementCustom.cpp \
 	Source/WebCore/bindings/js/JSHistoryCustom.cpp \
 	Source/WebCore/bindings/js/JSIDBAnyCustom.cpp \
@@ -2439,7 +2430,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSMainThreadExecState.cpp \
 	Source/WebCore/bindings/js/JSMainThreadExecState.h \
 	Source/WebCore/bindings/js/JSMediaListCustom.h \
-	Source/WebCore/bindings/js/JSMediaListCustom.cpp \
 	Source/WebCore/bindings/js/JSMessageChannelCustom.cpp \
 	Source/WebCore/bindings/js/JSMessageEventCustom.cpp \
 	Source/WebCore/bindings/js/JSMessagePortCustom.cpp \
@@ -2461,7 +2451,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	Source/WebCore/bindings/js/JSPluginElementFunctions.h \
 	Source/WebCore/bindings/js/JSPopStateEventCustom.cpp \
-	Source/WebCore/bindings/js/JSProcessingInstructionCustom.cpp \
 	Source/WebCore/bindings/js/JSRequestAnimationFrameCallbackCustom.cpp \
 	Source/WebCore/bindings/js/JSSQLResultSetRowListCustom.cpp \
 	Source/WebCore/bindings/js/JSSQLTransactionCustom.cpp \
@@ -2484,8 +2473,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSTreeWalkerCustom.cpp \
 	Source/WebCore/bindings/js/JSVideoTrackCustom.cpp \
 	Source/WebCore/bindings/js/JSVideoTrackListCustom.cpp \
-	Source/WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
-	Source/WebCore/bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebGLRenderingContextCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitPointCustom.cpp \
 	Source/WebCore/bindings/js/JSWorkerGlobalScopeBase.cpp \
@@ -2493,7 +2480,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSWorkerGlobalScopeCustom.cpp \
 	Source/WebCore/bindings/js/JSWorkerCustom.cpp \
 	Source/WebCore/bindings/js/JSXMLHttpRequestCustom.cpp \
-	Source/WebCore/bindings/js/JSXMLHttpRequestUploadCustom.cpp \
 	Source/WebCore/bindings/js/JSXPathResultCustom.cpp \
 	Source/WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
 	Source/WebCore/bindings/js/JavaScriptCallFrame.cpp \

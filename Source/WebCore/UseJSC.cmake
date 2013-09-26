@@ -29,18 +29,12 @@ list(APPEND WebCore_SOURCES
     bindings/js/DOMWrapperWorld.cpp
     bindings/js/Dictionary.cpp
     bindings/js/GCController.cpp
-    bindings/js/JSAudioBufferCustom.cpp
     bindings/js/JSAttrCustom.cpp
     bindings/js/JSBlobCustom.cpp
     bindings/js/JSCDATASectionCustom.cpp
-    bindings/js/JSCSSFontFaceRuleCustom.cpp
-    bindings/js/JSCSSImportRuleCustom.cpp
-    bindings/js/JSCSSMediaRuleCustom.cpp
-    bindings/js/JSCSSPageRuleCustom.cpp
     bindings/js/JSCSSRuleCustom.cpp
     bindings/js/JSCSSRuleListCustom.cpp
     bindings/js/JSCSSStyleDeclarationCustom.cpp
-    bindings/js/JSCSSStyleRuleCustom.cpp
     bindings/js/JSCSSValueCustom.cpp
     bindings/js/JSCallbackData.cpp
     bindings/js/JSCanvasRenderingContext2DCustom.cpp
@@ -53,13 +47,11 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSDOMFormDataCustom.cpp
     bindings/js/JSDOMGlobalObject.cpp
     bindings/js/JSDOMGlobalObjectTask.cpp
-    bindings/js/JSDOMImplementationCustom.cpp
     bindings/js/JSDOMMimeTypeArrayCustom.cpp
     bindings/js/JSDOMPluginArrayCustom.cpp
     bindings/js/JSDOMPluginCustom.cpp
     bindings/js/JSDOMStringListCustom.cpp
     bindings/js/JSDOMStringMapCustom.cpp
-    bindings/js/JSDOMTokenListCustom.cpp
     bindings/js/JSDOMWindowBase.cpp
     bindings/js/JSDOMWindowCustom.cpp
     bindings/js/JSDOMWindowShell.cpp
@@ -91,7 +83,6 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSHTMLObjectElementCustom.cpp
     bindings/js/JSHTMLOptionsCollectionCustom.cpp
     bindings/js/JSHTMLSelectElementCustom.cpp
-    bindings/js/JSHTMLStyleElementCustom.cpp
     bindings/js/JSHTMLTemplateElementCustom.cpp
     bindings/js/JSHistoryCustom.cpp
     bindings/js/JSImageConstructor.cpp
@@ -103,7 +94,6 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSLazyEventListener.cpp
     bindings/js/JSLocationCustom.cpp
     bindings/js/JSMainThreadExecState.cpp
-    bindings/js/JSMediaListCustom.cpp
     bindings/js/JSMessageChannelCustom.cpp
     bindings/js/JSMessageEventCustom.cpp
     bindings/js/JSMessagePortCustom.cpp
@@ -117,7 +107,6 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSNodeListCustom.cpp
     bindings/js/JSPluginElementFunctions.cpp
     bindings/js/JSPopStateEventCustom.cpp
-    bindings/js/JSProcessingInstructionCustom.cpp
     bindings/js/JSStorageCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp
     bindings/js/JSStyleSheetListCustom.cpp
@@ -125,11 +114,8 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSTouchCustom.cpp
     bindings/js/JSTouchListCustom.cpp
     bindings/js/JSTreeWalkerCustom.cpp
-    bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp
-    bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp
     bindings/js/JSWebKitPointCustom.cpp
     bindings/js/JSXMLHttpRequestCustom.cpp
-    bindings/js/JSXMLHttpRequestUploadCustom.cpp
     bindings/js/JSXPathResultCustom.cpp
     bindings/js/JSXSLTProcessorCustom.cpp
     bindings/js/JavaScriptCallFrame.cpp
