@@ -1,5 +1,15 @@
 2013-09-26  Mario Sanchez Prada  <mario.prada@samsung.com>
 
+        [GTK] Logging of accessibility events is not disabled between tests
+        https://bugs.webkit.org/show_bug.cgi?id=121957
+
+        Unreviewed gardening. Marking accessibility tests as flaky while
+        an issue with the logging of accessibility events is investigated.
+
+        * platform/gtk/TestExpectations: Added flaky expectations.
+
+2013-09-26  Mario Sanchez Prada  <mario.prada@samsung.com>
+
         REGRESSION(r144831-r144846):Crashes in accessibility/aria-hidden-with-elements.html, accessibility/table-with-hidden-head-section.html
         https://bugs.webkit.org/show_bug.cgi?id=112152
 

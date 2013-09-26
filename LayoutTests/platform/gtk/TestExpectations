@@ -520,6 +520,20 @@ webkit.org/b/73772 fast/table/multiple-captions-display.xhtml [ Failure Pass ]
 
 webkit.org/b/74493 platform/gtk/accessibility/unknown-roles-not-exposed.html [ Failure Pass ]
 
+webkit.org/b/121957 platform/gtk/accessibility/aria-table-hierarchy.html [ Failure Pass ]
+webkit.org/b/121957 platform/gtk/accessibility/aria-toggle-button-role.html [ Failure Pass ]
+webkit.org/b/121957 platform/gtk/accessibility/button-accessible-name.html [ Failure Pass ]
+webkit.org/b/121957 platform/gtk/accessibility/caret-browsing-text-focus.html [ Failure Pass ]
+webkit.org/b/121957 platform/gtk/accessibility/entry-and-password.html [ Failure Pass ]
+webkit.org/b/121957 platform/gtk/accessibility/list-items-always-exposed.html [ Failure Pass ]
+webkit.org/b/121957 platform/gtk/accessibility/media-controls-panel-title.html [ Failure Pass ]
+webkit.org/b/121957 platform/gtk/accessibility/name-from-label.html [ Failure Pass ]
+webkit.org/b/121957 platform/gtk/accessibility/object-with-title.html [ Failure Pass ]
+webkit.org/b/121957 platform/gtk/accessibility/remapped-aria-crash.html [ Failure Pass ]
+webkit.org/b/121957 platform/gtk/accessibility/spans-paragraphs-and-divs.html [ Failure Pass ]
+webkit.org/b/121957 platform/gtk/accessibility/spans.html [ Failure Pass ]
+webkit.org/b/121957 platform/gtk/accessibility/table-hierarchy.html [ Failure Pass ]
+
 webkit.org/b/76385 tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html [ Failure Pass ]
 
 webkit.org/b/78344 fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html [ ImageOnlyFailure Pass ]
