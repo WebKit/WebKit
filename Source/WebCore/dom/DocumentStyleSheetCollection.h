@@ -48,8 +48,6 @@ class DocumentStyleSheetCollection {
 public:
     explicit DocumentStyleSheetCollection(Document&);
 
-    ~DocumentStyleSheetCollection();
-
     const Vector<RefPtr<StyleSheet>>& styleSheetsForStyleSheetList() const { return m_styleSheetsForStyleSheetList; }
 
     const Vector<RefPtr<CSSStyleSheet>>& activeAuthorStyleSheets() const { return m_activeAuthorStyleSheets; }
@@ -116,6 +114,8 @@ public:
     void resetCSSFeatureFlags();
 
     bool activeStyleSheetsContains(const CSSStyleSheet*) const;
+
+    void detachFromDocument();
 
 private:
     void collectActiveStyleSheets(Vector<RefPtr<StyleSheet> >&);

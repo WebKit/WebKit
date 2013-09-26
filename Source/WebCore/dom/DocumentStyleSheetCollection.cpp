@@ -68,20 +68,6 @@ DocumentStyleSheetCollection::DocumentStyleSheetCollection(Document& document)
 {
 }
 
-DocumentStyleSheetCollection::~DocumentStyleSheetCollection()
-{
-    if (m_pageUserSheet)
-        m_pageUserSheet->clearOwnerNode();
-    for (unsigned i = 0; i < m_injectedUserStyleSheets.size(); ++i)
-        m_injectedUserStyleSheets[i]->clearOwnerNode();
-    for (unsigned i = 0; i < m_injectedAuthorStyleSheets.size(); ++i)
-        m_injectedAuthorStyleSheets[i]->clearOwnerNode();
-    for (unsigned i = 0; i < m_userStyleSheets.size(); ++i)
-        m_userStyleSheets[i]->clearOwnerNode();
-    for (unsigned i = 0; i < m_authorStyleSheets.size(); ++i)
-        m_authorStyleSheets[i]->clearOwnerNode();
-}
-
 void DocumentStyleSheetCollection::combineCSSFeatureFlags()
 {
     // Delay resetting the flags until after next style recalc since unapplying the style may not work without these set (this is true at least with before/after).
@@ -513,6 +499,20 @@ bool DocumentStyleSheetCollection::activeStyleSheetsContains(const CSSStyleSheet
             m_weakCopyOfActiveStyleSheetListForFastLookup->add(m_activeAuthorStyleSheets[i].get());
     }
     return m_weakCopyOfActiveStyleSheetListForFastLookup->contains(sheet);
+}
+
+void DocumentStyleSheetCollection::detachFromDocument()
+{
+    if (m_pageUserSheet)
+        m_pageUserSheet->detachFromDocument();
+    for (unsigned i = 0; i < m_injectedUserStyleSheets.size(); ++i)
+        m_injectedUserStyleSheets[i]->detachFromDocument();
+    for (unsigned i = 0; i < m_injectedAuthorStyleSheets.size(); ++i)
+        m_injectedAuthorStyleSheets[i]->detachFromDocument();
+    for (unsigned i = 0; i < m_userStyleSheets.size(); ++i)
+        m_userStyleSheets[i]->detachFromDocument();
+    for (unsigned i = 0; i < m_authorStyleSheets.size(); ++i)
+        m_authorStyleSheets[i]->detachFromDocument();
 }
 
 }

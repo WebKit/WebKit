@@ -111,6 +111,8 @@ public:
 
     StyleSheetContents* contents() const { return m_contents.get(); }
 
+    void detachFromDocument() { m_ownerNode = nullptr; }
+
 private:
     CSSStyleSheet(PassRefPtr<StyleSheetContents>, CSSImportRule* ownerRule);
     CSSStyleSheet(PassRefPtr<StyleSheetContents>, Node* ownerNode, bool isInlineStylesheet);
