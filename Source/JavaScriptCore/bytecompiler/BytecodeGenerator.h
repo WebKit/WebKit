@@ -502,13 +502,13 @@ namespace JSC {
         RegisterID& registerFor(int index)
         {
             if (operandIsLocal(index))
-                return m_calleeRegisters[operandToLocal(index)];
+                return m_calleeRegisters[VirtualRegister(index).toLocal()];
 
             if (index == JSStack::Callee)
                 return m_calleeRegister;
 
             ASSERT(m_parameters.size());
-            return m_parameters[operandToArgument(index)];
+            return m_parameters[VirtualRegister(index).toArgument()];
         }
 
         unsigned addConstant(const Identifier&);

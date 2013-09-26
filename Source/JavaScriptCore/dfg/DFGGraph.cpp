@@ -234,18 +234,18 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     ASSERT(node->hasVariableAccessData(*this) == node->hasLocal(*this));
     if (node->hasVariableAccessData(*this)) {
         VariableAccessData* variableAccessData = node->variableAccessData();
-        int operand = variableAccessData->operand();
-        if (operandIsArgument(operand))
-            out.print(comma, "arg", operandToArgument(operand), "(", VariableAccessDataDump(*this, variableAccessData), ")");
+        VirtualRegister operand = variableAccessData->local();
+        if (operand.isArgument())
+            out.print(comma, "arg", operand.toArgument(), "(", VariableAccessDataDump(*this, variableAccessData), ")");
         else
-            out.print(comma, "loc", operandToLocal(operand), "(", VariableAccessDataDump(*this, variableAccessData), ")");
+            out.print(comma, "loc", operand.toLocal(), "(", VariableAccessDataDump(*this, variableAccessData), ")");
     }
     if (node->hasUnlinkedLocal()) {
-        int operand = node->unlinkedLocal();
-        if (operandIsArgument(operand))
-            out.print(comma, "arg", operandToArgument(operand));
+        VirtualRegister operand = node->unlinkedLocal();
+        if (operand.isArgument())
+            out.print(comma, "arg", operand.toArgument());
         else
-            out.print(comma, "loc", operandToLocal(operand));
+            out.print(comma, "loc", operand.toLocal());
     }
     if (node->hasConstantBuffer()) {
         out.print(comma);

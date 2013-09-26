@@ -113,7 +113,7 @@ public:
         
         Payload(VirtualRegister operand)
             : m_isTop(false)
-            , m_value(static_cast<int>(operand))
+            , m_value(operand.offset())
         {
         }
         

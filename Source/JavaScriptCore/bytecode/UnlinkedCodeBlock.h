@@ -254,17 +254,17 @@ public:
     bool hasExpressionInfo() { return m_expressionInfo.size(); }
 
     // Special registers
-    void setThisRegister(int thisRegister) { m_thisRegister = thisRegister; }
-    void setActivationRegister(int activationRegister) { m_activationRegister = activationRegister; }
+    void setThisRegister(VirtualRegister thisRegister) { m_thisRegister = thisRegister; }
+    void setActivationRegister(VirtualRegister activationRegister) { m_activationRegister = activationRegister; }
 
-    void setArgumentsRegister(int argumentsRegister) { m_argumentsRegister = argumentsRegister; }
-    bool usesArguments() const { return m_argumentsRegister != (int)InvalidVirtualRegister; }
-    int argumentsRegister() const { return m_argumentsRegister; }
+    void setArgumentsRegister(VirtualRegister argumentsRegister) { m_argumentsRegister = argumentsRegister; }
+    bool usesArguments() const { return m_argumentsRegister.isValid(); }
+    VirtualRegister argumentsRegister() const { return m_argumentsRegister; }
 
 
-    bool usesGlobalObject() const { return m_globalObjectRegister != (int)InvalidVirtualRegister; }
-    void setGlobalObjectRegister(int globalObjectRegister) { m_globalObjectRegister = globalObjectRegister; }
-    int globalObjectRegister() const { return m_globalObjectRegister; }
+    bool usesGlobalObject() const { return m_globalObjectRegister.isValid(); }
+    void setGlobalObjectRegister(VirtualRegister globalObjectRegister) { m_globalObjectRegister = globalObjectRegister; }
+    VirtualRegister globalObjectRegister() const { return m_globalObjectRegister; }
 
     // Parameter information
     void setNumParameters(int newValue) { m_numParameters = newValue; }
@@ -399,8 +399,8 @@ public:
 
     CodeType codeType() const { return m_codeType; }
 
-    int thisRegister() const { return m_thisRegister; }
-    int activationRegister() const { return m_activationRegister; }
+    VirtualRegister thisRegister() const { return m_thisRegister; }
+    VirtualRegister activationRegister() const { return m_activationRegister; }
 
 
     void addPropertyAccessInstruction(unsigned propertyAccessInstruction)
@@ -479,10 +479,10 @@ private:
     int m_numParameters;
     VM* m_vm;
 
-    int m_thisRegister;
-    int m_argumentsRegister;
-    int m_activationRegister;
-    int m_globalObjectRegister;
+    VirtualRegister m_thisRegister;
+    VirtualRegister m_argumentsRegister;
+    VirtualRegister m_activationRegister;
+    VirtualRegister m_globalObjectRegister;
 
     bool m_needsFullScopeChain : 1;
     bool m_usesEval : 1;

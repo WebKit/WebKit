@@ -217,10 +217,10 @@ private:
     void canonicalizeGetLocal(Node* node)
     {
         VariableAccessData* variable = node->variableAccessData();
-        if (operandIsArgument(variable->local()))
-            canonicalizeGetLocalFor<ArgumentOperand>(node, variable, operandToArgument(variable->local()));
+        if (variable->local().isArgument())
+            canonicalizeGetLocalFor<ArgumentOperand>(node, variable, variable->local().toArgument());
         else
-            canonicalizeGetLocalFor<LocalOperand>(node, variable, operandToLocal(variable->local()));
+            canonicalizeGetLocalFor<LocalOperand>(node, variable, variable->local().toLocal());
     }
     
     void canonicalizeSetLocal(Node* node)
@@ -285,17 +285,17 @@ private:
     void canonicalizeFlushOrPhantomLocal(Node* node)
     {
         VariableAccessData* variable = node->variableAccessData();
-        if (operandIsArgument(variable->local()))
-            canonicalizeFlushOrPhantomLocalFor<nodeType, ArgumentOperand>(node, variable, operandToArgument(variable->local()));
+        if (variable->local().isArgument())
+            canonicalizeFlushOrPhantomLocalFor<nodeType, ArgumentOperand>(node, variable, variable->local().toArgument());
         else
-            canonicalizeFlushOrPhantomLocalFor<nodeType, LocalOperand>(node, variable, operandToLocal(variable->local()));
+            canonicalizeFlushOrPhantomLocalFor<nodeType, LocalOperand>(node, variable, variable->local().toLocal());
     }
     
     void canonicalizeSetArgument(Node* node)
     {
-        int local = node->local();
-        ASSERT(operandIsArgument(local));
-        int argument = operandToArgument(local);
+        VirtualRegister local = node->local();
+        ASSERT(local.isArgument());
+        int argument = local.toArgument();
         m_block->variablesAtHead.setArgumentFirstTime(argument, node);
         m_block->variablesAtTail.setArgumentFirstTime(argument, node);
     }

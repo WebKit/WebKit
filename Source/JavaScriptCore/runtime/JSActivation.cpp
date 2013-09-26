@@ -218,13 +218,13 @@ JSValue JSActivation::argumentsGetter(ExecState*, JSValue slotBase, PropertyName
     if (activation->isTornOff() || !(callFrame->codeBlock()->usesArguments() || callFrame->codeBlock()->usesEval()))
         return jsUndefined();
 
-    int argumentsRegister = callFrame->codeBlock()->argumentsRegister();
-    if (JSValue arguments = callFrame->uncheckedR(argumentsRegister).jsValue())
+    VirtualRegister argumentsRegister = callFrame->codeBlock()->argumentsRegister();
+    if (JSValue arguments = callFrame->uncheckedR(argumentsRegister.offset()).jsValue())
         return arguments;
-    int realArgumentsRegister = unmodifiedArgumentsRegister(argumentsRegister);
+    int realArgumentsRegister = unmodifiedArgumentsRegister(argumentsRegister).offset();
 
     JSValue arguments = JSValue(Arguments::create(callFrame->vm(), callFrame));
-    callFrame->uncheckedR(argumentsRegister) = arguments;
+    callFrame->uncheckedR(argumentsRegister.offset()) = arguments;
     callFrame->uncheckedR(realArgumentsRegister) = arguments;
     
     ASSERT(callFrame->uncheckedR(realArgumentsRegister).jsValue().inherits(Arguments::info()));

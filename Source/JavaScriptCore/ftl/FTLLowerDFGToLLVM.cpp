@@ -42,6 +42,8 @@
 #include "LinkBuffer.h"
 #include "OperandsInlines.h"
 #include "Operations.h"
+#include "VirtualRegister.h"
+
 #include <wtf/ProcessID.h>
 
 namespace JSC { namespace FTL {
@@ -69,7 +71,7 @@ public:
         , m_heaps(state.context)
         , m_out(state.context)
         , m_valueSources(OperandsLike, state.graph.block(0)->variablesAtHead)
-        , m_lastSetOperand(std::numeric_limits<int>::max())
+        , m_lastSetOperand(VirtualRegister())
         , m_exitThunkGenerator(state)
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
@@ -524,7 +526,7 @@ private:
     void compileGetArgument()
     {
         VariableAccessData* variable = m_node->variableAccessData();
-        int operand = variable->operand();
+        VirtualRegister operand = variable->local();
 
         LValue jsValue = m_out.load64(addressFor(operand));
 
@@ -554,7 +556,7 @@ private:
     {
         EncodedJSValue* buffer = static_cast<EncodedJSValue*>(
             m_ftlState.jitCode->ftlForOSREntry()->entryBuffer()->dataBuffer());
-        setJSValue(m_out.load64(m_out.absolute(buffer + operandToLocal(m_node->unlinkedLocal()))));
+        setJSValue(m_out.load64(m_out.absolute(buffer + m_node->unlinkedLocal().toLocal())));
     }
     
     void compileGetLocal()
@@ -2003,7 +2005,7 @@ private:
         
         LValue calleeFrame = m_out.add(
             m_callFrame,
-            m_out.constIntPtr(sizeof(Register) * localToOperand(codeBlock()->m_numCalleeRegisters)));
+            m_out.constIntPtr(sizeof(Register) * virtualRegisterForLocal(codeBlock()->m_numCalleeRegisters).offset()));
         
         m_out.store32(
             m_out.constInt32(numPassedArgs + dummyThisArgument),
@@ -2016,7 +2018,7 @@ private:
         for (int i = 0; i < numPassedArgs; ++i) {
             m_out.store64(
                 lowJSValue(m_graph.varArgChild(m_node, 1 + i)),
-                addressFor(calleeFrame, argumentToOperand(i + dummyThisArgument)));
+                addressFor(calleeFrame, virtualRegisterForArgument(i + dummyThisArgument).offset()));
         }
         
         setJSValue(vmCall(m_out.operation(function), calleeFrame));
@@ -3351,7 +3353,7 @@ private:
         
         m_ftlState.jitCode->osrExit.append(OSRExit(
             kind, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
-            m_codeOriginForExitTarget, m_codeOriginForExitProfile, m_lastSetOperand,
+            m_codeOriginForExitTarget, m_codeOriginForExitProfile, m_lastSetOperand.offset(),
             m_valueSources.numberOfArguments(), m_valueSources.numberOfLocals()));
         m_ftlState.osrExit.append(OSRExitCompilationInfo());
         
@@ -3626,7 +3628,7 @@ private:
         ASSERT(node->containsMovHint());
         ASSERT(node->op() != ZombieHint);
         
-        int operand = node->local();
+        VirtualRegister operand = node->local();
         
         m_lastSetOperand = operand;
         m_valueSources.operand(operand) = ValueSource(node->child1().node());
@@ -3744,13 +3746,25 @@ private:
     {
         return addressFor(m_callFrame, operand);
     }
+    TypedPointer addressFor(VirtualRegister operand)
+    {
+        return addressFor(m_callFrame, operand.offset());
+    }
     TypedPointer payloadFor(int operand)
     {
         return payloadFor(m_callFrame, operand);
     }
+    TypedPointer payloadFor(VirtualRegister operand)
+    {
+        return payloadFor(m_callFrame, operand.offset());
+    }
     TypedPointer tagFor(int operand)
     {
         return tagFor(m_callFrame, operand);
+    }
+    TypedPointer tagFor(VirtualRegister operand)
+    {
+        return tagFor(m_callFrame, operand.offset());
     }
     
     VM& vm() { return m_graph.m_vm; }
@@ -3781,7 +3795,7 @@ private:
     HashMap<Node*, LValue> m_phis;
     
     Operands<ValueSource> m_valueSources;
-    int m_lastSetOperand;
+    VirtualRegister m_lastSetOperand;
     ExitThunkGenerator m_exitThunkGenerator;
     
     InPlaceAbstractState m_state;

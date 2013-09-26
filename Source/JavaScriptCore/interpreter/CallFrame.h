@@ -218,7 +218,7 @@ namespace JSC  {
 
         // Read a register from the codeframe (or constant from the CodeBlock).
         Register& r(int);
-        // Read a register for a non-constant 
+        // Read a register for a non-constant
         Register& uncheckedR(int);
 
         // Access to arguments as passed. (After capture, arguments may move to a different location.)

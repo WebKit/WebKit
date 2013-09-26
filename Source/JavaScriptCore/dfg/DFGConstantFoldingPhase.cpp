@@ -385,23 +385,7 @@ private:
         
         return changed;
     }
-    
-#if !ASSERT_DISABLED
-    bool isCapturedAtOrAfter(BasicBlock* block, unsigned indexInBlock, int operand)
-    {
-        for (; indexInBlock < block->size(); ++indexInBlock) {
-            Node* node = block->at(indexInBlock);
-            if (!node->hasLocal(m_graph))
-                continue;
-            if (node->local() != operand)
-                continue;
-            if (node->variableAccessData()->isCaptured())
-                return true;
-        }
-        return false;
-    }
-#endif // !ASSERT_DISABLED
-    
+
     void addStructureTransitionCheck(CodeOrigin codeOrigin, unsigned indexInBlock, JSCell* cell)
     {
         Node* weakConstant = m_insertionSet.insertNode(

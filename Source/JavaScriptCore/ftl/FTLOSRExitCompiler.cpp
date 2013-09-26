@@ -93,7 +93,7 @@ static void compileStub(
         if (!value.isArgument())
             continue;
         
-        sortedArguments.append(ExitArgumentForOperand(value.exitArgument(), operand));
+        sortedArguments.append(ExitArgumentForOperand(value.exitArgument(), VirtualRegister(operand)));
     }
     std::sort(sortedArguments.begin(), sortedArguments.end(), lesserArgumentIndex);
     
@@ -158,7 +158,7 @@ static void compileStub(
     jit.pop(MacroAssembler::framePointerRegister);
     jit.pop(GPRInfo::nonArgGPR0); // ignore the result.
     
-    if (exit.m_lastSetOperand != std::numeric_limits<int>::max()) {
+    if (exit.m_lastSetOperand.isValid()) {
         jit.load64(
             AssemblyHelpers::addressFor(exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
     }

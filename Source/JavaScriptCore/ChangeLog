@@ -1,3 +1,84 @@
+2013-09-25  Michael Saboff  <msaboff@apple.com>
+
+        VirtualRegister should be a class
+        https://bugs.webkit.org/show_bug.cgi?id=121732
+
+        Reviewed by Geoffrey Garen.
+
+        This is a refactoring change.  Changed VirtualRegister from an enum to a class.
+        Moved Operands::operandIsArgument(), operandToArgument(), argumentToOperand()
+        and the similar functions for locals to VirtualRegister class.
+
+        This is in preparation for changing the offset for the first local register from
+        0 to -1.  This is needed since most native calling conventions have the architected
+        frame pointer (e.g. %rbp for X86) point at the slot that stores the previous frame
+        pointer.  Local values start below that address.
+
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        * bytecode/Instruction.h:
+        * bytecode/LazyOperandValueProfile.h:
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        * bytecode/Operands.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecode/ValueRecovery.h:
+        * bytecode/VirtualRegister.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/RegisterID.h:
+        * debugger/DebuggerCallFrame.cpp:
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        * dfg/DFGArgumentPosition.h:
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        * dfg/DFGCapabilities.cpp:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        * dfg/DFGFlushLivenessAnalysisPhase.cpp:
+        * dfg/DFGGraph.cpp:
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCode.cpp:
+        * dfg/DFGNode.h:
+        * dfg/DFGOSREntry.cpp:
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        * dfg/DFGOSRExitCompiler64.cpp:
+        * dfg/DFGRegisterBank.h:
+        * dfg/DFGScoreBoard.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        * dfg/DFGValidate.cpp:
+        * dfg/DFGValueRecoveryOverride.h:
+        * dfg/DFGVariableAccessData.h:
+        * dfg/DFGVariableEvent.h:
+        * dfg/DFGVariableEventStream.cpp:
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        * ftl/FTLExitArgumentForOperand.h:
+        * ftl/FTLLink.cpp:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        * ftl/FTLOSREntry.cpp:
+        * ftl/FTLOSRExit.cpp:
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompiler.cpp:
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        * jit/AssemblyHelpers.h:
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        * jit/JITInlines.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITStubs.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        * profiler/ProfilerBytecodeSequence.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/JSActivation.cpp:
+
 2013-09-26  Anders Carlsson  <andersca@apple.com>
 
         Weak should have a move constructor and move assignment operator

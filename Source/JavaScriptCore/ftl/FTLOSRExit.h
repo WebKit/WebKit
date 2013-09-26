@@ -40,6 +40,7 @@
 #include "MethodOfGettingAValueProfile.h"
 #include "Operands.h"
 #include "ValueProfile.h"
+#include "VirtualRegister.h"
 
 namespace JSC { namespace FTL {
 
@@ -160,7 +161,7 @@ struct OSRExit : public DFG::OSRExitBase {
     // Offset within the exit stubs of the stub for this exit.
     unsigned m_patchableCodeOffset;
     
-    int m_lastSetOperand;
+    VirtualRegister m_lastSetOperand;
     
     Operands<ExitValue> m_values;
     

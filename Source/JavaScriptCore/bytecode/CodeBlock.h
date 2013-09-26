@@ -71,6 +71,7 @@
 #include "StructureStubInfo.h"
 #include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
+#include "VirtualRegister.h"
 #include "Watchpoint.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/PassOwnPtr.h>
@@ -86,7 +87,7 @@ class ExecState;
 class LLIntOffsetsExtractor;
 class RepatchBuffer;
 
-inline int unmodifiedArgumentsRegister(int argumentsRegister) { return argumentsRegister + 1; }
+inline VirtualRegister unmodifiedArgumentsRegister(VirtualRegister argumentsRegister) { return VirtualRegister(argumentsRegister.offset() + 1); }
 
 static ALWAYS_INLINE int missingThisObjectMarker() { return std::numeric_limits<int>::max(); }
 
@@ -148,7 +149,7 @@ public:
 
     inline bool isKnownNotImmediate(int index)
     {
-        if (index == m_thisRegister && !m_isStrictMode)
+        if (index == m_thisRegister.offset() && !m_isStrictMode)
             return true;
 
         if (isConstantRegisterIndex(index))
@@ -298,58 +299,61 @@ public:
     void setVM(VM* vm) { m_vm = vm; }
     VM* vm() { return m_vm; }
 
-    void setThisRegister(int thisRegister) { m_thisRegister = thisRegister; }
-    int thisRegister() const { return m_thisRegister; }
+    void setThisRegister(VirtualRegister thisRegister) { m_thisRegister = thisRegister; }
+    VirtualRegister thisRegister() const { return m_thisRegister; }
 
     bool needsFullScopeChain() const { return m_unlinkedCode->needsFullScopeChain(); }
     bool usesEval() const { return m_unlinkedCode->usesEval(); }
 
-    void setArgumentsRegister(int argumentsRegister)
+    void setArgumentsRegister(VirtualRegister argumentsRegister)
     {
-        ASSERT(argumentsRegister != (int)InvalidVirtualRegister);
+        ASSERT(argumentsRegister.isValid());
         m_argumentsRegister = argumentsRegister;
         ASSERT(usesArguments());
     }
-    int argumentsRegister() const
+    VirtualRegister argumentsRegister() const
     {
         ASSERT(usesArguments());
         return m_argumentsRegister;
     }
-    int uncheckedArgumentsRegister()
+    VirtualRegister uncheckedArgumentsRegister()
     {
         if (!usesArguments())
-            return InvalidVirtualRegister;
+            return VirtualRegister();
         return argumentsRegister();
     }
-    void setActivationRegister(int activationRegister)
+    void setActivationRegister(VirtualRegister activationRegister)
     {
         m_activationRegister = activationRegister;
     }
-    int activationRegister() const
+
+    VirtualRegister activationRegister() const
     {
         ASSERT(needsFullScopeChain());
         return m_activationRegister;
     }
-    int uncheckedActivationRegister()
+
+    VirtualRegister uncheckedActivationRegister()
     {
         if (!needsFullScopeChain())
-            return InvalidVirtualRegister;
+            return VirtualRegister();
         return activationRegister();
     }
-    bool usesArguments() const { return m_argumentsRegister != (int)InvalidVirtualRegister; }
+
+    bool usesArguments() const { return m_argumentsRegister.isValid(); }
 
     bool needsActivation() const
     {
         return m_needsActivation;
     }
 
-    bool isCaptured(int operand, InlineCallFrame* inlineCallFrame = 0) const
+    bool isCaptured(VirtualRegister operand, InlineCallFrame* inlineCallFrame = 0) const
     {
-        if (operandIsArgument(operand))
-            return operandToArgument(operand) && usesArguments();
+        if (operand.isArgument())
+            return operand.toArgument() && usesArguments();
 
         if (inlineCallFrame)
-            return inlineCallFrame->capturedVars.get(operandToLocal(operand));
+            return inlineCallFrame->capturedVars.get(operand.toLocal());
 
         // The activation object isn't in the captured region, but it's "captured"
         // in the sense that stores to its location can be observed indirectly.
@@ -368,8 +372,8 @@ public:
         if (!symbolTable())
             return false;
 
-        return operand <= symbolTable()->captureStart()
-            && operand > symbolTable()->captureEnd();
+        return operand.offset() <= symbolTable()->captureStart()
+            && operand.offset() > symbolTable()->captureEnd();
     }
 
     CodeType codeType() const { return m_unlinkedCode->codeType(); }
@@ -391,7 +395,7 @@ public:
 
     void clearEvalCache();
 
-    String nameForRegister(int registerNumber);
+    String nameForRegister(VirtualRegister);
 
 #if ENABLE(JIT)
     void setNumberOfStructureStubInfos(size_t size) { m_structureStubInfos.grow(size); }
@@ -1027,9 +1031,9 @@ private:
     VM* m_vm;
 
     RefCountedArray<Instruction> m_instructions;
-    int m_thisRegister;
-    int m_argumentsRegister;
-    int m_activationRegister;
+    VirtualRegister m_thisRegister;
+    VirtualRegister m_argumentsRegister;
+    VirtualRegister m_activationRegister;
 
     bool m_isStrictMode;
     bool m_needsActivation;

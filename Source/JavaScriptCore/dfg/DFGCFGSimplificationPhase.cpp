@@ -311,7 +311,7 @@ private:
         }
     }
 
-    void keepOperandAlive(BasicBlock* block, BasicBlock* jettisonedBlock, CodeOrigin codeOrigin, int operand)
+    void keepOperandAlive(BasicBlock* block, BasicBlock* jettisonedBlock, CodeOrigin codeOrigin, VirtualRegister operand)
     {
         Node* livenessNode = jettisonedBlock->variablesAtHead.operand(operand);
         if (!livenessNode)
@@ -326,9 +326,9 @@ private:
     void jettisonBlock(BasicBlock* block, BasicBlock* jettisonedBlock, CodeOrigin boundaryCodeOrigin)
     {
         for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfArguments(); ++i)
-            keepOperandAlive(block, jettisonedBlock, boundaryCodeOrigin, argumentToOperand(i));
+            keepOperandAlive(block, jettisonedBlock, boundaryCodeOrigin, virtualRegisterForArgument(i));
         for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfLocals(); ++i)
-            keepOperandAlive(block, jettisonedBlock, boundaryCodeOrigin, localToOperand(i));
+            keepOperandAlive(block, jettisonedBlock, boundaryCodeOrigin, virtualRegisterForLocal(i));
         
         fixJettisonedPredecessors(block, jettisonedBlock);
     }
@@ -380,9 +380,9 @@ private:
             // different path than secondBlock.
             
             for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfArguments(); ++i)
-                keepOperandAlive(firstBlock, jettisonedBlock, boundaryCodeOrigin, argumentToOperand(i));
+                keepOperandAlive(firstBlock, jettisonedBlock, boundaryCodeOrigin, virtualRegisterForArgument(i));
             for (size_t i = 0; i < jettisonedBlock->variablesAtHead.numberOfLocals(); ++i)
-                keepOperandAlive(firstBlock, jettisonedBlock, boundaryCodeOrigin, localToOperand(i));
+                keepOperandAlive(firstBlock, jettisonedBlock, boundaryCodeOrigin, virtualRegisterForLocal(i));
         }
         
         for (size_t i = 0; i < secondBlock->phis.size(); ++i)

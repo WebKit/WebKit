@@ -207,7 +207,7 @@ SLOW_PATH_DECL(slow_path_create_arguments)
     JSValue arguments = JSValue(Arguments::create(vm, exec));
     CHECK_EXCEPTION();
     exec->uncheckedR(pc[1].u.operand) = arguments;
-    exec->uncheckedR(unmodifiedArgumentsRegister(pc[1].u.operand)) = arguments;
+    exec->uncheckedR(unmodifiedArgumentsRegister(VirtualRegister(pc[1].u.operand)).offset()) = arguments;
     END();
 }
 

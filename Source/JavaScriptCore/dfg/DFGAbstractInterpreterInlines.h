@@ -142,7 +142,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetArgument: {
         ASSERT(m_graph.m_form == SSA);
         VariableAccessData* variable = node->variableAccessData();
-        AbstractValue& value = m_state.variables().operand(variable->local());
+        AbstractValue& value = m_state.variables().operand(variable->local().offset());
         ASSERT(value.isHeapTop());
         FiltrationResult result =
             value.filter(typeFilterFor(useKindFor(variable->flushFormat())));
@@ -152,8 +152,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case ExtractOSREntryLocal: {
-        if (!operandIsArgument(node->unlinkedLocal())
-            && m_graph.m_lazyVars.get(operandToLocal(node->unlinkedLocal()))) {
+        if (!(node->unlinkedLocal().isArgument())
+            && m_graph.m_lazyVars.get(node->unlinkedLocal().toLocal())) {
             // This is kind of pessimistic - we could know in some cases that the
             // DFG code at the point of the OSR had already initialized the lazy
             // variable. But maybe this is fine, since we're inserting OSR
@@ -171,7 +171,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_state.setIsValid(false);
             break;
         }
-        AbstractValue value = m_state.variables().operand(variableAccessData->local());
+        AbstractValue value = m_state.variables().operand(variableAccessData->local().offset());
         if (!variableAccessData->isCaptured()) {
             if (value.isClear())
                 node->setCanExit(true);
@@ -183,7 +183,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case GetLocalUnlinked: {
-        AbstractValue value = m_state.variables().operand(node->unlinkedLocal());
+        AbstractValue value = m_state.variables().operand(node->unlinkedLocal().offset());
         if (value.value())
             m_state.setFoundConstants(true);
         forNode(node) = value;
@@ -191,7 +191,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case SetLocal: {
-        m_state.variables().operand(node->local()) = forNode(node->child1());
+        m_state.variables().operand(node->local().offset()) = forNode(node->child1());
         break;
     }
         
@@ -1133,7 +1133,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CheckArgumentsNotCreated:
         if (isEmptySpeculation(
                 m_state.variables().operand(
-                    m_graph.argumentsRegisterFor(node->codeOrigin)).m_type))
+                    m_graph.argumentsRegisterFor(node->codeOrigin).offset()).m_type))
             m_state.setFoundConstants(true);
         else
             node->setCanExit(true);
@@ -1607,13 +1607,13 @@ void AbstractInterpreter<AbstractStateType>::clobberCapturedVars(const CodeOrigi
         }
     } else {
         for (size_t i = m_codeBlock->m_numVars; i--;) {
-            if (m_codeBlock->isCaptured(localToOperand(i)))
+            if (m_codeBlock->isCaptured(virtualRegisterForLocal(i)))
                 m_state.variables().local(i).makeHeapTop();
         }
     }
 
     for (size_t i = m_state.variables().numberOfArguments(); i--;) {
-        if (m_codeBlock->isCaptured(argumentToOperand(i)))
+        if (m_codeBlock->isCaptured(virtualRegisterForArgument(i)))
             m_state.variables().argument(i).makeHeapTop();
     }
 }

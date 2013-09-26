@@ -41,6 +41,7 @@
 #include "DFGValueSource.h"
 #include "MarkedAllocator.h"
 #include "ValueRecovery.h"
+#include "VirtualRegister.h"
 
 namespace JSC { namespace DFG {
 
@@ -184,7 +185,7 @@ public:
 #endif
         VirtualRegister spillMe;
         GPRReg gpr = m_gprs.allocate(spillMe);
-        if (spillMe != InvalidVirtualRegister) {
+        if (spillMe.isValid()) {
 #if USE(JSVALUE32_64)
             GenerationInfo& info = generationInfoFromVirtualRegister(spillMe);
             RELEASE_ASSERT(info.registerFormat() != DataFormatJSDouble);
@@ -201,7 +202,7 @@ public:
         m_jit.addRegisterAllocationAtOffset(m_jit.debugOffset());
 #endif
         VirtualRegister spillMe = m_gprs.allocateSpecific(specific);
-        if (spillMe != InvalidVirtualRegister) {
+        if (spillMe.isValid()) {
 #if USE(JSVALUE32_64)
             GenerationInfo& info = generationInfoFromVirtualRegister(spillMe);
             RELEASE_ASSERT(info.registerFormat() != DataFormatJSDouble);
@@ -223,7 +224,7 @@ public:
 #endif
         VirtualRegister spillMe;
         FPRReg fpr = m_fprs.allocate(spillMe);
-        if (spillMe != InvalidVirtualRegister)
+        if (spillMe.isValid())
             spill(spillMe);
         return fpr;
     }
@@ -360,7 +361,7 @@ public:
         ASSERT(plans.isEmpty());
         for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
             GPRReg gpr = iter.regID();
-            if (iter.name() != InvalidVirtualRegister && gpr != exclude && gpr != exclude2) {
+            if (iter.name().isValid() && gpr != exclude && gpr != exclude2) {
                 SilentRegisterSavePlan plan = silentSavePlanForGPR(iter.name(), gpr);
                 if (doSpill)
                     silentSpill(plan);
@@ -368,7 +369,7 @@ public:
             }
         }
         for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
-            if (iter.name() != InvalidVirtualRegister && iter.regID() != fprExclude) {
+            if (iter.name().isValid() && iter.regID() != fprExclude) {
                 SilentRegisterSavePlan plan = silentSavePlanForFPR(iter.name(), iter.regID());
                 if (doSpill)
                     silentSpill(plan);
@@ -601,13 +602,13 @@ public:
     void flushRegisters()
     {
         for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
-            if (iter.name() != InvalidVirtualRegister) {
+            if (iter.name().isValid()) {
                 spill(iter.name());
                 iter.release();
             }
         }
         for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
-            if (iter.name() != InvalidVirtualRegister) {
+            if (iter.name().isValid()) {
                 spill(iter.name());
                 iter.release();
             }
@@ -620,11 +621,11 @@ public:
     bool isFlushed()
     {
         for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
-            if (iter.name() != InvalidVirtualRegister)
+            if (iter.name().isValid())
                 return false;
         }
         for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
-            if (iter.name() != InvalidVirtualRegister)
+            if (iter.name().isValid())
                 return false;
         }
         return true;
@@ -759,7 +760,7 @@ public:
     // Access to our fixed callee CallFrame.
     MacroAssembler::Address argumentSlot(int argument)
     {
-        return MacroAssembler::Address(GPRInfo::callFrameRegister, (-m_jit.codeBlock()->m_numCalleeRegisters + argumentToOperand(argument)) * static_cast<int>(sizeof(Register)));
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (-m_jit.codeBlock()->m_numCalleeRegisters + virtualRegisterForArgument(argument).offset()) * static_cast<int>(sizeof(Register)));
     }
 
     MacroAssembler::Address callFrameTagSlot(int slot)
@@ -774,12 +775,12 @@ public:
 
     MacroAssembler::Address argumentTagSlot(int argument)
     {
-        return MacroAssembler::Address(GPRInfo::callFrameRegister, (-m_jit.codeBlock()->m_numCalleeRegisters + argumentToOperand(argument)) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (-m_jit.codeBlock()->m_numCalleeRegisters + virtualRegisterForArgument(argument).offset()) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
 
     MacroAssembler::Address argumentPayloadSlot(int argument)
     {
-        return MacroAssembler::Address(GPRInfo::callFrameRegister, (-m_jit.codeBlock()->m_numCalleeRegisters + argumentToOperand(argument)) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (-m_jit.codeBlock()->m_numCalleeRegisters + virtualRegisterForArgument(argument).offset()) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 
     void emitCall(Node*);
@@ -2188,12 +2189,12 @@ public:
     // Tracking for which nodes are currently holding the values of arguments and bytecode
     // operand-indexed variables.
     
-    ValueSource valueSourceForOperand(int operand)
+    ValueSource valueSourceForOperand(VirtualRegister operand)
     {
         return valueSourceReferenceForOperand(operand);
     }
     
-    void setNodeForOperand(Node* node, int operand)
+    void setNodeForOperand(Node* node, VirtualRegister operand)
     {
         valueSourceReferenceForOperand(operand) = ValueSource(MinifiedID(node));
     }
@@ -2202,21 +2203,21 @@ public:
     // and potentially resizes the array. So it would not be right to call this
     // twice and then perform operands on both references, since the one from
     // the first call may no longer be valid.
-    ValueSource& valueSourceReferenceForOperand(int operand)
+    ValueSource& valueSourceReferenceForOperand(VirtualRegister operand)
     {
-        if (operandIsArgument(operand)) {
-            int argument = operandToArgument(operand);
+        if (operand.isArgument()) {
+            int argument = operand.toArgument();
             return m_arguments[argument];
         }
 
-        int local = operandToLocal(operand);
+        int local = operand.toLocal();
         if ((unsigned)local >= m_variables.size())
             m_variables.resize(local + 1);
         
         return m_variables[local];
     }
     
-    void recordSetLocal(int operand, ValueSource valueSource)
+    void recordSetLocal(VirtualRegister operand, ValueSource valueSource)
     {
         valueSourceReferenceForOperand(operand) = valueSource;
         m_stream->appendAndLog(VariableEvent::setLocal(operand, valueSource.dataFormat()));
@@ -2224,7 +2225,7 @@ public:
 
     GenerationInfo& generationInfoFromVirtualRegister(VirtualRegister virtualRegister)
     {
-        return m_generationInfo[operandToLocal(virtualRegister)];
+        return m_generationInfo[virtualRegister.toLocal()];
     }
     
     GenerationInfo& generationInfo(Node* node)
@@ -2267,7 +2268,7 @@ public:
 
     Vector<ValueSource, 0> m_arguments;
     Vector<ValueSource, 0> m_variables;
-    int m_lastSetOperand;
+    VirtualRegister m_lastSetOperand;
     CodeOrigin m_codeOriginForExitTarget;
     CodeOrigin m_codeOriginForExitProfile;
     
@@ -2286,7 +2287,7 @@ public:
 
     ValueRecovery computeValueRecoveryFor(int operand)
     {
-        return computeValueRecoveryFor(valueSourceForOperand(operand));
+        return computeValueRecoveryFor(valueSourceForOperand(VirtualRegister(operand)));
     }
 };
 

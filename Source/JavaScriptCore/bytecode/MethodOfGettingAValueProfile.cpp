@@ -39,7 +39,7 @@ MethodOfGettingAValueProfile MethodOfGettingAValueProfile::fromLazyOperand(
     result.m_kind = LazyOperand;
     result.u.lazyOperand.codeBlock = codeBlock;
     result.u.lazyOperand.bytecodeOffset = key.bytecodeOffset();
-    result.u.lazyOperand.operand = key.operand();
+    result.u.lazyOperand.operand = key.operand().offset();
     return result;
 }
 
@@ -53,7 +53,7 @@ EncodedJSValue* MethodOfGettingAValueProfile::getSpecFailBucket(unsigned index) 
         return u.profile->specFailBucket(index);
         
     case LazyOperand: {
-        LazyOperandValueProfileKey key(u.lazyOperand.bytecodeOffset, u.lazyOperand.operand);
+        LazyOperandValueProfileKey key(u.lazyOperand.bytecodeOffset, VirtualRegister(u.lazyOperand.operand));
         
         ConcurrentJITLocker locker(u.lazyOperand.codeBlock->m_lock);
         LazyOperandValueProfile* profile =

@@ -697,7 +697,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_argument_by_val)
         arguments = Arguments::create(vm, exec);
         LLINT_CHECK_EXCEPTION();
         LLINT_OP(2) = arguments;
-        exec->uncheckedR(unmodifiedArgumentsRegister(pc[2].u.operand)) = arguments;
+        exec->uncheckedR(unmodifiedArgumentsRegister(VirtualRegister(pc[2].u.operand)).offset()) = arguments;
     }
     
     LLINT_RETURN_PROFILED(op_get_argument_by_val, getByVal(exec, arguments, LLINT_OP_C(3).jsValue()));
@@ -917,7 +917,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func)
     CodeBlock* codeBlock = exec->codeBlock();
     ASSERT(codeBlock->codeType() != FunctionCode
            || !codeBlock->needsFullScopeChain()
-           || exec->uncheckedR(codeBlock->activationRegister()).jsValue());
+           || exec->uncheckedR(codeBlock->activationRegister().offset()).jsValue());
 #if LLINT_SLOW_PATH_TRACING
     dataLogF("Creating function!\n");
 #endif
@@ -1128,7 +1128,7 @@ LLINT_SLOW_PATH_DECL(slow_path_tear_off_arguments)
 {
     LLINT_BEGIN();
     ASSERT(exec->codeBlock()->usesArguments());
-    Arguments* arguments = jsCast<Arguments*>(exec->uncheckedR(unmodifiedArgumentsRegister(pc[1].u.operand)).jsValue());
+    Arguments* arguments = jsCast<Arguments*>(exec->uncheckedR(unmodifiedArgumentsRegister(VirtualRegister(pc[1].u.operand)).offset()).jsValue());
     if (JSValue activationValue = LLINT_OP_C(2).jsValue())
         arguments->didTearOffActivation(exec, jsCast<JSActivation*>(activationValue));
     else

@@ -201,7 +201,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         case CellDisplacedInJSStack:
         case BooleanDisplacedInJSStack: {
             numberOfDisplacedVirtualRegisters++;
-            ASSERT(operandIsLocal(recovery.virtualRegister()));
+            ASSERT(recovery.virtualRegister().isLocal());
             
             // See if we might like to store to this virtual register before doing
             // virtual register shuffling. If so, we say that the virtual register
@@ -210,7 +210,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             // to ensure this happens efficiently. Note that we expect this case
             // to be rare, so the handling of it is optimized for the cases in
             // which it does not happen.
-            int local = operandToLocal(recovery.virtualRegister());
+            int local = recovery.virtualRegister().toLocal();
             if (local < (int)operands.numberOfLocals()) {
                 switch (operands.local(local).technique()) {
                 case InGPR:
@@ -535,17 +535,19 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     // 9) Dump all poisoned virtual registers.
     
     if (numberOfPoisonedVirtualRegisters) {
-        for (int virtualRegister = 0; virtualRegister < (int)operands.numberOfLocals(); ++virtualRegister) {
-            if (!poisonedVirtualRegisters[virtualRegister])
+        for (int localIndex = 0; localIndex < (int)operands.numberOfLocals(); ++localIndex) {
+            if (!poisonedVirtualRegisters[localIndex])
                 continue;
             
-            const ValueRecovery& recovery = operands.local(virtualRegister);
+            VirtualRegister virtualRegister = virtualRegisterForLocal(localIndex);
+
+            const ValueRecovery& recovery = operands.local(localIndex);
             switch (recovery.technique()) {
             case InGPR:
             case UnboxedInt32InGPR:
             case UnboxedBooleanInGPR: {
-                m_jit.load32(reinterpret_cast<char*>(scratchDataBuffer + poisonIndex(virtualRegister)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
-                m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor((VirtualRegister)localToOperand(virtualRegister)));
+                m_jit.load32(reinterpret_cast<char*>(scratchDataBuffer + poisonIndex(localIndex)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
+                m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor(virtualRegister));
                 uint32_t tag = JSValue::EmptyValueTag;
                 if (recovery.technique() == InGPR)
                     tag = JSValue::CellTag;
@@ -553,17 +555,17 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                     tag = JSValue::Int32Tag;
                 else
                     tag = JSValue::BooleanTag;
-                m_jit.store32(AssemblyHelpers::TrustedImm32(tag), AssemblyHelpers::tagFor((VirtualRegister)localToOperand(virtualRegister)));
+                m_jit.store32(AssemblyHelpers::TrustedImm32(tag), AssemblyHelpers::tagFor(virtualRegister));
                 break;
             }
 
             case InFPR:
             case InPair:
             case UInt32InGPR:
-                m_jit.load32(reinterpret_cast<char*>(scratchDataBuffer + poisonIndex(virtualRegister)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
-                m_jit.load32(reinterpret_cast<char*>(scratchDataBuffer + poisonIndex(virtualRegister)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag), GPRInfo::regT1);
-                m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor((VirtualRegister)localToOperand(virtualRegister)));
-                m_jit.store32(GPRInfo::regT1, AssemblyHelpers::tagFor((VirtualRegister)localToOperand(virtualRegister)));
+                m_jit.load32(reinterpret_cast<char*>(scratchDataBuffer + poisonIndex(localIndex)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
+                m_jit.load32(reinterpret_cast<char*>(scratchDataBuffer + poisonIndex(localIndex)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag), GPRInfo::regT1);
+                m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor(virtualRegister));
+                m_jit.store32(GPRInfo::regT1, AssemblyHelpers::tagFor(virtualRegister));
                 break;
                 
             default:
@@ -706,9 +708,9 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     
     // 15) Load the result of the last bytecode operation into regT0.
     
-    if (exit.m_lastSetOperand != std::numeric_limits<int>::max()) {
-        m_jit.load32(AssemblyHelpers::payloadFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
-        m_jit.load32(AssemblyHelpers::tagFor((VirtualRegister)exit.m_lastSetOperand), GPRInfo::cachedResultRegister2);
+    if (exit.m_lastSetOperand.isValid()) {
+        m_jit.load32(AssemblyHelpers::payloadFor(exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
+        m_jit.load32(AssemblyHelpers::tagFor(exit.m_lastSetOperand), GPRInfo::cachedResultRegister2);
     }
     
     // 16) And finish.

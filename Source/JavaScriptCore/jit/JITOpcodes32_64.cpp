@@ -39,6 +39,7 @@
 #include "JSVariableObject.h"
 #include "LinkBuffer.h"
 #include "SlowPathCall.h"
+#include "VirtualRegister.h"
 
 namespace JSC {
 
@@ -1096,7 +1097,7 @@ void JIT::emit_op_enter(Instruction*)
     // registers to zap stale pointers, to avoid unnecessarily prolonging
     // object lifetime and increasing GC pressure.
     for (int i = 0; i < m_codeBlock->m_numVars; ++i)
-        emitStore(localToOperand(i), jsUndefined());
+        emitStore(virtualRegisterForLocal(i).offset(), jsUndefined());
 }
 
 void JIT::emit_op_create_activation(Instruction* currentInstruction)

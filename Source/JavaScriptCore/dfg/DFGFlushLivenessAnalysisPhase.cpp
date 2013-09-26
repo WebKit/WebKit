@@ -167,7 +167,7 @@ private:
         }
     }
     
-    void setForNode(Node* node, int operand, FlushFormat nodeFormat, FlushFormat newFormat)
+    void setForNode(Node* node, VirtualRegister operand, FlushFormat nodeFormat, FlushFormat newFormat)
     {
         FlushFormat& currentFormat = m_live.operand(operand);
         
