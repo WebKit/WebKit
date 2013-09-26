@@ -30,13 +30,14 @@
 <script>
 description("Bug 49374 - Web Font specified with base64 data URI ending with EOT is not rendered. Each of the following pairs should look identical.");
 
+jsTestIsAsync = true;
+
 function testMain()
 {
-    for (var testId = 0; testId < 2; testId++) {
+    for (var testId = 0; testId < 2; testId++)
         shouldBe("document.getElementById('ref" + testId + "').offsetWidth", "document.getElementById('test" + testId + "').offsetWidth");
-    }
-    if (window.testRunner)
-        window.testRunner.notifyDone();
+
+    finishJSTest();
 }
 
 var trialCount = 0;
@@ -44,7 +45,9 @@ var trialCount = 0;
 function warmUpAndTest()
 {
     document.body.offsetTop; // Force layout.
-    if (trialCount > 20 || document.getElementById("ref0").offsetWidth == document.getElementById("test0").offsetWidth) {
+    if (trialCount > 200
+        || document.getElementById("ref0").offsetWidth == document.getElementById("test0").offsetWidth
+        || document.getElementById("ref1").offsetWidth == document.getElementById("test1").offsetWidth) {
         // Font has been loaded (or the wait limit has been exceeded). Now run the test.
         testMain();
         return;
@@ -52,9 +55,6 @@ function warmUpAndTest()
     trialCount++;
     window.setTimeout(warmUpAndTest, 10);
 }
-
-if (window.testRunner)
-    window.testRunner.waitUntilDone();
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

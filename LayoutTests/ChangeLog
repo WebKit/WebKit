@@ -1,5 +1,20 @@
 2013-09-25  Alexey Proskuryakov  <ap@apple.com>
 
+        fast/css/font-face-data-uri.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=82744
+
+        Reviewed by Darin Adler.
+
+        This test used to wait for one font to load, but not for another, which made no sense.
+
+        * fast/css/font-face-data-uri.html: Wait for both fonts. Increased the number of tries,
+        it's not that long. Use an async test idiom that doesn't conflict with js-test-post.js.
+
+        * fast/css/font-face-data-uri-expected.txt: Updated the results for proper async
+        test usage.
+
+2013-09-25  Alexey Proskuryakov  <ap@apple.com>
+
         Flaky Test: fast/history/history-subframe-with-name.html
         https://bugs.webkit.org/show_bug.cgi?id=51039
 
