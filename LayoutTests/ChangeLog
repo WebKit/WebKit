@@ -1,3 +1,10 @@
+2013-09-26  Andreas Kling  <akling@apple.com>
+
+        Rebaseline some tests after IndexedDB was enabled.
+
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+        * js/dom/global-constructors-attributes-shared-worker-expected.txt:
+
 2013-09-26  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         Inset box-shadows fail to round around corners when border-radius is set in vh/vw units.
