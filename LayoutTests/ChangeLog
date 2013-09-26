@@ -1,5 +1,16 @@
 2013-09-26  Mario Sanchez Prada  <mario.prada@samsung.com>
 
+        [GTK][WK2] Logging of accessibility events is not disabled between tests
+        https://bugs.webkit.org/show_bug.cgi?id=121957
+
+        Unreviewed gardening again. Now moving the expected flakiness to
+        the WebKit2GTK+ port, where it actually belongs to.
+
+        * platform/gtk-wk2/TestExpectations: Added expectations.
+        * platform/gtk/TestExpectations: Removed expectations.
+
+2013-09-26  Mario Sanchez Prada  <mario.prada@samsung.com>
+
         [GTK] Logging of accessibility events is not disabled between tests
         https://bugs.webkit.org/show_bug.cgi?id=121957
 
