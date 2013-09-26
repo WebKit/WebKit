@@ -79,6 +79,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 #include <WebCore/StorageTracker.h>
+#include <unistd.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/PassRefPtr.h>
@@ -94,9 +95,6 @@
 #include "NetworkProcessConnection.h"
 #endif
 
-#if !OS(WINDOWS)
-#include <unistd.h>
-#endif
 
 #if ENABLE(CUSTOM_PROTOCOLS)
 #include "CustomProtocolManager.h"

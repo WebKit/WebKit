@@ -1,5 +1,25 @@
 2013-09-26  Anders Carlsson  <andersca@apple.com>
 
+        Remove Windows code
+        https://bugs.webkit.org/show_bug.cgi?id=121988
+
+        Reviewed by Antti Koivisto.
+
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/win/ConnectionWin.cpp: Removed.
+        * Platform/SharedMemory.h:
+        * Platform/WorkQueue.h:
+        * Platform/win/SharedMemoryWin.cpp: Removed.
+        * Platform/win/WorkQueueWin.cpp: Removed.
+        * Shared/ChildProcess.cpp:
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::didFinishLaunching):
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::loadPluginsIfNecessary):
+        * WebProcess/WebProcess.cpp:
+
+2013-09-26  Anders Carlsson  <andersca@apple.com>
+
         Stop using PassWeak
         https://bugs.webkit.org/show_bug.cgi?id=121968
 

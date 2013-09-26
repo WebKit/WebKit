@@ -127,8 +127,6 @@ void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connection
     m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
 #if OS(DARWIN)
     m_connection->setShouldCloseConnectionOnMachExceptions();
-#elif PLATFORM(QT) && !OS(WINDOWS)
-    m_connection->setShouldCloseConnectionOnProcessTermination(processIdentifier());
 #endif
 
     connectionWillOpen(m_connection.get());

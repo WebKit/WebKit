@@ -71,10 +71,6 @@ public:
 
 #if OS(DARWIN)
     dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
-
-#elif OS(WINDOWS)
-    void registerHandle(HANDLE, const Function<void()>&);
-    void unregisterAndCloseHandle(HANDLE);
 #elif PLATFORM(QT)
     QSocketNotifier* registerSocketEventHandler(int, QSocketNotifier::Type, const Function<void()>&);
     void dispatchOnTermination(WebKit::PlatformProcessIdentifier, const Function<void()>&);
@@ -96,58 +92,6 @@ private:
 #if OS(DARWIN)
     static void executeFunction(void*);
     dispatch_queue_t m_dispatchQueue;
-#elif OS(WINDOWS)
-    class WorkItemWin : public ThreadSafeRefCounted<WorkItemWin> {
-    public:
-        static PassRefPtr<WorkItemWin> create(const Function<void()>&, WorkQueue*);
-        virtual ~WorkItemWin();
-
-        Function<void()>& function() { return m_function; }
-        WorkQueue* queue() const { return m_queue.get(); }
-
-    protected:
-        WorkItemWin(const Function<void()>&, WorkQueue*);
-
-    private:
-        Function<void()> m_function;
-        RefPtr<WorkQueue> m_queue;
-    };
-
-    class HandleWorkItem : public WorkItemWin {
-    public:
-        static PassRefPtr<HandleWorkItem> createByAdoptingHandle(HANDLE, const Function<void()>&, WorkQueue*);
-        virtual ~HandleWorkItem();
-
-        void setWaitHandle(HANDLE waitHandle) { m_waitHandle = waitHandle; }
-        HANDLE waitHandle() const { return m_waitHandle; }
-
-    private:
-        HandleWorkItem(HANDLE, const Function<void()>&, WorkQueue*);
-
-        HANDLE m_handle;
-        HANDLE m_waitHandle;
-    };
-
-    static void CALLBACK handleCallback(void* context, BOOLEAN timerOrWaitFired);
-    static void CALLBACK timerCallback(void* context, BOOLEAN timerOrWaitFired);
-    static DWORD WINAPI workThreadCallback(void* context);
-
-    bool tryRegisterAsWorkThread();
-    void unregisterAsWorkThread();
-    void performWorkOnRegisteredWorkThread();
-
-    static void unregisterWaitAndDestroyItemSoon(PassRefPtr<HandleWorkItem>);
-    static DWORD WINAPI unregisterWaitAndDestroyItemCallback(void* context);
-
-    volatile LONG m_isWorkThreadRegistered;
-
-    Mutex m_workItemQueueLock;
-    Vector<RefPtr<WorkItemWin>> m_workItemQueue;
-
-    Mutex m_handlesLock;
-    HashMap<HANDLE, RefPtr<HandleWorkItem>> m_handles;
-
-    HANDLE m_timerQueue;
 #elif PLATFORM(QT)
     class WorkItemQt;
     QThread* m_workThread;
