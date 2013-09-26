@@ -69,7 +69,7 @@ private:
     
     typedef HashMap<ThunkGenerator, MacroAssemblerCodeRef> CTIStubMap;
     CTIStubMap m_ctiStubMap;
-    typedef HashMap<std::pair<NativeFunction, NativeFunction>, Weak<NativeExecutable> > HostFunctionStubMap;
+    typedef HashMap<std::pair<NativeFunction, NativeFunction>, Weak<NativeExecutable>> HostFunctionStubMap;
     OwnPtr<HostFunctionStubMap> m_hostFunctionStubMap;
     Lock m_lock;
 };

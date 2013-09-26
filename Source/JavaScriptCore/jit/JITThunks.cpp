@@ -81,7 +81,7 @@ NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, N
         return nativeExecutable;
 
     NativeExecutable* nativeExecutable = NativeExecutable::create(*vm, JIT::compileCTINativeCall(vm, function), function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(vm)), constructor, NoIntrinsic);
-    weakAdd(*m_hostFunctionStubMap, std::make_pair(function, constructor), nativeExecutable);
+    weakAdd(*m_hostFunctionStubMap, std::make_pair(function, constructor), Weak<NativeExecutable>(nativeExecutable));
     return nativeExecutable;
 }
 
@@ -102,7 +102,7 @@ NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, T
         code = JIT::compileCTINativeCall(vm, function);
 
     NativeExecutable* nativeExecutable = NativeExecutable::create(*vm, code, function, MacroAssemblerCodeRef::createSelfManagedCodeRef(ctiNativeConstruct(vm)), callHostFunctionAsConstructor, intrinsic);
-    weakAdd(*m_hostFunctionStubMap, std::make_pair(function, &callHostFunctionAsConstructor), nativeExecutable);
+    weakAdd(*m_hostFunctionStubMap, std::make_pair(function, &callHostFunctionAsConstructor), Weak<NativeExecutable>(nativeExecutable));
     return nativeExecutable;
 }
 
