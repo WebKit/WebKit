@@ -449,7 +449,7 @@ public:
         if (pair->first()->isPercentage())
             radiusWidth = Length(pair->first()->getDoubleValue(), Percent);
         else if (pair->first()->isViewportPercentageLength())
-            radiusWidth = pair->first()->viewportPercentageLength();
+            radiusWidth = Length(styleResolver->viewportPercentageValue(*pair->first(), pair->first()->getIntValue()), Fixed);
         else if (pair->first()->isCalculatedPercentageWithLength())
             radiusWidth = Length((pair->first()->cssCalcValue()->toCalcValue(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom())));
         else
@@ -457,7 +457,7 @@ public:
         if (pair->second()->isPercentage())
             radiusHeight = Length(pair->second()->getDoubleValue(), Percent);
         else if (pair->second()->isViewportPercentageLength())
-            radiusHeight = pair->second()->viewportPercentageLength();
+            radiusHeight = Length(styleResolver->viewportPercentageValue(*pair->second(), pair->second()->getIntValue()), Fixed);
         else if (pair->second()->isCalculatedPercentageWithLength())
             radiusHeight = Length((pair->second()->cssCalcValue()->toCalcValue(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom())));
         else
@@ -625,18 +625,8 @@ public:
                 if (originalLength >= 1.0)
                     length = 1.0;
             }
-            if (primitiveValue->isViewportPercentageLength()) { 
-                int viewPortHeight = styleResolver->document().renderView()->viewportSize().height() * length / 100.0f;
-                int viewPortWidth = styleResolver->document().renderView()->viewportSize().width() * length / 100.0f;
-                if (primitiveValue->isViewportPercentageHeight())
-                    length = viewPortHeight;
-                else if (primitiveValue->isViewportPercentageWidth())
-                    length = viewPortWidth;
-                else if (primitiveValue->isViewportPercentageMax())
-                    length = max(viewPortWidth, viewPortHeight);
-                else if (primitiveValue->isViewportPercentageMin())
-                    length = min(viewPortWidth, viewPortHeight);
-            }
+            if (primitiveValue->isViewportPercentageLength())
+                length = styleResolver->viewportPercentageValue(*primitiveValue, length);
         } else {
             ASSERT_NOT_REACHED();
             length = 0;

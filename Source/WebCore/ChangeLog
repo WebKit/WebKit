@@ -1,3 +1,27 @@
+2013-09-26  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        Inset box-shadows fail to round around corners when border-radius is set in vh/vw units.
+        https://bugs.webkit.org/show_bug.cgi?id=119187
+
+        Reviewed by Darin Adler.
+
+        Border-radius properties were not applied incase its values
+        were given in vh, vw, vmax, vmin units.
+
+        Tests: fast/css/border-radius-inset-box-shadow-viewportlength.html
+               fast/css/border-radius-viewport-height.html
+               fast/css/border-radius-viewport-vmax.html
+               fast/css/border-radius-viewport-vmin.html
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyBorderRadius::applyValue):
+        (WebCore::ApplyPropertyComputeLength::applyValue):
+        * css/StyleResolver.h:
+        Calculating the border-radius values which has been specified
+        in viewport units.The vh/vw units are calcultated as percent of
+        viewport height and viewport width respectively. 1vmax: 1vw or 1vh,
+        whatever is largest.1vmin: 1vw or 1vh, whatever is smallest.
+
 2013-09-26  Seokju Kwon  <seokju@webkit.org>
 
         Fix ordered comparison warnings in BitmapImage::drawPattern

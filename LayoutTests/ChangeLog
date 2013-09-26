@@ -1,3 +1,21 @@
+2013-09-26  Gurpreet Kaur  <k.gurpreet@samsung.com>
+
+        Inset box-shadows fail to round around corners when border-radius is set in vh/vw units.
+        https://bugs.webkit.org/show_bug.cgi?id=119187
+
+        Reviewed by Darin Adler.
+
+        * fast/css/border-radius-inset-box-shadow-viewportlength-expected-mismatch.html: Added.
+        * fast/css/border-radius-inset-box-shadow-viewportlength.html: Added.
+        * fast/css/border-radius-viewport-height-expected-mismatch.html: Added.
+        * fast/css/border-radius-viewport-height.html: Added.
+        * fast/css/border-radius-viewport-vmax-expected-mismatch.html: Added.
+        * fast/css/border-radius-viewport-vmax.html: Added.
+        * fast/css/border-radius-viewport-vmin-expected-mismatch.html: Added.
+        * fast/css/border-radius-viewport-vmin.html: Added.
+        Added new tests for verifying that box-shadow and border-radius properties
+        are applied when its values are viewport units.
+
 2013-09-25  Oliver Hunt  <oliver@apple.com>
 
         Implement prefixed-destructuring assignment

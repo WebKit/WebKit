@@ -310,6 +310,8 @@ public:
 
     void loadPendingResources();
 
+    int viewportPercentageValue(CSSPrimitiveValue& unit, int percentage);
+
     struct RuleRange {
         RuleRange(int& firstRuleIndex, int& lastRuleIndex): firstRuleIndex(firstRuleIndex), lastRuleIndex(lastRuleIndex) { }
         int& firstRuleIndex;
@@ -585,7 +587,6 @@ private:
     bool classNamesAffectedByRules(const SpaceSplitString&) const;
     bool sharingCandidateHasIdenticalStyleAffectingAttributes(StyledElement*) const;
 
-    int viewportPercentageValue(CSSPrimitiveValue& unit, int percentage);
 
     unsigned m_matchedPropertiesCacheAdditionsSinceLastSweep;
 
