@@ -1,3 +1,15 @@
+2013-09-26  Seokju Kwon  <seokju@webkit.org>
+
+        Fix ordered comparison warnings in BitmapImage::drawPattern
+        https://bugs.webkit.org/show_bug.cgi?id=121945
+
+        Reviewed by Darin Adler.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::drawPattern):
+
 2013-09-26  Andreas Kling  <akling@apple.com>
 
         Remove empty JSFooCustom.cpp files.
