@@ -1,3 +1,16 @@
+2013-09-26  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: Keep DOM tree expanded on page reload
+        https://bugs.webkit.org/show_bug.cgi?id=121665
+
+        Reviewed by Darin Adler.
+
+        Allow the node that was selected before reloading the page to be selected
+        at the page is reloaded. Credit goes to Joseph Pecoraro for the fix.
+
+        * UserInterface/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView.prototype._rootDOMNodeAvailable.selectNode):
+
 2013-09-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Using Breakpoint Actions Breaks iOS inspection

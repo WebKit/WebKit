@@ -295,10 +295,6 @@ WebInspector.DOMTreeContentView.prototype = {
 
         function selectNode(lastSelectedNode)
         {
-            // A selection was made while waiting for the async reply. Just bail now.
-            if (this._domTreeOutline.selectedTreeElement)
-                return;
-
             var nodeToFocus = lastSelectedNode;
             if (!nodeToFocus)
                 nodeToFocus = rootDOMNode.body || rootDOMNode.documentElement;
