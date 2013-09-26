@@ -63,8 +63,6 @@ namespace JSC {
     JS_EXPORT_PRIVATE JSValue JSONParse(ExecState*, const String&);
     String JSONStringify(ExecState*, JSValue, unsigned indent);
 
-    void escapeStringToBuilder(StringBuilder&, const String&);
-    
 } // namespace JSC
 
 #endif // JSONObject_h

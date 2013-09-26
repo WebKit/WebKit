@@ -84,6 +84,7 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* 
     m_token.m_location.startOffset = source.startOffset();
     m_token.m_location.endOffset = source.startOffset();
     m_token.m_location.lineStartOffset = source.startOffset();
+
     m_functionCache = vm->addSourceProviderCache(source.provider());
     ScopeRef scope = pushScope();
     if (parserMode == JSParseFunctionCode)
@@ -91,12 +92,8 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* 
     if (strictness == JSParseStrict)
         scope->setStrictMode();
     if (parameters) {
-        for (unsigned i = 0; i < parameters->size(); i++) {
-            auto parameter = parameters->at(i);
-            if (!parameter->isBindingNode())
-                continue;
-            scope->declareParameter(&static_cast<BindingNode*>(parameter)->boundProperty());
-        }
+        for (unsigned i = 0; i < parameters->size(); i++)
+            scope->declareParameter(&parameters->at(i));
     }
     if (!name.isNull())
         scope->declareCallee(&name);
@@ -206,7 +203,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseVarDeclaratio
     int start = tokenLine();
     int end = 0;
     int scratch;
-    TreeDeconstructionPattern scratch1 = 0;
+    const Identifier* scratch1 = 0;
     TreeExpression scratch2 = 0;
     JSTextPosition scratch3;
     TreeExpression varDecls = parseVarDeclarationList(context, scratch, scratch1, scratch2, scratch3, scratch3, scratch3);
@@ -274,167 +271,40 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWhileStatemen
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarationList(TreeBuilder& context, int& declarations, TreeDeconstructionPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd)
+template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarationList(TreeBuilder& context, int& declarations, const Identifier*& lastIdent, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd)
 {
     TreeExpression varDecls = 0;
-    const Identifier* lastIdent;
     do {
-        lastIdent = 0;
-        lastPattern = 0;
+        declarations++;
         JSTokenLocation location(tokenLocation());
         next();
-        TreeExpression node = 0;
-        declarations++;
-        bool hasInitializer = false;
-        if (match(IDENT)) {
-            JSTextPosition varStart = tokenStartPosition();
-            identStart = varStart;
-            const Identifier* name = m_token.m_data.ident;
-            lastIdent = name;
-            next();
-            hasInitializer = match(EQUAL);
-            failIfFalseIfStrictWithNameAndMessage(declareVariable(name), "Cannot declare a variable named", name->impl(), "in strict mode.");
-            context.addVar(name, (hasInitializer || (!m_allowsIn && match(INTOKEN))) ? DeclarationStacks::HasInitializer : 0);
-            if (hasInitializer) {
-                JSTextPosition varDivot = tokenStartPosition() + 1;
-                initStart = tokenStartPosition();
-                next(TreeBuilder::DontBuildStrings); // consume '='
-                TreeExpression initializer = parseAssignmentExpression(context);
-                initEnd = lastTokenEndPosition();
-                lastInitializer = initializer;
-                failIfFalse(initializer);
-                
-                node = context.createAssignResolve(location, *name, initializer, varStart, varDivot, lastTokenEndPosition());
-            }
-        } else {
-            lastIdent = 0;
-            auto pattern = parseDeconstructionPattern<DeconstructToVariables>(context);
-            failIfFalse(pattern);
-            hasInitializer = match(EQUAL);
-            lastPattern = pattern;
-            if (hasInitializer) {
-                next(TreeBuilder::DontBuildStrings); // consume '='
-                TreeExpression rhs = parseExpression(context);
-                node = context.createDeconstructingAssignment(location, pattern, rhs);
-            }
-            ASSERT(node);
-        }
+        matchOrFail(IDENT);
         
+        JSTextPosition varStart = tokenStartPosition();
+        identStart = varStart;
+        const Identifier* name = m_token.m_data.ident;
+        lastIdent = name;
+        next();
+        bool hasInitializer = match(EQUAL);
+        failIfFalseIfStrictWithNameAndMessage(declareVariable(name), "Cannot declare a variable named", name->impl(), "in strict mode.");
+        context.addVar(name, (hasInitializer || (!m_allowsIn && match(INTOKEN))) ? DeclarationStacks::HasInitializer : 0);
         if (hasInitializer) {
+            JSTextPosition varDivot = tokenStartPosition() + 1;
+            initStart = tokenStartPosition();
+            next(TreeBuilder::DontBuildStrings); // consume '='
+            TreeExpression initializer = parseAssignmentExpression(context);
+            initEnd = lastTokenEndPosition();
+            lastInitializer = initializer;
+            failIfFalse(initializer);
+            
+            TreeExpression node = context.createAssignResolve(location, *name, initializer, varStart, varDivot, lastTokenEndPosition());
             if (!varDecls)
                 varDecls = node;
             else
                 varDecls = context.combineCommaNodes(location, varDecls, node);
         }
     } while (match(COMMA));
-    if (lastIdent)
-        lastPattern = createBindingPattern<DeconstructToVariables>(context, *lastIdent, 0);
     return varDecls;
-}
-
-template <typename LexerType>
-template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::createBindingPattern(TreeBuilder& context, const Identifier& name, int depth)
-{
-    ASSERT(!name.isEmpty());
-    ASSERT(!name.isNull());
-    
-    ASSERT(name.impl()->isIdentifier());
-    if (depth) {
-        if (kind == DeconstructToVariables)
-            failIfFalseIfStrictWithNameAndMessage(declareVariable(&name), "Cannot deconstruct to a variable named", name.impl(), ".");
-        if (kind == DeconstructToParameters) {
-            auto bindingResult = declareBoundParameter(&name);
-            failIfFalseIfStrictWithNameAndMessage(bindingResult != Scope::StrictBindingFailed, "Cannot deconstruct to a parameter named", name.impl(), "in strict mode.");
-            failIfFalseWithNameAndMessage(bindingResult != Scope::BindingFailed, "Cannot deconstruct to a parameter named", name.impl(), ".");
-        }
-        context.addVar(&name, kind == DeconstructToParameters ? 0 : DeclarationStacks::HasInitializer);
-    } else {
-        if (kind == DeconstructToVariables) {
-            failIfFalseIfStrictWithNameAndMessage(declareVariable(&name), "Cannot declare a variable named", name.impl(), "in strict mode.");
-            context.addVar(&name, DeclarationStacks::HasInitializer);
-        }
-        
-        if (kind == DeconstructToParameters)
-            failIfFalseIfStrictWithNameAndMessage(declareParameter(&name), "Cannot declare a parameter named", name.impl(), "in strict mode.");
-    }
-    return context.createBindingLocation(m_token.m_location, name, m_token.m_endPosition, m_token.m_startPosition, m_token.m_endPosition);
-}
-
-template <typename LexerType>
-template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseDeconstructionPattern(TreeBuilder& context, int depth)
-{
-    failIfStackOverflow();
-    int nonLHSCount = m_nonLHSCount;
-    TreeDeconstructionPattern pattern;
-    switch (m_token.m_type) {
-    case OPENBRACKET: {
-        auto arrayPattern = context.createArrayPattern(m_token.m_location);
-        next();
-        do {
-            while (match(COMMA)) {
-                context.appendArrayPatternSkipEntry(arrayPattern, m_token.m_location);
-                next();
-            }
-            failIfTrue(hasError());
-            JSTokenLocation location = m_token.m_location;
-            auto innerPattern = parseDeconstructionPattern<kind>(context, depth + 1);
-            failIfFalse(innerPattern);
-            context.appendArrayPatternEntry(arrayPattern, location, innerPattern);
-        } while (consume(COMMA));
-        consumeOrFail(CLOSEBRACKET);
-        pattern = arrayPattern;
-        break;
-    }
-    case OPENBRACE: {
-        next();
-        auto objectPattern = context.createObjectPattern(m_token.m_location);
-        bool wasString = false;
-        do {
-            Identifier propertyName;
-            TreeDeconstructionPattern innerPattern = 0;
-            JSTokenLocation location = m_token.m_location;
-            if (match(IDENT)) {
-                propertyName = *m_token.m_data.ident;
-                next();
-                if (consume(COLON))
-                    innerPattern = parseDeconstructionPattern<kind>(context, depth + 1);
-                else
-                    innerPattern = createBindingPattern<kind>(context, propertyName, depth);
-            } else {
-                switch (m_token.m_type) {
-                case NUMBER:
-                    propertyName = Identifier::from(m_vm, m_token.m_data.doubleValue);
-                    break;
-                case STRING:
-                    propertyName = *m_token.m_data.ident;
-                    wasString = true;
-                    break;
-                default:
-                    failIfTrue(!(m_token.m_type & KeywordTokenFlag));
-                    propertyName = *m_token.m_data.ident;
-                    break;
-                }
-                next();
-                consumeOrFail(COLON);
-                innerPattern = parseDeconstructionPattern<kind>(context, depth + 1);
-            }
-            failIfFalse(innerPattern);
-            context.appendObjectPatternEntry(objectPattern, location, wasString, propertyName, innerPattern);
-        } while (consume(COMMA));
-        consumeOrFail(CLOSEBRACE);
-        pattern = objectPattern;
-        break;
-    }
-
-    default: {
-        matchOrFail(IDENT);
-        pattern = createBindingPattern<kind>(context, *m_token.m_data.ident, depth);
-        next();
-        break;
-    }
-    }
-    m_nonLHSCount = nonLHSCount;
-    return pattern;
 }
 
 template <typename LexerType>
@@ -481,9 +351,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     if (match(VAR)) {
         /*
          for (var IDENT in expression) statement
+         for (var IDENT = expression in expression) statement
          for (var varDeclarationList; expressionOpt; expressionOpt)
          */
-        TreeDeconstructionPattern forInTarget = 0;
+        const Identifier* forInTarget = 0;
         TreeExpression forInInitializer = 0;
         m_allowsIn = false;
         JSTextPosition initStart;
@@ -498,7 +369,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         
         failIfFalse(declarations == 1);
         failIfTrueWithMessage(forInInitializer, "Cannot use initialiser syntax in a for-in loop");
-        
+
         // Handle for-in with var declaration
         JSTextPosition inLocation = tokenStartPosition();
         consumeOrFail(INTOKEN);
@@ -515,6 +386,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         TreeStatement statement = parseStatement(context, unused);
         endLoop();
         failIfFalse(statement);
+        
         return context.createForInLoop(location, forInTarget, expr, statement, declsStart, inLocation, exprEnd, startLine, endLine);
     }
     
@@ -900,14 +772,18 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
 template <typename LexerType>
 template <class TreeBuilder> TreeFormalParameterList Parser<LexerType>::parseFormalParameters(TreeBuilder& context)
 {
-    auto parameter = parseDeconstructionPattern<DeconstructToParameters>(context);
-    failIfFalse(parameter);
-    TreeFormalParameterList list = context.createFormalParameterList(parameter);
+    matchOrFail(IDENT);
+    failIfFalseIfStrictWithNameAndMessage(declareParameter(m_token.m_data.ident), "Cannot declare a parameter named", m_token.m_data.ident->impl(), " in strict mode");
+    TreeFormalParameterList list = context.createFormalParameterList(*m_token.m_data.ident);
     TreeFormalParameterList tail = list;
-    while (consume(COMMA)) {
-        parameter = parseDeconstructionPattern<DeconstructToParameters>(context);
-        failIfFalse(parameter);
-        tail = context.createFormalParameterList(tail, parameter);
+    next();
+    while (match(COMMA)) {
+        next();
+        matchOrFail(IDENT);
+        const Identifier* ident = m_token.m_data.ident;
+        failIfFalseIfStrictWithNameAndMessage(declareParameter(ident), "Cannot declare a parameter named", ident->impl(), "in strict mode");
+        next();
+        tail = context.createFormalParameterList(tail, *ident);
     }
     return list;
 }
@@ -1279,7 +1155,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
             declareWrite(m_lastIdentifier);
             m_lastIdentifier = 0;
         }
-        lhs = parseAssignmentExpression(context);
+        lhs = parseConditionalExpression(context);
         failIfFalse(lhs);
         if (initialNonLHSCount != m_nonLHSCount)
             break;

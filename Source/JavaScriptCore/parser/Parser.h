@@ -73,17 +73,11 @@ class SourceCode;
 #define TreeFunctionBody typename TreeBuilder::FunctionBody
 #define TreeProperty typename TreeBuilder::Property
 #define TreePropertyList typename TreeBuilder::PropertyList
-#define TreeDeconstructionPattern typename TreeBuilder::DeconstructionPattern
 
 COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
 
 enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
 enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
-enum DeconstructionKind {
-    DeconstructToVariables,
-    DeconstructToParameters,
-    DeconstructToExpressions
-};
 
 template <typename T> inline bool isEvalNode() { return false; }
 template <> inline bool isEvalNode<EvalNode>() { return true; }
@@ -229,26 +223,6 @@ struct Scope {
             m_shadowsArguments = true;
         return isValidStrictMode;
     }
-    
-    enum BindingResult {
-        BindingFailed,
-        StrictBindingFailed,
-        BindingSucceeded
-    };
-    BindingResult declareBoundParameter(const Identifier* ident)
-    {
-        bool isArguments = m_vm->propertyNames->arguments == *ident;
-        bool newEntry = m_declaredVariables.add(ident->string().impl()).isNewEntry;
-        bool isValidStrictMode = newEntry && m_vm->propertyNames->eval != *ident && !isArguments;
-        m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
-    
-        if (isArguments)
-            m_shadowsArguments = true;
-        if (!newEntry)
-            return BindingFailed;
-        return isValidStrictMode ? BindingSucceeded : StrictBindingFailed;
-    }
-
 
     void useVariable(const Identifier* ident, bool isEval)
     {
@@ -882,7 +856,6 @@ private:
     bool strictMode() { return currentScope()->strictMode(); }
     bool isValidStrictMode() { return currentScope()->isValidStrictMode(); }
     bool declareParameter(const Identifier* ident) { return currentScope()->declareParameter(ident); }
-    Scope::BindingResult declareBoundParameter(const Identifier* ident) { return currentScope()->declareBoundParameter(ident); }
     bool breakIsValid()
     {
         ScopeRef current = currentScope();
@@ -953,11 +926,8 @@ private:
     template <bool strict, class TreeBuilder> ALWAYS_INLINE TreeProperty parseProperty(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeFormalParameterList parseFormalParameters(TreeBuilder&);
-    template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseVarDeclarationList(TreeBuilder&, int& declarations, TreeDeconstructionPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd);
-    template <class TreeBuilder> ALWAYS_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder&);
-
-    template <DeconstructionKind, class TreeBuilder> ALWAYS_INLINE TreeDeconstructionPattern createBindingPattern(TreeBuilder&, const Identifier&, int depth);
-    template <DeconstructionKind, class TreeBuilder> ALWAYS_INLINE TreeDeconstructionPattern parseDeconstructionPattern(TreeBuilder&, int depth = 0);
+    template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseVarDeclarationList(TreeBuilder&, int& declarations, const Identifier*& lastIdent, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd);
+    template <class TreeBuilder> ALWAYS_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder& context);
     template <FunctionRequirements, bool nameIsInContainingScope, class TreeBuilder> bool parseFunctionInfo(TreeBuilder&, const Identifier*&, TreeFormalParameterList&, TreeFunctionBody&, unsigned& openBraceOffset, unsigned& closeBraceOffset, int& bodyStartLine, unsigned& bodyStartColumn);
     ALWAYS_INLINE int isBinaryOperator(JSTokenType);
     bool allowAutomaticSemicolon();

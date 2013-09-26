@@ -1,3 +1,30 @@
+2013-09-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r156464 and r156480.
+        http://trac.webkit.org/changeset/156464
+        http://trac.webkit.org/changeset/156480
+        https://bugs.webkit.org/show_bug.cgi?id=121981
+
+        Leaking too much and killing buildbot. (Requested by xenon on
+        #webkit).
+
+        * js/destructuring-assignment-expected.txt: Removed.
+        * js/destructuring-assignment.html: Removed.
+        * js/mozilla/strict/13.1-expected.txt:
+        * js/mozilla/strict/regress-532254-expected.txt:
+        * js/mozilla/strict/script-tests/13.1.js:
+        * js/regress/destructuring-arguments-expected.txt: Removed.
+        * js/regress/destructuring-arguments-length-expected.txt: Removed.
+        * js/regress/destructuring-arguments-length.html: Removed.
+        * js/regress/destructuring-arguments.html: Removed.
+        * js/regress/destructuring-swap-expected.txt: Removed.
+        * js/regress/destructuring-swap.html: Removed.
+        * js/regress/script-tests/destructuring-arguments-length.js: Removed.
+        * js/regress/script-tests/destructuring-arguments.js: Removed.
+        * js/regress/script-tests/destructuring-swap.js: Removed.
+        * js/script-tests/destructuring-assignment.js: Removed.
+        * sputnik/Conformance/13_Function_Definition/S13_A5.html:
+
 2013-09-26  Alexey Proskuryakov  <ap@apple.com>
 
         Layout Test plugins/access-after-page-destroyed.html is flaky

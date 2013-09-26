@@ -157,7 +157,7 @@ PassRefPtr<FunctionParameters> FunctionParameters::create(ParameterNode* firstPa
     for (ParameterNode* parameter = firstParameter; parameter; parameter = parameter->nextParam())
         ++parameterCount;
 
-    size_t objectSize = sizeof(FunctionParameters) - sizeof(void*) + sizeof(DeconstructionPatternNode*) * parameterCount;
+    size_t objectSize = sizeof(FunctionParameters) - sizeof(void*) + sizeof(StringImpl*) * parameterCount;
     void* slot = fastMalloc(objectSize);
     return adoptRef(new (slot) FunctionParameters(firstParameter, parameterCount));
 }
@@ -166,17 +166,14 @@ FunctionParameters::FunctionParameters(ParameterNode* firstParameter, unsigned s
     : m_size(size)
 {
     unsigned i = 0;
-    for (ParameterNode* parameter = firstParameter; parameter; parameter = parameter->nextParam()) {
-        auto pattern = parameter->pattern();
-        pattern->ref();
-        patterns()[i++] = pattern;
-    }
+    for (ParameterNode* parameter = firstParameter; parameter; parameter = parameter->nextParam())
+        new (&identifiers()[i++]) Identifier(parameter->ident());
 }
 
 FunctionParameters::~FunctionParameters()
 {
     for (unsigned i = 0; i < m_size; ++i)
-        patterns()[i]->deref();
+        identifiers()[i].~Identifier();
 }
 
 inline FunctionBodyNode::FunctionBodyNode(VM* vm, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, bool inStrictContext)

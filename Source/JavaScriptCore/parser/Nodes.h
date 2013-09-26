@@ -80,7 +80,7 @@ namespace JSC {
 
     namespace DeclarationStacks {
         enum VarAttrs { IsConstant = 1, HasInitializer = 2 };
-        typedef Vector<std::pair<Identifier, unsigned> > VarStack;
+        typedef Vector<std::pair<const Identifier*, unsigned> > VarStack;
         typedef Vector<FunctionBodyNode*> FunctionStack;
     }
 
@@ -154,7 +154,6 @@ namespace JSC {
         virtual bool isResolveNode() const { return false; }
         virtual bool isBracketAccessorNode() const { return false; }
         virtual bool isDotAccessorNode() const { return false; }
-        virtual bool isDeconstructionNode() const { return false; }
         virtual bool isFuncExprNode() const { return false; }
         virtual bool isCommaNode() const { return false; }
         virtual bool isSimpleArray() const { return false; }
@@ -462,7 +461,6 @@ namespace JSC {
 
         ArgumentListNode* toArgumentList(VM*, int, int) const;
 
-        ElementNode* elements() const { ASSERT(isSimpleArray()); return m_element; }
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
@@ -1082,7 +1080,7 @@ namespace JSC {
 
         using ParserArenaDeletable::operator new;
 
-        void append(ExpressionNode* expr) { ASSERT(expr); m_expressions.append(expr); }
+        void append(ExpressionNode* expr) { m_expressions.append(expr); }
 
     private:
         virtual bool isCommaNode() const { return true; }
@@ -1240,13 +1238,11 @@ namespace JSC {
         ExpressionNode* m_expr3;
         StatementNode* m_statement;
     };
-    
-    class DeconstructionPatternNode;
 
     class ForInNode : public StatementNode, public ThrowableExpressionData {
     public:
         ForInNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*);
-        ForInNode(VM*, const JSTokenLocation&, DeconstructionPatternNode*, ExpressionNode*, StatementNode*);
+        ForInNode(VM*, const JSTokenLocation&, const Identifier&, ExpressionNode*, StatementNode*, const JSTextPosition& divotStart);
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -1345,14 +1341,14 @@ namespace JSC {
 
     class ParameterNode : public ParserArenaFreeable {
     public:
-        ParameterNode(PassRefPtr<DeconstructionPatternNode>);
-        ParameterNode(ParameterNode*, PassRefPtr<DeconstructionPatternNode>);
+        ParameterNode(const Identifier&);
+        ParameterNode(ParameterNode*, const Identifier&);
 
-        DeconstructionPatternNode* pattern() const { return m_pattern.get(); }
+        const Identifier& ident() const { return m_ident; }
         ParameterNode* nextParam() const { return m_next; }
 
     private:
-        RefPtr<DeconstructionPatternNode> m_pattern;
+        const Identifier& m_ident;
         ParameterNode* m_next;
     };
 
@@ -1464,21 +1460,21 @@ namespace JSC {
 
     class FunctionParameters : public RefCounted<FunctionParameters> {
         WTF_MAKE_FAST_ALLOCATED;
-        WTF_MAKE_NONCOPYABLE(FunctionParameters);
     public:
         static PassRefPtr<FunctionParameters> create(ParameterNode*);
         ~FunctionParameters();
 
         unsigned size() const { return m_size; }
-        DeconstructionPatternNode* at(unsigned index) { ASSERT(index < m_size); return patterns()[index]; }
+        const Identifier& at(unsigned index) const { ASSERT(index < m_size); return identifiers()[index]; }
 
     private:
         FunctionParameters(ParameterNode*, unsigned size);
 
-        DeconstructionPatternNode** patterns() { return &m_storage; }
+        Identifier* identifiers() { return reinterpret_cast<Identifier*>(&m_storage); }
+        const Identifier* identifiers() const { return reinterpret_cast<const Identifier*>(&m_storage); }
 
         unsigned m_size;
-        DeconstructionPatternNode* m_storage;
+        void* m_storage;
     };
 
     class FunctionBodyNode : public ScopeNode {
@@ -1532,100 +1528,6 @@ namespace JSC {
         virtual bool isFuncExprNode() const { return true; } 
 
         FunctionBodyNode* m_body;
-    };
-
-    class DeconstructionPatternNode : public RefCounted<DeconstructionPatternNode> {
-        WTF_MAKE_NONCOPYABLE(DeconstructionPatternNode);
-        WTF_MAKE_FAST_ALLOCATED;
-
-    public:
-        virtual void collectBoundIdentifiers(Vector<Identifier>&) const = 0;
-        virtual void emitBytecode(BytecodeGenerator&, RegisterID* source) const = 0;
-        virtual void toString(StringBuilder&) const = 0;
-
-        virtual bool isBindingNode() const { return false; }
-        virtual RegisterID* emitDirectBinding(BytecodeGenerator&, RegisterID*, ExpressionNode*) { return 0; }
-        
-        virtual ~DeconstructionPatternNode() = 0;
-        
-    protected:
-        DeconstructionPatternNode(VM*);
-    };
-
-    class ArrayPatternNode : public DeconstructionPatternNode {
-    public:
-        static PassRefPtr<ArrayPatternNode> create(VM*);
-        void appendIndex(const JSTokenLocation&, DeconstructionPatternNode* node)
-        {
-            m_targetPatterns.append(node);
-        }
-
-    private:
-        ArrayPatternNode(VM*);
-        void collectBoundIdentifiers(Vector<Identifier>&) const;
-        void emitBytecode(BytecodeGenerator&, RegisterID*) const;
-        RegisterID* emitDirectBinding(BytecodeGenerator&, RegisterID* dst, ExpressionNode*);
-        void toString(StringBuilder&) const;
-
-        Vector<RefPtr<DeconstructionPatternNode>> m_targetPatterns;
-    };
-    
-    class ObjectPatternNode : public DeconstructionPatternNode {
-    public:
-        static PassRefPtr<ObjectPatternNode> create(VM*);
-        void appendEntry(const JSTokenLocation&, const Identifier& identifier, bool wasString, DeconstructionPatternNode* pattern)
-        {
-            m_targetPatterns.append(Entry(identifier, wasString, pattern));
-        }
-        
-    private:
-        ObjectPatternNode(VM*);
-        void collectBoundIdentifiers(Vector<Identifier>&) const;
-        void emitBytecode(BytecodeGenerator&, RegisterID*) const;
-        void toString(StringBuilder&) const;
-        struct Entry {
-            Entry(const Identifier& propertyName, bool wasString, DeconstructionPatternNode* pattern)
-                : propertyName(propertyName)
-                , wasString(wasString)
-                , pattern(pattern)
-            {
-            }
-            Identifier propertyName;
-            bool wasString;
-            RefPtr<DeconstructionPatternNode> pattern;
-        };
-        Vector<Entry> m_targetPatterns;
-    };
-
-    class BindingNode : public DeconstructionPatternNode, ThrowableExpressionData {
-    public:
-        static PassRefPtr<BindingNode> create(VM*, const Identifier& boundProperty, const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end);
-        const Identifier& boundProperty() const { return m_boundProperty; }
-        
-    private:
-        BindingNode(VM*, const Identifier& boundProperty, const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end);
-
-        void collectBoundIdentifiers(Vector<Identifier>&) const;
-        void emitBytecode(BytecodeGenerator&, RegisterID*) const;
-        void toString(StringBuilder&) const;
-        
-        virtual bool isBindingNode() const { return true; }
-        
-        Identifier m_boundProperty;
-    };
-
-    class DeconstructingAssignmentNode : public ExpressionNode {
-    public:
-        DeconstructingAssignmentNode(const JSTokenLocation&, PassRefPtr<DeconstructionPatternNode>, ExpressionNode*);
-        DeconstructionPatternNode* bindings() { return m_bindings.get(); }
-
-    private:
-        virtual bool isLocation() const { return true; }
-        virtual bool isDeconstructionNode() const { return true; }
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-
-        RefPtr<DeconstructionPatternNode> m_bindings;
-        ExpressionNode* m_initializer;
     };
 
     class FuncDeclNode : public StatementNode {
