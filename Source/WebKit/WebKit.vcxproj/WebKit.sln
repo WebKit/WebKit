@@ -765,8 +765,10 @@ Global
 		{F93EBE5A-20F3-44C1-B192-C4AA2BA95FD5}.Release|Win32.Build.0 = Release|Win32
 		{F93EBE5A-20F3-44C1-B192-C4AA2BA95FD5}.Release|x64.ActiveCfg = Release|x64
 		{F93EBE5A-20F3-44C1-B192-C4AA2BA95FD5}.Release|x64.Build.0 = Release|x64
-		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Debug_WinCairo|Win32.ActiveCfg = Debug|Win32
-		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Debug_WinCairo|x64.ActiveCfg = Debug|x64
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Debug_WinCairo|Win32.ActiveCfg = Debug_WinCairo|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Debug_WinCairo|Win32.Build.0 = Debug_WinCairo|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Debug_WinCairo|x64.ActiveCfg = Debug_WinCairo|x64
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Debug_WinCairo|x64.Build.0 = Debug_WinCairo|x64
 		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Debug|Win32.ActiveCfg = Debug|Win32
 		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Debug|Win32.Build.0 = Debug|Win32
 		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Debug|x64.ActiveCfg = Debug|x64
@@ -775,8 +777,10 @@ Global
 		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Production|Win32.Build.0 = Production|Win32
 		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Production|x64.ActiveCfg = Production|x64
 		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Production|x64.Build.0 = Production|x64
-		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release_WinCairo|Win32.ActiveCfg = Release|Win32
-		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release_WinCairo|x64.ActiveCfg = Release|x64
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release_WinCairo|Win32.ActiveCfg = Release_WinCairo|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release_WinCairo|Win32.Build.0 = Release_WinCairo|Win32
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release_WinCairo|x64.ActiveCfg = Release_WinCairo|x64
+		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release_WinCairo|x64.Build.0 = Release_WinCairo|x64
 		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release|Win32.ActiveCfg = Release|Win32
 		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release|Win32.Build.0 = Release|Win32
 		{67A61940-F80B-42A0-A29D-B6DB1C27BCEE}.Release|x64.ActiveCfg = Release|x64

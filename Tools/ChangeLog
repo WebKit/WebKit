@@ -1,3 +1,18 @@
+2013-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Enabled AssembleBuildLogs on WinCairo port.
+        https://bugs.webkit.org/show_bug.cgi?id=121923
+
+        Reviewed by Brent Fulgham.
+
+        * win/AssembleBuildLogs/AssembleBuildLogs.vcxproj:
+        Fixed reference to README, added WinCairo configurations.
+        * win/AssembleBuildLogs/AssembleBuildLogs.vcxproj.filters:
+        Fixed reference to README.
+        * win/AssembleBuildLogs/AssembleLogs.cmd:
+        Added ANGLE projects, skipped QTMovieWin for WinCairo, use PlatformArchitecture for Win64.
+        * win/AssembleBuildLogs/README: Fixed spelling.
+
 2013-09-25  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Fix MSVC C4146 compiler warning
