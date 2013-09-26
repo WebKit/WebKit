@@ -1,3 +1,10 @@
+2013-09-26  Anders Carlsson  <andersca@apple.com>
+
+        Attempt to fix the FTL build.
+
+        * ftl/FTLAbstractHeap.cpp:
+        (JSC::FTL::IndexedAbstractHeap::atSlow):
+
 2013-09-26  Andreas Kling  <akling@apple.com>
 
         Pass VM instead of ExecState to many finishCreation() functions.

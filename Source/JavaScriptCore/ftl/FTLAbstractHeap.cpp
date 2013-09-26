@@ -102,16 +102,14 @@ const AbstractField& IndexedAbstractHeap::atSlow(ptrdiff_t index)
     
     if (UNLIKELY(!m_largeIndices))
         m_largeIndices = adoptPtr(new MapType());
-    
-    MapType::const_iterator iter = m_largeIndices->find(index);
-    if (iter != m_largeIndices->end())
-        return *iter->value;
-    
-    OwnPtr<AbstractField> field = adoptPtr(new AbstractField());
-    AbstractField* result = field.get();
-    initialize(*result, index);
-    m_largeIndices->add(index, field.release());
-    return *result;
+
+    std::unique_ptr<AbstractField>& field = m_largeIndices->add(index, nullptr).iterator->value;
+    if (!field) {
+        field = std::make_unique<AbstractField>();
+        initialize(*field, index);
+    }
+
+    return *field;
 }
 
 void IndexedAbstractHeap::initialize(AbstractField& field, ptrdiff_t signedIndex)
