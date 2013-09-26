@@ -39,8 +39,8 @@ assertEq(testLenientAndStrict('function f(a,b,c,d,e,f,g,h,d) {}',
  */
 // Destructuring is not valid ES5 syntax.
 assertEq(testLenientAndStrict('function f([x,y]) {}',
-                              parseRaisesException(SyntaxError),
-                              parseRaisesException(SyntaxError)),
+                              parsesSuccessfully,
+                              parsesSuccessfully),
          true);
 assertEq(testLenientAndStrict('function f([x,x]){}',
                               parseRaisesException(SyntaxError),
@@ -118,12 +118,12 @@ assertEq(testLenientAndStrict('function f(eval){}',
          true);
 // Destructuring is not valid ES5 syntax.
 assertEq(testLenientAndStrict('function f([eval]){}',
-                              parseRaisesException(SyntaxError),
+                              parsesSuccessfully,
                               parseRaisesException(SyntaxError)),
          true);
 // Destructuring is not valid ES5 syntax.
 assertEq(testLenientAndStrict('function f({x:eval}){}',
-                              parseRaisesException(SyntaxError),
+                              parsesSuccessfully,
                               parseRaisesException(SyntaxError)),
          true);
 assertEq(testLenientAndStrict('function eval(){}',
@@ -154,12 +154,12 @@ assertEq(testLenientAndStrict('(function f(eval){})',
          true);
 // Destructuring is not valid ES5 syntax.
 assertEq(testLenientAndStrict('(function f([eval]){})',
-                              parseRaisesException(SyntaxError),
+                              parsesSuccessfully,
                               parseRaisesException(SyntaxError)),
          true);
 // Destructuring is not valid ES5 syntax.
 assertEq(testLenientAndStrict('(function f({x:eval}){})',
-                              parseRaisesException(SyntaxError),
+                              parsesSuccessfully,
                               parseRaisesException(SyntaxError)),
          true);
 assertEq(testLenientAndStrict('(function eval(){})',
@@ -208,12 +208,12 @@ assertEq(testLenientAndStrict('({set x(eval){}})',
          true);
 // Destructuring is not valid ES5 syntax.
 assertEq(testLenientAndStrict('({set x([eval]){}})',
-                              parseRaisesException(SyntaxError),
+                              parsesSuccessfully,
                               parseRaisesException(SyntaxError)),
          true);
 // Destructuring is not valid ES5 syntax.
 assertEq(testLenientAndStrict('({set x({x:eval}){}})',
-                              parseRaisesException(SyntaxError),
+                              parsesSuccessfully,
                               parseRaisesException(SyntaxError)),
          true);
 assertEq(testLenientAndStrict('({set x(eval){"use strict";}})',
@@ -234,12 +234,12 @@ assertEq(testLenientAndStrict('function f(arguments){}',
          true);
 // Destructuring is not valid ES5 syntax.
 assertEq(testLenientAndStrict('function f([arguments]){}',
-                              parseRaisesException(SyntaxError),
+                              parsesSuccessfully,
                               parseRaisesException(SyntaxError)),
          true);
 // Destructuring is not valid ES5 syntax.
 assertEq(testLenientAndStrict('function f({x:arguments}){}',
-                              parseRaisesException(SyntaxError),
+                              parsesSuccessfully,
                               parseRaisesException(SyntaxError)),
          true);
 assertEq(testLenientAndStrict('function arguments(){}',
@@ -269,12 +269,12 @@ assertEq(testLenientAndStrict('(function f(arguments){})',
          true);
 // Destructuring is not valid ES5 syntax.
 assertEq(testLenientAndStrict('(function f([arguments]){})',
-                              parseRaisesException(SyntaxError),
+                              parsesSuccessfully,
                               parseRaisesException(SyntaxError)),
          true);
 // Destructuring is not valid ES5 syntax.
 assertEq(testLenientAndStrict('(function f({x:arguments}){})',
-                              parseRaisesException(SyntaxError),
+                              parsesSuccessfully,
                               parseRaisesException(SyntaxError)),
          true);
 assertEq(testLenientAndStrict('(function arguments(){})',
@@ -323,12 +323,12 @@ assertEq(testLenientAndStrict('({set x(arguments){}})',
          true);
 // Destructuring is not valid ES5 syntax.
 assertEq(testLenientAndStrict('({set x([arguments]){}})',
-                              parseRaisesException(SyntaxError),
+                              parsesSuccessfully,
                               parseRaisesException(SyntaxError)),
          true);
 // Destructuring is not valid ES5 syntax.
 assertEq(testLenientAndStrict('({set x({x:arguments}){}})',
-                              parseRaisesException(SyntaxError),
+                              parsesSuccessfully,
                               parseRaisesException(SyntaxError)),
          true);
 assertEq(testLenientAndStrict('({set x(arguments){"use strict";}})',
