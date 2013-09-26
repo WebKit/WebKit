@@ -28,7 +28,6 @@
 
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
-#include <heap/PassWeak.h>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/JSArrayBuffer.h>
 #include <runtime/Operations.h>

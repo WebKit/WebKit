@@ -188,7 +188,7 @@ void RootObject::updateGlobalObject(JSGlobalObject* globalObject)
 void RootObject::addRuntimeObject(VM&, RuntimeObject* object)
 {
     ASSERT(m_isValid);
-    weakAdd(m_runtimeObjects, object, JSC::PassWeak<RuntimeObject>(object, this));
+    weakAdd(m_runtimeObjects, object, JSC::Weak<RuntimeObject>(object, this));
 }
 
 void RootObject::removeRuntimeObject(RuntimeObject* object)

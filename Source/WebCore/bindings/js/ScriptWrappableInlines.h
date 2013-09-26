@@ -46,7 +46,7 @@ inline JSDOMWrapper* ScriptWrappable::wrapper() const
 inline void ScriptWrappable::setWrapper(JSDOMWrapper* wrapper, JSC::WeakHandleOwner* wrapperOwner, void* context)
 {
     ASSERT(!m_wrapper);
-    m_wrapper = JSC::PassWeak<JSDOMWrapper>(wrapper, wrapperOwner, context);
+    m_wrapper = JSC::Weak<JSDOMWrapper>(wrapper, wrapperOwner, context);
 }
 
 inline void ScriptWrappable::clearWrapper(JSDOMWrapper* wrapper)

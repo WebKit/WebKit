@@ -47,7 +47,7 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
 {
     if (wrapper) {
         JSC::Heap::writeBarrier(wrapper, function);
-        m_jsFunction = JSC::PassWeak<JSC::JSObject>(function);
+        m_jsFunction = function;
     } else
         ASSERT(!function);
 #if ENABLE(INSPECTOR)

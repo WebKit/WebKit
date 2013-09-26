@@ -46,7 +46,7 @@ RegExp* RegExpCache::lookupOrCreate(const String& patternString, RegExpFlags fla
     m_vm->addRegExpToTrace(regExp);
 #endif
 
-    weakAdd(m_weakCache, key, PassWeak<RegExp>(regExp, this));
+    weakAdd(m_weakCache, key, Weak<RegExp>(regExp, this));
     return regExp;
 }
 

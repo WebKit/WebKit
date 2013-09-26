@@ -34,13 +34,11 @@ namespace JSC {
 
 // A HashMap with Weak<JSCell> values, which automatically removes values once they're garbage collected.
 
-template<typename KeyArg, typename RawMappedArg, typename HashArg = typename DefaultHash<KeyArg>::Hash,
+template<typename KeyArg, typename ValueArg, typename HashArg = typename DefaultHash<KeyArg>::Hash,
     typename KeyTraitsArg = HashTraits<KeyArg>>
 class WeakGCMap {
-    typedef Weak<RawMappedArg> MappedType;
-    typedef HashMap<KeyArg, MappedType, HashArg, KeyTraitsArg> HashMapType;
-    typedef HashTraits<MappedType> MappedTraits;
-    typedef typename MappedTraits::PassInType MappedPassInType;
+    typedef Weak<ValueArg> ValueType;
+    typedef HashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;
 
 public:
     typedef typename HashMapType::KeyType KeyType;
@@ -53,24 +51,24 @@ public:
     {
     }
 
-    RawMappedArg* get(const KeyType& key) const
+    ValueArg* get(const KeyType& key) const
     {
         return m_map.get(key);
     }
 
-    AddResult set(const KeyType& key, MappedPassInType value)
+    AddResult set(const KeyType& key, ValueType value)
     {
         gcMapIfNeeded();
-        return m_map.set(key, value);
+        return m_map.set(key, std::move(value));
     }
 
-    AddResult add(const KeyType& key, MappedPassInType value)
+    AddResult add(const KeyType& key, ValueType value)
     {
         gcMapIfNeeded();
         AddResult addResult = m_map.add(key, nullptr);
         if (!addResult.iterator->value) { // New value or found a zombie value.
             addResult.isNewEntry = true;
-            addResult.iterator->value = value;
+            addResult.iterator->value = std::move(value);
         }
         return addResult;
     }

@@ -31,7 +31,6 @@
 
 namespace JSC {
 
-template<typename T> class PassWeak;
 class WeakImpl;
 class WeakHandleOwner;
 
@@ -46,19 +45,18 @@ public:
     {
     }
 
-    explicit Weak(std::nullptr_t)
+    Weak(std::nullptr_t)
         : m_impl(0)
     {
     }
 
-    explicit Weak(T*, WeakHandleOwner* = 0, void* context = 0);
+    Weak(T*, WeakHandleOwner* = 0, void* context = 0);
 
     enum HashTableDeletedValueTag { HashTableDeletedValue };
     bool isHashTableDeletedValue() const;
     Weak(HashTableDeletedValueTag);
 
     Weak(Weak&&);
-    template<typename U> Weak(const PassWeak<U>&);
 
     ~Weak()
     {
@@ -68,8 +66,7 @@ public:
     void swap(Weak&);
 
     Weak& operator=(Weak&&);
-    Weak& operator=(const PassWeak<T>&);
-    
+
     bool operator!() const;
     T* operator->() const;
     T& operator*() const;
@@ -81,7 +78,6 @@ public:
     typedef void* (Weak::*UnspecifiedBoolType);
     operator UnspecifiedBoolType*() const;
 
-    PassWeak<T> release();
     WeakImpl* leakImpl() WARN_UNUSED_RETURN;
     void clear()
     {

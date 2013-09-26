@@ -1,3 +1,15 @@
+2013-09-26  Anders Carlsson  <andersca@apple.com>
+
+        Stop using PassWeak
+        https://bugs.webkit.org/show_bug.cgi?id=121968
+
+        Reviewed by Sam Weinig.
+
+        Update for JavaScriptCore changes.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::getOrCreateJSObject):
+
 2013-09-25  Jer Noble  <jer.noble@apple.com>
 
         [WK2] Crash at at com.apple.WebKit2: WebKit::VoidCallback::invalidate + 46

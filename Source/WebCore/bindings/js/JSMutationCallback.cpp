@@ -42,7 +42,7 @@ namespace WebCore {
 
 JSMutationCallback::JSMutationCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
     : ActiveDOMCallback(globalObject->scriptExecutionContext())
-    , m_callback(PassWeak<JSObject>(callback))
+    , m_callback(callback)
     , m_isolatedWorld(globalObject->world())
 {
 }

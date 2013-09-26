@@ -22,7 +22,6 @@
 
 #include "EventListener.h"
 #include "JSDOMWindow.h"
-#include <heap/PassWeak.h>
 #include <heap/StrongInlines.h>
 #include <heap/Weak.h>
 #include <heap/WeakInlines.h>
@@ -57,7 +56,7 @@ namespace WebCore {
         DOMWrapperWorld* isolatedWorld() const { return m_isolatedWorld.get(); }
 
         JSC::JSObject* wrapper() const { return m_wrapper.get(); }
-        void setWrapper(JSC::VM&, JSC::JSObject* wrapper) const { m_wrapper = JSC::PassWeak<JSC::JSObject>(wrapper); }
+        void setWrapper(JSC::VM&, JSC::JSObject* wrapper) const { m_wrapper = JSC::Weak<JSC::JSObject>(wrapper); }
 
     private:
         virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const;
@@ -86,7 +85,7 @@ namespace WebCore {
         if (!m_jsFunction) {
             JSC::JSObject* function = initializeJSFunction(scriptExecutionContext);
             JSC::Heap::writeBarrier(m_wrapper.get(), function);
-            m_jsFunction = JSC::PassWeak<JSC::JSObject>(function);
+            m_jsFunction = function;
         }
 
         // Verify that we have a valid wrapper protecting our function from

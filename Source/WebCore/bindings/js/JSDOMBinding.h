@@ -152,7 +152,7 @@ class DOMStringList;
     {
         if (!world->isNormal())
             return false;
-        domObject->m_wrapper = JSC::PassWeak<JSC::JSArrayBuffer>(wrapper, wrapperOwner, context);
+        domObject->m_wrapper = JSC::Weak<JSC::JSArrayBuffer>(wrapper, wrapperOwner, context);
         return true;
     }
 
@@ -185,8 +185,7 @@ class DOMStringList;
         void* context = wrapperContext(world, domObject);
         if (setInlineCachedWrapper(world, domObject, wrapper, owner, context))
             return;
-        JSC::PassWeak<JSC::JSObject> passWeak(wrapper, owner, context);
-        weakAdd(world->m_wrappers, (void*)domObject, passWeak);
+        weakAdd(world->m_wrappers, (void*)domObject, JSC::Weak<JSC::JSObject>(wrapper, owner, context));
     }
 
     template <typename DOMClass, typename WrapperClass> inline void uncacheWrapper(DOMWrapperWorld* world, DOMClass* domObject, WrapperClass* wrapper)

@@ -108,7 +108,7 @@ JSObject* NPRuntimeObjectMap::getOrCreateJSObject(JSGlobalObject* globalObject, 
         return jsNPObject;
 
     JSNPObject* jsNPObject = JSNPObject::create(globalObject, this, npObject);
-    weakAdd(m_jsNPObjects, npObject, JSC::PassWeak<JSNPObject>(jsNPObject, this, npObject));
+    weakAdd(m_jsNPObjects, npObject, JSC::Weak<JSNPObject>(jsNPObject, this, npObject));
     return jsNPObject;
 }
 

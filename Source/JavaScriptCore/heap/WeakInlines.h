@@ -48,11 +48,6 @@ template<typename T> inline Weak<T>::Weak(typename Weak<T>::HashTableDeletedValu
 {
 }
 
-template<typename T> template<typename U>  inline Weak<T>::Weak(const PassWeak<U>& other)
-    : m_impl(other.leakImpl())
-{
-}
-
 template<typename T> inline Weak<T>::Weak(Weak&& other)
     : m_impl(other.leakImpl())
 {
@@ -66,13 +61,6 @@ template<class T> inline void swap(Weak<T>& a, Weak<T>& b)
 template<typename T> inline void Weak<T>::swap(Weak& other)
 {
     std::swap(m_impl, other.m_impl);
-}
-
-template<typename T> inline Weak<T>& Weak<T>::operator=(const PassWeak<T>& o)
-{
-    clear();
-    m_impl = o.leakImpl();
-    return *this;
 }
 
 template<typename T> inline auto Weak<T>::operator=(Weak&& other) -> Weak&
@@ -116,13 +104,6 @@ template<typename T> inline Weak<T>::operator UnspecifiedBoolType*() const
     return reinterpret_cast<UnspecifiedBoolType*>(!!*this);
 }
 
-template<typename T> inline PassWeak<T> Weak<T>::release()
-{
-    PassWeak<T> tmp = adoptWeak<T>(m_impl);
-    m_impl = 0;
-    return tmp;
-}
-
 template<typename T> inline WeakImpl* Weak<T>::leakImpl()
 {
     WeakImpl* impl = m_impl;
@@ -142,10 +123,10 @@ template <typename T> inline bool operator==(const Weak<T>& lhs, const Weak<T>& 
 
 // This function helps avoid modifying a weak table while holding an iterator into it. (Object allocation
 // can run a finalizer that modifies the table. We avoid that by requiring a pre-constructed object as our value.)
-template<typename Map, typename Key, typename Value> inline void weakAdd(Map& map, const Key& key, Value value)
+template<typename Map, typename Key, typename Value> inline void weakAdd(Map& map, const Key& key, Value&& value)
 {
     ASSERT(!map.get(key));
-    map.set(key, value); // The table may still have a zombie for value.
+    map.set(key, std::forward<Value>(value)); // The table may still have a zombie for value.
 }
 
 template<typename Map, typename Key, typename Value> inline void weakRemove(Map& map, const Key& key, Value value)
