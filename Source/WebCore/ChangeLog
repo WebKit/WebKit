@@ -1,3 +1,19 @@
+2013-09-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix for EFL port.
+
+        IDBCursorBackendImpl and IDBDatabaseBackendImpl are renamed after r156406.
+
+        * Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.h:
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp:
+        (WebCore::IDBTransactionBackendLevelDB::create):
+        (WebCore::IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB):
+        (WebCore::IDBTransactionBackendLevelDB::registerOpenCursor):
+        (WebCore::IDBTransactionBackendLevelDB::unregisterOpenCursor):
+        (WebCore::IDBTransactionBackendLevelDB::closeOpenCursors):
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.h:
+        (WebCore::IDBTransactionBackendLevelDB::database):
+
 2013-09-25  Benjamin Poulain  <benjamin@webkit.org>
 
         Do not reenter Document from its destructor

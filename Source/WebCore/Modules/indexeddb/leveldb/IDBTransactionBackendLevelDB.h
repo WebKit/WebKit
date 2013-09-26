@@ -30,6 +30,7 @@
 
 #include "IDBBackingStoreLevelDB.h"
 #include "IDBDatabaseBackendInterface.h"
+#include "IDBDatabaseBackendLevelDB.h"
 #include "IDBDatabaseError.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
@@ -38,13 +39,12 @@
 
 namespace WebCore {
 
-class IDBDatabaseBackendImpl;
-class IDBCursorBackendImpl;
+class IDBCursorBackendLevelDB;
 class IDBDatabaseCallbacks;
 
 class IDBTransactionBackendLevelDB : public RefCounted<IDBTransactionBackendLevelDB> {
 public:
-    static PassRefPtr<IDBTransactionBackendLevelDB> create(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode, IDBDatabaseBackendImpl*);
+    static PassRefPtr<IDBTransactionBackendLevelDB> create(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode, IDBDatabaseBackendLevelDB*);
     virtual ~IDBTransactionBackendLevelDB();
 
     virtual void abort();
@@ -62,17 +62,17 @@ public:
     const HashSet<int64_t>& scope() const { return m_objectStoreIds; }
     void scheduleTask(PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask = nullptr) { scheduleTask(IDBDatabaseBackendInterface::NormalTask, task, abortTask); }
     void scheduleTask(IDBDatabaseBackendInterface::TaskType, PassOwnPtr<Operation>, PassOwnPtr<Operation> abortTask = nullptr);
-    void registerOpenCursor(IDBCursorBackendImpl*);
-    void unregisterOpenCursor(IDBCursorBackendImpl*);
+    void registerOpenCursor(IDBCursorBackendLevelDB*);
+    void unregisterOpenCursor(IDBCursorBackendLevelDB*);
     void addPreemptiveEvent() { m_pendingPreemptiveEvents++; }
     void didCompletePreemptiveEvent() { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
     IDBBackingStore::Transaction* backingStoreTransaction() { return &m_transaction; }
     int64_t id() const { return m_id; }
 
-    IDBDatabaseBackendImpl* database() const { return m_database.get(); }
+    IDBDatabaseBackendLevelDB* database() const { return m_database.get(); }
 
 private:
-    IDBTransactionBackendLevelDB(int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, IDBDatabaseBackendImpl*);
+    IDBTransactionBackendLevelDB(int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, IDBDatabaseBackendLevelDB*);
 
     enum State {
         Unused, // Created, but no tasks yet.
@@ -96,7 +96,7 @@ private:
     State m_state;
     bool m_commitPending;
     RefPtr<IDBDatabaseCallbacks> m_callbacks;
-    RefPtr<IDBDatabaseBackendImpl> m_database;
+    RefPtr<IDBDatabaseBackendLevelDB> m_database;
 
     typedef Deque<OwnPtr<Operation> > TaskQueue;
     TaskQueue m_taskQueue;
@@ -109,7 +109,7 @@ private:
     Timer<IDBTransactionBackendLevelDB> m_taskTimer;
     int m_pendingPreemptiveEvents;
 
-    HashSet<IDBCursorBackendImpl*> m_openCursors;
+    HashSet<IDBCursorBackendLevelDB*> m_openCursors;
 };
 
 } // namespace WebCore

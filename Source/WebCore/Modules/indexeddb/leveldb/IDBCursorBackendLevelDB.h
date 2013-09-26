@@ -31,6 +31,7 @@
 
 #include "IDBBackingStoreLevelDB.h"
 #include "IDBCursorBackendInterface.h"
+#include "IDBDatabaseBackendLevelDB.h"
 #include "IDBTransactionBackendLevelDB.h"
 #include "SharedBuffer.h"
 #include <wtf/OwnPtr.h>
@@ -39,7 +40,6 @@
 
 namespace WebCore {
 
-class IDBDatabaseBackendLevelDB;
 class IDBKeyRange;
 
 class IDBCursorBackendLevelDB : public IDBCursorBackendInterface {

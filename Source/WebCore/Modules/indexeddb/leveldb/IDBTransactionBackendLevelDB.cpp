@@ -29,7 +29,7 @@
 #if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
 #include "IDBBackingStoreLevelDB.h"
-#include "IDBCursorBackendImpl.h"
+#include "IDBCursorBackendLevelDB.h"
 #include "IDBDatabaseBackendLevelDB.h"
 #include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseException.h"
@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransactionBackendLevelDB> IDBTransactionBackendLevelDB::create(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode, IDBDatabaseBackendImpl* database)
+PassRefPtr<IDBTransactionBackendLevelDB> IDBTransactionBackendLevelDB::create(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode, IDBDatabaseBackendLevelDB* database)
 {
     HashSet<int64_t> objectStoreHashSet;
     for (size_t i = 0; i < objectStoreIds.size(); ++i)
@@ -47,7 +47,7 @@ PassRefPtr<IDBTransactionBackendLevelDB> IDBTransactionBackendLevelDB::create(in
     return adoptRef(new IDBTransactionBackendLevelDB(id, callbacks, objectStoreHashSet, mode, database));
 }
 
-IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode, IDBDatabaseBackendImpl* database)
+IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode, IDBDatabaseBackendLevelDB* database)
     : m_id(id)
     , m_objectStoreIds(objectStoreIds)
     , m_mode(mode)
@@ -150,12 +150,12 @@ bool IDBTransactionBackendLevelDB::hasPendingTasks() const
     return m_pendingPreemptiveEvents || !isTaskQueueEmpty();
 }
 
-void IDBTransactionBackendLevelDB::registerOpenCursor(IDBCursorBackendImpl* cursor)
+void IDBTransactionBackendLevelDB::registerOpenCursor(IDBCursorBackendLevelDB* cursor)
 {
     m_openCursors.add(cursor);
 }
 
-void IDBTransactionBackendLevelDB::unregisterOpenCursor(IDBCursorBackendImpl* cursor)
+void IDBTransactionBackendLevelDB::unregisterOpenCursor(IDBCursorBackendLevelDB* cursor)
 {
     m_openCursors.remove(cursor);
 }
@@ -262,7 +262,7 @@ void IDBTransactionBackendLevelDB::taskTimerFired(Timer<IDBTransactionBackendLev
 
 void IDBTransactionBackendLevelDB::closeOpenCursors()
 {
-    for (HashSet<IDBCursorBackendImpl*>::iterator i = m_openCursors.begin(); i != m_openCursors.end(); ++i)
+    for (HashSet<IDBCursorBackendLevelDB*>::iterator i = m_openCursors.begin(); i != m_openCursors.end(); ++i)
         (*i)->close();
     m_openCursors.clear();
 }
