@@ -1,5 +1,15 @@
 2013-09-26  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
+        [EFL] Remove inappropriate expectations for tests that are now passing on EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=121897
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
+2013-09-26  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
         [EFL] Add baselines for editing/selection/paragraph-granularity.html
         https://bugs.webkit.org/show_bug.cgi?id=121842
 
