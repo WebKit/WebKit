@@ -30,6 +30,7 @@
 
 namespace WebKit { 
 class LayerTreeContext;
+class VoidCallback;
 }
 
 namespace WebCore {
@@ -58,6 +59,7 @@ typedef enum FullScreenState : NSInteger FullScreenState;
     FullScreenState _fullScreenState;
 
     double _savedScale;
+    RefPtr<WebKit::VoidCallback> _repaintCallback;
 }
 
 - (id)initWithWindow:(NSWindow *)window webView:(WKView *)webView;
