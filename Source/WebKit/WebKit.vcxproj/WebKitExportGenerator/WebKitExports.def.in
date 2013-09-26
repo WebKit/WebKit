@@ -454,3 +454,10 @@ EXPORTS
 #endif
         symbolWithPointer(?toJSONString@InspectorValue@WebCore@@QBE?AVString@WTF@@XZ, ?toJSONString@InspectorValue@WebCore@@QBE?AVString@WTF@@XZ)
         symbolWithPointer(?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@WebCore@@@WTF@@XZ, ?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@WebCore@@@WTF@@XZ)
+        ?standardFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z
+        ?serifFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z
+        ?sansSerifFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z
+        ?pictographFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z
+        ?fixedFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z
+        ?fantasyFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z
+        ?cursiveFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z

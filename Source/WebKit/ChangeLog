@@ -1,3 +1,9 @@
+2013-09-25  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed Build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Enabled AssembleBuildLogs on WinCairo port.
