@@ -63,20 +63,22 @@ bool JSFunction::isHostFunctionNonInline() const
 
 JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, int length, const String& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
+    VM& vm = exec->vm();
+
     NativeExecutable* executable;
 #if !ENABLE(JIT)
     UNUSED_PARAM(intrinsic);
 #else
     if (intrinsic != NoIntrinsic && exec->vm().canUseJIT()) {
         ASSERT(nativeConstructor == callHostFunctionAsConstructor);
-        executable = exec->vm().getHostFunction(nativeFunction, intrinsic);
+        executable = vm.getHostFunction(nativeFunction, intrinsic);
     } else
 #endif
-        executable = exec->vm().getHostFunction(nativeFunction, nativeConstructor);
+        executable = vm.getHostFunction(nativeFunction, nativeConstructor);
 
-    JSFunction* function = new (NotNull, allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, globalObject, globalObject->functionStructure());
+    JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(exec, globalObject, globalObject->functionStructure());
     // Can't do this during initialization because getHostFunction might do a GC allocation.
-    function->finishCreation(exec, executable, length, name);
+    function->finishCreation(vm, executable, length, name);
     return function;
 }
 
@@ -102,13 +104,13 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure*
 {
 }
 
-void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, int length, const String& name)
+void JSFunction::finishCreation(VM& vm, NativeExecutable* executable, int length, const String& name)
 {
-    Base::finishCreation(exec->vm());
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    m_executable.set(exec->vm(), this, executable);
-    putDirect(exec->vm(), exec->vm().propertyNames->name, jsString(exec, name), DontDelete | ReadOnly | DontEnum);
-    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
+    m_executable.set(vm, this, executable);
+    putDirect(vm, vm.propertyNames->name, jsString(&vm, name), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
 
 ObjectAllocationProfile* JSFunction::createAllocationProfile(ExecState* exec, size_t inlineCapacity)

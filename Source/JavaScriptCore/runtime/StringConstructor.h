@@ -33,8 +33,9 @@ namespace JSC {
 
         static StringConstructor* create(ExecState* exec, JSGlobalObject* globalObject , Structure* structure, StringPrototype* stringPrototype)
         {
-            StringConstructor* constructor = new (NotNull, allocateCell<StringConstructor>(*exec->heap())) StringConstructor(globalObject, structure);
-            constructor->finishCreation(exec, stringPrototype);
+            VM& vm = exec->vm();
+            StringConstructor* constructor = new (NotNull, allocateCell<StringConstructor>(vm.heap)) StringConstructor(globalObject, structure);
+            constructor->finishCreation(vm, stringPrototype);
             return constructor;
         }
 
@@ -50,7 +51,7 @@ namespace JSC {
 
     private:
         StringConstructor(JSGlobalObject*, Structure*);
-        void finishCreation(ExecState*, StringPrototype*);
+        void finishCreation(VM&, StringPrototype*);
         static ConstructType getConstructData(JSCell*, ConstructData&);
         static CallType getCallData(JSCell*, CallData&);
 

@@ -33,8 +33,9 @@ namespace JSC {
 
         static NumberConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, NumberPrototype* numberPrototype)
         {
-            NumberConstructor* constructor = new (NotNull, allocateCell<NumberConstructor>(*exec->heap())) NumberConstructor(globalObject, structure);
-            constructor->finishCreation(exec, numberPrototype);
+            VM& vm = exec->vm();
+            NumberConstructor* constructor = new (NotNull, allocateCell<NumberConstructor>(vm.heap)) NumberConstructor(globalObject, structure);
+            constructor->finishCreation(vm, numberPrototype);
             return constructor;
         }
 
@@ -53,7 +54,7 @@ namespace JSC {
         enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
 
     protected:
-        void finishCreation(ExecState*, NumberPrototype*);
+        void finishCreation(VM&, NumberPrototype*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | InternalFunction::StructureFlags;
 
     private:

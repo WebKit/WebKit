@@ -44,13 +44,13 @@ FunctionConstructor::FunctionConstructor(JSGlobalObject* globalObject, Structure
 {
 }
 
-void FunctionConstructor::finishCreation(ExecState* exec, FunctionPrototype* functionPrototype)
+void FunctionConstructor::finishCreation(VM& vm, FunctionPrototype* functionPrototype)
 {
-    Base::finishCreation(exec->vm(), functionPrototype->classInfo()->className);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, functionPrototype, DontEnum | DontDelete | ReadOnly);
+    Base::finishCreation(vm, functionPrototype->classInfo()->className);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, functionPrototype, DontEnum | DontDelete | ReadOnly);
 
     // Number of arguments for constructor
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithFunctionConstructor(ExecState* exec)

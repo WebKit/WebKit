@@ -75,10 +75,10 @@ NumberPrototype::NumberPrototype(ExecState* exec, Structure* structure)
 {
 }
 
-void NumberPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
+void NumberPrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
-    Base::finishCreation(exec->vm());
-    setInternalValue(exec->vm(), jsNumber(0));
+    Base::finishCreation(vm);
+    setInternalValue(vm, jsNumber(0));
 
     ASSERT(inherits(info()));
 }

@@ -35,8 +35,9 @@ namespace JSC {
 
         static ObjectConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ObjectPrototype* objectPrototype)
         {
-            ObjectConstructor* constructor = new (NotNull, allocateCell<ObjectConstructor>(*exec->heap())) ObjectConstructor(globalObject, structure);
-            constructor->finishCreation(exec, objectPrototype);
+            VM& vm = exec->vm();
+            ObjectConstructor* constructor = new (NotNull, allocateCell<ObjectConstructor>(vm.heap)) ObjectConstructor(globalObject, structure);
+            constructor->finishCreation(vm, objectPrototype);
             return constructor;
         }
 
@@ -50,7 +51,7 @@ namespace JSC {
         }
 
     protected:
-        void finishCreation(ExecState*, ObjectPrototype*);
+        void finishCreation(VM& vm, ObjectPrototype*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
     private:

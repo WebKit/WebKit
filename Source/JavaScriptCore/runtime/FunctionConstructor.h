@@ -37,8 +37,9 @@ namespace JSC {
 
         static FunctionConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, FunctionPrototype* functionPrototype)
         {
-            FunctionConstructor* constructor = new (NotNull, allocateCell<FunctionConstructor>(*exec->heap())) FunctionConstructor(globalObject, structure);
-            constructor->finishCreation(exec, functionPrototype);
+            VM& vm = exec->vm();
+            FunctionConstructor* constructor = new (NotNull, allocateCell<FunctionConstructor>(vm.heap)) FunctionConstructor(globalObject, structure);
+            constructor->finishCreation(vm, functionPrototype);
             return constructor;
         }
 
@@ -51,7 +52,7 @@ namespace JSC {
 
     private:
         FunctionConstructor(JSGlobalObject*, Structure*);
-        void finishCreation(ExecState*, FunctionPrototype*);
+        void finishCreation(VM&, FunctionPrototype*);
         static ConstructType getConstructData(JSCell*, ConstructData&);
         static CallType getCallData(JSCell*, CallData&);
     };

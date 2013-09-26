@@ -33,12 +33,12 @@ NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, Structure* structure
 {
 }
 
-void NativeErrorPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject, const WTF::String& nameAndMessage, NativeErrorConstructor* constructor)
+void NativeErrorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, const WTF::String& nameAndMessage, NativeErrorConstructor* constructor)
 {
-    Base::finishCreation(exec, globalObject);
-    putDirect(exec->vm(), exec->propertyNames().name, jsString(exec, nameAndMessage), DontEnum);
-    putDirect(exec->vm(), exec->propertyNames().message, jsEmptyString(exec), DontEnum);
-    putDirect(exec->vm(), exec->propertyNames().constructor, constructor, DontEnum);
+    Base::finishCreation(vm, globalObject);
+    putDirect(vm, vm.propertyNames->name, jsString(&vm, nameAndMessage), DontEnum);
+    putDirect(vm, vm.propertyNames->message, jsEmptyString(&vm), DontEnum);
+    putDirect(vm, vm.propertyNames->constructor, constructor, DontEnum);
 }
 
 } // namespace JSC

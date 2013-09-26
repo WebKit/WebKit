@@ -77,12 +77,12 @@ namespace JSC {
         DECLARE_EXPORT_INFO;
 
     protected:
-        void finishCreation(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, JSObject* object)
+        void finishCreation(VM& vm, PropertyNameArrayData* propertyNameArrayData, JSObject* object)
         {
-            Base::finishCreation(exec->vm());
+            Base::finishCreation(vm);
             PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArrayData->propertyNameVector();
             for (size_t i = 0; i < m_jsStringsSize; ++i)
-                m_jsStrings[i].set(exec->vm(), this, jsOwnedString(exec, propertyNameVector[i].string()));
+                m_jsStrings[i].set(vm, this, jsOwnedString(&vm, propertyNameVector[i].string()));
             m_cachedStructureInlineCapacity = object->structure()->inlineCapacity();
         }
 

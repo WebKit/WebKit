@@ -35,13 +35,14 @@ namespace JSC {
 
         static NativeErrorPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const String& name, NativeErrorConstructor* constructor)
         {
-            NativeErrorPrototype* prototype = new (NotNull, allocateCell<NativeErrorPrototype>(*exec->heap())) NativeErrorPrototype(exec, structure);
-            prototype->finishCreation(exec, globalObject, name, constructor);
+            VM& vm = exec->vm();
+            NativeErrorPrototype* prototype = new (NotNull, allocateCell<NativeErrorPrototype>(vm.heap)) NativeErrorPrototype(exec, structure);
+            prototype->finishCreation(vm, globalObject, name, constructor);
             return prototype;
         }
 
     protected:
-        void finishCreation(ExecState*, JSGlobalObject*, const String& nameAndMessage, NativeErrorConstructor*);
+        void finishCreation(VM&, JSGlobalObject*, const String& nameAndMessage, NativeErrorConstructor*);
     };
 
 } // namespace JSC

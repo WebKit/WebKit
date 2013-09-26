@@ -36,8 +36,9 @@ namespace JSC {
 
         static DatePrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            DatePrototype* prototype = new (NotNull, allocateCell<DatePrototype>(*exec->heap())) DatePrototype(exec, structure);
-            prototype->finishCreation(exec, globalObject);
+            VM& vm = exec->vm();
+            DatePrototype* prototype = new (NotNull, allocateCell<DatePrototype>(vm.heap)) DatePrototype(exec, structure);
+            prototype->finishCreation(vm, globalObject);
             return prototype;
         }
         static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
@@ -50,7 +51,7 @@ namespace JSC {
         }
 
     protected:
-        void finishCreation(ExecState*, JSGlobalObject*);
+        void finishCreation(VM&, JSGlobalObject*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | DateInstance::StructureFlags;
     };
 

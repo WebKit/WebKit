@@ -34,8 +34,9 @@ namespace JSC {
 
         static ErrorConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ErrorPrototype* errorPrototype)
         {
-            ErrorConstructor* constructor = new (NotNull, allocateCell<ErrorConstructor>(*exec->heap())) ErrorConstructor(globalObject, structure);
-            constructor->finishCreation(exec, errorPrototype);
+            VM& vm = exec->vm();
+            ErrorConstructor* constructor = new (NotNull, allocateCell<ErrorConstructor>(vm.heap)) ErrorConstructor(globalObject, structure);
+            constructor->finishCreation(vm, errorPrototype);
             return constructor;
         }
 
@@ -47,7 +48,7 @@ namespace JSC {
         }
 
     protected:
-        void finishCreation(ExecState*, ErrorPrototype*);
+        void finishCreation(VM&, ErrorPrototype*);
         
     private:
         ErrorConstructor(JSGlobalObject*, Structure*);

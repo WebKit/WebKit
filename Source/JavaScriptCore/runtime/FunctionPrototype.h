@@ -31,8 +31,9 @@ namespace JSC {
 
         static FunctionPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            FunctionPrototype* prototype = new (NotNull, allocateCell<FunctionPrototype>(*exec->heap())) FunctionPrototype(globalObject, structure);
-            prototype->finishCreation(exec, String());
+            VM& vm = exec->vm();
+            FunctionPrototype* prototype = new (NotNull, allocateCell<FunctionPrototype>(vm.heap)) FunctionPrototype(globalObject, structure);
+            prototype->finishCreation(vm, String());
             return prototype;
         }
         
@@ -46,7 +47,7 @@ namespace JSC {
         DECLARE_INFO;
 
     protected:
-        void finishCreation(ExecState*, const String& name);
+        void finishCreation(VM&, const String& name);
 
     private:
         FunctionPrototype(JSGlobalObject*, Structure*);

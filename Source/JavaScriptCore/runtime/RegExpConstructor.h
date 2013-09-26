@@ -38,8 +38,9 @@ namespace JSC {
 
         static RegExpConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExpPrototype* regExpPrototype)
         {
-            RegExpConstructor* constructor = new (NotNull, allocateCell<RegExpConstructor>(*exec->heap())) RegExpConstructor(globalObject, structure, regExpPrototype);
-            constructor->finishCreation(exec, regExpPrototype);
+            VM& vm = exec->vm();
+            RegExpConstructor* constructor = new (NotNull, allocateCell<RegExpConstructor>(vm.heap)) RegExpConstructor(globalObject, structure, regExpPrototype);
+            constructor->finishCreation(vm, regExpPrototype);
             return constructor;
         }
 
@@ -71,7 +72,7 @@ namespace JSC {
         static void visitChildren(JSCell*, SlotVisitor&);
 
     protected:
-        void finishCreation(ExecState*, RegExpPrototype*);
+        void finishCreation(VM&, RegExpPrototype*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesVisitChildren | Base::StructureFlags;
 
     private:

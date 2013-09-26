@@ -38,8 +38,9 @@ public:
 
     static WeakMapConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, WeakMapPrototype* prototype)
     {
-        WeakMapConstructor* constructor = new (NotNull, allocateCell<WeakMapConstructor>(*exec->heap())) WeakMapConstructor(globalObject, structure);
-        constructor->finishCreation(exec, prototype);
+        VM& vm = exec->vm();
+        WeakMapConstructor* constructor = new (NotNull, allocateCell<WeakMapConstructor>(vm.heap)) WeakMapConstructor(globalObject, structure);
+        constructor->finishCreation(vm, prototype);
         return constructor;
     }
 
@@ -55,7 +56,7 @@ private:
         : Base(globalObject, structure)
     {
     }
-    void finishCreation(ExecState*, WeakMapPrototype*);
+    void finishCreation(VM&, WeakMapPrototype*);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
 };

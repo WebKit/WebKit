@@ -54,11 +54,11 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, Structure* structure)
 {
 }
 
-void ErrorPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
+void ErrorPrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
-    Base::finishCreation(exec->vm(), "");
+    Base::finishCreation(vm, "");
     ASSERT(inherits(info()));
-    putDirect(exec->vm(), exec->propertyNames().name, jsNontrivialString(exec, String(ASCIILiteral("Error"))), DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("Error"))), DontEnum);
 }
 
 bool ErrorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)

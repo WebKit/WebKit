@@ -39,8 +39,9 @@ public:
 
     static NameConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, NamePrototype* prototype)
     {
-        NameConstructor* constructor = new (NotNull, allocateCell<NameConstructor>(*exec->heap())) NameConstructor(globalObject, structure);
-        constructor->finishCreation(exec, prototype);
+        VM& vm = exec->vm();
+        NameConstructor* constructor = new (NotNull, allocateCell<NameConstructor>(vm.heap)) NameConstructor(globalObject, structure);
+        constructor->finishCreation(vm, prototype);
         return constructor;
     }
 
@@ -52,7 +53,7 @@ public:
     }
 
 protected:
-    void finishCreation(ExecState*, NamePrototype*);
+    void finishCreation(VM&, NamePrototype*);
     
 private:
     NameConstructor(JSGlobalObject*, Structure*);

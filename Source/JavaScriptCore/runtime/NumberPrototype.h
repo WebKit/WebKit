@@ -31,8 +31,9 @@ namespace JSC {
 
         static NumberPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            NumberPrototype* prototype = new (NotNull, allocateCell<NumberPrototype>(*exec->heap())) NumberPrototype(exec, structure);
-            prototype->finishCreation(exec, globalObject);
+            VM& vm = exec->vm();
+            NumberPrototype* prototype = new (NotNull, allocateCell<NumberPrototype>(vm.heap)) NumberPrototype(exec, structure);
+            prototype->finishCreation(vm, globalObject);
             return prototype;
         }
         
@@ -44,7 +45,7 @@ namespace JSC {
         }
 
     protected:
-        void finishCreation(ExecState*, JSGlobalObject*);
+        void finishCreation(VM&, JSGlobalObject*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NumberObject::StructureFlags;
 
     private:

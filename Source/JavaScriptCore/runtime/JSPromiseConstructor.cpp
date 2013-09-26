@@ -67,8 +67,9 @@ const ClassInfo JSPromiseConstructor::s_info = { "Function", &InternalFunction::
 
 JSPromiseConstructor* JSPromiseConstructor::create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSPromisePrototype* promisePrototype)
 {
-    JSPromiseConstructor* constructor = new (NotNull, allocateCell<JSPromiseConstructor>(*exec->heap())) JSPromiseConstructor(globalObject, structure);
-    constructor->finishCreation(exec, promisePrototype);
+    VM& vm = exec->vm();
+    JSPromiseConstructor* constructor = new (NotNull, allocateCell<JSPromiseConstructor>(vm.heap)) JSPromiseConstructor(globalObject, structure);
+    constructor->finishCreation(vm, promisePrototype);
     return constructor;
 }
 
@@ -82,11 +83,11 @@ JSPromiseConstructor::JSPromiseConstructor(JSGlobalObject* globalObject, Structu
 {
 }
 
-void JSPromiseConstructor::finishCreation(ExecState* exec, JSPromisePrototype* promisePrototype)
+void JSPromiseConstructor::finishCreation(VM& vm, JSPromisePrototype* promisePrototype)
 {
-    Base::finishCreation(exec->vm(), "Promise");
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, promisePrototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+    Base::finishCreation(vm, "Promise");
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, promisePrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)

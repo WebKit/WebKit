@@ -63,8 +63,9 @@ const ClassInfo JSPromisePrototype::s_info = { "PromisePrototype", &JSNonFinalOb
 
 JSPromisePrototype* JSPromisePrototype::create(ExecState* exec, JSGlobalObject*, Structure* structure)
 {
-    JSPromisePrototype* object = new (NotNull, allocateCell<JSPromisePrototype>(*exec->heap())) JSPromisePrototype(exec, structure);
-    object->finishCreation(exec, structure);
+    VM& vm = exec->vm();
+    JSPromisePrototype* object = new (NotNull, allocateCell<JSPromisePrototype>(vm.heap)) JSPromisePrototype(exec, structure);
+    object->finishCreation(vm, structure);
     return object;
 }
 
@@ -78,9 +79,9 @@ JSPromisePrototype::JSPromisePrototype(ExecState* exec, Structure* structure)
 {
 }
 
-void JSPromisePrototype::finishCreation(ExecState* exec, Structure*)
+void JSPromisePrototype::finishCreation(VM& vm, Structure*)
 {
-    Base::finishCreation(exec->vm());
+    Base::finishCreation(vm);
 }
 
 bool JSPromisePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

@@ -53,11 +53,11 @@ StringConstructor::StringConstructor(JSGlobalObject* globalObject, Structure* st
 {
 }
 
-void StringConstructor::finishCreation(ExecState* exec, StringPrototype* stringPrototype)
+void StringConstructor::finishCreation(VM& vm, StringPrototype* stringPrototype)
 {
-    Base::finishCreation(exec->vm(), stringPrototype->classInfo()->className);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, stringPrototype, ReadOnly | DontEnum | DontDelete);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+    Base::finishCreation(vm, stringPrototype->classInfo()->className);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, stringPrototype, ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
 bool StringConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)

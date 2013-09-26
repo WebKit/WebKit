@@ -52,9 +52,9 @@ NamePrototype::NamePrototype(ExecState* exec, Structure* structure)
 {
 }
 
-void NamePrototype::finishCreation(ExecState* exec)
+void NamePrototype::finishCreation(VM& vm)
 {
-    Base::finishCreation(exec->vm());
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
 }
 

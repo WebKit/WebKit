@@ -55,10 +55,10 @@ BooleanPrototype::BooleanPrototype(ExecState* exec, Structure* structure)
 {
 }
 
-void BooleanPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
+void BooleanPrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
-    Base::finishCreation(exec->vm());
-    setInternalValue(exec->vm(), jsBoolean(false));
+    Base::finishCreation(vm);
+    setInternalValue(vm, jsBoolean(false));
 
     ASSERT(inherits(info()));
 }

@@ -38,8 +38,9 @@ public:
 
     static MapConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, MapPrototype* mapPrototype)
     {
-        MapConstructor* constructor = new (NotNull, allocateCell<MapConstructor>(*exec->heap())) MapConstructor(globalObject, structure);
-        constructor->finishCreation(exec, mapPrototype);
+        VM& vm = exec->vm();
+        MapConstructor* constructor = new (NotNull, allocateCell<MapConstructor>(vm.heap)) MapConstructor(globalObject, structure);
+        constructor->finishCreation(vm, mapPrototype);
         return constructor;
     }
 
@@ -55,7 +56,7 @@ private:
         : Base(globalObject, structure)
     {
     }
-    void finishCreation(ExecState*, MapPrototype*);
+    void finishCreation(VM&, MapPrototype*);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
 };

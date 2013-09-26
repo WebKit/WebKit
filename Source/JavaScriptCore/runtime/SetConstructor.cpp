@@ -38,11 +38,11 @@ namespace JSC {
 
 const ClassInfo SetConstructor::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(SetConstructor) };
 
-void SetConstructor::finishCreation(ExecState* exec, SetPrototype* setPrototype)
+void SetConstructor::finishCreation(VM& vm, SetPrototype* setPrototype)
 {
-    Base::finishCreation(exec->vm(), setPrototype->classInfo()->className);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, setPrototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
+    Base::finishCreation(vm, setPrototype->classInfo()->className);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, setPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
 }
 
 static EncodedJSValue JSC_HOST_CALL callSet(CallFrame* callFrame)

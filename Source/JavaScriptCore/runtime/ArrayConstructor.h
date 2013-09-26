@@ -35,8 +35,9 @@ public:
 
     static ArrayConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ArrayPrototype* arrayPrototype)
     {
-        ArrayConstructor* constructor = new (NotNull, allocateCell<ArrayConstructor>(*exec->heap())) ArrayConstructor(globalObject, structure);
-        constructor->finishCreation(exec, arrayPrototype);
+        VM& vm = exec->vm();
+        ArrayConstructor* constructor = new (NotNull, allocateCell<ArrayConstructor>(vm.heap)) ArrayConstructor(globalObject, structure);
+        constructor->finishCreation(vm, arrayPrototype);
         return constructor;
     }
 
@@ -48,7 +49,7 @@ public:
     }
 
 protected:
-    void finishCreation(ExecState*, ArrayPrototype*);
+    void finishCreation(VM&, ArrayPrototype*);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
 private:

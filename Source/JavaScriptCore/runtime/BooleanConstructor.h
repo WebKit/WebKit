@@ -33,8 +33,9 @@ public:
 
     static BooleanConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, BooleanPrototype* booleanPrototype)
     {
-        BooleanConstructor* constructor = new (NotNull, allocateCell<BooleanConstructor>(*exec->heap())) BooleanConstructor(globalObject, structure);
-        constructor->finishCreation(exec, booleanPrototype);
+        VM& vm = exec->vm();
+        BooleanConstructor* constructor = new (NotNull, allocateCell<BooleanConstructor>(vm.heap)) BooleanConstructor(globalObject, structure);
+        constructor->finishCreation(vm, booleanPrototype);
         return constructor;
     }
 
@@ -46,7 +47,7 @@ public:
     }
 
 protected:
-    void finishCreation(ExecState*, BooleanPrototype*);
+    void finishCreation(VM&, BooleanPrototype*);
 
 private:
     BooleanConstructor(JSGlobalObject*, Structure*);

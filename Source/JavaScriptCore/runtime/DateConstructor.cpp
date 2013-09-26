@@ -79,11 +79,11 @@ DateConstructor::DateConstructor(JSGlobalObject* globalObject, Structure* struct
 {
 }
 
-void DateConstructor::finishCreation(ExecState* exec, DatePrototype* datePrototype)
+void DateConstructor::finishCreation(VM& vm, DatePrototype* datePrototype)
 {
-    Base::finishCreation(exec->vm(), datePrototype->classInfo()->className);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, datePrototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(7), ReadOnly | DontEnum | DontDelete);
+    Base::finishCreation(vm, datePrototype->classInfo()->className);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, datePrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(7), ReadOnly | DontEnum | DontDelete);
 }
 
 bool DateConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)

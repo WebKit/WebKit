@@ -37,11 +37,11 @@ namespace JSC {
 
 const ClassInfo MapConstructor::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(MapConstructor) };
 
-void MapConstructor::finishCreation(ExecState* exec, MapPrototype* mapPrototype)
+void MapConstructor::finishCreation(VM& vm, MapPrototype* mapPrototype)
 {
-    Base::finishCreation(exec->vm(), mapPrototype->classInfo()->className);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, mapPrototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
+    Base::finishCreation(vm, mapPrototype->classInfo()->className);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, mapPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)

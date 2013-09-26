@@ -38,8 +38,9 @@ public:
 
     static SetConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, SetPrototype* setPrototype)
     {
-        SetConstructor* constructor = new (NotNull, allocateCell<SetConstructor>(*exec->heap())) SetConstructor(globalObject, structure);
-        constructor->finishCreation(exec, setPrototype);
+        VM& vm = exec->vm();
+        SetConstructor* constructor = new (NotNull, allocateCell<SetConstructor>(vm.heap)) SetConstructor(globalObject, structure);
+        constructor->finishCreation(vm, setPrototype);
         return constructor;
     }
 
@@ -55,7 +56,7 @@ private:
         : Base(globalObject, structure)
     {
     }
-    void finishCreation(ExecState*, SetPrototype*);
+    void finishCreation(VM&, SetPrototype*);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
 };

@@ -41,11 +41,11 @@ NameConstructor::NameConstructor(JSGlobalObject* globalObject, Structure* struct
 {
 }
 
-void NameConstructor::finishCreation(ExecState* exec, NamePrototype* prototype)
+void NameConstructor::finishCreation(VM& vm, NamePrototype* prototype)
 {
-    Base::finishCreation(exec->vm(), prototype->classInfo()->className);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, prototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum);
+    Base::finishCreation(vm, prototype->classInfo()->className);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), DontDelete | ReadOnly | DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructPrivateName(ExecState* exec)

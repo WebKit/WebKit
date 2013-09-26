@@ -60,16 +60,16 @@ NumberConstructor::NumberConstructor(JSGlobalObject* globalObject, Structure* st
 {
 }
 
-void NumberConstructor::finishCreation(ExecState* exec, NumberPrototype* numberPrototype)
+void NumberConstructor::finishCreation(VM& vm, NumberPrototype* numberPrototype)
 {
-    Base::finishCreation(exec->vm(), NumberPrototype::info()->className);
+    Base::finishCreation(vm, NumberPrototype::info()->className);
     ASSERT(inherits(info()));
 
     // Number.Prototype
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
 bool NumberConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

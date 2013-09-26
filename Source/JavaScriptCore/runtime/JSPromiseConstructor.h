@@ -44,7 +44,7 @@ public:
     DECLARE_INFO;
 
 protected:
-    void finishCreation(ExecState*, JSPromisePrototype*);
+    void finishCreation(VM&, JSPromisePrototype*);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
 private:

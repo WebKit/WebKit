@@ -36,11 +36,11 @@ namespace JSC {
 
 const ClassInfo WeakMapConstructor::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(WeakMapConstructor) };
 
-void WeakMapConstructor::finishCreation(ExecState* exec, WeakMapPrototype* prototype)
+void WeakMapConstructor::finishCreation(VM& vm, WeakMapPrototype* prototype)
 {
-    Base::finishCreation(exec->vm(), prototype->classInfo()->className);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, prototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
+    Base::finishCreation(vm, prototype->classInfo()->className);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWeakMap(ExecState* exec)

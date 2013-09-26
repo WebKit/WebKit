@@ -46,16 +46,17 @@ namespace JSC {
         
         static JSAPIValueWrapper* create(ExecState* exec, JSValue value) 
         {
-            JSAPIValueWrapper* wrapper = new (NotNull, allocateCell<JSAPIValueWrapper>(*exec->heap())) JSAPIValueWrapper(exec);
-            wrapper->finishCreation(exec, value);
+            VM& vm = exec->vm();
+            JSAPIValueWrapper* wrapper = new (NotNull, allocateCell<JSAPIValueWrapper>(vm.heap)) JSAPIValueWrapper(exec);
+            wrapper->finishCreation(vm, value);
             return wrapper;
         }
 
     protected:
-        void finishCreation(ExecState* exec, JSValue value)
+        void finishCreation(VM& vm, JSValue value)
         {
-            Base::finishCreation(exec->vm());
-            m_value.set(exec->vm(), this, value);
+            Base::finishCreation(vm);
+            m_value.set(vm, this, value);
             ASSERT(!value.isCell());
         }
 

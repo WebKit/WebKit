@@ -85,13 +85,13 @@ ObjectConstructor::ObjectConstructor(JSGlobalObject* globalObject, Structure* st
 {
 }
 
-void ObjectConstructor::finishCreation(ExecState* exec, ObjectPrototype* objectPrototype)
+void ObjectConstructor::finishCreation(VM& vm, ObjectPrototype* objectPrototype)
 {
-    Base::finishCreation(exec->vm(), Identifier(exec, "Object").string());
+    Base::finishCreation(vm, Identifier(&vm, "Object").string());
     // ECMA 15.2.3.1
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, objectPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, objectPrototype, DontEnum | DontDelete | ReadOnly);
     // no. of arguments for constructor
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
 bool ObjectConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)

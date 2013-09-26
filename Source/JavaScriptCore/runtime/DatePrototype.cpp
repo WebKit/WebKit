@@ -506,9 +506,9 @@ DatePrototype::DatePrototype(ExecState* exec, Structure* structure)
 {
 }
 
-void DatePrototype::finishCreation(ExecState* exec, JSGlobalObject*)
+void DatePrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
-    Base::finishCreation(exec->vm());
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
     // The constructor will be added later, after DateConstructor has been built.

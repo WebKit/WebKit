@@ -44,7 +44,7 @@ public:
     DECLARE_INFO;
 
 protected:
-    void finishCreation(ExecState*, JSPromiseResolverPrototype*);
+    void finishCreation(VM&, JSPromiseResolverPrototype*);
     static const unsigned StructureFlags = InternalFunction::StructureFlags;
 
 private:

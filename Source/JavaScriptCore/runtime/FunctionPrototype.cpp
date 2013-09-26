@@ -47,10 +47,10 @@ FunctionPrototype::FunctionPrototype(JSGlobalObject* globalObject, Structure* st
 {
 }
 
-void FunctionPrototype::finishCreation(ExecState* exec, const String& name)
+void FunctionPrototype::finishCreation(VM& vm, const String& name)
 {
-    Base::finishCreation(exec->vm(), name);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
+    Base::finishCreation(vm, name);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
 }
 
 void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* globalObject, JSFunction** callFunction, JSFunction** applyFunction)

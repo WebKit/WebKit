@@ -165,7 +165,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE JSFunction(ExecState*, JSGlobalObject*, Structure*);
         JSFunction(VM&, FunctionExecutable*, JSScope*);
         
-        void finishCreation(ExecState*, NativeExecutable*, int length, const String& name);
+        void finishCreation(VM&, NativeExecutable*, int length, const String& name);
         using Base::finishCreation;
 
         ObjectAllocationProfile* createAllocationProfile(ExecState*, size_t inlineCapacity);

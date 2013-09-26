@@ -42,7 +42,7 @@ public:
     DECLARE_INFO;
 
 protected:
-    void finishCreation(ExecState*, Structure*);
+    void finishCreation(VM&, Structure*);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
 
 private:

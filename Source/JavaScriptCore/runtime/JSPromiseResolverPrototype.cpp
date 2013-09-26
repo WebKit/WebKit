@@ -63,8 +63,9 @@ const ClassInfo JSPromiseResolverPrototype::s_info = { "PromiseResolverPrototype
 
 JSPromiseResolverPrototype* JSPromiseResolverPrototype::create(ExecState* exec, JSGlobalObject*, Structure* structure)
 {
-    JSPromiseResolverPrototype* object = new (NotNull, allocateCell<JSPromiseResolverPrototype>(*exec->heap())) JSPromiseResolverPrototype(exec, structure);
-    object->finishCreation(exec, structure);
+    VM& vm = exec->vm();
+    JSPromiseResolverPrototype* object = new (NotNull, allocateCell<JSPromiseResolverPrototype>(vm.heap)) JSPromiseResolverPrototype(exec, structure);
+    object->finishCreation(vm, structure);
     return object;
 }
 
@@ -78,9 +79,9 @@ JSPromiseResolverPrototype::JSPromiseResolverPrototype(ExecState* exec, Structur
 {
 }
 
-void JSPromiseResolverPrototype::finishCreation(ExecState* exec, Structure*)
+void JSPromiseResolverPrototype::finishCreation(VM& vm, Structure*)
 {
-    Base::finishCreation(exec->vm());
+    Base::finishCreation(vm);
 }
 
 bool JSPromiseResolverPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

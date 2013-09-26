@@ -89,16 +89,16 @@ RegExpConstructor::RegExpConstructor(JSGlobalObject* globalObject, Structure* st
 {
 }
 
-void RegExpConstructor::finishCreation(ExecState* exec, RegExpPrototype* regExpPrototype)
+void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype)
 {
-    Base::finishCreation(exec->vm(), Identifier(exec, "RegExp").string());
+    Base::finishCreation(vm, Identifier(&vm, "RegExp").string());
     ASSERT(inherits(info()));
 
     // ECMA 15.10.5.1 RegExp.prototype
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, regExpPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, regExpPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
 }
 
 void RegExpConstructor::destroy(JSCell* cell)

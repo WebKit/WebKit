@@ -1,3 +1,16 @@
+2013-09-26  Andreas Kling  <akling@apple.com>
+
+        Pass VM instead of ExecState to many finishCreation() functions.
+        <https://webkit.org/b/121975>
+
+        Reviewed by Sam Weinig.
+
+        Reduce unnecessary loads by passing the VM to object creation
+        functions that don't need the ExecState.
+
+        There are tons of opportunities in this area, I'm just scratching
+        the surface.
+
 2013-09-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r156464 and r156480.

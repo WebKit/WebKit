@@ -42,8 +42,9 @@ const ClassInfo JSPromiseResolverConstructor::s_info = { "Function", &Base::s_in
 
 JSPromiseResolverConstructor* JSPromiseResolverConstructor::create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSPromiseResolverPrototype* promisePrototype)
 {
-    JSPromiseResolverConstructor* constructor = new (NotNull, allocateCell<JSPromiseResolverConstructor>(*exec->heap())) JSPromiseResolverConstructor(globalObject, structure);
-    constructor->finishCreation(exec, promisePrototype);
+    VM& vm = exec->vm();
+    JSPromiseResolverConstructor* constructor = new (NotNull, allocateCell<JSPromiseResolverConstructor>(vm.heap)) JSPromiseResolverConstructor(globalObject, structure);
+    constructor->finishCreation(vm, promisePrototype);
     return constructor;
 }
 
@@ -57,10 +58,10 @@ JSPromiseResolverConstructor::JSPromiseResolverConstructor(JSGlobalObject* globa
 {
 }
 
-void JSPromiseResolverConstructor::finishCreation(ExecState* exec, JSPromiseResolverPrototype* promiseResolverPrototype)
+void JSPromiseResolverConstructor::finishCreation(VM& vm, JSPromiseResolverPrototype* promiseResolverPrototype)
 {
-    Base::finishCreation(exec->vm(), "PromiseResolver");
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, promiseResolverPrototype, DontEnum | DontDelete | ReadOnly);
+    Base::finishCreation(vm, "PromiseResolver");
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, promiseResolverPrototype, DontEnum | DontDelete | ReadOnly);
 }
 
 ConstructType JSPromiseResolverConstructor::getConstructData(JSCell*, ConstructData&)

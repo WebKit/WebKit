@@ -36,8 +36,9 @@ public:
 
     static NamePrototype* create(ExecState* exec, Structure* structure)
     {
-        NamePrototype* prototype = new (NotNull, allocateCell<NamePrototype>(*exec->heap())) NamePrototype(exec, structure);
-        prototype->finishCreation(exec);
+        VM& vm = exec->vm();
+        NamePrototype* prototype = new (NotNull, allocateCell<NamePrototype>(vm.heap)) NamePrototype(exec, structure);
+        prototype->finishCreation(vm);
         return prototype;
     }
     
@@ -50,7 +51,7 @@ public:
 
 protected:
     NamePrototype(ExecState*, Structure*);
-    void finishCreation(ExecState*);
+    void finishCreation(VM&);
 
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NameInstance::StructureFlags;
 

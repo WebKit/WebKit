@@ -59,11 +59,11 @@ ArrayConstructor::ArrayConstructor(JSGlobalObject* globalObject, Structure* stru
 {
 }
 
-void ArrayConstructor::finishCreation(ExecState* exec, ArrayPrototype* arrayPrototype)
+void ArrayConstructor::finishCreation(VM& vm, ArrayPrototype* arrayPrototype)
 {
-    Base::finishCreation(exec->vm(), arrayPrototype->classInfo()->className);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+    Base::finishCreation(vm, arrayPrototype->classInfo()->className);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
 bool ArrayConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
