@@ -163,13 +163,6 @@ inline void FEGaussianBlur::platformApplyGeneric(Uint8ClampedArray* srcPixelArra
     Uint8ClampedArray* src = srcPixelArray;
     Uint8ClampedArray* dst = tmpPixelArray;
 
-    void* dataOrig = src->data();
-    void* dataDone = dst->data();
-    size_t pixelCount = paintSize.height() * paintSize.width() * 4;
-    DIBPixelData original(paintSize, dataOrig, pixelCount, stride, 32);
-    if (0)
-        original.writeToFile(L"C:\\Public\\ImageTest\\original.bmp");
-
     for (int i = 0; i < 3; ++i) {
         if (kernelSizeX) {
             kernelPosition(i, kernelSizeX, dxLeft, dxRight);
@@ -198,10 +191,6 @@ inline void FEGaussianBlur::platformApplyGeneric(Uint8ClampedArray* srcPixelArra
         }
     }
 
-    DIBPixelData blurred(paintSize, dataDone, pixelCount, stride, 32);
-    if (0)
-        blurred.writeToFile(L"C:\\Public\\ImageTest\\blurred.bmp");
-
     // The final result should be stored in srcPixelArray.
     if (dst == srcPixelArray) {
         ASSERT(src->length() == dst->length());
@@ -222,13 +211,6 @@ inline void FEGaussianBlur::platformApply(Uint8ClampedArray* srcPixelArray, Uint
     int scanline = 4 * paintSize.width();
     int extraHeight = 3 * kernelSizeY * 0.5f;
     int optimalThreadNumber = (paintSize.width() * paintSize.height()) / (s_minimalRectDimension + extraHeight * paintSize.width());
-
-    size_t pixelCount = paintSize.width() * paintSize.height() * 4;
-    void* dataOrig = srcPixelArray->data();
-    void* tmpOrig = tmpPixelArray->data();
-    DIBPixelData original(paintSize, dataOrig, pixelCount, scanline, 32);
-    if (0)
-        original.writeToFile(L"C:\\Public\\ImageTest\\original.bmp");
 
     if (optimalThreadNumber > 1) {
         WTF::ParallelJobs<PlatformApplyParameters> parallelJobs(&platformApplyWorker, optimalThreadNumber);
@@ -283,12 +265,6 @@ inline void FEGaussianBlur::platformApply(Uint8ClampedArray* srcPixelArray, Uint
 
                 memcpy(srcPixelArray->data() + destinationOffset, params.srcPixelArray->data() + sourceOffset, size);
             }
-
-            // Dump the bitmap to disk.
-            DIBPixelData blurred(paintSize, dataOrig, pixelCount, scanline, 32);
-            if (0)
-                blurred.writeToFile(L"C:\\Public\\ImageTest\\blurred.bmp");
-
             return;
         }
         // Fallback to single threaded mode.

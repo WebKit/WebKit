@@ -48,7 +48,6 @@ class DIBPixelData {
         {
         }
         DIBPixelData(HBITMAP);
-        DIBPixelData(IntSize size, void* data, size_t bufferLen, int bytesPerRow, int bytesPerPixel);
 
         void initialize(HBITMAP);
 

@@ -36,15 +36,6 @@ DIBPixelData::DIBPixelData(HBITMAP bitmap)
     initialize(bitmap);
 }
 
-DIBPixelData::DIBPixelData(IntSize size, void* data, size_t bufferLen, int bytesPerRow, int bytesPerPixel)
-{
-    m_bitmapBuffer = reinterpret_cast<UInt8*>(data);
-    m_bitmapBufferLength = bufferLen;
-    m_size = size;
-    m_bytesPerRow = bytesPerRow;
-    m_bitsPerPixel = bytesPerPixel;
-}
-
 void DIBPixelData::initialize(HBITMAP bitmap)
 {
     BITMAP bmpInfo;
@@ -61,20 +52,8 @@ void DIBPixelData::initialize(HBITMAP bitmap)
 void DIBPixelData::writeToFile(LPCWSTR filePath)
 {
     HANDLE hFile = ::CreateFile(filePath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-    if (INVALID_HANDLE_VALUE == hFile) {
-        DWORD error = ::GetLastError();
-
-        static const DWORD kFlags = FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS;
-        static const size_t bufSize = 4096;
-
-        wchar_t errorMessage[bufSize];
-        DWORD len = ::FormatMessageW(kFlags, 0, error, 0, errorMessage, bufSize, 0);
-        if (len >= bufSize)
-            len = bufSize - 1;
-
-        errorMessage[len + 1] = 0;
+    if (INVALID_HANDLE_VALUE == hFile)
         return;
-    }
 
     BITMAPFILEHEADER header;
     header.bfType = bitmapType;
