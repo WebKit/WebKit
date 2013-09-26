@@ -132,9 +132,9 @@ static void initializeProxy()
     if (proxylist.count() == 1) {
         QNetworkProxy proxy = proxylist.first();
         if (proxy == QNetworkProxy::NoProxy || proxy == QNetworkProxy::DefaultProxy) {
-            EnvHttpProxyFactory* proxyFactory = new EnvHttpProxyFactory();
+            OwnPtr<EnvHttpProxyFactory> proxyFactory = adoptPtr(new EnvHttpProxyFactory());
             if (proxyFactory->initializeFromEnvironment()) {
-                QNetworkProxyFactory::setApplicationProxyFactory(proxyFactory);
+                QNetworkProxyFactory::setApplicationProxyFactory(proxyFactory.leakPtr());
                 return;
             }
         }
