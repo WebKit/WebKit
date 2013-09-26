@@ -17,7 +17,7 @@
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
-<body onload="warmUpAndTest()">
+<body onload="testMain()">
 <div id="description"></div>
 <div id="console"></div>
 <hr/>
@@ -40,21 +40,9 @@ function testMain()
     finishJSTest();
 }
 
-var trialCount = 0;
+// Force layout, so that fonts begin to load before the document finishes loading, and thus delay the load event.
+document.body.offsetTop;
 
-function warmUpAndTest()
-{
-    document.body.offsetTop; // Force layout.
-    if (trialCount > 200
-        || document.getElementById("ref0").offsetWidth == document.getElementById("test0").offsetWidth
-        || document.getElementById("ref1").offsetWidth == document.getElementById("test1").offsetWidth) {
-        // Font has been loaded (or the wait limit has been exceeded). Now run the test.
-        testMain();
-        return;
-    }
-    trialCount++;
-    window.setTimeout(warmUpAndTest, 10);
-}
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>
