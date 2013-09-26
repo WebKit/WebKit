@@ -1,5 +1,12 @@
 2013-09-26  Anders Carlsson  <andersca@apple.com>
 
+        Work around another MSVC bug.
+
+        * runtime/PrototypeMap.cpp:
+        (JSC::PrototypeMap::emptyObjectStructureForPrototype):
+
+2013-09-26  Anders Carlsson  <andersca@apple.com>
+
         Attempt to fix the FTL build.
 
         * ftl/FTLAbstractHeap.cpp:
