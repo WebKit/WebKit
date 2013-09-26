@@ -96,12 +96,12 @@ JSTestEventConstructorConstructor::JSTestEventConstructorConstructor(Structure* 
 {
 }
 
-void JSTestEventConstructorConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
+void JSTestEventConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
 {
-    Base::finishCreation(exec->vm());
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(exec->vm(), exec->propertyNames().prototype, JSTestEventConstructorPrototype::self(exec, globalObject), DontDelete | ReadOnly);
-    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestEventConstructorPrototype::self(vm, globalObject), DontDelete | ReadOnly);
+    putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestEventConstructorConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -125,9 +125,9 @@ static const HashTableValue JSTestEventConstructorPrototypeTableValues[] =
 static const HashTable JSTestEventConstructorPrototypeTable = { 1, 0, JSTestEventConstructorPrototypeTableValues, 0 };
 const ClassInfo JSTestEventConstructorPrototype::s_info = { "TestEventConstructorPrototype", &Base::s_info, &JSTestEventConstructorPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestEventConstructorPrototype) };
 
-JSObject* JSTestEventConstructorPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
+JSObject* JSTestEventConstructorPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMPrototype<JSTestEventConstructor>(exec, globalObject);
+    return getDOMPrototype<JSTestEventConstructor>(vm, globalObject);
 }
 
 const ClassInfo JSTestEventConstructor::s_info = { "TestEventConstructor", &Base::s_info, &JSTestEventConstructorTable, 0 , CREATE_METHOD_TABLE(JSTestEventConstructor) };
@@ -144,9 +144,9 @@ void JSTestEventConstructor::finishCreation(VM& vm)
     ASSERT(inherits(info()));
 }
 
-JSObject* JSTestEventConstructor::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
+JSObject* JSTestEventConstructor::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
-    return JSTestEventConstructorPrototype::create(exec->vm(), globalObject, JSTestEventConstructorPrototype::createStructure(globalObject->vm(), globalObject, globalObject->objectPrototype()));
+    return JSTestEventConstructorPrototype::create(vm, globalObject, JSTestEventConstructorPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
 void JSTestEventConstructor::destroy(JSC::JSCell* cell)
@@ -190,12 +190,12 @@ JSValue jsTestEventConstructorAttr2(ExecState* exec, JSValue slotBase, PropertyN
 JSValue jsTestEventConstructorConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestEventConstructor* domObject = jsCast<JSTestEventConstructor*>(asObject(slotBase));
-    return JSTestEventConstructor::getConstructor(exec, domObject->globalObject());
+    return JSTestEventConstructor::getConstructor(exec->vm(), domObject->globalObject());
 }
 
-JSValue JSTestEventConstructor::getConstructor(ExecState* exec, JSGlobalObject* globalObject)
+JSValue JSTestEventConstructor::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestEventConstructorConstructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestEventConstructorConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 static inline bool isObservable(JSTestEventConstructor* jsTestEventConstructor)

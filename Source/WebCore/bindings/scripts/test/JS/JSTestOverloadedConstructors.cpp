@@ -121,12 +121,12 @@ JSTestOverloadedConstructorsConstructor::JSTestOverloadedConstructorsConstructor
 {
 }
 
-void JSTestOverloadedConstructorsConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
+void JSTestOverloadedConstructorsConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
 {
-    Base::finishCreation(exec->vm());
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(exec->vm(), exec->propertyNames().prototype, JSTestOverloadedConstructorsPrototype::self(exec, globalObject), DontDelete | ReadOnly);
-    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestOverloadedConstructorsPrototype::self(vm, globalObject), DontDelete | ReadOnly);
+    putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestOverloadedConstructorsConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -150,9 +150,9 @@ static const HashTableValue JSTestOverloadedConstructorsPrototypeTableValues[] =
 static const HashTable JSTestOverloadedConstructorsPrototypeTable = { 1, 0, JSTestOverloadedConstructorsPrototypeTableValues, 0 };
 const ClassInfo JSTestOverloadedConstructorsPrototype::s_info = { "TestOverloadedConstructorsPrototype", &Base::s_info, &JSTestOverloadedConstructorsPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsPrototype) };
 
-JSObject* JSTestOverloadedConstructorsPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
+JSObject* JSTestOverloadedConstructorsPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMPrototype<JSTestOverloadedConstructors>(exec, globalObject);
+    return getDOMPrototype<JSTestOverloadedConstructors>(vm, globalObject);
 }
 
 const ClassInfo JSTestOverloadedConstructors::s_info = { "TestOverloadedConstructors", &Base::s_info, &JSTestOverloadedConstructorsTable, 0 , CREATE_METHOD_TABLE(JSTestOverloadedConstructors) };
@@ -169,9 +169,9 @@ void JSTestOverloadedConstructors::finishCreation(VM& vm)
     ASSERT(inherits(info()));
 }
 
-JSObject* JSTestOverloadedConstructors::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
+JSObject* JSTestOverloadedConstructors::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
-    return JSTestOverloadedConstructorsPrototype::create(exec->vm(), globalObject, JSTestOverloadedConstructorsPrototype::createStructure(globalObject->vm(), globalObject, globalObject->objectPrototype()));
+    return JSTestOverloadedConstructorsPrototype::create(vm, globalObject, JSTestOverloadedConstructorsPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
 void JSTestOverloadedConstructors::destroy(JSC::JSCell* cell)
@@ -195,12 +195,12 @@ bool JSTestOverloadedConstructors::getOwnPropertySlot(JSObject* object, ExecStat
 JSValue jsTestOverloadedConstructorsConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestOverloadedConstructors* domObject = jsCast<JSTestOverloadedConstructors*>(asObject(slotBase));
-    return JSTestOverloadedConstructors::getConstructor(exec, domObject->globalObject());
+    return JSTestOverloadedConstructors::getConstructor(exec->vm(), domObject->globalObject());
 }
 
-JSValue JSTestOverloadedConstructors::getConstructor(ExecState* exec, JSGlobalObject* globalObject)
+JSValue JSTestOverloadedConstructors::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestOverloadedConstructorsConstructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestOverloadedConstructorsConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 static inline bool isObservable(JSTestOverloadedConstructors* jsTestOverloadedConstructors)

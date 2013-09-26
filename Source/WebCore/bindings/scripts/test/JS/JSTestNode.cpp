@@ -62,12 +62,12 @@ JSTestNodeConstructor::JSTestNodeConstructor(Structure* structure, JSDOMGlobalOb
 {
 }
 
-void JSTestNodeConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
+void JSTestNodeConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
 {
-    Base::finishCreation(exec->vm());
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(exec->vm(), exec->propertyNames().prototype, JSTestNodePrototype::self(exec, globalObject), DontDelete | ReadOnly);
-    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestNodePrototype::self(vm, globalObject), DontDelete | ReadOnly);
+    putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestNodeConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -91,9 +91,9 @@ static const HashTableValue JSTestNodePrototypeTableValues[] =
 static const HashTable JSTestNodePrototypeTable = { 1, 0, JSTestNodePrototypeTableValues, 0 };
 const ClassInfo JSTestNodePrototype::s_info = { "TestNodePrototype", &Base::s_info, &JSTestNodePrototypeTable, 0, CREATE_METHOD_TABLE(JSTestNodePrototype) };
 
-JSObject* JSTestNodePrototype::self(ExecState* exec, JSGlobalObject* globalObject)
+JSObject* JSTestNodePrototype::self(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMPrototype<JSTestNode>(exec, globalObject);
+    return getDOMPrototype<JSTestNode>(vm, globalObject);
 }
 
 const ClassInfo JSTestNode::s_info = { "TestNode", &Base::s_info, &JSTestNodeTable, 0 , CREATE_METHOD_TABLE(JSTestNode) };
@@ -109,9 +109,9 @@ void JSTestNode::finishCreation(VM& vm)
     ASSERT(inherits(info()));
 }
 
-JSObject* JSTestNode::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
+JSObject* JSTestNode::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
-    return JSTestNodePrototype::create(exec->vm(), globalObject, JSTestNodePrototype::createStructure(exec->vm(), globalObject, JSNodePrototype::self(exec, globalObject)));
+    return JSTestNodePrototype::create(vm, globalObject, JSTestNodePrototype::createStructure(vm, globalObject, JSNodePrototype::self(vm, globalObject)));
 }
 
 bool JSTestNode::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -124,12 +124,12 @@ bool JSTestNode::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
 JSValue jsTestNodeConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestNode* domObject = jsCast<JSTestNode*>(asObject(slotBase));
-    return JSTestNode::getConstructor(exec, domObject->globalObject());
+    return JSTestNode::getConstructor(exec->vm(), domObject->globalObject());
 }
 
-JSValue JSTestNode::getConstructor(ExecState* exec, JSGlobalObject* globalObject)
+JSValue JSTestNode::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNodeConstructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNodeConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestNode::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -56,12 +56,12 @@ JSTestMediaQueryListListenerConstructor::JSTestMediaQueryListListenerConstructor
 {
 }
 
-void JSTestMediaQueryListListenerConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
+void JSTestMediaQueryListListenerConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
 {
-    Base::finishCreation(exec->vm());
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(exec->vm(), exec->propertyNames().prototype, JSTestMediaQueryListListenerPrototype::self(exec, globalObject), DontDelete | ReadOnly);
-    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestMediaQueryListListenerPrototype::self(vm, globalObject), DontDelete | ReadOnly);
+    putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestMediaQueryListListenerConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -80,9 +80,9 @@ static const HashTableValue JSTestMediaQueryListListenerPrototypeTableValues[] =
 static const HashTable JSTestMediaQueryListListenerPrototypeTable = { 2, 1, JSTestMediaQueryListListenerPrototypeTableValues, 0 };
 const ClassInfo JSTestMediaQueryListListenerPrototype::s_info = { "TestMediaQueryListListenerPrototype", &Base::s_info, &JSTestMediaQueryListListenerPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerPrototype) };
 
-JSObject* JSTestMediaQueryListListenerPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
+JSObject* JSTestMediaQueryListListenerPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMPrototype<JSTestMediaQueryListListener>(exec, globalObject);
+    return getDOMPrototype<JSTestMediaQueryListListener>(vm, globalObject);
 }
 
 bool JSTestMediaQueryListListenerPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -105,9 +105,9 @@ void JSTestMediaQueryListListener::finishCreation(VM& vm)
     ASSERT(inherits(info()));
 }
 
-JSObject* JSTestMediaQueryListListener::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
+JSObject* JSTestMediaQueryListListener::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
-    return JSTestMediaQueryListListenerPrototype::create(exec->vm(), globalObject, JSTestMediaQueryListListenerPrototype::createStructure(globalObject->vm(), globalObject, globalObject->objectPrototype()));
+    return JSTestMediaQueryListListenerPrototype::create(vm, globalObject, JSTestMediaQueryListListenerPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
 void JSTestMediaQueryListListener::destroy(JSC::JSCell* cell)
@@ -131,12 +131,12 @@ bool JSTestMediaQueryListListener::getOwnPropertySlot(JSObject* object, ExecStat
 JSValue jsTestMediaQueryListListenerConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestMediaQueryListListener* domObject = jsCast<JSTestMediaQueryListListener*>(asObject(slotBase));
-    return JSTestMediaQueryListListener::getConstructor(exec, domObject->globalObject());
+    return JSTestMediaQueryListListener::getConstructor(exec->vm(), domObject->globalObject());
 }
 
-JSValue JSTestMediaQueryListListener::getConstructor(ExecState* exec, JSGlobalObject* globalObject)
+JSValue JSTestMediaQueryListListener::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestMediaQueryListListenerConstructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestMediaQueryListListenerConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod(ExecState* exec)

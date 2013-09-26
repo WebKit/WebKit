@@ -227,12 +227,12 @@ JSTestObjConstructor::JSTestObjConstructor(Structure* structure, JSDOMGlobalObje
 {
 }
 
-void JSTestObjConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
+void JSTestObjConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
 {
-    Base::finishCreation(exec->vm());
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(exec->vm(), exec->propertyNames().prototype, JSTestObjPrototype::self(exec, globalObject), DontDelete | ReadOnly);
-    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestObjPrototype::self(vm, globalObject), DontDelete | ReadOnly);
+    putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
 }
 
 bool JSTestObjConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -338,9 +338,9 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
 static const HashTable JSTestObjPrototypeTable = { 267, 255, JSTestObjPrototypeTableValues, 0 };
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, &JSTestObjPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
 
-JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
+JSObject* JSTestObjPrototype::self(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMPrototype<JSTestObj>(exec, globalObject);
+    return getDOMPrototype<JSTestObj>(vm, globalObject);
 }
 
 bool JSTestObjPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -363,9 +363,9 @@ void JSTestObj::finishCreation(VM& vm)
     ASSERT(inherits(info()));
 }
 
-JSObject* JSTestObj::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
+JSObject* JSTestObj::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
-    return JSTestObjPrototype::create(exec->vm(), globalObject, JSTestObjPrototype::createStructure(globalObject->vm(), globalObject, globalObject->objectPrototype()));
+    return JSTestObjPrototype::create(vm, globalObject, JSTestObjPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
 }
 
 void JSTestObj::destroy(JSC::JSCell* cell)
@@ -437,7 +437,7 @@ JSValue jsTestObjConstructorStaticStringAttr(ExecState* exec, JSValue slotBase, 
 JSValue jsTestObjConstructorTestSubObj(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestSubObj::getConstructor(exec, castedThis->globalObject());
+    return JSTestSubObj::getConstructor(exec->vm(), castedThis->globalObject());
 }
 
 
@@ -449,7 +449,7 @@ JSValue jsTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, JSValue 
     Settings& settings = castedThis->impl()->frame()->settings();
     if (!settings.testSettingEnabled())
         return jsUndefined();
-    return JSTestSubObj::getConstructor(exec, castedThis->globalObject());
+    return JSTestSubObj::getConstructor(exec->vm(), castedThis->globalObject());
 }
 
 
@@ -855,7 +855,7 @@ JSValue jsTestObjConditionalAttr3(ExecState* exec, JSValue slotBase, PropertyNam
 JSValue jsTestObjConditionalAttr4Constructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestObjectA::getConstructor(exec, castedThis->globalObject());
+    return JSTestObjectA::getConstructor(exec->vm(), castedThis->globalObject());
 }
 
 #endif
@@ -864,7 +864,7 @@ JSValue jsTestObjConditionalAttr4Constructor(ExecState* exec, JSValue slotBase, 
 JSValue jsTestObjConditionalAttr5Constructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestObjectB::getConstructor(exec, castedThis->globalObject());
+    return JSTestObjectB::getConstructor(exec->vm(), castedThis->globalObject());
 }
 
 #endif
@@ -873,7 +873,7 @@ JSValue jsTestObjConditionalAttr5Constructor(ExecState* exec, JSValue slotBase, 
 JSValue jsTestObjConditionalAttr6Constructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestObjectC::getConstructor(exec, castedThis->globalObject());
+    return JSTestObjectC::getConstructor(exec->vm(), castedThis->globalObject());
 }
 
 #endif
@@ -1084,7 +1084,7 @@ JSValue jsTestObjNullableStringValue(ExecState* exec, JSValue slotBase, Property
 JSValue jsTestObjConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestObj* domObject = jsCast<JSTestObj*>(asObject(slotBase));
-    return JSTestObj::getConstructor(exec, domObject->globalObject());
+    return JSTestObj::getConstructor(exec->vm(), domObject->globalObject());
 }
 
 void JSTestObj::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -1724,9 +1724,9 @@ void setJSTestObjNullableStringValue(ExecState* exec, JSObject* thisObject, JSVa
 }
 
 
-JSValue JSTestObj::getConstructor(ExecState* exec, JSGlobalObject* globalObject)
+JSValue JSTestObj::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestObjConstructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestObjConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(ExecState* exec)
