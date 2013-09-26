@@ -333,7 +333,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
 }
 
 template <typename LexerType>
-template <typename Parser<LexerType>::DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::createBindingPattern(TreeBuilder& context, const Identifier& name, int depth)
+template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::createBindingPattern(TreeBuilder& context, const Identifier& name, int depth)
 {
     ASSERT(!name.isEmpty());
     ASSERT(!name.isNull());
@@ -361,7 +361,7 @@ template <typename Parser<LexerType>::DeconstructionKind kind, class TreeBuilder
 }
 
 template <typename LexerType>
-template <typename Parser<LexerType>::DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseDeconstructionPattern(TreeBuilder& context, int depth)
+template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseDeconstructionPattern(TreeBuilder& context, int depth)
 {
     failIfStackOverflow();
     int nonLHSCount = m_nonLHSCount;

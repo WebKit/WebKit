@@ -79,6 +79,11 @@ COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
 
 enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
 enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
+enum DeconstructionKind {
+    DeconstructToVariables,
+    DeconstructToParameters,
+    DeconstructToExpressions
+};
 
 template <typename T> inline bool isEvalNode() { return false; }
 template <> inline bool isEvalNode<EvalNode>() { return true; }
@@ -950,11 +955,7 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeFormalParameterList parseFormalParameters(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseVarDeclarationList(TreeBuilder&, int& declarations, TreeDeconstructionPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd);
     template <class TreeBuilder> ALWAYS_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder&);
-    enum DeconstructionKind {
-        DeconstructToVariables,
-        DeconstructToParameters,
-        DeconstructToExpressions
-    };
+
     template <DeconstructionKind, class TreeBuilder> ALWAYS_INLINE TreeDeconstructionPattern createBindingPattern(TreeBuilder&, const Identifier&, int depth);
     template <DeconstructionKind, class TreeBuilder> ALWAYS_INLINE TreeDeconstructionPattern parseDeconstructionPattern(TreeBuilder&, int depth = 0);
     template <FunctionRequirements, bool nameIsInContainingScope, class TreeBuilder> bool parseFunctionInfo(TreeBuilder&, const Identifier*&, TreeFormalParameterList&, TreeFunctionBody&, unsigned& openBraceOffset, unsigned& closeBraceOffset, int& bodyStartLine, unsigned& bodyStartColumn);
