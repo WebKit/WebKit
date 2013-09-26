@@ -228,9 +228,6 @@ Bug(GTK) plugins/document-open.html [ Crash ]
 
 webkit.org/b/116974 accessibility/title-ui-element-correctness.html [ Crash ]
 
-# EventSender's contextClick should return objects that implements click() method
-webkit.org/b/98410 media/context-menu-actions.html [ Crash ]
-
 # Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces this regression
 webkit.org/b/102776 media/track/track-cue-container-rendering-position.html [ Crash ]
 

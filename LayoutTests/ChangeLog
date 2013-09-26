@@ -1,3 +1,11 @@
+2013-09-26  Alberto Garcia  <berto@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        Unskip media/context-menu-actions.html which is passing now.
+
+        * platform/gtk-wk2/TestExpectations:
+
 2013-09-26  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK][WK2] Logging of accessibility events is not disabled between tests
