@@ -1,3 +1,28 @@
+2013-09-26  Antti Koivisto  <antti@apple.com>
+
+        Don't mutate style in RenderCombineText
+        https://bugs.webkit.org/show_bug.cgi?id=121979
+
+        Reviewed by Andreas Kling.
+
+        Text renderers should always have the same style as the parent.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::fontToUse):
+        (WebCore::InlineTextBox::localSelectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        
+            Select the modified font for text-combine.
+
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::styleDidChange):
+        (WebCore::RenderCombineText::combineText):
+        * rendering/RenderCombineText.h:
+        
+            Move the text-combine specific font style to a member of its own.
+
 2013-09-26  Anders Carlsson  <andersca@apple.com>
 
         Remove PassWeak.h

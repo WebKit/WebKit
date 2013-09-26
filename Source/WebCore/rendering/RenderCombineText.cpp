@@ -38,7 +38,9 @@ RenderCombineText::RenderCombineText(Text& textNode, PassRefPtr<StringImpl> stri
 
 void RenderCombineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    setStyleInternal(RenderStyle::clone(style()));
+    // FIXME: This is pretty hackish.
+    m_combineFontStyle = RenderStyle::clone(style());
+
     RenderText::styleDidChange(diff, oldStyle);
 
     if (m_isCombined) {
@@ -110,7 +112,7 @@ void RenderCombineText::combineText()
     FontSelector* fontSelector = style()->font().fontSelector();
 
     if (m_isCombined)
-        shouldUpdateFont = style()->setFontDescription(description); // Need to change font orientation to horizontal.
+        shouldUpdateFont = m_combineFontStyle->setFontDescription(description); // Need to change font orientation to horizontal.
     else {
         // Need to try compressed glyphs.
         static const FontWidthVariant widthVariants[] = { HalfWidth, ThirdWidth, QuarterWidth };
@@ -124,17 +126,17 @@ void RenderCombineText::combineText()
                 m_isCombined = true;
 
                 // Replace my font with the new one.
-                shouldUpdateFont = style()->setFontDescription(description);
+                shouldUpdateFont = m_combineFontStyle->setFontDescription(description);
                 break;
             }
         }
     }
 
     if (!m_isCombined)
-        shouldUpdateFont = style()->setFontDescription(originalFont().fontDescription());
+        shouldUpdateFont = m_combineFontStyle->setFontDescription(originalFont().fontDescription());
 
     if (shouldUpdateFont)
-        style()->font().update(fontSelector);
+        m_combineFontStyle->font().update(fontSelector);
 
     if (m_isCombined) {
         DEFINE_STATIC_LOCAL(String, objectReplacementCharacterString, (&objectReplacementCharacter, 1));

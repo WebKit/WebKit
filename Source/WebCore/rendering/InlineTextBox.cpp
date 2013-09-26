@@ -189,6 +189,16 @@ static void adjustCharactersAndLengthForHyphen(BufferForAppendingHyphen& charact
     length += hyphenString.length();
 }
 
+static const Font& fontToUse(const RenderStyle& style, const RenderText& renderer)
+{
+    if (style.hasTextCombine() && renderer.isCombineText()) {
+        const RenderCombineText& textCombineRenderer = toRenderCombineText(renderer);
+        if (textCombineRenderer.isCombined())
+            return textCombineRenderer.textCombineFont();
+    }
+    return style.font();
+}
+
 LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos)
 {
     int sPos = max(startPos - m_start, 0);
@@ -202,7 +212,7 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos)
     LayoutUnit selTop = selectionTop();
     LayoutUnit selHeight = selectionHeight();
     RenderStyle* styleToUse = renderer().style(isFirstLineStyle());
-    const Font& font = styleToUse->font();
+    const Font& font = fontToUse(*styleToUse, renderer());
 
     BufferForAppendingHyphen charactersWithHyphen;
     bool respectHyphen = ePos == m_len && hasHyphen();
@@ -660,7 +670,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     }
 
     // Set our font.
-    const Font& font = styleToUse->font();
+    const Font& font = fontToUse(*styleToUse, renderer());
 
     FloatPoint textOrigin = FloatPoint(boxOrigin.x(), boxOrigin.y() + font.fontMetrics().ascent());
 
@@ -1544,7 +1554,7 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
     FontCachePurgePreventer fontCachePurgePreventer;
 
     RenderStyle* style = renderer().style(isFirstLineStyle());
-    const Font& font = style->font();
+    const Font& font = fontToUse(*style, renderer());
     return font.offsetForPosition(constructTextRun(style, font), lineOffset - logicalLeft(), includePartialGlyphs);
 }
 
@@ -1560,7 +1570,7 @@ float InlineTextBox::positionForOffset(int offset) const
 
     RenderStyle* styleToUse = renderer().style(isFirstLineStyle());
     ASSERT(styleToUse);
-    const Font& font = styleToUse->font();
+    const Font& font = fontToUse(*styleToUse, renderer());
     int from = !isLeftToRightDirection() ? offset - m_start : 0;
     int to = !isLeftToRightDirection() ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?

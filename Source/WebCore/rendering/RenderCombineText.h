@@ -40,6 +40,7 @@ public:
     bool isCombined() const { return m_isCombined; }
     float combinedTextWidth(const Font& font) const { return font.size(); }
     const Font& originalFont() const { return parent()->style()->font(); }
+    const Font& textCombineFont() const { return m_combineFontStyle->font(); }
 
 private:
     void node() const WTF_DELETED_FUNCTION;
@@ -50,6 +51,7 @@ private:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void setTextInternal(const String&) OVERRIDE;
 
+    RefPtr<RenderStyle> m_combineFontStyle;
     float m_combinedTextWidth;
     bool m_isCombined : 1;
     bool m_needsFontUpdate : 1;
