@@ -50,10 +50,7 @@ class IDBFactory : public ScriptWrappable, public RefCounted<IDBFactory> {
 public:
     static PassRefPtr<IDBFactory> create(IDBFactoryBackendInterface* factory)
     {
-        // FIXME: While the feature is under development we'll handle a null factory backend here,
-        // returning null, so javascript can't try to use the feature.
-        // Once the feature is fully functional we should remove the null factory backend.
-        return factory ? adoptRef(new IDBFactory(factory)) : nullptr;
+        return adoptRef(new IDBFactory(factory));
     }
     ~IDBFactory();
 
