@@ -1,3 +1,17 @@
+2013-09-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        XvfbDriver should set up Xvfb instances providing screens of 8-bit depth
+        https://bugs.webkit.org/show_bug.cgi?id=121951
+
+        Reviewed by Carlos Garcia Campos.
+
+        Screens with 24-bit depth are causing problems as it doesn't seem to be possible to fall back to
+        software rendering successfully on the GTK 64-bit release builder, resulting in crashes in almost
+        500 layout tests that trigger accelerated compositing to be used.
+
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        (XvfbDriver._start):
+
 2013-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Removed check for Apple Application Support directory in WinCairo port.
