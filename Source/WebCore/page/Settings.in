@@ -58,6 +58,7 @@ usesDashboardBackwardCompatibilityMode initial=false, conditional=DASHBOARD_SUPP
 textAreasAreResizable initial=false, setNeedsStyleRecalcInAllFrames=1
 authorAndUserStylesEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
 acceleratedCompositingEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
+acceleratedCompositedAnimationsEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
 showDebugBorders initial=false, setNeedsStyleRecalcInAllFrames=1
 showRepaintCounter initial=false, setNeedsStyleRecalcInAllFrames=1
 

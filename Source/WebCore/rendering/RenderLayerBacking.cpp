@@ -2139,8 +2139,11 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
 #endif
     }
 
+    if (renderer().frame().page() && !renderer().frame().page()->settings().acceleratedCompositedAnimationsEnabled())
+        return false;
+
     bool didAnimate = false;
-    
+
     if (hasTransform && m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer()).pixelSnappedBorderBoxRect().size(), anim, keyframes.animationName(), timeOffset))
         didAnimate = true;
 

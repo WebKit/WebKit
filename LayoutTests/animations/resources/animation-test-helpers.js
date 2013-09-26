@@ -510,9 +510,12 @@ function comparePropertyValue(property, computedValue, expectedValue, tolerance)
     return result;
 }
 
-function endTest()
+function endTest(finishCallback)
 {
     document.getElementById('result').innerHTML = result;
+
+    if (finishCallback)
+        finishCallback();
 
     if (window.testRunner)
         testRunner.notifyDone();
@@ -524,13 +527,13 @@ function checkExpectedValueCallback(expected, index)
 }
 
 var testStarted = false;
-function startTest(expected, callback)
+function startTest(expected, startCallback, finishCallback)
 {
     if (testStarted) return;
     testStarted = true;
 
-    if (callback)
-        callback();
+    if (startCallback)
+        startCallback();
 
     var maxTime = 0;
 
@@ -551,15 +554,17 @@ function startTest(expected, callback)
     }
 
     if (maxTime > 0)
-        window.setTimeout(endTest, maxTime * 1000 + 50);
+        window.setTimeout(function () {
+            endTest(finishCallback);
+        }, maxTime * 1000 + 50);
     else
-        endTest();
+        endTest(finishCallback);
 }
 
 var result = "";
 var hasPauseAnimationAPI;
 
-function runAnimationTest(expected, callback, event, disablePauseAnimationAPI, doPixelTest)
+function runAnimationTest(expected, startCallback, event, disablePauseAnimationAPI, doPixelTest, finishCallback)
 {
     hasPauseAnimationAPI = 'internals' in window;
     if (disablePauseAnimationAPI)
@@ -576,10 +581,10 @@ function runAnimationTest(expected, callback, event, disablePauseAnimationAPI, d
     
     var target = document;
     if (event == undefined)
-        waitForAnimationToStart(target, function() { startTest(expected, callback); });
+        waitForAnimationToStart(target, function() { startTest(expected, startCallback, finishCallback); });
     else if (event == "load")
         window.addEventListener(event, function() {
-            startTest(expected, callback);
+            startTest(expected, startCallback, finishCallback);
         }, false);
 }
 

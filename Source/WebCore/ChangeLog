@@ -1,3 +1,22 @@
+2013-09-26  Dean Jackson  <dino@apple.com>
+
+        Expose a setting to disable hardware accelerated animations
+        https://bugs.webkit.org/show_bug.cgi?id=121978
+        <rdar://problem/15091284>
+
+        Reviewed by Eric Carlson.
+
+        Expose acceleratedCompositedAnimationsEnabled
+        to disable CoreAnimation animations.
+
+        Test: LayoutTests/animations/transform-non-accelerated.html
+
+        * WebCore.exp.in: Export new method.
+        * page/Settings.in: Add new setting.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation): Don't go
+        to GraphicsLayer if the setting is false.
+
 2013-09-26  Julien Brianceau  <jbriance@cisco.com>
 
         [Qt] Fix build after r156487.
