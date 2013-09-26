@@ -1,3 +1,24 @@
+2013-09-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix after r156487.
+
+        Add explicit casting needed by MSVC to compile this code. Much
+        of this could probably be removed when we move to VS2012 or newer.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::jsFunction):
+        * bridge/jsc/BridgeJSC.cpp:
+        (JSC::Bindings::Instance::createRuntimeObject):
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplyGeneric):
+        (WebCore::FEGaussianBlur::platformApply):
+        * platform/graphics/win/DIBPixelData.cpp:
+        (WebCore::DIBPixelData::DIBPixelData):
+        (WebCore::DIBPixelData::writeToFile):
+        * platform/graphics/win/DIBPixelData.h:
+
 2013-09-26  Dean Jackson  <dino@apple.com>
 
         Expose a setting to disable hardware accelerated animations
