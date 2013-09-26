@@ -1,3 +1,104 @@
+2013-09-26  Mark Lam  <mark.lam@apple.com>
+
+        Move DFG inline caching logic into jit/.
+        https://bugs.webkit.org/show_bug.cgi?id=121749.
+
+        Reviewed by Geoffrey Garen.
+
+        Relanding http://trac.webkit.org/changeset/156235 after rebasing to latest
+        revision and fixing build breakages on Windows.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::unlink):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::resetStubInternal):
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        (JSC::DFG::CallArrayAllocatorSlowPathGenerator::CallArrayAllocatorSlowPathGenerator):
+        (JSC::DFG::CallArrayAllocatorWithVariableSizeSlowPathGenerator::CallArrayAllocatorWithVariableSizeSlowPathGenerator):
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGOSRExitCompiler.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationPutByValInternal):
+        * dfg/DFGOperations.h:
+        (JSC::DFG::operationNewTypedArrayWithSizeForType):
+        (JSC::DFG::operationNewTypedArrayWithOneArgumentForType):
+        * dfg/DFGRegisterSet.h: Removed.
+        * dfg/DFGRepatch.cpp: Removed.
+        * dfg/DFGRepatch.h: Removed.
+        * dfg/DFGScratchRegisterAllocator.h: Removed.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompare):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compare):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::CompareAndBoxBooleanSlowPathGenerator):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::CompareAndBoxBooleanSlowPathGenerator::CompareAndBoxBooleanSlowPathGenerator):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGThunks.cpp:
+        * dfg/DFGThunks.h:
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCallOrConstruct):
+        * ftl/FTLOSRExitCompiler.h:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::writeBarrier):
+        * jit/JIT.cpp:
+        (JSC::JIT::linkFor):
+        (JSC::JIT::linkSlowCall):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::privateCompileClosureCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::privateCompileClosureCall):
+        * jit/JITOperationWrappers.h: Copied from Source/JavaScriptCore/jit/JITOperationWrappers.h.
+        * jit/JITOperations.cpp: Copied from Source/JavaScriptCore/jit/JITOperations.cpp.
+        (JSC::getHostCallReturnValueWithExecState):
+        * jit/JITOperations.h: Copied from Source/JavaScriptCore/jit/JITOperations.h.
+        * jit/RegisterSet.h: Copied from Source/JavaScriptCore/jit/RegisterSet.h.
+        * jit/Repatch.cpp: Copied from Source/JavaScriptCore/jit/Repatch.cpp.
+        (JSC::tryBuildGetByIDList):
+        * jit/Repatch.h: Copied from Source/JavaScriptCore/jit/Repatch.h.
+        * jit/ScratchRegisterAllocator.h: Copied from Source/JavaScriptCore/jit/ScratchRegisterAllocator.h.
+        * jit/ThunkGenerators.cpp:
+        (JSC::oldStyleGenerateSlowCaseFor):
+        (JSC::oldStyleLinkForGenerator):
+        (JSC::oldStyleLinkCallGenerator):
+        (JSC::oldStyleLinkConstructGenerator):
+        (JSC::oldStyleLinkClosureCallGenerator):
+        (JSC::oldStyleVirtualForGenerator):
+        (JSC::oldStyleVirtualCallGenerator):
+        (JSC::oldStyleVirtualConstructGenerator):
+        (JSC::emitPointerValidation):
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::slowPathFor):
+        (JSC::linkForThunkGenerator):
+        (JSC::linkCallThunkGenerator):
+        (JSC::linkConstructThunkGenerator):
+        (JSC::linkClosureCallThunkGenerator):
+        (JSC::virtualForThunkGenerator):
+        (JSC::virtualCallThunkGenerator):
+        (JSC::virtualConstructThunkGenerator):
+        * jit/ThunkGenerators.h:
+
 2013-09-26  Anders Carlsson  <andersca@apple.com>
 
         Remove PassWeak.h

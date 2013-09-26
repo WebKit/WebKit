@@ -48,12 +48,12 @@ namespace JSC { namespace FTL {
     macro(osrExit, "webkit_osr_exit", functionType(voidType, boolean, int32, Variadic))
 
 #define FOR_EACH_FUNCTION_TYPE(macro) \
-    macro(I_DFGOperation_EJss, functionType(intPtr, intPtr, intPtr)) \
-    macro(J_DFGOperation_E, functionType(int64, intPtr)) \
-    macro(P_DFGOperation_EC, functionType(intPtr, intPtr, intPtr)) \
-    macro(V_DFGOperation_EOZD, functionType(voidType, intPtr, intPtr, int32, doubleType)) \
-    macro(V_DFGOperation_EOZJ, functionType(voidType, intPtr, intPtr, int32, int64)) \
-    macro(Z_DFGOperation_D, functionType(int32, doubleType))
+    macro(I_JITOperation_EJss, functionType(intPtr, intPtr, intPtr)) \
+    macro(J_JITOperation_E, functionType(int64, intPtr)) \
+    macro(P_JITOperation_EC, functionType(intPtr, intPtr, intPtr)) \
+    macro(V_JITOperation_EOZD, functionType(voidType, intPtr, intPtr, int32, doubleType)) \
+    macro(V_JITOperation_EOZJ, functionType(voidType, intPtr, intPtr, int32, int64)) \
+    macro(Z_JITOperation_D, functionType(int32, doubleType))
 
 class IntrinsicRepository : public CommonValues {
 public:
@@ -79,7 +79,7 @@ public:
 #undef FUNCTION_TYPE_GETTER
     
 #define FUNCTION_TYPE_RESOLVER(typeName, type) \
-    LType operationType(DFG::typeName)         \
+    LType operationType(JSC::typeName)         \
     {                                          \
         return typeName();                     \
     }

@@ -23,18 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGRegisterSet_h
-#define DFGRegisterSet_h
+#ifndef RegisterSet_h
+#define RegisterSet_h
 
 #include <wtf/Platform.h>
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include <wtf/Bitmap.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
 static const unsigned totalNumberOfRegisters =
     GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters;
@@ -197,11 +197,11 @@ private:
     RegisterSetPOD m_set;
 };
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
-#else // ENABLE(DFG_JIT) -> so if DFG is disabled
+#else // ENABLE(JIT) -> so if JIT is disabled
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
 // Define RegisterSetPOD to something that is a POD, but is otherwise useless,
 // to make it easier to refer to this type in code that may be compiled when
@@ -209,9 +209,9 @@ namespace JSC { namespace DFG {
 
 struct RegisterSetPOD { };
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
-#endif // ENABLE(DFG_JIT)
+#endif // ENABLE(JIT)
 
-#endif // DFGRegisterSet_h
+#endif // RegisterSet_h
 

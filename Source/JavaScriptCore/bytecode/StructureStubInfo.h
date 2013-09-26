@@ -31,12 +31,12 @@
 #if ENABLE(JIT)
 
 #include "CodeOrigin.h"
-#include "DFGRegisterSet.h"
 #include "Instruction.h"
 #include "JITStubRoutine.h"
 #include "MacroAssembler.h"
 #include "Opcode.h"
 #include "PolymorphicAccessStructureList.h"
+#include "RegisterSet.h"
 #include "Structure.h"
 #include "StructureStubClearingWatchpoint.h"
 #include <wtf/OwnPtr.h>
@@ -231,7 +231,7 @@ struct StructureStubInfo {
             int8_t valueTagGPR;
 #endif
             int8_t valueGPR;
-            DFG::RegisterSetPOD usedRegisters;
+            RegisterSetPOD usedRegisters;
             int32_t deltaCallToDone;
             int32_t deltaCallToStorageLoad;
             int32_t deltaCallToStructCheck;
