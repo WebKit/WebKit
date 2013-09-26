@@ -151,17 +151,6 @@ public:
     RenderScrollbar* scrollbar;
 };
 
-class MatchRequest {
-public:
-    MatchRequest(RuleSet* ruleSet, bool includeEmptyRules = false, const ContainerNode* scope = 0)
-        : ruleSet(ruleSet)
-        , includeEmptyRules(includeEmptyRules)
-        , scope(scope) { }
-    const RuleSet* ruleSet;
-    const bool includeEmptyRules;
-    const ContainerNode* scope;
-};
-
 // This class selects a RenderStyle for a given element based on a collection of stylesheets.
 class StyleResolver {
     WTF_MAKE_NONCOPYABLE(StyleResolver); WTF_MAKE_FAST_ALLOCATED;

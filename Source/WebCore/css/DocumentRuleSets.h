@@ -36,7 +36,6 @@ class CSSStyleRule;
 class CSSStyleSheet;
 class DocumentStyleSheetCollection;
 class InspectorCSSOMWrappers;
-class MatchRequest;
 class MediaQueryEvaluator;
 class RuleSet;
 class StyleScopeResolver;

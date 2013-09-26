@@ -1,3 +1,18 @@
+2013-09-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        Move CSS MatchRequest from StyleResolver to a private definition in ElementRuleCollector
+        https://bugs.webkit.org/show_bug.cgi?id=121986
+
+        Reviewed by Andreas Kling.
+
+        MatchRequest is an internal type of ElementRuleCollector now, move the definition
+        to ElementRuleCollector.
+
+        * css/DocumentRuleSets.h:
+        * css/ElementRuleCollector.h:
+        (WebCore::ElementRuleCollector::MatchRequest::MatchRequest):
+        * css/StyleResolver.h:
+
 2013-09-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix after r156487.

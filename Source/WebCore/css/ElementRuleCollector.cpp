@@ -63,6 +63,19 @@ static const StylePropertySet& rightToLeftDeclaration()
     return *rightToLeftDecl;
 }
 
+class MatchRequest {
+public:
+    MatchRequest(RuleSet* ruleSet, bool includeEmptyRules = false, const ContainerNode* scope = 0)
+        : ruleSet(ruleSet)
+        , includeEmptyRules(includeEmptyRules)
+        , scope(scope)
+    {
+    }
+    const RuleSet* ruleSet;
+    const bool includeEmptyRules;
+    const ContainerNode* scope;
+};
+
 StyleResolver::MatchResult& ElementRuleCollector::matchedResult()
 {
     ASSERT(m_mode == SelectorChecker::ResolvingStyle);
