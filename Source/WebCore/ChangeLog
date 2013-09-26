@@ -1,3 +1,13 @@
+2013-09-26  Julien Brianceau  <jbriance@cisco.com>
+
+        [Qt] Fix build after r156487.
+        https://bugs.webkit.org/show_bug.cgi?id=121984
+
+        Reviewed by Anders Carlsson.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMethod::jsObjectRef):
+
 2013-09-26  Antti Koivisto  <antti@apple.com>
 
         Don't mutate style in RenderCombineText

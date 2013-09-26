@@ -1301,7 +1301,7 @@ JSObjectRef QtRuntimeMethod::jsObjectRef(JSContextRef context, JSValueRef* excep
     JSObjectSetProperty(context, object, connectStr, connectFunction, attributes, exception);
     JSObjectSetProperty(context, object, disconnectStr, disconnectFunction, attributes, exception);
 
-    m_jsObject = PassWeak<JSObject>(toJS(object));
+    m_jsObject = Weak<JSObject>(toJS(object));
 
     return object;
 }
