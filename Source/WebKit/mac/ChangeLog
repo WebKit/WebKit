@@ -1,3 +1,18 @@
+2013-09-25  Sam Weinig  <sam@webkit.org>
+
+        Pass a JSC::VM& to JS bindings object creation functions, rather than a JSC::ExecState*
+        https://bugs.webkit.org/show_bug.cgi?id=121934
+
+        Reviewed by Geoffrey Garen.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::newRuntimeObject):
+        * Plugins/Hosted/ProxyRuntimeObject.h:
+        (WebKit::ProxyRuntimeObject::create):
+        * Plugins/Hosted/ProxyRuntimeObject.mm:
+        (WebKit::ProxyRuntimeObject::ProxyRuntimeObject):
+        (WebKit::ProxyRuntimeObject::finishCreation):
+
 2013-09-25  Brady Eidson  <beidson@apple.com>
 
         Enable the IndexedDB build on Mac, but leave the feature non-functional

@@ -36,10 +36,10 @@ class RuntimeObject : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static RuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
+    static RuntimeObject* create(VM& vm, Structure* structure, PassRefPtr<Instance> instance)
     {
-        RuntimeObject* object = new (NotNull, allocateCell<RuntimeObject>(*exec->heap())) RuntimeObject(exec, globalObject, structure, instance);
-        object->finishCreation(globalObject);
+        RuntimeObject* object = new (NotNull, allocateCell<RuntimeObject>(vm.heap)) RuntimeObject(vm, structure, instance);
+        object->finishCreation(vm);
         return object;
     }
 
@@ -62,7 +62,7 @@ public:
 
     DECLARE_INFO;
 
-    static ObjectPrototype* createPrototype(ExecState*, JSGlobalObject* globalObject)
+    static ObjectPrototype* createPrototype(VM&, JSGlobalObject* globalObject)
     {
         return globalObject->objectPrototype();
     }
@@ -73,8 +73,8 @@ public:
     }
 
 protected:
-    RuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<Instance>);
-    void finishCreation(JSGlobalObject*);
+    RuntimeObject(VM&, Structure*, PassRefPtr<Instance>);
+    void finishCreation(VM&);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | Base::StructureFlags;
 
 private:

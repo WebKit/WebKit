@@ -67,7 +67,7 @@ public:
 
     DECLARE_INFO;
 
-    static ArrayPrototype* createPrototype(ExecState*, JSGlobalObject* globalObject)
+    static ArrayPrototype* createPrototype(VM&, JSGlobalObject* globalObject)
     {
         return globalObject->arrayPrototype();
     }

@@ -35,7 +35,6 @@
 #include <heap/Weak.h>
 
 namespace JSC {
-class VM;
 class WeakHandleOwner;
 }
 
@@ -46,7 +45,7 @@ class JSDOMWrapper;
 class ScriptWrappable {
 public:
     JSDOMWrapper* wrapper() const;
-    void setWrapper(JSC::VM&, JSDOMWrapper*, JSC::WeakHandleOwner*, void*);
+    void setWrapper(JSDOMWrapper*, JSC::WeakHandleOwner*, void*);
     void clearWrapper(JSDOMWrapper*);
 
 private:

@@ -37,15 +37,15 @@ namespace Bindings {
 
 const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(RuntimeObject) };
 
-RuntimeObject::RuntimeObject(ExecState*, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
-    : JSDestructibleObject(globalObject->vm(), structure)
+RuntimeObject::RuntimeObject(VM& vm, Structure* structure, PassRefPtr<Instance> instance)
+    : JSDestructibleObject(vm, structure)
     , m_instance(instance)
 {
 }
 
-void RuntimeObject::finishCreation(JSGlobalObject* globalObject)
+void RuntimeObject::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalObject->vm());
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
 }
 

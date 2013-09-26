@@ -92,7 +92,8 @@ CInstance::~CInstance()
 
 RuntimeObject* CInstance::newRuntimeObject(ExecState* exec)
 {
-    return CRuntimeObject::create(exec, exec->lexicalGlobalObject(), this);
+    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object.
+    return CRuntimeObject::create(exec->vm(), WebCore::deprecatedGetDOMStructure<CRuntimeObject>(exec), this);
 }
 
 Class *CInstance::getClass() const

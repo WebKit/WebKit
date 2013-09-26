@@ -107,7 +107,7 @@ public:
 
     const String& propertyName() const { return m_item; }
 
-    static ObjectPrototype* createPrototype(ExecState*, JSGlobalObject* globalObject)
+    static ObjectPrototype* createPrototype(VM&, JSGlobalObject* globalObject)
     {
         return globalObject->objectPrototype();
     }

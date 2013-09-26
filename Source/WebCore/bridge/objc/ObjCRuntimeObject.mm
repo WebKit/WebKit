@@ -35,14 +35,14 @@ namespace Bindings {
 
 const ClassInfo ObjCRuntimeObject::s_info = { "ObjCRuntimeObject", &RuntimeObject::s_info, 0, 0, CREATE_METHOD_TABLE(ObjCRuntimeObject) };
 
-ObjCRuntimeObject::ObjCRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<ObjcInstance> instance, Structure* structure)
-    : RuntimeObject(exec, globalObject, structure, instance)
+ObjCRuntimeObject::ObjCRuntimeObject(VM& vm, Structure* structure, PassRefPtr<ObjcInstance> instance)
+    : RuntimeObject(vm, structure, instance)
 {
 }
 
-void ObjCRuntimeObject::finishCreation(JSGlobalObject* globalObject)
+void ObjCRuntimeObject::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalObject);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 

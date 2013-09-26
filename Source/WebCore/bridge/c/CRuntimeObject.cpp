@@ -37,14 +37,14 @@ namespace Bindings {
 
 const ClassInfo CRuntimeObject::s_info = { "CRuntimeObject", &RuntimeObject::s_info, 0, 0, CREATE_METHOD_TABLE(CRuntimeObject) };
 
-CRuntimeObject::CRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<CInstance> instance)
-    : RuntimeObject(exec, globalObject, structure, instance)
+CRuntimeObject::CRuntimeObject(VM& vm, Structure* structure, PassRefPtr<CInstance> instance)
+    : RuntimeObject(vm, structure, instance)
 {
 }
 
-void CRuntimeObject::finishCreation(JSGlobalObject* globalObject)
+void CRuntimeObject::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalObject);
+    Base::finishCreation(vm);
     ASSERT(inherits(info()));
 }
 
@@ -52,7 +52,6 @@ CInstance* CRuntimeObject::getInternalCInstance() const
 {
     return static_cast<CInstance*>(getInternalInstance());
 }
-
 
 }
 }

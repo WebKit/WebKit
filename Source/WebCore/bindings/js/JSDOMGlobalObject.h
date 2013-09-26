@@ -86,14 +86,14 @@ namespace WebCore {
     };
 
     template<class ConstructorClass>
-    inline JSC::JSObject* getDOMConstructor(JSC::ExecState* exec, const JSDOMGlobalObject* globalObject)
+    inline JSC::JSObject* getDOMConstructor(JSC::VM& vm, const JSDOMGlobalObject* globalObject)
     {
         if (JSC::JSObject* constructor = const_cast<JSDOMGlobalObject*>(globalObject)->constructors().get(ConstructorClass::info()).get())
             return constructor;
-        JSC::JSObject* constructor = ConstructorClass::create(exec, ConstructorClass::createStructure(exec->vm(), const_cast<JSDOMGlobalObject*>(globalObject), globalObject->objectPrototype()), const_cast<JSDOMGlobalObject*>(globalObject));
+        JSC::JSObject* constructor = ConstructorClass::create(vm, ConstructorClass::createStructure(vm, const_cast<JSDOMGlobalObject*>(globalObject), globalObject->objectPrototype()), const_cast<JSDOMGlobalObject*>(globalObject));
         ASSERT(!const_cast<JSDOMGlobalObject*>(globalObject)->constructors().contains(ConstructorClass::info()));
         JSC::WriteBarrier<JSC::JSObject> temp;
-        const_cast<JSDOMGlobalObject*>(globalObject)->constructors().add(ConstructorClass::info(), temp).iterator->value.set(exec->vm(), globalObject, constructor);
+        const_cast<JSDOMGlobalObject*>(globalObject)->constructors().add(ConstructorClass::info(), temp).iterator->value.set(vm, globalObject, constructor);
         return constructor;
     }
 

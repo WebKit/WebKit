@@ -48,7 +48,7 @@ public:
 
     DECLARE_INFO;
 
-    static FunctionPrototype* createPrototype(ExecState*, JSGlobalObject* globalObject)
+    static FunctionPrototype* createPrototype(VM&, JSGlobalObject* globalObject)
     {
         return globalObject->functionPrototype();
     }

@@ -36,14 +36,14 @@ namespace WebKit {
 
 const ClassInfo ProxyRuntimeObject::s_info = { "ProxyRuntimeObject", &RuntimeObject::s_info, 0, 0, CREATE_METHOD_TABLE(ProxyRuntimeObject) };
 
-ProxyRuntimeObject::ProxyRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<ProxyInstance> instance)
-    : RuntimeObject(exec, globalObject, structure, instance)
+ProxyRuntimeObject::ProxyRuntimeObject(VM& vm, Structure* structure, PassRefPtr<ProxyInstance> instance)
+    : RuntimeObject(vm, structure, instance)
 {
 }
 
-void ProxyRuntimeObject::finishCreation(JSGlobalObject* globalObject)
+void ProxyRuntimeObject::finishCreation(VM& vm)
 {
-    Base::finishCreation(globalObject);
+    Base::finishCreation(vm);
     ASSERT(inherits(&s_info));
 }
 

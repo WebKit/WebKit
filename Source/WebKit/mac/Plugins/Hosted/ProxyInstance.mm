@@ -133,7 +133,8 @@ ProxyInstance::~ProxyInstance()
     
 RuntimeObject* ProxyInstance::newRuntimeObject(ExecState* exec)
 {
-    return ProxyRuntimeObject::create(exec, exec->lexicalGlobalObject(), this);
+    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object.
+    return ProxyRuntimeObject::create(exec->vm(), WebCore::deprecatedGetDOMStructure<ProxyRuntimeObject>(exec), this);
 }
 
 JSC::Bindings::Class* ProxyInstance::getClass() const

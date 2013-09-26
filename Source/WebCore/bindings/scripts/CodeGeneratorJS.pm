@@ -671,7 +671,7 @@ sub GenerateHeader
     }
 
     # Prototype
-    push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);\n") unless IsDOMGlobalObject($interface);
+    push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);\n") unless IsDOMGlobalObject($interface);
 
     $headerTrailingIncludes{"${className}Custom.h"} = 1 if $interface->extendedAttributes->{"JSCustomHeader"};
 
@@ -785,8 +785,8 @@ sub GenerateHeader
 
     # Constructor object getter
     unless ($interface->extendedAttributes->{"NoInterfaceObject"}) {
-        push(@headerContent, "    static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);\n");
-        push(@headerContent, "    static JSC::JSValue getNamedConstructor(JSC::ExecState*, JSC::JSGlobalObject*);\n") if $interface->extendedAttributes->{"NamedConstructor"};
+        push(@headerContent, "    static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);\n");
+        push(@headerContent, "    static JSC::JSValue getNamedConstructor(JSC::VM&, JSC::JSGlobalObject*);\n") if $interface->extendedAttributes->{"NamedConstructor"};
     }
 
     my $numCustomFunctions = 0;
@@ -971,7 +971,7 @@ sub GenerateHeader
     push(@headerContent, "public:\n");
     push(@headerContent, "    typedef JSC::JSNonFinalObject Base;\n");
     unless (IsDOMGlobalObject($interface)) {
-        push(@headerContent, "    static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);\n");
+        push(@headerContent, "    static JSC::JSObject* self(JSC::VM&, JSC::JSGlobalObject*);\n");
     }
 
     push(@headerContent, "    static ${className}Prototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)\n");
@@ -1649,9 +1649,9 @@ sub GenerateImplementation
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     }
     unless (IsDOMGlobalObject($interface)) {
-        push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec, JSGlobalObject* globalObject)\n");
+        push(@implContent, "JSObject* ${className}Prototype::self(VM& vm, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return getDOMPrototype<${className}>(exec, globalObject);\n");
+        push(@implContent, "    return getDOMPrototype<${className}>(vm, globalObject);\n");
         push(@implContent, "}\n\n");
     }
 
@@ -1744,13 +1744,13 @@ sub GenerateImplementation
     }
 
     unless (IsDOMGlobalObject($interface)) {
-        push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec, JSGlobalObject* globalObject)\n");
+        push(@implContent, "JSObject* ${className}::createPrototype(VM& vm, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
-            push(@implContent, "    return ${className}Prototype::create(exec->vm(), globalObject, ${className}Prototype::createStructure(exec->vm(), globalObject, ${parentClassName}Prototype::self(exec, globalObject)));\n");
+            push(@implContent, "    return ${className}Prototype::create(vm, globalObject, ${className}Prototype::createStructure(vm, globalObject, ${parentClassName}Prototype::self(vm, globalObject)));\n");
         } else {
             my $prototype = $interface->isException ? "errorPrototype" : "objectPrototype";
-            push(@implContent, "    return ${className}Prototype::create(exec->vm(), globalObject, ${className}Prototype::createStructure(globalObject->vm(), globalObject, globalObject->${prototype}()));\n");
+            push(@implContent, "    return ${className}Prototype::create(vm, globalObject, ${className}Prototype::createStructure(vm, globalObject, globalObject->${prototype}()));\n");
         }
         push(@implContent, "}\n\n");
     }
@@ -1937,10 +1937,10 @@ sub GenerateImplementation
                     if ($interfaceName eq "DOMWindow") {
                         my $named = ($constructorType =~ /Named$/) ? "Named" : "";
                         $constructorType =~ s/Named$//;
-                        push(@implContent, "    return JS" . $constructorType . "::get${named}Constructor(exec, castedThis);\n");
+                        push(@implContent, "    return JS" . $constructorType . "::get${named}Constructor(exec->vm(), castedThis);\n");
                     } else {
                        AddToImplIncludes("JS" . $constructorType . ".h", $attribute->signature->extendedAttributes->{"Conditional"});
-                       push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec, castedThis->globalObject());\n");
+                       push(@implContent, "    return JS" . $constructorType . "::getConstructor(exec->vm(), castedThis->globalObject());\n");
                     }
                 } elsif (!$attribute->signature->extendedAttributes->{"GetterRaisesException"}) {
                     push(@implContent, "    UNUSED_PARAM(exec);\n") if !$attribute->signature->extendedAttributes->{"CallWith"};
@@ -2047,7 +2047,7 @@ sub GenerateImplementation
                     push(@implContent, "        return jsUndefined();\n");
                 }
 
-                push(@implContent, "    return ${className}::getConstructor(exec, domObject->globalObject());\n");
+                push(@implContent, "    return ${className}::getConstructor(exec->vm(), domObject->globalObject());\n");
                 push(@implContent, "}\n\n");
             }
         }
@@ -2312,12 +2312,12 @@ sub GenerateImplementation
     }
 
     if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
-        push(@implContent, "JSValue ${className}::getConstructor(ExecState* exec, JSGlobalObject* globalObject)\n{\n");
-        push(@implContent, "    return getDOMConstructor<${className}Constructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));\n");
+        push(@implContent, "JSValue ${className}::getConstructor(VM& vm, JSGlobalObject* globalObject)\n{\n");
+        push(@implContent, "    return getDOMConstructor<${className}Constructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));\n");
         push(@implContent, "}\n\n");
         if ($interface->extendedAttributes->{"NamedConstructor"}) {
-            push(@implContent, "JSValue ${className}::getNamedConstructor(ExecState* exec, JSGlobalObject* globalObject)\n{\n");
-            push(@implContent, "    return getDOMConstructor<${className}NamedConstructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));\n");
+            push(@implContent, "JSValue ${className}::getNamedConstructor(VM& vm, JSGlobalObject* globalObject)\n{\n");
+            push(@implContent, "    return getDOMConstructor<${className}NamedConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));\n");
             push(@implContent, "}\n\n");
         }
     }
@@ -3749,14 +3749,14 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "class ${constructorClassName} : public DOMConstructorObject {\n");
     push(@$outputArray, "private:\n");
     push(@$outputArray, "    ${constructorClassName}(JSC::Structure*, JSDOMGlobalObject*);\n");
-    push(@$outputArray, "    void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);\n\n");
+    push(@$outputArray, "    void finishCreation(JSC::VM&, JSDOMGlobalObject*);\n\n");
 
     push(@$outputArray, "public:\n");
     push(@$outputArray, "    typedef DOMConstructorObject Base;\n");
-    push(@$outputArray, "    static $constructorClassName* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)\n");
+    push(@$outputArray, "    static $constructorClassName* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)\n");
     push(@$outputArray, "    {\n");
-    push(@$outputArray, "        $constructorClassName* ptr = new (NotNull, JSC::allocateCell<$constructorClassName>(*exec->heap())) $constructorClassName(structure, globalObject);\n");
-    push(@$outputArray, "        ptr->finishCreation(exec, globalObject);\n");
+    push(@$outputArray, "        $constructorClassName* ptr = new (NotNull, JSC::allocateCell<$constructorClassName>(vm.heap)) $constructorClassName(structure, globalObject);\n");
+    push(@$outputArray, "        ptr->finishCreation(vm, globalObject);\n");
     push(@$outputArray, "        return ptr;\n");
     push(@$outputArray, "    }\n\n");
 
@@ -3801,10 +3801,10 @@ class JS${interfaceName}NamedConstructor : public DOMConstructorWithDocument {
 public:
     typedef DOMConstructorWithDocument Base;
 
-    static JS${interfaceName}NamedConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JS${interfaceName}NamedConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
-        JS${interfaceName}NamedConstructor* constructor = new (NotNull, JSC::allocateCell<JS${interfaceName}NamedConstructor>(*exec->heap())) JS${interfaceName}NamedConstructor(structure, globalObject);
-        constructor->finishCreation(exec, globalObject);
+        JS${interfaceName}NamedConstructor* constructor = new (NotNull, JSC::allocateCell<JS${interfaceName}NamedConstructor>(vm.heap)) JS${interfaceName}NamedConstructor(structure, globalObject);
+        constructor->finishCreation(vm, globalObject);
         return constructor;
     }
 
@@ -3819,7 +3819,7 @@ private:
     JS${interfaceName}NamedConstructor(JSC::Structure*, JSDOMGlobalObject*);
     static JSC::EncodedJSValue JSC_HOST_CALL constructJS${interfaceName}(JSC::ExecState*);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
-    void finishCreation(JSC::ExecState*, JSDOMGlobalObject*);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
 };
 
 END
@@ -4089,22 +4089,22 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "{\n}\n\n");
     }
 
-    push(@$outputArray, "void ${constructorClassName}::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)\n");
+    push(@$outputArray, "void ${constructorClassName}::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)\n");
     push(@$outputArray, "{\n");
     if (IsDOMGlobalObject($interface)) {
-        push(@$outputArray, "    Base::finishCreation(exec->vm());\n");
+        push(@$outputArray, "    Base::finishCreation(vm);\n");
         push(@$outputArray, "    ASSERT(inherits(info()));\n");
-        push(@$outputArray, "    putDirect(exec->vm(), exec->propertyNames().prototype, globalObject->prototype(), DontDelete | ReadOnly);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject->prototype(), DontDelete | ReadOnly);\n");
     } elsif ($generatingNamedConstructor) {
         push(@$outputArray, "    Base::finishCreation(globalObject);\n");
         push(@$outputArray, "    ASSERT(inherits(info()));\n");
-        push(@$outputArray, "    putDirect(exec->vm(), exec->propertyNames().prototype, ${className}Prototype::self(exec, globalObject), None);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}Prototype::self(vm, globalObject), None);\n");
     } else {
-        push(@$outputArray, "    Base::finishCreation(exec->vm());\n");
+        push(@$outputArray, "    Base::finishCreation(vm);\n");
         push(@$outputArray, "    ASSERT(inherits(info()));\n");
-        push(@$outputArray, "    putDirect(exec->vm(), exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${protoClassName}::self(vm, globalObject), DontDelete | ReadOnly);\n");
     }
-    push(@$outputArray, "    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(${leastConstructorLength}), ReadOnly | DontDelete | DontEnum);\n") if defined $leastConstructorLength;
+    push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), ReadOnly | DontDelete | DontEnum);\n") if defined $leastConstructorLength;
     push(@$outputArray, "}\n\n");
 
     if (!$generatingNamedConstructor) {

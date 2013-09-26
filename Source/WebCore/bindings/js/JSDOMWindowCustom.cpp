@@ -454,7 +454,7 @@ JSValue JSDOMWindow::event(ExecState* exec) const
 
 JSValue JSDOMWindow::image(ExecState* exec) const
 {
-    return getDOMConstructor<JSImageConstructor>(exec, this);
+    return getDOMConstructor<JSImageConstructor>(exec->vm(), this);
 }
 
 // Custom functions

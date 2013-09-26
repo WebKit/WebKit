@@ -94,22 +94,22 @@ class DOMStringList;
         return JSC::jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     }
 
-    template<class WrapperClass> inline JSC::Structure* getDOMStructure(JSC::ExecState* exec, JSDOMGlobalObject* globalObject)
+    template<class WrapperClass> inline JSC::Structure* getDOMStructure(JSC::VM& vm, JSDOMGlobalObject* globalObject)
     {
         if (JSC::Structure* structure = getCachedDOMStructure(globalObject, WrapperClass::info()))
             return structure;
-        return cacheDOMStructure(globalObject, WrapperClass::createStructure(exec->vm(), globalObject, WrapperClass::createPrototype(exec, globalObject)), WrapperClass::info());
+        return cacheDOMStructure(globalObject, WrapperClass::createStructure(vm, globalObject, WrapperClass::createPrototype(vm, globalObject)), WrapperClass::info());
     }
 
     template<class WrapperClass> inline JSC::Structure* deprecatedGetDOMStructure(JSC::ExecState* exec)
     {
         // FIXME: This function is wrong.  It uses the wrong global object for creating the prototype structure.
-        return getDOMStructure<WrapperClass>(exec, deprecatedGlobalObjectForPrototype(exec));
+        return getDOMStructure<WrapperClass>(exec->vm(), deprecatedGlobalObjectForPrototype(exec));
     }
 
-    template<class WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject)
+    template<class WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::VM& vm, JSC::JSGlobalObject* globalObject)
     {
-        return JSC::jsCast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(exec, JSC::jsCast<JSDOMGlobalObject*>(globalObject))->storedPrototype()));
+        return JSC::jsCast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(vm, JSC::jsCast<JSDOMGlobalObject*>(globalObject))->storedPrototype()));
     }
 
     inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld* world, JSC::ArrayBuffer*)
@@ -144,7 +144,7 @@ class DOMStringList;
     {
         if (!world->isNormal())
             return false;
-        domObject->setWrapper(*world->vm(), wrapper, wrapperOwner, context);
+        domObject->setWrapper(wrapper, wrapperOwner, context);
         return true;
     }
 
@@ -201,7 +201,7 @@ class DOMStringList;
     {
         ASSERT(node);
         ASSERT(!getCachedWrapper(currentWorld(exec), node));
-        WrapperClass* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(exec, globalObject), globalObject, node);
+        WrapperClass* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(exec->vm(), globalObject), globalObject, node);
         // FIXME: The entire function can be removed, once we fix caching.
         // This function is a one-off hack to make Nodes cache in the right global object.
         cacheWrapper(currentWorld(exec), node, wrapper);

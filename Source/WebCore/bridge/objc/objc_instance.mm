@@ -72,7 +72,8 @@ static NSMapTable *createInstanceWrapperCache()
 
 RuntimeObject* ObjcInstance::newRuntimeObject(ExecState* exec)
 {
-    return ObjCRuntimeObject::create(exec, exec->lexicalGlobalObject(), this);
+    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object.
+    return ObjCRuntimeObject::create(exec->vm(), WebCore::deprecatedGetDOMStructure<ObjCRuntimeObject>(exec), this);
 }
 
 void ObjcInstance::setGlobalException(NSString* exception, JSGlobalObject* exceptionEnvironment)

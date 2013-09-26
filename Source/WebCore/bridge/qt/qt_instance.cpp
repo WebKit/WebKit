@@ -50,11 +50,10 @@ class QtRuntimeObject : public RuntimeObject {
 public:
     typedef RuntimeObject Base;
 
-    static QtRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<Instance> instance)
+    static QtRuntimeObject* create(VM& vm, Structure* structure, PassRefPtr<Instance> instance)
     {
-        Structure* domStructure = WebCore::deprecatedGetDOMStructure<QtRuntimeObject>(exec);
-        QtRuntimeObject* object = new (allocateCell<QtRuntimeObject>(*exec->heap())) QtRuntimeObject(exec, globalObject, domStructure, instance);
-        object->finishCreation(globalObject);
+        QtRuntimeObject* object = new (allocateCell<QtRuntimeObject>(vm.heap)) QtRuntimeObject(vm, structure, instance);
+        object->finishCreation(vm);
         return object;
     }
     
@@ -69,13 +68,13 @@ protected:
     static const unsigned StructureFlags = RuntimeObject::StructureFlags | OverridesVisitChildren;
 
 private:
-    QtRuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<Instance>);
+    QtRuntimeObject(VM&, Structure*, PassRefPtr<Instance>);
 };
 
 const ClassInfo QtRuntimeObject::s_info = { "QtRuntimeObject", &RuntimeObject::s_info, 0, 0, CREATE_METHOD_TABLE(QtRuntimeObject) };
 
-QtRuntimeObject::QtRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
-    : RuntimeObject(exec, globalObject, structure, instance)
+QtRuntimeObject::QtRuntimeObject(VM& vm, Structure* structure, PassRefPtr<Instance> instance)
+    : RuntimeObject(vm, structure, instance)
 {
 }
 
@@ -172,7 +171,9 @@ RuntimeObject* QtInstance::newRuntimeObject(ExecState* exec)
     JSLockHolder lock(exec);
     qDeleteAll(m_methods);
     m_methods.clear();
-    return QtRuntimeObject::create(exec, exec->lexicalGlobalObject(), this);
+
+    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object.
+    return QtRuntimeObject::create(exec->vm(), WebCore::deprecatedGetDOMStructure<QtRuntimeObject>(exec), this);
 }
 
 void QtInstance::begin()

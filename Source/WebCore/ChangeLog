@@ -1,3 +1,67 @@
+2013-09-25  Sam Weinig  <sam@webkit.org>
+
+        Pass a JSC::VM& to JS bindings object creation functions, rather than a JSC::ExecState*
+        https://bugs.webkit.org/show_bug.cgi?id=121934
+
+        Reviewed by Geoffrey Garen.
+
+        Reduce unnecessary loads by passing the JSC::VM to object creation/access functions
+        that don't need the ExecState.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::getDOMStructure):
+        (WebCore::deprecatedGetDOMStructure):
+        (WebCore::getDOMPrototype):
+        (WebCore::setInlineCachedWrapper):
+        (WebCore::createWrapper):
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::getDOMConstructor):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::image):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::finishCreation):
+        * bindings/js/JSImageConstructor.h:
+        (WebCore::JSImageConstructor::create):
+        * bindings/js/ScriptWrappable.h:
+        * bindings/js/ScriptWrappableInlines.h:
+        (WebCore::ScriptWrappable::setWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateConstructorDeclaration):
+        (GenerateConstructorHelperMethods):
+        * bridge/c/CRuntimeObject.cpp:
+        (JSC::Bindings::CRuntimeObject::CRuntimeObject):
+        (JSC::Bindings::CRuntimeObject::finishCreation):
+        * bridge/c/CRuntimeObject.h:
+        (JSC::Bindings::CRuntimeObject::create):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::newRuntimeObject):
+        * bridge/jsc/BridgeJSC.cpp:
+        (JSC::Bindings::Instance::newRuntimeObject):
+        * bridge/objc/ObjCRuntimeObject.h:
+        (JSC::Bindings::ObjCRuntimeObject::create):
+        * bridge/objc/ObjCRuntimeObject.mm:
+        (JSC::Bindings::ObjCRuntimeObject::ObjCRuntimeObject):
+        (JSC::Bindings::ObjCRuntimeObject::finishCreation):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::newRuntimeObject):
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::createPrototype):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::createPrototype):
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::createPrototype):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::RuntimeObject):
+        (JSC::Bindings::RuntimeObject::finishCreation):
+        * bridge/runtime_object.h:
+        (JSC::Bindings::RuntimeObject::create):
+        (JSC::Bindings::RuntimeObject::createPrototype):
+
 2013-09-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r156451.
