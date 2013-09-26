@@ -74,7 +74,7 @@ class XvfbDriver(Driver):
         display_id = self._next_free_display()
         self._lock_file = "/tmp/.X%d-lock" % display_id
 
-        run_xvfb = ["Xvfb", ":%d" % display_id, "-screen",  "0", "800x600x8", "-nolisten", "tcp"]
+        run_xvfb = ["Xvfb", ":%d" % display_id, "-screen",  "0", "800x600x24", "-nolisten", "tcp"]
         with open(os.devnull, 'w') as devnull:
             self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull)
 
