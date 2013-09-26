@@ -1,3 +1,11 @@
+2013-09-26  Brady Eidson  <beidson@apple.com>
+
+        Mark IDBDatabase "FINAL" now that http://webkit.org/b/121747 is fixed.
+
+        Rubberstamped by Andreas Kling
+
+        * Modules/indexeddb/IDBDatabase.h: Mark this class FINAL.
+
 2013-09-26  Gurpreet Kaur  <k.gurpreet@samsung.com>
 
         Inset box-shadows fail to round around corners when border-radius is set in vh/vw units.
