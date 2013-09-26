@@ -236,9 +236,10 @@ void RenderFlowThread::layout()
     // Note that there's no need to do so for the inline multi-column as we are not moving layers into different
     // containers, but just adjusting the position of the RenderLayerBacking.
     if (!m_needsTwoPhasesLayout) {
-        updateLayerToRegionMappings();
-        // FIXME: If we have layers that moved from one region to another, we should trigger
+        // If we have layers that moved from one region to another, we trigger
         // a composited layers rebuild in here to make sure that the regions will collect the right layers.
+        if (isOutOfFlowRenderFlowThread() && updateAllLayerToRegionMappings())
+            layer()->compositor().setCompositingLayersNeedRebuild();
     }
 #endif
 
@@ -250,32 +251,73 @@ void RenderFlowThread::layout()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
+bool RenderFlowThread::hasCompositingRegionDescendant() const
+{
+    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        if (region->hasLayer() && region->layer()->hasCompositingDescendant())
+            return true;
+    }
+    return false;
+}
+
+const RenderLayerList* RenderFlowThread::getLayerListForRegion(RenderRegion* region) const
+{
+    if (!m_regionToLayerListMap)
+        return 0;
+    ASSERT(!m_layersToRegionMappingsDirty);
+    RegionToLayerListMap::const_iterator iterator = m_regionToLayerListMap->find(region);
+    return iterator == m_regionToLayerListMap->end() ? 0 : &iterator->value;
+}
+
+// FIXME: make it const when it won't be calling regionAtBlockOffset.
 RenderRegion* RenderFlowThread::regionForCompositedLayer(RenderLayer* childLayer)
 {
-    LayoutPoint leftTopLocation = childLayer->renderBox() ? childLayer->renderBox()->flipForWritingMode(LayoutPoint()) : LayoutPoint();
-    LayoutPoint flowThreadOffset = flooredLayoutPoint(childLayer->renderer().localToContainerPoint(leftTopLocation, this, ApplyContainerFlip));
+    if (childLayer->renderBox()) {
+        RenderRegion* startRegion = 0;
+        RenderRegion* endRegion = 0;
+        getRegionRangeForBox(childLayer->renderBox(), startRegion, endRegion);
+        // The video tag is such a box that doesn't have a region range because it's inline (by default).
+        if (startRegion)
+            return startRegion;
+    }
+
+    // FIXME: remove this when we'll have region ranges for inlines as well.
+    LayoutPoint flowThreadOffset = flooredLayoutPoint(childLayer->renderer().localToContainerPoint(LayoutPoint(), this, ApplyContainerFlip));
     return regionAtBlockOffset(0, flipForWritingMode(isHorizontalWritingMode() ? flowThreadOffset.y() : flowThreadOffset.x()), true, DisallowRegionAutoGeneration);
 }
 
-void RenderFlowThread::updateRegionForRenderLayer(RenderLayer* layer, LayerToRegionMap& layerToRegionMap, RegionToLayerListMap& regionToLayerListMap, bool& needsLayerUpdate)
+RenderRegion* RenderFlowThread::cachedRegionForCompositedLayer(RenderLayer* childLayer) const
+{
+    if (!m_layerToRegionMap)
+        return 0;
+    ASSERT(!m_layersToRegionMappingsDirty);
+    return m_layerToRegionMap->get(childLayer);
+}
+
+// FIXME: Make it const when regionForCompositedLayer will be const.
+void RenderFlowThread::updateLayerToRegionMappings(RenderLayer* layer, LayerToRegionMap& layerToRegionMap, RegionToLayerListMap& regionToLayerListMap, bool& needsLayerUpdate)
 {
     RenderRegion* region = regionForCompositedLayer(layer);
     if (!needsLayerUpdate) {
-        ASSERT(m_layerToRegionMap);
         // Figure out if we moved this layer from a region to the other.
-        RenderRegion* previousRegion = m_layerToRegionMap->get(layer);
+        RenderRegion* previousRegion = cachedRegionForCompositedLayer(layer);
         if (previousRegion != region)
             needsLayerUpdate = true;
     }
+
     if (!region)
         return;
+
     layerToRegionMap.set(layer, region);
+
     RegionToLayerListMap::iterator iterator = regionToLayerListMap.find(region);
     RenderLayerList& list = iterator == regionToLayerListMap.end() ? regionToLayerListMap.set(region, RenderLayerList()).iterator->value : iterator->value;
+    ASSERT(!list.contains(layer));
     list.append(layer);
 }
 
-bool RenderFlowThread::updateLayerToRegionMappings()
+bool RenderFlowThread::updateAllLayerToRegionMappings()
 {
     // We only need to map layers to regions for named flow threads.
     // Multi-column threads are displayed on top of the regions and do not require
@@ -288,38 +330,30 @@ bool RenderFlowThread::updateLayerToRegionMappings()
     CurrentRenderFlowThreadDisabler disabler(&view());
 
     // If the RenderFlowThread had a z-index layer update, then we need to update the composited layers too.
-    bool needsLayerUpdate = m_layersToRegionMappingsDirty || !m_layerToRegionMap.get();
+    bool needsLayerUpdate = layer()->isDirtyRenderFlowThread() || m_layersToRegionMappingsDirty || !m_layerToRegionMap.get();
     layer()->updateLayerListsIfNeeded();
 
     LayerToRegionMap layerToRegionMap;
     RegionToLayerListMap regionToLayerListMap;
 
-    if (Vector<RenderLayer*>* negZOrderList = layer()->negZOrderList()) {
-        size_t listSize = negZOrderList->size();
-        for (size_t i = 0; i < listSize; ++i)
-            updateRegionForRenderLayer(negZOrderList->at(i), layerToRegionMap, regionToLayerListMap, needsLayerUpdate);
-    }
-
-    if (Vector<RenderLayer*>* normalFlowList = layer()->normalFlowList()) {
-        size_t listSize = normalFlowList->size();
-        for (size_t i = 0; i < listSize; ++i)
-            updateRegionForRenderLayer(normalFlowList->at(i), layerToRegionMap, regionToLayerListMap, needsLayerUpdate);
-    }
-    
-    if (Vector<RenderLayer*>* posZOrderList = layer()->posZOrderList()) {
-        size_t listSize = posZOrderList->size();
-        for (size_t i = 0; i < listSize; ++i)
-            updateRegionForRenderLayer(posZOrderList->at(i), layerToRegionMap, regionToLayerListMap, needsLayerUpdate);
-    }
+    RenderLayerList* lists[] = { layer()->negZOrderList(), layer()->normalFlowList(), layer()->posZOrderList()};
+    for (size_t listIndex = 0; listIndex < sizeof(lists) / sizeof(lists[0]); ++listIndex)
+        if (RenderLayerList* list = lists[listIndex])
+            for (size_t i = 0, listSize = list->size(); i < listSize; ++i)
+                updateLayerToRegionMappings(list->at(i), layerToRegionMap, regionToLayerListMap, needsLayerUpdate);
 
     if (needsLayerUpdate) {
         if (!m_layerToRegionMap)
             m_layerToRegionMap = adoptPtr(new LayerToRegionMap());
         m_layerToRegionMap->swap(layerToRegionMap);
 
+        if (!m_regionToLayerListMap)
+            m_regionToLayerListMap = adoptPtr(new RegionToLayerListMap());
+        m_regionToLayerListMap->swap(regionToLayerListMap);
+
         for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
             RenderRegion* region = *iter;
-            region->setRequiresLayerForCompositing(regionToLayerListMap.contains(region));
+            region->setRequiresLayerForCompositing(m_regionToLayerListMap->contains(region));
         }
     }
 

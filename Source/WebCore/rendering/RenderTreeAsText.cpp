@@ -802,14 +802,18 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
                 ++layerCount;
         if (layerCount) {
             int currIndent = indent;
-            if (behavior & RenderAsTextShowLayerNesting) {
-                writeIndent(ts, indent);
-                ts << " positive z-order list(" << layerCount << ")\n";
-                ++currIndent;
-            }
-            for (unsigned i = 0; i != posList->size(); ++i) {
-                if (!posList->at(i)->isOutOfFlowRenderFlowThread())
-                    writeLayers(ts, rootLayer, posList->at(i), paintDirtyRect, currIndent, behavior);
+            // We only print the header if there's at list a non-RenderNamedFlowThread part of the list.
+            if (!posList->size() || !posList->at(0)->isOutOfFlowRenderFlowThread()) {
+                if (behavior & RenderAsTextShowLayerNesting) {
+                    writeIndent(ts, indent);
+                    ts << " positive z-order list(" << posList->size() << ")\n";
+                    ++currIndent;
+                }
+                for (unsigned i = 0; i != posList->size(); ++i) {
+                    // Do not print named flows twice.
+                    if (!posList->at(i)->isOutOfFlowRenderFlowThread())
+                        writeLayers(ts, rootLayer, posList->at(i), paintDirtyRect, currIndent, behavior);
+                }
             }
         }
     }

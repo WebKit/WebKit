@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Bug 120457: [CSS Regions] The layers from the flow thread should be collected under the regions' layers.</title>
+		<style>
+			html {
+				-webkit-font-smoothing: none;
+			}
+			.transformed {
+				-webkit-transform:rotateX(15deg) rotateZ(15deg);
+			}
+			.content {
+			}
+			.region {
+				-webkit-transform:rotateZ(0deg); /*so the div is composited, just like the region*/
+			}
+		</style>
+		<script>
+			window.addEventListener( "load", function () {
+				var div = document.querySelector("#transformed");
+				for(var i = 0; i < 10; ++i ) {
+					div.className = "transformed content";
+					document.body.offsetTop;
+					div.className = "content";
+					document.body.offsetTop;
+				}
+			}, false);
+		</script>
+	</head>
+	<body>
+		<div id="transformed" class="transformed content">transformed content</div>
+		<div id="transformed" class="transformed content">transformed content</div>
+		<div class="content">not transformed content</div>
+		<div class="region"></div>
+		<div>Test PASSES if it doesn't crash or assert</div>
+	</body>
+</html>

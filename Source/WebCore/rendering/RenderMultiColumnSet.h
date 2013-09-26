@@ -120,6 +120,8 @@ private:
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) OVERRIDE;
 
+    virtual void adjustRegionBoundsFromFlowThreadPortionRect(const IntPoint& layerOffset, IntRect& regionBounds) OVERRIDE;
+
     virtual const char* renderName() const;
     
     void paintColumnRules(PaintInfo&, const LayoutPoint& paintOffset);

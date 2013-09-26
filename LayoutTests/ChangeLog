@@ -1,3 +1,31 @@
+2013-09-26  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] The layers from the flow thread should be collected under the regions' layers.
+        https://bugs.webkit.org/show_bug.cgi?id=120457
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/layers/accelerated-compositing/crash-transform-inside-region.html: Added.
+        * fast/regions/layers/accelerated-compositing/crash-transform-inside-region-expected.html: Added.
+        * fast/regions/layers/accelerated-compositing/floated-region-with-transformed-child.html: Added.
+        * fast/regions/layers/accelerated-compositing/floated-region-with-transformed-child-expected.html: Added.
+        * fast/regions/layers/accelerated-compositing/move-layer-from-one-region-to-another.html: Added.
+        * fast/regions/layers/accelerated-compositing/move-layer-from-one-region-to-another-expected.html: Added.
+        * fast/regions/layers/accelerated-compositing/propagate-region-box-shadow-border-padding.html: Added.
+        * fast/regions/layers/accelerated-compositing/propagate-region-box-shadow-border-padding-expected.html: Added.
+        * fast/regions/layers/accelerated-compositing/propagate-region-box-shadow-border-padding-for-video.html: Added.
+        * fast/regions/layers/accelerated-compositing/propagate-region-box-shadow-border-padding-for-video-expected.html: Added.
+        * fast/regions/layers/accelerated-compositing/region-as-layer-in-another-flowthread.html: Added.
+        * fast/regions/layers/accelerated-compositing/region-as-layer-in-another-flowthread-expected.html: Added.
+        * fast/regions/layers/accelerated-compositing/transformed-layer-inside-transformed-layer.html: Added.
+        * fast/regions/layers/accelerated-compositing/transformed-layer-inside-transformed-layer-expected.html: Added.
+        * fast/regions/layers/accelerated-compositing/transform-transparent-positioned-video-inside-region.html: Added.
+        * fast/regions/layers/accelerated-compositing/transform-transparent-positioned-video-inside-region-expected.html: Added.
+        * fast/regions/layers/accelerated-compositing/z-index.html: Added.
+        * fast/regions/layers/accelerated-compositing/z-index-expected.html: Added.
+        * fast/regions/layers/accelerated-compositing/z-index-update-expected.html: Added.
+        * fast/regions/layers/accelerated-compositing/z-index-update.html: Added.
+
 2013-09-26  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Unable to collect html element in a named flow

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderGeometryMap.h"
 
+#include "RenderFlowThread.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "TransformState.h"
@@ -249,6 +250,12 @@ void RenderGeometryMap::pushView(const RenderView* view, const LayoutSize& scrol
         step.m_transform = adoptPtr(new TransformationMatrix(*t));
     
     stepInserted(step);
+}
+
+void RenderGeometryMap::pushRenderFlowThread(const RenderFlowThread* flowThread)
+{
+    m_mapping.append(RenderGeometryMapStep(flowThread, false, false, false, false));
+    stepInserted(m_mapping.last());
 }
 
 void RenderGeometryMap::popMappingsToAncestor(const RenderLayerModelObject* ancestorRenderer)

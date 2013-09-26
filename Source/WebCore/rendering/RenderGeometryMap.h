@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class RenderFlowThread;
 class RenderLayer;
 class RenderLayerModelObject;
 class RenderView;
@@ -110,6 +111,7 @@ public:
 
     // RenderView gets special treatment, because it applies the scroll offset only for elements inside in fixed position.
     void pushView(const RenderView*, const LayoutSize& scrollOffset, const TransformationMatrix* = 0);
+    void pushRenderFlowThread(const RenderFlowThread*);
 
 private:
     void mapToContainer(TransformState&, const RenderLayerModelObject* container = 0) const;

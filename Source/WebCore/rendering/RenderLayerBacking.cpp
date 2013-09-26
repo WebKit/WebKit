@@ -47,10 +47,12 @@
 #include "KeyframeList.h"
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
+#include "RenderFlowThread.h" 
 #include "RenderIFrame.h"
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderRegion.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScrollingCoordinator.h"
@@ -412,6 +414,9 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
     if (layerOrAncestorIsTransformedOrUsingCompositedScrolling(m_owningLayer))
         return false;
 
+    if (m_owningLayer->isInsideOutOfFlowThread())
+        return false;
+
     return true;
 }
 
@@ -648,6 +653,8 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     IntRect relativeCompositingBounds(localCompositingBounds);
     relativeCompositingBounds.moveBy(delta);
 
+    adjustAncestorCompositingBoundsForFlowThread(ancestorCompositingBounds, compAncestor);
+
     IntPoint graphicsLayerParentLocation;
     if (compAncestor && compAncestor->backing()->hasClippingLayer()) {
         // If the compositing ancestor has a layer to clip children, we parent in that, and therefore
@@ -843,6 +850,52 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     updateDrawsContent(isSimpleContainer);
     updateAfterWidgetResize();
     registerScrollingLayers();
+}
+
+static RenderLayer* enclosingFlowThreadAncestor(RenderLayer* curr)
+{
+    for (curr = curr->parent(); curr && !curr->isRenderFlowThread(); curr = curr->parent()) {
+        if (curr->isStackingContainer() && curr->isComposited()) {
+            // We only adjust the position of the first level of layers.
+            return 0;
+        }
+    }
+    return curr;
+}
+
+void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(IntRect& ancestorCompositingBounds, const RenderLayer* compositingAncestor) const
+{
+    if (!m_owningLayer->isInsideFlowThread())
+        return;
+
+    RenderLayer* flowThreadLayer = m_owningLayer->isInsideOutOfFlowThread() ? m_owningLayer->stackingContainer() : enclosingFlowThreadAncestor(m_owningLayer);
+    if (flowThreadLayer && flowThreadLayer->isRenderFlowThread()) {
+        RenderFlowThread& flowThread = toRenderFlowThread(flowThreadLayer->renderer());
+        if (m_owningLayer->isInsideOutOfFlowThread()) {
+            // The RenderNamedFlowThread is not composited, as we need it to paint the 
+            // background layer of the regions. We need to compensate for that by manually
+            // subtracting the position of the flow-thread.
+            IntPoint flowPosition;
+            flowThreadLayer->convertToPixelSnappedLayerCoords(compositingAncestor, flowPosition);
+            ancestorCompositingBounds.moveBy(flowPosition);
+        }
+
+        // Move the ancestor position at the top of the region where the composited layer is going to display.
+        RenderRegion* parentRegion = flowThread.cachedRegionForCompositedLayer(m_owningLayer);
+        if (parentRegion) {
+            IntPoint flowDelta;
+            m_owningLayer->convertToPixelSnappedLayerCoords(flowThreadLayer, flowDelta);
+            parentRegion->adjustRegionBoundsFromFlowThreadPortionRect(flowDelta, ancestorCompositingBounds);
+            if (parentRegion->hasLayer() && parentRegion->layer()->backing()) {
+                // Make sure that the region propagates its borders, paddings, outlines or box-shadows to layers inside it.
+                // Note that the composited bounds of the RenderRegion are already calculated
+                // because RenderLayerCompositor::rebuildCompositingLayerTree will only
+                // iterate on the content of the region after the region itself is computed.
+                ancestorCompositingBounds.moveBy(roundedIntPoint(parentRegion->layer()->backing()->compositedBounds().location()));
+                ancestorCompositingBounds.move(-parentRegion->borderAndPaddingStart(), -parentRegion->borderAndPaddingBefore());
+            }
+        }
+    }
 }
 
 void RenderLayerBacking::updateDirectlyCompositedContents(bool isSimpleContainer, bool& didUpdateContentsRect)

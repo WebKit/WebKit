@@ -1,3 +1,81 @@
+2013-09-26  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSS Regions] The layers from the flow thread should be collected under the regions' layers.
+        https://bugs.webkit.org/show_bug.cgi?id=120457
+
+        Reviewed by David Hyatt.
+
+        This patch is based on the work of Alexandru Chiculita at https://bugs.webkit.org/attachment.cgi?id=203872&action=review
+
+        The composited layers inside the named flow threads are collected as part of the regions.
+        When a region displays a layer that needs accelerated compositing we activate the accelerated compositing for
+        that region too (inside RenderFlowThread::updateAllLayerToRegionMappings).
+
+        Tests: fast/regions/layers/accelerated-compositing/crash-transform-inside-region.html
+               fast/regions/layers/accelerated-compositing/floated-region-with-transformed-child.html
+               fast/regions/layers/accelerated-compositing/move-layer-from-one-region-to-another.html
+               fast/regions/layers/accelerated-compositing/propagate-region-box-shadow-border-padding.html
+               fast/regions/layers/accelerated-compositing/propagate-region-box-shadow-border-padding-for-video.html
+               fast/regions/layers/accelerated-compositing/region-as-layer-in-another-flowthread.html
+               fast/regions/layers/accelerated-compositing/transform-transparent-positioned-video-inside-region.html
+               fast/regions/layers/accelerated-compositing/transformed-layer-inside-transformed-layer.html
+               fast/regions/layers/accelerated-compositing/z-index.html: Added.
+               fast/regions/layers/accelerated-compositing/z-index-update.html: Added.
+
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::updateRenderFlowThreadLayersIfNeeded):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout): When the layout of the flow thread is over (including the 2 phase layout),
+        we update all the mappings between the layers inside the flow thread and the regions where those layers will be
+        painted.
+        (WebCore::RenderFlowThread::hasCompositingRegionDescendant): Whether any of the regions has a compositing descendant.
+        (WebCore::RenderFlowThread::getLayerListForRegion):
+        (WebCore::RenderFlowThread::regionForCompositedLayer):
+        (WebCore::RenderFlowThread::cachedRegionForCompositedLayer):
+        (WebCore::RenderFlowThread::updateLayerToRegionMappings): Triggers an update of the layers if a layer has moved
+        from a region to another since the last update.
+        (WebCore::RenderFlowThread::updateAllLayerToRegionMappings):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::pushRenderFlowThread):
+        * rendering/RenderGeometryMap.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateLayerBounds): The RenderNamedFlowThread is ignored when we calculate the bounds
+        of the RenderView.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::shouldClipCompositedBounds): Not if it's inside an out of flow Flow Thread.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): Now adjusts the ancestorCompositingBounds for the FlowThread.
+        (WebCore::enclosingFlowThreadAncestor):
+        (WebCore::RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread): Make sure that the region propagates
+        its borders, paddings, outlines or box-shadows to layers inside it.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements): Now calls computeRegionCompositingRequirements.
+        (WebCore::RenderLayerCompositor::computeRegionCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree): Do not iterate the RenderFlowThread directly. We
+        are going to collect composited layers as part of regions.
+        (WebCore::RenderLayerCompositor::rebuildRegionCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::canBeComposited): CSS Regions flow threads do not need to be composited as we
+        use composited RenderRegions to render the background of the RenderFlowThread.
+        (WebCore::RenderLayerCompositor::requiresCompositingForIndirectReason): If it's a region.
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect):
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderObject::propagateStyleToAnonymousChildren): Not for RenderFlowThreads, as they are updated
+        through the RenderView::styleDidChange function.
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::setRequiresLayerForCompositing):
+        (WebCore::RenderRegion::adjustRegionBoundsFromFlowThreadPortionRect):
+        * rendering/RenderRegion.h:
+        (WebCore::toRenderRegion):
+        * rendering/RenderRegionSet.h:
+        (WebCore::RenderRegionSet::requiresLayer): Never.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+
 2013-09-26  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Unable to collect html element in a named flow
