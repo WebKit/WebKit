@@ -270,11 +270,13 @@ if (isAppleMacWebKit()) {
 # build options, etc.
 @projects = ("Source/WebKit") if $onlyWebKitProject;
 
-if (isInspectorFrontend()) {
-    exit exitStatus(copyInspectorFrontendFiles());
-}
-
 my $result = 0;
+
+if (isInspectorFrontend()) {
+    $result = copyInspectorFrontendFiles();
+    exit exitStatus($result) if exitStatus($result);
+    @projects = ("Source/WebInspectorUI");
+}
 
 if (isEfl()) {
     # By default we build using all of the available CPUs.
