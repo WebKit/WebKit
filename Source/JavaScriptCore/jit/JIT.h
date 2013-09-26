@@ -583,11 +583,8 @@ namespace JSC {
         void emitGetJITStubArg(int argumentNumber, RegisterID dst);
 
         void emitGetVirtualRegister(int src, RegisterID dst);
-        void emitGetVirtualRegister(VirtualRegister src, RegisterID dst);
         void emitGetVirtualRegisters(int src1, RegisterID dst1, int src2, RegisterID dst2);
-        void emitGetVirtualRegisters(VirtualRegister src1, RegisterID dst1, VirtualRegister src2, RegisterID dst2);
         void emitPutVirtualRegister(int dst, RegisterID from = regT0);
-        void emitPutVirtualRegister(VirtualRegister dst, RegisterID from = regT0);
         void emitStoreCell(int dst, RegisterID payload, bool /* only used in JSValue32_64 */ = false)
         {
             emitPutVirtualRegister(dst, payload);

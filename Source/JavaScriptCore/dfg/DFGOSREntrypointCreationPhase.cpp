@@ -101,7 +101,7 @@ public:
             VariableAccessData* variable = previousHead->variableAccessData();
             Node* node = newRoot->appendNode(
                 m_graph, variable->prediction(), ExtractOSREntryLocal, codeOrigin,
-                OpInfo(variable->local().offset()));
+                OpInfo(variable->local()));
             newRoot->appendNode(
                 m_graph, SpecNone, SetLocal, codeOrigin, OpInfo(variable), Edge(node));
         }

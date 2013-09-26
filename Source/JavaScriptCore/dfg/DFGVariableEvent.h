@@ -141,7 +141,7 @@ public:
         ASSERT(kind == BirthToSpill || kind == Spill);
         VariableEvent event;
         event.m_id = id;
-        event.u.virtualReg = virtualRegister.offset();
+        event.u.virtualReg = virtualRegister;
         event.m_kind = kind;
         event.m_dataFormat = format;
         return event;
@@ -155,10 +155,10 @@ public:
         return event;
     }
     
-    static VariableEvent setLocal(VirtualRegister virtualRegister, DataFormat format)
+    static VariableEvent setLocal(int operand, DataFormat format)
     {
         VariableEvent event;
-        event.u.virtualReg = virtualRegister.offset();
+        event.u.virtualReg = operand;
         event.m_kind = SetLocalEvent;
         event.m_dataFormat = format;
         return event;

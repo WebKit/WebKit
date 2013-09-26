@@ -46,26 +46,26 @@ class LazyOperandValueProfileKey {
 public:
     LazyOperandValueProfileKey()
         : m_bytecodeOffset(0) // 0 = empty value
-        , m_operand(VirtualRegister()) // not a valid operand index in our current scheme
+        , m_operand(InvalidVirtualRegister) // not a valid operand index in our current scheme
     {
     }
     
     LazyOperandValueProfileKey(WTF::HashTableDeletedValueType)
         : m_bytecodeOffset(1) // 1 = deleted value
-        , m_operand(VirtualRegister()) // not a valid operand index in our current scheme
+        , m_operand(InvalidVirtualRegister) // not a valid operand index in our current scheme
     {
     }
     
-    LazyOperandValueProfileKey(unsigned bytecodeOffset, VirtualRegister operand)
+    LazyOperandValueProfileKey(unsigned bytecodeOffset, int operand)
         : m_bytecodeOffset(bytecodeOffset)
         , m_operand(operand)
     {
-        ASSERT(m_operand.isValid());
+        ASSERT(operand != InvalidVirtualRegister);
     }
     
     bool operator!() const
     {
-        return !m_operand.isValid();
+        return m_operand == InvalidVirtualRegister;
     }
     
     bool operator==(const LazyOperandValueProfileKey& other) const
@@ -76,7 +76,7 @@ public:
     
     unsigned hash() const
     {
-        return WTF::intHash(m_bytecodeOffset) + m_operand.offset();
+        return WTF::intHash(m_bytecodeOffset) + m_operand;
     }
     
     unsigned bytecodeOffset() const
@@ -84,8 +84,7 @@ public:
         ASSERT(!!*this);
         return m_bytecodeOffset;
     }
-
-    VirtualRegister operand() const
+    int operand() const
     {
         ASSERT(!!*this);
         return m_operand;
@@ -93,11 +92,11 @@ public:
     
     bool isHashTableDeletedValue() const
     {
-        return !m_operand.isValid() && m_bytecodeOffset;
+        return m_operand == InvalidVirtualRegister && m_bytecodeOffset;
     }
 private: 
     unsigned m_bytecodeOffset;
-    VirtualRegister m_operand;
+    int m_operand;
 };
 
 struct LazyOperandValueProfileKeyHash {
@@ -130,7 +129,7 @@ namespace JSC {
 struct LazyOperandValueProfile : public MinimalValueProfile {
     LazyOperandValueProfile()
         : MinimalValueProfile()
-        , m_operand(VirtualRegister())
+        , m_operand(InvalidVirtualRegister)
     {
     }
     
@@ -145,7 +144,7 @@ struct LazyOperandValueProfile : public MinimalValueProfile {
         return LazyOperandValueProfileKey(m_bytecodeOffset, m_operand);
     }
     
-    VirtualRegister m_operand;
+    int m_operand;
     
     typedef SegmentedVector<LazyOperandValueProfile, 8> List;
 };

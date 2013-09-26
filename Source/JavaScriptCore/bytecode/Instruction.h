@@ -35,7 +35,6 @@
 #include "SpecialPointer.h"
 #include "Structure.h"
 #include "StructureChain.h"
-#include "VirtualRegister.h"
 #include <wtf/VectorTraits.h>
 
 namespace JSC {

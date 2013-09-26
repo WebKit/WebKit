@@ -48,7 +48,7 @@ SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     , m_generationInfo(m_jit.codeBlock()->m_numCalleeRegisters)
     , m_arguments(jit.codeBlock()->numParameters())
     , m_variables(jit.graph().m_localVars)
-    , m_lastSetOperand(VirtualRegister())
+    , m_lastSetOperand(std::numeric_limits<int>::max())
     , m_state(m_jit.graph())
     , m_interpreter(m_jit.graph(), m_state)
     , m_stream(&jit.jitCode()->variableEventStream)
@@ -1183,7 +1183,7 @@ void SpeculativeJIT::checkConsistency()
 
     for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
         VirtualRegister virtualRegister = iter.name();
-        if (!virtualRegister.isValid())
+        if (virtualRegister == InvalidVirtualRegister)
             continue;
 
         GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
@@ -1209,7 +1209,7 @@ void SpeculativeJIT::checkConsistency()
 
     for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
         VirtualRegister virtualRegister = iter.name();
-        if (!virtualRegister.isValid())
+        if (virtualRegister == InvalidVirtualRegister)
             continue;
 
         GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
@@ -1538,7 +1538,7 @@ void SpeculativeJIT::compileMovHint(Node* node)
     if (child->op() == UInt32ToNumber)
         noticeOSRBirth(child->child1().node());
     
-    m_stream->appendAndLog(VariableEvent::movHint(MinifiedID(child), node->local().offset()));
+    m_stream->appendAndLog(VariableEvent::movHint(MinifiedID(child), node->local()));
 }
 
 void SpeculativeJIT::compileMovHintAndCheck(Node* node)
@@ -1556,7 +1556,7 @@ void SpeculativeJIT::compileInlineStart(Node* node)
     CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
     for (int i = 0; i < argumentCountIncludingThis; ++i) {
         ValueRecovery recovery;
-        if (codeBlock->isCaptured(virtualRegisterForArgument(i)))
+        if (codeBlock->isCaptured(argumentToOperand(i)))
             recovery = ValueRecovery::alreadyInJSStack();
         else {
             ArgumentPosition& argumentPosition =
@@ -1639,7 +1639,7 @@ void SpeculativeJIT::compileCurrentBlock()
     for (size_t i = 0; i < m_arguments.size(); ++i) {
         ValueSource valueSource = ValueSource(ValueInJSStack);
         m_arguments[i] = valueSource;
-        m_stream->appendAndLog(VariableEvent::setLocal(virtualRegisterForArgument(i), valueSource.dataFormat()));
+        m_stream->appendAndLog(VariableEvent::setLocal(argumentToOperand(i), valueSource.dataFormat()));
     }
     
     m_state.reset();
@@ -1659,10 +1659,10 @@ void SpeculativeJIT::compileCurrentBlock()
             valueSource = ValueSource::forFlushFormat(node->variableAccessData()->flushFormat());
         m_variables[i] = valueSource;
         // FIXME: Don't emit SetLocal(Dead). https://bugs.webkit.org/show_bug.cgi?id=108019
-        m_stream->appendAndLog(VariableEvent::setLocal(virtualRegisterForLocal(i), valueSource.dataFormat()));
+        m_stream->appendAndLog(VariableEvent::setLocal(localToOperand(i), valueSource.dataFormat()));
     }
     
-    m_lastSetOperand = VirtualRegister();
+    m_lastSetOperand = std::numeric_limits<int>::max();
     m_codeOriginForExitTarget = CodeOrigin();
     m_codeOriginForExitProfile = CodeOrigin();
     

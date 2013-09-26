@@ -429,17 +429,17 @@ public:
         return hasExitSite(node->codeOrigin, exitKind);
     }
     
-    VirtualRegister argumentsRegisterFor(const CodeOrigin& codeOrigin)
+    int argumentsRegisterFor(const CodeOrigin& codeOrigin)
     {
         if (!codeOrigin.inlineCallFrame)
             return m_codeBlock->argumentsRegister();
         
-        return VirtualRegister(baselineCodeBlockForInlineCallFrame(
-            codeOrigin.inlineCallFrame)->argumentsRegister().offset() +
-            codeOrigin.inlineCallFrame->stackOffset);
+        return baselineCodeBlockForInlineCallFrame(
+            codeOrigin.inlineCallFrame)->argumentsRegister() +
+            codeOrigin.inlineCallFrame->stackOffset;
     }
     
-    VirtualRegister uncheckedArgumentsRegisterFor(const CodeOrigin& codeOrigin)
+    int uncheckedArgumentsRegisterFor(const CodeOrigin& codeOrigin)
     {
         if (!codeOrigin.inlineCallFrame)
             return m_codeBlock->uncheckedArgumentsRegister();
@@ -447,13 +447,13 @@ public:
         CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(
             codeOrigin.inlineCallFrame);
         if (!codeBlock->usesArguments())
-            return VirtualRegister();
+            return InvalidVirtualRegister;
         
-        return VirtualRegister(codeBlock->argumentsRegister().offset() +
-            codeOrigin.inlineCallFrame->stackOffset);
+        return codeBlock->argumentsRegister() +
+            codeOrigin.inlineCallFrame->stackOffset;
     }
     
-    VirtualRegister uncheckedActivationRegisterFor(const CodeOrigin&)
+    int uncheckedActivationRegisterFor(const CodeOrigin&)
     {
         // This will ignore CodeOrigin because we don't inline code that uses activations.
         // Hence for inlined call frames it will return the outermost code block's
@@ -472,14 +472,14 @@ public:
         CodeBlock* profiledBlock = baselineCodeBlockFor(node->codeOrigin);
         
         if (node->op() == GetArgument)
-            return profiledBlock->valueProfileForArgument(node->local().toArgument());
+            return profiledBlock->valueProfileForArgument(operandToArgument(node->local()));
         
         if (node->hasLocal(*this)) {
             if (m_form == SSA)
                 return 0;
-            if (!node->local().isArgument())
+            if (!operandIsArgument(node->local()))
                 return 0;
-            int argument = node->local().toArgument();
+            int argument = operandToArgument(node->local());
             if (node->variableAccessData() != m_arguments[argument]->variableAccessData())
                 return 0;
             return profiledBlock->valueProfileForArgument(argument);

@@ -60,7 +60,7 @@ ParserError BytecodeGenerator::generate()
 {
     SamplingRegion samplingRegion("Bytecode Generation");
     
-    m_codeBlock->setThisRegister(m_thisRegister.virtualRegister());
+    m_codeBlock->setThisRegister(m_thisRegister.index());
 
     m_scopeNode->emitBytecode(*this);
 
@@ -117,7 +117,7 @@ ParserError BytecodeGenerator::generate()
 bool BytecodeGenerator::addVar(const Identifier& ident, bool isConstant, RegisterID*& r0)
 {
     ConcurrentJITLocker locker(symbolTable().m_lock);
-    int index = virtualRegisterForLocal(m_calleeRegisters.size()).offset();
+    int index = localToOperand(m_calleeRegisters.size());
     SymbolTableEntry newEntry(index, isConstant ? ReadOnly : 0);
     SymbolTable::Map::AddResult result = symbolTable().add(locker, ident.impl(), newEntry);
 
@@ -230,10 +230,10 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     if (m_codeBlock->needsFullScopeChain()) {
         m_activationRegister = addVar();
         emitInitLazyRegister(m_activationRegister);
-        m_codeBlock->setActivationRegister(m_activationRegister->virtualRegister());
+        m_codeBlock->setActivationRegister(m_activationRegister->index());
     }
 
-    m_symbolTable->setCaptureStart(virtualRegisterForLocal(m_codeBlock->m_numVars).offset());
+    m_symbolTable->setCaptureStart(localToOperand(m_codeBlock->m_numVars));
 
     if (functionBody->usesArguments() || codeBlock->usesEval()) { // May reify arguments object.
         RegisterID* unmodifiedArgumentsRegister = addVar(); // Anonymous, so it can't be modified by user code.
@@ -242,8 +242,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         // We can save a little space by hard-coding the knowledge that the two
         // 'arguments' values are stored in consecutive registers, and storing
         // only the index of the assignable one.
-        codeBlock->setArgumentsRegister(argumentsRegister->virtualRegister());
-        ASSERT_UNUSED(unmodifiedArgumentsRegister, unmodifiedArgumentsRegister->virtualRegister() == JSC::unmodifiedArgumentsRegister(codeBlock->argumentsRegister()));
+        codeBlock->setArgumentsRegister(argumentsRegister->index());
+        ASSERT_UNUSED(unmodifiedArgumentsRegister, unmodifiedArgumentsRegister->index() == JSC::unmodifiedArgumentsRegister(codeBlock->argumentsRegister()));
 
         emitInitLazyRegister(argumentsRegister);
         emitInitLazyRegister(unmodifiedArgumentsRegister);
@@ -324,7 +324,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         instructions().append(m_activationRegister->index());
     }
 
-    m_symbolTable->setCaptureEnd(virtualRegisterForLocal(codeBlock->m_numVars).offset());
+    m_symbolTable->setCaptureEnd(localToOperand(codeBlock->m_numVars));
 
     m_firstLazyFunction = codeBlock->m_numVars;
     for (size_t i = 0; i < functionStack.size(); ++i) {
@@ -339,7 +339,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
                 emitNewFunction(reg.get(), function);
             else {
                 emitInitLazyRegister(reg.get());
-                m_lazyFunctions.set(reg->virtualRegister().toLocal(), function);
+                m_lazyFunctions.set(localToOperand(reg->index()), function);
             }
         }
     }
@@ -351,7 +351,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     }
 
     if (shouldCaptureAllTheThings)
-        m_symbolTable->setCaptureEnd(virtualRegisterForLocal(codeBlock->m_numVars).offset());
+        m_symbolTable->setCaptureEnd(localToOperand(codeBlock->m_numVars));
 
     m_parameters.grow(parameters.size() + 1); // reserve space for "this"
 
@@ -533,11 +533,8 @@ RegisterID* BytecodeGenerator::uncheckedRegisterForArguments()
 
 RegisterID* BytecodeGenerator::createLazyRegisterIfNecessary(RegisterID* reg)
 {
-    if (!reg->virtualRegister().isLocal())
-        return reg;
-
-    int localVariableNumber = reg->virtualRegister().toLocal();
-
+    int localVariableNumber = operandToLocal(reg->index());
+    
     if (m_lastLazyFunction <= localVariableNumber || localVariableNumber < m_firstLazyFunction)
         return reg;
     emitLazyNewFunction(reg, m_lazyFunctions.get(localVariableNumber));
@@ -546,7 +543,7 @@ RegisterID* BytecodeGenerator::createLazyRegisterIfNecessary(RegisterID* reg)
 
 RegisterID* BytecodeGenerator::newRegister()
 {
-    m_calleeRegisters.append(virtualRegisterForLocal(m_calleeRegisters.size()));
+    m_calleeRegisters.append(localToOperand(m_calleeRegisters.size()));
     m_codeBlock->m_numCalleeRegisters = max<int>(m_codeBlock->m_numCalleeRegisters, m_calleeRegisters.size());
     return &m_calleeRegisters.last();
 }
@@ -1149,7 +1146,7 @@ RegisterID* BytecodeGenerator::emitLoadGlobalObject(RegisterID* dst)
         ++m_nextConstantOffset;
         m_codeBlock->addConstant(JSValue());
         m_globalObjectRegister = &m_constantPoolRegisters[index];
-        m_codeBlock->setGlobalObjectRegister(VirtualRegister(index));
+        m_codeBlock->setGlobalObjectRegister(index);
     }
     if (dst)
         emitMove(dst, m_globalObjectRegister);
@@ -1293,7 +1290,7 @@ RegisterID* BytecodeGenerator::emitGetArgumentsLength(RegisterID* dst, RegisterI
 {
     emitOpcode(op_get_arguments_length);
     instructions().append(dst->index());
-    ASSERT(base->virtualRegister() == m_codeBlock->argumentsRegister());
+    ASSERT(base->index() == m_codeBlock->argumentsRegister());
     instructions().append(base->index());
     instructions().append(addConstant(propertyNames().length));
     return dst;
@@ -1368,7 +1365,7 @@ RegisterID* BytecodeGenerator::emitGetArgumentByVal(RegisterID* dst, RegisterID*
     UnlinkedArrayProfile arrayProfile = newArrayProfile();
     UnlinkedValueProfile profile = emitProfiledOpcode(op_get_argument_by_val);
     instructions().append(kill(dst));
-    ASSERT(base->virtualRegister() == m_codeBlock->argumentsRegister());
+    ASSERT(base->index() == m_codeBlock->argumentsRegister());
     instructions().append(base->index());
     instructions().append(property->index());
     instructions().append(arrayProfile);
@@ -1588,7 +1585,7 @@ void BytecodeGenerator::createArgumentsIfNecessary()
         return;
 
     emitOpcode(op_create_arguments);
-    instructions().append(m_codeBlock->argumentsRegister().offset());
+    instructions().append(m_codeBlock->argumentsRegister());
 }
 
 void BytecodeGenerator::createActivationIfNecessary()
@@ -1773,7 +1770,7 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
 
     if (m_codeBlock->usesArguments() && m_codeBlock->numParameters() != 1 && !isStrictMode()) {
         emitOpcode(op_tear_off_arguments);
-        instructions().append(m_codeBlock->argumentsRegister().offset());
+        instructions().append(m_codeBlock->argumentsRegister());
         instructions().append(m_activationRegister ? m_activationRegister->index() : emitLoad(0, JSValue())->index());
     }
 

@@ -67,8 +67,6 @@
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
 #include "VMStackBounds.h"
-#include "VirtualRegister.h"
-
 #include <limits.h>
 #include <stdio.h>
 #include <wtf/StackStats.h>
@@ -320,7 +318,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     while (it > end) {
         JSValue v = it->jsValue();
         int registerNumber = it - callFrame->registers();
-        String name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
+        String name = codeBlock->nameForRegister(registerNumber);
         dataLogF("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, toCString(v).data(), (long long)JSValue::encode(v));
         it++;
     }
@@ -354,7 +352,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
         do {
             JSValue v = it->jsValue();
             int registerNumber = it - callFrame->registers();
-            String name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
+            String name = codeBlock->nameForRegister(registerNumber);
             dataLogF("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, toCString(v).data(), (long long)JSValue::encode(v));
             --it;
             --registerCount;
@@ -410,13 +408,13 @@ static bool unwindCallFrame(StackVisitor& visitor)
 #if ENABLE(DFG_JIT)
         RELEASE_ASSERT(!visitor->isInlinedFrame());
 #endif
-        activation = callFrame->uncheckedR(oldCodeBlock->activationRegister().offset()).jsValue();
+        activation = callFrame->uncheckedR(oldCodeBlock->activationRegister()).jsValue();
         if (activation)
             jsCast<JSActivation*>(activation)->tearOff(*scope->vm());
     }
 
     if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->usesArguments()) {
-        if (JSValue arguments = visitor->r(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister()).offset()).jsValue()) {
+        if (JSValue arguments = visitor->r(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue()) {
             if (activation)
                 jsCast<Arguments*>(arguments)->didTearOffActivation(callFrame, jsCast<JSActivation*>(activation));
 #if ENABLE(DFG_JIT)
@@ -691,7 +689,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& ex
 
     // Unwind the scope chain within the exception handler's call frame.
     int targetScopeDepth = handler->scopeDepth;
-    if (codeBlock->needsActivation() && callFrame->uncheckedR(codeBlock->activationRegister().offset()).jsValue())
+    if (codeBlock->needsActivation() && callFrame->uncheckedR(codeBlock->activationRegister()).jsValue())
         ++targetScopeDepth;
 
     JSScope* scope = callFrame->scope();

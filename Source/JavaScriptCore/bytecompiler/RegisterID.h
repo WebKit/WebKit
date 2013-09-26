@@ -29,8 +29,6 @@
 #ifndef RegisterID_h
 #define RegisterID_h
 
-#include "VirtualRegister.h"
-
 #include <wtf/Assertions.h>
 #include <wtf/VectorTraits.h>
 
@@ -48,19 +46,9 @@ namespace JSC {
         {
         }
 
-        RegisterID(VirtualRegister virtualRegister)
-            : m_refCount(0)
-            , m_virtualRegister(virtualRegister)
-            , m_isTemporary(false)
-#ifndef NDEBUG
-            , m_didSetIndex(true)
-#endif
-        {
-        }
-        
         explicit RegisterID(int index)
             : m_refCount(0)
-            , m_virtualRegister(VirtualRegister(index))
+            , m_index(index)
             , m_isTemporary(false)
 #ifndef NDEBUG
             , m_didSetIndex(true)
@@ -74,7 +62,7 @@ namespace JSC {
 #ifndef NDEBUG
             m_didSetIndex = true;
 #endif
-            m_virtualRegister = VirtualRegister(index);
+            m_index = index;
         }
 
         void setTemporary()
@@ -85,13 +73,7 @@ namespace JSC {
         int index() const
         {
             ASSERT(m_didSetIndex);
-            return m_virtualRegister.offset();
-        }
-
-        VirtualRegister virtualRegister() const
-        {
-            ASSERT(m_virtualRegister.isValid());
-            return m_virtualRegister;
+            return m_index;
         }
 
         bool isTemporary()
@@ -118,7 +100,7 @@ namespace JSC {
     private:
 
         int m_refCount;
-        VirtualRegister m_virtualRegister;
+        int m_index;
         bool m_isTemporary;
 #ifndef NDEBUG
         bool m_didSetIndex;

@@ -38,11 +38,11 @@ namespace JSC { namespace FTL {
 class ExitArgumentForOperand {
 public:
     ExitArgumentForOperand()
-        : m_operand(VirtualRegister())
+        : m_operand(InvalidVirtualRegister)
     {
     }
     
-    ExitArgumentForOperand(ExitArgument exitArgument, VirtualRegister operand)
+    ExitArgumentForOperand(ExitArgument exitArgument, int operand)
         : m_exitArgument(exitArgument)
         , m_operand(operand)
     {
@@ -51,13 +51,13 @@ public:
     bool operator!() const { return !m_exitArgument; }
     
     const ExitArgument& exitArgument() const { return m_exitArgument; }
-    VirtualRegister operand() const { return m_operand; }
+    int operand() const { return m_operand; }
     
     void dump(PrintStream&) const;
     
 private:
     ExitArgument m_exitArgument;
-    VirtualRegister m_operand;
+    int m_operand;
 };
 
 inline bool lesserArgumentIndex(

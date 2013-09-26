@@ -156,7 +156,7 @@ public:
     
     static Address addressFor(VirtualRegister virtualRegister)
     {
-        return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register));
+        return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register));
     }
     static Address addressFor(int operand)
     {
@@ -165,7 +165,7 @@ public:
 
     static Address tagFor(VirtualRegister virtualRegister)
     {
-        return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
     static Address tagFor(int operand)
     {
@@ -174,7 +174,7 @@ public:
 
     static Address payloadFor(VirtualRegister virtualRegister)
     {
-        return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
     static Address payloadFor(int operand)
     {
@@ -380,16 +380,16 @@ public:
         return m_baselineCodeBlock;
     }
     
-    VirtualRegister argumentsRegisterFor(InlineCallFrame* inlineCallFrame)
+    int argumentsRegisterFor(InlineCallFrame* inlineCallFrame)
     {
         if (!inlineCallFrame)
             return codeBlock()->argumentsRegister();
         
-        return VirtualRegister(baselineCodeBlockForInlineCallFrame(
-            inlineCallFrame)->argumentsRegister().offset() + inlineCallFrame->stackOffset);
+        return baselineCodeBlockForInlineCallFrame(
+            inlineCallFrame)->argumentsRegister() + inlineCallFrame->stackOffset;
     }
     
-    VirtualRegister argumentsRegisterFor(const CodeOrigin& codeOrigin)
+    int argumentsRegisterFor(const CodeOrigin& codeOrigin)
     {
         return argumentsRegisterFor(codeOrigin.inlineCallFrame);
     }

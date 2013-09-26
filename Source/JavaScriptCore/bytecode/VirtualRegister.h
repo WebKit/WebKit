@@ -26,72 +26,15 @@
 #ifndef VirtualRegister_h
 #define VirtualRegister_h
 
-#include "CallFrame.h"
-
 #include <wtf/Platform.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {
 
-inline bool operandIsLocal(int operand)
-{
-    return operand <= 0;
-}
-
-inline bool operandIsArgument(int operand)
-{
-    return operand > 0;
-}
-
-
-class VirtualRegister {
-public:
-    friend VirtualRegister virtualRegisterForLocal(int);
-    friend VirtualRegister virtualRegisterForArgument(int, int);
-
-    VirtualRegister()
-        : m_virtualRegister(s_invalidVirtualRegister)
-    { }
-
-    explicit VirtualRegister(int virtualRegister)
-        : m_virtualRegister(virtualRegister)
-    { }
-
-    bool isValid() const { return (m_virtualRegister != s_invalidVirtualRegister); }
-    bool isLocal() const { return operandIsLocal(m_virtualRegister); }
-    bool isArgument() const { return operandIsArgument(m_virtualRegister); }
-    bool isConstant() const { return m_virtualRegister >= s_firstConstantRegisterIndex; }
-    int toLocal() const { ASSERT(isLocal()); return operandToLocal(m_virtualRegister); }
-    int toArgument() const { ASSERT(isArgument()); return operandToArgument(m_virtualRegister); }
-    int toConstantIndex() const { ASSERT(isConstant()); return m_virtualRegister - s_firstConstantRegisterIndex; }
-    int offset() const { return m_virtualRegister; }
-
-    bool operator==(const VirtualRegister other) const { return m_virtualRegister == other.m_virtualRegister; }
-    bool operator!=(const VirtualRegister other) const { return m_virtualRegister != other.m_virtualRegister; }
-
-private:
-    static const int s_invalidVirtualRegister = 0x3fffffff;
-    static const int s_firstConstantRegisterIndex = 0x40000000;
-
-    static int localToOperand(int local) { return -local; }
-    static int operandToLocal(int operand) { return -operand; }
-    static int operandToArgument(int operand) { return operand - CallFrame::thisArgumentOffset(); }
-    static int argumentToOperand(int argument) { return argument + CallFrame::thisArgumentOffset(); }
-
-    int m_virtualRegister;
-};
-
+// Type for a virtual register number (spill location).
+// Using an enum to make this type-checked at compile time, to avert programmer errors.
+enum VirtualRegister { InvalidVirtualRegister = 0x3fffffff };
 COMPILE_ASSERT(sizeof(VirtualRegister) == sizeof(int), VirtualRegister_is_32bit);
-
-inline VirtualRegister virtualRegisterForLocal(int local)
-{
-    return VirtualRegister(VirtualRegister::localToOperand(local));
-}
-
-inline VirtualRegister virtualRegisterForArgument(int argument, int offset = 0)
-{
-    return VirtualRegister(VirtualRegister::argumentToOperand(argument) + offset);
-}
 
 } // namespace JSC
 
@@ -99,7 +42,7 @@ namespace WTF {
 
 inline void printInternal(PrintStream& out, JSC::VirtualRegister value)
 {
-    out.print(value.offset());
+    out.print(static_cast<int>(value));
 }
 
 } // namespace WTF

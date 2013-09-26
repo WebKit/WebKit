@@ -115,7 +115,7 @@ void VariableEventStream::reconstruct(
     
     unsigned numVariables;
     if (codeOrigin.inlineCallFrame)
-        numVariables = baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame)->m_numCalleeRegisters + VirtualRegister(codeOrigin.inlineCallFrame->stackOffset).toLocal();
+        numVariables = baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame)->m_numCalleeRegisters + operandToLocal(codeOrigin.inlineCallFrame->stackOffset);
     else
         numVariables = baselineCodeBlock->m_numCalleeRegisters;
     
@@ -283,7 +283,7 @@ void VariableEventStream::reconstruct(
     // that those values don't have to be recovered. Signal this by using ValueRecovery::alreadyInJSStack()
     for (InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->caller.inlineCallFrame) {
         for (unsigned i = JSStack::CallFrameHeaderSize; i--;)
-            valueRecoveries.setLocal(VirtualRegister(inlineCallFrame->stackOffset).toLocal() - i - 1, ValueRecovery::alreadyInJSStack());
+            valueRecoveries.setLocal(operandToLocal(inlineCallFrame->stackOffset) - i - 1, ValueRecovery::alreadyInJSStack());
     }
 }
 

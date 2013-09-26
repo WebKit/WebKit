@@ -31,8 +31,6 @@
 #include "DFGOperations.h"
 #include "DFGOSRExitCompilerCommon.h"
 #include "Operations.h"
-#include "VirtualRegister.h"
-
 #include <wtf/DataLog.h>
 
 namespace JSC { namespace DFG {
@@ -396,7 +394,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
 
             if (!m_jit.baselineCodeBlockFor(inlineCallFrame)->usesArguments())
                 continue;
-            VirtualRegister argumentsRegister = m_jit.argumentsRegisterFor(inlineCallFrame);
+            int argumentsRegister = m_jit.argumentsRegisterFor(inlineCallFrame);
             if (didCreateArgumentsObject.add(inlineCallFrame).isNewEntry) {
                 // We know this call frame optimized out an arguments object that
                 // the baseline JIT would have created. Do that creation now.
@@ -424,7 +422,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     
     // 10) Load the result of the last bytecode operation into regT0.
     
-    if (exit.m_lastSetOperand.isValid())
+    if (exit.m_lastSetOperand != std::numeric_limits<int>::max())
         m_jit.load64(AssemblyHelpers::addressFor(exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
     
     // 11) And finish.

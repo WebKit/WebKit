@@ -28,12 +28,19 @@
 
 #include "CallFrame.h"
 #include "JSObject.h"
-#include "VirtualRegister.h"
-
 #include <wtf/PrintStream.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
+
+inline int localToOperand(int local) { return -local; }
+inline bool operandIsLocal(int operand) { return operand <= 0; }
+inline int operandToLocal(int operand) { return -operand; }
+
+// argument 0 is 'this'.
+inline bool operandIsArgument(int operand) { return operand > 0; }
+inline int operandToArgument(int operand) { return operand - CallFrame::thisArgumentOffset(); }
+inline int argumentToOperand(int argument) { return argument + CallFrame::thisArgumentOffset(); }
 
 template<typename T> struct OperandValueTraits;
 
@@ -136,43 +143,33 @@ public:
     T& operand(int operand)
     {
         if (operandIsArgument(operand)) {
-            int argument = VirtualRegister(operand).toArgument();
+            int argument = operandToArgument(operand);
             return m_arguments[argument];
         }
-
-        return m_locals[VirtualRegister(operand).toLocal()];
+        
+        return m_locals[operandToLocal(operand)];
     }
-
-    T& operand(VirtualRegister virtualRegister)
-    {
-        return operand(virtualRegister.offset());
-    }
-
+    
     const T& operand(int operand) const { return const_cast<const T&>(const_cast<Operands*>(this)->operand(operand)); }
     
     bool hasOperand(int operand) const
     {
         if (operandIsArgument(operand))
             return true;
-        return static_cast<size_t>(VirtualRegister(operand).toLocal()) < numberOfLocals();
+        return static_cast<size_t>(operandToLocal(operand)) < numberOfLocals();
     }
     
     void setOperand(int operand, const T& value)
     {
         if (operandIsArgument(operand)) {
-            int argument = VirtualRegister(operand).toArgument();
+            int argument = operandToArgument(operand);
             m_arguments[argument] = value;
             return;
         }
         
-        setLocal(VirtualRegister(operand).toLocal(), value);
+        setLocal(operandToLocal(operand), value);
     }
     
-    void setOperand(VirtualRegister virtualRegister, const T& value)
-    {
-        setOperand(virtualRegister.offset(), value);
-    }
-
     size_t size() const { return numberOfArguments() + numberOfLocals(); }
     const T& at(size_t index) const
     {
@@ -202,18 +199,18 @@ public:
     int operandForIndex(size_t index) const
     {
         if (index < numberOfArguments())
-            return virtualRegisterForArgument(index).offset();
-        return virtualRegisterForLocal(index - numberOfArguments()).offset();
+            return argumentToOperand(index);
+        return localToOperand(index - numberOfArguments());
     }
     
     void setOperandFirstTime(int operand, const T& value)
     {
         if (operandIsArgument(operand)) {
-            setArgumentFirstTime(VirtualRegister(operand).toArgument(), value);
+            setArgumentFirstTime(operandToArgument(operand), value);
             return;
         }
         
-        setLocalFirstTime(VirtualRegister(operand).toLocal(), value);
+        setLocalFirstTime(operandToLocal(operand), value);
     }
     
     void fill(T value)

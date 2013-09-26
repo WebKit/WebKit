@@ -78,7 +78,7 @@ public:
         // Validate that all local variables at the head of the root block are dead.
         BasicBlock* root = m_graph.block(0);
         for (unsigned i = 0; i < root->variablesAtHead.numberOfLocals(); ++i)
-            V_EQUAL((virtualRegisterForLocal(i), 0), static_cast<Node*>(0), root->variablesAtHead.local(i));
+            V_EQUAL((static_cast<VirtualRegister>(localToOperand(i)), 0), static_cast<Node*>(0), root->variablesAtHead.local(i));
         
         // Validate ref counts and uses.
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
@@ -317,17 +317,17 @@ private:
                 block->variablesAtHead.numberOfLocals());
             
             for (size_t i = 0; i < block->variablesAtHead.numberOfArguments(); ++i) {
-                VALIDATE((virtualRegisterForArgument(i), block), !block->variablesAtHead.argument(i) || block->variablesAtHead.argument(i)->hasVariableAccessData(m_graph));
+                VALIDATE((static_cast<VirtualRegister>(argumentToOperand(i)), block), !block->variablesAtHead.argument(i) || block->variablesAtHead.argument(i)->hasVariableAccessData(m_graph));
                 if (m_graph.m_form == ThreadedCPS)
-                    VALIDATE((virtualRegisterForArgument(i), block), !block->variablesAtTail.argument(i) || block->variablesAtTail.argument(i)->hasVariableAccessData(m_graph));
+                    VALIDATE((static_cast<VirtualRegister>(argumentToOperand(i)), block), !block->variablesAtTail.argument(i) || block->variablesAtTail.argument(i)->hasVariableAccessData(m_graph));
                 
                 getLocalPositions.argument(i) = notSet;
                 setLocalPositions.argument(i) = notSet;
             }
             for (size_t i = 0; i < block->variablesAtHead.numberOfLocals(); ++i) {
-                VALIDATE((virtualRegisterForLocal(i), block), !block->variablesAtHead.local(i) || block->variablesAtHead.local(i)->hasVariableAccessData(m_graph));
+                VALIDATE((static_cast<VirtualRegister>(localToOperand(i)), block), !block->variablesAtHead.local(i) || block->variablesAtHead.local(i)->hasVariableAccessData(m_graph));
                 if (m_graph.m_form == ThreadedCPS)
-                    VALIDATE((virtualRegisterForLocal(i), block), !block->variablesAtTail.local(i) || block->variablesAtTail.local(i)->hasVariableAccessData(m_graph));
+                    VALIDATE((static_cast<VirtualRegister>(localToOperand(i)), block), !block->variablesAtTail.local(i) || block->variablesAtTail.local(i)->hasVariableAccessData(m_graph));
 
                 getLocalPositions.local(i) = notSet;
                 setLocalPositions.local(i) = notSet;
@@ -389,18 +389,18 @@ private:
             
             for (size_t i = 0; i < block->variablesAtHead.numberOfArguments(); ++i) {
                 checkOperand(
-                    block, getLocalPositions, setLocalPositions, virtualRegisterForArgument(i));
+                    block, getLocalPositions, setLocalPositions, argumentToOperand(i));
             }
             for (size_t i = 0; i < block->variablesAtHead.numberOfLocals(); ++i) {
                 checkOperand(
-                    block, getLocalPositions, setLocalPositions, virtualRegisterForLocal(i));
+                    block, getLocalPositions, setLocalPositions, localToOperand(i));
             }
         }
     }
     
     void checkOperand(
         BasicBlock* block, Operands<size_t>& getLocalPositions,
-        Operands<size_t>& setLocalPositions, VirtualRegister operand)
+        Operands<size_t>& setLocalPositions, int operand)
     {
         if (getLocalPositions.operand(operand) == notSet)
             return;
@@ -432,23 +432,23 @@ private:
     void reportValidationContext(VirtualRegister local, BasicBlock* block)
     {
         if (!block) {
-            dataLog("r", local, " in null Block ");
+            dataLog("r", static_cast<int>(local), " in null Block ");
             return;
         }
 
-        dataLog("r", local, " in Block ", *block);
+        dataLog("r", static_cast<int>(local), " in Block ", *block);
     }
     
     void reportValidationContext(
         VirtualRegister local, BasicBlock* sourceBlock, BasicBlock* destinationBlock)
     {
-        dataLog("r", local, " in Block ", *sourceBlock, " -> ", *destinationBlock);
+        dataLog("r", static_cast<int>(local), " in Block ", *sourceBlock, " -> ", *destinationBlock);
     }
     
     void reportValidationContext(
         VirtualRegister local, BasicBlock* sourceBlock, Node* prevNode)
     {
-        dataLog(prevNode, " for r", local, " in Block ", *sourceBlock);
+        dataLog(prevNode, " for r", static_cast<int>(local), " in Block ", *sourceBlock);
     }
     
     void reportValidationContext(Node* node, BasicBlock* block)

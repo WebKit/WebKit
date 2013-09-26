@@ -758,7 +758,7 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
         return;
     }
 
-    if (src == m_lastResultBytecodeRegister && operandIsLocal(src) && m_codeBlock->isTemporaryRegisterIndex(VirtualRegister(src).toLocal()) && !atJumpTarget()) {
+    if (src == m_lastResultBytecodeRegister && m_codeBlock->isTemporaryRegisterIndex(operandToLocal(src)) && !atJumpTarget()) {
         // The argument we want is already stored in eax
         if (dst != cachedResultRegister)
             move(cachedResultRegister, dst);
@@ -770,11 +770,6 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
     killLastResultRegister();
 }
 
-ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, RegisterID dst)
-{
-    emitGetVirtualRegister(src.offset(), dst);
-}
-
 ALWAYS_INLINE void JIT::emitGetVirtualRegisters(int src1, RegisterID dst1, int src2, RegisterID dst2)
 {
     if (src2 == m_lastResultBytecodeRegister) {
@@ -784,11 +779,6 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegisters(int src1, RegisterID dst1, int s
         emitGetVirtualRegister(src1, dst1);
         emitGetVirtualRegister(src2, dst2);
     }
-}
-
-ALWAYS_INLINE void JIT::emitGetVirtualRegisters(VirtualRegister src1, RegisterID dst1, VirtualRegister src2, RegisterID dst2)
-{
-    emitGetVirtualRegisters(src1.offset(), dst1, src2.offset(), dst2);
 }
 
 ALWAYS_INLINE int32_t JIT::getConstantOperandImmediateInt(int src)
@@ -805,11 +795,6 @@ ALWAYS_INLINE void JIT::emitPutVirtualRegister(int dst, RegisterID from)
 {
     store64(from, Address(callFrameRegister, dst * sizeof(Register)));
     m_lastResultBytecodeRegister = (from == cachedResultRegister) ? dst : std::numeric_limits<int>::max();
-}
-
-ALWAYS_INLINE void JIT::emitPutVirtualRegister(VirtualRegister dst, RegisterID from)
-{
-    emitPutVirtualRegister(dst.offset(), from);
 }
 
 ALWAYS_INLINE void JIT::emitInitRegister(int dst)

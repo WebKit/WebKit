@@ -118,15 +118,15 @@ public:
     {
         for (unsigned i = 0; i < m_variables.size(); ++i) {
             VariableAccessData* variable = m_variables[i]->find();
-            VirtualRegister operand = variable->local();
+            int operand = variable->operand();
 
             if (i)
                 out.print(" ");
 
-            if (operand.isArgument())
-                out.print("arg", operand.toArgument(), "(", VariableAccessDataDump(*graph, variable), ")");
+            if (operandIsArgument(operand))
+                out.print("arg", operandToArgument(operand), "(", VariableAccessDataDump(*graph, variable), ")");
             else
-                out.print("r", operand.toLocal(), "(", VariableAccessDataDump(*graph, variable), ")");
+                out.print("r", operand, "(", VariableAccessDataDump(*graph, variable), ")");
         }
         out.print("\n");
     }
