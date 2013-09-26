@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-MediaStreamCenter& MediaStreamCenter::instance()
+MediaStreamCenter& MediaStreamCenter::platformCenter()
 {
     ASSERT(isMainThread());
     DEFINE_STATIC_LOCAL(MediaStreamCenterGStreamer, center, ());
@@ -56,37 +56,47 @@ MediaStreamCenterGStreamer::~MediaStreamCenterGStreamer()
 {
 }
 
-void MediaStreamCenterGStreamer::queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient> client)
+void MediaStreamCenterGStreamer::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints>, PassRefPtr<MediaConstraints>)
 {
-    MediaStreamSourceVector audioSources, videoSources;
-    client->didCompleteQuery(audioSources, videoSources);
+    notImplemented();
+}
+    
+void MediaStreamCenterGStreamer::createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints>, PassRefPtr<MediaConstraints>)
+{
+    notImplemented();
 }
 
-bool MediaStreamCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>)
+bool MediaStreamCenterGStreamer::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>)
 {
+    notImplemented();
     return false;
 }
 
-void MediaStreamCenterGStreamer::didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*)
+void MediaStreamCenterGStreamer::didSetMediaStreamTrackEnabled(MediaStreamSource*)
 {
+    notImplemented();
 }
 
-bool MediaStreamCenterGStreamer::didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+bool MediaStreamCenterGStreamer::didAddMediaStreamTrack(MediaStreamSource*)
 {
+    notImplemented();
     return false;
 }
 
-bool MediaStreamCenterGStreamer::didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+bool MediaStreamCenterGStreamer::didRemoveMediaStreamTrack(MediaStreamSource*)
 {
+    notImplemented();
     return false;
 }
 
-void MediaStreamCenterGStreamer::didStopLocalMediaStream(MediaStreamDescriptor*)
+void MediaStreamCenterGStreamer::didStopLocalMediaStream(MediaStreamDescriptor* stream)
 {
+    endLocalMediaStream(stream);
 }
 
 void MediaStreamCenterGStreamer::didCreateMediaStream(MediaStreamDescriptor*)
 {
+    notImplemented();
 }
 
 } // namespace WebCore

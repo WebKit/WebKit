@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,45 +29,64 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Dictionary.h"
 #include "Event.h"
 #include "ExceptionCode.h"
+#include "MediaStream.h"
 #include "MediaStreamCenter.h"
-#include "MediaStreamComponent.h"
+#include "MediaStreamDescriptor.h"
 #include "MediaStreamTrackSourcesCallback.h"
 #include "MediaStreamTrackSourcesRequest.h"
+#include "UUID.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext* context, MediaStreamComponent* component)
+PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext* context, const Dictionary& videoConstraints)
 {
-    RefPtr<MediaStreamTrack> track = adoptRef(new MediaStreamTrack(context, component));
-    track->suspendIfNeeded();
+    RefPtr<MediaStreamTrack> track = adoptRef(new MediaStreamTrack(context, 0, &videoConstraints));
     return track.release();
 }
 
-MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext* context, MediaStreamComponent* component)
-    : ActiveDOMObject(context)
-    , m_component(component)
-    , m_stopped(false)
+PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext* context, MediaStreamSource* source)
 {
-    m_component->source()->addObserver(this);
+    RefPtr<MediaStreamTrack> track = adoptRef(new MediaStreamTrack(context, source, 0));
+    return track.release();
+}
+
+MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext* context, MediaStreamSource* source, const Dictionary*)
+    : ActiveDOMObject(context)
+    , m_source(source)
+    , m_readyState(MediaStreamSource::New)
+    , m_stopped(false)
+    , m_enabled(true)
+    , m_muted(false)
+{
+    suspendIfNeeded();
+    if (m_source) {
+        m_source->addObserver(this);
+        m_muted = m_source->muted();
+    }
 }
 
 MediaStreamTrack::~MediaStreamTrack()
 {
-    m_component->source()->removeObserver(this);
+    if (m_source)
+        m_source->removeObserver(this);
 }
 
-AtomicString MediaStreamTrack::kind() const
+const AtomicString& MediaStreamTrack::kind() const
 {
+    if (!m_source)
+        return emptyAtom;
+
     static NeverDestroyed<AtomicString> audioKind("audio", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> videoKind("video", AtomicString::ConstructFromLiteral);
 
-    switch (m_component->source()->type()) {
-    case MediaStreamSource::TypeAudio:
+    switch (m_source->type()) {
+    case MediaStreamSource::Audio:
         return audioKind;
-    case MediaStreamSource::TypeVideo:
+    case MediaStreamSource::Video:
         return videoKind;
     }
 
@@ -74,49 +94,81 @@ AtomicString MediaStreamTrack::kind() const
     return emptyAtom;
 }
 
-String MediaStreamTrack::id() const
+void MediaStreamTrack::setSource(MediaStreamSource* source)
 {
-    return m_component->id();
+    ASSERT(source == m_source || !m_source);
+    m_source = source;
 }
 
-String MediaStreamTrack::label() const
+const String& MediaStreamTrack::id() const
 {
-    return m_component->source()->name();
+    if (!m_id.isEmpty())
+        return m_id;
+
+    if (!m_source)
+        return emptyString();
+
+    const String& id = m_source->id();
+    if (!id.isEmpty())
+        return id;
+
+    // The spec says:
+    //   Unless a MediaStreamTrack object is created as a part a of special purpose algorithm that
+    //   specifies how the track id must be initialized, the user agent must generate a globally
+    //   unique identifier string and initialize the object's id attribute to that string.
+    // so generate a UUID if the source doesn't have an ID.
+    m_id = createCanonicalUUIDString();
+    return m_id;
+}
+
+const String& MediaStreamTrack::label() const
+{
+    if (m_source)
+        return m_source->name();
+    return emptyString();
 }
 
 bool MediaStreamTrack::enabled() const
 {
-    return m_component->enabled();
+    return m_enabled;
 }
 
 void MediaStreamTrack::setEnabled(bool enabled)
 {
-    if (m_stopped || enabled == m_component->enabled())
+    if (m_stopped)
+        return;
+    
+    m_enabled = enabled;
+
+    if (!m_source || enabled == m_source->enabled())
         return;
 
-    m_component->setEnabled(enabled);
+    m_source->setEnabled(enabled);
 
-    if (m_component->stream()->ended())
+    if (m_source->stream()->ended())
         return;
 
-    MediaStreamCenter::instance().didSetMediaStreamTrackEnabled(m_component->stream(), m_component.get());
+    MediaStreamCenter::shared().didSetMediaStreamTrackEnabled(m_source.get());
 }
 
-AtomicString MediaStreamTrack::readyState() const
+const AtomicString& MediaStreamTrack::readyState() const
 {
     static NeverDestroyed<AtomicString> ended("ended", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> live("live", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> muted("muted", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> newState("new", AtomicString::ConstructFromLiteral);
+
+    if (!m_source)
+        return newState;
 
     if (m_stopped)
         return ended;
 
-    switch (m_component->source()->readyState()) {
-    case MediaStreamSource::ReadyStateLive:
+    switch (m_source->readyState()) {
+    case MediaStreamSource::Live:
         return live;
-    case MediaStreamSource::ReadyStateMuted:
-        return muted;
-    case MediaStreamSource::ReadyStateEnded:
+    case MediaStreamSource::New:
+        return newState;
+    case MediaStreamSource::Ended:
         return ended;
     }
 
@@ -127,13 +179,13 @@ AtomicString MediaStreamTrack::readyState() const
 void MediaStreamTrack::getSources(ScriptExecutionContext* context, PassRefPtr<MediaStreamTrackSourcesCallback> callback, ExceptionCode& ec)
 {
     RefPtr<MediaStreamTrackSourcesRequest> request = MediaStreamTrackSourcesRequest::create(context, callback);
-    if (!MediaStreamCenter::instance().getMediaStreamTrackSources(request.release()))
+    if (!MediaStreamCenter::shared().getMediaStreamTrackSources(request.release()))
         ec = NOT_SUPPORTED_ERR;
 }
 
 bool MediaStreamTrack::ended() const
 {
-    return m_stopped || (m_component->source()->readyState() == MediaStreamSource::ReadyStateEnded);
+    return m_stopped || (m_source && m_source->readyState() == MediaStreamSource::Ended);
 }
 
 void MediaStreamTrack::sourceChangedState()
@@ -141,32 +193,32 @@ void MediaStreamTrack::sourceChangedState()
     if (m_stopped)
         return;
 
-    switch (m_component->source()->readyState()) {
-    case MediaStreamSource::ReadyStateLive:
-        dispatchEvent(Event::create(eventNames().unmuteEvent, false, false));
-        break;
-    case MediaStreamSource::ReadyStateMuted:
-        dispatchEvent(Event::create(eventNames().muteEvent, false, false));
-        break;
-    case MediaStreamSource::ReadyStateEnded:
+    MediaStreamSource::ReadyState oldReadyState = m_readyState;
+    m_readyState = m_source->readyState();
+
+    if (m_readyState >= MediaStreamSource::Live && oldReadyState == MediaStreamSource::New)
+        dispatchEvent(Event::create(eventNames().startedEvent, false, false));
+    if (m_readyState == MediaStreamSource::Ended && oldReadyState != MediaStreamSource::Ended)
         dispatchEvent(Event::create(eventNames().endedEvent, false, false));
-        didEndTrack();
-        break;
-    }
+
+    if (m_muted == m_source->muted())
+        return;
+
+    m_muted = m_source->muted();
+    if (m_muted)
+        dispatchEvent(Event::create(eventNames().muteEvent, false, false));
+    else
+        dispatchEvent(Event::create(eventNames().unmuteEvent, false, false));
 }
 
-void MediaStreamTrack::didEndTrack()
+void MediaStreamTrack::trackDidEnd()
 {
-    MediaStreamDescriptorClient* client = m_component->stream()->client();
+    // FIXME: this is wrong, the track shouldn't have to call the descriptor's client!
+    MediaStreamDescriptorClient* client = m_source ? m_source->stream()->client() : 0;
     if (!client)
         return;
     
-    client->trackEnded();
-}
-
-MediaStreamComponent* MediaStreamTrack::component()
-{
-    return m_component.get();
+    client->trackDidEnd();
 }
 
 void MediaStreamTrack::stop()

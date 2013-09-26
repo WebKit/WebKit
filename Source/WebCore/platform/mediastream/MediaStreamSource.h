@@ -42,6 +42,9 @@
 
 namespace WebCore {
 
+class AudioBus;
+class MediaStreamDescriptor;
+
 class MediaStreamSource : public RefCounted<MediaStreamSource> {
 public:
     class Observer {
@@ -50,25 +53,13 @@ public:
         virtual void sourceChangedState() = 0;
     };
 
-    class ExtraData : public RefCounted<ExtraData> {
-    public:
-        virtual ~ExtraData() { }
-    };
+    enum Type { Audio, Video };
+    enum ReadyState { New = 0, Live = 1, Ended = 2 };
 
-    enum Type {
-        TypeAudio,
-        TypeVideo
-    };
-
-    enum ReadyState {
-        ReadyStateLive = 0,
-        ReadyStateMuted = 1,
-        ReadyStateEnded = 2
-    };
-
-    static PassRefPtr<MediaStreamSource> create(const String& id, Type, const String& name, ReadyState = ReadyStateLive, bool requiresConsumer = false);
+    static PassRefPtr<MediaStreamSource> create(const String& id, Type, const String& name, ReadyState = New, bool requiresConsumer = false);
 
     const String& id() const { return m_id; }
+
     Type type() const { return m_type; }
     const String& name() const { return m_name; }
 
@@ -78,22 +69,28 @@ public:
     void addObserver(Observer*);
     void removeObserver(Observer*);
 
-    PassRefPtr<ExtraData> extraData() const { return m_extraData; }
-    void setExtraData(PassRefPtr<ExtraData> extraData) { m_extraData = extraData; }
-
     void setConstraints(PassRefPtr<MediaConstraints> constraints) { m_constraints = constraints; }
-    MediaConstraints* constraints() { return m_constraints.get(); }
+    MediaConstraints* constraints() const { return m_constraints.get(); }
 
-    const String& deviceId() { return m_deviceId; }
+    const String& deviceId() const { return m_deviceId; }
     void setDeviceId(const String& deviceId) { m_deviceId = deviceId; }
 
+    bool enabled() const { return m_enabled; }
+    void setEnabled(bool enabled) { m_enabled = enabled; }
+
+    bool muted() const { return m_muted; }
+    void setMuted(bool);
+    
     void setAudioFormat(size_t numberOfChannels, float sampleRate);
     void consumeAudio(AudioBus*, size_t numberOfFrames);
+
+    MediaStreamDescriptor* stream() const { return m_stream; }
+    void setStream(MediaStreamDescriptor*);
 
     bool requiresAudioConsumer() const { return m_requiresConsumer; }
     void addAudioConsumer(PassRefPtr<AudioDestinationConsumer>);
     bool removeAudioConsumer(AudioDestinationConsumer*);
-    const Vector<RefPtr<AudioDestinationConsumer> >& audioConsumers() { return m_audioConsumers; }
+    const Vector<RefPtr<AudioDestinationConsumer> >& audioConsumers() const { return m_audioConsumers; }
 
 private:
     MediaStreamSource(const String& id, Type, const String& name, ReadyState, bool requiresConsumer);
@@ -103,12 +100,15 @@ private:
     String m_name;
     ReadyState m_readyState;
     String m_deviceId;
-    bool m_requiresConsumer;
     Vector<Observer*> m_observers;
     Mutex m_audioConsumersLock;
-    Vector<RefPtr<AudioDestinationConsumer> > m_audioConsumers;
-    RefPtr<ExtraData> m_extraData;
+    Vector<RefPtr<AudioDestinationConsumer>> m_audioConsumers;
     RefPtr<MediaConstraints> m_constraints;
+    MediaStreamDescriptor* m_stream;
+
+    bool m_requiresConsumer;
+    bool m_enabled;
+    bool m_muted;
 };
 
 typedef Vector<RefPtr<MediaStreamSource> > MediaStreamSourceVector;

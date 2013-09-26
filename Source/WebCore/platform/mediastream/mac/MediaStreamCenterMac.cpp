@@ -34,15 +34,15 @@
 
 #include "MediaStreamCenterMac.h"
 
+#include "MediaStreamCreationClient.h"
 #include "MediaStreamDescriptor.h"
-#include "MediaStreamSourcesQueryClient.h"
 #include "MediaStreamTrackSourcesRequestClient.h"
 #include "NotImplemented.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 
-MediaStreamCenter& MediaStreamCenter::instance()
+MediaStreamCenter& MediaStreamCenter::platformCenter()
 {
     ASSERT(isMainThread());
     DEFINE_STATIC_LOCAL(MediaStreamCenterMac, center, ());
@@ -57,7 +57,12 @@ MediaStreamCenterMac::~MediaStreamCenterMac()
 {
 }
 
-void MediaStreamCenterMac::queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient>)
+void MediaStreamCenterMac::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints>, PassRefPtr<MediaConstraints>)
+{
+    notImplemented();
+}
+    
+void MediaStreamCenterMac::createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints>, PassRefPtr<MediaConstraints>)
 {
     notImplemented();
 }
@@ -68,18 +73,18 @@ bool MediaStreamCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrac
     return false;
 }
 
-void MediaStreamCenterMac::didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*)
+void MediaStreamCenterMac::didSetMediaStreamTrackEnabled(MediaStreamSource*)
 {
     notImplemented();
 }
 
-bool MediaStreamCenterMac::didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+bool MediaStreamCenterMac::didAddMediaStreamTrack(MediaStreamSource*)
 {
     notImplemented();
     return false;
 }
 
-bool MediaStreamCenterMac::didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+bool MediaStreamCenterMac::didRemoveMediaStreamTrack(MediaStreamSource*)
 {
     notImplemented();
     return false;

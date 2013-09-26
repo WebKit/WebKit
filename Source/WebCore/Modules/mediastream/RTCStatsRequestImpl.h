@@ -46,7 +46,6 @@ public:
     virtual PassRefPtr<RTCStatsResponseBase> createResponse() OVERRIDE;
     virtual bool hasSelector() OVERRIDE;
     virtual MediaStreamDescriptor* stream() OVERRIDE;
-    virtual MediaStreamComponent* component() OVERRIDE;
 
     virtual void requestSucceeded(PassRefPtr<RTCStatsResponseBase>) OVERRIDE;
 
@@ -60,7 +59,6 @@ private:
 
     RefPtr<RTCStatsCallback> m_successCallback;
     RefPtr<MediaStreamDescriptor> m_stream;
-    RefPtr<MediaStreamComponent> m_component;
 };
 
 } // namespace WebCore

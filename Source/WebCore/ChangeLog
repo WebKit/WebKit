@@ -1,46 +1,144 @@
-2013-09-26  Tim Horton  <timothy_horton@apple.com>
+2013-09-26  Eric Carlson  <eric.carlson@apple.com>
 
-        Tiled drawing should not imply threaded scrolling
-        https://bugs.webkit.org/show_bug.cgi?id=121874
-        <rdar://problem/15071494>
+        [MediaStream] Cleanup platform interface
+        https://bugs.webkit.org/show_bug.cgi?id=121935
 
-        Reviewed by Sam Weinig.
+        Reviewed by Jer Noble.
 
-        No new tests; a near-future patch is going to put the majority of layout
-        tests into the tiled-drawing-without-threaded-scrolling mode.
+        No new tests, tests will be updated in the next patch.
 
-        * page/ChromeClient.h:
-        (WebCore::ChromeClient::shouldUseTiledBackingForFrame):
-        Add a ChromeClient callback to determine whether a given frame wants a TiledBacking for its contents.
+        * CMakeLists.txt: Remove MediaStreamComponent.cpp.
+        * GNUmakefile.list.am: Remove MediaStreamComponent.h|cpp and MediaStreamSourcesQueryClient.h. 
+            Add MediaStreamConstraintsValidationClient.h and MediaStreamCreationClient.h.
 
-        * page/FrameView.h:
-        * WebCore.exp.in:
-        Make isMainFrameView public and export it for use in WebKit2.
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::processTrack): Duplicate MediaStreamSource when necessary to work around bug 121954.
+        (WebCore::createFromSourceVectors): MediaStreamCenter::instance -> MediaStream::sharedStreamCenter.
+        (WebCore::MediaStream::MediaStream): *Components -> *Streams.
+        (WebCore::MediaStream::setEnded): New.
+        (WebCore::MediaStream::stop):  MediaStreamCenter::instance -> MediaStream::sharedStreamCenter.
+        (WebCore::MediaStream::addTrack): Append the track parameter rather than duplicating it, as per spec.
+        (WebCore::MediaStream::removeTrack): *Components -> *Streams.
+        (WebCore::MediaStream::trackDidEnd): Renamed from trackEnded.
+        (WebCore::MediaStream::streamDidEnd): Renamed from streamEnded.
+        (WebCore::MediaStream::addRemoteSource): Renamed from addRemoteTrack. *Components -> *Streams.
+        (WebCore::MediaStream::removeRemoteSource): Renamed from removeRemoteTrack. *Components -> *Streams.
+        * Modules/mediastream/MediaStream.h:
 
-        * rendering/RenderLayerBacking.cpp:
-        (WebCore::RenderLayerBacking::RenderLayerBacking):
-        Make use of shouldUseTiledBackingForFrame instead of predicating the
-        main frame using a tile cache on whether we have a scrolling coordinator.
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::create): *Component -> *Stream.
+        (WebCore::MediaStreamTrack::MediaStreamTrack): Don't assume source is valid.
+        (WebCore::MediaStreamTrack::~MediaStreamTrack): Ditto.
+        (WebCore::MediaStreamTrack::kind): Ditto. AtomicString -> const AtomicString&.
+        (WebCore::MediaStreamTrack::setSource): Moved from .h file.
+        (WebCore::MediaStreamTrack::id): Don't assume source is valid. Create ID when the source doesn't have one.
+        (WebCore::MediaStreamTrack::label): Don't assume source is valid.
+        (WebCore::MediaStreamTrack::enabled): 
+        (WebCore::MediaStreamTrack::setEnabled): *Component -> *Stream. MediaStreamCenter::instance -> MediaStreamCenter::shared.
+        (WebCore::MediaStreamTrack::readyState): "muted" is not a readyState, but "new" is.
+        (WebCore::MediaStreamTrack::getSources): MediaStreamCenter::instance -> MediaStreamCenter::shared.
+        (WebCore::MediaStreamTrack::ended): *Component -> *Stream.
+        (WebCore::MediaStreamTrack::sourceChangedState): Dispatch "started" and "unmuted" events.
+        (WebCore::MediaStreamTrack::trackDidEnd): Renamed from didEndTrack. m_component -> m_source.
+        * Modules/mediastream/MediaStreamTrack.h:
 
-        * rendering/RenderLayerCompositor.cpp:
-        (WebCore::RenderLayerCompositor::mainFrameBackingIsTiled): Added.
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        (WebCore::RTCDTMFSender::create): track->component() -> track->source();
 
-        (WebCore::RenderLayerCompositor::shouldCompositeOverflowControls):
-        (WebCore::RenderLayerCompositor::requiresOverhangAreasLayer):
-        (WebCore::RenderLayerCompositor::requiresContentShadowLayer):
-        All of these checks for existence of a scrollingCoordinator should actually
-        key off whether we're using tiled drawing at the root; they have nothing
-        to do with threaded scrolling.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::didRemoveRemoteStream): Ditto.
 
-        * rendering/RenderLayerCompositor.h:
+        * Modules/mediastream/RTCStatsRequestImpl.cpp:
+        (WebCore::RTCStatsRequestImpl::RTCStatsRequestImpl): Ditto.
+        (WebCore::RTCStatsRequestImpl::component): Removed, it was unused.
+        * Modules/mediastream/RTCStatsRequestImpl.h:
 
-2013-09-26  Brady Eidson  <beidson@apple.com>
+        * Modules/mediastream/UserMediaClient.h:
+        * Modules/mediastream/UserMediaController.h:
+        (WebCore::UserMediaController::requestPermission): Renamed from requestUserMedia, get rid of source
+            vector parameters.
+        (WebCore::UserMediaController::cancelRequest): Renamed from cancelUserMediaRequest.
 
-        Mark IDBDatabase "FINAL" now that http://webkit.org/b/121747 is fixed.
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::parseOptions): MediaConstraintsImpl -> MediaConstraints.
+        (WebCore::UserMediaRequest::create): Ditto.
+        (WebCore::UserMediaRequest::UserMediaRequest): Ditto.
+        (WebCore::UserMediaRequest::securityOrigin): New.
+        (WebCore::UserMediaRequest::start): Request constraint validation.
+        (WebCore::UserMediaRequest::constraintsValidated): New. Callback from media engine when constraints
+            can be supported.
+        (WebCore::UserMediaRequest::requestPermission): New. Ask user media client for permission to access media.
+        (WebCore::UserMediaRequest::userMediaAccessGranted): New. Access has been granted.
+        (WebCore::UserMediaRequest::createMediaStream): New. Allowed to access media, ask media engine
+            to create stream sources.
+        (WebCore::UserMediaRequest::userMediaAccessDenied): New. User media client has denied access request.
+        (WebCore::UserMediaRequest::constraintsInvalid): New. Media engine can not support constraints.
+        (WebCore::UserMediaRequest::didCreateStream): New. Media engine has created stream sources.
+        (WebCore::UserMediaRequest::callSuccessHandler): New. Create stream from sources and call success handler.
+        (WebCore::UserMediaRequest::failedToCreateStreamWithConstraintsError): Renamed from constraintFailure.
+        (WebCore::UserMediaRequest::failedToCreateStreamWithPermissionError): Renamed from permissionFailure.
+        (WebCore::UserMediaRequest::callErrorHandler): 
+        (WebCore::UserMediaRequest::contextDestroyed): cancelUserMediaRequest -> cancelRequest.
+        * Modules/mediastream/UserMediaRequest.h:
 
-        Rubberstamped by Andreas Kling
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createMediaStreamSource): localAudio->component()->source() -> localAudio->source().
 
-        * Modules/indexeddb/IDBDatabase.h: Mark this class FINAL.
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode): MediaStreamSource::TypeAudio ->
+            MediaStreamSource::Audio, MediaStreamSource::ReadyStateLive -> MediaStreamSource::Live.
+            MediaStreamCenter::instance -> MediaStreamCenter::shared.
+
+        * WebCore.exp.in: Export new symbols.
+
+        * WebCore.xcodeproj/project.pbxproj: Add new files and remove deleted files.
+
+        * dom/EventNames.h: Define "started" event.
+
+        * platform/mediastream/MediaStreamCenter.cpp:
+        (WebCore::mediaStreamCenterOverride): Make it possible to override the shared stream center. Will
+            be used for testing in a later patch.
+        (WebCore::MediaStreamCenter::shared): Renamed from instance. Return current stream center.
+        (WebCore::MediaStreamCenter::setSharedStreamCenter): Override current stream center.
+        (WebCore::MediaStreamCenter::endLocalMediaStream): Never call the descriptor client, always call
+            the descriptor and let it deal with the client.
+        * platform/mediastream/MediaStreamCenter.h:
+
+        * platform/mediastream/MediaStreamComponent.cpp: Removed.
+        * platform/mediastream/MediaStreamComponent.h: Removed.
+
+        * platform/mediastream/MediaStreamConstraintsValidationClient.h: Added.
+        * platform/mediastream/MediaStreamCreationClient.h: Added.
+
+        * platform/mediastream/MediaStreamDescriptor.cpp:
+        (WebCore::MediaStreamDescriptor::addSource): *Component -> *Source.
+        (WebCore::MediaStreamDescriptor::removeSource): Ditto.
+        (WebCore::MediaStreamDescriptor::addRemoteSource): Ditto.
+        (WebCore::MediaStreamDescriptor::removeRemoteSource): Ditto.
+        (WebCore::MediaStreamDescriptor::MediaStreamDescriptor): Ditto.
+        (WebCore::MediaStreamDescriptor::setEnded): Ditto. Set source readyStates to Ended.
+        * platform/mediastream/MediaStreamDescriptor.h:
+
+        * platform/mediastream/MediaStreamSource.cpp:
+        (WebCore::MediaStreamSource::MediaStreamSource): Initialize new member variables.
+        (WebCore::MediaStreamSource::setReadyState): Early return when the state hasn't changed.
+        (WebCore::MediaStreamSource::setStream): New.
+        (WebCore::MediaStreamSource::setMuted): New.
+        * platform/mediastream/MediaStreamSource.h:
+
+        * platform/mediastream/MediaStreamSourcesQueryClient.h: Removed.
+
+        * platform/mediastream/RTCPeerConnectionHandler.h:
+        * platform/mediastream/RTCStatsRequest.h:
+
+        * platform/mediastream/blackberry/MediaStreamCenterBlackBerry.cpp: Update for new MediaStreamCenter API.
+        * platform/mediastream/blackberry/MediaStreamCenterBlackBerry.h:
+
+        * platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp: Ditto.
+        * platform/mediastream/gstreamer/MediaStreamCenterGStreamer.h:
+
+        * platform/mediastream/mac/MediaStreamCenterMac.cpp: Ditto.
+        * platform/mediastream/mac/MediaStreamCenterMac.h:
 
 2013-09-26  Gurpreet Kaur  <k.gurpreet@samsung.com>
 

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +31,6 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "MediaStreamDescriptor.h"
 #include "MediaStreamSource.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
@@ -40,33 +40,37 @@
 
 namespace WebCore {
 
-class MediaStreamComponent;
+class Dictionary;
+class MediaConstraints;
 class MediaStreamTrackSourcesCallback;
 
 // FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
 class MediaStreamTrack : public RefCounted<MediaStreamTrack>, public ScriptWrappable, public ActiveDOMObject, public EventTargetWithInlineData, public MediaStreamSource::Observer {
 public:
-    static PassRefPtr<MediaStreamTrack> create(ScriptExecutionContext*, MediaStreamComponent*);
+
+    static PassRefPtr<MediaStreamTrack> create(ScriptExecutionContext*, const Dictionary&);
+    static PassRefPtr<MediaStreamTrack> create(ScriptExecutionContext*, MediaStreamSource*);
+
     virtual ~MediaStreamTrack();
 
-    AtomicString kind() const;
-    String id() const;
-    String label() const;
+    const AtomicString& kind() const;
+    const String& id() const;
+    const String& label() const;
 
     bool enabled() const;
     void setEnabled(bool);
-
-    void didEndTrack();
     
-    AtomicString readyState() const;
+    const AtomicString& readyState() const;
 
     static void getSources(ScriptExecutionContext*, PassRefPtr<MediaStreamTrackSourcesCallback>, ExceptionCode&);
+
+    MediaStreamSource* source() const { return m_source.get(); }
+    void setSource(MediaStreamSource*);
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(mute);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(unmute);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
 
-    MediaStreamComponent* component();
     bool ended() const;
 
     // EventTarget
@@ -80,7 +84,9 @@ public:
     using RefCounted<MediaStreamTrack>::deref;
 
 private:
-    MediaStreamTrack(ScriptExecutionContext*, MediaStreamComponent*);
+    MediaStreamTrack(ScriptExecutionContext*, MediaStreamSource*, const Dictionary*);
+
+    void trackDidEnd();
 
     // EventTarget
     virtual void refEventTarget() OVERRIDE FINAL { ref(); }
@@ -89,8 +95,14 @@ private:
     // MediaStreamSourceObserver
     virtual void sourceChangedState() OVERRIDE;
 
-    RefPtr<MediaStreamComponent> m_component;
+    RefPtr<MediaStreamSource> m_source;
+    RefPtr<MediaConstraints> m_constraints;
+    MediaStreamSource::ReadyState m_readyState;
+    mutable String m_id;
+
     bool m_stopped;
+    bool m_enabled;
+    bool m_muted;
 };
 
 typedef Vector<RefPtr<MediaStreamTrack> > MediaStreamTrackVector;

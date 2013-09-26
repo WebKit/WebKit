@@ -2025,7 +2025,6 @@ set(WebCore_SOURCES
     platform/leveldb/LevelDBWriteBatch.cpp
 
     platform/mediastream/MediaStreamCenter.cpp
-    platform/mediastream/MediaStreamComponent.cpp
     platform/mediastream/MediaStreamDescriptor.cpp
     platform/mediastream/MediaStreamSource.cpp
     platform/mediastream/RTCIceCandidateDescriptor.cpp

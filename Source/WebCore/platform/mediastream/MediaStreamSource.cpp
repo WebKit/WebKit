@@ -33,6 +33,8 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamSource.h"
+
+#include "AudioDestinationConsumer.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -47,17 +49,21 @@ MediaStreamSource::MediaStreamSource(const String& id, Type type, const String& 
     , m_type(type)
     , m_name(name)
     , m_readyState(readyState)
+    , m_stream(0)
     , m_requiresConsumer(requiresConsumer)
+    , m_enabled(true)
+    , m_muted(false)
 {
 }
 
 void MediaStreamSource::setReadyState(ReadyState readyState)
 {
-    if (m_readyState != ReadyStateEnded && m_readyState != readyState) {
-        m_readyState = readyState;
-        for (Vector<Observer*>::iterator i = m_observers.begin(); i != m_observers.end(); ++i)
-            (*i)->sourceChangedState();
-    }
+    if (m_readyState == Ended || m_readyState == readyState)
+        return;
+
+    m_readyState = readyState;
+    for (Vector<Observer*>::iterator i = m_observers.begin(); i != m_observers.end(); ++i)
+        (*i)->sourceChangedState();
 }
 
 void MediaStreamSource::addObserver(MediaStreamSource::Observer* observer)
@@ -70,6 +76,22 @@ void MediaStreamSource::removeObserver(MediaStreamSource::Observer* observer)
     size_t pos = m_observers.find(observer);
     if (pos != notFound)
         m_observers.remove(pos);
+}
+
+void MediaStreamSource::setStream(MediaStreamDescriptor* stream)
+{
+    ASSERT(!m_stream && stream);
+    m_stream = stream;
+}
+
+void MediaStreamSource::setMuted(bool muted)
+{
+    if (m_muted == muted)
+        return;
+
+    m_muted = muted;
+    for (Vector<Observer*>::iterator i = m_observers.begin(); i != m_observers.end(); ++i)
+        (*i)->sourceChangedState();
 }
 
 void MediaStreamSource::addAudioConsumer(PassRefPtr<AudioDestinationConsumer> consumer)

@@ -559,8 +559,9 @@ void RTCPeerConnection::didRemoveRemoteStream(MediaStreamDescriptor* streamDescr
     ASSERT(scriptExecutionContext()->isContextThread());
     ASSERT(streamDescriptor->client());
 
+    // FIXME: this class shouldn't know that the descriptor client is a MediaStream!
     RefPtr<MediaStream> stream = static_cast<MediaStream*>(streamDescriptor->client());
-    stream->streamEnded();
+    stream->setEnded();
 
     if (m_signalingState == SignalingStateClosed)
         return;

@@ -240,6 +240,7 @@ namespace WebCore {
     macro(removetrack) \
     macro(mute) \
     macro(unmute) \
+    macro(started) \
     macro(iceconnectionstatechange) \
     macro(icecandidate) \
     macro(negotiationneeded) \

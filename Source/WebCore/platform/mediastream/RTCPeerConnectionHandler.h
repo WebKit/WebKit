@@ -40,7 +40,7 @@
 namespace WebCore {
 
 class MediaConstraints;
-class MediaStreamComponent;
+class MediaStreamSource;
 class RTCConfiguration;
 class RTCDTMFSenderHandler;
 class RTCDataChannelHandler;
@@ -86,7 +86,7 @@ public:
     virtual void removeStream(PassRefPtr<MediaStreamDescriptor>) = 0;
     virtual void getStats(PassRefPtr<RTCStatsRequest>) = 0;
     virtual PassOwnPtr<RTCDataChannelHandler> createDataChannel(const String& label, const RTCDataChannelInit&) = 0;
-    virtual PassOwnPtr<RTCDTMFSenderHandler> createDTMFSender(PassRefPtr<MediaStreamComponent>) = 0;
+    virtual PassOwnPtr<RTCDTMFSenderHandler> createDTMFSender(PassRefPtr<MediaStreamSource>) = 0;
     virtual void stop() = 0;
 
 protected:

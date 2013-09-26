@@ -28,6 +28,8 @@
 
 #include "RTCStatsRequestImpl.h"
 
+#include "MediaStreamDescriptor.h"
+#include "MediaStreamTrack.h"
 #include "RTCStatsCallback.h"
 #include "RTCStatsRequest.h"
 #include "RTCStatsResponse.h"
@@ -44,8 +46,7 @@ PassRefPtr<RTCStatsRequestImpl> RTCStatsRequestImpl::create(ScriptExecutionConte
 RTCStatsRequestImpl::RTCStatsRequestImpl(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback, PassRefPtr<MediaStreamTrack> selector)
     : ActiveDOMObject(context)
     , m_successCallback(callback)
-    , m_stream(selector ? selector->component()->stream() : 0)
-    , m_component(selector ? selector->component() : 0)
+    , m_stream(selector ? selector->source()->stream() : 0)
 {
 }
 
@@ -66,11 +67,6 @@ bool RTCStatsRequestImpl::hasSelector()
 MediaStreamDescriptor* RTCStatsRequestImpl::stream()
 {
     return m_stream.get();
-}
-
-MediaStreamComponent* RTCStatsRequestImpl::component()
-{
-    return m_component.get();
 }
 
 void RTCStatsRequestImpl::requestSucceeded(PassRefPtr<RTCStatsResponseBase> response)

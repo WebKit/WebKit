@@ -34,9 +34,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamComponent.h"
 #include "MediaStreamSource.h"
-#include "UUID.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -46,56 +44,45 @@ class MediaStreamDescriptorClient {
 public:
     virtual ~MediaStreamDescriptorClient() { }
 
-    virtual void trackEnded() = 0;
-    virtual void streamEnded() = 0;
-    virtual void addRemoteTrack(MediaStreamComponent*) = 0;
-    virtual void removeRemoteTrack(MediaStreamComponent*) = 0;
+    virtual void trackDidEnd() = 0;
+    virtual void streamDidEnd() = 0;
+    virtual void addRemoteSource(MediaStreamSource*) = 0;
+    virtual void removeRemoteSource(MediaStreamSource*) = 0;
 };
 
 class MediaStreamDescriptor : public RefCounted<MediaStreamDescriptor> {
 public:
-    class ExtraData : public RefCounted<ExtraData> {
-    public:
-        virtual ~ExtraData() { }
-    };
 
     static PassRefPtr<MediaStreamDescriptor> create(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
-    static PassRefPtr<MediaStreamDescriptor> create(const MediaStreamComponentVector& audioComponents, const MediaStreamComponentVector& videoComponents);
 
     MediaStreamDescriptorClient* client() const { return m_client; }
     void setClient(MediaStreamDescriptorClient* client) { m_client = client; }
 
     String id() const { return m_id; }
 
-    unsigned numberOfAudioComponents() const { return m_audioComponents.size(); }
-    MediaStreamComponent* audioComponent(unsigned index) const { return m_audioComponents[index].get(); }
+    unsigned numberOfAudioStreams() const { return m_audioStreamSources.size(); }
+    MediaStreamSource* audioStreams(unsigned index) const { return m_audioStreamSources[index].get(); }
 
-    unsigned numberOfVideoComponents() const { return m_videoComponents.size(); }
-    MediaStreamComponent* videoComponent(unsigned index) const { return m_videoComponents[index].get(); }
+    unsigned numberOfVideoStreams() const { return m_videoStreamSources.size(); }
+    MediaStreamSource* videoStreams(unsigned index) const { return m_videoStreamSources[index].get(); }
 
-    void addComponent(PassRefPtr<MediaStreamComponent>);
-    void removeComponent(PassRefPtr<MediaStreamComponent>);
+    void addSource(PassRefPtr<MediaStreamSource>);
+    void removeSource(PassRefPtr<MediaStreamSource>);
 
-    void addRemoteTrack(MediaStreamComponent*);
-    void removeRemoteTrack(MediaStreamComponent*);
+    void addRemoteSource(MediaStreamSource*);
+    void removeRemoteSource(MediaStreamSource*);
 
     bool ended() const { return m_ended; }
-    void setEnded() { m_ended = true; }
-
-    PassRefPtr<ExtraData> extraData() const { return m_extraData; }
-    void setExtraData(PassRefPtr<ExtraData> extraData) { m_extraData = extraData; }
+    void setEnded();
 
 private:
     MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
-    MediaStreamDescriptor(const String& id, const MediaStreamComponentVector& audioComponents, const MediaStreamComponentVector& videoComponents);
 
     MediaStreamDescriptorClient* m_client;
     String m_id;
-    Vector<RefPtr<MediaStreamComponent> > m_audioComponents;
-    Vector<RefPtr<MediaStreamComponent> > m_videoComponents;
+    Vector<RefPtr<MediaStreamSource> > m_audioStreamSources;
+    Vector<RefPtr<MediaStreamSource> > m_videoStreamSources;
     bool m_ended;
-
-    RefPtr<ExtraData> m_extraData;
 };
 
 typedef Vector<RefPtr<MediaStreamDescriptor> > MediaStreamDescriptorVector;

@@ -95,7 +95,8 @@
 		070756DF14239B4E00414161 /* JSTextTrackCueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 070756D914239B4C00414161 /* JSTextTrackCueList.cpp */; };
 		070756E014239B4E00414161 /* JSTextTrackCueList.h in Headers */ = {isa = PBXBuildFile; fileRef = 070756DA14239B4E00414161 /* JSTextTrackCueList.h */; };
 		0709FC4E1025DEE30059CDBA /* AccessibilitySlider.h in Headers */ = {isa = PBXBuildFile; fileRef = 0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */; };
-		0711589017DF6F6200EDFE2B /* MediaStreamComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0711588E17DF633700EDFE2B /* MediaStreamComponent.cpp */; };
+		070F549817F12F6B00169E04 /* MediaStreamConstraintsValidationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 070F549717F12F6B00169E04 /* MediaStreamConstraintsValidationClient.h */; };
+		070F549E17F2402700169E04 /* AudioDestinationConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 070F549D17F2402700169E04 /* AudioDestinationConsumer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0711589117DF6F6600EDFE2B /* MediaStreamDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0711588F17DF633700EDFE2B /* MediaStreamDescriptor.cpp */; };
 		071A9EC2168FBC43002629F9 /* TextTrackCueGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 071A9EC0168FB56C002629F9 /* TextTrackCueGeneric.cpp */; };
 		071A9EC3168FBC55002629F9 /* TextTrackCueGeneric.h in Headers */ = {isa = PBXBuildFile; fileRef = 071A9EC1168FB56C002629F9 /* TextTrackCueGeneric.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -202,11 +203,10 @@
 		078E093217D1684600420AA1 /* MediaStreamCenterMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 0729B14F17CFCCA0004F1D60 /* MediaStreamCenterMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093317D16B0600420AA1 /* MediaStreamCenter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B9A17CF0AD400848E51 /* MediaStreamCenter.cpp */; };
 		078E093417D16B0B00420AA1 /* MediaStreamCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B9B17CF0AD400848E51 /* MediaStreamCenter.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		078E093517D16B2100420AA1 /* MediaStreamComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B9C17CF0AD400848E51 /* MediaStreamComponent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093617D16B2100420AA1 /* MediaStreamSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B9E17CF0AD400848E51 /* MediaStreamSource.cpp */; };
 		078E093717D16B2C00420AA1 /* MediaStreamDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B9D17CF0AD400848E51 /* MediaStreamDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093817D16B2C00420AA1 /* MediaStreamSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B9F17CF0AD400848E51 /* MediaStreamSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		078E093917D16B2C00420AA1 /* MediaStreamSourcesQueryClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA017CF0AD400848E51 /* MediaStreamSourcesQueryClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		078E093917D16B2C00420AA1 /* MediaStreamCreationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA017CF0AD400848E51 /* MediaStreamCreationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093A17D16E1C00420AA1 /* MediaConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B9917CF0AD400848E51 /* MediaConstraints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093B17D16E1C00420AA1 /* RTCConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA117CF0AD400848E51 /* RTCConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093C17D16E1C00420AA1 /* RTCDataChannelHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6467,7 +6467,8 @@
 		070756DA14239B4E00414161 /* JSTextTrackCueList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextTrackCueList.h; sourceTree = "<group>"; };
 		0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySlider.h; sourceTree = "<group>"; };
 		070DD8F50F01868000727DEB /* mediaControls.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mediaControls.css; sourceTree = "<group>"; };
-		0711588E17DF633700EDFE2B /* MediaStreamComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamComponent.cpp; sourceTree = "<group>"; };
+		070F549717F12F6B00169E04 /* MediaStreamConstraintsValidationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamConstraintsValidationClient.h; sourceTree = "<group>"; };
+		070F549D17F2402700169E04 /* AudioDestinationConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioDestinationConsumer.h; sourceTree = "<group>"; };
 		0711588F17DF633700EDFE2B /* MediaStreamDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamDescriptor.cpp; sourceTree = "<group>"; };
 		071A9EC0168FB56C002629F9 /* TextTrackCueGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackCueGeneric.cpp; sourceTree = "<group>"; };
 		071A9EC1168FB56C002629F9 /* TextTrackCueGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackCueGeneric.h; sourceTree = "<group>"; };
@@ -6550,11 +6551,10 @@
 		07221B9917CF0AD400848E51 /* MediaConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaConstraints.h; sourceTree = "<group>"; };
 		07221B9A17CF0AD400848E51 /* MediaStreamCenter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamCenter.cpp; sourceTree = "<group>"; };
 		07221B9B17CF0AD400848E51 /* MediaStreamCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamCenter.h; sourceTree = "<group>"; };
-		07221B9C17CF0AD400848E51 /* MediaStreamComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamComponent.h; sourceTree = "<group>"; };
 		07221B9D17CF0AD400848E51 /* MediaStreamDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamDescriptor.h; sourceTree = "<group>"; };
 		07221B9E17CF0AD400848E51 /* MediaStreamSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamSource.cpp; sourceTree = "<group>"; };
 		07221B9F17CF0AD400848E51 /* MediaStreamSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamSource.h; sourceTree = "<group>"; };
-		07221BA017CF0AD400848E51 /* MediaStreamSourcesQueryClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamSourcesQueryClient.h; sourceTree = "<group>"; };
+		07221BA017CF0AD400848E51 /* MediaStreamCreationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamCreationClient.h; sourceTree = "<group>"; };
 		07221BA117CF0AD400848E51 /* RTCConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCConfiguration.h; sourceTree = "<group>"; };
 		07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelHandler.h; sourceTree = "<group>"; };
 		07221BA317CF0AD400848E51 /* RTCDataChannelHandlerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelHandlerClient.h; sourceTree = "<group>"; };
@@ -13399,13 +13399,12 @@
 				07221B9917CF0AD400848E51 /* MediaConstraints.h */,
 				07221B9A17CF0AD400848E51 /* MediaStreamCenter.cpp */,
 				07221B9B17CF0AD400848E51 /* MediaStreamCenter.h */,
-				0711588E17DF633700EDFE2B /* MediaStreamComponent.cpp */,
-				07221B9C17CF0AD400848E51 /* MediaStreamComponent.h */,
+				070F549717F12F6B00169E04 /* MediaStreamConstraintsValidationClient.h */,
+				07221BA017CF0AD400848E51 /* MediaStreamCreationClient.h */,
 				0711588F17DF633700EDFE2B /* MediaStreamDescriptor.cpp */,
 				07221B9D17CF0AD400848E51 /* MediaStreamDescriptor.h */,
 				07221B9E17CF0AD400848E51 /* MediaStreamSource.cpp */,
 				07221B9F17CF0AD400848E51 /* MediaStreamSource.h */,
-				07221BA017CF0AD400848E51 /* MediaStreamSourcesQueryClient.h */,
 				076306E217E22A43005A7C4E /* MediaStreamTrackSourcesRequestClient.h */,
 				07221BA117CF0AD400848E51 /* RTCConfiguration.h */,
 				07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */,
@@ -21292,6 +21291,7 @@
 				FD31604712B026F700C1A359 /* AudioChannel.cpp */,
 				FD31604812B026F700C1A359 /* AudioChannel.h */,
 				FD31604912B026F700C1A359 /* AudioDestination.h */,
+				070F549D17F2402700169E04 /* AudioDestinationConsumer.h */,
 				FD31604A12B026F700C1A359 /* AudioDSPKernel.h */,
 				FD31604B12B026F700C1A359 /* AudioDSPKernelProcessor.cpp */,
 				FD31604C12B026F700C1A359 /* AudioDSPKernelProcessor.h */,
@@ -21549,6 +21549,7 @@
 				FD31607E12B026F700C1A359 /* AudioChannel.h in Headers */,
 				FD31600512B0267600C1A359 /* AudioContext.h in Headers */,
 				FD31607F12B026F700C1A359 /* AudioDestination.h in Headers */,
+				070F549E17F2402700169E04 /* AudioDestinationConsumer.h in Headers */,
 				FD3160BD12B0272A00C1A359 /* AudioDestinationMac.h in Headers */,
 				FD31600812B0267600C1A359 /* AudioDestinationNode.h in Headers */,
 				FD31608012B026F700C1A359 /* AudioDSPKernel.h in Headers */,
@@ -21807,6 +21808,7 @@
 				BC5A12E00DC0414800C9AFAD /* CSSReflectValue.h in Headers */,
 				A80E6D0D0A1989CA007FB8C5 /* CSSRule.h in Headers */,
 				A80E6CF20A1989CA007FB8C5 /* CSSRuleList.h in Headers */,
+				070F549817F12F6B00169E04 /* MediaStreamConstraintsValidationClient.h in Headers */,
 				371F51A10D262FA000ECE0D5 /* CSSSegmentedFontFace.h in Headers */,
 				A80E73520A199C77007FB8C5 /* CSSSelector.h in Headers */,
 				E4C1789B0EE6903800824D69 /* CSSSelectorList.h in Headers */,
@@ -21958,7 +21960,7 @@
 				858C38A50AA8F20400B187A4 /* DOMCounter.h in Headers */,
 				85E711910AC5D5350053270F /* DOMCounterInternal.h in Headers */,
 				BC1A37B0097C715F0019F3D8 /* DOMCSS.h in Headers */,
-				078E093917D16B2C00420AA1 /* MediaStreamSourcesQueryClient.h in Headers */,
+				078E093917D16B2C00420AA1 /* MediaStreamCreationClient.h in Headers */,
 				85032DD70AA8C9BE007D3B7D /* DOMCSSCharsetRule.h in Headers */,
 				85909CDC0ACC7A7E00DF01F1 /* DOMCSSCharsetRuleInternal.h in Headers */,
 				85032DD90AA8C9BE007D3B7D /* DOMCSSFontFaceRule.h in Headers */,
@@ -24207,7 +24209,6 @@
 				B2227A210D00BF220071B782 /* SVGFontFaceUriElement.h in Headers */,
 				B2227A240D00BF220071B782 /* SVGForeignObjectElement.h in Headers */,
 				B2227A270D00BF220071B782 /* SVGGElement.h in Headers */,
-				078E093517D16B2100420AA1 /* MediaStreamComponent.h in Headers */,
 				087E0AF713606D0B00FA4BA8 /* SVGGlyph.h in Headers */,
 				B2A1F2AE0CEF0ABF00442F6A /* SVGGlyphElement.h in Headers */,
 				3744570F0DB05FA500AE0992 /* SVGGlyphMap.h in Headers */,
@@ -26732,7 +26733,6 @@
 				D3AA10F3123A98AA0092152B /* MediaQueryMatcher.cpp in Sources */,
 				CD61FE671794AADB004101EB /* MediaSourceRegistry.cpp in Sources */,
 				FD671A77159BB07000197559 /* MediaStreamAudioSourceNode.cpp in Sources */,
-				0711589017DF6F6200EDFE2B /* MediaStreamComponent.cpp in Sources */,
 				0711589117DF6F6600EDFE2B /* MediaStreamDescriptor.cpp in Sources */,
 				BCB16C170979C3BD00467741 /* MemoryCache.cpp in Sources */,
 				657EDA081385CB97004E0645 /* MemoryPressureHandler.cpp in Sources */,
