@@ -103,7 +103,6 @@ HEADERS += \
     ParallelJobsOpenMP.h \
     PassOwnPtr.h \
     PassRefPtr.h \
-    PassTraits.h \
     Platform.h \
     PossiblyNull.h \
     PrintStream.h \
