@@ -183,7 +183,7 @@ String UnlinkedFunctionExecutable::paramString() const
     for (size_t pos = 0; pos < parameters.size(); ++pos) {
         if (!builder.isEmpty())
             builder.appendLiteral(", ");
-        builder.append(parameters.at(pos).string());
+        parameters.at(pos)->toString(builder);
     }
     return builder.toString();
 }

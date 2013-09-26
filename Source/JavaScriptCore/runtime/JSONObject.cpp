@@ -302,7 +302,15 @@ static void appendStringToStringBuilder(StringBuilder& builder, const CharType* 
         }
     }
 }
-    
+
+void escapeStringToBuilder(StringBuilder& builder, const String& message)
+{
+    if (message.is8Bit())
+        appendStringToStringBuilder(builder, message.characters8(), message.length());
+    else
+        appendStringToStringBuilder(builder, message.characters16(), message.length());
+}
+
 void Stringifier::appendQuotedString(StringBuilder& builder, const String& value)
 {
     int length = value.length();

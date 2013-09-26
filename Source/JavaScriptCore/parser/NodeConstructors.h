@@ -603,6 +603,8 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
     inline CommaNode::CommaNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2)
         : ExpressionNode(location)
     {
+        ASSERT(expr1);
+        ASSERT(expr2);
         m_expressions.append(expr1);
         m_expressions.append(expr2);
     }
@@ -732,17 +734,20 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
     {
     }
 
-    inline ParameterNode::ParameterNode(const Identifier& ident)
-        : m_ident(ident)
+    inline ParameterNode::ParameterNode(PassRefPtr<DeconstructionPatternNode> pattern)
+        : m_pattern(pattern)
         , m_next(0)
     {
+        ASSERT(m_pattern);
     }
 
-    inline ParameterNode::ParameterNode(ParameterNode* l, const Identifier& ident)
-        : m_ident(ident)
+    inline ParameterNode::ParameterNode(ParameterNode* l, PassRefPtr<DeconstructionPatternNode> pattern)
+        : m_pattern(pattern)
         , m_next(0)
     {
         l->m_next = this;
+        ASSERT(m_pattern);
+        ASSERT(l->m_pattern);
     }
 
     inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
@@ -812,16 +817,61 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
         , m_expr(expr)
         , m_statement(statement)
     {
+        ASSERT(l);
     }
-
-    inline ForInNode::ForInNode(VM* vm, const JSTokenLocation& location, const Identifier& ident, ExpressionNode* expr, StatementNode* statement, const JSTextPosition& divotStart)
+    
+    inline ForInNode::ForInNode(VM* vm, const JSTokenLocation& location, DeconstructionPatternNode* pattern, ExpressionNode* expr, StatementNode* statement)
         : StatementNode(location)
-        , m_lexpr(new (vm) ResolveNode(location, ident, divotStart))
+        , m_lexpr(new (vm) DeconstructingAssignmentNode(location, pattern, 0))
         , m_expr(expr)
         , m_statement(statement)
     {
+        ASSERT(pattern);
+    }
+    
+    inline DeconstructionPatternNode::DeconstructionPatternNode(VM*)
+    {
     }
 
+    inline ArrayPatternNode::ArrayPatternNode(VM* vm)
+        : DeconstructionPatternNode(vm)
+    {
+    }
+    
+    inline PassRefPtr<ArrayPatternNode> ArrayPatternNode::create(VM* vm)
+    {
+        return adoptRef(new ArrayPatternNode(vm));
+    }
+    
+    inline ObjectPatternNode::ObjectPatternNode(VM* vm)
+        : DeconstructionPatternNode(vm)
+    {
+    }
+    
+    inline PassRefPtr<ObjectPatternNode> ObjectPatternNode::create(VM* vm)
+    {
+        return adoptRef(new ObjectPatternNode(vm));
+    }
+
+    inline PassRefPtr<BindingNode> BindingNode::create(VM* vm, const Identifier& boundProperty, const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end)
+    {
+        return adoptRef(new BindingNode(vm, boundProperty, divot, start, end));
+    }
+    
+    inline BindingNode::BindingNode(VM* vm, const Identifier& boundProperty, const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end)
+        : DeconstructionPatternNode(vm)
+        , ThrowableExpressionData(divot, start, end)
+        , m_boundProperty(boundProperty)
+    {
+    }
+    
+    inline DeconstructingAssignmentNode::DeconstructingAssignmentNode(const JSTokenLocation& location, PassRefPtr<DeconstructionPatternNode> bindings, ExpressionNode* initializer)
+        : ExpressionNode(location)
+        , m_bindings(bindings)
+        , m_initializer(initializer)
+    {
+    }
+    
 } // namespace JSC
 
 #endif // NodeConstructors_h

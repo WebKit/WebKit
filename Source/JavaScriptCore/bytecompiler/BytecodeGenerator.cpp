@@ -180,7 +180,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     }
 
     for (size_t i = 0; i < varStack.size(); ++i)
-        codeBlock->addVariableDeclaration(*varStack[i].first, !!(varStack[i].second & DeclarationStacks::IsConstant));
+        codeBlock->addVariableDeclaration(varStack[i].first, !!(varStack[i].second & DeclarationStacks::IsConstant));
 
 }
 
@@ -215,6 +215,15 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         m_codeBlock->setNeedsFullScopeChain(true);
 
     m_symbolTable->setUsesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode());
+    Vector<Identifier> boundParameterProperties;
+    FunctionParameters& parameters = *functionBody->parameters();
+    for (size_t i = 0; i < parameters.size(); i++) {
+        auto pattern = parameters.at(i);
+        if (pattern->isBindingNode())
+            continue;
+        pattern->collectBoundIdentifiers(boundParameterProperties);
+        continue;
+    }
     m_symbolTable->setParameterCountIncludingThis(functionBody->parameters()->size() + 1);
 
     emitOpcode(op_enter);
@@ -254,7 +263,11 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         capturedArguments.resize(parameters.size());
         for (size_t i = 0; i < parameters.size(); ++i) {
             capturedArguments[i] = 0;
-            if (!functionBody->captures(parameters.at(i)) && !shouldCaptureAllTheThings)
+            auto pattern = parameters.at(i);
+            if (!pattern->isBindingNode())
+                continue;
+            const Identifier& ident = static_cast<const BindingNode*>(pattern)->boundProperty();
+            if (!functionBody->captures(ident) && !shouldCaptureAllTheThings)
                 continue;
             capturesAnyArgumentByName = true;
             capturedArguments[i] = addVar();
@@ -299,7 +312,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
             }
         }
         for (size_t i = 0; i < varStack.size(); ++i) {
-            const Identifier& ident = *varStack[i].first;
+            const Identifier& ident = varStack[i].first;
             if (functionBody->captures(ident))
                 addVar(ident, varStack[i].second & DeclarationStacks::IsConstant);
         }
@@ -332,7 +345,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     }
     m_lastLazyFunction = canLazilyCreateFunctions ? codeBlock->m_numVars : m_firstLazyFunction;
     for (size_t i = 0; i < varStack.size(); ++i) {
-        const Identifier& ident = *varStack[i].first;
+        const Identifier& ident = varStack[i].first;
         if (!functionBody->captures(ident))
             addVar(ident, varStack[i].second & DeclarationStacks::IsConstant);
     }
@@ -340,23 +353,31 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     if (shouldCaptureAllTheThings)
         m_symbolTable->setCaptureEnd(localToOperand(codeBlock->m_numVars));
 
-    FunctionParameters& parameters = *functionBody->parameters();
     m_parameters.grow(parameters.size() + 1); // reserve space for "this"
 
     // Add "this" as a parameter
     int nextParameterIndex = CallFrame::thisArgumentOffset();
     m_thisRegister.setIndex(nextParameterIndex++);
     m_codeBlock->addParameter();
-    
+    Vector<std::pair<RegisterID*, const DeconstructionPatternNode*>> deconstructedParameters;
     for (size_t i = 0; i < parameters.size(); ++i, ++nextParameterIndex) {
         int index = nextParameterIndex;
+        auto pattern = parameters.at(i);
+        if (!pattern->isBindingNode()) {
+            m_codeBlock->addParameter();
+            RegisterID& parameter = registerFor(index);
+            parameter.setIndex(index);
+            deconstructedParameters.append(make_pair(&parameter, pattern));
+            continue;
+        }
+        auto simpleParameter = static_cast<const BindingNode*>(pattern);
         if (capturedArguments.size() && capturedArguments[i]) {
-            ASSERT((functionBody->hasCapturedVariables() && functionBody->captures(parameters.at(i))) || shouldCaptureAllTheThings);
+            ASSERT((functionBody->hasCapturedVariables() && functionBody->captures(simpleParameter->boundProperty())) || shouldCaptureAllTheThings);
             index = capturedArguments[i]->index();
             RegisterID original(nextParameterIndex);
             emitMove(capturedArguments[i], &original);
         }
-        addParameter(parameters.at(i), index);
+        addParameter(simpleParameter->boundProperty(), index);
     }
     preserveLastVar();
 
@@ -369,6 +390,10 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         UnlinkedValueProfile profile = emitProfiledOpcode(op_to_this);
         instructions().append(kill(&m_thisRegister));
         instructions().append(profile);
+    }
+    for (size_t i = 0; i < deconstructedParameters.size(); i++) {
+        auto& entry = deconstructedParameters[i];
+        entry.second->emitBytecode(*this, entry.first);
     }
 }
 
@@ -414,8 +439,10 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     unsigned numVariables = varStack.size();
     Vector<Identifier, 0, UnsafeVectorOverflow> variables;
     variables.reserveCapacity(numVariables);
-    for (size_t i = 0; i < numVariables; ++i)
-        variables.append(*varStack[i].first);
+    for (size_t i = 0; i < numVariables; ++i) {
+        ASSERT(varStack[i].first.impl()->isIdentifier());
+        variables.append(varStack[i].first);
+    }
     codeBlock->adoptVariables(variables);
     preserveLastVar();
 }

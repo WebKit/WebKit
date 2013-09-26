@@ -1,3 +1,103 @@
+2013-09-25  Oliver Hunt  <oliver@apple.com>
+
+        Implement prefixed-destructuring assignment
+        https://bugs.webkit.org/show_bug.cgi?id=121930
+
+        Reviewed by Mark Hahnenberg.
+
+        This is mostly simple - the semantics of deconstruction are already
+        present in the language, so most of the complexity (if you call it
+        that) is addition of new AST nodes, and parsing the syntax.
+
+        In order to get correct semantics for the parameter lists, FunctionParameters
+        now needs to store refcounted references to the parameter patterns.
+        There's also a little work to ensure that variable creation and assignment
+        occurs in the correct order while the BytecodeGenerator is being constructed. 
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::paramString):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitExpressionInfo):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitBytecode):
+        (JSC::DeconstructingAssignmentNode::emitBytecode):
+        (JSC::DeconstructionPatternNode::~DeconstructionPatternNode):
+        (JSC::ArrayPatternNode::emitBytecode):
+        (JSC::ArrayPatternNode::emitDirectBinding):
+        (JSC::ArrayPatternNode::toString):
+        (JSC::ArrayPatternNode::collectBoundIdentifiers):
+        (JSC::ObjectPatternNode::toString):
+        (JSC::ObjectPatternNode::emitBytecode):
+        (JSC::ObjectPatternNode::collectBoundIdentifiers):
+        (JSC::BindingNode::emitBytecode):
+        (JSC::BindingNode::toString):
+        (JSC::BindingNode::collectBoundIdentifiers):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFormalParameterList):
+        (JSC::ASTBuilder::createForInLoop):
+        (JSC::ASTBuilder::addVar):
+        (JSC::ASTBuilder::createDeconstructingAssignment):
+        (JSC::ASTBuilder::createArrayPattern):
+        (JSC::ASTBuilder::appendArrayPatternSkipEntry):
+        (JSC::ASTBuilder::appendArrayPatternEntry):
+        (JSC::ASTBuilder::createObjectPattern):
+        (JSC::ASTBuilder::appendObjectPatternEntry):
+        (JSC::ASTBuilder::createBindingLocation):
+        * parser/NodeConstructors.h:
+        (JSC::CommaNode::CommaNode):
+        (JSC::ParameterNode::ParameterNode):
+        (JSC::ForInNode::ForInNode):
+        (JSC::DeconstructionPatternNode::DeconstructionPatternNode):
+        (JSC::ArrayPatternNode::ArrayPatternNode):
+        (JSC::ArrayPatternNode::create):
+        (JSC::ObjectPatternNode::ObjectPatternNode):
+        (JSC::ObjectPatternNode::create):
+        (JSC::BindingNode::create):
+        (JSC::BindingNode::BindingNode):
+        (JSC::DeconstructingAssignmentNode::DeconstructingAssignmentNode):
+        * parser/Nodes.cpp:
+        (JSC::FunctionParameters::create):
+        (JSC::FunctionParameters::FunctionParameters):
+        (JSC::FunctionParameters::~FunctionParameters):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isDeconstructionNode):
+        (JSC::ArrayNode::elements):
+        (JSC::CommaNode::append):
+        (JSC::ParameterNode::pattern):
+        (JSC::FunctionParameters::at):
+        (JSC::FunctionParameters::patterns):
+        (JSC::DeconstructionPatternNode::isBindingNode):
+        (JSC::DeconstructionPatternNode::emitDirectBinding):
+        (JSC::ArrayPatternNode::appendIndex):
+        (JSC::ObjectPatternNode::appendEntry):
+        (JSC::ObjectPatternNode::Entry::Entry):
+        (JSC::BindingNode::boundProperty):
+        (JSC::BindingNode::isBindingNode):
+        (JSC::DeconstructingAssignmentNode::bindings):
+        (JSC::DeconstructingAssignmentNode::isLocation):
+        (JSC::DeconstructingAssignmentNode::isDeconstructionNode):
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        (JSC::::parseVarDeclaration):
+        (JSC::::parseVarDeclarationList):
+        (JSC::::createBindingPattern):
+        (JSC::::parseDeconstructionPattern):
+        (JSC::::parseForStatement):
+        (JSC::::parseFormalParameters):
+        (JSC::::parseAssignmentExpression):
+        * parser/Parser.h:
+        (JSC::Scope::declareBoundParameter):
+        (JSC::Parser::declareBoundParameter):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFormalParameterList):
+        (JSC::SyntaxChecker::addVar):
+        (JSC::SyntaxChecker::operatorStackPop):
+        * runtime/JSONObject.cpp:
+        (JSC::escapeStringToBuilder):
+        * runtime/JSONObject.h:
+
 2013-09-25  Brady Eidson  <beidson@apple.com>
 
         Enable the IndexedDB build on Mac, but leave the feature non-functional

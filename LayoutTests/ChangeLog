@@ -1,3 +1,34 @@
+2013-09-25  Oliver Hunt  <oliver@apple.com>
+
+        Implement prefixed-destructuring assignment
+        https://bugs.webkit.org/show_bug.cgi?id=121930
+
+        Reviewed by Mark Hahnenberg.
+
+        Add enw tests, and update old ones.
+
+        * js/destructuring-assignment-expected.txt: Added.
+        * js/destructuring-assignment.html: Added.
+        * js/mozilla/strict/13.1-expected.txt:
+        * js/mozilla/strict/regress-532254-expected.txt:
+        * js/mozilla/strict/script-tests/13.1.js:
+        * js/regress/destructuring-arguments-expected.txt: Added.
+        * js/regress/destructuring-arguments-length-expected.txt: Added.
+        * js/regress/destructuring-arguments-length.html: Added.
+        * js/regress/destructuring-arguments.html: Added.
+        * js/regress/destructuring-swap-expected.txt: Added.
+        * js/regress/destructuring-swap.html: Added.
+        * js/regress/script-tests/destructuring-arguments-length.js: Added.
+        (foo):
+        * js/regress/script-tests/destructuring-arguments.js: Added.
+        (foo):
+        * js/regress/script-tests/destructuring-swap.js: Added.
+        (foo):
+        * js/script-tests/destructuring-assignment.js: Added.
+        (testDestructuring):
+        (testDeconstructArgs):
+        (testDeconstructArgLength):
+
 2013-09-26  Alberto Garcia  <berto@igalia.com>
 
         Unreviewed GTK gardening.
