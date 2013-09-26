@@ -1278,9 +1278,6 @@
     <ClInclude Include="..\heap\MarkStackInlines.h">
       <Filter>heap</Filter>
     </ClInclude>
-    <ClInclude Include="..\heap\PassWeak.h">
-      <Filter>heap</Filter>
-    </ClInclude>
     <ClInclude Include="..\heap\Region.h">
       <Filter>heap</Filter>
     </ClInclude>

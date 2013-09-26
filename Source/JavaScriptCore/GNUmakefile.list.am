@@ -519,7 +519,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/TinyBloomFilter.h \
 	Source/JavaScriptCore/heap/MarkedSpace.cpp \
 	Source/JavaScriptCore/heap/MarkedSpace.h \
-	Source/JavaScriptCore/heap/PassWeak.h \
 	Source/JavaScriptCore/heap/Region.h \
 	Source/JavaScriptCore/heap/Strong.h \
 	Source/JavaScriptCore/heap/StrongInlines.h \

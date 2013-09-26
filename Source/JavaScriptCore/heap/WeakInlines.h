@@ -26,7 +26,7 @@
 #ifndef WeakInlines_h
 #define WeakInlines_h
 
-#include "PassWeak.h"
+#include "JSCell.h"
 #include "WeakSetInlines.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashTraits.h>
@@ -151,22 +151,15 @@ template<typename T> inline void weakClear(Weak<T>& weak, T* cell)
 
 namespace WTF {
 
-template<typename T> struct VectorTraits<JSC::Weak<T> > : SimpleClassVectorTraits {
+template<typename T> struct VectorTraits<JSC::Weak<T>> : SimpleClassVectorTraits {
     static const bool canCompareWithMemcmp = false;
 };
 
-template<typename T> struct HashTraits<JSC::Weak<T> > : SimpleClassHashTraits<JSC::Weak<T> > {
+template<typename T> struct HashTraits<JSC::Weak<T>> : SimpleClassHashTraits<JSC::Weak<T>> {
     typedef JSC::Weak<T> StorageType;
 
     typedef std::nullptr_t EmptyValueType;
     static EmptyValueType emptyValue() { return nullptr; }
-
-    typedef JSC::PassWeak<T> PassInType;
-    static void store(PassInType value, StorageType& storage) { storage = value; }
-
-    typedef JSC::PassWeak<T> PassOutType;
-    static PassOutType passOut(StorageType& value) { return value.release(); }
-    static PassOutType passOut(EmptyValueType) { return PassOutType(); }
 
     typedef T* PeekType;
     static PeekType peek(const StorageType& value) { return value.get(); }
