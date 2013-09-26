@@ -1334,3 +1334,5 @@ webkit.org/b/117427 compositing/reflections/load-video-in-reflection.html [ Pass
 
 # Resizing windows appears broken in both DRT and WTR, making the test fail or time out flakily.
 webkit.org/b/96642 loader/go-back-to-different-window-size.html [ Pass Failure Timeout ]
+
+webkit.org/b/114193 transitions/cancel-transition.html [ Pass Failure ]
