@@ -1,3 +1,13 @@
+2013-09-26  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] Add baselines for editing/selection/paragraph-granularity.html
+        https://bugs.webkit.org/show_bug.cgi?id=121842
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations: Removing the corresponding entry.
+        * platform/efl/editing/selection/paragraph-granularity-expected.txt: Added.
+
 2013-09-26  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSS Regions] The layers from the flow thread should be collected under the regions' layers.
