@@ -726,24 +726,14 @@ void RenderRegion::setRequiresLayerForCompositing(bool requiresLayerForCompositi
     // been laid out, after the flow thread decides there are 
     // composited layers that will display in this region.
     ASSERT(!needsLayout());
-
     if (m_requiresLayerForCompositing == requiresLayerForCompositing)
         return;
     
-    bool requiredLayerBefore = requiresLayer();
+    bool requiredLayer = requiresLayer();
     m_requiresLayerForCompositing = requiresLayerForCompositing;
 
-    if (requiredLayerBefore != requiresLayer())
+    if (requiredLayer != requiresLayer())
         updateLayerIfNeeded();
-}
-
-void RenderRegion::adjustRegionBoundsFromFlowThreadPortionRect(const IntPoint& layerOffset, IntRect& regionBounds)
-{
-    LayoutRect flippedFlowThreadPortionRect = flowThreadPortionRect();
-    flowThread()->flipForWritingMode(flippedFlowThreadPortionRect);
-    regionBounds.moveBy(roundedIntPoint(flippedFlowThreadPortionRect.location()));
-
-    UNUSED_PARAM(layerOffset);
 }
 #endif
 

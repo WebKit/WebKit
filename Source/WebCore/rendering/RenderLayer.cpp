@@ -5535,8 +5535,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
         size_t listSize = posZOrderList->size();
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = posZOrderList->at(i);
-            // The RenderNamedFlowThread is ignored when we calculate the bounds of the RenderView.
-            if ((flags & IncludeCompositedDescendants || !curLayer->isComposited()) && !curLayer->isOutOfFlowRenderFlowThread()) {
+            if (flags & IncludeCompositedDescendants || !curLayer->isComposited()) {
                 LayoutRect childUnionBounds = curLayer->calculateLayerBounds(this, 0, descendantFlags);
                 unionBounds.unite(childUnionBounds);
             }

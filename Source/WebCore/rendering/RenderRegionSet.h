@@ -60,8 +60,6 @@ private:
     virtual const char* renderName() const = 0;
     
     virtual bool isRenderRegionSet() const OVERRIDE FINAL { return true; }
-
-    virtual bool requiresLayer() const { return false; }
 };
 
 } // namespace WebCore

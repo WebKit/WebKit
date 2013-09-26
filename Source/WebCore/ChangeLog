@@ -1,3 +1,46 @@
+2013-09-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r156451.
+        http://trac.webkit.org/changeset/156451
+        https://bugs.webkit.org/show_bug.cgi?id=121965
+
+        Broke two fast/multicol tests. (Requested by kling on
+        #webkit).
+
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::updateRenderFlowThreadLayersIfNeeded):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::propagateStyleToAnonymousChildren):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::regionForCompositedLayer):
+        (WebCore::RenderFlowThread::updateRegionForRenderLayer):
+        (WebCore::RenderFlowThread::updateLayerToRegionMappings):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderGeometryMap.cpp:
+        * rendering/RenderGeometryMap.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateLayerBounds):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::shouldClipCompositedBounds):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::canBeComposited):
+        (WebCore::RenderLayerCompositor::requiresCompositingForIndirectReason):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::setRequiresLayerForCompositing):
+        * rendering/RenderRegion.h:
+        * rendering/RenderRegionSet.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+
 2013-09-26  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Cleanup platform interface

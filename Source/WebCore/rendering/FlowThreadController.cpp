@@ -270,7 +270,7 @@ void FlowThreadController::updateRenderFlowThreadLayersIfNeeded()
     // Walk the flow chain in reverse order because RenderRegions might become RenderLayers for the following flow threads.
     for (RenderNamedFlowThreadList::reverse_iterator iter = m_renderNamedFlowThreadList->rbegin(); iter != m_renderNamedFlowThreadList->rend(); ++iter) {
         RenderNamedFlowThread* flowRenderer = *iter;
-        flowRenderer->updateAllLayerToRegionMappingsIfNeeded();
+        flowRenderer->updateLayerToRegionMappingsIfNeeded();
     }
 }
 #endif
