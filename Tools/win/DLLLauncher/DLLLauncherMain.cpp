@@ -180,8 +180,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCm
 
     wstring programName = ::PathFindFileNameW(exePath);
 
+#ifndef WIN_CAIRO
     if (!modifyPath(programName))
         return 1;
+#endif
 
     // Load our corresponding DLL.
     wstring dllName = programName + L".dll";

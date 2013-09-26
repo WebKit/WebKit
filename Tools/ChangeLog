@@ -1,5 +1,21 @@
 2013-09-25  Alex Christensen  <achristensen@webkit.org>
 
+        Removed check for Apple Application Support directory in WinCairo port.
+        https://bugs.webkit.org/show_bug.cgi?id=121869
+
+        Reviewed by Brent Fulgham.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncher.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncher.vcxproj:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj:
+        Use DLLLauncherWinCairo.props for WinCairo ports.
+        * win/DLLLauncher/DLLLauncherMain.cpp:
+        (wWinMain):
+        Don't call modifyPath to check for AAS in the WinCairo port.
+        * win/DLLLauncher/DLLLauncherWinCairo.props: Added to define WIN_CAIRO.
+
+2013-09-25  Alex Christensen  <achristensen@webkit.org>
+
         Enabled AssembleBuildLogs on WinCairo port.
         https://bugs.webkit.org/show_bug.cgi?id=121923
 
