@@ -1,5 +1,16 @@
 2013-09-26  Anders Carlsson  <andersca@apple.com>
 
+        Remove the hash table mover
+        https://bugs.webkit.org/show_bug.cgi?id=121980
+
+        Reviewed by Andreas Kling.
+
+        Use std::move instead.
+
+        * wtf/HashTable.h:
+
+2013-09-26  Anders Carlsson  <andersca@apple.com>
+
         Change a couple of HashMap value types from OwnPtr to std::unique_ptr
         https://bugs.webkit.org/show_bug.cgi?id=121973
 

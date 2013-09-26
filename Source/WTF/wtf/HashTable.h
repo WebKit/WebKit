@@ -281,24 +281,6 @@ namespace WTF {
         const_iterator m_iterator;
     };
 
-    using std::swap;
-
-    // Work around MSVC's standard library, whose swap for pairs does not swap by component.
-    template<typename T> inline void hashTableSwap(T& a, T& b)
-    {
-        swap(a, b);
-    }
-
-    template<typename T, typename U> inline void hashTableSwap(KeyValuePair<T, U>& a, KeyValuePair<T, U>& b)
-    {
-        swap(a.key, b.key);
-        swap(a.value, b.value);
-    }
-
-    template<typename T, bool useSwap> struct Mover;
-    template<typename T> struct Mover<T, true> { static void move(T& from, T& to) { hashTableSwap(from, to); } };
-    template<typename T> struct Mover<T, false> { static void move(T& from, T& to) { to = from; } };
-
     template<typename HashFunctions> class IdentityHashTranslator {
     public:
         template<typename T> static unsigned hash(const T& key) { return HashFunctions::hash(key); }
@@ -462,7 +444,7 @@ namespace WTF {
         void shrink() { rehash(m_tableSize / 2, nullptr); }
 
         ValueType* rehash(int newTableSize, ValueType* entry);
-        ValueType* reinsert(ValueType&);
+        ValueType* reinsert(ValueType&&);
 
         static void initializeBucket(ValueType& bucket);
         static void deleteBucket(ValueType& bucket) { bucket.~ValueType(); Traits::constructDeletedValue(bucket); }
@@ -936,7 +918,7 @@ namespace WTF {
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::reinsert(ValueType& entry) -> ValueType*
+    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::reinsert(ValueType&& entry) -> ValueType*
     {
         ASSERT(m_table);
         ASSERT(!lookupForWriting(Extractor::extract(entry)).second);
@@ -949,7 +931,7 @@ namespace WTF {
 #endif
 
         Value* newEntry = lookupForWriting(Extractor::extract(entry)).first;
-        Mover<ValueType, Traits::needsDestruction>::move(entry, *newEntry);
+        new (NotNull, newEntry) ValueType(std::move(entry));
 
         return newEntry;
     }
@@ -1128,7 +1110,7 @@ namespace WTF {
                 continue;
             }
 
-            Value* reinsertedEntry = reinsert(oldTable[i]);
+            Value* reinsertedEntry = reinsert(std::move(oldTable[i]));
             if (&oldTable[i] == entry) {
                 ASSERT(!newEntry);
                 newEntry = reinsertedEntry;
