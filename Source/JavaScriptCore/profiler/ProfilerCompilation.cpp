@@ -69,14 +69,11 @@ void Compilation::addDescription(const CompiledBytecode& compiledBytecode)
 
 ExecutionCounter* Compilation::executionCounterFor(const OriginStack& origin)
 {
-    HashMap<OriginStack, OwnPtr<ExecutionCounter> >::iterator iter = m_counters.find(origin);
-    if (iter != m_counters.end())
-        return iter->value.get();
-    
-    OwnPtr<ExecutionCounter> counter = adoptPtr(new ExecutionCounter());
-    ExecutionCounter* result = counter.get();
-    m_counters.add(origin, counter.release());
-    return result;
+    std::unique_ptr<ExecutionCounter>& counter = m_counters.add(origin, nullptr).iterator->value;
+    if (!counter)
+        counter = std::make_unique<ExecutionCounter>();
+
+    return counter.get();
 }
 
 void Compilation::addOSRExitSite(const Vector<const void*>& codeAddresses)
@@ -108,11 +105,10 @@ JSValue Compilation::toJS(ExecState* exec) const
     result->putDirect(exec->vm(), exec->propertyNames().descriptions, descriptions);
     
     JSArray* counters = constructEmptyArray(exec, 0);
-    HashMap<OriginStack, OwnPtr<ExecutionCounter> >::const_iterator end = m_counters.end();
-    for (HashMap<OriginStack, OwnPtr<ExecutionCounter> >::const_iterator iter = m_counters.begin(); iter != end; ++iter) {
+    for (auto it = m_counters.begin(), end = m_counters.end(); it != end; ++it) {
         JSObject* counterEntry = constructEmptyObject(exec);
-        counterEntry->putDirect(exec->vm(), exec->propertyNames().origin, iter->key.toJS(exec));
-        counterEntry->putDirect(exec->vm(), exec->propertyNames().executionCount, jsNumber(iter->value->count()));
+        counterEntry->putDirect(exec->vm(), exec->propertyNames().origin, it->key.toJS(exec));
+        counterEntry->putDirect(exec->vm(), exec->propertyNames().executionCount, jsNumber(it->value->count()));
         counters->push(exec, counterEntry);
     }
     result->putDirect(exec->vm(), exec->propertyNames().counters, counters);

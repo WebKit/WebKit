@@ -177,7 +177,7 @@ private:
         static void constructDeletedValue(ptrdiff_t& slot) { slot = 1; }
         static bool isDeletedValue(ptrdiff_t value) { return value == 1; }
     };
-    typedef HashMap<ptrdiff_t, OwnPtr<AbstractField>, WTF::IntHash<ptrdiff_t>, WithoutZeroOrOneHashTraits> MapType;
+    typedef HashMap<ptrdiff_t, std::unique_ptr<AbstractField>, WTF::IntHash<ptrdiff_t>, WithoutZeroOrOneHashTraits> MapType;
     
     OwnPtr<MapType> m_largeIndices;
     Vector<CString, 16> m_largeIndexNames;

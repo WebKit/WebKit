@@ -1,3 +1,29 @@
+2013-09-26  Anders Carlsson  <andersca@apple.com>
+
+        Change a couple of HashMap value types from OwnPtr to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=121973
+
+        Reviewed by Andreas Kling.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        (OpaqueJSClass::contextData):
+        * API/JSClassRef.h:
+        * bytecode/SamplingTool.h:
+        * ftl/FTLAbstractHeap.h:
+        * parser/Parser.cpp:
+        (JSC::::parseFunctionInfo):
+        * parser/SourceProviderCache.cpp:
+        (JSC::SourceProviderCache::add):
+        * parser/SourceProviderCache.h:
+        * parser/SourceProviderCacheItem.h:
+        (JSC::SourceProviderCacheItem::create):
+        * profiler/ProfilerCompilation.cpp:
+        (JSC::Profiler::Compilation::executionCounterFor):
+        (JSC::Profiler::Compilation::toJS):
+        * profiler/ProfilerCompilation.h:
+        * runtime/JSGlobalObject.h:
+
 2013-09-26  Mark Lam  <mark.lam@apple.com>
 
         Move DFG inline caching logic into jit/.

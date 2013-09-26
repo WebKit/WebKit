@@ -211,7 +211,7 @@ namespace JSC {
         unsigned m_size;
     };
 
-    typedef HashMap<ScriptExecutable*, OwnPtr<ScriptSampleRecord> > ScriptSampleRecordMap;
+    typedef HashMap<ScriptExecutable*, std::unique_ptr<ScriptSampleRecord>> ScriptSampleRecordMap;
 
     class SamplingThread {
     public:

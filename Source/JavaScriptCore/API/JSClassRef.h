@@ -59,8 +59,8 @@ public:
     JSPropertyAttributes attributes;
 };
 
-typedef HashMap<RefPtr<StringImpl>, OwnPtr<StaticValueEntry> > OpaqueJSClassStaticValuesTable;
-typedef HashMap<RefPtr<StringImpl>, OwnPtr<StaticFunctionEntry> > OpaqueJSClassStaticFunctionsTable;
+typedef HashMap<RefPtr<StringImpl>, std::unique_ptr<StaticValueEntry>> OpaqueJSClassStaticValuesTable;
+typedef HashMap<RefPtr<StringImpl>, std::unique_ptr<StaticFunctionEntry>> OpaqueJSClassStaticFunctionsTable;
 
 struct OpaqueJSClass;
 
@@ -79,8 +79,8 @@ public:
     // 4. When it is used, the old context data is found in VM and used.
     RefPtr<OpaqueJSClass> m_class;
 
-    OwnPtr<OpaqueJSClassStaticValuesTable> staticValues;
-    OwnPtr<OpaqueJSClassStaticFunctionsTable> staticFunctions;
+    std::unique_ptr<OpaqueJSClassStaticValuesTable> staticValues;
+    std::unique_ptr<OpaqueJSClassStaticFunctionsTable> staticFunctions;
     JSC::Weak<JSC::JSObject> cachedPrototype;
 };
 

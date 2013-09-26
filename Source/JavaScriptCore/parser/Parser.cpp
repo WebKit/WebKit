@@ -995,7 +995,7 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
     // Cache the tokenizer state and the function scope the first time the function is parsed.
     // Any future reparsing can then skip the function.
     static const int minimumFunctionLengthToCache = 16;
-    OwnPtr<SourceProviderCacheItem> newInfo;
+    std::unique_ptr<SourceProviderCacheItem> newInfo;
     int functionLength = closeBraceOffset - openBraceOffset;
     if (TreeBuilder::CanUseFunctionCache && m_functionCache && functionLength > minimumFunctionLengthToCache) {
         SourceProviderCacheItemCreationParameters parameters;
@@ -1013,7 +1013,7 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
     matchOrFail(CLOSEBRACE);
     
     if (newInfo)
-        m_functionCache->add(openBraceOffset, newInfo.release());
+        m_functionCache->add(openBraceOffset, std::move(newInfo));
     
     next();
     return true;

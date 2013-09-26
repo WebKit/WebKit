@@ -38,9 +38,9 @@ void SourceProviderCache::clear()
     m_map.clear();
 }
 
-void SourceProviderCache::add(int sourcePosition, PassOwnPtr<SourceProviderCacheItem> item)
+void SourceProviderCache::add(int sourcePosition, std::unique_ptr<SourceProviderCacheItem> item)
 {
-    m_map.add(sourcePosition, item);
+    m_map.add(sourcePosition, std::move(item));
 }
 
 }

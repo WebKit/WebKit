@@ -41,11 +41,11 @@ public:
     JS_EXPORT_PRIVATE ~SourceProviderCache();
 
     JS_EXPORT_PRIVATE void clear();
-    void add(int sourcePosition, PassOwnPtr<SourceProviderCacheItem>);
+    void add(int sourcePosition, std::unique_ptr<SourceProviderCacheItem>);
     const SourceProviderCacheItem* get(int sourcePosition) const { return m_map.get(sourcePosition); }
 
 private:
-    HashMap<int, OwnPtr<SourceProviderCacheItem> > m_map;
+    HashMap<int, std::unique_ptr<SourceProviderCacheItem>> m_map;
 };
 
 }

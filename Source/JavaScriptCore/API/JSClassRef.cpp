@@ -66,7 +66,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
         while (staticValue->name) {
             String valueName = String::fromUTF8(staticValue->name);
             if (!valueName.isNull())
-                m_staticValues->set(valueName.impl(), adoptPtr(new StaticValueEntry(staticValue->getProperty, staticValue->setProperty, staticValue->attributes, valueName)));
+                m_staticValues->set(valueName.impl(), std::make_unique<StaticValueEntry>(staticValue->getProperty, staticValue->setProperty, staticValue->attributes, valueName));
             ++staticValue;
         }
     }
@@ -76,7 +76,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
         while (staticFunction->name) {
             String functionName = String::fromUTF8(staticFunction->name);
             if (!functionName.isNull())
-                m_staticFunctions->set(functionName.impl(), adoptPtr(new StaticFunctionEntry(staticFunction->callAsFunction, staticFunction->attributes)));
+                m_staticFunctions->set(functionName.impl(), std::make_unique<StaticFunctionEntry>(staticFunction->callAsFunction, staticFunction->attributes));
             ++staticFunction;
         }
     }
@@ -131,30 +131,30 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::VM&, OpaqueJSClass* jsCl
     : m_class(jsClass)
 {
     if (jsClass->m_staticValues) {
-        staticValues = adoptPtr(new OpaqueJSClassStaticValuesTable);
+        staticValues = std::make_unique<OpaqueJSClassStaticValuesTable>();
         OpaqueJSClassStaticValuesTable::const_iterator end = jsClass->m_staticValues->end();
         for (OpaqueJSClassStaticValuesTable::const_iterator it = jsClass->m_staticValues->begin(); it != end; ++it) {
             ASSERT(!it->key->isIdentifier());
             String valueName = it->key->isolatedCopy();
-            staticValues->add(valueName.impl(), adoptPtr(new StaticValueEntry(it->value->getProperty, it->value->setProperty, it->value->attributes, valueName)));
+            staticValues->add(valueName.impl(), std::make_unique<StaticValueEntry>(it->value->getProperty, it->value->setProperty, it->value->attributes, valueName));
         }
     }
 
     if (jsClass->m_staticFunctions) {
-        staticFunctions = adoptPtr(new OpaqueJSClassStaticFunctionsTable);
+        staticFunctions = std::make_unique<OpaqueJSClassStaticFunctionsTable>();
         OpaqueJSClassStaticFunctionsTable::const_iterator end = jsClass->m_staticFunctions->end();
         for (OpaqueJSClassStaticFunctionsTable::const_iterator it = jsClass->m_staticFunctions->begin(); it != end; ++it) {
             ASSERT(!it->key->isIdentifier());
-            staticFunctions->add(it->key->isolatedCopy(), adoptPtr(new StaticFunctionEntry(it->value->callAsFunction, it->value->attributes)));
+            staticFunctions->add(it->key->isolatedCopy(), std::make_unique<StaticFunctionEntry>(it->value->callAsFunction, it->value->attributes));
         }
     }
 }
 
 OpaqueJSClassContextData& OpaqueJSClass::contextData(ExecState* exec)
 {
-    OwnPtr<OpaqueJSClassContextData>& contextData = exec->lexicalGlobalObject()->opaqueJSClassData().add(this, nullptr).iterator->value;
+    std::unique_ptr<OpaqueJSClassContextData>& contextData = exec->lexicalGlobalObject()->opaqueJSClassData().add(this, nullptr).iterator->value;
     if (!contextData)
-        contextData = adoptPtr(new OpaqueJSClassContextData(exec->vm(), this));
+        contextData = std::make_unique<OpaqueJSClassContextData>(exec->vm(), this);
     return *contextData;
 }
 

@@ -74,7 +74,7 @@ private:
     CompilationKind m_kind;
     Vector<ProfiledBytecodes> m_profiledBytecodes;
     Vector<CompiledBytecode> m_descriptions;
-    HashMap<OriginStack, OwnPtr<ExecutionCounter> > m_counters;
+    HashMap<OriginStack, std::unique_ptr<ExecutionCounter>> m_counters;
     Vector<OSRExitSite> m_osrExitSites;
     SegmentedVector<OSRExit> m_osrExits;
     unsigned m_numInlinedGetByIds;
