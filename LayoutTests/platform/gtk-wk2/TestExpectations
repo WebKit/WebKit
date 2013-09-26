@@ -369,7 +369,6 @@ webkit.org/b/116970 accessibility/multiselect-list-reports-active-option.html [ 
 webkit.org/b/116971 accessibility/poorly-formed-aria-table.html [ Failure ]
 webkit.org/b/106346 accessibility/svg-remote-element.html [ Failure ]
 webkit.org/b/116973 platform/gtk/accessibility/caret-browsing-select-focus.html [ Failure ]
-Bug(GTK) accessibility/notification-listeners.html [ Failure ]
 
 # svg/ failures
 webkit.org/b/42457 svg/custom/embedded-svg-allowed-in-dashboard.xml [ Failure ]

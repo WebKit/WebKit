@@ -1,3 +1,9 @@
+2013-09-26  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed GTK gardening. Remove failure expectation for test passing after r156209.
+
+        * platform/gtk-wk2/TestExpectations: Removed failure expectation.
+
 2013-09-26  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Remove inappropriate expectations for tests that are now passing on EFL port
