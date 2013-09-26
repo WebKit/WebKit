@@ -29,12 +29,14 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "AudioStreamTrack.h"
 #include "Event.h"
 #include "ExceptionCode.h"
 #include "MediaStreamCenter.h"
 #include "MediaStreamRegistry.h"
 #include "MediaStreamSource.h"
 #include "MediaStreamTrackEvent.h"
+#include "VideoStreamTrack.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -124,12 +126,12 @@ MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStream
     size_t numberOfAudioTracks = m_descriptor->numberOfAudioStreams();
     m_audioTracks.reserveCapacity(numberOfAudioTracks);
     for (size_t i = 0; i < numberOfAudioTracks; i++)
-        m_audioTracks.append(MediaStreamTrack::create(context, m_descriptor->audioStreams(i)));
+        m_audioTracks.append(AudioStreamTrack::create(context, m_descriptor->audioStreams(i)));
 
     size_t numberOfVideoTracks = m_descriptor->numberOfVideoStreams();
     m_videoTracks.reserveCapacity(numberOfVideoTracks);
     for (size_t i = 0; i < numberOfVideoTracks; i++)
-        m_videoTracks.append(MediaStreamTrack::create(context, m_descriptor->videoStreams(i)));
+        m_videoTracks.append(VideoStreamTrack::create(context, m_descriptor->videoStreams(i)));
 }
 
 MediaStream::~MediaStream()
@@ -275,12 +277,14 @@ void MediaStream::addRemoteSource(MediaStreamSource* source)
 
     source->setStream(descriptor());
 
-    RefPtr<MediaStreamTrack> track = MediaStreamTrack::create(scriptExecutionContext(), source);
+    RefPtr<MediaStreamTrack> track;
     switch (source->type()) {
     case MediaStreamSource::Audio:
+        track = AudioStreamTrack::create(scriptExecutionContext(), source);
         m_audioTracks.append(track);
         break;
     case MediaStreamSource::Video:
+        track = VideoStreamTrack::create(scriptExecutionContext(), source);
         m_videoTracks.append(track);
         break;
     }

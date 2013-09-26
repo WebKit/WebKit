@@ -1,3 +1,34 @@
+2013-09-26  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream API] implement VideoStreamTrack and AudioStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=121950
+
+        Reviewed by Dean Jackson.
+
+        No new tests, blocked by https://bugs.webkit.org/show_bug.cgi?id=121967
+
+        * CMakeLists.txt: Add new files.
+        * DerivedSources.make: Ditto.
+        * GNUmakefile.list.am: Ditto.
+
+        * Modules/mediastream/AudioStreamTrack.cpp: Added.
+        * Modules/mediastream/AudioStreamTrack.h: Added.
+        * Modules/mediastream/AudioStreamTrack.idl: Added.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream): Create an AudioStreamTrack or a VideoStreamTrack.
+        (WebCore::MediaStream::addRemoteSource): Ditto.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::create): Removed.
+        * Modules/mediastream/MediaStreamTrack.h:
+
+        * Modules/mediastream/VideoStreamTrack.cpp: Added.
+        * Modules/mediastream/VideoStreamTrack.h: Added.
+        * Modules/mediastream/VideoStreamTrack.idl: Added.
+
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+
 2013-09-26  Anders Carlsson  <andersca@apple.com>
 
         Stop using PassWeak

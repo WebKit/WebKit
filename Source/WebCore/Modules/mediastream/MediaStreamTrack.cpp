@@ -42,18 +42,6 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext* context, const Dictionary& videoConstraints)
-{
-    RefPtr<MediaStreamTrack> track = adoptRef(new MediaStreamTrack(context, 0, &videoConstraints));
-    return track.release();
-}
-
-PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext* context, MediaStreamSource* source)
-{
-    RefPtr<MediaStreamTrack> track = adoptRef(new MediaStreamTrack(context, source, 0));
-    return track.release();
-}
-
 MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext* context, MediaStreamSource* source, const Dictionary*)
     : ActiveDOMObject(context)
     , m_source(source)

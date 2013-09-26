@@ -266,6 +266,14 @@
 		07B5A2DC1464320A00A81ECE /* JSTextTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B5A2DA1464320A00A81ECE /* JSTextTrackList.h */; };
 		07B5A30D14687D7100A81ECE /* JSTextTrackListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B5A30C14687D7100A81ECE /* JSTextTrackListCustom.cpp */; };
 		07BDD6EC1469B4C2009C9F85 /* JSTrackEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B5A30A14687B8400A81ECE /* JSTrackEventCustom.cpp */; };
+		07C59B5317F4AC15000FBCBB /* AudioStreamTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C59B4D17F4AC15000FBCBB /* AudioStreamTrack.cpp */; };
+		07C59B5417F4AC15000FBCBB /* AudioStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C59B4E17F4AC15000FBCBB /* AudioStreamTrack.h */; };
+		07C59B5617F4AC15000FBCBB /* VideoStreamTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C59B5017F4AC15000FBCBB /* VideoStreamTrack.cpp */; };
+		07C59B5717F4AC15000FBCBB /* VideoStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C59B5117F4AC15000FBCBB /* VideoStreamTrack.h */; };
+		07C59B5D17F4B208000FBCBB /* JSAudioStreamTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C59B5917F4B208000FBCBB /* JSAudioStreamTrack.cpp */; };
+		07C59B5E17F4B208000FBCBB /* JSAudioStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C59B5A17F4B208000FBCBB /* JSAudioStreamTrack.h */; };
+		07C59B5F17F4B208000FBCBB /* JSVideoStreamTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C59B5B17F4B208000FBCBB /* JSVideoStreamTrack.cpp */; };
+		07C59B6017F4B208000FBCBB /* JSVideoStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C59B5C17F4B208000FBCBB /* JSVideoStreamTrack.h */; };
 		07CE77D516712A6A00C55A47 /* InbandTextTrackPrivateClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 07CE77D416712A6A00C55A47 /* InbandTextTrackPrivateClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07DC5FD417D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07DC5FD317D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp */; };
 		07E116B11489C9A100EC5ACE /* JSTextTrackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07E116B01489C9A100EC5ACE /* JSTextTrackCustom.cpp */; };
@@ -6667,6 +6675,16 @@
 		07B5A3061468537100A81ECE /* TextTrackList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextTrackList.idl; sourceTree = "<group>"; };
 		07B5A30A14687B8400A81ECE /* JSTrackEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTrackEventCustom.cpp; sourceTree = "<group>"; };
 		07B5A30C14687D7100A81ECE /* JSTextTrackListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackListCustom.cpp; sourceTree = "<group>"; };
+		07C59B4D17F4AC15000FBCBB /* AudioStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioStreamTrack.cpp; sourceTree = "<group>"; };
+		07C59B4E17F4AC15000FBCBB /* AudioStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioStreamTrack.h; sourceTree = "<group>"; };
+		07C59B4F17F4AC15000FBCBB /* AudioStreamTrack.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioStreamTrack.idl; sourceTree = "<group>"; };
+		07C59B5017F4AC15000FBCBB /* VideoStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoStreamTrack.cpp; sourceTree = "<group>"; };
+		07C59B5117F4AC15000FBCBB /* VideoStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoStreamTrack.h; sourceTree = "<group>"; };
+		07C59B5217F4AC15000FBCBB /* VideoStreamTrack.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoStreamTrack.idl; sourceTree = "<group>"; };
+		07C59B5917F4B208000FBCBB /* JSAudioStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSAudioStreamTrack.cpp; path = JSAudioStreamTrack.cpp; sourceTree = "<group>"; };
+		07C59B5A17F4B208000FBCBB /* JSAudioStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSAudioStreamTrack.h; path = JSAudioStreamTrack.h; sourceTree = "<group>"; };
+		07C59B5B17F4B208000FBCBB /* JSVideoStreamTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSVideoStreamTrack.cpp; path = JSVideoStreamTrack.cpp; sourceTree = "<group>"; };
+		07C59B5C17F4B208000FBCBB /* JSVideoStreamTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSVideoStreamTrack.h; path = JSVideoStreamTrack.h; sourceTree = "<group>"; };
 		07CE77D416712A6A00C55A47 /* InbandTextTrackPrivateClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateClient.h; sourceTree = "<group>"; };
 		07DC5FD317D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCStatsResponseCustom.cpp; sourceTree = "<group>"; };
 		07E116B01489C9A100EC5ACE /* JSTextTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCustom.cpp; sourceTree = "<group>"; };
@@ -13307,6 +13325,12 @@
 		07221B4617CEC32700848E51 /* mediastream */ = {
 			isa = PBXGroup;
 			children = (
+				07C59B4D17F4AC15000FBCBB /* AudioStreamTrack.cpp */,
+				07C59B4E17F4AC15000FBCBB /* AudioStreamTrack.h */,
+				07C59B4F17F4AC15000FBCBB /* AudioStreamTrack.idl */,
+				07C59B5017F4AC15000FBCBB /* VideoStreamTrack.cpp */,
+				07C59B5117F4AC15000FBCBB /* VideoStreamTrack.h */,
+				07C59B5217F4AC15000FBCBB /* VideoStreamTrack.idl */,
 				07221B4A17CEC32700848E51 /* MediaConstraintsImpl.cpp */,
 				07221B4B17CEC32700848E51 /* MediaConstraintsImpl.h */,
 				07221B4C17CEC32700848E51 /* MediaStream.cpp */,
@@ -13450,6 +13474,10 @@
 		07CFD99317D01405001C4FFC /* MediaStream */ = {
 			isa = PBXGroup;
 			children = (
+				07C59B5917F4B208000FBCBB /* JSAudioStreamTrack.cpp */,
+				07C59B5A17F4B208000FBCBB /* JSAudioStreamTrack.h */,
+				07C59B5B17F4B208000FBCBB /* JSVideoStreamTrack.cpp */,
+				07C59B5C17F4B208000FBCBB /* JSVideoStreamTrack.h */,
 				07277E4017D018CC0015534D /* JSMediaStream.cpp */,
 				07277E4117D018CC0015534D /* JSMediaStream.h */,
 				07277E4217D018CC0015534D /* JSMediaStreamAudioDestinationNode.cpp */,
@@ -21546,6 +21574,7 @@
 				FD5686CC13AC181400B69C68 /* AudioBufferCallback.h in Headers */,
 				FD315FFC12B0267600C1A359 /* AudioBufferSourceNode.h in Headers */,
 				FD31607C12B026F700C1A359 /* AudioBus.h in Headers */,
+				07C59B5E17F4B208000FBCBB /* JSAudioStreamTrack.h in Headers */,
 				FD31607E12B026F700C1A359 /* AudioChannel.h in Headers */,
 				FD31600512B0267600C1A359 /* AudioContext.h in Headers */,
 				FD31607F12B026F700C1A359 /* AudioDestination.h in Headers */,
@@ -22784,6 +22813,7 @@
 				4D273CFA1669420800259CA1 /* InspectorInputAgent.h in Headers */,
 				20D629271253690B00081543 /* InspectorInstrumentation.h in Headers */,
 				71B1E125164048F700B1880A /* InspectorLayerTreeAgent.h in Headers */,
+				07C59B6017F4B208000FBCBB /* JSVideoStreamTrack.h in Headers */,
 				7AA51DD6148506A900AD2752 /* InspectorMemoryAgent.h in Headers */,
 				4F6FDD651341DEDD001F8EE3 /* InspectorPageAgent.h in Headers */,
 				9F0D6B2F121BFEBA006C0288 /* InspectorProfilerAgent.h in Headers */,
@@ -23609,6 +23639,7 @@
 				0F13163E16ED0CC80035CC04 /* PlatformCAFilters.h in Headers */,
 				499B3EC5128CCC4700E726C2 /* PlatformCALayer.h in Headers */,
 				493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */,
+				07C59B5417F4AC15000FBCBB /* AudioStreamTrack.h in Headers */,
 				E1424C8A164B3B4E00F32D40 /* PlatformCookieJar.h in Headers */,
 				BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */,
 				BCAA487014A052530088FAC4 /* PlatformEventFactoryMac.h in Headers */,
@@ -24503,6 +24534,7 @@
 				93F199F008245E59001E9ABC /* WebCoreView.h in Headers */,
 				BC6DADEF0A195FDF00E5CD14 /* WebFontCache.h in Headers */,
 				A7D20F6D107F438B00A80392 /* WebGLActiveInfo.h in Headers */,
+				07C59B5717F4AC15000FBCBB /* VideoStreamTrack.h in Headers */,
 				49C7B9C91042D32F0009D447 /* WebGLBuffer.h in Headers */,
 				7E66E23416D6EB6C00F7E7FF /* WebGLCompressedTextureATC.h in Headers */,
 				7E66E23417E6EB6C00F7E7FF /* WebGLCompressedTexturePVRTC.h in Headers */,
@@ -25298,6 +25330,7 @@
 				A80E6CF70A1989CA007FB8C5 /* CSSProperty.cpp in Sources */,
 				78D02BC5154A18DF00B62D05 /* CSSPropertyAnimation.cpp in Sources */,
 				1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */,
+				07C59B5617F4AC15000FBCBB /* VideoStreamTrack.cpp in Sources */,
 				82E3D8DE122EA0D1003AE5BC /* CSSPropertySourceData.cpp in Sources */,
 				BC5A12DF0DC0414800C9AFAD /* CSSReflectValue.cpp in Sources */,
 				A80E6D060A1989CA007FB8C5 /* CSSRule.cpp in Sources */,
@@ -25387,6 +25420,7 @@
 				B2F34FE90E82F82700F627CD /* DNSCFNet.cpp in Sources */,
 				F293B27E56C112F373FFF27E /* DNSResolveQueue.cpp in Sources */,
 				A8185F3C09765766005826D9 /* Document.cpp in Sources */,
+				07C59B5D17F4B208000FBCBB /* JSAudioStreamTrack.cpp in Sources */,
 				A3BB59F31457A40D00AC56FE /* DocumentEventQueue.cpp in Sources */,
 				A8185F3F09765766005826D9 /* DocumentFragment.cpp in Sources */,
 				93E227E00AF589AD00D48324 /* DocumentLoader.cpp in Sources */,
@@ -26885,6 +26919,7 @@
 				A715E652134BBBEC00D8E713 /* ProgressShadowElement.cpp in Sources */,
 				1A2A68230B5BEDE70002A480 /* ProgressTracker.cpp in Sources */,
 				E4BBED0E14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.cpp in Sources */,
+				07C59B5F17F4B208000FBCBB /* JSVideoStreamTrack.cpp in Sources */,
 				514C76740CE923A1007EF3CD /* ProtectionSpace.cpp in Sources */,
 				1AF8E13312565A4400230FF7 /* ProxyServer.cpp in Sources */,
 				1AF8E1C3125673E000230FF7 /* ProxyServerCFNet.cpp in Sources */,
@@ -26985,6 +27020,7 @@
 				1479FAF1109AE37500DED655 /* RenderRubyRun.cpp in Sources */,
 				1479FAF3109AE37500DED655 /* RenderRubyText.cpp in Sources */,
 				BC3BE9930E9C1C7C00835588 /* RenderScrollbar.cpp in Sources */,
+				07C59B5317F4AC15000FBCBB /* AudioStreamTrack.cpp in Sources */,
 				BC3BE9AB0E9C242000835588 /* RenderScrollbarPart.cpp in Sources */,
 				BC3BE9A50E9C239600835588 /* RenderScrollbarTheme.cpp in Sources */,
 				458FE4091589DF0B005609E6 /* RenderSearchField.cpp in Sources */,
