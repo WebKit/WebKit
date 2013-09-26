@@ -1,3 +1,13 @@
+2013-09-25  Alex Christensen  <alex.christensen@flexsim.com>
+
+        Win64 compile fix after r155226.
+        https://bugs.webkit.org/show_bug.cgi?id=120969
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        Disable building StructuredExceptionHandlerSuppressor.cpp and makesafeseh.asm on Win64.
+
 2013-09-25  Alexey Proskuryakov  <ap@apple.com>
 
         Flaky Test: platform/mac/fonts/han-disunification.html
