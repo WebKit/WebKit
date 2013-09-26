@@ -241,6 +241,7 @@ static PassRefPtr<IDBIndex> indexForObjectStore(IDBObjectStore* idbObjectStore, 
     return idbIndex;
 }
 
+#if !PLATFORM(MAC)
 static PassRefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
 {
     RefPtr<KeyPath> keyPath;
@@ -267,6 +268,7 @@ static PassRefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
 
     return keyPath.release();
 }
+#endif // !PLATFORM(MAC)
 
 class DatabaseLoader : public ExecutableWithDatabase {
 public:
