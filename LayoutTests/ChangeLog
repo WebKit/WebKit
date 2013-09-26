@@ -1,3 +1,18 @@
+2013-09-26  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Unable to collect html element in a named flow
+        https://bugs.webkit.org/show_bug.cgi?id=121878
+
+        Reviewed by Antti Koivisto.
+
+        Use an iframe with a html element collected in a named flow
+        to test that is does not crash or assert.
+
+        * fast/regions/collect-html-in-named-flow-expected.txt: Added.
+        * fast/regions/collect-html-in-named-flow.html: Added.
+        * fast/regions/iframe-html-collected-expected.txt: Added.
+        * fast/regions/iframe-html-collected.html: Added.
+
 2013-09-25  Alexey Proskuryakov  <ap@apple.com>
 
         fast/css/font-face-data-uri.html is failing

@@ -489,12 +489,12 @@ bool RenderNamedFlowThread::isChildAllowed(RenderObject* child, RenderStyle* sty
         return true;
 
     ASSERT(child->node()->isElementNode());
-    Element* originalParent = toElement(NodeRenderingTraversal::parent(child->node()));
 
-    if (!originalParent || !originalParent->renderer())
+    Node* originalParent = NodeRenderingTraversal::parent(child->node());
+    if (!originalParent || !originalParent->isElementNode() || !originalParent->renderer())
         return true;
 
-    return originalParent->renderer()->isChildAllowed(child, style);
+    return toElement(originalParent)->renderer()->isChildAllowed(child, style);
 }
 
 void RenderNamedFlowThread::dispatchRegionLayoutUpdateEvent()
