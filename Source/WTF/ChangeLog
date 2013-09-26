@@ -1,3 +1,12 @@
+2013-09-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Work around missing C++11 features of MSVC by providing an implementation for
+        std::is_trivially_destructible based on the existing std::has_trivial_destructor.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * wtf/StdLibExtras.h: Add implementation for is_trivially_destructable for MSVC 2010 and prior.
+
 2013-09-26  Anders Carlsson  <andersca@apple.com>
 
         Remove needsDestruction from vector and hash traits
