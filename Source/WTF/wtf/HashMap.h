@@ -25,40 +25,45 @@
 
 namespace WTF {
 
-template<typename KeyTraits, typename MappedTraits> struct HashMapValueTraits;
-
 template<typename T> struct KeyValuePairKeyExtractor {
     static const typename T::KeyType& extract(const T& p) { return p.key; }
 };
 
 template<typename KeyArg, typename MappedArg, typename HashArg = typename DefaultHash<KeyArg>::Hash,
-    typename KeyTraitsArg = HashTraits<KeyArg>, typename MappedTraitsArg = HashTraits<MappedArg> >
+    typename KeyTraitsArg = HashTraits<KeyArg>, typename MappedTraitsArg = HashTraits<MappedArg>>
 class HashMap {
     WTF_MAKE_FAST_ALLOCATED;
 private:
     typedef KeyTraitsArg KeyTraits;
     typedef MappedTraitsArg MappedTraits;
-    typedef HashMapValueTraits<KeyTraits, MappedTraits> ValueTraits;
+
+    struct KeyValuePairTraits : KeyValuePairHashTraits<KeyTraits, MappedTraits> {
+        static const bool hasIsEmptyValueFunction = true;
+        static bool isEmptyValue(const typename KeyValuePairHashTraits<KeyTraits, MappedTraits>::TraitType& value)
+        {
+            return isHashTraitsEmptyValue<KeyTraits>(value.key);
+        }
+    };
 
 public:
     typedef typename KeyTraits::TraitType KeyType;
     typedef typename MappedTraits::TraitType MappedType;
-    typedef typename ValueTraits::TraitType ValueType;
+    typedef typename KeyValuePairTraits::TraitType KeyValuePairType;
 
 private:
     typedef typename MappedTraits::PeekType MappedPeekType;
 
     typedef HashArg HashFunctions;
 
-    typedef HashTable<KeyType, ValueType, KeyValuePairKeyExtractor<ValueType>,
-        HashFunctions, ValueTraits, KeyTraits> HashTableType;
+    typedef HashTable<KeyType, KeyValuePairType, KeyValuePairKeyExtractor<KeyValuePairType>,
+        HashFunctions, KeyValuePairTraits, KeyTraits> HashTableType;
 
     class HashMapKeysProxy;
     class HashMapValuesProxy;
 
 public:
-    typedef HashTableIteratorAdapter<HashTableType, ValueType> iterator;
-    typedef HashTableConstIteratorAdapter<HashTableType, ValueType> const_iterator;
+    typedef HashTableIteratorAdapter<HashTableType, KeyValuePairType> iterator;
+    typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePairType> const_iterator;
     typedef typename HashTableType::AddResult AddResult;
 
 public:
@@ -209,14 +214,6 @@ class HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::HashMa
         ~HashMapValuesProxy() WTF_DELETED_FUNCTION;
 };
 
-template<typename KeyTraits, typename MappedTraits> struct HashMapValueTraits : KeyValuePairHashTraits<KeyTraits, MappedTraits> {
-    static const bool hasIsEmptyValueFunction = true;
-    static bool isEmptyValue(const typename KeyValuePairHashTraits<KeyTraits, MappedTraits>::TraitType& value)
-    {
-        return isHashTraitsEmptyValue<KeyTraits>(value.key);
-    }
-};
-
 template<typename ValueTraits, typename HashFunctions>
 struct HashMapTranslator {
     template<typename T> static unsigned hash(const T& key) { return HashFunctions::hash(key); }
@@ -310,7 +307,7 @@ template<typename HashTranslator, typename TYPE>
 inline typename HashMap<T, U, V, W, X>::iterator
 HashMap<T, U, V, W, X>::find(const TYPE& value)
 {
-    return m_impl.template find<HashMapTranslatorAdapter<ValueTraits, HashTranslator> >(value);
+    return m_impl.template find<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value);
 }
 
 template<typename T, typename U, typename V, typename W, typename X>
@@ -318,14 +315,14 @@ template<typename HashTranslator, typename TYPE>
 inline typename HashMap<T, U, V, W, X>::const_iterator 
 HashMap<T, U, V, W, X>::find(const TYPE& value) const
 {
-    return m_impl.template find<HashMapTranslatorAdapter<ValueTraits, HashTranslator> >(value);
+    return m_impl.template find<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value);
 }
 
 template<typename T, typename U, typename V, typename W, typename X>
 template<typename HashTranslator, typename TYPE>
 inline bool HashMap<T, U, V, W, X>::contains(const TYPE& value) const
 {
-    return m_impl.template contains<HashMapTranslatorAdapter<ValueTraits, HashTranslator>>(value);
+    return m_impl.template contains<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value);
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
@@ -344,7 +341,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 template<typename K, typename V>
 auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::inlineAdd(K&& key, V&& value) -> AddResult
 {
-    return m_impl.template add<HashMapTranslator<ValueTraits, HashFunctions>>(std::forward<K>(key), std::forward<V>(value));
+    return m_impl.template add<HashMapTranslator<KeyValuePairTraits, HashFunctions>>(std::forward<K>(key), std::forward<V>(value));
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
@@ -365,7 +362,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
 template<typename HashTranslator, typename K, typename V>
 auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::add(K&& key, V&& value) -> AddResult
 {
-    return m_impl.template addPassingHashCode<HashMapTranslatorAdapter<ValueTraits, HashTranslator>>(std::forward<K>(key), std::forward<V>(value));
+    return m_impl.template addPassingHashCode<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(std::forward<K>(key), std::forward<V>(value));
 }
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
@@ -385,7 +382,7 @@ auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::add(Key
 template<typename T, typename U, typename V, typename W, typename MappedTraits>
 auto HashMap<T, U, V, W, MappedTraits>::get(const KeyType& key) const -> MappedPeekType
 {
-    ValueType* entry = const_cast<HashTableType&>(m_impl).lookup(key);
+    KeyValuePairType* entry = const_cast<HashTableType&>(m_impl).lookup(key);
     if (!entry)
         return MappedTraits::peek(MappedTraits::emptyValue());
     return MappedTraits::peek(entry->value);

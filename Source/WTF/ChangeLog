@@ -1,5 +1,19 @@
 2013-09-25  Anders Carlsson  <andersca@apple.com>
 
+        Move KeyValuePairTraits inside HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=121931
+
+        Reviewed by Sam Weinig.
+
+        Also rename the ValueType typedef to KeyValuePairType since it's always a key value pair.
+
+        * wtf/HashMap.h:
+        (WTF::HashMap::KeyValuePairTraits::isEmptyValue):
+        (WTF::HashMap::find):
+        (WTF::HashMap::contains):
+
+2013-09-25  Anders Carlsson  <andersca@apple.com>
+
         Un-indent HashMap.h.
 
         Rubber-stamped by Andreas Kling.
