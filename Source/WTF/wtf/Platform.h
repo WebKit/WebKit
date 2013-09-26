@@ -497,17 +497,6 @@
 #define WTF_USE_QUERY_PERFORMANCE_COUNTER  1
 #endif
 
-#if OS(WINCE) && !PLATFORM(QT)
-#define NOSHLWAPI      /* shlwapi.h not available on WinCe */
-
-/* MSDN documentation says these functions are provided with uspce.lib.  But we cannot find this file. */
-#define __usp10__      /* disable "usp10.h" */
-
-#define _INC_ASSERT    /* disable "assert.h" */
-#define assert(x)
-
-#endif  /* OS(WINCE) && !PLATFORM(QT) */
-
 #if !USE(WCHAR_UNICODE)
 #define WTF_USE_ICU_UNICODE 1
 #endif

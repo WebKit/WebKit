@@ -1,3 +1,16 @@
+2013-09-25  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix compilation with new MSVC compiler for Windows CE
+        https://bugs.webkit.org/show_bug.cgi?id=121914
+
+        Reviewed by Darin Adler.
+
+        Remove code to support older Windows CE versions, since those old
+        versions do not support C+11, which is required in the meantime.
+
+        * wtf/Atomics.h:
+        * wtf/Platform.h:
+
 2013-09-25  Anders Carlsson  <andersca@apple.com>
 
         Move KeyValuePairTraits inside HashMap

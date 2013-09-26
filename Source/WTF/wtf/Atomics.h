@@ -63,9 +63,7 @@
 #include <wtf/StdLibExtras.h>
 
 #if OS(WINDOWS)
-#if OS(WINCE)
-#include <cmnintrin.h>
-#elif !COMPILER(GCC)
+#if !COMPILER(GCC)
 extern "C" void _ReadWriteBarrier(void);
 #pragma intrinsic(_ReadWriteBarrier)
 #endif
