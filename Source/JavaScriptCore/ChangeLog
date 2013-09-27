@@ -1,3 +1,9 @@
+2013-09-26  Oliver Hunt  <oliver@apple.com>
+
+        Make GCC happy
+
+        * parser/Parser.h:
+
 2013-09-25  Oliver Hunt  <oliver@apple.com>
 
         Implement prefixed-destructuring assignment

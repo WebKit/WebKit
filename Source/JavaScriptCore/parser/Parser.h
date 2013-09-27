@@ -957,7 +957,7 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder&);
 
     template <DeconstructionKind, class TreeBuilder> ALWAYS_INLINE TreeDeconstructionPattern createBindingPattern(TreeBuilder&, const Identifier&, int depth);
-    template <DeconstructionKind, class TreeBuilder> ALWAYS_INLINE TreeDeconstructionPattern parseDeconstructionPattern(TreeBuilder&, int depth = 0);
+    template <DeconstructionKind, class TreeBuilder> TreeDeconstructionPattern parseDeconstructionPattern(TreeBuilder&, int depth = 0);
     template <FunctionRequirements, bool nameIsInContainingScope, class TreeBuilder> bool parseFunctionInfo(TreeBuilder&, const Identifier*&, TreeFormalParameterList&, TreeFunctionBody&, unsigned& openBraceOffset, unsigned& closeBraceOffset, int& bodyStartLine, unsigned& bodyStartColumn);
     ALWAYS_INLINE int isBinaryOperator(JSTokenType);
     bool allowAutomaticSemicolon();
