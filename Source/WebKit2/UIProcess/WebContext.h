@@ -46,7 +46,6 @@
 #include "WebHistoryClient.h"
 #include "WebProcessProxy.h"
 #include <WebCore/LinkHash.h>
-#include <WebCore/Pasteboard.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -321,9 +320,13 @@ private:
 
 #if PLATFORM(MAC)
 #if PLATFORM(IOS)
-    void writeWebContentToPasteboard(const WebCore::PasteboardWebContent& content);
-    void writeImageToPasteboard(const WebCore::PasteboardImage& pasteboardImage);
-    void writeStringToPasteboard(const String& text);
+    void writeWebContentToPasteboard(const WebCore::PasteboardWebContent&);
+    void writeImageToPasteboard(const WebCore::PasteboardImage&);
+    void writeStringToPasteboard(const String& pasteboardType, const String&);
+    void readStringFromPasteboard(uint64_t index, const String& pasteboardType, WTF::String&);
+    void readURLFromPasteboard(uint64_t index, const String& pasteboardType, String&);
+    void readBufferFromPasteboard(uint64_t index, const String& pasteboardType, SharedMemory::Handle&, uint64_t& size);
+    void getPasteboardItemsCount(uint64_t& itemsCount);
 #endif
     void getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes);
     void getPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, Vector<String>& pathnames);

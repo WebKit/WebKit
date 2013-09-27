@@ -35,6 +35,7 @@
 #import <WebCore/PageGroup.h>
 #import <WebCore/PlatformCookieJar.h>
 #import <WebCore/PlatformPasteboard.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/SubframeLoader.h>
 #import <WebKitSystemInterface.h>
 
@@ -232,13 +233,39 @@ void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardWebConten
     PlatformPasteboard().write(content);
 }
 
-void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardImage& pasteboardImage)
+void WebPlatformStrategies::writeToPasteboard(const WebCore::PasteboardImage& image)
 {
-    PlatformPasteboard().write(pasteboardImage);
+    PlatformPasteboard().write(image);
 }
 
-void WebPlatformStrategies::writeToPasteboard(const String& text)
+void WebPlatformStrategies::writeToPasteboard(const String& pasteboardType, const String& text)
 {
-    PlatformPasteboard().write(text);
+    PlatformPasteboard().write(pasteboardType, text);
 }
+
+int WebPlatformStrategies::getPasteboardItemsCount()
+{
+    return PlatformPasteboard().count();
+}
+
+PassRefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(int index, const String& type)
+{
+    return PlatformPasteboard().readBuffer(index, type);
+}
+
+WebCore::URL WebPlatformStrategies::readURLFromPasteboard(int index, const String& type)
+{
+    return PlatformPasteboard().readURL(index, type);
+}
+
+String WebPlatformStrategies::readStringFromPasteboard(int index, const String& type)
+{
+    return PlatformPasteboard().readString(index, type);
+}
+
+long WebPlatformStrategies::changeCount()
+{
+    return PlatformPasteboard().changeCount();
+}
+
 #endif

@@ -26,10 +26,9 @@
 #ifndef PlatformPasteboard_h
 #define PlatformPasteboard_h
 
-#include "Pasteboard.h"
-#include "SharedBuffer.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
@@ -43,15 +42,18 @@ OBJC_CLASS UIPasteboard;
 namespace WebCore {
 
 class Color;
+class SharedBuffer;
 class URL;
+struct PasteboardImage;
+struct PasteboardWebContent;
 
 class PlatformPasteboard {
 public:
+    // FIXME: probably we don't need a constructor that takes a pasteboard name for iOS.
+    explicit PlatformPasteboard(const String& pasteboardName);
 #if PLATFORM(IOS)
     PlatformPasteboard();
 #endif
-    // FIXME: probably we don't need a constructor that takes a pasteboard name for iOS.
-    explicit PlatformPasteboard(const String& pasteboardName);
     static String uniqueName();
     
     void getTypes(Vector<String>& types);
@@ -71,9 +73,13 @@ public:
     long setBufferForType(PassRefPtr<SharedBuffer>, const String& pasteboardType);
     long setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType);
     long setStringForType(const String&, const String& pasteboardType);
-    void write(const PasteboardWebContent& content);
-    void write(const PasteboardImage& pasteboardImage);
-    void write(const String& text);
+    void write(const PasteboardWebContent&);
+    void write(const PasteboardImage&);
+    void write(const String& pasteboardType, const String&);
+    PassRefPtr<SharedBuffer> readBuffer(int index, const String& pasteboardType);
+    String readString(int index, const String& pasteboardType);
+    URL readURL(int index, const String& pasteboardType);
+    int count();
 
 private:
 #if PLATFORM(MAC) && !PLATFORM(IOS)

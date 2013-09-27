@@ -59,12 +59,10 @@
 - (BOOL)containsAttachments;
 @end
 
-// FIXME: the following soft linking and #define needs to be shared
-// with PlatformPasteboardIOS.mm
+// FIXME: The following soft linking and #define needs to be shared with PlatformPasteboardIOS.mm and EditorIOS.mm
 
 SOFT_LINK_FRAMEWORK(MobileCoreServices)
 
-SOFT_LINK(MobileCoreServices, UTTypeConformsTo, Boolean, (CFStringRef inUTI, CFStringRef inConformsToUTI), (inUTI, inConformsToUTI))
 SOFT_LINK(MobileCoreServices, UTTypeCreatePreferredIdentifierForTag, CFStringRef, (CFStringRef inTagClass, CFStringRef inTag, CFStringRef inConformingToUTI), (inTagClass, inTag, inConformingToUTI))
 SOFT_LINK(MobileCoreServices, UTTypeCopyPreferredTagWithClass, CFStringRef, (CFStringRef inUTI, CFStringRef inTagClass), (inUTI, inTagClass))
 
@@ -90,16 +88,31 @@ SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeRTF, CFStringRef)
 #define kUTTypeRTFD getkUTTypeRTFD()
 #define kUTTypeRTF getkUTTypeRTF()
 
-SOFT_LINK_FRAMEWORK(AppSupport)
-SOFT_LINK(AppSupport, CPSharedResourcesDirectory, CFStringRef, (void), ())
-
 namespace WebCore {
 
 // FIXME: Does this need to be declared in the header file?
 NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
 
+// Making this non-inline so that WebKit 2's decoding doesn't have to include SharedBuffer.h.
+PasteboardWebContent::PasteboardWebContent()
+{
+}
+
+PasteboardWebContent::~PasteboardWebContent()
+{
+}
+    
+// Making this non-inline so that WebKit 2's decoding doesn't have to include Image.h.
+PasteboardImage::PasteboardImage()
+{
+}
+
+PasteboardImage::~PasteboardImage()
+{
+}
+
 Pasteboard::Pasteboard()
-    : m_frame(0)
+    : m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount())
 {
 }
 
@@ -495,60 +508,44 @@ void Pasteboard::clear(const String& type)
     if (!cocoaType)
         return;
 
-    // FIXME: Should write this with @{} syntax.
-    RetainPtr<NSDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
-    [representations.get() setValue:0 forKey:cocoaType.get()];
-    m_frame->editor().client()->writeDataToPasteboard(representations.get());
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard(cocoaType.get(), String());
 }
 
 void Pasteboard::clear()
 {
-    m_frame->editor().client()->writeDataToPasteboard(@{});
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard(String(), String());
 }
 
 String Pasteboard::readString(const String& type)
 {
-    RetainPtr<NSString> cocoaType = cocoaTypeFromHTMLClipboardType(type);
+    PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
+
+    int numberOfItems = strategy.getPasteboardItemsCount();
+
+    if (!numberOfItems)
+        return String();
 
     // Grab the value off the pasteboard corresponding to the cocoaType.
-    RetainPtr<NSArray> pasteboardItem = m_frame->editor().client()->readDataFromPasteboard(cocoaType.get(), 0);
-
-    if ([pasteboardItem.get() count] == 0)
-        return String();
+    RetainPtr<NSString> cocoaType = cocoaTypeFromHTMLClipboardType(type);
 
     NSString *cocoaValue = nil;
 
-    if ([cocoaType.get() isEqualToString:(NSString *)kUTTypeURL]) {
-        id value = [pasteboardItem.get() objectAtIndex:0];
-        if (![value isKindOfClass:[NSURL class]]) {
-            ASSERT([value isKindOfClass:[NSURL class]]);
-            return String();
-        }
-        NSURL* absoluteURL = (NSURL*)value;
-
-        if (absoluteURL)
-            cocoaValue = [absoluteURL absoluteString];
-    } else if ([cocoaType.get() isEqualToString:(NSString *)kUTTypeText]) {
-        id value = [pasteboardItem.get() objectAtIndex:0];
-        if (![value isKindOfClass:[NSString class]]) {
-            ASSERT([value isKindOfClass:[NSString class]]);
-            return String();
-        }
-
-        cocoaValue = [(NSString *)value precomposedStringWithCanonicalMapping];
+    if ([cocoaType isEqualToString:(NSString *)kUTTypeURL]) {
+        URL url = strategy.readURLFromPasteboard(0, kUTTypeURL);
+        if (!url.isNull())
+            cocoaValue = [(NSURL *)url absoluteString];
+    } else if ([cocoaType isEqualToString:(NSString *)kUTTypeText]) {
+        String value = strategy.readStringFromPasteboard(0, kUTTypeText);
+        if (!value.isNull())
+            cocoaValue = [(NSString *)value precomposedStringWithCanonicalMapping];;
     } else if (cocoaType) {
-        ASSERT([pasteboardItem.get() count] == 1);
-        id value = [pasteboardItem.get() objectAtIndex:0];
-        if (![value isKindOfClass:[NSData class]]) {
-            ASSERT([value isKindOfClass:[NSData class]]);
-            return String();
-        }
-        cocoaValue = [[[NSString alloc] initWithData:(NSData *)value encoding:NSUTF8StringEncoding] autorelease];
+        if (RefPtr<SharedBuffer> buffer = strategy.readBufferFromPasteboard(0, cocoaType.get()))
+            cocoaValue = [[[NSString alloc] initWithData:buffer->createNSData() encoding:NSUTF8StringEncoding] autorelease];
     }
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (cocoaValue && m_changeCount == m_frame->editor().client()->pasteboardChangeCount())
+    if (cocoaValue && m_changeCount == platformStrategies()->pasteboardStrategy()->changeCount())
         return cocoaValue;
 
     return String();
@@ -580,19 +577,8 @@ bool Pasteboard::writeString(const String& type, const String& data)
     if (!cocoaType)
         return false;
 
-    NSString *cocoaData = data;
-    RetainPtr<NSObject> value;
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard(type, data);
 
-    if ([cocoaType.get() isEqualToString:(NSString *)kUTTypeURL])
-        value = adoptNS([[NSURL alloc] initWithString:cocoaData]);
-    else {
-        // Every other type we handle goes on the pasteboard as a string.
-        value = cocoaData;
-    }
-
-    RetainPtr<NSDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
-    [representations.get() setValue:value.get() forKey:cocoaType.get()];
-    m_frame->editor().client()->writeDataToPasteboard(representations.get());
     return true;
 }
 
@@ -602,7 +588,7 @@ Vector<String> Pasteboard::types()
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (m_changeCount != m_frame->editor().client()->pasteboardChangeCount())
+    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount())
         return Vector<String>();
 
     ListHashSet<String> result;

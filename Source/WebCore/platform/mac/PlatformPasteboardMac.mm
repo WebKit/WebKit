@@ -27,6 +27,7 @@
 #import "Color.h"
 #import "URL.h"
 #import "PlatformPasteboard.h"
+#import "SharedBuffer.h"
 
 namespace WebCore {
 

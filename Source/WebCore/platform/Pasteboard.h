@@ -27,15 +27,18 @@
 #define Pasteboard_h
 
 #include "DragImage.h"
-#include "Image.h"
 #include "URL.h"
-#include "SharedBuffer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(GTK)
 typedef struct _GtkClipboard GtkClipboard;
+#endif
+
+#if PLATFORM(IOS)
+OBJC_CLASS NSArray;
+OBJC_CLASS NSString;
 #endif
 
 #if PLATFORM(QT)
@@ -48,11 +51,6 @@ typedef struct _GtkClipboard GtkClipboard;
 #include <objidl.h>
 #include <windows.h>
 typedef struct HWND__* HWND;
-#endif
-
-#if PLATFORM(IOS)
-OBJC_CLASS NSArray;
-OBJC_CLASS NSString;
 #endif
 
 // FIXME: This class uses the DOM and makes calls to Editor.
@@ -75,6 +73,8 @@ enum ShouldSerializeSelectedTextForClipboard { DefaultSelectedTextType, IncludeI
 
 struct PasteboardWebContent {
 #if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(WIN))
+    PasteboardWebContent();
+    ~PasteboardWebContent();
     bool canSmartCopyOrDelete;
     RefPtr<SharedBuffer> dataInWebArchiveFormat;
     RefPtr<SharedBuffer> dataInRTFDFormat;
@@ -94,6 +94,8 @@ struct PasteboardURL {
 };
 
 struct PasteboardImage {
+    PasteboardImage();
+    ~PasteboardImage();
     RefPtr<Image> image;
 #if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(WIN))
     PasteboardURL url;
@@ -108,7 +110,7 @@ class PasteboardWebContentReader {
 public:
     virtual ~PasteboardWebContentReader() { }
 
-#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN))
+#if !(PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(WIN))
     virtual bool readWebArchive(PassRefPtr<SharedBuffer>) = 0;
     virtual bool readFilenames(const Vector<String>&) = 0;
     virtual bool readHTML(const String&) = 0;
@@ -165,7 +167,7 @@ public:
     void setDragImage(DragImageRef, const IntPoint& hotSpot);
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(QT) || PLATFORM(WIN)
+#if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(WIN)
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
 #endif
 
@@ -185,10 +187,8 @@ public:
 #endif
 
 #if PLATFORM(IOS)
-    void setFrame(Frame*); // FIXME: Layering violation.
-
     static NSArray* supportedPasteboardTypes();
-    static String resourceMIMEType(NSString *mimeType);
+    static String resourceMIMEType(const NSString *mimeType);
 #endif
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
@@ -223,10 +223,6 @@ private:
     Pasteboard(GtkClipboard*);
 #endif
 
-#if PLATFORM(IOS)
-    PassRefPtr<DocumentFragment> documentFragmentForPasteboardItemAtIndex(Frame*, int index, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
-#endif
-
 #if PLATFORM(QT)
     Pasteboard(const QMimeData* , bool);
 
@@ -250,7 +246,6 @@ private:
 #endif
 
 #if PLATFORM(IOS)
-    Frame* m_frame; // FIXME: Layering violation.
     long m_changeCount;
 #endif
 

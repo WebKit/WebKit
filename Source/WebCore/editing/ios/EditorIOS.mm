@@ -31,9 +31,12 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "DOMRangeInternal.h"
+#include "DocumentFragment.h"
+#include "DocumentLoader.h"
 #include "EditorClient.h"
 #include "Font.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "HTMLConverter.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -41,17 +44,39 @@
 #include "HTMLTextAreaElement.h"
 #include "LegacyWebArchive.h"
 #include "NodeTraversal.h"
+#include "Page.h"
 #include "Pasteboard.h"
 #include "RenderBlock.h"
 #include "RenderImage.h"
 #include "SharedBuffer.h"
+#include "SoftLinking.h"
 #include "StylePropertySet.h"
 #include "Text.h"
 #include "TypingCommand.h"
 #include "WAKAppKitStubs.h"
 #include "htmlediting.h"
+#include "markup.h"
 
 #if PLATFORM(IOS)
+
+SOFT_LINK_FRAMEWORK(AppSupport)
+SOFT_LINK(AppSupport, CPSharedResourcesDirectory, CFStringRef, (void), ())
+
+SOFT_LINK_FRAMEWORK(MobileCoreServices)
+
+SOFT_LINK(MobileCoreServices, UTTypeConformsTo, Boolean, (CFStringRef inUTI, CFStringRef inConformsToUTI), (inUTI, inConformsToUTI))
+SOFT_LINK(MobileCoreServices, UTTypeCreatePreferredIdentifierForTag, CFStringRef, (CFStringRef inTagClass, CFStringRef inTag, CFStringRef inConformingToUTI), (inTagClass, inTag, inConformingToUTI))
+SOFT_LINK(MobileCoreServices, UTTypeCopyPreferredTagWithClass, CFStringRef, (CFStringRef inUTI, CFStringRef inTagClass), (inUTI, inTagClass))
+
+SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypePNG, CFStringRef)
+SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeJPEG, CFStringRef)
+SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassFilenameExtension, CFStringRef)
+SOFT_LINK_CONSTANT(MobileCoreServices, kUTTagClassMIMEType, CFStringRef)
+
+#define kUTTypePNG  getkUTTypePNG()
+#define kUTTypeJPEG getkUTTypeJPEG()
+#define kUTTagClassFilenameExtension getkUTTagClassFilenameExtension()
+#define kUTTagClassMIMEType getkUTTagClassMIMEType()
 
 @interface NSAttributedString (NSAttributedStringKitAdditions)
 - (id)initWithRTF:(NSData *)data documentAttributes:(NSDictionary **)dict;
@@ -351,6 +376,234 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboardImage.resourceMIMEType = pasteboard.resourceMIMEType(cachedImage->response().mimeType());
 
     pasteboard.write(pasteboardImage);
+}
+
+class Editor::WebContentReader FINAL : public PasteboardWebContentReader {
+public:
+    WebContentReader(Frame& frame, Range& context, bool allowPlainText)
+        : frame(frame)
+        , context(context)
+        , allowPlainText(allowPlainText)
+        , madeFragmentFromPlainText(false)
+    {
+    }
+
+    Frame& frame;
+    Range& context;
+    const bool allowPlainText;
+
+    RefPtr<DocumentFragment> fragment;
+    bool madeFragmentFromPlainText;
+
+private:
+    virtual bool readWebArchive(PassRefPtr<SharedBuffer>) OVERRIDE;
+    virtual bool readFilenames(const Vector<String>&) OVERRIDE;
+    virtual bool readHTML(const String&) OVERRIDE;
+    virtual bool readRTFD(PassRefPtr<SharedBuffer>) OVERRIDE;
+    virtual bool readRTF(PassRefPtr<SharedBuffer>) OVERRIDE;
+    virtual bool readImage(PassRefPtr<SharedBuffer>, const String& type) OVERRIDE;
+    virtual bool readURL(const URL&, const String& title) OVERRIDE;
+    virtual bool readPlainText(const String&) OVERRIDE;
+    void addFragment(PassRefPtr<DocumentFragment>);
+};
+
+void Editor::WebContentReader::addFragment(PassRefPtr<DocumentFragment> newFragment)
+{
+    if (fragment) {
+        if (newFragment && newFragment->firstChild()) {
+            ExceptionCode ec;
+            fragment->appendChild(newFragment->firstChild(), ec);
+        }
+    } else
+        fragment = newFragment;
+}
+
+bool Editor::WebContentReader::readWebArchive(PassRefPtr<SharedBuffer> buffer)
+{
+    if (!frame.document())
+        return false;
+
+    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(URL(), buffer.get());
+    if (!archive)
+        return false;
+
+    RefPtr<ArchiveResource> mainResource = archive->mainResource();
+    if (!mainResource)
+        return false;
+
+    const String& type = mainResource->mimeType();
+
+    if (frame.loader()->client()->canShowMIMETypeAsHTML(type)) {
+        // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
+        if (DocumentLoader* loader = frame.loader()->documentLoader())
+            loader->addAllArchiveResources(archive.get());
+
+        String markupString = String::fromUTF8(mainResource->data()->data(), mainResource->data()->size());
+        addFragment(createFragmentFromMarkup(frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent));
+        return true;
+    }
+
+    return false;
+}
+
+bool Editor::WebContentReader::readFilenames(const Vector<String>&)
+{
+    return false;
+}
+
+bool Editor::WebContentReader::readHTML(const String&)
+{
+    return false;
+}
+
+bool Editor::WebContentReader::readRTFD(PassRefPtr<SharedBuffer> buffer)
+{
+    addFragment(frame.editor().createFragmentAndAddResources(adoptNS([[NSAttributedString alloc] initWithRTFD:buffer->createNSData() documentAttributes:nullptr]).get()));
+    return fragment;
+}
+
+bool Editor::WebContentReader::readRTF(PassRefPtr<SharedBuffer> buffer)
+{
+    addFragment(frame.editor().createFragmentAndAddResources(adoptNS([[NSAttributedString alloc] initWithRTF:buffer->createNSData() documentAttributes:nullptr]).get()));
+    return fragment;
+}
+
+static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
+{
+    RetainPtr<CFUUIDRef> UUIDRef = adoptCF(CFUUIDCreate(kCFAllocatorDefault));
+    RetainPtr<NSString> UUIDString = adoptNS((NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef.get()));
+
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@/%@", @"webkit-fake-url", UUIDString.get(), relativePart]];;
+}
+
+bool Editor::WebContentReader::readImage(PassRefPtr<SharedBuffer> buffer, const String& type)
+{
+    RetainPtr<CFStringRef> stringType = type.createCFString();
+    RetainPtr<NSString> filenameExtension = adoptNS((NSString *)UTTypeCopyPreferredTagWithClass(stringType.get(), kUTTagClassFilenameExtension));
+    NSString *relativeURLPart = [@"image" stringByAppendingString:filenameExtension.get()];
+    RetainPtr<NSString> mimeType = adoptNS((NSString *)UTTypeCopyPreferredTagWithClass(stringType.get(), kUTTagClassMIMEType));
+
+    addFragment(frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(buffer, uniqueURLWithRelativePart(relativeURLPart), mimeType.get(), emptyString(), emptyString())));
+    return fragment;
+}
+
+bool Editor::WebContentReader::readURL(const URL& url, const String&)
+{
+    if (url.isEmpty())
+        return false;
+
+    if (!frame.editor().client()->hasRichlyEditableSelection()) {
+        if (readPlainText([(NSURL *)url absoluteString]))
+            return true;
+    }
+
+    if ([(NSURL *)url isFileURL]) {
+        NSString *localPath = [(NSURL *)url relativePath];
+        // Only allow url attachments from ~/Media for now.
+        if (![localPath hasPrefix:[(NSString *)CPSharedResourcesDirectory() stringByAppendingString:@"/Media/DCIM/"]])
+            return false;
+
+        RetainPtr<NSString> fileType = adoptNS((NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)[localPath pathExtension], NULL));
+        NSData *data = [NSData dataWithContentsOfFile:localPath];
+        if (UTTypeConformsTo((CFStringRef)fileType.get(), kUTTypePNG)) {
+            addFragment(frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(SharedBuffer::wrapNSData([[data copy] autorelease]), uniqueURLWithRelativePart(@"image.png"), @"image/png", emptyString(), emptyString())));
+            return fragment;
+        } else if (UTTypeConformsTo((CFStringRef)fileType.get(), kUTTypeJPEG)) {
+            addFragment(frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(SharedBuffer::wrapNSData([[data copy] autorelease]), uniqueURLWithRelativePart(@"image.jpg"), @"image/jpg", emptyString(), emptyString())));
+            return fragment;
+        }
+    } else {
+        RefPtr<Element> anchor = frame.document()->createElement(HTMLNames::aTag, false);
+        anchor->setAttribute(HTMLNames::hrefAttr, url.string());
+        anchor->appendChild(frame.document()->createTextNode([[(NSURL *)url absoluteString] precomposedStringWithCanonicalMapping]));
+
+        RefPtr<DocumentFragment> newFragment = frame.document()->createDocumentFragment();
+        newFragment->appendChild(anchor.release());
+        addFragment(newFragment);
+        return true;
+    }
+    return false;
+}
+
+bool Editor::WebContentReader::readPlainText(const String& text)
+{
+    if (!allowPlainText)
+        return false;
+
+    addFragment(createFragmentFromText(&context, [text precomposedStringWithCanonicalMapping]));
+    if (!fragment)
+        return false;
+
+    madeFragmentFromPlainText = true;
+    return true;
+}
+
+// FIXME: Should give this function a name that makes it clear it adds resources to the document loader as a side effect.
+// Or refactor so it does not do that.
+PassRefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, Range& context, bool allowPlainText, bool& chosePlainText)
+{
+    WebContentReader reader(*m_frame, context, allowPlainText);
+    pasteboard.read(reader);
+    chosePlainText = reader.madeFragmentFromPlainText;
+    return reader.fragment.release();
+}
+
+void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
+{
+    RefPtr<Range> range = selectedRange();
+
+    bool chosePlainText;
+    RefPtr<DocumentFragment> fragment = client()->documentFragmentFromDelegate(0);
+    if (!fragment)
+        fragment = webContentFromPasteboard(*pasteboard, *range, allowPlainText, chosePlainText);
+
+    if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
+        pasteAsFragment(fragment, canSmartReplaceWithPasteboard(*pasteboard), false);
+}
+
+PassRefPtr<DocumentFragment> Editor::createFragmentAndAddResources(NSAttributedString *string)
+{
+    if (!m_frame->page() || !m_frame->document() || !m_frame->document()->isHTMLDocument())
+        return nullptr;
+
+    if (!string)
+        return nullptr;
+
+    bool wasDeferringCallbacks = m_frame->page()->defersLoading();
+    if (!wasDeferringCallbacks)
+        m_frame->page()->setDefersLoading(true);
+
+    Vector<RefPtr<ArchiveResource>> resources;
+    RefPtr<DocumentFragment> fragment = client()->documentFragmentFromAttributedString(string, resources);
+
+    if (DocumentLoader* loader = m_frame->loader()->documentLoader()) {
+        for (size_t i = 0, size = resources.size(); i < size; ++i)
+            loader->addArchiveResource(resources[i]);
+    }
+
+    if (!wasDeferringCallbacks)
+        m_frame->page()->setDefersLoading(false);
+    
+    return fragment.release();
+}
+
+PassRefPtr<DocumentFragment> Editor::createFragmentForImageResourceAndAddResource(PassRefPtr<ArchiveResource> resource)
+{
+    if (!resource)
+        return nullptr;
+
+    RefPtr<Element> imageElement = m_frame->document()->createElement(HTMLNames::imgTag, false);
+    // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
+    if (DocumentLoader* loader = m_frame->loader()->documentLoader())
+        loader->addArchiveResource(resource.get());
+
+    NSURL *URL = resource->url();
+    imageElement->setAttribute(HTMLNames::srcAttr, [URL isFileURL] ? [URL absoluteString] : resource->url());
+
+    RefPtr<DocumentFragment> fragment = m_frame->document()->createDocumentFragment();
+    fragment->appendChild(imageElement.release());
+
+    return fragment.release();
 }
 
 } // namespace WebCore

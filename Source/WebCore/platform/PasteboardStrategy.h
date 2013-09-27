@@ -26,10 +26,6 @@
 #ifndef PasteboardStrategy_h
 #define PasteboardStrategy_h
 
-#if PLATFORM(IOS)
-#include "Pasteboard.h"
-#endif
-#include "SharedBuffer.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -37,17 +33,25 @@
 namespace WebCore {
 
 class Color;
+class SharedBuffer;
 class URL;
-    
+struct PasteboardImage;
+struct PasteboardWebContent;
+
 class PasteboardStrategy {
 public:
-#if PLATFORM(MAC)
 #if PLATFORM(IOS)
-    // FIXME: we should move Mac to this.
-    virtual void writeToPasteboard(const PasteboardWebContent& content) = 0;
-    virtual void writeToPasteboard(const PasteboardImage& pasteboardImage) = 0;
-    virtual void writeToPasteboard(const String& text) = 0;
-#endif
+    // FIXME: We should move Mac to this.
+    virtual void writeToPasteboard(const PasteboardWebContent&) = 0;
+    virtual void writeToPasteboard(const PasteboardImage&) = 0;
+    virtual void writeToPasteboard(const String& pasteboardType, const String&) = 0;
+    virtual int getPasteboardItemsCount() = 0;
+    virtual String readStringFromPasteboard(int index, const String& pasteboardType) = 0;
+    virtual PassRefPtr<SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType) = 0;
+    virtual URL readURLFromPasteboard(int index, const String& pasteboardType) = 0;
+    virtual long changeCount() = 0;
+#endif // PLATFORM(IOS)
+#if PLATFORM(MAC)
     virtual void getTypes(Vector<String>& types, const String& pasteboardName) = 0;
     virtual PassRefPtr<SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) = 0;
     virtual void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName) = 0;

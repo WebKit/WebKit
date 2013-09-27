@@ -59,6 +59,8 @@ namespace WebCore {
     struct FileChooserSettings;
     struct GrammarDetail;
     struct MimeClassInfo;
+    struct PasteboardImage;
+    struct PasteboardWebContent;
     struct PluginInfo;
     struct TextCheckingResult;
     struct ViewportAttributes;

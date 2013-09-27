@@ -38,6 +38,7 @@
 #import <WebCore/FileSystem.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformPasteboard.h>
+#import <WebCore/SharedBuffer.h>
 #import <sys/param.h>
 
 #if ENABLE(NETWORK_PROCESS)
@@ -456,20 +457,47 @@ void WebContext::setPasteboardBufferForType(const String& pasteboardName, const 
 }
 
 #if PLATFORM(IOS)
-void WebContext::writeWebContentToPasteboard(const WebCore::PasteboardWebContent &content)
+void WebContext::writeWebContentToPasteboard(const WebCore::PasteboardWebContent& content)
 {
     PlatformPasteboard().write(content);
 }
 
-void WebContext::writeImageToPasteboard(const WebCore::PasteboardImage &pasteboardImage)
+void WebContext::writeImageToPasteboard(const WebCore::PasteboardImage& pasteboardImage)
 {
     PlatformPasteboard().write(pasteboardImage);
 }
 
-void WebContext::writeStringToPasteboard(const String& text)
+void WebContext::writeStringToPasteboard(const String& pasteboardType, const String& text)
 {
-    PlatformPasteboard().write(text);
+    PlatformPasteboard().write(pasteboardType, text);
 }
+
+void WebContext::readStringFromPasteboard(uint64_t index, const String& pasteboardType, WTF::String& value)
+{
+    value = PlatformPasteboard().readString(index, pasteboardType);
+}
+
+void WebContext::readURLFromPasteboard(uint64_t index, const String& pasteboardType, String& url)
+{
+    url = PlatformPasteboard().readURL(index, pasteboardType);
+}
+
+void WebContext::readBufferFromPasteboard(uint64_t index, const String& pasteboardType, SharedMemory::Handle& handle, uint64_t& size)
+{
+    RefPtr<SharedBuffer> buffer = PlatformPasteboard().readBuffer(index, pasteboardType);
+    if (!buffer)
+        return;
+    size = buffer->size();
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(size);
+    memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
+    sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+}
+
+void WebContext::getPasteboardItemsCount(uint64_t& itemsCount)
+{
+    itemsCount = PlatformPasteboard().count();
+}
+
 #endif
 
 void WebContext::setProcessSuppressionEnabled(bool enabled)

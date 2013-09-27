@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2013 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,10 +36,13 @@ SOFT_LINK_CLASS(UIKit, UIPasteboard)
 @interface UIPasteboard
 + (UIPasteboard *)generalPasteboard;
 - (void)setItems:(NSArray *)items;
+@property(readonly,nonatomic) NSInteger numberOfItems;
+- (NSArray *)dataForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet;
+- (NSArray *)valuesForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet;
+- (NSInteger)changeCount;
 @end
 
-// FIXME: the following soft linking and #define needs to be shared
-// with PasteboardIOS.mm.
+// FIXME: The following soft linking and #define needs to be shared with PasteboardIOS.mm.
 SOFT_LINK_FRAMEWORK(MobileCoreServices)
 
 SOFT_LINK_CONSTANT(MobileCoreServices, kUTTypeText, CFStringRef)
@@ -136,7 +139,7 @@ long PlatformPasteboard::setStringForType(const String&, const String&)
 
 long PlatformPasteboard::changeCount() const
 {
-    return 0;
+    return [m_pasteboard changeCount];
 }
 
 String PlatformPasteboard::uniqueName()
@@ -156,7 +159,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     if (content.dataInRTFFormat)
         [representations setValue:content.dataInRTFFormat->createNSData() forKey:(NSString *)kUTTypeRTF];
     [representations setValue:content.dataInStringFormat forKey:(NSString *)kUTTypeText];
-    [m_pasteboard setItems:[NSArray arrayWithObject:representations.get()]];
+    [m_pasteboard setItems:@[representations.get()]];
 }
 
 void PlatformPasteboard::write(const PasteboardImage& pasteboardImage)
@@ -166,14 +169,68 @@ void PlatformPasteboard::write(const PasteboardImage& pasteboardImage)
         [representations setObject:pasteboardImage.image->data()->createNSData() forKey:pasteboardImage.resourceMIMEType];
         [representations setObject:(NSString *)pasteboardImage.url.url forKey:(NSString *)kUTTypeURL];
     }
-    [m_pasteboard setItems:[NSArray arrayWithObject:representations.get()]];
+    [m_pasteboard setItems:@[representations.get()]];
 }
 
-void PlatformPasteboard::write(const String& text)
+void PlatformPasteboard::write(const String& pasteboardType, const String& text)
 {
     RetainPtr<NSDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
-    [representations setValue:text forKey:(NSString *)kUTTypeText];
-    [m_pasteboard setItems:[NSArray arrayWithObject:representations.get()]];
+
+    if (pasteboardType == String(kUTTypeURL))
+        [representations setValue:[adoptNS([NSURL alloc] initWithString:text]).get() forKey:pasteboardType];
+    else if (!pasteboardType.isNull())
+        [representations setValue:text forKey:pasteboardType];
+    [m_pasteboard setItems:@[representations.get()]];
+}
+
+int PlatformPasteboard::count()
+{
+    return [m_pasteboard numberOfItems];
+}
+
+PassRefPtr<SharedBuffer> PlatformPasteboard::readBuffer(int index, const String& type)
+{
+    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
+
+    RetainPtr<NSArray> pasteboardItem = [m_pasteboard dataForPasteboardType:type inItemSet:indexSet];
+
+    if (![pasteboardItem count])
+        return nullptr;
+    return SharedBuffer::wrapNSData([pasteboardItem.get() objectAtIndex:0]);
+}
+
+String PlatformPasteboard::readString(int index, const String& type)
+{
+    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
+
+    RetainPtr<NSArray> pasteboardItem = [m_pasteboard valuesForPasteboardType:type inItemSet:indexSet];
+
+    if (![pasteboardItem count])
+        return String();
+
+    id value = [pasteboardItem objectAtIndex:0];
+    ASSERT([value isKindOfClass:[NSString class]]);
+    if (![value isKindOfClass:[NSString class]])
+        return String();
+
+    return String(value);
+}
+
+URL PlatformPasteboard::readURL(int index, const String& type)
+{
+    NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:index];
+
+    RetainPtr<NSArray> pasteboardItem = [m_pasteboard valuesForPasteboardType:type inItemSet:indexSet];
+
+    if (![pasteboardItem count])
+        return URL();
+
+    id value = [pasteboardItem objectAtIndex:0];
+    ASSERT([value isKindOfClass:[NSURL class]]);
+    if (![value isKindOfClass:[NSURL class]])
+        return URL();
+
+    return (NSURL *)value;
 }
 
 }

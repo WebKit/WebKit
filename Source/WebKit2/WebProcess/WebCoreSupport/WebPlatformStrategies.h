@@ -93,13 +93,18 @@ private:
     virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash, const WebCore::URL& baseURL, const WTF::AtomicString& attributeURL) OVERRIDE;
     virtual void addVisitedLink(WebCore::Page*, WebCore::LinkHash) OVERRIDE;
 
-#if PLATFORM(MAC)
     // WebCore::PasteboardStrategy
 #if PLATFORM(IOS)
-    virtual void writeToPasteboard(const WebCore::PasteboardWebContent& content) OVERRIDE;
-    virtual void writeToPasteboard(const WebCore::PasteboardImage& pasteboardImage) OVERRIDE;
-    virtual void writeToPasteboard(const String& text) OVERRIDE;
+    virtual void writeToPasteboard(const WebCore::PasteboardWebContent&) OVERRIDE;
+    virtual void writeToPasteboard(const WebCore::PasteboardImage&) OVERRIDE;
+    virtual void writeToPasteboard(const String& pasteboardType, const String&) OVERRIDE;
+    virtual int getPasteboardItemsCount() OVERRIDE;
+    virtual String readStringFromPasteboard(int index, const String& pasteboardType) OVERRIDE;
+    virtual PassRefPtr<WebCore::SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType) OVERRIDE;
+    virtual WebCore::URL readURLFromPasteboard(int index, const String& pasteboardType) OVERRIDE;
+    virtual long changeCount() OVERRIDE;
 #endif
+#if PLATFORM(MAC)
     virtual void getTypes(Vector<String>& types, const String& pasteboardName) OVERRIDE;
     virtual PassRefPtr<WebCore::SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) OVERRIDE;
     virtual void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName) OVERRIDE;

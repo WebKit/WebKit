@@ -438,7 +438,7 @@ String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
 
 #endif
 
-#if !(PLATFORM(MAC) && !PLATFORM(IOS)) && !PLATFORM(EFL)
+#if !PLATFORM(MAC) && !PLATFORM(EFL)
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
 {
     RefPtr<Range> range = selectedRange();
@@ -712,10 +712,6 @@ bool Editor::dispatchCPPEvent(const AtomicString& eventType, ClipboardAccessPoli
         return true;
 
     RefPtr<Clipboard> clipboard = Clipboard::createForCopyAndPaste(policy);
-
-#if PLATFORM(IOS)
-    clipboard->pasteboard().setFrame(m_frame);
-#endif
 
     RefPtr<Event> event = ClipboardEvent::create(eventType, true, true, clipboard);
     target->dispatchEvent(event, IGNORE_EXCEPTION);

@@ -29,15 +29,15 @@
 #include <WebCore/CookiesStrategy.h>
 #include <WebCore/DatabaseStrategy.h>
 #include <WebCore/LoaderStrategy.h>
-#if PLATFORM(IOS)
-#include <WebCore/Pasteboard.h>
-#endif
 #include <WebCore/PasteboardStrategy.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/PluginStrategy.h>
 #include <WebCore/SharedWorkerStrategy.h>
 #include <WebCore/StorageStrategy.h>
 #include <WebCore/VisitedLinkStrategy.h>
+
+struct PasteboardImage;
+struct PasteboardWebContent;
 
 class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy, private WebCore::StorageStrategy, private WebCore::VisitedLinkStrategy {
 public:
@@ -83,9 +83,14 @@ private:
     
     // WebCore::PasteboardStrategy
 #if PLATFORM(IOS)
-    virtual void writeToPasteboard(const WebCore::PasteboardWebContent& content) OVERRIDE;
-    virtual void writeToPasteboard(const WebCore::PasteboardImage& pasteboardImage) OVERRIDE;
-    virtual void writeToPasteboard(const String& text) OVERRIDE;
+    virtual void writeToPasteboard(const WebCore::PasteboardWebContent&) OVERRIDE;
+    virtual void writeToPasteboard(const WebCore::PasteboardImage&) OVERRIDE;
+    virtual void writeToPasteboard(const String& pasteboardType, const String&) OVERRIDE;
+    virtual int getPasteboardItemsCount() OVERRIDE;
+    virtual String readStringFromPasteboard(int index, const String& pasteboardType) OVERRIDE;
+    virtual PassRefPtr<WebCore::SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType) OVERRIDE;
+    virtual WebCore::URL readURLFromPasteboard(int index, const String& pasteboardType) OVERRIDE;
+    virtual long changeCount() OVERRIDE;
 #endif
     virtual void getTypes(Vector<String>& types, const String& pasteboardName) OVERRIDE;
     virtual PassRefPtr<WebCore::SharedBuffer> bufferForType(const String& pasteboardType, const String& pasteboardName) OVERRIDE;

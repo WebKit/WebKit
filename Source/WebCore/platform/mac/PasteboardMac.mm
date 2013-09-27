@@ -72,6 +72,24 @@ const char WebSmartPastePboardType[] = "NeXT smart paste pasteboard type";
 const char WebURLPboardType[] = "public.url";
 const char WebURLsWithTitlesPboardType[] = "WebURLsWithTitlesPboardType";
 
+// Making this non-inline so that WebKit 2's decoding doesn't have to include SharedBuffer.h.
+PasteboardWebContent::PasteboardWebContent()
+{
+}
+
+PasteboardWebContent::~PasteboardWebContent()
+{
+}
+
+// Making this non-inline so that WebKit 2's decoding doesn't have to include Image.h.
+PasteboardImage::PasteboardImage()
+{
+}
+
+PasteboardImage::~PasteboardImage()
+{
+}
+
 static const Vector<String> writableTypesForURL()
 {
     Vector<String> types;

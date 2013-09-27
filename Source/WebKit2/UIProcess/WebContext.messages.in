@@ -30,7 +30,11 @@ messages -> WebContext LegacyReceiver {
 #if PLATFORM(IOS)
     WriteWebContentToPasteboard(WebCore::PasteboardWebContent content)
     WriteImageToPasteboard(WebCore::PasteboardImage pasteboardImage)
-    WriteStringToPasteboard(WTF::String text)
+    WriteStringToPasteboard(WTF::String pasteboardType, WTF::String text) 
+    ReadStringFromPasteboard(uint64_t index, WTF::String pasteboardType) -> (WTF::String string)
+    ReadURLFromPasteboard(uint64_t index, WTF::String pasteboardType) -> (WTF::String string)
+    ReadBufferFromPasteboard(uint64_t index, WTF::String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
+    GetPasteboardItemsCount() -> (uint64_t itemsCount)
 #endif
 
 #if PLATFORM(MAC)

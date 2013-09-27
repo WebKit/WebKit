@@ -790,6 +790,7 @@ bool ArgumentCoder<DatabaseDetails>::decode(ArgumentDecoder& decoder, DatabaseDe
 #endif
 
 #if PLATFORM(IOS)
+
 static void encodeSharedBuffer(ArgumentEncoder& encoder, SharedBuffer* buffer)
 {
     SharedMemory::Handle handle;
@@ -814,7 +815,7 @@ static bool decodeSharedBuffer(ArgumentDecoder& decoder, RefPtr<SharedBuffer>& b
             return false;
 
         RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::ReadOnly);
-        buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), bufferSize);
+        buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), bufferSize);
     }
 
     return true;
