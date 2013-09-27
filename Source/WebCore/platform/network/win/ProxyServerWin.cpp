@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-Vector<ProxyServer> proxyServersForURL(const KURL&, const NetworkingContext*)
+Vector<ProxyServer> proxyServersForURL(const URL&, const NetworkingContext*)
 {
     // FIXME: Implement.
     return Vector<ProxyServer>();

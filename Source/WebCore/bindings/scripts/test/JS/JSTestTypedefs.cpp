@@ -30,7 +30,7 @@
 #include "JSTestCallback.h"
 #include "JSTestEventTarget.h"
 #include "JSTestSubObj.h"
-#include "KURL.h"
+#include "URL.h"
 #include "SVGPoint.h"
 #include "SerializedScriptValue.h"
 #include "TestTypedefs.h"

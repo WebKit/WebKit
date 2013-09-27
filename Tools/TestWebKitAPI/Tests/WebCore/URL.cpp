@@ -25,14 +25,14 @@
 
 #include "config.h"
 #include "WTFStringUtilities.h"
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <wtf/MainThread.h>
 
 using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-class KURLTest : public testing::Test {
+class URLTest : public testing::Test {
 public:
     virtual void SetUp()
     {
@@ -40,18 +40,18 @@ public:
     }
 };
 
-TEST_F(KURLTest, KURLConstructorDefault)
+TEST_F(URLTest, URLConstructorDefault)
 {
-    KURL kurl;
+    URL kurl;
 
     EXPECT_TRUE(kurl.isEmpty());
     EXPECT_TRUE(kurl.isNull());
     EXPECT_FALSE(kurl.isValid());
 }
 
-TEST_F(KURLTest, KURLConstructorConstChar)
+TEST_F(URLTest, URLConstructorConstChar)
 {
-    KURL kurl(ParsedURLString, "http://username:password@www.example.com:8080/index.html?var=val#fragment");
+    URL kurl(ParsedURLString, "http://username:password@www.example.com:8080/index.html?var=val#fragment");
 
     EXPECT_FALSE(kurl.isEmpty());
     EXPECT_FALSE(kurl.isNull());
@@ -70,12 +70,12 @@ TEST_F(KURLTest, KURLConstructorConstChar)
     EXPECT_EQ(String("fragment"), kurl.fragmentIdentifier());
 }
 
-TEST_F(KURLTest, KURLDataURIStringSharing)
+TEST_F(URLTest, URLDataURIStringSharing)
 {
-    KURL baseURL(ParsedURLString, "http://www.webkit.org/");
+    URL baseURL(ParsedURLString, "http://www.webkit.org/");
     String threeApples = "data:text/plain;charset=utf-8;base64,76O/76O/76O/";
 
-    KURL url(baseURL, threeApples);
+    URL url(baseURL, threeApples);
     EXPECT_EQ(threeApples.impl(), url.string().impl());
 }
 

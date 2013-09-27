@@ -20,7 +20,7 @@
 #ifndef FormData_h
 #define FormData_h
 
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -39,12 +39,12 @@ public:
 
 #if ENABLE(BLOB)
     FormDataElement(const String& filename, long long fileStart, long long fileLength, double expectedFileModificationTime, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_fileStart(fileStart), m_fileLength(fileLength), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(shouldGenerateFile) { }
-    explicit FormDataElement(const KURL& blobURL) : m_type(encodedBlob), m_url(blobURL) { }
+    explicit FormDataElement(const URL& blobURL) : m_type(encodedBlob), m_url(blobURL) { }
 #else
     FormDataElement(const String& filename, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_shouldGenerateFile(shouldGenerateFile) { }
 #endif
 #if ENABLE(FILE_SYSTEM)
-    FormDataElement(const KURL& url, long long start, long long length, double expectedFileModificationTime) : m_type(encodedURL), m_url(url), m_fileStart(start), m_fileLength(length), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(false) { }
+    FormDataElement(const URL& url, long long start, long long length, double expectedFileModificationTime) : m_type(encodedURL), m_url(url), m_fileStart(start), m_fileLength(length), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(false) { }
 #endif
 
     enum Type {
@@ -60,7 +60,7 @@ public:
     Vector<char> m_data;
     String m_filename;
 #if ENABLE(BLOB)
-    KURL m_url; // For Blob or URL.
+    URL m_url; // For Blob or URL.
     long long m_fileStart;
     long long m_fileLength;
     double m_expectedFileModificationTime;
@@ -124,11 +124,11 @@ public:
     void appendFile(const String& filePath, bool shouldGenerateFile = false);
 #if ENABLE(BLOB)
     void appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile = false);
-    void appendBlob(const KURL& blobURL);
+    void appendBlob(const URL& blobURL);
 #endif
 #if ENABLE(FILE_SYSTEM)
-    void appendURL(const KURL&);
-    void appendURLRange(const KURL&, long long start, long long length, double expectedModificationTime);
+    void appendURL(const URL&);
+    void appendURLRange(const URL&, long long start, long long length, double expectedModificationTime);
 #endif
     char* expandDataStore(size_t);
 

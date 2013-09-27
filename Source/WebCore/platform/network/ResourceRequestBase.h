@@ -30,7 +30,7 @@
 
 #include "FormData.h"
 #include "HTTPHeaderMap.h"
-#include "KURL.h"
+#include "URL.h"
 #include "ResourceLoadPriority.h"
 
 #include <wtf/OwnPtr.h>
@@ -64,8 +64,8 @@ namespace WebCore {
         bool isNull() const;
         bool isEmpty() const;
 
-        const KURL& url() const;
-        void setURL(const KURL& url);
+        const URL& url() const;
+        void setURL(const URL& url);
 
         void removeCredentials();
 
@@ -75,8 +75,8 @@ namespace WebCore {
         double timeoutInterval() const; // May return 0 when using platform default.
         void setTimeoutInterval(double timeoutInterval);
         
-        const KURL& firstPartyForCookies() const;
-        void setFirstPartyForCookies(const KURL& firstPartyForCookies);
+        const URL& firstPartyForCookies() const;
+        void setFirstPartyForCookies(const URL& firstPartyForCookies);
         
         const String& httpMethod() const;
         void setHTTPMethod(const String& httpMethod);
@@ -158,7 +158,7 @@ namespace WebCore {
         {
         }
 
-        ResourceRequestBase(const KURL& url, ResourceRequestCachePolicy policy)
+        ResourceRequestBase(const URL& url, ResourceRequestCachePolicy policy)
             : m_url(url)
             , m_cachePolicy(policy)
             , m_timeoutInterval(s_defaultTimeoutInterval)
@@ -181,11 +181,11 @@ namespace WebCore {
         // The ResourceRequest subclass may "shadow" this method to compare platform specific fields
         static bool platformCompare(const ResourceRequest&, const ResourceRequest&) { return true; }
 
-        KURL m_url;
+        URL m_url;
 
         ResourceRequestCachePolicy m_cachePolicy;
         double m_timeoutInterval; // 0 is a magic value for platform default on platforms that have one.
-        KURL m_firstPartyForCookies;
+        URL m_firstPartyForCookies;
         String m_httpMethod;
         HTTPHeaderMap m_httpHeaderFields;
         Vector<String> m_responseContentDispositionEncodingFallbackArray;
@@ -215,11 +215,11 @@ namespace WebCore {
         WTF_MAKE_NONCOPYABLE(CrossThreadResourceRequestDataBase); WTF_MAKE_FAST_ALLOCATED;
     public:
         CrossThreadResourceRequestDataBase() { }
-        KURL m_url;
+        URL m_url;
 
         ResourceRequestCachePolicy m_cachePolicy;
         double m_timeoutInterval;
-        KURL m_firstPartyForCookies;
+        URL m_firstPartyForCookies;
 
         String m_httpMethod;
         OwnPtr<CrossThreadHTTPHeaderMapData> m_httpHeaders;

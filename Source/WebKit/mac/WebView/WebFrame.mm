@@ -1417,7 +1417,7 @@ static NSURL *createUniqueWebDataURL()
     if (!pthread_main_np())
         return [[self _webkit_invokeOnMainThread] _loadData:data MIMEType:MIMEType textEncodingName:encodingName baseURL:baseURL unreachableURL:unreachableURL];
     
-    KURL responseURL;
+    URL responseURL;
     if (!baseURL) {
         baseURL = blankURL();
         responseURL = createUniqueWebDataURL();

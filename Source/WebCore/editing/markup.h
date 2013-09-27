@@ -38,7 +38,7 @@ class Document;
 class DocumentFragment;
 class Element;
 class HTMLElement;
-class KURL;
+class URL;
 class Node;
 class QualifiedName;
 class Range;
@@ -70,7 +70,7 @@ String createMarkup(const Node*, EChildrenOnly = IncludeNode, Vector<Node*>* = 0
 String createFullMarkup(const Node*);
 String createFullMarkup(const Range*);
 
-String urlToMarkup(const KURL&, const String& title);
+String urlToMarkup(const URL&, const String& title);
 
 String documentTypeString(const Document&);
 

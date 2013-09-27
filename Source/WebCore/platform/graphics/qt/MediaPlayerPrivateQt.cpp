@@ -80,7 +80,7 @@ void MediaPlayerPrivateQt::getSupportedTypes(HashSet<String> &supported)
     }
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivateQt::supportsType(const String& mime, const String& codec, const KURL&)
+MediaPlayer::SupportsType MediaPlayerPrivateQt::supportsType(const String& mime, const String& codec, const URL&)
 {
     if (!mime.startsWith("audio/") && !mime.startsWith("video/"))
         return MediaPlayer::IsNotSupported;
@@ -191,7 +191,7 @@ void MediaPlayerPrivateQt::commitLoad(const String& url)
         m_webCorePlayer->readyStateChanged();
     }
 
-    KURL kUrl(ParsedURLString, url);
+    URL kUrl(ParsedURLString, url);
     const QUrl rUrl = kUrl;
     const QString scheme = rUrl.scheme().toLower();
 

@@ -48,7 +48,7 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public BlackBerry::Platform::FilterStream, public SocketStreamHandleBase {
 public:
-    static PassRefPtr<SocketStreamHandle> create(const String& groupName, const KURL& url, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(groupName, url, client)); }
+    static PassRefPtr<SocketStreamHandle> create(const String& groupName, const URL& url, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(groupName, url, client)); }
 
     virtual ~SocketStreamHandle();
 
@@ -64,7 +64,7 @@ protected:
     virtual void platformClose();
 
 private:
-    SocketStreamHandle(const String& groupName, const KURL&, SocketStreamHandleClient*);
+    SocketStreamHandle(const String& groupName, const URL&, SocketStreamHandleClient*);
 
     OwnPtr<BlackBerry::Platform::FilterStream> m_socketStream;
     int m_status;

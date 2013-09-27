@@ -38,7 +38,7 @@
 #include "CredentialTransformData.h"
 
 #include "HTMLInputElement.h"
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -49,9 +49,9 @@ namespace {
 static const size_t maxPasswords = 3;
 
 // Helper method to clear url of unneeded parts.
-KURL stripURL(const KURL& url)
+URL stripURL(const URL& url)
 {
-    KURL strippedURL = url;
+    URL strippedURL = url;
     strippedURL.setUser(String());
     strippedURL.setPass(String());
     strippedURL.setQuery(String());
@@ -78,13 +78,13 @@ CredentialTransformData::CredentialTransformData(HTMLFormElement* form, bool isF
     ASSERT(form);
 
     // Get the document URL
-    KURL fullOrigin(ParsedURLString, form->document()->documentURI());
+    URL fullOrigin(ParsedURLString, form->document()->documentURI());
 
     // Calculate the canonical action URL
     String action = form->action();
     if (action.isNull())
         action = ""; // missing 'action' attribute implies current URL
-    KURL fullAction = form->document()->completeURL(action);
+    URL fullAction = form->document()->completeURL(action);
     if (!fullAction.isValid())
         return;
 
@@ -95,7 +95,7 @@ CredentialTransformData::CredentialTransformData(HTMLFormElement* form, bool isF
     if (!isForSaving && m_oldPasswordElement)
         return;
 
-    KURL url = stripURL(fullOrigin);
+    URL url = stripURL(fullOrigin);
     m_action = stripURL(fullAction);
     m_protectionSpace = ProtectionSpace(url.host(), url.port(), ProtectionSpaceServerHTTP, "Form", ProtectionSpaceAuthenticationSchemeHTMLForm);
     m_credential = Credential(m_userNameElement->value(), m_passwordElement->value(), CredentialPersistencePermanent);

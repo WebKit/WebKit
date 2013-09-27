@@ -84,7 +84,7 @@ PassRefPtr<Worker> Worker::create(ScriptExecutionContext* context, const String&
 
     worker->suspendIfNeeded();
 
-    KURL scriptURL = worker->resolveURL(url, ec);
+    URL scriptURL = worker->resolveURL(url, ec);
     if (scriptURL.isEmpty())
         return 0;
 

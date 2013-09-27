@@ -66,7 +66,7 @@ QString QtFileDownloader::determineFilename()
 
     QString filenameCandidate = filenameFromHTTPContentDisposition(QString::fromLatin1(m_reply->rawHeader("Content-Disposition")));
     if (filenameCandidate.isEmpty()) {
-        KURL kurl = m_reply->url();
+        URL kurl = m_reply->url();
         filenameCandidate = decodeURLEscapeSequences(kurl.lastPathComponent());
     }
 

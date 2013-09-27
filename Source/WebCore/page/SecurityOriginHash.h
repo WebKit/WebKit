@@ -29,7 +29,7 @@
 #ifndef SecurityOriginHash_h
 #define SecurityOriginHash_h
 
-#include "KURL.h"
+#include "URL.h"
 #include "SecurityOrigin.h"
 #include <wtf/RefPtr.h>
 

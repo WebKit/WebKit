@@ -34,7 +34,7 @@
 #include "CachedResourceHandle.h"
 #include "CachedScript.h"
 #include "CachedScriptSourceProvider.h"
-#include "KURL.h"
+#include "URL.h"
 #include <parser/SourceProvider.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/RefPtr.h>
@@ -43,7 +43,7 @@ namespace WebCore {
 
 class ScriptSourceCode {
 public:
-    ScriptSourceCode(const String& source, const KURL& url = KURL(), const TextPosition& startPosition = TextPosition::minimumPosition())
+    ScriptSourceCode(const String& source, const URL& url = URL(), const TextPosition& startPosition = TextPosition::minimumPosition())
         : m_provider(JSC::StringSourceProvider::create(source, url.isNull() ? String() : url.string(), startPosition))
         , m_code(m_provider, startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
         , m_url(url)
@@ -67,7 +67,7 @@ public:
 
     CachedScript* cachedScript() const { return m_cachedScript.get(); }
 
-    const KURL& url() const { return m_url; }
+    const URL& url() const { return m_url; }
     
 private:
     RefPtr<JSC::SourceProvider> m_provider;
@@ -76,7 +76,7 @@ private:
 
     CachedResourceHandle<CachedScript> m_cachedScript;
 
-    KURL m_url;
+    URL m_url;
 
 };
 

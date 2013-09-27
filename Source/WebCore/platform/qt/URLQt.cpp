@@ -18,7 +18,7 @@
  *
  */
 #include "config.h"
-#include "KURL.h"
+#include "URL.h"
 
 #include "NotImplemented.h"
 #include "TextEncoding.h"
@@ -27,17 +27,17 @@
 
 namespace WebCore {
 
-KURL::KURL(const QUrl& url)
+URL::URL(const QUrl& url)
 {
-    *this = KURL(KURL(), url.toEncoded().constData(), UTF8Encoding());
+    *this = URL(URL(), url.toEncoded().constData(), UTF8Encoding());
 }
 
-KURL::operator QUrl() const
+URL::operator QUrl() const
 {
     return QUrl(m_string);
 }
 
-String KURL::fileSystemPath() const
+String URL::fileSystemPath() const
 {
     if (!isValid())
         return String();

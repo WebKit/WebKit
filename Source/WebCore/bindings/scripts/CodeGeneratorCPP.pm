@@ -290,7 +290,7 @@ sub AddIncludesForType
 
     if ($codeGenerator->IsStringType($type)) {
         $implIncludes{"wtf/text/AtomicString.h"} = 1;
-        $implIncludes{"KURL.h"} = 1;
+        $implIncludes{"URL.h"} = 1;
         $implIncludes{"WebDOMString.h"} = 1;
         return;
     }
@@ -573,7 +573,7 @@ sub AddReturnStatement
     my $typeInfo = shift;
     my $returnValue = shift;
 
-    # Used to invoke KURLs "const String&" operator
+    # Used to invoke URLs "const String&" operator
     if ($codeGenerator->IsStringType($typeInfo->signature->type)) {
         return "    return static_cast<const WTF::String&>($returnValue);\n";
     }

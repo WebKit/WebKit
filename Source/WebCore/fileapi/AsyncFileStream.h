@@ -42,7 +42,7 @@ namespace WebCore {
 
 class FileStreamClient;
 class FileStream;
-class KURL;
+class URL;
 
 class AsyncFileStream : public RefCounted<AsyncFileStream> {
 public:
@@ -54,7 +54,7 @@ public:
     void openForWrite(const String& path);
     void close();
     void read(char* buffer, int length);
-    void write(const KURL& blobURL, long long position, int length);
+    void write(const URL& blobURL, long long position, int length);
     void truncate(long long position);
 
     // Stops the proxy and schedules it to be destructed. All the pending tasks will be aborted and the file stream will be closed.
@@ -75,7 +75,7 @@ private:
     void openForWriteOnFileThread(const String& path);
     void closeOnFileThread();
     void readOnFileThread(char* buffer, int length);
-    void writeOnFileThread(const KURL& blobURL, long long position, int length);
+    void writeOnFileThread(const URL& blobURL, long long position, int length);
     void truncateOnFileThread(long long position);
 
     RefPtr<FileStream> m_stream;

@@ -24,12 +24,12 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
-class KURL;
+class URL;
 }
 
 typedef char gchar;
 
 gchar* convertToUTF8String(WTF::String const& s);
-gchar* convertToUTF8String(WebCore::KURL const& s);
+gchar* convertToUTF8String(WebCore::URL const& s);
 
 #endif /* ConvertToUTF8String_h */

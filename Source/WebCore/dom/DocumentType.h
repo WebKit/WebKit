@@ -49,7 +49,7 @@ public:
 private:
     DocumentType(Document&, const String& name, const String& publicId, const String& systemId);
 
-    virtual KURL baseURI() const;
+    virtual URL baseURI() const;
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);

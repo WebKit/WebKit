@@ -71,7 +71,7 @@
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "Settings.h"
@@ -82,7 +82,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLDocument::HTMLDocument(Frame* frame, const KURL& url, DocumentClassFlags documentClasses)
+HTMLDocument::HTMLDocument(Frame* frame, const URL& url, DocumentClassFlags documentClasses)
     : Document(frame, url, documentClasses | HTMLDocumentClass)
 {
     clearXMLVersion();

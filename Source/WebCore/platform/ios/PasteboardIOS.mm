@@ -38,7 +38,7 @@
 #import "HTMLElement.h"
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
-#import "KURL.h"
+#import "URL.h"
 #import "LegacyWebArchive.h"
 #import "Page.h"
 #import "PasteboardStrategy.h"

@@ -134,7 +134,7 @@ int FileStream::read(char* buffer, int bufferSize)
     return bytesRead;
 }
 
-int FileStream::write(const KURL&, long long, int)
+int FileStream::write(const URL&, long long, int)
 {
     // FIXME: to be implemented.
     return -1;

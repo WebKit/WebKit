@@ -43,7 +43,7 @@
 #include "FrameLoaderClientEfl.h"
 #include "HitTestResult.h"
 #include "IntRect.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NavigationAction.h"
 #include "NotImplemented.h"
 #include "PopupMenuEfl.h"
@@ -363,7 +363,7 @@ void ChromeClientEfl::mouseDidMoveOverElement(const HitTestResult& hit, unsigned
     // FIXME, compare with old link, look at Qt impl.
     bool isLink = hit.isLiveLink();
     if (isLink) {
-        KURL url = hit.absoluteLinkURL();
+        URL url = hit.absoluteLinkURL();
         if (!url.isEmpty() && url != m_hoveredLinkURL) {
             const char* link[2];
             TextDirection dir;
@@ -376,7 +376,7 @@ void ChromeClientEfl::mouseDidMoveOverElement(const HitTestResult& hit, unsigned
         }
     } else if (!isLink && !m_hoveredLinkURL.isEmpty()) {
         ewk_view_mouse_link_hover_out(m_view);
-        m_hoveredLinkURL = KURL();
+        m_hoveredLinkURL = URL();
     }
 }
 

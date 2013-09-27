@@ -27,7 +27,7 @@
 #ifndef CookieParser_h
 #define CookieParser_h
 
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -39,7 +39,7 @@ class ParsedCookie;
 
 class CookieParser {
 public:
-    CookieParser(const KURL& defaultCookieURL);
+    CookieParser(const URL& defaultCookieURL);
     ~CookieParser();
 
     // Parses a sequence of "Cookie:" header and return the parsed cookies.
@@ -51,7 +51,7 @@ private:
     // FIXME: curTime, start, end parameters should be removed. And this method can be public.
     PassRefPtr<ParsedCookie> parseOneCookie(const String& cookie, unsigned start, unsigned end, double curTime);
 
-    KURL m_defaultCookieURL;
+    URL m_defaultCookieURL;
     String m_defaultCookieHost;
     bool m_defaultDomainIsIPAddress;
 };

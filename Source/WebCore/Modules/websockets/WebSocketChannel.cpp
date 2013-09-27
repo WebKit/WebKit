@@ -99,7 +99,7 @@ WebSocketChannel::~WebSocketChannel()
 {
 }
 
-void WebSocketChannel::connect(const KURL& url, const String& protocol)
+void WebSocketChannel::connect(const URL& url, const String& protocol)
 {
     LOG(Network, "WebSocketChannel %p connect()", this);
     ASSERT(!m_handle);

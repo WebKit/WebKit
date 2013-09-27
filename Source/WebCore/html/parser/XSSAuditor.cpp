@@ -38,7 +38,7 @@
 #include "HTMLParamElement.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorValues.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Settings.h"
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"
@@ -156,8 +156,8 @@ static inline String decode16BitUnicodeEscapeSequences(const String& string)
 
 static inline String decodeStandardURLEscapeSequences(const String& string, const TextEncoding& encoding)
 {
-    // We use decodeEscapeSequences() instead of decodeURLEscapeSequences() (declared in KURL.h) to
-    // avoid platform-specific URL decoding differences (e.g. KURLGoogle).
+    // We use decodeEscapeSequences() instead of decodeURLEscapeSequences() (declared in URL.h) to
+    // avoid platform-specific URL decoding differences (e.g. URLGoogle).
     return decodeEscapeSequences<URLEscapeSequence>(string, encoding);
 }
 
@@ -278,7 +278,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
         String errorDetails;
         unsigned errorPosition = 0;
         String reportURL;
-        KURL xssProtectionReportURL;
+        URL xssProtectionReportURL;
 
         // Process the X-XSS-Protection header, then mix in the CSP header's value.
         ContentSecurityPolicy::ReflectedXSSDisposition xssProtectionHeader = parseXSSProtectionHeader(headerValue, errorDetails, errorPosition, reportURL);
@@ -288,7 +288,7 @@ void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
             if (MixedContentChecker::isMixedContent(document->securityOrigin(), xssProtectionReportURL)) {
                 errorDetails = "insecure reporting URL for secure page";
                 xssProtectionHeader = ContentSecurityPolicy::ReflectedXSSInvalid;
-                xssProtectionReportURL = KURL();
+                xssProtectionReportURL = URL();
             }
         }
         if (xssProtectionHeader == ContentSecurityPolicy::ReflectedXSSInvalid)
@@ -720,7 +720,7 @@ bool XSSAuditor::isLikelySafeResource(const String& url)
     if (m_documentURL.host().isEmpty())
         return false;
 
-    KURL resourceURL(m_documentURL, url);
+    URL resourceURL(m_documentURL, url);
     return (m_documentURL.host() == resourceURL.host() && resourceURL.query().isEmpty());
 }
 

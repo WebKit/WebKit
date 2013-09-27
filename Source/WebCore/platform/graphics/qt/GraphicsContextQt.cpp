@@ -1521,7 +1521,7 @@ void GraphicsContext::set3DTransform(const TransformationMatrix& transform)
 }
 #endif
 
-void GraphicsContext::setURLForRect(const KURL&, const IntRect&)
+void GraphicsContext::setURLForRect(const URL&, const IntRect&)
 {
     notImplemented();
 }

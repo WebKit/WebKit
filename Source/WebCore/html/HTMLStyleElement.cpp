@@ -269,7 +269,7 @@ void HTMLStyleElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOcc
     m_firedLoad = true;
 }
 
-void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {    
     HTMLElement::addSubresourceAttributeURLs(urls);
 

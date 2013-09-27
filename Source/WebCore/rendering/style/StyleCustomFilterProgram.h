@@ -35,7 +35,7 @@
 #include "CachedResourceHandle.h"
 #include "CachedShader.h"
 #include "CustomFilterProgram.h"
-#include "KURL.h"
+#include "URL.h"
 #include "StyleShader.h"
 #include <wtf/FastMalloc.h>
 
@@ -48,8 +48,8 @@ class StyleCustomFilterProgramCache;
 class StyleCustomFilterProgram : public CustomFilterProgram, public CachedResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<StyleCustomFilterProgram> create(KURL vertexShaderURL, PassRefPtr<StyleShader> vertexShader, 
-        KURL fragmentShaderURL, PassRefPtr<StyleShader> fragmentShader, CustomFilterProgramType programType,
+    static PassRefPtr<StyleCustomFilterProgram> create(URL vertexShaderURL, PassRefPtr<StyleShader> vertexShader, 
+        URL fragmentShaderURL, PassRefPtr<StyleShader> fragmentShader, CustomFilterProgramType programType,
         const CustomFilterProgramMixSettings& mixSettings, CustomFilterMeshType meshType)
     {
         return adoptRef(new StyleCustomFilterProgram(vertexShaderURL, vertexShader, fragmentShaderURL, fragmentShader, programType, mixSettings, meshType));
@@ -143,11 +143,11 @@ public:
     void setCache(StyleCustomFilterProgramCache* cache) { m_cache = cache; }
     bool inCache() const { return m_cache; }
     
-    KURL vertexShaderURL() const { return m_vertexShaderURL; }
-    KURL fragmentShaderURL() const { return m_fragmentShaderURL; }
+    URL vertexShaderURL() const { return m_vertexShaderURL; }
+    URL fragmentShaderURL() const { return m_fragmentShaderURL; }
 
 private:
-    StyleCustomFilterProgram(KURL vertexShaderURL, PassRefPtr<StyleShader> vertexShader, KURL fragmentShaderURL, PassRefPtr<StyleShader> fragmentShader, 
+    StyleCustomFilterProgram(URL vertexShaderURL, PassRefPtr<StyleShader> vertexShader, URL fragmentShaderURL, PassRefPtr<StyleShader> fragmentShader, 
         CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings, CustomFilterMeshType meshType)
         : CustomFilterProgram(programType, mixSettings, meshType)
         , m_vertexShader(vertexShader)
@@ -170,8 +170,8 @@ private:
 
     // The URLs form the key of the StyleCustomFilterProgram in the cache and are used
     // to lookup the StyleCustomFilterProgram when it's removed from the cache.
-    KURL m_vertexShaderURL;
-    KURL m_fragmentShaderURL;
+    URL m_vertexShaderURL;
+    URL m_fragmentShaderURL;
 
     // The Cache is responsible of invalidating this reference.
     StyleCustomFilterProgramCache* m_cache;

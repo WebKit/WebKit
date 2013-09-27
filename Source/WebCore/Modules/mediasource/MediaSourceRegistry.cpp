@@ -33,7 +33,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "KURL.h"
+#include "URL.h"
 #include "MediaSourceBase.h"
 #include <wtf/MainThread.h>
 
@@ -46,7 +46,7 @@ MediaSourceRegistry& MediaSourceRegistry::registry()
     return instance;
 }
 
-void MediaSourceRegistry::registerURL(SecurityOrigin*, const KURL& url, URLRegistrable* registrable)
+void MediaSourceRegistry::registerURL(SecurityOrigin*, const URL& url, URLRegistrable* registrable)
 {
     ASSERT(&registrable->registry() == this);
     ASSERT(isMainThread());
@@ -56,7 +56,7 @@ void MediaSourceRegistry::registerURL(SecurityOrigin*, const KURL& url, URLRegis
     m_mediaSources.set(url.string(), source);
 }
 
-void MediaSourceRegistry::unregisterURL(const KURL& url)
+void MediaSourceRegistry::unregisterURL(const URL& url)
 {
     ASSERT(isMainThread());
     HashMap<String, RefPtr<MediaSourceBase> >::iterator iter = m_mediaSources.find(url.string());

@@ -348,7 +348,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
 {
     if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty()) && !firstRequest().url().protocolIsInHTTPFamily()) {
         // Credentials for ftp can only be passed in URL, the didReceiveAuthenticationChallenge delegate call won't be made.
-        KURL urlWithCredentials(firstRequest().url());
+        URL urlWithCredentials(firstRequest().url());
         urlWithCredentials.setUser(d->m_user);
         urlWithCredentials.setPass(d->m_pass);
         firstRequest().setURL(urlWithCredentials);
@@ -479,7 +479,7 @@ void ResourceHandle::cancel()
 
 void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    const KURL& url = request.url();
+    const URL& url = request.url();
     d->m_user = url.user();
     d->m_pass = url.pass();
     d->m_lastHTTPMethod = request.httpMethod();
@@ -542,7 +542,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     if (!d->m_user.isNull() && !d->m_pass.isNull()) {
         RetainPtr<CFURLCredentialRef> credential = adoptCF(CFURLCredentialCreate(kCFAllocatorDefault, d->m_user.createCFString().get(), d->m_pass.createCFString().get(), 0, kCFURLCredentialPersistenceNone));
         
-        KURL urlToStore;
+        URL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
             urlToStore = challenge.failureResponse().url();
         CredentialStorage::set(core(credential.get()), challenge.protectionSpace(), urlToStore);
@@ -613,7 +613,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         Credential webCredential(credential.user(), credential.password(), CredentialPersistenceNone);
         RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(webCredential));
         
-        KURL urlToStore;
+        URL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
             urlToStore = challenge.failureResponse().url();      
         CredentialStorage::set(webCredential, challenge.protectionSpace(), urlToStore);

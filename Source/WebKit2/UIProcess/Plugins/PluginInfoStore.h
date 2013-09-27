@@ -33,7 +33,7 @@
 #include <WebCore/PluginData.h>
 
 namespace WebCore {
-    class KURL;
+    class URL;
 }
 
 namespace WebKit {
@@ -63,7 +63,7 @@ public:
     // Returns the info for a plug-in that can handle the given MIME type.
     // If the MIME type is null, the file extension of the given url will be used to infer the
     // plug-in type. In that case, mimeType will be filled in with the right MIME type.
-    PluginModuleInfo findPlugin(String& mimeType, const WebCore::KURL&, WebCore::PluginData::AllowedPluginTypes = WebCore::PluginData::AllPlugins);
+    PluginModuleInfo findPlugin(String& mimeType, const WebCore::URL&, WebCore::PluginData::AllowedPluginTypes = WebCore::PluginData::AllPlugins);
 
     // Returns the info for the plug-in with the given bundle identifier.
     PluginModuleInfo findPluginWithBundleIdentifier(const String& bundleIdentifier);

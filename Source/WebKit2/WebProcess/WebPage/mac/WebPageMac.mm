@@ -717,7 +717,7 @@ WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
     return m_mockAccessibilityElement.get();
 }
          
-bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
+bool WebPage::platformHasLocalDataForURL(const WebCore::URL& url)
 {
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];
     [request setValue:(NSString*)userAgent() forHTTPHeaderField:@"User-Agent"];
@@ -731,7 +731,7 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
     return cachedResponse;
 }
 
-static NSCachedURLResponse *cachedResponseForURL(WebPage* webPage, const KURL& url)
+static NSCachedURLResponse *cachedResponseForURL(WebPage* webPage, const URL& url)
 {
     RetainPtr<NSMutableURLRequest> request = adoptNS([[NSMutableURLRequest alloc] initWithURL:url]);
     [request.get() setValue:(NSString *)webPage->userAgent() forHTTPHeaderField:@"User-Agent"];
@@ -742,17 +742,17 @@ static NSCachedURLResponse *cachedResponseForURL(WebPage* webPage, const KURL& u
     return [[NSURLCache sharedURLCache] cachedResponseForRequest:request.get()];
 }
 
-String WebPage::cachedSuggestedFilenameForURL(const KURL& url)
+String WebPage::cachedSuggestedFilenameForURL(const URL& url)
 {
     return [[cachedResponseForURL(this, url) response] suggestedFilename];
 }
 
-String WebPage::cachedResponseMIMETypeForURL(const KURL& url)
+String WebPage::cachedResponseMIMETypeForURL(const URL& url)
 {
     return [[cachedResponseForURL(this, url) response] MIMEType];
 }
 
-PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const KURL& url)
+PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const URL& url)
 {
     return SharedBuffer::wrapNSData([cachedResponseForURL(this, url) data]);
 }

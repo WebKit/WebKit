@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "KURL.h"
+#include "URL.h"
 
 #include "CFURLExtras.h"
 #include <CoreFoundation/CFURL.h>
@@ -34,7 +34,7 @@ using namespace std;
 
 namespace WebCore {
 
-KURL::KURL(CFURLRef url)
+URL::URL(CFURLRef url)
 {
     if (!url) {
         invalidate();
@@ -48,7 +48,7 @@ KURL::KURL(CFURLRef url)
 }
 
 #if !PLATFORM(MAC)
-RetainPtr<CFURLRef> KURL::createCFURL() const
+RetainPtr<CFURLRef> URL::createCFURL() const
 {
     // FIXME: What should this return for invalid URLs?
     // Currently it throws away the high bytes of the characters in the string in that case,
@@ -59,7 +59,7 @@ RetainPtr<CFURLRef> KURL::createCFURL() const
 }
 #endif
 
-String KURL::fileSystemPath() const
+String URL::fileSystemPath() const
 {
     RetainPtr<CFURLRef> cfURL = createCFURL();
     if (!cfURL)

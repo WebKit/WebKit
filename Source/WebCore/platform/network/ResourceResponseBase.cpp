@@ -67,7 +67,7 @@ ResourceResponseBase::ResourceResponseBase()
 {
 }
 
-ResourceResponseBase::ResourceResponseBase(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
+ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
     : m_url(url)
     , m_mimeType(mimeType)
     , m_expectedContentLength(expectedLength)
@@ -138,14 +138,14 @@ bool ResourceResponseBase::isHTTP() const
     return equalIgnoringCase(protocol, "http")  || equalIgnoringCase(protocol, "https");
 }
 
-const KURL& ResourceResponseBase::url() const
+const URL& ResourceResponseBase::url() const
 {
     lazyInit(CommonFieldsOnly);
 
     return m_url; 
 }
 
-void ResourceResponseBase::setURL(const KURL& url)
+void ResourceResponseBase::setURL(const URL& url)
 {
     lazyInit(CommonFieldsOnly);
     m_isNull = false;

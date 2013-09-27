@@ -28,7 +28,7 @@ namespace WebCore {
 
 class AuthenticationChallengeManagerPrivate;
 class Credential;
-class KURL;
+class URL;
 class ProtectionSpace;
 
 enum AuthenticationChallengeResult {
@@ -38,7 +38,7 @@ enum AuthenticationChallengeResult {
 
 class AuthenticationChallengeClient {
 public:
-    virtual void notifyChallengeResult(const KURL&, const ProtectionSpace&, AuthenticationChallengeResult, const Credential&) = 0;
+    virtual void notifyChallengeResult(const URL&, const ProtectionSpace&, AuthenticationChallengeResult, const Credential&) = 0;
 };
 
 class AuthenticationChallengeManager : public BlackBerry::Platform::ThreadUnsafeSingleton<AuthenticationChallengeManager> {
@@ -48,9 +48,9 @@ public:
     void pageDeleted(PageClientBlackBerry*);
     void pageVisibilityChanged(PageClientBlackBerry*, bool visible);
 
-    void authenticationChallenge(const KURL&, const ProtectionSpace&, const Credential&, AuthenticationChallengeClient*, PageClientBlackBerry*);
+    void authenticationChallenge(const URL&, const ProtectionSpace&, const Credential&, AuthenticationChallengeClient*, PageClientBlackBerry*);
     void cancelAuthenticationChallenge(AuthenticationChallengeClient*);
-    void notifyChallengeResult(const KURL&, const ProtectionSpace&, AuthenticationChallengeResult, const Credential&);
+    void notifyChallengeResult(const URL&, const ProtectionSpace&, AuthenticationChallengeResult, const Credential&);
 
 private:
     AuthenticationChallengeManager();

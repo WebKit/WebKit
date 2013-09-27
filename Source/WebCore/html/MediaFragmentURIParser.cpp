@@ -75,7 +75,7 @@ double MediaFragmentURIParser::invalidTimeValue()
     return MediaPlayer::invalidTime();
 }
 
-MediaFragmentURIParser::MediaFragmentURIParser(const KURL& url)
+MediaFragmentURIParser::MediaFragmentURIParser(const URL& url)
     : m_url(url)
     , m_timeFormat(None)
     , m_startTime(MediaPlayer::invalidTime())

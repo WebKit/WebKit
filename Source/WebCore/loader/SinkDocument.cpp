@@ -47,7 +47,7 @@ private:
     virtual void appendBytes(DocumentWriter*, const char*, size_t) { }
 };
 
-SinkDocument::SinkDocument(Frame* frame, const KURL& url)
+SinkDocument::SinkDocument(Frame* frame, const URL& url)
     : HTMLDocument(frame, url)
 {
     setCompatibilityMode(QuirksMode);

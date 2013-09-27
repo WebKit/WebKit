@@ -100,32 +100,32 @@ VisitedLinkStrategy* PlatformStrategiesQt::createVisitedLinkStrategy()
     return this;
 }
 
-String PlatformStrategiesQt::cookiesForDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
+String PlatformStrategiesQt::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
     return WebCore::cookiesForDOM(session, firstParty, url);
 }
 
-void PlatformStrategiesQt::setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url, const String& cookieString)
+void PlatformStrategiesQt::setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& cookieString)
 {
     WebCore::setCookiesFromDOM(session, firstParty, url, cookieString);
 }
 
-bool PlatformStrategiesQt::cookiesEnabled(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
+bool PlatformStrategiesQt::cookiesEnabled(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
     return WebCore::cookiesEnabled(session, firstParty, url);
 }
 
-String PlatformStrategiesQt::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
+String PlatformStrategiesQt::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
     return WebCore::cookieRequestHeaderFieldValue(session, firstParty, url);
 }
 
-bool PlatformStrategiesQt::getRawCookies(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url, Vector<Cookie>& rawCookies)
+bool PlatformStrategiesQt::getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const URL& url, Vector<Cookie>& rawCookies)
 {
     return WebCore::getRawCookies(session, firstParty, url, rawCookies);
 }
 
-void PlatformStrategiesQt::deleteCookie(const NetworkStorageSession& session, const KURL& url, const String& cookieName)
+void PlatformStrategiesQt::deleteCookie(const NetworkStorageSession& session, const URL& url, const String& cookieName)
 {
     WebCore::deleteCookie(session, url, cookieName);
 }
@@ -196,7 +196,7 @@ void PlatformStrategiesQt::getPluginInfo(const WebCore::Page* page, Vector<WebCo
 
 // VisitedLinkStrategy
 
-bool PlatformStrategiesQt::isLinkVisited(Page* page, LinkHash hash, const KURL& baseURL, const AtomicString& attributeURL)
+bool PlatformStrategiesQt::isLinkVisited(Page* page, LinkHash hash, const URL& baseURL, const AtomicString& attributeURL)
 {
     ASSERT(hash);
 

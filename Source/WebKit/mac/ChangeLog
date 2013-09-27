@@ -1,3 +1,12 @@
+2013-09-26  Darin Adler  <darin@apple.com>
+
+        rename KURL to URL
+        https://bugs.webkit.org/show_bug.cgi?id=16214
+
+        Reviewed by Andreas Kling.
+
+        * many files: Renamed, using script.
+
 2013-09-06  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Implement the media controls in JavaScript.

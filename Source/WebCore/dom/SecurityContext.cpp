@@ -56,7 +56,7 @@ void SecurityContext::setContentSecurityPolicy(PassOwnPtr<ContentSecurityPolicy>
     m_contentSecurityPolicy = contentSecurityPolicy;
 }
 
-bool SecurityContext::isSecureTransitionTo(const KURL& url) const
+bool SecurityContext::isSecureTransitionTo(const URL& url) const
 {
     // If we haven't initialized our security origin by now, this is probably
     // a new window created via the API (i.e., that lacks an origin and lacks

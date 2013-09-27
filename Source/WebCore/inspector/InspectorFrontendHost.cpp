@@ -322,7 +322,7 @@ void InspectorFrontendHost::removeFileSystem(const String& fileSystemPath)
 PassRefPtr<DOMFileSystem> InspectorFrontendHost::isolatedFileSystem(const String& fileSystemName, const String& rootURL)
 {
     ScriptExecutionContext* context = m_frontendPage->mainFrame().document();
-    return DOMFileSystem::create(context, fileSystemName, FileSystemTypeIsolated, KURL(ParsedURLString, rootURL), AsyncFileSystem::create());
+    return DOMFileSystem::create(context, fileSystemName, FileSystemTypeIsolated, URL(ParsedURLString, rootURL), AsyncFileSystem::create());
 }
 #endif
 

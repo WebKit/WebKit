@@ -22,7 +22,7 @@
  */
 
 #include "config.h"
-#include "KURL.h"
+#include "URL.h"
 #include "LinkHash.h"
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringHash.h>
@@ -226,13 +226,13 @@ LinkHash visitedLinkHash(const UChar* url, unsigned length)
 }
 
 template <typename CharacterType>
-static ALWAYS_INLINE void visitedURLInline(const KURL& base, const CharacterType* characters, unsigned length, Vector<CharacterType, 512>& buffer)
+static ALWAYS_INLINE void visitedURLInline(const URL& base, const CharacterType* characters, unsigned length, Vector<CharacterType, 512>& buffer)
 {
     if (!length)
         return;
 
     // This is a poor man's completeURL. Faster with less memory allocation.
-    // FIXME: It's missing a lot of what completeURL does and a lot of what KURL does.
+    // FIXME: It's missing a lot of what completeURL does and a lot of what URL does.
     // For example, it does not handle international domain names properly.
 
     // FIXME: It is wrong that we do not do further processing on strings that have "://" in them:
@@ -284,12 +284,12 @@ static ALWAYS_INLINE void visitedURLInline(const KURL& base, const CharacterType
     return;
 }
 
-void visitedURL(const KURL& base, const AtomicString& attributeURL, Vector<UChar, 512>& buffer)
+void visitedURL(const URL& base, const AtomicString& attributeURL, Vector<UChar, 512>& buffer)
 {
     return visitedURLInline(base, attributeURL.characters(), attributeURL.length(), buffer);
 }
 
-LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
+LinkHash visitedLinkHash(const URL& base, const AtomicString& attributeURL)
 {
     if (attributeURL.isEmpty())
         return 0;

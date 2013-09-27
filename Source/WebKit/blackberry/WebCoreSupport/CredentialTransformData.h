@@ -22,7 +22,7 @@
 #include "Credential.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
-#include "KURL.h"
+#include "URL.h"
 #include "ProtectionSpace.h"
 
 #include <wtf/RefPtr.h>
@@ -47,7 +47,7 @@ private:
     bool findPasswordFormFields(const HTMLFormElement*);
     bool locateSpecificPasswords(const Vector<HTMLInputElement*>& passwords);
 
-    KURL m_action;
+    URL m_action;
     ProtectionSpace m_protectionSpace;
     mutable Credential m_credential;
     RefPtr<HTMLInputElement> m_userNameElement;

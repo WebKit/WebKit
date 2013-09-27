@@ -26,8 +26,8 @@
 #include "config.h"
 #include "ManifestParser.h"
 
-#include "KURL.h"
 #include "TextResourceDecoder.h"
+#include "URL.h"
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
@@ -36,7 +36,7 @@ namespace WebCore {
 
 enum Mode { Explicit, Fallback, OnlineWhitelist, Unknown };
     
-bool parseManifest(const KURL& manifestURL, const char* data, int length, Manifest& manifest)
+bool parseManifest(const URL& manifestURL, const char* data, int length, Manifest& manifest)
 {
     ASSERT(manifest.explicitURLs.isEmpty());
     ASSERT(manifest.onlineWhitelistedURLs.isEmpty());
@@ -114,7 +114,7 @@ bool parseManifest(const KURL& manifestURL, const char* data, int length, Manife
                 continue;
             }
 
-            KURL url(manifestURL, String(line.characters(), p - line.characters()));
+            URL url(manifestURL, String(line.characters(), p - line.characters()));
             
             if (!url.isValid())
                 continue;
@@ -146,7 +146,7 @@ bool parseManifest(const KURL& manifestURL, const char* data, int length, Manife
                 continue;
             }
             
-            KURL namespaceURL(manifestURL, String(line.characters(), p - line.characters()));
+            URL namespaceURL(manifestURL, String(line.characters(), p - line.characters()));
             if (!namespaceURL.isValid())
                 continue;
             if (namespaceURL.hasFragmentIdentifier())
@@ -164,7 +164,7 @@ bool parseManifest(const KURL& manifestURL, const char* data, int length, Manife
             while (p < lineEnd && *p != '\t' && *p != ' ') 
                 p++;
 
-            KURL fallbackURL(manifestURL, String(fallbackStart, p - fallbackStart));
+            URL fallbackURL(manifestURL, String(fallbackStart, p - fallbackStart));
             if (!fallbackURL.isValid())
                 continue;
             if (fallbackURL.hasFragmentIdentifier())

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ProxyServer.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "NetworkingContext.h"
 
 #include <QNetworkAccessManager>
@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-Vector<ProxyServer> proxyServersForURL(const KURL& url, const NetworkingContext* context)
+Vector<ProxyServer> proxyServersForURL(const URL& url, const NetworkingContext* context)
 {
     Vector<ProxyServer> servers;
     

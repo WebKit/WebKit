@@ -86,8 +86,8 @@ static bool verifyCustomHandlerURL(const String& baseURL, const String& url, Exc
     String newURL = url;
     newURL.remove(index, WTF_ARRAY_LENGTH(token) - 1);
 
-    KURL base(ParsedURLString, baseURL);
-    KURL kurl(base, newURL);
+    URL base(ParsedURLString, baseURL);
+    URL kurl(base, newURL);
 
     if (kurl.isEmpty() || !kurl.isValid()) {
         ec = SYNTAX_ERR;

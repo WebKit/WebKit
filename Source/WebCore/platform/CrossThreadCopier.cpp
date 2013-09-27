@@ -32,7 +32,7 @@
 
 #include "CrossThreadCopier.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-CrossThreadCopierBase<false, false, KURL>::Type CrossThreadCopierBase<false, false, KURL>::copy(const KURL& url)
+CrossThreadCopierBase<false, false, URL>::Type CrossThreadCopierBase<false, false, URL>::copy(const URL& url)
 {
     return url.copy();
 }

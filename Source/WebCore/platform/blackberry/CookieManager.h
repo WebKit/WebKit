@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class CookieDatabaseBackingStore;
-class KURL;
+class URL;
 
 enum BackingStoreRemovalPolicy {
     RemoveFromBackingStore,
@@ -70,11 +70,11 @@ public:
     bool canLocalAccessAllCookies() const { return m_shouldDumpAllCookies; }
     void setCanLocalAccessAllCookies(bool enabled) { m_shouldDumpAllCookies = enabled; }
 
-    void setCookies(const KURL&, const String& value, CookieFilter = WithHttpOnlyCookies);
-    void setCookies(const KURL&, const Vector<String>& cookies, CookieFilter);
+    void setCookies(const URL&, const String& value, CookieFilter = WithHttpOnlyCookies);
+    void setCookies(const URL&, const Vector<String>& cookies, CookieFilter);
 
     void removeAllCookies(BackingStoreRemovalPolicy);
-    void removeCookieWithName(const KURL&, const String& cookieName);
+    void removeCookieWithName(const URL&, const String& cookieName);
 
     unsigned short cookiesCount() const { return m_count; }
 
@@ -96,10 +96,10 @@ public:
     void setPrivateMode(bool);
 
     String generateHtmlFragmentForCookies();
-    String getCookie(const KURL& requestURL, CookieFilter) const;
+    String getCookie(const URL& requestURL, CookieFilter) const;
 
     // Returns all cookies that are associated with the specified URL as raw cookies.
-    void getRawCookies(Vector<RefPtr<ParsedCookie> >& stackOfCookies, const KURL& requestURL, CookieFilter = WithHttpOnlyCookies) const;
+    void getRawCookies(Vector<RefPtr<ParsedCookie> >& stackOfCookies, const URL& requestURL, CookieFilter = WithHttpOnlyCookies) const;
 
 private:
     friend CookieManager& cookieManager();

@@ -74,7 +74,7 @@ size_t HTTPRequest::parseRequestLine(const char* data, size_t length, String& fa
 {
     String url;
     size_t result = parseHTTPRequestLine(data, length, failureReason, m_requestMethod, url, m_httpVersion);
-    m_url = KURL(KURL(), url);
+    m_url = URL(URL(), url);
     return result;
 }
 
@@ -113,7 +113,7 @@ HTTPRequest::HTTPRequest()
 {
 }
 
-HTTPRequest::HTTPRequest(const String& requestMethod, const KURL& url, HTTPVersion version)
+HTTPRequest::HTTPRequest(const String& requestMethod, const URL& url, HTTPVersion version)
     : m_url(url)
     , m_httpVersion(version)
     , m_requestMethod(requestMethod)

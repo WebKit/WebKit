@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class KURL;
+class URL;
 
 class SecurityOrigin : public ThreadSafeRefCounted<SecurityOrigin> {
 public:
@@ -50,7 +50,7 @@ public:
         BlockAllStorage
     };
 
-    static PassRefPtr<SecurityOrigin> create(const KURL&);
+    static PassRefPtr<SecurityOrigin> create(const URL&);
     static PassRefPtr<SecurityOrigin> createUnique();
 
     static PassRefPtr<SecurityOrigin> createFromDatabaseIdentifier(const String&);
@@ -67,8 +67,8 @@ public:
     // Generally, we add URL schemes to this list when WebKit support them. For
     // example, we don't include the "jar" scheme, even though Firefox
     // understands that "jar" uses an inner URL for it's security origin.
-    static bool shouldUseInnerURL(const KURL&);
-    static KURL extractInnerURL(const KURL&);
+    static bool shouldUseInnerURL(const URL&);
+    static URL extractInnerURL(const URL&);
 
     // Create a deep copy of this SecurityOrigin. This method is useful
     // when marshalling a SecurityOrigin to another thread.
@@ -88,7 +88,7 @@ public:
     // Returns true if a given URL is secure, based either directly on its
     // own protocol, or, when relevant, on the protocol of its "inner URL"
     // Protocols like blob: and filesystem: fall into this latter category.
-    static bool isSecure(const KURL&);
+    static bool isSecure(const URL&);
 
     // Returns true if this SecurityOrigin can script objects in the given
     // SecurityOrigin. For example, call this function before allowing
@@ -99,12 +99,12 @@ public:
     // Returns true if this SecurityOrigin can read content retrieved from
     // the given URL. For example, call this function before issuing
     // XMLHttpRequests.
-    bool canRequest(const KURL&) const;
+    bool canRequest(const URL&) const;
 
     // Returns true if drawing an image from this URL taints a canvas from
     // this security origin. For example, call this function before
     // drawing an image onto an HTML canvas element with the drawImage API.
-    bool taintsCanvas(const KURL&) const;
+    bool taintsCanvas(const URL&) const;
 
     // Returns true if this SecurityOrigin can receive drag content from the
     // initiator. For example, call this function before allowing content to be
@@ -114,7 +114,7 @@ public:
     // Returns true if |document| can display content from the given URL (e.g.,
     // in an iframe or as an image). For example, web sites generally cannot
     // display content from the user's files system.
-    bool canDisplay(const KURL&) const;
+    bool canDisplay(const URL&) const;
 
     // Returns true if this SecurityOrigin can load local resources, such
     // as images, iframes, and style sheets, and can link to local URLs.
@@ -209,7 +209,7 @@ public:
 
 private:
     SecurityOrigin();
-    explicit SecurityOrigin(const KURL&);
+    explicit SecurityOrigin(const URL&);
     explicit SecurityOrigin(const SecurityOrigin*);
 
     // FIXME: Rename this function to something more semantic.

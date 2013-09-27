@@ -39,7 +39,7 @@ public:
     virtual PassOwnPtr<WebCore::ContextMenu> customizeMenu(PassOwnPtr<WebCore::ContextMenu>);
     virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*);
     
-    virtual void downloadURL(const WebCore::KURL&);
+    virtual void downloadURL(const WebCore::URL&);
     virtual void searchWithGoogle(const WebCore::Frame*);
     virtual void lookUpInDictionary(WebCore::Frame*);
     virtual void speak(const WTF::String&);

@@ -896,13 +896,13 @@ AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
         return 0;
     HTMLAnchorElement* anchor = toHTMLAnchorElement(element);
     
-    KURL linkURL = anchor->href();
+    URL linkURL = anchor->href();
     String fragmentIdentifier = linkURL.fragmentIdentifier();
     if (fragmentIdentifier.isEmpty())
         return 0;
     
     // check if URL is the same as current URL
-    KURL documentURL = m_renderer->document().url();
+    URL documentURL = m_renderer->document().url();
     if (!equalIgnoringFragmentIdentifier(documentURL, linkURL))
         return 0;
     
@@ -1448,7 +1448,7 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
         Position(node, range.start + range.length, Position::PositionIsOffsetInAnchor), DOWNSTREAM));
 }
 
-KURL AccessibilityRenderObject::url() const
+URL AccessibilityRenderObject::url() const
 {
     if (isAnchor() && isHTMLAnchorElement(m_renderer->node())) {
         if (HTMLAnchorElement* anchor = toHTMLAnchorElement(anchorElement()))
@@ -1464,7 +1464,7 @@ KURL AccessibilityRenderObject::url() const
     if (isInputImage())
         return toHTMLInputElement(m_renderer->node())->src();
     
-    return KURL();
+    return URL();
 }
 
 bool AccessibilityRenderObject::isUnvisited() const

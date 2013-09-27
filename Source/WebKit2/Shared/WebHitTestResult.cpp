@@ -25,7 +25,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HitTestResult.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <WebCore/Node.h>
 #include <wtf/text/WTFString.h>
 

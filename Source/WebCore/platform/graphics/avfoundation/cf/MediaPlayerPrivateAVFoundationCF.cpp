@@ -41,7 +41,7 @@
 #else
 #include "InbandTextTrackPrivateLegacyAVCF.h"
 #endif
-#include "KURL.h"
+#include "URL.h"
 #include "Logging.h"
 #include "PlatformCALayer.h"
 #include "SoftLinking.h"
@@ -828,7 +828,7 @@ void MediaPlayerPrivateAVFoundationCF::getSupportedTypes(HashSet<String>& suppor
     supportedTypes = mimeTypeCache();
 } 
 
-MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationCF::supportsType(const String& type, const String& codecs, const KURL&)
+MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationCF::supportsType(const String& type, const String& codecs, const URL&)
 {
     // Only return "IsSupported" if there is no codecs parameter for now as there is no way to ask if it supports an
     // extended MIME type until rdar://8721715 is fixed.
@@ -1298,7 +1298,7 @@ void AVFWrapper::createAssetForURL(const String& url)
 {
     ASSERT(!avAsset());
 
-    RetainPtr<CFURLRef> urlRef = KURL(ParsedURLString, url).createCFURL();
+    RetainPtr<CFURLRef> urlRef = URL(ParsedURLString, url).createCFURL();
 
     AVCFURLAssetRef assetRef = AVCFURLAssetCreateWithURLAndOptions(kCFAllocatorDefault, urlRef.get(), 0, m_notificationQueue);
     m_avAsset = adoptCF(assetRef);

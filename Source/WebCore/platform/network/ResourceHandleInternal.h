@@ -130,7 +130,7 @@ namespace WebCore {
             , m_scheduledFailureType(ResourceHandle::NoFailure)
             , m_failureTimer(loader, &ResourceHandle::fireFailure)
         {
-            const KURL& url = m_firstRequest.url();
+            const URL& url = m_firstRequest.url();
             m_user = url.user();
             m_pass = url.pass();
             m_firstRequest.removeCredentials();

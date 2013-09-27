@@ -43,7 +43,7 @@ namespace WebCore {
 
 class Credential;
 class Frame;
-class KURL;
+class URL;
 class ProtectionSpace;
 class ResourceRequest;
 
@@ -54,7 +54,7 @@ public:
 
     void initialize(int playerId,
         const String& pageGroupName,
-        const KURL&,
+        const URL&,
         const BlackBerry::Platform::NetworkRequest&,
         PassRefPtr<ResourceHandle>,
         BlackBerry::Platform::NetworkStreamFactory*,
@@ -92,7 +92,7 @@ public:
     virtual int status() const { return m_extendedStatusCode; }
     virtual const BlackBerry::Platform::String mimeType() const;
 
-    virtual void notifyChallengeResult(const KURL&, const ProtectionSpace&, AuthenticationChallengeResult, const Credential&);
+    virtual void notifyChallengeResult(const URL&, const ProtectionSpace&, AuthenticationChallengeResult, const Credential&);
 
     // Implementation of FrameDestructionObserver pure virtuals.
     virtual void frameDestroyed();

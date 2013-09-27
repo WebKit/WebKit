@@ -135,7 +135,7 @@ void PluginStream::startStream()
 {
     ASSERT(m_streamState == StreamBeforeStarted);
 
-    const KURL& responseURL = m_resourceResponse.url();
+    const URL& responseURL = m_resourceResponse.url();
 
     // Some plugins (Flash) expect that javascript URLs are passed back decoded as this is the
     // format used when requesting the URL.
@@ -386,7 +386,7 @@ void PluginStream::deliverData()
     } 
 }
 
-void PluginStream::sendJavaScriptStream(const KURL& requestURL, const CString& resultString)
+void PluginStream::sendJavaScriptStream(const URL& requestURL, const CString& resultString)
 {
     didReceiveResponse(0, ResourceResponse(requestURL, "text/plain", resultString.length(), "", ""));
 

@@ -74,7 +74,7 @@ MemoryCache::MemoryCache()
 {
 }
 
-KURL MemoryCache::removeFragmentIdentifierIfNeeded(const KURL& originalURL)
+URL MemoryCache::removeFragmentIdentifierIfNeeded(const URL& originalURL)
 {
     if (!originalURL.hasFragmentIdentifier())
         return originalURL;
@@ -83,7 +83,7 @@ KURL MemoryCache::removeFragmentIdentifierIfNeeded(const KURL& originalURL)
     // to be unique even when they differ by the fragment identifier only.
     if (!originalURL.protocolIsInHTTPFamily())
         return originalURL;
-    KURL url = originalURL;
+    URL url = originalURL;
     url.removeFragmentIdentifier();
     return url;
 }
@@ -163,7 +163,7 @@ void MemoryCache::revalidationFailed(CachedResource* revalidatingResource)
     revalidatingResource->clearResourceToRevalidate();
 }
 
-CachedResource* MemoryCache::resourceForURL(const KURL& resourceURL)
+CachedResource* MemoryCache::resourceForURL(const URL& resourceURL)
 {
     return resourceForRequest(ResourceRequest(resourceURL));
 }
@@ -171,7 +171,7 @@ CachedResource* MemoryCache::resourceForURL(const KURL& resourceURL)
 CachedResource* MemoryCache::resourceForRequest(const ResourceRequest& request)
 {
     ASSERT(WTF::isMainThread());
-    KURL url = removeFragmentIdentifierIfNeeded(request.url());
+    URL url = removeFragmentIdentifierIfNeeded(request.url());
 #if ENABLE(CACHE_PARTITIONING)
     CachedResourceItem* item = m_resources.get(url);
     CachedResource* resource = 0;

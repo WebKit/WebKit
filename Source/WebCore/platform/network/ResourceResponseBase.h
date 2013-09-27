@@ -28,7 +28,7 @@
 #define ResourceResponseBase_h
 
 #include "HTTPHeaderMap.h"
-#include "KURL.h"
+#include "URL.h"
 #include "ResourceLoadTiming.h"
 
 #include <wtf/PassOwnPtr.h>
@@ -55,8 +55,8 @@ public:
     bool isNull() const { return m_isNull; }
     bool isHTTP() const;
 
-    const KURL& url() const;
-    void setURL(const KURL& url);
+    const URL& url() const;
+    void setURL(const URL& url);
 
     const String& mimeType() const;
     void setMimeType(const String& mimeType);
@@ -130,7 +130,7 @@ protected:
     };
 
     ResourceResponseBase();
-    ResourceResponseBase(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename);
+    ResourceResponseBase(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename);
 
     void lazyInit(InitLevel) const;
 
@@ -140,7 +140,7 @@ protected:
     // The ResourceResponse subclass may "shadow" this method to compare platform specific fields
     static bool platformCompare(const ResourceResponse&, const ResourceResponse&) { return true; }
 
-    KURL m_url;
+    URL m_url;
     String m_mimeType;
     long long m_expectedContentLength;
     String m_textEncodingName;
@@ -184,7 +184,7 @@ struct CrossThreadResourceResponseDataBase {
     WTF_MAKE_NONCOPYABLE(CrossThreadResourceResponseDataBase); WTF_MAKE_FAST_ALLOCATED;
 public:
     CrossThreadResourceResponseDataBase() { }
-    KURL m_url;
+    URL m_url;
     String m_mimeType;
     long long m_expectedContentLength;
     String m_textEncodingName;

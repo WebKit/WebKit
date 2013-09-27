@@ -93,7 +93,7 @@ const String& FrameLoaderClientEfl::customUserAgent() const
     return m_customUserAgent;
 }
 
-String FrameLoaderClientEfl::userAgent(const KURL&)
+String FrameLoaderClientEfl::userAgent(const URL&)
 {
     if (!m_customUserAgent.isEmpty())
         return m_customUserAgent;
@@ -212,7 +212,7 @@ void FrameLoaderClientEfl::dispatchWillSendRequest(DocumentLoader* loader, unsig
     evas_object_smart_callback_call(m_view, "resource,request,willsend", &messages);
 
     if (request.url != orig.url) {
-        coreRequest.setURL(KURL(KURL(), request.url));
+        coreRequest.setURL(URL(URL(), request.url));
 
         // Calling client might have changed our url pointer.
         // Free the new allocated string.
@@ -356,7 +356,7 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     callPolicyFunction(function, policy);
 }
 
-PassRefPtr<Widget> FrameLoaderClientEfl::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+PassRefPtr<Widget> FrameLoaderClientEfl::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const URL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     ASSERT(m_frame);
     ASSERT(m_view);
@@ -366,7 +366,7 @@ PassRefPtr<Widget> FrameLoaderClientEfl::createPlugin(const IntSize& pluginSize,
                                   mimeType, loadManually);
 }
 
-PassRefPtr<Frame> FrameLoaderClientEfl::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer, bool /*allowsScrolling*/, int /*marginWidth*/, int /*marginHeight*/)
+PassRefPtr<Frame> FrameLoaderClientEfl::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer, bool /*allowsScrolling*/, int /*marginWidth*/, int /*marginHeight*/)
 {
     ASSERT(m_frame);
     ASSERT(m_view);
@@ -406,14 +406,14 @@ void FrameLoaderClientEfl::redirectDataToPlugin(Widget* pluginWidget)
         m_hasSentResponseToPlugin = false;
 }
 
-PassRefPtr<Widget> FrameLoaderClientEfl::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL&,
+PassRefPtr<Widget> FrameLoaderClientEfl::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL&,
                                                                 const Vector<String>& /*paramNames*/, const Vector<String>& /*paramValues*/)
 {
     notImplemented();
     return 0;
 }
 
-ObjectContentType FrameLoaderClientEfl::objectContentType(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages)
+ObjectContentType FrameLoaderClientEfl::objectContentType(const URL& url, const String& mimeType, bool shouldPreferPlugInsForImages)
 {
     // FIXME: once plugin support is enabled, this method needs to correctly handle the 'shouldPreferPlugInsForImages' flag. See
     // WebCore::FrameLoader::defaultObjectContentType() for an example.
@@ -575,12 +575,12 @@ void FrameLoaderClientEfl::didDisplayInsecureContent()
     ewk_frame_mixed_content_displayed_set(m_frame, true);
 }
 
-void FrameLoaderClientEfl::didRunInsecureContent(SecurityOrigin*, const KURL&)
+void FrameLoaderClientEfl::didRunInsecureContent(SecurityOrigin*, const URL&)
 {
     ewk_frame_mixed_content_run_set(m_frame, true);
 }
 
-void FrameLoaderClientEfl::didDetectXSS(const KURL& insecureURL, bool didBlockEntirePage)
+void FrameLoaderClientEfl::didDetectXSS(const URL& insecureURL, bool didBlockEntirePage)
 {
     CString cs = insecureURL.string().utf8();
     Ewk_Frame_Xss_Notification xssInfo = { cs.data(), didBlockEntirePage };
@@ -630,7 +630,7 @@ void FrameLoaderClientEfl::dispatchDidCancelClientRedirect()
     ewk_frame_redirect_cancelled(m_frame);
 }
 
-void FrameLoaderClientEfl::dispatchWillPerformClientRedirect(const KURL& url, double, double)
+void FrameLoaderClientEfl::dispatchWillPerformClientRedirect(const URL& url, double, double)
 {
     ewk_frame_redirect_requested(m_frame, url.string().utf8().data());
 }
@@ -788,7 +788,7 @@ void FrameLoaderClientEfl::prepareForDataSourceReplacement()
     notImplemented();
 }
 
-void FrameLoaderClientEfl::setTitle(const StringWithDirection&, const KURL&)
+void FrameLoaderClientEfl::setTitle(const StringWithDirection&, const URL&)
 {
     // no need for, dispatchDidReceiveTitle is the right callback
 }

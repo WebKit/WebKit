@@ -49,7 +49,7 @@
 #import "WebViewInternal.h"
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/FrameLoader.h>
-#import <WebCore/KURL.h>
+#import <WebCore/URL.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/ResourceBuffer.h>
@@ -312,7 +312,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 // May return nil if not initialized with a URL.
 - (NSURL *)_URL
 {
-    const KURL& url = toPrivate(_private)->loader->url();
+    const URL& url = toPrivate(_private)->loader->url();
     if (url.isEmpty())
         return nil;
     return url;
@@ -462,7 +462,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSURL *)unreachableURL
 {
-    const KURL& unreachableURL = toPrivate(_private)->loader->unreachableURL();
+    const URL& unreachableURL = toPrivate(_private)->loader->unreachableURL();
     if (unreachableURL.isEmpty())
         return nil;
     return unreachableURL;

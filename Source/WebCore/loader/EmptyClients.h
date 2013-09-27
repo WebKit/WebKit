@@ -243,7 +243,7 @@ public:
     virtual void dispatchDidHandleOnloadEvents() { }
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() { }
     virtual void dispatchDidCancelClientRedirect() { }
-    virtual void dispatchWillPerformClientRedirect(const KURL&, double, double) { }
+    virtual void dispatchWillPerformClientRedirect(const URL&, double, double) { }
     virtual void dispatchDidChangeLocationWithinPage() { }
     virtual void dispatchDidPushStateWithinPage() { }
     virtual void dispatchDidReplaceStateWithinPage() { }
@@ -312,14 +312,14 @@ public:
     virtual void frameLoadCompleted() { }
     virtual void restoreViewState() { }
     virtual void provisionalLoadStarted() { }
-    virtual bool shouldTreatURLAsSameAsCurrent(const KURL&) const { return false; }
+    virtual bool shouldTreatURLAsSameAsCurrent(const URL&) const { return false; }
     virtual void didFinishLoad() { }
     virtual void prepareForDataSourceReplacement() { }
 
     virtual PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&) OVERRIDE;
-    virtual void setTitle(const StringWithDirection&, const KURL&) { }
+    virtual void setTitle(const StringWithDirection&, const URL&) { }
 
-    virtual String userAgent(const KURL&) { return ""; }
+    virtual String userAgent(const URL&) { return ""; }
 
     virtual void savePlatformDataToCachedFrame(CachedFrame*) { }
     virtual void transitionToCommittedFromCachedFrame(CachedFrame*) { }
@@ -338,19 +338,19 @@ public:
     virtual void saveViewStateToItem(HistoryItem*) { }
     virtual bool canCachePage() const { return false; }
     virtual void didDisplayInsecureContent() { }
-    virtual void didRunInsecureContent(SecurityOrigin*, const KURL&) { }
-    virtual void didDetectXSS(const KURL&, bool) { }
-    virtual PassRefPtr<Frame> createFrame(const KURL&, const String&, HTMLFrameOwnerElement*, const String&, bool, int, int) OVERRIDE;
-    virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool) OVERRIDE;
+    virtual void didRunInsecureContent(SecurityOrigin*, const URL&) { }
+    virtual void didDetectXSS(const URL&, bool) { }
+    virtual PassRefPtr<Frame> createFrame(const URL&, const String&, HTMLFrameOwnerElement*, const String&, bool, int, int) OVERRIDE;
+    virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool) OVERRIDE;
     virtual void recreatePlugin(Widget*) OVERRIDE;
-    virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL&, const Vector<String>&, const Vector<String>&) OVERRIDE;
+    virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL&, const Vector<String>&, const Vector<String>&) OVERRIDE;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    virtual PassRefPtr<Widget> createMediaPlayerProxyPlugin(const IntSize&, HTMLMediaElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&) OVERRIDE;
+    virtual PassRefPtr<Widget> createMediaPlayerProxyPlugin(const IntSize&, HTMLMediaElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&) OVERRIDE;
     virtual void hideMediaPlayerProxyPlugin(Widget*) { }
     virtual void showMediaPlayerProxyPlugin(Widget*) { }
 #endif
 
-    virtual ObjectContentType objectContentType(const KURL&, const String&, bool) { return ObjectContentType(); }
+    virtual ObjectContentType objectContentType(const URL&, const String&, bool) { return ObjectContentType(); }
     virtual String overrideMediaType() const { return String(); }
 
     virtual void redirectDataToPlugin(Widget*) { }
@@ -517,7 +517,7 @@ public:
 #endif
     virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*) { }
 
-    virtual void downloadURL(const KURL&) { }
+    virtual void downloadURL(const URL&) { }
     virtual void copyImageToClipboard(const HitTestResult&) { }
     virtual void searchWithGoogle(const Frame*) { }
     virtual void lookUpInDictionary(Frame*) { }

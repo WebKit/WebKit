@@ -34,7 +34,7 @@
 #include "FileSystemCallback.h"
 #include "FileSystemCallbacks.h"
 #include "FileSystemType.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Page.h"
 #include "PageClientBlackBerry.h"
 #include "SecurityOrigin.h"
@@ -76,7 +76,7 @@ static void openFileSystem(ScriptExecutionContext* context, const String& basePa
     if (type == FileSystemTypeIsolated)
         return;
 
-    KURL url = context->url();
+    URL url = context->url();
     if (url.hasFragmentIdentifier())
         url.removeFragmentIdentifier();
     url.setQuery(String());
@@ -85,7 +85,7 @@ static void openFileSystem(ScriptExecutionContext* context, const String& basePa
     builder.append("filesystem:");
     builder.append(url.string());
     builder.append(fileSystemTypeString(type));
-    KURL rootURL = context->completeURL(builder.toString());
+    URL rootURL = context->completeURL(builder.toString());
     ASSERT(rootURL.isValid());
 
     // TODO: Ask user for file system permission.

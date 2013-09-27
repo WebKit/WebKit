@@ -81,32 +81,32 @@ VisitedLinkStrategy* PlatformStrategiesBlackBerry::createVisitedLinkStrategy()
 }
 
 // CookiesStrategy
-String PlatformStrategiesBlackBerry::cookiesForDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
+String PlatformStrategiesBlackBerry::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
     return WebCore::cookiesForDOM(session, firstParty, url);
 }
 
-void PlatformStrategiesBlackBerry::setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url, const String& cookieString)
+void PlatformStrategiesBlackBerry::setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& cookieString)
 {
     WebCore::setCookiesFromDOM(session, firstParty, url, cookieString);
 }
 
-bool PlatformStrategiesBlackBerry::cookiesEnabled(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
+bool PlatformStrategiesBlackBerry::cookiesEnabled(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
     return WebCore::cookiesEnabled(session, firstParty, url);
 }
 
-String PlatformStrategiesBlackBerry::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
+String PlatformStrategiesBlackBerry::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
     return WebCore::cookieRequestHeaderFieldValue(session, firstParty, url);
 }
 
-bool PlatformStrategiesBlackBerry::getRawCookies(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url, Vector<Cookie>& rawCookies)
+bool PlatformStrategiesBlackBerry::getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const URL& url, Vector<Cookie>& rawCookies)
 {
     return WebCore::getRawCookies(session, firstParty, url, rawCookies);
 }
 
-void PlatformStrategiesBlackBerry::deleteCookie(const NetworkStorageSession& session, const KURL& url, const String& cookieName)
+void PlatformStrategiesBlackBerry::deleteCookie(const NetworkStorageSession& session, const URL& url, const String& cookieName)
 {
     WebCore::deleteCookie(session, url, cookieName);
 }
@@ -151,7 +151,7 @@ void PlatformStrategiesBlackBerry::getPluginInfo(const Page*, Vector<PluginInfo>
 }
 
 // VisitedLinkStrategy
-bool PlatformStrategiesBlackBerry::isLinkVisited(Page* page, LinkHash hash, const KURL&, const AtomicString&)
+bool PlatformStrategiesBlackBerry::isLinkVisited(Page* page, LinkHash hash, const URL&, const AtomicString&)
 {
     return page->group().isLinkVisited(hash);
 }

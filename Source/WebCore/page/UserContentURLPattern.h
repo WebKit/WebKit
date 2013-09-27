@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class KURL;
+class URL;
 
 class UserContentURLPattern {
 public:
@@ -45,7 +45,7 @@ public:
 
     bool isValid() const { return !m_invalid; }
 
-    bool matches(const KURL&) const;
+    bool matches(const URL&) const;
 
     const String& scheme() const { return m_scheme; }
     const String& host() const { return m_host; }
@@ -53,13 +53,13 @@ public:
 
     bool matchSubdomains() const { return m_matchSubdomains; }
     
-    static bool matchesPatterns(const KURL&, const Vector<String>& whitelist, const Vector<String>& blacklist);
+    static bool matchesPatterns(const URL&, const Vector<String>& whitelist, const Vector<String>& blacklist);
 
 private:
     bool parse(const String& pattern);
 
-    bool matchesHost(const KURL&) const;
-    bool matchesPath(const KURL&) const;
+    bool matchesHost(const URL&) const;
+    bool matchesPath(const URL&) const;
 
     bool m_invalid;
 

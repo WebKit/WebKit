@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class KURL;
+class URL;
 class ScriptExecutionContext;
 class SecurityOrigin;
 class URLRegistry;
@@ -46,8 +46,8 @@ class PublicURLManager {
 public:
     static OwnPtr<PublicURLManager> create() { return adoptPtr(new PublicURLManager); }
 
-    void registerURL(SecurityOrigin*, const KURL&, URLRegistrable*);
-    void revoke(const KURL&);
+    void registerURL(SecurityOrigin*, const URL&, URLRegistrable*);
+    void revoke(const URL&);
     void contextDestroyed();
 
 private:

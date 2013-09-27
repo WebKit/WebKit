@@ -3420,8 +3420,8 @@ PassRefPtr<CustomFilterProgram> StyleResolver::lookupCustomFilterProgram(WebKitC
     CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings, CustomFilterMeshType meshType)
 {
     CachedResourceLoader* cachedResourceLoader = m_state.document().cachedResourceLoader();
-    KURL vertexShaderURL = vertexShader ? vertexShader->completeURL(cachedResourceLoader) : KURL();
-    KURL fragmentShaderURL = fragmentShader ? fragmentShader->completeURL(cachedResourceLoader) : KURL();
+    URL vertexShaderURL = vertexShader ? vertexShader->completeURL(cachedResourceLoader) : URL();
+    URL fragmentShaderURL = fragmentShader ? fragmentShader->completeURL(cachedResourceLoader) : URL();
     RefPtr<StyleCustomFilterProgram> program;
     if (m_customFilterProgramCache)
         program = m_customFilterProgramCache->lookup(CustomFilterProgramInfo(vertexShaderURL, fragmentShaderURL, programType, mixSettings, meshType));
@@ -3788,7 +3788,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
                 continue;
 
             WebKitCSSSVGDocumentValue* svgDocumentValue = toWebKitCSSSVGDocumentValue(argument);
-            KURL url = m_state.document().completeURL(svgDocumentValue->url());
+            URL url = m_state.document().completeURL(svgDocumentValue->url());
 
             RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(svgDocumentValue->url(), url.fragmentIdentifier(), operationType);
             if (SVGURIReference::isExternalURIReference(svgDocumentValue->url(), m_state.document())) {

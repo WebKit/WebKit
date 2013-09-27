@@ -55,7 +55,7 @@
 #include "InspectorPageAgent.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
-#include "KURL.h"
+#include "URL.h"
 #include "LocalFileSystem.h"
 #include "MIMETypeRegistry.h"
 #include "Metadata.h"
@@ -217,7 +217,7 @@ private:
     void readDirectoryEntries();
 
     RefPtr<RequestDirectoryContentCallback> m_requestCallback;
-    KURL m_url;
+    URL m_url;
     RefPtr<Array<TypeBuilder::FileSystem::Entry> > m_entries;
     RefPtr<DirectoryReader> m_directoryReader;
 };
@@ -342,7 +342,7 @@ private:
         , m_url(ParsedURLString, url) { }
 
     RefPtr<RequestMetadataCallback> m_requestCallback;
-    KURL m_url;
+    URL m_url;
     String m_path;
     bool m_isDirectory;
 };
@@ -442,7 +442,7 @@ private:
         , m_charset(charset) { }
 
     RefPtr<RequestFileContentCallback> m_requestCallback;
-    KURL m_url;
+    URL m_url;
     bool m_readAsText;
     int m_start;
     long long m_end;
@@ -522,7 +522,7 @@ void FileContentRequest::didRead()
 
 class DeleteEntryRequest : public VoidCallback {
 public:
-    static PassRefPtr<DeleteEntryRequest> create(PassRefPtr<DeleteEntryCallback> requestCallback, const KURL& url)
+    static PassRefPtr<DeleteEntryRequest> create(PassRefPtr<DeleteEntryCallback> requestCallback, const URL& url)
     {
         return adoptRef(new DeleteEntryRequest(requestCallback, url));
     }
@@ -554,12 +554,12 @@ private:
         m_requestCallback->sendSuccess(static_cast<int>(errorCode));
     }
 
-    DeleteEntryRequest(PassRefPtr<DeleteEntryCallback> requestCallback, const KURL& url)
+    DeleteEntryRequest(PassRefPtr<DeleteEntryCallback> requestCallback, const URL& url)
         : m_requestCallback(requestCallback)
         , m_url(url) { }
 
     RefPtr<DeleteEntryCallback> m_requestCallback;
-    KURL m_url;
+    URL m_url;
 };
 
 void DeleteEntryRequest::start(ScriptExecutionContext* scriptExecutionContext)
@@ -686,7 +686,7 @@ void InspectorFileSystemAgent::deleteEntry(ErrorString* error, const String& url
     if (!assertEnabled(error))
         return;
 
-    KURL url(ParsedURLString, urlString);
+    URL url(ParsedURLString, urlString);
 
     ScriptExecutionContext* scriptExecutionContext = assertScriptExecutionContextForOrigin(error, SecurityOrigin::create(url).get());
     if (!scriptExecutionContext)

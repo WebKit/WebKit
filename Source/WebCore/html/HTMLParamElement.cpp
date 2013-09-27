@@ -66,7 +66,7 @@ bool HTMLParamElement::isURLAttribute(const Attribute& attribute) const
     return HTMLElement::isURLAttribute(attribute);
 }
 
-void HTMLParamElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void HTMLParamElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 

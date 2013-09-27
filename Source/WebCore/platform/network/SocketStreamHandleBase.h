@@ -32,7 +32,7 @@
 #ifndef SocketStreamHandleBase_h
 #define SocketStreamHandleBase_h
 
-#include "KURL.h"
+#include "URL.h"
 
 #include <wtf/StreamBuffer.h>
 
@@ -56,13 +56,13 @@ namespace WebCore {
         void setClient(SocketStreamHandleClient*);
 
     protected:
-        SocketStreamHandleBase(const KURL&, SocketStreamHandleClient*);
+        SocketStreamHandleBase(const URL&, SocketStreamHandleClient*);
 
         bool sendPendingData();
         virtual int platformSend(const char* data, int length) = 0;
         virtual void platformClose() = 0;
 
-        KURL m_url;
+        URL m_url;
         SocketStreamHandleClient* m_client;
         StreamBuffer<char, 1024 * 1024> m_buffer;
         SocketStreamState m_state;

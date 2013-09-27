@@ -89,7 +89,7 @@ void DataObjectGtk::setURIList(const String& uriListString)
         if (line[0] == '#')
             continue;
 
-        KURL url = KURL(KURL(), line);
+        URL url = URL(URL(), line);
         if (url.isValid()) {
             if (!setURL) {
                 m_url = url;
@@ -104,7 +104,7 @@ void DataObjectGtk::setURIList(const String& uriListString)
     }
 }
 
-void DataObjectGtk::setURL(const KURL& url, const String& label)
+void DataObjectGtk::setURL(const URL& url, const String& label)
 {
     m_url = url;
     m_uriList = url;
@@ -152,7 +152,7 @@ void DataObjectGtk::clearAllExceptFilenames()
     m_text = "";
     m_markup = "";
     m_uriList = "";
-    m_url = KURL();
+    m_url = URL();
     m_image = 0;
     m_range = 0;
 }

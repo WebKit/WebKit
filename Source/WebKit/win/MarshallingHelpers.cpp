@@ -29,7 +29,7 @@
 
 #include <WebCore/BString.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
@@ -39,12 +39,12 @@ using namespace WebCore;
 CFArrayCallBacks MarshallingHelpers::kIUnknownArrayCallBacks = {0, IUnknownRetainCallback, IUnknownReleaseCallback, 0, 0};
 CFDictionaryValueCallBacks MarshallingHelpers::kIUnknownDictionaryValueCallBacks = {0, IUnknownRetainCallback, IUnknownReleaseCallback, 0, 0};
 
-KURL MarshallingHelpers::BSTRToKURL(BSTR urlStr)
+URL MarshallingHelpers::BSTRToKURL(BSTR urlStr)
 {
-    return KURL(KURL(), String(urlStr, SysStringLen(urlStr)));
+    return URL(URL(), String(urlStr, SysStringLen(urlStr)));
 }
 
-BSTR MarshallingHelpers::KURLToBSTR(const KURL& url)
+BSTR MarshallingHelpers::URLToBSTR(const URL& url)
 {
     return BString(url.string()).release();
 }

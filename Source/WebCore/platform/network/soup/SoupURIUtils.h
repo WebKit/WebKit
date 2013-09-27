@@ -26,12 +26,12 @@
 #ifndef SoupURIUtils_h
 #define SoupURIUtils_h
 
-#include "KURL.h"
+#include "URL.h"
 
 typedef struct _SoupURI SoupURI;
 
 namespace WebCore {
-KURL soupURIToKURL(SoupURI* soupURI);
+URL soupURIToKURL(SoupURI* soupURI);
 }
 
 #endif

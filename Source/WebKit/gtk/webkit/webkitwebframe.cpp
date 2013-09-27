@@ -677,7 +677,7 @@ void webkit_web_frame_load_uri(WebKitWebFrame* frame, const gchar* uri)
     if (!coreFrame)
         return;
 
-    coreFrame->loader().load(FrameLoadRequest(coreFrame, ResourceRequest(KURL(KURL(), String::fromUTF8(uri)))));
+    coreFrame->loader().load(FrameLoadRequest(coreFrame, ResourceRequest(URL(URL(), String::fromUTF8(uri)))));
 }
 
 static void webkit_web_frame_load_data(WebKitWebFrame* frame, const gchar* content, const gchar* mimeType, const gchar* encoding, const gchar* baseURL, const gchar* unreachableURL)
@@ -685,7 +685,7 @@ static void webkit_web_frame_load_data(WebKitWebFrame* frame, const gchar* conte
     Frame* coreFrame = core(frame);
     ASSERT(coreFrame);
 
-    KURL baseKURL = baseURL ? KURL(KURL(), String::fromUTF8(baseURL)) : blankURL();
+    URL baseKURL = baseURL ? URL(URL(), String::fromUTF8(baseURL)) : blankURL();
 
     ResourceRequest request(baseKURL);
 
@@ -693,8 +693,8 @@ static void webkit_web_frame_load_data(WebKitWebFrame* frame, const gchar* conte
     SubstituteData substituteData(sharedBuffer.release(),
                                   mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
                                   encoding ? String::fromUTF8(encoding) : String::fromUTF8("UTF-8"),
-                                  KURL(KURL(), String::fromUTF8(unreachableURL)),
-                                  KURL(KURL(), String::fromUTF8(unreachableURL)));
+                                  URL(URL(), String::fromUTF8(unreachableURL)),
+                                  URL(URL(), String::fromUTF8(unreachableURL)));
 
     coreFrame->loader().load(FrameLoadRequest(coreFrame, request, substituteData));
 }

@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class Color;
-class KURL;
+class URL;
     
 class PasteboardStrategy {
 public:
@@ -55,7 +55,7 @@ public:
     virtual long changeCount(const String& pasteboardName) = 0;
     virtual String uniqueName() = 0;
     virtual Color color(const String& pasteboardName) = 0;
-    virtual KURL url(const String& pasteboardName) = 0;
+    virtual URL url(const String& pasteboardName) = 0;
     
     virtual long addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) = 0;
     virtual long setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) = 0;

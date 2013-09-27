@@ -51,7 +51,7 @@ class IntSize;
 class IconDatabaseClient;
 class IconRecord;
 class IconSnapshot;
-class KURL;
+class URL;
 class PageURLRecord;
 class PageURLSnapshot;
 class SharedBuffer;

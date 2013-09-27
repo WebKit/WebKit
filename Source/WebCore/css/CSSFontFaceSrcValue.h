@@ -65,7 +65,7 @@ public:
 
     String customCSSText() const;
 
-    void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetContents*) const;
+    void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
 
     bool hasFailedOrCanceledSubresources() const;
 

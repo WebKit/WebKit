@@ -1138,9 +1138,9 @@ Document *Node::ownerDocument() const
     return doc == this ? 0 : doc;
 }
 
-KURL Node::baseURI() const
+URL Node::baseURI() const
 {
-    return parentNode() ? parentNode()->baseURI() : KURL();
+    return parentNode() ? parentNode()->baseURI() : URL();
 }
 
 bool Node::isEqualNode(Node* other) const
@@ -1799,7 +1799,7 @@ void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
         it->value->invalidateCache();
 }
 
-void Node::getSubresourceURLs(ListHashSet<KURL>& urls) const
+void Node::getSubresourceURLs(ListHashSet<URL>& urls) const
 {
     addSubresourceAttributeURLs(urls);
 }

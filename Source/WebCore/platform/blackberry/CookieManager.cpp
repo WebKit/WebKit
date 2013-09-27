@@ -124,7 +124,7 @@ static bool shouldIgnoreScheme(const String& protocol)
     return protocol == "file" || protocol == "local";
 }
 
-void CookieManager::setCookies(const KURL& url, const String& value, CookieFilter filter)
+void CookieManager::setCookies(const URL& url, const String& value, CookieFilter filter)
 {
     // If the database hasn't been sync-ed at this point, force a sync load
     if (!m_syncedWithDatabase && !m_privateMode)
@@ -140,7 +140,7 @@ void CookieManager::setCookies(const KURL& url, const String& value, CookieFilte
     }
 }
 
-void CookieManager::setCookies(const KURL& url, const Vector<String>& cookies, CookieFilter filter)
+void CookieManager::setCookies(const URL& url, const Vector<String>& cookies, CookieFilter filter)
 {
     // If the database hasn't been sync-ed at this point, force a sync load
     if (!m_syncedWithDatabase && !m_privateMode)
@@ -155,7 +155,7 @@ void CookieManager::setCookies(const KURL& url, const Vector<String>& cookies, C
     }
 }
 
-String CookieManager::getCookie(const KURL& url, CookieFilter filter) const
+String CookieManager::getCookie(const URL& url, CookieFilter filter) const
 {
     // If the database hasn't been sync-ed at this point, force a sync load
     if (!m_syncedWithDatabase && !m_privateMode)
@@ -223,7 +223,7 @@ String CookieManager::generateHtmlFragmentForCookies()
     return result;
 }
 
-void CookieManager::getRawCookies(Vector<RefPtr<ParsedCookie> > &stackOfCookies, const KURL& requestURL, CookieFilter filter) const
+void CookieManager::getRawCookies(Vector<RefPtr<ParsedCookie> > &stackOfCookies, const URL& requestURL, CookieFilter filter) const
 {
     // Force a sync load of the database
     if (!m_syncedWithDatabase && !m_privateMode)
@@ -589,13 +589,13 @@ CookieMap* CookieManager::findOrCreateCookieMap(CookieMap* protocolMap, const Pa
     return curMap;
 }
 
-void CookieManager::removeCookieWithName(const KURL& url, const String& cookieName)
+void CookieManager::removeCookieWithName(const URL& url, const String& cookieName)
 {
     // Dispatch the message because the database cookies are not loaded in memory yet.
     if (!m_syncedWithDatabase && !m_privateMode) {
-        typedef void (WebCore::CookieManager::*FunctionType)(const KURL&, const String&);
+        typedef void (WebCore::CookieManager::*FunctionType)(const URL&, const String&);
         BlackBerry::Platform::webKitThreadMessageClient()->dispatchMessage(
-            BlackBerry::Platform::createMethodCallMessage<FunctionType, CookieManager, const KURL, const String>(
+            BlackBerry::Platform::createMethodCallMessage<FunctionType, CookieManager, const URL, const String>(
                 &CookieManager::removeCookieWithName, this, url, cookieName));
         return;
     }

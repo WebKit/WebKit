@@ -63,7 +63,7 @@ NetscapePluginStream::~NetscapePluginStream()
     ASSERT(m_fileHandle == invalidPlatformFileHandle);
 }
 
-void NetscapePluginStream::didReceiveResponse(const KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
+void NetscapePluginStream::didReceiveResponse(const URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers)
 {
     // Starting the stream could cause the plug-in stream to go away so we keep a reference to it here.
     Ref<NetscapePluginStream> protect(*this);

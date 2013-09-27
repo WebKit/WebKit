@@ -45,7 +45,6 @@
 #include "Icon.h"
 #include "InspectorController.h"
 #include "IntRect.h"
-#include "KURL.h"
 #include "MainFrame.h"
 #include "NavigationAction.h"
 #include "NotImplemented.h"
@@ -54,6 +53,7 @@
 #include "RefPtrCairo.h"
 #include "SearchPopupMenuGtk.h"
 #include "SecurityOrigin.h"
+#include "URL.h"
 #include "WebKitDOMHTMLElementPrivate.h"
 #include "WindowFeatures.h"
 #include "webkitfilechooserrequestprivate.h"
@@ -799,7 +799,7 @@ void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned mo
     // check if the element is a link...
     bool isLink = hit.isLiveLink();
     if (isLink) {
-        KURL url = hit.absoluteLinkURL();
+        URL url = hit.absoluteLinkURL();
         if (!url.isEmpty() && url != m_hoveredLinkURL) {
             TextDirection dir;
             CString titleString = hit.title(dir).utf8();
@@ -809,7 +809,7 @@ void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned mo
         }
     } else if (!isLink && !m_hoveredLinkURL.isEmpty()) {
         g_signal_emit_by_name(m_webView, "hovering-over-link", 0, 0);
-        m_hoveredLinkURL = KURL();
+        m_hoveredLinkURL = URL();
     }
 
     if (Node* node = hit.innerNonSharedNode()) {

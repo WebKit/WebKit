@@ -41,7 +41,7 @@ class LoadableTextTrackClient : public TextTrackClient {
 public:
     virtual ~LoadableTextTrackClient() { }
     
-    virtual bool canLoadUrl(LoadableTextTrack*, const KURL&) { return false; }
+    virtual bool canLoadUrl(LoadableTextTrack*, const URL&) { return false; }
     virtual void loadingCompleted(LoadableTextTrack*, bool /* loadingFailed */) { }
 };
 
@@ -53,7 +53,7 @@ public:
     }
     virtual ~LoadableTextTrack();
 
-    void scheduleLoad(const KURL&);
+    void scheduleLoad(const URL&);
 
     virtual void clearClient();
 
@@ -82,7 +82,7 @@ private:
     HTMLTrackElement* m_trackElement;
     Timer<LoadableTextTrack> m_loadTimer;
     OwnPtr<TextTrackLoader> m_loader;
-    KURL m_url;
+    URL m_url;
     bool m_isDefault;
 };
 } // namespace WebCore

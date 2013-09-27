@@ -55,7 +55,7 @@ void SpeechGrammarList::addFromUri(ScriptExecutionContext* scriptExecutionContex
 void SpeechGrammarList::addFromString(const String& string, double weight)
 {
     String urlString = String("data:application/xml,") + encodeWithURLEscapeSequences(string);
-    m_grammars.append(SpeechGrammar::create(KURL(KURL(), urlString), weight));
+    m_grammars.append(SpeechGrammar::create(URL(URL(), urlString), weight));
 }
 
 SpeechGrammarList::SpeechGrammarList()

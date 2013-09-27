@@ -32,7 +32,7 @@
 
 #import <wtf/Assertions.h>
 #import <wtf/Vector.h>
-#import "KURL.h"
+#import "URL.h"
 #import "LocalizedStrings.h"
 #import "MIMETypeRegistry.h"
 #import "WebCoreNSStringExtras.h"
@@ -58,7 +58,7 @@ NSString *suggestedFilenameWithMIMEType(NSURL *url, const String& mimeType)
 
     if ([filename length] == 0 || [lastPathComponent isEqualToString:@"/"]) {
         // lastPathComponent is no good, try the host.
-        NSString *host = KURL(url).host();
+        NSString *host = URL(url).host();
         filename = filenameByFixingIllegalCharacters(host);
         if ([filename length] == 0) {
             // Can't make a filename using this URL, use "unknown".

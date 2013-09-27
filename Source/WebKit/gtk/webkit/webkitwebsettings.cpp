@@ -28,7 +28,7 @@
 
 #include "EditingBehavior.h"
 #include "FileSystem.h"
-#include "KURL.h"
+#include "URL.h"
 #include "PluginDatabase.h"
 #include "UserAgentGtk.h"
 #include "webkitenumtypes.h"
@@ -1597,7 +1597,7 @@ static bool isGoogleDomain(String host)
     return false;
 }
 
-static String userAgentForURL(const KURL& url)
+static String userAgentForURL(const URL& url)
 {
     // For Google domains, drop the browser's custom User Agent string, and use the
     // standard Chrome one, so they don't give us a broken experience.
@@ -1635,7 +1635,7 @@ static String userAgentForURL(const KURL& url)
 char* webkitWebSettingsUserAgentForURI(WebKitWebSettings* webSettings, const char* uri)
 {
     if (webSettings->priv->enableSiteSpecificQuirks) {
-        String userAgentString = userAgentForURL(WebCore::KURL(WebCore::KURL(), String::fromUTF8(uri)));
+        String userAgentString = userAgentForURL(WebCore::URL(WebCore::URL(), String::fromUTF8(uri)));
         if (!userAgentString.isEmpty())
             return g_strdup(userAgentString.utf8().data());
     }

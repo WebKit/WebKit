@@ -40,7 +40,7 @@
 namespace WebCore {
 
     class Document;
-    class KURL;
+    class URL;
     class MessagePortChannel;
     class SharedWorker;
 
@@ -53,7 +53,7 @@ namespace WebCore {
         static bool isAvailable();
 
         // Connects the passed SharedWorker object with the specified worker thread, creating a new thread if necessary.
-        static void connect(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, const KURL&, const String& name, ExceptionCode&);
+        static void connect(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, const URL&, const String& name, ExceptionCode&);
 
         // Invoked when a document has been detached.
         static void documentDetached(Document*);

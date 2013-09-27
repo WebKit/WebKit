@@ -33,7 +33,7 @@
 
 #include "IconDatabaseBase.h"
 #include "IconURL.h"
-#include "KURL.h"
+#include "URL.h"
 
 namespace WebCore {
 
@@ -47,7 +47,7 @@ public:
     explicit IconController(Frame*);
     ~IconController();
 
-    KURL url();
+    URL url();
     IconURLs urlsForTypes(int iconTypesMask);
     IconURL iconURL(IconType) const;
 
@@ -57,7 +57,7 @@ public:
     void loadDecisionReceived(IconLoadDecision);
     void continueLoadWithDecision(IconLoadDecision);
 
-    void commitToDatabase(const KURL& icon);
+    void commitToDatabase(const URL& icon);
 
 private:
     bool appendToIconURLs(IconType, IconURLs*);

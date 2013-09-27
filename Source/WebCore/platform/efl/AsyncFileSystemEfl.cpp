@@ -63,62 +63,62 @@ AsyncFileSystemEfl::~AsyncFileSystemEfl()
 {
 }
 
-void AsyncFileSystemEfl::move(const KURL&, const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>)
+void AsyncFileSystemEfl::move(const URL&, const URL&, PassOwnPtr<AsyncFileSystemCallbacks>)
 {
     notImplemented();
 }
 
-void AsyncFileSystemEfl::copy(const KURL&, const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>)
+void AsyncFileSystemEfl::copy(const URL&, const URL&, PassOwnPtr<AsyncFileSystemCallbacks>)
 {
     notImplemented();
 }
 
-void AsyncFileSystemEfl::remove(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>)
+void AsyncFileSystemEfl::remove(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>)
 {
     notImplemented();
 }
 
-void AsyncFileSystemEfl::removeRecursively(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>)
+void AsyncFileSystemEfl::removeRecursively(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>)
 {
     notImplemented();
 }
 
-void AsyncFileSystemEfl::readMetadata(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>)
+void AsyncFileSystemEfl::readMetadata(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>)
 {
     notImplemented();
 }
 
-void AsyncFileSystemEfl::createFile(const KURL&, bool, PassOwnPtr<AsyncFileSystemCallbacks>)
+void AsyncFileSystemEfl::createFile(const URL&, bool, PassOwnPtr<AsyncFileSystemCallbacks>)
 {
     notImplemented();
 }
 
-void AsyncFileSystemEfl::createDirectory(const KURL&, bool, PassOwnPtr<AsyncFileSystemCallbacks>)
+void AsyncFileSystemEfl::createDirectory(const URL&, bool, PassOwnPtr<AsyncFileSystemCallbacks>)
 {
     notImplemented();
 }
 
-void AsyncFileSystemEfl::fileExists(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>)
+void AsyncFileSystemEfl::fileExists(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>)
 {
     notImplemented();
 }
 
-void AsyncFileSystemEfl::directoryExists(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>)
+void AsyncFileSystemEfl::directoryExists(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>)
 {
     notImplemented();
 }
 
-void AsyncFileSystemEfl::readDirectory(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>)
+void AsyncFileSystemEfl::readDirectory(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>)
 {
     notImplemented();
 }
 
-void AsyncFileSystemEfl::createWriter(AsyncFileWriterClient*, const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>)
+void AsyncFileSystemEfl::createWriter(AsyncFileWriterClient*, const URL&, PassOwnPtr<AsyncFileSystemCallbacks>)
 {
     notImplemented();
 }
 
-void AsyncFileSystemEfl::createSnapshotFileAndReadMetadata(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>)
+void AsyncFileSystemEfl::createSnapshotFileAndReadMetadata(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>)
 {
     notImplemented();
 }

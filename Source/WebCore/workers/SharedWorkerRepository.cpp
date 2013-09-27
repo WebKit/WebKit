@@ -41,7 +41,7 @@ bool SharedWorkerRepository::isAvailable()
     return DefaultSharedWorkerRepository::instance().isAvailable();
 }
 
-void SharedWorkerRepository::connect(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, const KURL& url, const String& name, ExceptionCode& ec)
+void SharedWorkerRepository::connect(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, const URL& url, const String& name, ExceptionCode& ec)
 {
     DefaultSharedWorkerRepository::instance().connectToWorker(worker, port, url, name, ec);
 }

@@ -32,7 +32,7 @@
 #define TimelineRecordFactory_h
 
 #include "InspectorValues.h"
-#include "KURL.h"
+#include "URL.h"
 #include "LayoutRect.h"
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
@@ -97,7 +97,7 @@ namespace WebCore {
         static void appendLayoutRoot(InspectorObject* data, const FloatQuad&);
 
 #if ENABLE(WEB_SOCKETS)
-        static inline PassRefPtr<InspectorObject> createWebSocketCreateData(unsigned long identifier, const KURL& url, const String& protocol)
+        static inline PassRefPtr<InspectorObject> createWebSocketCreateData(unsigned long identifier, const URL& url, const String& protocol)
         {
             RefPtr<InspectorObject> data = InspectorObject::create();
             data->setNumber("identifier", identifier);

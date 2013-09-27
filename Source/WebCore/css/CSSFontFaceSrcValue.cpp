@@ -80,7 +80,7 @@ String CSSFontFaceSrcValue::customCSSText() const
     return result.toString();
 }
 
-void CSSFontFaceSrcValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet) const
+void CSSFontFaceSrcValue::addSubresourceStyleURLs(ListHashSet<URL>& urls, const StyleSheetContents* styleSheet) const
 {
     if (!isLocal())
         addSubresourceURL(urls, styleSheet->completeURL(m_resource));

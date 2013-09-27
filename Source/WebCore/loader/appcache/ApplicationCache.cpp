@@ -37,7 +37,7 @@
 
 namespace WebCore {
  
-static inline bool fallbackURLLongerThan(const std::pair<KURL, KURL>& lhs, const std::pair<KURL, KURL>& rhs)
+static inline bool fallbackURLLongerThan(const std::pair<URL, URL>& lhs, const std::pair<URL, URL>& rhs)
 {
     return lhs.first.string().length() > rhs.first.string().length();
 }
@@ -117,7 +117,7 @@ unsigned ApplicationCache::removeResource(const String& url)
     
 ApplicationCacheResource* ApplicationCache::resourceForURL(const String& url)
 {
-    ASSERT(!KURL(ParsedURLString, url).hasFragmentIdentifier());
+    ASSERT(!URL(ParsedURLString, url).hasFragmentIdentifier());
     return m_resources.get(url);
 }    
 
@@ -138,20 +138,20 @@ ApplicationCacheResource* ApplicationCache::resourceForRequest(const ResourceReq
     if (!requestIsHTTPOrHTTPSGet(request))
         return 0;
 
-    KURL url(request.url());
+    URL url(request.url());
     if (url.hasFragmentIdentifier())
         url.removeFragmentIdentifier();
 
     return resourceForURL(url);
 }
 
-void ApplicationCache::setOnlineWhitelist(const Vector<KURL>& onlineWhitelist)
+void ApplicationCache::setOnlineWhitelist(const Vector<URL>& onlineWhitelist)
 {
     ASSERT(m_onlineWhitelist.isEmpty());
     m_onlineWhitelist = onlineWhitelist; 
 }
 
-bool ApplicationCache::isURLInOnlineWhitelist(const KURL& url)
+bool ApplicationCache::isURLInOnlineWhitelist(const URL& url)
 {
     size_t whitelistSize = m_onlineWhitelist.size();
     for (size_t i = 0; i < whitelistSize; ++i) {
@@ -169,7 +169,7 @@ void ApplicationCache::setFallbackURLs(const FallbackURLVector& fallbackURLs)
     std::stable_sort(m_fallbackURLs.begin(), m_fallbackURLs.end(), fallbackURLLongerThan);
 }
 
-bool ApplicationCache::urlMatchesFallbackNamespace(const KURL& url, KURL* fallbackURL)
+bool ApplicationCache::urlMatchesFallbackNamespace(const URL& url, URL* fallbackURL)
 {
     size_t fallbackCount = m_fallbackURLs.size();
     for (size_t i = 0; i < fallbackCount; ++i) {
@@ -193,13 +193,13 @@ void ApplicationCache::clearStorageID()
     
 void ApplicationCache::deleteCacheForOrigin(SecurityOrigin* origin)
 {
-    Vector<KURL> urls;
+    Vector<URL> urls;
     if (!cacheStorage().manifestURLs(&urls)) {
         LOG_ERROR("Failed to retrieve ApplicationCache manifest URLs");
         return;
     }
 
-    KURL originURL(KURL(), origin->toString());
+    URL originURL(URL(), origin->toString());
 
     size_t count = urls.size();
     for (size_t i = 0; i < count; ++i) {

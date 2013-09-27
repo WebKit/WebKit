@@ -28,7 +28,7 @@
 
 #include "GStreamerUtilities.h"
 #include "GStreamerVersioning.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaPlayer.h"
@@ -334,7 +334,7 @@ void MediaPlayerPrivateGStreamer::load(const String& url)
     if (!initializeGStreamerAndRegisterWebKitElements())
         return;
 
-    KURL kurl(KURL(), url);
+    URL kurl(URL(), url);
     String cleanUrl(url);
 
     // Clean out everything after file:// url path.
@@ -346,7 +346,7 @@ void MediaPlayerPrivateGStreamer::load(const String& url)
 
     ASSERT(m_playBin);
 
-    m_url = KURL(KURL(), cleanUrl);
+    m_url = URL(URL(), cleanUrl);
     g_object_set(m_playBin.get(), "uri", cleanUrl.utf8().data(), NULL);
 
     INFO_MEDIA_MESSAGE("Load %s", cleanUrl.utf8().data());
@@ -1428,8 +1428,8 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
         // Found a candidate. new-location is not always an absolute url
         // though. We need to take the base of the current url and
         // append the value of new-location to it.
-        KURL baseUrl = gst_uri_is_valid(newLocation) ? KURL() : m_url;
-        KURL newUrl = KURL(baseUrl, newLocation);
+        URL baseUrl = gst_uri_is_valid(newLocation) ? URL() : m_url;
+        URL newUrl = URL(baseUrl, newLocation);
 
         RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(m_url);
         if (securityOrigin->canRequest(newUrl)) {
@@ -1653,7 +1653,7 @@ void MediaPlayerPrivateGStreamer::getSupportedTypes(HashSet<String>& types)
     types = mimeTypeCache();
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const String& type, const String& codecs, const KURL&)
+MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const String& type, const String& codecs, const URL&)
 {
     if (type.isNull() || type.isEmpty())
         return MediaPlayer::IsNotSupported;

@@ -30,7 +30,7 @@
 
 #include "ActiveDOMObject.h"
 #include "ConsoleTypes.h"
-#include "KURL.h"
+#include "URL.h"
 #include "SecurityContext.h"
 #include "Supplementable.h"
 #include <wtf/HashSet.h>
@@ -66,10 +66,10 @@ public:
     virtual bool isContextThread() const { return true; }
     virtual bool isJSExecutionForbidden() const = 0;
 
-    virtual const KURL& url() const = 0;
-    virtual KURL completeURL(const String& url) const = 0;
+    virtual const URL& url() const = 0;
+    virtual URL completeURL(const String& url) const = 0;
 
-    virtual String userAgent(const KURL&) const = 0;
+    virtual String userAgent(const URL&) const = 0;
 
     virtual void disableEval(const String& errorMessage) = 0;
 

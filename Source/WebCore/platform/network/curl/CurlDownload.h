@@ -89,7 +89,7 @@ public:
     CurlDownload();
     ~CurlDownload();
 
-    void init(CurlDownloadListener*, const WebCore::KURL&);
+    void init(CurlDownloadListener*, const WebCore::URL&);
     void init(CurlDownloadListener*, ResourceHandle*, const ResourceRequest&, const ResourceResponse&);
 
     bool start();

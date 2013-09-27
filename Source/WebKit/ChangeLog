@@ -1,3 +1,13 @@
+2013-09-26  Darin Adler  <darin@apple.com>
+
+        rename KURL to URL
+        https://bugs.webkit.org/show_bug.cgi?id=16214
+
+        Reviewed by Andreas Kling.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Let the script to try to rename here.
+
 2013-09-26  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] make MediaStream testable

@@ -24,7 +24,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HitTestResult.h"
-#include "KURL.h"
+#include "URL.h"
 #include "WebKitDOMNodePrivate.h"
 #include "webkitenumtypes.h"
 #include "webkitglobals.h"

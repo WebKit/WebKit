@@ -34,7 +34,7 @@
 #import "PluginProcessMessages.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
-#import <WebCore/KURL.h>
+#import <WebCore/URL.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
@@ -462,10 +462,10 @@ void PluginProcessProxy::openURL(const String& urlString, bool& result, int32_t&
 
     result = true;
     CFURLRef launchedURL;
-    status = LSOpenCFURLRef(KURL(ParsedURLString, urlString).createCFURL().get(), &launchedURL);
+    status = LSOpenCFURLRef(URL(ParsedURLString, urlString).createCFURL().get(), &launchedURL);
 
     if (launchedURL) {
-        launchedURLString = KURL(launchedURL).string();
+        launchedURLString = URL(launchedURL).string();
         CFRelease(launchedURL);
     }
 }

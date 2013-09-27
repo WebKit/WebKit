@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-IconURL IconURL::defaultIconURL(const KURL& url, IconType type)
+IconURL IconURL::defaultIconURL(const URL& url, IconType type)
 {
     IconURL result(url, emptyString(), emptyString(), type);
     result.m_isDefaultIcon = true;

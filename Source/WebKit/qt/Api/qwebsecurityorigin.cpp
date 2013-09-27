@@ -22,7 +22,7 @@
 
 #include "ApplicationCacheStorage.h"
 #include "DatabaseManager.h"
-#include "KURL.h"
+#include "URL.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
@@ -273,7 +273,7 @@ QStringList QWebSecurityOrigin::localSchemes()
 */
 QWebSecurityOrigin::QWebSecurityOrigin(const QUrl& url)
 {
-    d = new QWebSecurityOriginPrivate(SecurityOrigin::create(KURL(url)));
+    d = new QWebSecurityOriginPrivate(SecurityOrigin::create(URL(url)));
 }
 
 /*!

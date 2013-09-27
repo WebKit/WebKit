@@ -742,12 +742,12 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
         // hidden or moved out from under the cursor. Regardless, we don't want to start a drag on
         // something that's not actually under the drag origin.
         return false;
-    KURL linkURL = hitTestResult.absoluteLinkURL();
-    KURL imageURL = hitTestResult.absoluteImageURL();
+    URL linkURL = hitTestResult.absoluteLinkURL();
+    URL imageURL = hitTestResult.absoluteImageURL();
 
     IntPoint mouseDraggedPoint = src->view()->windowToContents(dragEvent.position());
 
-    m_draggingImageURL = KURL();
+    m_draggingImageURL = URL();
     m_sourceDragOperation = srcOp;
 
     DragImageRef dragImage = 0;

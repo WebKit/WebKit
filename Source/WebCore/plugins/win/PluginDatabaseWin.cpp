@@ -29,7 +29,7 @@
 #include "PluginDatabase.h"
 
 #include "Frame.h"
-#include "KURL.h"
+#include "URL.h"
 #include "PluginPackage.h"
 #include <wtf/WindowsExtras.h>
 

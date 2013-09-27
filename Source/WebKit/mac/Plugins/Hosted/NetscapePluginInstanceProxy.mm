@@ -53,7 +53,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameTree.h>
-#import <WebCore/KURL.h>
+#import <WebCore/URL.h>
 #import <WebCore/ProxyServer.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/ScriptController.h>

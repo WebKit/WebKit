@@ -142,13 +142,13 @@ CachedResourceLoader::~CachedResourceLoader()
 
 CachedResource* CachedResourceLoader::cachedResource(const String& resourceURL) const 
 {
-    KURL url = m_document->completeURL(resourceURL);
+    URL url = m_document->completeURL(resourceURL);
     return cachedResource(url); 
 }
 
-CachedResource* CachedResourceLoader::cachedResource(const KURL& resourceURL) const
+CachedResource* CachedResourceLoader::cachedResource(const URL& resourceURL) const
 {
-    KURL url = MemoryCache::removeFragmentIdentifierIfNeeded(resourceURL);
+    URL url = MemoryCache::removeFragmentIdentifierIfNeeded(resourceURL);
     return m_documentResources.get(url).get(); 
 }
 
@@ -161,7 +161,7 @@ CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResou
 {
     if (Frame* f = frame()) {
         if (f->loader().pageDismissalEventBeingDispatched() != FrameLoader::NoDismissal) {
-            KURL requestURL = request.resourceRequest().url();
+            URL requestURL = request.resourceRequest().url();
             if (requestURL.isValid() && canRequest(CachedResource::ImageResource, requestURL, request.options(), request.forPreload()))
                 PingLoader::loadImage(f, requestURL);
             return 0;
@@ -197,7 +197,7 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestCSSStyleS
 
 CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSStyleSheet(CachedResourceRequest& request)
 {
-    KURL url = MemoryCache::removeFragmentIdentifierIfNeeded(request.resourceRequest().url());
+    URL url = MemoryCache::removeFragmentIdentifierIfNeeded(request.resourceRequest().url());
 
 #if ENABLE(CACHE_PARTITIONING)
     request.mutableResourceRequest().setCachePartition(document()->topOrigin()->cachePartition());
@@ -259,7 +259,7 @@ CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestMainResourc
     return static_cast<CachedRawResource*>(requestResource(CachedResource::MainResource, request).get());
 }
 
-bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const KURL& url) const
+bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const URL& url) const
 {
     switch (type) {
     case CachedResource::Script:
@@ -304,7 +304,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     return true;
 }
 
-bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url, const ResourceLoaderOptions& options, bool forPreload)
+bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, bool forPreload)
 {
     if (document() && !document()->securityOrigin()->canDisplay(url)) {
         if (!forPreload)
@@ -435,7 +435,7 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(Cac
 
 CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest& request)
 {
-    KURL url = request.resourceRequest().url();
+    URL url = request.resourceRequest().url();
     
     LOG(ResourceLoading, "CachedResourceLoader::requestResource '%s', charset '%s', priority=%d, forPreload=%u", url.stringCenterEllipsizedToLength().latin1().data(), request.charset().latin1().data(), request.priority(), request.forPreload());
     
@@ -660,7 +660,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     return Use;
 }
 
-void CachedResourceLoader::printAccessDeniedMessage(const KURL& url) const
+void CachedResourceLoader::printAccessDeniedMessage(const URL& url) const
 {
     if (url.isNull())
         return;
@@ -703,12 +703,12 @@ void CachedResourceLoader::setImagesEnabled(bool enable)
     reloadImagesIfNotDeferred();
 }
 
-bool CachedResourceLoader::clientDefersImage(const KURL& url) const
+bool CachedResourceLoader::clientDefersImage(const URL& url) const
 {
     return frame() && !frame()->loader().client().allowImage(m_imagesEnabled, url);
 }
 
-bool CachedResourceLoader::shouldDeferImageLoad(const KURL& url) const
+bool CachedResourceLoader::shouldDeferImageLoad(const URL& url) const
 {
     return clientDefersImage(url) || !m_autoLoadImages;
 }
@@ -887,7 +887,7 @@ void CachedResourceLoader::requestPreload(CachedResource::Type type, CachedResou
 
 bool CachedResourceLoader::isPreloaded(const String& urlString) const
 {
-    const KURL& url = m_document->completeURL(urlString);
+    const URL& url = m_document->completeURL(urlString);
 
     if (m_preloads) {
         ListHashSet<CachedResource*>::iterator end = m_preloads->end();

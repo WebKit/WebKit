@@ -44,7 +44,7 @@ class Frame;
 class HTMLFrameOwnerElement;
 class IntPoint;
 class IntRect;
-class KURL;
+class URL;
 }
 
 namespace WebKit {
@@ -116,11 +116,11 @@ public:
     
     unsigned pendingUnloadCount() const;
     
-    bool allowsFollowingLink(const WebCore::KURL&) const;
+    bool allowsFollowingLink(const WebCore::URL&) const;
 
     String provisionalURL() const;
-    String suggestedFilenameForResourceWithURL(const WebCore::KURL&) const;
-    String mimeTypeForResourceWithURL(const WebCore::KURL&) const;
+    String suggestedFilenameForResourceWithURL(const WebCore::URL&) const;
+    String mimeTypeForResourceWithURL(const WebCore::URL&) const;
 
     void setTextDirection(const String&);
 

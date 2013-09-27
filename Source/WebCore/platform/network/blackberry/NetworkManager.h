@@ -19,7 +19,7 @@
 #ifndef NetworkManager_h
 #define NetworkManager_h
 
-#include "KURL.h"
+#include "URL.h"
 #include "ResourceHandle.h"
 
 #include <BlackBerryPlatformSingleton.h>
@@ -43,8 +43,8 @@ void protectionSpaceToPlatformAuth(const ProtectionSpace&, BlackBerry::Platform:
 class NetworkManager : public BlackBerry::Platform::ThreadUnsafeSingleton<NetworkManager> {
     SINGLETON_DEFINITION_THREADUNSAFE(NetworkManager)
 public:
-    void setInitialURL(const KURL& url) { m_initialURL = url; }
-    KURL initialURL() { return m_initialURL; }
+    void setInitialURL(const URL& url) { m_initialURL = url; }
+    URL initialURL() { return m_initialURL; }
     int startJob(int playerId, PassRefPtr<ResourceHandle> job, Frame*, bool defersLoading);
     int startJob(int playerId, PassRefPtr<ResourceHandle> job, const ResourceRequest&, Frame*, bool defersLoading);
     bool stopJob(PassRefPtr<ResourceHandle>);
@@ -60,7 +60,7 @@ private:
     int startJob(int playerId, const String& pageGroupName, PassRefPtr<ResourceHandle>, const ResourceRequest&, BlackBerry::Platform::NetworkStreamFactory*, Frame*, int deferLoadingCount = 0, int redirectCount = 0, bool rereadCookies = false);
 
     Vector<NetworkJob*> m_jobs;
-    KURL m_initialURL;
+    URL m_initialURL;
 };
 
 } // namespace WebCore

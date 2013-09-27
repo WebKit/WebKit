@@ -27,7 +27,7 @@
 #define WebErrors_h
 
 namespace WebCore {
-    class KURL;
+    class URL;
     class ResourceError;
     class ResourceRequest;
     class ResourceResponse;
@@ -42,7 +42,7 @@ WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRe
 WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&);
 WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
 WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&);
-WebCore::ResourceError internalError(const WebCore::KURL&);
+WebCore::ResourceError internalError(const WebCore::URL&);
 
 } // namespace WebKit
 

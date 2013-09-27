@@ -27,7 +27,7 @@
 #define ApplicationCacheGroup_h
 
 #include "DOMApplicationCache.h"
-#include "KURL.h"
+#include "URL.h"
 #include "ResourceHandleClient.h"
 #include "SharedBuffer.h"
 #include <wtf/Noncopyable.h>
@@ -53,7 +53,7 @@ enum ApplicationCacheUpdateOption {
 class ApplicationCacheGroup : ResourceHandleClient {
     WTF_MAKE_NONCOPYABLE(ApplicationCacheGroup); WTF_MAKE_FAST_ALLOCATED;
 public:
-    ApplicationCacheGroup(const KURL& manifestURL, bool isCopy = false);    
+    ApplicationCacheGroup(const URL& manifestURL, bool isCopy = false);    
     ~ApplicationCacheGroup();
     
     enum UpdateStatus { Idle, Checking, Downloading };
@@ -61,10 +61,10 @@ public:
     static ApplicationCache* cacheForMainRequest(const ResourceRequest&, DocumentLoader*);
     static ApplicationCache* fallbackCacheForMainRequest(const ResourceRequest&, DocumentLoader*);
     
-    static void selectCache(Frame*, const KURL& manifestURL);
+    static void selectCache(Frame*, const URL& manifestURL);
     static void selectCacheWithoutManifestURL(Frame*);
     
-    const KURL& manifestURL() const { return m_manifestURL; }
+    const URL& manifestURL() const { return m_manifestURL; }
     const SecurityOrigin* origin() const { return m_origin.get(); }
     UpdateStatus updateStatus() const { return m_updateStatus; }
     void setUpdateStatus(UpdateStatus status);
@@ -103,7 +103,7 @@ private:
 
     void scheduleReachedMaxAppCacheSizeCallback();
 
-    PassRefPtr<ResourceHandle> createResourceHandle(const KURL&, ApplicationCacheResource* newestCachedResource);
+    PassRefPtr<ResourceHandle> createResourceHandle(const URL&, ApplicationCacheResource* newestCachedResource);
 
     // For normal resource loading, WebKit client is asked about each resource individually. Since application cache does not belong to any particular document,
     // the existing client callback cannot be used, so assume that any client that enables application cache also wants it to use credential storage.
@@ -133,7 +133,7 @@ private:
     
     void stopLoading();
     
-    KURL m_manifestURL;
+    URL m_manifestURL;
     RefPtr<SecurityOrigin> m_origin;
     UpdateStatus m_updateStatus;
     

@@ -142,7 +142,7 @@ public:
     }
 #endif
 
-    OwnPtr<PreloadRequest> createPreloadRequest(const KURL& predictedBaseURL)
+    OwnPtr<PreloadRequest> createPreloadRequest(const URL& predictedBaseURL)
     {
         if (!shouldPreload())
             return nullptr;
@@ -263,7 +263,7 @@ private:
     float m_deviceScaleFactor;
 };
 
-TokenPreloadScanner::TokenPreloadScanner(const KURL& documentURL, float deviceScaleFactor)
+TokenPreloadScanner::TokenPreloadScanner(const URL& documentURL, float deviceScaleFactor)
     : m_documentURL(documentURL)
     , m_inStyle(false)
     , m_deviceScaleFactor(deviceScaleFactor)
@@ -381,10 +381,10 @@ void TokenPreloadScanner::updatePredictedBaseURL(const Token& token)
 {
     ASSERT(m_predictedBaseElementURL.isEmpty());
     if (const typename Token::Attribute* hrefAttribute = token.getAttributeItem(hrefAttr))
-        m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(hrefAttribute->value)).copy();
+        m_predictedBaseElementURL = URL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(hrefAttribute->value)).copy();
 }
 
-HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const KURL& documentURL, float deviceScaleFactor)
+HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const URL& documentURL, float deviceScaleFactor)
     : m_scanner(documentURL, deviceScaleFactor)
     , m_tokenizer(HTMLTokenizer::create(options))
 {
@@ -399,7 +399,7 @@ void HTMLPreloadScanner::appendToEnd(const SegmentedString& source)
     m_source.append(source);
 }
 
-void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const KURL& startingBaseElementURL)
+void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const URL& startingBaseElementURL)
 {
     ASSERT(isMainThread()); // HTMLTokenizer::updateStateFor only works on the main thread.
 

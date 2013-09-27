@@ -733,7 +733,7 @@ QUrl DumpRenderTreeSupportQt::mediaContentUrlByElementId(QWebFrameAdapter* adapt
 // API Candidate?
 void DumpRenderTreeSupportQt::setAlternateHtml(QWebFrameAdapter* adapter, const QString& html, const QUrl& baseUrl, const QUrl& failingUrl)
 {
-    KURL kurl(baseUrl);
+    URL kurl(baseUrl);
     WebCore::Frame* coreFrame = adapter->frame;
     WebCore::ResourceRequest request(kurl);
     const QByteArray utf8 = html.toUtf8();

@@ -208,7 +208,7 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::initWithURL(
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::mainDocumentURL( 
     /* [retval][out] */ BSTR* result)
 {
-    *result = MarshallingHelpers::KURLToBSTR(m_request.firstPartyForCookies());
+    *result = MarshallingHelpers::URLToBSTR(m_request.firstPartyForCookies());
     return S_OK;
 }
 
@@ -222,7 +222,7 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::timeoutInterval(
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::URL( 
     /* [retval][out] */ BSTR* result)
 {
-    *result = MarshallingHelpers::KURLToBSTR(m_request.url());
+    *result = MarshallingHelpers::URLToBSTR(m_request.url());
     return S_OK;
 }
 

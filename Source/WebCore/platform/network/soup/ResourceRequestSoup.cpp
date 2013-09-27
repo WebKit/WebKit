@@ -140,7 +140,7 @@ SoupURI* ResourceRequest::soupURI() const
         return soup_uri_new(urlString.utf8().data());
     }
 
-    KURL url = m_url;
+    URL url = m_url;
     url.removeFragmentIdentifier();
     SoupURI* uri = soup_uri_new(url.string().utf8().data());
 

@@ -38,7 +38,7 @@ namespace WebCore {
 
 class CachedResource;
 class Frame;
-class KURL;
+class URL;
 class NetscapePlugInStreamLoader;
 class NetscapePlugInStreamLoaderClient;
 class ResourceLoader;
@@ -53,7 +53,7 @@ public:
     virtual PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, CachedResource*, const ResourceRequest&, ResourceLoadPriority, const ResourceLoaderOptions&);
     virtual PassRefPtr<NetscapePlugInStreamLoader> schedulePluginStreamLoad(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
     virtual void remove(ResourceLoader*);
-    virtual void crossOriginRedirectReceived(ResourceLoader*, const KURL& redirectURL);
+    virtual void crossOriginRedirectReceived(ResourceLoader*, const URL& redirectURL);
     
     virtual void servePendingRequests(ResourceLoadPriority minimumPriority = ResourceLoadPriorityVeryLow);
     virtual void suspendPendingRequests();
@@ -104,7 +104,7 @@ private:
         FindOnly
     };
     
-    HostInformation* hostForURL(const KURL&, CreateHostPolicy = FindOnly);
+    HostInformation* hostForURL(const URL&, CreateHostPolicy = FindOnly);
     void servePendingRequests(HostInformation*, ResourceLoadPriority);
 
     typedef HashMap<String, HostInformation*, StringHash> HostMap;

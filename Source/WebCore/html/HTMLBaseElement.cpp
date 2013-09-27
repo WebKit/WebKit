@@ -77,7 +77,7 @@ String HTMLBaseElement::target() const
     return fastGetAttribute(targetAttr);
 }
 
-KURL HTMLBaseElement::href() const
+URL HTMLBaseElement::href() const
 {
     // This does not use the getURLAttribute function because that will resolve relative to the document's base URL;
     // base elements like this one can be used to set that base URL. Thus we need to resolve relative to the document's
@@ -87,12 +87,12 @@ KURL HTMLBaseElement::href() const
     if (attributeValue.isNull())
         return document().url();
 
-    KURL url = !document().decoder() ?
-        KURL(document().url(), stripLeadingAndTrailingHTMLSpaces(attributeValue)) :
-        KURL(document().url(), stripLeadingAndTrailingHTMLSpaces(attributeValue), document().decoder()->encoding());
+    URL url = !document().decoder() ?
+        URL(document().url(), stripLeadingAndTrailingHTMLSpaces(attributeValue)) :
+        URL(document().url(), stripLeadingAndTrailingHTMLSpaces(attributeValue), document().decoder()->encoding());
 
     if (!url.isValid())
-        return KURL();
+        return URL();
 
     return url;
 }

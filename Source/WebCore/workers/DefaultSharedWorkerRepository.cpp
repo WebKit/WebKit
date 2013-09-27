@@ -64,19 +64,19 @@ namespace WebCore {
 
 class SharedWorkerProxy : public ThreadSafeRefCounted<SharedWorkerProxy>, public WorkerLoaderProxy, public WorkerReportingProxy {
 public:
-    static PassRefPtr<SharedWorkerProxy> create(const String& name, const KURL& url, PassRefPtr<SecurityOrigin> origin) { return adoptRef(new SharedWorkerProxy(name, url, origin)); }
+    static PassRefPtr<SharedWorkerProxy> create(const String& name, const URL& url, PassRefPtr<SecurityOrigin> origin) { return adoptRef(new SharedWorkerProxy(name, url, origin)); }
 
     void setThread(PassRefPtr<SharedWorkerThread> thread) { m_thread = thread; }
     SharedWorkerThread* thread() { return m_thread.get(); }
     bool isClosing() const { return m_closing; }
-    KURL url() const
+    URL url() const
     {
         // Don't use m_url.copy() because it isn't a threadsafe method.
-        return KURL(ParsedURLString, m_url.string().isolatedCopy());
+        return URL(ParsedURLString, m_url.string().isolatedCopy());
     }
 
     String name() const { return m_name.isolatedCopy(); }
-    bool matches(const String& name, PassRefPtr<SecurityOrigin> origin, const KURL& urlToMatch) const;
+    bool matches(const String& name, PassRefPtr<SecurityOrigin> origin, const URL& urlToMatch) const;
 
     // WorkerLoaderProxy
     virtual void postTaskToLoader(PassOwnPtr<ScriptExecutionContext::Task>);
@@ -103,12 +103,12 @@ public:
     GroupSettings* groupSettings() const; // Page GroupSettings used by worker thread.
 
 private:
-    SharedWorkerProxy(const String& name, const KURL&, PassRefPtr<SecurityOrigin>);
+    SharedWorkerProxy(const String& name, const URL&, PassRefPtr<SecurityOrigin>);
     void close();
 
     bool m_closing;
     String m_name;
-    KURL m_url;
+    URL m_url;
     // The thread is freed when the proxy is destroyed, so we need to make sure that the proxy stays around until the SharedWorkerGlobalScope exits.
     RefPtr<SharedWorkerThread> m_thread;
     RefPtr<SecurityOrigin> m_origin;
@@ -117,7 +117,7 @@ private:
     Mutex m_workerDocumentsLock;
 };
 
-SharedWorkerProxy::SharedWorkerProxy(const String& name, const KURL& url, PassRefPtr<SecurityOrigin> origin)
+SharedWorkerProxy::SharedWorkerProxy(const String& name, const URL& url, PassRefPtr<SecurityOrigin> origin)
     : m_closing(false)
     , m_name(name.isolatedCopy())
     , m_url(url.copy())
@@ -127,7 +127,7 @@ SharedWorkerProxy::SharedWorkerProxy(const String& name, const KURL& url, PassRe
     ASSERT(m_origin->hasOneRef());
 }
 
-bool SharedWorkerProxy::matches(const String& name, PassRefPtr<SecurityOrigin> origin, const KURL& urlToMatch) const
+bool SharedWorkerProxy::matches(const String& name, PassRefPtr<SecurityOrigin> origin, const URL& urlToMatch) const
 {
     // If the origins don't match, or the names don't match, then this is not the proxy we are looking for.
     if (!origin->equal(m_origin.get()))
@@ -289,7 +289,7 @@ private:
 class SharedWorkerScriptLoader : public RefCounted<SharedWorkerScriptLoader>, private WorkerScriptLoaderClient {
 public:
     SharedWorkerScriptLoader(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, PassRefPtr<SharedWorkerProxy>);
-    void load(const KURL&);
+    void load(const URL&);
 
 private:
     // WorkerScriptLoaderClient callbacks
@@ -309,7 +309,7 @@ SharedWorkerScriptLoader::SharedWorkerScriptLoader(PassRefPtr<SharedWorker> work
 {
 }
 
-void SharedWorkerScriptLoader::load(const KURL& url)
+void SharedWorkerScriptLoader::load(const URL& url)
 {
     // Stay alive (and keep the SharedWorker and JS wrapper alive) until the load finishes.
     this->ref();
@@ -401,7 +401,7 @@ void DefaultSharedWorkerRepository::documentDetached(Document* document)
         m_proxies[i]->documentDetached(document);
 }
 
-void DefaultSharedWorkerRepository::connectToWorker(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, const KURL& url, const String& name, ExceptionCode& ec)
+void DefaultSharedWorkerRepository::connectToWorker(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, const URL& url, const String& name, ExceptionCode& ec)
 {
     MutexLocker lock(m_lock);
     ASSERT(worker->scriptExecutionContext()->securityOrigin()->canAccess(SecurityOrigin::create(url).get()));
@@ -426,12 +426,12 @@ void DefaultSharedWorkerRepository::connectToWorker(PassRefPtr<SharedWorker> wor
 }
 
 // Creates a new SharedWorkerProxy or returns an existing one from the repository. Must only be called while the repository mutex is held.
-PassRefPtr<SharedWorkerProxy> DefaultSharedWorkerRepository::getProxy(const String& name, const KURL& url)
+PassRefPtr<SharedWorkerProxy> DefaultSharedWorkerRepository::getProxy(const String& name, const URL& url)
 {
     // Look for an existing worker, and create one if it doesn't exist.
     // Items in the cache are freed on another thread, so do a threadsafe copy of the URL before creating the origin,
     // to make sure no references to external strings linger.
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(KURL(ParsedURLString, url.string().isolatedCopy()));
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(URL(ParsedURLString, url.string().isolatedCopy()));
     for (unsigned i = 0; i < m_proxies.size(); i++) {
         if (!m_proxies[i]->isClosing() && m_proxies[i]->matches(name, origin, url))
             return m_proxies[i];

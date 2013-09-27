@@ -193,7 +193,7 @@ namespace WebCore {
         void resumeActiveDOMObjectsAndAnimations();
         bool activeDOMObjectsAndAnimationsSuspended() const { return m_activeDOMObjectsAndAnimationsSuspendedCount > 0; }
 
-        bool isURLAllowed(const KURL&) const;
+        bool isURLAllowed(const URL&) const;
 
     // ========
 

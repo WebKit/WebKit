@@ -42,7 +42,7 @@ class InspectorFrontend;
 class InspectorObject;
 class InspectorState;
 class InstrumentingAgents;
-class KURL;
+class URL;
 class WorkerGlobalScopeProxy;
 
 typedef String ErrorString;
@@ -58,7 +58,7 @@ public:
 
     // Called from InspectorInstrumentation
     bool shouldPauseDedicatedWorkerOnStart();
-    void didStartWorkerGlobalScope(WorkerGlobalScopeProxy*, const KURL&);
+    void didStartWorkerGlobalScope(WorkerGlobalScopeProxy*, const URL&);
     void workerGlobalScopeTerminated(WorkerGlobalScopeProxy*);
 
     // Called from InspectorBackendDispatcher

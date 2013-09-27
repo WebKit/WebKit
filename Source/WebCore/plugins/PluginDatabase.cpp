@@ -28,7 +28,7 @@
 #include "PluginDatabase.h"
 
 #include "Frame.h"
-#include "KURL.h"
+#include "URL.h"
 #include "PluginPackage.h"
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
 #include "FileSystem.h"
@@ -281,7 +281,7 @@ String PluginDatabase::MIMETypeForExtension(const String& extension) const
     return mimeTypeForPlugin.get(pluginChoices[0]);
 }
 
-PluginPackage* PluginDatabase::findPlugin(const KURL& url, String& mimeType)
+PluginPackage* PluginDatabase::findPlugin(const URL& url, String& mimeType)
 {
     if (!mimeType.isEmpty())
         return pluginForMIMEType(mimeType);

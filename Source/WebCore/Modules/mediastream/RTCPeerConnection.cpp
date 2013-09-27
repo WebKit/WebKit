@@ -99,7 +99,7 @@ PassRefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Diction
             ec = TYPE_MISMATCH_ERR;
             return 0;
         }
-        KURL url(KURL(), urlString);
+        URL url(URL(), urlString);
         if (!url.isValid() || !(url.protocolIs("turn") || url.protocolIs("stun"))) {
             ec = TYPE_MISMATCH_ERR;
             return 0;

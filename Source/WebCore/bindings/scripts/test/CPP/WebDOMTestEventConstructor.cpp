@@ -21,7 +21,7 @@
 #include "config.h"
 #include "WebDOMTestEventConstructor.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "TestEventConstructor.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"

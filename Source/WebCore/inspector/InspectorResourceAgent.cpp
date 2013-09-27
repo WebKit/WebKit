@@ -51,7 +51,7 @@
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
-#include "KURL.h"
+#include "URL.h"
 #include "MemoryCache.h"
 #include "NetworkResourcesData.h"
 #include "Page.h"
@@ -375,7 +375,7 @@ void InspectorResourceAgent::documentThreadableLoaderStartedLoadingForClient(uns
     m_resourcesData->setXHRReplayData(requestId, xhrReplayData);
 }
 
-void InspectorResourceAgent::willLoadXHR(ThreadableLoaderClient* client, const String& method, const KURL& url, bool async, PassRefPtr<FormData> formData, const HTTPHeaderMap& headers, bool includeCredentials)
+void InspectorResourceAgent::willLoadXHR(ThreadableLoaderClient* client, const String& method, const URL& url, bool async, PassRefPtr<FormData> formData, const HTTPHeaderMap& headers, bool includeCredentials)
 {
     RefPtr<XHRReplayData> xhrReplayData = XHRReplayData::create(method, url, async, formData, includeCredentials);
     HTTPHeaderMap::const_iterator end = headers.end();
@@ -480,7 +480,7 @@ PassRefPtr<TypeBuilder::Network::Initiator> InspectorResourceAgent::buildInitiat
 
 #if ENABLE(WEB_SOCKETS)
 
-void InspectorResourceAgent::didCreateWebSocket(unsigned long identifier, const KURL& requestURL)
+void InspectorResourceAgent::didCreateWebSocket(unsigned long identifier, const URL& requestURL)
 {
     m_frontend->webSocketCreated(IdentifiersFactory::requestId(identifier), requestURL.string());
 }

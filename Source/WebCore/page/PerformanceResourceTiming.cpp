@@ -37,7 +37,7 @@
 #include "Document.h"
 #include "DocumentLoadTiming.h"
 #include "DocumentLoader.h"
-#include "KURL.h"
+#include "URL.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"

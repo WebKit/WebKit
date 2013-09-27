@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KURL_h
-#define KURL_h
+#ifndef URL_h
+#define URL_h
 
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -48,20 +48,20 @@ QT_END_NAMESPACE
 namespace WebCore {
 
 class TextEncoding;
-struct KURLHash;
+struct URLHash;
 
 enum ParsedURLStringTag { ParsedURLString };
 
-class KURL {
+class URL {
 public:
     // Generates a URL which contains a null string.
-    KURL() { invalidate(); }
+    URL() { invalidate(); }
 
-    // The argument is an absolute URL string. The string is assumed to be output of KURL::string() called on a valid
-    // KURL object, or indiscernible from such.
+    // The argument is an absolute URL string. The string is assumed to be output of URL::string() called on a valid
+    // URL object, or indiscernible from such.
     // It is usually best to avoid repeatedly parsing a string, unless memory saving outweigh the possible slow-downs.
-    KURL(ParsedURLStringTag, const String&);
-    explicit KURL(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
+    URL(ParsedURLStringTag, const String&);
+    explicit URL(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return string().isHashTableDeletedValue(); }
 
     // Resolves the relative URL with the given base URL. If provided, the
@@ -71,8 +71,8 @@ public:
     // FIXME: If the base URL is invalid, this always creates an invalid
     // URL. Instead I think it would be better to treat all invalid base URLs
     // the same way we treate null and empty base URLs.
-    KURL(const KURL& base, const String& relative);
-    KURL(const KURL& base, const String& relative, const TextEncoding&);
+    URL(const URL& base, const String& relative);
+    URL(const URL& base, const String& relative, const TextEncoding&);
 
     String strippedForUseAsReferrer() const;
 
@@ -80,10 +80,10 @@ public:
     // base of null or the empty string gives the same result as the
     // standard String constructor.
 
-    // Makes a deep copy. Helpful only if you need to use a KURL on another
+    // Makes a deep copy. Helpful only if you need to use a URL on another
     // thread.  Since the underlying StringImpl objects are immutable, there's
     // no other reason to ever prefer copy() over plain old assignment.
-    KURL copy() const;
+    URL copy() const;
 
     bool isNull() const;
     bool isEmpty() const;
@@ -148,9 +148,9 @@ public:
     void setFragmentIdentifier(const String&);
     void removeFragmentIdentifier();
 
-    friend bool equalIgnoringFragmentIdentifier(const KURL&, const KURL&);
+    friend bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
 
-    friend bool protocolHostAndPortAreEqual(const KURL&, const KURL&);
+    friend bool protocolHostAndPortAreEqual(const URL&, const URL&);
 
     unsigned hostStart() const;
     unsigned hostEnd() const;
@@ -162,12 +162,12 @@ public:
     operator const String&() const { return string(); }
 
 #if USE(CF)
-    KURL(CFURLRef);
+    URL(CFURLRef);
     RetainPtr<CFURLRef> createCFURL() const;
 #endif
 
 #if PLATFORM(MAC)
-    KURL(NSURL*);
+    URL(NSURL*);
     operator NSURL*() const;
 #endif
 #ifdef __OBJC__
@@ -175,11 +175,11 @@ public:
 #endif
 
 #if PLATFORM(QT)
-    KURL(const QUrl&);
+    URL(const QUrl&);
     operator QUrl() const;
 #endif
 
-    const KURL* innerURL() const { return 0; }
+    const URL* innerURL() const { return 0; }
 
 #ifndef NDEBUG
     void print() const;
@@ -190,7 +190,7 @@ public:
 private:
     void invalidate();
     static bool protocolIs(const String&, const char*);
-    void init(const KURL&, const String&, const TextEncoding&);
+    void init(const URL&, const String&, const TextEncoding&);
     void copyToBuffer(Vector<char, 512>& buffer) const;
 
     // Parses the given URL. The originalString parameter allows for an
@@ -217,33 +217,33 @@ private:
     int m_fragmentEnd;
 };
 
-bool operator==(const KURL&, const KURL&);
-bool operator==(const KURL&, const String&);
-bool operator==(const String&, const KURL&);
-bool operator!=(const KURL&, const KURL&);
-bool operator!=(const KURL&, const String&);
-bool operator!=(const String&, const KURL&);
+bool operator==(const URL&, const URL&);
+bool operator==(const URL&, const String&);
+bool operator==(const String&, const URL&);
+bool operator!=(const URL&, const URL&);
+bool operator!=(const URL&, const String&);
+bool operator!=(const String&, const URL&);
 
-bool equalIgnoringFragmentIdentifier(const KURL&, const KURL&);
-bool protocolHostAndPortAreEqual(const KURL&, const KURL&);
+bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
+bool protocolHostAndPortAreEqual(const URL&, const URL&);
 
-const KURL& blankURL();
+const URL& blankURL();
 
 // Functions to do URL operations on strings.
 // These are operations that aren't faster on a parsed URL.
-// These are also different from the KURL functions in that they don't require the string to be a valid and parsable URL.
-// This is especially important because valid javascript URLs are not necessarily considered valid by KURL.
+// These are also different from the URL functions in that they don't require the string to be a valid and parsable URL.
+// This is especially important because valid javascript URLs are not necessarily considered valid by URL.
 
 bool protocolIs(const String& url, const char* protocol);
 bool protocolIsJavaScript(const String& url);
 
 bool isDefaultPortForProtocol(unsigned short port, const String& protocol);
-bool portAllowed(const KURL&); // Blacklist ports that should never be used for Web resources.
+bool portAllowed(const URL&); // Blacklist ports that should never be used for Web resources.
 
 bool isValidProtocol(const String&);
 
 String mimeTypeFromDataURL(const String& url);
-String mimeTypeFromURL(const KURL&);
+String mimeTypeFromURL(const URL&);
 
 // Unescapes the given string using URL escaping rules, given an optional
 // encoding (defaulting to UTF-8 otherwise). DANGER: If the URL has "%00"
@@ -255,32 +255,32 @@ String encodeWithURLEscapeSequences(const String&);
 
 // Inlines.
 
-inline bool operator==(const KURL& a, const KURL& b)
+inline bool operator==(const URL& a, const URL& b)
 {
     return a.string() == b.string();
 }
 
-inline bool operator==(const KURL& a, const String& b)
+inline bool operator==(const URL& a, const String& b)
 {
     return a.string() == b;
 }
 
-inline bool operator==(const String& a, const KURL& b)
+inline bool operator==(const String& a, const URL& b)
 {
     return a == b.string();
 }
 
-inline bool operator!=(const KURL& a, const KURL& b)
+inline bool operator!=(const URL& a, const URL& b)
 {
     return a.string() != b.string();
 }
 
-inline bool operator!=(const KURL& a, const String& b)
+inline bool operator!=(const URL& a, const String& b)
 {
     return a.string() != b;
 }
 
-inline bool operator!=(const String& a, const KURL& b)
+inline bool operator!=(const String& a, const URL& b)
 {
     return a != b.string();
 }
@@ -288,57 +288,57 @@ inline bool operator!=(const String& a, const KURL& b)
 // Inline versions of some non-GoogleURL functions so we can get inlining
 // without having to have a lot of ugly ifdefs in the class definition.
 
-inline bool KURL::isNull() const
+inline bool URL::isNull() const
 {
     return m_string.isNull();
 }
 
-inline bool KURL::isEmpty() const
+inline bool URL::isEmpty() const
 {
     return m_string.isEmpty();
 }
 
-inline bool KURL::isValid() const
+inline bool URL::isValid() const
 {
     return m_isValid;
 }
 
-inline bool KURL::hasPath() const
+inline bool URL::hasPath() const
 {
     return m_pathEnd != m_portEnd;
 }
 
-inline bool KURL::hasPort() const
+inline bool URL::hasPort() const
 {
     return m_hostEnd < m_portEnd;
 }
 
-inline bool KURL::protocolIsInHTTPFamily() const
+inline bool URL::protocolIsInHTTPFamily() const
 {
     return m_protocolIsInHTTPFamily;
 }
 
-inline unsigned KURL::hostStart() const
+inline unsigned URL::hostStart() const
 {
     return (m_passwordEnd == m_userStart) ? m_passwordEnd : m_passwordEnd + 1;
 }
 
-inline unsigned KURL::hostEnd() const
+inline unsigned URL::hostEnd() const
 {
     return m_hostEnd;
 }
 
-inline unsigned KURL::pathStart() const
+inline unsigned URL::pathStart() const
 {
     return m_portEnd;
 }
 
-inline unsigned KURL::pathEnd() const
+inline unsigned URL::pathEnd() const
 {
     return m_pathEnd;
 }
 
-inline unsigned KURL::pathAfterLastSlash() const
+inline unsigned URL::pathAfterLastSlash() const
 {
     return m_pathAfterLastSlash;
 }
@@ -347,12 +347,12 @@ inline unsigned KURL::pathAfterLastSlash() const
 
 namespace WTF {
 
-    // KURLHash is the default hash for String
+    // URLHash is the default hash for String
     template<typename T> struct DefaultHash;
-    template<> struct DefaultHash<WebCore::KURL> {
-        typedef WebCore::KURLHash Hash;
+    template<> struct DefaultHash<WebCore::URL> {
+        typedef WebCore::URLHash Hash;
     };
 
 } // namespace WTF
 
-#endif // KURL_h
+#endif // URL_h

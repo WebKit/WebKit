@@ -64,7 +64,7 @@ public:
     }
     virtual ~TextTrackLoader();
     
-    bool load(const KURL&, const String& crossOriginMode);
+    bool load(const URL&, const String& crossOriginMode);
     void cancelLoad();
     void getNewCues(Vector<RefPtr<TextTrackCue> >& outputCues);
 #if ENABLE(WEBVTT_REGIONS)

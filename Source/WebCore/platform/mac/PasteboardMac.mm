@@ -45,7 +45,7 @@
 #import "htmlediting.h"
 #import "HTMLNames.h"
 #import "Image.h"
-#import "KURL.h"
+#import "URL.h"
 #import "LegacyWebArchive.h"
 #import "LoaderNSURLExtras.h"
 #import "MIMETypeRegistry.h"
@@ -383,7 +383,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
     }
 
     if (types.contains(String(NSURLPboardType))) {
-        KURL url = strategy.url(m_pasteboardName);
+        URL url = strategy.url(m_pasteboardName);
         String title = strategy.stringForType(WebURLNamePboardType, m_pasteboardName);
         if (!url.isNull() && reader.readURL(url, title))
             return;

@@ -414,7 +414,7 @@ void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
     m_page->privateBrowsingStateChanged();
 }
 
-void Settings::setUserStyleSheetLocation(const KURL& userStyleSheetLocation)
+void Settings::setUserStyleSheetLocation(const URL& userStyleSheetLocation)
 {
     if (m_userStyleSheetLocation == userStyleSheetLocation)
         return;

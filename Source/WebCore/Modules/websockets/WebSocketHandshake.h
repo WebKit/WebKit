@@ -33,7 +33,7 @@
 
 #if ENABLE(WEB_SOCKETS)
 
-#include "KURL.h"
+#include "URL.h"
 #include "ResourceResponse.h"
 #include "WebSocketExtensionDispatcher.h"
 #include "WebSocketExtensionProcessor.h"
@@ -51,11 +51,11 @@ public:
     enum Mode {
         Incomplete, Normal, Failed, Connected
     };
-    WebSocketHandshake(const KURL&, const String& protocol, ScriptExecutionContext*);
+    WebSocketHandshake(const URL&, const String& protocol, ScriptExecutionContext*);
     ~WebSocketHandshake();
 
-    const KURL& url() const;
-    void setURL(const KURL&);
+    const URL& url() const;
+    void setURL(const URL&);
     const String host() const;
 
     const String& clientProtocol() const;
@@ -91,7 +91,7 @@ public:
     static String getExpectedWebSocketAccept(const String& secWebSocketKey);
 
 private:
-    KURL httpURLForAuthenticationAndCookies() const;
+    URL httpURLForAuthenticationAndCookies() const;
 
     int readStatusLine(const char* header, size_t headerLength, int& statusCode, String& statusText);
 
@@ -100,7 +100,7 @@ private:
     void processHeaders();
     bool checkResponseHeaders();
 
-    KURL m_url;
+    URL m_url;
     String m_clientProtocol;
     bool m_secure;
     ScriptExecutionContext* m_context;

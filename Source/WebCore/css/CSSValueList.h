@@ -66,7 +66,7 @@ public:
     String customSerializeResolvingVariables(const HashMap<AtomicString, String>&) const;
 #endif
 
-    void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetContents*) const;
+    void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
 
     bool hasFailedOrCanceledSubresources() const;
     

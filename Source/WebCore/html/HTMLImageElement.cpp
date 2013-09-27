@@ -309,7 +309,7 @@ void HTMLImageElement::setHeight(int value)
     setAttribute(heightAttr, String::number(value));
 }
 
-KURL HTMLImageElement::src() const
+URL HTMLImageElement::src() const
 {
     return document().completeURL(getAttribute(srcAttr));
 }
@@ -351,7 +351,7 @@ bool HTMLImageElement::complete() const
     return m_imageLoader.imageComplete();
 }
 
-void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 

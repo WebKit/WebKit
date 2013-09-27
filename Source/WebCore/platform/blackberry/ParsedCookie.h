@@ -37,7 +37,7 @@ class String;
 }
 namespace WebCore {
 
-class KURL;
+class URL;
 
 // This class represents a cookie internally
 // It can either be created by the CookieParser which will then fill it

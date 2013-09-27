@@ -179,7 +179,7 @@ void HTMLLinkElement::process()
     }
 
     String type = m_type.lower();
-    KURL url = getNonEmptyURLAttribute(hrefAttr);
+    URL url = getNonEmptyURLAttribute(hrefAttr);
 
     if (!m_linkLoader.loadLink(m_relAttribute, type, m_sizes->toString(), url, &document()))
         return;
@@ -291,7 +291,7 @@ void HTMLLinkElement::finishParsingChildren()
     HTMLElement::finishParsingChildren();
 }
 
-void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* cachedStyleSheet)
+void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet* cachedStyleSheet)
 {
     if (!inDocument()) {
         ASSERT(!m_sheet);
@@ -395,7 +395,7 @@ bool HTMLLinkElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name().localName() == hrefAttr || HTMLElement::isURLAttribute(attribute);
 }
 
-KURL HTMLLinkElement::href() const
+URL HTMLLinkElement::href() const
 {
     return document().completeURL(getAttribute(hrefAttr));
 }
@@ -425,7 +425,7 @@ String HTMLLinkElement::iconSizes() const
     return m_sizes->toString();
 }
 
-void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 

@@ -41,7 +41,7 @@ class Frame;
 class HTMLMediaElement;
 #endif
 class Image;
-class KURL;
+class URL;
 class Node;
 class RenderRegion;
 class Scrollbar;
@@ -103,10 +103,10 @@ public:
     String titleDisplayString() const;
     Image* image() const;
     IntRect imageRect() const;
-    KURL absoluteImageURL() const;
-    KURL absolutePDFURL() const;
-    KURL absoluteMediaURL() const;
-    KURL absoluteLinkURL() const;
+    URL absoluteImageURL() const;
+    URL absolutePDFURL() const;
+    URL absoluteMediaURL() const;
+    URL absoluteLinkURL() const;
     String textContent() const;
     bool isLiveLink() const;
     bool isOverLink() const;

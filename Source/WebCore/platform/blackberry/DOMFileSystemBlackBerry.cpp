@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-KURL DOMFileSystemBase::createFileSystemURL(const String& fullPath) const
+URL DOMFileSystemBase::createFileSystemURL(const String& fullPath) const
 {
     ASSERT(DOMFilePath::isAbsolute(fullPath));
 
@@ -38,7 +38,7 @@ KURL DOMFileSystemBase::createFileSystemURL(const String& fullPath) const
     return m_context->completeURL(m_filesystemRootURL.string() + encodeWithURLEscapeSequences(fullPath));
 }
 
-bool DOMFileSystemBase::crackFileSystemURL(const KURL& url, FileSystemType& type, String& filePath)
+bool DOMFileSystemBase::crackFileSystemURL(const URL& url, FileSystemType& type, String& filePath)
 {
     if (!url.protocolIs("filesystem"))
         return false;
@@ -54,7 +54,7 @@ bool DOMFileSystemBase::crackFileSystemURL(const KURL& url, FileSystemType& type
 
         filePath = decodeURLEscapeSequences(url.path());
     } else {
-        KURL originURL(ParsedURLString, url.path());
+        URL originURL(ParsedURLString, url.path());
         String path = decodeURLEscapeSequences(originURL.path());
         if (path.isEmpty() || path[0] != '/')
             return false;

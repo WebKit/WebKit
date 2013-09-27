@@ -361,7 +361,7 @@ void DocumentThreadableLoader::preflightFailure(unsigned long identifier, const 
 void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, SecurityCheckPolicy securityCheck)
 {
     // Any credential should have been removed from the cross-site requests.
-    const KURL& requestURL = request.url();
+    const URL& requestURL = request.url();
     m_options.securityCheck = securityCheck;
     ASSERT(m_sameOriginRequest || requestURL.user().isEmpty());
     ASSERT(m_sameOriginRequest || requestURL.pass().isEmpty());
@@ -429,7 +429,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
     didFinishLoading(identifier, 0.0);
 }
 
-bool DocumentThreadableLoader::isAllowedRedirect(const KURL& url)
+bool DocumentThreadableLoader::isAllowedRedirect(const URL& url)
 {
     if (m_options.crossOriginRequestPolicy == AllowCrossOriginRequests)
         return true;

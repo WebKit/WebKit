@@ -69,7 +69,7 @@ namespace WebCore {
 
 class Frame;
 class DocumentFragment;
-class KURL;
+class URL;
 class Range;
 
 enum DragApplicationFlags {

@@ -22,7 +22,7 @@
 #ifndef DumpRenderTreeSupportEfl_h
 #define DumpRenderTreeSupportEfl_h
 
-#include "KURL.h"
+#include "URL.h"
 #include <Eina.h>
 #include <FindOptions.h>
 #include <IntRect.h>
@@ -66,7 +66,7 @@ public:
     static String responseMimeType(const Evas_Object* ewkFrame);
     static WebCore::IntRect selectionRectangle(const Evas_Object* ewkFrame);
     static String suitableDRTFrameName(const Evas_Object* ewkFrame);
-    static const WebCore::KURL provisionalURL(const Evas_Object* ewkFrame);
+    static const WebCore::URL provisionalURL(const Evas_Object* ewkFrame);
     static String layerTreeAsText(const Evas_Object* ewkFrame);
     static void setValueForUser(JSContextRef, JSValueRef nodeObject, const String& value);
     static void setDefersLoading(Evas_Object* ewkView, bool defers);

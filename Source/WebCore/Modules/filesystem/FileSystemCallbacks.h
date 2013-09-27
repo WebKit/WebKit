@@ -102,7 +102,7 @@ private:
 class FileSystemCallbacks : public FileSystemCallbacksBase {
 public:
     static PassOwnPtr<FileSystemCallbacks> create(PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*, FileSystemType);
-    virtual void didOpenFileSystem(const String& name, const KURL& rootURL, PassOwnPtr<AsyncFileSystem>);
+    virtual void didOpenFileSystem(const String& name, const URL& rootURL, PassOwnPtr<AsyncFileSystem>);
 
 private:
     FileSystemCallbacks(PassRefPtr<FileSystemCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*, FileSystemType);
@@ -114,7 +114,7 @@ private:
 class ResolveURICallbacks : public FileSystemCallbacksBase {
 public:
     static PassOwnPtr<ResolveURICallbacks> create(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*, FileSystemType, const String& filePath);
-    virtual void didOpenFileSystem(const String& name, const KURL& rootURL, PassOwnPtr<AsyncFileSystem>);
+    virtual void didOpenFileSystem(const String& name, const URL& rootURL, PassOwnPtr<AsyncFileSystem>);
 
 private:
     ResolveURICallbacks(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>, ScriptExecutionContext*, FileSystemType, const String& filePath);

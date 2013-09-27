@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "KURL.h"
+#import "URL.h"
 
 #import "CFURLExtras.h"
 #import <wtf/ObjcRuntimeExtras.h>
@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-KURL::KURL(NSURL *url)
+URL::URL(NSURL *url)
 {
     if (!url) {
         invalidate();
@@ -45,14 +45,14 @@ KURL::KURL(NSURL *url)
     parse(urlBytes.data());
 }
 
-KURL::operator NSURL *() const
+URL::operator NSURL *() const
 {
     // Creating a toll-free bridged CFURL, because a real NSURL would not preserve the original string.
     // We'll need fidelity when round-tripping via CFURLGetBytes().
     return CFBridgingRelease(createCFURL().leakRef());
 }
 
-RetainPtr<CFURLRef> KURL::createCFURL() const
+RetainPtr<CFURLRef> URL::createCFURL() const
 {
     if (isNull())
         return 0;

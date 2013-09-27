@@ -56,7 +56,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLFrameOwnerElement.h>
-#import <WebCore/KURL.h>
+#import <WebCore/URL.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PlatformEventFactoryMac.h>

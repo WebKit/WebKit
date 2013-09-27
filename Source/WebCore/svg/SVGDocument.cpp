@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-SVGDocument::SVGDocument(Frame* frame, const KURL& url)
+SVGDocument::SVGDocument(Frame* frame, const URL& url)
     : Document(frame, url, SVGDocumentClass)
 {
 }

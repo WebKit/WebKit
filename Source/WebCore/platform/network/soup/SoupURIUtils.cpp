@@ -29,10 +29,10 @@ namespace WebCore {
 // soup_uri_to_string, and thus the requests are not properly
 // built. Fixing soup_uri_to_string is a no-no as the maintainer does
 // not want to break compatibility with previous implementations
-KURL soupURIToKURL(SoupURI* soupURI)
+URL soupURIToKURL(SoupURI* soupURI)
 {
     GOwnPtr<gchar> urlString(soup_uri_to_string(soupURI, FALSE));
-    KURL url(KURL(), String::fromUTF8(urlString.get()));
+    URL url(URL(), String::fromUTF8(urlString.get()));
 
     if (!soupURI->password)
         return url;

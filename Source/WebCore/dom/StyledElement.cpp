@@ -274,7 +274,7 @@ void StyledElement::removeAllInlineStyleProperties()
     inlineStyleChanged();
 }
 
-void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void StyledElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     if (const StylePropertySet* inlineStyle = elementData() ? elementData()->inlineStyle() : 0)
         inlineStyle->addSubresourceStyleURLs(urls, document().elementSheet().contents());

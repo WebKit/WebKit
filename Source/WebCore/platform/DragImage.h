@@ -51,7 +51,7 @@ typedef struct _cairo_surface cairo_surface_t;
 namespace WebCore {
 
     class Image;
-    class KURL;
+    class URL;
 
 #if PLATFORM(MAC)
     typedef RetainPtr<NSImage> DragImageRef;
@@ -76,7 +76,7 @@ namespace WebCore {
     
     DragImageRef createDragImageFromImage(Image*, ImageOrientationDescription);
     DragImageRef createDragImageIconForCachedImageFilename(const String&);
-    DragImageRef createDragImageForLink(KURL&, const String& label, FontRenderingMode);
+    DragImageRef createDragImageForLink(URL&, const String& label, FontRenderingMode);
     void deleteDragImage(DragImageRef);
 }
 

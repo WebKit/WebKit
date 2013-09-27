@@ -38,7 +38,7 @@ namespace WebCore  {
 class CachedCSSStyleSheet;
 class CachedResource;
 class CachedResourceLoader;
-class KURL;
+class URL;
 class ResourceRequest;
 class ResourceResponse;
 class ScriptExecutionContext;
@@ -112,13 +112,13 @@ public:
         TypeStatistic fonts;
     };
 
-    CachedResource* resourceForURL(const KURL&);
+    CachedResource* resourceForURL(const URL&);
     CachedResource* resourceForRequest(const ResourceRequest&);
     
     bool add(CachedResource* resource);
     void remove(CachedResource* resource) { evict(resource); }
 
-    static KURL removeFragmentIdentifierIfNeeded(const KURL& originalURL);
+    static URL removeFragmentIdentifierIfNeeded(const URL& originalURL);
     
     void revalidationSucceeded(CachedResource* revalidatingResource, const ResourceResponse&);
     void revalidationFailed(CachedResource* revalidatingResource);

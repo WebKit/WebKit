@@ -182,37 +182,37 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(uint64_t m
     loader->didConvertHandleToDownload();
 }
 
-void NetworkConnectionToWebProcess::cookiesForDOM(bool privateBrowsingEnabled, const KURL& firstParty, const KURL& url, String& result)
+void NetworkConnectionToWebProcess::cookiesForDOM(bool privateBrowsingEnabled, const URL& firstParty, const URL& url, String& result)
 {
     result = WebCore::cookiesForDOM(storageSession(privateBrowsingEnabled), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::setCookiesFromDOM(bool privateBrowsingEnabled, const KURL& firstParty, const KURL& url, const String& cookieString)
+void NetworkConnectionToWebProcess::setCookiesFromDOM(bool privateBrowsingEnabled, const URL& firstParty, const URL& url, const String& cookieString)
 {
     WebCore::setCookiesFromDOM(storageSession(privateBrowsingEnabled), firstParty, url, cookieString);
 }
 
-void NetworkConnectionToWebProcess::cookiesEnabled(bool privateBrowsingEnabled, const KURL& firstParty, const KURL& url, bool& result)
+void NetworkConnectionToWebProcess::cookiesEnabled(bool privateBrowsingEnabled, const URL& firstParty, const URL& url, bool& result)
 {
     result = WebCore::cookiesEnabled(storageSession(privateBrowsingEnabled), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(bool privateBrowsingEnabled, const KURL& firstParty, const KURL& url, String& result)
+void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(bool privateBrowsingEnabled, const URL& firstParty, const URL& url, String& result)
 {
     result = WebCore::cookieRequestHeaderFieldValue(storageSession(privateBrowsingEnabled), firstParty, url);
 }
 
-void NetworkConnectionToWebProcess::getRawCookies(bool privateBrowsingEnabled, const KURL& firstParty, const KURL& url, Vector<Cookie>& result)
+void NetworkConnectionToWebProcess::getRawCookies(bool privateBrowsingEnabled, const URL& firstParty, const URL& url, Vector<Cookie>& result)
 {
     WebCore::getRawCookies(storageSession(privateBrowsingEnabled), firstParty, url, result);
 }
 
-void NetworkConnectionToWebProcess::deleteCookie(bool privateBrowsingEnabled, const KURL& url, const String& cookieName)
+void NetworkConnectionToWebProcess::deleteCookie(bool privateBrowsingEnabled, const URL& url, const String& cookieName)
 {
     WebCore::deleteCookie(storageSession(privateBrowsingEnabled), url, cookieName);
 }
 
-void NetworkConnectionToWebProcess::registerBlobURL(const KURL& url, const BlobRegistrationData& data)
+void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const BlobRegistrationData& data)
 {
     Vector<RefPtr<SandboxExtension>> extensions;
     for (size_t i = 0, count = data.sandboxExtensions().size(); i < count; ++i) {
@@ -223,12 +223,12 @@ void NetworkConnectionToWebProcess::registerBlobURL(const KURL& url, const BlobR
     NetworkBlobRegistry::shared().registerBlobURL(this, url, data.releaseData(), extensions);
 }
 
-void NetworkConnectionToWebProcess::registerBlobURLFromURL(const KURL& url, const KURL& srcURL)
+void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const URL& srcURL)
 {
     NetworkBlobRegistry::shared().registerBlobURL(this, url, srcURL);
 }
 
-void NetworkConnectionToWebProcess::unregisterBlobURL(const KURL& url)
+void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url)
 {
     NetworkBlobRegistry::shared().unregisterBlobURL(this, url);
 }

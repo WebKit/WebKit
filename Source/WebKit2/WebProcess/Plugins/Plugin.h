@@ -28,7 +28,7 @@
 
 #include <WebCore/FindOptions.h>
 #include <WebCore/GraphicsLayer.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/RefCounted.h>
@@ -73,7 +73,7 @@ class PluginController;
 class Plugin : public ThreadSafeRefCounted<Plugin> {
 public:
     struct Parameters {
-        WebCore::KURL url;
+        WebCore::URL url;
         Vector<String> names;
         Vector<String> values;
         String mimeType;
@@ -154,7 +154,7 @@ public:
     virtual void didEvaluateJavaScript(uint64_t requestID, const String& result) = 0;
 
     // Tells the plug-in that a stream has received its HTTP response.
-    virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::KURL& responseURL, uint32_t streamLength, 
+    virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::URL& responseURL, uint32_t streamLength, 
                                           uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) = 0;
 
     // Tells the plug-in that a stream did receive data.
@@ -167,7 +167,7 @@ public:
     virtual void streamDidFail(uint64_t streamID, bool wasCancelled) = 0;
 
     // Tells the plug-in that the manual stream has received its HTTP response.
-    virtual void manualStreamDidReceiveResponse(const WebCore::KURL& responseURL, uint32_t streamLength, 
+    virtual void manualStreamDidReceiveResponse(const WebCore::URL& responseURL, uint32_t streamLength, 
                                                 uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) = 0;
 
     // Tells the plug-in that the manual stream did receive data.

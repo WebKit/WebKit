@@ -33,18 +33,18 @@
 
 namespace WebCore {
 
-class KURL;
+class URL;
 class NetworkStorageSession;
 struct Cookie;
 
 // FIXME: These should probably be NetworkStorageSession member functions.
 
-String cookiesForDOM(const NetworkStorageSession&, const KURL& firstParty, const KURL&);
-void setCookiesFromDOM(const NetworkStorageSession&, const KURL& firstParty, const KURL&, const String&);
-bool cookiesEnabled(const NetworkStorageSession&, const KURL& firstParty, const KURL&);
-String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const KURL& firstParty, const KURL&);
-bool getRawCookies(const NetworkStorageSession&, const KURL& firstParty, const KURL&, Vector<Cookie>&);
-void deleteCookie(const NetworkStorageSession&, const KURL&, const String&);
+String cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&);
+void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, const String&);
+bool cookiesEnabled(const NetworkStorageSession&, const URL& firstParty, const URL&);
+String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&);
+bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, Vector<Cookie>&);
+void deleteCookie(const NetworkStorageSession&, const URL&, const String&);
 void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames);
 void deleteCookiesForHostname(const NetworkStorageSession&, const String& hostname);
 void deleteAllCookies(const NetworkStorageSession&);

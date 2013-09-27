@@ -28,7 +28,7 @@
 #define PluginStream_h
 
 #include "FileSystem.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NetscapePlugInStreamLoader.h"
 #include "PluginQuirkSet.h"
 #include "ResourceRequest.h"
@@ -70,7 +70,7 @@ namespace WebCore {
 
         void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 
-        void sendJavaScriptStream(const KURL& requestURL, const WTF::CString& resultString);
+        void sendJavaScriptStream(const URL& requestURL, const WTF::CString& resultString);
         void cancelAndDestroyStream(NPReason);
 
         static NPP ownerForStream(NPStream*);

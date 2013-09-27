@@ -75,19 +75,19 @@ JSValue jsStringOrUndefined(ExecState* exec, const String& s)
     return jsStringWithCache(exec, s);
 }
 
-JSValue jsString(ExecState* exec, const KURL& url)
+JSValue jsString(ExecState* exec, const URL& url)
 {
     return jsStringWithCache(exec, url.string());
 }
 
-JSValue jsStringOrNull(ExecState* exec, const KURL& url)
+JSValue jsStringOrNull(ExecState* exec, const URL& url)
 {
     if (url.isNull())
         return jsNull();
     return jsStringWithCache(exec, url.string());
 }
 
-JSValue jsStringOrUndefined(ExecState* exec, const KURL& url)
+JSValue jsStringOrUndefined(ExecState* exec, const URL& url)
 {
     if (url.isNull())
         return jsUndefined();

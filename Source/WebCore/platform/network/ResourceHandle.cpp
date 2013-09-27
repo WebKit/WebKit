@@ -205,7 +205,7 @@ bool ResourceHandle::shouldContentSniff() const
     return d->m_shouldContentSniff;
 }
 
-bool ResourceHandle::shouldContentSniffURL(const KURL& url)
+bool ResourceHandle::shouldContentSniffURL(const URL& url)
 {
 #if PLATFORM(MAC)
     if (shouldForceContentSniffing)

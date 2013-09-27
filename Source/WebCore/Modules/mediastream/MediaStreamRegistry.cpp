@@ -27,7 +27,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "KURL.h"
+#include "URL.h"
 #include "MediaStream.h"
 #include <wtf/MainThread.h>
 
@@ -41,14 +41,14 @@ MediaStreamRegistry& MediaStreamRegistry::registry()
     return instance;
 }
 
-void MediaStreamRegistry::registerURL(SecurityOrigin*, const KURL& url, URLRegistrable* stream)
+void MediaStreamRegistry::registerURL(SecurityOrigin*, const URL& url, URLRegistrable* stream)
 {
     ASSERT(&stream->registry() == this);
     ASSERT(isMainThread());
     m_streamDescriptors.set(url.string(), static_cast<MediaStream*>(stream)->descriptor());
 }
 
-void MediaStreamRegistry::unregisterURL(const KURL& url)
+void MediaStreamRegistry::unregisterURL(const URL& url)
 {
     ASSERT(isMainThread());
     m_streamDescriptors.remove(url.string());

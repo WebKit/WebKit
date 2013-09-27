@@ -113,11 +113,11 @@ protected:
     virtual void frameDidFinishLoading(uint64_t requestID);
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled);
     virtual void didEvaluateJavaScript(uint64_t requestID, const String& result);
-    virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName);
+    virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName);
     virtual void streamDidReceiveData(uint64_t streamID, const char* bytes, int length);
     virtual void streamDidFinishLoading(uint64_t streamID);
     virtual void streamDidFail(uint64_t streamID, bool wasCancelled);
-    virtual void manualStreamDidReceiveResponse(const WebCore::KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& suggestedFileName);
+    virtual void manualStreamDidReceiveResponse(const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& suggestedFileName);
     virtual void manualStreamDidReceiveData(const char* bytes, int length);
     virtual void manualStreamDidFinishLoading();
     virtual void manualStreamDidFail(bool wasCancelled);
@@ -204,7 +204,7 @@ private:
 
     WebCore::IntSize m_size;
 
-    WebCore::KURL m_sourceURL;
+    WebCore::URL m_sourceURL;
 
     String m_suggestedFilename;
     RetainPtr<CFMutableDataRef> m_data;

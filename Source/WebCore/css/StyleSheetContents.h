@@ -22,7 +22,7 @@
 #define StyleSheetContents_h
 
 #include "CSSParserMode.h"
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
@@ -80,8 +80,8 @@ public:
     bool loadCompleted() const { return m_loadCompleted; }
     bool hasFailedOrCanceledSubresources() const;
 
-    KURL completeURL(const String& url) const;
-    void addSubresourceStyleURLs(ListHashSet<KURL>&);
+    URL completeURL(const String& url) const;
+    void addSubresourceStyleURLs(ListHashSet<URL>&);
 
     void setIsUserStyleSheet(bool b) { m_isUserStyleSheet = b; }
     bool isUserStyleSheet() const { return m_isUserStyleSheet; }
@@ -111,7 +111,7 @@ public:
     // this style sheet. This property probably isn't useful for much except
     // the JavaScript binding (which needs to use this value for security).
     String originalURL() const { return m_originalURL; }
-    const KURL& baseURL() const { return m_parserContext.baseURL; }
+    const URL& baseURL() const { return m_parserContext.baseURL; }
 
     unsigned ruleCount() const;
     StyleRuleBase* ruleAt(unsigned index) const;

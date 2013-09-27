@@ -26,7 +26,7 @@
 #include "ContextMenu.h"
 #include "ContextMenuController.h"
 #include "HitTestResult.h"
-#include "KURL.h"
+#include "URL.h"
 #include "LocalizedStrings.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -123,7 +123,7 @@ void ContextMenuClient::contextMenuItemSelected(ContextMenuItem*, const ContextM
     notImplemented();
 }
 
-void ContextMenuClient::downloadURL(const KURL& url)
+void ContextMenuClient::downloadURL(const URL& url)
 {
     WebKitNetworkRequest* networkRequest = webkit_network_request_new(url.string().utf8().data());
 

@@ -37,7 +37,7 @@ class CSSRule;
 class CSSStyleDeclaration;
 class ComputedStyleExtractor;
 class ImmutableStylePropertySet;
-class KURL;
+class URL;
 class MutableStylePropertySet;
 class PropertySetCSSStyleDeclaration;
 class StyledElement;
@@ -98,7 +98,7 @@ public:
 
     CSSParserMode cssParserMode() const { return static_cast<CSSParserMode>(m_cssParserMode); }
 
-    void addSubresourceStyleURLs(ListHashSet<KURL>&, StyleSheetContents* contextStyleSheet) const;
+    void addSubresourceStyleURLs(ListHashSet<URL>&, StyleSheetContents* contextStyleSheet) const;
 
     PassRefPtr<MutableStylePropertySet> mutableCopy() const;
     PassRefPtr<ImmutableStylePropertySet> immutableCopyIfNeeded() const;

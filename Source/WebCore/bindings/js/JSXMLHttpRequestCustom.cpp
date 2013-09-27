@@ -88,7 +88,7 @@ JSValue JSXMLHttpRequest::open(ExecState* exec)
     if (exec->argumentCount() < 2)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
 
-    const KURL& url = impl()->scriptExecutionContext()->completeURL(exec->uncheckedArgument(1).toString(exec)->value(exec));
+    const URL& url = impl()->scriptExecutionContext()->completeURL(exec->uncheckedArgument(1).toString(exec)->value(exec));
     String method = exec->uncheckedArgument(0).toString(exec)->value(exec);
 
     ExceptionCode ec = 0;

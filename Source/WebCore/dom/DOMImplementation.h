@@ -37,7 +37,7 @@ class Document;
 class DocumentType;
 class Frame;
 class HTMLDocument;
-class KURL;
+class URL;
 class RegularExpression;
 
 typedef int ExceptionCode;
@@ -65,7 +65,7 @@ public:
     PassRefPtr<HTMLDocument> createHTMLDocument(const String& title);
 
     // Other methods (not part of DOM)
-    static PassRefPtr<Document> createDocument(const String& MIMEType, Frame*, const KURL&, bool inViewSourceMode);
+    static PassRefPtr<Document> createDocument(const String& MIMEType, Frame*, const URL&, bool inViewSourceMode);
 
     static bool isXMLMIMEType(const String& MIMEType);
     static bool isTextMIMEType(const String& MIMEType);

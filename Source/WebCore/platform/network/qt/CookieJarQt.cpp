@@ -30,7 +30,7 @@
 #include "CookieJarQt.h"
 
 #include "Cookie.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NetworkingContext.h"
 #include "PlatformCookieJar.h"
 #include "ThirdPartyCookiesQt.h"
@@ -46,7 +46,7 @@ namespace WebCore {
 
 static SharedCookieJarQt* s_sharedCookieJarQt = 0;
 
-void setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url, const String& value)
+void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& value)
 {
     QNetworkCookieJar* jar = session.context() ? session.context()->networkAccessManager()->cookieJar() : SharedCookieJarQt::shared();
     if (!jar)
@@ -69,7 +69,7 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstPa
     jar->setCookiesFromUrl(cookies, urlForCookies);
 }
 
-String cookiesForDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url)
+String cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
     QNetworkCookieJar* jar = session.context() ? session.context()->networkAccessManager()->cookieJar() : SharedCookieJarQt::shared();
     if (!jar)
@@ -94,7 +94,7 @@ String cookiesForDOM(const NetworkStorageSession& session, const KURL& firstPart
     return resultCookies.join(QLatin1String("; "));
 }
 
-String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const KURL& /*firstParty*/, const KURL& url)
+String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url)
 {
     QNetworkCookieJar* jar = session.context() ? session.context()->networkAccessManager()->cookieJar() : SharedCookieJarQt::shared();
     if (!jar)
@@ -111,20 +111,20 @@ String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const
     return resultCookies.join(QLatin1String("; "));
 }
 
-bool cookiesEnabled(const NetworkStorageSession& session, const KURL& /*firstParty*/, const KURL& /*url*/)
+bool cookiesEnabled(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& /*url*/)
 {
     QNetworkCookieJar* jar = session.context() ? session.context()->networkAccessManager()->cookieJar() : SharedCookieJarQt::shared();
     return !!jar;
 }
 
-bool getRawCookies(const NetworkStorageSession& session, const KURL& /*firstParty*/, const KURL& /*url*/, Vector<Cookie>& rawCookies)
+bool getRawCookies(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& /*url*/, Vector<Cookie>& rawCookies)
 {
     // FIXME: Not yet implemented
     rawCookies.clear();
     return false; // return true when implemented
 }
 
-void deleteCookie(const NetworkStorageSession&, const KURL&, const String&)
+void deleteCookie(const NetworkStorageSession&, const URL&, const String&)
 {
     // FIXME: Not yet implemented
 }

@@ -59,7 +59,7 @@ namespace WebCore {
 
 const unsigned long long EventSource::defaultReconnectDelay = 3000;
 
-inline EventSource::EventSource(ScriptExecutionContext* context, const KURL& url, const Dictionary& eventSourceInit)
+inline EventSource::EventSource(ScriptExecutionContext* context, const URL& url, const Dictionary& eventSourceInit)
     : ActiveDOMObject(context)
     , m_url(url)
     , m_withCredentials(false)
@@ -80,7 +80,7 @@ PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext* context, con
         return 0;
     }
 
-    KURL fullURL = context->completeURL(url);
+    URL fullURL = context->completeURL(url);
     if (!fullURL.isValid()) {
         ec = SYNTAX_ERR;
         return 0;

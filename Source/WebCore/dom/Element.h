@@ -253,7 +253,7 @@ public:
     virtual const AtomicString& prefix() const OVERRIDE FINAL { return m_tagName.prefix(); }
     virtual const AtomicString& namespaceURI() const OVERRIDE FINAL { return m_tagName.namespaceURI(); }
 
-    virtual KURL baseURI() const OVERRIDE FINAL;
+    virtual URL baseURI() const OVERRIDE FINAL;
 
     virtual String nodeName() const;
 
@@ -384,8 +384,8 @@ public:
     virtual bool isURLAttribute(const Attribute&) const { return false; }
     virtual bool isHTMLContentAttribute(const Attribute&) const { return false; }
 
-    KURL getURLAttribute(const QualifiedName&) const;
-    KURL getNonEmptyURLAttribute(const QualifiedName&) const;
+    URL getURLAttribute(const QualifiedName&) const;
+    URL getNonEmptyURLAttribute(const QualifiedName&) const;
 
     virtual const AtomicString& imageSourceURL() const;
     virtual String target() const { return String(); }

@@ -3674,7 +3674,7 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
         if (!page) 
             return nil; 
         
-        const KURL& imageURL = page->dragController().draggingImageURL();
+        const URL& imageURL = page->dragController().draggingImageURL();
         ASSERT(!imageURL.isEmpty());
         draggingImageURL = imageURL;
 

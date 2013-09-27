@@ -52,7 +52,7 @@ static inline bool isLightweightSpace(UChar c)
     return (c == ' ' || c == '\t');
 }
 
-CookieParser::CookieParser(const KURL& defaultCookieURL)
+CookieParser::CookieParser(const URL& defaultCookieURL)
     : m_defaultCookieURL(defaultCookieURL)
 {
     m_defaultCookieHost = defaultCookieURL.host();
@@ -237,7 +237,7 @@ PassRefPtr<ParsedCookie> CookieParser::parseOneCookie(const String& cookie, unsi
         case 'P':
         case 'p' : {
             if (length >= 4 && ((cookie.find("ath", tokenStartSvg + 1, false) - tokenStartSvg) == 1)) {
-                // We need the path to be decoded to match those returned from KURL::path().
+                // We need the path to be decoded to match those returned from URL::path().
                 // The path attribute may or may not include percent-encoded characters. Fortunately
                 // if there are no percent-encoded characters, decoding the url is a no-op.
                 res->setPath(decodeURLEscapeSequences(parsedValue));

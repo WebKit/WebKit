@@ -1041,7 +1041,7 @@ void MutableStylePropertySet::mergeAndOverrideOnConflict(const StylePropertySet&
         addParsedProperty(other.propertyAt(i).toCSSProperty());
 }
 
-void StylePropertySet::addSubresourceStyleURLs(ListHashSet<KURL>& urls, StyleSheetContents* contextStyleSheet) const
+void StylePropertySet::addSubresourceStyleURLs(ListHashSet<URL>& urls, StyleSheetContents* contextStyleSheet) const
 {
     unsigned size = propertyCount();
     for (unsigned i = 0; i < size; ++i)

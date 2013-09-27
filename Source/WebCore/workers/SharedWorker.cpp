@@ -38,7 +38,7 @@
 #include "ExceptionCode.h"
 #include "FeatureObserver.h"
 #include "InspectorInstrumentation.h"
-#include "KURL.h"
+#include "URL.h"
 #include "MessageChannel.h"
 #include "MessagePort.h"
 #include "ScriptExecutionContext.h"
@@ -66,7 +66,7 @@ PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext* context, c
 
     worker->suspendIfNeeded();
 
-    KURL scriptURL = worker->resolveURL(url, ec);
+    URL scriptURL = worker->resolveURL(url, ec);
     if (scriptURL.isEmpty())
         return 0;
 

@@ -24,28 +24,28 @@
 
 namespace WebCore {
 
-void setCookiesFromDOM(const NetworkStorageSession&, const KURL& /*firstParty*/, const KURL& url, const String& value)
+void setCookiesFromDOM(const NetworkStorageSession&, const URL& /*firstParty*/, const URL& url, const String& value)
 {
     cookieManager().setCookies(url, value, NoHttpOnlyCookie);
 }
 
-String cookiesForDOM(const NetworkStorageSession&, const KURL& /*firstParty*/, const KURL& url)
+String cookiesForDOM(const NetworkStorageSession&, const URL& /*firstParty*/, const URL& url)
 {
     // 'HttpOnly' cookies should no be accessible from scripts, so we filter them out here.
     return cookieManager().getCookie(url, NoHttpOnlyCookie);
 }
 
-String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const KURL& /*firstParty*/, const KURL& url)
+String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& /*firstParty*/, const URL& url)
 {
     return cookieManager().getCookie(url, WithHttpOnlyCookies);
 }
 
-bool cookiesEnabled(const NetworkStorageSession&, const KURL& /*firstParty*/, const KURL& /*url*/)
+bool cookiesEnabled(const NetworkStorageSession&, const URL& /*firstParty*/, const URL& /*url*/)
 {
     return !cookieManager().cookieJar().isEmpty();
 }
 
-bool getRawCookies(const NetworkStorageSession&, const KURL& /*firstParty*/, const KURL& url, Vector<Cookie>& rawCookies)
+bool getRawCookies(const NetworkStorageSession&, const URL& /*firstParty*/, const URL& url, Vector<Cookie>& rawCookies)
 {
     Vector<RefPtr<ParsedCookie> > result;
     cookieManager().getRawCookies(result, url, WithHttpOnlyCookies);
@@ -54,7 +54,7 @@ bool getRawCookies(const NetworkStorageSession&, const KURL& /*firstParty*/, con
     return true;
 }
 
-void deleteCookie(const NetworkStorageSession&, const KURL& url, const String& name)
+void deleteCookie(const NetworkStorageSession&, const URL& url, const String& name)
 {
     cookieManager().removeCookieWithName(url, name);
 }

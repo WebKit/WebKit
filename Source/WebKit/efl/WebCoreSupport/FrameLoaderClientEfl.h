@@ -94,7 +94,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void dispatchDidHandleOnloadEvents();
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad();
     virtual void dispatchDidCancelClientRedirect();
-    virtual void dispatchWillPerformClientRedirect(const KURL&, double, double);
+    virtual void dispatchWillPerformClientRedirect(const URL&, double, double);
     virtual void dispatchDidChangeLocationWithinPage();
     virtual void dispatchWillClose();
     virtual void dispatchDidReceiveIcon();
@@ -128,13 +128,13 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void postProgressEstimateChangedNotification();
     virtual void postProgressFinishedNotification();
 
-    virtual PassRefPtr<Frame> createFrame(const KURL&, const String& name, HTMLFrameOwnerElement*,
+    virtual PassRefPtr<Frame> createFrame(const URL&, const String& name, HTMLFrameOwnerElement*,
                                const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);
 
-    virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const WTF::Vector<String>&, const WTF::Vector<String>&, const String&, bool);
+    virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const URL&, const WTF::Vector<String>&, const WTF::Vector<String>&, const String&, bool);
     virtual void recreatePlugin(Widget*) { }
     virtual void redirectDataToPlugin(Widget* pluginWidget);
-    virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL, const WTF::Vector<String>& paramNames, const WTF::Vector<String>& paramValues);
+    virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL& baseURL, const WTF::Vector<String>& paramNames, const WTF::Vector<String>& paramValues);
     virtual String overrideMediaType() const;
     virtual void documentElementAvailable();
 
@@ -142,7 +142,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
 
     virtual void registerForIconNotification(bool);
 
-    virtual ObjectContentType objectContentType(const KURL&, const String& mimeType, bool shouldPreferPlugInsForImages);
+    virtual ObjectContentType objectContentType(const URL&, const String& mimeType, bool shouldPreferPlugInsForImages);
 
     virtual void setMainFrameDocumentReady(bool);
 
@@ -159,8 +159,8 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual bool shouldGoToHistoryItem(HistoryItem*) const;
     virtual bool shouldStopLoadingForHistoryItem(HistoryItem*) const;
     virtual void didDisplayInsecureContent();
-    virtual void didRunInsecureContent(SecurityOrigin*, const KURL&);
-    virtual void didDetectXSS(const KURL&, bool didBlockEntirePage);
+    virtual void didRunInsecureContent(SecurityOrigin*, const URL&);
+    virtual void didDetectXSS(const URL&, bool didBlockEntirePage);
 
     virtual ResourceError cancelledError(const ResourceRequest&);
     virtual ResourceError blockedError(const ResourceRequest&);
@@ -187,9 +187,9 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void prepareForDataSourceReplacement();
 
     virtual WTF::PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&);
-    virtual void setTitle(const StringWithDirection& title, const KURL&);
+    virtual void setTitle(const StringWithDirection& title, const URL&);
 
-    virtual String userAgent(const KURL&);
+    virtual String userAgent(const URL&);
 
     virtual void savePlatformDataToCachedFrame(CachedFrame*);
     virtual void transitionToCommittedFromCachedFrame(CachedFrame*);

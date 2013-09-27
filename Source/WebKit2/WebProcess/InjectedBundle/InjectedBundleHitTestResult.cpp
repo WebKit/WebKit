@@ -34,7 +34,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;

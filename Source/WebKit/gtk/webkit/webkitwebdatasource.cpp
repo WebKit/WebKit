@@ -24,7 +24,7 @@
 #include "DocumentLoaderGtk.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
-#include "KURL.h"
+#include "URL.h"
 #include "ResourceBuffer.h"
 #include "ResourceRequest.h"
 #include "SharedBuffer.h"
@@ -175,7 +175,7 @@ WebKitWebDataSource* webkit_web_data_source_new_with_request(WebKitNetworkReques
 
     const gchar* uri = webkit_network_request_get_uri(request);
 
-    ResourceRequest resourceRequest(ResourceRequest(KURL(KURL(), String::fromUTF8(uri))));
+    ResourceRequest resourceRequest(ResourceRequest(URL(URL(), String::fromUTF8(uri))));
     WebKitWebDataSource* datasource = kitNew(WebKit::DocumentLoader::create(resourceRequest, SubstituteData()));
 
     WebKitWebDataSourcePrivate* priv = datasource->priv;
@@ -396,7 +396,7 @@ const gchar* webkit_web_data_source_get_unreachable_uri(WebKitWebDataSource* web
     g_return_val_if_fail(WEBKIT_IS_WEB_DATA_SOURCE(webDataSource), NULL);
 
     WebKitWebDataSourcePrivate* priv = webDataSource->priv;
-    const KURL& unreachableURL = priv->loader->unreachableURL();
+    const URL& unreachableURL = priv->loader->unreachableURL();
 
     if (unreachableURL.isEmpty())
         return NULL;

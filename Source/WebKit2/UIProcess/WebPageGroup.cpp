@@ -154,7 +154,7 @@ void WebPageGroup::addUserStyleSheet(const String& source, const String& baseURL
     if (source.isEmpty())
         return;
 
-    WebCore::UserStyleSheet userStyleSheet = WebCore::UserStyleSheet(source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::KURL(WebCore::KURL(), baseURL)), toStringVector(whitelist), toStringVector(blacklist), injectedFrames, level);
+    WebCore::UserStyleSheet userStyleSheet = WebCore::UserStyleSheet(source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURL)), toStringVector(whitelist), toStringVector(blacklist), injectedFrames, level);
 
     m_data.userStyleSheets.append(userStyleSheet);
     sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserStyleSheet(userStyleSheet), m_data.pageGroupID);
@@ -165,7 +165,7 @@ void WebPageGroup::addUserScript(const String& source, const String& baseURL, Im
     if (source.isEmpty())
         return;
 
-    WebCore::UserScript userScript = WebCore::UserScript(source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::KURL(WebCore::KURL(), baseURL)), toStringVector(whitelist), toStringVector(blacklist), injectionTime, injectedFrames);
+    WebCore::UserScript userScript = WebCore::UserScript(source, (baseURL.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURL)), toStringVector(whitelist), toStringVector(blacklist), injectionTime, injectedFrames);
 
     m_data.userScripts.append(userScript);
     sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserScript(userScript), m_data.pageGroupID);

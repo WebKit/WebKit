@@ -38,7 +38,7 @@
 
 #include <wtf/platform.h>
 #include <WebCore/BString.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/ResourceHandle.h>
 #include <shlobj.h>
@@ -226,7 +226,7 @@ WebURLResponse* WebURLResponse::createInstance()
 {
     WebURLResponse* instance = new WebURLResponse();
     // fake an http response - so it has the IWebHTTPURLResponse interface
-    instance->m_response = ResourceResponse(KURL(ParsedURLString, "http://"), String(), 0, String(), String());
+    instance->m_response = ResourceResponse(WebCore::URL(ParsedURLString, "http://"), String(), 0, String(), String());
     instance->AddRef();
     return instance;
 }

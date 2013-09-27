@@ -21,7 +21,7 @@
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NotImplemented.h"
 #include "TransformationMatrix.h"
 

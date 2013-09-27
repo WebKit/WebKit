@@ -63,7 +63,7 @@ RSSAtomParser::RSSAtomParser()
 
 bool RSSAtomParser::parseBuffer(const char* buffer, int length, const char* url, const char* encoding)
 {
-    m_url = KURL(blankURL(), url);
+    m_url = URL(blankURL(), url);
     return parseXmlDoc(xmlReadMemory(buffer, length, url, encoding, XML_PARSE_NOBLANKS | XML_PARSE_NONET));
 }
 

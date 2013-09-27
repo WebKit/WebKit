@@ -69,7 +69,7 @@ public:
 
     bool shouldDisplayPosterImage() const { return displayMode() == Poster || displayMode() == PosterWaitingForVideo; }
 
-    KURL posterImageURL() const;
+    URL posterImageURL() const;
 
 private:
     HTMLVideoElement(const QualifiedName&, Document&, bool);

@@ -21,7 +21,7 @@
 #include "qwebscriptworld.h"
 #include "qwebscriptworld_p.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "ScriptController.h"
 #include <QStringList>
 

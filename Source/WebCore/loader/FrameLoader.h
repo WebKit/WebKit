@@ -103,7 +103,7 @@ public:
     void setupForReplace();
 
     // FIXME: These are all functions which start loads. We have too many.
-    void loadURLIntoChildFrame(const KURL&, const String& referer, Frame*);
+    void loadURLIntoChildFrame(const URL&, const String& referer, Frame*);
     void loadFrameRequest(const FrameLoadRequest&, bool lockHistory, bool lockBackForwardList,  // Called by submitForm, calls loadPostRequest and loadURL.
         PassRefPtr<Event>, PassRefPtr<FormState>, ShouldSendReferrer);
 
@@ -114,13 +114,13 @@ public:
 #endif
     unsigned long loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, Vector<char>& data);
 
-    void changeLocation(SecurityOrigin*, const KURL&, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true, bool refresh = false);
-    void urlSelected(const KURL&, const String& target, PassRefPtr<Event>, bool lockHistory, bool lockBackForwardList, ShouldSendReferrer);
+    void changeLocation(SecurityOrigin*, const URL&, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true, bool refresh = false);
+    void urlSelected(const URL&, const String& target, PassRefPtr<Event>, bool lockHistory, bool lockBackForwardList, ShouldSendReferrer);
     void submitForm(PassRefPtr<FormSubmission>);
 
     void reload(bool endToEndReload = false);
     void reloadWithOverrideEncoding(const String& overrideEncoding);
-    void reloadWithOverrideURL(const KURL& overrideUrl, bool endToEndReload = false);
+    void reloadWithOverrideURL(const URL& overrideUrl, bool endToEndReload = false);
 
     void open(CachedFrameBase&);
     void loadItem(HistoryItem*, FrameLoadType);
@@ -159,7 +159,7 @@ public:
     const ResourceRequest& initialRequest() const;
     void receivedMainResourceError(const ResourceError&);
 
-    bool willLoadMediaElementURL(KURL&);
+    bool willLoadMediaElementURL(URL&);
 
     void handleFallbackContent();
 
@@ -175,7 +175,7 @@ public:
     void didChangeTitle(DocumentLoader*);
     void didChangeIcons(IconType);
 
-    bool shouldTreatURLAsSrcdocDocument(const KURL&) const;
+    bool shouldTreatURLAsSrcdocDocument(const URL&) const;
 
     FrameLoadType loadType() const;
 
@@ -208,7 +208,7 @@ public:
     void receivedFirstData();
 
     void handledOnloadEvents();
-    String userAgent(const KURL&) const;
+    String userAgent(const URL&) const;
 
     void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld*);
     void dispatchDidClearWindowObjectsInAllWorlds();
@@ -219,7 +219,7 @@ public:
     void forceSandboxFlags(SandboxFlags flags) { m_forcedSandboxFlags |= flags; }
     SandboxFlags effectiveSandboxFlags() const;
 
-    bool checkIfFormActionAllowedByCSP(const KURL&) const;
+    bool checkIfFormActionAllowedByCSP(const URL&) const;
 
     Frame* opener();
     void setOpener(Frame*);
@@ -230,7 +230,7 @@ public:
 
     void frameDetached();
 
-    void setOutgoingReferrer(const KURL&);
+    void setOutgoingReferrer(const URL&);
 
     void loadDone();
     void finishedParsing();
@@ -248,11 +248,11 @@ public:
 
     void applyUserAgent(ResourceRequest&);
 
-    bool shouldInterruptLoadForXFrameOptions(const String&, const KURL&, unsigned long requestIdentifier);
+    bool shouldInterruptLoadForXFrameOptions(const String&, const URL&, unsigned long requestIdentifier);
 
     void completed();
     bool allAncestorsAreComplete() const; // including this
-    void clientRedirected(const KURL&, double delay, double fireDate, bool lockBackForwardList);
+    void clientRedirected(const URL&, double delay, double fireDate, bool lockBackForwardList);
     void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
 
     // FIXME: This is public because this asynchronous callback from the FrameLoaderClient
@@ -264,7 +264,7 @@ public:
 
     bool suppressOpenerInNewFrame() const { return m_suppressOpenerInNewFrame; }
 
-    static ObjectContentType defaultObjectContentType(const KURL&, const String& mimeType, bool shouldPreferPlugInsForImages);
+    static ObjectContentType defaultObjectContentType(const URL&, const String& mimeType, bool shouldPreferPlugInsForImages);
 
     bool quickRedirectComing() const { return m_quickRedirectComing; }
 
@@ -284,7 +284,7 @@ public:
 
     void loadProgressingStatusChanged();
 
-    const KURL& previousURL() const { return m_previousURL; }
+    const URL& previousURL() const { return m_previousURL; }
 
     void forcePageTransitionIfNeeded();
 
@@ -304,7 +304,7 @@ private:
     void loadProvisionalItemFromCachedPage();
 
     void updateFirstPartyForCookies();
-    void setFirstPartyForCookies(const KURL&);
+    void setFirstPartyForCookies(const URL&);
     
     void addExtraFieldsToRequest(ResourceRequest&, FrameLoadType, bool isMainResource);
 
@@ -312,7 +312,7 @@ private:
     void transitionToCommitted(CachedPage*);
     void frameLoadCompleted();
 
-    SubstituteData defaultSubstituteDataForURL(const KURL&);
+    SubstituteData defaultSubstituteDataForURL(const URL&);
 
     static void callContinueLoadAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
     static void callContinueLoadAfterNewWindowPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&, bool shouldContinue);
@@ -324,8 +324,8 @@ private:
     void continueLoadAfterNewWindowPolicy(const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&, bool shouldContinue);
     void continueFragmentScrollAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
 
-    bool shouldPerformFragmentNavigation(bool isFormSubmission, const String& httpMethod, FrameLoadType, const KURL&);
-    void scrollToFragmentWithParentBoundary(const KURL&);
+    bool shouldPerformFragmentNavigation(bool isFormSubmission, const String& httpMethod, FrameLoadType, const URL&);
+    void scrollToFragmentWithParentBoundary(const URL&);
 
     void checkLoadCompleteForThisFrame();
 
@@ -352,19 +352,19 @@ private:
 
     void loadPostRequest(const ResourceRequest&, const String& referrer,                // Called by loadFrameRequest, calls loadWithNavigationAction
         const String& frameName, bool lockHistory, FrameLoadType, PassRefPtr<Event>, PassRefPtr<FormState>);
-    void loadURL(const KURL&, const String& referrer, const String& frameName,          // Called by loadFrameRequest, calls loadWithNavigationAction or dispatches to navigation policy delegate
+    void loadURL(const URL&, const String& referrer, const String& frameName,          // Called by loadFrameRequest, calls loadWithNavigationAction or dispatches to navigation policy delegate
         bool lockHistory, FrameLoadType, PassRefPtr<Event>, PassRefPtr<FormState>);                                                         
 
     void reloadWithRequest(const ResourceRequest&, bool endToEndReload);
 
-    bool shouldReload(const KURL& currentURL, const KURL& destinationURL);
+    bool shouldReload(const URL& currentURL, const URL& destinationURL);
 
     void requestFromDelegate(ResourceRequest&, unsigned long& identifier, ResourceError&);
 
     void detachChildren();
     void closeAndRemoveChild(Frame*);
 
-    void loadInSameDocument(const KURL&, PassRefPtr<SerializedScriptValue> stateObject, bool isNewNavigation);
+    void loadInSameDocument(const URL&, PassRefPtr<SerializedScriptValue> stateObject, bool isNewNavigation);
 
     void prepareForLoadStart();
     void provisionalLoadStarted();
@@ -376,7 +376,7 @@ private:
     void scheduleCheckLoadComplete();
     void startCheckCompleteTimer();
 
-    bool shouldTreatURLAsSameAsCurrent(const KURL&) const;
+    bool shouldTreatURLAsSameAsCurrent(const URL&) const;
 
     void dispatchGlobalObjectAvailableInAllWorlds();
 
@@ -427,7 +427,7 @@ private:
 
     bool m_needsClear;
 
-    KURL m_submittedFormURL;
+    URL m_submittedFormURL;
 
     Timer<FrameLoader> m_checkTimer;
     bool m_shouldCallCheckCompleted;
@@ -446,7 +446,7 @@ private:
 
     RefPtr<FrameNetworkingContext> m_networkingContext;
 
-    KURL m_previousURL;
+    URL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;
     OwnPtr<PageActivityAssertionToken> m_activityAssertion;
 };

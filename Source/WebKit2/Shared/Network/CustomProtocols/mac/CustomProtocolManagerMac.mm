@@ -34,7 +34,7 @@
 #import "DataReference.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebProcessCreationParameters.h"
-#import <WebCore/KURL.h>
+#import <WebCore/URL.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>

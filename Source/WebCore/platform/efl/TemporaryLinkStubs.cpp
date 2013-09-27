@@ -34,7 +34,7 @@
 #include "Editor.h"
 #include "FTPDirectoryDocument.h"
 #include "FrameView.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NotImplemented.h"
 #include "PluginView.h"
 #include "ScrollbarTheme.h"
@@ -51,7 +51,7 @@ void getSupportedKeySizes(Vector<String>&)
     notImplemented();
 }
 
-String signedPublicKeyAndChallengeString(unsigned, const String&, const KURL&)
+String signedPublicKeyAndChallengeString(unsigned, const String&, const URL&)
 {
     return String();
 }

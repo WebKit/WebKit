@@ -52,7 +52,7 @@ bool Plugin::Parameters::decode(CoreIPC::ArgumentDecoder& decoder, Parameters& p
     if (!decoder.decode(urlString))
         return false;
     // FIXME: We can't assume that the url passed in here is valid.
-    parameters.url = KURL(ParsedURLString, urlString);
+    parameters.url = URL(ParsedURLString, urlString);
 
     if (!decoder.decode(parameters.names))
         return false;

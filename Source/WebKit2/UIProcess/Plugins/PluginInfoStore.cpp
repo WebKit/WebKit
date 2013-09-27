@@ -29,7 +29,7 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "PluginModuleInfo.h"
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <algorithm>
 #include <wtf/ListHashSet.h>
@@ -158,7 +158,7 @@ PluginModuleInfo PluginInfoStore::findPluginForExtension(const String& extension
     return PluginModuleInfo();
 }
 
-static inline String pathExtension(const KURL& url)
+static inline String pathExtension(const URL& url)
 {
     String extension;
     String filename = url.lastPathComponent();
@@ -190,7 +190,7 @@ PluginModuleInfo PluginInfoStore::findPluginWithBundleIdentifier(const String&)
 
 #endif
 
-PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const KURL& url, PluginData::AllowedPluginTypes allowedPluginTypes)
+PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const URL& url, PluginData::AllowedPluginTypes allowedPluginTypes)
 {
     loadPluginsIfNecessary();
     

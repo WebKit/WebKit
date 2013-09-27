@@ -56,7 +56,7 @@ public:
     
     virtual Element* anchorElement() const;
     virtual Element* actionElement() const;
-    virtual KURL url() const;
+    virtual URL url() const;
     virtual bool isLink() const { return true; } 
     virtual bool isLinked() const { return true; }
     virtual String title() const;

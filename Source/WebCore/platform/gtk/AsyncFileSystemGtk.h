@@ -34,17 +34,17 @@ public:
     AsyncFileSystemGtk();
     virtual ~AsyncFileSystemGtk();
 
-    virtual void move(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void copy(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void remove(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void removeRecursively(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void readMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createFile(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createDirectory(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void fileExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void directoryExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void readDirectory(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createWriter(AsyncFileWriterClient*, const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void move(const URL& sourcePath, const URL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void copy(const URL& sourcePath, const URL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void remove(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void removeRecursively(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void readMetadata(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createFile(const URL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createDirectory(const URL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void fileExists(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void directoryExists(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void readDirectory(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createWriter(AsyncFileWriterClient*, const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 };
 
 } // namespace WebCore

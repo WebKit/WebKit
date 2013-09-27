@@ -250,7 +250,7 @@ PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* i
 }
 
 // static
-void InspectorPageAgent::resourceContent(ErrorString* errorString, Frame* frame, const KURL& url, String* result, bool* base64Encoded)
+void InspectorPageAgent::resourceContent(ErrorString* errorString, Frame* frame, const URL& url, String* result, bool* base64Encoded)
 {
     DocumentLoader* loader = assertDocumentLoader(errorString, frame);
     if (!loader)
@@ -299,7 +299,7 @@ String InspectorPageAgent::sourceMapURLForResource(CachedResource* cachedResourc
     return String();
 }
 
-CachedResource* InspectorPageAgent::cachedResource(Frame* frame, const KURL& url)
+CachedResource* InspectorPageAgent::cachedResource(Frame* frame, const URL& url)
 {
     CachedResource* cachedResource = frame->document()->cachedResourceLoader()->cachedResource(url);
     if (!cachedResource) {
@@ -562,9 +562,9 @@ static Vector<CachedResource*> cachedResourcesForFrame(Frame* frame)
     return result;
 }
 
-static Vector<KURL> allResourcesURLsForFrame(Frame* frame)
+static Vector<URL> allResourcesURLsForFrame(Frame* frame)
 {
-    Vector<KURL> result;
+    Vector<URL> result;
 
     result.append(frame->loader().documentLoader()->url());
 
@@ -590,10 +590,10 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<TypeBuilder::Array<Type
 
     for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext(mainFrame())) {
         Document* document = frame->document();
-        Vector<KURL> allURLs = allResourcesURLsForFrame(frame);
-        for (Vector<KURL>::const_iterator it = allURLs.begin(); it != allURLs.end(); ++it) {
+        Vector<URL> allURLs = allResourcesURLsForFrame(frame);
+        for (Vector<URL>::const_iterator it = allURLs.begin(); it != allURLs.end(); ++it) {
             Vector<Cookie> docCookiesList;
-            rawCookiesImplemented = getRawCookies(document, KURL(ParsedURLString, *it), docCookiesList);
+            rawCookiesImplemented = getRawCookies(document, URL(ParsedURLString, *it), docCookiesList);
             if (!rawCookiesImplemented) {
                 // FIXME: We need duplication checking for the String representation of cookies.
                 //
@@ -622,7 +622,7 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<TypeBuilder::Array<Type
 
 void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, const String& url)
 {
-    KURL parsedURL(ParsedURLString, url);
+    URL parsedURL(ParsedURLString, url);
     for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext(&m_page->mainFrame()))
         WebCore::deleteCookie(frame->document(), parsedURL, cookieName);
 }
@@ -638,7 +638,7 @@ void InspectorPageAgent::getResourceContent(ErrorString* errorString, const Stri
     if (!frame)
         return;
 
-    resourceContent(errorString, frame, KURL(ParsedURLString, url), content, base64Encoded);
+    resourceContent(errorString, frame, URL(ParsedURLString, url), content, base64Encoded);
 }
 
 static bool textContentForCachedResource(CachedResource* cachedResource, String* result)
@@ -669,7 +669,7 @@ void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, c
     if (!loader)
         return;
 
-    KURL kurl(ParsedURLString, url);
+    URL kurl(ParsedURLString, url);
 
     String content;
     bool success = false;

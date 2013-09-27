@@ -24,7 +24,7 @@
 
 #include "WebDOMTestInterface.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "Node.h"
 #include "TestInterface.h"
 #include "TestSupplemental.h"

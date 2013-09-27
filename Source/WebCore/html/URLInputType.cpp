@@ -34,7 +34,7 @@
 #include "HTMLInputElement.h"
 #include "InputTypeNames.h"
 #include "LocalizedStrings.h"
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -57,7 +57,7 @@ const AtomicString& URLInputType::formControlType() const
 
 bool URLInputType::typeMismatchFor(const String& value) const
 {
-    return !value.isEmpty() && !KURL(KURL(), value).isValid();
+    return !value.isEmpty() && !URL(URL(), value).isValid();
 }
 
 bool URLInputType::typeMismatch() const

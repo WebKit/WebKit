@@ -72,7 +72,7 @@ ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
     return WebCore::pluginWillHandleLoadError(response);
 }
 
-WebCore::ResourceError internalError(const WebCore::KURL& url)
+WebCore::ResourceError internalError(const WebCore::URL& url)
 {
     return ResourceError(WebError::webKitErrorDomain(), kWKErrorInternal, url.string(), ASCIILiteral("Internal error"));
 }

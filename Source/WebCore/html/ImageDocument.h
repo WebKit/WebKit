@@ -34,7 +34,7 @@ class ImageDocumentElement;
 
 class ImageDocument FINAL : public HTMLDocument {
 public:
-    static PassRefPtr<ImageDocument> create(Frame* frame, const KURL& url)
+    static PassRefPtr<ImageDocument> create(Frame* frame, const URL& url)
     {
         return adoptRef(new ImageDocument(frame, url));
     }
@@ -48,7 +48,7 @@ public:
     void imageClicked(int x, int y);
 
 private:
-    ImageDocument(Frame*, const KURL&);
+    ImageDocument(Frame*, const URL&);
 
     virtual PassRefPtr<DocumentParser> createParser();
     

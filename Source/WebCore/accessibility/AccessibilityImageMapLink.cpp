@@ -87,10 +87,10 @@ Element* AccessibilityImageMapLink::anchorElement() const
     return m_areaElement.get();
 }
 
-KURL AccessibilityImageMapLink::url() const
+URL AccessibilityImageMapLink::url() const
 {
     if (!m_areaElement.get())
-        return KURL();
+        return URL();
     
     return m_areaElement->href();
 }

@@ -29,7 +29,7 @@
 #if USE(CFNETWORK)
 
 #include "Cookie.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NetworkStorageSession.h"
 #include "SoftLinking.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
@@ -93,7 +93,7 @@ static RetainPtr<CFArrayRef> filterCookies(CFArrayRef unfilteredCookies)
     return filteredCookies;
 }
 
-void setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url, const String& value)
+void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& value)
 {
     // <rdar://problem/5632883> CFHTTPCookieStorage stores an empty cookie, which would be sent as "Cookie: =".
     if (value.isEmpty())
@@ -117,7 +117,7 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstPa
     CFHTTPCookieStorageSetCookies(session.cookieStorage().get(), filterCookies(cookiesCF.get()).get(), urlCF.get(), firstPartyForCookiesCF.get());
 }
 
-String cookiesForDOM(const NetworkStorageSession& session, const KURL&, const KURL& url)
+String cookiesForDOM(const NetworkStorageSession& session, const URL&, const URL& url)
 {
     RetainPtr<CFURLRef> urlCF = url.createCFURL();
 
@@ -127,7 +127,7 @@ String cookiesForDOM(const NetworkStorageSession& session, const KURL&, const KU
     return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
 }
 
-String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const KURL& /*firstParty*/, const KURL& url)
+String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url)
 {
     RetainPtr<CFURLRef> urlCF = url.createCFURL();
 
@@ -137,13 +137,13 @@ String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const
     return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
 }
 
-bool cookiesEnabled(const NetworkStorageSession& session, const KURL& /*firstParty*/, const KURL& /*url*/)
+bool cookiesEnabled(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& /*url*/)
 {
     CFHTTPCookieStorageAcceptPolicy policy = CFHTTPCookieStorageGetCookieAcceptPolicy(session.cookieStorage().get());
     return policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyAlways;
 }
 
-bool getRawCookies(const NetworkStorageSession& session, const KURL& /*firstParty*/, const KURL& url, Vector<Cookie>& rawCookies)
+bool getRawCookies(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url, Vector<Cookie>& rawCookies)
 {
     rawCookies.clear();
 
@@ -174,7 +174,7 @@ bool getRawCookies(const NetworkStorageSession& session, const KURL& /*firstPart
     return true;
 }
 
-void deleteCookie(const NetworkStorageSession& session, const KURL& url, const String& name)
+void deleteCookie(const NetworkStorageSession& session, const URL& url, const String& name)
 {
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = session.cookieStorage();
 

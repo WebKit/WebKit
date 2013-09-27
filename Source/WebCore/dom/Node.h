@@ -27,7 +27,7 @@
 
 #include "EditingBoundary.h"
 #include "EventTarget.h"
-#include "KURLHash.h"
+#include "URLHash.h"
 #include "LayoutRect.h"
 #include "MutationObserver.h"
 #include "RenderStyleConstants.h"
@@ -191,9 +191,9 @@ public:
     Node* pseudoAwareFirstChild() const;
     Node* pseudoAwareLastChild() const;
 
-    virtual KURL baseURI() const;
+    virtual URL baseURI() const;
     
-    void getSubresourceURLs(ListHashSet<KURL>&) const;
+    void getSubresourceURLs(ListHashSet<URL>&) const;
 
     // These should all actually return a node, but this is only important for language bindings,
     // which will already know and hold a ref on the right node to return. Returning bool allows
@@ -664,7 +664,7 @@ protected:
 
     virtual void didMoveToNewDocument(Document* oldDocument);
     
-    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const { }
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const { }
 
     bool hasRareData() const { return getFlag(HasRareDataFlag); }
 
@@ -737,7 +737,7 @@ protected:
 };
 
 // Used in Node::addSubresourceAttributeURLs() and in addSubresourceStyleURLs()
-inline void addSubresourceURL(ListHashSet<KURL>& urls, const KURL& url)
+inline void addSubresourceURL(ListHashSet<URL>& urls, const URL& url)
 {
     if (!url.isNull())
         urls.add(url);

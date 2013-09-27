@@ -155,7 +155,7 @@ void FrameLoaderClientBlackBerry::dispatchDidCancelClientRedirect()
     m_clientRedirectIsPending = false;
 }
 
-void FrameLoaderClientBlackBerry::dispatchWillPerformClientRedirect(const KURL&, double, double)
+void FrameLoaderClientBlackBerry::dispatchWillPerformClientRedirect(const URL&, double, double)
 {
     if (m_webPagePrivate->m_dumpRenderTree)
         m_webPagePrivate->m_dumpRenderTree->didDispatchWillPerformClientRedirect();
@@ -186,12 +186,12 @@ void FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction(FrameP
 {
     PolicyAction decision = PolicyIgnore;
 
-    const KURL& url = request.url();
+    const URL& url = request.url();
     if (!url.isNull()) {
         // Fragment scrolls on the same page should always be handled internally.
         // (Only count as a fragment scroll if we are scrolling to a #fragment url, not back to the top, and reloading
         // the same url is not a fragment scroll even if it has a #fragment.)
-        const KURL& currentUrl = m_frame->document()->url();
+        const URL& currentUrl = m_frame->document()->url();
         bool isFragmentScroll = url.hasFragmentIdentifier() && url != currentUrl && equalIgnoringFragmentIdentifier(currentUrl, url);
         decision = decidePolicyForExternalLoad(request, isFragmentScroll);
 
@@ -312,7 +312,7 @@ bool FrameLoaderClientBlackBerry::shouldAlwaysUsePluginDocument(const String& mi
 }
 
 PassRefPtr<Widget> FrameLoaderClientBlackBerry::createPlugin(const IntSize& pluginSize,
-    HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames,
+    HTMLPlugInElement* element, const URL& url, const Vector<String>& paramNames,
     const Vector<String>& paramValues, const String& mimeTypeIn, bool loadManually)
 {
     String mimeType(mimeTypeIn);
@@ -395,7 +395,7 @@ PassRefPtr<DocumentLoader> FrameLoaderClientBlackBerry::createDocumentLoader(con
         if (!source.isEmpty()) {
             // Always ignore existing substitute data if any.
             WTF::RefPtr<SharedBuffer> buffer = SharedBuffer::create(source.is8Bit() ? reinterpret_cast<const char*>(source.characters8()) : source.latin1().data(), source.length());
-            substituteDataLocal = SubstituteData(buffer, "text/html", "latin1", KURL());
+            substituteDataLocal = SubstituteData(buffer, "text/html", "latin1", URL());
         }
     }
 
@@ -460,7 +460,7 @@ void FrameLoaderClientBlackBerry::transitionToCommittedForNewPage()
     }
 }
 
-String FrameLoaderClientBlackBerry::userAgent(const KURL&)
+String FrameLoaderClientBlackBerry::userAgent(const URL&)
 {
     return m_webPagePrivate->m_webSettings->userAgentString();
 }
@@ -519,7 +519,7 @@ void FrameLoaderClientBlackBerry::dispatchDidReceiveTitle(const StringWithDirect
         m_webPagePrivate->m_dumpRenderTree->didReceiveTitleForFrame(title.string(), m_frame);
 }
 
-void FrameLoaderClientBlackBerry::setTitle(const StringWithDirection& /*title*/, const KURL& /*url*/)
+void FrameLoaderClientBlackBerry::setTitle(const StringWithDirection& /*title*/, const URL& /*url*/)
 {
     // Used by Apple WebKit to update the title of an existing history item.
     // QtWebKit doesn't accomodate this on history items. If it ever does,
@@ -726,7 +726,7 @@ void FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad(const ResourceE
         return;
 
     String errorPage = m_webPagePrivate->m_client->getErrorPage(error.errorCode(), error.localizedDescription(), error.failingURL());
-    SubstituteData errorData(utf8Buffer(errorPage), "text/html", "utf-8", KURL(KURL(), error.failingURL()));
+    SubstituteData errorData(utf8Buffer(errorPage), "text/html", "utf-8", URL(URL(), error.failingURL()));
 
     // Loading using SubstituteData will replace the original request with our
     // error data. This must be done within dispatchDidFailProvisionalLoad,
@@ -777,7 +777,7 @@ void FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent(PassRefPtr<FormSta
     }
 }
 
-PassRefPtr<Frame> FrameLoaderClientBlackBerry::createFrame(const KURL& url, const String& name
+PassRefPtr<Frame> FrameLoaderClientBlackBerry::createFrame(const URL& url, const String& name
     , HTMLFrameOwnerElement* ownerElement, const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
 {
     if (!m_webPagePrivate)
@@ -815,7 +815,7 @@ PassRefPtr<Frame> FrameLoaderClientBlackBerry::createFrame(const KURL& url, cons
     return childFrame.release();
 }
 
-ObjectContentType FrameLoaderClientBlackBerry::objectContentType(const KURL& url, const String& mimeTypeIn, bool shouldPreferPlugInsForImages)
+ObjectContentType FrameLoaderClientBlackBerry::objectContentType(const URL& url, const String& mimeTypeIn, bool shouldPreferPlugInsForImages)
 {
     String mimeType = mimeTypeIn;
     if (mimeType.isEmpty())
@@ -1139,7 +1139,7 @@ PolicyAction FrameLoaderClientBlackBerry::decidePolicyForExternalLoad(const Reso
     // and exposed to client. Before that, don't return PolicyIgnore so we can continue to
     // create new window and get to dispatchDecidePolicyForNavigationAction() where the client
     // is given a chance to decide how to handle patterns such as 'mailto:'.
-    const KURL& url = request.url();
+    const URL& url = request.url();
     String pattern = m_webPagePrivate->findPatternStringForUrl(url);
     if (!pattern.isEmpty()) {
         m_webPagePrivate->m_client->handleStringPattern(pattern.characters(), pattern.length());
@@ -1342,7 +1342,7 @@ void FrameLoaderClientBlackBerry::dispatchDidLoadFromApplicationCache(const Reso
     m_webPagePrivate->m_client->notifyDidLoadFromApplicationCache();
 }
 
-PassRefPtr<SecurityOrigin> FrameLoaderClientBlackBerry::securityOriginForNewDocument(const KURL& url)
+PassRefPtr<SecurityOrigin> FrameLoaderClientBlackBerry::securityOriginForNewDocument(const URL& url)
 {
     // What we are trying to do here is to keep using the old path as origin when a file-based html page
     // changes its location to some html in a subfolder. This will allow some file-based html packages

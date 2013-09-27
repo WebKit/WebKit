@@ -192,7 +192,7 @@ void DumpRenderTreeSupportGtk::addUserScript(WebKitWebFrame* frame, const char* 
 
     WebKitWebView* webView = getViewFromFrame(frame);
     Page* page = core(webView);
-    page->group().addUserScriptToWorld(mainThreadNormalWorld(), sourceCode, KURL(), Vector<String>(), Vector<String>(),
+    page->group().addUserScriptToWorld(mainThreadNormalWorld(), sourceCode, URL(), Vector<String>(), Vector<String>(),
         runAtStart ? InjectAtDocumentStart : InjectAtDocumentEnd, allFrames ? InjectInAllFrames : InjectInTopFrameOnly);
 }
 
@@ -212,7 +212,7 @@ void DumpRenderTreeSupportGtk::addUserStyleSheet(WebKitWebFrame* frame, const ch
 
     WebKitWebView* webView = getViewFromFrame(frame);
     Page* page = core(webView);
-    page->group().addUserStyleSheetToWorld(mainThreadNormalWorld(), sourceCode, KURL(), Vector<String>(), Vector<String>(), allFrames ? InjectInAllFrames : InjectInTopFrameOnly); 
+    page->group().addUserStyleSheetToWorld(mainThreadNormalWorld(), sourceCode, URL(), Vector<String>(), Vector<String>(), allFrames ? InjectInAllFrames : InjectInTopFrameOnly); 
 }
 
 /**

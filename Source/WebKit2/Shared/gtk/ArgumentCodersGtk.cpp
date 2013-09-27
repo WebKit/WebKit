@@ -141,7 +141,7 @@ static bool decodeDataObject(ArgumentDecoder& decoder, RefPtr<DataObjectGtk>& da
         String url;
         if (!decoder.decode(url))
             return false;
-        data->setURL(KURL(KURL(), url), String());
+        data->setURL(URL(URL(), url), String());
     }
 
     bool hasURIList;

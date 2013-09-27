@@ -979,7 +979,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return nil;
     
-    KURL url = m_object->url();
+    URL url = m_object->url();
     if (url.isNull())
         return nil;
     return (NSURL*)url;

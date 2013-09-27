@@ -618,7 +618,7 @@ sub AddIncludesForType
     }
 
     if ($codeGenerator->IsStringType($type)) {
-        $implIncludes{"KURL.h"} = 1;
+        $implIncludes{"URL.h"} = 1;
         return;
     }
 

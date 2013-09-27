@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-    class KURL;
+    class URL;
     class ScriptExecutionContext;
 
     class AbstractWorker : public RefCounted<AbstractWorker>, public ActiveDOMObject, public EventTargetWithInlineData {
@@ -62,7 +62,7 @@ namespace WebCore {
 
     protected:
         // Helper function that converts a URL to an absolute URL and checks the result for validity.
-        KURL resolveURL(const String& url, ExceptionCode& ec);
+        URL resolveURL(const String& url, ExceptionCode& ec);
         intptr_t asID() const { return reinterpret_cast<intptr_t>(this); }
 
     private:

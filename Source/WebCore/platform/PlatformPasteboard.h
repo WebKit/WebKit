@@ -43,7 +43,7 @@ OBJC_CLASS UIPasteboard;
 namespace WebCore {
 
 class Color;
-class KURL;
+class URL;
 
 class PlatformPasteboard {
 public:
@@ -60,7 +60,7 @@ public:
     String stringForType(const String& pasteboardType);
     long changeCount() const;
     Color color();
-    KURL url();
+    URL url();
 
     // Take ownership of the pasteboard, and return new change count.
     long addTypes(const Vector<String>& pasteboardTypes);

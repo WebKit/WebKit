@@ -100,10 +100,10 @@ void DocumentWriter::clear()
 
 void DocumentWriter::begin()
 {
-    begin(KURL());
+    begin(URL());
 }
 
-PassRefPtr<Document> DocumentWriter::createDocument(const KURL& url)
+PassRefPtr<Document> DocumentWriter::createDocument(const URL& url)
 {
     if (!m_frame->loader().stateMachine()->isDisplayingInitialEmptyDocument() && m_frame->loader().client().shouldAlwaysUsePluginDocument(m_mimeType))
         return PluginDocument::create(m_frame, url);
@@ -112,12 +112,12 @@ PassRefPtr<Document> DocumentWriter::createDocument(const KURL& url)
     return DOMImplementation::createDocument(m_mimeType, m_frame, url, m_frame->inViewSourceMode());
 }
 
-void DocumentWriter::begin(const KURL& urlReference, bool dispatch, Document* ownerDocument)
+void DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* ownerDocument)
 {
     // We grab a local copy of the URL because it's easy for callers to supply
     // a URL that will be deallocated during the execution of this function.
     // For example, see <https://bugs.webkit.org/show_bug.cgi?id=66360>.
-    KURL url = urlReference;
+    URL url = urlReference;
 
     // Create a new document before clearing the frame, because it may need to
     // inherit an aliased security context.

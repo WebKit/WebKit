@@ -96,7 +96,7 @@ namespace WebCore {
     class ImageBuffer;
     class IntRect;
     class RoundedRect;
-    class KURL;
+    class URL;
     class GraphicsContext3D;
     class TextRun;
     class TransformationMatrix;
@@ -400,7 +400,7 @@ namespace WebCore {
         void translate(const FloatSize& size) { translate(size.width(), size.height()); }
         void translate(float x, float y);
 
-        void setURLForRect(const KURL&, const IntRect&);
+        void setURLForRect(const URL&, const IntRect&);
 
         void concatCTM(const AffineTransform&);
         void setCTM(const AffineTransform&);

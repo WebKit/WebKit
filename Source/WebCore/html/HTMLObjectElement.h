@@ -82,7 +82,7 @@ private:
 
     virtual RenderWidget* renderWidgetForJSBindings() const;
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
 
     virtual void updateWidget(PluginCreationOption);
     void updateDocNamedItem();

@@ -1246,10 +1246,10 @@ void Element::setPrefix(const AtomicString& prefix, ExceptionCode& ec)
     m_tagName.setPrefix(prefix.isEmpty() ? AtomicString() : prefix);
 }
 
-KURL Element::baseURI() const
+URL Element::baseURI() const
 {
     const AtomicString& baseAttribute = getAttribute(baseAttr);
-    KURL base(KURL(), baseAttribute);
+    URL base(URL(), baseAttribute);
     if (!base.protocol().isEmpty())
         return base;
 
@@ -1257,11 +1257,11 @@ KURL Element::baseURI() const
     if (!parent)
         return base;
 
-    const KURL& parentBase = parent->baseURI();
+    const URL& parentBase = parent->baseURI();
     if (parentBase.isNull())
         return base;
 
-    return KURL(parentBase, baseAttribute);
+    return URL(parentBase, baseAttribute);
 }
 
 const AtomicString& Element::imageSourceURL() const
@@ -2490,7 +2490,7 @@ DOMStringMap* Element::dataset()
     return data.dataset();
 }
 
-KURL Element::getURLAttribute(const QualifiedName& name) const
+URL Element::getURLAttribute(const QualifiedName& name) const
 {
 #if !ASSERT_DISABLED
     if (elementData()) {
@@ -2501,7 +2501,7 @@ KURL Element::getURLAttribute(const QualifiedName& name) const
     return document().completeURL(stripLeadingAndTrailingHTMLSpaces(getAttribute(name)));
 }
 
-KURL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
+URL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
 {
 #if !ASSERT_DISABLED
     if (elementData()) {
@@ -2511,7 +2511,7 @@ KURL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
 #endif
     String value = stripLeadingAndTrailingHTMLSpaces(getAttribute(name));
     if (value.isEmpty())
-        return KURL();
+        return URL();
     return document().completeURL(value);
 }
 

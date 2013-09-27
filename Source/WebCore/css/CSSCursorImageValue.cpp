@@ -190,7 +190,7 @@ bool CSSCursorImageValue::isSVGCursor() const
 {
     if (m_imageValue->isImageValue()) {
         RefPtr<CSSImageValue> imageValue = static_cast<CSSImageValue*>(m_imageValue.get());
-        KURL kurl(ParsedURLString, imageValue->url());
+        URL kurl(ParsedURLString, imageValue->url());
         return kurl.hasFragmentIdentifier();
     }
     return false;

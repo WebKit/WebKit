@@ -28,7 +28,7 @@
 
 #if USE(CFNETWORK)
 
-#include "KURL.h"
+#include "URL.h"
 #include <CoreFoundation/CFError.h>
 #include <CFNetwork/CFNetworkErrors.h>
 #include <wtf/RetainPtr.h>

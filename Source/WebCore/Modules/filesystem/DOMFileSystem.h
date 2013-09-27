@@ -47,7 +47,7 @@ class FileWriterCallback;
 
 class DOMFileSystem : public DOMFileSystemBase, public ActiveDOMObject {
 public:
-    static PassRefPtr<DOMFileSystem> create(ScriptExecutionContext*, const String& name, FileSystemType, const KURL& rootURL, PassOwnPtr<AsyncFileSystem>);
+    static PassRefPtr<DOMFileSystem> create(ScriptExecutionContext*, const String& name, FileSystemType, const URL& rootURL, PassOwnPtr<AsyncFileSystem>);
 
     // Creates a new isolated file system for the given filesystemId.
     static PassRefPtr<DOMFileSystem> createIsolatedFileSystem(ScriptExecutionContext*, const String& filesystemId);
@@ -72,7 +72,7 @@ public:
     }
 
 private:
-    DOMFileSystem(ScriptExecutionContext*, const String& name, FileSystemType, const KURL& rootURL, PassOwnPtr<AsyncFileSystem>);
+    DOMFileSystem(ScriptExecutionContext*, const String& name, FileSystemType, const URL& rootURL, PassOwnPtr<AsyncFileSystem>);
 
     // ActiveDOMObject methods.
     virtual void stop() OVERRIDE;

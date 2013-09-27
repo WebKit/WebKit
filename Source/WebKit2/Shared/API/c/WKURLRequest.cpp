@@ -28,7 +28,7 @@
 
 #include "WKAPICast.h"
 #include "WebURLRequest.h"
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -40,7 +40,7 @@ WKTypeID WKURLRequestGetTypeID()
 
 WKURLRequestRef WKURLRequestCreateWithWKURL(WKURLRef url)
 {
-    return toAPI(WebURLRequest::create(KURL(KURL(), toImpl(url)->string())).leakRef());
+    return toAPI(WebURLRequest::create(URL(URL(), toImpl(url)->string())).leakRef());
 }
 
 WKURLRef WKURLRequestCopyURL(WKURLRequestRef requestRef)

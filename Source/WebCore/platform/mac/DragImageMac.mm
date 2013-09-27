@@ -34,7 +34,7 @@
 #import "FontSelector.h"
 #import "GraphicsContext.h"
 #import "Image.h"
-#import "KURL.h"
+#import "URL.h"
 #import "ResourceResponse.h"
 #import "StringTruncator.h"
 #import "TextRun.h"
@@ -267,7 +267,7 @@ static void drawDoubledAtPoint(NSString *string, NSPoint textPoint, NSColor *top
         drawAtPoint(string, textPoint, font, topColor);
 }
 
-DragImageRef createDragImageForLink(KURL& url, const String& title, FontRenderingMode)
+DragImageRef createDragImageForLink(URL& url, const String& title, FontRenderingMode)
 {
     NSString *label = nsStringNilIfEmpty(title);
     NSURL *cocoaURL = url;

@@ -60,7 +60,7 @@ class InspectorObject;
 class InspectorOverlay;
 class InspectorState;
 class InstrumentingAgents;
-class KURL;
+class URL;
 class Page;
 class RegularExpression;
 class SharedBuffer;
@@ -86,11 +86,11 @@ public:
 
     static bool cachedResourceContent(CachedResource*, String* result, bool* base64Encoded);
     static bool sharedBufferContent(PassRefPtr<SharedBuffer>, const String& textEncodingName, bool withBase64Encode, String* result);
-    static void resourceContent(ErrorString*, Frame*, const KURL&, String* result, bool* base64Encoded);
+    static void resourceContent(ErrorString*, Frame*, const URL&, String* result, bool* base64Encoded);
     static String sourceMapURLForResource(CachedResource*);
 
-    static PassRefPtr<SharedBuffer> resourceData(Frame*, const KURL&, String* textEncodingName);
-    static CachedResource* cachedResource(Frame*, const KURL&);
+    static PassRefPtr<SharedBuffer> resourceData(Frame*, const URL&, String* textEncodingName);
+    static CachedResource* cachedResource(Frame*, const URL&);
     static TypeBuilder::Page::ResourceType::Enum resourceTypeJson(ResourceType);
     static ResourceType cachedResourceType(const CachedResource&);
     static TypeBuilder::Page::ResourceType::Enum cachedResourceTypeJson(const CachedResource&);

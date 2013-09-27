@@ -1134,7 +1134,7 @@
     <ClCompile Include="..\platform\KillRingNone.cpp">
       <Filter>platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\KURL.cpp">
+    <ClCompile Include="..\platform\URL.cpp">
       <Filter>platform</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\Language.cpp">
@@ -5118,7 +5118,7 @@
     <ClCompile Include="..\platform\cf\FileSystemCF.cpp">
       <Filter>platform\cf</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\cf\KURLCFNet.cpp">
+    <ClCompile Include="..\platform\cf\URLCF.cpp">
       <Filter>platform\cf</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\cf\win\CertificateCFWin.cpp">
@@ -8133,10 +8133,10 @@
     <ClInclude Include="..\platform\KillRing.h">
       <Filter>platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\KURL.h">
+    <ClInclude Include="..\platform\URL.h">
       <Filter>platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\KURLHash.h">
+    <ClInclude Include="..\platform\URLHash.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\Language.h">

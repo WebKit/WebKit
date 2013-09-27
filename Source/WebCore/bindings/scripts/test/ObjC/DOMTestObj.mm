@@ -49,7 +49,7 @@
 #import "ExceptionHandlers.h"
 #import "HTMLNames.h"
 #import "JSMainThreadExecState.h"
-#import "KURL.h"
+#import "URL.h"
 #import "Node.h"
 #import "ObjCEventListener.h"
 #import "SVGDocument.h"

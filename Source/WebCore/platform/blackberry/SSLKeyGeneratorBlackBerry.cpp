@@ -19,7 +19,7 @@
 #include "config.h"
 #include "SSLKeyGenerator.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "NotImplemented.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -31,7 +31,7 @@ void getSupportedKeySizes(Vector<String>&)
     notImplemented();
 }
 
-String signedPublicKeyAndChallengeString(unsigned, String const&, KURL const&)
+String signedPublicKeyAndChallengeString(unsigned, String const&, URL const&)
 {
     notImplemented();
     return String();

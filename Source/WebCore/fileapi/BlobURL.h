@@ -31,7 +31,7 @@
 #ifndef BlobURL_h
 #define BlobURL_h
 
-#include "KURL.h"
+#include "URL.h"
 
 namespace WebCore {
 
@@ -48,14 +48,14 @@ class SecurityOrigin;
 // be used with ResourceHandle or FileReader.
 class BlobURL {
 public:
-    static KURL createPublicURL(SecurityOrigin*);
-    static KURL createInternalURL();
-    static String getOrigin(const KURL&);
-    static String getIdentifier(const KURL&);
+    static URL createPublicURL(SecurityOrigin*);
+    static URL createInternalURL();
+    static String getOrigin(const URL&);
+    static String getIdentifier(const URL&);
     static const char* blobProtocol() { return kBlobProtocol; }
 
 private:
-    static KURL createBlobURL(const String& originString);
+    static URL createBlobURL(const String& originString);
     static const char kBlobProtocol[];
     BlobURL() { }
 };

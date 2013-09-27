@@ -34,9 +34,9 @@ namespace WebKit {
 
 class BlobRegistryProxy : public WebCore::BlobRegistry {
 public:
-    virtual void registerBlobURL(const WebCore::KURL&, PassOwnPtr<WebCore::BlobData>);
-    virtual void registerBlobURL(const WebCore::KURL&, const WebCore::KURL& srcURL);
-    virtual void unregisterBlobURL(const WebCore::KURL&);
+    virtual void registerBlobURL(const WebCore::URL&, PassOwnPtr<WebCore::BlobData>);
+    virtual void registerBlobURL(const WebCore::URL&, const WebCore::URL& srcURL);
+    virtual void unregisterBlobURL(const WebCore::URL&);
 };
 
 }

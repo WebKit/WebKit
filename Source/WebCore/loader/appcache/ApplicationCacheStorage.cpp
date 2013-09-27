@@ -31,7 +31,7 @@
 #include "ApplicationCacheHost.h"
 #include "ApplicationCacheResource.h"
 #include "FileSystem.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NotImplemented.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
@@ -87,7 +87,7 @@ private:
     Vector<Record> m_records;
 };
 
-static unsigned urlHostHash(const KURL& url)
+static unsigned urlHostHash(const URL& url)
 {
     unsigned hostStart = url.hostStart();
     unsigned hostEnd = url.hostEnd();
@@ -100,7 +100,7 @@ static unsigned urlHostHash(const KURL& url)
     return AlreadyHashed::avoidDeletedValue(StringHasher::computeHashAndMaskTop8Bits(urlString.characters16() + hostStart, hostEnd - hostStart));
 }
 
-ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const KURL& manifestURL)
+ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const URL& manifestURL)
 {
     openDatabase(false);
     if (!m_database.isOpen())
@@ -135,7 +135,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const KURL& manif
     return group;
 }    
 
-ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const KURL& manifestURL)
+ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const URL& manifestURL)
 {
     ASSERT(!manifestURL.hasFragmentIdentifier());
 
@@ -160,7 +160,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::findOrCreateCacheGroup(const KUR
     return group;
 }
 
-ApplicationCacheGroup* ApplicationCacheStorage::findInMemoryCacheGroup(const KURL& manifestURL) const
+ApplicationCacheGroup* ApplicationCacheStorage::findInMemoryCacheGroup(const URL& manifestURL) const
 {
     return m_cachesInMemory.get(manifestURL);
 }
@@ -189,7 +189,7 @@ void ApplicationCacheStorage::loadManifestHostHashes()
         m_cacheHostSet.add(static_cast<unsigned>(statement.getColumnInt64(0)));
 }    
 
-ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const KURL& url)
+ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
 {
     ASSERT(!url.hasFragmentIdentifier());
     
@@ -229,7 +229,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const KURL& url
     
     int result;
     while ((result = statement.step()) == SQLResultRow) {
-        KURL manifestURL = KURL(ParsedURLString, statement.getColumnText(1));
+        URL manifestURL = URL(ParsedURLString, statement.getColumnText(1));
 
         if (m_cachesInMemory.contains(manifestURL))
             continue;
@@ -266,7 +266,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const KURL& url
     return 0;
 }
 
-ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const KURL& url)
+ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const URL& url)
 {
     ASSERT(!url.hasFragmentIdentifier());
 
@@ -278,7 +278,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const K
         ASSERT(!group->isObsolete());
 
         if (ApplicationCache* cache = group->newestCache()) {
-            KURL fallbackURL;
+            URL fallbackURL;
             if (cache->isURLInOnlineWhitelist(url))
                 continue;
             if (!cache->urlMatchesFallbackNamespace(url, &fallbackURL))
@@ -299,7 +299,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const K
     
     int result;
     while ((result = statement.step()) == SQLResultRow) {
-        KURL manifestURL = KURL(ParsedURLString, statement.getColumnText(1));
+        URL manifestURL = URL(ParsedURLString, statement.getColumnText(1));
 
         if (m_cachesInMemory.contains(manifestURL))
             continue;
@@ -313,7 +313,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const K
         unsigned newestCacheID = static_cast<unsigned>(statement.getColumnInt64(2));
         RefPtr<ApplicationCache> cache = loadCache(newestCacheID);
 
-        KURL fallbackURL;
+        URL fallbackURL;
         if (cache->isURLInOnlineWhitelist(url))
             continue;
         if (!cache->urlMatchesFallbackNamespace(url, &fallbackURL))
@@ -729,7 +729,7 @@ bool ApplicationCacheStorage::store(ApplicationCache* cache, ResourceStorageIDJo
     }
     
     // Store the online whitelist
-    const Vector<KURL>& onlineWhitelist = cache->onlineWhitelist();
+    const Vector<URL>& onlineWhitelist = cache->onlineWhitelist();
     {
         size_t whitelistSize = onlineWhitelist.size();
         for (size_t i = 0; i < whitelistSize; ++i) {
@@ -1110,7 +1110,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
 
     int result;
     while ((result = cacheStatement.step()) == SQLResultRow) {
-        KURL url(ParsedURLString, cacheStatement.getColumnText(0));
+        URL url(ParsedURLString, cacheStatement.getColumnText(0));
         
         int httpStatusCode = cacheStatement.getColumnInt(1);
 
@@ -1156,9 +1156,9 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
         return 0;
     whitelistStatement.bindInt64(1, storageID);
     
-    Vector<KURL> whitelist;
+    Vector<URL> whitelist;
     while ((result = whitelistStatement.step()) == SQLResultRow) 
-        whitelist.append(KURL(ParsedURLString, whitelistStatement.getColumnText(0)));
+        whitelist.append(URL(ParsedURLString, whitelistStatement.getColumnText(0)));
 
     if (result != SQLResultDone)
         LOG_ERROR("Could not load cache online whitelist, error \"%s\"", m_database.lastErrorMsg());
@@ -1188,7 +1188,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
     
     FallbackURLVector fallbackURLs;
     while ((result = fallbackStatement.step()) == SQLResultRow) 
-        fallbackURLs.append(make_pair(KURL(ParsedURLString, fallbackStatement.getColumnText(0)), KURL(ParsedURLString, fallbackStatement.getColumnText(1))));
+        fallbackURLs.append(make_pair(URL(ParsedURLString, fallbackStatement.getColumnText(0)), URL(ParsedURLString, fallbackStatement.getColumnText(1))));
 
     if (result != SQLResultDone)
         LOG_ERROR("Could not load fallback URLs, error \"%s\"", m_database.lastErrorMsg());
@@ -1337,7 +1337,7 @@ bool ApplicationCacheStorage::storeCopyOfCache(const String& cacheDirectory, App
     return copyStorage.storeNewestCache(groupCopy.get());
 }
 
-bool ApplicationCacheStorage::manifestURLs(Vector<KURL>* urls)
+bool ApplicationCacheStorage::manifestURLs(Vector<URL>* urls)
 {
     ASSERT(urls);
     openDatabase(false);
@@ -1350,7 +1350,7 @@ bool ApplicationCacheStorage::manifestURLs(Vector<KURL>* urls)
         return false;
 
     while (selectURLs.step() == SQLResultRow)
-        urls->append(KURL(ParsedURLString, selectURLs.getColumnText(0)));
+        urls->append(URL(ParsedURLString, selectURLs.getColumnText(0)));
 
     return true;
 }
@@ -1514,7 +1514,7 @@ long long ApplicationCacheStorage::flatFileAreaSize()
 
 void ApplicationCacheStorage::getOriginsWithCache(HashSet<RefPtr<SecurityOrigin> >& origins)
 {
-    Vector<KURL> urls;
+    Vector<URL> urls;
     if (!manifestURLs(&urls)) {
         LOG_ERROR("Failed to retrieve ApplicationCache manifest URLs");
         return;

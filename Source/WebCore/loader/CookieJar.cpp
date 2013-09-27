@@ -59,13 +59,13 @@ inline NetworkStorageSession& storageSession(const Document* document)
 #define LOCAL_SESSION(document) NetworkStorageSession session(networkingContext(document));
 #endif
 
-String cookies(const Document* document, const KURL& url)
+String cookies(const Document* document, const URL& url)
 {
     LOCAL_SESSION(document)
     return platformStrategies()->cookiesStrategy()->cookiesForDOM(session, document->firstPartyForCookies(), url);
 }
 
-void setCookies(Document* document, const KURL& url, const String& cookieString)
+void setCookies(Document* document, const URL& url, const String& cookieString)
 {
     LOCAL_SESSION(document)
     platformStrategies()->cookiesStrategy()->setCookiesFromDOM(session, document->firstPartyForCookies(), url, cookieString);
@@ -77,19 +77,19 @@ bool cookiesEnabled(const Document* document)
     return platformStrategies()->cookiesStrategy()->cookiesEnabled(session, document->firstPartyForCookies(), document->cookieURL());
 }
 
-String cookieRequestHeaderFieldValue(const Document* document, const KURL& url)
+String cookieRequestHeaderFieldValue(const Document* document, const URL& url)
 {
     LOCAL_SESSION(document)
     return platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(session, document->firstPartyForCookies(), url);
 }
 
-bool getRawCookies(const Document* document, const KURL& url, Vector<Cookie>& cookies)
+bool getRawCookies(const Document* document, const URL& url, Vector<Cookie>& cookies)
 {
     LOCAL_SESSION(document)
     return platformStrategies()->cookiesStrategy()->getRawCookies(session, document->firstPartyForCookies(), url, cookies);
 }
 
-void deleteCookie(const Document* document, const KURL& url, const String& cookieName)
+void deleteCookie(const Document* document, const URL& url, const String& cookieName)
 {
     LOCAL_SESSION(document)
     platformStrategies()->cookiesStrategy()->deleteCookie(session, url, cookieName);

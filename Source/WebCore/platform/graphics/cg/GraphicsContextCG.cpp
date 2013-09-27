@@ -33,7 +33,7 @@
 #include "GraphicsContextPlatformPrivateCG.h"
 #include "ImageBuffer.h"
 #include "ImageOrientation.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Path.h"
 #include "Pattern.h"
 #include "ShadowBlur.h"
@@ -1284,7 +1284,7 @@ void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool
         CGContextSetShouldAntialias(platformContext(), true);
 }
 
-void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
+void GraphicsContext::setURLForRect(const URL& link, const IntRect& destRect)
 {
     if (paintingDisabled())
         return;

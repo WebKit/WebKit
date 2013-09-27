@@ -213,7 +213,7 @@ void WebSocket::connect(const String& url, const String& protocol, ExceptionCode
 void WebSocket::connect(const String& url, const Vector<String>& protocols, ExceptionCode& ec)
 {
     LOG(Network, "WebSocket %p connect() url='%s'", this, url.utf8().data());
-    m_url = KURL(KURL(), url);
+    m_url = URL(URL(), url);
 
     if (!m_url.isValid()) {
         scriptExecutionContext()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Invalid url for WebSocket " + m_url.stringCenterEllipsizedToLength());
@@ -398,7 +398,7 @@ void WebSocket::close(int code, const String& reason, ExceptionCode& ec)
         m_channel->close(code, reason);
 }
 
-const KURL& WebSocket::url() const
+const URL& WebSocket::url() const
 {
     return m_url;
 }

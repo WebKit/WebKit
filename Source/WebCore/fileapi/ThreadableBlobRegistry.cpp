@@ -49,26 +49,26 @@ namespace WebCore {
 struct BlobRegistryContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BlobRegistryContext(const KURL& url, PassOwnPtr<BlobData> blobData)
+    BlobRegistryContext(const URL& url, PassOwnPtr<BlobData> blobData)
         : url(url.copy())
         , blobData(blobData)
     {
         this->blobData->detachFromCurrentThread();
     }
 
-    BlobRegistryContext(const KURL& url, const KURL& srcURL)
+    BlobRegistryContext(const URL& url, const URL& srcURL)
         : url(url.copy())
         , srcURL(srcURL.copy())
     {
     }
 
-    BlobRegistryContext(const KURL& url)
+    BlobRegistryContext(const URL& url)
         : url(url.copy())
     {
     }
 
-    KURL url;
-    KURL srcURL;
+    URL url;
+    URL srcURL;
     OwnPtr<BlobData> blobData;
 };
 
@@ -87,7 +87,7 @@ static void registerBlobURLTask(void* context)
     blobRegistry().registerBlobURL(blobRegistryContext->url, blobRegistryContext->blobData.release());
 }
 
-void ThreadableBlobRegistry::registerBlobURL(const KURL& url, PassOwnPtr<BlobData> blobData)
+void ThreadableBlobRegistry::registerBlobURL(const URL& url, PassOwnPtr<BlobData> blobData)
 {
     if (isMainThread())
         blobRegistry().registerBlobURL(url, blobData);
@@ -103,7 +103,7 @@ static void registerBlobURLFromTask(void* context)
     blobRegistry().registerBlobURL(blobRegistryContext->url, blobRegistryContext->srcURL);
 }
 
-void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, const KURL& url, const KURL& srcURL)
+void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, const URL& url, const URL& srcURL)
 {
     // If the blob URL contains null origin, as in the context with unique security origin or file URL, save the mapping between url and origin so that the origin can be retrived when doing security origin check.
     if (origin && BlobURL::getOrigin(url) == "null")
@@ -123,7 +123,7 @@ static void unregisterBlobURLTask(void* context)
     blobRegistry().unregisterBlobURL(blobRegistryContext->url);
 }
 
-void ThreadableBlobRegistry::unregisterBlobURL(const KURL& url)
+void ThreadableBlobRegistry::unregisterBlobURL(const URL& url)
 {
     if (BlobURL::getOrigin(url) == "null")
         originMap()->remove(url.string());
@@ -136,26 +136,26 @@ void ThreadableBlobRegistry::unregisterBlobURL(const KURL& url)
     }
 }
 
-PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const KURL& url)
+PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& url)
 {
     return originMap()->get(url.string());
 }
 
 #else
 
-void ThreadableBlobRegistry::registerBlobURL(const KURL&, PassOwnPtr<BlobData>)
+void ThreadableBlobRegistry::registerBlobURL(const URL&, PassOwnPtr<BlobData>)
 {
 }
 
-void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin*, const KURL&, const KURL&)
+void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin*, const URL&, const URL&)
 {
 }
 
-void ThreadableBlobRegistry::unregisterBlobURL(const KURL&)
+void ThreadableBlobRegistry::unregisterBlobURL(const URL&)
 {
 }
 
-PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const KURL&)
+PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL&)
 {
     return 0;
 }

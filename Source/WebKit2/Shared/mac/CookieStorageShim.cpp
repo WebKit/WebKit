@@ -33,7 +33,7 @@
 #include "NetworkProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <dlfcn.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
@@ -46,7 +46,7 @@ namespace WebKit {
 static CFDictionaryRef webKitCookieStorageCopyRequestHeaderFieldsForURL(CFHTTPCookieStorageRef inCookieStorage, CFURLRef inRequestURL)
 {
     String cookies;
-    KURL firstPartyForCookiesURL;
+    URL firstPartyForCookiesURL;
     if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(false, firstPartyForCookiesURL, inRequestURL), Messages::NetworkConnectionToWebProcess::CookiesForDOM::Reply(cookies), 0))
         return 0;
 

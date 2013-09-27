@@ -40,7 +40,7 @@ namespace WebKit {
 
 class WebURLRequest : public TypedAPIObject<APIObject::TypeURLRequest> {
 public:
-    static PassRefPtr<WebURLRequest> create(const WebCore::KURL&);
+    static PassRefPtr<WebURLRequest> create(const WebCore::URL&);
 
     static PassRefPtr<WebURLRequest> create(const WebCore::ResourceRequest& request)
     {

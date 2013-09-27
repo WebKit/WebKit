@@ -34,7 +34,7 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "FileSystemType.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Timer.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -72,58 +72,58 @@ public:
     // Moves a file or directory from srcPath to destPath.
     // AsyncFileSystemCallbacks::didSucceed() is called when the operation is completed successfully.
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
-    virtual void move(const KURL& srcPath, const KURL& destPath, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
+    virtual void move(const URL& srcPath, const URL& destPath, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
     // Copies a file or directory from srcPath to destPath.
     // AsyncFileSystemCallbacks::didSucceed() is called when the operation is completed successfully.
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
-    virtual void copy(const KURL& srcPath, const KURL& destPath, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
+    virtual void copy(const URL& srcPath, const URL& destPath, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
     // Deletes a file or directory at a given path.
     // It is an error to try to remove a directory that is not empty.
     // AsyncFileSystemCallbacks::didSucceed() is called when the operation is completed successfully.
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
-    virtual void remove(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
+    virtual void remove(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
     // Recursively deletes a directory at a given path.
     // AsyncFileSystemCallbacks::didSucceed() is called when the operation is completed successfully.
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
-    virtual void removeRecursively(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
+    virtual void removeRecursively(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
     // Retrieves the metadata information of the file or directory at a given path.
     // AsyncFileSystemCallbacks::didReadMetadata() is called when the operation is completed successfully.
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
-    virtual void readMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
+    virtual void readMetadata(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
     // Creates a file at a given path.  If exclusive flag is true, it fails if the path already exists.
     // AsyncFileSystemCallbacks::didSucceed() is called when the operation is completed successfully.
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
-    virtual void createFile(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
+    virtual void createFile(const URL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
     // Creates a directory at a given path.  If exclusive flag is true, it fails if the path already exists.
     // AsyncFileSystemCallbacks::didSucceed() is called when the operation is completed successfully.
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
-    virtual void createDirectory(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
+    virtual void createDirectory(const URL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
     // Checks if a file exists at a given path.
     // AsyncFileSystemCallbacks::didSucceed() is called if the file exists.
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
-    virtual void fileExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
+    virtual void fileExists(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
     // Checks if a directory exists at a given path.
     // AsyncFileSystemCallbacks::didSucceed() is called if the directory exists.
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
-    virtual void directoryExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
+    virtual void directoryExists(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
     // Reads directory entries of a given directory at path.
     // AsyncFileSystemCallbacks::didReadDirectoryEntry() is called when each directory entry is called. AsyncFileSystemCallbacks::didReadDirectoryEntries() is called after a chunk of directory entries have been read.
     // AsyncFileSystemCallbacks::didFail() is when there is an error.
-    virtual void readDirectory(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
+    virtual void readDirectory(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
     // Creates an AsyncFileWriter for a given file path.
     // AsyncFileSystemCallbacks::didCreateFileWriter() is called when an AsyncFileWriter is created successfully.
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
-    virtual void createWriter(AsyncFileWriterClient*, const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
+    virtual void createWriter(AsyncFileWriterClient*, const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
     // Creates a snapshot file and read its metadata for a new File object.
     // In local filesystem cases the backend may simply return the metadata of the file itself (as well as readMetadata does),
@@ -132,7 +132,7 @@ public:
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
     //
     // Note: the returned metadata info is cached in the File object for non-regular filesystem types (neither Temporary nor Persistent). The port could return valid metadata if it wants File object to cache metadata (e.g. if the file body is on a remote server), but otherwise should NOT return valid metadata.
-    virtual void createSnapshotFileAndReadMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
+    virtual void createSnapshotFileAndReadMetadata(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
 protected:
     AsyncFileSystem() { }

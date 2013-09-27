@@ -126,8 +126,8 @@ public:
     void pasteAsPlainText();
     void performDelete();
 
-    void copyURL(const KURL&, const String& title);
-    void copyURL(const KURL&, const String& title, Pasteboard&);
+    void copyURL(const URL&, const String& title);
+    void copyURL(const URL&, const String& title, Pasteboard&);
     void copyImage(const HitTestResult&);
 
     String readPlainTextFromPasteboard(Pasteboard&);
@@ -413,7 +413,7 @@ public:
 
 #if PLATFORM(MAC) || PLATFORM(EFL)
     void writeSelectionToPasteboard(Pasteboard&);
-    void writeImageToPasteboard(Pasteboard&, Element& imageElement, const KURL&, const String& title);
+    void writeImageToPasteboard(Pasteboard&, Element& imageElement, const URL&, const String& title);
 #endif
 
 private:

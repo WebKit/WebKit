@@ -31,7 +31,7 @@ class HTMLBaseElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLBaseElement> create(const QualifiedName&, Document&);
 
-    KURL href() const;
+    URL href() const;
     void setHref(const AtomicString&);
 
 private:

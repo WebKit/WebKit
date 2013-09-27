@@ -19,7 +19,7 @@
 #ifndef RSSAtomParser_h
 #define RSSAtomParser_h
 
-#include "KURL.h"
+#include "URL.h"
 #include "RSSParserBase.h"
 
 namespace WebCore {
@@ -70,7 +70,7 @@ private:
     String parseContent(const String& base, xmlNode*);
     String parseAuthor(xmlNode*);
     String parseCategory(xmlNode*);
-    KURL m_url;
+    URL m_url;
 };
 
 } // namespace WebCore

@@ -20,7 +20,7 @@
 #include "config.h"
 #include "ewk_security_policy.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 
@@ -29,7 +29,7 @@ using namespace WebCore;
 void ewk_security_policy_whitelist_origin_add(const char* sourceUrl, const char* destinationUrl, Eina_Bool allowSubdomains)
 {
     const RefPtr<SecurityOrigin> source = SecurityOrigin::createFromString(sourceUrl);
-    const KURL destination(KURL(), destinationUrl);
+    const URL destination(URL(), destinationUrl);
 
     SecurityPolicy::addOriginAccessWhitelistEntry(*source, destination.protocol(), destination.host(), allowSubdomains);
 }
@@ -37,7 +37,7 @@ void ewk_security_policy_whitelist_origin_add(const char* sourceUrl, const char*
 void ewk_security_policy_whitelist_origin_del(const char* sourceUrl, const char* destinationUrl, Eina_Bool allowSubdomains)
 {
     const RefPtr<SecurityOrigin> source = SecurityOrigin::createFromString(sourceUrl);
-    const KURL destination(KURL(), destinationUrl);
+    const URL destination(URL(), destinationUrl);
 
     SecurityPolicy::removeOriginAccessWhitelistEntry(*source, destination.protocol(), destination.host(), allowSubdomains);
 }

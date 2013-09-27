@@ -166,7 +166,7 @@ Programs_TestWebKitAPI_TestWebCore_LDFLAGS = \
 	-no-fast-install
 
 Programs_TestWebKitAPI_TestWebCore_SOURCES = \
-	Tools/TestWebKitAPI/Tests/WebCore/KURL.cpp \
+	Tools/TestWebKitAPI/Tests/WebCore/URL.cpp \
 	Tools/TestWebKitAPI/Tests/WebCore/LayoutUnit.cpp
 
 Programs_TestWebKitAPI_TestGtk_CPPFLAGS = \

@@ -27,7 +27,7 @@
 
 #include "config.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "NotImplemented.h"
 #include <float.h>
 #include <wtf/text/WTFString.h>
@@ -43,7 +43,7 @@ void getSupportedKeySizes(Vector<String>&)
     notImplemented();
 }
 
-String signedPublicKeyAndChallengeString(unsigned, const String&, const KURL&)
+String signedPublicKeyAndChallengeString(unsigned, const String&, const URL&)
 {
     return String();
 }

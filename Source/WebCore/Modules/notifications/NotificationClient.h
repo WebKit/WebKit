@@ -39,7 +39,7 @@
 namespace WebCore {
 
 class Document;
-class KURL;
+class URL;
 class Notification;
 class Page;
 class ScriptExecutionContext;

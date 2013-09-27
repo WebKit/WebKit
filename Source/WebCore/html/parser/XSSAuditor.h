@@ -28,7 +28,7 @@
 
 #include "HTMLToken.h"
 #include "HTTPParsers.h"
-#include "KURL.h"
+#include "URL.h"
 #include "SuffixTree.h"
 #include "TextEncoding.h"
 #include <wtf/PassOwnPtr.h>
@@ -104,7 +104,7 @@ private:
     bool isContainedInRequest(const String&);
     bool isLikelySafeResource(const String& url);
 
-    KURL m_documentURL;
+    URL m_documentURL;
     bool m_isEnabled;
 
     ContentSecurityPolicy::ReflectedXSSDisposition m_xssProtection;

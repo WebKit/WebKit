@@ -57,7 +57,7 @@ FrameLoaderClientWinCE::~FrameLoaderClientWinCE()
 {
 }
 
-String FrameLoaderClientWinCE::userAgent(const KURL&)
+String FrameLoaderClientWinCE::userAgent(const URL&)
 {
     DEFINE_STATIC_LOCAL(String, userAgentString, ());
 
@@ -162,12 +162,12 @@ void FrameLoaderClientWinCE::dispatchWillSubmitForm(FramePolicyFunction policyFu
     (m_frame->loader().policyChecker()->*policyFunction)(PolicyUse);
 }
 
-PassRefPtr<Widget> FrameLoaderClientWinCE::createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool)
+PassRefPtr<Widget> FrameLoaderClientWinCE::createPlugin(const IntSize&, HTMLPlugInElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool)
 {
     return 0;
 }
 
-PassRefPtr<Frame> FrameLoaderClientWinCE::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+PassRefPtr<Frame> FrameLoaderClientWinCE::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                                  const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
 {
     return m_webView->createFrame(url, name, ownerElement, referrer, allowsScrolling, marginWidth, marginHeight);
@@ -180,13 +180,13 @@ void FrameLoaderClientWinCE::redirectDataToPlugin(Widget* pluginWidget)
         m_hasSentResponseToPlugin = false;
 }
 
-PassRefPtr<Widget> FrameLoaderClientWinCE::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL&, const Vector<String>&, const Vector<String>&)
+PassRefPtr<Widget> FrameLoaderClientWinCE::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL&, const Vector<String>&, const Vector<String>&)
 {
     notImplemented();
     return 0;
 }
 
-ObjectContentType FrameLoaderClientWinCE::objectContentType(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages)
+ObjectContentType FrameLoaderClientWinCE::objectContentType(const URL& url, const String& mimeType, bool shouldPreferPlugInsForImages)
 {
     return FrameLoader::defaultObjectContentType(url, mimeType, shouldPreferPlugInsForImages);
 }
@@ -262,12 +262,12 @@ void FrameLoaderClientWinCE::didDisplayInsecureContent()
     notImplemented();
 }
 
-void FrameLoaderClientWinCE::didRunInsecureContent(SecurityOrigin*, const KURL&)
+void FrameLoaderClientWinCE::didRunInsecureContent(SecurityOrigin*, const URL&)
 {
     notImplemented();
 }
 
-void FrameLoaderClientWinCE::didDetectXSS(const KURL&, bool)
+void FrameLoaderClientWinCE::didDetectXSS(const URL&, bool)
 {
     notImplemented();
 }
@@ -317,7 +317,7 @@ void FrameLoaderClientWinCE::dispatchDidCancelClientRedirect()
     notImplemented();
 }
 
-void FrameLoaderClientWinCE::dispatchWillPerformClientRedirect(const KURL&, double, double)
+void FrameLoaderClientWinCE::dispatchWillPerformClientRedirect(const URL&, double, double)
 {
     notImplemented();
 }
@@ -462,7 +462,7 @@ void FrameLoaderClientWinCE::prepareForDataSourceReplacement()
     notImplemented();
 }
 
-void FrameLoaderClientWinCE::setTitle(const StringWithDirection&, const KURL&)
+void FrameLoaderClientWinCE::setTitle(const StringWithDirection&, const URL&)
 {
     notImplemented();
 }
@@ -631,7 +631,7 @@ void FrameLoaderClientWinCE::dispatchDidBecomeFrameset(bool)
 
 PassRefPtr<WebCore::FrameNetworkingContext> FrameLoaderClientWinCE::createNetworkingContext()
 {
-    return FrameNetworkingContextWinCE::create(m_frame, userAgent(KURL()));
+    return FrameNetworkingContextWinCE::create(m_frame, userAgent(URL()));
 }
 
 } // namespace WebKit

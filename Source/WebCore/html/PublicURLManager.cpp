@@ -29,20 +29,20 @@
 
 #if ENABLE(BLOB)
 
-#include "KURL.h"
+#include "URL.h"
 #include "URLRegistry.h"
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-void PublicURLManager::registerURL(SecurityOrigin* origin, const KURL& url, URLRegistrable* registrable)
+void PublicURLManager::registerURL(SecurityOrigin* origin, const URL& url, URLRegistrable* registrable)
 {
     RegistryURLMap::iterator found = m_registryToURL.add(&registrable->registry(), URLSet()).iterator;
     found->key->registerURL(origin, url, registrable);
     found->value.add(url.string());
 }
 
-void PublicURLManager::revoke(const KURL& url)
+void PublicURLManager::revoke(const URL& url)
 {
     for (RegistryURLMap::iterator i = m_registryToURL.begin(); i != m_registryToURL.end(); ++i) {
         if (i->value.contains(url.string())) {
@@ -57,7 +57,7 @@ void PublicURLManager::contextDestroyed()
 {
     for (RegistryURLMap::iterator i = m_registryToURL.begin(); i != m_registryToURL.end(); ++i) {
         for (URLSet::iterator j = i->value.begin(); j != i->value.end(); ++j)
-            i->key->unregisterURL(KURL(ParsedURLString, *j));
+            i->key->unregisterURL(URL(ParsedURLString, *j));
     }
 
     m_registryToURL.clear();

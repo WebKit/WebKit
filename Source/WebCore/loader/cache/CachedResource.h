@@ -112,7 +112,7 @@ public:
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return false; }
 
     ResourceRequest& resourceRequest() { return m_resourceRequest; }
-    const KURL& url() const { return m_resourceRequest.url();}
+    const URL& url() const { return m_resourceRequest.url();}
 #if ENABLE(CACHE_PARTITIONING)
     const String& cachePartition() const { return m_resourceRequest.cachePartition(); }
 #endif

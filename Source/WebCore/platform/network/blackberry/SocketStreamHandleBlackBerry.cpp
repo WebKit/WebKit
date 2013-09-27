@@ -34,7 +34,7 @@
 
 #include "Chrome.h"
 #include "FrameLoaderClientBlackBerry.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PageClientBlackBerry.h"
@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-SocketStreamHandle::SocketStreamHandle(const String& groupName, const KURL& url, SocketStreamHandleClient* client)
+SocketStreamHandle::SocketStreamHandle(const String& groupName, const URL& url, SocketStreamHandleClient* client)
     : SocketStreamHandleBase(url, client)
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, m_client);

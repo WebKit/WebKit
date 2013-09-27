@@ -44,7 +44,7 @@ class SegmentedString;
 class TokenPreloadScanner {
     WTF_MAKE_NONCOPYABLE(TokenPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit TokenPreloadScanner(const KURL& documentURL, float deviceScaleFactor = 1.0);
+    explicit TokenPreloadScanner(const URL& documentURL, float deviceScaleFactor = 1.0);
     ~TokenPreloadScanner();
 
     void scan(const HTMLToken&, PreloadRequestStream& requests);
@@ -52,7 +52,7 @@ public:
     void scan(const CompactHTMLToken&, PreloadRequestStream& requests);
 #endif
 
-    void setPredictedBaseElementURL(const KURL& url) { m_predictedBaseElementURL = url; }
+    void setPredictedBaseElementURL(const URL& url) { m_predictedBaseElementURL = url; }
 
     // A TokenPreloadScannerCheckpoint is valid until the next call to rewindTo,
     // at which point all outstanding checkpoints are invalidated.
@@ -94,7 +94,7 @@ private:
     void updatePredictedBaseURL(const Token&);
 
     struct Checkpoint {
-        Checkpoint(const KURL& predictedBaseElementURL, bool inStyle
+        Checkpoint(const URL& predictedBaseElementURL, bool inStyle
 #if ENABLE(TEMPLATE_ELEMENT)
             , size_t templateCount
 #endif
@@ -107,7 +107,7 @@ private:
         {
         }
 
-        KURL predictedBaseElementURL;
+        URL predictedBaseElementURL;
         bool inStyle;
 #if ENABLE(TEMPLATE_ELEMENT)
         size_t templateCount;
@@ -115,8 +115,8 @@ private:
     };
 
     CSSPreloadScanner m_cssScanner;
-    const KURL m_documentURL;
-    KURL m_predictedBaseElementURL;
+    const URL m_documentURL;
+    URL m_predictedBaseElementURL;
     bool m_inStyle;
     float m_deviceScaleFactor;
 
@@ -130,11 +130,11 @@ private:
 class HTMLPreloadScanner {
     WTF_MAKE_NONCOPYABLE(HTMLPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    HTMLPreloadScanner(const HTMLParserOptions&, const KURL& documentURL, float deviceScaleFactor = 1.0);
+    HTMLPreloadScanner(const HTMLParserOptions&, const URL& documentURL, float deviceScaleFactor = 1.0);
     ~HTMLPreloadScanner();
 
     void appendToEnd(const SegmentedString&);
-    void scan(HTMLResourcePreloader*, const KURL& documentBaseElementURL);
+    void scan(HTMLResourcePreloader*, const URL& documentBaseElementURL);
 
 private:
     TokenPreloadScanner m_scanner;

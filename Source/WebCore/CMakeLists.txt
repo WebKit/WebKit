@@ -1817,7 +1817,7 @@ set(WebCore_SOURCES
     platform/FileStream.cpp
     platform/FileSystem.cpp
     platform/HistogramSupport.cpp
-    platform/KURL.cpp
+    platform/URL.cpp
     platform/KillRingNone.cpp
     platform/Language.cpp
     platform/Length.cpp

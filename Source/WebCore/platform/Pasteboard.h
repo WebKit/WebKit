@@ -28,7 +28,7 @@
 
 #include "DragImage.h"
 #include "Image.h"
-#include "KURL.h"
+#include "URL.h"
 #include "SharedBuffer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -86,7 +86,7 @@ struct PasteboardWebContent {
 };
 
 struct PasteboardURL {
-    KURL url;
+    URL url;
     String title;
 #if PLATFORM(MAC) && !PLATFORM(IOS)
     String userVisibleForm;
@@ -115,7 +115,7 @@ public:
     virtual bool readRTFD(PassRefPtr<SharedBuffer>) = 0;
     virtual bool readRTF(PassRefPtr<SharedBuffer>) = 0;
     virtual bool readImage(PassRefPtr<SharedBuffer>, const String& type) = 0;
-    virtual bool readURL(const KURL&, const String& title) = 0;
+    virtual bool readURL(const URL&, const String& title) = 0;
 #endif
     virtual bool readPlainText(const String&) = 0;
 };
@@ -170,7 +170,7 @@ public:
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(WIN)
-    void writeImage(Node*, const KURL&, const String& title); // FIXME: Layering violation.
+    void writeImage(Node*, const URL&, const String& title); // FIXME: Layering violation.
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
 
@@ -210,9 +210,9 @@ public:
 #if PLATFORM(WIN)
     COMPtr<IDataObject> dataObject() const { return m_dataObject; }
     void setExternalDataObject(IDataObject*);
-    void writeURLToWritableDataObject(const KURL&, const String&);
+    void writeURLToWritableDataObject(const URL&, const String&);
     COMPtr<WCDataObject> writableDataObject() const { return m_writableDataObject; }
-    void writeImageToDataObject(Element*, const KURL&); // FIXME: Layering violation.
+    void writeImageToDataObject(Element*, const URL&); // FIXME: Layering violation.
 #endif
 
 private:
@@ -240,7 +240,7 @@ private:
 
     void finishCreatingPasteboard();
     void writeRangeToDataObject(Range*, Frame*); // FIXME: Layering violation.
-    void writeURLToDataObject(const KURL&, const String&);
+    void writeURLToDataObject(const URL&, const String&);
     void writePlainTextToDataObject(const String&, SmartReplaceOption);
 #endif
 

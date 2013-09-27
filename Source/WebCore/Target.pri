@@ -1027,7 +1027,7 @@ SOURCES += \
     platform/image-decoders/gif/GIFImageDecoder.cpp \
     platform/image-decoders/gif/GIFImageReader.cpp\
     platform/KillRingNone.cpp \
-    platform/KURL.cpp \
+    platform/URL.cpp \
     platform/Language.cpp \
     platform/Length.cpp \
     platform/LengthBox.cpp \
@@ -2244,7 +2244,7 @@ HEADERS += \
     platform/image-decoders/gif/GIFImageReader.h \
     platform/image-decoders/png/PNGImageDecoder.h \
     platform/KillRing.h \
-    platform/KURL.h \
+    platform/URL.h \
     platform/Length.h \
     platform/LengthBox.h \
     platform/leveldb/LevelDBComparator.h \
@@ -2905,7 +2905,7 @@ SOURCES += \
     platform/graphics/qt/GlyphPageTreeNodeQt.cpp \
     platform/graphics/qt/SimpleFontDataQt.cpp \
     platform/graphics/qt/TileQt.cpp \
-    platform/qt/KURLQt.cpp \
+    platform/qt/URLQt.cpp \
     platform/qt/MIMETypeRegistryQt.cpp \
     platform/qt/PasteboardQt.cpp \
     platform/qt/PlatformKeyboardEventQt.cpp \

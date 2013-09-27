@@ -31,7 +31,7 @@
 #ifndef IconURL_h
 #define IconURL_h
 
-#include "KURL.h"
+#include "URL.h"
 
 namespace WebCore {
 
@@ -52,7 +52,7 @@ struct IconURL {
     IconType m_iconType;
     String m_sizes;
     String m_mimeType;
-    KURL m_iconURL;
+    URL m_iconURL;
     bool m_isDefaultIcon;
 
     IconURL()
@@ -61,7 +61,7 @@ struct IconURL {
     {
     }
 
-    IconURL(const KURL& url, const String& sizes, const String& mimeType, IconType type)
+    IconURL(const URL& url, const String& sizes, const String& mimeType, IconType type)
         : m_iconType(type)
         , m_sizes(sizes)
         , m_mimeType(mimeType)
@@ -70,7 +70,7 @@ struct IconURL {
     {
     }
     
-    static IconURL defaultIconURL(const KURL&, IconType);
+    static IconURL defaultIconURL(const URL&, IconType);
 };
 
 bool operator==(const IconURL&, const IconURL&);

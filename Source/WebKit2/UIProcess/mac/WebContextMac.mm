@@ -600,7 +600,7 @@ static CFURLStorageSessionRef privateBrowsingSession()
 bool WebContext::isURLKnownHSTSHost(const String& urlString, bool privateBrowsingEnabled) const
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    RetainPtr<CFURLRef> url = KURL(KURL(), urlString).createCFURL();
+    RetainPtr<CFURLRef> url = URL(URL(), urlString).createCFURL();
 
     return _CFNetworkIsKnownHSTSHostWithSession(url.get(), privateBrowsingEnabled ? privateBrowsingSession() : nullptr);
 #else

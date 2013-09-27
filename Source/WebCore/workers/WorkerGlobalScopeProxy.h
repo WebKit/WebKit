@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-    class KURL;
+    class URL;
     class Worker;
 
     // A proxy to talk to the worker context.
@@ -50,7 +50,7 @@ namespace WebCore {
 
         virtual ~WorkerGlobalScopeProxy() { }
 
-        virtual void startWorkerGlobalScope(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode) = 0;
+        virtual void startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode) = 0;
 
         virtual void terminateWorkerGlobalScope() = 0;
 

@@ -386,7 +386,7 @@ String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
     String string = text.text;
 
     // FIXME: It's not clear this is 100% correct since we know -[NSURL URLWithString:] does not handle
-    // all the same cases we handle well in the KURL code for creating an NSURL.
+    // all the same cases we handle well in the URL code for creating an NSURL.
     if (text.isURL)
         string = client()->userVisibleString([NSURL URLWithString:string]);
 
@@ -394,7 +394,7 @@ String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
     return [(NSString *)string precomposedStringWithCanonicalMapping];
 }
 
-void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const KURL& url, const String& title)
+void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const URL& url, const String& title)
 {
     PasteboardImage pasteboardImage;
 
@@ -437,7 +437,7 @@ private:
     virtual bool readRTFD(PassRefPtr<SharedBuffer>) override;
     virtual bool readRTF(PassRefPtr<SharedBuffer>) override;
     virtual bool readImage(PassRefPtr<SharedBuffer>, const String& type) override;
-    virtual bool readURL(const KURL&, const String& title) override;
+    virtual bool readURL(const URL&, const String& title) override;
     virtual bool readPlainText(const String&) override;
 };
 
@@ -446,7 +446,7 @@ bool Editor::WebContentReader::readWebArchive(PassRefPtr<SharedBuffer> buffer)
     if (!frame.document())
         return false;
 
-    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(KURL(), buffer.get());
+    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(URL(), buffer.get());
     if (!archive)
         return false;
 
@@ -535,13 +535,13 @@ bool Editor::WebContentReader::readImage(PassRefPtr<SharedBuffer> buffer, const 
     ASSERT(type.contains('/'));
     String typeAsFilenameWithExtension = type;
     typeAsFilenameWithExtension.replace('/', '.');
-    KURL imageURL = KURL(KURL(), "webkit-fake-url://" + createCanonicalUUIDString() + '/' + typeAsFilenameWithExtension);
+    URL imageURL = URL(URL(), "webkit-fake-url://" + createCanonicalUUIDString() + '/' + typeAsFilenameWithExtension);
 
     fragment = frame.editor().createFragmentForImageResourceAndAddResource(ArchiveResource::create(buffer, imageURL, type, emptyString(), emptyString()));
     return fragment;
 }
 
-bool Editor::WebContentReader::readURL(const KURL& url, const String& title)
+bool Editor::WebContentReader::readURL(const URL& url, const String& title)
 {
     if (url.string().isEmpty())
         return false;

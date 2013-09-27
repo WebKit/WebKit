@@ -44,7 +44,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <WebCore/ResourceBuffer.h>
 
 using namespace WebCore;
@@ -254,7 +254,7 @@ HRESULT STDMETHODCALLTYPE WebDataSource::pageTitle(
 HRESULT STDMETHODCALLTYPE WebDataSource::unreachableURL( 
     /* [retval][out] */ BSTR* url)
 {
-    KURL unreachableURL = m_loader->unreachableURL();
+    URL unreachableURL = m_loader->unreachableURL();
     BString urlString((LPOLESTR)unreachableURL.string().characters(), unreachableURL.string().length());
 
     *url = urlString.release();

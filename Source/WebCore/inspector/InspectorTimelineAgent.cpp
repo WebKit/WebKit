@@ -434,7 +434,7 @@ void InspectorTimelineAgent::didFireAnimationFrame()
 }
 
 #if ENABLE(WEB_SOCKETS)
-void InspectorTimelineAgent::didCreateWebSocket(unsigned long identifier, const KURL& url, const String& protocol, Frame* frame)
+void InspectorTimelineAgent::didCreateWebSocket(unsigned long identifier, const URL& url, const String& protocol, Frame* frame)
 {
     appendRecord(TimelineRecordFactory::createWebSocketCreateData(identifier, url, protocol), TimelineRecordType::WebSocketCreate, true, frame);
 }

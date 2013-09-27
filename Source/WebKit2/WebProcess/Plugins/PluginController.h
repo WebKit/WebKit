@@ -39,7 +39,7 @@ typedef void* NPIdentifier;
 namespace WebCore {
     class HTTPHeaderMap;
     class IntRect;
-    class KURL;
+    class URL;
     class ProtectionSpace;
 }
 

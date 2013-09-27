@@ -36,7 +36,7 @@ typedef wchar_t* BSTR;
 
 namespace WebCore {
 
-    class KURL;
+    class URL;
 
     class BString {
     public:
@@ -45,7 +45,7 @@ namespace WebCore {
         BString(const wchar_t*, size_t length);
         BString(const String&);
         BString(const AtomicString&);
-        BString(const KURL&);
+        BString(const URL&);
 #if USE(CF)
         BString(CFStringRef);
 #endif

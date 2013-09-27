@@ -1174,12 +1174,12 @@ void Editor::simplifyMarkup(Node* startNode, Node* endNode)
     applyCommand(SimplifyMarkupCommand::create(document(), startNode, (endNode) ? NodeTraversal::next(endNode) : 0));
 }
 
-void Editor::copyURL(const KURL& url, const String& title)
+void Editor::copyURL(const URL& url, const String& title)
 {
     copyURL(url, title, *Pasteboard::createForCopyAndPaste());
 }
 
-void Editor::copyURL(const KURL& url, const String& title, Pasteboard& pasteboard)
+void Editor::copyURL(const URL& url, const String& title, Pasteboard& pasteboard)
 {
     PasteboardURL pasteboardURL;
     pasteboardURL.url = url;
@@ -1198,7 +1198,7 @@ void Editor::copyImage(const HitTestResult& result)
     if (!element)
         return;
 
-    KURL url = result.absoluteLinkURL();
+    URL url = result.absoluteLinkURL();
     if (url.isEmpty())
         url = result.absoluteImageURL();
 

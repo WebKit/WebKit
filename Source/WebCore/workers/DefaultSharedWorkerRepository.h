@@ -46,7 +46,7 @@
 namespace WebCore {
 
     class Document;
-    class KURL;
+    class URL;
     class MessagePortChannel;
     class ScriptExecutionContext;
     class SharedWorker;
@@ -65,7 +65,7 @@ namespace WebCore {
         void workerScriptLoaded(SharedWorkerProxy&, const String& userAgent, const String& workerScript, PassOwnPtr<MessagePortChannel>, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
 
         // Internal implementation of SharedWorkerRepository::connect()
-        void connectToWorker(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, const KURL&, const String& name, ExceptionCode&);
+        void connectToWorker(PassRefPtr<SharedWorker>, PassOwnPtr<MessagePortChannel>, const URL&, const String& name, ExceptionCode&);
 
         // Notification that a document has been detached.
         void documentDetached(Document*);
@@ -80,7 +80,7 @@ namespace WebCore {
         DefaultSharedWorkerRepository();
         ~DefaultSharedWorkerRepository();
 
-        PassRefPtr<SharedWorkerProxy> getProxy(const String& name, const KURL&);
+        PassRefPtr<SharedWorkerProxy> getProxy(const String& name, const URL&);
         // Mutex used to protect internal data structures.
         Mutex m_lock;
 

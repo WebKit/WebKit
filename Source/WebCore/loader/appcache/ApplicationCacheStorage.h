@@ -39,7 +39,7 @@ class ApplicationCache;
 class ApplicationCacheGroup;
 class ApplicationCacheHost;
 class ApplicationCacheResource;
-class KURL;
+class URL;
 class SecurityOrigin;
 class SharedBuffer;
 template <class T> class StorageIDJournal;
@@ -69,11 +69,11 @@ public:
     bool storeUpdatedQuotaForOrigin(const SecurityOrigin*, int64_t quota);
     bool checkOriginQuota(ApplicationCacheGroup*, ApplicationCache* oldCache, ApplicationCache* newCache, int64_t& totalSpaceNeeded);
 
-    ApplicationCacheGroup* cacheGroupForURL(const KURL&); // Cache to load a main resource from.
-    ApplicationCacheGroup* fallbackCacheGroupForURL(const KURL&); // Cache that has a fallback entry to load a main resource from if normal loading fails.
+    ApplicationCacheGroup* cacheGroupForURL(const URL&); // Cache to load a main resource from.
+    ApplicationCacheGroup* fallbackCacheGroupForURL(const URL&); // Cache that has a fallback entry to load a main resource from if normal loading fails.
 
-    ApplicationCacheGroup* findOrCreateCacheGroup(const KURL& manifestURL);
-    ApplicationCacheGroup* findInMemoryCacheGroup(const KURL& manifestURL) const;
+    ApplicationCacheGroup* findOrCreateCacheGroup(const URL& manifestURL);
+    ApplicationCacheGroup* findInMemoryCacheGroup(const URL& manifestURL) const;
     void cacheGroupDestroyed(ApplicationCacheGroup*);
     void cacheGroupMadeObsolete(ApplicationCacheGroup*);
         
@@ -89,7 +89,7 @@ public:
     
     static bool storeCopyOfCache(const String& cacheDirectory, ApplicationCacheHost*);
 
-    bool manifestURLs(Vector<KURL>* urls);
+    bool manifestURLs(Vector<URL>* urls);
     bool cacheGroupSize(const String& manifestURL, int64_t* size);
     bool deleteCacheGroup(const String& manifestURL);
     void vacuumDatabaseFile();
@@ -102,7 +102,7 @@ public:
 private:
     ApplicationCacheStorage();
     PassRefPtr<ApplicationCache> loadCache(unsigned storageID);
-    ApplicationCacheGroup* loadCacheGroup(const KURL& manifestURL);
+    ApplicationCacheGroup* loadCacheGroup(const URL& manifestURL);
     
     typedef StorageIDJournal<ApplicationCacheResource> ResourceStorageIDJournal;
     typedef StorageIDJournal<ApplicationCacheGroup> GroupStorageIDJournal;

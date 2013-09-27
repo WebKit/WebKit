@@ -41,7 +41,7 @@
 #include "JSTestObj.h"
 #include "JSTestSubObj.h"
 #include "JSbool.h"
-#include "KURL.h"
+#include "URL.h"
 #include "SVGDocument.h"
 #include "SVGPoint.h"
 #include "SVGStaticPropertyTearOff.h"

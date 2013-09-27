@@ -26,12 +26,12 @@
 #include "config.h"
 #include "ProxyServer.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
-Vector<ProxyServer> proxyServersForURL(const KURL&, const NetworkingContext*)
+Vector<ProxyServer> proxyServersForURL(const URL&, const NetworkingContext*)
 {
     // FIXME: Implement.
     return Vector<ProxyServer>();

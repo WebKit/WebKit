@@ -35,7 +35,7 @@
 #if ENABLE(NETWORK_PROCESS)
 
 namespace WebCore {
-class KURL;
+class URL;
 }
 
 namespace WebKit {
@@ -58,7 +58,7 @@ public:
     // Called within the NetworkProcess on a background thread when a resource load has finished.
     void scheduleRemoveLoader(NetworkResourceLoader*);
 
-    void receivedRedirect(NetworkResourceLoader*, const WebCore::KURL& redirectURL);
+    void receivedRedirect(NetworkResourceLoader*, const WebCore::URL& redirectURL);
     void servePendingRequests(WebCore::ResourceLoadPriority = WebCore::ResourceLoadPriorityVeryLow);
 
     // For NetworkProcess statistics reporting.
@@ -73,7 +73,7 @@ private:
         FindOnly
     };
     
-    HostRecord* hostForURL(const WebCore::KURL&, CreateHostPolicy = FindOnly);
+    HostRecord* hostForURL(const WebCore::URL&, CreateHostPolicy = FindOnly);
     
     void scheduleServePendingRequests();
     void requestTimerFired(WebCore::Timer<NetworkResourceLoadScheduler>*);

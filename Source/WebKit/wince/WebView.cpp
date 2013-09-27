@@ -155,7 +155,7 @@ void WebView::cleanup()
     UnregisterClass(kWebViewWindowClassName, WebCore::instanceHandle());
 }
 
-PassRefPtr<Frame> WebView::createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer,
+PassRefPtr<Frame> WebView::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer,
                                        bool /*allowsScrolling*/, int /*marginWidth*/, int /*marginHeight*/)
 {
     Frame* coreFrame = m_frame;

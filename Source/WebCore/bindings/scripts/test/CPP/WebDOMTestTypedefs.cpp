@@ -21,7 +21,7 @@
 #include "config.h"
 #include "WebDOMTestTypedefs.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "SVGPoint.h"
 #include "SerializedScriptValue.h"
 #include "TestTypedefs.h"

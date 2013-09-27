@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class KURL;
+class URL;
 class MediaStream;
 class MediaStreamDescriptor;
 
@@ -44,8 +44,8 @@ public:
     static MediaStreamRegistry& registry();
 
     // Registers a blob URL referring to the specified stream data.
-    virtual void registerURL(SecurityOrigin*, const KURL&, URLRegistrable*) OVERRIDE;
-    virtual void unregisterURL(const KURL&) OVERRIDE;
+    virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) OVERRIDE;
+    virtual void unregisterURL(const URL&) OVERRIDE;
 
     MediaStreamDescriptor* lookupMediaStreamDescriptor(const String& url);
 

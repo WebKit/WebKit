@@ -31,7 +31,7 @@ namespace WebCore {
 
 class HTMLFrameElementBase : public HTMLFrameOwnerElement {
 public:
-    KURL location() const;
+    URL location() const;
     void setLocation(const String&);
 
     virtual ScrollbarMode scrollingMode() const { return m_scrolling; }

@@ -27,9 +27,9 @@
 #define History_h
 
 #include "DOMWindowProperty.h"
-#include "KURL.h"
 #include "ScriptWrappable.h"
 #include "SerializedScriptValue.h"
+#include "URL.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -66,7 +66,7 @@ public:
 private:
     explicit History(Frame*);
 
-    KURL urlForState(const String& url);
+    URL urlForState(const String& url);
 
     PassRefPtr<SerializedScriptValue> stateInternal() const;
 

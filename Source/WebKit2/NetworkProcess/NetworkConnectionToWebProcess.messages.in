@@ -35,16 +35,16 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     StartDownload(bool privateBrowsingEnabled, uint64_t downloadID, WebCore::ResourceRequest request)
     ConvertMainResourceLoadToDownload(uint64_t mainResourceLoadIdentifier, uint64_t downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response)
 
-    CookiesForDOM(bool privateBrowsingEnabled, WebCore::KURL firstParty, WebCore::KURL url) -> (WTF::String result)
-    SetCookiesFromDOM(bool privateBrowsingEnabled, WebCore::KURL firstParty, WebCore::KURL url, WTF::String cookieString)
-    CookiesEnabled(bool privateBrowsingEnabled, WebCore::KURL firstParty, WebCore::KURL url) -> (bool enabled)
-    CookieRequestHeaderFieldValue(bool privateBrowsingEnabled, WebCore::KURL firstParty, WebCore::KURL url) -> (WTF::String result)
-    GetRawCookies(bool privateBrowsingEnabled, WebCore::KURL firstParty, WebCore::KURL url) -> (WTF::Vector<WebCore::Cookie> cookies)
-    DeleteCookie(bool privateBrowsingEnabled, WebCore::KURL url, WTF::String cookieName)
+    CookiesForDOM(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (WTF::String result)
+    SetCookiesFromDOM(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url, WTF::String cookieString)
+    CookiesEnabled(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (bool enabled)
+    CookieRequestHeaderFieldValue(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (WTF::String result)
+    GetRawCookies(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (WTF::Vector<WebCore::Cookie> cookies)
+    DeleteCookie(bool privateBrowsingEnabled, WebCore::URL url, WTF::String cookieName)
 
-    RegisterBlobURL(WebCore::KURL url, WebKit::BlobRegistrationData data)
-    RegisterBlobURLFromURL(WebCore::KURL url, WebCore::KURL srcURL)
-    UnregisterBlobURL(WebCore::KURL url)
+    RegisterBlobURL(WebCore::URL url, WebKit::BlobRegistrationData data)
+    RegisterBlobURLFromURL(WebCore::URL url, WebCore::URL srcURL)
+    UnregisterBlobURL(WebCore::URL url)
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class Frame;
-class KURL;
+class URL;
 
 class DocumentLoadTiming {
 public:
@@ -42,7 +42,7 @@ public:
 
     void markNavigationStart();
     void setNavigationStart(double);
-    void addRedirect(const KURL& redirectingUrl, const KURL& redirectedUrl);
+    void addRedirect(const URL& redirectingUrl, const URL& redirectedUrl);
 
     void markUnloadEventStart() { m_unloadEventStart = monotonicallyIncreasingTime(); }
     void markUnloadEventEnd() { m_unloadEventEnd = monotonicallyIncreasingTime(); }

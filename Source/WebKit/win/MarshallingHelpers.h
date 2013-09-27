@@ -31,14 +31,14 @@
 
 namespace WebCore {
     class IntRect;
-    class KURL;
+    class URL;
 }
 
 class MarshallingHelpers
 {
 public:
-    static WebCore::KURL BSTRToKURL(BSTR);
-    static BSTR KURLToBSTR(const WebCore::KURL&);
+    static WebCore::URL BSTRToKURL(BSTR);
+    static BSTR URLToBSTR(const WebCore::URL&);
     static CFURLRef PathStringToFileCFURLRef(const WTF::String&);
     static WTF::String FileCFURLRefToPathString(CFURLRef fileURL);
     static CFURLRef BSTRToCFURLRef(BSTR);

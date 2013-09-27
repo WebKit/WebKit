@@ -74,10 +74,10 @@ void HTMLScriptRunner::detach()
     m_document = 0;
 }
 
-static KURL documentURLForScriptExecution(Document* document)
+static URL documentURLForScriptExecution(Document* document)
 {
     if (!document || !document->frame())
-        return KURL();
+        return URL();
 
     // Use the URL of the currently active document for this frame.
     return document->frame()->document()->url();

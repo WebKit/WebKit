@@ -7436,7 +7436,7 @@
     </ClCompile>
     <ClCompile Include="..\platform\HistogramSupport.cpp" />
     <ClCompile Include="..\platform\KillRingNone.cpp" />
-    <ClCompile Include="..\platform\KURL.cpp" />
+    <ClCompile Include="..\platform\URL.cpp" />
     <ClCompile Include="..\platform\Language.cpp" />
     <ClCompile Include="..\platform\Length.cpp" />
     <ClCompile Include="..\platform\LengthBox.cpp" />
@@ -7620,7 +7620,7 @@
     <ClCompile Include="..\platform\win\WindowMessageBroadcaster.cpp" />
     <ClCompile Include="..\platform\cf\CFURLExtras.cpp" />
     <ClCompile Include="..\platform\cf\FileSystemCF.cpp" />
-    <ClCompile Include="..\platform\cf\KURLCFNet.cpp" />
+    <ClCompile Include="..\platform\cf\URLCF.cpp" />
     <ClCompile Include="..\platform\cf\SharedBufferCF.cpp" />
     <ClCompile Include="..\platform\cf\win\CertificateCFWin.cpp" />
     <ClCompile Include="..\platform\graphics\BitmapImage.cpp" />
@@ -19034,8 +19034,8 @@
     <ClInclude Include="..\platform\HistogramSupport.h" />
     <ClInclude Include="..\platform\HostWindow.h" />
     <ClInclude Include="..\platform\KillRing.h" />
-    <ClInclude Include="..\platform\KURL.h" />
-    <ClInclude Include="..\platform\KURLHash.h" />
+    <ClInclude Include="..\platform\URL.h" />
+    <ClInclude Include="..\platform\URLHash.h" />
     <ClInclude Include="..\platform\Language.h" />
     <ClInclude Include="..\platform\LayoutUnit.h" />
     <ClInclude Include="..\platform\Length.h" />

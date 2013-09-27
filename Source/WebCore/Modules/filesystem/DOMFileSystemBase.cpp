@@ -57,7 +57,7 @@ const size_t DOMFileSystemBase::temporaryPathPrefixLength = sizeof(DOMFileSystem
 const char DOMFileSystemBase::isolatedPathPrefix[] = "isolated";
 const size_t DOMFileSystemBase::isolatedPathPrefixLength = sizeof(DOMFileSystemBase::isolatedPathPrefix) - 1;
 
-DOMFileSystemBase::DOMFileSystemBase(ScriptExecutionContext* context, const String& name, FileSystemType type, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+DOMFileSystemBase::DOMFileSystemBase(ScriptExecutionContext* context, const String& name, FileSystemType type, const URL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
     : m_context(context)
     , m_name(name)
     , m_type(type)
@@ -79,7 +79,7 @@ bool DOMFileSystemBase::isValidType(FileSystemType type)
 }
 
 // static
-bool DOMFileSystemBase::crackFileSystemURL(const KURL& url, FileSystemType& type, String& filePath)
+bool DOMFileSystemBase::crackFileSystemURL(const URL& url, FileSystemType& type, String& filePath)
 {
     if (!url.protocolIs("filesystem"))
         return false;
@@ -105,10 +105,10 @@ bool DOMFileSystemBase::supportsToURL() const
     return true;
 }
 
-KURL DOMFileSystemBase::createFileSystemURL(const String& fullPath) const
+URL DOMFileSystemBase::createFileSystemURL(const String& fullPath) const
 {
     ASSERT(DOMFilePath::isAbsolute(fullPath));
-    KURL url = m_filesystemRootURL;
+    URL url = m_filesystemRootURL;
     // Remove the extra leading slash.
     url.setPath(url.path() + encodeWithURLEscapeSequences(fullPath.substring(1)));
     return url;
@@ -120,7 +120,7 @@ SecurityOrigin* DOMFileSystemBase::securityOrigin() const
     return m_context->securityOrigin();
 }
 
-KURL DOMFileSystemBase::createFileSystemURL(const EntryBase* entry) const
+URL DOMFileSystemBase::createFileSystemURL(const EntryBase* entry) const
 {
     return createFileSystemURL(entry->fullPath());
 }

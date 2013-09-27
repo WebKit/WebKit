@@ -27,7 +27,7 @@
 #define CachedFrame_h
 
 #include "DOMWindow.h"
-#include "KURL.h"
+#include "URL.h"
 #include "ScriptCachedFrameData.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -47,7 +47,7 @@ public:
 
     Document* document() const { return m_document.get(); }
     FrameView* view() const { return m_view.get(); }
-    const KURL& url() const { return m_url; }
+    const URL& url() const { return m_url; }
     bool isMainFrame() { return m_isMainFrame; }
 
 protected:
@@ -58,7 +58,7 @@ protected:
     RefPtr<DocumentLoader> m_documentLoader;
     RefPtr<FrameView> m_view;
     RefPtr<Node> m_mousePressNode;
-    KURL m_url;
+    URL m_url;
     OwnPtr<ScriptCachedFrameData> m_cachedFrameScriptData;
     OwnPtr<CachedFramePlatformData> m_cachedFramePlatformData;
     bool m_isMainFrame;

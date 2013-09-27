@@ -425,7 +425,7 @@ void FTPDirectoryDocumentParser::finish()
     HTMLDocumentParser::finish();
 }
 
-FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame, const KURL& url)
+FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame, const URL& url)
     : HTMLDocument(frame, url)
 {
 #if !LOG_DISABLED

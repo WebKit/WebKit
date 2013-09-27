@@ -385,7 +385,7 @@ static void applyAuthenticationToRequest(ResourceHandle* handle, ResourceRequest
     // We always put the credentials into the URL. In the CFNetwork-port HTTP family credentials are applied in
     // the didReceiveAuthenticationChallenge callback, but libsoup requires us to use this method to override
     // any previously remembered credentials. It has its own per-session credential storage.
-    KURL urlWithCredentials(request.url());
+    URL urlWithCredentials(request.url());
     urlWithCredentials.setUser(user);
     urlWithCredentials.setPass(password);
     request.setURL(urlWithCredentials);
@@ -422,7 +422,7 @@ static bool shouldRedirect(ResourceHandle* handle)
     return true;
 }
 
-static bool shouldRedirectAsGET(SoupMessage* message, KURL& newURL, bool crossOrigin)
+static bool shouldRedirectAsGET(SoupMessage* message, URL& newURL, bool crossOrigin)
 {
     if (message->method == SOUP_METHOD_GET || message->method == SOUP_METHOD_HEAD)
         return false;
@@ -460,7 +460,7 @@ static void doRedirect(ResourceHandle* handle)
     ResourceRequest newRequest = handle->firstRequest();
     SoupMessage* message = d->m_soupMessage.get();
     const char* location = soup_message_headers_get_one(message->response_headers, "Location");
-    KURL newURL = KURL(soupURIToKURL(soup_message_get_uri(message)), location);
+    URL newURL = URL(soupURIToKURL(soup_message_get_uri(message)), location);
     bool crossOrigin = !protocolHostAndPortAreEqual(handle->firstRequest().url(), newURL);
     newRequest.setURL(newURL);
     newRequest.setFirstPartyForCookies(newURL);
@@ -779,7 +779,7 @@ static void addEncodedBlobItemToSoupMessageBody(SoupMessage* message, const Blob
 
 static void addEncodedBlobToSoupMessageBody(SoupMessage* message, const FormDataElement& element, unsigned long& totalBodySize)
 {
-    RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, element.m_url));
+    RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(URL(ParsedURLString, element.m_url));
     if (!blobData)
         return;
 

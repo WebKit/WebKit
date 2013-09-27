@@ -33,18 +33,18 @@
 
 namespace WebCore {
 
-class KURL;
+class URL;
 class NetworkStorageSession;
 struct Cookie;
 
 class CookiesStrategy {
 public:
-    virtual String cookiesForDOM(const NetworkStorageSession&, const KURL& firstParty, const KURL&) = 0;
-    virtual void setCookiesFromDOM(const NetworkStorageSession&, const KURL& firstParty, const KURL&, const String& cookieString) = 0;
-    virtual bool cookiesEnabled(const NetworkStorageSession&, const KURL& firstParty, const KURL&) = 0;
-    virtual String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const KURL& firstParty, const KURL&) = 0;
-    virtual bool getRawCookies(const NetworkStorageSession&, const KURL& firstParty, const KURL&, Vector<Cookie>&) = 0;
-    virtual void deleteCookie(const NetworkStorageSession&, const KURL&, const String& cookieName) = 0;
+    virtual String cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&) = 0;
+    virtual void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, const String& cookieString) = 0;
+    virtual bool cookiesEnabled(const NetworkStorageSession&, const URL& firstParty, const URL&) = 0;
+    virtual String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&) = 0;
+    virtual bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, Vector<Cookie>&) = 0;
+    virtual void deleteCookie(const NetworkStorageSession&, const URL&, const String& cookieName) = 0;
 
 protected:
     virtual ~CookiesStrategy() { }

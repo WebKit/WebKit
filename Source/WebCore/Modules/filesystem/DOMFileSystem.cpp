@@ -55,7 +55,7 @@
 namespace WebCore {
 
 // static
-PassRefPtr<DOMFileSystem> DOMFileSystem::create(ScriptExecutionContext* context, const String& name, FileSystemType type, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+PassRefPtr<DOMFileSystem> DOMFileSystem::create(ScriptExecutionContext* context, const String& name, FileSystemType type, const URL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
 {
     RefPtr<DOMFileSystem> fileSystem(adoptRef(new DOMFileSystem(context, name, type, rootURL, asyncFileSystem)));
     fileSystem->suspendIfNeeded();
@@ -83,10 +83,10 @@ PassRefPtr<DOMFileSystem> DOMFileSystem::createIsolatedFileSystem(ScriptExecutio
     rootURL.append(filesystemId);
     rootURL.append("/");
 
-    return DOMFileSystem::create(context, filesystemName.toString(), FileSystemTypeIsolated, KURL(ParsedURLString, rootURL.toString()), AsyncFileSystem::create());
+    return DOMFileSystem::create(context, filesystemName.toString(), FileSystemTypeIsolated, URL(ParsedURLString, rootURL.toString()), AsyncFileSystem::create());
 }
 
-DOMFileSystem::DOMFileSystem(ScriptExecutionContext* context, const String& name, FileSystemType type, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+DOMFileSystem::DOMFileSystem(ScriptExecutionContext* context, const String& name, FileSystemType type, const URL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
     : DOMFileSystemBase(context, name, type, rootURL, asyncFileSystem)
     , ActiveDOMObject(context)
 {
@@ -150,7 +150,7 @@ namespace {
 
 class SnapshotFileCallback : public FileSystemCallbacksBase {
 public:
-    static PassOwnPtr<SnapshotFileCallback> create(PassRefPtr<DOMFileSystem> filesystem, const String& name, const KURL& url, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+    static PassOwnPtr<SnapshotFileCallback> create(PassRefPtr<DOMFileSystem> filesystem, const String& name, const URL& url, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
     {
         return adoptPtr(new SnapshotFileCallback(filesystem, name, url, successCallback, errorCallback));
     }
@@ -184,7 +184,7 @@ public:
     }
 
 private:
-    SnapshotFileCallback(PassRefPtr<DOMFileSystem> filesystem, const String& name,  const KURL& url, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+    SnapshotFileCallback(PassRefPtr<DOMFileSystem> filesystem, const String& name,  const URL& url, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
         : FileSystemCallbacksBase(errorCallback)
         , m_filesystem(filesystem)
         , m_name(name)
@@ -195,7 +195,7 @@ private:
 
     RefPtr<DOMFileSystem> m_filesystem;
     String m_name;
-    KURL m_url;
+    URL m_url;
     RefPtr<FileCallback> m_successCallback;
 };
 
@@ -203,7 +203,7 @@ private:
 
 void DOMFileSystem::createFile(const FileEntry* fileEntry, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    KURL fileSystemURL = createFileSystemURL(fileEntry);
+    URL fileSystemURL = createFileSystemURL(fileEntry);
     m_asyncFileSystem->createSnapshotFileAndReadMetadata(fileSystemURL, SnapshotFileCallback::create(this, fileEntry->name(), fileSystemURL, successCallback, errorCallback));
 }
 

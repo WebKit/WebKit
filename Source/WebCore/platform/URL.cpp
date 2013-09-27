@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "KURL.h"
+#include "URL.h"
 
 #include "DecodeEscapeSequences.h"
 #include "MIMETypeRegistry.h"
@@ -307,12 +307,12 @@ static inline void checkEncodedString(const String& url)
     ASSERT_UNUSED(url, url.isEmpty() || isSchemeFirstChar(url[0]));
 }
 
-inline bool KURL::protocolIs(const String& string, const char* protocol)
+inline bool URL::protocolIs(const String& string, const char* protocol)
 {
     return WebCore::protocolIs(string, protocol);
 }
 
-void KURL::invalidate()
+void URL::invalidate()
 {
     m_isValid = false;
     m_protocolIsInHTTPFamily = false;
@@ -328,18 +328,18 @@ void KURL::invalidate()
     m_fragmentEnd = 0;
 }
 
-KURL::KURL(ParsedURLStringTag, const String& url)
+URL::URL(ParsedURLStringTag, const String& url)
 {
     parse(url);
     ASSERT(url == m_string);
 }
 
-KURL::KURL(const KURL& base, const String& relative)
+URL::URL(const URL& base, const String& relative)
 {
     init(base, relative, UTF8Encoding());
 }
 
-KURL::KURL(const KURL& base, const String& relative, const TextEncoding& encoding)
+URL::URL(const URL& base, const String& relative, const TextEncoding& encoding)
 {
     // For UTF-{7,16,32}, we want to use UTF-8 for the query part as 
     // we do when submitting a form. A form with GET method
@@ -356,7 +356,7 @@ static bool shouldTrimFromURL(unsigned char c)
     return c <= ' ';
 }
 
-void KURL::init(const KURL& base, const String& relative, const TextEncoding& encoding)
+void URL::init(const URL& base, const String& relative, const TextEncoding& encoding)
 {
     // Allow resolutions with a null or empty base URL, but not with any other invalid one.
     // FIXME: Is this a good rule?
@@ -547,14 +547,14 @@ void KURL::init(const KURL& base, const String& relative, const TextEncoding& en
     }
 }
 
-KURL KURL::copy() const
+URL URL::copy() const
 {
-    KURL result = *this;
+    URL result = *this;
     result.m_string = result.m_string.isolatedCopy();
     return result;
 }
 
-String KURL::lastPathComponent() const
+String URL::lastPathComponent() const
 {
     if (!hasPath())
         return String();
@@ -571,18 +571,18 @@ String KURL::lastPathComponent() const
     return m_string.substring(start, end - start + 1);
 }
 
-String KURL::protocol() const
+String URL::protocol() const
 {
     return m_string.left(m_schemeEnd);
 }
 
-String KURL::host() const
+String URL::host() const
 {
     int start = hostStart();
     return decodeURLEscapeSequences(m_string.substring(start, m_hostEnd - start));
 }
 
-unsigned short KURL::port() const
+unsigned short URL::port() const
 {
     // We return a port of 0 if there is no port specified. This can happen in two situations:
     // 1) The URL contains no colon after the host name and before the path component of the URL.
@@ -598,7 +598,7 @@ unsigned short KURL::port() const
     return number;
 }
 
-String KURL::pass() const
+String URL::pass() const
 {
     if (m_passwordEnd == m_userEnd)
         return String();
@@ -606,12 +606,12 @@ String KURL::pass() const
     return decodeURLEscapeSequences(m_string.substring(m_userEnd + 1, m_passwordEnd - m_userEnd - 1)); 
 }
 
-String KURL::user() const
+String URL::user() const
 {
     return decodeURLEscapeSequences(m_string.substring(m_userStart, m_userEnd - m_userStart));
 }
 
-String KURL::fragmentIdentifier() const
+String URL::fragmentIdentifier() const
 {
     if (m_fragmentEnd == m_queryEnd)
         return String();
@@ -619,18 +619,18 @@ String KURL::fragmentIdentifier() const
     return m_string.substring(m_queryEnd + 1, m_fragmentEnd - (m_queryEnd + 1));
 }
 
-bool KURL::hasFragmentIdentifier() const
+bool URL::hasFragmentIdentifier() const
 {
     return m_fragmentEnd != m_queryEnd;
 }
 
-String KURL::baseAsString() const
+String URL::baseAsString() const
 {
     return m_string.left(m_pathAfterLastSlash);
 }
 
 #if !PLATFORM(QT) && !USE(CF)
-String KURL::fileSystemPath() const
+String URL::fileSystemPath() const
 {
     if (!isValid() || !isLocalFile())
         return String();
@@ -658,11 +658,11 @@ static void assertProtocolIsGood(const char* protocol)
 
 #endif
 
-bool KURL::protocolIs(const char* protocol) const
+bool URL::protocolIs(const char* protocol) const
 {
     assertProtocolIsGood(protocol);
 
-    // JavaScript URLs are "valid" and should be executed even if KURL decides they are invalid.
+    // JavaScript URLs are "valid" and should be executed even if URL decides they are invalid.
     // The free function protocolIsJavaScript() should be used instead. 
     ASSERT(!equalIgnoringCase(protocol, String("javascript")));
 
@@ -677,7 +677,7 @@ bool KURL::protocolIs(const char* protocol) const
     return !protocol[m_schemeEnd]; // We should have consumed all characters in the argument.
 }
 
-String KURL::query() const
+String URL::query() const
 {
     if (m_queryEnd == m_pathEnd)
         return String();
@@ -685,12 +685,12 @@ String KURL::query() const
     return m_string.substring(m_pathEnd + 1, m_queryEnd - (m_pathEnd + 1)); 
 }
 
-String KURL::path() const
+String URL::path() const
 {
     return m_string.substring(m_portEnd, m_pathEnd - m_portEnd);
 }
 
-bool KURL::setProtocol(const String& s)
+bool URL::setProtocol(const String& s)
 {
     // Firefox and IE remove everything after the first ':'.
     size_t separatorPosition = s.find(':');
@@ -708,7 +708,7 @@ bool KURL::setProtocol(const String& s)
     return true;
 }
 
-void KURL::setHost(const String& s)
+void URL::setHost(const String& s)
 {
     if (!m_isValid)
         return;
@@ -721,14 +721,14 @@ void KURL::setHost(const String& s)
     parse(m_string.left(hostStart()) + (slashSlashNeeded ? "//" : "") + s + m_string.substring(m_hostEnd));
 }
 
-void KURL::removePort()
+void URL::removePort()
 {
     if (m_hostEnd == m_portEnd)
         return;
     parse(m_string.left(m_hostEnd) + m_string.substring(m_portEnd));
 }
 
-void KURL::setPort(unsigned short i)
+void URL::setPort(unsigned short i)
 {
     if (!m_isValid)
         return;
@@ -739,7 +739,7 @@ void KURL::setPort(unsigned short i)
     parse(m_string.left(portStart) + (colonNeeded ? ":" : "") + String::number(i) + m_string.substring(m_portEnd));
 }
 
-void KURL::setHostAndPort(const String& hostAndPort)
+void URL::setHostAndPort(const String& hostAndPort)
 {
     if (!m_isValid)
         return;
@@ -752,7 +752,7 @@ void KURL::setHostAndPort(const String& hostAndPort)
     parse(m_string.left(hostStart()) + (slashSlashNeeded ? "//" : "") + hostAndPort + m_string.substring(m_portEnd));
 }
 
-void KURL::setUser(const String& user)
+void URL::setUser(const String& user)
 {
     if (!m_isValid)
         return;
@@ -779,7 +779,7 @@ void KURL::setUser(const String& user)
     }
 }
 
-void KURL::setPass(const String& password)
+void URL::setPass(const String& password)
 {
     if (!m_isValid)
         return;
@@ -806,7 +806,7 @@ void KURL::setPass(const String& password)
     }
 }
 
-void KURL::setFragmentIdentifier(const String& s)
+void URL::setFragmentIdentifier(const String& s)
 {
     if (!m_isValid)
         return;
@@ -815,14 +815,14 @@ void KURL::setFragmentIdentifier(const String& s)
     parse(m_string.left(m_queryEnd) + "#" + s);
 }
 
-void KURL::removeFragmentIdentifier()
+void URL::removeFragmentIdentifier()
 {
     if (!m_isValid)
         return;
     parse(m_string.left(m_queryEnd));
 }
     
-void KURL::setQuery(const String& query)
+void URL::setQuery(const String& query)
 {
     if (!m_isValid)
         return;
@@ -837,7 +837,7 @@ void KURL::setQuery(const String& query)
 
 }
 
-void KURL::setPath(const String& s)
+void URL::setPath(const String& s)
 {
     if (!m_isValid)
         return;
@@ -977,7 +977,7 @@ static inline bool hasSlashDotOrDotDot(const char* str)
     return false;
 }
 
-void KURL::parse(const String& string)
+void URL::parse(const String& string)
 {
     checkEncodedString(string);
 
@@ -1067,7 +1067,7 @@ static bool isCanonicalHostnameLowercaseForScheme(const char* scheme, size_t sch
     return false;
 }
 
-void KURL::parse(const char* url, const String* originalString)
+void URL::parse(const char* url, const String* originalString)
 {
     if (!url || url[0] == '\0') {
         // valid URL must be non-empty
@@ -1415,7 +1415,7 @@ void KURL::parse(const char* url, const String* originalString)
     m_isValid = true;
 }
 
-bool equalIgnoringFragmentIdentifier(const KURL& a, const KURL& b)
+bool equalIgnoringFragmentIdentifier(const URL& a, const URL& b)
 {
     if (a.m_queryEnd != b.m_queryEnd)
         return false;
@@ -1426,7 +1426,7 @@ bool equalIgnoringFragmentIdentifier(const KURL& a, const KURL& b)
     return true;
 }
 
-bool protocolHostAndPortAreEqual(const KURL& a, const KURL& b)
+bool protocolHostAndPortAreEqual(const URL& a, const URL& b)
 {
     if (a.m_schemeEnd != b.m_schemeEnd)
         return false;
@@ -1687,7 +1687,7 @@ static String substituteBackslashes(const String& string)
     return string.left(pathEnd).replace('\\','/') + string.substring(pathEnd);
 }
 
-bool KURL::isHierarchical() const
+bool URL::isHierarchical() const
 {
     if (!m_isValid)
         return false;
@@ -1695,7 +1695,7 @@ bool KURL::isHierarchical() const
     return m_string[m_schemeEnd + 1] == '/';
 }
 
-void KURL::copyToBuffer(Vector<char, 512>& buffer) const
+void URL::copyToBuffer(Vector<char, 512>& buffer) const
 {
     // FIXME: This throws away the high bytes of all the characters in the string!
     // That's fine for a valid URL, which is all ASCII, but not for invalid URLs.
@@ -1731,22 +1731,22 @@ bool isValidProtocol(const String& protocol)
 }
 
 #ifndef NDEBUG
-void KURL::print() const
+void URL::print() const
 {
     printf("%s\n", m_string.utf8().data());
 }
 #endif
 
-String KURL::strippedForUseAsReferrer() const
+String URL::strippedForUseAsReferrer() const
 {
-    KURL referrer(*this);
+    URL referrer(*this);
     referrer.setUser(String());
     referrer.setPass(String());
     referrer.removeFragmentIdentifier();
     return referrer.string();
 }
 
-bool KURL::isLocalFile() const
+bool URL::isLocalFile() const
 {
     // Including feed here might be a bad idea since drag and drop uses this check
     // and including feed would allow feeds to potentially let someone's blog
@@ -1760,13 +1760,13 @@ bool protocolIsJavaScript(const String& url)
     return protocolIs(url, "javascript");
 }
 
-const KURL& blankURL()
+const URL& blankURL()
 {
-    DEFINE_STATIC_LOCAL(KURL, staticBlankURL, (ParsedURLString, "about:blank"));
+    DEFINE_STATIC_LOCAL(URL, staticBlankURL, (ParsedURLString, "about:blank"));
     return staticBlankURL;
 }
 
-bool KURL::isBlankURL() const
+bool URL::isBlankURL() const
 {
     return protocolIs("about");
 }
@@ -1787,7 +1787,7 @@ bool isDefaultPortForProtocol(unsigned short port, const String& protocol)
     return defaultPorts.get(protocol) == port;
 }
 
-bool portAllowed(const KURL& url)
+bool portAllowed(const URL& url)
 {
     unsigned short port = url.port();
 
@@ -1910,7 +1910,7 @@ String mimeTypeFromDataURL(const String& url)
     return "";
 }
 
-String mimeTypeFromURL(const KURL& url)
+String mimeTypeFromURL(const URL& url)
 {
     String decodedPath = decodeURLEscapeSequences(url.path());
     String extension = decodedPath.substring(decodedPath.reverseFind('.') + 1);
@@ -1919,12 +1919,12 @@ String mimeTypeFromURL(const KURL& url)
     return MIMETypeRegistry::getMIMETypeForExtension(extension);
 }
 
-bool KURL::isSafeToSendToAnotherThread() const
+bool URL::isSafeToSendToAnotherThread() const
 {
     return m_string.isSafeToSendToAnotherThread();
 }
 
-String KURL::stringCenterEllipsizedToLength(unsigned length) const
+String URL::stringCenterEllipsizedToLength(unsigned length) const
 {
     if (string().length() <= length)
         return string();

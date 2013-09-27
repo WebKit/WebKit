@@ -35,7 +35,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLTemplateElement.h"
-#include "KURL.h"
+#include "URL.h"
 #include "ProcessingInstruction.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"

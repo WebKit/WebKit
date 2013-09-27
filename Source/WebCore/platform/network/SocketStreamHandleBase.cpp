@@ -38,7 +38,7 @@ namespace WebCore {
 
 const unsigned int bufferSize = 100 * 1024 * 1024;
 
-SocketStreamHandleBase::SocketStreamHandleBase(const KURL& url, SocketStreamHandleClient* client)
+SocketStreamHandleBase::SocketStreamHandleBase(const URL& url, SocketStreamHandleClient* client)
     : m_url(url)
     , m_client(client)
     , m_state(Connecting)

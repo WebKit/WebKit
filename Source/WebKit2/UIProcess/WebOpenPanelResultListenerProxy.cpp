@@ -28,7 +28,7 @@
 
 #include "ImmutableArray.h"
 #include "WebPageProxy.h"
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;
@@ -57,7 +57,7 @@ void WebOpenPanelResultListenerProxy::chooseFiles(ImmutableArray* fileURLsArray)
     for (size_t i = 0; i < size; ++i) {
         WebURL* webURL = fileURLsArray->at<WebURL>(i);
         if (webURL) {
-            KURL url(KURL(), webURL->string()); 
+            URL url(URL(), webURL->string()); 
             filePaths.uncheckedAppend(url.fileSystemPath());
         }
     }

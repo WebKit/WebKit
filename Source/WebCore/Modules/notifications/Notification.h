@@ -35,7 +35,7 @@
 #include "ActiveDOMObject.h"
 #include "EventNames.h"
 #include "EventTarget.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NotificationClient.h"
 #include "SharedBuffer.h"
 #include "TextDirection.h"
@@ -83,8 +83,8 @@ public:
 #endif
     void close();
 
-    KURL iconURL() const { return m_icon; }
-    void setIconURL(const KURL& url) { m_icon = url; }
+    URL iconURL() const { return m_icon; }
+    void setIconURL(const URL& url) { m_icon = url; }
 
     String title() const { return m_title; }
     String body() const { return m_body; }
@@ -164,7 +164,7 @@ private:
 #endif
 
     // Text notifications.
-    KURL m_icon;
+    URL m_icon;
     String m_title;
     String m_body;
     String m_direction;

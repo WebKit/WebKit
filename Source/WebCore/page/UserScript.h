@@ -26,7 +26,7 @@
 #ifndef UserScript_h
 #define UserScript_h
 
-#include "KURL.h"
+#include "URL.h"
 #include "UserContentTypes.h"
 #include "UserScriptTypes.h"
 #include <wtf/Vector.h>
@@ -42,7 +42,7 @@ public:
     {
     }
 
-    UserScript(const String& source, const KURL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)
+    UserScript(const String& source, const URL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)
         : m_source(source)
         , m_url(url)
         , m_whitelist(whitelist)
@@ -53,7 +53,7 @@ public:
     }
 
     const String& source() const { return m_source; }
-    const KURL& url() const { return m_url; }
+    const URL& url() const { return m_url; }
     const Vector<String>& whitelist() const { return m_whitelist; }
     const Vector<String>& blacklist() const { return m_blacklist; }
     UserScriptInjectionTime injectionTime() const { return m_injectionTime; }
@@ -61,7 +61,7 @@ public:
 
 private:
     String m_source;
-    KURL m_url;
+    URL m_url;
     Vector<String> m_whitelist;
     Vector<String> m_blacklist;
     UserScriptInjectionTime m_injectionTime;

@@ -128,7 +128,7 @@ void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, cons
     }
 }
 
-void BlobRegistryImpl::registerBlobURL(const KURL& url, PassOwnPtr<BlobData> blobData)
+void BlobRegistryImpl::registerBlobURL(const URL& url, PassOwnPtr<BlobData> blobData)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
@@ -164,7 +164,7 @@ void BlobRegistryImpl::registerBlobURL(const KURL& url, PassOwnPtr<BlobData> blo
     m_blobs.set(url.string(), blobStorageData);
 }
 
-void BlobRegistryImpl::registerBlobURL(const KURL& url, const KURL& srcURL)
+void BlobRegistryImpl::registerBlobURL(const URL& url, const URL& srcURL)
 {
     ASSERT(isMainThread());
     registerBlobResourceHandleConstructor();
@@ -177,13 +177,13 @@ void BlobRegistryImpl::registerBlobURL(const KURL& url, const KURL& srcURL)
     m_blobs.set(url.string(), src);
 }
 
-void BlobRegistryImpl::unregisterBlobURL(const KURL& url)
+void BlobRegistryImpl::unregisterBlobURL(const URL& url)
 {
     ASSERT(isMainThread());
     m_blobs.remove(url.string());
 }
 
-BlobStorageData* BlobRegistryImpl::getBlobDataFromURL(const KURL& url) const
+BlobStorageData* BlobRegistryImpl::getBlobDataFromURL(const URL& url) const
 {
     ASSERT(isMainThread());
     return m_blobs.get(url.string());

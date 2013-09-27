@@ -27,7 +27,7 @@
 #ifndef DOMURL_h
 #define DOMURL_h
 
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

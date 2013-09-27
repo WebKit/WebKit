@@ -53,7 +53,7 @@ class Document;
 class DocumentLoader;
 class Frame;
 class ImageLoader;
-class KURL;
+class URL;
 
 // The CachedResourceLoader provides a per-context interface to the MemoryCache
 // and enforces a bunch of security checks and rules for resource revalidation.
@@ -97,10 +97,10 @@ public:
 #endif
 
     // Logs an access denied message to the console for the specified URL.
-    void printAccessDeniedMessage(const KURL& url) const;
+    void printAccessDeniedMessage(const URL& url) const;
 
     CachedResource* cachedResource(const String& url) const;
-    CachedResource* cachedResource(const KURL& url) const;
+    CachedResource* cachedResource(const URL& url) const;
     
     typedef HashMap<String, CachedResourceHandle<CachedResource> > DocumentResourceMap;
     const DocumentResourceMap& allCachedResources() const { return m_documentResources; }
@@ -110,7 +110,7 @@ public:
 
     void setImagesEnabled(bool);
 
-    bool shouldDeferImageLoad(const KURL&) const;
+    bool shouldDeferImageLoad(const URL&) const;
     
     CachePolicy cachePolicy(CachedResource::Type) const;
     
@@ -133,7 +133,7 @@ public:
     void preload(CachedResource::Type, CachedResourceRequest&, const String& charset);
     void checkForPendingPreloads();
     void printPreloadStats();
-    bool canRequest(CachedResource::Type, const KURL&, const ResourceLoaderOptions&, bool forPreload = false);
+    bool canRequest(CachedResource::Type, const URL&, const ResourceLoaderOptions&, bool forPreload = false);
 
     static const ResourceLoaderOptions& defaultCachedResourceOptions();
 
@@ -152,12 +152,12 @@ private:
     RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, ResourceRequest&, bool forPreload, CachedResource* existingResource, CachedResourceRequest::DeferOption) const;
     
     bool shouldContinueAfterNotifyingLoadedFromMemoryCache(CachedResource*);
-    bool checkInsecureContent(CachedResource::Type, const KURL&) const;
+    bool checkInsecureContent(CachedResource::Type, const URL&) const;
 
     void garbageCollectDocumentResourcesTimerFired(Timer<CachedResourceLoader>*);
     void performPostLoadActions();
 
-    bool clientDefersImage(const KURL&) const;
+    bool clientDefersImage(const URL&) const;
     void reloadImagesIfNotDeferred();
     
     HashSet<String> m_validatedURLs;

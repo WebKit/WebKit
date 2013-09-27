@@ -54,7 +54,7 @@ class InspectorPageAgent;
 class InspectorState;
 class InstrumentingAgents;
 class IntRect;
-class KURL;
+class URL;
 class Page;
 class RenderObject;
 class ResourceRequest;
@@ -216,7 +216,7 @@ public:
     void didFireAnimationFrame();
 
 #if ENABLE(WEB_SOCKETS)
-    void didCreateWebSocket(unsigned long identifier, const KURL&, const String& protocol, Frame*);
+    void didCreateWebSocket(unsigned long identifier, const URL&, const String& protocol, Frame*);
     void willSendWebSocketHandshakeRequest(unsigned long identifier, Frame*);
     void didReceiveWebSocketHandshakeResponse(unsigned long identifier, Frame*);
     void didDestroyWebSocket(unsigned long identifier, Frame*);

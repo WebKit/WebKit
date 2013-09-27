@@ -39,7 +39,7 @@
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
-#include "KURL.h"
+#include "URL.h"
 #include "WorkerGlobalScopeProxy.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -204,7 +204,7 @@ bool InspectorWorkerAgent::shouldPauseDedicatedWorkerOnStart()
     return m_state->getBoolean(WorkerAgentState::autoconnectToWorkers);
 }
 
-void InspectorWorkerAgent::didStartWorkerGlobalScope(WorkerGlobalScopeProxy* workerGlobalScopeProxy, const KURL& url)
+void InspectorWorkerAgent::didStartWorkerGlobalScope(WorkerGlobalScopeProxy* workerGlobalScopeProxy, const URL& url)
 {
     m_dedicatedWorkers.set(workerGlobalScopeProxy, url.string());
     if (m_inspectorFrontend && m_state->getBoolean(WorkerAgentState::workerInspectionEnabled))

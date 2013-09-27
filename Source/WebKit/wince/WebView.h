@@ -39,7 +39,7 @@ class Frame;
 class Page;
 class FrameView;
 class HTMLFrameOwnerElement;
-class KURL;
+class URL;
 class ResourceRequest;
 }
 
@@ -69,7 +69,7 @@ public:
 
     void frameRect(RECT* rect) const;
 
-    PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL&, const WTF::String&, WebCore::HTMLFrameOwnerElement*, const WTF::String&, bool, int, int);
+    PassRefPtr<WebCore::Frame> createFrame(const WebCore::URL&, const WTF::String&, WebCore::HTMLFrameOwnerElement*, const WTF::String&, bool, int, int);
 
     // JavaScript Dialog
     void runJavaScriptAlert(const WTF::String& message);

@@ -34,7 +34,7 @@
 #include "WebView.h"
 #include <WebCore/BString.h>
 #include <WebCore/Document.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
@@ -184,7 +184,7 @@ void WebDesktopNotificationsDelegate::cancelRequestsForPermission(ScriptExecutio
 {
 }
 
-NotificationClient::Permission WebDesktopNotificationsDelegate::checkPermission(const KURL& url)
+NotificationClient::Permission WebDesktopNotificationsDelegate::checkPermission(const URL& url)
 {
     int out = 0;
     BString org(SecurityOrigin::create(url)->toString());

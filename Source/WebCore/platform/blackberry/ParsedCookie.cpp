@@ -28,7 +28,7 @@
 #include "ParsedCookie.h"
 
 #include "CookieManager.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Logging.h"
 #include <curl/curl.h>
 #include <wtf/CurrentTime.h>

@@ -34,7 +34,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
-#include "KURL.h"
+#include "URL.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MemoryCache.h"
@@ -230,7 +230,7 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type)
 
     if (!m_resourceRequest.url().hasFragmentIdentifier())
         return;
-    KURL urlForCache = MemoryCache::removeFragmentIdentifierIfNeeded(m_resourceRequest.url());
+    URL urlForCache = MemoryCache::removeFragmentIdentifierIfNeeded(m_resourceRequest.url());
     if (urlForCache.hasFragmentIdentifier())
         return;
     m_fragmentIdentifierForRequest = m_resourceRequest.url().fragmentIdentifier();
@@ -344,7 +344,7 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
     // We should look into removing the expectation of that knowledge from the platform network stacks.
     ResourceRequest request(m_resourceRequest);
     if (!m_fragmentIdentifierForRequest.isNull()) {
-        KURL url = request.url();
+        URL url = request.url();
         url.setFragmentIdentifier(m_fragmentIdentifierForRequest);
         request.setURL(url);
         m_fragmentIdentifierForRequest = String();

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ProxyServer.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "Logging.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
@@ -119,7 +119,7 @@ static void processProxyServers(Vector<ProxyServer>& proxyServers, CFArrayRef pr
     }
 }
 
-static void addProxyServersForURL(Vector<ProxyServer>& proxyServers, const KURL& url)
+static void addProxyServersForURL(Vector<ProxyServer>& proxyServers, const URL& url)
 {
     RetainPtr<CFDictionaryRef> proxySettings = adoptCF(CFNetworkCopySystemProxySettings());
     if (!proxySettings)
@@ -133,7 +133,7 @@ static void addProxyServersForURL(Vector<ProxyServer>& proxyServers, const KURL&
     processProxyServers(proxyServers, proxiesForURL.get(), cfURL.get());
 }
 
-Vector<ProxyServer> proxyServersForURL(const KURL& url, const NetworkingContext*)
+Vector<ProxyServer> proxyServersForURL(const URL& url, const NetworkingContext*)
 {
     Vector<ProxyServer> proxyServers;
     

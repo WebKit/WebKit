@@ -72,7 +72,7 @@ void WebDownload::init(ResourceHandle* handle, const ResourceRequest& request, c
     start();
 }
 
-void WebDownload::init(const KURL& url, IWebDownloadDelegate* delegate)
+void WebDownload::init(const URL& url, IWebDownloadDelegate* delegate)
 {
     m_delegate = delegate;
 

@@ -57,7 +57,7 @@ void NetworkResourceLoadScheduler::scheduleLoader(PassRefPtr<NetworkResourceLoad
     scheduleServePendingRequests();
 }
 
-HostRecord* NetworkResourceLoadScheduler::hostForURL(const WebCore::KURL& url, CreateHostPolicy createHostPolicy)
+HostRecord* NetworkResourceLoadScheduler::hostForURL(const WebCore::URL& url, CreateHostPolicy createHostPolicy)
 {
     if (!url.protocolIsInHTTPFamily())
         return m_nonHTTPProtocolHost.get();
@@ -92,7 +92,7 @@ void NetworkResourceLoadScheduler::removeLoader(NetworkResourceLoader* loader)
     scheduleServePendingRequests();
 }
 
-void NetworkResourceLoadScheduler::receivedRedirect(NetworkResourceLoader* loader, const WebCore::KURL& redirectURL)
+void NetworkResourceLoadScheduler::receivedRedirect(NetworkResourceLoader* loader, const WebCore::URL& redirectURL)
 {
     ASSERT(isMainThread());
     LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::receivedRedirect loader originally for '%s' redirected to '%s'", loader->request().url().string().utf8().data(), redirectURL.string().utf8().data());

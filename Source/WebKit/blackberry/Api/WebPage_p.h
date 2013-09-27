@@ -30,7 +30,7 @@
 #include "LayerRenderer.h"
 #include <EGL/egl.h>
 #endif
-#include "KURL.h"
+#include "URL.h"
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "NotificationManager.h"
 #endif
@@ -216,7 +216,7 @@ public:
     virtual int showAlertDialog(WebPageClient::AlertType atype);
     virtual bool isActive() const;
     virtual bool isVisible() const { return m_visible; }
-    virtual void authenticationChallenge(const WebCore::KURL&, const WebCore::ProtectionSpace&, const WebCore::Credential&);
+    virtual void authenticationChallenge(const WebCore::URL&, const WebCore::ProtectionSpace&, const WebCore::Credential&);
     virtual SaveCredentialType notifyShouldSaveCredential(bool);
     virtual void syncProxyCredential(const WebCore::Credential&);
 
@@ -349,7 +349,7 @@ public:
 
     // If this url should be handled as a pattern, returns the pattern
     // otherwise, returns an empty string.
-    String findPatternStringForUrl(const WebCore::KURL&) const;
+    String findPatternStringForUrl(const WebCore::URL&) const;
 
     void suspendBackingStore();
     void resumeBackingStore();
@@ -621,7 +621,7 @@ public:
     int m_cachedPopupListSelectedIndex;
     BlackBerry::Platform::String m_cachedDateTimeInput;
     BlackBerry::Platform::String m_cachedColorInput;
-    WebCore::KURL m_cachedManualScript;
+    WebCore::URL m_cachedManualScript;
 
     class DeferredTaskBase {
     public:

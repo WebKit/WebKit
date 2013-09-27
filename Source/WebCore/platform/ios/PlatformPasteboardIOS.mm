@@ -25,7 +25,7 @@
 
 #import "config.h"
 #import "Color.h"
-#import "KURL.h"
+#import "URL.h"
 #import "Image.h"
 #import "PlatformPasteboard.h"
 #import "SoftLinking.h"
@@ -99,9 +99,9 @@ Color PlatformPasteboard::color()
     return Color();
 }
 
-KURL PlatformPasteboard::url()
+URL PlatformPasteboard::url()
 {
-    return KURL();
+    return URL();
 }
 
 long PlatformPasteboard::copy(const String&)

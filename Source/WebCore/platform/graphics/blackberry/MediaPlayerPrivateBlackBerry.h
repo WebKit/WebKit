@@ -49,7 +49,7 @@ public:
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static void registerMediaEngine(MediaEngineRegistrar);
     static void getSupportedTypes(HashSet<WTF::String>&);
-    static MediaPlayer::SupportsType supportsType(const WTF::String&, const WTF::String&, const KURL&);
+    static MediaPlayer::SupportsType supportsType(const WTF::String&, const WTF::String&, const URL&);
     static void notifyAppActivatedEvent(bool);
     static void setCertificatePath(const WTF::String&);
 
@@ -154,7 +154,7 @@ public:
     virtual void onCreateHolePunchRect();
     virtual void onDestroyHolePunchRect();
 
-    virtual void notifyChallengeResult(const KURL&, const ProtectionSpace&, AuthenticationChallengeResult, const Credential&);
+    virtual void notifyChallengeResult(const URL&, const ProtectionSpace&, AuthenticationChallengeResult, const Credential&);
 
     virtual bool isProcessingUserGesture() const;
     virtual bool isFullscreen() const;

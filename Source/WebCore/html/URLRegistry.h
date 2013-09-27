@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class KURL;
+class URL;
 class SecurityOrigin;
 class URLRegistry;
 
@@ -49,8 +49,8 @@ class URLRegistry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~URLRegistry() { }
-    virtual void registerURL(SecurityOrigin*, const KURL&, URLRegistrable*) = 0;
-    virtual void unregisterURL(const KURL&) = 0;
+    virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) = 0;
+    virtual void unregisterURL(const URL&) = 0;
 
     // This is an optional API
     virtual URLRegistrable* lookup(const String&) { ASSERT_NOT_REACHED(); return 0; }

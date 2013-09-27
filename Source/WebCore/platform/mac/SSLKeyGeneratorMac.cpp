@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SSLKeyGenerator.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "LocalizedStrings.h"
 #include "WebCoreSystemInterface.h"
 #include <wtf/RetainPtr.h>
@@ -41,7 +41,7 @@ void getSupportedKeySizes(Vector<String>& supportedKeySizes)
     supportedKeySizes.append(keygenMenuItem512());
 }
 
-String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const KURL& url)
+String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url)
 {   
     // This switch statement must always be synced with the UI strings returned by getSupportedKeySizes.
     UInt32 keySize;

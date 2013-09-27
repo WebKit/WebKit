@@ -22,7 +22,7 @@
 #include "webkitwebhistoryitem.h"
 
 #include "HistoryItem.h"
-#include "KURL.h"
+#include "URL.h"
 #include "webkitglobalsprivate.h"
 #include "webkitwebhistoryitemprivate.h"
 #include <glib.h>
@@ -298,7 +298,7 @@ WebKitWebHistoryItem* webkit_web_history_item_new_with_data(const gchar* uri, co
     WebKitWebHistoryItem* webHistoryItem = WEBKIT_WEB_HISTORY_ITEM(g_object_new(WEBKIT_TYPE_WEB_HISTORY_ITEM, NULL));
     WebKitWebHistoryItemPrivate* priv = webHistoryItem->priv;
 
-    WebCore::KURL historyUri(WebCore::KURL(), uri);
+    WebCore::URL historyUri(WebCore::URL(), uri);
     WTF::String historyTitle = WTF::String::fromUTF8(title);
     RefPtr<WebCore::HistoryItem> item = WebCore::HistoryItem::create(historyUri, historyTitle, 0);
     priv->historyItem = item.release().leakRef();

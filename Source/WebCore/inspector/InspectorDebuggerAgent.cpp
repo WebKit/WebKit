@@ -683,7 +683,7 @@ String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
 
     if (!script.url.isEmpty()) {
         if (InspectorPageAgent* pageAgent = m_instrumentingAgents->inspectorPageAgent()) {
-            CachedResource* resource = pageAgent->cachedResource(pageAgent->mainFrame(), KURL(ParsedURLString, script.url));
+            CachedResource* resource = pageAgent->cachedResource(pageAgent->mainFrame(), URL(ParsedURLString, script.url));
             if (resource) {
                 String sourceMapHeader = resource->response().httpHeaderField(sourceMapHTTPHeader);
                 if (!sourceMapHeader.isEmpty())

@@ -26,7 +26,7 @@
 #include "JSDOMWindowBase.h"
 #include "JSObject.h"
 #include "JSRetainPtr.h"
-#include "KURL.h"
+#include "URL.h"
 #include "PagePopupClient.h"
 #include "Settings.h"
 #include "WebPage.h"
@@ -69,7 +69,7 @@ void PagePopup::writeDocument(DocumentWriter* writer)
 {
     ASSERT(writer);
     writer->setMIMEType("text/html");
-    writer->begin(KURL());
+    writer->begin(URL());
 
     // All the popups have the same html head and the page content should be non-zoomable.
     StringBuilder source;

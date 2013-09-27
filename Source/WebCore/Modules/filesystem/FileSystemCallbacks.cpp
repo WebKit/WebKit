@@ -147,7 +147,7 @@ FileSystemCallbacks::FileSystemCallbacks(PassRefPtr<FileSystemCallback> successC
 {
 }
 
-void FileSystemCallbacks::didOpenFileSystem(const String& name, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+void FileSystemCallbacks::didOpenFileSystem(const String& name, const URL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
 {
     if (m_successCallback) {
         ASSERT(asyncFileSystem);
@@ -211,7 +211,7 @@ ResolveURICallbacks::ResolveURICallbacks(PassRefPtr<EntryCallback> successCallba
 {
 }
 
-void ResolveURICallbacks::didOpenFileSystem(const String& name, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+void ResolveURICallbacks::didOpenFileSystem(const String& name, const URL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
 {
     ASSERT(asyncFileSystem);
     RefPtr<DirectoryEntry> root = DOMFileSystem::create(m_scriptExecutionContext.get(), name, m_type, rootURL, asyncFileSystem)->root();

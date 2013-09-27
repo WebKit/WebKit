@@ -50,7 +50,7 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/OpaqueJSString.h>
-#include <KURL.h>
+#include <URL.h>
 #include <editing/FindOptions.h>
 #include <stdio.h>
 #include <wtf/text/WTFString.h>
@@ -157,8 +157,8 @@ JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef ur
 
 void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
 {
-    WebCore::KURL baseURL(WebCore::KURL(), String::fromUTF8(ewk_frame_uri_get(browser->mainFrame())));
-    WebCore::KURL absoluteURL(baseURL, url->string());
+    WebCore::URL baseURL(WebCore::URL(), String::fromUTF8(ewk_frame_uri_get(browser->mainFrame())));
+    WebCore::URL absoluteURL(baseURL, url->string());
 
     JSRetainPtr<JSStringRef> jsAbsoluteURL(
         Adopt, JSStringCreateWithUTF8CString(absoluteURL.string().utf8().data()));
@@ -196,7 +196,7 @@ void TestRunner::setScrollbarPolicy(JSStringRef, JSStringRef)
 
 void TestRunner::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef protocol, JSStringRef host, bool includeSubdomains)
 {
-    WebCore::KURL kurl;
+    WebCore::URL kurl;
     kurl.setProtocol(String(protocol->characters(), protocol->length()));
     kurl.setHost(String(host->characters(), host->length()));
 
@@ -205,7 +205,7 @@ void TestRunner::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStrin
 
 void TestRunner::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef protocol, JSStringRef host, bool includeSubdomains)
 {
-    WebCore::KURL kurl;
+    WebCore::URL kurl;
     kurl.setProtocol(String(protocol->characters(), protocol->length()));
     kurl.setHost(String(host->characters(), host->length()));
 

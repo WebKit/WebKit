@@ -27,7 +27,7 @@
 #include "ClipboardUtilitiesWin.h"
 
 #include "DocumentFragment.h"
-#include "KURL.h"
+#include "URL.h"
 #include "TextEncoding.h"
 #include "markup.h"
 #include <shlobj.h>
@@ -173,7 +173,7 @@ static FORMATETC* texthtmlFormat()
     return &texthtmlFormat;
 }
 
-HGLOBAL createGlobalData(const KURL& url, const String& title)
+HGLOBAL createGlobalData(const URL& url, const String& title)
 {
     String mutableURL(url.string());
     String mutableTitle(title);

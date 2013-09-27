@@ -139,7 +139,7 @@ void InspectorAgent::domContentLoadedEventFired()
     m_injectedScriptManager->injectedScriptHost()->clearInspectedObjects();
 }
 
-bool InspectorAgent::isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl)
+bool InspectorAgent::isMainResourceLoader(DocumentLoader* loader, const URL& requestUrl)
 {
     return m_inspectedPage->frameIsMainFrame(loader->frame()) && requestUrl == loader->requestURL();
 }
@@ -169,14 +169,14 @@ void InspectorAgent::inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> obje
     m_pendingInspectData.second = hints;
 }
 
-KURL InspectorAgent::inspectedURL() const
+URL InspectorAgent::inspectedURL() const
 {
     return m_inspectedPage->mainFrame().document()->url();
 }
 
-KURL InspectorAgent::inspectedURLWithoutFragment() const
+URL InspectorAgent::inspectedURLWithoutFragment() const
 {
-    KURL url = inspectedURL();
+    URL url = inspectedURL();
     url.removeFragmentIdentifier();
     return url;
 }

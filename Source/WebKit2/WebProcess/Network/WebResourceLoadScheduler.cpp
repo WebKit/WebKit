@@ -185,7 +185,7 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     loader->detachFromCoreLoader();
 }
 
-void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader*, const KURL&)
+void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader*, const URL&)
 {
     // We handle cross origin redirects entirely within the NetworkProcess.
     // We override this call in the WebProcess to make it a no-op.

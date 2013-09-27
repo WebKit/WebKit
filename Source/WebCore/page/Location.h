@@ -40,7 +40,7 @@ namespace WebCore {
 
 class DOMWindow;
 class Frame;
-class KURL;
+class URL;
 
 typedef int ExceptionCode;
 
@@ -80,7 +80,7 @@ private:
 
     void setLocation(const String&, DOMWindow* activeWindow, DOMWindow* firstWindow);
 
-    const KURL& url() const;
+    const URL& url() const;
 };
 
 } // namespace WebCore

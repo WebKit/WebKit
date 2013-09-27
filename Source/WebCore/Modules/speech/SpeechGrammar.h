@@ -28,7 +28,7 @@
 
 #if ENABLE(SCRIPTED_SPEECH)
 
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,10 +39,10 @@ class ScriptExecutionContext;
 class SpeechGrammar : public RefCounted<SpeechGrammar> {
 public:
     static PassRefPtr<SpeechGrammar> create(); // FIXME: The spec is not clear on what the constructor should look like.
-    static PassRefPtr<SpeechGrammar> create(const KURL& src, double weight);
+    static PassRefPtr<SpeechGrammar> create(const URL& src, double weight);
 
-    const KURL& src(ScriptExecutionContext*) const { return m_src; }
-    const KURL& src() const { return m_src; }
+    const URL& src(ScriptExecutionContext*) const { return m_src; }
+    const URL& src() const { return m_src; }
     void setSrc(ScriptExecutionContext*, const String& src);
 
     double weight() const { return m_weight; }
@@ -50,9 +50,9 @@ public:
 
 private:
     SpeechGrammar();
-    SpeechGrammar(const KURL& src, double weight);
+    SpeechGrammar(const URL& src, double weight);
 
-    KURL m_src;
+    URL m_src;
     double m_weight;
 };
 

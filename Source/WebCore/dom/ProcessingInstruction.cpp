@@ -127,7 +127,7 @@ void ProcessingInstruction::checkStyleSheet()
             // We need to make a synthetic XSLStyleSheet that is embedded.  It needs to be able
             // to kick off import/include loads that can hang off some parent sheet.
             if (m_isXSL) {
-                KURL finalURL(ParsedURLString, m_localHref);
+                URL finalURL(ParsedURLString, m_localHref);
                 m_sheet = XSLStyleSheet::createEmbedded(this, finalURL);
                 m_loading = false;
             }
@@ -188,7 +188,7 @@ bool ProcessingInstruction::sheetLoaded()
     return false;
 }
 
-void ProcessingInstruction::setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet)
+void ProcessingInstruction::setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet)
 {
     if (!inDocument()) {
         ASSERT(!m_sheet);
@@ -214,7 +214,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const KURL& bas
 }
 
 #if ENABLE(XSLT)
-void ProcessingInstruction::setXSLStyleSheet(const String& href, const KURL& baseURL, const String& sheet)
+void ProcessingInstruction::setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet)
 {
     ASSERT(m_isXSL);
     m_sheet = XSLStyleSheet::create(this, href, baseURL);
@@ -254,7 +254,7 @@ void ProcessingInstruction::setCSSStyleSheet(PassRefPtr<CSSStyleSheet> sheet)
     sheet->setDisabled(m_alternate);
 }
 
-void ProcessingInstruction::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void ProcessingInstruction::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     if (!sheet())
         return;

@@ -32,7 +32,7 @@
 #define BlobData_h
 
 #include "FileSystem.h"
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -102,7 +102,7 @@ struct BlobDataItem {
     }
 
     // Constructor for Blob type.
-    BlobDataItem(const KURL& url, long long offset, long long length)
+    BlobDataItem(const URL& url, long long offset, long long length)
         : type(Blob)
         , url(url)
         , offset(offset)
@@ -113,7 +113,7 @@ struct BlobDataItem {
 
 #if ENABLE(FILE_SYSTEM)
     // Constructor for URL type (e.g. FileSystem files).
-    BlobDataItem(const KURL& url, long long offset, long long length, double expectedModificationTime)
+    BlobDataItem(const URL& url, long long offset, long long length, double expectedModificationTime)
         : type(URL)
         , url(url)
         , offset(offset)
@@ -142,7 +142,7 @@ struct BlobDataItem {
     String path;
 
     // For Blob or URL type.
-    KURL url;
+    URL url;
 
     long long offset;
     long long length;
@@ -184,9 +184,9 @@ public:
     void appendData(PassRefPtr<RawData>, long long offset, long long length);
     void appendFile(const String& path);
     void appendFile(const String& path, long long offset, long long length, double expectedModificationTime);
-    void appendBlob(const KURL&, long long offset, long long length);
+    void appendBlob(const URL&, long long offset, long long length);
 #if ENABLE(FILE_SYSTEM)
-    void appendURL(const KURL&, long long offset, long long length, double expectedModificationTime);
+    void appendURL(const URL&, long long offset, long long length, double expectedModificationTime);
 #endif
 
 private:
@@ -217,7 +217,7 @@ public:
 
 private:
     BlobDataHandle(PassOwnPtr<BlobData>, long long size);
-    KURL m_internalURL;
+    URL m_internalURL;
 };
 
 } // namespace WebCore

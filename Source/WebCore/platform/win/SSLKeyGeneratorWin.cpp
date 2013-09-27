@@ -35,7 +35,7 @@ void WebCore::getSupportedKeySizes(Vector<String>& v)
     v.append("Medium Grade");
 }
 
-String WebCore::signedPublicKeyAndChallengeString(unsigned index, const String& challenge, const KURL& url)
+String WebCore::signedPublicKeyAndChallengeString(unsigned index, const String& challenge, const URL& url)
 {
     String keyString;
 

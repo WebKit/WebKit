@@ -33,11 +33,11 @@
 namespace WebCore {
 
 class Document;
-class KURL;
+class URL;
 
 HGLOBAL createGlobalData(const String&);
 HGLOBAL createGlobalData(const Vector<char>&);
-HGLOBAL createGlobalData(const KURL& url, const String& title);
+HGLOBAL createGlobalData(const URL& url, const String& title);
 
 FORMATETC* urlWFormat();
 FORMATETC* urlFormat();

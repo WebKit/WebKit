@@ -22,7 +22,7 @@
 #include "JSTestEventConstructor.h"
 
 #include "JSDictionary.h"
-#include "KURL.h"
+#include "URL.h"
 #include "TestEventConstructor.h"
 #include <runtime/Error.h>
 #include <runtime/JSString.h>

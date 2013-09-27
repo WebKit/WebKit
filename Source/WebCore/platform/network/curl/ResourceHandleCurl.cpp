@@ -231,7 +231,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
 
     if (shouldUseCredentialStorage()) {
         if (challenge.failureResponse().httpStatusCode() == 401) {
-            KURL urlToStore = challenge.failureResponse().url();
+            URL urlToStore = challenge.failureResponse().url();
             CredentialStorage::set(credential, challenge.protectionSpace(), urlToStore);
         }
     }

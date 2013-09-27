@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-class KURL;
+class URL;
 class ResourceHandle;
 class ResourceHandleClient;
 class ResourceRequest;
@@ -50,7 +50,7 @@ class BlobRegistryImpl : public BlobRegistry {
 public:
     virtual ~BlobRegistryImpl();
 
-    BlobStorageData* getBlobDataFromURL(const KURL&) const;
+    BlobStorageData* getBlobDataFromURL(const URL&) const;
 
     PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*);
 
@@ -58,9 +58,9 @@ private:
     void appendStorageItems(BlobStorageData*, const BlobDataItemList&);
     void appendStorageItems(BlobStorageData*, const BlobDataItemList&, long long offset, long long length);
 
-    virtual void registerBlobURL(const KURL&, PassOwnPtr<BlobData>) OVERRIDE;
-    virtual void registerBlobURL(const KURL&, const KURL& srcURL) OVERRIDE;
-    virtual void unregisterBlobURL(const KURL&) OVERRIDE;
+    virtual void registerBlobURL(const URL&, PassOwnPtr<BlobData>) OVERRIDE;
+    virtual void registerBlobURL(const URL&, const URL& srcURL) OVERRIDE;
+    virtual void unregisterBlobURL(const URL&) OVERRIDE;
     virtual bool isBlobRegistryImpl() const OVERRIDE { return true; }
 
     HashMap<String, RefPtr<BlobStorageData> > m_blobs;

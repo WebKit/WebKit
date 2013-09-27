@@ -20,7 +20,7 @@
 #ifndef ConvertToGCharPrivate_h
 #define ConvertToGCharPrivate_h
 
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/WTFString.h>
@@ -30,7 +30,7 @@ inline gchar* copyAsGchar(WTF::String const& s)
     return g_strdup(s.utf8().data());
 }
 
-inline gchar* copyAsGchar(WebCore::KURL const& s)
+inline gchar* copyAsGchar(WebCore::URL const& s)
 {
     return copyAsGchar(s.string());
 }

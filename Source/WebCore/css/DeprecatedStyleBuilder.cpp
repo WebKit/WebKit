@@ -1998,7 +1998,7 @@ public:
 #if ENABLE(SVG)
             else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_URI) {
                 String cssURLValue = primitiveValue->getStringValue();
-                KURL url = styleResolver->document().completeURL(cssURLValue);
+                URL url = styleResolver->document().completeURL(cssURLValue);
                 // FIXME: It doesn't work with forward or external SVG references (see https://bugs.webkit.org/show_bug.cgi?id=90405)
                 setValue(styleResolver->style(), ReferenceClipPathOperation::create(cssURLValue, url.fragmentIdentifier()));
             }

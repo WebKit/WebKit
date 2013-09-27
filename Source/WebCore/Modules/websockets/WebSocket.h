@@ -37,7 +37,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
-#include "KURL.h"
+#include "URL.h"
 #include "WebSocketChannel.h"
 #include "WebSocketChannelClient.h"
 #include <wtf/Forward.h>
@@ -82,7 +82,7 @@ public:
     void close(ExceptionCode& ec) { close(WebSocketChannel::CloseEventCodeNotSpecified, String(), ec); }
     void close(int code, ExceptionCode& ec) { close(code, String(), ec); }
 
-    const KURL& url() const;
+    const URL& url() const;
     State readyState() const;
     unsigned long bufferedAmount() const;
 
@@ -136,7 +136,7 @@ private:
     RefPtr<ThreadableWebSocketChannel> m_channel;
 
     State m_state;
-    KURL m_url;
+    URL m_url;
     unsigned long m_bufferedAmount;
     unsigned long m_bufferedAmountAfterClose;
     BinaryType m_binaryType;

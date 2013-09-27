@@ -35,7 +35,6 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "KURL.h"
 #include "MediaPlayerPrivateTaskTimer.h"
 #include "Page.h"
 #include "QTCFDictionary.h"
@@ -48,6 +47,7 @@
 #include "SoftLinking.h"
 #include "TimeRanges.h"
 #include "Timer.h"
+#include "URL.h"
 #include <AssertMacros.h>
 #include <CoreGraphics/CGAffineTransform.h>
 #include <CoreGraphics/CGContext.h>
@@ -266,7 +266,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::setUpCookiesForQuickTime(const St
     if (!frame || !frame->page() || !frame->page()->settings().cookieEnabled())
         return;
 
-    KURL movieURL = KURL(KURL(), url);
+    URL movieURL = URL(URL(), url);
     Vector<Cookie> documentCookies;
     if (!getRawCookies(frame->document(), movieURL, documentCookies))
         return;
@@ -1015,7 +1015,7 @@ bool MediaPlayerPrivateQuickTimeVisualContext::isAvailable()
 #endif
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivateQuickTimeVisualContext::supportsType(const String& type, const String& codecs, const KURL&)
+MediaPlayer::SupportsType MediaPlayerPrivateQuickTimeVisualContext::supportsType(const String& type, const String& codecs, const URL&)
 {
     // only return "IsSupported" if there is no codecs parameter for now as there is no way to ask QT if it supports an
     //  extended MIME type

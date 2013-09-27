@@ -32,7 +32,7 @@
 #include "Frame.h"
 #include "HTMLInputElement.h"
 #include "JSElement.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "RenderTreeAsText.h"
@@ -159,8 +159,8 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
     OwnArrayPtr<char> urlArr = adoptArrayPtr(new char[urlArrSize]);
     JSStringGetUTF8CString(url, urlArr.get(), urlArrSize);
 
-    WebCore::KURL base = mainFrame->loader()->documentLoader()->response().url();
-    WebCore::KURL absolute(base, urlArr.get());
+    WebCore::URL base = mainFrame->loader()->documentLoader()->response().url();
+    WebCore::URL absolute(base, urlArr.get());
 
     JSRetainPtr<JSStringRef> absoluteURL(Adopt, JSStringCreateWithUTF8CString(absolute.string().utf8().data()));
     WorkQueue::shared()->queue(new LoadItem(absoluteURL.get(), target));

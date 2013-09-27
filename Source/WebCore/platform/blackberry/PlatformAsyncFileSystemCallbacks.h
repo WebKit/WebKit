@@ -22,7 +22,7 @@
 
 #if ENABLE(FILE_SYSTEM)
 #include "AsyncFileSystemCallbacks.h"
-#include "KURL.h"
+#include "URL.h"
 
 #include <BlackBerryPlatformWebFileSystem.h>
 #include <wtf/OwnPtr.h>
@@ -39,7 +39,7 @@ class AsyncFileWriterClient;
 
 class PlatformAsyncFileSystemCallbacks: public BlackBerry::Platform::WebFileSystemCallbacks {
 public:
-    PlatformAsyncFileSystemCallbacks(PassOwnPtr<AsyncFileSystemCallbacks> callbacks, const KURL& rootURL = KURL())
+    PlatformAsyncFileSystemCallbacks(PassOwnPtr<AsyncFileSystemCallbacks> callbacks, const URL& rootURL = URL())
         : m_callbacks(callbacks)
         , m_writerClient(0)
         , m_rootURL(rootURL)
@@ -70,7 +70,7 @@ protected:
     AsyncFileWriterClient* m_writerClient;
 
 private:
-    KURL m_rootURL;
+    URL m_rootURL;
 };
 
 } // namespace WebCore

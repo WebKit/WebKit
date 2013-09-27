@@ -31,7 +31,7 @@
 
 #include "ChromeClient.h"
 #include "FloatRect.h"
-#include "KURL.h"
+#include "URL.h"
 #include "QtPlatformPlugin.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -203,7 +203,7 @@ public:
     QWebFullScreenVideoHandler* createFullScreenVideoHandler();
 
     QWebPageAdapter* m_webPage;
-    KURL lastHoverURL;
+    URL lastHoverURL;
     String lastHoverTitle;
     String lastHoverContent;
 

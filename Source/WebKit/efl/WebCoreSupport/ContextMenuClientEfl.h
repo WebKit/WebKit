@@ -45,7 +45,7 @@ public:
     virtual PassOwnPtr<ContextMenu> customizeMenu(PassOwnPtr<ContextMenu>);
     virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*);
 
-    virtual void downloadURL(const KURL&);
+    virtual void downloadURL(const URL&);
     virtual void lookUpInDictionary(Frame*);
     virtual void speak(const String&);
     virtual bool isSpeaking();

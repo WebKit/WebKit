@@ -266,7 +266,7 @@ WebCore::ResourceRequest core(WebKitNetworkRequest* request)
     if (soupMessage)
         return WebCore::ResourceRequest(soupMessage);
 
-    WebCore::KURL url = WebCore::KURL(WebCore::KURL(), String::fromUTF8(webkit_network_request_get_uri(request)));
+    WebCore::URL url = WebCore::URL(WebCore::URL(), String::fromUTF8(webkit_network_request_get_uri(request)));
     return WebCore::ResourceRequest(url);
 }
 

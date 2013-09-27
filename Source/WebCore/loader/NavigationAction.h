@@ -31,7 +31,7 @@
 
 #include "Event.h"
 #include "FrameLoaderTypes.h"
-#include "KURL.h"
+#include "URL.h"
 #include "ResourceRequest.h"
 #include <wtf/Forward.h>
 
@@ -48,7 +48,7 @@ namespace WebCore {
 
         bool isEmpty() const { return m_resourceRequest.url().isEmpty(); }
 
-        KURL url() const { return m_resourceRequest.url(); }
+        URL url() const { return m_resourceRequest.url(); }
         const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
 
         NavigationType type() const { return m_type; }

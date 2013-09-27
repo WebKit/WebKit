@@ -41,39 +41,39 @@ public:
         return adoptPtr(new WorkerAsyncFileSystemBlackBerry(context, mode, platformFileSystem));
     }
 
-    static void openFileSystem(WorkerGlobalScope*, const KURL& rootURL, const String& mode, const String& basePath, const String& storageIdentifier, FileSystemType, long long size, bool create, PassOwnPtr<AsyncFileSystemCallbacks>);
+    static void openFileSystem(WorkerGlobalScope*, const URL& rootURL, const String& mode, const String& basePath, const String& storageIdentifier, FileSystemType, long long size, bool create, PassOwnPtr<AsyncFileSystemCallbacks>);
     static void deleteFileSystem(WorkerGlobalScope*, const String& mode, const String& basePath, const String& storageIdentifier, FileSystemType, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual ~WorkerAsyncFileSystemBlackBerry();
     virtual bool waitForOperationToComplete();
-    virtual void move(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void copy(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void remove(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void removeRecursively(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void readMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createFile(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createDirectory(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void fileExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void directoryExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void readDirectory(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createWriter(AsyncFileWriterClient*, const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createSnapshotFileAndReadMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void move(const URL& sourcePath, const URL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void copy(const URL& sourcePath, const URL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void remove(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void removeRecursively(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void readMetadata(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createFile(const URL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createDirectory(const URL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void fileExists(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void directoryExists(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void readDirectory(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createWriter(AsyncFileWriterClient*, const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createSnapshotFileAndReadMetadata(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 private:
     WorkerAsyncFileSystemBlackBerry(WorkerGlobalScope*, const String& mode, PassOwnPtr<BlackBerry::Platform::WebFileSystem> platformFileSystem);
     static void openFileSystemOnMainThread(ScriptExecutionContext*, const String& basePath, const String& storageIdentifier, FileSystemType, long long size, bool create, WorkerPlatformAsyncFileSystemCallbacks*);
     static void deleteFileSystemOnMainThread(ScriptExecutionContext*, const String& basePath, const String& storageIdentifier, FileSystemType, WorkerPlatformAsyncFileSystemCallbacks*);
-    static void moveOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const KURL& sourcePath, const KURL& destinationPath, WorkerPlatformAsyncFileSystemCallbacks*);
-    static void copyOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const KURL& sourcePath, const KURL& destinationPath, WorkerPlatformAsyncFileSystemCallbacks*);
-    static void removeOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks*);
-    static void removeRecursivelyOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks*);
-    static void readMetadataOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks*);
-    static void createFileOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const KURL& path, bool exclusive, WorkerPlatformAsyncFileSystemCallbacks*);
-    static void createDirectoryOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const KURL& path, bool exclusive, WorkerPlatformAsyncFileSystemCallbacks*);
-    static void fileExistsOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks*);
-    static void directoryExistsOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks*);
-    static void readDirectoryOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks*);
-    static void createWriterOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, AsyncFileWriterClient*, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks*);
-    static void createSnapshotFileAndReadMetadataOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const KURL& path, WorkerPlatformAsyncFileSystemCallbacks*);
+    static void moveOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const URL& sourcePath, const URL& destinationPath, WorkerPlatformAsyncFileSystemCallbacks*);
+    static void copyOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const URL& sourcePath, const URL& destinationPath, WorkerPlatformAsyncFileSystemCallbacks*);
+    static void removeOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const URL& path, WorkerPlatformAsyncFileSystemCallbacks*);
+    static void removeRecursivelyOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const URL& path, WorkerPlatformAsyncFileSystemCallbacks*);
+    static void readMetadataOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const URL& path, WorkerPlatformAsyncFileSystemCallbacks*);
+    static void createFileOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const URL& path, bool exclusive, WorkerPlatformAsyncFileSystemCallbacks*);
+    static void createDirectoryOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const URL& path, bool exclusive, WorkerPlatformAsyncFileSystemCallbacks*);
+    static void fileExistsOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const URL& path, WorkerPlatformAsyncFileSystemCallbacks*);
+    static void directoryExistsOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const URL& path, WorkerPlatformAsyncFileSystemCallbacks*);
+    static void readDirectoryOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const URL& path, WorkerPlatformAsyncFileSystemCallbacks*);
+    static void createWriterOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, AsyncFileWriterClient*, const URL& path, WorkerPlatformAsyncFileSystemCallbacks*);
+    static void createSnapshotFileAndReadMetadataOnMainThread(ScriptExecutionContext*, BlackBerry::Platform::WebFileSystem*, const URL& path, WorkerPlatformAsyncFileSystemCallbacks*);
 
     WorkerGlobalScope* m_context;
     String m_mode;

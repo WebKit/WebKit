@@ -224,9 +224,9 @@ static inline String toString(BSTR bstr)
     return String(bstr, SysStringLen(bstr));
 }
 
-static inline KURL toKURL(BSTR bstr)
+static inline URL toURL(BSTR bstr)
 {
-    return KURL(KURL(), toString(bstr));
+    return URL(URL(), toString(bstr));
 }
 
 class PreferencesChangedOrRemovedObserver : public IWebNotificationObserver {
@@ -2498,7 +2498,7 @@ static String webKitVersionString()
     return buildNumberStringPtr;
 }
 
-const String& WebView::userAgentForKURL(const KURL&)
+const String& WebView::userAgentForKURL(const URL&)
 {
     if (m_userAgentOverridden)
         return m_userAgentCustom;
@@ -4855,7 +4855,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         settings.setUserStyleSheetLocation(url.get());
         str.clear();
     } else
-        settings.setUserStyleSheetLocation(KURL());
+        settings.setUserStyleSheetLocation(URL());
 
     hr = preferences->shouldPrintBackgrounds(&enabled);
     if (FAILED(hr))
@@ -6360,7 +6360,7 @@ HRESULT WebView::addUserScriptToGroup(BSTR groupName, IWebScriptWorld* iWorld, B
     if (!pageGroup)
         return E_FAIL;
 
-    pageGroup->addUserScriptToWorld(world->world(), toString(source), toKURL(url),
+    pageGroup->addUserScriptToWorld(world->world(), toString(source), toURL(url),
                                     toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist),
                                     injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd,
                                     InjectInAllFrames);
@@ -6385,7 +6385,7 @@ HRESULT WebView::addUserStyleSheetToGroup(BSTR groupName, IWebScriptWorld* iWorl
     if (!pageGroup)
         return E_FAIL;
 
-    pageGroup->addUserStyleSheetToWorld(world->world(), toString(source), toKURL(url),
+    pageGroup->addUserStyleSheetToWorld(world->world(), toString(source), toURL(url),
                                         toStringVector(whitelistCount, whitelist), toStringVector(blacklistCount, blacklist),
                                         InjectInAllFrames);
 
@@ -6407,7 +6407,7 @@ HRESULT WebView::removeUserScriptFromGroup(BSTR groupName, IWebScriptWorld* iWor
     if (!pageGroup)
         return E_FAIL;
 
-    pageGroup->removeUserScriptFromWorld(world->world(), toKURL(url));
+    pageGroup->removeUserScriptFromWorld(world->world(), toURL(url));
 
     return S_OK;
 }
@@ -6427,7 +6427,7 @@ HRESULT WebView::removeUserStyleSheetFromGroup(BSTR groupName, IWebScriptWorld* 
     if (!pageGroup)
         return E_FAIL;
 
-    pageGroup->removeUserStyleSheetFromWorld(world->world(), toKURL(url));
+    pageGroup->removeUserStyleSheetFromWorld(world->world(), toURL(url));
 
     return S_OK;
 }
@@ -6549,7 +6549,7 @@ HRESULT WebView::addVisitedLinks(BSTR* visitedURLs, unsigned visitedURLCount)
     return S_OK;
 }
 
-void WebView::downloadURL(const KURL& url)
+void WebView::downloadURL(const URL& url)
 {
     // It's the delegate's job to ref the WebDownload to keep it alive - otherwise it will be
     // destroyed when this function returns.

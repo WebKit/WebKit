@@ -43,7 +43,7 @@ namespace WebCore {
     class IntRect;
     class IntSize;
     class KeyframeValueList;
-    class KURL;
+    class URL;
     class Notification;
     class ProtectionSpace;
     class ResourceError;
@@ -255,9 +255,9 @@ template<> struct ArgumentCoder<WebCore::DragSession> {
     static bool decode(ArgumentDecoder&, WebCore::DragSession&);
 };
 
-template<> struct ArgumentCoder<WebCore::KURL> {
-    static void encode(ArgumentEncoder&, const WebCore::KURL&);
-    static bool decode(ArgumentDecoder&, WebCore::KURL&);
+template<> struct ArgumentCoder<WebCore::URL> {
+    static void encode(ArgumentEncoder&, const WebCore::URL&);
+    static bool decode(ArgumentDecoder&, WebCore::URL&);
 };
 
 template<> struct ArgumentCoder<WebCore::UserStyleSheet> {

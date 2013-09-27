@@ -966,7 +966,7 @@ void Page::userStyleSheetLocationChanged()
 {
     // FIXME: Eventually we will move to a model of just being handed the sheet
     // text instead of loading the URL ourselves.
-    KURL url = m_settings->userStyleSheetLocation();
+    URL url = m_settings->userStyleSheetLocation();
     
     // Allow any local file URL scheme to be loaded.
     if (SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol()))

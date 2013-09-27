@@ -71,7 +71,7 @@ Notification::Notification(const String& title, const String& body, const String
         return;
     }
 
-    m_icon = iconURI.isEmpty() ? KURL() : scriptExecutionContext()->completeURL(iconURI);
+    m_icon = iconURI.isEmpty() ? URL() : scriptExecutionContext()->completeURL(iconURI);
     if (!m_icon.isEmpty() && !m_icon.isValid()) {
         ec = SYNTAX_ERR;
         return;
@@ -120,7 +120,7 @@ PassRefPtr<Notification> Notification::create(ScriptExecutionContext* context, c
     if (options.get("dir", argument))
         notification->setDir(argument);
     if (options.get("icon", argument)) {
-        KURL iconURI = argument.isEmpty() ? KURL() : context->completeURL(argument);
+        URL iconURI = argument.isEmpty() ? URL() : context->completeURL(argument);
         if (!iconURI.isEmpty() && iconURI.isValid())
             notification->setIconURL(iconURI);
     }

@@ -45,7 +45,7 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
 public:
-    static PassRefPtr<SocketStreamHandle> create(const KURL& url, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(url, client)); }
+    static PassRefPtr<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(url, client)); }
 
     virtual ~SocketStreamHandle();
 
@@ -54,7 +54,7 @@ protected:
     virtual void platformClose();
 
 private:
-    SocketStreamHandle(const KURL&, SocketStreamHandleClient*);
+    SocketStreamHandle(const URL&, SocketStreamHandleClient*);
 
     // No authentication for streams per se, but proxy may ask for credentials.
     void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);

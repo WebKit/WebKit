@@ -35,7 +35,6 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "KURL.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "QWebFrameAdapter.h"
@@ -43,6 +42,7 @@
 #include "QtPlatformPlugin.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "URL.h"
 #include "UserGestureIndicator.h"
 #include "qwebkitglobal.h"
 

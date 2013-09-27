@@ -82,7 +82,7 @@ namespace WebCore {
 class AuthenticationChallenge;
 class Credential;
 class Frame;
-class KURL;
+class URL;
 class NetworkingContext;
 class ProtectionSpace;
 class ResourceError;
@@ -146,7 +146,7 @@ public:
 #endif
 
     bool shouldContentSniff() const;
-    static bool shouldContentSniffURL(const KURL&);
+    static bool shouldContentSniffURL(const URL&);
 
     static void forceContentSniffing();
 

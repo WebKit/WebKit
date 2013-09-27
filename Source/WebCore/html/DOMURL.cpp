@@ -33,7 +33,7 @@
 #include "ActiveDOMObject.h"
 #include "Blob.h"
 #include "BlobURL.h"
-#include "KURL.h"
+#include "URL.h"
 #include "MemoryCache.h"
 #include "PublicURLManager.h"
 #include "ResourceRequest.h"
@@ -52,7 +52,7 @@ String DOMURL::createObjectURL(ScriptExecutionContext* scriptExecutionContext, B
 
 String DOMURL::createPublicURL(ScriptExecutionContext* scriptExecutionContext, URLRegistrable* registrable)
 {
-    KURL publicURL = BlobURL::createPublicURL(scriptExecutionContext->securityOrigin());
+    URL publicURL = BlobURL::createPublicURL(scriptExecutionContext->securityOrigin());
     if (publicURL.isEmpty())
         return String();
 
@@ -66,7 +66,7 @@ void DOMURL::revokeObjectURL(ScriptExecutionContext* scriptExecutionContext, con
     if (!scriptExecutionContext)
         return;
 
-    KURL url(KURL(), urlString);
+    URL url(URL(), urlString);
     ResourceRequest request(url);
 #if ENABLE(CACHE_PARTITIONING)
     request.setCachePartition(scriptExecutionContext->topOrigin()->cachePartition());

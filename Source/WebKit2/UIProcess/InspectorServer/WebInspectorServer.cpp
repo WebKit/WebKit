@@ -111,7 +111,7 @@ void WebInspectorServer::sendMessageOverConnection(unsigned pageIdForConnection,
 void WebInspectorServer::didReceiveUnrecognizedHTTPRequest(WebSocketServerConnection* connection, PassRefPtr<HTTPRequest> request)
 {
     // request->url() contains only the path extracted from the HTTP request line
-    // and KURL is poor at parsing incomplete URLs, so extract the interesting parts manually.
+    // and URL is poor at parsing incomplete URLs, so extract the interesting parts manually.
     String path = request->url();
     size_t pathEnd = path.find('?');
     if (pathEnd == notFound)

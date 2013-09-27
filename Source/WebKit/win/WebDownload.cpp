@@ -82,7 +82,7 @@ WebDownload* WebDownload::createInstance(ResourceHandle* handle, const ResourceR
     return instance;
 }
 
-WebDownload* WebDownload::createInstance(const KURL& url, IWebDownloadDelegate* delegate)
+WebDownload* WebDownload::createInstance(const URL& url, IWebDownloadDelegate* delegate)
 {
     WebDownload* instance = new WebDownload();
     instance->AddRef();

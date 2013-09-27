@@ -33,7 +33,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -43,25 +43,25 @@ namespace WebCore {
 
 class RTCIceServer : public RefCounted<RTCIceServer> {
 public:
-    static PassRefPtr<RTCIceServer> create(const KURL& uri, const String& credential, const String& username)
+    static PassRefPtr<RTCIceServer> create(const URL& uri, const String& credential, const String& username)
     {
         return adoptRef(new RTCIceServer(uri, credential, username));
     }
     virtual ~RTCIceServer() { }
 
-    const KURL& uri() { return m_uri; }
+    const URL& uri() { return m_uri; }
     const String& credential() { return m_credential; }
     const String& username() { return m_username; }
 
 private:
-    RTCIceServer(const KURL& uri, const String& credential, const String& username)
+    RTCIceServer(const URL& uri, const String& credential, const String& username)
         : m_uri(uri)
         , m_credential(credential)
         , m_username(username)
     {
     }
 
-    KURL m_uri;
+    URL m_uri;
     String m_credential;
     String m_username;
 };

@@ -570,7 +570,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
         mimeType = MIMETypeRegistry::getMIMETypeForPath(m_replyWrapper->reply()->url().path());
     }
 
-    KURL url(m_replyWrapper->reply()->url());
+    URL url(m_replyWrapper->reply()->url());
     ResourceResponse response(url, mimeType.lower(),
                               m_replyWrapper->reply()->header(QNetworkRequest::ContentLengthHeader).toLongLong(),
                               m_replyWrapper->encoding(), String());

@@ -34,7 +34,7 @@
 
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/HTTPParsers.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -44,15 +44,15 @@ namespace WebKit {
 class HTTPRequest : public RefCounted<HTTPRequest> {
 public:
     static PassRefPtr<HTTPRequest> create() { return adoptRef(new HTTPRequest()); }
-    static PassRefPtr<HTTPRequest> create(const String& requestMethod, const WebCore::KURL& url, WebCore::HTTPVersion version) { return adoptRef(new HTTPRequest(requestMethod, url, version)); }
+    static PassRefPtr<HTTPRequest> create(const String& requestMethod, const WebCore::URL& url, WebCore::HTTPVersion version) { return adoptRef(new HTTPRequest(requestMethod, url, version)); }
     static PassRefPtr<HTTPRequest> parseHTTPRequestFromBuffer(const char* data, size_t length, String& failureReason);
     virtual ~HTTPRequest();
 
     String requestMethod() const { return m_requestMethod; }
     void setRequestMethod(const String& method) { m_requestMethod = method; }
 
-    WebCore::KURL url() const { return m_url; }
-    void setURL(const WebCore::KURL& url) { m_url = url; }
+    WebCore::URL url() const { return m_url; }
+    void setURL(const WebCore::URL& url) { m_url = url; }
 
     const Vector<unsigned char>& body() const { return m_body; }
 
@@ -62,14 +62,14 @@ public:
 
 protected:
     HTTPRequest();
-    HTTPRequest(const String& requestMethod, const WebCore::KURL&, WebCore::HTTPVersion);
+    HTTPRequest(const String& requestMethod, const WebCore::URL&, WebCore::HTTPVersion);
 
     // Parsing helpers.
     size_t parseRequestLine(const char* data, size_t length, String& failureReason);
     size_t parseHeaders(const char* data, size_t length, String& failureReason);
     size_t parseRequestBody(const char* data, size_t length);
 
-    WebCore::KURL m_url;
+    WebCore::URL m_url;
     WebCore::HTTPVersion m_httpVersion;
     String m_requestMethod;
     WebCore::HTTPHeaderMap m_headerFields;

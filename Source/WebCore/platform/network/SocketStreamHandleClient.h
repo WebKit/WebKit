@@ -35,7 +35,7 @@
 namespace WebCore {
 
     class AuthenticationChallenge;
-    class KURL;
+    class URL;
     class SocketStreamError;
     class SocketStreamHandle;
 

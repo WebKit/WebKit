@@ -33,7 +33,7 @@
 #import "DOMTestExceptionInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
-#import "KURL.h"
+#import "URL.h"
 #import "TestException.h"
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"

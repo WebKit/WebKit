@@ -56,7 +56,7 @@ PassRefPtr<DOMFileSystemSync> DOMFileSystemSync::create(DOMFileSystemBase* fileS
     return adoptRef(new DOMFileSystemSync(fileSystem->m_context, fileSystem->name(), fileSystem->type(), fileSystem->rootURL(), fileSystem->m_asyncFileSystem.release()));
 }
 
-DOMFileSystemSync::DOMFileSystemSync(ScriptExecutionContext* context, const String& name, FileSystemType type, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
+DOMFileSystemSync::DOMFileSystemSync(ScriptExecutionContext* context, const String& name, FileSystemType type, const URL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
     : DOMFileSystemBase(context, name, type, rootURL, asyncFileSystem)
 {
 }
@@ -98,7 +98,7 @@ public:
         friend class WTF::RefCounted<CreateFileResult>;
     };
 
-    static PassOwnPtr<CreateFileHelper> create(PassRefPtr<CreateFileResult> result, const String& name, const KURL& url, FileSystemType type)
+    static PassOwnPtr<CreateFileHelper> create(PassRefPtr<CreateFileResult> result, const String& name, const URL& url, FileSystemType type)
     {
         return adoptPtr(new CreateFileHelper(result, name, url, type));
     }
@@ -136,7 +136,7 @@ public:
         }
     }
 private:
-    CreateFileHelper(PassRefPtr<CreateFileResult> result, const String& name, const KURL& url, FileSystemType type)
+    CreateFileHelper(PassRefPtr<CreateFileResult> result, const String& name, const URL& url, FileSystemType type)
         : m_result(result)
         , m_name(name)
         , m_url(url)
@@ -146,7 +146,7 @@ private:
 
     RefPtr<CreateFileResult> m_result;
     String m_name;
-    KURL m_url;
+    URL m_url;
     FileSystemType m_type;
 };
 
@@ -155,7 +155,7 @@ private:
 PassRefPtr<File> DOMFileSystemSync::createFile(const FileEntrySync* fileEntry, ExceptionCode& ec)
 {
     ec = 0;
-    KURL fileSystemURL = createFileSystemURL(fileEntry);
+    URL fileSystemURL = createFileSystemURL(fileEntry);
     RefPtr<CreateFileHelper::CreateFileResult> result(CreateFileHelper::CreateFileResult::create());
     m_asyncFileSystem->createSnapshotFileAndReadMetadata(fileSystemURL, CreateFileHelper::create(result, fileEntry->name(), fileSystemURL, type()));
     if (!m_asyncFileSystem->waitForOperationToComplete()) {

@@ -222,7 +222,7 @@ void CSSPreloadScanner::emitRule()
     if (ruleEqualIgnoringCase(m_rule, "import")) {
         String url = parseCSSStringOrURL(m_ruleValue.data(), m_ruleValue.size());
         if (!url.isEmpty()) {
-            KURL baseElementURL; // FIXME: This should be passed in from the HTMLPreloadScaner via scan()!
+            URL baseElementURL; // FIXME: This should be passed in from the HTMLPreloadScaner via scan()!
             OwnPtr<PreloadRequest> request = PreloadRequest::create("css", url, baseElementURL, CachedResource::CSSStyleSheet);
             // FIXME: Should this be including the charset in the preload request?
             m_requests->append(request.release());

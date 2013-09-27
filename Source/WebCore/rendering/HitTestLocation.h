@@ -41,7 +41,7 @@ class Frame;
 class HTMLMediaElement;
 #endif
 class Image;
-class KURL;
+class URL;
 class Node;
 class RenderRegion;
 class Scrollbar;

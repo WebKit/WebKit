@@ -35,7 +35,7 @@ class HTMLToken;
 
 class HTMLViewSourceDocument FINAL : public HTMLDocument {
 public:
-    static PassRefPtr<HTMLViewSourceDocument> create(Frame* frame, const KURL& url, const String& mimeType)
+    static PassRefPtr<HTMLViewSourceDocument> create(Frame* frame, const URL& url, const String& mimeType)
     {
         return adoptRef(new HTMLViewSourceDocument(frame, url, mimeType));
     }
@@ -43,7 +43,7 @@ public:
     void addSource(const String&, HTMLToken&);
 
 private:
-    HTMLViewSourceDocument(Frame*, const KURL&, const String& mimeType);
+    HTMLViewSourceDocument(Frame*, const URL&, const String& mimeType);
 
     // Returns HTMLViewSourceParser or TextDocumentParser based on m_type.
     virtual PassRefPtr<DocumentParser> createParser();

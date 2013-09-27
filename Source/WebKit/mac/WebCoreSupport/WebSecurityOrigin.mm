@@ -31,7 +31,7 @@
 #import "WebApplicationCacheQuotaManager.h"
 #import "WebDatabaseQuotaManager.h"
 #import "WebQuotaManager.h"
-#import <WebCore/KURL.h>
+#import <WebCore/URL.h>
 #import <WebCore/DatabaseManager.h>
 #import <WebCore/SecurityOrigin.h>
 
@@ -44,7 +44,7 @@ using namespace WebCore;
     if (!self)
         return nil;
 
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(KURL([url absoluteURL]));
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(URL([url absoluteURL]));
     origin->ref();
     _private = reinterpret_cast<WebSecurityOriginPrivate *>(origin.get());
 

@@ -118,7 +118,7 @@ void MediaDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
     finish();
 }
     
-MediaDocument::MediaDocument(Frame* frame, const KURL& url)
+MediaDocument::MediaDocument(Frame* frame, const URL& url)
     : HTMLDocument(frame, url, MediaDocumentClass)
     , m_replaceMediaElementTimer(this, &MediaDocument::replaceMediaElementTimerFired)
 {

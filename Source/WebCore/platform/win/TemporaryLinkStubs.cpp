@@ -34,7 +34,7 @@
 namespace WebCore {
 
 // <keygen>
-String signedPublicKeyAndChallengeString(unsigned, const String&, const KURL&) { notImplemented(); return String(); }
+String signedPublicKeyAndChallengeString(unsigned, const String&, const URL&) { notImplemented(); return String(); }
 void getSupportedKeySizes(Vector<String>&) { notImplemented(); }
 
 #if !USE(CFNETWORK)

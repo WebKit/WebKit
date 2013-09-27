@@ -67,7 +67,7 @@ void MediaPlayerPrivate::getSupportedTypes(HashSet<WTF::String>& types)
         types.add(*i);
 }
 
-MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const WTF::String& type, const WTF::String& codecs, const KURL& url)
+MediaPlayer::SupportsType MediaPlayerPrivate::supportsType(const WTF::String& type, const WTF::String& codecs, const URL& url)
 {
     bool isRTSP = url.protocolIs("rtsp");
 
@@ -142,7 +142,7 @@ void MediaPlayerPrivate::load(const WTF::String& url)
     WTF::String modifiedUrl(url);
 
     if (modifiedUrl.startsWith("local://")) {
-        KURL kurl = KURL(KURL(), modifiedUrl);
+        URL kurl = URL(URL(), modifiedUrl);
         kurl.setProtocol("file");
         WTF::String tempPath(BlackBerry::Platform::Settings::instance()->applicationLocalDirectory().c_str());
         tempPath.append(kurl.path());
@@ -157,8 +157,8 @@ void MediaPlayerPrivate::load(const WTF::String& url)
     // already done a security check on the filesystem: URL as part of the
     // media resource selection algorithm, we should be OK here.
     if (modifiedUrl.startsWith("filesystem:")) {
-        KURL kurl = KURL(KURL(), modifiedUrl);
-        KURL mediaURL;
+        URL kurl = URL(URL(), modifiedUrl);
+        URL mediaURL;
         WTF::String fsPath;
         FileSystemType fsType;
         WebFileSystem::Type type;
@@ -201,7 +201,7 @@ void MediaPlayerPrivate::load(const WTF::String& url)
 
     WTF::String cookiePairs;
     if (!url.isEmpty())
-        cookiePairs = cookieManager().getCookie(KURL(ParsedURLString, url), WithHttpOnlyCookies);
+        cookiePairs = cookieManager().getCookie(URL(ParsedURLString, url), WithHttpOnlyCookies);
     m_platformPlayer->load(playerID, modifiedUrl, m_webCorePlayer->userAgent(), cookiePairs);
 }
 
@@ -728,7 +728,7 @@ void MediaPlayerPrivate::onBuffering(bool flag)
 
 static ProtectionSpace generateProtectionSpaceFromMMRAuthChallenge(const MMRAuthChallenge& authChallenge)
 {
-    KURL url(ParsedURLString, WTF::String(authChallenge.url().c_str()));
+    URL url(ParsedURLString, WTF::String(authChallenge.url().c_str()));
     ASSERT(url.isValid());
 
     return ProtectionSpace(url.host(), url.port(),
@@ -739,7 +739,7 @@ static ProtectionSpace generateProtectionSpaceFromMMRAuthChallenge(const MMRAuth
 
 void MediaPlayerPrivate::onAuthenticationNeeded(MMRAuthChallenge& authChallenge)
 {
-    KURL url(ParsedURLString, WTF::String(authChallenge.url().c_str()));
+    URL url(ParsedURLString, WTF::String(authChallenge.url().c_str()));
     if (!url.isValid())
         return;
 
@@ -755,7 +755,7 @@ void MediaPlayerPrivate::onAuthenticationNeeded(MMRAuthChallenge& authChallenge)
         this, m_webCorePlayer->mediaPlayerClient()->mediaPlayerHostWindow()->platformPageClient());
 }
 
-void MediaPlayerPrivate::notifyChallengeResult(const KURL& url, const ProtectionSpace&, AuthenticationChallengeResult result, const Credential& credential)
+void MediaPlayerPrivate::notifyChallengeResult(const URL& url, const ProtectionSpace&, AuthenticationChallengeResult result, const Credential& credential)
 {
     m_isAuthenticationChallenging = false;
 
@@ -767,7 +767,7 @@ void MediaPlayerPrivate::notifyChallengeResult(const KURL& url, const Protection
 
 void MediaPlayerPrivate::onAuthenticationAccepted(const MMRAuthChallenge& authChallenge) const
 {
-    KURL url(ParsedURLString, WTF::String(authChallenge.url().c_str()));
+    URL url(ParsedURLString, WTF::String(authChallenge.url().c_str()));
     if (!url.isValid())
         return;
 

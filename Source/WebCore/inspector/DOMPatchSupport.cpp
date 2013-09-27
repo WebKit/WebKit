@@ -91,12 +91,12 @@ void DOMPatchSupport::patchDocument(const String& markup)
 {
     RefPtr<Document> newDocument;
     if (m_document->isHTMLDocument())
-        newDocument = HTMLDocument::create(0, KURL());
+        newDocument = HTMLDocument::create(0, URL());
     else if (m_document->isXHTMLDocument())
-        newDocument = HTMLDocument::createXHTML(0, KURL());
+        newDocument = HTMLDocument::createXHTML(0, URL());
 #if ENABLE(SVG)
     else if (m_document->isSVGDocument())
-        newDocument = Document::create(0, KURL());
+        newDocument = Document::create(0, URL());
 #endif
 
     ASSERT(newDocument);

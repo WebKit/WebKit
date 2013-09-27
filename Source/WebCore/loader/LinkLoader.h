@@ -42,7 +42,7 @@
 namespace WebCore {
 
 class Document;
-class KURL;
+class URL;
 struct LinkRelAttribute;
 
 // The LinkLoader can load link rel types icon, dns-prefetch, subresource and prefetch.
@@ -56,7 +56,7 @@ public:
     virtual void notifyFinished(CachedResource*);
 
     void released();
-    bool loadLink(const LinkRelAttribute&, const String& type, const String& sizes, const KURL&, Document*);
+    bool loadLink(const LinkRelAttribute&, const String& type, const String& sizes, const URL&, Document*);
 
 private:
     void linkLoadTimerFired(Timer<LinkLoader>*);

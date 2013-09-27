@@ -30,16 +30,16 @@
 
 namespace WebCore {
 
-    class KURL;
+    class URL;
 
     struct Manifest {
-        Vector<KURL> onlineWhitelistedURLs;
+        Vector<URL> onlineWhitelistedURLs;
         HashSet<String> explicitURLs;
         FallbackURLVector fallbackURLs;
         bool allowAllNetworkRequests; // Wildcard found in NETWORK section.
     };
 
-    bool parseManifest(const KURL& manifestURL, const char* data, int length, Manifest&);
+    bool parseManifest(const URL& manifestURL, const char* data, int length, Manifest&);
 
 }
 

@@ -30,7 +30,7 @@
 #include "EditingBehaviorTypes.h"
 #include "FontRenderingMode.h"
 #include "IntSize.h"
-#include "KURL.h"
+#include "URL.h"
 #include "SecurityOrigin.h"
 #include "SettingsMacros.h"
 #include "Timer.h"
@@ -150,8 +150,8 @@ namespace WebCore {
         void setDNSPrefetchingEnabled(bool);
         bool dnsPrefetchingEnabled() const { return m_dnsPrefetchingEnabled; }
 
-        void setUserStyleSheetLocation(const KURL&);
-        const KURL& userStyleSheetLocation() const { return m_userStyleSheetLocation; }
+        void setUserStyleSheetLocation(const URL&);
+        const URL& userStyleSheetLocation() const { return m_userStyleSheetLocation; }
 
         void setNeedsAdobeFrameReloadingQuirk(bool);
         bool needsAcrobatFrameReloadingQuirk() const { return m_needsAdobeFrameReloadingQuirk; }
@@ -273,7 +273,7 @@ namespace WebCore {
         Page* m_page;
 
         String m_mediaTypeOverride;
-        KURL m_userStyleSheetLocation;
+        URL m_userStyleSheetLocation;
         RefPtr<FontGenericFamilies> m_fontGenericFamilies;
         SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
 #if ENABLE(TEXT_AUTOSIZING)

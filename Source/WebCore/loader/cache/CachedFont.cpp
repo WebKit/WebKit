@@ -117,7 +117,7 @@ FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, b
 bool CachedFont::ensureSVGFontData()
 {
     if (!m_externalSVGDocument && !errorOccurred() && !isLoading() && m_data) {
-        m_externalSVGDocument = SVGDocument::create(0, KURL());
+        m_externalSVGDocument = SVGDocument::create(0, URL());
 
         RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("application/xml");
         String svgSource = decoder->decode(m_data->data(), m_data->size());

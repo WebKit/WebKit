@@ -36,7 +36,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <WebCore/SharedBuffer.h>
 #include <runtime/JSObject.h>
 #include <utility>
@@ -790,7 +790,7 @@ void NetscapePlugin::didEvaluateJavaScript(uint64_t requestID, const String& res
         pluginStream->sendJavaScriptStream(result);
 }
 
-void NetscapePlugin::streamDidReceiveResponse(uint64_t streamID, const KURL& responseURL, uint32_t streamLength, 
+void NetscapePlugin::streamDidReceiveResponse(uint64_t streamID, const URL& responseURL, uint32_t streamLength, 
                                               uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& /* suggestedFileName */)
 {
     ASSERT(m_isStarted);
@@ -823,7 +823,7 @@ void NetscapePlugin::streamDidFail(uint64_t streamID, bool wasCancelled)
         pluginStream->didFail(wasCancelled);
 }
 
-void NetscapePlugin::manualStreamDidReceiveResponse(const KURL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, 
+void NetscapePlugin::manualStreamDidReceiveResponse(const URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, 
                                                     const String& mimeType, const String& headers, const String& /* suggestedFileName */)
 {
     ASSERT(m_isStarted);

@@ -948,7 +948,7 @@ void Frame::deviceOrPageScaleFactorChanged()
 }
 #endif
 
-bool Frame::isURLAllowed(const KURL& url) const
+bool Frame::isURLAllowed(const URL& url) const
 {
     // We allow one level of self-reference because some sites depend on that,
     // but we don't allow more than one.

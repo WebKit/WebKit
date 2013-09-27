@@ -34,7 +34,7 @@
 #include <WebCore/AdjustViewSizeOrNot.h>
 #include <WebCore/FrameWin.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <WebCore/ResourceHandleClient.h>
 
 #include <WTF/RefPtr.h>
@@ -318,7 +318,7 @@ public:
     HRESULT matchLabelsAgainstElement(const BSTR* labels, int cLabels, IDOMElement* againstElement, BSTR* result);
     HRESULT canProvideDocumentSource(bool* result);
 
-    WebCore::KURL url() const;
+    WebCore::URL url() const;
 
     WebView* webView() const;
     void setWebView(WebView*);
@@ -341,7 +341,7 @@ protected:
     class WebFramePrivate;
     WebFramePrivate*    d;
     bool                m_quickRedirectComing;
-    WebCore::KURL       m_originalRequestURL;
+    WebCore::URL       m_originalRequestURL;
     bool                m_inPrintingMode;
     Vector<WebCore::IntRect> m_pageRects;
     int m_pageHeight;   // height of the page adjusted by margins

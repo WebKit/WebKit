@@ -451,7 +451,7 @@ unsigned WebFrame::pendingUnloadCount() const
     return m_coreFrame->document()->domWindow()->pendingUnloadEventListeners();
 }
 
-bool WebFrame::allowsFollowingLink(const WebCore::KURL& url) const
+bool WebFrame::allowsFollowingLink(const WebCore::URL& url) const
 {
     if (!m_coreFrame)
         return true;
@@ -679,7 +679,7 @@ String WebFrame::provisionalURL() const
     return provisionalDocumentLoader->url().string();
 }
 
-String WebFrame::suggestedFilenameForResourceWithURL(const KURL& url) const
+String WebFrame::suggestedFilenameForResourceWithURL(const URL& url) const
 {
     if (!m_coreFrame)
         return String();
@@ -700,7 +700,7 @@ String WebFrame::suggestedFilenameForResourceWithURL(const KURL& url) const
     return page()->cachedSuggestedFilenameForURL(url);
 }
 
-String WebFrame::mimeTypeForResourceWithURL(const KURL& url) const
+String WebFrame::mimeTypeForResourceWithURL(const URL& url) const
 {
     if (!m_coreFrame)
         return String();

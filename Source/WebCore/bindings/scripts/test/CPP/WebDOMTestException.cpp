@@ -21,7 +21,7 @@
 #include "config.h"
 #include "WebDOMTestException.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "TestException.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"

@@ -41,7 +41,7 @@ namespace WebCore {
 
 class FormData;
 class Frame;
-class KURL;
+class URL;
 class ResourceError;
 class ResourceHandle;
 class ResourceResponse;
@@ -54,9 +54,9 @@ class ResourceResponse;
 class PingLoader : private ResourceHandleClient {
     WTF_MAKE_NONCOPYABLE(PingLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static void loadImage(Frame*, const KURL& url);
-    static void sendPing(Frame*, const KURL& pingURL, const KURL& destinationURL);
-    static void sendViolationReport(Frame*, const KURL& reportURL, PassRefPtr<FormData> report);
+    static void loadImage(Frame*, const URL& url);
+    static void sendPing(Frame*, const URL& pingURL, const URL& destinationURL);
+    static void sendViolationReport(Frame*, const URL& reportURL, PassRefPtr<FormData> report);
 
     virtual ~PingLoader();
 

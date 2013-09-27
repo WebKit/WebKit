@@ -56,7 +56,7 @@ private:
 
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGCursorElement)
         DECLARE_ANIMATED_LENGTH(X, x)

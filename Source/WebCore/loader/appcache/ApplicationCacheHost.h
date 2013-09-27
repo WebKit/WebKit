@@ -31,7 +31,7 @@
 #ifndef ApplicationCacheHost_h
 #define ApplicationCacheHost_h
 
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -78,19 +78,19 @@ namespace WebCore {
 
 #if ENABLE(INSPECTOR)
         struct CacheInfo {
-            CacheInfo(const KURL& manifest, double creationTime, double updateTime, long long size)
+            CacheInfo(const URL& manifest, double creationTime, double updateTime, long long size)
                 : m_manifest(manifest)
                 , m_creationTime(creationTime)
                 , m_updateTime(updateTime)
                 , m_size(size) { }
-            KURL m_manifest;
+            URL m_manifest;
             double m_creationTime;
             double m_updateTime;
             long long m_size;
         };
 
         struct ResourceInfo {
-            ResourceInfo(const KURL& resource, bool isMaster, bool isManifest, bool isFallback, bool isForeign, bool isExplicit, long long size)
+            ResourceInfo(const URL& resource, bool isMaster, bool isManifest, bool isFallback, bool isForeign, bool isExplicit, long long size)
                 : m_resource(resource)
                 , m_isMaster(isMaster)
                 , m_isManifest(isManifest)
@@ -98,7 +98,7 @@ namespace WebCore {
                 , m_isForeign(isForeign)
                 , m_isExplicit(isExplicit)
                 , m_size(size) { }
-            KURL m_resource;
+            URL m_resource;
             bool m_isMaster;
             bool m_isManifest;
             bool m_isFallback;
@@ -114,7 +114,7 @@ namespace WebCore {
         ~ApplicationCacheHost();
 
         void selectCacheWithoutManifest();
-        void selectCacheWithManifest(const KURL& manifestURL);
+        void selectCacheWithManifest(const URL& manifestURL);
 
         void maybeLoadMainResource(ResourceRequest&, SubstituteData&);
         void maybeLoadMainResourceForRedirect(ResourceRequest&, SubstituteData&);
@@ -123,7 +123,7 @@ namespace WebCore {
         void finishedLoadingMainResource();
         void failedLoadingMainResource();
 
-        bool maybeLoadResource(ResourceLoader*, ResourceRequest&, const KURL& originalURL);
+        bool maybeLoadResource(ResourceLoader*, ResourceRequest&, const URL& originalURL);
         bool maybeLoadFallbackForRedirect(ResourceLoader*, ResourceRequest&, const ResourceResponse&);
         bool maybeLoadFallbackForResponse(ResourceLoader*, const ResourceResponse&);
         bool maybeLoadFallbackForError(ResourceLoader*, const ResourceError&);

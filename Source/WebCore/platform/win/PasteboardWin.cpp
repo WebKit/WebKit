@@ -40,7 +40,7 @@
 #include "HWndDC.h"
 #include "HitTestResult.h"
 #include "Image.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "Range.h"
@@ -344,7 +344,7 @@ Vector<String> Pasteboard::readFilenames()
 #endif
 }
 
-static bool writeURL(WCDataObject *data, const KURL& url, String title, bool withPlainText, bool withHTML)
+static bool writeURL(WCDataObject *data, const URL& url, String title, bool withPlainText, bool withHTML)
 {
     ASSERT(data);
 
@@ -396,7 +396,7 @@ bool Pasteboard::writeString(const String& type, const String& data)
     ClipboardDataType winType = clipboardTypeFromMIMEType(type);
 
     if (winType == ClipboardDataTypeURL)
-        return WebCore::writeURL(m_writableDataObject.get(), KURL(KURL(), data), String(), false, true);
+        return WebCore::writeURL(m_writableDataObject.get(), URL(URL(), data), String(), false, true);
 
     if (winType == ClipboardDataTypeText) {
         STGMEDIUM medium = {0};
@@ -565,7 +565,7 @@ static String filesystemPathFromUrlOrTitle(const String& url, const String& titl
     }
 
     if (!lstrlen(fsPathBuffer)) {
-        KURL kurl(KURL(), url);
+        URL kurl(URL(), url);
         usedURL = true;
         // The filename for any content based drag or file url should be the last element of 
         // the path. If we can't find it, or we're coming up with the name for a link
@@ -640,14 +640,14 @@ exit:
     return hr;
 }
 
-void Pasteboard::writeURLToDataObject(const KURL& kurl, const String& titleStr)
+void Pasteboard::writeURLToDataObject(const URL& kurl, const String& titleStr)
 {
     if (!m_writableDataObject)
         return;
     WebCore::writeURL(m_writableDataObject.get(), kurl, titleStr, true, true);
 
     String url = kurl.string();
-    ASSERT(url.containsOnlyASCII()); // KURL::string() is URL encoded.
+    ASSERT(url.containsOnlyASCII()); // URL::string() is URL encoded.
 
     String fsPath = filesystemPathFromUrlOrTitle(url, titleStr, L".URL", true);
     String contentString("[InternetShortcut]\r\nURL=" + url + "\r\n");
@@ -725,7 +725,7 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
     writeURLToDataObject(pasteboardURL.url, pasteboardURL.title);
 }
 
-void Pasteboard::writeImage(Node* node, const KURL&, const String&)
+void Pasteboard::writeImage(Node* node, const URL&, const String&)
 {
     ASSERT(node);
 
@@ -932,7 +932,7 @@ static HGLOBAL createGlobalImageFileContent(SharedBuffer* data)
     return memObj;
 }
 
-static HGLOBAL createGlobalHDropContent(const KURL& url, String& fileName, SharedBuffer* data)
+static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, SharedBuffer* data)
 {
     if (fileName.isEmpty() || !data)
         return 0;
@@ -1001,7 +1001,7 @@ static HGLOBAL createGlobalHDropContent(const KURL& url, String& fileName, Share
     return memObj;
 }
 
-void Pasteboard::writeImageToDataObject(Element* element, const KURL& url)
+void Pasteboard::writeImageToDataObject(Element* element, const URL& url)
 {
     // Shove image data into a DataObject for use as a file
     CachedImage* cachedImage = getCachedImage(element);
@@ -1032,7 +1032,7 @@ void Pasteboard::writeImageToDataObject(Element* element, const KURL& url)
     writeFileToDataObject(m_writableDataObject.get(), imageFileDescriptor, imageFileContent, hDropContent);
 }
 
-void Pasteboard::writeURLToWritableDataObject(const KURL& url, const String& title)
+void Pasteboard::writeURLToWritableDataObject(const URL& url, const String& title)
 {
     WebCore::writeURL(m_writableDataObject.get(), url, title, true, false);
 }

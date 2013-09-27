@@ -397,12 +397,12 @@ Document* StyleSheetContents::singleOwnerDocument() const
     return ownerNode ? &ownerNode->document() : 0;
 }
 
-KURL StyleSheetContents::completeURL(const String& url) const
+URL StyleSheetContents::completeURL(const String& url) const
 {
     return CSSParser::completeURL(m_parserContext, url);
 }
 
-void StyleSheetContents::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
+void StyleSheetContents::addSubresourceStyleURLs(ListHashSet<URL>& urls)
 {
     Deque<StyleSheetContents*> styleSheetQueue;
     styleSheetQueue.append(this);

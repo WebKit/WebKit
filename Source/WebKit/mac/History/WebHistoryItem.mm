@@ -45,7 +45,7 @@
 #import "WebTypesInternal.h"
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Image.h>
-#import <WebCore/KURL.h>
+#import <WebCore/URL.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/RunLoop.h>
 #import <WebCore/ThreadCheck.h>
@@ -535,7 +535,7 @@ WebHistoryItem *kit(HistoryItem* item)
 - (NSURL *)URL
 {
     ASSERT_MAIN_THREAD();
-    const KURL& url = core(_private)->url();
+    const URL& url = core(_private)->url();
     if (url.isEmpty())
         return nil;
     return url;

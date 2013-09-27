@@ -25,7 +25,7 @@
 #include "GtkAdjustmentWatcher.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "KURL.h"
+#include "URL.h"
 #include "PopupMenu.h"
 #include "Region.h"
 #include "SearchPopupMenu.h"
@@ -167,7 +167,7 @@ namespace WebKit {
     private:
         WebKitWebView* m_webView;
         GtkAdjustmentWatcher m_adjustmentWatcher;
-        KURL m_hoveredLinkURL;
+        URL m_hoveredLinkURL;
         unsigned int m_closeSoonTimer;
 
         Timer <ChromeClient> m_displayTimer;

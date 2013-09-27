@@ -28,7 +28,7 @@
 #include "Frame.h"
 #include "FrameLoaderClientBlackBerry.h"
 #include "HTTPParsers.h"
-#include "KURL.h"
+#include "URL.h"
 #include "MIMESniffing.h"
 #include "MIMETypeRegistry.h"
 #include "NetworkManager.h"
@@ -117,7 +117,7 @@ NetworkJob::~NetworkJob()
 
 void NetworkJob::initialize(int playerId,
     const String& pageGroupName,
-    const KURL& url,
+    const URL& url,
     const BlackBerry::Platform::NetworkRequest& request,
     PassRefPtr<ResourceHandle> handle,
     BlackBerry::Platform::NetworkStreamFactory* streamFactory,
@@ -450,7 +450,7 @@ void NetworkJob::handleNotifyMultipartHeaderReceived(const String& key, const St
 
 void NetworkJob::handleSetCookieHeader(const String& value)
 {
-    KURL url = m_response.url();
+    URL url = m_response.url();
     CookieManager& manager = cookieManager();
     if ((manager.cookiePolicy() == CookieStorageAcceptPolicyOnlyFromMainDocumentDomain)
         && (m_handle->firstRequest().firstPartyForCookies() != url)
@@ -618,7 +618,7 @@ bool NetworkJob::retryAsFTPDirectory()
 
     ASSERT(m_handle);
     ResourceRequest newRequest = m_handle->firstRequest();
-    KURL url = newRequest.url();
+    URL url = newRequest.url();
     url.setPath(url.path() + "/");
     newRequest.setURL(url);
     newRequest.setMustHandleInternally(true);
@@ -672,7 +672,7 @@ bool NetworkJob::handleRedirect()
     if (location.isNull())
         return false;
 
-    KURL newURL(m_response.url(), location);
+    URL newURL(m_response.url(), location);
     if (!newURL.isValid())
         return false;
 
@@ -813,7 +813,7 @@ NetworkJob::SendRequestResult NetworkJob::sendRequestWithCredentials(ProtectionS
     if (!m_handle)
         return SendRequestCancelled;
 
-    KURL newURL = m_response.url();
+    URL newURL = m_response.url();
     if (!newURL.isValid())
         return SendRequestCancelled;
 
@@ -832,10 +832,10 @@ NetworkJob::SendRequestResult NetworkJob::sendRequestWithCredentials(ProtectionS
             host = m_response.url().host();
             port = m_response.url().port();
         } else {
-            // proxyInfo returns host:port, without a protocol. KURL can't parse this, so stick http
+            // proxyInfo returns host:port, without a protocol. URL can't parse this, so stick http
             // on the front.
             // (We could split into host and port by hand, but that gets hard to parse with IPv6 urls,
-            // so better to reuse KURL's parsing.)
+            // so better to reuse URL's parsing.)
             StringBuilder proxyAddress;
             if (type == ProtectionSpaceProxyHTTP)
                 proxyAddress.append("http://");
@@ -843,7 +843,7 @@ NetworkJob::SendRequestResult NetworkJob::sendRequestWithCredentials(ProtectionS
                 proxyAddress.append("https://");
             proxyAddress.append(proxyInfo.address);
 
-            KURL proxyURL(KURL(), proxyAddress.toString());
+            URL proxyURL(URL(), proxyAddress.toString());
             host = proxyURL.host();
             port = proxyURL.port();
         }
@@ -1028,7 +1028,7 @@ void NetworkJob::fireDeleteJobTimer(Timer<NetworkJob>*)
     NetworkManager::instance()->deleteJob(this);
 }
 
-void NetworkJob::notifyChallengeResult(const KURL& url, const ProtectionSpace& protectionSpace, AuthenticationChallengeResult result, const Credential& credential)
+void NetworkJob::notifyChallengeResult(const URL& url, const ProtectionSpace& protectionSpace, AuthenticationChallengeResult result, const Credential& credential)
 {
     ASSERT(url.isValid());
     ASSERT(url == m_response.url());

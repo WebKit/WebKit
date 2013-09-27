@@ -39,7 +39,7 @@ class HTMLTrackElement FINAL : public HTMLElement, public TextTrackClient {
 public:
     static PassRefPtr<HTMLTrackElement> create(const QualifiedName&, Document&);
 
-    KURL src() const;
+    URL src() const;
     void setSrc(const String&);
 
     String kind();
@@ -91,7 +91,7 @@ private:
     virtual void textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue>);
 
     LoadableTextTrack& ensureTrack();
-    virtual bool canLoadUrl(const KURL&);
+    virtual bool canLoadUrl(const URL&);
 
     RefPtr<LoadableTextTrack> m_track;
     Timer<HTMLTrackElement> m_loadTimer;

@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-class KURL;
+class URL;
 class ScriptExecutionContext;
 class ThreadableWebSocketChannelClientWrapper;
 class WorkerGlobalScope;
@@ -62,7 +62,7 @@ public:
     virtual ~WorkerThreadableWebSocketChannel();
 
     // ThreadableWebSocketChannel functions.
-    virtual void connect(const KURL&, const String& protocol) OVERRIDE;
+    virtual void connect(const URL&, const String& protocol) OVERRIDE;
     virtual String subprotocol() OVERRIDE;
     virtual String extensions() OVERRIDE;
     virtual ThreadableWebSocketChannel::SendResult send(const String& message) OVERRIDE;
@@ -86,7 +86,7 @@ public:
         }
         ~Peer();
 
-        void connect(const KURL&, const String& protocol);
+        void connect(const URL&, const String& protocol);
         void send(const String& message);
         void send(const JSC::ArrayBuffer&);
         void send(const Blob&);
@@ -132,7 +132,7 @@ private:
         }
         ~Bridge();
         void initialize();
-        void connect(const KURL&, const String& protocol);
+        void connect(const URL&, const String& protocol);
         ThreadableWebSocketChannel::SendResult send(const String& message);
         ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength);
         ThreadableWebSocketChannel::SendResult send(const Blob&);
@@ -169,10 +169,10 @@ private:
 
     WorkerThreadableWebSocketChannel(WorkerGlobalScope*, WebSocketChannelClient*, const String& taskMode);
 
-    static void mainThreadConnect(ScriptExecutionContext*, Peer*, const KURL&, const String& protocol);
+    static void mainThreadConnect(ScriptExecutionContext*, Peer*, const URL&, const String& protocol);
     static void mainThreadSend(ScriptExecutionContext*, Peer*, const String& message);
     static void mainThreadSendArrayBuffer(ScriptExecutionContext*, Peer*, PassOwnPtr<Vector<char> >);
-    static void mainThreadSendBlob(ScriptExecutionContext*, Peer*, const KURL&, const String& type, long long size);
+    static void mainThreadSendBlob(ScriptExecutionContext*, Peer*, const URL&, const String& type, long long size);
     static void mainThreadBufferedAmount(ScriptExecutionContext*, Peer*);
     static void mainThreadClose(ScriptExecutionContext*, Peer*, int code, const String& reason);
     static void mainThreadFail(ScriptExecutionContext*, Peer*, const String& reason);

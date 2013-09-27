@@ -26,10 +26,10 @@
 
 #include "DOMStringList.h"
 #include "Float32Array.h"
-#include "KURL.h"
 #include "SerializedScriptValue.h"
 #include "TestCallback.h"
 #include "TestNode.h"
+#include "URL.h"
 #include "WebDOMDOMStringList.h"
 #include "WebDOMFloat32Array.h"
 #include "WebDOMString.h"

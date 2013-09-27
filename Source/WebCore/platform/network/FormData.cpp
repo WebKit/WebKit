@@ -178,18 +178,18 @@ void FormData::appendFileRange(const String& filename, long long start, long lon
     m_elements.append(FormDataElement(filename, start, length, expectedModificationTime, shouldGenerateFile));
 }
 
-void FormData::appendBlob(const KURL& blobURL)
+void FormData::appendBlob(const URL& blobURL)
 {
     m_elements.append(FormDataElement(blobURL));
 }
 #endif
 #if ENABLE(FILE_SYSTEM)
-void FormData::appendURL(const KURL& url)
+void FormData::appendURL(const URL& url)
 {
     m_elements.append(FormDataElement(url, 0, BlobDataItem::toEndOfFile, invalidFileTime()));
 }
 
-void FormData::appendURLRange(const KURL& url, long long start, long long length, double expectedModificationTime)
+void FormData::appendURLRange(const URL& url, long long start, long long length, double expectedModificationTime)
 {
     m_elements.append(FormDataElement(url, start, length, expectedModificationTime));
 }
@@ -326,13 +326,13 @@ String FormData::flattenToString() const
 }
 
 #if ENABLE(BLOB)
-static void appendBlobResolved(FormData* formData, const KURL& url)
+static void appendBlobResolved(FormData* formData, const URL& url)
 {
     if (!blobRegistry().isBlobRegistryImpl()) {
         LOG_ERROR("Tried to resolve a blob without a usable registry");
         return;
     }
-    BlobStorageData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, url));
+    BlobStorageData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(URL(ParsedURLString, url));
     if (!blobData) {
         LOG_ERROR("Could not get blob data from a registry");
         return;
@@ -521,7 +521,7 @@ static bool decodeElement(Decoder& decoder, FormDataElement& element)
 
 #if ENABLE(FILE_SYSTEM)
         if (type == FormDataElement::encodedURL)
-            element.m_url = KURL(KURL(), filenameOrURL);
+            element.m_url = URL(URL(), filenameOrURL);
         else
 #endif
         element.m_filename = filenameOrURL;
@@ -540,7 +540,7 @@ static bool decodeElement(Decoder& decoder, FormDataElement& element)
         String blobURLString;
         if (!decoder.decodeString(blobURLString))
             return false;
-        element.m_url = KURL(KURL(), blobURLString);
+        element.m_url = URL(URL(), blobURLString);
         return true;
 #endif
 

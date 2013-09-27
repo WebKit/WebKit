@@ -46,7 +46,7 @@ namespace WebCore {
 
     class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
     public:
-        static PassRefPtr<SocketStreamHandle> create(const KURL& url, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(url, client)); }
+        static PassRefPtr<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(url, client)); }
         static PassRefPtr<SocketStreamHandle> create(GSocketConnection* socketConnection, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(socketConnection, client)); }
 
         virtual ~SocketStreamHandle();
@@ -67,7 +67,7 @@ namespace WebCore {
         char* m_readBuffer;
         void* m_id;
 
-        SocketStreamHandle(const KURL&, SocketStreamHandleClient*);
+        SocketStreamHandle(const URL&, SocketStreamHandleClient*);
         SocketStreamHandle(GSocketConnection*, SocketStreamHandleClient*);
 
         // No authentication for streams per se, but proxy may ask for credentials.

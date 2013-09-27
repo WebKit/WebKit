@@ -215,7 +215,7 @@ inline void PageGroup::addVisitedLink(LinkHash hash)
     pageCache()->markPagesForVistedLinkStyleRecalc();
 }
 
-void PageGroup::addVisitedLink(const KURL& url)
+void PageGroup::addVisitedLink(const URL& url)
 {
     if (!shouldTrackVisitedLinks)
         return;
@@ -273,7 +273,7 @@ StorageNamespace* PageGroup::transientLocalStorage(SecurityOrigin* topOrigin)
     return result.iterator->value.get();
 }
 
-void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& source, const KURL& url,
+void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& source, const URL& url,
                                      const Vector<String>& whitelist, const Vector<String>& blacklist,
                                      UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)
 {
@@ -288,7 +288,7 @@ void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& sourc
     scriptsInWorld->append(userScript.release());
 }
 
-void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& source, const KURL& url,
+void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& source, const URL& url,
                                          const Vector<String>& whitelist, const Vector<String>& blacklist,
                                          UserContentInjectedFrames injectedFrames,
                                          UserStyleLevel level,
@@ -308,7 +308,7 @@ void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& s
         invalidateInjectedStyleSheetCacheInAllFrames();
 }
 
-void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld* world, const KURL& url)
+void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld* world, const URL& url)
 {
     ASSERT_ARG(world, world);
 
@@ -329,7 +329,7 @@ void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld* world, const KURL& ur
         m_userScripts->remove(it);
 }
 
-void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld* world, const KURL& url)
+void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld* world, const URL& url)
 {
     ASSERT_ARG(world, world);
 

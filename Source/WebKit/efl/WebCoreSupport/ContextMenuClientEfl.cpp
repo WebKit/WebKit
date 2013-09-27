@@ -33,7 +33,7 @@
 
 #include "ContextMenu.h"
 #include "HitTestResult.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NotImplemented.h"
 #include <wtf/RefCounted.h>
 
@@ -55,7 +55,7 @@ void ContextMenuClientEfl::contextMenuItemSelected(ContextMenuItem*, const Conte
     notImplemented();
 }
 
-void ContextMenuClientEfl::downloadURL(const KURL&)
+void ContextMenuClientEfl::downloadURL(const URL&)
 {
     notImplemented();
 }

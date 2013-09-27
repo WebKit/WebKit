@@ -23,22 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KURLHash_h
-#define KURLHash_h
+#ifndef URLHash_h
+#define URLHash_h
 
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-    struct KURLHash {
-        static unsigned hash(const KURL& key)
+    struct URLHash {
+        static unsigned hash(const URL& key)
         {
             return key.string().impl()->hash();
         }
 
-        static bool equal(const KURL& a, const KURL& b)
+        static bool equal(const URL& a, const URL& b)
         {
             return StringHash::equal(a.string(), b.string());
         }
@@ -50,8 +50,8 @@ namespace WebCore {
 
 namespace WTF {
 
-    template<> struct HashTraits<WebCore::KURL> : SimpleClassHashTraits<WebCore::KURL> { };
+    template<> struct HashTraits<WebCore::URL> : SimpleClassHashTraits<WebCore::URL> { };
 
 } // namespace WTF
 
-#endif // KURLHash_h
+#endif // URLHash_h

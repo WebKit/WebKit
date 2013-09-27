@@ -43,7 +43,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "IntSize.h"
-#include "KURL.h"
+#include "URL.h"
 #include "PlatformEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMessagePortChannel.h"
@@ -336,7 +336,7 @@ Evas_Object* ewk_frame_child_find(Evas_Object* ewkFrame, const char* name)
 Eina_Bool ewk_frame_uri_set(Evas_Object* ewkFrame, const char* uri)
 {
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, false);
-    WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(uri));
+    WebCore::URL kurl(WebCore::URL(), WTF::String::fromUTF8(uri));
     WebCore::ResourceRequest req(kurl);
     smartData->frame->loader().load(WebCore::FrameLoadRequest(smartData->frame, req));
 
@@ -402,12 +402,12 @@ static Eina_Bool _ewk_frame_contents_set_internal(Ewk_Frame_Smart_Data* smartDat
     if (!baseUri)
         baseUri = "about:blank";
 
-    WebCore::KURL baseKURL(WebCore::KURL(), WTF::String::fromUTF8(baseUri));
-    WebCore::KURL unreachableKURL;
+    WebCore::URL baseKURL(WebCore::URL(), WTF::String::fromUTF8(baseUri));
+    WebCore::URL unreachableKURL;
     if (unreachableUri)
-        unreachableKURL = WebCore::KURL(WebCore::KURL(), WTF::String::fromUTF8(unreachableUri));
+        unreachableKURL = WebCore::URL(WebCore::URL(), WTF::String::fromUTF8(unreachableUri));
     else
-        unreachableKURL = WebCore::KURL();
+        unreachableKURL = WebCore::URL();
 
     WTF::RefPtr<WebCore::SharedBuffer> buffer = WebCore::SharedBuffer::create(contents, contentsSize);
     WebCore::SubstituteData substituteData
@@ -1690,7 +1690,7 @@ Ewk_Certificate_Status ewk_frame_certificate_status_get(Evas_Object* ewkFrame)
 
     const WebCore::FrameLoader& frameLoader = smartData->frame->loader();
     const WebCore::DocumentLoader* documentLoader = frameLoader.documentLoader();
-    const WebCore::KURL documentURL = documentLoader->requestURL();
+    const WebCore::URL documentURL = documentLoader->requestURL();
 
     if (!documentURL.protocolIs("https"))
         return EWK_CERTIFICATE_STATUS_NO_CERTIFICATE;
@@ -1763,7 +1763,7 @@ void ewk_frame_force_layout(Evas_Object* ewkFrame)
  *
  * Creates plugin.
  */
-WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* ewkFrame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually)
+WTF::PassRefPtr<WebCore::Widget> ewk_frame_plugin_create(Evas_Object* ewkFrame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::URL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     DBG("ewkFrame=%p, size=%dx%d, element=%p, url=%s, mimeType=%s",

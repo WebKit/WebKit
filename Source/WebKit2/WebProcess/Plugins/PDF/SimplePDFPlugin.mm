@@ -615,7 +615,7 @@ void SimplePDFPlugin::convertPostScriptDataIfNeeded()
     m_data = convertPostScriptDataToPDF(m_data);
 }
 
-void SimplePDFPlugin::streamDidReceiveResponse(uint64_t streamID, const KURL&, uint32_t, uint32_t, const String& mimeType, const String&, const String& suggestedFilename)
+void SimplePDFPlugin::streamDidReceiveResponse(uint64_t streamID, const URL&, uint32_t, uint32_t, const String& mimeType, const String&, const String& suggestedFilename)
 {
     ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
 
@@ -650,7 +650,7 @@ void SimplePDFPlugin::streamDidFail(uint64_t streamID, bool wasCancelled)
     m_data.clear();
 }
 
-void SimplePDFPlugin::manualStreamDidReceiveResponse(const KURL& responseURL, uint32_t streamLength,  uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFilename)
+void SimplePDFPlugin::manualStreamDidReceiveResponse(const URL& responseURL, uint32_t streamLength,  uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFilename)
 {
     m_suggestedFilename = suggestedFilename;
 

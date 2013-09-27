@@ -33,7 +33,7 @@
 #include "FrameView.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Page.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"
@@ -59,7 +59,7 @@ bool HTMLFrameElementBase::isURLAllowed() const
     if (m_URL.isEmpty())
         return true;
 
-    const KURL& completeURL = document().completeURL(m_URL);
+    const URL& completeURL = document().completeURL(m_URL);
 
     if (protocolIsJavaScript(completeURL)) { 
         Document* contentDoc = this->contentDocument();
@@ -181,10 +181,10 @@ void HTMLFrameElementBase::didAttachRenderers()
     }
 }
 
-KURL HTMLFrameElementBase::location() const
+URL HTMLFrameElementBase::location() const
 {
     if (fastHasAttribute(srcdocAttr))
-        return KURL(ParsedURLString, "about:srcdoc");
+        return URL(ParsedURLString, "about:srcdoc");
     return document().completeURL(getAttribute(srcAttr));
 }
 

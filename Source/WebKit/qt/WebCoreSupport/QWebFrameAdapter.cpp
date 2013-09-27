@@ -35,7 +35,6 @@
 #include "HitTestResult.h"
 #include "InspectorController.h"
 #include "JSDOMWindowBase.h"
-#include "KURL.h"
 #include "MainFrame.h"
 #include "NavigationScheduler.h"
 #include "NetworkingContext.h"
@@ -49,6 +48,7 @@
 #include "SubstituteData.h"
 #include "TextureMapperLayerClientQt.h"
 #include "TiledBackingStore.h"
+#include "URL.h"
 #include "htmlediting.h"
 #include "markup.h"
 #include "qt_runtime.h"
@@ -266,7 +266,7 @@ QString QWebFrameAdapter::toPlainText() const
 
 void QWebFrameAdapter::setContent(const QByteArray &data, const QString &mimeType, const QUrl &baseUrl)
 {
-    KURL kurl(baseUrl);
+    URL kurl(baseUrl);
     WebCore::ResourceRequest request(kurl);
     WTF::RefPtr<WebCore::SharedBuffer> buffer = WebCore::SharedBuffer::create(data.constData(), data.length());
     QString actualMimeType;
@@ -277,17 +277,17 @@ void QWebFrameAdapter::setContent(const QByteArray &data, const QString &mimeTyp
         actualMimeType = extractMIMETypeFromMediaType(mimeType);
         encoding = extractCharsetFromMediaType(mimeType);
     }
-    WebCore::SubstituteData substituteData(buffer, WTF::String(actualMimeType), encoding, KURL());
+    WebCore::SubstituteData substituteData(buffer, WTF::String(actualMimeType), encoding, URL());
     frame->loader().load(WebCore::FrameLoadRequest(frame, request, substituteData));
 }
 
 void QWebFrameAdapter::setHtml(const QString &html, const QUrl &baseUrl)
 {
-    KURL kurl(baseUrl);
+    URL kurl(baseUrl);
     WebCore::ResourceRequest request(kurl);
     const QByteArray utf8 = html.toUtf8();
     WTF::RefPtr<WebCore::SharedBuffer> data = WebCore::SharedBuffer::create(utf8.constData(), utf8.length());
-    WebCore::SubstituteData substituteData(data, WTF::String("text/html"), WTF::String("utf-8"), KURL());
+    WebCore::SubstituteData substituteData(data, WTF::String("text/html"), WTF::String("utf-8"), URL());
     frame->loader().load(WebCore::FrameLoadRequest(frame, request, substituteData));
 }
 
@@ -376,8 +376,8 @@ QWebFrameAdapter* QWebFrameAdapter::kit(const Frame* frame)
 QUrl QWebFrameAdapter::ensureAbsoluteUrl(const QUrl& url)
 {
     // FIXME: it would be nice if we could avoid doing this.
-    // Convert to KURL and back to preserve the old behavior (e.g. fixup of single slash in 'http:/')
-    QUrl validatedUrl = KURL(url);
+    // Convert to URL and back to preserve the old behavior (e.g. fixup of single slash in 'http:/')
+    QUrl validatedUrl = URL(url);
 
     if (!validatedUrl.isValid() || !validatedUrl.isRelative())
         return validatedUrl;

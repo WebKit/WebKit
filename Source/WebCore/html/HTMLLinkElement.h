@@ -37,7 +37,7 @@
 namespace WebCore {
 
 class HTMLLinkElement;
-class KURL;
+class URL;
 
 template<typename T> class EventSender;
 typedef EventSender<HTMLLinkElement> LinkEventSender;
@@ -47,7 +47,7 @@ public:
     static PassRefPtr<HTMLLinkElement> create(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLLinkElement();
 
-    KURL href() const;
+    URL href() const;
     String rel() const;
 
     virtual String target() const;
@@ -83,7 +83,7 @@ private:
     virtual void removedFrom(ContainerNode*) OVERRIDE;
 
     // from CachedResourceClient
-    virtual void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet);
+    virtual void setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet);
     virtual bool sheetLoaded();
     virtual void notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred);
     virtual void startLoadingDynamicSheet();
@@ -100,7 +100,7 @@ private:
 private:
     HTMLLinkElement(const QualifiedName&, Document&, bool createdByParser);
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
 
     virtual void finishParsingChildren();
 

@@ -670,7 +670,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     Ewk_View_Private_Data* priv = new Ewk_View_Private_Data;
     memset(priv, 0, sizeof(Ewk_View_Private_Data));
     AtomicString string;
-    WebCore::KURL url;
+    WebCore::URL url;
 
     WebCore::Page::PageClients pageClients;
     pageClients.chromeClient = new WebCore::ChromeClientEfl(smartData->self);
@@ -1728,7 +1728,7 @@ Eina_Bool ewk_view_visited_link_add(Evas_Object* ewkView, const char* visitedUrl
     EINA_SAFETY_ON_NULL_RETURN_VAL(priv->page, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(priv->page->groupPtr(), false);
 
-    WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(visitedUrl));
+    WebCore::URL kurl(WebCore::URL(), WTF::String::fromUTF8(visitedUrl));
     priv->page->groupPtr()->addVisitedLink(kurl);
     return true;
 }
@@ -2055,7 +2055,7 @@ Eina_Bool ewk_view_setting_user_stylesheet_set(Evas_Object* ewkView, const char*
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
     if (eina_stringshare_replace(&priv->settings.userStylesheet, uri)) {
-        WebCore::KURL kurl(WebCore::KURL(), String::fromUTF8(uri));
+        WebCore::URL kurl(WebCore::URL(), String::fromUTF8(uri));
         priv->pageSettings->setUserStyleSheetLocation(kurl);
     }
     return true;
@@ -3662,7 +3662,7 @@ void ewk_view_frame_rect_changed(Evas_Object* ewkView)
     _ewk_view_smart_changed(smartData);
 }
 
-WTF::PassRefPtr<WebCore::Widget> ewk_view_plugin_create(Evas_Object* ewkView, Evas_Object* frame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually)
+WTF::PassRefPtr<WebCore::Widget> ewk_view_plugin_create(Evas_Object* ewkView, Evas_Object* frame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::URL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually)
 {
     DBG("ewkView=%p, frame=%p, size=%dx%d, element=%p, url=%s, mimeType=%s",
         ewkView, frame, pluginSize.width(), pluginSize.height(), element,

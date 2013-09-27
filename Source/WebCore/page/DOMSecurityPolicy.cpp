@@ -48,22 +48,22 @@ bool isPolicyActiveInContext(ScriptExecutionContext* context)
     return context->contentSecurityPolicy()->isActive();
 }
 
-template<bool (ContentSecurityPolicy::*allowWithType)(const String&, const String&, const KURL&, ContentSecurityPolicy::ReportingStatus) const>
+template<bool (ContentSecurityPolicy::*allowWithType)(const String&, const String&, const URL&, ContentSecurityPolicy::ReportingStatus) const>
 bool isAllowedWithType(ScriptExecutionContext* context, const String& type)
 {
     if (!isPolicyActiveInContext(context))
         return true;
 
-    return (context->contentSecurityPolicy()->*allowWithType)(type, type, KURL(), ContentSecurityPolicy::SuppressReport);
+    return (context->contentSecurityPolicy()->*allowWithType)(type, type, URL(), ContentSecurityPolicy::SuppressReport);
 }
 
-template<bool (ContentSecurityPolicy::*allowWithURL)(const KURL&, ContentSecurityPolicy::ReportingStatus) const>
+template<bool (ContentSecurityPolicy::*allowWithURL)(const URL&, ContentSecurityPolicy::ReportingStatus) const>
 bool isAllowedWithURL(ScriptExecutionContext* context, const String& url)
 {
     if (!isPolicyActiveInContext(context))
         return true;
 
-    KURL parsedURL = context->completeURL(url);
+    URL parsedURL = context->completeURL(url);
     if (!parsedURL.isValid())
         return false; // FIXME: Figure out how to throw a JavaScript error.
 

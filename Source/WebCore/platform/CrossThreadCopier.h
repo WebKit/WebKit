@@ -42,7 +42,7 @@ namespace WebCore {
 
     class IntRect;
     class IntSize;
-    class KURL;
+    class URL;
     class ResourceError;
     class ResourceRequest;
     class ResourceResponse;
@@ -120,9 +120,9 @@ namespace WebCore {
         }
     };
 
-    template<> struct CrossThreadCopierBase<false, false, KURL> {
-        typedef KURL Type;
-        static Type copy(const KURL&);
+    template<> struct CrossThreadCopierBase<false, false, URL> {
+        typedef URL Type;
+        static Type copy(const URL&);
     };
 
     template<> struct CrossThreadCopierBase<false, false, String> {

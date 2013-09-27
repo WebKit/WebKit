@@ -34,7 +34,7 @@
 #if ENABLE(BLOB)
 
 #include "FileError.h"
-#include "KURL.h"
+#include "URL.h"
 #include "TextEncoding.h"
 #include "ThreadableLoaderClient.h"
 #include <wtf/Forward.h>
@@ -106,7 +106,7 @@ private:
     TextEncoding m_encoding;
     String m_dataType;
 
-    KURL m_urlForReading;
+    URL m_urlForReading;
     RefPtr<ThreadableLoader> m_loader;
 
     RefPtr<JSC::ArrayBuffer> m_rawData;

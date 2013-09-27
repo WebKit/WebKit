@@ -160,7 +160,7 @@ bool HTMLPlugInImageElement::isImageType()
         m_serviceType = mimeTypeFromDataURL(m_url);
 
     if (Frame* frame = document().frame()) {
-        KURL completedURL = document().completeURL(m_url);
+        URL completedURL = document().completeURL(m_url);
         return frame->loader().client().objectContentType(completedURL, m_serviceType, shouldPreferPlugInsForImages()) == ObjectContentImage;
     }
 
@@ -171,7 +171,7 @@ bool HTMLPlugInImageElement::isImageType()
 // depending on <param> values.
 bool HTMLPlugInImageElement::allowedToLoadFrameURL(const String& url)
 {
-    KURL completeURL = document().completeURL(url);
+    URL completeURL = document().completeURL(url);
 
     if (contentFrame() && protocolIsJavaScript(completeURL)
         && !document().securityOrigin()->canAccess(contentDocument()->securityOrigin()))
@@ -185,7 +185,7 @@ bool HTMLPlugInImageElement::allowedToLoadFrameURL(const String& url)
 bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const String& serviceType)
 {
     ASSERT(document().frame());
-    KURL completedURL;
+    URL completedURL;
     if (!url.isEmpty())
         completedURL = document().completeURL(url);
 
@@ -432,7 +432,7 @@ static void addPlugInsFromNodeListMatchingPlugInOrigin(HTMLPlugInImageElementLis
             HTMLPlugInElement* plugInElement = toHTMLPlugInElement(node);
             if (plugInElement->isPlugInImageElement()) {
                 HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(node);
-                const KURL& loadedURL = plugInImageElement->loadedUrl();
+                const URL& loadedURL = plugInImageElement->loadedUrl();
                 String otherMimeType = plugInImageElement->loadedMimeType();
                 if (plugInOrigin == loadedURL.host() && mimeType == otherMimeType)
                     plugInList.append(plugInImageElement);
@@ -572,7 +572,7 @@ void HTMLPlugInImageElement::checkSizeChangeForSnapshotting()
         toPluginViewBase(widget)->beginSnapshottingRunningPlugin();
 }
 
-void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
+void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)
 {
     LOG(Plugins, "%p Plug-in URL: %s", this, m_url.utf8().data());
     LOG(Plugins, "   Actual URL: %s", url.string().utf8().data());

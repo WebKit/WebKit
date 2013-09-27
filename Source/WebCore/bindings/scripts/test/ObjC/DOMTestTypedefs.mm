@@ -34,7 +34,7 @@
 #import "DOMTestTypedefsInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
-#import "KURL.h"
+#import "URL.h"
 #import "SVGPoint.h"
 #import "SerializedScriptValue.h"
 #import "TestTypedefs.h"

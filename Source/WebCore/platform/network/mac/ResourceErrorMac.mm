@@ -27,7 +27,7 @@
 #import "ResourceError.h"
 
 #import "BlockExceptions.h"
-#import "KURL.h"
+#import "URL.h"
 #import <CoreFoundation/CFError.h>
 #import <Foundation/Foundation.h>
 

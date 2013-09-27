@@ -86,16 +86,16 @@ public:
     virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return XMLHttpRequestEventTargetInterfaceType; }
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
 
-    const KURL& url() const { return m_url; }
+    const URL& url() const { return m_url; }
     String statusText(ExceptionCode&) const;
     int status(ExceptionCode&) const;
     State readyState() const;
     bool withCredentials() const { return m_includeCredentials; }
     void setWithCredentials(bool, ExceptionCode&);
-    void open(const String& method, const KURL&, ExceptionCode&);
-    void open(const String& method, const KURL&, bool async, ExceptionCode&);
-    void open(const String& method, const KURL&, bool async, const String& user, ExceptionCode&);
-    void open(const String& method, const KURL&, bool async, const String& user, const String& password, ExceptionCode&);
+    void open(const String& method, const URL&, ExceptionCode&);
+    void open(const String& method, const URL&, bool async, ExceptionCode&);
+    void open(const String& method, const URL&, bool async, const String& user, ExceptionCode&);
+    void open(const String& method, const URL&, bool async, const String& user, const String& password, ExceptionCode&);
     void send(ExceptionCode&);
     void send(Document*, ExceptionCode&);
     void send(const String&, ExceptionCode&);
@@ -212,7 +212,7 @@ private:
 
     OwnPtr<XMLHttpRequestUpload> m_upload;
 
-    KURL m_url;
+    URL m_url;
     String m_method;
     HTTPHeaderMap m_requestHeaders;
     RefPtr<FormData> m_requestEntityBody;

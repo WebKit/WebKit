@@ -95,21 +95,21 @@ ResourceError printError(const PrintContext* printContext, const String& errorMe
 {
     DocumentLoader* documentLoader = printContext->frame()->loader().documentLoader();
     return ResourceError(errorDomainPrint, PrintErrorGeneral,
-                         documentLoader ? documentLoader->url() : KURL(), errorMessage);
+                         documentLoader ? documentLoader->url() : URL(), errorMessage);
 }
 
 ResourceError printerNotFoundError(const PrintContext* printContext)
 {
     DocumentLoader* documentLoader = printContext->frame()->loader().documentLoader();
     return ResourceError(errorDomainPrint, PrintErrorPrinterNotFound,
-                         documentLoader ? documentLoader->url() : KURL(), _("Printer not found"));
+                         documentLoader ? documentLoader->url() : URL(), _("Printer not found"));
 }
 
 ResourceError invalidPageRangeToPrint(const PrintContext* printContext)
 {
     DocumentLoader* documentLoader = printContext->frame()->loader().documentLoader();
     return ResourceError(errorDomainPrint, PrintErrorInvalidPageRange,
-                         documentLoader ? documentLoader->url() : KURL(), _("Invalid page range"));
+                         documentLoader ? documentLoader->url() : URL(), _("Invalid page range"));
 }
 
 } // namespace WebCore

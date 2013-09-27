@@ -34,7 +34,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "KURL.h"
+#include "URL.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
@@ -44,11 +44,11 @@ Location::Location(Frame* frame)
 {
 }
 
-inline const KURL& Location::url() const
+inline const URL& Location::url() const
 {
     ASSERT(m_frame);
 
-    const KURL& url = m_frame->document()->url();
+    const URL& url = m_frame->document()->url();
     if (!url.isValid())
         return blankURL(); // Use "about:blank" while the page is still loading (before we have a frame).
 
@@ -78,7 +78,7 @@ String Location::host() const
 
     // Note: this is the IE spec. The NS spec swaps the two, it says
     // "The hostname property is the concatenation of the host and port properties, separated by a colon."
-    const KURL& url = this->url();
+    const URL& url = this->url();
     return url.hasPort() ? url.host() + ":" + String::number(url.port()) : url.host();
 }
 
@@ -95,7 +95,7 @@ String Location::port() const
     if (!m_frame)
         return String();
 
-    const KURL& url = this->url();
+    const URL& url = this->url();
     return url.hasPort() ? String::number(url.port()) : "";
 }
 
@@ -104,7 +104,7 @@ String Location::pathname() const
     if (!m_frame)
         return String();
 
-    const KURL& url = this->url();
+    const URL& url = this->url();
     return url.path().isEmpty() ? "/" : url.path();
 }
 
@@ -113,7 +113,7 @@ String Location::search() const
     if (!m_frame)
         return String();
 
-    const KURL& url = this->url();
+    const URL& url = this->url();
     return url.query().isEmpty() ? emptyString() : "?" + url.query();
 }
 
@@ -154,7 +154,7 @@ void Location::setProtocol(const String& protocol, DOMWindow* activeWindow, DOMW
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->document()->url();
+    URL url = m_frame->document()->url();
     if (!url.setProtocol(protocol)) {
         ec = SYNTAX_ERR;
         return;
@@ -166,7 +166,7 @@ void Location::setHost(const String& host, DOMWindow* activeWindow, DOMWindow* f
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->document()->url();
+    URL url = m_frame->document()->url();
     url.setHostAndPort(host);
     setLocation(url.string(), activeWindow, firstWindow);
 }
@@ -175,7 +175,7 @@ void Location::setHostname(const String& hostname, DOMWindow* activeWindow, DOMW
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->document()->url();
+    URL url = m_frame->document()->url();
     url.setHost(hostname);
     setLocation(url.string(), activeWindow, firstWindow);
 }
@@ -184,7 +184,7 @@ void Location::setPort(const String& portString, DOMWindow* activeWindow, DOMWin
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->document()->url();
+    URL url = m_frame->document()->url();
     int port = portString.toInt();
     if (port < 0 || port > 0xFFFF || portString.isEmpty())
         url.removePort();
@@ -197,7 +197,7 @@ void Location::setPathname(const String& pathname, DOMWindow* activeWindow, DOMW
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->document()->url();
+    URL url = m_frame->document()->url();
     url.setPath(pathname);
     setLocation(url.string(), activeWindow, firstWindow);
 }
@@ -206,7 +206,7 @@ void Location::setSearch(const String& search, DOMWindow* activeWindow, DOMWindo
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->document()->url();
+    URL url = m_frame->document()->url();
     url.setQuery(search);
     setLocation(url.string(), activeWindow, firstWindow);
 }
@@ -215,7 +215,7 @@ void Location::setHash(const String& hash, DOMWindow* activeWindow, DOMWindow* f
 {
     if (!m_frame)
         return;
-    KURL url = m_frame->document()->url();
+    URL url = m_frame->document()->url();
     String oldFragmentIdentifier = url.fragmentIdentifier();
     String newFragmentIdentifier = hash;
     if (hash[0] == '#')

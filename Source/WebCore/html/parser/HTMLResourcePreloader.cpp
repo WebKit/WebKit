@@ -45,7 +45,7 @@ bool PreloadRequest::isSafeToSendToAnotherThread() const
         && m_baseURL.isSafeToSendToAnotherThread();
 }
 
-KURL PreloadRequest::completeURL(Document* document)
+URL PreloadRequest::completeURL(Document* document)
 {
     return document->completeURL(m_resourceURL, m_baseURL.isEmpty() ? document->url() : m_baseURL);
 }

@@ -47,7 +47,7 @@ NetworkBlobRegistry::NetworkBlobRegistry()
 {
 }
 
-void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const KURL& url, PassOwnPtr<BlobData> data, const Vector<RefPtr<SandboxExtension>>& newSandboxExtensions)
+void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const URL& url, PassOwnPtr<BlobData> data, const Vector<RefPtr<SandboxExtension>>& newSandboxExtensions)
 {
     ASSERT(!m_sandboxExtensions.contains(url.string()));
 
@@ -67,11 +67,11 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
     ASSERT(!m_blobsForConnection.get(connection).contains(url));
     BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(connection);
     if (mapIterator == m_blobsForConnection.end())
-        mapIterator = m_blobsForConnection.add(connection, HashSet<KURL>()).iterator;
+        mapIterator = m_blobsForConnection.add(connection, HashSet<URL>()).iterator;
     mapIterator->value.add(url);
 }
 
-void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::KURL& url, const WebCore::KURL& srcURL)
+void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::URL& url, const WebCore::URL& srcURL)
 {
     blobRegistry().registerBlobURL(url, srcURL);
     SandboxExtensionMap::iterator iter = m_sandboxExtensions.find(srcURL.string());
@@ -83,7 +83,7 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
     m_blobsForConnection.find(connection)->value.add(url);
 }
 
-void NetworkBlobRegistry::unregisterBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::KURL& url)
+void NetworkBlobRegistry::unregisterBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::URL& url)
 {
     blobRegistry().unregisterBlobURL(url);
     m_sandboxExtensions.remove(url.string());
@@ -98,8 +98,8 @@ void NetworkBlobRegistry::connectionToWebProcessDidClose(NetworkConnectionToWebP
     if (!m_blobsForConnection.contains(connection))
         return;
 
-    HashSet<KURL>& blobsForConnection = m_blobsForConnection.find(connection)->value;
-    for (HashSet<KURL>::iterator iter = blobsForConnection.begin(), end = blobsForConnection.end(); iter != end; ++iter) {
+    HashSet<URL>& blobsForConnection = m_blobsForConnection.find(connection)->value;
+    for (HashSet<URL>::iterator iter = blobsForConnection.begin(), end = blobsForConnection.end(); iter != end; ++iter) {
         blobRegistry().unregisterBlobURL(*iter);
         m_sandboxExtensions.remove(*iter);
     }
@@ -107,7 +107,7 @@ void NetworkBlobRegistry::connectionToWebProcessDidClose(NetworkConnectionToWebP
     m_blobsForConnection.remove(connection);
 }
 
-const Vector<RefPtr<SandboxExtension>> NetworkBlobRegistry::sandboxExtensions(const WebCore::KURL& url)
+const Vector<RefPtr<SandboxExtension>> NetworkBlobRegistry::sandboxExtensions(const WebCore::URL& url)
 {
     return m_sandboxExtensions.get(url.string());
 }

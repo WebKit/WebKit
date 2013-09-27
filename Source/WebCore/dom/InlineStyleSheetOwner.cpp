@@ -145,7 +145,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     m_loading = true;
 
-    m_sheet = CSSStyleSheet::createInline(element, KURL(), document.inputEncoding());
+    m_sheet = CSSStyleSheet::createInline(element, URL(), document.inputEncoding());
     m_sheet->setMediaQueries(mediaQueries.release());
     m_sheet->setTitle(element.title());
     m_sheet->contents()->parseStringAtLine(text, m_startLineNumber.zeroBasedInt(), m_isParsingChildren);

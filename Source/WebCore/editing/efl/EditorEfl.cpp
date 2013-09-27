@@ -37,7 +37,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard&)
     notImplemented();
 }
 
-void Editor::writeImageToPasteboard(Pasteboard&, Element&, const KURL&, const String&)
+void Editor::writeImageToPasteboard(Pasteboard&, Element&, const URL&, const String&)
 {
     notImplemented();
 }

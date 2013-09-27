@@ -167,7 +167,7 @@ String CSSValueList::customSerializeResolvingVariables(const HashMap<AtomicStrin
 }
 #endif
 
-void CSSValueList::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet) const
+void CSSValueList::addSubresourceStyleURLs(ListHashSet<URL>& urls, const StyleSheetContents* styleSheet) const
 {
     size_t size = m_values.size();
     for (size_t i = 0; i < size; ++i)

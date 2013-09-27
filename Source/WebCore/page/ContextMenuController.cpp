@@ -171,7 +171,7 @@ void ContextMenuController::showContextMenu(Event* event)
     event->setDefaultHandled();
 }
 
-static void openNewWindow(const KURL& urlToLoad, Frame* frame)
+static void openNewWindow(const URL& urlToLoad, Frame* frame)
 {
     if (Page* oldPage = frame->page()) {
         FrameLoadRequest request(frame->document()->securityOrigin(), ResourceRequest(urlToLoad, frame->loader().outgoingReferrer()));
@@ -820,7 +820,7 @@ void ContextMenuController::populate()
 
     if (!m_hitTestResult.isContentEditable()) {
         FrameLoader& loader = frame->loader();
-        KURL linkURL = m_hitTestResult.absoluteLinkURL();
+        URL linkURL = m_hitTestResult.absoluteLinkURL();
         if (!linkURL.isEmpty()) {
             if (loader.client().canHandleRequest(ResourceRequest(linkURL))) {
                 appendItem(OpenLinkItem, m_contextMenu.get());
@@ -834,7 +834,7 @@ void ContextMenuController::populate()
             appendItem(CopyLinkItem, m_contextMenu.get());
         }
 
-        KURL imageURL = m_hitTestResult.absoluteImageURL();
+        URL imageURL = m_hitTestResult.absoluteImageURL();
         if (!imageURL.isEmpty()) {
             if (!linkURL.isEmpty())
                 appendItem(*separatorItem(), m_contextMenu.get());
@@ -848,7 +848,7 @@ void ContextMenuController::populate()
 #endif
         }
 
-        KURL mediaURL = m_hitTestResult.absoluteMediaURL();
+        URL mediaURL = m_hitTestResult.absoluteMediaURL();
         if (!mediaURL.isEmpty()) {
             if (!linkURL.isEmpty() || !imageURL.isEmpty())
                 appendItem(*separatorItem(), m_contextMenu.get());
@@ -991,7 +991,7 @@ void ContextMenuController::populate()
         }
 
         FrameLoader& loader = frame->loader();
-        KURL linkURL = m_hitTestResult.absoluteLinkURL();
+        URL linkURL = m_hitTestResult.absoluteLinkURL();
         if (!linkURL.isEmpty()) {
             if (loader.client().canHandleRequest(ResourceRequest(linkURL))) {
                 appendItem(OpenLinkItem, m_contextMenu.get());

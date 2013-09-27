@@ -139,7 +139,7 @@ public:
     Document* topDocument() const;
     HTMLLabelElement* labelElementContainer() const;
     
-    virtual KURL url() const;
+    virtual URL url() const;
     virtual PlainTextRange selectedTextRange() const;
     virtual VisibleSelection selection() const;
     virtual String stringValue() const;

@@ -39,7 +39,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/Image.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceError.h>
@@ -407,7 +407,7 @@ bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder& decoder, ResourceRe
         String url;
         if (!decoder.decode(url))
             return false;
-        request.setURL(KURL(KURL(), url));
+        request.setURL(URL(URL(), url));
 
         String httpMethod;
         if (!decoder.decode(httpMethod))
@@ -432,7 +432,7 @@ bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder& decoder, ResourceRe
         String firstPartyForCookies;
         if (!decoder.decode(firstPartyForCookies))
             return false;
-        request.setFirstPartyForCookies(KURL(KURL(), firstPartyForCookies));
+        request.setFirstPartyForCookies(URL(URL(), firstPartyForCookies));
 
         resourceRequest = request;
     }
@@ -503,7 +503,7 @@ bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder& decoder, ResourceR
         String url;
         if (!decoder.decode(url))
             return false;
-        response.setURL(KURL(KURL(), url));
+        response.setURL(URL(URL(), url));
 
         int32_t httpStatusCode;
         if (!decoder.decode(httpStatusCode))
@@ -1033,17 +1033,17 @@ bool ArgumentCoder<DragSession>::decode(ArgumentDecoder& decoder, DragSession& r
     return true;
 }
 
-void ArgumentCoder<KURL>::encode(ArgumentEncoder& encoder, const KURL& result)
+void ArgumentCoder<URL>::encode(ArgumentEncoder& encoder, const URL& result)
 {
     encoder << result.string();
 }
     
-bool ArgumentCoder<KURL>::decode(ArgumentDecoder& decoder, KURL& result)
+bool ArgumentCoder<URL>::decode(ArgumentDecoder& decoder, URL& result)
 {
     String urlAsString;
     if (!decoder.decode(urlAsString))
         return false;
-    result = KURL(WebCore::ParsedURLString, urlAsString);
+    result = URL(WebCore::ParsedURLString, urlAsString);
     return true;
 }
 
@@ -1063,7 +1063,7 @@ bool ArgumentCoder<WebCore::UserStyleSheet>::decode(ArgumentDecoder& decoder, We
     if (!decoder.decode(source))
         return false;
 
-    KURL url;
+    URL url;
     if (!decoder.decode(url))
         return false;
 
@@ -1103,7 +1103,7 @@ bool ArgumentCoder<WebCore::UserScript>::decode(ArgumentDecoder& decoder, WebCor
     if (!decoder.decode(source))
         return false;
 
-    KURL url;
+    URL url;
     if (!decoder.decode(url))
         return false;
 

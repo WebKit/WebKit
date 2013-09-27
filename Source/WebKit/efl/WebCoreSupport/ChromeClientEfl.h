@@ -25,7 +25,7 @@
 #define ChromeClientEfl_h
 
 #include "ChromeClient.h"
-#include "KURL.h"
+#include "URL.h"
 #include "PopupMenu.h"
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -188,7 +188,7 @@ public:
 #endif
 
     Evas_Object* m_view;
-    KURL m_hoveredLinkURL;
+    URL m_hoveredLinkURL;
 #if ENABLE(FULLSCREEN_API)
     RefPtr<Element> m_fullScreenElement;
 #endif

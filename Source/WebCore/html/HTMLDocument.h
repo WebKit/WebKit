@@ -31,7 +31,7 @@ namespace WebCore {
 
 class HTMLDocument : public Document, public CachedResourceClient {
 public:
-    static PassRefPtr<HTMLDocument> create(Frame* frame, const KURL& url)
+    static PassRefPtr<HTMLDocument> create(Frame* frame, const URL& url)
     {
         return adoptRef(new HTMLDocument(frame, url));
     }
@@ -80,7 +80,7 @@ public:
     static bool isCaseSensitiveAttribute(const QualifiedName&);
 
 protected:
-    HTMLDocument(Frame*, const KURL&, DocumentClassFlags = 0);
+    HTMLDocument(Frame*, const URL&, DocumentClassFlags = 0);
 
 private:
     virtual PassRefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);

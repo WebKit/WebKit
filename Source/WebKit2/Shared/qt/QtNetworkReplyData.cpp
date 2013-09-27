@@ -27,7 +27,7 @@
 #include "QtNetworkReplyData.h"
 
 #include "ArgumentCodersQt.h"
-#include "KURL.h"
+#include "URL.h"
 #include "SharedMemory.h"
 #include "WebCoreArgumentCoders.h"
 #include <QNetworkAccessManager>

@@ -33,7 +33,7 @@ class String;
 }
 
 namespace WebCore {
-class KURL;
+class URL;
 class ProtectionSpace;
 class CredentialTransformData;
 

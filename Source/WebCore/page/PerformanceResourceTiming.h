@@ -42,7 +42,7 @@
 namespace WebCore {
 
 class Document;
-class KURL;
+class URL;
 class ResourceLoadTiming;
 class ResourceRequest;
 class ResourceResponse;

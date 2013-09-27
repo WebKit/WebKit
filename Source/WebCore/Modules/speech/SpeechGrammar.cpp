@@ -38,7 +38,7 @@ PassRefPtr<SpeechGrammar> SpeechGrammar::create()
     return adoptRef(new SpeechGrammar);
 }
 
-PassRefPtr<SpeechGrammar> SpeechGrammar::create(const KURL& src, double weight)
+PassRefPtr<SpeechGrammar> SpeechGrammar::create(const URL& src, double weight)
 {
     return adoptRef(new SpeechGrammar(src, weight));
 }
@@ -54,7 +54,7 @@ SpeechGrammar::SpeechGrammar()
 {
 }
 
-SpeechGrammar::SpeechGrammar(const KURL& src, double weight)
+SpeechGrammar::SpeechGrammar(const URL& src, double weight)
     : m_src(src)
     , m_weight(weight)
 {

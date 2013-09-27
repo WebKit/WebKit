@@ -469,12 +469,12 @@ bool XMLHttpRequest::isAllowedHTTPHeader(const String& name)
         && !name.startsWith(staticData->m_secHeaderPrefix, false);
 }
 
-void XMLHttpRequest::open(const String& method, const KURL& url, ExceptionCode& ec)
+void XMLHttpRequest::open(const String& method, const URL& url, ExceptionCode& ec)
 {
     open(method, url, true, ec);
 }
 
-void XMLHttpRequest::open(const String& method, const KURL& url, bool async, ExceptionCode& ec)
+void XMLHttpRequest::open(const String& method, const URL& url, bool async, ExceptionCode& ec)
 {
     internalAbort();
     State previousState = m_state;
@@ -554,17 +554,17 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
         m_state = OPENED;
 }
 
-void XMLHttpRequest::open(const String& method, const KURL& url, bool async, const String& user, ExceptionCode& ec)
+void XMLHttpRequest::open(const String& method, const URL& url, bool async, const String& user, ExceptionCode& ec)
 {
-    KURL urlWithCredentials(url);
+    URL urlWithCredentials(url);
     urlWithCredentials.setUser(user);
 
     open(method, urlWithCredentials, async, ec);
 }
 
-void XMLHttpRequest::open(const String& method, const KURL& url, bool async, const String& user, const String& password, ExceptionCode& ec)
+void XMLHttpRequest::open(const String& method, const URL& url, bool async, const String& user, const String& password, ExceptionCode& ec)
 {
-    KURL urlWithCredentials(url);
+    URL urlWithCredentials(url);
     urlWithCredentials.setUser(user);
     urlWithCredentials.setPass(password);
 

@@ -78,8 +78,8 @@ void SubframeLoader::clear()
 bool SubframeLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String& urlString, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList)
 {
     // Support for <frame src="javascript:string">
-    KURL scriptURL;
-    KURL url;
+    URL scriptURL;
+    URL url;
     if (protocolIsJavaScript(urlString)) {
         scriptURL = completeURL(urlString); // completeURL() encodes the URL.
         url = blankURL();
@@ -98,7 +98,7 @@ bool SubframeLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const Str
     
 bool SubframeLoader::resourceWillUsePlugin(const String& url, const String& mimeType, bool shouldPreferPlugInsForImages)
 {
-    KURL completedURL;
+    URL completedURL;
     if (!url.isEmpty())
         completedURL = completeURL(url);
 
@@ -106,7 +106,7 @@ bool SubframeLoader::resourceWillUsePlugin(const String& url, const String& mime
     return shouldUsePlugin(completedURL, mimeType, shouldPreferPlugInsForImages, false, useFallback);
 }
 
-bool SubframeLoader::pluginIsLoadable(HTMLPlugInImageElement* pluginElement, const KURL& url, const String& mimeType)
+bool SubframeLoader::pluginIsLoadable(HTMLPlugInImageElement* pluginElement, const URL& url, const String& mimeType)
 {
     if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {
         if (!m_frame->settings().isJavaEnabled())
@@ -141,7 +141,7 @@ bool SubframeLoader::pluginIsLoadable(HTMLPlugInImageElement* pluginElement, con
     return true;
 }
 
-bool SubframeLoader::requestPlugin(HTMLPlugInImageElement* ownerElement, const KURL& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback)
+bool SubframeLoader::requestPlugin(HTMLPlugInImageElement* ownerElement, const URL& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback)
 {
     // Application plug-ins are plug-ins implemented by the user agent, for example Qt plug-ins,
     // as opposed to third-party code such as Flash. The user agent decides whether or not they are
@@ -219,7 +219,7 @@ bool SubframeLoader::requestObject(HTMLPlugInImageElement* ownerElement, const S
     if (!renderer)
         return false;
 
-    KURL completedURL;
+    URL completedURL;
     if (!url.isEmpty())
         completedURL = completeURL(url);
 
@@ -237,12 +237,12 @@ bool SubframeLoader::requestObject(HTMLPlugInImageElement* ownerElement, const S
 }
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const KURL& url,
+PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const URL& url,
     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     ASSERT(node->hasTagName(videoTag) || isHTMLAudioElement(node));
 
-    KURL completedURL;
+    URL completedURL;
     if (!url.isEmpty())
         completedURL = completeURL(url);
 
@@ -292,7 +292,7 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
     }
 
     if (!codeBaseURLString.isEmpty()) {
-        KURL codeBaseURL = completeURL(codeBaseURLString);
+        URL codeBaseURL = completeURL(codeBaseURLString);
         if (!element->document().securityOrigin()->canDisplay(codeBaseURL)) {
             FrameLoader::reportLocalLoadFailed(m_frame, codeBaseURL.string());
             return 0;
@@ -306,7 +306,7 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
 
     if (baseURLString.isEmpty())
         baseURLString = m_frame->document()->baseURL().string();
-    KURL baseURL = completeURL(baseURLString);
+    URL baseURL = completeURL(baseURLString);
 
     RefPtr<Widget> widget;
     if (allowPlugins(AboutToInstantiatePlugin))
@@ -326,7 +326,7 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
     return widget;
 }
 
-Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement* ownerElement, const KURL& url, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList)
+Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement* ownerElement, const URL& url, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList)
 {
     Frame* frame = ownerElement->contentFrame();
     if (frame)
@@ -338,7 +338,7 @@ Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement* ownerElemen
     return ownerElement->contentFrame();
 }
 
-Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const KURL& url, const String& name, const String& referrer)
+Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const URL& url, const String& name, const String& referrer)
 {
     RefPtr<Frame> protect(m_frame);
 
@@ -403,7 +403,7 @@ bool SubframeLoader::allowPlugins(ReasonForCallingAllowPlugins reason)
     return allowed;
 }
 
-bool SubframeLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages, bool hasFallback, bool& useFallback)
+bool SubframeLoader::shouldUsePlugin(const URL& url, const String& mimeType, bool shouldPreferPlugInsForImages, bool hasFallback, bool& useFallback)
 {
     if (m_frame->loader().client().shouldAlwaysUsePluginDocument(mimeType)) {
         useFallback = false;
@@ -430,7 +430,7 @@ Document* SubframeLoader::document() const
     return m_frame->document();
 }
 
-bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KURL& url, const String& mimeType,
+bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const URL& url, const String& mimeType,
     const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback)
 {
     RenderEmbeddedObject* renderer = pluginElement->renderEmbeddedObject();
@@ -462,7 +462,7 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KUR
     return true;
 }
 
-KURL SubframeLoader::completeURL(const String& url) const
+URL SubframeLoader::completeURL(const String& url) const
 {
     ASSERT(m_frame->document());
     return m_frame->document()->completeURL(url);

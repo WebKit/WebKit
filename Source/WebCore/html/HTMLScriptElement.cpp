@@ -105,12 +105,12 @@ bool HTMLScriptElement::async() const
     return fastHasAttribute(asyncAttr) || forceAsync();
 }
 
-KURL HTMLScriptElement::src() const
+URL HTMLScriptElement::src() const
 {
     return document().completeURL(sourceAttributeValue());
 }
 
-void HTMLScriptElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void HTMLScriptElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 

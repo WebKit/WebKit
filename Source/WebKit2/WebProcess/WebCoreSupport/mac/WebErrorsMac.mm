@@ -87,7 +87,7 @@ ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
     return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodePlugInWillHandleLoad, response.url(), WEB_UI_STRING("Plug-in handled load", "WebKitErrorPlugInWillHandleLoad description"));
 }
 
-ResourceError internalError(const KURL& url)
+ResourceError internalError(const URL& url)
 {
     return ResourceError(WebError::webKitErrorDomain(), kWKErrorInternal, url, WEB_UI_STRING("WebKit encountered an internal error", "WebKitErrorInternal description"));
 }

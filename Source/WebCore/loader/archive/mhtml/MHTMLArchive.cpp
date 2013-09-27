@@ -107,7 +107,7 @@ PassRefPtr<MHTMLArchive> MHTMLArchive::create()
     return adoptRef(new MHTMLArchive);
 }
 
-PassRefPtr<MHTMLArchive> MHTMLArchive::create(const KURL& url, SharedBuffer* data)
+PassRefPtr<MHTMLArchive> MHTMLArchive::create(const URL& url, SharedBuffer* data)
 {
     // For security reasons we only load MHTML pages from local URLs.
     if (!SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol()))

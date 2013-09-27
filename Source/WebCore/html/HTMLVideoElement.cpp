@@ -194,7 +194,7 @@ const AtomicString& HTMLVideoElement::imageSourceURL() const
 void HTMLVideoElement::setDisplayMode(DisplayMode mode)
 {
     DisplayMode oldMode = displayMode();
-    KURL poster = posterImageURL();
+    URL poster = posterImageURL();
 
     if (!poster.isEmpty()) {
         // We have a poster path, but only show it until the user triggers display by playing or seeking and the
@@ -315,11 +315,11 @@ unsigned HTMLVideoElement::webkitDroppedFrameCount() const
 }
 #endif
 
-KURL HTMLVideoElement::posterImageURL() const
+URL HTMLVideoElement::posterImageURL() const
 {
     String url = stripLeadingAndTrailingHTMLSpaces(imageSourceURL());
     if (url.isEmpty())
-        return KURL();
+        return URL();
     return document().completeURL(url);
 }
 

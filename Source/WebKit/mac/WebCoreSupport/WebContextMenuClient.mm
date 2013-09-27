@@ -43,7 +43,7 @@
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Document.h>
-#import <WebCore/KURL.h>
+#import <WebCore/URL.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Page.h>
 #import <WebCore/Frame.h>
@@ -312,7 +312,7 @@ void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const 
     }
 }
 
-void WebContextMenuClient::downloadURL(const KURL& url)
+void WebContextMenuClient::downloadURL(const URL& url)
 {
     [m_webView _downloadURL:url];
 }

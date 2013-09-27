@@ -127,13 +127,13 @@ void History::go(ScriptExecutionContext* context, int distance)
     m_frame->navigationScheduler().scheduleHistoryNavigation(distance);
 }
 
-KURL History::urlForState(const String& urlString)
+URL History::urlForState(const String& urlString)
 {
-    KURL baseURL = m_frame->document()->baseURL();
+    URL baseURL = m_frame->document()->baseURL();
     if (urlString.isEmpty())
         return baseURL;
 
-    return KURL(baseURL, urlString);
+    return URL(baseURL, urlString);
 }
 
 void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const String& title, const String& urlString, StateObjectType stateObjectType, ExceptionCode& ec)
@@ -141,7 +141,7 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
     if (!m_frame || !m_frame->page())
         return;
     
-    KURL fullURL = urlForState(urlString);
+    URL fullURL = urlForState(urlString);
     if (!fullURL.isValid() || !m_frame->document()->securityOrigin()->canRequest(fullURL)) {
         ec = SECURITY_ERR;
         return;

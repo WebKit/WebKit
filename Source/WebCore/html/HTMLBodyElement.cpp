@@ -327,7 +327,7 @@ int HTMLBodyElement::scrollWidth()
     return adjustForZoom(view->contentsWidth(), *frame);
 }
 
-void HTMLBodyElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void HTMLBodyElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
 

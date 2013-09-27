@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-class KURL;
+class URL;
 class MediaSourceBase;
 
 class MediaSourceRegistry : public URLRegistry {
@@ -49,8 +49,8 @@ public:
     static MediaSourceRegistry& registry();
 
     // Registers a blob URL referring to the specified media source.
-    virtual void registerURL(SecurityOrigin*, const KURL&, URLRegistrable*) OVERRIDE;
-    virtual void unregisterURL(const KURL&) OVERRIDE;
+    virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) OVERRIDE;
+    virtual void unregisterURL(const URL&) OVERRIDE;
     virtual URLRegistrable* lookup(const String&) OVERRIDE;
 
 private:

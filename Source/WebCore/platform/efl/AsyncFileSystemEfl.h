@@ -40,18 +40,18 @@ public:
     AsyncFileSystemEfl();
     virtual ~AsyncFileSystemEfl();
 
-    virtual void move(const KURL&, const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void copy(const KURL&, const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void remove(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void removeRecursively(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void readMetadata(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createFile(const KURL&, bool, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createDirectory(const KURL&, bool, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void fileExists(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void directoryExists(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void readDirectory(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createWriter(AsyncFileWriterClient*, const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>);
-    virtual void createSnapshotFileAndReadMetadata(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void move(const URL&, const URL&, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void copy(const URL&, const URL&, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void remove(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void removeRecursively(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void readMetadata(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createFile(const URL&, bool, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createDirectory(const URL&, bool, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void fileExists(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void directoryExists(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void readDirectory(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createWriter(AsyncFileWriterClient*, const URL&, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createSnapshotFileAndReadMetadata(const URL&, PassOwnPtr<AsyncFileSystemCallbacks>);
 };
 
 } // namespace WebCore

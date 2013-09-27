@@ -48,7 +48,7 @@ class CSSStyleSheet FINAL : public StyleSheet {
 public:
     static PassRefPtr<CSSStyleSheet> create(PassRefPtr<StyleSheetContents>, CSSImportRule* ownerRule = 0);
     static PassRefPtr<CSSStyleSheet> create(PassRefPtr<StyleSheetContents>, Node* ownerNode);
-    static PassRefPtr<CSSStyleSheet> createInline(Node&, const KURL&, const String& encoding = String());
+    static PassRefPtr<CSSStyleSheet> createInline(Node&, const URL&, const String& encoding = String());
 
     virtual ~CSSStyleSheet();
 
@@ -76,7 +76,7 @@ public:
 
     virtual void clearOwnerNode() OVERRIDE;
     virtual CSSImportRule* ownerRule() const OVERRIDE { return m_ownerRule; }
-    virtual KURL baseURL() const OVERRIDE;
+    virtual URL baseURL() const OVERRIDE;
     virtual bool isLoading() const OVERRIDE;
     
     void clearOwnerRule() { m_ownerRule = 0; }

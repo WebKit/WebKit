@@ -73,7 +73,7 @@ ScriptValue ScriptController::executeScript(const ScriptSourceCode& sourceCode)
     return evaluate(sourceCode);
 }
 
-bool ScriptController::executeIfJavaScriptURL(const KURL& url, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL)
+bool ScriptController::executeIfJavaScriptURL(const URL& url, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL)
 {
     if (!protocolIsJavaScript(url))
         return false;

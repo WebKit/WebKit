@@ -146,7 +146,7 @@ void TextTrackLoader::notifyFinished(CachedResource* resource)
     cancelLoad();
 }
 
-bool TextTrackLoader::load(const KURL& url, const String& crossOriginMode)
+bool TextTrackLoader::load(const URL& url, const String& crossOriginMode)
 {
     cancelLoad();
 

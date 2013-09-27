@@ -103,7 +103,7 @@ static InstanceMap& instanceMap()
     return map;
 }
 
-static String scriptStringIfJavaScriptURL(const KURL& url)
+static String scriptStringIfJavaScriptURL(const URL& url)
 {
     if (!protocolIsJavaScript(url))
         return String();
@@ -426,7 +426,7 @@ void PluginView::performRequest(PluginRequest* request)
     if (m_parentFrame->loader().documentLoader() != m_parentFrame->loader().activeDocumentLoader() && (targetFrameName.isNull() || m_parentFrame->tree().find(targetFrameName) != m_parentFrame))
         return;
 
-    KURL requestURL = request->frameLoadRequest().resourceRequest().url();
+    URL requestURL = request->frameLoadRequest().resourceRequest().url();
     String jsString = scriptStringIfJavaScriptURL(requestURL);
 
     UserGestureIndicator gestureIndicator(request->shouldAllowPopups() ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
@@ -512,7 +512,7 @@ NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNoti
 {
     ASSERT(frameLoadRequest.resourceRequest().httpMethod() == "GET" || frameLoadRequest.resourceRequest().httpMethod() == "POST");
 
-    KURL url = frameLoadRequest.resourceRequest().url();
+    URL url = frameLoadRequest.resourceRequest().url();
     
     if (url.isEmpty())
         return NPERR_INVALID_URL;
@@ -541,7 +541,7 @@ NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNoti
     return NPERR_NO_ERROR;
 }
 
-static KURL makeURL(const KURL& baseURL, const char* relativeURLString)
+static URL makeURL(const URL& baseURL, const char* relativeURLString)
 {
     String urlString = relativeURLString;
 
@@ -549,7 +549,7 @@ static KURL makeURL(const KURL& baseURL, const char* relativeURLString)
     urlString.replaceWithLiteral('\n', "");
     urlString.replaceWithLiteral('\r', "");
 
-    return KURL(baseURL, urlString);
+    return URL(baseURL, urlString);
 }
 
 NPError PluginView::getURLNotify(const char* url, const char* target, void* notifyData)
@@ -796,7 +796,7 @@ void PluginView::setParameters(const Vector<String>& paramNames, const Vector<St
     m_paramCount = paramCount;
 }
 
-PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* plugin, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* plugin, HTMLPlugInElement* element, const URL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
     : m_parentFrame(parentFrame)
     , m_plugin(plugin)
     , m_element(element)
@@ -948,7 +948,7 @@ bool PluginView::isCallingPlugin()
     return s_callingPlugin > 0;
 }
 
-PassRefPtr<PluginView> PluginView::create(Frame* parentFrame, const IntSize& size, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+PassRefPtr<PluginView> PluginView::create(Frame* parentFrame, const IntSize& size, HTMLPlugInElement* element, const URL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     // if we fail to find a plugin for this MIME type, findPlugin will search for
     // a plugin by the file extension and update the MIME type, so pass a mutable String
@@ -1382,7 +1382,7 @@ NPError PluginView::getValueForURL(NPNURLVariable variable, const char* url, cha
 
     switch (variable) {
     case NPNURLVCookie: {
-        KURL u(m_parentFrame->document()->baseURL(), url);
+        URL u(m_parentFrame->document()->baseURL(), url);
         if (u.isValid()) {
             Frame* frame = getFrame(parentFrame(), m_element);
             if (frame) {
@@ -1404,7 +1404,7 @@ NPError PluginView::getValueForURL(NPNURLVariable variable, const char* url, cha
         break;
     }
     case NPNURLVProxy: {
-        KURL u(m_parentFrame->document()->baseURL(), url);
+        URL u(m_parentFrame->document()->baseURL(), url);
         if (u.isValid()) {
             Frame* frame = getFrame(parentFrame(), m_element);
             const FrameLoader* frameLoader = frame ? &frame->loader() : 0;
@@ -1443,7 +1443,7 @@ NPError PluginView::setValueForURL(NPNURLVariable variable, const char* url, con
 
     switch (variable) {
     case NPNURLVCookie: {
-        KURL u(m_parentFrame->document()->baseURL(), url);
+        URL u(m_parentFrame->document()->baseURL(), url);
         if (u.isValid()) {
             const String cookieStr = String::fromUTF8(value, len);
             Frame* frame = getFrame(parentFrame(), m_element);

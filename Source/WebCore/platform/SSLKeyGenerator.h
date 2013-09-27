@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-    class KURL;
+    class URL;
 
     // Returns strings representing key sizes that may be used
     // for the <keygen> tag. The first string is displayed as the default
@@ -41,7 +41,7 @@ namespace WebCore {
     // This function handles the <keygen> tag in form elements.
     // Returns a signed copy of the combined challenge string and public
     // key (from a newly generated key pair).
-    String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const KURL&);
+    String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&);
 
 } // namespace WebCore
 

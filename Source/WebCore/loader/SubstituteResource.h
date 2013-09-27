@@ -28,7 +28,7 @@
 
 #include <wtf/RefCounted.h>
 
-#include "KURL.h"
+#include "URL.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 
@@ -40,12 +40,12 @@ class SubstituteResource : public RefCounted<SubstituteResource> {
 public:
     virtual ~SubstituteResource() { }
 
-    const KURL& url() const { return m_url; }
+    const URL& url() const { return m_url; }
     const ResourceResponse& response() const { return m_response; }
     SharedBuffer* data() const { return m_data.get(); }
 
 protected:
-    SubstituteResource(const KURL& url, const ResourceResponse& response, PassRefPtr<SharedBuffer> data)
+    SubstituteResource(const URL& url, const ResourceResponse& response, PassRefPtr<SharedBuffer> data)
         : m_url(url)
         , m_response(response)
         , m_data(data)
@@ -54,7 +54,7 @@ protected:
     }
     
 private:
-    KURL m_url;
+    URL m_url;
     ResourceResponse m_response;
     RefPtr<SharedBuffer> m_data;
 };

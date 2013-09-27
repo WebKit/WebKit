@@ -56,12 +56,12 @@ private:
     virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy() OVERRIDE;
 
     // WebCore::CookiesStrategy
-    virtual String cookiesForDOM(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&) OVERRIDE;
-    virtual void setCookiesFromDOM(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&, const String&) OVERRIDE;
-    virtual bool cookiesEnabled(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&) OVERRIDE;
-    virtual String cookieRequestHeaderFieldValue(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&) OVERRIDE;
-    virtual bool getRawCookies(const WebCore::NetworkStorageSession&, const WebCore::KURL& firstParty, const WebCore::KURL&, Vector<WebCore::Cookie>&) OVERRIDE;
-    virtual void deleteCookie(const WebCore::NetworkStorageSession&, const WebCore::KURL&, const String&) OVERRIDE;
+    virtual String cookiesForDOM(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) OVERRIDE;
+    virtual void setCookiesFromDOM(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, const String&) OVERRIDE;
+    virtual bool cookiesEnabled(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) OVERRIDE;
+    virtual String cookieRequestHeaderFieldValue(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) OVERRIDE;
+    virtual bool getRawCookies(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, Vector<WebCore::Cookie>&) OVERRIDE;
+    virtual void deleteCookie(const WebCore::NetworkStorageSession&, const WebCore::URL&, const String&) OVERRIDE;
 
     // WebCore::DatabaseStrategy
 #if ENABLE(SQL_DATABASE)
@@ -90,7 +90,7 @@ private:
     virtual PassRefPtr<WebCore::StorageNamespace> sessionStorageNamespace(WebCore::Page*) OVERRIDE;
 
     // WebCore::VisitedLinkStrategy
-    virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash, const WebCore::KURL& baseURL, const WTF::AtomicString& attributeURL) OVERRIDE;
+    virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash, const WebCore::URL& baseURL, const WTF::AtomicString& attributeURL) OVERRIDE;
     virtual void addVisitedLink(WebCore::Page*, WebCore::LinkHash) OVERRIDE;
 
 #if PLATFORM(MAC)
@@ -107,7 +107,7 @@ private:
     virtual long changeCount(const String& pasteboardName) OVERRIDE;
     virtual String uniqueName() OVERRIDE;
     virtual WebCore::Color color(const String& pasteboardName) OVERRIDE;
-    virtual WebCore::KURL url(const String& pasteboardName) OVERRIDE;
+    virtual WebCore::URL url(const String& pasteboardName) OVERRIDE;
 
     virtual long addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) OVERRIDE;
     virtual long setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) OVERRIDE;

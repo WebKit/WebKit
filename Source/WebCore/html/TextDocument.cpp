@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-TextDocument::TextDocument(Frame* frame, const KURL& url)
+TextDocument::TextDocument(Frame* frame, const URL& url)
     : HTMLDocument(frame, url)
 {
     setCompatibilityMode(QuirksMode);

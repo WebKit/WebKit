@@ -76,7 +76,7 @@ public:
 
         String suggestedFilename = response.suggestedFilename();
         if (suggestedFilename.isEmpty()) {
-            KURL url = response.url();
+            URL url = response.url();
             url.setQuery(String());
             url.removeFragmentIdentifier();
             suggestedFilename = decodeURLEscapeSequences(url.lastPathComponent());

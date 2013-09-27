@@ -77,7 +77,7 @@ class DeprecatedStyleBuilder;
 class Element;
 class Frame;
 class FrameView;
-class KURL;
+class URL;
 class KeyframeList;
 class KeyframeValue;
 class MediaQueryEvaluator;

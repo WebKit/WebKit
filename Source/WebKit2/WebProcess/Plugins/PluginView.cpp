@@ -212,7 +212,7 @@ static uint32_t lastModifiedDate(const ResourceResponse& response)
 void PluginView::Stream::didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse& response)
 {
     // Compute the stream related data from the resource response.
-    const KURL& responseURL = response.url();
+    const URL& responseURL = response.url();
     const String& mimeType = response.mimeType();
     long long expectedContentLength = response.expectedContentLength();
     
@@ -383,7 +383,7 @@ void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)
     }
 
     // Compute the stream related data from the resource response.
-    const KURL& responseURL = response.url();
+    const URL& responseURL = response.url();
     const String& mimeType = response.mimeType();
     long long expectedContentLength = response.expectedContentLength();
     
@@ -1308,7 +1308,7 @@ String PluginView::userAgent()
     if (!frame)
         return String();
     
-    return frame->loader().client().userAgent(KURL());
+    return frame->loader().client().userAgent(URL());
 }
 
 void PluginView::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, 
@@ -1489,18 +1489,18 @@ String PluginView::proxiesForURL(const String& urlString)
 {
     const FrameLoader* frameLoader = frame() ? &frame()->loader() : 0;
     const NetworkingContext* context = frameLoader ? frameLoader->networkingContext() : 0;
-    Vector<ProxyServer> proxyServers = proxyServersForURL(KURL(KURL(), urlString), context);
+    Vector<ProxyServer> proxyServers = proxyServersForURL(URL(URL(), urlString), context);
     return toString(proxyServers);
 }
 
 String PluginView::cookiesForURL(const String& urlString)
 {
-    return cookies(&m_pluginElement->document(), KURL(KURL(), urlString));
+    return cookies(&m_pluginElement->document(), URL(URL(), urlString));
 }
 
 void PluginView::setCookiesForURL(const String& urlString, const String& cookieString)
 {
-    setCookies(&m_pluginElement->document(), KURL(KURL(), urlString), cookieString);
+    setCookies(&m_pluginElement->document(), URL(URL(), urlString), cookieString);
 }
 
 bool PluginView::getAuthenticationInfo(const ProtectionSpace& protectionSpace, String& username, String& password)

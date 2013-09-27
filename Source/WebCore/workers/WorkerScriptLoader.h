@@ -30,7 +30,7 @@
 
 #if ENABLE(WORKERS)
 
-#include "KURL.h"
+#include "URL.h"
 #include "ResourceRequest.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
@@ -56,14 +56,14 @@ namespace WebCore {
             return adoptRef(new WorkerScriptLoader());
         }
 
-        void loadSynchronously(ScriptExecutionContext*, const KURL&, CrossOriginRequestPolicy);
-        void loadAsynchronously(ScriptExecutionContext*, const KURL&, CrossOriginRequestPolicy, WorkerScriptLoaderClient*);
+        void loadSynchronously(ScriptExecutionContext*, const URL&, CrossOriginRequestPolicy);
+        void loadAsynchronously(ScriptExecutionContext*, const URL&, CrossOriginRequestPolicy, WorkerScriptLoaderClient*);
 
         void notifyError();
 
         String script();
-        const KURL& url() const { return m_url; }
-        const KURL& responseURL() const;
+        const URL& url() const { return m_url; }
+        const URL& responseURL() const;
         bool failed() const { return m_failed; }
         unsigned long identifier() const { return m_identifier; }
 
@@ -91,8 +91,8 @@ namespace WebCore {
         String m_responseEncoding;        
         RefPtr<TextResourceDecoder> m_decoder;
         StringBuilder m_script;
-        KURL m_url;
-        KURL m_responseURL;
+        URL m_url;
+        URL m_responseURL;
         bool m_failed;
         unsigned long m_identifier;
         bool m_finishing;

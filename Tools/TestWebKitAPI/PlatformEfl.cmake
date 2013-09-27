@@ -49,7 +49,7 @@ set(webkit2_api_harness_SOURCES
 
 set(test_webcore_BINARIES
     LayoutUnit
-    KURL
+    URL
 )
 
 # In here we list the bundles that are used by our specific WK2 API Tests

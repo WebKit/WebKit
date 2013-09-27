@@ -23,7 +23,7 @@
 
 #include "Cookie.h"
 #include "GOwnPtrSoup.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NetworkingContext.h"
 #include "PlatformCookieJar.h"
 #include "ResourceHandle.h"
@@ -83,7 +83,7 @@ static inline bool httpOnlyCookieExists(const GSList* cookies, const gchar* name
     return false;
 }
 
-void setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url, const String& value)
+void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& value)
 {
     SoupCookieJar* jar = cookieJarForSession(session);
     if (!jar)
@@ -117,7 +117,7 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstPa
     soup_cookies_free(existingCookies);
 }
 
-static String cookiesForSession(const NetworkStorageSession& session, const KURL& url, bool forHTTPHeader)
+static String cookiesForSession(const NetworkStorageSession& session, const URL& url, bool forHTTPHeader)
 {
     SoupCookieJar* jar = cookieJarForSession(session);
     if (!jar)
@@ -128,22 +128,22 @@ static String cookiesForSession(const NetworkStorageSession& session, const KURL
     return String::fromUTF8(cookies.get());
 }
 
-String cookiesForDOM(const NetworkStorageSession& session, const KURL&, const KURL& url)
+String cookiesForDOM(const NetworkStorageSession& session, const URL&, const URL& url)
 {
     return cookiesForSession(session, url, false);
 }
 
-String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const KURL& /*firstParty*/, const KURL& url)
+String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url)
 {
     return cookiesForSession(session, url, true);
 }
 
-bool cookiesEnabled(const NetworkStorageSession& session, const KURL& /*firstParty*/, const KURL& /*url*/)
+bool cookiesEnabled(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& /*url*/)
 {
     return !!cookieJarForSession(session);
 }
 
-bool getRawCookies(const NetworkStorageSession& session, const KURL& /*firstParty*/, const KURL& url, Vector<Cookie>& rawCookies)
+bool getRawCookies(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url, Vector<Cookie>& rawCookies)
 {
     rawCookies.clear();
     SoupCookieJar* jar = cookieJarForSession(session);
@@ -166,7 +166,7 @@ bool getRawCookies(const NetworkStorageSession& session, const KURL& /*firstPart
     return true;
 }
 
-void deleteCookie(const NetworkStorageSession& session, const KURL& url, const String& name)
+void deleteCookie(const NetworkStorageSession& session, const URL& url, const String& name)
 {
     SoupCookieJar* jar = cookieJarForSession(session);
     if (!jar)

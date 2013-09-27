@@ -48,9 +48,9 @@
 #include "WebURLRequest.h"
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityObject.h>
-#include <WebCore/KURL.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
+#include <WebCore/URL.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace WebKit;
@@ -364,7 +364,7 @@ void WKBundlePageSetFooterBanner(WKBundlePageRef pageRef, WKBundlePageBannerRef 
 
 bool WKBundlePageHasLocalDataForURL(WKBundlePageRef pageRef, WKURLRef urlRef)
 {
-    return toImpl(pageRef)->hasLocalDataForURL(WebCore::KURL(WebCore::KURL(), toWTFString(urlRef)));
+    return toImpl(pageRef)->hasLocalDataForURL(WebCore::URL(WebCore::URL(), toWTFString(urlRef)));
 }
 
 bool WKBundlePageCanHandleRequest(WKURLRequestRef requestRef)

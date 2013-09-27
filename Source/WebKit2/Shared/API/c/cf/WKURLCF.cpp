@@ -54,8 +54,8 @@ CFURLRef WKURLCopyCFURL(CFAllocatorRef allocatorRef, WKURLRef URLRef)
     // We first create a CString and then create the CFURL from it. This will ensure that the CFURL is stored in 
     // UTF-8 which uses less memory and is what WebKit clients might expect.
 
-    // This pattern of using UTF-8 and then falling back to Latin1 on failure matches KURL::createCFString with the
-    // major differnce being that KURL does not do a UTF-8 conversion and instead chops off the high bits of the UTF-16
+    // This pattern of using UTF-8 and then falling back to Latin1 on failure matches URL::createCFString with the
+    // major differnce being that URL does not do a UTF-8 conversion and instead chops off the high bits of the UTF-16
     // character sequence.
 
     CString buffer = toImpl(URLRef)->string().utf8();

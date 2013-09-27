@@ -2138,7 +2138,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     }
     
     if ([attributeName isEqualToString: NSAccessibilityURLAttribute]) {
-        KURL url = m_object->url();
+        URL url = m_object->url();
         if (url.isNull())
             return nil;
         return (NSURL*)url;

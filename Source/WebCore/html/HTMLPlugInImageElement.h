@@ -57,7 +57,7 @@ public:
 
     const String& serviceType() const { return m_serviceType; }
     const String& url() const { return m_url; }
-    const KURL& loadedUrl() const { return m_loadedUrl; }
+    const URL& loadedUrl() const { return m_loadedUrl; }
 
     const String loadedMimeType() const
     {
@@ -79,7 +79,7 @@ public:
     void restartSnapshottedPlugIn();
 
     // Plug-in URL might not be the same as url() with overriding parameters.
-    void subframeLoaderWillCreatePlugIn(const KURL& plugInURL);
+    void subframeLoaderWillCreatePlugIn(const URL& plugInURL);
     void subframeLoaderDidCreatePlugIn(const Widget*);
 
     void setIsPrimarySnapshottedPlugIn(bool);
@@ -106,7 +106,7 @@ protected:
     OwnPtr<HTMLImageLoader> m_imageLoader;
     String m_serviceType;
     String m_url;
-    KURL m_loadedUrl;
+    URL m_loadedUrl;
 
     static void updateWidgetCallback(Node*, unsigned = 0);
     virtual void didAttachRenderers() OVERRIDE;

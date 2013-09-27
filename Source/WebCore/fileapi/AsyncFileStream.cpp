@@ -203,12 +203,12 @@ static void didWrite(AsyncFileStream* proxy, int bytesWritten)
         proxy->client()->didWrite(bytesWritten);
 }
 
-void AsyncFileStream::write(const KURL& blobURL, long long position, int length)
+void AsyncFileStream::write(const URL& blobURL, long long position, int length)
 {
     fileThread()->postTask(createFileThreadTask(this, &AsyncFileStream::writeOnFileThread, blobURL, position, length));
 }
 
-void AsyncFileStream::writeOnFileThread(const KURL& blobURL, long long position, int length)
+void AsyncFileStream::writeOnFileThread(const URL& blobURL, long long position, int length)
 {
     int bytesWritten = m_stream->write(blobURL, position, length);
     callOnMainThread(didWrite, AllowCrossThreadAccess(this), bytesWritten);

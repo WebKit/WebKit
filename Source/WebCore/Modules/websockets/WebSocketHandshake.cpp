@@ -41,7 +41,7 @@
 #include "Document.h"
 #include "HTTPHeaderMap.h"
 #include "HTTPParsers.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Logging.h"
 #include "ResourceRequest.h"
 #include "ScriptCallStack.h"
@@ -63,7 +63,7 @@ namespace WebCore {
 
 static const char randomCharacterInSecWebSocketKey[] = "!\"#$%&'()*+,-./:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
-static String resourceName(const KURL& url)
+static String resourceName(const URL& url)
 {
     StringBuilder name;
     name.append(url.path());
@@ -79,7 +79,7 @@ static String resourceName(const KURL& url)
     return result;
 }
 
-static String hostName(const KURL& url, bool secure)
+static String hostName(const URL& url, bool secure)
 {
     ASSERT(url.protocolIs("wss") == secure);
     StringBuilder builder;
@@ -121,7 +121,7 @@ String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocket
     return base64Encode(reinterpret_cast<const char*>(hash.data()), sha1HashSize);
 }
 
-WebSocketHandshake::WebSocketHandshake(const KURL& url, const String& protocol, ScriptExecutionContext* context)
+WebSocketHandshake::WebSocketHandshake(const URL& url, const String& protocol, ScriptExecutionContext* context)
     : m_url(url)
     , m_clientProtocol(protocol)
     , m_secure(m_url.protocolIs("wss"))
@@ -136,12 +136,12 @@ WebSocketHandshake::~WebSocketHandshake()
 {
 }
 
-const KURL& WebSocketHandshake::url() const
+const URL& WebSocketHandshake::url() const
 {
     return m_url;
 }
 
-void WebSocketHandshake::setURL(const KURL& url)
+void WebSocketHandshake::setURL(const URL& url)
 {
     m_url = url.copy();
 }
@@ -198,7 +198,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
     if (!m_clientProtocol.isEmpty())
         fields.append("Sec-WebSocket-Protocol: " + m_clientProtocol);
 
-    KURL url = httpURLForAuthenticationAndCookies();
+    URL url = httpURLForAuthenticationAndCookies();
     if (m_context->isDocument()) {
         Document* document = toDocument(m_context);
         String cookie = cookieRequestHeaderFieldValue(document, url);
@@ -251,7 +251,7 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest() const
     if (!m_clientProtocol.isEmpty())
         request.addHTTPHeaderField("Sec-WebSocket-Protocol", m_clientProtocol);
 
-    KURL url = httpURLForAuthenticationAndCookies();
+    URL url = httpURLForAuthenticationAndCookies();
     if (m_context->isDocument()) {
         Document* document = toDocument(m_context);
         String cookie = cookieRequestHeaderFieldValue(document, url);
@@ -386,9 +386,9 @@ void WebSocketHandshake::addExtensionProcessor(PassOwnPtr<WebSocketExtensionProc
     m_extensionDispatcher.addProcessor(processor);
 }
 
-KURL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
+URL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
 {
-    KURL url = m_url.copy();
+    URL url = m_url.copy();
     bool couldSetProtocol = url.setProtocol(m_secure ? "https" : "http");
     ASSERT_UNUSED(couldSetProtocol, couldSetProtocol);
     return url;

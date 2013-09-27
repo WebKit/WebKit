@@ -56,7 +56,7 @@ public:
 private:
     XSLImportRule(XSLStyleSheet* parentSheet, const String& href);
 
-    virtual void setXSLStyleSheet(const String& href, const KURL& baseURL, const String& sheet);
+    virtual void setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet);
     
     XSLStyleSheet* m_parentStyleSheet;
     String m_strHref;

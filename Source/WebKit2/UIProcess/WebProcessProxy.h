@@ -46,7 +46,7 @@
 #endif
 
 namespace WebCore {
-class KURL;
+class URL;
 struct PluginInfo;
 };
 
@@ -100,7 +100,7 @@ public:
     void assumeReadAccessToBaseURL(const String&);
 
     bool checkURLReceivedFromWebProcess(const String&);
-    bool checkURLReceivedFromWebProcess(const WebCore::KURL&);
+    bool checkURLReceivedFromWebProcess(const WebCore::URL&);
 
     static bool fullKeyboardAccessEnabled();
 

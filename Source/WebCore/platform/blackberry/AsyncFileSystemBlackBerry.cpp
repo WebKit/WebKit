@@ -26,11 +26,11 @@
 #include "AsyncFileWriterClient.h"
 #include "DOMFileSystemBase.h"
 #include "ExceptionCode.h"
-#include "KURL.h"
 #include "NotImplemented.h"
 #include "PlatformAsyncFileSystemCallbacks.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "URL.h"
 
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -58,7 +58,7 @@ void AsyncFileSystem::openFileSystem(const String& basePath, const String& stora
     ASSERT_NOT_REACHED();
 }
 
-void AsyncFileSystemBlackBerry::openFileSystem(const KURL& rootURL, const String& basePath, const String& storageIdentifier, FileSystemType type, long long size, bool create, int playerId, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemBlackBerry::openFileSystem(const URL& rootURL, const String& basePath, const String& storageIdentifier, FileSystemType type, long long size, bool create, int playerId, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     BlackBerry::Platform::WebFileSystem::openFileSystem(BlackBerry::Platform::webKitThreadMessageClient(), basePath, storageIdentifier, static_cast<BlackBerry::Platform::WebFileSystem::Type>(type), size, create, new PlatformAsyncFileSystemCallbacks(callbacks, rootURL), playerId);
 }
@@ -78,67 +78,67 @@ AsyncFileSystemBlackBerry::~AsyncFileSystemBlackBerry()
 {
 }
 
-void AsyncFileSystemBlackBerry::move(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemBlackBerry::move(const URL& sourcePath, const URL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     m_platformFileSystem->move(fileSystemURLToPath(sourcePath), fileSystemURLToPath(destinationPath), new PlatformAsyncFileSystemCallbacks(callbacks));
 }
 
-void AsyncFileSystemBlackBerry::copy(const KURL& sourcePath, const KURL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemBlackBerry::copy(const URL& sourcePath, const URL& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     m_platformFileSystem->copy(fileSystemURLToPath(sourcePath), fileSystemURLToPath(destinationPath), new PlatformAsyncFileSystemCallbacks(callbacks));
 }
 
-void AsyncFileSystemBlackBerry::remove(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemBlackBerry::remove(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     m_platformFileSystem->remove(fileSystemURLToPath(path), new PlatformAsyncFileSystemCallbacks(callbacks));
 }
 
-void AsyncFileSystemBlackBerry::removeRecursively(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemBlackBerry::removeRecursively(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     m_platformFileSystem->removeRecursively(fileSystemURLToPath(path), new PlatformAsyncFileSystemCallbacks(callbacks));
 }
 
-void AsyncFileSystemBlackBerry::readMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemBlackBerry::readMetadata(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     m_platformFileSystem->readMetadata(fileSystemURLToPath(path), new PlatformAsyncFileSystemCallbacks(callbacks));
 }
 
-void AsyncFileSystemBlackBerry::createFile(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemBlackBerry::createFile(const URL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     m_platformFileSystem->createFile(fileSystemURLToPath(path), exclusive, new PlatformAsyncFileSystemCallbacks(callbacks));
 }
 
-void AsyncFileSystemBlackBerry::createDirectory(const KURL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemBlackBerry::createDirectory(const URL& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     m_platformFileSystem->createDirectory(fileSystemURLToPath(path), exclusive, new PlatformAsyncFileSystemCallbacks(callbacks));
 }
 
-void AsyncFileSystemBlackBerry::fileExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemBlackBerry::fileExists(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     m_platformFileSystem->fileExists(fileSystemURLToPath(path), new PlatformAsyncFileSystemCallbacks(callbacks));
 }
 
-void AsyncFileSystemBlackBerry::directoryExists(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemBlackBerry::directoryExists(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     m_platformFileSystem->directoryExists(fileSystemURLToPath(path), new PlatformAsyncFileSystemCallbacks(callbacks));
 }
 
-void AsyncFileSystemBlackBerry::readDirectory(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemBlackBerry::readDirectory(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     m_platformFileSystem->readDirectory(fileSystemURLToPath(path), new PlatformAsyncFileSystemCallbacks(callbacks));
 }
 
-void AsyncFileSystemBlackBerry::createWriter(AsyncFileWriterClient* client, const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemBlackBerry::createWriter(AsyncFileWriterClient* client, const URL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     BlackBerry::Platform::WebFileWriter::createWriter(m_platformFileSystem.get(), fileSystemURLToPath(path), new PlatformAsyncFileSystemCallbacks(callbacks, client));
 }
 
-void AsyncFileSystemBlackBerry::createSnapshotFileAndReadMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystemBlackBerry::createSnapshotFileAndReadMetadata(const URL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     m_platformFileSystem->createSnapshotFileAndReadMetadata(fileSystemURLToPath(path), new PlatformAsyncFileSystemCallbacks(callbacks));
 }
 
-String AsyncFileSystemBlackBerry::fileSystemURLToPath(const KURL& url)
+String AsyncFileSystemBlackBerry::fileSystemURLToPath(const URL& url)
 {
     FileSystemType type;
     String fullPath;

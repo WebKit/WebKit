@@ -123,7 +123,7 @@ bool SubresourceLoader::isSubresourceLoader()
 void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
     // Store the previous URL because the call to ResourceLoader::willSendRequest will modify it.
-    KURL previousURL = request().url();
+    URL previousURL = request().url();
     Ref<SubresourceLoader> protect(*this);
 
     ASSERT(!newRequest.isNull());

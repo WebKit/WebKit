@@ -43,7 +43,7 @@
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Page.h"
 #include "PageScriptDebugServer.h"
 #include "ScriptHeapSnapshot.h"

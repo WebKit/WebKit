@@ -41,7 +41,7 @@
 #include "HitTestResult.h"
 #include "Icon.h"
 #include "InputHandler.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Node.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -222,7 +222,7 @@ Page* ChromeClientBlackBerry::createWindow(Frame* frame, const FrameLoadRequest&
     // Bail out early when we aren't allowed to display the target origin, otherwise,
     // it would be harmful and the window would be useless. This is the same check
     // as the one in FrameLoader::loadFrameRequest().
-    const KURL& url = request.resourceRequest().url();
+    const URL& url = request.resourceRequest().url();
     if (!request.requester()->canDisplay(url)) {
         frame->loader().reportLocalLoadFailed(frame, url.string());
         return 0;

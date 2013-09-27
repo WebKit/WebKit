@@ -68,7 +68,7 @@ public:
     virtual void dispatchDidHandleOnloadEvents();
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() { notImplemented(); }
     virtual void dispatchDidCancelClientRedirect();
-    virtual void dispatchWillPerformClientRedirect(const KURL&, double, double);
+    virtual void dispatchWillPerformClientRedirect(const URL&, double, double);
     virtual void dispatchDidChangeLocationWithinPage();
     virtual void dispatchDidPushStateWithinPage();
     virtual void dispatchDidReplaceStateWithinPage();
@@ -77,7 +77,7 @@ public:
     virtual void dispatchDidReceiveIcon();
     virtual void dispatchDidStartProvisionalLoad();
     virtual void dispatchDidReceiveTitle(const StringWithDirection&);
-    virtual void setTitle(const StringWithDirection& title, const KURL&);
+    virtual void setTitle(const StringWithDirection& title, const URL&);
     virtual void dispatchDidCommitLoad();
     virtual void dispatchDidFailProvisionalLoad(const ResourceError&);
     virtual void dispatchDidFailLoad(const ResourceError&);
@@ -111,7 +111,7 @@ public:
     virtual void dispatchWillUpdateApplicationCache(const ResourceRequest&);
     virtual void dispatchDidLoadFromApplicationCache(const ResourceRequest&);
     virtual void didDisplayInsecureContent() { notImplemented(); }
-    virtual void didRunInsecureContent(SecurityOrigin*, const KURL&) { notImplemented(); }
+    virtual void didRunInsecureContent(SecurityOrigin*, const URL&) { notImplemented(); }
     virtual ResourceError interruptedForPolicyChangeError(const ResourceRequest&) { notImplemented(); return ResourceError(emptyString(), 0, emptyString(), emptyString()); }
     virtual ResourceError cancelledError(const ResourceRequest&) { notImplemented(); return ResourceError(emptyString(), 0, emptyString(), emptyString()); }
     virtual ResourceError blockedError(const ResourceRequest&) { notImplemented(); return ResourceError(emptyString(), 0, emptyString(), emptyString()); }
@@ -133,8 +133,8 @@ public:
     virtual void didFinishLoad() { notImplemented(); }
     virtual void prepareForDataSourceReplacement() { notImplemented(); }
     virtual PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&);
-    virtual void setTitle(const String&, const KURL&) { notImplemented(); }
-    virtual String userAgent(const KURL&);
+    virtual void setTitle(const String&, const URL&) { notImplemented(); }
+    virtual String userAgent(const URL&);
     virtual void savePlatformDataToCachedFrame(CachedFrame*) { notImplemented(); }
     virtual void transitionToCommittedFromCachedFrame(CachedFrame*) { notImplemented(); }
     virtual void transitionToCommittedForNewPage();
@@ -143,13 +143,13 @@ public:
     virtual void didRestoreFromPageCache();
     virtual void dispatchDidBecomeFrameset(bool) { }
     virtual void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&);
-    virtual PassRefPtr<Frame> createFrame(const KURL&, const String&, HTMLFrameOwnerElement*, const String&, bool, int, int);
+    virtual PassRefPtr<Frame> createFrame(const URL&, const String&, HTMLFrameOwnerElement*, const String&, bool, int, int);
     virtual bool shouldAlwaysUsePluginDocument(const String&) const;
-    virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool);
+    virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool);
     virtual void redirectDataToPlugin(Widget*);
-    virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL&, const Vector<String>&, const Vector<String>&) { notImplemented(); return 0; }
+    virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL&, const Vector<String>&, const Vector<String>&) { notImplemented(); return 0; }
 
-    virtual ObjectContentType objectContentType(const KURL&, const String& mimeType, bool shouldPreferPlugInsForImages);
+    virtual ObjectContentType objectContentType(const URL&, const String& mimeType, bool shouldPreferPlugInsForImages);
     virtual String overrideMediaType() const { notImplemented(); return String(); }
     virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld*);
     virtual void documentElementAvailable() { notImplemented(); }
@@ -159,7 +159,7 @@ public:
     virtual bool shouldLoadIconExternally() { return false; }
     virtual void loadIconExternally(const String& originalPageUrl, const String& finalPageUrl, const String& iconUrl);
 
-    virtual void didDetectXSS(const KURL&, bool) { }
+    virtual void didDetectXSS(const URL&, bool) { }
     virtual void dispatchDidChangeIcons(IconType) { notImplemented(); };
     virtual void dispatchWillSendSubmitEvent(PassRefPtr<FormState>);
 
@@ -168,7 +168,7 @@ public:
 
     virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext();
 
-    virtual PassRefPtr<SecurityOrigin> securityOriginForNewDocument(const KURL&);
+    virtual PassRefPtr<SecurityOrigin> securityOriginForNewDocument(const URL&);
 
     void readyToRender(bool pageIsVisuallyNonEmpty);
 
@@ -203,8 +203,8 @@ private:
     bool m_childFrameCreationSuppressed;
 
     // This set includes the original and final urls for server redirects.
-    HashSet<KURL> m_historyNavigationSourceURLs;
-    HashSet<KURL> m_redirectURLsToSkipDueToHistoryNavigation;
+    HashSet<URL> m_historyNavigationSourceURLs;
+    HashSet<URL> m_redirectURLsToSkipDueToHistoryNavigation;
 
     // Plugin view to redirect data to.
     PluginView* m_pluginView;

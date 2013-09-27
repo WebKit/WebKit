@@ -40,7 +40,7 @@
 #include "Event.h"
 #include "EventException.h"
 #include "InspectorConsoleInstrumentation.h"
-#include "KURL.h"
+#include "URL.h"
 #include "MessagePort.h"
 #include "NotImplemented.h"
 #include "ScheduledAction.h"
@@ -84,7 +84,7 @@ public:
     virtual bool isCleanupTask() const { return true; }
 };
 
-WorkerGlobalScope::WorkerGlobalScope(const KURL& url, const String& userAgent, PassOwnPtr<GroupSettings> settings, WorkerThread* thread, PassRefPtr<SecurityOrigin> topOrigin)
+WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, PassOwnPtr<GroupSettings> settings, WorkerThread* thread, PassRefPtr<SecurityOrigin> topOrigin)
     : m_url(url)
     , m_userAgent(userAgent)
     , m_groupSettings(settings)
@@ -117,17 +117,17 @@ void WorkerGlobalScope::applyContentSecurityPolicyFromString(const String& polic
     contentSecurityPolicy()->didReceiveHeader(policy, contentSecurityPolicyType);
 }
 
-KURL WorkerGlobalScope::completeURL(const String& url) const
+URL WorkerGlobalScope::completeURL(const String& url) const
 {
     // Always return a null URL when passed a null string.
-    // FIXME: Should we change the KURL constructor to have this behavior?
+    // FIXME: Should we change the URL constructor to have this behavior?
     if (url.isNull())
-        return KURL();
+        return URL();
     // Always use UTF-8 in Workers.
-    return KURL(m_url, url);
+    return URL(m_url, url);
 }
 
-String WorkerGlobalScope::userAgent(const KURL&) const
+String WorkerGlobalScope::userAgent(const URL&) const
 {
     return m_userAgent;
 }
@@ -217,18 +217,18 @@ void WorkerGlobalScope::importScripts(const Vector<String>& urls, ExceptionCode&
     ASSERT(contentSecurityPolicy());
     ec = 0;
     Vector<String>::const_iterator urlsEnd = urls.end();
-    Vector<KURL> completedURLs;
+    Vector<URL> completedURLs;
     for (Vector<String>::const_iterator it = urls.begin(); it != urlsEnd; ++it) {
-        const KURL& url = scriptExecutionContext()->completeURL(*it);
+        const URL& url = scriptExecutionContext()->completeURL(*it);
         if (!url.isValid()) {
             ec = SYNTAX_ERR;
             return;
         }
         completedURLs.append(url);
     }
-    Vector<KURL>::const_iterator end = completedURLs.end();
+    Vector<URL>::const_iterator end = completedURLs.end();
 
-    for (Vector<KURL>::const_iterator it = completedURLs.begin(); it != end; ++it) {
+    for (Vector<URL>::const_iterator it = completedURLs.begin(); it != end; ++it) {
         RefPtr<WorkerScriptLoader> scriptLoader(WorkerScriptLoader::create());
 #if PLATFORM(BLACKBERRY)
         scriptLoader->setTargetType(ResourceRequest::TargetIsScript);

@@ -174,7 +174,7 @@ void ResourceHandle::internetStatusCallback(HINTERNET internetHandle, DWORD_PTR 
 void ResourceHandle::onRedirect()
 {
     ResourceRequest newRequest = firstRequest();
-    newRequest.setURL(KURL(ParsedURLString, d->m_redirectUrl));
+    newRequest.setURL(URL(ParsedURLString, d->m_redirectUrl));
 
     ResourceResponse response(firstRequest().url(), String(), 0, String(), String());
 

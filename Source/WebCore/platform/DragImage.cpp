@@ -63,7 +63,7 @@ DragImageRef fitDragImageToMaxSize(DragImageRef image, const IntSize& srcSize, c
 }
 
 #if !PLATFORM(MAC) && (!PLATFORM(WIN) || OS(WINCE))
-DragImageRef createDragImageForLink(KURL&, const String&, FontRenderingMode)
+DragImageRef createDragImageForLink(URL&, const String&, FontRenderingMode)
 {
     return 0;
 }

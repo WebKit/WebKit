@@ -33,7 +33,7 @@
 #include "GraphicsContext.h"
 #include "HWndDC.h"
 #include "Image.h"
-#include "KURL.h"
+#include "URL.h"
 #include "StringTruncator.h"
 #include "TextRun.h"
 #include "WebCoreTextRenderer.h"
@@ -121,7 +121,7 @@ static Font dragLabelFont(int size, bool bold, FontRenderingMode renderingMode)
     return result;
 }
 
-DragImageRef createDragImageForLink(KURL& url, const String& inLabel, FontRenderingMode fontRenderingMode)
+DragImageRef createDragImageForLink(URL& url, const String& inLabel, FontRenderingMode fontRenderingMode)
 {
     // This is more or less an exact match for the Mac OS X code.
 

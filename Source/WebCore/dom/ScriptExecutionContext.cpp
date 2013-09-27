@@ -280,7 +280,7 @@ void ScriptExecutionContext::closeMessagePorts() {
 
 bool ScriptExecutionContext::sanitizeScriptError(String& errorMessage, int& lineNumber, int& columnNumber, String& sourceURL, CachedScript* cachedScript)
 {
-    KURL targetURL = completeURL(sourceURL);
+    URL targetURL = completeURL(sourceURL);
     if (securityOrigin()->canRequest(targetURL) || (cachedScript && cachedScript->passesAccessControlCheck(securityOrigin())))
         return false;
     errorMessage = "Script error.";

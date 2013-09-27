@@ -65,11 +65,11 @@ namespace WebCore {
         virtual bool isSharedWorkerGlobalScope() const { return false; }
         virtual bool isDedicatedWorkerGlobalScope() const { return false; }
 
-        virtual const KURL& url() const OVERRIDE FINAL { return m_url; }
-        virtual KURL completeURL(const String&) const OVERRIDE FINAL;
+        virtual const URL& url() const OVERRIDE FINAL { return m_url; }
+        virtual URL completeURL(const String&) const OVERRIDE FINAL;
 
         const GroupSettings* groupSettings() { return m_groupSettings.get(); }
-        virtual String userAgent(const KURL&) const;
+        virtual String userAgent(const URL&) const;
 
         virtual void disableEval(const String& errorMessage) OVERRIDE;
 
@@ -139,7 +139,7 @@ namespace WebCore {
         virtual SecurityOrigin* topOrigin() const OVERRIDE { return m_topOrigin.get(); }
 
     protected:
-        WorkerGlobalScope(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, WorkerThread*, PassRefPtr<SecurityOrigin> topOrigin);
+        WorkerGlobalScope(const URL&, const String& userAgent, PassOwnPtr<GroupSettings>, WorkerThread*, PassRefPtr<SecurityOrigin> topOrigin);
         void applyContentSecurityPolicyFromString(const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
 
         virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<ScriptCallStack>) OVERRIDE;
@@ -159,7 +159,7 @@ namespace WebCore {
 
         virtual WorkerEventQueue& eventQueue() const OVERRIDE FINAL;
 
-        KURL m_url;
+        URL m_url;
         String m_userAgent;
         OwnPtr<GroupSettings> m_groupSettings;
 

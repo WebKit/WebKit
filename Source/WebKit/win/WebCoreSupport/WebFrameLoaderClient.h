@@ -80,7 +80,7 @@ public:
     virtual void dispatchDidHandleOnloadEvents() OVERRIDE;
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() OVERRIDE;
     virtual void dispatchDidCancelClientRedirect() OVERRIDE;
-    virtual void dispatchWillPerformClientRedirect(const WebCore::KURL&, double interval, double fireDate) OVERRIDE;
+    virtual void dispatchWillPerformClientRedirect(const WebCore::URL&, double interval, double fireDate) OVERRIDE;
     virtual void dispatchDidChangeLocationWithinPage() OVERRIDE;
     virtual void dispatchDidPushStateWithinPage() OVERRIDE;
     virtual void dispatchDidReplaceStateWithinPage() OVERRIDE;
@@ -135,8 +135,8 @@ public:
     virtual void updateGlobalHistoryItemForPage() OVERRIDE;
 
     virtual void didDisplayInsecureContent() OVERRIDE;
-    virtual void didRunInsecureContent(WebCore::SecurityOrigin*, const WebCore::KURL&) OVERRIDE;
-    virtual void didDetectXSS(const WebCore::KURL&, bool didBlockEntirePage) OVERRIDE;
+    virtual void didRunInsecureContent(WebCore::SecurityOrigin*, const WebCore::URL&) OVERRIDE;
+    virtual void didDetectXSS(const WebCore::URL&, bool didBlockEntirePage) OVERRIDE;
 
     virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) OVERRIDE;
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) OVERRIDE;
@@ -148,10 +148,10 @@ public:
 
     virtual bool shouldFallBack(const WebCore::ResourceError&) OVERRIDE;
 
-    virtual WTF::String userAgent(const WebCore::KURL&) OVERRIDE;
+    virtual WTF::String userAgent(const WebCore::URL&) OVERRIDE;
 
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
-    virtual void setTitle(const WebCore::StringWithDirection&, const WebCore::KURL&);
+    virtual void setTitle(const WebCore::StringWithDirection&, const WebCore::URL&);
 
     virtual void savePlatformDataToCachedFrame(WebCore::CachedFrame*) OVERRIDE;
     virtual void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*) OVERRIDE;
@@ -177,15 +177,15 @@ public:
 
     virtual bool canCachePage() const;
 
-    virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL& url, const WTF::String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
+    virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::URL& url, const WTF::String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
         const WTF::String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) OVERRIDE;
-    virtual PassRefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::KURL&, const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool loadManually) OVERRIDE;
+    virtual PassRefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::URL&, const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool loadManually) OVERRIDE;
     virtual void recreatePlugin(WebCore::Widget*) OVERRIDE { }
     virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget) OVERRIDE;
 
-    virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::KURL& baseURL, const Vector<WTF::String>& paramNames, const Vector<WTF::String>& paramValues) OVERRIDE;
+    virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::URL& baseURL, const Vector<WTF::String>& paramNames, const Vector<WTF::String>& paramValues) OVERRIDE;
 
-    virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL&, const WTF::String& mimeType, bool shouldPreferPlugInsForImages) OVERRIDE;
+    virtual WebCore::ObjectContentType objectContentType(const WebCore::URL&, const WTF::String& mimeType, bool shouldPreferPlugInsForImages) OVERRIDE;
     virtual WTF::String overrideMediaType() const OVERRIDE;
 
     virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld*) OVERRIDE;
@@ -206,7 +206,7 @@ protected:
     OwnPtr<WebFramePolicyListenerPrivate> m_policyListenerPrivate;
 
 private:
-    PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL&, const WTF::String& name, WebCore::HTMLFrameOwnerElement*, const WTF::String& referrer);
+    PassRefPtr<WebCore::Frame> createFrame(const WebCore::URL&, const WTF::String& name, WebCore::HTMLFrameOwnerElement*, const WTF::String& referrer);
     WebHistory* webHistory() const;
 
     WebFrame* m_webFrame;

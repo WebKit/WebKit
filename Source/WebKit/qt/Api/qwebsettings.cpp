@@ -36,7 +36,7 @@
 #endif
 #include "InitWebCoreQt.h"
 #include "IntSize.h"
-#include "KURL.h"
+#include "URL.h"
 #include "MemoryCache.h"
 #include "NetworkStateNotifier.h"
 #include "Page.h"
@@ -225,7 +225,7 @@ void QWebSettingsPrivate::apply()
         settings->setFrameFlatteningEnabled(value);
 
         QUrl location = !userStyleSheetLocation.isEmpty() ? userStyleSheetLocation : global->userStyleSheetLocation;
-        settings->setUserStyleSheetLocation(WebCore::KURL(location));
+        settings->setUserStyleSheetLocation(WebCore::URL(location));
 
         QString encoding = !defaultTextEncoding.isEmpty() ? defaultTextEncoding: global->defaultTextEncoding;
         settings->setDefaultTextEncodingName(encoding);
@@ -749,7 +749,7 @@ void QWebSettings::clearIconDatabase()
 QIcon QWebSettings::iconForUrl(const QUrl& url)
 {
     WebCore::initializeWebCoreQt();
-    QPixmap* icon = WebCore::iconDatabase().synchronousNativeIconForPageURL(WebCore::KURL(url).string(),
+    QPixmap* icon = WebCore::iconDatabase().synchronousNativeIconForPageURL(WebCore::URL(url).string(),
                                 WebCore::IntSize(16, 16));
     if (!icon)
         return QIcon();

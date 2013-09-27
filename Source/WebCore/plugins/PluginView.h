@@ -79,7 +79,7 @@ namespace WebCore {
     class HTMLPlugInElement;
     class KeyboardEvent;
     class MouseEvent;
-    class KURL;
+    class URL;
 #if OS(WINDOWS) && ENABLE(NETSCAPE_PLUGIN_API)
     class PluginMessageThrottlerWin;
 #endif
@@ -132,7 +132,7 @@ namespace WebCore {
                      , public PluginManualLoader
                      , private MediaCanStartListener {
     public:
-        static PassRefPtr<PluginView> create(Frame* parentFrame, const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
+        static PassRefPtr<PluginView> create(Frame* parentFrame, const IntSize&, HTMLPlugInElement*, const URL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
         virtual ~PluginView();
 
         PluginPackage* plugin() const { return m_plugin.get(); }
@@ -217,7 +217,7 @@ namespace WebCore {
 
         const String& pluginsPage() const { return m_pluginsPage; }
         const String& mimeType() const { return m_mimeType; }
-        const KURL& url() const { return m_url; }
+        const URL& url() const { return m_url; }
 
 #if defined(XP_MACOSX) && ENABLE(NETSCAPE_PLUGIN_API)
         bool popUpContextMenu(NPMenu*);
@@ -250,7 +250,7 @@ namespace WebCore {
 #endif
 
     private:
-        PluginView(Frame* parentFrame, const IntSize&, PluginPackage*, HTMLPlugInElement*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
+        PluginView(Frame* parentFrame, const IntSize&, PluginPackage*, HTMLPlugInElement*, const URL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
 
         void setParameters(const Vector<String>& paramNames, const Vector<String>& paramValues);
         bool startOrAddToUnstartedList();
@@ -286,7 +286,7 @@ namespace WebCore {
         RefPtr<PluginPackage> m_plugin;
         HTMLPlugInElement* m_element;
         bool m_isStarted;
-        KURL m_url;
+        URL m_url;
         PluginStatus m_status;
         Vector<IntRect> m_invalidRects;
 

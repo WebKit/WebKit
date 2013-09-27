@@ -80,7 +80,7 @@ String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* 
     if (!m_platformDragData->hasURL())
         return String();
     if (filenamePolicy != ConvertFilenames) {
-        KURL url(KURL(), m_platformDragData->url());
+        URL url(URL(), m_platformDragData->url());
         if (url.isLocalFile())
             return String();
     }

@@ -26,7 +26,7 @@
 #ifndef UserStyleSheet_h
 #define UserStyleSheet_h
 
-#include "KURL.h"
+#include "URL.h"
 #include "UserContentTypes.h"
 #include "UserStyleSheetTypes.h"
 #include <wtf/Vector.h>
@@ -42,7 +42,7 @@ public:
     {
     }
 
-    UserStyleSheet(const String& source, const KURL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level)
+    UserStyleSheet(const String& source, const URL& url, const Vector<String>& whitelist, const Vector<String>& blacklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level)
         : m_source(source)
         , m_url(url)
         , m_whitelist(whitelist)
@@ -53,7 +53,7 @@ public:
     }
 
     const String& source() const { return m_source; }
-    const KURL& url() const { return m_url; }
+    const URL& url() const { return m_url; }
     const Vector<String>& whitelist() const { return m_whitelist; }
     const Vector<String>& blacklist() const { return m_blacklist; }
     UserContentInjectedFrames injectedFrames() const { return m_injectedFrames; }
@@ -61,7 +61,7 @@ public:
 
 private:
     String m_source;
-    KURL m_url;
+    URL m_url;
     Vector<String> m_whitelist;
     Vector<String> m_blacklist;
     UserContentInjectedFrames m_injectedFrames;

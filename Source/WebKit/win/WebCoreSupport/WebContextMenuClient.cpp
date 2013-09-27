@@ -103,7 +103,7 @@ void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const 
     uiDelegate->contextMenuItemSelected(m_webView, &selectedItem, propertyBag.get());
 }
 
-void WebContextMenuClient::downloadURL(const KURL& url)
+void WebContextMenuClient::downloadURL(const URL& url)
 {
     m_webView->downloadURL(url);
 }
@@ -121,7 +121,7 @@ void WebContextMenuClient::searchWithGoogle(const Frame* frame)
 
     if (Page* page = frame->page()) {
         UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
-        page->mainFrame().loader().urlSelected(KURL(ParsedURLString, url), String(), 0, false, false, MaybeSendReferrer);
+        page->mainFrame().loader().urlSelected(URL(ParsedURLString, url), String(), 0, false, false, MaybeSendReferrer);
     }
 }
 

@@ -248,7 +248,7 @@ CurlDownload::~CurlDownload()
     moveFileToDestination();
 }
 
-void CurlDownload::init(CurlDownloadListener* listener, const KURL& url)
+void CurlDownload::init(CurlDownloadListener* listener, const URL& url)
 {
     if (!listener)
         return;
@@ -288,7 +288,7 @@ void CurlDownload::init(CurlDownloadListener* listener, ResourceHandle*, const R
 
     MutexLocker locker(m_mutex);
 
-    KURL url(ParsedURLString, request.url());
+    URL url(ParsedURLString, request.url());
 
     init(listener, url);
 
@@ -390,7 +390,7 @@ void CurlDownload::didReceiveHeader(const String& header)
         if (httpCode >= 200 && httpCode < 300) {
             const char* url = 0;
             err = curl_easy_getinfo(m_curlHandle, CURLINFO_EFFECTIVE_URL, &url);
-            m_response.setURL(KURL(ParsedURLString, url));
+            m_response.setURL(URL(ParsedURLString, url));
 
             m_response.setMimeType(extractMIMETypeFromMediaType(m_response.httpHeaderField("Content-Type")));
             m_response.setTextEncodingName(extractCharsetFromMediaType(m_response.httpHeaderField("Content-Type")));

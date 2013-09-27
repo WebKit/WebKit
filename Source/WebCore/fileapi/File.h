@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct FileMetadata;
-class KURL;
+class URL;
 
 class File : public Blob {
 public:
@@ -50,7 +50,7 @@ public:
     }
 
     // For deserialization.
-    static PassRefPtr<File> create(const String& path, const KURL& srcURL, const String& type)
+    static PassRefPtr<File> create(const String& path, const URL& srcURL, const String& type)
     {
         return adoptRef(new File(path, srcURL, type));
     }
@@ -68,12 +68,12 @@ public:
         return adoptRef(new File(name, metadata));
     }
 
-    static PassRefPtr<File> createForFileSystemFile(const KURL& url, const FileMetadata& metadata)
+    static PassRefPtr<File> createForFileSystemFile(const URL& url, const FileMetadata& metadata)
     {
         return adoptRef(new File(url, metadata));
     }
 
-    KURL fileSystemURL() const { return m_fileSystemURL; }
+    URL fileSystemURL() const { return m_fileSystemURL; }
 #endif
 
     // Create a file with a name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
@@ -105,12 +105,12 @@ private:
     File(const String& path, ContentTypeLookupPolicy);
 
     // For deserialization.
-    File(const String& path, const KURL& srcURL, const String& type);
+    File(const String& path, const URL& srcURL, const String& type);
     File(const String& path, const String& name, ContentTypeLookupPolicy);
 
 # if ENABLE(FILE_SYSTEM)
     File(const String& name, const FileMetadata&);
-    File(const KURL& fileSystemURL, const FileMetadata&);
+    File(const URL& fileSystemURL, const FileMetadata&);
 
     // Returns true if this has a valid snapshot metadata (i.e. m_snapshotSize >= 0).
     bool hasValidSnapshotMetadata() const { return m_snapshotSize >= 0; }
@@ -120,7 +120,7 @@ private:
     String m_name;
 
 #if ENABLE(FILE_SYSTEM)
-    KURL m_fileSystemURL;
+    URL m_fileSystemURL;
 
     // If m_snapshotSize is negative (initialized to -1 by default), the snapshot metadata is invalid and we retrieve the latest metadata synchronously in size(), lastModifiedTime() and slice().
     // Otherwise, the snapshot metadata are used directly in those methods.

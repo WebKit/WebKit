@@ -38,7 +38,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/BString.h>
 #include <WebCore/HistoryItem.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/SharedBuffer.h>
 #include <functional>
@@ -530,7 +530,7 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool*
     return hr;
 }
 
-void WebHistory::visitedURL(const KURL& url, const String& title, const String& httpMethod, bool wasFailure, bool increaseVisitCount)
+void WebHistory::visitedURL(const URL& url, const String& title, const String& httpMethod, bool wasFailure, bool increaseVisitCount)
 {
     IWebHistoryItem* entry = m_entriesByURL.get(url.string()).get();
     if (entry) {

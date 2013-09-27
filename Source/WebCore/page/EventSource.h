@@ -34,7 +34,7 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "KURL.h"
+#include "URL.h"
 #include "ThreadableLoaderClient.h"
 #include "Timer.h"
 #include <wtf/RefPtr.h>
@@ -80,7 +80,7 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return ActiveDOMObject::scriptExecutionContext(); }
 
 private:
-    EventSource(ScriptExecutionContext*, const KURL&, const Dictionary&);
+    EventSource(ScriptExecutionContext*, const URL&, const Dictionary&);
 
     virtual void refEventTarget() OVERRIDE FINAL { ref(); }
     virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
@@ -104,7 +104,7 @@ private:
     void parseEventStreamLine(unsigned pos, int fieldLength, int lineLength);
     PassRefPtr<MessageEvent> createMessageEvent();
 
-    KURL m_url;
+    URL m_url;
     bool m_withCredentials;
     State m_state;
 

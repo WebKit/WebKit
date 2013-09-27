@@ -66,7 +66,7 @@ WorkerThreadableWebSocketChannel::~WorkerThreadableWebSocketChannel()
         m_bridge->disconnect();
 }
 
-void WorkerThreadableWebSocketChannel::connect(const KURL& url, const String& protocol)
+void WorkerThreadableWebSocketChannel::connect(const URL& url, const String& protocol)
 {
     if (m_bridge)
         m_bridge->connect(url, protocol);
@@ -160,7 +160,7 @@ WorkerThreadableWebSocketChannel::Peer::~Peer()
         m_mainWebSocketChannel->disconnect();
 }
 
-void WorkerThreadableWebSocketChannel::Peer::connect(const KURL& url, const String& protocol)
+void WorkerThreadableWebSocketChannel::Peer::connect(const URL& url, const String& protocol)
 {
     ASSERT(isMainThread());
     if (!m_mainWebSocketChannel)
@@ -428,7 +428,7 @@ void WorkerThreadableWebSocketChannel::Bridge::initialize()
         m_workerClientWrapper->setFailedWebSocketChannelCreation();
 }
 
-void WorkerThreadableWebSocketChannel::mainThreadConnect(ScriptExecutionContext* context, Peer* peer, const KURL& url, const String& protocol)
+void WorkerThreadableWebSocketChannel::mainThreadConnect(ScriptExecutionContext* context, Peer* peer, const URL& url, const String& protocol)
 {
     ASSERT(isMainThread());
     ASSERT_UNUSED(context, context->isDocument());
@@ -437,7 +437,7 @@ void WorkerThreadableWebSocketChannel::mainThreadConnect(ScriptExecutionContext*
     peer->connect(url, protocol);
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::connect(const KURL& url, const String& protocol)
+void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const String& protocol)
 {
     ASSERT(m_workerClientWrapper);
     if (!m_peer)
@@ -464,7 +464,7 @@ void WorkerThreadableWebSocketChannel::mainThreadSendArrayBuffer(ScriptExecution
     peer->send(*arrayBuffer);
 }
 
-void WorkerThreadableWebSocketChannel::mainThreadSendBlob(ScriptExecutionContext* context, Peer* peer, const KURL& url, const String& type, long long size)
+void WorkerThreadableWebSocketChannel::mainThreadSendBlob(ScriptExecutionContext* context, Peer* peer, const URL& url, const String& type, long long size)
 {
     ASSERT(isMainThread());
     ASSERT_UNUSED(context, context->isDocument());

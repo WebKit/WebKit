@@ -236,11 +236,11 @@ typedef unsigned char DocumentClassFlags;
 
 class Document : public ContainerNode, public TreeScope, public ScriptExecutionContext {
 public:
-    static PassRefPtr<Document> create(Frame* frame, const KURL& url)
+    static PassRefPtr<Document> create(Frame* frame, const URL& url)
     {
         return adoptRef(new Document(frame, url));
     }
-    static PassRefPtr<Document> createXHTML(Frame* frame, const KURL& url)
+    static PassRefPtr<Document> createXHTML(Frame* frame, const URL& url)
     {
         return adoptRef(new Document(frame, url, XHTMLDocumentClass));
     }
@@ -414,7 +414,7 @@ public:
     String documentURI() const { return m_documentURI; }
     void setDocumentURI(const String&);
 
-    virtual KURL baseURI() const;
+    virtual URL baseURI() const;
 
 #if ENABLE(PAGE_VISIBILITY_API)
     String visibilityState() const;
@@ -584,22 +584,22 @@ public:
 
     bool wellFormed() const { return m_wellFormed; }
 
-    virtual const KURL& url() const OVERRIDE FINAL { return m_url; }
-    void setURL(const KURL&);
+    virtual const URL& url() const OVERRIDE FINAL { return m_url; }
+    void setURL(const URL&);
 
     // To understand how these concepts relate to one another, please see the
     // comments surrounding their declaration.
-    const KURL& baseURL() const { return m_baseURL; }
-    void setBaseURLOverride(const KURL&);
-    const KURL& baseURLOverride() const { return m_baseURLOverride; }
-    const KURL& baseElementURL() const { return m_baseElementURL; }
+    const URL& baseURL() const { return m_baseURL; }
+    void setBaseURLOverride(const URL&);
+    const URL& baseURLOverride() const { return m_baseURLOverride; }
+    const URL& baseElementURL() const { return m_baseElementURL; }
     const String& baseTarget() const { return m_baseTarget; }
     void processBaseElement();
 
-    virtual KURL completeURL(const String&) const OVERRIDE FINAL;
-    KURL completeURL(const String&, const KURL& baseURLOverride) const;
+    virtual URL completeURL(const String&) const OVERRIDE FINAL;
+    URL completeURL(const String&, const URL& baseURLOverride) const;
 
-    virtual String userAgent(const KURL&) const;
+    virtual String userAgent(const URL&) const;
 
     virtual void disableEval(const String& errorMessage);
 
@@ -817,8 +817,8 @@ public:
     //    document inherits the security context of another document, it
     //    inherits its cookieURL but not its URL.
     //
-    const KURL& cookieURL() const { return m_cookieURL; }
-    void setCookieURL(const KURL& url) { m_cookieURL = url; }
+    const URL& cookieURL() const { return m_cookieURL; }
+    void setCookieURL(const URL& url) { m_cookieURL = url; }
 
     // The firstPartyForCookies is used to compute whether this document
     // appears in a "third-party" context for the purpose of third-party
@@ -830,8 +830,8 @@ public:
     //       firstPartyForCookies have a different registry-controlled
     //       domain.
     //
-    const KURL& firstPartyForCookies() const { return m_firstPartyForCookies; }
-    void setFirstPartyForCookies(const KURL& url) { m_firstPartyForCookies = url; }
+    const URL& firstPartyForCookies() const { return m_firstPartyForCookies; }
+    void setFirstPartyForCookies(const URL& url) { m_firstPartyForCookies = url; }
     
     // The following implements the rule from HTML 4 for what valid names are.
     // To get this right for all the XML cases, we probably have to improve this or move it
@@ -866,7 +866,7 @@ public:
     bool queryCommandSupported(const String& command);
     String queryCommandValue(const String& command);
 
-    KURL openSearchDescriptionURL();
+    URL openSearchDescriptionURL();
 
     // designMode support
     enum InheritedBool { off = false, on = true, inherit };    
@@ -1007,7 +1007,7 @@ public:
     void initSecurityContext();
     void initContentSecurityPolicy();
 
-    void updateURLForPushOrReplaceState(const KURL&);
+    void updateURLForPushOrReplaceState(const URL&);
     void statePopped(PassRefPtr<SerializedScriptValue>);
 
     bool processingLoadEvent() const { return m_processingLoadEvent; }
@@ -1187,7 +1187,7 @@ public:
     void setVisualUpdatesAllowedByClient(bool);
 
 protected:
-    Document(Frame*, const KURL&, unsigned = DefaultDocumentClass);
+    Document(Frame*, const URL&, unsigned = DefaultDocumentClass);
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 
@@ -1293,12 +1293,12 @@ private:
     bool m_wellFormed;
 
     // Document URLs.
-    KURL m_url; // Document.URL: The URL from which this document was retrieved.
-    KURL m_baseURL; // Node.baseURI: The URL to use when resolving relative URLs.
-    KURL m_baseURLOverride; // An alternative base URL that takes precedence over m_baseURL (but not m_baseElementURL).
-    KURL m_baseElementURL; // The URL set by the <base> element.
-    KURL m_cookieURL; // The URL to use for cookie access.
-    KURL m_firstPartyForCookies; // The policy URL for third-party cookie blocking.
+    URL m_url; // Document.URL: The URL from which this document was retrieved.
+    URL m_baseURL; // Node.baseURI: The URL to use when resolving relative URLs.
+    URL m_baseURLOverride; // An alternative base URL that takes precedence over m_baseURL (but not m_baseElementURL).
+    URL m_baseElementURL; // The URL set by the <base> element.
+    URL m_cookieURL; // The URL to use for cookie access.
+    URL m_firstPartyForCookies; // The policy URL for third-party cookie blocking.
 
     // Document.documentURI:
     // Although URL-like, Document.documentURI can actually be set to any

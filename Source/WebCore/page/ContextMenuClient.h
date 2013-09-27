@@ -37,7 +37,7 @@ namespace WebCore {
     class ContextMenuItem;
     class Frame;
     class HitTestResult;
-    class KURL;
+    class URL;
 
     class ContextMenuClient {
     public:
@@ -52,7 +52,7 @@ namespace WebCore {
 
         virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*) = 0;
 
-        virtual void downloadURL(const KURL& url) = 0;
+        virtual void downloadURL(const URL& url) = 0;
         virtual void searchWithGoogle(const Frame*) = 0;
         virtual void lookUpInDictionary(Frame*) = 0;
         virtual bool isSpeaking() = 0;

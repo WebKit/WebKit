@@ -71,7 +71,7 @@ void DragController::cleanupAfterSystemDrag()
 {
 }
 
-void DragController::declareAndWriteDragImage(Clipboard* clipboard, Element* element, const KURL& url, const String& label)
+void DragController::declareAndWriteDragImage(Clipboard* clipboard, Element* element, const URL& url, const String& label)
 {
     clipboard->pasteboard().writeImage(element, url, label);
 }

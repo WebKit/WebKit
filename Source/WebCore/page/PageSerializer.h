@@ -31,8 +31,8 @@
 #ifndef PageSerializer_h
 #define PageSerializer_h
 
-#include "KURL.h"
-#include "KURLHash.h"
+#include "URL.h"
+#include "URLHash.h"
 #include "SharedBuffer.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
@@ -54,11 +54,11 @@ class StyleRule;
 class PageSerializer {
 public:
     struct Resource {
-        KURL url;
+        URL url;
         String mimeType;
         RefPtr<SharedBuffer> data;
         Resource();
-        Resource(const KURL&, const String& mimeType, PassRefPtr<SharedBuffer> data);
+        Resource(const URL&, const String& mimeType, PassRefPtr<SharedBuffer> data);
     };
 
     explicit PageSerializer(Vector<Resource>*);
@@ -68,22 +68,22 @@ public:
     // vector is the top frame serialized content.
     void serialize(Page*);
 
-    KURL urlForBlankFrame(Frame*);
+    URL urlForBlankFrame(Frame*);
 
 private:
     void serializeFrame(Frame*);
 
     // Serializes the stylesheet back to text and adds it to the resources if URL is not-empty.
     // It also adds any resources included in that stylesheet (including any imported stylesheets and their own resources).
-    void serializeCSSStyleSheet(CSSStyleSheet*, const KURL&);
+    void serializeCSSStyleSheet(CSSStyleSheet*, const URL&);
 
-    void addImageToResources(CachedImage*, RenderObject*, const KURL&);
+    void addImageToResources(CachedImage*, RenderObject*, const URL&);
     void retrieveResourcesForProperties(const StylePropertySet*, Document*);
     void retrieveResourcesForRule(StyleRule*, Document*);
 
     Vector<Resource>* m_resources;
-    ListHashSet<KURL> m_resourceURLs;
-    HashMap<Frame*, KURL> m_blankFrameURLs;
+    ListHashSet<URL> m_resourceURLs;
+    HashMap<Frame*, URL> m_blankFrameURLs;
     unsigned m_blankFrameCounter;
 };
 

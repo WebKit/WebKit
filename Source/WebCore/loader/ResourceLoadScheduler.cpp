@@ -30,7 +30,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
-#include "KURL.h"
+#include "URL.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "NetscapePlugInStreamLoader.h"
@@ -48,7 +48,7 @@ static const unsigned maxRequestsInFlightForNonHTTPProtocols = 20;
 // Match the parallel connection count used by the networking layer.
 static unsigned maxRequestsInFlightPerHost;
 
-ResourceLoadScheduler::HostInformation* ResourceLoadScheduler::hostForURL(const KURL& url, CreateHostPolicy createHostPolicy)
+ResourceLoadScheduler::HostInformation* ResourceLoadScheduler::hostForURL(const URL& url, CreateHostPolicy createHostPolicy)
 {
     if (!url.protocolIsInHTTPFamily())
         return m_nonHTTPProtocolHost;
@@ -160,7 +160,7 @@ void ResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     scheduleServePendingRequests();
 }
 
-void ResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resourceLoader, const KURL& redirectURL)
+void ResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resourceLoader, const URL& redirectURL)
 {
     HostInformation* oldHost = hostForURL(resourceLoader->url());
     ASSERT(oldHost);

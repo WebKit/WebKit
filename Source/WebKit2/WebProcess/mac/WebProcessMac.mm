@@ -240,7 +240,7 @@ void WebProcess::updateActivePages()
         if (!mainFrameOrigin->isUnique())
             mainFrameOriginString = mainFrameOrigin->toRawString();
         else
-            mainFrameOriginString = KURL(KURL(), mainFrame->url()).protocol() + ':'; // toRawString() is not supposed to work with unique origins, and would just return "://".
+            mainFrameOriginString = URL(URL(), mainFrame->url()).protocol() + ':'; // toRawString() is not supposed to work with unique origins, and would just return "://".
 
         NSURL *originAsNSURL = [NSURL URLWithString:mainFrameOriginString];
         // +[NSURL URLWithString:] returns nil when its argument is malformed. It's unclear how we can possibly have a malformed URL here,

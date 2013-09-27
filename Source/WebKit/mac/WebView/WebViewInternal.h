@@ -49,7 +49,7 @@ class Element;
 class Event;
 class Frame;
 class HistoryItem;
-class KURL;
+class URL;
 class KeyboardEvent;
 class Page;
 class RenderBox;

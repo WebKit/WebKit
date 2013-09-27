@@ -46,7 +46,7 @@ class InjectedScriptManager;
 class InspectorFrontend;
 class InspectorObject;
 class InstrumentingAgents;
-class KURL;
+class URL;
 class Page;
 
 typedef String ErrorString;
@@ -67,8 +67,8 @@ public:
     void enable(ErrorString*);
     void disable(ErrorString*);
 
-    KURL inspectedURL() const;
-    KURL inspectedURLWithoutFragment() const;
+    URL inspectedURL() const;
+    URL inspectedURLWithoutFragment() const;
 
     InspectorFrontend* frontend() const { return m_frontend; }
 
@@ -98,7 +98,7 @@ private:
     void toggleRecordButton(bool);
 #endif
 
-    bool isMainResourceLoader(DocumentLoader*, const KURL& requestUrl);
+    bool isMainResourceLoader(DocumentLoader*, const URL& requestUrl);
 
     Page* m_inspectedPage;
     InspectorFrontend* m_frontend;

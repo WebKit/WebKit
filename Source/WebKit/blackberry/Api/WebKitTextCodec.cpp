@@ -19,7 +19,7 @@
 #include "config.h"
 #include "WebKitTextCodec.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "TextCodecICU.h"
 #include <BlackBerryPlatformString.h>
 #include <wtf/Vector.h>

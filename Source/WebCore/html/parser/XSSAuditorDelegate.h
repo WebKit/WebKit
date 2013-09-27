@@ -26,7 +26,7 @@
 #ifndef XSSAuditorDelegate_h
 #define XSSAuditorDelegate_h
 
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
@@ -63,14 +63,14 @@ public:
     explicit XSSAuditorDelegate(Document*);
 
     void didBlockScript(const XSSInfo&);
-    void setReportURL(const KURL& url) { m_reportURL = url; }
+    void setReportURL(const URL& url) { m_reportURL = url; }
 
 private:
     PassRefPtr<FormData> generateViolationReport();
 
     Document* m_document;
     bool m_didSendNotifications;
-    KURL m_reportURL;
+    URL m_reportURL;
 };
 
 typedef Vector<OwnPtr<XSSInfo> > XSSInfoStream;

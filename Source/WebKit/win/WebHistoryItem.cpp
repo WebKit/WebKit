@@ -33,7 +33,7 @@
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/HistoryItem.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>

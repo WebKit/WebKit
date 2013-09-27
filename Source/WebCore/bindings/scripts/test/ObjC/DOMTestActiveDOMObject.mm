@@ -33,7 +33,7 @@
 #import "DOMTestActiveDOMObjectInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
-#import "KURL.h"
+#import "URL.h"
 #import "Node.h"
 #import "TestActiveDOMObject.h"
 #import "ThreadCheck.h"

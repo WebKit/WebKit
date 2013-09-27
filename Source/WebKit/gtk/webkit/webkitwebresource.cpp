@@ -21,7 +21,7 @@
 #include "webkitwebresource.h"
 
 #include "ArchiveResource.h"
-#include "KURL.h"
+#include "URL.h"
 #include "SharedBuffer.h"
 #include "webkitenumtypes.h"
 #include "webkitglobalsprivate.h"
@@ -357,7 +357,7 @@ WebKitWebResource* webkit_web_resource_new(const gchar* data,
         size = strlen(data);
 
     RefPtr<SharedBuffer> buffer = SharedBuffer::create(data, size);
-    WebKitWebResource* webResource = webkit_web_resource_new_with_core_resource(ArchiveResource::create(buffer, KURL(KURL(), String::fromUTF8(uri)), String::fromUTF8(mimeType), String::fromUTF8(encoding), String::fromUTF8(frameName)));
+    WebKitWebResource* webResource = webkit_web_resource_new_with_core_resource(ArchiveResource::create(buffer, URL(URL(), String::fromUTF8(uri)), String::fromUTF8(mimeType), String::fromUTF8(encoding), String::fromUTF8(frameName)));
 
     return webResource;
 }

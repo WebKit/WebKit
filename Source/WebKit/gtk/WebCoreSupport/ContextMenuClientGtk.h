@@ -48,7 +48,7 @@ namespace WebKit {
         virtual WebCore::PlatformMenuDescription getCustomMenuFromDefaultItems(WebCore::ContextMenu*);
         virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*);
 
-        virtual void downloadURL(const WebCore::KURL& url);
+        virtual void downloadURL(const WebCore::URL& url);
         virtual void copyImageToClipboard(const WebCore::HitTestResult&);
         virtual void searchWithGoogle(const WebCore::Frame*);
         virtual void lookUpInDictionary(WebCore::Frame*);

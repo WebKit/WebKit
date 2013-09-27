@@ -39,7 +39,7 @@ public:
     virtual NSMutableArray* getCustomMenuFromDefaultItems(WebCore::ContextMenu*) OVERRIDE;
     virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*) OVERRIDE;
     
-    virtual void downloadURL(const WebCore::KURL&) OVERRIDE;
+    virtual void downloadURL(const WebCore::URL&) OVERRIDE;
     virtual void searchWithGoogle(const WebCore::Frame*) OVERRIDE;
     virtual void lookUpInDictionary(WebCore::Frame*) OVERRIDE;
     virtual bool isSpeaking() OVERRIDE;

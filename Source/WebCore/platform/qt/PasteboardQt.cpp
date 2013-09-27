@@ -205,7 +205,7 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
 #endif
 }
 
-void Pasteboard::writeImage(Node* node, const KURL&, const String&)
+void Pasteboard::writeImage(Node* node, const URL&, const String&)
 {
     ASSERT(node);
 

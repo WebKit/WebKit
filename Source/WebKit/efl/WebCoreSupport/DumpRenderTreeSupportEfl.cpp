@@ -221,13 +221,13 @@ String DumpRenderTreeSupportEfl::suitableDRTFrameName(const Evas_Object* ewkFram
     return String("frame (anonymous)");
 }
 
-const WebCore::KURL DumpRenderTreeSupportEfl::provisionalURL(const Evas_Object* ewkFrame)
+const WebCore::URL DumpRenderTreeSupportEfl::provisionalURL(const Evas_Object* ewkFrame)
 {
-    DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, WebCore::KURL());
+    DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, WebCore::URL());
 
     WebCore::DocumentLoader* provisionalDocumentLoader = frame->loader().provisionalDocumentLoader();
     if (!provisionalDocumentLoader)
-        return WebCore::KURL();
+        return WebCore::URL();
 
     return provisionalDocumentLoader->url();
 }
@@ -270,7 +270,7 @@ void DumpRenderTreeSupportEfl::addUserScript(const Evas_Object* ewkView, const S
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    page->group().addUserScriptToWorld(WebCore::mainThreadNormalWorld(), sourceCode, WebCore::KURL(),
+    page->group().addUserScriptToWorld(WebCore::mainThreadNormalWorld(), sourceCode, WebCore::URL(),
                                        Vector<String>(), Vector<String>(), runAtStart ? WebCore::InjectAtDocumentStart : WebCore::InjectAtDocumentEnd,
                                        allFrames ? WebCore::InjectInAllFrames : WebCore::InjectInTopFrameOnly);
 }
@@ -286,7 +286,7 @@ void DumpRenderTreeSupportEfl::addUserStyleSheet(const Evas_Object* ewkView, con
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    page->group().addUserStyleSheetToWorld(WebCore::mainThreadNormalWorld(), sourceCode, WebCore::KURL(), Vector<String>(), Vector<String>(), allFrames ? WebCore::InjectInAllFrames : WebCore::InjectInTopFrameOnly);
+    page->group().addUserStyleSheetToWorld(WebCore::mainThreadNormalWorld(), sourceCode, WebCore::URL(), Vector<String>(), Vector<String>(), allFrames ? WebCore::InjectInAllFrames : WebCore::InjectInTopFrameOnly);
 }
 
 void DumpRenderTreeSupportEfl::clearUserStyleSheets(const Evas_Object* ewkView)

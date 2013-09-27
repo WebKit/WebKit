@@ -27,7 +27,7 @@
 
 #include "Decimal.h"
 #include "HTMLIdentifier.h"
-#include "KURL.h"
+#include "URL.h"
 #include "QualifiedName.h"
 #include <limits>
 #include <wtf/MathExtras.h>

@@ -41,7 +41,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 #if !LOG_DISABLED
-static String urlForLoggingTrack(const KURL& url)
+static String urlForLoggingTrack(const URL& url)
 {
     static const unsigned maximumURLLengthForLogging = 128;
     
@@ -115,7 +115,7 @@ void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomicStr
     HTMLElement::parseAttribute(name, value);
 }
 
-KURL HTMLTrackElement::src() const
+URL HTMLTrackElement::src() const
 {
     return document().completeURL(getAttribute(srcAttr));
 }
@@ -220,7 +220,7 @@ void HTMLTrackElement::loadTimerFired(Timer<HTMLTrackElement>*)
     setReadyState(HTMLTrackElement::LOADING);
 
     // 7. Let URL be the track URL of the track element.
-    KURL url = getNonEmptyURLAttribute(srcAttr);
+    URL url = getNonEmptyURLAttribute(srcAttr);
 
     // 8. If the track element's parent is a media element then let CORS mode be the state of the parent media
     // element's crossorigin content attribute. Otherwise, let CORS mode be No CORS.
@@ -232,7 +232,7 @@ void HTMLTrackElement::loadTimerFired(Timer<HTMLTrackElement>*)
     ensureTrack().scheduleLoad(url);
 }
 
-bool HTMLTrackElement::canLoadUrl(const KURL& url)
+bool HTMLTrackElement::canLoadUrl(const URL& url)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
         return false;

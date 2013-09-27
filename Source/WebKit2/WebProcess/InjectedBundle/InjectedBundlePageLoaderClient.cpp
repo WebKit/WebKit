@@ -55,7 +55,7 @@ static void releaseSharedBuffer(unsigned char*, const void* data)
     static_cast<SharedBuffer*>(const_cast<void*>(data))->deref();
 }
 
-void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage* page, const ResourceRequest& request, const SharedBuffer* data, const String& MIMEType, const String& encodingName, const KURL& unreachableURL, APIObject* userData)
+void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage* page, const ResourceRequest& request, const SharedBuffer* data, const String& MIMEType, const String& encodingName, const URL& unreachableURL, APIObject* userData)
 {
     if (!m_client.willLoadDataRequest)
         return;

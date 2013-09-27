@@ -21,7 +21,7 @@
 #include "AffineTransform.h"
 #include "Gradient.h"
 #include "GraphicsContext3D.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NotImplemented.h"
 #include "RoundedRect.h"
 #include "TransformationMatrix.h"
@@ -387,7 +387,7 @@ IntRect GraphicsContext::clipBounds() const
     return IntRect(IntPoint(INT_MIN / 2, INT_MIN / 2), IntSize(INT_MAX, INT_MAX));
 }
 
-void GraphicsContext::setURLForRect(const KURL&, const IntRect&)
+void GraphicsContext::setURLForRect(const URL&, const IntRect&)
 {
 }
 

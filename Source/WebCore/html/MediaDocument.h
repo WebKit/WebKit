@@ -34,7 +34,7 @@ namespace WebCore {
 
 class MediaDocument FINAL : public HTMLDocument {
 public:
-    static PassRefPtr<MediaDocument> create(Frame* frame, const KURL& url)
+    static PassRefPtr<MediaDocument> create(Frame* frame, const URL& url)
     {
         return adoptRef(new MediaDocument(frame, url));
     }
@@ -43,7 +43,7 @@ public:
     void mediaElementSawUnsupportedTracks();
 
 private:
-    MediaDocument(Frame*, const KURL&);
+    MediaDocument(Frame*, const URL&);
 
     virtual PassRefPtr<DocumentParser> createParser();
 

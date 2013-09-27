@@ -53,7 +53,7 @@ private:
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
     virtual void finishParsingChildren();
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
 
     virtual bool haveLoadedRequiredResources() { return SVGExternalResourcesRequired::haveLoadedRequiredResources(); }
 

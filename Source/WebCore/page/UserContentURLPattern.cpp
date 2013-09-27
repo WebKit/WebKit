@@ -26,12 +26,12 @@
 #include "config.h"
 #include "UserContentURLPattern.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-bool UserContentURLPattern::matchesPatterns(const KURL& url, const Vector<String>& whitelist, const Vector<String>& blacklist)
+bool UserContentURLPattern::matchesPatterns(const URL& url, const Vector<String>& whitelist, const Vector<String>& blacklist)
 {
     // In order for a URL to be a match it has to be present in the whitelist and not present in the blacklist.
     // If there is no whitelist at all, then all URLs are assumed to be in the whitelist.
@@ -110,7 +110,7 @@ bool UserContentURLPattern::parse(const String& pattern)
     return true;
 }
 
-bool UserContentURLPattern::matches(const KURL& test) const
+bool UserContentURLPattern::matches(const URL& test) const
 {
     if (m_invalid)
         return false;
@@ -124,7 +124,7 @@ bool UserContentURLPattern::matches(const KURL& test) const
     return matchesPath(test);
 }
 
-bool UserContentURLPattern::matchesHost(const KURL& test) const
+bool UserContentURLPattern::matchesHost(const URL& test) const
 {
     const String& host = test.host();
     if (equalIgnoringCase(host, m_host))
@@ -225,7 +225,7 @@ struct MatchTester
     }
 };
 
-bool UserContentURLPattern::matchesPath(const KURL& test) const
+bool UserContentURLPattern::matchesPath(const URL& test) const
 {
     MatchTester match(m_path, test.path());
     return match.test();

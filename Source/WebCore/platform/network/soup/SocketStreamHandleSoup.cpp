@@ -32,7 +32,7 @@
 #include "config.h"
 #include "SocketStreamHandle.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "SocketStreamError.h"
@@ -80,7 +80,7 @@ static void* activateHandle(SocketStreamHandle* handle)
     return id;
 }
 
-SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient* client)
+SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient* client)
     : SocketStreamHandleBase(url, client)
     , m_readBuffer(0)
 {
@@ -96,7 +96,7 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
 }
 
 SocketStreamHandle::SocketStreamHandle(GSocketConnection* socketConnection, SocketStreamHandleClient* client)
-    : SocketStreamHandleBase(KURL(), client)
+    : SocketStreamHandleBase(URL(), client)
     , m_readBuffer(0)
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, m_client);

@@ -66,7 +66,7 @@ void WebCoreAVFResourceLoader::startLoading()
     if (m_resource)
         return;
 
-    KURL requestURL = [[m_avRequest.get() request] URL];
+    URL requestURL = [[m_avRequest.get() request] URL];
 
     CachedResourceRequest request(ResourceRequest(requestURL), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, DoNotAskClientForCrossOriginCredentials, DoSecurityCheck, UseDefaultOriginRestrictionsForType));
 

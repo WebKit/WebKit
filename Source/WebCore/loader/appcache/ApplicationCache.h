@@ -38,11 +38,11 @@ namespace WebCore {
 class ApplicationCacheGroup;
 class ApplicationCacheResource;
 class DocumentLoader;
-class KURL;
+class URL;
 class ResourceRequest;
 class SecurityOrigin;
 
-typedef Vector<std::pair<KURL, KURL> > FallbackURLVector;
+typedef Vector<std::pair<URL, URL> > FallbackURLVector;
 
 class ApplicationCache : public RefCounted<ApplicationCache> {
 public:
@@ -68,13 +68,13 @@ public:
 
     void setAllowsAllNetworkRequests(bool value) { m_allowAllNetworkRequests = value; }
     bool allowsAllNetworkRequests() const { return m_allowAllNetworkRequests; }
-    void setOnlineWhitelist(const Vector<KURL>& onlineWhitelist);
-    const Vector<KURL>& onlineWhitelist() const { return m_onlineWhitelist; }
-    bool isURLInOnlineWhitelist(const KURL&); // There is an entry in online whitelist that has the same origin as the resource's URL and that is a prefix match for the resource's URL.
+    void setOnlineWhitelist(const Vector<URL>& onlineWhitelist);
+    const Vector<URL>& onlineWhitelist() const { return m_onlineWhitelist; }
+    bool isURLInOnlineWhitelist(const URL&); // There is an entry in online whitelist that has the same origin as the resource's URL and that is a prefix match for the resource's URL.
 
     void setFallbackURLs(const FallbackURLVector&);
     const FallbackURLVector& fallbackURLs() const { return m_fallbackURLs; }
-    bool urlMatchesFallbackNamespace(const KURL&, KURL* fallbackURL = 0);
+    bool urlMatchesFallbackNamespace(const URL&, URL* fallbackURL = 0);
     
 #ifndef NDEBUG
     void dump();
@@ -102,7 +102,7 @@ private:
     ApplicationCacheResource* m_manifest;
 
     bool m_allowAllNetworkRequests;
-    Vector<KURL> m_onlineWhitelist;
+    Vector<URL> m_onlineWhitelist;
     FallbackURLVector m_fallbackURLs;
 
     // The total size of the resources belonging to this Application Cache instance.

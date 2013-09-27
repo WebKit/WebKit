@@ -163,7 +163,7 @@ bool BlobRegistrationData::decode(CoreIPC::ArgumentDecoder& decoder, BlobRegistr
             String url;
             if (!decoder.decode(url))
                 return false;
-            result.m_data->appendBlob(KURL(KURL(), url), offset, length);
+            result.m_data->appendBlob(URL(URL(), url), offset, length);
             break;
         }
         default:

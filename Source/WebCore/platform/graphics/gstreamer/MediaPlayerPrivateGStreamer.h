@@ -115,7 +115,7 @@ private:
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
 
     static void getSupportedTypes(HashSet<String>&);
-    static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs, const KURL&);
+    static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs, const URL&);
 
     static bool isAvailable();
 
@@ -180,7 +180,7 @@ private:
     guint m_readyTimerHandler;
     GRefPtr<GstElement> m_webkitAudioSink;
     mutable long m_totalBytes;
-    KURL m_url;
+    URL m_url;
     bool m_preservesPitch;
     GstState m_requestedState;
     GRefPtr<GstElement> m_autoAudioSink;

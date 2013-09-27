@@ -24,7 +24,7 @@
 #include "Dictionary.h"
 #include "Document.h"
 #include "HTMLNames.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Node.h"
 #include "SVGPoint.h"
 #include "SerializedScriptValue.h"

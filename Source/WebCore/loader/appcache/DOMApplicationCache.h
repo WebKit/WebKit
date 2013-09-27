@@ -41,7 +41,7 @@
 namespace WebCore {
 
 class Frame;
-class KURL;
+class URL;
 
 // FIXME: This class should be marked FINAL once <http://webkit.org/b/121747> is fixed.
 class DOMApplicationCache : public ScriptWrappable, public RefCounted<DOMApplicationCache>, public EventTargetWithInlineData, public DOMWindowProperty {

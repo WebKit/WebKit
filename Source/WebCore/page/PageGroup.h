@@ -40,7 +40,7 @@ namespace WebCore {
     class CaptionPreferencesChangedListener;
     class CaptionUserPreferences;
 #endif
-    class KURL;
+    class URL;
     class GroupSettings;
     class IDBFactoryBackendInterface;
     class Page;
@@ -73,7 +73,7 @@ namespace WebCore {
 
         bool isLinkVisited(LinkHash);
 
-        void addVisitedLink(const KURL&);
+        void addVisitedLink(const URL&);
         void addVisitedLink(const UChar*, size_t);
         void addVisitedLinkHash(LinkHash);
         void removeVisitedLinks();
@@ -89,16 +89,16 @@ namespace WebCore {
 
         StorageNamespace* transientLocalStorage(SecurityOrigin* topOrigin);
 
-        void addUserScriptToWorld(DOMWrapperWorld*, const String& source, const KURL&,
+        void addUserScriptToWorld(DOMWrapperWorld*, const String& source, const URL&,
                                   const Vector<String>& whitelist, const Vector<String>& blacklist,
                                   UserScriptInjectionTime, UserContentInjectedFrames);
-        void addUserStyleSheetToWorld(DOMWrapperWorld*, const String& source, const KURL&,
+        void addUserStyleSheetToWorld(DOMWrapperWorld*, const String& source, const URL&,
                                       const Vector<String>& whitelist, const Vector<String>& blacklist,
                                       UserContentInjectedFrames,
                                       UserStyleLevel level = UserStyleUserLevel,
                                       UserStyleInjectionTime injectionTime = InjectInExistingDocuments);
-        void removeUserScriptFromWorld(DOMWrapperWorld*, const KURL&);
-        void removeUserStyleSheetFromWorld(DOMWrapperWorld*, const KURL&);
+        void removeUserScriptFromWorld(DOMWrapperWorld*, const URL&);
+        void removeUserStyleSheetFromWorld(DOMWrapperWorld*, const URL&);
 
         void removeUserScriptsFromWorld(DOMWrapperWorld*);
         void removeUserStyleSheetsFromWorld(DOMWrapperWorld*);

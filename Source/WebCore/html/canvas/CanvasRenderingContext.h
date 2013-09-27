@@ -39,7 +39,7 @@ class CanvasPattern;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
-class KURL;
+class URL;
 class WebGLObject;
 
 class CanvasRenderingContext : public ScriptWrappable {
@@ -67,14 +67,14 @@ protected:
     bool wouldTaintOrigin(const HTMLCanvasElement*);
     bool wouldTaintOrigin(const HTMLImageElement*);
     bool wouldTaintOrigin(const HTMLVideoElement*);
-    bool wouldTaintOrigin(const KURL&);
+    bool wouldTaintOrigin(const URL&);
 
     template<class T> void checkOrigin(const T* arg)
     {
         if (wouldTaintOrigin(arg))
             canvas()->setOriginTainted();
     }
-    void checkOrigin(const KURL&);
+    void checkOrigin(const URL&);
 
 private:
     HTMLCanvasElement* m_canvas;

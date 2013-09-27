@@ -95,8 +95,8 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
         return 1 << NoDocumentLoader;
     }
 
-    KURL currentURL = frame->loader().documentLoader()->url();
-    KURL newURL = frame->loader().provisionalDocumentLoader() ? frame->loader().provisionalDocumentLoader()->url() : KURL();
+    URL currentURL = frame->loader().documentLoader()->url();
+    URL newURL = frame->loader().provisionalDocumentLoader() ? frame->loader().provisionalDocumentLoader()->url() : URL();
     if (!newURL.isEmpty())
         PCLOG(" Determining if frame can be cached navigating from (", currentURL.string(), ") to (", newURL.string(), "):");
     else
@@ -205,7 +205,7 @@ static void logCanCachePageDecision(Page* page)
     // Only bother logging for main frames that have actually loaded and have content.
     if (page->mainFrame().loader().stateMachine()->creatingInitialEmptyDocument())
         return;
-    KURL currentURL = page->mainFrame().loader().documentLoader() ? page->mainFrame().loader().documentLoader()->url() : KURL();
+    URL currentURL = page->mainFrame().loader().documentLoader() ? page->mainFrame().loader().documentLoader()->url() : URL();
     if (currentURL.isEmpty())
         return;
     

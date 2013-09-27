@@ -49,7 +49,7 @@ String CSSReflectValue::customSerializeResolvingVariables(const HashMap<AtomicSt
 }
 #endif
 
-void CSSReflectValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheetContents* styleSheet) const
+void CSSReflectValue::addSubresourceStyleURLs(ListHashSet<URL>& urls, const StyleSheetContents* styleSheet) const
 {
     if (m_mask)
         m_mask->addSubresourceStyleURLs(urls, styleSheet);

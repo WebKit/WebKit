@@ -1340,7 +1340,7 @@ void HTMLInputElement::setSize(unsigned size, ExceptionCode& ec)
         setSize(size);
 }
 
-KURL HTMLInputElement::src() const
+URL HTMLInputElement::src() const
 {
     return document().completeURL(fastGetAttribute(srcAttr));
 }
@@ -1570,7 +1570,7 @@ void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)
     HTMLTextFormControlElement::didMoveToNewDocument(oldDocument);
 }
 
-void HTMLInputElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void HTMLInputElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLTextFormControlElement::addSubresourceAttributeURLs(urls);
 

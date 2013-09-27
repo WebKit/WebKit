@@ -109,7 +109,7 @@ protected:
     virtual void fire(Frame* frame)
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
-        frame->loader().changeLocation(m_securityOrigin.get(), KURL(ParsedURLString, m_url), m_referrer, lockHistory(), lockBackForwardList(), false);
+        frame->loader().changeLocation(m_securityOrigin.get(), URL(ParsedURLString, m_url), m_referrer, lockHistory(), lockBackForwardList(), false);
     }
 
     virtual void didStartTimer(Frame* frame, Timer<NavigationScheduler>* timer)
@@ -119,7 +119,7 @@ protected:
         m_haveToldClient = true;
 
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
-        frame->loader().clientRedirected(KURL(ParsedURLString, m_url), delay(), currentTime() + timer->nextFireInterval(), lockBackForwardList());
+        frame->loader().clientRedirected(URL(ParsedURLString, m_url), delay(), currentTime() + timer->nextFireInterval(), lockBackForwardList());
     }
 
     virtual void didStopTimer(Frame* frame, bool newLoadInProgress)
@@ -160,8 +160,8 @@ public:
     virtual void fire(Frame* frame)
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
-        bool refresh = equalIgnoringFragmentIdentifier(frame->document()->url(), KURL(ParsedURLString, url()));
-        frame->loader().changeLocation(securityOrigin(), KURL(ParsedURLString, url()), referrer(), lockHistory(), lockBackForwardList(), refresh);
+        bool refresh = equalIgnoringFragmentIdentifier(frame->document()->url(), URL(ParsedURLString, url()));
+        frame->loader().changeLocation(securityOrigin(), URL(ParsedURLString, url()), referrer(), lockHistory(), lockBackForwardList(), refresh);
     }
 };
 
@@ -181,7 +181,7 @@ public:
     virtual void fire(Frame* frame)
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
-        frame->loader().changeLocation(securityOrigin(), KURL(ParsedURLString, url()), referrer(), lockHistory(), lockBackForwardList(), true);
+        frame->loader().changeLocation(securityOrigin(), URL(ParsedURLString, url()), referrer(), lockHistory(), lockBackForwardList(), true);
     }
 };
 
@@ -350,7 +350,7 @@ void NavigationScheduler::scheduleLocationChange(SecurityOrigin* securityOrigin,
 
     // If the URL we're going to navigate to is the same as the current one, except for the
     // fragment part, we don't need to schedule the location change.
-    KURL parsedURL(ParsedURLString, url);
+    URL parsedURL(ParsedURLString, url);
     if (parsedURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(m_frame->document()->url(), parsedURL)) {
         loader.changeLocation(securityOrigin, m_frame->document()->completeURL(url), referrer, lockHistory, lockBackForwardList);
         return;
@@ -388,7 +388,7 @@ void NavigationScheduler::scheduleRefresh()
 {
     if (!shouldScheduleNavigation())
         return;
-    const KURL& url = m_frame->document()->url();
+    const URL& url = m_frame->document()->url();
     if (url.isEmpty())
         return;
 

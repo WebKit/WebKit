@@ -31,7 +31,7 @@
 #import "BlockExceptions.h"
 #import "Cookie.h"
 #import "CookieStorage.h"
-#import "KURL.h"
+#import "URL.h"
 #import "NetworkStorageSession.h"
 #import "WebCoreSystemInterface.h"
 
@@ -61,7 +61,7 @@ static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies)
     return filteredCookies;
 }
 
-String cookiesForDOM(const NetworkStorageSession& session, const KURL&, const KURL& url)
+String cookiesForDOM(const NetworkStorageSession& session, const URL&, const URL& url)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -72,7 +72,7 @@ String cookiesForDOM(const NetworkStorageSession& session, const KURL&, const KU
     return String();
 }
 
-String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const KURL& /*firstParty*/, const KURL& url)
+String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -83,7 +83,7 @@ String cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const
     return String();
 }
 
-void setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstParty, const KURL& url, const String& cookieStr)
+void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& cookieStr)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -105,7 +105,7 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const KURL& firstPa
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-bool cookiesEnabled(const NetworkStorageSession& session, const KURL& /*firstParty*/, const KURL& /*url*/)
+bool cookiesEnabled(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& /*url*/)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -116,7 +116,7 @@ bool cookiesEnabled(const NetworkStorageSession& session, const KURL& /*firstPar
     return false;
 }
 
-bool getRawCookies(const NetworkStorageSession& session, const KURL& /*firstParty*/, const KURL& url, Vector<Cookie>& rawCookies)
+bool getRawCookies(const NetworkStorageSession& session, const URL& /*firstParty*/, const URL& url, Vector<Cookie>& rawCookies)
 {
     rawCookies.clear();
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -135,7 +135,7 @@ bool getRawCookies(const NetworkStorageSession& session, const KURL& /*firstPart
     return true;
 }
 
-void deleteCookie(const NetworkStorageSession& session, const KURL& url, const String& cookieName)
+void deleteCookie(const NetworkStorageSession& session, const URL& url, const String& cookieName)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 

@@ -37,7 +37,7 @@
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiators.h"
 #include "Document.h"
-#include "KURL.h"
+#include "URL.h"
 #include "StyleCachedShader.h"
 #include "StylePendingShader.h"
 #include <wtf/text/StringBuilder.h>
@@ -55,7 +55,7 @@ WebKitCSSShaderValue::~WebKitCSSShaderValue()
 {
 }
 
-KURL WebKitCSSShaderValue::completeURL(CachedResourceLoader* loader) const
+URL WebKitCSSShaderValue::completeURL(CachedResourceLoader* loader) const
 {
     return loader->document()->completeURL(m_url);
 }

@@ -79,7 +79,7 @@ static void overrideSystemProxies(const String& httpProxy, const String& httpsPr
     NSMutableDictionary *proxySettings = [NSMutableDictionary dictionary];
 
     if (!httpProxy.isNull()) {
-        KURL httpProxyURL(KURL(), httpProxy);
+        URL httpProxyURL(URL(), httpProxy);
         if (httpProxyURL.isValid()) {
             [proxySettings setObject:nsStringFromWebCoreString(httpProxyURL.host()) forKey:(NSString *)kCFNetworkProxiesHTTPProxy];
             if (httpProxyURL.hasPort()) {
@@ -92,7 +92,7 @@ static void overrideSystemProxies(const String& httpProxy, const String& httpsPr
     }
 
     if (!httpsProxy.isNull()) {
-        KURL httpsProxyURL(KURL(), httpsProxy);
+        URL httpsProxyURL(URL(), httpsProxy);
         if (httpsProxyURL.isValid()) {
             [proxySettings setObject:nsStringFromWebCoreString(httpsProxyURL.host()) forKey:(NSString *)kCFNetworkProxiesHTTPSProxy];
             if (httpsProxyURL.hasPort()) {

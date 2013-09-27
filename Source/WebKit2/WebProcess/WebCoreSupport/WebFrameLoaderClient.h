@@ -74,7 +74,7 @@ private:
     virtual void dispatchDidHandleOnloadEvents() OVERRIDE;
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() OVERRIDE;
     virtual void dispatchDidCancelClientRedirect() OVERRIDE;
-    virtual void dispatchWillPerformClientRedirect(const WebCore::KURL&, double interval, double fireDate) OVERRIDE;
+    virtual void dispatchWillPerformClientRedirect(const WebCore::URL&, double interval, double fireDate) OVERRIDE;
     virtual void dispatchDidChangeLocationWithinPage() OVERRIDE;
     virtual void dispatchDidPushStateWithinPage() OVERRIDE;
     virtual void dispatchDidReplaceStateWithinPage() OVERRIDE;
@@ -133,8 +133,8 @@ private:
     virtual bool shouldStopLoadingForHistoryItem(WebCore::HistoryItem*) const OVERRIDE;
 
     virtual void didDisplayInsecureContent() OVERRIDE;
-    virtual void didRunInsecureContent(WebCore::SecurityOrigin*, const WebCore::KURL&) OVERRIDE;
-    virtual void didDetectXSS(const WebCore::KURL&, bool didBlockEntirePage) OVERRIDE;
+    virtual void didRunInsecureContent(WebCore::SecurityOrigin*, const WebCore::URL&) OVERRIDE;
+    virtual void didDetectXSS(const WebCore::URL&, bool didBlockEntirePage) OVERRIDE;
 
     virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) OVERRIDE;
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) OVERRIDE;
@@ -161,9 +161,9 @@ private:
     virtual void prepareForDataSourceReplacement() OVERRIDE;
     
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
-    virtual void setTitle(const WebCore::StringWithDirection&, const WebCore::KURL&) OVERRIDE;
+    virtual void setTitle(const WebCore::StringWithDirection&, const WebCore::URL&) OVERRIDE;
     
-    virtual String userAgent(const WebCore::KURL&) OVERRIDE;
+    virtual String userAgent(const WebCore::URL&) OVERRIDE;
     
     virtual void savePlatformDataToCachedFrame(WebCore::CachedFrame*) OVERRIDE;
     virtual void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*) OVERRIDE;
@@ -177,22 +177,22 @@ private:
     virtual bool canCachePage() const OVERRIDE { return true; }
     virtual void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) OVERRIDE;
     
-    virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL& url, const String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
+    virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::URL& url, const String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
                                           const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) OVERRIDE;
     
-    virtual PassRefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::KURL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) OVERRIDE;
+    virtual PassRefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::URL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) OVERRIDE;
     virtual void recreatePlugin(WebCore::Widget*) OVERRIDE;
     virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget) OVERRIDE;
     
-    virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::KURL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues) OVERRIDE;
+    virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::URL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues) OVERRIDE;
     
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    virtual PassRefPtr<WebCore::Widget> createMediaPlayerProxyPlugin(const WebCore::IntSize&, WebCore::HTMLMediaElement*, const WebCore::KURL&, const Vector<String>&, const Vector<String>&, const String&) OVERRIDE;
+    virtual PassRefPtr<WebCore::Widget> createMediaPlayerProxyPlugin(const WebCore::IntSize&, WebCore::HTMLMediaElement*, const WebCore::URL&, const Vector<String>&, const Vector<String>&, const String&) OVERRIDE;
     virtual void hideMediaPlayerProxyPlugin(WebCore::Widget*) OVERRIDE;
     virtual void showMediaPlayerProxyPlugin(WebCore::Widget*) OVERRIDE;
 #endif
 
-    virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL&, const String& mimeType, bool shouldPreferPlugInsForImages) OVERRIDE;
+    virtual WebCore::ObjectContentType objectContentType(const WebCore::URL&, const String& mimeType, bool shouldPreferPlugInsForImages) OVERRIDE;
     virtual String overrideMediaType() const OVERRIDE;
 
     virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld*) OVERRIDE;
@@ -219,7 +219,7 @@ private:
 
     virtual bool allowScript(bool enabledPerSettings) OVERRIDE;
 
-    virtual bool shouldForceUniversalAccessFromLocalURL(const WebCore::KURL&) OVERRIDE;
+    virtual bool shouldForceUniversalAccessFromLocalURL(const WebCore::URL&) OVERRIDE;
 
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext() OVERRIDE;
 

@@ -38,7 +38,7 @@ namespace WebCore {
     class Element;
     class Frame;
     class IntSize;
-    class KURL;
+    class URL;
     class PluginDatabaseClient;
     class PluginPackage;
 
@@ -65,7 +65,7 @@ namespace WebCore {
         static bool isPreferredPluginDirectory(const String& directory);
         static int preferredPluginCompare(const void*, const void*);
 
-        PluginPackage* findPlugin(const KURL&, String& mimeType);
+        PluginPackage* findPlugin(const URL&, String& mimeType);
         PluginPackage* pluginForMIMEType(const String& mimeType);
         void setPreferredPluginForMIMEType(const String& mimeType, PluginPackage* plugin);
 

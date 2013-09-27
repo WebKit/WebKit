@@ -40,7 +40,7 @@ public:
         Fallback = 1 << 4
     };
         
-    static PassRefPtr<ApplicationCacheResource> create(const KURL& url, const ResourceResponse& response, unsigned type, PassRefPtr<SharedBuffer> buffer = SharedBuffer::create(), const String& path = String())
+    static PassRefPtr<ApplicationCacheResource> create(const URL& url, const ResourceResponse& response, unsigned type, PassRefPtr<SharedBuffer> buffer = SharedBuffer::create(), const String& path = String())
     {
         ASSERT(!url.hasFragmentIdentifier());
         return adoptRef(new ApplicationCacheResource(url, response, type, buffer, path));
@@ -62,7 +62,7 @@ public:
 #endif
     
 private:
-    ApplicationCacheResource(const KURL&, const ResourceResponse&, unsigned type, PassRefPtr<SharedBuffer>, const String& path);
+    ApplicationCacheResource(const URL&, const ResourceResponse&, unsigned type, PassRefPtr<SharedBuffer>, const String& path);
 
     unsigned m_type;
     unsigned m_storageID;

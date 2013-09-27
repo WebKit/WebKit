@@ -497,7 +497,7 @@ static gboolean webKitWebSrcStart(WebKitWebSrc* src)
 
     ASSERT(!priv->client);
 
-    KURL url = KURL(KURL(), priv->uri);
+    URL url = URL(URL(), priv->uri);
 
     ResourceRequest request(url);
     request.setAllowCookies(true);
@@ -688,7 +688,7 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri, GEr
     if (!uri)
         return TRUE;
 
-    KURL url(KURL(), uri);
+    URL url(URL(), uri);
 
     if (!url.isValid() || !url.protocolIsInHTTPFamily()) {
         g_set_error(error, GST_URI_ERROR, GST_URI_ERROR_BAD_URI, "Invalid URI '%s'", uri);
@@ -739,7 +739,7 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri)
     if (!uri)
         return TRUE;
 
-    KURL url(KURL(), uri);
+    URL url(URL(), uri);
 
     if (!url.isValid() || !url.protocolIsInHTTPFamily()) {
         GST_ERROR_OBJECT(src, "Invalid URI '%s'", uri);

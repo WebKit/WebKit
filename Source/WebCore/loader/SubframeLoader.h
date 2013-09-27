@@ -47,7 +47,7 @@ class HTMLAppletElement;
 class HTMLFrameOwnerElement;
 class HTMLPlugInImageElement;
 class IntSize;
-class KURL;
+class URL;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 class Node;
 #endif
@@ -68,7 +68,7 @@ public:
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     // FIXME: This should take Element* instead of Node*, or better yet the
     // specific type of Element which this code depends on.
-    PassRefPtr<Widget> loadMediaPlayerProxyPlugin(Node*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues);
+    PassRefPtr<Widget> loadMediaPlayerProxyPlugin(Node*, const URL&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 #endif
 
     PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const Vector<String>& paramNames, const Vector<String>& paramValues);
@@ -80,21 +80,21 @@ public:
     bool resourceWillUsePlugin(const String& url, const String& mimeType, bool shouldPreferPlugInsForImages);
 
 private:
-    bool requestPlugin(HTMLPlugInImageElement*, const KURL&, const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
-    Frame* loadOrRedirectSubframe(HTMLFrameOwnerElement*, const KURL&, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList);
-    Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL&, const String& name, const String& referrer);
-    bool loadPlugin(HTMLPlugInImageElement*, const KURL&, const String& mimeType,
+    bool requestPlugin(HTMLPlugInImageElement*, const URL&, const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
+    Frame* loadOrRedirectSubframe(HTMLFrameOwnerElement*, const URL&, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList);
+    Frame* loadSubframe(HTMLFrameOwnerElement*, const URL&, const String& name, const String& referrer);
+    bool loadPlugin(HTMLPlugInImageElement*, const URL&, const String& mimeType,
         const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
 
-    bool shouldUsePlugin(const KURL&, const String& mimeType, bool shouldPreferPlugInsForImages, bool hasFallback, bool& useFallback);
-    bool pluginIsLoadable(HTMLPlugInImageElement*, const KURL&, const String& mimeType);
+    bool shouldUsePlugin(const URL&, const String& mimeType, bool shouldPreferPlugInsForImages, bool hasFallback, bool& useFallback);
+    bool pluginIsLoadable(HTMLPlugInImageElement*, const URL&, const String& mimeType);
 
     Document* document() const;
 
     bool m_containsPlugins;
     Frame* m_frame;
 
-    KURL completeURL(const String&) const;
+    URL completeURL(const String&) const;
 };
 
 } // namespace WebCore

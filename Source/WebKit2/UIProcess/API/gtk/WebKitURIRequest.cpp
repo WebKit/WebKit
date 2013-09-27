@@ -139,7 +139,7 @@ void webkit_uri_request_set_uri(WebKitURIRequest* request, const char* uri)
     g_return_if_fail(WEBKIT_IS_URI_REQUEST(request));
     g_return_if_fail(uri);
 
-    KURL url(KURL(), uri);
+    URL url(URL(), uri);
     if (url == request->priv->resourceRequest.url())
         return;
 

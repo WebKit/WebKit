@@ -35,7 +35,7 @@
 #include "GraphicsContext.h"
 #include "InbandTextTrackPrivateAVF.h"
 #include "InbandTextTrackPrivateClient.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Logging.h"
 #include "PlatformLayer.h"
 #include "SoftLinking.h"

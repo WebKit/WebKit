@@ -26,7 +26,7 @@
 #include "IconDatabaseBase.h"
 #include "Image.h"
 #include "IntSize.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include <QWebPageAdapter.h>

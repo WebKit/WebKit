@@ -219,7 +219,7 @@ const AtomicString& SVGImageElement::imageSourceURL() const
     return getAttribute(XLinkNames::hrefAttr);
 }
 
-void SVGImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void SVGImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     SVGGraphicsElement::addSubresourceAttributeURLs(urls);
 

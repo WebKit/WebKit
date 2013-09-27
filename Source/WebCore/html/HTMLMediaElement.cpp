@@ -164,7 +164,7 @@ static void clearFlags(unsigned& value, unsigned flags)
 }
     
 #if !LOG_DISABLED
-static String urlForLoggingMedia(const KURL& url)
+static String urlForLoggingMedia(const URL& url)
 {
     static const unsigned maximumURLLengthForLogging = 128;
 
@@ -754,7 +754,7 @@ HTMLMediaElement::NetworkState HTMLMediaElement::networkState() const
     return m_networkState;
 }
 
-String HTMLMediaElement::canPlayType(const String& mimeType, const String& keySystem, const KURL& url) const
+String HTMLMediaElement::canPlayType(const String& mimeType, const String& keySystem, const URL& url) const
 {
     MediaPlayer::SupportsType support = MediaPlayer::supportsType(ContentType(mimeType), keySystem, url, this);
     String canPlay;
@@ -970,7 +970,7 @@ void HTMLMediaElement::selectMediaResource()
         m_loadState = LoadingFromSrcAttr;
 
         // If the src attribute's value is the empty string ... jump down to the failed step below
-        KURL mediaURL = getNonEmptyURLAttribute(srcAttr);
+        URL mediaURL = getNonEmptyURLAttribute(srcAttr);
         if (mediaURL.isEmpty()) {
             mediaLoadingFailed(MediaPlayer::FormatError);
             LOG(Media, "HTMLMediaElement::selectMediaResource, empty 'src'");
@@ -999,7 +999,7 @@ void HTMLMediaElement::loadNextSourceChild()
 {
     ContentType contentType((String()));
     String keySystem;
-    KURL mediaURL = selectNextSourceChild(&contentType, &keySystem, Complain);
+    URL mediaURL = selectNextSourceChild(&contentType, &keySystem, Complain);
     if (!mediaURL.isValid()) {
         waitForSourceChange();
         return;
@@ -1014,18 +1014,18 @@ void HTMLMediaElement::loadNextSourceChild()
     loadResource(mediaURL, contentType, keySystem);
 }
 
-static KURL createFileURLForApplicationCacheResource(const String& path)
+static URL createFileURLForApplicationCacheResource(const String& path)
 {
-    // KURL should have a function to create a url from a path, but it does not. This function
-    // is not suitable because KURL::setPath uses encodeWithURLEscapeSequences, which it notes
+    // URL should have a function to create a url from a path, but it does not. This function
+    // is not suitable because URL::setPath uses encodeWithURLEscapeSequences, which it notes
     // does not correctly escape '#' and '?'. This function works for our purposes because
     // app cache media files are always created with encodeForFileName(createCanonicalUUIDString()).
 
 #if USE(CF) && PLATFORM(WIN)
     RetainPtr<CFURLRef> cfURL = adoptCF(CFURLCreateWithFileSystemPath(0, path.createCFString().get(), kCFURLWindowsPathStyle, false));
-    KURL url(cfURL.get());
+    URL url(cfURL.get());
 #else
-    KURL url;
+    URL url;
 
     url.setProtocol(ASCIILiteral("file"));
     url.setPath(path);
@@ -1033,7 +1033,7 @@ static KURL createFileURLForApplicationCacheResource(const String& path)
     return url;
 }
 
-void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& contentType, const String& keySystem)
+void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentType, const String& keySystem)
 {
     ASSERT(isSafeToLoadURL(initialURL, Complain));
 
@@ -1045,7 +1045,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
         return;
     }
 
-    KURL url = initialURL;
+    URL url = initialURL;
     if (!frame->loader().willLoadMediaElementURL(url)) {
         mediaLoadingFailed(MediaPlayer::FormatError);
         return;
@@ -1541,7 +1541,7 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue> c
 
 #endif
 
-bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidURLAction actionIfInvalid)
+bool HTMLMediaElement::isSafeToLoadURL(const URL& url, InvalidURLAction actionIfInvalid)
 {
     if (!url.isValid()) {
         LOG(Media, "HTMLMediaElement::isSafeToLoadURL(%s) -> FALSE because url is invalid", urlForLoggingMedia(url).utf8().data());
@@ -1997,7 +1997,7 @@ void HTMLMediaElement::mediaPlayerKeyError(MediaPlayer*, const String& keySystem
     m_asyncEventQueue.enqueueEvent(event.release());
 }
 
-void HTMLMediaElement::mediaPlayerKeyMessage(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength, const KURL& defaultURL)
+void HTMLMediaElement::mediaPlayerKeyMessage(MediaPlayer*, const String& keySystem, const String& sessionId, const unsigned char* message, unsigned messageLength, const URL& defaultURL)
 {
     MediaKeyEventInit initializer;
     initializer.keySystem = keySystem;
@@ -3203,7 +3203,7 @@ void HTMLMediaElement::didRemoveTextTrack(HTMLTrackElement* trackElement)
 
 #if !LOG_DISABLED
     if (trackElement->hasTagName(trackTag)) {
-        KURL url = trackElement->getNonEmptyURLAttribute(srcAttr);
+        URL url = trackElement->getNonEmptyURLAttribute(srcAttr);
         LOG(Media, "HTMLMediaElement::didRemoveTrack - 'src' is %s", urlForLoggingMedia(url).utf8().data());
     }
 #endif
@@ -3438,7 +3438,7 @@ bool HTMLMediaElement::havePotentialSourceChild()
     RefPtr<HTMLSourceElement> currentSourceNode = m_currentSourceNode;
     RefPtr<Node> nextNode = m_nextChildNodeToConsider;
 
-    KURL nextURL = selectNextSourceChild(0, 0, DoNothing);
+    URL nextURL = selectNextSourceChild(0, 0, DoNothing);
 
     m_currentSourceNode = currentSourceNode;
     m_nextChildNodeToConsider = nextNode;
@@ -3446,7 +3446,7 @@ bool HTMLMediaElement::havePotentialSourceChild()
     return nextURL.isValid();
 }
 
-KURL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* keySystem, InvalidURLAction actionIfInvalid)
+URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* keySystem, InvalidURLAction actionIfInvalid)
 {
 #if !LOG_DISABLED
     // Don't log if this was just called to find out if there are any valid <source> elements.
@@ -3460,10 +3460,10 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* k
         if (shouldLog)
             LOG(Media, "HTMLMediaElement::selectNextSourceChild -> 0x0000, \"\"");
 #endif
-        return KURL();
+        return URL();
     }
 
-    KURL mediaURL;
+    URL mediaURL;
     HTMLSourceElement* source = 0;
     String type;
     String system;
@@ -3557,7 +3557,7 @@ check_again:
     if (shouldLog)
         LOG(Media, "HTMLMediaElement::selectNextSourceChild -> %p, %s", m_currentSourceNode.get(), canUseSourceElement ? urlForLoggingMedia(mediaURL).utf8().data() : "");
 #endif
-    return canUseSourceElement ? mediaURL : KURL();
+    return canUseSourceElement ? mediaURL : URL();
 }
 
 void HTMLMediaElement::sourceWasAdded(HTMLSourceElement* source)
@@ -3566,7 +3566,7 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement* source)
 
 #if !LOG_DISABLED
     if (source->hasTagName(sourceTag)) {
-        KURL url = source->getNonEmptyURLAttribute(srcAttr);
+        URL url = source->getNonEmptyURLAttribute(srcAttr);
         LOG(Media, "HTMLMediaElement::sourceWasAdded - 'src' is %s", urlForLoggingMedia(url).utf8().data());
     }
 #endif
@@ -3614,7 +3614,7 @@ void HTMLMediaElement::sourceWasRemoved(HTMLSourceElement* source)
 
 #if !LOG_DISABLED
     if (source->hasTagName(sourceTag)) {
-        KURL url = source->getNonEmptyURLAttribute(srcAttr);
+        URL url = source->getNonEmptyURLAttribute(srcAttr);
         LOG(Media, "HTMLMediaElement::sourceWasRemoved - 'src' is %s", urlForLoggingMedia(url).utf8().data());
     }
 #endif
@@ -4325,7 +4325,7 @@ void HTMLMediaElement::setMediaPlayerProxy(WebMediaPlayerProxy* proxy)
     m_player->setMediaPlayerProxy(proxy);
 }
 
-void HTMLMediaElement::getPluginProxyParams(KURL& url, Vector<String>& names, Vector<String>& values)
+void HTMLMediaElement::getPluginProxyParams(URL& url, Vector<String>& names, Vector<String>& values)
 {
     Ref<HTMLMediaElement> protect(*this); // selectNextSourceChild may fire 'beforeload', which can make arbitrary DOM mutations.
 
@@ -4333,7 +4333,7 @@ void HTMLMediaElement::getPluginProxyParams(KURL& url, Vector<String>& names, Ve
 
     if (isVideo()) {
         HTMLVideoElement* video = toHTMLVideoElement(this);
-        KURL posterURL = video->posterImageURL();
+        URL posterURL = video->posterImageURL();
         if (!posterURL.isEmpty() && frame && frame->loader().willLoadMediaElementURL(posterURL)) {
             names.append(ASCIILiteral("_media_element_poster_"));
             values.append(posterURL.string());
@@ -4369,7 +4369,7 @@ void HTMLMediaElement::createMediaPlayerProxy()
 
     LOG(Media, "HTMLMediaElement::createMediaPlayerProxy");
 
-    KURL url;
+    URL url;
     Vector<String> paramNames;
     Vector<String> paramValues;
 
@@ -4389,7 +4389,7 @@ void HTMLMediaElement::updateWidget(PluginCreationOption)
     Vector<String> paramNames;
     Vector<String> paramValues;
     // FIXME: Rename kurl to something more sensible.
-    KURL kurl;
+    URL kurl;
 
     mediaElement->getPluginProxyParams(kurl, paramNames, paramValues);
     // FIXME: What if document().frame() is 0?

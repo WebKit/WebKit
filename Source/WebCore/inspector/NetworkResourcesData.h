@@ -31,7 +31,7 @@
 
 #include "HTTPHeaderMap.h"
 #include "InspectorPageAgent.h"
-#include "KURL.h"
+#include "URL.h"
 #include "TextResourceDecoder.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -51,20 +51,20 @@ class TextResourceDecoder;
 
 class XHRReplayData : public RefCounted<XHRReplayData> {
 public:
-    static PassRefPtr<XHRReplayData> create(const String &method, const KURL&, bool async, PassRefPtr<FormData>, bool includeCredentials);
+    static PassRefPtr<XHRReplayData> create(const String &method, const URL&, bool async, PassRefPtr<FormData>, bool includeCredentials);
 
     void addHeader(const AtomicString& key, const String& value);
     const String& method() const { return m_method; }
-    const KURL& url() const { return m_url; }
+    const URL& url() const { return m_url; }
     bool async() const { return m_async; }
     PassRefPtr<FormData> formData() const { return m_formData; }
     const HTTPHeaderMap& headers() const { return m_headers; }
     bool includeCredentials() const { return m_includeCredentials; }
 private:
-    XHRReplayData(const String &method, const KURL&, bool async, PassRefPtr<FormData>, bool includeCredentials);
+    XHRReplayData(const String &method, const URL&, bool async, PassRefPtr<FormData>, bool includeCredentials);
 
     String m_method;
-    KURL m_url;
+    URL m_url;
     bool m_async;
     RefPtr<FormData> m_formData;
     HTTPHeaderMap m_headers;

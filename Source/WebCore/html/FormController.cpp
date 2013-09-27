@@ -328,7 +328,7 @@ static inline void recordFormStructure(const HTMLFormElement& form, StringBuilde
 
 static inline String formSignature(const HTMLFormElement& form)
 {
-    KURL actionURL = form.getURLAttribute(actionAttr);
+    URL actionURL = form.getURLAttribute(actionAttr);
     // Remove the query part because it might contain volatile parameters such
     // as a session key.
     actionURL.setQuery(String());

@@ -26,7 +26,7 @@
 #ifndef PlatformSupport_h
 #define PlatformSupport_h
 
-#include "KURL.h"
+#include "URL.h"
 
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

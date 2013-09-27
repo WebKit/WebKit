@@ -55,7 +55,7 @@ extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
 
 namespace WebCore {
 
-SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient* client)
+SocketStreamHandle::SocketStreamHandle(const URL& url, SocketStreamHandleClient* client)
     : SocketStreamHandleBase(url, client)
     , m_connectingSubstate(New)
     , m_connectionType(Unknown)
@@ -65,7 +65,7 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
 
     ASSERT(url.protocolIs("ws") || url.protocolIs("wss"));
 
-    KURL httpsURL(KURL(), "https://" + m_url.host());
+    URL httpsURL(URL(), "https://" + m_url.host());
     m_httpsURL = httpsURL.createCFURL();
 
     createStreams();

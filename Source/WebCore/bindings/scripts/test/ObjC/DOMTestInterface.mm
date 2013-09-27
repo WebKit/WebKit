@@ -37,7 +37,7 @@
 #import "DOMTestObjInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
-#import "KURL.h"
+#import "URL.h"
 #import "Node.h"
 #import "TestInterface.h"
 #import "TestObj.h"

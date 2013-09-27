@@ -26,7 +26,7 @@
 #ifndef ContentSecurityPolicy_h
 #define ContentSecurityPolicy_h
 
-#include "KURL.h"
+#include "URL.h"
 #include "ScriptState.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -92,19 +92,19 @@ public:
     bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus = SendReport) const;
     bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus = SendReport) const;
     bool allowEval(JSC::ExecState* = 0, ReportingStatus = SendReport) const;
-    bool allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const KURL& = KURL()) const;
-    bool allowPluginType(const String& type, const String& typeAttribute, const KURL&, ReportingStatus = SendReport) const;
+    bool allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const URL& = URL()) const;
+    bool allowPluginType(const String& type, const String& typeAttribute, const URL&, ReportingStatus = SendReport) const;
 
-    bool allowScriptFromSource(const KURL&, ReportingStatus = SendReport) const;
-    bool allowObjectFromSource(const KURL&, ReportingStatus = SendReport) const;
-    bool allowChildFrameFromSource(const KURL&, ReportingStatus = SendReport) const;
-    bool allowImageFromSource(const KURL&, ReportingStatus = SendReport) const;
-    bool allowStyleFromSource(const KURL&, ReportingStatus = SendReport) const;
-    bool allowFontFromSource(const KURL&, ReportingStatus = SendReport) const;
-    bool allowMediaFromSource(const KURL&, ReportingStatus = SendReport) const;
-    bool allowConnectToSource(const KURL&, ReportingStatus = SendReport) const;
-    bool allowFormAction(const KURL&, ReportingStatus = SendReport) const;
-    bool allowBaseURI(const KURL&, ReportingStatus = SendReport) const;
+    bool allowScriptFromSource(const URL&, ReportingStatus = SendReport) const;
+    bool allowObjectFromSource(const URL&, ReportingStatus = SendReport) const;
+    bool allowChildFrameFromSource(const URL&, ReportingStatus = SendReport) const;
+    bool allowImageFromSource(const URL&, ReportingStatus = SendReport) const;
+    bool allowStyleFromSource(const URL&, ReportingStatus = SendReport) const;
+    bool allowFontFromSource(const URL&, ReportingStatus = SendReport) const;
+    bool allowMediaFromSource(const URL&, ReportingStatus = SendReport) const;
+    bool allowConnectToSource(const URL&, ReportingStatus = SendReport) const;
+    bool allowFormAction(const URL&, ReportingStatus = SendReport) const;
+    bool allowBaseURI(const URL&, ReportingStatus = SendReport) const;
 
     ReflectedXSSDisposition reflectedXSSDisposition() const;
 
@@ -124,12 +124,12 @@ public:
     void reportInvalidReflectedXSS(const String&) const;
     void reportMissingReportURI(const String&) const;
     void reportUnsupportedDirective(const String&) const;
-    void reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const KURL& blockedURL, const Vector<KURL>& reportURIs, const String& header, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = 0) const;
+    void reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const URL& blockedURL, const Vector<URL>& reportURIs, const String& header, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = 0) const;
 
     void reportBlockedScriptExecutionToInspector(const String& directiveText) const;
 
-    const KURL& url() const;
-    KURL completeURL(const String&) const;
+    const URL& url() const;
+    URL completeURL(const String&) const;
     SecurityOrigin* securityOrigin() const;
     void enforceSandboxFlags(SandboxFlags) const;
     String evalDisabledErrorMessage() const;

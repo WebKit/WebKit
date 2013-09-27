@@ -29,7 +29,7 @@
 #include "WebKitDLL.h"
 
 #include <WebCore/BString.h>
-#include <WebCore/KURL.h>
+#include <WebCore/URL.h>
 
 using namespace WebCore;
 

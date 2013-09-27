@@ -34,7 +34,7 @@
 #import "DOMTestEventConstructorInternal.h"
 #import "ExceptionHandlers.h"
 #import "JSMainThreadExecState.h"
-#import "KURL.h"
+#import "URL.h"
 #import "TestEventConstructor.h"
 #import "ThreadCheck.h"
 #import "WebCoreObjCExtras.h"

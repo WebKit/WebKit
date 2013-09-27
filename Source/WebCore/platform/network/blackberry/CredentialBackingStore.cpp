@@ -22,7 +22,7 @@
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
 #include "CredentialStorage.h"
 #include "FileSystem.h"
-#include "KURL.h"
+#include "URL.h"
 #include "ProtectionSpaceHash.h"
 #include "SQLiteStatement.h"
 #include <BlackBerryPlatformEncryptor.h>

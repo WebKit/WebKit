@@ -56,7 +56,7 @@ class Document;
 class FormData;
 class HistoryItem;
 class Image;
-class KURL;
+class URL;
 class ResourceRequest;
 
 typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
@@ -81,7 +81,7 @@ public:
     {
         return adoptRef(new HistoryItem(urlString, title, alternateTitle, lastVisited));
     }
-    static PassRefPtr<HistoryItem> create(const KURL& url, const String& target, const String& parent, const String& title)
+    static PassRefPtr<HistoryItem> create(const URL& url, const String& target, const String& parent, const String& title)
     {
         return adoptRef(new HistoryItem(url, target, parent, title));
     }
@@ -109,8 +109,8 @@ public:
     const String& alternateTitle() const;
     
     const String& parent() const;
-    KURL url() const;
-    KURL originalURL() const;
+    URL url() const;
+    URL originalURL() const;
     const String& referrer() const;
     const String& target() const;
     bool isTargetItem() const;
@@ -135,7 +135,7 @@ public:
     void setDocumentState(const Vector<String>&);
     void clearDocumentState();
 
-    void setURL(const KURL&);
+    void setURL(const URL&);
     void setURLString(const String&);
     void setOriginalURLString(const String&);
     void setReferrer(const String&);
@@ -222,7 +222,7 @@ private:
     HistoryItem();
     HistoryItem(const String& urlString, const String& title, double lastVisited);
     HistoryItem(const String& urlString, const String& title, const String& alternateTitle, double lastVisited);
-    HistoryItem(const KURL& url, const String& frameName, const String& parent, const String& title);
+    HistoryItem(const URL& url, const String& frameName, const String& parent, const String& title);
 
     explicit HistoryItem(const HistoryItem&);
 

@@ -413,10 +413,10 @@ public:
     WebContextMenu* contextMenuAtPointInWindow(const WebCore::IntPoint&);
 #endif
     
-    bool hasLocalDataForURL(const WebCore::KURL&);
-    String cachedResponseMIMETypeForURL(const WebCore::KURL&);
-    String cachedSuggestedFilenameForURL(const WebCore::KURL&);
-    PassRefPtr<WebCore::SharedBuffer> cachedResponseDataForURL(const WebCore::KURL&);
+    bool hasLocalDataForURL(const WebCore::URL&);
+    String cachedResponseMIMETypeForURL(const WebCore::URL&);
+    String cachedSuggestedFilenameForURL(const WebCore::URL&);
+    PassRefPtr<WebCore::SharedBuffer> cachedResponseDataForURL(const WebCore::URL&);
 
     static bool canHandleRequest(const WebCore::ResourceRequest&);
 
@@ -686,9 +686,9 @@ private:
 
     String sourceForFrame(WebFrame*);
 
-    void loadDataImpl(PassRefPtr<WebCore::SharedBuffer>, const String& MIMEType, const String& encodingName, const WebCore::KURL& baseURL, const WebCore::KURL& failingURL, CoreIPC::MessageDecoder&);
+    void loadDataImpl(PassRefPtr<WebCore::SharedBuffer>, const String& MIMEType, const String& encodingName, const WebCore::URL& baseURL, const WebCore::URL& failingURL, CoreIPC::MessageDecoder&);
 
-    bool platformHasLocalDataForURL(const WebCore::KURL&);
+    bool platformHasLocalDataForURL(const WebCore::URL&);
 
     // Actions
     void tryClose();

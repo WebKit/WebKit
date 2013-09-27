@@ -47,7 +47,7 @@ public:
             return false;
 
         // If the URI matches our documents URL, we're dealing with a local reference.
-        KURL url = document.completeURL(uri);
+        URL url = document.completeURL(uri);
         return !equalIgnoringFragmentIdentifier(url, document.url());
     }
 

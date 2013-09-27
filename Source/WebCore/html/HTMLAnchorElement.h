@@ -60,7 +60,7 @@ public:
 
     virtual ~HTMLAnchorElement();
 
-    KURL href() const;
+    URL href() const;
     void setHref(const AtomicString&);
 
     const AtomicString& name() const;
@@ -120,7 +120,7 @@ private:
     virtual short tabIndex() const OVERRIDE FINAL;
     virtual bool draggable() const;
 
-    void sendPings(const KURL& destinationURL);
+    void sendPings(const URL& destinationURL);
 
     void handleClick(Event*);
 

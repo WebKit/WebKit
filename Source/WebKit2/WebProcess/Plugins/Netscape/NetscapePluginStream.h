@@ -38,7 +38,7 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
-class KURL;
+class URL;
 }
 
 namespace WebKit {
@@ -56,7 +56,7 @@ public:
     uint64_t streamID() const { return m_streamID; }
     const NPStream* npStream() const { return &m_npStream; }
 
-    void didReceiveResponse(const WebCore::KURL& responseURL, uint32_t streamLength,
+    void didReceiveResponse(const WebCore::URL& responseURL, uint32_t streamLength,
                             uint32_t lastModifiedTime, const String& mimeType, const String& headers);
     void didReceiveData(const char* bytes, int length);
     void didFinishLoading();

@@ -233,13 +233,13 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
     RefPtr<Document> doc;
 #if ENABLE(SVG)
     if (namespaceURI == SVGNames::svgNamespaceURI)
-        doc = SVGDocument::create(0, KURL());
+        doc = SVGDocument::create(0, URL());
     else
 #endif
     if (namespaceURI == HTMLNames::xhtmlNamespaceURI)
-        doc = Document::createXHTML(0, KURL());
+        doc = Document::createXHTML(0, URL());
     else
-        doc = Document::create(0, KURL());
+        doc = Document::create(0, URL());
 
     doc->setSecurityOrigin(m_document.securityOrigin());
 
@@ -310,7 +310,7 @@ bool DOMImplementation::isTextMIMEType(const String& mimeType)
 
 PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
 {
-    RefPtr<HTMLDocument> d = HTMLDocument::create(0, KURL());
+    RefPtr<HTMLDocument> d = HTMLDocument::create(0, URL());
     d->open();
     d->write("<!doctype html><html><body></body></html>");
     if (!title.isNull())
@@ -319,7 +319,7 @@ PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(const String& tit
     return d.release();
 }
 
-PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame* frame, const KURL& url, bool inViewSourceMode)
+PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame* frame, const URL& url, bool inViewSourceMode)
 {
     if (inViewSourceMode)
         return HTMLViewSourceDocument::create(frame, url, type);

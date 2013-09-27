@@ -20,7 +20,7 @@
 #include "AuthenticationChallengeManager.h"
 
 #include "Credential.h"
-#include "KURL.h"
+#include "URL.h"
 #include "PageClientBlackBerry.h"
 #include "ProtectionSpace.h"
 
@@ -37,9 +37,9 @@ namespace WebCore {
 typedef HashMap<PageClientBlackBerry*, bool> PageVisibilityMap;
 
 struct ChallengeInfo {
-    ChallengeInfo(const KURL&, const ProtectionSpace&, const Credential&, AuthenticationChallengeClient*, PageClientBlackBerry*);
+    ChallengeInfo(const URL&, const ProtectionSpace&, const Credential&, AuthenticationChallengeClient*, PageClientBlackBerry*);
 
-    KURL url;
+    URL url;
     ProtectionSpace space;
     Credential credential;
     AuthenticationChallengeClient* authClient;
@@ -47,7 +47,7 @@ struct ChallengeInfo {
     bool blocked;
 };
 
-ChallengeInfo::ChallengeInfo(const KURL& aUrl, const ProtectionSpace& aSpace, const Credential& aCredential,
+ChallengeInfo::ChallengeInfo(const URL& aUrl, const ProtectionSpace& aSpace, const Credential& aCredential,
     AuthenticationChallengeClient* anAuthClient, PageClientBlackBerry* aPageClient)
     : url(aUrl)
     , space(aSpace)
@@ -153,7 +153,7 @@ void AuthenticationChallengeManager::pageVisibilityChanged(PageClientBlackBerry*
     d->resumeAuthenticationChallenge(client);
 }
 
-void AuthenticationChallengeManager::authenticationChallenge(const KURL& url, const ProtectionSpace& space,
+void AuthenticationChallengeManager::authenticationChallenge(const URL& url, const ProtectionSpace& space,
     const Credential& credential, AuthenticationChallengeClient* authClient, PageClientBlackBerry* pageClient)
 {
     BLACKBERRY_ASSERT(authClient);
@@ -196,7 +196,7 @@ void AuthenticationChallengeManager::cancelAuthenticationChallenge(Authenticatio
         d->startAuthenticationChallenge(next);
 }
 
-void AuthenticationChallengeManager::notifyChallengeResult(const KURL&, const ProtectionSpace& space,
+void AuthenticationChallengeManager::notifyChallengeResult(const URL&, const ProtectionSpace& space,
     AuthenticationChallengeResult result, const Credential& credential)
 {
     d->m_activeChallenge = 0;

@@ -39,14 +39,14 @@ namespace WebCore {
 
     class SharedWorkerThread : public WorkerThread {
     public:
-        static PassRefPtr<SharedWorkerThread> create(const String& name, const KURL&, const String& userAgent, const GroupSettings*, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
+        static PassRefPtr<SharedWorkerThread> create(const String& name, const URL&, const String& userAgent, const GroupSettings*, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
         virtual ~SharedWorkerThread();
 
     protected:
-        virtual PassRefPtr<WorkerGlobalScope> createWorkerGlobalScope(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin) OVERRIDE;
+        virtual PassRefPtr<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, PassOwnPtr<GroupSettings>, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin) OVERRIDE;
 
     private:
-        SharedWorkerThread(const String& name, const KURL&, const String& userAgent, const GroupSettings*, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
+        SharedWorkerThread(const String& name, const URL&, const String& userAgent, const GroupSettings*, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
 
         String m_name;
     };

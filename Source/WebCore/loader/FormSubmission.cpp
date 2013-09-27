@@ -61,7 +61,7 @@ static int64_t generateFormDataIdentifier()
     return ++nextIdentifier;
 }
 
-static void appendMailtoPostFormDataToURL(KURL& url, const FormData& data, const String& encodingType)
+static void appendMailtoPostFormDataToURL(URL& url, const FormData& data, const String& encodingType)
 {
     String body = data.flattenToString();
 
@@ -84,7 +84,7 @@ static void appendMailtoPostFormDataToURL(KURL& url, const FormData& data, const
 
 void FormSubmission::Attributes::parseAction(const String& action)
 {
-    // FIXME: Can we parse into a KURL?
+    // FIXME: Can we parse into a URL?
     m_action = stripLeadingAndTrailingHTMLSpaces(action);
 }
 
@@ -124,7 +124,7 @@ void FormSubmission::Attributes::copyFrom(const Attributes& other)
     m_acceptCharset = other.m_acceptCharset;
 }
 
-inline FormSubmission::FormSubmission(Method method, const KURL& action, const String& target, const String& contentType, PassRefPtr<FormState> state, PassRefPtr<FormData> data, const String& boundary, bool lockHistory, PassRefPtr<Event> event)
+inline FormSubmission::FormSubmission(Method method, const URL& action, const String& target, const String& contentType, PassRefPtr<FormState> state, PassRefPtr<FormData> data, const String& boundary, bool lockHistory, PassRefPtr<Event> event)
     : m_method(method)
     , m_action(action)
     , m_target(target)
@@ -166,7 +166,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
     }
     
     Document& document = form->document();
-    KURL actionURL = document.completeURL(copiedAttributes.action().isEmpty() ? document.url().string() : copiedAttributes.action());
+    URL actionURL = document.completeURL(copiedAttributes.action().isEmpty() ? document.url().string() : copiedAttributes.action());
     bool isMailtoForm = actionURL.protocolIs("mailto");
     bool isMultiPartForm = false;
     String encodingType = copiedAttributes.encodingType();
@@ -222,12 +222,12 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
     return adoptRef(new FormSubmission(copiedAttributes.method(), actionURL, targetOrBaseTarget, encodingType, formState.release(), formData.release(), boundary, lockHistory, event));
 }
 
-KURL FormSubmission::requestURL() const
+URL FormSubmission::requestURL() const
 {
     if (m_method == FormSubmission::PostMethod)
         return m_action;
 
-    KURL requestURL(m_action);
+    URL requestURL(m_action);
     requestURL.setQuery(m_formData->flattenToString());    
     return requestURL;
 }

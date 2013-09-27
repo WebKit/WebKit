@@ -372,7 +372,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
 
         ASSERT(loader.activeDocumentLoader()); // DocumentLoader should have been created by frame->init().
         loader.activeDocumentLoader()->writer()->setMIMEType("image/svg+xml");
-        loader.activeDocumentLoader()->writer()->begin(KURL()); // create the empty document
+        loader.activeDocumentLoader()->writer()->begin(URL()); // create the empty document
         loader.activeDocumentLoader()->writer()->addData(data()->data(), data()->size());
         loader.activeDocumentLoader()->writer()->end();
 

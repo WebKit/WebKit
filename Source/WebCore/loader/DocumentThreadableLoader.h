@@ -45,7 +45,7 @@
 namespace WebCore {
     class CachedRawResource;
     class Document;
-    class KURL;
+    class URL;
     class ResourceRequest;
     class SecurityOrigin;
     class ThreadableLoaderClient;
@@ -95,7 +95,7 @@ namespace WebCore {
         void preflightFailure(unsigned long identifier, const String& url, const String& errorDescription);
 
         void loadRequest(const ResourceRequest&, SecurityCheckPolicy);
-        bool isAllowedRedirect(const KURL&);
+        bool isAllowedRedirect(const URL&);
 
         SecurityOrigin* securityOrigin() const;
 

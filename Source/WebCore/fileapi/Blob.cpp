@@ -54,20 +54,20 @@ enum SliceHistogramEnum {
 
 class BlobURLRegistry : public URLRegistry {
 public:
-    virtual void registerURL(SecurityOrigin*, const KURL&, URLRegistrable*) OVERRIDE;
-    virtual void unregisterURL(const KURL&) OVERRIDE;
+    virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) OVERRIDE;
+    virtual void unregisterURL(const URL&) OVERRIDE;
 
     static URLRegistry& registry();
 };
 
 
-void BlobURLRegistry::registerURL(SecurityOrigin* origin, const KURL& publicURL, URLRegistrable* blob)
+void BlobURLRegistry::registerURL(SecurityOrigin* origin, const URL& publicURL, URLRegistrable* blob)
 {
     ASSERT(&blob->registry() == this);
     ThreadableBlobRegistry::registerBlobURL(origin, publicURL, static_cast<Blob*>(blob)->url());
 }
 
-void BlobURLRegistry::unregisterURL(const KURL& url)
+void BlobURLRegistry::unregisterURL(const URL& url)
 {
     ThreadableBlobRegistry::unregisterBlobURL(url);
 }
@@ -100,7 +100,7 @@ Blob::Blob(PassOwnPtr<BlobData> blobData, long long size)
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, blobData);
 }
 
-Blob::Blob(const KURL& srcURL, const String& type, long long size)
+Blob::Blob(const URL& srcURL, const String& type, long long size)
     : m_type(Blob::normalizedContentType(type))
     , m_size(size)
 {

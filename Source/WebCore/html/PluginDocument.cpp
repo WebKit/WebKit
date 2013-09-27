@@ -131,7 +131,7 @@ void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
     }
 }
 
-PluginDocument::PluginDocument(Frame* frame, const KURL& url)
+PluginDocument::PluginDocument(Frame* frame, const URL& url)
     : HTMLDocument(frame, url, PluginDocumentClass)
     , m_shouldLoadPluginManually(true)
 {

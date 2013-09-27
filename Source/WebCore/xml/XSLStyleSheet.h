@@ -40,22 +40,22 @@ class XSLImportRule;
     
 class XSLStyleSheet FINAL : public StyleSheet {
 public:
-    static PassRefPtr<XSLStyleSheet> create(XSLImportRule* parentImport, const String& originalURL, const KURL& finalURL)
+    static PassRefPtr<XSLStyleSheet> create(XSLImportRule* parentImport, const String& originalURL, const URL& finalURL)
     {
         return adoptRef(new XSLStyleSheet(parentImport, originalURL, finalURL));
     }
-    static PassRefPtr<XSLStyleSheet> create(ProcessingInstruction* parentNode, const String& originalURL, const KURL& finalURL)
+    static PassRefPtr<XSLStyleSheet> create(ProcessingInstruction* parentNode, const String& originalURL, const URL& finalURL)
     {
         return adoptRef(new XSLStyleSheet(parentNode, originalURL, finalURL, false));
     }
-    static PassRefPtr<XSLStyleSheet> createEmbedded(ProcessingInstruction* parentNode, const KURL& finalURL)
+    static PassRefPtr<XSLStyleSheet> createEmbedded(ProcessingInstruction* parentNode, const URL& finalURL)
     {
         return adoptRef(new XSLStyleSheet(parentNode, finalURL.string(), finalURL, true));
     }
 
     // Taking an arbitrary node is unsafe, because owner node pointer can become stale.
     // XSLTProcessor ensures that the stylesheet doesn't outlive its parent, in part by not exposing it to JavaScript.
-    static PassRefPtr<XSLStyleSheet> createForXSLTProcessor(Node* parentNode, const String& originalURL, const KURL& finalURL)
+    static PassRefPtr<XSLStyleSheet> createForXSLTProcessor(Node* parentNode, const String& originalURL, const URL& finalURL)
     {
         return adoptRef(new XSLStyleSheet(parentNode, originalURL, finalURL, false));
     }
@@ -66,7 +66,7 @@ public:
     
     void checkLoaded();
     
-    const KURL& finalURL() const { return m_finalURL; }
+    const URL& finalURL() const { return m_finalURL; }
 
     void loadChildSheets();
     void loadChildSheet(const String& href);
@@ -94,18 +94,18 @@ public:
     virtual String title() const OVERRIDE { return emptyString(); }
 
     virtual void clearOwnerNode() OVERRIDE { m_ownerNode = 0; }
-    virtual KURL baseURL() const OVERRIDE { return m_finalURL; }
+    virtual URL baseURL() const OVERRIDE { return m_finalURL; }
     virtual bool isLoading() const OVERRIDE;
 
     virtual bool isXSLStyleSheet() const OVERRIDE { return true; }
 
 private:
-    XSLStyleSheet(Node* parentNode, const String& originalURL, const KURL& finalURL, bool embedded);
-    XSLStyleSheet(XSLImportRule* parentImport, const String& originalURL, const KURL& finalURL);
+    XSLStyleSheet(Node* parentNode, const String& originalURL, const URL& finalURL, bool embedded);
+    XSLStyleSheet(XSLImportRule* parentImport, const String& originalURL, const URL& finalURL);
     
     Node* m_ownerNode;
     String m_originalURL;
-    KURL m_finalURL;
+    URL m_finalURL;
     bool m_isDisabled;
 
     Vector<OwnPtr<XSLImportRule> > m_children;

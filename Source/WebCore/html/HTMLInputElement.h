@@ -39,7 +39,7 @@ class HTMLImageLoader;
 class HTMLOptionElement;
 class Icon;
 class InputType;
-class KURL;
+class URL;
 class ListAttributeTargetObserver;
 struct DateTimeChooserParameters;
 
@@ -214,7 +214,7 @@ public:
     void setSize(unsigned);
     void setSize(unsigned, ExceptionCode&);
 
-    KURL src() const;
+    URL src() const;
 
     virtual int maxLength() const;
     void setMaxLength(int, ExceptionCode&);
@@ -372,7 +372,7 @@ private:
     virtual void documentWillSuspendForPageCache() OVERRIDE;
 #endif
 
-    virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
+    virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const;
 
     bool needsSuspensionCallback();
     void registerForSuspensionCallbackIfNeeded();

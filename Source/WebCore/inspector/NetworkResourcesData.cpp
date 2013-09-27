@@ -49,7 +49,7 @@ static size_t maximumSingleResourceContentSize = 10 * 1000 * 1000;
 namespace WebCore {
 
 
-PassRefPtr<XHRReplayData> XHRReplayData::create(const String &method, const KURL& url, bool async, PassRefPtr<FormData> formData, bool includeCredentials)
+PassRefPtr<XHRReplayData> XHRReplayData::create(const String &method, const URL& url, bool async, PassRefPtr<FormData> formData, bool includeCredentials)
 {
     return adoptRef(new XHRReplayData(method, url, async, formData, includeCredentials));
 }
@@ -59,7 +59,7 @@ void XHRReplayData::addHeader(const AtomicString& key, const String& value)
     m_headers.set(key, value);
 }
 
-XHRReplayData::XHRReplayData(const String &method, const KURL& url, bool async, PassRefPtr<FormData> formData, bool includeCredentials)
+XHRReplayData::XHRReplayData(const String &method, const URL& url, bool async, PassRefPtr<FormData> formData, bool includeCredentials)
     : m_method(method)
     , m_url(url)
     , m_async(async)

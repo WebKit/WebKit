@@ -27,7 +27,7 @@
 #include "CredentialStorage.h"
 
 #include "Credential.h"
-#include "KURL.h"
+#include "URL.h"
 #include "ProtectionSpaceHash.h"
 #include <wtf/text/WTFString.h>
 #include <wtf/text/StringHash.h>
@@ -61,7 +61,7 @@ static PathToDefaultProtectionSpaceMap& pathToDefaultProtectionSpaceMap()
     return map;
 }
 
-static String originStringFromURL(const KURL& url)
+static String originStringFromURL(const URL& url)
 {
     if (url.port())
         return url.protocol() + "://" + url.host() + ':' + String::number(url.port()) + '/';
@@ -69,7 +69,7 @@ static String originStringFromURL(const KURL& url)
     return url.protocol() + "://" + url.host() + '/';
 }
 
-static String protectionSpaceMapKeyFromURL(const KURL& url)
+static String protectionSpaceMapKeyFromURL(const URL& url)
 {
     ASSERT(url.isValid());
 
@@ -87,7 +87,7 @@ static String protectionSpaceMapKeyFromURL(const KURL& url)
     return directoryURL;
 }
 
-void CredentialStorage::set(const Credential& credential, const ProtectionSpace& protectionSpace, const KURL& url)
+void CredentialStorage::set(const Credential& credential, const ProtectionSpace& protectionSpace, const URL& url)
 {
     ASSERT(protectionSpace.isProxy() || url.protocolIsInHTTPFamily());
     ASSERT(protectionSpace.isProxy() || url.isValid());
@@ -114,7 +114,7 @@ void CredentialStorage::remove(const ProtectionSpace& protectionSpace)
     protectionSpaceToCredentialMap().remove(protectionSpace);
 }
 
-static PathToDefaultProtectionSpaceMap::iterator findDefaultProtectionSpaceForURL(const KURL& url)
+static PathToDefaultProtectionSpaceMap::iterator findDefaultProtectionSpaceForURL(const URL& url)
 {
     ASSERT(url.protocolIsInHTTPFamily());
     ASSERT(url.isValid());
@@ -143,7 +143,7 @@ static PathToDefaultProtectionSpaceMap::iterator findDefaultProtectionSpaceForUR
     }
 }
 
-bool CredentialStorage::set(const Credential& credential, const KURL& url)
+bool CredentialStorage::set(const Credential& credential, const URL& url)
 {
     ASSERT(url.protocolIsInHTTPFamily());
     ASSERT(url.isValid());
@@ -155,7 +155,7 @@ bool CredentialStorage::set(const Credential& credential, const KURL& url)
     return true;
 }
 
-Credential CredentialStorage::get(const KURL& url)
+Credential CredentialStorage::get(const URL& url)
 {
     PathToDefaultProtectionSpaceMap::iterator iter = findDefaultProtectionSpaceForURL(url);
     if (iter == pathToDefaultProtectionSpaceMap().end())

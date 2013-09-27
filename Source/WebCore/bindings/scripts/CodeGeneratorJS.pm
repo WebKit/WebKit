@@ -2501,7 +2501,7 @@ sub GenerateImplementation
         push(@implContent, "    ${className}* thisObj = jsCast<$className*>(asObject(slotBase));\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObj, info());\n");
         if ($indexedGetterFunction->signature->type eq "DOMString") {
-            $implIncludes{"KURL.h"} = 1;
+            $implIncludes{"URL.h"} = 1;
             push(@implContent, "    return jsStringOrUndefined(exec, thisObj->impl()->item(index));\n");
         } else {
             push(@implContent, "    return toJS(exec, thisObj->globalObject(), thisObj->impl()->item(index));\n");
@@ -3436,7 +3436,7 @@ sub NativeToJSValue
     }
 
     if ($codeGenerator->IsStringType($type)) {
-        AddToImplIncludes("KURL.h", $conditional);
+        AddToImplIncludes("URL.h", $conditional);
         my $conv = $signature->extendedAttributes->{"TreatReturnedNullStringAs"};
         if (defined $conv) {
             return "jsStringOrNull(exec, $value)" if $conv eq "Null";

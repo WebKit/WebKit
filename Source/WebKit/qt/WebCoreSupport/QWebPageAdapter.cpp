@@ -1071,7 +1071,7 @@ void QWebPageAdapter::triggerAction(QWebPageAdapter::MenuAction action, QWebHitT
         frame.loader().loadFrameRequest(frameLoadRequest(hitTestResult->linkUrl, &frame), /*lockHistory*/ false, /*lockBackForwardList*/ false, /*event*/ 0, /*FormState*/ 0, MaybeSendReferrer);
         break;
     case OpenFrameInNewWindow: {
-        KURL url = frame.loader().documentLoader()->unreachableURL();
+        URL url = frame.loader().documentLoader()->unreachableURL();
         if (url.isEmpty())
             url = frame.loader().documentLoader()->url();
         openNewWindow(url, &frame);

@@ -159,7 +159,7 @@ String HTMLTableCellElement::scope() const
     return getAttribute(scopeAttr);
 }
 
-void HTMLTableCellElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
+void HTMLTableCellElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLTablePartElement::addSubresourceAttributeURLs(urls);
 

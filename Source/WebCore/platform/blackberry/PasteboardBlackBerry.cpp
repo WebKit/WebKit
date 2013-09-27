@@ -21,7 +21,7 @@
 
 #include "DocumentFragment.h"
 #include "Frame.h"
-#include "KURL.h"
+#include "URL.h"
 #include "NotImplemented.h"
 #include "Range.h"
 #include "markup.h"
@@ -45,7 +45,7 @@ void Pasteboard::clear()
     BlackBerry::Platform::Clipboard::clearClipboard();
 }
 
-void Pasteboard::writeImage(Node*, KURL const&, String const&)
+void Pasteboard::writeImage(Node*, URL const&, String const&)
 {
     notImplemented();
 }

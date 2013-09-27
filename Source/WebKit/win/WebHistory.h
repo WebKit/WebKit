@@ -34,7 +34,7 @@
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
-    class KURL;
+    class URL;
     class PageGroup;
 }
 
@@ -111,7 +111,7 @@ public:
 
     // WebHistory
     static WebHistory* sharedHistory();
-    void visitedURL(const WebCore::KURL&, const WTF::String& title, const WTF::String& httpMethod, bool wasFailure, bool increaseVisitCount);
+    void visitedURL(const WebCore::URL&, const WTF::String& title, const WTF::String& httpMethod, bool wasFailure, bool increaseVisitCount);
     void addVisitedLinksToPageGroup(WebCore::PageGroup&);
 
     COMPtr<IWebHistoryItem> itemForURLString(const WTF::String&) const;

@@ -33,12 +33,12 @@ namespace WebCore {
 
 class PreloadRequest {
 public:
-    static OwnPtr<PreloadRequest> create(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
+    static OwnPtr<PreloadRequest> create(const String& initiator, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
     {
         return adoptPtr(new PreloadRequest(initiator, resourceURL, baseURL, resourceType, mediaAttribute));
     }
 
-    static OwnPtr<PreloadRequest> create(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType)
+    static OwnPtr<PreloadRequest> create(const String& initiator, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType)
     {
         return adoptPtr(new PreloadRequest(initiator, resourceURL, baseURL, resourceType, String()));
     }
@@ -54,7 +54,7 @@ public:
     CachedResource::Type resourceType() const { return m_resourceType; }
 
 private:
-    PreloadRequest(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
+    PreloadRequest(const String& initiator, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
         : m_initiator(initiator)
         , m_resourceURL(resourceURL.isolatedCopy())
         , m_baseURL(baseURL.copy())
@@ -64,11 +64,11 @@ private:
     {
     }
 
-    KURL completeURL(Document*);
+    URL completeURL(Document*);
 
     String m_initiator;
     String m_resourceURL;
-    KURL m_baseURL;
+    URL m_baseURL;
     String m_charset;
     CachedResource::Type m_resourceType;
     String m_mediaAttribute;

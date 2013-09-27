@@ -50,7 +50,7 @@
 
 namespace WebCore {
 
-void PingLoader::loadImage(Frame* frame, const KURL& url)
+void PingLoader::loadImage(Frame* frame, const URL& url)
 {
     if (!frame->document()->securityOrigin()->canDisplay(url)) {
         FrameLoader::reportLocalLoadFailed(frame, url);
@@ -74,7 +74,7 @@ void PingLoader::loadImage(Frame* frame, const KURL& url)
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink-auditing
-void PingLoader::sendPing(Frame* frame, const KURL& pingURL, const KURL& destinationURL)
+void PingLoader::sendPing(Frame* frame, const URL& pingURL, const URL& destinationURL)
 {
     ResourceRequest request(pingURL);
 #if PLATFORM(BLACKBERRY)
@@ -105,7 +105,7 @@ void PingLoader::sendPing(Frame* frame, const KURL& pingURL, const KURL& destina
     UNUSED_PARAM(leakedPingLoader);
 }
 
-void PingLoader::sendViolationReport(Frame* frame, const KURL& reportURL, PassRefPtr<FormData> report)
+void PingLoader::sendViolationReport(Frame* frame, const URL& reportURL, PassRefPtr<FormData> report)
 {
     ResourceRequest request(reportURL);
 #if PLATFORM(BLACKBERRY)

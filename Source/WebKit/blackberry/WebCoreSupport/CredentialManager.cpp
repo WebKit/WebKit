@@ -24,7 +24,7 @@
 #include "CredentialBackingStore.h"
 #include "CredentialTransformData.h"
 #include "HTMLFormElement.h"
-#include "KURL.h"
+#include "URL.h"
 #include "Logging.h"
 #include "PageClientBlackBerry.h"
 

@@ -45,7 +45,7 @@ class Event;
 class FloatSize;
 class Frame;
 class HTMLFrameOwnerElement;
-class KURL;
+class URL;
 class Node;
 class Page;
 class RenderBox;
@@ -325,7 +325,7 @@ public:
     // NO OTHER PLATFORM BESIDES MAC SHOULD USE THIS METHOD.
     void adjustPageHeightDeprecated(float* newBottom, float oldTop, float oldBottom, float bottomLimit);
 
-    bool scrollToFragment(const KURL&);
+    bool scrollToFragment(const URL&);
     bool scrollToAnchor(const String&);
     void maintainScrollPositionAtAnchor(Node*);
     void scrollElementToRect(Element*, const IntRect&);

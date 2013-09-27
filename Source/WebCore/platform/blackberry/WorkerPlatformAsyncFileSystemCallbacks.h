@@ -54,11 +54,11 @@ template<> struct CrossThreadCopierBase<false, false, AsyncFileWriterClient*> : 
 
 void postTaskToMainThread(PassOwnPtr<ScriptExecutionContext::Task>);
 
-class KURL;
+class URL;
 
 class WorkerPlatformAsyncFileSystemCallbacks: public PlatformAsyncFileSystemCallbacks, public WorkerGlobalScope::Observer {
 public:
-    WorkerPlatformAsyncFileSystemCallbacks(PassOwnPtr<AsyncFileSystemCallbacks> callbacks, WorkerGlobalScope* context, const String& mode, const KURL& rootURL = KURL())
+    WorkerPlatformAsyncFileSystemCallbacks(PassOwnPtr<AsyncFileSystemCallbacks> callbacks, WorkerGlobalScope* context, const String& mode, const URL& rootURL = URL())
         : PlatformAsyncFileSystemCallbacks(callbacks, rootURL)
         , WorkerGlobalScope::Observer(context)
         , m_context(context)

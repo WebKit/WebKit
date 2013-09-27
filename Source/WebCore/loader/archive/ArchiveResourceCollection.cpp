@@ -68,11 +68,11 @@ void ArchiveResourceCollection::addResource(PassRefPtr<ArchiveResource> resource
     if (!resource)
         return;
 
-    const KURL& url = resource->url(); // get before passing PassRefPtr (which sets it to 0)
+    const URL& url = resource->url(); // get before passing PassRefPtr (which sets it to 0)
     m_subresources.set(url, resource);
 }
 
-ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const KURL& url)
+ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const URL& url)
 {
     ArchiveResource* resource = m_subresources.get(url);
     if (!resource)
@@ -81,7 +81,7 @@ ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const KURL& ur
     return resource;
 }
 
-PassRefPtr<Archive> ArchiveResourceCollection::popSubframeArchive(const String& frameName, const KURL& url)
+PassRefPtr<Archive> ArchiveResourceCollection::popSubframeArchive(const String& frameName, const URL& url)
 {
     RefPtr<Archive> archive = m_subframes.take(frameName);
     if (archive)

@@ -21,7 +21,7 @@
 #include "config.h"
 #include "WebDOMTestCustomNamedGetter.h"
 
-#include "KURL.h"
+#include "URL.h"
 #include "TestCustomNamedGetter.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"

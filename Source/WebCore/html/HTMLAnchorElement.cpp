@@ -294,7 +294,7 @@ bool HTMLAnchorElement::draggable() const
     return hasAttribute(hrefAttr);
 }
 
-KURL HTMLAnchorElement::href() const
+URL HTMLAnchorElement::href() const
 {
     return document().completeURL(stripLeadingAndTrailingHTMLSpaces(getAttribute(hrefAttr)));
 }
@@ -341,7 +341,7 @@ String HTMLAnchorElement::hash() const
 
 void HTMLAnchorElement::setHash(const String& value)
 {
-    KURL url = href();
+    URL url = href();
     if (value[0] == '#')
         url.setFragmentIdentifier(value.substring(1));
     else
@@ -351,7 +351,7 @@ void HTMLAnchorElement::setHash(const String& value)
 
 String HTMLAnchorElement::host() const
 {
-    const KURL& url = href();
+    const URL& url = href();
     if (url.hostEnd() == url.pathStart())
         return url.host();
     if (isDefaultPortForProtocol(url.port(), url.protocol()))
@@ -363,7 +363,7 @@ void HTMLAnchorElement::setHost(const String& value)
 {
     if (value.isEmpty())
         return;
-    KURL url = href();
+    URL url = href();
     if (!url.canSetHostOrPort())
         return;
 
@@ -408,7 +408,7 @@ void HTMLAnchorElement::setHostname(const String& value)
     if (i == hostLength)
         return;
 
-    KURL url = href();
+    URL url = href();
     if (!url.canSetHostOrPort())
         return;
 
@@ -423,7 +423,7 @@ String HTMLAnchorElement::pathname() const
 
 void HTMLAnchorElement::setPathname(const String& value)
 {
-    KURL url = href();
+    URL url = href();
     if (!url.canSetPathname())
         return;
 
@@ -445,7 +445,7 @@ String HTMLAnchorElement::port() const
 
 void HTMLAnchorElement::setPort(const String& value)
 {
-    KURL url = href();
+    URL url = href();
     if (!url.canSetHostOrPort())
         return;
 
@@ -468,7 +468,7 @@ String HTMLAnchorElement::protocol() const
 
 void HTMLAnchorElement::setProtocol(const String& value)
 {
-    KURL url = href();
+    URL url = href();
     url.setProtocol(value);
     setHref(url.string());
 }
@@ -487,7 +487,7 @@ String HTMLAnchorElement::origin() const
 
 void HTMLAnchorElement::setSearch(const String& value)
 {
-    KURL url = href();
+    URL url = href();
     String newSearch = (value[0] == '?') ? value.substring(1) : value;
     // Make sure that '#' in the query does not leak to the hash.
     url.setQuery(newSearch.replaceWithLiteral('#', "%23"));
@@ -510,7 +510,7 @@ bool HTMLAnchorElement::isLiveLink() const
     return isLink() && treatLinkAsLiveForEventType(m_wasShiftKeyDownOnMouseDown ? MouseEventWithShiftKey : MouseEventWithoutShiftKey);
 }
 
-void HTMLAnchorElement::sendPings(const KURL& destinationURL)
+void HTMLAnchorElement::sendPings(const URL& destinationURL)
 {
     if (!hasAttribute(pingAttr) || !document().settings() || !document().settings()->hyperlinkAuditingEnabled())
         return;
@@ -531,7 +531,7 @@ void HTMLAnchorElement::handleClick(Event* event)
     StringBuilder url;
     url.append(stripLeadingAndTrailingHTMLSpaces(fastGetAttribute(hrefAttr)));
     appendServerMapMousePosition(url, event);
-    KURL kurl = document().completeURL(url.toString());
+    URL kurl = document().completeURL(url.toString());
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     if (hasAttribute(downloadAttr)) {

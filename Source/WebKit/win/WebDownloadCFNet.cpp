@@ -101,7 +101,7 @@ void WebDownload::init(ResourceHandle* handle, const ResourceRequest& request, c
     CFRelease(connection);
 }
 
-void WebDownload::init(const KURL& url, IWebDownloadDelegate* delegate)
+void WebDownload::init(const URL& url, IWebDownloadDelegate* delegate)
 {
     m_delegate = delegate ? delegate : DefaultDownloadDelegate::sharedInstance();
     LOG_ERROR("Delegate is %p", m_delegate.get());

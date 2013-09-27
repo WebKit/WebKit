@@ -34,19 +34,19 @@
 namespace WebCore {
 
 class Document;
-class KURL;
+class URL;
 struct Cookie;
 
 // Functions in this file take a Document pointer to determine which cookie storage to use. We should merge that into call sites, and use PlatformCookieJar directly.
 
 // These two functions implement document.cookie API, with special rules for HttpOnly cookies.
-String cookies(const Document*, const KURL&);
-void setCookies(Document*, const KURL&, const String& cookieString);
+String cookies(const Document*, const URL&);
+void setCookies(Document*, const URL&, const String& cookieString);
 
 bool cookiesEnabled(const Document*);
-String cookieRequestHeaderFieldValue(const Document*, const KURL&);
-bool getRawCookies(const Document*, const KURL&, Vector<Cookie>&);
-void deleteCookie(const Document*, const KURL&, const String& cookieName);
+String cookieRequestHeaderFieldValue(const Document*, const URL&);
+bool getRawCookies(const Document*, const URL&, Vector<Cookie>&);
+void deleteCookie(const Document*, const URL&, const String& cookieName);
 
 }
 

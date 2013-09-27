@@ -78,7 +78,7 @@ static PassOwnPtr<BlobData> createBlobDataForFileWithMetadata(const String& file
     return blobData.release();
 }
 
-static PassOwnPtr<BlobData> createBlobDataForFileSystemURL(const KURL& fileSystemURL, const FileMetadata& metadata)
+static PassOwnPtr<BlobData> createBlobDataForFileSystemURL(const URL& fileSystemURL, const FileMetadata& metadata)
 {
     OwnPtr<BlobData> blobData = BlobData::create();
     blobData->setContentType(getContentTypeFromFileName(fileSystemURL.path(), File::WellKnownContentTypes));
@@ -107,7 +107,7 @@ File::File(const String& path, ContentTypeLookupPolicy policy)
 {
 }
 
-File::File(const String& path, const KURL& url, const String& type)
+File::File(const String& path, const URL& url, const String& type)
     : Blob(url, type, -1)
     , m_path(path)
 #if ENABLE(FILE_SYSTEM)
@@ -142,7 +142,7 @@ File::File(const String& name, const FileMetadata& metadata)
 {
 }
 
-File::File(const KURL& fileSystemURL, const FileMetadata& metadata)
+File::File(const URL& fileSystemURL, const FileMetadata& metadata)
     : Blob(createBlobDataForFileSystemURL(fileSystemURL, metadata), metadata.length)
     , m_fileSystemURL(fileSystemURL)
     , m_snapshotSize(metadata.length)

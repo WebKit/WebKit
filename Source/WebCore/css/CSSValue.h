@@ -22,7 +22,7 @@
 #define CSSValue_h
 
 #include "ExceptionCode.h"
-#include "KURLHash.h"
+#include "URLHash.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -122,7 +122,7 @@ public:
 
     PassRefPtr<CSSValue> cloneForCSSOM() const;
 
-    void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetContents*) const;
+    void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
 
     bool hasFailedOrCanceledSubresources() const;
 

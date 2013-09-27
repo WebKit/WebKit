@@ -56,7 +56,7 @@ void Pasteboard::write(const PasteboardURL&)
     notImplemented();
 }
 
-void Pasteboard::writeImage(Node*, const KURL&, const String&)
+void Pasteboard::writeImage(Node*, const URL&, const String&)
 {
     notImplemented();
 }

@@ -142,12 +142,12 @@ int NetworkManager::startJob(int playerId, const String& pageGroupName, PassRefP
     // Make sure the ResourceHandle doesn't go out of scope while calling callbacks.
     RefPtr<ResourceHandle> guardJob(job);
 
-    KURL url = request.url();
+    URL url = request.url();
 
     // Only load the initial url once.
     bool isInitial = (url == m_initialURL);
     if (isInitial)
-        m_initialURL = KURL();
+        m_initialURL = URL();
 
     // Always reread cookies on a redirect
     if (redirectCount)
@@ -156,8 +156,8 @@ int NetworkManager::startJob(int playerId, const String& pageGroupName, PassRefP
     BlackBerry::Platform::NetworkRequest platformRequest;
     request.initializePlatformRequest(platformRequest, frame->loader() && frame->loader()->client() && static_cast<FrameLoaderClientBlackBerry*>(frame->loader()->client())->cookiesEnabled(), isInitial, rereadCookies);
 
-    // GURL and KURL consider valid URLs differently, for example http:// is parsed as
-    // http:/ by KURL and considered valid, while GURL considers it invalid.
+    // GURL and URL consider valid URLs differently, for example http:// is parsed as
+    // http:/ by URL and considered valid, while GURL considers it invalid.
     if (!platformRequest.url().is_valid())
         return BlackBerry::Platform::FilterStream::StatusErrorInvalidUrl;
 
