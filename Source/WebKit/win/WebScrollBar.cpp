@@ -300,11 +300,6 @@ WebCore::IntSize WebScrollBar::contentsSize() const
     return m_scrollBar->frameRect().size();
 }
 
-bool WebScrollBar::scrollbarsCanBeActive() const
-{
-    return true;
-}
-
 WebCore::IntRect WebScrollBar::scrollableAreaBoundingBox() const
 {
     return m_scrollBar->frameRect();
