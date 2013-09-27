@@ -1371,3 +1371,5 @@ webkit.org/b/122033 media/video-duration-known-after-eos.html [ Pass Failure ]
 webkit.org/b/122038 animations/transform-non-accelerated.html [ Pass Failure ]
 
 webkit.org/b/122039 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Pass Failure ]
+
+webkit.org/b/122040 animations/combo-transform-translate+scale.html [ Pass Failure ]
