@@ -931,7 +931,8 @@ namespace WTF {
 #endif
 
         Value* newEntry = lookupForWriting(Extractor::extract(entry)).first;
-        *newEntry = std::move(entry);
+        newEntry->~Value();
+        new (NotNull, newEntry) ValueType(std::move(entry));
 
         return newEntry;
     }
