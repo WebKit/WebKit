@@ -1,3 +1,17 @@
+2013-09-26  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: dissociate old content views that are spliced from back/forward list
+        https://bugs.webkit.org/show_bug.cgi?id=121987
+
+        Reviewed by Timothy Hatcher.
+
+        There was a bug where old back/forward list entries were not being dissociated when
+        the newly-shown content view was already in the list. Instead, dissociation should be
+        skipped if the old list entry is not already in the list.
+
+        * UserInterface/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype.showContentView):
+
 2013-09-26  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: Activity viewer not properly reset when reloading

@@ -158,7 +158,7 @@ WebInspector.ContentViewContainer.prototype = {
         // Disassociate with the removed content views.
         for (var i = 0; i < removedItems.length; ++i) {
             // Skip disassociation if this content view is still in the back/forward list.
-            if (this._backForwardList.contains(contentView))
+            if (this._backForwardList.contains(removedItems[i]))
                 continue;
 
             this._disassociateFromContentView(removedItems[i]);
