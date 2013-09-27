@@ -1,3 +1,14 @@
+2013-09-26  Anders Carlsson  <andersca@apple.com>
+
+        Use the move assignment operator when reinserting values in the hash map
+        https://bugs.webkit.org/show_bug.cgi?id=122003
+
+        Reviewed by Alexey Proskuryakov.
+
+        Using the move assignment operator ensures that the existing values will be destroyed correctly.
+
+        * wtf/HashTable.h:
+
 2013-09-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Work around missing C++11 features of MSVC by providing an implementation for
