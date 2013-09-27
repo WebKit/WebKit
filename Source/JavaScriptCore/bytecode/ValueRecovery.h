@@ -56,6 +56,7 @@ enum ValueRecoveryTechnique {
     UnboxedInt52InGPR,
     UnboxedStrictInt52InGPR,
     UnboxedBooleanInGPR,
+    UnboxedCellInGPR,
 #if USE(JSVALUE32_64)
     InPair,
 #endif
@@ -145,6 +146,8 @@ public:
             result.m_technique = UnboxedStrictInt52InGPR;
         else if (dataFormat == DataFormatBoolean)
             result.m_technique = UnboxedBooleanInGPR;
+        else if (dataFormat == DataFormatCell)
+            result.m_technique = UnboxedCellInGPR;
         else
             result.m_technique = InGPR;
         result.m_source.gpr = gpr;
@@ -240,6 +243,9 @@ public:
         case InGPR:
         case UnboxedInt32InGPR:
         case UnboxedBooleanInGPR:
+        case UnboxedCellInGPR:
+        case UnboxedInt52InGPR:
+        case UnboxedStrictInt52InGPR:
 #if USE(JSVALUE32_64)
         case InPair:
 #endif
@@ -267,7 +273,7 @@ public:
     
     MacroAssembler::RegisterID gpr() const
     {
-        ASSERT(m_technique == InGPR || m_technique == UnboxedInt32InGPR || m_technique == UnboxedBooleanInGPR || m_technique == UInt32InGPR || m_technique == UnboxedInt52InGPR || m_technique == UnboxedStrictInt52InGPR);
+        ASSERT(m_technique == InGPR || m_technique == UnboxedInt32InGPR || m_technique == UnboxedBooleanInGPR || m_technique == UInt32InGPR || m_technique == UnboxedInt52InGPR || m_technique == UnboxedStrictInt52InGPR || m_technique == UnboxedCellInGPR);
         return m_source.gpr;
     }
     
@@ -338,6 +344,9 @@ public:
             return;
         case UnboxedBooleanInGPR:
             out.print("bool(", gpr(), ")");
+            return;
+        case UnboxedCellInGPR:
+            out.print("cell(", gpr(), ")");
             return;
         case UInt32InGPR:
             out.print("uint32(", gpr(), ")");

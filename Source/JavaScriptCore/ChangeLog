@@ -1,3 +1,23 @@
+2013-09-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Deoptimize 32-bit deoptimization
+        https://bugs.webkit.org/show_bug.cgi?id=122025
+
+        Reviewed by Oliver Hunt.
+        
+        Just simplifying a bunch of code. I don't want the old, super-complicated,
+        deoptimization code to get in the way of changes I'll be making to DFG stack layout.
+
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::inGPR):
+        (JSC::ValueRecovery::isInRegisters):
+        (JSC::ValueRecovery::gpr):
+        (JSC::ValueRecovery::dumpInContext):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+
 2013-09-27  Alex Christensen  <alex.christensen@flexsim.com>
 
         Fixed Win64 build after r156184.
