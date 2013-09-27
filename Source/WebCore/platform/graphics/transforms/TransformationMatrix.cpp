@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2013 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -54,16 +54,16 @@ namespace WebCore {
 //
 // Adapted from Matrix Inversion by Richard Carling, Graphics Gems <http://tog.acm.org/GraphicsGems/index.html>.
 
-// EULA: The Graphics Gems code is copyright-protected. In other words, you cannot claim the text of the code 
-// as your own and resell it. Using the code is permitted in any program, product, or library, non-commercial 
-// or commercial. Giving credit is not required, though is a nice gesture. The code comes as-is, and if there 
-// are any flaws or problems with any Gems code, nobody involved with Gems - authors, editors, publishers, or 
-// webmasters - are to be held responsible. Basically, don't be a jerk, and remember that anything free comes 
+// EULA: The Graphics Gems code is copyright-protected. In other words, you cannot claim the text of the code
+// as your own and resell it. Using the code is permitted in any program, product, or library, non-commercial
+// or commercial. Giving credit is not required, though is a nice gesture. The code comes as-is, and if there
+// are any flaws or problems with any Gems code, nobody involved with Gems - authors, editors, publishers, or
+// webmasters - are to be held responsible. Basically, don't be a jerk, and remember that anything free comes
 // with no guarantee.
 
 // A clarification about the storage of matrix elements
 //
-// This class uses a 2 dimensional array internally to store the elements of the matrix.  The first index into 
+// This class uses a 2 dimensional array internally to store the elements of the matrix. The first index into
 // the array refers to the column that the element lies in; the second index refers to the row.
 //
 // In other words, this is the layout of the matrix:
@@ -79,15 +79,15 @@ typedef double Vector3[3];
 const double SMALL_NUMBER = 1.e-8;
 
 // inverse(original_matrix, inverse_matrix)
-// 
+//
 // calculate the inverse of a 4x4 matrix
-// 
-// -1     
+//
+// -1
 // A  = ___1__ adjoint A
 //       det A
 
 //  double = determinant2x2(double a, double b, double c, double d)
-//  
+//
 //  calculate the determinant of a 2x2 matrix.
 
 static double determinant2x2(double a, double b, double c, double d)
@@ -96,10 +96,10 @@ static double determinant2x2(double a, double b, double c, double d)
 }
 
 //  double = determinant3x3(a1, a2, a3, b1, b2, b3, c1, c2, c3)
-//  
+//
 //  Calculate the determinant of a 3x3 matrix
 //  in the form
-// 
+//
 //      | a1,  b1,  c1 |
 //      | a2,  b2,  c2 |
 //      | a3,  b3,  c3 |
@@ -112,7 +112,7 @@ static double determinant3x3(double a1, double a2, double a3, double b1, double 
 }
 
 //  double = determinant4x4(matrix)
-//  
+//
 //  calculate the determinant of a 4x4 matrix.
 
 static double determinant4x4(const TransformationMatrix::Matrix4& m)
@@ -121,22 +121,22 @@ static double determinant4x4(const TransformationMatrix::Matrix4& m)
     // correct elements
 
     double a1 = m[0][0];
-    double b1 = m[0][1]; 
+    double b1 = m[0][1];
     double c1 = m[0][2];
     double d1 = m[0][3];
 
     double a2 = m[1][0];
-    double b2 = m[1][1]; 
+    double b2 = m[1][1];
     double c2 = m[1][2];
     double d2 = m[1][3];
 
-    double a3 = m[2][0]; 
+    double a3 = m[2][0];
     double b3 = m[2][1];
     double c3 = m[2][2];
     double d3 = m[2][3];
 
     double a4 = m[3][0];
-    double b4 = m[3][1]; 
+    double b4 = m[3][1];
     double c4 = m[3][2];
     double d4 = m[3][3];
 
@@ -154,11 +154,11 @@ static double determinant4x4(const TransformationMatrix::Matrix4& m)
 //         ij
 //
 //    deleting the ith row and jth column from A.
-// 
+//
 //                  i+j
 //   Let  b   = (-1)    a
 //        ij            ji
-// 
+//
 //  The matrix B = (b  ) is the adjoint of A
 //                   ij
 
@@ -167,12 +167,12 @@ static void adjoint(const TransformationMatrix::Matrix4& matrix, TransformationM
     // Assign to individual variable names to aid
     // selecting correct values
     double a1 = matrix[0][0];
-    double b1 = matrix[0][1]; 
+    double b1 = matrix[0][1];
     double c1 = matrix[0][2];
     double d1 = matrix[0][3];
 
     double a2 = matrix[1][0];
-    double b2 = matrix[1][1]; 
+    double b2 = matrix[1][1];
     double c2 = matrix[1][2];
     double d2 = matrix[1][3];
 
@@ -182,7 +182,7 @@ static void adjoint(const TransformationMatrix::Matrix4& matrix, TransformationM
     double d3 = matrix[2][3];
 
     double a4 = matrix[3][0];
-    double b4 = matrix[3][1]; 
+    double b4 = matrix[3][1];
     double c4 = matrix[3][2];
     double d4 = matrix[3][3];
 
@@ -191,17 +191,17 @@ static void adjoint(const TransformationMatrix::Matrix4& matrix, TransformationM
     result[1][0]  = - determinant3x3(a2, a3, a4, c2, c3, c4, d2, d3, d4);
     result[2][0]  =   determinant3x3(a2, a3, a4, b2, b3, b4, d2, d3, d4);
     result[3][0]  = - determinant3x3(a2, a3, a4, b2, b3, b4, c2, c3, c4);
-        
+
     result[0][1]  = - determinant3x3(b1, b3, b4, c1, c3, c4, d1, d3, d4);
     result[1][1]  =   determinant3x3(a1, a3, a4, c1, c3, c4, d1, d3, d4);
     result[2][1]  = - determinant3x3(a1, a3, a4, b1, b3, b4, d1, d3, d4);
     result[3][1]  =   determinant3x3(a1, a3, a4, b1, b3, b4, c1, c3, c4);
-        
+
     result[0][2]  =   determinant3x3(b1, b2, b4, c1, c2, c4, d1, d2, d4);
     result[1][2]  = - determinant3x3(a1, a2, a4, c1, c2, c4, d1, d2, d4);
     result[2][2]  =   determinant3x3(a1, a2, a4, b1, b2, b4, d1, d2, d4);
     result[3][2]  = - determinant3x3(a1, a2, a4, b1, b2, b4, c1, c2, c4);
-        
+
     result[0][3]  = - determinant3x3(b1, b2, b3, c1, c2, c3, d1, d2, d3);
     result[1][3]  =   determinant3x3(a1, a2, a3, c1, c2, c3, d1, d2, d3);
     result[2][3]  = - determinant3x3(a1, a2, a3, b1, b2, b3, d1, d2, d3);
@@ -215,7 +215,7 @@ static bool inverse(const TransformationMatrix::Matrix4& matrix, TransformationM
     adjoint(matrix, result);
 
     // Calculate the 4x4 determinant
-    // If the determinant is zero, 
+    // If the determinant is zero,
     // then the inverse matrix is not unique.
     double det = determinant4x4(matrix);
 
@@ -262,7 +262,7 @@ static double v3Length(Vector3 a)
     return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2]));
 }
 
-static void v3Scale(Vector3 v, double desiredLength) 
+static void v3Scale(Vector3 v, double desiredLength)
 {
     double len = v3Length(v);
     if (len != 0) {
@@ -273,7 +273,7 @@ static void v3Scale(Vector3 v, double desiredLength)
     }
 }
 
-static double v3Dot(const Vector3 a, const Vector3 b) 
+static double v3Dot(const Vector3 a, const Vector3 b)
 {
     return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
 }
@@ -295,7 +295,69 @@ static void v3Cross(const Vector3 a, const Vector3 b, Vector3 result)
     result[2] = (a[0] * b[1]) - (a[1] * b[0]);
 }
 
-static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMatrix::DecomposedType& result)
+static bool decompose2(const TransformationMatrix::Matrix4& matrix, TransformationMatrix::Decomposed2Type& result)
+{
+    double row0x = matrix[0][0];
+    double row0y = matrix[0][1];
+    double row1x = matrix[1][0];
+    double row1y = matrix[1][1];
+    result.translateX = matrix[3][0];
+    result.translateY = matrix[3][1];
+
+    // Compute scaling factors.
+    result.scaleX = sqrt(row0x * row0x + row0y * row0y);
+    result.scaleY = sqrt(row1x * row1x + row1y * row1y);
+
+    // If determinant is negative, one axis was flipped.
+    double determinant = row0x * row1y - row0y * row1x;
+    if (determinant < 0) {
+        // Flip axis with minimum unit vector dot product.
+        if (row0x < row1y)
+            result.scaleX = -result.scaleX;
+        else
+            result.scaleY = -result.scaleY;
+    }
+
+    // Renormalize matrix to remove scale.
+    if (result.scaleX) {
+        row0x *= 1 / result.scaleX;
+        row0y *= 1 / result.scaleX;
+    }
+    if (result.scaleY) {
+        row1x *= 1 / result.scaleY;
+        row1y *= 1 / result.scaleY;
+    }
+
+    // Compute rotation and renormalize matrix.
+    result.angle = atan2(row0y, row0x);
+
+    if (result.angle) {
+        // Rotate(-angle) = [cos(angle), sin(angle), -sin(angle), cos(angle)]
+        //                = [row0x, -row0y, row0y, row0x]
+        // Thanks to the normalization above.
+        double sn = -row0y;
+        double cs = row0x;
+        double m11 = row0x, m12 = row0y;
+        double m21 = row1x, m22 = row1y;
+
+        row0x = cs * m11 + sn * m21;
+        row0y = cs * m12 + sn * m22;
+        row1x = -sn * m11 + cs * m21;
+        row1y = -sn * m12 + cs * m22;
+    }
+
+    result.m11 = row0x;
+    result.m12 = row0y;
+    result.m21 = row1x;
+    result.m22 = row1y;
+
+    // Convert into degrees because our rotation functions expect it.
+    result.angle = rad2deg(result.angle);
+
+    return true;
+}
+
+static bool decompose4(const TransformationMatrix::Matrix4& mat, TransformationMatrix::Decomposed4Type& result)
 {
     TransformationMatrix::Matrix4 localMatrix;
     memcpy(localMatrix, mat, sizeof(TransformationMatrix::Matrix4));
@@ -320,7 +382,7 @@ static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMa
     if (determinant4x4(perspectiveMatrix) == 0)
         return false;
 
-    // First, isolate perspective.  This is the messiest.
+    // First, isolate perspective. This is the messiest.
     if (localMatrix[0][3] != 0 || localMatrix[1][3] != 0 || localMatrix[2][3] != 0) {
         // rightHandSide is the right hand side of the equation.
         Vector4 rightHandSide;
@@ -330,7 +392,7 @@ static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMa
         rightHandSide[3] = localMatrix[3][3];
 
         // Solve the equation by inverting perspectiveMatrix and multiplying
-        // rightHandSide by the inverse.  (This is the easiest way, not
+        // rightHandSide by the inverse. (This is the easiest way, not
         // necessarily the best.)
         TransformationMatrix::Matrix4 inversePerspectiveMatrix, transposedInversePerspectiveMatrix;
         inverse(perspectiveMatrix, inversePerspectiveMatrix);
@@ -338,12 +400,12 @@ static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMa
 
         Vector4 perspectivePoint;
         v4MulPointByMatrix(rightHandSide, transposedInversePerspectiveMatrix, perspectivePoint);
- 
+
         result.perspectiveX = perspectivePoint[0];
         result.perspectiveY = perspectivePoint[1];
         result.perspectiveZ = perspectivePoint[2];
         result.perspectiveW = perspectivePoint[3];
-        
+
         // Clear the perspective partition
         localMatrix[0][3] = localMatrix[1][3] = localMatrix[2][3] = 0;
         localMatrix[3][3] = 1;
@@ -352,7 +414,7 @@ static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMa
         result.perspectiveX = result.perspectiveY = result.perspectiveZ = 0;
         result.perspectiveW = 1;
     }
-    
+
     // Next take care of translation (easy).
     result.translateX = localMatrix[3][0];
     localMatrix[3][0] = 0;
@@ -395,9 +457,9 @@ static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMa
     v3Scale(row[2], 1.0);
     result.skewXZ /= result.scaleZ;
     result.skewYZ /= result.scaleZ;
- 
+
     // At this point, the matrix (in rows[]) is orthonormal.
-    // Check for a coordinate system flip.  If the determinant
+    // Check for a coordinate system flip. If the determinant
     // is -1, then negate the matrix and the scaling factors.
     v3Cross(row[1], row[2], pdum3);
     if (v3Dot(row[0], pdum3) < 0) {
@@ -412,9 +474,9 @@ static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMa
             row[i][2] *= -1;
         }
     }
- 
+
     // Now, get the rotations out, as described in the gem.
-    
+
     // FIXME - Add the ability to return either quaternions (which are
     // easier to recompose with) or Euler angles (rx, ry, rz), which
     // are easier for authors to deal with. The latter will only be useful
@@ -429,7 +491,7 @@ static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMa
     //     ret.rotateX = atan2(-row[2][0], row[1][1]);
     //     ret.rotateZ = 0;
     // }
-    
+
     double s, t, x, y, z, w;
 
     t = row[0][0] + row[1][1] + row[2][2] + 1.0;
@@ -440,22 +502,22 @@ static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMa
         x = (row[2][1] - row[1][2]) * s;
         y = (row[0][2] - row[2][0]) * s;
         z = (row[1][0] - row[0][1]) * s;
-    } else if (row[0][0] > row[1][1] && row[0][0] > row[2][2]) { 
-        s = sqrt (1.0 + row[0][0] - row[1][1] - row[2][2]) * 2.0; // S=4*qx 
+    } else if (row[0][0] > row[1][1] && row[0][0] > row[2][2]) {
+        s = sqrt(1.0 + row[0][0] - row[1][1] - row[2][2]) * 2.0; // S = 4 * qx.
         x = 0.25 * s;
-        y = (row[0][1] + row[1][0]) / s; 
-        z = (row[0][2] + row[2][0]) / s; 
+        y = (row[0][1] + row[1][0]) / s;
+        z = (row[0][2] + row[2][0]) / s;
         w = (row[2][1] - row[1][2]) / s;
-    } else if (row[1][1] > row[2][2]) { 
-        s = sqrt (1.0 + row[1][1] - row[0][0] - row[2][2]) * 2.0; // S=4*qy
-        x = (row[0][1] + row[1][0]) / s; 
+    } else if (row[1][1] > row[2][2]) {
+        s = sqrt(1.0 + row[1][1] - row[0][0] - row[2][2]) * 2.0; // S = 4 * qy.
+        x = (row[0][1] + row[1][0]) / s;
         y = 0.25 * s;
-        z = (row[1][2] + row[2][1]) / s; 
+        z = (row[1][2] + row[2][1]) / s;
         w = (row[0][2] - row[2][0]) / s;
-    } else { 
-        s = sqrt(1.0 + row[2][2] - row[0][0] - row[1][1]) * 2.0; // S=4*qz
+    } else {
+        s = sqrt(1.0 + row[2][2] - row[0][0] - row[1][1]) * 2.0; // S = 4 * qz.
         x = (row[0][2] + row[2][0]) / s;
-        y = (row[1][2] + row[2][1]) / s; 
+        y = (row[1][2] + row[2][1]) / s;
         z = 0.25 * s;
         w = (row[1][0] - row[0][1]) / s;
     }
@@ -464,12 +526,12 @@ static bool decompose(const TransformationMatrix::Matrix4& mat, TransformationMa
     result.quaternionY = y;
     result.quaternionZ = z;
     result.quaternionW = w;
-    
+
     return true;
 }
 
 // Perform a spherical linear interpolation between the two
-// passed quaternions with 0 <= t <= 1
+// passed quaternions with 0 <= t <= 1.
 static void slerp(double qa[4], const double qb[4], double t)
 {
     double ax, ay, az, aw;
@@ -551,11 +613,11 @@ FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p, bool* clamped
     // with the transform applied. Once we have that point we apply the
     // inverse transform to find the corresponding point in the source
     // space.
-    // 
+    //
     // Given a plane with normal Pn, and a ray starting at point R0 and
     // with direction defined by the vector Rd, we can find the
     // intersection point as a distance d from R0 in units of Rd by:
-    // 
+    //
     // d = -dot (Pn', R0) / dot (Pn', Rd)
     if (clamped)
         *clamped = false;
@@ -565,7 +627,7 @@ FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p, bool* clamped
         // trace, and there is no well-defined value for the projection.
         return FloatPoint();
     }
-    
+
     double x = p.x();
     double y = p.y();
     double z = -(m13() * x + m23() * y + m43()) / m33();
@@ -608,7 +670,7 @@ FloatQuad TransformationMatrix::projectQuad(const FloatQuad& q, bool* clamped) c
 
     if (clamped)
         *clamped = clamped1 || clamped2 || clamped3 || clamped4;
-        
+
     // If all points on the quad had w < 0, then the entire quad would not be visible to the projected surface.
     bool everythingWasClipped = clamped1 && clamped2 && clamped3 && clamped4;
     if (everythingWasClipped)
@@ -715,7 +777,7 @@ TransformationMatrix& TransformationMatrix::scaleNonUniform(double sx, double sy
     m_matrix[0][1] *= sx;
     m_matrix[0][2] *= sx;
     m_matrix[0][3] *= sx;
-    
+
     m_matrix[1][0] *= sy;
     m_matrix[1][1] *= sy;
     m_matrix[1][2] *= sy;
@@ -726,7 +788,7 @@ TransformationMatrix& TransformationMatrix::scaleNonUniform(double sx, double sy
 TransformationMatrix& TransformationMatrix::scale3d(double sx, double sy, double sz)
 {
     scaleNonUniform(sx, sy);
-    
+
     m_matrix[2][0] *= sz;
     m_matrix[2][1] *= sz;
     m_matrix[2][2] *= sz;
@@ -739,7 +801,7 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
     // Normalize the axis of rotation
     double length = sqrt(x * x + y * y + z * z);
     if (length == 0) {
-        // A direction vector that cannot be normalized, such as [0, 0, 0], will cause the rotation to not be applied. 
+        // A direction vector that cannot be normalized, such as [0, 0, 0], will cause the rotation to not be applied.
         return *this;
     } else if (length != 1) {
         x /= length;
@@ -752,7 +814,7 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
 
     double sinTheta = sin(angle);
     double cosTheta = cos(angle);
-    
+
     TransformationMatrix mat;
 
     // Optimize cases where the axis is along a major axis
@@ -827,12 +889,12 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
     rx = deg2rad(rx);
     ry = deg2rad(ry);
     rz = deg2rad(rz);
-    
+
     TransformationMatrix mat;
-    
+
     double sinTheta = sin(rz);
     double cosTheta = cos(rz);
-    
+
     mat.m_matrix[0][0] = cosTheta;
     mat.m_matrix[0][1] = sinTheta;
     mat.m_matrix[0][2] = 0.0;
@@ -845,12 +907,12 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
     mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0;
     mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0;
     mat.m_matrix[3][3] = 1.0;
-    
+
     TransformationMatrix rmat(mat);
-    
+
     sinTheta = sin(ry);
     cosTheta = cos(ry);
-    
+
     mat.m_matrix[0][0] = cosTheta;
     mat.m_matrix[0][1] = 0.0;
     mat.m_matrix[0][2] = -sinTheta;
@@ -868,7 +930,7 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
 
     sinTheta = sin(rx);
     cosTheta = cos(rx);
-    
+
     mat.m_matrix[0][0] = 1.0;
     mat.m_matrix[0][1] = 0.0;
     mat.m_matrix[0][2] = 0.0;
@@ -943,7 +1005,7 @@ TransformationMatrix& TransformationMatrix::skew(double sx, double sy)
     // angles are in degrees. Switch to radians
     sx = deg2rad(sx);
     sy = deg2rad(sy);
-    
+
     TransformationMatrix mat;
     mat.m_matrix[0][1] = tan(sy); // note that the y shear goes in the first row
     mat.m_matrix[1][0] = tan(sx); // and the x shear in the second row
@@ -1242,7 +1304,7 @@ TransformationMatrix& TransformationMatrix::multiply(const TransformationMatrix&
     _mm_store_pd(&m_matrix[3][2], accumulator);
 #else
     Matrix4 tmp;
-    
+
     tmp[0][0] = (mat.m_matrix[0][0] * m_matrix[0][0] + mat.m_matrix[0][1] * m_matrix[1][0]
                + mat.m_matrix[0][2] * m_matrix[2][0] + mat.m_matrix[0][3] * m_matrix[3][0]);
     tmp[0][1] = (mat.m_matrix[0][0] * m_matrix[0][1] + mat.m_matrix[0][1] * m_matrix[1][1]
@@ -1278,7 +1340,7 @@ TransformationMatrix& TransformationMatrix::multiply(const TransformationMatrix&
                + mat.m_matrix[3][2] * m_matrix[2][2] + mat.m_matrix[3][3] * m_matrix[3][2]);
     tmp[3][3] = (mat.m_matrix[3][0] * m_matrix[0][3] + mat.m_matrix[3][1] * m_matrix[1][3]
                + mat.m_matrix[3][2] * m_matrix[2][3] + mat.m_matrix[3][3] * m_matrix[3][3]);
-    
+
     setMatrix(tmp);
 #endif
     return *this;
@@ -1321,25 +1383,25 @@ bool TransformationMatrix::isInvertible() const
     return true;
 }
 
-TransformationMatrix TransformationMatrix::inverse() const 
+TransformationMatrix TransformationMatrix::inverse() const
 {
     if (isIdentityOrTranslation()) {
         // identity matrix
         if (m_matrix[3][0] == 0 && m_matrix[3][1] == 0 && m_matrix[3][2] == 0)
             return TransformationMatrix();
-        
+
         // translation
         return TransformationMatrix(1, 0, 0, 0,
                                     0, 1, 0, 0,
                                     0, 0, 1, 0,
                                     -m_matrix[3][0], -m_matrix[3][1], -m_matrix[3][2], 1);
     }
-    
+
     TransformationMatrix invMat;
     bool inverted = WebCore::inverse(m_matrix, invMat.m_matrix);
     if (!inverted)
         return TransformationMatrix();
-    
+
     return invMat;
 }
 
@@ -1347,15 +1409,15 @@ void TransformationMatrix::makeAffine()
 {
     m_matrix[0][2] = 0;
     m_matrix[0][3] = 0;
-    
+
     m_matrix[1][2] = 0;
     m_matrix[1][3] = 0;
-    
+
     m_matrix[2][0] = 0;
     m_matrix[2][1] = 0;
     m_matrix[2][2] = 1;
     m_matrix[2][3] = 0;
-    
+
     m_matrix[3][2] = 0;
     m_matrix[3][3] = 1;
 }
@@ -1372,18 +1434,53 @@ static inline void blendFloat(double& from, double to, double progress)
         from = from + (to - from) * progress;
 }
 
-void TransformationMatrix::blend(const TransformationMatrix& from, double progress)
+void TransformationMatrix::blend2(const TransformationMatrix& from, double progress)
 {
-    if (from.isIdentity() && isIdentity())
-        return;
-        
-    // decompose
-    DecomposedType fromDecomp;
-    DecomposedType toDecomp;
-    from.decompose(fromDecomp);
-    decompose(toDecomp);
+    Decomposed2Type fromDecomp;
+    Decomposed2Type toDecomp;
+    from.decompose2(fromDecomp);
+    decompose2(toDecomp);
 
-    // interpolate
+    // If x-axis of one is flipped, and y-axis of the other, convert to an unflipped rotation.
+    if ((fromDecomp.scaleX < 0 && toDecomp.scaleY < 0) || (fromDecomp.scaleY < 0 && toDecomp.scaleX < 0)) {
+        fromDecomp.scaleX = -fromDecomp.scaleX;
+        fromDecomp.scaleY = -fromDecomp.scaleY;
+        fromDecomp.angle += fromDecomp.angle < 0 ? 180 : -180;
+    }
+
+    // Don't rotate the long way around.
+    if (!fromDecomp.angle)
+        fromDecomp.angle = 360;
+    if (!toDecomp.angle)
+        toDecomp.angle = 360;
+
+    if (fabs(fromDecomp.angle - toDecomp.angle) > 180) {
+        if (fromDecomp.angle > toDecomp.angle)
+            fromDecomp.angle -= 360;
+        else
+            toDecomp.angle -= 360;
+    }
+
+    blendFloat(fromDecomp.m11, toDecomp.m11, progress);
+    blendFloat(fromDecomp.m12, toDecomp.m12, progress);
+    blendFloat(fromDecomp.m21, toDecomp.m21, progress);
+    blendFloat(fromDecomp.m22, toDecomp.m22, progress);
+    blendFloat(fromDecomp.translateX, toDecomp.translateX, progress);
+    blendFloat(fromDecomp.translateY, toDecomp.translateY, progress);
+    blendFloat(fromDecomp.scaleX, toDecomp.scaleX, progress);
+    blendFloat(fromDecomp.scaleY, toDecomp.scaleY, progress);
+    blendFloat(fromDecomp.angle, toDecomp.angle, progress);
+
+    recompose2(fromDecomp);
+}
+
+void TransformationMatrix::blend4(const TransformationMatrix& from, double progress)
+{
+    Decomposed4Type fromDecomp;
+    Decomposed4Type toDecomp;
+    from.decompose4(fromDecomp);
+    decompose4(toDecomp);
+
     blendFloat(fromDecomp.scaleX, toDecomp.scaleX, progress);
     blendFloat(fromDecomp.scaleY, toDecomp.scaleY, progress);
     blendFloat(fromDecomp.scaleZ, toDecomp.scaleZ, progress);
@@ -1397,14 +1494,35 @@ void TransformationMatrix::blend(const TransformationMatrix& from, double progre
     blendFloat(fromDecomp.perspectiveY, toDecomp.perspectiveY, progress);
     blendFloat(fromDecomp.perspectiveZ, toDecomp.perspectiveZ, progress);
     blendFloat(fromDecomp.perspectiveW, toDecomp.perspectiveW, progress);
-    
+
     slerp(&fromDecomp.quaternionX, &toDecomp.quaternionX, progress);
-        
-    // recompose
-    recompose(fromDecomp);
+
+    recompose4(fromDecomp);
 }
 
-bool TransformationMatrix::decompose(DecomposedType& decomp) const
+void TransformationMatrix::blend(const TransformationMatrix& from, double progress)
+{
+    if (from.isIdentity() && isIdentity())
+        return;
+
+    if (from.isAffine() && isAffine())
+        blend2(from, progress);
+    else
+        blend4(from, progress);
+}
+
+bool TransformationMatrix::decompose2(Decomposed2Type& decomp) const
+{
+    if (isIdentity()) {
+        memset(&decomp, 0, sizeof(decomp));
+        decomp.scaleX = 1;
+        decomp.scaleY = 1;
+    }
+
+    return WebCore::decompose2(m_matrix, decomp);
+}
+
+bool TransformationMatrix::decompose4(Decomposed4Type& decomp) const
 {
     if (isIdentity()) {
         memset(&decomp, 0, sizeof(decomp));
@@ -1413,26 +1531,38 @@ bool TransformationMatrix::decompose(DecomposedType& decomp) const
         decomp.scaleY = 1;
         decomp.scaleZ = 1;
     }
-    
-    if (!WebCore::decompose(m_matrix, decomp))
-        return false;
-    return true;
+
+    return WebCore::decompose4(m_matrix, decomp);
 }
 
-void TransformationMatrix::recompose(const DecomposedType& decomp)
+void TransformationMatrix::recompose2(const Decomposed2Type& decomp)
 {
     makeIdentity();
-    
-    // first apply perspective
+
+    m_matrix[0][0] = decomp.m11;
+    m_matrix[0][1] = decomp.m12;
+    m_matrix[1][0] = decomp.m21;
+    m_matrix[1][1] = decomp.m22;
+
+    translate3d(decomp.translateX, decomp.translateY, 0);
+    rotate(decomp.angle);
+    scale3d(decomp.scaleX, decomp.scaleY, 1);
+}
+
+void TransformationMatrix::recompose4(const Decomposed4Type& decomp)
+{
+    makeIdentity();
+
+    // First apply perspective.
     m_matrix[0][3] = decomp.perspectiveX;
     m_matrix[1][3] = decomp.perspectiveY;
     m_matrix[2][3] = decomp.perspectiveZ;
     m_matrix[3][3] = decomp.perspectiveW;
-    
-    // now translate
+
+    // Next, translate.
     translate3d(decomp.translateX, decomp.translateY, decomp.translateZ);
-    
-    // apply rotation
+
+    // Apply rotation.
     double xx = decomp.quaternionX * decomp.quaternionX;
     double xy = decomp.quaternionX * decomp.quaternionY;
     double xz = decomp.quaternionX * decomp.quaternionZ;
@@ -1442,35 +1572,35 @@ void TransformationMatrix::recompose(const DecomposedType& decomp)
     double yw = decomp.quaternionY * decomp.quaternionW;
     double zz = decomp.quaternionZ * decomp.quaternionZ;
     double zw = decomp.quaternionZ * decomp.quaternionW;
-    
-    // Construct a composite rotation matrix from the quaternion values
-    TransformationMatrix rotationMatrix(1 - 2 * (yy + zz), 2 * (xy - zw), 2 * (xz + yw), 0, 
+
+    // Construct a composite rotation matrix from the quaternion values.
+    TransformationMatrix rotationMatrix(1 - 2 * (yy + zz), 2 * (xy - zw), 2 * (xz + yw), 0,
                            2 * (xy + zw), 1 - 2 * (xx + zz), 2 * (yz - xw), 0,
                            2 * (xz - yw), 2 * (yz + xw), 1 - 2 * (xx + yy), 0,
                            0, 0, 0, 1);
-    
+
     multiply(rotationMatrix);
-    
-    // now apply skew
+
+    // Apply skew.
     if (decomp.skewYZ) {
         TransformationMatrix tmp;
         tmp.setM32(decomp.skewYZ);
         multiply(tmp);
     }
-    
+
     if (decomp.skewXZ) {
         TransformationMatrix tmp;
         tmp.setM31(decomp.skewXZ);
         multiply(tmp);
     }
-    
+
     if (decomp.skewXY) {
         TransformationMatrix tmp;
         tmp.setM21(decomp.skewXY);
         multiply(tmp);
     }
-    
-    // finally, apply scale
+
+    // Finally, apply scale.
     scale3d(decomp.scaleX, decomp.scaleY, decomp.scaleZ);
 }
 

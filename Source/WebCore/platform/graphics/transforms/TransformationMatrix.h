@@ -232,7 +232,8 @@ public:
     TransformationMatrix& scale(double);
     TransformationMatrix& scaleNonUniform(double sx, double sy);
     TransformationMatrix& scale3d(double sx, double sy, double sz);
-    
+
+    // Angle is in degrees.
     TransformationMatrix& rotate(double d) { return rotate3d(0, 0, d); }
     TransformationMatrix& rotateFromVector(double x, double y);
     TransformationMatrix& rotate3d(double rx, double ry, double rz);
@@ -268,17 +269,29 @@ public:
 
     // decompose the matrix into its component parts
     typedef struct {
+        double scaleX, scaleY;
+        double translateX, translateY;
+        double angle;
+        double m11, m12, m21, m22;
+    } Decomposed2Type;
+
+    typedef struct {
         double scaleX, scaleY, scaleZ;
         double skewXY, skewXZ, skewYZ;
         double quaternionX, quaternionY, quaternionZ, quaternionW;
         double translateX, translateY, translateZ;
         double perspectiveX, perspectiveY, perspectiveZ, perspectiveW;
-    } DecomposedType;
+    } Decomposed4Type;
     
-    bool decompose(DecomposedType& decomp) const;
-    void recompose(const DecomposedType& decomp);
-    
+    bool decompose2(Decomposed2Type&) const;
+    void recompose2(const Decomposed2Type&);
+
+    bool decompose4(Decomposed4Type&) const;
+    void recompose4(const Decomposed4Type&);
+
     void blend(const TransformationMatrix& from, double progress);
+    void blend2(const TransformationMatrix& from, double progress);
+    void blend4(const TransformationMatrix& from, double progress);
 
     bool isAffine() const
     {

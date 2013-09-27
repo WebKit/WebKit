@@ -1,3 +1,49 @@
+2013-09-26  Dean Jackson  <dino@apple.com>
+
+        Provide 2D Matrix decomposition for animation
+        https://bugs.webkit.org/show_bug.cgi?id=112824
+        <rdar://problem/15091882>
+
+        Reviewed by Eric Carlson (and Ian Henderson offline).
+
+        Implement a new 2d matrix blend, which is triggered
+        when animating between two affine 3d matrices. This
+        is intended to be the official algorithm that gets
+        put into the W3C Transforms specification.
+
+        The old code is renamed with a 4 prefix (indicating
+        it is a blend between 3d matrices using quaternions),
+        and new methods and structures for 2d blending were added.
+
+        I also took the opportunity to clean up a lot of
+        bad WebKit style.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::maxScaleFromTransform): Use 3d decomposition.
+        * platform/graphics/transforms/PerspectiveTransformOperation.cpp:
+        (WebCore::PerspectiveTransformOperation::blend): Ditto.
+        * platform/graphics/transforms/RotateTransformOperation.cpp:
+        (WebCore::RotateTransformOperation::blend): Ditto.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::decompose2): New method to decompose an affine 3d matrix
+        into X/Y scale + translate, a rotation angle, plus some extracted
+        a,b,c,d fields from the affine section.
+        (WebCore::decompose4): New name for the old function.
+        (WebCore::TransformationMatrix::blend2): Perform linear interpolation
+        between two 2d decompositions.
+        (WebCore::TransformationMatrix::blend4): New name for the old function.
+        (WebCore::TransformationMatrix::blend): Call blend2 or blend4 depending
+        on the type of matrix.
+        (WebCore::TransformationMatrix::decompose2): Calls into the decompose2
+        method above.
+        (WebCore::TransformationMatrix::decompose4): New name.
+        (WebCore::TransformationMatrix::recompose2): Recomposes a 3d matrix from
+        a 2d decomposition.
+        (WebCore::TransformationMatrix::recompose4): New name.
+        * platform/graphics/transforms/TransformationMatrix.h: All the changes
+        for the new methods above.
+
 2013-09-26  Darin Adler  <darin@apple.com>
 
         rename KURL to URL

@@ -256,8 +256,8 @@ static float maxScaleFromTransform(const TransformationMatrix& t)
     if (t.isIdentityOrTranslation())
         return 1;
 
-    TransformationMatrix::DecomposedType decomposeData;
-    t.decompose(decomposeData);
+    TransformationMatrix::Decomposed4Type decomposeData;
+    t.decompose4(decomposeData);
     return std::max(fabsf(decomposeData.scaleX), fabsf(decomposeData.scaleY));
 }
 
