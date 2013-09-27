@@ -3,12 +3,12 @@
 <head>
 <style>
 .parent {
-    background-color: green;
+    background-color: yellow;
     width: 300px;
     border: 1px solid blue;
 }
 .container {
-    background-color: yellow;
+    background-color: green;
 }
 </style>
 </head>
@@ -22,8 +22,7 @@
     </div>
 </div>
 
-<p>We have two containers, a shape-inside: circle property is applied on the nested container. Since the nested container's height is not resolvable, we shouldn't apply the circle shape-inside on the content. <br/>We should see the content inside a 300px wide green container, the text shouldn't form any circular shape.</p>
-<p>Bug <a href="http://webkit.org/b/113255 ">113255</a>: The radius of a circle should be computed based on the shorter available dimensions</p>
+<p>We have two containers, a shape-inside: rectangle property is applied on the nested container. Since the nested container's height is not resolvable, we shouldn't apply the rectangle shape-inside on the content. <br/>We should see the content inside a 300px wide green container, the text shouldn't conform to any smaller shape</p>
 
 </body>
 </html>

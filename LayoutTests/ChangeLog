@@ -1,3 +1,22 @@
+2013-09-27  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [css-shapes] Shapes are not resolved the same way in shape-inside and clip-path
+        https://bugs.webkit.org/show_bug.cgi?id=121922
+
+        Reviewed by Andreas Kling.
+
+        Add new test for circular shape-outside with percentage radius.
+
+        Update the nested container with unresolved height test because with a
+        circle it isn't really testing just for unresolved height behavior.
+
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/resources/w3c-import.log:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-circle-001-expected.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-circle-001.html: Added.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/w3c-import.log:
+        * fast/shapes/shape-inside/shape-inside-on-nested-container-with-unresolved-height-expected.html:
+        * fast/shapes/shape-inside/shape-inside-on-nested-container-with-unresolved-height.html:
+
 2013-09-27  Andreas Kling  <akling@apple.com>
 
         Unrehued mac-lion rebaseline.
