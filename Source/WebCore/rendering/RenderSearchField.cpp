@@ -172,7 +172,7 @@ void RenderSearchField::updateFromElement()
 
 void RenderSearchField::updateCancelButtonVisibility() const
 {
-    RenderObject* cancelButtonRenderer = cancelButtonElement()->renderer();
+    RenderElement* cancelButtonRenderer = cancelButtonElement()->renderer();
     if (!cancelButtonRenderer)
         return;
 

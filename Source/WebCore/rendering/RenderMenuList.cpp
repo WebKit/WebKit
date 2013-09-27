@@ -157,8 +157,6 @@ void RenderMenuList::styleDidChange(StyleDifference diff, const RenderStyle* old
 {
     RenderBlock::styleDidChange(diff, oldStyle);
 
-    if (m_buttonText)
-        m_buttonText->setStyle(style());
     if (m_innerBlock) // RenderBlock handled updating the anonymous block's style.
         adjustInnerStyle();
 
@@ -244,7 +242,6 @@ void RenderMenuList::setText(const String& s)
         m_buttonText->setText(textToUse.impl(), true);
     else {
         m_buttonText = RenderText::createAnonymous(document(), textToUse);
-        m_buttonText->setStyle(style());
         addChild(m_buttonText);
     }
     adjustInnerStyle();

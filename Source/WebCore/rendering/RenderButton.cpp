@@ -105,8 +105,6 @@ void RenderButton::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 {
     RenderBlock::styleDidChange(diff, oldStyle);
 
-    if (m_buttonText)
-        m_buttonText->setStyle(style());
     if (m_inner) // RenderBlock handled updating the anonymous block's style.
         setupInnerStyle(m_inner->style());
 
@@ -156,7 +154,6 @@ void RenderButton::setText(const String& str)
             m_buttonText->setText(str.impl());
         else {
             m_buttonText = RenderTextFragment::createAnonymous(document(), str);
-            m_buttonText->setStyle(style());
             addChild(m_buttonText);
         }
     }

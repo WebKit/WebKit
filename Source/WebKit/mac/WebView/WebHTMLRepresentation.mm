@@ -58,7 +58,7 @@
 #import <WebCore/NodeTraversal.h>
 #import <WebCore/Range.h>
 #import <WebCore/RegularExpression.h>
-#import <WebCore/RenderObject.h>
+#import <WebCore/RenderElement.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebKit/DOMHTMLInputElement.h>
 #import <wtf/Assertions.h>

@@ -148,14 +148,14 @@ static RenderObject* inFlowPositionedInlineAncestor(RenderObject* p)
     return 0;
 }
 
-static void updateStyleOfAnonymousBlockContinuations(RenderObject* block, const RenderStyle* newStyle, const RenderStyle* oldStyle)
+static void updateStyleOfAnonymousBlockContinuations(RenderBlock* block, const RenderStyle* newStyle, const RenderStyle* oldStyle)
 {
-    for (;block && block->isAnonymousBlock(); block = block->nextSibling()) {
-        if (!toRenderBlock(block)->isAnonymousBlockContinuation() || block->style()->position() == newStyle->position())
+    for (;block && block->isAnonymousBlock(); block = toRenderBlock(block->nextSibling())) {
+        if (!block->isAnonymousBlockContinuation() || block->style()->position() == newStyle->position())
             continue;
         // If we are no longer in-flow positioned but our descendant block(s) still have an in-flow positioned ancestor then
         // their containing anonymous block should keep its in-flow positioning. 
-        RenderInline* cont = toRenderBlock(block)->inlineElementContinuation();
+        RenderInline* cont = block->inlineElementContinuation();
         if (oldStyle->hasInFlowPosition() && inFlowPositionedInlineAncestor(cont))
             continue;
         RefPtr<RenderStyle> blockStyle = RenderStyle::createAnonymousStyleWithDisplay(block->style(), BLOCK);
@@ -190,7 +190,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         // If any descendant blocks exist then they will be in the next anonymous block and its siblings.
         RenderObject* block = containingBlock()->nextSibling();
         ASSERT(block && block->isAnonymousBlock());
-        updateStyleOfAnonymousBlockContinuations(block, newStyle, oldStyle);
+        updateStyleOfAnonymousBlockContinuations(toRenderBlock(block), newStyle, oldStyle);
     }
 
     if (!m_alwaysCreateLineBoxes) {
@@ -1029,8 +1029,8 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
 
 LayoutRect RenderInline::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
-    // Only run-ins are allowed in here during layout.
-    ASSERT(!view().layoutStateEnabled() || isRunIn());
+    // Only run-ins and first-letter renderers are allowed in here during layout. They mutate the tree triggering repaints.
+    ASSERT(!view().layoutStateEnabled() || isRunIn() || style()->styleType() == FIRST_LETTER);
 
     if (!firstLineBoxIncludingCulling() && !continuation())
         return LayoutRect();

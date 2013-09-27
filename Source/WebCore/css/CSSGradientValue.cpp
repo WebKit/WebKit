@@ -34,7 +34,7 @@
 #include "IntSize.h"
 #include "IntSizeHash.h"
 #include "NodeRenderStyle.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "StyleResolver.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>

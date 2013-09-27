@@ -1,3 +1,24 @@
+2013-09-26  Antti Koivisto  <antti@apple.com>
+
+        Move m_style to RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=121936
+
+        Reviewed by Andreas Kling.
+        
+        Progressions from text style updating correctly in all cases.
+
+        * compositing/contents-opaque/hidden-with-visible-text-expected.txt:
+        * compositing/contents-opaque/visibility-hidden-expected.txt:
+        
+            Can't figure out why these progress but they do. The new rendering (showing nothing)
+            is correct and matches Firefox.
+
+        * platform/mac/svg/custom/SVGPoint-matrixTransform-expected.txt:
+        * platform/mac/svg/custom/getTransformToElement-expected.txt:
+        * platform/mac/svg/custom/text-ctm-expected.txt:
+        * platform/mac/svg/custom/text-hit-test-expected.txt:
+        * platform/mac/svg/text/append-text-node-to-tspan-expected.txt:
+
 2013-09-26  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] make MediaStream testable

@@ -111,14 +111,9 @@ void PseudoElement::didRecalcStyle(Style::Change)
     RenderObject* renderer = this->renderer();
     for (RenderObject* child = renderer->nextInPreOrder(renderer); child; child = child->nextInPreOrder(renderer)) {
         // We only manage the style for the generated content which must be images or text.
-        if (!child->isText() && !child->isImage())
+        if (!child->isImage())
             continue;
-
-        // The style for the RenderTextFragment for first letter is managed by an enclosing block, not by us.
-        if (child->style()->styleType() == FIRST_LETTER)
-            continue;
-
-        child->setPseudoStyle(renderer->style());
+        toRenderElement(child)->setPseudoStyle(renderer->style());
     }
 }
 

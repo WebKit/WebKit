@@ -29,7 +29,7 @@
 #include "RenderImageResourceStyleImage.h"
 
 #include "CachedImage.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "StyleCachedImage.h"
 
 namespace WebCore {

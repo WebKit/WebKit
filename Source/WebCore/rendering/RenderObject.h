@@ -704,21 +704,6 @@ public:
 
     virtual void dirtyLinesFromChangedChild(RenderObject*);
 
-    // Called to update a style that is allowed to trigger animations.
-    // FIXME: Right now this will typically be called only when updating happens from the DOM on explicit elements.
-    // We don't yet handle generated content animation such as first-letter or before/after (we'll worry about this later).
-    void setAnimatableStyle(PassRefPtr<RenderStyle>);
-
-    // Set the style of the object and update the state of the object accordingly.
-    virtual void setStyle(PassRefPtr<RenderStyle>) = 0;
-
-    // Set the style of the object if it's generated content.
-    void setPseudoStyle(PassRefPtr<RenderStyle>);
-
-    // Updates only the local style ptr of the object.  Does not update the state of the object,
-    // and so only should be called when the style is known not to have changed (or from setStyle).
-    void setStyleInternal(PassRefPtr<RenderStyle> style) { m_style = style; }
-
     // returns the containing block level element for this element.
     RenderBlock* containingBlock() const;
 
@@ -773,7 +758,7 @@ public:
     virtual LayoutUnit minPreferredLogicalWidth() const { return 0; }
     virtual LayoutUnit maxPreferredLogicalWidth() const { return 0; }
 
-    RenderStyle* style() const { return m_style.get(); }
+    RenderStyle* style() const;
     RenderStyle* firstLineStyle() const { return document().styleSheetCollection().usesFirstLineRules() ? cachedFirstLineStyle() : style(); }
     RenderStyle* style(bool firstLine) const { return firstLine ? firstLineStyle() : style(); }
 
@@ -1002,8 +987,6 @@ private:
     void checkBlockPositionedObjectsNeedLayout();
 #endif
 
-    RefPtr<RenderStyle> m_style;
-
     Node* m_node;
 
     RenderElement* m_parent;
@@ -1142,20 +1125,20 @@ inline bool RenderObject::documentBeingDestroyed() const
 
 inline bool RenderObject::isBeforeContent() const
 {
-    if (style()->styleType() != BEFORE)
-        return false;
     // Text nodes don't have their own styles, so ignore the style on a text node.
     if (isText())
+        return false;
+    if (style()->styleType() != BEFORE)
         return false;
     return true;
 }
 
 inline bool RenderObject::isAfterContent() const
 {
-    if (style()->styleType() != AFTER)
-        return false;
     // Text nodes don't have their own styles, so ignore the style on a text node.
     if (isText())
+        return false;
+    if (style()->styleType() != AFTER)
         return false;
     return true;
 }
@@ -1214,7 +1197,7 @@ inline void RenderObject::setNeedsPositionedMovementLayout(const RenderStyle* ol
     if (!alreadyNeededLayout) {
         markContainingBlocksForLayout();
         if (hasLayer()) {
-            if (oldStyle && m_style->diffRequiresRepaint(oldStyle))
+            if (oldStyle && style()->diffRequiresRepaint(oldStyle))
                 setLayerNeedsFullRepaint();
             else
                 setLayerNeedsFullRepaintForPositionedMovementLayout();

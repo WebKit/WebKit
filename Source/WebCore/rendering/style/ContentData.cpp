@@ -78,25 +78,19 @@ RenderObject* ImageContentData::createRenderer(Document& document, RenderStyle& 
     return image;
 }
 
-RenderObject* TextContentData::createRenderer(Document& document, RenderStyle& pseudoStyle) const
+RenderObject* TextContentData::createRenderer(Document& document, RenderStyle&) const
 {
-    RenderObject* renderer = RenderTextFragment::createAnonymous(document, m_text);
-    renderer->setPseudoStyle(&pseudoStyle);
-    return renderer;
+    return RenderTextFragment::createAnonymous(document, m_text);
 }
 
-RenderObject* CounterContentData::createRenderer(Document& document, RenderStyle& pseudoStyle) const
+RenderObject* CounterContentData::createRenderer(Document& document, RenderStyle&) const
 {
-    RenderObject* renderer = RenderCounter::createAnonymous(document, *m_counter);
-    renderer->setPseudoStyle(&pseudoStyle);
-    return renderer;
+    return RenderCounter::createAnonymous(document, *m_counter);
 }
 
-RenderObject* QuoteContentData::createRenderer(Document& document, RenderStyle& pseudoStyle) const
+RenderObject* QuoteContentData::createRenderer(Document& document, RenderStyle&) const
 {
-    RenderObject* renderer = RenderQuote::createAnonymous(document, m_quote);
-    renderer->setPseudoStyle(&pseudoStyle);
-    return renderer;
+    return RenderQuote::createAnonymous(document, m_quote);
 }
 
 } // namespace WebCore

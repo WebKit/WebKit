@@ -366,12 +366,7 @@ static void createTextRendererIfNeeded(Text& textNode)
         return;
 
     Document& document = textNode.document();
-    RefPtr<RenderStyle> style;
-    bool resetStyleInheritance = textNode.parentNode()->isShadowRoot() && toShadowRoot(textNode.parentNode())->resetStyleInheritance();
-    if (resetStyleInheritance)
-        style = document.ensureStyleResolver().defaultStyleForElement();
-    else
-        style = parentRenderer->style();
+    RefPtr<RenderStyle> style = parentRenderer->style();
 
     if (!textRendererIsNeeded(textNode, *parentRenderer, *style))
         return;
@@ -390,7 +385,6 @@ static void createTextRendererIfNeeded(Text& textNode)
     RenderObject* nextRenderer = nextSiblingRenderer(textNode);
     textNode.setRenderer(newRenderer);
     // Parent takes care of the animations, no need to call setAnimatableStyle.
-    newRenderer->setStyle(style.release());
     parentRenderer->addChild(newRenderer, nextRenderer);
 }
 
@@ -605,7 +599,7 @@ static Change resolveLocal(Element& current, Change inheritedChange)
         return Detach;
     }
 
-    if (RenderObject* renderer = current.renderer()) {
+    if (RenderElement* renderer = current.renderer()) {
         if (localChange != NoChange || pseudoStyleCacheIsInvalid(renderer, newStyle.get()) || (inheritedChange == Force && renderer->requiresForcedStyleRecalcPropagation()) || current.styleChangeType() == SyntheticStyleChange)
             renderer->setAnimatableStyle(newStyle.get());
         else if (current.needsStyleRecalc()) {
@@ -631,12 +625,9 @@ static Change resolveLocal(Element& current, Change inheritedChange)
     return localChange;
 }
 
-static void updateTextStyle(Text& text, RenderStyle* parentElementStyle, Style::Change change)
+static void updateTextStyle(Text& text)
 {
     RenderText* renderer = toRenderText(text.renderer());
-
-    if (change != Style::NoChange && renderer)
-        renderer->setStyle(parentElementStyle);
 
     if (!text.needsStyleRecalc())
         return;
@@ -649,7 +640,7 @@ static void updateTextStyle(Text& text, RenderStyle* parentElementStyle, Style::
     text.clearNeedsStyleRecalc();
 }
 
-static void resolveShadowTree(ShadowRoot* shadowRoot, RenderStyle* parentElementStyle, Style::Change change)
+static void resolveShadowTree(ShadowRoot* shadowRoot, Style::Change change)
 {
     if (!shadowRoot)
         return;
@@ -659,7 +650,7 @@ static void resolveShadowTree(ShadowRoot* shadowRoot, RenderStyle* parentElement
     for (Node* child = shadowRoot->firstChild(); child; child = child->nextSibling()) {
         if (child->isTextNode()) {
             // Current user agent ShadowRoots don't have immediate text children so this branch is never actually taken.
-            updateTextStyle(*toText(child), parentElementStyle, change);
+            updateTextStyle(*toText(child));
             continue;
         }
         resolveTree(*toElement(child), change);
@@ -751,12 +742,10 @@ void resolveTree(Element& current, Change change)
     if (change != Detach) {
         StyleResolverParentPusher parentPusher(&current);
 
-        RenderStyle* currentStyle = current.renderStyle();
-
         if (ShadowRoot* shadowRoot = current.shadowRoot()) {
             if (change >= Inherit || shadowRoot->childNeedsStyleRecalc() || shadowRoot->needsStyleRecalc()) {
                 parentPusher.push();
-                resolveShadowTree(shadowRoot, currentStyle, change);
+                resolveShadowTree(shadowRoot, change);
             }
         }
 
@@ -769,7 +758,7 @@ void resolveTree(Element& current, Change change)
         bool forceCheckOfAnyElementSibling = false;
         for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
             if (child->isTextNode()) {
-                updateTextStyle(*toText(child), currentStyle, change);
+                updateTextStyle(*toText(child));
                 continue;
             }
             if (!child->isElementNode())

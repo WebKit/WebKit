@@ -93,7 +93,7 @@ RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope()
 
 struct SameSizeAsRenderObject {
     virtual ~SameSizeAsRenderObject() { } // Allocate vtable pointer.
-    void* pointers[5];
+    void* pointers[4];
 #ifndef NDEBUG
     unsigned m_debugBitfields : 2;
 #endif
@@ -121,7 +121,6 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, renderObjectCounter, ("Rend
 
 RenderObject::RenderObject(Node* node)
     : CachedImageClient()
-    , m_style(0)
     , m_node(node)
     , m_parent(0)
     , m_previous(0)
@@ -737,9 +736,10 @@ RenderBlock* RenderObject::containingBlock() const
     if (!o && isRenderScrollbarPart())
         o = toRenderScrollbarPart(this)->rendererOwningScrollbar();
 
-    if (!isText() && m_style->position() == FixedPosition)
+    RenderStyle* style = this->style();
+    if (!isText() && style->position() == FixedPosition)
         o = containingBlockForFixedPosition(o);
-    else if (!isText() && m_style->position() == AbsolutePosition)
+    else if (!isText() && style->position() == AbsolutePosition)
         o = containingBlockForAbsolutePosition(o);
     else
         o = containingBlockForObjectInFlow(o);
@@ -810,8 +810,7 @@ bool RenderObject::mustRepaintBackgroundOrBorder() const
 }
 
 void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, int y1, int x2, int y2,
-                                      BoxSide side, Color color, EBorderStyle style,
-                                      int adjacentWidth1, int adjacentWidth2, bool antialias)
+    BoxSide side, Color color, EBorderStyle borderStyle, int adjacentWidth1, int adjacentWidth2, bool antialias)
 {
     int thickness;
     int length;
@@ -828,10 +827,11 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
     if (!thickness || !length)
         return;
 
-    if (style == DOUBLE && thickness < 3)
-        style = SOLID;
+    if (borderStyle == DOUBLE && thickness < 3)
+        borderStyle = SOLID;
 
-    switch (style) {
+    RenderStyle* style = this->style();
+    switch (borderStyle) {
         case BNONE:
         case BHIDDEN:
             return;
@@ -841,9 +841,9 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
                 bool wasAntialiased = graphicsContext->shouldAntialias();
                 StrokeStyle oldStrokeStyle = graphicsContext->strokeStyle();
                 graphicsContext->setShouldAntialias(antialias);
-                graphicsContext->setStrokeColor(color, m_style->colorSpace());
+                graphicsContext->setStrokeColor(color, style->colorSpace());
                 graphicsContext->setStrokeThickness(thickness);
-                graphicsContext->setStrokeStyle(style == DASHED ? DashedStroke : DottedStroke);
+                graphicsContext->setStrokeStyle(borderStyle == DASHED ? DashedStroke : DottedStroke);
 
                 switch (side) {
                     case BSBottom:
@@ -867,7 +867,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
             if (adjacentWidth1 == 0 && adjacentWidth2 == 0) {
                 StrokeStyle oldStrokeStyle = graphicsContext->strokeStyle();
                 graphicsContext->setStrokeStyle(NoStroke);
-                graphicsContext->setFillColor(color, m_style->colorSpace());
+                graphicsContext->setFillColor(color, style->colorSpace());
                 
                 bool wasAntialiased = graphicsContext->shouldAntialias();
                 graphicsContext->setShouldAntialias(antialias);
@@ -937,7 +937,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
         case GROOVE: {
             EBorderStyle s1;
             EBorderStyle s2;
-            if (style == GROOVE) {
+            if (borderStyle == GROOVE) {
                 s1 = INSET;
                 s2 = OUTSET;
             } else {
@@ -983,13 +983,13 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
                 color = color.dark();
             // fall through
         case OUTSET:
-            if (style == OUTSET && (side == BSBottom || side == BSRight))
+            if (borderStyle == OUTSET && (side == BSBottom || side == BSRight))
                 color = color.dark();
             // fall through
         case SOLID: {
             StrokeStyle oldStrokeStyle = graphicsContext->strokeStyle();
             graphicsContext->setStrokeStyle(NoStroke);
-            graphicsContext->setFillColor(color, m_style->colorSpace());
+            graphicsContext->setFillColor(color, style->colorSpace());
             ASSERT(x2 >= x1);
             ASSERT(y2 >= y1);
             if (!adjacentWidth1 && !adjacentWidth2) {
@@ -1664,31 +1664,6 @@ void RenderObject::removeAnonymousWrappersForInlinesIfNecessary()
     }
 }
 
-void RenderObject::setAnimatableStyle(PassRefPtr<RenderStyle> style)
-{
-    if (!isText() && style)
-        setStyle(animation().updateAnimations(this, style.get()));
-    else
-        setStyle(style);
-}
-
-void RenderObject::setPseudoStyle(PassRefPtr<RenderStyle> pseudoStyle)
-{
-    ASSERT(pseudoStyle->styleType() == BEFORE || pseudoStyle->styleType() == AFTER);
-
-    // Images are special and must inherit the pseudoStyle so the width and height of
-    // the pseudo element doesn't change the size of the image. In all other cases we
-    // can just share the style.
-    if (isImage()) {
-        RefPtr<RenderStyle> style = RenderStyle::create();
-        style->inheritFrom(pseudoStyle.get());
-        setStyle(style.release());
-        return;
-    }
-
-    setStyle(pseudoStyle);
-}
-
 LayoutRect RenderObject::viewRect() const
 {
     return view().viewRect();
@@ -1913,7 +1888,7 @@ bool RenderObject::hasOutlineAnnotation() const
 
 bool RenderObject::hasEntirelyFixedBackground() const
 {
-    return m_style->hasEntirelyFixedBackground();
+    return style()->hasEntirelyFixedBackground();
 }
 
 RenderElement* RenderObject::container(const RenderLayerModelObject* repaintContainer, bool* repaintContainerSkipped) const
@@ -1935,7 +1910,7 @@ RenderElement* RenderObject::container(const RenderLayerModelObject* repaintCont
     if (isText())
         return o;
 
-    EPosition pos = m_style->position();
+    EPosition pos = style()->position();
     if (pos == FixedPosition) {
         // container() can be called on an object that is not in the
         // tree yet.  We don't call view() since it will assert if it
@@ -2302,10 +2277,11 @@ RenderStyle* RenderObject::cachedFirstLineStyle() const
 {
     ASSERT(document().styleSheetCollection().usesFirstLineRules());
 
-    if (RefPtr<RenderStyle> style = firstLineStyleForCachedUncachedType(Cached, isText() ? parent() : this, m_style.get()))
-        return style.get();
+    RenderStyle* style = this->style();
+    if (RefPtr<RenderStyle> firstLineStyle = firstLineStyleForCachedUncachedType(Cached, isText() ? parent() : this, style))
+        return firstLineStyle.get();
 
-    return m_style.get();
+    return style;
 }
 
 RenderStyle* RenderObject::getCachedPseudoStyle(PseudoId pseudo, RenderStyle* parentStyle) const

@@ -26,6 +26,7 @@
 #include "RenderElement.h"
 
 #include "AXObjectCache.h"
+#include "AnimationController.h"
 #include "ContentData.h"
 #include "CursorList.h"
 #include "EventHandler.h"
@@ -66,6 +67,7 @@ RenderElement::RenderElement(Element* element)
     : RenderObject(element)
     , m_firstChild(nullptr)
     , m_lastChild(nullptr)
+    , m_style(0)
 {
 }
 
@@ -323,6 +325,12 @@ void RenderElement::setStyle(PassRefPtr<RenderStyle> style)
 
     styleDidChange(diff, oldStyle.get());
 
+    // Text renderers use their parent style. Notify them about the change.
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->isText())
+            toRenderText(child)->styleDidChange(diff, oldStyle.get());
+    }
+
     // FIXME: |this| might be destroyed here. This can currently happen for a RenderTextFragment when
     // its first-letter block gets an update in RenderTextFragment::styleDidChange. For RenderTextFragment(s),
     // we will safely bail out with the doesNotNeedLayout flag. We might want to broaden this condition
@@ -351,6 +359,28 @@ void RenderElement::setStyle(PassRefPtr<RenderStyle> style)
         // not having an outline to having an outline.
         repaint();
     }
+}
+
+void RenderElement::setAnimatableStyle(PassRefPtr<RenderStyle> style)
+{
+    setStyle(animation().updateAnimations(this, style.get()));
+}
+
+void RenderElement::setPseudoStyle(PassRefPtr<RenderStyle> pseudoStyle)
+{
+    ASSERT(pseudoStyle->styleType() == BEFORE || pseudoStyle->styleType() == AFTER);
+
+    // Images are special and must inherit the pseudoStyle so the width and height of
+    // the pseudo element doesn't change the size of the image. In all other cases we
+    // can just share the style.
+    if (isImage()) {
+        RefPtr<RenderStyle> style = RenderStyle::create();
+        style->inheritFrom(pseudoStyle.get());
+        setStyle(style.release());
+        return;
+    }
+
+    setStyle(pseudoStyle);
 }
 
 void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
@@ -383,8 +413,8 @@ void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
     } else
         insertChildInternal(newChild, beforeChild, NotifyChildren);
 
-    if (newChild->isText() && newChild->style()->textTransform() == CAPITALIZE)
-        toRenderText(newChild)->transformText();
+    if (newChild->isText())
+        toRenderText(newChild)->styleDidChange(StyleDifferenceEqual, nullptr);
 
     // SVG creates renderers for <g display="none">, as SVG requires children of hidden
     // <g>s to have renderers - at least that's how our implementation works. Consider:
@@ -659,6 +689,8 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
 {
     // FIXME: We could save this call when the change only affected non-inherited properties.
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->isText())
+            continue;
         if (!child->isAnonymous() || child->style()->styleType() != NOPSEUDO)
             continue;
 
@@ -683,7 +715,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (child->isInFlowPositioned() && toRenderBlock(child)->isAnonymousBlockContinuation())
             newStyle->setPosition(child->style()->position());
 
-        child->setStyle(newStyle.release());
+        toRenderElement(child)->setStyle(newStyle.release());
     }
 }
 

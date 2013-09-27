@@ -29,7 +29,7 @@
 
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "RenderStyle.h"
 #include "Text.h"
 #include "TextIterator.h"

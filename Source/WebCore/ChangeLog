@@ -1,3 +1,134 @@
+2013-09-26  Antti Koivisto  <antti@apple.com>
+
+        Move m_style to RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=121936
+
+        Reviewed by Andreas Kling.
+
+        Text renderers always have the same style as their parent. They can get their style via the parent pointer
+        rather than having a member of their own.
+        
+        This shrinks RenderText by a pointer.
+
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::didRecalcStyle):
+        
+            Text renderers have no independent style. No need to set it.
+
+        * editing/ApplyBlockElementCommand.cpp:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildToAnonymousColumnBlocks):
+        
+            Avoid getting style from text child before it is added to tree.
+
+        (WebCore::RenderBlock::updateFirstLetterStyle):
+        (WebCore::RenderBlock::createFirstLetterRenderer):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::styleDidChange):
+        (WebCore::RenderButton::setText):
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::styleDidChange):
+                
+            Don't set text style anymore.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        (WebCore::RenderElement::setStyle):
+        
+            Notify child text renderers of style change.
+
+        (WebCore::RenderElement::setAnimatableStyle):
+        (WebCore::RenderElement::setPseudoStyle):
+        
+            Push down to RenderElement, remove text branches.
+
+        (WebCore::RenderElement::addChild):
+        
+            Notify text renderers of style change when added to tree.
+
+        (WebCore::RenderElement::propagateStyleToAnonymousChildren):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::style):
+        (WebCore::RenderElement::setStyleInternal):
+        
+            Move m_style from RenderObject.
+
+        (WebCore::RenderObject::style):
+        
+            Inline this in RenderElement.h instead of making it virtual.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::updateStyleOfAnonymousBlockContinuations):
+        (WebCore::RenderInline::styleDidChange):
+        
+            Tighten typing to call RenderElement::setStyle.
+
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        
+            Change assert. This can get legitimately called during layout for the first letter renderers.
+            This was previously avoided by luck.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::styleDidChange):
+        (WebCore::RenderMenuList::setText):
+        
+            Don't set text style anymore.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::containingBlock):
+        (WebCore::RenderObject::drawLineForBoxSide):
+        (WebCore::RenderObject::hasEntirelyFixedBackground):
+        (WebCore::RenderObject::container):
+        (WebCore::RenderObject::cachedFirstLineStyle):
+
+            Switch to style(), avoid unnecessary repetition.
+            Move code out.
+
+        * rendering/RenderObject.h:
+        
+            Move functions to RenderElement.
+
+        (WebCore::RenderObject::isBeforeContent):
+        (WebCore::RenderObject::isAfterContent):
+        
+            Avoid accessing style for text renderers as these are called before the renderer
+            is added to tree.
+
+        (WebCore::RenderObject::setNeedsPositionedMovementLayout):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::restoreRegionObjectsOriginalStyle):
+        (WebCore::RenderRegion::setObjectStyleInRegion):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::updateCancelButtonVisibility):
+        * rendering/RenderText.cpp:
+        * rendering/RenderText.h:
+        
+            Remove setStyle.
+
+        (WebCore::RenderText::style):
+        
+            Get style from parent.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::updateFromElement):
+        (WebCore::RenderMathMLOperator::createGlyph):
+        * rendering/style/ContentData.cpp:
+        (WebCore::TextContentData::createRenderer):
+        (WebCore::CounterContentData::createRenderer):
+        (WebCore::QuoteContentData::createRenderer):
+        
+            Pseudo style for RenderText subclasses comes from parent without any explicit setting.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::createTextRendererIfNeeded):
+        (WebCore::Style::resolveLocal):
+        (WebCore::Style::updateTextStyle):
+        (WebCore::Style::resolveShadowTree):
+        (WebCore::Style::resolveTree):
+        
+            No need to set or update text renderer style separately.
+
 2013-09-26  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] make MediaStream testable

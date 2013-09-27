@@ -23,7 +23,7 @@
 #ifndef RenderText_h
 #define RenderText_h
 
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -46,7 +46,8 @@ public:
 
     virtual bool isTextFragment() const;
 
-    virtual void setStyle(PassRefPtr<RenderStyle>) OVERRIDE FINAL;
+    RenderStyle* style() const;
+    RenderStyle* style(bool firstLine) const { return firstLine ? firstLineStyle() : style(); }
 
     virtual String originalText() const;
 
@@ -142,6 +143,8 @@ public:
 
     void removeAndDestroyTextBoxes();
 
+    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     float candidateComputedTextSize() const { return m_candidateComputedTextSize; }
     void setCandidateComputedTextSize(float s) { m_candidateComputedTextSize = s; }
@@ -150,8 +153,6 @@ public:
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
     virtual void willBeDestroyed() OVERRIDE;
-
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual void setTextInternal(const String&);
     virtual UChar previousCharacter() const;
@@ -242,6 +243,11 @@ inline const RenderText* toRenderText(const RenderObject* object)
 // This will catch anyone doing an unnecessary cast.
 void toRenderText(const RenderText*);
 void toRenderText(const RenderText&);
+
+inline RenderStyle* RenderText::style() const
+{
+    return parent()->style();
+}
 
 #ifdef NDEBUG
 inline void RenderText::checkConsistency() const

@@ -33,7 +33,14 @@ public:
 
     static RenderElement* createFor(Element&, RenderStyle&);
 
-    virtual void setStyle(PassRefPtr<RenderStyle>) OVERRIDE;
+    RenderStyle* style() const { return m_style.get(); }
+    RenderStyle* style(bool firstLine) const { return firstLine ? firstLineStyle() : style(); }
+
+    virtual void setStyle(PassRefPtr<RenderStyle>);
+    // Called to update a style that is allowed to trigger animations.
+    void setAnimatableStyle(PassRefPtr<RenderStyle>);
+    // Set the style of the object if it's generated content.
+    void setPseudoStyle(PassRefPtr<RenderStyle>);
 
     // This is null for anonymous renderers.
     Element* element() const { return toElement(RenderObject::node()); }
@@ -64,6 +71,10 @@ public:
 
     // Return the renderer whose background style is used to paint the root background. Should only be called on the renderer for which isRoot() is true.
     RenderElement* rendererForRootBackground();
+
+    // Updates only the local style ptr of the object. Does not update the state of the object,
+    // and so only should be called when the style is known not to have changed (or from setStyle).
+    void setStyleInternal(PassRefPtr<RenderStyle> style) { m_style = style; }
 
 protected:
     explicit RenderElement(Element*);
@@ -111,6 +122,8 @@ private:
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;
 
+    RefPtr<RenderStyle> m_style;
+
     // FIXME: Get rid of this hack.
     // Store state between styleWillChange and styleDidChange
     static bool s_affectsParentBlock;
@@ -154,6 +167,13 @@ inline const RenderElement* toRenderElement(const RenderObject* object)
 // This will catch anyone doing an unnecessary cast.
 void toRenderElement(const RenderElement*);
 void toRenderElement(const RenderElement&);
+
+inline RenderStyle* RenderObject::style() const
+{
+    if (isText())
+        return m_parent->style();
+    return toRenderElement(this)->style();
+}
 
 inline RenderElement* Element::renderer() const
 {

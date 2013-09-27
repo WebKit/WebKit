@@ -34,7 +34,7 @@
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "Range.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "Text.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
