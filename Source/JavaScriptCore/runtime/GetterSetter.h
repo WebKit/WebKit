@@ -38,18 +38,18 @@ namespace JSC {
         friend class JIT;
 
     private:        
-        GetterSetter(ExecState* exec)
-            : JSCell(exec->vm(), exec->vm().getterSetterStructure.get())
+        GetterSetter(VM& vm)
+            : JSCell(vm, vm.getterSetterStructure.get())
         {
         }
 
     public:
         typedef JSCell Base;
 
-        static GetterSetter* create(ExecState* exec)
+        static GetterSetter* create(VM& vm)
         {
-            GetterSetter* getterSetter = new (NotNull, allocateCell<GetterSetter>(*exec->heap())) GetterSetter(exec);
-            getterSetter->finishCreation(exec->vm());
+            GetterSetter* getterSetter = new (NotNull, allocateCell<GetterSetter>(vm.heap)) GetterSetter(vm);
+            getterSetter->finishCreation(vm);
             return getterSetter;
         }
 

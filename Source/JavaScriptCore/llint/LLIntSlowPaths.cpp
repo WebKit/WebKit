@@ -787,7 +787,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_getter_setter)
     ASSERT(LLINT_OP(1).jsValue().isObject());
     JSObject* baseObj = asObject(LLINT_OP(1).jsValue());
     
-    GetterSetter* accessor = GetterSetter::create(exec);
+    GetterSetter* accessor = GetterSetter::create(vm);
     LLINT_CHECK_EXCEPTION();
     
     JSValue getter = LLINT_OP(3).jsValue();

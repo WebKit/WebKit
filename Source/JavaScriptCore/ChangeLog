@@ -1,3 +1,15 @@
+2013-09-26  Andreas Kling  <akling@apple.com>
+
+        GetterSetter construction should take a VM instead of ExecState.
+        <https://webkit.org/b/121993>
+
+        Reviewed by Sam Weinig.
+
+        Pass VM& instead of ExecState* to GetterSetter. Updated surrounding
+        code at touched sites to cache VM in a local for fewer loads.
+
+        JSC release binary size -= 4120 bytes.
+
 2013-09-26  Oliver Hunt  <oliver@apple.com>
 
         Make GCC happy

@@ -226,93 +226,94 @@ static inline JSObject* lastInPrototypeChain(JSObject* object)
 void JSGlobalObject::reset(JSValue prototype)
 {
     ExecState* exec = JSGlobalObject::globalExec();
+    VM& vm = exec->vm();
 
-    m_functionPrototype.set(exec->vm(), this, FunctionPrototype::create(exec, this, FunctionPrototype::createStructure(exec->vm(), this, jsNull()))); // The real prototype will be set once ObjectPrototype is created.
-    m_functionStructure.set(exec->vm(), this, JSFunction::createStructure(exec->vm(), this, m_functionPrototype.get()));
-    m_boundFunctionStructure.set(exec->vm(), this, JSBoundFunction::createStructure(exec->vm(), this, m_functionPrototype.get()));
-    m_namedFunctionStructure.set(exec->vm(), this, Structure::addPropertyTransition(exec->vm(), m_functionStructure.get(), exec->vm().propertyNames->name, DontDelete | ReadOnly | DontEnum, 0, m_functionNameOffset));
-    m_internalFunctionStructure.set(exec->vm(), this, InternalFunction::createStructure(exec->vm(), this, m_functionPrototype.get()));
+    m_functionPrototype.set(vm, this, FunctionPrototype::create(exec, this, FunctionPrototype::createStructure(vm, this, jsNull()))); // The real prototype will be set once ObjectPrototype is created.
+    m_functionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
+    m_boundFunctionStructure.set(vm, this, JSBoundFunction::createStructure(vm, this, m_functionPrototype.get()));
+    m_namedFunctionStructure.set(vm, this, Structure::addPropertyTransition(vm, m_functionStructure.get(), vm.propertyNames->name, DontDelete | ReadOnly | DontEnum, 0, m_functionNameOffset));
+    m_internalFunctionStructure.set(vm, this, InternalFunction::createStructure(vm, this, m_functionPrototype.get()));
     JSFunction* callFunction = 0;
     JSFunction* applyFunction = 0;
     m_functionPrototype->addFunctionProperties(exec, this, &callFunction, &applyFunction);
-    m_callFunction.set(exec->vm(), this, callFunction);
-    m_applyFunction.set(exec->vm(), this, applyFunction);
-    m_objectPrototype.set(exec->vm(), this, ObjectPrototype::create(exec, this, ObjectPrototype::createStructure(exec->vm(), this, jsNull())));
-    GetterSetter* protoAccessor = GetterSetter::create(exec);
-    protoAccessor->setGetter(exec->vm(), JSFunction::create(exec, this, 0, String(), globalFuncProtoGetter));
-    protoAccessor->setSetter(exec->vm(), JSFunction::create(exec, this, 0, String(), globalFuncProtoSetter));
-    m_objectPrototype->putDirectAccessor(exec, exec->propertyNames().underscoreProto, protoAccessor, Accessor | DontEnum);
-    m_functionPrototype->structure()->setPrototypeWithoutTransition(exec->vm(), m_objectPrototype.get());
+    m_callFunction.set(vm, this, callFunction);
+    m_applyFunction.set(vm, this, applyFunction);
+    m_objectPrototype.set(vm, this, ObjectPrototype::create(exec, this, ObjectPrototype::createStructure(vm, this, jsNull())));
+    GetterSetter* protoAccessor = GetterSetter::create(vm);
+    protoAccessor->setGetter(vm, JSFunction::create(exec, this, 0, String(), globalFuncProtoGetter));
+    protoAccessor->setSetter(vm, JSFunction::create(exec, this, 0, String(), globalFuncProtoSetter));
+    m_objectPrototype->putDirectAccessor(exec, vm.propertyNames->underscoreProto, protoAccessor, Accessor | DontEnum);
+    m_functionPrototype->structure()->setPrototypeWithoutTransition(vm, m_objectPrototype.get());
     
-    m_typedArrays[toIndex(TypeInt8)].prototype.set(exec->vm(), this, JSInt8ArrayPrototype::create(exec, this, JSInt8ArrayPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
-    m_typedArrays[toIndex(TypeInt16)].prototype.set(exec->vm(), this, JSInt16ArrayPrototype::create(exec, this, JSInt16ArrayPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
-    m_typedArrays[toIndex(TypeInt32)].prototype.set(exec->vm(), this, JSInt32ArrayPrototype::create(exec, this, JSInt32ArrayPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
-    m_typedArrays[toIndex(TypeUint8)].prototype.set(exec->vm(), this, JSUint8ArrayPrototype::create(exec, this, JSUint8ArrayPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
-    m_typedArrays[toIndex(TypeUint8Clamped)].prototype.set(exec->vm(), this, JSUint8ClampedArrayPrototype::create(exec, this, JSUint8ClampedArrayPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
-    m_typedArrays[toIndex(TypeUint16)].prototype.set(exec->vm(), this, JSUint16ArrayPrototype::create(exec, this, JSUint16ArrayPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
-    m_typedArrays[toIndex(TypeUint32)].prototype.set(exec->vm(), this, JSUint32ArrayPrototype::create(exec, this, JSUint32ArrayPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
-    m_typedArrays[toIndex(TypeFloat32)].prototype.set(exec->vm(), this, JSFloat32ArrayPrototype::create(exec, this, JSFloat32ArrayPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
-    m_typedArrays[toIndex(TypeFloat64)].prototype.set(exec->vm(), this, JSFloat64ArrayPrototype::create(exec, this, JSFloat64ArrayPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
-    m_typedArrays[toIndex(TypeDataView)].prototype.set(exec->vm(), this, JSDataViewPrototype::create(exec->vm(), JSDataViewPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
+    m_typedArrays[toIndex(TypeInt8)].prototype.set(vm, this, JSInt8ArrayPrototype::create(exec, this, JSInt8ArrayPrototype::createStructure(vm, this, m_objectPrototype.get())));
+    m_typedArrays[toIndex(TypeInt16)].prototype.set(vm, this, JSInt16ArrayPrototype::create(exec, this, JSInt16ArrayPrototype::createStructure(vm, this, m_objectPrototype.get())));
+    m_typedArrays[toIndex(TypeInt32)].prototype.set(vm, this, JSInt32ArrayPrototype::create(exec, this, JSInt32ArrayPrototype::createStructure(vm, this, m_objectPrototype.get())));
+    m_typedArrays[toIndex(TypeUint8)].prototype.set(vm, this, JSUint8ArrayPrototype::create(exec, this, JSUint8ArrayPrototype::createStructure(vm, this, m_objectPrototype.get())));
+    m_typedArrays[toIndex(TypeUint8Clamped)].prototype.set(vm, this, JSUint8ClampedArrayPrototype::create(exec, this, JSUint8ClampedArrayPrototype::createStructure(vm, this, m_objectPrototype.get())));
+    m_typedArrays[toIndex(TypeUint16)].prototype.set(vm, this, JSUint16ArrayPrototype::create(exec, this, JSUint16ArrayPrototype::createStructure(vm, this, m_objectPrototype.get())));
+    m_typedArrays[toIndex(TypeUint32)].prototype.set(vm, this, JSUint32ArrayPrototype::create(exec, this, JSUint32ArrayPrototype::createStructure(vm, this, m_objectPrototype.get())));
+    m_typedArrays[toIndex(TypeFloat32)].prototype.set(vm, this, JSFloat32ArrayPrototype::create(exec, this, JSFloat32ArrayPrototype::createStructure(vm, this, m_objectPrototype.get())));
+    m_typedArrays[toIndex(TypeFloat64)].prototype.set(vm, this, JSFloat64ArrayPrototype::create(exec, this, JSFloat64ArrayPrototype::createStructure(vm, this, m_objectPrototype.get())));
+    m_typedArrays[toIndex(TypeDataView)].prototype.set(vm, this, JSDataViewPrototype::create(vm, JSDataViewPrototype::createStructure(vm, this, m_objectPrototype.get())));
     
-    m_typedArrays[toIndex(TypeInt8)].structure.set(exec->vm(), this, JSInt8Array::createStructure(exec->vm(), this, m_typedArrays[toIndex(TypeInt8)].prototype.get()));
-    m_typedArrays[toIndex(TypeInt16)].structure.set(exec->vm(), this, JSInt16Array::createStructure(exec->vm(), this, m_typedArrays[toIndex(TypeInt16)].prototype.get()));
-    m_typedArrays[toIndex(TypeInt32)].structure.set(exec->vm(), this, JSInt32Array::createStructure(exec->vm(), this, m_typedArrays[toIndex(TypeInt32)].prototype.get()));
-    m_typedArrays[toIndex(TypeUint8)].structure.set(exec->vm(), this, JSUint8Array::createStructure(exec->vm(), this, m_typedArrays[toIndex(TypeUint8)].prototype.get()));
-    m_typedArrays[toIndex(TypeUint8Clamped)].structure.set(exec->vm(), this, JSUint8ClampedArray::createStructure(exec->vm(), this, m_typedArrays[toIndex(TypeUint8Clamped)].prototype.get()));
-    m_typedArrays[toIndex(TypeUint16)].structure.set(exec->vm(), this, JSUint16Array::createStructure(exec->vm(), this, m_typedArrays[toIndex(TypeUint16)].prototype.get()));
-    m_typedArrays[toIndex(TypeUint32)].structure.set(exec->vm(), this, JSUint32Array::createStructure(exec->vm(), this, m_typedArrays[toIndex(TypeUint32)].prototype.get()));
-    m_typedArrays[toIndex(TypeFloat32)].structure.set(exec->vm(), this, JSFloat32Array::createStructure(exec->vm(), this, m_typedArrays[toIndex(TypeFloat32)].prototype.get()));
-    m_typedArrays[toIndex(TypeFloat64)].structure.set(exec->vm(), this, JSFloat64Array::createStructure(exec->vm(), this, m_typedArrays[toIndex(TypeFloat64)].prototype.get()));
-    m_typedArrays[toIndex(TypeDataView)].structure.set(exec->vm(), this, JSDataView::createStructure(exec->vm(), this, m_typedArrays[toIndex(TypeDataView)].prototype.get()));
+    m_typedArrays[toIndex(TypeInt8)].structure.set(vm, this, JSInt8Array::createStructure(vm, this, m_typedArrays[toIndex(TypeInt8)].prototype.get()));
+    m_typedArrays[toIndex(TypeInt16)].structure.set(vm, this, JSInt16Array::createStructure(vm, this, m_typedArrays[toIndex(TypeInt16)].prototype.get()));
+    m_typedArrays[toIndex(TypeInt32)].structure.set(vm, this, JSInt32Array::createStructure(vm, this, m_typedArrays[toIndex(TypeInt32)].prototype.get()));
+    m_typedArrays[toIndex(TypeUint8)].structure.set(vm, this, JSUint8Array::createStructure(vm, this, m_typedArrays[toIndex(TypeUint8)].prototype.get()));
+    m_typedArrays[toIndex(TypeUint8Clamped)].structure.set(vm, this, JSUint8ClampedArray::createStructure(vm, this, m_typedArrays[toIndex(TypeUint8Clamped)].prototype.get()));
+    m_typedArrays[toIndex(TypeUint16)].structure.set(vm, this, JSUint16Array::createStructure(vm, this, m_typedArrays[toIndex(TypeUint16)].prototype.get()));
+    m_typedArrays[toIndex(TypeUint32)].structure.set(vm, this, JSUint32Array::createStructure(vm, this, m_typedArrays[toIndex(TypeUint32)].prototype.get()));
+    m_typedArrays[toIndex(TypeFloat32)].structure.set(vm, this, JSFloat32Array::createStructure(vm, this, m_typedArrays[toIndex(TypeFloat32)].prototype.get()));
+    m_typedArrays[toIndex(TypeFloat64)].structure.set(vm, this, JSFloat64Array::createStructure(vm, this, m_typedArrays[toIndex(TypeFloat64)].prototype.get()));
+    m_typedArrays[toIndex(TypeDataView)].structure.set(vm, this, JSDataView::createStructure(vm, this, m_typedArrays[toIndex(TypeDataView)].prototype.get()));
 
-    m_nameScopeStructure.set(exec->vm(), this, JSNameScope::createStructure(exec->vm(), this, jsNull()));
-    m_activationStructure.set(exec->vm(), this, JSActivation::createStructure(exec->vm(), this, jsNull()));
-    m_strictEvalActivationStructure.set(exec->vm(), this, StrictEvalActivation::createStructure(exec->vm(), this, jsNull()));
-    m_withScopeStructure.set(exec->vm(), this, JSWithScope::createStructure(exec->vm(), this, jsNull()));
+    m_nameScopeStructure.set(vm, this, JSNameScope::createStructure(vm, this, jsNull()));
+    m_activationStructure.set(vm, this, JSActivation::createStructure(vm, this, jsNull()));
+    m_strictEvalActivationStructure.set(vm, this, StrictEvalActivation::createStructure(vm, this, jsNull()));
+    m_withScopeStructure.set(vm, this, JSWithScope::createStructure(vm, this, jsNull()));
 
-    m_nullPrototypeObjectStructure.set(exec->vm(), this, JSFinalObject::createStructure(vm(), this, jsNull(), JSFinalObject::defaultInlineCapacity()));
+    m_nullPrototypeObjectStructure.set(vm, this, JSFinalObject::createStructure(vm, this, jsNull(), JSFinalObject::defaultInlineCapacity()));
 
-    m_callbackFunctionStructure.set(exec->vm(), this, JSCallbackFunction::createStructure(exec->vm(), this, m_functionPrototype.get()));
-    m_argumentsStructure.set(exec->vm(), this, Arguments::createStructure(exec->vm(), this, m_objectPrototype.get()));
-    m_callbackConstructorStructure.set(exec->vm(), this, JSCallbackConstructor::createStructure(exec->vm(), this, m_objectPrototype.get()));
-    m_callbackObjectStructure.set(exec->vm(), this, JSCallbackObject<JSDestructibleObject>::createStructure(exec->vm(), this, m_objectPrototype.get()));
+    m_callbackFunctionStructure.set(vm, this, JSCallbackFunction::createStructure(vm, this, m_functionPrototype.get()));
+    m_argumentsStructure.set(vm, this, Arguments::createStructure(vm, this, m_objectPrototype.get()));
+    m_callbackConstructorStructure.set(vm, this, JSCallbackConstructor::createStructure(vm, this, m_objectPrototype.get()));
+    m_callbackObjectStructure.set(vm, this, JSCallbackObject<JSDestructibleObject>::createStructure(vm, this, m_objectPrototype.get()));
 #if JSC_OBJC_API_ENABLED
-    m_objcCallbackFunctionStructure.set(exec->vm(), this, ObjCCallbackFunction::createStructure(exec->vm(), this, m_functionPrototype.get()));
-    m_objcWrapperObjectStructure.set(exec->vm(), this, JSCallbackObject<JSAPIWrapperObject>::createStructure(exec->vm(), this, m_objectPrototype.get()));
+    m_objcCallbackFunctionStructure.set(vm, this, ObjCCallbackFunction::createStructure(vm, this, m_functionPrototype.get()));
+    m_objcWrapperObjectStructure.set(vm, this, JSCallbackObject<JSAPIWrapperObject>::createStructure(vm, this, m_objectPrototype.get()));
 #endif
 
-    m_arrayPrototype.set(exec->vm(), this, ArrayPrototype::create(exec, this, ArrayPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
+    m_arrayPrototype.set(vm, this, ArrayPrototype::create(exec, this, ArrayPrototype::createStructure(vm, this, m_objectPrototype.get())));
     
-    m_originalArrayStructureForIndexingShape[UndecidedShape >> IndexingShapeShift].set(exec->vm(), this, JSArray::createStructure(exec->vm(), this, m_arrayPrototype.get(), ArrayWithUndecided));
-    m_originalArrayStructureForIndexingShape[Int32Shape >> IndexingShapeShift].set(exec->vm(), this, JSArray::createStructure(exec->vm(), this, m_arrayPrototype.get(), ArrayWithInt32));
-    m_originalArrayStructureForIndexingShape[DoubleShape >> IndexingShapeShift].set(exec->vm(), this, JSArray::createStructure(exec->vm(), this, m_arrayPrototype.get(), ArrayWithDouble));
-    m_originalArrayStructureForIndexingShape[ContiguousShape >> IndexingShapeShift].set(exec->vm(), this, JSArray::createStructure(exec->vm(), this, m_arrayPrototype.get(), ArrayWithContiguous));
-    m_originalArrayStructureForIndexingShape[ArrayStorageShape >> IndexingShapeShift].set(exec->vm(), this, JSArray::createStructure(exec->vm(), this, m_arrayPrototype.get(), ArrayWithArrayStorage));
-    m_originalArrayStructureForIndexingShape[SlowPutArrayStorageShape >> IndexingShapeShift].set(exec->vm(), this, JSArray::createStructure(exec->vm(), this, m_arrayPrototype.get(), ArrayWithSlowPutArrayStorage));
+    m_originalArrayStructureForIndexingShape[UndecidedShape >> IndexingShapeShift].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithUndecided));
+    m_originalArrayStructureForIndexingShape[Int32Shape >> IndexingShapeShift].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithInt32));
+    m_originalArrayStructureForIndexingShape[DoubleShape >> IndexingShapeShift].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithDouble));
+    m_originalArrayStructureForIndexingShape[ContiguousShape >> IndexingShapeShift].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithContiguous));
+    m_originalArrayStructureForIndexingShape[ArrayStorageShape >> IndexingShapeShift].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithArrayStorage));
+    m_originalArrayStructureForIndexingShape[SlowPutArrayStorageShape >> IndexingShapeShift].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithSlowPutArrayStorage));
     for (unsigned i = 0; i < NumberOfIndexingShapes; ++i)
         m_arrayStructureForIndexingShapeDuringAllocation[i] = m_originalArrayStructureForIndexingShape[i];
     
-    m_regExpMatchesArrayStructure.set(exec->vm(), this, RegExpMatchesArray::createStructure(exec->vm(), this, m_arrayPrototype.get()));
+    m_regExpMatchesArrayStructure.set(vm, this, RegExpMatchesArray::createStructure(vm, this, m_arrayPrototype.get()));
 
-    RegExp* emptyRegex = RegExp::create(exec->vm(), "", NoFlags);
+    RegExp* emptyRegex = RegExp::create(vm, "", NoFlags);
     
-    m_regExpPrototype.set(exec->vm(), this, RegExpPrototype::create(exec, this, RegExpPrototype::createStructure(exec->vm(), this, m_objectPrototype.get()), emptyRegex));
-    m_regExpStructure.set(exec->vm(), this, RegExpObject::createStructure(exec->vm(), this, m_regExpPrototype.get()));
+    m_regExpPrototype.set(vm, this, RegExpPrototype::create(exec, this, RegExpPrototype::createStructure(vm, this, m_objectPrototype.get()), emptyRegex));
+    m_regExpStructure.set(vm, this, RegExpObject::createStructure(vm, this, m_regExpPrototype.get()));
 
 #if ENABLE(PROMISES)
-    m_promisePrototype.set(exec->vm(), this, JSPromisePrototype::create(exec, this, JSPromisePrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
-    m_promiseStructure.set(exec->vm(), this, JSPromise::createStructure(exec->vm(), this, m_promisePrototype.get()));
+    m_promisePrototype.set(vm, this, JSPromisePrototype::create(exec, this, JSPromisePrototype::createStructure(vm, this, m_objectPrototype.get())));
+    m_promiseStructure.set(vm, this, JSPromise::createStructure(vm, this, m_promisePrototype.get()));
 
-    m_promiseResolverPrototype.set(exec->vm(), this, JSPromiseResolverPrototype::create(exec, this, JSPromiseResolverPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
-    m_promiseResolverStructure.set(exec->vm(), this, JSPromiseResolver::createStructure(exec->vm(), this, m_promiseResolverPrototype.get()));
-    m_promiseCallbackStructure.set(exec->vm(), this, JSPromiseCallback::createStructure(exec->vm(), this, m_functionPrototype.get()));
-    m_promiseWrapperCallbackStructure.set(exec->vm(), this, JSPromiseWrapperCallback::createStructure(exec->vm(), this, m_functionPrototype.get()));
+    m_promiseResolverPrototype.set(vm, this, JSPromiseResolverPrototype::create(exec, this, JSPromiseResolverPrototype::createStructure(vm, this, m_objectPrototype.get())));
+    m_promiseResolverStructure.set(vm, this, JSPromiseResolver::createStructure(vm, this, m_promiseResolverPrototype.get()));
+    m_promiseCallbackStructure.set(vm, this, JSPromiseCallback::createStructure(vm, this, m_functionPrototype.get()));
+    m_promiseWrapperCallbackStructure.set(vm, this, JSPromiseWrapperCallback::createStructure(vm, this, m_functionPrototype.get()));
 #endif // ENABLE(PROMISES)
 
 #define CREATE_PROTOTYPE_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
-    m_ ## lowerName ## Prototype.set(exec->vm(), this, capitalName##Prototype::create(exec, this, capitalName##Prototype::createStructure(exec->vm(), this, m_objectPrototype.get()))); \
-    m_ ## properName ## Structure.set(exec->vm(), this, instanceType::createStructure(exec->vm(), this, m_ ## lowerName ## Prototype.get()));
+    m_ ## lowerName ## Prototype.set(vm, this, capitalName##Prototype::create(exec, this, capitalName##Prototype::createStructure(vm, this, m_objectPrototype.get()))); \
+    m_ ## properName ## Structure.set(vm, this, instanceType::createStructure(vm, this, m_ ## lowerName ## Prototype.get()));
 
     FOR_EACH_SIMPLE_BUILTIN_TYPE(CREATE_PROTOTYPE_FOR_SIMPLE_TYPE)
 
@@ -320,96 +321,96 @@ void JSGlobalObject::reset(JSValue prototype)
 
     // Constructors
 
-    JSCell* objectConstructor = ObjectConstructor::create(exec, this, ObjectConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_objectPrototype.get());
-    JSCell* functionConstructor = FunctionConstructor::create(exec, this, FunctionConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_functionPrototype.get());
-    JSCell* arrayConstructor = ArrayConstructor::create(exec, this, ArrayConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_arrayPrototype.get());
+    JSCell* objectConstructor = ObjectConstructor::create(exec, this, ObjectConstructor::createStructure(vm, this, m_functionPrototype.get()), m_objectPrototype.get());
+    JSCell* functionConstructor = FunctionConstructor::create(exec, this, FunctionConstructor::createStructure(vm, this, m_functionPrototype.get()), m_functionPrototype.get());
+    JSCell* arrayConstructor = ArrayConstructor::create(exec, this, ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_arrayPrototype.get());
 
 #if ENABLE(PROMISES)
-    JSCell* promiseConstructor = JSPromiseConstructor::create(exec, this, JSPromiseConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_promisePrototype.get());
-    JSCell* promiseResolverConstructor = JSPromiseResolverConstructor::create(exec, this, JSPromiseResolverConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_promiseResolverPrototype.get());
+    JSCell* promiseConstructor = JSPromiseConstructor::create(exec, this, JSPromiseConstructor::createStructure(vm, this, m_functionPrototype.get()), m_promisePrototype.get());
+    JSCell* promiseResolverConstructor = JSPromiseResolverConstructor::create(exec, this, JSPromiseResolverConstructor::createStructure(vm, this, m_functionPrototype.get()), m_promiseResolverPrototype.get());
 #endif // ENABLE(PROMISES)
 
-    m_regExpConstructor.set(exec->vm(), this, RegExpConstructor::create(exec, this, RegExpConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_regExpPrototype.get()));
+    m_regExpConstructor.set(vm, this, RegExpConstructor::create(exec, this, RegExpConstructor::createStructure(vm, this, m_functionPrototype.get()), m_regExpPrototype.get()));
 
 #define CREATE_CONSTRUCTOR_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
-    capitalName ## Constructor* lowerName ## Constructor = capitalName ## Constructor::create(exec, this, capitalName ## Constructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_ ## lowerName ## Prototype.get()); \
-    m_ ## lowerName ## Prototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, lowerName ## Constructor, DontEnum); \
+    capitalName ## Constructor* lowerName ## Constructor = capitalName ## Constructor::create(exec, this, capitalName ## Constructor::createStructure(vm, this, m_functionPrototype.get()), m_ ## lowerName ## Prototype.get()); \
+    m_ ## lowerName ## Prototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, lowerName ## Constructor, DontEnum); \
 
     FOR_EACH_SIMPLE_BUILTIN_TYPE(CREATE_CONSTRUCTOR_FOR_SIMPLE_TYPE)
 
 #undef CREATE_CONSTRUCTOR_FOR_SIMPLE_TYPE
 
-    m_errorConstructor.set(exec->vm(), this, errorConstructor);
+    m_errorConstructor.set(vm, this, errorConstructor);
 
-    Structure* nativeErrorPrototypeStructure = NativeErrorPrototype::createStructure(exec->vm(), this, m_errorPrototype.get());
-    Structure* nativeErrorStructure = NativeErrorConstructor::createStructure(exec->vm(), this, m_functionPrototype.get());
-    m_evalErrorConstructor.set(exec->vm(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("EvalError")));
-    m_rangeErrorConstructor.set(exec->vm(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("RangeError")));
-    m_referenceErrorConstructor.set(exec->vm(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("ReferenceError")));
-    m_syntaxErrorConstructor.set(exec->vm(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("SyntaxError")));
-    m_typeErrorConstructor.set(exec->vm(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("TypeError")));
-    m_URIErrorConstructor.set(exec->vm(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("URIError")));
+    Structure* nativeErrorPrototypeStructure = NativeErrorPrototype::createStructure(vm, this, m_errorPrototype.get());
+    Structure* nativeErrorStructure = NativeErrorConstructor::createStructure(vm, this, m_functionPrototype.get());
+    m_evalErrorConstructor.set(vm, this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("EvalError")));
+    m_rangeErrorConstructor.set(vm, this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("RangeError")));
+    m_referenceErrorConstructor.set(vm, this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("ReferenceError")));
+    m_syntaxErrorConstructor.set(vm, this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("SyntaxError")));
+    m_typeErrorConstructor.set(vm, this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("TypeError")));
+    m_URIErrorConstructor.set(vm, this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, ASCIILiteral("URIError")));
 
-    m_objectPrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, objectConstructor, DontEnum);
-    m_functionPrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, functionConstructor, DontEnum);
-    m_arrayPrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, arrayConstructor, DontEnum);
-    m_regExpPrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, m_regExpConstructor.get(), DontEnum);
+    m_objectPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, objectConstructor, DontEnum);
+    m_functionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, functionConstructor, DontEnum);
+    m_arrayPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, arrayConstructor, DontEnum);
+    m_regExpPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, m_regExpConstructor.get(), DontEnum);
 #if ENABLE(PROMISES)
-    m_promisePrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, promiseConstructor, DontEnum);
-    m_promiseResolverPrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, promiseResolverConstructor, DontEnum);
+    m_promisePrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, promiseConstructor, DontEnum);
+    m_promiseResolverPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, promiseResolverConstructor, DontEnum);
 #endif
 
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().Object, objectConstructor, DontEnum);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().Function, functionConstructor, DontEnum);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().Array, arrayConstructor, DontEnum);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().RegExp, m_regExpConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().EvalError, m_evalErrorConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().RangeError, m_rangeErrorConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().ReferenceError, m_referenceErrorConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().SyntaxError, m_syntaxErrorConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().TypeError, m_typeErrorConstructor.get(), DontEnum);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().URIError, m_URIErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->Object, objectConstructor, DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->Function, functionConstructor, DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->Array, arrayConstructor, DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->RegExp, m_regExpConstructor.get(), DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->EvalError, m_evalErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->RangeError, m_rangeErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->ReferenceError, m_referenceErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->SyntaxError, m_syntaxErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->TypeError, m_typeErrorConstructor.get(), DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->URIError, m_URIErrorConstructor.get(), DontEnum);
 #if ENABLE(PROMISES)
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().Promise, promiseConstructor, DontEnum);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().PromiseResolver, promiseResolverConstructor, DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->Promise, promiseConstructor, DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->PromiseResolver, promiseResolverConstructor, DontEnum);
 #endif
 
 
 #define PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames(). jsName, lowerName ## Constructor, DontEnum); \
+    putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Constructor, DontEnum); \
 
     FOR_EACH_SIMPLE_BUILTIN_TYPE(PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE)
 
 #undef PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE
 
 
-    m_evalFunction.set(exec->vm(), this, JSFunction::create(exec, this, 1, exec->propertyNames().eval.string(), globalFuncEval));
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().eval, m_evalFunction.get(), DontEnum);
+    m_evalFunction.set(vm, this, JSFunction::create(exec, this, 1, vm.propertyNames->eval.string(), globalFuncEval));
+    putDirectWithoutTransition(vm, vm.propertyNames->eval, m_evalFunction.get(), DontEnum);
 
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().JSON, JSONObject::create(exec, this, JSONObject::createStructure(exec->vm(), this, m_objectPrototype.get())), DontEnum);
-    putDirectWithoutTransition(exec->vm(), exec->propertyNames().Math, MathObject::create(exec, this, MathObject::createStructure(exec->vm(), this, m_objectPrototype.get())), DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->JSON, JSONObject::create(exec, this, JSONObject::createStructure(vm, this, m_objectPrototype.get())), DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->Math, MathObject::create(exec, this, MathObject::createStructure(vm, this, m_objectPrototype.get())), DontEnum);
     
     FixedArray<InternalFunction*, NUMBER_OF_TYPED_ARRAY_TYPES> typedArrayConstructors;
-    typedArrayConstructors[toIndex(TypeInt8)] = JSInt8ArrayConstructor::create(this, JSInt8ArrayConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeInt8)].prototype.get(), "Int8Array");
-    typedArrayConstructors[toIndex(TypeInt16)] = JSInt16ArrayConstructor::create(this, JSInt16ArrayConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeInt16)].prototype.get(), "Int16Array");
-    typedArrayConstructors[toIndex(TypeInt32)] = JSInt32ArrayConstructor::create(this, JSInt32ArrayConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeInt32)].prototype.get(), "Int32Array");
-    typedArrayConstructors[toIndex(TypeUint8)] = JSUint8ArrayConstructor::create(this, JSUint8ArrayConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeUint8)].prototype.get(), "Uint8Array");
-    typedArrayConstructors[toIndex(TypeUint8Clamped)] = JSUint8ClampedArrayConstructor::create(this, JSUint8ClampedArrayConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeUint8Clamped)].prototype.get(), "Uint8ClampedArray");
-    typedArrayConstructors[toIndex(TypeUint16)] = JSUint16ArrayConstructor::create(this, JSUint16ArrayConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeUint16)].prototype.get(), "Uint16Array");
-    typedArrayConstructors[toIndex(TypeUint32)] = JSUint32ArrayConstructor::create(this, JSUint32ArrayConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeUint32)].prototype.get(), "Uint32Array");
-    typedArrayConstructors[toIndex(TypeFloat32)] = JSFloat32ArrayConstructor::create(this, JSFloat32ArrayConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeFloat32)].prototype.get(), "Float32Array");
-    typedArrayConstructors[toIndex(TypeFloat64)] = JSFloat64ArrayConstructor::create(this, JSFloat64ArrayConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeFloat64)].prototype.get(), "Float64Array");
-    typedArrayConstructors[toIndex(TypeDataView)] = JSDataViewConstructor::create(this, JSDataViewConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeDataView)].prototype.get(), "DataView");
+    typedArrayConstructors[toIndex(TypeInt8)] = JSInt8ArrayConstructor::create(this, JSInt8ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeInt8)].prototype.get(), "Int8Array");
+    typedArrayConstructors[toIndex(TypeInt16)] = JSInt16ArrayConstructor::create(this, JSInt16ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeInt16)].prototype.get(), "Int16Array");
+    typedArrayConstructors[toIndex(TypeInt32)] = JSInt32ArrayConstructor::create(this, JSInt32ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeInt32)].prototype.get(), "Int32Array");
+    typedArrayConstructors[toIndex(TypeUint8)] = JSUint8ArrayConstructor::create(this, JSUint8ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeUint8)].prototype.get(), "Uint8Array");
+    typedArrayConstructors[toIndex(TypeUint8Clamped)] = JSUint8ClampedArrayConstructor::create(this, JSUint8ClampedArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeUint8Clamped)].prototype.get(), "Uint8ClampedArray");
+    typedArrayConstructors[toIndex(TypeUint16)] = JSUint16ArrayConstructor::create(this, JSUint16ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeUint16)].prototype.get(), "Uint16Array");
+    typedArrayConstructors[toIndex(TypeUint32)] = JSUint32ArrayConstructor::create(this, JSUint32ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeUint32)].prototype.get(), "Uint32Array");
+    typedArrayConstructors[toIndex(TypeFloat32)] = JSFloat32ArrayConstructor::create(this, JSFloat32ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeFloat32)].prototype.get(), "Float32Array");
+    typedArrayConstructors[toIndex(TypeFloat64)] = JSFloat64ArrayConstructor::create(this, JSFloat64ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeFloat64)].prototype.get(), "Float64Array");
+    typedArrayConstructors[toIndex(TypeDataView)] = JSDataViewConstructor::create(this, JSDataViewConstructor::createStructure(vm, this, m_functionPrototype.get()), m_typedArrays[toIndex(TypeDataView)].prototype.get(), "DataView");
 
     for (unsigned typedArrayIndex = NUMBER_OF_TYPED_ARRAY_TYPES; typedArrayIndex--;) {
-        m_typedArrays[typedArrayIndex].prototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, typedArrayConstructors[typedArrayIndex], DontEnum);
-        putDirectWithoutTransition(exec->vm(), Identifier(exec, typedArrayConstructors[typedArrayIndex]->name(exec)), typedArrayConstructors[typedArrayIndex], DontEnum);
+        m_typedArrays[typedArrayIndex].prototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, typedArrayConstructors[typedArrayIndex], DontEnum);
+        putDirectWithoutTransition(vm, Identifier(exec, typedArrayConstructors[typedArrayIndex]->name(exec)), typedArrayConstructors[typedArrayIndex], DontEnum);
     }
 
     GlobalPropertyInfo staticGlobals[] = {
-        GlobalPropertyInfo(exec->propertyNames().NaN, jsNaN(), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(exec->propertyNames().Infinity, jsNumber(std::numeric_limits<double>::infinity()), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(exec->propertyNames().undefinedKeyword, jsUndefined(), DontEnum | DontDelete | ReadOnly)
+        GlobalPropertyInfo(vm.propertyNames->NaN, jsNaN(), DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->Infinity, jsNumber(std::numeric_limits<double>::infinity()), DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->undefinedKeyword, jsUndefined(), DontEnum | DontDelete | ReadOnly)
     };
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
     
@@ -419,15 +420,15 @@ void JSGlobalObject::reset(JSValue prototype)
     m_specialPointers[Special::ArrayConstructor] = arrayConstructor;
 
     if (m_experimentsEnabled) {
-        NamePrototype* privateNamePrototype = NamePrototype::create(exec, NamePrototype::createStructure(exec->vm(), this, m_objectPrototype.get()));
-        m_privateNameStructure.set(exec->vm(), this, NameInstance::createStructure(exec->vm(), this, privateNamePrototype));
+        NamePrototype* privateNamePrototype = NamePrototype::create(exec, NamePrototype::createStructure(vm, this, m_objectPrototype.get()));
+        m_privateNameStructure.set(vm, this, NameInstance::createStructure(vm, this, privateNamePrototype));
 
-        JSCell* privateNameConstructor = NameConstructor::create(exec, this, NameConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), privateNamePrototype);
-        privateNamePrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, privateNameConstructor, DontEnum);
-        putDirectWithoutTransition(exec->vm(), Identifier(exec, "Name"), privateNameConstructor, DontEnum);
+        JSCell* privateNameConstructor = NameConstructor::create(exec, this, NameConstructor::createStructure(vm, this, m_functionPrototype.get()), privateNamePrototype);
+        privateNamePrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, privateNameConstructor, DontEnum);
+        putDirectWithoutTransition(vm, Identifier(exec, "Name"), privateNameConstructor, DontEnum);
     }
 
-    resetPrototype(exec->vm(), prototype);
+    resetPrototype(vm, prototype);
 }
 
 // Private namespace for helpers for JSGlobalObject::haveABadTime()
@@ -549,11 +550,12 @@ bool JSGlobalObject::stringPrototypeChainIsSane()
 
 void JSGlobalObject::createThrowTypeError(ExecState* exec)
 {
+    VM& vm = exec->vm();
     JSFunction* thrower = JSFunction::create(exec, this, 0, String(), globalFuncThrowTypeError);
-    GetterSetter* getterSetter = GetterSetter::create(exec);
-    getterSetter->setGetter(exec->vm(), thrower);
-    getterSetter->setSetter(exec->vm(), thrower);
-    m_throwTypeErrorGetterSetter.set(exec->vm(), this, getterSetter);
+    GetterSetter* getterSetter = GetterSetter::create(vm);
+    getterSetter->setGetter(vm, thrower);
+    getterSetter->setSetter(vm, thrower);
+    m_throwTypeErrorGetterSetter.set(vm, this, getterSetter);
 }
 
 // Set prototype, and also insert the object prototype at the end of the chain.

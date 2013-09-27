@@ -2112,7 +2112,8 @@ DEFINE_STUB_FUNCTION(void, op_put_getter_setter)
     ASSERT(stackFrame.args[0].jsValue().isObject());
     JSObject* baseObj = asObject(stackFrame.args[0].jsValue());
 
-    GetterSetter* accessor = GetterSetter::create(callFrame);
+    VM& vm = callFrame->vm();
+    GetterSetter* accessor = GetterSetter::create(vm);
 
     JSValue getter = stackFrame.args[2].jsValue();
     JSValue setter = stackFrame.args[3].jsValue();
@@ -2121,9 +2122,9 @@ DEFINE_STUB_FUNCTION(void, op_put_getter_setter)
     ASSERT(getter.isObject() || setter.isObject());
 
     if (!getter.isUndefined())
-        accessor->setGetter(callFrame->vm(), asObject(getter));
+        accessor->setGetter(vm, asObject(getter));
     if (!setter.isUndefined())
-        accessor->setSetter(callFrame->vm(), asObject(setter));
+        accessor->setSetter(vm, asObject(setter));
     baseObj->putDirectAccessor(callFrame, stackFrame.args[1].identifier(), accessor, Accessor);
 }
 
