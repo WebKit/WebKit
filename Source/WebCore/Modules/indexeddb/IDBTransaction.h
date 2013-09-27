@@ -97,7 +97,6 @@ public:
     void objectStoreDeleted(const String&);
     void setActive(bool);
     void setError(PassRefPtr<DOMError>, const String& errorMessage);
-    String webkitErrorMessage() const;
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);

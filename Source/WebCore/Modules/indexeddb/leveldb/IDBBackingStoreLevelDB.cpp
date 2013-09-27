@@ -510,7 +510,9 @@ bool IDBBackingStore::getIDBDatabaseMetaData(const String& name, IDBDatabaseMeta
     if (!found)
         return true;
 
-    ok = getString(m_db.get(), DatabaseMetaDataKey::encode(metadata->id, DatabaseMetaDataKey::UserVersion), metadata->version, found);
+    // FIXME: The string version is no longer supported, so the levelDB ports should consider refactoring off of it.
+    String stringVersion;
+    ok = getString(m_db.get(), DatabaseMetaDataKey::encode(metadata->id, DatabaseMetaDataKey::UserVersion), stringVersion, found);
     if (!ok) {
         INTERNAL_READ_ERROR(GetIDBDatabaseMetaData);
         return false;
@@ -520,7 +522,8 @@ bool IDBBackingStore::getIDBDatabaseMetaData(const String& name, IDBDatabaseMeta
         return false;
     }
 
-    ok = getVarInt(m_db.get(), DatabaseMetaDataKey::encode(metadata->id, DatabaseMetaDataKey::UserIntVersion), metadata->intVersion, found);
+    int64_t version;
+    ok = getVarInt(m_db.get(), DatabaseMetaDataKey::encode(metadata->id, DatabaseMetaDataKey::UserIntVersion), version, found);
     if (!ok) {
         INTERNAL_READ_ERROR(GetIDBDatabaseMetaData);
         return false;
@@ -530,8 +533,11 @@ bool IDBBackingStore::getIDBDatabaseMetaData(const String& name, IDBDatabaseMeta
         return false;
     }
 
-    if (metadata->intVersion == IDBDatabaseMetadata::DefaultIntVersion)
-        metadata->intVersion = IDBDatabaseMetadata::NoIntVersion;
+    // FIXME: The versioning semantics have changed since this original code was written, and what was once a negative number
+    // stored in the database is no longer a valid version.
+    if (version < 0)
+        version = 0;
+    metadata->version = version;
 
     ok = getMaxObjectStoreId(m_db.get(), metadata->id, metadata->maxObjectStoreId);
     if (!ok) {
@@ -569,6 +575,7 @@ WARN_UNUSED_RETURN static bool getNewDatabaseId(LevelDBDatabase* db, int64_t& ne
     return true;
 }
 
+// FIXME: The version semantics have changed. String versions no longer exist, and the integer version is now a uint64_t
 bool IDBBackingStore::createIDBDatabaseMetaData(const String& name, const String& version, int64_t intVersion, int64_t& rowId)
 {
     bool ok = getNewDatabaseId(m_db.get(), rowId);
@@ -1804,7 +1811,7 @@ bool IndexCursorImpl::loadCurrentRow()
     return true;
 }
 
-bool objectStoreCursorOptions(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction, IDBBackingStore::Cursor::CursorOptions& cursorOptions)
+static bool objectStoreCursorOptions(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction, IDBBackingStore::Cursor::CursorOptions& cursorOptions)
 {
     cursorOptions.databaseId = databaseId;
     cursorOptions.objectStoreId = objectStoreId;
@@ -1854,7 +1861,7 @@ bool objectStoreCursorOptions(LevelDBTransaction* transaction, int64_t databaseI
     return true;
 }
 
-bool indexCursorOptions(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IndexedDB::CursorDirection direction, IDBBackingStore::Cursor::CursorOptions& cursorOptions)
+static bool indexCursorOptions(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IndexedDB::CursorDirection direction, IDBBackingStore::Cursor::CursorOptions& cursorOptions)
 {
     ASSERT(transaction);
     if (!KeyPrefix::validIds(databaseId, objectStoreId, indexId))

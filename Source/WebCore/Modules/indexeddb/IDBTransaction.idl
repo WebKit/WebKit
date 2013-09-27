@@ -29,28 +29,15 @@
     ActiveDOMObject,
     EventTarget,
     JSNoStaticTables
-] interface IDBTransaction {
-
-    // Properties
+] interface IDBTransaction : EventTarget {
     readonly attribute DOMString mode;
     readonly attribute IDBDatabase db;
     readonly attribute DOMError error;
-    [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString webkitErrorMessage;
 
-    // Methods
     [RaisesException] IDBObjectStore objectStore (DOMString name);
     [RaisesException] void abort ();
 
-    // Events
     attribute EventListener onabort;
     attribute EventListener oncomplete;
     attribute EventListener onerror;
-    // EventTarget interface
-    void addEventListener(DOMString type,
-                          EventListener listener,
-                          optional boolean useCapture);
-    void removeEventListener(DOMString type,
-                             EventListener listener,
-                             optional boolean useCapture);
-    [RaisesException] boolean dispatchEvent(Event evt);
 };

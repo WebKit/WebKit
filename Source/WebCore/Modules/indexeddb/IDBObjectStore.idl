@@ -38,12 +38,11 @@
     [CallWith=ScriptState, RaisesException] IDBRequest add(any value, optional any key);
     [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction, RaisesException] IDBRequest delete(IDBKeyRange? keyRange);
     [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction, RaisesException] IDBRequest delete(any key);
-    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest clear();
     [CallWith=ScriptExecutionContext, RaisesException] IDBRequest get(IDBKeyRange? key);
     [CallWith=ScriptExecutionContext, RaisesException] IDBRequest get(any key);
+    [CallWith=ScriptExecutionContext, RaisesException] IDBRequest clear();
     [CallWith=ScriptExecutionContext, RaisesException] IDBRequest openCursor(optional IDBKeyRange? range, optional DOMString direction);
     [CallWith=ScriptExecutionContext, RaisesException] IDBRequest openCursor(any key, optional DOMString direction);
-
     [CallWith=ScriptExecutionContext, Custom, RaisesException] IDBIndex createIndex(DOMString name, sequence<DOMString> keyPath, optional Dictionary options);
     [CallWith=ScriptExecutionContext, Custom, RaisesException] IDBIndex createIndex(DOMString name, DOMString keyPath, optional Dictionary options);
     [RaisesException] IDBIndex index(DOMString name);

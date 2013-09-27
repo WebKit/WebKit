@@ -138,11 +138,6 @@ void IDBTransaction::setError(PassRefPtr<DOMError> error, const String& errorMes
     }
 }
 
-String IDBTransaction::webkitErrorMessage() const
-{
-    return m_errorMessage;
-}
-
 PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, ExceptionCode& ec)
 {
     if (m_state == Finished) {

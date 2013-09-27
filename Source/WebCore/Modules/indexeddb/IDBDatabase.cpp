@@ -131,12 +131,9 @@ PassRefPtr<DOMStringList> IDBDatabase::objectStoreNames() const
     return objectStoreNames.release();
 }
 
-PassRefPtr<IDBAny> IDBDatabase::version() const
+uint64_t IDBDatabase::version() const
 {
-    int64_t intVersion = m_metadata.intVersion;
-    if (intVersion == IDBDatabaseMetadata::NoIntVersion)
-        return IDBAny::createString(m_metadata.version);
-    return IDBAny::create(intVersion);
+    return m_metadata.version;
 }
 
 PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const Dictionary& options, ExceptionCode& ec)
@@ -303,7 +300,7 @@ void IDBDatabase::closeConnection()
     }
 }
 
-void IDBDatabase::onVersionChange(int64_t oldVersion, int64_t newVersion)
+void IDBDatabase::onVersionChange(uint64_t oldVersion, uint64_t newVersion, IndexedDB::VersionNullness newVersionNullness)
 {
     IDB_TRACE("IDBDatabase::onVersionChange");
     if (m_contextStopped || !scriptExecutionContext())
@@ -312,8 +309,7 @@ void IDBDatabase::onVersionChange(int64_t oldVersion, int64_t newVersion)
     if (m_closePending)
         return;
 
-    RefPtr<IDBAny> newVersionAny = newVersion == IDBDatabaseMetadata::NoIntVersion ? IDBAny::createNull() : IDBAny::create(newVersion);
-    enqueueEvent(IDBVersionChangeEvent::create(IDBAny::create(oldVersion), newVersionAny.release(), eventNames().versionchangeEvent));
+    enqueueEvent(IDBVersionChangeEvent::create(oldVersion, newVersion, newVersionNullness));
 }
 
 void IDBDatabase::enqueueEvent(PassRefPtr<Event> event)

@@ -27,11 +27,10 @@
     Conditional=INDEXED_DATABASE,
     JSNoStaticTables
 ] interface IDBCursor {
-
+    readonly attribute IDBAny source;
     readonly attribute DOMString direction;
     readonly attribute any key;
     readonly attribute any primaryKey;
-    readonly attribute IDBAny source;
 
     [CallWith=ScriptState, RaisesException] IDBRequest update(any value);
     [RaisesException] void advance([EnforceRange] unsigned long count);

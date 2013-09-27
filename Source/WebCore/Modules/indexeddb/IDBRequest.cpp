@@ -120,15 +120,6 @@ unsigned short IDBRequest::errorCode(ExceptionCode& ec) const
     return m_errorCode;
 }
 
-String IDBRequest::webkitErrorMessage(ExceptionCode& ec) const
-{
-    if (m_readyState != DONE) {
-        ec = IDBDatabaseException::InvalidStateError;
-        return String();
-    }
-    return m_errorMessage;
-}
-
 PassRefPtr<IDBAny> IDBRequest::source() const
 {
     return m_source;

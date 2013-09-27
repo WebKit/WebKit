@@ -30,6 +30,7 @@
 #define IDBMetadata_h
 
 #include "IDBKeyPath.h"
+#include <stdint.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -79,31 +80,45 @@ struct IDBObjectStoreMetadata {
 };
 
 struct IDBDatabaseMetadata {
-    // FIXME: These can probably be collapsed into 0.
+
+#if USE(LEVELDB)
+    // FIXME: These are only here to support the LevelDB backend which incorrectly handles versioning.
+    // Once LevelDB supports a single, uint64_t version and throws out the old string version, these
+    // should be gotten rid of.
+    // Also, "NoIntVersion" used to be a magic number of -1, which doesn't work with the new unsigned type.
+    // Changing the value to INT64_MAX here seems like a reasonable temporary fix as the current LevelDB
+    // already cannot represent valid version numbers between INT64_MAX and UINT64_MAX.
+
+#ifndef INT64_MAX
+#define INT64_MAX 9223372036854775807LL
+#endif
+
     enum {
-        NoIntVersion = -1,
+        NoIntVersion = INT64_MAX,
         DefaultIntVersion = 0
     };
+#endif // USE(LEVELDB)
 
     typedef HashMap<int64_t, IDBObjectStoreMetadata> ObjectStoreMap;
 
     IDBDatabaseMetadata()
-        : intVersion(NoIntVersion)
+        : id(0)
+        , version(0)
+        , maxObjectStoreId(0)
     {
     }
-    IDBDatabaseMetadata(const String& name, int64_t id, const String& version, int64_t intVersion, int64_t maxObjectStoreId)
+
+    IDBDatabaseMetadata(const String& name, int64_t id, uint64_t version, int64_t maxObjectStoreId)
         : name(name)
         , id(id)
         , version(version)
-        , intVersion(intVersion)
         , maxObjectStoreId(maxObjectStoreId)
     {
     }
 
     String name;
     int64_t id;
-    String version;
-    int64_t intVersion;
+    uint64_t version;
     int64_t maxObjectStoreId;
 
     ObjectStoreMap objectStores;

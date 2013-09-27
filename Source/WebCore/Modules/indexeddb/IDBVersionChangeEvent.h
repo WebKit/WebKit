@@ -29,7 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "Event.h"
-#include "IDBAny.h"
+#include "IndexedDB.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -38,19 +38,24 @@ namespace WebCore {
 
 class IDBVersionChangeEvent : public Event {
 public:
-    static PassRefPtr<IDBVersionChangeEvent> create(PassRefPtr<IDBAny> oldVersion = IDBAny::createNull(), PassRefPtr<IDBAny> newVersion = IDBAny::createNull(), const AtomicString& eventType = AtomicString());
+    static PassRefPtr<IDBVersionChangeEvent> create(unsigned long long oldVersion = 0, unsigned long long newVersion = 0, IndexedDB::VersionNullness newVersionNullness = IndexedDB::NullVersion, const AtomicString& eventType = AtomicString())
+    {
+        return adoptRef(new IDBVersionChangeEvent(oldVersion, newVersion, newVersionNullness, eventType));
+    }
+
     virtual ~IDBVersionChangeEvent();
 
-    virtual PassRefPtr<IDBAny> oldVersion() { return m_oldVersion; }
-    virtual PassRefPtr<IDBAny> newVersion() { return m_newVersion; }
+    virtual unsigned long long oldVersion() { return m_oldVersion; }
+    virtual unsigned long long newVersion(bool& isNull) { isNull = (m_newVersionNullness == IndexedDB::NullVersion); return m_newVersion; }
 
     virtual EventInterface eventInterface() const;
 
 private:
-    IDBVersionChangeEvent(PassRefPtr<IDBAny> oldVersion, PassRefPtr<IDBAny> newVersion, const AtomicString& eventType);
+    IDBVersionChangeEvent(unsigned long long oldVersion, unsigned long long newVersion, IndexedDB::VersionNullness newVersionNullness, const AtomicString& eventType);
 
-    RefPtr<IDBAny> m_oldVersion;
-    RefPtr<IDBAny> m_newVersion;
+    unsigned long long m_oldVersion;
+    unsigned long long m_newVersion;
+    IndexedDB::VersionNullness m_newVersionNullness;
 };
 
 } // namespace WebCore

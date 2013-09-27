@@ -1,3 +1,98 @@
+2013-09-27  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB IDL Refactoring.
+        https://bugs.webkit.org/show_bug.cgi?id=121996
+
+        Reviewed by Alexey Proskuryakov.
+
+        This includes:
+        1 - Leveraging EventTarget.idl inheritance
+        2 - Removing comments
+        3 - Reordering to match the spec's IDLs
+        4 - Removing nonstandard, WebKit-specific methods
+        5 - Updating interfaces to match the spec (versions are only uint64_t's now...)
+        6 - Updating implementation code as needed (versions are only uint64_t's now...)
+
+        IDL changes:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBKeyRange.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/indexeddb/IDBVersionChangeEvent.idl:
+
+        * Modules/indexeddb/IndexedDB.h: Add new enum to represent version nullness.
+
+        Adapt to new IDLs, and also refactor representation of initial, null versioning:
+        * Modules/indexeddb/IDBCallbacks.h:
+        (WebCore::IDBCallbacks::onBlocked):
+        (WebCore::IDBCallbacks::onUpgradeNeeded):
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::version):
+        (WebCore::IDBDatabase::onVersionChange):
+        * Modules/indexeddb/IDBDatabase.h:
+
+        * Modules/indexeddb/IDBDatabaseCallbacks.h:
+        * Modules/indexeddb/IDBDatabaseCallbacksImpl.cpp:
+        (WebCore::IDBDatabaseCallbacksImpl::onVersionChange):
+        * Modules/indexeddb/IDBDatabaseCallbacksImpl.h:
+
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::open):
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/indexeddb/IDBFactory.h:
+
+        * Modules/indexeddb/IDBMetadata.h:
+        (WebCore::IDBDatabaseMetadata::IDBDatabaseMetadata):
+
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::create):
+        (WebCore::IDBOpenDBRequest::IDBOpenDBRequest):
+        (WebCore::IDBOpenDBRequest::onBlocked):
+        (WebCore::IDBOpenDBRequest::onUpgradeNeeded):
+        * Modules/indexeddb/IDBOpenDBRequest.h:
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        * Modules/indexeddb/IDBRequest.h:
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        * Modules/indexeddb/IDBTransaction.h:
+
+        * Modules/indexeddb/IDBVersionChangeEvent.cpp:
+        (WebCore::IDBVersionChangeEvent::IDBVersionChangeEvent):
+        * Modules/indexeddb/IDBVersionChangeEvent.h:
+        (WebCore::IDBVersionChangeEvent::create):
+        (WebCore::IDBVersionChangeEvent::oldVersion):
+        (WebCore::IDBVersionChangeEvent::newVersion):
+
+        Keep leveldb building with minimal adaptations to the new IDLs,
+        but note that the LevelDB implementation is now incompatible with the spec:
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStore::getIDBDatabaseMetaData):
+        (WebCore::objectStoreCursorOptions):
+        (WebCore::indexCursorOptions):
+
+        * Modules/indexeddb/leveldb/IDBDatabaseBackendLevelDB.cpp:
+        (WebCore::IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB):
+        (WebCore::IDBDatabaseBackendLevelDB::openInternal):
+        (WebCore::IDBDatabaseBackendLevelDB::VersionChangeOperation::perform):
+        (WebCore::IDBDatabaseBackendLevelDB::processPendingCalls):
+        (WebCore::IDBDatabaseBackendLevelDB::openConnection):
+        (WebCore::IDBDatabaseBackendLevelDB::runIntVersionChangeTransaction):
+        (WebCore::IDBDatabaseBackendLevelDB::deleteDatabase):
+        (WebCore::IDBDatabaseBackendLevelDB::deleteDatabaseFinal):
+        (WebCore::IDBDatabaseBackendLevelDB::VersionChangeAbortOperation::perform):
+
+        * Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::compareEncodedIDBKeys):
+
+        * inspector/InspectorIndexedDBAgent.cpp: Update for metadata change.
+
 2013-09-27  Enrica Casucci  <enrica@apple.com>
 
         Upstream changes to Pasteboard implementation for iOS.

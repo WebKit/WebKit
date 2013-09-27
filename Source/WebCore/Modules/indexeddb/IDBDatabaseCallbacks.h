@@ -29,20 +29,25 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBDatabaseError.h"
+#include "IndexedDB.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class IDBDatabase;
 
 class IDBDatabaseCallbacks : public RefCounted<IDBDatabaseCallbacks> {
 public:
     virtual ~IDBDatabaseCallbacks() { }
 
     virtual void onForcedClose() = 0;
-    virtual void onVersionChange(int64_t oldVersion, int64_t newVersion) = 0;
+    virtual void onVersionChange(uint64_t oldVersion, uint64_t newVersion, IndexedDB::VersionNullness newVersionNullness) = 0;
 
     virtual void onAbort(int64_t transactionId, PassRefPtr<IDBDatabaseError>) = 0;
     virtual void onComplete(int64_t transactionId) = 0;
+
+    virtual void connect(IDBDatabase*) = 0;
 };
 
 } // namespace WebCore

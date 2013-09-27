@@ -473,13 +473,9 @@ PassRefPtr<IDBDatabaseBackendLevelDB> IDBDatabaseBackendLevelDB::create(const St
     return backend.release();
 }
 
-namespace {
-const char* NoStringVersion = "";
-}
-
 IDBDatabaseBackendLevelDB::IDBDatabaseBackendLevelDB(const String& name, IDBBackingStore* backingStore, IDBFactoryBackendLevelDB* factory, const String& uniqueIdentifier)
     : m_backingStore(backingStore)
-    , m_metadata(name, InvalidId, NoStringVersion, IDBDatabaseMetadata::NoIntVersion, InvalidId)
+    , m_metadata(name, InvalidId, 0, InvalidId)
     , m_identifier(uniqueIdentifier)
     , m_factory(factory)
     , m_transactionCoordinator(IDBTransactionCoordinatorLevelDB::create())
@@ -538,7 +534,7 @@ bool IDBDatabaseBackendLevelDB::openInternal()
     if (success)
         return m_backingStore->getObjectStores(m_metadata.id, &m_metadata.objectStores);
 
-    return m_backingStore->createIDBDatabaseMetaData(m_metadata.name, m_metadata.version, m_metadata.intVersion, m_metadata.id);
+    return m_backingStore->createIDBDatabaseMetaData(m_metadata.name, String::number(m_metadata.version), m_metadata.version, m_metadata.id);
 }
 
 IDBDatabaseBackendLevelDB::~IDBDatabaseBackendLevelDB()
@@ -1072,10 +1068,12 @@ void IDBDatabaseBackendLevelDB::VersionChangeOperation::perform(IDBTransactionBa
 {
     IDB_TRACE("VersionChangeOperation");
     int64_t databaseId = m_database->id();
-    int64_t oldVersion = m_database->m_metadata.intVersion;
-    ASSERT(m_version > oldVersion);
-    m_database->m_metadata.intVersion = m_version;
-    if (!m_database->m_backingStore->updateIDBDatabaseIntVersion(transaction->backingStoreTransaction(), databaseId, m_database->m_metadata.intVersion)) {
+    uint64_t oldVersion = m_database->m_metadata.version;
+
+    // FIXME: Database versions are now of type uint64_t, but this code expected int64_t.
+    ASSERT(m_version > (int64_t)oldVersion);
+    m_database->m_metadata.version = m_version;
+    if (!m_database->m_backingStore->updateIDBDatabaseIntVersion(transaction->backingStoreTransaction(), databaseId, m_database->m_metadata.version)) {
         RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error writing data to stable storage when updating version.");
         m_callbacks->onError(error);
         transaction->abort(error);
@@ -1138,7 +1136,8 @@ size_t IDBDatabaseBackendLevelDB::connectionCount()
 void IDBDatabaseBackendLevelDB::processPendingCalls()
 {
     if (m_pendingSecondHalfOpen) {
-        ASSERT(m_pendingSecondHalfOpen->version() == m_metadata.intVersion);
+        // FIXME: Database versions are now of type uint64_t, but this code expected int64_t.
+        ASSERT(m_pendingSecondHalfOpen->version() == (int64_t)m_metadata.version);
         ASSERT(m_metadata.id != InvalidId);
         m_pendingSecondHalfOpen->callbacks()->onSuccess(this, this->metadata());
         m_pendingSecondHalfOpen.release();
@@ -1194,7 +1193,7 @@ void IDBDatabaseBackendLevelDB::openConnection(PassRefPtr<IDBCallbacks> prpCallb
     if (m_metadata.id == InvalidId) {
         // The database was deleted then immediately re-opened; openInternal() recreates it in the backing store.
         if (openInternal())
-            ASSERT(m_metadata.intVersion == IDBDatabaseMetadata::NoIntVersion);
+            ASSERT(m_metadata.version == IDBDatabaseMetadata::NoIntVersion);
         else {
             String message;
             RefPtr<IDBDatabaseError> error;
@@ -1208,7 +1207,7 @@ void IDBDatabaseBackendLevelDB::openConnection(PassRefPtr<IDBCallbacks> prpCallb
     }
 
     // We infer that the database didn't exist from its lack of either type of version.
-    bool isNewDatabase = m_metadata.version == NoStringVersion && m_metadata.intVersion == IDBDatabaseMetadata::NoIntVersion;
+    bool isNewDatabase = m_metadata.version == IDBDatabaseMetadata::NoIntVersion;
 
     if (version == IDBDatabaseMetadata::DefaultIntVersion) {
         // FIXME: this comments was related to Chromium code. It may be incorrect
@@ -1229,15 +1228,20 @@ void IDBDatabaseBackendLevelDB::openConnection(PassRefPtr<IDBCallbacks> prpCallb
         version = 1;
     }
 
-    if (version > m_metadata.intVersion) {
+    // FIXME: Database versions are now of type uint64_t, but this code expected int64_t.
+    if (version > (int64_t)m_metadata.version) {
         runIntVersionChangeTransaction(callbacks, databaseCallbacks, transactionId, version);
         return;
     }
-    if (version < m_metadata.intVersion) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::VersionError, String::format("The requested version (%lld) is less than the existing version (%lld).", static_cast<long long>(version), static_cast<long long>(m_metadata.intVersion))));
+
+    // FIXME: Database versions are now of type uint64_t, but this code expected int64_t.
+    if (version < (int64_t)m_metadata.version) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::VersionError, String::format("The requested version (%lld) is less than the existing version (%lld).", static_cast<long long>(version), static_cast<long long>(m_metadata.version))));
         return;
     }
-    ASSERT(version == m_metadata.intVersion);
+
+    // FIXME: Database versions are now of type uint64_t, but this code expected int64_t.
+    ASSERT(version == (int64_t)m_metadata.version);
     m_databaseCallbacksSet.add(databaseCallbacks);
     callbacks->onSuccess(this, this->metadata());
 }
@@ -1250,7 +1254,7 @@ void IDBDatabaseBackendLevelDB::runIntVersionChangeTransaction(PassRefPtr<IDBCal
     for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
         // Front end ensures the event is not fired at connections that have closePending set.
         if (*it != databaseCallbacks)
-            (*it)->onVersionChange(m_metadata.intVersion, requestedVersion);
+            (*it)->onVersionChange(m_metadata.version, requestedVersion, IndexedDB::NullVersion);
     }
     // The spec dictates we wait until all the version change events are
     // delivered and then check m_databaseCallbacks.empty() before proceeding
@@ -1260,7 +1264,7 @@ void IDBDatabaseBackendLevelDB::runIntVersionChangeTransaction(PassRefPtr<IDBCal
     // tells us that all the blocked events have been delivered. See
     // https://bugs.webkit.org/show_bug.cgi?id=71130
     if (connectionCount())
-        callbacks->onBlocked(m_metadata.intVersion);
+        callbacks->onBlocked(m_metadata.version);
     // FIXME: Add test for m_runningVersionChangeTransaction.
     if (m_runningVersionChangeTransaction || connectionCount()) {
         m_pendingOpenCalls.append(PendingOpenCall::create(callbacks, databaseCallbacks, transactionId, requestedVersion));
@@ -1271,7 +1275,7 @@ void IDBDatabaseBackendLevelDB::runIntVersionChangeTransaction(PassRefPtr<IDBCal
     createTransaction(transactionId, databaseCallbacks, objectStoreIds, IndexedDB::TransactionVersionChange);
     RefPtr<IDBTransactionBackendLevelDB> transaction = m_transactions.get(transactionId);
 
-    transaction->scheduleTask(VersionChangeOperation::create(this, transactionId, requestedVersion, callbacks, databaseCallbacks), VersionChangeAbortOperation::create(this, m_metadata.version, m_metadata.intVersion));
+    transaction->scheduleTask(VersionChangeOperation::create(this, transactionId, requestedVersion, callbacks, databaseCallbacks), VersionChangeAbortOperation::create(this, String::number(m_metadata.version), m_metadata.version));
 
     ASSERT(!m_pendingSecondHalfOpen);
     m_databaseCallbacksSet.add(databaseCallbacks);
@@ -1283,12 +1287,12 @@ void IDBDatabaseBackendLevelDB::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallb
     if (isDeleteDatabaseBlocked()) {
         for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
             // Front end ensures the event is not fired at connections that have closePending set.
-            (*it)->onVersionChange(m_metadata.intVersion, IDBDatabaseMetadata::NoIntVersion);
+            (*it)->onVersionChange(m_metadata.version, 0, IndexedDB::NullVersion);
         }
         // FIXME: Only fire onBlocked if there are open connections after the
         // VersionChangeEvents are received, not just set up to fire.
         // https://bugs.webkit.org/show_bug.cgi?id=71130
-        callbacks->onBlocked(m_metadata.intVersion);
+        callbacks->onBlocked(m_metadata.version);
         m_pendingDeleteCalls.append(PendingDeleteCall::create(callbacks.release()));
         return;
     }
@@ -1308,9 +1312,8 @@ void IDBDatabaseBackendLevelDB::deleteDatabaseFinal(PassRefPtr<IDBCallbacks> cal
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error deleting database."));
         return;
     }
-    m_metadata.version = NoStringVersion;
     m_metadata.id = InvalidId;
-    m_metadata.intVersion = IDBDatabaseMetadata::NoIntVersion;
+    m_metadata.version = IDBDatabaseMetadata::NoIntVersion;
     m_metadata.objectStores.clear();
     callbacks->onSuccess();
 }
@@ -1375,8 +1378,7 @@ void IDBDatabaseBackendLevelDB::VersionChangeAbortOperation::perform(IDBTransact
 {
     IDB_TRACE("VersionChangeAbortOperation");
     ASSERT_UNUSED(transaction, !transaction);
-    m_database->m_metadata.version = m_previousVersion;
-    m_database->m_metadata.intVersion = m_previousIntVersion;
+    m_database->m_metadata.version = m_previousIntVersion;
 }
 
 } // namespace WebCore

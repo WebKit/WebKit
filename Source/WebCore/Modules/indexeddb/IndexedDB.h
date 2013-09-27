@@ -50,6 +50,11 @@ enum CursorType {
     CursorKeyOnly
 };
 
+enum VersionNullness {
+    NullVersion,
+    NonNullVersion
+};
+
 } // namespace IndexedDB
 
 } // namespace WebCore

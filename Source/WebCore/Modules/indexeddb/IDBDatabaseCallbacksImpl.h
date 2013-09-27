@@ -36,19 +36,19 @@ namespace WebCore {
 
 class IDBDatabase;
 
-class IDBDatabaseCallbacksImpl : public IDBDatabaseCallbacks {
+class IDBDatabaseCallbacksImpl FINAL : public IDBDatabaseCallbacks {
 public:
     static PassRefPtr<IDBDatabaseCallbacksImpl> create();
-    virtual ~IDBDatabaseCallbacksImpl();
+    virtual ~IDBDatabaseCallbacksImpl() OVERRIDE;
 
     // IDBDatabaseCallbacks
-    virtual void onForcedClose();
-    virtual void onVersionChange(int64_t oldVersion, int64_t newVersion);
+    virtual void onForcedClose() OVERRIDE;
+    virtual void onVersionChange(uint64_t oldVersion, uint64_t newVersion, IndexedDB::VersionNullness newVersionNullness) OVERRIDE;
 
-    virtual void onAbort(int64_t transactionId, PassRefPtr<IDBDatabaseError>);
-    virtual void onComplete(int64_t transactionId);
+    virtual void onAbort(int64_t transactionId, PassRefPtr<IDBDatabaseError>) OVERRIDE;
+    virtual void onComplete(int64_t transactionId) OVERRIDE;
 
-    void connect(IDBDatabase*);
+    virtual void connect(IDBDatabase*) OVERRIDE;
 
 private:
     IDBDatabaseCallbacksImpl();

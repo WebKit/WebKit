@@ -59,7 +59,6 @@ public:
     PassRefPtr<IDBAny> result(ExceptionCode&) const;
     unsigned short errorCode(ExceptionCode&) const;
     PassRefPtr<DOMError> error(ExceptionCode&) const;
-    String webkitErrorMessage(ExceptionCode&) const;
     PassRefPtr<IDBAny> source() const;
     PassRefPtr<IDBTransaction> transaction() const;
     void preventPropagation() { m_preventPropagation = true; }

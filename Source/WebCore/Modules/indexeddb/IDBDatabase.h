@@ -60,7 +60,7 @@ public:
 
     // Implement the IDL
     const String name() const { return m_metadata.name; }
-    PassRefPtr<IDBAny> version() const;
+    uint64_t version() const;
     PassRefPtr<DOMStringList> objectStoreNames() const;
 
     PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCode&);
@@ -76,7 +76,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(versionchange);
 
     // IDBDatabaseCallbacks
-    virtual void onVersionChange(int64_t oldVersion, int64_t newVersion);
+    virtual void onVersionChange(uint64_t oldVersion, uint64_t newVersion, IndexedDB::VersionNullness newVersionNullness);
     virtual void onAbort(int64_t, PassRefPtr<IDBDatabaseError>);
     virtual void onComplete(int64_t);
 

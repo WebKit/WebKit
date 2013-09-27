@@ -29,20 +29,21 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBRequest.h"
+#include "IndexedDB.h"
 
 namespace WebCore {
 
-class IDBDatabaseCallbacksImpl;
+class IDBDatabaseCallbacks;
 
 class IDBOpenDBRequest : public IDBRequest {
 public:
-    static PassRefPtr<IDBOpenDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseCallbacksImpl>, int64_t transactionId, int64_t version);
+    static PassRefPtr<IDBOpenDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, uint64_t version, IndexedDB::VersionNullness);
     virtual ~IDBOpenDBRequest();
 
     using IDBRequest::onSuccess;
 
-    virtual void onBlocked(int64_t existingVersion) OVERRIDE;
-    virtual void onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBDatabaseBackendInterface>, const IDBDatabaseMetadata&) OVERRIDE;
+    virtual void onBlocked(uint64_t existingVersion) OVERRIDE;
+    virtual void onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDatabaseBackendInterface>, const IDBDatabaseMetadata&) OVERRIDE;
     virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>, const IDBDatabaseMetadata&) OVERRIDE;
 
     // EventTarget
@@ -56,11 +57,12 @@ protected:
     virtual bool shouldEnqueueEvent() const OVERRIDE;
 
 private:
-    IDBOpenDBRequest(ScriptExecutionContext*, PassRefPtr<IDBDatabaseCallbacksImpl>, int64_t transactionId, int64_t version);
+    IDBOpenDBRequest(ScriptExecutionContext*, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, uint64_t version, IndexedDB::VersionNullness);
 
-    RefPtr<IDBDatabaseCallbacksImpl> m_databaseCallbacks;
+    RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
     const int64_t m_transactionId;
-    int64_t m_version;
+    uint64_t m_version;
+    IndexedDB::VersionNullness m_versionNullness;
 };
 
 } // namespace WebCore

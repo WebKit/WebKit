@@ -28,20 +28,13 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "EventNames.h"
-#include "IDBAny.h"
-
 namespace WebCore {
 
-PassRefPtr<IDBVersionChangeEvent> IDBVersionChangeEvent::create(PassRefPtr<IDBAny> oldVersion, PassRefPtr<IDBAny> newVersion, const AtomicString& eventType)
-{
-    return adoptRef(new IDBVersionChangeEvent(oldVersion, newVersion, eventType));
-}
-
-IDBVersionChangeEvent::IDBVersionChangeEvent(PassRefPtr<IDBAny> oldVersion, PassRefPtr<IDBAny> newVersion, const AtomicString& eventType)
+IDBVersionChangeEvent::IDBVersionChangeEvent(unsigned long long oldVersion, unsigned long long newVersion, IndexedDB::VersionNullness newVersionNullness, const AtomicString& eventType)
     : Event(eventType, false /*canBubble*/, false /*cancelable*/)
     , m_oldVersion(oldVersion)
     , m_newVersion(newVersion)
+    , m_newVersionNullness(newVersionNullness)
 {
 }
 
