@@ -1,3 +1,12 @@
+2013-09-27  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GCC] Fix build with gcc < 4.8.1, which does not have is_trivially_destructible
+        https://bugs.webkit.org/show_bug.cgi?id=121999
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/StdLibExtras.h:
+
 2013-09-26  Anders Carlsson  <andersca@apple.com>
 
         "Build fix".
