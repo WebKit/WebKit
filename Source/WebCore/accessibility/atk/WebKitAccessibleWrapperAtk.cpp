@@ -497,8 +497,9 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
 
     AccessibilitySortDirection sortDirection = coreObject->sortDirection();
     if (sortDirection != SortDirectionNone) {
-        attributeSet = addToAtkAttributeSet(attributeSet, "sort",
-            sortDirection == SortDirectionAscending ? "ascending" : "descending");
+        // WAI-ARIA spec says to translate the value as is from the attribute.
+        const AtomicString& sortAttribute = coreObject->getAttribute(HTMLNames::aria_sortAttr);
+        attributeSet = addToAtkAttributeSet(attributeSet, "sort", sortAttribute.string().utf8().data());
     }
 
     return attributeSet;

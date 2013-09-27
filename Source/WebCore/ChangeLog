@@ -1,3 +1,18 @@
+2013-09-27  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] accessibility/aria-sort.html is failing after r156409
+        https://bugs.webkit.org/show_bug.cgi?id=121947
+
+        Reviewed by Chris Fleizach.
+
+        The WAI-ARIA spec says to translate the value as is from the
+        attribute, so do just that instead of mapping values from the
+        AccessibilitySortDirection enumeration into strings.
+        http://www.w3.org/TR/wai-aria-implementation/#mapping_state-property
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes): Do the right mapping for aria-sort.
+
 2013-09-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Sync toWebKitCSSShaderValue() behavior with other toCSSFooValue()

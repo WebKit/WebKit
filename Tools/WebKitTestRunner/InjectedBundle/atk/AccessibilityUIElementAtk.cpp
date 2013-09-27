@@ -615,8 +615,15 @@ bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
 
 bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
 {
-    // FIXME: implement
-    return false;
+    if (!ATK_IS_OBJECT(m_element.get()))
+        return false;
+
+    String atkAttributeName = coreAttributeToAtkAttribute(attribute);
+    if (atkAttributeName.isEmpty())
+        return false;
+
+    String attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), atkAttributeName.utf8().data());
+    return !attributeValue.isEmpty();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::parameterizedAttributeNames()

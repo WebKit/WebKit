@@ -948,7 +948,15 @@ bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
 
 bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
 {
-    return false;
+    if (!ATK_IS_OBJECT(m_element))
+        return false;
+
+    String atkAttributeName = coreAttributeToAtkAttribute(attribute);
+    if (atkAttributeName.isEmpty())
+        return false;
+
+    String attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element), atkAttributeName.utf8().data());
+    return !attributeValue.isEmpty();
 }
 
 static void alterCurrentValue(PlatformUIElement element, int factor)

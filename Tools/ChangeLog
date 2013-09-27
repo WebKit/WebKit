@@ -1,3 +1,20 @@
+2013-09-27  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] accessibility/aria-sort.html is failing after r156409
+        https://bugs.webkit.org/show_bug.cgi?id=121947
+
+        Reviewed by Chris Fleizach.
+
+        Implement AccessibilityUIElement::isSupported for the ATK
+        platforms, just by checking whether we have an associated object
+        attribute exposed for the wrapper object matching the required
+        attribute in the layout test (e.g "AXSortDirection" -> "sort").
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::isAttributeSupported): Implemented.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::isAttributeSupported): Implemented.
+
 2013-09-26  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] make MediaStream testable
