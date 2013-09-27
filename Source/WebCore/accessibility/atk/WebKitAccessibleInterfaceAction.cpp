@@ -51,17 +51,27 @@ static AccessibilityObject* core(AtkAction* action)
 
 static gboolean webkitAccessibleActionDoAction(AtkAction* action, gint index)
 {
+    g_return_val_if_fail(ATK_IS_ACTION(action), FALSE);
     g_return_val_if_fail(!index, FALSE);
+
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(action), FALSE);
+
     return core(action)->performDefaultAction();
 }
 
-static gint webkitAccessibleActionGetNActions(AtkAction*)
+static gint webkitAccessibleActionGetNActions(AtkAction* action)
 {
+    g_return_val_if_fail(ATK_IS_ACTION(action), 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(action), 0);
+
     return 1;
 }
 
-static const gchar* webkitAccessibleActionGetDescription(AtkAction*, gint)
+static const gchar* webkitAccessibleActionGetDescription(AtkAction* action, gint)
 {
+    g_return_val_if_fail(ATK_IS_ACTION(action), 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(action), 0);
+
     // TODO: Need a way to provide/localize action descriptions.
     notImplemented();
     return "";
@@ -69,14 +79,20 @@ static const gchar* webkitAccessibleActionGetDescription(AtkAction*, gint)
 
 static const gchar* webkitAccessibleActionGetKeybinding(AtkAction* action, gint index)
 {
+    g_return_val_if_fail(ATK_IS_ACTION(action), 0);
     g_return_val_if_fail(!index, 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(action), 0);
+
     // FIXME: Construct a proper keybinding string.
     return cacheAndReturnAtkProperty(ATK_OBJECT(action), AtkCachedActionKeyBinding, core(action)->accessKey().string());
 }
 
 static const gchar* webkitAccessibleActionGetName(AtkAction* action, gint index)
 {
+    g_return_val_if_fail(ATK_IS_ACTION(action), 0);
     g_return_val_if_fail(!index, 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(action), 0);
+
     return cacheAndReturnAtkProperty(ATK_OBJECT(action), AtkCachedActionName, core(action)->actionVerb());
 }
 

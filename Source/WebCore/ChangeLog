@@ -1,5 +1,157 @@
 2013-09-27  Mario Sanchez Prada  <mario.prada@samsung.com>
 
+        [ATK] Protect entry points in the ATK wrapper against outdated render trees
+        https://bugs.webkit.org/show_bug.cgi?id=121558
+
+        Reviewed by Chris Fleizach.
+
+        Make sure that we protect every entry point in the ATK wrapper
+        against outdated render trees, before using the WebCore's
+        accessibility API, since that might lead to problems (and crashes)
+        if the render and accessibility trees are not stable.
+
+        Thus, call AccessibilityObject::updateBackingStore() in those
+        entry points and check whether the ATK wrapper is detached or not
+        after that, to decide whether to continue or not.
+
+        Besides providing a new test to check that it WebKit does not
+        crash in a given scenario (which actually triggered the
+        investigation here), solving this situation also fixes other tests
+        that were previously failing (aria-used-on-image-maps.html) or
+        that were printing wrong results, not detected until now due to
+        wrong platform specific expectations (file-upload-button-stringvalue
+        and deleting-iframe-destroys-axcache).
+
+        Test: accessibility/heading-crash-after-hidden.html
+
+        * accessibility/atk/WebKitAccessibleUtil.h: Added two new macros
+        to inject the needed code at the beginning of each entry point to
+        allow gracefully exit those functions when the render tree is
+        unstable. Inspired by g_return_if_fail and g_return_val_if_fail, we
+        called them returnIfWebKitAccessibleIsInvalid and returnValIfWebKitAccessibleIsInvalid.
+
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp:
+        (webkitAccessibleHyperlinkActionDoAction): Protect entry point.
+        (webkitAccessibleHyperlinkActionGetNActions): Ditto.
+        (webkitAccessibleHyperlinkActionGetDescription): Ditto.
+        (webkitAccessibleHyperlinkActionGetKeybinding): Ditto.
+        (webkitAccessibleHyperlinkActionGetName): Ditto.
+        (webkitAccessibleHyperlinkGetURI): Ditto.
+        (webkitAccessibleHyperlinkGetObject): Ditto.
+        (webkitAccessibleHyperlinkGetStartIndex): Ditto.
+        (webkitAccessibleHyperlinkGetEndIndex): Ditto.
+        (webkitAccessibleHyperlinkIsValid): Ditto.
+        (webkitAccessibleHyperlinkGetNAnchors): Ditto.
+        (webkitAccessibleHyperlinkIsSelectedLink): Ditto.
+        * accessibility/atk/WebKitAccessibleInterfaceAction.cpp:
+        (webkitAccessibleActionDoAction): Ditto.
+        (webkitAccessibleActionGetNActions): Ditto.
+        (webkitAccessibleActionGetDescription): Ditto.
+        (webkitAccessibleActionGetKeybinding): Ditto.
+        (webkitAccessibleActionGetName): Ditto.
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.cpp:
+        (webkitAccessibleComponentRefAccessibleAtPoint): Ditto.
+        (webkitAccessibleComponentGetExtents): Ditto.
+        (webkitAccessibleComponentGrabFocus): Ditto.
+        * accessibility/atk/WebKitAccessibleInterfaceDocument.cpp:
+        (webkitAccessibleDocumentGetAttributeValue): Ditto.
+        (webkitAccessibleDocumentGetAttributes): Ditto.
+        (webkitAccessibleDocumentGetLocale): Ditto.
+        * accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp:
+        (webkitAccessibleEditableTextSetRunAttributes): Ditto.
+        (webkitAccessibleEditableTextSetTextContents): Ditto.
+        (webkitAccessibleEditableTextInsertText): Ditto.
+        (webkitAccessibleEditableTextCopyText): Ditto.
+        (webkitAccessibleEditableTextCutText): Ditto.
+        (webkitAccessibleEditableTextDeleteText): Ditto.
+        (webkitAccessibleEditableTextPasteText): Ditto.
+        * accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp:
+        (webkitAccessibleHypertextGetLink): Ditto.
+        (webkitAccessibleHypertextGetNLinks): Ditto.
+        (webkitAccessibleHypertextGetLinkIndex): Ditto.
+        * accessibility/atk/WebKitAccessibleInterfaceImage.cpp:
+        (webkitAccessibleImageGetImagePosition): Ditto.
+        (webkitAccessibleImageGetImageDescription): Ditto.
+        (webkitAccessibleImageGetImageSize): Ditto.
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        (webkitAccessibleSelectionAddSelection): Ditto.
+        (webkitAccessibleSelectionClearSelection): Ditto.
+        (webkitAccessibleSelectionRefSelection): Ditto.
+        (webkitAccessibleSelectionGetSelectionCount): Ditto.
+        (webkitAccessibleSelectionIsChildSelected): Ditto.
+        (webkitAccessibleSelectionRemoveSelection): Ditto.
+        (webkitAccessibleSelectionSelectAllSelection): Ditto.
+        * accessibility/atk/WebKitAccessibleInterfaceTable.cpp:
+        (webkitAccessibleTableRefAt): Ditto.
+        (webkitAccessibleTableGetIndexAt): Ditto.
+        (webkitAccessibleTableGetColumnAtIndex): Ditto.
+        (webkitAccessibleTableGetRowAtIndex): Ditto.
+        (webkitAccessibleTableGetNColumns): Ditto.
+        (webkitAccessibleTableGetNRows): Ditto.
+        (webkitAccessibleTableGetColumnExtentAt): Ditto.
+        (webkitAccessibleTableGetRowExtentAt): Ditto.
+        (webkitAccessibleTableGetColumnHeader): Ditto.
+        (webkitAccessibleTableGetRowHeader): Ditto.
+        (webkitAccessibleTableGetCaption): Ditto.
+        (webkitAccessibleTableGetColumnDescription): Ditto.
+        (webkitAccessibleTableGetRowDescription): Ditto.
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (webkitAccessibleTextGetText): Ditto.
+        (webkitAccessibleTextGetTextAfterOffset): Ditto.
+        (webkitAccessibleTextGetTextAtOffset): Ditto.
+        (webkitAccessibleTextGetTextBeforeOffset): Ditto.
+        (webkitAccessibleTextGetCharacterAtOffset): Ditto.
+        (webkitAccessibleTextGetCaretOffset): Ditto.
+        (webkitAccessibleTextGetRunAttributes): Ditto.
+        (webkitAccessibleTextGetDefaultAttributes): Ditto.
+        (webkitAccessibleTextGetCharacterExtents): Ditto.
+        (webkitAccessibleTextGetRangeExtents): Ditto.
+        (webkitAccessibleTextGetCharacterCount): Ditto.
+        (webkitAccessibleTextGetOffsetAtPoint): Ditto.
+        (webkitAccessibleTextGetNSelections): Ditto.
+        (webkitAccessibleTextGetSelection): Ditto.
+        (webkitAccessibleTextAddSelection): Ditto.
+        (webkitAccessibleTextSetSelection): Ditto.
+        (webkitAccessibleTextRemoveSelection): Ditto.
+        (webkitAccessibleTextSetCaretOffset): Ditto.
+        * accessibility/atk/WebKitAccessibleInterfaceValue.cpp:
+        (webkitAccessibleValueGetCurrentValue): Ditto.
+        (webkitAccessibleValueGetMaximumValue): Ditto.
+        (webkitAccessibleValueGetMinimumValue): Ditto.
+        (webkitAccessibleValueSetCurrentValue): Ditto.
+        (webkitAccessibleValueGetMinimumIncrement): Ditto.
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (core): Removed, as it's not actually needed.
+        (webkitAccessibleGetName):  Protect entry point.
+        (webkitAccessibleGetDescription): Ditto.
+        (webkitAccessibleGetParent): Ditto.
+        (webkitAccessibleGetNChildren): Ditto.
+        (webkitAccessibleRefChild): Ditto.
+        (webkitAccessibleGetIndexInParent): Ditto.
+        (webkitAccessibleGetAttributes): Ditto.
+        (webkitAccessibleGetRole): Ditto.
+        (webkitAccessibleRefStateSet): Ditto.
+        (webkitAccessibleRefRelationSet): Ditto.
+        (webkitAccessibleGetObjectLocale): Ditto.
+        (webkitAccessibleDetach): Ditto.
+        (webkitAccessibleIsDetached): New helper function, to be used from
+        the newly added macros. We need to check whether the wrapper is
+        detached and not just the wrapper AccessibilityObject since once
+        the detachment happens we can't trust anything but the AtkObject
+        from the wrapper (the AccessibilityObject might be invalid).
+        * accessibility/atk/WebKitAccessibleWrapperAtk.h:
+
+        Assert that the render tree is neither being updated nor in need
+        of being updated before trying to compute the text under a given
+        element, since that might lead to crashes due to the constructor
+        of TextIterator calling updateLayoutIgnorePendingStylesheets().
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::textUnderElement): Assert that
+        the render tree is neither being updated nor needing updating.
+
+2013-09-27  Mario Sanchez Prada  <mario.prada@samsung.com>
+
         [ATK] accessibility/aria-sort.html is failing after r156409
         https://bugs.webkit.org/show_bug.cgi?id=121947
 

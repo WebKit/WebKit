@@ -38,6 +38,7 @@
 #include "Editor.h"
 #include "Frame.h"
 #include "NotImplemented.h"
+#include "WebKitAccessibleUtil.h"
 #include "WebKitAccessibleWrapperAtk.h"
 
 using namespace WebCore;
@@ -50,20 +51,29 @@ static AccessibilityObject* core(AtkEditableText* text)
     return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(text));
 }
 
-static gboolean webkitAccessibleEditableTextSetRunAttributes(AtkEditableText*, AtkAttributeSet*, gint, gint)
+static gboolean webkitAccessibleEditableTextSetRunAttributes(AtkEditableText* text, AtkAttributeSet*, gint, gint)
 {
+    g_return_val_if_fail(ATK_IS_EDITABLE_TEXT(text), FALSE);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(text), FALSE);
+
     notImplemented();
     return FALSE;
 }
 
 static void webkitAccessibleEditableTextSetTextContents(AtkEditableText* text, const gchar* string)
 {
+    g_return_if_fail(ATK_IS_EDITABLE_TEXT(text));
+    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(text));
+
     // FIXME: string nullcheck?
     core(text)->setValue(String::fromUTF8(string));
 }
 
 static void webkitAccessibleEditableTextInsertText(AtkEditableText* text, const gchar* string, gint length, gint* position)
 {
+    g_return_if_fail(ATK_IS_EDITABLE_TEXT(text));
+    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(text));
+
     if (!string)
         return;
 
@@ -83,18 +93,27 @@ static void webkitAccessibleEditableTextInsertText(AtkEditableText* text, const 
         *position += length;
 }
 
-static void webkitAccessibleEditableTextCopyText(AtkEditableText*, gint, gint)
+static void webkitAccessibleEditableTextCopyText(AtkEditableText* text, gint, gint)
 {
+    g_return_if_fail(ATK_IS_EDITABLE_TEXT(text));
+    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(text));
+
     notImplemented();
 }
 
-static void webkitAccessibleEditableTextCutText(AtkEditableText*, gint, gint)
+static void webkitAccessibleEditableTextCutText(AtkEditableText* text, gint, gint)
 {
+    g_return_if_fail(ATK_IS_EDITABLE_TEXT(text));
+    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(text));
+
     notImplemented();
 }
 
 static void webkitAccessibleEditableTextDeleteText(AtkEditableText* text, gint startPos, gint endPos)
 {
+    g_return_if_fail(ATK_IS_EDITABLE_TEXT(text));
+    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(text));
+
     AccessibilityObject* coreObject = core(text);
     // FIXME: Not implemented in WebCore
     // coreObject->setSelectedTextRange(PlainTextRange(startPos, endPos - startPos));
@@ -109,8 +128,11 @@ static void webkitAccessibleEditableTextDeleteText(AtkEditableText* text, gint s
     document->frame()->editor().performDelete();
 }
 
-static void webkitAccessibleEditableTextPasteText(AtkEditableText*, gint)
+static void webkitAccessibleEditableTextPasteText(AtkEditableText* text, gint)
 {
+    g_return_if_fail(ATK_IS_EDITABLE_TEXT(text));
+    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(text));
+
     notImplemented();
 }
 

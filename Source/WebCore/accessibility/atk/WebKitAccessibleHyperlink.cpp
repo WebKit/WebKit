@@ -94,6 +94,7 @@ static gboolean webkitAccessibleHyperlinkActionDoAction(AtkAction* action, gint 
     g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(action), FALSE);
     g_return_val_if_fail(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl, FALSE);
     g_return_val_if_fail(!index, FALSE);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl, FALSE);
 
     if (!ATK_IS_ACTION(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl))
         return FALSE;
@@ -109,6 +110,7 @@ static gint webkitAccessibleHyperlinkActionGetNActions(AtkAction* action)
 {
     g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(action), 0);
     g_return_val_if_fail(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl, 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl, 0);
 
     if (!ATK_IS_ACTION(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl))
         return 0;
@@ -121,6 +123,7 @@ static const gchar* webkitAccessibleHyperlinkActionGetDescription(AtkAction* act
     g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(action), 0);
     g_return_val_if_fail(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl, 0);
     g_return_val_if_fail(!index, 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl, 0);
 
     // TODO: Need a way to provide/localize action descriptions.
     notImplemented();
@@ -130,10 +133,11 @@ static const gchar* webkitAccessibleHyperlinkActionGetDescription(AtkAction* act
 static const gchar* webkitAccessibleHyperlinkActionGetKeybinding(AtkAction* action, gint index)
 {
     g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(action), 0);
+    g_return_val_if_fail(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl, 0);
     g_return_val_if_fail(!index, 0);
 
     WebKitAccessibleHyperlinkPrivate* priv = WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv;
-    g_return_val_if_fail(priv->hyperlinkImpl, 0);
+    returnValIfWebKitAccessibleIsInvalid(priv->hyperlinkImpl, 0);
 
     if (!ATK_IS_ACTION(priv->hyperlinkImpl))
         return 0;
@@ -149,10 +153,11 @@ static const gchar* webkitAccessibleHyperlinkActionGetKeybinding(AtkAction* acti
 static const gchar* webkitAccessibleHyperlinkActionGetName(AtkAction* action, gint index)
 {
     g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(action), 0);
+    g_return_val_if_fail(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl, 0);
     g_return_val_if_fail(!index, 0);
 
     WebKitAccessibleHyperlinkPrivate* priv = WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv;
-    g_return_val_if_fail(priv->hyperlinkImpl, 0);
+    returnValIfWebKitAccessibleIsInvalid(priv->hyperlinkImpl, 0);
 
     if (!ATK_IS_ACTION(priv->hyperlinkImpl))
         return 0;
@@ -177,9 +182,13 @@ static void atkActionInterfaceInit(AtkActionIface* iface)
 static gchar* webkitAccessibleHyperlinkGetURI(AtkHyperlink* link, gint index)
 {
     g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(link), 0);
+    g_return_val_if_fail(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl, 0);
+
     // FIXME: Do NOT support more than one instance of an AtkObject
     // implementing AtkHyperlinkImpl in every instance of AtkHyperLink
     g_return_val_if_fail(!index, 0);
+
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl, 0);
 
     AccessibilityObject* coreObject = core(link);
     if (!coreObject || coreObject->url().isNull())
@@ -196,6 +205,8 @@ static AtkObject* webkitAccessibleHyperlinkGetObject(AtkHyperlink* link, gint in
     // FIXME: Do NOT support more than one instance of an AtkObject
     // implementing AtkHyperlinkImpl in every instance of AtkHyperLink
     g_return_val_if_fail(!index, 0);
+
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl, 0);
 
     return ATK_OBJECT(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl);
 }
@@ -230,6 +241,8 @@ static gint getRangeLengthForObject(AccessibilityObject* obj, Range* range)
 static gint webkitAccessibleHyperlinkGetStartIndex(AtkHyperlink* link)
 {
     g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(link), 0);
+    g_return_val_if_fail(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl, 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl, 0);
 
     AccessibilityObject* coreObject = core(link);
     if (!coreObject)
@@ -254,6 +267,8 @@ static gint webkitAccessibleHyperlinkGetStartIndex(AtkHyperlink* link)
 static gint webkitAccessibleHyperlinkGetEndIndex(AtkHyperlink* link)
 {
     g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(link), 0);
+    g_return_val_if_fail(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl, 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl, 0);
 
     AccessibilityObject* coreObject = core(link);
     if (!coreObject)
@@ -277,8 +292,9 @@ static gint webkitAccessibleHyperlinkGetEndIndex(AtkHyperlink* link)
 
 static gboolean webkitAccessibleHyperlinkIsValid(AtkHyperlink* link)
 {
-    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(link), 0);
+    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(link), FALSE);
     g_return_val_if_fail(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl, FALSE);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl, FALSE);
 
     // Link is valid for the whole object's lifetime
     return TRUE;
@@ -290,11 +306,17 @@ static gint webkitAccessibleHyperlinkGetNAnchors(AtkHyperlink* link)
     // implementing AtkHyperlinkImpl in every instance of AtkHyperLink
     g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(link), 0);
     g_return_val_if_fail(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl, 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl, 0);
+
     return 1;
 }
 
-static gboolean webkitAccessibleHyperlinkIsSelectedLink(AtkHyperlink*)
+static gboolean webkitAccessibleHyperlinkIsSelectedLink(AtkHyperlink* link)
 {
+    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(link), FALSE);
+    g_return_val_if_fail(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl, FALSE);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE_HYPERLINK(link)->priv->hyperlinkImpl, FALSE);
+
     // Not implemented: this function is deprecated in ATK now
     notImplemented();
     return FALSE;

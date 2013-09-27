@@ -78,11 +78,17 @@ static const gchar* documentAttributeValue(AtkDocument* document, const gchar* a
 
 static const gchar* webkitAccessibleDocumentGetAttributeValue(AtkDocument* document, const gchar* attribute)
 {
+    g_return_val_if_fail(ATK_IS_DOCUMENT(document), 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(document), 0);
+
     return documentAttributeValue(document, attribute);
 }
 
 static AtkAttributeSet* webkitAccessibleDocumentGetAttributes(AtkDocument* document)
 {
+    g_return_val_if_fail(ATK_IS_DOCUMENT(document), 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(document), 0);
+
     AtkAttributeSet* attributeSet = 0;
     const gchar* attributes[] = { "DocType", "Encoding", "URI" };
 
@@ -97,6 +103,9 @@ static AtkAttributeSet* webkitAccessibleDocumentGetAttributes(AtkDocument* docum
 
 static const gchar* webkitAccessibleDocumentGetLocale(AtkDocument* document)
 {
+    g_return_val_if_fail(ATK_IS_DOCUMENT(document), 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(document), 0);
+
     // The logic to resolve locale has been moved to
     // AtkObject::get_object_locale() virtual method. However, to avoid breaking
     // clients expecting the deprecated AtkDocumentIface::get_document_locale()

@@ -24,6 +24,7 @@
 
 #include "AccessibilityObject.h"
 #include "HTMLNames.h"
+#include "WebKitAccessibleUtil.h"
 #include "WebKitAccessibleWrapperAtk.h"
 
 using namespace WebCore;
@@ -38,6 +39,9 @@ static AccessibilityObject* core(AtkValue* value)
 
 static void webkitAccessibleValueGetCurrentValue(AtkValue* value, GValue* gValue)
 {
+    g_return_if_fail(ATK_VALUE(value));
+    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(value));
+
     memset(gValue,  0, sizeof(GValue));
     g_value_init(gValue, G_TYPE_FLOAT);
     g_value_set_float(gValue, core(value)->valueForRange());
@@ -45,6 +49,9 @@ static void webkitAccessibleValueGetCurrentValue(AtkValue* value, GValue* gValue
 
 static void webkitAccessibleValueGetMaximumValue(AtkValue* value, GValue* gValue)
 {
+    g_return_if_fail(ATK_VALUE(value));
+    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(value));
+
     memset(gValue,  0, sizeof(GValue));
     g_value_init(gValue, G_TYPE_FLOAT);
     g_value_set_float(gValue, core(value)->maxValueForRange());
@@ -52,6 +59,9 @@ static void webkitAccessibleValueGetMaximumValue(AtkValue* value, GValue* gValue
 
 static void webkitAccessibleValueGetMinimumValue(AtkValue* value, GValue* gValue)
 {
+    g_return_if_fail(ATK_VALUE(value));
+    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(value));
+
     memset(gValue,  0, sizeof(GValue));
     g_value_init(gValue, G_TYPE_FLOAT);
     g_value_set_float(gValue, core(value)->minValueForRange());
@@ -59,6 +69,9 @@ static void webkitAccessibleValueGetMinimumValue(AtkValue* value, GValue* gValue
 
 static gboolean webkitAccessibleValueSetCurrentValue(AtkValue* value, const GValue* gValue)
 {
+    g_return_val_if_fail(ATK_VALUE(value), FALSE);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(value), FALSE);
+
     double newValue;
     if (G_VALUE_HOLDS_DOUBLE(gValue))
         newValue = g_value_get_double(gValue);
@@ -77,7 +90,7 @@ static gboolean webkitAccessibleValueSetCurrentValue(AtkValue* value, const GVal
     else if (G_VALUE_HOLDS_UINT(gValue))
         newValue = g_value_get_uint(gValue);
     else
-        return false;
+        return FALSE;
 
     AccessibilityObject* coreObject = core(value);
     if (!coreObject->canSetValueAttribute())
@@ -93,6 +106,9 @@ static gboolean webkitAccessibleValueSetCurrentValue(AtkValue* value, const GVal
 
 static void webkitAccessibleValueGetMinimumIncrement(AtkValue* value, GValue* gValue)
 {
+    g_return_if_fail(ATK_VALUE(value));
+    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(value));
+
     memset(gValue,  0, sizeof(GValue));
     g_value_init(gValue, G_TYPE_FLOAT);
 

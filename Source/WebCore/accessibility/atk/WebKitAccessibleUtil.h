@@ -33,6 +33,26 @@ class IntRect;
 class VisibleSelection;
 }
 
+// An existing accessibility object is considered to be invalid whether it's already
+// detached or if it's not but just updating the layout will detach it anyway.
+#define returnIfWebKitAccessibleIsInvalid(webkitAccessible) G_STMT_START { \
+    if (!webkitAccessible || webkitAccessibleIsDetached(webkitAccessible)) { \
+        return; \
+    } else { \
+        webkitAccessibleGetAccessibilityObject(webkitAccessible)->updateBackingStore(); \
+        if (webkitAccessibleIsDetached(webkitAccessible)) \
+            return; \
+    }; } G_STMT_END
+
+#define returnValIfWebKitAccessibleIsInvalid(webkitAccessible, val) G_STMT_START { \
+    if (!webkitAccessible || webkitAccessibleIsDetached(webkitAccessible)) { \
+        return (val); \
+    } else { \
+        webkitAccessibleGetAccessibilityObject(webkitAccessible)->updateBackingStore(); \
+        if (webkitAccessibleIsDetached(webkitAccessible)) \
+            return (val); \
+    }; } G_STMT_END
+
 AtkAttributeSet* addToAtkAttributeSet(AtkAttributeSet*, const char* name, const char* value);
 
 void contentsRelativeToAtkCoordinateType(WebCore::AccessibilityObject*, AtkCoordType, WebCore::IntRect, gint* x, gint* y, gint* width = 0, gint* height = 0);

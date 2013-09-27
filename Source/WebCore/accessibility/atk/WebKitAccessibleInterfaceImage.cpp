@@ -51,17 +51,26 @@ static AccessibilityObject* core(AtkImage* image)
 
 static void webkitAccessibleImageGetImagePosition(AtkImage* image, gint* x, gint* y, AtkCoordType coordType)
 {
+    g_return_if_fail(ATK_IMAGE(image));
+    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(image));
+
     IntRect rect = pixelSnappedIntRect(core(image)->elementRect());
     contentsRelativeToAtkCoordinateType(core(image), coordType, rect, x, y);
 }
 
 static const gchar* webkitAccessibleImageGetImageDescription(AtkImage* image)
 {
+    g_return_val_if_fail(ATK_IMAGE(image), 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(image), 0);
+
     return cacheAndReturnAtkProperty(ATK_OBJECT(image), AtkCachedImageDescription, accessibilityDescription(core(image)));
 }
 
 static void webkitAccessibleImageGetImageSize(AtkImage* image, gint* width, gint* height)
 {
+    g_return_if_fail(ATK_IMAGE(image));
+    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(image));
+
     IntSize size = core(image)->pixelSnappedSize();
 
     if (width)

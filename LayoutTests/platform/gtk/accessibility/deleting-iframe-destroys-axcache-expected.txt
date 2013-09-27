@@ -26,7 +26,6 @@ After:
 AXRole: AXScrollArea 
     AXRole: AXWebArea 
         AXRole: AXParagraph AXValue: Before
-        AXRole: AXGroup AXValue: 
         AXRole: AXParagraph AXValue: After
         AXRole: AXParagraph AXValue: End of test
 

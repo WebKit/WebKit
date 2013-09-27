@@ -68,6 +68,9 @@ static IntPoint atkToContents(AccessibilityObject* coreObject, AtkCoordType coor
 
 static AtkObject* webkitAccessibleComponentRefAccessibleAtPoint(AtkComponent* component, gint x, gint y, AtkCoordType coordType)
 {
+    g_return_val_if_fail(ATK_IS_COMPONENT(component), 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(component), 0);
+
     IntPoint pos = atkToContents(core(component), coordType, x, y);
 
     AccessibilityObject* target = core(component)->accessibilityHitTest(pos);
@@ -79,12 +82,18 @@ static AtkObject* webkitAccessibleComponentRefAccessibleAtPoint(AtkComponent* co
 
 static void webkitAccessibleComponentGetExtents(AtkComponent* component, gint* x, gint* y, gint* width, gint* height, AtkCoordType coordType)
 {
+    g_return_if_fail(ATK_IS_COMPONENT(component));
+    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(component));
+
     IntRect rect = pixelSnappedIntRect(core(component)->elementRect());
     contentsRelativeToAtkCoordinateType(core(component), coordType, rect, x, y, width, height);
 }
 
 static gboolean webkitAccessibleComponentGrabFocus(AtkComponent* component)
 {
+    g_return_val_if_fail(ATK_IS_COMPONENT(component), FALSE);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(component), FALSE);
+
     core(component)->setFocused(true);
     return core(component)->isFocused();
 }

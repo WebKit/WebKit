@@ -3,8 +3,8 @@ This tests the value of stringValue for a single file- and multiple files-<input
 
 
 Default value (no files selected):
-accessibilityController.accessibleElementById("singleFileUpload").stringValue: AXValue: Choose File
-accessibilityController.accessibleElementById("multipleFileUpload").stringValue: AXValue: Choose Files
+accessibilityController.accessibleElementById("singleFileUpload").stringValue: AXValue: (None)
+accessibilityController.accessibleElementById("multipleFileUpload").stringValue: AXValue: (None)
 
 Drag and drop a single file:
 accessibilityController.accessibleElementById("singleFileUpload").stringValue: AXValue: file1.txt

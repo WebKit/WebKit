@@ -1,3 +1,36 @@
+2013-09-27  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Protect entry points in the ATK wrapper against outdated render trees
+        https://bugs.webkit.org/show_bug.cgi?id=121558
+
+        Reviewed by Chris Fleizach.
+
+        Added a new test to check that we do not crash in certain
+        scenarios when hiding objects and retriving accessibility
+        information about it.
+
+        * accessibility/heading-crash-after-hidden-expected.txt: Added.
+        * accessibility/heading-crash-after-hidden.html: Added.
+
+        Rebaselined expectations that were wrong before, since they were
+        not returning the actual value that they should be returning when
+        called AccessibilityUIElement::stringValue().
+
+        * platform/efl-wk1/accessibility/file-upload-button-stringvalue-expected.txt:
+        Updated, since the actual text being returned should be the actual
+        value of the file chooser (e.g. "(None)") and not the text in the
+        upload botton (e.g. "Choose files").
+        * platform/efl-wk2/accessibility/file-upload-button-stringvalue-expected.txt: Ditto.
+        * platform/gtk-wk2/accessibility/file-upload-button-stringvalue-expected.txt: Ditto..
+        * platform/gtk/accessibility/file-upload-button-stringvalue-expected.txt: Ditto.
+
+        * platform/gtk/accessibility/deleting-iframe-destroys-axcache-expected.txt:
+        Updated, since the iframe should be exposed at all after deleting it.
+
+        Removed accesibility test now passing after fixing this issue.
+
+        * platform/gtk/TestExpectations: Removed accessibility/aria-used-on-image-maps.html.
+
 2013-09-26  Antti Koivisto  <antti@apple.com>
 
         Move m_style to RenderElement

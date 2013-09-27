@@ -23,6 +23,7 @@
 #if HAVE(ACCESSIBILITY)
 
 #include "AccessibilityObject.h"
+#include "WebKitAccessibleUtil.h"
 #include "WebKitAccessibleWrapperAtk.h"
 
 using namespace WebCore;
@@ -37,6 +38,9 @@ static AccessibilityObject* core(AtkHypertext* hypertext)
 
 static AtkHyperlink* webkitAccessibleHypertextGetLink(AtkHypertext* hypertext, gint index)
 {
+    g_return_val_if_fail(ATK_HYPERTEXT(hypertext), 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(hypertext), 0);
+
     AccessibilityObject::AccessibilityChildrenVector children = core(hypertext)->children();
     if (index < 0 || static_cast<unsigned>(index) >= children.size())
         return 0;
@@ -62,6 +66,9 @@ static AtkHyperlink* webkitAccessibleHypertextGetLink(AtkHypertext* hypertext, g
 
 static gint webkitAccessibleHypertextGetNLinks(AtkHypertext* hypertext)
 {
+    g_return_val_if_fail(ATK_HYPERTEXT(hypertext), 0);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(hypertext), 0);
+
     AccessibilityObject::AccessibilityChildrenVector children = core(hypertext)->children();
     if (!children.size())
         return 0;
@@ -81,6 +88,9 @@ static gint webkitAccessibleHypertextGetNLinks(AtkHypertext* hypertext)
 
 static gint webkitAccessibleHypertextGetLinkIndex(AtkHypertext* hypertext, gint charIndex)
 {
+    g_return_val_if_fail(ATK_HYPERTEXT(hypertext), -1);
+    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(hypertext), -1);
+
     size_t linksCount = webkitAccessibleHypertextGetNLinks(hypertext);
     if (!linksCount)
         return -1;

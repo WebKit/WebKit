@@ -77,6 +77,8 @@ WebCore::AccessibilityObject* webkitAccessibleGetAccessibilityObject(WebKitAcces
 
 void webkitAccessibleDetach(WebKitAccessible*);
 
+bool webkitAccessibleIsDetached(WebKitAccessible*);
+
 AtkObject* webkitAccessibleGetFocusedElement(WebKitAccessible*);
 
 WebCore::AccessibilityObject* objectFocusedAndCaretOffsetUnignored(WebCore::AccessibilityObject*, int& offset);
