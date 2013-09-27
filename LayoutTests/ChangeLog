@@ -1,69 +1,24 @@
-2013-09-26  Alexey Proskuryakov  <ap@apple.com>
+2013-09-26  Eric Carlson  <eric.carlson@apple.com>
 
-        Layout Test http/tests/inspector/network/network-iframe-load-and-delete.html is flaky
-        https://bugs.webkit.org/show_bug.cgi?id=121998
+        [MediaStream] make MediaStream testable
+        https://bugs.webkit.org/show_bug.cgi?id=121967
 
-        * platform/mac/TestExpectations: Marking as such.
+        Reviewed by Dean Jackson.
 
-2013-09-25  Oliver Hunt  <oliver@apple.com>
-
-        Implement prefixed-destructuring assignment
-        https://bugs.webkit.org/show_bug.cgi?id=121930
-
-        Reviewed by Mark Hahnenberg.
-
-        Relanding with fix after rollout
-
-2013-09-26  Alexey Proskuryakov  <ap@apple.com>
-
-        Flaky Test: transitions/cancel-transition.html
-        https://bugs.webkit.org/show_bug.cgi?id=114193
-
-        * platform/mac/TestExpectations: Marking as flaky. Dean says that such tests are
-        currently broken by design.
-
-2013-09-26  Dean Jackson  <dino@apple.com>
-
-        Expose a setting to disable hardware accelerated animations
-        https://bugs.webkit.org/show_bug.cgi?id=121978
-        <rdar://problem/15091284>
-
-        Reviewed by Eric Carlson.
-
-        * animations/resources/animation-test-helpers.js: Add a callback
-        for when the tests finish. Minor cleanup.
-        (endTest):
-        (.else):
-        (runAnimationTest):
-        * animations/transform-non-accelerated.html: New test.
-        * animations/transform-non-accelerated-expected.txt: Result.
-
-2013-09-26  Commit Queue  <commit-queue@webkit.org>
-
-        Unreviewed, rolling out r156464 and r156480.
-        http://trac.webkit.org/changeset/156464
-        http://trac.webkit.org/changeset/156480
-        https://bugs.webkit.org/show_bug.cgi?id=121981
-
-        Leaking too much and killing buildbot. (Requested by xenon on
-        #webkit).
-
-        * js/destructuring-assignment-expected.txt: Removed.
-        * js/destructuring-assignment.html: Removed.
-        * js/mozilla/strict/13.1-expected.txt:
-        * js/mozilla/strict/regress-532254-expected.txt:
-        * js/mozilla/strict/script-tests/13.1.js:
-        * js/regress/destructuring-arguments-expected.txt: Removed.
-        * js/regress/destructuring-arguments-length-expected.txt: Removed.
-        * js/regress/destructuring-arguments-length.html: Removed.
-        * js/regress/destructuring-arguments.html: Removed.
-        * js/regress/destructuring-swap-expected.txt: Removed.
-        * js/regress/destructuring-swap.html: Removed.
-        * js/regress/script-tests/destructuring-arguments-length.js: Removed.
-        * js/regress/script-tests/destructuring-arguments.js: Removed.
-        * js/regress/script-tests/destructuring-swap.js: Removed.
-        * js/script-tests/destructuring-assignment.js: Removed.
-        * sputnik/Conformance/13_Function_Definition/S13_A5.html:
+        * fast/mediastream/MediaStream-add-remove-tracks-expected.txt:
+        * fast/mediastream/MediaStream-add-remove-tracks.html: Make the test results more understandable
+            to simplify debugging failures.
+        * fast/mediastream/MediaStream-onended-expected.txt:
+        * fast/mediastream/MediaStream-onended.html: Ditto. Fix a test error: stopping stream A should
+            not stop stream B even when it was created from stream A.
+        * fast/mediastream/MediaStreamConstructor-expected.txt:
+        * fast/mediastream/MediaStreamConstructor.html: Make the test results more understandable. Fix a
+            logic errors: webkitMediaStream is an object, not a function. JSC does not support 
+            object.constructor.name, use object.constructor.toString() instead.
+        * fast/mediastream/MediaStreamTrackEvent-constructor-expected.txt:
+        * fast/mediastream/MediaStreamTrackEvent-constructor.html: Update now that getUserMedia() works.
+        * fast/mediastream/argument-types-expected.txt: Updated with "Failing" results because the correct 
+            behavior is unknown. The spec says "the syntax for getUserMedia() is still under discussion".
 
 2013-09-26  Alexey Proskuryakov  <ap@apple.com>
 

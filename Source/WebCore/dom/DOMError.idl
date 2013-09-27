@@ -27,8 +27,8 @@
  */
 [
     NoInterfaceObject,
-    ImplementationLacksVTable
+    SkipVTableValidation
 ] interface  DOMError {
     readonly attribute DOMString name;
-  };
+};
 

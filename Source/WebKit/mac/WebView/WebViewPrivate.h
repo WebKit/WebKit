@@ -47,6 +47,7 @@
 
 @protocol WebDeviceOrientationProvider;
 @protocol WebFormDelegate;
+@protocol WebUserMediaClient;
 
 extern NSString *_WebCanGoBackKey;
 extern NSString *_WebCanGoForwardKey;
@@ -714,6 +715,11 @@ Could be worth adding to the API.
 @interface WebView (WebViewDeviceOrientation)
 - (void)_setDeviceOrientationProvider:(id<WebDeviceOrientationProvider>)deviceOrientationProvider;
 - (id<WebDeviceOrientationProvider>)_deviceOrientationProvider;
+@end
+
+@interface WebView (WebViewUserMedia)
+- (void)_setUserMediaClient:(id<WebUserMediaClient>)userMediaClient;
+- (id<WebUserMediaClient>)_userMediaClient;
 @end
 
 @protocol WebGeolocationProvider <NSObject>

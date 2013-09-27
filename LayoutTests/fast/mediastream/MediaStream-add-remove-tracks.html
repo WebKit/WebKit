@@ -62,58 +62,61 @@ function gotStream2(s) {
     stream1.onaddtrack = shouldNotFire;
     stream1.onremovetrack = shouldNotFire;
 
-    // remove a track of each kind
     audioTrack = stream1.getAudioTracks()[0];
     videoTrack = stream1.getVideoTracks()[0];
 
+    debug("<br>*** remove an audio track");
     tryRemoveTrack(stream1, audioTrack);
-    // verify removed tracks
     shouldBe('stream1.getAudioTracks().length', '0');
     shouldBeNull('stream1.getTrackById(audioTrack.id)');
-    // remove a non-existent (already removed) track (should not throw)
+
+    debug("<br>*** remove a non-existent (already removed) track (should not throw)");
     tryRemoveTrack(stream1, audioTrack);
-    // (re-)add tracks
+
+    debug("<br>*** add the track back to the stream");
     tryAddTrack(stream1, audioTrack);
 
+    debug("<br>*** remove a video track");
     tryRemoveTrack(stream1, videoTrack);
     shouldBe('stream1.getVideoTracks().length', '0');
     shouldBeNull('stream1.getTrackById(videoTrack.id)');
+
+    debug("<br>*** remove a non-existent (already removed) track (should not throw)");
     tryRemoveTrack(stream1, videoTrack);
+
+    debug("<br>*** add the track back to the stream");
     tryAddTrack(stream1, videoTrack);
 
-    // verify added tracks
+    debug("<br>*** verify added tracks");
     shouldBe('stream1.getAudioTracks().length', '1');
     shouldBe('stream1.getVideoTracks().length', '1');
-
-    // verify that kind and label is preserved
     shouldBe('stream1.getAudioTracks()[0].kind', 'audioTrack.kind');
     shouldBe('stream1.getAudioTracks()[0].label', 'audioTrack.label');
     shouldBe('stream1.getVideoTracks()[0].kind', 'videoTrack.kind');
     shouldBe('stream1.getVideoTracks()[0].label', 'videoTrack.label');
 
-    // try adding stream1's own tracks
+    debug("<br>*** try adding a stream's own tracks again (nothing should happen)");
     tryAddTrack(stream1, stream1.getAudioTracks()[0]);
     tryAddTrack(stream1, stream1.getVideoTracks()[0]);
-
-    // verify that nothing has changed
     shouldBe('stream1.getAudioTracks().length', '1');
     shouldBe('stream1.getVideoTracks().length', '1');
 
-    // add new tracks (from stream2)
+    debug("<br>*** add tracks from another stream");
     tryAddTrack(stream1, stream2.getAudioTracks()[0]);
     tryAddTrack(stream1, stream2.getVideoTracks()[0]);
 
-    // verify added tracks
+    debug("<br>*** verify added tracks");
     shouldBe('stream1.getAudioTracks().length', '2');
     shouldBe('stream1.getVideoTracks().length', '2');
 
-    // when all tracks have been removed, stream.ended should return true.
+    debug("<br>*** after all tracks have been removed, stream.ended should return true");
     tryRemoveTrack(stream2, stream2.getAudioTracks()[0]);
     tryRemoveTrack(stream2, stream2.getVideoTracks()[0]);
     shouldBeTrue('stream2.ended');
 
     stream1.stop();
 
+    debug("<br>*** it should be impossible to add a track after the stream has been stopped");
     shouldThrow('stream1.addTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
     shouldThrow('stream1.removeTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
 

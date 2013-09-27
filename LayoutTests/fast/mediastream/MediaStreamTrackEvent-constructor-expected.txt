@@ -3,6 +3,11 @@ This tests the constructor for the MediaStreamTrackEvent DOM class.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS getUserMedia({audio:true, video:true}, gotStream) did not throw exception.
+
+*** getUserMedia() succeeded, test stream ***
+PASS mediaStream is non-null.
+PASS mediaStream.getVideoTracks()[0] is non-null.
 
 *** No initializer passed ***
 PASS new MediaStreamTrackEvent('MediaStreamTrackEvent').bubbles is false
@@ -30,7 +35,7 @@ PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancela
 PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: mediaStreamTrack }).cancelable is true
 
 *** Initialize 'track' with valid track object ***
-FAIL new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: mediaStreamTrack }).track should be non-null. Was null
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: mediaStreamTrack }).track is non-null.
 PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: mediaStreamTrack }).track is mediaStreamTrack
 
 PASS successfullyParsed is true

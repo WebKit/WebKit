@@ -59,6 +59,9 @@ class Page;
 #if ENABLE(FULLSCREEN_API)
 @class WebFullScreenController;
 #endif
+#if ENABLE(MEDIA_STREAM)
+@protocol WebUserMediaClient;
+#endif
 
 extern BOOL applicationIsTerminating;
 extern int pluginDatabaseClientCount;
@@ -207,6 +210,10 @@ private:
     id<WebGeolocationProvider> _geolocationProvider;
     id<WebDeviceOrientationProvider> m_deviceOrientationProvider;
     id<WebNotificationProvider> _notificationProvider;
+
+#if ENABLE(MEDIA_STREAM)
+    id<WebUserMediaClient> m_userMediaClient;
+#endif
 
     RefPtr<WebCore::HistoryItem> _globalHistoryItem;
 

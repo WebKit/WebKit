@@ -13,6 +13,28 @@
 
             description("This tests the constructor for the MediaStreamTrackEvent DOM class.");
 
+            function endTest()
+            {
+                clearTimeout(timer);
+                finishJSTest();
+            }
+
+            function error()
+            {
+                testFailed('Stream generation failed.');
+                endTest();
+            }
+
+            function getUserMedia(constraints, callback)
+            {
+                try {
+                    navigator.webkitGetUserMedia(constraints, callback, error);
+                } catch (e) {
+                    testFailed('webkitGetUserMedia threw exception :' + e);
+                    endTest();
+                }
+            }
+
             function testMediaStreamTrackEvent()
             {
                 debug("<br>*** No initializer passed ***");
@@ -46,14 +68,14 @@
                 shouldBe("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: mediaStreamTrack }).track", "mediaStreamTrack");
 
                 debug("");
-                finishJSTest();
+                endTest();
             }
 
             function gotStream(stream)
             {
                 clearTimeout(timer);
-                testPassed('getUserMedia succeeded.');
 
+                debug("<br>*** getUserMedia() succeeded, test stream ***");
                 mediaStream = stream;
                 shouldBeNonNull("mediaStream");
                 shouldBeNonNull("mediaStream.getVideoTracks()[0]");
@@ -64,18 +86,13 @@
             function primeTimeout(msg)
             {
                 clearTimeout(timer);
-                timer = setTimeout(function() { testFailed(msg); finishJSTest() }, 4000);
+                timer = setTimeout(function() { testFailed(msg); endTest() }, 4000);
             }
 
             function test()
             {
-            /* 
-                @@@@@ NOTE: we can't get a MediaStreamTrack until we have a functional mock getUserMedia, so just test what we can for now @@@@@ 
                 primeTimeout("Timeout waiting for getUserMedia()");
                 shouldNotThrow('getUserMedia({audio:true, video:true}, gotStream)');
-            */
-
-                testMediaStreamTrackEvent();
             }
 
         </script>

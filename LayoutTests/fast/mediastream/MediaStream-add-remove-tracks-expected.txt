@@ -7,21 +7,45 @@ PASS stream1.getAudioTracks().length is 1
 PASS stream1.getVideoTracks().length is 1
 PASS stream2.getAudioTracks().length is 1
 PASS stream2.getVideoTracks().length is 1
+
+*** remove an audio track
 PASS stream1.getAudioTracks().length is 0
 PASS stream1.getTrackById(audioTrack.id) is null
+
+*** remove a non-existent (already removed) track (should not throw)
+
+*** add the track back to the stream
+
+*** remove a video track
 PASS stream1.getVideoTracks().length is 0
 PASS stream1.getTrackById(videoTrack.id) is null
+
+*** remove a non-existent (already removed) track (should not throw)
+
+*** add the track back to the stream
+
+*** verify added tracks
 PASS stream1.getAudioTracks().length is 1
 PASS stream1.getVideoTracks().length is 1
 PASS stream1.getAudioTracks()[0].kind is audioTrack.kind
 PASS stream1.getAudioTracks()[0].label is audioTrack.label
 PASS stream1.getVideoTracks()[0].kind is videoTrack.kind
 PASS stream1.getVideoTracks()[0].label is videoTrack.label
+
+*** try adding a stream's own tracks again (nothing should happen)
 PASS stream1.getAudioTracks().length is 1
 PASS stream1.getVideoTracks().length is 1
+
+*** add tracks from another stream
+
+*** verify added tracks
 PASS stream1.getAudioTracks().length is 2
 PASS stream1.getVideoTracks().length is 2
+
+*** after all tracks have been removed, stream.ended should return true
 PASS stream2.ended is true
+
+*** it should be impossible to add a track after the stream has been stopped
 PASS stream1.addTrack(audioTrack) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS stream1.removeTrack(audioTrack) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS successfullyParsed is true

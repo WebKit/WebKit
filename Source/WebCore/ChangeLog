@@ -1,3 +1,28 @@
+2013-09-26  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] make MediaStream testable
+        https://bugs.webkit.org/show_bug.cgi?id=121967
+
+        Reviewed by Dean Jackson.
+
+        No new tests, existing tests updated.
+
+        * CMakeLists.txt: Add MockMediaStreamCenter.
+        * GNUmakefile.list.am: Ditto.
+
+        * Modules/mediastream/MediaStreamTrack.idl: Add SkipVTableValidation.
+        * Modules/mediastream/NavigatorUserMediaError.idl: Add JSGenerateToJSObject.
+        * WebCore.exp.in: Export MockMediaStreamCenter::registerMockMediaStreamCenter.
+
+        * WebCore.xcodeproj/project.pbxproj: Add MockMediaStreamCenter.
+        * dom/DOMError.h: Make the destructor virtual because it has a derived class.
+        * dom/DOMError.idl:
+
+        * platform/mock/MockMediaStreamCenter.cpp: Added.
+        * platform/mock/MockMediaStreamCenter.h: Added.
+
+        * testing/Internals.cpp: Register the mock stream center.
+
 2013-09-26  Benjamin Poulain  <benjamin@webkit.org>
 
         Move CSS MatchRequest from StyleResolver to a private definition in ElementRuleCollector

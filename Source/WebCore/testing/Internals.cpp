@@ -152,6 +152,10 @@
 #include <QNetworkAccessManager>
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include "MockMediaStreamCenter.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -288,6 +292,10 @@ Internals::Internals(Document* document)
 #if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
     if (document && document->page())
         document->page()->group().captionPreferences()->setTestingMode(true);
+#endif
+    
+#if ENABLE(MEDIA_STREAM)
+    MockMediaStreamCenter::registerMockMediaStreamCenter();
 #endif
 }
 

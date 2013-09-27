@@ -38,6 +38,7 @@ public:
     {
         return adoptRef(new DOMError(name));
     }
+    virtual ~DOMError() { }
 
     const String& name() const { return m_name; }
 

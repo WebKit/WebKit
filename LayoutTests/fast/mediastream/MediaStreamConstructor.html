@@ -60,7 +60,7 @@ function gotStream(s) {
     shouldBe('localStream.getAudioTracks().length', '1');
     shouldBe('localStream.getVideoTracks().length', '1');
 
-    shouldBeTrue("typeof webkitMediaStream === 'function'");
+    shouldBeTrue("typeof webkitMediaStream === 'object'");
     shouldBeTrue('checkIdAttribute(localStream.id)');
     testConstructor(localStream);
 }
@@ -75,21 +75,22 @@ function testConstructor(s) {
     shouldThrow('new webkitMediaStream(null)');
     shouldThrow('new webkitMediaStream(undefined)');
 
-    verifyStream(new webkitMediaStream(), 0, 0);
-    verifyStream(new webkitMediaStream([]), 0, 0);
+    verifyStream("new webkitMediaStream()", 0, 0);
+    verifyStream("new webkitMediaStream([])", 0, 0);
 
-    verifyStream(new webkitMediaStream(s), s.getAudioTracks().length, s.getVideoTracks().length);
+    verifyStream("new webkitMediaStream(stream)", s.getAudioTracks().length, s.getVideoTracks().length);
 
-    verifyStream(new webkitMediaStream([s.getAudioTracks()[0]]), 1, 0);
-    verifyStream(new webkitMediaStream([s.getVideoTracks()[0]]), 0, 1);
-    verifyStream(new webkitMediaStream([s.getAudioTracks()[0], s.getVideoTracks()[0]]), 1, 1);
-    verifyStream(new webkitMediaStream([s.getVideoTracks()[0], s.getAudioTracks()[0], s.getVideoTracks()[0]]), 1, 1);
+    verifyStream("new webkitMediaStream([stream.getAudioTracks()[0]])", 1, 0);
+    verifyStream("new webkitMediaStream([stream.getVideoTracks()[0]])", 0, 1);
+    verifyStream("new webkitMediaStream([stream.getAudioTracks()[0], stream.getVideoTracks()[0]])", 1, 1);
+    verifyStream("new webkitMediaStream([stream.getVideoTracks()[0], stream.getAudioTracks()[0], stream.getVideoTracks()[0]])", 1, 1);
 
-    s.onended = function () {
-        verifyStream(new webkitMediaStream([s.getAudioTracks()[0]]), 0, 0);
-        verifyStream(new webkitMediaStream([s.getVideoTracks()[0]]), 0, 0);
-        verifyStream(new webkitMediaStream([s.getAudioTracks()[0], s.getVideoTracks()[0]]), 0, 0);
-        verifyStream(new webkitMediaStream(s), 0, 0);
+    stream.onended = function () {
+        debug("<br>Creating a new stream from a stream that has stopped");
+        verifyStream("new webkitMediaStream([stream.getAudioTracks()[0]])", 0, 0);
+        verifyStream("new webkitMediaStream([stream.getVideoTracks()[0]])", 0, 0);
+        verifyStream("new webkitMediaStream([stream.getAudioTracks()[0], stream.getVideoTracks()[0]])", 0, 0);
+        verifyStream("new webkitMediaStream(stream)", 0, 0);
 
         finishJSTest();
     };
@@ -97,15 +98,16 @@ function testConstructor(s) {
     s.stop();
 }
 
-function verifyStream(s, numAudioTracks, numVideoTracks) {
-    newStream = s;
+function verifyStream(script, numAudioTracks, numVideoTracks) {
+    debug("<br>*** testing \"" + script + "\"");
+    newStream = eval(script);
     nAudio = numAudioTracks;
     nVideo = numVideoTracks;
 
     testPassed('Stream constructed');
     shouldBeNonNull(newStream);
     shouldBeDefined(newStream);
-    shouldBe("newStream.constructor.name", "'MediaStream'");
+    shouldBe("newStream.constructor.toString()", "'[object webkitMediaStreamConstructor]'");
     shouldBe('newStream.getAudioTracks().length', 'nAudio');
     shouldBe('newStream.getVideoTracks().length', 'nVideo');
 

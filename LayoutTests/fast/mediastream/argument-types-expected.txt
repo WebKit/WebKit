@@ -17,10 +17,10 @@ PASS navigator.webkitGetUserMedia({video: true}, emptyFunction) did not throw ex
 PASS navigator.webkitGetUserMedia(undefined, emptyFunction) threw exception Error: NotSupportedError: DOM Exception 9.
 PASS navigator.webkitGetUserMedia(null, emptyFunction) threw exception Error: NotSupportedError: DOM Exception 9.
 PASS navigator.webkitGetUserMedia({ }, emptyFunction) threw exception Error: NotSupportedError: DOM Exception 9.
-PASS navigator.webkitGetUserMedia(true, emptyFunction) threw exception TypeError: Not an object..
-PASS navigator.webkitGetUserMedia(42, emptyFunction) threw exception TypeError: Not an object..
-PASS navigator.webkitGetUserMedia(Infinity, emptyFunction) threw exception TypeError: Not an object..
-PASS navigator.webkitGetUserMedia(-Infinity, emptyFunction) threw exception TypeError: Not an object..
+FAIL navigator.webkitGetUserMedia(true, emptyFunction) should throw TypeError: Not an object.. Threw exception Error: NotSupportedError: DOM Exception 9.
+FAIL navigator.webkitGetUserMedia(42, emptyFunction) should throw TypeError: Not an object.. Threw exception Error: NotSupportedError: DOM Exception 9.
+FAIL navigator.webkitGetUserMedia(Infinity, emptyFunction) should throw TypeError: Not an object.. Threw exception Error: NotSupportedError: DOM Exception 9.
+FAIL navigator.webkitGetUserMedia(-Infinity, emptyFunction) should throw TypeError: Not an object.. Threw exception Error: NotSupportedError: DOM Exception 9.
 PASS navigator.webkitGetUserMedia(emptyFunction, emptyFunction) threw exception Error: NotSupportedError: DOM Exception 9.
 PASS navigator.webkitGetUserMedia({video: true}, "foobar") threw exception TypeError: Type error.
 PASS navigator.webkitGetUserMedia({video: true}, undefined) threw exception TypeError: Type error.
