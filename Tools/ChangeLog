@@ -1,5 +1,87 @@
 2013-09-27  Mario Sanchez Prada  <mario.prada@samsung.com>
 
+        [ATK] Normalize checks in entry points for DRT and WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=121959
+
+        Reviewed by Chris Fleizach.
+
+        Always check if we have a proper instance of AtkObject,
+        implementing the interfaces that we might need for each case, at
+        the entry point of every method of AccessibilityUIElement for ATK,
+        and do those checks in an uniform way across DRT and WKTR, to
+        avoid confusion and issues when modifying these files in the future.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::getChildren): Use normalized checks.
+        (AccessibilityUIElement::getChildrenWithRange): Ditto.
+        (AccessibilityUIElement::rowCount): Ditto.
+        (AccessibilityUIElement::columnCount): Ditto.
+        (AccessibilityUIElement::childrenCount): Ditto.
+        (AccessibilityUIElement::elementAtPoint): Ditto.
+        (AccessibilityUIElement::getChildAtIndex): Ditto.
+        (AccessibilityUIElement::allAttributes): Ditto.
+        (AccessibilityUIElement::titleUIElement): Ditto.
+        (AccessibilityUIElement::parentElement): Ditto.
+        (AccessibilityUIElement::attributesOfChildren): Ditto.
+        (AccessibilityUIElement::role): Ditto.
+        (AccessibilityUIElement::title): Ditto.
+        (AccessibilityUIElement::description): Ditto.
+        (AccessibilityUIElement::stringValue): Ditto.
+        (AccessibilityUIElement::language): Ditto.
+        (AccessibilityUIElement::x): Ditto.
+        (AccessibilityUIElement::y): Ditto.
+        (AccessibilityUIElement::width): Ditto.
+        (AccessibilityUIElement::height): Ditto.
+        (AccessibilityUIElement::orientation): Ditto.
+        (AccessibilityUIElement::intValue): Ditto.
+        (AccessibilityUIElement::minValue): Ditto.
+        (AccessibilityUIElement::maxValue): Ditto.
+        (indexRangeInTable): Ditto.
+        (AccessibilityUIElement::cellForColumnAndRow): Ditto.
+        (AccessibilityUIElement::stringAttributeValue): Ditto.
+        (alterCurrentValue): Ditto.
+        (AccessibilityUIElement::press): Ditto.
+        (AccessibilityUIElement::documentEncoding): Ditto.
+        (AccessibilityUIElement::documentURI): Ditto.
+        (AccessibilityUIElement::hasPopup): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::indexRangeInTable): Use normalized checks.
+        (WTR::alterCurrentValue): Ditto.
+        (WTR::AccessibilityUIElement::getChildren): Ditto.
+        (WTR::AccessibilityUIElement::getChildrenWithRange): Ditto.
+        (WTR::AccessibilityUIElement::childrenCount): Ditto.
+        (WTR::AccessibilityUIElement::elementAtPoint): Ditto.
+        (WTR::AccessibilityUIElement::indexOfChild): Ditto.
+        (WTR::AccessibilityUIElement::childAtIndex): Ditto.
+        (WTR::AccessibilityUIElement::titleUIElement): Ditto.
+        (WTR::AccessibilityUIElement::parentElement): Ditto.
+        (WTR::AccessibilityUIElement::attributesOfChildren): Ditto.
+        (WTR::AccessibilityUIElement::allAttributes): Ditto.
+        (WTR::AccessibilityUIElement::stringAttributeValue): Ditto.
+        (WTR::AccessibilityUIElement::role): Ditto.
+        (WTR::AccessibilityUIElement::title): Ditto.
+        (WTR::AccessibilityUIElement::description): Ditto.
+        (WTR::AccessibilityUIElement::orientation): Ditto.
+        (WTR::AccessibilityUIElement::stringValue): Ditto.
+        (WTR::AccessibilityUIElement::language): Ditto.
+        (WTR::AccessibilityUIElement::x): Ditto.
+        (WTR::AccessibilityUIElement::y): Ditto.
+        (WTR::AccessibilityUIElement::width): Ditto.
+        (WTR::AccessibilityUIElement::height): Ditto.
+        (WTR::AccessibilityUIElement::intValue): Ditto.
+        (WTR::AccessibilityUIElement::minValue): Ditto.
+        (WTR::AccessibilityUIElement::maxValue): Ditto.
+        (WTR::AccessibilityUIElement::rowCount): Ditto.
+        (WTR::AccessibilityUIElement::columnCount): Ditto.
+        (WTR::AccessibilityUIElement::cellForColumnAndRow): Ditto.
+        (WTR::AccessibilityUIElement::press): Ditto.
+        (WTR::AccessibilityUIElement::documentEncoding): Ditto.
+        (WTR::AccessibilityUIElement::documentURI): Ditto.
+        (WTR::AccessibilityUIElement::hasPopup): Ditto.
+
+2013-09-27  Mario Sanchez Prada  <mario.prada@samsung.com>
+
         [ATK] accessibility/aria-sort.html is failing after r156409
         https://bugs.webkit.org/show_bug.cgi?id=121947
 

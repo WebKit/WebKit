@@ -112,7 +112,7 @@ static JSStringRef indexRangeInTable(PlatformUIElement element, bool isRowRange)
 {
     GOwnPtr<gchar> rangeString(g_strdup("{0, 0}"));
 
-    if (!element || !ATK_IS_OBJECT(element.get()))
+    if (!ATK_IS_OBJECT(element.get()))
         return JSStringCreateWithUTF8CString(rangeString.get());
 
     AtkObject* axTable = atk_object_get_parent(ATK_OBJECT(element.get()));
@@ -148,7 +148,7 @@ static JSStringRef indexRangeInTable(PlatformUIElement element, bool isRowRange)
 
 static void alterCurrentValue(PlatformUIElement element, int factor)
 {
-    if (!element || !ATK_IS_VALUE(element.get()))
+    if (!ATK_IS_VALUE(element.get()))
         return;
 
     GValue currentValue = G_VALUE_INIT;
@@ -372,7 +372,7 @@ bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
 
 void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >& children)
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_OBJECT(m_element.get()))
         return;
 
     int count = childrenCount();
@@ -384,7 +384,7 @@ void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >
 
 void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >& children, unsigned location, unsigned length)
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_OBJECT(m_element.get()))
         return;
     unsigned end = location + length;
     for (unsigned i = location; i < end; i++) {
@@ -395,7 +395,7 @@ void AccessibilityUIElement::getChildrenWithRange(Vector<RefPtr<AccessibilityUIE
 
 int AccessibilityUIElement::childrenCount()
 {
-    if (!m_element)
+    if (!ATK_IS_OBJECT(m_element.get()))
         return 0;
 
     return atk_object_get_n_accessible_children(ATK_OBJECT(m_element.get()));
@@ -403,7 +403,7 @@ int AccessibilityUIElement::childrenCount()
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x, int y)
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_COMPONENT(m_element.get()))
         return 0;
 
     GRefPtr<AtkObject> objectAtPoint = adoptGRef(atk_component_ref_accessible_at_point(ATK_COMPONENT(m_element.get()), x, y, ATK_XY_WINDOW));
@@ -412,7 +412,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x,
 
 unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_OBJECT(m_element.get()))
         return 0;
 
     Vector<RefPtr<AccessibilityUIElement> > children;
@@ -428,6 +428,9 @@ unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::childAtIndex(unsigned index)
 {
+    if (!ATK_IS_OBJECT(m_element.get()))
+        return 0;
+
     Vector<RefPtr<AccessibilityUIElement> > children;
     getChildrenWithRange(children, index, 1);
 
@@ -487,7 +490,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedRowAtIndex(un
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::titleUIElement()
 {
-    if (!m_element)
+    if (!ATK_IS_OBJECT(m_element.get()))
         return 0;
 
     AtkRelationSet* set = atk_object_ref_relation_set(ATK_OBJECT(m_element.get()));
@@ -511,7 +514,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::titleUIElement()
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::parentElement()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_OBJECT(m_element.get()))
         return 0;
 
     AtkObject* parent = atk_object_get_parent(ATK_OBJECT(m_element.get()));
@@ -538,6 +541,9 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfDocumentLinks()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfChildren()
 {
+    if (!ATK_IS_OBJECT(m_element.get()))
+        return JSStringCreateWithCharacters(0, 0);
+
     Vector<RefPtr<AccessibilityUIElement> > children;
     getChildren(children);
 
@@ -552,7 +558,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfChildren()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_OBJECT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
     return JSStringCreateWithUTF8CString(attributesOfElement(this).utf8().data());
@@ -560,7 +566,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
 {
-    if (!m_element)
+    if (!ATK_IS_OBJECT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
     String atkAttributeName = coreAttributeToAtkAttribute(attribute);
@@ -634,7 +640,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::parameterizedAttributeNames()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_OBJECT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
     AtkRole role = atk_object_get_role(ATK_OBJECT(m_element.get()));
@@ -659,7 +665,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_OBJECT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
     const gchar* name = atk_object_get_name(ATK_OBJECT(m_element.get()));
@@ -670,7 +676,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::title()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_OBJECT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
     const gchar* description = atk_object_get_description(ATK_OBJECT(m_element.get()));
@@ -684,7 +690,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_OBJECT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
     const gchar* axOrientation = 0;
@@ -701,7 +707,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 {
-    if (!m_element || !ATK_IS_TEXT(m_element.get()))
+    if (!ATK_IS_TEXT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
     GOwnPtr<gchar> text(atk_text_get_text(ATK_TEXT(m_element.get()), 0, -1));
@@ -713,7 +719,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::language()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_OBJECT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
     const gchar* locale = atk_object_get_object_locale(ATK_OBJECT(m_element.get()));
@@ -734,7 +740,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
 
 double AccessibilityUIElement::x()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_COMPONENT(m_element.get()))
         return 0;
 
     int x, y;
@@ -744,7 +750,7 @@ double AccessibilityUIElement::x()
 
 double AccessibilityUIElement::y()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_COMPONENT(m_element.get()))
         return 0;
 
     int x, y;
@@ -754,7 +760,7 @@ double AccessibilityUIElement::y()
 
 double AccessibilityUIElement::width()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_COMPONENT(m_element.get()))
         return 0;
 
     int width, height;
@@ -764,7 +770,7 @@ double AccessibilityUIElement::width()
 
 double AccessibilityUIElement::height()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_COMPONENT(m_element.get()))
         return 0;
 
     int width, height;
@@ -786,7 +792,7 @@ double AccessibilityUIElement::clickPointY()
 
 double AccessibilityUIElement::intValue() const
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_VALUE(m_element.get()))
         return 0;
 
     GValue value = G_VALUE_INIT;
@@ -799,7 +805,7 @@ double AccessibilityUIElement::intValue() const
 
 double AccessibilityUIElement::minValue()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_VALUE(m_element.get()))
         return 0;
 
     GValue value = G_VALUE_INIT;
@@ -812,7 +818,7 @@ double AccessibilityUIElement::minValue()
 
 double AccessibilityUIElement::maxValue()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_VALUE(m_element.get()))
         return 0;
 
     GValue value = G_VALUE_INIT;
@@ -994,7 +1000,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfHeader()
 
 int AccessibilityUIElement::rowCount()
 {
-    if (!m_element || !ATK_IS_TABLE(m_element.get()))
+    if (!ATK_IS_TABLE(m_element.get()))
         return 0;
 
     return atk_table_get_n_rows(ATK_TABLE(m_element.get()));
@@ -1002,7 +1008,7 @@ int AccessibilityUIElement::rowCount()
 
 int AccessibilityUIElement::columnCount()
 {
-    if (!m_element || !ATK_IS_TABLE(m_element.get()))
+    if (!ATK_IS_TABLE(m_element.get()))
         return 0;
 
     return atk_table_get_n_columns(ATK_TABLE(m_element.get()));
@@ -1028,7 +1034,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::columnIndexRange()
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::cellForColumnAndRow(unsigned col, unsigned row)
 {
-    if (!m_element || !ATK_IS_TABLE(m_element.get()))
+    if (!ATK_IS_TABLE(m_element.get()))
         return 0;
 
     // Adopt the AtkObject representing the cell because
@@ -1077,9 +1083,6 @@ void AccessibilityUIElement::showMenu()
 
 void AccessibilityUIElement::press()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
-        return;
-
     if (!ATK_IS_ACTION(m_element.get()))
         return;
 
@@ -1100,7 +1103,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::accessibilityValue() const
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::documentEncoding()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_DOCUMENT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
     AtkRole role = atk_object_get_role(ATK_OBJECT(m_element.get()));
@@ -1112,7 +1115,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::documentEncoding()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_DOCUMENT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
     AtkRole role = atk_object_get_role(ATK_OBJECT(m_element.get()));
@@ -1193,7 +1196,7 @@ bool AccessibilityUIElement::isIgnored() const
 
 bool AccessibilityUIElement::hasPopup() const
 {
-    if (!m_element || !ATK_IS_OBJECT(m_element.get()))
+    if (!ATK_IS_OBJECT(m_element.get()))
         return false;
 
     return equalIgnoringCase(getAttributeSetValueForId(ATK_OBJECT(m_element.get()), "haspopup"), "true");
