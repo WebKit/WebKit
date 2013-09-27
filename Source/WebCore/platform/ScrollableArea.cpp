@@ -254,10 +254,17 @@ void ScrollableArea::contentAreaDidHide() const
         scrollAnimator->contentAreaDidHide();
 }
 
-void ScrollableArea::finishCurrentScrollAnimations() const
+void ScrollableArea::lockOverlayScrollbarStateToHidden(bool shouldLockState) const
 {
     if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
-        scrollAnimator->finishCurrentScrollAnimations();
+        scrollAnimator->lockOverlayScrollbarStateToHidden(shouldLockState);
+}
+
+bool ScrollableArea::scrollbarsCanBeActive() const
+{
+    if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
+        return scrollAnimator->scrollbarsCanBeActive();
+    return true;
 }
 
 void ScrollableArea::didAddScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)

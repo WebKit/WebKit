@@ -3999,6 +3999,9 @@ void Document::setInPageCache(bool flag)
     FrameView* v = view();
     Page* page = this->page();
 
+    if (page)
+        page->lockAllOverlayScrollbarsToHidden(flag);
+
     if (flag) {
         ASSERT(!m_savedRenderView);
         m_savedRenderView = renderView();
@@ -4066,8 +4069,8 @@ void Document::documentDidResumeFromPageCache()
         renderView()->setIsInWindow(true);
 #endif
 
-    if (FrameView* frameView = view())
-        frameView->setAnimatorsAreActive();
+    ASSERT(page());
+    page()->lockAllOverlayScrollbarsToHidden(false);
 
     ASSERT(m_frame);
     m_frame->loader().client().dispatchDidBecomeFrameset(isFrameSet());

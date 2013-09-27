@@ -67,6 +67,8 @@ public:
 
     void setVisibleScrollerThumbRect(const IntRect&);
 
+    virtual bool scrollbarsCanBeActive() const OVERRIDE FINAL;
+
 private:
     RetainPtr<id> m_scrollAnimationHelper;
     RetainPtr<WebScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
@@ -93,7 +95,6 @@ private:
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) OVERRIDE;
 
     virtual void cancelAnimations();
-    virtual void setIsActive();
     
     virtual void notifyPositionChanged(const FloatSize& delta);
     virtual void contentAreaWillPaint() const;
@@ -111,7 +112,7 @@ private:
     void didEndScrollGesture() const;
     void mayBeginScrollGesture() const;
 
-    virtual void finishCurrentScrollAnimations();
+    virtual void lockOverlayScrollbarStateToHidden(bool shouldLockState) OVERRIDE FINAL;
 
     virtual void didAddVerticalScrollbar(Scrollbar*);
     virtual void willRemoveVerticalScrollbar(Scrollbar*);

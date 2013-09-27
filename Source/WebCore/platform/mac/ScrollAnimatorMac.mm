@@ -267,7 +267,7 @@ static NSSize abs(NSSize size)
     if (!_scrollableArea)
         return;
 
-    if (!_scrollableArea->scrollbarsCanBeActive())
+    if ([scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
     _scrollableArea->scrollAnimator()->contentAreaWillPaint();
@@ -500,7 +500,7 @@ enum FeatureToAnimate {
     ASSERT(scrollerImp == scrollbarPainterForScrollbar(_scrollbar));
 
     ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
-    if (_scrollbar->scrollableArea()->scrollbarAnimationsAreSuppressed()) {
+    if (![self scrollAnimator]->scrollbarsCanBeActive()) {
         [scrollerImp setKnobAlpha:0];
         _scrollbar->invalidate();
         return;
@@ -748,7 +748,7 @@ void ScrollAnimatorMac::notifyPositionChanged(const FloatSize& delta)
 
 void ScrollAnimatorMac::contentAreaWillPaint() const
 {
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     [m_scrollbarPainterController contentAreaWillDraw];
@@ -756,7 +756,7 @@ void ScrollAnimatorMac::contentAreaWillPaint() const
 
 void ScrollAnimatorMac::mouseEnteredContentArea() const
 {
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     [m_scrollbarPainterController mouseEnteredContentArea];
@@ -764,7 +764,7 @@ void ScrollAnimatorMac::mouseEnteredContentArea() const
 
 void ScrollAnimatorMac::mouseExitedContentArea() const
 {
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     [m_scrollbarPainterController mouseExitedContentArea];
@@ -772,7 +772,7 @@ void ScrollAnimatorMac::mouseExitedContentArea() const
 
 void ScrollAnimatorMac::mouseMovedInContentArea() const
 {
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     [m_scrollbarPainterController mouseMovedInContentArea];
@@ -784,7 +784,7 @@ void ScrollAnimatorMac::mouseEnteredScrollbar(Scrollbar* scrollbar) const
     if (recommendedScrollerStyle() != NSScrollerStyleLegacy)
         return;
 
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     if (!supportsUIStateTransitionProgress())
@@ -799,7 +799,7 @@ void ScrollAnimatorMac::mouseExitedScrollbar(Scrollbar* scrollbar) const
     if (recommendedScrollerStyle() != NSScrollerStyleLegacy)
         return;
 
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     if (!supportsUIStateTransitionProgress())
@@ -810,7 +810,7 @@ void ScrollAnimatorMac::mouseExitedScrollbar(Scrollbar* scrollbar) const
 
 void ScrollAnimatorMac::willStartLiveResize()
 {
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     [m_scrollbarPainterController startLiveResize];
@@ -818,7 +818,7 @@ void ScrollAnimatorMac::willStartLiveResize()
 
 void ScrollAnimatorMac::contentsResized() const
 {
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     [m_scrollbarPainterController contentAreaDidResize];
@@ -826,7 +826,7 @@ void ScrollAnimatorMac::contentsResized() const
 
 void ScrollAnimatorMac::willEndLiveResize()
 {
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     [m_scrollbarPainterController endLiveResize];
@@ -834,7 +834,7 @@ void ScrollAnimatorMac::willEndLiveResize()
 
 void ScrollAnimatorMac::contentAreaDidShow() const
 {
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     [m_scrollbarPainterController windowOrderedIn];
@@ -842,7 +842,7 @@ void ScrollAnimatorMac::contentAreaDidShow() const
 
 void ScrollAnimatorMac::contentAreaDidHide() const
 {
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     [m_scrollbarPainterController windowOrderedOut];
@@ -850,7 +850,7 @@ void ScrollAnimatorMac::contentAreaDidHide() const
 
 void ScrollAnimatorMac::didBeginScrollGesture() const
 {
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     [m_scrollbarPainterController beginScrollGesture];
@@ -858,7 +858,7 @@ void ScrollAnimatorMac::didBeginScrollGesture() const
 
 void ScrollAnimatorMac::didEndScrollGesture() const
 {
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     [m_scrollbarPainterController endScrollGesture];
@@ -866,18 +866,30 @@ void ScrollAnimatorMac::didEndScrollGesture() const
 
 void ScrollAnimatorMac::mayBeginScrollGesture() const
 {
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     [m_scrollbarPainterController beginScrollGesture];
     [m_scrollbarPainterController contentAreaScrolled];
 }
 
-void ScrollAnimatorMac::finishCurrentScrollAnimations()
+void ScrollAnimatorMac::lockOverlayScrollbarStateToHidden(bool shouldLockState)
 {
-    cancelAnimations();
+    if (shouldLockState)
+        [m_scrollbarPainterController lockOverlayScrollerState:ScrollbarOverlayStateHidden];
+    else {
+        [m_scrollbarPainterController unlockOverlayScrollerState];
 
-    [m_scrollbarPainterController hideOverlayScrollers];
+        // We never update scroller style for PainterControllers that are locked. If we have a pending
+        // need to update the style, do it once we've unlocked the scroller state.
+        if (m_needsScrollerStyleUpdate)
+            updateScrollerStyle();
+    }
+}
+
+bool ScrollAnimatorMac::scrollbarsCanBeActive() const
+{
+    return ![m_scrollbarPainterController overlayScrollerStateIsLocked];
 }
 
 void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
@@ -959,7 +971,7 @@ void ScrollAnimatorMac::notifyContentAreaScrolled(const FloatSize& delta)
     // This function is called when a page is going into the page cache, but the page
     // isn't really scrolling in that case. We should only pass the message on to the
     // ScrollbarPainterController when we're really scrolling on an active page.
-    if (!scrollableArea()->scrollbarsCanBeActive())
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
         return;
 
     if (m_scrollableArea->isHandlingWheelEvent())
@@ -1154,17 +1166,9 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
 }
 #endif
 
-void ScrollAnimatorMac::setIsActive()
-{
-    if (!m_needsScrollerStyleUpdate)
-        return;
-
-    updateScrollerStyle();
-}
-
 void ScrollAnimatorMac::updateScrollerStyle()
 {
-    if (!scrollableArea()->scrollbarsCanBeActive()) {
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked]) {
         m_needsScrollerStyleUpdate = true;
         return;
     }

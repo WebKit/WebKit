@@ -1,3 +1,97 @@
+2013-09-27  Beth Dakin  <bdakin@apple.com>
+
+        ScrollbarPainterController should adopt the api to lock overlay scrollbar state
+        https://bugs.webkit.org/show_bug.cgi?id=121928
+
+        Reviewed by Sam Weinig.
+
+        ScrollbarPainterController should adopt the api to lock overlay scrollbar state. 
+        This will allow the ScrollbarPainterController and ScrollAnimatorMac to have 
+        control over knowing whether or not the scrollbars are currently active, which 
+        will allow us to remove a bunch of functions previously implemented in 
+        ScrollableArea subclasses to answer that question.
+
+        ScrollableArea::scrollbarsCanBeActive() is not longer virtual. It used to 
+        implemented on ScrollableArea subclasses, but now ScrollableArea can just get the 
+        information from the ScrollAnimator.
+        * WebCore.exp.in:
+
+        When ScrollableArea subclasses implemented scrollbarsCanBeActive(), they would 
+        check to see if the document was in the page cache. Instead of that model, this 
+        patch adopts a model where ScrollbarPainterController is told directly whether or 
+        not it is active via shouldLockOverlayScrollbarsToHidden(bool).
+        * dom/Document.cpp:
+        (WebCore::Document::setInPageCache):
+
+        setAnimatorsAreActive() is no longer necessary. The functionality can be bundled 
+        into shouldLockOverlayScrollbarsToHidden(bool).
+        (WebCore::Document::documentDidResumeFromPageCache):
+
+        Remove implementations of scrollbarsCanBeActive(), setAnimatorsAreActive(), and 
+        scrollbarAnimationsAreSuppressed(). 
+        * page/FrameView.cpp:
+        (WebCore::FrameView::notifyPageThatContentAreaWillPaint):
+        * page/FrameView.h:
+
+        setShouldSuppressScrollbarAnimations(bool) now calls 
+        setShouldLockOverlayScrollbars(bool). 
+        * page/Page.cpp:
+        (WebCore::Page::setShouldSuppressScrollbarAnimations):
+        (WebCore::Page::setShouldLockOverlayScrollbars):
+        * page/Page.h:
+
+        setIsActive() is now implemented in the ScrollAnimator instead of ScrollableArea 
+        subclasses. finishCurrentScrollAnimations() is replaced by 
+        lockOverlayScrollbarStateToHidden(bool).
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::lockOverlayScrollbarStateToHidden):
+        (WebCore::ScrollAnimator::scrollbarsCanBeActive):
+
+        New enum ScrollbarOverlayState.
+        * platform/ScrollTypes.h:
+
+        Go to the animator for both of these functions.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::lockOverlayScrollbarStateToHidden):
+        (WebCore::ScrollableArea::scrollbarsCanBeActive):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::setVisibleScrollerThumbRect):
+
+        Three new pieces of ScrollbarPainterController api.
+        * platform/mac/NSScrollerImpDetails.h:
+
+        Instead of asking the ScrollableArea if scrollbars can be active, just find out if 
+        the ScrollbarPaintController has been locked.
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterControllerDelegate scrollerImpPair:setContentAreaNeedsDisplayInRect:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (WebCore::ScrollAnimatorMac::contentAreaWillPaint):
+        (WebCore::ScrollAnimatorMac::mouseEnteredContentArea):
+        (WebCore::ScrollAnimatorMac::mouseExitedContentArea):
+        (WebCore::ScrollAnimatorMac::mouseMovedInContentArea):
+        (WebCore::ScrollAnimatorMac::mouseEnteredScrollbar):
+        (WebCore::ScrollAnimatorMac::mouseExitedScrollbar):
+        (WebCore::ScrollAnimatorMac::willStartLiveResize):
+        (WebCore::ScrollAnimatorMac::contentsResized):
+        (WebCore::ScrollAnimatorMac::willEndLiveResize):
+        (WebCore::ScrollAnimatorMac::contentAreaDidShow):
+        (WebCore::ScrollAnimatorMac::contentAreaDidHide):
+        (WebCore::ScrollAnimatorMac::didBeginScrollGesture):
+        (WebCore::ScrollAnimatorMac::didEndScrollGesture):
+        (WebCore::ScrollAnimatorMac::mayBeginScrollGesture):
+        (WebCore::ScrollAnimatorMac::lockOverlayScrollbarStateToHidden):
+        (WebCore::ScrollAnimatorMac::scrollbarsCanBeActive):
+        (WebCore::ScrollAnimatorMac::notifyContentAreaScrolled):
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+
+        Remove implementations of scrollbarsCanBeActive() and 
+        scrollbarAnimationsAreSuppressed().
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderListBox.h:
+
 2013-09-27  David Hyatt  <hyatt@apple.com>
 
         Move line grid functionality from RenderBlock into RenderBlockFlow.

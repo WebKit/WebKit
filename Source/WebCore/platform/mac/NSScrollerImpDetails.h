@@ -67,6 +67,9 @@
 - (void)setDelegate:(id)delegate;
 - (void)hideOverlayScrollers;
 - (void)flashScrollers;
+- (void)lockOverlayScrollerState:(NSUInteger)state;
+- (BOOL)overlayScrollerStateIsLocked;
+- (void)unlockOverlayScrollerState;
 - (id)horizontalScrollerImp;
 - (void)setHorizontalScrollerImp:(id)horizontal;
 - (id)verticalScrollerImp;

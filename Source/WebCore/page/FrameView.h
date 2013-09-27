@@ -356,15 +356,11 @@ public:
     virtual bool isHandlingWheelEvent() const OVERRIDE;
     bool shouldSetCursor() const;
 
-    virtual bool scrollbarsCanBeActive() const OVERRIDE;
-
     // FIXME: Remove this method once plugin loading is decoupled from layout.
     void flushAnyPendingPostLayoutTasks();
 
     virtual bool shouldSuspendScrollAnimations() const OVERRIDE;
     virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate) OVERRIDE;
-
-    void setAnimatorsAreActive();
 
     RenderBox* embeddedContentBox() const;
     
@@ -422,10 +418,6 @@ public:
 
     virtual void willStartLiveResize() OVERRIDE;
     virtual void willEndLiveResize() OVERRIDE;
-
-#if USE(ACCELERATED_COMPOSITING)
-    virtual bool scrollbarAnimationsAreSuppressed() const OVERRIDE;
-#endif
 
     void addPaintPendingMilestones(LayoutMilestones);
     void firePaintRelatedMilestones();

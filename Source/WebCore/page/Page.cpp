@@ -816,20 +816,17 @@ void Page::setShouldSuppressScrollbarAnimations(bool suppressAnimations)
     if (suppressAnimations == m_suppressScrollbarAnimations)
         return;
 
-    if (!suppressAnimations) {
-        // If animations are not going to be suppressed anymore, then there is nothing to do here but
-        // change the cached value.
-        m_suppressScrollbarAnimations = suppressAnimations;
-        return;
-    }
+    lockAllOverlayScrollbarsToHidden(suppressAnimations);
+    m_suppressScrollbarAnimations = suppressAnimations;
+}
 
-    // On the other hand, if we are going to start suppressing animations, then we need to make sure we
-    // finish any current scroll animations first.
+void Page::lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars)
+{
     FrameView* view = mainFrame().view();
     if (!view)
         return;
 
-    view->finishCurrentScrollAnimations();
+    view->lockOverlayScrollbarStateToHidden(lockOverlayScrollbars);
     
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameView* frameView = frame->view();
@@ -842,13 +839,9 @@ void Page::setShouldSuppressScrollbarAnimations(bool suppressAnimations)
 
         for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
             ScrollableArea* scrollableArea = *it;
-            ASSERT(scrollableArea->scrollbarsCanBeActive());
-
-            scrollableArea->finishCurrentScrollAnimations();
+            scrollableArea->lockOverlayScrollbarStateToHidden(lockOverlayScrollbars);
         }
     }
-
-    m_suppressScrollbarAnimations = suppressAnimations;
 }
 
 bool Page::rubberBandsAtBottom()

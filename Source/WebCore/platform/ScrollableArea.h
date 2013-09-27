@@ -81,8 +81,8 @@ public:
     void contentAreaDidShow() const;
     void contentAreaDidHide() const;
 
-    void finishCurrentScrollAnimations() const;
-    virtual bool scrollbarAnimationsAreSuppressed() const { return false; }
+    void lockOverlayScrollbarStateToHidden(bool shouldLockState) const;
+    bool scrollbarsCanBeActive() const;
 
     virtual void didAddScrollbar(Scrollbar*, ScrollbarOrientation);
     virtual void willRemoveScrollbar(Scrollbar*, ScrollbarOrientation);
@@ -155,8 +155,6 @@ public:
     virtual bool shouldSuspendScrollAnimations() const { return true; }
     virtual void scrollbarStyleChanged(int /*newStyle*/, bool /*forceUpdate*/) { }
     virtual void setVisibleScrollerThumbRect(const IntRect&) { }
-
-    virtual bool scrollbarsCanBeActive() const = 0;
     
     // Note that this only returns scrollable areas that can actually be scrolled.
     virtual ScrollableArea* enclosingScrollableArea() const = 0;

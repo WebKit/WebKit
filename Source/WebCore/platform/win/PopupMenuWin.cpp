@@ -751,11 +751,6 @@ IntSize PopupMenuWin::contentsSize() const
     return m_windowRect.size();
 }
 
-bool PopupMenuWin::scrollbarsCanBeActive() const
-{
-    return m_showPopup;
-}
-
 IntRect PopupMenuWin::scrollableAreaBoundingBox() const
 {
     return m_windowRect;

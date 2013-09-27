@@ -60,8 +60,6 @@ public:
 
     ScrollableArea* scrollableArea() const { return m_scrollableArea; }
 
-    virtual void setIsActive() { }
-
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
 
 #if PLATFORM(MAC)
@@ -86,7 +84,8 @@ public:
     virtual void contentAreaDidShow() const { }
     virtual void contentAreaDidHide() const { }
 
-    virtual void finishCurrentScrollAnimations() { }
+    virtual void lockOverlayScrollbarStateToHidden(bool) { }
+    virtual bool scrollbarsCanBeActive() const { return true; }
 
     virtual void didAddVerticalScrollbar(Scrollbar*) { }
     virtual void willRemoveVerticalScrollbar(Scrollbar*) { }

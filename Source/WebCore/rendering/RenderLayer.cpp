@@ -1400,11 +1400,6 @@ IntRect RenderLayer::scrollableAreaBoundingBox() const
     return renderer().absoluteBoundingBoxRect();
 }
 
-bool RenderLayer::scrollbarAnimationsAreSuppressed() const
-{
-    return renderer().view().frameView().scrollbarAnimationsAreSuppressed();
-}
-
 RenderLayer* RenderLayer::enclosingTransformedAncestor() const
 {
     RenderLayer* curr = parent();
@@ -2751,11 +2746,6 @@ int RenderLayer::visibleWidth() const
 bool RenderLayer::shouldSuspendScrollAnimations() const
 {
     return renderer().view().frameView().shouldSuspendScrollAnimations();
-}
-
-bool RenderLayer::scrollbarsCanBeActive() const
-{
-    return renderer().view().frameView().scrollbarsCanBeActive();
 }
 
 IntPoint RenderLayer::lastKnownMousePosition() const

@@ -283,6 +283,7 @@ public:
 
     bool shouldSuppressScrollbarAnimations() const { return m_suppressScrollbarAnimations; }
     void setShouldSuppressScrollbarAnimations(bool suppressAnimations);
+    void lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars);
 
     bool rubberBandsAtBottom();
     void setRubberBandsAtBottom(bool);

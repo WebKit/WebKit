@@ -1,3 +1,14 @@
+2013-09-27  Beth Dakin  <bdakin@apple.com>
+
+        ScrollbarPainterController should adopt the api to lock overlay scrollbar state
+        https://bugs.webkit.org/show_bug.cgi?id=121928
+
+        Reviewed by Sam Weinig.
+
+        This function no longer needs to be implemented by ScrollablArea subclasses.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+
 2013-09-27  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
 
         Web Inspector: Make WebKitGTK+ port work with Eclipse chromedevtools plugin
