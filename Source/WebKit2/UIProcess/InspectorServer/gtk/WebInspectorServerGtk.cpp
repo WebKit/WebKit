@@ -43,7 +43,7 @@ namespace WebKit {
 bool WebInspectorServer::platformResourceForPath(const String& path, Vector<char>& data, String& contentType)
 {
     // The page list contains an unformated list of pages that can be inspected with a link to open a session.
-    if (path == "/pagelist.json") {
+    if (path == "/pagelist.json" || path == "/json") {
         buildPageList(data, contentType);
         return true;
     }
@@ -84,6 +84,14 @@ bool WebInspectorServer::platformResourceForPath(const String& path, Vector<char
 
 void WebInspectorServer::buildPageList(Vector<char>& data, String& contentType)
 {
+    // chromedevtools (http://code.google.com/p/chromedevtools) 0.3.8 expected JSON format:
+    // {
+    //  "title": "Foo",
+    //  "url": "http://foo",
+    //  "devtoolsFrontendUrl": "/Main.html?ws=localhost:9222/devtools/page/1",
+    //  "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/1"
+    // },
+
     StringBuilder builder;
     builder.appendLiteral("[ ");
     ClientMap::iterator end = m_clientMap.end();
@@ -99,6 +107,20 @@ void WebInspectorServer::buildPageList(Vector<char>& data, String& contentType)
         builder.append(webPage->activeURL());
         builder.appendLiteral("\", \"inspectorUrl\": \"");
         builder.appendLiteral("/Main.html?page=");
+        builder.appendNumber(it->key);
+        builder.appendLiteral("\", \"devtoolsFrontendUrl\": \"");
+        builder.appendLiteral("/Main.html?ws=");
+        builder.append(bindAddress());
+        builder.appendLiteral(":");
+        builder.appendNumber(port());
+        builder.appendLiteral("/devtools/page/");
+        builder.appendNumber(it->key);
+        builder.appendLiteral("\", \"webSocketDebuggerUrl\": \"");
+        builder.appendLiteral("ws://");
+        builder.append(bindAddress());
+        builder.appendLiteral(":");
+        builder.appendNumber(port());
+        builder.appendLiteral("/devtools/page/");
         builder.appendNumber(it->key);
         builder.appendLiteral("\" }");
     }

@@ -1,3 +1,39 @@
+2013-09-27  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
+
+        Web Inspector: Make WebKitGTK+ port work with Eclipse chromedevtools plugin
+        https://bugs.webkit.org/show_bug.cgi?id=121121
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The chromedevtools plugin (http://code.google.com/p/chromedevtools/) requires a specific
+        json format to connect to the webkit inspector.
+
+        The current format is missing some required fields that make the connection with the plugin
+        fail.
+
+        The format expected by the plugin is as follows:
+          {
+           "title": "Foo",
+           "url": "http://foo",
+           "devtoolsFrontendUrl": "/Main.html?ws=localhost:9222/devtools/page/1",
+           "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/1"
+          }
+
+        The current format is missing the entries for "devtoolsFrontendUrl" and
+        "webSocketDebuggerUrl".
+
+        The plugin also sends an HTTP GET request to http://host:port/json instead of
+        http://host:port/pagelist.json when retrieving the pages list.
+
+        This patch fixes the issues by adding support for the missing fields and accepting requests
+        for "/json" alongside "/pagelist.json".
+
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp:
+        (WebKit::WebInspectorServer::platformResourceForPath):
+        Also accept requests for "/json" alongside "pagelist.json".
+        (WebKit::WebInspectorServer::buildPageList):
+        Add fields required by chromedevtools plugin.
+
 2013-09-26  Darin Adler  <darin@apple.com>
 
         rename KURL to URL
