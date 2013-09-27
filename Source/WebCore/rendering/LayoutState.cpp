@@ -132,7 +132,7 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
 
     // If we have a new grid to track, then add it to our set.
     if (renderer->style()->lineGrid() != RenderStyle::initialLineGrid() && renderer->isRenderBlockFlow())
-        establishLineGrid(toRenderBlock(renderer));
+        establishLineGrid(toRenderBlockFlow(renderer));
 
     // FIXME: <http://bugs.webkit.org/show_bug.cgi?id=13443> Apply control clip if present.
 }
@@ -228,13 +228,13 @@ void LayoutState::propagateLineGridInfo(RenderBox* renderer)
     m_lineGridPaginationOrigin = m_next->m_lineGridPaginationOrigin;
 }
 
-void LayoutState::establishLineGrid(RenderBlock* block)
+void LayoutState::establishLineGrid(RenderBlockFlow* block)
 {
     // First check to see if this grid has been established already.
     if (m_lineGrid) {
         if (m_lineGrid->style()->lineGrid() == block->style()->lineGrid())
             return;
-        RenderBlock* currentGrid = m_lineGrid;
+        RenderBlockFlow* currentGrid = m_lineGrid;
         for (LayoutState* currentState = m_next; currentState; currentState = currentState->m_next) {
             if (currentState->m_lineGrid == currentGrid)
                 continue;

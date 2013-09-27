@@ -1,3 +1,30 @@
+2013-09-27  David Hyatt  <hyatt@apple.com>
+
+        Move line grid functionality from RenderBlock into RenderBlockFlow.
+        https://bugs.webkit.org/show_bug.cgi?id=121502
+
+        Reviewed by Dean Jackson.
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        (WebCore::LayoutState::establishLineGrid):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::lineGrid):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::willBeDestroyed):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::RenderBlockRareData::RenderBlockRareData):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        (WebCore::RenderBlockFlow::layoutLineGridBox):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::RenderBlockFlowRareData):
+        (WebCore::RenderBlockFlow::lineGridBox):
+        (WebCore::RenderBlockFlow::setLineGridBox):
+        * rendering/RenderBlockLineLayout.cpp:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::lineSnapAdjustment):
+
 2013-09-27  Andreas Kling  <akling@apple.com>
 
         Re-indent Settings.h

@@ -35,8 +35,10 @@ public:
     virtual bool isRenderBlockFlow() const OVERRIDE FINAL { return true; }
     
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
-    
+
 protected:
+    virtual void willBeDestroyed() OVERRIDE;
+    
     // This method is called at the start of layout to wipe away all of the floats in our floating objects list. It also
     // repopulates the list with any floats that intrude from previous siblings or parents. Floats that were added by
     // descendants are gone when this call completes and will get added back later on after the children have gotten
@@ -87,6 +89,7 @@ public:
         RenderBlockFlowRareData(const RenderBlockFlow* block)
             : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
             , m_lineBreakToAvoidWidow(-1)
+            , m_lineGridBox(0)
             , m_discardMarginBefore(false)
             , m_discardMarginAfter(false)
             , m_shouldBreakAtLineToAvoidWidow(false)
@@ -112,6 +115,8 @@ public:
         
         MarginValues m_margins;
         int m_lineBreakToAvoidWidow;
+        RootInlineBox* m_lineGridBox;
+
         bool m_discardMarginBefore : 1;
         bool m_discardMarginAfter : 1;
         bool m_shouldBreakAtLineToAvoidWidow : 1;
@@ -212,6 +217,17 @@ public:
     int lineBreakToAvoidWidow() const { return m_rareData ? m_rareData->m_lineBreakToAvoidWidow : -1; }
     void setBreakAtLineToAvoidWidow(int);
     bool relayoutToAvoidWidows(LayoutStateMaintainer&);
+
+    RootInlineBox* lineGridBox() const { return m_rareData ? m_rareData->m_lineGridBox : 0; }
+    void setLineGridBox(RootInlineBox* box)
+    {
+        if (!m_rareData)
+            m_rareData = adoptPtr(new RenderBlockFlowRareData(this));
+        if (m_rareData->m_lineGridBox)
+            m_rareData->m_lineGridBox->destroy(renderArena());
+        m_rareData->m_lineGridBox = box;
+    }
+    void layoutLineGridBox();
 
 protected:
     LayoutUnit maxPositiveMarginBefore() const { return m_rareData ? m_rareData->m_margins.positiveMarginBefore() : RenderBlockFlowRareData::positiveMarginBeforeDefault(this); }
