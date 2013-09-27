@@ -446,7 +446,7 @@ void CSSValue::destroy()
         delete static_cast<CSSValueList*>(this);
         return;
     case WebKitCSSTransformClass:
-        delete static_cast<WebKitCSSTransformValue*>(this);
+        delete toWebKitCSSTransformValue(this);
         return;
     case LineBoxContainClass:
         delete static_cast<CSSLineBoxContainValue*>(this);
@@ -464,17 +464,17 @@ void CSSValue::destroy()
         delete static_cast<CSSFilterImageValue*>(this);
         return;
     case WebKitCSSFilterClass:
-        delete static_cast<WebKitCSSFilterValue*>(this);
+        delete toWebKitCSSFilterValue(this);
         return;
 #if ENABLE(CSS_SHADERS)
     case WebKitCSSArrayFunctionValueClass:
-        delete static_cast<WebKitCSSArrayFunctionValue*>(this);
+        delete toWebKitCSSArrayFunctionValue(this);
         return;
     case WebKitCSSMatFunctionValueClass:
-        delete static_cast<WebKitCSSMatFunctionValue*>(this);
+        delete toWebKitCSSMatFunctionValue(this);
         return;
     case WebKitCSSMixFunctionValueClass:
-        delete static_cast<WebKitCSSMixFunctionValue*>(this);
+        delete toWebKitCSSMixFunctionValue(this);
         return;
     case WebKitCSSShaderClass:
         delete static_cast<WebKitCSSShaderValue*>(this);
@@ -494,7 +494,7 @@ void CSSValue::destroy()
         delete static_cast<SVGPaint*>(this);
         return;
     case WebKitCSSSVGDocumentClass:
-        delete static_cast<WebKitCSSSVGDocumentValue*>(this);
+        delete toWebKitCSSSVGDocumentValue(this);
         return;
 #endif
     }
