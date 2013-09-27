@@ -1365,3 +1365,5 @@ webkit.org/b/122021 media/volume-bar-empty-when-muted.html
 webkit.org/b/122021 media/track/track-cue-rendering-vertical.html [ Pass Failure ]
 
 webkit.org/b/122031 fast/animation/request-animation-frame-time-unit.html [ Pass Failure ]
+
+webkit.org/b/122033 media/video-duration-known-after-eos.html [ Pass Failure ]
