@@ -31,9 +31,9 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include <wtf/text/AtomicStringHash.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 
@@ -52,6 +52,7 @@ public:
     PassRefPtr<CSSPrimitiveValue> createColorValue(unsigned rgbValue);
     PassRefPtr<CSSPrimitiveValue> createValue(double value, CSSPrimitiveValue::UnitTypes);
     PassRefPtr<CSSPrimitiveValue> createValue(const String& value, CSSPrimitiveValue::UnitTypes type) { return CSSPrimitiveValue::create(value, type); }
+    PassRefPtr<CSSPrimitiveValue> createValue(const Length& value, const RenderStyle* style) { return CSSPrimitiveValue::create(value, style); }
     template<typename T> static PassRefPtr<CSSPrimitiveValue> createValue(T value) { return CSSPrimitiveValue::create(value); }
 
     void drain();

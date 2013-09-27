@@ -1,0 +1,3 @@
+PASS window.getComputedStyle(document.getElementById('shape-inside'))['-webkit-shape-inside'] is 'circle(30%, 50%, 50%)'
+This test should not crash
+Hello

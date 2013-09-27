@@ -1,3 +1,96 @@
+2013-09-27  Hans Muller  <hmuller@adobe.com>
+
+        Crash on shape-outside when using calc()
+        https://bugs.webkit.org/show_bug.cgi?id=121020
+
+        Reviewed by Dirk Schulze.
+
+        This change prevents a crash caused by specifying a CSS Shape geometry
+        Length attribute with a calc() expression. It adds support for converting
+        Lengths to CSSPrimitive Values, in large part by migrating Blink changes
+        made to the calc classes since the split. Doing so required a few supporting
+        changes in some related classes, notably CSSPrimitiveValue.
+
+        Tests: fast/shapes/shape-inside/shape-inside-calc-crash.html
+               css3/calc/simplification.html
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::convertToCSSPrimitiveValue): Effectively use the new CSSPrimtiveValue(length,style) constructor to convert Lengths to CSSValues.
+        (WebCore::valueForBasicShape): Use the convertToCSSPrimitiveValue() function.
+        (WebCore::convertToLength): Added the CalculatedConversion convertToLength() flag to enable support for calc() valued Length Shape attributes.
+        * css/BasicShapeFunctions.h:
+        * css/CSSCalculationValue.cpp:
+        (WebCore::hasDoubleValue):
+        (WebCore::buildCssText):
+        (WebCore::CSSCalcValue::clampToPermittedRange):
+        (WebCore::CSSCalcValue::doubleValue):
+        (WebCore::CSSCalcExpressionNode::~CSSCalcExpressionNode):
+        (WebCore::CSSCalcPrimitiveValue::create):
+        (WebCore::CSSCalcPrimitiveValue::toCalcValue):
+        (WebCore::CSSCalcPrimitiveValue::doubleValue):
+        (WebCore::CSSCalcPrimitiveValue::computeLengthPx):
+        (WebCore::CSSCalcPrimitiveValue::primitiveType):
+        (WebCore::CSSCalcPrimitiveValue::CSSCalcPrimitiveValue):
+        (WebCore::determineCategory):
+        (WebCore::isIntegerResult):
+        (WebCore::CSSCalcBinaryOperation::create):
+        (WebCore::CSSCalcBinaryOperation::createSimplified):
+        (WebCore::CSSCalcBinaryOperation::doubleValue):
+        (WebCore::CSSCalcBinaryOperation::buildCssText):
+        (WebCore::CSSCalcBinaryOperation::primitiveType):
+        (WebCore::CSSCalcBinaryOperation::CSSCalcBinaryOperation):
+        (WebCore::CSSCalcBinaryOperation::getNumberSide):
+        (WebCore::CSSCalcBinaryOperation::evaluate):
+        (WebCore::CSSCalcBinaryOperation::evaluateOperator):
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueTerm):
+        (WebCore::CSSCalcExpressionNodeParser::parseValueMultiplicativeExpression):
+        (WebCore::CSSCalcExpressionNodeParser::parseAdditiveValueExpression):
+        (WebCore::CSSCalcValue::createExpressionNode):
+        (WebCore::CSSCalcValue::create):
+        * css/CSSCalculationValue.h:
+        (WebCore::CSSCalcExpressionNode::category):
+        (WebCore::CSSCalcValue::create):
+        (WebCore::CSSCalcValue::isInt):
+        (WebCore::CSSCalcValue::permittedValueRange):
+        (WebCore::CSSCalcValue::expressionNode):
+        (WebCore::CSSCalcValue::CSSCalcValue):
+        (WebCore::toCSSCalcValue):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): Pass the style along to the new valueForBasicShape() function.
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::unitCategory): Made this function public so that CSSCalculationValue could use it.
+        (WebCore::CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor): Ditto.
+        (WebCore::CSSPrimitiveValue::primitiveType): Cleared trailing whitespace.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Construct a CSSPrimitiveValue from a Length and a RenderStyle*.
+        (WebCore::CSSPrimitiveValue::init): The common part of the two Length CSSPrimitiveValue constructors.
+        (WebCore::CSSPrimitiveValue::computeLengthDouble): Moved the case labels to the left per check-webkit-style.
+        (WebCore::CSSPrimitiveValue::getStringValue): Ditto.
+        (WebCore::CSSPrimitiveValue::getDoubleValue): Removed trailing whitespace.
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::create): Construct a CSSPrimitiveValue from a Length and a RenderStyle*.
+        (WebCore::toCSSPrimitiveValue): Check the CSSValue*'s validity with ASSERT_WITH_SECURITY_IMPLICATION before casting to CSSPrimitiveValue*.
+        * css/CSSValuePool.h:
+        (WebCore::CSSValuePool::createValue): A new overload that delegates to the new CSSPrimitiveValue(length,style) constructor.
+        * platform/CalculationValue.h:
+        (WebCore::CalculationValue::operator==):
+        (WebCore::CalculationValue::isNonNegative):
+        (WebCore::CalculationValue::expression):
+        (WebCore::CalcExpressionNumber::value):
+        (WebCore::toCalcExpressionNumber):
+        (WebCore::CalcExpressionLength::CalcExpressionLength):
+        (WebCore::CalcExpressionLength::length):
+        (WebCore::toCalcExpressionLength):
+        (WebCore::CalcExpressionBinaryOperation::leftSide):
+        (WebCore::CalcExpressionBinaryOperation::rightSide):
+        (WebCore::CalcExpressionBinaryOperation::getOperator):
+        (WebCore::toCalcExpressionBinaryOperation):
+        (WebCore::CalcExpressionBlendLength::CalcExpressionBlendLength):
+        (WebCore::CalcExpressionBlendLength::from):
+        (WebCore::CalcExpressionBlendLength::to):
+        (WebCore::CalcExpressionBlendLength::progress):
+        (WebCore::toCalcExpressionBlendLength):
+
 2013-09-27  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r154219): 30% more malloc memory used on html5-full-render.
