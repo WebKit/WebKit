@@ -792,6 +792,9 @@
     <ClCompile Include="..\page\Location.cpp">
       <Filter>page</Filter>
     </ClCompile>
+    <ClCompile Include="..\page\MainFrame.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
     <ClCompile Include="..\page\PrintContext.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -7711,6 +7714,9 @@
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\Location.h">
+      <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\MainFrame.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\PrintContext.h">

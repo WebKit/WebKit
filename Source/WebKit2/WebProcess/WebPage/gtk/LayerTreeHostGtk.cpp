@@ -40,10 +40,10 @@
 #include <GL/gl.h>
 #endif
 
-#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/GraphicsLayerTextureMapper.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 #include <wtf/CurrentTime.h>

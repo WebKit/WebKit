@@ -27,11 +27,12 @@
  */
 
 #include "config.h"
+#include "Page.h"
+
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
-#include "Page.h"
+#include "MainFrame.h"
 
 namespace WebCore {
 

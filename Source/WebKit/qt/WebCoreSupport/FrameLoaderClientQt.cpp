@@ -49,11 +49,9 @@
 #include "HTTPStatusCodes.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
-#if ENABLE(ICONDATABASE)
-#include "IconDatabaseClientQt.h"
-#endif
 #include "JSDOMWindowBase.h"
 #include "MIMETypeRegistry.h"
+#include "MainFrame.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -82,7 +80,6 @@
 #include "qwebhistoryinterface.h"
 #include "qwebpluginfactory.h"
 #include "qwebsettings.h"
-
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFileInfo>
@@ -92,6 +89,10 @@
 #include <QStringList>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/StringBuilder.h>
+
+#if ENABLE(ICONDATABASE)
+#include "IconDatabaseClientQt.h"
+#endif
 
 static QMap<unsigned long, QString> dumpAssignedUrls;
 

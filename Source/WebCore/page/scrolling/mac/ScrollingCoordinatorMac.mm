@@ -30,9 +30,9 @@
 #import "ScrollingCoordinatorMac.h"
 
 #include "GraphicsLayer.h"
-#include "Frame.h"
 #include "FrameView.h"
 #include "IntRect.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "PlatformWheelEvent.h"
 #include "PluginViewBase.h"
@@ -48,7 +48,6 @@
 #include "ScrollingThread.h"
 #include "ScrollingTree.h"
 #include "TiledBacking.h"
-
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>

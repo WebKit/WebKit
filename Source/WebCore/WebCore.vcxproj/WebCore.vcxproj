@@ -7177,6 +7177,7 @@
     <ClCompile Include="..\page\animation\ImplicitAnimation.cpp" />
     <ClCompile Include="..\page\animation\KeyframeAnimation.cpp" />
     <ClCompile Include="..\page\Location.cpp" />
+    <ClCompile Include="..\page\MainFrame.cpp" />
     <ClCompile Include="..\page\MouseEventWithHitTestResults.cpp" />
     <ClCompile Include="..\page\Navigator.cpp" />
     <ClCompile Include="..\page\NavigatorBase.cpp" />
@@ -18821,6 +18822,7 @@
     <ClInclude Include="..\page\animation\ImplicitAnimation.h" />
     <ClInclude Include="..\page\animation\KeyframeAnimation.h" />
     <ClInclude Include="..\page\Location.h" />
+    <ClInclude Include="..\page\MainFrame.h" />
     <ClInclude Include="..\page\MouseEventWithHitTestResults.h" />
     <ClInclude Include="..\page\Navigator.h" />
     <ClInclude Include="..\page\NavigatorBase.h" />

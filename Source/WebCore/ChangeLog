@@ -1,3 +1,90 @@
+2013-09-27  Darin Adler  <darin@apple.com>
+
+        Add empty MainFrame class
+        https://bugs.webkit.org/show_bug.cgi?id=121770
+
+        Reviewed by Andreas Kling.
+
+        For now, MainFrame simply derives from Frame and adds nothing.
+        Next, we will make each Frame point back to its MainFrame.
+
+        * CMakeLists.txt: Added MainFrame.cpp/h.
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.exp.in: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame): Use references instead of pointers for constructor.
+        (WebCore::Frame::create): Pass references instead of pointers to constructor.
+        * page/Frame.h: Made constructor protected instead of private, and marked
+        destructor virtual explicitly. Also marked virtual functions OVERRIDE and FINAL.
+
+        * page/MainFrame.cpp: Added.
+        * page/MainFrame.h: Added.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page): Use MainFrame::create instead of Frame::create.
+        (WebCore::Page::frameIsMainFrame): Moved here, no longer inline.
+        (WebCore::Page::renderTreeSize): Use const Frame* instead of Frame*.
+        (WebCore::Page::checkSubframeCountConsistency): Ditto.
+        * page/Page.h: Changed mainFrame() to return MainFrame& and m_mainFrame to
+        be a RefPtr<MainFrame>.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        * bindings/js/PageScriptDebugServer.cpp:
+        * bindings/js/ScriptProfiler.cpp:
+        * bindings/js/ScriptState.cpp:
+        * css/MediaQueryEvaluator.cpp:
+        * dom/Document.cpp:
+        * history/CachedFrame.cpp:
+        * history/CachedPage.cpp:
+        * history/PageCache.cpp:
+        * html/HTMLPlugInImageElement.cpp:
+        * inspector/InspectorAgent.cpp:
+        * inspector/InspectorCanvasAgent.cpp:
+        * inspector/InspectorClient.cpp:
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        * inspector/InspectorFrontendHost.cpp:
+        * inspector/InspectorInputAgent.cpp:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InspectorOverlay.cpp:
+        * inspector/InspectorPageAgent.cpp:
+        * inspector/PageRuntimeAgent.cpp:
+        * loader/FrameLoader.cpp:
+        * loader/HistoryController.cpp:
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        * page/AutoscrollController.cpp:
+        * page/Chrome.cpp:
+        * page/ContextMenuController.cpp:
+        * page/DOMWindow.cpp:
+        * page/DragController.cpp:
+        * page/EventHandler.cpp:
+        * page/FocusController.cpp:
+        * page/FrameTree.cpp:
+        * page/FrameView.cpp:
+        * page/GestureTapHighlighter.cpp:
+        * page/PageGroup.cpp:
+        * page/PageGroupLoadDeferrer.cpp:
+        * page/PageSerializer.cpp:
+        * page/PageThrottler.cpp:
+        * page/Settings.cpp:
+        * page/SpatialNavigation.cpp:
+        * page/mac/DragControllerMac.mm:
+        * page/mac/PageMac.cpp:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        * platform/graphics/texmap/coordinated/CompositingCoordinator.cpp:
+        * plugins/DOMMimeType.cpp:
+        * storage/StorageEventDispatcher.cpp:
+        * svg/graphics/SVGImage.cpp:
+        * testing/InternalSettings.cpp:
+        * testing/Internals.cpp:
+        Include MainFrame.h instead of Frame.h as needed.
+
 2013-09-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add toWebKitCSS*Value functions to cast from CSSValue

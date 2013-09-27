@@ -1,3 +1,15 @@
+2013-09-27  Darin Adler  <darin@apple.com>
+
+        Add empty MainFrame class
+        https://bugs.webkit.org/show_bug.cgi?id=121770
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/AcceleratedCompositingContextEfl.cpp:
+        * WebCoreSupport/InspectorClientEfl.cpp:
+        * ewk/ewk_view.cpp:
+        Include MainFrame.h instead of Frame.h as needed.
+
 2013-09-25  Brent Fulgham  <bfulgham@apple.com>
 
         Refactor RuntimeEnabledFeatures as a Singleton.

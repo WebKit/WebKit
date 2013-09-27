@@ -31,9 +31,9 @@
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <QuartzCore/CATransaction.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsLayerCA.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/PlatformCALayer.h>
 #import <WebCore/Settings.h>
 

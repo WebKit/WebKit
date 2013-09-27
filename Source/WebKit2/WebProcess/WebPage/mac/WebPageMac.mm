@@ -48,13 +48,13 @@
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FocusController.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/NetworkingContext.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>

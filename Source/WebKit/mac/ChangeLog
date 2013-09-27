@@ -1,3 +1,18 @@
+2013-09-27  Darin Adler  <darin@apple.com>
+
+        Add empty MainFrame class
+        https://bugs.webkit.org/show_bug.cgi?id=121770
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/WebDragClient.mm:
+        * WebCoreSupport/WebInspectorClient.mm:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        * WebView/WebFrame.mm:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebView.mm:
+        Include MainFrame.h instead of Frame.h as needed.
+
 2013-09-26  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] make MediaStream testable

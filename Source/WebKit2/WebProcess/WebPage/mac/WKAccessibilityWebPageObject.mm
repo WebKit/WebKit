@@ -35,8 +35,8 @@
 #import "WKString.h"
 #import "WKStringCF.h"
 #import <WebCore/AXObjectCache.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/Scrollbar.h>

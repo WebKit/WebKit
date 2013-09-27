@@ -2877,6 +2877,8 @@
 		9326DC0C09DAD5D600AFC847 /* CharsetData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AC09D14EE6000E61D7 /* CharsetData.cpp */; };
 		9327A94209968D1A0068A546 /* HTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */; };
 		932871C00B20DEB70049035A /* PlatformMenuDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 932871BF0B20DEB70049035A /* PlatformMenuDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		932AD70517EFA2C30038F8FF /* MainFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 932AD70317EFA2C30038F8FF /* MainFrame.cpp */; };
+		932AD70617EFA2C40038F8FF /* MainFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 932AD70417EFA2C30038F8FF /* MainFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932E16090AF578340025F408 /* FrameLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 932E16080AF578340025F408 /* FrameLoader.cpp */; };
 		93309DD6099E64920056E581 /* AppendNodeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D87099E64910056E581 /* AppendNodeCommand.cpp */; };
 		93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D88099E64910056E581 /* AppendNodeCommand.h */; };
@@ -9474,6 +9476,8 @@
 		931D72F515FE695300C4C07E /* LayoutMilestones.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutMilestones.h; sourceTree = "<group>"; };
 		9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		932871BF0B20DEB70049035A /* PlatformMenuDescription.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformMenuDescription.h; sourceTree = "<group>"; };
+		932AD70317EFA2C30038F8FF /* MainFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainFrame.cpp; sourceTree = "<group>"; };
+		932AD70417EFA2C30038F8FF /* MainFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainFrame.h; sourceTree = "<group>"; };
 		932E16080AF578340025F408 /* FrameLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLoader.cpp; sourceTree = "<group>"; };
 		93309D87099E64910056E581 /* AppendNodeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppendNodeCommand.cpp; sourceTree = "<group>"; };
 		93309D88099E64910056E581 /* AppendNodeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppendNodeCommand.h; sourceTree = "<group>"; };
@@ -15307,6 +15311,8 @@
 				BCE1C41A0D982980003B02F2 /* Location.cpp */,
 				BCE1C4190D982980003B02F2 /* Location.h */,
 				BCE1C4220D9829F2003B02F2 /* Location.idl */,
+				932AD70317EFA2C30038F8FF /* MainFrame.cpp */,
+				932AD70417EFA2C30038F8FF /* MainFrame.h */,
 				BC59DEFA169DEDD80016AC34 /* make_settings.pl */,
 				931BCC601124DFCB00BE70DD /* MediaCanStartListener.h */,
 				93EB355E09E37FD600F43799 /* MouseEventWithHitTestResults.cpp */,
@@ -21502,6 +21508,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				932AD70617EFA2C40038F8FF /* MainFrame.h in Headers */,
 				FE115FAB167988CD00249134 /* AbstractDatabaseServer.h in Headers */,
 				9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */,
 				FE4AADEE16D2C37400026FFC /* AbstractSQLStatement.h in Headers */,
@@ -25708,6 +25715,7 @@
 				84730D8C1248F0B300D3A9C9 /* FETurbulence.cpp in Sources */,
 				FD31609412B026F700C1A359 /* FFTConvolver.cpp in Sources */,
 				FD31609612B026F700C1A359 /* FFTFrame.cpp in Sources */,
+				932AD70517EFA2C30038F8FF /* MainFrame.cpp in Sources */,
 				FD3160C012B0272A00C1A359 /* FFTFrameMac.cpp in Sources */,
 				976D6C80122B8A3D001FD1F7 /* File.cpp in Sources */,
 				934FE9E50B5CA539003E4A73 /* FileChooser.cpp in Sources */,

@@ -100,7 +100,7 @@ namespace WebCore {
             bool useFixedLayout = false, ScrollbarMode = ScrollbarAuto, bool horizontalLock = false,
             ScrollbarMode = ScrollbarAuto, bool verticalLock = false);
 
-        ~Frame();
+        virtual ~Frame();
 
         void addDestructionObserver(FrameDestructionObserver*);
         void removeDestructionObserver(FrameDestructionObserver*);
@@ -197,9 +197,10 @@ namespace WebCore {
 
     // ========
 
-    private:
-        Frame(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
+    protected:
+        Frame(Page&, HTMLFrameOwnerElement*, FrameLoaderClient&);
 
+    private:
         void injectUserScriptsForWorld(DOMWrapperWorld*, const UserScriptVector&, UserScriptInjectionTime);
 
         HashSet<FrameDestructionObserver*> m_destructionObservers;
@@ -242,12 +243,12 @@ namespace WebCore {
 
     private:
         // TiledBackingStoreClient interface
-        virtual void tiledBackingStorePaintBegin();
-        virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&);
-        virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea);
-        virtual IntRect tiledBackingStoreContentsRect();
-        virtual IntRect tiledBackingStoreVisibleRect();
-        virtual Color tiledBackingStoreBackgroundColor() const;
+        virtual void tiledBackingStorePaintBegin() OVERRIDE FINAL;
+        virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) OVERRIDE FINAL;
+        virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea) OVERRIDE FINAL;
+        virtual IntRect tiledBackingStoreContentsRect() OVERRIDE FINAL;
+        virtual IntRect tiledBackingStoreVisibleRect() OVERRIDE FINAL;
+        virtual Color tiledBackingStoreBackgroundColor() const OVERRIDE FINAL;
 
         OwnPtr<TiledBackingStore> m_tiledBackingStore;
 #endif

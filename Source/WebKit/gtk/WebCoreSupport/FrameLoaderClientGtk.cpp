@@ -52,6 +52,7 @@
 #include "JSDOMWindow.h"
 #include "Language.h"
 #include "MIMETypeRegistry.h"
+#include "MainFrame.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"

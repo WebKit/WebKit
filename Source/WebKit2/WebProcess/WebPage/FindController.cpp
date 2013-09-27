@@ -35,9 +35,9 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginDocument.h>
 

@@ -36,6 +36,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "KURL.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "QWebFrameAdapter.h"
 #include "QWebPageAdapter.h"

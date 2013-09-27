@@ -41,7 +41,6 @@
 #include "ExceptionCodePlaceholder.h"
 #include "FileSystem.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameSelection.h"
@@ -53,6 +52,7 @@
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
+#include "MainFrame.h"
 #include "MediaCanStartListener.h"
 #include "Navigator.h"
 #include "NetworkStateNotifier.h"
@@ -142,7 +142,7 @@ Page::Page(PageClients& pageClients)
     , m_settings(Settings::create(this))
     , m_progress(ProgressTracker::create())
     , m_backForwardController(createOwned<BackForwardController>(*this, pageClients.backForwardClient))
-    , m_mainFrame(Frame::create(this, 0, pageClients.loaderClientForMainFrame))
+    , m_mainFrame(MainFrame::create(*this, *pageClients.loaderClientForMainFrame))
     , m_theme(RenderTheme::themeForPage(this))
     , m_editorClient(pageClients.editorClient)
     , m_plugInClient(pageClients.plugInClient)
@@ -239,10 +239,15 @@ Page::~Page()
     m_pageThrottler.clear();
 }
 
+bool Page::frameIsMainFrame(const Frame* frame)
+{
+    return frame == m_mainFrame.get();
+}
+
 ArenaSize Page::renderTreeSize() const
 {
     ArenaSize total(0, 0);
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (const Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())
             continue;
         if (RenderArena* arena = frame->document()->renderArena()) {
@@ -1232,7 +1237,7 @@ void Page::checkSubframeCountConsistency() const
     ASSERT(m_subframeCount >= 0);
 
     int subframeCount = 0;
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (const Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         ++subframeCount;
 
     ASSERT(m_subframeCount + 1 == subframeCount);

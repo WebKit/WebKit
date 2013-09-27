@@ -36,9 +36,9 @@
 
 #include "Document.h"
 #include "EventLoop.h"
-#include "Frame.h"
 #include "FrameView.h"
 #include "JSDOMWindowCustom.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PluginView.h"

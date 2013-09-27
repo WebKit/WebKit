@@ -75,6 +75,7 @@ class HaltablePlugin;
 class HistoryItem;
 class InspectorClient;
 class InspectorController;
+class MainFrame;
 class MediaCanStartListener;
 class Node;
 class PageActivityAssertionToken;
@@ -161,8 +162,9 @@ public:
     EditorClient* editorClient() const { return m_editorClient; }
     PlugInClient* plugInClient() const { return m_plugInClient; }
 
-    Frame& mainFrame() const { return *m_mainFrame; }
-    bool frameIsMainFrame(const Frame* frame) { return frame == m_mainFrame.get(); }
+    MainFrame& mainFrame() { return *m_mainFrame; }
+    const MainFrame& mainFrame() const { return *m_mainFrame; }
+    bool frameIsMainFrame(const Frame*);
 
     bool openedByDOM() const;
     void setOpenedByDOM();
@@ -464,7 +466,7 @@ private:
     const OwnPtr<ProgressTracker> m_progress;
 
     const OwnPtr<BackForwardController> m_backForwardController;
-    const RefPtr<Frame> m_mainFrame;
+    const RefPtr<MainFrame> m_mainFrame;
 
     mutable RefPtr<PluginData> m_pluginData;
 

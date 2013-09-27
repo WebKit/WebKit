@@ -36,10 +36,10 @@
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/Settings.h>

@@ -66,6 +66,7 @@
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
+#include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "RegularExpression.h"

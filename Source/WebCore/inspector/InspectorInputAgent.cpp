@@ -36,11 +36,11 @@
 
 #include "Chrome.h"
 #include "EventHandler.h"
-#include "Frame.h"
 #include "FrameView.h"
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "PlatformEvent.h"
 #include "PlatformKeyboardEvent.h"

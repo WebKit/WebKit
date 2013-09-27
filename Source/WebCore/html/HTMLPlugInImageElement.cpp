@@ -34,6 +34,7 @@
 #include "JSDocumentFragment.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
+#include "MainFrame.h"
 #include "MouseEvent.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"

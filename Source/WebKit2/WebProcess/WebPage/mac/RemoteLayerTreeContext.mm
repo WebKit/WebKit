@@ -30,8 +30,8 @@
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteLayerTreeHostMessages.h"
 #import "WebPage.h"
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <wtf/PassOwnPtr.h>
 #import <wtf/TemporaryChange.h>

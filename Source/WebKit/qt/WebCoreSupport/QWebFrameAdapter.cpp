@@ -27,7 +27,6 @@
 #include "DocumentLoader.h"
 #include "EventHandler.h"
 #include "FocusController.h"
-#include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoaderClientQt.h"
 #include "FrameView.h"
@@ -37,6 +36,7 @@
 #include "InspectorController.h"
 #include "JSDOMWindowBase.h"
 #include "KURL.h"
+#include "MainFrame.h"
 #include "NavigationScheduler.h"
 #include "NetworkingContext.h"
 #include "NodeList.h"
@@ -49,21 +49,21 @@
 #include "SubstituteData.h"
 #include "TextureMapperLayerClientQt.h"
 #include "TiledBackingStore.h"
-#if ENABLE(GESTURE_EVENTS)
-#include "PlatformGestureEvent.h"
-#include "WebEventConversion.h"
-#endif
 #include "htmlediting.h"
 #include "markup.h"
 #include "qt_runtime.h"
 #include "qwebsecurityorigin.h"
 #include "qwebsecurityorigin_p.h"
 #include "qwebsettings.h"
-
 #include <IntRect.h>
 #include <IntSize.h>
 #include <QFileInfo>
 #include <QNetworkRequest>
+
+#if ENABLE(GESTURE_EVENTS)
+#include "PlatformGestureEvent.h"
+#include "WebEventConversion.h"
+#endif
 
 using namespace WebCore;
 

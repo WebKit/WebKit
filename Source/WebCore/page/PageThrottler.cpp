@@ -28,7 +28,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Frame.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "PageActivityAssertionToken.h"
 

@@ -66,6 +66,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSDOMWindowShell.h"
 #include "Logging.h"
+#include "MainFrame.h"
 #include "MathMLNames.h"
 #include "MediaFeatureNames.h"
 #include "Navigator.h"
@@ -150,11 +151,11 @@ static inline float parentTextZoomFactor(Frame* frame)
     return parent->textZoomFactor();
 }
 
-inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* frameLoaderClient)
-    : m_page(page)
-    , m_settings(&page->settings())
+Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient& frameLoaderClient)
+    : m_page(&page)
+    , m_settings(&page.settings())
     , m_treeNode(this, parentFromOwnerElement(ownerElement))
-    , m_loader(*this, *frameLoaderClient)
+    , m_loader(*this, frameLoaderClient)
     , m_navigationScheduler(this)
     , m_ownerElement(ownerElement)
     , m_script(createOwned<ScriptController>(*this))
@@ -170,7 +171,6 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     , m_inViewSourceMode(false)
     , m_activeDOMObjectsAndAnimationsSuspendedCount(0)
 {
-    ASSERT(page);
     AtomicString::init();
     HTMLNames::init();
     QualifiedName::init();
@@ -188,7 +188,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
         setTiledBackingStoreEnabled(settings().tiledBackingStoreEnabled());
 #endif
     } else {
-        page->incrementSubframeCount();
+        page.incrementSubframeCount();
         ownerElement->setContentFrame(this);
     }
 
@@ -204,7 +204,9 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
 
 PassRefPtr<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* client)
 {
-    return adoptRef(new Frame(page, ownerElement, client));
+    ASSERT(page);
+    ASSERT(client);
+    return adoptRef(new Frame(*page, ownerElement, *client));
 }
 
 Frame::~Frame()

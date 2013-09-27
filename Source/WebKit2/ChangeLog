@@ -1,3 +1,33 @@
+2013-09-27  Darin Adler  <darin@apple.com>
+
+        Add empty MainFrame class
+        https://bugs.webkit.org/show_bug.cgi?id=121770
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        * WebProcess/WebPage/FindController.cpp:
+        * WebProcess/WebPage/PageOverlay.cpp:
+        * WebProcess/WebPage/WebInspector.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp:
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        Include MainFrame.h instead of Frame.h as needed.
+
 2013-09-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Fix force_static_libs_as_shared in WebKit2

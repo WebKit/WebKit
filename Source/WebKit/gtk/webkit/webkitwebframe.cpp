@@ -48,6 +48,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "JSElement.h"
+#include "MainFrame.h"
 #include "PlatformContextCairo.h"
 #include "PrintContext.h"
 #include "RenderListItem.h"

@@ -30,10 +30,10 @@
 
 #include "ScriptProfiler.h"
 
-#include "Frame.h"
 #include "GCController.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "ScriptObject.h"
 #include "ScriptState.h"

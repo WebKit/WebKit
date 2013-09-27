@@ -29,16 +29,6 @@
 #include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
 #include "ContextMenuController.h"
-#if ENABLE(DEVICE_ORIENTATION)
-#include "DeviceMotionClientMock.h"
-#include "DeviceMotionController.h"
-#include "DeviceOrientationClientMock.h"
-#include "DeviceOrientationController.h"
-#if HAVE(QTSENSORS)
-#include "DeviceMotionClientQt.h"
-#include "DeviceOrientationClientQt.h"
-#endif
-#endif
 #include "DocumentLoader.h"
 #include "DragClientQt.h"
 #include "DragController.h"
@@ -51,13 +41,6 @@
 #include "FrameLoadRequest.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
-#if ENABLE(GEOLOCATION)
-#include "GeolocationClientMock.h"
-#include "GeolocationController.h"
-#if HAVE(QTLOCATION)
-#include "GeolocationClientQt.h"
-#endif
-#endif
 #include "GeolocationPermissionClientQt.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLInputElement.h"
@@ -68,6 +51,7 @@
 #include "InspectorServerQt.h"
 #include "LocalizedStrings.h"
 #include "MIMETypeRegistry.h"
+#include "MainFrame.h"
 #include "MemoryCache.h"
 #include "NetworkingContext.h"
 #include "NodeList.h"
@@ -105,6 +89,25 @@
 #include <QTextCharFormat>
 #include <QTouchEvent>
 #include <QWheelEvent>
+
+#if ENABLE(DEVICE_ORIENTATION)
+#include "DeviceMotionClientMock.h"
+#include "DeviceMotionController.h"
+#include "DeviceOrientationClientMock.h"
+#include "DeviceOrientationController.h"
+#if HAVE(QTSENSORS)
+#include "DeviceMotionClientQt.h"
+#include "DeviceOrientationClientQt.h"
+#endif
+#endif
+
+#if ENABLE(GEOLOCATION)
+#include "GeolocationClientMock.h"
+#include "GeolocationController.h"
+#if HAVE(QTLOCATION)
+#include "GeolocationClientQt.h"
+#endif
+#endif
 
 // from text/qfont.cpp
 QT_BEGIN_NAMESPACE

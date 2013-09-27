@@ -25,20 +25,20 @@
 
 #include "config.h"
 #include "WebDragClient.h"
+
 #include "WebDropSource.h"
 #include "WebKitGraphics.h"
 #include "WebView.h"
-
 #include <WebCore/Clipboard.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
 #include <WebCore/EventHandler.h>
+#include <WebCore/FrameView.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PlatformMouseEvent.h>
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
-#include <WebCore/GraphicsContext.h>
 #include <shlobj.h>
 
 using namespace WebCore;

@@ -27,6 +27,7 @@
 #include "GraphicsContext3D.h"
 #include "GraphicsLayerTextureMapper.h"
 #include "HostWindow.h"
+#include "MainFrame.h"
 #include "PageClientEfl.h"
 #include "TextureMapperGL.h"
 #include "TextureMapperLayer.h"

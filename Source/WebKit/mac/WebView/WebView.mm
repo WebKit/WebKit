@@ -131,7 +131,6 @@
 #import <WebCore/EventHandler.h>
 #import <WebCore/ExceptionHandlers.h>
 #import <WebCore/FocusController.h>
-#import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameSelection.h>
 #import <WebCore/FrameTree.h>
@@ -151,6 +150,7 @@
 #import <WebCore/JSNotification.h>
 #import <WebCore/Logging.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/MemoryPressureHandler.h>
 #import <WebCore/NodeList.h>
 #import <WebCore/Notification.h>

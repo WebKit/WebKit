@@ -36,7 +36,6 @@
 
 #include "BindingVisitors.h"
 #include "DOMWindow.h"
-#include "Frame.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLNames.h"
 #include "InjectedScript.h"
@@ -46,6 +45,7 @@
 #include "InspectorPageAgent.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
+#include "MainFrame.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "ScriptObject.h"

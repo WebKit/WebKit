@@ -3440,7 +3440,7 @@ class PassPtrTest(CppStyleTestBase):
             'RefPtr<Type1> myFunction(int)\n'
             '{\n'
             '}',
-            'The return type should use PassRefPtr instead of RefPtr.  [readability/pass_ptr] [5]')
+            '')
         self.assert_pass_ptr_check(
             'OwnPtr<Type1> myFunction(int)\n'
             '{\n'

@@ -517,15 +517,6 @@ class _FunctionState(object):
         self._clean_lines = clean_lines
         self._parameter_list = None
 
-    def modifiers_and_return_type(self):
-        """Returns the modifiers and the return type."""
-        # Go backwards from where the function name is until we encounter one of several things:
-        #   ';' or '{' or '}' or 'private:', etc. or '#' or return Position(0, 0)
-        elided = self._clean_lines.elided
-        start_modifiers = _rfind_in_lines(r';|\{|\}|((private|public|protected):)|(#.*)',
-                                          elided, self.parameter_start_position, Position(0, 0))
-        return SingleLineView(elided, start_modifiers, self.function_name_start_position).single_line.strip()
-
     def parameter_list(self):
         if not self._parameter_list:
             # Store the final result as a tuple since that is immutable.
@@ -1596,13 +1587,12 @@ def _check_parameter_name_against_text(parameter, text, error):
     return True
 
 
-def check_function_definition_and_pass_ptr(type_text, row, location_description, error):
+def check_function_definition_and_pass_ptr(type_text, row, error):
     """Check that function definitions for use Pass*Ptr instead of *Ptr.
 
     Args:
-       type_text: A string containing the type. (For return values, it may contain more than the type.)
+       type_text: A string containing the type.
        row: The row number of the type.
-       location_description: Used to indicate where the type is. This is either 'parameter' or 'return'.
        error: The function to call with any errors found.
     """
     match_ref_ptr = '(?=\W|^)RefPtr(?=\W)'
@@ -1611,7 +1601,7 @@ def check_function_definition_and_pass_ptr(type_text, row, location_description,
         return
     type_name = bad_type_usage.group(0)
     error(row, 'readability/pass_ptr', 5,
-          'The %s type should use Pass%s instead of %s.' % (location_description, type_name, type_name))
+          'The parameter type should use Pass%s instead of %s.' % (type_name, type_name))
 
 
 def check_function_definition(filename, file_extension, clean_lines, line_number, function_state, error):
@@ -1630,12 +1620,9 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
     if line_number != function_state.body_start_position.row:
         return
 
-    modifiers_and_return_type = function_state.modifiers_and_return_type()
-    check_function_definition_and_pass_ptr(modifiers_and_return_type, function_state.function_name_start_position.row, 'return', error)
-
     parameter_list = function_state.parameter_list()
     for parameter in parameter_list:
-        check_function_definition_and_pass_ptr(parameter.type, parameter.row, 'parameter', error)
+        check_function_definition_and_pass_ptr(parameter.type, parameter.row, error)
 
         # Do checks specific to function declarations and parameter names.
         if not function_state.is_declaration or not parameter.name:

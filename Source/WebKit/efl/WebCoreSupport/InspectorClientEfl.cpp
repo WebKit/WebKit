@@ -22,8 +22,10 @@
 #include "InspectorClientEfl.h"
 
 #if ENABLE(INSPECTOR)
+
 #include "EflInspectorUtilities.h"
 #include "InspectorController.h"
+#include "MainFrame.h"
 #include "NotImplemented.h"
 #include "ewk_view_private.h"
 #include <wtf/text/CString.h>

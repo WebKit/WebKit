@@ -28,10 +28,10 @@
 #include "ScrollingCoordinator.h"
 
 #include "Document.h"
-#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsLayer.h"
 #include "IntRect.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "PlatformWheelEvent.h"
 #include "PluginViewBase.h"

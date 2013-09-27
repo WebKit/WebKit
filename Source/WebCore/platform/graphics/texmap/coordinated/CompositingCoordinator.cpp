@@ -27,16 +27,19 @@
 #include "config.h"
 
 #if USE(COORDINATED_GRAPHICS)
+
 #include "CompositingCoordinator.h"
 
-#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "InspectorController.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "Settings.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/TemporaryChange.h>
+
+// FIXME: Having this in the platform directory is a layering violation. This does not belong here.
 
 namespace WebCore {
 

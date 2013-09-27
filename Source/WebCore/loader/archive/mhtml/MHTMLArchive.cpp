@@ -31,18 +31,19 @@
 #include "config.h"
 
 #if ENABLE(MHTML)
+
 #include "MHTMLArchive.h"
 
 #include "Document.h"
-#include "Frame.h"
 #include "MHTMLParser.h"
 #include "MIMETypeRegistry.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "PageSerializer.h"
 #include "QuotedPrintable.h"
 #include "SchemeRegistry.h"
 #include "SharedBuffer.h"
-
+#include <time.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/DateMath.h>
 #include <wtf/GregorianDateTime.h>
@@ -53,8 +54,6 @@
 #if HAVE(SYS_TIME_H)
 #include <sys/time.h>
 #endif
-#include <time.h>
-
 
 namespace WebCore {
 
@@ -242,4 +241,5 @@ PassRefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page, bool useBin
 }
 
 }
+
 #endif

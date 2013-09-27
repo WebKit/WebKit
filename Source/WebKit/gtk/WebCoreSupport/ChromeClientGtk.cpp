@@ -46,6 +46,7 @@
 #include "InspectorController.h"
 #include "IntRect.h"
 #include "KURL.h"
+#include "MainFrame.h"
 #include "NavigationAction.h"
 #include "NotImplemented.h"
 #include "PopupMenuClient.h"

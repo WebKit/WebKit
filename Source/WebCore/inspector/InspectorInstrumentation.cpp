@@ -64,6 +64,7 @@
 #include "InspectorTimelineAgent.h"
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
+#include "MainFrame.h"
 #include "PageDebuggerAgent.h"
 #include "PageRuntimeAgent.h"
 #include "RenderObject.h"

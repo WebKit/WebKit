@@ -32,8 +32,8 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/EventHandler.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <wtf/CurrentTime.h>

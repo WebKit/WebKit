@@ -42,9 +42,9 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/Color.h>
-#include <WebCore/Frame.h>
 #include <WebCore/KURL.h>
 #include <WebCore/LoaderStrategy.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/Page.h>

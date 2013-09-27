@@ -43,9 +43,9 @@
 #import "WebUIDelegate.h"
 #import "WebViewInternal.h"
 #import <algorithm>
-#import <WebCore/Frame.h>
 #import <WebCore/InspectorController.h>
 #import <WebCore/InspectorFrontendClient.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>

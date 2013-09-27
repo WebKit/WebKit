@@ -32,8 +32,8 @@
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <wtf/text/WTFString.h>
 

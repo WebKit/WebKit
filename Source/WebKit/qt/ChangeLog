@@ -1,3 +1,18 @@
+2013-09-27  Darin Adler  <darin@apple.com>
+
+        Add empty MainFrame class
+        https://bugs.webkit.org/show_bug.cgi?id=121770
+
+        Reviewed by Andreas Kling.
+
+        * Source/WebKit/qt/WebCoreSupport/InspectorClientQt.cpp:
+        * Source/WebKit/qt/WebCoreSupport/ChromeClientQt.cpp:
+        * Source/WebKit/qt/WebCoreSupport/QWebFrameAdapter.cpp:
+        * Source/WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        * Source/WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp:
+        * Source/WebKit/qt/WebCoreSupport/QWebPageAdapter.cpp:
+        Include MainFrame.h instead of Frame.h as needed.
+
 2013-09-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Fix force_static_libs_as_shared in WebKit2

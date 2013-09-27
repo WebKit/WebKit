@@ -55,7 +55,6 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FileIconLoader.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
@@ -64,6 +63,7 @@
 #include <WebCore/HTMLParserIdioms.h>
 #include <WebCore/HTMLPlugInImageElement.h>
 #include <WebCore/Icon.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>

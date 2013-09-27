@@ -896,6 +896,7 @@ SOURCES += \
     page/GroupSettings.cpp \
     page/History.cpp \
     page/Location.cpp \
+    page/MainFrame.cpp \
     page/MouseEventWithHitTestResults.cpp \
     page/Navigator.cpp \
     page/NavigatorBase.cpp \

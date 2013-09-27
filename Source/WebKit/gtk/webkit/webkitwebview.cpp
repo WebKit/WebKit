@@ -71,6 +71,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InspectorClientGtk.h"
+#include "MainFrame.h"
 #include "MemoryCache.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NotImplemented.h"

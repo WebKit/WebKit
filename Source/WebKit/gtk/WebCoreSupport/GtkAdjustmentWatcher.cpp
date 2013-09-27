@@ -19,8 +19,8 @@
 #include "config.h"
 #include "GtkAdjustmentWatcher.h"
 
-#include "Frame.h"
 #include "FrameView.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "Scrollbar.h"
 #include "webkitwebviewprivate.h"

@@ -98,7 +98,6 @@
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FormState.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameView.h>
@@ -111,6 +110,7 @@
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>

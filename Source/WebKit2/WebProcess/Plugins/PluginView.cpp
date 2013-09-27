@@ -42,7 +42,6 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
@@ -52,6 +51,7 @@
 #include <WebCore/HTMLPlugInImageElement.h>
 #include <WebCore/HostWindow.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/NetworkingContext.h>

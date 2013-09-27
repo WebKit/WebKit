@@ -27,13 +27,14 @@
 #import "DragController.h"
 
 #if ENABLE(DRAG_SUPPORT)
+
 #import "Clipboard.h"
 #import "DOMElementInternal.h"
 #import "DragClient.h"
 #import "DragData.h"
 #import "Element.h"
-#import "Frame.h"
 #import "FrameView.h"
+#import "MainFrame.h"
 #import "Page.h"
 #import "Pasteboard.h"
 

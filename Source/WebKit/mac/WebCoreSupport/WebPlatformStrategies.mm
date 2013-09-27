@@ -30,6 +30,7 @@
 #import "WebPluginPackage.h"
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/Color.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageGroup.h>
 #import <WebCore/PlatformCookieJar.h>

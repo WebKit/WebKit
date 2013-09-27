@@ -55,7 +55,6 @@
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FormState.h>
-#include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
@@ -64,6 +63,7 @@
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>

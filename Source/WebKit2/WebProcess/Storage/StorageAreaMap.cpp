@@ -35,7 +35,7 @@
 #include "WebPageGroupProxy.h"
 #include "WebProcess.h"
 #include <WebCore/DOMWindow.h>
-#include <WebCore/Frame.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/Storage.h>

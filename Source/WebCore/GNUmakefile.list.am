@@ -4211,6 +4211,8 @@ webcore_sources += \
 	Source/WebCore/page/LayoutMilestones.h \
 	Source/WebCore/page/Location.cpp \
 	Source/WebCore/page/Location.h \
+	Source/WebCore/page/MainFrame.cpp \
+	Source/WebCore/page/MainFrame.h \
 	Source/WebCore/page/MediaCanStartListener.h \
 	Source/WebCore/page/MouseEventWithHitTestResults.cpp \
 	Source/WebCore/page/MouseEventWithHitTestResults.h \

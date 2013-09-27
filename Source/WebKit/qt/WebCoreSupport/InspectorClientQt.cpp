@@ -31,11 +31,11 @@
 #include "config.h"
 #include "InspectorClientQt.h"
 
-#include "Frame.h"
 #include "FrameView.h"
 #include "InspectorController.h"
 #include "InspectorFrontend.h"
 #include "InspectorServerQt.h"
+#include "MainFrame.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "QWebFrameAdapter.h"

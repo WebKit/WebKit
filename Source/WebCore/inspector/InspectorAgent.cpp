@@ -36,7 +36,6 @@
 
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "Frame.h"
 #include "GraphicsContext.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
@@ -46,6 +45,7 @@
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "ResourceRequest.h"
 #include "ScriptController.h"

@@ -22,10 +22,10 @@
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
 
 #include "CairoUtilities.h"
-#include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsLayerTextureMapper.h"
 #include "GtkVersioning.h"
+#include "MainFrame.h"
 #include "PlatformContextCairo.h"
 #include "Settings.h"
 #include "TextureMapperGL.h"

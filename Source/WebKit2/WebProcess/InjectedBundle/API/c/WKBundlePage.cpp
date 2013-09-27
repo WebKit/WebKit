@@ -46,11 +46,10 @@
 #include "WebString.h"
 #include "WebURL.h"
 #include "WebURLRequest.h"
-
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityObject.h>
-#include <WebCore/Frame.h>
 #include <WebCore/KURL.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <wtf/StdLibExtras.h>
 
