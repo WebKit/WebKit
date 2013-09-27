@@ -1,3 +1,13 @@
+2013-09-27  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Intermittent crash on media/video-controls-captions-trackmenu.html
+        https://bugs.webkit.org/show_bug.cgi?id=110173
+
+        This code got rewritten, and the test now just fails. Fixing and re-enabling it
+        is tracked in a different bug.
+
+        * platform/mac/TestExpectations: Removing superfluous entry which was confusing the parser.
+
 2013-09-27  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] WebKitTestRunner's window snapshots are blank with tiled drawing
