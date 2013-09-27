@@ -2789,7 +2789,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
                 trailingObjects.appendBoxIfNeeded(box);
             } else
                 m_positionedObjects.append(box);
-            width.addUncommittedWidth(inlineLogicalWidth(current.m_obj));
+            width.addUncommittedWidth(inlineLogicalWidth(current.m_obj), *current.m_obj);
             // Reset prior line break context characters.
             renderTextInfo.m_lineBreakIterator.resetPriorContext();
         } else if (current.m_obj->isFloating()) {
@@ -2840,7 +2840,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
                 }
             }
 
-            width.addUncommittedWidth(inlineLogicalWidth(current.m_obj) + borderPaddingMarginStart(flowBox) + borderPaddingMarginEnd(flowBox));
+            width.addUncommittedWidth(inlineLogicalWidth(current.m_obj) + borderPaddingMarginStart(flowBox) + borderPaddingMarginEnd(flowBox), *current.m_obj);
         } else if (current.m_obj->isReplaced()) {
             RenderBox* replacedBox = toRenderBox(current.m_obj);
 
@@ -2872,9 +2872,9 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
                     ignoringSpaces = true;
                 }
                 if (toRenderListMarker(*current.m_obj).isInside())
-                    width.addUncommittedWidth(replacedLogicalWidth);
+                    width.addUncommittedWidth(replacedLogicalWidth, *current.m_obj);
             } else
-                width.addUncommittedWidth(replacedLogicalWidth);
+                width.addUncommittedWidth(replacedLogicalWidth, *current.m_obj);
             if (current.m_obj->isRubyRun())
                 width.applyOverhang(toRenderRubyRun(current.m_obj), last, next);
             // Update prior line break context characters, using U+FFFD (OBJECT REPLACEMENT CHARACTER) for replaced element.
@@ -2962,7 +2962,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
 
                 if (c == softHyphen && autoWrap && !hyphenWidth && style->hyphens() != HyphensNone) {
                     hyphenWidth = measureHyphenWidth(t, f, &fallbackFonts);
-                    width.addUncommittedWidth(hyphenWidth);
+                    width.addUncommittedWidth(hyphenWidth, *current.m_obj);
                 }
 
                 bool applyWordSpacing = false;
@@ -3016,13 +3016,13 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
 
                     wordMeasurement.width = additionalTempWidth + wordSpacingForWordMeasurement;
                     additionalTempWidth += lastSpaceWordSpacing;
-                    width.addUncommittedWidth(additionalTempWidth);
+                    width.addUncommittedWidth(additionalTempWidth, *current.m_obj);
 
                     if (collapseWhiteSpace && previousCharacterIsSpace && currentCharacterIsSpace && additionalTempWidth)
                         width.setTrailingWhitespaceWidth(additionalTempWidth);
 
                     if (!appliedStartWidth) {
-                        width.addUncommittedWidth(inlineLogicalWidth(current.m_obj, true, false));
+                        width.addUncommittedWidth(inlineLogicalWidth(current.m_obj, true, false), *current.m_obj);
                         appliedStartWidth = true;
                     }
 
@@ -3078,10 +3078,10 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
                                 goto end;
                         } else {
                             if (!betweenWords || (midWordBreak && !autoWrap))
-                                width.addUncommittedWidth(-additionalTempWidth);
+                                width.addUncommittedWidth(-additionalTempWidth, *current.m_obj);
                             if (hyphenWidth) {
                                 // Subtract the width of the soft hyphen out since we fit on a line.
-                                width.addUncommittedWidth(-hyphenWidth);
+                                width.addUncommittedWidth(-hyphenWidth, *current.m_obj);
                                 hyphenWidth = 0;
                             }
                         }
@@ -3193,7 +3193,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
             additionalTempWidth += lastSpaceWordSpacing;
 
             float inlineLogicalTempWidth = inlineLogicalWidth(current.m_obj, !appliedStartWidth, includeEndWidth);
-            width.addUncommittedWidth(additionalTempWidth + inlineLogicalTempWidth);
+            width.addUncommittedWidth(additionalTempWidth + inlineLogicalTempWidth, *current.m_obj);
 
             if (wordMeasurement.fallbackFonts.isEmpty() && !fallbackFonts.isEmpty())
                 wordMeasurement.fallbackFonts.swap(fallbackFonts);
@@ -3283,7 +3283,7 @@ InlineIterator LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineI
             // make sure we consume at least one char/object.
             if (lBreak == resolver.position())
                 lBreak.increment();
-        } else if (!width.committedWidth() && (!current.m_obj || !current.m_obj->isBR()) && !current.m_pos) {
+        } else if (!current.m_pos && !width.committedWidth() && current.m_obj && width.uncommittedWidthForObject(*current.m_obj) == width.uncommittedWidth()) {
             // Do not push the current object to the next line, when this line has some content, but it is still considered empty.
             // Empty inline elements like <span></span> can produce such lines and now we just ignore these break opportunities
             // at the start of a line, if no width has been committed yet.

@@ -150,6 +150,23 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
     computeAvailableWidthFromLeftAndRight();
 }
 
+float LineWidth::uncommittedWidthForObject(const RenderObject& object) const
+{
+    auto result = m_uncommittedWidthMap.find(&object);
+    if (result != m_uncommittedWidthMap.end())
+        return result->value;
+    return -1;
+}
+
+void LineWidth::addUncommittedWidth(float delta, const RenderObject& current)
+{
+    m_uncommittedWidth += delta;
+
+    auto result = m_uncommittedWidthMap.add(&current, delta);
+    if (!result.isNewEntry)
+        result.iterator->value += delta;
+}
+
 void LineWidth::commit()
 {
     m_committedWidth += m_uncommittedWidth;
