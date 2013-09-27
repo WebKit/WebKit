@@ -33,6 +33,7 @@
 #include "WebPreferences.h"
 #include <WebCore/COMPtr.h>
 #include <WebCore/DragActions.h>
+#include <WebCore/GraphicsLayer.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/SharedGDIObject.h>
 #include <WebCore/SuspendableTimer.h>
@@ -1156,7 +1157,7 @@ protected:
     void setAcceleratedCompositing(bool);
 
     RefPtr<WebCore::CACFLayerTreeHost> m_layerTreeHost;
-    OwnPtr<WebCore::GraphicsLayer> m_backingLayer;
+    std::unique_ptr<WebCore::GraphicsLayer> m_backingLayer;
     bool m_isAcceleratedCompositing;
 #endif
 
