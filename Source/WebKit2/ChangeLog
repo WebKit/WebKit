@@ -1,3 +1,15 @@
+2013-09-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Fix force_static_libs_as_shared in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=121961
+
+        Reviewed by Csaba Osztrogonác.
+
+        Do not add strict ordering for webkit2qml. It is not needed and causes
+        Target.pri to be built out of order.
+
+        * WebKit2.pro:
+
 2013-09-26  Anders Carlsson  <andersca@apple.com>
 
         Remove Windows code

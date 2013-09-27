@@ -16,6 +16,4 @@ addStrictSubdirOrderBetween(derived_sources, target)
 have?(QTQUICK) {
     webkit2qml.file = WebKit2QML.pri
     SUBDIRS += webkit2qml
-
-    addStrictSubdirOrderBetween(target, webkit2qml)
 }

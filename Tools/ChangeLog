@@ -1,5 +1,16 @@
 2013-09-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] Fix force_static_libs_as_shared in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=121961
+
+        Reviewed by Csaba Osztrogonác.
+
+        Reenable force_static_libs_as_shared when building WebKit2.
+
+        * qmake/mkspecs/features/default_post.prf:
+
+2013-09-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         [Qt] Mock implementations of positioning and orientation not used
         https://bugs.webkit.org/show_bug.cgi?id=121956
 
