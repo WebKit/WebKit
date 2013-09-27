@@ -44,4 +44,9 @@ String localizedString(const char* key)
     return String::fromUTF8(key, strlen(key));
 }
 
+String unacceptableTLSCertificate()
+{
+    return ASCIILiteral("Unacceptable TLS certificate");
+}
+
 }

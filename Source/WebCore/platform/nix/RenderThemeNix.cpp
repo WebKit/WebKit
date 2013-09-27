@@ -29,10 +29,10 @@
 #include "InputTypeNames.h"
 #include "PaintInfo.h"
 #include "PlatformContextCairo.h"
+#include "public/Canvas.h"
 #include "public/Platform.h"
-#include "public/WebCanvas.h"
-#include "public/WebRect.h"
-#include "public/WebThemeEngine.h"
+#include "public/Rect.h"
+#include "public/ThemeEngine.h"
 #if ENABLE(PROGRESS_ELEMENT)
 #include "RenderProgress.h"
 #endif
@@ -53,17 +53,17 @@ static void setSizeIfAuto(RenderStyle* style, const IntSize& size)
         style->setHeight(Length(size.height(), Fixed));
 }
 
-Color toColor(const WebKit::WebColor& color)
+Color toColor(const Nix::Color& color)
 {
     return WebCore::Color(RGBA32(color));
 }
 
-static WebKit::WebThemeEngine* themeEngine()
+static Nix::ThemeEngine* themeEngine()
 {
-    return WebKit::Platform::current()->themeEngine();
+    return Nix::Platform::current()->themeEngine();
 }
 
-static WebKit::WebCanvas* webCanvas(const PaintInfo& info)
+static Nix::Canvas* webCanvas(const PaintInfo& info)
 {
     return info.context->platformContext()->cr();
 }
@@ -169,28 +169,28 @@ void RenderThemeNix::systemFont(WebCore::CSSValueID, FontDescription&) const
 {
 }
 
-static WebKit::WebThemeEngine::State getWebThemeState(const RenderTheme* theme, const RenderObject* o)
+static Nix::ThemeEngine::State getWebThemeState(const RenderTheme* theme, const RenderObject* o)
 {
     if (!theme->isEnabled(o))
-        return WebKit::WebThemeEngine::StateDisabled;
+        return Nix::ThemeEngine::StateDisabled;
     if (theme->isPressed(o))
-        return WebKit::WebThemeEngine::StatePressed;
+        return Nix::ThemeEngine::StatePressed;
     if (theme->isHovered(o))
-        return WebKit::WebThemeEngine::StateHover;
+        return Nix::ThemeEngine::StateHover;
 
-    return WebKit::WebThemeEngine::StateNormal;
+    return Nix::ThemeEngine::StateNormal;
 }
 
 bool RenderThemeNix::paintButton(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
-    WebKit::WebThemeEngine::ButtonExtraParams extraParams;
+    Nix::ThemeEngine::ButtonExtraParams extraParams;
     extraParams.isDefault = isDefault(o);
     extraParams.hasBorder = true;
     extraParams.backgroundColor = defaultButtonBackgroundColor;
     if (o->hasBackground())
         extraParams.backgroundColor = o->style()->visitedDependentColor(CSSPropertyBackgroundColor).rgb();
 
-    themeEngine()->paintButton(webCanvas(i), getWebThemeState(this, o), WebKit::WebRect(rect), extraParams);
+    themeEngine()->paintButton(webCanvas(i), getWebThemeState(this, o), Nix::Rect(rect), extraParams);
     return false;
 }
 
@@ -201,7 +201,7 @@ bool RenderThemeNix::paintTextField(RenderObject* o, const PaintInfo& i, const I
     if (o->style()->hasBorderRadius() || o->style()->hasBackgroundImage())
         return true;
 
-    themeEngine()->paintTextField(webCanvas(i), getWebThemeState(this, o), WebKit::WebRect(rect));
+    themeEngine()->paintTextField(webCanvas(i), getWebThemeState(this, o), Nix::Rect(rect));
     return false;
 }
 
@@ -212,11 +212,11 @@ bool RenderThemeNix::paintTextArea(RenderObject* o, const PaintInfo& i, const In
 
 bool RenderThemeNix::paintCheckbox(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
-    WebKit::WebThemeEngine::ButtonExtraParams extraParams;
+    Nix::ThemeEngine::ButtonExtraParams extraParams;
     extraParams.checked = isChecked(o);
     extraParams.indeterminate = isIndeterminate(o);
 
-    themeEngine()->paintCheckbox(webCanvas(i), getWebThemeState(this, o), WebKit::WebRect(rect), extraParams);
+    themeEngine()->paintCheckbox(webCanvas(i), getWebThemeState(this, o), Nix::Rect(rect), extraParams);
     return false;
 }
 
@@ -232,11 +232,11 @@ void RenderThemeNix::setCheckboxSize(RenderStyle* style) const
 
 bool RenderThemeNix::paintRadio(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
-    WebKit::WebThemeEngine::ButtonExtraParams extraParams;
+    Nix::ThemeEngine::ButtonExtraParams extraParams;
     extraParams.checked = isChecked(o);
     extraParams.indeterminate = isIndeterminate(o);
 
-    themeEngine()->paintRadio(webCanvas(i), getWebThemeState(this, o), WebKit::WebRect(rect), extraParams);
+    themeEngine()->paintRadio(webCanvas(i), getWebThemeState(this, o), Nix::Rect(rect), extraParams);
     return false;
 }
 
@@ -252,7 +252,7 @@ void RenderThemeNix::setRadioSize(RenderStyle* style) const
 
 bool RenderThemeNix::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
-    themeEngine()->paintMenuList(webCanvas(i), getWebThemeState(this, o), WebKit::WebRect(rect));
+    themeEngine()->paintMenuList(webCanvas(i), getWebThemeState(this, o), Nix::Rect(rect));
     return false;
 }
 
@@ -281,12 +281,12 @@ void RenderThemeNix::adjustProgressBarStyle(StyleResolver*, RenderStyle* style, 
 bool RenderThemeNix::paintProgressBar(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
     RenderProgress* renderProgress = toRenderProgress(o);
-    WebKit::WebThemeEngine::ProgressBarExtraParams extraParams;
+    Nix::ThemeEngine::ProgressBarExtraParams extraParams;
     extraParams.isDeterminate = renderProgress->isDeterminate();
     extraParams.position = renderProgress->position();
     extraParams.animationProgress = renderProgress->animationProgress();
     extraParams.animationStartTime = renderProgress->animationStartTime();
-    themeEngine()->paintProgressBar(webCanvas(i), getWebThemeState(this, o), WebKit::WebRect(rect), extraParams);
+    themeEngine()->paintProgressBar(webCanvas(i), getWebThemeState(this, o), Nix::Rect(rect), extraParams);
 
     return false;
 }
@@ -384,11 +384,11 @@ void RenderThemeNix::adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle* sty
 
 bool RenderThemeNix::paintInnerSpinButton(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
-    WebKit::WebThemeEngine::InnerSpinButtonExtraParams extraParams;
+    Nix::ThemeEngine::InnerSpinButtonExtraParams extraParams;
     extraParams.spinUp = isSpinUpButtonPartPressed(o);
     extraParams.readOnly = isReadOnlyControl(o);
 
-    themeEngine()->paintInnerSpinButton(webCanvas(i), getWebThemeState(this, o), WebKit::WebRect(rect), extraParams);
+    themeEngine()->paintInnerSpinButton(webCanvas(i), getWebThemeState(this, o), Nix::Rect(rect), extraParams);
     return false;
 }
 
@@ -424,7 +424,7 @@ bool RenderThemeNix::paintMeter(RenderObject* o, const PaintInfo& i, const IntRe
 
     RenderMeter* renderMeter = toRenderMeter(o);
     HTMLMeterElement* e = renderMeter->meterElement();
-    WebKit::WebThemeEngine::MeterExtraParams extraParams;
+    Nix::ThemeEngine::MeterExtraParams extraParams;
     extraParams.min = e->min();
     extraParams.max = e->max();
     extraParams.value = e->value();

@@ -38,6 +38,10 @@
 #define ENABLE_ACCELERATED_OVERFLOW_SCROLLING 1
 #endif
 
+#if !defined(ENABLE_BATTERY_STATUS)
+#define ENABLE_BATTERY_STATUS 1
+#endif
+
 #if !defined(ENABLE_BLOB)
 #define ENABLE_BLOB 1
 #endif
@@ -56,6 +60,10 @@
 
 #if !defined(ENABLE_CSS_BOX_DECORATION_BREAK)
 #define ENABLE_CSS_BOX_DECORATION_BREAK 1
+#endif
+
+#if !defined(ENABLE_CSS_DEVICE_ADAPTATION)
+#define ENABLE_CSS_DEVICE_ADAPTATION 1
 #endif
 
 #if !defined(ENABLE_CSS_EXCLUSIONS)
@@ -122,6 +130,10 @@
 #define ENABLE_GAMEPAD 1
 #endif
 
+#if !defined(ENABLE_GEOLOCATION)
+#define ENABLE_GEOLOCATION 1
+#endif
+
 #if !defined(ENABLE_GESTURE_EVENTS)
 #define ENABLE_GESTURE_EVENTS 1
 #endif
@@ -154,10 +166,6 @@
 #define ENABLE_JIT 1
 #endif
 
-#if !defined(ENABLE_LEGACY_VENDOR_PREFIXES)
-#define ENABLE_LEGACY_VENDOR_PREFIXES 0
-#endif
-
 #if !defined(ENABLE_LEGACY_VIEWPORT_ADAPTION)
 #define ENABLE_LEGACY_VIEWPORT_ADAPTION 1
 #endif
@@ -178,10 +186,6 @@
 #define ENABLE_METER_ELEMENT 1
 #endif
 
-#if !defined(ENABLE_MICRODATA)
-#define ENABLE_MICRODATA 1
-#endif
-
 #if !defined(ENABLE_NAVIGATOR_CONTENT_UTILS)
 #define ENABLE_NAVIGATOR_CONTENT_UTILS 1
 #endif
@@ -194,6 +198,10 @@
 #define ENABLE_NETWORK_INFO 1
 #endif
 
+#if !defined(ENABLE_PAGE_VISIBILITY_API)
+#define ENABLE_PAGE_VISIBILITY_API 1
+#endif
+
 #if !defined(ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH)
 #define ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH 1
 #endif
@@ -204,6 +212,10 @@
 
 #if !defined(ENABLE_PROGRESS_ELEMENT)
 #define ENABLE_PROGRESS_ELEMENT 1
+#endif
+
+#if !defined(ENABLE_PROMISES)
+#define ENABLE_PROMISES 1
 #endif
 
 #if !defined(ENABLE_REQUEST_ANIMATION_FRAME)
@@ -240,6 +252,10 @@
 
 #if !defined(ENABLE_UNDO_MANAGER)
 #define ENABLE_UNDO_MANAGER 0
+#endif
+
+#if !defined(ENABLE_VIBRATION)
+#define ENABLE_VIBRATION 1
 #endif
 
 #if !defined(ENABLE_VIDEO)

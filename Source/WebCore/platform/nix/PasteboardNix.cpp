@@ -24,17 +24,11 @@
 #include "config.h"
 #include "Pasteboard.h"
 
-#include "DocumentFragment.h"
 #include "NotImplemented.h"
-#include <wtf/text/StringHash.h>
+
+using namespace WTF;
 
 namespace WebCore {
-
-Pasteboard* Pasteboard::generalPasteboard()
-{
-    static Pasteboard* pasteboard = new Pasteboard();
-    return pasteboard;
-}
 
 Pasteboard::Pasteboard()
 {
@@ -46,22 +40,7 @@ void Pasteboard::writePlainText(const String&, SmartReplaceOption)
     notImplemented();
 }
 
-void Pasteboard::writeSelection(Range*, bool, Frame*, ShouldSerializeSelectedTextForClipboard)
-{
-    notImplemented();
-}
-
 void Pasteboard::write(const PasteboardURL&)
-{
-    notImplemented();
-}
-
-void Pasteboard::writeImage(Node*, const URL&, const String&)
-{
-    notImplemented();
-}
-
-void Pasteboard::writeClipboard(Clipboard*)
 {
     notImplemented();
 }
@@ -75,12 +54,6 @@ bool Pasteboard::canSmartReplace()
 {
     notImplemented();
     return false;
-}
-
-PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame*, PassRefPtr<Range>, bool, bool&)
-{
-    notImplemented();
-    return 0;
 }
 
 void Pasteboard::read(PasteboardPlainText&)
@@ -133,10 +106,10 @@ bool Pasteboard::writeString(const String&, const String&)
     return false;
 }
 
-ListHashSet<String> Pasteboard::types()
+Vector<String> Pasteboard::types()
 {
     notImplemented();
-    return ListHashSet<String>();
+    return Vector<String>();
 }
 
 Vector<String> Pasteboard::readFilenames()

@@ -1,3 +1,44 @@
+2013-09-27  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        [Nix] Updating Nix trunk files
+        https://bugs.webkit.org/show_bug.cgi?id=121752
+
+        Reviewed by Benjamin Poulain.
+
+        No new tests needed.
+
+        * page/nix/EventHandlerNix.cpp:
+        (WebCore::EventHandler::focusDocumentView):
+        (WebCore::EventHandler::passWheelEventToWidget):
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        * platform/DragImage.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/nix/DragImageNix.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/nix/GamepadsNix.cpp:
+        (WebCore::sampleGamepads):
+        * platform/nix/LanguageNix.cpp:
+        (WebCore::platformLanguage):
+        * platform/nix/LocalizedStringsNix.cpp:
+        (WebCore::unacceptableTLSCertificate):
+        * platform/nix/PasteboardNix.cpp:
+        (WebCore::Pasteboard::types):
+        * platform/nix/RenderThemeNix.cpp:
+        (WebCore::toColor):
+        (WebCore::themeEngine):
+        (WebCore::webCanvas):
+        (WebCore::getWebThemeState):
+        (WebCore::RenderThemeNix::paintButton):
+        (WebCore::RenderThemeNix::paintTextField):
+        (WebCore::RenderThemeNix::paintCheckbox):
+        (WebCore::RenderThemeNix::paintRadio):
+        (WebCore::RenderThemeNix::paintMenuList):
+        (WebCore::RenderThemeNix::paintProgressBar):
+        (WebCore::RenderThemeNix::paintInnerSpinButton):
+        (WebCore::RenderThemeNix::paintMeter):
+
 2013-09-27  Anders Carlsson  <andersca@apple.com>
 
         Use std::unique_ptr for GraphicsLayer creation

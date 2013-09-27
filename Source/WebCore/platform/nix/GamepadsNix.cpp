@@ -37,21 +37,21 @@ class GamepadList;
 
 void sampleGamepads(GamepadList* into)
 {
-    WebKit::WebGamepads gamepads;
+    Nix::Gamepads gamepads;
 
-    WebKit::Platform::current()->sampleGamepads(gamepads);
+    Nix::Platform::current()->sampleGamepads(gamepads);
 
-    for (unsigned i = 0; i < WebKit::WebGamepads::itemsLengthCap; ++i) {
-        WebKit::WebGamepad& webGamepad = gamepads.items[i];
-        if (i < gamepads.length && webGamepad.connected) {
+    for (unsigned i = 0; i < Nix::Gamepads::itemsLengthCap; ++i) {
+        Nix::Gamepad& nixGamepad = gamepads.items[i];
+        if (i < gamepads.length && nixGamepad.connected) {
             RefPtr<Gamepad> gamepad = into->item(i);
             if (!gamepad)
                 gamepad = Gamepad::create();
-            gamepad->id(webGamepad.id);
+            gamepad->id(nixGamepad.id);
             gamepad->index(i);
-            gamepad->timestamp(webGamepad.timestamp);
-            gamepad->axes(webGamepad.axesLength, webGamepad.axes);
-            gamepad->buttons(webGamepad.buttonsLength, webGamepad.buttons);
+            gamepad->timestamp(nixGamepad.timestamp);
+            gamepad->axes(nixGamepad.axesLength, nixGamepad.axes);
+            gamepad->buttons(nixGamepad.buttonsLength, nixGamepad.buttons);
             into->set(i, gamepad);
         } else
             into->set(i, 0);

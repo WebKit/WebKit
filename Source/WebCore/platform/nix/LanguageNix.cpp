@@ -41,7 +41,7 @@ static String platformLanguage()
     char* localeDefault = setlocale(LC_CTYPE, 0);
 
     if (!localeDefault)
-        return ASCIIString("c");
+        return ASCIILiteral("c");
 
     String locale = String(localeDefault);
     locale.replace('_', '-');
