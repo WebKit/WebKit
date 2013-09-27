@@ -1,5 +1,15 @@
 2013-09-27  Alexey Proskuryakov  <ap@apple.com>
 
+        Don't retry failures on Apple MountainLion Release WK1 tester
+        https://bugs.webkit.org/show_bug.cgi?id=122026
+
+        Reviewed by Mark Rowe.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Added --no-retry-failures
+        on this bot.
+
+2013-09-27  Alexey Proskuryakov  <ap@apple.com>
+
         Don't hardcode builder specific configuration in buildbot master.cfg
         https://bugs.webkit.org/show_bug.cgi?id=122023
 
