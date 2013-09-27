@@ -97,14 +97,6 @@ defineTest(detectFeatures) {
     # Enable CSS shaders when CSS filters and WebGL are enabled
     enable?(css_filters):enable?(webgl): WEBKIT_CONFIG += css_shaders
 
-    # Geolocation support if QtPositioning exists or if we're doing a developer build (Mock implementation exists
-    # and used for layout tests)
-    have?(qtpositioning)|!production_build: WEBKIT_CONFIG += geolocation
-
-    # Orientation support if QtSensors exists or if we're doing a developer build (Mock implementation exists
-    # and used for layout tests)
-    have?(qtsensors)|!production_build: WEBKIT_CONFIG += orientation_events device_orientation
-
     # HTML5 Media Support for non-Mac builds
     !mac {
         !contains(QT_CONFIG, no-pkg-config) {
@@ -155,6 +147,12 @@ defineTest(detectFeatures) {
 }
 
 defineTest(santizeFeatures) {
+    # If we are doing a production_build we should only enable Geolocation support if QtPositioning exists. In developer builds we can use Mock implementations.
+    production_build:!have?(qtpositioning): WEBKIT_CONFIG -= geolocation
+
+    # If we are doing a production_build we should only enable Orientation support if QtSensors exists. In developer builds we can use Mock implementations.
+    production_build:!have?(qtsensors): WEBKIT_CONFIG -= orientation_events device_orientation
+
     # Disable SVG fonts if SVG is disabled
     !enable?(svg): WEBKIT_CONFIG -= svg_fonts
 
