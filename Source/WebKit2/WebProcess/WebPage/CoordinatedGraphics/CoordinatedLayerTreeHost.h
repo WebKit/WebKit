@@ -122,7 +122,7 @@ private:
     OwnPtr<WebCore::CompositingCoordinator> m_coordinator;
 
     // The page overlay layer. Will be null if there's no page overlay.
-    OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
+    std::unique_ptr<WebCore::GraphicsLayer> m_pageOverlayLayer;
     RefPtr<PageOverlay> m_pageOverlay;
 
 #if ENABLE(CSS_SHADERS)
