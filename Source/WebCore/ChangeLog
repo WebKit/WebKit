@@ -1,5 +1,27 @@
 2013-09-27  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
+        Storing a reference to MediaStreamTrack in RTCStatsRequest
+        https://bugs.webkit.org/show_bug.cgi?id=122030
+
+        Reviewed by Eric Carlson.
+
+        The spec[1] says that the stats is related to a MediaStreamTrack object.
+        It also says: "Evaluate the need for other selectors than MediaStreamTrack".
+        So a MediaStreamTrack object is more suitable in this case.
+
+        [1]http://dev.w3.org/2011/webrtc/editor/webrtc.html#stats-selector
+
+        No new tests needed.
+
+        * Modules/mediastream/RTCStatsRequestImpl.cpp:
+        (WebCore::RTCStatsRequestImpl::RTCStatsRequestImpl):
+        (WebCore::RTCStatsRequestImpl::hasSelector):
+        (WebCore::RTCStatsRequestImpl::track):
+        * Modules/mediastream/RTCStatsRequestImpl.h:
+        * platform/mediastream/RTCStatsRequest.h:
+
+2013-09-27  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
         [Nix] Updating Nix trunk files
         https://bugs.webkit.org/show_bug.cgi?id=121752
 

@@ -39,8 +39,7 @@
 
 namespace WebCore {
 
-class MediaStreamComponent;
-class MediaStreamDescriptor;
+class MediaStreamTrack;
 class RTCStatsResponseBase;
 
 class RTCStatsRequest : public RefCounted<RTCStatsRequest> {
@@ -49,7 +48,7 @@ public:
 
     virtual PassRefPtr<RTCStatsResponseBase> createResponse() = 0;
     virtual bool hasSelector() = 0;
-    virtual MediaStreamDescriptor* stream() = 0;
+    virtual MediaStreamTrack* track() = 0;
     virtual void requestSucceeded(PassRefPtr<RTCStatsResponseBase>) = 0;
 
 protected:
