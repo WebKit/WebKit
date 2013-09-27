@@ -111,7 +111,7 @@ EXPORTS
         symbolWithPointer(?fastFree@WTF@@YAXPAX@Z, ?fastFree@WTF@@YAXPEAX@Z)
         symbolWithPointer(?fastCalloc@WTF@@YAPAXII@Z, ?fastCalloc@WTF@@YAPEAX_K0@Z)
         symbolWithPointer(??0CSSComputedStyleDeclaration@WebCore@@AAE@V?$PassRefPtr@VNode@WebCore@@@WTF@@_NABVString@3@@Z, ??0CSSComputedStyleDeclaration@WebCore@@AEAA@V?$PassRefPtr@VNode@WebCore@@@WTF@@_NAEBVString@3@@Z)
-        symbolWithPointer(??0CSSParserContext@WebCore@@QAE@AAVDocument@1@ABVURL@1@ABVString@WTF@@@Z, ??0CSSParserContext@WebCore@@QAE@AAVDocument@1@ABVURL@1@AEBVString@WTF@@@Z)
+        symbolWithPointer(??0CSSParserContext@WebCore@@QAE@AAVDocument@1@ABVKURL@1@ABVString@WTF@@@Z, ??0CSSParserContext@WebCore@@QEAA@AEAVDocument@1@AEBVKURL@1@AEBVString@WTF@@@Z)
         symbolWithPointer(??0Mutex@WTF@@QAE@XZ, ??0Mutex@WTF@@QEAA@XZ)
         symbolWithPointer(??0ThreadCondition@WTF@@QAE@XZ, ??0ThreadCondition@WTF@@QEAA@XZ)
         symbolWithPointer(??1HitTestResult@WebCore@@QAE@XZ, ??1HitTestResult@WebCore@@QEAA@XZ)
@@ -197,8 +197,8 @@ EXPORTS
         symbolWithPointer(?find@StringImpl@WTF@@QAEIPAV12@I@Z, ?find@StringImpl@WTF@@QEAA_KPEAV12@I@Z)
         symbolWithPointer(?find@StringImpl@WTF@@QAEIPAV12@@Z, ?find@StringImpl@WTF@@QEAA_KPEAV12@@Z)
         symbolWithPointer(?absoluteCaretBounds@FrameSelection@WebCore@@QAE?AVIntRect@2@XZ, ?absoluteCaretBounds@FrameSelection@WebCore@@QEAA?AVIntRect@2@XZ)
-        symbolWithPointer(?afterPseudoElement@Element@WebCore@@QBEPAVPseudoElement@2@XZ, ?afterPseudoElement@Element@WebCore@@QBEPAVPseudoElement@2@XZ)
-        symbolWithPointer(?beforePseudoElement@Element@WebCore@@QBEPAVPseudoElement@2@XZ, ?beforePseudoElement@Element@WebCore@@QBEPAVPseudoElement@2@XZ)
+        symbolWithPointer(?afterPseudoElement@Element@WebCore@@QBEPAVPseudoElement@2@XZ, ?afterPseudoElement@Element@WebCore@@QEBAPEAVPseudoElement@2@XZ)
+        symbolWithPointer(?beforePseudoElement@Element@WebCore@@QBEPAVPseudoElement@2@XZ, ?beforePseudoElement@Element@WebCore@@QEBAPEAVPseudoElement@2@XZ)
         symbolWithPointer(?bounds@FrameSelection@WebCore@@QBE?AVFloatRect@2@_N@Z, ?bounds@FrameSelection@WebCore@@QEBA?AVFloatRect@2@_N@Z)
         symbolWithPointer(?fromUTF8@String@WTF@@SA?AV12@PBE@Z, ?fromUTF8@String@WTF@@SA?AV12@PEBE_K@Z)
         symbolWithPointer(?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PBEI@Z, ?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PEBE_K@Z)
@@ -298,7 +298,7 @@ EXPORTS
         symbolWithPointer(?setPseudo@Element@WebCore@@QAEXABVAtomicString@WTF@@@Z, ?setPseudo@Element@WebCore@@QEAAXAEBVAtomicString@WTF@@@Z)
         symbolWithPointer(?setMediaTypeOverride@Settings@WebCore@@QAEXABVString@WTF@@@Z, ?setMediaTypeOverride@Settings@WebCore@@QEAAXAEBVString@WTF@@@Z)
         symbolWithPointer(?settings@Document@WebCore@@QBEPAVSettings@2@XZ, ?settings@Document@WebCore@@QEBAPEAVSettings@2@XZ)
-        ?sharedFeatures@RuntimeEnabledFeatures@WebCore@@SAAAV12@XZ
+        symbolWithPointer(?sharedFeatures@RuntimeEnabledFeatures@WebCore@@SAAAV12@XZ, ?sharedFeatures@RuntimeEnabledFeatures@WebCore@@SAAEAV12@XZ)
         symbolWithPointer(?substring@String@WTF@@QBE?AV12@II@Z, ?substring@String@WTF@@QEBA?AV12@II@Z)
         symbolWithPointer(?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ, ?suggestedValue@HTMLInputElement@WebCore@@QEBAAEBVString@WTF@@XZ)
         symbolWithPointer(?target@HistoryItem@WebCore@@QBEABVString@WTF@@XZ, ?target@HistoryItem@WebCore@@QEBAAEBVString@WTF@@XZ)
@@ -377,14 +377,14 @@ EXPORTS
         symbolWithPointer(?getCGImageArray@BitmapImage@WebCore@@UAE?AV?$RetainPtr@PBU__CFArray@@@WTF@@XZ, ?getCGImageArray@BitmapImage@WebCore@@UEAA?AV?$RetainPtr@PEBU__CFArray@@@WTF@@XZ)
         symbolWithPointer(?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z, ?draw@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z)
 #elif USE(CAIRO)
-        symbolWithPointer(?nativeImageForCurrentFrame@BitmapImage@WebCore@@UAE?AV?$PassRefPtr@U_cairo_surface@@@WTF@@XZ, ?nativeImageForCurrentFrame@BitmapImage@WebCore@@UEAA?AV?$PassRefPtr@U_cairo_surface@@@WTF@@XZ)
-        symbolWithPointer(?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@UImageOrientationDescription@2@@Z, ?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@UImageOrientationDescription@2@@Z)
-        symbolWithPointer(?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z, ?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z)
+        symbolWithPointer(?nativeImageForCurrentFrame@BitmapImage@WebCore@@UAE?AV?$PassRefPtr@U_cairo_surface@@@WTF@@XZ, ?draw@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z)
+        symbolWithPointer(?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@UImageOrientationDescription@2@@Z, ?draw@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@UImageOrientationDescription@2@@Z)
+        symbolWithPointer(?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z, ?draw@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@@Z)
 #endif
         symbolWithPointer(?getHBITMAP@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@@Z, ?getHBITMAP@BitmapImage@WebCore@@UEAA_NPEAUHBITMAP__@@@Z)
-        ?getHBITMAPOfSize@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@PBVIntSize@2@@Z
-        ?create@BitmapImage@WebCore@@SA?AV?$PassRefPtr@VBitmapImage@WebCore@@@WTF@@PAUHBITMAP__@@@Z
-        ?create@BitmapInfo@WebCore@@SA?AU12@ABVIntSize@2@W4BitCount@12@@Z
+        symbolWithPointer(?getHBITMAPOfSize@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@PBVIntSize@2@@Z, ?getHBITMAPOfSize@BitmapImage@WebCore@@UEAA_NPEAUHBITMAP__@@PEBVIntSize@2@@Z)
+        symbolWithPointer(?create@BitmapImage@WebCore@@SA?AV?$PassRefPtr@VBitmapImage@WebCore@@@WTF@@PAUHBITMAP__@@@Z, ?create@BitmapImage@WebCore@@SA?AV?$PassRefPtr@VBitmapImage@WebCore@@@WTF@@PEAVImageObserver@2@@Z)
+        symbolWithPointer(?create@BitmapInfo@WebCore@@SA?AU12@ABVIntSize@2@W4BitCount@12@@Z, ?create@BitmapInfo@WebCore@@SA?AU12@AEBVIntSize@2@W4BitCount@12@@Z)
         symbolWithPointer(?drawPattern@Image@WebCore@@UAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVAffineTransform@2@ABVFloatPoint@2@W4ColorSpace@2@W4CompositeOperator@2@1W4BlendMode@2@@Z, ?drawPattern@Image@WebCore@@UEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@AEBVAffineTransform@2@AEBVFloatPoint@2@W4ColorSpace@2@W4CompositeOperator@2@1W4BlendMode@2@@Z)
         symbolWithPointer(?drawFrameMatchingSourceSize@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVIntSize@2@W4ColorSpace@2@W4CompositeOperator@2@@Z, ?drawFrameMatchingSourceSize@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@AEBVIntSize@2@W4ColorSpace@2@W4CompositeOperator@2@@Z)
         symbolWithPointer(?mayFillWithSolidColor@BitmapImage@WebCore@@MAE_NXZ, ?mayFillWithSolidColor@BitmapImage@WebCore@@MEAA_NXZ)
@@ -453,12 +453,12 @@ EXPORTS
         symbolWithPointer(?nearest@TimeRanges@WebCore@@QBENN@Z, ?nearest@TimeRanges@WebCore@@QEBANN@Z)
         symbolWithPointer(?add@TimeRanges@WebCore@@QAEXNN@Z, ?add@TimeRanges@WebCore@@QEAAXNN@Z)
 #endif
-        symbolWithPointer(?toJSONString@InspectorValue@WebCore@@QBE?AVString@WTF@@XZ, ?toJSONString@InspectorValue@WebCore@@QBE?AVString@WTF@@XZ)
-        symbolWithPointer(?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@WebCore@@@WTF@@XZ, ?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@WebCore@@@WTF@@XZ)
-        ?standardFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z
-        ?serifFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z
-        ?sansSerifFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z
-        ?pictographFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z
-        ?fixedFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z
-        ?fantasyFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z
-        ?cursiveFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z
+        symbolWithPointer(?toJSONString@InspectorValue@WebCore@@QBE?AVString@WTF@@XZ, ?toJSONString@InspectorValue@WebCore@@QEBA?AVString@WTF@@XZ)
+        symbolWithPointer(?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@WebCore@@@WTF@@XZ, ?buildObjectForHighlightedNode@InspectorController@WebCore@@QEBA?AV?$PassRefPtr@VInspectorObject@WebCore@@@WTF@@XZ)
+        symbolWithPointer(?standardFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z, ?standardFontFamily@Settings@WebCore@@QEBAAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
+        symbolWithPointer(?serifFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z, ?serifFontFamily@Settings@WebCore@@QEBAAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
+        symbolWithPointer(?sansSerifFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z, ?sansSerifFontFamily@Settings@WebCore@@QEBAAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
+        symbolWithPointer(?pictographFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z, ?pictographFontFamily@Settings@WebCore@@QEBAAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
+        symbolWithPointer(?fixedFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z, ?fixedFontFamily@Settings@WebCore@@QEBAAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
+        symbolWithPointer(?fantasyFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z, ?fantasyFontFamily@Settings@WebCore@@QEBAAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
+        symbolWithPointer(?cursiveFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z, ?cursiveFontFamily@Settings@WebCore@@QEBAAEBVAtomicString@WTF@@W4UScriptCode@@@Z)

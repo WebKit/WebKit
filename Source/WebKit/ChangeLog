@@ -1,3 +1,10 @@
+2013-09-27  Alex Christensen  <alex.christensen@flexsim.com>
+
+        [Windows] Unreviewed build fix for Win64.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Added and fixed 64-bit linker symbols.
+
 2013-09-26  Darin Adler  <darin@apple.com>
 
         rename KURL to URL
