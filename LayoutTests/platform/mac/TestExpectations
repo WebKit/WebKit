@@ -1365,3 +1365,5 @@ webkit.org/b/122021 media/video-no-audio.html
 webkit.org/b/122021 media/video-rtl.html
 webkit.org/b/122021 media/video-volume-slider.html
 webkit.org/b/122021 media/volume-bar-empty-when-muted.html
+
+webkit.org/b/122031 fast/animation/request-animation-frame-time-unit.html [ Pass Failure ]
