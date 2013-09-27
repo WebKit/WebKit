@@ -1,3 +1,23 @@
+2013-09-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Tentative SunSpider 1.0.2
+        https://bugs.webkit.org/show_bug.cgi?id=122002
+
+        Reviewed by Gavin Barraclough.
+
+        Be even more aggressive about asking for zero delay between tests by
+        setting a timeout at the beginning of a test instead of the end. This is
+        another step toward reducing noise -- particularly noise caused by
+        power management -- just like the step down from 10ms to 0ms.
+
+        Browsers typically put a 4ms floor on timers. The sooner we set
+        our timer, the sooner it will fire.
+
+        * make-hosted:
+        * resources/driver-TEMPLATE.html: Changed the driver to set the timeout
+        earlier.
+        * tests/sunspider-1.0.2: Added. These tests are unchanged from 1.0.1.
+
 2013-09-09  Filip Pizlo  <fpizlo@apple.com>
 
         Stress tests should test the jsc profiler (-p)
