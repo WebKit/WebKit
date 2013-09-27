@@ -49,11 +49,11 @@ struct TupleCoder {
 
 template<typename... Elements>
 struct TupleCoder<0, Elements...> {
-    static void encode(ArgumentEncoder& encoder, const std::tuple<Elements...>& tuple)
+    static void encode(ArgumentEncoder&, const std::tuple<Elements...>&)
     {
     }
 
-    static bool decode(ArgumentDecoder& decoder, std::tuple<Elements...>& tuple)
+    static bool decode(ArgumentDecoder&, std::tuple<Elements...>&)
     {
         return true;
     }
