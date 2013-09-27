@@ -1,3 +1,18 @@
+2013-09-27  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] GTK does not expose heading level correctly. Was: accessibility/heading-level.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=106924
+
+        Reviewed by Chris Fleizach.
+
+        Consider headings levels as values to be returned in intValue()
+        both in DRT and WKTR, so we can share more tests with other ports.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::intValue): Consider headings too.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::intValue): Ditto.
+
 2013-09-26  Darin Adler  <darin@apple.com>
 
         rename KURL to URL

@@ -792,15 +792,29 @@ double AccessibilityUIElement::clickPointY()
 
 double AccessibilityUIElement::intValue() const
 {
-    if (!ATK_IS_VALUE(m_element.get()))
+    if (!ATK_IS_OBJECT(m_element.get()))
         return 0;
 
-    GValue value = G_VALUE_INIT;
-    atk_value_get_current_value(ATK_VALUE(m_element.get()), &value);
-    if (!G_VALUE_HOLDS_FLOAT(&value))
-        return 0;
+    if (ATK_IS_VALUE(m_element.get())) {
+        GValue value = G_VALUE_INIT;
+        atk_value_get_current_value(ATK_VALUE(m_element.get()), &value);
+        if (!G_VALUE_HOLDS_FLOAT(&value))
+            return 0;
+        return g_value_get_float(&value);
+    }
 
-    return g_value_get_float(&value);
+    // Consider headings as an special case when returning the "int value" of
+    // an AccessibilityUIElement, so we can reuse some tests to check the level
+    // both for HTML headings and objects with the aria-level attribute.
+    if (atk_object_get_role(ATK_OBJECT(m_element.get())) == ATK_ROLE_HEADING) {
+        String headingLevel = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), "level");
+        bool ok;
+        double headingLevelValue = headingLevel.toDouble(&ok);
+        if (ok)
+            return headingLevelValue;
+    }
+
+    return 0;
 }
 
 double AccessibilityUIElement::minValue()

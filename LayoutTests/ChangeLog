@@ -1,3 +1,14 @@
+2013-09-27  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] GTK does not expose heading level correctly. Was: accessibility/heading-level.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=106924
+
+        Reviewed by Chris Fleizach.
+
+        Removed accesibility/heading-level.html from failure expectations.
+
+        * platform/gtk/TestExpectations: Removed test now passing.
+
 2013-09-27  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Implement the media controls in JavaScript.
