@@ -1,3 +1,9 @@
+2013-09-27  Andreas Kling  <akling@apple.com>
+
+        Unrehued mac-lion rebaseline.
+
+        * platform/mac-lion/js/dom/global-constructors-attributes-expected.txt:
+
 2013-09-27  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK][WK2] Logging of accessibility events is not disabled between tests
