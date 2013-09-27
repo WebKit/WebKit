@@ -888,10 +888,11 @@ static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse,
 
     DateInstance* thisDateObj = asDateInstance(thisValue);
     double milli = thisDateObj->internalNumber();
+    VM& vm = exec->vm();
     
     if (!exec->argumentCount() || std::isnan(milli)) {
         JSValue result = jsNaN();
-        thisDateObj->setInternalValue(exec->vm(), result);
+        thisDateObj->setInternalValue(vm, result);
         return JSValue::encode(result);
     }
      
@@ -908,12 +909,12 @@ static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse,
     gregorianDateTime.copyFrom(*other);
     if (!fillStructuresUsingTimeArgs(exec, numArgsToUse, &ms, &gregorianDateTime)) {
         JSValue result = jsNaN();
-        thisDateObj->setInternalValue(exec->vm(), result);
+        thisDateObj->setInternalValue(vm, result);
         return JSValue::encode(result);
     } 
     
-    JSValue result = jsNumber(gregorianDateTimeToMS(exec, gregorianDateTime, ms, inputIsUTC));
-    thisDateObj->setInternalValue(exec->vm(), result);
+    JSValue result = jsNumber(gregorianDateTimeToMS(vm, gregorianDateTime, ms, inputIsUTC));
+    thisDateObj->setInternalValue(vm, result);
     return JSValue::encode(result);
 }
 
@@ -928,14 +929,15 @@ static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse,
         JSValue result = jsNaN();
         thisDateObj->setInternalValue(exec->vm(), result);
         return JSValue::encode(result);
-    }      
-    
+    }
+
+    VM& vm = exec->vm();
     double milli = thisDateObj->internalNumber();
     double ms = 0; 
 
     GregorianDateTime gregorianDateTime; 
     if (numArgsToUse == 3 && std::isnan(milli)) 
-        msToGregorianDateTime(exec, 0, true, gregorianDateTime); 
+        msToGregorianDateTime(vm, 0, true, gregorianDateTime);
     else { 
         ms = milli - floor(milli / msPerSecond) * msPerSecond; 
         const GregorianDateTime* other = inputIsUTC 
@@ -948,12 +950,12 @@ static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse,
     
     if (!fillStructuresUsingDateArgs(exec, numArgsToUse, &ms, &gregorianDateTime)) {
         JSValue result = jsNaN();
-        thisDateObj->setInternalValue(exec->vm(), result);
+        thisDateObj->setInternalValue(vm, result);
         return JSValue::encode(result);
     } 
            
-    JSValue result = jsNumber(gregorianDateTimeToMS(exec, gregorianDateTime, ms, inputIsUTC));
-    thisDateObj->setInternalValue(exec->vm(), result);
+    JSValue result = jsNumber(gregorianDateTimeToMS(vm, gregorianDateTime, ms, inputIsUTC));
+    thisDateObj->setInternalValue(vm, result);
     return JSValue::encode(result);
 }
 
@@ -1047,10 +1049,11 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
     if (!thisValue.inherits(DateInstance::info()))
         return throwVMTypeError(exec);
 
+    VM& vm = exec->vm();
     DateInstance* thisDateObj = asDateInstance(thisValue);
     if (!exec->argumentCount()) { 
         JSValue result = jsNaN();
-        thisDateObj->setInternalValue(exec->vm(), result);
+        thisDateObj->setInternalValue(vm, result);
         return JSValue::encode(result);
     }
 
@@ -1061,7 +1064,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
     if (std::isnan(milli))
         // Based on ECMA 262 B.2.5 (setYear)
         // the time must be reset to +0 if it is NaN.
-        msToGregorianDateTime(exec, 0, true, gregorianDateTime);
+        msToGregorianDateTime(vm, 0, true, gregorianDateTime);
     else {
         double secs = floor(milli / msPerSecond);
         ms = milli - secs * msPerSecond;
@@ -1072,13 +1075,13 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
     double year = exec->argument(0).toIntegerPreserveNaN(exec);
     if (!std::isfinite(year)) {
         JSValue result = jsNaN();
-        thisDateObj->setInternalValue(exec->vm(), result);
+        thisDateObj->setInternalValue(vm, result);
         return JSValue::encode(result);
     }
 
     gregorianDateTime.setYear(toInt32((year >= 0 && year <= 99) ? (year + 1900) : year));
-    JSValue result = jsNumber(gregorianDateTimeToMS(exec, gregorianDateTime, ms, false));
-    thisDateObj->setInternalValue(exec->vm(), result);
+    JSValue result = jsNumber(gregorianDateTimeToMS(vm, gregorianDateTime, ms, false));
+    thisDateObj->setInternalValue(vm, result);
     return JSValue::encode(result);
 }
 

@@ -132,9 +132,9 @@ static inline int msToWeekDay(double ms)
 // NOTE: The implementation relies on the fact that no time zones have
 // more than one daylight savings offset change per month.
 // If this function is called with NaN it returns NaN.
-static LocalTimeOffset localTimeOffset(ExecState* exec, double ms)
+static LocalTimeOffset localTimeOffset(VM& vm, double ms)
 {
-    LocalTimeOffsetCache& cache = exec->vm().localTimeOffsetCache;
+    LocalTimeOffsetCache& cache = vm.localTimeOffsetCache;
     double start = cache.start;
     double end = cache.end;
 
@@ -188,24 +188,24 @@ static LocalTimeOffset localTimeOffset(ExecState* exec, double ms)
     return offset;
 }
 
-double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
+double gregorianDateTimeToMS(VM& vm, const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
 {
     double day = dateToDaysFrom1970(t.year(), t.month(), t.monthDay());
     double ms = timeToMS(t.hour(), t.minute(), t.second(), milliSeconds);
     double result = (day * WTF::msPerDay) + ms;
 
     if (!inputIsUTC)
-        result -= localTimeOffset(exec, result).offset;
+        result -= localTimeOffset(vm, result).offset;
 
     return result;
 }
 
 // input is UTC
-void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, GregorianDateTime& tm)
+void msToGregorianDateTime(VM& vm, double ms, bool outputIsUTC, GregorianDateTime& tm)
 {
     LocalTimeOffset localTime;
     if (!outputIsUTC) {
-        localTime = localTimeOffset(exec, ms);
+        localTime = localTimeOffset(vm, ms);
         ms += localTime.offset;
     }
 
@@ -222,9 +222,8 @@ void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, Gregori
     tm.setUtcOffset(localTime.offset / WTF::msPerSecond);
 }
 
-double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateString)
+double parseDateFromNullTerminatedCharacters(VM& vm, const char* dateString)
 {
-    ASSERT(exec);
     bool haveTZ;
     int offset;
     double ms = WTF::parseDateFromNullTerminatedCharacters(dateString, haveTZ, offset);
@@ -233,20 +232,20 @@ double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateSt
 
     // fall back to local timezone
     if (!haveTZ)
-        offset = localTimeOffset(exec, ms).offset / WTF::msPerMinute;
+        offset = localTimeOffset(vm, ms).offset / WTF::msPerMinute;
 
     return ms - (offset * WTF::msPerMinute);
 }
 
-double parseDate(ExecState* exec, const String& date)
+double parseDate(VM& vm, const String& date)
 {
-    if (date == exec->vm().cachedDateString)
-        return exec->vm().cachedDateStringValue;
+    if (date == vm.cachedDateString)
+        return vm.cachedDateStringValue;
     double value = parseES5DateFromNullTerminatedCharacters(date.utf8().data());
     if (std::isnan(value))
-        value = parseDateFromNullTerminatedCharacters(exec, date.utf8().data());
-    exec->vm().cachedDateString = date;
-    exec->vm().cachedDateStringValue = value;
+        value = parseDateFromNullTerminatedCharacters(vm, date.utf8().data());
+    vm.cachedDateString = date;
+    vm.cachedDateStringValue = value;
     return value;
 }
 

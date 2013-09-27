@@ -106,7 +106,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
         else {
             JSValue primitive = args.at(0).toPrimitive(exec);
             if (primitive.isString())
-                value = parseDate(exec, primitive.getString(exec));
+                value = parseDate(exec->vm(), primitive.getString(exec));
             else
                 value = primitive.toNumber(exec);
         }
@@ -139,7 +139,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
             t.setSecond(JSC::toInt32(doubleArguments[5]));
             t.setIsDST(-1);
             double ms = (numArgs >= 7) ? doubleArguments[6] : 0;
-            value = gregorianDateTimeToMS(exec, t, ms, false);
+            value = gregorianDateTimeToMS(exec->vm(), t, ms, false);
         }
     }
 
@@ -161,9 +161,10 @@ ConstructType DateConstructor::getConstructData(JSCell*, ConstructData& construc
 // ECMA 15.9.2
 static EncodedJSValue JSC_HOST_CALL callDate(ExecState* exec)
 {
+    VM& vm = exec->vm();
     GregorianDateTime ts;
-    msToGregorianDateTime(exec, currentTimeMS(), false, ts);
-    return JSValue::encode(jsNontrivialString(exec, formatDateTime(ts, DateTimeFormatDateAndTime, false)));
+    msToGregorianDateTime(vm, currentTimeMS(), false, ts);
+    return JSValue::encode(jsNontrivialString(&vm, formatDateTime(ts, DateTimeFormatDateAndTime, false)));
 }
 
 CallType DateConstructor::getCallData(JSCell*, CallData& callData)
@@ -174,7 +175,7 @@ CallType DateConstructor::getCallData(JSCell*, CallData& callData)
 
 static EncodedJSValue JSC_HOST_CALL dateParse(ExecState* exec)
 {
-    return JSValue::encode(jsNumber(parseDate(exec, exec->argument(0).toString(exec)->value(exec))));
+    return JSValue::encode(jsNumber(parseDate(exec->vm(), exec->argument(0).toString(exec)->value(exec))));
 }
 
 static EncodedJSValue JSC_HOST_CALL dateNow(ExecState*)
@@ -212,7 +213,7 @@ static EncodedJSValue JSC_HOST_CALL dateUTC(ExecState* exec)
     t.setMinute(JSC::toInt32(doubleArguments[4]));
     t.setSecond(JSC::toInt32(doubleArguments[5]));
     double ms = (n >= 7) ? doubleArguments[6] : 0;
-    return JSValue::encode(jsNumber(timeClip(gregorianDateTimeToMS(exec, t, ms, true))));
+    return JSValue::encode(jsNumber(timeClip(gregorianDateTimeToMS(exec->vm(), t, ms, true))));
 }
 
 } // namespace JSC

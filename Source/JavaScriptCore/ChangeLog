@@ -1,3 +1,13 @@
+2013-09-27  Andreas Kling  <akling@apple.com>
+
+        Pass VM instead of ExecState to JSDateMath functions.
+        <https://webkit.org/b/121997>
+
+        Reviewed by Geoffrey Garen.
+
+        The JSC date math functions only need the VM, so pass that from
+        callers instead of the whole ExecState.
+
 2013-09-26  Andreas Kling  <akling@apple.com>
 
         GetterSetter construction should take a VM instead of ExecState.
