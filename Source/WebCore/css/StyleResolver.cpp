@@ -3623,8 +3623,13 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperationWith
     unsigned shadersListLength = shadersList->length();
     ASSERT(shadersListLength);
 
-    WebKitCSSShaderValue* vertexShader = toWebKitCSSShaderValue(shadersList->itemWithoutBoundsCheck(0));
+
+    WebKitCSSShaderValue* vertexShader = 0;
     WebKitCSSShaderValue* fragmentShader = 0;
+
+    if (shadersList->itemWithoutBoundsCheck(0)->isWebKitCSSShaderValue())
+        vertexShader = toWebKitCSSShaderValue(shadersList->itemWithoutBoundsCheck(0));
+
     CustomFilterProgramType programType = PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE;
     CustomFilterProgramMixSettings mixSettings;
 
@@ -3635,7 +3640,9 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperationWith
             CSSValueListIterator iterator(mixFunction);
 
             ASSERT(mixFunction->length());
-            fragmentShader = toWebKitCSSShaderValue(iterator.value());
+            if (iterator.value()->isWebKitCSSShaderValue())
+                fragmentShader = toWebKitCSSShaderValue(iterator.value());
+
             iterator.advance();
 
             ASSERT(mixFunction->length() <= 3);
@@ -3651,13 +3658,14 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperationWith
             }
         } else {
             programType = PROGRAM_TYPE_NO_ELEMENT_TEXTURE;
-            fragmentShader = toWebKitCSSShaderValue(fragmentShaderOrMixFunction);
+            if (fragmentShaderOrMixFunction->isWebKitCSSShaderValue())
+                fragmentShader = toWebKitCSSShaderValue(fragmentShaderOrMixFunction);
         }
     }
 
     if (!vertexShader && !fragmentShader)
         return 0;
-    
+
     unsigned meshRows = 1;
     unsigned meshColumns = 1;
     CustomFilterMeshType meshType = MeshTypeAttached;

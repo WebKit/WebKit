@@ -1,3 +1,18 @@
+2013-09-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Sync toWebKitCSSShaderValue() behavior with other toCSSFooValue()
+        https://bugs.webkit.org/show_bug.cgi?id=121886
+
+        Reviewed by Darin Adler.
+
+        toWebKitCSSShaderValue() behavior is different from other to CSSFooValue().
+        It shouldn't return null. The type checking should be done before doing type cast.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createCustomFilterOperationWithInlineSyntax):
+        * css/WebKitCSSShaderValue.h:
+        (WebCore::toWebKitCSSShaderValue):
+
 2013-09-26  Antti Koivisto  <antti@apple.com>
 
         Move m_style to RenderElement
