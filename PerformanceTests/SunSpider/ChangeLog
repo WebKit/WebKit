@@ -1,5 +1,15 @@
 2013-09-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Fixed a version number string in SunSpider 1.0.2
+        https://bugs.webkit.org/show_bug.cgi?id=122004
+
+        Reviewed by Gavin Barraclough.
+
+        * resources/driver-TEMPLATE.html:
+        * resources/results-TEMPLATE.html: 1.0.2!
+
+2013-09-26  Geoffrey Garen  <ggaren@apple.com>
+
         Tentative SunSpider 1.0.2
         https://bugs.webkit.org/show_bug.cgi?id=122002
 
